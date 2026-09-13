@@ -214,7 +214,9 @@ class ref extends sandbox
     {
         return [
             ref_fields::FLD_EX_KEY => url_var::EXTERNAL_KEY,
-            ref_fields::FLD_TYPE => url_var::TYPE,
+            // the type selector of the ref form posts the reference type url var, not the
+            // generic type var, so the change preview and the undo link must use it too
+            ref_fields::FLD_TYPE => url_var::REF_TYPE,
             ref_fields::FLD_SOURCE => url_var::SOURCE,
             fields::FLD_URL => url_var::URL,
             fields::FLD_DESCRIPTION => url_var::DESCRIPTION,

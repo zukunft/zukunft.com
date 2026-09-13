@@ -39,6 +39,7 @@ namespace Zukunft\ZukunftCom\main\php\web\component\execute;
 
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
+include_once html_paths::CONST . 'icons.php';
 include_once html_paths::FORMULA . 'formula.php';
 include_once html_paths::FORMULA . 'formula_link_list.php';
 include_once html_paths::FORMULA . 'formula_list.php';
@@ -46,6 +47,7 @@ include_once html_paths::EXECUTE . 'ui_log.php';
 include_once html_paths::HELPER . 'config.php';
 include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::HTML . 'html_selector.php';
 include_once html_paths::LOG . 'change_log_list.php';
 include_once html_paths::HTML . 'list_sort.php';
 include_once html_paths::HTML . 'styles.php';
@@ -72,18 +74,21 @@ include_once html_paths::SHARED_TYPES . 'verbs.php';
 include_once html_paths::SHARED_TYPES . 'view_styles.php';
 include_once html_paths::SHARED_CONST . 'words.php';
 include_once html_paths::SHARED . 'library.php';
+include_once html_paths::SHARED . 'url_var.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::SHARED_ENUM . 'foaf_direction.php';
 
 //include_once test_paths::CONST . 'triple_names.php';
 
 use Zukunft\ZukunftCom\main\php\web\component\component;
+use Zukunft\ZukunftCom\main\php\web\const\icons;
 use Zukunft\ZukunftCom\main\php\web\formula\formula;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_link_list;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\web\helper\config;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\html\html_selector;
 use Zukunft\ZukunftCom\main\php\web\html\list_sort;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_list;
@@ -110,6 +115,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
@@ -456,9 +462,10 @@ class ui_list extends ui_base
      *
      * @param db_object|null $dbo the view whose components should be listed
      * @param user_message $msg to report a missing cache or an unexpected selection object
+     * @param array $url_arr the url vars of the calling page for the back link of the action icons
      * @return string the component table or the message that the view has no components
      */
-    function view_components(?db_object $dbo, user_message $msg): string
+    function view_components(?db_object $dbo, user_message $msg, array $url_arr = []): string
     {
         global $mtr;
         global $ui_sys;
@@ -473,27 +480,127 @@ class ui_list extends ui_base
             // the request cache that also provides the views for the page rendering itself
             $msk = $ui_sys->typ_lst_cache->get_view_by_id($dbo->id());
             $cmp_lst = $msk?->get_component_list();
+            $html = new html_base();
+            $rows = '';
+            $last_pos = 0;
             if ($cmp_lst == null or $cmp_lst->is_empty()) {
                 $result = $mtr->txt(msg_id::INFO_VIEW_HAS_NO_COMPONENTS);
             } else {
                 // the table is not cut by the configured name list limit, because the position
                 // numbers are only useful if complete and the number of components of one view
                 // is bounded by its layout; the position type name comes from the type cache
-                $html = new html_base();
                 $pos_typ_lst = $ui_sys->typ_lst_cache->pos_typ;
-                $rows = '';
                 foreach ($cmp_lst->sorted_by_position() as $cmp) {
                     $rows .= $html->tr(
                         $html->td((string)$cmp->position)
                         . $html->td($cmp->name_link([], '', views::COMPONENT_DEFAULT_ID))
-                        . $html->td($pos_typ_lst?->name($cmp->pos_type_id) ?? ''));
+                        . $html->td($pos_typ_lst?->name($cmp->pos_type_id) ?? '')
+                        . $html->td($this->component_link_icons($cmp, $url_arr)));
+                    // a component without a position does not move the end of the list
+                    $last_pos = $cmp->position ?? $last_pos;
                 }
-                $result = $html->tbl($rows, styles::STYLE_BORDERLESS_GREY);
+            }
+            // the add row follows the listed components, so the new component is linked at the end
+            $rows .= $this->component_add_row($dbo, $last_pos + 1);
+            if ($rows != '') {
+                $result .= $html->tbl($rows, styles::STYLE_BORDERLESS_GREY);
             }
         } else {
             log_err_msg_ui($dbo::class . ' is not expected to be a selection for components', $msg);
         }
         return $result;
+    }
+
+    /**
+     * the edit and the delete icon of one component link of a view, so that the user can change
+     * e.g. the position type of the link or remove the component from the view
+     *
+     * @param component $cmp the component whose link to the shown view can be changed
+     * @param array $url_arr the url vars of the calling page for the back link
+     * @return string the html code of the two action icons, empty if the link id is not known
+     */
+    private function component_link_icons(component $cmp, array $url_arr = []): string
+    {
+        global $mtr;
+
+        $result = '';
+        // a component of a view that the api sends without the link id cannot be changed by id
+        if ($cmp->link_id != 0) {
+            $html = new html_base();
+            $result = $html->icon_link(views::COMPONENT_LINK_EDIT_ID, $cmp->link_id,
+                    icons::EDIT, $mtr->txt(msg_id::COMPONENT_LINK_EDIT), $url_arr)
+                . $html->icon_link(views::COMPONENT_LINK_DEL_ID, $cmp->link_id,
+                    icons::DEL, $mtr->txt(msg_id::COMPONENT_UNLINK), $url_arr);
+        }
+        return $result;
+    }
+
+    /**
+     * the last row of the component list of a view: a component selector and the add action that
+     * opens the confirm page which links the selected component to the view, so that the user can
+     * extend a view from the view page instead of opening the component link add form
+     *
+     * the back target is not set, because the confirm step replaces it by the default page of the
+     * created object (see frontend::url_to_action)
+     *
+     * @param view|db_object $msk the view the selected component should be linked to
+     * @param int $pos the position of the new component, which is the end of the view
+     * @return string the html code of the add row, empty if no component can be selected
+     */
+    private function component_add_row(view|db_object $msk, int $pos): string
+    {
+        global $mtr;
+        global $ui_sys;
+
+        $result = '';
+        // every component that the frontend cache knows can be added to the view
+        $cmp_names = $ui_sys?->typ_lst_cache?->msk_sys?->component_names() ?? [];
+        // a view that is not yet saved cannot be linked and an empty cache has nothing to select
+        if ($msk->id() != 0 and $cmp_names != []) {
+            $html = new html_base();
+            $form_name = views::COMPONENT_LINK_ADD;
+            $fields = $html->form_hidden(url_var::MASK, (string)views::COMPONENT_LINK_ADD_ID)
+                . $html->form_hidden(url_var::STEP, url_var::STEP_CONFIRM)
+                . $html->form_hidden(url_var::VIEW, (string)$msk->id())
+                . $html->form_hidden(url_var::POSITION, (string)$pos);
+            $selector = $this->component_add_selector($form_name, $cmp_names);
+            // the add text is in the position column and so outside the form of the next column
+            $add_text = $html->button_submit_text($mtr->txt(msg_id::ADD), $form_name);
+            $form = $html->form_start($form_name) . $fields . $selector . $html->form_end();
+            $result = $html->tr($html->td($add_text) . $html->td($form) . $html->td('') . $html->td(''));
+        }
+        return $result;
+    }
+
+    /**
+     * the selector of the components that can be added to the shown view; it is filled here and
+     * not by ListBase::selector, because the components come from the view cache as a name list:
+     * a component_list in the view list would include the component renderer and with it the
+     * view list into itself (see the include block of component_list)
+     *
+     * the selector fills the table cell, which the table already sizes for the column, and the
+     * column and the add text say what is selected, so the field needs no label and shows the
+     * short empty entry with the tooltip instead
+     *
+     * @param string $form_name the form that posts the selected component
+     * @param array $cmp_names the name of every selectable component keyed by its database id
+     * @return string the html code of the component selector
+     */
+    private function component_add_selector(string $form_name, array $cmp_names): string
+    {
+        global $mtr;
+
+        $sel = new html_selector();
+        $sel->lst = $cmp_names;
+        $sel->name = url_var::COMPONENT;
+        $sel->form = $form_name;
+        $sel->selected = 0;
+        $sel->label_id = msg_id::FORM_SELECT_COMPONENT;
+        $sel->style = view_styles::COL_SM_12;
+        $sel->with_label = false;
+        $sel->dummy_text = $mtr->txt(msg_id::PLEASE_SELECT_SHORT);
+        $sel->tooltip = $mtr->txt(msg_id::SELECT_TO_ADD);
+        return $sel->display();
     }
 
     /**
@@ -590,6 +697,72 @@ class ui_list extends ui_base
             }
         } else {
             log_err_msg_ui($dbo::class . ' is not expected to be a selection for formulas', $msg);
+        }
+        return $result;
+    }
+
+    /**
+     * the link icon below the formula list of a word or triple and the form that it reveals: a
+     * formula selector and the link button that opens the confirm page which assigns the selected
+     * formula to the phrase
+     *
+     * the form is hidden until the icon targets it via the url fragment, so the page stays short
+     * and no javascript is needed (see docs/llm/frontend.md); the confirm step sets the back
+     * target itself (see frontend::url_to_action)
+     *
+     * @param phrase $phr the word or triple the selected formula should be assigned to
+     * @param user_message $msg to report a problem of the formula load
+     * @param data_object|null $cfg the request cache with the formulas that can be selected
+     * @param bool $test_mode true to build the form without a backend call
+     * @return string the html code of the link icon and the hidden form, empty for an unsaved phrase
+     */
+    private function formula_link_form(
+        phrase       $phr,
+        user_message $msg,
+        ?data_object $cfg,
+        bool         $test_mode
+    ): string
+    {
+        global $mtr;
+
+        // the selector offers one selection list of formulas, not the few names that the list
+        // above shows; if that list is full more formulas may exist, which the more entry says,
+        // because the user would else silently never see them
+        $size = config::LIMIT_SEARCH_LIST;
+        $frm_lst = $cfg?->formula_list() ?? new formula_list();
+        // the request cache is filled by the unit tests only, so outside of them the formulas
+        // that can be assigned are requested from the backend (like the assigned formulas above)
+        if ($frm_lst->is_empty() and !$test_mode) {
+            $frm_lst->load_selectable($size, $msg);
+        }
+
+        $result = '';
+        // a phrase that is not yet saved cannot be linked; the icon is shown even if no formula
+        // can be offered, so that the page looks the same with and without the cache
+        if ($phr->id() != 0) {
+            $html = new html_base();
+            // an empty selector would post a link without a formula, which can only fail, so the
+            // pane says why nothing can be selected instead of offering a form that never saves
+            if ($frm_lst->is_empty()) {
+                $pane = $mtr->txt(msg_id::INFO_NO_FORMULA_TO_LINK);
+            } else {
+                $form_name = views::FORMULA_LINK_ADD;
+                $fields = $html->form_hidden(url_var::MASK, (string)views::FORMULA_LINK_ADD_ID)
+                    . $html->form_hidden(url_var::STEP, url_var::STEP_CONFIRM)
+                    . $html->form_hidden(url_var::PHRASE, (string)$phr->id());
+                $sel = $frm_lst->selector_ui($form_name, 0, url_var::FORMULA,
+                    msg_id::FORM_SELECT_FORMULA, view_styles::COL_SM_12);
+                if ($frm_lst->count() >= $size) {
+                    $sel->more_text = $mtr->txt(msg_id::PLEASE_SELECT_SHORT);
+                }
+                $button = $html->form_submit($mtr->txt(msg_id::SYSTEM_BUTTON_LINK));
+                $pane = $html->form_start($form_name) . $fields . $sel->display()
+                    . $button . $html->form_end();
+            }
+            $icon = $html->ref('#' . styles::FORMULA_LINK_PANE, $html->icon(icons::LINK),
+                $mtr->txt(msg_id::FORMULA_LINK), styles::HEADING_ICON_INLINE, true);
+            $result = $html->div($icon)
+                . $html->div($pane, styles::TOGGLE_PANE, styles::FORMULA_LINK_PANE);
         }
         return $result;
     }
@@ -861,17 +1034,19 @@ class ui_list extends ui_base
         //      column); a result_chart component plus a word-carried results_related list are
         //      still missing
 
+        // the page object is a word or a triple, but the formula lookup and the link form below
+        // the list need the phrase of it
+        if ($wrd::class == phrase::class) {
+            $phr = $wrd;
+        } else {
+            $phr = $wrd->phrase();
+        }
         // a word loaded for its page carries its related formulas directly (like the
         // related values), so use that list; otherwise fall back to the formula link
         // cache or, outside the unit tests, an api load
         if ($wrd::class == word::class and $wrd->frm_lst != null) {
             $frm_lst = $wrd->frm_lst;
         } else {
-            if ($wrd::class == phrase::class) {
-                $phr = $wrd;
-            } else {
-                $phr = $wrd->phrase();
-            }
             $lnk_lst = $cac?->frm_lnk_lst;
             $frm_lst = new formula_list();
             // the default cache is an empty list, so an empty cache triggers the backend call
@@ -891,7 +1066,11 @@ class ui_list extends ui_base
         } else {
             $row_limit = config::LIMIT_NAME_LIST;
         }
-        return $frm_lst->name_link([], $row_limit);
+        $result = $frm_lst->name_link([], $row_limit);
+        // the link icon below the list is the only way to assign a formula to the phrase,
+        // so it is also shown if the phrase has no formula yet (like the reference list)
+        $result .= $this->formula_link_form($phr, $msg, $cac, $test_mode);
+        return $result;
     }
 
     /**

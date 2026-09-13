@@ -216,7 +216,7 @@ class test_lib
         // add the view id because the import does not include the database id
         $dto_ui->add_id_to_views();
         // add the components to the views
-        //$dto_ui->add_components_to_views();
+        //$dto_ui->add_components_to_views($msg);
         // import the base views
         $json_str = file_get_contents(files::BASE_VIEWS);
         $size = strlen($json_str);
@@ -229,7 +229,7 @@ class test_lib
         // add the view id because the import does not include the database id
         $dto_base_ui->add_id_to_views();
         // add the components to the views
-        //$dto_base_ui->add_components_to_views();
+        //$dto_base_ui->add_components_to_views($msg);
         $dto_ui->merge_view_list($dto_base_ui->view_list(), $msg);
 
         // TODO Prio 2 separate the test object creation from the test object class because this is not depending on the test object settings

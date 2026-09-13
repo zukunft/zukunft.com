@@ -41,6 +41,7 @@ include_once html_paths::HTML . 'styles.php';
 include_once html_paths::SANDBOX . 'combine_named.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::SANDBOX . 'sandbox.php';
+include_once html_paths::SANDBOX . 'sandbox_link.php';
 include_once html_paths::SANDBOX . 'sandbox_list.php';
 include_once html_paths::TYPES . 'type_object.php';
 include_once html_paths::USER . 'user.php';
@@ -61,6 +62,7 @@ use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_link;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_list;
 use Zukunft\ZukunftCom\main\php\web\types\type_object;
 use Zukunft\ZukunftCom\main\php\web\user\user;
@@ -218,12 +220,14 @@ class ui_preview extends ui_base
      * @param array $url_array the parsed url with the new field values and their '8'-prefixed old values
      * @param db_object|type_object|combine_named|sandbox_list|null $dbo the object being changed; the
      *        same union that dsp_entries passes, because any view object can be shown in a popup form
+     * @param bool $test_mode true to build the preview without a backend call
      * @return string the html code of the centered change table, or an empty string if nothing changed
      */
     function popup_changes(
         user_message                                          $msg,
         array                                                 $url_array = [],
-        db_object|type_object|combine_named|sandbox_list|null $dbo = null
+        db_object|type_object|combine_named|sandbox_list|null $dbo = null,
+        bool                                                  $test_mode = false
     ): string
     {
         global $mtr;
@@ -256,6 +260,14 @@ class ui_preview extends ui_base
         $ex_from = in_array($url_array[url_var::MASK] ?? 0, views::ADD_MASKS_IDS);
         $rows = $this->change_rows($url_array, $dbo, $msg, $ex_from);
         $result = $hidden;
+        // a link is named above the table, because the two linked objects are the link itself and
+        // not a changed field, so the table would else show only their ids (see sandbox_link)
+        if ($dbo instanceof sandbox_link) {
+            $link_text = $dbo->link_preview($msg, $test_mode);
+            if ($link_text != '') {
+                $result .= $html->div($html->bold($link_text));
+            }
+        }
         if ($rows != '') {
             $head_row = $html->th($mtr->txt(msg_id::CHANGE_TBL_FIELD));
             if (!$ex_from) {

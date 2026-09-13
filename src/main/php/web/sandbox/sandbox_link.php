@@ -219,6 +219,20 @@ class sandbox_link extends sandbox
     }
 
     /**
+     * the pending link in one line, shown above the change table of a confirm page, e.g.
+     * "link formula 'increase' to phrase 'GDP'", so that the user reads what is linked instead
+     * of the ids of the two objects; the children overwrite this with the wording of their link
+     *
+     * @param user_message $msg to report a problem while reading the names of the linked objects
+     * @param bool $test_mode true to name the link without a backend call
+     * @return string the text of the pending link, empty for a link that has no wording yet
+     */
+    function link_preview(user_message $msg, bool $test_mode = false): string
+    {
+        return '';
+    }
+
+    /**
      * the two linked objects as links, e.g. for the subtitle of the link default page;
      * the children overwrite this with the wording specific to their link
      * @param array $url_arr the url vars of the calling page for the back link

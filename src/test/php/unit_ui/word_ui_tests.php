@@ -311,8 +311,55 @@ class word_ui_tests
         $t->assert_text_contains($test_name, $list->formulas($wrd_minute, $msg, $dto), formula_names::SCALE_TO_SEC);
         $test_name = 'the sample formula of the default test word is listed';
         $t->assert_text_contains($test_name, $list->formulas($wrd, $msg, $dto), formula_names::INCREASE);
-        $test_name = 'a word without assigned formulas shows an empty list';
-        $t->assert($test_name, $list->formulas($wrd_zh, $msg, $dto), '');
+        // the link form below the list offers every cached formula, so a word without an assigned
+        // formula is proven by the missing link to a formula page, not by the missing name
+        $test_name = 'a word without assigned formulas links no formula';
+        $zh_html = $list->formulas($wrd_zh, $msg, $dto);
+        $t->assert_text_not_contains($test_name, $zh_html,
+            url_var::MASK . url_var::EQ . views::FORMULA_ID);
+
+        // below the formula list the link icon opens the form that assigns an existing formula
+        // to the shown phrase; it is also shown for a word that has no formula yet
+        $test_name = 'the formula list offers the link icon';
+        $t->assert_text_contains($test_name, $zh_html, icons::LINK);
+        $test_name = 'the link icon opens the hidden formula link form';
+        $t->assert_text_contains($test_name, $zh_html, '#' . styles::FORMULA_LINK_PANE);
+        $test_name = 'the formula link form posts the formula link add mask';
+        $frm_html = $list->formulas($wrd, $msg, $dto);
+        $t->assert_text_contains($test_name, $frm_html,
+            $html->form_hidden(url_var::MASK, (string)views::FORMULA_LINK_ADD_ID));
+        $test_name = 'the formula link form asks to confirm the new link';
+        $t->assert_text_contains($test_name, $frm_html,
+            $html->form_hidden(url_var::STEP, url_var::STEP_CONFIRM));
+        $test_name = 'the formula link form assigns the formula to the shown phrase';
+        $t->assert_text_contains($test_name, $frm_html,
+            $html->form_hidden(url_var::PHRASE, (string)$wrd->phrase()->id()));
+        // the word without an assigned formula shows the name only in the selector of the form
+        $test_name = 'the formula link form offers a formula to select';
+        $t->assert_text_contains($test_name, $zh_html, formula_names::INCREASE);
+        // the icon does not depend on the cache, so that a page looks the same whether the
+        // formulas come from the request cache or from the backend; with nothing to select the
+        // pane says so instead of offering a form that can only fail on save
+        $test_name = 'a page without cached formulas still shows the link icon';
+        $empty_html = $list->formulas($wrd, $msg, new data_object(), true);
+        $t->assert_text_contains($test_name, $empty_html, icons::LINK);
+        $test_name = 'a page without a formula to link says so';
+        $t->assert_text_contains($test_name, $empty_html, $mtr->txt(msg_id::INFO_NO_FORMULA_TO_LINK));
+        $test_name = 'a page without a formula to link offers no link button';
+        $link_button = $html->form_submit($mtr->txt(msg_id::SYSTEM_BUTTON_LINK));
+        $t->assert_text_not_contains($test_name, $empty_html, $link_button);
+        $test_name = 'a page with a formula to link offers the link button';
+        $t->assert_text_contains($test_name, $frm_html, $link_button);
+
+        // a selector that offers only one selection list ends with the more entry, so that the
+        // user knows that a formula outside of it needs the add form
+        $more_html = '<option value="0" disabled>' . $mtr->txt(msg_id::PLEASE_SELECT_SHORT) . '</option>';
+        $test_name = 'a formula selector that is not cut has no more entry';
+        $t->assert_text_not_contains($test_name, $frm_html, $more_html);
+        $test_name = 'a cut formula selector ends with the more entry';
+        $sel = $dto->formula_list()->selector_ui(views::FORMULA_LINK_ADD, 0, url_var::FORMULA);
+        $sel->more_text = $mtr->txt(msg_id::PLEASE_SELECT_SHORT);
+        $t->assert_text_contains($test_name, $sel->display(), $more_html);
 
         $t->subheader($ts . 'related sorted by impact');
         $stock_html = $list->phrases_related($msg, $wrd_company_rel);

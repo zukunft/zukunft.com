@@ -46,6 +46,7 @@ include_once html_paths::LOG . 'change_log_list.php';
 
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_list;
+use Zukunft\ZukunftCom\main\php\web\component\execute\ui_preview;
 use Zukunft\ZukunftCom\main\php\web\formula\formula;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_link as formula_link_ui;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
@@ -343,6 +344,36 @@ class formula_ui_tests
             url_var::DESCRIPTION);
         $test_name = 'a db field that a formula link does not have has no url var';
         $t->assert($test_name, $lnk->db_fld_to_url()[fields::FLD_STYLE] ?? '', '');
+
+        $t->subheader($ts . 'link preview');
+
+        // the confirm page names the two linked objects in one line above the change table,
+        // because they are the link itself and not a field that the user has changed;
+        // test mode, because the names come from the request cache and not from the backend
+        $test_name = 'the formula link preview names the linked formula';
+        $lnk_txt = $lnk_url->link_preview($msg, true);
+        $t->assert_text_contains($test_name, $lnk_txt, formula_names::SCALE_TO_SEC);
+        $test_name = 'the formula link preview names the linked phrase';
+        $t->assert_text_contains($test_name, $lnk_txt, word_names::MINUTE);
+        $test_name = 'a formula link without linked objects has no preview text';
+        $t->assert($test_name, $lnk_new->link_preview($msg, true), '');
+
+        // the change table of a link lists only the editable fields, so the ids of the linked
+        // objects are no longer shown as a changed field
+        $preview = new ui_preview();
+        $lnk_chg_url = [
+            url_var::MASK => (string)views::FORMULA_LINK_ADD_ID,
+            url_var::FORMULA => (string)formula_names::SCALE_TO_SEC_ID,
+            url_var::PHRASE => (string)word_names::MINUTE_ID,
+            url_var::DESCRIPTION => test_const::FORMULA_LINK_COM
+        ];
+        $test_name = 'the confirm preview of a formula link does not list the phrase id';
+        $lnk_chg_html = $preview->popup_changes($msg, $lnk_chg_url, $lnk_url, true);
+        $t->assert_text_not_contains($test_name, $lnk_chg_html, url_var::std_to_human(url_var::PHRASE));
+        $test_name = 'the confirm preview of a formula link lists the changed description';
+        $t->assert_text_contains($test_name, $lnk_chg_html, test_const::FORMULA_LINK_COM);
+        $test_name = 'the confirm preview of a formula link names the link in bold';
+        $t->assert_text_contains($test_name, $lnk_chg_html, $html->bold($lnk_txt));
 
         $t->subheader($ts . 'link tabs');
 

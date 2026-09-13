@@ -574,19 +574,25 @@ class data_object
     }
 
     /**
-     * add the database id of the known test views to view list
+     * add the database id to the components that the views of this cache know only by name,
+     * like add_id_to_views does it for the views themselves
+     *
+     * @param user_message $msg to report a problem of the cache read; a component that the cache
+     *                          does not know keeps its empty id, like a view of add_id_to_views
      * @return void
      */
-    function add_components_to_views(): void
+    function add_components_to_views(user_message $msg): void
     {
         $msk_lst = $this->msk_lst;
         foreach ($msk_lst->lst() as $msk) {
             if ($msk->id > 0) {
-                foreach ($msk->component_list()->lst() as $cmp) {
+                foreach ($msk->get_component_list()->lst() as $cmp) {
+                    // the name is the only key of a component that is not yet in the database,
+                    // so the id of the cached component with the same name is the missing one
                     if ($cmp->id == 0) {
-                        $filled = $this->component_list()->get($cmp->id);
+                        $filled = $this->component_list()->get_by_name($cmp->name(), $msg);
                         if ($filled != null) {
-                            $cmp->fill($filled);
+                            $cmp->id = $filled->id();
                         }
                     }
                 }

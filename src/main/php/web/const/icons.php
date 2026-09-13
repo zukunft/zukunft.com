@@ -48,6 +48,10 @@ class icons
     const string VIEW_SWITCH = 'fas fa-shuffle';
     // shown behind a selector to add a new object of the selected type e.g. a source of a value
     const string ADD = 'fas fa-plus';
+    // shown behind a list entry to delete or exclude it e.g. a component link of a view
+    const string DEL = 'fas fa-times-circle';
+    // shown below a list to link an existing object to the shown object e.g. a formula to a phrase
+    const string LINK = 'fas fa-link';
     const string GLOBE = 'fas fa-globe';
     const string USER_CIRCLE = 'fas fa-user-circle';
     // shown e.g. behind a reference to link to a (potential) job that refreshes the referenced data

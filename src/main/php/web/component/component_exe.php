@@ -192,7 +192,7 @@ class component_exe extends component
 
             // system form - components that can only be used for internal system forms
             // general form fields
-            component_types::FORM_TITLE => $form->form_tile($form_name, $this->ui_msg_code_id),
+            component_types::FORM_TITLE => $form->form_tile($form_name, $this->ui_msg_code_id, $dbo),
             component_types::TITLE_NAMED_EDIT => $form->title_named($dbo, $msg, def::LIMIT_RELATED_PER_VERB, $url_arr, $this->ui_msg_code_id),
             component_types::TITLE_TRIPLE_EDIT => $form->title_triple($dbo, $msg, def::LIMIT_RELATED_PER_VERB, $url_arr),
             component_types::TITLE_LINK_EDIT => $form->title_link($dbo, $msg, def::LIMIT_RELATED_PER_VERB, $url_arr),
@@ -343,7 +343,7 @@ class component_exe extends component
             component_types::SYSTEM_SELECTION_TEXT => $preview->selection_text(),
             component_types::SYSTEM_TITLE_OBJECT_NAMED => $preview->popup_title($form_name, $this->ui_msg_code_id, $dbo, $url_arr),
             component_types::FORM_CLASS => $preview->popup_class($dbo),
-            component_types::FORM_CHANGES => $preview->popup_changes($msg, $url_arr, $dbo),
+            component_types::FORM_CHANGES => $preview->popup_changes($msg, $url_arr, $dbo, $test_mode),
             component_types::FORM_IMPACT => $preview->popup_impact($url_arr),
             component_types::SYSTEM_SHOW_VIEW_DIFF => $preview->view_diff(),
 
@@ -429,7 +429,7 @@ class component_exe extends component
             component_types::SHOW_PLURAL_REVERSE => $form->show_plural_reverse($dbo),
             component_types::SHOW_STYLE => $form->show_style($dbo),
             component_types::SHOW_OWNER => $form->show_owner($dbo),
-            component_types::VIEW_COMPONENTS => $list->view_components($dbo, $msg),
+            component_types::VIEW_COMPONENTS => $list->view_components($dbo, $msg, $url_arr),
             component_types::VIEW_TERMS => $list->view_terms($dbo, $msg),
             component_types::SHOW_FORMULA => $form->show_formula($dbo),
             component_types::SHOW_LINKED_COMPONENT => $form->show_linked_component($dbo),

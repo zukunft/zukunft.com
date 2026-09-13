@@ -44,6 +44,7 @@ include_once html_paths::SHARED_CONST . 'views.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::SHARED_TYPES . 'api_type_list.php';
 include_once html_paths::SHARED . 'json_fields.php';
+include_once html_paths::SHARED . 'library.php';
 include_once html_paths::SHARED . 'url_var.php';
 include_once html_paths::SHARED_CONST_FIELDS . 'fields.php';
 
@@ -56,6 +57,7 @@ use Zukunft\ZukunftCom\main\php\web\types\type_object;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
@@ -223,7 +225,10 @@ class formula_link extends sandbox_link
         $vars = parent::api_array($typ_lst, $msg);
 
         $vars[json_fields::FORMULA_ID] = $this->formula()?->id();
-        $vars[json_fields::PHRASE_ID] = $this->phrase()?->id();
+        // an unset phrase is an empty phrase with the id 0, which the filter below would keep,
+        // so a link without a phrase sends no phrase id at all
+        $phr_id = $this->phrase()->id();
+        $vars[json_fields::PHRASE_ID] = $phr_id == 0 ? null : $phr_id;
         // priority is the api name of the order_nbr db field
         $vars[json_fields::PRIORITY] = $this->order_nbr;
         $vars[json_fields::DESCRIPTION] = $this->description;
@@ -244,6 +249,56 @@ class formula_link extends sandbox_link
         $url_array[url_var::FORMULA_LINK_PRIO] = $this->order_nbr;
         $url_array[url_var::DESCRIPTION] = $this->description;
         return array_filter($url_array, fn($val) => !is_null($val) && $val !== '');
+    }
+
+    /**
+     * the pending formula link in one line for the confirm page, e.g.
+     * "link formula 'increase' to phrase 'GDP'"
+     *
+     * the confirm page builds the link from the url, so the names are missing if the request
+     * cache has neither formula nor phrase (see sandbox_link::named_from_cache) and are read
+     * by id in that case, like the view name of the change preview
+     *
+     * @param user_message $msg to report a problem while reading the names of the linked objects
+     * @param bool $test_mode true to name the link without a backend call
+     * @return string the text of the pending link, empty if one of the two names is missing
+     */
+    function link_preview(user_message $msg, bool $test_mode = false): string
+    {
+        global $mtr;
+        $lib = new library();
+
+        $this->load_linked($this->formula(), $msg, $test_mode);
+        $this->load_linked($this->phrase(), $msg, $test_mode);
+        $frm_name = $this->formula_name() ?? '';
+        $phr_name = $this->phrase_name() ?? '';
+        $result = '';
+        if ($frm_name != '' and $phr_name != '') {
+            $text = $lib->msg_var_replace(
+                $mtr->txt(msg_id::INFO_LINK_FORMULA_TO_PHRASE),
+                msg_id::VAR_FORMULA_NAME, $frm_name);
+            $result = $lib->msg_var_replace($text, msg_id::VAR_PHRASE_NAME, $phr_name);
+        }
+        return $result;
+    }
+
+    /**
+     * read a linked object that the url carries only by id, so that the link can be named even if
+     * the request cache does not know the formula or the phrase; this fills the complete object
+     * and not only its name, like reload_objects of the backend
+     *
+     * @param formula|phrase|null $obj the linked object that may be known by its id only
+     * @param user_message $msg to report a problem while reading the object
+     * @param bool $test_mode true to keep a reproducible render, which never calls the backend
+     * @return void
+     */
+    private function load_linked(formula|phrase|null $obj, user_message $msg, bool $test_mode): void
+    {
+        if ($obj != null and !$test_mode) {
+            if ($obj->name() == '' and $obj->id() != 0) {
+                $obj->load_by_id($obj->id(), $msg);
+            }
+        }
     }
 
     /**
@@ -280,9 +335,14 @@ class formula_link extends sandbox_link
         $this->tob = $phr;
     }
 
+    /**
+     * @return phrase the linked phrase, or an empty phrase if it is not yet set e.g. for a new
+     *                link of an add form; never null, because db_object::phrase() promises a
+     *                phrase to every caller (like ref::phrase)
+     */
     function phrase(): phrase
     {
-        return $this->tob;
+        return $this->tob ?? new phrase();
     }
 
     /**

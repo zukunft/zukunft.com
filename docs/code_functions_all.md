@@ -6625,6 +6625,7 @@
     \-- api_array - section for function api_array not yet defined that it should be api in /formula/formula_link.php
     \-- to_url_array - section for function to_url_array not yet defined that it should be url in /formula/formula_link.
             php
+    \-- link_preview - section for function link_preview is expected to be link in /formula/formula_link.php
     \-- db_fld_to_url - section for function db_fld_to_url not yet defined that it should be url in /formula/formula_lin
             k.php
     \-- set_formula - section for function set_formula is expected to be set and get in /formula/formula_link.php
@@ -6837,6 +6838,8 @@
             html/html_base.php
     \-- icon - section for function icon not yet defined that it should be wrapper for the basic html elements used in /
             html/html_base.php
+    \-- icon_link - section for function icon_link not yet defined that it should be wrapper for the basic html elements
+             used in /html/html_base.php
     \-- icon_with_title - section for function icon_with_title not yet defined that it should be wrapper for the basic h
             tml elements used in /html/html_base.php
     \-- sup - section for function sup not yet defined that it should be wrapper for the basic html elements used in /ht
@@ -6858,6 +6861,7 @@
     \-- url_ex - section for function url_ex not yet defined that it should be wrapper for internal references used in t
             he html code in /html/html_base.php
     \-- text_h1 - section for function text_h1 not yet defined that it should be text formatting in /html/html_base.php
+    \-- bold - section for function bold not yet defined that it should be text formatting in /html/html_base.php
     \-- text_h2 - section for function text_h2 not yet defined that it should be text formatting in /html/html_base.php
     \-- text_h3 - section for function text_h3 not yet defined that it should be text formatting in /html/html_base.php
     \-- text_h4 - section for function text_h4 not yet defined that it should be text formatting in /html/html_base.php
@@ -6980,6 +6984,8 @@
             ents used in zukunft.com in /html/html_base.php
     \-- button_refresh - section for function button_refresh not yet defined that it should be base elements - functions
              for all html elements used in zukunft.com in /html/html_base.php
+    \-- button_submit_text - section for function button_submit_text not yet defined that it should be base elements - f
+            unctions for all html elements used in zukunft.com in /html/html_base.php
     \-- label_lan - section for function label_lan not yet defined that it should be base elements - functions for all h
             tml elements used in zukunft.com in /html/html_base.php
     \-- form_field_id - section for function form_field_id not yet defined that it should be base elements - functions f
@@ -7357,6 +7363,7 @@
     \-- id - section for function id not yet defined that it should be html in /sandbox/ListBase.php
     \-- get_by_code_id - section for function get_by_code_id is expected to be set and get in /sandbox/ListBase.php
     \-- selector - section for function selector not yet defined that it should be select in /sandbox/ListBase.php
+    \-- selector_ui - section for function selector_ui not yet defined that it should be select in /sandbox/ListBase.php
     \-- order error - order of section construct and map has difference at api_mapper should be before __construct
 \-- combine_named
     \-- obj_id - section for function obj_id not yet defined that it should be set and get in /sandbox/combine_named.php
@@ -7478,6 +7485,7 @@
     \-- load_by_id_with_related - section for function load_by_id_with_related is expected to be load in /sandbox/sandbo
             x_link.php
     \-- link_type - section for function link_type is expected to be link in /sandbox/sandbox_link.php
+    \-- link_preview - section for function link_preview is expected to be link in /sandbox/sandbox_link.php
     \-- name_linked - section for function name_linked not yet defined that it should be display in /sandbox/sandbox_lin
             k.php
 \-- sandbox_list
@@ -7868,6 +7876,8 @@
             .php
 \-- view_list
     \-- api_mapper - section for function api_mapper is expected to be construct and map in /view/view_list.php
+    \-- component_names - section for function component_names not yet defined that it should be base in /view/view_list
+            .php
     \-- name_tip - section for function name_tip not yet defined that it should be base in /view/view_list.php
     \-- name_link - section for function name_link not yet defined that it should be base in /view/view_list.php
     \-- default_id - section for function default_id not yet defined that it should be info in /view/view_list.php
@@ -8300,6 +8310,8 @@
         \-- sandbox_link - load the link incl. its two linked objects by adding the ?incl_related=1 url flag, so that
     \-- link_type
         \-- sandbox_link - the children overwrite this with the type list of their own link type
+    \-- link_preview
+        \-- sandbox_link - the pending link in one line, shown above the change table of a confirm page, e.g.
     \-- name_linked
         \-- sandbox_link - the two linked objects as links, e.g. for the subtitle of the link default page;
     \-- display_admin
@@ -9208,8 +9220,7 @@
         \-- formula_link - @return array the db field names mapped to their url var for the change preview and undo link
                 s
     \-- phrase
-        \-- formula_link - @return array the db field names mapped to their url var for the change preview and undo link
-                s
+        \-- formula_link - @return phrase the linked phrase, or an empty phrase if it is not yet set e.g. for a new
     \-- link_type
         \-- formula_link - @return type_object|null the formula link type object from the preloaded cache
     \-- get_description
@@ -9264,6 +9275,8 @@
     \-- to_url_array
         \-- formula_link - @return array parent url array extended with the order number and the description,
                  without empty strings
+    \-- link_preview
+        \-- formula_link - the pending formula link in one line for the confirm page, e.g.
     \-- db_fld_to_url
         \-- formula_link - @return array the db field names mapped to their url var for the change preview and undo link
                 s
@@ -9341,7 +9354,7 @@
     \-- add_id_to_views
         \-- data_object - add the database id of the known test views to view list
     \-- add_components_to_views
-        \-- data_object - add the database id of the known test views to view list
+        \-- data_object - add the database id to the components that the views of this cache know only by name,
 \-- construct and capsule
     \-- __construct
         \-- button - @param string $url the url that is called if the button is pressed
@@ -9430,6 +9443,8 @@
         \-- html_base - @param string $text the text that should be formatted
     \-- icon
         \-- html_base - the html code of a font icon (e.g. Font Awesome) as an empty paired <i> tag
+    \-- icon_link
+        \-- html_base - an icon that links to a view of an object, e.g. the edit and the delete icon of a component
     \-- icon_with_title
         \-- html_base - the html of a font awesome icon
     \-- sup
@@ -9454,12 +9469,14 @@
 \-- text formatting
     \-- text_h1
         \-- html_base - build a url for an external webside
+    \-- bold
+        \-- html_base - @param string $text the text to show bold, e.g. the pending link of a confirm page
     \-- text_h2
-        \-- html_base - build a url for an external webside
+        \-- html_base - @param string $text the text to show bold, e.g. the pending link of a confirm page
     \-- text_h3
-        \-- html_base - build a url for an external webside
+        \-- html_base - @param string $text the text to show bold, e.g. the pending link of a confirm page
     \-- text_h4
-        \-- html_base - build a url for an external webside
+        \-- html_base - @param string $text the text to show bold, e.g. the pending link of a confirm page
 \-- images
     \-- logo
         \-- html_base - @return string the zukunft.com logo with a link to the home page
@@ -9589,6 +9606,8 @@
         \-- html_base - create the html code for a label
     \-- button_refresh
         \-- html_base - a small submit button beside a form field label that asks the backend to recalculate one
+    \-- button_submit_text
+        \-- html_base - a submit button that looks like a link, e.g. the 'add' of the component list of a view; it is
     \-- label_lan
         \-- html_base - translate and create the html code for a label
     \-- form_field_id
