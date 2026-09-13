@@ -3,11 +3,9 @@
 
 ## word default view
 
-if a word has no triple where it is the from side of a triple with the verb 'is a' show instead of the 'is a' phrase list a button 'define xxx as yyy' with an 'add' button that creates a corresponding triple. E.g. if the word lugano has no 'perent' / 'is a triple' show a phrase selection where city and other phrases can be selected and the add triple view with 'triple is a city' is preselected 
+if the user has no permission to save changes to the database and in the formula column 'link formula' icon should be grey and the tooltip message should be something like a translatable 'please log in to link formulas'. if the icon is pressed that normal message 'This pod does not allow changes without a login. Please log in to add or change data.' should be shown 
 
-## search page
-
-if no result offer to add a word
+if a word has no triple where it is the from side of a triple with the verb 'is a' show instead of the 'is a' phrase list a button 'define xxx as yyy' with an 'add' button that creates a corresponding triple. E.g. if the word lugano has no 'parent' / 'is a triple' show a phrase selection where city and other phrases can be selected and the add triple view with 'triple is a city' is preselected
 
 ## start page
 

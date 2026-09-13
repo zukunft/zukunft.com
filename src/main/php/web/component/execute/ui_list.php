@@ -702,6 +702,60 @@ class ui_list extends ui_base
     }
 
     /**
+     * the link icon below the formula list of a word or triple and the form that it reveals: a
+     * formula selector and the link button that opens the confirm page which assigns the selected
+     * formula to the phrase
+     *
+     * the form is hidden until the icon targets it via the url fragment, so the page stays short
+     * and no javascript is needed (see docs/llm/frontend.md); the confirm step sets the back
+     * target itself (see frontend::url_to_action)
+     *
+     * @param phrase $phr the word or triple the selected formula should be assigned to
+     * @param user_message $msg to report a problem of the formula load
+     * @param data_object|null $cfg the request cache with the formulas that can be selected
+     * @param int $row_limit the max number of formulas offered if they are loaded via the api
+     * @param bool $test_mode true to build the form without a backend call
+     * @return string the html code of the link icon and the hidden form, empty if nothing can be selected
+     */
+    private function formula_link_form(
+        phrase       $phr,
+        user_message $msg,
+        ?data_object $cfg,
+        int          $row_limit,
+        bool         $test_mode
+    ): string
+    {
+        global $mtr;
+
+        $frm_lst = $cfg?->formula_list();
+        // the request cache is filled by the unit tests only, so outside of them the formulas
+        // that can be assigned are requested from the backend (like the assigned formulas above)
+        if (($frm_lst == null or $frm_lst->is_empty()) and !$test_mode) {
+            $frm_lst = new formula_list();
+            $frm_lst->load_selectable($row_limit, $msg);
+        }
+
+        $result = '';
+        // a phrase that is not yet saved cannot be linked and an empty list has nothing to select
+        if ($phr->id() != 0 and $frm_lst != null and !$frm_lst->is_empty()) {
+            $html = new html_base();
+            $form_name = views::FORMULA_LINK_ADD;
+            $fields = $html->form_hidden(url_var::MASK, (string)views::FORMULA_LINK_ADD_ID)
+                . $html->form_hidden(url_var::STEP, url_var::STEP_CONFIRM)
+                . $html->form_hidden(url_var::PHRASE, (string)$phr->id());
+            $selector = $frm_lst->selector($form_name, 0, url_var::FORMULA,
+                msg_id::FORM_SELECT_FORMULA, view_styles::COL_SM_12);
+            $button = $html->form_submit($mtr->txt(msg_id::SYSTEM_BUTTON_LINK));
+            $form = $html->form_start($form_name) . $fields . $selector . $button . $html->form_end();
+            $icon = $html->ref('#' . styles::FORMULA_LINK_PANE, $html->icon(icons::LINK),
+                $mtr->txt(msg_id::FORMULA_LINK), styles::HEADING_ICON_INLINE, true);
+            $result = $html->div($icon)
+                . $html->div($form, styles::TOGGLE_PANE, styles::FORMULA_LINK_PANE);
+        }
+        return $result;
+    }
+
+    /**
      * the formulas assigned to the ancestor phrases of a word, grouped per ancestor and shown as a
      * small 'assigned to <ancestor>' subheading (the ancestor name links to its word page and shows a
      * tooltip) followed by the ancestor's formulas; empty if the word has no ancestor formulas. the
@@ -968,17 +1022,19 @@ class ui_list extends ui_base
         //      column); a result_chart component plus a word-carried results_related list are
         //      still missing
 
+        // the page object is a word or a triple, but the formula lookup and the link form below
+        // the list need the phrase of it
+        if ($wrd::class == phrase::class) {
+            $phr = $wrd;
+        } else {
+            $phr = $wrd->phrase();
+        }
         // a word loaded for its page carries its related formulas directly (like the
         // related values), so use that list; otherwise fall back to the formula link
         // cache or, outside the unit tests, an api load
         if ($wrd::class == word::class and $wrd->frm_lst != null) {
             $frm_lst = $wrd->frm_lst;
         } else {
-            if ($wrd::class == phrase::class) {
-                $phr = $wrd;
-            } else {
-                $phr = $wrd->phrase();
-            }
             $lnk_lst = $cac?->frm_lnk_lst;
             $frm_lst = new formula_list();
             // the default cache is an empty list, so an empty cache triggers the backend call
@@ -998,7 +1054,11 @@ class ui_list extends ui_base
         } else {
             $row_limit = config::LIMIT_NAME_LIST;
         }
-        return $frm_lst->name_link([], $row_limit);
+        $result = $frm_lst->name_link([], $row_limit);
+        // the link icon below the list is the only way to assign a formula to the phrase,
+        // so it is also shown if the phrase has no formula yet (like the reference list)
+        $result .= $this->formula_link_form($phr, $msg, $cac, $row_limit, $test_mode);
+        return $result;
     }
 
     /**

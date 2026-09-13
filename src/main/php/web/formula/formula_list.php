@@ -76,6 +76,19 @@ class formula_list extends ListBase
         return parent::load_by_id(self::class, url_var::PHRASE, $id, $msg);
     }
 
+    /**
+     * load the formulas that the user can select from the backend via api, e.g. to assign one
+     * of them to a phrase; the api answers a request without a filter with the first names, so
+     * the selector shows one page of formulas instead of all of them
+     *
+     * @param int $size the max number of formulas to load
+     * @return bool true if at least one formula has been loaded
+     */
+    function load_selectable(int $size, user_message $msg): bool
+    {
+        return parent::load_by_id(self::class, url_var::DISPLAY_LIST_SIZE, $size, $msg);
+    }
+
 
     /*
      * set and get

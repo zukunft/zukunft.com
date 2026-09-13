@@ -311,8 +311,38 @@ class word_ui_tests
         $t->assert_text_contains($test_name, $list->formulas($wrd_minute, $msg, $dto), formula_names::SCALE_TO_SEC);
         $test_name = 'the sample formula of the default test word is listed';
         $t->assert_text_contains($test_name, $list->formulas($wrd, $msg, $dto), formula_names::INCREASE);
-        $test_name = 'a word without assigned formulas shows an empty list';
-        $t->assert($test_name, $list->formulas($wrd_zh, $msg, $dto), '');
+        // the link form below the list offers every cached formula, so a word without an assigned
+        // formula is proven by the missing link to a formula page, not by the missing name
+        $test_name = 'a word without assigned formulas links no formula';
+        $zh_html = $list->formulas($wrd_zh, $msg, $dto);
+        $t->assert_text_not_contains($test_name, $zh_html,
+            url_var::MASK . url_var::EQ . views::FORMULA_ID);
+
+        // below the formula list the link icon opens the form that assigns an existing formula
+        // to the shown phrase; it is also shown for a word that has no formula yet
+        $test_name = 'the formula list offers the link icon';
+        $t->assert_text_contains($test_name, $zh_html, icons::LINK);
+        $test_name = 'the link icon opens the hidden formula link form';
+        $t->assert_text_contains($test_name, $zh_html, '#' . styles::FORMULA_LINK_PANE);
+        $test_name = 'the formula link form posts the formula link add mask';
+        $frm_html = $list->formulas($wrd, $msg, $dto);
+        $t->assert_text_contains($test_name, $frm_html,
+            $html->form_hidden(url_var::MASK, (string)views::FORMULA_LINK_ADD_ID));
+        $test_name = 'the formula link form asks to confirm the new link';
+        $t->assert_text_contains($test_name, $frm_html,
+            $html->form_hidden(url_var::STEP, url_var::STEP_CONFIRM));
+        $test_name = 'the formula link form assigns the formula to the shown phrase';
+        $t->assert_text_contains($test_name, $frm_html,
+            $html->form_hidden(url_var::PHRASE, (string)$wrd->phrase()->id()));
+        // the word without an assigned formula shows the name only in the selector of the form
+        $test_name = 'the formula link form offers a formula to select';
+        $t->assert_text_contains($test_name, $zh_html, formula_names::INCREASE);
+        $test_name = 'the formula link form offers the link button';
+        $t->assert_text_contains($test_name, $frm_html, $mtr->txt(msg_id::SYSTEM_BUTTON_LINK));
+        // without the formulas in the request cache there is nothing to select, so no form is shown
+        $test_name = 'a page without cached formulas shows no link icon';
+        $t->assert_text_not_contains($test_name,
+            $list->formulas($wrd, $msg, new data_object(), true), icons::LINK);
 
         $t->subheader($ts . 'related sorted by impact');
         $stock_html = $list->phrases_related($msg, $wrd_company_rel);

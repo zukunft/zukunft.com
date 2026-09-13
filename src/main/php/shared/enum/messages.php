@@ -2187,6 +2187,8 @@ enum messages: string
     case BUTTON_VIEW_EDIT_TIP = 'button_view_edit_tip';
     case SYSTEM_BUTTON_IMPORT = 'system_button_import';
     case SYSTEM_BUTTON_EXPORT = 'system_button_export';
+    // the button that links the selected object to the shown object e.g. a formula to a phrase
+    case SYSTEM_BUTTON_LINK = 'system_button_link';
     case FORM_WORD_FLD_NAME = 'form_word_fld_name';
 
 

@@ -81,6 +81,12 @@ class styles
     // of the component list of a view, which must be a submit to send the selected component
     const string TEXT_BUTTON = 'text-button';
 
+    // css class of a block that is hidden until the url fragment names it, e.g. the formula link
+    // form that the link icon of the formula list reveals; the css-only twin of the tabs above
+    const string TOGGLE_PANE = 'css-toggle-pane';
+    // the url fragment that reveals the formula link form on a word or triple page
+    const string FORMULA_LINK_PANE = 'formula-link';
+
     // css class for the small category line under a page-title heading
     const string SUBTITLE = 'subtitle';
 

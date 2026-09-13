@@ -474,6 +474,16 @@ a:hover {
     display: block;
 }
 
+/* css-only reveal (no javascript, see docs/llm/frontend.md): a block that is shown only while the */
+/* url fragment names it, e.g. the formula link form that the link icon of a phrase page opens; */
+/* same mechanism as the tabs above, but with one pane instead of a tab bar */
+.css-toggle-pane {
+    display: none;
+}
+.css-toggle-pane:target {
+    display: block;
+}
+
 /* css-only "show password" toggle (no javascript): the password field is a text input that is masked
    by default and revealed while the sibling "show password" checkbox is checked; the raw checkbox is
    hidden and the eye / eye-slash icon in the label is the clickable symbol that toggles it */
