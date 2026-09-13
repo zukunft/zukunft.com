@@ -1276,19 +1276,24 @@ class frontend
         $mask_id = $url_array[url_var::MASK] ?? 0;
         $obj_id = $url_array[url_var::ID] ?? 0;
         $lan = $url_array[url_var::LANGUAGE] ?? '';
+        // the list size and the list page are view-only states of the same page (the more and
+        // the all version of a list, see docs/llm/frontend.md), so each version is cached on its own
+        $list_size = $url_array[url_var::DISPLAY_LIST_SIZE] ?? '';
+        $list_page = $url_array[url_var::DISPLAY_LIST_PAGE] ?? '';
         // a request without a view and without an object shows the default start view, so cache it
         // under the start view key so the bare landing page (view.php with no mask) and an explicit
         // start request (view.php?m=1) share the same cached start page
         $mask_id = self::default_view_id($mask_id, $obj_id);
-        // a request with more than the view, object and language is not cached; the anti-csrf token
-        // is per session, the debug level only controls out-of-band debug output (log_debug echoes,
-        // never part of the rendered html), and a process step of 0 (no action started) does not
-        // change a view-only page, so all three are allowed without preventing the cache and are not
-        // part of the cache key - so e.g. ?m=2&debug=6 takes the same cached path as ?m=2
-        // the same applies to the cache switch itself, which is checked below instead
+        // a request with more than the view, object, language and list state is not cached; the
+        // anti-csrf token is per session, the debug level only controls out-of-band debug output
+        // (log_debug echoes, never part of the rendered html), and a process step of 0 (no action
+        // started) does not change a view-only page, so all three are allowed without preventing
+        // the cache and are not part of the cache key - so e.g. ?m=2&debug=6 takes the same cached
+        // path as ?m=2; the same applies to the cache switch itself, which is checked below instead
         $is_view_only = true;
         foreach ($url_array as $url_key => $url_val) {
             $is_key_param = in_array($url_key, [url_var::MASK, url_var::ID, url_var::LANGUAGE,
+                url_var::DISPLAY_LIST_SIZE, url_var::DISPLAY_LIST_PAGE,
                 url_var::SESSION_TOKEN, url_var::DEBUG, url_var::NO_CACHE]);
             $is_show_step = ($url_key == url_var::STEP and $url_val == url_var::STEP_BASE);
             if (!$is_key_param and !$is_show_step) {
@@ -1324,6 +1329,12 @@ class frontend
             $result = url_var::MASK . url_var::EQ . $mask_id . url_var::ADD_ID . $obj_id;
             if ($lan != '') {
                 $result .= url_var::ADD . url_var::LANGUAGE . url_var::EQ . $lan;
+            }
+            if ($list_size != '') {
+                $result .= url_var::ADD . url_var::DISPLAY_LIST_SIZE . url_var::EQ . $list_size;
+            }
+            if ($list_page != '') {
+                $result .= url_var::ADD . url_var::DISPLAY_LIST_PAGE . url_var::EQ . $list_page;
             }
         }
         return $result;
