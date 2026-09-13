@@ -737,6 +737,32 @@ class test_values extends test_objects
     }
 
     /**
+     * the ranking values of the start page plus a measured figure of a problem that fits no
+     * column of the ranking, e.g. the global temperature of a year, which the start page leaves
+     * to the page of the problem instead of adding a row for it
+     *
+     * @return value_list the ranking values plus one measured value of the first problem
+     */
+    function value_list_solution_prio_measured(): value_list
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $lst = $this->value_list_solution_prio();
+        $lst->add($this->value_for_phrases(
+            [$t_trp->global_warming()->phrase(), $t_wrd->word_2024()->phrase()]));
+        return $lst;
+    }
+
+    /**
+     * @return value_list_ui the frontend ranking values plus the measured figure for unit testing
+     */
+    function value_list_solution_prio_measured_ui(): value_list_ui
+    {
+        $tl = new test_lib();
+        return $tl->list_to_ui($this->value_list_solution_prio_measured(), [api_types::INCL_PHRASES]);
+    }
+
+    /**
      * the potential loss of global warming with the bounds of its probability range and its
      * confidence and the potential gain of its solution without bounds, with the numbers of
      * solution_prio.json, so that the range display of a value table can be tested: the bounds

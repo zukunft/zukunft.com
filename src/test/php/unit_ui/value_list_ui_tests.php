@@ -243,6 +243,16 @@ class value_list_ui_tests
         $test_name = 'the header is shown before the first row';
         $t->assert_text_order($test_name, $tbl_html, '<th', '<td');
 
+        // a table that is a grid of its columns leaves out the value that shares no column phrase
+        // instead of adding a row and the "Values" column for it
+        $tbl_grid = $t_val->value_list_most_relevant_ui()->table_by_related_columns(
+            $msg_ui, new phrase_list_ui(), [], false, true, null, value_list_ui::LIMIT_ALL, [], true);
+        $test_name = 'a grid of the columns leaves out the value without a column phrase';
+        $t->assert_text_not_contains($test_name, $tbl_grid, '>' . word_names::PI . '</a>');
+        $test_name = '... and has no column for the values without a column phrase';
+        $t->assert_text_not_contains($test_name, $tbl_grid,
+            '<th>' . msg_id::FORM_SUB_TITLE_VALUES->text() . '</th>');
+
         // a page must not fill the screen, so with the configured limit the rows that do not fit
         // are reachable via the "... and n more" row instead of being shown
         $tbl_cut = $t_val->value_list_most_relevant_ui()->table_by_related_columns($msg_ui);
