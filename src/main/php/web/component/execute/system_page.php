@@ -162,8 +162,8 @@ class system_page extends component
 
     /**
      * HTML for a subtitle
-     * the formulas subtitle of a word or triple page also shows the icon to add a formula that is
-     * linked to the shown phrase (see ui_list::formula_add_link)
+     * the formulas and the values subtitle of a word or triple page also show the icon to add a formula
+     * or a value for the shown phrase (see ui_list::formula_add_link and ui_list::value_add_link)
      *
      * @param msg_id|null $ui_msg_code_id the message id of the text that should be shown to the user in the user-specific frontend language
      * @param db_object|type_object|combine_named|sandbox_list|null $dbo the object of the page e.g. the word of the formulas subtitle
@@ -183,9 +183,14 @@ class system_page extends component
         if ($ui_msg_code_id != null) {
             $result .= $html->text_h3($mtr->txt($ui_msg_code_id));
         }
-        if ($ui_msg_code_id == msg_id::FORM_SUB_TITLE_FORMULAS and $dbo instanceof db_object) {
+        if ($dbo instanceof db_object) {
             $list = new ui_list();
-            $icon = $list->formula_add_link($dbo->phrase(), $url_arr);
+            // the formulas and the values subtitle of a word or triple page offer to add one for the phrase
+            $icon = match ($ui_msg_code_id) {
+                msg_id::FORM_SUB_TITLE_FORMULAS => $list->formula_add_link($dbo->phrase(), $url_arr),
+                msg_id::FORM_SUB_TITLE_VALUES => $list->value_add_link($dbo->phrase(), $url_arr),
+                default => '',
+            };
             // like the edit icon of the page title the icon stays on the line of the subtitle
             if ($icon != '') {
                 $result = $html->div($result . $icon, styles::HEADING_LINE);

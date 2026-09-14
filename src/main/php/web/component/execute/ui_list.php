@@ -925,6 +925,27 @@ class ui_list extends ui_base
     }
 
     /**
+     * the plus icon behind the values subtitle of a word or triple page that opens the value add view
+     * with the shown phrase preset as the first phrase of the new value (see value::url_mapper)
+     *
+     * @param phrase $phr the word or triple that the new value should be assigned to
+     * @param array $url_arr the url of the shown page as back target
+     * @return string the html code of the add icon, empty for an unsaved phrase
+     */
+    function value_add_link(phrase $phr, array $url_arr = []): string
+    {
+        $result = '';
+        // a phrase without a db id cannot be preset, so there is nothing to add a value to
+        if ($phr->id() != 0) {
+            $html = new html_base();
+            $preset = url_var::PHRASE_LIST . url_var::EQ . $phr->id();
+            $url = $html->url_back(views::VALUE_ADD_ID, 0, $url_arr, $preset);
+            $result = $this->change_icon($url, icons::ADD, msg_id::VALUE_ADD, msg_id::VALUE_ADD_BLOCKED);
+        }
+        return $result;
+    }
+
+    /**
      * an icon link that starts a change e.g. the add or the link of a formula; a user who cannot save a
      * change (see change_blocked) gets the icon greyed out with a tooltip that asks for a login, but the
      * icon stays a link, so the user who presses it gets the reason that the backend would give
