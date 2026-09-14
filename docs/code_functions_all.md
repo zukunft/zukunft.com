@@ -6681,6 +6681,8 @@
             rontend.php
     \-- url_cache_key - section for function url_cache_key not yet defined that it should be cached page in /frontend.ph
             p
+    \-- user_msg_html - section for function user_msg_html not yet defined that it should be cached page in /frontend.ph
+            p
     \-- save_html_page - section for function save_html_page is expected to be save in /frontend.php
     \-- execute_and_next - section for function execute_and_next not yet defined that it should be cached page in /front
             end.php
@@ -9279,6 +9281,8 @@
         \-- frontend - create the html code for the given url and use the cached html pages
     \-- url_cache_key
         \-- frontend - the canonical cache key of a view-only page request
+    \-- user_msg_html
+        \-- frontend - create the html notification for the user messages of the current request
     \-- save_html_page
         \-- frontend - remember the rendered html page for the next request of the same url
     \-- execute_and_next

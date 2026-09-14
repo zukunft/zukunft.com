@@ -775,6 +775,67 @@ class base_ui_tests
         $back_url = $ui->url_to_back_url([url_var::MASK => views::WORD_ID]);
         $t->assert($test_name, $back_url[url_var::MASK], views::START_ID);
 
+        // a change opened from another page returns there, so the confirm view carries the mask of the
+        // change as origin mask for the object type instead of overwriting the back target
+        $test_name = 'a confirm keeps the calling page as back target';
+        $cfm_msg = new user_message_ui();
+        $cfm_url = $ui->url_to_action([
+            url_var::MASK => views::WORD_ADD_ID,
+            url_var::STEP => url_var::STEP_CONFIRM,
+            url_var::NAME => word_names::TEST_ADD,
+            url_var::BACK . url_var::MASK => views::WORD_ID,
+            url_var::BACK . url_var::ID => word_names::ZH_ID
+        ], $t->usr1, $cfm_msg, $ui->dto, false);
+        $t->assert($test_name, $cfm_url[url_var::BACK . url_var::ID] ?? 0, word_names::ZH_ID);
+        $cfm_msg->reset();
+        $test_name = 'a confirm carries the mask of the change as origin mask';
+        $t->assert($test_name, $cfm_url[url_var::ORIGIN_MASK] ?? 0, views::WORD_ADD_ID);
+        $test_name = 'a confirm without a calling page returns to the own view of the object';
+        $cfm_url = $ui->url_to_action([
+            url_var::MASK => views::WORD_ADD_ID,
+            url_var::STEP => url_var::STEP_CONFIRM,
+            url_var::NAME => word_names::TEST_ADD
+        ], $t->usr1, $cfm_msg, $ui->dto, false);
+        $t->assert($test_name, $cfm_url[url_var::BACK . url_var::MASK] ?? 0, views::WORD_ID);
+        $cfm_msg->reset();
+        $test_name = 'a change from the start page returns to the own view of the object';
+        $cfm_url = $ui->url_to_action([
+            url_var::MASK => views::WORD_EDIT_ID,
+            url_var::STEP => url_var::STEP_CONFIRM,
+            url_var::ID => word_names::MINUTE_ID,
+            url_var::NAME => word_names::MINUTE,
+            url_var::BACK . url_var::MASK => views::START_ID
+        ], $t->usr1, $cfm_msg, $ui->dto, false);
+        $t->assert($test_name, $cfm_url[url_var::BACK . url_var::MASK] ?? 0, views::WORD_ID);
+        $cfm_msg->reset();
+        $test_name = 'a change from the start page returns to the id of the object';
+        $t->assert($test_name, $cfm_url[url_var::BACK . url_var::ID] ?? 0, word_names::MINUTE_ID);
+        // the id of the written object replaces the back id only if the back target is its own page
+        $test_name = 'a confirmed change returns to the calling page of another object';
+        $cfm_url = $ui->url_to_action([
+            url_var::MASK => views::CONFIRM_EDIT_ID,
+            url_var::STEP => url_var::STEP_CONFIRMED,
+            url_var::ID => word_names::MINUTE_ID,
+            url_var::NAME => word_names::MINUTE,
+            url_var::ORIGIN_MASK => views::WORD_EDIT_ID,
+            url_var::BACK . url_var::MASK => views::WORD_ID,
+            url_var::BACK . url_var::ID => word_names::ZH_ID
+        ], $t->usr1, $cfm_msg, $ui->dto, false);
+        $t->assert($test_name, $cfm_url[url_var::ID] ?? 0, word_names::ZH_ID);
+        $cfm_msg->reset();
+        $test_name = 'a confirmed change from the own page shows the changed object';
+        $cfm_url = $ui->url_to_action([
+            url_var::MASK => views::CONFIRM_EDIT_ID,
+            url_var::STEP => url_var::STEP_CONFIRMED,
+            url_var::ID => word_names::MINUTE_ID,
+            url_var::NAME => word_names::MINUTE,
+            url_var::ORIGIN_MASK => views::WORD_EDIT_ID,
+            url_var::BACK . url_var::MASK => views::WORD_ID,
+            url_var::BACK . url_var::ID => word_names::MINUTE_ID
+        ], $t->usr1, $cfm_msg, $ui->dto, false);
+        $t->assert($test_name, $cfm_url[url_var::ID] ?? 0, word_names::MINUTE_ID);
+        $cfm_msg->reset();
+
         // url_mapper::human_url_to_json groups the 8-prefixed vars into 'original_data' and the
         // 9-prefixed vars into 'back', and converts the view id to the code id
         $test_name = 'human_url_to_json groups the pre values and back targets into subarrays';
@@ -820,6 +881,32 @@ class base_ui_tests
         $t->assert($test_name, $recovery[url_var::MASK], views::LOGIN_ID);
         $test_name = 'the login page keeps the requested page as the back target';
         $t->assert($test_name, $recovery[url_var::BACK . url_var::MASK], views::WORD_ID);
+        // redirect_url: after an action the browser gets the next page as a plain get, so the url
+        // must not repeat the action, show the session token or carry a typed password
+        $act_url = [
+            url_var::MASK => views::WORD_ID,
+            url_var::ID => word_names::ZH_ID,
+            url_var::BACK . url_var::MASK => views::START_ID,
+            url_var::POST_SUBMIT => '',
+            url_var::SESSION_TOKEN => 'dummy session token for the redirect unit test',
+            url_var::USER_PASSWORD => 'dummy unhashed password for the redirect unit test'
+        ];
+        $redirect = frontend::redirect_url($act_url);
+        $test_name = 'the redirect after an action shows the next page';
+        $t->assert_text_contains($test_name, $redirect,
+            api::MAIN_SCRIPT . url_var::PAR . url_var::MASK . url_var::EQ . views::WORD_ID);
+        $test_name = 'the redirect after an action keeps the back target';
+        $t->assert_text_contains($test_name, $redirect, url_var::BACK . url_var::MASK . url_var::EQ);
+        $test_name = 'the redirect after an action does not repeat the action';
+        $t->assert_text_not_contains($test_name, $redirect, url_var::POST_SUBMIT . url_var::EQ);
+        $test_name = 'the redirect after an action does not show the session token';
+        $t->assert_text_not_contains($test_name, $redirect, url_var::SESSION_TOKEN . url_var::EQ);
+        $test_name = 'the redirect after an action does not show a password';
+        $t->assert_text_not_contains($test_name, $redirect, url_var::USER_PASSWORD . url_var::EQ);
+        // a get action mask (e.g. logout) would need the token again, so its page is not redirected
+        $test_name = 'a next page that is itself an action is not redirected';
+        $t->assert($test_name, frontend::redirect_url([url_var::MASK => views::LOGOUT_ID]), '');
+
         $test_name = 'a valid token needs no session recovery';
         $t->assert_true($test_name, frontend::session_recovery_url(true, true, $req_url) === null);
         $test_name = 'an anonymous or ip user with an expired token just gets the page again';

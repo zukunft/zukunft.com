@@ -77,7 +77,8 @@ class url_var
     // guard at frontend.php:686).
     const string MASK = 'm'; // the internal database id of the view used to format the object
     const string MASK_HUMAN = 'mask_id'; // if *_LONG is given the human-readable url format is used
-    const string MASK_POD = 'mask'; // if *_EXCHANGE is given the url that is interchangeable between pods is used thet does not contain pod specific database ids
+    const string MASK_POD = 'mask'; // if *_EXCHANGE is given the url that is interchangeable between pods is used that does not contain pod specific database ids
+    const string ORIGIN_MASK = 'mo'; // the add, edit or del mask that has opened a confirm view, which names the object type of the change
 
 
     /*
@@ -352,6 +353,7 @@ class url_var
     const array CONTROL_VARS = [
         self::MASK,
         self::MASK_POD,
+        self::ORIGIN_MASK,
         self::ID,
         self::USER,
         self::STEP,
@@ -368,6 +370,7 @@ class url_var
     const string ACTION_HUMAN = 'action'; // the CRUD action for the long url
     const string STEP_HUMAN = 'step';  // the action status for the long url
     const string BACK_HUMAN = 'back';
+    const string ORIGIN_MASK_HUMAN = 'origin_mask_id';
     const string MSG_HUMAN = 'message';
 
     // enum for self::ACTION and the database change process that should be stared
@@ -579,6 +582,7 @@ class url_var
     const string SESSION_LOGGED = 'logged';
     const string SESSION_TOKEN = 'token';
     const string SESSION_USER_ID = 'usr_id';
+    const string SESSION_REDIRECT_MSG = 'redirect_msg'; // the rendered message of an action, shown on the page after the redirect
 
 
     /*
@@ -617,6 +621,7 @@ class url_var
 
         // control
         [self::MASK_HUMAN, self::MASK, views::START_ID, true],
+        [self::ORIGIN_MASK_HUMAN, self::ORIGIN_MASK],
         [self::ACTION_HUMAN, self::ACTION],
         [self::STEP_HUMAN, self::STEP],
         [self::BACK_HUMAN, self::BACK],

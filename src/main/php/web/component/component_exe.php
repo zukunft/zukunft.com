@@ -497,10 +497,10 @@ class component_exe extends component
             component_types::LIST_VIEWS => $list->views_related($dbo, $cfg),
             component_types::LIST_RESULTS => $list->result_list($dbo, $msg, $cfg),
             component_types::LINK_LIST_WORD => $list->link_list_word($dbo, $cfg),
-            component_types::FORMULAS => $list->formulas($dbo, $msg, $cfg, $test_mode),
+            component_types::FORMULAS => $list->formulas($dbo, $msg, $cfg, $test_mode, $url_arr),
             // the changeable formula list shows the same list as the formula list type;
             // TODO Prio 2 add the edit links that make the list changeable
-            component_types::FORM_LIST_FORMULAS => $list->formulas($dbo, $msg, $cfg, $test_mode),
+            component_types::FORM_LIST_FORMULAS => $list->formulas($dbo, $msg, $cfg, $test_mode, $url_arr),
             // the formula results type shows the results related to the given word or term
             // like the results_related type, so the same renderer is used for both
             component_types::FORMULA_RESULTS => $list->results_related($dbo, $cfg),

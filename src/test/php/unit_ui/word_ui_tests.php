@@ -351,6 +351,13 @@ class word_ui_tests
         $t->assert_text_not_contains($test_name, $empty_html, $link_button);
         $test_name = 'a page with a formula to link offers the link button';
         $t->assert_text_contains($test_name, $frm_html, $link_button);
+        // after the save the user returns to the page with the form, not to the page of the new link
+        $test_name = 'the formula link form returns to the shown page';
+        $page_url = [url_var::MASK => views::WORD_ID, url_var::ID => $wrd->id()];
+        $t->assert_text_contains($test_name, $list->formulas($wrd, $msg, $dto, false, $page_url),
+            $html->form_hidden(url_var::BACK . url_var::MASK, (string)views::WORD_ID));
+        $test_name = 'the formula link form without a page url sets no back target';
+        $t->assert_text_not_contains($test_name, $frm_html, url_var::BACK . url_var::MASK);
 
         // a user without login cannot save the link, so the icon is greyed out and the pane
         // names the reason instead of a form that the backend would only reject

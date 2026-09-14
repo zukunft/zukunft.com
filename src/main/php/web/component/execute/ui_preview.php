@@ -262,7 +262,7 @@ class ui_preview extends ui_base
                 unset($url_array[$key]);
             }
         }
-        $skip = [url_var::MASK, url_var::ID, url_var::STEP];
+        $skip = [url_var::MASK, url_var::ID, url_var::STEP, url_var::ORIGIN_MASK];
         $hidden = '';
         foreach ($url_array as $key => $val) {
             if (!in_array($key, $skip)
@@ -361,7 +361,7 @@ class ui_preview extends ui_base
      */
     private function changed_fields(array $url_array): array
     {
-        $skip = [url_var::MASK, url_var::ID, url_var::STEP, url_var::ACTION];
+        $skip = [url_var::MASK, url_var::ID, url_var::STEP, url_var::ACTION, url_var::ORIGIN_MASK];
         $changed = [];
         foreach ($url_array as $key => $val) {
             if (!in_array($key, $skip)

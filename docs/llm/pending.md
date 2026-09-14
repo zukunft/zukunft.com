@@ -9,12 +9,6 @@ if the formula add view is called with link prefixed url_vars show in the confir
 
 if a word has no triple where it is the from side of a triple with the verb 'is a' show instead of the 'is a' phrase list a button 'define xxx as yyy' with an 'add' button that creates a corresponding triple. E.g. if the word lugano has no 'parent' / 'is a triple' show a phrase selection where city and other phrases can be selected and the add triple view with 'triple is a city' is preselected
 
-## start page
-
-simple start page with on 4 col
-
-fix the more data
-
 ## word default view
 
 add a list with the triples and a plus sign to add a new triple

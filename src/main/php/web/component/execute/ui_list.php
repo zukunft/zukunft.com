@@ -707,8 +707,8 @@ class ui_list extends ui_base
      * formula to the phrase
      *
      * the form is hidden until the icon targets it via the url fragment, so the page stays short
-     * and no javascript is needed (see docs/llm/frontend.md); the confirm step sets the back
-     * target itself (see frontend::url_to_action)
+     * and no javascript is needed (see docs/llm/frontend.md); the form sends the shown page as
+     * back target, so the user returns to it after the save (see frontend::url_to_action)
      *
      * a user who cannot save a change (see user::is_blocked) gets the icon greyed out and with
      * a tooltip that asks for a login; the icon still opens the pane, which then shows the same
@@ -718,13 +718,15 @@ class ui_list extends ui_base
      * @param user_message $msg to report a problem of the formula load
      * @param data_object|null $cfg the request cache with the formulas that can be selected
      * @param bool $test_mode true to build the form without a backend call
+     * @param array $url_arr the url of the shown page as back target; empty to return to the new link
      * @return string the html code of the link icon and the hidden form, empty for an unsaved phrase
      */
     private function formula_link_form(
         phrase       $phr,
         user_message $msg,
         ?data_object $cfg,
-        bool         $test_mode
+        bool         $test_mode,
+        array        $url_arr
     ): string
     {
         global $mtr, $ui_sys;
@@ -767,6 +769,9 @@ class ui_list extends ui_base
                 $fields = $html->form_hidden(url_var::MASK, (string)views::FORMULA_LINK_ADD_ID)
                     . $html->form_hidden(url_var::STEP, url_var::STEP_CONFIRM)
                     . $html->form_hidden(url_var::PHRASE, (string)$phr->id());
+                foreach (html_base::back_url_array($url_arr) as $key => $val) {
+                    $fields .= $html->form_hidden($key, (string)$val);
+                }
                 $sel = $frm_lst->selector_ui($form_name, 0, url_var::FORMULA,
                     msg_id::FORM_SELECT_FORMULA, view_styles::COL_SM_12);
                 if ($frm_lst->count() >= $size) {
@@ -1040,9 +1045,16 @@ class ui_list extends ui_base
      * @param word|phrase|db_object $wrd the object shown to the user e.g. the word "minute"
      * @param data_object|null $cac the cached lists for initial display without backend call
      * @param bool $test_mode true to create a reproducible result without a backend call
+     * @param array $url_arr the url of the shown page, to which the link form returns after the save
      * @return string the html code with the linked names of the assigned formulas
      */
-    function formulas(word|phrase|db_object $wrd, user_message $msg, ?data_object $cac = null, bool $test_mode = false): string
+    function formulas(
+        word|phrase|db_object $wrd,
+        user_message          $msg,
+        ?data_object          $cac = null,
+        bool                  $test_mode = false,
+        array                 $url_arr = []
+    ): string
     {
         global $ui_sys;
 
@@ -1086,7 +1098,7 @@ class ui_list extends ui_base
         $result = $frm_lst->name_link([], $row_limit);
         // the link icon below the list is the only way to assign a formula to the phrase,
         // so it is also shown if the phrase has no formula yet (like the reference list)
-        $result .= $this->formula_link_form($phr, $msg, $cac, $test_mode);
+        $result .= $this->formula_link_form($phr, $msg, $cac, $test_mode, $url_arr);
         return $result;
     }
 

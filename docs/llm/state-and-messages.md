@@ -658,6 +658,12 @@ Back navigation (where to redirect after an action) is encoded as
 code reading `$url_array[url_var::BACK]` directly must migrate to the
 prefixed-key pattern.
 
+A confirm view keeps the back target of the add / edit / del request, so the
+user returns to the page that has opened the change (e.g. the word page after
+linking a formula). The object type of the confirm view therefore travels
+separately as `url_var::ORIGIN_MASK` (`mo`, the add / edit / del mask); only a
+request without a back target gets the object's own view + id as back target.
+
 ## Edit-view baseline parameter convention (concurrent-edit protection)
 
 An edit view must carry, alongside each editable field, the **database value
