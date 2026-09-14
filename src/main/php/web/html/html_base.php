@@ -898,6 +898,32 @@ class html_base
     }
 
     /**
+     * the url parameters of a link that the called add view creates together with the new object,
+     * each prefixed with url_var::LINK ('7'), e.g. the phrase of the formula link of a new formula
+     *
+     * @param array $link_vars the vars of the link keyed by their url var e.g. [url_var::PHRASE => 1]
+     * @return string the additional url parameters e.g. '7p=1'
+     */
+    static function link_url_part(array $link_vars): string
+    {
+        return self::prefixed_url_part($link_vars, url_var::LINK);
+    }
+
+    /**
+     * the vars of the link that is created together with a new object, taken from the '7'-prefixed
+     * url params with the prefix removed; only the vars that a link may name (url_var::LINK_VARS) are
+     * taken, so that a typed url cannot set e.g. the id of the new link
+     *
+     * @param array $url_array the url with the '7'-prefixed link vars e.g. ['7p' => 1]
+     * @return array the link vars without the prefix e.g. ['p' => 1], empty if the url has none
+     */
+    static function link_vars(array $url_array): array
+    {
+        $link_vars = url_var::prefixed_vars($url_array, url_var::LINK);
+        return array_intersect_key($link_vars, array_flip(url_var::LINK_VARS));
+    }
+
+    /**
      * reduce the url params of the calling page to those identifying the page (url_var::PAGE_VARS),
      * so the back part of an edit link stays short and form state or already '8'/'9'-prefixed
      * params are never prefixed again (e.g. no '99m' or '98k' compounds)
@@ -999,13 +1025,8 @@ class html_base
      */
     static function url_par_from_back_part(array $url_array): array
     {
-        $result = [];
-        foreach ($url_array as $key => $val) {
-            if (str_starts_with($key, url_var::BACK)) {
-                $result[substr($key, strlen(url_var::BACK))] = rawurldecode((string)$val);
-            }
-        }
-        return $result;
+        $back_vars = url_var::prefixed_vars($url_array, url_var::BACK);
+        return array_map(fn($val) => rawurldecode((string)$val), $back_vars);
     }
 
     /**
@@ -1063,6 +1084,7 @@ class html_base
     }
 
     /**
+     * TODO Prio 3 kept for future use, check if it actually has been used
      * @param string $text the text to show bold, e.g. the pending link of a confirm page
      * @return string the html code of the bold text
      */

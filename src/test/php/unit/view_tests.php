@@ -184,6 +184,12 @@ class view_tests
         $msk_posted->url_mapper([url_var::CODE_ID => ''], new user_message_ui());
         $t->assert_true($test_name, $msk_posted->code_id === null);
 
+        $t->subheader($ts . 'base view of a change mask');
+        $test_name = 'the word edit mask shows the word view';
+        $t->assert($test_name, new views()->id_to_base_id(views::WORD_EDIT_ID), views::WORD_ID);
+        $test_name = 'a view that is no change mask has no base view';
+        $t->assert($test_name, new views()->id_to_base_id(views::WORD_ID), 0);
+
         $t->subheader($ts . 'with components api');
         $msk = $t_msk->view_with_components();
         $t->assert_api($msk, 'view_with_component_id');

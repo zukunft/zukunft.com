@@ -6480,6 +6480,7 @@
     \-- view_components - section for function view_components missing in /component/execute/ui_list.php
     \-- component_views - section for function component_views missing in /component/execute/ui_list.php
     \-- formula_list - section for function formula_list missing in /component/execute/ui_list.php
+    \-- formula_add_link - section for function formula_add_link missing in /component/execute/ui_list.php
     \-- formulas_of_parents - section for function formulas_of_parents missing in /component/execute/ui_list.php
     \-- ref_list_word - section for function ref_list_word missing in /component/execute/ui_list.php
     \-- views_related - section for function views_related missing in /component/execute/ui_list.php
@@ -6680,6 +6681,8 @@
     \-- url_to_html_cached - section for function url_to_html_cached not yet defined that it should be cached page in /f
             rontend.php
     \-- url_cache_key - section for function url_cache_key not yet defined that it should be cached page in /frontend.ph
+            p
+    \-- user_msg_html - section for function user_msg_html not yet defined that it should be cached page in /frontend.ph
             p
     \-- save_html_page - section for function save_html_page is expected to be save in /frontend.php
     \-- execute_and_next - section for function execute_and_next not yet defined that it should be cached page in /front
@@ -8312,7 +8315,7 @@
     \-- link_type
         \-- sandbox_link - the children overwrite this with the type list of their own link type
     \-- link_preview
-        \-- sandbox_link - the pending link in one line, shown above the change table of a confirm page, e.g.
+        \-- sandbox_link - the pending link in one line, shown as the title of a confirm page, e.g.
     \-- name_linked
         \-- sandbox_link - the two linked objects as links, e.g. for the subtitle of the link default page;
     \-- display_admin
@@ -8715,6 +8718,8 @@
         \-- ui_list - the views that use the given component as a comma separated list of the view names with
     \-- formula_list
         \-- ui_list - get a list of formulas related to e.g. a verb
+    \-- formula_add_link
+        \-- ui_list - the boxed plus icon behind the formulas subtitle of a word or triple page that opens the formula
     \-- formulas_of_parents
         \-- ui_list - the formulas assigned to the ancestor phrases of a word, grouped per ancestor and shown as a
     \-- ref_list_word
@@ -9279,6 +9284,8 @@
         \-- frontend - create the html code for the given url and use the cached html pages
     \-- url_cache_key
         \-- frontend - the canonical cache key of a view-only page request
+    \-- user_msg_html
+        \-- frontend - create the html notification for the user messages of the current request
     \-- save_html_page
         \-- frontend - remember the rendered html page for the next request of the same url
     \-- execute_and_next
@@ -9411,13 +9418,13 @@
     \-- text_h1
         \-- html_base - build a url for an external webside
     \-- bold
-        \-- html_base - @param string $text the text to show bold, e.g. the pending link of a confirm page
+        \-- html_base - TODO Prio 3 kept for future use, check if it actually has been used
     \-- text_h2
-        \-- html_base - @param string $text the text to show bold, e.g. the pending link of a confirm page
+        \-- html_base - TODO Prio 3 kept for future use, check if it actually has been used
     \-- text_h3
-        \-- html_base - @param string $text the text to show bold, e.g. the pending link of a confirm page
+        \-- html_base - TODO Prio 3 kept for future use, check if it actually has been used
     \-- text_h4
-        \-- html_base - @param string $text the text to show bold, e.g. the pending link of a confirm page
+        \-- html_base - TODO Prio 3 kept for future use, check if it actually has been used
 \-- images
     \-- logo
         \-- html_base - @return string the zukunft.com logo with a link to the home page

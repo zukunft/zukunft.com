@@ -658,6 +658,21 @@ Back navigation (where to redirect after an action) is encoded as
 code reading `$url_array[url_var::BACK]` directly must migrate to the
 prefixed-key pattern.
 
+A confirm view keeps the back target of the add / edit / del request, so the
+user returns to the page that has opened the change (e.g. the word page after
+linking a formula). The object type of the confirm view therefore travels
+separately as `url_var::ORIGIN_MASK` (`mo`, the add / edit / del mask); only a
+request without a back target, or with the start page as back target (it shows
+no object), gets the object's own view + id as back target.
+
+An add view can create a link together with the new object: the vars of that
+link travel `'7'`-prefixed (`url_var::LINK`, e.g. `7p=1` for the phrase of the
+formula link of a formula added from a word page). The add form and the confirm
+view carry them as hidden fields (`system_form::form_back`), the confirm view
+shows the link in its own section, and the confirmed add writes the link after
+the object, because the link needs the id of the new object
+(`frontend::add_link_of_new`).
+
 ## Edit-view baseline parameter convention (concurrent-edit protection)
 
 An edit view must carry, alongside each editable field, the **database value

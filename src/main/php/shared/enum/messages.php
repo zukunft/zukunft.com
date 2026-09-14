@@ -1719,8 +1719,10 @@ enum messages: string
     case INFO_NO_SEARCH_RESULT = 'info_no_search_result';
     // shown instead of the formula selector of a phrase page if no formula can be offered
     case INFO_NO_FORMULA_TO_LINK = 'info_no_formula_to_link';
-    // the one line summary above the change table of the formula link confirm page
+    // the title of the formula link confirm page
     case INFO_LINK_FORMULA_TO_PHRASE = 'info_link_formula_to_phrase';
+    // the title of the confirm page section with the link that a new object gets with the same confirm
+    case INFO_CONFIRM_LINK = 'info_confirm_link';
 
     // e.g. if an import formula does not contain all needed parameters
     case FORMULA_NOT_VALID = 'formula is not valid';
@@ -1777,6 +1779,8 @@ enum messages: string
     case VALUE_EDIT = 'value_edit';
     case VALUE_DEL = 'value_del';
     case FORMULA_ADD = 'formula_add';
+    // the tooltip of the greyed out formula add icon of a user who cannot save a change
+    case FORMULA_ADD_BLOCKED = 'formula_add_blocked';
     case FORMULA_EDIT = 'formula_edit';
     case FORMULA_DEL = 'formula_del';
     case FORMULA_LINK = 'formula_link';

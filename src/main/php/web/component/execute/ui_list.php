@@ -707,8 +707,8 @@ class ui_list extends ui_base
      * formula to the phrase
      *
      * the form is hidden until the icon targets it via the url fragment, so the page stays short
-     * and no javascript is needed (see docs/llm/frontend.md); the confirm step sets the back
-     * target itself (see frontend::url_to_action)
+     * and no javascript is needed (see docs/llm/frontend.md); the form sends the shown page as
+     * back target, so the user returns to it after the save (see frontend::url_to_action)
      *
      * a user who cannot save a change (see user::is_blocked) gets the icon greyed out and with
      * a tooltip that asks for a login; the icon still opens the pane, which then shows the same
@@ -718,21 +718,22 @@ class ui_list extends ui_base
      * @param user_message $msg to report a problem of the formula load
      * @param data_object|null $cfg the request cache with the formulas that can be selected
      * @param bool $test_mode true to build the form without a backend call
+     * @param array $url_arr the url of the shown page as back target; empty to return to the new link
      * @return string the html code of the link icon and the hidden form, empty for an unsaved phrase
      */
     private function formula_link_form(
         phrase       $phr,
         user_message $msg,
         ?data_object $cfg,
-        bool         $test_mode
+        bool         $test_mode,
+        array        $url_arr
     ): string
     {
-        global $mtr, $ui_sys;
+        global $mtr;
 
         // a user without login cannot save the link, so the form is replaced by the reason and
-        // the formulas are not even read; without a request cache the user is unknown and the
-        // form is offered like for any user whose profile is not known (see user::is_blocked)
-        $blocked = $ui_sys?->usr?->is_blocked() ?? false;
+        // the formulas are not even read
+        $blocked = $this->change_blocked();
 
         // the selector offers one selection list of formulas, not the few names that the list
         // above shows; if that list is full more formulas may exist, which the more entry says,
@@ -750,14 +751,8 @@ class ui_list extends ui_base
         // can be offered, so that the page looks the same with and without the cache
         if ($phr->id() != 0) {
             $html = new html_base();
-            $icon_style = styles::HEADING_ICON_INLINE;
-            $tooltip = $mtr->txt(msg_id::FORMULA_LINK);
-            // the icon stays a link, so that the user who presses the greyed out icon gets the
-            // same reason that the backend would give after the link has been sent
             if ($blocked) {
-                $icon_style .= ' ' . styles::STYLE_GREY;
-                $tooltip = $mtr->txt(msg_id::FORMULA_LINK_BLOCKED);
-                $pane = $html->dsp_notification($mtr->txt(msg_id::CHANGE_BLOCKED_FOR_IP_USER));
+                $pane =$html->dsp_notification($mtr->txt(msg_id::CHANGE_BLOCKED_FOR_IP_USER));
             } elseif ($frm_lst->is_empty()) {
                 // an empty selector would post a link without a formula, which can only fail, so
                 // the pane says why nothing can be selected instead of a form that never saves
@@ -767,6 +762,9 @@ class ui_list extends ui_base
                 $fields = $html->form_hidden(url_var::MASK, (string)views::FORMULA_LINK_ADD_ID)
                     . $html->form_hidden(url_var::STEP, url_var::STEP_CONFIRM)
                     . $html->form_hidden(url_var::PHRASE, (string)$phr->id());
+                foreach (html_base::back_url_array($url_arr) as $key => $val) {
+                    $fields .= $html->form_hidden($key, (string)$val);
+                }
                 $sel = $frm_lst->selector_ui($form_name, 0, url_var::FORMULA,
                     msg_id::FORM_SELECT_FORMULA, view_styles::COL_SM_12);
                 if ($frm_lst->count() >= $size) {
@@ -776,12 +774,68 @@ class ui_list extends ui_base
                 $pane = $html->form_start($form_name) . $fields . $sel->display()
                     . $button . $html->form_end();
             }
-            $icon = $html->ref('#' . styles::FORMULA_LINK_PANE, $html->icon(icons::LINK),
-                $tooltip, $icon_style, true);
+            $pane_url = '#' . styles::FORMULA_LINK_PANE;
+            $icon = $this->change_icon($pane_url, icons::LINK, msg_id::FORMULA_LINK, msg_id::FORMULA_LINK_BLOCKED);
             $result = $html->div($icon)
                 . $html->div($pane, styles::TOGGLE_PANE, styles::FORMULA_LINK_PANE);
         }
         return $result;
+    }
+
+    /**
+     * the boxed plus icon behind the formulas subtitle of a word or triple page that opens the formula
+     * add view; the phrase travels as '7'-prefixed link var (see url_var::LINK), so the confirm page
+     * of the new formula also creates its link to the phrase (see frontend::add_link_of_new)
+     *
+     * @param phrase $phr the word or triple the new formula should be linked to
+     * @param array $url_arr the url of the shown page as back target
+     * @return string the html code of the add icon, empty for an unsaved phrase
+     */
+    function formula_add_link(phrase $phr, array $url_arr = []): string
+    {
+        $result = '';
+        // a phrase without a db id cannot be linked, so there is nothing to add a formula to
+        if ($phr->id() != 0) {
+            $html = new html_base();
+            $link_part = html_base::link_url_part([url_var::PHRASE => $phr->id()]);
+            $url = $html->url_back(views::FORMULA_ADD_ID, 0, $url_arr, $link_part);
+            $result = $this->change_icon($url, icons::ADD, msg_id::FORMULA_ADD, msg_id::FORMULA_ADD_BLOCKED);
+        }
+        return $result;
+    }
+
+    /**
+     * an icon link that starts a change e.g. the add or the link of a formula; a user who cannot save a
+     * change (see change_blocked) gets the icon greyed out with a tooltip that asks for a login, but the
+     * icon stays a link, so the user who presses it gets the reason that the backend would give
+     *
+     * @param string $url the url or url fragment that the icon opens
+     * @param string $icon the icon css class from web/const/icons.php e.g. icons::ADD
+     * @param msg_id $tooltip the tooltip for a user who can save the change
+     * @param msg_id $tooltip_blocked the tooltip that asks a user without login to log in
+     * @return string the html code of the icon link
+     */
+    private function change_icon(string $url, string $icon, msg_id $tooltip, msg_id $tooltip_blocked): string
+    {
+        global $mtr;
+        $html = new html_base();
+        $style = styles::HEADING_ICON_INLINE;
+        $txt = $mtr->txt($tooltip);
+        if ($this->change_blocked()) {
+            $style .= ' ' . styles::STYLE_GREY;
+            $txt = $mtr->txt($tooltip_blocked);
+        }
+        return $html->ref($url, $html->icon($icon), $txt, $style, true);
+    }
+
+    /**
+     * @return bool true if the requesting user cannot save a change; without a request cache the user is
+     *              unknown and treated like any user whose profile is not known (see user::is_blocked)
+     */
+    private function change_blocked(): bool
+    {
+        global $ui_sys;
+        return $ui_sys?->usr?->is_blocked() ?? false;
     }
 
     /**
@@ -1040,9 +1094,16 @@ class ui_list extends ui_base
      * @param word|phrase|db_object $wrd the object shown to the user e.g. the word "minute"
      * @param data_object|null $cac the cached lists for initial display without backend call
      * @param bool $test_mode true to create a reproducible result without a backend call
+     * @param array $url_arr the url of the shown page, to which the link form returns after the save
      * @return string the html code with the linked names of the assigned formulas
      */
-    function formulas(word|phrase|db_object $wrd, user_message $msg, ?data_object $cac = null, bool $test_mode = false): string
+    function formulas(
+        word|phrase|db_object $wrd,
+        user_message          $msg,
+        ?data_object          $cac = null,
+        bool                  $test_mode = false,
+        array                 $url_arr = []
+    ): string
     {
         global $ui_sys;
 
@@ -1086,7 +1147,7 @@ class ui_list extends ui_base
         $result = $frm_lst->name_link([], $row_limit);
         // the link icon below the list is the only way to assign a formula to the phrase,
         // so it is also shown if the phrase has no formula yet (like the reference list)
-        $result .= $this->formula_link_form($phr, $msg, $cac, $test_mode);
+        $result .= $this->formula_link_form($phr, $msg, $cac, $test_mode, $url_arr);
         return $result;
     }
 

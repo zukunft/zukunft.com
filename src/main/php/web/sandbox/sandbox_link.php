@@ -218,8 +218,8 @@ class sandbox_link extends sandbox
     }
 
     /**
-     * the pending link in one line, shown above the change table of a confirm page, e.g.
-     * "link formula 'increase' to phrase 'GDP'", so that the user reads what is linked instead
+     * the pending link in one line, shown as the title of a confirm page, e.g.
+     * "Link formula 'increase' to phrase 'GDP'", so that the user reads what is linked instead
      * of the ids of the two objects; the children overwrite this with the wording of their link
      *
      * a link type without an own wording shows no line at all instead of a generic one, because

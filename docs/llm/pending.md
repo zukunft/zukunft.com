@@ -3,17 +3,7 @@
 
 ## word default view
 
-in the word and triple default view add a boxed fa-plus icon to the 'Formulas' column title similar to the edit icon at the page title so a little bis smaller than the title font size. The icon should link to the add_formula view, but the url should contain the word or triple id. For this use a new url var prefix to include the link parameters in the url e.g. "CONST LINK = '7';"
-
-if the formula add view is called with link prefixed url_vars show in the confirmation page a new section with e.g. the formula link that should be created with the same confirmation button that adds the new formula to the database   
-
 if a word has no triple where it is the from side of a triple with the verb 'is a' show instead of the 'is a' phrase list a button 'define xxx as yyy' with an 'add' button that creates a corresponding triple. E.g. if the word lugano has no 'parent' / 'is a triple' show a phrase selection where city and other phrases can be selected and the add triple view with 'triple is a city' is preselected
-
-## start page
-
-simple start page with on 4 col
-
-fix the more data
 
 ## word default view
 
