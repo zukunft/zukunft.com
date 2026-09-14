@@ -89,6 +89,7 @@ class url_var
     const string EXCLUDED = '0';
     const string CONFIG_PART = '1';
     const string MSG = '2';
+    const string LINK = '7'; // prefix to add the vars of a link that the add view creates together with the new object e.g. 7p for the phrase of a formula added from a word page
     const string PRE = '8'; // prefix to add the database values the fields to an edit view when the view has be called. Used to detect the real user change requests
     const string BACK = '9'; // prefix to list of url targets for the back action
     const string ACTION = 'a'; // the crud action
@@ -370,6 +371,7 @@ class url_var
     const string ACTION_HUMAN = 'action'; // the CRUD action for the long url
     const string STEP_HUMAN = 'step';  // the action status for the long url
     const string BACK_HUMAN = 'back';
+    const string LINK_HUMAN = 'link';
     const string ORIGIN_MASK_HUMAN = 'origin_mask_id';
     const string MSG_HUMAN = 'message';
 
@@ -625,6 +627,7 @@ class url_var
         [self::ACTION_HUMAN, self::ACTION],
         [self::STEP_HUMAN, self::STEP],
         [self::BACK_HUMAN, self::BACK],
+        [self::LINK_HUMAN, self::LINK],
         [self::MSG_HUMAN, self::MSG],
         [self::NO_CACHE_HUMAN, self::NO_CACHE],
 

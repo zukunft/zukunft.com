@@ -551,9 +551,12 @@ class system_form extends component
         $result .= $html->input(url_var::MASK, msg_id::FORM_FIELD_MASK, $msk_id, html_base::INPUT_HIDDEN);
         $result .= $html->input(url_var::ID, msg_id::FORM_FIELD_ID, $id, html_base::INPUT_HIDDEN);
         // carry the '9'-prefixed back targets so cancel and the post-action redirect return to where the
-        // user came from, and the origin mask that names the object type of a confirm view
+        // user came from, the '7'-prefixed vars of the link that a new object gets with the same confirm
+        // and the origin mask that names the object type of a confirm view
         foreach ($url_array as $key => $val) {
-            if (str_starts_with($key, url_var::BACK) or $key == url_var::ORIGIN_MASK) {
+            if (str_starts_with($key, url_var::BACK)
+                or str_starts_with($key, url_var::LINK)
+                or $key == url_var::ORIGIN_MASK) {
                 $result .= $html->form_hidden($key, (string)$val);
             }
         }

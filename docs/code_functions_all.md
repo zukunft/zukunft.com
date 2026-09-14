@@ -6480,6 +6480,7 @@
     \-- view_components - section for function view_components missing in /component/execute/ui_list.php
     \-- component_views - section for function component_views missing in /component/execute/ui_list.php
     \-- formula_list - section for function formula_list missing in /component/execute/ui_list.php
+    \-- formula_add_link - section for function formula_add_link missing in /component/execute/ui_list.php
     \-- formulas_of_parents - section for function formulas_of_parents missing in /component/execute/ui_list.php
     \-- ref_list_word - section for function ref_list_word missing in /component/execute/ui_list.php
     \-- views_related - section for function views_related missing in /component/execute/ui_list.php
@@ -6575,6 +6576,7 @@
 \-- expression
     \-- element_list - section for function element_list missing in /formula/expression.php
 \-- formula
+    \-- link_of_new - section for function link_of_new is expected to be link in /formula/formula.php
     \-- url_mapper - section for function url_mapper not yet defined that it should be construct and map in /formula/for
             mula.php
     \-- sandbox_fld_order - section for function sandbox_fld_order not yet defined that it should be construct and map i
@@ -8717,6 +8719,8 @@
         \-- ui_list - the views that use the given component as a comma separated list of the view names with
     \-- formula_list
         \-- ui_list - get a list of formulas related to e.g. a verb
+    \-- formula_add_link
+        \-- ui_list - the boxed plus icon behind the formulas subtitle of a word or triple page that opens the formula
     \-- formulas_of_parents
         \-- ui_list - the formulas assigned to the ancestor phrases of a word, grouped per ancestor and shown as a
     \-- ref_list_word

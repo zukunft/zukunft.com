@@ -36,6 +36,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\languages;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
 use Zukunft\ZukunftCom\main\php\web\const\icons;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
+use Zukunft\ZukunftCom\main\php\web\component\execute\system_page;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_list;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_preview;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
@@ -354,10 +355,37 @@ class word_ui_tests
         // after the save the user returns to the page with the form, not to the page of the new link
         $test_name = 'the formula link form returns to the shown page';
         $page_url = [url_var::MASK => views::WORD_ID, url_var::ID => $wrd->id()];
-        $t->assert_text_contains($test_name, $list->formulas($wrd, $msg, $dto, false, $page_url),
-            $html->form_hidden(url_var::BACK . url_var::MASK, (string)views::WORD_ID));
+        $back_html = $list->formulas($wrd, $msg, $dto, false, $page_url);
+        $back_field = $html->form_hidden(url_var::BACK . url_var::MASK, (string)views::WORD_ID);
+        $t->assert_text_contains($test_name, $back_html, $back_field);
         $test_name = 'the formula link form without a page url sets no back target';
         $t->assert_text_not_contains($test_name, $frm_html, url_var::BACK . url_var::MASK);
+
+        // the formulas subtitle of a word or triple page offers the boxed plus icon that adds a formula
+        // already linked to the shown phrase, which travels as '7'-prefixed link var
+        $page = new system_page();
+        $test_name = 'the formulas subtitle offers to add a formula';
+        $sub_html = $page->system_sub_tile(msg_id::FORM_SUB_TITLE_FORMULAS, $wrd, $page_url);
+        $t->assert_text_contains($test_name, $sub_html, icons::ADD);
+        $test_name = 'the add formula icon opens the formula add view';
+        $add_par = url_var::MASK . url_var::EQ . views::FORMULA_ADD_ID;
+        $t->assert_text_contains($test_name, $sub_html, $add_par);
+        $test_name = 'the add formula icon links the new formula to the shown word';
+        $wrd_link = html_base::link_url_part([url_var::PHRASE => $wrd->phrase()->id()]);
+        $t->assert_text_contains($test_name, $sub_html, $wrd_link);
+        $test_name = 'the add formula icon returns to the shown page';
+        $back_par = url_var::BACK . url_var::MASK . url_var::EQ . views::WORD_ID;
+        $t->assert_text_contains($test_name, $sub_html, $back_par);
+        $test_name = 'the add formula icon links the new formula to the shown triple';
+        $trp_html = $page->system_sub_tile(msg_id::FORM_SUB_TITLE_FORMULAS, $trp_chf, $page_url);
+        $trp_link = html_base::link_url_part([url_var::PHRASE => $trp_chf->phrase()->id()]);
+        $t->assert_text_contains($test_name, $trp_html, $trp_link);
+        $test_name = 'another subtitle offers no add formula icon';
+        $other_html = $page->system_sub_tile(msg_id::FORM_SUB_TITLE_ASSIGNED_PHRASES, $wrd, $page_url);
+        $t->assert_text_not_contains($test_name, $other_html, icons::ADD);
+        $test_name = 'the formulas subtitle without a shown phrase offers no add formula icon';
+        $no_phr_html = $page->system_sub_tile(msg_id::FORM_SUB_TITLE_FORMULAS);
+        $t->assert_text_not_contains($test_name, $no_phr_html, icons::ADD);
 
         // a user without login cannot save the link, so the icon is greyed out and the pane
         // names the reason instead of a form that the backend would only reject

@@ -790,6 +790,31 @@ class ui_list extends ui_base
     }
 
     /**
+     * the boxed plus icon behind the formulas subtitle of a word or triple page that opens the formula
+     * add view; the phrase travels as '7'-prefixed link var (see url_var::LINK), so the confirm page
+     * of the new formula also creates its link to the phrase (see frontend::add_link_of_new)
+     *
+     * @param phrase $phr the word or triple the new formula should be linked to
+     * @param array $url_arr the url of the shown page as back target
+     * @return string the html code of the add icon, empty for an unsaved phrase
+     */
+    function formula_add_link(phrase $phr, array $url_arr = []): string
+    {
+        global $mtr;
+
+        $result = '';
+        // a phrase without a db id cannot be linked, so there is nothing to add a formula to
+        if ($phr->id() != 0) {
+            $html = new html_base();
+            $link_part = html_base::link_url_part([url_var::PHRASE => $phr->id()]);
+            $url = $html->url_back(views::FORMULA_ADD_ID, 0, $url_arr, $link_part);
+            $result = $html->ref($url, $html->icon(icons::ADD),
+                $mtr->txt(msg_id::FORMULA_ADD), styles::HEADING_ICON_INLINE, true);
+        }
+        return $result;
+    }
+
+    /**
      * the formulas assigned to the ancestor phrases of a word, grouped per ancestor and shown as a
      * small 'assigned to <ancestor>' subheading (the ancestor name links to its word page and shows a
      * tooltip) followed by the ancestor's formulas; empty if the word has no ancestor formulas. the

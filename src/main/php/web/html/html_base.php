@@ -898,6 +898,36 @@ class html_base
     }
 
     /**
+     * the url parameters of a link that the called add view creates together with the new object,
+     * each prefixed with url_var::LINK ('7'), e.g. the phrase of the formula link of a new formula
+     *
+     * @param array $link_vars the vars of the link keyed by their url var e.g. [url_var::PHRASE => 1]
+     * @return string the additional url parameters e.g. '7p=1'
+     */
+    static function link_url_part(array $link_vars): string
+    {
+        return self::prefixed_url_part($link_vars, url_var::LINK);
+    }
+
+    /**
+     * the vars of the link that is created together with a new object, taken from the '7'-prefixed
+     * url params with the prefix removed, e.g. to map them onto the link object
+     *
+     * @param array $url_array the url with the '7'-prefixed link vars e.g. ['7p' => 1]
+     * @return array the link vars without the prefix e.g. ['p' => 1], empty if the url has none
+     */
+    static function link_vars(array $url_array): array
+    {
+        $result = [];
+        foreach ($url_array as $key => $val) {
+            if (str_starts_with($key, url_var::LINK)) {
+                $result[substr($key, strlen(url_var::LINK))] = $val;
+            }
+        }
+        return $result;
+    }
+
+    /**
      * reduce the url params of the calling page to those identifying the page (url_var::PAGE_VARS),
      * so the back part of an edit link stays short and form state or already '8'/'9'-prefixed
      * params are never prefixed again (e.g. no '99m' or '98k' compounds)

@@ -36,6 +36,7 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::CONST . 'icons.php';
 include_once html_paths::EXECUTE . 'ui_base.php';
+include_once html_paths::FORMULA . 'formula.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'styles.php';
 include_once html_paths::SANDBOX . 'combine_named.php';
@@ -57,6 +58,7 @@ include_once html_paths::SHARED . 'library.php';
 include_once html_paths::SHARED . 'url_var.php';
 
 use Zukunft\ZukunftCom\main\php\web\const\icons;
+use Zukunft\ZukunftCom\main\php\web\formula\formula;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named;
@@ -251,9 +253,9 @@ class ui_preview extends ui_base
         // carry the pending change forward as hidden inputs so the confirm submit re-posts every edited
         // field; without this url_mapper would reset the fields not posted (e.g. the plural or the
         // share) to their default. the keys owned by the back / confirm components (the view mask, the
-        // object id and the process step) are emitted there, and the 8-prefixed old values and
-        // 9-prefixed back targets are shown only in the diff, so skip those. the origin mask is kept so
-        // the confirm submit tells action_crud which object view to return to after the write
+        // object id, the process step, the origin mask, the 7-prefixed link vars and the 9-prefixed
+        // back targets) are emitted there (see system_form::form_back), and the 8-prefixed old values
+        // are shown only in the diff, so skip those
         // a url array is expected to carry only scalar values, so report a non scalar value
         // as an internal inconsistency and drop it instead of failing with a fatal on a cast
         foreach ($url_array as $key => $val) {
@@ -266,6 +268,7 @@ class ui_preview extends ui_base
         $hidden = '';
         foreach ($url_array as $key => $val) {
             if (!in_array($key, $skip)
+                and !str_starts_with($key, url_var::LINK)
                 and !str_starts_with($key, url_var::PRE)
                 and !str_starts_with($key, url_var::BACK)) {
                 $hidden .= $html->form_hidden($key, (string)$val);
@@ -285,10 +288,46 @@ class ui_preview extends ui_base
             $head = $html->thead($html->tr($head_row));
             $result .= $html->div($html->tbl($head . $rows), styles::CHANGE_PREVIEW);
         }
+        $result .= $this->link_section($url_array, $dbo, $msg, $test_mode);
         // the component brings its own centered row (matching its "side" position in the confirm
         // views), so the hidden carry inputs and the preview table stay together in one row
         if ($result != '') {
             $result = $html->div_row($result, view_styles::COL_SM_12 . ' ' . styles::JUSTIFY_CENTER);
+        }
+        return $result;
+    }
+
+    /**
+     * the section of the confirm page with the link that the same confirm button creates together
+     * with the new object, e.g. the formula link to the word page that has opened the formula add
+     * view (see url_var::LINK and frontend::add_link_of_new)
+     *
+     * @param array $url_array the pending change url with the name of the new object and the '7'-prefixed link vars
+     * @param db_object|type_object|combine_named|sandbox_list|null $dbo the object being added
+     * @param user_message $msg to report a problem while reading the names of the linked objects
+     * @param bool $test_mode true to name the link without a backend call
+     * @return string the html code of the link section, empty if no link is created with the object
+     */
+    private function link_section(
+        array                                                 $url_array,
+        db_object|type_object|combine_named|sandbox_list|null $dbo,
+        user_message                                          $msg,
+        bool                                                  $test_mode
+    ): string
+    {
+        global $mtr, $ui_sys;
+        $html = new html_base();
+        $result = '';
+        if ($dbo instanceof formula) {
+            // the confirm view object is not loaded from the db, so the name comes from the posted url
+            $frm = new formula();
+            $frm->set_name($url_array[url_var::NAME] ?? '');
+            $lnk = $frm->link_of_new($url_array, $msg, $ui_sys);
+            $lnk_txt = $lnk?->link_preview($msg, $test_mode) ?? '';
+            if ($lnk_txt != '') {
+                $title = $html->text_h3($mtr->txt(msg_id::INFO_CONFIRM_LINK));
+                $result = $html->div($title . $html->esc($lnk_txt), styles::CHANGE_PREVIEW);
+            }
         }
         return $result;
     }
@@ -365,6 +404,7 @@ class ui_preview extends ui_base
         $changed = [];
         foreach ($url_array as $key => $val) {
             if (!in_array($key, $skip)
+                and !str_starts_with($key, url_var::LINK)
                 and !str_starts_with($key, url_var::PRE)
                 and !str_starts_with($key, url_var::BACK)
                 and (string)$val != (string)($url_array[url_var::PRE . $key] ?? '')) {

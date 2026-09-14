@@ -835,6 +835,29 @@ class base_ui_tests
         ], $t->usr1, $cfm_msg, $ui->dto, false);
         $t->assert($test_name, $cfm_url[url_var::ID] ?? 0, word_names::MINUTE_ID);
         $cfm_msg->reset();
+        // a url without origin mask (e.g. of a workflow test) takes the back mask as the own view
+        $test_name = 'a confirmed change without origin mask shows the changed object';
+        $cfm_url = $ui->url_to_action([
+            url_var::MASK => views::CONFIRM_EDIT_ID,
+            url_var::STEP => url_var::STEP_CONFIRMED,
+            url_var::ID => word_names::MINUTE_ID,
+            url_var::NAME => word_names::MINUTE,
+            url_var::BACK . url_var::MASK => views::WORD_ID,
+            url_var::BACK . url_var::ID => word_names::MINUTE_ID
+        ], $t->usr1, $cfm_msg, $ui->dto, false);
+        $t->assert($test_name, $cfm_url[url_var::ID] ?? 0, word_names::MINUTE_ID);
+        $cfm_msg->reset();
+        $test_name = 'a confirmed change without origin mask keeps the id of another object';
+        $cfm_url = $ui->url_to_action([
+            url_var::MASK => views::CONFIRM_EDIT_ID,
+            url_var::STEP => url_var::STEP_CONFIRMED,
+            url_var::ID => word_names::MINUTE_ID,
+            url_var::NAME => word_names::MINUTE,
+            url_var::BACK . url_var::MASK => views::WORD_ID,
+            url_var::BACK . url_var::ID => word_names::ZH_ID
+        ], $t->usr1, $cfm_msg, $ui->dto, false);
+        $t->assert($test_name, $cfm_url[url_var::ID] ?? 0, word_names::ZH_ID);
+        $cfm_msg->reset();
 
         // url_mapper::human_url_to_json groups the 8-prefixed vars into 'original_data' and the
         // 9-prefixed vars into 'back', and converts the view id to the code id
@@ -853,6 +876,48 @@ class base_ui_tests
         $err_msg = new user_message_ui();
         $url_map->human_url_to_json([url_var::MASK => views::WORD_EDIT_ID, 'zzz' => '1'], $err_msg);
         $t->assert_true($test_name, $err_msg->has_msg_id(msg_id::URL_MAP_MISSING));
+        $test_name = 'human_url_to_json groups the link vars into a subarray';
+        $link_json = $url_map->human_url_to_json([
+            url_var::MASK => views::FORMULA_ADD_ID,
+            url_var::LINK . url_var::PHRASE => word_names::MINUTE_ID
+        ], $msg);
+        $t->assert_text_contains($test_name, $link_json, json_fields::URL_PART_LINK);
+        $test_name = 'human_url_to_json without link vars has no link subarray';
+        $t->assert_text_not_contains($test_name, $json, json_fields::URL_PART_LINK);
+
+        // the '7'-prefixed link vars name the link that an add view creates together with the new object
+        $test_name = 'the link vars are prefixed with the link char';
+        $link_part = html_base::link_url_part([url_var::PHRASE => word_names::MINUTE_ID]);
+        $link_expected = url_var::LINK . url_var::PHRASE . url_var::EQ . word_names::MINUTE_ID;
+        $t->assert($test_name, $link_part, $link_expected);
+        $test_name = 'the link vars are read from the url without the prefix';
+        $link_vars = html_base::link_vars([
+            url_var::LINK . url_var::PHRASE => word_names::MINUTE_ID,
+            url_var::BACK . url_var::MASK => views::WORD_ID
+        ]);
+        $t->assert($test_name, $link_vars[url_var::PHRASE] ?? 0, word_names::MINUTE_ID);
+        $test_name = 'the back targets are no link vars';
+        $t->assert($test_name, count($link_vars), 1);
+        // the confirm view keeps the link vars for the confirm submit, the page after the add does not
+        $test_name = 'a confirm keeps the link vars of the new object';
+        $cfm_url = $ui->url_to_action([
+            url_var::MASK => views::FORMULA_ADD_ID,
+            url_var::STEP => url_var::STEP_CONFIRM,
+            url_var::LINK . url_var::PHRASE => word_names::MINUTE_ID
+        ], $t->usr1, $cfm_msg, $ui->dto, false);
+        $t->assert($test_name, $cfm_url[url_var::LINK . url_var::PHRASE] ?? 0, word_names::MINUTE_ID);
+        $cfm_msg->reset();
+        $test_name = 'the page after a confirmed add does not repeat the link vars';
+        $cfm_url = $ui->url_to_action([
+            url_var::MASK => views::CONFIRM_ADD_ID,
+            url_var::STEP => url_var::STEP_CONFIRMED,
+            url_var::ORIGIN_MASK => views::FORMULA_ADD_ID,
+            url_var::LINK . url_var::PHRASE => word_names::MINUTE_ID,
+            url_var::BACK . url_var::MASK => views::WORD_ID,
+            url_var::BACK . url_var::ID => word_names::MINUTE_ID
+        ], $t->usr1, $cfm_msg, $ui->dto, false);
+        $t->assert($test_name, $cfm_url[url_var::LINK . url_var::PHRASE] ?? '', '');
+        $cfm_msg->reset();
 
         // url_var::action_step maps a confirmed action to the confirmed process step (which triggers the
         // db write), and a plain navigation action to the base step

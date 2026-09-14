@@ -385,7 +385,7 @@ class component_exe extends component
             component_types::SELECT_VIEW => $select->view_select($dbo, $form_name, $msg, $cfg),
 
             // related
-            component_types::SYSTEM_SUB_TITLE => $page->system_sub_tile($this->ui_msg_code_id),
+            component_types::SYSTEM_SUB_TITLE => $page->system_sub_tile($this->ui_msg_code_id, $dbo, $url_arr),
             component_types::SYSTEM_SUB_TITLE_VAR => $page->system_sub_tile_var($this->ui_msg_code_id, $dbo->usage, $this->ui_msg_code_id_vars, $this->ui_msg_value_exception, $this->ui_msg_code_id_exception),
             component_types::LIST_PARENTS_OF_WORD => $list->parents_of_word($dbo, $msg, $cfg->phrase_list()),
             component_types::LIST_CHILDREN_OF_WORD => $list->children_of_word($dbo, $msg, $cfg->phrase_list()),

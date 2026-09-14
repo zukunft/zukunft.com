@@ -1195,7 +1195,12 @@ class views
      */
     function id_to_base_id(int $msk_id): int
     {
-        return $this->code_id_to_id($this->system_to_base($this->id_to_code_id($msk_id)));
+        $base_code_id = $this->system_to_base($this->id_to_code_id($msk_id));
+        $result = 0;
+        if ($base_code_id != '') {
+            $result = $this->code_id_to_id($base_code_id);
+        }
+        return $result;
     }
 
     function code_id_to_id(string $code_id): int

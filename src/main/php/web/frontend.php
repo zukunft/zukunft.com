@@ -1982,8 +1982,8 @@ class frontend
 
     /**
      * the object field values of a url without the control vars that select the view, the object and
-     * the render mode and without the '9'-prefixed back navigation targets, e.g. to carry the posted
-     * values of a simulated write to the following page (see action_crud)
+     * the render mode and without the '9'-prefixed back navigation targets and the '7'-prefixed link
+     * vars, e.g. to carry the posted values of a simulated write to the following page (see action_crud)
      *
      * @param array $url_array the parsed url
      * @return array the url keys and values that are object field values
@@ -1994,7 +1994,8 @@ class frontend
         foreach ($url_array as $key => $val) {
             if (!in_array($key, url_var::CONTROL_VARS)
                 and $key != rest_ctrl::PAR_VIEW_NEW_ID
-                and !str_starts_with($key, url_var::BACK)) {
+                and !str_starts_with($key, url_var::BACK)
+                and !str_starts_with($key, url_var::LINK)) {
                 $result[$key] = $val;
             }
         }
@@ -2054,6 +2055,10 @@ class frontend
                 // stay on the current view so the user can fix errors
                 return $url_array;
             }
+            // the link that the confirm page has shown with a new object needs the id of the object
+            if ($crud == url_var::CRUD_CREATE) {
+                $this->add_link_of_new($dbo, $url_array, $msg_ui, $dto);
+            }
         }
 
         // on success go back to the calling page: the confirm view set the object's own default view +
@@ -2100,8 +2105,36 @@ class frontend
         if (array_key_exists(url_var::ORIGIN_MASK, $url_array)) {
             $own_view = new views()->id_to_base_id((int)$url_array[url_var::ORIGIN_MASK]);
         }
-        $same_id = (string)($back_url[url_var::ID] ?? 0) == (string)($url_array[url_var::ID] ?? 0);
-        return ($back_view != views::START_ID and $back_view == $own_view and $same_id);
+        $back_id = (string)($back_url[url_var::ID] ?? 0);
+        $url_id = (string)($url_array[url_var::ID] ?? 0);
+        return ($back_view != views::START_ID and $back_view == $own_view and $back_id == $url_id);
+    }
+
+    /**
+     * write the link that the confirm page of a new object has shown with it, e.g. the formula link to
+     * the word page that has opened the formula add view (see url_var::LINK); called after the object
+     * write, because the link needs the id of the new object
+     *
+     * @param sandbox_ui|sandbox_named_ui|db_object_ui|combine_named_ui|type_object|sandbox_list_ui $dbo the just added object
+     * @param array $url_array the confirmed url with the '7'-prefixed link vars
+     * @param user_message_ui $msg_ui to report the result of the link write
+     * @param data_object $dto the request cache with the names of the linked objects
+     * @return void
+     */
+    private function add_link_of_new(
+        sandbox_ui|sandbox_named_ui|db_object_ui|combine_named_ui|type_object|sandbox_list_ui $dbo,
+        array                                                                                 $url_array,
+        user_message_ui                                                                       $msg_ui,
+        data_object                                                                           $dto
+    ): void
+    {
+        if ($dbo instanceof formula_ui) {
+            $lnk = $dbo->link_of_new($url_array, $msg_ui, $dto);
+            // the formula is written already, so a failed link is reported and the page still moves on
+            if ($lnk != null) {
+                $msg_ui->merge($lnk->add_via_api($msg_ui));
+            }
+        }
     }
 
     /**

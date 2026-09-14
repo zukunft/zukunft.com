@@ -40,7 +40,9 @@ namespace Zukunft\ZukunftCom\main\php\web\component\execute;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::COMPONENT . 'component.php';
+include_once html_paths::EXECUTE . 'ui_list.php';
 include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::HTML . 'styles.php';
 include_once html_paths::PHRASE . 'term_list.php';
 include_once html_paths::SANDBOX . 'combine_named.php';
 include_once html_paths::SANDBOX . 'db_object.php';
@@ -60,6 +62,7 @@ include_once html_paths::SHARED_HELPER . 'Translator.php';
 
 use Zukunft\ZukunftCom\main\php\web\component\component;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_list;
@@ -159,11 +162,18 @@ class system_page extends component
 
     /**
      * HTML for a subtitle
+     * the formulas subtitle of a word or triple page also shows the icon to add a formula that is
+     * linked to the shown phrase (see ui_list::formula_add_link)
+     *
      * @param msg_id|null $ui_msg_code_id the message id of the text that should be shown to the user in the user-specific frontend language
+     * @param db_object|type_object|combine_named|sandbox_list|null $dbo the object of the page e.g. the word of the formulas subtitle
+     * @param array $url_arr the url of the shown page as back target of the add icon
      * @return string the html code to start a new form and display the subtitle
      */
     function system_sub_tile(
-        ?msg_id $ui_msg_code_id = null
+        ?msg_id                                               $ui_msg_code_id = null,
+        db_object|type_object|combine_named|sandbox_list|null $dbo = null,
+        array                                                 $url_arr = []
     ): string
     {
         global $mtr;
@@ -172,6 +182,13 @@ class system_page extends component
         $result = '';
         if ($ui_msg_code_id != null) {
             $result .= $html->text_h3($mtr->txt($ui_msg_code_id));
+        }
+        if ($ui_msg_code_id == msg_id::FORM_SUB_TITLE_FORMULAS and $dbo instanceof db_object) {
+            $icon = new ui_list()->formula_add_link($dbo->phrase(), $url_arr);
+            // like the edit icon of the page title the icon stays on the line of the subtitle
+            if ($icon != '') {
+                $result = $html->div($result . $icon, styles::HEADING_LINE);
+            }
         }
         return $result;
     }
