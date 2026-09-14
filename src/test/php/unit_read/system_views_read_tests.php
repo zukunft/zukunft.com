@@ -34,11 +34,13 @@ namespace Zukunft\ZukunftCom\test\php\unit_read;
 
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::SHARED_CONST . 'components.php';
 include_once paths::SHARED_CONST . 'refs.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_HELPER . 'Config.php';
+include_once html_paths::VALUE . 'value_list.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
@@ -63,6 +65,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\helper\Config;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\value\value_list as value_list_ui;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
@@ -109,11 +112,29 @@ class system_views_read_tests
         $cfg->set_component_list($t_cmp->component_list_ui());
         // create the test pages
 
-        // START: the entry view shows the global problems as a table with the short list, and
-        // with the more list that a "... more" click requests with the next list size
+        // START: the entry view shows the global problems as a simple table with the short list,
+        // with the more list that a "... more" click requests with the next list size, and as the
+        // full table with every column and the ranges that the "..." header links to
         $t->assert_view(views::START_CODE, $t->usr1, new triple($t->usr1), triple_names::GLOBAL_PROBLEM_ID);
         $t->assert_view(views::START_CODE, $t->usr1, new triple($t->usr1), triple_names::GLOBAL_PROBLEM_ID,
             null, [url_var::DISPLAY_LIST_SIZE => Config::LIMIT_MORE_LIST]);
+        $t->assert_view(views::START_CODE, $t->usr1, new triple($t->usr1), triple_names::GLOBAL_PROBLEM_ID,
+            null, [url_var::DISPLAY_LIST_SIZE => Config::LIMIT_MORE_LIST,
+                url_var::DISPLAY_LIST_COLUMNS => value_list_ui::COLUMN_TIERS_ALL,
+                url_var::DISPLAY_LIST_RANGE => url_var::TRUE]);
+        // the full table with the short list, and the two switches on their own: the mayor
+        // columns with the ranges, and the mayor columns explicitly without the ranges
+        $t->assert_view(views::START_CODE, $t->usr1, new triple($t->usr1), triple_names::GLOBAL_PROBLEM_ID,
+            null, [url_var::DISPLAY_LIST_COLUMNS => value_list_ui::COLUMN_TIERS_ALL,
+                url_var::DISPLAY_LIST_RANGE => url_var::TRUE]);
+        $t->assert_view(views::START_CODE, $t->usr1, new triple($t->usr1), triple_names::GLOBAL_PROBLEM_ID,
+            null, [url_var::DISPLAY_LIST_SIZE => Config::LIMIT_MORE_LIST,
+                url_var::DISPLAY_LIST_COLUMNS => value_list_ui::COLUMN_TIERS_MAYOR,
+                url_var::DISPLAY_LIST_RANGE => url_var::TRUE]);
+        $t->assert_view(views::START_CODE, $t->usr1, new triple($t->usr1), triple_names::GLOBAL_PROBLEM_ID,
+            null, [url_var::DISPLAY_LIST_SIZE => Config::LIMIT_MORE_LIST,
+                url_var::DISPLAY_LIST_COLUMNS => value_list_ui::COLUMN_TIERS_MAYOR,
+                url_var::DISPLAY_LIST_RANGE => url_var::FALSE]);
 
         $t->assert_view(views::WORD, $t->usr1, new word($t->usr1), word_names::MATH_ID, $cfg);
         // Zurich and CHF is the example for the page-title symbol-line layout

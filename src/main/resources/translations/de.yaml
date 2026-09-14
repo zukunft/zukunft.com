@@ -689,6 +689,7 @@ messages:
   reserved_name: "Name für Systemtests. Bitte einen anderen Namen verwenden"
   not_similar: "scheint nicht ähnlich zu sein zu"
   reload: "wird neu geladen"
+  table_all_columns_tip: "alle Spalten und den Wahrscheinlichkeitsbereich jeder Zahl anzeigen"
   of_default: "des Standards"
   ip_block_pre_addr: "Deine IP "
   ip_block_post_addr: " ist im Moment blockiert, weil "

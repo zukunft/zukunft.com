@@ -38,12 +38,14 @@ use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\helper\Config;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\web\value\value_list as value_list_ui;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::SHARED_TYPES . 'component_types.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_HELPER . 'Config.php';
+include_once html_paths::VALUE . 'value_list.php';
 include_once html_paths::COMPONENT . 'component_exe.php';
 include_once html_paths::HTML . 'html_selector.php';
 include_once html_paths::HTML . 'button.php';
@@ -236,6 +238,14 @@ class base_ui_tests
         $url_array = [url_var::MASK => views::START_ID, url_var::DISPLAY_LIST_PAGE => 1];
         $t->assert($test_name, $ui->url_cache_key($url_array),
             'm=' . views::START_ID . '&id=0&' . url_var::DISPLAY_LIST_PAGE . '=1');
+        // the full table with every column and the ranges is a view-only state like the list size
+        $test_name = 'the full table of the start page is cached under its own key';
+        $url_array = [url_var::MASK => views::START_ID,
+            url_var::DISPLAY_LIST_COLUMNS => value_list_ui::COLUMN_TIERS_ALL,
+            url_var::DISPLAY_LIST_RANGE => url_var::TRUE];
+        $t->assert($test_name, $ui->url_cache_key($url_array), 'm=' . views::START_ID . '&id=0&'
+            . url_var::DISPLAY_LIST_COLUMNS . '=' . value_list_ui::COLUMN_TIERS_ALL . '&'
+            . url_var::DISPLAY_LIST_RANGE . '=' . url_var::TRUE);
 
         $t->subheader($ts . 'tab box');
 

@@ -240,6 +240,8 @@ enum messages: string
     case TOTAL = 'total';
     case MORE = 'more';
     case AND_MORE = '... more';
+    // the tooltip of the "..." header of a simple table that links to the table with every column
+    case TABLE_ALL_COLUMNS_TIP = 'table_all_columns_tip';
     case EXAMPLE_SHORT = 'e.g.';
     case NO_PRIVILEGES = 'cannot be changed';
 
