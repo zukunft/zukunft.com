@@ -138,11 +138,11 @@ class phrase_list_read_tests
         // a list load fills the from and to of each link with the id and the name only, so a
         // triple nested as the from of a link carries no from and to of its own; the frontend
         // needs them e.g. to match the parts of the "potential loss" column, so load_linked_sides
-        // adds them with one read; the column definitions of the main tier are such links,
+        // adds them with one read; the column definitions of the mayor tier are such links,
         // because the "column potential loss" definition is built from the triple "potential loss"
         $lst = new phrase_list($t->usr1);
         $tier = new phrase($t->usr1);
-        $tier->set_obj_from_id(triple_names::SYSTEM_COLUMN_MAIN_ID * -1);
+        $tier->set_obj_from_id(triple_names::SYSTEM_COLUMN_MAYOR_ID * -1);
         $lst->load_by_phr($tier, $msg, null, foaf_direction::DOWN);
         $col_phr = $lst->get_by_name(triple_names::COLUMN_POTENTIAL_LOSS, $msg);
         $test_name = 'the column definitions of a tier are loaded';

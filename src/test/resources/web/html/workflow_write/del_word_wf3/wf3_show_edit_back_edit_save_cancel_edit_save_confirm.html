@@ -158,8 +158,8 @@
                         </div>
                         <div>
                             <div class="col-md-12">
-                                <a href="http://localhost/http/view.php?m=15&amp;p=999" title="add new ref" class="heading-icon-inline">
-                                    <i class="fas fa-plus">
+                                <a href="http://localhost/http/view.php?m=15&amp;p=999" title="add new reference" class="heading-icon-inline">
+                                    <i class="far fa-square-plus">
                                     </i>
                                 </a>
                             </div>
@@ -172,9 +172,167 @@
                     </h5>
                 </div>
                 <div class="col" style="min-width: 700px">
-                    <h5>
-                        Formulas
-                    </h5>
+                    <div class="heading-line">
+                        <h5>
+                            Formulas
+                        </h5>
+                        <a href="http://localhost/http/view.php?m=24&amp;7p=999&amp;9m=90&amp;9id=999" title="add new formula" class="heading-icon-inline">
+                            <i class="far fa-square-plus">
+                            </i>
+                        </a>
+                    </div>
+                    <div>
+                        <div>
+                            <a href="#formula-link" title="assign a formula" class="heading-icon-inline">
+                                <i class="fas fa-link">
+                                </i>
+                            </a>
+                        </div>
+                        <div class="css-toggle-pane" id="formula-link">
+                            <form action="http://localhost/http/view.php" id="formula_link_add">
+                                <input type="hidden" name="token" value="5e18d78c56c5ccb645631d7e5c6657d02a2f7c579cd01d36d3f5539ba07a6c13">
+                                <input type="hidden" name="m" value="45">
+                                <input type="hidden" name="z" value="1">
+                                <input type="hidden" name="p" value="999">
+                                <input type="hidden" name="9m" value="90">
+                                <input type="hidden" name="9id" value="999">
+                                <div class="form-group col-md-12">
+                                    <label for="f_form_select_formula">
+                                        formula
+                                    </label>
+                                    <select class="form-control" name="f" form="formula_link_add" id="f_form_select_formula" >
+                                        <option value="0" selected>
+                                            please select ...
+                                        </option>
+                                        <option value="39"  >
+                                            PE Ratio
+                                        </option>
+                                        <option value="38"  >
+                                            USD cross rate
+                                        </option>
+                                        <option value="24"  >
+                                            avoided potential loss
+                                        </option>
+                                        <option value="33"  >
+                                            bid-ask spread absolut
+                                        </option>
+                                        <option value="34"  >
+                                            bid-ask spread percent
+                                        </option>
+                                        <option value="26"  >
+                                            city population
+                                        </option>
+                                        <option value="29"  >
+                                            countryside population
+                                        </option>
+                                        <option value="30"  >
+                                            countryside population without suburb
+                                        </option>
+                                        <option value="31"  >
+                                            currency conversion calculation
+                                        </option>
+                                        <option value="14"  >
+                                            definition of joule
+                                        </option>
+                                        <option value="36"  >
+                                            forward rate from spot
+                                        </option>
+                                        <option value="23"  >
+                                            global happy time points
+                                        </option>
+                                        <option value="21"  >
+                                            increase
+                                        </option>
+                                        <option value="19"  >
+                                            next
+                                        </option>
+                                        <option value="28"  >
+                                            population in the city of Zurich in percent of Switzerland
+                                        </option>
+                                        <option value="20"  >
+                                            prior
+                                        </option>
+                                        <option value="35"  >
+                                            rate percent change
+                                        </option>
+                                        <option value="32"  >
+                                            reverse currency conversion
+                                        </option>
+                                        <option value="25"  >
+                                            reward ratio (formula)
+                                        </option>
+                                        <option value="17"  >
+                                            scale billion to one
+                                        </option>
+                                        <option value="3"  >
+                                            scale day to hour
+                                        </option>
+                                        <option value="4"  >
+                                            scale day to sec
+                                        </option>
+                                        <option value="9"  >
+                                            scale gram to kg
+                                        </option>
+                                        <option value="2"  >
+                                            scale hour to sec
+                                        </option>
+                                        <option value="11"  >
+                                            scale kWh to joule
+                                        </option>
+                                        <option value="13"  >
+                                            scale km to 100 km
+                                        </option>
+                                        <option value="12"  >
+                                            scale km to metre
+                                        </option>
+                                        <option value="8"  >
+                                            scale litre to m3
+                                        </option>
+                                        <option value="16"  >
+                                            scale million to one
+                                        </option>
+                                        <option value="1"  >
+                                            scale minute to sec
+                                        </option>
+                                        <option value="40"  >
+                                            scale pence to Pound
+                                        </option>
+                                        <option value="15"  >
+                                            scale thousand to one
+                                        </option>
+                                        <option value="10"  >
+                                            scale tonne to kg
+                                        </option>
+                                        <option value="22"  >
+                                            scale trillion to one
+                                        </option>
+                                        <option value="5"  >
+                                            scale week to day
+                                        </option>
+                                        <option value="6"  >
+                                            scale year to month
+                                        </option>
+                                        <option value="7"  >
+                                            scale year to second
+                                        </option>
+                                        <option value="27"  >
+                                            suburb population
+                                        </option>
+                                        <option value="18"  >
+                                            this
+                                        </option>
+                                        <option value="37"  >
+                                            yearly average turnover by month sum
+                                        </option>
+                                        <option value="0" disabled>
+                                            ...
+                                        </option>
+                                    </select>
+                                </div>
+                                <input type="submit" name="submit" value="link" class="submit-input">
+                            </form>
+                        </div>
+                    </div>
                 </div>
                 <div class="col" style="min-width: 700px">
                     <div class="css-tabs">

@@ -1186,6 +1186,23 @@ class views
         };
     }
 
+    /**
+     * the database id of the base view that shows the object of an add, edit or del mask
+     * e.g. for the formula link add mask the formula link default view
+     *
+     * @param int $msk_id the database id of the add, edit or del mask
+     * @return int the database id of the base view or 0 if the mask has no base view
+     */
+    function id_to_base_id(int $msk_id): int
+    {
+        $base_code_id = $this->system_to_base($this->id_to_code_id($msk_id));
+        $result = 0;
+        if ($base_code_id != '') {
+            $result = $this->code_id_to_id($base_code_id);
+        }
+        return $result;
+    }
+
     function code_id_to_id(string $code_id): int
     {
         $msk_codes = array_flip(self::TEST_VIEW_IDS);

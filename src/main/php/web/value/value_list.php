@@ -110,6 +110,10 @@ class value_list extends ListBase
 
     // show every row of a table instead of the configured number (like type_list::LIMIT_ALL)
     const int LIMIT_ALL = 0;
+    // the column tiers of a table to show: every tier, every unit and the ranges, or only the
+    // mayor columns with one unit each and the numbers without ranges (docs/llm/frontend.md)
+    const int COLUMN_TIERS_ALL = 0;
+    const int COLUMN_TIERS_MAYOR = 1;
     // the probability range of a value is shown behind its centre value e.g. "2.2 (0.88 – 5.5)"
     const string RANGE_START = ' (';
     const string RANGE_SEP = ' – ';
@@ -587,6 +591,14 @@ class value_list extends ListBase
      *                         the url can name the list size and the list page and the value
      *                         links can return to the page; an empty array if the page is not
      *                         known, e.g. for a table taken out of its page
+     * @param bool $col_values_only true to leave out the values that share no column phrase, so
+     *                              that the table stays a grid of its columns e.g. the ranking of
+     *                              the start page; false to show them in a last "Values" column
+     * @param int $col_tiers the number of column tiers to show by default, self::COLUMN_TIERS_ALL
+     *                       for every column; a simple table shows the mayor columns with one unit
+     *                       each and a "..." header that links to the full table
+     * @param bool $with_range true to show the probability range behind each number by default,
+     *                         false for the numbers only; the url of the page overrides both defaults
      * @return string the html code of the value table or '' if this list is empty
      */
     function table_by_related_columns(
@@ -597,10 +609,22 @@ class value_list extends ListBase
         bool         $with_border = true,
         ?phrase_list $rel_lst = null,
         ?int         $limit = null,
-        array        $url_array = []
+        array        $url_array = [],
+        bool         $col_values_only = false,
+        int          $col_tiers = self::COLUMN_TIERS_ALL,
+        bool         $with_range = true
     ): string
     {
         $result = '';
+        // the url of the page names the column tiers and whether the ranges are shown, e.g. after
+        // the "..." click on a simple table, and wins over the default of the caller
+        if (array_key_exists(url_var::DISPLAY_LIST_COLUMNS, $url_array)) {
+            $col_tiers = (int)$url_array[url_var::DISPLAY_LIST_COLUMNS];
+        }
+        if (array_key_exists(url_var::DISPLAY_LIST_RANGE, $url_array)) {
+            $with_range = ($url_array[url_var::DISPLAY_LIST_RANGE] == url_var::TRUE);
+        }
+        $full_table = ($col_tiers == self::COLUMN_TIERS_ALL and $with_range);
         if (!$this->is_empty()) {
             $html = new html_base();
             // the row order follows the impact, so it never depends on the api/db row order
@@ -667,11 +691,18 @@ class value_list extends ListBase
                 $phr_col_names[$phr_col_id] = $rel_lst->child_names($phr);
             }
 
+            // a table that is a grid of its columns leaves out the values that fit no column, e.g.
+            // the measured figures of a problem that are no part of the ranking of the start page
+            $vals = $this->lst();
+            if ($col_values_only) {
+                $vals = array_filter($vals, fn($val) => array_key_exists($val->id(), $val_col));
+            }
+
             // per row the label and per row and column the value html
             $row_label = [];
             $cells = [];
             $phr_cells = [];
-            foreach ($this->lst() as $val) {
+            foreach ($vals as $val) {
                 $col_id = $val_col[$val->id()] ?? '';
                 $ctx = clone $grp_ctx;
                 if ($col_id !== '') {
@@ -734,6 +765,9 @@ class value_list extends ListBase
             // a phrase column is defined like a value column, so both kinds are shown in one
             // order, e.g. the "solution" column between the "loss" and the "gain" column
             $col_ids = $this->column_id_order($col_order, $col_phr, $phr_col);
+            // a simple table shows the first tiers only and one unit per column; the columns
+            // left out are still reachable via the "..." header, which links to the full table
+            $col_ids = $this->columns_of_tiers($col_ids, $col_phr, $phr_col, $rel_lst, $col_tiers);
 
             // the row column is headed by the phrase that the page phrase is built from, e.g.
             // "problem" for the page phrase "global problem", and stays empty if that phrase is
@@ -754,20 +788,27 @@ class value_list extends ListBase
             if ($rest_col) {
                 $header .= $html->th(msg_id::FORM_SUB_TITLE_VALUES->text());
             }
+            // a simple table ends with the "..." header that links to the full table
+            if (!$full_table) {
+                $header .= $html->th($this->all_columns_link($url_array));
+            }
             $rows = $html->tr($header);
             foreach ($shown_keys as $row_key) {
                 $row = $html->td($row_label[$row_key]);
                 foreach ($col_ids as $col_id) {
                     // a phrase column names a phrase of the row, a value column its values
                     if (array_key_exists($col_id, $col_phr)) {
-                        $row .= $this->cell(
-                            $cells[$row_key][$col_id] ?? [], $msg, $url_array, $col_style[$col_id]);
+                        $row .= $this->cell($cells[$row_key][$col_id] ?? [],
+                            $msg, $url_array, $col_style[$col_id], $with_range);
                     } else {
                         $row .= $html->td($phr_cells[$row_key][$col_id] ?? '', $col_style[$col_id]);
                     }
                 }
                 if ($rest_col) {
-                    $row .= $this->cell($cells[$row_key][''] ?? [], $msg, $url_array, '');
+                    $row .= $this->cell($cells[$row_key][''] ?? [], $msg, $url_array, '', $with_range);
+                }
+                if (!$full_table) {
+                    $row .= $html->td('');
                 }
                 $rows .= $html->tr($row);
             }
@@ -775,8 +816,12 @@ class value_list extends ListBase
             $diff = count($row_label) - $first_row - count($shown_keys);
             if ($diff > 0) {
                 // the empty cells of the more row hide with their column like every other cell
-                $pad_styles = array_values($col_style);
+                $pad_styles = array_intersect_key($col_style, array_flip($col_ids));
+                $pad_styles = array_values($pad_styles);
                 if ($rest_col) {
+                    $pad_styles[] = '';
+                }
+                if (!$full_table) {
                     $pad_styles[] = '';
                 }
                 $more_url = $this->more_url($url_array, $row_limit, $msg);
@@ -1015,10 +1060,21 @@ class value_list extends ListBase
      * @param string $style the css class of the column, which hides it on the screens its tier excludes
      * @return string the html of the cell, the centre values separated by a comma
      */
-    private function cell(array $val_lst, user_message $msg, array $url_arr, string $style): string
+    private function cell(
+        array        $val_lst,
+        user_message $msg,
+        array        $url_arr,
+        string       $style,
+        bool         $with_range = true
+    ): string
     {
         $html = new html_base();
         [$centre_lst, $bound, $conf_lst, $title_lst] = $this->sort_cell_values($val_lst, $msg);
+        // a simple table shows the numbers only, so the bounds of the range are left out here
+        // and shown by the full table that the "..." header links to
+        if (!$with_range) {
+            $bound = [];
+        }
         $txt_lst = [];
         $conf_used = [];
         foreach ($centre_lst as $val) {
@@ -1707,6 +1763,77 @@ class value_list extends ListBase
             $cells .= $html->td('', $style);
         }
         $result = $html->tr($cells);
+        return $result;
+    }
+
+    /**
+     * the columns of the first tiers: a column of a later tier and a further unit column of a
+     * phrase are left to the full table, which the "..." header links to (docs/llm/frontend.md)
+     *
+     * @param array $col_ids the ids of every column in the order they are shown
+     * @param array $col_phr the value column phrases by column id
+     * @param array $phr_col the phrase column phrases by column id
+     * @param phrase_list|null $rel_lst the phrases related to the page phrase with the definitions
+     * @param int $col_tiers the number of column tiers to show, self::COLUMN_TIERS_ALL for every column
+     * @return array the ids of the columns to show
+     */
+    private function columns_of_tiers(
+        array        $col_ids,
+        array        $col_phr,
+        array        $phr_col,
+        ?phrase_list $rel_lst,
+        int          $col_tiers
+    ): array
+    {
+        $result = $col_ids;
+        if ($col_tiers != self::COLUMN_TIERS_ALL) {
+            $result = [];
+            foreach ($col_ids as $col_id) {
+                $phr = $col_phr[$col_id] ?? $phr_col[$col_id];
+                $is_first_unit = !str_contains((string)$col_id, self::UNIT_COLUMN_SEP);
+                if ($is_first_unit and $this->tier_level($phr->name(), $rel_lst) <= $col_tiers) {
+                    $result[] = $col_id;
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param string $name the name of the column phrase e.g. "loss"
+     * @param phrase_list|null $rel_lst the phrases related to the page phrase with the definitions
+     * @return int the tier level of the column, 1 for a mayor column; a column that the data
+     *             suggests has no definition and counts as a main column
+     */
+    private function tier_level(string $name, ?phrase_list $rel_lst): int
+    {
+        $tier = $rel_lst?->column_tier($name) ?? '';
+        $pos = array_search($tier, triples::SYSTEM_COLUMN_TIERS);
+        if ($pos === false) {
+            $pos = array_search(triples::SYSTEM_COLUMN_MAIN, triples::SYSTEM_COLUMN_TIERS);
+        }
+        return $pos + 1;
+    }
+
+    /**
+     * the "..." header of a simple table that links to the full table with every column tier,
+     * every unit and the range of each number, so that the simple table hides nothing for good
+     * (docs/llm/frontend.md "... more is always a link"); plain text if the page is not known
+     *
+     * @param array $url_array the url parameters of the page that shows the table
+     * @return string the html code of the header cell
+     */
+    private function all_columns_link(array $url_array): string
+    {
+        $html = new html_base();
+        $result = msg_id::THREE_POINTS->text();
+        if ($url_array != []) {
+            $url_pars = html_base::page_url_array($url_array);
+            $url_pars[url_var::DISPLAY_LIST_COLUMNS] = self::COLUMN_TIERS_ALL;
+            $url_pars[url_var::DISPLAY_LIST_RANGE] = url_var::TRUE;
+            $url = api::MAIN_SCRIPT . url_var::PAR . http_build_query($url_pars);
+            $result = $html->ref($url, $result, msg_id::TABLE_ALL_COLUMNS_TIP->text());
+        }
         return $result;
     }
 

@@ -1,7 +1,27 @@
 
 # pending - list of planned llm prompts with prio 1
 
+## word default view
+
+if a word has no triple where it is the from side of a triple with the verb 'is a' show instead of the 'is a' phrase list a button 'define xxx as yyy' with an 'add' button that creates a corresponding triple. E.g. if the word lugano has no 'parent' / 'is a triple' show a phrase selection where city and other phrases can be selected and the add triple view with 'triple is a city' is preselected
+
+## word default view
+
+add a list with the triples and a plus sign to add a new triple
+
+## triple view
+
+add values icon and add formula icon
+
+### add formula
+
+propagation of uncertainty
+
 ## workflows
+
+### views
+
+### general
 
 add the missing workflows link workflows such as
 
@@ -14,7 +34,7 @@ add the missing workflows link workflows such as
 - add a child view to a view
 - remove a child view from a view
 
-add a fa-plus icon at the end of the phrases linked to a formula in the formula default view and add and edit view that, based on url_to_action, call a confirm page that showns something like 'link phrase xxx to formula xxx' with a cancel and confirm button
+add a fa-plus icon at the end of the phrases linked to a formula in the formula default view and add and edit view that, based on url_to_action, call a confirm page that shows something like 'link phrase xxx to formula xxx' with a cancel and confirm button
 
 add the missing workflows quick workflows such as
 

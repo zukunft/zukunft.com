@@ -40,6 +40,7 @@ include_once 'const.php';
 // load the main frontend class
 include_once WEB . 'frontend.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache_page;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\Translator;
 use Zukunft\ZukunftCom\main\php\shared\library;
@@ -91,6 +92,11 @@ if ($debug > 10) {
 // open database
 $app = new frontend();
 $db_con = $app->start("view", $msg_ui, $url_array);
+
+// the message of the action that has redirected to this page, shown once (see frontend::redirect_url)
+$redirect_msg = $_SESSION[url_var::SESSION_REDIRECT_MSG] ?? null;
+unset($_SESSION[url_var::SESSION_REDIRECT_MSG]);
+$redirect_url = '';
 
 
 if ($db_con->is_open()) {
@@ -167,7 +173,11 @@ if ($db_con->is_open()) {
         // so that a user without own data changes gets the page with a few database reads only
         // (the cached types json, the system config, the user incl. the uses_sandbox flag
         // and this cached page); the message of this request is added to the cached page
-        $cached_page = $ui->cached_page_or_null($url_array, $msg_ui);
+        // the page after an action shows the changed data, so it is never taken from the cache
+        $cached_page = null;
+        if ($redirect_msg === null) {
+            $cached_page = $ui->cached_page_or_null($url_array, $msg_ui);
+        }
         if ($cached_page !== null) {
             $web_txt .= $cached_page;
         } else {
@@ -198,13 +208,27 @@ if ($db_con->is_open()) {
             if ($is_action) {
                 if (frontend::request_triggers_action($url_array)) {
                     $url_array = $ui->url_to_action($url_array, $usr, $msg_ui, $ui->dto);
+                    // a page text collected so far or an already sent header would be lost by a redirect
+                    if ($web_txt == '' and !headers_sent()) {
+                        $redirect_url = frontend::redirect_url($url_array);
+                    }
                 }
             }
 
-            // show the result to the user
-            // and use the cached html pages for view-only requests to reduce the response time
-            $sys->times->switch(system_time_type::URL_TO_HTML);
-            $web_txt .= $ui->url_to_html_cached($url_array, $msg_ui, $is_action, $ui->dto);
+            if ($redirect_url != '') {
+                // a logout has destroyed the session, so a new one keeps the message for the next page
+                if (session_status() != PHP_SESSION_ACTIVE) {
+                    session_start();
+                }
+                $_SESSION[url_var::SESSION_REDIRECT_MSG] = $ui->user_msg_html($msg_ui);
+            } else {
+                // show the result to the user
+                // and use the cached html pages for view-only requests to reduce the response time
+                $sys->times->switch(system_time_type::URL_TO_HTML);
+                $is_live = ($is_action or $redirect_msg !== null);
+                $page_html = $ui->url_to_html_cached($url_array, $msg_ui, $is_live, $ui->dto);
+                $web_txt .= db_cache_page::add_user_msg($page_html, $redirect_msg ?? '');
+            }
             $sys->times->switch(system_time_type::CLOSE);
         }
     }
@@ -222,6 +246,10 @@ if ($debug == url_var::DEBUG_EXE_TIME_REPORT) {
     $web_txt .= '<br>Execution times for debugging: ' . $sys->times->report($duration);
 }
 
-// show the page
-echo $web_txt;
+// show the page, or after an action send the browser to the next page
+if ($redirect_url != '') {
+    header('Location: ' . $redirect_url, true, 303);
+} else {
+    echo $web_txt;
+}
 

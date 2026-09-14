@@ -193,18 +193,17 @@ class sandbox_link extends sandbox
     }
 
     /**
-     * get the view with its name from the request cache based on the id of the given view;
-     * the system views are in the type list cache that is filled for every page rendering
-     * and the user views are in the view list of the request cache, so check both
+     * get the view with its name from the request cache based on the id of the given view
+     * (see data_object::get_view_by_id, which knows where the views are cached)
      * @param object|null $msk the id only view created from the url or the api message
      * @param data_object|null $dto the request cache
      * @return object|null the cached view with its name or the given id only view
      */
     protected function view_named_from_cache(?object $msk, ?data_object $dto): ?object
     {
-        $result = $this->named_from_cache($msk, $dto?->typ_lst_cache?->msk_sys);
-        if ($result === $msk) {
-            $result = $this->named_from_cache($msk, $dto?->view_list());
+        $result = $msk;
+        if ($msk != null) {
+            $result = $dto?->get_view_by_id($msk->id()) ?? $msk;
         }
         return $result;
     }
@@ -216,6 +215,25 @@ class sandbox_link extends sandbox
     function link_type(): ?type_object
     {
         return null;
+    }
+
+    /**
+     * the pending link in one line, shown as the title of a confirm page, e.g.
+     * "Link formula 'increase' to phrase 'GDP'", so that the user reads what is linked instead
+     * of the ids of the two objects; the children overwrite this with the wording of their link
+     *
+     * a link type without an own wording shows no line at all instead of a generic one, because
+     * "x extends y" says nothing useful for e.g. a component link; the two parameters are for the
+     * children: a wording that names the linked objects may have to read them by id, which a
+     * test render must not do (see formula_link::link_preview)
+     *
+     * @param user_message $msg to report a problem while reading the names of the linked objects
+     * @param bool $test_mode true to name the link without a backend call
+     * @return string the text of the pending link, empty for a link that has no wording yet
+     */
+    function link_preview(user_message $msg, bool $test_mode = false): string
+    {
+        return '';
     }
 
     /**

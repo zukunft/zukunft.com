@@ -1194,6 +1194,8 @@ class test_base
      * @param int $id the id of the database object that should be loaded and send to the frontend
      * @param data_object_ui|null $cfg the context that should be used to create the view
      *                              which can be fixed test data for stable test results
+     * @param array $url_array the url parameters of a page state e.g. the list size after a "... more"
+     *                         click; each one is added to the snapshot name as key and value
      * @return bool true if the generated view matches the expected
      */
     function assert_view(
@@ -1201,7 +1203,8 @@ class test_base
         user                           $usr,
         db_object_seq_id|sandbox_multi $dbo,
         int                            $id = 0,
-        ?data_object_ui                $cfg = null
+        ?data_object_ui                $cfg = null,
+        array                          $url_array = []
     ): bool
     {
         global $sys;
@@ -1222,6 +1225,10 @@ class test_base
                 $dbo_name .= '_' . $id;
             }
         }
+        // a page state is part of the snapshot name, so the same view has one snapshot per state
+        foreach ($url_array as $key => $value) {
+            $dbo_name .= '_' . $key . '_' . $value;
+        }
         $file_path = test_paths::HTML . test_paths::VIEWS . $folder . $dsp_code_id . $dbo_name;
 
         // load the view from the database (the db layer measures its own read time)
@@ -1234,7 +1241,7 @@ class test_base
             // add the related database objects
             $dbo->load_by_id_with_related($id, $msg);
         }
-        return $this->assert_view_html($msk, $usr, $dbo, $id != 0, $cfg, $file_path, $dsp_code_id);
+        return $this->assert_view_html($msk, $usr, $dbo, $id != 0, $cfg, $file_path, $dsp_code_id, $url_array);
     }
 
     /**
@@ -1306,6 +1313,7 @@ class test_base
      * @param data_object_ui|null $cfg the context that should be used to create the view
      * @param string $file_path the snapshot file without the extension
      * @param string $view_key the code id or the name of the view for the test name
+     * @param array $url_array the url parameters of a page state e.g. the list size after a "... more" click
      * @return bool true if the generated view matches the expected
      */
     private function assert_view_html(
@@ -1315,7 +1323,8 @@ class test_base
         bool                           $with_obj,
         ?data_object_ui                $cfg,
         string                         $file_path,
-        string                         $view_key
+        string                         $view_key,
+        array                          $url_array = []
     ): bool
     {
         global $sys;
@@ -1368,7 +1377,7 @@ class test_base
         }
         // render in test mode so that the result is reproducible without backend calls
         $sys->times->switch(system_time_type::URL_TO_HTML);
-        $actual = $dsp_html->show($dbo_dsp, $msg_ui, $cfg, '', true);
+        $actual = $dsp_html->show($dbo_dsp, $msg_ui, $cfg, '', true, $url_array);
         // return to the default section for the following tests
         $sys->times->switch(system_time_type::DEFAULT);
 

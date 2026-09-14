@@ -192,7 +192,7 @@ class component_exe extends component
 
             // system form - components that can only be used for internal system forms
             // general form fields
-            component_types::FORM_TITLE => $form->form_tile($form_name, $this->ui_msg_code_id),
+            component_types::FORM_TITLE => $form->form_tile($form_name, $this->ui_msg_code_id, $dbo),
             component_types::TITLE_NAMED_EDIT => $form->title_named($dbo, $msg, def::LIMIT_RELATED_PER_VERB, $url_arr, $this->ui_msg_code_id),
             component_types::TITLE_TRIPLE_EDIT => $form->title_triple($dbo, $msg, def::LIMIT_RELATED_PER_VERB, $url_arr),
             component_types::TITLE_LINK_EDIT => $form->title_link($dbo, $msg, def::LIMIT_RELATED_PER_VERB, $url_arr),
@@ -341,9 +341,10 @@ class component_exe extends component
             component_types::SYSTEM_PASTE_TABLE_CONTEXT => $preview->paste_table(),
             component_types::SYSTEM_PASTE_TABLE_BODY => $preview->table_body(),
             component_types::SYSTEM_SELECTION_TEXT => $preview->selection_text(),
-            component_types::SYSTEM_TITLE_OBJECT_NAMED => $preview->popup_title($form_name, $this->ui_msg_code_id, $dbo, $url_arr),
+            component_types::SYSTEM_TITLE_OBJECT_NAMED => $preview->popup_title(
+                $form_name, $this->ui_msg_code_id, $dbo, $url_arr, $msg, $test_mode),
             component_types::FORM_CLASS => $preview->popup_class($dbo),
-            component_types::FORM_CHANGES => $preview->popup_changes($msg, $url_arr, $dbo),
+            component_types::FORM_CHANGES => $preview->popup_changes($msg, $url_arr, $dbo, $test_mode),
             component_types::FORM_IMPACT => $preview->popup_impact($url_arr),
             component_types::SYSTEM_SHOW_VIEW_DIFF => $preview->view_diff(),
 
@@ -384,7 +385,7 @@ class component_exe extends component
             component_types::SELECT_VIEW => $select->view_select($dbo, $form_name, $msg, $cfg),
 
             // related
-            component_types::SYSTEM_SUB_TITLE => $page->system_sub_tile($this->ui_msg_code_id),
+            component_types::SYSTEM_SUB_TITLE => $page->system_sub_tile($this->ui_msg_code_id, $dbo, $url_arr),
             component_types::SYSTEM_SUB_TITLE_VAR => $page->system_sub_tile_var($this->ui_msg_code_id, $dbo->usage, $this->ui_msg_code_id_vars, $this->ui_msg_value_exception, $this->ui_msg_code_id_exception),
             component_types::LIST_PARENTS_OF_WORD => $list->parents_of_word($dbo, $msg, $cfg->phrase_list()),
             component_types::LIST_CHILDREN_OF_WORD => $list->children_of_word($dbo, $msg, $cfg->phrase_list()),
@@ -429,7 +430,7 @@ class component_exe extends component
             component_types::SHOW_PLURAL_REVERSE => $form->show_plural_reverse($dbo),
             component_types::SHOW_STYLE => $form->show_style($dbo),
             component_types::SHOW_OWNER => $form->show_owner($dbo),
-            component_types::VIEW_COMPONENTS => $list->view_components($dbo, $msg),
+            component_types::VIEW_COMPONENTS => $list->view_components($dbo, $msg, $url_arr),
             component_types::VIEW_TERMS => $list->view_terms($dbo, $msg),
             component_types::SHOW_FORMULA => $form->show_formula($dbo),
             component_types::SHOW_LINKED_COMPONENT => $form->show_linked_component($dbo),
@@ -496,10 +497,10 @@ class component_exe extends component
             component_types::LIST_VIEWS => $list->views_related($dbo, $cfg),
             component_types::LIST_RESULTS => $list->result_list($dbo, $msg, $cfg),
             component_types::LINK_LIST_WORD => $list->link_list_word($dbo, $cfg),
-            component_types::FORMULAS => $list->formulas($dbo, $msg, $cfg, $test_mode),
+            component_types::FORMULAS => $list->formulas($dbo, $msg, $cfg, $test_mode, $url_arr),
             // the changeable formula list shows the same list as the formula list type;
             // TODO Prio 2 add the edit links that make the list changeable
-            component_types::FORM_LIST_FORMULAS => $list->formulas($dbo, $msg, $cfg, $test_mode),
+            component_types::FORM_LIST_FORMULAS => $list->formulas($dbo, $msg, $cfg, $test_mode, $url_arr),
             // the formula results type shows the results related to the given word or term
             // like the results_related type, so the same renderer is used for both
             component_types::FORMULA_RESULTS => $list->results_related($dbo, $cfg),

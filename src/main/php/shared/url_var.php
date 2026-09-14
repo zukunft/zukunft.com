@@ -77,7 +77,8 @@ class url_var
     // guard at frontend.php:686).
     const string MASK = 'm'; // the internal database id of the view used to format the object
     const string MASK_HUMAN = 'mask_id'; // if *_LONG is given the human-readable url format is used
-    const string MASK_POD = 'mask'; // if *_EXCHANGE is given the url that is interchangeable between pods is used thet does not contain pod specific database ids
+    const string MASK_POD = 'mask'; // if *_EXCHANGE is given the url that is interchangeable between pods is used that does not contain pod specific database ids
+    const string ORIGIN_MASK = 'mo'; // the add, edit or del mask that has opened a confirm view, which names the object type of the change
 
 
     /*
@@ -88,6 +89,7 @@ class url_var
     const string EXCLUDED = '0';
     const string CONFIG_PART = '1';
     const string MSG = '2';
+    const string LINK = '7'; // prefix to add the vars of a link that the add view creates together with the new object e.g. 7p for the phrase of a formula added from a word page
     const string PRE = '8'; // prefix to add the database values the fields to an edit view when the view has be called. Used to detect the real user change requests
     const string BACK = '9'; // prefix to list of url targets for the back action
     const string ACTION = 'a'; // the crud action
@@ -122,6 +124,8 @@ class url_var
     const string VIEW_TERM_LINK = 'dl'; // to link a view to a term
     const string DISPLAY_LIST_PAGE = 'dlp'; // the page of a list that is longer than the display list size, starting with 0
     const string DISPLAY_LIST_SIZE = 'dls'; // the number of rows of a list shown on a page, which a "... more" link raises to the next level (docs/llm/frontend.md "Short, more and all")
+    const string DISPLAY_LIST_COLUMNS = 'dlc'; // the number of column tiers of a table shown, which the "..." header raises to every column (0)
+    const string DISPLAY_LIST_RANGE = 'dlr'; // 1 to show the probability range behind each number of a table, 0 for the numbers only
     const string VIEW_CHILD = 'dm'; // the display view that modifies the parent view
     const string DOI = 'do'; // the digital object identifier of a source used to create the url to doi.org
     const string VIEW_TERM_LINK_PRIO = 'dp'; // to define the order of the view components
@@ -265,6 +269,8 @@ class url_var
 
     // to select the configuration part that should be updated in the frontend e.g. all, frontend or user
     const string TRUE = '1';
+    // the switched off value of a url flag e.g. DISPLAY_LIST_RANGE for a table without the ranges
+    const string FALSE = '0';
 
     // enum for self::STEP and the next step of the action
     const string STEP_BASE = '0'; // no action process has been started
@@ -324,14 +330,33 @@ class url_var
         self::PATTERN_HUMAN,
         self::DISPLAY_LIST_SIZE,
         self::DISPLAY_LIST_PAGE,
+        self::DISPLAY_LIST_COLUMNS,
+        self::DISPLAY_LIST_RANGE,
     ];
 
     // the page vars where a zero is a value and not the "not set" default, so that
     // page_url_array keeps them: a list size of zero is value_list::LIMIT_ALL, i.e. the user
-    // has expanded the list to every row, which a back link must repeat; for every other page
-    // var a zero names nothing (no view, no object, the first list page) and is dropped
+    // has expanded the list to every row, which a back link must repeat, and the same holds for
+    // every column tier and for the ranges switched off; for every other page var a zero names
+    // nothing (no view, no object, the first list page) and is dropped
     const array PAGE_VARS_KEEP_ZERO = [
         self::DISPLAY_LIST_SIZE,
+        self::DISPLAY_LIST_COLUMNS,
+        self::DISPLAY_LIST_RANGE,
+    ];
+
+    // the prefix chars that move a normal url key into another part of the url: the vars of the link
+    // created with a new object, the db values of an edit view and the back targets
+    const array PREFIXES = [
+        self::LINK,
+        self::PRE,
+        self::BACK,
+    ];
+
+    // the url vars that a '7'-prefixed link var may name, so that a typed url cannot set e.g. the id of
+    // the link that is created with a new object (the phrase of the formula link of a new formula)
+    const array LINK_VARS = [
+        self::PHRASE,
     ];
 
     // the url vars that carry a secret (the unhashed password typed on the login / signup / activate
@@ -352,6 +377,7 @@ class url_var
     const array CONTROL_VARS = [
         self::MASK,
         self::MASK_POD,
+        self::ORIGIN_MASK,
         self::ID,
         self::USER,
         self::STEP,
@@ -368,6 +394,8 @@ class url_var
     const string ACTION_HUMAN = 'action'; // the CRUD action for the long url
     const string STEP_HUMAN = 'step';  // the action status for the long url
     const string BACK_HUMAN = 'back';
+    const string LINK_HUMAN = 'link';
+    const string ORIGIN_MASK_HUMAN = 'origin_mask_id';
     const string MSG_HUMAN = 'message';
 
     // enum for self::ACTION and the database change process that should be stared
@@ -453,6 +481,8 @@ class url_var
     // list display
     const string DISPLAY_LIST_SIZE_HUMAN = 'display_list_size'; // the number of list rows shown on a page
     const string DISPLAY_LIST_PAGE_HUMAN = 'display_list_page'; // the page of a list longer than the size
+    const string DISPLAY_LIST_COLUMNS_HUMAN = 'display_list_columns'; // the number of column tiers of a table shown
+    const string DISPLAY_LIST_RANGE_HUMAN = 'display_list_range'; // 1 to show the probability ranges of a table
 
     // graph
     const string DIRECTION_HUMAN = 'dir'; // 'up' to get the parents and 'down' for the children
@@ -579,6 +609,7 @@ class url_var
     const string SESSION_LOGGED = 'logged';
     const string SESSION_TOKEN = 'token';
     const string SESSION_USER_ID = 'usr_id';
+    const string SESSION_REDIRECT_MSG = 'redirect_msg'; // the rendered message of an action, shown on the page after the redirect
 
 
     /*
@@ -617,9 +648,11 @@ class url_var
 
         // control
         [self::MASK_HUMAN, self::MASK, views::START_ID, true],
+        [self::ORIGIN_MASK_HUMAN, self::ORIGIN_MASK],
         [self::ACTION_HUMAN, self::ACTION],
         [self::STEP_HUMAN, self::STEP],
         [self::BACK_HUMAN, self::BACK],
+        [self::LINK_HUMAN, self::LINK],
         [self::MSG_HUMAN, self::MSG],
         [self::NO_CACHE_HUMAN, self::NO_CACHE],
 
@@ -686,6 +719,8 @@ class url_var
         // list display
         [self::DISPLAY_LIST_SIZE_HUMAN, self::DISPLAY_LIST_SIZE],
         [self::DISPLAY_LIST_PAGE_HUMAN, self::DISPLAY_LIST_PAGE],
+        [self::DISPLAY_LIST_COLUMNS_HUMAN, self::DISPLAY_LIST_COLUMNS],
+        [self::DISPLAY_LIST_RANGE_HUMAN, self::DISPLAY_LIST_RANGE],
 
         // graph
         [self::DIRECTION_HUMAN, self::DIRECTION],
@@ -857,6 +892,42 @@ class url_var
     static function back_par(array $url_array): array
     {
         return array_filter($url_array, fn($k) => str_starts_with($k, self::BACK), ARRAY_FILTER_USE_KEY);
+    }
+
+    /**
+     * split a url key into its prefix char (see PREFIXES) and the normal url key behind it
+     *
+     * @param string $key the url key e.g. '9m'
+     * @return array the prefix char and the base key e.g. ['9', 'm'], or ['', 'm'] for a key without prefix
+     */
+    static function split_prefix(string $key): array
+    {
+        $prefix = '';
+        foreach (self::PREFIXES as $pfx) {
+            if (str_starts_with($key, $pfx)) {
+                $prefix = $pfx;
+            }
+        }
+        return [$prefix, substr($key, strlen($prefix))];
+    }
+
+    /**
+     * the url params of one url part: the params with the given prefix char, the prefix removed
+     *
+     * @param array $url_array the url e.g. ['m' => 3, '9m' => 90, '9id' => 1]
+     * @param string $prefix the prefix char of the part e.g. self::BACK, or '' for the params without prefix
+     * @return array the params of the part without the prefix e.g. ['m' => 90, 'id' => 1]
+     */
+    static function prefixed_vars(array $url_array, string $prefix): array
+    {
+        $result = [];
+        foreach ($url_array as $key => $val) {
+            [$key_prefix, $base_key] = self::split_prefix((string)$key);
+            if ($key_prefix == $prefix) {
+                $result[$base_key] = $val;
+            }
+        }
+        return $result;
     }
 
     /**

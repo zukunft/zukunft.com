@@ -36,11 +36,13 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::CONST . 'icons.php';
 include_once html_paths::EXECUTE . 'ui_base.php';
+include_once html_paths::FORMULA . 'formula.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'styles.php';
 include_once html_paths::SANDBOX . 'combine_named.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::SANDBOX . 'sandbox.php';
+include_once html_paths::SANDBOX . 'sandbox_link.php';
 include_once html_paths::SANDBOX . 'sandbox_list.php';
 include_once html_paths::TYPES . 'type_object.php';
 include_once html_paths::USER . 'user.php';
@@ -56,11 +58,13 @@ include_once html_paths::SHARED . 'library.php';
 include_once html_paths::SHARED . 'url_var.php';
 
 use Zukunft\ZukunftCom\main\php\web\const\icons;
+use Zukunft\ZukunftCom\main\php\web\formula\formula;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_link;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_list;
 use Zukunft\ZukunftCom\main\php\web\types\type_object;
 use Zukunft\ZukunftCom\main\php\web\user\user;
@@ -141,17 +145,25 @@ class ui_preview extends ui_base
      * this is the confirm-view analog of form_tile: it shows the heading and then opens the form, so
      * the component must be the first one of the confirm view (ahead of the hidden fields)
      *
+     * a link is titled by the pending link itself, e.g. "Link formula 'PE Ratio' to phrase 'EUR'",
+     * because the two linked objects are the link and a link has no name of its own
+     * (see sandbox_link::link_preview)
+     *
      * @param string $form_name the name of the confirm view used as the html form name
      * @param msg_id|null $ui_msg_code_id the message code id of the component using this component type
      * @param db_object|null $dbo the object that is being changed, used for the object class name
      * @param array $url_array the pending change url used for the name of the changed object
+     * @param user_message $msg to report a problem while reading the names of the linked objects
+     * @param bool $test_mode true to build the title without a backend call
      * @return string the html heading followed by the opening form tag
      */
     function popup_title(
-        string                                                $form_name = '',
-        ?msg_id                                               $ui_msg_code_id = null,
-        db_object|type_object|combine_named|sandbox_list|null $dbo = null,
-        array                                                 $url_array = []
+        string                                                $form_name,
+        ?msg_id                                               $ui_msg_code_id,
+        db_object|type_object|combine_named|sandbox_list|null $dbo,
+        array                                                 $url_array,
+        user_message                                          $msg,
+        bool                                                  $test_mode
     ): string
     {
         global $mtr;
@@ -165,7 +177,15 @@ class ui_preview extends ui_base
             // the confirm view object is not loaded from the db, so the name comes from the posted url
             $name = $url_array[url_var::NAME] ?? '';
             if ($name != '') {
-                $title .= ' "' . $name . '"';
+                // the name is user input from the url and text_h2 does not escape
+                $title .= ' "' . $html->esc($name) . '"';
+            }
+            if ($dbo instanceof sandbox_link) {
+                $link_text = $dbo->link_preview($msg, $test_mode);
+                if ($link_text != '') {
+                    // the names of the linked objects are user input and text_h2 does not escape
+                    $title = $html->esc($link_text);
+                }
             }
             $result = $html->text_h2($title);
         }
@@ -218,12 +238,14 @@ class ui_preview extends ui_base
      * @param array $url_array the parsed url with the new field values and their '8'-prefixed old values
      * @param db_object|type_object|combine_named|sandbox_list|null $dbo the object being changed; the
      *        same union that dsp_entries passes, because any view object can be shown in a popup form
+     * @param bool $test_mode true to build the preview without a backend call
      * @return string the html code of the centered change table, or an empty string if nothing changed
      */
     function popup_changes(
         user_message                                          $msg,
         array                                                 $url_array = [],
-        db_object|type_object|combine_named|sandbox_list|null $dbo = null
+        db_object|type_object|combine_named|sandbox_list|null $dbo = null,
+        bool                                                  $test_mode = false
     ): string
     {
         global $mtr;
@@ -231,9 +253,9 @@ class ui_preview extends ui_base
         // carry the pending change forward as hidden inputs so the confirm submit re-posts every edited
         // field; without this url_mapper would reset the fields not posted (e.g. the plural or the
         // share) to their default. the keys owned by the back / confirm components (the view mask, the
-        // object id and the process step) are emitted there, and the 8-prefixed old values and
-        // 9-prefixed back targets are shown only in the diff, so skip those. the origin mask is kept so
-        // the confirm submit tells action_crud which object view to return to after the write
+        // object id, the process step, the origin mask, the 7-prefixed link vars and the 9-prefixed
+        // back targets) are emitted there (see system_form::form_back), and the 8-prefixed old values
+        // are shown only in the diff, so skip those
         // a url array is expected to carry only scalar values, so report a non scalar value
         // as an internal inconsistency and drop it instead of failing with a fatal on a cast
         foreach ($url_array as $key => $val) {
@@ -242,10 +264,11 @@ class ui_preview extends ui_base
                 unset($url_array[$key]);
             }
         }
-        $skip = [url_var::MASK, url_var::ID, url_var::STEP];
+        $skip = [url_var::MASK, url_var::ID, url_var::STEP, url_var::ORIGIN_MASK];
         $hidden = '';
         foreach ($url_array as $key => $val) {
             if (!in_array($key, $skip)
+                and !str_starts_with($key, url_var::LINK)
                 and !str_starts_with($key, url_var::PRE)
                 and !str_starts_with($key, url_var::BACK)) {
                 $hidden .= $html->form_hidden($key, (string)$val);
@@ -254,7 +277,7 @@ class ui_preview extends ui_base
         // an add creates the object, so it has no previous values: the 'from' column would be empty
         // in every row and is therefore left out, which makes the table a two column field / to list
         $ex_from = in_array($url_array[url_var::MASK] ?? 0, views::ADD_MASKS_IDS);
-        $rows = $this->change_rows($url_array, $dbo, $msg, $ex_from);
+        $rows = $this->change_rows($url_array, $dbo, $msg, $ex_from, $test_mode);
         $result = $hidden;
         if ($rows != '') {
             $head_row = $html->th($mtr->txt(msg_id::CHANGE_TBL_FIELD));
@@ -265,10 +288,46 @@ class ui_preview extends ui_base
             $head = $html->thead($html->tr($head_row));
             $result .= $html->div($html->tbl($head . $rows), styles::CHANGE_PREVIEW);
         }
+        $result .= $this->link_section($url_array, $dbo, $msg, $test_mode);
         // the component brings its own centered row (matching its "side" position in the confirm
         // views), so the hidden carry inputs and the preview table stay together in one row
         if ($result != '') {
             $result = $html->div_row($result, view_styles::COL_SM_12 . ' ' . styles::JUSTIFY_CENTER);
+        }
+        return $result;
+    }
+
+    /**
+     * the section of the confirm page with the link that the same confirm button creates together
+     * with the new object, e.g. the formula link to the word page that has opened the formula add
+     * view (see url_var::LINK and frontend::add_link_of_new)
+     *
+     * @param array $url_array the pending change url with the name of the new object and the '7'-prefixed link vars
+     * @param db_object|type_object|combine_named|sandbox_list|null $dbo the object being added
+     * @param user_message $msg to report a problem while reading the names of the linked objects
+     * @param bool $test_mode true to name the link without a backend call
+     * @return string the html code of the link section, empty if no link is created with the object
+     */
+    private function link_section(
+        array                                                 $url_array,
+        db_object|type_object|combine_named|sandbox_list|null $dbo,
+        user_message                                          $msg,
+        bool                                                  $test_mode
+    ): string
+    {
+        global $mtr, $ui_sys;
+        $html = new html_base();
+        $result = '';
+        if ($dbo instanceof formula) {
+            // the confirm view object is not loaded from the db, so the name comes from the posted url
+            $frm = new formula();
+            $frm->set_name($url_array[url_var::NAME] ?? '');
+            $lnk = $frm->link_of_new($url_array, $msg, $ui_sys);
+            $lnk_txt = $lnk?->link_preview($msg, $test_mode) ?? '';
+            if ($lnk_txt != '') {
+                $title = $html->text_h3($mtr->txt(msg_id::INFO_CONFIRM_LINK));
+                $result = $html->div($title . $html->esc($lnk_txt), styles::CHANGE_PREVIEW);
+            }
         }
         return $result;
     }
@@ -283,13 +342,15 @@ class ui_preview extends ui_base
      *        for the db field order and the field labels; only a db object has an own field order, for
      *        the other objects (e.g. a language) the labels are derived from the url keys
      * @param bool $ex_from true to leave out the 'from' column, e.g. for an add where there is no old value
+     * @param bool $test_mode true to build the rows without a backend call
      * @return string the html table rows, one per changed field
      */
     private function change_rows(
         array                                                 $url_array,
         db_object|type_object|combine_named|sandbox_list|null $dbo,
         user_message                                          $msg,
-        bool                                                  $ex_from = false
+        bool                                                  $ex_from = false,
+        bool                                                  $test_mode = false
     ): string
     {
         global $mtr;
@@ -311,7 +372,8 @@ class ui_preview extends ui_base
             foreach ($order as $db_fld) {
                 if (array_key_exists($db_fld, $url_keys)) {
                     if ($sees_admin or !in_array($db_fld, fields::LOG_ADMIN_ONLY)) {
-                        $rows .= $this->change_row($url_array, $url_keys[$db_fld], $mtr->text_db_field($db_fld), $msg, $db_fld, $ex_from);
+                        $rows .= $this->change_row($url_array, $url_keys[$db_fld],
+                            $mtr->text_db_field($db_fld), $msg, $db_fld, $ex_from, $test_mode);
                     }
                 }
             }
@@ -320,7 +382,8 @@ class ui_preview extends ui_base
             // without the object context the url key cannot be mapped to a real db field code id of
             // change_fields.csv and a guessed code id would trigger a missing translation error
             foreach ($this->changed_fields($url_array) as $url_key) {
-                $rows .= $this->change_row($url_array, $url_key, url_var::std_to_human($url_key), $msg, '', $ex_from);
+                $rows .= $this->change_row($url_array, $url_key,
+                    url_var::std_to_human($url_key), $msg, '', $ex_from, $test_mode);
             }
         }
         return $rows;
@@ -337,10 +400,11 @@ class ui_preview extends ui_base
      */
     private function changed_fields(array $url_array): array
     {
-        $skip = [url_var::MASK, url_var::ID, url_var::STEP, url_var::ACTION];
+        $skip = [url_var::MASK, url_var::ID, url_var::STEP, url_var::ACTION, url_var::ORIGIN_MASK];
         $changed = [];
         foreach ($url_array as $key => $val) {
             if (!in_array($key, $skip)
+                and !str_starts_with($key, url_var::LINK)
                 and !str_starts_with($key, url_var::PRE)
                 and !str_starts_with($key, url_var::BACK)
                 and (string)$val != (string)($url_array[url_var::PRE . $key] ?? '')) {
@@ -358,6 +422,7 @@ class ui_preview extends ui_base
      * @param string $label the translated field name shown in the first column
      * @param string $db_fld the db field name, used to show the type name instead of the id for a type field
      * @param bool $ex_from true to leave out the 'from' column, e.g. for an add where there is no old value
+     * @param bool $test_mode true to build the row without a backend call
      * @return string the html table row, or an empty string if the field did not change
      */
     private function change_row(
@@ -366,7 +431,8 @@ class ui_preview extends ui_base
         string       $label,
         user_message $msg,
         string       $db_fld = '',
-        bool         $ex_from = false
+        bool         $ex_from = false,
+        bool         $test_mode = false
     ): string
     {
         $html = new html_base();
@@ -374,10 +440,10 @@ class ui_preview extends ui_base
         $new = $url_array[$url_key] ?? '';
         $old = $url_array[url_var::PRE . $url_key] ?? '';
         if ($new != $old) {
-            $to_text = $this->field_value($db_fld, (string)$new, $msg, $url_key);
+            $to_text = $this->field_value($db_fld, (string)$new, $msg, $url_key, $test_mode);
             $cells = $html->td($label);
             if (!$ex_from) {
-                $from_text = $this->field_value($db_fld, (string)$old, $msg, $url_key);
+                $from_text = $this->field_value($db_fld, (string)$old, $msg, $url_key, $test_mode);
                 $cells .= $html->td('<span class="' . styles::STYLE_GREY . '">' . htmlspecialchars($from_text) . '</span>');
             }
             $cells .= $html->td('<span class="' . styles::STYLE_CHANGED . '">' . htmlspecialchars($to_text) . '</span>');
@@ -394,9 +460,16 @@ class ui_preview extends ui_base
      * @param string $value the raw url value of the field (a type id for a type field)
      * @param string $url_key the url var short key that carries the value, used to find the type list
      *                        if the db field name is unknown
+     * @param bool $test_mode true to read the value without a backend call
      * @return string the value to show to the user
      */
-    private function field_value(string $db_fld, string $value, user_message $msg, string $url_key = ''): string
+    private function field_value(
+        string       $db_fld,
+        string       $value,
+        user_message $msg,
+        string       $url_key = '',
+        bool         $test_mode = false
+    ): string
     {
         global $ui_sys, $mtr;
         $result = $value;
@@ -415,26 +488,34 @@ class ui_preview extends ui_base
             }
         } elseif ($db_fld == fields::FLD_VIEW) {
             // the view is a sandbox object, not a type, so resolve its id to the view name via the api
-            $result = $this->view_name($value, $msg);
+            $result = $this->view_name($value, $msg, $test_mode);
         }
         return $result;
     }
 
     /**
-     * the display name of a view id used in the change preview: the view's name loaded via the api,
-     * or 'not set' when no view is selected (an empty or zero id)
+     * the display name of a view id used in the change preview: the view's name from the request
+     * cache or read via the api, or 'not set' when no view is selected (an empty or zero id)
      *
      * @param string $value the raw url value of the view field (a view id)
-     * @return string the view name to show to the user
+     * @param user_message $msg to report a problem while reading the view
+     * @param bool $test_mode true to name the view without a backend call
+     * @return string the view name to show to the user, the id if the name cannot be read
      */
-    private function view_name(string $value, user_message $msg): string
+    private function view_name(string $value, user_message $msg, bool $test_mode = false): string
     {
-        global $mtr;
+        global $mtr, $ui_sys;
         $result = $mtr->txt(msg_id::NOT_SET);
         if ($value != '' and $value != '0') {
-            $msk = new view();
-            $msk->load_by_id((int)$value, $msg);
-            $result = $msk->name();
+            // the request cache knows the system and the user views, so the name is normally
+            // found without a backend call; a view that is in neither cache is read by id, which
+            // a test render never does, because a snapshot must be reproducible without a backend
+            $msk = $ui_sys?->get_view_by_id((int)$value);
+            if ($msk == null and !$test_mode) {
+                $msk = new view();
+                $msk->load_by_id((int)$value, $msg);
+            }
+            $result = $msk?->name() ?? $value;
         }
         return $result;
     }
@@ -451,9 +532,15 @@ class ui_preview extends ui_base
      * @param db_object $dbo the word, triple or formula that should be shown to the user
      * @param user_message $msg to collect the mapping errors
      * @param array $url_array the parsed url of the current page, carried into the undo links
+     * @param bool $test_mode true to build the table without a backend call
      * @return string the html code of the overwrite table or an empty string if there is nothing to show
      */
-    function user_overwrites_table(db_object $dbo, user_message $msg, array $url_array = []): string
+    function user_overwrites_table(
+        db_object    $dbo,
+        user_message $msg,
+        array        $url_array = [],
+        bool         $test_mode = false
+    ): string
     {
         global $mtr;
         global $ui_sys;
@@ -465,8 +552,8 @@ class ui_preview extends ui_base
             foreach ($dbo->user_overwrites as $ovr) {
                 $fld = $ovr[json_fields::FIELD] ?? '';
                 if ($this->shows_field($usr, $fld)) {
-                    $your = $this->field_value($fld, (string)($ovr[json_fields::USR_VALUE] ?? ''), $msg);
-                    $instead = $this->field_value($fld, (string)($ovr[json_fields::STD_VALUE] ?? ''), $msg);
+                    $your = $this->field_value($fld, (string)($ovr[json_fields::USR_VALUE] ?? ''), $msg, test_mode: $test_mode);
+                    $instead = $this->field_value($fld, (string)($ovr[json_fields::STD_VALUE] ?? ''), $msg, test_mode: $test_mode);
                     // e.g. a null and a zero view id both resolve to 'not set', so a row that
                     // would show the same text on both sides tells the user nothing and is skipped
                     if ($your != $instead) {
@@ -502,9 +589,15 @@ class ui_preview extends ui_base
      * @param db_object $dbo the word, triple or formula that should be shown to the user
      * @param user_message $msg to collect the mapping errors
      * @param array $url_array the parsed url of the current page, carried into the apply links
+     * @param bool $test_mode true to build the table without a backend call
      * @return string the html code of the overwrite table or an empty string if there is nothing to show
      */
-    function other_overwrites_table(db_object $dbo, user_message $msg, array $url_array = []): string
+    function other_overwrites_table(
+        db_object    $dbo,
+        user_message $msg,
+        array        $url_array = [],
+        bool         $test_mode = false
+    ): string
     {
         global $mtr;
         global $ui_sys;
@@ -516,8 +609,8 @@ class ui_preview extends ui_base
             foreach ($dbo->other_overwrites as $ovr) {
                 $fld = $ovr[json_fields::FIELD] ?? '';
                 if ($this->shows_field($usr, $fld)) {
-                    $val = $this->field_value($fld, (string)($ovr[json_fields::USR_VALUE] ?? ''), $msg);
-                    $instead = $this->field_value($fld, (string)($ovr[json_fields::STD_VALUE] ?? ''), $msg);
+                    $val = $this->field_value($fld, (string)($ovr[json_fields::USR_VALUE] ?? ''), $msg, test_mode: $test_mode);
+                    $instead = $this->field_value($fld, (string)($ovr[json_fields::STD_VALUE] ?? ''), $msg, test_mode: $test_mode);
                     // like in the my tab a row with the same text on both sides is skipped
                     if ($val != $instead) {
                         // escape the values and the user name (user input rendered raw; stored xss)

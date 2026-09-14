@@ -1,5 +1,17 @@
 # pending prio 2
 
+## tests
+
+add a write workflow test for the formula add from a word page: the confirmed add must also write the formula link to the phrase of the '7'-prefixed link vars (frontend::add_link_of_new), which the unit tests cannot check because they never write the formula
+
+## data cleanup for final database setup
+
+sort the views and components so that the most often used are in groups on the to
+
+assign all values assigned to a symbol to the main word or triple but in the default view of the symbol show tha values and formula of the linked main word. E.g. move all values from EUR to Euro but still show the Euro values in the EUR page
+
+if a value of a phrase is shown that has a symbol use the shortest symbol that is unique for the page. E.g. if values in Euro are shown use € instead of Euro
+
 ## use case
 
 PV in Switzerland
@@ -11,6 +23,11 @@ if the value if updated use the frontend cache to update the results within the 
 ## default views
 
 the $wrd->name_link(), $trp->name_link() or $prh->name_link() function returns at the moment a link to the word or triple default view, but it should lead to the selected page of the word / triple. E.g. for 'PV in Switzerland' the 'calculator' view should be used instead of the triple default view  
+
+## search empty result 
+
+see /docs/llm/coding.md and if the search e.g. http://localhost/http/view.php?m=67&pattern=Momo returns no result, additional to the simple add word button show an 'add word' button with a selection of the parent phrases last used by the user. For the phrase selection list use an list in the user section of the config.yaml that contains the x parent phrases last used by the user. x is the max number of phrases to show in the list that is itself a value in the config.yaml. A parent phrase is a phrase
+connected wth the 'is a' verb. So e.g. if a tripel 'basel is a city' has been added, add city to the list of last used parents and if the the word lugano is searched and the result is empty shown 'add lugano as a city' with a link that confirms the adding of the word lugano and the triple 'lugano is a city' in one confirm page.
 
 ## after replacing the `$back` parameter by the url array of the calling page
 

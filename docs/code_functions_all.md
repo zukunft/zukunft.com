@@ -6480,6 +6480,7 @@
     \-- view_components - section for function view_components missing in /component/execute/ui_list.php
     \-- component_views - section for function component_views missing in /component/execute/ui_list.php
     \-- formula_list - section for function formula_list missing in /component/execute/ui_list.php
+    \-- formula_add_link - section for function formula_add_link missing in /component/execute/ui_list.php
     \-- formulas_of_parents - section for function formulas_of_parents missing in /component/execute/ui_list.php
     \-- ref_list_word - section for function ref_list_word missing in /component/execute/ui_list.php
     \-- views_related - section for function views_related missing in /component/execute/ui_list.php
@@ -6625,6 +6626,7 @@
     \-- api_array - section for function api_array not yet defined that it should be api in /formula/formula_link.php
     \-- to_url_array - section for function to_url_array not yet defined that it should be url in /formula/formula_link.
             php
+    \-- link_preview - section for function link_preview is expected to be link in /formula/formula_link.php
     \-- db_fld_to_url - section for function db_fld_to_url not yet defined that it should be url in /formula/formula_lin
             k.php
     \-- set_formula - section for function set_formula is expected to be set and get in /formula/formula_link.php
@@ -6679,6 +6681,8 @@
     \-- url_to_html_cached - section for function url_to_html_cached not yet defined that it should be cached page in /f
             rontend.php
     \-- url_cache_key - section for function url_cache_key not yet defined that it should be cached page in /frontend.ph
+            p
+    \-- user_msg_html - section for function user_msg_html not yet defined that it should be cached page in /frontend.ph
             p
     \-- save_html_page - section for function save_html_page is expected to be save in /frontend.php
     \-- execute_and_next - section for function execute_and_next not yet defined that it should be cached page in /front
@@ -6837,6 +6841,8 @@
             html/html_base.php
     \-- icon - section for function icon not yet defined that it should be wrapper for the basic html elements used in /
             html/html_base.php
+    \-- icon_link - section for function icon_link not yet defined that it should be wrapper for the basic html elements
+             used in /html/html_base.php
     \-- icon_with_title - section for function icon_with_title not yet defined that it should be wrapper for the basic h
             tml elements used in /html/html_base.php
     \-- sup - section for function sup not yet defined that it should be wrapper for the basic html elements used in /ht
@@ -6858,6 +6864,7 @@
     \-- url_ex - section for function url_ex not yet defined that it should be wrapper for internal references used in t
             he html code in /html/html_base.php
     \-- text_h1 - section for function text_h1 not yet defined that it should be text formatting in /html/html_base.php
+    \-- bold - section for function bold not yet defined that it should be text formatting in /html/html_base.php
     \-- text_h2 - section for function text_h2 not yet defined that it should be text formatting in /html/html_base.php
     \-- text_h3 - section for function text_h3 not yet defined that it should be text formatting in /html/html_base.php
     \-- text_h4 - section for function text_h4 not yet defined that it should be text formatting in /html/html_base.php
@@ -6980,6 +6987,8 @@
             ents used in zukunft.com in /html/html_base.php
     \-- button_refresh - section for function button_refresh not yet defined that it should be base elements - functions
              for all html elements used in zukunft.com in /html/html_base.php
+    \-- button_submit_text - section for function button_submit_text not yet defined that it should be base elements - f
+            unctions for all html elements used in zukunft.com in /html/html_base.php
     \-- label_lan - section for function label_lan not yet defined that it should be base elements - functions for all h
             tml elements used in zukunft.com in /html/html_base.php
     \-- form_field_id - section for function form_field_id not yet defined that it should be base elements - functions f
@@ -7357,6 +7366,7 @@
     \-- id - section for function id not yet defined that it should be html in /sandbox/ListBase.php
     \-- get_by_code_id - section for function get_by_code_id is expected to be set and get in /sandbox/ListBase.php
     \-- selector - section for function selector not yet defined that it should be select in /sandbox/ListBase.php
+    \-- selector_ui - section for function selector_ui not yet defined that it should be select in /sandbox/ListBase.php
     \-- order error - order of section construct and map has difference at api_mapper should be before __construct
 \-- combine_named
     \-- obj_id - section for function obj_id not yet defined that it should be set and get in /sandbox/combine_named.php
@@ -7478,6 +7488,7 @@
     \-- load_by_id_with_related - section for function load_by_id_with_related is expected to be load in /sandbox/sandbo
             x_link.php
     \-- link_type - section for function link_type is expected to be link in /sandbox/sandbox_link.php
+    \-- link_preview - section for function link_preview is expected to be link in /sandbox/sandbox_link.php
     \-- name_linked - section for function name_linked not yet defined that it should be display in /sandbox/sandbox_lin
             k.php
 \-- sandbox_list
@@ -7641,6 +7652,7 @@
     \-- url_key_to_type_list - section for function url_key_to_type_list not yet defined that it should be type list by 
             class in /types/type_lists.php
     \-- log_err - section for function log_err is expected to be log in /types/type_lists.php
+    \-- order error - order of section set and get has difference at get_view_by_id should be before set_from_json_array
 \-- type_object
     \-- id - section for function id not yet defined that it should be set and get in /types/type_object.php
     \-- name - section for function name is expected to be debug in /types/type_object.php
@@ -7868,6 +7880,8 @@
             .php
 \-- view_list
     \-- api_mapper - section for function api_mapper is expected to be construct and map in /view/view_list.php
+    \-- component_names - section for function component_names not yet defined that it should be base in /view/view_list
+            .php
     \-- name_tip - section for function name_tip not yet defined that it should be base in /view/view_list.php
     \-- name_link - section for function name_link not yet defined that it should be base in /view/view_list.php
     \-- default_id - section for function default_id not yet defined that it should be info in /view/view_list.php
@@ -8300,6 +8314,8 @@
         \-- sandbox_link - load the link incl. its two linked objects by adding the ?incl_related=1 url flag, so that
     \-- link_type
         \-- sandbox_link - the children overwrite this with the type list of their own link type
+    \-- link_preview
+        \-- sandbox_link - the pending link in one line, shown as the title of a confirm page, e.g.
     \-- name_linked
         \-- sandbox_link - the two linked objects as links, e.g. for the subtitle of the link default page;
     \-- display_admin
@@ -8349,7 +8365,6 @@
     \-- set_from_json
         \-- data_object - set the vars of these list display objects bases on the api message
         \-- sys_log_list - set the vars of these list display objects bases on the api message
-        \-- type_lists - set the vars of this frontend object bases on the api message
         \-- verb_list - set the vars of these list display objects bases on the api message
     \-- refresh_words_via_api
         \-- data_object - set the vars of these list display objects bases on the api message
@@ -8389,6 +8404,8 @@
         \-- data_object - set the view_list of this data object
     \-- view_list
         \-- data_object - @return view_list with the views of this data object
+    \-- get_view_by_id
+        \-- data_object - the view with its name from the request cache, asked in both view caches, because the
     \-- has_view_list
         \-- data_object - @return bool true if this context object contains a view list
     \-- file_list
@@ -8482,7 +8499,6 @@
         \-- sandbox - @return array the json message array to send the updated data to the backend
     \-- set_from_json_array
         \-- sys_log_list - set the vars of these list display objects bases on the api json array
-        \-- type_lists - set the vars of this log html object bases on the api json array
         \-- verb_list - set the vars of a term object based on the given json
     \-- default_id
         \-- component_type_list - create the HTML code to select a component type
@@ -8497,66 +8513,6 @@
         \-- view_type_list - create the HTML code to select a view type
     \-- url
         \-- ref_type_list - a null id means the reference type is not (yet) set, e.g. for a new reference of an add
-    \-- set_user_profiles
-        \-- type_lists - set the vars of this log html object bases on the api json array
-    \-- set_phrase_types
-        \-- type_lists - set the vars of this log html object bases on the api json array
-    \-- set_formula_types
-        \-- type_lists - set the vars of this log html object bases on the api json array
-    \-- set_formula_link_types
-        \-- type_lists - set the vars of this log html object bases on the api json array
-    \-- set_view_types
-        \-- type_lists - set the vars of this log html object bases on the api json array
-    \-- set_view_styles
-        \-- type_lists - set the vars of this log html object bases on the api json array
-    \-- set_view_link_types
-        \-- type_lists - set the vars of this log html object bases on the api json array
-    \-- set_view_relation_types
-        \-- type_lists - set the vars of this log html object bases on the api json array
-    \-- set_component_types
-        \-- type_lists - set the vars of this log html object bases on the api json array
-    \-- set_component_link_types
-        \-- type_lists - set the vars of this log html object bases on the api json array
-    \-- set_position_types
-        \-- type_lists - set the vars of this log html object bases on the api json array
-    \-- set_source_types
-        \-- type_lists - set the vars of this log html object bases on the api json array
-    \-- set_ref_types
-        \-- type_lists - set the vars of this log html object bases on the api json array
-    \-- set_share_types
-        \-- type_lists - set the vars of this log html object bases on the api json array
-    \-- set_protection_types
-        \-- type_lists - set the vars of this log html object bases on the api json array
-    \-- set_languages
-        \-- type_lists - set the vars of this log html object bases on the api json array
-    \-- set_language_forms
-        \-- type_lists - set the vars of this log html object bases on the api json array
-    \-- set_verbs
-        \-- type_lists - set the vars of this log html object bases on the api json array
-    \-- set_sys_log_statuum
-        \-- type_lists - set the vars of this log html object bases on the api json array
-    \-- set_job_types
-        \-- type_lists - set the vars of this log html object bases on the api json array
-    \-- set_change_action_list
-        \-- type_lists - set the vars of this log html object bases on the api json array
-    \-- set_change_table_list
-        \-- type_lists - set the vars of this log html object bases on the api json array
-    \-- set_change_field_list
-        \-- type_lists - set the vars of this log html object bases on the api json array
-    \-- set_system_views
-        \-- type_lists - set the vars of this log html object bases on the api json array
-    \-- get_html_by_id
-        \-- type_lists - set the vars of this log html object bases on the api json array
-    \-- get_view_by_id
-        \-- type_lists - the system views are filled once per request by set_system_views, but a request that could
-    \-- get_view
-        \-- type_lists - the system views are filled once per request by set_system_views, but a request that could
-    \-- get_component_by_id
-        \-- type_lists - the components are cached as part of the system views, so a component is found by the
-    \-- get_html
-        \-- type_lists - the components are cached as part of the system views, so a component is found by the
-    \-- log_err
-        \-- type_lists - the components are cached as part of the system views, so a component is found by the
 \-- load
     \-- load_by_view_id
         \-- component_list - the components sorted by the position in the view and by the name for the components
@@ -8762,6 +8718,8 @@
         \-- ui_list - the views that use the given component as a comma separated list of the view names with
     \-- formula_list
         \-- ui_list - get a list of formulas related to e.g. a verb
+    \-- formula_add_link
+        \-- ui_list - the boxed plus icon behind the formulas subtitle of a word or triple page that opens the formula
     \-- formulas_of_parents
         \-- ui_list - the formulas assigned to the ancestor phrases of a word, grouped per ancestor and shown as a
     \-- ref_list_word
@@ -9208,8 +9166,7 @@
         \-- formula_link - @return array the db field names mapped to their url var for the change preview and undo link
                 s
     \-- phrase
-        \-- formula_link - @return array the db field names mapped to their url var for the change preview and undo link
-                s
+        \-- formula_link - @return phrase the linked phrase, or an empty phrase if it is not yet set e.g. for a new
     \-- link_type
         \-- formula_link - @return type_object|null the formula link type object from the preloaded cache
     \-- get_description
@@ -9264,6 +9221,8 @@
     \-- to_url_array
         \-- formula_link - @return array parent url array extended with the order number and the description,
                  without empty strings
+    \-- link_preview
+        \-- formula_link - the pending formula link in one line for the confirm page, e.g.
     \-- db_fld_to_url
         \-- formula_link - @return array the db field names mapped to their url var for the change preview and undo link
                 s
@@ -9325,6 +9284,8 @@
         \-- frontend - create the html code for the given url and use the cached html pages
     \-- url_cache_key
         \-- frontend - the canonical cache key of a view-only page request
+    \-- user_msg_html
+        \-- frontend - create the html notification for the user messages of the current request
     \-- save_html_page
         \-- frontend - remember the rendered html page for the next request of the same url
     \-- execute_and_next
@@ -9341,7 +9302,7 @@
     \-- add_id_to_views
         \-- data_object - add the database id of the known test views to view list
     \-- add_components_to_views
-        \-- data_object - add the database id of the known test views to view list
+        \-- data_object - add the database id to the components that the views of this cache know only by name,
 \-- construct and capsule
     \-- __construct
         \-- button - @param string $url the url that is called if the button is pressed
@@ -9430,6 +9391,8 @@
         \-- html_base - @param string $text the text that should be formatted
     \-- icon
         \-- html_base - the html code of a font icon (e.g. Font Awesome) as an empty paired <i> tag
+    \-- icon_link
+        \-- html_base - an icon that links to a view of an object, e.g. the edit and the delete icon of a component
     \-- icon_with_title
         \-- html_base - the html of a font awesome icon
     \-- sup
@@ -9454,12 +9417,14 @@
 \-- text formatting
     \-- text_h1
         \-- html_base - build a url for an external webside
+    \-- bold
+        \-- html_base - TODO Prio 3 kept for future use, check if it actually has been used
     \-- text_h2
-        \-- html_base - build a url for an external webside
+        \-- html_base - TODO Prio 3 kept for future use, check if it actually has been used
     \-- text_h3
-        \-- html_base - build a url for an external webside
+        \-- html_base - TODO Prio 3 kept for future use, check if it actually has been used
     \-- text_h4
-        \-- html_base - build a url for an external webside
+        \-- html_base - TODO Prio 3 kept for future use, check if it actually has been used
 \-- images
     \-- logo
         \-- html_base - @return string the zukunft.com logo with a link to the home page
@@ -9589,6 +9554,8 @@
         \-- html_base - create the html code for a label
     \-- button_refresh
         \-- html_base - a small submit button beside a form field label that asks the backend to recalculate one
+    \-- button_submit_text
+        \-- html_base - a submit button that looks like a link, e.g. the 'add' of the component list of a view; it is
     \-- label_lan
         \-- html_base - translate and create the html code for a label
     \-- form_field_id
@@ -9747,13 +9714,5 @@
         \-- sandbox_list - to show the list name to the user in the most simple form (without any ids)
     \-- names
         \-- sandbox_list - @param ?int $limit the max number of ids to show
-\-- type list by class
-    \-- class_to_type_list
-        \-- type_lists - get the type list related to a given object class
-    \-- field_to_type_list
-        \-- type_lists - map a type-id db field name to its preloaded type list so a caller can show the type name inste
-                ad of the id
-    \-- url_key_to_type_list
-        \-- type_lists - map a type-id url var key to its preloaded type list, used by the change preview of an object
 ```
 

@@ -36,12 +36,20 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::MODEL_CONST . 'files.php';
+include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED . 'url_var.php';
 include_once html_paths::TYPES . 'type_lists.php';
+include_once html_paths::VALUE . 'value_list.php';
 
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_list;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\value\value_list as value_list_ui;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
@@ -93,6 +101,25 @@ class start_ui_tests
         $test_name = '... and the solution of each problem';
         $t->assert_text_contains($test_name, $start_html,
             '>' . triple_names::REDUCE_EMISSIONS . '</a>');
+
+        // a measured figure of a problem that fits no column of the ranking, e.g. the global
+        // temperature of a year, stays on the page of the problem instead of adding a row
+        $test_name = 'a measured value of a problem without a ranking column adds no row';
+        $dto_ui->val_lst = $t_val->value_list_solution_prio_measured_ui();
+        $t->assert_text_not_contains($test_name, $list->start_list($dto_ui, $msg),
+            '>' . word_names::YEAR_2024 . '</a>');
+
+        // the start page opens with the simple table, whose "..." header links to the same page
+        // with every column and the range of each number; the full page has no "..." header
+        $test_name = 'the simple start page links to the full table';
+        $url_array = [url_var::MASK => views::START_ID];
+        $t->assert_text_contains($test_name, $list->start_list($dto_ui, $msg, $url_array),
+            url_var::DISPLAY_LIST_COLUMNS . '=' . value_list_ui::COLUMN_TIERS_ALL);
+        $test_name = 'the full start page has no "..." header';
+        $url_array[url_var::DISPLAY_LIST_COLUMNS] = value_list_ui::COLUMN_TIERS_ALL;
+        $url_array[url_var::DISPLAY_LIST_RANGE] = url_var::TRUE;
+        $t->assert_text_not_contains($test_name, $list->start_list($dto_ui, $msg, $url_array),
+            '<' . html_base::TH . '>' . msg_id::THREE_POINTS->text());
 
         // negative: without the values of the global issues the start page shows no table at all
         // instead of an empty header row

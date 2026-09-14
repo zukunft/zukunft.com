@@ -46,8 +46,13 @@ class icons
     const string EDIT = 'fas fa-edit';
     // shown in the views tab of an object page to set the view as the default view of the object
     const string VIEW_SWITCH = 'fas fa-shuffle';
-    // shown behind a selector to add a new object of the selected type e.g. a source of a value
-    const string ADD = 'fas fa-plus';
+    // shown to add a new object e.g. a source of a value or a formula of a word; the regular (outlined)
+    // square plus is the Font Awesome 6 name of fa-plus-square-o, so no v4 shim css is needed
+    const string ADD = 'far fa-square-plus';
+    // shown behind a list entry to delete or exclude it e.g. a component link of a view
+    const string DEL = 'fas fa-times-circle';
+    // shown below a list to link an existing object to the shown object e.g. a formula to a phrase
+    const string LINK = 'fas fa-link';
     const string GLOBE = 'fas fa-globe';
     const string USER_CIRCLE = 'fas fa-user-circle';
     // shown e.g. behind a reference to link to a (potential) job that refreshes the referenced data
