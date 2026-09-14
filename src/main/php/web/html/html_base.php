@@ -800,8 +800,9 @@ class html_base
         $url = self::base_url_clean($base_url);
         $url .= rest_ctrl::PATH_FIXED . rest_ctrl::URL_MAIN_SCRIPT . rest_ctrl::EXT . '?';
         $url .= url_var::MASK . '=' . $view;
+        // a string id e.g. the group id of a value can contain a '+', which a url reads as a space
         if (is_string($id)) {
-            $url .= '&id=' . $id;
+            $url .= '&id=' . rawurlencode($id);
         } elseif ($id <> 0) {
             $url .= '&id=' . $id;
         }
@@ -832,8 +833,9 @@ class html_base
         $url = self::base_url_clean($base_url);
         $url .= rest_ctrl::PATH_FIXED . rest_ctrl::URL_MAIN_SCRIPT . rest_ctrl::EXT . url_var::PAR;
         $url .= url_var::MASK . url_var::EQ . $view;
+        // a string id e.g. the group id of a value can contain a '+', which a url reads as a space
         if (is_string($id)) {
-            $url .= url_var::ADD . url_var::ID . url_var::EQ . $id;
+            $url .= url_var::ADD . url_var::ID . url_var::EQ . rawurlencode($id);
         } elseif ($id <> 0) {
             $url .= url_var::ADD . url_var::ID . url_var::EQ . $id;
         }

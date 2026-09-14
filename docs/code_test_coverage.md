@@ -2559,7 +2559,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- set_url - 0 unit test calls shared by 3 classes
     \-- set_warning - 0 unit test calls shared by 3 classes
     \-- unset_added_depending - 0 unit test calls shared by 2 classes
-    \-- url - 0 unit test calls shared by 7 classes
+    \-- url - 1 unit test calls shared by 7 classes
 \-- sql_par
     \-- combine - 0 unit test calls
     \-- dsp_id - 43 unit test calls shared by 46 classes
@@ -3269,7 +3269,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- set_url - 0 unit test calls shared by 3 classes
     \-- set_warning - 0 unit test calls shared by 3 classes
     \-- unset_added_depending - 0 unit test calls shared by 2 classes
-    \-- url - 0 unit test calls shared by 7 classes
+    \-- url - 1 unit test calls shared by 7 classes
 \-- user_profile
     \-- api_json_array - 8 unit test calls shared by 57 classes
     \-- api_mapper - 18 unit test calls shared by 100 classes
@@ -4281,7 +4281,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- style_selector - 2 unit test calls shared by 4 classes
     \-- term - 8 unit test calls shared by 13 classes
     \-- update - 1 unit test calls shared by 5 classes
-    \-- url - 0 unit test calls shared by 7 classes
+    \-- url - 1 unit test calls shared by 7 classes
     \-- url_is_add_action - 0 unit test calls
     \-- url_mapper - 20 unit test calls shared by 27 classes
     \-- user_expression - 0 unit test calls shared by 2 classes
@@ -4558,7 +4558,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- thead - 0 unit test calls
     \-- tr - 0 unit test calls shared by 6 classes
     \-- ui_progress - 0 unit test calls
-    \-- url - 0 unit test calls shared by 7 classes
+    \-- url - 1 unit test calls shared by 7 classes
     \-- url_api - 0 unit test calls
     \-- url_ex - 0 unit test calls
     \-- url_from_back - 0 unit test calls
@@ -4745,7 +4745,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- type_id - 9 unit test calls shared by 10 classes
     \-- type_name - 0 unit test calls shared by 13 classes
     \-- type_url - 0 unit test calls
-    \-- url - 0 unit test calls shared by 7 classes
+    \-- url - 1 unit test calls shared by 7 classes
     \-- url_mapper - 20 unit test calls shared by 27 classes
     \-- used_url - 0 unit test calls
     \-- view_selector - 1 unit test calls shared by 9 classes
@@ -4757,7 +4757,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
 \-- ref_type_list
     \-- default_id - 0 unit test calls shared by 44 classes
     \-- selector - 2 unit test calls shared by 23 classes
-    \-- url - 0 unit test calls shared by 7 classes
+    \-- url - 1 unit test calls shared by 7 classes
 \-- rest_call
     \-- api_call - 0 unit test calls
     \-- api_call_id - 0 unit test calls
@@ -4895,7 +4895,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- sandbox_fld_order - 1 unit test calls shared by 6 classes
     \-- source_selector - 0 unit test calls shared by 4 classes
     \-- source_type_selector - 0 unit test calls shared by 2 classes
-    \-- url - 0 unit test calls shared by 7 classes
+    \-- url - 1 unit test calls shared by 7 classes
     \-- url_mapper - 20 unit test calls shared by 27 classes
     \-- view_selector - 1 unit test calls shared by 9 classes
 \-- source_list

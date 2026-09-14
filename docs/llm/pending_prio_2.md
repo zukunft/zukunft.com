@@ -1,5 +1,9 @@
 # pending prio 2
 
+## frontend values
+
+the frontend has only one value object (web/value/value.php) without a text or a geo field, so the value page of a text value or a geo value shows no text or geolocation (see the value_default_value_text and value_default_value_geo snapshots); add the mapping of json_fields::TEXT_VALUE and json_fields::GEO_VALUE and show them on the value page
+
 ## tests
 
 add a write workflow test for the formula add from a word page: the confirmed add must also write the formula link to the phrase of the '7'-prefixed link vars (frontend::add_link_of_new), which the unit tests cannot check because they never write the formula

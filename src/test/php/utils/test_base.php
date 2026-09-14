@@ -1292,6 +1292,47 @@ class test_base
     }
 
     /**
+     * test a view with a filled object of a test factory that the seeded database does not have, e.g. a
+     * value with more than 16 phrases or a text value; the snapshot is named by the test case, because
+     * the object has no database row whose id could name it
+     *
+     * @param string $dsp_code_id the code id of the view that should be tested e.g. views::VALUE
+     * @param user $usr to define for which user the view should be created
+     * @param db_object_seq_id|sandbox_multi $dbo the filled object of a test factory
+     * @param string $case_name the name of the test case for the snapshot file e.g. "big"
+     * @param data_object_ui|null $cfg the context that should be used to create the view
+     * @param string $class_for_file the class that names the snapshot folder, if not the class of the object
+     *                               e.g. value::class for a text value that is shown on the value page
+     * @return bool true if the generated view matches the expected
+     */
+    function assert_view_by_factory(
+        string                         $dsp_code_id,
+        user                           $usr,
+        db_object_seq_id|sandbox_multi $dbo,
+        string                         $case_name,
+        ?data_object_ui                $cfg = null,
+        string                         $class_for_file = ''
+    ): bool
+    {
+        $msg = new user_message();
+        $lib = new library();
+
+        if ($class_for_file == '') {
+            $class_for_file = $dbo::class;
+        }
+        $class = $lib->class_to_name($class_for_file);
+        $file_path = test_paths::HTML . test_paths::VIEWS . $class . DIRECTORY_SEPARATOR
+            . $dsp_code_id . '_' . $class . '_' . $this->name_to_file($case_name);
+
+        $msk = new view($usr);
+        $msk->load_by_code_id($dsp_code_id, $msg);
+        if ($msk->id() == 0) {
+            log_err('view with code id ' . $dsp_code_id . ' not found');
+        }
+        return $this->assert_view_html($msk, $usr, $dbo, true, $cfg, $file_path, $dsp_code_id);
+    }
+
+    /**
      * @param string $name a view or object name e.g. "PV in Switzerland"
      * @return string the name as the part of a snapshot file name e.g. "pv_in_switzerland"
      */

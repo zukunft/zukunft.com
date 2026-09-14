@@ -73,6 +73,7 @@ use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_components;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\create\test_log;
+use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\create\test_views;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -182,6 +183,14 @@ class system_views_read_tests
         // users, so it is the example for the share and protection subtitle of the "Value title"
         // component, which shows nothing for a value with the default types like the pi values
         $t->assert_view(views::VALUE, $t->usr1, new value($t->usr1), values::TARGET_PE_RATIO_ID, $cfg);
+        // the seeded database has neither a value with more than 16 phrases nor a text or a geo value, so
+        // these value pages are rendered from the test factory objects together with the non prime value
+        // with 16 phrases; a text and a geo value are shown on the value page, so they share its folder
+        $t_val = new test_values($t);
+        $t->assert_view_by_factory(views::VALUE, $t->usr1, $t_val->value_16(), 'non prime', $cfg);
+        $t->assert_view_by_factory(views::VALUE, $t->usr1, $t_val->value_17_plus(), 'big', $cfg);
+        $t->assert_view_by_factory(views::VALUE, $t->usr1, $t_val->text_value(), 'text', $cfg, value::class);
+        $t->assert_view_by_factory(views::VALUE, $t->usr1, $t_val->geo_value(), 'geo', $cfg, value::class);
         // GROUP
         //$t->assert_view(views::GROUP_ADD, $t->usr1, new group($t->usr1));
         // FORMULA
