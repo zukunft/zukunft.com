@@ -15,7 +15,7 @@ propagation of uncertainty
 
 ## start page
 
-add up / down sort icons to columns which sorts the start page rows by this column
+add up / down sort icons to each column which sorts the start page rows by this column
 
 if there is more than one solution add ', ...' with a link to the solution list
 

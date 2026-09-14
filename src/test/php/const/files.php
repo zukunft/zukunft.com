@@ -71,6 +71,13 @@ class files
         'word_add' . self::HTML,
     ];
 
+    // the case names of the value page snapshots that are rendered from the test factories, because the
+    // seeded database has no such value (see test_base::assert_view_by_factory)
+    CONST string VIEW_CASE_NON_PRIME = 'non prime';
+    CONST string VIEW_CASE_BIG = 'big';
+    CONST string VIEW_CASE_TEXT = 'text';
+    CONST string VIEW_CASE_GEO = 'geo';
+
 
     /*
      * docs

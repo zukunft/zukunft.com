@@ -1232,11 +1232,7 @@ class test_base
         $file_path = test_paths::HTML . test_paths::VIEWS . $folder . $dsp_code_id . $dbo_name;
 
         // load the view from the database (the db layer measures its own read time)
-        $msk = new view($usr);
-        $msk->load_by_code_id($dsp_code_id, $msg);
-        if ($msk->id() == 0) {
-            log_err('view with code id ' . $dsp_code_id . ' not found');
-        }
+        $msk = $this->load_view_by_code_id($dsp_code_id, $usr, $msg);
         if ($id != 0) {
             // add the related database objects
             $dbo->load_by_id_with_related($id, $msg);
@@ -1324,12 +1320,26 @@ class test_base
         $file_path = test_paths::HTML . test_paths::VIEWS . $class . DIRECTORY_SEPARATOR
             . $dsp_code_id . '_' . $class . '_' . $this->name_to_file($case_name);
 
+        $msk = $this->load_view_by_code_id($dsp_code_id, $usr, $msg);
+        return $this->assert_view_html($msk, $usr, $dbo, true, $cfg, $file_path, $dsp_code_id);
+    }
+
+    /**
+     * load the view that a view test renders, e.g. the value default view
+     *
+     * @param string $dsp_code_id the code id of the view e.g. views::VALUE
+     * @param user $usr the user for whom the view is loaded
+     * @param user_message $msg to collect the problems of the load
+     * @return view the loaded view, which has no id if the code id is not found
+     */
+    private function load_view_by_code_id(string $dsp_code_id, user $usr, user_message $msg): view
+    {
         $msk = new view($usr);
         $msk->load_by_code_id($dsp_code_id, $msg);
         if ($msk->id() == 0) {
             log_err('view with code id ' . $dsp_code_id . ' not found');
         }
-        return $this->assert_view_html($msk, $usr, $dbo, true, $cfg, $file_path, $dsp_code_id);
+        return $msk;
     }
 
     /**

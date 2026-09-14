@@ -66,6 +66,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\helper\Config;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\value\value_list as value_list_ui;
+use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
@@ -187,10 +188,10 @@ class system_views_read_tests
         // these value pages are rendered from the test factory objects together with the non prime value
         // with 16 phrases; a text and a geo value are shown on the value page, so they share its folder
         $t_val = new test_values($t);
-        $t->assert_view_by_factory(views::VALUE, $t->usr1, $t_val->value_16(), 'non prime', $cfg);
-        $t->assert_view_by_factory(views::VALUE, $t->usr1, $t_val->value_17_plus(), 'big', $cfg);
-        $t->assert_view_by_factory(views::VALUE, $t->usr1, $t_val->text_value(), 'text', $cfg, value::class);
-        $t->assert_view_by_factory(views::VALUE, $t->usr1, $t_val->geo_value(), 'geo', $cfg, value::class);
+        $t->assert_view_by_factory(views::VALUE, $t->usr1, $t_val->value_16(), test_files::VIEW_CASE_NON_PRIME, $cfg);
+        $t->assert_view_by_factory(views::VALUE, $t->usr1, $t_val->value_17_plus(), test_files::VIEW_CASE_BIG, $cfg);
+        $t->assert_view_by_factory(views::VALUE, $t->usr1, $t_val->text_value(), test_files::VIEW_CASE_TEXT, $cfg, value::class);
+        $t->assert_view_by_factory(views::VALUE, $t->usr1, $t_val->geo_value(), test_files::VIEW_CASE_GEO, $cfg, value::class);
         // GROUP
         //$t->assert_view(views::GROUP_ADD, $t->usr1, new group($t->usr1));
         // FORMULA

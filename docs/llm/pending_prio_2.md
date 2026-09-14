@@ -2,7 +2,7 @@
 
 ## frontend values
 
-the frontend has only one value object (web/value/value.php) without a text or a geo field, so the value page of a text value or a geo value shows no text or geolocation (see the value_default_value_text and value_default_value_geo snapshots); add the mapping of json_fields::TEXT_VALUE and json_fields::GEO_VALUE and show them on the value page
+the value page of a geo value shows no geolocation, while a text value is already shown (see the value_default_value_geo snapshot); add the mapping of json_fields::GEO_VALUE to the frontend value object (web/value/value.php) and show the geolocation on the value page
 
 ## tests
 
