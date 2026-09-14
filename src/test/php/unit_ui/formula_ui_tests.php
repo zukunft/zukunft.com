@@ -382,17 +382,29 @@ class formula_ui_tests
         $test_name = 'the change table of a formula link does not repeat the link';
         $t->assert_text_not_contains($test_name, $lnk_chg_html, $lnk_txt);
 
-        // a formula added from a word page carries the phrase as '7'-prefixed link var, so its confirm
-        // page shows the formula link that the same confirm button creates
-        $test_name = 'the confirm page of a new formula shows the link that is created with it';
+        // a formula added from a word page carries the phrase as '7'-prefixed link var, so the new
+        // formula gets its link with the same confirm; a link var that a link may not name is dropped
+        $test_name = 'the link of a new formula links the phrase of the calling page';
         $frm_add_url = [
-            url_var::MASK => (string)views::FORMULA_ADD_ID,
+            url_var::MASK => views::FORMULA_ADD_ID,
             url_var::NAME => formula_names::INCREASE,
-            url_var::LINK . url_var::PHRASE => (string)word_names::MINUTE_ID
+            url_var::LINK . url_var::PHRASE => word_names::MINUTE_ID,
+            url_var::LINK . url_var::ID => formula_names::SCALE_TO_SEC_ID
         ];
-        $frm_add = new formula();
+        $lnk = $frm->link_of_new($frm_add_url, $msg, $ui_sys);
+        $t->assert($test_name, $lnk?->phrase()->id(), word_names::MINUTE_ID);
+        $test_name = '... to the new formula';
+        $t->assert($test_name, $lnk?->formula()?->name(), $frm->name());
+        $test_name = 'a link var that a link may not name is not mapped';
+        $t->assert($test_name, $lnk?->id(), 0);
+        $test_name = 'a new formula without link vars gets no link';
+        $lnk = $frm->link_of_new([url_var::NAME => formula_names::INCREASE], $msg, $ui_sys);
+        $t->assert_true($test_name, $lnk === null);
+
+        // the confirm page shows the formula link that the same confirm button creates
+        $test_name = 'the confirm page of a new formula shows the link that is created with it';
         $link_title = $mtr->txt(msg_id::INFO_CONFIRM_LINK);
-        $frm_add_html = $preview->popup_changes($msg, $frm_add_url, $frm_add, true);
+        $frm_add_html = $preview->popup_changes($msg, $frm_add_url, $frm, true);
         $t->assert_text_contains($test_name, $frm_add_html, $link_title);
         $test_name = '... and names the linked phrase';
         $t->assert_text_contains($test_name, $frm_add_html, word_names::MINUTE);
@@ -401,7 +413,7 @@ class formula_ui_tests
         $t->assert_text_not_contains($test_name, $frm_add_html, $link_field);
         $test_name = 'the confirm page of a new formula without link vars shows no link section';
         unset($frm_add_url[url_var::LINK . url_var::PHRASE]);
-        $no_link_html = $preview->popup_changes($msg, $frm_add_url, $frm_add, true);
+        $no_link_html = $preview->popup_changes($msg, $frm_add_url, $frm, true);
         $t->assert_text_not_contains($test_name, $no_link_html, $link_title);
 
         $t->subheader($ts . 'link tabs');

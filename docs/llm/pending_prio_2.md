@@ -1,5 +1,9 @@
 # pending prio 2
 
+## tests
+
+add a write workflow test for the formula add from a word page: the confirmed add must also write the formula link to the phrase of the '7'-prefixed link vars (frontend::add_link_of_new), which the unit tests cannot check because they never write the formula
+
 ## data cleanup for final database setup
 
 sort the views and components so that the most often used are in groups on the to

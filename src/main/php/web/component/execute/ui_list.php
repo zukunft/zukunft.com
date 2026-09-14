@@ -729,12 +729,11 @@ class ui_list extends ui_base
         array        $url_arr
     ): string
     {
-        global $mtr, $ui_sys;
+        global $mtr;
 
         // a user without login cannot save the link, so the form is replaced by the reason and
-        // the formulas are not even read; without a request cache the user is unknown and the
-        // form is offered like for any user whose profile is not known (see user::is_blocked)
-        $blocked = $ui_sys?->usr?->is_blocked() ?? false;
+        // the formulas are not even read
+        $blocked = $this->change_blocked();
 
         // the selector offers one selection list of formulas, not the few names that the list
         // above shows; if that list is full more formulas may exist, which the more entry says,
@@ -752,14 +751,8 @@ class ui_list extends ui_base
         // can be offered, so that the page looks the same with and without the cache
         if ($phr->id() != 0) {
             $html = new html_base();
-            $icon_style = styles::HEADING_ICON_INLINE;
-            $tooltip = $mtr->txt(msg_id::FORMULA_LINK);
-            // the icon stays a link, so that the user who presses the greyed out icon gets the
-            // same reason that the backend would give after the link has been sent
             if ($blocked) {
-                $icon_style .= ' ' . styles::STYLE_GREY;
-                $tooltip = $mtr->txt(msg_id::FORMULA_LINK_BLOCKED);
-                $pane = $html->dsp_notification($mtr->txt(msg_id::CHANGE_BLOCKED_FOR_IP_USER));
+                $pane =$html->dsp_notification($mtr->txt(msg_id::CHANGE_BLOCKED_FOR_IP_USER));
             } elseif ($frm_lst->is_empty()) {
                 // an empty selector would post a link without a formula, which can only fail, so
                 // the pane says why nothing can be selected instead of a form that never saves
@@ -781,8 +774,8 @@ class ui_list extends ui_base
                 $pane = $html->form_start($form_name) . $fields . $sel->display()
                     . $button . $html->form_end();
             }
-            $icon = $html->ref('#' . styles::FORMULA_LINK_PANE, $html->icon(icons::LINK),
-                $tooltip, $icon_style, true);
+            $pane_url = '#' . styles::FORMULA_LINK_PANE;
+            $icon = $this->change_icon($pane_url, icons::LINK, msg_id::FORMULA_LINK, msg_id::FORMULA_LINK_BLOCKED);
             $result = $html->div($icon)
                 . $html->div($pane, styles::TOGGLE_PANE, styles::FORMULA_LINK_PANE);
         }
@@ -800,18 +793,49 @@ class ui_list extends ui_base
      */
     function formula_add_link(phrase $phr, array $url_arr = []): string
     {
-        global $mtr;
-
         $result = '';
         // a phrase without a db id cannot be linked, so there is nothing to add a formula to
         if ($phr->id() != 0) {
             $html = new html_base();
             $link_part = html_base::link_url_part([url_var::PHRASE => $phr->id()]);
             $url = $html->url_back(views::FORMULA_ADD_ID, 0, $url_arr, $link_part);
-            $result = $html->ref($url, $html->icon(icons::ADD),
-                $mtr->txt(msg_id::FORMULA_ADD), styles::HEADING_ICON_INLINE, true);
+            $result = $this->change_icon($url, icons::ADD, msg_id::FORMULA_ADD, msg_id::FORMULA_ADD_BLOCKED);
         }
         return $result;
+    }
+
+    /**
+     * an icon link that starts a change e.g. the add or the link of a formula; a user who cannot save a
+     * change (see change_blocked) gets the icon greyed out with a tooltip that asks for a login, but the
+     * icon stays a link, so the user who presses it gets the reason that the backend would give
+     *
+     * @param string $url the url or url fragment that the icon opens
+     * @param string $icon the icon css class from web/const/icons.php e.g. icons::ADD
+     * @param msg_id $tooltip the tooltip for a user who can save the change
+     * @param msg_id $tooltip_blocked the tooltip that asks a user without login to log in
+     * @return string the html code of the icon link
+     */
+    private function change_icon(string $url, string $icon, msg_id $tooltip, msg_id $tooltip_blocked): string
+    {
+        global $mtr;
+        $html = new html_base();
+        $style = styles::HEADING_ICON_INLINE;
+        $txt = $mtr->txt($tooltip);
+        if ($this->change_blocked()) {
+            $style .= ' ' . styles::STYLE_GREY;
+            $txt = $mtr->txt($tooltip_blocked);
+        }
+        return $html->ref($url, $html->icon($icon), $txt, $style, true);
+    }
+
+    /**
+     * @return bool true if the requesting user cannot save a change; without a request cache the user is
+     *              unknown and treated like any user whose profile is not known (see user::is_blocked)
+     */
+    private function change_blocked(): bool
+    {
+        global $ui_sys;
+        return $ui_sys?->usr?->is_blocked() ?? false;
     }
 
     /**

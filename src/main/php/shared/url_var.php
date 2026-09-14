@@ -336,6 +336,20 @@ class url_var
         self::DISPLAY_LIST_SIZE,
     ];
 
+    // the prefix chars that move a normal url key into another part of the url: the vars of the link
+    // created with a new object, the db values of an edit view and the back targets
+    const array PREFIXES = [
+        self::LINK,
+        self::PRE,
+        self::BACK,
+    ];
+
+    // the url vars that a '7'-prefixed link var may name, so that a typed url cannot set e.g. the id of
+    // the link that is created with a new object (the phrase of the formula link of a new formula)
+    const array LINK_VARS = [
+        self::PHRASE,
+    ];
+
     // the url vars that carry a secret (the unhashed password typed on the login / signup / activate
     // form) and must never be written to a log or reflected in a page; used to redact the post array
     // before it is logged in http/view.php (see without_secrets)
@@ -865,6 +879,42 @@ class url_var
     static function back_par(array $url_array): array
     {
         return array_filter($url_array, fn($k) => str_starts_with($k, self::BACK), ARRAY_FILTER_USE_KEY);
+    }
+
+    /**
+     * split a url key into its prefix char (see PREFIXES) and the normal url key behind it
+     *
+     * @param string $key the url key e.g. '9m'
+     * @return array the prefix char and the base key e.g. ['9', 'm'], or ['', 'm'] for a key without prefix
+     */
+    static function split_prefix(string $key): array
+    {
+        $prefix = '';
+        foreach (self::PREFIXES as $pfx) {
+            if (str_starts_with($key, $pfx)) {
+                $prefix = $pfx;
+            }
+        }
+        return [$prefix, substr($key, strlen($prefix))];
+    }
+
+    /**
+     * the url params of one url part: the params with the given prefix char, the prefix removed
+     *
+     * @param array $url_array the url e.g. ['m' => 3, '9m' => 90, '9id' => 1]
+     * @param string $prefix the prefix char of the part e.g. self::BACK, or '' for the params without prefix
+     * @return array the params of the part without the prefix e.g. ['m' => 90, 'id' => 1]
+     */
+    static function prefixed_vars(array $url_array, string $prefix): array
+    {
+        $result = [];
+        foreach ($url_array as $key => $val) {
+            [$key_prefix, $base_key] = self::split_prefix((string)$key);
+            if ($key_prefix == $prefix) {
+                $result[$base_key] = $val;
+            }
+        }
+        return $result;
     }
 
     /**

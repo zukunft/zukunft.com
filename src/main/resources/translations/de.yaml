@@ -708,6 +708,7 @@ messages:
   value_edit: "Wert ändern"
   value_del: "Wert löschen"
   formula_add: "neue Formel hinzufügen"
+  formula_add_blocked: "bitte melden Sie sich an, um Formeln hinzuzufügen"
   formula_edit: "Formel ändern"
   formula_del: "diese Formel löschen"
   formula_link: "Formel zuweisen"

@@ -1779,6 +1779,8 @@ enum messages: string
     case VALUE_EDIT = 'value_edit';
     case VALUE_DEL = 'value_del';
     case FORMULA_ADD = 'formula_add';
+    // the tooltip of the greyed out formula add icon of a user who cannot save a change
+    case FORMULA_ADD_BLOCKED = 'formula_add_blocked';
     case FORMULA_EDIT = 'formula_edit';
     case FORMULA_DEL = 'formula_del';
     case FORMULA_LINK = 'formula_link';

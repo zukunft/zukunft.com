@@ -28,7 +28,7 @@ change_log: $log
 component: $cmp2, $cmp_added, $cmp_by_id, $cmp_filled, $cmp_frm, $cmp_imp, $cmp_lnk, $cmp_lnk_cmp, $cmp_no_exc, $cmp_no_lnk, $cmp_no_ovr, $cmp_obj, $cmp_owned, $cmp_plain, $cmp_reloaded, $cmp_renamed, $cmp_renamed_reloaded, $cmp_tab, $cmp_ui, $cmp_usr2, $cmp_usr2_reloaded, $cmp_zero, $cmp_zero_imp, $dbo, $msk, $obj
 element: $elm_ui
 figure: $fig_ui
-formula: $db_rec, $dbo, $dbo_ui, $fop_ui, $frm_add, $frm_empty, $frm_has_next, $frm_html, $frm_imp, $frm_imp_off, $frm_ltx, $frm_next, $frm_page, $frm_plain, $frm_renamed, $frm_tab, $frm_this, $frm_trm, $frm_ui, $frm_upd, $frm_usr2, $frm_usr2_reloaded, $lnk, $obj, $to_add, $trp, $url_arr
+formula: $db_rec, $dbo, $dbo_ui, $fop_ui, $frm_empty, $frm_has_next, $frm_html, $frm_imp, $frm_imp_off, $frm_ltx, $frm_next, $frm_page, $frm_plain, $frm_renamed, $frm_tab, $frm_this, $frm_trm, $frm_ui, $frm_upd, $frm_usr2, $frm_usr2_reloaded, $lnk, $obj, $to_add, $trp, $url_arr
 group: $db_rec, $dbo, $dbo_ui, $grp1, $grp2, $grp_2019, $grp_big, $grp_canton, $grp_canton_pct, $grp_ch, $grp_check, $grp_chk, $grp_city, $grp_city_pct, $grp_used, $obj, $phr_grp, $phr_grp_reload, $val_grp
 job: $calc_request, $dbo, $dbo_ui, $job_closed, $job_done, $job_future, $job_high, $job_low, $job_newer, $job_older, $job_oldest
 language: $dbo, $dbo_ui, $lan_by_id, $obj, $src
@@ -125,7 +125,7 @@ export_type_list: $exp_typ
 expression: $exp, $exp_db, $exp_pe, $exp_scale, $exp_sector
 figure_list: $fig_lst, $fig_lst_ui, $lst
 formula_dsp: $frm_html
-formula_link: $dbo, $dbo_ui, $flk, $frm_lnk, $frm_lnk2, $lnk, $lnk_fld_url, $lnk_id_only, $lnk_new, $lnk_plain, $lnk_row, $lnk_tab, $lnk_url, $obj, $result
+formula_link: $dbo, $dbo_ui, $flk, $frm_lnk, $frm_lnk2, $lnk, $lnk_fld_url, $lnk_id_only, $lnk_new, $lnk_plain, $lnk_row, $lnk_tab, $lnk_url, $obj
 formula_link_list: $frm_lnk_lst, $lnk_lst, $lst
 formula_link_type: $frm_lnk_typ
 formula_list: $add_lst, $calc_blocks, $db_lst, $db_lst_all, $frm, $frm_lst, $frm_to_calc, $lst, $result, $trp_lst
@@ -235,7 +235,7 @@ ui_config: $ui_cfg
 ui_foaf: $foaf
 ui_im_export: $port
 ui_link: $link
-ui_list: $icon, $list, $lst_ui
+ui_list: $list, $lst_ui
 ui_preview: $preview
 ui_rank: $rank
 ui_select: $select

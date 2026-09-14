@@ -898,14 +898,26 @@ class base_ui_tests
         $t->assert($test_name, $link_vars[url_var::PHRASE] ?? 0, word_names::MINUTE_ID);
         $test_name = 'the back targets are no link vars';
         $t->assert($test_name, count($link_vars), 1);
-        // the confirm view keeps the link vars for the confirm submit, the page after the add does not
+        $test_name = 'a link var that a link may not name is dropped';
+        $id_vars = html_base::link_vars([url_var::LINK . url_var::ID => word_names::MINUTE_ID]);
+        $t->assert($test_name, count($id_vars), 0);
+        $test_name = 'a prefixed url key is split into the prefix and the url key';
+        $key_parts = url_var::split_prefix(url_var::BACK . url_var::MASK);
+        $t->assert($test_name, $key_parts[0] . '|' . $key_parts[1], url_var::BACK . '|' . url_var::MASK);
+        $test_name = 'a url key without prefix has no prefix';
+        $key_parts = url_var::split_prefix(url_var::MASK);
+        $t->assert($test_name, $key_parts[0], '');
+        // the confirm view keeps the link vars for the confirm submit, the page after the add does not;
+        // a valid formula of the factory, so that the url reaches the confirm view
         $test_name = 'a confirm keeps the link vars of the new object';
-        $cfm_url = $ui->url_to_action([
-            url_var::MASK => views::FORMULA_ADD_ID,
-            url_var::STEP => url_var::STEP_CONFIRM,
-            url_var::LINK . url_var::PHRASE => word_names::MINUTE_ID
-        ], $t->usr1, $cfm_msg, $ui->dto, false);
+        $frm_url = $t_frm->formula_joule_ui()->to_url_array($msg_ui);
+        $frm_url[url_var::MASK] = views::FORMULA_ADD_ID;
+        $frm_url[url_var::STEP] = url_var::STEP_CONFIRM;
+        $frm_url[url_var::LINK . url_var::PHRASE] = word_names::MINUTE_ID;
+        $cfm_url = $ui->url_to_action($frm_url, $t->usr1, $cfm_msg, $ui->dto, false);
         $t->assert($test_name, $cfm_url[url_var::LINK . url_var::PHRASE] ?? 0, word_names::MINUTE_ID);
+        $test_name = '... on the confirm view';
+        $t->assert($test_name, $cfm_url[url_var::MASK] ?? 0, views::CONFIRM_ADD_ID);
         $cfm_msg->reset();
         $test_name = 'the page after a confirmed add does not repeat the link vars';
         $cfm_url = $ui->url_to_action([

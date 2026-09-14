@@ -387,6 +387,19 @@ class word_ui_tests
         $no_phr_html = $page->system_sub_tile(msg_id::FORM_SUB_TITLE_FORMULAS);
         $t->assert_text_not_contains($test_name, $no_phr_html, icons::ADD);
 
+        // the add form and the confirm view carry the link vars to the confirm submit (see form_back)
+        $test_name = 'the hidden back fields carry the link vars of a new object';
+        $link_url = [
+            url_var::LINK . url_var::PHRASE => $wrd->phrase()->id(),
+            url_var::LINK . url_var::ID => $wrd->id()
+        ];
+        $hidden_html = $form->form_back(views::FORMULA_ADD_ID, 0, $link_url);
+        $phr_field = 'name="' . url_var::LINK . url_var::PHRASE . '"';
+        $t->assert_text_contains($test_name, $hidden_html, $phr_field);
+        $test_name = 'the hidden back fields drop a link var that a link may not name';
+        $id_field = 'name="' . url_var::LINK . url_var::ID . '"';
+        $t->assert_text_not_contains($test_name, $hidden_html, $id_field);
+
         // a user without login cannot save the link, so the icon is greyed out and the pane
         // names the reason instead of a form that the backend would only reject
         global $ui_sys;
@@ -412,9 +425,16 @@ class word_ui_tests
         $t->assert_text_contains($test_name, $ip_html, $mtr->txt(msg_id::CHANGE_BLOCKED_FOR_IP_USER));
         $test_name = 'the formula link pane of a user without login offers no link button';
         $t->assert_text_not_contains($test_name, $ip_html, $link_button);
+        $test_name = 'the formula add icon of a user without login is grey';
+        $ip_add_html = $list->formula_add_link($wrd->phrase(), $page_url);
+        $t->assert_text_contains($test_name, $ip_add_html, $icon_grey);
+        $test_name = 'the formula add icon of a user without login asks for a login';
+        $t->assert_text_contains($test_name, $ip_add_html, $mtr->txt(msg_id::FORMULA_ADD_BLOCKED));
         $ui_sys->usr = $usr_known;
         $test_name = 'the formula link icon of a known user is not grey';
         $t->assert_text_not_contains($test_name, $list->formulas($wrd, $msg, $dto), $icon_grey);
+        $test_name = 'the formula add icon of a known user is not grey';
+        $t->assert_text_not_contains($test_name, $sub_html, $icon_grey);
 
         // a selector that offers only one selection list ends with the more entry, so that the
         // user knows that a formula outside of it needs the add form

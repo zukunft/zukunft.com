@@ -175,27 +175,6 @@ class formula extends sandbox_code_id
      */
 
     /**
-     * the formula link that is created together with this new formula, e.g. to the word page that has
-     * opened the formula add view (see url_var::LINK)
-     *
-     * @param array $url_array the url with the '7'-prefixed link vars
-     * @param user_message $msg to report a problem of the link mapping
-     * @param data_object|null $dto the request cache with the names of the linked phrases
-     * @return formula_link|null the link to create or null if the url carries no link vars
-     */
-    function link_of_new(array $url_array, user_message $msg, ?data_object $dto): ?formula_link
-    {
-        $link_vars = html_base::link_vars($url_array);
-        $result = null;
-        if ($link_vars != []) {
-            $result = new formula_link();
-            $result->url_mapper($link_vars, $msg, $dto);
-            $result->set_formula($this);
-        }
-        return $result;
-    }
-
-    /**
      * set the vars of this formula frontend object bases on the url array
      * public because it is reused e.g. by the phrase group display object
      * @param array $url_array an array based on $_GET from a form submit
@@ -373,6 +352,32 @@ class formula extends sandbox_code_id
             $this->trm_lst = null;
         }
         return $msg->is_ok();
+    }
+
+
+    /*
+     * link
+     */
+
+    /**
+     * the formula link that is created together with this new formula, e.g. to the word page that has
+     * opened the formula add view (see url_var::LINK)
+     *
+     * @param array $url_array the url with the '7'-prefixed link vars
+     * @param user_message $msg to report a problem of the link mapping
+     * @param data_object|null $dto the request cache with the names of the linked phrases
+     * @return formula_link|null the link to create or null if the url carries no link vars
+     */
+    function link_of_new(array $url_array, user_message $msg, ?data_object $dto): ?formula_link
+    {
+        $link_vars = html_base::link_vars($url_array);
+        $lnk = null;
+        if ($link_vars != []) {
+            $lnk = new formula_link();
+            $lnk->url_mapper($link_vars, $msg, $dto);
+            $lnk->set_formula($this);
+        }
+        return $lnk;
     }
 
 

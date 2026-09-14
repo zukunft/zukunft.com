@@ -6576,7 +6576,6 @@
 \-- expression
     \-- element_list - section for function element_list missing in /formula/expression.php
 \-- formula
-    \-- link_of_new - section for function link_of_new is expected to be link in /formula/formula.php
     \-- url_mapper - section for function url_mapper not yet defined that it should be construct and map in /formula/for
             mula.php
     \-- sandbox_fld_order - section for function sandbox_fld_order not yet defined that it should be construct and map i

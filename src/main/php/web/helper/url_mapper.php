@@ -121,6 +121,13 @@ class url_mapper
         ));
     }
 
+    // the json field of each prefixed url part of the human-readable json url (see human_url_to_json)
+    const array URL_PART_FIELDS = [
+        url_var::LINK => json_fields::URL_PART_LINK,
+        url_var::PRE => json_fields::URL_ORIGINAL_DATA,
+        url_var::BACK => json_fields::URL_PART_BACK,
+    ];
+
     /**
      * // TODO Prio 2 review
      * the human-readable url as a pretty json object: the normal url vars become human-keyed
@@ -134,30 +141,13 @@ class url_mapper
      */
     function human_url_to_json(array $url_array, user_message $msg): string
     {
-        $main = [];
-        $link_arr = [];
-        $original = [];
-        $back_arr = [];
-        foreach ($url_array as $key => $val) {
-            if (str_starts_with($key, url_var::LINK)) {
-                $link_arr[substr($key, strlen(url_var::LINK))] = $val;
-            } elseif (str_starts_with($key, url_var::PRE)) {
-                $original[substr($key, strlen(url_var::PRE))] = $val;
-            } elseif (str_starts_with($key, url_var::BACK)) {
-                $back_arr[substr($key, strlen(url_var::BACK))] = $val;
-            } else {
-                $main[$key] = $val;
-            }
-        }
+        $main = url_var::prefixed_vars($url_array, '');
         $json = $this->to_human_assoc($main, $msg);
-        if (!empty($link_arr)) {
-            $json[json_fields::URL_PART_LINK] = $this->to_human_assoc($link_arr, $msg);
-        }
-        if (!empty($original)) {
-            $json[json_fields::URL_ORIGINAL_DATA] = $this->to_human_assoc($original, $msg);
-        }
-        if (!empty($back_arr)) {
-            $json[json_fields::URL_PART_BACK] = $this->to_human_assoc($back_arr, $msg);
+        foreach (self::URL_PART_FIELDS as $prefix => $json_fld) {
+            $part = url_var::prefixed_vars($url_array, (string)$prefix);
+            if (!empty($part)) {
+                $json[$json_fld] = $this->to_human_assoc($part, $msg);
+            }
         }
         return json_encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
     }
@@ -209,18 +199,7 @@ class url_mapper
                 // mapped (and the action / step / mask value converted) and re-apply the prefix to the
                 // human key, so the human url shows e.g. 8name / 9mask_id instead of reporting the
                 // prefixed key as missing
-                $prefix = '';
-                $base_key = $std_key;
-                if (str_starts_with($std_key, url_var::LINK)) {
-                    $prefix = url_var::LINK;
-                    $base_key = substr($std_key, strlen(url_var::LINK));
-                } elseif (str_starts_with($std_key, url_var::PRE)) {
-                    $prefix = url_var::PRE;
-                    $base_key = substr($std_key, strlen(url_var::PRE));
-                } elseif (str_starts_with($std_key, url_var::BACK)) {
-                    $prefix = url_var::BACK;
-                    $base_key = substr($std_key, strlen(url_var::BACK));
-                }
+                [$prefix, $base_key] = url_var::split_prefix((string)$std_key);
                 if (array_key_exists($base_key, $map_pos)) {
                     $pos = $map_pos[$base_key];
                     $target_key = $prefix . $map_lst[$pos][0];

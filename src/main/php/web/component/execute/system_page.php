@@ -184,7 +184,8 @@ class system_page extends component
             $result .= $html->text_h3($mtr->txt($ui_msg_code_id));
         }
         if ($ui_msg_code_id == msg_id::FORM_SUB_TITLE_FORMULAS and $dbo instanceof db_object) {
-            $icon = new ui_list()->formula_add_link($dbo->phrase(), $url_arr);
+            $list = new ui_list();
+            $icon = $list->formula_add_link($dbo->phrase(), $url_arr);
             // like the edit icon of the page title the icon stays on the line of the subtitle
             if ($icon != '') {
                 $result = $html->div($result . $icon, styles::HEADING_LINE);
