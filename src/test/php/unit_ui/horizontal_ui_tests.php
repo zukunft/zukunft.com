@@ -223,6 +223,16 @@ class horizontal_ui_tests
         $test_name = 'an unrelated frontend object is not caught by the component branch';
         $db_obj = $map->dbObject($t_map->class_to_ui_object(user::class), $t->usr1);
         $t->assert($test_name, $db_obj::class, user::class);
+        // a confirmed link add converts the frontend link, which must reach its backend link and
+        // not the base object, whose save reports the not overwritten check function
+        foreach ([formula_link::class, component_link::class, term_view::class] as $class) {
+            $ui_obj = $t_map->class_to_ui_object($class);
+            $test_name = 'the frontend ' . $class . ' converts to its backend class';
+            $db_obj = $map->dbObject($ui_obj, $t->usr1);
+            $t->assert($test_name, $db_obj::class, $class);
+            $test_name = 'the backend ' . $class . ' converts back to its frontend class';
+            $t->assert($test_name, $map->uiObject($db_obj)::class, $ui_obj::class);
+        }
 
         $t->subheader($ts . 'component types');
         $html = new html_base();

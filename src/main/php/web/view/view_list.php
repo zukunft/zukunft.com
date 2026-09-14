@@ -157,6 +157,27 @@ class view_list extends ListBase
      */
 
     /**
+     * the components used by the views of this list, each one only once and sorted by name, e.g.
+     * to offer every component that the frontend cache knows in a selector (see
+     * ui_list::component_add_row); the id and the name are returned instead of the objects,
+     * because a component_list here would include the component renderer and so the view list
+     * into itself (see the include block of component_list and component)
+     *
+     * @return array the name of every component of the views of this list keyed by its id
+     */
+    function component_names(): array
+    {
+        $result = [];
+        foreach ($this->lst() as $msk) {
+            foreach ($msk->get_component_list()->lst() as $cmp) {
+                $result[$cmp->id()] = $cmp->name();
+            }
+        }
+        natsort($result);
+        return $result;
+    }
+
+    /**
      * @return string with a list of the view names with html links
      * ex. names_linked
      */

@@ -388,6 +388,25 @@ class frontend
     }
 
     /**
+     * the url of the page after an action as a plain get (POST-Redirect-GET), so the address bar
+     * shows the next page and a reload does not repeat the action; the submit marker, the session
+     * token and a typed password are left out, because a url is visible and stored in the history
+     *
+     * @param array $url_array the url of the next page as returned by url_to_action
+     * @return string the url to redirect to, or empty if the next page is itself an action (e.g. logout)
+     */
+    static function redirect_url(array $url_array): string
+    {
+        $drop = array_merge([url_var::POST_SUBMIT, url_var::SESSION_TOKEN], url_var::SECRET_VARS);
+        $next_url = array_diff_key($url_array, array_flip($drop));
+        $result = '';
+        if (!self::request_triggers_action($next_url)) {
+            $result = api::MAIN_SCRIPT . url_var::PAR . http_build_query($next_url);
+        }
+        return $result;
+    }
+
+    /**
      * decide whether a request may proceed with respect to the anti-csrf session token
      * every request that triggers an action (see request_triggers_action) - a crud change, a login,
      * signup, import or paste submit, but also a get action mask like logout or error_update - must
@@ -819,16 +838,17 @@ class frontend
                 }
             }
             $url[url_var::MASK] = $confirm_view;
-            // the confirm mask does not encode the object type and the confirm view has no back target
-            // of its own, so set the back target to the object's own default view + id (derived from the
-            // originating edit mask); the confirm view uses it to show the real object, and cancel and
-            // the post-write redirect return to it via the standard '9'-prefixed back mechanism
-            // TODO Prio 2 review
-            $views = new views();
-            $url[url_var::BACK . url_var::MASK] =
-                $views->code_id_to_id($views->system_to_base($views->id_to_code_id($view)));
-            if ($id != 0) {
-                $url[url_var::BACK . url_var::ID] = $id;
+            // the confirm mask does not encode the object type, so the mask of the change travels as
+            // origin mask; cancel and the post-write redirect return via the '9'-prefixed back target
+            // to the page that has opened the change, or without one to the object's own view + id;
+            // the start page shows no object, so a change opened there also returns to the object
+            $url[url_var::ORIGIN_MASK] = $view;
+            $back_view = $url_array[url_var::BACK . url_var::MASK] ?? views::START_ID;
+            if ($back_view == views::START_ID) {
+                $url[url_var::BACK . url_var::MASK] = new views()->id_to_base_id($view);
+                if ($id != 0) {
+                    $url[url_var::BACK . url_var::ID] = $id;
+                }
             }
             $url[url_var::STEP] = url_var::STEP_CONFIRMED;
             return $url;
@@ -1276,19 +1296,27 @@ class frontend
         $mask_id = $url_array[url_var::MASK] ?? 0;
         $obj_id = $url_array[url_var::ID] ?? 0;
         $lan = $url_array[url_var::LANGUAGE] ?? '';
+        // the list size and the list page are view-only states of the same page (the more and
+        // the all version of a list, see docs/llm/frontend.md), so each version is cached on its own
+        $list_size = $url_array[url_var::DISPLAY_LIST_SIZE] ?? '';
+        $list_page = $url_array[url_var::DISPLAY_LIST_PAGE] ?? '';
+        $list_cols = $url_array[url_var::DISPLAY_LIST_COLUMNS] ?? '';
+        $list_range = $url_array[url_var::DISPLAY_LIST_RANGE] ?? '';
         // a request without a view and without an object shows the default start view, so cache it
         // under the start view key so the bare landing page (view.php with no mask) and an explicit
         // start request (view.php?m=1) share the same cached start page
         $mask_id = self::default_view_id($mask_id, $obj_id);
-        // a request with more than the view, object and language is not cached; the anti-csrf token
-        // is per session, the debug level only controls out-of-band debug output (log_debug echoes,
-        // never part of the rendered html), and a process step of 0 (no action started) does not
-        // change a view-only page, so all three are allowed without preventing the cache and are not
-        // part of the cache key - so e.g. ?m=2&debug=6 takes the same cached path as ?m=2
-        // the same applies to the cache switch itself, which is checked below instead
+        // a request with more than the view, object, language and list state is not cached; the
+        // anti-csrf token is per session, the debug level only controls out-of-band debug output
+        // (log_debug echoes, never part of the rendered html), and a process step of 0 (no action
+        // started) does not change a view-only page, so all three are allowed without preventing
+        // the cache and are not part of the cache key - so e.g. ?m=2&debug=6 takes the same cached
+        // path as ?m=2; the same applies to the cache switch itself, which is checked below instead
         $is_view_only = true;
         foreach ($url_array as $url_key => $url_val) {
             $is_key_param = in_array($url_key, [url_var::MASK, url_var::ID, url_var::LANGUAGE,
+                url_var::DISPLAY_LIST_SIZE, url_var::DISPLAY_LIST_PAGE,
+                url_var::DISPLAY_LIST_COLUMNS, url_var::DISPLAY_LIST_RANGE,
                 url_var::SESSION_TOKEN, url_var::DEBUG, url_var::NO_CACHE]);
             $is_show_step = ($url_key == url_var::STEP and $url_val == url_var::STEP_BASE);
             if (!$is_key_param and !$is_show_step) {
@@ -1325,18 +1353,31 @@ class frontend
             if ($lan != '') {
                 $result .= url_var::ADD . url_var::LANGUAGE . url_var::EQ . $lan;
             }
+            if ($list_size != '') {
+                $result .= url_var::ADD . url_var::DISPLAY_LIST_SIZE . url_var::EQ . $list_size;
+            }
+            if ($list_page != '') {
+                $result .= url_var::ADD . url_var::DISPLAY_LIST_PAGE . url_var::EQ . $list_page;
+            }
+            if ($list_cols != '') {
+                $result .= url_var::ADD . url_var::DISPLAY_LIST_COLUMNS . url_var::EQ . $list_cols;
+            }
+            if ($list_range != '') {
+                $result .= url_var::ADD . url_var::DISPLAY_LIST_RANGE . url_var::EQ . $list_range;
+            }
         }
         return $result;
     }
 
     /**
      * create the html notification for the user messages of the current request
-     * used to render the message into a live page and to add it to a page loaded from the cache
+     * used to render the message into a live page, to add it to a page loaded from the cache
+     * and to keep it for the page after the redirect of an action (see http/view.php)
      *
      * @param user_message_ui $msg_ui with the messages collected during the request
      * @return string the html code of the notification or an empty string if there is no message
      */
-    private function user_msg_html(user_message_ui $msg_ui): string
+    function user_msg_html(user_message_ui $msg_ui): string
     {
         $result = '';
         $html = new html_base();
@@ -1950,8 +1991,8 @@ class frontend
 
     /**
      * the object field values of a url without the control vars that select the view, the object and
-     * the render mode and without the '9'-prefixed back navigation targets, e.g. to carry the posted
-     * values of a simulated write to the following page (see action_crud)
+     * the render mode and without the '9'-prefixed back navigation targets and the '7'-prefixed link
+     * vars, e.g. to carry the posted values of a simulated write to the following page (see action_crud)
      *
      * @param array $url_array the parsed url
      * @return array the url keys and values that are object field values
@@ -1962,7 +2003,8 @@ class frontend
         foreach ($url_array as $key => $val) {
             if (!in_array($key, url_var::CONTROL_VARS)
                 and $key != rest_ctrl::PAR_VIEW_NEW_ID
-                and !str_starts_with($key, url_var::BACK)) {
+                and !str_starts_with($key, url_var::BACK)
+                and !str_starts_with($key, url_var::LINK)) {
                 $result[$key] = $val;
             }
         }
@@ -2022,6 +2064,10 @@ class frontend
                 // stay on the current view so the user can fix errors
                 return $url_array;
             }
+            // the link that the confirm page has shown with a new object needs the id of the object
+            if ($crud == url_var::CRUD_CREATE) {
+                $this->add_link_of_new($dbo, $url_array, $msg_ui, $dto);
+            }
         }
 
         // on success go back to the calling page: the confirm view set the object's own default view +
@@ -2033,11 +2079,12 @@ class frontend
         // built, so the id assigned by the write (see db_object::add_via_api) is added here; without
         // it the user would land on the object's own default view with id 0, i.e. an empty page.
         // the start view shows no object, so it never gets an id
+        // a calling page that shows another object keeps its own id (see back_shows_object)
         $back_url = $this->url_to_back_url($url_array);
         if ($crud != url_var::CRUD_DELETE
             and $dbo instanceof db_object_ui
             and $dbo->id() != 0
-            and ($back_url[url_var::MASK] ?? views::START_ID) != views::START_ID) {
+            and $this->back_shows_object($url_array, $back_url)) {
             $back_url[url_var::ID] = $dbo->id();
         }
         if (!$do_it and $crud != url_var::CRUD_DELETE) {
@@ -2049,6 +2096,54 @@ class frontend
             $back_url = array_merge($this->url_object_values($url_array), $back_url);
         }
         return $back_url;
+    }
+
+    /**
+     * true if the back target of a confirmed change is the page of the changed object itself, i.e. its
+     * own view with its id before the write (none for an add), so the id of the write may replace it
+     *
+     * @param array $url_array the confirmed change url with the origin mask and the object id
+     * @param array $back_url the back target of the url without the '9' prefix
+     * @return bool true if the back target should show the written object
+     */
+    private function back_shows_object(array $url_array, array $back_url): bool
+    {
+        $back_view = $back_url[url_var::MASK] ?? views::START_ID;
+        // a url without origin mask (e.g. of a workflow test) names the own view as back mask
+        $own_view = $back_view;
+        if (array_key_exists(url_var::ORIGIN_MASK, $url_array)) {
+            $own_view = new views()->id_to_base_id((int)$url_array[url_var::ORIGIN_MASK]);
+        }
+        $back_id = (string)($back_url[url_var::ID] ?? 0);
+        $url_id = (string)($url_array[url_var::ID] ?? 0);
+        return ($back_view != views::START_ID and $back_view == $own_view and $back_id == $url_id);
+    }
+
+    /**
+     * write the link that the confirm page of a new object has shown with it, e.g. the formula link to
+     * the word page that has opened the formula add view (see url_var::LINK); called after the object
+     * write, because the link needs the id of the new object
+     *
+     * @param sandbox_ui|sandbox_named_ui|db_object_ui|combine_named_ui|type_object|sandbox_list_ui $dbo the just added object
+     * @param array $url_array the confirmed url with the '7'-prefixed link vars
+     * @param user_message_ui $msg_ui to report the result of the link write
+     * @param data_object $dto the request cache with the names of the linked objects
+     * @return void
+     */
+    private function add_link_of_new(
+        sandbox_ui|sandbox_named_ui|db_object_ui|combine_named_ui|type_object|sandbox_list_ui $dbo,
+        array                                                                                 $url_array,
+        user_message_ui                                                                       $msg_ui,
+        data_object                                                                           $dto
+    ): void
+    {
+        if ($dbo instanceof formula_ui) {
+            $lnk = $dbo->link_of_new($url_array, $msg_ui, $dto);
+            // the formula is written already, so a failed link is reported and the page still moves on
+            if ($lnk != null) {
+                $msg_ui->merge($lnk->add_via_api($msg_ui));
+            }
+        }
     }
 
     /**
@@ -2082,14 +2177,17 @@ class frontend
     private function dbo_for_url(int $view_id, array $url_array, bool $for_action = false): sandbox_ui|sandbox_named_ui|db_object_ui|combine_named_ui|type_object|sandbox_list_ui
     {
         $dbo = $this->view_id_to_dbo_ui($view_id);
-        // a confirm view does not encode its own object type, so it takes the type from the '9'-prefixed
-        // back mask (the object's own default view). without it view_id_to_dbo_ui has fallen back to a
+        // a confirm view does not encode its own object type, so it takes the type from the origin mask
+        // (the add, edit or del mask of the change) or, for a url without one, from the '9'-prefixed
+        // back mask. without both view_id_to_dbo_ui has fallen back to a
         // word, which would let a confirmed change or delete target the wrong object, so log the
         // inconsistency instead of defaulting silently (see docs/llm/structure.md). only a confirm view
-        // that triggers a write ($for_action) needs the back mask; rendering one standalone (e.g. the
+        // that triggers a write ($for_action) needs the mask; rendering one standalone (e.g. the
         // view catalog test) legitimately has none, so it is not logged
         if (in_array($view_id, views::CONFIRM_MASKS_IDS)) {
-            if (array_key_exists(url_var::BACK . url_var::MASK, $url_array)) {
+            if (array_key_exists(url_var::ORIGIN_MASK, $url_array)) {
+                $dbo = $this->view_id_to_dbo_ui((int)$url_array[url_var::ORIGIN_MASK]);
+            } elseif (array_key_exists(url_var::BACK . url_var::MASK, $url_array)) {
                 $dbo = $this->view_id_to_dbo_ui((int)$url_array[url_var::BACK . url_var::MASK]);
             } elseif ($for_action) {
                 log_err('confirm view ' . $view_id . ' reached without a back mask, '

@@ -396,3 +396,18 @@ unit list, which does not know the page phrase) may the tail stay plain text —
 and that is a gap to close by threading the context, not a licence to skip the
 link. When adding a new truncated list, pick (or create) the "show all" view
 first, then wire the tail to it.
+
+## The simple table and its "…" header
+
+A value table has a simple and a full version, like a list has a short and a
+more version. The simple version shows the columns of the mayor tier only, one
+unit per column, and each cell the number without its probability range; the
+full version shows every tier, every unit and the range behind each number. The
+start page opens with the simple version. The last header cell of a simple
+table is the "…" link (`value_list::all_columns_link`) to the same page with
+`url_var::DISPLAY_LIST_COLUMNS` (`dlc`, human `display_list_columns`) set to
+`value_list::COLUMN_TIERS_ALL` and `url_var::DISPLAY_LIST_RANGE` (`dlr`,
+`display_list_range`) set to `url_var::TRUE`. Both are `url_var::PAGE_VARS` and
+part of the page cache key, so the full version is a cached page of its own
+like the more version of a list. A page that is not known renders the "…" as
+plain text, the same gap as for the list tail.

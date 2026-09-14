@@ -146,18 +146,53 @@ class system_form extends component
      * start an HTML form, show the title and set and set the unique form name
      * @param string $form_name the name of the view which is also used for the html form name
      * @param msg_id|null $ui_msg_code_id the message id of the text that should be shown to the user in the user-specific frontend language
+     * @param db_object|type_object|combine_named|sandbox_list|null $dbo the object of the form, used to name the object in the title e.g. the phrase of a reference
      * @return string the html code to start a new form and display the tile
      */
-    function form_tile(string $form_name, ?msg_id $ui_msg_code_id = null): string
+    function form_tile(
+        string                                                $form_name,
+        ?msg_id                                               $ui_msg_code_id = null,
+        db_object|type_object|combine_named|sandbox_list|null $dbo = null
+    ): string
     {
-        global $mtr;
-
         $html = new html_base();
         $result = '';
         if ($ui_msg_code_id != null) {
-            $result .= $html->text_h2($mtr->txt($ui_msg_code_id));
+            $result .= $html->text_h2($this->form_title_text($ui_msg_code_id, $dbo));
         }
         $result .= $html->form_start($form_name);
+        return $result;
+    }
+
+    /**
+     * the title of a system form in the user language; the title of a reference also names and links
+     * the word or triple the reference belongs to, e.g. "Change reference for GDP", because the phrase
+     * of a reference cannot be changed and is therefore not a field of the edit form
+     *
+     * @param msg_id $ui_msg_code_id the message id of the form title
+     * @param db_object|type_object|combine_named|sandbox_list|null $dbo the object of the form
+     * @return string the form title in the user-specific frontend language
+     */
+    private function form_title_text(
+        msg_id                                                $ui_msg_code_id,
+        db_object|type_object|combine_named|sandbox_list|null $dbo
+    ): string
+    {
+        global $mtr;
+
+        $result = $mtr->txt($ui_msg_code_id);
+        // the api sends the phrase with the name for a page request; name_link() returns safe html,
+        // so it replaces the message var unescaped; without a name (e.g. a test render that fills
+        // the reference from the url values only) the plain title is used, because a link without
+        // a name would be invisible
+        if ($ui_msg_code_id == msg_id::FORM_TITLE_REF_EDIT and $dbo instanceof ref
+            and $dbo->phrase()->name() != '') {
+            $lib = new library();
+            $result = $lib->msg_var_replace(
+                $mtr->txt(msg_id::FORM_TITLE_REF_EDIT_PHRASE),
+                msg_id::VAR_PHRASE_NAME,
+                $dbo->phrase()->name_link());
+        }
         return $result;
     }
 
@@ -429,7 +464,7 @@ class system_form extends component
         // an object class without a type list e.g. a link has no type and therefore no type
         // subtitle; asking the type list also covers the page classes that extend the object
         // class (e.g. component_exe extends component), which an exact class match would miss
-    $typ_lst = $ui_sys?->typ_lst_cache?->class_to_type_list($dbo::class);
+        $typ_lst = $ui_sys?->typ_lst_cache?->class_to_type_list($dbo::class);
         if ($typ_lst == null) {
             return '';
         }
@@ -516,9 +551,14 @@ class system_form extends component
         $result .= $html->input(url_var::MASK, msg_id::FORM_FIELD_MASK, $msk_id, html_base::INPUT_HIDDEN);
         $result .= $html->input(url_var::ID, msg_id::FORM_FIELD_ID, $id, html_base::INPUT_HIDDEN);
         // carry the '9'-prefixed back targets so cancel and the post-action redirect return to where the
-        // user came from (the confirm view sets the object's own view + id as the back target)
+        // user came from, the '7'-prefixed vars of the link that a new object gets with the same confirm
+        // (only those that a link may name, see html_base::link_vars) and the origin mask that names the
+        // object type of a confirm view
+        $link_url = html_base::prefixed_url_array(html_base::link_vars($url_array), url_var::LINK);
         foreach ($url_array as $key => $val) {
-            if (str_starts_with($key, url_var::BACK)) {
+            if (str_starts_with($key, url_var::BACK)
+                or array_key_exists($key, $link_url)
+                or $key == url_var::ORIGIN_MASK) {
                 $result .= $html->form_hidden($key, (string)$val);
             }
         }

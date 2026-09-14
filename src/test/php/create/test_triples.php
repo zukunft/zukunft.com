@@ -1510,7 +1510,8 @@ class test_triples extends test_objects
     }
 
     /**
-     * @return triple "column potential loss" that defines "potential loss" as a main table column
+     * @return triple "column potential loss" that defines "potential loss" as a mayor table column,
+     *                so that the simple start page shows it (see solution_prio.json)
      */
     function column_potential_loss(): triple
     {
@@ -1519,7 +1520,7 @@ class test_triples extends test_objects
         $trp->set(triple_names::COLUMN_POTENTIAL_LOSS_ID, triple_names::COLUMN_POTENTIAL_LOSS);
         $trp->set_from($this->potential_loss()->phrase());
         $trp->set_verb($t_vrb->verb_can_be());
-        $trp->set_to($this->column_main()->phrase());
+        $trp->set_to($this->column_mayor()->phrase());
         return $trp;
     }
 

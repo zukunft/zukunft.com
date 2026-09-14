@@ -42,6 +42,7 @@ use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\api\controller;
+use Zukunft\ZukunftCom\main\php\shared\helper\Config as shared_config;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 // init api app and open database
@@ -61,6 +62,10 @@ if ($db_con->is_open()) {
     // get the parameters
     $frm_ids = $_GET[url_var::ID_LST] ?? '';
     $phr_id = $_GET[url_var::PHRASE] ?? 0;
+    // the size is user input, so it is capped to one selection list: without the cap a single
+    // request could ask for the complete formula table (see the crawler note below)
+    $size = (int)($_GET[url_var::DISPLAY_LIST_SIZE] ?? shared_config::ROW_LIMIT);
+    $size = max(1, min($size, shared_config::LIMIT_SEARCH_LIST));
 
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
     if ($usr->id > 0) {
@@ -81,7 +86,13 @@ if ($db_con->is_open()) {
             $lst->filter_readable_by($usr);
             $result = $lst->api_json([], $msg);
         } else {
-            $msg->add_message_text('list of formula id or the phrase id is missing');
+            // the formulas a user can select e.g. to assign one to a phrase; bound by the
+            // requested size, because a selector never shows more than one page of names
+            $lst = new formula_list($usr);
+            $lst->load_all($size, 0, $msg);
+            // drop the formulas the requester may not read (idor); see sandbox::is_readable_by
+            $lst->filter_readable_by($usr);
+            $result = $lst->api_json([], $msg);
         }
     }
 

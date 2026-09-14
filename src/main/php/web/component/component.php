@@ -55,7 +55,7 @@ include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::TYPES . 'view_style_list.php';
 include_once html_paths::FORMULA . 'formula_list.php';
 include_once html_paths::SANDBOX . 'db_object.php';
-//include_once html_paths::SANDBOX . 'sandbox_code_id.php';
+include_once html_paths::SANDBOX . 'sandbox_code_id.php';
 include_once html_paths::VIEW . 'view_list.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::WORD . 'word.php';

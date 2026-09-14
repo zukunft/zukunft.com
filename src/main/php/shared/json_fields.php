@@ -51,8 +51,10 @@ class json_fields
     const string TIMESTAMP = 'timestamp';
     const string SELECTION = 'selection';
     const string BODY = 'body';
-    // subarrays of the json url representation: the '8'-prefixed pre values (the db values when the
-    // edit view was opened) and the '9'-prefixed back targets (where cancel / confirm return to)
+    // subarrays of the json url representation: the '7'-prefixed link vars (the link created with a new
+    // object), the '8'-prefixed pre values (the db values when the edit view was opened) and the
+    // '9'-prefixed back targets (where cancel / confirm return to)
+    const string URL_PART_LINK = 'url_part_link';
     const string URL_ORIGINAL_DATA = 'url_part_original_data';
     const string URL_PART_BACK = 'url_part_back';
     // the messages that should be shown to the user e.g. name already used. please use another name

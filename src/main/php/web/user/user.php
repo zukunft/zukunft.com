@@ -475,6 +475,30 @@ class user extends db_object
     }
 
     /**
+     * the frontend twin of the backend user::is_blocked, which rejects every change of an ip user
+     * unless the pod admin permits it (config.yaml: pod > permissions > database change > ip user);
+     * used to grey out an action that the backend would only reject, e.g. the formula link icon
+     *
+     * unlike is_ip_only a user whose profile is not (yet) known is not blocked, because hiding an
+     * action from a user who may use it is worse than offering an action that the backend rejects
+     * with the same message that the greyed out icon shows
+     *
+     * TODO Prio 3 ask the pod permission as soon as the frontend config carries it, because until
+     *      then a pod that permits the changes of an ip user greys out the action although it works
+     *
+     * @return bool true if the user is not allowed to save a change in the database
+     */
+    function is_blocked(): bool
+    {
+        global $ui_sys;
+        $result = false;
+        if ($this->profile_id > 0 and $ui_sys?->typ_lst_cache?->usr_pro != null) {
+            $result = $this->profile_id == $ui_sys->typ_lst_cache->usr_pro->id(user_profiles::IP_ONLY);
+        }
+        return $result;
+    }
+
+    /**
      * @returns bool true if the user has admin rights
      */
     function is_admin(): bool

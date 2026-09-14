@@ -237,13 +237,17 @@ class db_object extends TextIdObject
     /**
      * the ordered database field names of this object, e.g. word_fields::ALL_NAMES
      * used to show the pending field changes in the confirm preview in the database order
-     * expected to be overwritten by each sandbox child that has user-editable fields
+     * expected to be overwritten by each sandbox child that has its own field order
+     *
+     * an object that names its editable fields but no order uses them in the order of that map,
+     * so that the confirm preview shows the editable fields of e.g. a formula link instead of
+     * every url key, which would include the ids of the linked objects (see ui_preview::change_rows)
      *
      * @return array the ordered db field names, or an empty array if the object has no field order
      */
     function sandbox_fld_order(): array
     {
-        return [];
+        return array_keys($this->db_fld_to_url());
     }
 
     /**

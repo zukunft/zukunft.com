@@ -240,6 +240,8 @@ enum messages: string
     case TOTAL = 'total';
     case MORE = 'more';
     case AND_MORE = '... more';
+    // the tooltip of the "..." header of a simple table that links to the table with every column
+    case TABLE_ALL_COLUMNS_TIP = 'table_all_columns_tip';
     case EXAMPLE_SHORT = 'e.g.';
     case NO_PRIVILEGES = 'cannot be changed';
 
@@ -1715,6 +1717,14 @@ enum messages: string
     case INFO_VIEW_HAS_NO_COMPONENTS = 'info_view_has_no_components';
     case INFO_NOT_USED_IN_VIEWS = 'info_not_used_in_views';
     case INFO_NOT_USED_BY_TERMS = 'info_not_used_by_terms';
+    // shown on the search page if no word, triple, verb or formula matches the search pattern
+    case INFO_NO_SEARCH_RESULT = 'info_no_search_result';
+    // shown instead of the formula selector of a phrase page if no formula can be offered
+    case INFO_NO_FORMULA_TO_LINK = 'info_no_formula_to_link';
+    // the title of the formula link confirm page
+    case INFO_LINK_FORMULA_TO_PHRASE = 'info_link_formula_to_phrase';
+    // the title of the confirm page section with the link that a new object gets with the same confirm
+    case INFO_CONFIRM_LINK = 'info_confirm_link';
 
     // e.g. if an import formula does not contain all needed parameters
     case FORMULA_NOT_VALID = 'formula is not valid';
@@ -1771,9 +1781,13 @@ enum messages: string
     case VALUE_EDIT = 'value_edit';
     case VALUE_DEL = 'value_del';
     case FORMULA_ADD = 'formula_add';
+    // the tooltip of the greyed out formula add icon of a user who cannot save a change
+    case FORMULA_ADD_BLOCKED = 'formula_add_blocked';
     case FORMULA_EDIT = 'formula_edit';
     case FORMULA_DEL = 'formula_del';
     case FORMULA_LINK = 'formula_link';
+    // the tooltip of the greyed out formula link icon of a user who cannot save a change
+    case FORMULA_LINK_BLOCKED = 'formula_link_blocked';
     case FORMULA_UNLINK = 'formula_unlink';
     case RESULT_EDIT = 'result_edit';
     case RESULT_DEL = 'result_del';
@@ -1801,6 +1815,10 @@ enum messages: string
     case USER_EDIT = 'user_edit';
     case USER_DEL = 'user_del';
     case PLEASE_SELECT = 'please_select';
+    // the empty entry of a selector that has no label to explain it, e.g. the component selector
+    // at the end of the component list of a view, plus the tooltip that says what it selects
+    case PLEASE_SELECT_SHORT = 'please_select_short';
+    case SELECT_TO_ADD = 'select_to_add';
 
     /*
      * view
@@ -1823,6 +1841,8 @@ enum messages: string
     case FORM_TITLE_SOURCE_DEL = 'form_title_source_del';
     case FORM_TITLE_REF_ADD = 'form_title_ref_add';
     case FORM_TITLE_REF_EDIT = 'form_title_ref_edit';
+    // the ref edit title that names the linked phrase, used if the phrase name is known
+    case FORM_TITLE_REF_EDIT_PHRASE = 'form_title_ref_edit_phrase';
     case FORM_TITLE_REF_DEL = 'form_title_ref_del';
     case FORM_TITLE_GROUP_ADD = 'form_title_group_add';
     case FORM_TITLE_GROUP_EDIT = 'form_title_group_edit';
@@ -1891,6 +1911,8 @@ enum messages: string
     case FORM_TITLE_ERROR_UPDATE = 'system_title_error_update';
     case FORM_TITLE_SEARCH = 'system_title_search';
     case FORM_TITLE_SEARCH_RESULT = 'system_title_search_result';
+    // the button of a search without a result that suggests to add the pattern as a new word
+    case SEARCH_ADD_WORD = 'system_search_add_word';
     case FORM_TITLE_SEARCH_FULL = 'system_title_search_full';
     case FORM_TITLE_SANDBOX = 'system_title_sandbox';
     case FORM_TITLE_UNDO = 'system_title_undo';
@@ -2177,6 +2199,8 @@ enum messages: string
     case BUTTON_VIEW_EDIT_TIP = 'button_view_edit_tip';
     case SYSTEM_BUTTON_IMPORT = 'system_button_import';
     case SYSTEM_BUTTON_EXPORT = 'system_button_export';
+    // the button that links the selected object to the shown object e.g. a formula to a phrase
+    case SYSTEM_BUTTON_LINK = 'system_button_link';
     case FORM_WORD_FLD_NAME = 'form_word_fld_name';
 
 
