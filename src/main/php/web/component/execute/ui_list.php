@@ -239,15 +239,138 @@ class ui_list extends ui_base
     /**
      * HTML for the phrases related to the given phrase excluding the alias, symbol and "is a"
      * entries, because the alias and symbol have their own components and the "is a" parents
-     * are already shown in the page subtitle (e.g. on the default word page)
+     * are already shown in the page subtitle (e.g. on the default word page); a phrase without an
+     * "is a" parent gets the form to define it as one of the categories first (see define_form)
      *
      * @param word|db_object $wrd the object shown to the user e.g. the word "US dollar"
      * @param phrase_list|null $phr_lst the cached list of phrases for initial display without backend call
-     * @return string the html code with the remaining related phrases
+     * @param data_object|null $cfg the request cache with the categories that the phrase can be defined as
+     * @param bool $test_mode true to build the define form without a backend call
+     * @param array $url_arr the url of the shown page as back target of the triple add view
+     * @return string the html code with the define form and the remaining related phrases
      */
-    function phrases_related_ex_subtitle(word|db_object $wrd, user_message $msg, ?phrase_list $phr_lst = null): string
+    function phrases_related_ex_subtitle(
+        word|db_object $wrd,
+        user_message   $msg,
+        ?phrase_list   $phr_lst = null,
+        ?data_object   $cfg = null,
+        bool           $test_mode = false,
+        array          $url_arr = []
+    ): string
     {
-        return $this->phrases_related_ex_verbs($wrd, $phr_lst, [verbs::SYMBOL, verbs::ALIAS, verbs::IS], $msg, true);
+        $phr_cac = $this->related_list($wrd, $phr_lst);
+        $result = $this->define_form($wrd->phrase(), $phr_cac, $msg, $cfg, $test_mode, $url_arr);
+        $ex_vrb_lst = [verbs::SYMBOL, verbs::ALIAS, verbs::IS];
+        return $result . $this->phrases_related_ex_verbs($wrd, $phr_lst, $ex_vrb_lst, $msg, true);
+    }
+
+    /**
+     * the plus icon of a word or triple that has no "is a" parent yet, which reveals the form to define
+     * it as one of the categories, e.g. "define lugano as [city] add" (like the formula link icon); the
+     * button opens the triple add view with the phrase, the verb "is a" and the selected category
+     * preselected, so the user checks the new triple before the save
+     *
+     * @param phrase $phr the shown word or triple
+     * @param phrase_list|null $phr_cac the related phrases of the shown phrase with its triples
+     * @param user_message $msg to report a problem of the category load
+     * @param data_object|null $cfg the request cache with the categories that can be selected
+     * @param bool $test_mode true to build the form without a backend call
+     * @param array $url_arr the url of the shown page as back target
+     * @return string the html code of the icon and the hidden form, empty if the phrase has an "is a" parent
+     */
+    private function define_form(
+        phrase       $phr,
+        ?phrase_list $phr_cac,
+        user_message $msg,
+        ?data_object $cfg,
+        bool         $test_mode,
+        array        $url_arr
+    ): string
+    {
+        global $ui_sys;
+
+        $result = '';
+        $is_vrb = $ui_sys?->typ_lst_cache?->vrb?->get_by_code_id(verbs::IS);
+        // without the related phrases or the verb it is unknown whether the phrase has a parent
+        if ($phr->id() != 0 and $phr_cac != null and $is_vrb != null) {
+            // the "is a" triples with the phrase as from side are its parents
+            if ($phr_cac->children($phr, $msg, $is_vrb)->is_empty()) {
+                $pane = $this->define_pane($phr, $is_vrb, $msg, $cfg, $test_mode, $url_arr);
+                $result = $this->toggle_pane(
+                    styles::DEFINE_PHRASE_PANE, icons::ADD, msg_id::DEFINE_PHRASE, msg_id::DEFINE_PHRASE_BLOCKED, $pane);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the pane that the define icon reveals: the text, the category selector and the add button, or the
+     * reason why nothing can be defined, i.e. a user without login or no category to select
+     *
+     * @param phrase $phr the shown word or triple without an "is a" parent
+     * @param verb $is_vrb the verb "is a" of the new triple
+     * @param user_message $msg to report a problem of the category load
+     * @param data_object|null $cfg the request cache with the categories that can be selected
+     * @param bool $test_mode true to build the form without a backend call
+     * @param array $url_arr the url of the shown page as back target
+     * @return string the html code of the pane
+     */
+    private function define_pane(
+        phrase       $phr,
+        verb         $is_vrb,
+        user_message $msg,
+        ?data_object $cfg,
+        bool         $test_mode,
+        array        $url_arr
+    ): string
+    {
+        global $mtr;
+
+        $html = new html_base();
+        $blocked = $this->change_blocked();
+        $ctg_lst = $cfg?->ctg_lst ?? new phrase_list();
+        // a user without login cannot save the triple, so the categories are not even read; the request
+        // cache is filled by the unit tests only, so outside of them the categories come from the backend
+        if ($ctg_lst->is_empty() and !$test_mode and !$blocked) {
+            $ctg_lst->load_by_verb($is_vrb, foaf_direction::UP, $msg);
+        }
+        if ($blocked) {
+            $pane = $html->dsp_notification($mtr->txt(msg_id::CHANGE_BLOCKED_FOR_IP_USER));
+        } elseif ($ctg_lst->is_empty()) {
+            $pane = $mtr->txt(msg_id::INFO_NO_CATEGORY_TO_SELECT);
+        } else {
+            $lib = new library();
+            $form_name = views::TRIPLE_ADD;
+            $fields = $this->hidden_fields([
+                url_var::MASK => views::TRIPLE_ADD_ID,
+                url_var::PHRASE_FROM => $phr->id(),
+                url_var::VERB => $is_vrb->id()
+            ], $url_arr);
+            $define_txt = $mtr->txt(msg_id::INFO_DEFINE_PHRASE_AS);
+            $text = $lib->msg_var_replace($define_txt, msg_id::VAR_PHRASE_NAME, $html->esc($phr->name()));
+            $sel = $ctg_lst->selector($form_name, 0, url_var::PHRASE_TO, msg_id::FORM_SELECT_PHRASE_TO);
+            $button = $html->form_submit($mtr->txt(msg_id::SYSTEM_BUTTON_ADD));
+            $pane = $html->form_start($form_name) . $fields . $text . $sel . $button . $html->form_end();
+        }
+        return $pane;
+    }
+
+    /**
+     * the hidden fields of a form that opens another view: the given url vars followed by the shown
+     * page as '9'-prefixed back target
+     *
+     * @param array $url_vars the url vars that the form sends e.g. the mask and the phrase
+     * @param array $url_arr the url of the shown page as back target
+     * @return string the html code of the hidden fields
+     */
+    private function hidden_fields(array $url_vars, array $url_arr): string
+    {
+        $html = new html_base();
+        $result = '';
+        foreach ($url_vars + html_base::back_url_array($url_arr) as $key => $val) {
+            $result .= $html->form_hidden($key, (string)$val);
+        }
+        return $result;
     }
 
     /**
@@ -759,12 +882,11 @@ class ui_list extends ui_base
                 $pane = $mtr->txt(msg_id::INFO_NO_FORMULA_TO_LINK);
             } else {
                 $form_name = views::FORMULA_LINK_ADD;
-                $fields = $html->form_hidden(url_var::MASK, (string)views::FORMULA_LINK_ADD_ID)
-                    . $html->form_hidden(url_var::STEP, url_var::STEP_CONFIRM)
-                    . $html->form_hidden(url_var::PHRASE, (string)$phr->id());
-                foreach (html_base::back_url_array($url_arr) as $key => $val) {
-                    $fields .= $html->form_hidden($key, (string)$val);
-                }
+                $fields = $this->hidden_fields([
+                    url_var::MASK => views::FORMULA_LINK_ADD_ID,
+                    url_var::STEP => url_var::STEP_CONFIRM,
+                    url_var::PHRASE => $phr->id()
+                ], $url_arr);
                 $sel = $frm_lst->selector_ui($form_name, 0, url_var::FORMULA,
                     msg_id::FORM_SELECT_FORMULA, view_styles::COL_SM_12);
                 if ($frm_lst->count() >= $size) {
@@ -774,10 +896,8 @@ class ui_list extends ui_base
                 $pane = $html->form_start($form_name) . $fields . $sel->display()
                     . $button . $html->form_end();
             }
-            $pane_url = '#' . styles::FORMULA_LINK_PANE;
-            $icon = $this->change_icon($pane_url, icons::LINK, msg_id::FORMULA_LINK, msg_id::FORMULA_LINK_BLOCKED);
-            $result = $html->div($icon)
-                . $html->div($pane, styles::TOGGLE_PANE, styles::FORMULA_LINK_PANE);
+            $result = $this->toggle_pane(
+                styles::FORMULA_LINK_PANE, icons::LINK, msg_id::FORMULA_LINK, msg_id::FORMULA_LINK_BLOCKED, $pane);
         }
         return $result;
     }
@@ -826,6 +946,30 @@ class ui_list extends ui_base
             $txt = $mtr->txt($tooltip_blocked);
         }
         return $html->ref($url, $html->icon($icon), $txt, $style, true);
+    }
+
+    /**
+     * a change icon that reveals a hidden pane via the url fragment, e.g. the formula link form or the
+     * define form of a phrase, so the page stays short and no javascript is needed (see docs/llm/frontend.md)
+     *
+     * @param string $pane_id the css id of the pane that the icon reveals e.g. styles::FORMULA_LINK_PANE
+     * @param string $icon the icon css class from web/const/icons.php e.g. icons::LINK
+     * @param msg_id $tooltip the tooltip for a user who can save the change
+     * @param msg_id $tooltip_blocked the tooltip that asks a user without login to log in
+     * @param string $pane the html code that is shown after the icon has been pressed
+     * @return string the html code of the icon and the hidden pane
+     */
+    private function toggle_pane(
+        string $pane_id,
+        string $icon,
+        msg_id $tooltip,
+        msg_id $tooltip_blocked,
+        string $pane
+    ): string
+    {
+        $html = new html_base();
+        $icon_html = $this->change_icon('#' . $pane_id, $icon, $tooltip, $tooltip_blocked);
+        return $html->div($icon_html) . $html->div($pane, styles::TOGGLE_PANE, $pane_id);
     }
 
     /**

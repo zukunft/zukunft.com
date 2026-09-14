@@ -1721,10 +1721,14 @@ enum messages: string
     case INFO_NO_SEARCH_RESULT = 'info_no_search_result';
     // shown instead of the formula selector of a phrase page if no formula can be offered
     case INFO_NO_FORMULA_TO_LINK = 'info_no_formula_to_link';
+    // shown instead of the category selector of a phrase page if no category can be offered
+    case INFO_NO_CATEGORY_TO_SELECT = 'info_no_category_to_select';
     // the title of the formula link confirm page
     case INFO_LINK_FORMULA_TO_PHRASE = 'info_link_formula_to_phrase';
     // the title of the confirm page section with the link that a new object gets with the same confirm
     case INFO_CONFIRM_LINK = 'info_confirm_link';
+    // the text of the form that defines a phrase without an "is a" parent as one of the categories
+    case INFO_DEFINE_PHRASE_AS = 'info_define_phrase_as';
 
     // e.g. if an import formula does not contain all needed parameters
     case FORMULA_NOT_VALID = 'formula is not valid';
@@ -1788,6 +1792,10 @@ enum messages: string
     case FORMULA_LINK = 'formula_link';
     // the tooltip of the greyed out formula link icon of a user who cannot save a change
     case FORMULA_LINK_BLOCKED = 'formula_link_blocked';
+    // the tooltip of the icon that opens the form to define a phrase without "is a" parent as a category
+    case DEFINE_PHRASE = 'define_phrase';
+    // the tooltip of the greyed out define icon of a user who cannot save a change
+    case DEFINE_PHRASE_BLOCKED = 'define_phrase_blocked';
     case FORMULA_UNLINK = 'formula_unlink';
     case RESULT_EDIT = 'result_edit';
     case RESULT_DEL = 'result_del';
@@ -2201,6 +2209,8 @@ enum messages: string
     case SYSTEM_BUTTON_EXPORT = 'system_button_export';
     // the button that links the selected object to the shown object e.g. a formula to a phrase
     case SYSTEM_BUTTON_LINK = 'system_button_link';
+    // the button that opens the add view for the selected object e.g. to define a word as a category
+    case SYSTEM_BUTTON_ADD = 'system_button_add';
     case FORM_WORD_FLD_NAME = 'form_word_fld_name';
 
 

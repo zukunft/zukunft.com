@@ -52,6 +52,7 @@ use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\triple_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
@@ -129,6 +130,21 @@ class phrase_list_tests
         $phr_lst->add($wrd->phrase());
         $vrb = $sys->verb(verbs::PART_NAME);
         $this->assert_sql_linked_phrases($db_con->sql_creator(), $t, $phr_lst, $vrb, foaf_direction::UP);
+
+        // sql to load the phrases on one side of the triples of a verb, each once, e.g. the categories
+        // a word can be defined as are the to side of the "is a" triples
+        $phr_lst = new phrase_list($t->usr1);
+        $vrb = $sys->verb(verbs::IS_NAME);
+        $this->assert_sql_by_verb($sc, $t, $phr_lst, $vrb, foaf_direction::UP);
+        $this->assert_sql_by_verb($sc, $t, $phr_lst, $vrb, foaf_direction::DOWN);
+        $test_name = 'the parents of a verb are the to side of its triples';
+        $up_sql = $phr_lst->load_sql_by_verb($sc, $vrb, foaf_direction::UP)->sql;
+        $t->assert_text_contains($test_name, $up_sql, triple_fields::FLD_TO);
+        $test_name = 'the parents of a verb are not the from side of its triples';
+        $t->assert_text_not_contains($test_name, $up_sql, triple_fields::FLD_FROM);
+        $test_name = 'the children of a verb are the from side of its triples';
+        $down_sql = $phr_lst->load_sql_by_verb($sc, $vrb, foaf_direction::DOWN)->sql;
+        $t->assert_text_contains($test_name, $down_sql, triple_fields::FLD_FROM);
         // TODO Prio 1 activate
         //$this->assert_sql_by_phr_lst($db_con, $t, $phr_lst, $vrb, foaf_direction::UP);
 
@@ -400,6 +416,35 @@ class phrase_list_tests
             $db_con->db_type = sql_db::MYSQL;
             $qp = $lst->load_names_sql_by_ids($db_con->sql_creator(), $ids);
             $t->assert_qp($qp, $db_con->db_type);
+        }
+    }
+
+    /**
+     * test the SQL statement creation to get the phrases on one side of the triples of a verb
+     *
+     * @param sql_creator $sc does not need to be connected to a real database
+     * @param test_cleanup $t the testing object with the error counting of this test run
+     * @param phrase_list $lst the phrase list that creates the sql statement
+     * @param verb $vrb the verb of the triples
+     * @param foaf_direction $direction up for the to side, down for the from side
+     */
+    private function assert_sql_by_verb(
+        sql_creator    $sc,
+        test_cleanup   $t,
+        phrase_list    $lst,
+        verb           $vrb,
+        foaf_direction $direction): void
+    {
+        // check the Postgres query syntax
+        $sc->set_db_type(sql_db::POSTGRES);
+        $qp = $lst->load_sql_by_verb($sc, $vrb, $direction);
+        $result = $t->assert_qp($qp, $sc->db_type());
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $sc->set_db_type(sql_db::MYSQL);
+            $qp = $lst->load_sql_by_verb($sc, $vrb, $direction);
+            $t->assert_qp($qp, $sc->db_type());
         }
     }
 

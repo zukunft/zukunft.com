@@ -1204,7 +1204,7 @@ class sql_creator
         }
     }
 
-    function add_where_no_par(?string $tbl, string $fld, sql_par_type $spt, int $pos): void
+    function add_where_no_par(?string $tbl, string $fld, sql_par_type $spt, int $pos): sql_where
     {
         // add the parameter to the where list
         $pwh = new sql_where();
@@ -1213,6 +1213,35 @@ class sql_creator
         $pwh->typ = $spt;
         $pwh->pos = $pos;
         $this->par_where->add($pwh);
+        return $pwh;
+    }
+
+    /**
+     * add a where condition that selects the rows whose field value is used in a field of the not
+     * excluded rows of another table, e.g. the phrases used as the to side of the triples of one verb:
+     * phrase_id IN (SELECT to_phrase_id FROM triples WHERE verb_id = $1 AND ...);
+     * a sub-select and not a join, because a join would repeat the row for every matching row
+     *
+     * @param string $fld the field of this table that must be in the sub-select e.g. phrase_id
+     * @param string $sub_class the class of the table of the sub-select e.g. triple::class
+     * @param string $sub_fld the field that the sub-select returns e.g. to_phrase_id
+     * @param string $sub_where_fld the field that filters the sub-select e.g. verb_id
+     * @param int $sub_id the value of the filter field e.g. the id of the verb "is a"
+     * @return void
+     */
+    function add_where_in_sub(
+        string $fld,
+        string $sub_class,
+        string $sub_fld,
+        string $sub_where_fld,
+        int    $sub_id
+    ): void
+    {
+        $this->add_par(sql_par_type::INT_SUB_IN, $sub_id, $this->par_name());
+        $pwh = $this->add_where_no_par(null, $fld, sql_par_type::INT_SUB_IN, $this->get_par_pos());
+        $pwh->sub_tbl = $this->get_table_name($sub_class);
+        $pwh->sub_fld = $sub_fld;
+        $pwh->sub_where_fld = $sub_where_fld;
     }
 
 
@@ -3829,8 +3858,7 @@ class sql_creator
                 //$par_offset--;
                 $sql_where .= ''; // because added with the page statement
             } elseif ($typ == sql_par_type::INT_SUB_IN) {
-                // $sql_where .= $tbl . $fld . ' IN (' . $this->par_value($i + 1) . ')';
-                $sql_where .= $tbl . $fld . ' IN (' . $par->name . ')';
+                $sql_where .= $tbl . $fld . ' ' . sql::IN . ' (' . $this->sub_select($whp, $par) . ')';
             } elseif ($typ == sql_par_type::MIN
                 or $typ == sql_par_type::MAX
                 or $typ == sql_par_type::COUNT
@@ -3894,6 +3922,22 @@ class sql_creator
         }
 
         return $sql_where;
+    }
+
+    /**
+     * the sub-select of an INT_SUB_IN where condition (see add_where_in_sub), which leaves out the
+     * excluded rows, because an excluded row e.g. a deleted triple must not select anything
+     *
+     * @param sql_where $whp the where condition with the table and the fields of the sub-select
+     * @param sql_field $par the parameter with the value of the filter field
+     * @return string the sub-select e.g. SELECT to_phrase_id FROM triples WHERE verb_id = $1 AND ...
+     */
+    private function sub_select(sql_where $whp, sql_field $par): string
+    {
+        $from = sql::SELECT . ' ' . $whp->sub_fld . ' ' . sql::FROM . ' ' . $whp->sub_tbl;
+        $filter = $whp->sub_where_fld . ' = ' . $par->name;
+        $not_excluded = sql::COALESCE . '(' . fields::FLD_EXCLUDED . ', ' . sql::FALSE . ') = ' . sql::FALSE;
+        return $from . ' ' . sql::WHERE . ' ' . $filter . ' ' . sql::AND . ' ' . $not_excluded;
     }
 
     /**
@@ -4864,8 +4908,7 @@ class sql_creator
                 and $par_fld->type != sql_par_type::NOT_NULL
                 and $par_fld->type != sql_par_type::MIN
                 and $par_fld->type != sql_par_type::MAX
-                and $par_fld->type != sql_par_type::COUNT
-                and $par_fld->type != sql_par_type::INT_SUB_IN) {
+                and $par_fld->type != sql_par_type::COUNT) {
                 if ($par_fld->name != '' and $this->db_type() != sql_db::MYSQL) {
                     $used_par_values[$par_fld->name] = $par_fld->value;
                 } else {

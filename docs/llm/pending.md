@@ -3,10 +3,6 @@
 
 ## word default view
 
-if a word has no triple where it is the from side of a triple with the verb 'is a' show instead of the 'is a' phrase list a button 'define xxx as yyy' with an 'add' button that creates a corresponding triple. E.g. if the word lugano has no 'parent' / 'is a triple' show a phrase selection where city and other phrases can be selected and the add triple view with 'triple is a city' is preselected
-
-## word default view
-
 add a list with the triples and a plus sign to add a new triple
 
 ## triple view
@@ -16,6 +12,12 @@ add values icon and add formula icon
 ### add formula
 
 propagation of uncertainty
+
+## start page
+
+add up / down sort icons to columns which sorts the start page rows by this column
+
+if there is more than one solution add ', ...' with a link to the solution list
 
 ## workflows
 

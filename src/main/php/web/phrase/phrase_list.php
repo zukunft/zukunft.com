@@ -196,15 +196,11 @@ class phrase_list extends sandbox_list_named
         int            $levels = 1
     ): bool
     {
-        $count = $this->count();
-        $api = new rest_call();
         $data = array();
         $data[url_var::NAME] = $name;
         $data[url_var::DIRECTION] = $direction->value;
         $data[url_var::LEVELS] = $levels;
-        $json_body = $api->api_get(self::class, $data);
-        $msg->merge($this->api_mapper($json_body));
-        return $this->count() > $count;
+        return $this->add_by_api($data, $msg);
     }
 
     /**
@@ -224,11 +220,40 @@ class phrase_list extends sandbox_list_named
         user_message   $msg
     ): bool
     {
-        $count = $this->count();
-        $api = new rest_call();
         $data = array();
         $data[url_var::ID_LST] = implode(',', $phr_lst->ids());
         $data[url_var::DIRECTION] = $direction->value;
+        return $this->add_by_api($data, $msg);
+    }
+
+    /**
+     * add the phrases on one side of the triples of a verb to this list, each phrase once, e.g. the
+     * parents of the verb "is a" as the categories that a word can be defined as
+     *
+     * @param verb $vrb the verb of the triples e.g. "is a"
+     * @param foaf_direction $direction up for the to side (the parents), down for the from side (the children)
+     * @param user_message $msg to report a problem of the api message to the user
+     * @return bool true if at least one phrase has been added to this list
+     */
+    function load_by_verb(verb $vrb, foaf_direction $direction, user_message $msg): bool
+    {
+        $data = array();
+        $data[url_var::VERB] = $vrb->id();
+        $data[url_var::DIRECTION] = $direction->value;
+        return $this->add_by_api($data, $msg);
+    }
+
+    /**
+     * add the phrases that the phrase list api returns for the given request to this list
+     *
+     * @param array $data the url vars of the api request e.g. the verb and the direction
+     * @param user_message $msg to report a problem of the api message to the user
+     * @return bool true if at least one phrase has been added to this list
+     */
+    private function add_by_api(array $data, user_message $msg): bool
+    {
+        $count = $this->count();
+        $api = new rest_call();
         $json_body = $api->api_get(self::class, $data);
         $msg->merge($this->api_mapper($json_body));
         return $this->count() > $count;

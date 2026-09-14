@@ -1208,6 +1208,8 @@
             p
     \-- add_where_no_par - section for function add_where_no_par not yet defined that it should be where in /db/sql_crea
             tor.php
+    \-- add_where_in_sub - section for function add_where_in_sub not yet defined that it should be where in /db/sql_crea
+            tor.php
     \-- sql - section for function sql not yet defined that it should be statement in /db/sql_creator.php
     \-- create_sql_insert - section for function create_sql_insert not yet defined that it should be statement in /db/sq
             l_creator.php
@@ -2251,6 +2253,8 @@
     \-- system_users - section for function system_users not yet defined that it should be interface in /helper/system_o
             bject.php
     \-- verb - section for function verb not yet defined that it should be interface in /helper/system_object.php
+    \-- verb_by_id - section for function verb_by_id not yet defined that it should be interface in /helper/system_objec
+            t.php
     \-- system_user - section for function system_user not yet defined that it should be interface in /helper/system_obj
             ect.php
     \-- admin_user - section for function admin_user not yet defined that it should be interface in /helper/system_objec
@@ -2628,6 +2632,7 @@
             order of section im- and export has difference at export_json should be before import_mapper,
             order of section load has difference at load_sql_by_id should be before load
 \-- phrase_list
+    \-- load_sql_by_verb - section for function load_sql_by_verb is expected to be load sql in /phrase/phrase_list.php
     \-- load_sql_like - section for function load_sql_like is expected to be load sql in /phrase/phrase_list.php
     \-- load_sql_by_names - section for function load_sql_by_names is expected to be load sql in /phrase/phrase_list.php
     \-- load_sql_by_ids - section for function load_sql_by_ids is expected to be load sql in /phrase/phrase_list.php
@@ -5135,6 +5140,8 @@
         \-- sql_creator - add the parameter for a where condition a list of id are one field or another
     \-- add_where_no_par
         \-- sql_creator - add the parameter for a where condition a list of id are one field or another
+    \-- add_where_in_sub
+        \-- sql_creator - add a where condition that selects the rows whose field value is used in a field of the not
 \-- statement
     \-- sql
         \-- sql_creator - create a SQL select statement for the select database
@@ -5793,6 +5800,8 @@
         \-- system_object - load all system users that have a code id
     \-- verb
         \-- system_object - get a verb
+    \-- verb_by_id
+        \-- system_object - get a preloaded verb by its database id e.g. the verb that an api request names by id
     \-- system_user
         \-- system_object - get a preloaded system user
     \-- admin_user
@@ -8533,7 +8542,7 @@
         \-- sys_log_list - request the system log entries related to the session user from the backend
     \-- load_api_by_object_field
         \-- change_log_list - get the json of a list of changes from the api
-    \-- 5
+    \-- 6
         \-- phrase_list - add the phrases related to the given formula to the list
     \-- load_fallback
         \-- change_log_list - if the change log list is empty fill it with the last changes
