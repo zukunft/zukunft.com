@@ -425,6 +425,24 @@ class word_ui_tests
         $no_phr_html = $page->system_sub_tile(msg_id::FORM_SUB_TITLE_FORMULAS);
         $t->assert_text_not_contains($test_name, $no_phr_html, icons::ADD);
 
+        // the values subtitle offers the plus icon that opens the value add view with the shown phrase preset
+        $test_name = 'the values subtitle offers to add a value';
+        $val_sub_html = $page->system_sub_tile(msg_id::FORM_SUB_TITLE_VALUES, $wrd, $page_url);
+        $t->assert_text_contains($test_name, $val_sub_html, icons::ADD);
+        $test_name = 'the add value icon opens the value add view';
+        $val_add_par = url_var::MASK . url_var::EQ . views::VALUE_ADD_ID;
+        $t->assert_text_contains($test_name, $val_sub_html, $val_add_par);
+        $test_name = 'the add value icon presets the shown word';
+        $wrd_preset = url_var::PHRASE_LIST . url_var::EQ . $wrd->phrase()->id();
+        $t->assert_text_contains($test_name, $val_sub_html, $wrd_preset);
+        $test_name = 'the add value icon presets the shown triple';
+        $trp_val_html = $page->system_sub_tile(msg_id::FORM_SUB_TITLE_VALUES, $trp_chf, $page_url);
+        $trp_preset = url_var::PHRASE_LIST . url_var::EQ . $trp_chf->phrase()->id();
+        $t->assert_text_contains($test_name, $trp_val_html, $trp_preset);
+        $test_name = 'the values subtitle without a shown phrase offers no add value icon';
+        $no_phr_val_html = $page->system_sub_tile(msg_id::FORM_SUB_TITLE_VALUES);
+        $t->assert_text_not_contains($test_name, $no_phr_val_html, icons::ADD);
+
         // the add form and the confirm view carry the link vars to the confirm submit (see form_back)
         $test_name = 'the hidden back fields carry the link vars of a new object';
         $link_url = [
@@ -468,6 +486,11 @@ class word_ui_tests
         $t->assert_text_contains($test_name, $ip_add_html, $icon_grey);
         $test_name = 'the formula add icon of a user without login asks for a login';
         $t->assert_text_contains($test_name, $ip_add_html, $mtr->txt(msg_id::FORMULA_ADD_BLOCKED));
+        $test_name = 'the value add icon of a user without login is grey';
+        $ip_val_html = $list->value_add_link($wrd->phrase(), $page_url);
+        $t->assert_text_contains($test_name, $ip_val_html, $icon_grey);
+        $test_name = 'the value add icon of a user without login asks for a login';
+        $t->assert_text_contains($test_name, $ip_val_html, $mtr->txt(msg_id::VALUE_ADD_BLOCKED));
         $test_name = 'the define icon of a user without login is grey';
         $ip_define_html = $list->phrases_related_ex_subtitle($wrd_currency_rel, $msg, null, $ctg_dto, true, $url_arr);
         $t->assert_text_contains($test_name, $ip_define_html, $icon_grey);

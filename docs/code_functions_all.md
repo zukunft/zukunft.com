@@ -6490,6 +6490,7 @@
     \-- component_views - section for function component_views missing in /component/execute/ui_list.php
     \-- formula_list - section for function formula_list missing in /component/execute/ui_list.php
     \-- formula_add_link - section for function formula_add_link missing in /component/execute/ui_list.php
+    \-- value_add_link - section for function value_add_link missing in /component/execute/ui_list.php
     \-- formulas_of_parents - section for function formulas_of_parents missing in /component/execute/ui_list.php
     \-- ref_list_word - section for function ref_list_word missing in /component/execute/ui_list.php
     \-- views_related - section for function views_related missing in /component/execute/ui_list.php
@@ -8729,6 +8730,8 @@
         \-- ui_list - get a list of formulas related to e.g. a verb
     \-- formula_add_link
         \-- ui_list - the boxed plus icon behind the formulas subtitle of a word or triple page that opens the formula
+    \-- value_add_link
+        \-- ui_list - the plus icon behind the values subtitle of a word or triple page that opens the value add view
     \-- formulas_of_parents
         \-- ui_list - the formulas assigned to the ancestor phrases of a word, grouped per ancestor and shown as a
     \-- ref_list_word
