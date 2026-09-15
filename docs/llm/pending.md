@@ -1,12 +1,8 @@
 # pending - list of planned llm prompts with prio 1
 
-## add user and admin view
-
-look at the system and base views and suggest views that should be added because they might be useful and are missing. Take LANGUAGE, SYS LOG, CHANGE LOG, IMPORT, EXPORT, PROCESS, FIND into account
-
 ## sort the views
 
-sort views and components so that the most used once are on top but try to keep them in useful groups. The word_default view should have the id 2, triple default id 3, value default id 4, formula_default id 5 and result default id 6 
+sort views in src/test/resources/unit/view/list.csv and only there so that the most used once are on top but try to keep them in useful groups. The word_default view should have the id 2, triple default id 3, value default id 4, formula_default id 5 and result default id 6; 
 
 ## add value
 
@@ -57,6 +53,30 @@ user quarantine and all quarantine - postponed until it is defined what quaranti
 
 the existing job views job_async, job_control and job_check and the admin delayed jobs component still show placeholders
 or no data
+
+## fill the language, log, import, export, process, find and list skeleton views
+
+these system views show only the "system body not yet available" hint:
+- language: phrase_translations, language_forms (api/languageForm), translations_missing, list_languages
+- system log: sys_log_detail (link target of error_log, error_update and the admin dashboard)
+- change log: change_log_user (with undo per row), change_log_recent, object_history (incl. api/changeLogLinkList),
+  change_detail (old and new value with revert)
+- import: import_preview (like confirm_add), import_result (linked from user_jobs), import_url, import_wikidata
+  (import_wikidata.php)
+- export: export_selections (the saved selections of the export forms), export_object, export_ready (download of a job)
+- process: job_detail (link target of user_jobs and all_jobs), calc_status (outdated results and calculation progress)
+- find: value_find (api/valueList), ref_find (by external id), find_duplicates (admin, input for quarantine)
+- object lists: list_words, list_triples, list_sources, list_refs, list_formulas, list_views, list_components
+
+job_detail and calc_status use a user as the main object in the view mapping, because the unit test url mapper has no
+show url for a job yet
+
+adding the 28 views and their title components at the end of system_views.json shifted the ids of all base views by 28
+(views.php) and of the components after them by 28 (components::SOLUTION_PRIO_TITLE_ID); confirm the view ids from
+unit/view/list.csv and the component ids from unit/component/list.csv after the next reset
+
+also fill or remove the existing placeholder views word_find, search_full, undo, error_log, error_update, system_log
+(no components) and verbs (no components)
 
 ## workflows
 

@@ -596,6 +596,22 @@ class system_view_ui_tests
     ): void
     {
         $updated_files = [];
+        // the views of the frontend cache come from the api/type_lists/type_lists.json fixture, which reset_db
+        // regenerates only after the unit tests; if a view has been added to the seed views since, the cached ids
+        // are shifted and a view would be rendered with the object of another view (a fatal type error), so the
+        // loop and the snapshot cleanup are skipped until the fixture matches views::TEST_VIEW_IDS again
+        $test_name = 'the views of type_lists.json have the ids of views::TEST_VIEW_IDS (else reset the database)';
+        $stale = '';
+        foreach (views::TEST_VIEW_IDS as $id => $code_id) {
+            $cached_code_id = $ui->dto->typ_lst_cache->get_view_by_id($id)?->code_id;
+            if ($stale == '' and $cached_code_id != $code_id) {
+                $stale = 'view ' . $id . ' is ' . ($cached_code_id ?? 'missing') . ' instead of ' . $code_id;
+            }
+        }
+        $t->assert($test_name, $stale, '');
+        if ($stale != '') {
+            return;
+        }
         // the start view shows the global problems as a table, which the frontend fills from the
         // api; a unit test has no api, so the cache of that view is filled from the factories,
         // and only of that view, so the snapshots of the other views stay unchanged
@@ -809,6 +825,8 @@ class system_view_ui_tests
         } elseif (in_array($view_id, view_shared::VIEW_RELATION_MASKS_IDS)) {
             $dbo = new view_relation($usr);
         } elseif (in_array($view_id, view_shared::USER_MASKS_IDS)) {
+            $dbo = new user();
+        } elseif (in_array($view_id, view_shared::CHANGE_LOG_VIEW_IDS)) {
             $dbo = new user();
         } elseif (in_array($view_id, view_shared::USER_LOGIN_MASK_IDS)) {
             $dbo = new user();

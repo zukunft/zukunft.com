@@ -1,6 +1,6 @@
 GET
-http://localhost/http/view.php?id=0&9m=102&k=System+Test+Word&m=54&z=2&submit=
-/http/view.php?id=0&9m=102&k=System+Test+Word&m=54&z=2&submit=
+http://localhost/http/view.php?id=0&9m=130&k=System+Test+Word&m=54&z=2&submit=
+/http/view.php?id=0&9m=130&k=System+Test+Word&m=54&z=2&submit=
 /http/view.php?id=0&9mask_id=word_default&name=System+Test+Word&mask_id=confirm_add&step=confirmed&
 {
     "id": "0",

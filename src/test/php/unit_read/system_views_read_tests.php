@@ -258,13 +258,44 @@ class system_views_read_tests
         $t->assert_view(views::ALL_QUARANTINE, $t->usr1, new user(), users::SYSTEM_TEST_ID);
         $t->assert_view(views::USER_JOBS, $t->usr1, new user(), users::SYSTEM_TEST_ID);
         $t->assert_view(views::ALL_JOBS, $t->usr1, new user(), users::SYSTEM_TEST_ID);
+        // the language, log, import, export, process, find and object list views below are skeletons that show
+        // only the not yet available hint until their data and actions are implemented
         // LANGUAGE
+        $t->assert_view(views::PHRASE_TRANSLATIONS, $t->usr1, new user(), users::SYSTEM_TEST_ID);
+        $t->assert_view(views::LANGUAGE_FORMS, $t->usr1, new user(), users::SYSTEM_TEST_ID);
+        $t->assert_view(views::TRANSLATIONS_MISSING, $t->usr1, new user(), users::SYSTEM_TEST_ID);
+        $t->assert_view(views::LIST_LANGUAGES, $t->usr1, new user(), users::SYSTEM_TEST_ID);
         // SYS LOG
+        $t->assert_view(views::SYS_LOG_DETAIL, $t->usr1, new user(), users::SYSTEM_TEST_ID);
         // CHANGE LOG
+        $t->assert_view(views::CHANGE_LOG_USER, $t->usr1, new user(), users::SYSTEM_TEST_ID);
+        $t->assert_view(views::CHANGE_LOG_RECENT, $t->usr1, new user(), users::SYSTEM_TEST_ID);
+        $t->assert_view(views::OBJECT_HISTORY, $t->usr1, new user(), users::SYSTEM_TEST_ID);
+        $t->assert_view(views::CHANGE_DETAIL, $t->usr1, new user(), users::SYSTEM_TEST_ID);
         // IMPORT
+        $t->assert_view(views::IMPORT_PREVIEW, $t->usr1, new user(), users::SYSTEM_TEST_ID);
+        $t->assert_view(views::IMPORT_RESULT, $t->usr1, new user(), users::SYSTEM_TEST_ID);
+        $t->assert_view(views::IMPORT_URL, $t->usr1, new user(), users::SYSTEM_TEST_ID);
+        $t->assert_view(views::IMPORT_WIKIDATA, $t->usr1, new user(), users::SYSTEM_TEST_ID);
         // EXPORT
+        $t->assert_view(views::EXPORT_SELECTIONS, $t->usr1, new user(), users::SYSTEM_TEST_ID);
+        $t->assert_view(views::EXPORT_OBJECT, $t->usr1, new user(), users::SYSTEM_TEST_ID);
+        $t->assert_view(views::EXPORT_READY, $t->usr1, new user(), users::SYSTEM_TEST_ID);
         // PROCESS
+        $t->assert_view(views::JOB_DETAIL, $t->usr1, new user(), users::SYSTEM_TEST_ID);
+        $t->assert_view(views::CALC_STATUS, $t->usr1, new user(), users::SYSTEM_TEST_ID);
         // FIND
+        $t->assert_view(views::VALUE_FIND, $t->usr1, new user(), users::SYSTEM_TEST_ID);
+        $t->assert_view(views::REF_FIND, $t->usr1, new user(), users::SYSTEM_TEST_ID);
+        $t->assert_view(views::FIND_DUPLICATES, $t->usr1, new user(), users::SYSTEM_TEST_ID);
+        // OBJECT LISTS
+        $t->assert_view(views::LIST_WORDS, $t->usr1, new user(), users::SYSTEM_TEST_ID);
+        $t->assert_view(views::LIST_TRIPLES, $t->usr1, new user(), users::SYSTEM_TEST_ID);
+        $t->assert_view(views::LIST_SOURCES, $t->usr1, new user(), users::SYSTEM_TEST_ID);
+        $t->assert_view(views::LIST_REFS, $t->usr1, new user(), users::SYSTEM_TEST_ID);
+        $t->assert_view(views::LIST_FORMULAS, $t->usr1, new user(), users::SYSTEM_TEST_ID);
+        $t->assert_view(views::LIST_VIEWS, $t->usr1, new user(), users::SYSTEM_TEST_ID);
+        $t->assert_view(views::LIST_COMPONENTS, $t->usr1, new user(), users::SYSTEM_TEST_ID);
         //$t->assert_view(view_shared::DSP_COMPONENT_ADD, $t->usr1, new component($t->usr1), 1, $cfg);
         // TODO add the frontend reaction tests e.g. call the view.php script with the reaction to add a word
 

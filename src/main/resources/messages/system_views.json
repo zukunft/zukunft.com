@@ -2019,6 +2019,202 @@
       "type": "system_title",
       "code_id": "system_title_all_jobs",
       "ui_msg_code_id": "system_title_all_jobs"
+    },
+    {
+      "name": "system title phrase translations",
+      "description": "show the language specific title for the names of a word or triple in all languages",
+      "type": "system_title",
+      "code_id": "system_title_phrase_translations",
+      "ui_msg_code_id": "system_title_phrase_translations"
+    },
+    {
+      "name": "system title language forms",
+      "description": "show the language specific title for the language forms of a language",
+      "type": "system_title",
+      "code_id": "system_title_language_forms",
+      "ui_msg_code_id": "system_title_language_forms"
+    },
+    {
+      "name": "system title translations missing",
+      "description": "show the language specific title for the words and triples without a name in the language of the user",
+      "type": "system_title",
+      "code_id": "system_title_translations_missing",
+      "ui_msg_code_id": "system_title_translations_missing"
+    },
+    {
+      "name": "system title list languages",
+      "description": "show the language specific title for the list of all languages",
+      "type": "system_title",
+      "code_id": "system_title_list_languages",
+      "ui_msg_code_id": "system_title_list_languages"
+    },
+    {
+      "name": "system title sys log detail",
+      "description": "show the language specific title for the detail of one system error",
+      "type": "system_title",
+      "code_id": "system_title_sys_log_detail",
+      "ui_msg_code_id": "system_title_sys_log_detail"
+    },
+    {
+      "name": "system title change log user",
+      "description": "show the language specific title for the changes of the user",
+      "type": "system_title",
+      "code_id": "system_title_change_log_user",
+      "ui_msg_code_id": "system_title_change_log_user"
+    },
+    {
+      "name": "system title change log recent",
+      "description": "show the language specific title for the latest changes of all users",
+      "type": "system_title",
+      "code_id": "system_title_change_log_recent",
+      "ui_msg_code_id": "system_title_change_log_recent"
+    },
+    {
+      "name": "system title object history",
+      "description": "show the language specific title for all changes of one object",
+      "type": "system_title",
+      "code_id": "system_title_object_history",
+      "ui_msg_code_id": "system_title_object_history"
+    },
+    {
+      "name": "system title change detail",
+      "description": "show the language specific title for the detail of one change",
+      "type": "system_title",
+      "code_id": "system_title_change_detail",
+      "ui_msg_code_id": "system_title_change_detail"
+    },
+    {
+      "name": "system title import preview",
+      "description": "show the language specific title for the preview of an import",
+      "type": "system_title",
+      "code_id": "system_title_import_preview",
+      "ui_msg_code_id": "system_title_import_preview"
+    },
+    {
+      "name": "system title import result",
+      "description": "show the language specific title for the result of an import",
+      "type": "system_title",
+      "code_id": "system_title_import_result",
+      "ui_msg_code_id": "system_title_import_result"
+    },
+    {
+      "name": "system title import url",
+      "description": "show the language specific title for the import of a file given by an url",
+      "type": "system_title",
+      "code_id": "system_title_import_url",
+      "ui_msg_code_id": "system_title_import_url"
+    },
+    {
+      "name": "system title import wikidata",
+      "description": "show the language specific title for the import by a Wikidata id",
+      "type": "system_title",
+      "code_id": "system_title_import_wikidata",
+      "ui_msg_code_id": "system_title_import_wikidata"
+    },
+    {
+      "name": "system title export selections",
+      "description": "show the language specific title for the saved export selections of the user",
+      "type": "system_title",
+      "code_id": "system_title_export_selections",
+      "ui_msg_code_id": "system_title_export_selections"
+    },
+    {
+      "name": "system title export object",
+      "description": "show the language specific title for the export of one object",
+      "type": "system_title",
+      "code_id": "system_title_export_object",
+      "ui_msg_code_id": "system_title_export_object"
+    },
+    {
+      "name": "system title export ready",
+      "description": "show the language specific title for the download of an export created by a job",
+      "type": "system_title",
+      "code_id": "system_title_export_ready",
+      "ui_msg_code_id": "system_title_export_ready"
+    },
+    {
+      "name": "system title job detail",
+      "description": "show the language specific title for the detail of one job",
+      "type": "system_title",
+      "code_id": "system_title_job_detail",
+      "ui_msg_code_id": "system_title_job_detail"
+    },
+    {
+      "name": "system title calc status",
+      "description": "show the language specific title for the status of the formula calculation",
+      "type": "system_title",
+      "code_id": "system_title_calc_status",
+      "ui_msg_code_id": "system_title_calc_status"
+    },
+    {
+      "name": "system title value find",
+      "description": "show the language specific title for the search of values by phrases",
+      "type": "system_title",
+      "code_id": "system_title_value_find",
+      "ui_msg_code_id": "system_title_value_find"
+    },
+    {
+      "name": "system title ref find",
+      "description": "show the language specific title for the search of an object by an external reference",
+      "type": "system_title",
+      "code_id": "system_title_ref_find",
+      "ui_msg_code_id": "system_title_ref_find"
+    },
+    {
+      "name": "system title find duplicates",
+      "description": "show the language specific title for the admin list of terms with the same or a similar name",
+      "type": "system_title",
+      "code_id": "system_title_find_duplicates",
+      "ui_msg_code_id": "system_title_find_duplicates"
+    },
+    {
+      "name": "system title list words",
+      "description": "show the language specific title for the list of words",
+      "type": "system_title",
+      "code_id": "system_title_list_words",
+      "ui_msg_code_id": "system_title_list_words"
+    },
+    {
+      "name": "system title list triples",
+      "description": "show the language specific title for the list of triples",
+      "type": "system_title",
+      "code_id": "system_title_list_triples",
+      "ui_msg_code_id": "system_title_list_triples"
+    },
+    {
+      "name": "system title list sources",
+      "description": "show the language specific title for the list of sources",
+      "type": "system_title",
+      "code_id": "system_title_list_sources",
+      "ui_msg_code_id": "system_title_list_sources"
+    },
+    {
+      "name": "system title list refs",
+      "description": "show the language specific title for the list of references",
+      "type": "system_title",
+      "code_id": "system_title_list_refs",
+      "ui_msg_code_id": "system_title_list_refs"
+    },
+    {
+      "name": "system title list formulas",
+      "description": "show the language specific title for the list of formulas",
+      "type": "system_title",
+      "code_id": "system_title_list_formulas",
+      "ui_msg_code_id": "system_title_list_formulas"
+    },
+    {
+      "name": "system title list views",
+      "description": "show the language specific title for the list of views",
+      "type": "system_title",
+      "code_id": "system_title_list_views",
+      "ui_msg_code_id": "system_title_list_views"
+    },
+    {
+      "name": "system title list components",
+      "description": "show the language specific title for the list of view components",
+      "type": "system_title",
+      "code_id": "system_title_list_components",
+      "ui_msg_code_id": "system_title_list_components"
     }
   ],
   "views": [
@@ -7359,6 +7555,482 @@
         {
           "position": "2",
           "name": "system body all jobs"
+        }
+      ]
+    },
+    {
+      "name": "Phrase translations",
+      "description": "Show and change the names of a word or triple in all languages",
+      "code_id": "phrase_translations",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title phrase translations"
+        },
+        {
+          "position": "2",
+          "name": "system body not yet available"
+        }
+      ]
+    },
+    {
+      "name": "Language forms",
+      "description": "Show and change the language forms of a language e.g. the plural",
+      "code_id": "language_forms",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title language forms"
+        },
+        {
+          "position": "2",
+          "name": "system body not yet available"
+        }
+      ]
+    },
+    {
+      "name": "Missing translations",
+      "description": "List the words and triples that have no name in the language of the user",
+      "code_id": "translations_missing",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title translations missing"
+        },
+        {
+          "position": "2",
+          "name": "system body not yet available"
+        }
+      ]
+    },
+    {
+      "name": "Language list",
+      "description": "List all languages with a link to the language",
+      "code_id": "list_languages",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title list languages"
+        },
+        {
+          "position": "2",
+          "name": "system body not yet available"
+        }
+      ]
+    },
+    {
+      "name": "System error detail",
+      "description": "Show one system error with the trace, the status, the assigned admin and the solution",
+      "code_id": "sys_log_detail",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title sys log detail"
+        },
+        {
+          "position": "2",
+          "name": "system body not yet available"
+        }
+      ]
+    },
+    {
+      "name": "Own changes",
+      "description": "List all changes of the user across all objects with the possibility to undo a change",
+      "code_id": "change_log_user",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title change log user"
+        },
+        {
+          "position": "2",
+          "name": "system body not yet available"
+        }
+      ]
+    },
+    {
+      "name": "Recent changes",
+      "description": "List the latest changes of all users",
+      "code_id": "change_log_recent",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title change log recent"
+        },
+        {
+          "position": "2",
+          "name": "system body not yet available"
+        }
+      ]
+    },
+    {
+      "name": "Object history",
+      "description": "Show all changes of one object including the changes of its links",
+      "code_id": "object_history",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title object history"
+        },
+        {
+          "position": "2",
+          "name": "system body not yet available"
+        }
+      ]
+    },
+    {
+      "name": "Change detail",
+      "description": "Show one change with the old and the new value and the possibility to revert it",
+      "code_id": "change_detail",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title change detail"
+        },
+        {
+          "position": "2",
+          "name": "system body not yet available"
+        }
+      ]
+    },
+    {
+      "name": "Import preview",
+      "description": "Show what an import would add, change or clash with before anything is written",
+      "code_id": "import_preview",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title import preview"
+        },
+        {
+          "position": "2",
+          "name": "system body not yet available"
+        }
+      ]
+    },
+    {
+      "name": "Import result",
+      "description": "Show the objects of an import with the warnings and the links to the added objects",
+      "code_id": "import_result",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title import result"
+        },
+        {
+          "position": "2",
+          "name": "system body not yet available"
+        }
+      ]
+    },
+    {
+      "name": "Import from url",
+      "description": "Import the data of a file given by an url",
+      "code_id": "import_url",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title import url"
+        },
+        {
+          "position": "2",
+          "name": "system body not yet available"
+        }
+      ]
+    },
+    {
+      "name": "Import from Wikidata",
+      "description": "Import an object and the related data by the Wikidata id",
+      "code_id": "import_wikidata",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title import wikidata"
+        },
+        {
+          "position": "2",
+          "name": "system body not yet available"
+        }
+      ]
+    },
+    {
+      "name": "Export selections",
+      "description": "List the saved export selections of the user",
+      "code_id": "export_selections",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title export selections"
+        },
+        {
+          "position": "2",
+          "name": "system body not yet available"
+        }
+      ]
+    },
+    {
+      "name": "Export object",
+      "description": "Export one word, triple or formula with the related objects up to the selected depth",
+      "code_id": "export_object",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title export object"
+        },
+        {
+          "position": "2",
+          "name": "system body not yet available"
+        }
+      ]
+    },
+    {
+      "name": "Export ready",
+      "description": "Offer the download of an export that has been created by a job",
+      "code_id": "export_ready",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title export ready"
+        },
+        {
+          "position": "2",
+          "name": "system body not yet available"
+        }
+      ]
+    },
+    {
+      "name": "Job detail",
+      "description": "Show one job with the parameters, the status history, the log and the possibility to retry or cancel it",
+      "code_id": "job_detail",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title job detail"
+        },
+        {
+          "position": "2",
+          "name": "system body not yet available"
+        }
+      ]
+    },
+    {
+      "name": "Calculation status",
+      "description": "Show the formulas with outdated results and the progress of the running calculation",
+      "code_id": "calc_status",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title calc status"
+        },
+        {
+          "position": "2",
+          "name": "system body not yet available"
+        }
+      ]
+    },
+    {
+      "name": "Find values",
+      "description": "Find the values by a set of phrases and show them as a table",
+      "code_id": "value_find",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title value find"
+        },
+        {
+          "position": "2",
+          "name": "system body not yet available"
+        }
+      ]
+    },
+    {
+      "name": "Find by reference",
+      "description": "Find an object by the external reference e.g. the Wikidata id",
+      "code_id": "ref_find",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title ref find"
+        },
+        {
+          "position": "2",
+          "name": "system body not yet available"
+        }
+      ]
+    },
+    {
+      "name": "Find duplicates",
+      "description": "List for an admin the terms with the same or a similar name for the cleanup",
+      "code_id": "find_duplicates",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title find duplicates"
+        },
+        {
+          "position": "2",
+          "name": "system body not yet available"
+        }
+      ]
+    },
+    {
+      "name": "Word list",
+      "description": "List the words with paging and sorting",
+      "code_id": "list_words",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title list words"
+        },
+        {
+          "position": "2",
+          "name": "system body not yet available"
+        }
+      ]
+    },
+    {
+      "name": "Triple list",
+      "description": "List the triples with paging and sorting",
+      "code_id": "list_triples",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title list triples"
+        },
+        {
+          "position": "2",
+          "name": "system body not yet available"
+        }
+      ]
+    },
+    {
+      "name": "Source list",
+      "description": "List the sources with paging and sorting",
+      "code_id": "list_sources",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title list sources"
+        },
+        {
+          "position": "2",
+          "name": "system body not yet available"
+        }
+      ]
+    },
+    {
+      "name": "Reference list",
+      "description": "List the references with paging and sorting",
+      "code_id": "list_refs",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title list refs"
+        },
+        {
+          "position": "2",
+          "name": "system body not yet available"
+        }
+      ]
+    },
+    {
+      "name": "Formula list",
+      "description": "List the formulas with paging and sorting",
+      "code_id": "list_formulas",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title list formulas"
+        },
+        {
+          "position": "2",
+          "name": "system body not yet available"
+        }
+      ]
+    },
+    {
+      "name": "View list",
+      "description": "List the views with paging and sorting",
+      "code_id": "list_views",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title list views"
+        },
+        {
+          "position": "2",
+          "name": "system body not yet available"
+        }
+      ]
+    },
+    {
+      "name": "Component list",
+      "description": "List the view components with paging and sorting",
+      "code_id": "list_components",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title list components"
+        },
+        {
+          "position": "2",
+          "name": "system body not yet available"
         }
       ]
     }

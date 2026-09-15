@@ -2358,6 +2358,8 @@ class frontend
             $dbo_ui = new formula_link_ui();
         } elseif (in_array($view_id, views::USER_MASKS_IDS)) {
             $dbo_ui = new user_ui();
+        } elseif (in_array($view_id, views::CHANGE_LOG_VIEW_IDS)) {
+            $dbo_ui = new user_ui();
         } elseif (in_array($view_id, views::LANGUAGE_MASKS_IDS)) {
             $dbo_ui = new language_ui(0, null);
         } elseif (in_array($view_id, views::CONFIRM_MASKS_IDS)) {
