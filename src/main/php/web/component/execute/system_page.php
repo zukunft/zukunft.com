@@ -168,12 +168,14 @@ class system_page extends component
      * @param msg_id|null $ui_msg_code_id the message id of the text that should be shown to the user in the user-specific frontend language
      * @param db_object|type_object|combine_named|sandbox_list|null $dbo the object of the page e.g. the word of the formulas subtitle
      * @param array $url_arr the url of the shown page as back target of the add icon
+     * @param int $msk_id the database id of the shown view; only a default view of a phrase gets the add icon
      * @return string the html code to start a new form and display the subtitle
      */
     function system_sub_tile(
         ?msg_id                                               $ui_msg_code_id = null,
         db_object|type_object|combine_named|sandbox_list|null $dbo = null,
-        array                                                 $url_arr = []
+        array                                                 $url_arr = [],
+        int                                                   $msk_id = 0
     ): string
     {
         global $mtr;
@@ -183,7 +185,8 @@ class system_page extends component
         if ($ui_msg_code_id != null) {
             $result .= $html->text_h3($mtr->txt($ui_msg_code_id));
         }
-        if ($dbo instanceof db_object) {
+        // only the default view of a word or triple offers to add, not e.g. its edit or delete form
+        if ($dbo instanceof db_object and in_array($msk_id, views::PHRASE_DEFAULT_IDS)) {
             $list = new ui_list();
             // the formulas and the values subtitle of a word or triple page offer to add one for the phrase
             $icon = match ($ui_msg_code_id) {

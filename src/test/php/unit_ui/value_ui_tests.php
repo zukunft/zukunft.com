@@ -132,6 +132,18 @@ class value_ui_tests
         $test_page .= $t->dsp_title_value($val_protected, $msg_ui);
         $t->html_page_test($test_page, 'value html components', 'value', $msg_ui, $base_url, $lan);
 
+        // the add value view presets the phrases that the url names as the phrase list, e.g. the word of
+        // the page whose values subtitle has opened the view (see ui_list::value_add_link)
+        $t->subheader($ts . 'phrase preset');
+        $test_name = 'the phrase list of the url presets the phrase of a new value';
+        $val = $t_val->value_add_ui();
+        $val->url_mapper([url_var::PHRASE_LIST => (string)word_names::ZH_ID], $msg_ui);
+        $t->assert($test_name, implode(',', $val->phr_lst()->ids()), (string)word_names::ZH_ID);
+        $test_name = 'a url without a phrase list presets no phrase';
+        $val = $t_val->value_add_ui();
+        $val->url_mapper([url_var::MASK => views::VALUE_ADD_ID], $msg_ui);
+        $t->assert($test_name, $val->phr_lst()->count(), 0);
+
         $t->subheader($ts . 'links and measure');
         // the speed of light value: "speed of light" names the value, "m/s" is the measure
         // shown behind the number and "1983 (year of definition)" explains it as the tooltip

@@ -1,6 +1,18 @@
 
 # pending - list of planned llm prompts with prio 1
 
+## add value
+
+add a 'pure HTML' 'add_value' view to the system views that contains one field for the phrase selection with an 'check and add' button that checks if the phrase is valid and if yes adds another phrase selection field for an additional phrase. if only a few chars are give and there is more than one phrase that matches the pattern make the phrases selectable by the user.
+
+add a simple 'add value' view to the system views that contains only the phrase selection fields and the value
+
+add a selector to the add value views that can be used to explicit switch between a numeric, time, geo or text value 
+
+## add formula
+
+change the format of the 'refresh' icons in the add and edit formula view to normal chars without button formatting
+
 ## word default view
 
 add a list with the triples and a plus sign to add a new triple

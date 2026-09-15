@@ -554,6 +554,13 @@ class views
         self::TRIPLE_ID,
     ];
 
+    // the default views of a word and a triple, i.e. the page that shows the phrase and not a change form
+    // of it, so only there the subtitles offer to add e.g. a formula or a value for the phrase
+    const array PHRASE_DEFAULT_IDS = [
+        self::WORD_ID,
+        self::TRIPLE_ID,
+    ];
+
     // default view for a phrase and the views that show a word or a triple the same way
     const array PHRASE_MASKS_IDS = [
         self::PHRASE_ID,
