@@ -403,7 +403,7 @@ class word_ui_tests
         // already linked to the shown phrase, which travels as '7'-prefixed link var
         $page = new system_page();
         $test_name = 'the formulas subtitle offers to add a formula';
-        $sub_html = $page->system_sub_tile(msg_id::FORM_SUB_TITLE_FORMULAS, $wrd, $page_url, views::WORD_ID);
+        $sub_html = $page->system_sub_tile($msg, msg_id::FORM_SUB_TITLE_FORMULAS, $wrd, $page_url, views::WORD_ID);
         $t->assert_text_contains($test_name, $sub_html, icons::ADD);
         $test_name = 'the add formula icon opens the formula add view';
         $add_par = url_var::MASK . url_var::EQ . views::FORMULA_ADD_ID;
@@ -415,45 +415,46 @@ class word_ui_tests
         $back_par = url_var::BACK . url_var::MASK . url_var::EQ . views::WORD_ID;
         $t->assert_text_contains($test_name, $sub_html, $back_par);
         $test_name = 'the add formula icon links the new formula to the shown triple';
-        $trp_html = $page->system_sub_tile(
+        $trp_html = $page->system_sub_tile($msg,
             msg_id::FORM_SUB_TITLE_FORMULAS, $trp_chf, $page_url, views::TRIPLE_ID);
         $trp_link = html_base::link_url_part([url_var::PHRASE => $trp_chf->phrase()->id()]);
         $t->assert_text_contains($test_name, $trp_html, $trp_link);
         $test_name = 'another subtitle offers no add formula icon';
-        $other_html = $page->system_sub_tile(
+        $other_html = $page->system_sub_tile($msg,
             msg_id::FORM_SUB_TITLE_ASSIGNED_PHRASES, $wrd, $page_url, views::WORD_ID);
         $t->assert_text_not_contains($test_name, $other_html, icons::ADD);
         // on the default view, so that only the missing phrase prevents the icon
         $test_name = 'the formulas subtitle without a shown phrase offers no add formula icon';
-        $no_phr_html = $page->system_sub_tile(msg_id::FORM_SUB_TITLE_FORMULAS, null, $page_url, views::WORD_ID);
+        $no_phr_html = $page->system_sub_tile($msg, msg_id::FORM_SUB_TITLE_FORMULAS, null, $page_url, views::WORD_ID);
         $t->assert_text_not_contains($test_name, $no_phr_html, icons::ADD);
 
         // the values subtitle offers the plus icon that opens the value add view with the shown phrase preset
         $test_name = 'the values subtitle offers to add a value';
-        $val_sub_html = $page->system_sub_tile(msg_id::FORM_SUB_TITLE_VALUES, $wrd, $page_url, views::WORD_ID);
+        $val_sub_html = $page->system_sub_tile($msg, msg_id::FORM_SUB_TITLE_VALUES, $wrd, $page_url, views::WORD_ID);
         $t->assert_text_contains($test_name, $val_sub_html, icons::ADD);
-        $test_name = 'the add value icon opens the value add view';
-        $val_add_par = url_var::MASK . url_var::EQ . views::VALUE_ADD_ID;
+        // the default frontend type is pure html, which adds a value by selecting its phrases step by step
+        $test_name = 'the add value icon opens the view that selects the phrases step by step';
+        $val_add_par = url_var::MASK . url_var::EQ . views::VALUE_ADD_PHRASES_ID;
         $t->assert_text_contains($test_name, $val_sub_html, $val_add_par);
         $test_name = 'the add value icon presets the shown word';
         $wrd_preset = url_var::PHRASE_LIST . url_var::EQ . $wrd->phrase()->id();
         $t->assert_text_contains($test_name, $val_sub_html, $wrd_preset);
         $test_name = 'the add value icon presets the shown triple';
-        $trp_val_html = $page->system_sub_tile(
+        $trp_val_html = $page->system_sub_tile($msg,
             msg_id::FORM_SUB_TITLE_VALUES, $trp_chf, $page_url, views::TRIPLE_ID);
         $trp_preset = url_var::PHRASE_LIST . url_var::EQ . $trp_chf->phrase()->id();
         $t->assert_text_contains($test_name, $trp_val_html, $trp_preset);
         // on the default view, so that only the missing phrase prevents the icon
         $test_name = 'the values subtitle without a shown phrase offers no add value icon';
-        $no_phr_val_html = $page->system_sub_tile(msg_id::FORM_SUB_TITLE_VALUES, null, $page_url, views::WORD_ID);
+        $no_phr_val_html = $page->system_sub_tile($msg, msg_id::FORM_SUB_TITLE_VALUES, null, $page_url, views::WORD_ID);
         $t->assert_text_not_contains($test_name, $no_phr_val_html, icons::ADD);
         // only the default view offers to add a value, not the change forms of the word
         $test_name = 'the values subtitle of the word delete view offers no add value icon';
-        $del_val_html = $page->system_sub_tile(
+        $del_val_html = $page->system_sub_tile($msg,
             msg_id::FORM_SUB_TITLE_VALUES, $wrd, $page_url, views::WORD_DEL_ID);
         $t->assert_text_not_contains($test_name, $del_val_html, icons::ADD);
         $test_name = 'the values subtitle of the word edit view offers no add value icon';
-        $edit_val_html = $page->system_sub_tile(
+        $edit_val_html = $page->system_sub_tile($msg,
             msg_id::FORM_SUB_TITLE_VALUES, $wrd, $page_url, views::WORD_EDIT_ID);
         $t->assert_text_not_contains($test_name, $edit_val_html, icons::ADD);
 
@@ -501,7 +502,7 @@ class word_ui_tests
         $test_name = 'the formula add icon of a user without login asks for a login';
         $t->assert_text_contains($test_name, $ip_add_html, $mtr->txt(msg_id::FORMULA_ADD_BLOCKED));
         $test_name = 'the value add icon of a user without login is grey';
-        $ip_val_html = $list->value_add_link($wrd->phrase(), $page_url);
+        $ip_val_html = $list->value_add_link($wrd->phrase(), $msg, $page_url);
         $t->assert_text_contains($test_name, $ip_val_html, $icon_grey);
         $test_name = 'the value add icon of a user without login asks for a login';
         $t->assert_text_contains($test_name, $ip_val_html, $mtr->txt(msg_id::VALUE_ADD_BLOCKED));
@@ -676,6 +677,24 @@ class word_ui_tests
         $test_name = 'without a change no impact line is shown';
         $t->assert($test_name, $preview->popup_impact([]), '');
 
+
+        // the simple add form writes the word without the confirm view and shows it after the write
+        $t->subheader($ts . 'simple add');
+        $test_name = 'the simple add form has the name field';
+        $simple_form = new system_form();
+        $simple_html = $simple_form->form_word_add_simple();
+        $t->assert_text_contains($test_name, $simple_html, 'name="' . url_var::NAME . '"');
+        $test_name = '... writes via the word add mask';
+        $add_mask = $html->form_hidden(url_var::MASK, (string)views::WORD_ADD_ID);
+        $t->assert_text_contains($test_name, $simple_html, $add_mask);
+        $test_name = '... without the confirm view';
+        $confirmed = $html->form_hidden(url_var::STEP, url_var::STEP_CONFIRMED);
+        $t->assert_text_contains($test_name, $simple_html, $confirmed);
+        $test_name = '... shows the new word with its default view';
+        $back_mask = $html->form_hidden(url_var::BACK . url_var::MASK, (string)views::WORD_ID);
+        $t->assert_text_contains($test_name, $simple_html, $back_mask);
+        $test_name = '... and the add button is a save submit';
+        $t->assert_text_contains($test_name, $simple_html, 'name="' . url_var::POST_SUBMIT . '"');
 
         $t->subheader($ts . 'url mapper');
 

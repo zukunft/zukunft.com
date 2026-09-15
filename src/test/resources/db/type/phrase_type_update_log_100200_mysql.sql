@@ -13,21 +13,21 @@ BEGIN
     INSERT INTO changes ( user_id, change_action_id, change_field_id,      old_value,       new_value,   row_id)
          SELECT          _user_id,_change_action_id,_field_id_description,_description_old,_description,_phrase_type_id ;
 
-         UPDATE phrase_types
-            SET description = _description
-          WHERE phrase_type_id = _phrase_type_id;
+    UPDATE phrase_types
+       SET description = _description
+     WHERE phrase_type_id = _phrase_type_id;
 
 END;
 
-PREPARE phrase_type_update_log_100200_call
-    FROM 'SELECT phrase_type_update_log_100200 (?,?,?,?,?,?,?,?)';
+PREPARE phrase_type_update_log_100200_call FROM
+    'SELECT phrase_type_update_log_100200 (?,?,?,?,?,?,?,?)';
 
 SELECT phrase_type_update_log_100200
-    (3,
-     1,
-     837,
-     'changed description',
-     '1',
-     1,
-     835,
-     'standard');
+       (3,
+        1,
+        837,
+        'changed description',
+        '1',
+        1,
+        835,
+        'standard');

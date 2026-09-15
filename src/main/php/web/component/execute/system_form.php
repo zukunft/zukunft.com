@@ -1468,6 +1468,26 @@ class system_form extends component
     }
 
     /**
+     * the one field form that adds a word by its name without the confirm view: the hidden word add mask
+     * with the confirmed step lets url_to_action write the word directly, the backend refuses a name that
+     * is already used by a term and after the write the new word is shown with its default view
+     *
+     * @param string $style_text the formatting code of the name field
+     * @return string the html code of the name field, the hidden write vars and the add button
+     */
+    function form_word_add_simple(string $style_text = view_styles::COL_SM_12): string
+    {
+        $html = new html_base();
+        global $mtr;
+        $result = $html->form_field(url_var::NAME, msg_id::FORM_FIELD_NAME, '', html_base::INPUT_TEXT, '', $style_text);
+        $result .= $html->form_hidden(url_var::MASK, (string)views::WORD_ADD_ID);
+        $result .= $html->form_hidden(url_var::STEP, url_var::STEP_CONFIRMED);
+        $result .= $html->form_hidden(url_var::BACK . url_var::MASK, (string)views::WORD_ID);
+        $result .= $html->button_bs($mtr->txt(msg_id::SYSTEM_BUTTON_ADD), '', '', url_var::POST_SUBMIT);
+        return $result;
+    }
+
+    /**
      * @param db_object|type_object $dbo
      * @return string the html code to request the description from the user
      */
@@ -1714,6 +1734,80 @@ class system_form extends component
             html_base::INPUT_NUMBER,
             '', $style_text
         );
+    }
+
+    /**
+     * the one field form that overwrites the number, text, time or geolocation of a value or the number of a result
+     * without the confirm view: the hidden edit mask with the confirmed step lets url_to_action write the change
+     * directly as the user overwrite and after the write the value or result is shown with its default view
+     *
+     * @param db_object|type_object|combine_named|sandbox_list|null $dbo the value or result that the user overwrites
+     * @param string $style_text the formatting code of the value field
+     * @return string the html code of the value field, the hidden write vars and the save button
+     */
+    function form_value_overwrite(
+        db_object|type_object|combine_named|sandbox_list|null $dbo,
+        string                                                $style_text = view_styles::COL_SM_12
+    ): string
+    {
+        $result = '';
+        // the overwrite view is only opened for a value or a result, so any other object is a program error
+        if ($dbo instanceof sandbox_value) {
+            $result = $this->form_value_overwrite_fields($dbo, $style_text);
+        } else {
+            log_err('the value overwrite form got ' . get_debug_type($dbo) . ' instead of a value or result');
+        }
+        return $result;
+    }
+
+    /**
+     * @param sandbox_value $dbo the value or result that the user overwrites
+     * @param string $style_text the formatting code of the value field
+     * @return string the html code of the value field, the hidden write vars and the save button
+     */
+    private function form_value_overwrite_fields(sandbox_value $dbo, string $style_text): string
+    {
+        $html = new html_base();
+        $edit_mask = views::VALUE_EDIT_ID;
+        $back_mask = views::VALUE_DEFAULT_ID;
+        if ($dbo instanceof result) {
+            $edit_mask = views::RESULT_EDIT_ID;
+            $back_mask = views::RESULT_ID;
+        }
+        $id = (string)$dbo->id();
+        $result = $this->form_field_value_by_type($dbo, $style_text);
+        $result .= $html->form_hidden(url_var::MASK, (string)$edit_mask);
+        $result .= $html->form_hidden(url_var::ID, $id);
+        $result .= $html->form_hidden(url_var::STEP, url_var::STEP_CONFIRMED);
+        $result .= $html->form_hidden(url_var::BACK . url_var::MASK, (string)$back_mask);
+        $result .= $html->form_hidden(url_var::BACK . url_var::ID, $id);
+        $result .= $this->button_save();
+        return $result;
+    }
+
+    /**
+     * @param sandbox_value $dbo the value or result that the user overwrites
+     * @param string $style_text the formatting code of the value field
+     * @return string the html code of the text, time, geolocation or number field that matches the type of the value
+     */
+    private function form_field_value_by_type(sandbox_value $dbo, string $style_text): string
+    {
+        $html = new html_base();
+        if ($dbo->text_value() !== null) {
+            $result = $html->form_field(
+                url_var::VALUE_TEXT, msg_id::FORM_FIELD_TEXT_VALUE, $dbo->text_value(), html_base::INPUT_TEXT, '', $style_text);
+        } elseif ($dbo->time_value() !== null) {
+            $time = $dbo->time_value()->format(sandbox_value::TIME_FORMAT);
+            $result = $html->form_field(
+                url_var::VALUE_TIME, msg_id::FORM_FIELD_TIME_VALUE, $time, html_base::INPUT_TEXT, '', $style_text);
+        } elseif ($dbo->geo_value() !== null) {
+            $result = $html->form_field(
+                url_var::VALUE_GEO, msg_id::FORM_FIELD_GEO_VALUE, $dbo->geo_value(), html_base::INPUT_TEXT, '', $style_text);
+        } else {
+            $result = $html->form_field(
+                url_var::NUMERIC_VALUE, msg_id::FORM_FIELD_VALUE, $dbo->number(), html_base::INPUT_NUMBER, '', $style_text);
+        }
+        return $result;
     }
 
     /**

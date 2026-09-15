@@ -16,17 +16,14 @@ CREATE PROCEDURE component_link_update_log_00040240000
      _position_type_id_old      smallint,
      _position                  text,
      _position_type_id          smallint)
-
 BEGIN
 
-    INSERT INTO changes ( user_id, change_action_id, change_field_id,          old_value,             new_value,         old_id,               new_id,           row_id)
-         SELECT          _user_id,_change_action_id,_field_id_component_id,   _to_component_name_old,_to_component_name,_component_id_old,    _component_id,    _component_link_id ;
-
-    INSERT INTO changes (user_id, change_action_id, change_field_id,           old_value,             new_value,                                                 row_id)
-         SELECT         _user_id,_change_action_id,_field_id_order_nbr,       _order_nbr_old,        _order_nbr,                                                _component_link_id ;
-
-    INSERT INTO changes (user_id, change_action_id, change_field_id,           old_value,             new_value,         old_id,               new_id,           row_id)
-         SELECT         _user_id,_change_action_id,_field_id_position_type_id,_position_old,         _position,         _position_type_id_old,_position_type_id,_component_link_id ;
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,           old_value,             new_value,         old_id,               new_id,           row_id)
+         SELECT          _user_id,_change_action_id,_field_id_component_id,    _to_component_name_old,_to_component_name,_component_id_old,    _component_id,    _component_link_id ;
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,           old_value,             new_value,                                                 row_id)
+         SELECT          _user_id,_change_action_id,_field_id_order_nbr,       _order_nbr_old,        _order_nbr,                                                _component_link_id ;
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,           old_value,             new_value,         old_id,               new_id,           row_id)
+         SELECT          _user_id,_change_action_id,_field_id_position_type_id,_position_old,         _position,         _position_type_id_old,_position_type_id,_component_link_id ;
 
     UPDATE component_links
        SET component_id     = _component_id,
@@ -37,8 +34,7 @@ BEGIN
 END;
 
 PREPARE component_link_update_log_00040240000_call FROM
-    'SELECT component_link_update_log_00040240000
-            (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
+    'SELECT component_link_update_log_00040240000 (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
 
 SELECT component_link_update_log_00040240000
        (3,

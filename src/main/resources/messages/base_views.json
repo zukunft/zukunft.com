@@ -1572,6 +1572,38 @@
           "position_type": "combine"
         }
       ]
+    },
+    {
+      "name": "Related phrases",
+      "description": "the full list of the phrases related to a word or triple grouped by verb, which the title of a phrase page links with its '...' if the title shows only some related phrases",
+      "code_id": "word_related",
+      "type": "word",
+      "components": [
+        {
+          "position": "1",
+          "name": "Word title"
+        },
+        {
+          "position": "2",
+          "name": "phrase aliases"
+        },
+        {
+          "position": "3",
+          "name": "phrase symbols"
+        },
+        {
+          "position": "4",
+          "name": "parents of word"
+        },
+        {
+          "position": "5",
+          "name": "children of word"
+        },
+        {
+          "position": "6",
+          "name": "related phrases without subtitles"
+        }
+      ]
     }
   ]
 }

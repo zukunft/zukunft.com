@@ -217,7 +217,8 @@ class job_runner
             $this->err('failed ' . $job->dsp_id() . ': ' . $e->getMessage());
         }
 
-        // record the final status so the job is not executed again
+        // record the final status so the job is not executed again; the end time marks the job as completed
+        $job->end_time = new DateTime();
         if ($result) {
             $this->set_status($job, job_statuum::STATUS_DONE);
         } else {

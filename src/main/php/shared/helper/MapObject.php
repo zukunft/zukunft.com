@@ -54,6 +54,9 @@ use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_geo;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_text;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_time;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
 use Zukunft\ZukunftCom\main\php\cfg\result\result;
@@ -106,7 +109,7 @@ class MapObject
         } elseif ($ui_obj::class == ref_ui::class) {
             return new ref($usr);
         } elseif ($ui_obj::class == value_ui::class) {
-            return new value($usr);
+            return $this->dbValue($ui_obj, $usr);
         } elseif ($ui_obj::class == formula_ui::class) {
             return new formula($usr);
         } elseif ($ui_obj::class == result_ui::class) {
@@ -138,8 +141,33 @@ class MapObject
      * @param db_object_seq_id|db_object_multi_user $obj the backend object to select the frontend object
      * @return db_object_ui the empty frontend object corresponding to the frontend object
      */
+    /**
+     * the empty backend value object that matches the type of the frontend value, because the text, time and
+     * geolocation of a value are saved in their own tables
+     *
+     * @param value_ui $val the frontend value with the number, text, time or geolocation
+     * @param user|null $usr the user of the frontend already converted to a backend user object
+     * @return value|value_text|value_time|value_geo the empty backend value object with the user set
+     */
+    private function dbValue(value_ui $val, ?user $usr): value|value_text|value_time|value_geo
+    {
+        $result = new value($usr);
+        if ($val->text_value() !== null) {
+            $result = new value_text($usr);
+        } elseif ($val->time_value() !== null) {
+            $result = new value_time($usr);
+        } elseif ($val->geo_value() !== null) {
+            $result = new value_geo($usr);
+        }
+        return $result;
+    }
+
     function uiObject(db_object_seq_id|db_object_multi_user $obj): db_object_ui
     {
+        // the text, time and geo values are shown and changed with the same frontend value object as a number
+        if (in_array($obj::class, [value_text::class, value_time::class, value_geo::class])) {
+            return new value_ui();
+        }
         if ($obj::class == user::class) {
             return new user_ui();
         } elseif ($obj::class == word::class) {

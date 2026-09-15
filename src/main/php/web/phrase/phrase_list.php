@@ -244,6 +244,40 @@ class phrase_list extends sandbox_list_named
     }
 
     /**
+     * add the phrases with the given ids to this list, e.g. to name the phrases that a url has selected
+     *
+     * @param array $ids the phrase ids, positive for a word and negative for a triple
+     * @param user_message $msg to report a problem of the api message to the user
+     * @return bool true if at least one phrase has been added to this list
+     */
+    function load_by_ids(array $ids, user_message $msg): bool
+    {
+        $data = array();
+        $data[url_var::ID_LST] = implode(',', $ids);
+        return $this->add_by_api($data, $msg);
+    }
+
+    /**
+     * the phrases of this list whose name starts with the given chars ignoring the case, like the backend
+     * search by the start of a name, e.g. to offer the phrases that match a few typed chars
+     *
+     * @param string $pattern the first chars of the phrase names e.g. "ci" for "city"
+     * @param user_message $msg to report a problem of the list
+     * @return phrase_list the matching phrases of this list
+     */
+    function filter_by_name_start(string $pattern, user_message $msg): phrase_list
+    {
+        $result = new phrase_list();
+        $start = mb_strtolower($pattern);
+        foreach ($this->lst() as $phr) {
+            if (str_starts_with(mb_strtolower($phr->name()), $start)) {
+                $result->add($phr, $msg);
+            }
+        }
+        return $result;
+    }
+
+    /**
      * add the phrases that the phrase list api returns for the given request to this list
      *
      * @param array $data the url vars of the api request e.g. the verb and the direction

@@ -18,16 +18,20 @@ BEGIN
          SELECT           _formula_name
       RETURNING            formula_id INTO new_formula_id;
 
-    INSERT INTO changes ( user_id, change_action_id, change_field_id,         new_value,      row_id)
-         SELECT          _user_id,_change_action_id,_field_id_formula_name,  _formula_name,   new_formula_id ;
-    INSERT INTO changes ( user_id, change_action_id, change_field_id,         new_value,      row_id)
-         SELECT          _user_id,_change_action_id,_field_id_user_id,       _user_id,        new_formula_id ;
-    INSERT INTO changes (user_id, change_action_id, change_field_id,          new_value,      row_id)
-         SELECT         _user_id,_change_action_id,_field_id_formula_type_id,_formula_type_id,new_formula_id ;
-    INSERT INTO changes (user_id, change_action_id, change_field_id,          new_value,      row_id)
-         SELECT         _user_id,_change_action_id,_field_id_formula_text,   _formula_text,   new_formula_id ;
-    INSERT INTO changes (user_id, change_action_id, change_field_id,          new_value,      row_id)
-         SELECT         _user_id,_change_action_id,_field_id_resolved_text,  _resolved_text,  new_formula_id ;
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,          new_value,      row_id)
+         SELECT          _user_id,_change_action_id,_field_id_formula_name,   _formula_name,   new_formula_id ;
+
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,          new_value,      row_id)
+         SELECT          _user_id,_change_action_id,_field_id_user_id,        _user_id,        new_formula_id ;
+
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,          new_value,      row_id)
+         SELECT          _user_id,_change_action_id,_field_id_formula_type_id,_formula_type_id,new_formula_id ;
+
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,          new_value,      row_id)
+         SELECT          _user_id,_change_action_id,_field_id_formula_text,   _formula_text,   new_formula_id ;
+
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,          new_value,      row_id)
+         SELECT          _user_id,_change_action_id,_field_id_resolved_text,  _resolved_text,  new_formula_id ;
 
     UPDATE formulas
        SET user_id         = _user_id,
@@ -44,18 +48,18 @@ $$ LANGUAGE plpgsql;
 
 PREPARE formula_insert_log_01100011100100000_call
         (text, bigint, smallint, smallint, smallint, smallint, smallint, smallint, text, smallint, text) AS
-    SELECT formula_insert_log_01100011100100000
+SELECT formula_insert_log_01100011100100000
         ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11);
 
-SELECT formula_insert_log_01100011100100000 (
-               'scale hour to sec'::text,
-               3::bigint,
-               1::smallint,
-               30::smallint,
-               173::smallint,
-               31::smallint,
-               1::smallint,
-               33::smallint,
-               '{w24}={w105}*3600'::text,
-               32::smallint,
-               '{w24}={w105}*3600'::text);
+SELECT formula_insert_log_01100011100100000
+       ('scale hour to sec'::text,
+        3::bigint,
+        1::smallint,
+        30::smallint,
+        173::smallint,
+        31::smallint,
+        1::smallint,
+        33::smallint,
+        '{w24}={w105}*3600'::text,
+        32::smallint,
+        '{w24}={w105}*3600'::text);

@@ -1,16 +1,16 @@
 DROP PROCEDURE IF EXISTS formula_insert_log_01100011100100000;
 CREATE PROCEDURE formula_insert_log_01100011100100000
-(_formula_name             text,
- _user_id                  bigint,
- _change_action_id         smallint,
- _field_id_formula_name    smallint,
- _field_id_user_id         smallint,
- _field_id_formula_type_id smallint,
- _formula_type_id          smallint,
- _field_id_formula_text    smallint,
- _formula_text             text,
- _field_id_resolved_text   smallint,
- _resolved_text            text)
+    (_formula_name             text,
+     _user_id                  bigint,
+     _change_action_id         smallint,
+     _field_id_formula_name    smallint,
+     _field_id_user_id         smallint,
+     _field_id_formula_type_id smallint,
+     _formula_type_id          smallint,
+     _field_id_formula_text    smallint,
+     _formula_text             text,
+     _field_id_resolved_text   smallint,
+     _resolved_text            text)
 BEGIN
 
     INSERT INTO formulas ( formula_name)
@@ -18,16 +18,20 @@ BEGIN
 
     SELECT LAST_INSERT_ID() AS @new_formula_id;
 
-    INSERT INTO changes ( user_id, change_action_id, change_field_id,         new_value,               row_id)
-         SELECT          _user_id,_change_action_id,_field_id_formula_name,  _formula_name,   @new_formula_id ;
-    INSERT INTO changes ( user_id, change_action_id, change_field_id,         new_value,               row_id)
-         SELECT          _user_id,_change_action_id,_field_id_user_id,       _user_id,        @new_formula_id ;
-    INSERT INTO changes (user_id, change_action_id, change_field_id,          new_value,               row_id)
-         SELECT         _user_id,_change_action_id,_field_id_formula_type_id,_formula_type_id,@new_formula_id ;
-    INSERT INTO changes (user_id, change_action_id, change_field_id,          new_value,               row_id)
-         SELECT         _user_id,_change_action_id,_field_id_formula_text,   _formula_text,   @new_formula_id ;
-    INSERT INTO changes (user_id, change_action_id, change_field_id,          new_value,               row_id)
-         SELECT         _user_id,_change_action_id,_field_id_resolved_text,  _resolved_text,  @new_formula_id ;
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,          new_value,       row_id)
+         SELECT          _user_id,_change_action_id,_field_id_formula_name,   _formula_name,   @new_formula_id ;
+
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,          new_value,       row_id)
+         SELECT          _user_id,_change_action_id,_field_id_user_id,        _user_id,        @new_formula_id ;
+
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,          new_value,       row_id)
+         SELECT          _user_id,_change_action_id,_field_id_formula_type_id,_formula_type_id,@new_formula_id ;
+
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,          new_value,       row_id)
+         SELECT          _user_id,_change_action_id,_field_id_formula_text,   _formula_text,   @new_formula_id ;
+
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,          new_value,       row_id)
+         SELECT          _user_id,_change_action_id,_field_id_resolved_text,  _resolved_text,  @new_formula_id ;
 
     UPDATE formulas
        SET user_id         = _user_id,
@@ -42,15 +46,15 @@ END;
 PREPARE formula_insert_log_01100011100100000_call FROM
     'SELECT formula_insert_log_01100011100100000 (?,?,?,?,?,?,?,?,?,?,?)';
 
-SELECT formula_insert_log_01100011100100000 (
-               'scale hour to sec',
-               3,
-               1,
-               30,
-               173,
-               31,
-               1,
-               33,
-               '{w24}={w105}*3600',
-               32,
-               '{w24}={w105}*3600');
+SELECT formula_insert_log_01100011100100000
+       ('scale hour to sec',
+        3,
+        1,
+        30,
+        173,
+        31,
+        1,
+        33,
+        '{w24}={w105}*3600',
+        32,
+        '{w24}={w105}*3600');

@@ -77,6 +77,7 @@ use Zukunft\ZukunftCom\main\php\cfg\system\list_db_read;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_geo;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_text;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_time;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_list;
@@ -152,7 +153,7 @@ class test_lib
         return $usr_ui;
     }
 
-    function ui_value(value $val): value_ui
+    function ui_value(value|value_text|value_time|value_geo $val): value_ui
     {
         $api_msg = $val->api_json([api_types::INCL_PHRASES]);
         return new value_ui($api_msg);
@@ -321,8 +322,9 @@ class test_lib
             source::class => new source_ui(),
             ref::class => new ref_ui(),
             value::class => new value_ui(),
-            // the frontend shows a text and a geo value on the same value object as a number
+            // the frontend shows a text, time and geo value on the same value object as a number
             value_text::class => new value_ui(),
+            value_time::class => new value_ui(),
             value_geo::class => new value_ui(),
             group::class => new group_ui(),
             formula::class => new formula_ui(),

@@ -1582,14 +1582,7 @@ class group extends sandbox_multi
     function is_prime(): bool
     {
         $grp_id = new group_id();
-        $id = $grp_id->get_id($this->phr_lst);
-        if (count($this->phr_lst->lst()) == 0 and is_string($this->id())) {
-            if ($this->id() != '') {
-                $id = $this->id();
-                log_warning('fix wrong using of value id');
-            }
-        }
-        return $grp_id->is_prime($id);
+        return $grp_id->is_prime($this->id_or_phrase_list_id());
     }
 
     /**
@@ -1603,8 +1596,23 @@ class group extends sandbox_multi
     function is_big(): bool
     {
         $grp_id = new group_id();
-        $id = $grp_id->get_id($this->phr_lst);
-        return $grp_id->is_big($id);
+        return $grp_id->is_big($this->id_or_phrase_list_id());
+    }
+
+    /**
+     * the id that selects the table of the group like table_type(): the database id if it is set, because the
+     * phrase list of a loaded group can be incomplete, and else the id created from the phrase list
+     *
+     * @return int|string the database id of this group or the id of its phrase list
+     */
+    private function id_or_phrase_list_id(): int|string
+    {
+        $result = $this->id();
+        if ($result === 0 or $result === '') {
+            $grp_id = new group_id();
+            $result = $grp_id->get_id($this->phr_lst);
+        }
+        return $result;
     }
 
     /**

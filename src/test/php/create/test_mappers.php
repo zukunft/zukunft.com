@@ -839,6 +839,7 @@ class test_mappers
             case component_types::PHRASE:
             case component_types::FORM_TITLE:
             case component_types::FORM_FIELD_NAME:
+            case component_types::FORM_WORD_ADD_SIMPLE:
             case component_types::FORM_FIELD_DESCRIPTION:
             case component_types::FORM_FIELD_SELECTION_NAME:
             case component_types::FORM_FIELD_SELECTION_DESCRIPTION:
@@ -877,6 +878,9 @@ class test_mappers
             case component_types::SYSTEM_BODY_PROCESS:
             case component_types::SYSTEM_BODY_PROCESS_PROGRESS:
             case component_types::SYSTEM_BODY_PROCESS_LIST:
+            case component_types::SYSTEM_BODY_NOT_YET_AVAILABLE:
+            case component_types::SYSTEM_BODY_USER_JOBS:
+            case component_types::SYSTEM_BODY_ALL_JOBS:
             case component_types::SYSTEM_BODY_ERROR_LOG:
             case component_types::SYSTEM_BODY_ERROR_UPDATE:
             case component_types::LIST_PARENTS_OF_WORD:
@@ -962,6 +966,9 @@ class test_mappers
             case component_types::NUMERIC_VALUE:
             case component_types::VALUES_ALL:
             case component_types::SYSTEM_BODY_VALUE_DETAIL:
+            case component_types::FORM_PHRASE_STEPS:
+            case component_types::FORM_VALUE_ADD_SIMPLE:
+            case component_types::FORM_VALUE_OVERWRITE:
                 $obj = $t_val->value_16_filled();
                 break;
             case component_types::FORM_FIELD_GROUP:

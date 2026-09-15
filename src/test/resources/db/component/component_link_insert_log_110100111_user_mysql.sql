@@ -26,23 +26,18 @@ CREATE PROCEDURE component_link_insert_log_110100111_user
      _protect_id             smallint)
 BEGIN
 
-    INSERT INTO change_links (user_id, change_action_id, change_table_id, old_text_from, old_text_link, old_text_to, new_text_from, new_text_link, new_text_to, old_from_id, old_link_id, old_to_id, new_from_id, new_link_id, new_to_id, row_id)
-         SELECT              _user_id,_change_action_id,_change_table_id,_old_text_from,_old_text_link,_old_text_to,_new_text_from,_new_text_link,_new_text_to,_old_from_id,_old_link_id,_old_to_id,_new_from_id,_new_link_id,_new_to_id,_component_link_id ;
-
-    INSERT INTO changes (user_id, change_action_id, change_field_id,        new_value,     row_id)
-         SELECT         _user_id,_change_action_id,_field_id_order_nbr,    _order_nbr,    _component_link_id ;
-
-    INSERT INTO changes (user_id, change_action_id, change_field_id,        new_value,     row_id)
-         SELECT         _user_id,_change_action_id,_field_id_excluded,     _excluded,     _component_link_id ;
-
-    INSERT INTO changes (user_id, change_action_id, change_field_id,        new_value,     row_id)
-         SELECT         _user_id,_change_action_id,_field_id_share_type_id,_share_type_id,_component_link_id ;
-
-    INSERT INTO changes (user_id, change_action_id, change_field_id,        new_value,     row_id)
-         SELECT         _user_id,_change_action_id,_field_id_protect_id,   _protect_id,   _component_link_id ;
-
-    INSERT INTO user_component_links (component_link_id, user_id, order_nbr, excluded, share_type_id, protect_id)
-         SELECT                      _component_link_id,_user_id,_order_nbr,_excluded,_share_type_id,_protect_id ;
+    INSERT INTO change_links ( user_id, change_action_id, change_table_id, old_text_from, old_text_link, old_text_to, new_text_from, new_text_link, new_text_to, old_from_id, old_link_id, old_to_id, new_from_id, new_link_id, new_to_id, row_id)
+         SELECT               _user_id,_change_action_id,_change_table_id,_old_text_from,_old_text_link,_old_text_to,_new_text_from,_new_text_link,_new_text_to,_old_from_id,_old_link_id,_old_to_id,_new_from_id,_new_link_id,_new_to_id,_component_link_id ;
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,        new_value,     row_id)
+         SELECT          _user_id,_change_action_id,_field_id_order_nbr,    _order_nbr,    _component_link_id ;
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,        new_value,     row_id)
+         SELECT          _user_id,_change_action_id,_field_id_excluded,     _excluded,     _component_link_id ;
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,        new_value,     row_id)
+         SELECT          _user_id,_change_action_id,_field_id_share_type_id,_share_type_id,_component_link_id ;
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,        new_value,     row_id)
+         SELECT          _user_id,_change_action_id,_field_id_protect_id,   _protect_id,   _component_link_id ;
+    INSERT INTO user_component_links ( component_link_id, user_id, order_nbr, excluded, share_type_id, protect_id)
+         SELECT                       _component_link_id,_user_id,_order_nbr,_excluded,_share_type_id,_protect_id ;
 
 END;
 

@@ -3670,6 +3670,8 @@
     \-- load_sql - section for function load_sql is expected to be load sql in /system/job.php
     \-- load_sql_by_id - section for function load_sql_by_id is expected to be load sql in /system/job.php
     \-- id_field - section for function id_field not yet defined that it should be load in /system/job.php
+    \-- change_by_user - section for function change_by_user not yet defined that it should be modify in /system/job.php
+    \-- apply_change - section for function apply_change not yet defined that it should be modify in /system/job.php
     \-- exe_val_upd - section for function exe_val_upd not yet defined that it should be modify in /system/job.php
     \-- exe - section for function exe not yet defined that it should be modify in /system/job.php
     \-- del - section for function del is expected to be del in /system/job.php
@@ -3684,8 +3686,12 @@
 \-- job_list
     \-- load_by_type - section for function load_by_type is expected to be load in /system/job_list.php
     \-- load_by_status - section for function load_by_status is expected to be load in /system/job_list.php
+    \-- load_by_user - section for function load_by_user is expected to be load in /system/job_list.php
+    \-- load_all - section for function load_all is expected to be load in /system/job_list.php
     \-- load_sql_by_type - section for function load_sql_by_type is expected to be load sql in /system/job_list.php
     \-- load_sql_by_status - section for function load_sql_by_status is expected to be load sql in /system/job_list.php
+    \-- load_sql_by_user - section for function load_sql_by_user is expected to be load sql in /system/job_list.php
+    \-- load_sql_all - section for function load_sql_all is expected to be load sql in /system/job_list.php
     \-- add - section for function add not yet defined that it should be modify in /system/job_list.php
     \-- merge - section for function merge not yet defined that it should be modify in /system/job_list.php
 \-- job_runner
@@ -5910,6 +5916,10 @@
         \-- job_list - prepare sql to get all open jobs of one type
     \-- load_sql_by_status
         \-- job_list - prepare sql to get all open jobs of one status
+    \-- load_sql_by_user
+        \-- job_list - prepare sql to get the jobs requested by the user of this list
+    \-- load_sql_all
+        \-- job_list - prepare sql to get the jobs of all users
 \-- get function
     \-- id_lst
         \-- term_list - @returns array the phrase ids as an array
@@ -6001,6 +6011,10 @@
         \-- job_list - load a list of batch jobs of the given type
     \-- load_by_status
         \-- job_list - load a list of batch jobs of the given status
+    \-- load_by_user
+        \-- job_list - load the batch jobs that the user of this list has requested
+    \-- load_all
+        \-- job_list - load the batch jobs of all users e.g. for the job overview of an admin;
 \-- construct
     \-- __construct
         \-- job_runner - @param user $usr the system user that runs the jobs (see user::system)
@@ -6256,6 +6270,8 @@
             password but without auto fill in /component/execute/system_form.php
     \-- form_name - section for function form_name not yet defined that it should be optional with show password but wit
             hout auto fill in /component/execute/system_form.php
+    \-- form_word_add_simple - section for function form_word_add_simple not yet defined that it should be optional with
+             show password but without auto fill in /component/execute/system_form.php
     \-- form_description - section for function form_description not yet defined that it should be optional with show pa
             ssword but without auto fill in /component/execute/system_form.php
     \-- form_field_code_id - section for function form_field_code_id not yet defined that it should be optional with sho
@@ -6276,6 +6292,8 @@
             password but without auto fill in /component/execute/system_form.php
     \-- form_num_value - section for function form_num_value not yet defined that it should be optional with show passwo
             rd but without auto fill in /component/execute/system_form.php
+    \-- form_value_overwrite - section for function form_value_overwrite not yet defined that it should be optional with
+             show password but without auto fill in /component/execute/system_form.php
     \-- form_field_url - section for function form_field_url not yet defined that it should be optional with show passwo
             rd but without auto fill in /component/execute/system_form.php
     \-- form_field_doi - section for function form_field_doi not yet defined that it should be optional with show passwo
@@ -6438,6 +6456,9 @@
     \-- process - section for function process missing in /component/execute/system_page.php
     \-- error_log - section for function error_log missing in /component/execute/system_page.php
     \-- error_update - section for function error_update missing in /component/execute/system_page.php
+    \-- not_yet_available - section for function not_yet_available missing in /component/execute/system_page.php
+    \-- user_jobs - section for function user_jobs missing in /component/execute/system_page.php
+    \-- all_jobs - section for function all_jobs missing in /component/execute/system_page.php
     \-- process_progress - section for function process_progress missing in /component/execute/system_page.php
     \-- process_list - section for function process_list missing in /component/execute/system_page.php
     \-- admin_url_delay - section for function admin_url_delay missing in /component/execute/system_page.php
@@ -6547,6 +6568,8 @@
     \-- view_select - section for function view_select missing in /component/execute/ui_select.php
     \-- view_list_for - section for function view_list_for missing in /component/execute/ui_select.php
     \-- list_select - section for function list_select missing in /component/execute/ui_select.php
+    \-- phrase_steps - section for function phrase_steps missing in /component/execute/ui_select.php
+    \-- value_add_simple - section for function value_add_simple missing in /component/execute/ui_select.php
 \-- element
     \-- api_mapper - section for function api_mapper is expected to be construct and map in /element/element.php
     \-- api_array - section for function api_array not yet defined that it should be api in /element/element.php
@@ -6723,6 +6746,8 @@
             roup_list.php
     \-- dsp_id - section for function dsp_id is expected to be debug in /group/group_list.php
 \-- config
+    \-- frontend_type - section for function frontend_type not yet defined that it should be interface in /helper/config
+            .php
     \-- percent_decimals - section for function percent_decimals not yet defined that it should be interface in /helper/
             config.php
     \-- dec_point - section for function dec_point not yet defined that it should be interface in /helper/config.php
@@ -7163,6 +7188,8 @@
     \-- url_mapper - section for function url_mapper not yet defined that it should be set and get in /phrase/phrase_lis
             t.php
     \-- api_mapper - section for function api_mapper is expected to be construct and map in /phrase/phrase_list.php
+    \-- filter_by_name_start - section for function filter_by_name_start not yet defined that it should be load in /phra
+            se/phrase_list.php
     \-- result_phrases_most_relevant - section for function result_phrases_most_relevant not yet defined that it should 
             be related in /phrase/phrase_list.php
     \-- child_names - section for function child_names not yet defined that it should be related in /phrase/phrase_list.
@@ -7558,6 +7585,8 @@
             alue.php
     \-- time_value - section for function time_value not yet defined that it should be set and get in /sandbox/sandbox_v
             alue.php
+    \-- geo_value - section for function geo_value not yet defined that it should be set and get in /sandbox/sandbox_val
+            ue.php
     \-- is_std - section for function is_std is expected to be info in /sandbox/sandbox_value.php
     \-- phr_lst - section for function phr_lst not yet defined that it should be set and get in /sandbox/sandbox_value.p
             hp
@@ -7578,7 +7607,12 @@
     \-- type - section for function type not yet defined that it should be set and get in /system/job.php
     \-- status - section for function status not yet defined that it should be set and get in /system/job.php
     \-- priority - section for function priority not yet defined that it should be set and get in /system/job.php
+    \-- user_name - section for function user_name not yet defined that it should be set and get in /system/job.php
+    \-- is_open - section for function is_open is expected to be info in /system/job.php
+    \-- change - section for function change not yet defined that it should be modify in /system/job.php
     \-- display - section for function display not yet defined that it should be base elements in /system/job.php
+    \-- display_with_actions - section for function display_with_actions not yet defined that it should be base elements
+             in /system/job.php
     \-- header - section for function header not yet defined that it should be base elements in /system/job.php
     \-- api_array - section for function api_array not yet defined that it should be interface in /system/job.php
     \-- display_linked - section for function display_linked not yet defined that it should be to review in /system/job.
@@ -7586,10 +7620,14 @@
     \-- td - section for function td not yet defined that it should be to review in /system/job.php
     \-- th - section for function th not yet defined that it should be to review in /system/job.php
     \-- tr - section for function tr not yet defined that it should be to review in /system/job.php
-    \-- order error - order of section set and get has difference at set_user_id should be before set_request_time
+    \-- order error - order of section set and get has difference at user_name should be before status
 \-- job_list
     \-- api_mapper - section for function api_mapper is expected to be construct and map in /system/job_list.php
     \-- display - section for function display not yet defined that it should be display in /system/job_list.php
+    \-- display_with_actions - section for function display_with_actions not yet defined that it should be display in /s
+            ystem/job_list.php
+    \-- pending_first - section for function pending_first not yet defined that it should be display in /system/job_list
+            .php
     \-- tbl - section for function tbl not yet defined that it should be to review in /system/job_list.php
 \-- language
     \-- url_mapper - section for function url_mapper not yet defined that it should be api in /system/language.php
@@ -8328,6 +8366,10 @@
         \-- sandbox_link - the pending link in one line, shown as the title of a confirm page, e.g.
     \-- name_linked
         \-- sandbox_link - the two linked objects as links, e.g. for the subtitle of the link default page;
+    \-- display_with_actions
+        \-- job_list - @param bool $is_admin true if the requesting user is an admin, who can also upgrade a job
+    \-- pending_first
+        \-- job_list - @return array the jobs with the open jobs on top and within each group the newest request first
     \-- display_admin
         \-- sys_log_list - @param array $url_arr the url vars of the calling page for the back link of the close links
     \-- get_html
@@ -8540,10 +8582,11 @@
         \-- change_log_list - load a list of changes from the api
     \-- load_by_user
         \-- change_log_list - load the overwrites done by the given user via the api
+        \-- job_list - load the jobs of the requesting user via the api
         \-- sys_log_list - request the system log entries related to the session user from the backend
     \-- load_api_by_object_field
         \-- change_log_list - get the json of a list of changes from the api
-    \-- 6
+    \-- 8
         \-- phrase_list - add the phrases related to the given formula to the list
     \-- load_fallback
         \-- change_log_list - if the change log list is empty fill it with the last changes
@@ -8560,6 +8603,8 @@
         \-- combine_named - load the phrase by name via api
     \-- load_by_id
         \-- sandbox - add the user to the load of the user sandbox object e.g. word by id via api
+    \-- load_all
+        \-- job_list - load the jobs of all users via the api, which refuses the request of a user who is not an admin
 \-- 
     \-- form_tile
         \-- system_form - start an HTML form, show the title and set and set the unique form name
@@ -8632,10 +8677,19 @@
         \-- system_page - @return string with the HTML code to show all relations of a value
     \-- error_update
         \-- system_page - render the admin error-update page body: a table of unresolved program issues an admin can
+    \-- not_yet_available
+        \-- system_page - the body of a system view that is already part of the system views,
+                 but whose data and actions are not yet
+    \-- user_jobs
+        \-- system_page - the jobs of the requesting user with the pending jobs on top and the buttons to downgrade or c
+                ancel a job
+    \-- all_jobs
+        \-- system_page - the jobs of all users for an admin with the pending jobs on top and the buttons to up- or down
+                grade or cancel
     \-- process_progress
-        \-- system_page - render the admin error-update page body: a table of unresolved program issues an admin can
+        \-- system_page - @param user_message $msg with the requesting user
     \-- process_list
-        \-- system_page - render the admin error-update page body: a table of unresolved program issues an admin can
+        \-- system_page - @param user_message $msg with the requesting user
     \-- admin_url_delay
         \-- system_page - @return string with the HTML code that contains the most relevant user response delay within a
                  time period defined in the system configuration
@@ -8821,6 +8875,12 @@
         \-- ui_select - the views to offer in a view selector: the request cache list if it is already filled, otherwise
     \-- list_select
         \-- ui_select - show a selection list (e.g. of languages) and let the user pick one entry by name
+    \-- phrase_steps
+        \-- ui_select - the pure html selection of the phrases of a new value one after the other: the chosen phrases ar
+                e
+    \-- value_add_simple
+        \-- ui_select - the pure html form that adds a value just by its phrases and the number: the phrases are selecte
+                d step by
     \-- api_mapper
         \-- element_group - set the vars of this element_group list based on the given json
     \-- element_list
@@ -8995,6 +9055,9 @@
         \-- system_form - TODO Prio 1 fill with the correct field
     \-- form_name
         \-- system_form - an editable text field of an edit / add form that also sends the unchanged db value as the
+    \-- form_word_add_simple
+        \-- system_form - the one field form that adds a word by its name without the confirm view: the hidden word add 
+                mask
     \-- form_description
         \-- system_form - @param db_object|type_object $dbo
     \-- form_field_code_id
@@ -9015,6 +9078,9 @@
         \-- system_form - edit field for the triple weight
     \-- form_num_value
         \-- system_form - @param db_object $dbo the object
+    \-- form_value_overwrite
+        \-- system_form - the one field form that overwrites the number, text,
+                 time or geolocation of a value or the number of a result
     \-- form_field_url
         \-- system_form - @return string the html code to request a url from the user
     \-- form_field_doi
@@ -9187,12 +9253,17 @@
         \-- formula_link - @return string the description of this formula link or an empty string if not set
     \-- phrase_name
         \-- formula_link - @return string the description of this formula link or an empty string if not set
+    \-- frontend_type
+        \-- config - @param user_message $msg to report a problem of reading the config
     \-- percent_decimals
-        \-- config - 
+        \-- config - the view that adds a value for the given frontend type: a pure html frontend selects the phrases of
+                 the
     \-- dec_point
-        \-- config - 
+        \-- config - the view that adds a value for the given frontend type: a pure html frontend selects the phrases of
+                 the
     \-- thousand_sep
-        \-- config - 
+        \-- config - the view that adds a value for the given frontend type: a pure html frontend selects the phrases of
+                 the
     \-- date_time_format
         \-- config - @return string with the date format as requested by the user
 \-- classifications

@@ -18,11 +18,11 @@ BEGIN
     INSERT INTO changes ( user_id, change_action_id, change_field_id,       new_value,    row_id)
          SELECT          _user_id,_change_action_id,_field_id_ip_range_key,_ip_range_key,@new_ip_range_id ;
 
-    INSERT INTO changes ( user_id, change_action_id, change_field_id,  new_value, row_id)
-         SELECT          _user_id,_change_action_id,_field_id_ip_from,_ip_from,  @new_ip_range_id ;
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,       new_value,    row_id)
+         SELECT          _user_id,_change_action_id,_field_id_ip_from,     _ip_from,     @new_ip_range_id ;
 
-    INSERT INTO changes ( user_id, change_action_id, change_field_id, new_value, row_id)
-         SELECT          _user_id,_change_action_id,_field_id_ip_to, _ip_to,    @new_ip_range_id ;
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,       new_value,    row_id)
+         SELECT          _user_id,_change_action_id,_field_id_ip_to,       _ip_to,       @new_ip_range_id ;
 
     UPDATE ip_ranges
        SET ip_from = _ip_from,
@@ -32,14 +32,14 @@ BEGIN
 END;
 
 PREPARE ip_range_insert_log_111100_call FROM
-    'SELECT ip_range_insert_log_111100 (?, ?, ?, ?, ?, ?, ?, ?)';
+    'SELECT ip_range_insert_log_111100 (?,?,?,?,?,?,?,?)';
 
 SELECT ip_range_insert_log_111100
-    ('66.249.64.95-66.249.64.95',
-     3,
-     1,
-     859,
-     185,
-     '66.249.64.95',
-     186,
-     '66.249.64.95');
+       ('66.249.64.95-66.249.64.95',
+        3,
+        1,
+        859,
+        185,
+        '66.249.64.95',
+        186,
+        '66.249.64.95');

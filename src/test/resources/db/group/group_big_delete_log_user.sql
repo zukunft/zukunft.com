@@ -1,24 +1,26 @@
 CREATE OR REPLACE FUNCTION group_big_delete_log_user
-    (_user_id bigint,
-     _change_action_id smallint,
+    (_user_id             bigint,
+     _change_action_id    smallint,
      _field_id_group_name smallint,
-     _group_name text,
-     _group_id text) RETURNS void AS
+     _group_name          text,
+     _group_id            text) RETURNS void AS
+$$
+BEGIN
 
-$$ BEGIN
+    INSERT INTO changes_big ( user_id, change_action_id, change_field_id,     old_value,  row_id)
+         SELECT              _user_id,_change_action_id,_field_id_group_name,_group_name,_group_id ;
 
-    INSERT INTO changes_big (user_id,change_action_id,change_field_id,old_value,row_id)
-         SELECT _user_id,_change_action_id,_field_id_group_name,_group_name,_group_id ;
+    DELETE
+      FROM user_groups_big
+     WHERE group_id = _group_id
+       AND user_id = _user_id;
 
-    DELETE FROM user_groups_big
-          WHERE group_id = _group_id
-            AND user_id = _user_id;
-
-END $$ LANGUAGE plpgsql;
+END
+$$ LANGUAGE plpgsql;
 
 SELECT group_big_delete_log_user
-    (3::bigint,
-     3::smallint,
-     324::smallint,
-     'π'::text,
-     '1FajJ2-.4LYK3-..8jId-...I1A-....Yz-..../.-.....Z-.....9-...../+.....A+.....a+....3s+...1Ao+../vLC+.//ZSB+.ZSahL+.uraWl+'::text);
+       (3::bigint,
+        3::smallint,
+        324::smallint,
+        'π'::text,
+        '1FajJ2-.4LYK3-..8jId-...I1A-....Yz-..../.-.....Z-.....9-...../+.....A+.....a+....3s+...1Ao+../vLC+.//ZSB+.ZSahL+.uraWl+'::text);

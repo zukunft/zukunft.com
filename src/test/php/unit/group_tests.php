@@ -164,6 +164,18 @@ class group_tests
             '1,-11,12,-37,38,-64,376,-2367,13108,-82124,505294,-2815273,17192845,-106841477,628779863,-3516593476');
         $grp_id = 0;
 
+        // the prime and big check of a group follow the database id like the table selection, because the phrase
+        // list of a loaded group can be incomplete, and only a group without an id is checked by its phrase list
+        $test_name = 'a group with the text id of 16 phrases is not prime although its phrase list has one phrase';
+        $grp = $t_grp->group();
+        $grp->set_id($t_grp->group_16()->id());
+        $t->assert_false($test_name, $grp->is_prime());
+        $test_name = 'a group with the id of more than 16 phrases is big although its phrase list has one phrase';
+        $grp->set_id($t_grp->group_17_plus()->id());
+        $t->assert_true($test_name, $grp->is_big());
+        $test_name = 'a group without an id is prime by its phrase list';
+        $t->assert_true($test_name, $t_grp->group_incomplete()->is_prime());
+
         $t->subheader($ts . 'result id');
         // TODO assign the formula "increase" to the word inhabitants
         // TODO based on the formula the name of the formula and the phrases on the left side

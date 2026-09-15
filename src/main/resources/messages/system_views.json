@@ -1921,6 +1921,104 @@
       "description": "the components of the shown view sorted by their position with a link to each component",
       "type": "components_of_view",
       "code_id": "view_components"
+    },
+    {
+      "name": "system form title value add phrases",
+      "description": "show the language specific title for the system form to add a new value by selecting its words and triples step by step",
+      "type": "system_form_title",
+      "code_id": "form_title_value_add_phrases",
+      "ui_msg_code_id": "form_title_value_add_phrases"
+    },
+    {
+      "name": "system form phrase steps",
+      "description": "select the phrases of a new value one after the other: a typed name is checked and added, the phrases that start with a few typed chars are offered to select and next opens the value add form with the selected phrases",
+      "type": "system_form_phrase_steps",
+      "code_id": "form_phrase_steps"
+    },
+    {
+      "name": "system form word add simple",
+      "description": "one field for the name of a new word and an add button that writes the word directly if no term with the same name exists",
+      "type": "system_form_word_add_simple",
+      "code_id": "form_word_add_simple"
+    },
+    {
+      "name": "system form value add simple",
+      "description": "select the phrases of a new value step by step and, as soon as a phrase is chosen, the number field and an add button that writes the value directly",
+      "type": "system_form_value_add_simple",
+      "code_id": "form_value_add_simple"
+    },
+    {
+      "name": "system form value overwrite",
+      "description": "one field with the number, text, time or geolocation of the shown value or the number of the shown result and a save button that writes the change directly as the user overwrite",
+      "type": "system_form_value_overwrite",
+      "code_id": "form_value_overwrite"
+    },
+    {
+      "name": "system body not yet available",
+      "description": "the hint that the data and actions of the shown system view are not yet available",
+      "type": "system_body_not_yet_available",
+      "code_id": "system_body_not_yet_available"
+    },
+    {
+      "name": "system body user jobs",
+      "description": "the jobs of the requesting user with the status, the pending jobs on top and the buttons to downgrade or cancel a job",
+      "type": "system_body_user_jobs",
+      "code_id": "system_body_user_jobs"
+    },
+    {
+      "name": "system body all jobs",
+      "description": "the jobs of all users for an admin with the status, the pending jobs on top and the buttons to up- or downgrade or cancel a job",
+      "type": "system_body_all_jobs",
+      "code_id": "system_body_all_jobs"
+    },
+    {
+      "name": "system title user config",
+      "description": "show the language specific title for the standard user configuration and the overwrites of the user",
+      "type": "system_title",
+      "code_id": "system_title_user_config",
+      "ui_msg_code_id": "system_title_user_config"
+    },
+    {
+      "name": "system title system config",
+      "description": "show the language specific title for the read only system configuration",
+      "type": "system_title",
+      "code_id": "system_title_system_config",
+      "ui_msg_code_id": "system_title_system_config"
+    },
+    {
+      "name": "system title admin config",
+      "description": "show the language specific title for the admin view to adjust the full system configuration",
+      "type": "system_title",
+      "code_id": "system_title_admin_config",
+      "ui_msg_code_id": "system_title_admin_config"
+    },
+    {
+      "name": "system title user quarantine",
+      "description": "show the language specific title for the data of the user that has been moved to the quarantine",
+      "type": "system_title",
+      "code_id": "system_title_user_quarantine",
+      "ui_msg_code_id": "system_title_user_quarantine"
+    },
+    {
+      "name": "system title all quarantine",
+      "description": "show the language specific title for the admin list of all data in quarantine",
+      "type": "system_title",
+      "code_id": "system_title_all_quarantine",
+      "ui_msg_code_id": "system_title_all_quarantine"
+    },
+    {
+      "name": "system title user jobs",
+      "description": "show the language specific title for the jobs caused by the user",
+      "type": "system_title",
+      "code_id": "system_title_user_jobs",
+      "ui_msg_code_id": "system_title_user_jobs"
+    },
+    {
+      "name": "system title all jobs",
+      "description": "show the language specific title for the admin list of all jobs",
+      "type": "system_title",
+      "code_id": "system_title_all_jobs",
+      "ui_msg_code_id": "system_title_all_jobs"
     }
   ],
   "views": [
@@ -7025,6 +7123,242 @@
         {
           "position": "3",
           "name": "request additional language"
+        }
+      ]
+    },
+    {
+      "name": "Add number by words and triples",
+      "description": "Create a new value by selecting its words and triples step by step without javascript",
+      "code_id": "value_add_phrases",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system form title value add phrases"
+        },
+        {
+          "position": "2",
+          "name": "system form hidden back stack"
+        },
+        {
+          "position": "3",
+          "name": "system form phrase steps"
+        },
+        {
+          "position": "4",
+          "name": "system form button cancel"
+        },
+        {
+          "position": "5",
+          "name": "system form end"
+        }
+      ]
+    },
+    {
+      "name": "Add word by name",
+      "description": "Create a new word just by its name without the confirm view if no term with the same name exists",
+      "code_id": "word_add_simple",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system form title word add"
+        },
+        {
+          "position": "2",
+          "name": "system form word add simple"
+        },
+        {
+          "position": "3",
+          "name": "system form end"
+        }
+      ]
+    },
+    {
+      "name": "Add number by phrases",
+      "description": "Create a new value just by selecting its words and triples and entering the number without the confirm view",
+      "code_id": "value_add_simple",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system form title value add"
+        },
+        {
+          "position": "2",
+          "name": "system form hidden back stack"
+        },
+        {
+          "position": "3",
+          "name": "system form value add simple"
+        },
+        {
+          "position": "4",
+          "name": "system form end"
+        }
+      ]
+    },
+    {
+      "name": "Overwrite number",
+      "description": "Change just the number, text, time or geolocation of a value for the user without the confirm view",
+      "code_id": "value_overwrite",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system form title value edit"
+        },
+        {
+          "position": "2",
+          "name": "system form value overwrite"
+        },
+        {
+          "position": "3",
+          "name": "system form end"
+        }
+      ]
+    },
+    {
+      "name": "Overwrite result",
+      "description": "Change just the number of a result for the user without the confirm view",
+      "code_id": "result_overwrite",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system form title result edit"
+        },
+        {
+          "position": "2",
+          "name": "system form value overwrite"
+        },
+        {
+          "position": "3",
+          "name": "system form end"
+        }
+      ]
+    },
+    {
+      "name": "User configuration",
+      "description": "Show to the user the standard user configuration and the overwrites of the user",
+      "code_id": "user_config",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title user config"
+        },
+        {
+          "position": "2",
+          "name": "system body not yet available"
+        }
+      ]
+    },
+    {
+      "name": "System configuration",
+      "description": "Show to the user the system configuration as read only with the possibility to request changes",
+      "code_id": "system_config",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title system config"
+        },
+        {
+          "position": "2",
+          "name": "system body not yet available"
+        }
+      ]
+    },
+    {
+      "name": "Admin system configuration",
+      "description": "Allow an admin to see the full system configuration with the possibility to adjust it",
+      "code_id": "admin_config",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title admin config"
+        },
+        {
+          "position": "2",
+          "name": "system body not yet available"
+        }
+      ]
+    },
+    {
+      "name": "User quarantine",
+      "description": "Show to the user the data that the user has entered and that has been moved to the quarantine",
+      "code_id": "user_quarantine",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title user quarantine"
+        },
+        {
+          "position": "2",
+          "name": "system body not yet available"
+        }
+      ]
+    },
+    {
+      "name": "All quarantine",
+      "description": "Show to an admin user the complete list of data in quarantine",
+      "code_id": "all_quarantine",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title all quarantine"
+        },
+        {
+          "position": "2",
+          "name": "system body not yet available"
+        }
+      ]
+    },
+    {
+      "name": "User jobs",
+      "description": "Show to the user the jobs that the user has caused with the status, the pending jobs on the top and the possibility to downgrade or cancel jobs",
+      "code_id": "user_jobs",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title user jobs"
+        },
+        {
+          "position": "2",
+          "name": "system body user jobs"
+        }
+      ]
+    },
+    {
+      "name": "All jobs",
+      "description": "Show to an admin user the complete list of jobs with the pending jobs on the top and the possibility to up and downgrade or cancel jobs",
+      "code_id": "all_jobs",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title all jobs"
+        },
+        {
+          "position": "2",
+          "name": "system body all jobs"
         }
       ]
     }

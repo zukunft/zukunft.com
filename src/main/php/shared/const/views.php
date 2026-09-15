@@ -52,11 +52,13 @@ class views
     // the id of the last system view that should be included in the unit testing
     const int MIN_TEST_ID = 1;
     // TODO Prio 1 set to 109
-    const int MAX_TEST_ID = 120;
+    const int MAX_TEST_ID = 133;
 
     // curl views for main objects
     const string WORD_ADD = 'word_add';
     const int WORD_ADD_ID = 2;
+    const string WORD_ADD_SIMPLE = 'word_add_simple';
+    const int WORD_ADD_SIMPLE_ID = 90;
     const string WORD_EDIT = 'word_edit';
     const int WORD_EDIT_ID = 3;
     const string WORD_DEL = 'word_del';
@@ -90,8 +92,14 @@ class views
     const int REF_DEL_ID = 17;
     const string VALUE_ADD = 'value_add';
     const int VALUE_ADD_ID = 18;
+    const string VALUE_ADD_PHRASES = 'value_add_phrases';
+    const int VALUE_ADD_PHRASES_ID = 89;
+    const string VALUE_ADD_SIMPLE = 'value_add_simple';
+    const int VALUE_ADD_SIMPLE_ID = 91;
     const string VALUE_EDIT = 'value_edit';
     const int VALUE_EDIT_ID = 19;
+    const string VALUE_OVERWRITE = 'value_overwrite';
+    const int VALUE_OVERWRITE_ID = 92;
     const string VALUE_DEL = 'value_del';
     const int VALUE_DEL_ID = 20;
     const string GROUP_ADD = 'group_add';
@@ -110,6 +118,8 @@ class views
     const int RESULT_ADD_ID = 27;
     const string RESULT_EDIT = 'result_edit';
     const int RESULT_EDIT_ID = 28;
+    const string RESULT_OVERWRITE = 'result_overwrite';
+    const int RESULT_OVERWRITE_ID = 93;
     const string RESULT_DEL = 'result_del';
     const int RESULT_DEL_ID = 29;
 
@@ -250,6 +260,22 @@ class views
     const int JOB_CONTROL_ID = 83;
     const string JOB_CHECK = 'job_check';
     const int JOB_CHECK_ID = 84;
+    const string USER_JOBS = 'user_jobs';
+    const int USER_JOBS_ID = 99;
+    const string ALL_JOBS = 'all_jobs';
+    const int ALL_JOBS_ID = 100;
+
+    // configuration and quarantine
+    const string USER_CONFIG = 'user_config';
+    const int USER_CONFIG_ID = 94;
+    const string SYSTEM_CONFIG = 'system_config';
+    const int SYSTEM_CONFIG_ID = 95;
+    const string ADMIN_CONFIG = 'admin_config';
+    const int ADMIN_CONFIG_ID = 96;
+    const string USER_QUARANTINE = 'user_quarantine';
+    const int USER_QUARANTINE_ID = 97;
+    const string ALL_QUARANTINE = 'all_quarantine';
+    const int ALL_QUARANTINE_ID = 98;
 
     // admin
     const string ADMIN_MAIN = 'admin_main';
@@ -261,106 +287,107 @@ class views
     const string COMPLETE = 'complete';
     const int COMPLETE_ID = 87;
     const string BASE_UNITS = 'base_units';
-    const int BASE_UNITS_ID = 89;
+    const int BASE_UNITS_ID = 101;
 
     // default views
     // TODO easy add missing default views e.g. for formula
     const string WORD = 'word_default';
-    const int WORD_ID = 90;
+    const int WORD_ID = 102;
     const string WORD_NAME = 'Word';
     const string WORD_COM = 'The default view for words';
     const string VERB = 'verb_default';
-    const int VERB_ID = 91;
+    const int VERB_ID = 103;
     const string VERB_NAME = 'Verb';
     const string TRIPLE = 'triple_default';
-    const int TRIPLE_ID = 92;
+    const int TRIPLE_ID = 104;
     const string SOURCE = 'source_default';
-    const int SOURCE_ID = 93;
+    const int SOURCE_ID = 105;
     const string SOURCE_NAME = 'Source';
     const string REF = 'ref_default';
-    const int REF_ID = 94;
+    const int REF_ID = 106;
     const string LANGUAGE = 'language_default';
-    const int LANGUAGE_ID = 95;
+    const int LANGUAGE_ID = 107;
     const string VALUE = 'value_default';
-    const int VALUE_DEFAULT_ID = 96;
+    const int VALUE_DEFAULT_ID = 108;
     const string FORMULA = 'formula_default';
-    const int FORMULA_ID = 97;
+    const int FORMULA_ID = 109;
     const string RESULT = 'result_default';
-    const int RESULT_ID = 98;
+    const int RESULT_ID = 110;
     // appended at the end of base_views.json, so the import position is after the last
     // view of the previously imported files (see docs/llm/json_views.md)
     const string VIEW = 'view_default';
-    const int VIEW_DEFAULT_ID = 114;
+    const int VIEW_DEFAULT_ID = 126;
     const string COMPONENT = 'component_default';
-    const int COMPONENT_DEFAULT_ID = 115;
+    const int COMPONENT_DEFAULT_ID = 127;
     const string FORMULA_LINK_DEFAULT = 'formula_link_default';
-    const int FORMULA_LINK_DEFAULT_ID = 116;
+    const int FORMULA_LINK_DEFAULT_ID = 128;
     const string TERM_VIEW_DEFAULT = 'term_view_default';
-    const int TERM_VIEW_DEFAULT_ID = 117;
+    const int TERM_VIEW_DEFAULT_ID = 129;
     const string COMPONENT_LINK_DEFAULT = 'component_link_default';
-    const int COMPONENT_LINK_DEFAULT_ID = 118;
+    const int COMPONENT_LINK_DEFAULT_ID = 130;
     const string VIEW_RELATION_DEFAULT = 'view_relation_default';
-    const int VIEW_RELATION_DEFAULT_ID = 119;
+    const int VIEW_RELATION_DEFAULT_ID = 131;
 
     // base views for users
     const string RANKING = 'ranking';
-    const int RANKING_ID = 99;
+    const int RANKING_ID = 111;
     const string SCIENCE = 'science';
-    const int SCIENCE_ID = 100;
+    const int SCIENCE_ID = 112;
     const string SCIENCE_NAME = 'show mainly related words that are relevant in sciences';
     const string HISTORIC = 'hist';
-    const int HISTORIC_ID = 101;
+    const int HISTORIC_ID = 113;
     const string HISTORIC_NAME = 'Historic';
     const string HISTORIC_COM = 'show mainly related words that are relevant in sciences';
     const string BIOLOGICAL = 'bio';
-    const int BIOLOGICAL_ID = 102;
+    const int BIOLOGICAL_ID = 114;
     const string BIOLOGICAL_NAME = 'Biological';
     const string BIOLOGICAL_COM = 'show what is relevant from the biological point of view';
     const string EDUCATION = 'edu';
-    const int EDUCATION_ID = 103;
+    const int EDUCATION_ID = 115;
     const string EDUCATION_NAME = 'Education';
     const string EDUCATION_COM = 'show mainly related words that are relevant in sciences';
     const string TOURISTIC = 'touristic';
-    const int TOURISTIC_ID = 104;
+    const int TOURISTIC_ID = 116;
     const string TOURISTIC_NAME = 'Touristic';
     const string TOURISTIC_COM = 'show mainly related words that are relevant in sciences';
     const string GRAPH = 'graph';
-    const int GRAPH_ID = 105;
+    const int GRAPH_ID = 117;
     const string GRAPH_NAME = 'Graph';
     const string GRAPH_COM = 'show mainly related words that are relevant in sciences';
     const string SIMPLE = 'simple';
-    const int SIMPLE_ID = 106;
+    const int SIMPLE_ID = 118;
     const string SIMPLE_NAME = 'Simple';
     const string SIMPLE_COM = 'show mainly related words that are relevant in sciences';
     const string MATH_CONST = 'math_const';
-    const int MATH_CONST_ID = 107;
+    const int MATH_CONST_ID = 119;
     const string MATH_CONST_NAME = 'math const';
     const string MATH_CONST_COM = 'Show a mathematical constance and the related words and formulas';
     const string GLOBAL_PROBLEM = 'global_problem';
-    const int GLOBAL_PROBLEM_ID = 108;
+    const int GLOBAL_PROBLEM_ID = 120;
 
     // TODO Prio 3 resort the views and group it
     const string SYSTEM_LOG = 'system_log';
-    const int SYSTEM_LOG_ID = 109;
+    const int SYSTEM_LOG_ID = 121;
 
     // to sort
     const string LANGUAGE_SELECT = 'language_select';
     const int LANGUAGE_SELECT_ID = 88;
     const string PHRASE = 'phrase_default';
-    const int PHRASE_ID = 110;
+    const int PHRASE_ID = 122;
 
     // full list of phrases related to a word/triple — the "..." link target shown in the
     // page title when the title's truncated related-list overflows the per-verb config limit
     // (e.g. for Zurich with limit=2 the title 'Zurich (city, canton, ...)' links the '...'
     // to this view, which then renders every related triple grouped by verb)
     const string WORD_RELATED = 'word_related';
-    const int WORD_RELATED_ID = 111;
+    // the last view of base_views.json, so its id follows the calculator; confirm it from the regenerated list.csv
+    const int WORD_RELATED_ID = 133;
 
     // all values of a word/triple in up to four columns headed by the phrases used most often
     // within these values (e.g. inhabitants, area and elevation for a city) — the "more" link
     // target of the values list shown on the default word page
     const string PHRASE_VALUES = 'phrase_values';
-    const int PHRASE_VALUES_ID = 112;
+    const int PHRASE_VALUES_ID = 124;
     const string PHRASE_VALUES_NAME = 'Values of a phrase';
     const string PHRASE_VALUES_COM = 'All values related to a word or triple, grouped into up to four columns by the phrases used most often within the values';
 
@@ -368,7 +395,7 @@ class views
     // values (e.g. inhabitants and area for a city) and one row per remaining phrase combination
     // (e.g. per year), headed by the phrase title of a word or of a triple
     const string TABLE = 'table';
-    const int TABLE_ID = 113;
+    const int TABLE_ID = 125;
     const string TABLE_NAME = 'Table';
     const string TABLE_COM = 'The values related to a word or triple as a table with one column per phrase used most often within the values';
 
@@ -376,7 +403,7 @@ class views
     // tiers define, headed by the phrase title, e.g. the use case "PV in Switzerland" with the
     // avoided emission with and without the displacement mix concept (pv_switzerland_co2.json)
     const string CALCULATOR = 'calculator';
-    const int CALCULATOR_ID = 120;
+    const int CALCULATOR_ID = 132;
     const string CALCULATOR_NAME = 'Calculator';
     const string CALCULATOR_COM = 'The values related to a word or triple as a table with the defined columns, so that the numbers of a question can be compared';
 
@@ -413,7 +440,7 @@ class views
 
     // code if of views that should be checked before deployment if they are still fine with the base setup
     const string CURRENCY = 'currency'; // the default view for all currencies
-    const int CURRENCY_ID = 111; // a kind of dummy id that may often change
+    const int CURRENCY_ID = 123; // a kind of dummy id that may often change
 
 
     // TODO views to be created
@@ -481,6 +508,10 @@ class views
         self::USER_ADMIN_EDIT_ID,
         self::USER_ADMIN_DEL_ID,
         self::BASE_UNITS_ID,
+        self::USER_CONFIG_ID,
+        self::SYSTEM_CONFIG_ID,
+        self::USER_QUARANTINE_ID,
+        self::USER_JOBS_ID,
     ];
 
     // system masks that handle user authentication or user profile
@@ -523,6 +554,9 @@ class views
         self::USER_ADMIN_DEL_ID,
         self::ADMIN_MAIN_ID,
         self::COMPLETE_ID,
+        self::ADMIN_CONFIG_ID,
+        self::ALL_QUARANTINE_ID,
+        self::ALL_JOBS_ID,
     ];
 
     // system masks that have a word as the main object
@@ -535,6 +569,8 @@ class views
         self::WORD_RELATED_ID,
         self::PHRASE_VALUES_ID,
         self::TABLE_ID,
+        self::WORD_ADD_SIMPLE_ID,
+        self::CURRENCY_ID,
     ];
 
     // system masks that have a verb as the main object
@@ -597,6 +633,9 @@ class views
         self::VALUE_DEL_ID,
         self::VALUE_DETAIL_ID,
         self::VALUE_DEFAULT_ID,
+        self::VALUE_ADD_PHRASES_ID,
+        self::VALUE_ADD_SIMPLE_ID,
+        self::VALUE_OVERWRITE_ID,
     ];
 
     // system masks that have a formula as the main object
@@ -615,6 +654,7 @@ class views
         self::RESULT_DEL_ID,
         self::RESULT_EXPLAIN_ID,
         self::RESULT_ID,
+        self::RESULT_OVERWRITE_ID,
     ];
 
     // system masks that have a view as the main object
@@ -790,12 +830,20 @@ class views
         self::PHRASE_VALUES_ID,
         self::TABLE_ID,
         self::CALCULATOR_ID,
+        self::CURRENCY_ID,
         self::VIEW_DEFAULT_ID,
         self::COMPONENT_DEFAULT_ID,
         self::FORMULA_LINK_DEFAULT_ID,
         self::TERM_VIEW_DEFAULT_ID,
         self::COMPONENT_LINK_DEFAULT_ID,
         self::VIEW_RELATION_DEFAULT_ID,
+        self::USER_CONFIG_ID,
+        self::SYSTEM_CONFIG_ID,
+        self::ADMIN_CONFIG_ID,
+        self::USER_QUARANTINE_ID,
+        self::ALL_QUARANTINE_ID,
+        self::USER_JOBS_ID,
+        self::ALL_JOBS_ID,
     ];
 
     // system masks that add a sandbox object
@@ -818,6 +866,9 @@ class views
         self::USER_ADMIN_ADD_ID,
         self::LANGUAGE_ADD_ID,
         self::CONFIRM_ADD_ID,
+        self::VALUE_ADD_PHRASES_ID,
+        self::WORD_ADD_SIMPLE_ID,
+        self::VALUE_ADD_SIMPLE_ID,
     ];
 
     // system masks that change a sandbox object
@@ -842,6 +893,8 @@ class views
         self::CONFIRM_EDIT_ID,
         self::CONFIRM_VIEWS_ID,
         self::ERROR_UPDATE_ID,
+        self::VALUE_OVERWRITE_ID,
+        self::RESULT_OVERWRITE_ID,
     ];
 
     // system masks that delete a sandbox object
@@ -1033,6 +1086,18 @@ class views
         self::ADMIN_MAIN_ID => self::ADMIN_MAIN,
         self::VERBS_ID => self::VERBS,
         self::COMPLETE_ID => self::COMPLETE,
+        self::VALUE_ADD_PHRASES_ID => self::VALUE_ADD_PHRASES,
+        self::WORD_ADD_SIMPLE_ID => self::WORD_ADD_SIMPLE,
+        self::VALUE_ADD_SIMPLE_ID => self::VALUE_ADD_SIMPLE,
+        self::VALUE_OVERWRITE_ID => self::VALUE_OVERWRITE,
+        self::RESULT_OVERWRITE_ID => self::RESULT_OVERWRITE,
+        self::USER_CONFIG_ID => self::USER_CONFIG,
+        self::SYSTEM_CONFIG_ID => self::SYSTEM_CONFIG,
+        self::ADMIN_CONFIG_ID => self::ADMIN_CONFIG,
+        self::USER_QUARANTINE_ID => self::USER_QUARANTINE,
+        self::ALL_QUARANTINE_ID => self::ALL_QUARANTINE,
+        self::USER_JOBS_ID => self::USER_JOBS,
+        self::ALL_JOBS_ID => self::ALL_JOBS,
         self::BASE_UNITS_ID => self::BASE_UNITS,
         self::WORD_ID => self::WORD,
         self::VERB_ID => self::VERB,
@@ -1056,6 +1121,7 @@ class views
         self::SYSTEM_LOG_ID => self::SYSTEM_LOG,
         self::LANGUAGE_SELECT_ID => self::LANGUAGE_SELECT,
         self::PHRASE_ID => self::PHRASE,
+        self::WORD_RELATED_ID => self::WORD_RELATED,
         self::PHRASE_VALUES_ID => self::PHRASE_VALUES,
         self::TABLE_ID => self::TABLE,
         self::CALCULATOR_ID => self::CALCULATOR,
@@ -1071,6 +1137,7 @@ class views
     const array SYSTEM_VIEWS = [
         self::START_CODE,
         self::WORD_ADD,
+        self::WORD_ADD_SIMPLE,
         self::WORD_EDIT,
         self::WORD_DEL,
         self::WORD_LOG,
@@ -1087,7 +1154,10 @@ class views
         self::REF_EDIT,
         self::REF_DEL,
         self::VALUE_ADD,
+        self::VALUE_ADD_PHRASES,
+        self::VALUE_ADD_SIMPLE,
         self::VALUE_EDIT,
+        self::VALUE_OVERWRITE,
         self::VALUE_DEL,
         self::GROUP_ADD,
         self::GROUP_EDIT,
@@ -1097,6 +1167,7 @@ class views
         self::FORMULA_DEL,
         self::RESULT_ADD,
         self::RESULT_EDIT,
+        self::RESULT_OVERWRITE,
         self::RESULT_DEL,
         self::VIEW_ADD,
         self::VIEW_EDIT,
@@ -1153,6 +1224,13 @@ class views
         self::JOB_ASYNC,
         self::JOB_CONTROL,
         self::JOB_CHECK,
+        self::USER_JOBS,
+        self::ALL_JOBS,
+        self::USER_CONFIG,
+        self::SYSTEM_CONFIG,
+        self::ADMIN_CONFIG,
+        self::USER_QUARANTINE,
+        self::ALL_QUARANTINE,
         self::ADMIN_MAIN,
         self::GLOBAL_PROBLEM,
     ];

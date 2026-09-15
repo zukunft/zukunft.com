@@ -1,14 +1,14 @@
 DROP PROCEDURE IF EXISTS ref_delete_log;
 CREATE PROCEDURE ref_delete_log
-    (_user_id            bigint,
-     _change_action_id  smallint,
-     _change_table_id   smallint,
-     _old_text_from     text,
-     _old_text_link     text,
-     _old_text_to       text,
-     _old_from_id       bigint,
-     _old_link_id       smallint,
-     _ref_id            bigint)
+    (_user_id          bigint,
+     _change_action_id smallint,
+     _change_table_id  smallint,
+     _old_text_from    text,
+     _old_text_link    text,
+     _old_text_to      text,
+     _old_from_id      bigint,
+     _old_link_id      smallint,
+     _ref_id           bigint)
 
 BEGIN
 

@@ -1719,6 +1719,8 @@ enum messages: string
     case INFO_NOT_USED_BY_TERMS = 'info_not_used_by_terms';
     // shown on the search page if no word, triple, verb or formula matches the search pattern
     case INFO_NO_SEARCH_RESULT = 'info_no_search_result';
+    // shown in the phrase selection of a new value if no word or triple starts with the typed chars
+    case INFO_NO_PHRASE_FOR_PATTERN = 'info_no_phrase_for_pattern';
     // shown instead of the formula selector of a phrase page if no formula can be offered
     case INFO_NO_FORMULA_TO_LINK = 'info_no_formula_to_link';
     // shown instead of the category selector of a phrase page if no category can be offered
@@ -1858,6 +1860,8 @@ enum messages: string
     case FORM_TITLE_GROUP_EDIT = 'form_title_group_edit';
     case FORM_TITLE_GROUP_DEL = 'form_title_group_del';
     case FORM_TITLE_VALUE_ADD = 'form_title_value_add';
+    // the title of the form that selects the phrases of a new value step by step
+    case FORM_TITLE_VALUE_ADD_PHRASES = 'form_title_value_add_phrases';
     case FORM_TITLE_VALUE_EDIT = 'form_title_value_edit';
     case FORM_TITLE_VALUE_DEL = 'form_title_value_del';
     case FORM_TITLE_FORMULA_ADD = 'form_title_formula_add';
@@ -1981,6 +1985,14 @@ enum messages: string
     case SYSTEM_TITLE_RESULT_EXPLAIN = 'system_title_result_explain';
     case SYSTEM_TITLE_FORMULA_TEST = 'system_title_formula_test';
     case SYSTEM_TITLE_USER_SETTINGS = 'system_title_user_settings';
+    case SYSTEM_TITLE_USER_CONFIG = 'system_title_user_config';
+    case SYSTEM_TITLE_SYSTEM_CONFIG = 'system_title_system_config';
+    case SYSTEM_TITLE_ADMIN_CONFIG = 'system_title_admin_config';
+    case SYSTEM_TITLE_USER_QUARANTINE = 'system_title_user_quarantine';
+    case SYSTEM_TITLE_ALL_QUARANTINE = 'system_title_all_quarantine';
+    case SYSTEM_TITLE_USER_JOBS = 'system_title_user_jobs';
+    case SYSTEM_TITLE_ALL_JOBS = 'system_title_all_jobs';
+    case INFO_VIEW_NOT_YET_AVAILABLE = 'info_view_not_yet_available';
     case SYSTEM_TITLE_USER = 'system_title_user';
     case SYSTEM_TITLE_VERB = 'system_title_verb';
     // the class word in front of the object name of a page title e.g. view "Word"
@@ -1988,6 +2000,15 @@ enum messages: string
     case SYSTEM_TITLE_COMPONENT = 'system_title_component';
     case TITLE_LANGUAGE_SELECT = 'title_language_select';
     case ADMIN_NO_OPEN_JOBS = 'admin_no_open_jobs';
+    case INFO_NO_JOBS = 'info_no_jobs';
+    case JOB_CHANGE_NOT_PERMITTED = 'job_change_not_permitted';
+    case JOB_UPGRADE_ONLY_ADMIN = 'job_upgrade_only_admin';
+    case JOB_ALREADY_CLOSED = 'job_already_closed';
+    case JOB_ACTION_UNKNOWN = 'job_action_unknown';
+    case JOB_LIST_ALL_ONLY_ADMIN = 'job_list_all_only_admin';
+    case SYSTEM_BUTTON_JOB_UPGRADE = 'system_button_job_upgrade';
+    case SYSTEM_BUTTON_JOB_DOWNGRADE = 'system_button_job_downgrade';
+    case SYSTEM_BUTTON_JOB_CANCEL = 'system_button_job_cancel';
     case ERROR_UPDATE_PROGRAM_ISSUES = 'error_update_program_issues';
     case ERROR_UPDATE_NO_OPEN = 'error_update_no_open';
     case ERROR_UPDATE_PERMISSION_DENIED = 'error_update_permission_denied';
@@ -2054,6 +2075,11 @@ enum messages: string
     // value and result fields
     case FORM_FIELD_VALUE = 'form_field_value';
     case FORM_FIELD_GROUP = 'form_field_group';
+    // the label of the field for the name or the first chars of a word or triple of a new value
+    case FORM_FIELD_PHRASE_PATTERN = 'form_field_phrase_pattern';
+    case FORM_FIELD_TEXT_VALUE = 'form_field_text_value';
+    case FORM_FIELD_TIME_VALUE = 'form_field_time_value';
+    case FORM_FIELD_GEO_VALUE = 'form_field_geo_value';
     case FORM_FIELD_GROUP_OR_PHRASE_LIST = 'form_field_group_or_phrase_list';
     case FORM_FIELD_SOURCE_GROUP_OR_PHRASE_LIST = 'form_field_source_group_or_phrase_list';
 
@@ -2213,6 +2239,10 @@ enum messages: string
     case SYSTEM_BUTTON_LINK = 'system_button_link';
     // the button that opens the add view for the selected object e.g. to define a word as a category
     case SYSTEM_BUTTON_ADD = 'system_button_add';
+    // the button that checks the typed word or triple and adds it to the phrases of a new value
+    case SYSTEM_BUTTON_CHECK_AND_ADD = 'system_button_check_and_add';
+    // the button that continues with the next step e.g. the value add form with the selected phrases
+    case SYSTEM_BUTTON_NEXT = 'system_button_next';
     case FORM_WORD_FLD_NAME = 'form_word_fld_name';
 
 

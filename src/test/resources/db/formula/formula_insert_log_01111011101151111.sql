@@ -35,32 +35,44 @@ BEGIN
          SELECT           _formula_name
       RETURNING            formula_id INTO new_formula_id;
 
-    INSERT INTO changes ( user_id, change_action_id, change_field_id,           new_value,                  row_id)
-         SELECT          _user_id,_change_action_id,_field_id_formula_name,    _formula_name,               new_formula_id ;
-    INSERT INTO changes ( user_id, change_action_id, change_field_id,           new_value,                  row_id)
-         SELECT          _user_id,_change_action_id,_field_id_user_id,         _user_id,                    new_formula_id ;
-    INSERT INTO changes (user_id, change_action_id, change_field_id,            new_value,                  row_id)
-         SELECT         _user_id,_change_action_id,_field_id_description,      _description,                new_formula_id ;
-    INSERT INTO changes (user_id, change_action_id, change_field_id,            new_value,                  row_id)
-         SELECT         _user_id,_change_action_id,_field_id_usage,            _usage,                      new_formula_id ;
-    INSERT INTO changes (user_id, change_action_id, change_field_id,            new_value,                  row_id)
-         SELECT         _user_id,_change_action_id,_field_id_formula_type_id,  _formula_type_id,            new_formula_id ;
-    INSERT INTO changes (user_id, change_action_id, change_field_id,            new_value,                  row_id)
-         SELECT         _user_id,_change_action_id,_field_id_formula_text,     _formula_text,               new_formula_id ;
-    INSERT INTO changes (user_id, change_action_id, change_field_id,            new_value,                  row_id)
-         SELECT         _user_id,_change_action_id,_field_id_resolved_text,    _resolved_text,              new_formula_id ;
-    INSERT INTO changes (user_id, change_action_id, change_field_id,            new_value,                  row_id)
-         SELECT         _user_id,_change_action_id,_field_id_all_values_needed,_all_values_needed,          new_formula_id ;
-    INSERT INTO changes (user_id, change_action_id, change_field_id,            new_value,         new_id,  row_id)
-         SELECT         _user_id,_change_action_id,_field_id_view_id,          _view_name,        _view_id, new_formula_id ;
-    INSERT INTO changes (user_id, change_action_id, change_field_id,            new_value,                  row_id)
-         SELECT         _user_id,_change_action_id,_field_id_impact,           _impact,                     new_formula_id ;
-    INSERT INTO changes (user_id, change_action_id, change_field_id,            new_value,                  row_id)
-         SELECT         _user_id,_change_action_id,_field_id_excluded,         _excluded,                   new_formula_id ;
-    INSERT INTO changes (user_id, change_action_id, change_field_id,            new_value,                  row_id)
-         SELECT         _user_id,_change_action_id,_field_id_share_type_id,    _share_type_id,              new_formula_id ;
-    INSERT INTO changes (user_id, change_action_id, change_field_id,            new_value,                  row_id)
-         SELECT         _user_id,_change_action_id,_field_id_protect_id,       _protect_id,                 new_formula_id ;
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,            new_value,                 row_id)
+         SELECT          _user_id,_change_action_id,_field_id_formula_name,     _formula_name,              new_formula_id ;
+
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,            new_value,                 row_id)
+         SELECT          _user_id,_change_action_id,_field_id_user_id,          _user_id,                   new_formula_id ;
+
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,            new_value,                 row_id)
+         SELECT          _user_id,_change_action_id,_field_id_description,      _description,               new_formula_id ;
+
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,            new_value,                 row_id)
+         SELECT          _user_id,_change_action_id,_field_id_usage,            _usage,                     new_formula_id ;
+
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,            new_value,                 row_id)
+         SELECT          _user_id,_change_action_id,_field_id_formula_type_id,  _formula_type_id,           new_formula_id ;
+
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,            new_value,                 row_id)
+         SELECT          _user_id,_change_action_id,_field_id_formula_text,     _formula_text,              new_formula_id ;
+
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,            new_value,                 row_id)
+         SELECT          _user_id,_change_action_id,_field_id_resolved_text,    _resolved_text,             new_formula_id ;
+
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,            new_value,                 row_id)
+         SELECT          _user_id,_change_action_id,_field_id_all_values_needed,_all_values_needed,         new_formula_id ;
+
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,            new_value,         new_id, row_id)
+         SELECT          _user_id,_change_action_id,_field_id_view_id,          _view_name,        _view_id,new_formula_id ;
+
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,            new_value,                 row_id)
+         SELECT          _user_id,_change_action_id,_field_id_impact,           _impact,                    new_formula_id ;
+
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,            new_value,                 row_id)
+         SELECT          _user_id,_change_action_id,_field_id_excluded,         _excluded,                  new_formula_id ;
+
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,            new_value,                 row_id)
+         SELECT          _user_id,_change_action_id,_field_id_share_type_id,    _share_type_id,             new_formula_id ;
+
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,            new_value,                 row_id)
+         SELECT          _user_id,_change_action_id,_field_id_protect_id,       _protect_id,                new_formula_id ;
 
     UPDATE formulas
        SET user_id           = _user_id,
@@ -85,8 +97,8 @@ $$ LANGUAGE plpgsql;
 
 PREPARE formula_insert_log_01111011101151111_call
         (text, bigint, smallint, smallint, smallint, smallint, text, smallint, bigint, smallint, smallint, smallint, text, smallint, text, smallint, smallint, smallint, text, bigint, smallint, numeric, smallint, smallint, smallint, smallint, smallint, smallint) AS
-    SELECT formula_insert_log_01111011101151111
-        ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26, $27, $28);
+SELECT formula_insert_log_01111011101151111
+        ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28);
 
 SELECT formula_insert_log_01111011101151111
        ('scale minute to sec'::text,

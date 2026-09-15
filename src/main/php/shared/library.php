@@ -516,11 +516,11 @@ class library
         $sql = preg_replace('/; ?;$/', ';', $sql);
         $pg_function = '/^CREATE OR REPLACE FUNCTION (\S+) \((.+?)\) RETURNS (\w+) AS '
             . '\$\$ (DECLARE (.+?); )?BEGIN (.+) END \$\$ LANGUAGE plpgsql; '
-            . 'PREPARE (\S+) \((.+?)\) AS SELECT (\S+) \((.+?)\); '
+            . '(PREPARE (\S+) \((.+?)\) AS SELECT (\S+) \((.+?)\); )?'
             . 'SELECT (\S+) \((.+)\);$/';
         $my_procedure = '/^DROP PROCEDURE IF EXISTS (\S+); CREATE PROCEDURE (\S+) \((.+?)\) '
             . 'BEGIN (.+) END; '
-            . "PREPARE (\S+) FROM 'SELECT (\S+) \((.+?)\)'; "
+            . "(PREPARE (\S+) FROM 'SELECT (\S+) \((.+?)\)'; )?"
             . 'SELECT (\S+) \((.+)\);$/';
         $pg_insert = '/^PREPARE (\S+)(?: \((.+?)\))? AS (INSERT INTO .+);$/';
         $my_insert = "/^PREPARE (\S+) FROM '(INSERT INTO .+)';$/";
@@ -854,18 +854,20 @@ class library
      */
     private function sql_format_function(array $prt): string
     {
-        return 'CREATE OR REPLACE FUNCTION ' . $prt[1] . "\n"
+        $result = 'CREATE OR REPLACE FUNCTION ' . $prt[1] . "\n"
             . $this->sql_format_params($this->sql_split($prt[2])) . ' RETURNS ' . $prt[3] . " AS\n\$\$\n"
             . ($prt[5] != '' ? 'DECLARE ' . $prt[5] . ";\n" : '')
             . "BEGIN\n\n"
             . $this->sql_format_body($prt[6])
-            . "\n\nEND\n\$\$ LANGUAGE plpgsql;\n\n"
-            . 'PREPARE ' . $prt[7] . "\n"
-            . '        (' . implode(', ', $this->sql_split($prt[8])) . ") AS\n"
-            . 'SELECT ' . $prt[9] . "\n"
-            . '        (' . implode(',', $this->sql_split($prt[10])) . ");\n\n"
-            . 'SELECT ' . $prt[11] . "\n"
-            . $this->sql_format_call_args($this->sql_split($prt[12]));
+            . "\n\nEND\n\$\$ LANGUAGE plpgsql;\n\n";
+        // a delete log script calls the function directly without the prepared test call
+        if ($prt[7] != '') {
+            $result .= 'PREPARE ' . $prt[8] . "\n"
+                . '        (' . implode(', ', $this->sql_split($prt[9])) . ") AS\n"
+                . 'SELECT ' . $prt[10] . "\n"
+                . '        (' . implode(',', $this->sql_split($prt[11])) . ");\n\n";
+        }
+        return $result . 'SELECT ' . $prt[12] . "\n" . $this->sql_format_call_args($this->sql_split($prt[13]));
     }
 
     /**
@@ -876,15 +878,21 @@ class library
      */
     private function sql_format_procedure(array $prt): string
     {
-        return 'DROP PROCEDURE IF EXISTS ' . $prt[1] . ";\n"
+        // a delete log script calls the procedure directly and separates its parameters from the BEGIN by an empty line
+        $begin = "\n\nBEGIN\n\n";
+        if ($prt[5] != '') {
+            $begin = "\nBEGIN\n\n";
+        }
+        $result = 'DROP PROCEDURE IF EXISTS ' . $prt[1] . ";\n"
             . 'CREATE PROCEDURE ' . $prt[2] . "\n"
-            . $this->sql_format_params($this->sql_split($prt[3])) . "\nBEGIN\n\n"
+            . $this->sql_format_params($this->sql_split($prt[3])) . $begin
             . $this->sql_format_body($prt[4])
-            . "\n\nEND;\n\n"
-            . 'PREPARE ' . $prt[5] . " FROM\n"
-            . "    'SELECT " . $prt[6] . ' (' . implode(',', $this->sql_split($prt[7])) . ")';\n\n"
-            . 'SELECT ' . $prt[8] . "\n"
-            . $this->sql_format_call_args($this->sql_split($prt[9]));
+            . "\n\nEND;\n\n";
+        if ($prt[5] != '') {
+            $result .= 'PREPARE ' . $prt[6] . " FROM\n"
+                . "    'SELECT " . $prt[7] . ' (' . implode(',', $this->sql_split($prt[8])) . ")';\n\n";
+        }
+        return $result . 'SELECT ' . $prt[9] . "\n" . $this->sql_format_call_args($this->sql_split($prt[10]));
     }
 
     /**
@@ -998,6 +1006,8 @@ class library
                         $multi_step = true;
                     }
                 }
+            } elseif (preg_match('/^DELETE FROM (\S+) WHERE (.+)$/', $stm, $prt)) {
+                $parsed[] = ['type' => 'delete', 'tbl' => $prt[1], 'where' => $prt[2]];
             } elseif (str_starts_with($stm, 'UPDATE ')) {
                 $parsed[] = ['type' => 'update', 'stm' => $stm];
             } else {
@@ -1021,6 +1031,8 @@ class library
                 $result .= $this->sql_format_insert($stm['ins'], $widths, $last_start);
             } elseif ($stm['type'] == 'update') {
                 $result .= $this->sql_format_update($stm['stm']);
+            } elseif ($stm['type'] == 'delete') {
+                $result .= $this->sql_format_delete($stm['tbl'], $stm['where']);
             } else {
                 $result .= '    ' . $stm['stm'] . ';';
             }
@@ -1029,6 +1041,23 @@ class library
             }
         }
         return $result;
+    }
+
+    /**
+     * format a delete statement of a log function body with the keywords right aligned
+     *
+     * @param string $tbl the name of the table from which the rows are deleted
+     * @param string $where the where condition e.g. "view_id = _view_id AND excluded = 1"
+     * @return string the delete statement with one line per keyword and one line per where condition
+     */
+    private function sql_format_delete(string $tbl, string $where): string
+    {
+        $conds = explode(' AND ', $where);
+        $result = "    DELETE\n      FROM " . $tbl . "\n     WHERE " . array_shift($conds);
+        foreach ($conds as $cond) {
+            $result .= "\n       AND " . $cond;
+        }
+        return $result . ';';
     }
 
     /**
@@ -1354,12 +1383,33 @@ class library
         if (($prt[7] ?? '') != '') {
             $where_line = '         WHERE ';
             $conds = explode(' AND ', $prt[8]);
-            $result .= "\n" . $where_line . $conds[0];
+            // the OR of a bracketed where condition is right aligned to the WHERE
+            $or_off = strlen($where_line) - 3;
+            $result .= "\n" . $where_line . $this->sql_format_or_group($conds[0], $or_off);
             // the AND of a where condition is right aligned to the WHERE like the one of a join
             $and_off = strlen($where_line) - 4;
             for ($i = 1; $i < count($conds); $i++) {
-                $result .= "\n" . str_pad('', $and_off) . 'AND ' . $conds[$i];
+                $result .= "\n" . str_pad('', $and_off) . 'AND ' . $this->sql_format_or_group($conds[$i], $or_off);
             }
+        }
+        return $result;
+    }
+
+    /**
+     * format a bracketed where condition of or parts with one part per line, so that every part starts in the column
+     * after the opening bracket e.g. "( a ilike $1" and below "OR   a ilike $2 )"
+     *
+     * @param string $cond the where condition e.g. "( a ilike $1 OR a ilike $2 )"
+     * @param int $or_off the number of spaces before each OR to align it right to the WHERE
+     * @return string the condition with one line per or part or the unchanged condition if it is no bracketed or group
+     */
+    private function sql_format_or_group(string $cond, int $or_off): string
+    {
+        $result = $cond;
+        if (str_starts_with($cond, '( ') and str_contains($cond, ' OR ')) {
+            // the two spaces behind the OR match the width of the opening bracket and its space
+            $or_line = "\n" . str_pad('', $or_off) . 'OR   ';
+            $result = implode($or_line, explode(' OR ', $cond));
         }
         return $result;
     }

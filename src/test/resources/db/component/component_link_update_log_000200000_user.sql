@@ -1,16 +1,15 @@
 CREATE OR REPLACE FUNCTION component_link_update_log_000200000_user
-    (_user_id                bigint,
-     _change_action_id       smallint,
-     _field_id_order_nbr     smallint,
-     _order_nbr_old          bigint,
-     _order_nbr              bigint,
-     _component_link_id      bigint) RETURNS void AS
-
+    (_user_id            bigint,
+     _change_action_id   smallint,
+     _field_id_order_nbr smallint,
+     _order_nbr_old      bigint,
+     _order_nbr          bigint,
+     _component_link_id  bigint) RETURNS void AS
 $$
 BEGIN
 
-    INSERT INTO changes (user_id, change_action_id, change_field_id,    old_value,     new_value, row_id)
-         SELECT         _user_id,_change_action_id,_field_id_order_nbr,_order_nbr_old,_order_nbr,_component_link_id ;
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,    old_value,     new_value, row_id)
+         SELECT          _user_id,_change_action_id,_field_id_order_nbr,_order_nbr_old,_order_nbr,_component_link_id ;
 
     UPDATE user_component_links
        SET order_nbr = _order_nbr
@@ -21,9 +20,9 @@ END
 $$ LANGUAGE plpgsql;
 
 PREPARE component_link_update_log_000200000_user_call
-        (bigint,smallint,smallint,bigint,bigint,bigint) AS
+        (bigint, smallint, smallint, bigint, bigint, bigint) AS
 SELECT component_link_update_log_000200000_user
-        ($1,$2,$3,$4,$5, $6);
+        ($1,$2,$3,$4,$5,$6);
 
 SELECT component_link_update_log_000200000_user
        (3::bigint,

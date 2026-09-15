@@ -6159,11 +6159,7 @@ class test_base
      */
     function update_file(string $test_resource_path, string $result): void
     {
-        // TODO always set a breakpoint here
-        $filepath = test_paths::RESOURCE . $test_resource_path;
-        if (file_put_contents($filepath, $result) === false) {
-            log_err('Cannot write target file ' . $filepath);
-        }
+        $this->update_path_file(test_paths::RESOURCE . $test_resource_path, $result);
     }
 
     /**
@@ -6174,7 +6170,11 @@ class test_base
     function update_path_file(string $filepath, string $result): void
     {
         // TODO always set a breakpoint here
-        if (file_put_contents($filepath, $result) === false) {
+        // the first snapshot of a new object type is written to a folder that does not exist yet
+        $dir = dirname($filepath);
+        if (!is_dir($dir) and !mkdir($dir, 0775, true) and !is_dir($dir)) {
+            log_err('Cannot create the target folder ' . $dir);
+        } elseif (file_put_contents($filepath, $result) === false) {
             log_err('Cannot write target file ' . $filepath);
         }
     }

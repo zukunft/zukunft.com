@@ -1,30 +1,30 @@
 DROP PROCEDURE IF EXISTS view_update_log_00220000001;
 CREATE PROCEDURE view_update_log_00220000001
-    (_user_id                 bigint,
-     _change_action_id        smallint,
-     _field_id_view_name      smallint,
-     _view_name_old           text,
-     _view_name               text,
-     _view_id                 bigint,
-     _field_id_description    smallint,
-     _description_old         text,
-     _description             text,
-     _field_id_protect_id     smallint,
-     _protect_id_old          smallint,
-     _protect_id              smallint)
+    (_user_id              bigint,
+     _change_action_id     smallint,
+     _field_id_view_name   smallint,
+     _view_name_old        text,
+     _view_name            text,
+     _view_id              bigint,
+     _field_id_description smallint,
+     _description_old      text,
+     _description          text,
+     _field_id_protect_id  smallint,
+     _protect_id_old       smallint,
+     _protect_id           smallint)
 BEGIN
 
-    INSERT INTO changes ( user_id, change_action_id, change_field_id,    old_value,     new_value, row_id)
-         SELECT          _user_id,_change_action_id,_field_id_view_name,_view_name_old,_view_name,_view_id ;
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,      old_value,       new_value,   row_id)
+         SELECT          _user_id,_change_action_id,_field_id_view_name,  _view_name_old,  _view_name,  _view_id ;
     INSERT INTO changes ( user_id, change_action_id, change_field_id,      old_value,       new_value,   row_id)
          SELECT          _user_id,_change_action_id,_field_id_description,_description_old,_description,_view_id ;
-    INSERT INTO changes ( user_id, change_action_id, change_field_id,         old_value,          new_value,      row_id)
-         SELECT          _user_id,_change_action_id,_field_id_protect_id,    _protect_id_old,    _protect_id,    _view_id ;
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,      old_value,       new_value,   row_id)
+         SELECT          _user_id,_change_action_id,_field_id_protect_id, _protect_id_old, _protect_id, _view_id ;
 
     UPDATE views
-       SET view_name      = _view_name,
-           description    = _description,
-           protect_id     = _protect_id
+       SET view_name   = _view_name,
+           description = _description,
+           protect_id  = _protect_id
      WHERE view_id = _view_id;
 
 END;

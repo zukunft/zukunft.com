@@ -37,6 +37,7 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_CONST . 'def.php';
+include_once html_paths::EXECUTE . 'system_page.php';
 include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::USER . 'user.php';
 include_once paths::MODEL_CONST . 'def.php';
@@ -97,6 +98,7 @@ use Zukunft\ZukunftCom\main\php\cfg\view\view_relation;
 use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\web\component\execute\system_page;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\helper\server_guard;
@@ -125,6 +127,7 @@ class system_view_ui_tests
 {
     function run(test_cleanup $t): void
     {
+        global $mtr;
 
         // init
         $lib = new library();
@@ -165,6 +168,12 @@ class system_view_ui_tests
         $test_name = 'a relative url is linked';
         $t->assert_text_contains($test_name,
             $html->ref('/http/view.php?m=1', 'start'), '<a href="/http/view.php?m=1">');
+
+        // the body of a system view whose data and actions are not yet implemented shows a hint
+        $t->subheader($ts . 'not yet available');
+        $test_name = 'the body of a not yet implemented system view shows the hint';
+        $page = new system_page();
+        $t->assert_text_contains($test_name, $page->not_yet_available(), $mtr->txt(msg_id::INFO_VIEW_NOT_YET_AVAILABLE));
         // switch usr1 to the system test profile user (needed for the ui cache imports)
         // and remember the normal usr1 so the end of this run can restore it - otherwise every
         // later test would see a system-tier usr1 instead of the normal email profile user

@@ -19,20 +19,20 @@ BEGIN
 
     SELECT LAST_INSERT_ID() AS @new_word_id;
 
-    INSERT INTO changes ( user_id, change_action_id, change_field_id,    new_value, row_id)
-         SELECT          _user_id,_change_action_id,_field_id_word_name,_word_name,@new_word_id ;
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,         new_value,                        row_id)
+         SELECT          _user_id,_change_action_id,_field_id_word_name,     _word_name,                       @new_word_id ;
 
-    INSERT INTO changes ( user_id, change_action_id, change_field_id,  new_value, row_id)
-         SELECT          _user_id,_change_action_id,_field_id_user_id,_user_id,  @new_word_id ;
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,         new_value,                        row_id)
+         SELECT          _user_id,_change_action_id,_field_id_user_id,       _user_id,                         @new_word_id ;
 
-    INSERT INTO changes ( user_id, change_action_id, change_field_id,      new_value,   row_id)
-         SELECT          _user_id,_change_action_id,_field_id_description,_description,@new_word_id ;
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,         new_value,                        row_id)
+         SELECT          _user_id,_change_action_id,_field_id_description,   _description,                     @new_word_id ;
 
     INSERT INTO changes ( user_id, change_action_id, change_field_id,         new_value,        new_id,         row_id)
          SELECT          _user_id,_change_action_id,_field_id_phrase_type_id,_phrase_type_name,_phrase_type_id,@new_word_id ;
 
-    INSERT INTO changes (user_id, change_action_id, change_field_id,     new_value,  row_id)
-         SELECT         _user_id,_change_action_id,_field_id_protect_id,_protect_id,@new_word_id ;
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,         new_value,                        row_id)
+         SELECT          _user_id,_change_action_id,_field_id_protect_id,    _protect_id,                      @new_word_id ;
 
     UPDATE words
        SET user_id        = _user_id,
@@ -44,18 +44,18 @@ BEGIN
 END;
 
 PREPARE word_insert_log_0111005000001_call FROM
-    'SELECT word_insert_log_0111005000001 (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+    'SELECT word_insert_log_0111005000001 (?,?,?,?,?,?,?,?,?,?,?,?)';
 
 SELECT word_insert_log_0111005000001
-    ('mathematics',
-     3,
-     1,
-     10,
-     9,
-     11,
-     'Mathematics is an area of knowledge that includes the topics of numbers and formulas',
-     12,
-     'standard',
-     1,
-     87,
-     3);
+       ('mathematics',
+        3,
+        1,
+        10,
+        9,
+        11,
+        'Mathematics is an area of knowledge that includes the topics of numbers and formulas',
+        12,
+        'standard',
+        1,
+        87,
+        3);

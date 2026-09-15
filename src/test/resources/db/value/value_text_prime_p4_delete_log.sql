@@ -10,7 +10,7 @@ CREATE OR REPLACE FUNCTION value_text_prime_p4_delete_log
 $$
 BEGIN
 
-    INSERT INTO change_values_text_prime ( user_id, change_action_id, change_field_id,        group_id)
+    INSERT INTO change_values_text_prime ( user_id, change_action_id, change_field_id,     group_id)
          SELECT                           _user_id,_change_action_id,_field_id_text_value,_group_id ;
 
     DELETE

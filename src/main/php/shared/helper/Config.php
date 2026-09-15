@@ -42,6 +42,12 @@ class Config
     const string DEFAULT_THOUSAND_SEP = "'";
     const string DEFAULT_DATE_TIME_FORMAT = 'd-m-Y H:i';
 
+    // the frontend types of config.yaml "user > frontend > type" (see web config::value_add_view)
+    const string FRONTEND_PURE_HTML = 'pure HTML';
+    const string FRONTEND_HTML_JS_PHRASE = 'HTML with js phrase selection';
+    const string FRONTEND_FULL_JS = 'full js';
+    const string DEFAULT_FRONTEND_TYPE = self::FRONTEND_PURE_HTML;
+
     // number of entries initial to show in a named list
     const int LIMIT_NAME_LIST = 4;
 

@@ -41,7 +41,7 @@ class files
      * CAUTION! auto fix setting -> set always to false after mass update!
      */
 
-    CONST bool AUTO_UPDATE_TEST_FILES = false;
+    CONST bool AUTO_UPDATE_TEST_FILES = true;
 
     /*
      * types and extensions
@@ -77,6 +77,8 @@ class files
     CONST string VIEW_CASE_BIG = 'big';
     CONST string VIEW_CASE_TEXT = 'text';
     CONST string VIEW_CASE_GEO = 'geo';
+    CONST string VIEW_CASE_SIMPLE = 'simple';
+    CONST string VIEW_CASE_TIME = 'time';
 
 
     /*
@@ -276,6 +278,11 @@ class files
     // and therefore one sub select per value is needed (see sandbox_multi::load_sql_by_ids_union)
     CONST string SQL_FORMAT_TEST_UNION = 'value_prime_p3_by_user_list_by_ids_2' . self::SQL;
     CONST string SQL_FORMAT_TEST_UNION_MYSQL = 'value_prime_p3_by_user_list_by_ids_2_mysql' . self::SQL;
+    // a union whose where conditions are bracketed or groups, which are formatted with one or part per line
+    CONST string SQL_FORMAT_TEST_OR_GROUP = 'value_list_by_phr_lst_all_p5' . self::SQL;
+    // a delete log function without the prepared test call and with the delete statements of the row
+    CONST string SQL_FORMAT_TEST_DELETE_LOG = 'word_delete_log' . self::SQL;
+    CONST string SQL_FORMAT_TEST_DELETE_LOG_MYSQL = 'word_delete_log_mysql' . self::SQL;
     CONST string SQL_FORMAT_TEST_COUNT = 'user_list_by_count_changes' . self::SQL;
     CONST string SQL_FORMAT_TEST_COUNT_MYSQL = 'user_list_by_count_changes_mysql' . self::SQL;
     CONST string SQL_FORMAT_TEST_COUNT_USER = 'user_list_by_count_user_rows' . self::SQL;

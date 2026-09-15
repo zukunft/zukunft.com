@@ -1,13 +1,13 @@
 DROP PROCEDURE IF EXISTS value_prime_p1_delete_log;
 CREATE PROCEDURE value_prime_p1_delete_log
-    (_user_id                 bigint,
-     _change_action_id        smallint,
-     _field_id_numeric_value  smallint,
-     _group_id                bigint,
-     _phrase_id_1             smallint,
-     _phrase_id_2             smallint,
-     _phrase_id_3             smallint,
-     _phrase_id_4             smallint)
+    (_user_id                bigint,
+     _change_action_id       smallint,
+     _field_id_numeric_value smallint,
+     _group_id               bigint,
+     _phrase_id_1            smallint,
+     _phrase_id_2            smallint,
+     _phrase_id_3            smallint,
+     _phrase_id_4            smallint)
 
 BEGIN
 

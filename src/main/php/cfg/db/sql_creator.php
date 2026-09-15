@@ -3869,7 +3869,7 @@ class sql_creator
             } elseif ($typ == sql_par_type::LIKE_R
                 or $typ == sql_par_type::LIKE
                 or $typ == sql_par_type::LIKE_OR) {
-                $sql_where .= $tbl . $fld . ' like ' . $par->name;
+                $sql_where .= $tbl . $fld . ' ' . $this->like_keyword() . ' ' . $par->name;
             } elseif ($typ == sql_par_type::CONST) {
                 // $par_offset--;
                 $sql_where .= $tbl . $fld . ' = ' . $par->value;
@@ -3938,6 +3938,19 @@ class sql_creator
         $filter = $whp->sub_where_fld . ' = ' . $par->name;
         $not_excluded = sql::COALESCE . '(' . fields::FLD_EXCLUDED . ', ' . sql::FALSE . ') = ' . sql::FALSE;
         return $from . ' ' . sql::WHERE . ' ' . $filter . ' ' . sql::AND . ' ' . $not_excluded;
+    }
+
+    /**
+     * @return string the pattern match that ignores the upper and lower case: postgres needs ILIKE, while the
+     *                mysql LIKE of the default utf8 collation already ignores the case
+     */
+    private function like_keyword(): string
+    {
+        $result = sql::LIKE_LOWER_CASE;
+        if ($this->db_type == sql_db::POSTGRES) {
+            $result = sql::LIKE_NO_UP_CASE;
+        }
+        return $result;
     }
 
     /**
@@ -4039,7 +4052,7 @@ class sql_creator
                         } elseif ($typ == sql_par_type::LIKE_R
                             or $typ == sql_par_type::LIKE
                             or $typ == sql_par_type::LIKE_OR) {
-                            $result .= $tbl_id . $this->par_lst->name($i) . ' like ';
+                            $result .= $tbl_id . $this->par_lst->name($i) . ' ' . $this->like_keyword() . ' ';
                             if ($this->par_named[$i]) {
                                 if ($this->par_name[$i] != '' and $this->db_type() != sql_db::MYSQL) {
                                     // if the same parameter is used more than once use the same placeholder again

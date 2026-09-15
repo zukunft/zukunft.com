@@ -476,7 +476,7 @@ class ui_list extends ui_base
         global $ui_sys;
 
         $page = new system_page();
-        $result = $page->system_sub_tile(msg_id::FORM_SUB_TITLE_ASSIGNED_PHRASES);
+        $result = $page->system_sub_tile($msg, msg_id::FORM_SUB_TITLE_ASSIGNED_PHRASES);
 
         // a formula loaded for its page carries its assigned phrases directly (like a word's
         // related formulas), so use that list; otherwise fall back to the formula link cache or,
@@ -926,20 +926,25 @@ class ui_list extends ui_base
 
     /**
      * the plus icon behind the values subtitle of a word or triple page that opens the value add view
-     * with the shown phrase preset as the first phrase of the new value (see value::url_mapper)
+     * with the shown phrase preset as the first phrase of the new value (see value::url_mapper); the
+     * frontend type of the user decides which view adds the value (see config::value_add_view)
      *
      * @param phrase $phr the word or triple that the new value should be assigned to
+     * @param user_message $msg to report a problem of reading the frontend type
      * @param array $url_arr the url of the shown page as back target
      * @return string the html code of the add icon, empty for an unsaved phrase
      */
-    function value_add_link(phrase $phr, array $url_arr = []): string
+    function value_add_link(phrase $phr, user_message $msg, array $url_arr = []): string
     {
+        global $ui_sys;
+
         $result = '';
         // a phrase without a db id cannot be preset, so there is nothing to add a value to
         if ($phr->id() != 0) {
             $html = new html_base();
+            $type = $ui_sys?->cfg?->frontend_type($msg) ?? config::DEFAULT_FRONTEND_TYPE;
             $preset = url_var::PHRASE_LIST . url_var::EQ . $phr->id();
-            $url = $html->url_back(views::VALUE_ADD_ID, 0, $url_arr, $preset);
+            $url = $html->url_back(config::value_add_view($type), 0, $url_arr, $preset);
             $result = $this->change_icon($url, icons::ADD, msg_id::VALUE_ADD, msg_id::VALUE_ADD_BLOCKED);
         }
         return $result;

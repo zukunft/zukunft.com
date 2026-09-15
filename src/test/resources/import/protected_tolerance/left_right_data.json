@@ -1,0 +1,334 @@
+{
+  "file_name": "leaders_wellbeing_vs_political_orientation.json",
+  "version": "0.0.1",
+  "created": "2026-09-15",
+  "description": "Evidence base for the question whether the share of leaders suffering from inner conflict varies along the left-right political axis. Main finding: no single study measures both dimensions in one population. Three separate literature strands exist and are recorded here with their own populations, constructs and measurement methods so that the gap between them stays visible instead of being closed by interpolation.",
+  "words": [
+    {
+      "name": "leader",
+      "description": "Person holding a formal top position in an organisation or in politics; used here as the umbrella term covering the two disjoint populations 'corporate executive' and 'elected politician'"
+    },
+    {
+      "name": "corporate executive",
+      "description": "CEO, C-level officer or company founder; the population of the occupational-health strand"
+    },
+    {
+      "name": "elected politician",
+      "description": "Member of a parliament or congress; the population of the Wojcik behavioural strand"
+    },
+    {
+      "name": "general population",
+      "description": "Non-selected adult survey respondents; the population of the happiness-gap strand"
+    },
+    {
+      "name": "political orientation",
+      "description": "Position on the left-right (liberal-conservative) axis; in almost all cited studies measured by a single self-report Likert item, which is a known quality limit"
+    },
+    {
+      "name": "political conservatism",
+      "description": "Right pole of political orientation; the direction in which the correlations below are signed"
+    },
+    {
+      "name": "inner conflict",
+      "description": "Umbrella concept of the user's question: sustained internal distress. Deliberately NOT treated as one construct here, because the three strands operationalise it differently (see the three words below)"
+    },
+    {
+      "name": "self-reported subjective well-being",
+      "description": "Life satisfaction or happiness as stated by the person about themselves; the construct of the happiness-gap strand"
+    },
+    {
+      "name": "behaviourally displayed happiness",
+      "description": "Positive emotional language and genuineness of smiling, coded from text and photographs; the construct of the Wojcik strand"
+    },
+    {
+      "name": "clinical depression symptoms",
+      "description": "Symptom load consistent with a depressive episode; the construct of the occupational-health strand"
+    },
+    {
+      "name": "self-enhancement",
+      "description": "Tendency to describe oneself in an unrealistically favourable way; the proposed artefact mechanism linking the first two constructs"
+    },
+    {
+      "name": "dark triad",
+      "description": "Psychopathy, narcissism and Machiavellianism as subclinical personality traits"
+    },
+    {
+      "name": "sadism",
+      "description": "Enjoyment of others' suffering; fourth trait of the dark tetrad"
+    },
+    {
+      "name": "correlation coefficient",
+      "description": "Pearson r between a trait and political conservatism"
+    },
+    {
+      "name": "percentage point gap",
+      "description": "Difference in the share of respondents giving the top answer category, in percentage points"
+    },
+    {
+      "name": "prevalence share",
+      "description": "Share of a population showing a condition, in percent"
+    },
+    {
+      "name": "sample size",
+      "description": "Number of individual respondents or cases"
+    },
+    {
+      "name": "number of studies",
+      "description": "Count of primary studies entering a meta-analysis"
+    },
+    {
+      "name": "probability",
+      "description": "Subjective probability assigned to a proposition, used for the assumed values in this file"
+    }
+  ],
+  "sources": [
+    {
+      "name": "Wojcik 2015",
+      "type": "peer-reviewed article",
+      "title": "Conservatives report, but liberals display, greater happiness",
+      "authors": "Wojcik, S. P.; Hovasapian, A.; Graham, J.; Motyl, M.; Ditto, P. H.",
+      "journal": "Science 347 (6227), 1243-1246",
+      "year": 2015,
+      "doi": "10.1126/science.1260817",
+      "doi_verified": true,
+      "data_doi": "10.3886/E26078V1",
+      "description": "The only study located that measures political orientation and a happiness indicator in the same leader population. Study 1 (N = 1433) shows the self-report advantage of conservatives is fully mediated by self-enhancement. Studies 2-4 (N = 4936) use behavioural measures: the 2013 Congressional Record and the official portrait photographs of all members of the 113th US Congress, plus Twitter and LinkedIn users."
+    },
+    {
+      "name": "Van Hiel 2015 comment",
+      "type": "peer-reviewed comment",
+      "title": "Defining the happiness gap",
+      "authors": "Van Hiel, A.; Roets, A.; Van Assche, J.; Bostyn, D.; De keersmaecker, J.; Haesevoets, T.; Joosten, A.; Stadeus, J.; Onraet, E.",
+      "journal": "Science 348 (6240), 1216",
+      "year": 2015,
+      "doi": "10.1126/science.348.6240.1216-a",
+      "doi_verified": true,
+      "description": "Published critique of Wojcik 2015. Recorded here so that the contested status of the behavioural finding is part of the dataset. Author response: doi 10.1126/science.348.6240.1216-b"
+    },
+    {
+      "name": "Bartolo 2024",
+      "type": "meta-analysis",
+      "title": "Associations between the dark tetrad and political orientation: a systematic review with meta-analysis",
+      "authors": "Bartolo, A.; Powell, C.",
+      "journal": "Personality and Individual Differences 218, 112498",
+      "year": 2024,
+      "doi": null,
+      "doi_verified": false,
+      "description": "Volume, article number and year taken from the publisher listing; the DOI was not retrieved in this session and is therefore left empty rather than reconstructed from the usual Elsevier pattern."
+    },
+    {
+      "name": "Okulicz-Kozaryn 2016",
+      "type": "peer-reviewed article",
+      "title": "Are conservatives happier than liberals? Not always and not everywhere",
+      "journal": "Journal of Research in Personality",
+      "year": 2016,
+      "doi": null,
+      "doi_verified": false,
+      "description": "Two studies, US time series (N = 40000) and 92 countries (N = 230000). Conservatives are happier only to the extent that conservative ideology prevails in the surrounding socio-cultural context. Author attribution and DOI not verified in this session; cited for the conditionality result, not for exact figures."
+    },
+    {
+      "name": "GSS happiness gap",
+      "type": "secondary summary of survey data",
+      "title": "How to understand the well-being gap between liberals and conservatives",
+      "journal": "American Affairs Journal",
+      "year": 2023,
+      "url": "https://americanaffairsjournal.org/2023/03/how-to-understand-the-well-being-gap-between-liberals-and-conservatives/",
+      "description": "Opinion journal summarising General Social Survey data. Used only for the size and persistence of the raw gap, which is a widely replicated descriptive figure; not used for any causal claim. The primary source would be the GSS itself."
+    },
+    {
+      "name": "Freeman 2019",
+      "type": "peer-reviewed article",
+      "title": "The prevalence and co-occurrence of psychiatric conditions among entrepreneurs and their families",
+      "authors": "Freeman, M. A.; Staudenmaier, P. J.; Zisser, M. R.; Andresen, L. A.",
+      "journal": "Small Business Economics 53, 323-342",
+      "year": 2019,
+      "doi": null,
+      "doi_verified": false,
+      "description": "Best-quality source in the occupational-health strand; entrepreneurs, not incumbent executives. Cited for the direction of the effect only, because neither the DOI nor the exact prevalence figures were retrieved in this session."
+    },
+    {
+      "name": "executive mental health grey literature",
+      "type": "grey literature",
+      "title": "Aggregated executive mental-health figures (hospital and consultancy publications)",
+      "year": 2025,
+      "url": "https://www.mcleanhospital.org/news/silent-strain-top-mental-health-among-executive-leadership",
+      "description": "Clinic and consultancy publications citing a Journal of Occupational Health Psychology figure and a Harvard Business Review survey at second hand. The primary studies were not located. All values drawn from this source carry low reliability and are marked accordingly."
+    }
+  ],
+  "values": [
+    {
+      "type": "measured value",
+      "words": [
+        "general population",
+        "political conservatism",
+        "self-reported subjective well-being",
+        "percentage point gap"
+      ],
+      "number": 10,
+      "unit": "percentage point",
+      "source": "GSS happiness gap",
+      "description": "Share of respondents answering 'very happy' is about 10 points higher among conservatives than among liberals, in essentially every GSS wave since 1972. Descriptive, uncontrolled."
+    },
+    {
+      "type": "measured value",
+      "words": [
+        "general population",
+        "political conservatism",
+        "self-reported subjective well-being",
+        "correlation coefficient"
+      ],
+      "number": 0.10,
+      "source": "Wojcik 2015",
+      "description": "Study 1, N = 1433. Conservatism predicts higher satisfaction with life; small effect, p < 0.001, robust to demographic controls."
+    },
+    {
+      "type": "measured value",
+      "words": [
+        "general population",
+        "self-enhancement",
+        "self-reported subjective well-being"
+      ],
+      "number": 1.0,
+      "unit": "share of effect mediated",
+      "source": "Wojcik 2015",
+      "description": "The self-report gap above is fully mediated by self-enhancement, i.e. after accounting for the self-enhancing response style no direct ideology effect on reported well-being remains."
+    },
+    {
+      "type": "measured value",
+      "words": [
+        "elected politician",
+        "political conservatism",
+        "behaviourally displayed happiness"
+      ],
+      "number": -1,
+      "unit": "sign of effect",
+      "source": "Wojcik 2015",
+      "description": "Direction reversal: among members of the 113th US Congress, more liberal members used positive emotional language more often and smiled more intensely and genuinely in their portraits. Effect sign is negative with respect to conservatism. Exact effect sizes per sub-study not extracted here. Contested by Van Hiel 2015 comment."
+    },
+    {
+      "type": "measured value",
+      "words": [
+        "elected politician",
+        "sample size"
+      ],
+      "number": 4936,
+      "source": "Wojcik 2015",
+      "description": "Combined N of studies 2-4 across politicians, Twitter and LinkedIn users; the congressional sub-sample is a fraction of this."
+    },
+    {
+      "type": "measured value",
+      "words": [
+        "general population",
+        "dark triad",
+        "political orientation",
+        "correlation coefficient"
+      ],
+      "number": 0.0,
+      "source": "Bartolo 2024",
+      "description": "No association found between political orientation and psychopathy, narcissism or Machiavellianism across 28 primary studies. This closes the most obvious bridging hypothesis between the leadership strand and the ideology strand."
+    },
+    {
+      "type": "measured value",
+      "words": [
+        "general population",
+        "sadism",
+        "political conservatism",
+        "correlation coefficient"
+      ],
+      "number": 0.10,
+      "source": "Bartolo 2024",
+      "description": "Very weak positive association with conservatism, but derived from only k = 5 samples; the authors themselves flag this as thin."
+    },
+    {
+      "type": "measured value",
+      "words": [
+        "general population",
+        "dark triad",
+        "number of studies"
+      ],
+      "number": 28,
+      "source": "Bartolo 2024",
+      "description": "Studies reporting zero-order correlations between at least one dark tetrad trait and political orientation."
+    },
+    {
+      "type": "measured value",
+      "words": [
+        "corporate executive",
+        "clinical depression symptoms",
+        "prevalence share"
+      ],
+      "number": 26,
+      "unit": "percent",
+      "source": "executive mental health grey literature",
+      "reliability": "low",
+      "description": "Share of executives reporting symptoms consistent with clinical depression. Attributed at second hand to the Journal of Occupational Health Psychology; primary study not located. No political orientation recorded."
+    },
+    {
+      "type": "measured value",
+      "words": [
+        "general population",
+        "clinical depression symptoms",
+        "prevalence share"
+      ],
+      "number": 18,
+      "unit": "percent",
+      "source": "executive mental health grey literature",
+      "reliability": "low",
+      "description": "Comparison figure for the general workforce from the same second-hand chain; the two numbers should only be read as a pair, not separately."
+    },
+    {
+      "type": "assumed value",
+      "confidence": 0.05,
+      "words": [
+        "leader",
+        "political orientation",
+        "inner conflict",
+        "probability"
+      ],
+      "number": 0.05,
+      "description": "Probability that a study exists which measures inner distress and political orientation in one and the same leader population with a clinical or validated distress instrument. Searches across the happiness-gap, dark-tetrad and occupational-health literatures returned none; a low residual probability is kept for non-English or unindexed work."
+    },
+    {
+      "type": "assumed value",
+      "confidence": 0.3,
+      "words": [
+        "corporate executive",
+        "behaviourally displayed happiness",
+        "political orientation",
+        "probability"
+      ],
+      "number": 0.3,
+      "description": "Probability that the Wojcik direction reversal found in elected politicians would replicate in corporate executives. Held low because the incentive structure for emotional display differs sharply: politicians are photographed and recorded for persuasion, executives are not."
+    },
+    {
+      "type": "assumed value",
+      "confidence": 0.6,
+      "words": [
+        "general population",
+        "self-enhancement",
+        "percentage point gap",
+        "probability"
+      ],
+      "number": 0.6,
+      "description": "Probability that the self-enhancement artefact accounts for the larger part of the 10-point GSS gap. Wojcik 2015 supports full mediation, but the published comment by Van Hiel and the conditionality result in Okulicz-Kozaryn 2016 both argue that real contextual differences remain."
+    },
+    {
+      "type": "assumed value",
+      "confidence": 0.75,
+      "words": [
+        "leader",
+        "clinical depression symptoms",
+        "prevalence share",
+        "probability"
+      ],
+      "number": 0.75,
+      "description": "Probability that leaders carry a higher distress load than the comparable general working population, irrespective of political orientation. The direction is consistent across the grey literature and the better-quality entrepreneur research, but self-selection into leadership and reporting bias are uncontrolled everywhere."
+    }
+  ],
+  "open_questions": [
+    "The three strands use three different populations and three different operationalisations of inner distress. Any chart placing them on one y-axis is an interpolation, not a measurement.",
+    "Almost every cited study measures political orientation with a single self-report item, which caps the achievable resolution on the x-axis.",
+    "The entire evidence base is US-centred except Okulicz-Kozaryn 2016, whose central result is precisely that the effect does not generalise across contexts.",
+    "Behaviourally displayed happiness is a proxy for inner state, not a measure of it; a person can smile genuinely in a portrait and still be in sustained inner conflict."
+  ]
+}

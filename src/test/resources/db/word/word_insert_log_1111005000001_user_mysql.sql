@@ -14,18 +14,16 @@ CREATE PROCEDURE word_insert_log_1111005000001_user
      _protect_id              smallint)
 BEGIN
 
-    INSERT INTO changes ( user_id, change_action_id, change_field_id,    new_value, row_id)
-         SELECT          _user_id,_change_action_id,_field_id_word_name,_word_name,_word_id ;
-    INSERT INTO changes ( user_id, change_action_id, change_field_id,      new_value,   row_id)
-         SELECT          _user_id,_change_action_id,_field_id_description,_description,_word_id ;
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,         new_value,                        row_id)
+         SELECT          _user_id,_change_action_id,_field_id_word_name,     _word_name,                       _word_id ;
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,         new_value,                        row_id)
+         SELECT          _user_id,_change_action_id,_field_id_description,   _description,                     _word_id ;
     INSERT INTO changes ( user_id, change_action_id, change_field_id,         new_value,        new_id,         row_id)
          SELECT          _user_id,_change_action_id,_field_id_phrase_type_id,_phrase_type_name,_phrase_type_id,_word_id ;
-    INSERT INTO changes (user_id, change_action_id, change_field_id,     new_value,  row_id)
-         SELECT         _user_id,_change_action_id,_field_id_protect_id,_protect_id,_word_id ;
-
-    INSERT INTO user_words
-                (word_id, user_id, word_name, description, phrase_type_id, protect_id)
-         SELECT _word_id,_user_id,_word_name,_description,_phrase_type_id,_protect_id ;
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,         new_value,                        row_id)
+         SELECT          _user_id,_change_action_id,_field_id_protect_id,    _protect_id,                      _word_id ;
+    INSERT INTO user_words ( word_id, user_id, word_name, description, phrase_type_id, protect_id)
+         SELECT             _word_id,_user_id,_word_name,_description,_phrase_type_id,_protect_id ;
 
 END;
 
@@ -33,15 +31,15 @@ PREPARE word_insert_log_1111005000001_user_call FROM
     'SELECT word_insert_log_1111005000001_user (?,?,?,?,?,?,?,?,?,?,?,?)';
 
 SELECT word_insert_log_1111005000001_user
-        (3,
-         1,
-         88,
-         'mathematics',
-         1,
-         17,
-         'Mathematics is an area of knowledge that includes the topics of numbers and formulas',
-         15,
-         'standard',
-         1,
-         93,
-         3);
+       (3,
+        1,
+        88,
+        'mathematics',
+        1,
+        17,
+        'Mathematics is an area of knowledge that includes the topics of numbers and formulas',
+        15,
+        'standard',
+        1,
+        93,
+        3);

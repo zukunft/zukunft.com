@@ -321,6 +321,9 @@ zukunft.com:
           language:
             sys-conf-value: en
             tooltip-comment: "the language of the user frontend"
+          type:
+            sys-conf-value: "pure HTML"
+            tooltip-comment: "either 'pure HTML' for forms without javascript e.g. to add a value by selecting its words and triples step by step, 'HTML with js phrase selection' for forms that select the words and triples with javascript or 'full js' for a javascript frontend"
           selections:
             tooltip-comment: "the default number of item to select"
             target:

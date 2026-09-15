@@ -17,32 +17,25 @@ CREATE PROCEDURE formula_insert_log_11110011110100000_user
      _latex                    text)
 BEGIN
 
-    INSERT INTO changes ( user_id, change_action_id, change_field_id,          new_value,     row_id)
-         SELECT          _user_id,_change_action_id,_field_id_formula_name,   _formula_name,_formula_id ;
-
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,          new_value,       row_id)
+         SELECT          _user_id,_change_action_id,_field_id_formula_name,   _formula_name,   _formula_id ;
     INSERT INTO changes ( user_id, change_action_id, change_field_id,          new_value,       row_id)
          SELECT          _user_id,_change_action_id,_field_id_description,    _description,    _formula_id ;
-
     INSERT INTO changes ( user_id, change_action_id, change_field_id,          new_value,       row_id)
          SELECT          _user_id,_change_action_id,_field_id_formula_type_id,_formula_type_id,_formula_id ;
-
-    INSERT INTO changes ( user_id, change_action_id, change_field_id,          new_value,    row_id)
-         SELECT          _user_id,_change_action_id,_field_id_formula_text,   _formula_text,_formula_id ;
-
-    INSERT INTO changes ( user_id, change_action_id, change_field_id,          new_value,     row_id)
-         SELECT          _user_id,_change_action_id,_field_id_resolved_text,  _resolved_text,_formula_id ;
-
-    INSERT INTO changes ( user_id, change_action_id, change_field_id,          new_value,     row_id)
-         SELECT          _user_id,_change_action_id,_field_id_latex,          _latex,        _formula_id ;
-
-    INSERT INTO user_formulas
-                (formula_id, user_id, formula_name, description, formula_type_id, formula_text, resolved_text, latex, last_update)
-         SELECT _formula_id,_user_id,_formula_name,_description,_formula_type_id,_formula_text,_resolved_text,_latex, Now() ;
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,          new_value,       row_id)
+         SELECT          _user_id,_change_action_id,_field_id_formula_text,   _formula_text,   _formula_id ;
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,          new_value,       row_id)
+         SELECT          _user_id,_change_action_id,_field_id_resolved_text,  _resolved_text,  _formula_id ;
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,          new_value,       row_id)
+         SELECT          _user_id,_change_action_id,_field_id_latex,          _latex,          _formula_id ;
+    INSERT INTO user_formulas ( formula_id, user_id, formula_name, description, formula_type_id, formula_text, resolved_text, latex,last_update)
+         SELECT                _formula_id,_user_id,_formula_name,_description,_formula_type_id,_formula_text,_resolved_text,_latex,Now() ;
 
 END;
 
 PREPARE formula_insert_log_11110011110100000_user_call FROM
-    'SELECT formula_insert_log_11110011110100000_user (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+    'SELECT formula_insert_log_11110011110100000_user (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
 
 SELECT formula_insert_log_11110011110100000_user
        (3,

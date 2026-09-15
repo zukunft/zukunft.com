@@ -30,5 +30,5 @@ SELECT source_update_log_0000000500000_user
         null,
         null,
         null,
-        93,
+        105,
         1);

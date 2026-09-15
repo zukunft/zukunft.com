@@ -861,6 +861,9 @@ class frontend
             $view == views::LOGOUT_ID => $url = $this->action_logout($usr_backend, $usr_ui, $msg_ui, $do_it, $url_array),
             $view == views::LOGIN_RESET_ID => $url = $this->action_login_reset($url_array, $msg_ui, $do_it),
             $view == views::ERROR_UPDATE_ID => $url = $this->action_error_update($url_array, $msg_ui, $do_it),
+            // a button of the job lists changes the priority of a job or cancels it without a confirm view
+            in_array($action, url_var::JOB_ACTIONS) and $step == url_var::STEP_CONFIRMED => $url = $this->action_job(
+                $url_array, $msg_ui, $do_it),
             // a confirmed delete request: triggered by a del mask or by an explicit delete action; the
             // explicit action overrules the crud action derived from the mask, because e.g. the delete
             // of a just added object is posted with the add mask of the object
@@ -2096,6 +2099,25 @@ class frontend
             $back_url = array_merge($this->url_object_values($url_array), $back_url);
         }
         return $back_url;
+    }
+
+    /**
+     * change the priority of a batch job or cancel it and show the job list again;
+     * the backend checks that the requesting user may do the change
+     *
+     * @param array $url_array the url of the job button with the job id and the job action
+     * @param user_message_ui $msg_ui with the requesting user to collect the result of the change
+     * @param bool $do_it false to simulate the change e.g. in a workflow snapshot test
+     * @return array the url of the job list that has shown the button
+     */
+    private function action_job(array $url_array, user_message_ui $msg_ui, bool $do_it): array
+    {
+        $job = new job_ui();
+        $job->set_id((int)($url_array[url_var::JOB] ?? 0));
+        if ($do_it) {
+            $job->change($url_array[url_var::ACTION], $msg_ui);
+        }
+        return [url_var::MASK => $url_array[url_var::MASK]];
     }
 
     /**

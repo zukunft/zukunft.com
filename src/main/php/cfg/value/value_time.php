@@ -179,7 +179,7 @@ class value_time extends value_base
         if (array_key_exists(json_fields::TIME_VALUE, $api_json)) {
             $value = $api_json[json_fields::TIME_VALUE];
             if (strtotime($value)) {
-                $this->set_last_update($lib->get_datetime($value, $this->dsp_id(), 'api mapper'));
+                $this->set_time_value($lib->get_datetime($value, $this->dsp_id(), 'api mapper'));
             } else {
                 $msg->add(msg_id::IMPORT_VALUE_NOT_DATETIME, [
                     msg_id::VAR_VALUE => $value,

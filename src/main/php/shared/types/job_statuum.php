@@ -48,6 +48,14 @@ class job_statuum
     const string STATUS_DONE = 'done'; // the task has been completed successfully
     const string STATUS_FAILED = 'failed'; // the task has been completed unsuccessful
     const string STATUS_RETRY = 'retry'; // an admin has forced to retry the execution
+    const string STATUS_CANCELLED = 'cancelled'; // the job has been cancelled by the requesting user or an admin
+
+    // the statuum of a job that is completed, so its priority cannot be changed and it cannot be cancelled
+    const array CLOSED_STATUUM = [
+        self::STATUS_DONE,
+        self::STATUS_FAILED,
+        self::STATUS_CANCELLED,
+    ];
 
     const int PRIO_HIGHEST = 10;
     const int PRIO_LOWEST = 1;

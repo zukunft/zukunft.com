@@ -81,6 +81,8 @@ class test_jobs
         $sys_usr = $t_usr->system_user();
         $job = new job($sys_usr, new DateTime(sys_log_tests::TV_TIME));
         $job->id = 1;
+        // the user who has requested the job like the seeded job row, so the api json names the same owner
+        $job->owner = test_users::user_sys_test();
         $job->set_type(job_types::BASE_IMPORT, $sys_usr);
         $job->start_time = new DateTime(sys_log_tests::TV_TIME);
         $job->priority = job_statuum::PRIO_HIGHEST;

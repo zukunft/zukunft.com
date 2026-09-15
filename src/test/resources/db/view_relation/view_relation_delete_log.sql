@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION view_relation_delete_log
      _old_from_id      bigint,
      _old_link_id      smallint,
      _old_to_id        bigint,
-     _view_relation_id  bigint) RETURNS void AS
+     _view_relation_id bigint) RETURNS void AS
 $$
 BEGIN
 

@@ -42,6 +42,8 @@ include_once html_paths::HTML . 'rest_call.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::VALUE . 'value_list.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
+include_once html_paths::SHARED_CONST . 'views.php';
+include_once html_paths::SHARED_CONST . 'words.php';
 include_once html_paths::SHARED_HELPER . 'Config.php';
 include_once html_paths::SHARED_TYPES . 'system_time_type.php';
 include_once html_paths::SHARED . 'api.php';
@@ -52,6 +54,8 @@ use Zukunft\ZukunftCom\main\php\cfg\helper\system_object;
 use Zukunft\ZukunftCom\main\php\web\html\rest_call;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\value\value_list;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\Config as shared_config;
 use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
@@ -69,11 +73,38 @@ class config extends value_list
     const int LIMIT_NAME_LIST = shared_config::LIMIT_NAME_LIST;
     const int LIMIT_LINK_LIST = shared_config::LIMIT_LINK_LIST;
     const int LIMIT_SEARCH_LIST = shared_config::LIMIT_SEARCH_LIST;
+    const string DEFAULT_FRONTEND_TYPE = shared_config::DEFAULT_FRONTEND_TYPE;
 
 
     /*
      * interface
      */
+
+    /**
+     * @param user_message $msg to report a problem of reading the config
+     * @return string the frontend type of the user e.g. shared_config::FRONTEND_PURE_HTML
+     */
+    function frontend_type(user_message $msg): string
+    {
+        $names = [words::TYPE, words::FRONTEND, words::USER];
+        return (string)$this->get_by($names, $msg, self::DEFAULT_FRONTEND_TYPE);
+    }
+
+    /**
+     * the view that adds a value for the given frontend type: a pure html frontend selects the phrases of the
+     * new value step by step, while a frontend with javascript selects them in the add value form
+     *
+     * @param string $type the frontend type e.g. shared_config::FRONTEND_PURE_HTML
+     * @return int the id of the view that adds a value
+     */
+    static function value_add_view(string $type): int
+    {
+        $result = views::VALUE_ADD_ID;
+        if ($type == shared_config::FRONTEND_PURE_HTML) {
+            $result = views::VALUE_ADD_PHRASES_ID;
+        }
+        return $result;
+    }
 
     // TODO add the user setting as default
     function percent_decimals(): int

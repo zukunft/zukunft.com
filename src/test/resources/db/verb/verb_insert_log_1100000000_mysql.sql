@@ -1,9 +1,9 @@
 DROP PROCEDURE IF EXISTS verb_insert_log_1100000000;
 CREATE PROCEDURE verb_insert_log_1100000000
-    (_verb_name            text,
-     _user_id              bigint,
-     _change_action_id     smallint,
-     _field_id_verb_name   smallint)
+    (_verb_name          text,
+     _user_id            bigint,
+     _change_action_id   smallint,
+     _field_id_verb_name smallint)
 BEGIN
 
     INSERT INTO verbs ( verb_name)
@@ -17,10 +17,10 @@ BEGIN
 END;
 
 PREPARE verb_insert_log_1100000000_call FROM
-    'SELECT verb_insert_log_1100000000 (?, ?, ?, ?)';
+    'SELECT verb_insert_log_1100000000 (?,?,?,?)';
 
 SELECT verb_insert_log_1100000000
-    ('System Test Verb',
-     3,
-     1,
-     23);
+       ('System Test Verb',
+        3,
+        1,
+        23);

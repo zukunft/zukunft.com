@@ -15,31 +15,31 @@ BEGIN
 
     SELECT LAST_INSERT_ID() AS @new_verb_id;
 
-    INSERT INTO changes ( user_id, change_action_id, change_field_id,    new_value, row_id)
-         SELECT          _user_id,_change_action_id,_field_id_verb_name,_verb_name,@new_verb_id ;
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,      new_value,   row_id)
+         SELECT          _user_id,_change_action_id,_field_id_verb_name,  _verb_name,  @new_verb_id ;
 
-    INSERT INTO changes ( user_id, change_action_id, change_field_id,  new_value, row_id)
-         SELECT          _user_id,_change_action_id,_field_id_code_id,_code_id,  @new_verb_id ;
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,      new_value,   row_id)
+         SELECT          _user_id,_change_action_id,_field_id_code_id,    _code_id,    @new_verb_id ;
 
     INSERT INTO changes ( user_id, change_action_id, change_field_id,      new_value,   row_id)
          SELECT          _user_id,_change_action_id,_field_id_description,_description,@new_verb_id ;
 
     UPDATE verbs
-       SET code_id        = _code_id,
-           description    = _description
+       SET code_id     = _code_id,
+           description = _description
      WHERE verbs.verb_id = @new_verb_id;
 
 END;
 
 PREPARE verb_insert_log_1111000000_call FROM
-    'SELECT verb_insert_log_1111000000 (?, ?, ?, ?, ?, ?, ?, ?)';
+    'SELECT verb_insert_log_1111000000 (?,?,?,?,?,?,?,?)';
 
 SELECT verb_insert_log_1111000000
-    ('not set',
-     3,
-     1,
-     23,
-     24,
-     'not_set',
-     25,
-     'no verb / predicate selected');
+       ('not set',
+        3,
+        1,
+        23,
+        24,
+        'not_set',
+        25,
+        'no verb / predicate selected');
