@@ -44,9 +44,9 @@ SELECT view_relation_insert_log_0155510000
         ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12);
 
 SELECT view_relation_insert_log_0155510000
-       (3::bigint,
+       (24::bigint,
         1::smallint,
-        5::bigint,
+        26::bigint,
         3::bigint,
         1::smallint,
         108::smallint,

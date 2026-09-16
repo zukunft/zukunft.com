@@ -95,7 +95,7 @@ SELECT word_update_log_0022224422200
         null,
         85,
         'math const',
-        147,
+        159,
         null,
         null,
         13,

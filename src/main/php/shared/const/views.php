@@ -56,397 +56,395 @@ class views
 
     // curl views for main objects
     const string WORD_ADD = 'word_add';
-    const int WORD_ADD_ID = 2;
+    const int WORD_ADD_ID = 22;
     const string WORD_ADD_SIMPLE = 'word_add_simple';
-    const int WORD_ADD_SIMPLE_ID = 90;
+    const int WORD_ADD_SIMPLE_ID = 23;
     const string WORD_EDIT = 'word_edit';
-    const int WORD_EDIT_ID = 3;
+    const int WORD_EDIT_ID = 24;
     const string WORD_DEL = 'word_del';
-    const int WORD_DEL_ID = 4;
+    const int WORD_DEL_ID = 25;
     const string WORD_LOG = 'word_usage';
-    const int WORD_LOG_ID = 5;
+    const int WORD_LOG_ID = 26;
     const string WORD_LOG_COM = 'child view that groups the usage and log components of a word so that it can be added to the word edit and word del view without repeating the list';
     const string VERB_ADD = 'verb_add';
-    const int VERB_ADD_ID = 6;
+    const int VERB_ADD_ID = 52;
     const string VERB_EDIT = 'verb_edit';
-    const int VERB_EDIT_ID = 7;
+    const int VERB_EDIT_ID = 53;
     const string VERB_DEL = 'verb_del';
-    const int VERB_DEL_ID = 8;
+    const int VERB_DEL_ID = 54;
     const string TRIPLE_ADD = 'triple_add';
-    const int TRIPLE_ADD_ID = 9;
+    const int TRIPLE_ADD_ID = 34;
     const string TRIPLE_EDIT = 'triple_edit';
-    const int TRIPLE_EDIT_ID = 10;
+    const int TRIPLE_EDIT_ID = 35;
     const string TRIPLE_DEL = 'triple_del';
-    const int TRIPLE_DEL_ID = 11;
+    const int TRIPLE_DEL_ID = 36;
     const string SOURCE_ADD = 'source_add';
-    const int SOURCE_ADD_ID = 12;
+    const int SOURCE_ADD_ID = 46;
     const string SOURCE_EDIT = 'source_edit';
-    const int SOURCE_EDIT_ID = 13;
+    const int SOURCE_EDIT_ID = 47;
     const string SOURCE_DEL = 'source_del';
-    const int SOURCE_DEL_ID = 14;
+    const int SOURCE_DEL_ID = 48;
     const string REF_ADD = 'ref_add';
-    const int REF_ADD_ID = 15;
+    const int REF_ADD_ID = 49;
     const string REF_EDIT = 'ref_edit';
-    const int REF_EDIT_ID = 16;
+    const int REF_EDIT_ID = 50;
     const string REF_DEL = 'ref_del';
-    const int REF_DEL_ID = 17;
+    const int REF_DEL_ID = 51;
     const string VALUE_ADD = 'value_add';
-    const int VALUE_ADD_ID = 18;
+    const int VALUE_ADD_ID = 27;
     const string VALUE_ADD_PHRASES = 'value_add_phrases';
-    const int VALUE_ADD_PHRASES_ID = 89;
+    const int VALUE_ADD_PHRASES_ID = 28;
     const string VALUE_ADD_SIMPLE = 'value_add_simple';
-    const int VALUE_ADD_SIMPLE_ID = 91;
+    const int VALUE_ADD_SIMPLE_ID = 29;
     const string VALUE_EDIT = 'value_edit';
-    const int VALUE_EDIT_ID = 19;
+    const int VALUE_EDIT_ID = 30;
     const string VALUE_OVERWRITE = 'value_overwrite';
-    const int VALUE_OVERWRITE_ID = 92;
+    const int VALUE_OVERWRITE_ID = 31;
     const string VALUE_DEL = 'value_del';
-    const int VALUE_DEL_ID = 20;
+    const int VALUE_DEL_ID = 32;
     const string GROUP_ADD = 'group_add';
-    const int GROUP_ADD_ID = 21;
+    const int GROUP_ADD_ID = 55;
     const string GROUP_EDIT = 'group_edit';
-    const int GROUP_EDIT_ID = 22;
+    const int GROUP_EDIT_ID = 56;
     const string GROUP_DEL = 'group_del';
-    const int GROUP_DEL_ID = 23;
+    const int GROUP_DEL_ID = 57;
     const string FORMULA_ADD = 'formula_add';
-    const int FORMULA_ADD_ID = 24;
+    const int FORMULA_ADD_ID = 37;
     const string FORMULA_EDIT = 'formula_edit';
-    const int FORMULA_EDIT_ID = 25;
+    const int FORMULA_EDIT_ID = 38;
     const string FORMULA_DEL = 'formula_del';
-    const int FORMULA_DEL_ID = 26;
+    const int FORMULA_DEL_ID = 39;
     const string RESULT_ADD = 'result_add';
-    const int RESULT_ADD_ID = 27;
+    const int RESULT_ADD_ID = 41;
     const string RESULT_EDIT = 'result_edit';
-    const int RESULT_EDIT_ID = 28;
+    const int RESULT_EDIT_ID = 42;
     const string RESULT_OVERWRITE = 'result_overwrite';
-    const int RESULT_OVERWRITE_ID = 93;
+    const int RESULT_OVERWRITE_ID = 43;
     const string RESULT_DEL = 'result_del';
-    const int RESULT_DEL_ID = 29;
+    const int RESULT_DEL_ID = 44;
 
     // views to edit views
     const string VIEW_ADD = 'view_add';
-    const int VIEW_ADD_ID = 30;
+    const int VIEW_ADD_ID = 86;
     const string VIEW_EDIT = 'view_edit';
-    const int VIEW_EDIT_ID = 31;
+    const int VIEW_EDIT_ID = 87;
     const string VIEW_DEL = 'view_del';
-    const int VIEW_DEL_ID = 32;
+    const int VIEW_DEL_ID = 88;
     const string COMPONENT_ADD = 'component_add';
-    const int COMPONENT_ADD_ID = 33;
+    const int COMPONENT_ADD_ID = 90;
     const string COMPONENT_EDIT = 'component_edit';
-    const int COMPONENT_EDIT_ID = 34;
+    const int COMPONENT_EDIT_ID = 91;
     const string COMPONENT_DEL = 'component_del';
-    const int COMPONENT_DEL_ID = 35;
+    const int COMPONENT_DEL_ID = 92;
     const string VIEW_LINK_ADD = 'view_link_add';
-    const int VIEW_LINK_ADD_ID = 36;
+    const int VIEW_LINK_ADD_ID = 94;
     const string VIEW_LINK_EDIT = 'view_link_edit';
-    const int VIEW_LINK_EDIT_ID = 37;
+    const int VIEW_LINK_EDIT_ID = 95;
     const string VIEW_LINK_DEL = 'view_link_del';
-    const int VIEW_LINK_DEL_ID = 38;
+    const int VIEW_LINK_DEL_ID = 96;
     const string COMPONENT_LINK_ADD = 'component_link_add';
-    const int COMPONENT_LINK_ADD_ID = 39;
+    const int COMPONENT_LINK_ADD_ID = 98;
     const string COMPONENT_LINK_EDIT = 'component_link_edit';
-    const int COMPONENT_LINK_EDIT_ID = 40;
+    const int COMPONENT_LINK_EDIT_ID = 99;
     const string COMPONENT_LINK_DEL = 'component_link_del';
-    const int COMPONENT_LINK_DEL_ID = 41;
+    const int COMPONENT_LINK_DEL_ID = 100;
     const string VIEW_RELATION_ADD = 'view_relation_add';
-    const int VIEW_RELATION_ADD_ID = 42;
+    const int VIEW_RELATION_ADD_ID = 102;
     const string VIEW_RELATION_EDIT = 'view_relation_edit';
-    const int VIEW_RELATION_EDIT_ID = 43;
+    const int VIEW_RELATION_EDIT_ID = 103;
     const string VIEW_RELATION_DEL = 'view_relation_del';
-    const int VIEW_RELATION_DEL_ID = 44;
+    const int VIEW_RELATION_DEL_ID = 104;
 
     // formula links
     const string FORMULA_LINK_ADD = 'formula_link_add';
-    const int FORMULA_LINK_ADD_ID = 45;
+    const int FORMULA_LINK_ADD_ID = 59;
     const string FORMULA_LINK_EDIT = 'formula_link_edit';
-    const int FORMULA_LINK_EDIT_ID = 46;
+    const int FORMULA_LINK_EDIT_ID = 60;
     const string FORMULA_LINK_DEL = 'formula_link_del';
-    const int FORMULA_LINK_DEL_ID = 47;
+    const int FORMULA_LINK_DEL_ID = 61;
 
     // admin views
     const string USER_ADMIN_ADD = 'admin_user_add';
-    const int USER_ADMIN_ADD_ID = 48;
+    const int USER_ADMIN_ADD_ID = 108;
     const string USER_ADMIN_EDIT = 'admin_user_edit';
-    const int USER_ADMIN_EDIT_ID = 49;
+    const int USER_ADMIN_EDIT_ID = 109;
     const string USER_ADMIN_DEL = 'admin_user_del';
-    const int USER_ADMIN_DEL_ID = 50;
+    const int USER_ADMIN_DEL_ID = 110;
     const string LANGUAGE_ADD = 'language_add';
-    const int LANGUAGE_ADD_ID = 51;
+    const int LANGUAGE_ADD_ID = 134;
     const string LANGUAGE_EDIT = 'language_edit';
-    const int LANGUAGE_EDIT_ID = 52;
+    const int LANGUAGE_EDIT_ID = 135;
     const string LANGUAGE_DEL = 'language_del';
-    const int LANGUAGE_DEL_ID = 53;
+    const int LANGUAGE_DEL_ID = 136;
 
     // confirm
     const string CONFIRM_ADD = 'confirm_add';
-    const int CONFIRM_ADD_ID = 54;
+    const int CONFIRM_ADD_ID = 62;
     const string CONFIRM_EDIT = 'confirm_update';
-    const int CONFIRM_EDIT_ID = 55;
+    const int CONFIRM_EDIT_ID = 63;
     const string CONFIRM_DEL = 'confirm_delete';
-    const int CONFIRM_DEL_ID = 56;
+    const int CONFIRM_DEL_ID = 64;
     const string CONFIRM_VIEW = 'view_preview';
-    const int CONFIRM_VIEWS_ID = 57;
+    const int CONFIRM_VIEWS_ID = 65;
 
     // fixed
     const string ABOUT = 'about';
-    const int ABOUT_ID = 58;
+    const int ABOUT_ID = 142;
     const string SETUP = 'setup';
-    const int SETUP_ID = 59;
+    const int SETUP_ID = 143;
     const string SIGNUP = 'signup';
-    const int SIGNUP_ID = 60;
+    const int SIGNUP_ID = 19;
     const string LOGIN = 'login';
-    const int LOGIN_ID = 61;
+    const int LOGIN_ID = 17;
     const string LOGIN_ACTIVATE = 'login_activate';
-    const int LOGIN_ACTIVATE_ID = 62;
+    const int LOGIN_ACTIVATE_ID = 20;
     const string LOGIN_RESET = 'login_reset';
-    const int LOGIN_RESET_ID = 63;
+    const int LOGIN_RESET_ID = 21;
     const string LOGOUT = 'logout';
-    const int LOGOUT_ID = 64;
+    const int LOGOUT_ID = 18;
 
     // error log
     const string ERROR_LOG = 'error_log';
-    const int ERROR_LOG_ID = 65;
+    const int ERROR_LOG_ID = 145;
     const string ERROR_UPDATE = 'error_update';
-    const int ERROR_UPDATE_ID = 66;
+    const int ERROR_UPDATE_ID = 146;
 
     // search
     const string WORD_FIND = 'word_find';
-    const int WORD_FIND_ID = 67;
+    const int WORD_FIND_ID = 15;
     const string SEARCH_FULL = 'search_full';
-    const int SEARCH_FULL_ID = 68;
+    const int SEARCH_FULL_ID = 16;
 
     // explain
     const string VALUE_DETAIL = 'value_detail';
-    const int VALUE_DETAIL_ID = 69;
+    const int VALUE_DETAIL_ID = 33;
     const string RESULT_EXPLAIN = 'result_explain';
-    const int RESULT_EXPLAIN_ID = 70;
+    const int RESULT_EXPLAIN_ID = 45;
     const string FORMULA_TEST = 'formula_test';
-    const int FORMULA_TEST_ID = 71;
+    const int FORMULA_TEST_ID = 40;
 
     const string FORMULA_EXPLAIN = 'formula_explain';
 
     // sandbox
     const string SANDBOX = 'sandbox';
-    const int SANDBOX_ID = 72;
+    const int SANDBOX_ID = 67;
     const string UNDO = 'undo';
-    const int UNDO_ID = 73;
+    const int UNDO_ID = 66;
 
     // user
     const string USER = 'user';
-    const int USER_ID = 74;
+    const int USER_ID = 72;
 
     // import
     const string PASTE_TABLE = 'paste_table';
-    const int PASTE_TABLE_ID = 75;
+    const int PASTE_TABLE_ID = 116;
     const string IMPORT = 'import';
-    const int IMPORT_ID = 76;
+    const int IMPORT_ID = 115;
 
     // export
     const string EXPORT = 'export_in_selected_format';
-    const int EXPORT_ID = 77;
+    const int EXPORT_ID = 121;
     const string EXPORT_JSON = 'export_json';
-    const int EXPORT_JSON_ID = 78;
+    const int EXPORT_JSON_ID = 122;
     const string EXPORT_XML = 'export_xml';
-    const int EXPORT_XML_ID = 79;
+    const int EXPORT_XML_ID = 123;
     const string EXPORT_CSV = 'export_csv';
-    const int EXPORT_CSV_ID = 80;
+    const int EXPORT_CSV_ID = 124;
     const string EXPORT_ODS = 'export_ods';
-    const int EXPORT_ODS_ID = 81;
+    const int EXPORT_ODS_ID = 125;
 
     // jobs
     const string JOB_ASYNC = 'job_async';
-    const int JOB_ASYNC_ID = 82;
+    const int JOB_ASYNC_ID = 139;
     const string JOB_CONTROL = 'job_control';
-    const int JOB_CONTROL_ID = 83;
+    const int JOB_CONTROL_ID = 140;
     const string JOB_CHECK = 'job_check';
-    const int JOB_CHECK_ID = 84;
+    const int JOB_CHECK_ID = 141;
     const string USER_JOBS = 'user_jobs';
-    const int USER_JOBS_ID = 99;
+    const int USER_JOBS_ID = 74;
     const string ALL_JOBS = 'all_jobs';
-    const int ALL_JOBS_ID = 100;
+    const int ALL_JOBS_ID = 112;
 
     // configuration and quarantine
     const string USER_CONFIG = 'user_config';
-    const int USER_CONFIG_ID = 94;
+    const int USER_CONFIG_ID = 73;
     const string SYSTEM_CONFIG = 'system_config';
-    const int SYSTEM_CONFIG_ID = 95;
+    const int SYSTEM_CONFIG_ID = 144;
     const string ADMIN_CONFIG = 'admin_config';
-    const int ADMIN_CONFIG_ID = 96;
+    const int ADMIN_CONFIG_ID = 111;
     const string USER_QUARANTINE = 'user_quarantine';
-    const int USER_QUARANTINE_ID = 97;
+    const int USER_QUARANTINE_ID = 75;
     const string ALL_QUARANTINE = 'all_quarantine';
-    const int ALL_QUARANTINE_ID = 98;
+    const int ALL_QUARANTINE_ID = 113;
 
     // language, system log, change log, import, export, process, find and object list views that show only the
     // not yet available hint until their data and actions are implemented (see docs/llm/pending.md)
     const string PHRASE_TRANSLATIONS = 'phrase_translations';
-    const int PHRASE_TRANSLATIONS_ID = 101;
+    const int PHRASE_TRANSLATIONS_ID = 131;
     const string LANGUAGE_FORMS = 'language_forms';
-    const int LANGUAGE_FORMS_ID = 102;
+    const int LANGUAGE_FORMS_ID = 133;
     const string TRANSLATIONS_MISSING = 'translations_missing';
-    const int TRANSLATIONS_MISSING_ID = 103;
+    const int TRANSLATIONS_MISSING_ID = 132;
     const string LIST_LANGUAGES = 'list_languages';
-    const int LIST_LANGUAGES_ID = 104;
+    const int LIST_LANGUAGES_ID = 130;
     const string SYS_LOG_DETAIL = 'sys_log_detail';
-    const int SYS_LOG_DETAIL_ID = 105;
+    const int SYS_LOG_DETAIL_ID = 147;
     const string CHANGE_LOG_USER = 'change_log_user';
-    const int CHANGE_LOG_USER_ID = 106;
+    const int CHANGE_LOG_USER_ID = 68;
     const string CHANGE_LOG_RECENT = 'change_log_recent';
-    const int CHANGE_LOG_RECENT_ID = 107;
+    const int CHANGE_LOG_RECENT_ID = 69;
     const string OBJECT_HISTORY = 'object_history';
-    const int OBJECT_HISTORY_ID = 108;
+    const int OBJECT_HISTORY_ID = 70;
     const string CHANGE_DETAIL = 'change_detail';
-    const int CHANGE_DETAIL_ID = 109;
+    const int CHANGE_DETAIL_ID = 71;
     const string IMPORT_PREVIEW = 'import_preview';
-    const int IMPORT_PREVIEW_ID = 110;
+    const int IMPORT_PREVIEW_ID = 117;
     const string IMPORT_RESULT = 'import_result';
-    const int IMPORT_RESULT_ID = 111;
+    const int IMPORT_RESULT_ID = 118;
     const string IMPORT_URL = 'import_url';
-    const int IMPORT_URL_ID = 112;
+    const int IMPORT_URL_ID = 119;
     const string IMPORT_WIKIDATA = 'import_wikidata';
-    const int IMPORT_WIKIDATA_ID = 113;
+    const int IMPORT_WIKIDATA_ID = 120;
     const string EXPORT_SELECTIONS = 'export_selections';
-    const int EXPORT_SELECTIONS_ID = 114;
+    const int EXPORT_SELECTIONS_ID = 126;
     const string EXPORT_OBJECT = 'export_object';
-    const int EXPORT_OBJECT_ID = 115;
+    const int EXPORT_OBJECT_ID = 127;
     const string EXPORT_READY = 'export_ready';
-    const int EXPORT_READY_ID = 116;
+    const int EXPORT_READY_ID = 128;
     const string JOB_DETAIL = 'job_detail';
-    const int JOB_DETAIL_ID = 117;
+    const int JOB_DETAIL_ID = 137;
     const string CALC_STATUS = 'calc_status';
-    const int CALC_STATUS_ID = 118;
+    const int CALC_STATUS_ID = 138;
     const string VALUE_FIND = 'value_find';
-    const int VALUE_FIND_ID = 119;
+    const int VALUE_FIND_ID = 83;
     const string REF_FIND = 'ref_find';
-    const int REF_FIND_ID = 120;
+    const int REF_FIND_ID = 84;
     const string FIND_DUPLICATES = 'find_duplicates';
-    const int FIND_DUPLICATES_ID = 121;
+    const int FIND_DUPLICATES_ID = 114;
     const string LIST_WORDS = 'list_words';
-    const int LIST_WORDS_ID = 122;
+    const int LIST_WORDS_ID = 78;
     const string LIST_TRIPLES = 'list_triples';
-    const int LIST_TRIPLES_ID = 123;
+    const int LIST_TRIPLES_ID = 79;
     const string LIST_SOURCES = 'list_sources';
-    const int LIST_SOURCES_ID = 124;
+    const int LIST_SOURCES_ID = 80;
     const string LIST_REFS = 'list_refs';
-    const int LIST_REFS_ID = 125;
+    const int LIST_REFS_ID = 81;
     const string LIST_FORMULAS = 'list_formulas';
-    const int LIST_FORMULAS_ID = 126;
+    const int LIST_FORMULAS_ID = 82;
     const string LIST_VIEWS = 'list_views';
-    const int LIST_VIEWS_ID = 127;
+    const int LIST_VIEWS_ID = 105;
     const string LIST_COMPONENTS = 'list_components';
-    const int LIST_COMPONENTS_ID = 128;
+    const int LIST_COMPONENTS_ID = 106;
 
     // admin
     const string ADMIN_MAIN = 'admin_main';
-    const int ADMIN_MAIN_ID = 85;
+    const int ADMIN_MAIN_ID = 107;
 
     // list views for users
     const string VERBS = 'verbs';
-    const int VERBS_ID = 86;
+    const int VERBS_ID = 77;
     const string COMPLETE = 'complete';
-    const int COMPLETE_ID = 87;
+    const int COMPLETE_ID = 149;
     const string BASE_UNITS = 'base_units';
-    const int BASE_UNITS_ID = 129;
+    const int BASE_UNITS_ID = 150;
 
     // default views
     // TODO easy add missing default views e.g. for formula
     const string WORD = 'word_default';
-    const int WORD_ID = 130;
+    const int WORD_ID = 2;
     const string WORD_NAME = 'Word';
     const string WORD_COM = 'The default view for words';
     const string VERB = 'verb_default';
-    const int VERB_ID = 131;
+    const int VERB_ID = 8;
     const string VERB_NAME = 'Verb';
     const string TRIPLE = 'triple_default';
-    const int TRIPLE_ID = 132;
+    const int TRIPLE_ID = 3;
     const string SOURCE = 'source_default';
-    const int SOURCE_ID = 133;
+    const int SOURCE_ID = 9;
     const string SOURCE_NAME = 'Source';
     const string REF = 'ref_default';
-    const int REF_ID = 134;
+    const int REF_ID = 10;
     const string LANGUAGE = 'language_default';
-    const int LANGUAGE_ID = 135;
+    const int LANGUAGE_ID = 129;
     const string VALUE = 'value_default';
-    const int VALUE_DEFAULT_ID = 136;
+    const int VALUE_DEFAULT_ID = 4;
     const string FORMULA = 'formula_default';
-    const int FORMULA_ID = 137;
+    const int FORMULA_ID = 5;
     const string RESULT = 'result_default';
-    const int RESULT_ID = 138;
-    // appended at the end of base_views.json, so the import position is after the last
-    // view of the previously imported files (see docs/llm/json_views.md)
+    const int RESULT_ID = 6;
+    // the id is the import position in system_views.json (see docs/llm/json_views.md)
     const string VIEW = 'view_default';
-    const int VIEW_DEFAULT_ID = 154;
+    const int VIEW_DEFAULT_ID = 85;
     const string COMPONENT = 'component_default';
-    const int COMPONENT_DEFAULT_ID = 155;
+    const int COMPONENT_DEFAULT_ID = 89;
     const string FORMULA_LINK_DEFAULT = 'formula_link_default';
-    const int FORMULA_LINK_DEFAULT_ID = 156;
+    const int FORMULA_LINK_DEFAULT_ID = 58;
     const string TERM_VIEW_DEFAULT = 'term_view_default';
-    const int TERM_VIEW_DEFAULT_ID = 157;
+    const int TERM_VIEW_DEFAULT_ID = 93;
     const string COMPONENT_LINK_DEFAULT = 'component_link_default';
-    const int COMPONENT_LINK_DEFAULT_ID = 158;
+    const int COMPONENT_LINK_DEFAULT_ID = 97;
     const string VIEW_RELATION_DEFAULT = 'view_relation_default';
-    const int VIEW_RELATION_DEFAULT_ID = 159;
+    const int VIEW_RELATION_DEFAULT_ID = 101;
 
     // base views for users
     const string RANKING = 'ranking';
-    const int RANKING_ID = 139;
+    const int RANKING_ID = 151;
     const string SCIENCE = 'science';
-    const int SCIENCE_ID = 140;
+    const int SCIENCE_ID = 152;
     const string SCIENCE_NAME = 'show mainly related words that are relevant in sciences';
     const string HISTORIC = 'hist';
-    const int HISTORIC_ID = 141;
+    const int HISTORIC_ID = 153;
     const string HISTORIC_NAME = 'Historic';
     const string HISTORIC_COM = 'show mainly related words that are relevant in sciences';
     const string BIOLOGICAL = 'bio';
-    const int BIOLOGICAL_ID = 142;
+    const int BIOLOGICAL_ID = 154;
     const string BIOLOGICAL_NAME = 'Biological';
     const string BIOLOGICAL_COM = 'show what is relevant from the biological point of view';
     const string EDUCATION = 'edu';
-    const int EDUCATION_ID = 143;
+    const int EDUCATION_ID = 155;
     const string EDUCATION_NAME = 'Education';
     const string EDUCATION_COM = 'show mainly related words that are relevant in sciences';
     const string TOURISTIC = 'touristic';
-    const int TOURISTIC_ID = 144;
+    const int TOURISTIC_ID = 156;
     const string TOURISTIC_NAME = 'Touristic';
     const string TOURISTIC_COM = 'show mainly related words that are relevant in sciences';
     const string GRAPH = 'graph';
-    const int GRAPH_ID = 145;
+    const int GRAPH_ID = 157;
     const string GRAPH_NAME = 'Graph';
     const string GRAPH_COM = 'show mainly related words that are relevant in sciences';
     const string SIMPLE = 'simple';
-    const int SIMPLE_ID = 146;
+    const int SIMPLE_ID = 158;
     const string SIMPLE_NAME = 'Simple';
     const string SIMPLE_COM = 'show mainly related words that are relevant in sciences';
     const string MATH_CONST = 'math_const';
-    const int MATH_CONST_ID = 147;
+    const int MATH_CONST_ID = 159;
     const string MATH_CONST_NAME = 'math const';
     const string MATH_CONST_COM = 'Show a mathematical constance and the related words and formulas';
     const string GLOBAL_PROBLEM = 'global_problem';
-    const int GLOBAL_PROBLEM_ID = 148;
+    const int GLOBAL_PROBLEM_ID = 160;
 
     // TODO Prio 3 resort the views and group it
     const string SYSTEM_LOG = 'system_log';
-    const int SYSTEM_LOG_ID = 149;
+    const int SYSTEM_LOG_ID = 148;
 
     // to sort
     const string LANGUAGE_SELECT = 'language_select';
-    const int LANGUAGE_SELECT_ID = 88;
+    const int LANGUAGE_SELECT_ID = 76;
     const string PHRASE = 'phrase_default';
-    const int PHRASE_ID = 150;
+    const int PHRASE_ID = 7;
 
     // full list of phrases related to a word/triple — the "..." link target shown in the
     // page title when the title's truncated related-list overflows the per-verb config limit
     // (e.g. for Zurich with limit=2 the title 'Zurich (city, canton, ...)' links the '...'
     // to this view, which then renders every related triple grouped by verb)
     const string WORD_RELATED = 'word_related';
-    // the last view of base_views.json, so its id follows the calculator; confirm it from the regenerated list.csv
-    const int WORD_RELATED_ID = 161;
+    const int WORD_RELATED_ID = 13;
 
     // all values of a word/triple in up to four columns headed by the phrases used most often
     // within these values (e.g. inhabitants, area and elevation for a city) — the "more" link
     // target of the values list shown on the default word page
     const string PHRASE_VALUES = 'phrase_values';
-    const int PHRASE_VALUES_ID = 152;
+    const int PHRASE_VALUES_ID = 11;
     const string PHRASE_VALUES_NAME = 'Values of a phrase';
     const string PHRASE_VALUES_COM = 'All values related to a word or triple, grouped into up to four columns by the phrases used most often within the values';
 
@@ -454,7 +452,7 @@ class views
     // values (e.g. inhabitants and area for a city) and one row per remaining phrase combination
     // (e.g. per year), headed by the phrase title of a word or of a triple
     const string TABLE = 'table';
-    const int TABLE_ID = 153;
+    const int TABLE_ID = 12;
     const string TABLE_NAME = 'Table';
     const string TABLE_COM = 'The values related to a word or triple as a table with one column per phrase used most often within the values';
 
@@ -462,7 +460,7 @@ class views
     // tiers define, headed by the phrase title, e.g. the use case "PV in Switzerland" with the
     // avoided emission with and without the displacement mix concept (pv_switzerland_co2.json)
     const string CALCULATOR = 'calculator';
-    const int CALCULATOR_ID = 160;
+    const int CALCULATOR_ID = 14;
     const string CALCULATOR_NAME = 'Calculator';
     const string CALCULATOR_COM = 'The values related to a word or triple as a table with the defined columns, so that the numbers of a question can be compared';
 
@@ -495,11 +493,11 @@ class views
     const string TEST_FORM_NEW_NAME = 'Add new word';
     const string TEST_FORM_COM = 'system form to add a word';
     const string TEST_FORM = 'word_add';
-    const int TEST_FORM_ID = 2;
+    const int TEST_FORM_ID = 22;
 
     // code if of views that should be checked before deployment if they are still fine with the base setup
     const string CURRENCY = 'currency'; // the default view for all currencies
-    const int CURRENCY_ID = 151; // a kind of dummy id that may often change
+    const int CURRENCY_ID = 161; // a kind of dummy id that may often change
 
 
     // TODO views to be created

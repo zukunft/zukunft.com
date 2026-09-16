@@ -34,7 +34,7 @@ SELECT view_relation_delete_log
         'word_edit'::text,
         'add components'::text,
         'word_usage'::text,
-        3::bigint,
+        24::bigint,
         1::smallint,
-        5::bigint,
+        26::bigint,
         1::bigint);

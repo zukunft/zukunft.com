@@ -1,6 +1,6 @@
 GET
-http://localhost/http/view.php?k=&py=2&8py=1&8k=System+Test+Word&id=999&8id=999&9m=130&9id=999&m=3&z=1&submit=
-/http/view.php?k=&py=2&8py=1&8k=System+Test+Word&id=999&8id=999&9m=130&9id=999&m=3&z=1&submit=
+http://localhost/http/view.php?k=&py=2&8py=1&8k=System+Test+Word&id=999&8id=999&9m=2&9id=999&m=24&z=1&submit=
+/http/view.php?k=&py=2&8py=1&8k=System+Test+Word&id=999&8id=999&9m=2&9id=999&m=24&z=1&submit=
 /http/view.php?phrase_type=2&8phrase_type=1&8name=System+Test+Word&id=999&8id=999&9mask_id=word_default&9id=999&mask_id=word_edit&step=confirm&
 {
     "name": "",

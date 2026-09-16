@@ -968,7 +968,7 @@ class user extends db_object
     function display(): string
     {
         $html = new html_base();
-        return $html->ref_view(views::USER_ID, $this->id, $this->name);
+        return $html->ref_view(views::USER_ID, $this->id, $this->name ?? '');
     }
 
 

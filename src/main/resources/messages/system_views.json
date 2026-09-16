@@ -2215,6 +2215,356 @@
       "type": "system_title",
       "code_id": "system_title_list_components",
       "ui_msg_code_id": "system_title_list_components"
+    },
+    {
+      "name": "Word title",
+      "description": "show the word name as a page title",
+      "type": "title_of_named_with_edit_link",
+      "code_id": "title_of_named_with_edit_link_word"
+    },
+    {
+      "name": "Triple title",
+      "description": "show the triple name as the page title and the from, verb and to with links in the subtitle",
+      "type": "title_of_triple_with_edit_link",
+      "code_id": "title_of_triple_with_edit_link_triple"
+    },
+    {
+      "name": "Value title",
+      "description": "show the related phrases of a value with links as the page title and the value itself, plus the edit link and the share and protection subtitle",
+      "type": "title_of_value_with_edit_link",
+      "code_id": "title_of_value_with_edit_link_value"
+    },
+    {
+      "name": "language name",
+      "description": "simply show the name of a language",
+      "type": "language_name"
+    },
+    {
+      "name": "related values",
+      "description": "show the most relevant and related values",
+      "type": "values_related"
+    },
+    {
+      "name": "values by triple",
+      "description": "show the most relevant values where this triple is used",
+      "type": "values_by_triple"
+    },
+    {
+      "name": "value chart",
+      "description": "show a chart of the most relevant values by impact on top of the value list",
+      "type": "value_chart"
+    },
+    {
+      "name": "related results",
+      "description": "show the most relevant and related results",
+      "type": "results_related"
+    },
+    {
+      "name": "system show field plural",
+      "description": "show the plural form of a word as read only text",
+      "type": "system_show_field_plural",
+      "code_id": "show_field_plural"
+    },
+    {
+      "name": "phrase aliases",
+      "description": "show the phrases that are an alias of this phrase",
+      "type": "phrase_aliases",
+      "code_id": "phrase_aliases"
+    },
+    {
+      "name": "phrase symbols",
+      "description": "show the symbols of this phrase",
+      "type": "phrase_symbols",
+      "code_id": "phrase_symbols"
+    },
+    {
+      "name": "related phrases without subtitles",
+      "description": "list of phrases related to this phrase excluding the alias, symbol and 'is a' entries that are already shown by the alias, symbol and subtitle components",
+      "type": "list_phrases_related_ex_subtitle",
+      "code_id": "list_phrases_related_ex_subtitle"
+    },
+    {
+      "name": "system sub title description",
+      "description": "show the language specific sub title for the description column",
+      "type": "system_sub_title",
+      "code_id": "system_sub_title_description",
+      "ui_msg_code_id": "system_sub_title_description"
+    },
+    {
+      "name": "formula list",
+      "description": "list of formulas",
+      "type": "formula_list"
+    },
+    {
+      "name": "formulas of parents",
+      "description": "list of formulas assigned to the ancestor phrases of this word, grouped per ancestor",
+      "type": "formulas_of_parents"
+    },
+    {
+      "name": "system sub title views",
+      "description": "show the language specific sub title for the related views",
+      "type": "system_sub_title",
+      "code_id": "system_sub_title_views",
+      "ui_msg_code_id": "system_sub_title_views"
+    },
+    {
+      "name": "view tab box",
+      "description": "tab box with the related views (preview plus open and switch buttons) and the change log of the shown object",
+      "type": "view_tab_box",
+      "code_id": "view_tab_box_word"
+    },
+    {
+      "name": "values in columns",
+      "description": "all values related to this word or triple in up to four columns that wrap on narrow screens, each column headed by one of the phrases used most often within these values",
+      "type": "values_in_columns",
+      "code_id": "values_in_columns_phrase"
+    },
+    {
+      "name": "phrase title",
+      "description": "show the phrase name as the page title with the subheader of a word (the related phrases) or of a triple (the from, verb and to with links)",
+      "type": "phrase_title",
+      "code_id": "phrase_title_phrase"
+    },
+    {
+      "name": "table with related columns",
+      "description": "all values related to this word or triple as a table with one column per phrase used most often within the values and one row per remaining phrase combination",
+      "type": "table_with_related_columns",
+      "code_id": "table_with_related_columns_phrase"
+    },
+    {
+      "name": "system title verb",
+      "description": "show the language specific word verb and the name of the shown verb as the page title",
+      "type": "system_title_with_object_name",
+      "code_id": "system_title_verb",
+      "ui_msg_code_id": "system_title_verb"
+    },
+    {
+      "name": "source doi link",
+      "description": "show the doi of a source behind its label as a link to doi.org",
+      "type": "source_doi_link",
+      "code_id": "source_doi_link"
+    },
+    {
+      "name": "system show field reverse",
+      "description": "the reverse name of a verb as read only",
+      "type": "system_show_field_reverse",
+      "code_id": "show_field_reverse"
+    },
+    {
+      "name": "system show field plural reverse",
+      "description": "the plural of the reverse name of a verb as read only",
+      "type": "system_show_field_plural_reverse",
+      "code_id": "show_field_plural_reverse"
+    },
+    {
+      "name": "verb triples",
+      "description": "the triples that use this verb with a link to each triple",
+      "type": "triples_by_verb",
+      "code_id": "verb_triples"
+    },
+    {
+      "name": "Source title",
+      "description": "show the source name as the page title and the type, the share and the protection in the subtitle",
+      "type": "title_of_named_with_edit_link",
+      "code_id": "title_of_named_with_edit_link_source"
+    },
+    {
+      "name": "Reference title",
+      "description": "show the reference name as the page title and the predicate, the share and the protection in the subtitle",
+      "type": "title_of_named_with_edit_link",
+      "code_id": "title_of_named_with_edit_link_ref"
+    },
+    {
+      "name": "source url link",
+      "description": "show the url of a source behind its label as a link to the source",
+      "type": "source_url_link",
+      "code_id": "source_url_link"
+    },
+    {
+      "name": "source values",
+      "description": "the values that name this source grouped by their phrases like the default word view",
+      "type": "values_by_source",
+      "code_id": "source_values"
+    },
+    {
+      "name": "View title",
+      "description": "show the translated word view and the view name as the page title and the type, the share and the protection in the subtitle",
+      "type": "title_of_named_with_edit_link",
+      "code_id": "title_of_named_with_edit_link_view",
+      "ui_msg_code_id": "system_title_view"
+    },
+    {
+      "name": "Component title",
+      "description": "show the translated word component and the component name as the page title and the type, the share and the protection in the subtitle",
+      "type": "title_of_named_with_edit_link",
+      "code_id": "title_of_named_with_edit_link_component",
+      "ui_msg_code_id": "system_title_component"
+    },
+    {
+      "name": "Link title",
+      "description": "show the generated name of a link object as the page title and the two linked objects with links in the subtitle",
+      "type": "title_of_link_with_edit_link",
+      "code_id": "title_of_link_with_edit_link"
+    },
+    {
+      "name": "system show field style",
+      "description": "the name of the display style of a view or component as read only",
+      "type": "system_show_field_style",
+      "code_id": "show_field_style"
+    },
+    {
+      "name": "system show field owner",
+      "description": "the name of the user who owns the object as read only",
+      "type": "system_show_field_owner",
+      "code_id": "show_field_owner"
+    },
+    {
+      "name": "system show field formula",
+      "description": "the name of the calculation formula of a component with a link to the formula",
+      "type": "system_show_field_formula",
+      "code_id": "show_field_formula"
+    },
+    {
+      "name": "component views",
+      "description": "the views that use the shown component with a link to each view",
+      "type": "views_of_component",
+      "code_id": "component_views"
+    },
+    {
+      "name": "system show field link type",
+      "description": "the name of the link type of a link as read only",
+      "type": "system_show_field_link_type",
+      "code_id": "show_field_link_type"
+    },
+    {
+      "name": "system show field order number",
+      "description": "the order number of a link as read only",
+      "type": "system_show_field_order_nbr",
+      "code_id": "show_field_order_nbr"
+    },
+    {
+      "name": "link tab box",
+      "description": "tab box with the change log and the user overwrites of this link",
+      "type": "view_tab_box",
+      "code_id": "view_tab_box_link"
+    },
+    {
+      "name": "value tab box",
+      "description": "tab box with the views that can show this value, the change log and the user overwrites of this value",
+      "type": "view_tab_box",
+      "code_id": "view_tab_box_value"
+    },
+    {
+      "name": "component tab box",
+      "description": "tab box with the change log and the user overwrites of this component",
+      "type": "view_tab_box",
+      "code_id": "view_tab_box_component"
+    },
+    {
+      "name": "view page tab box",
+      "description": "tab box with the change log and the user overwrites of this view; named view page tab box, because view tab box is the name of the tab box of the word, triple and formula page",
+      "type": "view_tab_box",
+      "code_id": "view_tab_box_view"
+    },
+    {
+      "name": "source tab box",
+      "description": "tab box with the views that can show this source, the change log and the user overwrites of this source",
+      "type": "view_tab_box",
+      "code_id": "view_tab_box_source"
+    },
+    {
+      "name": "system show field start position",
+      "description": "the position in the parent view where the child view of a view relation starts as read only",
+      "type": "system_show_view_start_pos",
+      "code_id": "show_field_start_pos"
+    },
+    {
+      "name": "system show field name in formulas",
+      "description": "the verb name used in formulas as read only",
+      "type": "system_show_field_name_in_formulas",
+      "code_id": "show_field_name_in_formulas"
+    },
+    {
+      "name": "system show field weight",
+      "description": "the weight of a triple compared to others as read only",
+      "type": "system_show_field_weight",
+      "code_id": "show_field_weight"
+    },
+    {
+      "name": "system show field condition formula",
+      "description": "the formula that decides if a triple is used, with a link to the formula",
+      "type": "system_show_field_condition_formula",
+      "code_id": "show_field_condition_formula"
+    },
+    {
+      "name": "system show field value source",
+      "description": "the source of a value with a link to the source; named value source, because system show field source is the source name shown on the reference pages",
+      "type": "system_show_field_source",
+      "code_id": "show_field_value_source"
+    },
+    {
+      "name": "system show result value",
+      "description": "the calculated number of a result behind its phrase group with links",
+      "type": "system_show_result_value",
+      "code_id": "show_result_value"
+    },
+    {
+      "name": "system show result formula",
+      "description": "the formula that calculated a result, with a link to the formula",
+      "type": "system_show_result_formula",
+      "code_id": "show_result_formula"
+    },
+    {
+      "name": "system show field reference phrase",
+      "description": "the word or triple a reference belongs to, with a link to the phrase",
+      "type": "system_show_field_ref_phrase",
+      "code_id": "show_field_ref_phrase"
+    },
+    {
+      "name": "similar values",
+      "description": "the values that share a phrase with this value sorted by impact e.g. the other mathematical constants of pi",
+      "type": "values_similar",
+      "code_id": "values_similar"
+    },
+    {
+      "name": "results of value",
+      "description": "the results that use this value e.g. the increase calculated from it",
+      "type": "results_by_value",
+      "code_id": "results_by_value"
+    },
+    {
+      "name": "system sub title related values",
+      "description": "show the language specific sub title for the values related to the shown value",
+      "type": "system_sub_title",
+      "code_id": "system_sub_title_related_values",
+      "ui_msg_code_id": "system_sub_title_related_values"
+    },
+    {
+      "name": "system show field linked component",
+      "description": "the name of the component that the shown component links to with the type of that link and a link to the linked component",
+      "type": "system_show_field_linked_component",
+      "code_id": "show_field_linked_component"
+    },
+    {
+      "name": "Formula title",
+      "description": "show the formula name as the page title and the assigned phrases with links in the subtitle",
+      "type": "title_of_formula_with_edit_link",
+      "code_id": "title_of_formula_with_edit_link_formula"
+    },
+    {
+      "name": "Expression with links",
+      "description": "show the formula expression in the latex format with a tooltip and a link for each term",
+      "type": "expression_latex_link"
+    },
+    {
+      "name": "Expression",
+      "type": "expression"
+    },
+    {
+      "name": "system show field all values needed",
+      "description": "show if a formula only calculates when all used values exist",
+      "type": "system_show_field_formula_all_vars",
+      "code_id": "show_field_all_values_needed"
     }
   ],
   "views": [
@@ -2232,6 +2582,677 @@
         {
           "position": "2",
           "name": "spreadsheet"
+        }
+      ]
+    },
+    {
+      "name": "Word (default)",
+      "description": "the default view for words",
+      "code_id": "word_default",
+      "type": "word",
+      "components": [
+        {
+          "position": "1",
+          "name": "Word title"
+        },
+        {
+          "position": "2",
+          "name": "system sub title description",
+          "style": "text-left"
+        },
+        {
+          "position": "3",
+          "name": "system show field description",
+          "position_type": "combine"
+        },
+        {
+          "position": "4",
+          "name": "system show field plural",
+          "position_type": "combine"
+        },
+        {
+          "position": "5",
+          "name": "phrase aliases",
+          "position_type": "combine"
+        },
+        {
+          "position": "6",
+          "name": "phrase symbols",
+          "position_type": "combine"
+        },
+        {
+          "position": "7",
+          "name": "children of word",
+          "position_type": "combine"
+        },
+        {
+          "position": "8",
+          "name": "related phrases without subtitles",
+          "position_type": "combine"
+        },
+        {
+          "position": "9",
+          "name": "system sub title references",
+          "position_type": "combine"
+        },
+        {
+          "position": "10",
+          "name": "ref list word",
+          "position_type": "combine"
+        },
+        {
+          "position": "11",
+          "name": "system sub title values",
+          "position_type": "side_or_first_below"
+        },
+        {
+          "position": "12",
+          "name": "value chart",
+          "position_type": "combine"
+        },
+        {
+          "position": "13",
+          "name": "related values",
+          "position_type": "combine"
+        },
+        {
+          "position": "14",
+          "name": "system sub title formulas",
+          "position_type": "side_or_below"
+        },
+        {
+          "position": "15",
+          "name": "formula list",
+          "position_type": "combine"
+        },
+        {
+          "position": "16",
+          "name": "formulas of parents",
+          "position_type": "combine"
+        },
+        {
+          "position": "17",
+          "name": "view tab box",
+          "position_type": "side_or_last_below"
+        }
+      ]
+    },
+    {
+      "name": "Triple (default)",
+      "description": "the default view for triples",
+      "code_id": "triple_default",
+      "type": "triple",
+      "components": [
+        {
+          "position": "1",
+          "name": "Triple title"
+        },
+        {
+          "position": "2",
+          "name": "system sub title description",
+          "style": "text-left"
+        },
+        {
+          "position": "3",
+          "name": "system show field description",
+          "position_type": "combine"
+        },
+        {
+          "position": "4",
+          "name": "system show field weight",
+          "position_type": "combine"
+        },
+        {
+          "position": "5",
+          "name": "system show field condition formula",
+          "position_type": "combine"
+        },
+        {
+          "position": "6",
+          "name": "phrase aliases",
+          "position_type": "combine"
+        },
+        {
+          "position": "7",
+          "name": "phrase symbols",
+          "position_type": "combine"
+        },
+        {
+          "position": "8",
+          "name": "related phrases without subtitles",
+          "position_type": "combine"
+        },
+        {
+          "position": "9",
+          "name": "system sub title references",
+          "position_type": "combine"
+        },
+        {
+          "position": "10",
+          "name": "ref list word",
+          "position_type": "combine"
+        },
+        {
+          "position": "11",
+          "name": "system sub title values",
+          "position_type": "side_or_first_below"
+        },
+        {
+          "position": "12",
+          "name": "values by triple",
+          "position_type": "combine"
+        },
+        {
+          "position": "13",
+          "name": "system sub title formulas",
+          "position_type": "side_or_below"
+        },
+        {
+          "position": "14",
+          "name": "formula list",
+          "position_type": "combine"
+        },
+        {
+          "position": "15",
+          "name": "view tab box",
+          "position_type": "side_or_last_below"
+        }
+      ]
+    },
+    {
+      "name": "Value (default)",
+      "description": "the default view for values",
+      "code_id": "value_default",
+      "type": "value",
+      "components": [
+        {
+          "position": "1",
+          "name": "Value title"
+        },
+        {
+          "position": "2",
+          "name": "system show field last update",
+          "style": "fields-in-line"
+        },
+        {
+          "position": "3",
+          "name": "system show field value source",
+          "position_type": "same_line"
+        },
+        {
+          "position": "4",
+          "name": "system sub title related values"
+        },
+        {
+          "position": "5",
+          "name": "similar values",
+          "position_type": "combine"
+        },
+        {
+          "position": "6",
+          "name": "system sub title results",
+          "position_type": "side_or_first_below"
+        },
+        {
+          "position": "7",
+          "name": "results of value",
+          "position_type": "combine"
+        },
+        {
+          "position": "8",
+          "name": "value tab box",
+          "position_type": "side_or_last_below"
+        }
+      ]
+    },
+    {
+      "name": "Formula (default)",
+      "description": "Show a formula and the related results and words",
+      "code_id": "formula_default",
+      "type": "formula",
+      "components": [
+        {
+          "position": "1",
+          "name": "Formula title"
+        },
+        {
+          "position": "2",
+          "name": "Expression with links",
+          "style": "text-left"
+        },
+        {
+          "position": "3",
+          "name": "Expression",
+          "style": "text-left"
+        },
+        {
+          "position": "4",
+          "name": "system sub title description",
+          "position_type": "combine"
+        },
+        {
+          "position": "5",
+          "name": "system show field description",
+          "position_type": "combine"
+        },
+        {
+          "position": "6",
+          "name": "system show field all values needed",
+          "position_type": "combine"
+        },
+        {
+          "position": "7",
+          "name": "system show field last update",
+          "position_type": "combine"
+        },
+        {
+          "position": "8",
+          "name": "system sub title values",
+          "position_type": "side_or_first_below"
+        },
+        {
+          "position": "9",
+          "name": "related values",
+          "position_type": "combine"
+        },
+        {
+          "position": "10",
+          "name": "related results",
+          "position_type": "side_or_below"
+        },
+        {
+          "position": "11",
+          "name": "view tab box",
+          "position_type": "side_or_last_below"
+        }
+      ]
+    },
+    {
+      "name": "Result (default)",
+      "description": "the default view for results",
+      "code_id": "result_default",
+      "type": "result",
+      "components": [
+        {
+          "position": "1",
+          "name": "system show result value"
+        },
+        {
+          "position": "2",
+          "name": "system show result formula",
+          "position_type": "combine"
+        },
+        {
+          "position": "3",
+          "name": "system show field last update",
+          "position_type": "combine"
+        },
+        {
+          "position": "4",
+          "name": "related results"
+        }
+      ]
+    },
+    {
+      "name": "Phrase (default)",
+      "description": "the default view for a word or triple",
+      "code_id": "phrase_default"
+    },
+    {
+      "name": "Verb (default)",
+      "description": "the default view for verbs",
+      "code_id": "verb_default",
+      "type": "verb",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title verb"
+        },
+        {
+          "position": "2",
+          "name": "system show field description"
+        },
+        {
+          "position": "3",
+          "name": "system show field reverse"
+        },
+        {
+          "position": "4",
+          "name": "system show field plural"
+        },
+        {
+          "position": "5",
+          "name": "system show field plural reverse"
+        },
+        {
+          "position": "6",
+          "name": "system show field name in formulas"
+        },
+        {
+          "position": "7",
+          "name": "system sub title triples"
+        },
+        {
+          "position": "8",
+          "name": "verb triples"
+        }
+      ]
+    },
+    {
+      "name": "Source (default)",
+      "description": "the default view for sources",
+      "code_id": "source_default",
+      "type": "source",
+      "components": [
+        {
+          "position": "1",
+          "name": "Source title"
+        },
+        {
+          "position": "2",
+          "name": "system sub title description",
+          "style": "text-left"
+        },
+        {
+          "position": "3",
+          "name": "system show field description",
+          "position_type": "combine"
+        },
+        {
+          "position": "4",
+          "name": "source url link",
+          "position_type": "combine"
+        },
+        {
+          "position": "5",
+          "name": "source doi link",
+          "position_type": "combine"
+        },
+        {
+          "position": "6",
+          "name": "system sub title usage number",
+          "position_type": "side_or_first_below"
+        },
+        {
+          "position": "7",
+          "name": "system sub title values",
+          "position_type": "combine"
+        },
+        {
+          "position": "8",
+          "name": "source values",
+          "position_type": "combine"
+        },
+        {
+          "position": "9",
+          "name": "source tab box",
+          "position_type": "side_or_last_below"
+        }
+      ]
+    },
+    {
+      "name": "Reference (default)",
+      "description": "the default view for references",
+      "code_id": "ref_default",
+      "type": "ref",
+      "components": [
+        {
+          "position": "1",
+          "name": "Reference title"
+        },
+        {
+          "position": "2",
+          "name": "system sub title description",
+          "style": "text-left"
+        },
+        {
+          "position": "3",
+          "name": "system show field description",
+          "position_type": "combine"
+        },
+        {
+          "position": "4",
+          "name": "system show field reference phrase",
+          "position_type": "combine"
+        },
+        {
+          "position": "5",
+          "name": "system show field reference type",
+          "position_type": "combine"
+        },
+        {
+          "position": "6",
+          "name": "system show field external key",
+          "position_type": "combine"
+        },
+        {
+          "position": "7",
+          "name": "system show field url",
+          "position_type": "combine"
+        },
+        {
+          "position": "8",
+          "name": "system show field source",
+          "position_type": "combine"
+        },
+        {
+          "position": "9",
+          "name": "system show field last update",
+          "position_type": "combine"
+        },
+        {
+          "position": "10",
+          "name": "system sub title values",
+          "position_type": "side_or_first_below"
+        },
+        {
+          "position": "11",
+          "name": "related values",
+          "position_type": "combine"
+        },
+        {
+          "position": "12",
+          "name": "view tab box",
+          "position_type": "side_or_last_below"
+        }
+      ]
+    },
+    {
+      "name": "Values of a phrase",
+      "description": "all values related to a word or triple, grouped into up to four columns by the phrases used most often within the values",
+      "code_id": "phrase_values",
+      "type": "word",
+      "components": [
+        {
+          "position": "1",
+          "name": "Word title"
+        },
+        {
+          "position": "2",
+          "name": "system sub title values"
+        },
+        {
+          "position": "3",
+          "name": "values in columns",
+          "position_type": "combine"
+        }
+      ]
+    },
+    {
+      "name": "Table",
+      "description": "the values related to a word or triple as a table with one column per phrase used most often within the values",
+      "code_id": "table",
+      "type": "word",
+      "components": [
+        {
+          "position": "1",
+          "name": "phrase title"
+        },
+        {
+          "position": "2",
+          "name": "table with related columns",
+          "position_type": "combine"
+        }
+      ]
+    },
+    {
+      "name": "Related phrases",
+      "description": "the full list of the phrases related to a word or triple grouped by verb, which the title of a phrase page links with its '...' if the title shows only some related phrases",
+      "code_id": "word_related",
+      "type": "word",
+      "components": [
+        {
+          "position": "1",
+          "name": "Word title"
+        },
+        {
+          "position": "2",
+          "name": "phrase aliases"
+        },
+        {
+          "position": "3",
+          "name": "phrase symbols"
+        },
+        {
+          "position": "4",
+          "name": "parents of word"
+        },
+        {
+          "position": "5",
+          "name": "children of word"
+        },
+        {
+          "position": "6",
+          "name": "related phrases without subtitles"
+        }
+      ]
+    },
+    {
+      "name": "Calculator",
+      "description": "the values related to a word or triple as a table with the defined columns, so that the numbers of a question can be compared, e.g. the avoided emission of PV in Switzerland with and without the displacement mix concept",
+      "code_id": "calculator",
+      "type": "word",
+      "components": [
+        {
+          "position": "1",
+          "name": "phrase title"
+        },
+        {
+          "position": "2",
+          "name": "table with related columns",
+          "position_type": "combine"
+        }
+      ]
+    },
+    {
+      "name": "Search",
+      "description": "The search page for all words, triples, verbs and formulas",
+      "code_id": "word_find",
+      "type": "system",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title search"
+        },
+        {
+          "position": "2",
+          "name": "system body search"
+        }
+      ]
+    },
+    {
+      "name": "Search detail",
+      "description": "The full search page for all words, triples, verbs and formulas",
+      "code_id": "search_full",
+      "type": "system",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title search full"
+        },
+        {
+          "position": "2",
+          "name": "system body search full"
+        }
+      ]
+    },
+    {
+      "name": "Login",
+      "description": "the system login form",
+      "type": "system",
+      "code_id": "login",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title login"
+        },
+        {
+          "position": "2",
+          "name": "system body login"
+        }
+      ]
+    },
+    {
+      "name": "Logout",
+      "description": "the system logout form",
+      "type": "system",
+      "code_id": "logout",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title logout"
+        },
+        {
+          "position": "2",
+          "name": "system body logout"
+        }
+      ]
+    },
+    {
+      "name": "Signup",
+      "description": "the system signup form",
+      "type": "system",
+      "code_id": "signup",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title signup"
+        },
+        {
+          "position": "2",
+          "name": "system body signup"
+        }
+      ]
+    },
+    {
+      "name": "Login activate",
+      "description": "the system login activate form",
+      "type": "system",
+      "code_id": "login_activate",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title login activate"
+        },
+        {
+          "position": "2",
+          "name": "system body login activate"
+        }
+      ]
+    },
+    {
+      "name": "Login reset",
+      "description": "reset the password of a login user name",
+      "type": "system",
+      "code_id": "login_reset",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title login reset"
+        },
+        {
+          "position": "2",
+          "name": "system body login reset"
         }
       ]
     },
@@ -2305,6 +3326,27 @@
         },
         {
           "position": "15",
+          "name": "system form end"
+        }
+      ]
+    },
+    {
+      "name": "Add word by name",
+      "description": "Create a new word just by its name without the confirm view if no term with the same name exists",
+      "code_id": "word_add_simple",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system form title word add"
+        },
+        {
+          "position": "2",
+          "name": "system form word add simple"
+        },
+        {
+          "position": "3",
           "name": "system form end"
         }
       ]
@@ -2634,15 +3676,15 @@
       ]
     },
     {
-      "name": "Add new verb",
-      "description": "Request to add a new verb/predicate",
-      "code_id": "verb_add",
+      "name": "Add new number",
+      "description": "Create a new value",
+      "code_id": "value_add",
       "type": "system",
       "protection": "admin_protection",
       "components": [
         {
           "position": "1",
-          "name": "system form title verb add"
+          "name": "system form title value add"
         },
         {
           "position": "2",
@@ -2654,168 +3696,121 @@
         },
         {
           "position": "4",
-          "name": "system form field name",
-          "style": "col-md-8"
+          "name": "system form field group or phrase list"
         },
         {
           "position": "5",
-          "name": "system form field description"
+          "name": "system form select value type",
+          "position_type": "side"
         },
         {
           "position": "6",
-          "name": "system form field plural",
-          "style": "col-md-4"
+          "name": "system form field value"
         },
         {
           "position": "7",
-          "name": "system form field reverse",
-          "style": "col-md-4",
-          "position_type": "side"
-        },
-        {
-          "position": "8",
-          "name": "system form field plural reverse",
-          "style": "col-md-4",
-          "position_type": "side"
-        },
-        {
-          "position": "9",
-          "name": "system formatter row right"
-        },
-        {
-          "position": "10",
-          "name": "system form button cancel"
-        },
-        {
-          "position": "11",
-          "name": "system form button save"
-        },
-        {
-          "position": "12",
-          "name": "system formatter row end"
-        },
-        {
-          "position": "13",
-          "name": "system form end"
-        }
-      ]
-    },
-    {
-      "name": "Change verb",
-      "description": "Rename a verb/predicate",
-      "code_id": "verb_edit",
-      "type": "system",
-      "protection": "admin_protection",
-      "components": [
-        {
-          "position": "1",
-          "name": "system form title verb edit"
-        },
-        {
-          "position": "2",
-          "name": "system form hidden back stack"
-        },
-        {
-          "position": "3",
-          "name": "system form hidden confirm status"
-        },
-        {
-          "position": "4",
-          "name": "system form field name",
-          "style": "col-md-8"
-        },
-        {
-          "position": "5",
           "name": "system form field description"
         },
         {
-          "position": "6",
-          "name": "system form field plural",
-          "style": "col-md-4"
-        },
-        {
-          "position": "7",
-          "name": "system form field reverse",
-          "style": "col-md-4",
-          "position_type": "side"
-        },
-        {
           "position": "8",
-          "name": "system form field plural reverse",
-          "style": "col-md-4",
-          "position_type": "side"
+          "name": "system form select source"
         },
         {
           "position": "9",
-          "name": "system formatter row right"
+          "name": "system form select ref"
         },
         {
           "position": "10",
-          "name": "system form button cancel"
+          "name": "system form select view"
         },
         {
           "position": "11",
-          "name": "system form button save"
+          "name": "system form select share type",
+          "position_type": "side"
         },
         {
           "position": "12",
-          "name": "system formatter row end"
+          "name": "system form select protection type",
+          "position_type": "side"
         },
         {
           "position": "13",
-          "name": "system form end"
+          "name": "system form button cancel"
         },
         {
           "position": "14",
-          "name": "system formatter row start"
+          "name": "system form button save"
         },
         {
           "position": "15",
-          "name": "system sub title usage number",
-          "style": "col-md-12"
-        },
-        {
-          "position": "16",
-          "name": "system sub title triples",
-          "style": "col-md-4"
-        },
-        {
-          "position": "17",
-          "name": "triples that use a verb",
-          "position_type": "combine"
-        },
-        {
-          "position": "18",
-          "name": "system sub title formulas",
-          "style": "col-md-4"
-        },
-        {
-          "position": "19",
-          "name": "formulas that use a verb",
-          "position_type": "combine"
-        },
-        {
-          "position": "20",
-          "name": "system form tab box",
-          "position_type": "column",
-          "style": "col-md-4"
-        },
-        {
-          "position": "21",
-          "name": "system formatter row end"
+          "name": "system form end"
         }
       ]
     },
     {
-      "name": "Delete verb",
-      "description": "Exclude or delete a verb",
-      "code_id": "verb_del",
+      "name": "Add number by words and triples",
+      "description": "Create a new value by selecting its words and triples step by step without javascript",
+      "code_id": "value_add_phrases",
       "type": "system",
       "protection": "admin_protection",
       "components": [
         {
           "position": "1",
-          "name": "system form title verb del"
+          "name": "system form title value add phrases"
+        },
+        {
+          "position": "2",
+          "name": "system form hidden back stack"
+        },
+        {
+          "position": "3",
+          "name": "system form phrase steps"
+        },
+        {
+          "position": "4",
+          "name": "system form button cancel"
+        },
+        {
+          "position": "5",
+          "name": "system form end"
+        }
+      ]
+    },
+    {
+      "name": "Add number by phrases",
+      "description": "Create a new value just by selecting its words and triples and entering the number without the confirm view",
+      "code_id": "value_add_simple",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system form title value add"
+        },
+        {
+          "position": "2",
+          "name": "system form hidden back stack"
+        },
+        {
+          "position": "3",
+          "name": "system form value add simple"
+        },
+        {
+          "position": "4",
+          "name": "system form end"
+        }
+      ]
+    },
+    {
+      "name": "Change number",
+      "description": "Change a number",
+      "code_id": "value_edit",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system form title value edit"
         },
         {
           "position": "2",
@@ -2827,15 +3822,112 @@
         },
         {
           "position": "4",
-          "name": "system show field name big"
+          "name": "system form field group or phrase list"
         },
         {
           "position": "5",
-          "name": "system show field description"
+          "name": "system form select value type",
+          "position_type": "side"
         },
         {
           "position": "6",
-          "name": "system formatter row right"
+          "name": "system form field value"
+        },
+        {
+          "position": "7",
+          "name": "system form field description"
+        },
+        {
+          "position": "8",
+          "name": "system form select source"
+        },
+        {
+          "position": "9",
+          "name": "system form select ref"
+        },
+        {
+          "position": "10",
+          "name": "system form select view"
+        },
+        {
+          "position": "11",
+          "name": "system form select share type",
+          "position_type": "side"
+        },
+        {
+          "position": "12",
+          "name": "system form select protection type",
+          "position_type": "side"
+        },
+        {
+          "position": "13",
+          "name": "system show value usage"
+        },
+        {
+          "position": "14",
+          "name": "system form button cancel"
+        },
+        {
+          "position": "15",
+          "name": "system form button save"
+        },
+        {
+          "position": "16",
+          "name": "system form end"
+        }
+      ]
+    },
+    {
+      "name": "Overwrite number",
+      "description": "Change just the number, text, time or geolocation of a value for the user without the confirm view",
+      "code_id": "value_overwrite",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system form title value edit"
+        },
+        {
+          "position": "2",
+          "name": "system form value overwrite"
+        },
+        {
+          "position": "3",
+          "name": "system form end"
+        }
+      ]
+    },
+    {
+      "name": "Delete number",
+      "description": "Exclude or delete a number",
+      "code_id": "value_del",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system form title value del"
+        },
+        {
+          "position": "2",
+          "name": "system form hidden back stack"
+        },
+        {
+          "position": "3",
+          "name": "system form hidden confirm status"
+        },
+        {
+          "position": "4",
+          "name": "value name"
+        },
+        {
+          "position": "5",
+          "name": "number value"
+        },
+        {
+          "position": "6",
+          "name": "system show value usage"
         },
         {
           "position": "7",
@@ -2847,50 +3939,24 @@
         },
         {
           "position": "9",
-          "name": "system formatter row end"
-        },
-        {
-          "position": "10",
           "name": "system form end"
+        }
+      ]
+    },
+    {
+      "name": "Value detail",
+      "description": "show all details of one value",
+      "code_id": "value_detail",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title value detail"
         },
         {
-          "position": "11",
-          "name": "system formatter row start"
-        },
-        {
-          "position": "12",
-          "name": "system sub title usage number",
-          "style": "col-md-12"
-        },
-        {
-          "position": "13",
-          "name": "system sub title triples",
-          "style": "col-md-4"
-        },
-        {
-          "position": "14",
-          "name": "triples that use a verb",
-          "position_type": "combine"
-        },
-        {
-          "position": "15",
-          "name": "system sub title formulas",
-          "style": "col-md-4"
-        },
-        {
-          "position": "16",
-          "name": "formulas that use a verb",
-          "position_type": "combine"
-        },
-        {
-          "position": "17",
-          "name": "system form tab box",
-          "position_type": "column",
-          "style": "col-md-4"
-        },
-        {
-          "position": "18",
-          "name": "system formatter row end"
+          "position": "2",
+          "name": "system body value detail"
         }
       ]
     },
@@ -3296,6 +4362,577 @@
         {
           "position": "25",
           "name": "system formatter row end"
+        }
+      ]
+    },
+    {
+      "name": "Add new formula",
+      "description": "Create a new formula with all parameters e.g. the type",
+      "code_id": "formula_add",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system form title formula add"
+        },
+        {
+          "position": "2",
+          "name": "system form hidden back stack"
+        },
+        {
+          "position": "3",
+          "name": "system form hidden confirm status"
+        },
+        {
+          "position": "4",
+          "name": "system form field name",
+          "style": "col-md-8"
+        },
+        {
+          "position": "5",
+          "name": "system form select formula type",
+          "position_type": "side"
+        },
+        {
+          "position": "6",
+          "name": "system form field description"
+        },
+        {
+          "position": "7",
+          "name": "system form field formula text"
+        },
+        {
+          "position": "8",
+          "name": "system expression with links",
+          "position_type": "side"
+        },
+        {
+          "position": "9",
+          "name": "system form field latex"
+        },
+        {
+          "position": "10",
+          "name": "system expression latex with links",
+          "position_type": "side"
+        },
+        {
+          "position": "11",
+          "name": "system form field flag need all vars"
+        },
+        {
+          "position": "12",
+          "name": "system form select view"
+        },
+        {
+          "position": "13",
+          "name": "system form select share type",
+          "position_type": "side"
+        },
+        {
+          "position": "14",
+          "name": "system form select protection type",
+          "position_type": "side"
+        },
+        {
+          "position": "15",
+          "name": "system formatter row right"
+        },
+        {
+          "position": "16",
+          "name": "system form button cancel"
+        },
+        {
+          "position": "17",
+          "name": "system form button save"
+        },
+        {
+          "position": "18",
+          "name": "system formatter row end"
+        },
+        {
+          "position": "19",
+          "name": "system form end"
+        }
+      ]
+    },
+    {
+      "name": "Change formula",
+      "description": "Change a formula, the name or the type",
+      "code_id": "formula_edit",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system form title formula edit"
+        },
+        {
+          "position": "2",
+          "name": "system form hidden back stack"
+        },
+        {
+          "position": "3",
+          "name": "system form hidden confirm status"
+        },
+        {
+          "position": "4",
+          "name": "system form field name",
+          "style": "col-md-8"
+        },
+        {
+          "position": "5",
+          "name": "system form select formula type",
+          "position_type": "side"
+        },
+        {
+          "position": "6",
+          "name": "system form field description"
+        },
+        {
+          "position": "7",
+          "name": "system form field formula text"
+        },
+        {
+          "position": "8",
+          "name": "system expression with links",
+          "position_type": "side"
+        },
+        {
+          "position": "9",
+          "name": "system form field latex"
+        },
+        {
+          "position": "10",
+          "name": "system expression latex with links",
+          "position_type": "side"
+        },
+        {
+          "position": "11",
+          "name": "system form field flag need all vars"
+        },
+        {
+          "position": "12",
+          "name": "system form select view"
+        },
+        {
+          "position": "13",
+          "name": "system form select share type",
+          "position_type": "side"
+        },
+        {
+          "position": "14",
+          "name": "system form select protection type",
+          "position_type": "side"
+        },
+        {
+          "position": "15",
+          "name": "system formatter row right"
+        },
+        {
+          "position": "16",
+          "name": "assigned phrases of this formula"
+        },
+        {
+          "position": "17",
+          "name": "system form button cancel"
+        },
+        {
+          "position": "18",
+          "name": "system form button save"
+        },
+        {
+          "position": "19",
+          "name": "system formatter row end"
+        },
+        {
+          "position": "20",
+          "name": "system form end"
+        },
+        {
+          "position": "21",
+          "name": "system formatter row start"
+        },
+        {
+          "position": "22",
+          "name": "system sub title usage number",
+          "style": "col-md-12"
+        },
+        {
+          "position": "23",
+          "name": "system formatter row end"
+        },
+        {
+          "position": "24",
+          "name": "system formatter row start"
+        },
+        {
+          "position": "25",
+          "name": "system sub title results",
+          "position_type": "column",
+          "style": "col-md-4"
+        },
+        {
+          "position": "26",
+          "name": "result list of formula",
+          "position_type": "combine"
+        },
+        {
+          "position": "27",
+          "name": "system sub title formulas",
+          "position_type": "column",
+          "style": "col-md-4"
+        },
+        {
+          "position": "28",
+          "name": "formula list of formula",
+          "position_type": "combine"
+        },
+        {
+          "position": "29",
+          "name": "system form tab box",
+          "position_type": "column",
+          "style": "col-md-4"
+        },
+        {
+          "position": "30",
+          "name": "system formatter row end"
+        }
+      ]
+    },
+    {
+      "name": "Delete formula",
+      "description": "To confirm the exclusion or deleting of a formula",
+      "code_id": "formula_del",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system form title formula del"
+        },
+        {
+          "position": "2",
+          "name": "system form hidden back stack"
+        },
+        {
+          "position": "3",
+          "name": "system form hidden confirm status"
+        },
+        {
+          "position": "4",
+          "name": "system show field name big"
+        },
+        {
+          "position": "5",
+          "name": "system form button cancel"
+        },
+        {
+          "position": "6",
+          "name": "system form button del"
+        },
+        {
+          "position": "7",
+          "name": "system form end"
+        },
+        {
+          "position": "8",
+          "name": "system formatter row start"
+        },
+        {
+          "position": "9",
+          "name": "system sub title usage number",
+          "style": "col-md-12"
+        },
+        {
+          "position": "10",
+          "name": "system formatter row end"
+        },
+        {
+          "position": "11",
+          "name": "system formatter row start"
+        },
+        {
+          "position": "12",
+          "name": "system sub title results",
+          "position_type": "column",
+          "style": "col-md-4"
+        },
+        {
+          "position": "13",
+          "name": "result list of formula",
+          "position_type": "combine"
+        },
+        {
+          "position": "14",
+          "name": "system sub title formulas",
+          "position_type": "column",
+          "style": "col-md-4"
+        },
+        {
+          "position": "15",
+          "name": "formula list of formula",
+          "position_type": "combine"
+        },
+        {
+          "position": "16",
+          "name": "system formatter row end"
+        },
+        {
+          "position": "17",
+          "name": "system formatter row right"
+        },
+        {
+          "position": "18",
+          "name": "system form tab box",
+          "position_type": "column",
+          "style": "col-md-4"
+        },
+        {
+          "position": "19",
+          "name": "system formatter row end"
+        }
+      ]
+    },
+    {
+      "name": "Formula test",
+      "description": "debug the formula results",
+      "code_id": "formula_test",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title formula test"
+        },
+        {
+          "position": "2",
+          "name": "system body formula test"
+        }
+      ]
+    },
+    {
+      "name": "Add result number",
+      "description": "Administrator can add manually a formula result e.g. for debugging",
+      "code_id": "result_add",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system form title result add"
+        },
+        {
+          "position": "2",
+          "name": "system form hidden back stack"
+        },
+        {
+          "position": "3",
+          "name": "system form hidden confirm status"
+        },
+        {
+          "position": "4",
+          "name": "system form field group or phrase list"
+        },
+        {
+          "position": "5",
+          "name": "system form field value"
+        },
+        {
+          "position": "6",
+          "name": "system form field description"
+        },
+        {
+          "position": "7",
+          "name": "system form select formula"
+        },
+        {
+          "position": "8",
+          "name": "system form field source group or phrase list"
+        },
+        {
+          "position": "9",
+          "name": "system form select value type"
+        },
+        {
+          "position": "10",
+          "name": "system form select view"
+        },
+        {
+          "position": "11",
+          "name": "system form select share type",
+          "position_type": "side"
+        },
+        {
+          "position": "12",
+          "name": "system form select protection type",
+          "position_type": "side"
+        },
+        {
+          "position": "13",
+          "name": "system form button cancel"
+        },
+        {
+          "position": "14",
+          "name": "system form button save"
+        },
+        {
+          "position": "15",
+          "name": "system form end"
+        }
+      ]
+    },
+    {
+      "name": "Change result",
+      "description": "Overwrite a result",
+      "code_id": "result_edit",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system form title result edit"
+        },
+        {
+          "position": "2",
+          "name": "system form hidden back stack"
+        },
+        {
+          "position": "3",
+          "name": "system form hidden confirm status"
+        },
+        {
+          "position": "4",
+          "name": "system form field group or phrase list"
+        },
+        {
+          "position": "5",
+          "name": "system form field value"
+        },
+        {
+          "position": "6",
+          "name": "system form field description"
+        },
+        {
+          "position": "7",
+          "name": "system form select formula"
+        },
+        {
+          "position": "8",
+          "name": "system form field source group or phrase list"
+        },
+        {
+          "position": "9",
+          "name": "system form select value type"
+        },
+        {
+          "position": "10",
+          "name": "system form select view"
+        },
+        {
+          "position": "11",
+          "name": "system form select share type",
+          "position_type": "side"
+        },
+        {
+          "position": "12",
+          "name": "system form select protection type",
+          "position_type": "side"
+        },
+        {
+          "position": "13",
+          "name": "system form button cancel"
+        },
+        {
+          "position": "14",
+          "name": "system form button save"
+        },
+        {
+          "position": "15",
+          "name": "system form end"
+        }
+      ]
+    },
+    {
+      "name": "Overwrite result",
+      "description": "Change just the number of a result for the user without the confirm view",
+      "code_id": "result_overwrite",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system form title result edit"
+        },
+        {
+          "position": "2",
+          "name": "system form value overwrite"
+        },
+        {
+          "position": "3",
+          "name": "system form end"
+        }
+      ]
+    },
+    {
+      "name": "Delete result",
+      "description": "Exclude or delete a result",
+      "code_id": "result_del",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system form title result del"
+        },
+        {
+          "position": "2",
+          "name": "system form hidden back stack"
+        },
+        {
+          "position": "3",
+          "name": "system form hidden confirm status"
+        },
+        {
+          "position": "4",
+          "name": "value name"
+        },
+        {
+          "position": "5",
+          "name": "number value"
+        },
+        {
+          "position": "6",
+          "name": "system show value usage"
+        },
+        {
+          "position": "7",
+          "name": "system form button cancel"
+        },
+        {
+          "position": "8",
+          "name": "system form button del"
+        },
+        {
+          "position": "9",
+          "name": "system form end"
+        }
+      ]
+    },
+    {
+      "name": "Explain result",
+      "description": "explains one formula result",
+      "code_id": "result_explain",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title result explain"
+        },
+        {
+          "position": "2",
+          "name": "system body result explain"
         }
       ]
     },
@@ -3897,15 +5534,15 @@
       ]
     },
     {
-      "name": "Add new number",
-      "description": "Create a new value",
-      "code_id": "value_add",
+      "name": "Add new verb",
+      "description": "Request to add a new verb/predicate",
+      "code_id": "verb_add",
       "type": "system",
       "protection": "admin_protection",
       "components": [
         {
           "position": "1",
-          "name": "system form title value add"
+          "name": "system form title verb add"
         },
         {
           "position": "2",
@@ -3917,67 +5554,62 @@
         },
         {
           "position": "4",
-          "name": "system form field group or phrase list"
+          "name": "system form field name",
+          "style": "col-md-8"
         },
         {
           "position": "5",
-          "name": "system form select value type",
-          "position_type": "side"
-        },
-        {
-          "position": "6",
-          "name": "system form field value"
-        },
-        {
-          "position": "7",
           "name": "system form field description"
         },
         {
+          "position": "6",
+          "name": "system form field plural",
+          "style": "col-md-4"
+        },
+        {
+          "position": "7",
+          "name": "system form field reverse",
+          "style": "col-md-4",
+          "position_type": "side"
+        },
+        {
           "position": "8",
-          "name": "system form select source"
+          "name": "system form field plural reverse",
+          "style": "col-md-4",
+          "position_type": "side"
         },
         {
           "position": "9",
-          "name": "system form select ref"
+          "name": "system formatter row right"
         },
         {
           "position": "10",
-          "name": "system form select view"
-        },
-        {
-          "position": "11",
-          "name": "system form select share type",
-          "position_type": "side"
-        },
-        {
-          "position": "12",
-          "name": "system form select protection type",
-          "position_type": "side"
-        },
-        {
-          "position": "13",
           "name": "system form button cancel"
         },
         {
-          "position": "14",
+          "position": "11",
           "name": "system form button save"
         },
         {
-          "position": "15",
+          "position": "12",
+          "name": "system formatter row end"
+        },
+        {
+          "position": "13",
           "name": "system form end"
         }
       ]
     },
     {
-      "name": "Change number",
-      "description": "Change a number",
-      "code_id": "value_edit",
+      "name": "Change verb",
+      "description": "Rename a verb/predicate",
+      "code_id": "verb_edit",
       "type": "system",
       "protection": "admin_protection",
       "components": [
         {
           "position": "1",
-          "name": "system form title value edit"
+          "name": "system form title verb edit"
         },
         {
           "position": "2",
@@ -3989,71 +5621,101 @@
         },
         {
           "position": "4",
-          "name": "system form field group or phrase list"
+          "name": "system form field name",
+          "style": "col-md-8"
         },
         {
           "position": "5",
-          "name": "system form select value type",
-          "position_type": "side"
-        },
-        {
-          "position": "6",
-          "name": "system form field value"
-        },
-        {
-          "position": "7",
           "name": "system form field description"
         },
         {
+          "position": "6",
+          "name": "system form field plural",
+          "style": "col-md-4"
+        },
+        {
+          "position": "7",
+          "name": "system form field reverse",
+          "style": "col-md-4",
+          "position_type": "side"
+        },
+        {
           "position": "8",
-          "name": "system form select source"
+          "name": "system form field plural reverse",
+          "style": "col-md-4",
+          "position_type": "side"
         },
         {
           "position": "9",
-          "name": "system form select ref"
+          "name": "system formatter row right"
         },
         {
           "position": "10",
-          "name": "system form select view"
-        },
-        {
-          "position": "11",
-          "name": "system form select share type",
-          "position_type": "side"
-        },
-        {
-          "position": "12",
-          "name": "system form select protection type",
-          "position_type": "side"
-        },
-        {
-          "position": "13",
-          "name": "system show value usage"
-        },
-        {
-          "position": "14",
           "name": "system form button cancel"
         },
         {
-          "position": "15",
+          "position": "11",
           "name": "system form button save"
+        },
+        {
+          "position": "12",
+          "name": "system formatter row end"
+        },
+        {
+          "position": "13",
+          "name": "system form end"
+        },
+        {
+          "position": "14",
+          "name": "system formatter row start"
+        },
+        {
+          "position": "15",
+          "name": "system sub title usage number",
+          "style": "col-md-12"
         },
         {
           "position": "16",
-          "name": "system form end"
+          "name": "system sub title triples",
+          "style": "col-md-4"
+        },
+        {
+          "position": "17",
+          "name": "triples that use a verb",
+          "position_type": "combine"
+        },
+        {
+          "position": "18",
+          "name": "system sub title formulas",
+          "style": "col-md-4"
+        },
+        {
+          "position": "19",
+          "name": "formulas that use a verb",
+          "position_type": "combine"
+        },
+        {
+          "position": "20",
+          "name": "system form tab box",
+          "position_type": "column",
+          "style": "col-md-4"
+        },
+        {
+          "position": "21",
+          "name": "system formatter row end"
         }
       ]
     },
     {
-      "name": "Delete number",
-      "description": "Exclude or delete a number",
-      "code_id": "value_del",
+      "name": "Delete verb",
+      "description": "Exclude or delete a verb",
+      "code_id": "verb_del",
       "type": "system",
       "protection": "admin_protection",
       "components": [
         {
           "position": "1",
-          "name": "system form title value del"
+          "name": "system form title verb del"
         },
         {
           "position": "2",
@@ -4065,15 +5727,15 @@
         },
         {
           "position": "4",
-          "name": "value name"
+          "name": "system show field name big"
         },
         {
           "position": "5",
-          "name": "number value"
+          "name": "system show field description"
         },
         {
           "position": "6",
-          "name": "system show value usage"
+          "name": "system formatter row right"
         },
         {
           "position": "7",
@@ -4085,7 +5747,50 @@
         },
         {
           "position": "9",
+          "name": "system formatter row end"
+        },
+        {
+          "position": "10",
           "name": "system form end"
+        },
+        {
+          "position": "11",
+          "name": "system formatter row start"
+        },
+        {
+          "position": "12",
+          "name": "system sub title usage number",
+          "style": "col-md-12"
+        },
+        {
+          "position": "13",
+          "name": "system sub title triples",
+          "style": "col-md-4"
+        },
+        {
+          "position": "14",
+          "name": "triples that use a verb",
+          "position_type": "combine"
+        },
+        {
+          "position": "15",
+          "name": "system sub title formulas",
+          "style": "col-md-4"
+        },
+        {
+          "position": "16",
+          "name": "formulas that use a verb",
+          "position_type": "combine"
+        },
+        {
+          "position": "17",
+          "name": "system form tab box",
+          "position_type": "column",
+          "style": "col-md-4"
+        },
+        {
+          "position": "18",
+          "name": "system formatter row end"
         }
       ]
     },
@@ -4211,15 +5916,47 @@
       ]
     },
     {
-      "name": "Add new formula",
-      "description": "Create a new formula with all parameters e.g. the type",
-      "code_id": "formula_add",
+      "name": "Formula link",
+      "description": "the default view for formula links",
+      "code_id": "formula_link_default",
+      "type": "formula_link",
+      "components": [
+        {
+          "position": "1",
+          "name": "Link title"
+        },
+        {
+          "position": "2",
+          "name": "system show field link type"
+        },
+        {
+          "position": "3",
+          "name": "system show field order number"
+        },
+        {
+          "position": "4",
+          "name": "system show field description"
+        },
+        {
+          "position": "5",
+          "name": "system show field owner"
+        },
+        {
+          "position": "6",
+          "name": "link tab box"
+        }
+      ]
+    },
+    {
+      "name": "Add formula link",
+      "description": "Create a new link between a formula and a phrase",
+      "code_id": "formula_link_add",
       "type": "system",
       "protection": "admin_protection",
       "components": [
         {
           "position": "1",
-          "name": "system form title formula add"
+          "name": "system form title formula link add"
         },
         {
           "position": "2",
@@ -4231,86 +5968,68 @@
         },
         {
           "position": "4",
-          "name": "system form field name",
-          "style": "col-md-8"
+          "name": "system form select formula",
+          "position_type": "side"
         },
         {
           "position": "5",
-          "name": "system form select formula type",
+          "name": "system form select phrase",
           "position_type": "side"
         },
         {
           "position": "6",
-          "name": "system form field description"
+          "name": "system form select formula link type",
+          "position_type": "side"
         },
         {
           "position": "7",
-          "name": "system form field formula text"
+          "name": "system form formula link priority"
         },
         {
           "position": "8",
-          "name": "system expression with links",
-          "position_type": "side"
+          "name": "system form field description"
         },
         {
           "position": "9",
-          "name": "system form field latex"
+          "name": "system form select share type"
         },
         {
           "position": "10",
-          "name": "system expression latex with links",
-          "position_type": "side"
-        },
-        {
-          "position": "11",
-          "name": "system form field flag need all vars"
-        },
-        {
-          "position": "12",
-          "name": "system form select view"
-        },
-        {
-          "position": "13",
-          "name": "system form select share type",
-          "position_type": "side"
-        },
-        {
-          "position": "14",
           "name": "system form select protection type",
           "position_type": "side"
         },
         {
-          "position": "15",
+          "position": "11",
           "name": "system formatter row right"
         },
         {
-          "position": "16",
+          "position": "12",
           "name": "system form button cancel"
         },
         {
-          "position": "17",
+          "position": "13",
           "name": "system form button save"
         },
         {
-          "position": "18",
+          "position": "14",
           "name": "system formatter row end"
         },
         {
-          "position": "19",
+          "position": "15",
           "name": "system form end"
         }
       ]
     },
     {
-      "name": "Change formula",
-      "description": "Change a formula, the name or the type",
-      "code_id": "formula_edit",
+      "name": "Change formula link",
+      "description": "Change a link between a formula and a phrase",
+      "code_id": "formula_link_edit",
       "type": "system",
       "protection": "admin_protection",
       "components": [
         {
           "position": "1",
-          "name": "system form title formula edit"
+          "name": "system form title formula link edit"
         },
         {
           "position": "2",
@@ -4322,287 +6041,51 @@
         },
         {
           "position": "4",
-          "name": "system form field name",
-          "style": "col-md-8"
+          "name": "system form select formula",
+          "position_type": "side"
         },
         {
           "position": "5",
-          "name": "system form select formula type",
+          "name": "system form select phrase",
           "position_type": "side"
         },
         {
           "position": "6",
-          "name": "system form field description"
+          "name": "system form select formula link type",
+          "position_type": "side"
         },
         {
           "position": "7",
-          "name": "system form field formula text"
+          "name": "system form formula link priority"
         },
         {
           "position": "8",
-          "name": "system expression with links",
-          "position_type": "side"
+          "name": "system form field description"
         },
         {
           "position": "9",
-          "name": "system form field latex"
+          "name": "system form select share type"
         },
         {
           "position": "10",
-          "name": "system expression latex with links",
-          "position_type": "side"
-        },
-        {
-          "position": "11",
-          "name": "system form field flag need all vars"
-        },
-        {
-          "position": "12",
-          "name": "system form select view"
-        },
-        {
-          "position": "13",
-          "name": "system form select share type",
-          "position_type": "side"
-        },
-        {
-          "position": "14",
           "name": "system form select protection type",
           "position_type": "side"
         },
         {
-          "position": "15",
+          "position": "11",
           "name": "system formatter row right"
         },
         {
-          "position": "16",
-          "name": "assigned phrases of this formula"
-        },
-        {
-          "position": "17",
-          "name": "system form button cancel"
-        },
-        {
-          "position": "18",
-          "name": "system form button save"
-        },
-        {
-          "position": "19",
-          "name": "system formatter row end"
-        },
-        {
-          "position": "20",
-          "name": "system form end"
-        },
-        {
-          "position": "21",
-          "name": "system formatter row start"
-        },
-        {
-          "position": "22",
-          "name": "system sub title usage number",
-          "style": "col-md-12"
-        },
-        {
-          "position": "23",
-          "name": "system formatter row end"
-        },
-        {
-          "position": "24",
-          "name": "system formatter row start"
-        },
-        {
-          "position": "25",
-          "name": "system sub title results",
-          "position_type": "column",
-          "style": "col-md-4"
-        },
-        {
-          "position": "26",
-          "name": "result list of formula",
-          "position_type": "combine"
-        },
-        {
-          "position": "27",
-          "name": "system sub title formulas",
-          "position_type": "column",
-          "style": "col-md-4"
-        },
-        {
-          "position": "28",
-          "name": "formula list of formula",
-          "position_type": "combine"
-        },
-        {
-          "position": "29",
-          "name": "system form tab box",
-          "position_type": "column",
-          "style": "col-md-4"
-        },
-        {
-          "position": "30",
-          "name": "system formatter row end"
-        }
-      ]
-    },
-    {
-      "name": "Delete formula",
-      "description": "To confirm the exclusion or deleting of a formula",
-      "code_id": "formula_del",
-      "type": "system",
-      "protection": "admin_protection",
-      "components": [
-        {
-          "position": "1",
-          "name": "system form title formula del"
-        },
-        {
-          "position": "2",
-          "name": "system form hidden back stack"
-        },
-        {
-          "position": "3",
-          "name": "system form hidden confirm status"
-        },
-        {
-          "position": "4",
-          "name": "system show field name big"
-        },
-        {
-          "position": "5",
-          "name": "system form button cancel"
-        },
-        {
-          "position": "6",
-          "name": "system form button del"
-        },
-        {
-          "position": "7",
-          "name": "system form end"
-        },
-        {
-          "position": "8",
-          "name": "system formatter row start"
-        },
-        {
-          "position": "9",
-          "name": "system sub title usage number",
-          "style": "col-md-12"
-        },
-        {
-          "position": "10",
-          "name": "system formatter row end"
-        },
-        {
-          "position": "11",
-          "name": "system formatter row start"
-        },
-        {
           "position": "12",
-          "name": "system sub title results",
-          "position_type": "column",
-          "style": "col-md-4"
+          "name": "system form button cancel"
         },
         {
           "position": "13",
-          "name": "result list of formula",
-          "position_type": "combine"
-        },
-        {
-          "position": "14",
-          "name": "system sub title formulas",
-          "position_type": "column",
-          "style": "col-md-4"
-        },
-        {
-          "position": "15",
-          "name": "formula list of formula",
-          "position_type": "combine"
-        },
-        {
-          "position": "16",
-          "name": "system formatter row end"
-        },
-        {
-          "position": "17",
-          "name": "system formatter row right"
-        },
-        {
-          "position": "18",
-          "name": "system form tab box",
-          "position_type": "column",
-          "style": "col-md-4"
-        },
-        {
-          "position": "19",
-          "name": "system formatter row end"
-        }
-      ]
-    },
-    {
-      "name": "Add result number",
-      "description": "Administrator can add manually a formula result e.g. for debugging",
-      "code_id": "result_add",
-      "type": "system",
-      "protection": "admin_protection",
-      "components": [
-        {
-          "position": "1",
-          "name": "system form title result add"
-        },
-        {
-          "position": "2",
-          "name": "system form hidden back stack"
-        },
-        {
-          "position": "3",
-          "name": "system form hidden confirm status"
-        },
-        {
-          "position": "4",
-          "name": "system form field group or phrase list"
-        },
-        {
-          "position": "5",
-          "name": "system form field value"
-        },
-        {
-          "position": "6",
-          "name": "system form field description"
-        },
-        {
-          "position": "7",
-          "name": "system form select formula"
-        },
-        {
-          "position": "8",
-          "name": "system form field source group or phrase list"
-        },
-        {
-          "position": "9",
-          "name": "system form select value type"
-        },
-        {
-          "position": "10",
-          "name": "system form select view"
-        },
-        {
-          "position": "11",
-          "name": "system form select share type",
-          "position_type": "side"
-        },
-        {
-          "position": "12",
-          "name": "system form select protection type",
-          "position_type": "side"
-        },
-        {
-          "position": "13",
-          "name": "system form button cancel"
-        },
-        {
-          "position": "14",
           "name": "system form button save"
+        },
+        {
+          "position": "14",
+          "name": "system formatter row end"
         },
         {
           "position": "15",
@@ -4611,15 +6094,15 @@
       ]
     },
     {
-      "name": "Change result",
-      "description": "Overwrite a result",
-      "code_id": "result_edit",
+      "name": "Delete formula link",
+      "description": "To confirm the exclusion or deleting of a formula link",
+      "code_id": "formula_link_del",
       "type": "system",
       "protection": "admin_protection",
       "components": [
         {
           "position": "1",
-          "name": "system form title result edit"
+          "name": "system form title formula link del"
         },
         {
           "position": "2",
@@ -4631,86 +6114,15 @@
         },
         {
           "position": "4",
-          "name": "system form field group or phrase list"
+          "name": "system show field formula name"
         },
         {
           "position": "5",
-          "name": "system form field value"
+          "name": "system show field phrase name"
         },
         {
           "position": "6",
-          "name": "system form field description"
-        },
-        {
-          "position": "7",
-          "name": "system form select formula"
-        },
-        {
-          "position": "8",
-          "name": "system form field source group or phrase list"
-        },
-        {
-          "position": "9",
-          "name": "system form select value type"
-        },
-        {
-          "position": "10",
-          "name": "system form select view"
-        },
-        {
-          "position": "11",
-          "name": "system form select share type",
-          "position_type": "side"
-        },
-        {
-          "position": "12",
-          "name": "system form select protection type",
-          "position_type": "side"
-        },
-        {
-          "position": "13",
-          "name": "system form button cancel"
-        },
-        {
-          "position": "14",
-          "name": "system form button save"
-        },
-        {
-          "position": "15",
-          "name": "system form end"
-        }
-      ]
-    },
-    {
-      "name": "Delete result",
-      "description": "Exclude or delete a result",
-      "code_id": "result_del",
-      "type": "system",
-      "protection": "admin_protection",
-      "components": [
-        {
-          "position": "1",
-          "name": "system form title result del"
-        },
-        {
-          "position": "2",
-          "name": "system form hidden back stack"
-        },
-        {
-          "position": "3",
-          "name": "system form hidden confirm status"
-        },
-        {
-          "position": "4",
-          "name": "value name"
-        },
-        {
-          "position": "5",
-          "name": "number value"
-        },
-        {
-          "position": "6",
-          "name": "system show value usage"
+          "name": "system show result diff list"
         },
         {
           "position": "7",
@@ -4723,6 +6135,566 @@
         {
           "position": "9",
           "name": "system form end"
+        }
+      ]
+    },
+    {
+      "name": "Confirm adding",
+      "description": "Ask the user for confirmation of the changes to be written to the database",
+      "code_id": "confirm_add",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system form title confirm add"
+        },
+        {
+          "position": "2",
+          "name": "system form hidden back stack"
+        },
+        {
+          "position": "3",
+          "name": "system form hidden confirm status"
+        },
+        {
+          "position": "4",
+          "name": "system form changes",
+          "position_type": "side"
+        },
+        {
+          "position": "5",
+          "name": "system formatter row right"
+        },
+        {
+          "position": "6",
+          "name": "system form button cancel"
+        },
+        {
+          "position": "7",
+          "name": "system form button save"
+        },
+        {
+          "position": "8",
+          "name": "system formatter row end"
+        },
+        {
+          "position": "9",
+          "name": "system form end"
+        }
+      ]
+    },
+    {
+      "name": "Confirm update",
+      "description": "Show the impact of the changes to the user and ask the user for confirmation",
+      "code_id": "confirm_update",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system form title confirm update"
+        },
+        {
+          "position": "2",
+          "name": "system form hidden back stack"
+        },
+        {
+          "position": "3",
+          "name": "system form hidden confirm status"
+        },
+        {
+          "position": "4",
+          "name": "system form changes",
+          "position_type": "side"
+        },
+        {
+          "position": "5",
+          "name": "system form impact"
+        },
+        {
+          "position": "6",
+          "name": "system formatter row center"
+        },
+        {
+          "position": "7",
+          "name": "system form button cancel"
+        },
+        {
+          "position": "8",
+          "name": "system form button confirm"
+        },
+        {
+          "position": "9",
+          "name": "system formatter row end"
+        },
+        {
+          "position": "10",
+          "name": "system form end"
+        }
+      ]
+    },
+    {
+      "name": "Confirm delete",
+      "description": "Show the impact of the deletion to the user and ask the user for confirmation",
+      "code_id": "confirm_delete",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system form title confirm delete"
+        },
+        {
+          "position": "2",
+          "name": "system form hidden back stack"
+        },
+        {
+          "position": "3",
+          "name": "system form hidden confirm status"
+        },
+        {
+          "position": "4",
+          "name": "system form impact"
+        },
+        {
+          "position": "5",
+          "name": "system formatter row center"
+        },
+        {
+          "position": "6",
+          "name": "system form button cancel"
+        },
+        {
+          "position": "7",
+          "name": "system form button confirm"
+        },
+        {
+          "position": "8",
+          "name": "system formatter row end"
+        },
+        {
+          "position": "9",
+          "name": "system form end"
+        }
+      ]
+    },
+    {
+      "name": "Change confirm view",
+      "description": "show the old and the new view and let the user confirm the change",
+      "code_id": "view_preview",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system form title confirm edit"
+        },
+        {
+          "position": "2",
+          "name": "system form hidden back stack"
+        },
+        {
+          "position": "3",
+          "name": "system form hidden confirm status"
+        },
+        {
+          "position": "4",
+          "name": "system form select view"
+        },
+        {
+          "position": "5",
+          "name": "system show view new"
+        },
+        {
+          "position": "6",
+          "name": "system show view old"
+        },
+        {
+          "position": "7",
+          "name": "system form button cancel"
+        },
+        {
+          "position": "8",
+          "name": "system form button del"
+        },
+        {
+          "position": "9",
+          "name": "system form end"
+        }
+      ]
+    },
+    {
+      "name": "Undo",
+      "description": "show the last changes of the user and offer selective undo",
+      "code_id": "undo",
+      "type": "system",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title undo"
+        },
+        {
+          "position": "2",
+          "name": "system body undo"
+        }
+      ]
+    },
+    {
+      "name": "Sandbox",
+      "description": "show the differences between the user sandbox and the standard and offer a selective switch to the standard",
+      "code_id": "sandbox",
+      "type": "system",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title sandbox"
+        },
+        {
+          "position": "2",
+          "name": "system body sandbox"
+        }
+      ]
+    },
+    {
+      "name": "Own changes",
+      "description": "List all changes of the user across all objects with the possibility to undo a change",
+      "code_id": "change_log_user",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title change log user"
+        },
+        {
+          "position": "2",
+          "name": "system body not yet available"
+        }
+      ]
+    },
+    {
+      "name": "Recent changes",
+      "description": "List the latest changes of all users",
+      "code_id": "change_log_recent",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title change log recent"
+        },
+        {
+          "position": "2",
+          "name": "system body not yet available"
+        }
+      ]
+    },
+    {
+      "name": "Object history",
+      "description": "Show all changes of one object including the changes of its links",
+      "code_id": "object_history",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title object history"
+        },
+        {
+          "position": "2",
+          "name": "system body not yet available"
+        }
+      ]
+    },
+    {
+      "name": "Change detail",
+      "description": "Show one change with the old and the new value and the possibility to revert it",
+      "code_id": "change_detail",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title change detail"
+        },
+        {
+          "position": "2",
+          "name": "system body not yet available"
+        }
+      ]
+    },
+    {
+      "name": "User Settings",
+      "description": "to change the user settings",
+      "code_id": "user",
+      "type": "system",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title user"
+        },
+        {
+          "position": "2",
+          "name": "system title user settings"
+        },
+        {
+          "position": "3",
+          "name": "system body user settings"
+        },
+        {
+          "position": "4",
+          "name": "user system errors"
+        },
+        {
+          "position": "5",
+          "name": "all user overwrites"
+        }
+      ]
+    },
+    {
+      "name": "User configuration",
+      "description": "Show to the user the standard user configuration and the overwrites of the user",
+      "code_id": "user_config",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title user config"
+        },
+        {
+          "position": "2",
+          "name": "system body not yet available"
+        }
+      ]
+    },
+    {
+      "name": "User jobs",
+      "description": "Show to the user the jobs that the user has caused with the status, the pending jobs on the top and the possibility to downgrade or cancel jobs",
+      "code_id": "user_jobs",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title user jobs"
+        },
+        {
+          "position": "2",
+          "name": "system body user jobs"
+        }
+      ]
+    },
+    {
+      "name": "User quarantine",
+      "description": "Show to the user the data that the user has entered and that has been moved to the quarantine",
+      "code_id": "user_quarantine",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title user quarantine"
+        },
+        {
+          "position": "2",
+          "name": "system body not yet available"
+        }
+      ]
+    },
+    {
+      "name": "Language selection",
+      "description": "List all language in an overview page to select the ui language and allow to request an additional language",
+      "code_id": "language_select",
+      "components": [
+        {
+          "position": "1",
+          "name": "title language select"
+        },
+        {
+          "position": "2",
+          "name": "list of all languages"
+        },
+        {
+          "position": "3",
+          "name": "request additional language"
+        }
+      ]
+    },
+    {
+      "name": "Verb List",
+      "description": "List all available ways how to link two words",
+      "code_id": "verbs",
+      "type": "system"
+    },
+    {
+      "name": "Word list",
+      "description": "List the words with paging and sorting",
+      "code_id": "list_words",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title list words"
+        },
+        {
+          "position": "2",
+          "name": "system body not yet available"
+        }
+      ]
+    },
+    {
+      "name": "Triple list",
+      "description": "List the triples with paging and sorting",
+      "code_id": "list_triples",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title list triples"
+        },
+        {
+          "position": "2",
+          "name": "system body not yet available"
+        }
+      ]
+    },
+    {
+      "name": "Source list",
+      "description": "List the sources with paging and sorting",
+      "code_id": "list_sources",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title list sources"
+        },
+        {
+          "position": "2",
+          "name": "system body not yet available"
+        }
+      ]
+    },
+    {
+      "name": "Reference list",
+      "description": "List the references with paging and sorting",
+      "code_id": "list_refs",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title list refs"
+        },
+        {
+          "position": "2",
+          "name": "system body not yet available"
+        }
+      ]
+    },
+    {
+      "name": "Formula list",
+      "description": "List the formulas with paging and sorting",
+      "code_id": "list_formulas",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title list formulas"
+        },
+        {
+          "position": "2",
+          "name": "system body not yet available"
+        }
+      ]
+    },
+    {
+      "name": "Find values",
+      "description": "Find the values by a set of phrases and show them as a table",
+      "code_id": "value_find",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title value find"
+        },
+        {
+          "position": "2",
+          "name": "system body not yet available"
+        }
+      ]
+    },
+    {
+      "name": "Find by reference",
+      "description": "Find an object by the external reference e.g. the Wikidata id",
+      "code_id": "ref_find",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title ref find"
+        },
+        {
+          "position": "2",
+          "name": "system body not yet available"
+        }
+      ]
+    },
+    {
+      "name": "View",
+      "description": "the default view for views",
+      "code_id": "view_default",
+      "type": "view",
+      "components": [
+        {
+          "position": "1",
+          "name": "View title"
+        },
+        {
+          "position": "2",
+          "name": "system show field description"
+        },
+        {
+          "position": "3",
+          "name": "system show field owner",
+          "position_type": "combine"
+        },
+        {
+          "position": "4",
+          "name": "system show field style",
+          "position_type": "combine"
+        },
+        {
+          "position": "5",
+          "name": "system sub title terms",
+          "position_type": "side_or_first_below"
+        },
+        {
+          "position": "6",
+          "name": "view terms",
+          "position_type": "combine"
+        },
+        {
+          "position": "7",
+          "name": "system sub title components",
+          "position_type": "side_or_below"
+        },
+        {
+          "position": "8",
+          "name": "view components",
+          "position_type": "combine"
+        },
+        {
+          "position": "9",
+          "name": "view page tab box",
+          "position_type": "side_or_last_below"
         }
       ]
     },
@@ -5001,6 +6973,58 @@
       ]
     },
     {
+      "name": "Component",
+      "description": "the default view for components",
+      "code_id": "component_default",
+      "type": "component",
+      "components": [
+        {
+          "position": "1",
+          "name": "Component title"
+        },
+        {
+          "position": "2",
+          "name": "system sub title description",
+          "style": "text-left"
+        },
+        {
+          "position": "3",
+          "name": "system show field description",
+          "position_type": "combine"
+        },
+        {
+          "position": "4",
+          "name": "system show field style",
+          "position_type": "combine"
+        },
+        {
+          "position": "5",
+          "name": "system show field formula",
+          "position_type": "combine"
+        },
+        {
+          "position": "6",
+          "name": "system show field linked component",
+          "position_type": "combine"
+        },
+        {
+          "position": "7",
+          "name": "system sub title views",
+          "position_type": "side_or_first_below"
+        },
+        {
+          "position": "8",
+          "name": "component views",
+          "position_type": "combine"
+        },
+        {
+          "position": "9",
+          "name": "component tab box",
+          "position_type": "side_or_last_below"
+        }
+      ]
+    },
+    {
       "name": "Add new view component",
       "description": "Create a new view component with all parameters",
       "code_id": "component_add",
@@ -5253,6 +7277,42 @@
       ]
     },
     {
+      "name": "Term view",
+      "description": "the default view for term views",
+      "code_id": "term_view_default",
+      "type": "term_view",
+      "components": [
+        {
+          "position": "1",
+          "name": "Link title"
+        },
+        {
+          "position": "2",
+          "name": "system show field link type"
+        },
+        {
+          "position": "3",
+          "name": "system show field order number"
+        },
+        {
+          "position": "4",
+          "name": "system show field style"
+        },
+        {
+          "position": "5",
+          "name": "system show field description"
+        },
+        {
+          "position": "6",
+          "name": "system show field owner"
+        },
+        {
+          "position": "7",
+          "name": "link tab box"
+        }
+      ]
+    },
+    {
       "name": "Add view link",
       "description": "Create a new link between a view and a term",
       "code_id": "view_link_add",
@@ -5452,6 +7512,38 @@
         {
           "position": "9",
           "name": "system form end"
+        }
+      ]
+    },
+    {
+      "name": "Component link",
+      "description": "the default view for component links",
+      "code_id": "component_link_default",
+      "type": "component_link",
+      "components": [
+        {
+          "position": "1",
+          "name": "Link title"
+        },
+        {
+          "position": "2",
+          "name": "system show field link type"
+        },
+        {
+          "position": "3",
+          "name": "system show field order number"
+        },
+        {
+          "position": "4",
+          "name": "system show field style"
+        },
+        {
+          "position": "5",
+          "name": "system show field owner"
+        },
+        {
+          "position": "6",
+          "name": "link tab box"
         }
       ]
     },
@@ -5659,6 +7751,38 @@
         {
           "position": "9",
           "name": "system form end"
+        }
+      ]
+    },
+    {
+      "name": "View relation",
+      "description": "the default view for view relations",
+      "code_id": "view_relation_default",
+      "type": "view_relation",
+      "components": [
+        {
+          "position": "1",
+          "name": "Link title"
+        },
+        {
+          "position": "2",
+          "name": "system show field link type"
+        },
+        {
+          "position": "3",
+          "name": "system show field start position"
+        },
+        {
+          "position": "4",
+          "name": "system show field description"
+        },
+        {
+          "position": "5",
+          "name": "system show field owner"
+        },
+        {
+          "position": "6",
+          "name": "link tab box"
         }
       ]
     },
@@ -5878,193 +8002,68 @@
       ]
     },
     {
-      "name": "Add formula link",
-      "description": "Create a new link between a formula and a phrase",
-      "code_id": "formula_link_add",
+      "name": "View list",
+      "description": "List the views with paging and sorting",
+      "code_id": "list_views",
       "type": "system",
       "protection": "admin_protection",
       "components": [
         {
           "position": "1",
-          "name": "system form title formula link add"
+          "name": "system title list views"
         },
         {
           "position": "2",
-          "name": "system form hidden back stack"
-        },
-        {
-          "position": "3",
-          "name": "system form hidden confirm status"
-        },
-        {
-          "position": "4",
-          "name": "system form select formula",
-          "position_type": "side"
-        },
-        {
-          "position": "5",
-          "name": "system form select phrase",
-          "position_type": "side"
-        },
-        {
-          "position": "6",
-          "name": "system form select formula link type",
-          "position_type": "side"
-        },
-        {
-          "position": "7",
-          "name": "system form formula link priority"
-        },
-        {
-          "position": "8",
-          "name": "system form field description"
-        },
-        {
-          "position": "9",
-          "name": "system form select share type"
-        },
-        {
-          "position": "10",
-          "name": "system form select protection type",
-          "position_type": "side"
-        },
-        {
-          "position": "11",
-          "name": "system formatter row right"
-        },
-        {
-          "position": "12",
-          "name": "system form button cancel"
-        },
-        {
-          "position": "13",
-          "name": "system form button save"
-        },
-        {
-          "position": "14",
-          "name": "system formatter row end"
-        },
-        {
-          "position": "15",
-          "name": "system form end"
+          "name": "system body not yet available"
         }
       ]
     },
     {
-      "name": "Change formula link",
-      "description": "Change a link between a formula and a phrase",
-      "code_id": "formula_link_edit",
+      "name": "Component list",
+      "description": "List the view components with paging and sorting",
+      "code_id": "list_components",
       "type": "system",
       "protection": "admin_protection",
       "components": [
         {
           "position": "1",
-          "name": "system form title formula link edit"
+          "name": "system title list components"
         },
         {
           "position": "2",
-          "name": "system form hidden back stack"
-        },
-        {
-          "position": "3",
-          "name": "system form hidden confirm status"
-        },
-        {
-          "position": "4",
-          "name": "system form select formula",
-          "position_type": "side"
-        },
-        {
-          "position": "5",
-          "name": "system form select phrase",
-          "position_type": "side"
-        },
-        {
-          "position": "6",
-          "name": "system form select formula link type",
-          "position_type": "side"
-        },
-        {
-          "position": "7",
-          "name": "system form formula link priority"
-        },
-        {
-          "position": "8",
-          "name": "system form field description"
-        },
-        {
-          "position": "9",
-          "name": "system form select share type"
-        },
-        {
-          "position": "10",
-          "name": "system form select protection type",
-          "position_type": "side"
-        },
-        {
-          "position": "11",
-          "name": "system formatter row right"
-        },
-        {
-          "position": "12",
-          "name": "system form button cancel"
-        },
-        {
-          "position": "13",
-          "name": "system form button save"
-        },
-        {
-          "position": "14",
-          "name": "system formatter row end"
-        },
-        {
-          "position": "15",
-          "name": "system form end"
+          "name": "system body not yet available"
         }
       ]
     },
     {
-      "name": "Delete formula link",
-      "description": "To confirm the exclusion or deleting of a formula link",
-      "code_id": "formula_link_del",
+      "name": "Admin dashboard",
+      "description": "Show a overview of the most relevant issues that an administrator should check",
       "type": "system",
-      "protection": "admin_protection",
+      "code_id": "admin_main",
       "components": [
         {
           "position": "1",
-          "name": "system form title formula link del"
+          "name": "system title admin"
         },
         {
           "position": "2",
-          "name": "system form hidden back stack"
+          "name": "system admin response times"
         },
         {
           "position": "3",
-          "name": "system form hidden confirm status"
+          "name": "system admin failed logins"
         },
         {
           "position": "4",
-          "name": "system show field formula name"
+          "name": "system admin unassigned errors"
         },
         {
           "position": "5",
-          "name": "system show field phrase name"
+          "name": "system admin pending error fixes"
         },
         {
           "position": "6",
-          "name": "system show result diff list"
-        },
-        {
-          "position": "7",
-          "name": "system form button cancel"
-        },
-        {
-          "position": "8",
-          "name": "system form button del"
-        },
-        {
-          "position": "9",
-          "name": "system form end"
+          "name": "system admin delayed jobs"
         }
       ]
     },
@@ -6231,658 +8230,70 @@
       ]
     },
     {
-      "name": "Add language",
-      "description": "Add a language by an admin user",
-      "code_id": "language_add",
+      "name": "Admin system configuration",
+      "description": "Allow an admin to see the full system configuration with the possibility to adjust it",
+      "code_id": "admin_config",
       "type": "system",
       "protection": "admin_protection",
       "components": [
         {
           "position": "1",
-          "name": "system form title admin add language"
+          "name": "system title admin config"
         },
         {
           "position": "2",
-          "name": "system form hidden back stack"
-        },
-        {
-          "position": "3",
-          "name": "system form hidden confirm status"
-        },
-        {
-          "position": "4",
-          "name": "system form field name"
-        },
-        {
-          "position": "5",
-          "name": "admin form field language symbol",
-          "position_type": "side"
-        },
-        {
-          "position": "6",
-          "name": "system form field description"
-        },
-        {
-          "position": "7",
-          "name": "system formatter row right"
-        },
-        {
-          "position": "8",
-          "name": "system form button cancel"
-        },
-        {
-          "position": "9",
-          "name": "system form button save"
-        },
-        {
-          "position": "10",
-          "name": "system formatter row end"
-        },
-        {
-          "position": "11",
-          "name": "system form end"
+          "name": "system body not yet available"
         }
       ]
     },
     {
-      "name": "Change language",
-      "description": "Change a language name or symbol by an admin user",
-      "code_id": "language_edit",
+      "name": "All jobs",
+      "description": "Show to an admin user the complete list of jobs with the pending jobs on the top and the possibility to up and downgrade or cancel jobs",
+      "code_id": "all_jobs",
       "type": "system",
       "protection": "admin_protection",
       "components": [
         {
           "position": "1",
-          "name": "system form title admin edit language"
+          "name": "system title all jobs"
         },
         {
           "position": "2",
-          "name": "system form hidden back stack"
-        },
-        {
-          "position": "3",
-          "name": "system form hidden confirm status"
-        },
-        {
-          "position": "4",
-          "name": "system form field name"
-        },
-        {
-          "position": "5",
-          "name": "admin form field language symbol",
-          "position_type": "side"
-        },
-        {
-          "position": "6",
-          "name": "system form field description"
-        },
-        {
-          "position": "7",
-          "name": "system formatter row right"
-        },
-        {
-          "position": "8",
-          "name": "system form button cancel"
-        },
-        {
-          "position": "9",
-          "name": "system form button save"
-        },
-        {
-          "position": "10",
-          "name": "system formatter row end"
-        },
-        {
-          "position": "11",
-          "name": "system form end"
+          "name": "system body all jobs"
         }
       ]
     },
     {
-      "name": "Delete language",
-      "description": "View for administrators to delete a language",
-      "code_id": "language_del",
+      "name": "All quarantine",
+      "description": "Show to an admin user the complete list of data in quarantine",
+      "code_id": "all_quarantine",
       "type": "system",
       "protection": "admin_protection",
       "components": [
         {
           "position": "1",
-          "name": "system form title admin del language"
+          "name": "system title all quarantine"
         },
         {
           "position": "2",
-          "name": "system form hidden back stack"
-        },
-        {
-          "position": "3",
-          "name": "system form hidden confirm status"
-        },
-        {
-          "position": "4",
-          "name": "system show field name big"
-        },
-        {
-          "position": "5",
-          "name": "show field language symbol",
-          "position_type": "side"
-        },
-        {
-          "position": "6",
-          "name": "system show field description"
-        },
-        {
-          "position": "7",
-          "name": "system formatter row right"
-        },
-        {
-          "position": "8",
-          "name": "system form button cancel"
-        },
-        {
-          "position": "9",
-          "name": "system form button del"
-        },
-        {
-          "position": "10",
-          "name": "system formatter row end"
-        },
-        {
-          "position": "11",
-          "name": "system form end"
+          "name": "system body not yet available"
         }
       ]
     },
     {
-      "name": "Confirm adding",
-      "description": "Ask the user for confirmation of the changes to be written to the database",
-      "code_id": "confirm_add",
+      "name": "Find duplicates",
+      "description": "List for an admin the terms with the same or a similar name for the cleanup",
+      "code_id": "find_duplicates",
       "type": "system",
       "protection": "admin_protection",
       "components": [
         {
           "position": "1",
-          "name": "system form title confirm add"
+          "name": "system title find duplicates"
         },
         {
           "position": "2",
-          "name": "system form hidden back stack"
-        },
-        {
-          "position": "3",
-          "name": "system form hidden confirm status"
-        },
-        {
-          "position": "4",
-          "name": "system form changes",
-          "position_type": "side"
-        },
-        {
-          "position": "5",
-          "name": "system formatter row right"
-        },
-        {
-          "position": "6",
-          "name": "system form button cancel"
-        },
-        {
-          "position": "7",
-          "name": "system form button save"
-        },
-        {
-          "position": "8",
-          "name": "system formatter row end"
-        },
-        {
-          "position": "9",
-          "name": "system form end"
-        }
-      ]
-    },
-    {
-      "name": "Confirm update",
-      "description": "Show the impact of the changes to the user and ask the user for confirmation",
-      "code_id": "confirm_update",
-      "type": "system",
-      "protection": "admin_protection",
-      "components": [
-        {
-          "position": "1",
-          "name": "system form title confirm update"
-        },
-        {
-          "position": "2",
-          "name": "system form hidden back stack"
-        },
-        {
-          "position": "3",
-          "name": "system form hidden confirm status"
-        },
-        {
-          "position": "4",
-          "name": "system form changes",
-          "position_type": "side"
-        },
-        {
-          "position": "5",
-          "name": "system form impact"
-        },
-        {
-          "position": "6",
-          "name": "system formatter row center"
-        },
-        {
-          "position": "7",
-          "name": "system form button cancel"
-        },
-        {
-          "position": "8",
-          "name": "system form button confirm"
-        },
-        {
-          "position": "9",
-          "name": "system formatter row end"
-        },
-        {
-          "position": "10",
-          "name": "system form end"
-        }
-      ]
-    },
-    {
-      "name": "Confirm delete",
-      "description": "Show the impact of the deletion to the user and ask the user for confirmation",
-      "code_id": "confirm_delete",
-      "type": "system",
-      "protection": "admin_protection",
-      "components": [
-        {
-          "position": "1",
-          "name": "system form title confirm delete"
-        },
-        {
-          "position": "2",
-          "name": "system form hidden back stack"
-        },
-        {
-          "position": "3",
-          "name": "system form hidden confirm status"
-        },
-        {
-          "position": "4",
-          "name": "system form impact"
-        },
-        {
-          "position": "5",
-          "name": "system formatter row center"
-        },
-        {
-          "position": "6",
-          "name": "system form button cancel"
-        },
-        {
-          "position": "7",
-          "name": "system form button confirm"
-        },
-        {
-          "position": "8",
-          "name": "system formatter row end"
-        },
-        {
-          "position": "9",
-          "name": "system form end"
-        }
-      ]
-    },
-    {
-      "name": "Change confirm view",
-      "description": "show the old and the new view and let the user confirm the change",
-      "code_id": "view_preview",
-      "type": "system",
-      "protection": "admin_protection",
-      "components": [
-        {
-          "position": "1",
-          "name": "system form title confirm edit"
-        },
-        {
-          "position": "2",
-          "name": "system form hidden back stack"
-        },
-        {
-          "position": "3",
-          "name": "system form hidden confirm status"
-        },
-        {
-          "position": "4",
-          "name": "system form select view"
-        },
-        {
-          "position": "5",
-          "name": "system show view new"
-        },
-        {
-          "position": "6",
-          "name": "system show view old"
-        },
-        {
-          "position": "7",
-          "name": "system form button cancel"
-        },
-        {
-          "position": "8",
-          "name": "system form button del"
-        },
-        {
-          "position": "9",
-          "name": "system form end"
-        }
-      ]
-    },
-    {
-      "name": "about",
-      "description": "Show the about page",
-      "type": "system",
-      "code_id": "about",
-      "components": [
-        {
-          "position": "1",
-          "name": "system title about"
-        },
-        {
-          "position": "2",
-          "name": "system body about"
-        }
-      ]
-    },
-    {
-      "name": "Setup",
-      "description": "The initial setup form to request the admin password, to select the parent pod and the main phrase for this pod e.g. the name of an organisation",
-      "code_id": "setup",
-      "type": "system",
-      "components": [
-        {
-          "position": "1",
-          "name": "system title setup"
-        },
-        {
-          "position": "2",
-          "name": "system body setup"
-        }
-      ]
-    },
-    {
-      "name": "Signup",
-      "description": "the system signup form",
-      "type": "system",
-      "code_id": "signup",
-      "components": [
-        {
-          "position": "1",
-          "name": "system title signup"
-        },
-        {
-          "position": "2",
-          "name": "system body signup"
-        }
-      ]
-    },
-    {
-      "name": "Login",
-      "description": "the system login form",
-      "type": "system",
-      "code_id": "login",
-      "components": [
-        {
-          "position": "1",
-          "name": "system title login"
-        },
-        {
-          "position": "2",
-          "name": "system body login"
-        }
-      ]
-    },
-    {
-      "name": "Login activate",
-      "description": "the system login activate form",
-      "type": "system",
-      "code_id": "login_activate",
-      "components": [
-        {
-          "position": "1",
-          "name": "system title login activate"
-        },
-        {
-          "position": "2",
-          "name": "system body login activate"
-        }
-      ]
-    },
-    {
-      "name": "Login reset",
-      "description": "reset the password of a login user name",
-      "type": "system",
-      "code_id": "login_reset",
-      "components": [
-        {
-          "position": "1",
-          "name": "system title login reset"
-        },
-        {
-          "position": "2",
-          "name": "system body login reset"
-        }
-      ]
-    },
-    {
-      "name": "Logout",
-      "description": "the system logout form",
-      "type": "system",
-      "code_id": "logout",
-      "components": [
-        {
-          "position": "1",
-          "name": "system title logout"
-        },
-        {
-          "position": "2",
-          "name": "system body logout"
-        }
-      ]
-    },
-    {
-      "name": "Error Log",
-      "description": "simple confirm page for a new error that has been logged in the database",
-      "type": "system",
-      "code_id": "error_log",
-      "components": [
-        {
-          "position": "1",
-          "name": "system title error log"
-        },
-        {
-          "position": "2",
-          "name": "system body error log"
-        }
-      ]
-    },
-    {
-      "name": "System Error List",
-      "description": "List the system errors and allow the user to change the status",
-      "type": "system",
-      "code_id": "error_update",
-      "components": [
-        {
-          "position": "1",
-          "name": "system title error update"
-        },
-        {
-          "position": "2",
-          "name": "system body error update"
-        }
-      ]
-    },
-    {
-      "name": "Search",
-      "description": "The search page for all words, triples, verbs and formulas",
-      "code_id": "word_find",
-      "type": "system",
-      "components": [
-        {
-          "position": "1",
-          "name": "system title search"
-        },
-        {
-          "position": "2",
-          "name": "system body search"
-        }
-      ]
-    },
-    {
-      "name": "Search detail",
-      "description": "The full search page for all words, triples, verbs and formulas",
-      "code_id": "search_full",
-      "type": "system",
-      "components": [
-        {
-          "position": "1",
-          "name": "system title search full"
-        },
-        {
-          "position": "2",
-          "name": "system body search full"
-        }
-      ]
-    },
-    {
-      "name": "Value detail",
-      "description": "show all details of one value",
-      "code_id": "value_detail",
-      "type": "system",
-      "protection": "admin_protection",
-      "components": [
-        {
-          "position": "1",
-          "name": "system title value detail"
-        },
-        {
-          "position": "2",
-          "name": "system body value detail"
-        }
-      ]
-    },
-    {
-      "name": "Explain result",
-      "description": "explains one formula result",
-      "code_id": "result_explain",
-      "type": "system",
-      "protection": "admin_protection",
-      "components": [
-        {
-          "position": "1",
-          "name": "system title result explain"
-        },
-        {
-          "position": "2",
-          "name": "system body result explain"
-        }
-      ]
-    },
-    {
-      "name": "Formula test",
-      "description": "debug the formula results",
-      "code_id": "formula_test",
-      "type": "system",
-      "protection": "admin_protection",
-      "components": [
-        {
-          "position": "1",
-          "name": "system title formula test"
-        },
-        {
-          "position": "2",
-          "name": "system body formula test"
-        }
-      ]
-    },
-    {
-      "name": "Sandbox",
-      "description": "show the differences between the user sandbox and the standard and offer a selective switch to the standard",
-      "code_id": "sandbox",
-      "type": "system",
-      "components": [
-        {
-          "position": "1",
-          "name": "system title sandbox"
-        },
-        {
-          "position": "2",
-          "name": "system body sandbox"
-        }
-      ]
-    },
-    {
-      "name": "Undo",
-      "description": "show the last changes of the user and offer selective undo",
-      "code_id": "undo",
-      "type": "system",
-      "components": [
-        {
-          "position": "1",
-          "name": "system title undo"
-        },
-        {
-          "position": "2",
-          "name": "system body undo"
-        }
-      ]
-    },
-    {
-      "name": "User Settings",
-      "description": "to change the user settings",
-      "code_id": "user",
-      "type": "system",
-      "components": [
-        {
-          "position": "1",
-          "name": "system title user"
-        },
-        {
-          "position": "2",
-          "name": "system title user settings"
-        },
-        {
-          "position": "3",
-          "name": "system body user settings"
-        },
-        {
-          "position": "4",
-          "name": "user system errors"
-        },
-        {
-          "position": "5",
-          "name": "all user overwrites"
-        }
-      ]
-    },
-    {
-      "name": "Paste table",
-      "description": "add more than one values by pasting a table",
-      "code_id": "paste_table",
-      "type": "system",
-      "protection": "admin_protection",
-      "components": [
-        {
-          "position": "1",
-          "name": "system form title paste table"
-        },
-        {
-          "position": "2",
-          "name": "system form field context"
-        },
-        {
-          "position": "3",
-          "name": "system form body paste table"
+          "name": "system body not yet available"
         }
       ]
     },
@@ -6919,6 +8330,95 @@
         {
           "position": "7",
           "name": "system form end"
+        }
+      ]
+    },
+    {
+      "name": "Paste table",
+      "description": "add more than one values by pasting a table",
+      "code_id": "paste_table",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system form title paste table"
+        },
+        {
+          "position": "2",
+          "name": "system form field context"
+        },
+        {
+          "position": "3",
+          "name": "system form body paste table"
+        }
+      ]
+    },
+    {
+      "name": "Import preview",
+      "description": "Show what an import would add, change or clash with before anything is written",
+      "code_id": "import_preview",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title import preview"
+        },
+        {
+          "position": "2",
+          "name": "system body not yet available"
+        }
+      ]
+    },
+    {
+      "name": "Import result",
+      "description": "Show the objects of an import with the warnings and the links to the added objects",
+      "code_id": "import_result",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title import result"
+        },
+        {
+          "position": "2",
+          "name": "system body not yet available"
+        }
+      ]
+    },
+    {
+      "name": "Import from url",
+      "description": "Import the data of a file given by an url",
+      "code_id": "import_url",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title import url"
+        },
+        {
+          "position": "2",
+          "name": "system body not yet available"
+        }
+      ]
+    },
+    {
+      "name": "Import from Wikidata",
+      "description": "Import an object and the related data by the Wikidata id",
+      "code_id": "import_wikidata",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title import wikidata"
+        },
+        {
+          "position": "2",
+          "name": "system body not yet available"
         }
       ]
     },
@@ -7187,599 +8687,6 @@
       ]
     },
     {
-      "name": "Asynchronous process",
-      "description": "Show the progress of one asynchronous process",
-      "type": "system",
-      "code_id": "job_async",
-      "components": [
-        {
-          "position": "1",
-          "name": "system title process async"
-        },
-        {
-          "position": "2",
-          "name": "system body process async"
-        }
-      ]
-    },
-    {
-      "name": "Job and process overview",
-      "description": "Show all batch progress jobs with the progress and offer process control",
-      "type": "system",
-      "code_id": "job_control",
-      "components": [
-        {
-          "position": "1",
-          "name": "system title process list"
-        },
-        {
-          "position": "2",
-          "name": "system body process list"
-        }
-      ]
-    },
-    {
-      "name": "Job overview",
-      "description": "Show the control board to start and monitor the system consistency check e.g. to calc again all formula results",
-      "type": "system",
-      "code_id": "job_check",
-      "components": [
-        {
-          "position": "1",
-          "name": "system title process"
-        },
-        {
-          "position": "2",
-          "name": "system body process"
-        }
-      ]
-    },
-    {
-      "name": "Admin dashboard",
-      "description": "Show a overview of the most relevant issues that an administrator should check",
-      "type": "system",
-      "code_id": "admin_main",
-      "components": [
-        {
-          "position": "1",
-          "name": "system title admin"
-        },
-        {
-          "position": "2",
-          "name": "system admin response times"
-        },
-        {
-          "position": "3",
-          "name": "system admin failed logins"
-        },
-        {
-          "position": "4",
-          "name": "system admin unassigned errors"
-        },
-        {
-          "position": "5",
-          "name": "system admin pending error fixes"
-        },
-        {
-          "position": "6",
-          "name": "system admin delayed jobs"
-        }
-      ]
-    },
-    {
-      "name": "Verb List",
-      "description": "List all available ways how to link two words",
-      "code_id": "verbs",
-      "type": "system"
-    },
-    {
-      "name": "Complete",
-      "description": "Show a word, all related words to edit the word tree and the linked formulas with some results",
-      "code_id": "complete",
-      "components": [
-        {
-          "position": "1",
-          "name": "Word"
-        },
-        {
-          "position": "2",
-          "name": "link list word"
-        },
-        {
-          "position": "3",
-          "name": "formulas list word"
-        },
-        {
-          "position": "4",
-          "name": "result list word"
-        },
-        {
-          "position": "5",
-          "name": "Export JSON"
-        },
-        {
-          "position": "6",
-          "name": "Export XML"
-        }
-      ]
-    },
-    {
-      "name": "Language selection",
-      "description": "List all language in an overview page to select the ui language and allow to request an additional language",
-      "code_id": "language_select",
-      "components": [
-        {
-          "position": "1",
-          "name": "title language select"
-        },
-        {
-          "position": "2",
-          "name": "list of all languages"
-        },
-        {
-          "position": "3",
-          "name": "request additional language"
-        }
-      ]
-    },
-    {
-      "name": "Add number by words and triples",
-      "description": "Create a new value by selecting its words and triples step by step without javascript",
-      "code_id": "value_add_phrases",
-      "type": "system",
-      "protection": "admin_protection",
-      "components": [
-        {
-          "position": "1",
-          "name": "system form title value add phrases"
-        },
-        {
-          "position": "2",
-          "name": "system form hidden back stack"
-        },
-        {
-          "position": "3",
-          "name": "system form phrase steps"
-        },
-        {
-          "position": "4",
-          "name": "system form button cancel"
-        },
-        {
-          "position": "5",
-          "name": "system form end"
-        }
-      ]
-    },
-    {
-      "name": "Add word by name",
-      "description": "Create a new word just by its name without the confirm view if no term with the same name exists",
-      "code_id": "word_add_simple",
-      "type": "system",
-      "protection": "admin_protection",
-      "components": [
-        {
-          "position": "1",
-          "name": "system form title word add"
-        },
-        {
-          "position": "2",
-          "name": "system form word add simple"
-        },
-        {
-          "position": "3",
-          "name": "system form end"
-        }
-      ]
-    },
-    {
-      "name": "Add number by phrases",
-      "description": "Create a new value just by selecting its words and triples and entering the number without the confirm view",
-      "code_id": "value_add_simple",
-      "type": "system",
-      "protection": "admin_protection",
-      "components": [
-        {
-          "position": "1",
-          "name": "system form title value add"
-        },
-        {
-          "position": "2",
-          "name": "system form hidden back stack"
-        },
-        {
-          "position": "3",
-          "name": "system form value add simple"
-        },
-        {
-          "position": "4",
-          "name": "system form end"
-        }
-      ]
-    },
-    {
-      "name": "Overwrite number",
-      "description": "Change just the number, text, time or geolocation of a value for the user without the confirm view",
-      "code_id": "value_overwrite",
-      "type": "system",
-      "protection": "admin_protection",
-      "components": [
-        {
-          "position": "1",
-          "name": "system form title value edit"
-        },
-        {
-          "position": "2",
-          "name": "system form value overwrite"
-        },
-        {
-          "position": "3",
-          "name": "system form end"
-        }
-      ]
-    },
-    {
-      "name": "Overwrite result",
-      "description": "Change just the number of a result for the user without the confirm view",
-      "code_id": "result_overwrite",
-      "type": "system",
-      "protection": "admin_protection",
-      "components": [
-        {
-          "position": "1",
-          "name": "system form title result edit"
-        },
-        {
-          "position": "2",
-          "name": "system form value overwrite"
-        },
-        {
-          "position": "3",
-          "name": "system form end"
-        }
-      ]
-    },
-    {
-      "name": "User configuration",
-      "description": "Show to the user the standard user configuration and the overwrites of the user",
-      "code_id": "user_config",
-      "type": "system",
-      "protection": "admin_protection",
-      "components": [
-        {
-          "position": "1",
-          "name": "system title user config"
-        },
-        {
-          "position": "2",
-          "name": "system body not yet available"
-        }
-      ]
-    },
-    {
-      "name": "System configuration",
-      "description": "Show to the user the system configuration as read only with the possibility to request changes",
-      "code_id": "system_config",
-      "type": "system",
-      "protection": "admin_protection",
-      "components": [
-        {
-          "position": "1",
-          "name": "system title system config"
-        },
-        {
-          "position": "2",
-          "name": "system body not yet available"
-        }
-      ]
-    },
-    {
-      "name": "Admin system configuration",
-      "description": "Allow an admin to see the full system configuration with the possibility to adjust it",
-      "code_id": "admin_config",
-      "type": "system",
-      "protection": "admin_protection",
-      "components": [
-        {
-          "position": "1",
-          "name": "system title admin config"
-        },
-        {
-          "position": "2",
-          "name": "system body not yet available"
-        }
-      ]
-    },
-    {
-      "name": "User quarantine",
-      "description": "Show to the user the data that the user has entered and that has been moved to the quarantine",
-      "code_id": "user_quarantine",
-      "type": "system",
-      "protection": "admin_protection",
-      "components": [
-        {
-          "position": "1",
-          "name": "system title user quarantine"
-        },
-        {
-          "position": "2",
-          "name": "system body not yet available"
-        }
-      ]
-    },
-    {
-      "name": "All quarantine",
-      "description": "Show to an admin user the complete list of data in quarantine",
-      "code_id": "all_quarantine",
-      "type": "system",
-      "protection": "admin_protection",
-      "components": [
-        {
-          "position": "1",
-          "name": "system title all quarantine"
-        },
-        {
-          "position": "2",
-          "name": "system body not yet available"
-        }
-      ]
-    },
-    {
-      "name": "User jobs",
-      "description": "Show to the user the jobs that the user has caused with the status, the pending jobs on the top and the possibility to downgrade or cancel jobs",
-      "code_id": "user_jobs",
-      "type": "system",
-      "protection": "admin_protection",
-      "components": [
-        {
-          "position": "1",
-          "name": "system title user jobs"
-        },
-        {
-          "position": "2",
-          "name": "system body user jobs"
-        }
-      ]
-    },
-    {
-      "name": "All jobs",
-      "description": "Show to an admin user the complete list of jobs with the pending jobs on the top and the possibility to up and downgrade or cancel jobs",
-      "code_id": "all_jobs",
-      "type": "system",
-      "protection": "admin_protection",
-      "components": [
-        {
-          "position": "1",
-          "name": "system title all jobs"
-        },
-        {
-          "position": "2",
-          "name": "system body all jobs"
-        }
-      ]
-    },
-    {
-      "name": "Phrase translations",
-      "description": "Show and change the names of a word or triple in all languages",
-      "code_id": "phrase_translations",
-      "type": "system",
-      "protection": "admin_protection",
-      "components": [
-        {
-          "position": "1",
-          "name": "system title phrase translations"
-        },
-        {
-          "position": "2",
-          "name": "system body not yet available"
-        }
-      ]
-    },
-    {
-      "name": "Language forms",
-      "description": "Show and change the language forms of a language e.g. the plural",
-      "code_id": "language_forms",
-      "type": "system",
-      "protection": "admin_protection",
-      "components": [
-        {
-          "position": "1",
-          "name": "system title language forms"
-        },
-        {
-          "position": "2",
-          "name": "system body not yet available"
-        }
-      ]
-    },
-    {
-      "name": "Missing translations",
-      "description": "List the words and triples that have no name in the language of the user",
-      "code_id": "translations_missing",
-      "type": "system",
-      "protection": "admin_protection",
-      "components": [
-        {
-          "position": "1",
-          "name": "system title translations missing"
-        },
-        {
-          "position": "2",
-          "name": "system body not yet available"
-        }
-      ]
-    },
-    {
-      "name": "Language list",
-      "description": "List all languages with a link to the language",
-      "code_id": "list_languages",
-      "type": "system",
-      "protection": "admin_protection",
-      "components": [
-        {
-          "position": "1",
-          "name": "system title list languages"
-        },
-        {
-          "position": "2",
-          "name": "system body not yet available"
-        }
-      ]
-    },
-    {
-      "name": "System error detail",
-      "description": "Show one system error with the trace, the status, the assigned admin and the solution",
-      "code_id": "sys_log_detail",
-      "type": "system",
-      "protection": "admin_protection",
-      "components": [
-        {
-          "position": "1",
-          "name": "system title sys log detail"
-        },
-        {
-          "position": "2",
-          "name": "system body not yet available"
-        }
-      ]
-    },
-    {
-      "name": "Own changes",
-      "description": "List all changes of the user across all objects with the possibility to undo a change",
-      "code_id": "change_log_user",
-      "type": "system",
-      "protection": "admin_protection",
-      "components": [
-        {
-          "position": "1",
-          "name": "system title change log user"
-        },
-        {
-          "position": "2",
-          "name": "system body not yet available"
-        }
-      ]
-    },
-    {
-      "name": "Recent changes",
-      "description": "List the latest changes of all users",
-      "code_id": "change_log_recent",
-      "type": "system",
-      "protection": "admin_protection",
-      "components": [
-        {
-          "position": "1",
-          "name": "system title change log recent"
-        },
-        {
-          "position": "2",
-          "name": "system body not yet available"
-        }
-      ]
-    },
-    {
-      "name": "Object history",
-      "description": "Show all changes of one object including the changes of its links",
-      "code_id": "object_history",
-      "type": "system",
-      "protection": "admin_protection",
-      "components": [
-        {
-          "position": "1",
-          "name": "system title object history"
-        },
-        {
-          "position": "2",
-          "name": "system body not yet available"
-        }
-      ]
-    },
-    {
-      "name": "Change detail",
-      "description": "Show one change with the old and the new value and the possibility to revert it",
-      "code_id": "change_detail",
-      "type": "system",
-      "protection": "admin_protection",
-      "components": [
-        {
-          "position": "1",
-          "name": "system title change detail"
-        },
-        {
-          "position": "2",
-          "name": "system body not yet available"
-        }
-      ]
-    },
-    {
-      "name": "Import preview",
-      "description": "Show what an import would add, change or clash with before anything is written",
-      "code_id": "import_preview",
-      "type": "system",
-      "protection": "admin_protection",
-      "components": [
-        {
-          "position": "1",
-          "name": "system title import preview"
-        },
-        {
-          "position": "2",
-          "name": "system body not yet available"
-        }
-      ]
-    },
-    {
-      "name": "Import result",
-      "description": "Show the objects of an import with the warnings and the links to the added objects",
-      "code_id": "import_result",
-      "type": "system",
-      "protection": "admin_protection",
-      "components": [
-        {
-          "position": "1",
-          "name": "system title import result"
-        },
-        {
-          "position": "2",
-          "name": "system body not yet available"
-        }
-      ]
-    },
-    {
-      "name": "Import from url",
-      "description": "Import the data of a file given by an url",
-      "code_id": "import_url",
-      "type": "system",
-      "protection": "admin_protection",
-      "components": [
-        {
-          "position": "1",
-          "name": "system title import url"
-        },
-        {
-          "position": "2",
-          "name": "system body not yet available"
-        }
-      ]
-    },
-    {
-      "name": "Import from Wikidata",
-      "description": "Import an object and the related data by the Wikidata id",
-      "code_id": "import_wikidata",
-      "type": "system",
-      "protection": "admin_protection",
-      "components": [
-        {
-          "position": "1",
-          "name": "system title import wikidata"
-        },
-        {
-          "position": "2",
-          "name": "system body not yet available"
-        }
-      ]
-    },
-    {
       "name": "Export selections",
       "description": "List the saved export selections of the user",
       "code_id": "export_selections",
@@ -7831,6 +8738,252 @@
       ]
     },
     {
+      "name": "Language",
+      "description": "the default view for languages",
+      "code_id": "language_default",
+      "type": "language",
+      "components": [
+        {
+          "position": "1",
+          "name": "language name"
+        },
+        {
+          "position": "2",
+          "name": "related values"
+        }
+      ]
+    },
+    {
+      "name": "Language list",
+      "description": "List all languages with a link to the language",
+      "code_id": "list_languages",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title list languages"
+        },
+        {
+          "position": "2",
+          "name": "system body not yet available"
+        }
+      ]
+    },
+    {
+      "name": "Phrase translations",
+      "description": "Show and change the names of a word or triple in all languages",
+      "code_id": "phrase_translations",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title phrase translations"
+        },
+        {
+          "position": "2",
+          "name": "system body not yet available"
+        }
+      ]
+    },
+    {
+      "name": "Missing translations",
+      "description": "List the words and triples that have no name in the language of the user",
+      "code_id": "translations_missing",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title translations missing"
+        },
+        {
+          "position": "2",
+          "name": "system body not yet available"
+        }
+      ]
+    },
+    {
+      "name": "Language forms",
+      "description": "Show and change the language forms of a language e.g. the plural",
+      "code_id": "language_forms",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title language forms"
+        },
+        {
+          "position": "2",
+          "name": "system body not yet available"
+        }
+      ]
+    },
+    {
+      "name": "Add language",
+      "description": "Add a language by an admin user",
+      "code_id": "language_add",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system form title admin add language"
+        },
+        {
+          "position": "2",
+          "name": "system form hidden back stack"
+        },
+        {
+          "position": "3",
+          "name": "system form hidden confirm status"
+        },
+        {
+          "position": "4",
+          "name": "system form field name"
+        },
+        {
+          "position": "5",
+          "name": "admin form field language symbol",
+          "position_type": "side"
+        },
+        {
+          "position": "6",
+          "name": "system form field description"
+        },
+        {
+          "position": "7",
+          "name": "system formatter row right"
+        },
+        {
+          "position": "8",
+          "name": "system form button cancel"
+        },
+        {
+          "position": "9",
+          "name": "system form button save"
+        },
+        {
+          "position": "10",
+          "name": "system formatter row end"
+        },
+        {
+          "position": "11",
+          "name": "system form end"
+        }
+      ]
+    },
+    {
+      "name": "Change language",
+      "description": "Change a language name or symbol by an admin user",
+      "code_id": "language_edit",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system form title admin edit language"
+        },
+        {
+          "position": "2",
+          "name": "system form hidden back stack"
+        },
+        {
+          "position": "3",
+          "name": "system form hidden confirm status"
+        },
+        {
+          "position": "4",
+          "name": "system form field name"
+        },
+        {
+          "position": "5",
+          "name": "admin form field language symbol",
+          "position_type": "side"
+        },
+        {
+          "position": "6",
+          "name": "system form field description"
+        },
+        {
+          "position": "7",
+          "name": "system formatter row right"
+        },
+        {
+          "position": "8",
+          "name": "system form button cancel"
+        },
+        {
+          "position": "9",
+          "name": "system form button save"
+        },
+        {
+          "position": "10",
+          "name": "system formatter row end"
+        },
+        {
+          "position": "11",
+          "name": "system form end"
+        }
+      ]
+    },
+    {
+      "name": "Delete language",
+      "description": "View for administrators to delete a language",
+      "code_id": "language_del",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system form title admin del language"
+        },
+        {
+          "position": "2",
+          "name": "system form hidden back stack"
+        },
+        {
+          "position": "3",
+          "name": "system form hidden confirm status"
+        },
+        {
+          "position": "4",
+          "name": "system show field name big"
+        },
+        {
+          "position": "5",
+          "name": "show field language symbol",
+          "position_type": "side"
+        },
+        {
+          "position": "6",
+          "name": "system show field description"
+        },
+        {
+          "position": "7",
+          "name": "system formatter row right"
+        },
+        {
+          "position": "8",
+          "name": "system form button cancel"
+        },
+        {
+          "position": "9",
+          "name": "system form button del"
+        },
+        {
+          "position": "10",
+          "name": "system formatter row end"
+        },
+        {
+          "position": "11",
+          "name": "system form end"
+        }
+      ]
+    },
+    {
       "name": "Job detail",
       "description": "Show one job with the parameters, the status history, the log and the possibility to retry or cancel it",
       "code_id": "job_detail",
@@ -7865,15 +9018,95 @@
       ]
     },
     {
-      "name": "Find values",
-      "description": "Find the values by a set of phrases and show them as a table",
-      "code_id": "value_find",
+      "name": "Asynchronous process",
+      "description": "Show the progress of one asynchronous process",
+      "type": "system",
+      "code_id": "job_async",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title process async"
+        },
+        {
+          "position": "2",
+          "name": "system body process async"
+        }
+      ]
+    },
+    {
+      "name": "Job and process overview",
+      "description": "Show all batch progress jobs with the progress and offer process control",
+      "type": "system",
+      "code_id": "job_control",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title process list"
+        },
+        {
+          "position": "2",
+          "name": "system body process list"
+        }
+      ]
+    },
+    {
+      "name": "Job overview",
+      "description": "Show the control board to start and monitor the system consistency check e.g. to calc again all formula results",
+      "type": "system",
+      "code_id": "job_check",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title process"
+        },
+        {
+          "position": "2",
+          "name": "system body process"
+        }
+      ]
+    },
+    {
+      "name": "about",
+      "description": "Show the about page",
+      "type": "system",
+      "code_id": "about",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title about"
+        },
+        {
+          "position": "2",
+          "name": "system body about"
+        }
+      ]
+    },
+    {
+      "name": "Setup",
+      "description": "The initial setup form to request the admin password, to select the parent pod and the main phrase for this pod e.g. the name of an organisation",
+      "code_id": "setup",
+      "type": "system",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title setup"
+        },
+        {
+          "position": "2",
+          "name": "system body setup"
+        }
+      ]
+    },
+    {
+      "name": "System configuration",
+      "description": "Show to the user the system configuration as read only with the possibility to request changes",
+      "code_id": "system_config",
       "type": "system",
       "protection": "admin_protection",
       "components": [
         {
           "position": "1",
-          "name": "system title value find"
+          "name": "system title system config"
         },
         {
           "position": "2",
@@ -7882,15 +9115,47 @@
       ]
     },
     {
-      "name": "Find by reference",
-      "description": "Find an object by the external reference e.g. the Wikidata id",
-      "code_id": "ref_find",
+      "name": "Error Log",
+      "description": "simple confirm page for a new error that has been logged in the database",
+      "type": "system",
+      "code_id": "error_log",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title error log"
+        },
+        {
+          "position": "2",
+          "name": "system body error log"
+        }
+      ]
+    },
+    {
+      "name": "System Error List",
+      "description": "List the system errors and allow the user to change the status",
+      "type": "system",
+      "code_id": "error_update",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title error update"
+        },
+        {
+          "position": "2",
+          "name": "system body error update"
+        }
+      ]
+    },
+    {
+      "name": "System error detail",
+      "description": "Show one system error with the trace, the status, the assigned admin and the solution",
+      "code_id": "sys_log_detail",
       "type": "system",
       "protection": "admin_protection",
       "components": [
         {
           "position": "1",
-          "name": "system title ref find"
+          "name": "system title sys log detail"
         },
         {
           "position": "2",
@@ -7899,138 +9164,38 @@
       ]
     },
     {
-      "name": "Find duplicates",
-      "description": "List for an admin the terms with the same or a similar name for the cleanup",
-      "code_id": "find_duplicates",
-      "type": "system",
-      "protection": "admin_protection",
-      "components": [
-        {
-          "position": "1",
-          "name": "system title find duplicates"
-        },
-        {
-          "position": "2",
-          "name": "system body not yet available"
-        }
-      ]
+      "name": "System log",
+      "description": "show the most relevant system log entries (placeholder only at the moment)",
+      "code_id": "system_log"
     },
     {
-      "name": "Word list",
-      "description": "List the words with paging and sorting",
-      "code_id": "list_words",
-      "type": "system",
-      "protection": "admin_protection",
+      "name": "Complete",
+      "description": "Show a word, all related words to edit the word tree and the linked formulas with some results",
+      "code_id": "complete",
       "components": [
         {
           "position": "1",
-          "name": "system title list words"
+          "name": "Word"
         },
         {
           "position": "2",
-          "name": "system body not yet available"
-        }
-      ]
-    },
-    {
-      "name": "Triple list",
-      "description": "List the triples with paging and sorting",
-      "code_id": "list_triples",
-      "type": "system",
-      "protection": "admin_protection",
-      "components": [
-        {
-          "position": "1",
-          "name": "system title list triples"
+          "name": "link list word"
         },
         {
-          "position": "2",
-          "name": "system body not yet available"
-        }
-      ]
-    },
-    {
-      "name": "Source list",
-      "description": "List the sources with paging and sorting",
-      "code_id": "list_sources",
-      "type": "system",
-      "protection": "admin_protection",
-      "components": [
-        {
-          "position": "1",
-          "name": "system title list sources"
+          "position": "3",
+          "name": "formulas list word"
         },
         {
-          "position": "2",
-          "name": "system body not yet available"
-        }
-      ]
-    },
-    {
-      "name": "Reference list",
-      "description": "List the references with paging and sorting",
-      "code_id": "list_refs",
-      "type": "system",
-      "protection": "admin_protection",
-      "components": [
-        {
-          "position": "1",
-          "name": "system title list refs"
+          "position": "4",
+          "name": "result list word"
         },
         {
-          "position": "2",
-          "name": "system body not yet available"
-        }
-      ]
-    },
-    {
-      "name": "Formula list",
-      "description": "List the formulas with paging and sorting",
-      "code_id": "list_formulas",
-      "type": "system",
-      "protection": "admin_protection",
-      "components": [
-        {
-          "position": "1",
-          "name": "system title list formulas"
+          "position": "5",
+          "name": "Export JSON"
         },
         {
-          "position": "2",
-          "name": "system body not yet available"
-        }
-      ]
-    },
-    {
-      "name": "View list",
-      "description": "List the views with paging and sorting",
-      "code_id": "list_views",
-      "type": "system",
-      "protection": "admin_protection",
-      "components": [
-        {
-          "position": "1",
-          "name": "system title list views"
-        },
-        {
-          "position": "2",
-          "name": "system body not yet available"
-        }
-      ]
-    },
-    {
-      "name": "Component list",
-      "description": "List the view components with paging and sorting",
-      "code_id": "list_components",
-      "type": "system",
-      "protection": "admin_protection",
-      "components": [
-        {
-          "position": "1",
-          "name": "system title list components"
-        },
-        {
-          "position": "2",
-          "name": "system body not yet available"
+          "position": "6",
+          "name": "Export XML"
         }
       ]
     }

@@ -57,9 +57,9 @@ PREPARE view_relation_insert_log_0155511011_call FROM
     'SELECT view_relation_insert_log_0155511011 (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
 
 SELECT view_relation_insert_log_0155511011
-       (3,
+       (24,
         1,
-        5,
+        26,
         3,
         1,
         108,

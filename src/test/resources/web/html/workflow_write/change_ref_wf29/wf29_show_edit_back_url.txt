@@ -1,6 +1,6 @@
 GET
-http://localhost/http/view.php?m=134&id=992&z=0
-/http/view.php?m=134&id=992&z=0
+http://localhost/http/view.php?m=10&id=992&z=0
+/http/view.php?m=10&id=992&z=0
 /http/view.php?mask_id=ref_default&id=992&step=no&
 {
     "mask_id": "ref_default",

@@ -665,7 +665,7 @@ class base_ui_tests
         $url_part = parse_url('?m=3&id=123');
         parse_str($url_part["query"], $url_array);
         $result = $html->url_with_back(api::LOGIN_SCRIPT, $url_array);
-        $t->assert($test_name, $result, rest_ctrl::PATH_FIXED .'view.php?m=61&9m=3&9id=123');
+        $t->assert($test_name, $result, rest_ctrl::PATH_FIXED .'view.php?m=' . views::LOGIN_ID . '&9m=3&9id=123');
 
         $test_name = 'url from back part while editing word 123';
         $url_part = parse_url('?m=2&9m=3&9id=123');
@@ -745,7 +745,7 @@ class base_ui_tests
         // the human url uses the view code id (the name) for the mask, not the numeric view id, for
         // every view that is in the loaded cache (url_mapper::map_std_mask_to)
         $test_name = 'convert the standard url to human-readable url';
-        $url = 'http://localhost' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=2&id=1&debug=-1';
+        $url = 'http://localhost' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::WORD_ADD_ID . '&id=1&debug=-1';
         $url_human = $url_test->test_url($url_map->standard_url_to_human($lib->url_array_with($url), $msg));
         $url_array = $lib->url_array($url_human);
         $view = $url_array[url_var::MASK_HUMAN];
@@ -770,7 +770,7 @@ class base_ui_tests
         // url_mapper::to_row_format: the flat standard url array (as produced by url_to_standard) is
         // accepted directly now, not only the [key, value] row format produced by url_array_with
         $test_name = 'convert a flat standard url to human-readable url';
-        $url = 'http://localhost' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=2&id=1&debug=-1';
+        $url = 'http://localhost' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::WORD_ADD_ID . '&id=1&debug=-1';
         $url_human = $url_test->test_url($url_map->standard_url_to_human($lib->url_array($url), $msg));
         $url_array = $lib->url_array($url_human);
         $view = $url_array[url_var::MASK_HUMAN];
@@ -1018,7 +1018,7 @@ class base_ui_tests
         $t->assert_true($test_name, frontend::session_recovery_url(false, false, $req_url) === null);
 
         $test_name = 'convert the standard url to pod interchangeable url';
-        $url = 'http://localhost' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=2&id=1&debug=-1';
+        $url = 'http://localhost' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::WORD_ADD_ID . '&id=1&debug=-1';
         $url_pod = $url_test->test_url($url_map->standard_url_to_pod($lib->url_array_with($url), $msg));
         $url_array = $lib->url_array($url_pod);
         // TODO Prio 2 activate

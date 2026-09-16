@@ -1,6 +1,6 @@
 GET
-http://localhost/http/view.php?id=999&k=System+Test+Word&8id=999&8k=System+Test+Word&9m=1&m=130&z=-1
-/http/view.php?id=999&k=System+Test+Word&8id=999&8k=System+Test+Word&9m=1&m=130&z=-1
+http://localhost/http/view.php?id=999&k=System+Test+Word&8id=999&8k=System+Test+Word&9m=1&m=2&z=-1
+/http/view.php?id=999&k=System+Test+Word&8id=999&8k=System+Test+Word&9m=1&m=2&z=-1
 /http/view.php?id=999&name=System+Test+Word&8id=999&8name=System+Test+Word&9mask_id=entry_view&mask_id=word_default&step=cancel&
 {
     "id": "999",

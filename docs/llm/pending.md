@@ -1,9 +1,5 @@
 # pending - list of planned llm prompts with prio 1
 
-## sort the views
-
-sort views in src/test/resources/unit/view/list.csv and only there so that the most used once are on top but try to keep them in useful groups. The word_default view should have the id 2, triple default id 3, value default id 4, formula_default id 5 and result default id 6; 
-
 ## add value
 
 add a selector to the add value views that can be used to explicit switch between a numeric, time, geo or text value

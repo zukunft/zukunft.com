@@ -176,7 +176,7 @@ class term_list_tests
 
         // positive: the edit link points to the word edit view (views::WORD_EDIT_ID = 3) of the term
         $test_name = 'term_list->links_with_context edit link points to the term edit page';
-        $t->assert($test_name, str_contains($cols_html, 'm=3&amp;id=1'), true);
+        $t->assert($test_name, str_contains($cols_html, 'm=' . views::WORD_EDIT_ID . '&amp;id=1'), true);
 
         // positive: the page-identifying url params of the calling page are added to the edit link
         // with the url_var::BACK ('9') prefix so the edit mask can return to the calling page
