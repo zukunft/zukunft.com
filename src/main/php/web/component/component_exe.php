@@ -280,8 +280,11 @@ class component_exe extends component
             component_types::FORM_FIELD_VALUE => $form->form_num_value($dbo, $style, $msg),
             component_types::FORM_FIELD_GROUP => $form->form_field_group_name($dbo),
             component_types::FORM_FIELD_GROUP_OR_PHRASES => $form->form_field_group_or_phrases($dbo),
-            component_types::FORM_PHRASE_STEPS => $select->phrase_steps($form_name, $url_arr, $msg, $cfg, $test_mode),
-            component_types::FORM_VALUE_ADD_SIMPLE => $select->value_add_simple($form_name, $url_arr, $msg, $cfg, $test_mode),
+            // the cancel button is part of the phrase form, because it shares the right aligned row with the add button
+            component_types::FORM_PHRASE_STEPS => $select->phrase_steps($form_name, $url_arr,
+                $form->button_cancel($msk_id, $dbo, $url_arr), $msg, $cfg, $test_mode),
+            component_types::FORM_VALUE_ADD_SIMPLE => $select->value_add_simple($form_name, $url_arr,
+                $form->button_cancel($msk_id, $dbo, $url_arr), $msg, $cfg, $test_mode),
             component_types::FORM_VALUE_OVERWRITE => $form->form_value_overwrite($dbo, $style),
             component_types::SYSTEM_BODY_NOT_YET_AVAILABLE => $page->not_yet_available(),
             component_types::SYSTEM_BODY_USER_JOBS => $page->user_jobs($msg, $msk_id, $test_mode),

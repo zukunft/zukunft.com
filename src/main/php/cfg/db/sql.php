@@ -107,6 +107,9 @@ class sql
     const string THEN = 'THEN';
     const string THEN_MYSQL = ',';
     const string IS_NULL = 'IS NULL';
+    // "= NULL" never matches, so a key part that may be null is compared with these
+    const string NULL_SAFE_EQUAL = 'IS NOT DISTINCT FROM';
+    const string NULL_SAFE_EQUAL_MYSQL = '<=>';
     const string NULL = 'NULL';
     const string NOT_TRUE = 'IS NOT TRUE';
     const string ELSE = 'ELSE';

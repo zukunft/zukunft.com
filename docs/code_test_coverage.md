@@ -8,7 +8,7 @@ in a test file of the src/test/php/unit* folders; the count is by function name
 and cannot tell the classes apart, so a name that several classes declare needs
 2 calls per class and is listed as shared otherwise
 
-526 of 5763 public functions have at least 2 unit test calls; the 5237 functions below do not
+526 of 5764 public functions have at least 2 unit test calls; the 5238 functions below do not
 
 ## main backend
 
@@ -4399,8 +4399,9 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- bold - 0 unit test calls
     \-- br - 0 unit test calls
     \-- br2 - 0 unit test calls
-    \-- button_bs - 0 unit test calls
+    \-- button_bs - 1 unit test calls
     \-- button_refresh - 0 unit test calls
+    \-- button_refresh_text - 1 unit test calls
     \-- button_submit - 0 unit test calls
     \-- concat_category_text - 0 unit test calls
     \-- concat_entry_text - 0 unit test calls
@@ -4488,8 +4489,8 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- prefixed_url_array - 0 unit test calls
     \-- ref_view - 0 unit test calls
     \-- row_center - 0 unit test calls shared by 2 classes
-    \-- row_end - 0 unit test calls shared by 2 classes
-    \-- row_right - 0 unit test calls shared by 2 classes
+    \-- row_end - 1 unit test calls shared by 2 classes
+    \-- row_right - 1 unit test calls shared by 2 classes
     \-- row_start - 0 unit test calls shared by 2 classes
     \-- span - 0 unit test calls
     \-- sup - 0 unit test calls
@@ -4980,8 +4981,8 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- form_word_add_simple - 1 unit test calls
     \-- result - 0 unit test calls shared by 2 classes
     \-- row_center - 0 unit test calls shared by 2 classes
-    \-- row_end - 0 unit test calls shared by 2 classes
-    \-- row_right - 0 unit test calls shared by 2 classes
+    \-- row_end - 1 unit test calls shared by 2 classes
+    \-- row_right - 1 unit test calls shared by 2 classes
     \-- row_start - 0 unit test calls shared by 2 classes
     \-- show_child_view - 0 unit test calls
     \-- show_col_phrase - 1 unit test calls

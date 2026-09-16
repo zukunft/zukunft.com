@@ -59,6 +59,7 @@ use Zukunft\ZukunftCom\main\php\web\const\icons;
 use Zukunft\ZukunftCom\main\php\web\helper\config;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\html\html_selector;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
@@ -152,15 +153,16 @@ class ui_select
 
     /**
      * the pure html selection of the phrases of a new value one after the other followed by the number field:
-     * the chosen phrases are carried as the phrase list of the url and the selector offers the phrases that
-     * the user uses most often with the phrases that match the typed chars on top; a typed name that names
-     * one phrase is added and a selector for the next phrase is shown; the refresh icon of the pattern field
-     * is the first submit of the form, so that the enter key only updates the phrase selection and never
+     * the chosen phrases are carried as the phrase list of the url and the one phrase field offers the phrases
+     * that the user uses most often with the phrases that match the typed chars on top; a typed or picked name
+     * that names one phrase is added and the field for the next phrase is shown; the find and next button is
+     * the first submit of the form, so that the enter key only updates the phrase selection and never
      * changes any data, while the add button of the number form writes the value and the more details link
      * opens the detailed value add form with the phrases chosen so far
      *
      * @param string $form_name the name of the html form of the view
      * @param array $url_arr the url of the shown form with the chosen phrases, the typed chars and the selection
+     * @param string $cancel the html code of the cancel button shown left of the add button
      * @param user_message $msg to report a problem of the phrase load
      * @param data_object|null $cfg the request cache with the phrases that the test mode uses
      * @param bool $test_mode true to find the phrases in the request cache without a backend call
@@ -169,6 +171,7 @@ class ui_select
     function phrase_steps(
         string       $form_name,
         array        $url_arr,
+        string       $cancel,
         user_message $msg,
         ?data_object $cfg,
         bool         $test_mode
@@ -183,6 +186,7 @@ class ui_select
             $result .= $this->value_number_form($form_name, $chosen_ids);
         }
         $result .= $this->value_detail_link($url_arr, $chosen_ids);
+        $result .= $this->value_buttons($cancel, $chosen_ids);
         return $result;
     }
 
@@ -194,6 +198,7 @@ class ui_select
      *
      * @param string $form_name the name of the html form of the view
      * @param array $url_arr the url of the shown form with the chosen phrases, the typed chars and the selection
+     * @param string $cancel the html code of the cancel button shown left of the add button
      * @param user_message $msg to report a problem of the phrase load
      * @param data_object|null $cfg the request cache with the phrases that the test mode uses
      * @param bool $test_mode true to find the phrases in the request cache without a backend call
@@ -202,6 +207,7 @@ class ui_select
     function value_add_simple(
         string       $form_name,
         array        $url_arr,
+        string       $cancel,
         user_message $msg,
         ?data_object $cfg,
         bool         $test_mode
@@ -213,6 +219,7 @@ class ui_select
         if ($chosen_ids != '') {
             $result .= $this->value_number_form($form_name, $chosen_ids);
         }
+        $result .= $this->value_buttons($cancel, $chosen_ids);
         return $result;
     }
 
@@ -261,11 +268,12 @@ class ui_select
     }
 
     /**
-     * the chosen phrases, the selector of the next phrase, the info if no phrase matches the typed chars
-     * and the field for the typed chars with the refresh icon
+     * the chosen phrases in one line, the one field for the next phrase, the info if no phrase matches the
+     * typed chars and the find and next button
      *
-     * the selector is always shown, so that a user who has chosen a phrase directly gets the selector for
-     * the next phrase and a user who has not yet typed anything can pick one of the preloaded phrases
+     * the field is always shown and suggests the phrases to offer, so that a user who has chosen a phrase
+     * directly gets the field for the next phrase and a user who has not yet typed anything can pick one
+     * of the preloaded phrases
      *
      * @param string $form_name the name of the html form of the view
      * @param array $url_arr the url of the shown form used for the links of the chosen phrases
@@ -294,19 +302,27 @@ class ui_select
 
         // the ids before the names, because the chosen phrases keep the order that the user has chosen
         $chosen_ids = implode(',', $chosen->id_lst());
-        $result = $this->chosen_phrase_fields($form_name, $chosen, $url_arr);
+        // the component sets its own rows (component_types::OWN_ROW_TYPES), so the row closes before the number form
+        $result = $html->row_start();
+        $result .= $this->chosen_phrase_fields($form_name, $chosen, $url_arr);
         $result .= $html->form_hidden(url_var::PHRASE_LIST, $chosen_ids);
-        $result .= $this->phrase_selector($form_name, $this->phrase_offer($chosen, $matches, $msg, $cfg, $test_mode));
+        $offer = $this->phrase_offer($chosen, $matches, $msg, $cfg, $test_mode);
+        $result .= $this->phrase_field($form_name, $pattern, $offer);
+        // the find button adds the named phrase or offers the matching phrases and is the first submit of
+        // the form, so that the enter key triggers it and never saves anything
+        $result .= $html->button_refresh_text($mtr->txt(msg_id::SYSTEM_BUTTON_FIND_AND_NEXT), url_var::REFRESH_PHRASES);
+        // as soon as a phrase is chosen the number follows in the same line, but it is posted with the number
+        // form (see value_number_form), so that the find button never writes the value
+        if ($chosen_ids != '') {
+            $result .= $html->form_field(url_var::NUMERIC_VALUE, msg_id::FORM_FIELD_VALUE, '', html_base::INPUT_NUMBER,
+                '', view_styles::COL_SM_6, '', $form_name . self::VALUE_FORM_SUFFIX);
+        }
         // the typed chars name no phrase at all, so the user is told instead of getting an empty selection
         if ($pattern != '' and $matches->is_empty()) {
             $no_match = $mtr->txt(msg_id::INFO_NO_PHRASE_FOR_PATTERN);
             $result .= $lib->msg_var_replace($no_match, msg_id::VAR_PATTERN, $html->esc($pattern));
         }
-        // the refresh icon adds the matching phrases to the selector and is the first submit of the form,
-        // so that the enter key triggers it and never saves anything
-        $result .= $html->form_field(url_var::PATTERN, msg_id::FORM_FIELD_PHRASE_PATTERN, $pattern,
-            html_base::INPUT_TEXT, '', view_styles::COL_SM_4, url_var::REFRESH_PHRASES);
-        return $result;
+        return $result . $html->row_end();
     }
 
     /**
@@ -320,7 +336,7 @@ class ui_select
      * @param string $form_name the name of the html form which is also the code id of the shown view
      * @param phrase_list $chosen the phrases chosen so far
      * @param array $url_arr the url of the shown form used for the back part of the remove link
-     * @return string the html code of the chosen phrases with their remove icons
+     * @return string the html code of the chosen phrases in one left aligned line or '' if none is chosen
      */
     private function chosen_phrase_fields(string $form_name, phrase_list $chosen, array $url_arr): string
     {
@@ -335,18 +351,23 @@ class ui_select
             $par = url_var::PHRASE_LIST . url_var::EQ . $chosen_ids
                 . url_var::ADD . url_var::UNLINK_PHRASE . url_var::EQ . $phr->id();
             $url = $html->url_back($form_name, 0, $url_arr, $par);
-            $names[] = $phr->name_link() . ' '
-                . $html->ref($url, $icon, $tip, styles::HEADING_ICON_INLINE, true);
+            $names[] = $phr->name_link() . $html->ref($url, $icon, $tip, styles::HEADING_ICON_INLINE, true);
         }
-        return implode(', ', $names);
+        if ($names == []) {
+            return '';
+        }
+        // the full width keeps the phrases in a line of their own above the field for the next phrase
+        return $html->div(implode(', ', $names), view_styles::TEXT_LEFT . ' ' . view_styles::COL_SM_12);
     }
 
     /**
-     * the second form of a phrase selection view with the chosen phrases, the number and the add button
+     * the second form of a phrase selection view with the chosen phrases
      *
      * the refresh of the phrase selection must keep the selection view, so the vars that write the value
      * are in a form of their own and the hidden value add mask with the confirmed step lets url_to_action
-     * write the value directly and show it afterwards with its default view
+     * write the value directly and show it afterwards with its default view; the number field stays in the
+     * line of the phrase field and joins this form by its form attribute (see phrase_step_fields); the form
+     * stays open, so that the add button of value_buttons submits it
      *
      * @param string $form_name the name of the html form of the view
      * @param string $chosen_ids the ids of the chosen phrases in the order that the user has chosen them
@@ -354,7 +375,6 @@ class ui_select
      */
     private function value_number_form(string $form_name, string $chosen_ids): string
     {
-        global $mtr;
         $html = new html_base();
 
         $result = $html->form_end();
@@ -363,9 +383,27 @@ class ui_select
         $result .= $html->form_hidden(url_var::STEP, url_var::STEP_CONFIRMED);
         $result .= $html->form_hidden(url_var::BACK . url_var::MASK, (string)views::VALUE_DEFAULT_ID);
         $result .= $html->form_hidden(url_var::PHRASE_LIST, $chosen_ids);
-        $result .= $html->form_field(url_var::NUMERIC_VALUE, msg_id::FORM_FIELD_VALUE, '', html_base::INPUT_NUMBER);
-        $result .= $html->button_bs($mtr->txt(msg_id::SYSTEM_BUTTON_ADD), '', '', url_var::POST_SUBMIT);
         return $result;
+    }
+
+    /**
+     * the cancel and add button in one right aligned row like the buttons of the other add forms e.g. of a formula
+     *
+     * @param string $cancel the html code of the cancel button of the view
+     * @param string $chosen_ids the ids of the chosen phrases, empty if the value cannot be added yet
+     * @return string the html code of the button row
+     */
+    private function value_buttons(string $cancel, string $chosen_ids): string
+    {
+        global $mtr;
+        $html = new html_base();
+
+        $result = $html->row_right() . $cancel;
+        // without a phrase there is no number form that the add button could submit
+        if ($chosen_ids != '') {
+            $result .= $html->button_bs($mtr->txt(msg_id::SYSTEM_BUTTON_ADD), '', '', url_var::POST_SUBMIT);
+        }
+        return $result . $html->row_end();
     }
 
     /**
@@ -435,22 +473,24 @@ class ui_select
     }
 
     /**
-     * the selector of the next phrase
+     * the one field for the next phrase: the user types the name or picks one of the offered phrases
      *
-     * the label of a phrase selector would sort the entries by name, but the offered phrases are already
-     * sorted by relevance, so the list of the selector is set after the selector has been created
+     * a datalist suggests the offered phrases without javascript and posts the name as the typed chars,
+     * so a picked phrase is added by its exact name like a typed one (see phrase_step_selection); the
+     * label does not sort the list, so the offered phrases keep their order by relevance
      *
      * @param string $form_name the name of the html form of the view
+     * @param string $pattern the typed chars that name no single phrase, shown again in the field
      * @param phrase_list $offer the phrases to offer in the order that they should be shown
-     * @return string the html code of the selector or '' if no phrase can be offered
+     * @return string the html code of the phrase field
      */
-    private function phrase_selector(string $form_name, phrase_list $offer): string
+    private function phrase_field(string $form_name, string $pattern, phrase_list $offer): string
     {
-        if ($offer->is_empty()) {
-            return '';
+        $sel = $offer->selector_ui($form_name, 0, url_var::PATTERN, msg_id::FORM_FIELD_PHRASE_PATTERN,
+            view_styles::COL_SM_5, html_selector::TYPE_DATALIST);
+        if ($pattern != '') {
+            $sel->attribute = html_base::VALUE . '="' . htmlspecialchars($pattern, ENT_QUOTES) . '"';
         }
-        $sel = $offer->selector_ui($form_name, 0, url_var::PHRASE, msg_id::FORM_SELECT_PHRASE);
-        $sel->lst = $offer->lst_key();
         return $sel->display();
     }
 

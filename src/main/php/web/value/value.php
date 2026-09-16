@@ -151,8 +151,12 @@ class value extends sandbox_value
         parent::url_mapper($url_array, $msg, $dto);
         if ($msg->is_ok()) {
             if (array_key_exists(url_var::SOURCE, $url_array)) {
-                if ($url_array[url_var::SOURCE] != null) {
-                    $this->set_source_id($url_array[url_var::SOURCE]);
+                $src_id = $url_array[url_var::SOURCE];
+                // a text would fatal on the int id, so it is reported instead
+                if (filter_var($src_id, FILTER_VALIDATE_INT) !== false) {
+                    $this->set_source_id((int)$src_id);
+                } elseif ($src_id != null) {
+                    $msg->add(msg_id::URL_VALUE_NOT_NUMERIC, [msg_id::VAR_VALUE => $src_id]);
                 }
             }
         }

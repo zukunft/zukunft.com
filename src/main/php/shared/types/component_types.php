@@ -887,6 +887,13 @@ class component_types
         self::ROW_END
     );
 
+    // list of component types that close their form and open a second one, so they set their own rows,
+    // because an automatic row div would close around the second form (form straddle, see HIDDEN_TYPES)
+    const array OWN_ROW_TYPES = array(
+        self::FORM_PHRASE_STEPS,
+        self::FORM_VALUE_ADD_SIMPLE
+    );
+
     // list of component types that are used to combine lists
     const array LIST_GROUP = array(
         self::SYSTEM_SUB_TITLE,

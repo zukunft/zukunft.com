@@ -7021,6 +7021,8 @@
             ents used in zukunft.com in /html/html_base.php
     \-- button_refresh - section for function button_refresh not yet defined that it should be base elements - functions
              for all html elements used in zukunft.com in /html/html_base.php
+    \-- button_refresh_text - section for function button_refresh_text not yet defined that it should be base elements -
+             functions for all html elements used in zukunft.com in /html/html_base.php
     \-- button_submit_text - section for function button_submit_text not yet defined that it should be base elements - f
             unctions for all html elements used in zukunft.com in /html/html_base.php
     \-- label_lan - section for function label_lan not yet defined that it should be base elements - functions for all h
@@ -8238,7 +8240,8 @@
     \-- no_row_style
         \-- component - @return bool true if the component uses the style for the component not the row
     \-- needs_row_components
-        \-- component - @return bool true if the component is a system form button or a hidden form element
+        \-- component - @return bool true if the component is a system form button,
+                 a hidden form element or sets its own rows
     \-- field_code_id
         \-- change_log - @return string the change field code id (the change table id followed by the field name)
     \-- field_name
@@ -9638,6 +9641,8 @@
         \-- html_base - create the html code for a label
     \-- button_refresh
         \-- html_base - a small submit button beside a form field label that asks the backend to recalculate one
+    \-- button_refresh_text
+        \-- html_base - a text button that submits the form only to refresh some fields, e.g. the 'find and next' of the
     \-- button_submit_text
         \-- html_base - a submit button that looks like a link, e.g. the 'add' of the component list of a view; it is
     \-- label_lan

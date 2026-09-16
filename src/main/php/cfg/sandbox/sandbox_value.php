@@ -109,7 +109,6 @@ use Zukunft\ZukunftCom\main\php\cfg\group\group_db;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_id;
 use Zukunft\ZukunftCom\main\php\cfg\group\result_id;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_multi;
-use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 use Zukunft\ZukunftCom\main\php\cfg\log\change;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_action;
@@ -1346,10 +1345,11 @@ class sandbox_value extends sandbox_multi
                     or $this::class == value_time::class
                     or $this::class == value_text::class
                     or $this::class == value_geo::class)) {
+                // a user value without source has a null source id, which must still match its row
                 $lst->add_field(
                     source_fields::FLD_ID,
                     $this->get_source()?->id(),
-                    db_object_seq_id::FLD_ID_SQL_TYP
+                    sql_par_type::INT_NULL_SAFE
                 );
             }
         }

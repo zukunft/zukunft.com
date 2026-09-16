@@ -141,16 +141,23 @@
                 <input class="form-control" type="hidden" name="id" id="id" value="0">
                 <div class="row col-md-12">
                     <input type="hidden" name="pl" value="">
-                    <div class="form-group col-md-4">
-                        <label for="word_or_triple">
+                    <div class="form-group col-md-5">
+                        <label for="kp_form_field_phrase_pattern">
                             word or triple
                         </label>
-                        <button class="btn btn-link p-0 ms-1 align-baseline" type="submit" name="fr" value="frp">
-                            <i class="fas fa-arrows-rotate" title="recalculate this field based on the other fields">
-                            </i>
-                        </button>
-                        <input class="form-control" type="text" name="kp" id="word_or_triple">
+                        <input type="text" list="kp_form_field_phrase_pattern_list" class="form-control" name="kp" form="value_add_simple" id="kp_form_field_phrase_pattern" >
+                        <datalist id="kp_form_field_phrase_pattern_list">
+                        </datalist>
                     </div>
+                    <button class="btn btn-space col-1 align-self-end btn-outline-success" type="submit" name="fr" value="frp">
+                        find and next
+                    </button>
+                </div>
+                <br>
+                <div class="row col-md-12 justify-content-end">
+                    <a href="http://localhost/http/view.php?m=0" class="btn btn-space col-1 btn-outline-secondary">
+                        cancel
+                    </a>
                 </div>
             </form>
         </main>

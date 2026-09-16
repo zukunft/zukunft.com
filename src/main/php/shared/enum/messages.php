@@ -1721,6 +1721,8 @@ enum messages: string
     case INFO_NO_SEARCH_RESULT = 'info_no_search_result';
     // shown in the phrase selection of a new value if no word or triple starts with the typed chars
     case INFO_NO_PHRASE_FOR_PATTERN = 'info_no_phrase_for_pattern';
+    // shown if a url field that expects a number e.g. the number of a new value gets a text
+    case URL_VALUE_NOT_NUMERIC = 'url_value_not_numeric';
     // shown instead of the formula selector of a phrase page if no formula can be offered
     case INFO_NO_FORMULA_TO_LINK = 'info_no_formula_to_link';
     // shown instead of the category selector of a phrase page if no category can be offered
@@ -2273,6 +2275,8 @@ enum messages: string
     case SYSTEM_BUTTON_CHECK_AND_ADD = 'system_button_check_and_add';
     // the button that continues with the next step e.g. the value add form with the selected phrases
     case SYSTEM_BUTTON_NEXT = 'system_button_next';
+    // the button beside the phrase field of a new value that adds the named phrase or offers the matching phrases
+    case SYSTEM_BUTTON_FIND_AND_NEXT = 'system_button_find_and_next';
     // the link that opens the detailed form of a simple add form e.g. the value add form with all fields
     case SYSTEM_BUTTON_MORE_DETAILS = 'system_button_more_details';
     case FORM_WORD_FLD_NAME = 'form_word_fld_name';

@@ -3340,7 +3340,9 @@ class sandbox_multi extends db_object_multi_user
         // $msg_txt = $this->del_links();
         // $msg->merge($msg_txt);
 
-        if ($this::class == value::class) {
+        // a group has its own del() and results are removed without log by result_list::db_delete_no_log,
+        // so only the numeric, text, time and geo values reach this point
+        if ($this instanceof value_base) {
             $db_con->usr_id = $this->get_user()->id;
             $sc = $db_con->sql_creator();
             // delete first all user configuration that have also been excluded

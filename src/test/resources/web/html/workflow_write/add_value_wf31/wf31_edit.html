@@ -131,7 +131,7 @@
         </nav>
         <main class="main-container">
             <h4>
-                Add a new value by its words and triples
+                Add a new value for ...
             </h4>
             <form action="http://localhost/http/view.php" id="value_add_phrases">
                 <input type="hidden" name="token" value="5e18d78c56c5ccb645631d7e5c6657d02a2f7c579cd01d36d3f5539ba07a6c13">
@@ -140,314 +140,215 @@
                 <input type="hidden" name="9m" value="1">
                 <div class="row col-md-12">
                     <input type="hidden" name="pl" value="">
-                    <div class="form-group col-md-4">
-                        <label for="p_form_select_phrase">
+                    <div class="form-group col-md-5">
+                        <label for="kp_form_field_phrase_pattern">
                             word or triple
                         </label>
-                        <select class="form-control" name="p" form="value_add_phrases" id="p_form_select_phrase" >
-                            <option value="0" selected>
-                                please select ...
+                        <input type="text" list="kp_form_field_phrase_pattern_list" class="form-control" name="kp" form="value_add_phrases" id="kp_form_field_phrase_pattern" >
+                        <datalist id="kp_form_field_phrase_pattern_list">
+                            <option value="mathematics" data-value="1">
                             </option>
-                            <option value="1"  >
-                                mathematics
+                            <option value="ABB" data-value="548">
                             </option>
-                            <option value="548"  >
-                                ABB
+                            <option value="Bern" data-value="185">
                             </option>
-                            <option value="185"  >
-                                Bern
+                            <option value="billion" data-value="159">
                             </option>
-                            <option value="159"  >
-                                billion
+                            <option value="canton" data-value="186">
                             </option>
-                            <option value="186"  >
-                                canton
+                            <option value="cash" data-value="551">
                             </option>
-                            <option value="551"  >
-                                cash
+                            <option value="Switzerland" data-value="206">
                             </option>
-                            <option value="206"  >
-                                Switzerland
+                            <option value="CHF" data-value="407">
                             </option>
-                            <option value="407"  >
-                                CHF
+                            <option value="circumference" data-value="15">
                             </option>
-                            <option value="15"  >
-                                circumference
+                            <option value="city" data-value="188">
                             </option>
-                            <option value="188"  >
-                                city
+                            <option value="climate" data-value="226">
                             </option>
-                            <option value="226"  >
-                                climate
+                            <option value="company" data-value="189">
                             </option>
-                            <option value="189"  >
-                                company
+                            <option value="day" data-value="102">
                             </option>
-                            <option value="102"  >
-                                day
+                            <option value="diameter" data-value="16">
                             </option>
-                            <option value="16"  >
-                                diameter
+                            <option value="𝑒" data-value="6">
                             </option>
-                            <option value="6"  >
-                                𝑒
+                            <option value="education" data-value="253">
                             </option>
-                            <option value="253"  >
-                                education
+                            <option value="fact" data-value="191">
                             </option>
-                            <option value="191"  >
-                                fact
+                            <option value="flow" data-value="97">
                             </option>
-                            <option value="97"  >
-                                flow
+                            <option value="Geneva" data-value="192">
                             </option>
-                            <option value="192"  >
-                                Geneva
+                            <option value="global" data-value="194">
                             </option>
-                            <option value="194"  >
-                                global
+                            <option value="government" data-value="193">
                             </option>
-                            <option value="193"  >
-                                government
+                            <option value="group" data-value="195">
                             </option>
-                            <option value="195"  >
-                                group
+                            <option value="hand" data-value="196">
                             </option>
-                            <option value="196"  >
-                                hand
+                            <option value="happy" data-value="264">
                             </option>
-                            <option value="264"  >
-                                happy
+                            <option value="health" data-value="249">
                             </option>
-                            <option value="249"  >
-                                health
+                            <option value="htp" data-value="269">
                             </option>
-                            <option value="269"  >
-                                htp
+                            <option value="income" data-value="298">
                             </option>
-                            <option value="298"  >
-                                income
+                            <option value="inhabitants" data-value="197">
                             </option>
-                            <option value="197"  >
-                                inhabitants
+                            <option value="life" data-value="12">
                             </option>
-                            <option value="12"  >
-                                life
+                            <option value="man" data-value="199">
                             </option>
-                            <option value="199"  >
-                                man
+                            <option value="minute" data-value="100">
                             </option>
-                            <option value="100"  >
-                                minute
+                            <option value="million" data-value="158">
                             </option>
-                            <option value="158"  >
-                                million
+                            <option value="number" data-value="137">
                             </option>
-                            <option value="137"  >
-                                number
+                            <option value="one" data-value="4">
                             </option>
-                            <option value="4"  >
-                                one
+                            <option value="part" data-value="200">
                             </option>
-                            <option value="200"  >
-                                part
+                            <option value="parts" data-value="554">
                             </option>
-                            <option value="554"  >
-                                parts
+                            <option value="percent" data-value="160">
                             </option>
-                            <option value="160"  >
-                                percent
+                            <option value="person" data-value="201">
                             </option>
-                            <option value="201"  >
-                                person
+                            <option value="Pi" data-value="17">
                             </option>
-                            <option value="17"  >
-                                Pi
+                            <option value="π" data-value="5">
                             </option>
-                            <option value="5"  >
-                                π
+                            <option value="place" data-value="202">
                             </option>
-                            <option value="202"  >
-                                place
+                            <option value="points" data-value="266">
                             </option>
-                            <option value="266"  >
-                                points
+                            <option value="populism" data-value="233">
                             </option>
-                            <option value="233"  >
-                                populism
+                            <option value="potential" data-value="222">
                             </option>
-                            <option value="222"  >
-                                potential
+                            <option value="poverty" data-value="251">
                             </option>
-                            <option value="251"  >
-                                poverty
+                            <option value="problem" data-value="205">
                             </option>
-                            <option value="205"  >
-                                problem
+                            <option value="sales" data-value="550">
                             </option>
-                            <option value="550"  >
-                                sales
+                            <option value="second" data-value="22">
                             </option>
-                            <option value="22"  >
-                                second
+                            <option value="statement" data-value="552">
                             </option>
-                            <option value="552"  >
-                                statement
+                            <option value="solution" data-value="214">
                             </option>
-                            <option value="214"  >
-                                solution
+                            <option value="tax" data-value="301">
                             </option>
-                            <option value="301"  >
-                                tax
+                            <option value="total" data-value="334">
                             </option>
-                            <option value="334"  >
-                                total
+                            <option value="trillion" data-value="270">
                             </option>
-                            <option value="270"  >
-                                trillion
+                            <option value="USD" data-value="393">
                             </option>
-                            <option value="393"  >
-                                USD
+                            <option value="Vestas" data-value="549">
                             </option>
-                            <option value="549"  >
-                                Vestas
+                            <option value="warmer" data-value="229">
                             </option>
-                            <option value="229"  >
-                                warmer
+                            <option value="way" data-value="208">
                             </option>
-                            <option value="208"  >
-                                way
+                            <option value="week" data-value="103">
                             </option>
-                            <option value="103"  >
-                                week
+                            <option value="woman" data-value="209">
                             </option>
-                            <option value="209"  >
-                                woman
+                            <option value="work" data-value="210">
                             </option>
-                            <option value="210"  >
-                                work
+                            <option value="world" data-value="211">
                             </option>
-                            <option value="211"  >
-                                world
+                            <option value="2013" data-value="326">
                             </option>
-                            <option value="326"  >
-                                2013
+                            <option value="2014" data-value="327">
                             </option>
-                            <option value="327"  >
-                                2014
+                            <option value="2015" data-value="328">
                             </option>
-                            <option value="328"  >
-                                2015
+                            <option value="2016" data-value="329">
                             </option>
-                            <option value="329"  >
-                                2016
+                            <option value="2017" data-value="330">
                             </option>
-                            <option value="330"  >
-                                2017
+                            <option value="2018" data-value="331">
                             </option>
-                            <option value="331"  >
-                                2018
+                            <option value="2019" data-value="135">
                             </option>
-                            <option value="135"  >
-                                2019
+                            <option value="2020" data-value="136">
                             </option>
-                            <option value="136"  >
-                                2020
+                            <option value="Zurich" data-value="213">
                             </option>
-                            <option value="213"  >
-                                Zurich
+                            <option value="mathematical constant" data-value="-1">
                             </option>
-                            <option value="-1"  >
-                                mathematical constant
+                            <option value="Zurich (canton)" data-value="-105">
                             </option>
-                            <option value="-105"  >
-                                Zurich (canton)
+                            <option value="CHF is symbol for Swiss franc" data-value="-384">
                             </option>
-                            <option value="-384"  >
-                                CHF is symbol for Swiss franc
+                            <option value="cash flow" data-value="-550">
                             </option>
-                            <option value="-550"  >
-                                cash flow
+                            <option value="cash flow statement" data-value="-553">
                             </option>
-                            <option value="-553"  >
-                                cash flow statement
+                            <option value="Bern (city)" data-value="-106">
                             </option>
-                            <option value="-106"  >
-                                Bern (city)
+                            <option value="Geneva (city)" data-value="-107">
                             </option>
-                            <option value="-107"  >
-                                Geneva (city)
+                            <option value="Zurich (city)" data-value="-104">
                             </option>
-                            <option value="-104"  >
-                                Zurich (city)
+                            <option value="Zurich Insurance" data-value="-226">
                             </option>
-                            <option value="-226"  >
-                                Zurich Insurance
+                            <option value="𝑒 (unit symbol)" data-value="-58">
                             </option>
-                            <option value="-58"  >
-                                𝑒 (unit symbol)
+                            <option value="global problem" data-value="-102">
                             </option>
-                            <option value="-102"  >
-                                global problem
+                            <option value="global warming" data-value="-110">
                             </option>
-                            <option value="-110"  >
-                                global warming
+                            <option value="global warming (global problem)" data-value="-152">
                             </option>
-                            <option value="-152"  >
-                                global warming (global problem)
+                            <option value="global warming potential" data-value="-111">
                             </option>
-                            <option value="-111"  >
-                                global warming potential
+                            <option value="happy time points" data-value="-151">
                             </option>
-                            <option value="-151"  >
-                                happy time points
+                            <option value="income taxes" data-value="-551">
                             </option>
-                            <option value="-551"  >
-                                income taxes
+                            <option value="Pi (math)" data-value="-56">
                             </option>
-                            <option value="-56"  >
-                                Pi (math)
+                            <option value="π (unit symbol)" data-value="-5">
                             </option>
-                            <option value="-5"  >
-                                π (unit symbol)
+                            <option value="populism (global problem)" data-value="-116">
                             </option>
-                            <option value="-116"  >
-                                populism (global problem)
+                            <option value="education can be global problem" data-value="-120">
                             </option>
-                            <option value="-120"  >
-                                education can be global problem
+                            <option value="health can be a global problem" data-value="-117">
                             </option>
-                            <option value="-117"  >
-                                health can be a global problem
+                            <option value="poverty (global problem)" data-value="-119">
                             </option>
-                            <option value="-119"  >
-                                poverty (global problem)
+                            <option value="time points" data-value="-114">
                             </option>
-                            <option value="-114"  >
-                                time points
-                            </option>
-                        </select>
+                        </datalist>
                     </div>
-                    <div class="form-group col-md-4">
-                        <label for="word_or_triple">
-                            word or triple
-                        </label>
-                        <button class="btn btn-link p-0 ms-1 align-baseline" type="submit" name="fr" value="frp">
-                            <i class="fas fa-arrows-rotate" title="recalculate this field based on the other fields">
-                            </i>
-                        </button>
-                        <input class="form-control" type="text" name="kp" id="word_or_triple">
-                    </div>
-                    <div class="text-left">
-                        <a href="http://localhost/http/view.php?m=29&amp;9m=19">
-                            ... more details ...
-                        </a>
-                    </div>
+                    <button class="btn btn-space col-1 align-self-end btn-outline-success" type="submit" name="fr" value="frp">
+                        find and next
+                    </button>
                 </div>
-                <a href="http://localhost/http/view.php?m=1" class="btn btn-space col-1 btn-outline-secondary">
-                    cancel
-                </a>
+                <div class="text-left">
+                    <a href="http://localhost/http/view.php?m=29&amp;9m=19">
+                        ... more details ...
+                    </a>
+                </div>
+                <br>
+                <div class="row col-md-12 justify-content-end">
+                    <a href="http://localhost/http/view.php?m=1" class="btn btn-space col-1 btn-outline-secondary">
+                        cancel
+                    </a>
+                </div>
             </form>
         </main>
         <!--usr_msg-->

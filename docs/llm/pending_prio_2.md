@@ -1349,6 +1349,16 @@ from the symbol to the math triple instead of adding the extra hop; if values ke
 should show their siblings too, categories() needs to follow 'is symbol for' and 'name of' before
 the 'is a' step (see verbs::CATEGORY_VERBS)
 
+## a user value without source cannot be stored in the non-prime user value tables
+
+the user value tables use the source as part of the unique key, and a user value without source has a
+null source_id; the where part compares it null-safe (sql_par_type::INT_NULL_SAFE), but the non-prime
+user tables (user_values, user_values_big, user_values_text*, user_values_time*, user_values_geo, ...)
+declare PRIMARY KEY (group_id, user_id, source_id), which makes source_id NOT NULL in postgres, so the
+insert of a user value without source fails there while the prime user tables allow it; replace these
+primary keys with a unique index that allows a null source (postgres 15+: UNIQUE NULLS NOT DISTINCT)
+in zukunft_structure.sql, the table creation code (sandbox_value::FLD_USER_SOURCE) and a db upgrade
+
 ## the linked component of a component has no form field
 
 the component page now shows the linked component with its link type (components.linked_component_id

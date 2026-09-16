@@ -16,7 +16,7 @@ BEGIN
       FROM user_values_big
      WHERE group_id = _group_id
        AND user_id = _user_id
-       AND source_id = _source_id;
+       AND source_id <=> _source_id;
 
 END;
 

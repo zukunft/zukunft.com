@@ -109,6 +109,9 @@ class html_base
     const string BS_BTN = 'btn btn-space col-1';
     // a borderless button that shows only an icon, e.g. the refresh icon beside a form field label
     const string BS_BTN_ICON = 'btn btn-link p-0 ms-1 align-baseline';
+    // a text button beside a form field with the size of the form buttons, aligned to the bottom so that it is
+    // in line with the input and not the label
+    const string BS_BTN_FIELD = self::BS_BTN . ' align-self-end ' . self::BS_BTN_SUCCESS;
     const string BS_BTN_SUCCESS = 'btn-outline-success';
     const string BS_BTN_CANCEL = 'btn-outline-secondary';
     const string BS_BTN_DEL = 'btn-outline-secondary';
@@ -2215,6 +2218,19 @@ class html_base
     }
 
     /**
+     * a text button that submits the form only to refresh some fields, e.g. the 'find and next' of the
+     * phrase selection of a new value; as the first submit of a form the enter key triggers it
+     *
+     * @param string $text the translated text shown to the user
+     * @param string $refresh the url_var::REFRESH value that says which fields are refreshed
+     * @return string the html code of the refresh button
+     */
+    function button_refresh_text(string $text, string $refresh): string
+    {
+        return $this->button_link(htmlspecialchars($text, ENT_QUOTES), url_var::REFRESH, $refresh, '', self::BS_BTN_FIELD);
+    }
+
+    /**
      * a submit button that looks like a link, e.g. the 'add' of the component list of a view; it is
      * a submit and not a link, because only a submit sends the value that the user has selected in
      * the form (see docs/llm/frontend.md: no javascript)
@@ -2321,6 +2337,7 @@ class html_base
      * @param string $type the type of the input e.g. a text or if not set a submit field
      * @param string $class_add the formatting code to adjust the formatting e.g. extend the description to the full screen width
      * @param string $placeholder
+     * @param string $form_name the form that the field is posted with if it is placed outside of it, '' for the surrounding form
      * @return string the HTML code for the field
      */
     function input(
@@ -2329,7 +2346,8 @@ class html_base
         string|null $value = '',
         string      $type = '',
         string      $class_add = '',
-        string      $placeholder = ''): string
+        string      $placeholder = '',
+        string      $form_name = ''): string
     {
         $name = '';
         if ($url_id != '') {
@@ -2352,7 +2370,11 @@ class html_base
             $placeholder = ' placeholder="' . $placeholder . '"';
         }
         $id = ' id="' . $id . '"';
-        return '<' . self::INPUT . $class . $type . $name . $id . $value . $placeholder . '>';
+        $form = '';
+        if ($form_name != '') {
+            $form = ' ' . self::FORM . '="' . $form_name . '"';
+        }
+        return '<' . self::INPUT . $class . $type . $name . $id . $value . $placeholder . $form . '>';
     }
 
     function div_form(string $text, string $style = ''): string
@@ -2484,6 +2506,7 @@ class html_base
      * @param string $style the formatting code to adjust the formatting e.g. extend the description to the full screen width
      * @param string $refresh which part of the form a refresh icon beside the label should recalculate
      *                        e.g. url_var::REFRESH_LATEX, '' for a field without a refresh icon
+     * @param string $form_name the form that the field is posted with if it is placed outside of it, '' for the surrounding form
      * @return string the HTML code for the field with the label
      */
     function form_field(
@@ -2493,7 +2516,8 @@ class html_base
         string                $type = html_base::INPUT_TEXT,
         string                $input_class = '',
         string                $style = view_styles::COL_SM_12,
-        string                $refresh = ''
+        string                $refresh = '',
+        string                $form_name = ''
     ): string
     {
         // TODO Prio 2 move mtr to label
@@ -2503,10 +2527,10 @@ class html_base
             // the label for must equal the input id (field_id) so the pair stays linked
             $text = $this->label($name, $this->field_id($url_id, $name));
             $text .= $this->button_refresh($refresh);
-            $text .= $this->input($url_id, $msg_id, $value, $type, $input_class);
+            $text .= $this->input($url_id, $msg_id, $value, $type, $input_class, '', $form_name);
             return $this->div_form($text, $style);
         } else {
-            return $this->input($url_id, $msg_id, $value, $type);
+            return $this->input($url_id, $msg_id, $value, $type, '', '', $form_name);
         }
     }
 
