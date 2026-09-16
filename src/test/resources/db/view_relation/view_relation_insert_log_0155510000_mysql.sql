@@ -41,7 +41,7 @@ PREPARE view_relation_insert_log_0155510000_call FROM
 SELECT view_relation_insert_log_0155510000
        (24,
         1,
-        26,
+        92,
         3,
         1,
         108,

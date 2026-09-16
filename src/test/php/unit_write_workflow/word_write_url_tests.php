@@ -152,7 +152,7 @@ class word_write_url_tests extends word_url_tests
 
         $test_name = 'a confirmed add url writes the word to the database';
         $url_arr = [];
-        $url_arr[url_var::MASK] = views::WORD_ADD_ID;
+        $url_arr[url_var::MASK] = views::WORD_ADD_DETAIL_ID;
         $url_arr[url_var::NAME] = word_names::TEST_ADD;
         $url_arr[url_var::STEP] = url_var::STEP_CONFIRMED;
         $this->ui->execute_and_next($url_arr, $req);

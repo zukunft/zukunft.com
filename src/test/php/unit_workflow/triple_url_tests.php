@@ -136,14 +136,14 @@ class triple_url_tests extends url_test_base
         $url_arr[url_var::BACK . url_var::MASK] = views::START_ID;
 
         // edit: open the empty add triple form
-        $this->assert_step(workflows::EDIT, $url_arr, views::TRIPLE_ADD_ID);
+        $this->assert_step(workflows::EDIT, $url_arr, views::TRIPLE_ADD_DETAIL_ID);
 
         // mark the failing input variant (the from and to phrases are missing) in the snapshot file name
         $this->step_path .= workflows::NAME_SEP . workflows::STEP_NO_PHRASES;
 
         // save: press save without a from and a to phrase; the confirm add view is not shown, the add
         // form is rendered again with the warning (no write)
-        $this->assert_step(workflows::SAVE, $url_arr, views::TRIPLE_ADD_ID);
+        $this->assert_step(workflows::SAVE, $url_arr, views::TRIPLE_ADD_DETAIL_ID);
 
         // the missing from and to phrases are reported as a warning instead of confirming the new triple
         $test_name = $this->step_path . workflows::NAME_SEP . 'warns_no_phrases';
@@ -175,32 +175,32 @@ class triple_url_tests extends url_test_base
         $add = $t_trp->add_url_array();
 
         // edit: open the empty add triple form
-        $this->assert_step(workflows::EDIT, $url_arr, views::TRIPLE_ADD_ID);
+        $this->assert_step(workflows::EDIT, $url_arr, views::TRIPLE_ADD_DETAIL_ID);
 
         // back: leave the add form without adding and return to the start view (no write)
         $this->assert_step(workflows::BACK, $url_arr, views::START_ID);
 
         // edit: re-open the add form to enter the new triple
-        $this->assert_step(workflows::EDIT, $url_arr, views::TRIPLE_ADD_ID);
+        $this->assert_step(workflows::EDIT, $url_arr, views::TRIPLE_ADD_DETAIL_ID);
 
         // user is entering the new triple: the from and to phrases, the name and the description
         // (a triple without a from and a to phrase would be blocked, see add_triple_fail_workflow)
         $url_arr = $add + $url_arr;
 
         // save: press save on the add form which shows the confirm add view
-        $this->assert_step(workflows::SAVE, $url_arr, views::TRIPLE_ADD_ID);
+        $this->assert_step(workflows::SAVE, $url_arr, views::TRIPLE_ADD_DETAIL_ID);
 
         // cancel: discard the new triple in the confirm view and return to the start view (no write)
         $this->assert_step(workflows::CANCEL, $url_arr, views::START_ID);
 
         // edit: re-open the add form to redo the new triple
-        $this->assert_step(workflows::EDIT, $url_arr, views::TRIPLE_ADD_ID);
+        $this->assert_step(workflows::EDIT, $url_arr, views::TRIPLE_ADD_DETAIL_ID);
 
         // user is entering the new triple again
         $url_arr = $add + $url_arr;
 
         // save: press save again which shows the confirm add view
-        $this->assert_step(workflows::SAVE, $url_arr, views::TRIPLE_ADD_ID);
+        $this->assert_step(workflows::SAVE, $url_arr, views::TRIPLE_ADD_DETAIL_ID);
 
         // confirmed: confirm the new triple so it is actually added (with do_it true); the confirm form
         // posts the confirm add mask and the back mask carries the object type (like the url that

@@ -187,7 +187,7 @@ class api_tests
         $t->assert_api_get_list(term_list::class, [word_names::MATH_ID, triple_names::MATH_CONST_ID * -1, verbs::NOT_SET_ID * 2, formula_names::SCALE_TO_SEC_ID * -2]);
         $t->assert_api_get_list(formula_list::class, [formula_names::SCALE_TO_SEC_ID]);
         $t->assert_api_get_list(view_list::class, views::START_NAME, url_var::PATTERN);
-        $t->assert_api_get_list(component_list::class, views::WORD_ADD_ID, url_var::VIEW);
+        $t->assert_api_get_list(component_list::class, views::WORD_ADD_DETAIL_ID, url_var::VIEW);
 
         $t->assert_api_chg_list(word::class,word_names::MATH_ID);
         $t->assert_api_chg_list(word::class,word_names::MATH_ID, change_fields::FLD_WORD_NAME);

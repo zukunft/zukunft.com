@@ -1480,9 +1480,29 @@ class system_form extends component
         $html = new html_base();
         global $mtr;
         $result = $html->form_field(url_var::NAME, msg_id::FORM_FIELD_NAME, '', html_base::INPUT_TEXT, '', $style_text);
-        $result .= $html->form_hidden(url_var::MASK, (string)views::WORD_ADD_ID);
+        $result .= $html->form_hidden(url_var::MASK, (string)views::WORD_ADD_DETAIL_ID);
         $result .= $html->form_hidden(url_var::STEP, url_var::STEP_CONFIRMED);
         $result .= $html->form_hidden(url_var::BACK . url_var::MASK, (string)views::WORD_ID);
+        $result .= $html->button_bs($mtr->txt(msg_id::SYSTEM_BUTTON_ADD), '', '', url_var::POST_SUBMIT);
+        return $result;
+    }
+
+    /**
+     * one field for the name of a new triple and an add button that writes the triple directly,
+     * so like form_word_add_simple the hidden triple add mask with the confirmed step lets
+     * url_to_action save the triple without the confirm view and show the new triple afterwards
+     *
+     * @param string $style_text the css style of the name field e.g. to set the width
+     * @return string the html code of the name field and the add button
+     */
+    function form_triple_add_simple(string $style_text = view_styles::COL_SM_12): string
+    {
+        $html = new html_base();
+        global $mtr;
+        $result = $html->form_field(url_var::NAME, msg_id::FORM_FIELD_NAME, '', html_base::INPUT_TEXT, '', $style_text);
+        $result .= $html->form_hidden(url_var::MASK, (string)views::TRIPLE_ADD_DETAIL_ID);
+        $result .= $html->form_hidden(url_var::STEP, url_var::STEP_CONFIRMED);
+        $result .= $html->form_hidden(url_var::BACK . url_var::MASK, (string)views::TRIPLE_ID);
         $result .= $html->button_bs($mtr->txt(msg_id::SYSTEM_BUTTON_ADD), '', '', url_var::POST_SUBMIT);
         return $result;
     }

@@ -840,6 +840,7 @@ class test_mappers
             case component_types::FORM_TITLE:
             case component_types::FORM_FIELD_NAME:
             case component_types::FORM_WORD_ADD_SIMPLE:
+            case component_types::FORM_TRIPLE_ADD_SIMPLE:
             case component_types::FORM_FIELD_DESCRIPTION:
             case component_types::FORM_FIELD_SELECTION_NAME:
             case component_types::FORM_FIELD_SELECTION_DESCRIPTION:

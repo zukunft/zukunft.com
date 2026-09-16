@@ -8,7 +8,7 @@ in a test file of the src/test/php/unit* folders; the count is by function name
 and cannot tell the classes apart, so a name that several classes declare needs
 2 calls per class and is listed as shared otherwise
 
-526 of 5768 public functions have at least 2 unit test calls; the 5242 functions below do not
+526 of 5769 public functions have at least 2 unit test calls; the 5243 functions below do not
 
 ## main backend
 
@@ -4969,6 +4969,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- form_table_linked_view - 0 unit test calls
     \-- form_term - 0 unit test calls
     \-- form_terms - 0 unit test calls
+    \-- form_triple_add_simple - 0 unit test calls
     \-- form_value - 0 unit test calls
     \-- form_value_type - 0 unit test calls
     \-- form_values - 0 unit test calls

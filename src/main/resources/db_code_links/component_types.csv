@@ -256,3 +256,4 @@ component_type_id, type_name, description, code_id
 255, 'system body not yet available', 'the body of a system view whose data and actions are not yet implemented', 'system_body_not_yet_available'
 256, 'system body user jobs', 'the jobs of the requesting user with the pending jobs on top and the buttons to downgrade or cancel a job', 'system_body_user_jobs'
 257, 'system body all jobs', 'the jobs of all users for an admin with the pending jobs on top and the buttons to up- or downgrade or cancel a job', 'system_body_all_jobs'
+258, 'system form triple add simple', 'add a triple by its name without the confirm view if no term with the same name exists', 'system_form_triple_add_simple'

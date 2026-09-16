@@ -147,10 +147,10 @@ class word extends sandbox_code_id
      */
 
     // crud views
-    const string VIEW_ADD = views::WORD_ADD;
+    const string VIEW_ADD = views::WORD_ADD_DETAIL;
     const string VIEW_EDIT = views::WORD_EDIT;
     const string VIEW_DEL = views::WORD_DEL;
-    const int VIEW_ADD_ID = views::WORD_ADD_ID;
+    const int VIEW_ADD_ID = views::WORD_ADD_DETAIL_ID;
     const int VIEW_EDIT_ID = views::WORD_EDIT_ID;
     const int VIEW_DEL_ID = views::WORD_DEL_ID;
 

@@ -116,7 +116,7 @@ class term_list_ui_tests
         $t->assert_text_not_contains($test_name,
             $page->body_search([url_var::PATTERN => 'impact'], $search_lst), $hit_msg);
         $test_name = 'the add word button opens the add word mask';
-        $t->assert_text_contains($test_name, $no_hit_html, url_var::MASK . url_var::EQ . views::WORD_ADD_ID);
+        $t->assert_text_contains($test_name, $no_hit_html, url_var::MASK . url_var::EQ . views::WORD_ADD_DETAIL_ID);
         $test_name = 'the add word button asks to confirm the new word';
         $t->assert_text_contains($test_name, $no_hit_html,
             url_var::STEP . url_var::EQ . url_var::STEP_CONFIRM);

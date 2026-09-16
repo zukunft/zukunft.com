@@ -146,9 +146,9 @@ class system_views_read_tests
         $t->assert_view(views::WORD, $t->usr1, new word($t->usr1), words::CHF_ID, $cfg);
         // inhabitants is the example for the related formula list (e.g. the "increase" formula)
         $t->assert_view(views::WORD, $t->usr1, new word($t->usr1), word_names::INHABITANT_ID, $cfg);
-        $t->assert_view(views::WORD_ADD, $t->usr1, new word($t->usr1), word_names::MATH_ID);
+        $t->assert_view(views::WORD_ADD_DETAIL, $t->usr1, new word($t->usr1), word_names::MATH_ID);
         // the one field form that adds a word just by its name
-        $t->assert_view(views::WORD_ADD_SIMPLE, $t->usr1, new word($t->usr1));
+        $t->assert_view(views::WORD_ADD, $t->usr1, new word($t->usr1));
         $t->assert_view(views::WORD_EDIT, $t->usr1, new word($t->usr1), word_names::MATH_ID, $cfg);
         $t->assert_view(views::WORD_DEL, $t->usr1, new word($t->usr1), word_names::MATH_ID, $cfg);
         $t->assert_view(views::VERB, $t->usr1, new verb(), 1, $cfg);
@@ -159,7 +159,7 @@ class system_views_read_tests
         $t->assert_view(views::TRIPLE, $t->usr1, new triple($t->usr1), triple_names::PI_ID, $cfg);
         $t->assert_view(views::TRIPLE, $t->usr1, new triple($t->usr1), triple_names::SPEED_OF_LIGHT_ID, $cfg);
         $t->assert_view(views::TRIPLE, $t->usr1, new triple($t->usr1), triple_names::CANTON_ZURICH_ID, $cfg);
-        $t->assert_view(views::TRIPLE_ADD, $t->usr1, new triple($t->usr1));
+        $t->assert_view(views::TRIPLE_ADD_DETAIL, $t->usr1, new triple($t->usr1));
         $t->assert_view(views::TRIPLE_EDIT, $t->usr1, new triple($t->usr1), 1, $cfg);
         $t->assert_view(views::TRIPLE_DEL, $t->usr1, new triple($t->usr1), 1, $cfg);
         //$t->assert_view(views::SOURCE, $t->usr1, new source($t->usr1), 1, $cfg);
@@ -197,9 +197,9 @@ class system_views_read_tests
         $t->assert_view_by_factory(views::VALUE, $t->usr1, $t_val->text_value(), test_files::VIEW_CASE_TEXT, $cfg, value::class);
         $t->assert_view_by_factory(views::VALUE, $t->usr1, $t_val->geo_value(), test_files::VIEW_CASE_GEO, $cfg, value::class);
         // the empty form that selects the phrases of a new value step by step
-        $t->assert_view(views::VALUE_ADD_PHRASES, $t->usr1, new value($t->usr1));
+        $t->assert_view(views::VALUE_ADD_NO_JS, $t->usr1, new value($t->usr1));
         // the empty form that adds a value just by its phrases and the number
-        $t->assert_view(views::VALUE_ADD_SIMPLE, $t->usr1, new value($t->usr1));
+        $t->assert_view(views::VALUE_ADD, $t->usr1, new value($t->usr1));
         // the form that overwrites just the number of the pi value
         $t->assert_view(views::VALUE_OVERWRITE, $t->usr1, new value($t->usr1), values::PI_MATH_ID, $cfg);
         // the seeded database has no text, time or geo value, so their overwrite forms use the factory values
@@ -348,7 +348,7 @@ class system_views_read_tests
         // an add view changes data, so a user without login is blocked before the view is created
         // (config.yaml: system configuration > pod > permissions > database change > ip user > allowed)
         $is_connected = $t->dsp_web_test(
-            api::SCRIPT_PATH_NAME . 'view.php?' . url_var::MASK . url_var::EQ . views::WORD_ADD_ID,
+            api::SCRIPT_PATH_NAME . 'view.php?' . url_var::MASK . url_var::EQ . views::WORD_ADD_DETAIL_ID,
             $mtr->txt(msg_id::CHANGE_BLOCKED_FOR_IP_USER),
             ', frontend view.php?m=word_add contains at least', $is_connected);
         // the former find.php has been replaced by the word find view (m=67)

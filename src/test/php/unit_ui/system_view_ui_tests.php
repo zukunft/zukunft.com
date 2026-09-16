@@ -201,11 +201,11 @@ class system_view_ui_tests
         $t->subheader($ts . 'anti-csrf token');
         $token = test_const::DUMMY_SESSION_TOKEN;
 
-        $submit_ok = [url_var::MASK => views::WORD_ADD_ID, url_var::POST_SUBMIT => '', url_var::SESSION_TOKEN => $token];
+        $submit_ok = [url_var::MASK => views::WORD_ADD_DETAIL_ID, url_var::POST_SUBMIT => '', url_var::SESSION_TOKEN => $token];
         $test_name = 'a crud submit with the correct token is accepted';
         $t->assert_true($test_name, frontend::request_token_valid($submit_ok, $token));
 
-        $submit_no_token = [url_var::MASK => views::WORD_ADD_ID, url_var::POST_SUBMIT => ''];
+        $submit_no_token = [url_var::MASK => views::WORD_ADD_DETAIL_ID, url_var::POST_SUBMIT => ''];
         $test_name = 'a crud submit without a token is rejected';
         $t->assert_false($test_name, frontend::request_token_valid($submit_no_token, $token));
 
@@ -217,7 +217,7 @@ class system_view_ui_tests
         $test_name = 'a login submit with the correct token is accepted';
         $t->assert_true($test_name, frontend::request_token_valid($login_ok, $token));
 
-        $submit_wrong = [url_var::MASK => views::WORD_ADD_ID, url_var::POST_SUBMIT => '', url_var::SESSION_TOKEN => 'wrong'];
+        $submit_wrong = [url_var::MASK => views::WORD_ADD_DETAIL_ID, url_var::POST_SUBMIT => '', url_var::SESSION_TOKEN => 'wrong'];
         $test_name = 'a submit with a wrong token is rejected';
         $t->assert_false($test_name, frontend::request_token_valid($submit_wrong, $token));
 
@@ -259,7 +259,7 @@ class system_view_ui_tests
         $test_name = 'the job view is blocked for an ip user';
         $t->assert_true($test_name, in_array(views::JOB_ASYNC_ID, views::IP_BLOCKED_MASKS_IDS));
         $test_name = 'the word add view is blocked for an ip user';
-        $t->assert_true($test_name, in_array(views::WORD_ADD_ID, views::IP_BLOCKED_MASKS_IDS));
+        $t->assert_true($test_name, in_array(views::WORD_ADD_DETAIL_ID, views::IP_BLOCKED_MASKS_IDS));
         $test_name = 'the login view is never blocked for an ip user';
         $t->assert_false($test_name, in_array(views::LOGIN_ID, views::IP_BLOCKED_MASKS_IDS));
         $test_name = 'the signup view is never blocked for an ip user';

@@ -595,6 +595,9 @@ class component_types
     // add a word by its name without the confirm view (see system_form::form_word_add_simple)
     const string FORM_WORD_ADD_SIMPLE = "system_form_word_add_simple";
     const int FORM_WORD_ADD_SIMPLE_ID = 252;
+    // add a triple by its name without the confirm view (see system_form::form_triple_add_simple)
+    const string FORM_TRIPLE_ADD_SIMPLE = "system_form_triple_add_simple";
+    const int FORM_TRIPLE_ADD_SIMPLE_ID = 258;
     // add a value by its phrases and the number without the confirm view (see ui_select::value_add_simple)
     const string FORM_VALUE_ADD_SIMPLE = "system_form_value_add_simple";
     const int FORM_VALUE_ADD_SIMPLE_ID = 253;
@@ -849,6 +852,7 @@ class component_types
         self::SYSTEM_TITLE,
         self::FORM_PHRASE_STEPS,
         self::FORM_WORD_ADD_SIMPLE,
+        self::FORM_TRIPLE_ADD_SIMPLE,
         self::FORM_VALUE_ADD_SIMPLE,
         self::FORM_VALUE_OVERWRITE,
         self::SYSTEM_BODY_NOT_YET_AVAILABLE,
@@ -1155,6 +1159,7 @@ class component_types
         [self::ALL_USER_OVERWRITES, self::ALL_USER_OVERWRITES_ID],
         [self::FORM_PHRASE_STEPS, self::FORM_PHRASE_STEPS_ID],
         [self::FORM_WORD_ADD_SIMPLE, self::FORM_WORD_ADD_SIMPLE_ID],
+        [self::FORM_TRIPLE_ADD_SIMPLE, self::FORM_TRIPLE_ADD_SIMPLE_ID],
         [self::FORM_VALUE_ADD_SIMPLE, self::FORM_VALUE_ADD_SIMPLE_ID],
         [self::FORM_VALUE_OVERWRITE, self::FORM_VALUE_OVERWRITE_ID],
         [self::SYSTEM_BODY_NOT_YET_AVAILABLE, self::SYSTEM_BODY_NOT_YET_AVAILABLE_ID],

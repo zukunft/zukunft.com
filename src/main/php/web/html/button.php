@@ -282,7 +282,7 @@ class button
             $url_type = $lib->ids_to_url($type_ids, "type");
         }
 
-        $this->call = new html_base()->url_back(views::VALUE_ADD_ID, 0, $url_arr) . $url_phr . $url_type;
+        $this->call = new html_base()->url_back(views::VALUE_ADD_DETAIL_ID, 0, $url_arr) . $url_phr . $url_type;
         $result = $this->add(msg_id::ADD);
 
         log_debug($result);

@@ -6272,6 +6272,8 @@
             hout auto fill in /component/execute/system_form.php
     \-- form_word_add_simple - section for function form_word_add_simple not yet defined that it should be optional with
              show password but without auto fill in /component/execute/system_form.php
+    \-- form_triple_add_simple - section for function form_triple_add_simple not yet defined that it should be optional 
+            with show password but without auto fill in /component/execute/system_form.php
     \-- form_description - section for function form_description not yet defined that it should be optional with show pa
             ssword but without auto fill in /component/execute/system_form.php
     \-- form_field_code_id - section for function form_field_code_id not yet defined that it should be optional with sho
@@ -9058,6 +9060,8 @@
     \-- form_word_add_simple
         \-- system_form - the one field form that adds a word by its name without the confirm view: the hidden word add 
                 mask
+    \-- form_triple_add_simple
+        \-- system_form - one field for the name of a new triple and an add button that writes the triple directly,
     \-- form_description
         \-- system_form - @param db_object|type_object $dbo
     \-- form_field_code_id

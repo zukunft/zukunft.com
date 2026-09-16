@@ -1,6 +1,6 @@
 GET
-http://localhost/http/view.php?id=0&9m=1&m=86&z=0
-/http/view.php?id=0&9m=1&m=86&z=0
+http://localhost/http/view.php?id=0&9m=1&m=60&z=0
+/http/view.php?id=0&9m=1&m=60&z=0
 /http/view.php?id=0&9mask_id=entry_view&mask_id=view_add&step=no&
 {
     "id": "0",

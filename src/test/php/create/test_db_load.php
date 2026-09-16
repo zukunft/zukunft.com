@@ -1290,7 +1290,7 @@ class test_db_load
 
         // the components of a view, because the component ids shift with each added seed component
         $result = $this->update_api_list_file(
-            $t, component_list::class, views::WORD_ADD_ID, url_var::VIEW);
+            $t, component_list::class, views::WORD_ADD_DETAIL_ID, url_var::VIEW);
 
         // the changes of a word, because the change log ids shift with each additional setup change
         if (!$this->update_api_chg_list_file($t, word::class, word_names::MATH_ID)) {
