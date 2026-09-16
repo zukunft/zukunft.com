@@ -42,6 +42,7 @@ include_once paths::SHARED_TYPES . 'db_cache_statuum.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once paths::SHARED . 'api.php';
 include_once paths::SHARED_TYPES . 'db_cache_types.php';
+include_once paths::SHARED_CONST . 'views.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
@@ -50,6 +51,7 @@ use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache_db;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache_page;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\api;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\types\db_cache_types;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\test\php\create\test_db_caches;
@@ -193,7 +195,7 @@ class db_cache_tests
         // in - covering both the crud form hidden field and the logout / error_update link href
         $token = 'aaaa1111';
         $page =
-            '<a href="view.php?m=64&token=' . $token . '">logout</a>'
+            '<a href="view.php?m=' . views::LOGOUT_ID . '&token=' . $token . '">logout</a>'
             . '<input name="token" value="' . $token . '">';
         $stored = db_cache_page::strip_session_token($page, $token);
         $test_name = 'the session token is removed from the stored page';
@@ -205,7 +207,7 @@ class db_cache_tests
         $served = db_cache_page::restore_session_token($stored, $other);
         $test_name = 'the reading session token is filled in on read';
         $t->assert($test_name, $served,
-            '<a href="view.php?m=64&token=' . $other . '">logout</a>'
+            '<a href="view.php?m=' . views::LOGOUT_ID . '&token=' . $other . '">logout</a>'
             . '<input name="token" value="' . $other . '">');
         $test_name = 'the rendering session token is not served to another session';
         $t->assert_false($test_name, str_contains($served, $token));

@@ -3,6 +3,7 @@ CREATE PROCEDURE value_text_prime_p4_delete_log
     (_user_id             bigint,
      _change_action_id    smallint,
      _field_id_text_value smallint,
+     _text_value          text,
      _group_id            bigint,
      _phrase_id_1         smallint,
      _phrase_id_2         smallint,
@@ -11,8 +12,8 @@ CREATE PROCEDURE value_text_prime_p4_delete_log
 
 BEGIN
 
-    INSERT INTO change_values_text_prime ( user_id, change_action_id, change_field_id,     group_id)
-         SELECT                           _user_id,_change_action_id,_field_id_text_value,_group_id ;
+    INSERT INTO change_values_text_prime ( user_id, change_action_id, change_field_id,     old_value,  group_id)
+         SELECT                           _user_id,_change_action_id,_field_id_text_value,_text_value,_group_id ;
 
     DELETE
       FROM values_text_prime
@@ -27,6 +28,7 @@ SELECT value_text_prime_p4_delete_log
        (3,
         3,
         421,
+        'zukunft.com',
         59673584134226023,
         212,
         207,

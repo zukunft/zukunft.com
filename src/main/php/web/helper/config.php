@@ -73,6 +73,7 @@ class config extends value_list
     const int LIMIT_NAME_LIST = shared_config::LIMIT_NAME_LIST;
     const int LIMIT_LINK_LIST = shared_config::LIMIT_LINK_LIST;
     const int LIMIT_SEARCH_LIST = shared_config::LIMIT_SEARCH_LIST;
+    const int LIMIT_PHRASE_PRELOAD = shared_config::LIMIT_PHRASE_PRELOAD;
     const string DEFAULT_FRONTEND_TYPE = shared_config::DEFAULT_FRONTEND_TYPE;
 
 

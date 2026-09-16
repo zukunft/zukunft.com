@@ -147,6 +147,8 @@ class url_var
     const string REFRESH_EXPRESSION = 'fre'; // recalculate the expression based on the latex changes
     const string REFRESH_LATEX = 'frx'; // recalculate the latex based on the expression
     const string REFRESH_TERMS = 'frt'; // only resolve the terms of the expression and the latex again
+    // the phrase selection asks the backend for the phrases that match the typed chars
+    const string REFRESH_PHRASES = 'frp'; // add the phrases that match the typed chars to the selector
     const string FORMULAS = 'fs';  // to select the formulas that should be displayed
     const string FORMULA_LINK_TYPE = 'ft';
     const string LATEX = 'fx'; // the formula in latex format
@@ -540,6 +542,7 @@ class url_var
     const string REFRESH_EXPRESSION_HUMAN = 'expression_from_latex';
     const string REFRESH_LATEX_HUMAN = 'latex_from_expression';
     const string REFRESH_TERMS_HUMAN = 'terms_only';
+    const string REFRESH_PHRASES_HUMAN = 'phrases_from_pattern';
     const string FORMULA_LINK_HUMAN = 'formula_link_id'; // to link a formula to a phrase
     const string FORMULA_LINK_PRIO_HUMAN = 'formula_link_prio';
     const string FORMULA_LINK_TYPE_HUMAN = 'formula_link_type';
@@ -880,6 +883,7 @@ class url_var
         self::REFRESH_EXPRESSION => self::REFRESH_EXPRESSION_HUMAN,
         self::REFRESH_LATEX => self::REFRESH_LATEX_HUMAN,
         self::REFRESH_TERMS => self::REFRESH_TERMS_HUMAN,
+        self::REFRESH_PHRASES => self::REFRESH_PHRASES_HUMAN,
     ];
 
     // map human-readable url values to standard url values

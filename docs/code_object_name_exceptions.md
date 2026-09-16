@@ -220,7 +220,7 @@ test_terms: $t_trm
 test_triples: $t_trp
 test_types: $t_typ
 test_users: $sys_usr, $t_usr
-test_values: $t_val
+test_values: $t_val, $url_arr
 test_verbs: $t_vrb, $t_vrp
 test_views: $t_msk
 test_words: $t_wrd

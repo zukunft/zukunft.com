@@ -181,10 +181,17 @@ class value_ui_tests
         $city_html = $select->phrase_steps($steps_form, $city_url, $msg_ui, $steps_dto, true);
         $city_field = $html->form_hidden(url_var::PHRASE_LIST, (string)$phr_city->id());
         $t->assert_text_contains($test_name, $city_html, $city_field);
-        $test_name = '... and next opens the value add form with the phrase';
+        $test_name = '... and the more details link opens the value add form with the phrase';
         $t->assert_text_contains($test_name, $city_html, $next_par);
-        $test_name = 'the check button is no save submit';
-        $t->assert_text_not_contains($test_name, $city_html, 'name="' . url_var::POST_SUBMIT . '"');
+        $test_name = '... named as the link to the detailed form';
+        $t->assert_text_contains($test_name, $city_html, $mtr->txt(msg_id::SYSTEM_BUTTON_MORE_DETAILS));
+        $test_name = 'the refresh icon of the pattern field only updates the phrase selection';
+        $t->assert_text_contains($test_name, $city_html, 'name="' . url_var::REFRESH . '"');
+        $test_name = '... and the number of the value can be entered directly';
+        $t->assert_text_contains($test_name, $city_html, 'name="' . url_var::NUMERIC_VALUE . '"');
+        $test_name = 'the phrases used most often are preloaded in the selector';
+        $pre_html = $select->phrase_steps($steps_form, [], $msg_ui, $steps_dto, true);
+        $t->assert_text_contains($test_name, $pre_html, 'name="' . url_var::PHRASE . '"');
         $test_name = 'the first chars of several phrases offer the matching phrases to select';
         $few_url = [url_var::PATTERN => mb_substr($phr_city->name(), 0, 1)];
         $few_html = $select->phrase_steps($steps_form, $few_url, $msg_ui, $steps_dto, true);
@@ -204,8 +211,30 @@ class value_ui_tests
         $bad_url = [url_var::PHRASE_LIST => (string)word_names::MATH_ID];
         $bad_html = $select->phrase_steps($steps_form, $bad_url, $msg_ui, $steps_dto, true);
         $t->assert_text_contains($test_name, $bad_html, $html->form_hidden(url_var::PHRASE_LIST, ''));
-        $test_name = '... and without a chosen phrase there is no next button';
-        $t->assert_text_not_contains($test_name, $bad_html, $next_par);
+        $test_name = '... and without a chosen phrase the detailed form can still be opened';
+        $t->assert_text_contains($test_name, $bad_html, $next_par);
+        $test_name = '... but without a phrase list';
+        $t->assert_text_not_contains($test_name, $bad_html, url_var::PHRASE_LIST . url_var::EQ);
+        $test_name = 'each chosen phrase offers a remove icon';
+        $remove_par = url_var::UNLINK_PHRASE . url_var::EQ . $phr_city->id();
+        $t->assert_text_contains($test_name, $city_html, $remove_par);
+        $test_name = 'the remove icon drops the phrase from the phrases of the new value';
+        $rem_url = [
+            url_var::PHRASE_LIST => $phr_city->id() . ',' . $phr_canton->id(),
+            url_var::UNLINK_PHRASE => (string)$phr_canton->id()
+        ];
+        $rem_html = $select->phrase_steps($steps_form, $rem_url, $msg_ui, $steps_dto, true);
+        $city_only = $html->form_hidden(url_var::PHRASE_LIST, (string)$phr_city->id());
+        $t->assert_text_contains($test_name, $rem_html, $city_only);
+        $test_name = 'removing a phrase that is not chosen keeps the phrases unchanged';
+        $keep_url = [
+            url_var::PHRASE_LIST => (string)$phr_city->id(),
+            url_var::UNLINK_PHRASE => (string)$phr_canton->id()
+        ];
+        $keep_html = $select->phrase_steps($steps_form, $keep_url, $msg_ui, $steps_dto, true);
+        $t->assert_text_contains($test_name, $keep_html, $city_only);
+        $test_name = '... and no number field';
+        $t->assert_text_not_contains($test_name, $bad_html, 'name="' . url_var::NUMERIC_VALUE . '"');
 
         // the simple add form writes the value with the chosen phrases without the confirm view
         $t->subheader($ts . 'simple add');

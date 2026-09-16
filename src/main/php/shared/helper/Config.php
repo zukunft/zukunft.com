@@ -71,4 +71,8 @@ class Config
     // TODO Prio 0 use this only as the fallback value for the changeable value from config.yaml
     const int LIMIT_MORE_LIST = 20;
 
+    // number of the most often used phrases offered in a phrase selector before the user has typed
+    // anything (config.yaml "user > frontend > lists > preload > phrase list")
+    const int LIMIT_PHRASE_PRELOAD = 400;
+
 }

@@ -418,14 +418,17 @@ class value_base extends sandbox_value
         // TODO use sand
         $this->reset(true);
 
-        if (array_key_exists(json_fields::PHRASES, $api_json)) {
-            $phr_lst = new phrase_list($this->get_user());
-            if ($phr_lst->api_mapper($api_json[json_fields::PHRASES], $msg)) {
-                $this->grp()->set_phrase_list($phr_lst);
-            }
-        }
         if (array_key_exists(json_fields::ID, $api_json)) {
             $this->set_id($api_json[json_fields::ID]);
+        }
+        // the phrases define the value, so their group id wins over the id 0 sent for a new value;
+        // an empty list (the api to the frontend omits the phrases by default) keeps the given id
+        if (array_key_exists(json_fields::PHRASES, $api_json)) {
+            $phr_lst = new phrase_list($this->get_user());
+            $mapped = $phr_lst->api_mapper($api_json[json_fields::PHRASES], $msg);
+            if ($mapped and !$phr_lst->is_empty()) {
+                $this->set_id($this->grp()->set_phrase_list($phr_lst));
+            }
         }
         if (array_key_exists(json_fields::TIMESTAMP, $api_json)) {
             $time_stamp = $api_json[json_fields::TIMESTAMP];

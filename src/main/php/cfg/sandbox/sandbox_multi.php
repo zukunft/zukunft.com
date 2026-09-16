@@ -2170,6 +2170,7 @@ class sandbox_multi extends db_object_multi_user
 
     /**
      * remove user adjustment and log it (used by user.php to undo the user changes)
+     * the log entry and the delete are one sql function (e.g. value_delete_log_user), see del_exe
      * @param user_message $msg to report to the requesting user why the undo has failed
      */
     function del_usr_cfg(user_message $msg): bool
@@ -2179,20 +2180,22 @@ class sandbox_multi extends db_object_multi_user
         $class_name = $lib->class_to_name($this::class);
 
         global $db_con;
-        $result = true;
 
         if ($this->id() > 0 and $this->get_user()->id() > 0) {
-            $log = $this->log_del($msg);
-            if ($log->id() > 0) {
-                $db_con->usr_id = $this->get_user()->id();
-                $result = $this->del_usr_cfg_exe($db_con);
+            $db_con->usr_id = $this->get_user()->id();
+            $qp = $this->sql_delete($db_con->sql_creator(), $msg, new sql_type_list([sql_type::LOG, sql_type::USER]));
+            $db_con->delete($qp, 'del and log user ' . $this->dsp_id(), $msg);
+            if ($msg->is_ok()) {
+                $this->usr_cfg_id = null;
+                // after removing the user sandbox row switch off the sandbox usage
+                // of the user if no user sandbox row is left
+                $this->get_user()->check_sandbox_usage($db_con, $msg);
             }
-
         } else {
             log_err('The database ID and the user must be set to remove a user-specific modification of ' . $class_name . '.', $this::class . '->del_usr_cfg');
         }
 
-        return $result;
+        return $msg->is_ok();
     }
 
     /**
@@ -2609,85 +2612,6 @@ class sandbox_multi extends db_object_multi_user
 
     /**
      * dummy function definition that will be overwritten by the child object
-     * @return change_link
-     */
-    function log_del_link(user_message $msg): change_link
-    {
-        $msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
-            msg_id::VAR_FUNCTION_NAME => 'log_del_link',
-            msg_id::VAR_CLASS_NAME => $this::class
-        ]);
-        return new change_link($this->get_user());
-    }
-
-    /**
-     * set the log entry parameter for a group object with a bigint key
-     * for all not named objects like links, this function is overwritten
-     * e.g. that the user can see "added formula 'scale millions' to word 'mio'"
-     *
-     * @return change the change log object with the basic parameters set
-     */
-    function log_del_prime(user_message $msg): change
-    {
-        log_debug($this->dsp_id());
-
-        $log = new change($this->get_user());
-        $class = (new library())->class_to_name($this::class);
-        $log->set_table($class . sql_db::TABLE_EXTENSION, $msg);
-        return $this->log_del_common($log, $msg);
-    }
-
-    /**
-     * similar to log_del_prime but ...
-     * ... set the log entry parameter for a group object with a 512bit key
-     *
-     * @return changes_norm the change log object with the basic parameters set
-     */
-    function log_del(user_message $msg): change
-    {
-        $log = new changes_norm($this->get_user());
-        $class = (new library())->class_to_name($this::class);
-        $log->set_table($class . sql_db::TABLE_EXTENSION . sql_type::NORM->extension(), $msg);
-        return $this->log_del_common($log, $msg);
-    }
-
-    /**
-     * similar to log_del_prime but ...
-     * * ... set the log entry parameter for a group object with a text key
-     *
-     * @return changes_big the change log object with the basic parameters set
-     */
-    function log_del_big(user_message $msg): changes_big
-    {
-        log_debug($this->dsp_id());
-
-        $log = new changes_big($this->get_user());
-        $class = (new library())->class_to_name($this::class);
-        $log->set_table($class . sql_db::TABLE_EXTENSION . sql_type::BIG->extension(), $msg);
-        return $this->log_del_common($log, $msg);
-    }
-
-    /**
-     * set the common parameters to log the delete or exclude of a value, result or group object and execute it
-     * @param change|changes_norm|changes_big $log with the target table set
-     * @param user_message $msg to report a failed change log write to the requesting user
-     * @return change|changes_norm|changes_big with the log id set
-     */
-    private function log_del_common(change|changes_norm|changes_big $log, user_message $msg): change|changes_norm|changes_big
-    {
-        $lib = new library();
-        // a value, result or group is always identified by the group name
-        $log->set_field($lib->class_to_name(group::class) . '_name', $msg);
-        $log->old_value = $this->name();
-        $log->new_value = null;
-        $log->row_id = 0;
-        $log->set_action(change_actions::DELETE, $msg);
-        $log->add($msg);
-        return $log;
-    }
-
-    /**
-     * dummy function definition that will be overwritten by the child object
      * check if the user requested a preserved name and if yes return a message to the user
      * @param user_message $msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
      * @return bool true if everything has been fine
@@ -3013,33 +2937,6 @@ class sandbox_multi extends db_object_multi_user
     function name_field(): string
     {
         return log_missing_overwrite('name_field', $this::class);
-    }
-
-    /**
-     * @param sandbox_multi $db_rec the object as saved in the database before the change
-     * @param user_message $msg to report a failed change log write to the requesting user
-     * @return change_log the log object predefined for excluding
-     */
-    function save_field_excluded_log(sandbox_multi $db_rec, user_message $msg): change_log
-    {
-        $log = new change_log($this->get_user());
-        if ($db_rec->is_excluded() <> $this->is_excluded()) {
-            if ($this->is_excluded()) {
-                if ($this->is_link_obj()) {
-                    $log = $this->log_del_link($msg);
-                } else {
-                    $log = $this->log_del($msg);
-                }
-            } else {
-                if ($this->is_link_obj()) {
-                    $log = $this->log_link_add($msg);
-                } else {
-                    $log = $this->log_add($msg);
-                }
-            }
-        }
-        $log->set_field(fields::FLD_EXCLUDED, $msg);
-        return $log;
     }
 
     /**
@@ -3428,57 +3325,36 @@ class sandbox_multi extends db_object_multi_user
 
     /**
      * delete the complete object (the calling function del must have checked that no one uses this object)
-     * @returns string the message that should be shown to the user if something went wrong or an empty string if everything is fine
+     * the change log entry and the delete are one sql function (e.g. value_delete_log),
+     * so a delete is never done without its log entry
+     * @param user_message $msg to report a failed delete to the requesting user
+     * @return bool true if the object has been deleted
      */
     private function del_exe(user_message $msg): bool
     {
         log_debug($this->dsp_id());
-        $lib = new library();
-        $class_name = $lib->class_to_name($this::class);
 
-        global $sys;
         global $db_con;
 
-        $msg_txt = '';
+        // TODO Prio 1 activate
+        // $msg_txt = $this->del_links();
+        // $msg->merge($msg_txt);
 
-        // log the deletion request
-        if ($this->is_link_obj()) {
-            $log = $this->log_del_link($msg);
-        } else {
-            $log = $this->log_del($msg);
-        }
-        if ($log->id > 0) {
+        if ($this::class == value::class) {
             $db_con->usr_id = $this->get_user()->id;
-
-            // TODO Prio 1 activate
-            // $msg_txt = $this->del_links();
-            // $msg->merge($msg_txt);
-
+            $sc = $db_con->sql_creator();
             // delete first all user configuration that have also been excluded
+            $qp = $this->sql_delete($sc, $msg, new sql_type_list([sql_type::USER, sql_type::EXCLUDE]));
+            $db_con->delete($qp, $this::class . ' user exclusions', $msg);
             if ($msg->is_ok()) {
-                // TODO always use the qp based setup
-                if ($this::class == value::class) {
-                    $qp = $this->sql_delete($db_con->sql_creator(), $msg, new sql_type_list([sql_type::USER, sql_type::EXCLUDE]));
-                    $db_con->delete($qp, $this::class . ' user exclusions', $msg);
-                } else {
-                    log_err('Delete of user link for ' . $this::class . ' not yet defined');
-                }
+                $qp = $this->sql_delete($sc, $msg, new sql_type_list([sql_type::LOG]));
+                $db_con->delete($qp, 'del and log ' . $this->dsp_id(), $msg);
             }
-            if ($msg->is_ok()) {
-                // finally, delete the object
-                if ($this::class == value::class) {
-                    $qp = $this->sql_delete($db_con->sql_creator(), $msg);
-                    $db_con->delete($qp, $this::class . ' user exclusions', $msg);
-                } else {
-                    log_err('Delete of link for ' . $this::class . ' not yet defined');
-                }
-                log_debug('of ' . $this->dsp_id() . ' done');
-            } else {
-                log_err('Delete failed for ' . $this::class, $this::class . '->del_exe', 'Delete failed, because removing the user settings for ' . $class_name . ' ' . $this->dsp_id() . ' returns ' . $msg_txt, (new Exception)->getTraceAsString(), $this->get_user());
-            }
+        } else {
+            log_err('Delete of ' . $this::class . ' not yet defined');
         }
 
-        return $msg->get_last_message();
+        return $msg->is_ok();
     }
 
     /**

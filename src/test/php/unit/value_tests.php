@@ -422,6 +422,10 @@ class value_tests
         $t->assert_sql_delete($sc, $val, [sql_type::USER, sql_type::EXCLUDE]);
         $t->assert_sql_delete($sc, $val_16);
         $t->assert_sql_delete($sc, $val_16, [sql_type::USER]);
+        $t->assert_sql_delete($sc, $val_16, [sql_type::LOG]);
+        $t->assert_sql_delete($sc, $val_16, [sql_type::LOG, sql_type::USER]);
+        $t->assert_sql_delete($sc, $val_17, [sql_type::LOG]);
+        $t->assert_sql_delete($sc, $val_17, [sql_type::LOG, sql_type::USER]);
         $t->assert_sql_delete($sc, $val_txt, [sql_type::LOG]);
 
 

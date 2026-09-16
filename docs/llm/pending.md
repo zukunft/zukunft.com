@@ -2,7 +2,7 @@
 
 ## add value
 
-add a selector to the add value views that can be used to explicit switch between a numeric, time, geo or text value
+add a selector to the 'Add value pure' view that can be used to explicit switch between a numeric, time, geo or text value
 
 ## add formula
 

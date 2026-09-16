@@ -3403,8 +3403,6 @@
     \-- sql_delete - section for function sql_delete not yet defined that it should be save helper - save fields in /san
             dbox/sandbox_multi.php
     \-- name_field - section for function name_field is expected to be sql fields in /sandbox/sandbox_multi.php
-    \-- save_field_excluded_log - section for function save_field_excluded_log is expected to be save in /sandbox/sandbo
-            x_multi.php
     \-- save_set_log_id - section for function save_set_log_id is expected to be save in /sandbox/sandbox_multi.php
     \-- is_id_updated - section for function is_id_updated is expected to be info in /sandbox/sandbox_multi.php
     \-- get_obj_with_same_id_fields - section for function get_obj_with_same_id_fields is expected to be set and get in 
@@ -3605,7 +3603,6 @@
     \-- wrd_lst - section for function wrd_lst not yet defined that it should be load in /sandbox/sandbox_value.php
     \-- trp_lst - section for function trp_lst not yet defined that it should be load in /sandbox/sandbox_value.php
     \-- log_add_value - section for function log_add_value is expected to be log in /sandbox/sandbox_value.php
-    \-- log_del - section for function log_del is expected to be log in /sandbox/sandbox_value.php
     \-- sql_update_value - section for function sql_update_value not yet defined that it should be save in /sandbox/sand
             box_value.php
     \-- sql_update - section for function sql_update not yet defined that it should be sql write in /sandbox/sandbox_val
@@ -8878,8 +8875,8 @@
     \-- list_select
         \-- ui_select - show a selection list (e.g. of languages) and let the user pick one entry by name
     \-- phrase_steps
-        \-- ui_select - the pure html selection of the phrases of a new value one after the other: the chosen phrases ar
-                e
+        \-- ui_select - the pure html selection of the phrases of a new value one after the other followed by the number
+                 field:
     \-- value_add_simple
         \-- ui_select - the pure html form that adds a value just by its phrases and the number: the phrases are selecte
                 d step by

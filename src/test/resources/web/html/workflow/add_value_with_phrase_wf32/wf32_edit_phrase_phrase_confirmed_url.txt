@@ -1,0 +1,16 @@
+GET
+http://localhost/http/view.php?id=0&9m=5&pl=188%2C999%2C997&n=123.456&m=29&z=2&submit=
+/http/view.php?id=0&9m=5&pl=188%2C999%2C997&n=123.456&m=29&z=2&submit=
+/http/view.php?id=0&9mask_id=value_default&phrase_ids=188%2C999%2C997&number=123.456&mask_id=value_add&step=confirmed&
+{
+    "id": "0",
+    "share": "",
+    "protection": "",
+    "phrase_ids": "188,999,997",
+    "number": "123.456",
+    "mask_id": "value_add",
+    "step": "confirmed",
+    "url_part_back": {
+        "mask_id": "value_default"
+    }
+}

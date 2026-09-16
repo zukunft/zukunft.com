@@ -413,6 +413,8 @@ class test_cleanup extends test_api
         $test_name = 'request to delete the added test word "' . word_names::TEST_ADD . '"';
         $wrd = $t_db->load_word($msg, word_names::TEST_ADD);
         if ($wrd->id() > 0) {
+            // the shared message still carries the leftover report of check_cleanup, which is not a delete error
+            $msg->reset(true);
             $wrd->del($msg);
             // assert via the message, so a failing delete shows the reason instead of a bare false
             $this->assert_msg($test_name, $msg, self::TIMEOUT_LIMIT_DB);

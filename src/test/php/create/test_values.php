@@ -54,6 +54,7 @@ include_once paths::SHARED_CONST . 'values.php';
 include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::SHARED_TYPES . 'protection_types.php';
 include_once paths::SHARED_TYPES . 'share_types.php';
+include_once html_paths::USER . 'user_message.php';
 include_once html_paths::VALUE . 'value.php';
 include_once html_paths::VALUE . 'value_list.php';
 include_once test_paths::CONST . 'word_names.php';
@@ -77,6 +78,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\shared\types\share_types;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\web\value\value as value_ui;
 use Zukunft\ZukunftCom\main\php\web\value\value_list as value_list_ui;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
@@ -301,6 +303,19 @@ class test_values extends test_objects
         }
         $grp = $lst->get_grp_id(false);
         return new value($this->env->usr1, $number, $grp);
+    }
+
+    /**
+     * the url of the empty add value form, mirroring test_words::word_new_url, so that the value
+     * workflow tests open the add value views from a factory object (see docs/llm/testing.md)
+     *
+     * @param user_message_ui $msg to report a problem of the url creation
+     * @return array the url var keyed array of a value that has no phrase and no number yet
+     */
+    function value_new_url(user_message_ui $msg): array
+    {
+        $val_ui = new value_ui();
+        return $val_ui->to_url_array($msg);
     }
 
     /**

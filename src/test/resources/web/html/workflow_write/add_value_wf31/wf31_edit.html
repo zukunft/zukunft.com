@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>
+            Add value pure - zukunft.com
+        </title>
+        <link rel="stylesheet" href="http://localhost/external_lib/bootstrap/css/bootstrap.css">
+        <link rel="stylesheet" href="http://localhost/external_lib/fontawesome/css/all.css">
+        <link rel="stylesheet" href="http://localhost/src/main/resources/style/style_html.css">
+    </head>
+    <body>
+        <nav  class="navbar site-header fixed-top">
+            <a href="http://localhost/http/view.php" title="zukunft.com" class="navbar-brand">
+                <img src="http://localhost/src/main/resources/images/ZUKUNFT_logo.svg" alt="zukunft.com" class="logo-nav">
+            </a>
+            <form action="http://localhost/http/view.php" class="d-flex align-items-center my-2 my-lg-0 flex-grow-1 mx-3">
+                <input type="hidden" name="m" value="83">
+                <label for="kp" class="visually-hidden">
+                    Search
+                </label>
+                <input class="form-control me-2" type="search" name="pattern" id="kp" placeholder="word or formula" style="min-width: 40vw; max-width: 800px;">
+                <button class="btn btn-outline-primary" type="submit">
+                    Get numbers
+                </button>
+            </form>
+            <div class="col-md-2">
+                <ul class="nav navbar-nav">
+                    <li class="active">
+                        <details class="view-menu">
+                            <summary>
+                                <i class="fas fa-edit">
+                                </i>
+                            </summary>
+                            <ul>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=view_change&amp;id=2">
+                                        alternative
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="?view=more">
+                                        ... more
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=61&amp;id=19&amp;9m=19">
+                                        change view
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=60&amp;9m=19">
+                                        add view
+                                    </a>
+                                </li>
+                            </ul>
+                        </details>
+                        <details class="lang-menu">
+                            <summary>
+                                <i class="fas fa-globe">
+                                </i>
+                            </summary>
+                            <ul>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=19&amp;q=en">
+                                        English
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=19&amp;q=en_us">
+                                        US English
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=19&amp;q=de" title="German">
+                                        Deutsch
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=19&amp;q=fr" title="French">
+                                        Français
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=19&amp;q=es" title="Spanish">
+                                        Español
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=19&amp;q=zh" title="Chinese">
+                                        漢語
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=19&amp;q=ar" title="Arabic">
+                                        العربية
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=language_select">
+                                        ... more
+                                    </a>
+                                </li>
+                            </ul>
+                        </details>
+                        <details class="user-menu">
+                            <summary>
+                                <i class="fas fa-user-circle user-logged" title="system test zukunft.com system test">
+                                </i>
+                            </summary>
+                            <ul>
+                                <li>
+                                    system test zukunft.com system test
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=12&amp;9m=19&amp;token=5e18d78c56c5ccb645631d7e5c6657d02a2f7c579cd01d36d3f5539ba07a6c13">
+                                        logout
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/settings?9m=19">
+                                        Settings
+                                    </a>
+                                </li>
+                            </ul>
+                        </details>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <main class="main-container">
+            <h4>
+                Add a new value by its words and triples
+            </h4>
+            <form action="http://localhost/http/view.php" id="value_add_phrases">
+                <input type="hidden" name="token" value="5e18d78c56c5ccb645631d7e5c6657d02a2f7c579cd01d36d3f5539ba07a6c13">
+                <input class="form-control" type="hidden" name="m" id="mask" value="19">
+                <input class="form-control" type="hidden" name="id" id="id" value="0">
+                <input type="hidden" name="9m" value="1">
+                <div class="row col-md-12">
+                    <input type="hidden" name="pl" value="">
+                    <div class="form-group col-md-4">
+                        <label for="p_form_select_phrase">
+                            word or triple
+                        </label>
+                        <select class="form-control" name="p" form="value_add_phrases" id="p_form_select_phrase" >
+                            <option value="0" selected>
+                                please select ...
+                            </option>
+                            <option value="1"  >
+                                mathematics
+                            </option>
+                            <option value="548"  >
+                                ABB
+                            </option>
+                            <option value="185"  >
+                                Bern
+                            </option>
+                            <option value="159"  >
+                                billion
+                            </option>
+                            <option value="186"  >
+                                canton
+                            </option>
+                            <option value="551"  >
+                                cash
+                            </option>
+                            <option value="206"  >
+                                Switzerland
+                            </option>
+                            <option value="407"  >
+                                CHF
+                            </option>
+                            <option value="15"  >
+                                circumference
+                            </option>
+                            <option value="188"  >
+                                city
+                            </option>
+                            <option value="226"  >
+                                climate
+                            </option>
+                            <option value="189"  >
+                                company
+                            </option>
+                            <option value="102"  >
+                                day
+                            </option>
+                            <option value="16"  >
+                                diameter
+                            </option>
+                            <option value="6"  >
+                                𝑒
+                            </option>
+                            <option value="253"  >
+                                education
+                            </option>
+                            <option value="191"  >
+                                fact
+                            </option>
+                            <option value="97"  >
+                                flow
+                            </option>
+                            <option value="192"  >
+                                Geneva
+                            </option>
+                            <option value="194"  >
+                                global
+                            </option>
+                            <option value="193"  >
+                                government
+                            </option>
+                            <option value="195"  >
+                                group
+                            </option>
+                            <option value="196"  >
+                                hand
+                            </option>
+                            <option value="264"  >
+                                happy
+                            </option>
+                            <option value="249"  >
+                                health
+                            </option>
+                            <option value="269"  >
+                                htp
+                            </option>
+                            <option value="298"  >
+                                income
+                            </option>
+                            <option value="197"  >
+                                inhabitants
+                            </option>
+                            <option value="12"  >
+                                life
+                            </option>
+                            <option value="199"  >
+                                man
+                            </option>
+                            <option value="100"  >
+                                minute
+                            </option>
+                            <option value="158"  >
+                                million
+                            </option>
+                            <option value="137"  >
+                                number
+                            </option>
+                            <option value="4"  >
+                                one
+                            </option>
+                            <option value="200"  >
+                                part
+                            </option>
+                            <option value="554"  >
+                                parts
+                            </option>
+                            <option value="160"  >
+                                percent
+                            </option>
+                            <option value="201"  >
+                                person
+                            </option>
+                            <option value="17"  >
+                                Pi
+                            </option>
+                            <option value="5"  >
+                                π
+                            </option>
+                            <option value="202"  >
+                                place
+                            </option>
+                            <option value="266"  >
+                                points
+                            </option>
+                            <option value="233"  >
+                                populism
+                            </option>
+                            <option value="222"  >
+                                potential
+                            </option>
+                            <option value="251"  >
+                                poverty
+                            </option>
+                            <option value="205"  >
+                                problem
+                            </option>
+                            <option value="550"  >
+                                sales
+                            </option>
+                            <option value="22"  >
+                                second
+                            </option>
+                            <option value="552"  >
+                                statement
+                            </option>
+                            <option value="214"  >
+                                solution
+                            </option>
+                            <option value="301"  >
+                                tax
+                            </option>
+                            <option value="334"  >
+                                total
+                            </option>
+                            <option value="270"  >
+                                trillion
+                            </option>
+                            <option value="393"  >
+                                USD
+                            </option>
+                            <option value="549"  >
+                                Vestas
+                            </option>
+                            <option value="229"  >
+                                warmer
+                            </option>
+                            <option value="208"  >
+                                way
+                            </option>
+                            <option value="103"  >
+                                week
+                            </option>
+                            <option value="209"  >
+                                woman
+                            </option>
+                            <option value="210"  >
+                                work
+                            </option>
+                            <option value="211"  >
+                                world
+                            </option>
+                            <option value="326"  >
+                                2013
+                            </option>
+                            <option value="327"  >
+                                2014
+                            </option>
+                            <option value="328"  >
+                                2015
+                            </option>
+                            <option value="329"  >
+                                2016
+                            </option>
+                            <option value="330"  >
+                                2017
+                            </option>
+                            <option value="331"  >
+                                2018
+                            </option>
+                            <option value="135"  >
+                                2019
+                            </option>
+                            <option value="136"  >
+                                2020
+                            </option>
+                            <option value="213"  >
+                                Zurich
+                            </option>
+                            <option value="-1"  >
+                                mathematical constant
+                            </option>
+                            <option value="-105"  >
+                                Zurich (canton)
+                            </option>
+                            <option value="-384"  >
+                                CHF is symbol for Swiss franc
+                            </option>
+                            <option value="-550"  >
+                                cash flow
+                            </option>
+                            <option value="-553"  >
+                                cash flow statement
+                            </option>
+                            <option value="-106"  >
+                                Bern (city)
+                            </option>
+                            <option value="-107"  >
+                                Geneva (city)
+                            </option>
+                            <option value="-104"  >
+                                Zurich (city)
+                            </option>
+                            <option value="-226"  >
+                                Zurich Insurance
+                            </option>
+                            <option value="-58"  >
+                                𝑒 (unit symbol)
+                            </option>
+                            <option value="-102"  >
+                                global problem
+                            </option>
+                            <option value="-110"  >
+                                global warming
+                            </option>
+                            <option value="-152"  >
+                                global warming (global problem)
+                            </option>
+                            <option value="-111"  >
+                                global warming potential
+                            </option>
+                            <option value="-151"  >
+                                happy time points
+                            </option>
+                            <option value="-551"  >
+                                income taxes
+                            </option>
+                            <option value="-56"  >
+                                Pi (math)
+                            </option>
+                            <option value="-5"  >
+                                π (unit symbol)
+                            </option>
+                            <option value="-116"  >
+                                populism (global problem)
+                            </option>
+                            <option value="-120"  >
+                                education can be global problem
+                            </option>
+                            <option value="-117"  >
+                                health can be a global problem
+                            </option>
+                            <option value="-119"  >
+                                poverty (global problem)
+                            </option>
+                            <option value="-114"  >
+                                time points
+                            </option>
+                        </select>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="word_or_triple">
+                            word or triple
+                        </label>
+                        <button class="btn btn-link p-0 ms-1 align-baseline" type="submit" name="fr" value="frp">
+                            <i class="fas fa-arrows-rotate" title="recalculate this field based on the other fields">
+                            </i>
+                        </button>
+                        <input class="form-control" type="text" name="kp" id="word_or_triple">
+                    </div>
+                    <div class="text-left">
+                        <a href="http://localhost/http/view.php?m=29&amp;9m=19">
+                            ... more details ...
+                        </a>
+                    </div>
+                </div>
+                <a href="http://localhost/http/view.php?m=1" class="btn btn-space col-1 btn-outline-secondary">
+                    cancel
+                </a>
+            </form>
+        </main>
+        <!--usr_msg-->
+        <footer class="site-footer">
+            <p>
+                <a href="http://localhost/http/about.php">
+                    About
+                </a>
+                &middot;
+                <a href="http://localhost/http/privacy_policy.html">
+                    Privacy Policy
+                </a>
+                &middot; 
+All structured data is available under the
+                <a href="https://creativecommons.org/publicdomain/zero/1.0/" title="CC0 License">
+                    Creative Commons CC0
+                </a>
+                Licence unless otherwise stated and the
+                <a href="https://github.com/zukunft/zukunft.com">
+                    program code
+                </a>
+                of this version 0.0.3
+under the
+                <a href="https://www.gnu.org/licenses/agpl.html">
+                    AGPL3
+                </a>
+                Licence.
+            </p>
+        </footer>
+    </body>
+</html>

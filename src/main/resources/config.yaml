@@ -378,6 +378,11 @@ zukunft.com:
                 read:
                   sys-conf-value: 100
                   tooltip-comment: "maximal number of triples read for one verb, which bounds the api message of the verb page; it is above the 'link list' limit that decides how many of them are shown, so that the read is not repeated if the shown number is increased"
+            preload:
+              tooltip-comment: "the number of entries offered in a selector before the user has typed anything"
+              phrase list:
+                sys-conf-value: 400
+                tooltip-comment: "number of the phrases used most often that are offered in a phrase selector e.g. to select the phrases of a new value; the phrases that match the chars typed by the user are added on top of these phrases"
             separator:
               tooltip-comment: "the default separator for horizontal lists e.g. entry one, entry two / next topic"
               entry: ", "

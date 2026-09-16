@@ -754,6 +754,8 @@ class lib_tests
         $test_result = $t->file('/web/system/result.html');
         $test_target = $t->file('/web/system/target.html');
         $result = $lib->diff_msg($test_result, $test_target);
+        // the view id in the expected diff is the text of the static result.html fixture, not an id
+        // that the code creates, so it stays a literal and does not follow the view id consts
         $target = '381//- href="Test" title=""////+ href="/http/view.php?m=2" title="add new word"//';
         $t->assert($test_name, $result, $target);
 

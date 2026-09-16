@@ -2341,11 +2341,18 @@ class sql_creator
 
         $log->group_id = $fvt_lst->get_value(group_fields::FLD_ID);
         $val_old = null;
-        if ($sc_par_lst->is_update()) {
-            $val_old = $fvt_lst->get_old($num_fld);
-            $log->old_value = $val_old;
+        $val_new = null;
+        // the value parameter of the function: the new value or for a delete the removed value
+        $val_par = $fvt_lst->get_value($num_fld);
+        if ($sc_par_lst->is_delete()) {
+            $val_old = $val_par;
+        } else {
+            $val_new = $val_par;
+            if ($sc_par_lst->is_update()) {
+                $val_old = $fvt_lst->get_old($num_fld);
+            }
         }
-        $val_new = $fvt_lst->get_value($num_fld);
+        $log->old_value = $val_old;
         $log->new_value = $val_new;
 
         // set the parameters for the log sql statement creation
@@ -2383,10 +2390,12 @@ class sql_creator
                 $num_fld_typ
             );
         }
-        if (!$sc_par_lst->is_delete()) {
+        // a delete part names the old value without the old extension (see create_sql_insert),
+        // so the value parameter is shared; a delete of a null value has no old value to log
+        if ($val_par !== null or !$sc_par_lst->is_delete()) {
             $par_lst_out->add_field(
                 $num_fld,
-                $val_new,
+                $val_par,
                 $num_fld_typ
             );
         }
