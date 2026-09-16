@@ -82,18 +82,18 @@ class view_read_tests
         $msk->load_components($msg);
         $t->assert_contains($test_name, $msk->cmp_lnk_lst->names(), components::WORD_NAME);
 
-        $test_name = 'load view by code id "' . view_shared::WORD_ADD . '"';
+        $test_name = 'load view by code id "' . view_shared::WORD_ADD_DETAIL . '"';
         $msk = new view($t->usr1);
-        $msk->load_by_code_id(view_shared::WORD_ADD, $msg);
+        $msk->load_by_code_id(view_shared::WORD_ADD_DETAIL, $msg);
         $t->assert($test_name, $msk->name(), views::TEST_FORM_NEW_NAME);
 
-        $test_name = 'load view by phrase "' . view_shared::WORD_ADD . '"';
+        $test_name = 'load view by phrase "' . view_shared::WORD_ADD_DETAIL . '"';
         $msk = new view($t->usr1);
         // TODO Prio 2 activate
         //$msk->load_by_phrase($t->phrase_pi());
         //$t->assert($test_name, $msk->name(), views::TN_FORM_NEW);
 
-        $test_name = 'load view by term "' . view_shared::WORD_ADD . '"';
+        $test_name = 'load view by term "' . view_shared::WORD_ADD_DETAIL . '"';
         $msk = new view($t->usr1);
         // TODO Prio 2 activate
         //$msk->load_by_term($t_frm->formula()->term());

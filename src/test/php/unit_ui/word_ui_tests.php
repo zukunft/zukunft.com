@@ -308,7 +308,7 @@ class word_ui_tests
         $ctg_dto->ctg_lst = $t_phr->list_zh_ui();
         $cur_phr = $wrd_currency_rel->phrase();
         $define_html = $list->phrases_related_ex_subtitle($wrd_currency_rel, $msg, null, $ctg_dto, true, $url_arr);
-        $mask_field = $html->form_hidden(url_var::MASK, (string)views::TRIPLE_ADD_ID);
+        $mask_field = $html->form_hidden(url_var::MASK, (string)views::TRIPLE_ADD_DETAIL_ID);
         $t->assert_text_contains($test_name, $define_html, $mask_field);
         $test_name = '... with the word as from side of the new triple';
         $from_field = $html->form_hidden(url_var::PHRASE_FROM, (string)$cur_phr->id());
@@ -434,7 +434,7 @@ class word_ui_tests
         $t->assert_text_contains($test_name, $val_sub_html, icons::ADD);
         // the default frontend type is pure html, which adds a value by selecting its phrases step by step
         $test_name = 'the add value icon opens the view that selects the phrases step by step';
-        $val_add_par = url_var::MASK . url_var::EQ . views::VALUE_ADD_PHRASES_ID;
+        $val_add_par = url_var::MASK . url_var::EQ . views::VALUE_ADD_NO_JS_ID;
         $t->assert_text_contains($test_name, $val_sub_html, $val_add_par);
         $test_name = 'the add value icon presets the shown word';
         $wrd_preset = url_var::PHRASE_LIST . url_var::EQ . $wrd->phrase()->id();
@@ -685,7 +685,7 @@ class word_ui_tests
         $simple_html = $simple_form->form_word_add_simple();
         $t->assert_text_contains($test_name, $simple_html, 'name="' . url_var::NAME . '"');
         $test_name = '... writes via the word add mask';
-        $add_mask = $html->form_hidden(url_var::MASK, (string)views::WORD_ADD_ID);
+        $add_mask = $html->form_hidden(url_var::MASK, (string)views::WORD_ADD_DETAIL_ID);
         $t->assert_text_contains($test_name, $simple_html, $add_mask);
         $test_name = '... without the confirm view';
         $confirmed = $html->form_hidden(url_var::STEP, url_var::STEP_CONFIRMED);

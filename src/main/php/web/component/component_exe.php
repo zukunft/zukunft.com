@@ -287,6 +287,7 @@ class component_exe extends component
             component_types::SYSTEM_BODY_USER_JOBS => $page->user_jobs($msg, $msk_id, $test_mode),
             component_types::SYSTEM_BODY_ALL_JOBS => $page->all_jobs($msg, $msk_id, $test_mode),
             component_types::FORM_WORD_ADD_SIMPLE => $form->form_word_add_simple($style),
+            component_types::FORM_TRIPLE_ADD_SIMPLE => $form->form_triple_add_simple($style),
 
             // result only fields
             component_types::FORM_FIELD_SOURCE_GROUP => $form->form_field_source_group_name($dbo),

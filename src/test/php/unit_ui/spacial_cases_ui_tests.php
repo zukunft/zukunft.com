@@ -66,13 +66,13 @@ class spacial_cases_ui_tests
         $wrd = $t_wrd->word_dsp();
 
         // check if the system views have set
-        $msk = $ui->dto->typ_lst_cache->msk_sys->get_by_code_id(view_shared::WORD_ADD);
+        $msk = $ui->dto->typ_lst_cache->msk_sys->get_by_code_id(view_shared::WORD_ADD_DETAIL);
         $cfg = new data_object();
         $cfg->typ_lst_cache = $ui->dto->typ_lst_cache;
         $test_page .= $msk->show($wrd, $msg, $cfg) . '<br>';
 
         // TODO review and combine with read db tests
-        $t->html_view_test($test_page, view_shared::WORD_ADD);
+        $t->html_view_test($test_page, view_shared::WORD_ADD_DETAIL);
 
         // TODO add a word edit page with no usage to test the switch to the exception message
 

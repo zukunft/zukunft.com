@@ -36,5 +36,5 @@ SELECT view_relation_delete_log
         'word_usage',
         24,
         1,
-        26,
+        92,
         1);

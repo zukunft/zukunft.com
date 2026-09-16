@@ -36,5 +36,5 @@ SELECT view_relation_delete_log
         'word_usage'::text,
         24::bigint,
         1::smallint,
-        26::bigint,
+        92::bigint,
         1::bigint);

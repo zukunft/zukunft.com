@@ -340,9 +340,9 @@ class ui_list extends ui_base
             $pane = $mtr->txt(msg_id::INFO_NO_CATEGORY_TO_SELECT);
         } else {
             $lib = new library();
-            $form_name = views::TRIPLE_ADD;
+            $form_name = views::TRIPLE_ADD_DETAIL;
             $fields = $this->hidden_fields([
-                url_var::MASK => views::TRIPLE_ADD_ID,
+                url_var::MASK => views::TRIPLE_ADD_DETAIL_ID,
                 url_var::PHRASE_FROM => $phr->id(),
                 url_var::VERB => $is_vrb->id()
             ], $url_arr);

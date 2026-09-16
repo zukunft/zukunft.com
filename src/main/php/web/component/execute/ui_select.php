@@ -165,7 +165,7 @@ class ui_select
         $result = $this->phrase_step_fields($form_name, $url_arr, $chosen, $matches, $pattern);
         if ($chosen_ids != '') {
             $preset = url_var::PHRASE_LIST . url_var::EQ . $chosen_ids;
-            $next_url = $html->url_back(views::VALUE_ADD_ID, 0, $url_arr, $preset);
+            $next_url = $html->url_back(views::VALUE_ADD_DETAIL_ID, 0, $url_arr, $preset);
             $next_style = html_base::BS_BTN . ' ' . html_base::BS_BTN_SUCCESS;
             $result .= $html->ref($next_url, $mtr->txt(msg_id::SYSTEM_BUTTON_NEXT), '', $next_style);
         }
@@ -203,7 +203,7 @@ class ui_select
             // the check button must keep the phrase selection view, so the write vars are in a separate form
             $result .= $html->form_end();
             $result .= $html->form_start($form_name . self::VALUE_FORM_SUFFIX);
-            $result .= $html->form_hidden(url_var::MASK, (string)views::VALUE_ADD_ID);
+            $result .= $html->form_hidden(url_var::MASK, (string)views::VALUE_ADD_DETAIL_ID);
             $result .= $html->form_hidden(url_var::STEP, url_var::STEP_CONFIRMED);
             $result .= $html->form_hidden(url_var::BACK . url_var::MASK, (string)views::VALUE_DEFAULT_ID);
             $result .= $html->form_hidden(url_var::PHRASE_LIST, $chosen_ids);

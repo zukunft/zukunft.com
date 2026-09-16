@@ -1,6 +1,6 @@
 GET
-http://localhost/http/view.php?id=0&b=1&8id=0&8b=1&9m=1&m=34&z=0
-/http/view.php?id=0&b=1&8id=0&8b=1&9m=1&m=34&z=0
+http://localhost/http/view.php?id=0&b=1&8id=0&8b=1&9m=1&m=26&z=0
+/http/view.php?id=0&b=1&8id=0&8b=1&9m=1&m=26&z=0
 /http/view.php?id=0&verb_id=1&8id=0&8verb_id=1&9mask_id=entry_view&mask_id=triple_add&step=no&
 {
     "id": "0",

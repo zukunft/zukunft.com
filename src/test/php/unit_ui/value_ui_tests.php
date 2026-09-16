@@ -150,20 +150,20 @@ class value_ui_tests
         $t->assert($test_name, implode(',', $val->phr_lst()->ids()), (string)word_names::ZH_ID);
         $test_name = 'a url without a phrase list presets no phrase';
         $val = $t_val->value_add_ui();
-        $val->url_mapper([url_var::MASK => views::VALUE_ADD_ID], $msg_ui);
+        $val->url_mapper([url_var::MASK => views::VALUE_ADD_DETAIL_ID], $msg_ui);
         $t->assert($test_name, $val->phr_lst()->count(), 0);
 
         // the frontend type of the user decides which view adds a value
         $t->subheader($ts . 'add value view');
         $test_name = 'a pure html frontend adds a value by selecting its phrases step by step';
         $pure_view = config::value_add_view(shared_config::FRONTEND_PURE_HTML);
-        $t->assert($test_name, $pure_view, views::VALUE_ADD_PHRASES_ID);
+        $t->assert($test_name, $pure_view, views::VALUE_ADD_NO_JS_ID);
         $test_name = 'a frontend with js phrase selection adds a value in the add value form';
         $js_phr_view = config::value_add_view(shared_config::FRONTEND_HTML_JS_PHRASE);
-        $t->assert($test_name, $js_phr_view, views::VALUE_ADD_ID);
+        $t->assert($test_name, $js_phr_view, views::VALUE_ADD_DETAIL_ID);
         $test_name = 'a full js frontend adds a value in the add value form';
         $full_js_view = config::value_add_view(shared_config::FRONTEND_FULL_JS);
-        $t->assert($test_name, $full_js_view, views::VALUE_ADD_ID);
+        $t->assert($test_name, $full_js_view, views::VALUE_ADD_DETAIL_ID);
 
         // the form that selects the phrases of a new value step by step, in the test mode with the phrases of
         // the request cache instead of the backend
@@ -174,8 +174,8 @@ class value_ui_tests
         $steps_dto->phr_lst = $t_phr->list_zh_ui();
         $phr_city = $t_wrd->word_city()->phrase();
         $phr_canton = $t_wrd->word_canton()->phrase();
-        $steps_form = views::VALUE_ADD_PHRASES;
-        $next_par = url_var::MASK . url_var::EQ . views::VALUE_ADD_ID;
+        $steps_form = views::VALUE_ADD_NO_JS;
+        $next_par = url_var::MASK . url_var::EQ . views::VALUE_ADD_DETAIL_ID;
         $test_name = 'the exact name of a phrase is checked and added to the phrases of the new value';
         $city_url = [url_var::PATTERN => $phr_city->name()];
         $city_html = $select->phrase_steps($steps_form, $city_url, $msg_ui, $steps_dto, true);
@@ -209,14 +209,14 @@ class value_ui_tests
 
         // the simple add form writes the value with the chosen phrases without the confirm view
         $t->subheader($ts . 'simple add');
-        $simple_form = views::VALUE_ADD_SIMPLE;
+        $simple_form = views::VALUE_ADD;
         $test_name = 'the simple add form checks and adds the phrases like the phrase steps';
         $simple_html = $select->value_add_simple($simple_form, $city_url, $msg_ui, $steps_dto, true);
         $t->assert_text_contains($test_name, $simple_html, $city_field);
         $test_name = '... has the number field';
         $t->assert_text_contains($test_name, $simple_html, 'name="' . url_var::NUMERIC_VALUE . '"');
         $test_name = '... writes via the value add mask';
-        $add_mask = $html->form_hidden(url_var::MASK, (string)views::VALUE_ADD_ID);
+        $add_mask = $html->form_hidden(url_var::MASK, (string)views::VALUE_ADD_DETAIL_ID);
         $t->assert_text_contains($test_name, $simple_html, $add_mask);
         $test_name = '... without the confirm view';
         $confirmed = $html->form_hidden(url_var::STEP, url_var::STEP_CONFIRMED);

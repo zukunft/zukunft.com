@@ -128,7 +128,7 @@ class word_url_tests extends url_test_base
 
         $test_name = 'add request via url without name should return a missing error message';
         $url_arr = test_words::word_new_url($msg_ui);
-        $url_arr[url_var::MASK] = views::WORD_ADD_ID;
+        $url_arr[url_var::MASK] = views::WORD_ADD_DETAIL_ID;
         $url_arr[url_var::ACTION] = url_var::CRUD_CREATE;
         $url_arr[url_var::NAME] = '';
         $result = $ui->url_to_html($url_arr, $msg, $ui->dto, true);
@@ -342,14 +342,14 @@ class word_url_tests extends url_test_base
         $url_arr[url_var::BACK . url_var::MASK] = views::START_ID;
 
         // edit: open the empty add word form
-        $this->assert_step(workflows::EDIT, $url_arr, views::WORD_ADD_ID);
+        $this->assert_step(workflows::EDIT, $url_arr, views::WORD_ADD_DETAIL_ID);
 
         // mark the failing input variant (the empty name) in the snapshot file name
         $this->step_path .= workflows::NAME_SEP . workflows::STEP_NO_NAME;
 
         // save: press save with the empty name
         // the confirm add view is not shown, the add form is rendered again with the warning (no write)
-        $this->assert_step(workflows::SAVE, $url_arr, views::WORD_ADD_ID);
+        $this->assert_step(workflows::SAVE, $url_arr, views::WORD_ADD_DETAIL_ID);
 
         // the empty name is reported as a warning instead of confirming the new word
         $test_name = $this->step_path . workflows::NAME_SEP . 'warns_empty_name';
@@ -377,32 +377,32 @@ class word_url_tests extends url_test_base
         $url_arr[url_var::BACK . url_var::MASK] = views::START_ID;
 
         // edit: open the empty add word form
-        $this->assert_step(workflows::EDIT, $url_arr, views::WORD_ADD_ID);
+        $this->assert_step(workflows::EDIT, $url_arr, views::WORD_ADD_DETAIL_ID);
 
         // back: leave the add form without adding and return to the start view (no write)
         $this->assert_step(workflows::BACK, $url_arr);
 
         // edit: re-open the add form to enter the new word
-        $this->assert_step(workflows::EDIT, $url_arr, views::WORD_ADD_ID);
+        $this->assert_step(workflows::EDIT, $url_arr, views::WORD_ADD_DETAIL_ID);
 
         // user is typing the new word name
         $url_arr[url_var::NAME] = word_names::TEST_ADD;
 
         // save: press save on the add form which shows the confirm add view;
         // the submitted form carries the add mask so url_to_action can map it to the confirm add view
-        $this->assert_step(workflows::SAVE, $url_arr, views::WORD_ADD_ID);
+        $this->assert_step(workflows::SAVE, $url_arr, views::WORD_ADD_DETAIL_ID);
 
         // cancel: discard the new word in the confirm view and return to the start view (no write)
         $this->assert_step(workflows::CANCEL, $url_arr);
 
         // edit: re-open the add form to redo the new word
-        $this->assert_step(workflows::EDIT, $url_arr, views::WORD_ADD_ID);
+        $this->assert_step(workflows::EDIT, $url_arr, views::WORD_ADD_DETAIL_ID);
 
         // user is typing again the new word name
         $url_arr[url_var::NAME] = word_names::TEST_ADD;
 
         // save: press save which shows the confirm add view
-        $this->assert_step(workflows::SAVE, $url_arr, views::WORD_ADD_ID);
+        $this->assert_step(workflows::SAVE, $url_arr, views::WORD_ADD_DETAIL_ID);
 
         // save: press confirm which shows the added word in its own default view
         // TODO Prio 2 with the green message that zu word has been added

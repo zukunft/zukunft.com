@@ -487,7 +487,7 @@ class system_page extends component
         $html = new html_base();
         $par = url_var::STEP . url_var::EQ . url_var::STEP_CONFIRM
             . url_var::ADD . url_var::NAME . url_var::EQ . urlencode($pattern);
-        $url = $html->url_back(views::WORD_ADD_ID, 0, [], $par);
+        $url = $html->url_back(views::WORD_ADD_DETAIL_ID, 0, [], $par);
         // ref escapes the pattern, which is user input reflected from the url
         $btn_text = $lib->msg_var_replace(
             $mtr->txt(msg_id::SEARCH_ADD_WORD),

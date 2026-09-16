@@ -1,6 +1,6 @@
 GET
-http://localhost/http/view.php?m=3&id=998&z=0
-/http/view.php?m=3&id=998&z=0
+http://localhost/http/view.php?m=4&id=998&z=0
+/http/view.php?m=4&id=998&z=0
 /http/view.php?mask_id=triple_default&id=998&step=no&
 {
     "mask_id": "triple_default",

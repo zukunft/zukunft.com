@@ -99,9 +99,9 @@ class config extends value_list
      */
     static function value_add_view(string $type): int
     {
-        $result = views::VALUE_ADD_ID;
+        $result = views::VALUE_ADD_DETAIL_ID;
         if ($type == shared_config::FRONTEND_PURE_HTML) {
-            $result = views::VALUE_ADD_PHRASES_ID;
+            $result = views::VALUE_ADD_NO_JS_ID;
         }
         return $result;
     }

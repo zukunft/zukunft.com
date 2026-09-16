@@ -46,7 +46,7 @@ SELECT view_relation_insert_log_0155510000
 SELECT view_relation_insert_log_0155510000
        (24::bigint,
         1::smallint,
-        26::bigint,
+        92::bigint,
         3::bigint,
         1::smallint,
         108::smallint,

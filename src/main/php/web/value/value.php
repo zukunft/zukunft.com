@@ -109,10 +109,10 @@ class value extends sandbox_value
      */
 
     // curl views
-    const string VIEW_ADD = views::VALUE_ADD;
+    const string VIEW_ADD = views::VALUE_ADD_DETAIL;
     const string VIEW_EDIT = views::VALUE_EDIT;
     const string VIEW_DEL = views::VALUE_DEL;
-    const int VIEW_ADD_ID = views::VALUE_ADD_ID;
+    const int VIEW_ADD_ID = views::VALUE_ADD_DETAIL_ID;
     const int VIEW_EDIT_ID = views::VALUE_EDIT_ID;
     const int VIEW_DEL_ID = views::VALUE_DEL_ID;
 
@@ -842,7 +842,7 @@ class value extends sandbox_value
         }
 
         return parent::btn_add_sbx(
-            views::VALUE_ADD_ID,
+            views::VALUE_ADD_DETAIL_ID,
             $msg_code_id,
             $url_arr, $explain, $base_url);
     }

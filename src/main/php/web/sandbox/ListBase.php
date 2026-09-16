@@ -511,11 +511,11 @@ class ListBase extends ListOfIdObjects
             //      this default value is only valid to select the view
             //      but it does not work for e.g. the formula selector
             if ($this::class == view_list::class) {
-                if ($form == views::WORD_ADD or $form == views::WORD_EDIT) {
+                if ($form == views::WORD_ADD_DETAIL or $form == views::WORD_EDIT) {
                     $default = views::WORD;
                 } elseif ($form == views::VERB_ADD or $form == views::VERB_EDIT) {
                     $default = views::VERB;
-                } elseif ($form == views::TRIPLE_ADD or $form == views::TRIPLE_EDIT) {
+                } elseif ($form == views::TRIPLE_ADD_DETAIL or $form == views::TRIPLE_EDIT) {
                     $default = views::TRIPLE;
                 } elseif ($form == views::SOURCE_ADD or $form == views::SOURCE_EDIT) {
                     $default = views::SOURCE;
@@ -523,7 +523,7 @@ class ListBase extends ListOfIdObjects
                     $default = views::REF;
                 } elseif ($form == views::LANGUAGE_ADD or $form == views::LANGUAGE_EDIT) {
                     $default = views::LANGUAGE;
-                } elseif ($form == views::VALUE_ADD or $form == views::VALUE_EDIT) {
+                } elseif ($form == views::VALUE_ADD_DETAIL or $form == views::VALUE_EDIT) {
                     $default = views::VALUE;
                 } elseif ($form == views::FORMULA_ADD or $form == views::FORMULA_EDIT) {
                     $default = views::FORMULA;

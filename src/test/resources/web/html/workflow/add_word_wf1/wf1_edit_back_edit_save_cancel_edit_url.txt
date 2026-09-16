@@ -1,6 +1,6 @@
 GET
-http://localhost/http/view.php?id=0&9m=1&k=System+Test+Word&m=22&z=0
-/http/view.php?id=0&9m=1&k=System+Test+Word&m=22&z=0
+http://localhost/http/view.php?id=0&9m=1&k=System+Test+Word&m=23&z=0
+/http/view.php?id=0&9m=1&k=System+Test+Word&m=23&z=0
 /http/view.php?id=0&9mask_id=entry_view&name=System+Test+Word&mask_id=word_add&step=no&
 {
     "id": "0",

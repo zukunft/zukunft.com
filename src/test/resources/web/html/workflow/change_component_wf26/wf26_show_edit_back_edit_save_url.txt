@@ -1,6 +1,6 @@
 GET
-http://localhost/http/view.php?id=993&k=System+Test+View+Component&8id=993&8k=System+Test+View+Component&9m=89&9id=993&cs=2&m=91&z=1&submit=
-/http/view.php?id=993&k=System+Test+View+Component&8id=993&8k=System+Test+View+Component&9m=89&9id=993&cs=2&m=91&z=1&submit=
+http://localhost/http/view.php?id=993&k=System+Test+View+Component&8id=993&8k=System+Test+View+Component&9m=67&9id=993&cs=2&m=65&z=1&submit=
+/http/view.php?id=993&k=System+Test+View+Component&8id=993&8k=System+Test+View+Component&9m=67&9id=993&cs=2&m=65&z=1&submit=
 /http/view.php?id=993&name=System+Test+View+Component&8id=993&8name=System+Test+View+Component&9mask_id=component_default&9id=993&style=2&mask_id=component_edit&step=confirm&
 {
     "id": "993",

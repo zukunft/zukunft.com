@@ -133,7 +133,7 @@ class base_ui_tests
 
         // a request of a view that changes data is never cached
         $test_name = 'a change mask request is not cached';
-        $url_array = [url_var::MASK => views::WORD_ADD_ID, url_var::ID => 2];
+        $url_array = [url_var::MASK => views::WORD_ADD_DETAIL_ID, url_var::ID => 2];
         $t->assert($test_name, $ui->url_cache_key($url_array), '');
 
         // a request with a form submission is never cached
@@ -332,7 +332,7 @@ class base_ui_tests
         //$t->assert_sql_name_unique($log_ui->dsp_hist_links_sql($db_con, true));
 
         // button add
-        $url = $html->url_back(views::WORD_ADD_ID);
+        $url = $html->url_back(views::WORD_ADD_DETAIL_ID);
         $t->html_page_test(new button($url)->add(msg_id::WORD_ADD), '', 'button_add', $msg_ui);
 
         $t->subheader($ts . 'form field name and id');
@@ -521,7 +521,7 @@ class base_ui_tests
         $url_arr = [url_var::MASK => views::WORD_ID, url_var::ID => word_names::ZH_ID];
 
         $test_name = 'a sandbox object e.g. word add button html code';
-        $target = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::WORD_ADD_ID . '" title="add new word"><i class="far fa-plus-square"></i></a>';
+        $target = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::WORD_ADD_DETAIL_ID . '" title="add new word"><i class="far fa-plus-square"></i></a>';
         $wrd = new word();
         $t->assert($test_name, $wrd->btn_add(), $target);
 
@@ -538,11 +538,11 @@ class base_ui_tests
         $t->assert($test_name, $frm->btn_del(), $target);
 
 
-        $url = $html->url_back(views::WORD_ADD_ID);
+        $url = $html->url_back(views::WORD_ADD_DETAIL_ID);
         // this block tests the icon and the title of each button, so no calling page is named;
         // that the buttons carry the page vars of the url array is tested in the back url section
         $url_arr = [];
-        $target = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::WORD_ADD_ID . '" title="add new word">';
+        $target = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::WORD_ADD_DETAIL_ID . '" title="add new word">';
         $result = (new button($url, $url_arr))->add(msg_id::WORD_ADD);
         $t->dsp_contains(", btn_add", $target, $result);
 
@@ -560,25 +560,25 @@ class base_ui_tests
         $result = (new button($url, $url_arr))->undo(msg_id::UNDO);
         //$t->assert(", btn_undo", $result, $target);
 
-        $url = $html->url_back(views::WORD_ADD_ID);
+        $url = $html->url_back(views::WORD_ADD_DETAIL_ID);
         $target = '<a href="/http/view.php" title="Find test"><img src="/images/button_find.svg" alt="Find test"></a>';
-        $target = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::WORD_ADD_ID . '" title=""><img src="/images/button_find.svg" alt=""></a>';
+        $target = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::WORD_ADD_DETAIL_ID . '" title=""><img src="/images/button_find.svg" alt=""></a>';
         $result = (new button($url, $url_arr))->find(msg_id::FIND);
         //$t->assert(", btn_find", $result, $target);
 
-        $url = $html->url_back(views::WORD_ADD_ID);
+        $url = $html->url_back(views::WORD_ADD_DETAIL_ID);
         $target = '<a href="/http/view.php" title="Show all test"><img src="/images/button_filter_off.svg" alt="Show all test"></a>';
-        $target = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::WORD_ADD_ID . '" title=""><img src="/images/button_filter_off.svg" alt=""></a>';
+        $target = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::WORD_ADD_DETAIL_ID . '" title=""><img src="/images/button_filter_off.svg" alt=""></a>';
         $result = (new button($url, $url_arr))->un_filter(msg_id::REMOVE_FILTER);
         //$t->assert(", btn_unfilter", $result, $target);
 
-        $url = $html->url_back(views::WORD_ADD_ID);
+        $url = $html->url_back(views::WORD_ADD_DETAIL_ID);
         $target = '<h6>YesNo test</h6><a href="/http/view.php&confirm=1" title="Yes">Yes</a>/<a href="/http/view.php&confirm=-1" title="No">No</a>';
-        $target = '<h6></h6><a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::WORD_ADD_ID . '&amp;confirm=1">yes</a>/<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::WORD_ADD_ID . '&amp;confirm=-1">no</a>';
+        $target = '<h6></h6><a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::WORD_ADD_DETAIL_ID . '&amp;confirm=1">yes</a>/<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::WORD_ADD_DETAIL_ID . '&amp;confirm=-1">no</a>';
         $result = (new button($url, $url_arr))->yes_no();
         $t->assert(", btn_yesno", $result, $target);
 
-        $url = $html->url_back(views::WORD_ADD_ID);
+        $url = $html->url_back(views::WORD_ADD_DETAIL_ID);
         $target = '<a href="' . api::MAIN_SCRIPT . '?words=1" title="back"><img src="/images/button_back.svg" alt="back"></a>';
         $result = (new button($url, $url_arr))->back();
         //$t->assert(", btn_back", $result, $target);
@@ -688,9 +688,9 @@ class base_ui_tests
         // '9'-prefixed back part, so that the called page can return to the calling page
         $page_arr = [url_var::MASK => '3', url_var::ID => '123'];
         $test_name = 'a view url carries the calling page as the back part';
-        $t->assert_text_contains($test_name, $html->url_back(views::WORD_ADD_ID, 0, $page_arr), '9m=3&9id=123');
+        $t->assert_text_contains($test_name, $html->url_back(views::WORD_ADD_DETAIL_ID, 0, $page_arr), '9m=3&9id=123');
         $test_name = '... and an unknown calling page adds no back part';
-        $t->assert_text_not_contains($test_name, $html->url_back(views::WORD_ADD_ID, 0, []), '9');
+        $t->assert_text_not_contains($test_name, $html->url_back(views::WORD_ADD_DETAIL_ID, 0, []), '9');
         $test_name = 'an old style script url carries the calling page as the back part';
         $t->assert_text_contains($test_name, $html->url_old(rest_ctrl::VIEW, 5, $page_arr), '9m=3&9id=123');
         // the group id of a value with more than four phrases contains a '+', which a url reads as a
@@ -745,11 +745,11 @@ class base_ui_tests
         // the human url uses the view code id (the name) for the mask, not the numeric view id, for
         // every view that is in the loaded cache (url_mapper::map_std_mask_to)
         $test_name = 'convert the standard url to human-readable url';
-        $url = 'http://localhost' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::WORD_ADD_ID . '&id=1&debug=-1';
+        $url = 'http://localhost' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::WORD_ADD_DETAIL_ID . '&id=1&debug=-1';
         $url_human = $url_test->test_url($url_map->standard_url_to_human($lib->url_array_with($url), $msg));
         $url_array = $lib->url_array($url_human);
         $view = $url_array[url_var::MASK_HUMAN];
-        $t->assert($test_name, $view, views::WORD_ADD);
+        $t->assert($test_name, $view, views::WORD_ADD_DETAIL);
         // the list size and the list page of a "... more" click are url state like every other
         // frontend state, so both have a human-readable name that maps to the short name and back
         $test_name = 'the human-readable list size and page map to the short url vars';
@@ -770,11 +770,11 @@ class base_ui_tests
         // url_mapper::to_row_format: the flat standard url array (as produced by url_to_standard) is
         // accepted directly now, not only the [key, value] row format produced by url_array_with
         $test_name = 'convert a flat standard url to human-readable url';
-        $url = 'http://localhost' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::WORD_ADD_ID . '&id=1&debug=-1';
+        $url = 'http://localhost' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::WORD_ADD_DETAIL_ID . '&id=1&debug=-1';
         $url_human = $url_test->test_url($url_map->standard_url_to_human($lib->url_array($url), $msg));
         $url_array = $lib->url_array($url_human);
         $view = $url_array[url_var::MASK_HUMAN];
-        $t->assert($test_name, $view, views::WORD_ADD);
+        $t->assert($test_name, $view, views::WORD_ADD_DETAIL);
         // an '8'-prefixed pre value (and '9'-prefixed back target) is mapped to its human key with the
         // prefix kept (e.g. 8name), so it is not reported as missing
         $test_name = 'human url conversion maps an 8-prefixed pre value';
@@ -808,7 +808,7 @@ class base_ui_tests
         $test_name = 'a confirm keeps the calling page as back target';
         $cfm_msg = new user_message_ui();
         $cfm_url = $ui->url_to_action([
-            url_var::MASK => views::WORD_ADD_ID,
+            url_var::MASK => views::WORD_ADD_DETAIL_ID,
             url_var::STEP => url_var::STEP_CONFIRM,
             url_var::NAME => word_names::TEST_ADD,
             url_var::BACK . url_var::MASK => views::WORD_ID,
@@ -817,10 +817,10 @@ class base_ui_tests
         $t->assert($test_name, $cfm_url[url_var::BACK . url_var::ID] ?? 0, word_names::ZH_ID);
         $cfm_msg->reset();
         $test_name = 'a confirm carries the mask of the change as origin mask';
-        $t->assert($test_name, $cfm_url[url_var::ORIGIN_MASK] ?? 0, views::WORD_ADD_ID);
+        $t->assert($test_name, $cfm_url[url_var::ORIGIN_MASK] ?? 0, views::WORD_ADD_DETAIL_ID);
         $test_name = 'a confirm without a calling page returns to the own view of the object';
         $cfm_url = $ui->url_to_action([
-            url_var::MASK => views::WORD_ADD_ID,
+            url_var::MASK => views::WORD_ADD_DETAIL_ID,
             url_var::STEP => url_var::STEP_CONFIRM,
             url_var::NAME => word_names::TEST_ADD
         ], $t->usr1, $cfm_msg, $ui->dto, false);
@@ -1018,7 +1018,7 @@ class base_ui_tests
         $t->assert_true($test_name, frontend::session_recovery_url(false, false, $req_url) === null);
 
         $test_name = 'convert the standard url to pod interchangeable url';
-        $url = 'http://localhost' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::WORD_ADD_ID . '&id=1&debug=-1';
+        $url = 'http://localhost' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::WORD_ADD_DETAIL_ID . '&id=1&debug=-1';
         $url_pod = $url_test->test_url($url_map->standard_url_to_pod($lib->url_array_with($url), $msg));
         $url_array = $lib->url_array($url_pod);
         // TODO Prio 2 activate
