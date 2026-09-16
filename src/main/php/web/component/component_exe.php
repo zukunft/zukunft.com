@@ -280,6 +280,13 @@ class component_exe extends component
             component_types::FORM_FIELD_VALUE => $form->form_num_value($dbo, $style, $msg),
             component_types::FORM_FIELD_GROUP => $form->form_field_group_name($dbo),
             component_types::FORM_FIELD_GROUP_OR_PHRASES => $form->form_field_group_or_phrases($dbo),
+            component_types::FORM_PHRASE_STEPS => $select->phrase_steps($form_name, $url_arr, $msg, $cfg, $test_mode),
+            component_types::FORM_VALUE_ADD_SIMPLE => $select->value_add_simple($form_name, $url_arr, $msg, $cfg, $test_mode),
+            component_types::FORM_VALUE_OVERWRITE => $form->form_value_overwrite($dbo, $style),
+            component_types::SYSTEM_BODY_NOT_YET_AVAILABLE => $page->not_yet_available(),
+            component_types::SYSTEM_BODY_USER_JOBS => $page->user_jobs($msg, $msk_id, $test_mode),
+            component_types::SYSTEM_BODY_ALL_JOBS => $page->all_jobs($msg, $msk_id, $test_mode),
+            component_types::FORM_WORD_ADD_SIMPLE => $form->form_word_add_simple($style),
 
             // result only fields
             component_types::FORM_FIELD_SOURCE_GROUP => $form->form_field_source_group_name($dbo),
@@ -385,14 +392,14 @@ class component_exe extends component
             component_types::SELECT_VIEW => $select->view_select($dbo, $form_name, $msg, $cfg),
 
             // related
-            component_types::SYSTEM_SUB_TITLE => $page->system_sub_tile($this->ui_msg_code_id, $dbo, $url_arr),
+            component_types::SYSTEM_SUB_TITLE => $page->system_sub_tile($msg, $this->ui_msg_code_id, $dbo, $url_arr, $msk_id),
             component_types::SYSTEM_SUB_TITLE_VAR => $page->system_sub_tile_var($this->ui_msg_code_id, $dbo->usage, $this->ui_msg_code_id_vars, $this->ui_msg_value_exception, $this->ui_msg_code_id_exception),
             component_types::LIST_PARENTS_OF_WORD => $list->parents_of_word($dbo, $msg, $cfg->phrase_list()),
             component_types::LIST_CHILDREN_OF_WORD => $list->children_of_word($dbo, $msg, $cfg->phrase_list()),
             component_types::PHRASE_ALIASES => $list->phrase_aliases($dbo, $msg, $cfg->phrase_list()),
             component_types::PHRASE_SYMBOLS => $list->phrase_symbols($dbo, $msg, $cfg->phrase_list()),
             component_types::LIST_PHRASES_RELATED_EX_SYMBOLS => $list->phrases_related_ex_symbols($dbo, $msg, $cfg->phrase_list()),
-            component_types::LIST_PHRASES_RELATED_EX_SUBTITLE => $list->phrases_related_ex_subtitle($dbo, $msg, $cfg->phrase_list()),
+            component_types::LIST_PHRASES_RELATED_EX_SUBTITLE => $list->phrases_related_ex_subtitle($dbo, $msg, $cfg->phrase_list(), $cfg, $test_mode, $url_arr),
             component_types::LIST_TRIPLES_OF_VERB => $list->triple_list($dbo, $msg, $cfg, $url_arr),
             component_types::LIST_VALUES_BY_TRIPLE => $list->values_by_triple($dbo, $msg, $cfg),
             component_types::LIST_VALUES_BY_SOURCE => $list->values_by_source($dbo, $msg, $cfg),

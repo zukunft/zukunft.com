@@ -251,6 +251,16 @@ class system_object
     }
 
     /**
+     * get a preloaded verb by its database id e.g. the verb that an api request names by id
+     * @param int $id the database id of the verb
+     * @return verb|null the verb or null if no verb has this id
+     */
+    function verb_by_id(int $id): ?verb
+    {
+        return $this->typ_lst->vrb->get_verb_by_id($id);
+    }
+
+    /**
      * get a preloaded system user
      * TODO Prio 1 check that it is never be called by a user action and log all access as double check
      *

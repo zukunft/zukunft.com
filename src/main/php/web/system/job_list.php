@@ -40,8 +40,16 @@ include_once html_paths::HTML . 'styles.php';
 include_once html_paths::SANDBOX . 'ListBase.php';
 include_once html_paths::SYSTEM . 'job.php';
 include_once html_paths::USER . 'user_message.php';
+include_once html_paths::HTML . 'rest_call.php';
+include_once html_paths::SHARED . 'json_fields.php';
+include_once html_paths::SHARED . 'url_var.php';
+include_once html_paths::SHARED_ENUM . 'messages.php';
 
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\html\rest_call;
 use Zukunft\ZukunftCom\main\php\web\sandbox\ListBase;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
@@ -69,6 +77,65 @@ class job_list extends ListBase
 
 
     /*
+     * load
+     */
+
+    /**
+     * load the jobs of the requesting user via the api
+     * @param user_message $msg to report a problem of the api call
+     * @return bool true if at least one job has been found
+     */
+    function load_by_user(user_message $msg): bool
+    {
+        $rest = new rest_call();
+        $json_body = $rest->api_get(self::class, $this->user_data($msg));
+        return $this->api_load($json_body, $msg);
+    }
+
+    /**
+     * load the jobs of all users via the api, which refuses the request of a user who is not an admin
+     * @param user_message $msg to report a problem of the api call e.g. that only an admin can see all jobs
+     * @return bool true if at least one job has been found
+     */
+    function load_all(user_message $msg): bool
+    {
+        $rest = new rest_call();
+        $data = $this->user_data($msg);
+        $data[url_var::JOB_LIST_ALL] = url_var::TRUE;
+        $json_body = $rest->api_get(self::class, $data);
+        return $this->api_load($json_body, $msg);
+    }
+
+    /**
+     * @param user_message $msg with the requesting user
+     * @return array the api request data with the requesting user, for whom the backend loads the jobs
+     */
+    private function user_data(user_message $msg): array
+    {
+        $data = [];
+        if ($msg->usr != null) {
+            $data[url_var::USER] = $msg->usr->id();
+        }
+        return $data;
+    }
+
+    /**
+     * @param array $json_body the api answer with the jobs or the message why the jobs are not sent
+     * @param user_message $msg to report the api message
+     * @return bool true if at least one job has been found
+     */
+    private function api_load(array $json_body, user_message $msg): bool
+    {
+        if (array_key_exists(json_fields::MSG, $json_body)) {
+            $msg->add(msg_id::API_MESSAGE, [msg_id::VAR_JSON_TEXT => $json_body[json_fields::MSG]]);
+        } else {
+            $msg->merge($this->api_mapper($json_body));
+        }
+        return !$this->is_empty();
+    }
+
+
+    /*
      * display
      */
 
@@ -86,6 +153,36 @@ class job_list extends ListBase
             $result .= $html->tr($job->display());
         }
         return $html->tbl($result);
+    }
+
+    /**
+     * @param bool $is_admin true if the requesting user is an admin, who can also upgrade a job
+     * @param int $msk_id the id of the shown view, so that a job button returns to this view
+     * @return string with a table of the jobs with the pending jobs on top and the buttons to change an open job
+     */
+    function display_with_actions(bool $is_admin, int $msk_id): string
+    {
+        global $mtr;
+        $html = new html_base();
+        $rows = '';
+        foreach ($this->pending_first() as $job) {
+            $rows .= $html->tr($job->display_with_actions($is_admin, $msk_id));
+        }
+        if ($rows == '') {
+            $rows = $html->tr($html->td($mtr->txt(msg_id::INFO_NO_JOBS)));
+        }
+        return $html->tbl(new job()->header(true) . $rows);
+    }
+
+    /**
+     * @return array the jobs with the open jobs on top and within each group the newest request first
+     */
+    function pending_first(): array
+    {
+        $jobs = $this->lst();
+        usort($jobs, fn(job $a, job $b) => [$b->is_open(), $b->request_time(), $b->id()]
+            <=> [$a->is_open(), $a->request_time(), $a->id()]);
+        return $jobs;
     }
 
     /*

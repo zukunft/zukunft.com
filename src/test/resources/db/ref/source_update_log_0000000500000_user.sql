@@ -33,5 +33,5 @@ SELECT source_update_log_0000000500000_user
         null::text,
         null::bigint,
         null::text,
-        93::bigint,
+        9::bigint,
         1::bigint);

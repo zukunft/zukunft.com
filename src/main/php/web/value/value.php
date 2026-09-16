@@ -160,9 +160,8 @@ class value extends sandbox_value
     }
 
     /**
-     * the url vars that url_mapper reads back for the user-editable fields of a value;
-     * the text, time and geo values have no url var yet, so an overwrite of one of them gets no
-     * undo icon (see docs/llm/pending.md)
+     * the url vars that url_mapper reads back for the user-editable fields of a value
+     * e.g. to show the undo icon of a user overwrite
      *
      * @return array db field name => url var key
      */
@@ -170,6 +169,9 @@ class value extends sandbox_value
     {
         return [
             value_fields::FLD_VALUE => url_var::NUMERIC_VALUE,
+            value_fields::FLD_VALUE_TEXT => url_var::VALUE_TEXT,
+            value_fields::FLD_VALUE_TIME => url_var::VALUE_TIME,
+            value_fields::FLD_VALUE_GEO => url_var::VALUE_GEO,
             source_fields::FLD_ID => url_var::SOURCE,
             fields::FLD_EXCLUDED => url_var::EXCLUDED,
             fields::FLD_SHARE => url_var::SHARE,
@@ -308,6 +310,9 @@ class value extends sandbox_value
         $vars = parent::api_array($typ_lst, $msg);
         $vars[json_fields::PHRASES] = $this->grp->phr_lst()->api_array($typ_lst, $msg);
         $vars[json_fields::NUMBER] = $this->number();
+        $vars[json_fields::TEXT_VALUE] = $this->text_value();
+        $vars[json_fields::TIME_VALUE] = $this->time_value()?->format(self::TIME_FORMAT);
+        $vars[json_fields::GEO_VALUE] = $this->geo_value();
         if ($this->src != null) {
             $vars[json_fields::SOURCE_ID] = $this->source_id();
         }

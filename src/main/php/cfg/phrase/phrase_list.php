@@ -283,10 +283,54 @@ class phrase_list extends sandbox_list_named
         return $result;
     }
 
+    /**
+     * load the phrases on one side of the not excluded triples of a verb, each phrase once,
+     * e.g. the parents of the verb "is a" to offer the categories a word can be defined as
+     *
+     * @param verb $vrb the verb of the triples e.g. "is a"
+     * @param foaf_direction $direction up for the to side (the parents), down for the from side (the children)
+     * @param user_message $msg to report a problem of the load
+     * @return bool true if at least one phrase has been loaded
+     */
+    function load_by_verb(verb $vrb, foaf_direction $direction, user_message $msg): bool
+    {
+        global $db_con;
+        $qp = $this->load_sql_by_verb($db_con->sql_creator(), $vrb, $direction);
+        return $this->load($qp, $msg);
+    }
+
 
     /*
      * sql
      */
+
+    /**
+     * create the sql statement to load the phrases on one side of the not excluded triples of a verb,
+     * each phrase once, e.g. the parents of the verb "is a" as the categories a word can be defined as
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param verb $vrb the verb of the triples e.g. "is a"
+     * @param foaf_direction $direction up for the to side (the parents), down for the from side (the children)
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
+     */
+    function load_sql_by_verb(sql_creator $sc, verb $vrb, foaf_direction $direction): sql_par
+    {
+        $side_fld = match ($direction) {
+            foaf_direction::UP => triple_fields::FLD_TO,
+            foaf_direction::DOWN => triple_fields::FLD_FROM,
+            default => '',
+        };
+        $qp = $this->load_sql($sc, 'verb_' . $direction->value);
+        if ($vrb->id() == 0 or $side_fld == '') {
+            log_err('a verb with an id and the direction up or down are needed to load the phrases of a verb');
+            $qp->name = '';
+        } else {
+            $sc->add_where_in_sub(phrase::FLD_ID, triple::class, $side_fld, verb_db::FLD_ID, $vrb->id());
+            $qp->sql = $sc->sql();
+            $qp->par = $sc->get_par();
+        }
+        return $qp;
+    }
 
     /**
      * create an SQL statement to retrieve a list of phrase objects

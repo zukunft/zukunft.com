@@ -118,6 +118,9 @@ class sql
     const string IN = 'IN';
     const string ANY = '= ANY';
     const string LIKE = 'LIKE';
+    // lower case like the pattern search of the existing queries
+    const string LIKE_LOWER_CASE = 'like';
+    const string LIKE_NO_UP_CASE = 'ilike';
     const string COALESCE = 'COALESCE';
 
     // to separate one SQL statement from the next

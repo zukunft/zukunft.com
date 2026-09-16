@@ -1232,11 +1232,7 @@ class test_base
         $file_path = test_paths::HTML . test_paths::VIEWS . $folder . $dsp_code_id . $dbo_name;
 
         // load the view from the database (the db layer measures its own read time)
-        $msk = new view($usr);
-        $msk->load_by_code_id($dsp_code_id, $msg);
-        if ($msk->id() == 0) {
-            log_err('view with code id ' . $dsp_code_id . ' not found');
-        }
+        $msk = $this->load_view_by_code_id($dsp_code_id, $usr, $msg);
         if ($id != 0) {
             // add the related database objects
             $dbo->load_by_id_with_related($id, $msg);
@@ -1289,6 +1285,61 @@ class test_base
             $dbo->load_by_id_with_related($dbo->id(), $msg);
         }
         return $this->assert_view_html($msk, $usr, $dbo, $dbo->id() != 0, $cfg, $file_path, $view_name);
+    }
+
+    /**
+     * test a view with a filled object of a test factory that the seeded database does not have, e.g. a
+     * value with more than 16 phrases or a text value; the snapshot is named by the test case, because
+     * the object has no database row whose id could name it
+     *
+     * @param string $dsp_code_id the code id of the view that should be tested e.g. views::VALUE
+     * @param user $usr to define for which user the view should be created
+     * @param db_object_seq_id|sandbox_multi $dbo the filled object of a test factory
+     * @param string $case_name the name of the test case for the snapshot file e.g. "big"
+     * @param data_object_ui|null $cfg the context that should be used to create the view
+     * @param string $class_for_file the class that names the snapshot folder, if not the class of the object
+     *                               e.g. value::class for a text value that is shown on the value page
+     * @return bool true if the generated view matches the expected
+     */
+    function assert_view_by_factory(
+        string                         $dsp_code_id,
+        user                           $usr,
+        db_object_seq_id|sandbox_multi $dbo,
+        string                         $case_name,
+        ?data_object_ui                $cfg = null,
+        string                         $class_for_file = ''
+    ): bool
+    {
+        $msg = new user_message();
+        $lib = new library();
+
+        if ($class_for_file == '') {
+            $class_for_file = $dbo::class;
+        }
+        $class = $lib->class_to_name($class_for_file);
+        $file_path = test_paths::HTML . test_paths::VIEWS . $class . DIRECTORY_SEPARATOR
+            . $dsp_code_id . '_' . $class . '_' . $this->name_to_file($case_name);
+
+        $msk = $this->load_view_by_code_id($dsp_code_id, $usr, $msg);
+        return $this->assert_view_html($msk, $usr, $dbo, true, $cfg, $file_path, $dsp_code_id);
+    }
+
+    /**
+     * load the view that a view test renders, e.g. the value default view
+     *
+     * @param string $dsp_code_id the code id of the view e.g. views::VALUE
+     * @param user $usr the user for whom the view is loaded
+     * @param user_message $msg to collect the problems of the load
+     * @return view the loaded view, which has no id if the code id is not found
+     */
+    private function load_view_by_code_id(string $dsp_code_id, user $usr, user_message $msg): view
+    {
+        $msk = new view($usr);
+        $msk->load_by_code_id($dsp_code_id, $msg);
+        if ($msk->id() == 0) {
+            log_err('view with code id ' . $dsp_code_id . ' not found');
+        }
+        return $msk;
     }
 
     /**
@@ -6108,11 +6159,7 @@ class test_base
      */
     function update_file(string $test_resource_path, string $result): void
     {
-        // TODO always set a breakpoint here
-        $filepath = test_paths::RESOURCE . $test_resource_path;
-        if (file_put_contents($filepath, $result) === false) {
-            log_err('Cannot write target file ' . $filepath);
-        }
+        $this->update_path_file(test_paths::RESOURCE . $test_resource_path, $result);
     }
 
     /**
@@ -6123,7 +6170,11 @@ class test_base
     function update_path_file(string $filepath, string $result): void
     {
         // TODO always set a breakpoint here
-        if (file_put_contents($filepath, $result) === false) {
+        // the first snapshot of a new object type is written to a folder that does not exist yet
+        $dir = dirname($filepath);
+        if (!is_dir($dir) and !mkdir($dir, 0775, true) and !is_dir($dir)) {
+            log_err('Cannot create the target folder ' . $dir);
+        } elseif (file_put_contents($filepath, $result) === false) {
             log_err('Cannot write target file ' . $filepath);
         }
     }

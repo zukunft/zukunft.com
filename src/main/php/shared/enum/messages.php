@@ -1719,12 +1719,18 @@ enum messages: string
     case INFO_NOT_USED_BY_TERMS = 'info_not_used_by_terms';
     // shown on the search page if no word, triple, verb or formula matches the search pattern
     case INFO_NO_SEARCH_RESULT = 'info_no_search_result';
+    // shown in the phrase selection of a new value if no word or triple starts with the typed chars
+    case INFO_NO_PHRASE_FOR_PATTERN = 'info_no_phrase_for_pattern';
     // shown instead of the formula selector of a phrase page if no formula can be offered
     case INFO_NO_FORMULA_TO_LINK = 'info_no_formula_to_link';
+    // shown instead of the category selector of a phrase page if no category can be offered
+    case INFO_NO_CATEGORY_TO_SELECT = 'info_no_category_to_select';
     // the title of the formula link confirm page
     case INFO_LINK_FORMULA_TO_PHRASE = 'info_link_formula_to_phrase';
     // the title of the confirm page section with the link that a new object gets with the same confirm
     case INFO_CONFIRM_LINK = 'info_confirm_link';
+    // the text of the form that defines a phrase without an "is a" parent as one of the categories
+    case INFO_DEFINE_PHRASE_AS = 'info_define_phrase_as';
 
     // e.g. if an import formula does not contain all needed parameters
     case FORMULA_NOT_VALID = 'formula is not valid';
@@ -1777,6 +1783,8 @@ enum messages: string
     case REF_EDIT = 'ref_edit';
     case REF_DEL = 'ref_del';
     case VALUE_ADD = 'value_add';
+    // the tooltip of the greyed out value add icon of a user who cannot save a change
+    case VALUE_ADD_BLOCKED = 'value_add_blocked';
     case VALUE_ADD_SIMILAR = 'value_add_similar';
     case VALUE_EDIT = 'value_edit';
     case VALUE_DEL = 'value_del';
@@ -1788,6 +1796,10 @@ enum messages: string
     case FORMULA_LINK = 'formula_link';
     // the tooltip of the greyed out formula link icon of a user who cannot save a change
     case FORMULA_LINK_BLOCKED = 'formula_link_blocked';
+    // the tooltip of the icon that opens the form to define a phrase without "is a" parent as a category
+    case DEFINE_PHRASE = 'define_phrase';
+    // the tooltip of the greyed out define icon of a user who cannot save a change
+    case DEFINE_PHRASE_BLOCKED = 'define_phrase_blocked';
     case FORMULA_UNLINK = 'formula_unlink';
     case RESULT_EDIT = 'result_edit';
     case RESULT_DEL = 'result_del';
@@ -1848,6 +1860,8 @@ enum messages: string
     case FORM_TITLE_GROUP_EDIT = 'form_title_group_edit';
     case FORM_TITLE_GROUP_DEL = 'form_title_group_del';
     case FORM_TITLE_VALUE_ADD = 'form_title_value_add';
+    // the title of the form that selects the phrases of a new value step by step
+    case FORM_TITLE_VALUE_ADD_PHRASES = 'form_title_value_add_phrases';
     case FORM_TITLE_VALUE_EDIT = 'form_title_value_edit';
     case FORM_TITLE_VALUE_DEL = 'form_title_value_del';
     case FORM_TITLE_FORMULA_ADD = 'form_title_formula_add';
@@ -1971,6 +1985,42 @@ enum messages: string
     case SYSTEM_TITLE_RESULT_EXPLAIN = 'system_title_result_explain';
     case SYSTEM_TITLE_FORMULA_TEST = 'system_title_formula_test';
     case SYSTEM_TITLE_USER_SETTINGS = 'system_title_user_settings';
+    case SYSTEM_TITLE_USER_CONFIG = 'system_title_user_config';
+    case SYSTEM_TITLE_SYSTEM_CONFIG = 'system_title_system_config';
+    case SYSTEM_TITLE_ADMIN_CONFIG = 'system_title_admin_config';
+    case SYSTEM_TITLE_USER_QUARANTINE = 'system_title_user_quarantine';
+    case SYSTEM_TITLE_ALL_QUARANTINE = 'system_title_all_quarantine';
+    case SYSTEM_TITLE_USER_JOBS = 'system_title_user_jobs';
+    case SYSTEM_TITLE_ALL_JOBS = 'system_title_all_jobs';
+    case SYSTEM_TITLE_PHRASE_TRANSLATIONS = 'system_title_phrase_translations';
+    case SYSTEM_TITLE_LANGUAGE_FORMS = 'system_title_language_forms';
+    case SYSTEM_TITLE_TRANSLATIONS_MISSING = 'system_title_translations_missing';
+    case SYSTEM_TITLE_LIST_LANGUAGES = 'system_title_list_languages';
+    case SYSTEM_TITLE_SYS_LOG_DETAIL = 'system_title_sys_log_detail';
+    case SYSTEM_TITLE_CHANGE_LOG_USER = 'system_title_change_log_user';
+    case SYSTEM_TITLE_CHANGE_LOG_RECENT = 'system_title_change_log_recent';
+    case SYSTEM_TITLE_OBJECT_HISTORY = 'system_title_object_history';
+    case SYSTEM_TITLE_CHANGE_DETAIL = 'system_title_change_detail';
+    case SYSTEM_TITLE_IMPORT_PREVIEW = 'system_title_import_preview';
+    case SYSTEM_TITLE_IMPORT_RESULT = 'system_title_import_result';
+    case SYSTEM_TITLE_IMPORT_URL = 'system_title_import_url';
+    case SYSTEM_TITLE_IMPORT_WIKIDATA = 'system_title_import_wikidata';
+    case SYSTEM_TITLE_EXPORT_SELECTIONS = 'system_title_export_selections';
+    case SYSTEM_TITLE_EXPORT_OBJECT = 'system_title_export_object';
+    case SYSTEM_TITLE_EXPORT_READY = 'system_title_export_ready';
+    case SYSTEM_TITLE_JOB_DETAIL = 'system_title_job_detail';
+    case SYSTEM_TITLE_CALC_STATUS = 'system_title_calc_status';
+    case SYSTEM_TITLE_VALUE_FIND = 'system_title_value_find';
+    case SYSTEM_TITLE_REF_FIND = 'system_title_ref_find';
+    case SYSTEM_TITLE_FIND_DUPLICATES = 'system_title_find_duplicates';
+    case SYSTEM_TITLE_LIST_WORDS = 'system_title_list_words';
+    case SYSTEM_TITLE_LIST_TRIPLES = 'system_title_list_triples';
+    case SYSTEM_TITLE_LIST_SOURCES = 'system_title_list_sources';
+    case SYSTEM_TITLE_LIST_REFS = 'system_title_list_refs';
+    case SYSTEM_TITLE_LIST_FORMULAS = 'system_title_list_formulas';
+    case SYSTEM_TITLE_LIST_VIEWS = 'system_title_list_views';
+    case SYSTEM_TITLE_LIST_COMPONENTS = 'system_title_list_components';
+    case INFO_VIEW_NOT_YET_AVAILABLE = 'info_view_not_yet_available';
     case SYSTEM_TITLE_USER = 'system_title_user';
     case SYSTEM_TITLE_VERB = 'system_title_verb';
     // the class word in front of the object name of a page title e.g. view "Word"
@@ -1978,6 +2028,15 @@ enum messages: string
     case SYSTEM_TITLE_COMPONENT = 'system_title_component';
     case TITLE_LANGUAGE_SELECT = 'title_language_select';
     case ADMIN_NO_OPEN_JOBS = 'admin_no_open_jobs';
+    case INFO_NO_JOBS = 'info_no_jobs';
+    case JOB_CHANGE_NOT_PERMITTED = 'job_change_not_permitted';
+    case JOB_UPGRADE_ONLY_ADMIN = 'job_upgrade_only_admin';
+    case JOB_ALREADY_CLOSED = 'job_already_closed';
+    case JOB_ACTION_UNKNOWN = 'job_action_unknown';
+    case JOB_LIST_ALL_ONLY_ADMIN = 'job_list_all_only_admin';
+    case SYSTEM_BUTTON_JOB_UPGRADE = 'system_button_job_upgrade';
+    case SYSTEM_BUTTON_JOB_DOWNGRADE = 'system_button_job_downgrade';
+    case SYSTEM_BUTTON_JOB_CANCEL = 'system_button_job_cancel';
     case ERROR_UPDATE_PROGRAM_ISSUES = 'error_update_program_issues';
     case ERROR_UPDATE_NO_OPEN = 'error_update_no_open';
     case ERROR_UPDATE_PERMISSION_DENIED = 'error_update_permission_denied';
@@ -2044,6 +2103,11 @@ enum messages: string
     // value and result fields
     case FORM_FIELD_VALUE = 'form_field_value';
     case FORM_FIELD_GROUP = 'form_field_group';
+    // the label of the field for the name or the first chars of a word or triple of a new value
+    case FORM_FIELD_PHRASE_PATTERN = 'form_field_phrase_pattern';
+    case FORM_FIELD_TEXT_VALUE = 'form_field_text_value';
+    case FORM_FIELD_TIME_VALUE = 'form_field_time_value';
+    case FORM_FIELD_GEO_VALUE = 'form_field_geo_value';
     case FORM_FIELD_GROUP_OR_PHRASE_LIST = 'form_field_group_or_phrase_list';
     case FORM_FIELD_SOURCE_GROUP_OR_PHRASE_LIST = 'form_field_source_group_or_phrase_list';
 
@@ -2201,6 +2265,12 @@ enum messages: string
     case SYSTEM_BUTTON_EXPORT = 'system_button_export';
     // the button that links the selected object to the shown object e.g. a formula to a phrase
     case SYSTEM_BUTTON_LINK = 'system_button_link';
+    // the button that opens the add view for the selected object e.g. to define a word as a category
+    case SYSTEM_BUTTON_ADD = 'system_button_add';
+    // the button that checks the typed word or triple and adds it to the phrases of a new value
+    case SYSTEM_BUTTON_CHECK_AND_ADD = 'system_button_check_and_add';
+    // the button that continues with the next step e.g. the value add form with the selected phrases
+    case SYSTEM_BUTTON_NEXT = 'system_button_next';
     case FORM_WORD_FLD_NAME = 'form_word_fld_name';
 
 

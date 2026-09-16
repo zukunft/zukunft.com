@@ -575,6 +575,14 @@ class test_values extends test_objects
         return new value($this->env->usr1, values::CANTON_ZH_INHABITANTS_2020_IN_MIO, $grp);
     }
 
+    /**
+     * @return value_ui the empty value that the value add view starts with, e.g. to test the phrase preset
+     */
+    function value_add_ui(): value_ui
+    {
+        return new value_ui();
+    }
+
     function people_zh_canton_mio_ui(): value_ui
     {
         $tl = new test_lib();

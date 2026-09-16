@@ -108,6 +108,7 @@ include_once paths::SHARED_TYPES . 'job_statuum.php';
 include_once paths::SHARED_TYPES . 'job_types.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED_CONST_FIELDS . 'fields.php';
 include_once paths::SHARED_CONST_FIELDS . 'source_fields.php';
 include_once paths::SHARED_CONST_FIELDS . 'ref_fields.php';
@@ -131,11 +132,13 @@ use Zukunft\ZukunftCom\main\php\cfg\ref\ref_db;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\types\job_statuum;
 use Zukunft\ZukunftCom\main\php\shared\types\job_types;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
@@ -176,6 +179,7 @@ class job extends db_object_seq_id_user
     public source|null $src = null;         // used for import to link the source
     public ref|null $ref = null;            // used for import to link the reference
     public int|null $priority = 0;
+    public ?user $owner = null;             // the user who has requested the job
 
     // in memory only fields
     public ?object $obj = null;             // the updated object
@@ -235,7 +239,14 @@ class job extends db_object_seq_id_user
     function row_mapper(?array $db_row, user_message $msg, string $id_fld = ''): bool
     {
         $lib = new library();
-        $result = parent::row_mapper($db_row, $msg, job_db::FLD_ID);
+        // the user who has requested the job is kept as the owner and not mapped by the parent, because the job
+        // list of all users is loaded by an admin, whose user id differs from the owner of most jobs
+        $row_ex_owner = $db_row;
+        if ($db_row != null and array_key_exists(user_db::FLD_ID, $db_row)) {
+            $this->owner = $this->owner_by_id((int)$db_row[user_db::FLD_ID], $msg);
+            unset($row_ex_owner[user_db::FLD_ID]);
+        }
+        $result = parent::row_mapper($row_ex_owner, $msg, job_db::FLD_ID);
         // map the fields if the id has been set from a found row, independent of the message state
         if ($this->id() != 0) {
             if (array_key_exists(job_db::FLD_TYPE, $db_row)) {
@@ -266,6 +277,28 @@ class job extends db_object_seq_id_user
             log_debug('Batch job ' . $this->id() . ' loaded');
         }
         return $msg->is_ok();
+    }
+
+    /**
+     * @param int $usr_id the id of the user who has requested the job
+     * @param user_message $msg to report that the user cannot be loaded
+     * @return user the user who has requested the job, which is the user of this job unless an admin loads it
+     */
+    private function owner_by_id(int $usr_id, user_message $msg): user
+    {
+        global $sys;
+        $result = $this->get_user();
+        if ($usr_id != $result->id) {
+            $result = null;
+            if (!$sys->sys_usr_lst->is_empty()) {
+                $result = $sys->sys_usr_lst->get_by_id($usr_id);
+            }
+            if ($result == null) {
+                $result = new user();
+                $result->load_by_id($usr_id, $msg);
+            }
+        }
+        return $result;
     }
 
 
@@ -317,7 +350,7 @@ class job extends db_object_seq_id_user
         $result = false;
         $usr_req = $msg->usr;
         if ($usr_req != null and $usr_req->can_set_type_id()) {
-            $this->type_id = $sta_id;
+            $this->status_id = $sta_id;
             $result = true;
         } else {
             // the type of a job can be set once if not defined already
@@ -446,7 +479,9 @@ class job extends db_object_seq_id_user
 
         $sc->set_name($qp->name);
         $sc->set_usr($this->get_user()->id);
-        $sc->set_fields(job_db::FLD_NAMES);
+        // the user who has requested the job is selected too, so that a job list can show the owner
+        // and the backend can check that only the owner or an admin changes the job
+        $sc->set_fields(array_merge([user_db::FLD_ID], job_db::FLD_NAMES));
 
         return $qp;
     }
@@ -511,7 +546,11 @@ class job extends db_object_seq_id_user
         $vars = [];
 
         $vars[json_fields::ID] = $this->id();
-        $vars[json_fields::USER_NAME] = $this->get_user()->name();
+        // the user who has requested the job, which differs from the user of the list in the job list of an admin
+        $vars[json_fields::USER_NAME] = $this->owner?->name() ?? $this->get_user()->name();
+        if ($this->owner != null) {
+            $vars[json_fields::USER_ID] = $this->owner->id;
+        }
         $vars[json_fields::TYPE] = $this->type_id($msg);
         $vars[json_fields::STATUS] = $this->status_id();
         // TODO use time zone?
@@ -536,6 +575,69 @@ class job extends db_object_seq_id_user
     /*
      * modify
      */
+
+    /**
+     * change the priority of this job or cancel it and save the change
+     *
+     * @param string $action the job action e.g. url_var::ACTION_JOB_CANCEL
+     * @param user $usr_req the user who requests the change
+     * @param user_message $msg to report why the change is not permitted or failed
+     * @return bool true if the job has been changed
+     */
+    function change_by_user(string $action, user $usr_req, user_message $msg): bool
+    {
+        if ($this->apply_change($action, $usr_req, $msg)) {
+            $this->save($msg);
+        }
+        return $msg->is_ok();
+    }
+
+    /**
+     * change the priority of this job or cancel it without saving: the user who has requested the job can downgrade
+     * or cancel it, an admin can also upgrade it and a completed job cannot be changed anymore
+     *
+     * @param string $action the job action e.g. url_var::ACTION_JOB_CANCEL
+     * @param user $usr_req the user who requests the change
+     * @param user_message $msg to report why the change is not permitted
+     * @return bool true if the change is permitted and has been applied to this job
+     */
+    function apply_change(string $action, user $usr_req, user_message $msg): bool
+    {
+        global $sys;
+        $closed_ids = [];
+        foreach (job_statuum::CLOSED_STATUUM as $code_id) {
+            $closed_ids[] = $sys->typ_lst->job_sta->id($code_id);
+        }
+        $is_admin = $usr_req->is_admin();
+        $prio = (int)$this->priority;
+        // a job that has not been found would be added as a new job by the save
+        if ($this->id() == 0) {
+            $msg->add(msg_id::JOB_ROW_MISSING, [msg_id::VAR_NAME => $this->dsp_id()]);
+        } elseif (!$is_admin and $this->owner?->id != $usr_req->id) {
+            $msg->add(msg_id::JOB_CHANGE_NOT_PERMITTED, []);
+        } elseif ($this->end_time != null or in_array($this->status_id, $closed_ids)) {
+            $msg->add(msg_id::JOB_ALREADY_CLOSED, []);
+        } elseif ($action == url_var::ACTION_JOB_UPGRADE and !$is_admin) {
+            $msg->add(msg_id::JOB_UPGRADE_ONLY_ADMIN, []);
+        } elseif ($action == url_var::ACTION_JOB_UPGRADE) {
+            // a priority outside the range, e.g. the default zero, is never moved further away from it
+            if ($prio < job_statuum::PRIO_HIGHEST) {
+                $this->priority = $prio + 1;
+            }
+            $this->status_id = $sys->typ_lst->job_sta->id(job_statuum::STATUS_FORCED);
+        } elseif ($action == url_var::ACTION_JOB_DOWNGRADE) {
+            if ($prio > job_statuum::PRIO_LOWEST) {
+                $this->priority = $prio - 1;
+            }
+            $this->status_id = $sys->typ_lst->job_sta->id(job_statuum::STATUS_DELAYED);
+        } elseif ($action == url_var::ACTION_JOB_CANCEL) {
+            $this->status_id = $sys->typ_lst->job_sta->id(job_statuum::STATUS_CANCELLED);
+            $this->end_time = new DateTime();
+        } else {
+            $msg->add(msg_id::JOB_ACTION_UNKNOWN, []);
+        }
+        return $msg->is_ok();
+    }
 
     /**
      * update all result depending on one value
@@ -694,15 +796,15 @@ class job extends db_object_seq_id_user
         if ($obj->status_id() !== $this->status_id()) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . job_db::FLD_TYPE,
-                    $sys->typ_lst->cng_fld->id($table_id . job_db::FLD_TYPE),
+                    sql::FLD_LOG_FIELD_PREFIX . job_db::FLD_STATUS,
+                    $sys->typ_lst->cng_fld->id($table_id . job_db::FLD_STATUS),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             global $sys;
             if ($this->status_id() < 0) {
                 $msg->add(msg_id::JOB_STATUS_MISSING, [
-                    msg_id::VAR_TYPE => $this->type_id($msg),
+                    msg_id::VAR_TYPE => $this->status_id(),
                     msg_id::VAR_NAME => $this->dsp_id()
                 ]);
             }

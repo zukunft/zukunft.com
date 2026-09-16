@@ -36,10 +36,13 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_TYPES . 'api_types.php';
 
+use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\result\result;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\create\test_results;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -76,6 +79,25 @@ class result_ui_tests
         $test_name = 'a missing number returns an empty text';
         $res = new result();
         $t->assert($test_name, $res->val_formatted($msg), '');
+
+        // the overwrite form writes the changed number of the result without the confirm view
+        $t->subheader($ts . 'value overwrite');
+        $test_name = 'the result overwrite form shows the number field';
+        $form = new system_form();
+        $api_json = $t_res->result_simple()->api_json([api_types::TEST_MODE, api_types::INCL_PHRASES]);
+        $res = new result($api_json);
+        $res_id = (string)$res->id();
+        $res_html = $form->form_value_overwrite($res);
+        $t->assert_text_contains($test_name, $res_html, 'name="' . url_var::NUMERIC_VALUE . '"');
+        $test_name = '... writes via the result edit mask';
+        $t->assert_text_contains($test_name, $res_html, $html->form_hidden(url_var::MASK, (string)views::RESULT_EDIT_ID));
+        $test_name = '... for the shown result';
+        $t->assert_text_contains($test_name, $res_html, $html->form_hidden(url_var::ID, $res_id));
+        $test_name = '... without the confirm view';
+        $t->assert_text_contains($test_name, $res_html, $html->form_hidden(url_var::STEP, url_var::STEP_CONFIRMED));
+        $test_name = '... shows the result with its default view';
+        $res_back = $html->form_hidden(url_var::BACK . url_var::MASK, (string)views::RESULT_ID);
+        $t->assert_text_contains($test_name, $res_html, $res_back);
     }
 
 }

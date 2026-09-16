@@ -95,6 +95,7 @@ use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\create\test_mappers;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
 use Zukunft\ZukunftCom\test\php\create\test_sources;
+use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
@@ -664,7 +665,7 @@ class base_ui_tests
         $url_part = parse_url('?m=3&id=123');
         parse_str($url_part["query"], $url_array);
         $result = $html->url_with_back(api::LOGIN_SCRIPT, $url_array);
-        $t->assert($test_name, $result, rest_ctrl::PATH_FIXED .'view.php?m=61&9m=3&9id=123');
+        $t->assert($test_name, $result, rest_ctrl::PATH_FIXED .'view.php?m=' . views::LOGIN_ID . '&9m=3&9id=123');
 
         $test_name = 'url from back part while editing word 123';
         $url_part = parse_url('?m=2&9m=3&9id=123');
@@ -692,6 +693,23 @@ class base_ui_tests
         $t->assert_text_not_contains($test_name, $html->url_back(views::WORD_ADD_ID, 0, []), '9');
         $test_name = 'an old style script url carries the calling page as the back part';
         $t->assert_text_contains($test_name, $html->url_old(rest_ctrl::VIEW, 5, $page_arr), '9m=3&9id=123');
+        // the group id of a value with more than four phrases contains a '+', which a url reads as a
+        // space, so a link must encode it, because else the value page finds no value
+        $t_val = new test_values($t);
+        $grp_id = $t_val->value_16()->id();
+        $test_name = 'the group id of a non prime value contains a plus';
+        $t->assert_text_contains($test_name, (string)$grp_id, '+');
+        $test_name = 'a view url encodes the plus of a value group id';
+        $val_url = $html->url_back(views::VALUE_DEFAULT_ID, $grp_id);
+        $t->assert_text_contains($test_name, $val_url, '%2B');
+        $test_name = '... and does not contain the raw group id';
+        $t->assert_text_not_contains($test_name, $val_url, url_var::ID . url_var::EQ . $grp_id);
+        $test_name = 'the static view url encodes the plus of a value group id';
+        $static_url = html_base::url(views::VALUE_DEFAULT_ID, $grp_id);
+        $t->assert_text_contains($test_name, $static_url, '%2B');
+        $test_name = 'a view url keeps a numeric value id unchanged';
+        $prime_url = $html->url_back(views::VALUE_DEFAULT_ID, values::PI_MATH_ID);
+        $t->assert_text_contains($test_name, $prime_url, url_var::ID . url_var::EQ . values::PI_MATH_ID);
         $test_name = 'the page url of a url array names the page by its page vars only';
         $t->assert($test_name, $html->page_url($page_arr + [url_var::STEP => '0']),
             api::MAIN_SCRIPT . '?m=3&id=123');
@@ -727,7 +745,7 @@ class base_ui_tests
         // the human url uses the view code id (the name) for the mask, not the numeric view id, for
         // every view that is in the loaded cache (url_mapper::map_std_mask_to)
         $test_name = 'convert the standard url to human-readable url';
-        $url = 'http://localhost' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=2&id=1&debug=-1';
+        $url = 'http://localhost' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::WORD_ADD_ID . '&id=1&debug=-1';
         $url_human = $url_test->test_url($url_map->standard_url_to_human($lib->url_array_with($url), $msg));
         $url_array = $lib->url_array($url_human);
         $view = $url_array[url_var::MASK_HUMAN];
@@ -752,7 +770,7 @@ class base_ui_tests
         // url_mapper::to_row_format: the flat standard url array (as produced by url_to_standard) is
         // accepted directly now, not only the [key, value] row format produced by url_array_with
         $test_name = 'convert a flat standard url to human-readable url';
-        $url = 'http://localhost' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=2&id=1&debug=-1';
+        $url = 'http://localhost' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::WORD_ADD_ID . '&id=1&debug=-1';
         $url_human = $url_test->test_url($url_map->standard_url_to_human($lib->url_array($url), $msg));
         $url_array = $lib->url_array($url_human);
         $view = $url_array[url_var::MASK_HUMAN];
@@ -1000,7 +1018,7 @@ class base_ui_tests
         $t->assert_true($test_name, frontend::session_recovery_url(false, false, $req_url) === null);
 
         $test_name = 'convert the standard url to pod interchangeable url';
-        $url = 'http://localhost' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=2&id=1&debug=-1';
+        $url = 'http://localhost' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::WORD_ADD_ID . '&id=1&debug=-1';
         $url_pod = $url_test->test_url($url_map->standard_url_to_pod($lib->url_array_with($url), $msg));
         $url_array = $lib->url_array($url_pod);
         // TODO Prio 2 activate

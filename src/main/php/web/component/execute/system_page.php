@@ -162,18 +162,22 @@ class system_page extends component
 
     /**
      * HTML for a subtitle
-     * the formulas subtitle of a word or triple page also shows the icon to add a formula that is
-     * linked to the shown phrase (see ui_list::formula_add_link)
+     * the formulas and the values subtitle of a word or triple page also show the icon to add a formula
+     * or a value for the shown phrase (see ui_list::formula_add_link and ui_list::value_add_link)
      *
+     * @param user_message $msg to report a problem of reading the config e.g. the frontend type for the add icon
      * @param msg_id|null $ui_msg_code_id the message id of the text that should be shown to the user in the user-specific frontend language
      * @param db_object|type_object|combine_named|sandbox_list|null $dbo the object of the page e.g. the word of the formulas subtitle
      * @param array $url_arr the url of the shown page as back target of the add icon
+     * @param int $msk_id the database id of the shown view; only a default view of a phrase gets the add icon
      * @return string the html code to start a new form and display the subtitle
      */
     function system_sub_tile(
+        user_message                                          $msg,
         ?msg_id                                               $ui_msg_code_id = null,
         db_object|type_object|combine_named|sandbox_list|null $dbo = null,
-        array                                                 $url_arr = []
+        array                                                 $url_arr = [],
+        int                                                   $msk_id = 0
     ): string
     {
         global $mtr;
@@ -183,9 +187,15 @@ class system_page extends component
         if ($ui_msg_code_id != null) {
             $result .= $html->text_h3($mtr->txt($ui_msg_code_id));
         }
-        if ($ui_msg_code_id == msg_id::FORM_SUB_TITLE_FORMULAS and $dbo instanceof db_object) {
+        // only the default view of a word or triple offers to add, not e.g. its edit or delete form
+        if ($dbo instanceof db_object and in_array($msk_id, views::PHRASE_DEFAULT_IDS)) {
             $list = new ui_list();
-            $icon = $list->formula_add_link($dbo->phrase(), $url_arr);
+            // the formulas and the values subtitle of a word or triple page offer to add one for the phrase
+            $icon = match ($ui_msg_code_id) {
+                msg_id::FORM_SUB_TITLE_FORMULAS => $list->formula_add_link($dbo->phrase(), $url_arr),
+                msg_id::FORM_SUB_TITLE_VALUES => $list->value_add_link($dbo->phrase(), $msg, $url_arr),
+                default => '',
+            };
             // like the edit icon of the page title the icon stays on the line of the subtitle
             if ($icon != '') {
                 $result = $html->div($result . $icon, styles::HEADING_LINE);
@@ -585,6 +595,74 @@ class system_page extends component
                 . $errors->get_html($msg, $usr, $url_arr);
         } else {
             $result = $html->text_h3($mtr->txt(msg_id::ERROR_UPDATE_NO_OPEN));
+        }
+        return $result;
+    }
+
+    /**
+     * the body of a system view that is already part of the system views, but whose data and actions are not yet
+     * implemented (see docs/llm/pending.md), so the user gets a hint instead of an empty page
+     *
+     * @return string the html code of the not yet available hint
+     */
+    function not_yet_available(): string
+    {
+        global $mtr;
+        $html = new html_base();
+        return $html->text_h3($mtr->txt(msg_id::INFO_VIEW_NOT_YET_AVAILABLE));
+    }
+
+    /**
+     * the jobs of the requesting user with the pending jobs on top and the buttons to downgrade or cancel a job
+     *
+     * @param user_message $msg with the requesting user to report a problem of the job load
+     * @param int $msk_id the id of the shown view, so that a job button returns to this view
+     * @param bool $test_mode true to show the given jobs without a backend call
+     * @param job_list $jobs the jobs to show in the test mode
+     * @return string the html code of the job table
+     */
+    function user_jobs(user_message $msg, int $msk_id, bool $test_mode, job_list $jobs = new job_list()): string
+    {
+        if (!$test_mode) {
+            $jobs->load_by_user($msg);
+        }
+        return $jobs->display_with_actions($this->is_admin($msg), $msk_id);
+    }
+
+    /**
+     * the jobs of all users for an admin with the pending jobs on top and the buttons to up- or downgrade or cancel
+     * a job; a user who is not an admin gets the hint that only an admin can see the jobs of all users
+     *
+     * @param user_message $msg with the requesting user to report a problem of the job load
+     * @param int $msk_id the id of the shown view, so that a job button returns to this view
+     * @param bool $test_mode true to show the given jobs without a backend call
+     * @param job_list $jobs the jobs to show in the test mode
+     * @return string the html code of the job table or the admin only hint
+     */
+    function all_jobs(user_message $msg, int $msk_id, bool $test_mode, job_list $jobs = new job_list()): string
+    {
+        global $mtr;
+        $html = new html_base();
+        if ($this->is_admin($msg)) {
+            if (!$test_mode) {
+                $jobs->load_all($msg);
+            }
+            $result = $jobs->display_with_actions(true, $msk_id);
+        } else {
+            $result = $html->text_h3($mtr->txt(msg_id::JOB_LIST_ALL_ONLY_ADMIN));
+        }
+        return $result;
+    }
+
+    /**
+     * @param user_message $msg with the requesting user
+     * @return bool true if the requesting user is an admin
+     */
+    private function is_admin(user_message $msg): bool
+    {
+        $result = false;
+        if ($msg->usr != null) {
+            $result = $msg->usr->is_admin();
         }
         return $result;
     }

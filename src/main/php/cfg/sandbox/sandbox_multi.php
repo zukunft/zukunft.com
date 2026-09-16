@@ -2027,8 +2027,10 @@ class sandbox_multi extends db_object_multi_user
         $usr_id_lst = array();
         $result = new user_list($this->get_user());
 
-        // add object owner
-        $usr_id_lst[] = $this->owner_id();
+        // add object owner, but only a known one, because an empty id breaks the id list of the user load
+        if ($this->owner_id() > 0) {
+            $usr_id_lst[] = $this->owner_id();
+        }
         $qp = $this->load_sql_of_users_that_changed($db_con->sql_creator());
         $db_usr_lst = $db_con->get($qp, $msg, 'sandbox user list');
         foreach ($db_usr_lst as $db_usr) {

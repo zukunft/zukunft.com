@@ -81,6 +81,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\helper\config;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase as phrase_ui;
@@ -180,6 +181,9 @@ class api_tests
         // TODO Prio 1 review and add triple links to phrases
         $t->assert_api_get_list(phrase_list::class, [word_names::MATH_ID, word_names::CONST_ID, word_names::PI_ID, triple_names::MATH_CONST_ID * -1, triple_names::PI_ID * -1]);
         $t->assert_api_get_list(phrase_list::class, word_names::MATH, url_var::PATTERN);
+        // the phrases used as the to side of the "is a" triples, each once, e.g. to define a word as one of them
+        $up_par = [url_var::DIRECTION => foaf_direction::UP->value];
+        $t->assert_api_get_list(phrase_list::class, verbs::IS_ID, url_var::VERB, '', false, $up_par);
         $t->assert_api_get_list(term_list::class, [word_names::MATH_ID, triple_names::MATH_CONST_ID * -1, verbs::NOT_SET_ID * 2, formula_names::SCALE_TO_SEC_ID * -2]);
         $t->assert_api_get_list(formula_list::class, [formula_names::SCALE_TO_SEC_ID]);
         $t->assert_api_get_list(view_list::class, views::START_NAME, url_var::PATTERN);

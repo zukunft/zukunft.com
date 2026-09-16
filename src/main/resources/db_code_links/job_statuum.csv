@@ -9,3 +9,4 @@ job_status_id, status_name, description, code_id, priority
 8, 'done', 'the task has been completed successfully', 'done', 0
 9, 'failed', 'the task has been completed unsuccessful', 'failed', 0
 10, 'retry', 'an admin has forced to retry the execution', 'retry', 7
+11, 'cancelled', 'the job has been cancelled by the requesting user or an admin', 'cancelled', 0

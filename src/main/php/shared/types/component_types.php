@@ -589,6 +589,28 @@ class component_types
     // the component that a component links to shown with the type of that link
     const string SHOW_LINKED_COMPONENT = "system_show_field_linked_component";
     const int SHOW_LINKED_COMPONENT_ID = 250;
+    // select the phrases of a new value one after the other (see ui_select::phrase_steps)
+    const string FORM_PHRASE_STEPS = "system_form_phrase_steps";
+    const int FORM_PHRASE_STEPS_ID = 251;
+    // add a word by its name without the confirm view (see system_form::form_word_add_simple)
+    const string FORM_WORD_ADD_SIMPLE = "system_form_word_add_simple";
+    const int FORM_WORD_ADD_SIMPLE_ID = 252;
+    // add a value by its phrases and the number without the confirm view (see ui_select::value_add_simple)
+    const string FORM_VALUE_ADD_SIMPLE = "system_form_value_add_simple";
+    const int FORM_VALUE_ADD_SIMPLE_ID = 253;
+    // overwrite the number, text, time or geolocation of a value or the number of a result without the confirm view
+    // (see system_form::form_value_overwrite)
+    const string FORM_VALUE_OVERWRITE = "system_form_value_overwrite";
+    const int FORM_VALUE_OVERWRITE_ID = 254;
+    // the body of a system view whose data and actions are not yet implemented (see system_page::not_yet_available)
+    const string SYSTEM_BODY_NOT_YET_AVAILABLE = "system_body_not_yet_available";
+    const int SYSTEM_BODY_NOT_YET_AVAILABLE_ID = 255;
+    // the jobs of the requesting user with the pending jobs on top (see system_page::user_jobs)
+    const string SYSTEM_BODY_USER_JOBS = "system_body_user_jobs";
+    const int SYSTEM_BODY_USER_JOBS_ID = 256;
+    // the jobs of all users for an admin with the pending jobs on top (see system_page::all_jobs)
+    const string SYSTEM_BODY_ALL_JOBS = "system_body_all_jobs";
+    const int SYSTEM_BODY_ALL_JOBS_ID = 257;
     const string SHOW_PHRASE_ROW = "system_show_field_phrase_row";
     const int SHOW_PHRASE_ROW_ID = 227;
     const string SHOW_PHRASE_COL = "system_show_field_phrase_col";
@@ -824,7 +846,14 @@ class component_types
         self::WORD_RESULTS,
         self::USED_IN_AS_TEXT,
         self::USED_IN_AS_TEXT_WITH_LINK,
-        self::SYSTEM_TITLE
+        self::SYSTEM_TITLE,
+        self::FORM_PHRASE_STEPS,
+        self::FORM_WORD_ADD_SIMPLE,
+        self::FORM_VALUE_ADD_SIMPLE,
+        self::FORM_VALUE_OVERWRITE,
+        self::SYSTEM_BODY_NOT_YET_AVAILABLE,
+        self::SYSTEM_BODY_USER_JOBS,
+        self::SYSTEM_BODY_ALL_JOBS
     );
 
     // list of component types that are a button
@@ -1123,7 +1152,14 @@ class component_types
         [self::SYSTEM_CHANGE_LOG, self::SYSTEM_CHANGE_LOG_ID],
         [self::CHANGE_LOG_TABLE_PURE, self::CHANGE_LOG_TABLE_PURE_ID],
         [self::USER_SYSTEM_ERRORS, self::USER_SYSTEM_ERRORS_ID],
-        [self::ALL_USER_OVERWRITES, self::ALL_USER_OVERWRITES_ID]
+        [self::ALL_USER_OVERWRITES, self::ALL_USER_OVERWRITES_ID],
+        [self::FORM_PHRASE_STEPS, self::FORM_PHRASE_STEPS_ID],
+        [self::FORM_WORD_ADD_SIMPLE, self::FORM_WORD_ADD_SIMPLE_ID],
+        [self::FORM_VALUE_ADD_SIMPLE, self::FORM_VALUE_ADD_SIMPLE_ID],
+        [self::FORM_VALUE_OVERWRITE, self::FORM_VALUE_OVERWRITE_ID],
+        [self::SYSTEM_BODY_NOT_YET_AVAILABLE, self::SYSTEM_BODY_NOT_YET_AVAILABLE_ID],
+        [self::SYSTEM_BODY_USER_JOBS, self::SYSTEM_BODY_USER_JOBS_ID],
+        [self::SYSTEM_BODY_ALL_JOBS, self::SYSTEM_BODY_ALL_JOBS_ID]
     );
 
 }

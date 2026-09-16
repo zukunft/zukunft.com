@@ -14,37 +14,35 @@ CREATE OR REPLACE FUNCTION word_insert_log_1111005000001_user
 $$
 BEGIN
 
-    INSERT INTO changes ( user_id, change_action_id, change_field_id,    new_value, row_id)
-         SELECT          _user_id,_change_action_id,_field_id_word_name,_word_name,_word_id ;
-    INSERT INTO changes ( user_id, change_action_id, change_field_id,      new_value,   row_id)
-         SELECT          _user_id,_change_action_id,_field_id_description,_description,_word_id ;
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,         new_value,                        row_id)
+         SELECT          _user_id,_change_action_id,_field_id_word_name,     _word_name,                       _word_id ;
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,         new_value,                        row_id)
+         SELECT          _user_id,_change_action_id,_field_id_description,   _description,                     _word_id ;
     INSERT INTO changes ( user_id, change_action_id, change_field_id,         new_value,        new_id,         row_id)
          SELECT          _user_id,_change_action_id,_field_id_phrase_type_id,_phrase_type_name,_phrase_type_id,_word_id ;
-    INSERT INTO changes (user_id, change_action_id, change_field_id,     new_value,  row_id)
-         SELECT         _user_id,_change_action_id,_field_id_protect_id,_protect_id,_word_id ;
-
-    INSERT INTO user_words
-                (word_id, user_id, word_name, description, phrase_type_id, protect_id)
-         SELECT _word_id,_user_id,_word_name,_description,_phrase_type_id,_protect_id ;
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,         new_value,                        row_id)
+         SELECT          _user_id,_change_action_id,_field_id_protect_id,    _protect_id,                      _word_id ;
+    INSERT INTO user_words ( word_id, user_id, word_name, description, phrase_type_id, protect_id)
+         SELECT             _word_id,_user_id,_word_name,_description,_phrase_type_id,_protect_id ;
 
 END
 $$ LANGUAGE plpgsql;
 
 PREPARE word_insert_log_1111005000001_user_call
         (bigint, smallint, smallint, text, bigint, smallint, text, smallint, text, smallint, smallint, smallint) AS
-    SELECT word_insert_log_1111005000001_user
+SELECT word_insert_log_1111005000001_user
         ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12);
 
 SELECT word_insert_log_1111005000001_user
-        (3::bigint,
-         1::smallint,
-         88::smallint,
-         'mathematics'::text,
-         1::bigint,
-         17::smallint,
-         'Mathematics is an area of knowledge that includes the topics of numbers and formulas'::text,
-         15::smallint,
-         'standard'::text,
-         1::smallint,
-         93::smallint,
-         3::smallint);
+       (3::bigint,
+        1::smallint,
+        88::smallint,
+        'mathematics'::text,
+        1::bigint,
+        17::smallint,
+        'Mathematics is an area of knowledge that includes the topics of numbers and formulas'::text,
+        15::smallint,
+        'standard'::text,
+        1::smallint,
+        93::smallint,
+        3::smallint);

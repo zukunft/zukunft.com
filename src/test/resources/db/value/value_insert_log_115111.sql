@@ -34,8 +34,8 @@ $$ LANGUAGE plpgsql;
 
 PREPARE value_insert_log_115111_call
         (bigint, smallint, smallint, numeric, text, smallint, text, bigint, smallint, smallint, smallint, smallint, smallint, smallint) AS
-    SELECT value_insert_log_115111
-        ($1,$2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14);
+SELECT value_insert_log_115111
+        ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14);
 
 SELECT value_insert_log_115111
        (3::bigint,

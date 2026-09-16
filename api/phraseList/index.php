@@ -34,6 +34,7 @@ include_once __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'api_c
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_ENUM . 'foaf_direction.php';
+include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::MODEL_PHRASE . 'phr_ids.php';
 include_once paths::MODEL_PHRASE . 'phrase.php';
@@ -49,8 +50,11 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple_list;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+
+global $sys;
 
 // init api app and open database
 $app = new application();
@@ -75,6 +79,7 @@ if ($db_con->is_open()) {
     // just found; load_by_phr_levels bounds the requested number
     $levels = (int)($_GET[url_var::LEVELS] ?? 1);
     $pattern = $_GET[url_var::PATTERN] ?? '';
+    $vrb_id = $_GET[url_var::VERB] ?? '';
 
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
     if ($usr->id > 0) {
@@ -94,7 +99,19 @@ if ($db_con->is_open()) {
                 $msg->add_message_text($error->getMessage());
             }
         }
-        if ($phr_ids != '' and $direction_text != '') {
+        if ($vrb_id != '') {
+            // the phrases on one side of the triples of a verb, each once, e.g. the categories that a
+            // word can be defined as are the to side (up) of the "is a" triples
+            $vrb = $sys->verb_by_id((int)$vrb_id);
+            if ($vrb == null) {
+                $msg->add(msg_id::VERB_MISSING, [
+                    msg_id::VAR_TYPE => $vrb_id,
+                    msg_id::VAR_NAME => $lst->dsp_id()
+                ]);
+            } else {
+                $lst->load_by_verb($vrb, $dir, $msg);
+            }
+        } elseif ($phr_ids != '' and $direction_text != '') {
             // an id list with a direction asks for the phrases linked to any of the given
             // phrases, so that the frontend needs one call and not one call per phrase
             $phr_lst = new phrase_list($usr);

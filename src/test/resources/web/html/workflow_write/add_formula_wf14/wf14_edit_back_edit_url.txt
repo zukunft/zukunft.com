@@ -1,6 +1,6 @@
 GET
-http://localhost/http/view.php?id=0&k=&o=&m=24&z=0
-/http/view.php?id=0&k=&o=&m=24&z=0
+http://localhost/http/view.php?id=0&k=&o=&m=37&z=0
+/http/view.php?id=0&k=&o=&m=37&z=0
 /http/view.php?id=0&mask_id=formula_add&step=no&
 {
     "id": "0",

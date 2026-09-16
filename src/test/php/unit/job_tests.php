@@ -42,6 +42,10 @@ include_once paths::SHARED_TYPES . 'job_types.php';
 include_once test_paths::UNIT . 'sys_log_tests.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\cfg\system\job_time;
 use Zukunft\ZukunftCom\main\php\cfg\system\job;
 use Zukunft\ZukunftCom\main\php\cfg\system\job_list;
@@ -57,6 +61,7 @@ class job_tests
 {
     function run(test_cleanup $t): void
     {
+        global $sys;
 
 
         // init
@@ -93,6 +98,16 @@ class job_tests
         $job_lst = new job_list($sys_usr);
         $t->assert_sql_list_by_type($sc, $job_lst, job_types::BASE_IMPORT);
 
+        // sql to load the jobs of one user and the jobs of all users
+        $sc->reset(sql_db::POSTGRES);
+        $t->assert_qp($job_lst->load_sql_by_user($sc), $sc->db_type);
+        $sc->reset(sql_db::MYSQL);
+        $t->assert_qp($job_lst->load_sql_by_user($sc), $sc->db_type);
+        $sc->reset(sql_db::POSTGRES);
+        $t->assert_qp($job_lst->load_sql_all($sc), $sc->db_type);
+        $sc->reset(sql_db::MYSQL);
+        $t->assert_qp($job_lst->load_sql_all($sc), $sc->db_type);
+
         $t->subheader($ts . 'sql write');
         $job = $t_job->job();
         // for job a log is not needed because the table rows are never expected to be deleted
@@ -110,6 +125,113 @@ class job_tests
 
         $job_lst = $t_job->job_list();
         $t->assert_api($job_lst);
+
+
+        // the user who has requested a job can downgrade or cancel it, an admin can also upgrade it
+        $t->subheader($ts . 'priority change');
+        $usr_normal = $t_usr->user_sys_normal();
+        $usr_admin = $t_usr->user_sys_admin();
+        $chg_msg = new user_message();
+
+        $test_name = 'the user who has requested the job can downgrade it';
+        $job = $t_job->job();
+        $job->owner = $usr_normal;
+        $job->apply_change(url_var::ACTION_JOB_DOWNGRADE, $usr_normal, $chg_msg);
+        $t->assert_true($test_name, $chg_msg->is_ok());
+        $chg_msg->reset();
+        $test_name = '... which reduces the priority by one';
+        $t->assert($test_name, $job->priority, job_statuum::PRIO_HIGHEST - 1);
+
+        $test_name = 'the user who has requested the job cannot upgrade it';
+        $job = $t_job->job();
+        $job->owner = $usr_normal;
+        $job->apply_change(url_var::ACTION_JOB_UPGRADE, $usr_normal, $chg_msg);
+        $t->assert_false($test_name, $chg_msg->is_ok());
+        $chg_msg->reset();
+
+        $test_name = 'another user who is not an admin cannot cancel the job';
+        $job = $t_job->job();
+        $job->owner = $usr_admin;
+        $job->apply_change(url_var::ACTION_JOB_CANCEL, $usr_normal, $chg_msg);
+        $t->assert_false($test_name, $chg_msg->is_ok());
+        $chg_msg->reset();
+
+        $test_name = 'an admin can upgrade the job of another user';
+        $job = $t_job->job();
+        $job->owner = $usr_normal;
+        $job->priority = job_statuum::PRIO_LOWEST;
+        $job->apply_change(url_var::ACTION_JOB_UPGRADE, $usr_admin, $chg_msg);
+        $t->assert_true($test_name, $chg_msg->is_ok());
+        $chg_msg->reset();
+        $test_name = '... which increases the priority by one';
+        $t->assert($test_name, $job->priority, job_statuum::PRIO_LOWEST + 1);
+
+        $test_name = 'the priority of a job with the highest priority is not increased further';
+        $job = $t_job->job();
+        $job->owner = $usr_normal;
+        $job->apply_change(url_var::ACTION_JOB_UPGRADE, $usr_admin, $chg_msg);
+        $t->assert($test_name, $job->priority, job_statuum::PRIO_HIGHEST);
+        $chg_msg->reset();
+
+        $test_name = 'a cancelled job gets an end time';
+        $job = $t_job->job();
+        $job->owner = $usr_normal;
+        $job->apply_change(url_var::ACTION_JOB_CANCEL, $usr_normal, $chg_msg);
+        $t->assert_true($test_name, $job->end_time != null);
+        $chg_msg->reset();
+
+        $test_name = 'an admin can cancel the job of another user';
+        $job = $t_job->job();
+        $job->owner = $usr_normal;
+        $job->apply_change(url_var::ACTION_JOB_CANCEL, $usr_admin, $chg_msg);
+        $t->assert_true($test_name, $chg_msg->is_ok());
+        $chg_msg->reset();
+
+        $test_name = 'an unknown job action is reported';
+        $job = $t_job->job();
+        $job->owner = $usr_normal;
+        $job->apply_change(url_var::ACTION_CANCEL, $usr_normal, $chg_msg);
+        $t->assert_false($test_name, $chg_msg->is_ok());
+        $chg_msg->reset();
+
+        $test_name = 'a job with a completed status cannot be changed';
+        $job = $t_job->job();
+        $job->owner = $usr_normal;
+        $job->status_id = $sys->typ_lst->job_sta->id(job_statuum::STATUS_DONE);
+        $job->apply_change(url_var::ACTION_JOB_CANCEL, $usr_normal, $chg_msg);
+        $t->assert_false($test_name, $chg_msg->is_ok());
+        $chg_msg->reset();
+
+        $test_name = 'a job with the default priority zero is not raised by a downgrade';
+        $job = $t_job->job();
+        $job->owner = $usr_normal;
+        $job->priority = 0;
+        $job->apply_change(url_var::ACTION_JOB_DOWNGRADE, $usr_normal, $chg_msg);
+        $t->assert($test_name, $job->priority, 0);
+        $chg_msg->reset();
+
+        $test_name = 'a job without a database id cannot be changed';
+        $job = $t_job->job();
+        $job->owner = $usr_admin;
+        $job->id = 0;
+        $job->apply_change(url_var::ACTION_JOB_UPGRADE, $usr_admin, $chg_msg);
+        $t->assert_false($test_name, $chg_msg->is_ok());
+        $chg_msg->reset();
+
+        $test_name = 'the job list of an admin shows the user who has requested the job';
+        $job = $t_job->job();
+        $job->owner = $usr_normal;
+        $job_json = $job->api_json_array([], $chg_msg);
+        $t->assert($test_name, $job_json[json_fields::USER_NAME], $usr_normal->name());
+        $chg_msg->reset();
+
+        $test_name = 'a completed job cannot be changed anymore';
+        $job = $t_job->job();
+        $job->owner = $usr_normal;
+        $job->end_time = new DateTime(sys_log_tests::TV_TIME_CLOSED);
+        $job->apply_change(url_var::ACTION_JOB_DOWNGRADE, $usr_normal, $chg_msg);
+        $t->assert_false($test_name, $chg_msg->is_ok());
+        $chg_msg->reset();
 
 
         $t->subheader($ts . 'due job selection');

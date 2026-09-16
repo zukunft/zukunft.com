@@ -18,33 +18,33 @@ BEGIN
     INSERT INTO changes ( user_id, change_action_id, change_field_id,       new_value,   row_id)
          SELECT          _user_id,_change_action_id,_field_id_ip_range_key,_ip_range_key,new_ip_range_id ;
 
-    INSERT INTO changes ( user_id, change_action_id, change_field_id,  new_value, row_id)
-         SELECT          _user_id,_change_action_id,_field_id_ip_from,_ip_from,   new_ip_range_id ;
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,       new_value,   row_id)
+         SELECT          _user_id,_change_action_id,_field_id_ip_from,     _ip_from,     new_ip_range_id ;
 
-    INSERT INTO changes ( user_id, change_action_id, change_field_id, new_value, row_id)
-         SELECT          _user_id,_change_action_id,_field_id_ip_to, _ip_to,     new_ip_range_id ;
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,       new_value,   row_id)
+         SELECT          _user_id,_change_action_id,_field_id_ip_to,       _ip_to,       new_ip_range_id ;
 
-         UPDATE ip_ranges
-            SET ip_from = _ip_from,
-                ip_to   = _ip_to
-          WHERE ip_ranges.ip_range_id = new_ip_range_id;
+    UPDATE ip_ranges
+       SET ip_from = _ip_from,
+           ip_to   = _ip_to
+     WHERE ip_ranges.ip_range_id = new_ip_range_id;
 
-         RETURN new_ip_range_id;
+    RETURN new_ip_range_id;
 
 END
 $$ LANGUAGE plpgsql;
 
 PREPARE ip_range_insert_log_111100_call
-    (text, bigint, smallint, smallint, smallint, text, smallint, text) AS
+        (text, bigint, smallint, smallint, smallint, text, smallint, text) AS
 SELECT ip_range_insert_log_111100
-    ($1, $2, $3, $4, $5, $6, $7, $8);
+        ($1,$2,$3,$4,$5,$6,$7,$8);
 
 SELECT ip_range_insert_log_111100
-        ('66.249.64.95-66.249.64.95'::text,
-         3::bigint,
-         1::smallint,
-         859::smallint,
-         185::smallint,
-         '66.249.64.95'::text,
-         186::smallint,
-         '66.249.64.95'::text);
+       ('66.249.64.95-66.249.64.95'::text,
+        3::bigint,
+        1::smallint,
+        859::smallint,
+        185::smallint,
+        '66.249.64.95'::text,
+        186::smallint,
+        '66.249.64.95'::text);

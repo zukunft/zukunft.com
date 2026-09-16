@@ -632,6 +632,7 @@ class test_api extends test_base
      * @param string $id_fld the field name for the object id e.g. word_id
      * @param string $filename to overwrite the class-based filename to get the standard expected result
      * @param bool $contains set to true if the actual message is expected to contain more than the expected message
+     * @param array $url_par additional url vars of the request e.g. the direction of a verb selection
      * @return bool true if the json has no relevant differences
      */
     function assert_api_get_list(
@@ -639,9 +640,10 @@ class test_api extends test_base
         array|string $ids = [1, 2],
         string       $id_fld = url_var::ID_LST,
         string       $filename = '',
-        bool         $contains = false): bool
+        bool         $contains = false,
+        array        $url_par = []): bool
     {
-        $actual = $this->assert_result_api_get_list($class, $ids, $id_fld);
+        $actual = $this->assert_result_api_get_list($class, $ids, $id_fld, $url_par);
         $filename = $this->assert_parameter_api_list_filename($class, $id_fld, $filename);
         return $this->assert_api_compare($class, $actual, null, $filename, '', $contains);
     }
@@ -677,12 +679,14 @@ class test_api extends test_base
      * @param string $class the class that should be tested e.g. type_lists::class
      * @param array|string $ids the database ids of the db rows that should be used for testing
      * @param string $id_fld the field name for the object id e.g. word_id
+     * @param array $url_par additional url vars of the request e.g. the direction of a verb selection
      * @return array|null the json as an array to avoid differences due to formatting
      */
     function assert_result_api_get_list(
         string       $class,
         array|string $ids = [1, 2],
-        string       $id_fld = url_var::ID_LST
+        string       $id_fld = url_var::ID_LST,
+        array        $url_par = []
     ): ?array
     {
         $lib = new library();
@@ -693,6 +697,7 @@ class test_api extends test_base
         } else {
             $data = array($id_fld => $ids);
         }
+        $data = array_merge($data, $url_par);
         $ctrl = new rest_call();
         $response = $ctrl->api_call(rest_ctrl::GET, $url, $data);
         $actual = json_decode($response, true);

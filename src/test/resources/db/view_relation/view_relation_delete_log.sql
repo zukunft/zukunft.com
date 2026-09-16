@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION view_relation_delete_log
      _old_from_id      bigint,
      _old_link_id      smallint,
      _old_to_id        bigint,
-     _view_relation_id  bigint) RETURNS void AS
+     _view_relation_id bigint) RETURNS void AS
 $$
 BEGIN
 
@@ -34,7 +34,7 @@ SELECT view_relation_delete_log
         'word_edit'::text,
         'add components'::text,
         'word_usage'::text,
-        3::bigint,
+        24::bigint,
         1::smallint,
-        5::bigint,
+        26::bigint,
         1::bigint);

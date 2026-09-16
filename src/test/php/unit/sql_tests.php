@@ -38,10 +38,18 @@ include_once paths::MODEL_CONST . 'files.php';
 include_once test_paths::CONST . 'files.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\files;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\main\php\cfg\element\element;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb_db;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\triple_fields;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\web\user\user;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
@@ -105,6 +113,52 @@ class sql_tests
         $test_name = ' delete elements by id list mysql';
         $t->assert_sql($test_name, $qp->sql,
             "PREPARE element_delete_by_ids FROM 'DELETE FROM elements WHERE element_id IN (?)';");
+
+        // a sub-select selects the rows whose id is used in the not excluded rows of another table,
+        // so e.g. a phrase used by many triples of one verb is still selected only once
+        $t->subheader($ts . 'where in sub-select');
+        $test_name = ' the phrases used as the to side of the triples of a verb postgres';
+        $sc->set_db_type(sql_db::POSTGRES);
+        $sc->set_class(phrase::class);
+        $sc->set_name('phrase_in_sub_test');
+        $sc->add_where_in_sub(phrase::FLD_ID, triple::class, triple_fields::FLD_TO, verb_db::FLD_ID, verbs::IS_ID);
+        $t->assert_text_contains($test_name, $sc->sql(),
+            'phrase_id IN (SELECT to_phrase_id FROM triples WHERE verb_id = $1 AND COALESCE(excluded, 0) = 0)');
+        // the sub-select uses a placeholder, so its value must be passed with the other parameters
+        $test_name = ' the value of the sub-select filter is passed as parameter';
+        $t->assert($test_name, implode(',', $sc->get_par()), (string)verbs::IS_ID);
+        $test_name = ' the phrases used as the to side of the triples of a verb mysql';
+        $sc->set_db_type(sql_db::MYSQL);
+        $sc->set_class(phrase::class);
+        $sc->set_name('phrase_in_sub_test');
+        $sc->add_where_in_sub(phrase::FLD_ID, triple::class, triple_fields::FLD_TO, verb_db::FLD_ID, verbs::IS_ID);
+        $t->assert_text_contains($test_name, $sc->sql(),
+            'phrase_id IN (SELECT to_phrase_id FROM triples WHERE verb_id = ? AND COALESCE(excluded, 0) = 0)');
+        $test_name = ' a select without a sub-select condition has no sub-select';
+        $sc->set_db_type(sql_db::POSTGRES);
+        $sc->set_class(phrase::class);
+        $sc->set_name('phrase_no_sub_test');
+        $sc->add_where(phrase::FLD_ID, verbs::IS_ID);
+        $t->assert_text_not_contains($test_name, $sc->sql(), 'IN (SELECT');
+
+        // a pattern search ignores the upper and lower case: postgres needs ILIKE, while the mysql LIKE of the
+        // default collation already ignores the case
+        $t->subheader($ts . 'case-insensitive pattern');
+        $test_name = ' a postgres pattern search ignores the case';
+        $sc->set_db_type(sql_db::POSTGRES);
+        $sc->set_class(phrase::class);
+        $sc->set_name('phrase_like_test');
+        $sc->add_where(phrase::FLD_NAME, word_names::MATH, sql_par_type::LIKE_R);
+        $t->assert_text_contains($test_name, $sc->sql(), phrase::FLD_NAME . ' ' . sql::LIKE_NO_UP_CASE . ' $1');
+        $test_name = ' a mysql pattern search uses the case-insensitive LIKE';
+        $sc->set_db_type(sql_db::MYSQL);
+        $sc->set_class(phrase::class);
+        $sc->set_name('phrase_like_test');
+        $sc->add_where(phrase::FLD_NAME, word_names::MATH, sql_par_type::LIKE_R);
+        $mysql_like = $sc->sql();
+        $t->assert_text_contains($test_name, $mysql_like, phrase::FLD_NAME . ' ' . sql::LIKE_LOWER_CASE . ' ?');
+        $test_name = ' ... without the postgres ILIKE';
+        $t->assert_text_not_contains($test_name, $mysql_like, sql::LIKE_NO_UP_CASE);
 
     }
 

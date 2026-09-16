@@ -176,6 +176,7 @@ class url_var
     const string JOB_START_TIME = 'jb'; // Begin time of the job execution
     const string JOB_CHANGE_FIELD = 'jc'; // the Changed field id for undo jobs
     const string JOB_END_TIME = 'je'; // End time of the job execution
+    const string JOB_LIST_ALL = 'jl'; // true to List the jobs of all users, which only an admin may request
     const string JOB_PRIORITY = 'jp'; // the Priority of the batch job
     const string JOB_REQUEST_TIME = 'jq'; // the time when the job was reQuested
     const string JOB_ROW_ID = 'jr'; // the Row id of the related object touched by the job
@@ -237,7 +238,10 @@ class url_var
     const string USER_PASSWORD = 'uw';
     const string USER_PASSWORD_RETYPE = 'uwr';
     const string VALUE = 'v';
+    const string VALUE_TIME = 'vd'; // the date and time of a time value
+    const string VALUE_GEO = 'vg'; // the geolocation of a geo value e.g. '47.263179, 8.684730'
     const string VALUE_TIME_SERIES = 'vs';
+    const string VALUE_TEXT = 'vt'; // the text of a text value
     const string WORD = 'w';
     const string WORD_POS = 'wp'; // with a number the word id of the x word e.g. of the form field of a group
     const string WORDS = 'wl'; // array of ids to select or add the words
@@ -294,6 +298,16 @@ class url_var
     // view mask selects which crud is run, so one action covers all three operations
     const string ACTION_CONFIRMED = 'confirmed';
     const string ACTION_CANCEL = 'cancel'; // cancel the pending change
+    const string ACTION_JOB_UPGRADE = 'aju'; // an admin increases the priority of a batch job
+    const string ACTION_JOB_DOWNGRADE = 'ajd'; // reduce the priority of a batch job
+    const string ACTION_JOB_CANCEL = 'ajc'; // cancel a batch job
+
+    // the actions of the job list buttons that change a batch job directly without a confirm view
+    const array JOB_ACTIONS = [
+        self::ACTION_JOB_UPGRADE,
+        self::ACTION_JOB_DOWNGRADE,
+        self::ACTION_JOB_CANCEL,
+    ];
 
 
     /*
@@ -406,6 +420,9 @@ class url_var
     const string CRUD_FULL_HUMAN = 'full'; // to show object with all fields
     const string CRUD_POPUP_HUMAN = 'popup'; // to show object with only a few fields as a popup window
     const string CRUD_CELL_HUMAN = 'cell'; // to show object with only the name or key as table cell
+    const string ACTION_JOB_UPGRADE_HUMAN = 'job_upgrade'; // an admin increases the priority of a batch job
+    const string ACTION_JOB_DOWNGRADE_HUMAN = 'job_downgrade'; // reduce the priority of a batch job
+    const string ACTION_JOB_CANCEL_HUMAN = 'job_cancel'; // cancel a batch job
 
     // enum for self::STEP and the next step of the action
     const string STEP_BASE_HUMAN = 'no'; // no action process has been started
@@ -507,6 +524,9 @@ class url_var
     const string VALUE_HUMAN = 'value_id';
     const string VALUE_TIME_SERIES_HUMAN = 'time_series_id';
     const string NUMERIC_VALUE_HUMAN = 'number';
+    const string VALUE_TEXT_HUMAN = 'text_value';
+    const string VALUE_TIME_HUMAN = 'time_value';
+    const string VALUE_GEO_HUMAN = 'geo_value';
 
     // formula
     const string FORMULA_HUMAN = 'formula_id';
@@ -592,6 +612,7 @@ class url_var
     const string JOB_REQUEST_TIME_HUMAN = 'job_request_time'; // the time when the job was requested
     const string JOB_START_TIME_HUMAN = 'job_start_time'; // begin time of the job execution
     const string JOB_END_TIME_HUMAN = 'job_end_time'; // end time of the job execution
+    const string JOB_LIST_ALL_HUMAN = 'job_list_all'; // true to list the jobs of all users
 
     // access
     const string SHARE_HUMAN = 'share';
@@ -745,6 +766,9 @@ class url_var
         [self::VALUE_HUMAN, self::VALUE],
         [self::VALUE_TIME_SERIES_HUMAN, self::VALUE_TIME_SERIES],
         [self::NUMERIC_VALUE_HUMAN, self::NUMERIC_VALUE],
+        [self::VALUE_TEXT_HUMAN, self::VALUE_TEXT],
+        [self::VALUE_TIME_HUMAN, self::VALUE_TIME],
+        [self::VALUE_GEO_HUMAN, self::VALUE_GEO],
 
         // formula
         [self::FORMULA_HUMAN, self::FORMULA],
@@ -826,6 +850,7 @@ class url_var
         [self::JOB_REQUEST_TIME_HUMAN, self::JOB_REQUEST_TIME],
         [self::JOB_START_TIME_HUMAN, self::JOB_START_TIME],
         [self::JOB_END_TIME_HUMAN, self::JOB_END_TIME],
+        [self::JOB_LIST_ALL_HUMAN, self::JOB_LIST_ALL],
 
         // access
         [self::SHARE_HUMAN, self::SHARE],
@@ -845,6 +870,9 @@ class url_var
         self::SHOW_FULL => self::CRUD_FULL_HUMAN,
         self::SHOW_POPUP => self::CRUD_POPUP_HUMAN,
         self::SHOW_CREATE => self::CRUD_CELL_HUMAN,
+        self::ACTION_JOB_UPGRADE => self::ACTION_JOB_UPGRADE_HUMAN,
+        self::ACTION_JOB_DOWNGRADE => self::ACTION_JOB_DOWNGRADE_HUMAN,
+        self::ACTION_JOB_CANCEL => self::ACTION_JOB_CANCEL_HUMAN,
     ];
 
     // map human-readable url values to standard url values

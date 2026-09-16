@@ -1,14 +1,14 @@
 CREATE OR REPLACE FUNCTION value_prime_p3_update_log_0010020
-    (_user_id                 bigint,
-     _change_action_id        smallint,
-     _field_id_share_type_id  smallint,
-     _share_type_id_old       smallint,
-     _share_type_id           smallint,
-     _group_id                bigint,
-     _phrase_id_1             smallint,
-     _phrase_id_2             smallint,
-     _phrase_id_3             smallint,
-     _phrase_id_4             smallint) RETURNS void AS
+    (_user_id                bigint,
+     _change_action_id       smallint,
+     _field_id_share_type_id smallint,
+     _share_type_id_old      smallint,
+     _share_type_id          smallint,
+     _group_id               bigint,
+     _phrase_id_1            smallint,
+     _phrase_id_2            smallint,
+     _phrase_id_3            smallint,
+     _phrase_id_4            smallint) RETURNS void AS
 $$
 BEGIN
 
@@ -17,7 +17,7 @@ BEGIN
 
     UPDATE values_prime
        SET share_type_id = _share_type_id,
-           last_update = Now()
+           last_update   = Now()
      WHERE phrase_id_1 = _phrase_id_1
        AND phrase_id_2 = _phrase_id_2
        AND phrase_id_3 = _phrase_id_3
@@ -28,8 +28,8 @@ $$ LANGUAGE plpgsql;
 
 PREPARE value_prime_p3_update_log_0010020_call
         (bigint, smallint, smallint, smallint, smallint, bigint, smallint, smallint, smallint, smallint) AS
-    SELECT value_prime_p3_update_log_0010020
-        ($1,$2, $3, $4, $5, $6, $7, $8, $9, $10);
+SELECT value_prime_p3_update_log_0010020
+        ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10);
 
 SELECT value_prime_p3_update_log_0010020
        (3::bigint,

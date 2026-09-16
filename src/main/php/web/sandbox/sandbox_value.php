@@ -67,9 +67,15 @@ use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use DateTime;
+use DateTimeInterface;
 
 class sandbox_value extends sandbox
 {
+
+    // the format of a time value in a form field and in the api message to the backend
+    const string TIME_FORMAT = DateTimeInterface::ATOM;
+    // the key of the date text in the json of a DateTime object
+    const string JSON_DATETIME_DATE = 'date';
 
     /*
      * object vars
@@ -102,7 +108,11 @@ class sandbox_value extends sandbox
             $this->time_value = $value;
         }
     } // a time value
-    // TODO add geo points
+    public ?string $geo_value = null {
+        set {
+            $this->geo_value = $value;
+        }
+    } // a geolocation value e.g. '47.263179, 8.684730'
 
     // true if the user has done no personal overwrites which is the default case
     private bool $is_std = true;
@@ -151,6 +161,15 @@ class sandbox_value extends sandbox
                     $this->number = $url_array[url_var::NUMERIC_VALUE];
                 }
             }
+            if (array_key_exists(url_var::VALUE_TEXT, $url_array)) {
+                $this->text_value = $url_array[url_var::VALUE_TEXT];
+            }
+            if (array_key_exists(url_var::VALUE_TIME, $url_array)) {
+                $this->time_value = $this->time_from_text($url_array[url_var::VALUE_TIME]);
+            }
+            if (array_key_exists(url_var::VALUE_GEO, $url_array)) {
+                $this->geo_value = $url_array[url_var::VALUE_GEO];
+            }
         }
         return $msg;
     }
@@ -174,6 +193,8 @@ class sandbox_value extends sandbox
             return $this->text_value();
         } elseif ($this->time_value() != null) {
             return $this->time_value();
+        } elseif ($this->geo_value() != null) {
+            return $this->geo_value();
         } else {
             return null;
         }
@@ -192,6 +213,29 @@ class sandbox_value extends sandbox
     function time_value(): ?DateTime
     {
         return $this->time_value;
+    }
+
+    function geo_value(): ?string
+    {
+        return $this->geo_value;
+    }
+
+    /**
+     * @param string|array|null $time the time as text or as the json of a DateTime object of the backend
+     * @return DateTime|null the time or null if no time is given
+     */
+    private function time_from_text(string|array|null $time): ?DateTime
+    {
+        $result = null;
+        $text = $time;
+        if (is_array($time)) {
+            $text = $time[self::JSON_DATETIME_DATE] ?? null;
+        }
+        if ($text != null and $text != '') {
+            $lib = new library();
+            $result = $lib->get_datetime($text, $this->dsp_id(), 'value time mapper');
+        }
+        return $result;
     }
 
     /**
@@ -246,8 +290,9 @@ class sandbox_value extends sandbox
         } elseif (array_key_exists(json_fields::TEXT_VALUE, $json_array)) {
             $this->text_value = $json_array[json_fields::TEXT_VALUE];
         } elseif (array_key_exists(json_fields::TIME_VALUE, $json_array)) {
-            $this->time_value = $json_array[json_fields::TIME_VALUE];
-            // TODO add geo point
+            $this->time_value = $this->time_from_text($json_array[json_fields::TIME_VALUE]);
+        } elseif (array_key_exists(json_fields::GEO_VALUE, $json_array)) {
+            $this->geo_value = $json_array[json_fields::GEO_VALUE];
         } else {
             $this->number = null;
         }

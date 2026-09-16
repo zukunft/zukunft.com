@@ -1,10 +1,10 @@
 DROP PROCEDURE IF EXISTS user_delete_log_ip_address;
 CREATE PROCEDURE user_delete_log_ip_address
-    (_req_user_id        bigint,
-     _change_action_id   smallint,
+    (_req_user_id         bigint,
+     _change_action_id    smallint,
      _field_id_ip_address smallint,
      _ip_address          text,
-     _user_id            bigint)
+     _user_id             bigint)
 
 BEGIN
 

@@ -2,12 +2,11 @@ CREATE OR REPLACE FUNCTION sys_log_update_log_10000000008
     (_user_id                    bigint,
      _change_action_id           smallint,
      _field_id_sys_log_status_id smallint,
-     _status_name_old              text,
+     _status_name_old            text,
      _sys_log_status_id_old      smallint,
-     _status_name                  text,
+     _status_name                text,
      _sys_log_status_id          smallint,
      _sys_log_id                 bigint) RETURNS void AS
-
 $$
 BEGIN
 
@@ -22,16 +21,16 @@ END
 $$ LANGUAGE plpgsql;
 
 PREPARE sys_log_update_log_10000000008_call
-    (bigint, smallint, smallint, text, smallint, text, smallint, bigint) AS
+        (bigint, smallint, smallint, text, smallint, text, smallint, bigint) AS
 SELECT sys_log_update_log_10000000008
-    ($1,$2,$3,$4,$5,$6,$7,$8);
+        ($1,$2,$3,$4,$5,$6,$7,$8);
 
 SELECT sys_log_update_log_10000000008
-    (3::bigint,
-     2::smallint,
-     209::smallint,
-     'resolved'::text,
-     3::smallint,
-     'closed'::text,
-     4::smallint,
-     2::bigint);
+       (3::bigint,
+        2::smallint,
+        209::smallint,
+        'resolved'::text,
+        3::smallint,
+        'closed'::text,
+        4::smallint,
+        2::bigint);

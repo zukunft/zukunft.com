@@ -1,23 +1,25 @@
 CREATE OR REPLACE FUNCTION group_prime_delete_log
-    (_user_id bigint,
-     _change_action_id smallint,
+    (_user_id             bigint,
+     _change_action_id    smallint,
      _field_id_group_name smallint,
-     _group_name text,
-     _group_id bigint) RETURNS void AS
+     _group_name          text,
+     _group_id            bigint) RETURNS void AS
+$$
+BEGIN
 
-$$ BEGIN
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,     old_value,  row_id)
+         SELECT          _user_id,_change_action_id,_field_id_group_name,_group_name,_group_id ;
 
-    INSERT INTO changes (user_id,change_action_id,change_field_id,old_value,row_id)
-         SELECT _user_id,_change_action_id,_field_id_group_name,_group_name,_group_id ;
+    DELETE
+      FROM groups_prime
+     WHERE group_id = _group_id;
 
-    DELETE FROM groups_prime
-          WHERE group_id = _group_id;
-
-END $$ LANGUAGE plpgsql;
+END
+$$ LANGUAGE plpgsql;
 
 SELECT group_prime_delete_log
-    (3::bigint,
-     3::smallint,
-     320::smallint,
-     'π (unit symbol)'::text,
-     5::bigint);
+       (3::bigint,
+        3::smallint,
+        320::smallint,
+        'π (unit symbol)'::text,
+        5::bigint);

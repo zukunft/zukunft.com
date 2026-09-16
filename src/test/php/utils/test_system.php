@@ -35,6 +35,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::SHARED_CONST . 'users.php';
+include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SERVICE . 'config.php';
 
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
@@ -42,6 +43,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_list;
 use Zukunft\ZukunftCom\main\php\service\config;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -102,7 +104,7 @@ function run_system_test(test_cleanup $t): void
     $usr_test = new user;
     $usr_test->load_by_name(users::SYSTEM_TEST_NAME, $msg);
     $usr_ui = new user_ui($usr_by_id->api_json());
-    $target = '<a href="/http/view.php?m=74&amp;id=' . $usr_test->id() . '">zukunft.com system test</a>';
+    $target = '<a href="/http/view.php?m=' . views::USER_ID . '&amp;id=' . $usr_test->id() . '">zukunft.com system test</a>';
     $result = $usr_ui->display();
     $t->assert('user->load for id ' . $wrd_company->id(), $result, $target);
 

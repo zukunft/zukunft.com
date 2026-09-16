@@ -11,9 +11,9 @@ BEGIN
     INSERT INTO changes ( user_id, change_action_id, change_field_id,    old_value, row_id)
          SELECT          _user_id,_change_action_id,_field_id_type_name,_type_name,_phrase_type_id ;
 
-         DELETE
-           FROM phrase_types
-          WHERE phrase_type_id = _phrase_type_id;
+    DELETE
+      FROM phrase_types
+     WHERE phrase_type_id = _phrase_type_id;
 
 END;
 

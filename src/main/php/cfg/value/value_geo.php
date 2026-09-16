@@ -175,19 +175,10 @@ class value_geo extends value_base
      */
     function api_mapper(array $api_json, user_message $msg): bool
     {
-        $lib = new library();
         parent::api_mapper($api_json, $msg);
 
-        if (array_key_exists(json_fields::TIME_VALUE, $api_json)) {
-            $value = $api_json[json_fields::TIME_VALUE];
-            if (strtotime($value)) {
-                $this->set_last_update($lib->get_datetime($value, $this->dsp_id(), 'api mapper'));
-            } else {
-                $msg->add(msg_id::IMPORT_VALUE_NOT_DATETIME, [
-                    msg_id::VAR_VALUE => $value,
-                    msg_id::VAR_GROUP => $this->grp()->dsp_id()
-                ]);
-            }
+        if (array_key_exists(json_fields::GEO_VALUE, $api_json)) {
+            $this->set_geo_value($api_json[json_fields::GEO_VALUE]);
         }
 
         return $msg->is_ok();

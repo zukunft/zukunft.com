@@ -86,6 +86,8 @@ class styles
     const string TOGGLE_PANE = 'css-toggle-pane';
     // the url fragment that reveals the formula link form on a word or triple page
     const string FORMULA_LINK_PANE = 'formula-link';
+    // the url fragment that reveals the form to define a word or triple without "is a" parent as a category
+    const string DEFINE_PHRASE_PANE = 'define-phrase';
 
     // css class for the small category line under a page-title heading
     const string SUBTITLE = 'subtitle';

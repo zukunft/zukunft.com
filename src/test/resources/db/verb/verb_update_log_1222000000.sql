@@ -14,12 +14,10 @@ CREATE OR REPLACE FUNCTION verb_update_log_1222000000
 $$
 BEGIN
 
-    INSERT INTO changes ( user_id, change_action_id, change_field_id,    old_value,     new_value, row_id)
-         SELECT          _user_id,_change_action_id,_field_id_verb_name,_verb_name_old,_verb_name,_verb_id ;
-
-    INSERT INTO changes ( user_id, change_action_id, change_field_id,  old_value,   new_value, row_id)
-         SELECT          _user_id,_change_action_id,_field_id_code_id,_code_id_old,_code_id,  _verb_id ;
-
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,      old_value,       new_value,   row_id)
+         SELECT          _user_id,_change_action_id,_field_id_verb_name,  _verb_name_old,  _verb_name,  _verb_id ;
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,      old_value,       new_value,   row_id)
+         SELECT          _user_id,_change_action_id,_field_id_code_id,    _code_id_old,    _code_id,    _verb_id ;
     INSERT INTO changes ( user_id, change_action_id, change_field_id,      old_value,       new_value,   row_id)
          SELECT          _user_id,_change_action_id,_field_id_description,_description_old,_description,_verb_id ;
 
@@ -33,20 +31,20 @@ END
 $$ LANGUAGE plpgsql;
 
 PREPARE verb_update_log_1222000000_call
-    (bigint, smallint, smallint, text, text, bigint, smallint, text, text, smallint, text, text) AS
+        (bigint, smallint, smallint, text, text, bigint, smallint, text, text, smallint, text, text) AS
 SELECT verb_update_log_1222000000
-    ($1,$2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12);
+        ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12);
 
 SELECT verb_update_log_1222000000
-        (3::bigint,
-         1::smallint,
-         23::smallint,
-         'not set'::text,
-         'System Test Verb Renamed'::text,
-         1::bigint,
-         24::smallint,
-         'not_set'::text,
-         null::text,
-         25::smallint,
-         'no verb / predicate selected'::text,
-         null::text);
+       (3::bigint,
+        1::smallint,
+        23::smallint,
+        'not set'::text,
+        'System Test Verb Renamed'::text,
+        1::bigint,
+        24::smallint,
+        'not_set'::text,
+        null::text,
+        25::smallint,
+        'no verb / predicate selected'::text,
+        null::text);
