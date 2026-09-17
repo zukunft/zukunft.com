@@ -38,6 +38,7 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_FORMULA . 'formula_link.php';
 include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'url_var.php';
 include_once html_paths::REF . 'ref.php';
 include_once test_paths::CONST . 'files.php';
@@ -49,6 +50,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use DateTimeInterface;
 use Zukunft\ZukunftCom\main\php\shared\const\def as def_shared;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\ref\ref as ref_ui;
@@ -1062,6 +1064,12 @@ class lib_tests
         $result = $t->json_remove_volatile(json_decode($json_with_id_in_array, true), true);
         $target = json_decode($json_without_id_in_array, true);
         $t->assert("json remove volatile id in a array of a sub array", $result, $target);
+
+        // the log function list grows with every script and error location that logs,
+        // so it can never match a stored fixture and is dropped from the type list compare
+        $json_with_log_fnc = [json_fields::LIST_SYS_LOG_FUNCTIONS => [['id' => 1]], 'a' => 1];
+        $result = $t->json_remove_volatile($json_with_log_fnc);
+        $t->assert("json remove volatile log function list", $result, ['a' => 1]);
 
 
         $t->subheader($ts . 'user message');

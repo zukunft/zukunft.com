@@ -153,8 +153,12 @@ class sandbox_value extends sandbox
             if (array_key_exists(url_var::PHRASE_LIST, $url_array)) {
                 $id_lst = explode(',', $url_array[url_var::PHRASE_LIST]);
                 if (count($id_lst) > 0) {
-                    $this->set_phrases_by_is_list($id_lst, $msg);
+                    $this->set_phrases_by_is_list($id_lst, $msg, $dto);
                 }
+            }
+            // the name that the user has given to the group of the value
+            if (array_key_exists(url_var::GROUP_NAME, $url_array)) {
+                $this->grp->set_name($url_array[url_var::GROUP_NAME]);
             }
             if (array_key_exists(url_var::NUMERIC_VALUE, $url_array)) {
                 $number = $url_array[url_var::NUMERIC_VALUE];
@@ -254,22 +258,41 @@ class sandbox_value extends sandbox
      * set the phrase list based on the given id list
      * @param array $id_lst with the all phrase ids for the unique identification of this value
      * @param user_message $msg to report an id that is not a number e.g. from a changed url
+     * @param data_object|null $dto the request cache with the names of the phrases, which the url does not carry
      * @return void
      */
-    function set_phrases_by_is_list(array $id_lst, user_message $msg): void
+    function set_phrases_by_is_list(array $id_lst, user_message $msg, ?data_object $dto = null): void
     {
-        $phr_lst = new phrase_list();
         foreach ($id_lst as $id) {
             // a text would fatal on the int id, so it is reported and skipped; an empty list is normal
             if (filter_var($id, FILTER_VALIDATE_INT) !== false) {
                 $phr = new phrase();
                 $phr->set_id((int)$id);
+                // a phrase of the cache has the name, so that e.g. the form title can show it
+                if ($dto != null) {
+                    $phr = $dto->phr_lst->cached_phrase($phr);
+                }
                 $this->grp->add($phr);
             } elseif ($id != '') {
                 $msg->add(msg_id::URL_VALUE_NOT_NUMERIC, [msg_id::VAR_VALUE => $id]);
             }
         }
     }
+    /**
+     * @return bool true if the phrases of the value are loaded with their names, so they can be shown as links
+     *              e.g. in the form title; a value filled from the url only carries the phrase ids
+     */
+    function has_named_phrases(): bool
+    {
+        $result = !$this->phr_lst()->is_empty();
+        foreach ($this->phr_lst()->lst() as $phr) {
+            if ($phr->name() == '') {
+                $result = false;
+            }
+        }
+        return $result;
+    }
+
     /**
      * @returns phrase_list the list of phrases as an object
      */
@@ -340,12 +363,8 @@ class sandbox_value extends sandbox
      */
     public function value_type_selector(string $form, ?type_lists $typ_lst): string
     {
-        $lst = [];
-        foreach (value_types::cases() as $case) {
-            $lst[$case->value] = $case->value;
-        }
         $sel = new html_selector();
-        $sel->lst = $lst;
+        $sel->lst = value_types::selector_list();
         $sel->name = url_var::TYPE;
         $sel->form = $form;
         $sel->selected = value_types::NUMBER->value;

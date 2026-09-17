@@ -244,6 +244,7 @@ class url_var
     const string VALUE_GEO = 'vg'; // the geolocation of a geo value e.g. '47.263179, 8.684730'
     const string VALUE_TIME_SERIES = 'vs';
     const string VALUE_TEXT = 'vt'; // the text of a text value
+    const string VALUE_TYPE = 'vy'; // the selected type of a new value e.g. text to show the text field
     const string WORD = 'w';
     const string WORD_POS = 'wp'; // with a number the word id of the x word e.g. of the form field of a group
     const string WORDS = 'wl'; // array of ids to select or add the words
@@ -529,6 +530,7 @@ class url_var
     const string VALUE_TEXT_HUMAN = 'text_value';
     const string VALUE_TIME_HUMAN = 'time_value';
     const string VALUE_GEO_HUMAN = 'geo_value';
+    const string VALUE_TYPE_HUMAN = 'value_type';
 
     // formula
     const string FORMULA_HUMAN = 'formula_id';
@@ -772,6 +774,7 @@ class url_var
         [self::VALUE_TEXT_HUMAN, self::VALUE_TEXT],
         [self::VALUE_TIME_HUMAN, self::VALUE_TIME],
         [self::VALUE_GEO_HUMAN, self::VALUE_GEO],
+        [self::VALUE_TYPE_HUMAN, self::VALUE_TYPE],
 
         // formula
         [self::FORMULA_HUMAN, self::FORMULA],

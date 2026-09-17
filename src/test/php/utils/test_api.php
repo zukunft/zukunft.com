@@ -1298,6 +1298,10 @@ class test_api extends test_base
         $json = $this->json_remove_volatile_time_field($json, user_db::FLD_LAST_LOGOUT);
         $json = $this->json_remove_volatile_time_field($json, user_db::FLD_CREATED);
 
+        // the log writer adds a log function for every script and error location that logs,
+        // so the list depends on the errors of the run and can never match a stored fixture
+        $json = $this->json_remove_volatile_unset_field($json, json_fields::LIST_SYS_LOG_FUNCTIONS);
+
         // remove the id fields if requested
         // for tests with base load dataset the id fields should not be ignored
         // but for tests that add and remove data to table that have real data the id field should be ignored

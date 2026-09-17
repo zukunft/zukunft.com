@@ -601,6 +601,10 @@ class component_types
     // add a value by its phrases and the number without the confirm view (see ui_select::value_add_simple)
     const string FORM_VALUE_ADD_SIMPLE = "system_form_value_add_simple";
     const int FORM_VALUE_ADD_SIMPLE_ID = 253;
+    // the phrases, the value type and the value of a new value in one line of the detailed value add form
+    // (see ui_select::phrase_value_line)
+    const string FORM_PHRASE_VALUE_LINE = "system_form_phrase_value_line";
+    const int FORM_PHRASE_VALUE_LINE_ID = 259;
     // overwrite the number, text, time or geolocation of a value or the number of a result without the confirm view
     // (see system_form::form_value_overwrite)
     const string FORM_VALUE_OVERWRITE = "system_form_value_overwrite";
@@ -854,6 +858,7 @@ class component_types
         self::FORM_WORD_ADD_SIMPLE,
         self::FORM_TRIPLE_ADD_SIMPLE,
         self::FORM_VALUE_ADD_SIMPLE,
+        self::FORM_PHRASE_VALUE_LINE,
         self::FORM_VALUE_OVERWRITE,
         self::SYSTEM_BODY_NOT_YET_AVAILABLE,
         self::SYSTEM_BODY_USER_JOBS,
@@ -887,11 +892,13 @@ class component_types
         self::ROW_END
     );
 
-    // list of component types that close their form and open a second one, so they set their own rows,
-    // because an automatic row div would close around the second form (form straddle, see HIDDEN_TYPES)
+    // list of component types that set their own rows: the phrase steps close their form and open a second one,
+    // so an automatic row div would close around the second form (form straddle, see HIDDEN_TYPES); the phrase
+    // value line shares their row code and would otherwise get a row inside the automatic row
     const array OWN_ROW_TYPES = array(
         self::FORM_PHRASE_STEPS,
-        self::FORM_VALUE_ADD_SIMPLE
+        self::FORM_VALUE_ADD_SIMPLE,
+        self::FORM_PHRASE_VALUE_LINE
     );
 
     // list of component types that are used to combine lists
@@ -916,6 +923,7 @@ class component_types
         self::FORM_FIELD_NAME_IN_FORMULAS,
         self::FORM_FIELD_WEIGHT,
         self::FORM_FIELD_VALUE,
+        self::FORM_FIELD_GROUP_OR_PHRASES,
         self::FORM_FIELD_EXTERNAL_KEY,
         self::FORM_FIELD_URL,
         self::FORM_FIELD_DOI,
@@ -1168,6 +1176,7 @@ class component_types
         [self::FORM_WORD_ADD_SIMPLE, self::FORM_WORD_ADD_SIMPLE_ID],
         [self::FORM_TRIPLE_ADD_SIMPLE, self::FORM_TRIPLE_ADD_SIMPLE_ID],
         [self::FORM_VALUE_ADD_SIMPLE, self::FORM_VALUE_ADD_SIMPLE_ID],
+        [self::FORM_PHRASE_VALUE_LINE, self::FORM_PHRASE_VALUE_LINE_ID],
         [self::FORM_VALUE_OVERWRITE, self::FORM_VALUE_OVERWRITE_ID],
         [self::SYSTEM_BODY_NOT_YET_AVAILABLE, self::SYSTEM_BODY_NOT_YET_AVAILABLE_ID],
         [self::SYSTEM_BODY_USER_JOBS, self::SYSTEM_BODY_USER_JOBS_ID],

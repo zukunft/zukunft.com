@@ -77,6 +77,10 @@ class styles
     // centred, so the heading stays prominent while the inline action stays unobtrusive
     const string HEADING_ICON_INLINE = 'heading-icon-inline';
 
+    // css class for an add or change icon link beside a form field e.g. behind the source selector:
+    // the size of the field label, so the icon is easy to hit
+    const string FORM_ICON_INLINE = 'form-icon-inline';
+
     // css class for a submit button that is shown like the plain text around it, e.g. the 'add'
     // of the component list of a view, which must be a submit to send the selected component
     const string TEXT_BUTTON = 'text-button';

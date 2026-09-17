@@ -231,6 +231,7 @@
             p.php
     \-- dsp_id_medium - section for function dsp_id_medium not yet defined that it should be debug in /group/group.php
     \-- dsp_id_short - section for function dsp_id_short not yet defined that it should be debug in /group/group.php
+    \-- name_given - section for function name_given not yet defined that it should be debug in /group/group.php
     \-- name_generated - section for function name_generated not yet defined that it should be debug in /group/group.php
     \-- names - section for function names is expected to be info in /group/group.php
     \-- order error - order of section construct and map has difference at api_mapper should be before row_mapper,
@@ -6569,6 +6570,7 @@
     \-- list_select - section for function list_select missing in /component/execute/ui_select.php
     \-- phrase_steps - section for function phrase_steps missing in /component/execute/ui_select.php
     \-- value_add_simple - section for function value_add_simple missing in /component/execute/ui_select.php
+    \-- phrase_value_line - section for function phrase_value_line missing in /component/execute/ui_select.php
 \-- element
     \-- api_mapper - section for function api_mapper is expected to be construct and map in /element/element.php
     \-- api_array - section for function api_array not yet defined that it should be api in /element/element.php
@@ -7589,6 +7591,8 @@
     \-- geo_value - section for function geo_value not yet defined that it should be set and get in /sandbox/sandbox_val
             ue.php
     \-- is_std - section for function is_std is expected to be info in /sandbox/sandbox_value.php
+    \-- has_named_phrases - section for function has_named_phrases not yet defined that it should be set and get in /san
+            dbox/sandbox_value.php
     \-- phr_lst - section for function phr_lst not yet defined that it should be set and get in /sandbox/sandbox_value.p
             hp
     \-- api_mapper - section for function api_mapper is expected to be construct and map in /sandbox/sandbox_value.php
@@ -8883,6 +8887,9 @@
     \-- value_add_simple
         \-- ui_select - the pure html form that adds a value just by its phrases and the number: the phrases are selecte
                 d step by
+    \-- phrase_value_line
+        \-- ui_select - the line of the pure value add form with the chosen phrases, the phrase field,
+                 the find and next button,
     \-- api_mapper
         \-- element_group - set the vars of this element_group list based on the given json
     \-- element_list
@@ -9081,7 +9088,7 @@
     \-- form_field_weight
         \-- system_form - edit field for the triple weight
     \-- form_num_value
-        \-- system_form - @param db_object $dbo the object
+        \-- system_form - the number, text, time or geolocation field of the value form with the opening value as the
     \-- form_value_overwrite
         \-- system_form - the one field form that overwrites the number, text,
                  time or geolocation of a value or the number of a result
@@ -9094,7 +9101,7 @@
     \-- form_field_source_group_name
         \-- system_form - @return string the html code to request the source group name
     \-- form_field_group_or_phrases
-        \-- system_form - @return string the html code to request the group name or a list of phrases
+        \-- system_form - @param db_object $dbo the value or result with the group name
     \-- form_field_source_group_or_phrases
         \-- system_form - @return string the html code to request the group name or a list of phrases
     \-- form_field_formula_link_priority

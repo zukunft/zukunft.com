@@ -335,11 +335,14 @@ class group extends sandbox_named
                     $lst_to_show->remove($phr_lst_exclude);
                 }
             }
+            // a phrase that carries only its id e.g. of a value built from a url adds no separator
             foreach ($lst_to_show->lst() as $phr) {
-                if ($result <> '') {
-                    $result .= $sep;
+                if ($phr->name() != '') {
+                    if ($result <> '') {
+                        $result .= $sep;
+                    }
+                    $result .= $phr->name();
                 }
-                $result .= $phr->name();
             }
         }
         return $result;
@@ -366,10 +369,12 @@ class group extends sandbox_named
                     }
                 }
                 foreach ($lst_to_show->lst() as $phr) {
-                    if ($result <> '') {
-                        $result .= $sep;
+                    if ($phr->name() != '') {
+                        if ($result <> '') {
+                            $result .= $sep;
+                        }
+                        $result .= $phr->name_tip();
                     }
-                    $result .= $phr->name_tip();
                 }
             }
             $this->name_tip = $result;

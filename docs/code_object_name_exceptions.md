@@ -15,7 +15,7 @@ $cac: the backend cache of user-specific data_object
 $cfg: the user configuration values
 $db_con: the database connection (additional in init.php, library)
 $debug: to activate additional logging levels (additional in ListOfIdObjects, config, init.php, library)
-$mtr: the translation object (additional in Message, library, messages.php)
+$mtr: the translation object (additional in Message, library, messages.php, value_types.php)
 $sys: the system time control including the preloaded types and system configuration that change rarely and is not user-specific and for easy check how many times the code writes (additional in config, db_cl, init.php, library)
 
 
@@ -29,10 +29,10 @@ component: $cmp2, $cmp_added, $cmp_by_id, $cmp_filled, $cmp_frm, $cmp_imp, $cmp_
 element: $elm_ui
 figure: $fig_ui
 formula: $db_rec, $dbo, $dbo_ui, $fop_ui, $frm_empty, $frm_has_next, $frm_html, $frm_imp, $frm_imp_off, $frm_ltx, $frm_next, $frm_page, $frm_plain, $frm_renamed, $frm_tab, $frm_this, $frm_trm, $frm_ui, $frm_upd, $frm_usr2, $frm_usr2_reloaded, $lnk, $obj, $to_add, $trp
-group: $db_rec, $dbo, $dbo_ui, $grp1, $grp2, $grp_2019, $grp_big, $grp_canton, $grp_canton_pct, $grp_ch, $grp_check, $grp_chk, $grp_city, $grp_city_pct, $grp_used, $obj, $phr_grp, $phr_grp_reload, $val_grp
+group: $db_rec, $dbo, $dbo_ui, $grp1, $grp2, $grp_2019, $grp_big, $grp_canton, $grp_canton_pct, $grp_ch, $grp_check, $grp_chk, $grp_city, $grp_city_pct, $grp_no_names, $grp_used, $obj, $phr_grp, $phr_grp_reload, $val_grp
 job: $calc_request, $dbo, $dbo_ui, $job_closed, $job_done, $job_future, $job_high, $job_low, $job_newer, $job_older, $job_oldest
 language: $dbo, $dbo_ui, $lan_by_id, $obj, $src
-phrase: $country, $dbo, $dbo_ui, $debug_phr, $e_sym, $from, $max_phr, $new_phrase, $phr2, $phr_by_id, $phr_canton_ui, $phr_ch_ui, $phr_city_ui, $phr_loaded, $phr_new, $phr_sys_cfg, $phr_to, $phr_to_add, $phr_ui, $phr_zh, $pi, $result, $switzerland, $tier, $time_phr, $to, $to_add, $trp, $val_phr, $val_time_phr, $wrd, $zurich
+phrase: $country, $dbo, $dbo_ui, $debug_phr, $e_sym, $from, $max_phr, $new_phrase, $phr2, $phr_by_id, $phr_canton_ui, $phr_ch_ui, $phr_city_ui, $phr_loaded, $phr_new, $phr_no_name, $phr_sys_cfg, $phr_to, $phr_to_add, $phr_ui, $phr_zh, $pi, $result, $switzerland, $tier, $time_phr, $to, $to_add, $trp, $val_phr, $val_time_phr, $wrd, $zurich
 protection_type_list: $lst
 ref: $dbo, $dbo_ui, $obj, $ref2, $ref_empty, $ref_filled, $ref_new, $ref_obj, $ref_plain, $ref_ui, $std_rec, $type
 result: $ch_increase, $dbo, $dbo_ui, $grp_res, $k_val, $obj, $res_canton, $res_city, $res_db, $res_plain, $res_ui, $res_upd, $result, $rst
@@ -46,7 +46,7 @@ user_message: $act_msg, $activate_msg, $add_msg, $adm_msg, $anon_msg, $api_msg, 
 user_profile_list: $lst
 user_status_list: $lst
 user_type_list: $lst
-value: $add_val, $add_val2, $add_val_ts, $added_val, $added_val2, $added_val_usr2, $best_val, $best_val2, $chk_val, $dbo, $dbo_ui, $e, $mio_val, $mio_val_ui, $obj, $obj_to_add, $pi, $res_canton_ui, $res_city_ui, $result, $std_val, $std_val_missing, $val_add1, $val_add2, $val_added, $val_bad, $val_best_guess, $val_by_phr_lst, $val_canton, $val_canton_ui, $val_ch, $val_ch_ui, $val_city, $val_city_ui, $val_grp, $val_id, $val_no_src, $val_phr, $val_plain, $val_protected, $val_tab, $val_ui, $val_usr2, $wrd_val
+value: $add_val, $add_val2, $add_val_ts, $added_val, $added_val2, $added_val_usr2, $best_val, $best_val2, $chk_val, $dbo, $dbo_ui, $e, $mio_val, $mio_val_ui, $obj, $obj_to_add, $pi, $res_canton_ui, $res_city_ui, $result, $std_val, $std_val_missing, $val_add1, $val_add2, $val_added, $val_bad, $val_best_guess, $val_by_phr_lst, $val_canton, $val_canton_ui, $val_ch, $val_ch_ui, $val_city, $val_city_ui, $val_grp, $val_id, $val_named, $val_no_src, $val_phr, $val_pi, $val_plain, $val_protected, $val_tab, $val_ui, $val_unnamed, $val_usr2, $wrd_val
 verb: $dbo, $dbo_ui, $obj, $vrb_empty, $vrb_filled, $vrb_id, $vrb_is, $vrb_time_step, $vrb_unused
 view: $cld, $dbo, $dbo_ui, $msk_alone, $msk_cols, $msk_db, $msk_empty, $msk_filled, $msk_line, $msk_new, $msk_no_ovr, $msk_old, $msk_owned, $msk_plain, $msk_posted, $msk_reloaded, $msk_renamed, $msk_tab, $msk_terms, $msk_ui, $msk_usr2, $msk_usr2_reloaded, $obj, $prt, $result, $trp_view, $view_obj, $wrd_view
 view_link_type_list: $lst
@@ -107,7 +107,7 @@ component_type: $cmp_typ
 component_type_list: $cmp_lst
 config: $cfg, $cfg_all, $cfg_db, $cfg_sys, $sys_cfg
 controller: $ctrl
-data_object: $cac, $cfg, $ctg_dto, $dto, $dto_base_ui, $dto_empty, $dto_no_links, $dto_prio, $dto_res, $dto_sim, $dto_start, $dto_ui, $res_cfg, $steps_dto
+data_object: $cac, $cache_dto, $cfg, $ctg_dto, $dto, $dto_base_ui, $dto_empty, $dto_no_links, $dto_prio, $dto_res, $dto_sim, $dto_start, $dto_ui, $res_cfg, $steps_dto
 db_cache: $cac, $db_cache
 db_cache_page: $cac_check, $cac_page, $db_cache_page
 db_cache_status: $dbc_sta
@@ -187,7 +187,7 @@ sys_log_level: $log_typ
 sys_log_list: $err_lst, $err_lst_ui, $log_lst, $log_lst_ui, $lst_ui, $sys_lst
 sys_log_status: $log_sta
 sys_log_status_list: $lst, $sys_log_status
-system_form: $form, $overwrite_form, $sfm, $simple_form
+system_form: $form, $overwrite_form, $sfm, $simple_form, $value_form
 system_page: $page
 system_time: $sys_exe
 system_time_type: $sys_exe_typ, $sys_script

@@ -40,6 +40,7 @@ include_once paths::MODEL_VALUE . 'value_obj.php';
 include_once paths::SHARED_CONST . 'sources.php';
 include_once paths::SHARED_CONST_FIELDS . 'fields.php';
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED . 'json_fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
@@ -59,6 +60,7 @@ use Zukunft\ZukunftCom\main\php\cfg\value\value_time_series;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\groups;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\const\sources;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
@@ -123,6 +125,20 @@ class value_tests
         $test_name = 'create a geolocation value object';
         $val = new value_obj()->get($t->usr1, values::GEO);
         $t->assert($test_name, $val::class, value_geo::class);
+
+        // the frontend sends the group name that the user has typed in the value form as the name of the value
+        $t->subheader($ts . 'group name');
+        $test_name = 'the name of the api json is the name given to the group of the value';
+        $val = $t_val->value_pi_math();
+        $api_json = $val->api_json_array([api_types::INCL_PHRASES], $msg);
+        $api_json[json_fields::NAME] = groups::TN_VALUE_WORKFLOW;
+        $val_named = new value($t->usr1);
+        $val_named->api_mapper($api_json, $msg);
+        $t->assert($test_name, $val_named->grp()->name_given(), groups::TN_VALUE_WORKFLOW);
+        $test_name = 'without a name in the api json the group gets no given name';
+        $val_unnamed = new value($t->usr1);
+        $val_unnamed->api_mapper($val->api_json_array([api_types::INCL_PHRASES], $msg), $msg);
+        $t->assert($test_name, $val_unnamed->grp()->name_given(), '');
 
         $t->subheader($ts . 'union row mapping');
         // a value list is loaded with one union query over the prime, most and big value tables

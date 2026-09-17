@@ -257,6 +257,13 @@ body {
     vertical-align: middle;
 }
 
+/* add or change icon link beside a form field e.g. behind the source selector: the size of the */
+/* field label, so the icon is easy to hit */
+.form-icon-inline {
+    font-size: 1rem;
+    vertical-align: middle;
+}
+
 /* a submit button shown like the plain text around it, e.g. the 'add' of the component list of */
 /* a view, which must be a submit to send the selected component but should read like a link */
 .text-button {

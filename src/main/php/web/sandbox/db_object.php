@@ -41,6 +41,7 @@ include_once html_paths::API_OBJECT . 'api_message.php';
 //include_once html_paths::FORMULA . 'formula_list.php';
 //include_once html_paths::TYPES . 'type_lists.php';
 //include_once html_paths::REF . 'source_list.php';
+//include_once html_paths::REF . 'ref_list.php';
 //include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::CONST . 'icons.php';
 include_once html_paths::HTML . 'button.php';
@@ -79,6 +80,7 @@ use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\phrase\term as term_ui;
 use Zukunft\ZukunftCom\main\php\web\html\rest_call;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
+use Zukunft\ZukunftCom\main\php\web\ref\ref_list;
 use Zukunft\ZukunftCom\main\php\web\ref\source_list;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
@@ -1359,9 +1361,10 @@ class db_object extends TextIdObject
      * create the html code to select a reference
      * @param string $form the name of the html form
      * @param string $pattern
+     * @param ref_list|null $ref_lst the references of the frontend cache to select from
      * @return string the html code to select a reference
      */
-    public function ref_selector(string $form, string $pattern): string
+    public function ref_selector(string $form, string $pattern, ?ref_list $ref_lst): string
     {
         return $this->selector_not_defined('ref_selector');
     }

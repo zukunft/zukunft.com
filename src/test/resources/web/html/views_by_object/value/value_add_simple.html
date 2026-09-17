@@ -133,7 +133,7 @@
         </nav>
         <main class="main-container">
             <h4>
-                Add a new value
+                Add a new value for ...
             </h4>
             <form action="http://localhost/http/view.php" id="value_add_simple">
                 <input type="hidden" name="token" value="5e18d78c56c5ccb645631d7e5c6657d02a2f7c579cd01d36d3f5539ba07a6c13">
@@ -149,9 +149,11 @@
                         <datalist id="kp_form_field_phrase_pattern_list">
                         </datalist>
                     </div>
-                    <button class="btn btn-space col-1 align-self-end btn-outline-success" type="submit" name="fr" value="frp">
-                        find and next
-                    </button>
+                    <div class="col-1 d-flex align-items-end">
+                        <button class="btn btn-outline-success w-100" type="submit" name="fr" value="frp">
+                            find and next
+                        </button>
+                    </div>
                 </div>
                 <br>
                 <div class="row col-md-12 justify-content-end">

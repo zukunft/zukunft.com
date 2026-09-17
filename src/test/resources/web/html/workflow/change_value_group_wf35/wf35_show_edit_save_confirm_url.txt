@@ -1,0 +1,26 @@
+GET
+http://localhost/http/view.php?id=65471461&9m=5&pl=999%2C997&n=123.456&8id=65471461&89m=1&8pl=999%2C997&8n=123.456&9id=65471461&gn=System+Test+Group+named+via+value+workflow&m=77&z=2&submit=
+/http/view.php?id=65471461&9m=5&pl=999%2C997&n=123.456&8id=65471461&89m=1&8pl=999%2C997&8n=123.456&9id=65471461&gn=System+Test+Group+named+via+value+workflow&m=77&z=2&submit=
+/http/view.php?id=65471461&9mask_id=value_default&phrase_ids=999%2C997&number=123.456&8id=65471461&8phrase_ids=999%2C997&8number=123.456&9id=65471461&group_name=System+Test+Group+named+via+value+workflow&mask_id=confirm_update&step=confirmed&
+{
+    "id": "65471461",
+    "share": "",
+    "protection": "",
+    "phrase_ids": "999,997",
+    "number": "123.456",
+    "group_name": "System Test Group named via value workflow",
+    "mask_id": "confirm_update",
+    "step": "confirmed",
+    "url_part_original_data": {
+        "id": "65471461",
+        "share": "",
+        "protection": "",
+        "9mask_id": "entry_view",
+        "phrase_ids": "999,997",
+        "number": "123.456"
+    },
+    "url_part_back": {
+        "mask_id": "value_default",
+        "id": "65471461"
+    }
+}

@@ -2271,6 +2271,14 @@ class group extends sandbox_multi
     }
 
     /**
+     * @return string the name given by a user, '' if the group is only named by its phrases
+     */
+    function name_given(): string
+    {
+        return $this->name ?? '';
+    }
+
+    /**
      * @return string with the group name
      */
     function name(): string

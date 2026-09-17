@@ -42,7 +42,9 @@ A proper issue ticket should be created for these TODOs notes:
     TODO use global $ui_sys for the frontend cache and $cac for the global backend cache and remove all other caches
     TODO use one cache object for the frontend and the backend cache and replace the single type list cache objects
 
-    TODO create a formula "good enougth" default view
+    TODO add a phrase type 'measure convertable' that includes e.g. the currencies whereas humans / inhabitants are not realy convertable
+    TODO add an 'Export my changes of the last hour, day, week, ...' as json 
+    TODO create a json file merger that can e.g. only adjust the words, triples, values, formulas of file 2 with the changes of file 2
     TODO in the formula expression '{' and '}' should be escaped to avoid confusion with the term links
     TODO in the json import seperate the share (asset) from share (to share thnigs)
     TODO if a page shows only the 'share (asset)' use 'share' instead of 'share (asset)'

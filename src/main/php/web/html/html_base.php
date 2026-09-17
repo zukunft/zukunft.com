@@ -109,9 +109,12 @@ class html_base
     const string BS_BTN = 'btn btn-space col-1';
     // a borderless button that shows only an icon, e.g. the refresh icon beside a form field label
     const string BS_BTN_ICON = 'btn btn-link p-0 ms-1 align-baseline';
-    // a text button beside a form field with the size of the form buttons, aligned to the bottom so that it is
-    // in line with the input and not the label
-    const string BS_BTN_FIELD = self::BS_BTN . ' align-self-end ' . self::BS_BTN_SUCCESS;
+    // align an element beside a form field to the bottom, so that it is in line with the input and not the label
+    const string BS_ALIGN_BOTTOM = 'align-self-end';
+    // the column of a text button beside a form field: the button is aligned to the bottom like the input
+    // and fills the column, so that the button margin sits inside the column and not on it
+    const string BS_BTN_FIELD_COL = 'col-1 d-flex align-items-end';
+    const string BS_BTN_FIELD = 'btn btn-outline-success w-100';
     const string BS_BTN_SUCCESS = 'btn-outline-success';
     const string BS_BTN_CANCEL = 'btn-outline-secondary';
     const string BS_BTN_DEL = 'btn-outline-secondary';
@@ -2223,11 +2226,12 @@ class html_base
      *
      * @param string $text the translated text shown to the user
      * @param string $refresh the url_var::REFRESH value that says which fields are refreshed
-     * @return string the html code of the refresh button
+     * @return string the html code of the refresh button in a column of its own
      */
     function button_refresh_text(string $text, string $refresh): string
     {
-        return $this->button_link(htmlspecialchars($text, ENT_QUOTES), url_var::REFRESH, $refresh, '', self::BS_BTN_FIELD);
+        $btn = $this->button_link(htmlspecialchars($text, ENT_QUOTES), url_var::REFRESH, $refresh, '', self::BS_BTN_FIELD);
+        return $this->div($btn, self::BS_BTN_FIELD_COL);
     }
 
     /**

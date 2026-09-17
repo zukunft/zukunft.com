@@ -62,11 +62,13 @@ include_once html_paths::WORD . 'word.php';
 include_once html_paths::SHARED_CONST . 'rest_ctrl.php';
 include_once html_paths::SHARED_CONST . 'views.php';
 include_once html_paths::SHARED_CONST_FIELDS . 'fields.php';
+include_once html_paths::SHARED_CONST_FIELDS . 'group_fields.php';
 include_once html_paths::SHARED_CONST_FIELDS . 'source_fields.php';
 include_once html_paths::SHARED_CONST_FIELDS . 'value_fields.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::SHARED_HELPER . 'Message.php';
 include_once html_paths::SHARED_TYPES . 'api_type_list.php';
+include_once html_paths::SHARED_TYPES . 'view_styles.php';
 include_once html_paths::SHARED . 'api.php';
 include_once html_paths::SHARED . 'url_var.php';
 include_once html_paths::SHARED . 'json_fields.php';
@@ -93,11 +95,13 @@ use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\Message;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\group_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\source_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\value_fields;
 
@@ -180,6 +184,7 @@ class value extends sandbox_value
             fields::FLD_EXCLUDED => url_var::EXCLUDED,
             fields::FLD_SHARE => url_var::SHARE,
             fields::FLD_PROTECT => url_var::PROTECTION,
+            group_fields::FLD_NAME => url_var::GROUP_NAME,
         ];
     }
 
@@ -313,6 +318,8 @@ class value extends sandbox_value
     {
         $vars = parent::api_array($typ_lst, $msg);
         $vars[json_fields::PHRASES] = $this->grp->phr_lst()->api_array($typ_lst, $msg);
+        // the name given by the user to the group of the value, so that the backend writes it
+        $vars[json_fields::NAME] = $this->grp->name;
         $vars[json_fields::NUMBER] = $this->number();
         $vars[json_fields::TEXT_VALUE] = $this->text_value();
         $vars[json_fields::TIME_VALUE] = $this->time_value()?->format(self::TIME_FORMAT);
@@ -754,44 +761,79 @@ class value extends sandbox_value
         }
         // the selected entry is the source of this value, not the value itself
         $selected = $this->src?->id() ?? 0;
-        return $src_lst->selector($form, $selected, url_var::SOURCE, msg_id::FORM_SELECT_SOURCE)
-            . $this->source_crud_links($selected);
+        $sel_html = $src_lst->selector($form, $selected, url_var::SOURCE, msg_id::FORM_SELECT_SOURCE, view_styles::COL_SM_11);
+        // also send the opening source id as the '8'-prefixed pre value so the confirm view can detect
+        // whether the user actually changed the source (see url_var::PRE and sandbox::share_type_selector)
+        $html = new html_base();
+        $pre_source = $this->pre_value(url_var::SOURCE) ?? (string)$selected;
+        return $sel_html . $this->crud_icons(views::SOURCE_ADD_ID, msg_id::SOURCE_ADD,
+                views::SOURCE_EDIT_ID, msg_id::SOURCE_EDIT, $selected)
+            . $html->form_hidden(url_var::PRE . url_var::SOURCE, $pre_source);
     }
 
     /**
-     * the add and change icons shown behind the source selector of the value form
+     * the reference selector of the value add and edit form followed by the icons to add a new reference
+     * or to change the selected one, like the source selector (see source_selector)
      *
-     * @param int $src_id the database id of the selected source, 0 if the value has no source yet
-     * @return string the html code of the add icon and, for a selected source, of the change icon
+     * @param string $form the name of the html form
+     * @param string $pattern the typed chars to filter the references
+     * @param ref_list|null $ref_lst the references of the frontend cache to select from
+     * @return string the html code of the reference selector with its add and change icons
      */
-    private function source_crud_links(int $src_id): string
+    function ref_selector(string $form, string $pattern, ?ref_list $ref_lst): string
     {
-        global $mtr;
+        $ref_lst = $ref_lst ?? new ref_list();
+        // TODO review and maybe use test_mode parameter
+        if ($pattern != '') {
+            $ref_lst->load_like($pattern);
+        }
+        // a value has no reference of its own, so the reference of one of its phrases is preselected
+        $selected = $this->phrase_ref_id($ref_lst);
+        $sel_html = $ref_lst->selector($form, $selected, url_var::REF, msg_id::FORM_SELECT_REF, view_styles::COL_SM_11);
+        return $sel_html . $this->crud_icons(views::REF_ADD_ID, msg_id::REF_ADD,
+                views::REF_EDIT_ID, msg_id::REF_EDIT, $selected);
+    }
 
-        $html = new html_base();
-        $result = $html->ref($html->url_back(views::SOURCE_ADD_ID), $html->icon(icons::ADD),
-            $mtr->txt(msg_id::SOURCE_ADD), styles::HEADING_ICON_INLINE, true);
-        // without a selected source there is nothing to change, so only the add icon is shown
-        if ($src_id != 0) {
-            $result .= $html->ref($html->url_back(views::SOURCE_EDIT_ID, $src_id), $html->icon(icons::EDIT),
-                $mtr->txt(msg_id::SOURCE_EDIT), styles::HEADING_ICON_INLINE, true);
+    /**
+     * @param ref_list $ref_lst the references to select from
+     * @return int the id of the first reference that belongs to a phrase of this value, 0 if none does
+     */
+    private function phrase_ref_id(ref_list $ref_lst): int
+    {
+        $phr_ids = $this->phr_lst()->id_lst();
+        $result = 0;
+        foreach ($ref_lst->lst() as $ref) {
+            if ($result == 0 and in_array($ref->phrase()->id(), $phr_ids)) {
+                $result = $ref->id();
+            }
         }
         return $result;
     }
 
     /**
-     * @param string $form
-     * @param string $pattern
-     * @return string
+     * the add and change icons behind a selector of the value form in the last 1/12 of the line, so the user
+     * can create a missing source or reference without leaving the value form
+     *
+     * @param int $add_msk the view that adds a new object e.g. views::SOURCE_ADD_ID
+     * @param msg_id $add_tip the tooltip of the add icon
+     * @param int $edit_msk the view that changes the selected object e.g. views::SOURCE_EDIT_ID
+     * @param msg_id $edit_tip the tooltip of the change icon
+     * @param int $selected_id the database id of the selected object, 0 if none is selected
+     * @return string the html code of the add icon and, for a selected object, of the change icon
      */
-    function ref_selector(string $form, string $pattern): string
+    private function crud_icons(int $add_msk, msg_id $add_tip, int $edit_msk, msg_id $edit_tip, int $selected_id): string
     {
-        $ref_lst = new ref_list();
-        // TODO review and maybe use test_mode parameter
-        if ($pattern != '') {
-            $ref_lst->load_like($pattern);
+        global $mtr;
+
+        $html = new html_base();
+        $result = $html->ref($html->url_back($add_msk), $html->icon(icons::ADD),
+            $mtr->txt($add_tip), styles::FORM_ICON_INLINE, true);
+        // without a selected object there is nothing to change, so only the add icon is shown
+        if ($selected_id != 0) {
+            $result .= $html->ref($html->url_back($edit_msk, $selected_id), $html->icon(icons::EDIT),
+                $mtr->txt($edit_tip), styles::FORM_ICON_INLINE, true);
         }
-        return $ref_lst->selector($form, $this->id(), url_var::REF, msg_id::FORM_SELECT_VIEW_STYLE);
+        return $html->div($result, view_styles::COL_SM_1 . ' ' . html_base::BS_ALIGN_BOTTOM);
     }
 
     /*

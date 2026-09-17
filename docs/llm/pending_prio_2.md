@@ -1420,3 +1420,42 @@ but it is the kind of thing the reference workflow was presumably meant to surfa
 
 Two smaller consistency notes, both matching the change_source sibling so I would not change them: change_view_workflow runs ~90 lines (over the ~50-line guideline, as change_source_workflow does), and the file header still says "each step of the add_view workflow" now that
 there are two.        
+## change value view: given group name and the phrases of the fixture value
+
+the change value view (value_edit) now shows only a name that a user has given to the group and
+writes it to the group row on save (value_base::save), but two gaps remain:
+
+- the backend never sends an existing given group name to the frontend: sandbox_value::api_json_array
+  emits the phrases, but not the group name, and value::load_by_id loads no group row at all
+  (a group row exists only for a named group, see group::row_mapper). so the edit form of an
+  already named group shows an empty group field; a name typed there renames the group, an
+  empty field keeps the name. to show the current name load the group row with the value
+  (e.g. in group::load_phrase_names) and emit json_fields::NAME for a given name
+- the value of the views_by_id fixtures (test_values::value_16_filled, group_16) is built from
+  artificial phrase ids (word1 = 1, triple7 = 106841477, ...) that are not in the test request
+  cache, so the phrases stay unnamed in a test render and the title of
+  views_by_id/value/30_value_update_*.html still reads 'Change value' without the phrase names
+  although sandbox_value::set_phrases_by_is_list now takes the names from the cache. use a value
+  with cached phrases (e.g. value_pi_math) for the value views by id or add the phrases of
+  group_16 to the cache of test_lib; both change the fixture file names, because they carry the id
+- a value has no reference (decided 2026-09-17), so the reference selector was removed from the
+  value add and edit views; value::ref_selector and value::phrase_ref_id in web/value/value.php
+  are now unused by any view
+
+## database upgrade path
+
+two defects for the next minor version bump: sql_db::add_column pluralises its table argument via
+get_table_name, so it cannot take a real table name like values_standard_prime (a column for all
+value tables needs a variant that takes the name as in the database), and the version match in
+db_check::db_check has no arm for a 0.0.3 database (def::NEXT_VERSION maps a 0.0.4 database to
+db_upgrade_0_0_4), so the first start after the bump would end in an UnhandledMatchError
+
+## log function names taken from the log writer itself
+
+log_err without a function name derives it via library::php_function_from_exception from an
+Exception created inside text_log_functions.php, so the first trace frame is the log writer and the
+saved sys_log_function is "text_log_functions" or "src/main/php/cfg/log_text/text_log_functions"
+instead of the caller; the dedup in the log writer does not catch it either, so a test db load
+holds eight rows named text_log_functions. test_app::write_time adds the script path as a further
+log function. The type list compare of the tests drops sys_log_functions since 2026-09-17
+(test_api::json_remove_volatile), so this only pollutes the sys_log_functions table

@@ -98,6 +98,15 @@ class group_tests
         $this->check_64_bit_key($t, [4], 4);
         $this->check_64_bit_key($t, [7], 7);
         $this->check_64_bit_key($t, [-2], 32770);
+
+        $t->subheader($ts . 'given name');
+        $test_name = 'a group named by a user reports the given name';
+        $grp = $t_grp->group();
+        $t->assert($test_name, $grp->name_given(), groups::TN_READ);
+        $test_name = 'a group named only by its phrases reports no given name, but still a name';
+        $grp = $t_phr->phrase_list_pi()->get_grp_id(false);
+        $t->assert($test_name, $grp->name_given(), '');
+        $t->assert_true($test_name, $grp->name() != '');
         $this->check_64_bit_key($t, [-3], 32771);
         $this->check_64_bit_key($t, [-51], 32819);
         $this->check_64_bit_key($t, [32767], 32767);

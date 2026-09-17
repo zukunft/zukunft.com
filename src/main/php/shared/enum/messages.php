@@ -1859,6 +1859,8 @@ enum messages: string
     case FORM_TITLE_REF_EDIT = 'form_title_ref_edit';
     // the ref edit title that names the linked phrase, used if the phrase name is known
     case FORM_TITLE_REF_EDIT_PHRASE = 'form_title_ref_edit_phrase';
+    // the change value title with the linked phrases of the value (see system_form::form_title_text)
+    case FORM_TITLE_VALUE_EDIT_PHRASE = 'form_title_value_edit_phrase';
     case FORM_TITLE_REF_DEL = 'form_title_ref_del';
     case FORM_TITLE_GROUP_ADD = 'form_title_group_add';
     case FORM_TITLE_GROUP_EDIT = 'form_title_group_edit';
@@ -2247,6 +2249,11 @@ enum messages: string
     case FORM_PHRASE_TYPE_TO = 'form_phrase_type_to';
     case FORM_SELECT_VIEW_DEFAULT = 'form_select_view_default';
     case FORM_SELECT_VALUE_TYPE = 'form_select_value_type';
+    // the options of the value type selector (see value_types::msg_id)
+    case VALUE_TYPE_NUMBER = 'value_type_number';
+    case VALUE_TYPE_TEXT = 'value_type_text';
+    case VALUE_TYPE_TIME = 'value_type_time';
+    case VALUE_TYPE_GEO = 'value_type_geo';
     case SYSTEM_PASTE_TABLE_CONTEXT = 'system_paste_table_context';
     case SYSTEM_PASTE_TABLE_BODY = 'system_paste_table_body';
     case SYSTEM_SELECTION_TEXT = 'system_selection_text';
