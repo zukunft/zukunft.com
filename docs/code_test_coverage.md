@@ -8,7 +8,7 @@ in a test file of the src/test/php/unit* folders; the count is by function name
 and cannot tell the classes apart, so a name that several classes declare needs
 2 calls per class and is listed as shared otherwise
 
-526 of 5764 public functions have at least 2 unit test calls; the 5238 functions below do not
+527 of 5767 public functions have at least 2 unit test calls; the 5240 functions below do not
 
 ## main backend
 
@@ -3480,7 +3480,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- load_by_linked_phrases_sql - 0 unit test calls
     \-- load_dummy - 0 unit test calls shared by 36 classes
     \-- save - 39 unit test calls shared by 27 classes
-    \-- selector_list - 0 unit test calls
+    \-- selector_list - 0 unit test calls shared by 2 classes
     \-- set_user - 5 unit test calls shared by 15 classes
     \-- term_list - 3 unit test calls shared by 7 classes
     \-- term_lst_of_names - 0 unit test calls shared by 2 classes
@@ -3973,7 +3973,9 @@ and cannot tell the classes apart, so a name that several classes declare needs
 \-- users
     \-- mail_header - 0 unit test calls
 \-- value_types
+    \-- msg_id - 0 unit test calls
     \-- query_extension - 0 unit test calls shared by 2 classes
+    \-- selector_list - 0 unit test calls shared by 2 classes
     \-- sql_type - 0 unit test calls shared by 4 classes
     \-- table_extension - 0 unit test calls shared by 6 classes
 \-- views
@@ -4445,7 +4447,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- esc - 1 unit test calls
     \-- footer_html - 0 unit test calls
     \-- form - 0 unit test calls
-    \-- form_end - 0 unit test calls shared by 2 classes
+    \-- form_end - 1 unit test calls shared by 2 classes
     \-- form_end_with_submit - 0 unit test calls
     \-- form_field_id - 0 unit test calls
     \-- form_input - 0 unit test calls
@@ -4920,7 +4922,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- form_components - 0 unit test calls
     \-- form_confirm - 0 unit test calls
     \-- form_description - 0 unit test calls
-    \-- form_end - 0 unit test calls shared by 2 classes
+    \-- form_end - 1 unit test calls shared by 2 classes
     \-- form_field_component_link_order_number - 0 unit test calls
     \-- form_field_doi - 0 unit test calls
     \-- form_field_formula_link_priority - 0 unit test calls

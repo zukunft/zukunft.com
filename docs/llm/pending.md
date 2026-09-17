@@ -1,14 +1,24 @@
 # pending - list of planned llm prompts with prio 1
 
+## edit value
+
+in the edit value view increase the size of the field 'reference' to the same size as the source selector field and alos add the add and edit icons to the ref field. And fill the ref select field e.g. for src/test/resources/web/html/views_by_id/value/30_value_update_1FajJ2-4LYK3-8jId-I1A-Yz--Z-9-+A.html with some test data. 
+
 ## add value
 
-add a selector to the 'Add value pure' view that can be used to explicit switch between a numeric, time, geo or text value
+split the 'system form phrase value line' component into separate components if possible e.g. one component for the 'selected phrases', the 'add phrase selector' the 'find and select phrase button' and the 'value type selector' 
 
 ## add formula
 
 change the format of the 'refresh' icons in the add and edit formula view to normal chars without button formatting
 
 ## word default view
+
+in the values column of the word and triple default view show after the column title 'values' additional an edit icon that is grey if no user is logged in. If a user is logged in the section of the values will change to "edit mode" which means that after each value an edit icon is shown, that can be used to inline change the value. This probably implies that an editional set of edit mode parameters needs to be added to the url_var. The suggestion is to use a numeric prefix for the edit mode parameters
+
+if in the word and triple default view the edit mode add a plus icon at the end of each value group that can be used to inline add new values. if the puls icon is pressed the group header plus all common phrases of the group are shown in one additional line in the table. Another additional line shows a phrase selector to add additionalal phrases for the new value. the next additional lines show a field for the values and the value type and a cancel and save button. 
+
+edit icon for formulas that allow to unlink formulas
 
 add a list with the triples and a plus sign to add a new triple
 

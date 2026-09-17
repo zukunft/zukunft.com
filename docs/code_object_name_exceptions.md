@@ -15,7 +15,7 @@ $cac: the backend cache of user-specific data_object
 $cfg: the user configuration values
 $db_con: the database connection (additional in init.php, library)
 $debug: to activate additional logging levels (additional in ListOfIdObjects, config, init.php, library)
-$mtr: the translation object (additional in Message, library, messages.php)
+$mtr: the translation object (additional in Message, library, messages.php, value_types.php)
 $sys: the system time control including the preloaded types and system configuration that change rarely and is not user-specific and for easy check how many times the code writes (additional in config, db_cl, init.php, library)
 
 

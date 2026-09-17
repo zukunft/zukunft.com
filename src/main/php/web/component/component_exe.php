@@ -285,6 +285,7 @@ class component_exe extends component
                 $form->button_cancel($msk_id, $dbo, $url_arr), $msg, $cfg, $test_mode),
             component_types::FORM_VALUE_ADD_SIMPLE => $select->value_add_simple($form_name, $url_arr,
                 $form->button_cancel($msk_id, $dbo, $url_arr), $msg, $cfg, $test_mode),
+            component_types::FORM_PHRASE_VALUE_LINE => $select->phrase_value_line($form_name, $url_arr, $msg, $cfg, $test_mode),
             component_types::FORM_VALUE_OVERWRITE => $form->form_value_overwrite($dbo, $style),
             component_types::SYSTEM_BODY_NOT_YET_AVAILABLE => $page->not_yet_available(),
             component_types::SYSTEM_BODY_USER_JOBS => $page->user_jobs($msg, $msk_id, $test_mode),

@@ -340,12 +340,8 @@ class sandbox_value extends sandbox
      */
     public function value_type_selector(string $form, ?type_lists $typ_lst): string
     {
-        $lst = [];
-        foreach (value_types::cases() as $case) {
-            $lst[$case->value] = $case->value;
-        }
         $sel = new html_selector();
-        $sel->lst = $lst;
+        $sel->lst = value_types::selector_list();
         $sel->name = url_var::TYPE;
         $sel->form = $form;
         $sel->selected = value_types::NUMBER->value;

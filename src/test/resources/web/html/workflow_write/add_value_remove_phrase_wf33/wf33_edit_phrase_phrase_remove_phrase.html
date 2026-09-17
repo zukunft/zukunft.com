@@ -358,7 +358,26 @@
                     <button class="btn btn-space col-1 align-self-end btn-outline-success" type="submit" name="fr" value="frp">
                         find and next
                     </button>
-                    <div class="form-group col-md-6">
+                    <div class="form-group col-md-1">
+                        <label for="vy_form_select_value_type">
+                            Value type
+                        </label>
+                        <select class="form-control" name="vy" form="value_add_phrases" id="vy_form_select_value_type" >
+                            <option value="number"  selected >
+                                number
+                            </option>
+                            <option value="text"  >
+                                text
+                            </option>
+                            <option value="time"  >
+                                time
+                            </option>
+                            <option value="geo"  >
+                                geolocation
+                            </option>
+                        </select>
+                    </div>
+                    <div class="form-group col-md-5">
                         <label for="value">
                             Value
                         </label>

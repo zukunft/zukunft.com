@@ -1936,6 +1936,12 @@
       "code_id": "form_phrase_steps"
     },
     {
+      "name": "system form phrase value line",
+      "description": "select the phrases, the type and the value of a new value in one line like the pure value add form, but as part of the detailed value add form",
+      "type": "system_form_phrase_value_line",
+      "code_id": "form_phrase_value_line"
+    },
+    {
       "name": "system form word add simple",
       "description": "one field for the name of a new word and an add button that writes the word directly if no term with the same name exists",
       "type": "system_form_word_add_simple",
@@ -4057,16 +4063,16 @@
         },
         {
           "position": "4",
-          "name": "system form field group or phrase list"
+          "name": "system form phrase value line"
         },
         {
           "position": "5",
-          "name": "system form select value type",
-          "position_type": "side"
+          "name": "system form field group or phrase list"
         },
         {
           "position": "6",
-          "name": "system form field value"
+          "name": "system form select ref",
+          "position_type": "side"
         },
         {
           "position": "7",
@@ -4078,32 +4084,28 @@
         },
         {
           "position": "9",
-          "name": "system form select ref"
-        },
-        {
-          "position": "10",
           "name": "system form select view"
         },
         {
-          "position": "11",
+          "position": "10",
           "name": "system form select share type",
           "position_type": "side"
         },
         {
-          "position": "12",
+          "position": "11",
           "name": "system form select protection type",
           "position_type": "side"
         },
         {
-          "position": "13",
+          "position": "12",
           "name": "system form button cancel"
         },
         {
-          "position": "14",
+          "position": "13",
           "name": "system form button save"
         },
         {
-          "position": "15",
+          "position": "14",
           "name": "system form end"
         }
       ]

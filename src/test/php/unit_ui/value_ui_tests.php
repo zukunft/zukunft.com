@@ -66,6 +66,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\languages;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\enum\value_types;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
@@ -194,6 +195,22 @@ class value_ui_tests
         $t->assert_text_contains($test_name, $city_html, 'name="' . url_var::NUMERIC_VALUE . '"');
         $test_name = '... in the line of the phrase field, but posted with the number form';
         $t->assert_text_contains($test_name, $city_html, 'form="' . $steps_form . ui_select::VALUE_FORM_SUFFIX . '"');
+        $test_name = '... beside the selector of the value type with the width of a button';
+        $type_sel = '<div class="form-group ' . view_styles::COL_SM_1 . '">';
+        $t->assert_text_contains($test_name, $city_html, $type_sel);
+        $t->assert_text_contains($test_name, $city_html, 'name="' . url_var::VALUE_TYPE . '"');
+        $test_name = '... with the translated name of each value type';
+        $geo_option = '<option value="' . value_types::GEO->value . '"  >' . $mtr->txt(msg_id::VALUE_TYPE_GEO);
+        $t->assert_text_contains($test_name, $city_html, $geo_option);
+        $test_name = 'the selected text type shows the text field instead of the number field';
+        $text_url = $city_url + [url_var::VALUE_TYPE => value_types::TEXT->value];
+        $text_html = $select->phrase_steps($steps_form, $text_url, $cancel, $msg_ui, $steps_dto, true);
+        $t->assert_text_contains($test_name, $text_html, 'name="' . url_var::VALUE_TEXT . '"');
+        $t->assert_text_not_contains($test_name, $text_html, 'name="' . url_var::NUMERIC_VALUE . '"');
+        $test_name = 'an unknown value type falls back to the number field';
+        $bad_type_url = $city_url + [url_var::VALUE_TYPE => 'no type'];
+        $bad_type_html = $select->phrase_steps($steps_form, $bad_type_url, $cancel, $msg_ui, $steps_dto, true);
+        $t->assert_text_contains($test_name, $bad_type_html, 'name="' . url_var::NUMERIC_VALUE . '"');
         $test_name = 'the chosen phrases are shown in one left aligned line';
         $t->assert_text_contains($test_name, $city_html, 'class="' . view_styles::TEXT_LEFT . ' ' . view_styles::COL_SM_12 . '"');
         $test_name = 'cancel and add are in one right aligned row';
@@ -279,6 +296,29 @@ class value_ui_tests
         $t->assert_text_not_contains($test_name, $empty_html, 'name="' . url_var::NUMERIC_VALUE . '"');
         $test_name = '... and no add button';
         $t->assert_text_not_contains($test_name, $empty_html, 'name="' . url_var::POST_SUBMIT . '"');
+
+        // the detailed add form starts with the line of the pure add form, but as part of its own single form
+        $t->subheader($ts . 'phrase value line');
+        $detail_form = views::VALUE_ADD_DETAIL;
+        $test_name = 'the detailed add form checks and adds the phrases like the phrase steps';
+        $line_html = $select->phrase_value_line($detail_form, $city_url, $msg_ui, $steps_dto, true);
+        $t->assert_text_contains($test_name, $line_html, $city_field);
+        $test_name = '... with the find and next button, the value type and the value in the same line';
+        $t->assert_text_contains($test_name, $line_html, $find_btn);
+        $t->assert_text_contains($test_name, $line_html, 'name="' . url_var::VALUE_TYPE . '"');
+        $t->assert_text_contains($test_name, $line_html, 'name="' . url_var::NUMERIC_VALUE . '"');
+        $test_name = '... posted with the detailed form itself instead of a number form';
+        $t->assert_text_not_contains($test_name, $line_html, 'form="' . $detail_form . ui_select::VALUE_FORM_SUFFIX . '"');
+        $test_name = '... without a second form and without the buttons of the pure form';
+        $t->assert_text_not_contains($test_name, $line_html, $html->form_end());
+        $t->assert_text_not_contains($test_name, $line_html, 'name="' . url_var::POST_SUBMIT . '"');
+        $test_name = 'the detailed add form shows the value field also before a phrase is chosen';
+        $line_empty_html = $select->phrase_value_line($detail_form, [], $msg_ui, $steps_dto, true);
+        $t->assert_text_contains($test_name, $line_empty_html, 'name="' . url_var::NUMERIC_VALUE . '"');
+        $test_name = 'the typed value is kept when the find and next button refreshes the detailed form';
+        $typed_url = $city_url + [url_var::NUMERIC_VALUE => (string)values::SAMPLE_INT];
+        $typed_html = $select->phrase_value_line($detail_form, $typed_url, $msg_ui, $steps_dto, true);
+        $t->assert_text_contains($test_name, $typed_html, 'value="' . values::SAMPLE_INT . '"');
 
         // the overwrite form writes the changed number of the value without the confirm view
         $t->subheader($ts . 'value overwrite');
@@ -408,6 +448,9 @@ class value_ui_tests
         $t->assert_text_contains($test_name, $sel_html, url_var::MASK . '=' . views::SOURCE_ADD_ID);
         $test_name = '... with the add icon';
         $t->assert_text_contains($test_name, $sel_html, icons::ADD);
+        $test_name = '... in the same line as the selector, which uses 11/12 of the width';
+        $t->assert_text_contains($test_name, $sel_html, '<div class="form-group ' . view_styles::COL_SM_11 . '">');
+        $t->assert_text_contains($test_name, $sel_html, 'class="' . view_styles::COL_SM_1 . ' ' . html_base::BS_ALIGN_BOTTOM . '"');
 
         // the change icon targets the selected source, not the value itself
         $test_name = 'the source selector links to the edit view of the selected source';

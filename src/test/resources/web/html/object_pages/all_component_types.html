@@ -2301,6 +2301,9 @@
                         <option value="251"  >
                             system form phrase steps
                         </option>
+                        <option value="259"  >
+                            system form phrase value line
+                        </option>
                         <option value="89"  >
                             system form preview
                         </option>
@@ -4703,7 +4706,7 @@ under the
                     time
                 </option>
                 <option value="geo"  >
-                    geo
+                    geolocation
                 </option>
             </select>
         </div>
@@ -6505,6 +6508,56 @@ under the
     <button class="btn btn-space col-1 btn-outline-success" type="submit" name="submit_200">
         add
     </button>
+    <br>
+    <br>
+    <h4>
+        system form phrase value line (system_form_phrase_value_line)
+    </h4>
+    <br>
+    <br>
+    <br>
+    <form action="/http/view.php" id="component_type_test_201">
+        <input type="hidden" name="token" value="5e18d78c56c5ccb645631d7e5c6657d02a2f7c579cd01d36d3f5539ba07a6c13">
+        <div class="row col-md-12">
+            <input type="hidden" name="pl_201" value="">
+            <div class="form-group col-md-5">
+                <label for="kp_form_field_phrase_pattern_201">
+                    word or triple
+                </label>
+                <input type="text" list="kp_form_field_phrase_pattern_list_201" class="form-control" name="kp_201" form="component_type_test_201" id="kp_form_field_phrase_pattern_201" >
+                <datalist id="kp_form_field_phrase_pattern_list_201">
+                </datalist>
+            </div>
+            <button class="btn btn-space col-1 align-self-end btn-outline-success" type="submit" name="fr_201" value="frp">
+                find and next
+            </button>
+            <div class="form-group col-md-1">
+                <label for="vy_form_select_value_type_201">
+                    Value type
+                </label>
+                <select class="form-control" name="vy_201" form="component_type_test_201" id="vy_form_select_value_type_201" >
+                    <option value="number"  selected >
+                        number
+                    </option>
+                    <option value="text"  >
+                        text
+                    </option>
+                    <option value="time"  >
+                        time
+                    </option>
+                    <option value="geo"  >
+                        geolocation
+                    </option>
+                </select>
+            </div>
+            <div class="form-group col-md-5">
+                <label for="value_201">
+                    Value
+                </label>
+                <input class="form-control" type="text" name="n_201" id="value_201">
+            </div>
+        </div>
+    </form>
 </main>
 <!--usr_msg-->
 <footer class="site-footer">

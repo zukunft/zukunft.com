@@ -41,6 +41,32 @@ enum value_types: string
     case TIME = 'time';
     case GEO = 'geo';
 
+    /**
+     * @return array the translated value types to select from keyed by the code that a selector posts
+     */
+    static function selector_list(): array
+    {
+        global $mtr;
+        $lst = [];
+        foreach (self::cases() as $case) {
+            $lst[$case->value] = $mtr->txt($case->msg_id());
+        }
+        return $lst;
+    }
+
+    /**
+     * @return messages the message id of the name of the value type shown to the user
+     */
+    public function msg_id(): messages
+    {
+        return match($this) {
+            value_types::NUMBER => messages::VALUE_TYPE_NUMBER,
+            value_types::TEXT => messages::VALUE_TYPE_TEXT,
+            value_types::TIME => messages::VALUE_TYPE_TIME,
+            value_types::GEO => messages::VALUE_TYPE_GEO,
+        };
+    }
+
     // get the table extension
     public function table_extension(): string
     {

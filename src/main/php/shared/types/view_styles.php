@@ -54,6 +54,7 @@ class view_styles
     const string COL_SM_8_NAME = '2/3 width';
     const int COL_SM_8_ID = 2;
     const string COL_SM_10 = 'col-md-10';
+    const string COL_SM_11 = 'col-md-11';
     const string COL_SM_12 = 'col-md-12';
     const string COL_SM_1 = 'col-md-1';
     const string COL_SM_3 = 'col-md-3';

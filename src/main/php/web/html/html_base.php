@@ -109,9 +109,10 @@ class html_base
     const string BS_BTN = 'btn btn-space col-1';
     // a borderless button that shows only an icon, e.g. the refresh icon beside a form field label
     const string BS_BTN_ICON = 'btn btn-link p-0 ms-1 align-baseline';
-    // a text button beside a form field with the size of the form buttons, aligned to the bottom so that it is
-    // in line with the input and not the label
-    const string BS_BTN_FIELD = self::BS_BTN . ' align-self-end ' . self::BS_BTN_SUCCESS;
+    // align an element beside a form field to the bottom, so that it is in line with the input and not the label
+    const string BS_ALIGN_BOTTOM = 'align-self-end';
+    // a text button beside a form field with the size of the form buttons
+    const string BS_BTN_FIELD = self::BS_BTN . ' ' . self::BS_ALIGN_BOTTOM . ' ' . self::BS_BTN_SUCCESS;
     const string BS_BTN_SUCCESS = 'btn-outline-success';
     const string BS_BTN_CANCEL = 'btn-outline-secondary';
     const string BS_BTN_DEL = 'btn-outline-secondary';

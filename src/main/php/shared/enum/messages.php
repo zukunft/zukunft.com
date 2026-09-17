@@ -2247,6 +2247,11 @@ enum messages: string
     case FORM_PHRASE_TYPE_TO = 'form_phrase_type_to';
     case FORM_SELECT_VIEW_DEFAULT = 'form_select_view_default';
     case FORM_SELECT_VALUE_TYPE = 'form_select_value_type';
+    // the options of the value type selector (see value_types::msg_id)
+    case VALUE_TYPE_NUMBER = 'value_type_number';
+    case VALUE_TYPE_TEXT = 'value_type_text';
+    case VALUE_TYPE_TIME = 'value_type_time';
+    case VALUE_TYPE_GEO = 'value_type_geo';
     case SYSTEM_PASTE_TABLE_CONTEXT = 'system_paste_table_context';
     case SYSTEM_PASTE_TABLE_BODY = 'system_paste_table_body';
     case SYSTEM_SELECTION_TEXT = 'system_selection_text';

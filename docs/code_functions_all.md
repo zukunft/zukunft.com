@@ -6569,6 +6569,7 @@
     \-- list_select - section for function list_select missing in /component/execute/ui_select.php
     \-- phrase_steps - section for function phrase_steps missing in /component/execute/ui_select.php
     \-- value_add_simple - section for function value_add_simple missing in /component/execute/ui_select.php
+    \-- phrase_value_line - section for function phrase_value_line missing in /component/execute/ui_select.php
 \-- element
     \-- api_mapper - section for function api_mapper is expected to be construct and map in /element/element.php
     \-- api_array - section for function api_array not yet defined that it should be api in /element/element.php
@@ -8883,6 +8884,9 @@
     \-- value_add_simple
         \-- ui_select - the pure html form that adds a value just by its phrases and the number: the phrases are selecte
                 d step by
+    \-- phrase_value_line
+        \-- ui_select - the line of the pure value add form with the chosen phrases, the phrase field,
+                 the find and next button,
     \-- api_mapper
         \-- element_group - set the vars of this element_group list based on the given json
     \-- element_list

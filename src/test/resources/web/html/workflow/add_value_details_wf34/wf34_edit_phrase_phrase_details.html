@@ -140,17 +140,23 @@
                 <input type="hidden" name="9m" value="1">
                 <input class="form-control" type="hidden" name="z" id="confirm" value="1">
                 <div class="row col-md-12">
-                    <div class="form-group col-md-8">
-                        <label for="group">
-                            group
+                    <input type="hidden" name="pl" value="">
+                    <div class="form-group col-md-5">
+                        <label for="kp_form_field_phrase_pattern">
+                            word or triple
                         </label>
-                        <input class="form-control" type="text" name="gn" id="group">
+                        <input type="text" list="kp_form_field_phrase_pattern_list" class="form-control" name="kp" form="value_add" id="kp_form_field_phrase_pattern" >
+                        <datalist id="kp_form_field_phrase_pattern_list">
+                        </datalist>
                     </div>
-                    <div class="form-group col-md-4">
-                        <label for="y_form_select_value_type">
+                    <button class="btn btn-space col-1 align-self-end btn-outline-success" type="submit" name="fr" value="frp">
+                        find and next
+                    </button>
+                    <div class="form-group col-md-1">
+                        <label for="vy_form_select_value_type">
                             Value type
                         </label>
-                        <select class="form-control" name="y" form="value_add" id="y_form_select_value_type" >
+                        <select class="form-control" name="vy" form="value_add" id="vy_form_select_value_type" >
                             <option value="number"  selected >
                                 number
                             </option>
@@ -161,17 +167,33 @@
                                 time
                             </option>
                             <option value="geo"  >
-                                geo
+                                geolocation
                             </option>
                         </select>
                     </div>
-                </div>
-                <div class="row col-md-12">
-                    <div class="form-group ">
+                    <div class="form-group col-md-5">
                         <label for="value">
                             Value
                         </label>
-                        <input class="form-control" type="text" name="v" id="value">
+                        <input class="form-control" type="text" name="n" id="value">
+                    </div>
+                </div>
+                <div class="row col-md-12">
+                    <div class="form-group col-md-8">
+                        <label for="group">
+                            group
+                        </label>
+                        <input class="form-control" type="text" name="gn" id="group">
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="l_form_select_ref">
+                            reference
+                        </label>
+                        <select class="form-control" name="l" form="value_add" id="l_form_select_ref" >
+                            <option value="0" selected>
+                                please select ...
+                            </option>
+                        </select>
                     </div>
                 </div>
                 <div class="row col-md-12">
@@ -184,7 +206,7 @@
                     <input type="hidden" name="8o" value="">
                 </div>
                 <div class="row col-md-12">
-                    <div class="form-group col-md-4">
+                    <div class="form-group col-md-11">
                         <label for="so_form_select_source">
                             source
                         </label>
@@ -194,21 +216,11 @@
                             </option>
                         </select>
                     </div>
-                    <a href="http://localhost/http/view.php?m=40" title="source_add" class="heading-icon-inline">
-                        <i class="far fa-square-plus">
-                        </i>
-                    </a>
-                </div>
-                <div class="row col-md-12">
-                    <div class="form-group col-md-4">
-                        <label for="l_form_select_view_style">
-                            View style
-                        </label>
-                        <select class="form-control" name="l" form="value_add" id="l_form_select_view_style" >
-                            <option value="0" selected>
-                                please select ...
-                            </option>
-                        </select>
+                    <div class="col-md-1 align-self-end">
+                        <a href="http://localhost/http/view.php?m=40" title="source_add" class="heading-icon-inline">
+                            <i class="far fa-square-plus">
+                            </i>
+                        </a>
                     </div>
                 </div>
                 <div class="row col-md-12">

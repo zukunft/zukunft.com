@@ -54,7 +54,7 @@ class components
     // component default page, because it has a description and a type and is used by a view;
     // the id is the import position, so re-baseline it from unit/component/list.csv after a reset
     const string SOLUTION_PRIO_TITLE_NAME = 'Title solution priority';
-    const int SOLUTION_PRIO_TITLE_ID = 417;
+    const int SOLUTION_PRIO_TITLE_ID = 418;
 
     // text components to test the side or below position types
     // with ids that are far above the component ids used in the database

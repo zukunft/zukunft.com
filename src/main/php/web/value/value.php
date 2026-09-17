@@ -67,6 +67,7 @@ include_once html_paths::SHARED_CONST_FIELDS . 'value_fields.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::SHARED_HELPER . 'Message.php';
 include_once html_paths::SHARED_TYPES . 'api_type_list.php';
+include_once html_paths::SHARED_TYPES . 'view_styles.php';
 include_once html_paths::SHARED . 'api.php';
 include_once html_paths::SHARED . 'url_var.php';
 include_once html_paths::SHARED . 'json_fields.php';
@@ -93,6 +94,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\Message;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
@@ -754,8 +756,11 @@ class value extends sandbox_value
         }
         // the selected entry is the source of this value, not the value itself
         $selected = $this->src?->id() ?? 0;
-        return $src_lst->selector($form, $selected, url_var::SOURCE, msg_id::FORM_SELECT_SOURCE)
-            . $this->source_crud_links($selected);
+        // the selector uses almost the full width, so that the add and change icons fit in the same line
+        $html = new html_base();
+        $sel_html = $src_lst->selector($form, $selected, url_var::SOURCE, msg_id::FORM_SELECT_SOURCE, view_styles::COL_SM_11);
+        $icons = $html->div($this->source_crud_links($selected), view_styles::COL_SM_1 . ' ' . html_base::BS_ALIGN_BOTTOM);
+        return $sel_html . $icons;
     }
 
     /**
@@ -791,7 +796,7 @@ class value extends sandbox_value
         if ($pattern != '') {
             $ref_lst->load_like($pattern);
         }
-        return $ref_lst->selector($form, $this->id(), url_var::REF, msg_id::FORM_SELECT_VIEW_STYLE);
+        return $ref_lst->selector($form, $this->id(), url_var::REF, msg_id::FORM_SELECT_REF);
     }
 
     /*

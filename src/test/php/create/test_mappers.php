@@ -969,6 +969,7 @@ class test_mappers
             case component_types::SYSTEM_BODY_VALUE_DETAIL:
             case component_types::FORM_PHRASE_STEPS:
             case component_types::FORM_VALUE_ADD_SIMPLE:
+            case component_types::FORM_PHRASE_VALUE_LINE:
             case component_types::FORM_VALUE_OVERWRITE:
                 $obj = $t_val->value_16_filled();
                 break;
