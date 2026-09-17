@@ -243,6 +243,9 @@ class words
     const string SECOND = 'second';
     const int SECOND_ID = 22;
     const string SELECT = 'select';
+    const string SYMBOL = 'symbol'; // config key: the symbols of a phrase (config.yaml select > value|formula > symbol)
+    const string ALIAS = 'alias'; // config key: the aliases of a phrase (config.yaml select > value|formula > alias)
+    const string INCLUDE = 'include'; // config key: the switch that includes the linked phrases in a selection
     const string SELECTIONS = 'selections';
     const string SEPARATOR = 'separator';
     const string SIZE = 'size';

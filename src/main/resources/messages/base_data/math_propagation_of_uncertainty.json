@@ -1,0 +1,794 @@
+{
+  "version": "0.0.3",
+  "data_version": "0.0.1",
+  "time": "2026-09-17 12:00:00",
+  "user": "data-team",
+  "selection": [
+    "propagation of uncertainty"
+  ],
+  "description": "The formulas of the propagation of uncertainty (Wikipedia: Propagation_of_uncertainty): the variance of a function of uncertain inputs for a scaled quantity, a sum, a difference, a linear combination, a product and a quotient, each in the variance form that the calculation engine can reproduce, plus the standard deviation forms of the example table (power, logarithm, exponential, trigonometric function, general power and root) and the first order formula as documentation. The sample inputs x = 3 and y = 2 with the standard deviations 0.3 and 0.4, the correlation 0.2 and the coefficients a = 2 and b = 5 are assumed to make every variance formula reproducible by a calc-validation.",
+  "words": [
+    {
+      "name": "propagation",
+      "description": "the spreading of an effect from its source, e.g. of the uncertainty of the inputs to the result of a calculation"
+    },
+    {
+      "name": "uncertainty",
+      "description": "epistemic situations involving imperfect or unknown information, in measurements the range in which the true value is expected",
+      "refs": [
+        {
+          "name": "Uncertainty",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "statistics",
+      "description": "Statistics is the discipline that concerns the collection, organization, analysis, interpretation, and presentation of data.",
+      "refs": [
+        {
+          "name": "Statistics",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1949963",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "variance",
+      "description": "In probability theory and statistics, variance is the expectation of the squared deviation of a random variable from its mean.",
+      "refs": [
+        {
+          "name": "Variance",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q175199",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "covariance",
+      "description": "In probability theory and statistics, covariance is a measure of the joint variability of two random variables.",
+      "refs": [
+        {
+          "name": "Covariance",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "correlation",
+      "description": "In statistics, correlation or dependence is any statistical relationship, whether causal or not, between two random variables.",
+      "refs": [
+        {
+          "name": "Correlation",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "coefficient",
+      "description": "a multiplicative factor in a term of a polynomial, a series, or any expression",
+      "refs": [
+        {
+          "name": "Coefficient",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "deviation",
+      "description": "In mathematics and statistics, deviation is a measure of difference between the observed value of a variable and some other value, often that variable's mean.",
+      "refs": [
+        {
+          "name": "Deviation (statistics)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "standard",
+      "description": "describes the conventional reference form, e.g. standard deviation"
+    },
+    {
+      "name": "sigma",
+      "description": "the symbol of the standard deviation of a quantity"
+    },
+    {
+      "name": "linear",
+      "description": "relating to a straight line or to a function of the first degree",
+      "refs": [
+        {
+          "name": "Linearity",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "combination",
+      "description": "an expression built from a set of terms, e.g. by adding each term multiplied by a coefficient"
+    },
+    {
+      "name": "scaling",
+      "description": "the multiplication of a quantity by a constant factor"
+    },
+    {
+      "name": "sum",
+      "description": "the result of adding two or more numbers"
+    },
+    {
+      "name": "difference",
+      "description": "arithmetic difference between two values"
+    },
+    {
+      "name": "product",
+      "description": "the result of multiplying two or more numbers"
+    },
+    {
+      "name": "quotient",
+      "description": "the result of dividing one number by another"
+    },
+    {
+      "name": "power",
+      "description": "the result of raising a number to an exponent",
+      "refs": [
+        {
+          "name": "Exponentiation",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "exponential",
+      "description": "a function in which the variable is the exponent",
+      "refs": [
+        {
+          "name": "Exponential_function",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "logarithm",
+      "description": "the inverse function of exponentiation, the exponent to which a base must be raised to produce a number",
+      "refs": [
+        {
+          "name": "Logarithm",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Goodman",
+      "description": "American statistician after whom the exact variance of a product of two independent random variables is named",
+      "refs": [
+        {
+          "name": "Leo_Goodman",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "assumed"
+    },
+    {
+      "name": "x"
+    },
+    {
+      "name": "y"
+    },
+    {
+      "name": "f"
+    },
+    {
+      "name": "a"
+    },
+    {
+      "name": "b"
+    },
+    {
+      "name": "n"
+    },
+    {
+      "name": "i"
+    }
+  ],
+  "triples": [
+    {
+      "description": "the effect of the uncertainties of the inputs on the uncertainty of a function of these inputs",
+      "from": "propagation",
+      "verb": "of",
+      "to": "uncertainty",
+      "refs": [
+        {
+          "name": "Propagation_of_uncertainty",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "from": "propagation of uncertainty",
+      "verb": "is part of",
+      "to": "statistics"
+    },
+    {
+      "name": "standard deviation",
+      "from": "deviation",
+      "verb": "can be",
+      "to": "standard",
+      "refs": [
+        {
+          "name": "Standard deviation",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q159375",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "linear combination",
+      "description": "an expression built from a set of terms by multiplying each term by a coefficient and adding the results",
+      "from": "combination",
+      "verb": "can be",
+      "to": "linear",
+      "refs": [
+        {
+          "name": "Linear_combination",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "correlation coefficient",
+      "description": "a numerical measure of the linear correlation between two random variables, between -1 and 1",
+      "from": "coefficient",
+      "verb": "of",
+      "to": "correlation",
+      "refs": [
+        {
+          "name": "Correlation_coefficient",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "from": "x",
+      "verb": "and",
+      "to": "y"
+    },
+    {
+      "description": "the standard deviation of the input x",
+      "from": "sigma",
+      "verb": "of",
+      "to": "x"
+    },
+    {
+      "description": "the standard deviation of the input y",
+      "from": "sigma",
+      "verb": "of",
+      "to": "y"
+    },
+    {
+      "description": "the standard deviation of the result f",
+      "from": "sigma",
+      "verb": "of",
+      "to": "f"
+    },
+    {
+      "description": "the variance of the input x, the square of its standard deviation",
+      "from": "variance",
+      "verb": "of",
+      "to": "x"
+    },
+    {
+      "description": "the variance of the input y, the square of its standard deviation",
+      "from": "variance",
+      "verb": "of",
+      "to": "y"
+    },
+    {
+      "description": "the variance of the result f, the square of its standard deviation",
+      "from": "variance",
+      "verb": "of",
+      "to": "f"
+    },
+    {
+      "description": "the covariance of the inputs x and y, zero if the inputs are independent",
+      "from": "covariance",
+      "verb": "of",
+      "to": "x and y"
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "propagation of uncertainty",
+        "x",
+        "assumed"
+      ],
+      "number": "3"
+    },
+    {
+      "words": [
+        "propagation of uncertainty",
+        "y",
+        "assumed"
+      ],
+      "number": "2"
+    },
+    {
+      "words": [
+        "propagation of uncertainty",
+        "sigma of x",
+        "assumed"
+      ],
+      "number": "0.3"
+    },
+    {
+      "words": [
+        "propagation of uncertainty",
+        "sigma of y",
+        "assumed"
+      ],
+      "number": "0.4"
+    },
+    {
+      "words": [
+        "propagation of uncertainty",
+        "variance of x",
+        "assumed"
+      ],
+      "number": "0.09"
+    },
+    {
+      "words": [
+        "propagation of uncertainty",
+        "variance of y",
+        "assumed"
+      ],
+      "number": "0.16"
+    },
+    {
+      "words": [
+        "propagation of uncertainty",
+        "correlation coefficient",
+        "assumed"
+      ],
+      "number": "0.2"
+    },
+    {
+      "words": [
+        "propagation of uncertainty",
+        "covariance of x and y",
+        "assumed"
+      ],
+      "number": "0.024"
+    },
+    {
+      "words": [
+        "propagation of uncertainty",
+        "a",
+        "assumed"
+      ],
+      "number": "2"
+    },
+    {
+      "words": [
+        "propagation of uncertainty",
+        "b",
+        "assumed"
+      ],
+      "number": "5"
+    }
+  ],
+  "formulas": [
+    {
+      "name": "variance from the standard deviation",
+      "expression": "\"variance of x\" = \"sigma of x\" * \"sigma of x\"",
+      "latex": "\\sigma_x^2 = \\sigma_x \\cdot \\sigma_x",
+      "assigned": [
+        "propagation of uncertainty"
+      ]
+    },
+    {
+      "name": "covariance from the correlation",
+      "expression": "\"covariance of x and y\" = \"correlation coefficient\" * \"sigma of x\" * \"sigma of y\"",
+      "latex": "\\sigma_{xy} = \\rho_{xy} \\sigma_x \\sigma_y",
+      "assigned": [
+        "propagation of uncertainty"
+      ]
+    },
+    {
+      "name": "propagation for a scaled quantity",
+      "description": "f = a x",
+      "expression": "\"variance of f\" = \"a\" * \"a\" * \"variance of x\"",
+      "latex": "\\sigma_f^2 = a^2 \\sigma_x^2",
+      "assigned": [
+        "propagation of uncertainty"
+      ]
+    },
+    {
+      "name": "propagation for a sum",
+      "description": "f = x + y",
+      "expression": "\"variance of f\" = \"variance of x\" + \"variance of y\" + 2 * \"covariance of x and y\"",
+      "latex": "\\sigma_f^2 = \\sigma_x^2 + \\sigma_y^2 + 2 \\sigma_{xy}",
+      "assigned": [
+        "propagation of uncertainty"
+      ]
+    },
+    {
+      "name": "propagation for a difference",
+      "description": "f = x - y",
+      "expression": "\"variance of f\" = \"variance of x\" + \"variance of y\" - 2 * \"covariance of x and y\"",
+      "latex": "\\sigma_f^2 = \\sigma_x^2 + \\sigma_y^2 - 2 \\sigma_{xy}",
+      "assigned": [
+        "propagation of uncertainty"
+      ]
+    },
+    {
+      "name": "propagation for a linear combination",
+      "description": "f = a x + b y",
+      "expression": "\"variance of f\" = \"a\" * \"a\" * \"variance of x\" + \"b\" * \"b\" * \"variance of y\" + 2 * \"a\" * \"b\" * \"covariance of x and y\"",
+      "latex": "\\sigma_f^2 = a^2 \\sigma_x^2 + b^2 \\sigma_y^2 + 2 a b \\sigma_{xy}",
+      "assigned": [
+        "propagation of uncertainty"
+      ]
+    },
+    {
+      "name": "propagation for a linear difference",
+      "description": "f = a x - b y",
+      "expression": "\"variance of f\" = \"a\" * \"a\" * \"variance of x\" + \"b\" * \"b\" * \"variance of y\" - 2 * \"a\" * \"b\" * \"covariance of x and y\"",
+      "latex": "\\sigma_f^2 = a^2 \\sigma_x^2 + b^2 \\sigma_y^2 - 2 a b \\sigma_{xy}",
+      "assigned": [
+        "propagation of uncertainty"
+      ]
+    },
+    {
+      "name": "propagation for a product",
+      "description": "f = x y, first order approximation",
+      "expression": "\"variance of f\" = \"x\" * \"y\" * \"x\" * \"y\" * ( \"variance of x\" / ( \"x\" * \"x\" ) + \"variance of y\" / ( \"y\" * \"y\" ) + 2 * \"covariance of x and y\" / ( \"x\" * \"y\" ) )",
+      "latex": "\\sigma_f^2 \\approx f^2 \\left[ \\left(\\frac{\\sigma_x}{x}\\right)^2 + \\left(\\frac{\\sigma_y}{y}\\right)^2 + 2 \\frac{\\sigma_{xy}}{x y} \\right]",
+      "assigned": [
+        "propagation of uncertainty"
+      ]
+    },
+    {
+      "name": "propagation for a quotient",
+      "description": "f = x / y, first order approximation",
+      "expression": "\"variance of f\" = ( \"x\" / \"y\" ) * ( \"x\" / \"y\" ) * ( \"variance of x\" / ( \"x\" * \"x\" ) + \"variance of y\" / ( \"y\" * \"y\" ) - 2 * \"covariance of x and y\" / ( \"x\" * \"y\" ) )",
+      "latex": "\\sigma_f^2 \\approx f^2 \\left[ \\left(\\frac{\\sigma_x}{x}\\right)^2 + \\left(\\frac{\\sigma_y}{y}\\right)^2 - 2 \\frac{\\sigma_{xy}}{x y} \\right]",
+      "assigned": [
+        "propagation of uncertainty"
+      ]
+    },
+    {
+      "name": "exact variance of a product",
+      "description": "f = x y for independent inputs, exact instead of the first order approximation (Goodman)",
+      "expression": "\"variance of f\" = \"x\" * \"x\" * \"variance of y\" + \"y\" * \"y\" * \"variance of x\" + \"variance of x\" * \"variance of y\"",
+      "latex": "\\sigma_f^2 = x^2 \\sigma_y^2 + y^2 \\sigma_x^2 + \\sigma_x^2 \\sigma_y^2",
+      "assigned": [
+        "propagation of uncertainty"
+      ]
+    },
+    {
+      "name": "standard deviation of the result",
+      "expression": "\"sigma of f\" = sqrt(\"variance of f\")",
+      "latex": "\\sigma_f = \\sqrt{\\sigma_f^2}",
+      "assigned": [
+        "propagation of uncertainty"
+      ]
+    },
+    {
+      "name": "propagation for a ratio to the sum",
+      "description": "f = x / (x + y)",
+      "expression": "\"sigma of f\" = abs(\"f\" / (\"x\" + \"y\")) * sqrt(\"y\"^2 / \"x\"^2 * \"variance of x\" + \"variance of y\" - 2 * \"y\" / \"x\" * \"covariance of x and y\")",
+      "latex": "\\sigma_f \\approx \\left| \\frac{f}{x + y} \\right| \\sqrt{\\frac{y^2}{x^2} \\sigma_x^2 + \\sigma_y^2 - 2 \\frac{y}{x} \\sigma_{xy}}",
+      "assigned": [
+        "propagation of uncertainty"
+      ]
+    },
+    {
+      "name": "propagation for a power",
+      "description": "f = a x^b",
+      "expression": "\"sigma of f\" = abs(\"f\" * \"b\" * \"sigma of x\" / \"x\")",
+      "latex": "\\sigma_f \\approx \\left| \\frac{f b \\sigma_x}{x} \\right|",
+      "assigned": [
+        "propagation of uncertainty"
+      ]
+    },
+    {
+      "name": "propagation for a natural logarithm",
+      "description": "f = a ln(b x)",
+      "expression": "\"sigma of f\" = abs(\"a\" * \"sigma of x\" / \"x\")",
+      "latex": "\\sigma_f \\approx \\left| \\frac{a \\sigma_x}{x} \\right|",
+      "assigned": [
+        "propagation of uncertainty"
+      ]
+    },
+    {
+      "name": "propagation for a decimal logarithm",
+      "description": "f = a log10(b x)",
+      "expression": "\"sigma of f\" = abs(\"a\" * \"sigma of x\" / (\"x\" * ln(10)))",
+      "latex": "\\sigma_f \\approx \\left| \\frac{a \\sigma_x}{x \\ln(10)} \\right|",
+      "assigned": [
+        "propagation of uncertainty"
+      ]
+    },
+    {
+      "name": "propagation for an exponential",
+      "description": "f = a e^(b x)",
+      "expression": "\"sigma of f\" = abs(\"f\" * \"b\" * \"sigma of x\")",
+      "latex": "\\sigma_f \\approx |f| |b \\sigma_x|",
+      "assigned": [
+        "propagation of uncertainty"
+      ]
+    },
+    {
+      "name": "propagation for a general exponential",
+      "description": "f = a^(b x)",
+      "expression": "\"sigma of f\" = abs(\"f\" * \"b\" * ln(\"a\") * \"sigma of x\")",
+      "latex": "\\sigma_f \\approx |f| |b \\ln(a) \\sigma_x|",
+      "assigned": [
+        "propagation of uncertainty"
+      ]
+    },
+    {
+      "name": "propagation for a sine",
+      "description": "f = a sin(b x)",
+      "expression": "\"sigma of f\" = abs(\"a\" * \"b\" * cos(\"b\" * \"x\") * \"sigma of x\")",
+      "latex": "\\sigma_f \\approx |a b \\cos(b x) \\sigma_x|",
+      "assigned": [
+        "propagation of uncertainty"
+      ]
+    },
+    {
+      "name": "propagation for a cosine",
+      "description": "f = a cos(b x)",
+      "expression": "\"sigma of f\" = abs(\"a\" * \"b\" * sin(\"b\" * \"x\") * \"sigma of x\")",
+      "latex": "\\sigma_f \\approx |a b \\sin(b x) \\sigma_x|",
+      "assigned": [
+        "propagation of uncertainty"
+      ]
+    },
+    {
+      "name": "propagation for a tangent",
+      "description": "f = a tan(b x)",
+      "expression": "\"sigma of f\" = abs(\"a\" * \"b\" * sec(\"b\" * \"x\")^2 * \"sigma of x\")",
+      "latex": "\\sigma_f \\approx |a b \\sec^2(b x) \\sigma_x|",
+      "assigned": [
+        "propagation of uncertainty"
+      ]
+    },
+    {
+      "name": "propagation for a general power",
+      "description": "f = x^y",
+      "expression": "\"sigma of f\" = abs(\"f\") * sqrt((\"y\" * \"sigma of x\" / \"x\")^2 + (ln(\"x\") * \"sigma of y\")^2 + 2 * \"y\" * ln(\"x\") * \"covariance of x and y\" / \"x\")",
+      "latex": "\\sigma_f \\approx |f| \\sqrt{\\left(\\frac{y \\sigma_x}{x}\\right)^2 + (\\ln(x) \\sigma_y)^2 + 2 \\frac{y \\ln(x) \\sigma_{xy}}{x}}",
+      "assigned": [
+        "propagation of uncertainty"
+      ]
+    },
+    {
+      "name": "propagation for a root of a sum of squares",
+      "description": "f = sqrt(a x^2 + b y^2), for a difference of the squares the sign of the covariance term flips",
+      "expression": "\"sigma of f\" = sqrt((\"x\" / \"f\")^2 * \"a\"^2 * \"variance of x\" + (\"y\" / \"f\")^2 * \"b\"^2 * \"variance of y\" + 2 * \"a\" * \"b\" * \"x\" * \"y\" * \"covariance of x and y\" / \"f\"^2)",
+      "latex": "\\sigma_f \\approx \\sqrt{\\left(\\frac{x}{f}\\right)^2 a^2 \\sigma_x^2 + \\left(\\frac{y}{f}\\right)^2 b^2 \\sigma_y^2 + 2 a b \\frac{x y \\sigma_{xy}}{f^2}}",
+      "assigned": [
+        "propagation of uncertainty"
+      ]
+    },
+    {
+      "name": "propagation to the first order",
+      "description": "the variance of any function f of the independent inputs x_i to the first order of the Taylor expansion",
+      "expression": "\"variance of f\" = sum((d\"f\"/d\"x\"_\"i\")^2 * \"variance of x\"_\"i\", \"i\"=1..\"n\")",
+      "latex": "\\sigma_f^2 \\approx \\sum_{i=1}^{n} \\left(\\frac{\\partial f}{\\partial x_i}\\right)^2 \\sigma_{x_i}^2",
+      "assigned": [
+        "propagation of uncertainty"
+      ]
+    },
+    {
+      "name": "standard error of the mean",
+      "description": "the standard deviation of the mean of n independent measurements with the standard deviation sigma",
+      "expression": "\"sigma of f\" = \"sigma\" / sqrt(\"n\")",
+      "latex": "\\sigma_f = \\frac{\\sigma}{\\sqrt{n}}",
+      "assigned": [
+        "propagation of uncertainty"
+      ]
+    }
+  ],
+  "calc-validation": [
+    {
+      "context": [
+        "propagation of uncertainty",
+        "sigma of x",
+        "assumed"
+      ],
+      "formula": "variance from the standard deviation",
+      "words": [
+        "propagation of uncertainty",
+        "variance of x",
+        "assumed"
+      ],
+      "number": "0.09",
+      "note": "0.3 * 0.3"
+    },
+    {
+      "context": [
+        "propagation of uncertainty",
+        "correlation coefficient",
+        "sigma of x",
+        "sigma of y",
+        "assumed"
+      ],
+      "formula": "covariance from the correlation",
+      "words": [
+        "propagation of uncertainty",
+        "covariance of x and y",
+        "assumed"
+      ],
+      "number": "0.024",
+      "note": "0.2 * 0.3 * 0.4"
+    },
+    {
+      "context": [
+        "propagation of uncertainty",
+        "a",
+        "variance of x",
+        "assumed"
+      ],
+      "formula": "propagation for a scaled quantity",
+      "words": [
+        "propagation of uncertainty",
+        "variance of f",
+        "scaling",
+        "assumed"
+      ],
+      "number": "0.36",
+      "note": "2 * 2 * 0.09"
+    },
+    {
+      "context": [
+        "propagation of uncertainty",
+        "variance of x",
+        "variance of y",
+        "covariance of x and y",
+        "assumed"
+      ],
+      "formula": "propagation for a sum",
+      "words": [
+        "propagation of uncertainty",
+        "variance of f",
+        "sum",
+        "assumed"
+      ],
+      "number": "0.298",
+      "note": "0.09 + 0.16 + 2 * 0.024"
+    },
+    {
+      "context": [
+        "propagation of uncertainty",
+        "variance of x",
+        "variance of y",
+        "covariance of x and y",
+        "assumed"
+      ],
+      "formula": "propagation for a difference",
+      "words": [
+        "propagation of uncertainty",
+        "variance of f",
+        "difference",
+        "assumed"
+      ],
+      "number": "0.202",
+      "note": "0.09 + 0.16 - 2 * 0.024"
+    },
+    {
+      "context": [
+        "propagation of uncertainty",
+        "a",
+        "b",
+        "variance of x",
+        "variance of y",
+        "covariance of x and y",
+        "assumed"
+      ],
+      "formula": "propagation for a linear combination",
+      "words": [
+        "propagation of uncertainty",
+        "variance of f",
+        "linear combination",
+        "sum",
+        "assumed"
+      ],
+      "number": "4.84",
+      "note": "2 * 2 * 0.09 + 5 * 5 * 0.16 + 2 * 2 * 5 * 0.024"
+    },
+    {
+      "context": [
+        "propagation of uncertainty",
+        "a",
+        "b",
+        "variance of x",
+        "variance of y",
+        "covariance of x and y",
+        "assumed"
+      ],
+      "formula": "propagation for a linear difference",
+      "words": [
+        "propagation of uncertainty",
+        "variance of f",
+        "linear combination",
+        "difference",
+        "assumed"
+      ],
+      "number": "3.88",
+      "note": "2 * 2 * 0.09 + 5 * 5 * 0.16 - 2 * 2 * 5 * 0.024"
+    },
+    {
+      "context": [
+        "propagation of uncertainty",
+        "x",
+        "y",
+        "variance of x",
+        "variance of y",
+        "covariance of x and y",
+        "assumed"
+      ],
+      "formula": "propagation for a product",
+      "words": [
+        "propagation of uncertainty",
+        "variance of f",
+        "product",
+        "assumed"
+      ],
+      "number": "2.088",
+      "note": "36 * (0.09 / 9 + 0.16 / 4 + 2 * 0.024 / 6)"
+    },
+    {
+      "context": [
+        "propagation of uncertainty",
+        "x",
+        "y",
+        "variance of x",
+        "variance of y",
+        "covariance of x and y",
+        "assumed"
+      ],
+      "formula": "propagation for a quotient",
+      "words": [
+        "propagation of uncertainty",
+        "variance of f",
+        "quotient",
+        "assumed"
+      ],
+      "number": "0.0945",
+      "note": "2.25 * (0.09 / 9 + 0.16 / 4 - 2 * 0.024 / 6)"
+    },
+    {
+      "context": [
+        "propagation of uncertainty",
+        "x",
+        "y",
+        "variance of x",
+        "variance of y",
+        "assumed"
+      ],
+      "formula": "exact variance of a product",
+      "words": [
+        "propagation of uncertainty",
+        "variance of f",
+        "product",
+        "Goodman",
+        "assumed"
+      ],
+      "number": "1.8144",
+      "note": "9 * 0.16 + 4 * 0.09 + 0.09 * 0.16"
+    }
+  ]
+}

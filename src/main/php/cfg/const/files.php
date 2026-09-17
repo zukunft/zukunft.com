@@ -232,6 +232,9 @@ class files
     // most relevant base data around learning, cognition, Bloom's taxonomy and the zone of proximal development used as a real-world demo and for system testing
     const string EDUCATION_FILE = self::BASE_DATA_PATH . 'education' . self::JSON;
 
+    // the formulas of the propagation of uncertainty with assumed sample inputs, so that the variance formulas are calc-validated on import
+    const string MATH_PROPAGATION_OF_UNCERTAINTY_FILE = self::BASE_DATA_PATH . 'math_propagation_of_uncertainty' . self::JSON;
+
     /*
      * file lists
      */
@@ -334,6 +337,7 @@ class files
         self::HEALTH_FILE,
         self::POVERTY_FILE,
         self::EDUCATION_FILE,
+        self::MATH_PROPAGATION_OF_UNCERTAINTY_FILE,
     ];
 
 }

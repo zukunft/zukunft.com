@@ -1,165 +1,166 @@
 [
-  {
-    "id": 846,
-    "name": "agglomeration",
-    "description": "urban core plus surrounding built\u2011up areas",
-    "type_id": 1,
-    "class": "word"
-  },
-  {
-    "id": 186,
-    "name": "canton",
-    "description": "a member state of the Swiss federation",
-    "type_id": 1,
-    "class": "word"
-  },
-  {
-    "id": 188,
-    "name": "city",
-    "description": "a large permanent human settlement",
-    "type_id": 1,
-    "class": "word"
-  },
-  {
-    "id": 189,
-    "protection": 3,
-    "name": "company",
-    "description": "legal entity made up of an association of people for the purpose of carrying on a commercial or industrial enterprise",
-    "type_id": 1,
-    "class": "word"
-  },
-  {
-    "id": 560,
-    "name": "Cooperative",
-    "type_id": 1,
-    "class": "word"
-  },
-  {
-    "id": 324,
-    "name": "country",
-    "description": "a distinct part of the world, such as a state, nation, or other political entity.",
-    "type_id": 1,
-    "class": "word"
-  },
-  {
-    "id": 344,
-    "name": "currency",
-    "description": "A currency is a system of money in common use within a specific environment over time, especially for people in a nation state. It is typically issued and controlled by a central bank or monetary authority and serves as a medium of exchange, unit of account, and store of value.",
-    "type_id": 1,
-    "class": "word"
-  },
-  {
-    "id": 102,
-    "name": "global problem",
-    "description": "here more a personal issue (wikipedia does not really match)",
-    "class": "triple"
-  },
-  {
-    "id": 910,
-    "name": "greenhouse gas",
-    "description": "a gas that absorbs and emits infrared radiation, trapping heat in the atmosphere and warming the surface.",
-    "class": "triple"
-  },
-  {
-    "id": 325,
-    "name": "ISO 4217 code",
-    "description": "ISO 4217 is the international standard published by the International Organization for Standardization that defines three-letter alphabetic and three-digit numeric codes for the representation of currencies. For example, USD identifies the United States dollar and EUR identifies the euro.",
-    "class": "triple"
-  },
-  {
-    "id": 1,
-    "protection": 3,
-    "name": "mathematical constant",
-    "description": "A mathematical constant that never changes e.g. Pi",
-    "type_id": 17,
-    "class": "triple"
-  },
-  {
-    "id": 84,
-    "protection": 3,
-    "name": "mechanics SI derived unit",
-    "type_id": 3,
-    "class": "triple"
-  },
-  {
-    "id": 258,
-    "name": "most relevant",
-    "description": "The superlative form of relevance, used to identify the items deemed most important within a given set according to chosen criteria.",
-    "class": "triple"
-  },
-  {
-    "id": 6,
-    "name": "natural science",
-    "description": "Natural science is understanding and prediction of natural phenomena, based on empirical evidence",
-    "class": "triple"
-  },
-  {
-    "id": 7,
-    "protection": 3,
-    "name": "Physical constant",
-    "description": "A physical constant is a physical quantity that is generally believed to be both universal in nature and have constant value in time",
-    "type_id": 17,
-    "class": "triple"
-  },
-  {
-    "id": 864,
-    "name": "region",
-    "description": "an area of land larger than a city and its surroundings",
-    "type_id": 1,
-    "class": "word"
-  },
-  {
-    "id": 562,
-    "name": "scaling",
-    "type_id": 7,
-    "class": "word"
-  },
-  {
-    "id": 81,
-    "protection": 3,
-    "name": "SI base unit",
-    "description": "The SI base units are the standard units of measurement defined by the International System of Units (SI) for the seven base quantities of what is now known as the International System of Quantities: they are notably a basic set from which all other SI units can be derived.",
-    "class": "triple"
-  },
-  {
-    "id": 214,
-    "name": "solution",
-    "description": "a homogeneous mixture of a solute dissolved in a solvent",
-    "type_id": 1,
-    "class": "word"
-  },
-  {
-    "id": 326,
-    "name": "Symbol or abbreviation",
-    "description": "A symbol or abbreviation used to represent a currency in writing, such as $ for the US dollar, \u20ac for the euro, or \u00a3 for pound sterling. Currency symbols are typographic shorthand and are not standardised internationally (unlike ISO 4217 codes).",
-    "class": "triple"
-  },
-  {
-    "id": 20,
-    "protection": 3,
-    "name": "system",
-    "description": "A system is a group of interacting or interrelated elements that act according to a set of rules to form a unified whole.",
-    "type_id": 1,
-    "class": "word"
-  },
-  {
-    "id": 227,
-    "name": "warm",
-    "description": "having or giving off heat",
-    "type_id": 1,
-    "class": "word"
-  },
-  {
-    "id": 105,
-    "protection": 3,
-    "name": "year",
-    "description": "A year is the time taken for astronomical objects to complete one orbit. For example, a year on Earth is the time taken for Earth to revolve around the Sun.",
-    "type_id": 2,
-    "class": "word"
-  },
-  {
-    "id": 54,
-    "name": "year of definition",
-    "class": "triple"
-  }
+    {
+        "id": 848,
+        "name": "agglomeration",
+        "description": "urban core plus surrounding built\u2011up areas",
+        "type_id": 1,
+        "class": "word"
+    },
+    {
+        "id": 186,
+        "name": "canton",
+        "description": "a member state of the Swiss federation",
+        "type_id": 1,
+        "class": "word"
+    },
+    {
+        "id": 188,
+        "name": "city",
+        "description": "a large permanent human settlement",
+        "type_id": 1,
+        "class": "word"
+    },
+    {
+        "id": 189,
+        "protection": 3,
+        "name": "company",
+        "description": "legal entity made up of an association of people for the purpose of carrying on a commercial or industrial enterprise",
+        "type_id": 1,
+        "class": "word"
+    },
+    {
+        "id": 560,
+        "name": "Cooperative",
+        "type_id": 1,
+        "class": "word"
+    },
+    {
+        "id": 324,
+        "name": "country",
+        "description": "a distinct part of the world, such as a state, nation, or other political entity.",
+        "type_id": 1,
+        "class": "word"
+    },
+    {
+        "id": 344,
+        "name": "currency",
+        "description": "A currency is a system of money in common use within a specific environment over time, especially for people in a nation state. It is typically issued and controlled by a central bank or monetary authority and serves as a medium of exchange, unit of account, and store of value.",
+        "type_id": 1,
+        "class": "word"
+    },
+    {
+        "id": 102,
+        "name": "global problem",
+        "description": "here more a personal issue (wikipedia does not really match)",
+        "class": "triple"
+    },
+    {
+        "id": 910,
+        "name": "greenhouse gas",
+        "description": "a gas that absorbs and emits infrared radiation, trapping heat in the atmosphere and warming the surface.",
+        "class": "triple"
+    },
+    {
+        "id": 325,
+        "name": "ISO 4217 code",
+        "description": "ISO 4217 is the international standard published by the International Organization for Standardization that defines three-letter alphabetic and three-digit numeric codes for the representation of currencies. For example, USD identifies the United States dollar and EUR identifies the euro.",
+        "class": "triple"
+    },
+    {
+        "id": 1,
+        "protection": 3,
+        "name": "mathematical constant",
+        "description": "A mathematical constant that never changes e.g. Pi",
+        "type_id": 17,
+        "class": "triple"
+    },
+    {
+        "id": 84,
+        "protection": 3,
+        "name": "mechanics SI derived unit",
+        "type_id": 3,
+        "class": "triple"
+    },
+    {
+        "id": 258,
+        "name": "most relevant",
+        "description": "The superlative form of relevance, used to identify the items deemed most important within a given set according to chosen criteria.",
+        "class": "triple"
+    },
+    {
+        "id": 6,
+        "name": "natural science",
+        "description": "Natural science is understanding and prediction of natural phenomena, based on empirical evidence",
+        "class": "triple"
+    },
+    {
+        "id": 7,
+        "protection": 3,
+        "name": "Physical constant",
+        "description": "A physical constant is a physical quantity that is generally believed to be both universal in nature and have constant value in time",
+        "type_id": 17,
+        "class": "triple"
+    },
+    {
+        "id": 866,
+        "name": "region",
+        "description": "an area of land larger than a city and its surroundings",
+        "type_id": 1,
+        "class": "word"
+    },
+    {
+        "id": 562,
+        "name": "scaling",
+        "description": "the multiplication of a quantity by a constant factor",
+        "type_id": 7,
+        "class": "word"
+    },
+    {
+        "id": 81,
+        "protection": 3,
+        "name": "SI base unit",
+        "description": "The SI base units are the standard units of measurement defined by the International System of Units (SI) for the seven base quantities of what is now known as the International System of Quantities: they are notably a basic set from which all other SI units can be derived.",
+        "class": "triple"
+    },
+    {
+        "id": 214,
+        "name": "solution",
+        "description": "a homogeneous mixture of a solute dissolved in a solvent",
+        "type_id": 1,
+        "class": "word"
+    },
+    {
+        "id": 326,
+        "name": "Symbol or abbreviation",
+        "description": "A symbol or abbreviation used to represent a currency in writing, such as $ for the US dollar, \u20ac for the euro, or \u00a3 for pound sterling. Currency symbols are typographic shorthand and are not standardised internationally (unlike ISO 4217 codes).",
+        "class": "triple"
+    },
+    {
+        "id": 20,
+        "protection": 3,
+        "name": "system",
+        "description": "A system is a group of interacting or interrelated elements that act according to a set of rules to form a unified whole.",
+        "type_id": 1,
+        "class": "word"
+    },
+    {
+        "id": 227,
+        "name": "warm",
+        "description": "having or giving off heat",
+        "type_id": 1,
+        "class": "word"
+    },
+    {
+        "id": 105,
+        "protection": 3,
+        "name": "year",
+        "description": "A year is the time taken for astronomical objects to complete one orbit. For example, a year on Earth is the time taken for Earth to revolve around the Sun.",
+        "type_id": 2,
+        "class": "word"
+    },
+    {
+        "id": 54,
+        "name": "year of definition",
+        "class": "triple"
+    }
 ]

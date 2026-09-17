@@ -257,6 +257,12 @@ class all_tests extends all_unit_write_tests
                 //$t_db->csv_recreate();
             }
 
+            // refresh the api test files that still contain database ids which are not yet fixed
+            // e.g. the word ids of the "is a" phrase list that shift with each added seed word,
+            // because a database recreate of this run moves them and the next api test run
+            // would report the shift instead of a real change (same as in reset_db.php)
+            $t_db->update_files_with_not_yet_fixed_db_id($this, $msg);
+
             // recreate the type list api message based on the updated db
             // because this json is used for the unit tests
             $t_db->type_list_check($this, $msg);
