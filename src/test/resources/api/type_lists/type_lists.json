@@ -191,68 +191,6 @@
                 "id": 7
             }
         ],
-        "sys_log_functions": [
-            {
-                "name": "no function name detected",
-                "code_id": "no function name detected",
-                "description": "fallback value if the function name is missing",
-                "id": 1
-            },
-            {
-                "name": "cfg\/system\/sys_log",
-                "code_id": "cfg\/system\/sys_log",
-                "description": "for errors on the system log functions itself",
-                "id": 2
-            },
-            {
-                "name": "Import system configuration",
-                "code_id": "import_base_config",
-                "description": "Import the default system and user configuration",
-                "id": 3
-            },
-            {
-                "name": "Import pod configuration",
-                "code_id": "import_pod_config",
-                "description": "Import the default pod configuration",
-                "id": 4
-            },
-            {
-                "name": "Import test configuration",
-                "code_id": "import_test_config",
-                "description": "Import the configuration for system consistency tests",
-                "id": 5
-            },
-            {
-                "name": "api\/config",
-                "code_id": "api\/config",
-                "description": "request the configuration via api",
-                "id": 6
-            },
-            {
-                "name": "cfg\/application",
-                "code_id": "cfg\/application",
-                "description": "fallback entry to log system errors",
-                "id": 7
-            },
-            {
-                "name": "cfg\/helper\/config_numbers",
-                "code_id": "cfg\/helper\/config_numbers",
-                "description": "loader for the system and user configuration",
-                "id": 8
-            },
-            {
-                "name": "Import sample view data",
-                "code_id": "import_sample_view_data",
-                "description": "Import the sample view test data used by the view unit tests",
-                "id": 9
-            },
-            {
-                "name": "Import use case data",
-                "code_id": "import_use_case_data",
-                "description": "Import the use case data as the last step of the db setup",
-                "id": 10
-            }
-        ],
         "sys_log_levels": [
             {
                 "name": "undefined",
