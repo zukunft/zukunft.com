@@ -130,16 +130,17 @@ class word_read_tests
 
         // the values of a symbol are the values of the phrase it stands for and the other way
         // round (see phrase::value_selection), so the page of CHF shows the values of the Swiss
-        // franc and the page of the Swiss franc the values that carry CHF
+        // franc and the page of the Swiss franc the values that carry CHF; the Swiss franc is
+        // a triple (franc "kind of" Swiss), so it is loaded as a triple and not as a word
         $test_name = 'the values related to CHF include the values of the Swiss franc';
         $t->assert_contains($test_name,
-            $wrd_chf->values_related->phr_lst($msg)->names(), [words::SWISS_FRANC]);
+            $wrd_chf->values_related->phr_lst($msg)->names(), [triple_names::SWISS_FRANC]);
         $test_name = 'the values related to the Swiss franc include the values that carry CHF';
-        $wrd_franc = new word($t->usr1);
-        $wrd_franc->load_by_name(words::SWISS_FRANC, $msg);
-        $wrd_franc->load_values_related($msg);
+        $trp_franc = new triple($t->usr1);
+        $trp_franc->load_by_name(triple_names::SWISS_FRANC, $msg);
+        $trp_franc->load_values_related($msg);
         $t->assert_contains($test_name,
-            $wrd_franc->values_related->phr_lst($msg)->names(), [words::CHF]);
+            $trp_franc->values_related->phr_lst($msg)->names(), [words::CHF]);
 
         // negative: an unknown id returns 0 and leaves phrases_related null/empty —
         // the asserted reported outcome is the int 0 return AND no spurious related

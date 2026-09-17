@@ -127,7 +127,6 @@ class words
     const string CHECK = 'check';
     const string CHF = 'CHF';
     const int CHF_ID = 407;
-    const string SWISS_FRANC = 'Swiss franc'; // the currency that CHF is the symbol for
     const string COLUMNS = 'columns';
     const string COMBINATION = 'combination';
     const string COMPONENT = 'component';
