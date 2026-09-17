@@ -3235,10 +3235,6 @@
         },
         {
           "position": "4",
-          "name": "system form button cancel"
-        },
-        {
-          "position": "5",
           "name": "system form end"
         }
       ]

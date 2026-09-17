@@ -109,7 +109,6 @@ use Zukunft\ZukunftCom\main\php\cfg\group\group_db;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_id;
 use Zukunft\ZukunftCom\main\php\cfg\group\result_id;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_multi;
-use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 use Zukunft\ZukunftCom\main\php\cfg\log\change;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_action;
@@ -1229,8 +1228,8 @@ class sandbox_value extends sandbox_multi
         $msg = parent::diff_msg($obj, $ex_def);
         if ($this->grp_id() != $obj->grp_id()) {
             $msg->add(msg_id::DIFF_GROUP, [
-                msg_id::VAR_VALUE => $obj->grp()->dsp_id(),
-                msg_id::VAR_VALUE_CHK => $this->grp()->dsp_id(),
+                msg_id::VAR_GROUP => $obj->grp()->dsp_id(),
+                msg_id::VAR_GROUP_CHK => $this->grp()->dsp_id(),
                 msg_id::VAR_VAL_ID => $this->dsp_id(),
             ]);
         }
@@ -1346,10 +1345,11 @@ class sandbox_value extends sandbox_multi
                     or $this::class == value_time::class
                     or $this::class == value_text::class
                     or $this::class == value_geo::class)) {
+                // a user value without source has a null source id, which must still match its row
                 $lst->add_field(
                     source_fields::FLD_ID,
                     $this->get_source()?->id(),
-                    db_object_seq_id::FLD_ID_SQL_TYP
+                    sql_par_type::INT_NULL_SAFE
                 );
             }
         }
@@ -1631,30 +1631,6 @@ class sandbox_value extends sandbox_multi
     }
 
     /**
-     * set the log entry parameter to delete an object
-     * @param user_message $msg to report a failed change log write to the requesting user
-     * @returns change_link with the object presets e.g. th object name
-     */
-    function log_del(user_message $msg): change
-    {
-        log_debug($this->dsp_id());
-        $lib = new library();
-
-        $log = new change($this->get_user());
-        $log->set_action(change_actions::DELETE, $msg);
-        $class = $lib->class_to_name($this::class);
-        $log->set_table($class . sql_db::TABLE_EXTENSION, $msg);
-        $log->set_field(change_fields::FLD_NUMERIC_VALUE, $msg);
-        $log->old_value = $this->get_value();
-        $log->new_value = null;
-
-        $log->row_id = $this->id();
-        $log->add($msg);
-
-        return $log;
-    }
-
-    /**
      * the common part of the sql statement creation for insert and update statements
      * @param sql_creator $sc with the target db_type set
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
@@ -1905,6 +1881,8 @@ class sandbox_value extends sandbox_multi
 
         // get the fields for the value log entry
         $fvt_lst_log->add_field(group_fields::FLD_ID, $this->grp()->id);
+        // the removed value is logged as the old value
+        $fvt_lst_log->add_field($this::FLD_VALUE, $this->get_value(), $this->sql_field_type());
 
         // for standard prime values add the user only for the log
         if ($sc_par_lst->is_standard() and $sc_par_lst->is_prime()) {

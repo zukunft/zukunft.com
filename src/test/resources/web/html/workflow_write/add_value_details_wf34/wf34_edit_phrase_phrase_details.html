@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>
+            Add value with details - zukunft.com
+        </title>
+        <link rel="stylesheet" href="http://localhost/external_lib/bootstrap/css/bootstrap.css">
+        <link rel="stylesheet" href="http://localhost/external_lib/fontawesome/css/all.css">
+        <link rel="stylesheet" href="http://localhost/src/main/resources/style/style_html.css">
+    </head>
+    <body>
+        <nav  class="navbar site-header fixed-top">
+            <a href="http://localhost/http/view.php" title="zukunft.com" class="navbar-brand">
+                <img src="http://localhost/src/main/resources/images/ZUKUNFT_logo.svg" alt="zukunft.com" class="logo-nav">
+            </a>
+            <form action="http://localhost/http/view.php" class="d-flex align-items-center my-2 my-lg-0 flex-grow-1 mx-3">
+                <input type="hidden" name="m" value="83">
+                <label for="kp" class="visually-hidden">
+                    Search
+                </label>
+                <input class="form-control me-2" type="search" name="pattern" id="kp" placeholder="word or formula" style="min-width: 40vw; max-width: 800px;">
+                <button class="btn btn-outline-primary" type="submit">
+                    Get numbers
+                </button>
+            </form>
+            <div class="col-md-2">
+                <ul class="nav navbar-nav">
+                    <li class="active">
+                        <details class="view-menu">
+                            <summary>
+                                <i class="fas fa-edit">
+                                </i>
+                            </summary>
+                            <ul>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=view_change&amp;id=2">
+                                        alternative
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="?view=more">
+                                        ... more
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=61&amp;id=29&amp;9m=29">
+                                        change view
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=60&amp;9m=29">
+                                        add view
+                                    </a>
+                                </li>
+                            </ul>
+                        </details>
+                        <details class="lang-menu">
+                            <summary>
+                                <i class="fas fa-globe">
+                                </i>
+                            </summary>
+                            <ul>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=29&amp;q=en">
+                                        English
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=29&amp;q=en_us">
+                                        US English
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=29&amp;q=de" title="German">
+                                        Deutsch
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=29&amp;q=fr" title="French">
+                                        Français
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=29&amp;q=es" title="Spanish">
+                                        Español
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=29&amp;q=zh" title="Chinese">
+                                        漢語
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=29&amp;q=ar" title="Arabic">
+                                        العربية
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=language_select">
+                                        ... more
+                                    </a>
+                                </li>
+                            </ul>
+                        </details>
+                        <details class="user-menu">
+                            <summary>
+                                <i class="fas fa-user-circle user-logged" title="system test zukunft.com system test">
+                                </i>
+                            </summary>
+                            <ul>
+                                <li>
+                                    system test zukunft.com system test
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=12&amp;9m=29&amp;token=5e18d78c56c5ccb645631d7e5c6657d02a2f7c579cd01d36d3f5539ba07a6c13">
+                                        logout
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/settings?9m=29">
+                                        Settings
+                                    </a>
+                                </li>
+                            </ul>
+                        </details>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <main class="main-container">
+            <h4>
+                Add a new value
+            </h4>
+            <form action="http://localhost/http/view.php" id="value_add">
+                <input type="hidden" name="token" value="5e18d78c56c5ccb645631d7e5c6657d02a2f7c579cd01d36d3f5539ba07a6c13">
+                <input class="form-control" type="hidden" name="m" id="mask" value="29">
+                <input class="form-control" type="hidden" name="id" id="id" value="0">
+                <input type="hidden" name="9m" value="1">
+                <input class="form-control" type="hidden" name="z" id="confirm" value="1">
+                <div class="row col-md-12">
+                    <div class="form-group col-md-8">
+                        <label for="group">
+                            group
+                        </label>
+                        <input class="form-control" type="text" name="gn" id="group">
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="y_form_select_value_type">
+                            Value type
+                        </label>
+                        <select class="form-control" name="y" form="value_add" id="y_form_select_value_type" >
+                            <option value="number"  selected >
+                                number
+                            </option>
+                            <option value="text"  >
+                                text
+                            </option>
+                            <option value="time"  >
+                                time
+                            </option>
+                            <option value="geo"  >
+                                geo
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row col-md-12">
+                    <div class="form-group ">
+                        <label for="value">
+                            Value
+                        </label>
+                        <input class="form-control" type="text" name="v" id="value">
+                    </div>
+                </div>
+                <div class="row col-md-12">
+                    <div class="form-group col-md-12">
+                        <label for="description">
+                            Description
+                        </label>
+                        <input class="form-control" type="text" name="o" id="description">
+                    </div>
+                    <input type="hidden" name="8o" value="">
+                </div>
+                <div class="row col-md-12">
+                    <div class="form-group col-md-4">
+                        <label for="so_form_select_source">
+                            source
+                        </label>
+                        <select class="form-control" name="so" form="value_add" id="so_form_select_source" >
+                            <option value="0" selected>
+                                please select ...
+                            </option>
+                        </select>
+                    </div>
+                    <a href="http://localhost/http/view.php?m=40" title="source_add" class="heading-icon-inline">
+                        <i class="far fa-square-plus">
+                        </i>
+                    </a>
+                </div>
+                <div class="row col-md-12">
+                    <div class="form-group col-md-4">
+                        <label for="l_form_select_view_style">
+                            View style
+                        </label>
+                        <select class="form-control" name="l" form="value_add" id="l_form_select_view_style" >
+                            <option value="0" selected>
+                                please select ...
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row col-md-12">
+                    <div class="form-group col-md-4">
+                        <label for="d_form_select_view">
+                            View
+                        </label>
+                        <select class="form-control" name="d" form="value_add" id="d_form_select_view" >
+                            <option value="5"  selected >
+                                Value (default)
+                            </option>
+                            <option value="0"  >
+                                ---
+                            </option>
+                            <option value="156"  >
+                                Biological
+                            </option>
+                            <option value="16"  >
+                                Calculator
+                            </option>
+                            <option value="151"  >
+                                Complete
+                            </option>
+                            <option value="67"  >
+                                Component
+                            </option>
+                            <option value="71"  >
+                                Component link
+                            </option>
+                            <option value="163"  >
+                                Currency
+                            </option>
+                            <option value="157"  >
+                                Education
+                            </option>
+                            <option value="8"  >
+                                Formula (default)
+                            </option>
+                            <option value="55"  >
+                                Formula link
+                            </option>
+                            <option value="159"  >
+                                Graph
+                            </option>
+                            <option value="155"  >
+                                Historic
+                            </option>
+                            <option value="135"  >
+                                Language
+                            </option>
+                            <option value="134"  >
+                                Language selection
+                            </option>
+                            <option value="161"  >
+                                Mathematical constance
+                            </option>
+                            <option value="168"  >
+                                PV in Switzerland emission comparison
+                            </option>
+                            <option value="88"  >
+                                Phrase (default)
+                            </option>
+                            <option value="153"  >
+                                Ranking
+                            </option>
+                            <option value="7"  >
+                                Reference (default)
+                            </option>
+                            <option value="91"  >
+                                Related phrases
+                            </option>
+                            <option value="9"  >
+                                Result (default)
+                            </option>
+                            <option value="154"  >
+                                Science
+                            </option>
+                            <option value="160"  >
+                                Simple
+                            </option>
+                            <option value="6"  >
+                                Source (default)
+                            </option>
+                            <option value="112"  >
+                                System log
+                            </option>
+                            <option value="2"  >
+                                Table
+                            </option>
+                            <option value="89"  >
+                                Term (default)
+                            </option>
+                            <option value="59"  >
+                                Term view
+                            </option>
+                            <option value="158"  >
+                                Touristic
+                            </option>
+                            <option value="4"  >
+                                Triple (default)
+                            </option>
+                            <option value="90"  >
+                                Values of a phrase
+                            </option>
+                            <option value="10"  >
+                                Verb (default)
+                            </option>
+                            <option value="63"  >
+                                View
+                            </option>
+                            <option value="75"  >
+                                View relation
+                            </option>
+                            <option value="3"  >
+                                Word (default)
+                            </option>
+                            <option value="152"  >
+                                base units
+                            </option>
+                            <option value="167"  >
+                                company list with main ratios
+                            </option>
+                            <option value="166"  >
+                                company sheet
+                            </option>
+                            <option value="165"  >
+                                country ratios
+                            </option>
+                            <option value="162"  >
+                                problem with solutions
+                            </option>
+                            <option value="164"  >
+                                solution priority validation
+                            </option>
+                        </select>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="s_form_select_share_type">
+                            Share
+                        </label>
+                        <select class="form-control" name="s" form="value_add" id="s_form_select_share_type" >
+                            <option value="1"  selected >
+                                public
+                            </option>
+                            <option value="2"  >
+                                personal
+                            </option>
+                            <option value="3"  >
+                                group
+                            </option>
+                            <option value="4"  >
+                                private
+                            </option>
+                            <option value="5"  >
+                                personal log
+                            </option>
+                            <option value="6"  >
+                                group log
+                            </option>
+                            <option value="7"  >
+                                private log
+                            </option>
+                        </select>
+                    </div>
+                    <input type="hidden" name="8s" value="1">
+                    <div class="form-group col-md-4">
+                        <label for="sp_form_select_protection_type">
+                            Protection
+                        </label>
+                        <select class="form-control" name="sp" form="value_add" id="sp_form_select_protection_type" >
+                            <option value="1"  selected >
+                                no protection
+                            </option>
+                            <option value="2"  >
+                                user
+                            </option>
+                            <option value="3"  >
+                                admin
+                            </option>
+                            <option value="4"  >
+                                no change
+                            </option>
+                        </select>
+                    </div>
+                    <input type="hidden" name="8sp" value="1">
+                </div>
+                <a href="http://localhost/http/view.php?m=5" class="btn btn-space col-1 btn-outline-secondary">
+                    cancel
+                </a>
+                <button class="btn btn-space col-1 btn-outline-success" type="submit" name="submit">
+                    save
+                </button>
+            </form>
+        </main>
+        <!--usr_msg-->
+        <footer class="site-footer">
+            <p>
+                <a href="http://localhost/http/about.php">
+                    About
+                </a>
+                &middot;
+                <a href="http://localhost/http/privacy_policy.html">
+                    Privacy Policy
+                </a>
+                &middot; 
+All structured data is available under the
+                <a href="https://creativecommons.org/publicdomain/zero/1.0/" title="CC0 License">
+                    Creative Commons CC0
+                </a>
+                Licence unless otherwise stated and the
+                <a href="https://github.com/zukunft/zukunft.com">
+                    program code
+                </a>
+                of this version 0.0.3
+under the
+                <a href="https://www.gnu.org/licenses/agpl.html">
+                    AGPL3
+                </a>
+                Licence.
+            </p>
+        </footer>
+    </body>
+</html>

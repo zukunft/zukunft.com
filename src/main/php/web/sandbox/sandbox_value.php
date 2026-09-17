@@ -153,12 +153,16 @@ class sandbox_value extends sandbox
             if (array_key_exists(url_var::PHRASE_LIST, $url_array)) {
                 $id_lst = explode(',', $url_array[url_var::PHRASE_LIST]);
                 if (count($id_lst) > 0) {
-                    $this->set_phrases_by_is_list($id_lst);
+                    $this->set_phrases_by_is_list($id_lst, $msg);
                 }
             }
             if (array_key_exists(url_var::NUMERIC_VALUE, $url_array)) {
-                if ($url_array[url_var::NUMERIC_VALUE] != null) {
-                    $this->number = $url_array[url_var::NUMERIC_VALUE];
+                $number = $url_array[url_var::NUMERIC_VALUE];
+                // a typed text would fatal on the float property, so it is reported instead
+                if (is_numeric($number)) {
+                    $this->number = (float)$number;
+                } elseif ($number != null) {
+                    $msg->add(msg_id::URL_VALUE_NOT_NUMERIC, [msg_id::VAR_VALUE => $number]);
                 }
             }
             if (array_key_exists(url_var::VALUE_TEXT, $url_array)) {
@@ -249,15 +253,21 @@ class sandbox_value extends sandbox
     /**
      * set the phrase list based on the given id list
      * @param array $id_lst with the all phrase ids for the unique identification of this value
+     * @param user_message $msg to report an id that is not a number e.g. from a changed url
      * @return void
      */
-    function set_phrases_by_is_list(array $id_lst): void
+    function set_phrases_by_is_list(array $id_lst, user_message $msg): void
     {
         $phr_lst = new phrase_list();
         foreach ($id_lst as $id) {
-            $phr = new phrase();
-            $phr->set_id($id);
-            $this->grp->add($phr);
+            // a text would fatal on the int id, so it is reported and skipped; an empty list is normal
+            if (filter_var($id, FILTER_VALIDATE_INT) !== false) {
+                $phr = new phrase();
+                $phr->set_id((int)$id);
+                $this->grp->add($phr);
+            } elseif ($id != '') {
+                $msg->add(msg_id::URL_VALUE_NOT_NUMERIC, [msg_id::VAR_VALUE => $id]);
+            }
         }
     }
     /**

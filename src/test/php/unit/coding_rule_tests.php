@@ -668,9 +668,11 @@ class coding_rule_tests
                         : $full;
                 }
             }
-            // collect every '$var = new <class>(' creation
+            // collect every '$var = new <class>(...)' creation; a chained call like
+            // '$url_arr = new test_values($t)->value_new_url()' assigns the result of the call, not the object,
+            // so the balanced constructor arguments must not be followed by '->'
             $hits = [];
-            preg_match_all('/\$(\w+)\s*=\s*new\s+(\w+)\s*\(/', $code, $hits, PREG_SET_ORDER);
+            preg_match_all('/\$(\w+)\s*=\s*new\s+(\w+)\s*(\((?:[^()]++|(?-1))*\))(?!\s*->)/', $code, $hits, PREG_SET_ORDER);
             foreach ($hits as $hit) {
                 $var = $hit[1];
                 $token = $hit[2];

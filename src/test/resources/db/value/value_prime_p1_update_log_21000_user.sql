@@ -24,7 +24,7 @@ BEGIN
        AND phrase_id_3 = _phrase_id_3
        AND phrase_id_4 = _phrase_id_4
        AND user_id = _user_id
-       AND source_id = _source_id;
+       AND source_id IS NOT DISTINCT FROM _source_id;
 
 END
 $$ LANGUAGE plpgsql;

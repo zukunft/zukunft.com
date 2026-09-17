@@ -721,13 +721,14 @@ class component extends sandbox_code_id
     }
 
     /**
-     * @return bool true if the component is a system form button or a hidden form element
+     * @return bool true if the component is a system form button, a hidden form element or sets its own rows
      */
     function needs_row_components(?type_lists $typ_lst, user_message $msg): bool
     {
         if ($this->is_button($typ_lst, $msg)
             or $this->is_hidden($typ_lst, $msg)
-            or $this->is_list_group($typ_lst, $msg)) {
+            or $this->is_list_group($typ_lst, $msg)
+            or in_array($this->type_code_id($typ_lst, $msg), component_types::OWN_ROW_TYPES)) {
             return true;
         } else {
             return false;

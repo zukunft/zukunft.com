@@ -796,7 +796,9 @@ class test_api extends test_base
         $actual = $this->assert_result_api_chg_list($class, $id, $fld, $usr, $limit, $page);
         $filename = $this->assert_parameter_api_chg_list_filename($class, $id, $fld, $usr, $limit, $page);
         $class = $lib->class_to_api_name($class);
-        return $this->assert_api_compare($class, $actual, null, $filename, change_log_list::class);
+        // the id of a change log row is a database sequence number that differs after every reset,
+        // so it is ignored like the change time, which keeps the expected json stable
+        return $this->assert_api_compare($class, $actual, null, $filename, change_log_list::class, false, true);
     }
 
     /**

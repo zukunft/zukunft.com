@@ -53,6 +53,10 @@ class workflows
     const string CANCEL = 'cancel'; // press the cancel button
     const string CONFIRM = 'confirm'; // call the page to delete an object
     const string CONFIRMED = 'confirmed'; // show the original view with the changes
+    // the phrase selection steps of the value add views, which only update the form and never write
+    const string PHRASE = 'phrase'; // select one phrase of the new value
+    const string REMOVE = 'remove'; // press the remove icon of one already chosen phrase
+    const string DETAILS = 'details'; // open the detailed add form with the phrases chosen so far
 
     // separator between the name parts of a workflow snapshot file name e.g. 'wf2_show_edit'
     const string NAME_SEP = '_';
@@ -279,6 +283,35 @@ class workflows
     const string WF_DEL_REF = 'del_ref';
     // the id of the current del_ref workflow; increase it to add the next snapshot set
     const int WF_DEL_REF_NBR = 30;
+
+    // the add_value workflow name used for the snapshot folder and the test subheader:
+    // a value is added with the pure html view without any preset phrase, so the user selects the
+    // two phrases one after the other, enters the number and the add button writes the value
+    // without a confirm view (see ui_select::value_number_form)
+    const string WF_ADD_VALUE = 'add_value';
+    // the id of the current add_value workflow; increase it to add the next snapshot set
+    const int WF_ADD_VALUE_NBR = 31;
+
+    // the add_value_with_phrase workflow name used for the snapshot folder and the test subheader:
+    // like add_value, but the add view is opened with one phrase already preset, as the add value
+    // icon of a word or triple page does, and two more phrases are added before the number
+    const string WF_ADD_VALUE_WITH_PHRASE = 'add_value_with_phrase';
+    // the id of the current add_value_with_phrase workflow; increase it to add the next snapshot set
+    const int WF_ADD_VALUE_WITH_PHRASE_NBR = 32;
+
+    // the add_value_remove_phrase workflow name used for the snapshot folder and the test subheader:
+    // like add_value_with_phrase, but one of the chosen phrases is removed again with its remove
+    // icon and another phrase is selected instead before the value is written
+    const string WF_ADD_VALUE_REMOVE_PHRASE = 'add_value_remove_phrase';
+    // the id of the current add_value_remove_phrase workflow; increase it for the next snapshot set
+    const int WF_ADD_VALUE_REMOVE_PHRASE_NBR = 33;
+
+    // the add_value_details workflow name used for the snapshot folder and the test subheader:
+    // like add_value_with_phrase, but instead of entering the number the user opens the detailed
+    // add value view with the more details link, which takes the chosen phrases with it
+    const string WF_ADD_VALUE_DETAILS = 'add_value_details';
+    // the id of the current add_value_details workflow; increase it to add the next snapshot set
+    const int WF_ADD_VALUE_DETAILS_NBR = 34;
 
     /**
      * the user process step that a user reaction action triggers

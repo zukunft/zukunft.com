@@ -1151,6 +1151,9 @@ class sql_creator
         if ($fld_val === null) {
             if ($spt === null) {
                 log_err('value and type missing in add_where');
+            } elseif ($spt == sql_par_type::INT_NULL_SAFE) {
+                // the null itself is compared, so it must not become 0
+                $this->add_par($spt, null, $name);
             } else {
                 $this->add_par($spt, 0, $name);
             }
@@ -1169,6 +1172,7 @@ class sql_creator
                 or $spt == sql_par_type::INT_OR
                 or $spt == sql_par_type::INT_NOT
                 or $spt == sql_par_type::INT_NOT_OR_NULL
+                or $spt == sql_par_type::INT_NULL_SAFE
                 or $spt == sql_par_type::INT_USR
                 or $spt == sql_par_type::LIMIT
                 or $spt == sql_par_type::OFFSET) {
@@ -2341,11 +2345,18 @@ class sql_creator
 
         $log->group_id = $fvt_lst->get_value(group_fields::FLD_ID);
         $val_old = null;
-        if ($sc_par_lst->is_update()) {
-            $val_old = $fvt_lst->get_old($num_fld);
-            $log->old_value = $val_old;
+        $val_new = null;
+        // the value parameter of the function: the new value or for a delete the removed value
+        $val_par = $fvt_lst->get_value($num_fld);
+        if ($sc_par_lst->is_delete()) {
+            $val_old = $val_par;
+        } else {
+            $val_new = $val_par;
+            if ($sc_par_lst->is_update()) {
+                $val_old = $fvt_lst->get_old($num_fld);
+            }
         }
-        $val_new = $fvt_lst->get_value($num_fld);
+        $log->old_value = $val_old;
         $log->new_value = $val_new;
 
         // set the parameters for the log sql statement creation
@@ -2383,10 +2394,12 @@ class sql_creator
                 $num_fld_typ
             );
         }
-        if (!$sc_par_lst->is_delete()) {
+        // a delete part names the old value without the old extension (see create_sql_insert),
+        // so the value parameter is shared; a delete of a null value has no old value to log
+        if ($val_par !== null or !$sc_par_lst->is_delete()) {
             $par_lst_out->add_field(
                 $num_fld,
-                $val_new,
+                $val_par,
                 $num_fld_typ
             );
         }
@@ -2784,10 +2797,11 @@ class sql_creator
                 } else {
                     $sql_where .= ' ' . sql::WHERE . ' ';
                 }
+                $equal = $this->equal_operator(($this->par_lst->lst[$pos] ?? null)?->type);
                 if ($is_named) {
-                    $sql_where .= $id_fld . ' = ' . $id[$key];
+                    $sql_where .= $id_fld . $equal . $id[$key];
                 } else {
-                    $sql_where .= $id_fld . ' = ' . $this->par_lst->name($pos);
+                    $sql_where .= $id_fld . $equal . $this->par_lst->name($pos);
                 }
                 $pos++;
             }
@@ -2819,10 +2833,11 @@ class sql_creator
             } else {
                 $sql_where .= ' ' . sql::WHERE . ' ';
             }
+            $equal = $this->equal_operator($fvt->type);
             if ($sc_par_lst->use_named_par()) {
-                $sql_where .= $fvt->name . ' = ' . $fvt->par_name;
+                $sql_where .= $fvt->name . $equal . $fvt->par_name;
             } else {
-                $sql_where .= $fvt->name . ' = ' . $this->par_name($pos);
+                $sql_where .= $fvt->name . $equal . $this->par_name($pos);
             }
             $pos++;
         }
@@ -2931,12 +2946,12 @@ class sql_creator
     /**
      * add a parameter for a prepared query
      * @param sql_par_type $par_type the SQL parameter type used e.g. for Postgres as int or text
-     * @param string $value the int, float value or text value that is used for the concrete execution of the query
+     * @param string|null $value the int, float value or text value that is used for the concrete execution of the query or null for a null-safe compare
      * @param string $name the field name as used for the where condition including the table name if needed
      */
     private function add_par(
         sql_par_type $par_type,
-        string       $value,
+        ?string      $value,
         string       $name = ''
     ): void
     {
@@ -3895,6 +3910,8 @@ class sql_creator
             } elseif ($typ == sql_par_type::INT_NOT_OR_NULL) {
                 $sql_where .= '( ' . $tbl . $fld . ' <> ' . $par->name
                     . ' OR ' . $tbl . $fld . ' IS NULL )';
+            } elseif ($typ == sql_par_type::INT_NULL_SAFE) {
+                $sql_where .= $tbl . $fld . $this->equal_operator($typ) . $par->name;
             } elseif ($typ == sql_par_type::INT_HIGHER) {
                 $sql_where .= $tbl . $fld . ' >= ' . $par->name;
             } elseif ($typ == sql_par_type::INT_LOWER) {
@@ -3938,6 +3955,23 @@ class sql_creator
         $filter = $whp->sub_where_fld . ' = ' . $par->name;
         $not_excluded = sql::COALESCE . '(' . fields::FLD_EXCLUDED . ', ' . sql::FALSE . ') = ' . sql::FALSE;
         return $from . ' ' . sql::WHERE . ' ' . $filter . ' ' . sql::AND . ' ' . $not_excluded;
+    }
+
+    /**
+     * @param sql_par_type|string|null $typ the parameter type of the compared field
+     * @return string the compare operator with spaces: null-safe for a key part that may be null
+     *                e.g. the source of a user value, because "= NULL" never matches
+     */
+    private function equal_operator(sql_par_type|string|null $typ): string
+    {
+        $result = '=';
+        if ($typ == sql_par_type::INT_NULL_SAFE) {
+            $result = sql::NULL_SAFE_EQUAL;
+            if ($this->db_type == sql_db::MYSQL) {
+                $result = sql::NULL_SAFE_EQUAL_MYSQL;
+            }
+        }
+        return ' ' . $result . ' ';
     }
 
     /**
@@ -5551,6 +5585,7 @@ class sql_creator
             case sql_par_type::INT_LOWER:
             case sql_par_type::INT_NOT:
             case sql_par_type::INT_NOT_OR_NULL:
+            case sql_par_type::INT_NULL_SAFE:
             case sql_par_type::INT_SUB:
             case sql_par_type::INT_SUB_IN:
             case sql_par_type::LIMIT:

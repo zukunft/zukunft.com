@@ -17,7 +17,7 @@ BEGIN
            last_update   = Now()
      WHERE group_id = _group_id
        AND user_id = _user_id
-       AND source_id = _source_id;
+       AND source_id IS NOT DISTINCT FROM _source_id;
 
 END
 $$ LANGUAGE plpgsql;

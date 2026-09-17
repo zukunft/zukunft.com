@@ -8,7 +8,7 @@ in a test file of the src/test/php/unit* folders; the count is by function name
 and cannot tell the classes apart, so a name that several classes declare needs
 2 calls per class and is listed as shared otherwise
 
-526 of 5769 public functions have at least 2 unit test calls; the 5243 functions below do not
+526 of 5764 public functions have at least 2 unit test calls; the 5238 functions below do not
 
 ## main backend
 
@@ -1639,8 +1639,8 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- load_standard_rows_by_ids - 0 unit test calls shared by 2 classes
     \-- load_user_changes - 0 unit test calls shared by 2 classes
     \-- log_add - 0 unit test calls shared by 3 classes
-    \-- log_del - 0 unit test calls shared by 5 classes
-    \-- log_del_link - 0 unit test calls shared by 5 classes
+    \-- log_del - 0 unit test calls shared by 3 classes
+    \-- log_del_link - 0 unit test calls shared by 4 classes
     \-- log_link_add - 0 unit test calls shared by 5 classes
     \-- log_object - 0 unit test calls shared by 7 classes
     \-- log_upd - 0 unit test calls shared by 5 classes
@@ -1778,7 +1778,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- load_standard_by_link_parent - 0 unit test calls
     \-- load_standard_by_type_link - 0 unit test calls shared by 4 classes
     \-- load_standard_by_type_link_parent - 0 unit test calls
-    \-- log_del_link - 0 unit test calls shared by 5 classes
+    \-- log_del_link - 0 unit test calls shared by 4 classes
     \-- log_link_add - 0 unit test calls shared by 5 classes
     \-- log_object - 0 unit test calls shared by 7 classes
     \-- merged_info_message - 0 unit test calls shared by 3 classes
@@ -1970,10 +1970,6 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- load_standard - 2 unit test calls shared by 2 classes
     \-- load_standard_rows_by_ids - 0 unit test calls shared by 2 classes
     \-- log_add - 0 unit test calls shared by 3 classes
-    \-- log_del - 0 unit test calls shared by 5 classes
-    \-- log_del_big - 0 unit test calls
-    \-- log_del_link - 0 unit test calls shared by 5 classes
-    \-- log_del_prime - 0 unit test calls
     \-- log_link_add - 0 unit test calls shared by 5 classes
     \-- log_named_id_object - 0 unit test calls
     \-- log_object - 0 unit test calls shared by 7 classes
@@ -1998,7 +1994,6 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- row_mapper_std - 0 unit test calls shared by 2 classes
     \-- row_mapper_usr - 0 unit test calls shared by 2 classes
     \-- save - 39 unit test calls shared by 27 classes
-    \-- save_field_excluded_log - 0 unit test calls
     \-- save_fields - 0 unit test calls
     \-- save_fields_func - 0 unit test calls shared by 3 classes
     \-- save_set_log_id - 0 unit test calls shared by 2 classes
@@ -2066,7 +2061,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- load_sql_standard_by_name - 0 unit test calls shared by 4 classes
     \-- load_standard_by_name - 0 unit test calls shared by 3 classes
     \-- log_add - 0 unit test calls shared by 3 classes
-    \-- log_del - 0 unit test calls shared by 5 classes
+    \-- log_del - 0 unit test calls shared by 3 classes
     \-- log_last_field_msg - 0 unit test calls shared by 2 classes
     \-- log_last_msg - 0 unit test calls shared by 2 classes
     \-- merged_info_message - 0 unit test calls shared by 3 classes
@@ -2169,7 +2164,6 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- load_sql_standard - 0 unit test calls shared by 7 classes
     \-- load_sql_user_changes - 0 unit test calls shared by 10 classes
     \-- log_add_value - 0 unit test calls
-    \-- log_del - 0 unit test calls shared by 5 classes
     \-- number - 7 unit test calls shared by 4 classes
     \-- phrase_list - 11 unit test calls shared by 11 classes
     \-- reset - 35 unit test calls shared by 64 classes
@@ -2939,7 +2933,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- load_standard_by_type_link - 0 unit test calls shared by 4 classes
     \-- load_values_related - 0 unit test calls shared by 3 classes
     \-- load_views_related - 2 unit test calls shared by 5 classes
-    \-- log_del_link - 0 unit test calls shared by 5 classes
+    \-- log_del_link - 0 unit test calls shared by 4 classes
     \-- log_link_add - 0 unit test calls shared by 5 classes
     \-- log_upd - 0 unit test calls shared by 5 classes
     \-- log_upd_field - 0 unit test calls shared by 4 classes
@@ -3315,8 +3309,8 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- load_sql_standard - 0 unit test calls shared by 7 classes
     \-- load_sql_standard_by_ids - 0 unit test calls shared by 3 classes
     \-- log_add_link - 0 unit test calls
-    \-- log_del - 0 unit test calls shared by 5 classes
-    \-- log_del_link - 0 unit test calls shared by 5 classes
+    \-- log_del - 0 unit test calls shared by 3 classes
+    \-- log_del_link - 0 unit test calls shared by 4 classes
     \-- log_upd - 0 unit test calls shared by 5 classes
     \-- log_update_parameter - 0 unit test calls
     \-- match_all - 0 unit test calls shared by 2 classes
@@ -4405,8 +4399,9 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- bold - 0 unit test calls
     \-- br - 0 unit test calls
     \-- br2 - 0 unit test calls
-    \-- button_bs - 0 unit test calls
+    \-- button_bs - 1 unit test calls
     \-- button_refresh - 0 unit test calls
+    \-- button_refresh_text - 1 unit test calls
     \-- button_submit - 0 unit test calls
     \-- concat_category_text - 0 unit test calls
     \-- concat_entry_text - 0 unit test calls
@@ -4494,8 +4489,8 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- prefixed_url_array - 0 unit test calls
     \-- ref_view - 0 unit test calls
     \-- row_center - 0 unit test calls shared by 2 classes
-    \-- row_end - 0 unit test calls shared by 2 classes
-    \-- row_right - 0 unit test calls shared by 2 classes
+    \-- row_end - 1 unit test calls shared by 2 classes
+    \-- row_right - 1 unit test calls shared by 2 classes
     \-- row_start - 0 unit test calls shared by 2 classes
     \-- span - 0 unit test calls
     \-- sup - 0 unit test calls
@@ -4986,8 +4981,8 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- form_word_add_simple - 1 unit test calls
     \-- result - 0 unit test calls shared by 2 classes
     \-- row_center - 0 unit test calls shared by 2 classes
-    \-- row_end - 0 unit test calls shared by 2 classes
-    \-- row_right - 0 unit test calls shared by 2 classes
+    \-- row_end - 1 unit test calls shared by 2 classes
+    \-- row_right - 1 unit test calls shared by 2 classes
     \-- row_start - 0 unit test calls shared by 2 classes
     \-- show_child_view - 0 unit test calls
     \-- show_col_phrase - 1 unit test calls

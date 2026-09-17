@@ -2,6 +2,7 @@ CREATE OR REPLACE FUNCTION value_prime_p1_delete_log_user
     (_user_id                bigint,
      _change_action_id       smallint,
      _field_id_numeric_value smallint,
+     _numeric_value          numeric,
      _group_id               bigint,
      _phrase_id_1            smallint,
      _phrase_id_2            smallint,
@@ -11,8 +12,8 @@ CREATE OR REPLACE FUNCTION value_prime_p1_delete_log_user
 $$
 BEGIN
 
-    INSERT INTO change_values_prime ( user_id, change_action_id, change_field_id,        group_id)
-         SELECT                      _user_id,_change_action_id,_field_id_numeric_value,_group_id ;
+    INSERT INTO change_values_prime ( user_id, change_action_id, change_field_id,        old_value,     group_id)
+         SELECT                      _user_id,_change_action_id,_field_id_numeric_value,_numeric_value,_group_id ;
 
     DELETE
       FROM user_values_prime
@@ -21,7 +22,7 @@ BEGIN
        AND phrase_id_3 = _phrase_id_3
        AND phrase_id_4 = _phrase_id_4
        AND user_id = _user_id
-       AND source_id = _source_id;
+       AND source_id IS NOT DISTINCT FROM _source_id;
 
 END
 $$ LANGUAGE plpgsql;
@@ -30,6 +31,7 @@ SELECT value_prime_p1_delete_log_user
        (3::bigint,
         3::smallint,
         6::smallint,
+        3.1415926535898::numeric,
         5::bigint,
         5::smallint,
         0::smallint,
