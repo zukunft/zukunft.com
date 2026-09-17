@@ -111,6 +111,7 @@
   {
     "id": 562,
     "name": "scaling",
+    "description": "the multiplication of a quantity by a constant factor",
     "type_id": 7,
     "class": "word"
   },

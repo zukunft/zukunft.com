@@ -69,6 +69,7 @@ class chars
 
     // math calc (probably not needed any more if r-project.org is used)
     const string CHAR_CALC = '=';    //
+    const string DECIMAL_POINT = '.';    // the decimal separator of a number in a formula
     const string ADD = '+';    //
     const string SUB = '-';    //
     const string MUL = '*';    //

@@ -1,12 +1,12 @@
 GET
-http://localhost/http/view.php?id=0&9m=5&pl=188%2C1062%2C186&n=123.456&m=29&z=2&submit=
-/http/view.php?id=0&9m=5&pl=188%2C1062%2C186&n=123.456&m=29&z=2&submit=
-/http/view.php?id=0&9mask_id=value_default&phrase_ids=188%2C1062%2C186&number=123.456&mask_id=value_add&step=confirmed&
+http://localhost/http/view.php?id=0&9m=5&pl=188%2C1106%2C186&n=123.456&m=29&z=2&submit=
+/http/view.php?id=0&9m=5&pl=188%2C1106%2C186&n=123.456&m=29&z=2&submit=
+/http/view.php?id=0&9mask_id=value_default&phrase_ids=188%2C1106%2C186&number=123.456&mask_id=value_add&step=confirmed&
 {
     "id": "0",
     "share": "",
     "protection": "",
-    "phrase_ids": "188,1062,186",
+    "phrase_ids": "188,1106,186",
     "number": "123.456",
     "mask_id": "value_add",
     "step": "confirmed",
