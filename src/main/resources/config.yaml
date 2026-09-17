@@ -458,6 +458,24 @@ zukunft.com:
       more:
         entries: 20
         tooltip-comment: "if the selection list contains more than the initial entries, the number of alphabetic sorted entries show initially and added with each click on more"
+      value:
+        symbol:
+          include:
+            sys-conf-value: true
+            tooltip-comment: "if true the values of a phrase are selected together with the values of its symbols and the other way round, e.g. the page of 'Euro' shows also the values of 'EUR' and the page of 'EUR' shows also the values of 'Euro'"
+        alias:
+          include:
+            sys-conf-value: true
+            tooltip-comment: "if true the values of a phrase are selected together with the values of its aliases and the other way round, e.g. the page of 'Euro' shows also the values of '€'"
+      formula:
+        symbol:
+          include:
+            sys-conf-value: true
+            tooltip-comment: "if true the formulas of a phrase are selected together with the formulas assigned to its symbols and the other way round, e.g. the page of 'Euro' shows also the formulas of 'EUR'"
+        alias:
+          include:
+            sys-conf-value: true
+            tooltip-comment: "if true the formulas of a phrase are selected together with the formulas assigned to its aliases and the other way round, e.g. the page of 'Euro' shows also the formulas of '€'"
       phrase:
         preselect:
           min: "30%"

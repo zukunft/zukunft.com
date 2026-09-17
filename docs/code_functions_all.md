@@ -1977,6 +1977,14 @@
             g_numbers.php
     \-- page_cache_allowed - section for function page_cache_allowed not yet defined that it should be predefined in /he
             lper/config_numbers.php
+    \-- symbol_values_included - section for function symbol_values_included not yet defined that it should be predefine
+            d in /helper/config_numbers.php
+    \-- alias_values_included - section for function alias_values_included not yet defined that it should be predefined 
+            in /helper/config_numbers.php
+    \-- symbol_formulas_included - section for function symbol_formulas_included not yet defined that it should be prede
+            fined in /helper/config_numbers.php
+    \-- alias_formulas_included - section for function alias_formulas_included not yet defined that it should be predefi
+            ned in /helper/config_numbers.php
     \-- ip_user_can_change - section for function ip_user_can_change not yet defined that it should be predefined in /he
             lper/config_numbers.php
 \-- data_object
@@ -2622,6 +2630,10 @@
     \-- get_or_add - section for function get_or_add is expected to be set and get in /phrase/phrase.php
     \-- dsp_name - section for function dsp_name not yet defined that it should be display functions in /phrase/phrase.p
             hp
+    \-- value_selection - section for function value_selection not yet defined that it should be display functions in /p
+            hrase/phrase.php
+    \-- formula_selection - section for function formula_selection not yet defined that it should be display functions i
+            n /phrase/phrase.php
     \-- phrases - section for function phrases not yet defined that it should be display functions in /phrase/phrase.php
     \-- dsp_time_selector - section for function dsp_time_selector not yet defined that it should be display functions i
             n /phrase/phrase.php
@@ -5733,6 +5745,14 @@
     \-- page_cache_allowed
         \-- config_numbers - the pod setting that decides if the rendered html pages are cached in the db_cache_pages ta
                 ble
+    \-- symbol_values_included
+        \-- config_numbers - the pod setting that decides if the values of the symbols of a phrase are shown with the
+    \-- alias_values_included
+        \-- config_numbers - the pod setting that decides if the values of the aliases of a phrase are shown with the
+    \-- symbol_formulas_included
+        \-- config_numbers - the pod setting that decides if the formulas assigned to the symbols of a phrase are shown
+    \-- alias_formulas_included
+        \-- config_numbers - the pod setting that decides if the formulas assigned to the aliases of a phrase are shown
     \-- ip_user_can_change
         \-- config_numbers - the pod permission that decides if a user without login can change data in the database
 \-- settings

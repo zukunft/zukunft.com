@@ -676,7 +676,8 @@ class word extends sandbox_code_id
     function load_formulas_related(user_message $msg): void
     {
         $frm_lst = new formula_list($this->get_user());
-        $frm_lst->load_by_phr($this->phrase(), $msg);
+        // the formulas of a symbol or alias belong to the page too (see phrase::formula_selection)
+        $frm_lst->load_by_phr_lst($this->phrase()->formula_selection($msg), $msg);
         $this->formulas_related = $frm_lst;
     }
 
@@ -1127,7 +1128,9 @@ class word extends sandbox_code_id
     function reload_value_list(user_message $msg, int $page = 1, int $size = sql_db::ROW_LIMIT): value_list
     {
         $val_lst = new value_list($this->get_user());
-        $val_lst->load_by_phr($this->phrase(), $msg, $size, $page);
+        // the values of a symbol or alias belong to the page too (see phrase::value_selection),
+        // so a value that carries any phrase of the selection is loaded
+        $val_lst->load_by_phr_lst($this->phrase()->value_selection($msg), $msg, true, $size, $page);
         // load the phrase names of each value group so that the related value list
         // shows the phrase names (and not only the links) in the api and frontend
         $val_lst->load_phrases($msg);

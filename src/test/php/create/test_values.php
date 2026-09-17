@@ -356,6 +356,28 @@ class test_values extends test_objects
     }
 
     /**
+     * a pod configuration with several switches set to false, e.g. to switch off the symbols and
+     * the aliases of a value selection at once (mirrors config_cache_switch for one switch)
+     *
+     * @param array $names_lst the phrase name lists of the switches, each leaf first
+     * @return config_numbers the pod configuration with every given switch set to false
+     */
+    function config_switches_off(array $names_lst): config_numbers
+    {
+        $t_phr = new test_phrases($this->env);
+        $val_lst = [];
+        foreach ($names_lst as $names) {
+            $grp = $t_phr->list_cache_switch($names)->get_grp_id(false);
+            $val_lst[] = new value($this->env->usr1, (float)false, $grp);
+        }
+        $cfg = new config_numbers($this->env->usr1);
+        // the config phrases have no database id, so the group id of the value is empty
+        // and add() would skip the value, because it adds only objects with an id
+        $cfg->set_lst($val_lst);
+        return $cfg;
+    }
+
+    /**
      * @return config_numbers a pod configuration without any config value
      */
     function config_empty(): config_numbers

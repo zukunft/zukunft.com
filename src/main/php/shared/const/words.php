@@ -127,6 +127,7 @@ class words
     const string CHECK = 'check';
     const string CHF = 'CHF';
     const int CHF_ID = 407;
+    const string SWISS_FRANC = 'Swiss franc'; // the currency that CHF is the symbol for
     const string COLUMNS = 'columns';
     const string COMBINATION = 'combination';
     const string COMPONENT = 'component';
@@ -243,6 +244,9 @@ class words
     const string SECOND = 'second';
     const int SECOND_ID = 22;
     const string SELECT = 'select';
+    const string SYMBOL = 'symbol'; // config key: the symbols of a phrase (config.yaml select > value|formula > symbol)
+    const string ALIAS = 'alias'; // config key: the aliases of a phrase (config.yaml select > value|formula > alias)
+    const string INCLUDE = 'include'; // config key: the switch that includes the linked phrases in a selection
     const string SELECTIONS = 'selections';
     const string SEPARATOR = 'separator';
     const string SIZE = 'size';

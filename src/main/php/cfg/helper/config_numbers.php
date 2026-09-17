@@ -115,6 +115,14 @@ class config_numbers extends value_list
     // the phrase names that select the pod switch for the html page cache (db_cache_pages table)
     const array CACHE_PAGES_ALLOWED_NAMES = [words::ALLOWED, words::HTML, words::PAGE, words::CACHE];
 
+    // the phrase names that select the pod switches to show the values and the formulas of the
+    // symbols and of the aliases of a phrase with the phrase's own
+    // (config.yaml select > value|formula > symbol|alias > include)
+    const array SYMBOL_VALUES_INCLUDE_NAMES = [words::INCLUDE, words::SYMBOL, words::VALUE, words::SELECT];
+    const array ALIAS_VALUES_INCLUDE_NAMES = [words::INCLUDE, words::ALIAS, words::VALUE, words::SELECT];
+    const array SYMBOL_FORMULAS_INCLUDE_NAMES = [words::INCLUDE, words::SYMBOL, words::FORMULA, words::SELECT];
+    const array ALIAS_FORMULAS_INCLUDE_NAMES = [words::INCLUDE, words::ALIAS, words::FORMULA, words::SELECT];
+
     // list of word that should be hidden be default for normal selections
     // TODO check on pod start that these words exists and are of hidden type
     const array HIDDEN_KEYWORDS = [
@@ -743,8 +751,63 @@ class config_numbers extends value_list
      */
     function page_cache_allowed(): bool
     {
+        return $this->pod_switch(self::CACHE_PAGES_ALLOWED_NAMES);
+    }
+
+    /**
+     * the pod setting that decides if the values of the symbols of a phrase are shown with the
+     * phrase's own values and the other way round, e.g. the values of "EUR" on the page of "Euro";
+     * a pod without the switch includes them (config.yaml select > value > symbol > include)
+     * @return bool false if the values of the symbols should not be selected
+     */
+    function symbol_values_included(): bool
+    {
+        return $this->pod_switch(self::SYMBOL_VALUES_INCLUDE_NAMES);
+    }
+
+    /**
+     * the pod setting that decides if the values of the aliases of a phrase are shown with the
+     * phrase's own values and the other way round, e.g. the values of "€" on the page of "Euro";
+     * a pod without the switch includes them (config.yaml select > value > alias > include)
+     * @return bool false if the values of the aliases should not be selected
+     */
+    function alias_values_included(): bool
+    {
+        return $this->pod_switch(self::ALIAS_VALUES_INCLUDE_NAMES);
+    }
+
+    /**
+     * the pod setting that decides if the formulas assigned to the symbols of a phrase are shown
+     * with the phrase's own formulas and the other way round; a pod without the switch includes
+     * them (config.yaml select > formula > symbol > include)
+     * @return bool false if the formulas of the symbols should not be selected
+     */
+    function symbol_formulas_included(): bool
+    {
+        return $this->pod_switch(self::SYMBOL_FORMULAS_INCLUDE_NAMES);
+    }
+
+    /**
+     * the pod setting that decides if the formulas assigned to the aliases of a phrase are shown
+     * with the phrase's own formulas and the other way round; a pod without the switch includes
+     * them (config.yaml select > formula > alias > include)
+     * @return bool false if the formulas of the aliases should not be selected
+     */
+    function alias_formulas_included(): bool
+    {
+        return $this->pod_switch(self::ALIAS_FORMULAS_INCLUDE_NAMES);
+    }
+
+    /**
+     * a pod switch that is on unless config.yaml sets it to false, so a pod without the switch
+     * behaves like the default of config.yaml
+     * @param array $names the phrase names that select the switch, leaf first
+     * @return bool false only if the switch is set to false
+     */
+    private function pod_switch(array $names): bool
+    {
         $result = true;
-        $val = $this->get_by_names(self::CACHE_PAGES_ALLOWED_NAMES);
+        $val = $this->get_by_names($names);
         if ($val !== null) {
             $result = $val->number() != 0;
         }

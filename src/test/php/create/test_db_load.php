@@ -75,10 +75,12 @@ include_once paths::SHARED_CONST . 'sources.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'change_fields.php';
+include_once paths::SHARED_ENUM . 'foaf_direction.php';
 include_once paths::SHARED_ENUM . 'source_types.php';
 include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
+include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 include_once paths::SHARED . 'url_var.php';
@@ -128,10 +130,12 @@ use Zukunft\ZukunftCom\main\php\shared\const\sources;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_fields;
+use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
 use Zukunft\ZukunftCom\main\php\shared\enum\source_types;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
@@ -1292,6 +1296,13 @@ class test_db_load
         $result = $this->update_api_list_file(
             $t, component_list::class, views::WORD_ADD_DETAIL_ID, url_var::VIEW);
 
+        // the phrases used as the to side of the "is a" triples (see api_tests), because the
+        // word ids shift with each word added to a seed imported before them e.g. a config.yaml key
+        $up_par = [url_var::DIRECTION => foaf_direction::UP->value];
+        if (!$this->update_api_list_file($t, phrase_list::class, verbs::IS_ID, url_var::VERB, $up_par)) {
+            $result = false;
+        }
+
         // the changes of a word, because the change log ids shift with each additional setup change
         if (!$this->update_api_chg_list_file($t, word::class, word_names::MATH_ID)) {
             $result = false;
@@ -1313,21 +1324,23 @@ class test_db_load
      * @param string $class the class of the list that should be checked e.g. component_list::class
      * @param array|string $ids the database ids of the db rows that should be used for testing
      * @param string $id_fld the field name for the object id e.g. view_id
+     * @param array $url_par additional url vars of the request e.g. the direction of a verb selection
      * @return bool true if the file matches the database
      */
     private function update_api_list_file(
         test_cleanup $t,
         string       $class,
         array|string $ids,
-        string       $id_fld
+        string       $id_fld,
+        array        $url_par = []
     ): bool
     {
-        $result = $t->assert_api_get_list($class, $ids, $id_fld);
+        $result = $t->assert_api_get_list($class, $ids, $id_fld, '', false, $url_par);
 
         // easy one click update of the expected result if the test_files::AUTO_UPDATE_TEST_FILES flag is true
         if (!$result and test_files::AUTO_UPDATE_TEST_FILES) {
             $lib = new library();
-            $created = $t->assert_result_api_get_list($class, $ids, $id_fld);
+            $created = $t->assert_result_api_get_list($class, $ids, $id_fld, $url_par);
             if ($this->api_json_usable($created)) {
                 // remove the volatile fields e.g. the change time before saving, so that the
                 // stored file does not change with every database reset; the compare ignores
