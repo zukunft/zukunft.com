@@ -923,6 +923,7 @@ class component_types
         self::FORM_FIELD_NAME_IN_FORMULAS,
         self::FORM_FIELD_WEIGHT,
         self::FORM_FIELD_VALUE,
+        self::FORM_FIELD_GROUP_OR_PHRASES,
         self::FORM_FIELD_EXTERNAL_KEY,
         self::FORM_FIELD_URL,
         self::FORM_FIELD_DOI,

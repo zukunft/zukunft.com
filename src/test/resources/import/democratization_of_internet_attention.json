@@ -1,0 +1,3206 @@
+{
+  "version": "0.0.3",
+  "data_version": "0.0.2",
+  "time": "2026-09-17 12:00:00",
+  "user": "timon",
+  "selection": [
+    "comment forum",
+    "comment fee",
+    "net benefit"
+  ],
+  "description": "Rules for treating an online comment forum as a common-pool resource, as discussed in the Republik dialogue of September 2026: a free monthly word allowance, an exponential fee above it so that the affordable volume is bounded whatever the commenter's wealth, an additional sort by least attention, and a monthly reset. Worked examples with four commenter profiles and two budgets. Parameters and example numbers are assumed; the argumentation carries confidence values. Includes the dispute whether deliberate overuse or a self-set limit better serves the rule. Version 0.0.2 adds a Fermi estimate per rule: yearly benefit, effort and harm in US dollars for three adoption scenarios (20, 50 and 80 percent of internet users on adopting sites), with leakage of the effect to non-adopting platforms and a platform count that grows steeply with coverage. All Fermi inputs are assumed and carry confidence values; the results are stored and verified by calc-validation.",
+  "words": [
+    {
+      "name": "forum",
+      "description": "an online place where readers publish and discuss comments."
+    },
+    {
+      "name": "comment",
+      "description": "a written reader contribution below an article."
+    },
+    {
+      "name": "word",
+      "description": "the smallest unit of written text; the unit in which comment volume is counted here."
+    },
+    {
+      "name": "count",
+      "description": "Number of items."
+    },
+    {
+      "name": "allowance",
+      "description": "an amount that may be used without charge."
+    },
+    {
+      "name": "free",
+      "description": "without charge."
+    },
+    {
+      "name": "month",
+      "description": "Calendar month; the settlement period assumed for the rules."
+    },
+    {
+      "name": "year",
+      "description": "Calendar year."
+    },
+    {
+      "name": "reset",
+      "description": "setting a counter back to zero at the start of a new period."
+    },
+    {
+      "name": "decay",
+      "description": "the natural end of things; in nature nothing is stored forever."
+    },
+    {
+      "name": "fee",
+      "description": "a charge for using a service."
+    },
+    {
+      "name": "base",
+      "description": "the starting amount from which a scale is built."
+    },
+    {
+      "name": "doubling",
+      "description": "multiplication by two."
+    },
+    {
+      "name": "step",
+      "description": "a fixed increment on a scale."
+    },
+    {
+      "name": "excess",
+      "description": "the part above an allowance."
+    },
+    {
+      "name": "subscription",
+      "description": "a paid membership giving access to a publication."
+    },
+    {
+      "name": "price",
+      "description": "the amount of money asked for something."
+    },
+    {
+      "name": "CHF",
+      "description": "Swiss franc.",
+      "type": "measure"
+    },
+    {
+      "name": "reader",
+      "description": "a person who reads the publication and its comments."
+    },
+    {
+      "name": "attention",
+      "description": "the finite time and focus a reader spends."
+    },
+    {
+      "name": "publisher",
+      "description": "the organisation that runs the publication and pays for the forum."
+    },
+    {
+      "name": "storage",
+      "description": "keeping data available over time."
+    },
+    {
+      "name": "cost",
+      "description": "the amount paid or required for something."
+    },
+    {
+      "name": "resource"
+    },
+    {
+      "name": "common-pool"
+    },
+    {
+      "name": "exclusion"
+    },
+    {
+      "name": "tragedy"
+    },
+    {
+      "name": "commons",
+      "description": "A common-pool resource governed under a common property regime; requires both the good type and the institution."
+    },
+    {
+      "name": "principle"
+    },
+    {
+      "name": "design"
+    },
+    {
+      "name": "sanction",
+      "description": "a penalty for breaking a rule."
+    },
+    {
+      "name": "graduated",
+      "description": "increasing in steps with the severity or repetition of an offence."
+    },
+    {
+      "name": "sort",
+      "description": "an ordering of comments shown to readers."
+    },
+    {
+      "name": "unnoticed",
+      "description": "having received little attention so far."
+    },
+    {
+      "name": "popular",
+      "description": "having received much approval."
+    },
+    {
+      "name": "reply",
+      "description": "a comment answering another comment."
+    },
+    {
+      "name": "option",
+      "description": "one of several choices offered."
+    },
+    {
+      "name": "concentration",
+      "description": "the gathering of a quantity on few items."
+    },
+    {
+      "name": "wealth",
+      "description": "the money a person has available."
+    },
+    {
+      "name": "effect",
+      "description": "the influence of one quantity on another."
+    },
+    {
+      "name": "budget",
+      "description": "the money a person is willing to spend on comment fees in a period."
+    },
+    {
+      "name": "small"
+    },
+    {
+      "name": "large"
+    },
+    {
+      "name": "affordable",
+      "description": "reachable with a given budget."
+    },
+    {
+      "name": "rule",
+      "description": "a binding provision of a forum."
+    },
+    {
+      "name": "commenter",
+      "description": "a person who writes comments."
+    },
+    {
+      "name": "light"
+    },
+    {
+      "name": "regular"
+    },
+    {
+      "name": "heavy"
+    },
+    {
+      "name": "extreme"
+    },
+    {
+      "name": "overuse",
+      "description": "using more of a shared resource than an equal share."
+    },
+    {
+      "name": "deliberate",
+      "description": "done on purpose."
+    },
+    {
+      "name": "limit",
+      "description": "an upper bound."
+    },
+    {
+      "name": "self",
+      "description": "set by the person for herself or himself."
+    },
+    {
+      "name": "assumed",
+      "description": "Qualifier for a number that is not measured: a chosen parameter, an example or an estimate."
+    },
+    {
+      "name": "confidence",
+      "description": "Numeric confidence between zero and one attached to an assumed value."
+    },
+    {
+      "name": "internet",
+      "description": "the global network of computer networks."
+    },
+    {
+      "name": "user",
+      "description": "a person who uses a service."
+    },
+    {
+      "name": "adoption",
+      "description": "the share of internet users whose sites and services have implemented the rules."
+    },
+    {
+      "name": "low"
+    },
+    {
+      "name": "medium"
+    },
+    {
+      "name": "high"
+    },
+    {
+      "name": "share",
+      "description": "a fraction between zero and one."
+    },
+    {
+      "name": "benefit",
+      "description": "the yearly value created by a rule, expressed in US dollars."
+    },
+    {
+      "name": "harm",
+      "description": "the yearly damage caused by a rule, expressed in US dollars."
+    },
+    {
+      "name": "effort",
+      "description": "the yearly cost of implementing and running a rule, expressed in US dollars."
+    },
+    {
+      "name": "net",
+      "description": "after subtracting effort and harm."
+    },
+    {
+      "name": "platform",
+      "description": "a site or service that runs a comment forum."
+    },
+    {
+      "name": "leakage",
+      "description": "share of the comment volume trimmed on adopting platforms that reappears on non-adopting platforms; the same mechanism as carbon leakage under a partial carbon price."
+    },
+    {
+      "name": "USD",
+      "description": "US dollar.",
+      "type": "measure"
+    },
+    {
+      "name": "2024",
+      "description": "The year 2024."
+    },
+    {
+      "name": "circumvention",
+      "description": "getting around a rule, e.g. with several accounts."
+    },
+    {
+      "name": "spam",
+      "description": "unwanted low-value comments."
+    },
+    {
+      "name": "burst",
+      "description": "many comments in a short time."
+    },
+    {
+      "name": "brevity",
+      "description": "shortness of a text."
+    },
+    {
+      "name": "Republik",
+      "description": "Swiss reader-financed online magazine for politics, economy, society and culture, published since 2018."
+    }
+  ],
+  "triples": [
+    {
+      "name": "comment forum",
+      "from": "forum",
+      "verb": "of",
+      "to": "comment",
+      "description": "The reader discussion area of an online publication; here the Republik dialogue."
+    },
+    {
+      "name": "word count",
+      "from": "count",
+      "verb": "of",
+      "to": "word",
+      "description": "Number of words a commenter publishes in a period."
+    },
+    {
+      "name": "free allowance",
+      "from": "allowance",
+      "verb": "kind of",
+      "to": "free",
+      "description": "Number of comment words per period that cost nothing beyond the subscription."
+    },
+    {
+      "name": "excess words",
+      "from": "word",
+      "verb": "kind of",
+      "to": "excess",
+      "description": "Comment words above the free allowance in a period."
+    },
+    {
+      "name": "doubling step",
+      "from": "step",
+      "verb": "of",
+      "to": "doubling",
+      "description": "Number of excess words after which the fee doubles."
+    },
+    {
+      "name": "doubling count",
+      "from": "count",
+      "verb": "of",
+      "to": "doubling",
+      "description": "How many doubling steps the excess words span."
+    },
+    {
+      "name": "base fee",
+      "from": "fee",
+      "verb": "kind of",
+      "to": "base",
+      "description": "Fee charged for the first doubling step."
+    },
+    {
+      "name": "comment fee",
+      "from": "fee",
+      "verb": "of",
+      "to": "comment",
+      "description": "Fee for comment words above the free allowance; grows exponentially with the excess."
+    },
+    {
+      "name": "subscription price",
+      "from": "price",
+      "verb": "of",
+      "to": "subscription"
+    },
+    {
+      "name": "Republik subscription price",
+      "from": "subscription price",
+      "verb": "of",
+      "to": "Republik",
+      "description": "Regular yearly membership price of Republik."
+    },
+    {
+      "name": "reader attention",
+      "from": "attention",
+      "verb": "of",
+      "to": "reader",
+      "description": "Time and focus readers spend on the forum; every extra comment consumes some of it."
+    },
+    {
+      "name": "publisher cost",
+      "from": "cost",
+      "verb": "of",
+      "to": "publisher",
+      "description": "Money the publisher spends on hosting, moderating and storing comments."
+    },
+    {
+      "name": "storage cost",
+      "from": "cost",
+      "verb": "of",
+      "to": "storage",
+      "description": "Cost of keeping comments available; grows as long as nothing is ever deleted."
+    },
+    {
+      "name": "exclusion cost",
+      "from": "cost",
+      "verb": "of",
+      "to": "exclusion",
+      "description": "Cost of preventing non-authorized persons from using the resource; defining criterion of a common-pool resource."
+    },
+    {
+      "name": "common-pool resource",
+      "from": "resource",
+      "verb": "kind of",
+      "to": "common-pool",
+      "description": "Resource system with high subtractability of use and high cost of exclusion; a property of the good, not of its ownership."
+    },
+    {
+      "name": "tragedy of the commons",
+      "from": "tragedy",
+      "verb": "of",
+      "to": "commons",
+      "description": "Hardin's 1968 model of inevitable degradation; it assumes open access, which is why Ostrom regarded the label as a misnomer."
+    },
+    {
+      "name": "design principle",
+      "from": "principle",
+      "verb": "of",
+      "to": "design",
+      "description": "Regularity found in long-enduring self-governed common-pool resource institutions; diagnostic, not a recipe."
+    },
+    {
+      "name": "graduated sanctions",
+      "from": "sanction",
+      "verb": "kind of",
+      "to": "graduated",
+      "description": "Fifth of Ostrom's design principles: users who violate rules receive sanctions that escalate with the seriousness and repetition of the offence."
+    },
+    {
+      "name": "graduated sanctions principle",
+      "from": "graduated sanctions",
+      "verb": "is a",
+      "to": "design principle"
+    },
+    {
+      "name": "comment forum as common-pool resource",
+      "from": "comment forum",
+      "verb": "is a",
+      "to": "common-pool resource",
+      "description": "Claim of the dialogue: the forum costs every reader time and the publisher money, so it is subtractable and hard to fence; an allocation problem, not a disinformation problem."
+    },
+    {
+      "name": "attention in comment forum",
+      "from": "reader attention",
+      "verb": "is part of",
+      "to": "comment forum"
+    },
+    {
+      "name": "publisher cost of comment forum",
+      "from": "publisher cost",
+      "verb": "is part of",
+      "to": "comment forum"
+    },
+    {
+      "name": "storage adds to publisher cost",
+      "from": "storage cost",
+      "verb": "adds to",
+      "to": "publisher cost",
+      "description": "Because comments are stored without end, the resource use of a comment keeps growing after it is written."
+    },
+    {
+      "name": "attention concentration",
+      "from": "concentration",
+      "verb": "of",
+      "to": "reader attention",
+      "description": "Share of reader attention captured by the few most visible comments."
+    },
+    {
+      "name": "popular sort",
+      "from": "sort",
+      "verb": "kind of",
+      "to": "popular",
+      "description": "Existing Republik dialogue sort option: most popular first."
+    },
+    {
+      "name": "reply sort",
+      "from": "sort",
+      "verb": "is ranked by",
+      "to": "reply",
+      "description": "Existing Republik dialogue sort option: most replies first."
+    },
+    {
+      "name": "unnoticed sort",
+      "from": "sort",
+      "verb": "kind of",
+      "to": "unnoticed",
+      "description": "Proposed additional sort option: comments with the least attention first."
+    },
+    {
+      "name": "allowance rule",
+      "from": "rule",
+      "verb": "of",
+      "to": "free allowance",
+      "description": "Rule 1: every subscriber may publish the free allowance of comment words per month without charge."
+    },
+    {
+      "name": "fee rule",
+      "from": "rule",
+      "verb": "of",
+      "to": "comment fee",
+      "description": "Rule 2: above the allowance the fee doubles with every doubling step of excess words, so that the affordable volume is bounded whatever the wealth of the commenter."
+    },
+    {
+      "name": "sort rule",
+      "from": "rule",
+      "verb": "of",
+      "to": "unnoticed sort",
+      "description": "Rule 3: readers can sort the dialogue by least attention received, next to most popular and most replies."
+    },
+    {
+      "name": "reset rule",
+      "from": "rule",
+      "verb": "of",
+      "to": "reset",
+      "description": "Rule 4: the word counter is reset at the start of every month; the fee is charged per month."
+    },
+    {
+      "name": "fee rule caps word count",
+      "from": "fee rule",
+      "verb": "limits",
+      "to": "word count",
+      "description": "The exponential fee makes a monthly word volume beyond a few doubling steps unaffordable."
+    },
+    {
+      "name": "wealth effect",
+      "from": "effect",
+      "verb": "of",
+      "to": "wealth",
+      "description": "How much more comment volume a richer commenter can buy."
+    },
+    {
+      "name": "doubling step caps wealth effect",
+      "from": "doubling step",
+      "verb": "limits",
+      "to": "wealth effect",
+      "description": "With an exponential fee the affordable volume grows only with the logarithm of the budget: a thousandfold budget buys about ten doubling steps."
+    },
+    {
+      "name": "fee rule internalises publisher cost",
+      "from": "fee rule",
+      "verb": "reduces",
+      "to": "publisher cost",
+      "description": "The commenter's stated goal: internalise the external cost of comment volume."
+    },
+    {
+      "name": "fee rule as graduated sanction",
+      "from": "fee rule",
+      "verb": "is analogous to",
+      "to": "graduated sanctions"
+    },
+    {
+      "name": "unnoticed sort spreads attention",
+      "from": "unnoticed sort",
+      "verb": "reduces",
+      "to": "attention concentration",
+      "description": "Redistributes attention without forbidding anything; a lever on attention received, whereas the fee rule is a lever on volume produced."
+    },
+    {
+      "name": "reset rule mirrors decay",
+      "from": "reset rule",
+      "verb": "is analogous to",
+      "to": "decay",
+      "description": "Answers the point that in nature and in analogue culture everything ends, while forums store everything forever."
+    },
+    {
+      "name": "deliberate overuse",
+      "from": "overuse",
+      "verb": "kind of",
+      "to": "deliberate",
+      "description": "Publishing many comments on purpose to make the allocation problem visible."
+    },
+    {
+      "name": "self limit",
+      "from": "limit",
+      "verb": "kind of",
+      "to": "self",
+      "description": "A voluntary personal cap on comment volume, set and announced by the commenter."
+    },
+    {
+      "name": "overuse aims at fee rule",
+      "from": "deliberate overuse",
+      "verb": "aims to trigger",
+      "to": "fee rule",
+      "description": "Stated intent of Timon Zielonka: the high volume is meant to draw attention to the problem so that a rule follows."
+    },
+    {
+      "name": "overuse enables fee rule",
+      "from": "deliberate overuse",
+      "verb": "enables",
+      "to": "fee rule",
+      "description": "Disputed claim: whether the demonstration makes the rule more likely or is read as the problem itself."
+    },
+    {
+      "name": "self limit versus overuse",
+      "from": "self limit",
+      "verb": "competes with",
+      "to": "deliberate overuse",
+      "description": "The two responses to the same diagnosis exclude each other for one person at one time."
+    },
+    {
+      "name": "light commenter",
+      "from": "commenter",
+      "verb": "kind of",
+      "to": "light",
+      "description": "Example: stays well inside the allowance."
+    },
+    {
+      "name": "regular commenter",
+      "from": "commenter",
+      "verb": "kind of",
+      "to": "regular",
+      "description": "Example: slightly above the allowance."
+    },
+    {
+      "name": "heavy commenter",
+      "from": "commenter",
+      "verb": "kind of",
+      "to": "heavy",
+      "description": "Example: several times the allowance."
+    },
+    {
+      "name": "extreme commenter",
+      "from": "commenter",
+      "verb": "kind of",
+      "to": "extreme",
+      "description": "Example: volume that only the fee rule stops."
+    },
+    {
+      "name": "small budget",
+      "from": "budget",
+      "verb": "kind of",
+      "to": "small"
+    },
+    {
+      "name": "internet user",
+      "from": "user",
+      "verb": "of",
+      "to": "internet"
+    },
+    {
+      "name": "comment reader",
+      "from": "reader",
+      "verb": "of",
+      "to": "comment",
+      "description": "An internet user who reads comment sections."
+    },
+    {
+      "name": "comment reader share",
+      "from": "share",
+      "verb": "of",
+      "to": "comment reader",
+      "description": "Fraction of internet users who read comment sections."
+    },
+    {
+      "name": "low adoption",
+      "from": "adoption",
+      "verb": "kind of",
+      "to": "low",
+      "description": "Scenario: 20 percent of internet users are on sites and services that implement the rules."
+    },
+    {
+      "name": "medium adoption",
+      "from": "adoption",
+      "verb": "kind of",
+      "to": "medium",
+      "description": "Scenario: 50 percent of internet users are on sites and services that implement the rules."
+    },
+    {
+      "name": "high adoption",
+      "from": "adoption",
+      "verb": "kind of",
+      "to": "high",
+      "description": "Scenario: 80 percent of internet users are on sites and services that implement the rules."
+    },
+    {
+      "name": "adoption share",
+      "from": "share",
+      "verb": "of",
+      "to": "adoption",
+      "description": "Fraction of internet users covered by a scenario."
+    },
+    {
+      "name": "platform count",
+      "from": "count",
+      "verb": "of",
+      "to": "platform",
+      "description": "Number of platforms that must implement the rules to reach a scenario; grows steeply because the long tail of small forums covers few users each."
+    },
+    {
+      "name": "benefit per reader",
+      "from": "benefit",
+      "verb": "per",
+      "to": "comment reader",
+      "description": "Yearly value a comment reader gains from a rule, mainly attention no longer spent on diluting volume, valued at about ten US dollars per hour."
+    },
+    {
+      "name": "harm per reader",
+      "from": "harm",
+      "verb": "per",
+      "to": "comment reader",
+      "description": "Yearly damage a rule causes per comment reader: excluded or shortened contributions, pay-to-speak perception, visibility for spam."
+    },
+    {
+      "name": "effort per platform",
+      "from": "effort",
+      "verb": "per",
+      "to": "platform",
+      "description": "Yearly cost of implementing and running a rule on one platform: counting, billing, support, dispute handling."
+    },
+    {
+      "name": "net benefit",
+      "from": "benefit",
+      "verb": "kind of",
+      "to": "net",
+      "description": "Benefit minus effort minus harm."
+    },
+    {
+      "name": "fee rule excludes",
+      "from": "fee rule",
+      "verb": "can cause",
+      "to": "exclusion",
+      "description": "Harm channel: commenters with low income and a volume between allowance and cap are priced out; readers may perceive the forum as pay-to-speak."
+    },
+    {
+      "name": "fee rule circumvented",
+      "from": "fee rule",
+      "verb": "can cause",
+      "to": "circumvention",
+      "description": "Harm channel: several accounts per person, or moving the volume to non-adopting platforms; captured by leakage."
+    },
+    {
+      "name": "allowance rule shortens",
+      "from": "allowance rule",
+      "verb": "can cause",
+      "to": "brevity",
+      "description": "Harm channel: pressure to keep contributions short even where length is warranted."
+    },
+    {
+      "name": "unnoticed sort surfaces spam",
+      "from": "unnoticed sort",
+      "verb": "can cause",
+      "to": "spam",
+      "description": "Harm channel: comments that are unnoticed for good reason gain visibility."
+    },
+    {
+      "name": "reset rule bursts",
+      "from": "reset rule",
+      "verb": "can cause",
+      "to": "burst",
+      "description": "Harm channel: heavy commenters spend the fresh allowance in the first days of the month."
+    },
+    {
+      "name": "large budget",
+      "from": "budget",
+      "verb": "kind of",
+      "to": "large"
+    },
+    {
+      "name": "affordable words",
+      "from": "word",
+      "verb": "kind of",
+      "to": "affordable",
+      "description": "Monthly comment words a commenter can pay for with a given budget."
+    }
+  ],
+  "formulas": [
+    {
+      "name": "rule benefit formula",
+      "expression": "\"benefit\" = \"internet user\" * \"adoption share\" * \"comment reader share\" * \"benefit per reader\" * ( 1 - \"leakage\" )",
+      "latex": "B = U \\cdot s_a \\cdot s_r \\cdot b \\cdot ( 1 - l )",
+      "assigned": [
+        "benefit per reader",
+        "adoption share"
+      ],
+      "description": "Yearly benefit of a rule in a scenario: covered comment readers times benefit per reader, reduced by the share of the effect that leaks to non-adopting platforms."
+    },
+    {
+      "name": "rule effort formula",
+      "expression": "\"effort\" = \"platform count\" * \"effort per platform\"",
+      "latex": "E = N_p \\cdot e",
+      "assigned": [
+        "effort per platform",
+        "platform count"
+      ]
+    },
+    {
+      "name": "rule harm formula",
+      "expression": "\"harm\" = \"internet user\" * \"adoption share\" * \"comment reader share\" * \"harm per reader\"",
+      "latex": "H = U \\cdot s_a \\cdot s_r \\cdot h",
+      "assigned": [
+        "harm per reader",
+        "adoption share"
+      ]
+    },
+    {
+      "name": "net benefit formula",
+      "expression": "\"net benefit\" = \"benefit\" - \"effort\" - \"harm\"",
+      "latex": "N = B - E - H",
+      "assigned": [
+        "benefit",
+        "effort",
+        "harm"
+      ]
+    },
+    {
+      "name": "excess words formula",
+      "expression": "\"excess words\" = \"word count\" - \"free allowance\"",
+      "latex": "x = w - a",
+      "assigned": [
+        "word count",
+        "free allowance"
+      ],
+      "description": "Applies only when the word count exceeds the free allowance; otherwise the excess is zero."
+    },
+    {
+      "name": "doubling count formula",
+      "expression": "\"doubling count\" = \"excess words\" / \"doubling step\"",
+      "latex": "n = \\frac{x}{d}",
+      "assigned": [
+        "excess words",
+        "doubling step"
+      ]
+    },
+    {
+      "name": "comment fee formula",
+      "expression": "\"comment fee\" = \"base fee\" * ( 2 ^ \"doubling count\" - 1 )",
+      "latex": "f = c \\cdot \\left( 2^{n} - 1 \\right)",
+      "assigned": [
+        "doubling count",
+        "base fee"
+      ],
+      "description": "Exponential fee: doubles with every doubling step of excess words. The first step costs the base fee."
+    },
+    {
+      "name": "affordable words formula",
+      "expression": "\"affordable words\" = \"free allowance\" + \"doubling step\" * log( \"budget\" / \"base fee\" + 1 ) / log( 2 )",
+      "latex": "w_{max} = a + d \\cdot \\log_{2}\\left( \\frac{B}{c} + 1 \\right)",
+      "assigned": [
+        "budget"
+      ],
+      "description": "Inverse of the fee formula: the monthly word volume a budget can buy grows only with the logarithm of the budget."
+    }
+  ],
+  "sources": [
+    {
+      "name": "Republik dialogue Binswanger 2026-09-12",
+      "url": "https://www.republik.ch/dialog/2026/09/12/binswanger-deutschland-geht-auch-uns-etwas-an",
+      "description": "Reader dialogue in which a reader proposed the exponential comment fee and Timon Zielonka agreed and named the existing sort options; September 2026."
+    },
+    {
+      "name": "KulturLegi Republik offer",
+      "url": "https://www.kulturlegi.ch/zuerich/angebote/angebot-detail/angebot/republik",
+      "description": "States the regular Republik membership price of CHF 240 per year; read 17 September 2026."
+    },
+    {
+      "name": "Ostrom 1990",
+      "description": "Ostrom, E. (1990). Governing the Commons: The Evolution of Institutions for Collective Action. Cambridge University Press."
+    },
+    {
+      "name": "Hardin 1968 Science",
+      "doi": "10.1126/science.162.3859.1243",
+      "description": "Hardin, G. (1968). The Tragedy of the Commons. Science 162(3859), 1243-1248. DOI verified 17 September 2026."
+    },
+    {
+      "name": "ITU Facts and Figures 2024",
+      "url": "https://www.itu.int/itu-d/reports/statistics/2024/11/10/ff24-internet-use/",
+      "description": "International Telecommunication Union, Facts and Figures 2024: 5.5 billion people online in 2024, 68 percent of the world population."
+    },
+    {
+      "name": "Fermi estimate",
+      "description": "an order-of-magnitude figure assumed for a Fermi estimation, deliberately rough and chosen to be defensible within a factor of a few"
+    },
+    {
+      "name": "worked example",
+      "description": "Illustrative parameters and the numbers derived from them in this dialogue; chosen to show the shape of the rules, not measured."
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "Republik subscription price",
+        "CHF",
+        "year"
+      ],
+      "number": "240",
+      "source": "KulturLegi Republik offer"
+    },
+    {
+      "words": [
+        "Republik",
+        "comment forum",
+        "sort",
+        "option",
+        "count"
+      ],
+      "number": "2",
+      "source": "Republik dialogue Binswanger 2026-09-12"
+    },
+    {
+      "words": [
+        "tragedy of the commons",
+        "year"
+      ],
+      "number": "1968",
+      "source": "Hardin 1968 Science"
+    },
+    {
+      "words": [
+        "design principle",
+        "commons",
+        "count"
+      ],
+      "number": "8",
+      "source": "Ostrom 1990"
+    },
+    {
+      "words": [
+        "free allowance",
+        "word",
+        "month",
+        "assumed"
+      ],
+      "number": "1000",
+      "source": "worked example"
+    },
+    {
+      "words": [
+        "doubling step",
+        "word",
+        "assumed"
+      ],
+      "number": "500",
+      "source": "worked example"
+    },
+    {
+      "words": [
+        "base fee",
+        "CHF",
+        "assumed"
+      ],
+      "number": "1",
+      "source": "worked example"
+    },
+    {
+      "words": [
+        "light commenter",
+        "word count",
+        "month",
+        "assumed"
+      ],
+      "number": "300",
+      "source": "worked example"
+    },
+    {
+      "words": [
+        "regular commenter",
+        "word count",
+        "month",
+        "assumed"
+      ],
+      "number": "1500",
+      "source": "worked example"
+    },
+    {
+      "words": [
+        "heavy commenter",
+        "word count",
+        "month",
+        "assumed"
+      ],
+      "number": "4000",
+      "source": "worked example"
+    },
+    {
+      "words": [
+        "extreme commenter",
+        "word count",
+        "month",
+        "assumed"
+      ],
+      "number": "8000",
+      "source": "worked example"
+    },
+    {
+      "words": [
+        "light commenter",
+        "excess words",
+        "month"
+      ],
+      "number": "0",
+      "source": "worked example"
+    },
+    {
+      "words": [
+        "regular commenter",
+        "excess words",
+        "month"
+      ],
+      "number": "500",
+      "source": "worked example"
+    },
+    {
+      "words": [
+        "heavy commenter",
+        "excess words",
+        "month"
+      ],
+      "number": "3000",
+      "source": "worked example"
+    },
+    {
+      "words": [
+        "extreme commenter",
+        "excess words",
+        "month"
+      ],
+      "number": "7000",
+      "source": "worked example"
+    },
+    {
+      "words": [
+        "light commenter",
+        "comment fee",
+        "CHF",
+        "month"
+      ],
+      "number": "0",
+      "source": "worked example"
+    },
+    {
+      "words": [
+        "regular commenter",
+        "comment fee",
+        "CHF",
+        "month"
+      ],
+      "number": "1",
+      "source": "worked example"
+    },
+    {
+      "words": [
+        "heavy commenter",
+        "comment fee",
+        "CHF",
+        "month"
+      ],
+      "number": "63",
+      "source": "worked example"
+    },
+    {
+      "words": [
+        "extreme commenter",
+        "comment fee",
+        "CHF",
+        "month"
+      ],
+      "number": "16383",
+      "source": "worked example"
+    },
+    {
+      "words": [
+        "small budget",
+        "CHF",
+        "month",
+        "assumed"
+      ],
+      "number": "1000",
+      "source": "worked example"
+    },
+    {
+      "words": [
+        "large budget",
+        "CHF",
+        "month",
+        "assumed"
+      ],
+      "number": "1000000",
+      "source": "worked example"
+    },
+    {
+      "words": [
+        "affordable words",
+        "small budget",
+        "word",
+        "month"
+      ],
+      "number": "5984",
+      "source": "worked example"
+    },
+    {
+      "words": [
+        "affordable words",
+        "large budget",
+        "word",
+        "month"
+      ],
+      "number": "10966",
+      "source": "worked example"
+    },
+    {
+      "words": [
+        "confidence",
+        "comment forum as common-pool resource",
+        "assumed"
+      ],
+      "number": "0.7",
+      "source": "worked example"
+    },
+    {
+      "words": [
+        "confidence",
+        "fee rule caps word count",
+        "assumed"
+      ],
+      "number": "0.8",
+      "source": "worked example"
+    },
+    {
+      "words": [
+        "confidence",
+        "doubling step caps wealth effect",
+        "assumed"
+      ],
+      "number": "0.95",
+      "source": "worked example"
+    },
+    {
+      "words": [
+        "confidence",
+        "unnoticed sort spreads attention",
+        "assumed"
+      ],
+      "number": "0.5",
+      "source": "worked example"
+    },
+    {
+      "words": [
+        "confidence",
+        "overuse enables fee rule",
+        "assumed"
+      ],
+      "number": "0.3",
+      "source": "worked example"
+    },
+    {
+      "words": [
+        "internet user",
+        "count",
+        "2024"
+      ],
+      "number": "5500000000",
+      "source": "ITU Facts and Figures 2024"
+    },
+    {
+      "words": [
+        "comment reader share",
+        "assumed"
+      ],
+      "number": "0.5",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "confidence",
+        "comment reader share",
+        "assumed"
+      ],
+      "number": "0.5",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "low adoption",
+        "adoption share",
+        "assumed"
+      ],
+      "number": "0.2",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "low adoption",
+        "leakage",
+        "share",
+        "assumed"
+      ],
+      "number": "0.5",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "low adoption",
+        "platform count",
+        "assumed"
+      ],
+      "number": "100",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "medium adoption",
+        "adoption share",
+        "assumed"
+      ],
+      "number": "0.5",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "medium adoption",
+        "leakage",
+        "share",
+        "assumed"
+      ],
+      "number": "0.3",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "medium adoption",
+        "platform count",
+        "assumed"
+      ],
+      "number": "1000",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "high adoption",
+        "adoption share",
+        "assumed"
+      ],
+      "number": "0.8",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "high adoption",
+        "leakage",
+        "share",
+        "assumed"
+      ],
+      "number": "0.1",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "high adoption",
+        "platform count",
+        "assumed"
+      ],
+      "number": "100000",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "confidence",
+        "leakage",
+        "assumed"
+      ],
+      "number": "0.4",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "confidence",
+        "platform count",
+        "assumed"
+      ],
+      "number": "0.4",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "allowance rule",
+        "benefit per reader",
+        "USD",
+        "year",
+        "assumed"
+      ],
+      "number": "10",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "allowance rule",
+        "harm per reader",
+        "USD",
+        "year",
+        "assumed"
+      ],
+      "number": "0.1",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "allowance rule",
+        "effort per platform",
+        "USD",
+        "year",
+        "assumed"
+      ],
+      "number": "5000",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "confidence",
+        "allowance rule",
+        "benefit per reader",
+        "assumed"
+      ],
+      "number": "0.4",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "confidence",
+        "allowance rule",
+        "harm per reader",
+        "assumed"
+      ],
+      "number": "0.5",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "confidence",
+        "allowance rule",
+        "effort per platform",
+        "assumed"
+      ],
+      "number": "0.6",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "fee rule",
+        "benefit per reader",
+        "USD",
+        "year",
+        "assumed"
+      ],
+      "number": "50",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "fee rule",
+        "harm per reader",
+        "USD",
+        "year",
+        "assumed"
+      ],
+      "number": "5",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "fee rule",
+        "effort per platform",
+        "USD",
+        "year",
+        "assumed"
+      ],
+      "number": "30000",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "confidence",
+        "fee rule",
+        "benefit per reader",
+        "assumed"
+      ],
+      "number": "0.3",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "confidence",
+        "fee rule",
+        "harm per reader",
+        "assumed"
+      ],
+      "number": "0.3",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "confidence",
+        "fee rule",
+        "effort per platform",
+        "assumed"
+      ],
+      "number": "0.5",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "sort rule",
+        "benefit per reader",
+        "USD",
+        "year",
+        "assumed"
+      ],
+      "number": "2",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "sort rule",
+        "harm per reader",
+        "USD",
+        "year",
+        "assumed"
+      ],
+      "number": "0.5",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "sort rule",
+        "effort per platform",
+        "USD",
+        "year",
+        "assumed"
+      ],
+      "number": "2000",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "confidence",
+        "sort rule",
+        "benefit per reader",
+        "assumed"
+      ],
+      "number": "0.3",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "confidence",
+        "sort rule",
+        "harm per reader",
+        "assumed"
+      ],
+      "number": "0.3",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "confidence",
+        "sort rule",
+        "effort per platform",
+        "assumed"
+      ],
+      "number": "0.6",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "reset rule",
+        "benefit per reader",
+        "USD",
+        "year",
+        "assumed"
+      ],
+      "number": "1",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "reset rule",
+        "harm per reader",
+        "USD",
+        "year",
+        "assumed"
+      ],
+      "number": "0.2",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "reset rule",
+        "effort per platform",
+        "USD",
+        "year",
+        "assumed"
+      ],
+      "number": "1000",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "confidence",
+        "reset rule",
+        "benefit per reader",
+        "assumed"
+      ],
+      "number": "0.3",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "confidence",
+        "reset rule",
+        "harm per reader",
+        "assumed"
+      ],
+      "number": "0.4",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "confidence",
+        "reset rule",
+        "effort per platform",
+        "assumed"
+      ],
+      "number": "0.7",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "allowance rule",
+        "low adoption",
+        "benefit",
+        "USD",
+        "year"
+      ],
+      "number": "2750000000",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "allowance rule",
+        "low adoption",
+        "effort",
+        "USD",
+        "year"
+      ],
+      "number": "500000",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "allowance rule",
+        "low adoption",
+        "harm",
+        "USD",
+        "year"
+      ],
+      "number": "55000000",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "allowance rule",
+        "low adoption",
+        "net benefit",
+        "USD",
+        "year"
+      ],
+      "number": "2694500000",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "allowance rule",
+        "medium adoption",
+        "benefit",
+        "USD",
+        "year"
+      ],
+      "number": "9625000000",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "allowance rule",
+        "medium adoption",
+        "effort",
+        "USD",
+        "year"
+      ],
+      "number": "5000000",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "allowance rule",
+        "medium adoption",
+        "harm",
+        "USD",
+        "year"
+      ],
+      "number": "137500000",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "allowance rule",
+        "medium adoption",
+        "net benefit",
+        "USD",
+        "year"
+      ],
+      "number": "9482500000",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "allowance rule",
+        "high adoption",
+        "benefit",
+        "USD",
+        "year"
+      ],
+      "number": "19800000000",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "allowance rule",
+        "high adoption",
+        "effort",
+        "USD",
+        "year"
+      ],
+      "number": "500000000",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "allowance rule",
+        "high adoption",
+        "harm",
+        "USD",
+        "year"
+      ],
+      "number": "220000000",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "allowance rule",
+        "high adoption",
+        "net benefit",
+        "USD",
+        "year"
+      ],
+      "number": "19080000000",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "fee rule",
+        "low adoption",
+        "benefit",
+        "USD",
+        "year"
+      ],
+      "number": "13750000000",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "fee rule",
+        "low adoption",
+        "effort",
+        "USD",
+        "year"
+      ],
+      "number": "3000000",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "fee rule",
+        "low adoption",
+        "harm",
+        "USD",
+        "year"
+      ],
+      "number": "2750000000",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "fee rule",
+        "low adoption",
+        "net benefit",
+        "USD",
+        "year"
+      ],
+      "number": "10997000000",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "fee rule",
+        "medium adoption",
+        "benefit",
+        "USD",
+        "year"
+      ],
+      "number": "48125000000",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "fee rule",
+        "medium adoption",
+        "effort",
+        "USD",
+        "year"
+      ],
+      "number": "30000000",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "fee rule",
+        "medium adoption",
+        "harm",
+        "USD",
+        "year"
+      ],
+      "number": "6875000000",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "fee rule",
+        "medium adoption",
+        "net benefit",
+        "USD",
+        "year"
+      ],
+      "number": "41220000000",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "fee rule",
+        "high adoption",
+        "benefit",
+        "USD",
+        "year"
+      ],
+      "number": "99000000000",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "fee rule",
+        "high adoption",
+        "effort",
+        "USD",
+        "year"
+      ],
+      "number": "3000000000",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "fee rule",
+        "high adoption",
+        "harm",
+        "USD",
+        "year"
+      ],
+      "number": "11000000000",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "fee rule",
+        "high adoption",
+        "net benefit",
+        "USD",
+        "year"
+      ],
+      "number": "85000000000",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "sort rule",
+        "low adoption",
+        "benefit",
+        "USD",
+        "year"
+      ],
+      "number": "550000000",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "sort rule",
+        "low adoption",
+        "effort",
+        "USD",
+        "year"
+      ],
+      "number": "200000",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "sort rule",
+        "low adoption",
+        "harm",
+        "USD",
+        "year"
+      ],
+      "number": "275000000",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "sort rule",
+        "low adoption",
+        "net benefit",
+        "USD",
+        "year"
+      ],
+      "number": "274800000",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "sort rule",
+        "medium adoption",
+        "benefit",
+        "USD",
+        "year"
+      ],
+      "number": "1925000000",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "sort rule",
+        "medium adoption",
+        "effort",
+        "USD",
+        "year"
+      ],
+      "number": "2000000",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "sort rule",
+        "medium adoption",
+        "harm",
+        "USD",
+        "year"
+      ],
+      "number": "687500000",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "sort rule",
+        "medium adoption",
+        "net benefit",
+        "USD",
+        "year"
+      ],
+      "number": "1235500000",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "sort rule",
+        "high adoption",
+        "benefit",
+        "USD",
+        "year"
+      ],
+      "number": "3960000000",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "sort rule",
+        "high adoption",
+        "effort",
+        "USD",
+        "year"
+      ],
+      "number": "200000000",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "sort rule",
+        "high adoption",
+        "harm",
+        "USD",
+        "year"
+      ],
+      "number": "1100000000",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "sort rule",
+        "high adoption",
+        "net benefit",
+        "USD",
+        "year"
+      ],
+      "number": "2660000000",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "reset rule",
+        "low adoption",
+        "benefit",
+        "USD",
+        "year"
+      ],
+      "number": "275000000",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "reset rule",
+        "low adoption",
+        "effort",
+        "USD",
+        "year"
+      ],
+      "number": "100000",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "reset rule",
+        "low adoption",
+        "harm",
+        "USD",
+        "year"
+      ],
+      "number": "110000000",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "reset rule",
+        "low adoption",
+        "net benefit",
+        "USD",
+        "year"
+      ],
+      "number": "164900000",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "reset rule",
+        "medium adoption",
+        "benefit",
+        "USD",
+        "year"
+      ],
+      "number": "962500000",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "reset rule",
+        "medium adoption",
+        "effort",
+        "USD",
+        "year"
+      ],
+      "number": "1000000",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "reset rule",
+        "medium adoption",
+        "harm",
+        "USD",
+        "year"
+      ],
+      "number": "275000000",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "reset rule",
+        "medium adoption",
+        "net benefit",
+        "USD",
+        "year"
+      ],
+      "number": "686500000",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "reset rule",
+        "high adoption",
+        "benefit",
+        "USD",
+        "year"
+      ],
+      "number": "1980000000",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "reset rule",
+        "high adoption",
+        "effort",
+        "USD",
+        "year"
+      ],
+      "number": "100000000",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "reset rule",
+        "high adoption",
+        "harm",
+        "USD",
+        "year"
+      ],
+      "number": "440000000",
+      "source": "Fermi estimate"
+    },
+    {
+      "words": [
+        "reset rule",
+        "high adoption",
+        "net benefit",
+        "USD",
+        "year"
+      ],
+      "number": "1440000000",
+      "source": "Fermi estimate"
+    }
+  ],
+  "calc-validation": [
+    {
+      "context": [
+        "heavy commenter",
+        "word count",
+        "free allowance",
+        "word",
+        "month",
+        "assumed"
+      ],
+      "formula": "excess words formula",
+      "words": [
+        "heavy commenter",
+        "excess words",
+        "month"
+      ],
+      "number": "3000"
+    },
+    {
+      "context": [
+        "extreme commenter",
+        "word count",
+        "free allowance",
+        "word",
+        "month",
+        "assumed"
+      ],
+      "formula": "excess words formula",
+      "words": [
+        "extreme commenter",
+        "excess words",
+        "month"
+      ],
+      "number": "7000"
+    },
+    {
+      "context": [
+        "heavy commenter",
+        "excess words",
+        "month",
+        "doubling step",
+        "word",
+        "assumed"
+      ],
+      "formula": "doubling count formula",
+      "words": [
+        "heavy commenter",
+        "doubling count",
+        "month"
+      ],
+      "number": "6"
+    },
+    {
+      "context": [
+        "extreme commenter",
+        "excess words",
+        "month",
+        "doubling step",
+        "word",
+        "assumed"
+      ],
+      "formula": "doubling count formula",
+      "words": [
+        "extreme commenter",
+        "doubling count",
+        "month"
+      ],
+      "number": "14"
+    },
+    {
+      "context": [
+        "allowance rule",
+        "low adoption",
+        "internet user",
+        "count",
+        "2024",
+        "adoption share",
+        "comment reader share",
+        "USD",
+        "year",
+        "assumed",
+        "benefit per reader",
+        "leakage",
+        "share"
+      ],
+      "formula": "rule benefit formula",
+      "words": [
+        "allowance rule",
+        "low adoption",
+        "benefit",
+        "USD",
+        "year"
+      ],
+      "number": "2750000000"
+    },
+    {
+      "context": [
+        "allowance rule",
+        "low adoption",
+        "platform count",
+        "effort per platform",
+        "USD",
+        "year",
+        "assumed"
+      ],
+      "formula": "rule effort formula",
+      "words": [
+        "allowance rule",
+        "low adoption",
+        "effort",
+        "USD",
+        "year"
+      ],
+      "number": "500000"
+    },
+    {
+      "context": [
+        "allowance rule",
+        "low adoption",
+        "internet user",
+        "count",
+        "2024",
+        "adoption share",
+        "comment reader share",
+        "USD",
+        "year",
+        "assumed",
+        "harm per reader"
+      ],
+      "formula": "rule harm formula",
+      "words": [
+        "allowance rule",
+        "low adoption",
+        "harm",
+        "USD",
+        "year"
+      ],
+      "number": "55000000"
+    },
+    {
+      "context": [
+        "allowance rule",
+        "low adoption",
+        "benefit",
+        "effort",
+        "harm",
+        "USD",
+        "year"
+      ],
+      "formula": "net benefit formula",
+      "words": [
+        "allowance rule",
+        "low adoption",
+        "net benefit",
+        "USD",
+        "year"
+      ],
+      "number": "2694500000"
+    },
+    {
+      "context": [
+        "allowance rule",
+        "medium adoption",
+        "internet user",
+        "count",
+        "2024",
+        "adoption share",
+        "comment reader share",
+        "USD",
+        "year",
+        "assumed",
+        "benefit per reader",
+        "leakage",
+        "share"
+      ],
+      "formula": "rule benefit formula",
+      "words": [
+        "allowance rule",
+        "medium adoption",
+        "benefit",
+        "USD",
+        "year"
+      ],
+      "number": "9625000000"
+    },
+    {
+      "context": [
+        "allowance rule",
+        "medium adoption",
+        "platform count",
+        "effort per platform",
+        "USD",
+        "year",
+        "assumed"
+      ],
+      "formula": "rule effort formula",
+      "words": [
+        "allowance rule",
+        "medium adoption",
+        "effort",
+        "USD",
+        "year"
+      ],
+      "number": "5000000"
+    },
+    {
+      "context": [
+        "allowance rule",
+        "medium adoption",
+        "internet user",
+        "count",
+        "2024",
+        "adoption share",
+        "comment reader share",
+        "USD",
+        "year",
+        "assumed",
+        "harm per reader"
+      ],
+      "formula": "rule harm formula",
+      "words": [
+        "allowance rule",
+        "medium adoption",
+        "harm",
+        "USD",
+        "year"
+      ],
+      "number": "137500000"
+    },
+    {
+      "context": [
+        "allowance rule",
+        "medium adoption",
+        "benefit",
+        "effort",
+        "harm",
+        "USD",
+        "year"
+      ],
+      "formula": "net benefit formula",
+      "words": [
+        "allowance rule",
+        "medium adoption",
+        "net benefit",
+        "USD",
+        "year"
+      ],
+      "number": "9482500000"
+    },
+    {
+      "context": [
+        "allowance rule",
+        "high adoption",
+        "internet user",
+        "count",
+        "2024",
+        "adoption share",
+        "comment reader share",
+        "USD",
+        "year",
+        "assumed",
+        "benefit per reader",
+        "leakage",
+        "share"
+      ],
+      "formula": "rule benefit formula",
+      "words": [
+        "allowance rule",
+        "high adoption",
+        "benefit",
+        "USD",
+        "year"
+      ],
+      "number": "19800000000"
+    },
+    {
+      "context": [
+        "allowance rule",
+        "high adoption",
+        "platform count",
+        "effort per platform",
+        "USD",
+        "year",
+        "assumed"
+      ],
+      "formula": "rule effort formula",
+      "words": [
+        "allowance rule",
+        "high adoption",
+        "effort",
+        "USD",
+        "year"
+      ],
+      "number": "500000000"
+    },
+    {
+      "context": [
+        "allowance rule",
+        "high adoption",
+        "internet user",
+        "count",
+        "2024",
+        "adoption share",
+        "comment reader share",
+        "USD",
+        "year",
+        "assumed",
+        "harm per reader"
+      ],
+      "formula": "rule harm formula",
+      "words": [
+        "allowance rule",
+        "high adoption",
+        "harm",
+        "USD",
+        "year"
+      ],
+      "number": "220000000"
+    },
+    {
+      "context": [
+        "allowance rule",
+        "high adoption",
+        "benefit",
+        "effort",
+        "harm",
+        "USD",
+        "year"
+      ],
+      "formula": "net benefit formula",
+      "words": [
+        "allowance rule",
+        "high adoption",
+        "net benefit",
+        "USD",
+        "year"
+      ],
+      "number": "19080000000"
+    },
+    {
+      "context": [
+        "fee rule",
+        "low adoption",
+        "internet user",
+        "count",
+        "2024",
+        "adoption share",
+        "comment reader share",
+        "USD",
+        "year",
+        "assumed",
+        "benefit per reader",
+        "leakage",
+        "share"
+      ],
+      "formula": "rule benefit formula",
+      "words": [
+        "fee rule",
+        "low adoption",
+        "benefit",
+        "USD",
+        "year"
+      ],
+      "number": "13750000000"
+    },
+    {
+      "context": [
+        "fee rule",
+        "low adoption",
+        "platform count",
+        "effort per platform",
+        "USD",
+        "year",
+        "assumed"
+      ],
+      "formula": "rule effort formula",
+      "words": [
+        "fee rule",
+        "low adoption",
+        "effort",
+        "USD",
+        "year"
+      ],
+      "number": "3000000"
+    },
+    {
+      "context": [
+        "fee rule",
+        "low adoption",
+        "internet user",
+        "count",
+        "2024",
+        "adoption share",
+        "comment reader share",
+        "USD",
+        "year",
+        "assumed",
+        "harm per reader"
+      ],
+      "formula": "rule harm formula",
+      "words": [
+        "fee rule",
+        "low adoption",
+        "harm",
+        "USD",
+        "year"
+      ],
+      "number": "2750000000"
+    },
+    {
+      "context": [
+        "fee rule",
+        "low adoption",
+        "benefit",
+        "effort",
+        "harm",
+        "USD",
+        "year"
+      ],
+      "formula": "net benefit formula",
+      "words": [
+        "fee rule",
+        "low adoption",
+        "net benefit",
+        "USD",
+        "year"
+      ],
+      "number": "10997000000"
+    },
+    {
+      "context": [
+        "fee rule",
+        "medium adoption",
+        "internet user",
+        "count",
+        "2024",
+        "adoption share",
+        "comment reader share",
+        "USD",
+        "year",
+        "assumed",
+        "benefit per reader",
+        "leakage",
+        "share"
+      ],
+      "formula": "rule benefit formula",
+      "words": [
+        "fee rule",
+        "medium adoption",
+        "benefit",
+        "USD",
+        "year"
+      ],
+      "number": "48125000000"
+    },
+    {
+      "context": [
+        "fee rule",
+        "medium adoption",
+        "platform count",
+        "effort per platform",
+        "USD",
+        "year",
+        "assumed"
+      ],
+      "formula": "rule effort formula",
+      "words": [
+        "fee rule",
+        "medium adoption",
+        "effort",
+        "USD",
+        "year"
+      ],
+      "number": "30000000"
+    },
+    {
+      "context": [
+        "fee rule",
+        "medium adoption",
+        "internet user",
+        "count",
+        "2024",
+        "adoption share",
+        "comment reader share",
+        "USD",
+        "year",
+        "assumed",
+        "harm per reader"
+      ],
+      "formula": "rule harm formula",
+      "words": [
+        "fee rule",
+        "medium adoption",
+        "harm",
+        "USD",
+        "year"
+      ],
+      "number": "6875000000"
+    },
+    {
+      "context": [
+        "fee rule",
+        "medium adoption",
+        "benefit",
+        "effort",
+        "harm",
+        "USD",
+        "year"
+      ],
+      "formula": "net benefit formula",
+      "words": [
+        "fee rule",
+        "medium adoption",
+        "net benefit",
+        "USD",
+        "year"
+      ],
+      "number": "41220000000"
+    },
+    {
+      "context": [
+        "fee rule",
+        "high adoption",
+        "internet user",
+        "count",
+        "2024",
+        "adoption share",
+        "comment reader share",
+        "USD",
+        "year",
+        "assumed",
+        "benefit per reader",
+        "leakage",
+        "share"
+      ],
+      "formula": "rule benefit formula",
+      "words": [
+        "fee rule",
+        "high adoption",
+        "benefit",
+        "USD",
+        "year"
+      ],
+      "number": "99000000000"
+    },
+    {
+      "context": [
+        "fee rule",
+        "high adoption",
+        "platform count",
+        "effort per platform",
+        "USD",
+        "year",
+        "assumed"
+      ],
+      "formula": "rule effort formula",
+      "words": [
+        "fee rule",
+        "high adoption",
+        "effort",
+        "USD",
+        "year"
+      ],
+      "number": "3000000000"
+    },
+    {
+      "context": [
+        "fee rule",
+        "high adoption",
+        "internet user",
+        "count",
+        "2024",
+        "adoption share",
+        "comment reader share",
+        "USD",
+        "year",
+        "assumed",
+        "harm per reader"
+      ],
+      "formula": "rule harm formula",
+      "words": [
+        "fee rule",
+        "high adoption",
+        "harm",
+        "USD",
+        "year"
+      ],
+      "number": "11000000000"
+    },
+    {
+      "context": [
+        "fee rule",
+        "high adoption",
+        "benefit",
+        "effort",
+        "harm",
+        "USD",
+        "year"
+      ],
+      "formula": "net benefit formula",
+      "words": [
+        "fee rule",
+        "high adoption",
+        "net benefit",
+        "USD",
+        "year"
+      ],
+      "number": "85000000000"
+    },
+    {
+      "context": [
+        "sort rule",
+        "low adoption",
+        "internet user",
+        "count",
+        "2024",
+        "adoption share",
+        "comment reader share",
+        "USD",
+        "year",
+        "assumed",
+        "benefit per reader",
+        "leakage",
+        "share"
+      ],
+      "formula": "rule benefit formula",
+      "words": [
+        "sort rule",
+        "low adoption",
+        "benefit",
+        "USD",
+        "year"
+      ],
+      "number": "550000000"
+    },
+    {
+      "context": [
+        "sort rule",
+        "low adoption",
+        "platform count",
+        "effort per platform",
+        "USD",
+        "year",
+        "assumed"
+      ],
+      "formula": "rule effort formula",
+      "words": [
+        "sort rule",
+        "low adoption",
+        "effort",
+        "USD",
+        "year"
+      ],
+      "number": "200000"
+    },
+    {
+      "context": [
+        "sort rule",
+        "low adoption",
+        "internet user",
+        "count",
+        "2024",
+        "adoption share",
+        "comment reader share",
+        "USD",
+        "year",
+        "assumed",
+        "harm per reader"
+      ],
+      "formula": "rule harm formula",
+      "words": [
+        "sort rule",
+        "low adoption",
+        "harm",
+        "USD",
+        "year"
+      ],
+      "number": "275000000"
+    },
+    {
+      "context": [
+        "sort rule",
+        "low adoption",
+        "benefit",
+        "effort",
+        "harm",
+        "USD",
+        "year"
+      ],
+      "formula": "net benefit formula",
+      "words": [
+        "sort rule",
+        "low adoption",
+        "net benefit",
+        "USD",
+        "year"
+      ],
+      "number": "274800000"
+    },
+    {
+      "context": [
+        "sort rule",
+        "medium adoption",
+        "internet user",
+        "count",
+        "2024",
+        "adoption share",
+        "comment reader share",
+        "USD",
+        "year",
+        "assumed",
+        "benefit per reader",
+        "leakage",
+        "share"
+      ],
+      "formula": "rule benefit formula",
+      "words": [
+        "sort rule",
+        "medium adoption",
+        "benefit",
+        "USD",
+        "year"
+      ],
+      "number": "1925000000"
+    },
+    {
+      "context": [
+        "sort rule",
+        "medium adoption",
+        "platform count",
+        "effort per platform",
+        "USD",
+        "year",
+        "assumed"
+      ],
+      "formula": "rule effort formula",
+      "words": [
+        "sort rule",
+        "medium adoption",
+        "effort",
+        "USD",
+        "year"
+      ],
+      "number": "2000000"
+    },
+    {
+      "context": [
+        "sort rule",
+        "medium adoption",
+        "internet user",
+        "count",
+        "2024",
+        "adoption share",
+        "comment reader share",
+        "USD",
+        "year",
+        "assumed",
+        "harm per reader"
+      ],
+      "formula": "rule harm formula",
+      "words": [
+        "sort rule",
+        "medium adoption",
+        "harm",
+        "USD",
+        "year"
+      ],
+      "number": "687500000"
+    },
+    {
+      "context": [
+        "sort rule",
+        "medium adoption",
+        "benefit",
+        "effort",
+        "harm",
+        "USD",
+        "year"
+      ],
+      "formula": "net benefit formula",
+      "words": [
+        "sort rule",
+        "medium adoption",
+        "net benefit",
+        "USD",
+        "year"
+      ],
+      "number": "1235500000"
+    },
+    {
+      "context": [
+        "sort rule",
+        "high adoption",
+        "internet user",
+        "count",
+        "2024",
+        "adoption share",
+        "comment reader share",
+        "USD",
+        "year",
+        "assumed",
+        "benefit per reader",
+        "leakage",
+        "share"
+      ],
+      "formula": "rule benefit formula",
+      "words": [
+        "sort rule",
+        "high adoption",
+        "benefit",
+        "USD",
+        "year"
+      ],
+      "number": "3960000000"
+    },
+    {
+      "context": [
+        "sort rule",
+        "high adoption",
+        "platform count",
+        "effort per platform",
+        "USD",
+        "year",
+        "assumed"
+      ],
+      "formula": "rule effort formula",
+      "words": [
+        "sort rule",
+        "high adoption",
+        "effort",
+        "USD",
+        "year"
+      ],
+      "number": "200000000"
+    },
+    {
+      "context": [
+        "sort rule",
+        "high adoption",
+        "internet user",
+        "count",
+        "2024",
+        "adoption share",
+        "comment reader share",
+        "USD",
+        "year",
+        "assumed",
+        "harm per reader"
+      ],
+      "formula": "rule harm formula",
+      "words": [
+        "sort rule",
+        "high adoption",
+        "harm",
+        "USD",
+        "year"
+      ],
+      "number": "1100000000"
+    },
+    {
+      "context": [
+        "sort rule",
+        "high adoption",
+        "benefit",
+        "effort",
+        "harm",
+        "USD",
+        "year"
+      ],
+      "formula": "net benefit formula",
+      "words": [
+        "sort rule",
+        "high adoption",
+        "net benefit",
+        "USD",
+        "year"
+      ],
+      "number": "2660000000"
+    },
+    {
+      "context": [
+        "reset rule",
+        "low adoption",
+        "internet user",
+        "count",
+        "2024",
+        "adoption share",
+        "comment reader share",
+        "USD",
+        "year",
+        "assumed",
+        "benefit per reader",
+        "leakage",
+        "share"
+      ],
+      "formula": "rule benefit formula",
+      "words": [
+        "reset rule",
+        "low adoption",
+        "benefit",
+        "USD",
+        "year"
+      ],
+      "number": "275000000"
+    },
+    {
+      "context": [
+        "reset rule",
+        "low adoption",
+        "platform count",
+        "effort per platform",
+        "USD",
+        "year",
+        "assumed"
+      ],
+      "formula": "rule effort formula",
+      "words": [
+        "reset rule",
+        "low adoption",
+        "effort",
+        "USD",
+        "year"
+      ],
+      "number": "100000"
+    },
+    {
+      "context": [
+        "reset rule",
+        "low adoption",
+        "internet user",
+        "count",
+        "2024",
+        "adoption share",
+        "comment reader share",
+        "USD",
+        "year",
+        "assumed",
+        "harm per reader"
+      ],
+      "formula": "rule harm formula",
+      "words": [
+        "reset rule",
+        "low adoption",
+        "harm",
+        "USD",
+        "year"
+      ],
+      "number": "110000000"
+    },
+    {
+      "context": [
+        "reset rule",
+        "low adoption",
+        "benefit",
+        "effort",
+        "harm",
+        "USD",
+        "year"
+      ],
+      "formula": "net benefit formula",
+      "words": [
+        "reset rule",
+        "low adoption",
+        "net benefit",
+        "USD",
+        "year"
+      ],
+      "number": "164900000"
+    },
+    {
+      "context": [
+        "reset rule",
+        "medium adoption",
+        "internet user",
+        "count",
+        "2024",
+        "adoption share",
+        "comment reader share",
+        "USD",
+        "year",
+        "assumed",
+        "benefit per reader",
+        "leakage",
+        "share"
+      ],
+      "formula": "rule benefit formula",
+      "words": [
+        "reset rule",
+        "medium adoption",
+        "benefit",
+        "USD",
+        "year"
+      ],
+      "number": "962500000"
+    },
+    {
+      "context": [
+        "reset rule",
+        "medium adoption",
+        "platform count",
+        "effort per platform",
+        "USD",
+        "year",
+        "assumed"
+      ],
+      "formula": "rule effort formula",
+      "words": [
+        "reset rule",
+        "medium adoption",
+        "effort",
+        "USD",
+        "year"
+      ],
+      "number": "1000000"
+    },
+    {
+      "context": [
+        "reset rule",
+        "medium adoption",
+        "internet user",
+        "count",
+        "2024",
+        "adoption share",
+        "comment reader share",
+        "USD",
+        "year",
+        "assumed",
+        "harm per reader"
+      ],
+      "formula": "rule harm formula",
+      "words": [
+        "reset rule",
+        "medium adoption",
+        "harm",
+        "USD",
+        "year"
+      ],
+      "number": "275000000"
+    },
+    {
+      "context": [
+        "reset rule",
+        "medium adoption",
+        "benefit",
+        "effort",
+        "harm",
+        "USD",
+        "year"
+      ],
+      "formula": "net benefit formula",
+      "words": [
+        "reset rule",
+        "medium adoption",
+        "net benefit",
+        "USD",
+        "year"
+      ],
+      "number": "686500000"
+    },
+    {
+      "context": [
+        "reset rule",
+        "high adoption",
+        "internet user",
+        "count",
+        "2024",
+        "adoption share",
+        "comment reader share",
+        "USD",
+        "year",
+        "assumed",
+        "benefit per reader",
+        "leakage",
+        "share"
+      ],
+      "formula": "rule benefit formula",
+      "words": [
+        "reset rule",
+        "high adoption",
+        "benefit",
+        "USD",
+        "year"
+      ],
+      "number": "1980000000"
+    },
+    {
+      "context": [
+        "reset rule",
+        "high adoption",
+        "platform count",
+        "effort per platform",
+        "USD",
+        "year",
+        "assumed"
+      ],
+      "formula": "rule effort formula",
+      "words": [
+        "reset rule",
+        "high adoption",
+        "effort",
+        "USD",
+        "year"
+      ],
+      "number": "100000000"
+    },
+    {
+      "context": [
+        "reset rule",
+        "high adoption",
+        "internet user",
+        "count",
+        "2024",
+        "adoption share",
+        "comment reader share",
+        "USD",
+        "year",
+        "assumed",
+        "harm per reader"
+      ],
+      "formula": "rule harm formula",
+      "words": [
+        "reset rule",
+        "high adoption",
+        "harm",
+        "USD",
+        "year"
+      ],
+      "number": "440000000"
+    },
+    {
+      "context": [
+        "reset rule",
+        "high adoption",
+        "benefit",
+        "effort",
+        "harm",
+        "USD",
+        "year"
+      ],
+      "formula": "net benefit formula",
+      "words": [
+        "reset rule",
+        "high adoption",
+        "net benefit",
+        "USD",
+        "year"
+      ],
+      "number": "1440000000"
+    }
+  ]
+}

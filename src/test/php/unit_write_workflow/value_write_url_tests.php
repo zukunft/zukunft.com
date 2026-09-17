@@ -70,6 +70,8 @@ class value_write_url_tests extends value_url_tests
         $this->add_value_with_phrase_workflow(workflows::WF_ADD_VALUE_WITH_PHRASE_NBR, true);
         $this->add_value_remove_phrase_workflow(workflows::WF_ADD_VALUE_REMOVE_PHRASE_NBR, true);
         $this->add_value_details_workflow(workflows::WF_ADD_VALUE_DETAILS_NBR, true);
+        // names the group of the value that the add_value workflow has written above
+        $this->change_value_group_workflow(workflows::WF_CHANGE_VALUE_GROUP_NBR, true);
 
     }
 

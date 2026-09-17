@@ -1859,6 +1859,8 @@ enum messages: string
     case FORM_TITLE_REF_EDIT = 'form_title_ref_edit';
     // the ref edit title that names the linked phrase, used if the phrase name is known
     case FORM_TITLE_REF_EDIT_PHRASE = 'form_title_ref_edit_phrase';
+    // the change value title with the linked phrases of the value (see system_form::form_title_text)
+    case FORM_TITLE_VALUE_EDIT_PHRASE = 'form_title_value_edit_phrase';
     case FORM_TITLE_REF_DEL = 'form_title_ref_del';
     case FORM_TITLE_GROUP_ADD = 'form_title_group_add';
     case FORM_TITLE_GROUP_EDIT = 'form_title_group_edit';

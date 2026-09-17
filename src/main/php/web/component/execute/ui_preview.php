@@ -39,6 +39,7 @@ include_once html_paths::EXECUTE . 'ui_base.php';
 include_once html_paths::FORMULA . 'formula.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'styles.php';
+include_once html_paths::REF . 'source.php';
 include_once html_paths::SANDBOX . 'combine_named.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::SANDBOX . 'sandbox.php';
@@ -50,6 +51,7 @@ include_once html_paths::USER . 'user_message.php';
 include_once html_paths::VIEW . 'view.php';
 include_once html_paths::SHARED_CONST . 'views.php';
 include_once html_paths::SHARED_CONST_FIELDS . 'fields.php';
+include_once html_paths::SHARED_CONST_FIELDS . 'source_fields.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::SHARED_TYPES . 'view_styles.php';
 include_once html_paths::SHARED . 'api.php';
@@ -61,6 +63,7 @@ use Zukunft\ZukunftCom\main\php\web\const\icons;
 use Zukunft\ZukunftCom\main\php\web\formula\formula;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
+use Zukunft\ZukunftCom\main\php\web\ref\source;
 use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox;
@@ -72,6 +75,7 @@ use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\view\view;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\source_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
@@ -486,9 +490,39 @@ class ui_preview extends ui_base
             } else {
                 $result = $type_list->name((int)$value);
             }
+        } elseif ($db_fld == source_fields::FLD_ID) {
+            // the source of a value is a sandbox object like the view, so its id is resolved to the name
+            $result = $this->source_name_by_id($value, $msg, $test_mode);
         } elseif ($db_fld == fields::FLD_VIEW) {
             // the view is a sandbox object, not a type, so resolve its id to the view name via the api
             $result = $this->view_name($value, $msg, $test_mode);
+        }
+        return $result;
+    }
+
+    /**
+     * the display name of a source id used in the change preview: the source name from the request
+     * cache or read via the api, or 'not set' when no source is selected (an empty or zero id);
+     * named by the id, because ui_base::source_name shows the source of a given object
+     *
+     * @param string $value the raw url value of the source field (a source id)
+     * @param user_message $msg to report a problem while reading the source
+     * @param bool $test_mode true to name the source without a backend call
+     * @return string the source name to show to the user, the id if the name cannot be read
+     */
+    private function source_name_by_id(string $value, user_message $msg, bool $test_mode = false): string
+    {
+        global $mtr, $ui_sys;
+        $result = $mtr->txt(msg_id::NOT_SET);
+        if ($value != '' and $value != '0') {
+            // a source that is not in the request cache is read by id, which a test render never
+            // does, because a snapshot must be reproducible without a backend call
+            $src = $ui_sys?->source_list()->get((int)$value);
+            if ($src == null and !$test_mode) {
+                $src = new source();
+                $src->load_by_id((int)$value, $msg);
+            }
+            $result = $src?->name() ?? $value;
         }
         return $result;
     }

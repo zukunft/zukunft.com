@@ -54,6 +54,7 @@ include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'styles.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::REF . 'ref.php';
+include_once html_paths::REF . 'ref_list.php';
 include_once html_paths::REF . 'source.php';
 include_once html_paths::REF . 'source_list.php';
 include_once html_paths::RESULT . 'result.php';
@@ -102,6 +103,7 @@ use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\ref\ref;
+use Zukunft\ZukunftCom\main\php\web\ref\ref_list;
 use Zukunft\ZukunftCom\main\php\web\ref\source;
 use Zukunft\ZukunftCom\main\php\web\ref\source_list;
 use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named;
@@ -180,6 +182,7 @@ class system_form extends component
     {
         global $mtr;
 
+        $lib = new library();
         $result = $mtr->txt($ui_msg_code_id);
         // the api sends the phrase with the name for a page request; name_link() returns safe html,
         // so it replaces the message var unescaped; without a name (e.g. a test render that fills
@@ -187,11 +190,19 @@ class system_form extends component
         // a name would be invisible
         if ($ui_msg_code_id == msg_id::FORM_TITLE_REF_EDIT and $dbo instanceof ref
             and $dbo->phrase()->name() != '') {
-            $lib = new library();
             $result = $lib->msg_var_replace(
                 $mtr->txt(msg_id::FORM_TITLE_REF_EDIT_PHRASE),
                 msg_id::VAR_PHRASE_NAME,
                 $dbo->phrase()->name_link());
+        } elseif ($ui_msg_code_id == msg_id::FORM_TITLE_VALUE_EDIT and $dbo instanceof value
+            and $dbo->has_named_phrases()) {
+            // the same for the phrases of a value e.g. "Change value for Pi (math)"; the list is cloned,
+            // because the links sort the phrases and the form fields below keep the phrase order of the value
+            $phr_lst = clone $dbo->phr_lst();
+            $result = $lib->msg_var_replace(
+                $mtr->txt(msg_id::FORM_TITLE_VALUE_EDIT_PHRASE),
+                msg_id::VAR_PHRASE_NAME,
+                $phr_lst->name_link_list());
         }
         return $result;
     }
@@ -1737,23 +1748,29 @@ class system_form extends component
     }
 
     /**
-     * @param db_object $dbo the object
-     * @return string the html code to request a numeric value from the user
+     * the number, text, time or geolocation field of the value form with the opening value as the
+     * hidden pre value, so that the confirm view shows only a changed value (see url_var::PRE)
+     *
+     * @param db_object $dbo the value that the user changes
+     * @param string $style_text the formatting code of the value field
+     * @param user_message $msg to report a value that cannot be shown
+     * @return string the html code of the value field and the hidden pre value
      */
     function form_num_value(db_object $dbo, string $style_text, user_message $msg): string
     {
         $html = new html_base();
-        $val_txt = $dbo->value($msg);
-        if ($val_txt == null) {
-            $val_txt = '';
+        $result = '';
+        // the value form is only opened for a value or a result, so any other object is a program error
+        if ($dbo instanceof sandbox_value) {
+            [$url_id, $label_id, $input, $value] = $this->value_field_by_type($dbo);
+            // on a re-render keep the original db snapshot from the url, else the unchanged value is the snap
+            $pre = $dbo->pre_value($url_id) ?? (string)$value;
+            $result = $html->form_field($url_id, $label_id, $value, $input, '', $style_text)
+                . $html->form_hidden(url_var::PRE . $url_id, $pre);
+        } else {
+            log_err_msg('the value form got ' . get_debug_type($dbo) . ' instead of a value or result', $msg);
         }
-        return $html->form_field(
-            url_var::VALUE,
-            msg_id::FORM_FIELD_VALUE,
-            $val_txt,
-            html_base::INPUT_NUMBER,
-            '', $style_text
-        );
+        return $result;
     }
 
     /**
@@ -1813,19 +1830,26 @@ class system_form extends component
     private function form_field_value_by_type(sandbox_value $dbo, string $style_text): string
     {
         $html = new html_base();
+        [$url_id, $label_id, $input, $value] = $this->value_field_by_type($dbo);
+        return $html->form_field($url_id, $label_id, $value, $input, '', $style_text);
+    }
+
+    /**
+     * @param sandbox_value $dbo the value or result that the user changes
+     * @return array the url var, the label, the input type and the shown value of the field that matches
+     *               the type of the value, so that the url var is the one that url_mapper reads
+     */
+    private function value_field_by_type(sandbox_value $dbo): array
+    {
         if ($dbo->text_value() !== null) {
-            $result = $html->form_field(
-                url_var::VALUE_TEXT, msg_id::FORM_FIELD_TEXT_VALUE, $dbo->text_value(), html_base::INPUT_TEXT, '', $style_text);
+            $result = [url_var::VALUE_TEXT, msg_id::FORM_FIELD_TEXT_VALUE, html_base::INPUT_TEXT, $dbo->text_value()];
         } elseif ($dbo->time_value() !== null) {
             $time = $dbo->time_value()->format(sandbox_value::TIME_FORMAT);
-            $result = $html->form_field(
-                url_var::VALUE_TIME, msg_id::FORM_FIELD_TIME_VALUE, $time, html_base::INPUT_TEXT, '', $style_text);
+            $result = [url_var::VALUE_TIME, msg_id::FORM_FIELD_TIME_VALUE, html_base::INPUT_TEXT, $time];
         } elseif ($dbo->geo_value() !== null) {
-            $result = $html->form_field(
-                url_var::VALUE_GEO, msg_id::FORM_FIELD_GEO_VALUE, $dbo->geo_value(), html_base::INPUT_TEXT, '', $style_text);
+            $result = [url_var::VALUE_GEO, msg_id::FORM_FIELD_GEO_VALUE, html_base::INPUT_TEXT, $dbo->geo_value()];
         } else {
-            $result = $html->form_field(
-                url_var::NUMERIC_VALUE, msg_id::FORM_FIELD_VALUE, $dbo->number(), html_base::INPUT_NUMBER, '', $style_text);
+            $result = [url_var::NUMERIC_VALUE, msg_id::FORM_FIELD_VALUE, html_base::INPUT_NUMBER, $dbo->number()];
         }
         return $result;
     }
@@ -1909,18 +1933,28 @@ class system_form extends component
     }
 
     /**
-     * @return string the html code to request the group name or a list of phrases
+     * @param db_object $dbo the value or result with the group name
+     * @param string $style_text the width set by the view e.g. col-md-12, '' for 2/3 to leave room for a side field
+     * @return string the html code to request the group name
      */
-    function form_field_group_or_phrases(db_object $dbo): string
+    function form_field_group_or_phrases(db_object $dbo, string $style_text): string
     {
         $html = new html_base();
+        if ($style_text == '') {
+            $style_text = view_styles::COL_SM_8;
+        }
+        $name = $dbo->name();
+        // a value shows only a name given by a user, because its phrases are shown in the title
+        if ($dbo instanceof sandbox_value) {
+            $name = $dbo->grp->name;
+        }
         return $html->form_field(
             url_var::GROUP_NAME,
             msg_id::FORM_FIELD_GROUP,
-            $dbo->name(),
+            $name,
             html_base::INPUT_TEXT,
             '',
-            view_styles::COL_SM_8
+            $style_text
         );
     }
 
@@ -2359,13 +2393,13 @@ class system_form extends component
      * create the html code for the form element to select the reference
      * @param db_object $dbo the frontend phrase object with the type used until now
      * @param string $form_name the name of the view which is also used for the html form name
-     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
+     * @param ref_list|null $ref_lst the references of the frontend cache to select from
      * @param string $pattern the selection pattern to filter a selection
      * @return string the html code to select the reference
      */
-    function form_ref(db_object $dbo, string $form_name, ?type_lists $typ_lst, string $pattern = ''): string
+    function form_ref(db_object $dbo, string $form_name, ?ref_list $ref_lst, string $pattern = ''): string
     {
-        return $dbo->ref_selector($form_name, $pattern);
+        return $dbo->ref_selector($form_name, $pattern, $ref_lst);
     }
 
     /**
@@ -2373,12 +2407,12 @@ class system_form extends component
      * TODO Prio 1 review
      * @param db_object $dbo the frontend phrase object with the type used until now
      * @param string $form_name the name of the view which is also used for the html form name
-     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
+     * @param ref_list|null $ref_lst the references of the frontend cache to select from
      * @return string the html code to select the reference
      */
-    function form_refs(db_object $dbo, string $form_name, ?type_lists $typ_lst): string
+    function form_refs(db_object $dbo, string $form_name, ?ref_list $ref_lst): string
     {
-        return $dbo->ref_selector($form_name, '');
+        return $dbo->ref_selector($form_name, '', $ref_lst);
     }
 
     /**

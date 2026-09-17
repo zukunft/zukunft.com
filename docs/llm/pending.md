@@ -1,9 +1,5 @@
 # pending - list of planned llm prompts with prio 1
 
-## edit value
-
-in the edit value view increase the size of the field 'reference' to the same size as the source selector field and alos add the add and edit icons to the ref field. And fill the ref select field e.g. for src/test/resources/web/html/views_by_id/value/30_value_update_1FajJ2-4LYK3-8jId-I1A-Yz--Z-9-+A.html with some test data. 
-
 ## add value
 
 split the 'system form phrase value line' component into separate components if possible e.g. one component for the 'selected phrases', the 'add phrase selector' the 'find and select phrase button' and the 'value type selector' 

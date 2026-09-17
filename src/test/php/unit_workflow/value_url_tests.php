@@ -37,10 +37,14 @@
 namespace Zukunft\ZukunftCom\test\php\unit_workflow;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
+include_once paths::MODEL_GROUP . 'group.php';
+include_once paths::MODEL_PHRASE . 'phrase_list.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VALUE . 'value.php';
+include_once paths::SHARED_CONST . 'groups.php';
 include_once paths::SHARED_CONST . 'values.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED . 'url_var.php';
@@ -50,8 +54,11 @@ include_once test_paths::CREATE . 'test_values.php';
 include_once test_paths::CREATE . 'test_words.php';
 include_once test_paths::UNIT_WORKFLOW . 'url_test_base.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\shared\const\groups;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
@@ -88,6 +95,7 @@ class value_url_tests extends url_test_base
         $this->add_value_with_phrase_workflow(workflows::WF_ADD_VALUE_WITH_PHRASE_NBR);
         $this->add_value_remove_phrase_workflow(workflows::WF_ADD_VALUE_REMOVE_PHRASE_NBR);
         $this->add_value_details_workflow(workflows::WF_ADD_VALUE_DETAILS_NBR);
+        $this->change_value_group_workflow(workflows::WF_CHANGE_VALUE_GROUP_NBR);
     }
 
     /**
@@ -258,6 +266,93 @@ class value_url_tests extends url_test_base
         $det_url = $base;
         $det_url[url_var::PHRASE_LIST] = $city . ',' . $one . ',' . $two;
         $this->assert_step(workflows::DETAILS, $det_url, views::VALUE_ADD_DETAIL_ID);
+    }
+
+    /**
+     * run the change_value_group workflow and snapshot the html after every user action
+     *
+     * the user opens the value of the add_value workflow in the change value view, types a name
+     * for its group and confirms the change, which writes the name to the group row (see
+     * value_base::save); the value id is the group id of its phrases, so a read run computes the
+     * fixed snapshot id from the fixed word ids; snapshots go into workflow/change_value_group_wf<nbr>/
+     *
+     * @param int $wf_nbr the workflow id selecting the snapshot folder and file prefix
+     * @param bool $do_it false to only render the steps, true to also write the group name
+     */
+    protected function change_value_group_workflow(int $wf_nbr, bool $do_it = false): void
+    {
+        $fixed_id = $this->value_id([word_names::TEST_ADD_ID, word_names::TEST_ADD_TO_ID]);
+        $this->wf_start($wf_nbr, workflows::WF_CHANGE_VALUE_GROUP, $this->t->usr1, $fixed_id, $do_it);
+        $this->set_phrase_norm_ids();
+
+        $one = $this->phrase_id(word_names::TEST_ADD, word_names::TEST_ADD_ID);
+        $two = $this->phrase_id(word_names::TEST_ADD_TO, word_names::TEST_ADD_TO_ID);
+        $this->wf_id = $this->value_id([$one, $two]);
+
+        // the url carries the value as the add_value workflow has written it, because a read run
+        // renders the value from the url without a backend call
+        $url_arr = $this->add_value_url();
+        $url_arr[url_var::ID] = $this->wf_id;
+        $url_arr[url_var::PHRASE_LIST] = $one . ',' . $two;
+        $url_arr[url_var::NUMERIC_VALUE] = values::SAMPLE_FLOAT;
+        // fix the values before the change in the url TODO Prio 2 should be done by the process automatic
+        $url_arr = $url_arr + html_base::pre_url_array($url_arr);
+        $url_arr[url_var::BACK . url_var::MASK] = views::VALUE_DEFAULT_ID;
+        $url_arr[url_var::BACK . url_var::ID] = $this->wf_id;
+
+        // show: display the value in its default view
+        $this->assert_step(workflows::SHOW, $url_arr, views::VALUE_DEFAULT_ID);
+
+        // edit: open the change value view, which shows an empty group field and the phrases in the title
+        $this->assert_step(workflows::EDIT, $url_arr, views::VALUE_EDIT_ID);
+
+        // user is typing the name of the group
+        $url_arr[url_var::GROUP_NAME] = groups::TN_VALUE_WORKFLOW;
+
+        // save: press save on the edit form which shows the confirm change view with the group name
+        $this->assert_step(workflows::SAVE, $url_arr, views::VALUE_EDIT_ID);
+
+        // update_confirmed: confirm the pending change so the group name is written to the database
+        $this->assert_step(workflows::CONFIRM, $url_arr, views::CONFIRM_EDIT_ID);
+
+        // a write run must actually persist the group name, so check the group row in the database
+        if ($do_it) {
+            $this->assert_group_name_in_db('change_value_group workflow has named the group', [$one, $two]);
+        }
+    }
+
+    /**
+     * the id of the value with the given phrases, which is the group id of the phrases
+     *
+     * @param array $phr_ids the ids of the phrases of the value
+     * @return int the value id, an int because the phrases of the test value are prime phrases
+     */
+    private function value_id(array $phr_ids): int
+    {
+        $phr_lst = new phrase_list($this->t->usr1);
+        foreach ($phr_ids as $phr_id) {
+            $phr_lst->add_id($phr_id);
+        }
+        return $phr_lst->get_grp_id(false)->id();
+    }
+
+    /**
+     * check that the confirm step of a write run has really written the group name and remove the
+     * group row again, because the value cleanup deletes the value but not its named group
+     *
+     * @param string $test_name the description of the assertion
+     * @param array $phr_ids the phrase ids that name the group of the value
+     */
+    private function assert_group_name_in_db(string $test_name, array $phr_ids): void
+    {
+        $msg = new user_message(); // a buffer for the check load, asserted by the group below
+        $grp = new group($this->t->usr1);
+        $grp->load_by_id($this->value_id($phr_ids), $msg);
+        $this->t->assert($test_name, $grp->name_given(), groups::TN_VALUE_WORKFLOW);
+        // the change log of the group name must never point to the deleted group row
+        $this->t->cleanup_change_log_group($grp,
+            [groups::TN_VALUE_WORKFLOW, [word_names::TEST_ADD, word_names::TEST_ADD_TO]]);
+        $grp->del($msg);
     }
 
     /**

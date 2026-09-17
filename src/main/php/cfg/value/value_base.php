@@ -430,6 +430,10 @@ class value_base extends sandbox_value
                 $this->set_id($this->grp()->set_phrase_list($phr_lst));
             }
         }
+        // the name that the user has given to the group of the value in the value form
+        if (($api_json[json_fields::NAME] ?? '') != '') {
+            $this->grp()->set_name($api_json[json_fields::NAME]);
+        }
         if (array_key_exists(json_fields::TIMESTAMP, $api_json)) {
             $time_stamp = $api_json[json_fields::TIMESTAMP];
             if (strtotime($time_stamp)) {
@@ -2323,6 +2327,11 @@ class value_base extends sandbox_value
                     log_warning('value ' . $this->dsp_id() . ' not saved');
                 }
 
+            }
+
+            // a name given by the user is written to the group row, the name generated from the phrases never
+            if ($msg->is_ok() and $this->grp()->name_given() != '') {
+                $this->grp()->save($msg);
             }
 
             if (!$msg->is_ok()) {

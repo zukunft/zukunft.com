@@ -313,6 +313,13 @@ class workflows
     // the id of the current add_value_details workflow; increase it to add the next snapshot set
     const int WF_ADD_VALUE_DETAILS_NBR = 34;
 
+    // the change_value_group workflow name used for the snapshot folder and the test subheader:
+    // the user opens the value of the add_value workflow in the change value view, names its
+    // group and confirms the change, which writes the group name to the database
+    const string WF_CHANGE_VALUE_GROUP = 'change_value_group';
+    // the id of the current change_value_group workflow; increase it to add the next snapshot set
+    const int WF_CHANGE_VALUE_GROUP_NBR = 35;
+
     /**
      * the user process step that a user reaction action triggers
      *

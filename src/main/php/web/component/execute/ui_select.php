@@ -187,7 +187,7 @@ class ui_select
         // as soon as a phrase is chosen the number can be entered, so that the value can be added
         // without the detailed form
         if ($chosen_ids != '') {
-            $result .= $this->value_number_form($form_name, $chosen_ids);
+            $result .= $this->value_number_form($form_name, $chosen_ids, $this->value_type($url_arr));
         }
         $result .= $this->value_detail_link($url_arr, $chosen_ids);
         $result .= $this->value_buttons($cancel, $chosen_ids);
@@ -223,7 +223,7 @@ class ui_select
         $result = $this->phrase_step_fields(
             $form_name, $value_form, $url_arr, $chosen, $matches, $pattern, $msg, $cfg, $test_mode);
         if ($chosen_ids != '') {
-            $result .= $this->value_number_form($form_name, $chosen_ids);
+            $result .= $this->value_number_form($form_name, $chosen_ids, $this->value_type($url_arr));
         }
         $result .= $this->value_buttons($cancel, $chosen_ids);
         return $result;
@@ -347,11 +347,11 @@ class ui_select
         // the find button adds the named phrase or offers the matching phrases and is the first submit of
         // the form, so that the enter key triggers it and never saves anything
         $result .= $html->button_refresh_text($mtr->txt(msg_id::SYSTEM_BUTTON_FIND_AND_NEXT), url_var::REFRESH_PHRASES);
-        // the value type and the value follow in the same line as soon as the form that takes the value exists
+        // the value and its type follow in the same line as soon as the form that takes the value exists
         if ($chosen_ids != '' or $value_form == '') {
-            $val_typ = value_types::tryFrom((string)($url_arr[url_var::VALUE_TYPE] ?? '')) ?? value_types::NUMBER;
-            $result .= $this->value_type_field($form_name, $val_typ);
+            $val_typ = $this->value_type($url_arr);
             $result .= $this->value_field($value_form, $val_typ, $url_arr);
+            $result .= $this->value_type_field($form_name, $val_typ);
         }
         // the typed chars name no phrase at all, so the user is told instead of getting an empty selection
         if ($pattern != '' and $matches->is_empty()) {
@@ -403,13 +403,16 @@ class ui_select
      * are in a form of their own and the hidden value add mask with the confirmed step lets url_to_action
      * write the value directly and show it afterwards with its default view; the value field stays in the
      * line of the phrase field and joins this form by its form attribute (see value_field); the form
-     * stays open, so that the add button of value_buttons submits it
+     * stays open, so that the add button of value_buttons submits it; the selector of the value type
+     * belongs to the phrase form (see value_type_field), so the selected type is repeated hidden here
+     * and a rejected add shows the field of the same type again
      *
      * @param string $form_name the name of the html form of the view
      * @param string $chosen_ids the ids of the chosen phrases in the order that the user has chosen them
+     * @param value_types $val_typ the selected type of the new value
      * @return string the html code of the number form
      */
-    private function value_number_form(string $form_name, string $chosen_ids): string
+    private function value_number_form(string $form_name, string $chosen_ids, value_types $val_typ): string
     {
         $html = new html_base();
 
@@ -419,7 +422,17 @@ class ui_select
         $result .= $html->form_hidden(url_var::STEP, url_var::STEP_CONFIRMED);
         $result .= $html->form_hidden(url_var::BACK . url_var::MASK, (string)views::VALUE_DEFAULT_ID);
         $result .= $html->form_hidden(url_var::PHRASE_LIST, $chosen_ids);
+        $result .= $html->form_hidden(url_var::VALUE_TYPE, $val_typ->value);
         return $result;
+    }
+
+    /**
+     * @param array $url_arr the url of the shown form with the value type selected so far
+     * @return value_types the selected type of the new value, number if none or an unknown type is selected
+     */
+    private function value_type(array $url_arr): value_types
+    {
+        return value_types::tryFrom((string)($url_arr[url_var::VALUE_TYPE] ?? '')) ?? value_types::NUMBER;
     }
 
     /**

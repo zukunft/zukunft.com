@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>
-            Change value with details - zukunft.com
+            mathematics - Change value with details - zukunft.com
         </title>
         <link rel="stylesheet" href="http://localhost/external_lib/bootstrap/css/bootstrap.css">
         <link rel="stylesheet" href="http://localhost/external_lib/fontawesome/css/all.css">
@@ -141,12 +141,21 @@
                 <input class="form-control" type="hidden" name="id" id="id" value="1FajJ2-.4LYK3-..8jId-...I1A-....Yz-..../.-.....Z-.....9-...../+.....A+.....a+....3s+...1Ao+../vLC+.//ZSB+.ZSahL+">
                 <input class="form-control" type="hidden" name="z" id="confirm" value="1">
                 <div class="row col-md-12">
-                    <div class="form-group col-md-8">
+                    <div class="form-group col-md-12">
                         <label for="group">
                             group
                         </label>
                         <input class="form-control" type="text" name="gn" id="group">
                     </div>
+                </div>
+                <div class="row col-md-12">
+                    <div class="form-group col-md-8">
+                        <label for="value">
+                            Value
+                        </label>
+                        <input class="form-control" type="text" name="n" id="value" value="3.1415926535898">
+                    </div>
+                    <input type="hidden" name="8n" value="3.1415926535898">
                     <div class="form-group col-md-4">
                         <label for="y_form_select_value_type">
                             Value type
@@ -165,14 +174,6 @@
                                 geolocation
                             </option>
                         </select>
-                    </div>
-                </div>
-                <div class="row col-md-12">
-                    <div class="form-group ">
-                        <label for="value">
-                            Value
-                        </label>
-                        <input class="form-control" type="text" name="v" id="value" value="3.14">
                     </div>
                 </div>
                 <div class="row col-md-12">
@@ -199,24 +200,16 @@
                         </select>
                     </div>
                     <div class="col-md-1 align-self-end">
-                        <a href="http://localhost/http/view.php?m=40" title="source_add" class="heading-icon-inline">
+                        <a href="http://localhost/http/view.php?m=40" title="add new source" class="form-icon-inline">
                             <i class="far fa-square-plus">
                             </i>
                         </a>
-                        <a href="http://localhost/http/view.php?m=41&amp;id=1" title="change source" class="heading-icon-inline">
+                        <a href="http://localhost/http/view.php?m=41&amp;id=1" title="change source" class="form-icon-inline">
                             <i class="fas fa-edit">
                             </i>
                         </a>
                     </div>
-                </div>
-                <div class="row col-md-12">
-                    <div class="form-group col-md-4">
-                        <label for="l_form_select_ref">
-                            reference
-                        </label>
-                        <select class="form-control" name="l" form="value_edit" id="l_form_select_ref" >
-                        </select>
-                    </div>
+                    <input type="hidden" name="8so" value="1">
                 </div>
                 <div class="row col-md-12">
                     <div class="form-group col-md-4">
@@ -384,12 +377,15 @@
                     </div>
                     <input type="hidden" name="8sp" value="2">
                 </div>
-                <a href="http://localhost/http/view.php?m=5&amp;id=1FajJ2-.4LYK3-..8jId-...I1A-....Yz-..../.-.....Z-.....9-...../+.....A+.....a+....3s+...1Ao+../vLC+.//ZSB+.ZSahL+" class="btn btn-space col-1 btn-outline-secondary">
-                    cancel
-                </a>
-                <button class="btn btn-space col-1 btn-outline-success" type="submit" name="submit">
-                    save
-                </button>
+                <br>
+                <div class="row col-md-12 justify-content-end">
+                    <a href="http://localhost/http/view.php?m=5&amp;id=1FajJ2-.4LYK3-..8jId-...I1A-....Yz-..../.-.....Z-.....9-...../+.....A+.....a+....3s+...1Ao+../vLC+.//ZSB+.ZSahL+" class="btn btn-space col-1 btn-outline-secondary">
+                        cancel
+                    </a>
+                    <button class="btn btn-space col-1 btn-outline-success" type="submit" name="submit">
+                        save
+                    </button>
+                </div>
             </form>
         </main>
         <!--usr_msg-->
