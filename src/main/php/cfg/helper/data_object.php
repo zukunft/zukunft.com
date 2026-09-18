@@ -45,6 +45,8 @@ include_once paths::MODEL_CONST . 'def.php';
 //include_once paths::MODEL_FORMULA . 'formula_list.php';
 include_once paths::MODEL_FORMULA . 'formula_link_list.php';
 //include_once paths::MODEL_IMPORT . 'import.php';
+include_once paths::MODEL_GROUP . 'group.php';
+include_once paths::MODEL_GROUP . 'group_list.php';
 include_once paths::MODEL_RESULT . 'result.php';
 include_once paths::MODEL_RESULT . 'result_list.php';
 //include_once paths::MODEL_USER . 'user.php';
@@ -96,6 +98,8 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link_list;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_list;
+use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\group\group_list;
 use Zukunft\ZukunftCom\main\php\cfg\import\import;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
@@ -167,6 +171,7 @@ class data_object
     private phrase_list $phr_lst;
     private bool $phr_lst_dirty;
     private source_list $src_lst;
+    private group_list $grp_lst;
     private ref_list $ref_lst;
     private value_list $val_lst;
     private formula_list $frm_lst;
@@ -211,6 +216,7 @@ class data_object
         $this->trp_lst = new triple_list($usr);
         $this->phr_lst = new phrase_list($usr);
         $this->phr_lst_dirty = false;
+        $this->grp_lst = new group_list($usr);
         $this->src_lst = new source_list($usr);
         $this->ref_lst = new ref_list($usr);
         $this->val_lst = new value_list($usr);
@@ -265,6 +271,7 @@ class data_object
         $vars[json_fields::WORDS] = $this->wrd_lst->api_json_array($typ_lst, $msg);
         $vars[json_fields::VERBS] = $this->vrb_lst->api_json_array([], $msg);
         $vars[json_fields::TRIPLES] = $this->trp_lst->api_json_array($typ_lst, $msg);
+        $vars[json_fields::GROUPS] = $this->grp_lst->api_json_array($typ_lst, $msg);
         $vars[json_fields::SOURCES] = $this->src_lst->api_json_array($typ_lst, $msg);
         $vars[json_fields::REFERENCES] = $this->ref_lst->api_json_array($typ_lst, $msg);
         $vars[json_fields::VALUES] = $this->val_lst->api_json_array($typ_lst, $msg);
@@ -394,6 +401,14 @@ class data_object
     {
         $this->trm_lst = $trm_lst;
         $this->trm_lst_dirty = false;
+    }
+
+    /**
+     * @return group_list with the groups of this data object
+     */
+    function group_list(): group_list
+    {
+        return $this->grp_lst;
     }
 
     /**
@@ -795,6 +810,17 @@ class data_object
         } else {
             $this->add_triple($phr->triple(), $msg);
         }
+    }
+
+    /**
+     * add a group with the names but without db id to the list
+     * @param group $grp with the name of the phrase list to set
+     * @param user_message $msg to report a group that is already in the cache
+     * @return void
+     */
+    function add_group(group $grp, user_message $msg): void
+    {
+        $this->grp_lst->add_by_key($grp, false, $msg);
     }
 
     /**

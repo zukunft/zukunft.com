@@ -250,6 +250,7 @@ class horizontal_tests
                 $dto->add_source($filled_obj->get_source(), $msg);
             } elseif ($class == value::class) {
                 $dto->add_source($filled_obj->get_source(), $msg);
+                $dto->add_group($filled_obj->grp(), $msg);
             } elseif ($class == result::class) {
                 $dto->add_formula($filled_obj->frm, $msg);
             } elseif ($class == formula_link::class) {

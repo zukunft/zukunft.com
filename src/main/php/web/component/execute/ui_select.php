@@ -80,9 +80,6 @@ use Zukunft\ZukunftCom\main\php\shared\url_var;
 class ui_select
 {
 
-    // the suffix of the form name of the value form that follows the phrase selection (see value_add_simple)
-    const string VALUE_FORM_SUFFIX = '_value';
-
     /**
      * @return string the name of a phrase and give the user the possibility to change the phrase name
      */
@@ -159,8 +156,8 @@ class ui_select
      * that the user uses most often with the phrases that match the typed chars on top; a typed or picked name
      * that names one phrase is added and the field for the next phrase is shown; the find and next button is
      * the first submit of the form, so that the enter key only updates the phrase selection and never
-     * changes any data, while the add button of the number form writes the value and the more details link
-     * opens the detailed value add form with the phrases chosen so far
+     * changes any data, while the add button writes the value (see value_add_fields) and the more details
+     * link opens the detailed value add form with the phrases chosen so far
      *
      * @param string $form_name the name of the html form of the view
      * @param array $url_arr the url of the shown form with the chosen phrases, the typed chars and the selection
@@ -181,13 +178,12 @@ class ui_select
     {
         [$chosen, $matches, $pattern] = $this->phrase_step_selection($url_arr, $msg, $cfg, $test_mode);
         $chosen_ids = implode(',', $chosen->id_lst());
-        $value_form = $form_name . self::VALUE_FORM_SUFFIX;
         $result = $this->phrase_step_fields(
-            $form_name, $value_form, $url_arr, $chosen, $matches, $pattern, $msg, $cfg, $test_mode);
+            $form_name, false, $url_arr, $chosen, $matches, $pattern, $msg, $cfg, $test_mode);
         // as soon as a phrase is chosen the number can be entered, so that the value can be added
         // without the detailed form
         if ($chosen_ids != '') {
-            $result .= $this->value_number_form($form_name, $chosen_ids, $this->value_type($url_arr));
+            $result .= $this->value_add_fields();
         }
         $result .= $this->value_detail_link($url_arr, $chosen_ids);
         $result .= $this->value_buttons($cancel, $chosen_ids);
@@ -196,9 +192,9 @@ class ui_select
 
     /**
      * the pure html form that adds a value just by its phrases and the number: the phrases are selected step by
-     * step like in phrase_steps and as soon as a phrase is chosen a second form with the chosen phrases, the
-     * number field and the add button follows; the hidden value add mask with the confirmed step lets
-     * url_to_action write the value directly and after the write the new value is shown with its default view
+     * step like in phrase_steps and as soon as a phrase is chosen the number field and the add button follow;
+     * the hidden confirmed step lets url_to_action write the value directly (see value_add_fields) and after
+     * the write the new value is shown with its default view
      *
      * @param string $form_name the name of the html form of the view
      * @param array $url_arr the url of the shown form with the chosen phrases, the typed chars and the selection
@@ -206,7 +202,7 @@ class ui_select
      * @param user_message $msg to report a problem of the phrase load
      * @param data_object|null $cfg the request cache with the phrases that the test mode uses
      * @param bool $test_mode true to find the phrases in the request cache without a backend call
-     * @return string the html code of the phrase selection followed by the value form
+     * @return string the html code of the phrase selection followed by the value fields
      */
     function value_add_simple(
         string       $form_name,
@@ -219,11 +215,10 @@ class ui_select
     {
         [$chosen, $matches, $pattern] = $this->phrase_step_selection($url_arr, $msg, $cfg, $test_mode);
         $chosen_ids = implode(',', $chosen->id_lst());
-        $value_form = $form_name . self::VALUE_FORM_SUFFIX;
         $result = $this->phrase_step_fields(
-            $form_name, $value_form, $url_arr, $chosen, $matches, $pattern, $msg, $cfg, $test_mode);
+            $form_name, false, $url_arr, $chosen, $matches, $pattern, $msg, $cfg, $test_mode);
         if ($chosen_ids != '') {
-            $result .= $this->value_number_form($form_name, $chosen_ids, $this->value_type($url_arr));
+            $result .= $this->value_add_fields();
         }
         $result .= $this->value_buttons($cancel, $chosen_ids);
         return $result;
@@ -253,7 +248,7 @@ class ui_select
     ): string
     {
         [$chosen, $matches, $pattern] = $this->phrase_step_selection($url_arr, $msg, $cfg, $test_mode);
-        return $this->phrase_step_fields($form_name, '', $url_arr, $chosen, $matches, $pattern, $msg, $cfg, $test_mode);
+        return $this->phrase_step_fields($form_name, true, $url_arr, $chosen, $matches, $pattern, $msg, $cfg, $test_mode);
     }
 
     /**
@@ -309,8 +304,8 @@ class ui_select
      * of the preloaded phrases
      *
      * @param string $form_name the name of the html form of the view
-     * @param string $value_form the form that the value is posted with, '' for the form of the view which can
-     *                           always take the value, so the value is then shown also before a phrase is chosen
+     * @param bool $value_always true to show the value field also before a phrase is chosen e.g. in the
+     *                           detailed form, false to show it only with a chosen phrase like the add button
      * @param array $url_arr the url of the shown form used for the links of the chosen phrases and the typed value
      * @param phrase_list $chosen the phrases chosen so far
      * @param phrase_list $matches the phrases that start with the typed chars
@@ -322,7 +317,7 @@ class ui_select
      */
     private function phrase_step_fields(
         string       $form_name,
-        string       $value_form,
+        bool         $value_always,
         array        $url_arr,
         phrase_list  $chosen,
         phrase_list  $matches,
@@ -338,7 +333,7 @@ class ui_select
 
         // the ids before the names, because the chosen phrases keep the order that the user has chosen
         $chosen_ids = implode(',', $chosen->id_lst());
-        // the component sets its own rows (component_types::OWN_ROW_TYPES), so the row closes before the number form
+        // the component sets its own rows (component_types::OWN_ROW_TYPES), so the row closes before the buttons
         $result = $html->row_start();
         $result .= $this->chosen_phrase_fields($form_name, $chosen, $url_arr);
         $result .= $html->form_hidden(url_var::PHRASE_LIST, $chosen_ids);
@@ -347,10 +342,11 @@ class ui_select
         // the find button adds the named phrase or offers the matching phrases and is the first submit of
         // the form, so that the enter key triggers it and never saves anything
         $result .= $html->button_refresh_text($mtr->txt(msg_id::SYSTEM_BUTTON_FIND_AND_NEXT), url_var::REFRESH_PHRASES);
-        // the value and its type follow in the same line as soon as the form that takes the value exists
-        if ($chosen_ids != '' or $value_form == '') {
+        // the value and its type follow in the same line; both are posted with the phrase form, so that a
+        // find and next keeps the typed value and the selected type (see value_field)
+        if ($chosen_ids != '' or $value_always) {
             $val_typ = $this->value_type($url_arr);
-            $result .= $this->value_field($value_form, $val_typ, $url_arr);
+            $result .= $this->value_field($val_typ, $url_arr);
             $result .= $this->value_type_field($form_name, $val_typ);
         }
         // the typed chars name no phrase at all, so the user is told instead of getting an empty selection
@@ -397,32 +393,22 @@ class ui_select
     }
 
     /**
-     * the second form of a phrase selection view with the chosen phrases
+     * the hidden vars of a phrase selection view that let the add button write the value
      *
-     * the refresh of the phrase selection must keep the selection view, so the vars that write the value
-     * are in a form of their own and the hidden value add mask with the confirmed step lets url_to_action
-     * write the value directly and show it afterwards with its default view; the value field stays in the
-     * line of the phrase field and joins this form by its form attribute (see value_field); the form
-     * stays open, so that the add button of value_buttons submits it; the selector of the value type
-     * belongs to the phrase form (see value_type_field), so the selected type is repeated hidden here
-     * and a rejected add shows the field of the same type again
+     * the phrases, the value and its type are posted with the one form of the view, so that a find and next
+     * keeps them; the find and next button is no named submit, so it never triggers url_to_action, whereas
+     * the add button (see value_buttons) is, and the hidden confirmed step then lets url_to_action write
+     * the value directly with the add mask of the view and show it afterwards with its default view;
+     * the mask stays the one of the view, because a second mask would change the view of a refresh
      *
-     * @param string $form_name the name of the html form of the view
-     * @param string $chosen_ids the ids of the chosen phrases in the order that the user has chosen them
-     * @param value_types $val_typ the selected type of the new value
-     * @return string the html code of the number form
+     * @return string the html code of the hidden write vars
      */
-    private function value_number_form(string $form_name, string $chosen_ids, value_types $val_typ): string
+    private function value_add_fields(): string
     {
         $html = new html_base();
 
-        $result = $html->form_end();
-        $result .= $html->form_start($form_name . self::VALUE_FORM_SUFFIX);
-        $result .= $html->form_hidden(url_var::MASK, (string)views::VALUE_ADD_DETAIL_ID);
-        $result .= $html->form_hidden(url_var::STEP, url_var::STEP_CONFIRMED);
+        $result = $html->form_hidden(url_var::STEP, url_var::STEP_CONFIRMED);
         $result .= $html->form_hidden(url_var::BACK . url_var::MASK, (string)views::VALUE_DEFAULT_ID);
-        $result .= $html->form_hidden(url_var::PHRASE_LIST, $chosen_ids);
-        $result .= $html->form_hidden(url_var::VALUE_TYPE, $val_typ->value);
         return $result;
     }
 
@@ -438,10 +424,10 @@ class ui_select
     /**
      * the selector to switch the new value explicit between a number, text, time or geolocation
      *
-     * without javascript a changed type can only show its field after a submit, so the selector is posted with the
-     * phrase form and the find and next button shows the field of the selected type
+     * without javascript a changed type can only show its field after a submit, so the find and next button
+     * shows the field of the selected type
      *
-     * @param string $form_name the name of the phrase form of the view
+     * @param string $form_name the name of the html form of the view
      * @param value_types $val_typ the selected type of the new value
      * @return string the html code of the value type selector with the width of a button
      */
@@ -458,25 +444,33 @@ class ui_select
     }
 
     /**
-     * the field for the number, text, time or geolocation of the new value; in the pure value add form it is
-     * posted with the number form (see value_number_form), so that the find and next button never writes the value
+     * the field for the number, text, time or geolocation of the new value, filled with the value typed before
+     * a find and next, because the field is posted with the phrase form and a refresh must not lose the value
      *
-     * @param string $value_form the form that the value is posted with, '' for the surrounding form
      * @param value_types $val_typ the selected type of the new value
-     * @param array $url_arr the url of the shown form with the value typed before a refresh of the detailed form
+     * @param array $url_arr the url of the shown form with the value typed before a refresh
      * @return string the html code of the value field that matches the type
      */
-    private function value_field(string $value_form, value_types $val_typ, array $url_arr): string
+    private function value_field(value_types $val_typ, array $url_arr): string
     {
         $html = new html_base();
-        [$url_id, $label_id, $input] = match ($val_typ) {
+        [$url_id, $label_id, $input] = $this->value_field_def($val_typ);
+        $value = (string)($url_arr[$url_id] ?? '');
+        return $html->form_field($url_id, $label_id, $value, $input, '', view_styles::COL_SM_5);
+    }
+
+    /**
+     * @param value_types $val_typ the selected type of the new value
+     * @return array the url var, the label and the input type of the value field that matches the type
+     */
+    private function value_field_def(value_types $val_typ): array
+    {
+        return match ($val_typ) {
             value_types::NUMBER => [url_var::NUMERIC_VALUE, msg_id::FORM_FIELD_VALUE, html_base::INPUT_NUMBER],
             value_types::TEXT => [url_var::VALUE_TEXT, msg_id::FORM_FIELD_TEXT_VALUE, html_base::INPUT_TEXT],
             value_types::TIME => [url_var::VALUE_TIME, msg_id::FORM_FIELD_TIME_VALUE, html_base::INPUT_TEXT],
             value_types::GEO => [url_var::VALUE_GEO, msg_id::FORM_FIELD_GEO_VALUE, html_base::INPUT_TEXT],
         };
-        $value = (string)($url_arr[$url_id] ?? '');
-        return $html->form_field($url_id, $label_id, $value, $input, '', view_styles::COL_SM_5, '', $value_form);
     }
 
     /**
@@ -492,7 +486,7 @@ class ui_select
         $html = new html_base();
 
         $result = $html->row_right() . $cancel;
-        // without a phrase there is no number form that the add button could submit
+        // without a phrase there is no value to write, so the add button is left out (see value_add_fields)
         if ($chosen_ids != '') {
             $result .= $html->button_bs($mtr->txt(msg_id::SYSTEM_BUTTON_ADD), '', '', url_var::POST_SUBMIT);
         }
@@ -503,7 +497,7 @@ class ui_select
      * the link at the bottom left of a simple add form that opens the detailed form with the same parameters,
      * so that the user can add the fields that the simple form does not offer e.g. the source of a value
      *
-     * @param array $url_arr the url of the shown form as back target
+     * @param array $url_arr the url of the shown form as back target and with the value typed before a refresh
      * @param string $chosen_ids the ids of the chosen phrases, empty if the user has not yet chosen one
      * @return string the html code of the more details link
      */
@@ -512,13 +506,35 @@ class ui_select
         global $mtr;
         $html = new html_base();
 
-        $preset = '';
+        $preset = $this->typed_value_url_par($url_arr);
         if ($chosen_ids != '') {
-            $preset = url_var::PHRASE_LIST . url_var::EQ . $chosen_ids;
+            array_unshift($preset, url_var::PHRASE_LIST . url_var::EQ . $chosen_ids);
         }
-        $url = $html->url_back(views::VALUE_ADD_DETAIL_ID, 0, $url_arr, $preset);
+        $url = $html->url_back(views::VALUE_ADD_DETAIL_ID, 0, $url_arr, implode(url_var::ADD, $preset));
         $link = $html->ref($url, $mtr->txt(msg_id::SYSTEM_BUTTON_MORE_DETAILS));
         return $html->div($link, view_styles::TEXT_LEFT);
+    }
+
+    /**
+     * the value and its type that the detailed form takes over from the simple form; a link cannot post
+     * the form, so it carries only what a find and next has posted before
+     *
+     * @param array $url_arr the url of the shown form with the value typed before a refresh
+     * @return array the url parameters of the typed value and of a type that is not the default type
+     */
+    private function typed_value_url_par(array $url_arr): array
+    {
+        $val_typ = $this->value_type($url_arr);
+        [$url_id] = $this->value_field_def($val_typ);
+        $value = (string)($url_arr[$url_id] ?? '');
+        $result = [];
+        if ($value != '') {
+            $result[] = $url_id . url_var::EQ . rawurlencode($value);
+        }
+        if ($val_typ != value_types::NUMBER) {
+            $result[] = url_var::VALUE_TYPE . url_var::EQ . $val_typ->value;
+        }
+        return $result;
     }
 
     /**

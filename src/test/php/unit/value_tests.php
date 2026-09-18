@@ -139,6 +139,37 @@ class value_tests
         $val_unnamed = new value($t->usr1);
         $val_unnamed->api_mapper($val->api_json_array([api_types::INCL_PHRASES], $msg), $msg);
         $t->assert($test_name, $val_unnamed->grp()->name_given(), '');
+        // ... and the backend sends the given name back, else the frontend could never show a saved name
+        $test_name = 'the api json of a value with a named group has the given name';
+        $named_json = $t_val->value($msg)->api_json_array([api_types::INCL_PHRASES], $msg);
+        $t->assert($test_name, $named_json[json_fields::NAME] ?? '', groups::TN_READ);
+        $test_name = 'the api json of a value named only by its phrases has no name';
+        $unnamed_json = $val->api_json_array([api_types::INCL_PHRASES], $msg);
+        $t->assert_false($test_name, array_key_exists(json_fields::NAME, $unnamed_json));
+        $test_name = 'the export json of a value with a named group has the given name';
+        $named_ex_json = $t_val->value($msg)->export_json($msg, [], false);
+        $t->assert($test_name, $named_ex_json[json_fields::NAME] ?? '', groups::TN_READ);
+        $test_name = '... which the import takes as the given name of the group';
+        $val_imported = new value($t->usr1);
+        $val_imported->import_mapper($named_ex_json, $msg);
+        $t->assert($test_name, $val_imported->grp()->name_given(), groups::TN_READ);
+        $msg->reset();
+        $test_name = 'the export json of a value named only by its phrases has no name';
+        $unnamed_ex_json = $val->export_json($msg, [], false);
+        $t->assert_false($test_name, array_key_exists(json_fields::NAME, $unnamed_ex_json));
+        $test_name = '... so the import gives no name to the group';
+        $val_imported = new value($t->usr1);
+        $val_imported->import_mapper($unnamed_ex_json, $msg);
+        $t->assert($test_name, $val_imported->grp()->name_given(), '');
+        $msg->reset();
+        $test_name = 'fill takes over the given group name';
+        $val_filled = $t_val->value($msg)->clone_reset();
+        $val_filled->fill($t_val->value($msg), $t->usr1);
+        $t->assert($test_name, $val_filled->grp()->name_given(), groups::TN_READ);
+        $test_name = 'fill never turns the name generated from the phrases into a given name';
+        $val_filled = $val->clone_reset();
+        $val_filled->fill($val, $t->usr1);
+        $t->assert($test_name, $val_filled->grp()->name_given(), '');
 
         $t->subheader($ts . 'union row mapping');
         // a value list is loaded with one union query over the prime, most and big value tables

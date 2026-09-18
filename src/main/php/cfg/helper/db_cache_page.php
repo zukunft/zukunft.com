@@ -267,7 +267,9 @@ class db_cache_page extends db_object_seq_id
      */
     static function strip_user_msg(string $html): string
     {
-        $pattern = '#<div class="[^"]*' . api::USER_MSG_CLASS . '[^"]*">.*?</div>\s*'
+        // the notification never contains a div, so the match cannot start at an alert of the page
+        // content and run over the content up to the message before the placeholder
+        $pattern = '#<div class="[^"]*' . api::USER_MSG_CLASS . '[^"]*">(?:(?!<div).)*?</div>\s*'
             . '(?=' . preg_quote(api::USER_MSG_PLACEHOLDER, '#') . ')#s';
         return preg_replace($pattern, '', $html);
     }

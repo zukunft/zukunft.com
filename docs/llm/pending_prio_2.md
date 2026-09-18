@@ -1420,27 +1420,55 @@ but it is the kind of thing the reference workflow was presumably meant to surfa
 
 Two smaller consistency notes, both matching the change_source sibling so I would not change them: change_view_workflow runs ~90 lines (over the ~50-line guideline, as change_source_workflow does), and the file header still says "each step of the add_view workflow" now that
 there are two.        
+
 ## change value view: given group name and the phrases of the fixture value
 
 the change value view (value_edit) now shows only a name that a user has given to the group and
-writes it to the group row on save (value_base::save), but two gaps remain:
+writes it to the group row on save (value_base::save), but these gaps remain:
 
-- the backend never sends an existing given group name to the frontend: sandbox_value::api_json_array
-  emits the phrases, but not the group name, and value::load_by_id loads no group row at all
-  (a group row exists only for a named group, see group::row_mapper). so the edit form of an
-  already named group shows an empty group field; a name typed there renames the group, an
-  empty field keeps the name. to show the current name load the group row with the value
-  (e.g. in group::load_phrase_names) and emit json_fields::NAME for a given name
+- since 2026-09-18 value_base::api_json_array sends the given group name and the frontend
+  value::api_mapper takes it, so a saved name is shown again in the value views and in the group
+  field of the edit form. the name is only loaded by value_base::load_objects (load_grp_by_id
+  reads the group row), so a value loaded without it (e.g. the rows of a value list) still has
+  no given name. the backend add path is covered by value_write_tests ('given group name'),
+  but no write workflow types a group name in the detailed add form: add_value_details (wf34)
+  cannot be extended, because its phrases are the ones of add_value_with_phrase (wf32), so the
+  value exists already in a write run; a workflow of its own with other phrases is needed
+- since 2026-09-18 the value export and import carry the given group name as the optional json
+  field `name` (value_base::export_json / import_mapper). this is an addition to the json format,
+  for which docs/llm/versions.md asks for a minor version bump with a database upgrade script;
+  not done, because the upgrade path has the open defects listed under "database upgrade path".
+  the developer decides if an optional field needs the bump. the value list import format
+  (value_list::import_obj, one context for many values) has no group name
 - the value of the views_by_id fixtures (test_values::value_16_filled, group_16) is built from
-  artificial phrase ids (word1 = 1, triple7 = 106841477, ...) that are not in the test request
-  cache, so the phrases stay unnamed in a test render and the title of
-  views_by_id/value/30_value_update_*.html still reads 'Change value' without the phrase names
-  although sandbox_value::set_phrases_by_is_list now takes the names from the cache. use a value
+  artificial phrase ids (word1 = 1, triple7 = 106841477, ...) of which only word 1 is in the test
+  request cache, so the page title of views_by_id/value/30_value_update_*.html reads
+  'mathematics - Change value with details' but the form title stays 'Change value' without the
+  phrases, because system_form::form_title_text names them only if all are named
+  (sandbox_value::has_named_phrases). use a value
   with cached phrases (e.g. value_pi_math) for the value views by id or add the phrases of
   group_16 to the cache of test_lib; both change the fixture file names, because they carry the id
 - a value has no reference (decided 2026-09-17), so the reference selector was removed from the
   value add and edit views; value::ref_selector and value::phrase_ref_id in web/value/value.php
   are now unused by any view
+
+## given group name: two producers of TN_READ and a generic name that is always empty
+
+found 2026-09-18 while fixing the double name of the e group in
+all_unit_read_tests::init_unit_db_tests (the e group is now created without a given name):
+
+- groups::TN_READ is given to two different phrase lists: groups::TEST_GROUPS_CREATE creates it
+  for the words [PI, MATH], but all_unit_read_tests::init_unit_db_tests and
+  value_read_tests (add_phrase_group) give it to the group of the triple 'Pi (math)'. since
+  value_base::save writes a given group name to the group row, the second one is refused with
+  NAME_ALREADY_EXISTS as soon as its value is not yet in the database (e.g. after a reset).
+  the developer decides which phrase list owns the name; the other producer gets its own
+  reserved name or no given name
+- group::generic_name always returns '', because the block that sets $result is commented out,
+  so the check `$name != $this->generic_name($msg)` in group::get_by_phrase_list takes every
+  non-empty name as given by the user, also one that equals the name generated from the phrases,
+  which then is written to the group row. compare with group::name_generated instead or let
+  generic_name return the generated name
 
 ## database upgrade path
 
@@ -1459,3 +1487,28 @@ instead of the caller; the dedup in the log writer does not catch it either, so 
 holds eight rows named text_log_functions. test_app::write_time adds the script path as a further
 log function. The type list compare of the tests drops sys_log_functions since 2026-09-17
 (test_api::json_remove_volatile), so this only pollutes the sys_log_functions table
+
+## unstable test baselines and a test gap of the one form value add view
+
+found 2026-09-18 in the review of the change that posts the phrases, the value and its type of the
+pure html value add view with one form (ui_select::value_add_fields):
+
+- the change log rows of workflow_write/change_formula_wf15/
+  wf15_show_edit_back_edit_save_cancel_edit_save_confirmed_edit_fill_confirmed.html moved by one
+  position without any formula change ('added latex ...' dropped out of the shown rows), so the
+  order of change log rows with the same timestamp is not deterministic. sort the change log list
+  by a second deterministic key (e.g. the change id) before it is shown, because a regenerated
+  snapshot only replaces one unstable baseline with another
+- src/test/resources/unit/user/list.csv contains the row of the localhost ip user ('13,::1') only
+  if the pod has been opened from localhost without login before the test run, so the baseline
+  flips with the environment. exclude the ip users from the user list baseline
+- no test posts the find and next request like a browser does since the one form change: with the
+  hidden confirmed step (z=2) and the back mask (9m=5), but without url_var::POST_SUBMIT, and
+  asserts that nothing is written and the pure add view is shown again. today this is covered
+  only by the generic frontend::request_triggers_action logic; add the step to the add_value
+  workflows (value_url_tests) and a negative test of request_triggers_action for such a url
+- the more details link of the pure html value add view takes the value and its type to the
+  detailed form only if a find and next has posted them before (ui_select::typed_value_url_par),
+  because a link never posts the form; a value typed just before the click is still lost. to
+  close the gap without javascript make more details a named submit button of the one form that
+  switches the mask to views::VALUE_ADD_DETAIL_ID without triggering url_to_action

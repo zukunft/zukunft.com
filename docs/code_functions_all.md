@@ -183,6 +183,7 @@
     \-- name_field - section for function name_field is expected to be sql fields in /group/group.php
     \-- grp - section for function grp not yet defined that it should be set and get in /group/group.php
     \-- set_saved - section for function set_saved is expected to be set and get in /group/group.php
+    \-- can_be_ready - section for function can_be_ready is expected to be check in /group/group.php
     \-- delta - section for function delta is expected to be del in /group/group.php
     \-- sql_table - section for function sql_table not yet defined that it should be sql create in /group/group.php
     \-- sql_index - section for function sql_index not yet defined that it should be sql create in /group/group.php
@@ -1927,6 +1928,7 @@
     \-- load_sql_init - section for function load_sql_init is expected to be load sql in /group/group_list.php
     \-- load_sql_by_ids - section for function load_sql_by_ids is expected to be load sql in /group/group_list.php
     \-- del - section for function del is expected to be del in /group/group_list.php
+    \-- add_by_key - section for function add_by_key not yet defined that it should be add in /group/group_list.php
     \-- add - section for function add not yet defined that it should be add in /group/group_list.php
     \-- get_by_val_with_one_phr_each - section for function get_by_val_with_one_phr_each is expected to be set and get i
             n /group/group_list.php
@@ -2000,6 +2002,8 @@
     \-- phrase_list - section for function phrase_list is expected to be cast in /helper/data_object.php
     \-- term_list - section for function term_list not yet defined that it should be set and get in /helper/data_object.
             php
+    \-- group_list - section for function group_list not yet defined that it should be set and get in /helper/data_objec
+            t.php
     \-- source_list - section for function source_list not yet defined that it should be set and get in /helper/data_obj
             ect.php
     \-- reference_list - section for function reference_list not yet defined that it should be set and get in /helper/da
@@ -2052,6 +2056,7 @@
     \-- add_triple_without_ready_check - section for function add_triple_without_ready_check not yet defined that it sho
             uld be modify in /helper/data_object.php
     \-- add_phrase - section for function add_phrase not yet defined that it should be modify in /helper/data_object.php
+    \-- add_group - section for function add_group not yet defined that it should be modify in /helper/data_object.php
     \-- add_source - section for function add_source not yet defined that it should be modify in /helper/data_object.php
     \-- add_reference - section for function add_reference not yet defined that it should be modify in /helper/data_obje
             ct.php
@@ -5384,6 +5389,8 @@
     \-- unset_added_depending
         \-- sql_message - add the database id and the related name to the id list of the user message
         \-- user_message - add the database id and the related name to the id list of the user message
+    \-- add_by_key
+        \-- group_list - add a named object to the list that does not yet have an id but has a name
     \-- add
         \-- group_list - add a phrase group if it is not yet part of the list
     \-- get_by_val_with_one_phr_each
@@ -6758,8 +6765,13 @@
     \-- add - section for function add not yet defined that it should be modify in /group/group.php
     \-- has_percent - section for function has_percent not yet defined that it should be info in /group/group.php
     \-- name - section for function name is expected to be debug in /group/group.php
+    \-- phrase_names - section for function phrase_names not yet defined that it should be base in /group/group.php
     \-- name_tip - section for function name_tip not yet defined that it should be base in /group/group.php
+    \-- phrase_name_tip - section for function phrase_name_tip not yet defined that it should be base in /group/group.ph
+            p
     \-- name_link_list - section for function name_link_list not yet defined that it should be base in /group/group.php
+    \-- phrase_link_list - section for function phrase_link_list not yet defined that it should be base in /group/group.
+            php
     \-- order error - order of section api has difference at api_array should be before url_mapper
 \-- group_list
     \-- add - section for function add not yet defined that it should be set and get in /group/group_list.php

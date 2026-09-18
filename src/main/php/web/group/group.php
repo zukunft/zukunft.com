@@ -325,24 +325,40 @@ class group extends sandbox_named
      */
     function name(?phrase_list $phr_lst_exclude = null, string $sep = ', '): string|null
     {
-        $result = '';
         if (parent::name() <> null) {
-            $result .= parent::name();
+            $result = parent::name();
         } else {
-            $lst_to_show = $this->phr_lst();
-            if ($phr_lst_exclude != null) {
-                if (!$phr_lst_exclude->is_empty()) {
-                    $lst_to_show->remove($phr_lst_exclude);
-                }
+            $result = $this->phrase_names($phr_lst_exclude, $sep);
+        }
+        return $result;
+    }
+
+    /**
+     * the names of the phrases of the group as pure text, also if a user has given the group a name,
+     * e.g. for a value, which is shown by its phrases and only by the given name if no phrase has a name (see name_only)
+     * @param phrase_list|null $phr_lst_exclude list of phrases already shown in the header and should be excluded
+     * @param string $sep the separator between the phrase names
+     * @return string the phrase names separated by $sep
+     */
+    function phrase_names(?phrase_list $phr_lst_exclude = null, string $sep = ', '): string
+    {
+        if ($this->name_only()) {
+            return $this->name;
+        }
+        $result = '';
+        $lst_to_show = $this->phr_lst();
+        if ($phr_lst_exclude != null) {
+            if (!$phr_lst_exclude->is_empty()) {
+                $lst_to_show->remove($phr_lst_exclude);
             }
-            // a phrase that carries only its id e.g. of a value built from a url adds no separator
-            foreach ($lst_to_show->lst() as $phr) {
-                if ($phr->name() != '') {
-                    if ($result <> '') {
-                        $result .= $sep;
-                    }
-                    $result .= $phr->name();
+        }
+        // a phrase that carries only its id e.g. of a value built from a url adds no separator
+        foreach ($lst_to_show->lst() as $phr) {
+            if ($phr->name() != '') {
+                if ($result <> '') {
+                    $result .= $sep;
                 }
+                $result .= $phr->name();
             }
         }
         return $result;
@@ -362,25 +378,42 @@ class group extends sandbox_named
             if ($this->name <> '') {
                 $result .= parent::name_tip();
             } else {
-                $lst_to_show = $this->phr_lst();
-                if ($phr_lst_exclude != null) {
-                    if (!$phr_lst_exclude->is_empty()) {
-                        $lst_to_show->remove($phr_lst_exclude);
-                    }
-                }
-                foreach ($lst_to_show->lst() as $phr) {
-                    if ($phr->name() != '') {
-                        if ($result <> '') {
-                            $result .= $sep;
-                        }
-                        $result .= $phr->name_tip();
-                    }
-                }
+                $result .= $this->phrase_name_tip($phr_lst_exclude, $sep);
             }
             $this->name_tip = $result;
             $this->name_tip_dirty = false;
         } else {
             $result = $this->name_tip;
+        }
+        return $result;
+    }
+
+    /**
+     * the names of the phrases of the group with the tooltip, also if a user has given the group a name,
+     * e.g. for a value, which is shown by its phrases and only by the given name if no phrase has a name (see name_only)
+     * @param phrase_list|null $phr_lst_exclude list of phrases already shown in the header and should be excluded
+     * @param string $sep the separator between the phrase names
+     * @return string the html code of the phrase names with their tooltips
+     */
+    function phrase_name_tip(?phrase_list $phr_lst_exclude = null, string $sep = ', '): string
+    {
+        if ($this->name_only()) {
+            return parent::name_tip();
+        }
+        $result = '';
+        $lst_to_show = $this->phr_lst();
+        if ($phr_lst_exclude != null) {
+            if (!$phr_lst_exclude->is_empty()) {
+                $lst_to_show->remove($phr_lst_exclude);
+            }
+        }
+        foreach ($lst_to_show->lst() as $phr) {
+            if ($phr->name() != '') {
+                if ($result <> '') {
+                    $result .= $sep;
+                }
+                $result .= $phr->name_tip();
+            }
         }
         return $result;
     }
@@ -396,7 +429,7 @@ class group extends sandbox_named
             if ($this->name <> '') {
                 $result .= $this->name_link();
             } else {
-                $result .= $this->phr_lst()->name_link_list($phr_lst_header);
+                $result .= $this->phrase_link_list($phr_lst_header);
             }
             $this->name_link = $result;
             $this->name_link_dirty = false;
@@ -404,6 +437,33 @@ class group extends sandbox_named
             $result = $this->name_link;
         }
         return $result;
+    }
+
+    /**
+     * TODO Prio 2 review because actually the given group name should have priority
+     * the phrases of the group as links, also if a user has given the group a name,
+     * e.g. for a value, which is shown by its phrases and only by the given name if no phrase has a name (see name_only)
+     * @param phrase_list|null $phr_lst_header list of phrases already shown in the header and don't need to be included in the result
+     * @return string the html code of the phrase links
+     */
+    function phrase_link_list(?phrase_list $phr_lst_header = null): string
+    {
+        if ($this->name_only()) {
+            $result = $this->name_link();
+        } else {
+            $result = $this->phr_lst()->name_link_list($phr_lst_header);
+        }
+        return $result;
+    }
+
+    /**
+     * @return bool true if the name given to the group is the only name that can be shown,
+     *              because the phrases carry only their id e.g. of a value built from a url
+     */
+    private function name_only(): bool
+    {
+        $named = array_filter($this->lst(), fn($phr) => $phr->name() != '');
+        return ($named == [] and $this->name <> '');
     }
 
 }

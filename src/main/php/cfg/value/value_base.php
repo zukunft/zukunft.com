@@ -522,6 +522,11 @@ class value_base extends sandbox_value
             }
         }
 
+        // the name that a user has given to the group, mapped after the words, which create the group
+        if (($in_ex_json[json_fields::NAME] ?? '') != '') {
+            $this->grp()->set_name($in_ex_json[json_fields::NAME]);
+        }
+
         // the description of a value is the description of its phrase group (see
         // sandbox_value::set_description), so it is mapped after the words, which create the group
         if (key_exists(json_fields::DESCRIPTION, $in_ex_json)) {
@@ -631,6 +636,10 @@ class value_base extends sandbox_value
     {
         $vars = parent::api_json_array($typ_lst, $msg, $usr);
 
+        // the name that a user has given to the group, never the name generated from the phrases (see api_mapper)
+        if ($this->grp()->name_given() != '') {
+            $vars[json_fields::NAME] = $this->grp()->name_given();
+        }
         // add the source
         if ($this->source != null) {
             $vars[json_fields::SOURCE_ID] = $this->source->id();
@@ -1621,6 +1630,10 @@ class value_base extends sandbox_value
         }
         if ($this->source != null) {
             $vars[json_fields::SOURCE_NAME] = $this->source->name();
+        }
+        // the name that a user has given to the group, never the name generated from the phrases (see import_mapper)
+        if ($this->grp()->name_given() != '') {
+            $vars[json_fields::NAME] = $this->grp()->name_given();
         }
 
         return $vars;

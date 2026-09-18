@@ -1194,6 +1194,11 @@ class sandbox_value extends sandbox_multi
         if ($this->grp() === null and $obj->grp() != null) {
             $this->set_grp($obj->grp());
         }
+        // the group is never null after a reset, so the name given to the group is filled by the group;
+        // skipped after a conflict, because the id of the group is the id of the value reported above
+        if ($msg->is_ok()) {
+            $msg->merge($this->grp()->fill($obj->grp(), $usr_req));
+        }
         if ($this->last_update() === null and $obj->last_update() != null) {
             $this->set_last_update($obj->last_update());
         }

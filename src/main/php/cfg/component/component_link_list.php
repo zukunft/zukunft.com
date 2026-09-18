@@ -61,6 +61,7 @@ include_once paths::MODEL_VIEW . 'view_db.php';
 include_once paths::SHARED_CONST_FIELDS . 'component_fields.php';
 include_once paths::SHARED_CONST_FIELDS . 'view_fields.php';
 include_once paths::SHARED_HELPER . 'Message.php';
+include_once paths::SHARED_HELPER . 'TextIdObject.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
@@ -76,6 +77,7 @@ use Zukunft\ZukunftCom\main\php\cfg\view\view_db;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\component_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\view_fields;
 use Zukunft\ZukunftCom\main\php\shared\helper\Message;
+use Zukunft\ZukunftCom\main\php\shared\helper\TextIdObject;
 
 class component_link_list extends sandbox_link_list
 {
@@ -304,15 +306,15 @@ class component_link_list extends sandbox_link_list
 
     /**
      * add a view component link to the list without saving it to the database
-     * @param component_link|db_object_seq_id|null $to_add the link user sandbox object that should be added
+     * @param component_link|db_object_seq_id|TextIdObject|null $to_add the link user sandbox object that should be added
      * @param bool $allow_duplicates true if the list can contain the same entry twice e.g. for the components
      * @param user_message $msg to report which entry is double
      * @return bool true if the link has been added
      */
     function add_by_key(
-        component_link|db_object_seq_id|null $to_add,
-        bool                                 $allow_duplicates = false,
-        Message                              $msg = new Message()
+        component_link|db_object_seq_id|TextIdObject|null $to_add,
+        bool                                              $allow_duplicates = false,
+        Message                                           $msg = new Message()
     ): bool
     {
         $added = false;

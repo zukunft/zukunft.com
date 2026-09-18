@@ -35,11 +35,15 @@ namespace Zukunft\ZukunftCom\test\php\unit_write;
 use DateTime;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
+include_once paths::MODEL_GROUP . 'group.php';
+include_once paths::SHARED_CONST . 'groups.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'change_tables.php';
 include_once paths::SHARED_ENUM . 'change_fields.php';
+include_once paths::SHARED . 'json_fields.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\group\group;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_big;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_norm;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_prime;
@@ -56,7 +60,9 @@ use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_fields;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\Config as shared_config;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\const\groups;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
@@ -480,6 +486,43 @@ class value_write_tests
         $val_usr2->load_by_grp($phr_grp);
         $val_usr2->del($usr_msg);
         */
+
+        // the group name that the user types in the detailed value add form is written with the new value
+        $t->subheader($ts . 'given group name');
+        // the asserts above do not reset the message and the save is skipped if the message is not ok
+        $msg->reset();
+        $test_name = 'a new value with a given group name is saved';
+        $named_phr_names = [word_names::TEST_ADD, word_names::INHABITANTS];
+        $named_grp = $t_db->load_phrase_group($named_phr_names);
+        $named_grp->set_name(groups::TN_VALUE_ADD);
+        $named_val = new value($t->usr1);
+        $named_val->set_grp($named_grp);
+        $named_val->set_number(values::SAMPLE_INT);
+        $named_val->save($msg);
+        $t->test_val_ids[] = $named_val->id();
+        $t->assert_msg($test_name, $msg);
+        $msg->reset();
+        $test_name = '... and the group row has the given name';
+        $db_grp = new group($t->usr1);
+        $db_grp->load_by_id($named_grp->id(), $msg);
+        $t->assert($test_name, $db_grp->name_given(), groups::TN_VALUE_ADD);
+        $msg->reset();
+        $test_name = '... which is loaded with the value, so that the change value view can show it';
+        $db_val = new value($t->usr1);
+        $db_val->load_by_id($named_val->id(), $msg);
+        $db_val->load_objects($msg);
+        $named_json = $db_val->api_json_array([api_types::INCL_PHRASES], $msg);
+        $t->assert($test_name, $named_json[json_fields::NAME] ?? '', groups::TN_VALUE_ADD);
+        $msg->reset();
+        $test_name = 'a new value without a given group name writes no group row';
+        $unnamed_grp = new group($t->usr1);
+        $unnamed_grp->load_by_id($phr_grp2->id(), $msg);
+        $t->assert_false($test_name, $unnamed_grp->is_saved());
+        $msg->reset();
+        // the value cleanup deletes the value but not its named group and a change log entry
+        // must never point to a deleted group row
+        $t->cleanup_change_log_group($db_grp, [groups::TN_VALUE_ADD, $named_phr_names]);
+        $db_grp->del($msg);
 
         // cleanup - fallback delete
         $t_val->cleanup($ts);

@@ -34,9 +34,11 @@ namespace Zukunft\ZukunftCom\test\php\unit;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\const\groups;
 use Zukunft\ZukunftCom\main\php\shared\const\results;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\share_types;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
@@ -48,7 +50,9 @@ use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
 
 include_once html_paths::FIGURE . 'figure.php';
+include_once paths::SHARED_CONST . 'groups.php';
 include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'url_var.php';
 
 class figure_tests
@@ -126,6 +130,17 @@ class figure_tests
         $t->assert_api_to_ui($fig, new figure_ui());
         $fig = $t_fig->figure_result();
         $t->assert_api_to_ui($fig, new figure_ui());
+
+        // the name given to the group of a value is sent back as the name like the backend sends it
+        $test_name = 'the figure of a value with a named group sends the given name';
+        $fig_ui = $tl->ui_obj($t_fig->figure_value($msg), new figure_ui());
+        $fig_json = $fig_ui->api_array([], $msg_ui);
+        $t->assert($test_name, $fig_json[json_fields::NAME] ?? '', groups::TN_READ);
+        $test_name = '... and never the whole value as its phrases';
+        $t->assert_false($test_name, array_key_exists(json_fields::PHRASES, $fig_json));
+        $test_name = 'the figure of a result without a given name sends no name';
+        $fig_ui = $tl->ui_obj($t_fig->figure_result(), new figure_ui());
+        $t->assert_false($test_name, array_key_exists(json_fields::NAME, $fig_ui->api_array([], $msg_ui)));
 
         $fig = $t_fig->figure_value($msg);
         $dsp = $tl->ui_obj($fig, new figure_ui());

@@ -2084,6 +2084,10 @@ class frontend
         // the start view shows no object, so it never gets an id
         // a calling page that shows another object keeps its own id (see back_shows_object)
         $back_url = $this->url_to_back_url($url_array);
+        // the add form that has opened this add (e.g. by the more details link) is done with the write
+        if ($crud == url_var::CRUD_CREATE and $this->back_is_add_of_same_object($url_array, $view, $back_url)) {
+            $back_url = [url_var::MASK => $this->own_view($url_array, $view)];
+        }
         if ($crud != url_var::CRUD_DELETE
             and $dbo instanceof db_object_ui
             and $dbo->id() != 0
@@ -2139,6 +2143,41 @@ class frontend
         $back_id = (string)($back_url[url_var::ID] ?? 0);
         $url_id = (string)($url_array[url_var::ID] ?? 0);
         return ($back_view != views::START_ID and $back_view == $own_view and $back_id == $url_id);
+    }
+
+    /**
+     * true if the back target of a confirmed add is another add form of the same object, e.g. the pure
+     * value add view that has opened the detailed value add view with the more details link; returning
+     * there would offer to add the just written object again, whereas the add form of another object
+     * (e.g. a view add form that has opened a component add) still waits for its own add
+     *
+     * @param array $url_array the confirmed add url with the origin mask
+     * @param int $view the mask of the request, which is the add mask if the url has no origin mask
+     * @param array $back_url the back target of the url without the '9' prefix
+     * @return bool true if the own view of the written object should be shown instead of the back target
+     */
+    private function back_is_add_of_same_object(array $url_array, int $view, array $back_url): bool
+    {
+        $back_view = (int)($back_url[url_var::MASK] ?? views::START_ID);
+        $add_view = (int)($url_array[url_var::ORIGIN_MASK] ?? $view);
+        $result = false;
+        // the object of a view is only asked for an add mask, because the back target can be any user view
+        if (in_array($back_view, views::ADD_MASKS_IDS) and $this->own_view($url_array, $view) != 0) {
+            $back_class = $this->view_id_to_dbo_ui($back_view)::class;
+            $result = ($back_class == $this->view_id_to_dbo_ui($add_view)::class);
+        }
+        return $result;
+    }
+
+    /**
+     * @param array $url_array the confirmed change url with the origin mask
+     * @param int $view the mask of the request, which is the mask of the change if the url has no origin mask
+     * @return int the id of the view that shows the changed object or 0 if the mask has no such view
+     */
+    private function own_view(array $url_array, int $view): int
+    {
+        $change_view = (int)($url_array[url_var::ORIGIN_MASK] ?? $view);
+        return new views()->id_to_base_id($change_view);
     }
 
     /**

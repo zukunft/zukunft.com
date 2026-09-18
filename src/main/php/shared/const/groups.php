@@ -82,6 +82,8 @@ class groups
     const string SYSTEM_TEST_RENAMED = 'System Test Group Renamed';
     // the name that the change_value_group workflow gives to the group of the value of the add_value workflow
     const string TN_VALUE_WORKFLOW = 'System Test Group named via value workflow';
+    // the name that the value write test gives to the group of a new value
+    const string TN_VALUE_ADD = 'System Test Group named with a new value';
 
     // list of predefined group names used for system testing that are expected to be never renamed
     const array RESERVED_GROUP_NAMES = [

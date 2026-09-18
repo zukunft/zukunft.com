@@ -104,7 +104,7 @@ include_once paths::MODEL_LOG . 'change_action.php';
 include_once paths::MODEL_LOG . 'change_log.php';
 include_once paths::MODEL_LOG . 'change_log_list.php';
 include_once paths::MODEL_LOG . 'change_table.php';
-include_once paths::MODEL_SANDBOX . 'sandbox_related.php';
+//include_once paths::MODEL_SANDBOX . 'sandbox_related.php';
 //include_once paths::MODEL_REF . 'ref.php';
 //include_once paths::MODEL_REF . 'source.php';
 //include_once paths::MODEL_PHRASE . 'phrase.php';

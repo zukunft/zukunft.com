@@ -235,6 +235,14 @@ class db_cache_tests
             . api::USER_MSG_PLACEHOLDER . '<footer></footer>';
         $test_name = 'an alert of the page content is not removed on save';
         $t->assert($test_name, db_cache_page::strip_user_msg($content_alert_page), $content_alert_page);
+        // ... also if the request has a message: only the message before the placeholder is removed and
+        // never the page content between a content alert and the message (e.g. the rest of a word page)
+        $content_alert_main = '<main><div class="' . html_base::CLASS_NOTIFICATION . '">content alert</div>'
+            . '<div>more content</div></main>';
+        $content_alert_with_msg = $content_alert_main . $msg_html . api::USER_MSG_PLACEHOLDER . '<footer></footer>';
+        $test_name = 'the page content between a content alert and the message is kept on save';
+        $t->assert($test_name, db_cache_page::strip_user_msg($content_alert_with_msg),
+            $content_alert_main . api::USER_MSG_PLACEHOLDER . '<footer></footer>');
 
         $test_name = 'the message of the current request is added to a page loaded from cache';
         $t->assert($test_name, db_cache_page::add_user_msg($clean_page, $msg_html), $page_with_msg);

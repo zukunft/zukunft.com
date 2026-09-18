@@ -34,12 +34,15 @@ namespace Zukunft\ZukunftCom\test\php\unit;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_GROUP . 'group_id.php';
 include_once paths::MODEL_GROUP . 'group_link.php';
 include_once paths::MODEL_GROUP . 'group_list.php';
 include_once paths::MODEL_GROUP . 'result_id.php';
 include_once paths::SHARED_CONST . 'groups.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once test_paths::CONST . 'triple_names.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
@@ -51,6 +54,8 @@ use Zukunft\ZukunftCom\main\php\cfg\group\result_id;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\shared\const\groups;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\create\test_groups;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
@@ -62,7 +67,7 @@ class group_tests
 {
     function run(test_cleanup $t): void
     {
-
+        global $mtr;
 
         // init
         $db_con = new sql_db();
@@ -98,15 +103,6 @@ class group_tests
         $this->check_64_bit_key($t, [4], 4);
         $this->check_64_bit_key($t, [7], 7);
         $this->check_64_bit_key($t, [-2], 32770);
-
-        $t->subheader($ts . 'given name');
-        $test_name = 'a group named by a user reports the given name';
-        $grp = $t_grp->group();
-        $t->assert($test_name, $grp->name_given(), groups::TN_READ);
-        $test_name = 'a group named only by its phrases reports no given name, but still a name';
-        $grp = $t_phr->phrase_list_pi()->get_grp_id(false);
-        $t->assert($test_name, $grp->name_given(), '');
-        $t->assert_true($test_name, $grp->name() != '');
         $this->check_64_bit_key($t, [-3], 32771);
         $this->check_64_bit_key($t, [-51], 32819);
         $this->check_64_bit_key($t, [32767], 32767);
@@ -184,6 +180,31 @@ class group_tests
         $t->assert_true($test_name, $grp->is_big());
         $test_name = 'a group without an id is prime by its phrase list';
         $t->assert_true($test_name, $t_grp->group_incomplete()->is_prime());
+
+        $t->subheader($ts . 'given name');
+        $test_name = 'a group named by a user reports the given name';
+        $grp = $t_grp->group();
+        $t->assert($test_name, $grp->name_given(), groups::TN_READ);
+        $test_name = 'a group named only by its phrases reports no given name, but still a name';
+        $grp = $t_phr->phrase_list_pi()->get_grp_id(false);
+        $t->assert($test_name, $grp->name_given(), '');
+        $t->assert_true($test_name, $grp->name() != '');
+        // the given name is unique, so the e group must not repeat the name of the pi group
+        $test_name = 'the group of e has no given name and is named by its phrase';
+        $grp = $t_grp->group_e();
+        $t->assert($test_name, $grp->name_given(), '');
+        $t->assert($test_name, $grp->name(), triple_names::E);
+
+        // a list e.g. of an import holds a group by its name, because the id needs the ids of the phrases
+        $t->subheader($ts . 'list ready');
+        $test_name = 'a group without an id can be held in a list by its name';
+        $t->assert_true($test_name, $t_grp->group_incomplete()->can_be_ready($msg));
+        $msg->reset();
+        $test_name = 'a group without a given name and without phrases cannot be held in a list';
+        $t->assert_false($test_name, $t_grp->group_without_key()->can_be_ready($msg));
+        $test_name = '... which is reported';
+        $t->assert($test_name, $msg->text(), $mtr->txt(msg_id::ID_AND_NAME_MISSING));
+        $msg->reset();
 
         $t->subheader($ts . 'result id');
         // TODO assign the formula "increase" to the word inhabitants
