@@ -497,15 +497,15 @@ class sandbox_list_named extends sandbox_list
 
     /**
      * add a named object to the list that does not yet have an id but has a name
-     * @param sandbox_named|triple|phrase|term|db_object_seq_id|TextIdObject|null $to_add the named user sandbox object that should be added
+     * @param sandbox_named|triple|phrase|term|group|db_object_seq_id|TextIdObject|null $to_add the named user sandbox object that should be added
      * @param bool $allow_duplicates true if the list can contain the same entry twice e.g. for the components
      * @param Message $msg to report why an object has not been added e.g. a mandatory value is missing
      * @returns bool true if the object has been added
      */
     function add_by_key(
-        sandbox_named|triple|phrase|term|db_object_seq_id|TextIdObject|null $to_add,
-        bool                                                                $allow_duplicates = false,
-        Message                                                             $msg = new Message()
+        sandbox_named|triple|phrase|term|group|db_object_seq_id|TextIdObject|null $to_add,
+        bool                                                                      $allow_duplicates = false,
+        Message                                                                   $msg = new Message()
     ): bool
     {
         $added = false;

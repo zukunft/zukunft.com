@@ -136,7 +136,7 @@ class figure_tests
         $fig_ui = $tl->ui_obj($t_fig->figure_value($msg), new figure_ui());
         $fig_json = $fig_ui->api_array([], $msg_ui);
         $t->assert($test_name, $fig_json[json_fields::NAME] ?? '', groups::TN_READ);
-        $test_name = '... and never the whole value as its phrases';
+        $test_name = '... and no phrases, because the group of the api fixture carries none';
         $t->assert_false($test_name, array_key_exists(json_fields::PHRASES, $fig_json));
         $test_name = 'the figure of a result without a given name sends no name';
         $fig_ui = $tl->ui_obj($t_fig->figure_result(), new figure_ui());

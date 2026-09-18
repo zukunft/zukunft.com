@@ -50,6 +50,7 @@ include_once paths::MODEL_SANDBOX . 'sandbox_list_named.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_WORD . 'triple.php';
+include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_HELPER . 'Message.php';
 include_once paths::SHARED_HELPER . 'TextIdObject.php';
 include_once paths::SHARED . 'library.php';
@@ -61,7 +62,6 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
-use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
@@ -71,8 +71,8 @@ use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_list_named;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\Message;
-use Zukunft\ZukunftCom\main\php\shared\helper\TextIdObject;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\group_fields;
 
@@ -126,7 +126,7 @@ class group_list extends sandbox_list_named
             foreach ($db_rows as $db_row) {
                 $phr_grp = new group($this->get_user());
                 $phr_grp->row_mapper($db_row, $msg);
-                $this->add_obj($phr_grp);
+                $this->add_obj($phr_grp, false, $msg);
                 $result = true;
             }
         }
@@ -344,49 +344,6 @@ class group_list extends sandbox_list_named
      */
 
     /**
-     * add a named object to the list that does not yet have an id but has a name
-     * the types of the parent are repeated by name, because php can only match a type that is left out by
-     * loading its class, and triple is not yet loaded when this class is declared within the include cycle
-     * @param group|sandbox_named|triple|phrase|term|db_object_seq_id|TextIdObject|null $to_add the named user sandbox object that should be added
-     * @param bool $allow_duplicates true if the list can contain the same entry twice e.g. for the components
-     * @param Message $msg to report why an object has not been added e.g. a mandatory value is missing
-     * @returns bool true if the object has been added
-     */
-    function add_by_key(
-        group|sandbox_named|triple|phrase|term|db_object_seq_id|TextIdObject|null $to_add,
-        bool                                                                      $allow_duplicates = false,
-        Message                                                                   $msg = new Message()
-    ): bool
-    {
-        $added = false;
-        if ($to_add != null) {
-            $name = $to_add->name();
-            if ($name != '') {
-                if (!in_array($name, array_keys($this->name_pos_lst())) or $allow_duplicates) {
-                    // add only objects that have all mandatory values, judged by a local message,
-                    // because can_be_ready returns the state of the given message, so a shared
-                    // message with an earlier error would block an object that is fine
-                    $rdy_msg = new user_message(); // the verdict of this object, merged on rejection
-                    if ($to_add->can_be_ready($rdy_msg)) {
-                        $this->add_direct($to_add);
-                        $this->set_hash_dirty();
-                        $added = true;
-                    } else {
-                        $msg->merge($rdy_msg);
-                    }
-                } else {
-                    // the parent and not the own add_obj, because an entry with the same name but
-                    // another id is a different object that belongs in the list; only the name
-                    // keyed entries above are deduplicated by the name
-                    // TODO Prio 2 report a double that is dropped here without a message
-                    $added = parent::add_obj($to_add, $allow_duplicates, $msg);
-                }
-            }
-        }
-        return $added;
-    }
-
-    /**
      * combine the group id and the time id to a unique index
      */
     private function grp_time_id(group $grp, $time)
@@ -416,7 +373,7 @@ class group_list extends sandbox_list_named
      * @param group|sandbox_named|triple|phrase|term|null $to_add
      * @param bool $allow_duplicates true if the list can contain the same entry twice e.g. for the components
      * @param Message $msg to report which entry is double
-     * @return bool true if grou has been added
+     * @return bool true if the group has been added
      */
     function add(
         group|sandbox_named|triple|phrase|term|null $to_add,
@@ -424,27 +381,29 @@ class group_list extends sandbox_list_named
         Message                                     $msg = new Message()
     ): bool
     {
+        // the type is the one of the parent, but a group list holds only groups;
+        // reported to the caller like the other list rejections e.g. LIST_DOUBLE_ENTRY
+        if ($to_add != null and !($to_add instanceof group)) {
+            $msg->add(msg_id::LIST_CLASS_NOT_EXPECTED, [
+                msg_id::VAR_NAME => $to_add->name(),
+                msg_id::VAR_TYPE => library::class_to_name($to_add::class),
+                msg_id::VAR_CLASS_NAME => library::class_to_name($this::class)
+            ]);
+            return false;
+        }
         $result = false;
         if ($to_add != null) {
             log_debug($to_add->id());
-            $do_add = false;
+            // add_obj checks and reports a double, so the caller decides by $allow_duplicates
             if ($to_add->is_id_set()) {
-                if ($this->grp_ids == null) {
-                    $do_add = true;
-                } else {
-                    if (!in_array($to_add->id(), $this->grp_ids)) {
-                        $do_add = true;
-                    }
-                }
+                $result = $this->add_obj($to_add, $allow_duplicates, $msg);
             }
-            if ($do_add) {
-                $this->add_obj($to_add);
+            if ($result) {
                 $this->grp_ids[] = $to_add->id();
                 $this->time_lst[] = null;
-                $result = true;
                 log_debug($to_add->dsp_id() . ' added to list ' . $this->dsp_id());
             } else {
-                log_debug($to_add->dsp_id() . ' skipped, because is already in list ' . $this->dsp_id());
+                log_debug($to_add->dsp_id() . ' skipped, because it has no id or is already in list ' . $this->dsp_id());
             }
         }
         return $result;

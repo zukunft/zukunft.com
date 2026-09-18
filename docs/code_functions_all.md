@@ -1928,7 +1928,6 @@
     \-- load_sql_init - section for function load_sql_init is expected to be load sql in /group/group_list.php
     \-- load_sql_by_ids - section for function load_sql_by_ids is expected to be load sql in /group/group_list.php
     \-- del - section for function del is expected to be del in /group/group_list.php
-    \-- add_by_key - section for function add_by_key not yet defined that it should be add in /group/group_list.php
     \-- add - section for function add not yet defined that it should be add in /group/group_list.php
     \-- get_by_val_with_one_phr_each - section for function get_by_val_with_one_phr_each is expected to be set and get i
             n /group/group_list.php
@@ -5389,8 +5388,6 @@
     \-- unset_added_depending
         \-- sql_message - add the database id and the related name to the id list of the user message
         \-- user_message - add the database id and the related name to the id list of the user message
-    \-- add_by_key
-        \-- group_list - add a named object to the list that does not yet have an id but has a name
     \-- add
         \-- group_list - add a phrase group if it is not yet part of the list
     \-- get_by_val_with_one_phr_each

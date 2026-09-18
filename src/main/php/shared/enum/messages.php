@@ -593,6 +593,13 @@ enum messages: string
         . ' to list of user '
         . self::VAR_START . self::VAR_USER_LIST_NAME . self::VAR_END
         . ' list';
+    case LIST_CLASS_NOT_EXPECTED = 'trying to add "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" of class '
+        . self::VAR_START . self::VAR_TYPE . self::VAR_END
+        . ' to the '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' list';
     case FILL_WORD_WITH_OTHER = 'word "'
         . self::VAR_START . self::VAR_WORD_NAME . self::VAR_END
         . '" cannot be filled with '

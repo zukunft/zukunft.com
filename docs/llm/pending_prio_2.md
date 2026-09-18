@@ -1440,6 +1440,11 @@ writes it to the group row on save (value_base::save), but these gaps remain:
   not done, because the upgrade path has the open defects listed under "database upgrade path".
   the developer decides if an optional field needs the bump. the value list import format
   (value_list::import_obj, one context for many values) has no group name
+- the group list of the backend data_object (data_object::add_group, group_list()) is only
+  filled, e.g. by horizontal_tests for the value import, but never read: no import_mapper takes a
+  group from it and the frontend data_object does not map the json field `groups` that
+  data_object::api_json_array sends (like `sources` and `references`). either the value import
+  resolves a given group name via this cache or the developer retires the list and the json field
 - the value of the views_by_id fixtures (test_values::value_16_filled, group_16) is built from
   artificial phrase ids (word1 = 1, triple7 = 106841477, ...) of which only word 1 is in the test
   request cache, so the page title of views_by_id/value/30_value_update_*.html reads

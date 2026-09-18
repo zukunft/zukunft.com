@@ -34,7 +34,6 @@ namespace Zukunft\ZukunftCom\main\php\web\sandbox;
 
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
-//include_once html_paths::GROUP . 'group.php';
 //include_once html_paths::HELPER . 'config.php';
 //include_once html_paths::RESULT . 'result.php';
 include_once html_paths::SANDBOX . 'sandbox_list.php';
@@ -54,7 +53,6 @@ include_once html_paths::SHARED_HELPER . 'TextIdObject.php';
 include_once html_paths::SHARED_HELPER . 'CombineObject.php';
 include_once html_paths::SHARED_HELPER . 'Message.php';
 
-use Zukunft\ZukunftCom\main\php\web\group\group;
 use Zukunft\ZukunftCom\main\php\web\helper\config;
 use Zukunft\ZukunftCom\main\php\web\html\rest_call;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
