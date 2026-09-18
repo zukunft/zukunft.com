@@ -611,14 +611,13 @@ class ref extends sandbox
      * @param string $form
      * @param string $pattern
      * @param source_list|null $src_lst the frontend cache with the configuration, the preloaded source and the cached objects
+     * @param bool $test_mode true to offer only the cached sources, because a snapshot is created without a backend call
      * @return string
      */
-    function source_selector(string $form, string $pattern, ?source_list $src_lst): string
+    function source_selector(string $form, string $pattern, ?source_list $src_lst, bool $test_mode = false): string
     {
-        // TODO review and maybe use test_mode parameter
-        if ($pattern != '') {
-            $src_lst->load_like($pattern);
-        }
+        $src_lst = $src_lst ?? new source_list();
+        $src_lst->load_for_selector($pattern, $test_mode);
         return $src_lst->selector($form, $this->id(), url_var::SOURCE, msg_id::FORM_SELECT_SOURCE);
     }
 

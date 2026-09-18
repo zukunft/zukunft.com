@@ -1545,7 +1545,8 @@ class system_form extends component
         // guarded by class, because only a code id object has a code id and a mis-assigned
         // seed component must not stop the page with a fatal
         if ($dbo instanceof sandbox_code_id) {
-            if ($ui_sys?->usr?->can_see_code_id() ?? false) {
+            // read with ?? first, because a method call after ?-> does not guard an unset typed property
+            if (($ui_sys->usr ?? null)?->can_see_code_id() ?? false) {
                 if ($ui_sys->usr->can_set_code_id()) {
                     $result = $this->form_field_tracked(
                         url_var::CODE_ID,
@@ -1582,7 +1583,8 @@ class system_form extends component
         // guarded by class, because only a component has ui message links and a mis-assigned
         // seed component must not stop the page with a fatal
         if ($dbo instanceof component) {
-            if ($ui_sys?->usr?->can_see_code_id() ?? false) {
+            // read with ?? first, because a method call after ?-> does not guard an unset typed property
+            if (($ui_sys->usr ?? null)?->can_see_code_id() ?? false) {
                 $val_exp = $dbo->ui_msg_value_exception;
                 if ($ui_sys->usr->can_set_code_id()) {
                     $result = $this->form_field_tracked(
@@ -2370,11 +2372,18 @@ class system_form extends component
      * @param string $form_name the name of the view which is also used for the html form name
      * @param source_list|null $src_lst the frontend cache with the configuration, the preloaded source and the cached objects
      * @param string $pattern the selection pattern to filter a selection
+     * @param bool $test_mode true to offer only the cached sources, because a snapshot is created without a backend call
      * @return string the html code to select the source
      */
-    function form_source(db_object $dbo, string $form_name, ?source_list $src_lst, string $pattern = ''): string
+    function form_source(
+        db_object    $dbo,
+        string       $form_name,
+        ?source_list $src_lst,
+        string       $pattern = '',
+        bool         $test_mode = false
+    ): string
     {
-        return $dbo->source_selector($form_name, $pattern, $src_lst);
+        return $dbo->source_selector($form_name, $pattern, $src_lst, $test_mode);
     }
 
     /**
@@ -2382,11 +2391,12 @@ class system_form extends component
      * @param db_object $dbo the frontend phrase object with the type used until now
      * @param string $form_name the name of the view which is also used for the html form name
      * @param source_list|null $src_lst the frontend cache with the configuration, the preloaded types and the cached objects
+     * @param bool $test_mode true to offer only the cached sources, because a snapshot is created without a backend call
      * @return string the html code to select the source
      */
-    function form_sources(db_object $dbo, string $form_name, ?source_list $src_lst): string
+    function form_sources(db_object $dbo, string $form_name, ?source_list $src_lst, bool $test_mode = false): string
     {
-        return $dbo->source_selector($form_name, '', $src_lst);
+        return $dbo->source_selector($form_name, '', $src_lst, $test_mode);
     }
 
     /**

@@ -771,6 +771,7 @@ messages:
   verb_del: "Verb löschen"
   value_add: "neuen Wert hinzufügen"
   value_add_blocked: "bitte melden Sie sich an, um Werte hinzuzufügen"
+  change_login_required: "bitte melden Sie sich an, um die Daten zu ändern"
   value_add_similar: "neuen Wert hinzufügen ähnlich zu"
   value_edit: "Wert ändern"
   value_del: "Wert löschen"

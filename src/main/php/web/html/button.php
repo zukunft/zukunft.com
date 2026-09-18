@@ -118,11 +118,22 @@ class button
     /**
      * same as html but the bootstrap version
      */
-    private function html_fa(string $icon): string
+    private function html_fa(string $icon, string $style = ''): string
     {
         $html = new html_base();
         $inner = '<' . html_base::I . ' ' . html_base::CLASS_HTML . '="far ' . $icon . '"></' . html_base::I . '>';
-        return $html->ref($this->call, $inner, $this->title, '', true);
+        return $html->ref($this->call, $inner, $this->title, $style, true);
+    }
+
+    /**
+     * an add or edit button, which is grey with a login request for a user without login (see html_base::change_icon)
+     * @param string $icon the font awesome icon of the button
+     * @return string the html code of the button
+     */
+    private function change_fa(string $icon): string
+    {
+        [$style, $this->title] = new html_base()->change_style_and_tip('', $this->title);
+        return $this->html_fa($icon, $style);
     }
 
     private function set_ui_msg(msg_id $ui_msg_id, string $explain = ''): void
@@ -143,13 +154,13 @@ class button
     function add(msg_id $ui_msg_id, string $explain = ''): string
     {
         $this->set_ui_msg($ui_msg_id, $explain);
-        return $this->html_fa(self::IMG_ADD_FA);
+        return $this->change_fa(self::IMG_ADD_FA);
     } // an add button to create a new entry
 
     function edit(msg_id $ui_msg_id, string $explain = ''): string
     {
         $this->set_ui_msg($ui_msg_id, $explain);
-        return $this->html_fa(self::IMG_EDIT_FA);
+        return $this->change_fa(self::IMG_EDIT_FA);
     } // an edit button to adjust an entry
 
     function del(msg_id $ui_msg_id, string $explain = ''): string

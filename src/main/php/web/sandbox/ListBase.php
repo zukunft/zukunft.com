@@ -99,6 +99,8 @@ class ListBase extends ListOfIdObjects
     const int CODE_ID_NOT_FOUND = -1;
     // extra entry used in a selection to separate the highlighted entries from the sorted entries
     const string SELECT_SEPARATOR = ' --- ';
+    // the sql like wildcard as a load_like pattern, which the backend completes to select all objects
+    const string PATTERN_ALL = '%';
 
     private array $hash = []; // hash list with the code id for fast selection
 

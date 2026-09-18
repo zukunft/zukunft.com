@@ -782,8 +782,7 @@ class view extends view_exe
         $html = new html_base();
         $url = api::MAIN_SCRIPT . url_var::PAR . url_var::MASK . url_var::EQ . views::VIEW_EDIT_ID
             . url_var::ADD . url_var::ID . url_var::EQ . $this->id();
-        return $html->ref($url, $html->icon(icons::EDIT),
-            $this->tip(msg_id::BUTTON_VIEW_EDIT_TIP), '', true);
+        return $html->change_icon($url, icons::EDIT, $this->tip(msg_id::BUTTON_VIEW_EDIT_TIP), '');
     }
 
     /**

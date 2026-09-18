@@ -35,6 +35,7 @@ namespace Zukunft\ZukunftCom\test\php\unit;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_type_list.php';
 include_once paths::MODEL_VALUE . 'value_time_series.php';
 include_once paths::MODEL_VALUE . 'value_obj.php';
 include_once paths::SHARED_CONST . 'sources.php';
@@ -46,6 +47,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
@@ -170,6 +172,31 @@ class value_tests
         $val_filled = $val->clone_reset();
         $val_filled->fill($val, $t->usr1);
         $t->assert($test_name, $val_filled->grp()->name_given(), '');
+
+        // the description that the user types in the change value view is the description of the group
+        $t->subheader($ts . 'description');
+        $test_name = 'the description of the api json is the description of the group of the value';
+        $desc_json = $val->api_json_array([api_types::INCL_PHRASES], $msg);
+        $desc_json[json_fields::DESCRIPTION] = groups::TN_READ_COM;
+        $val_desc = new value($t->usr1);
+        $val_desc->api_mapper($desc_json, $msg);
+        $t->assert($test_name, $val_desc->grp()->get_description(), groups::TN_READ_COM);
+        $test_name = '... which is written to a new group row without the name generated from the phrases';
+        $grp_empty = $val_desc->grp()->clone_reset();
+        $fld_names = $val_desc->grp()->db_fields_changed($grp_empty, $msg, new sql_type_list([sql_type::INSERT]))->names();
+        $t->assert_true($test_name, in_array(fields::FLD_DESCRIPTION, $fld_names));
+        $t->assert_false($test_name, in_array(group_fields::FLD_NAME, $fld_names));
+        $test_name = 'a group that carries neither a given name nor a description differs from the stored group';
+        $grp_db = $t_val->value($msg)->grp();
+        $grp_db->set_description(groups::TN_READ_COM);
+        $grp_req = $val->grp();
+        $t->assert_false($test_name, $grp_req->no_diff($grp_db, $msg));
+        $test_name = '... but keeps both, because the save fills it from the stored group first';
+        $grp_req->fill($grp_db, $t->usr1);
+        $fld_names = $grp_req->db_fields_changed($grp_db, $msg, new sql_type_list([sql_type::UPDATE]))->names();
+        $t->assert_false($test_name, in_array(group_fields::FLD_NAME, $fld_names));
+        $t->assert_false($test_name, in_array(fields::FLD_DESCRIPTION, $fld_names));
+        $msg->reset();
 
         $t->subheader($ts . 'union row mapping');
         // a value list is loaded with one union query over the prime, most and big value tables

@@ -519,6 +519,17 @@ class value_write_tests
         $unnamed_grp->load_by_id($phr_grp2->id(), $msg);
         $t->assert_false($test_name, $unnamed_grp->is_saved());
         $msg->reset();
+        $test_name = 'the description changed in the change value view is written to the group row';
+        $named_val->set_description(groups::TN_READ_COM);
+        $named_val->save($msg);
+        $t->assert_msg($test_name, $msg);
+        $msg->reset();
+        $test_name = '... and keeps the given group name';
+        $db_grp = new group($t->usr1);
+        $db_grp->load_by_id($named_grp->id(), $msg);
+        $t->assert($test_name, $db_grp->get_description(), groups::TN_READ_COM);
+        $t->assert($test_name, $db_grp->name_given(), groups::TN_VALUE_ADD);
+        $msg->reset();
         // the value cleanup deletes the value but not its named group and a change log entry
         // must never point to a deleted group row
         $t->cleanup_change_log_group($db_grp, [groups::TN_VALUE_ADD, $named_phr_names]);

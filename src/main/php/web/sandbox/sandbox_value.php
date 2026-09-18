@@ -160,6 +160,10 @@ class sandbox_value extends sandbox
             if (array_key_exists(url_var::GROUP_NAME, $url_array)) {
                 $this->grp->set_name($url_array[url_var::GROUP_NAME]);
             }
+            // the description of the value, which is the description of its group
+            if (array_key_exists(url_var::DESCRIPTION, $url_array)) {
+                $this->grp->set_description($url_array[url_var::DESCRIPTION]);
+            }
             if (array_key_exists(url_var::NUMERIC_VALUE, $url_array)) {
                 $number = $url_array[url_var::NUMERIC_VALUE];
                 // a typed text would fatal on the float property, so it is reported instead

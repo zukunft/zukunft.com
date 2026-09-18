@@ -447,8 +447,9 @@ class html_base
             $result .= $this->list_item($usr_label) . "\n";
         }
         if ($usr_name !== null) {
-            // logout acts on a plain get, so the link carries the anti-csrf token (see request_token_valid)
-            $url_logout = $this->url_with_token($this->url_with_back(api::LOGOUT_SCRIPT, $url_array));
+            // logout acts on a plain get, so the link carries the anti-csrf token (see request_token_valid);
+            // the back target is the last normal page, so the back button of the logout page never repeats a change
+            $url_logout = $this->url_with_token($this->url_with_back(api::LOGOUT_SCRIPT, self::normal_page_array($url_array)));
             $result .= $this->list_item($this->ref($url_logout, $mtr->txt(msg_id::NAVBAR_LOGOUT))) . "\n";
         } else {
             // a page that itself carries a '9'-prefixed back target (e.g. the logout page, see
@@ -686,6 +687,49 @@ class html_base
     }
 
     /**
+     * an icon link that starts an add or an edit; a user without login gets the icon greyed out with a
+     * tooltip that asks for a login, but the icon stays a link, so pressing it shows the reason of the backend
+     *
+     * @param string $url the url that the icon opens
+     * @param string $icon the icon css class from web/const/icons.php e.g. icons::EDIT
+     * @param string $tooltip the translated tooltip for a user who can save the change
+     * @param string $style the css class of the icon link e.g. styles::FORM_ICON_INLINE
+     * @return string the html code of the icon link
+     */
+    function change_icon(string $url, string $icon, string $tooltip, string $style = styles::HEADING_ICON_INLINE): string
+    {
+        [$style, $tooltip] = $this->change_style_and_tip($style, $tooltip);
+        return $this->ref($url, $this->icon($icon), $tooltip, $style, true);
+    }
+
+    /**
+     * @param string $style the css class of an add or edit icon link
+     * @param string $tooltip the translated tooltip for a user who can save the change
+     * @return array the css class and the tooltip, for a user without login grey and with the request to log in
+     */
+    function change_style_and_tip(string $style, string $tooltip): array
+    {
+        global $mtr;
+        if (self::change_blocked()) {
+            $style = trim($style . ' ' . styles::STYLE_GREY);
+            $tooltip .= ': ' . $mtr->txt(msg_id::CHANGE_LOGIN_REQUIRED);
+        }
+        return [$style, $tooltip];
+    }
+
+    /**
+     * @return bool true if the requesting user is not logged in and therefore cannot save a change (see
+     *              user::is_blocked); without a request cache the user is unknown and treated as not blocked
+     */
+    static function change_blocked(): bool
+    {
+        global $ui_sys;
+        // read with ?? first, because a method call after ?-> does not guard an unset typed property
+        $usr = $ui_sys->usr ?? null;
+        return $usr?->is_blocked() ?? false;
+    }
+
+    /**
      * the html of a font awesome icon
      * @param string $icon the icon css class from web/const/icons.php e.g. icons::PASSWORD_SHOW
      * @param string $class_add an additional css class e.g. to toggle the icon visibility via css
@@ -912,6 +956,61 @@ class html_base
     static function back_url_array(array $url_arr): array
     {
         return self::prefixed_url_array(self::page_url_array($url_arr), url_var::BACK);
+    }
+
+    /**
+     * the page params of the last normal view page, e.g. as the back target of the logout page:
+     * the page itself or, for an add, edit, del or confirm page, the page it has been opened from
+     * or else the default view of its object, because returning to a change form would repeat the change
+     *
+     * @param array $url_arr the url params of the calling page
+     * @return array the page params of the normal page, empty for the start page
+     */
+    static function normal_page_array(array $url_arr): array
+    {
+        $page_arr = self::page_url_array($url_arr);
+        $msk_id = (int)($page_arr[url_var::MASK] ?? 0);
+        if (!self::is_change_mask($msk_id)) {
+            return $page_arr;
+        }
+        $back_arr = self::page_url_array(self::url_par_from_back_part($url_arr));
+        $back_msk_id = (int)($back_arr[url_var::MASK] ?? 0);
+        if ($back_arr != [] and !self::is_change_mask($back_msk_id)) {
+            $result = $back_arr;
+        } else {
+            $result = self::object_page_array($url_arr, $msk_id);
+        }
+        return $result;
+    }
+
+    /**
+     * @param int $msk_id the id of the view mask
+     * @return bool true if the mask adds, changes or deletes an object or confirms such a change
+     */
+    private static function is_change_mask(int $msk_id): bool
+    {
+        return (in_array($msk_id, views::CHANGE_MASKS_IDS) or in_array($msk_id, views::CONFIRM_MASKS_IDS));
+    }
+
+    /**
+     * @param array $url_arr the url params of an add, edit, del or confirm page
+     * @param int $msk_id the id of the change mask, which a confirm page replaces by its origin mask
+     * @return array the page params of the default view of the changed object, empty if it is unknown
+     */
+    private static function object_page_array(array $url_arr, int $msk_id): array
+    {
+        $msk = new views();
+        $chg_msk_id = (int)($url_arr[url_var::ORIGIN_MASK] ?? $msk_id);
+        $id = $url_arr[url_var::ID] ?? '';
+        $result = [];
+        // the origin mask is url input, so only a known change mask is resolved
+        if (in_array($chg_msk_id, views::CHANGE_MASKS_IDS) and $id != '' and $id != '0') {
+            $base_code_id = $msk->system_to_base($msk->id_to_code_id($chg_msk_id));
+            if ($base_code_id != '') {
+                $result = [url_var::MASK => $msk->code_id_to_id($base_code_id), url_var::ID => $id];
+            }
+        }
+        return $result;
     }
 
     /**

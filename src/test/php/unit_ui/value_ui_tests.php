@@ -56,10 +56,12 @@ use Zukunft\ZukunftCom\main\php\shared\helper\Config as shared_config;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
+use Zukunft\ZukunftCom\main\php\web\ref\source_list as source_list_ui;
 use Zukunft\ZukunftCom\main\php\web\result\result_list;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\web\value\value;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\source_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\value_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\groups;
@@ -193,6 +195,24 @@ class value_ui_tests
         $val->url_mapper([url_var::PHRASE_LIST => (string)word_names::ZH_ID], $msg_ui, $cache_dto);
         $grp_field = new system_form()->form_field_group_or_phrases($val, '');
         $t->assert_text_not_contains($test_name, $grp_field, html_base::VALUE . '="');
+        $test_name = 'the description of the url is the description of the group of the value';
+        $val = $t_val->value_add_ui();
+        $val->url_mapper([url_var::DESCRIPTION => groups::TN_READ_COM], $msg_ui);
+        $t->assert($test_name, $val->get_description(), groups::TN_READ_COM);
+        $test_name = '... which is sent to the backend';
+        $t->assert($test_name, $val->api_array([], $msg_ui)[json_fields::DESCRIPTION] ?? '', groups::TN_READ_COM);
+        $test_name = '... and shown as a change in the confirm view';
+        $t->assert($test_name, $val->db_fld_to_url()[fields::FLD_DESCRIPTION] ?? '', url_var::DESCRIPTION);
+        $test_name = 'the description of the api json is shown again in the change value view';
+        $desc_json = $t_val->value_pi_math()->api_json_array([api_types::INCL_PHRASES], $msg);
+        $desc_json[json_fields::DESCRIPTION] = groups::TN_READ_COM;
+        $val = new value(json_encode($desc_json));
+        $t->assert($test_name, $val->get_description(), groups::TN_READ_COM);
+        $test_name = 'the title of the confirm view repeats the phrases of the value as links like the value page';
+        $val = new value($t_val->value_pi_math()->api_json([api_types::INCL_PHRASES]));
+        $cfm_title = new ui_preview()->popup_title(views::CONFIRM_EDIT, msg_id::SYSTEM_TITLE_OBJECT_NAMED_UPDATE,
+            $val, [], $msg_ui, true);
+        $t->assert_text_contains($test_name, $cfm_title, $val->grp->phrase_link_list());
 
         // the frontend type of the user decides which view adds a value
         $t->subheader($ts . 'add value view');
@@ -555,6 +575,16 @@ class value_ui_tests
         $t_src = new test_sources($t);
         $val_src = $t_val->value_form_ui($msg);
         $sel_html = $val_src->source_selector(views::VALUE_EDIT, '', $t_src->source_list_ui());
+
+        // without typed chars the selector offers the cached sources or else all sources of the database
+        $test_name = 'the source selector keeps the sources of the request cache';
+        $src_lst = $t_src->source_list_ui();
+        $src_lst->load_for_selector('', true);
+        $t->assert($test_name, $src_lst->count(), $t_src->source_list_ui()->count());
+        $test_name = '... and an empty cache stays empty in a test, because a snapshot never calls the backend';
+        $src_lst = new source_list_ui();
+        $src_lst->load_for_selector('', true);
+        $t->assert_true($test_name, $src_lst->is_empty());
 
         $test_name = 'the source selector links to the add source view';
         $t->assert_text_contains($test_name, $sel_html, url_var::MASK . '=' . views::SOURCE_ADD_ID);

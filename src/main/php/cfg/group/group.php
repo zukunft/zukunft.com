@@ -2119,7 +2119,9 @@ class group extends sandbox_multi
 
         $lst = new sql_par_field_list();
 
-        if ($sbx->name() <> $this->name()) {
+        // only a name given by a user is written, because name() falls back to the name generated from the
+        // phrases, which would be loaded as a given name; that a request keeps the stored name is done by fill
+        if ($sbx->name_given() <> $this->name_given()) {
             if ($sc_par_lst->incl_log()) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . group_fields::FLD_NAME,
@@ -2129,7 +2131,7 @@ class group extends sandbox_multi
             }
             $lst->add_field(
                 group_fields::FLD_NAME,
-                $this->name(),
+                $this->name_given(),
                 group_db::FLD_NAME_SQL_TYP
             );
         }

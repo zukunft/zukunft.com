@@ -71,6 +71,7 @@ use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\web\verb\verb_list as verb_list_ui;
 use Zukunft\ZukunftCom\main\php\web\component\component_exe as component_ui;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
+use Zukunft\ZukunftCom\main\php\web\component\execute\system_page;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_base;
 use Zukunft\ZukunftCom\main\php\web\const\icons;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
@@ -104,6 +105,7 @@ class base_ui_tests
 {
     function run(test_cleanup $t): void
     {
+        global $mtr;
 
         $lib = new library();
         $html = new html_base();
@@ -290,6 +292,38 @@ class base_ui_tests
         $test_name = '... and never the logout page as its own back target';
         $t->assert_text_not_contains($test_name, $navbar_logout_page,
             api::LOGIN_SCRIPT . '&amp;' . url_var::BACK . url_var::MASK . '=' . views::LOGOUT_ID);
+
+        // the back button of the logout page returns to the last normal page and never to a change form
+        $test_name = 'the last normal page of a normal page is the page itself';
+        $val_page = [url_var::MASK => views::VALUE_DEFAULT_ID, url_var::ID => values::PI_ID];
+        $val_url = $html->page_url($val_page);
+        $t->assert($test_name, $html->page_url(html_base::normal_page_array($val_page)), $val_url);
+        $test_name = '... of a confirm page is the page it has been opened from';
+        $cfm_page = [
+            url_var::MASK => views::CONFIRM_EDIT_ID,
+            url_var::ID => values::PI_ID,
+            url_var::ORIGIN_MASK => views::VALUE_EDIT_ID,
+            url_var::BACK . url_var::MASK => views::VALUE_DEFAULT_ID,
+            url_var::BACK . url_var::ID => values::PI_ID
+        ];
+        $t->assert($test_name, $html->page_url(html_base::normal_page_array($cfm_page)), $val_url);
+        $test_name = '... and of a change form without a back target the default view of its object';
+        $edit_page = [url_var::MASK => views::VALUE_EDIT_ID, url_var::ID => values::PI_ID];
+        $t->assert($test_name, $html->page_url(html_base::normal_page_array($edit_page)), $val_url);
+        $test_name = 'the logout link of a confirm page points back to the last normal page';
+        $navbar_cfm = $html->navbar(views::CONFIRM_EDIT_ID, $cfm_page, 'test user');
+        // only the logout link is checked, because e.g. the settings link returns to the confirm page itself
+        $logout_back = api::LOGOUT_SCRIPT . '&amp;' . url_var::BACK . url_var::MASK . '=';
+        $t->assert_text_contains($test_name, $navbar_cfm, $logout_back . views::VALUE_DEFAULT_ID);
+        $t->assert_text_not_contains($test_name, $navbar_cfm, $logout_back . views::CONFIRM_EDIT_ID);
+        $test_name = 'the logout page shows a back button to the last normal page';
+        $logout_body = new system_page()->logout_body([
+            url_var::MASK => views::LOGOUT_ID,
+            url_var::BACK . url_var::MASK => views::VALUE_EDIT_ID,
+            url_var::BACK . url_var::ID => values::PI_ID
+        ]);
+        $t->assert_text_contains($test_name, $logout_body, htmlspecialchars($val_url));
+        $t->assert_text_contains($test_name, $logout_body, $mtr->txt(msg_id::FORM_FIELD_BACK));
 
         $test_name = 'on a normal page the login link uses the page as the back target';
         $navbar_normal_page = $html->navbar(views::WORD_ID, [

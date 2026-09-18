@@ -58,4 +58,24 @@ class source_list extends ListBase
         return parent::api_mapper_list($json_array, new source());
     }
 
+
+    /*
+     * load
+     */
+
+    /**
+     * fill the list for a source selector: the sources that match the typed chars, or all sources of the
+     * database if nothing is typed and the request cache has none, so that the selector is never empty
+     * @param string $pattern the chars typed by the user to filter the sources, empty to offer all sources
+     * @param bool $test_mode true to use only the cached sources, because a snapshot is created without a backend call
+     */
+    function load_for_selector(string $pattern, bool $test_mode = false): void
+    {
+        if ($pattern != '') {
+            $this->load_like($pattern);
+        } elseif ($this->is_empty() and !$test_mode) {
+            $this->load_like(self::PATTERN_ALL);
+        }
+    }
+
 }

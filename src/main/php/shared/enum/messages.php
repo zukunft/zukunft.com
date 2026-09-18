@@ -1796,6 +1796,8 @@ enum messages: string
     case VALUE_ADD = 'value_add';
     // the tooltip of the greyed out value add icon of a user who cannot save a change
     case VALUE_ADD_BLOCKED = 'value_add_blocked';
+    // added to the tooltip of a greyed out add or edit icon of a user without login (see html_base::change_icon)
+    case CHANGE_LOGIN_REQUIRED = 'change_login_required';
     case VALUE_ADD_SIMILAR = 'value_add_similar';
     case VALUE_EDIT = 'value_edit';
     case VALUE_DEL = 'value_del';

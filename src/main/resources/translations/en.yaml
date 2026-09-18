@@ -371,6 +371,7 @@ messages:
   verb_del: "delete verb"
   value_add: "add new value"
   value_add_blocked: "please log in to add values"
+  change_login_required: "please log in to change the data"
   value_add_similar: "add new value similar to"
   value_edit: "change value"
   value_del: "delete value"

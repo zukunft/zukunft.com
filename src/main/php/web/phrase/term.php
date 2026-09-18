@@ -36,6 +36,7 @@ namespace Zukunft\ZukunftCom\main\php\web\phrase;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
+include_once html_paths::CONST . 'icons.php';
 include_once html_paths::SANDBOX . 'combine_named.php';
 include_once html_paths::SHARED . 'api.php';
 include_once html_paths::SHARED . 'url_var.php';
@@ -55,6 +56,7 @@ include_once html_paths::SHARED . 'json_fields.php';
 include_once html_paths::SHARED . 'library.php';
 include_once html_paths::SHARED_CONST . 'views.php';
 
+use Zukunft\ZukunftCom\main\php\web\const\icons;
 use Zukunft\ZukunftCom\main\php\web\formula\formula;
 use Zukunft\ZukunftCom\main\php\web\html\button;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
@@ -584,8 +586,7 @@ class term extends combine_named
             $html->url_back($this->edit_view_id(), $this->obj_id()),
             $url_array
         );
-        $icon = '<' . html_base::I . ' ' . html_base::CLASS_HTML . '="fas fa-edit"></' . html_base::I . '>';
-        return $html->ref($url, $icon, $mtr->txt($this->obj()::MSG_EDIT), '', true);
+        return $html->change_icon($url, icons::EDIT, $mtr->txt($this->obj()::MSG_EDIT), '');
     }
 
     /**

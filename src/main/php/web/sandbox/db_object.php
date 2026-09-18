@@ -580,8 +580,7 @@ class db_object extends TextIdObject
             $html->url_back($this::VIEW_EDIT_ID, $this->id()),
             $url_array
         );
-        $icon = '<' . html_base::I . ' ' . html_base::CLASS_HTML . '="' . icons::EDIT . '"></' . html_base::I . '>';
-        return $html->ref($url, $icon, $mtr->txt($this::MSG_EDIT), styles::HEADING_ICON_INLINE, true);
+        return $html->change_icon($url, icons::EDIT, $mtr->txt($this::MSG_EDIT));
     }
 
     /**
@@ -1350,9 +1349,10 @@ class db_object extends TextIdObject
      * @param string $form the name of the html form
      * @param string $pattern
      * @param source_list|null $src_lst the frontend cache with the configuration, the preloaded source and the cached objects
+     * @param bool $test_mode true to offer only the cached sources, because a snapshot is created without a backend call
      * @return string the html code to select a source
      */
-    public function source_selector(string $form, string $pattern, ?source_list $src_lst): string
+    public function source_selector(string $form, string $pattern, ?source_list $src_lst, bool $test_mode = false): string
     {
         return $this->selector_not_defined('source_selector');
     }

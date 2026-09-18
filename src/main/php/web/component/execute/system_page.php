@@ -391,17 +391,23 @@ class system_page extends component
     }
 
     /**
-     * HTML shown on the logout confirmation page
+     * HTML shown on the logout confirmation page with a button back to the last normal page seen before
+     * the logout, which the logout link has set as the '9'-prefixed back target (see html_base::normal_page_array)
+     * @param array $url_arr the url of the logout page with the '9'-prefixed back target
      * @return string the logout page body HTML
      */
-    function logout_body(): string
+    function logout_body(array $url_arr = []): string
     {
         global $mtr;
 
         $html = new html_base();
+        // normalized again, because a logout url from elsewhere may point back to a change form
+        $back_url = $html->page_url(html_base::normal_page_array(html_base::url_par_from_back_part($url_arr)));
+        $back_btn = $html->ref($back_url, $mtr->txt(msg_id::FORM_FIELD_BACK), '',
+            html_base::BS_BTN . ' ' . html_base::BS_BTN_CANCEL);
         $result = $html->logo_flex();
         $result .= $html->br2();
-        $result .= $html->div($html->p($mtr->txt(msg_id::LOGOUT_NOTICE)), html_base::CLASS_INPUT_SECTION);
+        $result .= $html->div($html->p($mtr->txt(msg_id::LOGOUT_NOTICE)) . $back_btn, html_base::CLASS_INPUT_SECTION);
         return $result;
     }
 

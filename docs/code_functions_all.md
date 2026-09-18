@@ -6910,6 +6910,10 @@
             html/html_base.php
     \-- icon_link - section for function icon_link not yet defined that it should be wrapper for the basic html elements
              used in /html/html_base.php
+    \-- change_icon - section for function change_icon not yet defined that it should be wrapper for the basic html elem
+            ents used in /html/html_base.php
+    \-- change_style_and_tip - section for function change_style_and_tip not yet defined that it should be wrapper for t
+            he basic html elements used in /html/html_base.php
     \-- icon_with_title - section for function icon_with_title not yet defined that it should be wrapper for the basic h
             tml elements used in /html/html_base.php
     \-- sup - section for function sup not yet defined that it should be wrapper for the basic html elements used in /ht
@@ -8630,6 +8634,9 @@
     \-- load_fallback
         \-- change_log_list - if the change log list is empty fill it with the last changes
         \-- phrase_list - if the phrase list is empty fill it with some general suggested phrases
+    \-- load_for_selector
+        \-- source_list - fill the list for a source selector: the sources that match the typed chars,
+                 or all sources of the
     \-- load_by_formula_and_group_list
         \-- result_list - load all a result by the phrase group id and time phrase
     \-- load_by_formula
@@ -8693,7 +8700,8 @@
     \-- reset_body
         \-- system_page - build the password reset request form HTML
     \-- logout_body
-        \-- system_page - HTML shown on the logout confirmation page
+        \-- system_page - HTML shown on the logout confirmation page with a button back to the last normal page seen bef
+                ore
     \-- body_search
         \-- system_page - the HTML code to show the search results with words, verbs, triple, formulas
     \-- body_search_full
@@ -9520,6 +9528,10 @@
         \-- html_base - the html code of a font icon (e.g. Font Awesome) as an empty paired <i> tag
     \-- icon_link
         \-- html_base - an icon that links to a view of an object, e.g. the edit and the delete icon of a component
+    \-- change_icon
+        \-- html_base - an icon link that starts an add or an edit; a user without login gets the icon greyed out with a
+    \-- change_style_and_tip
+        \-- html_base - @param string $style the css class of an add or edit icon link
     \-- icon_with_title
         \-- html_base - the html of a font awesome icon
     \-- sup
