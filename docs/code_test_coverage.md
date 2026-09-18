@@ -4447,7 +4447,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- esc - 1 unit test calls
     \-- footer_html - 0 unit test calls
     \-- form - 0 unit test calls
-    \-- form_end - 1 unit test calls shared by 2 classes
+    \-- form_end - 2 unit test calls shared by 2 classes
     \-- form_end_with_submit - 0 unit test calls
     \-- form_field_id - 0 unit test calls
     \-- form_input - 0 unit test calls
@@ -4920,7 +4920,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- form_components - 0 unit test calls
     \-- form_confirm - 0 unit test calls
     \-- form_description - 0 unit test calls
-    \-- form_end - 1 unit test calls shared by 2 classes
+    \-- form_end - 2 unit test calls shared by 2 classes
     \-- form_field_component_link_order_number - 0 unit test calls
     \-- form_field_doi - 0 unit test calls
     \-- form_field_formula_link_priority - 0 unit test calls

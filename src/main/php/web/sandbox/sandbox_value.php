@@ -278,6 +278,7 @@ class sandbox_value extends sandbox
             }
         }
     }
+
     /**
      * @return bool true if the phrases of the value are loaded with their names, so they can be shown as links
      *              e.g. in the form title; a value filled from the url only carries the phrase ids

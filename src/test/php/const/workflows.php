@@ -287,7 +287,7 @@ class workflows
     // the add_value workflow name used for the snapshot folder and the test subheader:
     // a value is added with the pure html view without any preset phrase, so the user selects the
     // two phrases one after the other, enters the number and the add button writes the value
-    // without a confirm view (see ui_select::value_number_form)
+    // without a confirm view (see ui_select::value_add_fields)
     const string WF_ADD_VALUE = 'add_value';
     // the id of the current add_value workflow; increase it to add the next snapshot set
     const int WF_ADD_VALUE_NBR = 31;

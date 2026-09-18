@@ -224,8 +224,16 @@ class value_ui_tests
         $t->assert_text_not_contains($test_name, $city_html, html_base::BS_BTN . ' ' . html_base::BS_ALIGN_BOTTOM);
         $test_name = '... and the number of the value can be entered directly';
         $t->assert_text_contains($test_name, $city_html, 'name="' . url_var::NUMERIC_VALUE . '"');
-        $test_name = '... in the line of the phrase field, but posted with the number form';
-        $t->assert_text_contains($test_name, $city_html, 'form="' . $steps_form . ui_select::VALUE_FORM_SUFFIX . '"');
+        $test_name = '... in the one form of the view, so a find and next posts the typed value';
+        // the selectors name the form of the view, so only a form attribute of another form is a second form
+        $view_form_attr = ' ' . html_base::FORM . '="' . $steps_form . '"';
+        $other_forms_html = str_replace($view_form_attr, '', $city_html);
+        $t->assert_text_not_contains($test_name, $other_forms_html, ' ' . html_base::FORM . '="');
+        $t->assert_text_not_contains($test_name, $city_html, $html->form_end());
+        $test_name = '... which the refreshed form shows again';
+        $typed_steps_url = $city_url + [url_var::NUMERIC_VALUE => (string)values::SAMPLE_INT];
+        $typed_steps_html = $select->phrase_steps($steps_form, $typed_steps_url, $cancel, $msg_ui, $steps_dto, true);
+        $t->assert_text_contains($test_name, $typed_steps_html, 'value="' . values::SAMPLE_INT . '"');
         $test_name = '... beside the selector of the value type with the width of a button';
         $type_sel = '<div class="form-group ' . view_styles::COL_SM_1 . '">';
         $t->assert_text_contains($test_name, $city_html, $type_sel);
@@ -238,10 +246,8 @@ class value_ui_tests
         $text_html = $select->phrase_steps($steps_form, $text_url, $cancel, $msg_ui, $steps_dto, true);
         $t->assert_text_contains($test_name, $text_html, 'name="' . url_var::VALUE_TEXT . '"');
         $t->assert_text_not_contains($test_name, $text_html, 'name="' . url_var::NUMERIC_VALUE . '"');
-        $test_name = '... and the number form posts the selected type with the value, so a rejected add keeps the text field';
-        $text_hidden = $html->form_hidden(url_var::VALUE_TYPE, value_types::TEXT->value);
-        $t->assert_text_contains($test_name, $text_html, $text_hidden);
-        $t->assert_text_not_contains($test_name, $city_html, $text_hidden);
+        $test_name = '... and the type selector is posted with the value, so it is not repeated as a hidden field';
+        $t->assert_text_not_contains($test_name, $text_html, $html->form_hidden(url_var::VALUE_TYPE, value_types::TEXT->value));
         $test_name = 'an unknown value type falls back to the number field';
         $bad_type_url = $city_url + [url_var::VALUE_TYPE => 'no type'];
         $bad_type_html = $select->phrase_steps($steps_form, $bad_type_url, $cancel, $msg_ui, $steps_dto, true);
@@ -313,9 +319,8 @@ class value_ui_tests
         $t->assert_text_contains($test_name, $simple_html, $city_field);
         $test_name = '... has the number field';
         $t->assert_text_contains($test_name, $simple_html, 'name="' . url_var::NUMERIC_VALUE . '"');
-        $test_name = '... writes via the value add mask';
-        $add_mask = $html->form_hidden(url_var::MASK, (string)views::VALUE_ADD_DETAIL_ID);
-        $t->assert_text_contains($test_name, $simple_html, $add_mask);
+        $test_name = '... writes via its own add mask, because a second mask would change the view of a refresh';
+        $t->assert_text_not_contains($test_name, $simple_html, $html->form_hidden(url_var::MASK, (string)views::VALUE_ADD_DETAIL_ID));
         $test_name = '... without the confirm view';
         $confirmed = $html->form_hidden(url_var::STEP, url_var::STEP_CONFIRMED);
         $t->assert_text_contains($test_name, $simple_html, $confirmed);
@@ -342,10 +347,9 @@ class value_ui_tests
         $t->assert_text_contains($test_name, $line_html, $find_btn);
         $t->assert_text_contains($test_name, $line_html, 'name="' . url_var::VALUE_TYPE . '"');
         $t->assert_text_contains($test_name, $line_html, 'name="' . url_var::NUMERIC_VALUE . '"');
-        $test_name = '... posted with the detailed form itself instead of a number form';
-        $t->assert_text_not_contains($test_name, $line_html, 'form="' . $detail_form . ui_select::VALUE_FORM_SUFFIX . '"');
-        $t->assert_text_not_contains($test_name, $line_html, $html->form_hidden(url_var::VALUE_TYPE, value_types::NUMBER->value));
-        $test_name = '... without a second form and without the buttons of the pure form';
+        $test_name = '... posted with the detailed form itself without the write vars of the pure form';
+        $t->assert_text_not_contains($test_name, $line_html, $html->form_hidden(url_var::STEP, url_var::STEP_CONFIRMED));
+        $test_name = '... and without the buttons of the pure form';
         $t->assert_text_not_contains($test_name, $line_html, $html->form_end());
         $t->assert_text_not_contains($test_name, $line_html, 'name="' . url_var::POST_SUBMIT . '"');
         $test_name = 'the detailed add form shows the value field also before a phrase is chosen';

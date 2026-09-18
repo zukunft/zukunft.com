@@ -103,7 +103,7 @@ class value_url_tests extends url_test_base
      *
      * the user opens the pure html add value view without any phrase, selects two phrases one after
      * the other and enters the number; the add button writes the value without a confirm view, so
-     * this workflow has no confirm step (see ui_select::value_number_form). snapshots go into
+     * this workflow has no confirm step (see ui_select::value_add_fields). snapshots go into
      * src/test/resources/web/html/workflow/add_value_wf<nbr>/ (see docs/llm/testing.md)
      *
      * @param int $wf_nbr the workflow id selecting the snapshot folder and file prefix e.g. 31 for wf31
@@ -394,7 +394,7 @@ class value_url_tests extends url_test_base
 
     /**
      * the last step of an add value workflow: the user enters the number and presses add, which
-     * writes the value directly and shows it with its default view (see ui_select::value_number_form)
+     * writes the value directly and shows it with its default view (see ui_select::value_add_fields)
      *
      * @param array $url_arr the url of the shown add value form
      * @param string $chosen_ids the ids of the phrases of the new value
@@ -404,7 +404,8 @@ class value_url_tests extends url_test_base
         $url_arr[url_var::PHRASE_LIST] = $chosen_ids;
         $url_arr[url_var::NUMERIC_VALUE] = values::SAMPLE_FLOAT;
         $url_arr[url_var::BACK . url_var::MASK] = views::VALUE_DEFAULT_ID;
-        $this->assert_step(workflows::CONFIRMED, $url_arr, views::VALUE_ADD_DETAIL_ID);
+        // the form posts the mask of the pure add view itself, which is an add mask like the detailed one
+        $this->assert_step(workflows::CONFIRMED, $url_arr, views::VALUE_ADD_NO_JS_ID);
     }
 
     /**
