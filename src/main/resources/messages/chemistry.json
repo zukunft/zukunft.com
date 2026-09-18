@@ -2354,44 +2354,52 @@
   "formulas": [
     {
       "name": "definition of molar mass",
+      "description": "the mass of one mole of a substance in grams per mole, the link between the mass that is weighed and the number of particles that react",
       "expression": "\"molar mass\" = \"mass\" / \"mole\"",
       "latex": "M = \\frac{m}{n}"
     },
     {
       "name": "definition of molarity",
+      "description": "the concentration of a solution as the amount of dissolved substance in moles per litre of solution, the most common concentration measure in the laboratory",
       "expression": "\"molarity\" = \"mole\" / \"volume\"",
       "latex": "c = \\frac{n}{V}"
     },
     {
       "name": "definition of molality",
+      "description": "the concentration of a solution as the amount of dissolved substance in moles per kilogram of solvent, which unlike the molarity does not change with the temperature",
       "expression": "\"molality\" = \"mole\" / \"mass\"",
       "latex": "b = \\frac{n}{m}"
     },
     {
       "name": "definition of Gibbs free energy",
+      "description": "the energy of a system that is available to do work at constant temperature and pressure; a reaction runs by itself if its Gibbs free energy decreases",
       "expression": "\"Gibbs free energy\" = \"enthalpy\" - \"temperature\" * \"entropy\"",
       "latex": "G = H - T \\cdot S"
     },
     {
       "name": "definition of pH",
+      "description": "the acidity of a solution as the negative decimal logarithm of the hydrogen ion concentration in moles per litre, so one pH step means ten times more or less acid",
       "expression": "\"pH\" = - log(\"hydrogen ion concentration\")",
       "latex": "\\text{pH} = -\\log_{10}[\\text{H}^+]",
       "assigned_word": "hydrogen ion concentration"
     },
     {
       "name": "definition of pOH",
+      "description": "the basicity of a solution as the negative decimal logarithm of the hydroxide ion concentration, the counterpart of the pH",
       "expression": "\"pOH\" = - log(\"hydroxide ion concentration\")",
       "latex": "\\text{pOH} = -\\log_{10}[\\text{OH}^-]",
       "assigned_word": "hydroxide ion concentration"
     },
     {
       "name": "definition of pKa",
+      "description": "the strength of an acid as the negative decimal logarithm of its dissociation constant; the lower the pKa the stronger the acid",
       "expression": "\"pKa\" = - log(\"acid dissociation constant\")",
       "latex": "\\mathrm{p}K_a = -\\log_{10} K_a",
       "assigned_word": "acid dissociation constant"
     },
     {
       "name": "self-ionization of water",
+      "description": "in water at 25 degrees Celsius the pH and the pOH always add up to 14, because the product of the hydrogen and the hydroxide ion concentrations is constant",
       "expression": "\"pH\" + \"pOH\" = 14",
       "latex": "\\text{pH} + \\text{pOH} = 14",
       "assigned": [
@@ -2401,6 +2409,7 @@
     },
     {
       "name": "definition of mass number",
+      "description": "the number of nucleons in an atomic nucleus, the protons given by the atomic number plus the neutrons, which distinguishes the isotopes of an element",
       "expression": "\"mass number\" = \"atomic number\" + \"neutron\"",
       "latex": "A = Z + N",
       "assigned_word": "atomic number"

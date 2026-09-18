@@ -6665,6 +6665,8 @@
             in /formula/formula.php
     \-- expression_link - section for function expression_link not yet defined that it should be overwrites in /formula/
             formula.php
+    \-- expression_named_link - section for function expression_named_link not yet defined that it should be overwrites 
+            in /formula/formula.php
     \-- need_all - section for function need_all not yet defined that it should be overwrites in /formula/formula.php
     \-- dsp_text - section for function dsp_text not yet defined that it should be to review in /formula/formula.php
     \-- is_special - section for function is_special is expected to be info in /formula/formula.php
@@ -6914,6 +6916,8 @@
     \-- icon_with_title - section for function icon_with_title not yet defined that it should be wrapper for the basic h
             tml elements used in /html/html_base.php
     \-- sup - section for function sup not yet defined that it should be wrapper for the basic html elements used in /ht
+            ml/html_base.php
+    \-- sub - section for function sub not yet defined that it should be wrapper for the basic html elements used in /ht
             ml/html_base.php
     \-- url_old - section for function url_old not yet defined that it should be wrapper for internal references used in
              the html code in /html/html_base.php
@@ -9523,6 +9527,8 @@
         \-- html_base - the html of a font awesome icon
     \-- sup
         \-- html_base - @param string $text the superscript text e.g. the exponent "2"
+    \-- sub
+        \-- html_base - @param string $text the subscript text e.g. the index "i"
 \-- wrapper for internal references used in the html code
     \-- url_old
         \-- html_base - build a url for link a zukunft.com element

@@ -222,11 +222,13 @@
   "formulas": [
     {
       "name": "PE Ratio",
+      "description": "the price earning ratio of a share, the share price divided by the earnings per share, a sample of a simple ratio calculation for the system tests",
       "expression": "= \"Share price\" / \"Earnings\"",
       "assigned_word": "Share"
     },
     {
       "name": "scale pence to Pound",
+      "description": "to convert amounts in pence to pounds sterling and the other way round, e.g. a share price quoted in pence on the London stock exchange",
       "expression": "\"Pound (sterling)\" = \"pence\" * 100",
       "assigned_word": "pence"
     }

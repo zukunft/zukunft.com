@@ -79,6 +79,18 @@ class formula_names
     // each term is wrapped in \text{} so the expression_latex_link component can link it; the
     // increase object page sample renders it without a term list, so without the term links
     const string INCREASE_LATEX = '\text{' . words::PERCENT . '} = \frac{ \text{' . word_names::THIS_NAME . '} - \text{' . word_names::PRIOR_NAME . '} }{ \text{' . word_names::PRIOR_NAME . '} }';
+    // a scaling formula (scaling.json) that the import file defines without a latex, so its
+    // latex is created by the import from the expression
+    const string SCALE_THOUSAND_TO_ONE = 'scale thousand to one';
+    // the latex of some propagation of uncertainty formulas (math_propagation_of_uncertainty.json)
+    // that use the latex markup beyond the fraction, e.g. the almost equal sign, the bars, the
+    // root, the function names, the sum sign and the subscripts, which the frontend renders as html
+    const string PROPAGATION_POWER = 'propagation for a power';
+    const string PROPAGATION_POWER_LATEX = '\text{sigma of f} \approx \left| \frac{\text{f} \cdot \text{b} \cdot \text{sigma of x}}{\text{x}} \right|';
+    const string STD_ERROR_OF_MEAN = 'standard error of the mean';
+    const string STD_ERROR_OF_MEAN_LATEX = '\text{sigma of f} = \frac{\text{sigma}}{\sqrt{\text{n}}}';
+    const string PROPAGATION_FIRST_ORDER = 'propagation to the first order';
+    const string PROPAGATION_FIRST_ORDER_LATEX = '\text{variance of f} \approx \sum_{i=1}^{n} \left( \frac{\partial \text{f}}{\partial \text{x}_i} \right)^2 \text{variance of x}_i';
     // the formulas of solution_prio.json: the three scaling formulas that convert a number of
     // the start page table to one and the sum that turns a percent loss into happy time points
     const string SCALE_MIO_TO_ONE = 'scale million to one';

@@ -542,6 +542,7 @@ messages:
   system_sub_title_value_usage: "z$VarUsage$z mal verwendet"
   system_sub_title_triples: "verwendet für"
   system_sub_title_description: "Beschreibung"
+  system_sub_title_expression: "Ausdruck"
   system_sub_title_references: "Referenzen"
   system_sub_title_values: "Werte"
   system_sub_title_formulas: "Formeln"

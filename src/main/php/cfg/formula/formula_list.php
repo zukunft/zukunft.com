@@ -969,10 +969,25 @@ class formula_list extends sandbox_list_named
     }
 
 
+    /**
+     * convert the expression of each formula to the database reference text and create the latex
+     * format of a formula that the import file does not give, so that every imported formula
+     * has a latex to show on its page; a latex given by the import file is kept as it is written,
+     * because it may use a math layout that the generator cannot create e.g. a root or a bar
+     * @param term_list $trm_lst the terms loaded until now to avoid database access where possible
+     * @param user_message $msg to collect the conversion problems
+     */
     private function refresh_ref_text(term_list $trm_lst, user_message $msg): void
     {
         foreach ($this->lst() as $frm) {
-            $frm->generate_ref_text($trm_lst, $msg);
+            // a local message, because the latex is created only if the terms of this formula
+            // have been resolved, which must not depend on a formula converted earlier
+            $frm_msg = new user_message($msg->usr); // merged into the caller message below
+            $frm->generate_ref_text($trm_lst, $frm_msg);
+            if ($frm_msg->is_ok() and ($frm->get_latex() == null or $frm->get_latex() == '')) {
+                $frm->update_latex($trm_lst);
+            }
+            $msg->merge($frm_msg);
         }
     }
 

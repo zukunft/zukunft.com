@@ -778,6 +778,7 @@
   "formulas": [
     {
       "name": "status quo harm weight formula",
+      "description": "the harm weight of the current internet use, the harm weight of the model scaled down by the overstimulation gap between the model and the real exposure",
       "expression": "\"status quo harm weight\" = \"model harm weight\" / \"overstimulation gap\"",
       "assigned": [
         "model harm weight",
@@ -786,6 +787,7 @@
     },
     {
       "name": "status quo harm per person formula",
+      "description": "the harm of the current internet use for one person in happy time points, the harm weight multiplied by the time of exposure",
       "expression": "\"status quo harm per person\" = \"status quo harm weight\" * \"exposure duration\"",
       "assigned": [
         "status quo harm weight",
@@ -794,6 +796,7 @@
     },
     {
       "name": "status quo total harm formula",
+      "description": "the harm of the current internet use for the whole population in happy time points, the harm per person multiplied by the number of people",
       "expression": "\"status quo total harm\" = \"status quo harm per person\" * \"population\"",
       "assigned": [
         "status quo harm per person",
@@ -802,6 +805,7 @@
     },
     {
       "name": "autonomy cost formula",
+      "description": "the welfare lost when people are restricted in their internet use, the harm weight of the restriction multiplied by the number of people and the time affected",
       "expression": "\"autonomy cost\" = \"harm weight\" * \"population\" * \"exposure duration\"",
       "assigned": [
         "harm weight",
@@ -811,6 +815,7 @@
     },
     {
       "name": "misuse expected value formula",
+      "description": "the expected harm of a misuse of the restriction, e.g. for censorship, the probability of the misuse multiplied by the harm if it happens",
       "expression": "\"misuse expected value\" = \"misuse probability\" * \"misuse harm\"",
       "assigned": [
         "misuse probability",
@@ -819,6 +824,7 @@
     },
     {
       "name": "rollback cost formula",
+      "description": "the total cost of rolling back the internet use, the lost autonomy plus the expected harm of misuse plus the cost of blocking content that should not be blocked",
       "expression": "\"rollback cost\" = \"autonomy cost\" + \"misuse expected value\" + \"overblocking cost\"",
       "assigned": [
         "autonomy cost",
@@ -828,6 +834,7 @@
     },
     {
       "name": "rollback net balance formula",
+      "description": "the net benefit of rolling back the internet use, the harm avoided minus the cost of the rollback; positive if the rollback pays off",
       "expression": "\"rollback net balance\" = \"status quo total harm\" - \"rollback cost\"",
       "assigned": [
         "status quo total harm",
@@ -836,6 +843,7 @@
     },
     {
       "name": "study cost in HTP formula",
+      "description": "the cost of a study to reduce the uncertainty converted from money to happy time points, so that it can be compared with the value of the information",
       "expression": "\"study cost\" = \"financial study cost\" / \"conversion ratio\"",
       "assigned": [
         "financial study cost",
@@ -844,6 +852,7 @@
     },
     {
       "name": "value of information formula",
+      "description": "the expected benefit of better information, the probability that the information changes the decision multiplied by the harm of the wrong decision that is avoided",
       "expression": "\"value of information\" = \"flip probability\" * \"avoided wrong decision\"",
       "assigned": [
         "flip probability",
@@ -852,6 +861,7 @@
     },
     {
       "name": "value of information ratio formula",
+      "description": "the benefit of a study per unit of its cost; a ratio above one means the study is worth doing before the decision",
       "expression": "\"value of information ratio\" = \"value of information\" / \"study cost\"",
       "assigned": [
         "value of information",
@@ -860,6 +870,7 @@
     },
     {
       "name": "lever score formula",
+      "description": "how much a measure to increase the readiness for a decision is worth, the effect of the measure on the readiness multiplied by the number of people it reaches",
       "expression": "\"lever score\" = \"readiness effect\" * \"readiness reach\"",
       "assigned": [
         "readiness effect",
@@ -868,6 +879,7 @@
     },
     {
       "name": "total exposure hours formula",
+      "description": "the total time a person is exposed to the internet, the hours per day multiplied by the number of days",
       "expression": "\"total exposure hours\" = \"exposure hours\" * \"exposure days\"",
       "assigned": [
         "exposure hours",
@@ -876,6 +888,7 @@
     },
     {
       "name": "RSI expected harm formula",
+      "description": "the expected harm of a runaway recursive self-improvement of an artificial intelligence, the probability of the runaway multiplied by the harm if it happens",
       "expression": "\"RSI expected harm\" = \"runaway probability\" * \"runaway harm\"",
       "assigned": [
         "runaway probability",
@@ -884,6 +897,7 @@
     },
     {
       "name": "verification net balance formula",
+      "description": "the net benefit of verifying artificial intelligence systems, the expected harm avoided by the verification minus the cost of the verification",
       "expression": "\"verification net balance\" = (\"RSI expected harm\" * \"verification mitigation efficacy\") - \"verification cost\"",
       "assigned": [
         "RSI expected harm",
@@ -893,6 +907,7 @@
     },
     {
       "name": "decision sensitivity formula",
+      "description": "how much an input matters for the decision, the uncertainty of the input multiplied by its effect on the result, to find the inputs worth investigating first",
       "expression": "\"sensitivity\" = \"uncertainty\" * \"effect\"",
       "assigned": [
         "uncertainty",
@@ -901,6 +916,7 @@
     },
     {
       "name": "overstimulation gap formula",
+      "description": "how much less harmful the real internet use is than the overstimulation model, the gap in intensity multiplied by the gap in vulnerability of the users",
       "expression": "\"overstimulation gap\" = \"intensity gap\" * \"vulnerability gap\"",
       "assigned": [
         "intensity gap",
@@ -909,6 +925,7 @@
     },
     {
       "name": "confidence discounted RSI harm formula",
+      "description": "the expected harm of a runaway self-improvement weighted by the confidence in the estimate, so that a speculative harm counts less than a well founded one",
       "expression": "\"confidence discounted RSI harm\" = \"RSI expected harm\" * \"confidence\"",
       "assigned": [
         "RSI expected harm",
@@ -917,6 +934,7 @@
     },
     {
       "name": "overblocking cost formula",
+      "description": "the expected harm of blocking content that should stay available, the probability of such overblocking multiplied by the harm it causes",
       "expression": "\"overblocking cost\" = \"overblocking probability\" * \"overblocking harm\"",
       "assigned": [
         "overblocking probability",

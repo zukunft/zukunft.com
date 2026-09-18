@@ -331,6 +331,7 @@
   "formulas": [
     {
       "name": "health gap (formula)",
+      "description": "the years of a life that are expected to be lived in less than full health, the difference between the life expectancy and the healthy life expectancy (HALE)",
       "expression": "\"health gap\" = \"life expectancy\" - \"HALE\"",
       "assigned": [
         "world"
@@ -338,6 +339,7 @@
     },
     {
       "name": "prevalence (formula)",
+      "description": "the share of a population that has a disease at a given time, approximated for a stable situation by the rate of new cases multiplied by the average duration of the disease",
       "expression": "\"prevalence\" = \"incidence\" * \"duration\"",
       "assigned": [
         "chronic disease"
@@ -345,6 +347,7 @@
     },
     {
       "name": "QALY (formula)",
+      "description": "the quality-adjusted life years, a life year weighted by the health related quality of life between 0 (dead) and 1 (full health), used to compare the benefit of treatments",
       "expression": "\"QALY\" = \"life year\" * \"utility\"",
       "assigned": [
         "treatment"

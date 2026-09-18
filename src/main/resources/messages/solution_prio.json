@@ -4960,22 +4960,26 @@
     },
     {
       "name": "scale trillion to one",
+      "description": "convert numbers in trillions (million millions) to one and back, so that a value given in trillions can be compared and calculated with values given in ones",
       "expression": "\"one\" = \"trillion\" * 1000000000000",
       "assigned_word": "trillion"
     },
     {
       "name": "global happy time points",
+      "description": "convert a share of the global welfare given in percent into happy time points by multiplying it with the number of humans on earth, so that a percent loss or gain can be compared with absolute welfare numbers",
       "expression": "\"htp\" = \"htp\",\"percent\" * \"global\",\"human\",\"population\"",
       "assigned_word": "htp"
     },
     {
       "name": "avoided potential loss",
+      "description": "the reward of a solution in trillion EUR, the potential loss of the problem multiplied by the share of the loss that the solution is expected to avoid",
       "expression": "\"reward\",\"trillion\",\"EUR\" = \"potential\",\"loss\",\"trillion\",\"EUR\" * \"loss reduction\",\"percent\"",
       "latex": "R = L_{pot} \\cdot r",
       "assigned_word": "reward"
     },
     {
       "name": "reward ratio (formula)",
+      "description": "the avoided loss per person year of effort, the potential loss multiplied by the expected loss reduction and divided by the effort needed, to rank the solutions by their leverage",
       "expression": "\"reward ratio\",\"trillion\",\"EUR per person year\" = \"potential\",\"loss\",\"trillion\",\"EUR\" * \"loss reduction\",\"percent\" / \"initial effort\",\"person year\"",
       "latex": "\\rho = \\frac{L_{pot} \\cdot r}{E_{init}}",
       "assigned_word": "reward ratio"

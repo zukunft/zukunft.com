@@ -28,8 +28,8 @@ change_log: $log
 component: $cmp2, $cmp_added, $cmp_by_id, $cmp_filled, $cmp_frm, $cmp_imp, $cmp_lnk, $cmp_lnk_cmp, $cmp_no_exc, $cmp_no_lnk, $cmp_no_ovr, $cmp_obj, $cmp_owned, $cmp_plain, $cmp_reloaded, $cmp_renamed, $cmp_renamed_reloaded, $cmp_tab, $cmp_ui, $cmp_usr2, $cmp_usr2_reloaded, $cmp_zero, $cmp_zero_imp, $dbo, $msk, $obj
 element: $elm_ui
 figure: $fig_ui
-formula: $db_rec, $dbo, $dbo_ui, $fop_ui, $frm_empty, $frm_has_next, $frm_html, $frm_imp, $frm_imp_off, $frm_ltx, $frm_next, $frm_page, $frm_plain, $frm_renamed, $frm_tab, $frm_this, $frm_trm, $frm_ui, $frm_upd, $frm_usr2, $frm_usr2_reloaded, $lnk, $obj, $to_add, $trp
-group: $db_grp, $db_rec, $dbo, $dbo_ui, $grp1, $grp2, $grp_2019, $grp_big, $grp_canton, $grp_canton_pct, $grp_ch, $grp_check, $grp_chk, $grp_city, $grp_city_pct, $grp_no_names, $grp_used, $obj, $phr_grp, $phr_grp_reload, $unnamed_grp, $val_grp
+formula: $db_rec, $dbo, $dbo_ui, $fop_ui, $frm_empty, $frm_error, $frm_has_next, $frm_html, $frm_imp, $frm_imp_off, $frm_ltx, $frm_next, $frm_order, $frm_page, $frm_plain, $frm_power, $frm_renamed, $frm_tab, $frm_this, $frm_trm, $frm_ui, $frm_unknown, $frm_upd, $frm_usr2, $frm_usr2_reloaded, $lnk, $obj, $to_add, $trp
+group: $db_rec, $dbo, $dbo_ui, $grp1, $grp2, $grp_2019, $grp_big, $grp_canton, $grp_canton_pct, $grp_ch, $grp_check, $grp_chk, $grp_city, $grp_city_pct, $grp_no_names, $grp_used, $obj, $phr_grp, $phr_grp_reload, $val_grp
 job: $calc_request, $dbo, $dbo_ui, $job_closed, $job_done, $job_future, $job_high, $job_low, $job_newer, $job_older, $job_oldest
 language: $dbo, $dbo_ui, $lan_by_id, $obj, $src
 phrase: $country, $dbo, $dbo_ui, $debug_phr, $e_sym, $from, $max_phr, $new_phrase, $phr2, $phr_by_id, $phr_canton_ui, $phr_ch_ui, $phr_city_ui, $phr_loaded, $phr_new, $phr_no_name, $phr_sys_cfg, $phr_to, $phr_to_add, $phr_ui, $phr_zh, $pi, $result, $switzerland, $tier, $time_phr, $to, $to_add, $trp, $val_phr, $val_time_phr, $wrd, $zurich
@@ -46,7 +46,7 @@ user_message: $act_msg, $activate_msg, $add_msg, $adm_msg, $anon_msg, $api_msg, 
 user_profile_list: $lst
 user_status_list: $lst
 user_type_list: $lst
-value: $add_val, $add_val2, $add_val_ts, $added_val, $added_val2, $added_val_usr2, $best_val, $best_val2, $chk_val, $db_val, $dbo, $dbo_ui, $e, $mio_val, $mio_val_ui, $named_val, $obj, $obj_to_add, $pi, $res_canton_ui, $res_city_ui, $result, $std_val, $std_val_missing, $val_add1, $val_add2, $val_added, $val_bad, $val_best_guess, $val_by_phr_lst, $val_canton, $val_canton_ui, $val_ch, $val_ch_ui, $val_city, $val_city_ui, $val_grp, $val_id, $val_imported, $val_named, $val_no_src, $val_phr, $val_pi, $val_plain, $val_protected, $val_tab, $val_ui, $val_unnamed, $val_usr2, $wrd_val
+value: $add_val, $add_val2, $add_val_ts, $added_val, $added_val2, $added_val_usr2, $best_val, $best_val2, $chk_val, $dbo, $dbo_ui, $e, $mio_val, $mio_val_ui, $obj, $obj_to_add, $pi, $res_canton_ui, $res_city_ui, $result, $std_val, $std_val_missing, $val_add1, $val_add2, $val_added, $val_bad, $val_best_guess, $val_by_phr_lst, $val_canton, $val_canton_ui, $val_ch, $val_ch_ui, $val_city, $val_city_ui, $val_grp, $val_id, $val_named, $val_no_src, $val_phr, $val_pi, $val_plain, $val_protected, $val_tab, $val_ui, $val_unnamed, $val_usr2, $wrd_val
 verb: $dbo, $dbo_ui, $obj, $vrb_empty, $vrb_filled, $vrb_id, $vrb_is, $vrb_time_step, $vrb_unused
 view: $cld, $dbo, $dbo_ui, $msk_alone, $msk_cols, $msk_db, $msk_empty, $msk_filled, $msk_line, $msk_new, $msk_no_ovr, $msk_old, $msk_owned, $msk_plain, $msk_posted, $msk_reloaded, $msk_renamed, $msk_tab, $msk_terms, $msk_ui, $msk_usr2, $msk_usr2_reloaded, $obj, $prt, $result, $trp_view, $view_obj, $wrd_view
 view_link_type_list: $lst

@@ -527,6 +527,7 @@
   "formulas": [
     {
       "name": "knowledge retention (formula)",
+      "description": "the share of the learned content that a student can still recall after some time, a measure of how durable the learning is",
       "expression": "\"knowledge retention\" = \"recalled\" / \"learned\"",
       "assigned": [
         "student"
@@ -534,6 +535,7 @@
     },
     {
       "name": "effect size (formula)",
+      "description": "the advantage of tutoring over classroom teaching measured in standard deviations of the test scores, so that studies with different tests can be compared, e.g. Bloom's two sigma problem",
       "expression": "\"effect size\" = ( \"tutored score\" - \"classroom score\" ) / \"standard deviation\"",
       "assigned": [
         "student"
@@ -541,6 +543,7 @@
     },
     {
       "name": "transfer efficiency (formula)",
+      "description": "how well a skill learned in training carries over to a new task, the performance on the transfer task relative to the performance on the trained task",
       "expression": "\"transfer efficiency\" = \"transfer performance\" / \"trained performance\"",
       "assigned": [
         "student"

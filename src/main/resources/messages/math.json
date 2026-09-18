@@ -2548,612 +2548,714 @@
   "formulas": [
     {
       "name": "definition of tau",
+      "description": "the circle constant tau, the ratio of the circumference of a circle to its radius, which is twice pi and makes many formulas of angles and periods simpler",
       "expression": "\"tau\" = \"Pi\" * 2",
       "latex": "\\tau = 2\\pi",
       "assigned_word": "circle"
     },
     {
       "name": "definition of circumference",
+      "description": "the length of the boundary of a circle is pi times its diameter, the relation that defines the number pi",
       "expression": "\"circumference\" = \"Pi\" * \"diameter\"",
       "latex": "C = \\pi d",
       "assigned_word": "circle"
     },
     {
       "name": "definition of quadratic formula",
+      "description": "the solutions of a quadratic equation a x^2 + b x + c = 0; the term under the root, the discriminant, tells whether there are two, one or no real solutions",
       "expression": "\"x\" = (-\"b\" + sqrt(\"b\"^2 - 4*\"a\"*\"c\")) / (2*\"a\")",
       "latex": "x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}",
       "assigned_word": "quadratic"
     },
     {
       "name": "definition of difference of squares",
+      "description": "the difference of two squares factors into the product of the sum and the difference of the two numbers, e.g. 25 - 16 = 9 = (5 + 4) (5 - 4)",
       "expression": "\"a\"^2 - \"b\"^2 = (\"a\" - \"b\") * (\"a\" + \"b\")",
       "latex": "a^2 - b^2 = (a-b)(a+b)",
       "assigned_word": "difference of squares"
     },
     {
       "name": "definition of perfect square",
+      "description": "the square of a sum of two numbers, the first binomial formula, which expands to the two squares plus twice the product",
       "expression": "(\"a\" + \"b\")^2 = \"a\"^2 + 2*\"a\"*\"b\" + \"b\"^2",
       "latex": "(a+b)^2 = a^2 + 2ab + b^2",
       "assigned_word": "perfect square"
     },
     {
       "name": "cube of sum",
+      "description": "the cube of a sum of two numbers expanded into four terms with the coefficients 1, 3, 3, 1 of the third row of Pascal's triangle",
       "expression": "(\"a\" + \"b\")^3 = \"a\"^3 + 3*\"a\"^2*\"b\" + 3*\"a\"*\"b\"^2 + \"b\"^3",
       "latex": "(a+b)^3 = a^3 + 3a^2 b + 3ab^2 + b^3",
       "assigned_word": "perfect square"
     },
     {
       "name": "definition of sum of cubes",
+      "description": "the sum of two cubes factors into the sum of the two numbers multiplied by a quadratic term, used to simplify and solve cubic expressions",
       "expression": "\"a\"^3 + \"b\"^3 = (\"a\" + \"b\") * (\"a\"^2 - \"a\"*\"b\" + \"b\"^2)",
       "latex": "a^3 + b^3 = (a+b)(a^2 - ab + b^2)",
       "assigned_word": "sum of cubes"
     },
     {
       "name": "definition of difference of cubes",
+      "description": "the difference of two cubes factors into the difference of the two numbers multiplied by a quadratic term, the counterpart of the sum of cubes",
       "expression": "\"a\"^3 - \"b\"^3 = (\"a\" - \"b\") * (\"a\"^2 + \"a\"*\"b\" + \"b\"^2)",
       "latex": "a^3 - b^3 = (a-b)(a^2 + ab + b^2)",
       "assigned_word": "difference of cubes"
     },
     {
       "name": "definition of binomial theorem",
+      "description": "the expansion of a power of a sum into a sum of terms whose coefficients are the binomial coefficients of Pascal's triangle",
       "expression": "(\"a\" + \"b\")^\"n\" = sum(C(\"n\",\"k\") * \"a\"^(\"n\"-\"k\") * \"b\"^\"k\", \"k\"=0..\"n\")",
       "latex": "(a+b)^n = \\sum_{k=0}^{n} \\binom{n}{k} a^{n-k} b^k",
       "assigned_word": "binomial theorem"
     },
     {
       "name": "exponent product",
+      "description": "the product of two powers with the same base is the base raised to the sum of the exponents",
       "expression": "\"a\"^\"m\" * \"a\"^\"n\" = \"a\"^(\"m\" + \"n\")",
       "latex": "a^m \\cdot a^n = a^{m+n}",
       "assigned_word": "exponent"
     },
     {
       "name": "exponent quotient",
+      "description": "the quotient of two powers with the same base is the base raised to the difference of the exponents",
       "expression": "\"a\"^\"m\" / \"a\"^\"n\" = \"a\"^(\"m\" - \"n\")",
       "latex": "a^m / a^n = a^{m-n}",
       "assigned_word": "exponent"
     },
     {
       "name": "power of a power",
+      "description": "raising a power to another power multiplies the exponents",
       "expression": "(\"a\"^\"m\")^\"n\" = \"a\"^(\"m\" * \"n\")",
       "latex": "(a^m)^n = a^{mn}",
       "assigned_word": "exponent"
     },
     {
       "name": "negative exponent",
+      "description": "a power with a negative exponent is the reciprocal of the power with the positive exponent, e.g. 10^-3 is one thousandth",
       "expression": "\"a\"^(-\"n\") = 1 / \"a\"^\"n\"",
       "latex": "a^{-n} = 1/a^n",
       "assigned_word": "exponent"
     },
     {
       "name": "logarithm product",
+      "description": "the logarithm of a product is the sum of the logarithms, the rule that made slide rules and logarithm tables turn multiplications into additions",
       "expression": "log(\"x\" * \"y\") = log(\"x\") + log(\"y\")",
       "latex": "\\log(xy) = \\log x + \\log y",
       "assigned_word": "logarithm"
     },
     {
       "name": "logarithm quotient",
+      "description": "the logarithm of a quotient is the difference of the logarithms",
       "expression": "log(\"x\" / \"y\") = log(\"x\") - log(\"y\")",
       "latex": "\\log(x/y) = \\log x - \\log y",
       "assigned_word": "logarithm"
     },
     {
       "name": "logarithm power",
+      "description": "the logarithm of a power is the exponent multiplied by the logarithm of the base, which turns a root or a power into a multiplication",
       "expression": "log(\"x\"^\"n\") = \"n\" * log(\"x\")",
       "latex": "\\log(x^n) = n \\log x",
       "assigned_word": "logarithm"
     },
     {
       "name": "change of base",
+      "description": "a logarithm to any base can be calculated from the logarithms to another base, e.g. from the natural logarithm that a calculator offers",
       "expression": "log_b(\"x\") = log_a(\"x\") / log_a(\"b\")",
       "latex": "\\log_b x = \\frac{\\log_a x}{\\log_a b}",
       "assigned_word": "logarithm"
     },
     {
       "name": "definition of slope",
+      "description": "the steepness of a straight line through two points, the change in the vertical direction divided by the change in the horizontal direction",
       "expression": "\"m\" = (\"y\"2 - \"y\"1) / (\"x\"2 - \"x\"1)",
       "latex": "m = \\frac{y_2 - y_1}{x_2 - x_1}",
       "assigned_word": "slope"
     },
     {
       "name": "definition of slope intercept form",
+      "description": "the equation of a straight line given by its slope m and the point b where it crosses the vertical axis",
       "expression": "\"y\" = \"m\" * \"x\" + \"b\"",
       "latex": "y = mx + b",
       "assigned_word": "slope intercept form"
     },
     {
       "name": "definition of point slope form",
+      "description": "the equation of a straight line given by its slope and one point on the line, handy when the line is known from a point and a direction",
       "expression": "\"y\" - \"y\"1 = \"m\" * (\"x\" - \"x\"1)",
       "latex": "y - y_1 = m(x - x_1)",
       "assigned_word": "point slope form"
     },
     {
       "name": "standard form of a line",
+      "description": "the equation of a straight line as a linear equation in x and y with integer coefficients, which unlike the slope form can also describe a vertical line",
       "expression": "\"A\"*\"x\" + \"B\"*\"y\" = \"C\"",
       "latex": "Ax + By = C",
       "assigned_word": "line"
     },
     {
       "name": "distance between points",
+      "description": "the straight distance between two points in the plane by the Pythagorean theorem applied to the differences of their coordinates",
       "expression": "\"d\" = sqrt((\"x\"2 - \"x\"1)^2 + (\"y\"2 - \"y\"1)^2)",
       "latex": "d = \\sqrt{(x_2-x_1)^2 + (y_2-y_1)^2}",
       "assigned_word": "distance formula"
     },
     {
       "name": "square perimeter",
+      "description": "the length of the boundary of a square, four times the side",
       "expression": "\"perimeter\" = 4 * \"side\"",
       "latex": "P = 4s",
       "assigned_word": "square"
     },
     {
       "name": "square area",
+      "description": "the area of a square, the side multiplied by itself",
       "expression": "\"area\" = \"side\"^2",
       "latex": "A = s^2",
       "assigned_word": "square"
     },
     {
       "name": "rectangle perimeter",
+      "description": "the length of the boundary of a rectangle, twice the sum of its length and its width",
       "expression": "\"perimeter\" = 2 * (\"length\" + \"width\")",
       "latex": "P = 2(l+w)",
       "assigned_word": "rectangle"
     },
     {
       "name": "rectangle area",
+      "description": "the area of a rectangle, its length multiplied by its width",
       "expression": "\"area\" = \"length\" * \"width\"",
       "latex": "A = lw",
       "assigned_word": "rectangle"
     },
     {
       "name": "triangle area",
+      "description": "the area of a triangle, half the base multiplied by the height measured perpendicular to the base",
       "expression": "\"area\" = (1/2) * \"base\" * \"height\"",
       "latex": "A = \\tfrac{1}{2} b h",
       "assigned_word": "triangle"
     },
     {
       "name": "definition of Heron's formula",
+      "description": "the area of a triangle from its three sides alone, using the half perimeter s, without needing a height or an angle",
       "expression": "\"area\" = sqrt(\"s\" * (\"s\" - \"a\") * (\"s\" - \"b\") * (\"s\" - \"c\"))",
       "latex": "A = \\sqrt{s(s-a)(s-b)(s-c)}",
       "assigned_word": "Heron's formula"
     },
     {
       "name": "parallelogram area",
+      "description": "the area of a parallelogram, the base multiplied by the height measured perpendicular to the base, the same as a rectangle of the same base and height",
       "expression": "\"area\" = \"base\" * \"height\"",
       "latex": "A = bh",
       "assigned_word": "parallelogram"
     },
     {
       "name": "trapezoid area",
+      "description": "the area of a trapezoid, the average of the two parallel sides multiplied by the height between them",
       "expression": "\"area\" = (1/2) * (\"b\"1 + \"b\"2) * \"height\"",
       "latex": "A = \\tfrac{1}{2}(b_1+b_2)h",
       "assigned_word": "trapezoid"
     },
     {
       "name": "circle circumference",
+      "description": "the length of the boundary of a circle from its radius, two pi times the radius",
       "expression": "\"circumference\" = 2 * \"Pi\" * \"radius\"",
       "latex": "C = 2\\pi r",
       "assigned_word": "circle"
     },
     {
       "name": "circle area",
+      "description": "the area of a circle, pi times the square of the radius",
       "expression": "\"area\" = \"Pi\" * \"radius\"^2",
       "latex": "A = \\pi r^2",
       "assigned_word": "circle"
     },
     {
       "name": "definition of arc length",
+      "description": "the length of a part of a circle boundary, the radius multiplied by the angle of the arc in radians",
       "expression": "\"arc length\" = \"radius\" * \"theta\"",
       "latex": "s = r \\theta",
       "assigned_word": "arc length"
     },
     {
       "name": "definition of sector area",
+      "description": "the area of a slice of a circle, half the square of the radius multiplied by the angle of the slice in radians",
       "expression": "\"sector area\" = (1/2) * \"radius\"^2 * \"theta\"",
       "latex": "A = \\tfrac{1}{2} r^2 \\theta",
       "assigned_word": "sector area"
     },
     {
       "name": "ellipse area",
+      "description": "the area of an ellipse, pi times the product of the two half axes, which reduces to the circle area if both are equal",
       "expression": "\"area\" = \"Pi\" * \"a\" * \"b\"",
       "latex": "A = \\pi a b",
       "assigned_word": "ellipse"
     },
     {
       "name": "regular polygon area",
+      "description": "the area of a polygon with equal sides and angles, half the perimeter multiplied by the apothem, the distance from the centre to the middle of a side",
       "expression": "\"area\" = (1/2) * \"perimeter\" * \"apothem\"",
       "latex": "A = \\tfrac{1}{2} P a",
       "assigned_word": "regular polygon"
     },
     {
       "name": "definition of Pythagorean theorem",
+      "description": "in a right triangle the square of the longest side equals the sum of the squares of the two other sides, the base of all distance calculations",
       "expression": "\"a\"^2 + \"b\"^2 = \"c\"^2",
       "latex": "a^2 + b^2 = c^2",
       "assigned_word": "Pythagorean theorem"
     },
     {
       "name": "cube volume",
+      "description": "the volume of a cube, the side raised to the third power",
       "expression": "\"volume\" = \"side\"^3",
       "latex": "V = s^3",
       "assigned_word": "cube"
     },
     {
       "name": "rectangular prism volume",
+      "description": "the volume of a box, its length multiplied by its width and its height",
       "expression": "\"volume\" = \"length\" * \"width\" * \"height\"",
       "latex": "V = lwh",
       "assigned_word": "prism"
     },
     {
       "name": "cylinder volume",
+      "description": "the volume of a cylinder, the area of the circular base multiplied by the height",
       "expression": "\"volume\" = \"Pi\" * \"radius\"^2 * \"height\"",
       "latex": "V = \\pi r^2 h",
       "assigned_word": "cylinder"
     },
     {
       "name": "cylinder surface area",
+      "description": "the total surface of a closed cylinder, the two circular ends plus the curved side, which unrolls to a rectangle of the circumference times the height",
       "expression": "\"surface area\" = 2 * \"Pi\" * \"radius\"^2 + 2 * \"Pi\" * \"radius\" * \"height\"",
       "latex": "S = 2\\pi r^2 + 2\\pi r h",
       "assigned_word": "cylinder"
     },
     {
       "name": "sphere volume",
+      "description": "the volume of a sphere, four thirds of pi times the cube of the radius",
       "expression": "\"volume\" = (4/3) * \"Pi\" * \"radius\"^3",
       "latex": "V = \\tfrac{4}{3} \\pi r^3",
       "assigned_word": "sphere"
     },
     {
       "name": "sphere surface area",
+      "description": "the surface of a sphere, four times the area of a circle with the same radius",
       "expression": "\"surface area\" = 4 * \"Pi\" * \"radius\"^2",
       "latex": "S = 4 \\pi r^2",
       "assigned_word": "sphere"
     },
     {
       "name": "cone volume",
+      "description": "the volume of a cone, one third of the cylinder with the same base and height",
       "expression": "\"volume\" = (1/3) * \"Pi\" * \"radius\"^2 * \"height\"",
       "latex": "V = \\tfrac{1}{3} \\pi r^2 h",
       "assigned_word": "cone"
     },
     {
       "name": "cone surface area",
+      "description": "the total surface of a cone, the circular base plus the curved side given by the radius and the slant height along the side",
       "expression": "\"surface area\" = \"Pi\" * \"radius\"^2 + \"Pi\" * \"radius\" * \"slant height\"",
       "latex": "S = \\pi r^2 + \\pi r \\ell",
       "assigned_word": "cone"
     },
     {
       "name": "pyramid volume",
+      "description": "the volume of a pyramid, one third of the base area multiplied by the height, whatever the shape of the base",
       "expression": "\"volume\" = (1/3) * \"area\" * \"height\"",
       "latex": "V = \\tfrac{1}{3} A h",
       "assigned_word": "pyramid"
     },
     {
       "name": "prism volume",
+      "description": "the volume of a prism, the base area multiplied by the height, whatever the shape of the base",
       "expression": "\"volume\" = \"area\" * \"height\"",
       "latex": "V = A h",
       "assigned_word": "prism"
     },
     {
       "name": "sine ratio",
+      "description": "the sine of an angle in a right triangle, the side opposite the angle divided by the hypotenuse",
       "expression": "\"sine\"(\"theta\") = \"opposite\" / \"hypotenuse\"",
       "latex": "\\sin\\theta = \\text{opp}/\\text{hyp}",
       "assigned_word": "sine"
     },
     {
       "name": "cosine ratio",
+      "description": "the cosine of an angle in a right triangle, the side adjacent to the angle divided by the hypotenuse",
       "expression": "\"cosine\"(\"theta\") = \"adjacent\" / \"hypotenuse\"",
       "latex": "\\cos\\theta = \\text{adj}/\\text{hyp}",
       "assigned_word": "cosine"
     },
     {
       "name": "tangent ratio",
+      "description": "the tangent of an angle, the sine divided by the cosine, which in a right triangle is the opposite side divided by the adjacent side",
       "expression": "\"tangent\"(\"theta\") = \"sine\"(\"theta\") / \"cosine\"(\"theta\")",
       "latex": "\\tan\\theta = \\sin\\theta / \\cos\\theta",
       "assigned_word": "tangent"
     },
     {
       "name": "definition of Pythagorean identity",
+      "description": "the squares of the sine and the cosine of any angle add up to one, the Pythagorean theorem on the unit circle",
       "expression": "\"sine\"(\"theta\")^2 + \"cosine\"(\"theta\")^2 = 1",
       "latex": "\\sin^2\\theta + \\cos^2\\theta = 1",
       "assigned_word": "Pythagorean identity"
     },
     {
       "name": "identity tan sec",
+      "description": "one plus the square of the tangent equals the square of the secant, the Pythagorean identity divided by the square of the cosine",
       "expression": "1 + \"tangent\"(\"theta\")^2 = \"secant\"(\"theta\")^2",
       "latex": "1 + \\tan^2\\theta = \\sec^2\\theta",
       "assigned_word": "Pythagorean identity"
     },
     {
       "name": "identity cot csc",
+      "description": "one plus the square of the cotangent equals the square of the cosecant, the Pythagorean identity divided by the square of the sine",
       "expression": "1 + \"cotangent\"(\"theta\")^2 = \"cosecant\"(\"theta\")^2",
       "latex": "1 + \\cot^2\\theta = \\csc^2\\theta",
       "assigned_word": "Pythagorean identity"
     },
     {
       "name": "sine double angle",
+      "description": "the sine of twice an angle from the sine and the cosine of the angle itself",
       "expression": "\"sine\"(2*\"theta\") = 2 * \"sine\"(\"theta\") * \"cosine\"(\"theta\")",
       "latex": "\\sin(2\\theta) = 2\\sin\\theta\\cos\\theta",
       "assigned_word": "double angle"
     },
     {
       "name": "cosine double angle",
+      "description": "the cosine of twice an angle from the sine and the cosine of the angle itself",
       "expression": "\"cosine\"(2*\"theta\") = \"cosine\"(\"theta\")^2 - \"sine\"(\"theta\")^2",
       "latex": "\\cos(2\\theta) = \\cos^2\\theta - \\sin^2\\theta",
       "assigned_word": "double angle"
     },
     {
       "name": "sine of sum",
+      "description": "the sine of the sum of two angles from the sines and cosines of the two angles, the addition theorem of the sine",
       "expression": "\"sine\"(\"a\" + \"b\") = \"sine\"(\"a\") * \"cosine\"(\"b\") + \"cosine\"(\"a\") * \"sine\"(\"b\")",
       "latex": "\\sin(a+b) = \\sin a \\cos b + \\cos a \\sin b",
       "assigned_word": "sum angle"
     },
     {
       "name": "cosine of sum",
+      "description": "the cosine of the sum of two angles from the sines and cosines of the two angles, the addition theorem of the cosine",
       "expression": "\"cosine\"(\"a\" + \"b\") = \"cosine\"(\"a\") * \"cosine\"(\"b\") - \"sine\"(\"a\") * \"sine\"(\"b\")",
       "latex": "\\cos(a+b) = \\cos a \\cos b - \\sin a \\sin b",
       "assigned_word": "sum angle"
     },
     {
       "name": "tangent of sum",
+      "description": "the tangent of the sum of two angles from the tangents of the two angles, the addition theorem of the tangent",
       "expression": "\"tangent\"(\"a\" + \"b\") = (\"tangent\"(\"a\") + \"tangent\"(\"b\")) / (1 - \"tangent\"(\"a\") * \"tangent\"(\"b\"))",
       "latex": "\\tan(a+b) = \\frac{\\tan a + \\tan b}{1 - \\tan a \\tan b}",
       "assigned_word": "sum angle"
     },
     {
       "name": "definition of law of sines",
+      "description": "in any triangle each side divided by the sine of the opposite angle gives the same value, used to solve a triangle from two angles and one side",
       "expression": "\"a\" / \"sine\"(\"A\") = \"b\" / \"sine\"(\"B\") = \"c\" / \"sine\"(\"C\")",
       "latex": "\\frac{a}{\\sin A} = \\frac{b}{\\sin B} = \\frac{c}{\\sin C}",
       "assigned_word": "law of sines"
     },
     {
       "name": "definition of law of cosines",
+      "description": "the Pythagorean theorem extended to any triangle with a correction term for the angle between the two sides, used to solve a triangle from two sides and the enclosed angle",
       "expression": "\"c\"^2 = \"a\"^2 + \"b\"^2 - 2 * \"a\" * \"b\" * \"cosine\"(\"C\")",
       "latex": "c^2 = a^2 + b^2 - 2ab \\cos C",
       "assigned_word": "law of cosines"
     },
     {
       "name": "degrees to radians",
+      "description": "convert an angle in degrees to radians, the natural angle unit of the trigonometric functions, where a full circle of 360 degrees is two pi",
       "expression": "\"radian\" = \"degree\" * \"Pi\" / 180",
       "latex": "\\text{rad} = \\text{deg} \\cdot \\pi/180",
       "assigned_word": "radian"
     },
     {
       "name": "definition of Euler's formula",
+      "description": "the link between the exponential function and the trigonometric functions for imaginary exponents, the base of the complex description of waves and rotations",
       "expression": "\"e\"^(\"i\" * \"theta\") = \"cosine\"(\"theta\") + \"i\" * \"sine\"(\"theta\")",
       "latex": "e^{i\\theta} = \\cos\\theta + i\\sin\\theta",
       "assigned_word": "Euler's formula"
     },
     {
       "name": "arithmetic nth term",
+      "description": "the n-th member of a sequence that grows by the same difference d in each step, from the first member and the number of steps",
       "expression": "\"a\"_\"n\" = \"a\"_1 + (\"n\" - 1) * \"d\"",
       "latex": "a_n = a_1 + (n-1)d",
       "assigned_word": "arithmetic sequence"
     },
     {
       "name": "definition of arithmetic sum",
+      "description": "the sum of the first n members of an arithmetic sequence, the number of members multiplied by the average of the first and the last member",
       "expression": "\"S\"_\"n\" = (\"n\"/2) * (\"a\"_1 + \"a\"_\"n\")",
       "latex": "S_n = \\tfrac{n}{2}(a_1 + a_n)",
       "assigned_word": "arithmetic sum"
     },
     {
       "name": "geometric nth term",
+      "description": "the n-th member of a sequence that is multiplied by the same ratio r in each step, e.g. a capital with compound interest after n years",
       "expression": "\"a\"_\"n\" = \"a\"_1 * \"r\"^(\"n\" - 1)",
       "latex": "a_n = a_1 r^{n-1}",
       "assigned_word": "geometric sequence"
     },
     {
       "name": "definition of geometric sum",
+      "description": "the sum of the first n members of a geometric sequence, e.g. the total of regular payments that grow by a fixed rate",
       "expression": "\"S\"_\"n\" = \"a\"_1 * (1 - \"r\"^\"n\") / (1 - \"r\")",
       "latex": "S_n = a_1 \\frac{1-r^n}{1-r}",
       "assigned_word": "geometric sum"
     },
     {
       "name": "infinite geometric sum",
+      "description": "the sum of all members of a geometric sequence whose ratio is between -1 and 1, which stays finite because the members shrink towards zero",
       "expression": "\"S\" = \"a\"_1 / (1 - \"r\")",
       "latex": "S = \\frac{a_1}{1-r}",
       "assigned_word": "geometric sum"
     },
     {
       "name": "sum of first n integers",
+      "description": "the sum of the integers from 1 to n, the formula the young Gauss is said to have found by pairing the first and the last numbers",
       "expression": "sum(\"k\", \"k\"=1..\"n\") = \"n\" * (\"n\" + 1) / 2",
       "latex": "\\sum_{k=1}^{n} k = \\frac{n(n+1)}{2}",
       "assigned_word": "arithmetic sum"
     },
     {
       "name": "definition of derivative",
+      "description": "the rate of change of a function at a point, the limit of the slope of the secant between two points as they move together, the basic concept of differential calculus",
       "expression": "\"f\"'(\"x\") = lim((\"f\"(\"x\" + \"h\") - \"f\"(\"x\")) / \"h\", \"h\"->0)",
       "latex": "f'(x) = \\lim_{h \\to 0} \\frac{f(x+h) - f(x)}{h}",
       "assigned_word": "derivative"
     },
     {
       "name": "power rule derivative",
+      "description": "the derivative of a power of x: the exponent comes down as a factor and is reduced by one",
       "expression": "d/d\"x\" (\"x\"^\"n\") = \"n\" * \"x\"^(\"n\" - 1)",
       "latex": "\\frac{d}{dx} x^n = n x^{n-1}",
       "assigned_word": "power rule"
     },
     {
       "name": "constant rule derivative",
+      "description": "the derivative of a constant is zero, because a constant does not change",
       "expression": "d/d\"x\" (\"c\") = 0",
       "latex": "\\frac{d}{dx} c = 0",
       "assigned_word": "derivative"
     },
     {
       "name": "sum rule derivative",
+      "description": "the derivative of a sum of functions is the sum of the derivatives, so each term can be differentiated on its own",
       "expression": "(\"f\" + \"g\")' = \"f\"' + \"g\"'",
       "latex": "(f+g)' = f' + g'",
       "assigned_word": "derivative"
     },
     {
       "name": "product rule derivative",
+      "description": "the derivative of a product of two functions, each factor differentiated once while the other is kept, then added",
       "expression": "(\"f\" * \"g\")' = \"f\"' * \"g\" + \"f\" * \"g\"'",
       "latex": "(fg)' = f'g + fg'",
       "assigned_word": "product rule"
     },
     {
       "name": "quotient rule derivative",
+      "description": "the derivative of a quotient of two functions, derived from the product rule with the reciprocal of the denominator",
       "expression": "(\"f\" / \"g\")' = (\"f\"' * \"g\" - \"f\" * \"g\"') / \"g\"^2",
       "latex": "(f/g)' = \\frac{f'g - fg'}{g^2}",
       "assigned_word": "quotient rule"
     },
     {
       "name": "definition of chain rule",
+      "description": "the derivative of a function of a function, the outer derivative at the inner value multiplied by the inner derivative",
       "expression": "d/d\"x\" (\"f\"(\"g\"(\"x\"))) = \"f\"'(\"g\"(\"x\")) * \"g\"'(\"x\")",
       "latex": "\\frac{d}{dx} f(g(x)) = f'(g(x)) \\cdot g'(x)",
       "assigned_word": "chain rule"
     },
     {
       "name": "derivative of e^x",
+      "description": "the exponential function is its own derivative, the property that makes e the natural base for growth and decay",
       "expression": "d/d\"x\" (\"e\"^\"x\") = \"e\"^\"x\"",
       "latex": "\\frac{d}{dx} e^x = e^x",
       "assigned_word": "derivative"
     },
     {
       "name": "derivative of ln",
+      "description": "the derivative of the natural logarithm is the reciprocal of x",
       "expression": "d/d\"x\" (ln(\"x\")) = 1 / \"x\"",
       "latex": "\\frac{d}{dx} \\ln x = 1/x",
       "assigned_word": "derivative"
     },
     {
       "name": "derivative of sin",
+      "description": "the derivative of the sine is the cosine, the slope of the sine wave is largest where the cosine is largest",
       "expression": "d/d\"x\" (\"sine\"(\"x\")) = \"cosine\"(\"x\")",
       "latex": "\\frac{d}{dx} \\sin x = \\cos x",
       "assigned_word": "derivative"
     },
     {
       "name": "derivative of cos",
+      "description": "the derivative of the cosine is the negative sine",
       "expression": "d/d\"x\" (\"cosine\"(\"x\")) = -\"sine\"(\"x\")",
       "latex": "\\frac{d}{dx} \\cos x = -\\sin x",
       "assigned_word": "derivative"
     },
     {
       "name": "derivative of tan",
+      "description": "the derivative of the tangent is the square of the secant, which is one plus the square of the tangent",
       "expression": "d/d\"x\" (\"tangent\"(\"x\")) = \"secant\"(\"x\")^2",
       "latex": "\\frac{d}{dx} \\tan x = \\sec^2 x",
       "assigned_word": "derivative"
     },
     {
       "name": "power rule integral",
+      "description": "the antiderivative of a power of x: the exponent is raised by one and the result divided by the new exponent, plus a constant; not valid for the exponent -1",
       "expression": "integral(\"x\"^\"n\", \"x\") = \"x\"^(\"n\" + 1) / (\"n\" + 1) + \"C\"",
       "latex": "\\int x^n\\, dx = \\frac{x^{n+1}}{n+1} + C",
       "assigned_word": "integral"
     },
     {
       "name": "reciprocal integral",
+      "description": "the antiderivative of the reciprocal of x is the natural logarithm of the absolute value of x, the case the power rule cannot cover",
       "expression": "integral(1/\"x\", \"x\") = ln(|\"x\"|) + \"C\"",
       "latex": "\\int \\frac{1}{x}\\, dx = \\ln|x| + C",
       "assigned_word": "integral"
     },
     {
       "name": "exponential integral",
+      "description": "the antiderivative of the exponential function is the exponential function itself plus a constant",
       "expression": "integral(\"e\"^\"x\", \"x\") = \"e\"^\"x\" + \"C\"",
       "latex": "\\int e^x\\, dx = e^x + C",
       "assigned_word": "integral"
     },
     {
       "name": "sine integral",
+      "description": "the antiderivative of the sine is the negative cosine plus a constant",
       "expression": "integral(\"sine\"(\"x\"), \"x\") = -\"cosine\"(\"x\") + \"C\"",
       "latex": "\\int \\sin x\\, dx = -\\cos x + C",
       "assigned_word": "integral"
     },
     {
       "name": "cosine integral",
+      "description": "the antiderivative of the cosine is the sine plus a constant",
       "expression": "integral(\"cosine\"(\"x\"), \"x\") = \"sine\"(\"x\") + \"C\"",
       "latex": "\\int \\cos x\\, dx = \\sin x + C",
       "assigned_word": "integral"
     },
     {
       "name": "definition of fundamental theorem of calculus",
+      "description": "the integral of a derivative over an interval is the difference of the function values at the ends, the link between differentiation and integration",
       "expression": "integral(\"f\"'(\"x\"), \"x\"=\"a\"..\"b\") = \"f\"(\"b\") - \"f\"(\"a\")",
       "latex": "\\int_a^b f'(x)\\, dx = f(b) - f(a)",
       "assigned_word": "fundamental theorem of calculus"
     },
     {
       "name": "definition of integration by parts",
+      "description": "the integration counterpart of the product rule, which turns the integral of a product into a simpler integral, e.g. for x times a sine",
       "expression": "integral(\"u\" * d\"v\") = \"u\" * \"v\" - integral(\"v\" * d\"u\")",
       "latex": "\\int u\\, dv = uv - \\int v\\, du",
       "assigned_word": "integration by parts"
     },
     {
       "name": "area between curves",
+      "description": "the area enclosed between two curves over an interval, the integral of the upper function minus the lower function",
       "expression": "\"area\" = integral(\"f\"(\"x\") - \"g\"(\"x\"), \"x\"=\"a\"..\"b\")",
       "latex": "A = \\int_a^b [f(x) - g(x)]\\, dx",
       "assigned_word": "integral"
     },
     {
       "name": "definition of mean",
+      "description": "the arithmetic average of n values, their sum divided by their number, the most common measure of the centre of a data set",
       "expression": "\"mean\" = (1/\"n\") * sum(\"x\"_\"i\", \"i\"=1..\"n\")",
       "latex": "\\bar{x} = \\frac{1}{n}\\sum x_i",
       "assigned_word": "mean"
     },
     {
       "name": "definition of variance",
+      "description": "the average of the squared deviations of the values from their mean, a measure of the spread of a data set in the square of its unit",
       "expression": "\"sigma\"^2 = (1/\"n\") * sum((\"x\"_\"i\" - \"mean\")^2, \"i\"=1..\"n\")",
       "latex": "\\sigma^2 = \\frac{1}{n}\\sum (x_i - \\bar{x})^2",
       "assigned_word": "variance"
     },
     {
       "name": "definition of standard deviation",
+      "description": "the square root of the variance, the spread of a data set in the same unit as the values; about two thirds of normally distributed values lie within one standard deviation of the mean",
       "expression": "\"sigma\" = sqrt(\"sigma\"^2)",
       "latex": "\\sigma = \\sqrt{\\sigma^2}",
       "assigned_word": "standard deviation"
     },
     {
       "name": "definition of z score",
+      "description": "a value expressed as the number of standard deviations above or below the mean, which makes values of different distributions comparable",
       "expression": "\"z\" = (\"x\" - \"mu\") / \"sigma\"",
       "latex": "z = \\frac{x - \\mu}{\\sigma}",
       "assigned_word": "z score"
     },
     {
       "name": "definition of probability",
+      "description": "the classical probability of an event, the number of favourable outcomes divided by the number of all equally likely outcomes, e.g. 1/6 for one side of a die",
       "expression": "\"P\"(\"A\") = \"favorable\" / \"total\"",
       "latex": "P(A) = \\frac{\\text{favorable}}{\\text{total}}",
       "assigned_word": "probability"
     },
     {
       "name": "definition of complement",
+      "description": "the probability that an event does not happen is one minus the probability that it happens",
       "expression": "\"P\"(\"A\"^c) = 1 - \"P\"(\"A\")",
       "latex": "P(A^c) = 1 - P(A)",
       "assigned_word": "complement event"
     },
     {
       "name": "definition of union",
+      "description": "the probability that at least one of two events happens, the sum of the two probabilities minus the probability that both happen, which would otherwise be counted twice",
       "expression": "\"P\"(\"A\" or \"B\") = \"P\"(\"A\") + \"P\"(\"B\") - \"P\"(\"A\" and \"B\")",
       "latex": "P(A \\cup B) = P(A) + P(B) - P(A \\cap B)",
       "assigned_word": "union of events"
     },
     {
       "name": "definition of conditional probability",
+      "description": "the probability of an event given that another event has happened, the probability of both divided by the probability of the given event, the base of Bayes' theorem",
       "expression": "\"P\"(\"A\"|\"B\") = \"P\"(\"A\" and \"B\") / \"P\"(\"B\")",
       "latex": "P(A|B) = \\frac{P(A \\cap B)}{P(B)}",
       "assigned_word": "conditional probability"
     },
     {
       "name": "permutations",
+      "description": "the number of ways to arrange r items chosen from n items where the order matters, e.g. the possible podiums of a race",
       "expression": "\"P\"(\"n\",\"r\") = \"n\"! / (\"n\" - \"r\")!",
       "latex": "P(n,r) = \\frac{n!}{(n-r)!}",
       "assigned_word": "permutation"
     },
     {
       "name": "combinations",
+      "description": "the number of ways to choose r items from n items where the order does not matter, the binomial coefficient, e.g. the possible lottery draws",
       "expression": "\"C\"(\"n\",\"r\") = \"n\"! / (\"r\"! * (\"n\" - \"r\")!)",
       "latex": "C(n,r) = \\binom{n}{r} = \\frac{n!}{r!(n-r)!}",
       "assigned_word": "combination"
     },
     {
       "name": "definition of percent change",
+      "description": "the change of a value relative to its old value in percent, e.g. a price rise from 80 to 100 is a change of 25 percent",
       "expression": "\"percent change\" = (\"new\" - \"old\") / \"old\" * 100",
       "latex": "\\frac{\\text{new} - \\text{old}}{\\text{old}} \\times 100\\%",
       "assigned_word": "percent change"
     },
     {
       "name": "definition of simple interest",
+      "description": "the interest earned on a principal when the interest itself earns no interest, the principal multiplied by the rate and the time",
       "expression": "\"I\" = \"principal\" * \"rate\" * \"time\"",
       "latex": "I = Prt",
       "assigned_word": "simple interest"
     },
     {
       "name": "definition of compound interest",
+      "description": "the amount a principal grows to when the interest is added n times per year and earns interest itself, the reason why savings and debts grow exponentially",
       "expression": "\"A\" = \"principal\" * (1 + \"rate\" / \"n\")^(\"n\" * \"time\")",
       "latex": "A = P(1 + r/n)^{nt}",
       "assigned_word": "compound interest"
     },
     {
       "name": "definition of continuous compounding",
+      "description": "the limit of compound interest when the interest is added at every instant, the exponential growth of a principal at a given rate",
       "expression": "\"A\" = \"principal\" * \"e\"^(\"rate\" * \"time\")",
       "latex": "A = P e^{rt}",
       "assigned_word": "continuous compounding"

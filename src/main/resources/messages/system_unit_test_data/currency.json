@@ -524,6 +524,7 @@
     },
     {
       "name": "reverse currency conversion",
+      "description": "the amount in the source currency that a given amount in the target currency corresponds to, the target amount divided by the exchange rate",
       "expression": "\"source amount\" = \"target amount\" / \"exchange rate\"",
       "assigned_word": "currency"
     },
@@ -547,6 +548,7 @@
     },
     {
       "name": "rate percent change",
+      "description": "the change of an exchange rate relative to its old value in percent, e.g. how much a currency has gained or lost against another",
       "expression": "\"percent change\" = ( \"new rate\" - \"old rate\" ) / \"old rate\" * 100",
       "assigned_word": "currency"
     },
@@ -564,6 +566,7 @@
     },
     {
       "name": "yearly average turnover by month sum",
+      "description": "the average daily turnover of a year calculated from the monthly averages, the sum of the twelve monthly averages divided by 12",
       "expression": "\"yearly average turnover\" = &sum; ( \"monthly average turnover\" ) / 12",
       "assigned_word": "currency"
     }

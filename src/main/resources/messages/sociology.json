@@ -2702,6 +2702,7 @@
   "formulas": [
     {
       "name": "definition of crude birth rate",
+      "description": "the number of live births per 1000 inhabitants per year, crude because it does not take the age structure of the population into account",
       "expression": "\"crude birth rate\" = \"number of births\" / \"population\" * 1000",
       "latex": "CBR = \\frac{B}{P} \\cdot 1000",
       "assigned": [
@@ -2711,6 +2712,7 @@
     },
     {
       "name": "definition of crude death rate",
+      "description": "the number of deaths per 1000 inhabitants per year, crude because an old population has a higher rate even with better health",
       "expression": "\"crude death rate\" = \"number of deaths\" / \"population\" * 1000",
       "latex": "CDR = \\frac{D}{P} \\cdot 1000",
       "assigned": [
@@ -2720,6 +2722,7 @@
     },
     {
       "name": "definition of rate of natural increase",
+      "description": "the growth of a population by births minus deaths per 1000 inhabitants per year, without migration",
       "expression": "\"rate of natural increase\" = ( \"number of births\" - \"number of deaths\" ) / \"population\" * 1000",
       "latex": "RNI = \\frac{B - D}{P} \\cdot 1000",
       "assigned": [
@@ -2730,6 +2733,7 @@
     },
     {
       "name": "definition of net migration rate",
+      "description": "the change of a population by immigration minus emigration per 1000 inhabitants per year",
       "expression": "\"net migration rate\" = ( \"number of immigrants\" - \"number of emigrants\" ) / \"population\" * 1000",
       "latex": "NMR = \\frac{I - E}{P} \\cdot 1000",
       "assigned": [
@@ -2740,6 +2744,7 @@
     },
     {
       "name": "definition of infant mortality",
+      "description": "the number of children who die before their first birthday per 1000 live births, one of the most sensitive indicators of the health system and the living conditions",
       "expression": "\"infant mortality\" = \"infant deaths\" / \"live births\" * 1000",
       "latex": "IMR = \\frac{D_{<1}}{B} \\cdot 1000",
       "assigned": [
@@ -2749,6 +2754,7 @@
     },
     {
       "name": "definition of dependency ratio",
+      "description": "the number of children and pensioners per 100 people of working age, which shows how many people each worker supports on average",
       "expression": "\"dependency ratio\" = \"dependent population\" / \"working-age population\" * 100",
       "latex": "DR = \\frac{P_{dep}}{P_{work}} \\cdot 100",
       "assigned": [
@@ -2758,6 +2764,7 @@
     },
     {
       "name": "definition of sex ratio",
+      "description": "the number of males per 100 females in a population, about 105 at birth and below 100 in old age",
       "expression": "\"sex ratio\" = \"male population\" / \"female population\" * 100",
       "latex": "SR = \\frac{P_m}{P_f} \\cdot 100",
       "assigned": [
@@ -2767,6 +2774,7 @@
     },
     {
       "name": "definition of population density",
+      "description": "the number of inhabitants per unit of land area, e.g. per square kilometre",
       "expression": "\"population density\" = \"population\" / \"land area\"",
       "latex": "D = \\frac{P}{A}",
       "assigned": [
@@ -2776,6 +2784,7 @@
     },
     {
       "name": "doubling time by the rule of 70",
+      "description": "a rule of thumb for the years until a population doubles: 70 divided by the yearly growth rate in percent, e.g. 35 years at 2 percent",
       "expression": "\"doubling time\" = 70 / \"population growth rate\"",
       "latex": "t \\approx \\frac{70}{r}",
       "assigned": [

@@ -4443,12 +4443,13 @@ class sandbox_multi extends db_object_multi_user
     function id_used_msg(sandbox_multi $obj_to_add): user_message
     {
         $lib = new library();
-        $obj_to_add_name = $lib->class_to_name($obj_to_add::class);
         $msg = new user_message(); // the message IS the return value, so the caller merges it
+        // the message asks for another name like the named sandbox objects do, so the value is
+        // the name key and not the class name, which would read "use another group group"
         $msg->add(msg_id::NAME_ALREADY_EXISTS, [
             msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
             msg_id::VAR_NAME => $obj_to_add->dsp_id(),
-            msg_id::VAR_VALUE => $obj_to_add_name
+            msg_id::VAR_VALUE => msg_id::KEY_TYPE_NAME->value
         ]);
         return $msg;
     }
