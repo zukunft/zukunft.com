@@ -117,6 +117,8 @@ class html_base
     const string BS_BTN_FIELD = 'btn btn-outline-success w-100';
     const string BS_BTN_SUCCESS = 'btn-outline-success';
     const string BS_BTN_CANCEL = 'btn-outline-secondary';
+    // between the tooltip of an action and the reason why the action is blocked (see change_style_and_tip)
+    const string TOOLTIP_SEPARATOR = ': ';
     const string BS_BTN_DEL = 'btn-outline-secondary';
     const string BS_BTN_IMPORT = 'btn-outline-secondary';
     const string BS_BTN_EXPORT = 'btn-outline-secondary';
@@ -712,7 +714,7 @@ class html_base
         global $mtr;
         if (self::change_blocked()) {
             $style = trim($style . ' ' . styles::STYLE_GREY);
-            $tooltip .= ': ' . $mtr->txt(msg_id::CHANGE_LOGIN_REQUIRED);
+            $tooltip .= self::TOOLTIP_SEPARATOR . $mtr->txt(msg_id::CHANGE_LOGIN_REQUIRED);
         }
         return [$style, $tooltip];
     }

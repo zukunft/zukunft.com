@@ -175,17 +175,9 @@ class value_tests
 
         // the description that the user types in the change value view is the description of the group
         $t->subheader($ts . 'description');
-        $test_name = 'the description of the api json is the description of the group of the value';
+        // the api json is taken before the group of the value is filled below
         $desc_json = $val->api_json_array([api_types::INCL_PHRASES], $msg);
         $desc_json[json_fields::DESCRIPTION] = groups::TN_READ_COM;
-        $val_desc = new value($t->usr1);
-        $val_desc->api_mapper($desc_json, $msg);
-        $t->assert($test_name, $val_desc->grp()->get_description(), groups::TN_READ_COM);
-        $test_name = '... which is written to a new group row without the name generated from the phrases';
-        $grp_empty = $val_desc->grp()->clone_reset();
-        $fld_names = $val_desc->grp()->db_fields_changed($grp_empty, $msg, new sql_type_list([sql_type::INSERT]))->names();
-        $t->assert_true($test_name, in_array(fields::FLD_DESCRIPTION, $fld_names));
-        $t->assert_false($test_name, in_array(group_fields::FLD_NAME, $fld_names));
         $test_name = 'a group that carries neither a given name nor a description differs from the stored group';
         $grp_db = $t_val->value($msg)->grp();
         $grp_db->set_description(groups::TN_READ_COM);
@@ -196,6 +188,27 @@ class value_tests
         $fld_names = $grp_req->db_fields_changed($grp_db, $msg, new sql_type_list([sql_type::UPDATE]))->names();
         $t->assert_false($test_name, in_array(group_fields::FLD_NAME, $fld_names));
         $t->assert_false($test_name, in_array(fields::FLD_DESCRIPTION, $fld_names));
+        $test_name = 'the description of the api json is the description of the group of the value';
+        $val = new value($t->usr1);
+        $val->api_mapper($desc_json, $msg);
+        $t->assert($test_name, $val->grp()->get_description(), groups::TN_READ_COM);
+        $test_name = '... which is written to a new group row without the name generated from the phrases';
+        $grp_empty = $val->grp()->clone_reset();
+        $fld_names = $val->grp()->db_fields_changed($grp_empty, $msg, new sql_type_list([sql_type::INSERT]))->names();
+        $t->assert_true($test_name, in_array(fields::FLD_DESCRIPTION, $fld_names));
+        $t->assert_false($test_name, in_array(group_fields::FLD_NAME, $fld_names));
+        // the frontend sends the source selected in the value form by its id
+        $test_name = 'the source id of the api json is the source of the value, so that the save writes it';
+        $src_json = $desc_json;
+        $src_json[json_fields::SOURCE_ID] = sources::BFS_ID;
+        $val = new value($t->usr1);
+        $val->api_mapper($src_json, $msg);
+        $t->assert($test_name, $val->get_source_id(), sources::BFS_ID);
+        $test_name = '... which a source name in the same api json does not drop';
+        $src_json[json_fields::SOURCE_NAME] = sources::BFS;
+        $val = new value($t->usr1);
+        $val->api_mapper($src_json, $msg);
+        $t->assert($test_name, $val->get_source_id(), sources::BFS_ID);
         $msg->reset();
 
         $t->subheader($ts . 'union row mapping');

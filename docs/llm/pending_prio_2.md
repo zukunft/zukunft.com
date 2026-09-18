@@ -1440,6 +1440,14 @@ writes it to the group row on save (value_base::save), but these gaps remain:
   not done, because the upgrade path has the open defects listed under "database upgrade path".
   the developer decides if an optional field needs the bump. the value list import format
   (value_list::import_obj, one context for many values) has no group name
+- a stored given group name or value description cannot be cleared: the frontend drops an emptied
+  field before sending (value::api_array filters empty entries), and sandbox_multi::save fills every
+  field that the request does not carry from the database row, so "emptied" and "not sent" look
+  the same. the source of a value has the same gap: selecting no source drops the source in the
+  frontend (value::set_source_id) and value_base::set_source_id ignores the id 0, so a stored
+  source stays. to close the gap compare the field with its '8'-prefixed opening value
+  (url_var::PRE) and send an explicit empty value for a field that the user has emptied, which
+  fill must then keep instead of taking the stored value
 - the group list of the backend data_object (data_object::add_group, group_list()) is only
   filled, e.g. by horizontal_tests for the value import, but never read: no import_mapper takes a
   group from it and the frontend data_object does not map the json field `groups` that

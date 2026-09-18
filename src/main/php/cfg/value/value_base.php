@@ -471,10 +471,16 @@ class value_base extends sandbox_value
             }
             */
         }
+        // the source selected in the value form, which the frontend sends by its id (see api_json_array)
+        if (array_key_exists(json_fields::SOURCE_ID, $api_json)) {
+            $this->set_source_id((int)$api_json[json_fields::SOURCE_ID]);
+        }
         if (array_key_exists(json_fields::SOURCE_NAME, $api_json)) {
-            $src = new source($this->get_user());
-            $src->set_name($api_json[json_fields::SOURCE_NAME]);
-            $this->source = $src;
+            // the name is added to the source of the id above, so that a json with both keeps the id
+            if ($this->source == null) {
+                $this->source = new source($this->get_user());
+            }
+            $this->source->set_name($api_json[json_fields::SOURCE_NAME]);
         }
 
         return $msg->is_ok();

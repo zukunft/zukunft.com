@@ -1735,10 +1735,11 @@ class group extends sandbox_multi
             }
         }
 
-        // check potential duplicate by name
-        if ($sim == null) {
+        // check potential duplicate by name: only a name given by a user must be unique, a group without
+        // one (e.g. saved only for the description of its value) is identified by the phrases checked above
+        if ($sim == null and $this->name_given() != '') {
             // check with the standard namespace
-            if ($db_chk->load_standard_by_name($this->name(), $msg)) {
+            if ($db_chk->load_standard_by_name($this->name_given(), $msg)) {
                 if ($db_chk->id() > 0) {
                     log_debug($this->dsp_id() . ' has the same name is the already existing "' . $db_chk->dsp_id() . '" of the standard namespace');
                     $sim = $db_chk;
@@ -1746,15 +1747,11 @@ class group extends sandbox_multi
             }
             // check with the user namespace
             $db_chk->set_user($this->get_user());
-            if ($this->name() != '') {
-                if ($db_chk->load_by_name($this->name(), $msg)) {
-                    if ($db_chk->id() > 0) {
-                        log_debug($this->dsp_id() . ' has the same name is the already existing "' . $db_chk->dsp_id() . '" of the user namespace');
-                        $sim = $db_chk;
-                    }
+            if ($db_chk->load_by_name($this->name_given(), $msg)) {
+                if ($db_chk->id() > 0) {
+                    log_debug($this->dsp_id() . ' has the same name is the already existing "' . $db_chk->dsp_id() . '" of the user namespace');
+                    $sim = $db_chk;
                 }
-            } else {
-                log_err_msg('The name must be set to check if a similar object exists', $msg);
             }
         }
 

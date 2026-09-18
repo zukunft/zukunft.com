@@ -158,6 +158,8 @@ class figure extends combine_named
         // TODO Prio 3 create function for easier code read
         // only the name given to the group like the backend sends it (see value_base::api_json_array)
         $vars[json_fields::NAME] = $this->obj->grp->name;
+        // the description of the group like the value sends it (see value::api_array)
+        $vars[json_fields::DESCRIPTION] = $this->obj->grp->get_description();
         if (!$this->obj->grp->phr_lst()->is_empty()) {
             $vars[json_fields::PHRASES] = $this->obj->grp->phr_lst()->api_array($typ_lst, $msg);
         }
