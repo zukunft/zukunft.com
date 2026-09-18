@@ -76,6 +76,7 @@
   "formulas": [
     {
       "name": "scale thousand to one",
+      "description": "convert numbers in thousands to one and back, so that a value given in thousands can be compared and calculated with values given in ones",
       "expression": "\"one\" = \"thousand\" * 1000",
       "assigned_word": "thousand"
     },
@@ -89,6 +90,7 @@
     },
     {
       "name": "scale billion to one",
+      "description": "convert numbers in billions (thousand millions) to one and back, so that a value given in billions can be compared and calculated with values given in ones",
       "expression": "\"one\" = \"billion\" * 1000000000",
       "assigned_word": "billion"
     }

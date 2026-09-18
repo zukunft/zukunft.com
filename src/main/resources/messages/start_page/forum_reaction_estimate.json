@@ -383,6 +383,7 @@
   "formulas": [
     {
       "name": "star reaction calibration error (formula)",
+      "description": "how far the forecast of the star reactions to a forum post was off, the forecast minus the actual count, to calibrate the estimates of the forum outreach",
       "expression": "\"star reaction calibration error\" = \"star reaction count forecast\" - \"star reaction count\"",
       "assigned": [
         "star reaction count forecast",
@@ -391,6 +392,7 @@
     },
     {
       "name": "smile reaction calibration error (formula)",
+      "description": "how far the forecast of the smile reactions to a forum post was off, the forecast minus the actual count",
       "expression": "\"smile reaction calibration error\" = \"smile reaction count forecast\" - \"smile reaction count\"",
       "assigned": [
         "smile reaction count forecast",
@@ -399,6 +401,7 @@
     },
     {
       "name": "astonished reaction calibration error (formula)",
+      "description": "how far the forecast of the astonished reactions to a forum post was off, the forecast minus the actual count",
       "expression": "\"astonished reaction calibration error\" = \"astonished reaction count forecast\" - \"astonished reaction count\"",
       "assigned": [
         "astonished reaction count forecast",
@@ -407,6 +410,7 @@
     },
     {
       "name": "frown reaction calibration error (formula)",
+      "description": "how far the forecast of the frown reactions to a forum post was off, the forecast minus the actual count",
       "expression": "\"frown reaction calibration error\" = \"frown reaction count forecast\" - \"frown reaction count\"",
       "assigned": [
         "frown reaction count forecast",
@@ -415,6 +419,7 @@
     },
     {
       "name": "eyebrow reaction calibration error (formula)",
+      "description": "how far the forecast of the raised eyebrow reactions to a forum post was off, the forecast minus the actual count",
       "expression": "\"eyebrow reaction calibration error\" = \"eyebrow reaction count forecast\" - \"eyebrow reaction count\"",
       "assigned": [
         "eyebrow reaction count forecast",
@@ -423,6 +428,7 @@
     },
     {
       "name": "substantive reply calibration error (formula)",
+      "description": "how far the forecast of the replies with real content to a forum post was off, the forecast minus the actual count, the most important calibration for the outreach estimate",
       "expression": "\"substantive reply calibration error\" = \"substantive reply count forecast\" - \"substantive reply count\"",
       "assigned": [
         "substantive reply count forecast",

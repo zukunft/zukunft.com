@@ -697,9 +697,14 @@ class formula extends sandbox_code_id
 
     /**
      * convert the supported latex math markup to html so the expression can be shown without a
-     * latex engine: the "\text{...}" wrapper is unwrapped to plain text, an exponent "^2" becomes
-     * a superscript, the product "\cdot" becomes a middle dot and a fraction "\frac{a}{b}" (or the
-     * display variant "\dfrac{a}{b}") becomes a numerator-over-denominator block styled by css
+     * latex engine: the "\text{...}" wrapper is unwrapped to plain text, an exponent "^2" or
+     * "^{n}" becomes a superscript, an index "_i" or "_{i=1}" a subscript, the product "\cdot"
+     * a middle dot, "\approx" the almost equal sign, "\sum" and "\partial" their symbols, a
+     * "\left" or "\right" size hint is dropped so that the bracket itself stays, a function name
+     * such as "\ln" loses its backslash, a root "\sqrt{a}" becomes the root sign with the
+     * argument in brackets and a fraction "\frac{a}{b}" (or the display variant "\dfrac{a}{b}")
+     * becomes a numerator-over-denominator block styled by css; any other latex command is
+     * shown as it is written
      * @param string $latex the latex expression with the term names already replaced by their links
      * @return string the html code that renders the expression with the same layout as latex
      */
@@ -709,21 +714,44 @@ class formula extends sandbox_code_id
         // unwrap the "\text{...}" wrapper so the symbol or name is shown as plain text and its
         // braces do not interfere with the fraction conversion below
         $result = preg_replace('/\\\\text\{([^{}]*)}/', '$1', $latex);
-        // an exponent "^2" becomes a superscript "<sup>2</sup>"
-        $result = preg_replace_callback('/\^(\w+)/', fn($m) => $html->sup($m[1]), $result);
-        // the latex product "\cdot" becomes the html middle dot
-        $result = str_replace('\cdot', '&middot;', $result);
+        // an exponent "^{n+1}" or "^2" becomes a superscript "<sup>2</sup>" and an index "_{i=1}"
+        // or "_i" a subscript "<sub>i</sub>"; the lookahead skips a "^" or "_" inside a html tag,
+        // e.g. in the title of a term link, because the link html has been inserted before
+        $result = preg_replace_callback('/\^\{([^{}]*)}(?![^<]*>)/', fn($m) => $html->sup($m[1]), $result);
+        $result = preg_replace_callback('/\^(\w+)(?![^<]*>)/', fn($m) => $html->sup($m[1]), $result);
+        $result = preg_replace_callback('/_\{([^{}]*)}(?![^<]*>)/', fn($m) => $html->sub($m[1]), $result);
+        $result = preg_replace_callback('/_(\w+)(?![^<]*>)/', fn($m) => $html->sub($m[1]), $result);
+        // the latex product "\cdot" becomes the html middle dot and "\approx" the almost equal
+        // sign; the sum and the partial derivative signs are shown as their html entities
+        $result = str_replace(
+            ['\cdot', '\approx', '\sum', '\partial'],
+            ['&middot;', '&asymp;', '&sum;', '&part;'],
+            $result);
+        // the "\left" and "\right" size hints of a bracket or bar are dropped, the bracket stays
+        $result = preg_replace('/\\\\(left|right)\s*/', '', $result);
+        // a function name such as "\ln" or "\cos" is shown as the plain function name
+        $result = preg_replace('/\\\\(ln|log|exp|sin|cos|tan|sec)\b/', '$1', $result);
         // a fraction "\frac{a}{b}" or the display variant "\dfrac{a}{b}" becomes the numerator
-        // shown above the denominator
-        $result = preg_replace_callback(
-            '/\\\\d?frac\{([^{}]*)}\{([^{}]*)}/',
-            function ($m) use ($html) {
-                $num = $html->span(trim($m[1]), styles::FRAC_NUM);
-                $den = $html->span(trim($m[2]), styles::FRAC_DEN);
-                return $html->span($num . $den, styles::FRAC);
-            },
-            $result
-        );
+        // shown above the denominator and a root "\sqrt{a}" the root sign with the argument in
+        // brackets; both accept no braces inside, so a nested markup e.g. a fraction inside a
+        // root is converted from the inside out until nothing is left to convert
+        do {
+            $before = $result;
+            $result = preg_replace_callback(
+                '/\\\\d?frac\{([^{}]*)}\{([^{}]*)}/',
+                function ($m) use ($html) {
+                    $num = $html->span(trim($m[1]), styles::FRAC_NUM);
+                    $den = $html->span(trim($m[2]), styles::FRAC_DEN);
+                    return $html->span($num . $den, styles::FRAC);
+                },
+                $result
+            );
+            $result = preg_replace_callback(
+                '/\\\\sqrt\{([^{}]*)}/',
+                fn($m) => '&radic;(' . trim($m[1]) . ')',
+                $result
+            );
+        } while ($result != $before);
         return $result;
     }
 

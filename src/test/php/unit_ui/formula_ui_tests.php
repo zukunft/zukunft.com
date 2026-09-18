@@ -118,6 +118,45 @@ class formula_ui_tests
         $test_page .= $html->text_h2('increase expression in latex format without term links');
         $test_page .= 'latex without links: ' . $frm_increase->expression_latex() . '<br>';
 
+        // the latex markup of the propagation of uncertainty formulas is rendered as html without
+        // a latex engine: "\approx" as the almost equal sign, "\left|" and "\right|" as the bars
+        // without the size hints, "\ln" as the plain function name, "\sqrt{}" as the root sign,
+        // "\sum" with its limits as subscript and superscript and "_i" as a subscript
+        $frm_power = new formula($t_frm->formula_increase()->api_json());
+        $frm_power->set_latex(formula_names::PROPAGATION_POWER_LATEX);
+        $latex_html = $frm_power->expression_latex();
+        $test_name = 'the almost equal sign of the latex is rendered as html';
+        $t->assert_text_contains($test_name, $latex_html, '&asymp;');
+        $test_name = 'the bars of the latex are shown without the size hints';
+        $t->assert_text_contains($test_name, $latex_html, '| <span class="' . styles::FRAC . '">');
+        $test_name = 'no latex command is left in the rendered power formula';
+        $t->assert_text_not_contains($test_name, $latex_html, '\\');
+        $frm_error = new formula($t_frm->formula_increase()->api_json());
+        $frm_error->set_latex(formula_names::STD_ERROR_OF_MEAN_LATEX);
+        $test_name = 'a root inside a fraction is rendered as the root sign with the argument in brackets';
+        $t->assert_text_contains($test_name, $frm_error->expression_latex(),
+            '<span class="' . styles::FRAC_DEN . '">&radic;(n)</span>');
+        $frm_order = new formula($t_frm->formula_increase()->api_json());
+        $frm_order->set_latex(formula_names::PROPAGATION_FIRST_ORDER_LATEX);
+        $latex_html = $frm_order->expression_latex();
+        $test_name = 'the sum sign is rendered with its limits as subscript and superscript';
+        $t->assert_text_contains($test_name, $latex_html, '&sum;<sub>i=1</sub><sup>n</sup>');
+        $test_name = 'the index of a term is rendered as a subscript';
+        $t->assert_text_contains($test_name, $latex_html, 'variance of x<sub>i</sub>');
+        // a latex command that the renderer does not know stays as it is written, so the user
+        // still sees the intended markup instead of a silently dropped part of the expression
+        $frm_unknown = new formula($t_frm->formula_increase()->api_json());
+        $frm_unknown->set_latex('\text{x} \alpha');
+        $test_name = 'an unknown latex command is kept as it is written';
+        $t->assert_text_contains($test_name, $frm_unknown->expression_latex(), '\alpha');
+        // a "^" or "_" inside the html of a term link, e.g. in the tooltip description, is no
+        // latex markup, so the link html stays untouched
+        $frm_tip = $t_frm->formula_increase_ui(true);
+        $frm_tip->set_latex('\text{' . word_names::THIS_NAME . '}_i');
+        $latex_html = $frm_tip->expression_latex_link();
+        $test_name = 'the index after a term link is a subscript';
+        $t->assert_text_contains($test_name, $latex_html, '</a><sub>i</sub>');
+
         // the changes of the increase formula as a table, e.g. the name and expression added
         $t_log = new test_log($t);
         $api_typ_lst = new api_type_list([api_types::TEST_MODE]);

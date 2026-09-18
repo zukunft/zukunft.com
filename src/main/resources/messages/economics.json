@@ -2121,6 +2121,7 @@
   "formulas": [
     {
       "name": "definition of revenue",
+      "description": "the income from sales, the price per unit multiplied by the number of units sold, before any costs are deducted",
       "expression": "\"revenue\" = \"price\" * \"quantity\"",
       "latex": "R = P \\cdot Q",
       "assigned": [
@@ -2130,6 +2131,7 @@
     },
     {
       "name": "definition of total cost",
+      "description": "the cost of producing a given quantity, the fixed cost that does not depend on the quantity plus the variable cost that grows with it",
       "expression": "\"total cost\" = \"fixed cost\" + \"variable cost\"",
       "latex": "TC = FC + VC",
       "assigned": [
@@ -2139,6 +2141,7 @@
     },
     {
       "name": "definition of profit",
+      "description": "what remains of the revenue after the total cost of producing the sold goods or services is deducted",
       "expression": "\"profit\" = \"revenue\" - \"total cost\"",
       "latex": "\\pi = R - TC",
       "assigned": [
@@ -2148,6 +2151,7 @@
     },
     {
       "name": "definition of average cost",
+      "description": "the cost per unit produced, which falls with the quantity as long as the fixed cost is spread over more units (economies of scale)",
       "expression": "\"average cost\" = \"total cost\" / \"quantity\"",
       "latex": "AC = \\frac{TC}{Q}",
       "assigned": [
@@ -2157,6 +2161,7 @@
     },
     {
       "name": "definition of profit margin",
+      "description": "the share of the revenue that is kept as profit, a measure of profitability that makes companies of different sizes comparable",
       "expression": "\"profit margin\" = \"profit\" / \"revenue\"",
       "latex": "\\text{profit margin} = \\frac{\\pi}{R}",
       "assigned": [
@@ -2166,6 +2171,7 @@
     },
     {
       "name": "definition of gross margin",
+      "description": "the share of the revenue that remains after the direct cost of the sold goods, before the overhead costs, which shows how much a company earns on its products themselves",
       "expression": "\"gross margin\" = ( \"revenue\" - \"cost of goods sold\" ) / \"revenue\"",
       "latex": "\\text{gross margin} = \\frac{R - COGS}{R}",
       "assigned": [
@@ -2175,6 +2181,7 @@
     },
     {
       "name": "definition of markup",
+      "description": "how much the selling price exceeds the cost, as a share of the cost; unlike the margin it is related to the cost and not to the price",
       "expression": "\"markup\" = ( \"price\" - \"cost\" ) / \"cost\"",
       "latex": "\\text{markup} = \\frac{P - C}{C}",
       "assigned": [
@@ -2184,6 +2191,7 @@
     },
     {
       "name": "definition of gross domestic product",
+      "description": "the total value of the goods and services produced in a country in a period, measured by who buys them: households, investors, the government and foreign customers net of imports",
       "expression": "\"gross domestic product\" = \"consumption\" + \"investment\" + \"government spending\" + \"balance of trade\"",
       "latex": "GDP = C + I + G + NX",
       "assigned": [
@@ -2195,6 +2203,7 @@
     },
     {
       "name": "definition of GDP deflator",
+      "description": "a price index of everything produced in a country, the ratio of the GDP at current prices to the GDP at the prices of a base year, used to separate real growth from inflation",
       "expression": "\"GDP deflator\" = \"gross domestic product\" / \"real gross domestic product\" * 100",
       "latex": "\\text{deflator} = \\frac{GDP_{nominal}}{GDP_{real}} \\cdot 100",
       "assigned": [
@@ -2204,6 +2213,7 @@
     },
     {
       "name": "definition of GDP per capita",
+      "description": "the economic output per inhabitant, which makes countries of different population sizes comparable and is a rough indicator of the average material living standard",
       "expression": "\"GDP per capita\" = \"gross domestic product\" / \"population\"",
       "latex": "\\text{GDP per capita} = \\frac{GDP}{N}",
       "assigned": [
@@ -2213,6 +2223,7 @@
     },
     {
       "name": "definition of real interest rate",
+      "description": "the interest rate corrected for inflation, the gain in purchasing power of a saver or the true cost of a loan, approximated by the nominal rate minus the inflation rate",
       "expression": "\"real interest rate\" = \"nominal interest rate\" - \"inflation\"",
       "latex": "r = i - \\pi",
       "assigned": [
@@ -2222,6 +2233,7 @@
     },
     {
       "name": "equation of exchange",
+      "description": "the identity of the quantity theory of money: the money supply multiplied by how often each unit changes hands equals the price level multiplied by the real output",
       "expression": "\"money supply\" * \"velocity of money\" = \"price\" * \"real gross domestic product\"",
       "latex": "M \\cdot V = P \\cdot Y",
       "assigned": [
@@ -2231,6 +2243,7 @@
     },
     {
       "name": "definition of money multiplier",
+      "description": "the maximum amount of money the banking system can create from one unit of central bank money, the inverse of the share of deposits that banks must keep as reserves",
       "expression": "\"money multiplier\" = 1 / \"reserve requirement\"",
       "latex": "m = \\frac{1}{R}",
       "assigned": [
@@ -2239,6 +2252,7 @@
     },
     {
       "name": "definition of present value",
+      "description": "the value today of an amount received one period in the future, discounted by the interest rate, because money available now can earn interest",
       "expression": "\"present value\" = \"future value\" / ( 1 + \"interest rate\" )",
       "latex": "PV = \\frac{FV}{1 + r}",
       "assigned": [
@@ -2248,6 +2262,7 @@
     },
     {
       "name": "definition of future value",
+      "description": "the value of an amount invested today after one period of interest, the inverse of the present value",
       "expression": "\"future value\" = \"present value\" * ( 1 + \"interest rate\" )",
       "latex": "FV = PV \\cdot ( 1 + r )",
       "assigned": [
@@ -2257,6 +2272,7 @@
     },
     {
       "name": "definition of return on investment",
+      "description": "the profit earned per unit of money invested, the basic measure to compare the profitability of investments",
       "expression": "\"return on investment\" = \"profit\" / \"investment\"",
       "latex": "ROI = \\frac{\\pi}{I}",
       "assigned": [
@@ -2266,6 +2282,7 @@
     },
     {
       "name": "definition of return on equity",
+      "description": "the profit earned per unit of the owners' capital, which shows how well a company uses the money of its shareholders",
       "expression": "\"return on equity\" = \"profit\" / \"equity\"",
       "latex": "ROE = \\frac{\\pi}{E}",
       "assigned": [
@@ -2275,6 +2292,7 @@
     },
     {
       "name": "definition of return on assets",
+      "description": "the profit earned per unit of all assets, which shows how efficiently a company uses everything it owns regardless of how it is financed",
       "expression": "\"return on assets\" = \"profit\" / \"asset\"",
       "latex": "ROA = \\frac{\\pi}{A}",
       "assigned": [
@@ -2284,6 +2302,7 @@
     },
     {
       "name": "propensity identity",
+      "description": "each additional unit of income is either consumed or saved, so the marginal propensity to consume and the marginal propensity to save add up to one",
       "expression": "\"marginal propensity to consume\" + \"marginal propensity to save\" = 1",
       "latex": "MPC + MPS = 1",
       "assigned": [
@@ -2293,6 +2312,7 @@
     },
     {
       "name": "definition of fiscal multiplier",
+      "description": "how much the total output changes per unit of additional government spending in the simple Keynesian model, larger the more of each extra income is consumed again",
       "expression": "\"fiscal multiplier\" = 1 / ( 1 - \"marginal propensity to consume\" )",
       "latex": "k = \\frac{1}{1 - MPC}",
       "assigned": [
@@ -2301,6 +2321,7 @@
     },
     {
       "name": "doubling time by the rule of 72",
+      "description": "a rule of thumb for the years until an amount doubles at a given yearly interest rate: 72 divided by the rate in percent, e.g. 12 years at 6 percent",
       "expression": "\"doubling time\" = 72 / ( \"interest rate\" * 100 )",
       "latex": "t \\approx \\frac{72}{r \\cdot 100}",
       "assigned": [

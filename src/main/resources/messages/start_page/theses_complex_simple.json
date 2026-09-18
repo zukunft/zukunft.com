@@ -939,6 +939,7 @@
   "formulas": [
     {
       "name": "global welfare baseline formula",
+      "description": "the welfare of humanity in happy time points, the world population multiplied by the fraction of the waking time that people experience as good",
       "expression": "\"global welfare baseline\" = \"population\" * \"waking welfare fraction\"",
       "assigned": [
         "population",
@@ -947,6 +948,7 @@
     },
     {
       "name": "bad steering loss formula",
+      "description": "the welfare lost because societies steer badly, the global welfare baseline multiplied by the estimated fraction that bad decisions cost",
       "expression": "\"bad steering loss\" = \"global welfare baseline\" * \"bad steering fraction\"",
       "assigned": [
         "global welfare baseline",
@@ -955,6 +957,7 @@
     },
     {
       "name": "chain HTP loss formula",
+      "description": "the part of the bad steering loss that the causal chain from complexity over distrust to bad decisions explains, the loss multiplied by the share of each link of the chain",
       "expression": "\"chain HTP loss\" = \"bad steering loss\" * \"complexity share\" * \"distrust mediation share\" * \"avoidable share\"",
       "latex": "L_{chain} = R_{total}\\cdot s_{komplex}\\cdot t_{distrust}\\cdot q_{avoidable}",
       "assigned": [

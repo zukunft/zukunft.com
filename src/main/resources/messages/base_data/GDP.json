@@ -506,6 +506,7 @@
   "formulas": [
     {
       "name": "GDP per capita (formula)",
+      "description": "the economic output per inhabitant, which makes the GDP of countries with different population sizes comparable and is a rough indicator of the average material living standard",
       "expression": "\"GDP per capita\" = \"GDP\" / \"population\"",
       "assigned": [
         "country"
@@ -513,6 +514,7 @@
     },
     {
       "name": "net exports (formula)",
+      "description": "the trade balance of a country, positive if it sells more goods and services abroad than it buys, negative for a trade deficit",
       "expression": "\"net exports\" = \"export\" - \"import\"",
       "assigned": [
         "country"
@@ -520,6 +522,7 @@
     },
     {
       "name": "GDP (expenditure)",
+      "description": "the expenditure approach to the gross domestic product: everything produced in a country is bought either by households, by investors, by the government or by foreign customers net of imports",
       "expression": "\"GDP\" = \"consumption\" + \"investment\" + \"government spending\" + \"net exports\"",
       "assigned": [
         "country"

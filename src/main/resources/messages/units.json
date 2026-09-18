@@ -2770,72 +2770,84 @@
     },
     {
       "name": "scale hour to sec",
+      "description": "to convert times in hours to seconds and the other way round, so that durations given in hours can be calculated with durations in seconds",
       "expression": "\"second (time)\" = \"hour\" * 3600",
       "latex": "\\text{s} = 3600 \\cdot \\text{h}",
       "assigned_word": "hour"
     },
     {
       "name": "scale day to hour",
+      "description": "to convert times in days to hours and the other way round, using the 24 hours of a calendar day",
       "expression": "\"hour\" = \"day\" * 24",
       "latex": "\\text{h} = 24 \\cdot \\text{d}",
       "assigned_word": "day"
     },
     {
       "name": "scale day to sec",
+      "description": "to convert times in days to seconds and the other way round, using the 86400 seconds of a calendar day",
       "expression": "\"second (time)\" = \"day\" * 86400",
       "latex": "\\text{s} = 86400 \\cdot \\text{d}",
       "assigned_word": "day"
     },
     {
       "name": "scale week to day",
+      "description": "to convert times in weeks to days and the other way round",
       "expression": "\"day\" = \"week\" * 7",
       "latex": "\\text{d} = 7 \\cdot \\text{wk}",
       "assigned_word": "week"
     },
     {
       "name": "scale year to month",
+      "description": "to convert times in years to months and the other way round, e.g. a yearly amount to a monthly one",
       "expression": "\"month\" = \"year\" * 12",
       "latex": "\\text{mo} = 12 \\cdot \\text{a}",
       "assigned_word": "year"
     },
     {
       "name": "scale year to second",
+      "description": "to convert times in years to seconds and the other way round, using the 31557600 seconds of a Julian year of 365.25 days",
       "expression": "\"second (time)\" = \"year\" * 31557600",
       "latex": "\\text{s} = 31557600 \\cdot \\text{a}",
       "assigned_word": "year"
     },
     {
       "name": "scale litre to m3",
+      "description": "to convert volumes in litres to cubic metres and the other way round; a cubic metre holds 1000 litres",
       "expression": "\"m3\" = \"litre\" / 1000",
       "latex": "\\text{m}^3 = \\text{L} / 1000",
       "assigned_word": "litre"
     },
     {
       "name": "scale gram to kg",
+      "description": "to convert masses in grams to kilograms and the other way round",
       "expression": "\"kg\" = \"gram\" / 1000",
       "latex": "\\text{kg} = \\text{g} / 1000",
       "assigned_word": "gram"
     },
     {
       "name": "scale tonne to kg",
+      "description": "to convert masses in metric tonnes to kilograms and the other way round",
       "expression": "\"kg\" = \"tonne\" * 1000",
       "latex": "\\text{kg} = 1000 \\cdot \\text{t}",
       "assigned_word": "tonne"
     },
     {
       "name": "scale kWh to joule",
+      "description": "to convert energies in kilowatt hours, the unit of electricity bills, to joules, the SI unit, and the other way round",
       "expression": "\"joule\" = \"kWh\" * 3600000",
       "latex": "\\text{J} = 3600000 \\cdot \\text{kWh}",
       "assigned_word": "kWh"
     },
     {
       "name": "scale km to metre",
+      "description": "to convert distances in kilometres to metres and the other way round",
       "expression": "\"metre\" = \"km\" * 1000",
       "latex": "\\text{m} = 1000 \\cdot \\text{km}",
       "assigned_word": "kilometre"
     },
     {
       "name": "scale km to 100 km",
+      "description": "to convert a value per kilometre to a value per 100 kilometres and the other way round, e.g. the fuel consumption of a car",
       "expression": "\"per 100 km\" = \"km\" * 100",
       "latex": "\\text{per 100 km} = 100 \\cdot \\text{km}",
       "assigned_word": "kilometre"

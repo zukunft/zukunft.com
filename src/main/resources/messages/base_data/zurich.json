@@ -659,6 +659,7 @@
   "formulas": [
     {
       "name": "density (formula)",
+      "description": "the number of inhabitants per unit of area, e.g. per square kilometre, to compare how densely the city and the canton of Zurich are populated",
       "expression": "\"density\" = \"population\" / \"area\"",
       "assigned": [
         "Zurich (city)",
@@ -667,6 +668,7 @@
     },
     {
       "name": "share of canton (formula)",
+      "description": "the part of the canton of Zurich that the city of Zurich accounts for, e.g. of the population or of the area, as a ratio between 0 and 1",
       "expression": "\"Zurich (city) share of Zurich (canton)\" = \"Zurich (city)\" / \"Zurich (canton)\"",
       "assigned": [
         "Zurich (city)",
@@ -704,6 +706,7 @@
     },
     {
       "name": "natural balance (formula)",
+      "description": "the change of the population by births and deaths alone, without migration; negative if more people die than are born",
       "expression": "\"natural balance\" = \"birth count\" - \"death count\"",
       "assigned": [
         "Zurich (city)"
@@ -718,6 +721,7 @@
     },
     {
       "name": "foreign count (formula)",
+      "description": "the number of inhabitants without Swiss citizenship, the population multiplied by the foreign share given as a ratio",
       "expression": "\"foreign count\" = \"population\" * \"foreign share\"",
       "assigned": [
         "Zurich (city)",
@@ -726,6 +730,7 @@
     },
     {
       "name": "welfare (formula)",
+      "description": "the welfare of a population in happy time points, the number of people multiplied by the fraction of their waking time that they experience as good",
       "expression": "\"welfare\" = \"population\" * \"waking welfare fraction\"",
       "assigned": [
         "Zurich (canton)"

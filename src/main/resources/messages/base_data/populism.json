@@ -339,6 +339,7 @@
   "formulas": [
     {
       "name": "internet share (formula)",
+      "description": "the share of the population that uses the internet, a measure of how many people can be reached by online information and misinformation",
       "expression": "\"internet share\" = \"internet user\" / \"population\"",
       "assigned": [
         "world"
@@ -346,6 +347,7 @@
     },
     {
       "name": "social media share (formula)",
+      "description": "the share of the population that uses social media, the part of the public exposed to the algorithmic amplification of political messages",
       "expression": "\"social media share\" = \"social media user\" / \"population\"",
       "assigned": [
         "world"

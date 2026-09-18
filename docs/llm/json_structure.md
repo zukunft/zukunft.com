@@ -444,6 +444,17 @@ Rule of thumb: a one- or two-character typographic symbol (`s`, `m`, `kg`, `J`,
 (`from` = the symbol, `to` = the full phrase), so the replacer can find the symbol
 by the verb. Flip a triple that has the symbol on the `to` side.
 
+**Hand-written `latex`** — a `latex` field in a seed wraps every term in
+`\text{<name>}`, where the name is the term name of the expression or its symbol
+word, because only a `\text{}` token is resolved to a term and shown as a link on
+the formula page (`formula::load_latex_terms`, `web formula::expression_latex_link`).
+A bare `\sigma_f` is neither linked nor rendered. The page has no latex engine, so
+use only the markup the renderer knows (`web formula::latex_to_html`): `\frac`,
+`\sqrt`, `\cdot`, `\approx`, `\sum`, `\partial`, `\left`/`\right`, `^`, `_` and
+the function names `\ln`, `\log`, `\exp`, `\sin`, `\cos`, `\tan`, `\sec`; any other
+command is shown as raw text. Example: `\text{sigma of f} \approx \left|
+\frac{\text{f} \cdot \text{b} \cdot \text{sigma of x}}{\text{x}} \right|`.
+
 ### Disambiguate an ambiguous *word* with qualifier triples
 
 When a single word can mean more than one thing, the word stays **defined

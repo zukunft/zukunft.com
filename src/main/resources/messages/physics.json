@@ -2706,661 +2706,772 @@
   "formulas": [
     {
       "name": "definition of newton",
+      "description": "the SI unit of force, the force that accelerates a mass of one kilogram by one metre per second squared",
       "expression": "\"newton\" = ( \"kg\" * \"metre\" ) / ( \"second\" * \"second\" )",
       "assigned_word": "force"
     },
     {
       "name": "definition of pascal",
+      "description": "the SI unit of pressure, one newton per square metre; the air pressure at sea level is about 100000 pascal",
       "expression": "\"pascal\" = \"kg\" / ( \"metre\" * \"second\" * \"second\" )",
       "assigned_word": "pressure"
     },
     {
       "name": "definition of watt",
+      "description": "the SI unit of power, one joule of energy per second",
       "expression": "\"watt\" = \"joule\" / \"second\"",
       "assigned_word": "power"
     },
     {
       "name": "definition of coulomb",
+      "description": "the SI unit of electric charge, the charge that a current of one ampere carries in one second",
       "expression": "\"coulomb\" = \"ampere\" * \"second\"",
       "assigned_word": "charge"
     },
     {
       "name": "definition of volt",
+      "description": "the SI unit of voltage, the potential difference that delivers one watt of power at a current of one ampere",
       "expression": "\"volt\" = \"watt\" / \"ampere\"",
       "assigned_word": "voltage"
     },
     {
       "name": "definition of velocity",
+      "description": "the distance covered per unit of time, e.g. in metres per second",
       "expression": "\"v\" = \"distance\" / \"time\"",
       "latex": "v = d/t",
       "assigned_word": "velocity"
     },
     {
       "name": "average velocity",
+      "description": "the change of position divided by the time it took, the average speed over an interval regardless of how the speed varied in between",
       "expression": "\"v\" = \"Δx\" / \"Δt\"",
       "latex": "\\bar v = \\Delta x / \\Delta t",
       "assigned_word": "velocity"
     },
     {
       "name": "definition of acceleration",
+      "description": "the change of velocity per unit of time, e.g. in metres per second squared",
       "expression": "\"a\" = \"Δv\" / \"Δt\"",
       "latex": "a = \\Delta v / \\Delta t",
       "assigned_word": "acceleration"
     },
     {
       "name": "kinematics final velocity",
+      "description": "the velocity after a time of constant acceleration, the starting velocity plus the acceleration multiplied by the time",
       "expression": "\"v\" = \"v0\" + \"a\" * \"t\"",
       "latex": "v = v_0 + at",
       "assigned_word": "velocity"
     },
     {
       "name": "kinematics displacement",
+      "description": "the position after a time of constant acceleration, from the starting position, the starting velocity and the acceleration, e.g. the fall distance of a dropped stone",
       "expression": "\"x\" = \"x0\" + \"v0\" * \"t\" + ( 1 / 2 ) * \"a\" * \"t\" * \"t\"",
       "latex": "x = x_0 + v_0 t + \\tfrac{1}{2} a t^2",
       "assigned_word": "displacement"
     },
     {
       "name": "kinematics velocity squared",
+      "description": "the velocity after a distance of constant acceleration without knowing the time, e.g. the speed of a car at the end of a braking distance",
       "expression": "\"v\" * \"v\" = \"v0\" * \"v0\" + 2 * \"a\" * ( \"x\" - \"x0\" )",
       "latex": "v^2 = v_0^2 + 2a(x - x_0)",
       "assigned_word": "velocity"
     },
     {
       "name": "average velocity from endpoints",
+      "description": "the average velocity during a constant acceleration is the mean of the starting and the final velocity",
       "expression": "\"v\" = ( \"v0\" + \"v\" ) / 2",
       "latex": "\\bar v = (v_0 + v)/2",
       "assigned_word": "velocity"
     },
     {
       "name": "definition of Newton's second law",
+      "description": "the force on a body is its mass multiplied by its acceleration, the basic law of mechanics that links forces to motion",
       "expression": "\"F\" = \"m\" * \"a\"",
       "latex": "F = ma",
       "assigned_word": "Newton's second law"
     },
     {
       "name": "Newton's second law momentum form",
+      "description": "the force on a body is the change of its momentum per unit of time, the general form of the second law that also holds for a changing mass",
       "expression": "\"F\" = \"Δp\" / \"Δt\"",
       "latex": "F = \\Delta p / \\Delta t",
       "assigned_word": "Newton's second law"
     },
     {
       "name": "weight",
+      "description": "the gravitational force on a body, its mass multiplied by the gravitational acceleration of about 9.81 metres per second squared on earth",
       "expression": "\"F\" = \"m\" * \"g\"",
       "latex": "W = mg",
       "assigned_word": "force"
     },
     {
       "name": "definition of Newton's law of gravitation",
+      "description": "the attraction between two masses, proportional to the product of the masses and inversely proportional to the square of their distance",
       "expression": "\"F\" = \"G\" * ( \"m\" * \"m\" ) / ( \"r\" * \"r\" )",
       "latex": "F = G \\frac{m_1 m_2}{r^2}",
       "assigned_word": "Newton's law of gravitation"
     },
     {
       "name": "gravitational potential energy near surface",
+      "description": "the energy stored by lifting a mass to a height near the surface of the earth, the work needed against the weight",
       "expression": "\"E\" = \"m\" * \"g\" * \"height\"",
       "latex": "U = mgh",
       "assigned_word": "gravitational potential energy"
     },
     {
       "name": "gravitational potential energy general",
+      "description": "the potential energy of two masses at any distance, negative because energy is needed to separate them completely, e.g. for a satellite orbit or an escape velocity",
       "expression": "\"E\" = - \"G\" * ( \"m\" * \"m\" ) / \"r\"",
       "latex": "U = -G m_1 m_2 / r",
       "assigned_word": "gravitational potential energy"
     },
     {
       "name": "friction force",
+      "description": "the force that resists the sliding of two surfaces, the friction coefficient of the material pair multiplied by the force pressing the surfaces together",
       "expression": "\"F\" = \"η\" * \"newton\"",
       "latex": "F_f = \\mu N",
       "assigned_word": "friction"
     },
     {
       "name": "definition of linear momentum",
+      "description": "the momentum of a moving body, its mass multiplied by its velocity, which is conserved in collisions",
       "expression": "\"p\" = \"m\" * \"v\"",
       "latex": "p = mv",
       "assigned_word": "linear momentum"
     },
     {
       "name": "impulse momentum theorem",
+      "description": "a force acting for a time changes the momentum of a body by the impulse, the force multiplied by the time; why airbags stretch the stopping time to reduce the force",
       "expression": "\"F\" * \"Δt\" = \"Δp\"",
       "latex": "F \\Delta t = \\Delta p",
       "assigned_word": "impulse"
     },
     {
       "name": "definition of kinetic energy",
+      "description": "the energy of a moving body, half its mass multiplied by the square of its velocity; doubling the speed quadruples the energy",
       "expression": "\"E\" = ( 1 / 2 ) * \"m\" * \"v\" * \"v\"",
       "latex": "E_k = \\tfrac{1}{2} m v^2",
       "assigned_word": "kinetic energy"
     },
     {
       "name": "work done by force",
+      "description": "the energy transferred by a force that moves a body, the force multiplied by the distance in the direction of the force",
       "expression": "\"W\" = \"F\" * \"distance\"",
       "latex": "W = F d",
       "assigned_word": "work"
     },
     {
       "name": "work energy theorem",
+      "description": "the work done on a body equals the change of its kinetic energy",
       "expression": "\"W\" = \"ΔE\"",
       "latex": "W_{net} = \\Delta E_k",
       "assigned_word": "work"
     },
     {
       "name": "power from work",
+      "description": "the power of a process, the work done or energy transferred per unit of time",
       "expression": "\"P\" = \"W\" / \"t\"",
       "latex": "P = W/t",
       "assigned_word": "power"
     },
     {
       "name": "power from force and velocity",
+      "description": "the power needed to move a body against a force at a velocity, e.g. the engine power of a car against the air resistance",
       "expression": "\"P\" = \"F\" * \"v\"",
       "latex": "P = F v",
       "assigned_word": "power"
     },
     {
       "name": "definition of Hooke's law",
+      "description": "the restoring force of a spring is proportional to how far it is stretched or compressed, with the spring constant k as the stiffness",
       "expression": "\"F\" = - \"k\" * \"x\"",
       "latex": "F = -k x",
       "assigned_word": "Hooke's law"
     },
     {
       "name": "definition of elastic potential energy",
+      "description": "the energy stored in a stretched or compressed spring, half the spring constant multiplied by the square of the displacement",
       "expression": "\"E\" = ( 1 / 2 ) * \"k\" * \"x\" * \"x\"",
       "latex": "U = \\tfrac{1}{2} k x^2",
       "assigned_word": "elastic potential energy"
     },
     {
       "name": "spring period",
+      "description": "the time of one full oscillation of a mass on a spring, longer for a heavier mass and shorter for a stiffer spring, independent of the amplitude",
       "expression": "\"T\" = 2 * \"Pi\" * sqrt( \"m\" / \"k\" )",
       "latex": "T = 2\\pi \\sqrt{m/k}",
       "assigned_word": "spring"
     },
     {
       "name": "simple pendulum period",
+      "description": "the time of one full swing of a pendulum for small angles, which depends only on its length and the gravitational acceleration, not on its mass",
       "expression": "\"T\" = 2 * \"Pi\" * sqrt( \"length\" / \"g\" )",
       "latex": "T = 2\\pi \\sqrt{L/g}",
       "assigned_word": "pendulum"
     },
     {
       "name": "definition of angular velocity",
+      "description": "the angle turned per unit of time, in radians per second, the rotational counterpart of the velocity",
       "expression": "\"ω\" = \"θ\" / \"t\"",
       "latex": "\\omega = \\theta / t",
       "assigned_word": "angular velocity"
     },
     {
       "name": "angular velocity from frequency",
+      "description": "the angular velocity of a rotation or oscillation from its frequency, two pi radians per full turn",
       "expression": "\"ω\" = 2 * \"Pi\" * \"f\"",
       "latex": "\\omega = 2\\pi f",
       "assigned_word": "angular velocity"
     },
     {
       "name": "tangential velocity",
+      "description": "the speed of a point on a rotating body along its circular path, the angular velocity multiplied by the distance from the axis",
       "expression": "\"v\" = \"ω\" * \"r\"",
       "latex": "v = \\omega r",
       "assigned_word": "velocity"
     },
     {
       "name": "definition of centripetal acceleration",
+      "description": "the acceleration towards the centre that keeps a body on a circular path, the square of the speed divided by the radius",
       "expression": "\"a\" = ( \"v\" * \"v\" ) / \"r\"",
       "latex": "a_c = v^2 / r",
       "assigned_word": "centripetal acceleration"
     },
     {
       "name": "definition of centripetal force",
+      "description": "the force towards the centre needed to keep a mass on a circular path, e.g. the friction of the tyres in a curve",
       "expression": "\"F\" = ( \"m\" * \"v\" * \"v\" ) / \"r\"",
       "latex": "F_c = m v^2 / r",
       "assigned_word": "centripetal force"
     },
     {
       "name": "definition of angular momentum",
+      "description": "the rotational counterpart of the momentum, the moment of inertia multiplied by the angular velocity, which is conserved when no torque acts, e.g. a spinning skater pulling in the arms",
       "expression": "\"L\" = \"I\" * \"ω\"",
       "latex": "L = I \\omega",
       "assigned_word": "angular momentum"
     },
     {
       "name": "definition of torque",
+      "description": "the turning effect of a force, the force multiplied by the lever arm and the sine of the angle between them, e.g. of a wrench on a bolt",
       "expression": "\"torque\" = \"F\" * \"r\" * sin( \"θ\" )",
       "latex": "\\tau = F r \\sin\\theta",
       "assigned_word": "torque"
     },
     {
       "name": "torque from angular acceleration",
+      "description": "Newton's second law for rotations, the torque is the moment of inertia multiplied by the angular acceleration",
       "expression": "\"torque\" = \"I\" * \"α\"",
       "latex": "\\tau = I \\alpha",
       "assigned_word": "torque"
     },
     {
       "name": "definition of rotational kinetic energy",
+      "description": "the energy of a rotating body, half the moment of inertia multiplied by the square of the angular velocity, e.g. of a flywheel",
       "expression": "\"E\" = ( 1 / 2 ) * \"I\" * \"ω\" * \"ω\"",
       "latex": "E_k = \\tfrac{1}{2} I \\omega^2",
       "assigned_word": "rotational kinetic energy"
     },
     {
       "name": "definition of density",
+      "description": "the mass per unit of volume of a substance, e.g. 1000 kilograms per cubic metre for water",
       "expression": "\"ρ\" = \"m\" / \"volume\"",
       "latex": "\\rho = m/V",
       "assigned_word": "density"
     },
     {
       "name": "pressure from force and area",
+      "description": "the force per unit of area on a surface, in pascal; the same force on a smaller area gives a higher pressure, e.g. a needle",
       "expression": "\"pressure\" = \"F\" / \"area\"",
       "latex": "P = F/A",
       "assigned_word": "pressure"
     },
     {
       "name": "hydrostatic pressure",
+      "description": "the pressure at a depth in a liquid caused by the weight of the liquid above, about one bar more for every 10 metres of water",
       "expression": "\"pressure\" = \"ρ\" * \"g\" * \"depth\"",
       "latex": "P = \\rho g h",
       "assigned_word": "pressure"
     },
     {
       "name": "buoyant force",
+      "description": "the upward force on a body in a fluid by Archimedes' principle, the weight of the fluid that the body displaces",
       "expression": "\"F\" = \"ρ\" * \"g\" * \"volume\"",
       "latex": "F_b = \\rho g V",
       "assigned_word": "force"
     },
     {
       "name": "definition of Bernoulli's equation",
+      "description": "the energy conservation of a flowing fluid: the pressure, the kinetic energy per volume and the potential energy per volume add up to a constant along a streamline, so a faster flow has a lower pressure",
       "expression": "\"pressure\" + ( 1 / 2 ) * \"ρ\" * \"v\" * \"v\" + \"ρ\" * \"g\" * \"height\" = \"constant\"",
       "latex": "P + \\tfrac{1}{2}\\rho v^2 + \\rho g h = \\text{const}",
       "assigned_word": "Bernoulli's equation"
     },
     {
       "name": "continuity equation",
+      "description": "the volume flow of an incompressible fluid is the same everywhere in a pipe, so the fluid speeds up where the cross-section narrows",
       "expression": "\"area\" * \"v\" = \"constant\"",
       "latex": "A v = \\text{const}",
       "assigned_word": "Bernoulli's equation"
     },
     {
       "name": "Celsius to Kelvin",
+      "description": "convert a temperature in degrees Celsius to the absolute temperature in kelvin, which starts at the absolute zero of -273.15 degrees Celsius",
       "expression": "\"T\" = \"celsius\" + 273.15",
       "latex": "T = T_C + 273.15",
       "assigned_word": "temperature"
     },
     {
       "name": "definition of ideal gas law",
+      "description": "the relation of the pressure, the volume, the amount and the temperature of a gas, a good approximation for most gases at everyday conditions",
       "expression": "\"pressure\" * \"volume\" = \"n\" * \"R\" * \"T\"",
       "latex": "PV = nRT",
       "assigned_word": "ideal gas law"
     },
     {
       "name": "ideal gas Boltzmann form",
+      "description": "the ideal gas law written with the number of particles and the Boltzmann constant instead of the amount in moles and the gas constant",
       "expression": "\"pressure\" * \"volume\" = \"N\" * \"kB\" * \"T\"",
       "latex": "PV = N k_B T",
       "assigned_word": "ideal gas law"
     },
     {
       "name": "definition of specific heat",
+      "description": "the heat needed to change the temperature of a mass, the mass multiplied by the specific heat capacity of the material and the temperature change",
       "expression": "\"Q\" = \"m\" * \"c\" * \"ΔT\"",
       "latex": "Q = m c \\Delta T",
       "assigned_word": "specific heat"
     },
     {
       "name": "definition of first law of thermodynamics",
+      "description": "the energy conservation for heat: the internal energy of a system changes by the heat added minus the work the system does",
       "expression": "\"ΔU\" = \"Q\" - \"W\"",
       "latex": "\\Delta U = Q - W",
       "assigned_word": "first law of thermodynamics"
     },
     {
       "name": "entropy change",
+      "description": "the change of entropy of a system when heat is added reversibly at a temperature, the heat divided by the absolute temperature",
       "expression": "\"ΔS\" = \"Q\" / \"T\"",
       "latex": "\\Delta S = Q/T",
       "assigned_word": "entropy"
     },
     {
       "name": "Carnot efficiency",
+      "description": "the highest possible efficiency of a heat engine working between a hot and a cold temperature, one minus the ratio of the cold to the hot absolute temperature",
       "expression": "\"η\" = 1 - ( \"T\" / \"T\" )",
       "latex": "\\eta = 1 - T_c/T_h",
       "assigned_word": "second law of thermodynamics"
     },
     {
       "name": "thermal linear expansion",
+      "description": "how much the length of a body grows when it is heated, the expansion coefficient of the material multiplied by the length and the temperature change, e.g. of a bridge in summer",
       "expression": "\"Δx\" = \"α\" * \"L\" * \"ΔT\"",
       "latex": "\\Delta L = \\alpha L \\Delta T",
       "assigned_word": "thermal energy"
     },
     {
       "name": "average kinetic energy of gas particle",
+      "description": "the average energy of motion of a particle in an ideal gas, which depends only on the absolute temperature, the link between temperature and molecular motion",
       "expression": "\"E\" = ( 3 / 2 ) * \"kB\" * \"T\"",
       "latex": "\\bar E_k = \\tfrac{3}{2} k_B T",
       "assigned_word": "kinetic energy"
     },
     {
       "name": "RMS molecular speed",
+      "description": "the typical speed of the particles of a gas, the root mean square, which grows with the temperature and is lower for heavier particles, e.g. about 500 metres per second for air at room temperature",
       "expression": "\"v\" = sqrt( ( 3 * \"kB\" * \"T\" ) / \"m\" )",
       "latex": "v_{rms} = \\sqrt{3 k_B T / m}",
       "assigned_word": "ideal gas law"
     },
     {
       "name": "definition of Stefan-Boltzmann law",
+      "description": "the power radiated by a hot surface grows with the fourth power of its absolute temperature, which sets the temperature of stars and planets",
       "expression": "\"P\" = \"σ\" * \"area\" * \"T\" * \"T\" * \"T\" * \"T\"",
       "latex": "P = \\sigma A T^4",
       "assigned_word": "Stefan-Boltzmann law"
     },
     {
       "name": "definition of Wien's displacement law",
+      "description": "the wavelength at which a hot body radiates most is inversely proportional to its temperature, why a hotter star looks blue and a cooler one red",
       "expression": "\"λ\" * \"T\" = 2.898E-3",
       "latex": "\\lambda_{max} T = b",
       "assigned_word": "Wien's displacement law"
     },
     {
       "name": "definition of Coulomb's law",
+      "description": "the force between two electric charges, proportional to the product of the charges and inversely proportional to the square of their distance, like gravity but attracting or repelling",
       "expression": "\"F\" = \"ke\" * ( \"q\" * \"q\" ) / ( \"r\" * \"r\" )",
       "latex": "F = k_e q_1 q_2 / r^2",
       "assigned_word": "Coulomb's law"
     },
     {
       "name": "electric field of point charge",
+      "description": "the strength of the electric field around a point charge, the force per unit of test charge, falling with the square of the distance",
       "expression": "\"E\" = \"ke\" * \"q\" / ( \"r\" * \"r\" )",
       "latex": "E = k_e q / r^2",
       "assigned_word": "electric field"
     },
     {
       "name": "electric force on charge",
+      "description": "the force on a charge in an electric field, the charge multiplied by the field strength",
       "expression": "\"F\" = \"q\" * \"E\"",
       "latex": "F = q E",
       "assigned_word": "electric field"
     },
     {
       "name": "electric potential of point charge",
+      "description": "the electric potential at a distance from a point charge, the work per unit of charge to bring a test charge there from infinity, falling with the distance",
       "expression": "\"V\" = \"ke\" * \"q\" / \"r\"",
       "latex": "V = k_e q / r",
       "assigned_word": "electric potential"
     },
     {
       "name": "electric potential energy",
+      "description": "the energy stored in the arrangement of two charges at a distance, positive for like charges that repel and negative for unlike charges that attract",
       "expression": "\"E\" = \"ke\" * ( \"q\" * \"q\" ) / \"r\"",
       "latex": "U = k_e q_1 q_2 / r",
       "assigned_word": "potential energy"
     },
     {
       "name": "voltage from electric potential",
+      "description": "the voltage or electric potential is the potential energy per unit of charge, in volts",
       "expression": "\"V\" = \"E\" / \"q\"",
       "latex": "V = U/q",
       "assigned_word": "voltage"
     },
     {
       "name": "definition of Ohm's law",
+      "description": "the voltage across a conductor is the current through it multiplied by its resistance, the basic relation of electric circuits",
       "expression": "\"V\" = \"I\" * \"resistance\"",
       "latex": "V = IR",
       "assigned_word": "Ohm's law"
     },
     {
       "name": "electric power",
+      "description": "the power delivered by an electric current, the voltage multiplied by the current, in watts",
       "expression": "\"P\" = \"V\" * \"I\"",
       "latex": "P = VI",
       "assigned_word": "power"
     },
     {
       "name": "power dissipated by resistor",
+      "description": "the heat produced in a resistor per unit of time, the square of the current multiplied by the resistance, e.g. in a heating wire",
       "expression": "\"P\" = \"I\" * \"I\" * \"resistance\"",
       "latex": "P = I^2 R",
       "assigned_word": "power"
     },
     {
       "name": "resistance from resistivity",
+      "description": "the resistance of a wire from the resistivity of its material, its length and its cross-section; a longer or thinner wire has a higher resistance",
       "expression": "\"resistance\" = \"ρ\" * \"length\" / \"area\"",
       "latex": "R = \\rho L / A",
       "assigned_word": "resistance"
     },
     {
       "name": "resistors in series",
+      "description": "the total resistance of resistors connected one after the other is the sum of the single resistances",
       "expression": "\"resistance\" = \"resistance\" + \"resistance\"",
       "latex": "R = R_1 + R_2 + \\ldots",
       "assigned_word": "resistance"
     },
     {
       "name": "resistors in parallel",
+      "description": "the reciprocal of the total resistance of resistors connected side by side is the sum of the reciprocals, so the total is smaller than the smallest single resistance",
       "expression": "1 / \"resistance\" = 1 / \"resistance\" + 1 / \"resistance\"",
       "latex": "1/R = 1/R_1 + 1/R_2 + \\ldots",
       "assigned_word": "resistance"
     },
     {
       "name": "current as charge rate",
+      "description": "the electric current is the charge that flows through a cross-section per unit of time, in amperes",
       "expression": "\"I\" = \"Q\" / \"t\"",
       "latex": "I = Q/t",
       "assigned_word": "current"
     },
     {
       "name": "definition of capacitance",
+      "description": "how much charge a capacitor stores per volt of voltage across it, in farads",
       "expression": "\"capacitance\" = \"Q\" / \"V\"",
       "latex": "C = Q/V",
       "assigned_word": "capacitance"
     },
     {
       "name": "energy stored in capacitor",
+      "description": "the energy held in the electric field of a charged capacitor, half the capacitance multiplied by the square of the voltage",
       "expression": "\"E\" = ( 1 / 2 ) * \"capacitance\" * \"V\" * \"V\"",
       "latex": "U = \\tfrac{1}{2} C V^2",
       "assigned_word": "capacitance"
     },
     {
       "name": "parallel plate capacitance",
+      "description": "the capacitance of two parallel plates in vacuum, larger for bigger plates and a smaller gap between them",
       "expression": "\"capacitance\" = \"ε0\" * \"area\" / \"distance\"",
       "latex": "C = \\varepsilon_0 A / d",
       "assigned_word": "capacitance"
     },
     {
       "name": "capacitors in parallel",
+      "description": "the total capacitance of capacitors connected side by side is the sum of the single capacitances, the opposite of resistors",
       "expression": "\"capacitance\" = \"capacitance\" + \"capacitance\"",
       "latex": "C = C_1 + C_2 + \\ldots",
       "assigned_word": "capacitance"
     },
     {
       "name": "capacitors in series",
+      "description": "the reciprocal of the total capacitance of capacitors connected one after the other is the sum of the reciprocals",
       "expression": "1 / \"capacitance\" = 1 / \"capacitance\" + 1 / \"capacitance\"",
       "latex": "1/C = 1/C_1 + 1/C_2 + \\ldots",
       "assigned_word": "capacitance"
     },
     {
       "name": "definition of Lorentz force",
+      "description": "the total force on a moving charge in an electric and a magnetic field, the electric part plus the magnetic part that depends on the velocity",
       "expression": "\"F\" = \"q\" * ( \"E\" + \"v\" * \"B\" )",
       "latex": "F = q(E + v \\times B)",
       "assigned_word": "Lorentz force"
     },
     {
       "name": "magnetic force on charge",
+      "description": "the force on a charge moving through a magnetic field, largest when it moves across the field and zero when it moves along it; it bends the path but does no work",
       "expression": "\"F\" = \"q\" * \"v\" * \"B\" * sin( \"θ\" )",
       "latex": "F = q v B \\sin\\theta",
       "assigned_word": "magnetic field"
     },
     {
       "name": "magnetic force on current",
+      "description": "the force on a wire carrying a current in a magnetic field, the principle of the electric motor",
       "expression": "\"F\" = \"I\" * \"length\" * \"B\" * sin( \"θ\" )",
       "latex": "F = I L B \\sin\\theta",
       "assigned_word": "magnetic field"
     },
     {
       "name": "magnetic field around wire",
+      "description": "the strength of the magnetic field around a long straight wire, proportional to the current and falling with the distance from the wire",
       "expression": "\"B\" = ( \"μ0\" * \"I\" ) / ( 2 * \"Pi\" * \"r\" )",
       "latex": "B = \\mu_0 I / (2\\pi r)",
       "assigned_word": "magnetic field"
     },
     {
       "name": "magnetic field in solenoid",
+      "description": "the nearly uniform magnetic field inside a long coil, proportional to the current and the number of turns per unit of length",
       "expression": "\"B\" = \"μ0\" * \"n\" * \"I\"",
       "latex": "B = \\mu_0 n I",
       "assigned_word": "magnetic field"
     },
     {
       "name": "definition of magnetic flux",
+      "description": "the amount of magnetic field passing through a surface, the field strength multiplied by the area and the cosine of the angle to the surface normal",
       "expression": "\"Φ\" = \"B\" * \"area\" * cos( \"θ\" )",
       "latex": "\\Phi = B A \\cos\\theta",
       "assigned_word": "magnetic flux"
     },
     {
       "name": "definition of Faraday's law",
+      "description": "a changing magnetic flux through a loop induces a voltage that opposes the change, the principle of the generator and the transformer",
       "expression": "\"V\" = - \"Δp\" / \"Δt\"",
       "latex": "\\varepsilon = -d\\Phi/dt",
       "assigned_word": "Faraday's law"
     },
     {
       "name": "inductance EMF",
+      "description": "the voltage a coil induces in itself when the current through it changes, proportional to its inductance and the rate of the change",
       "expression": "\"V\" = - \"L\" * \"Δv\" / \"Δt\"",
       "latex": "\\varepsilon = -L\\, dI/dt",
       "assigned_word": "inductance"
     },
     {
       "name": "energy stored in inductor",
+      "description": "the energy held in the magnetic field of a coil carrying a current, half the inductance multiplied by the square of the current",
       "expression": "\"E\" = ( 1 / 2 ) * \"L\" * \"I\" * \"I\"",
       "latex": "U = \\tfrac{1}{2} L I^2",
       "assigned_word": "inductance"
     },
     {
       "name": "speed of light from permittivity and permeability",
+      "description": "the speed of light in vacuum follows from the two constants of electricity and magnetism, the discovery of Maxwell that light is an electromagnetic wave",
       "expression": "\"c\" = 1 / sqrt( \"ε0\" * \"μ0\" )",
       "latex": "c = 1/\\sqrt{\\varepsilon_0 \\mu_0}",
       "assigned_word": "c"
     },
     {
       "name": "wave speed",
+      "description": "the speed of a wave is its frequency multiplied by its wavelength, valid for sound, water and light waves",
       "expression": "\"v\" = \"f\" * \"λ\"",
       "latex": "v = f \\lambda",
       "assigned_word": "wave"
     },
     {
       "name": "period from frequency",
+      "description": "the time of one oscillation is the reciprocal of the number of oscillations per second",
       "expression": "\"T\" = 1 / \"f\"",
       "latex": "T = 1/f",
       "assigned_word": "period"
     },
     {
       "name": "definition of Snell's law",
+      "description": "how light bends when it passes from one medium into another, the product of the refractive index and the sine of the angle to the normal is the same on both sides",
       "expression": "\"n\" * sin( \"θ\" ) = \"n\" * sin( \"θ\" )",
       "latex": "n_1 \\sin\\theta_1 = n_2 \\sin\\theta_2",
       "assigned_word": "Snell's law"
     },
     {
       "name": "index of refraction",
+      "description": "how much slower light travels in a medium than in vacuum, e.g. about 1.33 for water and 1.5 for glass",
       "expression": "\"n\" = \"c\" / \"v\"",
       "latex": "n = c/v",
       "assigned_word": "refraction"
     },
     {
       "name": "thin lens equation",
+      "description": "the relation between the focal length of a lens, the distance of the object and the distance of the image, used to find where a lens forms a sharp image",
       "expression": "1 / \"f\" = 1 / \"x\" + 1 / \"y\"",
       "latex": "1/f = 1/d_o + 1/d_i",
       "assigned_word": "lens"
     },
     {
       "name": "magnification",
+      "description": "how many times larger the image of a lens is than the object, the ratio of the image distance to the object distance, negative for an upside-down image",
       "expression": "\"η\" = - \"y\" / \"x\"",
       "latex": "M = -d_i/d_o",
       "assigned_word": "lens"
     },
     {
       "name": "Doppler effect sound",
+      "description": "the change of the pitch of a sound when the source or the listener moves, higher when they approach and lower when they move apart, e.g. a passing siren",
       "expression": "\"f\" = \"f\" * ( \"v\" + \"v\" ) / ( \"v\" - \"v\" )",
       "latex": "f' = f (v + v_o)/(v - v_s)",
       "assigned_word": "frequency"
     },
     {
       "name": "photon energy",
+      "description": "the energy of a single light quantum, the Planck constant multiplied by the frequency, so blue light carries more energy per photon than red light",
       "expression": "\"E\" = \"h\" * \"f\"",
       "latex": "E = h f",
       "assigned_word": "Planck-Einstein relation"
     },
     {
       "name": "photon energy from wavelength",
+      "description": "the energy of a photon from its wavelength instead of its frequency, shorter wavelengths carry more energy",
       "expression": "\"E\" = \"h\" * \"c\" / \"λ\"",
       "latex": "E = h c / \\lambda",
       "assigned_word": "Planck-Einstein relation"
     },
     {
       "name": "photon momentum",
+      "description": "the momentum of a photon, the Planck constant divided by the wavelength, which lets light push on matter, e.g. a solar sail",
       "expression": "\"p\" = \"h\" / \"λ\"",
       "latex": "p = h/\\lambda",
       "assigned_word": "photon"
     },
     {
       "name": "de Broglie wavelength",
+      "description": "every moving particle has a wavelength, the Planck constant divided by its momentum, the wave nature of matter used in electron microscopes",
       "expression": "\"λ\" = \"h\" / \"p\"",
       "latex": "\\lambda = h/p",
       "assigned_word": "de Broglie relation"
     },
     {
       "name": "Heisenberg uncertainty position momentum",
+      "description": "the position and the momentum of a particle cannot both be known exactly, the product of their uncertainties has a lower limit set by the reduced Planck constant",
       "expression": "\"Δx\" * \"Δp\" >= \"ℏ\" / 2",
       "latex": "\\Delta x \\Delta p \\ge \\hbar / 2",
       "assigned_word": "Heisenberg uncertainty principle"
     },
     {
       "name": "Heisenberg uncertainty energy time",
+      "description": "the energy of a state and the time it exists cannot both be exact, so a short-lived particle has an uncertain mass",
       "expression": "\"E\" * \"Δt\" >= \"ℏ\" / 2",
       "latex": "\\Delta E \\Delta t \\ge \\hbar / 2",
       "assigned_word": "Heisenberg uncertainty principle"
     },
     {
       "name": "reduced Planck constant",
+      "description": "the Planck constant divided by two pi, the natural unit of angular momentum in quantum mechanics",
       "expression": "\"ℏ\" = \"h\" / ( 2 * \"Pi\" )",
       "latex": "\\hbar = h/(2\\pi)",
       "assigned_word": "ℏ"
     },
     {
       "name": "photoelectric effect",
+      "description": "the kinetic energy of an electron knocked out of a metal by light, the photon energy minus the work needed to free the electron, Einstein's explanation of the quantum nature of light",
       "expression": "\"E\" = \"h\" * \"f\" - \"W\"",
       "latex": "K_{max} = h f - \\phi",
       "assigned_word": "photon"
     },
     {
       "name": "mass-energy equivalence",
+      "description": "the energy contained in a mass at rest, the mass multiplied by the square of the speed of light, the source of the energy of nuclear reactions",
       "expression": "\"E\" = \"m\" * \"c\" * \"c\"",
       "latex": "E = m c^2",
       "assigned_word": "Einstein mass-energy equivalence"
     },
     {
       "name": "Lorentz factor",
+      "description": "the factor of special relativity by which time slows and lengths shrink for a moving body, close to one at everyday speeds and growing without limit near the speed of light",
       "expression": "\"η\" = 1 / sqrt( 1 - ( \"v\" * \"v\" ) / ( \"c\" * \"c\" ) )",
       "latex": "\\gamma = 1/\\sqrt{1 - v^2/c^2}",
       "assigned_word": "Einstein mass-energy equivalence"
     },
     {
       "name": "time dilation",
+      "description": "a clock moving relative to an observer runs slower by the Lorentz factor, measurable for satellites and fast particles",
       "expression": "\"Δt\" = \"η\" * \"Δt\"",
       "latex": "\\Delta t = \\gamma \\Delta t_0",
       "assigned_word": "Einstein mass-energy equivalence"
     },
     {
       "name": "length contraction",
+      "description": "a body moving relative to an observer appears shorter in the direction of motion by the Lorentz factor",
       "expression": "\"length\" = \"length\" / \"η\"",
       "latex": "L = L_0 / \\gamma",
       "assigned_word": "Einstein mass-energy equivalence"
     },
     {
       "name": "relativistic energy",
+      "description": "the total energy of a moving body, the rest energy multiplied by the Lorentz factor, which includes the kinetic energy",
       "expression": "\"E\" = \"η\" * \"m\" * \"c\" * \"c\"",
       "latex": "E = \\gamma m c^2",
       "assigned_word": "Einstein mass-energy equivalence"
     },
     {
       "name": "relativistic momentum",
+      "description": "the momentum of a fast body, the classical momentum multiplied by the Lorentz factor, which is why nothing with mass can reach the speed of light",
       "expression": "\"p\" = \"η\" * \"m\" * \"v\"",
       "latex": "p = \\gamma m v",
       "assigned_word": "Einstein mass-energy equivalence"
     },
     {
       "name": "energy momentum relation",
+      "description": "the relation between the total energy, the momentum and the rest mass of a particle in special relativity, which also holds for massless photons",
       "expression": "\"E\" * \"E\" = ( \"p\" * \"c\" ) * ( \"p\" * \"c\" ) + ( \"m\" * \"c\" * \"c\" ) * ( \"m\" * \"c\" * \"c\" )",
       "latex": "E^2 = (pc)^2 + (mc^2)^2",
       "assigned_word": "Einstein mass-energy equivalence"
     },
     {
       "name": "radioactive decay",
+      "description": "the number of radioactive nuclei left after a time, falling exponentially with the decay constant of the isotope",
       "expression": "\"N\" = \"N\" * exp( - \"η\" * \"t\" )",
       "latex": "N = N_0 e^{-\\lambda t}",
       "assigned_word": "nucleus"
     },
     {
       "name": "half-life",
+      "description": "the time until half of the radioactive nuclei have decayed, the natural logarithm of 2 divided by the decay constant, e.g. 5730 years for carbon-14",
       "expression": "\"t\" = ln( 2 ) / \"η\"",
       "latex": "t_{1/2} = \\ln 2 / \\lambda",
       "assigned_word": "nucleus"
     },
     {
       "name": "amount of substance from particles",
+      "description": "the amount of substance in moles from the number of particles, using the Avogadro constant of about 6.022 times 10^23 particles per mole",
       "expression": "\"n\" = \"N\" / \"NA\"",
       "latex": "n = N/N_A",
       "assigned_word": "amount"
     },
     {
       "name": "Bohr radius energy levels",
+      "description": "the energy of the electron of a hydrogen atom on the n-th orbit in electron volts, negative because the electron is bound, with -13.6 eV for the ground state",
       "expression": "\"E\" = - 13.6 / ( \"n\" * \"n\" )",
       "latex": "E_n = -13.6/n^2 \\,\\text{eV}",
       "assigned_word": "atom"

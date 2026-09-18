@@ -8,7 +8,7 @@ in a test file of the src/test/php/unit* folders; the count is by function name
 and cannot tell the classes apart, so a name that several classes declare needs
 2 calls per class and is listed as shared otherwise
 
-539 of 5775 public functions have at least 2 unit test calls; the 5236 functions below do not
+542 of 5776 public functions have at least 2 unit test calls; the 5234 functions below do not
 
 ## main backend
 
@@ -826,7 +826,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- fill - 10 unit test calls shared by 36 classes
     \-- formula_word - 0 unit test calls
     \-- generate_ref_text - 0 unit test calls shared by 2 classes
-    \-- get_latex - 1 unit test calls shared by 2 classes
+    \-- get_latex - 3 unit test calls shared by 2 classes
     \-- get_ref_text - 1 unit test calls
     \-- get_usr_text - 0 unit test calls shared by 2 classes
     \-- get_view_id - 2 unit test calls shared by 5 classes
@@ -857,7 +857,6 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- row_mapper_sandbox - 8 unit test calls shared by 20 classes
     \-- save_fields_func - 0 unit test calls shared by 3 classes
     \-- save_links - 0 unit test calls
-    \-- set_latex - 0 unit test calls shared by 2 classes
     \-- set_type - 1 unit test calls shared by 14 classes
     \-- set_view_id - 0 unit test calls shared by 6 classes
     \-- term - 8 unit test calls shared by 13 classes
@@ -4295,11 +4294,10 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- dsp_unlink_phr - 0 unit test calls
     \-- dsp_used4words - 0 unit test calls
     \-- edit_link - 0 unit test calls shared by 3 classes
-    \-- expression_latex - 0 unit test calls
-    \-- expression_latex_link - 0 unit test calls shared by 2 classes
+    \-- expression_latex_link - 1 unit test calls shared by 2 classes
     \-- expression_link - 0 unit test calls shared by 2 classes
     \-- formula_type_selector - 0 unit test calls shared by 2 classes
-    \-- get_latex - 1 unit test calls shared by 2 classes
+    \-- get_latex - 3 unit test calls shared by 2 classes
     \-- get_usr_text - 0 unit test calls shared by 2 classes
     \-- has_verb - 1 unit test calls shared by 3 classes
     \-- impact - 0 unit test calls shared by 9 classes
@@ -4309,7 +4307,6 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- need_all - 0 unit test calls shared by 2 classes
     \-- ref_text - 0 unit test calls shared by 2 classes
     \-- sandbox_fld_order - 1 unit test calls shared by 6 classes
-    \-- set_latex - 0 unit test calls shared by 2 classes
     \-- set_ref_text - 2 unit test calls shared by 2 classes
     \-- set_usr_text - 0 unit test calls
     \-- term - 8 unit test calls shared by 13 classes
@@ -4495,6 +4492,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- row_right - 1 unit test calls shared by 2 classes
     \-- row_start - 0 unit test calls shared by 2 classes
     \-- span - 0 unit test calls
+    \-- sub - 0 unit test calls
     \-- sup - 0 unit test calls
     \-- tab_box - 1 unit test calls
     \-- tab_id - 0 unit test calls
@@ -5231,7 +5229,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- url_mapper - 30 unit test calls shared by 27 classes
 \-- ui_base
     \-- all - 0 unit test calls
-    \-- expression_latex_link - 0 unit test calls shared by 2 classes
+    \-- expression_latex_link - 1 unit test calls shared by 2 classes
     \-- expression_latex_link_form - 0 unit test calls
     \-- expression_link - 0 unit test calls shared by 2 classes
     \-- group_name - 0 unit test calls

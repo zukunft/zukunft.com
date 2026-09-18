@@ -42,6 +42,9 @@ class groups
     // persevered phrase group names for unit and integration tests
     const string TN_READ = 'π (unit symbol)';
     const string TN_READ_COM = 'Symbol for the ratio of the circumference of a circle to its diameter';
+    // the group of the Euler number symbol for the read tests, named apart from TN_READ, because
+    // a group name is unique and the read test setup creates both groups in the same database
+    const string TN_READ_E = 'System Test Group Euler number for read tests';
     const string TN_RENAMED = 'π';
 
     const string ZH_CITY_INHABITANTS = word_names::ZH . ' ' . word_names::CITY . ' ' . word_names::INHABITANTS;
@@ -86,6 +89,7 @@ class groups
     // list of predefined group names used for system testing that are expected to be never renamed
     const array RESERVED_GROUP_NAMES = [
         self::TN_READ,
+        self::TN_READ_E,
         self::TN_ZH_2019,
         self::TN_CH_2019
     ];

@@ -390,61 +390,63 @@
   "formulas": [
     {
       "name": "variance from the standard deviation",
+      "description": "the variance of a quantity is the square of its standard deviation, so a measurement uncertainty given as sigma can be used in the variance based propagation formulas",
       "expression": "\"variance of x\" = \"sigma of x\" * \"sigma of x\"",
-      "latex": "\\sigma_x^2 = \\sigma_x \\cdot \\sigma_x",
+      "latex": "\\text{variance of x} = \\text{sigma of x}^2",
       "assigned": [
         "propagation of uncertainty"
       ]
     },
     {
       "name": "covariance from the correlation",
+      "description": "the covariance of two inputs from their correlation coefficient and their standard deviations; the covariance is zero for independent inputs and then drops out of the propagation formulas",
       "expression": "\"covariance of x and y\" = \"correlation coefficient\" * \"sigma of x\" * \"sigma of y\"",
-      "latex": "\\sigma_{xy} = \\rho_{xy} \\sigma_x \\sigma_y",
+      "latex": "\\text{covariance of x and y} = \\text{correlation coefficient} \\cdot \\text{sigma of x} \\cdot \\text{sigma of y}",
       "assigned": [
         "propagation of uncertainty"
       ]
     },
     {
       "name": "propagation for a scaled quantity",
-      "description": "f = a x",
+      "description": "the uncertainty of a result that is an input multiplied by a constant, f = a x: the variance is scaled by the square of the constant, so the standard deviation is scaled by the constant itself",
       "expression": "\"variance of f\" = \"a\" * \"a\" * \"variance of x\"",
-      "latex": "\\sigma_f^2 = a^2 \\sigma_x^2",
+      "latex": "\\text{variance of f} = \\text{a}^2 \\cdot \\text{variance of x}",
       "assigned": [
         "propagation of uncertainty"
       ]
     },
     {
       "name": "propagation for a sum",
-      "description": "f = x + y",
+      "description": "the uncertainty of a result that is the sum of two uncertain inputs, f = x + y: the variances add up, plus twice the covariance if the inputs are correlated; for independent inputs the standard deviations add in quadrature",
       "expression": "\"variance of f\" = \"variance of x\" + \"variance of y\" + 2 * \"covariance of x and y\"",
-      "latex": "\\sigma_f^2 = \\sigma_x^2 + \\sigma_y^2 + 2 \\sigma_{xy}",
+      "latex": "\\text{variance of f} = \\text{variance of x} + \\text{variance of y} + 2 \\cdot \\text{covariance of x and y}",
       "assigned": [
         "propagation of uncertainty"
       ]
     },
     {
       "name": "propagation for a difference",
-      "description": "f = x - y",
+      "description": "the uncertainty of a result that is the difference of two uncertain inputs, f = x - y: the variances add up like for a sum, but a positive correlation reduces the uncertainty, because a common error cancels in the difference",
       "expression": "\"variance of f\" = \"variance of x\" + \"variance of y\" - 2 * \"covariance of x and y\"",
-      "latex": "\\sigma_f^2 = \\sigma_x^2 + \\sigma_y^2 - 2 \\sigma_{xy}",
+      "latex": "\\text{variance of f} = \\text{variance of x} + \\text{variance of y} - 2 \\cdot \\text{covariance of x and y}",
       "assigned": [
         "propagation of uncertainty"
       ]
     },
     {
       "name": "propagation for a linear combination",
-      "description": "f = a x + b y",
+      "description": "the uncertainty of a result that is a weighted sum of two uncertain inputs, f = a x + b y: each variance is scaled by the square of its weight and the covariance term by the product of the weights",
       "expression": "\"variance of f\" = \"a\" * \"a\" * \"variance of x\" + \"b\" * \"b\" * \"variance of y\" + 2 * \"a\" * \"b\" * \"covariance of x and y\"",
-      "latex": "\\sigma_f^2 = a^2 \\sigma_x^2 + b^2 \\sigma_y^2 + 2 a b \\sigma_{xy}",
+      "latex": "\\text{variance of f} = \\text{a}^2 \\cdot \\text{variance of x} + \\text{b}^2 \\cdot \\text{variance of y} + 2 \\cdot \\text{a} \\cdot \\text{b} \\cdot \\text{covariance of x and y}",
       "assigned": [
         "propagation of uncertainty"
       ]
     },
     {
       "name": "propagation for a linear difference",
-      "description": "f = a x - b y",
+      "description": "the uncertainty of a result that is a weighted difference of two uncertain inputs, f = a x - b y: like the linear combination, but the covariance term is subtracted",
       "expression": "\"variance of f\" = \"a\" * \"a\" * \"variance of x\" + \"b\" * \"b\" * \"variance of y\" - 2 * \"a\" * \"b\" * \"covariance of x and y\"",
-      "latex": "\\sigma_f^2 = a^2 \\sigma_x^2 + b^2 \\sigma_y^2 - 2 a b \\sigma_{xy}",
+      "latex": "\\text{variance of f} = \\text{a}^2 \\cdot \\text{variance of x} + \\text{b}^2 \\cdot \\text{variance of y} - 2 \\cdot \\text{a} \\cdot \\text{b} \\cdot \\text{covariance of x and y}",
       "assigned": [
         "propagation of uncertainty"
       ]
@@ -453,7 +455,7 @@
       "name": "propagation for a product",
       "description": "f = x y, first order approximation",
       "expression": "\"variance of f\" = \"x\" * \"y\" * \"x\" * \"y\" * ( \"variance of x\" / ( \"x\" * \"x\" ) + \"variance of y\" / ( \"y\" * \"y\" ) + 2 * \"covariance of x and y\" / ( \"x\" * \"y\" ) )",
-      "latex": "\\sigma_f^2 \\approx f^2 \\left[ \\left(\\frac{\\sigma_x}{x}\\right)^2 + \\left(\\frac{\\sigma_y}{y}\\right)^2 + 2 \\frac{\\sigma_{xy}}{x y} \\right]",
+      "latex": "\\text{variance of f} \\approx \\left( \\text{x} \\cdot \\text{y} \\right)^2 \\left[ \\frac{\\text{variance of x}}{\\text{x}^2} + \\frac{\\text{variance of y}}{\\text{y}^2} + 2 \\cdot \\frac{\\text{covariance of x and y}}{\\text{x} \\cdot \\text{y}} \\right]",
       "assigned": [
         "propagation of uncertainty"
       ]
@@ -462,7 +464,7 @@
       "name": "propagation for a quotient",
       "description": "f = x / y, first order approximation",
       "expression": "\"variance of f\" = ( \"x\" / \"y\" ) * ( \"x\" / \"y\" ) * ( \"variance of x\" / ( \"x\" * \"x\" ) + \"variance of y\" / ( \"y\" * \"y\" ) - 2 * \"covariance of x and y\" / ( \"x\" * \"y\" ) )",
-      "latex": "\\sigma_f^2 \\approx f^2 \\left[ \\left(\\frac{\\sigma_x}{x}\\right)^2 + \\left(\\frac{\\sigma_y}{y}\\right)^2 - 2 \\frac{\\sigma_{xy}}{x y} \\right]",
+      "latex": "\\text{variance of f} \\approx \\left( \\frac{\\text{x}}{\\text{y}} \\right)^2 \\left[ \\frac{\\text{variance of x}}{\\text{x}^2} + \\frac{\\text{variance of y}}{\\text{y}^2} - 2 \\cdot \\frac{\\text{covariance of x and y}}{\\text{x} \\cdot \\text{y}} \\right]",
       "assigned": [
         "propagation of uncertainty"
       ]
@@ -471,105 +473,106 @@
       "name": "exact variance of a product",
       "description": "f = x y for independent inputs, exact instead of the first order approximation (Goodman)",
       "expression": "\"variance of f\" = \"x\" * \"x\" * \"variance of y\" + \"y\" * \"y\" * \"variance of x\" + \"variance of x\" * \"variance of y\"",
-      "latex": "\\sigma_f^2 = x^2 \\sigma_y^2 + y^2 \\sigma_x^2 + \\sigma_x^2 \\sigma_y^2",
+      "latex": "\\text{variance of f} = \\text{x}^2 \\cdot \\text{variance of y} + \\text{y}^2 \\cdot \\text{variance of x} + \\text{variance of x} \\cdot \\text{variance of y}",
       "assigned": [
         "propagation of uncertainty"
       ]
     },
     {
       "name": "standard deviation of the result",
+      "description": "the standard deviation of a result is the square root of its variance, the last step after a variance based propagation to get the uncertainty in the unit of the result",
       "expression": "\"sigma of f\" = sqrt(\"variance of f\")",
-      "latex": "\\sigma_f = \\sqrt{\\sigma_f^2}",
+      "latex": "\\text{sigma of f} = \\sqrt{\\text{variance of f}}",
       "assigned": [
         "propagation of uncertainty"
       ]
     },
     {
       "name": "propagation for a ratio to the sum",
-      "description": "f = x / (x + y)",
+      "description": "the uncertainty of a share, f = x / (x + y), e.g. the share of one part in the total of two parts; the same input appears in the numerator and the denominator, so the formula differs from the plain quotient",
       "expression": "\"sigma of f\" = abs(\"f\" / (\"x\" + \"y\")) * sqrt(\"y\"^2 / \"x\"^2 * \"variance of x\" + \"variance of y\" - 2 * \"y\" / \"x\" * \"covariance of x and y\")",
-      "latex": "\\sigma_f \\approx \\left| \\frac{f}{x + y} \\right| \\sqrt{\\frac{y^2}{x^2} \\sigma_x^2 + \\sigma_y^2 - 2 \\frac{y}{x} \\sigma_{xy}}",
+      "latex": "\\text{sigma of f} \\approx \\left| \\frac{\\text{f}}{\\text{x} + \\text{y}} \\right| \\sqrt{\\frac{\\text{y}^2}{\\text{x}^2} \\cdot \\text{variance of x} + \\text{variance of y} - 2 \\cdot \\frac{\\text{y}}{\\text{x}} \\cdot \\text{covariance of x and y}}",
       "assigned": [
         "propagation of uncertainty"
       ]
     },
     {
       "name": "propagation for a power",
-      "description": "f = a x^b",
+      "description": "the uncertainty of a result that is a power of one uncertain input, f = a x^b: the relative uncertainty of the result is the relative uncertainty of the input multiplied by the absolute value of the exponent, e.g. the area of a square measured with a side length uncertainty of 1% has an uncertainty of 2%; a first order approximation that assumes a small input uncertainty",
       "expression": "\"sigma of f\" = abs(\"f\" * \"b\" * \"sigma of x\" / \"x\")",
-      "latex": "\\sigma_f \\approx \\left| \\frac{f b \\sigma_x}{x} \\right|",
+      "latex": "\\text{sigma of f} \\approx \\left| \\frac{\\text{f} \\cdot \\text{b} \\cdot \\text{sigma of x}}{\\text{x}} \\right|",
       "assigned": [
         "propagation of uncertainty"
       ]
     },
     {
       "name": "propagation for a natural logarithm",
-      "description": "f = a ln(b x)",
+      "description": "the uncertainty of a natural logarithm of an uncertain input, f = a ln(b x): the absolute uncertainty of the result is the relative uncertainty of the input times the factor a, independent of b",
       "expression": "\"sigma of f\" = abs(\"a\" * \"sigma of x\" / \"x\")",
-      "latex": "\\sigma_f \\approx \\left| \\frac{a \\sigma_x}{x} \\right|",
+      "latex": "\\text{sigma of f} \\approx \\left| \\frac{\\text{a} \\cdot \\text{sigma of x}}{\\text{x}} \\right|",
       "assigned": [
         "propagation of uncertainty"
       ]
     },
     {
       "name": "propagation for a decimal logarithm",
-      "description": "f = a log10(b x)",
+      "description": "the uncertainty of a decimal logarithm of an uncertain input, f = a log10(b x): like the natural logarithm, but the relative uncertainty of the input is divided by ln(10), e.g. for a pH value",
       "expression": "\"sigma of f\" = abs(\"a\" * \"sigma of x\" / (\"x\" * ln(10)))",
-      "latex": "\\sigma_f \\approx \\left| \\frac{a \\sigma_x}{x \\ln(10)} \\right|",
+      "latex": "\\text{sigma of f} \\approx \\left| \\frac{\\text{a} \\cdot \\text{sigma of x}}{\\text{x} \\cdot \\ln(10)} \\right|",
       "assigned": [
         "propagation of uncertainty"
       ]
     },
     {
       "name": "propagation for an exponential",
-      "description": "f = a e^(b x)",
+      "description": "the uncertainty of an exponential of an uncertain input, f = a e^(b x): the relative uncertainty of the result is the absolute uncertainty of the input times the exponent factor b, e.g. for a growth or decay over an uncertain time",
       "expression": "\"sigma of f\" = abs(\"f\" * \"b\" * \"sigma of x\")",
-      "latex": "\\sigma_f \\approx |f| |b \\sigma_x|",
+      "latex": "\\text{sigma of f} \\approx \\left| \\text{f} \\cdot \\text{b} \\cdot \\text{sigma of x} \\right|",
       "assigned": [
         "propagation of uncertainty"
       ]
     },
     {
       "name": "propagation for a general exponential",
-      "description": "f = a^(b x)",
+      "description": "the uncertainty of an exponential with a general base, f = a^(b x): like the natural exponential, but the exponent factor is multiplied by the natural logarithm of the base",
       "expression": "\"sigma of f\" = abs(\"f\" * \"b\" * ln(\"a\") * \"sigma of x\")",
-      "latex": "\\sigma_f \\approx |f| |b \\ln(a) \\sigma_x|",
+      "latex": "\\text{sigma of f} \\approx \\left| \\text{f} \\cdot \\text{b} \\cdot \\ln(\\text{a}) \\cdot \\text{sigma of x} \\right|",
       "assigned": [
         "propagation of uncertainty"
       ]
     },
     {
       "name": "propagation for a sine",
-      "description": "f = a sin(b x)",
+      "description": "the uncertainty of a sine of an uncertain input, f = a sin(b x): the uncertainty of the input is scaled by the slope of the sine, which is the cosine at the same point, so it is largest near the zero crossings and vanishes at the peaks",
       "expression": "\"sigma of f\" = abs(\"a\" * \"b\" * cos(\"b\" * \"x\") * \"sigma of x\")",
-      "latex": "\\sigma_f \\approx |a b \\cos(b x) \\sigma_x|",
+      "latex": "\\text{sigma of f} \\approx \\left| \\text{a} \\cdot \\text{b} \\cdot \\cos(\\text{b} \\cdot \\text{x}) \\cdot \\text{sigma of x} \\right|",
       "assigned": [
         "propagation of uncertainty"
       ]
     },
     {
       "name": "propagation for a cosine",
-      "description": "f = a cos(b x)",
+      "description": "the uncertainty of a cosine of an uncertain input, f = a cos(b x): the uncertainty of the input is scaled by the slope of the cosine, which is the sine at the same point",
       "expression": "\"sigma of f\" = abs(\"a\" * \"b\" * sin(\"b\" * \"x\") * \"sigma of x\")",
-      "latex": "\\sigma_f \\approx |a b \\sin(b x) \\sigma_x|",
+      "latex": "\\text{sigma of f} \\approx \\left| \\text{a} \\cdot \\text{b} \\cdot \\sin(\\text{b} \\cdot \\text{x}) \\cdot \\text{sigma of x} \\right|",
       "assigned": [
         "propagation of uncertainty"
       ]
     },
     {
       "name": "propagation for a tangent",
-      "description": "f = a tan(b x)",
+      "description": "the uncertainty of a tangent of an uncertain input, f = a tan(b x): the uncertainty of the input is scaled by the slope of the tangent, the squared secant, which grows without limit near 90 degrees",
       "expression": "\"sigma of f\" = abs(\"a\" * \"b\" * sec(\"b\" * \"x\")^2 * \"sigma of x\")",
-      "latex": "\\sigma_f \\approx |a b \\sec^2(b x) \\sigma_x|",
+      "latex": "\\text{sigma of f} \\approx \\left| \\text{a} \\cdot \\text{b} \\cdot \\sec^2(\\text{b} \\cdot \\text{x}) \\cdot \\text{sigma of x} \\right|",
       "assigned": [
         "propagation of uncertainty"
       ]
     },
     {
       "name": "propagation for a general power",
-      "description": "f = x^y",
+      "description": "the uncertainty of a power where both the base and the exponent are uncertain, f = x^y: the relative uncertainty combines the relative uncertainty of the base scaled by the exponent with the uncertainty of the exponent scaled by the logarithm of the base",
       "expression": "\"sigma of f\" = abs(\"f\") * sqrt((\"y\" * \"sigma of x\" / \"x\")^2 + (ln(\"x\") * \"sigma of y\")^2 + 2 * \"y\" * ln(\"x\") * \"covariance of x and y\" / \"x\")",
-      "latex": "\\sigma_f \\approx |f| \\sqrt{\\left(\\frac{y \\sigma_x}{x}\\right)^2 + (\\ln(x) \\sigma_y)^2 + 2 \\frac{y \\ln(x) \\sigma_{xy}}{x}}",
+      "latex": "\\text{sigma of f} \\approx \\left| \\text{f} \\right| \\sqrt{\\left( \\frac{\\text{y} \\cdot \\text{sigma of x}}{\\text{x}} \\right)^2 + \\left( \\ln(\\text{x}) \\cdot \\text{sigma of y} \\right)^2 + 2 \\cdot \\frac{\\text{y} \\cdot \\ln(\\text{x}) \\cdot \\text{covariance of x and y}}{\\text{x}}}",
       "assigned": [
         "propagation of uncertainty"
       ]
@@ -578,7 +581,7 @@
       "name": "propagation for a root of a sum of squares",
       "description": "f = sqrt(a x^2 + b y^2), for a difference of the squares the sign of the covariance term flips",
       "expression": "\"sigma of f\" = sqrt((\"x\" / \"f\")^2 * \"a\"^2 * \"variance of x\" + (\"y\" / \"f\")^2 * \"b\"^2 * \"variance of y\" + 2 * \"a\" * \"b\" * \"x\" * \"y\" * \"covariance of x and y\" / \"f\"^2)",
-      "latex": "\\sigma_f \\approx \\sqrt{\\left(\\frac{x}{f}\\right)^2 a^2 \\sigma_x^2 + \\left(\\frac{y}{f}\\right)^2 b^2 \\sigma_y^2 + 2 a b \\frac{x y \\sigma_{xy}}{f^2}}",
+      "latex": "\\text{sigma of f} \\approx \\sqrt{\\left( \\frac{\\text{x}}{\\text{f}} \\right)^2 \\text{a}^2 \\cdot \\text{variance of x} + \\left( \\frac{\\text{y}}{\\text{f}} \\right)^2 \\text{b}^2 \\cdot \\text{variance of y} + 2 \\cdot \\text{a} \\cdot \\text{b} \\cdot \\frac{\\text{x} \\cdot \\text{y} \\cdot \\text{covariance of x and y}}{\\text{f}^2}}",
       "assigned": [
         "propagation of uncertainty"
       ]
@@ -587,7 +590,7 @@
       "name": "propagation to the first order",
       "description": "the variance of any function f of the independent inputs x_i to the first order of the Taylor expansion",
       "expression": "\"variance of f\" = sum((d\"f\"/d\"x\"_\"i\")^2 * \"variance of x\"_\"i\", \"i\"=1..\"n\")",
-      "latex": "\\sigma_f^2 \\approx \\sum_{i=1}^{n} \\left(\\frac{\\partial f}{\\partial x_i}\\right)^2 \\sigma_{x_i}^2",
+      "latex": "\\text{variance of f} \\approx \\sum_{i=1}^{n} \\left( \\frac{\\partial \\text{f}}{\\partial \\text{x}_i} \\right)^2 \\text{variance of x}_i",
       "assigned": [
         "propagation of uncertainty"
       ]
@@ -596,7 +599,7 @@
       "name": "standard error of the mean",
       "description": "the standard deviation of the mean of n independent measurements with the standard deviation sigma",
       "expression": "\"sigma of f\" = \"sigma\" / sqrt(\"n\")",
-      "latex": "\\sigma_f = \\frac{\\sigma}{\\sqrt{n}}",
+      "latex": "\\text{sigma of f} = \\frac{\\text{sigma}}{\\sqrt{\\text{n}}}",
       "assigned": [
         "propagation of uncertainty"
       ]

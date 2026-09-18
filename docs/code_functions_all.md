@@ -6903,6 +6903,8 @@
             tml elements used in /html/html_base.php
     \-- sup - section for function sup not yet defined that it should be wrapper for the basic html elements used in /ht
             ml/html_base.php
+    \-- sub - section for function sub not yet defined that it should be wrapper for the basic html elements used in /ht
+            ml/html_base.php
     \-- url_old - section for function url_old not yet defined that it should be wrapper for internal references used in
              the html code in /html/html_base.php
     \-- url_back - section for function url_back not yet defined that it should be wrapper for internal references used 
@@ -9511,6 +9513,8 @@
         \-- html_base - the html of a font awesome icon
     \-- sup
         \-- html_base - @param string $text the superscript text e.g. the exponent "2"
+    \-- sub
+        \-- html_base - @param string $text the subscript text e.g. the index "i"
 \-- wrapper for internal references used in the html code
     \-- url_old
         \-- html_base - build a url for link a zukunft.com element

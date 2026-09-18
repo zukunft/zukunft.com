@@ -1665,6 +1665,7 @@
   "formulas": [
     {
       "name": "definition of accounting equation",
+      "description": "the balance sheet identity that the assets of a company are financed either by debt (liabilities) or by the owners (equity), so both sides of a balance sheet always match",
       "expression": "\"asset\" = \"liability\" + \"equity\"",
       "latex": "A = L + E",
       "assigned": [
@@ -1674,6 +1675,7 @@
     },
     {
       "name": "definition of net income",
+      "description": "the profit of a period that remains after all expenses, including interest and taxes, are deducted from the revenue",
       "expression": "\"net income\" = \"revenue\" - \"expense\"",
       "latex": "NI = R - E",
       "assigned": [
@@ -1683,6 +1685,7 @@
     },
     {
       "name": "definition of gross profit",
+      "description": "the profit after the direct costs of producing the sold goods, before the operating expenses such as selling, administration, interest and taxes",
       "expression": "\"gross profit\" = \"revenue\" - \"cost of goods sold\"",
       "latex": "GP = R - COGS",
       "assigned": [
@@ -1692,6 +1695,7 @@
     },
     {
       "name": "definition of working capital",
+      "description": "the funds available for the day-to-day operations, the part of the current assets that is not needed to pay the debts due within a year",
       "expression": "\"working capital\" = \"current asset\" - \"current liability\"",
       "latex": "WC = CA - CL",
       "assigned": [
@@ -1701,6 +1705,7 @@
     },
     {
       "name": "definition of current ratio",
+      "description": "a liquidity measure that shows how many times the debts due within a year are covered by the assets that can be turned into cash within a year, e.g. a ratio below 1 signals a possible cash shortage",
       "expression": "\"current ratio\" = \"current asset\" / \"current liability\"",
       "latex": "CR = \\frac{CA}{CL}",
       "assigned": [
@@ -1710,6 +1715,7 @@
     },
     {
       "name": "definition of quick ratio",
+      "description": "a stricter liquidity measure than the current ratio that leaves out the inventory, because stock may take long to sell, so only the assets that are cash or close to cash count",
       "expression": "\"quick ratio\" = ( \"current asset\" - \"inventory\" ) / \"current liability\"",
       "latex": "QR = \\frac{CA - I}{CL}",
       "assigned": [
@@ -1720,6 +1726,7 @@
     },
     {
       "name": "definition of debt-to-equity ratio",
+      "description": "the leverage of a company, how much of the financing comes from creditors compared to the owners; a high ratio means more financial risk but potentially a higher return on equity",
       "expression": "\"debt-to-equity ratio\" = \"liability\" / \"equity\"",
       "latex": "\\frac{D}{E} = \\frac{L}{E}",
       "assigned": [
@@ -1729,6 +1736,7 @@
     },
     {
       "name": "straight-line depreciation",
+      "description": "the simplest way to spread the cost of an asset over its useful life: the same amount is expensed every year until only the salvage value is left",
       "expression": "\"depreciation\" = ( \"cost\" - \"salvage value\" ) / \"useful life\"",
       "latex": "D = \\frac{C - S}{n}",
       "assigned": [
@@ -1739,6 +1747,7 @@
     },
     {
       "name": "definition of book value",
+      "description": "the value of an asset in the accounts, the original cost less the depreciation booked so far, which can differ a lot from the market value",
       "expression": "\"book value\" = \"cost\" - \"accumulated depreciation\"",
       "latex": "BV = C - D_{acc}",
       "assigned": [
@@ -1748,6 +1757,7 @@
     },
     {
       "name": "definition of earnings per share",
+      "description": "the part of the net income that belongs to one share, the most used measure to compare the profitability of listed companies and the base of the price-earnings ratio",
       "expression": "\"earnings per share\" = \"net income\" / \"number of shares\"",
       "latex": "EPS = \\frac{NI}{N}",
       "assigned": [
@@ -1757,6 +1767,7 @@
     },
     {
       "name": "definition of retained earnings",
+      "description": "the accumulated profit that a company has kept instead of paying it out as dividends, rolled forward from period to period as part of the equity",
       "expression": "\"retained earnings\" = \"beginning retained earnings\" + \"net income\" - \"dividend\"",
       "latex": "RE = RE_0 + NI - Div",
       "assigned": [
@@ -1767,6 +1778,7 @@
     },
     {
       "name": "definition of asset turnover",
+      "description": "an efficiency measure of how much revenue a company generates per unit of assets; a retailer has a high turnover, a utility with heavy plants a low one",
       "expression": "\"asset turnover\" = \"revenue\" / \"asset\"",
       "latex": "AT = \\frac{R}{A}",
       "assigned": [
