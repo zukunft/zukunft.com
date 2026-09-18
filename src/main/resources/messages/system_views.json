@@ -2570,6 +2570,7 @@
     },
     {
       "name": "Expression",
+      "description": "show the formula expression with a link for each term and without the quotes around the term names",
       "type": "expression"
     },
     {
@@ -2577,6 +2578,13 @@
       "description": "show if a formula only calculates when all used values exist",
       "type": "system_show_field_formula_all_vars",
       "code_id": "show_field_all_values_needed"
+    },
+    {
+      "name": "system sub title expression",
+      "description": "show the language specific sub title for the expression of a formula",
+      "type": "system_sub_title",
+      "code_id": "system_sub_title_expression",
+      "ui_msg_code_id": "system_sub_title_expression"
     }
   ],
   "views": [
@@ -2970,46 +2978,51 @@
         },
         {
           "position": "3",
-          "name": "Expression",
+          "name": "system sub title description",
           "style": "text-left"
         },
         {
           "position": "4",
-          "name": "system sub title description",
-          "position_type": "combine"
-        },
-        {
-          "position": "5",
           "name": "system show field description",
           "position_type": "combine"
         },
         {
+          "position": "5",
+          "name": "system sub title expression",
+          "position_type": "combine"
+        },
+        {
           "position": "6",
-          "name": "system show field all values needed",
+          "name": "Expression",
           "position_type": "combine"
         },
         {
           "position": "7",
-          "name": "system show field last update",
+          "name": "system show field all values needed",
           "position_type": "combine"
         },
         {
           "position": "8",
+          "name": "system show field last update",
+          "position_type": "combine"
+        },
+        {
+          "position": "9",
           "name": "system sub title values",
           "position_type": "side_or_first_below"
         },
         {
-          "position": "9",
+          "position": "10",
           "name": "related values",
           "position_type": "combine"
         },
         {
-          "position": "10",
+          "position": "11",
           "name": "related results",
           "position_type": "side_or_below"
         },
         {
-          "position": "11",
+          "position": "12",
           "name": "view tab box",
           "position_type": "side_or_last_below"
         }

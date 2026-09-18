@@ -164,26 +164,31 @@
     },
     {
       "name": "city population",
+      "description": "the number of people living in cities, the sum of the inhabitants of all phrases that are a city, e.g. of a country",
       "expression": "\"total\" = &sum; ( \"inhabitants\" \"of all\" \"city\" )",
       "assigned_word": "country"
     },
     {
       "name": "countryside population",
+      "description": "the number of people living outside the cities, the total inhabitants minus the city population",
       "expression": "\"total\" = \"total\" \"inhabitants\" - \"city population\"",
       "assigned_word": "country"
     },
     {
       "name": "suburb population",
+      "description": "the number of people living in the suburbs, the sum of the inhabitants of all phrases that are a suburb",
       "expression": "\"total\" = &sum; ( \"inhabitants\" \"of all\" \"suburb\" )",
       "assigned_word": "country"
     },
     {
       "name": "countryside population without suburb",
+      "description": "the number of people living in rural areas, the countryside population minus the people living in the suburbs of the cities",
       "expression": "\"total\" = \"countryside population\" - \"suburb population\"",
       "assigned_word": "country"
     },
     {
       "name": "population in the city of Zurich in percent of Switzerland",
+      "description": "the share of the Swiss population that lives in the city of Zurich, a sample ratio of the inhabitants of a city to the inhabitants of its country",
       "expression": "\"percent\" = \"inhabitants\" \"Zurich (city)\" / \"inhabitants\" \"Switzerland\"",
       "assigned_word": "Switzerland"
     }

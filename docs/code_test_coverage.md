@@ -8,7 +8,7 @@ in a test file of the src/test/php/unit* folders; the count is by function name
 and cannot tell the classes apart, so a name that several classes declare needs
 2 calls per class and is listed as shared otherwise
 
-542 of 5776 public functions have at least 2 unit test calls; the 5234 functions below do not
+542 of 5777 public functions have at least 2 unit test calls; the 5235 functions below do not
 
 ## main backend
 
@@ -4296,6 +4296,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- edit_link - 0 unit test calls shared by 3 classes
     \-- expression_latex_link - 1 unit test calls shared by 2 classes
     \-- expression_link - 0 unit test calls shared by 2 classes
+    \-- expression_named_link - 1 unit test calls
     \-- formula_type_selector - 0 unit test calls shared by 2 classes
     \-- get_latex - 3 unit test calls shared by 2 classes
     \-- get_usr_text - 0 unit test calls shared by 2 classes

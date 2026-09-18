@@ -6658,6 +6658,8 @@
             in /formula/formula.php
     \-- expression_link - section for function expression_link not yet defined that it should be overwrites in /formula/
             formula.php
+    \-- expression_named_link - section for function expression_named_link not yet defined that it should be overwrites 
+            in /formula/formula.php
     \-- need_all - section for function need_all not yet defined that it should be overwrites in /formula/formula.php
     \-- dsp_text - section for function dsp_text not yet defined that it should be to review in /formula/formula.php
     \-- is_special - section for function is_special is expected to be info in /formula/formula.php

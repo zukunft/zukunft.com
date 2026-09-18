@@ -241,7 +241,11 @@ class ui_base
     function expression(?db_object $dbo = null): string
     {
         $result = '';
-        if ($dbo != null and method_exists($dbo, 'user_expression')) {
+        // a formula shows each term of the expression as a link without the quotes around the
+        // term names; an object without a term list falls back to the plain expression text
+        if ($dbo != null and method_exists($dbo, 'expression_named_link')) {
+            $result = $dbo->expression_named_link();
+        } elseif ($dbo != null and method_exists($dbo, 'user_expression')) {
             $result = $dbo->user_expression();
         }
         return $result;

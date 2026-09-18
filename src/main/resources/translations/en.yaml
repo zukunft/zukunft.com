@@ -64,6 +64,7 @@ messages:
   system_sub_title_triples: "used for"
   system_sub_title_components: "Components"
   system_sub_title_description: "Description"
+  system_sub_title_expression: "Expression"
   system_sub_title_references: "References"
   system_sub_title_values: "Values"
   system_sub_title_related_values: "Related values"

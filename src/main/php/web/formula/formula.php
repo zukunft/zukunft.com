@@ -680,6 +680,35 @@ class formula extends sandbox_code_id
     }
 
     /**
+     * the user expression with each term shown as a link to the term that displays the term
+     * description as a tooltip and without the double quotes that delimit a term name in the
+     * expression, e.g. 'second (time) = minute * 60' with both names linked; shown on the
+     * formula page below the expression subtitle, where the link marks the term instead of the
+     * quotes; a name that matches no term of the preloaded term list keeps its quotes, so the
+     * user sees which name is not resolved
+     *
+     * @return string the expression with the quoted term names replaced by the term links
+     */
+    function expression_named_link(): string
+    {
+        // escape the user expression first, so that only the trusted term-link html inserted
+        // below stays unescaped; ENT_NOQUOTES, because the double quotes are the term delimiter
+        // that the replace below looks for, so they must stay literal (see expression_link)
+        $exp = htmlspecialchars($this->usr_text ?? '', ENT_NOQUOTES);
+        if ($this->trm_lst != null) {
+            foreach ($this->trm_lst->lst() as $trm) {
+                $name = htmlspecialchars($trm->name(), ENT_NOQUOTES);
+                $exp = str_replace(
+                    chars::TERM_DELIMITER . $name . chars::TERM_DELIMITER,
+                    $trm->name_link(),
+                    $exp
+                );
+            }
+        }
+        return $exp;
+    }
+
+    /**
      * render the given latex math markup as html and keep the whole expression on one line with
      * the "text-nowrap" wrapper; shared by expression_latex and expression_latex_link
      * @param string $latex the latex expression, the term names already replaced by links if wanted

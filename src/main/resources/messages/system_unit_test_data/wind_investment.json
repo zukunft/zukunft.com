@@ -547,26 +547,31 @@
   "formulas": [
     {
       "name": "lifetime energy production",
+      "description": "the energy a power plant produces over its whole lifetime, the yearly production multiplied by the years of operation",
       "expression": "=\"energy production per year\" * \"lifetime in years\"",
       "assigned_word": "Power Plant"
     },
     {
       "name": "production climate emissions per kWh",
+      "description": "the climate gas emissions caused by building a power plant spread over each kilowatt hour it produces, the production emissions divided by the energy produced",
       "expression": "=\"production climate emissions\" / \"kWh\"",
       "assigned_word": "Power Plant"
     },
     {
       "name": "CO2 reduction based on replacement mix",
+      "description": "how many times less climate gas a power plant emits per kilowatt hour than the electricity mix it replaces, the emissions of the replaced mix divided by the emissions of the plant",
       "expression": "=\"CO2-eq\" \"replacement mix\" / \"CO2-eq\" \"production climate emissions per kWh\"",
       "assigned_word": "Power Plant"
     },
     {
       "name": "lifetime CO2 emissions",
+      "description": "the climate gas emissions of a power plant over its whole lifetime, the yearly emissions multiplied by the years of operation",
       "expression": "=\"CO2-eq\" \"climate gas emissions\" * \"lifetime\"",
       "assigned_word": "Power Plant"
     },
     {
       "name": "Euro per tonne",
+      "description": "the climate gas emissions avoided per euro invested, the lifetime emissions divided by the investment, to compare the climate effect of investments",
       "expression": "=\"CO2-eq\" \"climate gas emissions\" * \"lifetime\" /  \"investment\"",
       "assigned_word": "Power Plant"
     }

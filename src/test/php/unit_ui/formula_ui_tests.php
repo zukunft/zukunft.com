@@ -43,7 +43,9 @@ use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::LOG . 'change_log_list.php';
+include_once html_paths::SHARED_CONST . 'chars.php';
 
+use Zukunft\ZukunftCom\main\php\shared\const\chars;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_list;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_preview;
@@ -117,6 +119,20 @@ class formula_ui_tests
         // e.g. the increase formula "percent = ( this - prior ) / prior"
         $test_page .= $html->text_h2('increase expression in latex format without term links');
         $test_page .= 'latex without links: ' . $frm_increase->expression_latex() . '<br>';
+
+        // the expression on the formula page shows each term as a link and drops the double
+        // quotes that delimit a term name in the expression, e.g. percent = ( this - prior ) / prior
+        $exp_html = $frm_increase_linked->expression_named_link();
+        $test_name = 'the expression with term links shows each term as a link';
+        $t->assert_text_contains($test_name, $exp_html, '>' . word_names::THIS_NAME . '</a>');
+        $test_name = 'the expression with term links drops the quotes around a linked term name';
+        $t->assert_text_not_contains($test_name, $exp_html,
+            chars::TERM_DELIMITER . word_names::THIS_NAME . chars::TERM_DELIMITER);
+        // a name that matches no term of the term list keeps its quotes, so the user sees
+        // which name of the expression is not resolved to a term
+        $test_name = 'a term name without a matching term keeps the quotes';
+        $t->assert_text_contains($test_name, $frm_increase->expression_named_link(),
+            chars::TERM_DELIMITER . word_names::THIS_NAME . chars::TERM_DELIMITER);
 
         // the latex markup of the propagation of uncertainty formulas is rendered as html without
         // a latex engine: "\approx" as the almost equal sign, "\left|" and "\right|" as the bars
