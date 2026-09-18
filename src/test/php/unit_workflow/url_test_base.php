@@ -102,7 +102,13 @@ class url_test_base
         $this->ts = $ts;
         $this->msg = new user_message();
         $this->ui = new frontend('view');
-        $this->ui->load_cache($this->msg);
+        // the workflow steps read the type lists from the frontend cache, so a cache that the api
+        // could not deliver is reported here with the api problem instead of failing later with
+        // a null type list inside a workflow step
+        if (!$this->ui->load_cache($this->msg)) {
+            log_err('the frontend cache for the workflow tests could not be loaded via the api: '
+                . $this->msg->get_last_message());
+        }
         // the html renderers read the type cache from the global $ui_sys; point it at the just loaded
         // frontend cache so the render does not depend on a stale cache left by another test
         global $ui_sys;

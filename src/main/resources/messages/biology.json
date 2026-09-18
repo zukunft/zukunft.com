@@ -2384,42 +2384,49 @@
   "formulas": [
     {
       "name": "Hardy-Weinberg allele frequencies",
+      "description": "the frequencies of the two alleles of a gene in a population add up to one, the starting point of the Hardy-Weinberg principle for a population without evolution",
       "expression": "\"p\" + \"q\" = 1",
       "latex": "p + q = 1",
       "assigned_word": "allele frequency"
     },
     {
       "name": "Hardy-Weinberg genotype frequencies",
+      "description": "the expected frequencies of the three genotypes of a gene with two alleles in a large randomly mating population: the two homozygotes p squared and q squared and the heterozygote 2pq",
       "expression": "\"p\"^2 + 2*\"p\"*\"q\" + \"q\"^2 = 1",
       "latex": "p^2 + 2pq + q^2 = 1",
       "assigned_word": "genotype frequency"
     },
     {
       "name": "definition of body mass index",
+      "description": "the body mass in kilograms divided by the square of the height in metres, a simple screening measure for underweight, normal weight and obesity in adults",
       "expression": "\"body mass index\" = \"mass\" / \"height\"^2",
       "latex": "\\mathrm{BMI} = \\frac{m}{h^2}",
       "assigned_word": "body mass index"
     },
     {
       "name": "definition of cardiac output",
+      "description": "the volume of blood the heart pumps per minute, the number of beats per minute multiplied by the volume pumped with each beat, about 5 litres per minute at rest",
       "expression": "\"cardiac output\" = \"heart rate\" * \"stroke volume\"",
       "latex": "Q = \\mathrm{HR} \\cdot \\mathrm{SV}",
       "assigned_word": "cardiac output"
     },
     {
       "name": "definition of population growth rate",
+      "description": "the growth of a closed population per unit of time, the birth rate minus the death rate, without immigration and emigration",
       "expression": "\"population growth rate\" = \"birth rate\" - \"death rate\"",
       "latex": "r = b - d",
       "assigned_word": "population growth rate"
     },
     {
       "name": "definition of magnification",
+      "description": "how many times larger an image is than the object, e.g. of a microscope or a lens",
       "expression": "\"magnification\" = \"image size\" / \"object size\"",
       "latex": "M = \\frac{I}{O}",
       "assigned_word": "magnification"
     },
     {
       "name": "definition of net primary production",
+      "description": "the biomass that plants add to an ecosystem, the energy captured by photosynthesis minus the energy the plants use up themselves by respiration",
       "expression": "\"net primary production\" = \"gross primary production\" - \"cellular respiration\"",
       "latex": "\\mathrm{NPP} = \\mathrm{GPP} - R",
       "assigned_word": "net primary production"

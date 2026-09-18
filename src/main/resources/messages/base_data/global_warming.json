@@ -318,6 +318,7 @@
   "formulas": [
     {
       "name": "excess CO2 (formula)",
+      "description": "the additional carbon dioxide in the atmosphere compared to the pre-industrial level of about 280 ppm, the part caused by human activity",
       "expression": "\"excess CO2\" = \"CO2\" - \"pre-industrial CO2\"",
       "assigned": [
         "Earth"
@@ -325,6 +326,7 @@
     },
     {
       "name": "excess CO2 share (formula)",
+      "description": "the relative increase of the carbon dioxide concentration since pre-industrial times, e.g. 0.5 means the concentration is one and a half times the natural level",
       "expression": "\"excess CO2 share\" = ( \"CO2\" - \"pre-industrial CO2\" ) / \"pre-industrial CO2\"",
       "assigned": [
         "Earth"

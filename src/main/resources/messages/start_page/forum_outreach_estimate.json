@@ -263,6 +263,7 @@
   "formulas": [
     {
       "name": "substantive reply per post (formula)",
+      "description": "the expected number of replies with real content that one forum post receives, the readers per post multiplied by the share of readers who write such a reply",
       "expression": "\"substantive reply per post\" = \"reader per post\" * \"substantive reply rate\"",
       "latex": "r_{sub} = n_{read} \\cdot p_{sub}",
       "assigned": [
@@ -272,6 +273,7 @@
     },
     {
       "name": "qualified collaborator per post (formula)",
+      "description": "the expected number of new qualified collaborators that one forum post brings, the substantive replies multiplied by the share of qualified repliers and the share of them who join",
       "expression": "\"qualified collaborator per post\" = \"substantive reply per post\" * \"qualified share\" * \"collaboration probability\"",
       "latex": "c_{post} = r_{sub} \\cdot s_{qual} \\cdot p_{collab}",
       "assigned": [
@@ -282,6 +284,7 @@
     },
     {
       "name": "qualified collaborator per hour (formula)",
+      "description": "the expected number of new qualified collaborators per hour of forum outreach, the collaborators per post multiplied by the posts written per hour",
       "expression": "\"qualified collaborator per hour\" = \"qualified collaborator per post\" * \"post rate\"",
       "latex": "c_{hour} = c_{post} \\cdot r_{post}",
       "assigned": [
@@ -291,6 +294,7 @@
     },
     {
       "name": "hour per qualified collaborator (formula)",
+      "description": "the hours of forum outreach needed on average to win one qualified collaborator, the inverse of the collaborators per hour",
       "expression": "\"hour per qualified collaborator\" = 1 / \"qualified collaborator per hour\"",
       "latex": "h_{collab} = 1 / c_{hour}",
       "assigned_word": "qualified collaborator per hour"

@@ -162,8 +162,9 @@ class all_unit_read_tests extends all_unit_tests
             word_names::E_SYMBOL, verbs::SYMBOL, triple_names::EULER_NUMBER,
             triple_names::E, triple_names::E
         );
-        // without a given name, because TN_READ is the unique name of the pi group above
-        $phr_grp = $t_db->add_phrase_group(array(triple_names::E), '', $msg);
+        // the Euler group needs a name of its own, because the group name is unique and the
+        // pi group above already carries groups::TN_READ
+        $phr_grp = $t_db->add_phrase_group(array(triple_names::E), groups::TN_READ_E, $msg);
         $t_db->test_value_by_phr_grp($phr_grp, values::E);
     }
 

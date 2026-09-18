@@ -1917,6 +1917,7 @@ enum messages: string
     case FORM_SUB_TITLE_NO_USAGE = 'system_sub_title_no_usage';
     case FORM_SUB_TITLE_TRIPLES = 'system_sub_title_triples';
     case FORM_SUB_TITLE_DESCRIPTION = 'system_sub_title_description';
+    case FORM_SUB_TITLE_EXPRESSION = 'system_sub_title_expression';
     case FORM_SUB_TITLE_REF = 'system_sub_title_references';
     case FORM_SUB_TITLE_VALUES = 'system_sub_title_values';
     case FORM_SUB_TITLE_RELATED_VALUES = 'system_sub_title_related_values';

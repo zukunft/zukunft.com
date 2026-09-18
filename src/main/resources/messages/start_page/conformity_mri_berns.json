@@ -1298,6 +1298,7 @@
   "formulas": [
     {
       "name": "social conformity error factor formula",
+      "description": "how many times more often a person adopts a wrong answer when it comes from a group of people than when it comes from computers, from the mental rotation study of Berns",
       "expression": "\"social conformity error factor\" = \"group incorrect error rate\" / \"computer incorrect error rate\"",
       "latex": "F = \\frac{E_{group}}{E_{computer}}",
       "assigned": [
@@ -1307,6 +1308,7 @@
     },
     {
       "name": "conformity error increase formula",
+      "description": "the additional share of wrong answers caused by the wrong answers of a group, the error rate under group pressure minus the error rate when answering alone",
       "expression": "\"conformity error increase\" = \"group incorrect error rate\" - \"baseline error rate\"",
       "latex": "\\Delta E = E_{group} - E_{baseline}",
       "assigned": [
@@ -1316,6 +1318,7 @@
     },
     {
       "name": "self accuracy regression formula",
+      "description": "the regression line of the self-rated accuracy on the actual accuracy in the Berns study, which shows that people overestimate a low and underestimate a high accuracy",
       "expression": "\"self\" = 0.17 + 0.69 * \"actual\"",
       "latex": "S = 0.17 + 0.69 \\cdot A",
       "assigned": [
@@ -1325,6 +1328,7 @@
     },
     {
       "name": "self accuracy origin formula",
+      "description": "the simplified relation of the self-rated to the actual accuracy through the origin, which says that people rate themselves about 10 percent worse than they are",
       "expression": "\"self\" = 0.90 * \"actual\"",
       "latex": "S = 0.90 \\cdot A",
       "assigned": []

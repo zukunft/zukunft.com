@@ -715,6 +715,15 @@ class html_base
         return '<' . html_names::SUP . '>' . $text . '</' . html_names::SUP . '>';
     }
 
+    /**
+     * @param string $text the subscript text e.g. the index "i"
+     * @return string the html code that shows the given text as a subscript e.g. <sub>i</sub>
+     */
+    function sub(string $text): string
+    {
+        return '<' . html_names::SUB . '>' . $text . '</' . html_names::SUB . '>';
+    }
+
     /*
      * wrapper for internal references used in the html code
      */

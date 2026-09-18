@@ -1216,6 +1216,7 @@
   "formulas": [
     {
       "name": "population density formula",
+      "description": "the number of inhabitants per square kilometre of the canton of Zurich, which shows how crowded the canton is compared to other cantons and countries",
       "expression": "\"population density\" = \"population of Zurich (canton)\" / \"area of Zurich (canton)\"",
       "assigned": [
         "population of Zurich (canton)",
@@ -1224,6 +1225,7 @@
     },
     {
       "name": "foreign nationals count formula",
+      "description": "the number of inhabitants without Swiss citizenship, calculated from the total population and the foreign share given in percent",
       "expression": "\"foreign\" = \"population\" * \"percent\" / 100",
       "assigned_word": "foreign population share"
     }

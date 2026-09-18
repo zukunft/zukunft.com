@@ -192,6 +192,7 @@
     },
     {
       "name": "increase",
+      "description": "the relative change of a value compared to the previous period as a percent, e.g. the growth of a population from one year to the next",
       "expression": "\"percent\" = ( \"this\" - \"prior\" ) / \"prior\"",
       "latex": "\\text{percent} = \\frac{ \\text{this} - \\text{prior} }{ \\text{prior} }",
       "assigned_word": "year",

@@ -127,6 +127,21 @@ class formula_read_tests
         $frm_empty = new formula($t->usr1);
         $t->assert($test_name, $frm_empty->update_latex(), '');
 
+        // the import creates the latex of a formula that the import file defines without one
+        // (see formula_list::refresh_ref_text), so the page of every imported formula shows a
+        // latex format, whereas a latex given by the import file is kept as it is written;
+        // the latex is written once by the import, so an empty latex here means that the
+        // database has been recreated with a code version before the import created it
+        $test_name = 'the import has created the latex of ' . formula_names::SCALE_THOUSAND_TO_ONE
+            . ', which the import file defines without a latex';
+        $frm_scale = $t_db->load_formula(formula_names::SCALE_THOUSAND_TO_ONE);
+        $t->assert_text_contains($test_name, $frm_scale->get_latex() ?? '', '\text{',
+            $t::TIMEOUT_LIMIT_DB,
+            'an empty latex means the database has been recreated before formula_list::refresh_ref_text created the latex on import, so recreate the database');
+        $test_name = 'a latex given by the import file is not replaced by the created latex';
+        $frm_power = $t_db->load_formula(formula_names::PROPAGATION_POWER);
+        $t->assert($test_name, $frm_power->get_latex(), formula_names::PROPAGATION_POWER_LATEX);
+
         $t->subheader($ts . 'latex terms');
         // the \text{} tokens of the latex and the names of the expression
         // are resolved to terms so the frontend can link them

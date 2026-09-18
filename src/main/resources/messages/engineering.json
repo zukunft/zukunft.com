@@ -2011,42 +2011,49 @@
   "formulas": [
     {
       "name": "Ohm's law",
+      "description": "the voltage across a conductor is the current through it multiplied by its resistance, the basic relation of electrical circuits",
       "expression": "\"voltage\" = \"current\" * \"resistance\"",
       "latex": "V = I \\cdot R",
       "assigned_word": "resistor"
     },
     {
       "name": "definition of mechanical stress",
+      "description": "the internal force per unit of area in a loaded material, e.g. in pascal, which decides whether a part deforms or breaks",
       "expression": "\"mechanical stress\" = \"force\" / \"area\"",
       "latex": "\\sigma = \\frac{F}{A}",
       "assigned_word": "mechanical stress"
     },
     {
       "name": "definition of Young's modulus",
+      "description": "the stiffness of a material, the stress needed per unit of relative elongation in the elastic range, e.g. about 200 gigapascal for steel",
       "expression": "\"Young's modulus\" = \"mechanical stress\" / \"strain\"",
       "latex": "E = \\frac{\\sigma}{\\varepsilon}",
       "assigned_word": "Young's modulus"
     },
     {
       "name": "definition of the factor of safety",
+      "description": "how many times stronger a structure is than it needs to be for the expected load, the strength of the material divided by the actual stress",
       "expression": "\"factor of safety\" = \"ultimate strength\" / \"mechanical stress\"",
       "latex": "\\mathrm{FoS} = \\frac{\\sigma_u}{\\sigma}",
       "assigned_word": "factor of safety"
     },
     {
       "name": "electrical power",
+      "description": "the power delivered by an electrical circuit, the voltage multiplied by the current, in watts",
       "expression": "\"power\" = \"voltage\" * \"current\"",
       "latex": "P = V \\cdot I",
       "assigned_word": "power factor"
     },
     {
       "name": "definition of the Reynolds number",
+      "description": "a dimensionless number that tells whether a flow is smooth (laminar) or turbulent, the ratio of the inertial forces to the viscous forces in the fluid",
       "expression": "\"Reynolds number\" = ( \"density\" * \"velocity\" * \"length\" ) / \"viscosity\"",
       "latex": "\\mathrm{Re} = \\frac{\\rho\\, v\\, L}{\\mu}",
       "assigned_word": "Reynolds number"
     },
     {
       "name": "energy stored in a capacitor",
+      "description": "the energy held in the electric field of a charged capacitor, half the capacitance multiplied by the square of the voltage",
       "expression": "\"energy\" = \"capacitance\" * \"voltage\"^2 / 2",
       "latex": "E = \\tfrac{1}{2} C V^2",
       "assigned_word": "capacitor"
