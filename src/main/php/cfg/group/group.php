@@ -95,6 +95,7 @@ include_once paths::MODEL_VALUE . 'value.php';
 include_once paths::MODEL_VALUE . 'value_base.php';
 include_once paths::MODEL_WORD . 'word.php';
 include_once paths::SHARED_CONST . 'groups.php';
+include_once paths::SHARED_HELPER . 'Message.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
@@ -130,6 +131,7 @@ use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\shared\const\groups;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\helper\Message;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
@@ -596,6 +598,24 @@ class group extends sandbox_multi
     function set_saved(): void
     {
         $this->is_saved = true;
+    }
+
+    /**
+     * check if the group can be held in a list e.g. of an import: the key of a group in a list is its name,
+     * given by a user or generated from the phrases, because the id needs the database ids of all phrases,
+     * which are not yet known in an import (db_ready checks the id)
+     * @param user_message|Message $msg including suggested solutions if something is missing e.g. the user
+     * @return bool true if the group has a name and a user
+     */
+    function can_be_ready(user_message|Message $msg): bool
+    {
+        if ($this->name() == '') {
+            $msg->add_id(msg_id::ID_AND_NAME_MISSING);
+        }
+        if ($this->get_user() == null) {
+            $msg->add(msg_id::USER_MISSING, [msg_id::VAR_NAME => $this->dsp_id()]);
+        }
+        return $msg->is_ok();
     }
 
     /**
@@ -1663,8 +1683,9 @@ class group extends sandbox_multi
     function fill(group|db_object_multi $obj, user $usr_req): user_message
     {
         $msg = parent::fill($obj, $usr_req);
-        if ($this->name === null and $obj->name() != null) {
-            $this->set_name($obj->name());
+        // only a name given by a user, because name() falls back to the name generated from the phrases
+        if ($this->name_given() == '' and $obj->name_given() != '') {
+            $this->set_name($obj->name_given());
         }
         if ($this->get_description() === null and $obj->get_description() != null) {
             $this->set_description($obj->get_description());
@@ -1759,8 +1780,8 @@ class group extends sandbox_multi
         $qp = $this->sql_insert($sc, $msg, new sql_type_list([sql_type::LOG]));
         // TODO Prio 1 set the user table based on the exiting db rows link the sandbox add
         $usr_tbl = false;
+        // the id is kept, because the group id is given by the phrases and the insert function returns no row id
         if ($db_con->insert($qp, 'add and log ' . $this->dsp_id(), $msg, new sql_message(), $usr_tbl, true)) {
-            $this->id = $msg->get_row_id();
             $this->set_saved();
         }
 

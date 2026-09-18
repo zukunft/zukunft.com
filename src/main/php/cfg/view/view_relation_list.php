@@ -60,6 +60,7 @@ include_once paths::MODEL_VIEW . 'view_db.php';
 include_once paths::SHARED_CONST_FIELDS . 'view_fields.php';
 include_once paths::MODEL_VIEW . 'view_relation.php';
 include_once paths::SHARED_HELPER . 'Message.php';
+include_once paths::SHARED_HELPER . 'TextIdObject.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
@@ -72,6 +73,7 @@ use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\helper\Message;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\view_fields;
+use Zukunft\ZukunftCom\main\php\shared\helper\TextIdObject;
 
 class view_relation_list extends sandbox_link_list
 {
@@ -226,15 +228,15 @@ class view_relation_list extends sandbox_link_list
 
     /**
      * add a view relation to the list without saving it to the database
-     * @param view_relation|db_object_seq_id|null $to_add the link user sandbox object that should be added
+     * @param view_relation|db_object_seq_id|TextIdObject|null $to_add the link user sandbox object that should be added
      * @param bool $allow_duplicates true if the list can contain the same entry twice e.g. for the components
      * @param Message $msg to report which entry is double
      * @return true if the link has been added
      */
     function add_by_key(
-        view_relation|db_object_seq_id|null $to_add,
-        bool                                $allow_duplicates = false,
-        Message                             $msg = new Message()
+        view_relation|db_object_seq_id|TextIdObject|null $to_add,
+        bool                                      $allow_duplicates = false,
+        Message                                   $msg = new Message()
     ): bool
     {
         $added = false;

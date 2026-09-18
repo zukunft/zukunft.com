@@ -886,6 +886,30 @@ class base_ui_tests
         ], $t->usr1, $cfm_msg, $ui->dto, false);
         $t->assert($test_name, $cfm_url[url_var::ID] ?? 0, word_names::ZH_ID);
         $cfm_msg->reset();
+        // the add form that has opened the detailed add form of the same object is done with the add
+        $test_name = 'a confirmed add opened from another add form of the same object shows the new object';
+        $cfm_url = $ui->url_to_action([
+            url_var::MASK => views::CONFIRM_ADD_ID,
+            url_var::STEP => url_var::STEP_CONFIRMED,
+            url_var::ORIGIN_MASK => views::VALUE_ADD_DETAIL_ID,
+            url_var::PHRASE_LIST => (string)word_names::ZH_ID,
+            url_var::NUMERIC_VALUE => values::SAMPLE_INT,
+            url_var::BACK . url_var::MASK => views::VALUE_ADD_NO_JS_ID,
+            url_var::BACK . url_var::PATTERN => word_names::ZH
+        ], $t->usr1, $cfm_msg, $ui->dto, false);
+        $t->assert($test_name, $cfm_url[url_var::MASK] ?? 0, views::VALUE_DEFAULT_ID);
+        $test_name = '... without the vars of the add form';
+        $t->assert($test_name, $cfm_url[url_var::PATTERN] ?? '', '');
+        $cfm_msg->reset();
+        $test_name = 'a confirmed add opened from the add form of another object returns to that form';
+        $cfm_url = $ui->url_to_action([
+            url_var::MASK => views::CONFIRM_ADD_ID,
+            url_var::STEP => url_var::STEP_CONFIRMED,
+            url_var::ORIGIN_MASK => views::FORMULA_ADD_ID,
+            url_var::BACK . url_var::MASK => views::VALUE_ADD_NO_JS_ID
+        ], $t->usr1, $cfm_msg, $ui->dto, false);
+        $t->assert($test_name, $cfm_url[url_var::MASK] ?? 0, views::VALUE_ADD_NO_JS_ID);
+        $cfm_msg->reset();
 
         // url_mapper::human_url_to_json groups the 8-prefixed vars into 'original_data' and the
         // 9-prefixed vars into 'back', and converts the view id to the code id

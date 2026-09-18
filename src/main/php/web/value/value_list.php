@@ -367,7 +367,7 @@ class value_list extends ListBase
         $html = new html_base();
         // keep the phrases and the value of one value on a single row (text-nowrap) so they are never
         // wrapped and the html snapshot keeps them on one line as well (see library::format_html)
-        $line = $val->grp->name_link_list($context_phr_lst) . ' ' . $val->value_edit($msg, $url_arr);
+        $line = $val->grp->phrase_link_list($context_phr_lst) . ' ' . $val->value_edit($msg, $url_arr);
         $row = $html->span($line, styles::TEXT_NOWRAP) . $html->lf();
         return $row;
     }
@@ -724,9 +724,9 @@ class value_list extends ListBase
                 }
                 // the row is named by the phrases that are left after the context and the column
                 // phrase, e.g. the year if the columns are inhabitants and area
-                $row_key = $val->grp->name($ctx);
+                $row_key = $val->grp->phrase_names($ctx);
                 if (!key_exists($row_key, $row_label)) {
-                    $row_label[$row_key] = $val->grp->name_link_list($ctx);
+                    $row_label[$row_key] = $val->grp->phrase_link_list($ctx);
                     $cells[$row_key] = [];
                 }
                 // the phrase of a row is the same for every value of that row, so it is set
@@ -1732,7 +1732,7 @@ class value_list extends ListBase
     private function value_item(value $val, user_message $msg, phrase_list $context_phr_lst, array $url_arr): string
     {
         $html = new html_base();
-        $name = $html->span($val->grp->name_link_list($context_phr_lst), styles::VALUE_NAME);
+        $name = $html->span($val->grp->phrase_link_list($context_phr_lst), styles::VALUE_NAME);
         $num = $html->span($val->value_edit($msg, $url_arr), styles::VALUE_NUM);
         $result = $html->list_item($name . $num);
         return $result;
@@ -2136,7 +2136,7 @@ class value_list extends ListBase
                 $header .= $html->th('value');
                 $header_rows = $html->tr($header);
             }
-            $row = $html->td($val->grp->name_link_list($common_phrases));
+            $row = $html->td($val->grp->phrase_link_list($common_phrases));
             $row .= $html->td($val->value_edit($msg, $url_arr));
             $rows .= $html->tr($row);
             // TODO add button to delete a value or add a similar value

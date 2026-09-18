@@ -436,6 +436,7 @@ class json_fields
 
     const string PHRASE_VALUES = 'phrase-values';
     const string SOURCES = 'sources';
+    const string GROUPS = 'groups';
     const string REFERENCES = 'references';
     // the alpha key to select the internal phrase (or later the term)
     const string REF_INTERN = 'phrase';

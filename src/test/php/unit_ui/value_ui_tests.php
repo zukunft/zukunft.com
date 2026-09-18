@@ -176,6 +176,18 @@ class value_ui_tests
         $test_name = '... which the group field of the form shows';
         $grp_field = new system_form()->form_field_group_or_phrases($val, '');
         $t->assert_text_contains($test_name, $grp_field, html_base::VALUE . '="' . groups::TN_VALUE_WORKFLOW . '"');
+        $test_name = 'the name of the api json is the given group name, so a saved name is shown again';
+        $val = new value($t_val->value($msg)->api_json([api_types::INCL_PHRASES]));
+        $t->assert($test_name, $val->grp->name, groups::TN_READ);
+        $test_name = '... in the group field of the change value view';
+        $grp_field = new system_form()->form_field_group_or_phrases($val, '');
+        $t->assert_text_contains($test_name, $grp_field, html_base::VALUE . '="' . groups::TN_READ . '"');
+        $test_name = '... and links to the group of the value, which has the id of the value';
+        $grp_link_par = url_var::ID . url_var::EQ . rawurlencode((string)$val->id());
+        $t->assert_text_contains($test_name, $val->grp->name_link(), $grp_link_par);
+        $test_name = '... and without a name in the api json the group has no given name';
+        $val = new value($t_val->value_pi_math()->api_json([api_types::INCL_PHRASES]));
+        $t->assert($test_name, $val->grp->name ?? '', '');
         $test_name = 'without a given group name the group field is empty and never shows the phrases';
         $val = $t_val->value_add_ui();
         $val->url_mapper([url_var::PHRASE_LIST => (string)word_names::ZH_ID], $msg_ui, $cache_dto);
@@ -234,6 +246,19 @@ class value_ui_tests
         $typed_steps_url = $city_url + [url_var::NUMERIC_VALUE => (string)values::SAMPLE_INT];
         $typed_steps_html = $select->phrase_steps($steps_form, $typed_steps_url, $cancel, $msg_ui, $steps_dto, true);
         $t->assert_text_contains($test_name, $typed_steps_html, 'value="' . values::SAMPLE_INT . '"');
+        $test_name = '... and the more details link takes to the detailed form';
+        $typed_par = url_var::NUMERIC_VALUE . url_var::EQ . values::SAMPLE_INT;
+        $t->assert_text_contains($test_name, $typed_steps_html, htmlspecialchars(url_var::ADD . $typed_par));
+        $test_name = '... without the default value type, but with a selected one and its url encoded value';
+        $t->assert_text_not_contains($test_name, $typed_steps_html, url_var::VALUE_TYPE . url_var::EQ);
+        $typed_text_url = $city_url + [url_var::VALUE_TYPE => value_types::TEXT->value, url_var::VALUE_TEXT => values::DB_TEXT];
+        $typed_text_html = $select->phrase_steps($steps_form, $typed_text_url, $cancel, $msg_ui, $steps_dto, true);
+        $typed_text_par = url_var::VALUE_TEXT . url_var::EQ . rawurlencode(values::DB_TEXT)
+            . url_var::ADD . url_var::VALUE_TYPE . url_var::EQ . value_types::TEXT->value;
+        $t->assert_text_contains($test_name, $typed_text_html, htmlspecialchars($typed_text_par));
+        $test_name = '... and without a typed value the link names no value';
+        $no_value_par = url_var::ADD . url_var::NUMERIC_VALUE . url_var::EQ;
+        $t->assert_text_not_contains($test_name, $city_html, htmlspecialchars($no_value_par));
         $test_name = '... beside the selector of the value type with the width of a button';
         $type_sel = '<div class="form-group ' . view_styles::COL_SM_1 . '">';
         $t->assert_text_contains($test_name, $city_html, $type_sel);

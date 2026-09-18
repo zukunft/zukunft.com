@@ -197,6 +197,12 @@ class value extends sandbox_value
     {
         parent::api_mapper($json_array, $msg);
 
+        // the name that a user has given to the group of the value (see api_array); the id of the
+        // value is the id of its group, which the link of the name to the group needs
+        if (($json_array[json_fields::NAME] ?? '') != '') {
+            $this->grp->set_name($json_array[json_fields::NAME]);
+            $this->grp->set_id($this->id());
+        }
         if (array_key_exists(json_fields::SOURCE_ID, $json_array)) {
             $this->set_source_id($json_array[json_fields::SOURCE_ID]);
         }
@@ -644,7 +650,8 @@ class value extends sandbox_value
      */
     function name(): string|null
     {
-        return $this->grp->name();
+        // a value is shown by its phrases, the name given to its group only in the group name form field
+        return $this->grp->phrase_names();
     }
 
     /**
@@ -692,7 +699,7 @@ class value extends sandbox_value
      */
     function name_tip(user_message $msg, phrase_list|null $phr_lst_exclude = null, string $sep = ' '): string
     {
-        return $this->grp->name_tip($phr_lst_exclude) . $sep . $this->value($msg);
+        return $this->grp->phrase_name_tip($phr_lst_exclude) . $sep . $this->value($msg);
     }
 
     /**
@@ -706,7 +713,7 @@ class value extends sandbox_value
     function name_link(user_message $msg, phrase_list|null $phr_lst_exclude = null, string $sep = ' '): string
     {
         $html = new html_base();
-        $phr_links = $this->grp->name_link_list($phr_lst_exclude);
+        $phr_links = $this->grp->phrase_link_list($phr_lst_exclude);
         $val_grey = $html->span($this->value($msg), styles::STYLE_GREY);
         return $phr_links . $sep . $val_grey;
     }

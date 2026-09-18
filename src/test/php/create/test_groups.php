@@ -100,6 +100,14 @@ class test_groups extends test_objects
         return $ref;
     }
 
+    /**
+     * @return group without a given name and without phrases, so without any key that a list could use
+     */
+    function group_without_key(): group
+    {
+        return new group($this->env->usr1);
+    }
+
     function group_add(phrase $phr): group
     {
         $lst = new phrase_list($this->env->usr1);
@@ -131,15 +139,13 @@ class test_groups extends test_objects
     }
 
     /**
-     * @return group with one prime phrases
+     * @return group with one prime phrase and without a given name like the e group of the read test setup
      */
     function group_e(): group
     {
         $t_phr = new test_phrases($this->env);
         $lst = $t_phr->phrase_list_e();
-        $grp = $lst->get_grp_id(false);
-        $grp->name = groups::TN_READ;
-        return $grp;
+        return $lst->get_grp_id(false);
     }
 
     /**

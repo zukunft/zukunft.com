@@ -155,8 +155,11 @@ class figure extends combine_named
         }
         $vars[json_fields::ID] = $this->obj_id();
         $vars[json_fields::NUMBER] = $this->number();
-        if ($this->obj->grp->name() != '') {
-            $vars[json_fields::PHRASES] = $this->obj->api_array($typ_lst, $msg);
+        // TODO Prio 3 create function for easier code read
+        // only the name given to the group like the backend sends it (see value_base::api_json_array)
+        $vars[json_fields::NAME] = $this->obj->grp->name;
+        if (!$this->obj->grp->phr_lst()->is_empty()) {
+            $vars[json_fields::PHRASES] = $this->obj->grp->phr_lst()->api_array($typ_lst, $msg);
         }
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
@@ -199,7 +202,7 @@ class figure extends combine_named
      */
     function name_linked(?phrase_list $phr_lst_header = null): string
     {
-        return $this->grp()->name_link_list($phr_lst_header);
+        return $this->grp()->phrase_link_list($phr_lst_header);
     }
 
 

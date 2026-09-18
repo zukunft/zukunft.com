@@ -231,7 +231,6 @@ the object structure is:
 │       │   │   │   ├── element_group_list - simply a list of formula element groups to place the name function
 │       │   │   │   ├── element_list - a list of formula elements to place the name function
 │       │   │   │   ├── figure_list - a list of figures, so either a value of a formula result object
-│       │   │   │   ├── group_list - a list of word and triple groups
 │       │   │   │   ├── ref_list - al list of ref objects
 │       │   │   │   ├── sandbox_link_list
 │       │   │   │   │   ├── component_link_list - a list of links between a view and a component
@@ -241,6 +240,7 @@ the object structure is:
 │       │   │   │   ├── sandbox_list_named
 │       │   │   │   │   ├── component_list - list of predefined system components
 │       │   │   │   │   ├── formula_list - a simple list of formulas
+│       │   │   │   │   ├── group_list - a list of word and triple groups
 │       │   │   │   │   ├── phrase_list - a list of phrase (word or triple) objects
 │       │   │   │   │   ├── term_list - a list of word, triple, verb or formula objects
 │       │   │   │   │   ├── source_list - al list of source objects

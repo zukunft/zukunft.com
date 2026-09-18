@@ -454,14 +454,23 @@ class ui_select
     private function value_field(value_types $val_typ, array $url_arr): string
     {
         $html = new html_base();
-        [$url_id, $label_id, $input] = match ($val_typ) {
+        [$url_id, $label_id, $input] = $this->value_field_def($val_typ);
+        $value = (string)($url_arr[$url_id] ?? '');
+        return $html->form_field($url_id, $label_id, $value, $input, '', view_styles::COL_SM_5);
+    }
+
+    /**
+     * @param value_types $val_typ the selected type of the new value
+     * @return array the url var, the label and the input type of the value field that matches the type
+     */
+    private function value_field_def(value_types $val_typ): array
+    {
+        return match ($val_typ) {
             value_types::NUMBER => [url_var::NUMERIC_VALUE, msg_id::FORM_FIELD_VALUE, html_base::INPUT_NUMBER],
             value_types::TEXT => [url_var::VALUE_TEXT, msg_id::FORM_FIELD_TEXT_VALUE, html_base::INPUT_TEXT],
             value_types::TIME => [url_var::VALUE_TIME, msg_id::FORM_FIELD_TIME_VALUE, html_base::INPUT_TEXT],
             value_types::GEO => [url_var::VALUE_GEO, msg_id::FORM_FIELD_GEO_VALUE, html_base::INPUT_TEXT],
         };
-        $value = (string)($url_arr[$url_id] ?? '');
-        return $html->form_field($url_id, $label_id, $value, $input, '', view_styles::COL_SM_5);
     }
 
     /**
@@ -488,7 +497,7 @@ class ui_select
      * the link at the bottom left of a simple add form that opens the detailed form with the same parameters,
      * so that the user can add the fields that the simple form does not offer e.g. the source of a value
      *
-     * @param array $url_arr the url of the shown form as back target
+     * @param array $url_arr the url of the shown form as back target and with the value typed before a refresh
      * @param string $chosen_ids the ids of the chosen phrases, empty if the user has not yet chosen one
      * @return string the html code of the more details link
      */
@@ -497,13 +506,35 @@ class ui_select
         global $mtr;
         $html = new html_base();
 
-        $preset = '';
+        $preset = $this->typed_value_url_par($url_arr);
         if ($chosen_ids != '') {
-            $preset = url_var::PHRASE_LIST . url_var::EQ . $chosen_ids;
+            array_unshift($preset, url_var::PHRASE_LIST . url_var::EQ . $chosen_ids);
         }
-        $url = $html->url_back(views::VALUE_ADD_DETAIL_ID, 0, $url_arr, $preset);
+        $url = $html->url_back(views::VALUE_ADD_DETAIL_ID, 0, $url_arr, implode(url_var::ADD, $preset));
         $link = $html->ref($url, $mtr->txt(msg_id::SYSTEM_BUTTON_MORE_DETAILS));
         return $html->div($link, view_styles::TEXT_LEFT);
+    }
+
+    /**
+     * the value and its type that the detailed form takes over from the simple form; a link cannot post
+     * the form, so it carries only what a find and next has posted before
+     *
+     * @param array $url_arr the url of the shown form with the value typed before a refresh
+     * @return array the url parameters of the typed value and of a type that is not the default type
+     */
+    private function typed_value_url_par(array $url_arr): array
+    {
+        $val_typ = $this->value_type($url_arr);
+        [$url_id] = $this->value_field_def($val_typ);
+        $value = (string)($url_arr[$url_id] ?? '');
+        $result = [];
+        if ($value != '') {
+            $result[] = $url_id . url_var::EQ . rawurlencode($value);
+        }
+        if ($val_typ != value_types::NUMBER) {
+            $result[] = url_var::VALUE_TYPE . url_var::EQ . $val_typ->value;
+        }
+        return $result;
     }
 
     /**

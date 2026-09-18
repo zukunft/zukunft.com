@@ -34,6 +34,7 @@ namespace Zukunft\ZukunftCom\main\php\web\sandbox;
 
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
+//include_once html_paths::GROUP . 'group.php';
 //include_once html_paths::HELPER . 'config.php';
 //include_once html_paths::RESULT . 'result.php';
 include_once html_paths::SANDBOX . 'sandbox_list.php';
@@ -53,6 +54,7 @@ include_once html_paths::SHARED_HELPER . 'TextIdObject.php';
 include_once html_paths::SHARED_HELPER . 'CombineObject.php';
 include_once html_paths::SHARED_HELPER . 'Message.php';
 
+use Zukunft\ZukunftCom\main\php\web\group\group;
 use Zukunft\ZukunftCom\main\php\web\helper\config;
 use Zukunft\ZukunftCom\main\php\web\html\rest_call;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
@@ -250,15 +252,15 @@ class sandbox_list_named extends sandbox_list
 
     /**
      * add a named object to the list that does not yet have an id but has a name
-     * @param sandbox_named|triple|phrase|term|IdObject|null $to_add the named user sandbox object that should be added
+     * @param sandbox_named|triple|phrase|term|IdObject|TextIdObject|null $to_add the named user sandbox object that should be added
      * @param bool $allow_duplicates true if the list can contain the same entry twice e.g. for the components
      * @param Message $msg to report which entry is double
      * @returns bool true if the object has been added
      */
     function add_by_key(
-        sandbox_named|triple|phrase|term|IdObject|null $to_add,
-        bool                                           $allow_duplicates = false,
-        Message                                        $msg = new Message()
+        sandbox_named|triple|phrase|term|IdObject|TextIdObject|null $to_add,
+        bool                                                        $allow_duplicates = false,
+        Message                                                     $msg = new Message()
     ): bool
     {
         if (!in_array($to_add->name(), array_keys($this->name_pos_lst())) or $allow_duplicates) {

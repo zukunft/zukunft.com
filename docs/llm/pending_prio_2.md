@@ -1424,14 +1424,22 @@ there are two.
 ## change value view: given group name and the phrases of the fixture value
 
 the change value view (value_edit) now shows only a name that a user has given to the group and
-writes it to the group row on save (value_base::save), but two gaps remain:
+writes it to the group row on save (value_base::save), but these gaps remain:
 
-- the backend never sends an existing given group name to the frontend: sandbox_value::api_json_array
-  emits the phrases, but not the group name, and value::load_by_id loads no group row at all
-  (a group row exists only for a named group, see group::row_mapper). so the edit form of an
-  already named group shows an empty group field; a name typed there renames the group, an
-  empty field keeps the name. to show the current name load the group row with the value
-  (e.g. in group::load_phrase_names) and emit json_fields::NAME for a given name
+- since 2026-09-18 value_base::api_json_array sends the given group name and the frontend
+  value::api_mapper takes it, so a saved name is shown again in the value views and in the group
+  field of the edit form. the name is only loaded by value_base::load_objects (load_grp_by_id
+  reads the group row), so a value loaded without it (e.g. the rows of a value list) still has
+  no given name. the backend add path is covered by value_write_tests ('given group name'),
+  but no write workflow types a group name in the detailed add form: add_value_details (wf34)
+  cannot be extended, because its phrases are the ones of add_value_with_phrase (wf32), so the
+  value exists already in a write run; a workflow of its own with other phrases is needed
+- since 2026-09-18 the value export and import carry the given group name as the optional json
+  field `name` (value_base::export_json / import_mapper). this is an addition to the json format,
+  for which docs/llm/versions.md asks for a minor version bump with a database upgrade script;
+  not done, because the upgrade path has the open defects listed under "database upgrade path".
+  the developer decides if an optional field needs the bump. the value list import format
+  (value_list::import_obj, one context for many values) has no group name
 - the value of the views_by_id fixtures (test_values::value_16_filled, group_16) is built from
   artificial phrase ids (word1 = 1, triple7 = 106841477, ...) of which only word 1 is in the test
   request cache, so the page title of views_by_id/value/30_value_update_*.html reads
@@ -1499,3 +1507,8 @@ pure html value add view with one form (ui_select::value_add_fields):
   asserts that nothing is written and the pure add view is shown again. today this is covered
   only by the generic frontend::request_triggers_action logic; add the step to the add_value
   workflows (value_url_tests) and a negative test of request_triggers_action for such a url
+- the more details link of the pure html value add view takes the value and its type to the
+  detailed form only if a find and next has posted them before (ui_select::typed_value_url_par),
+  because a link never posts the form; a value typed just before the click is still lost. to
+  close the gap without javascript make more details a named submit button of the one form that
+  switches the mask to views::VALUE_ADD_DETAIL_ID without triggering url_to_action

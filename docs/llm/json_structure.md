@@ -979,6 +979,9 @@ source name.
 }
 ```
 
+An optional `"name"` is the name that a user has given to the phrase group of the value. It is
+exported only if a user has set one and never repeats the name generated from the `words`.
+
 ### Qualify a value as specifically as the data allows — build from single words
 
 A value's `words` array is the phrase group the number belongs to. **Always
