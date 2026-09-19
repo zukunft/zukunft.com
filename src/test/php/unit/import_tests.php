@@ -41,6 +41,7 @@ include_once paths::MODEL_IMPORT . 'import_convert_xbrl.php';
 include_once paths::MODEL_CONST . 'files.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED_CONST . 'refs.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once test_paths::CONST . 'files.php';
 include_once test_paths::CONST . 'word_names.php';
@@ -53,6 +54,7 @@ use Zukunft\ZukunftCom\main\php\cfg\import\import;
 use Zukunft\ZukunftCom\main\php\cfg\import\import_convert_xbrl;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
+use Zukunft\ZukunftCom\main\php\shared\const\refs;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
@@ -497,6 +499,38 @@ class import_tests
         $test_name = 'JSON import accepts a value that names its source';
         $msg = new user_message($t->usr_dev);
         $json_array[json_fields::VALUES][1][json_fields::SOURCE_NAME] = 'The World Factbook';
+        $imp->get_data_object($json_array, $msg);
+        $t->assert_true($test_name, $msg->is_ok());
+
+
+        $t->subheader($ts . 'phrase reference check');
+
+        // a reference of a word or a triple is a json object with a name and a type, so the
+        // compact form that names the type as the key is reported instead of ending the import
+        // with a fatal (see ref::import_list_valid)
+        $test_name = 'JSON import reports a word reference that is no object';
+        $msg = new user_message($t->usr_dev);
+        $json_str = file_get_contents(test_files::IMPORT_REFS_NOT_A_LIST . test_files::JSON);
+        $json_array = json_decode($json_str, true);
+        $imp->get_data_object($json_array, $msg);
+        $target = 'must be a list of objects each with a name and a type';
+        $t->assert_text_contains($test_name, $msg->all_message_text(), $target);
+        $test_name = '... and names the phrase and the unexpected reference format';
+        $t->assert_text_contains($test_name, $msg->all_message_text(), 'wikipedia');
+
+        // the references of a triple are checked the same way as the references of a word
+        $test_name = '... and reports a triple reference that is no object';
+        $t->assert_text_contains($test_name, $msg->all_message_text(),
+            'highest elevation of Zurich (canton)');
+
+        // the same phrases are a valid import once the references are a list of objects
+        $test_name = 'JSON import accepts references given as a list of objects';
+        $msg = new user_message($t->usr_dev);
+        // each phrase gets an external key of its own, because one key identifies one phrase
+        $json_array[json_fields::WORDS][0][json_fields::REFS] =
+            [[json_fields::NAME => refs::PI_KEY, json_fields::TYPE_NAME => refs::WIKIDATA_TYPE]];
+        $json_array[json_fields::TRIPLES][0][json_fields::REFS] =
+            [[json_fields::NAME => refs::MATH_KEY, json_fields::TYPE_NAME => refs::WIKIDATA_TYPE]];
         $imp->get_data_object($json_array, $msg);
         $t->assert_true($test_name, $msg->is_ok());
 

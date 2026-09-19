@@ -339,6 +339,30 @@ class ref extends sandbox_link
     }
 
     /**
+     * true if the "refs" part of a word or triple import json is a list of json objects, which is
+     * the only format that import_mapper can map e.g. [{"name": "Zurich", "type": "wikipedia"}]
+     *
+     * the compact form that names the type as the key and the external key as the value
+     * e.g. {"wikipedia": "Zurich"} is not supported, and it must be detected before the mapper,
+     * because the mapper expects an array and a string would end the whole import with a fatal
+     *
+     * @param mixed $ref_json the "refs" value of a word or triple import json
+     * @return bool true if every entry of the list can be mapped by import_mapper
+     */
+    static function import_list_valid(mixed $ref_json): bool
+    {
+        $result = is_array($ref_json);
+        if ($result) {
+            foreach ($ref_json as $ref_data) {
+                if (!is_array($ref_data)) {
+                    $result = false;
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
      * set the vars of this reference object based on the given json without writing to the database
      *
      * @param array $in_ex_json an array with the data of the json object
