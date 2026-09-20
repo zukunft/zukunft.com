@@ -1,0 +1,34 @@
+{
+  "version": "0.0.3",
+  "data_version": "0.0.1",
+  "time": "2026-09-19 12:00:00",
+  "user": "zukunft.com system batch job",
+  "selection": [
+    "a word and a triple that name their references with a compact type to key map instead of a list of objects"
+  ],
+  "words": [
+    {
+      "name": "elevation",
+      "description": "height above mean sea level",
+      "refs": {
+        "wikipedia": "Elevation",
+        "wikidata": "Q2633778"
+      }
+    },
+    {
+      "name": "rank",
+      "description": "position in an ordered list"
+    }
+  ],
+  "triples": [
+    {
+      "name": "highest elevation of Zurich (canton)",
+      "from": "elevation",
+      "verb": "kind of",
+      "to": "rank",
+      "refs": {
+        "wikipedia": "Zurich"
+      }
+    }
+  ]
+}

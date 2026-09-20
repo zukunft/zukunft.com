@@ -1089,6 +1089,6 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 1088,1,displacement,,the pushing out of one thing by another; for electricity the generation that an additional kWh of a new source removes from the market,1,,,,,,,,
 1089,1,avoided,,not caused, because something else has taken its place,1,,,,,,,,
 1090,1,CO2-eq,,carbon dioxide equivalent: the amount of CO2 with the same global warming effect as the mix of climate gases released,1,,,,,,,,
-1091,1,life cycle,,the whole life of a product from the raw materials over the use to the disposal, the scope of a life cycle assessment,1,,,,,,,,
+1091,1,cycle,,,1,,,,,,,,
 1092,1,avoided emission by consumption mix,,,10,,,,,,,,
 1093,1,avoided emission by displacement mix,,,10,,,,,,,,

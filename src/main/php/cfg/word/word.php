@@ -447,14 +447,24 @@ class word extends sandbox_code_id
         if (key_exists(json_fields::REFS, $in_ex_json)) {
             if ($in_ex_json[json_fields::REFS] <> '') {
                 $ref_json = $in_ex_json[json_fields::REFS];
-                foreach ($ref_json as $ref_data) {
-                    $ref_obj = new ref($this->get_user());
-                    $ref_obj->set_phrase($this->phrase());
-                    $ref_obj->import_mapper($ref_data, $msg, $dto);
-                    // TODO $dto should never be null if no direct import is used
-                    $dto?->add_reference($ref_obj, $msg);
-                    if ($msg->is_ok()) {
-                        $this->ref_lst[] = $ref_obj;
+                // check the format before the mapper, which expects an array: a reference given
+                // as a compact "type": "key" map would otherwise end the whole import with an
+                // uncaught fatal (see ref::import_list_valid)
+                if (!ref::import_list_valid($ref_json)) {
+                    $msg->add(msg_id::IMPORT_REF_NOT_AN_OBJECT, [
+                        msg_id::VAR_NAME => $this->name(),
+                        msg_id::VAR_JSON_TEXT => json_encode($ref_json)
+                    ]);
+                } else {
+                    foreach ($ref_json as $ref_data) {
+                        $ref_obj = new ref($this->get_user());
+                        $ref_obj->set_phrase($this->phrase());
+                        $ref_obj->import_mapper($ref_data, $msg, $dto);
+                        // TODO $dto should never be null if no direct import is used
+                        $dto?->add_reference($ref_obj, $msg);
+                        if ($msg->is_ok()) {
+                            $this->ref_lst[] = $ref_obj;
+                        }
                     }
                 }
             }
