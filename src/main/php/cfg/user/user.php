@@ -2846,7 +2846,8 @@ class user extends db_id_object_non_sandbox
         $new_pos = array_search($code_id, user_profiles::SIGNUP_STEPS);
         $result = true;
         if ($new_pos === false) {
-            log_err('profile ' . $code_id . ' is not a signup step', 'user->raise_signup_profile');
+            // an unknown step is a program error, but the user must not be left with a silently unchanged profile
+            log_err_msg('profile ' . $code_id . ' is not a signup step of user->raise_signup_profile', $msg);
             $result = false;
         } elseif ($cur_pos !== false and $cur_pos < $new_pos) {
             $new_id = $sys->typ_lst->usr_pro->id($code_id);

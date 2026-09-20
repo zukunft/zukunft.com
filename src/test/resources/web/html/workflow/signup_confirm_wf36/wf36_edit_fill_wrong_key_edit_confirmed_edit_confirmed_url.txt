@@ -1,10 +1,10 @@
 GET
-http://localhost/http/view.php?ue=99&key=376913&m=14&z=2&submit=
-/http/view.php?ue=99&key=376913&m=14&z=2&submit=
-/http/view.php?user_to_edit=99&activation_key=376913&mask_id=login_activate&step=confirmed&
+http://localhost/http/view.php?ue=99&key=%2A%2A%2A&m=14&z=2&submit=
+/http/view.php?ue=99&key=%2A%2A%2A&m=14&z=2&submit=
+/http/view.php?user_to_edit=99&activation_key=%2A%2A%2A&mask_id=login_activate&step=confirmed&
 {
     "user_to_edit": "99",
-    "activation_key": "376913",
+    "activation_key": "***",
     "mask_id": "login_activate",
     "step": "confirmed"
 }

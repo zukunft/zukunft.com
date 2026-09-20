@@ -272,6 +272,14 @@ class url_var
     const string CRUD_READ = 'r'; // the crud read action
     const string CRUD_UPDATE = 'u'; // the crud update action
     const string CRUD_DELETE = 'd'; // the crud delete action
+    // the values of self::ACTION that name the database operation itself, in contrast to the user
+    // reactions below, which leave the operation to the view mask (see db_object::url_is_add_action)
+    const array CRUD_ACTIONS = [
+        self::CRUD_CREATE,
+        self::CRUD_READ,
+        self::CRUD_UPDATE,
+        self::CRUD_DELETE,
+    ];
     const string SHOW_FULL = 'f'; // to show object with all fields
     const string SHOW_POPUP = 'p'; // to show object with only a few fields as a popup window
     const string SHOW_CREATE = 's'; // to show object with only the name or key as table cell
@@ -380,13 +388,16 @@ class url_var
     ];
 
     // the url vars that carry a secret (the unhashed password typed on the login / signup / activate
-    // form) and must never be written to a log or reflected in a page; used to redact the post array
+    // form and the activation key, which alone confirms the email and sets a new password)
+    // and must never be written to a log or reflected in a page; used to redact the post array
     // before it is logged in http/view.php (see without_secrets)
     const array SECRET_VARS = [
         self::USER_PASSWORD,
         self::USER_PASSWORD_HUMAN,
         self::USER_PASSWORD_RETYPE,
         self::USER_PASSWORD_RETYPE_HUMAN,
+        self::POST_KEY,
+        self::POST_KEY_HUMAN,
     ];
 
     // the placeholder shown instead of a secret value in a redacted url / post array

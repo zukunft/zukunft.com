@@ -225,12 +225,6 @@ class Message
      */
 
     /**
-     * combine the given message with this message
-     *
-     * @param Message $msg_to_add a message of which all parameters should be added to this message
-     * @return void is never expected to fail
-     */
-    /**
      * combine the status of two messages and assume the worst: an added message that is not ok makes this
      * message at least not ok, an error of either message is kept (a lower status is worse)
      * @param Message $msg_to_add the message whose status is combined with the status of this message
@@ -243,6 +237,12 @@ class Message
         }
     }
 
+    /**
+     * combine the given message with this message
+     *
+     * @param Message $msg_to_add a message of which all parameters should be added to this message
+     * @return void is never expected to fail
+     */
     function merge(Message $msg_to_add): void
     {
         foreach ($msg_to_add->get_all_var_messages() as $msg_var) {

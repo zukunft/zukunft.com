@@ -220,11 +220,14 @@ class db_object extends TextIdObject
      */
     function url_is_add_action(array $url_array): bool
     {
-        $is_add = in_array($url_array[url_var::MASK] ?? 0, views::ADD_MASKS_IDS);
-        if (array_key_exists(url_var::ACTION, $url_array)) {
-            if ($url_array[url_var::ACTION] == url_var::CRUD_CREATE) {
-                $is_add = true;
-            }
+        // an explicit crud action overrules the mask, because e.g. the delete of a just added object
+        // is posted with the add mask of the object (see frontend::action_crud); a user reaction
+        // like save names no operation, so there the add mask decides
+        $action = $url_array[url_var::ACTION] ?? '';
+        if (in_array($action, url_var::CRUD_ACTIONS)) {
+            $is_add = ($action == url_var::CRUD_CREATE);
+        } else {
+            $is_add = in_array($url_array[url_var::MASK] ?? 0, views::ADD_MASKS_IDS);
         }
         return $is_add;
     }

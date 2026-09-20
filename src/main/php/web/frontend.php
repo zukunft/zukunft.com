@@ -1626,6 +1626,9 @@ class frontend
         $signed_up = false;
 
         if ($do_it) {
+            // only a problem of this form may stop the signup, so the checks below report into an own
+            // buffer and an unrelated earlier problem of the request never blocks a valid signup
+            $form_msg = new user_message_ui(); // the problems of the form check, merged into $msg_ui right away
             // reject a user name with a path or control character so it can never be used to build
             // a file path (e.g. the config file cache keys by user id now, but a raw name must also
             // never travel into a path) or break out of an output context; the check stays a lenient
@@ -1633,12 +1636,12 @@ class frontend
             if (str_contains($usr_name, '/')
                 or str_contains($usr_name, '\\')
                 or preg_match('/[\x00-\x1f]/', $usr_name) === 1) {
-                $msg_ui->add(msg_id::SIGNUP_ERR_NAME_INVALID, []);
+                $form_msg->add(msg_id::SIGNUP_ERR_NAME_INVALID, []);
             }
             // block signup up front if a user whitelist is active and this name is not on it;
             // no account is created and the user is told how to get access (see is_ok() gate below)
             if (server_guard::user_rejected('', $usr_name)) {
-                $msg_ui->add(msg_id::SIGNUP_ERR_WHITELIST, []);
+                $form_msg->add(msg_id::SIGNUP_ERR_WHITELIST, []);
             }
             $existing = new user_backend();
             // the signup system user adds the new account, so it is also the author of its change log
@@ -1652,22 +1655,23 @@ class frontend
                 // without it the user cannot pick a free name, so signup would be impossible;
                 // the message points a returning user to the password reset instead, and the
                 // planned per-ip request rate limit will bound the probing speed (see pending.md)
-                $msg_ui->add(msg_id::SIGNUP_ERR_NAME_EXISTS, []);
+                $form_msg->add(msg_id::SIGNUP_ERR_NAME_EXISTS, []);
             }
             if (empty($email)) {
-                $msg_ui->add(msg_id::SIGNUP_ERR_EMAIL_EMPTY, []);
+                $form_msg->add(msg_id::SIGNUP_ERR_EMAIL_EMPTY, []);
             }
             if (empty($pw)) {
-                $msg_ui->add(msg_id::SIGNUP_ERR_PW_EMPTY, []);
+                $form_msg->add(msg_id::SIGNUP_ERR_PW_EMPTY, []);
             }
             if (empty($pw_re)) {
-                $msg_ui->add(msg_id::SIGNUP_ERR_PW_RETYPE_EMPTY, []);
+                $form_msg->add(msg_id::SIGNUP_ERR_PW_RETYPE_EMPTY, []);
             }
             if (!empty($pw) && !empty($pw_re) && $pw !== $pw_re) {
-                $msg_ui->add(msg_id::SIGNUP_ERR_PW_MISMATCH, []);
+                $form_msg->add(msg_id::SIGNUP_ERR_PW_MISMATCH, []);
             }
+            $msg_ui->merge($form_msg);
 
-            if ($msg_ui->is_ok()) {
+            if ($form_msg->is_ok()) {
                 $new_usr = new user_backend();
                 $new_usr->name = $usr_name;
                 $new_usr->email = $email;
@@ -1771,7 +1775,7 @@ class frontend
             // the account works anyway and the email can still be confirmed with a password reset
             $msg_ui->add(msg_id::RESET_ERR_KEY_GEN, [], true);
         } elseif ($this->send_activation_mail($new_usr, $key,
-            msg_id::SIGNUP_MAIL_SUBJECT, msg_id::SIGNUP_MAIL_KEY_INTRO, msg_id::SIGNUP_MAIL_IGNORE)) {
+            msg_id::SIGNUP_MAIL_SUBJECT, msg_id::SIGNUP_MAIL_KEY_INTRO, msg_id::SIGNUP_MAIL_IGNORE, $msg_ui)) {
             $msg_ui->add(msg_id::SIGNUP_MAIL_SENT, [], true);
         } else {
             // the account works anyway, the reason is in the system log for the admin
@@ -1831,17 +1835,21 @@ class frontend
                 if ($usr->activation_key_valid($post_key)) {
                     // without a password the link only confirms the email e.g. of a new account
                     $pw_given = (!empty($pw) or !empty($pw_re));
+                    // only a problem of the two password fields may stop the activation, so the
+                    // checks report into an own buffer (see the gate below)
+                    $form_msg = new user_message_ui(); // the problems of the form check, merged into $msg_ui right away
                     if ($pw_given and empty($pw)) {
-                        $msg_ui->add_message($mtr->txt(msg_id::SIGNUP_ERR_PW_EMPTY));
+                        $form_msg->add(msg_id::SIGNUP_ERR_PW_EMPTY, []);
                     }
                     if ($pw_given and empty($pw_re)) {
-                        $msg_ui->add_message($mtr->txt(msg_id::SIGNUP_ERR_PW_RETYPE_EMPTY));
+                        $form_msg->add(msg_id::SIGNUP_ERR_PW_RETYPE_EMPTY, []);
                     }
                     if (!empty($pw) && !empty($pw_re) && $pw !== $pw_re) {
-                        $msg_ui->add_message($mtr->txt(msg_id::SIGNUP_ERR_PW_MISMATCH));
+                        $form_msg->add(msg_id::SIGNUP_ERR_PW_MISMATCH, []);
                     }
+                    $msg_ui->merge($form_msg);
 
-                    if ($msg_ui->is_ok()) {
+                    if ($form_msg->is_ok()) {
                         if ($pw_given) {
                             $usr->set_password($pw, $activate_msg);
                         }
@@ -1989,14 +1997,16 @@ class frontend
      * @param msg_id $subject the subject e.g. msg_id::SIGNUP_MAIL_SUBJECT
      * @param msg_id $key_intro the text in front of the key e.g. msg_id::SIGNUP_MAIL_KEY_INTRO
      * @param msg_id $ignore the last line for a user who has not asked for the mail e.g. msg_id::SIGNUP_MAIL_IGNORE
+     * @param user_message_ui $msg_ui to report why the mail could not be sent, which the user cannot fix
      * @return bool true if the mail server has accepted the mail or if this is a test run
      */
     private function send_activation_mail(
-        user_backend $db_usr,
-        string       $key,
-        msg_id       $subject,
-        msg_id       $key_intro,
-        msg_id       $ignore
+        user_backend    $db_usr,
+        string          $key,
+        msg_id          $subject,
+        msg_id          $key_intro,
+        msg_id          $ignore,
+        user_message_ui $msg_ui
     ): bool
     {
         $mail_subject = POD_NAME . ' - ' . $this->mail_txt($subject);
@@ -2006,7 +2016,7 @@ class frontend
             . $this->mail_txt($ignore);
         $result = true;
         if ($this->live_request) {
-            $result = new mail_sender()->send($db_usr->email, $mail_subject, $mail_body);
+            $result = new mail_sender()->send($db_usr->email, $mail_subject, $mail_body, $msg_ui);
         }
         return $result;
     }
@@ -2045,8 +2055,12 @@ class frontend
                     // a save failure is logged, not shown, so the response stays identical for an
                     // existing and a non-existing account (do not merge it into the user message)
                     if ($reset_msg->is_ok()) {
+                        // a mail problem is only logged, because a notice would happen only for an
+                        // existing account and would therefore tell the sender that it exists
+                        $mail_msg = new user_message_ui(); // not reported, see the neutral response below
                         $this->send_activation_mail($db_usr, $key,
-                            msg_id::RESET_MAIL_SUBJECT, msg_id::RESET_MAIL_KEY_INTRO, msg_id::RESET_MAIL_IGNORE);
+                            msg_id::RESET_MAIL_SUBJECT, msg_id::RESET_MAIL_KEY_INTRO, msg_id::RESET_MAIL_IGNORE,
+                            $mail_msg);
                     } else {
                         log_err('password reset save failed: ' . $reset_msg->all_message_text());
                     }
