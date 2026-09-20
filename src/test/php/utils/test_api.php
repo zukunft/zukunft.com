@@ -822,7 +822,7 @@ class test_api extends test_base
     ): ?array
     {
         $log_lst = new change_log_list_ui();
-        $json = $log_lst->load_api_by_object_field($class, $id, $fld, $usr, $limit, $page);
+        $json = $log_lst->load_api_by_object_field($class, new user_message_ui(), $id, $fld, $usr, $limit, $page); // without a user, so the expected api json stays the same for every test user
         return json_decode($json, true);
     }
 

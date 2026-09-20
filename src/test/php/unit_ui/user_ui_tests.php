@@ -40,11 +40,18 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once html_paths::CONST . 'icons.php';
 include_once html_paths::EXECUTE . 'ui_log.php';
+include_once html_paths::EXECUTE . 'system_form.php';
 include_once html_paths::EXECUTE . 'ui_preview.php';
+include_once html_paths::HELPER . 'mail_sender.php';
+include_once html_paths::HELPER . 'url_mapper.php';
+include_once html_paths::HTML . 'rest_call.php';
 include_once html_paths::LOG . 'change_log_list.php';
 include_once html_paths::USER . 'user.php';
+include_once html_paths::WEB . 'frontend.php';
+include_once paths::SHARED . 'api.php';
 include_once paths::SHARED_CONST . 'components.php';
 include_once paths::SHARED_CONST . 'sources.php';
+include_once paths::SHARED_CONST . 'users.php';
 include_once paths::SHARED_CONST . 'values.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'change_log_actions.php';
@@ -58,10 +65,16 @@ include_once test_paths::CREATE . 'test_log.php';
 include_once test_paths::CREATE . 'test_sys_log.php';
 include_once test_paths::UNIT . 'sys_log_tests.php';
 
+use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_log;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_preview;
 use Zukunft\ZukunftCom\main\php\web\const\icons;
+use Zukunft\ZukunftCom\main\php\shared\api;
+use Zukunft\ZukunftCom\main\php\web\frontend;
+use Zukunft\ZukunftCom\main\php\web\helper\mail_sender;
+use Zukunft\ZukunftCom\main\php\web\helper\url_mapper;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\html\rest_call;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_list as change_log_list_ui;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_named as change_log_named_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
@@ -69,6 +82,7 @@ use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
 use Zukunft\ZukunftCom\main\php\shared\const\sources;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
@@ -454,6 +468,229 @@ class user_ui_tests
 
         $test_name = 'the system user sees the admin-only fields';
         $t->assert_true($test_name, $sys_ui->sees_admin_fields());
+
+        $t->subheader($ts . 'api url');
+
+        // the frontend asks the backend for the sandbox of the logged-in user (see user::data_user)
+        $rest = new rest_call();
+        $test_name = 'the api url carries the id of the logged-in user';
+        $dev_data = $rest->data_with_user([], new user_message($dev_ui));
+        $t->assert($test_name, $dev_data[url_var::USER] ?? 0, users::DEV_ID);
+
+        $test_name = 'a data user named by the caller is kept';
+        $adm_data = $rest->data_with_user([url_var::USER => users::SYSTEM_ADMIN_ID], new user_message($dev_ui));
+        $t->assert($test_name, $adm_data[url_var::USER], users::SYSTEM_ADMIN_ID);
+
+        $test_name = 'the api url of an ip only user carries no user id';
+        $ip_data = $rest->data_with_user([], new user_message($ip_ui));
+        $t->assert_false($test_name, array_key_exists(url_var::USER, $ip_data));
+
+        $test_name = 'the api url without a user carries no user id';
+        $t->assert_false($test_name, array_key_exists(url_var::USER, $rest->data_with_user([], $msg)));
+
+        $t->subheader($ts . 'page url');
+
+        // the url builders read the session user from the request cache (see html_base::url_with_user)
+        global $ui_sys;
+        $html = new html_base();
+        $page_url = api::MAIN_SCRIPT . url_var::PAR . url_var::MASK . url_var::EQ . views::WORD_ID;
+        $usr_url = url_var::USER . url_var::EQ . users::DEV_ID;
+        $usr_keep = $ui_sys->usr ?? null;
+        $ui_sys->usr = $dev_ui;
+        $test_name = 'the page url carries the id of the logged-in user';
+        $t->assert($test_name, $html->url_with_user($page_url), $page_url . url_var::ADD . $usr_url);
+        $test_name = '... also as the only parameter';
+        $t->assert($test_name, $html->url_with_user(api::MAIN_SCRIPT), api::MAIN_SCRIPT . url_var::PAR . $usr_url);
+        $test_name = '... which replaces the user id of another user';
+        $other_url = $page_url . url_var::ADD . url_var::USER . url_var::EQ . users::SYSTEM_ADMIN_ID;
+        $t->assert($test_name, $html->url_with_user($other_url), $page_url . url_var::ADD . $usr_url);
+        $test_name = '... in front of the in-page target';
+        $anchor = url_var::ANCHOR . 'tab';
+        $t->assert($test_name, $html->url_with_user($page_url . $anchor), $page_url . url_var::ADD . $usr_url . $anchor);
+        $test_name = '... and in the link';
+        $t->assert_text_contains($test_name, $html->ref($page_url, word_names::MATH), $usr_url);
+        $test_name = '... and in the form';
+        $t->assert_text_contains($test_name, $html->form_start(views::WORD_EDIT), $html->form_hidden(url_var::USER, (string)users::DEV_ID));
+        $test_name = 'the back key and a value u are not taken as the user id';
+        $back_url = $page_url . url_var::ADD . url_var::BACK . $usr_url . url_var::ADD . url_var::ACTION . url_var::EQ . url_var::CRUD_UPDATE;
+        $t->assert($test_name, $html->url_with_user($back_url), $back_url . url_var::ADD . $usr_url);
+        $test_name = 'an in-page anchor gets no user id';
+        $t->assert($test_name, $html->url_with_user($anchor), $anchor);
+        $test_name = 'the url of another site gets no user id';
+        $ext_url = 'https://www.wikidata.org' . api::MAIN_SCRIPT;
+        $t->assert($test_name, $html->url_with_user($ext_url), $ext_url);
+        $test_name = 'the url of another script gets no user id';
+        $t->assert($test_name, $html->url_with_user(api::ABOUT_SCRIPT), api::ABOUT_SCRIPT);
+        $ui_sys->usr = $ip_ui;
+        $test_name = 'the page url of an ip only user carries no user id';
+        $t->assert($test_name, $html->url_with_user($page_url), $page_url);
+        $test_name = '... and the form of an ip only user has no user field';
+        $t->assert($test_name, $html->form_user(), '');
+        // the system users see the standard data by default, so their urls name no user
+        $ui_sys->usr = $sys_ui;
+        $test_name = 'the page url of the system user carries no user id';
+        $t->assert($test_name, $html->url_with_user($page_url), $page_url);
+        $ui_sys->usr = $sys_test_ui;
+        $test_name = 'the page url of the system test user carries no user id, so the test pages show none';
+        $t->assert($test_name, $html->url_with_user($page_url), $page_url);
+        $ui_sys->usr = $usr_keep;
+        $test_name = 'a developer does not see only the standard data';
+        $t->assert_false($test_name, $dev_ui->uses_standard_data());
+        $test_name = 'an ip user sees the standard data, because it is not unique enough for a sandbox';
+        $t->assert_true($test_name, $ip_ui->uses_standard_data());
+        $test_name = 'the system user sees the standard data';
+        $t->assert_true($test_name, $sys_ui->uses_standard_data());
+        $test_name = 'the api url of the system user carries no user id';
+        $t->assert_false($test_name, array_key_exists(url_var::USER, $rest->data_with_user([], new user_message($sys_ui))));
+
+        // after an action the next page is created for the user of the session after the action
+        $act_url = [url_var::MASK => views::WORD_ID, url_var::USER => users::SYSTEM_ADMIN_ID];
+        $test_name = 'the redirect after an action carries the logged-in user';
+        $t->assert_text_contains($test_name, frontend::redirect_url($act_url, new user_message($dev_ui)), $usr_url);
+        $test_name = '... and not the posted user';
+        $t->assert_text_not_contains($test_name,
+            frontend::redirect_url($act_url, new user_message($dev_ui)), url_var::USER . url_var::EQ . users::SYSTEM_ADMIN_ID);
+        $test_name = 'the redirect after a logout carries no user';
+        $t->assert_text_not_contains($test_name, frontend::redirect_url($act_url, $msg), url_var::ADD . url_var::USER . url_var::EQ);
+
+        // the page is always created for the session user, so a link of another user only gets a notice
+        $test_name = 'a url with the id of the session user needs no notice';
+        $t->assert_true($test_name, frontend::url_user_matches([url_var::USER => users::DEV_ID], new user_message($dev_ui)));
+        $test_name = 'a url without a user needs no notice';
+        $t->assert_true($test_name, frontend::url_user_matches([url_var::MASK => views::WORD_ID], new user_message($dev_ui)));
+        $test_name = 'a url with the id of another user gets the notice';
+        $other_msg = new user_message($dev_ui);
+        $t->assert_false($test_name, frontend::url_user_matches([url_var::USER => users::SYSTEM_ADMIN_ID], $other_msg));
+        $test_name = '... which names the user of the url';
+        $t->assert_text_contains($test_name, $other_msg->text(), (string)users::SYSTEM_ADMIN_ID);
+        $test_name = '... and does not stop the request';
+        $t->assert_true($test_name, $other_msg->is_ok());
+
+        // the user to show or change is not the logged-in user, so it has its own url var
+        $test_name = 'the user edit form names the user to change by user_to_edit';
+        $edit_html = $usr_ui->form_edit();
+        $t->assert_text_contains($test_name, $edit_html, $html->form_hidden(url_var::USER_TO_EDIT, (string)$usr_ui->id()));
+        $test_name = '... and posts the name as the username';
+        $t->assert_text_contains($test_name, $edit_html, html_base::NAME . '="' . url_var::USERNAME . '"');
+        $test_name = 'the user to edit selects the user';
+        $edit_usr = new user_ui();
+        $edit_usr->url_mapper([url_var::USER_TO_EDIT => users::DEV_ID], $msg);
+        $t->assert($test_name, $edit_usr->id(), users::DEV_ID);
+        $msg->reset();
+        $test_name = '... but the logged-in user of the url does not';
+        $edit_usr = new user_ui();
+        $edit_usr->url_mapper([url_var::USER => users::DEV_ID, url_var::ID => users::SYSTEM_ADMIN_ID], $msg);
+        $t->assert($test_name, $edit_usr->id(), users::SYSTEM_ADMIN_ID);
+        $msg->reset();
+
+        // the signup and the reset mail open the activation page for the user of the mail
+        $test_name = 'the activation link names the user by user_to_edit';
+        $act_url = frontend::activation_url(users::DEV_ID, users::TEST_USER_ACTIVATION_KEY);
+        $t->assert_text_contains($test_name, $act_url, url_var::PAR . url_var::USER_TO_EDIT . url_var::EQ . users::DEV_ID);
+        $test_name = '... and carries the key';
+        $t->assert_text_contains($test_name, $act_url, url_var::ADD . url_var::POST_KEY . url_var::EQ . users::TEST_USER_ACTIVATION_KEY);
+        $test_name = '... and opens the activation page';
+        $t->assert_text_contains($test_name, $act_url, api::LOGIN_ACTIVATE_FORWARD . url_var::PAR);
+        $test_name = '... but not by the id';
+        $t->assert_text_not_contains($test_name, $act_url, url_var::PAR . url_var::ID . url_var::EQ);
+
+        $t->subheader($ts . 'user to edit url');
+
+        // the views that show or change a user select it by user_to_edit, all other views by the id
+        $test_name = 'the admin user edit view selects the user by user_to_edit';
+        $t->assert($test_name, url_var::id_var(views::USER_ADMIN_EDIT_ID), url_var::USER_TO_EDIT);
+        $test_name = '... also if the view is given by its code id';
+        $t->assert($test_name, url_var::id_var(views::USER_ADMIN_EDIT), url_var::USER_TO_EDIT);
+        $test_name = 'the user page selects the user by user_to_edit';
+        $t->assert($test_name, url_var::id_var(views::USER_ID), url_var::USER_TO_EDIT);
+        $test_name = 'the admin user add view selects the user by user_to_edit';
+        $t->assert($test_name, url_var::id_var(views::USER_ADMIN_ADD_ID), url_var::USER_TO_EDIT);
+        $test_name = 'the admin user delete view selects the user by user_to_edit';
+        $t->assert($test_name, url_var::id_var(views::USER_ADMIN_DEL_ID), url_var::USER_TO_EDIT);
+        $test_name = 'the jobs of the logged-in user select no user to edit';
+        $t->assert($test_name, url_var::id_var(views::USER_JOBS_ID), url_var::ID);
+        $test_name = 'another view selects its object by the id';
+        $t->assert($test_name, url_var::id_var(views::WORD_ID), url_var::ID);
+        $test_name = 'a view list in the url selects by the id';
+        $t->assert($test_name, url_var::id_var([views::USER_ADMIN_EDIT_ID]), url_var::ID);
+        $test_name = 'the user page url names its user by user_to_edit';
+        $t->assert($test_name, url_var::object_id([url_var::MASK => views::USER_ID, url_var::USER_TO_EDIT => users::DEV_ID]), users::DEV_ID);
+        $test_name = '... or by the id of an old link';
+        $t->assert($test_name, url_var::object_id([url_var::MASK => views::USER_ID, url_var::ID => users::DEV_ID]), users::DEV_ID);
+        $test_name = '... but another view is not selected by the user to edit';
+        $t->assert($test_name, url_var::object_id([url_var::MASK => views::WORD_ID, url_var::USER_TO_EDIT => users::DEV_ID]), 0);
+        $test_name = 'a url without an object names no object';
+        $t->assert($test_name, url_var::object_id([url_var::MASK => views::USER_ID]), 0);
+
+        $adm_url = api::MAIN_SCRIPT . url_var::PAR . url_var::MASK . url_var::EQ . views::USER_ADMIN_EDIT_ID;
+        $test_name = 'the link to the admin user edit names the user by user_to_edit';
+        $adm_id_url = $adm_url . url_var::ADD . url_var::ID . url_var::EQ . users::DEV_ID;
+        $adm_ue_url = $adm_url . url_var::ADD . url_var::USER_TO_EDIT . url_var::EQ . users::DEV_ID;
+        $t->assert($test_name, $html->url_with_id_var($adm_id_url), $adm_ue_url);
+        $test_name = 'the link to the user page names the user by user_to_edit';
+        $usr_link = $html->ref_view(views::USER_ID, users::DEV_ID, users::DEV_NAME);
+        $t->assert_text_contains($test_name, $usr_link, url_var::USER_TO_EDIT . url_var::EQ . users::DEV_ID);
+        $test_name = '... and not by the id';
+        $t->assert_text_not_contains($test_name, $usr_link, url_var::ADD . url_var::ID . url_var::EQ);
+        $test_name = '... but the link to another view keeps the id';
+        $wrd_id_url = $page_url . url_var::ADD . url_var::ID . url_var::EQ . word_names::MATH_ID;
+        $t->assert($test_name, $html->url_with_id_var($wrd_id_url), $wrd_id_url);
+        $test_name = '... and the back id to the admin user edit stays the back id';
+        $back_id_url = $page_url . url_var::ADD . url_var::BACK . url_var::MASK . url_var::EQ . views::USER_ADMIN_EDIT_ID
+            . url_var::ADD . url_var::BACK . url_var::ID . url_var::EQ . users::DEV_ID;
+        $t->assert($test_name, $html->url_with_id_var($back_id_url), $back_id_url);
+        $test_name = 'the redirect to the admin user edit names the user by user_to_edit';
+        $adm_arr = [url_var::MASK => views::USER_ADMIN_EDIT_ID, url_var::ID => users::DEV_ID];
+        $t->assert_text_contains($test_name, frontend::redirect_url($adm_arr, $msg), url_var::USER_TO_EDIT . url_var::EQ . users::DEV_ID);
+        $test_name = 'the admin user edit form posts the user as user_to_edit';
+        $form = new system_form();
+        $t->assert_text_contains($test_name, $form->form_back(views::USER_ADMIN_EDIT_ID, users::DEV_ID),
+            html_base::NAME . '="' . url_var::USER_TO_EDIT . '"');
+
+        $url_map = new url_mapper();
+        $test_name = 'the user_to_edit of the admin user edit url loads the user by the id';
+        $std_arr = $url_map->url_to_standard([url_var::MASK => views::USER_ADMIN_EDIT_ID, url_var::USER_TO_EDIT => users::DEV_ID], $msg);
+        $t->assert($test_name, $std_arr[url_var::ID] ?? 0, users::DEV_ID);
+        $test_name = '... and is not kept beside the id';
+        $t->assert_false($test_name, array_key_exists(url_var::USER_TO_EDIT, $std_arr));
+        $test_name = 'the user_to_edit of another view does not replace the id';
+        $std_arr = $url_map->url_to_standard(
+            [url_var::MASK => views::WORD_ID, url_var::ID => word_names::MATH_ID, url_var::USER_TO_EDIT => users::DEV_ID], $msg);
+        $t->assert($test_name, $std_arr[url_var::ID], word_names::MATH_ID);
+        $msg->reset();
+
+        $t->subheader($ts . 'signup mail');
+
+        // the signup and the reset mail are sent via the smtp account of the .env (see mail_sender)
+        $smtp_host = 'smtp.' . POD_NAME;
+        $test_name = 'the smtp account on the starttls port is called via smtp';
+        $t->assert($test_name, mail_sender::smtp_url($smtp_host, SIGNUP_MAIL_PORT_FALLBACK), 'smtp://' . $smtp_host . ':' . SIGNUP_MAIL_PORT_FALLBACK);
+        $test_name = '... and on the port with tls from the start via smtps';
+        $tls_port = mail_sender::SMTP_PORT_IMPLICIT_TLS;
+        $t->assert($test_name, mail_sender::smtp_url($smtp_host, $tls_port), 'smtps://' . $smtp_host . ':' . $tls_port);
+        $test_name = 'the mail is sent from the signup address of the .env';
+        $t->assert($test_name, mail_sender::sender(users::SYSTEM_SIGNUP_EMAIL), users::SYSTEM_SIGNUP_EMAIL);
+        $test_name = '... or from the admin address if the .env has none';
+        $t->assert($test_name, mail_sender::sender(''), users::SYSTEM_ADMIN_EMAIL);
+        $test_name = 'an address without a line break can be used in the mail header';
+        $t->assert_true($test_name, mail_sender::header_safe(users::TEST_SIGNUP_EMAIL));
+        $test_name = '... but a line break that would add a header is refused';
+        $t->assert_false($test_name, mail_sender::header_safe(users::TEST_SIGNUP_EMAIL . "\r\nBcc: " . users::SYSTEM_ADMIN_EMAIL));
+        $mail_txt = mail_sender::smtp_message(users::SYSTEM_SIGNUP_EMAIL, users::TEST_SIGNUP_EMAIL,
+            $mtr->txt(msg_id::SIGNUP_MAIL_SUBJECT), $mtr->txt(msg_id::RESET_MAIL_HELLO) . "\n\n" . $mtr->txt(msg_id::SIGNUP_MAIL_KEY_INTRO));
+        $test_name = 'the mail names the sender';
+        $t->assert_text_contains($test_name, $mail_txt, 'From: ' . users::SYSTEM_SIGNUP_EMAIL . mail_sender::CRLF);
+        $test_name = '... and the receiver';
+        $t->assert_text_contains($test_name, $mail_txt, 'To: ' . users::TEST_SIGNUP_EMAIL . mail_sender::CRLF);
+        $test_name = '... and says that the text is utf-8, e.g. for the german umlauts';
+        $t->assert_text_contains($test_name, $mail_txt, 'charset=UTF-8');
+        $test_name = '... and separates the header from the text by an empty line';
+        $t->assert_text_contains($test_name, $mail_txt, mail_sender::CRLF . mail_sender::CRLF . $mtr->txt(msg_id::RESET_MAIL_HELLO));
+        $test_name = '... and ends every text line with crlf as the smtp server expects';
+        $t->assert_text_contains($test_name, $mail_txt,
+            $mtr->txt(msg_id::RESET_MAIL_HELLO) . mail_sender::CRLF . mail_sender::CRLF . $mtr->txt(msg_id::SIGNUP_MAIL_KEY_INTRO));
+        $test_name = '... without a single line feed';
+        $t->assert_false($test_name, preg_match('/[^\r]\n/', $mail_txt) === 1);
 
         $t->subheader($ts . 'popup form');
 

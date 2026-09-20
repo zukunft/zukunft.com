@@ -43,6 +43,7 @@ include_once paths::SHARED_ENUM . 'user_profiles.php';
 include_once paths::SHARED_ENUM . 'user_types.php';
 include_once paths::SHARED_ENUM . 'user_statuum.php';
 include_once paths::SHARED_HELPER . 'Config.php';
+include_once paths::SHARED . 'url_var.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
@@ -53,6 +54,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_types;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_statuum;
 use Zukunft\ZukunftCom\main\php\shared\helper\Config as shared_config;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use DateMalformedStringException;
 use DateTime;
@@ -280,6 +282,60 @@ class test_users
         $usr = new user();
         $usr->set(users::SYSTEM_ADMIN_ID, users::SYSTEM_ADMIN_NAME, users::SYSTEM_ADMIN_EMAIL);
         $usr->profile_id = $sys->typ_lst->usr_pro->id(user_profiles::ADMIN);
+        return $usr;
+    }
+
+    /**
+     * the id is not pinned, because the profile alone decides what the signup user may do
+     * @return user the system user that creates new accounts and confirms their email
+     */
+    function user_signup(): user
+    {
+        global $sys;
+
+        $usr = new user();
+        $usr->set(0, users::SYSTEM_SIGNUP_NAME, users::SYSTEM_SIGNUP_EMAIL);
+        $usr->code_id = users::SYSTEM_SIGNUP_CODE_ID;
+        $usr->profile_id = $sys->typ_lst->usr_pro->id(user_profiles::SIGNUP);
+        return $usr;
+    }
+
+    /**
+     * @return array the fields that the signup form posts for the test user of the signup_confirm workflow
+     */
+    static function signup_url_array(): array
+    {
+        return [
+            url_var::USERNAME => users::TEST_SIGNUP_NAME,
+            url_var::EMAIL => users::TEST_SIGNUP_EMAIL,
+            url_var::USER_PASSWORD => users::TEST_USER_PASSWORD,
+            url_var::USER_PASSWORD_RETYPE => users::TEST_USER_PASSWORD,
+        ];
+    }
+
+    /**
+     * the fields of the activation link of the signup mail (see frontend::activation_url)
+     * @param int $usr_id the id of the signed up user
+     * @return array the url fields with the known test key, which the test sets instead of the mailed key
+     */
+    static function activation_url_array(int $usr_id): array
+    {
+        return [
+            url_var::USER_TO_EDIT => $usr_id,
+            url_var::POST_KEY => users::TEST_USER_ACTIVATION_KEY,
+        ];
+    }
+
+    /**
+     * @param string $code_id the profile of the account e.g. user_profiles::NAME_ONLY after the signup
+     * @return user a new account that has not yet confirmed its email
+     */
+    function user_signed_up(string $code_id): user
+    {
+        global $sys;
+
+        $usr = $this->user_add();
+        $usr->profile_id = $sys->typ_lst->usr_pro->id($code_id);
         return $usr;
     }
 

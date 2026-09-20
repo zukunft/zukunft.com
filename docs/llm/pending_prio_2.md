@@ -1440,6 +1440,19 @@ writes it to the group row on save (value_base::save), but these gaps remain:
   not done, because the upgrade path has the open defects listed under "database upgrade path".
   the developer decides if an optional field needs the bump. the value list import format
   (value_list::import_obj, one context for many values) has no group name
+- a stored given group name or value description cannot be cleared: the frontend drops an emptied
+  field before sending (value::api_array filters empty entries), and sandbox_multi::save fills every
+  field that the request does not carry from the database row, so "emptied" and "not sent" look
+  the same. the source of a value has the same gap: selecting no source drops the source in the
+  frontend (value::set_source_id) and value_base::set_source_id ignores the id 0, so a stored
+  source stays. to close the gap compare the field with its '8'-prefixed opening value
+  (url_var::PRE) and send an explicit empty value for a field that the user has emptied, which
+  fill must then keep instead of taking the stored value
+- the group list of the backend data_object (data_object::add_group, group_list()) is only
+  filled, e.g. by horizontal_tests for the value import, but never read: no import_mapper takes a
+  group from it and the frontend data_object does not map the json field `groups` that
+  data_object::api_json_array sends (like `sources` and `references`). either the value import
+  resolves a given group name via this cache or the developer retires the list and the json field
 - the value of the views_by_id fixtures (test_values::value_16_filled, group_16) is built from
   artificial phrase ids (word1 = 1, triple7 = 106841477, ...) of which only word 1 is in the test
   request cache, so the page title of views_by_id/value/30_value_update_*.html reads
@@ -1512,3 +1525,7 @@ pure html value add view with one form (ui_select::value_add_fields):
   because a link never posts the form; a value typed just before the click is still lost. to
   close the gap without javascript make more details a named submit button of the one form that
   switches the mask to views::VALUE_ADD_DETAIL_ID without triggering url_to_action
+- url_test_base::assert_step runs url_to_action for every step, while http/view.php runs it only
+  for a form submit or a get action mask (frontend::request_triggers_action); only the
+  signup_confirm workflow passes $submit_acts = true so far. make the view.php gate the default
+  for all workflows and regenerate their snapshots in one change

@@ -151,7 +151,7 @@ class config extends value_list
         $data[url_var::CONFIG_PART] = $part;
         $data[url_var::WITH_PHRASES] = url_var::TRUE;
         $rest = new rest_call();
-        $json_body = $rest->api_get(config::class, $data);
+        $json_body = $rest->api_get(config::class, $data, $msg);
         if (array_key_exists(json_fields::MSG, $json_body)) {
             $msg->add(msg_id::API_MESSAGE, [msg_id::VAR_JSON_TEXT => $json_body[json_fields::MSG]]);
         }

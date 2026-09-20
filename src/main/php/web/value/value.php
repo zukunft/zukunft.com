@@ -152,8 +152,11 @@ class value extends sandbox_value
      */
     function url_mapper(array $url_array, user_message $msg, data_object|null $dto = null): user_message
     {
-        parent::url_mapper($url_array, $msg, $dto);
-        if ($msg->is_ok()) {
+        $map_msg = new user_message($msg->usr); // the problems of the parent mapping, merged into $msg right away
+        parent::url_mapper($url_array, $map_msg, $dto);
+        $msg->merge($map_msg);
+        // the own fields depend on the parent mapping e.g. of the id, not on an unrelated earlier error
+        if ($map_msg->is_ok()) {
             if (array_key_exists(url_var::SOURCE, $url_array)) {
                 $src_id = $url_array[url_var::SOURCE];
                 // a text would fatal on the int id, so it is reported instead
@@ -180,6 +183,7 @@ class value extends sandbox_value
             value_fields::FLD_VALUE_TEXT => url_var::VALUE_TEXT,
             value_fields::FLD_VALUE_TIME => url_var::VALUE_TIME,
             value_fields::FLD_VALUE_GEO => url_var::VALUE_GEO,
+            fields::FLD_DESCRIPTION => url_var::DESCRIPTION,
             source_fields::FLD_ID => url_var::SOURCE,
             fields::FLD_EXCLUDED => url_var::EXCLUDED,
             fields::FLD_SHARE => url_var::SHARE,
@@ -202,6 +206,10 @@ class value extends sandbox_value
         if (($json_array[json_fields::NAME] ?? '') != '') {
             $this->grp->set_name($json_array[json_fields::NAME]);
             $this->grp->set_id($this->id());
+        }
+        // the description of a value is the description of its group, so the change value view shows it
+        if (array_key_exists(json_fields::DESCRIPTION, $json_array)) {
+            $this->grp->set_description($json_array[json_fields::DESCRIPTION]);
         }
         if (array_key_exists(json_fields::SOURCE_ID, $json_array)) {
             $this->set_source_id($json_array[json_fields::SOURCE_ID]);
@@ -326,6 +334,8 @@ class value extends sandbox_value
         $vars[json_fields::PHRASES] = $this->grp->phr_lst()->api_array($typ_lst, $msg);
         // the name given by the user to the group of the value, so that the backend writes it
         $vars[json_fields::NAME] = $this->grp->name;
+        // the description of the value, which the backend writes to the group row
+        $vars[json_fields::DESCRIPTION] = $this->grp->get_description();
         $vars[json_fields::NUMBER] = $this->number();
         $vars[json_fields::TEXT_VALUE] = $this->text_value();
         $vars[json_fields::TIME_VALUE] = $this->time_value()?->format(self::TIME_FORMAT);
@@ -756,16 +766,16 @@ class value extends sandbox_value
      * value form (see system_views.json value_add and value_edit)
      *
      * @param string $form
+     * @param user_message $msg with the requesting user for whom the sources are selected
      * @param string $pattern
      * @param source_list|null $src_lst the frontend cache with the configuration, the preloaded source and the cached objects
+     * @param bool $test_mode true to offer only the cached sources, because a snapshot is created without a backend call
      * @return string
      */
-    function source_selector(string $form, string $pattern, ?source_list $src_lst): string
+    function source_selector(string $form, user_message $msg, string $pattern, ?source_list $src_lst, bool $test_mode = false): string
     {
-        // TODO review and maybe use test_mode parameter
-        if ($pattern != '') {
-            $src_lst->load_like($pattern);
-        }
+        $src_lst = $src_lst ?? new source_list();
+        $src_lst->load_for_selector($pattern, $msg, $test_mode);
         // the selected entry is the source of this value, not the value itself
         $selected = $this->src?->id() ?? 0;
         $sel_html = $src_lst->selector($form, $selected, url_var::SOURCE, msg_id::FORM_SELECT_SOURCE, view_styles::COL_SM_11);
@@ -783,16 +793,17 @@ class value extends sandbox_value
      * or to change the selected one, like the source selector (see source_selector)
      *
      * @param string $form the name of the html form
+     * @param user_message $msg with the requesting user for whom the references are selected
      * @param string $pattern the typed chars to filter the references
      * @param ref_list|null $ref_lst the references of the frontend cache to select from
      * @return string the html code of the reference selector with its add and change icons
      */
-    function ref_selector(string $form, string $pattern, ?ref_list $ref_lst): string
+    function ref_selector(string $form, user_message $msg, string $pattern, ?ref_list $ref_lst): string
     {
         $ref_lst = $ref_lst ?? new ref_list();
         // TODO review and maybe use test_mode parameter
         if ($pattern != '') {
-            $ref_lst->load_like($pattern);
+            $ref_lst->load_like($pattern, $msg);
         }
         // a value has no reference of its own, so the reference of one of its phrases is preselected
         $selected = $this->phrase_ref_id($ref_lst);
@@ -833,12 +844,12 @@ class value extends sandbox_value
         global $mtr;
 
         $html = new html_base();
-        $result = $html->ref($html->url_back($add_msk), $html->icon(icons::ADD),
-            $mtr->txt($add_tip), styles::FORM_ICON_INLINE, true);
+        $result = $html->change_icon($html->url_back($add_msk), icons::ADD,
+            $mtr->txt($add_tip), styles::FORM_ICON_INLINE);
         // without a selected object there is nothing to change, so only the add icon is shown
         if ($selected_id != 0) {
-            $result .= $html->ref($html->url_back($edit_msk, $selected_id), $html->icon(icons::EDIT),
-                $mtr->txt($edit_tip), styles::FORM_ICON_INLINE, true);
+            $result .= $html->change_icon($html->url_back($edit_msk, $selected_id), icons::EDIT,
+                $mtr->txt($edit_tip), styles::FORM_ICON_INLINE);
         }
         return $html->div($result, view_styles::COL_SM_1 . ' ' . html_base::BS_ALIGN_BOTTOM);
     }
@@ -1335,7 +1346,7 @@ class value extends sandbox_value
                             /*if (!empty($phr_lst_sel->lst)) {
                 $result .= '      '.$phr_lst_sel->dsp_selector("phrase".$url_pos, $script, $phr->id);
               } else {  */
-                            $result .= '      ' . $phr->dsp_selector($phr->is_wrd, $script, $url_pos, '', $url_arr);
+                            $result .= '      ' . $phr->dsp_selector($phr->is_wrd, $script, $url_pos, '', $msg, $url_arr);
                             //}
                             $url_pos++;
 
@@ -1354,7 +1365,7 @@ class value extends sandbox_value
                             }
                             //$result .= '    <input type="' . html_base::INPUT_HIDDEN . '" name="db'.$url_pos.'" value="'.$phr->dsp_lnk_id.'">';
                             $result .= '    <td colspan="2">';
-                            $result .= '      ' . $phr->dsp_selector(0, $script, $url_pos, '', $url_arr);
+                            $result .= '      ' . $phr->dsp_selector(0, $script, $url_pos, '', $msg, $url_arr);
                             $url_pos++;
 
                             $result .= '    </td>';

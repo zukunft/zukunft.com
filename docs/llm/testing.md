@@ -279,33 +279,35 @@ $chf->phrases_related = $sym_lst;
 $chf->phrases_related = $t_phr->list_chf_symbol_ui();
 ```
 
-### Test url arrays come from a factory object via to_url_array($msg)
+### Test url arrays are built from consts
 
-A url test (e.g. `unit_workflow/*_url_tests.php`) never hand-builds the object
-fields of a `$url_arr`: it starts from a factory object's `to_url_array($msg)`
-(`$t_wrd->word_dsp()->to_url_array($msg)`) or a factory url helper
-(`test_words::word_new_url()`, `word_add_url()`, `change_url_array()`, ...) and
-adds only the request context — mask, action, step, back, user. A hand-built key
-list duplicates the object's field mapping in the test body, and the factory
-would no longer show centrally which test objects each test uses; keeping the
-build in the factory also means a field added to the object reaches every url
-test through one change. To vary a field, change it on the factory object
-(`$wrd->set_description(...)`) before calling `to_url_array($msg)`, never by
-patching the array. The only urls built without a factory object are those that
-carry no object at all (e.g. a search pattern url).
+A test that maps or renders a url (e.g. a `url_mapper` test or a
+`unit_workflow/*_url_tests.php` step) writes its `$url_arr` with the `url_var`
+keys and the consts of the test object (`word_names::MATH_ID`,
+`sources::BFS`, ...), never with `to_url_array($msg)`. So one test checks the url
+contract (the keys a browser sends) and the mapping together, and a change of
+`to_url_array` cannot hide a change of the mapping, because both sides would move
+at once. Put all the fields the test needs into the one url, so a single mapping
+checks several fields. When a url key or a test const changes, the tests with
+that key are adjusted; this is accepted, because the goal is to reduce the
+changes of the code, not of the tests. `to_url_array` itself is tested in its own
+round trip (object → url → object), which is the only place that calls it in a
+test. A factory url helper (`test_words::word_new_url()`, ...) is fine where it
+returns such a const url for more than one test.
 
-- **Wrong**:
-```php
-$url_arr = [];
-$url_arr[url_var::MASK] = views::WORD_EDIT_ID;
-$url_arr[url_var::ID] = word_names::MATH_ID;
-$url_arr[url_var::NAME] = word_names::MATH;
-```
-- **Right** — the object fields come from the factory, the test adds the context:
-
+- **Wrong** — the url comes from the function the test should check against:
 ```php
 $url_arr = $t_wrd->word_dsp()->to_url_array($msg_ui);
 $url_arr[url_var::MASK] = views::WORD_EDIT_ID;
+```
+- **Right** — the keys and values are consts, and one url checks several fields:
+
+```php
+$url_arr = [
+    url_var::MASK => views::WORD_EDIT_ID,
+    url_var::ID => word_names::MATH_ID,
+    url_var::NAME => word_names::MATH,
+];
 ```
 
 ### Factory names don't repeat the object word
@@ -1008,6 +1010,14 @@ change) snapshots into `src/test/resources/web/html/workflow/`; the matching
 folders mirror each other so the read-only and write runs of the same workflow
 are easy to compare; the write run additionally proves the database side
 effect of the confirmed step.
+
+A workflow of the user masks (e.g. `signup_confirm`) sets `frontend::live_request`
+to false, so the signup and the activation write to the database but never switch
+the php session of the streamed test run nor send a mail, and it passes
+`$submit_acts = true` to `assert_step`, so like `http/view.php` only a form submit
+runs the action of the view (opening the activation link must not confirm the
+email yet). A typed password never reaches a snapshot, because `assert_url`
+masks the `url_var::SECRET_VARS`.
 
 ## Every machine-checkable coding rule has a coded test
 

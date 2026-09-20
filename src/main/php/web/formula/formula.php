@@ -184,8 +184,11 @@ class formula extends sandbox_code_id
      */
     function url_mapper(array $url_array, user_message $msg, data_object|null $dto = null): user_message
     {
-        parent::url_mapper($url_array, $msg, $dto);
-        if ($msg->is_ok()) {
+        $map_msg = new user_message($msg->usr); // the problems of the parent mapping, merged into $msg right away
+        parent::url_mapper($url_array, $map_msg, $dto);
+        $msg->merge($map_msg);
+        // the own fields depend on the parent mapping e.g. of the id, not on an unrelated earlier error
+        if ($map_msg->is_ok()) {
             // the field that the user has asked to refresh has just been recalculated by the
             // backend (see api_par_from_url), so the url value of that field is outdated
             $refresh = $url_array[url_var::REFRESH] ?? '';
@@ -374,6 +377,8 @@ class formula extends sandbox_code_id
         $lnk = null;
         if ($link_vars != []) {
             $lnk = new formula_link();
+            // the link is created together with the new formula, so it has no id yet
+            $link_vars[url_var::ACTION] = url_var::CRUD_CREATE;
             $lnk->url_mapper($link_vars, $msg, $dto);
             $lnk->set_formula($this);
         }

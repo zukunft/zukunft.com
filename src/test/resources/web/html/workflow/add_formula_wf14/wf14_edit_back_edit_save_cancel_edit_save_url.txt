@@ -9,7 +9,6 @@ http://localhost/http/view.php?k=System+Test+Formula&fe=%22percent%22+%3D+%28+%2
     "share": "1",
     "protection": "1",
     "id": "0",
-    "type": "",
     "mask_id": "formula_add",
     "step": "confirm"
 }

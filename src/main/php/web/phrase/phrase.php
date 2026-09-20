@@ -432,7 +432,7 @@ class phrase extends combine_named
     {
         if ($phr_lst === null) {
             $phr_lst = new phrase_list();
-            $phr_lst->load_related($this, foaf_direction::UP);
+            $phr_lst->load_related($this, foaf_direction::UP, $msg);
         }
         $result = new phrase_list();
         // for each "this is a <parent>" relation collect the other phrases that are also "a <parent>"
@@ -470,7 +470,7 @@ class phrase extends combine_named
             }
         } else {
             $lst = new phrase_list();
-            $lst->load_related($this, $direction);
+            $lst->load_related($this, $direction, $msg);
         }
         // limit the number of related phrases shown to keep the page-title category subtitle readable
         global $ui_sys;
@@ -598,7 +598,7 @@ class phrase extends combine_named
     function dsp_graph(foaf_direction $direction, user_message $msg, ?verb_list $link_types = null, array $url_arr = []): string
     {
         $phr_lst = new phrase_list();
-        if ($phr_lst->load_related($this, $direction, $link_types)) {
+        if ($phr_lst->load_related($this, $direction, $msg, $link_types)) {
             return $phr_lst->dsp_graph($this, $msg, $url_arr);
         } else {
             return '';

@@ -92,16 +92,16 @@ class term_list_ui_tests
         $search_lst->add($wrd_high->term(), $msg);
         $test_page .= $html->text_h2('body_search test');
         $test_page .= 'empty pattern shows no terms<br>';
-        $test_page .= $page->body_search() . '<br>';
+        $test_page .= $page->body_search($msg) . '<br>';
         $test_page .= 'terms matching the pattern with the highest impact first<br>';
-        $test_page .= $page->body_search([url_var::PATTERN => 'impact'], $search_lst) . '<br>';
+        $test_page .= $page->body_search($msg, [url_var::PATTERN => 'impact'], $search_lst) . '<br>';
         $test_page .= 'a pattern without a match offers to add the word<br>';
-        $test_page .= $page->body_search([url_var::PATTERN => word_names::TEST_ADD], new term_list()) . '<br>';
+        $test_page .= $page->body_search($msg, [url_var::PATTERN => word_names::TEST_ADD], new term_list()) . '<br>';
 
         // a search that finds nothing says so and offers the pattern as the name of a new word,
         // so that the user can create it in one click via the confirm page of the add workflow
         $test_name = 'a search without a result suggests the pattern as a new word';
-        $no_hit_html = $page->body_search([url_var::PATTERN => word_names::TEST_ADD], new term_list());
+        $no_hit_html = $page->body_search($msg, [url_var::PATTERN => word_names::TEST_ADD], new term_list());
         $t->assert_text_contains($test_name, $no_hit_html, word_names::TEST_ADD);
         $test_name = 'a search without a result says that nothing has been found';
         $no_hit_msg = $lib->msg_var_replace(
@@ -114,7 +114,7 @@ class term_list_ui_tests
         $hit_msg = $lib->msg_var_replace(
             $mtr->txt(msg_id::INFO_NO_SEARCH_RESULT), msg_id::VAR_PATTERN, 'impact');
         $t->assert_text_not_contains($test_name,
-            $page->body_search([url_var::PATTERN => 'impact'], $search_lst), $hit_msg);
+            $page->body_search($msg, [url_var::PATTERN => 'impact'], $search_lst), $hit_msg);
         $test_name = 'the add word button opens the add word mask';
         $t->assert_text_contains($test_name, $no_hit_html, url_var::MASK . url_var::EQ . views::WORD_ADD_DETAIL_ID);
         $test_name = 'the add word button asks to confirm the new word';
@@ -124,11 +124,11 @@ class term_list_ui_tests
         $t->assert_text_contains($test_name, $no_hit_html,
             url_var::NAME . url_var::EQ . urlencode(word_names::TEST_ADD));
         $test_name = 'a search with a result offers no add word button';
-        $hit_html = $page->body_search([url_var::PATTERN => 'impact'], $search_lst);
+        $hit_html = $page->body_search($msg, [url_var::PATTERN => 'impact'], $search_lst);
         $t->assert_text_not_contains($test_name, $hit_html, html_base::BS_BTN_SUCCESS);
         // the pattern is user input that the button reflects into the page
         $test_name = 'the add word button escapes a script tag in the pattern';
-        $xss_html = $page->body_search([url_var::PATTERN => '<script>alert(1)</script>'], new term_list());
+        $xss_html = $page->body_search($msg, [url_var::PATTERN => '<script>alert(1)</script>'], new term_list());
         $t->assert_false($test_name, str_contains($xss_html, '<script>'));
 
         // the search pattern is user input reflected into the search result title

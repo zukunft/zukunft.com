@@ -3265,6 +3265,10 @@ class sandbox_multi extends db_object_multi_user
                         ]);
                     } else {
                         log_debug('reloaded from db');
+                        // a request carries only the fields it changes, e.g. a value change without the
+                        // group description, so the other fields are taken over from the database row;
+                        // fill never overwrites a field that the request has set (see sandbox::save)
+                        $msg->merge($this->fill($db_rec, $this->get_user()));
                         if ($this->is_link_obj()) {
                             if (!$db_rec->load_objects($msg)) {
                                 $msg->add(msg_id::FAILED_RELOAD_OBJECT, [

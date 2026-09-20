@@ -434,6 +434,10 @@ class value_base extends sandbox_value
         if (($api_json[json_fields::NAME] ?? '') != '') {
             $this->grp()->set_name($api_json[json_fields::NAME]);
         }
+        // the description of a value is the description of its group (see sandbox_value::set_description)
+        if (array_key_exists(json_fields::DESCRIPTION, $api_json)) {
+            $this->set_description($api_json[json_fields::DESCRIPTION]);
+        }
         if (array_key_exists(json_fields::TIMESTAMP, $api_json)) {
             $time_stamp = $api_json[json_fields::TIMESTAMP];
             if (strtotime($time_stamp)) {
@@ -467,10 +471,16 @@ class value_base extends sandbox_value
             }
             */
         }
+        // the source selected in the value form, which the frontend sends by its id (see api_json_array)
+        if (array_key_exists(json_fields::SOURCE_ID, $api_json)) {
+            $this->set_source_id((int)$api_json[json_fields::SOURCE_ID]);
+        }
         if (array_key_exists(json_fields::SOURCE_NAME, $api_json)) {
-            $src = new source($this->get_user());
-            $src->set_name($api_json[json_fields::SOURCE_NAME]);
-            $this->source = $src;
+            // the name is added to the source of the id above, so that a json with both keeps the id
+            if ($this->source == null) {
+                $this->source = new source($this->get_user());
+            }
+            $this->source->set_name($api_json[json_fields::SOURCE_NAME]);
         }
 
         return $msg->is_ok();
@@ -2342,8 +2352,8 @@ class value_base extends sandbox_value
 
             }
 
-            // a name given by the user is written to the group row, the name generated from the phrases never
-            if ($msg->is_ok() and $this->grp()->name_given() != '') {
+            // a name given by the user or a description is written to the group row, the name generated from the phrases never
+            if ($msg->is_ok() and ($this->grp()->name_given() != '' or $this->get_description() !== null)) {
                 $this->grp()->save($msg);
             }
 

@@ -4,8 +4,6 @@ http://localhost/http/view.php?id=0&9m=1&p=999&fr=frp&m=19&z=0
 /http/view.php?id=0&9mask_id=entry_view&phrase_id=999&refresh=phrases_from_pattern&mask_id=value_add_phrases&step=no&
 {
     "id": "0",
-    "share": "",
-    "protection": "",
     "phrase_id": "999",
     "refresh": "phrases_from_pattern",
     "mask_id": "value_add_phrases",

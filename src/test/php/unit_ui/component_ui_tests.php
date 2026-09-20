@@ -371,6 +371,7 @@ class component_ui_tests
         $test_name = 'the component link title of a page url names the linked objects';
         $lnk_url = new component_link_ui();
         $lnk_url->url_mapper([
+            url_var::ID => test_const::LINK_ID,
             url_var::VIEW => (string)views::START_ID,
             url_var::COMPONENT => (string)components::WORD_ID
         ], $msg, $ui_sys);

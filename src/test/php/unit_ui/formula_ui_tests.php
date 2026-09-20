@@ -321,6 +321,7 @@ class formula_ui_tests
         $test_name = 'the formula link title of a page url names the linked objects';
         $lnk_url = new formula_link_ui();
         $lnk_url->url_mapper([
+            url_var::ID => test_const::LINK_ID,
             url_var::FORMULA => (string)formula_names::SCALE_TO_SEC_ID,
             url_var::PHRASE => (string)word_names::MINUTE_ID
         ], $msg, $ui_sys);
@@ -363,6 +364,7 @@ class formula_ui_tests
         $test_name = 'the link type and the order number of a page url are shown';
         $lnk_fld_url = new formula_link_ui();
         $lnk_fld_url->url_mapper([
+            url_var::ID => test_const::LINK_ID,
             url_var::TYPE => (string)formula_link_types::TIME_PERIOD_ID,
             url_var::FORMULA_LINK_PRIO => (string)test_const::FORMULA_LINK_ORDER_NBR,
             url_var::DESCRIPTION => test_const::FORMULA_LINK_COM,

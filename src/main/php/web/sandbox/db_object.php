@@ -213,13 +213,21 @@ class db_object extends TextIdObject
         return true;
     }
 
+    /**
+     * @param array $url_array the url of the request
+     * @return bool true if the url creates a new object, which therefore has no id yet: the create action
+     *              or an add view e.g. the add value view that the add icon of a page opens without the action
+     */
     function url_is_add_action(array $url_array): bool
     {
-        $is_add = false;
-        if (array_key_exists(url_var::ACTION, $url_array)) {
-            if ($url_array[url_var::ACTION] == url_var::CRUD_CREATE) {
-                $is_add = true;
-            }
+        // an explicit crud action overrules the mask, because e.g. the delete of a just added object
+        // is posted with the add mask of the object (see frontend::action_crud); a user reaction
+        // like save names no operation, so there the add mask decides
+        $action = $url_array[url_var::ACTION] ?? '';
+        if (in_array($action, url_var::CRUD_ACTIONS)) {
+            $is_add = ($action == url_var::CRUD_CREATE);
+        } else {
+            $is_add = in_array($url_array[url_var::MASK] ?? 0, views::ADD_MASKS_IDS);
         }
         return $is_add;
     }
@@ -425,7 +433,7 @@ class db_object extends TextIdObject
         $result = false;
 
         $api = new rest_call();
-        $json_array = $api->api_call_id($this->api_class(), $id, $data);
+        $json_array = $api->api_call_id($this->api_class(), $id, $msg, $data);
         if ($json_array) {
             $api_msg = new api_message();
             $body = $api_msg->validate($json_array);
@@ -580,8 +588,7 @@ class db_object extends TextIdObject
             $html->url_back($this::VIEW_EDIT_ID, $this->id()),
             $url_array
         );
-        $icon = '<' . html_base::I . ' ' . html_base::CLASS_HTML . '="' . icons::EDIT . '"></' . html_base::I . '>';
-        return $html->ref($url, $icon, $mtr->txt($this::MSG_EDIT), styles::HEADING_ICON_INLINE, true);
+        return $html->change_icon($url, icons::EDIT, $mtr->txt($this::MSG_EDIT));
     }
 
     /**
@@ -1311,6 +1318,7 @@ class db_object extends TextIdObject
             . ' ' . html_base::ACTION . '="' . $action . '"'
             . ' ' . html_base::METHOD . '="' . html_base::METHOD_POST . '"'
             . ' ' . html_base::ENCTYPE . '="multipart/form-data">'
+            . $html->form_user()
             . $frm_str
             . '</' . html_base::FORM . '>';
         return $result;
@@ -1319,6 +1327,7 @@ class db_object extends TextIdObject
     /**
      * create the HTML code to select a component
      * @param string $form the name of the html form
+     * @param user_message $msg with the requesting user for whom the components are selected
      * @param string $pattern the pattern used to filter the components by the name
      * @param int $id the id of the component selected until now
      * @param component_list $cmp_lst with the suggested components
@@ -1326,6 +1335,7 @@ class db_object extends TextIdObject
      */
     public function component_selector(
         string         $form,
+        user_message   $msg,
         string         $pattern,
         int            $id,
         component_list $cmp_lst
@@ -1348,11 +1358,13 @@ class db_object extends TextIdObject
     /**
      * create the html code to select a source
      * @param string $form the name of the html form
+     * @param user_message $msg with the requesting user for whom the sources are selected
      * @param string $pattern
      * @param source_list|null $src_lst the frontend cache with the configuration, the preloaded source and the cached objects
+     * @param bool $test_mode true to offer only the cached sources, because a snapshot is created without a backend call
      * @return string the html code to select a source
      */
-    public function source_selector(string $form, string $pattern, ?source_list $src_lst): string
+    public function source_selector(string $form, user_message $msg, string $pattern, ?source_list $src_lst, bool $test_mode = false): string
     {
         return $this->selector_not_defined('source_selector');
     }
@@ -1360,11 +1372,12 @@ class db_object extends TextIdObject
     /**
      * create the html code to select a reference
      * @param string $form the name of the html form
+     * @param user_message $msg with the requesting user for whom the references are selected
      * @param string $pattern
      * @param ref_list|null $ref_lst the references of the frontend cache to select from
      * @return string the html code to select a reference
      */
-    public function ref_selector(string $form, string $pattern, ?ref_list $ref_lst): string
+    public function ref_selector(string $form, user_message $msg, string $pattern, ?ref_list $ref_lst): string
     {
         return $this->selector_not_defined('ref_selector');
     }

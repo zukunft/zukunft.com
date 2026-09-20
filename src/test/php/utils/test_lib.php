@@ -134,6 +134,7 @@ use Zukunft\ZukunftCom\test\php\create\test_log;
 use Zukunft\ZukunftCom\test\php\create\test_refs;
 use Zukunft\ZukunftCom\test\php\create\test_sources;
 use Zukunft\ZukunftCom\test\php\create\test_triples;
+use Zukunft\ZukunftCom\test\php\create\test_users;
 use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\create\test_words;
 
@@ -184,7 +185,7 @@ class test_lib
     /**
      * create the frontend cache and fill it with all entries for the unit tests
      * TODO use it for the global ui_cac var
-     * @param user $usr the user for which the sample cache should be created
+     * @param user $usr the user that imports the views of the cache
      *                  for unit tests a user that is allowed to import code-ids should be used
      * @param test_cleanup $t the test environment e.g. the collect the errors
      * @param user_message $msg to collect the problems of the cache creation, which are asserted
@@ -196,7 +197,10 @@ class test_lib
         global $ui_sys;
 
         $dto_ui = new data_object_ui();
-        $dto_ui->usr = $this->cast_user($usr);
+        // the pages are rendered for the system test user, which sees the standard data, so the links
+        // of the test pages carry no user id; a test that needs e.g. the admin-only fields of the
+        // developer sets its session user itself (see the my tab tests)
+        $dto_ui->usr = $this->cast_user(test_users::user_sys_test());
         $dto_base_ui = new data_object_ui();
         $dto_base_ui->usr = $this->cast_user($usr);
 

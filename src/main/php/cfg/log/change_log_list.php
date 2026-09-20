@@ -893,6 +893,13 @@ class change_log_list extends list_db_read
             } else {
                 $result = 'ref';
             }
+        } elseif ($class == user::class) {
+            // e.g. the changes of a test user that the test cleanup removes (see test_base::cleanup_test_user)
+            if ($field_name != '') {
+                $result = $field_name . '_of_usr';
+            } else {
+                $result = 'usr';
+            }
         } elseif (is_subclass_of($class, type_object::class)) {
             // a type row e.g. a sys log function logs to the changes table like the named objects
             // (used by the test cleanup to remove the change log of a type test row); type changes

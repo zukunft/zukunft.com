@@ -560,7 +560,8 @@ class system_form extends component
         $result = '';
         $html = new html_base();
         $result .= $html->input(url_var::MASK, msg_id::FORM_FIELD_MASK, $msk_id, html_base::INPUT_HIDDEN);
-        $result .= $html->input(url_var::ID, msg_id::FORM_FIELD_ID, $id, html_base::INPUT_HIDDEN);
+        // e.g. the admin user edit names its user by url_var::USER_TO_EDIT, because url_var::USER is the logged-in user
+        $result .= $html->input(url_var::id_var($msk_id), msg_id::FORM_FIELD_ID, $id, html_base::INPUT_HIDDEN);
         // carry the '9'-prefixed back targets so cancel and the post-action redirect return to where the
         // user came from, the '7'-prefixed vars of the link that a new object gets with the same confirm
         // (only those that a link may name, see html_base::link_vars) and the origin mask that names the
@@ -1545,7 +1546,8 @@ class system_form extends component
         // guarded by class, because only a code id object has a code id and a mis-assigned
         // seed component must not stop the page with a fatal
         if ($dbo instanceof sandbox_code_id) {
-            if ($ui_sys?->usr?->can_see_code_id() ?? false) {
+            // read with ?? first, because a method call after ?-> does not guard an unset typed property
+            if (($ui_sys->usr ?? null)?->can_see_code_id() ?? false) {
                 if ($ui_sys->usr->can_set_code_id()) {
                     $result = $this->form_field_tracked(
                         url_var::CODE_ID,
@@ -1582,7 +1584,8 @@ class system_form extends component
         // guarded by class, because only a component has ui message links and a mis-assigned
         // seed component must not stop the page with a fatal
         if ($dbo instanceof component) {
-            if ($ui_sys?->usr?->can_see_code_id() ?? false) {
+            // read with ?? first, because a method call after ?-> does not guard an unset typed property
+            if (($ui_sys->usr ?? null)?->can_see_code_id() ?? false) {
                 $val_exp = $dbo->ui_msg_value_exception;
                 if ($ui_sys->usr->can_set_code_id()) {
                     $result = $this->form_field_tracked(
@@ -2368,38 +2371,50 @@ class system_form extends component
      * create the html code for the form element to select the source
      * @param db_object $dbo the frontend phrase object with the type used until now
      * @param string $form_name the name of the view which is also used for the html form name
+     * @param user_message $msg with the requesting user for whom the sources are selected
      * @param source_list|null $src_lst the frontend cache with the configuration, the preloaded source and the cached objects
      * @param string $pattern the selection pattern to filter a selection
+     * @param bool $test_mode true to offer only the cached sources, because a snapshot is created without a backend call
      * @return string the html code to select the source
      */
-    function form_source(db_object $dbo, string $form_name, ?source_list $src_lst, string $pattern = ''): string
+    function form_source(
+        db_object    $dbo,
+        string       $form_name,
+        user_message $msg,
+        ?source_list $src_lst,
+        string       $pattern = '',
+        bool         $test_mode = false
+    ): string
     {
-        return $dbo->source_selector($form_name, $pattern, $src_lst);
+        return $dbo->source_selector($form_name, $msg, $pattern, $src_lst, $test_mode);
     }
 
     /**
      * create the html code for the form element to select one or many sources
      * @param db_object $dbo the frontend phrase object with the type used until now
      * @param string $form_name the name of the view which is also used for the html form name
+     * @param user_message $msg with the requesting user for whom the sources are selected
      * @param source_list|null $src_lst the frontend cache with the configuration, the preloaded types and the cached objects
+     * @param bool $test_mode true to offer only the cached sources, because a snapshot is created without a backend call
      * @return string the html code to select the source
      */
-    function form_sources(db_object $dbo, string $form_name, ?source_list $src_lst): string
+    function form_sources(db_object $dbo, string $form_name, user_message $msg, ?source_list $src_lst, bool $test_mode = false): string
     {
-        return $dbo->source_selector($form_name, '', $src_lst);
+        return $dbo->source_selector($form_name, $msg, '', $src_lst, $test_mode);
     }
 
     /**
      * create the html code for the form element to select the reference
      * @param db_object $dbo the frontend phrase object with the type used until now
      * @param string $form_name the name of the view which is also used for the html form name
+     * @param user_message $msg with the requesting user for whom the references are selected
      * @param ref_list|null $ref_lst the references of the frontend cache to select from
      * @param string $pattern the selection pattern to filter a selection
      * @return string the html code to select the reference
      */
-    function form_ref(db_object $dbo, string $form_name, ?ref_list $ref_lst, string $pattern = ''): string
+    function form_ref(db_object $dbo, string $form_name, user_message $msg, ?ref_list $ref_lst, string $pattern = ''): string
     {
-        return $dbo->ref_selector($form_name, $pattern, $ref_lst);
+        return $dbo->ref_selector($form_name, $msg, $pattern, $ref_lst);
     }
 
     /**
@@ -2407,12 +2422,13 @@ class system_form extends component
      * TODO Prio 1 review
      * @param db_object $dbo the frontend phrase object with the type used until now
      * @param string $form_name the name of the view which is also used for the html form name
+     * @param user_message $msg with the requesting user for whom the references are selected
      * @param ref_list|null $ref_lst the references of the frontend cache to select from
      * @return string the html code to select the reference
      */
-    function form_refs(db_object $dbo, string $form_name, ?ref_list $ref_lst): string
+    function form_refs(db_object $dbo, string $form_name, user_message $msg, ?ref_list $ref_lst): string
     {
-        return $dbo->ref_selector($form_name, '', $ref_lst);
+        return $dbo->ref_selector($form_name, $msg, '', $ref_lst);
     }
 
     /**
@@ -2558,6 +2574,7 @@ class system_form extends component
      * create the html code for the form element to select the component
      * @param db_object $dbo the frontend object with the component used until now
      * @param string $form_name the name of the component which is also used for the html form name
+     * @param user_message $msg with the requesting user for whom the components are selected
      * @param string $pattern the pattern used to filter the components by the name
      * @param int $id the id of the component selected until now
      * @param component_list|null $cmp_lst cached list of components for fast selection
@@ -2566,18 +2583,20 @@ class system_form extends component
     function form_component(
         db_object       $dbo,
         string          $form_name,
+        user_message    $msg,
         string          $pattern,
         int             $id,
         ?component_list $cmp_lst
     ): string
     {
-        return $dbo->component_selector($form_name, $pattern, $id, $cmp_lst);
+        return $dbo->component_selector($form_name, $msg, $pattern, $id, $cmp_lst);
     }
 
     /**
      * create the html code for the form element to select one or many components
      * @param db_object $dbo the frontend object with the component used until now
      * @param string $form_name the name of the component which is also used for the html form name
+     * @param user_message $msg with the requesting user for whom the components are selected
      * @param string $pattern the pattern used to filter the components by the name
      * @param int $id the id of the component selected until now
      * @param component_list|null $msk_lst cached list of components for fast selection
@@ -2586,12 +2605,13 @@ class system_form extends component
     function form_components(
         db_object       $dbo,
         string          $form_name,
+        user_message    $msg,
         string          $pattern,
         int             $id,
         ?component_list $msk_lst
     ): string
     {
-        return $dbo->component_selector($form_name, $pattern, $id, $msk_lst);
+        return $dbo->component_selector($form_name, $msg, $pattern, $id, $msk_lst);
     }
 
     /**

@@ -154,7 +154,12 @@ class system_view_ui_tests
 
         $t->subheader($ts . 'link escaping');
         // a user supplied url e.g. of a source can neither break the href attribute
-        // nor inject a script and the link text is escaped by default
+        // nor inject a script and the link text is escaped by default;
+        // rendered for an anonymous user, because a link of this pod carries the id of the logged-in
+        // user of the request cache (see html_base::url_with_user), which a previous test may have left
+        global $ui_sys;
+        $usr_keep = $ui_sys->usr ?? null;
+        $ui_sys->usr = new user_ui();
         $test_name = 'the href attribute of a link is escaped';
         $t->assert($test_name,
             $html->ref('https://example.org/?a=1&b="x"', 'a name'),
@@ -168,6 +173,11 @@ class system_view_ui_tests
         $test_name = 'a relative url is linked';
         $t->assert_text_contains($test_name,
             $html->ref('/http/view.php?m=1', 'start'), '<a href="/http/view.php?m=1">');
+        if ($usr_keep == null) {
+            unset($ui_sys->usr);
+        } else {
+            $ui_sys->usr = $usr_keep;
+        }
 
         // the body of a system view whose data and actions are not yet implemented shows a hint
         $t->subheader($ts . 'not yet available');
@@ -487,12 +497,20 @@ class system_view_ui_tests
         // activate link with the user id and key is delivered by email
         $t->subheader($ts . 'login reset');
 
-        $url_array = [url_var::MASK => views::LOGIN_ACTIVATE_ID, url_var::ID => 1];
+        // the mail link names the user by user_to_edit, because u is always the logged-in user
+        $url_array = [url_var::MASK => views::LOGIN_ACTIVATE_ID, url_var::USER_TO_EDIT => 1];
         $reset_sent_html = $ui->url_to_html($url_array, $msg, $ui->dto, true);
 
         // the first assert after a page render carries the render time, so a page timeout is used
         $test_name = 'activate page after reset email shows activation key label';
         $t->assert_text_contains($test_name, $reset_sent_html, $mtr->txt(msg_id::ACTIVATE_SUBMIT), $t::TIMEOUT_LIMIT_PAGE);
+        $test_name = '... and says that the password is optional, because the page also confirms the email of a signup';
+        $t->assert_text_contains($test_name, $reset_sent_html, $mtr->txt(msg_id::ACTIVATE_PASSWORD_OPTIONAL));
+        $test_name = '... and posts the user of the mail link as user_to_edit';
+        $ue_field = $html->form_hidden(url_var::USER_TO_EDIT, '1');
+        $t->assert_text_contains($test_name, $reset_sent_html, $ue_field);
+        $test_name = 'the activate page of an old mail link with the id posts the user as user_to_edit too';
+        $t->assert_text_contains($test_name, $activate_html, $ue_field);
 
         $file_path = test_paths::HTML . test_paths::VIEW_FUNCTIONS . 'reset_email_sent';
         $test_name = 'activate page after reset email matches snapshot';
@@ -659,6 +677,9 @@ class system_view_ui_tests
                 // link to the pod like the views_by_object snapshots, so that a snapshot opened in
                 // the ide does not link to the ide preview server port (see test_base::link_to_pod)
                 $t->assert_html_page($test_name, $t->link_to_pod($html, THIS_URL), $file_path);
+                // each view is an own request, so a message of one view must not stop the next
+                // e.g. the value url mapper maps the number only if the message is ok
+                $msg->reset();
             }
         }
         // remove test files not used any more

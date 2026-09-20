@@ -327,7 +327,7 @@ class ui_list extends ui_base
         global $mtr;
 
         $html = new html_base();
-        $blocked = $this->change_blocked();
+        $blocked = html_base::change_blocked();
         $ctg_lst = $cfg?->ctg_lst ?? new phrase_list();
         // a user without login cannot save the triple, so the categories are not even read; the request
         // cache is filled by the unit tests only, so outside of them the categories come from the backend
@@ -650,8 +650,8 @@ class ui_list extends ui_base
         // a component of a view that the api sends without the link id cannot be changed by id
         if ($cmp->link_id != 0) {
             $html = new html_base();
-            $result = $html->icon_link(views::COMPONENT_LINK_EDIT_ID, $cmp->link_id,
-                    icons::EDIT, $mtr->txt(msg_id::COMPONENT_LINK_EDIT), $url_arr)
+            $result = $html->change_icon($html->url_back(views::COMPONENT_LINK_EDIT_ID, $cmp->link_id, $url_arr),
+                    icons::EDIT, $mtr->txt(msg_id::COMPONENT_LINK_EDIT))
                 . $html->icon_link(views::COMPONENT_LINK_DEL_ID, $cmp->link_id,
                     icons::DEL, $mtr->txt(msg_id::COMPONENT_UNLINK), $url_arr);
         }
@@ -856,7 +856,7 @@ class ui_list extends ui_base
 
         // a user without login cannot save the link, so the form is replaced by the reason and
         // the formulas are not even read
-        $blocked = $this->change_blocked();
+        $blocked = html_base::change_blocked();
 
         // the selector offers one selection list of formulas, not the few names that the list
         // above shows; if that list is full more formulas may exist, which the more entry says,
@@ -967,7 +967,7 @@ class ui_list extends ui_base
         $html = new html_base();
         $style = styles::HEADING_ICON_INLINE;
         $txt = $mtr->txt($tooltip);
-        if ($this->change_blocked()) {
+        if (html_base::change_blocked()) {
             $style .= ' ' . styles::STYLE_GREY;
             $txt = $mtr->txt($tooltip_blocked);
         }
@@ -998,15 +998,6 @@ class ui_list extends ui_base
         return $html->div($icon_html) . $html->div($pane, styles::TOGGLE_PANE, $pane_id);
     }
 
-    /**
-     * @return bool true if the requesting user cannot save a change; without a request cache the user is
-     *              unknown and treated like any user whose profile is not known (see user::is_blocked)
-     */
-    private function change_blocked(): bool
-    {
-        global $ui_sys;
-        return $ui_sys?->usr?->is_blocked() ?? false;
-    }
 
     /**
      * the formulas assigned to the ancestor phrases of a word, grouped per ancestor and shown as a
@@ -1052,7 +1043,7 @@ class ui_list extends ui_base
     {
         if ($phr_cac == null) {
             $phr_lst = new phrase_list();
-            $phr_lst->load_related($phr, $dir);
+            $phr_lst->load_related($phr, $dir, $msg);
         } else {
             //$vrb = new verb();
             //$vrb->id = verbs::IS_ID;

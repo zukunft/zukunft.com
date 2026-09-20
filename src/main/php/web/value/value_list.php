@@ -156,7 +156,7 @@ class value_list extends ListBase
         $data = array();
         // comma separated like every other id list of the api e.g. url_var::ID_LST
         $data[api::JSON_LIST_PHRASE_IDS] = implode(',', $phr_lst->ids());
-        $json_body = $rest->api_get(self::class, $data);
+        $json_body = $rest->api_get(self::class, $data, $msg);
         $msg->merge($this->api_mapper($json_body));
         if (!$this->is_empty()) {
             $result = true;

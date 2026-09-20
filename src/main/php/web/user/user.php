@@ -206,8 +206,15 @@ class user extends db_object
      */
     function url_mapper(array $url_array, user_message $msg, data_object|null $dto = null): user_message
     {
-        parent::url_mapper($url_array, $msg, $dto);
-        if ($msg->is_ok()) {
+        // the user to show or change is named by url_var::USER_TO_EDIT, because url_var::USER is the logged-in user
+        if (array_key_exists(url_var::USER_TO_EDIT, $url_array)) {
+            $url_array[url_var::ID] = $url_array[url_var::USER_TO_EDIT];
+        }
+        $map_msg = new user_message($msg->usr); // the problems of the parent mapping, merged into $msg right away
+        parent::url_mapper($url_array, $map_msg, $dto);
+        $msg->merge($map_msg);
+        // the own fields depend on the parent mapping e.g. of the id, not on an unrelated earlier error
+        if ($map_msg->is_ok()) {
             if (array_key_exists(url_var::USERNAME, $url_array)) {
                 if ($url_array[url_var::USERNAME] != null) {
                     $this->name = $url_array[url_var::USERNAME];
@@ -472,6 +479,36 @@ class user extends db_object
             return true;
         }
         return $this->profile_id == $ui_sys->typ_lst_cache->usr_pro->id(user_profiles::IP_ONLY);
+    }
+
+    /**
+     * @return int the user id that the page and api urls carry as url_var::USER, 0 for a user who has not
+     *             logged in or a system user, because both see the standard data (see uses_standard_data)
+     */
+    function id_for_url(): int
+    {
+        $result = 0;
+        if (!$this->uses_standard_data()) {
+            $result = $this->id();
+        }
+        return $result;
+    }
+
+    /**
+     * @return bool true if the pages of this user show the standard data without user overwrites,
+     *              because the profile is one of user_profiles::STANDARD_DATA e.g. an ip or the system user
+     */
+    function uses_standard_data(): bool
+    {
+        global $ui_sys;
+        // like is_ip_only a user whose profile cannot be checked yet is assumed to be the most restricted
+        $result = true;
+        $pro_lst = $ui_sys?->typ_lst_cache?->usr_pro;
+        if ($this->profile_id > 0 and $pro_lst != null) {
+            $code_id = $pro_lst->get($this->profile_id)?->code_id;
+            $result = in_array($code_id, user_profiles::STANDARD_DATA);
+        }
+        return $result;
     }
 
     /**
@@ -840,7 +877,7 @@ class user extends db_object
         if ($usr_id <= 0) {
             return $html->dsp_err($mtr->txt(msg_id::ACTIVATE_ERR_MISSING_ID));
         }
-        $form_str = $html->form_hidden(url_var::ID, (string)$usr_id);
+        $form_str = $html->form_hidden(url_var::USER_TO_EDIT, (string)$usr_id);
         if ($key !== '') {
             $form_str .= $html->form_hidden(url_var::POST_KEY, $key);
         } else {
@@ -848,6 +885,7 @@ class user extends db_object
             $form_key .= $html->form_input(html_base::INPUT_TEXT, url_var::POST_KEY);
             $form_str .= $html->p($form_key);
         }
+        $form_str .= $html->p($mtr->txt(msg_id::ACTIVATE_PASSWORD_OPTIONAL));
         $form_pw = $mtr->txt(msg_id::FORM_NAME_PASSWORD) . $html->br();
         // optional
         // $form_pw .= $html->form_input_password(url_var::USER_PASSWORD, $mtr->txt(msg_id::FORM_SHOW_PASSWORD), html_base::AUTOCOMPLETE_NEW_PW);
@@ -909,12 +947,12 @@ class user extends db_object
             // display the user fields using a table and not using px in css to be independent of any screen solution
             // the same title as the user default view builds with the system_title_with_object_name component
             $header = $html->text_h2(msg_id::SYSTEM_TITLE_USER->text() . ' "' . $html->esc($this->name) . '"');
-            $hidden_fields = $html->form_hidden("id", $this->id);
+            $hidden_fields = $html->form_hidden(url_var::USER_TO_EDIT, $this->id);
             // the calling page travels with the form as the '9'-prefixed hidden fields
             foreach (html_base::back_url_array($url_arr) as $key => $val) {
                 $hidden_fields .= $html->form_hidden($key, (string)$val);
             }
-            $detail_fields = $html->form_text(url_var::USER, $this->name, msg_id::FORM_FIELD_USERNAME);
+            $detail_fields = $html->form_text(url_var::USERNAME, $this->name, msg_id::FORM_FIELD_USERNAME);
             $detail_fields .= $html->form_text(url_var::EMAIL, $this->email, msg_id::FORM_FIELD_USER_EMAIL);
             $detail_fields .= $html->form_text(url_var::USER_FIRST_NAME, $this->first_name, msg_id::FORM_FIELD_USER_FIRST_NAME);
             $detail_fields .= $html->form_text(url_var::USER_LAST_NAME, $this->last_name, msg_id::FORM_FIELD_USER_LAST_NAME);

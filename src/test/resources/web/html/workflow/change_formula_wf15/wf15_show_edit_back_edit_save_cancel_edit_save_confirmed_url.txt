@@ -4,8 +4,6 @@ http://localhost/http/view.php?id=996&k=System+Test+Formula&o=System+Test+Formul
 /http/view.php?id=996&name=System+Test+Formula&description=System+Test+Formula+Description&type=1&formula_text=%22percent%22+%3D+%28+%22this%22+-+%22prior%22+%29+%2F+%22prior%22&8id=996&8name=System+Test+Formula&8type=1&8formula_text=%22percent%22+%3D+%28+%22this%22+-+%22prior%22+%29+%2F+%22prior%22&9mask_id=formula_default&9id=996&mask_id=confirm_update&step=confirmed&
 {
     "id": "996",
-    "share": "",
-    "protection": "",
     "name": "System Test Formula",
     "description": "System Test Formula Description",
     "type": "1",
@@ -14,8 +12,6 @@ http://localhost/http/view.php?id=996&k=System+Test+Formula&o=System+Test+Formul
     "step": "confirmed",
     "url_part_original_data": {
         "id": "996",
-        "share": "",
-        "protection": "",
         "name": "System Test Formula",
         "description": "",
         "type": "1",

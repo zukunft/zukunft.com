@@ -111,7 +111,7 @@ class component_url_tests extends url_test_base
         $this->wf_start($wf_nbr, workflows::WF_ADD_COMPONENT, $this->t->usr1, components::TEST_ADD_ID, $do_it);
 
         // initial url with an empty component
-        $url_arr = test_components::component_new_url($this->msg);
+        $url_arr = test_components::component_new_url();
 
         $this->wf_id = 0;
         $this->wf_fixed_id = components::TEST_ADD_ID;
@@ -184,7 +184,7 @@ class component_url_tests extends url_test_base
         // the rendered buttons and the confirmed write target the real row (the snapshot files
         // normalize the id back to the fixed test id)
         $t_cmp = new test_components($this->t);
-        $url_arr = $t_cmp->component_add_url($this->msg);
+        $url_arr = test_components::component_add_url();
         $url_arr[url_var::ID] = $this->wf_id;
         // fix the values before the changes in the url TODO Prio 2 should be done by the process automatic
         $url_pre = html_base::pre_url_array($url_arr);
@@ -279,8 +279,7 @@ class component_url_tests extends url_test_base
         // initial url with the added component; the url carries the current db id of the component so
         // the confirmed delete targets the real row (the snapshot files normalize the id back to the
         // fixed test id)
-        $t_cmp = new test_components($this->t);
-        $url_arr = $t_cmp->component_add_url($this->msg);
+        $url_arr = test_components::component_add_url();
         $url_arr[url_var::ID] = $this->wf_id;
         // fix the values before the changes in the url TODO Prio 2 should be done by the process automatic
         $url_pre = html_base::pre_url_array($url_arr);

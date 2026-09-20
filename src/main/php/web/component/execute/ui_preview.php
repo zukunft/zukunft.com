@@ -45,6 +45,7 @@ include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::SANDBOX . 'sandbox.php';
 include_once html_paths::SANDBOX . 'sandbox_link.php';
 include_once html_paths::SANDBOX . 'sandbox_list.php';
+include_once html_paths::SANDBOX . 'sandbox_value.php';
 include_once html_paths::TYPES . 'type_object.php';
 include_once html_paths::USER . 'user.php';
 include_once html_paths::USER . 'user_message.php';
@@ -69,6 +70,7 @@ use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_link;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_list;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_value;
 use Zukunft\ZukunftCom\main\php\web\types\type_object;
 use Zukunft\ZukunftCom\main\php\web\user\user;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
@@ -177,6 +179,10 @@ class ui_preview extends ui_base
             $title = $mtr->txt($ui_msg_code_id);
             if ($dbo != null) {
                 $title .= ' ' . $this->object_name($dbo);
+            }
+            // a value has no name of its own, so its phrases are repeated as links like in the value page title
+            if ($dbo instanceof sandbox_value) {
+                $title .= ' ' . $dbo->grp->phrase_link_list();
             }
             // the confirm view object is not loaded from the db, so the name comes from the posted url
             $name = $url_array[url_var::NAME] ?? '';

@@ -78,6 +78,13 @@ class url_mapper
         if (array_key_exists(url_var::MASK, $std_array)) {
             $std_array[url_var::MASK] = $this->map_mask_to_std($std_array[url_var::MASK]);
         }
+        // e.g. the admin user edit names its user by USER_TO_EDIT, but every object is loaded by its id
+        // (html_base::url_with_id_var names it by USER_TO_EDIT again in the urls of the page)
+        $id_var = url_var::id_var($std_array[url_var::MASK] ?? 0);
+        if ($id_var != url_var::ID and array_key_exists($id_var, $std_array)) {
+            $std_array[url_var::ID] = $std_array[$id_var];
+            unset($std_array[$id_var]);
+        }
         return $std_array;
     }
 

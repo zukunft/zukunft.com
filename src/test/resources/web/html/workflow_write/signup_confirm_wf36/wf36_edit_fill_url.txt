@@ -1,0 +1,15 @@
+GET
+http://localhost/http/view.php?un=System+Test+Signup+User&um=system.test.signup%40zukunft.com&uw=%2A%2A%2A&uwr=%2A%2A%2A&9m=1&m=13&z=1&submit=
+/http/view.php?un=System+Test+Signup+User&um=system.test.signup%40zukunft.com&uw=%2A%2A%2A&uwr=%2A%2A%2A&9m=1&m=13&z=1&submit=
+/http/view.php?username=System+Test+Signup+User&email=system.test.signup%40zukunft.com&password=%2A%2A%2A&re_password=%2A%2A%2A&9mask_id=entry_view&mask_id=signup&step=confirm&
+{
+    "username": "System Test Signup User",
+    "email": "system.test.signup@zukunft.com",
+    "password": "***",
+    "re_password": "***",
+    "mask_id": "signup",
+    "step": "confirm",
+    "url_part_back": {
+        "mask_id": "entry_view"
+    }
+}

@@ -12,6 +12,15 @@ A proper issue ticket should be created for these TODOs notes:
     TODO Release 0.0.3
     TODO target approche to finish frontend: small commits and final solution
 
+    TODO formula add / edit
+    TODO use case PV calculator
+
+    ->  launch
+
+    TODO test on smartvote for initiatives, CBAM, SNSF decitions
+
+    TODO Release 0.0.4
+
     TODO create a carantane and archive database with the same structure as the main database
          access the databases with the $db_car and $db_arc connection vars
          use the functions move_to_archive and move_to_caratane to move data
@@ -84,8 +93,6 @@ A proper issue ticket should be created for these TODOs notes:
     TODO in import calculate the result values once based on the data_object and report an error if the result values cannot be reproduced and add a sample json for the fail test to src/test/resources/import/inconsistency_tests
          after data import check that the result values can be reproduced
 
-
-    TODO Release 0.0.4
 
     TODO add an auto fallback path to a single "too much trafic" frontpage
          The step towards this path are

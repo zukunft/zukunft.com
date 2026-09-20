@@ -1,5 +1,11 @@
 # pending - list of planned llm prompts with prio 1
 
+## email accounts
+
+add to .env (.env.example) a system@zukunft.com email account that is used to email admin@zukunft.com any time a system error has accused but max 5 (config.yaml parameter) emails per day.
+
+add to  .env (.env.example) a noreply@zukunft.com email account that is used to send non signup messages to the user e.g. if they have reached a top ranking in the user trust list 
+
 ## add value
 
 split the 'system form phrase value line' component into separate components if possible e.g. one component for the 'selected phrases', the 'add phrase selector' the 'find and select phrase button' and the 'value type selector' 

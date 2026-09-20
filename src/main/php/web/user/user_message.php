@@ -396,17 +396,4 @@ class user_message extends Message
         return $this->msg_var_lst;
     }
 
-    /**
-     * combine the status of two user messages and assume the worst
-     * TODO Prio 2 make it private
-     * @param user_message|Message $msg_to_add the user messages that should be combined with this user message
-     * @return void
-     */
-    function combine_status(user_message|Message $msg_to_add): void
-    {
-        if (!$msg_to_add->is_ok()) {
-            $this->msg_status = msg_id::NOK;
-        }
-    }
-
 }

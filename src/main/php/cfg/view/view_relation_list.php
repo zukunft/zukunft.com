@@ -235,8 +235,8 @@ class view_relation_list extends sandbox_link_list
      */
     function add_by_key(
         view_relation|db_object_seq_id|TextIdObject|null $to_add,
-        bool                                      $allow_duplicates = false,
-        Message                                   $msg = new Message()
+        bool                                             $allow_duplicates = false,
+        Message                                          $msg = new Message()
     ): bool
     {
         $added = false;

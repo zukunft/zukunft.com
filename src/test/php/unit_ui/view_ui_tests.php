@@ -372,6 +372,7 @@ class view_ui_tests
         global $ui_sys;
         $trm_msk_url = new term_view_ui();
         $trm_msk_url->url_mapper([
+            url_var::ID => test_const::LINK_ID,
             url_var::VIEW => (string)views::START_ID,
             url_var::TERM => (string)(word_names::MATH_ID * 2 - 1)
         ], $msg, $ui_sys);
@@ -405,6 +406,7 @@ class view_ui_tests
         $test_name = 'the view relation title of a page url names the linked views';
         $mrl_url = new view_relation_ui();
         $mrl_url->url_mapper([
+            url_var::ID => test_const::LINK_ID,
             url_var::VIEW_PARENT => (string)views::START_ID,
             url_var::VIEW_CHILD => (string)views::WORD_ID
         ], $msg, $ui->dto);

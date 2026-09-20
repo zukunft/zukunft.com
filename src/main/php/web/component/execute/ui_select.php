@@ -682,7 +682,7 @@ class ui_select
             $cache = $cfg?->phrase_list() ?? new phrase_list();
             $matches = $cache->filter_by_name_start($pattern, $msg);
         } else {
-            $matches->get_by_pattern($pattern);
+            $matches->get_by_pattern($msg, $pattern);
         }
         return $matches;
     }

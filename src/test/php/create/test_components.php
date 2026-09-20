@@ -667,10 +667,9 @@ class test_components extends test_objects
      *
      * @return array the url parameters of a component that is not yet created
      */
-    static function component_new_url(user_message_ui $msg): array
+    static function component_new_url(): array
     {
-        $cmp_ui = new component_ui();
-        return $cmp_ui->to_url_array($msg);
+        return [url_var::ID => 0];
     }
 
     /**
@@ -679,10 +678,9 @@ class test_components extends test_objects
      *
      * @return array the component url parameters of the added test component
      */
-    function component_add_url(user_message_ui $msg): array
+    static function component_add_url(): array
     {
-        $cmp_ui = new component_ui($this->component_add()->api_json());
-        return $cmp_ui->to_url_array($msg);
+        return [url_var::ID => 0, url_var::NAME => components::TEST_ADD_NAME];
     }
 
     /**
@@ -718,8 +716,7 @@ class test_components extends test_objects
      */
     function fill_url_array(int $id): array
     {
-        $msg = new user_message_ui();
-        $url_arr = $this->component_add_url($msg);
+        $url_arr = self::component_add_url();
         // the workflow step adds the current db id of the test component, so drop the factory id
         unset($url_arr[url_var::ID]);
         $url_arr[url_var::STYLE] = view_styles::COL_SM_8_ID;

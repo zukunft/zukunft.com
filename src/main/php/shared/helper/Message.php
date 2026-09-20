@@ -90,7 +90,9 @@ class Message
      */
     function set_not_ok(): void
     {
-        if ($this->msg_status < msg_id::NOK) {
+        // a lower status is worse (e.g. msg_id::ERROR < msg_id::NOK < msg_id::OK),
+        // so only a better status is replaced and an already worse one is kept
+        if ($this->msg_status > msg_id::NOK) {
             $this->msg_status = msg_id::NOK;
         }
     }
@@ -101,7 +103,7 @@ class Message
      */
     function set_error(): void
     {
-        if ($this->msg_status < msg_id::ERROR) {
+        if ($this->msg_status > msg_id::ERROR) {
             $this->msg_status = msg_id::ERROR;
         }
     }
@@ -112,7 +114,7 @@ class Message
      */
     function set_warning(): void
     {
-        if ($this->msg_status < msg_id::WARNING) {
+        if ($this->msg_status > msg_id::WARNING) {
             $this->msg_status = msg_id::WARNING;
         }
     }
@@ -221,6 +223,19 @@ class Message
     /*
      * modify
      */
+
+    /**
+     * combine the status of two messages and assume the worst: an added message that is not ok makes this
+     * message at least not ok, an error of either message is kept (a lower status is worse)
+     * @param Message $msg_to_add the message whose status is combined with the status of this message
+     * @return void
+     */
+    function combine_status(Message $msg_to_add): void
+    {
+        if (!$msg_to_add->is_ok()) {
+            $this->msg_status = min($this->msg_status, $msg_to_add->msg_status, msg_id::NOK);
+        }
+    }
 
     /**
      * combine the given message with this message

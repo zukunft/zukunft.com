@@ -4734,6 +4734,24 @@ class test_base
     }
 
     /**
+     * delete a test user and its change log entries, so that no change log entry points to the deleted
+     * user; the delete itself is logged with the user name, so the name must start with TEST_ROW_NAME_PART
+     *
+     * @param string $name the reserved test name of the user e.g. users::TEST_SIGNUP_NAME
+     * @return void
+     */
+    function cleanup_test_user(string $name): void
+    {
+        $usr = new user();
+        $usr->load_by_name($name, new user_message($this->usr_system));
+        if ($usr->id() != 0) {
+            $this->delete_change_log_of_obj(user::class, $usr->id());
+        }
+        $this->write_named_cleanup_user($name, $this->usr_system);
+        $this->cleanup_change_log_deleted();
+    }
+
+    /**
      * remove all remaining link test rows without test
      *
      * @param sandbox_link $lnk the link object that should be deleted

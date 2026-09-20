@@ -555,7 +555,7 @@ class word_write_url_tests extends word_url_tests
         $this->logout();
         $usr_keep = $this->msg->usr;
         $this->msg->usr = null;
-        $url_arr = test_words::word_add_url($this->msg);
+        $url_arr = test_words::word_add_url();
         $url_arr[url_var::ID] = $this->wf_id;
         $html = $this->assert_step(workflows::SHOW, $url_arr, views::WORD_ID);
         $test_name = 'the word page without a login shows the word';
@@ -645,7 +645,8 @@ class word_write_url_tests extends word_url_tests
     }
 
     /**
-     * log in the given user with the fixed test password and report the result
+     * log in the given user with the fixed test password via the login action of the login form, like
+     * the browser, so the session vars are set by frontend::start_user_session, and report the result
      *
      * @param test_cleanup $t the test environment
      * @param string $test_name the name of the login check shown in the test log
@@ -654,13 +655,19 @@ class word_write_url_tests extends word_url_tests
      */
     private function login_as(test_cleanup $t, string $test_name, string $usr_name): user
     {
-        $login_msg = new user_message();
+        $login_url = [
+            url_var::MASK => views::LOGIN_ID,
+            url_var::USERNAME => $usr_name,
+            url_var::USER_PASSWORD => users::TEST_USER_PASSWORD,
+        ];
+        $login_msg = new user_message_ui();
         $db_usr = new user();
-        $db_usr->login($usr_name, users::TEST_USER_PASSWORD, $login_msg);
+        $this->ui->url_to_action($login_url, $db_usr, $login_msg, $this->ui->dto, true);
         // the bcrypt password check is intentionally slow, so it is not charged to the assert timing
         $t->reset_section_timer();
         // assert via the login message so a failed login shows the reason, not just a false
         $t->assert_msg($test_name, $login_msg);
+        $t->assert($test_name . ' for the next requests', $_SESSION[url_var::SESSION_USER_ID] ?? 0, $db_usr->id());
         return $db_usr;
     }
 

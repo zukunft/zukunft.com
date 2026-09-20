@@ -109,7 +109,8 @@ class ui_base
      */
     function num_value(user_message $msg, ?db_object $dbo = null): string
     {
-        return $dbo->value($msg);
+        // a value object without a value e.g. a result that has not yet been calculated shows nothing
+        return (string)($dbo?->value($msg) ?? '');
     }
 
     /**

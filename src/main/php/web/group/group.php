@@ -334,8 +334,8 @@ class group extends sandbox_named
     }
 
     /**
-     * the names of the phrases of the group as pure text, also if a user has given the group a name,
-     * e.g. for a value, which is shown by its phrases and only by the given name if no phrase has a name (see name_only)
+     * the names of the phrases of the group as pure text, or the given name if no phrase has a name (see name_only),
+     * e.g. for a value, which is shown by its phrases
      * @param phrase_list|null $phr_lst_exclude list of phrases already shown in the header and should be excluded
      * @param string $sep the separator between the phrase names
      * @return string the phrase names separated by $sep
@@ -389,8 +389,8 @@ class group extends sandbox_named
     }
 
     /**
-     * the names of the phrases of the group with the tooltip, also if a user has given the group a name,
-     * e.g. for a value, which is shown by its phrases and only by the given name if no phrase has a name (see name_only)
+     * the names of the phrases of the group with the tooltip, or the given name if no phrase has a name (see name_only),
+     * e.g. for a value, which is shown by its phrases
      * @param phrase_list|null $phr_lst_exclude list of phrases already shown in the header and should be excluded
      * @param string $sep the separator between the phrase names
      * @return string the html code of the phrase names with their tooltips
@@ -440,9 +440,9 @@ class group extends sandbox_named
     }
 
     /**
-     * TODO Prio 2 review because actually the given group name should have priority
-     * the phrases of the group as links, also if a user has given the group a name,
-     * e.g. for a value, which is shown by its phrases and only by the given name if no phrase has a name (see name_only)
+     * the phrases of the group as links, or the given name if no phrase has a name (see name_only),
+     * e.g. for a value, which is shown by its phrases
+     * TODO Prio 2 decide if the given group name should have priority over the phrases (then use name_link_list)
      * @param phrase_list|null $phr_lst_header list of phrases already shown in the header and don't need to be included in the result
      * @return string the html code of the phrase links
      */

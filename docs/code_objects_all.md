@@ -408,6 +408,7 @@ the object structure is:
 ├── pathsUi - set the path const for the frontend php scripts
 ├── frontendUi - $ui - the main html frontend application
 ├── data_objectUi - frontend cache object
+├── mail_senderUi - send the mails of the pod e.g. the signup confirmation
 ├── url_mapperUi - create human-readable or pod exchangeable urls
 ├── user_requestUi - bundle the context of a frontend user request
 ├── hist_logUi - display the past changes of an object

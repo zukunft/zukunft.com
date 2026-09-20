@@ -88,7 +88,7 @@ class job_list extends ListBase
     function load_by_user(user_message $msg): bool
     {
         $rest = new rest_call();
-        $json_body = $rest->api_get(self::class, $this->user_data($msg));
+        $json_body = $rest->api_get(self::class, $this->user_data($msg), $msg);
         return $this->api_load($json_body, $msg);
     }
 
@@ -102,7 +102,7 @@ class job_list extends ListBase
         $rest = new rest_call();
         $data = $this->user_data($msg);
         $data[url_var::JOB_LIST_ALL] = url_var::TRUE;
-        $json_body = $rest->api_get(self::class, $data);
+        $json_body = $rest->api_get(self::class, $data, $msg);
         return $this->api_load($json_body, $msg);
     }
 

@@ -37,10 +37,12 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 include_once paths::SHARED_TYPES . 'api_types.php';
 
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
+use Zukunft\ZukunftCom\main\php\web\component\execute\ui_base;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\result\result;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\create\test_results;
@@ -79,6 +81,21 @@ class result_ui_tests
         $test_name = 'a missing number returns an empty text';
         $res = new result();
         $t->assert($test_name, $res->val_formatted($msg), '');
+        $test_name = '... also as the numeric value component of a view, which would else stop the page';
+        $t->assert($test_name, new ui_base()->num_value($msg, $res), '');
+        $test_name = 'the number of the url is mapped even after an unrelated earlier error of the request';
+        $err_msg = new user_message();
+        $err_msg->add_message(msg_id::RESET_MAIL_SENT->value);
+        $res_map = new result();
+        $res_map->url_mapper([url_var::ID => 1, url_var::NUMERIC_VALUE => '5'], $err_msg);
+        $t->assert($test_name, $res_map->number(), 5.0);
+        $test_name = '... but not if the mapping of the result itself fails e.g. because the id is missing';
+        $res_no_id = new result();
+        $res_no_id->url_mapper([url_var::NUMERIC_VALUE => '5'], new user_message());
+        $t->assert_true($test_name, $res_no_id->number() === null);
+        $test_name = '... which shows a given number';
+        $api_json = $t_res->result_simple()->api_json([api_types::TEST_MODE, api_types::INCL_PHRASES]);
+        $t->assert_true($test_name, new ui_base()->num_value($msg, new result($api_json)) != '');
 
         // the overwrite form writes the changed number of the result without the confirm view
         $t->subheader($ts . 'value overwrite');

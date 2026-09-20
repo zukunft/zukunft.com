@@ -137,6 +137,10 @@ class workflows
     // 'login' in 'wf18_show_login_show' where the same page is shown again as a logged in user
     const string STEP_LOGIN = 'login';
 
+    // snapshot file name marker for the activation link with a wrong key, e.g. the 'wrong_key' in
+    // 'wf36_edit_fill_wrong_key_edit' where the link of the signup mail is opened with a wrong key
+    const string STEP_WRONG_KEY = 'wrong_key';
+
     // the add_triple_fail workflow name used for the snapshot folder and the test subheader:
     // the negative twin of add_triple where a save without a from and a to phrase keeps the add form
     // with a warning instead of confirming the invalid triple
@@ -319,6 +323,12 @@ class workflows
     const string WF_CHANGE_VALUE_GROUP = 'change_value_group';
     // the id of the current change_value_group workflow; increase it to add the next snapshot set
     const int WF_CHANGE_VALUE_GROUP_NBR = 35;
+
+    // the signup_confirm workflow name used for the snapshot folder and the test subheader: a new user
+    // signs up, gets the name profile and confirms the email with the activation link of the signup mail
+    const string WF_SIGNUP_CONFIRM = 'signup_confirm';
+    // the id of the current signup_confirm workflow; increase it to add the next snapshot set
+    const int WF_SIGNUP_CONFIRM_NBR = 36;
 
     /**
      * the user process step that a user reaction action triggers

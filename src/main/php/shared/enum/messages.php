@@ -593,6 +593,13 @@ enum messages: string
         . ' to list of user '
         . self::VAR_START . self::VAR_USER_LIST_NAME . self::VAR_END
         . ' list';
+    case LIST_CLASS_NOT_EXPECTED = 'trying to add "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" of class '
+        . self::VAR_START . self::VAR_TYPE . self::VAR_END
+        . ' to the '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' list';
     case FILL_WORD_WITH_OTHER = 'word "'
         . self::VAR_START . self::VAR_WORD_NAME . self::VAR_END
         . '" cannot be filled with '
@@ -1789,6 +1796,8 @@ enum messages: string
     case VALUE_ADD = 'value_add';
     // the tooltip of the greyed out value add icon of a user who cannot save a change
     case VALUE_ADD_BLOCKED = 'value_add_blocked';
+    // added to the tooltip of a greyed out add or edit icon of a user without login (see html_base::change_icon)
+    case CHANGE_LOGIN_REQUIRED = 'change_login_required';
     case VALUE_ADD_SIMILAR = 'value_add_similar';
     case VALUE_EDIT = 'value_edit';
     case VALUE_DEL = 'value_del';
@@ -1986,6 +1995,14 @@ enum messages: string
     case RESET_MAIL_KEY_INTRO = 'reset_mail_key_intro';
     case RESET_MAIL_LINK_INTRO = 'reset_mail_link_intro';
     case RESET_MAIL_IGNORE = 'reset_mail_ignore';
+    // the mail with the link that confirms the email address of a new account
+    case SIGNUP_MAIL_SUBJECT = 'signup_mail_subject';
+    case SIGNUP_MAIL_KEY_INTRO = 'signup_mail_key_intro';
+    case SIGNUP_MAIL_IGNORE = 'signup_mail_ignore';
+    case SIGNUP_MAIL_SENT = 'signup_mail_sent';
+    case SIGNUP_MAIL_FAILED = 'signup_mail_failed';
+    // the activation page confirms the email address and only optionally sets a new password
+    case ACTIVATE_PASSWORD_OPTIONAL = 'activate_password_optional';
     case SYSTEM_TITLE_LOGOUT = 'system_title_logout';
     case LOGOUT_NOTICE = 'logout_notice';
     case SYSTEM_TITLE_VALUE_DETAIL = 'system_title_value_detail';
@@ -2053,6 +2070,8 @@ enum messages: string
     case ALL_USER_OVERWRITES_NONE = 'all_user_overwrites_none';
     // shown if a user without login tries to change data, but the pod does not permit that
     case CHANGE_BLOCKED_FOR_IP_USER = 'change_blocked_for_ip_user';
+    // shown if the url names another user than the one of the session e.g. a link shared by another user
+    case URL_USER_NOT_SESSION_USER = 'url_user_not_session_user';
     // shown if an api write is rejected because it comes from a different origin (suspected csrf)
     case CHANGE_BLOCKED_CROSS_ORIGIN = 'change_blocked_cross_origin';
 

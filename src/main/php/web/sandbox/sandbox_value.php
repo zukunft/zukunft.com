@@ -141,15 +141,17 @@ class sandbox_value extends sandbox
      */
     function url_mapper(array $url_array, user_message $msg, data_object|null $dto = null): user_message
     {
-        parent::url_mapper($url_array, $msg, $dto);
+        $map_msg = new user_message($msg->usr); // the problems of the parent mapping, merged into $msg right away
+        parent::url_mapper($url_array, $map_msg, $dto);
+        $msg->merge($map_msg);
         // even if the value is added set already the id if possible because if might contain the phrase list
         if ($this->url_is_add_action($url_array)) {
             if (array_key_exists(url_var::ID, $url_array)) {
                 $this->set_id($url_array[url_var::ID]);
             }
         }
-        // the other normal fields
-        if ($msg->is_ok()) {
+        // the other normal fields, which depend on the parent mapping, not on an unrelated earlier error
+        if ($map_msg->is_ok()) {
             if (array_key_exists(url_var::PHRASE_LIST, $url_array)) {
                 $id_lst = explode(',', $url_array[url_var::PHRASE_LIST]);
                 if (count($id_lst) > 0) {
@@ -159,6 +161,10 @@ class sandbox_value extends sandbox
             // the name that the user has given to the group of the value
             if (array_key_exists(url_var::GROUP_NAME, $url_array)) {
                 $this->grp->set_name($url_array[url_var::GROUP_NAME]);
+            }
+            // the description of the value, which is the description of its group
+            if (array_key_exists(url_var::DESCRIPTION, $url_array)) {
+                $this->grp->set_description($url_array[url_var::DESCRIPTION]);
             }
             if (array_key_exists(url_var::NUMERIC_VALUE, $url_array)) {
                 $number = $url_array[url_var::NUMERIC_VALUE];
