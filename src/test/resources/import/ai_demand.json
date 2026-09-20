@@ -8,18 +8,10 @@
   "description": "Tests the question: if AI improves itself and becomes more efficient, will human demand still be large enough to keep the data centres busy - or will they be dismantled like the US railroad network? Three reference cases are encoded: the US rail network (peak 1916, ~45% of route miles removed while freight output grew), the 1990s fibre glut (only a small share of laid fibre was lit in 2002, yet the asset later carried the cloud), and the current AI build-out. The key modelled distinction is asset lifetime: long-lived shells, power hookups and land versus short-lived accelerators. Measured values carry a source; projections and structural estimates carry 'assumed value' with a numeric confidence (0-1) so weak assumptions surface first. All content in English per project convention. Patched to 0.0.2 with the competing scaffolding hypothesis: today's high token count per task is largely error-correction and missing memory rather than irreducible work, so per-task compute at fixed difficulty should fall as models and harnesses improve. The decisive quantity is therefore the ratio between the yearly fall in compute per task at fixed difficulty and the yearly rise in the difficulty of tasks delegated.",
   "words": [
     {
-      "name": "artificial intelligence",
-      "description": "the capability of computational systems to perform tasks typically associated with human intelligence.",
-      "refs": [
-        {
-          "name": "Artificial_intelligence",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q11660",
-          "type": "wikidata"
-        }
-      ]
+      "name": "intelligence"
+    },
+    {
+      "name": "artificial"
     },
     {
       "name": "compute",
@@ -81,18 +73,11 @@
       ]
     },
     {
-      "name": "data centre",
-      "description": "a building or group of buildings dedicated to housing computer systems and associated components.",
-      "refs": [
-        {
-          "name": "Data_center",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q182349",
-          "type": "wikidata"
-        }
-      ]
+      "name": "centre"
+    },
+    {
+      "name": "data",
+      "description": "information in a form that a computer can store and process."
     },
     {
       "name": "token",
@@ -270,18 +255,10 @@
       ]
     },
     {
-      "name": "capital expenditure",
-      "description": "funds used to acquire or upgrade physical assets.",
-      "refs": [
-        {
-          "name": "Capital_expenditure",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q1194164",
-          "type": "wikidata"
-        }
-      ]
+      "name": "capital"
+    },
+    {
+      "name": "expenditure"
     },
     {
       "name": "power",
@@ -317,15 +294,11 @@
       ]
     },
     {
-      "name": "dollar billion",
-      "type": "measure",
-      "description": "billions of US dollars.",
-      "refs": [
-        {
-          "name": "United_States_dollar",
-          "type": "wikipedia"
-        }
-      ]
+      "name": "dollar"
+    },
+    {
+      "name": "billion",
+      "type": "measure"
     },
     {
       "name": "trillion",
@@ -619,6 +592,49 @@
     }
   ],
   "triples": [
+    {
+      "name": "artificial intelligence",
+      "from": "intelligence",
+      "verb": "can be",
+      "to": "artificial"
+    },
+    {
+      "name": "data centre",
+      "from": "centre",
+      "verb": "of",
+      "to": "data",
+      "description": "a building or group of buildings dedicated to housing computer systems and associated components.",
+      "refs": [
+        {
+          "name": "Data_center",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q182349",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "capital expenditure",
+      "from": "expenditure",
+      "verb": "of",
+      "to": "capital"
+    },
+    {
+      "name": "dollar billion",
+      "from": "dollar",
+      "verb": "scaled by",
+      "to": "billion",
+      "type": "measure",
+      "description": "billions of US dollars.",
+      "refs": [
+        {
+          "name": "United_States_dollar",
+          "type": "wikipedia"
+        }
+      ]
+    },
     {
       "name": "measured value",
       "from": "measured",

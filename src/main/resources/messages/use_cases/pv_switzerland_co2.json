@@ -60,14 +60,10 @@
       ]
     },
     {
-      "name": "life cycle",
-      "description": "the whole life of a product from the raw materials over the use to the disposal, the scope of a life cycle assessment",
-      "refs": [
-        {
-          "name": "Life-cycle assessment",
-          "type": "wikipedia"
-        }
-      ]
+      "name": "cycle"
+    },
+    {
+      "name": "life"
     },
     {
       "name": "gram"
@@ -157,6 +153,19 @@
       "verb": "can be",
       "to": "avoided",
       "description": "the emission of the reference mix minus the emission of the new source, so the climate benefit of one kWh of the new source"
+    },
+    {
+      "name": "life cycle",
+      "from": "cycle",
+      "verb": "of",
+      "to": "life",
+      "description": "the whole life of a product from the raw materials over the use to the disposal, the scope of a life cycle assessment",
+      "refs": [
+        {
+          "name": "Life-cycle assessment",
+          "type": "wikipedia"
+        }
+      ]
     },
     {
       "from": "gram",

@@ -206,9 +206,11 @@ class files
     CONST string IMPORT_WORK = test_paths::IMPORT . 'work' . self::JSON;
 
     // json files with sample data that only the full load of test/test_full_load.php imports
+    CONST string IMPORT_AI_DEMAND = test_paths::IMPORT . 'ai_demand' . self::JSON;
     CONST string IMPORT_AI_MEDIATED_COMMUNICATION = test_paths::IMPORT . 'ai_mediated_communication' . self::JSON;
     CONST string IMPORT_ALMENDE = test_paths::IMPORT . 'almende' . self::JSON;
     CONST string IMPORT_ANSER_TRUST_VS_FEAR = test_paths::IMPORT . 'anser_trush_vs_fear' . self::JSON;
+    CONST string IMPORT_CAR_COLOR_INTEREST_RATE_CORRELATION = test_paths::IMPORT . 'car_color_interest_rate_correlation' . self::JSON;
     CONST string IMPORT_CARBON_LEAKAGE_EFFECT = test_paths::IMPORT . 'carbon_leakage_effect' . self::JSON;
     CONST string IMPORT_CBAM_ALU = test_paths::IMPORT . 'CBAM_alu' . self::JSON;
     CONST string IMPORT_CBAM_COSTS = test_paths::IMPORT . 'CBAM_costs' . self::JSON;
@@ -216,19 +218,24 @@ class files
     CONST string IMPORT_CBAM_SETUP = test_paths::IMPORT . 'CBAM_setup' . self::JSON;
     CONST string IMPORT_CLIMATE_MITIGATION_VS_DAMAGE_COSTS = test_paths::IMPORT . 'climate_mitigation_vs_damage_costs' . self::JSON;
     CONST string IMPORT_CO2_WASTE_KEZO = test_paths::IMPORT . 'co2_waste_kezo' . self::JSON;
+    CONST string IMPORT_DEMOCRATIZATION_OF_INTERNET_ATTENTION = test_paths::IMPORT . 'democratization_of_internet_attention' . self::JSON;
     CONST string IMPORT_EU_BANKING = test_paths::IMPORT . 'eu_banking' . self::JSON;
     CONST string IMPORT_EU_SOFTWARE_SOVEREIGNTY = test_paths::IMPORT . 'eu_software_sovereignty' . self::JSON;
     CONST string IMPORT_GDU_SAMPLE = test_paths::IMPORT . 'GDU_sample' . self::JSON;
     CONST string IMPORT_HEAT_AND_CLIMATE_POLITICS = test_paths::IMPORT . 'heat_and_climate_politics' . self::JSON;
     CONST string IMPORT_INCENTIVE_AND_TRUST = test_paths::IMPORT . 'incentive_and_trust' . self::JSON;
+    CONST string IMPORT_INNER_CONFLICTS = test_paths::IMPORT . 'inner_conflicts' . self::JSON;
     CONST string IMPORT_INTERNET_SOLUTION_PROBLEM_MATRIX = test_paths::IMPORT . 'internet_solution_problem_matrix' . self::JSON;
     CONST string IMPORT_METHANE_CLIMATE_METRICS = test_paths::IMPORT . 'methane_climate_metrics' . self::JSON;
     CONST string IMPORT_NPP_CH_COST_CALC = test_paths::IMPORT . 'npp_ch_cost_calc' . self::JSON;
     CONST string IMPORT_POWER_DEVOLUTION_PARADOX = test_paths::IMPORT . 'power_devolution_paradox' . self::JSON;
+    CONST string IMPORT_SWISS_LIVESTOCK_WITHOUT_IMPORT = test_paths::IMPORT . 'swiss_livestock_without_import' . self::JSON;
     CONST string IMPORT_TRUE_COSTS_CLIMATE_CHANGE = test_paths::IMPORT . 'true_costs_climate_change' . self::JSON;
+    CONST string IMPORT_WHY_ASK_WHY = test_paths::IMPORT . 'why_ask_why' . self::JSON;
     CONST string IMPORT_EDGE_FIXED_GENERATED_NAME = test_paths::IMPORT_EDGE_CASES . 'fixed_generated_name' . self::JSON;
     CONST string IMPORT_EDGE_FIXED_NAME = test_paths::IMPORT_EDGE_CASES . 'fixed_name' . self::JSON;
     CONST string IMPORT_EDGE_GENERATED_NAME = test_paths::IMPORT_EDGE_CASES . 'generated_name' . self::JSON;
+    CONST string IMPORT_LEFT_RIGHT_DATA = test_paths::IMPORT_PROTECTED_TOLERANCE . 'left_right_data' . self::JSON;
     CONST string IMPORT_REPUBLIK_TEST_INIT_DE = test_paths::IMPORT_PROTECTED_TOLERANCE . 'republik_test_init_de' . self::JSON;
     CONST string IMPORT_REPUBLIK_TEST_INIT_EN = test_paths::IMPORT_PROTECTED_TOLERANCE . 'republik_test_init_en' . self::JSON;
     CONST string IMPORT_V_DEM_SAMPLE = test_paths::IMPORT_V_DEM . 'v_dem_sample' . self::JSON;
@@ -366,6 +373,14 @@ class files
         self::IMPORT_WIKIDATA_TO_IMPORT_Q4917,
         self::IMPORT_CLIMATE_MITIGATION_VS_DAMAGE_COSTS,
         self::IMPORT_XBRL_SAMPLE_JSON,
+        // appended at the end, so that the id of the objects used by the system tests does not change
+        self::IMPORT_AI_DEMAND,
+        self::IMPORT_CAR_COLOR_INTEREST_RATE_CORRELATION,
+        self::IMPORT_DEMOCRATIZATION_OF_INTERNET_ATTENTION,
+        self::IMPORT_INNER_CONFLICTS,
+        self::IMPORT_LEFT_RIGHT_DATA,
+        self::IMPORT_SWISS_LIVESTOCK_WITHOUT_IMPORT,
+        self::IMPORT_WHY_ASK_WHY,
     ];
 
 

@@ -157,6 +157,7 @@ class coding_rule_tests
         //$this->json_no_measured_value_tests($t);
         $this->json_view_component_defined_tests($t);
         $this->json_section_covered_tests($t);
+        $this->json_file_loaded_tests($t);
 
         $t->subheader($ts . 'verb consistency');
         $this->verb_group_tests($t);
@@ -303,6 +304,43 @@ class coding_rule_tests
         sort($names);
 
         $test_name = 'every verb used by an import json is defined in verbs.json';
+        $t->assert($test_name, implode(', ', $names), '');
+    }
+
+    /**
+     * verify that an import list of test/test.php or test/test_full_load.php names every json file,
+     * or that at least one test reads it by its const: a seed file that no list names is never
+     * imported, so its words, values and views silently do not exist, which shows up much later as
+     * a missing phrase of another file, and a test import that no test reads is dead weight that
+     * still needs to be maintained with every format change
+     *
+     * both scanned folders are checked (json_validation::SCAN_PATHS), the main data of
+     * src/main/resources/messages and the test imports of src/test/resources/import, so the
+     * assertion names the same files as the report of test/json_validation.php; the files of the
+     * inconsistency tests and the wikidata cache are no import json and are skipped by the scan
+     *
+     * to fix a reported file add it to the matching import list, use it in a test or delete it
+     *
+     * @param test_cleanup $t the test harness used for the assertion
+     * @return void
+     */
+    function json_file_loaded_tests(test_cleanup $t): void
+    {
+        // the reason detection is shared with test/json_validation.php, see the measured value check
+        $chk = new json_validation();
+        $names = [];
+        foreach (json_validation::SCAN_PATHS as $sec => $path) {
+            foreach ($chk->json_file_list($path) as $file_path) {
+                $reason = $chk->not_loaded_reason($file_path);
+                if ($reason != '') {
+                    // the folder is named too, because the two folders can hold the same file name
+                    $names[] = $sec . ': ' . basename($file_path) . ' - ' . $reason;
+                }
+            }
+        }
+        sort($names);
+
+        $test_name = 'every import json is in an import list or read by a test';
         $t->assert($test_name, implode(', ', $names), '');
     }
 

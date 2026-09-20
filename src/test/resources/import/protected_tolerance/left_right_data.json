@@ -9,76 +9,260 @@
       "description": "Person holding a formal top position in an organisation or in politics; used here as the umbrella term covering the two disjoint populations 'corporate executive' and 'elected politician'"
     },
     {
-      "name": "corporate executive",
-      "description": "CEO, C-level officer or company founder; the population of the occupational-health strand"
+      "name": "executive",
+      "description": "Person of the top management of a company"
     },
     {
-      "name": "elected politician",
-      "description": "Member of a parliament or congress; the population of the Wojcik behavioural strand"
+      "name": "corporate",
+      "description": "Of a company as opposed to a public body"
     },
     {
-      "name": "general population",
-      "description": "Non-selected adult survey respondents; the population of the happiness-gap strand"
+      "name": "politician",
+      "description": "Person who holds or seeks a political office"
     },
     {
-      "name": "political orientation",
-      "description": "Position on the left-right (liberal-conservative) axis; in almost all cited studies measured by a single self-report Likert item, which is a known quality limit"
+      "name": "elected",
+      "description": "Chosen for an office by a vote"
     },
     {
-      "name": "political conservatism",
-      "description": "Right pole of political orientation; the direction in which the correlations below are signed"
+      "name": "population"
     },
     {
-      "name": "inner conflict",
-      "description": "Umbrella concept of the user's question: sustained internal distress. Deliberately NOT treated as one construct here, because the three strands operationalise it differently (see the three words below)"
+      "name": "general"
     },
     {
-      "name": "self-reported subjective well-being",
-      "description": "Life satisfaction or happiness as stated by the person about themselves; the construct of the happiness-gap strand"
+      "name": "orientation",
+      "description": "The direction in which a person leans on a scale of attitudes"
     },
     {
-      "name": "behaviourally displayed happiness",
-      "description": "Positive emotional language and genuineness of smiling, coded from text and photographs; the construct of the Wojcik strand"
+      "name": "political"
     },
     {
-      "name": "clinical depression symptoms",
-      "description": "Symptom load consistent with a depressive episode; the construct of the occupational-health strand"
+      "name": "conservatism",
+      "description": "Attitude that favours tradition and established norms"
+    },
+    {
+      "name": "conflict"
+    },
+    {
+      "name": "inner"
+    },
+    {
+      "name": "well-being",
+      "description": "How well a person judges their own life to be going"
+    },
+    {
+      "name": "subjective"
+    },
+    {
+      "name": "self-reported",
+      "description": "Stated by the person about themselves rather than observed"
+    },
+    {
+      "name": "happiness"
+    },
+    {
+      "name": "displayed",
+      "description": "Shown to others rather than only felt"
+    },
+    {
+      "name": "behavioural",
+      "description": "Read from what a person does rather than from what the person says"
+    },
+    {
+      "name": "depression"
+    },
+    {
+      "name": "clinical"
+    },
+    {
+      "name": "symptom",
+      "description": "An observable sign of a condition"
     },
     {
       "name": "self-enhancement",
       "description": "Tendency to describe oneself in an unrealistically favourable way; the proposed artefact mechanism linking the first two constructs"
     },
     {
-      "name": "dark triad",
-      "description": "Psychopathy, narcissism and Machiavellianism as subclinical personality traits"
+      "name": "dark",
+      "description": "Of a personality trait that harms others"
+    },
+    {
+      "name": "triad"
     },
     {
       "name": "sadism",
       "description": "Enjoyment of others' suffering; fourth trait of the dark tetrad"
     },
     {
-      "name": "correlation coefficient",
-      "description": "Pearson r between a trait and political conservatism"
+      "name": "correlation"
     },
     {
-      "name": "percentage point gap",
-      "description": "Difference in the share of respondents giving the top answer category, in percentage points"
+      "name": "coefficient"
     },
     {
-      "name": "prevalence share",
-      "description": "Share of a population showing a condition, in percent"
+      "name": "percentage",
+      "description": "A share given in hundredths"
     },
     {
-      "name": "sample size",
-      "description": "Number of individual respondents or cases"
+      "name": "point"
     },
     {
-      "name": "number of studies",
-      "description": "Count of primary studies entering a meta-analysis"
+      "name": "gap"
+    },
+    {
+      "name": "prevalence"
+    },
+    {
+      "name": "share"
+    },
+    {
+      "name": "sample",
+      "description": "The cases drawn from a population for a study"
+    },
+    {
+      "name": "size"
+    },
+    {
+      "name": "number"
+    },
+    {
+      "name": "study"
     },
     {
       "name": "probability",
       "description": "Subjective probability assigned to a proposition, used for the assumed values in this file"
+    }
+  ],
+  "triples": [
+    {
+      "name": "corporate executive",
+      "from": "executive",
+      "verb": "kind of",
+      "to": "corporate",
+      "description": "CEO, C-level officer or company founder; the population of the occupational-health strand"
+    },
+    {
+      "name": "elected politician",
+      "from": "politician",
+      "verb": "kind of",
+      "to": "elected",
+      "description": "Member of a parliament or congress; the population of the Wojcik behavioural strand"
+    },
+    {
+      "name": "general population",
+      "from": "population",
+      "verb": "kind of",
+      "to": "general",
+      "description": "Non-selected adult survey respondents; the population of the happiness-gap strand"
+    },
+    {
+      "name": "political orientation",
+      "from": "orientation",
+      "verb": "kind of",
+      "to": "political",
+      "description": "Position on the left-right (liberal-conservative) axis; in almost all cited studies measured by a single self-report Likert item, which is a known quality limit"
+    },
+    {
+      "name": "political conservatism",
+      "from": "conservatism",
+      "verb": "kind of",
+      "to": "political",
+      "description": "Right pole of political orientation; the direction in which the correlations below are signed"
+    },
+    {
+      "name": "inner conflict",
+      "from": "conflict",
+      "verb": "kind of",
+      "to": "inner",
+      "description": "Umbrella concept of the user's question: sustained internal distress. Deliberately NOT treated as one construct here, because the three strands operationalise it differently (see the three constructs below)"
+    },
+    {
+      "name": "subjective well-being",
+      "from": "well-being",
+      "verb": "kind of",
+      "to": "subjective"
+    },
+    {
+      "name": "self-reported subjective well-being",
+      "from": "subjective well-being",
+      "verb": "kind of",
+      "to": "self-reported",
+      "description": "Life satisfaction or happiness as stated by the person about themselves; the construct of the happiness-gap strand"
+    },
+    {
+      "name": "displayed happiness",
+      "from": "happiness",
+      "verb": "kind of",
+      "to": "displayed"
+    },
+    {
+      "name": "behaviourally displayed happiness",
+      "from": "displayed happiness",
+      "verb": "kind of",
+      "to": "behavioural",
+      "description": "Positive emotional language and genuineness of smiling, coded from text and photographs; the construct of the Wojcik strand"
+    },
+    {
+      "name": "clinical depression",
+      "from": "depression",
+      "verb": "kind of",
+      "to": "clinical"
+    },
+    {
+      "name": "clinical depression symptoms",
+      "from": "symptom",
+      "verb": "of",
+      "to": "clinical depression",
+      "description": "Symptom load consistent with a depressive episode; the construct of the occupational-health strand"
+    },
+    {
+      "name": "dark triad",
+      "from": "triad",
+      "verb": "kind of",
+      "to": "dark",
+      "description": "Psychopathy, narcissism and Machiavellianism as subclinical personality traits"
+    },
+    {
+      "name": "correlation coefficient",
+      "from": "coefficient",
+      "verb": "of",
+      "to": "correlation",
+      "description": "Pearson r between a trait and political conservatism"
+    },
+    {
+      "name": "percentage point",
+      "from": "point",
+      "verb": "of",
+      "to": "percentage"
+    },
+    {
+      "name": "percentage point gap",
+      "from": "gap",
+      "verb": "of",
+      "to": "percentage point",
+      "description": "Difference in the share of respondents giving the top answer category, in percentage points"
+    },
+    {
+      "name": "prevalence share",
+      "from": "share",
+      "verb": "of",
+      "to": "prevalence",
+      "description": "Share of a population showing a condition, in percent"
+    },
+    {
+      "name": "sample size",
+      "from": "size",
+      "verb": "of",
+      "to": "sample",
+      "description": "Number of individual respondents or cases"
+    },
+    {
+      "name": "number of studies",
+      "from": "number",
+      "verb": "of",
+      "to": "study",
+      "description": "Count of primary studies entering a meta-analysis"
     }
   ],
   "sources": [

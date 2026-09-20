@@ -3,106 +3,293 @@
   "description": "Internalized sexual stigma, identity conflict and hostility toward LGBTQ persons: evidence for and against the hypothesis discussed on 2026-08-29. Hypothesis (paraphrased from the German dialogue): conservative or heteronormative socialization, combined with a non-heterosexual orientation that contradicts the internalized norms, produces an inner conflict and psychological distress; the affected person then devalues or harms people who embody the unwanted part of the self, which may bring relief, protect self-esteem or restore group membership. The dialogue reformulated this as a largely unconscious chain (identity conflict -> threat to self-image and group membership -> shame and self-rejection -> stronger identification with the normative group -> demonstrative devaluation of LGBTQ persons -> temporary relief) and derived two testable predictions: the strength of the conflict between orientation and internalized norms should predict demonstrative devaluation, and the decisive predictor is homophobia combined with identity conflict rather than homophobia alone. Sourced findings are tagged 'measured value'; conjectures from the dialogue are tagged 'assumed value' with a confidence number. All DOIs were verified on 2026-08-29. Three sources were added beyond the dialogue (Adams 1996, MacInnis 2013, Weinstein 2012) because they test the popular attraction-based account directly.",
   "words": [
     {
-      "name": "sexual orientation",
-      "description": "enduring pattern of sexual or romantic attraction.",
-      "refs": [
-        {
-          "name": "Sexual_orientation",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q17888",
-          "type": "wikidata"
-        }
-      ]
+      "name": "orientation",
+      "description": "the direction in which a person leans on a scale of attitudes or of attraction"
     },
     {
-      "name": "sexual minority",
-      "description": "a person whose sexual orientation is not heterosexual; lesbian, gay, bisexual (LGB) or other."
+      "name": "sexual",
+      "description": "of sexuality"
     },
     {
-      "name": "LGBTQ person",
-      "description": "a lesbian, gay, bisexual, transgender or queer person; the target group of the hostility discussed."
+      "name": "minority"
     },
     {
-      "name": "heterosexual man",
-      "description": "a man who self-identifies as heterosexual; the participant group of most aggression experiments."
+      "name": "person"
     },
     {
-      "name": "gay man",
-      "description": "a man whose sexual orientation is homosexual."
+      "name": "LGBTQ",
+      "description": "lesbian, gay, bisexual, transgender or queer"
+    },
+    {
+      "name": "man"
+    },
+    {
+      "name": "heterosexual",
+      "description": "attracted to persons of the other sex"
+    },
+    {
+      "name": "gay",
+      "description": "attracted to persons of the same sex"
+    },
+    {
+      "name": "homosexual",
+      "description": "attracted to persons of the same sex"
+    },
+    {
+      "name": "stigma"
+    },
+    {
+      "name": "internalized",
+      "description": "adopted as one's own belief about oneself"
+    },
+    {
+      "name": "conflict"
+    },
+    {
+      "name": "internal"
+    },
+    {
+      "name": "disclosure",
+      "description": "the telling of something that was kept private"
+    },
+    {
+      "name": "identity"
+    },
+    {
+      "name": "socialization"
+    },
+    {
+      "name": "heteronormative",
+      "description": "treating heterosexuality as the only normal orientation"
+    },
+    {
+      "name": "value"
+    },
+    {
+      "name": "conservative",
+      "description": "favouring tradition and established norms"
+    },
+    {
+      "name": "fundamentalism",
+      "description": "the belief that one teaching is the inerrant truth"
+    },
+    {
+      "name": "religious",
+      "description": "of a religion"
+    },
+    {
+      "name": "authoritarianism",
+      "description": "the disposition to submit to an authority and to enforce its norms"
+    },
+    {
+      "name": "right-wing",
+      "description": "of the conservative side of the political axis"
+    },
+    {
+      "name": "norm"
+    },
+    {
+      "name": "role"
+    },
+    {
+      "name": "male"
+    },
+    {
+      "name": "antifemininity",
+      "description": "the demand that men avoid feminine traits and behaviour"
+    },
+    {
+      "name": "gender"
+    },
+    {
+      "name": "enforcement",
+      "description": "the punishment of a rule violation"
+    },
+    {
+      "name": "masculine",
+      "description": "of the traits that a society expects of men"
+    },
+    {
+      "name": "stress"
+    },
+    {
+      "name": "aggression",
+      "description": "behaviour meant to harm another person"
+    },
+    {
+      "name": "anti-gay",
+      "description": "directed against gay persons"
+    },
+    {
+      "name": "devaluation",
+      "description": "the treating of someone as worth less"
+    },
+    {
+      "name": "demonstrative",
+      "description": "done visibly so that others notice it"
+    },
+    {
+      "name": "distress",
+      "description": "a lasting negative mental state"
+    },
+    {
+      "name": "psychological",
+      "description": "of the mind"
+    },
+    {
+      "name": "guilt",
+      "description": "the feeling of having done wrong"
+    },
+    {
+      "name": "sex"
+    },
+    {
+      "name": "threat",
+      "description": "a situation that endangers something"
+    },
+    {
+      "name": "derogation",
+      "description": "the belittling of a person or a group"
+    },
+    {
+      "name": "outgroup",
+      "description": "a group that a person does not belong to"
+    },
+    {
+      "name": "ingroup",
+      "description": "the group that a person belongs to"
+    },
+    {
+      "name": "intragroup",
+      "description": "within one group"
+    },
+    {
+      "name": "relief",
+      "description": "the easing of a distress"
+    },
+    {
+      "name": "identification",
+      "description": "the sense of belonging to a group"
+    },
+    {
+      "name": "group"
+    },
+    {
+      "name": "normative"
+    },
+    {
+      "name": "attraction",
+      "description": "the pull toward another person"
+    },
+    {
+      "name": "same-sex",
+      "description": "directed at persons of the same sex"
+    },
+    {
+      "name": "repressed",
+      "description": "kept out of the own awareness"
+    },
+    {
+      "name": "account"
+    },
+    {
+      "name": "attraction-based",
+      "description": "explained by an attraction of the person"
+    },
+    {
+      "name": "formation"
+    },
+    {
+      "name": "reaction"
+    },
+    {
+      "name": "implicit",
+      "description": "measured without asking the person directly"
+    },
+    {
+      "name": "discrepancy",
+      "description": "a difference between two measures of the same thing"
+    },
+    {
+      "name": "implicit-explicit",
+      "description": "between the implicit and the stated measure"
+    },
+    {
+      "name": "support"
+    },
+    {
+      "name": "autonomy"
+    },
+    {
+      "name": "parental",
+      "description": "of the parents"
+    },
+    {
+      "name": "arousal",
+      "description": "the state of being sexually excited"
+    },
+    {
+      "name": "genital",
+      "description": "of the sexual organs"
+    },
+    {
+      "name": "stimulus"
+    },
+    {
+      "name": "erotic",
+      "description": "meant to cause sexual excitement"
+    },
+    {
+      "name": "strategy",
+      "description": "a plan to reach an aim"
+    },
+    {
+      "name": "conscious",
+      "description": "done with deliberate intention"
+    },
+    {
+      "name": "process"
+    },
+    {
+      "name": "unconscious"
+    },
+    {
+      "name": "homophobic",
+      "description": "showing negative affect toward homosexual persons"
+    },
+    {
+      "name": "nonhomophobic",
+      "description": "not showing negative affect toward homosexual persons"
+    },
+    {
+      "name": "sample",
+      "description": "the persons drawn from a population for a study"
+    },
+    {
+      "name": "correlation"
+    },
+    {
+      "name": "factor"
+    },
+    {
+      "name": "chance",
+      "description": "the probability that something happens"
+    },
+    {
+      "name": "death"
+    },
+    {
+      "name": "threshold"
+    },
+    {
+      "name": "measured"
+    },
+    {
+      "name": "assumed"
     },
     {
       "name": "lesbian",
       "description": "a woman whose sexual orientation is homosexual."
-    },
-    {
-      "name": "sexual stigma",
-      "description": "negative societal beliefs and attitudes toward sexual minorities."
-    },
-    {
-      "name": "internalized sexual stigma",
-      "description": "adoption of societal sexual stigma as one's own beliefs about oneself; also called internalized homophobia or internalized homonegativity.",
-      "refs": [
-        {
-          "name": "Internalized_homophobia",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "internal conflict",
-      "description": "distress of a sexual-minority person with their own orientation that interferes with fitting into a stigmatizing society; first factor of the PrISSM (Padilla 2025)."
-    },
-    {
-      "name": "disclosure conflict",
-      "description": "distress of a sexual-minority person based on the expectation of rejection when disclosing; second factor of the PrISSM (Padilla 2025)."
-    },
-    {
-      "name": "identity conflict",
-      "description": "conflict between a person's own sexual orientation and the norms the person has internalized; the core variable of the dialogue's hypothesis."
-    },
-    {
-      "name": "heteronormative socialization",
-      "description": "upbringing in an environment that treats heterosexuality as the only normal or acceptable orientation."
-    },
-    {
-      "name": "conservative values",
-      "description": "value orientation that emphasizes tradition, established norms and authority."
-    },
-    {
-      "name": "religious fundamentalism",
-      "description": "belief that one religious teaching contains the fundamental, inerrant truth; measured with the Religious Fundamentalism Scale."
-    },
-    {
-      "name": "right-wing authoritarianism",
-      "description": "personality dimension of submission to authority, aggression against norm violators and conventionalism (Altemeyer).",
-      "refs": [
-        {
-          "name": "Right-wing_authoritarianism",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q7334656",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "male role norms",
-      "description": "traditional norms of masculinity, e.g. antifemininity, status and toughness."
-    },
-    {
-      "name": "antifemininity norm",
-      "description": "the male role norm that men must avoid feminine traits and behaviour."
-    },
-    {
-      "name": "gender role enforcement",
-      "description": "punishment of persons who violate prescribed gender roles; interpretation of anti-gay aggression by Parrott 2009."
-    },
-    {
-      "name": "masculine gender role stress",
-      "description": "stress experienced when a man perceives a threat to his masculinity."
     },
     {
       "name": "homophobia",
@@ -123,98 +310,8 @@
       "description": "negative attitudes toward transgender persons."
     },
     {
-      "name": "anti-gay aggression",
-      "description": "physical or verbal aggression directed at gay men or other sexual minorities."
-    },
-    {
-      "name": "demonstrative devaluation",
-      "description": "public, visible derogation of LGBTQ persons that signals group membership; the outcome variable proposed by the dialogue."
-    },
-    {
-      "name": "psychological distress",
-      "description": "negative mental states such as low self-esteem, guilt, shame, loneliness or depression."
-    },
-    {
       "name": "self-esteem",
       "description": "a person's overall evaluation of their own worth."
-    },
-    {
-      "name": "sex guilt",
-      "description": "guilt feelings connected to one's own sexual behaviour."
-    },
-    {
-      "name": "self-esteem threat",
-      "description": "a situation that lowers self-regard, e.g. negative feedback from a high-status evaluator."
-    },
-    {
-      "name": "outgroup derogation",
-      "description": "devaluation of members of another group; can serve to protect self-esteem after threat."
-    },
-    {
-      "name": "ingroup derogation",
-      "description": "devaluation of members of one's own group."
-    },
-    {
-      "name": "intragroup aggression",
-      "description": "aggression between members of the same group."
-    },
-    {
-      "name": "psychological relief",
-      "description": "temporary reduction of distress; the hypothesized pay-off of derogation in the dialogue."
-    },
-    {
-      "name": "normative group identification",
-      "description": "strengthened identification with the majority or norm-setting group."
-    },
-    {
-      "name": "repressed same-sex attraction",
-      "description": "same-sex attraction that a person does not acknowledge; basis of the popular attraction-based account of homophobia."
-    },
-    {
-      "name": "attraction-based account",
-      "description": "the claim that homophobia stems from the homophobic person's own unacknowledged same-sex attraction."
-    },
-    {
-      "name": "reaction formation",
-      "description": "psychoanalytic defense in which an unacceptable impulse is expressed as its opposite.",
-      "refs": [
-        {
-          "name": "Reaction_formation",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q1191669",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "implicit sexual orientation",
-      "description": "sexual orientation assessed with a reaction-time task rather than self-report."
-    },
-    {
-      "name": "implicit-explicit discrepancy",
-      "description": "difference between self-reported and implicitly measured sexual orientation."
-    },
-    {
-      "name": "parental autonomy support",
-      "description": "parenting that allows children to explore and endorse their own values and identity."
-    },
-    {
-      "name": "genital arousal",
-      "description": "physiological sexual arousal measured by penile plethysmography."
-    },
-    {
-      "name": "homosexual erotic stimulus",
-      "description": "sexually explicit video showing male homosexual activity, used as experimental stimulus."
-    },
-    {
-      "name": "conscious strategy",
-      "description": "a deliberate plan, as opposed to an unconscious process."
-    },
-    {
-      "name": "unconscious process",
-      "description": "a psychological mechanism that operates without deliberate intention."
     },
     {
       "name": "mediation",
@@ -223,18 +320,6 @@
     {
       "name": "participant",
       "description": "one person in a study sample."
-    },
-    {
-      "name": "homophobic group",
-      "description": "participants classified as homophobic by a scale score."
-    },
-    {
-      "name": "nonhomophobic group",
-      "description": "participants classified as not homophobic by a scale score."
-    },
-    {
-      "name": "heterosexual sample",
-      "description": "participants who self-identify as heterosexual."
     },
     {
       "name": "study",
@@ -249,14 +334,6 @@
       "description": "one question of a psychological scale."
     },
     {
-      "name": "factor correlation",
-      "description": "correlation between two factors of a scale."
-    },
-    {
-      "name": "death chance threshold",
-      "description": "minimum probability of death from intragroup conflict at which ingroup derogation evolves in the Wu 2016 simulation."
-    },
-    {
       "name": "percent",
       "description": "one hundredth, scaled by 100 in formulas.",
       "type": "measure"
@@ -264,17 +341,408 @@
     {
       "name": "confidence",
       "description": "subjective probability (0 to 1) that a claim tagged as assumed value is true."
+    }
+  ],
+  "triples": [
+    {
+      "name": "sexual orientation",
+      "from": "orientation",
+      "verb": "kind of",
+      "to": "sexual",
+      "description": "enduring pattern of sexual or romantic attraction.",
+      "refs": [
+        {
+          "name": "Sexual_orientation",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q17888",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "sexual minority",
+      "from": "minority",
+      "verb": "kind of",
+      "to": "sexual",
+      "description": "a person whose sexual orientation is not heterosexual; lesbian, gay, bisexual (LGB) or other."
+    },
+    {
+      "name": "LGBTQ person",
+      "from": "person",
+      "verb": "kind of",
+      "to": "LGBTQ",
+      "description": "a lesbian, gay, bisexual, transgender or queer person; the target group of the hostility discussed."
+    },
+    {
+      "name": "heterosexual man",
+      "from": "man",
+      "verb": "kind of",
+      "to": "heterosexual",
+      "description": "a man who self-identifies as heterosexual; the participant group of most aggression experiments."
+    },
+    {
+      "name": "gay man",
+      "from": "man",
+      "verb": "kind of",
+      "to": "gay",
+      "description": "a man whose sexual orientation is homosexual."
+    },
+    {
+      "name": "sexual stigma",
+      "from": "stigma",
+      "verb": "kind of",
+      "to": "sexual",
+      "description": "negative societal beliefs and attitudes toward sexual minorities."
+    },
+    {
+      "name": "internalized sexual stigma",
+      "from": "sexual stigma",
+      "verb": "kind of",
+      "to": "internalized",
+      "description": "adoption of societal sexual stigma as one's own beliefs about oneself; also called internalized homophobia or internalized homonegativity.",
+      "refs": [
+        {
+          "name": "Internalized_homophobia",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "internal conflict",
+      "from": "conflict",
+      "verb": "kind of",
+      "to": "internal",
+      "description": "distress of a sexual-minority person with their own orientation that interferes with fitting into a stigmatizing society; first factor of the PrISSM (Padilla 2025)."
+    },
+    {
+      "name": "disclosure conflict",
+      "from": "conflict",
+      "verb": "of",
+      "to": "disclosure",
+      "description": "distress of a sexual-minority person based on the expectation of rejection when disclosing; second factor of the PrISSM (Padilla 2025)."
+    },
+    {
+      "name": "identity conflict",
+      "from": "conflict",
+      "verb": "of",
+      "to": "identity",
+      "description": "conflict between a person's own sexual orientation and the norms the person has internalized; the core variable of the dialogue's hypothesis."
+    },
+    {
+      "name": "heteronormative socialization",
+      "from": "socialization",
+      "verb": "kind of",
+      "to": "heteronormative",
+      "description": "upbringing in an environment that treats heterosexuality as the only normal or acceptable orientation."
+    },
+    {
+      "name": "conservative values",
+      "from": "value",
+      "verb": "kind of",
+      "to": "conservative",
+      "description": "value orientation that emphasizes tradition, established norms and authority."
+    },
+    {
+      "name": "religious fundamentalism",
+      "from": "fundamentalism",
+      "verb": "kind of",
+      "to": "religious",
+      "description": "belief that one religious teaching contains the fundamental, inerrant truth; measured with the Religious Fundamentalism Scale."
+    },
+    {
+      "name": "right-wing authoritarianism",
+      "from": "authoritarianism",
+      "verb": "kind of",
+      "to": "right-wing",
+      "description": "personality dimension of submission to authority, aggression against norm violators and conventionalism (Altemeyer).",
+      "refs": [
+        {
+          "name": "Right-wing_authoritarianism",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q7334656",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "role norm",
+      "from": "norm",
+      "verb": "of",
+      "to": "role"
+    },
+    {
+      "name": "male role norms",
+      "from": "role norm",
+      "verb": "kind of",
+      "to": "male",
+      "description": "traditional norms of masculinity, e.g. antifemininity, status and toughness."
+    },
+    {
+      "name": "antifemininity norm",
+      "from": "norm",
+      "verb": "of",
+      "to": "antifemininity",
+      "description": "the male role norm that men must avoid feminine traits and behaviour."
+    },
+    {
+      "name": "gender role",
+      "from": "role",
+      "verb": "kind of",
+      "to": "gender"
+    },
+    {
+      "name": "gender role enforcement",
+      "from": "enforcement",
+      "verb": "of",
+      "to": "gender role",
+      "description": "punishment of persons who violate prescribed gender roles; interpretation of anti-gay aggression by Parrott 2009."
+    },
+    {
+      "name": "masculine gender role",
+      "from": "gender role",
+      "verb": "kind of",
+      "to": "masculine"
+    },
+    {
+      "name": "masculine gender role stress",
+      "from": "stress",
+      "verb": "of",
+      "to": "masculine gender role",
+      "description": "stress experienced when a man perceives a threat to his masculinity."
+    },
+    {
+      "name": "anti-gay aggression",
+      "from": "aggression",
+      "verb": "kind of",
+      "to": "anti-gay",
+      "description": "physical or verbal aggression directed at gay men or other sexual minorities."
+    },
+    {
+      "name": "demonstrative devaluation",
+      "from": "devaluation",
+      "verb": "kind of",
+      "to": "demonstrative",
+      "description": "public, visible derogation of LGBTQ persons that signals group membership; the outcome variable proposed by the dialogue."
+    },
+    {
+      "name": "psychological distress",
+      "from": "distress",
+      "verb": "kind of",
+      "to": "psychological",
+      "description": "negative mental states such as low self-esteem, guilt, shame, loneliness or depression."
+    },
+    {
+      "name": "sex guilt",
+      "from": "guilt",
+      "verb": "of",
+      "to": "sex",
+      "description": "guilt feelings connected to one's own sexual behaviour."
+    },
+    {
+      "name": "self-esteem threat",
+      "from": "threat",
+      "verb": "of",
+      "to": "self-esteem",
+      "description": "a situation that lowers self-regard, e.g. negative feedback from a high-status evaluator."
+    },
+    {
+      "name": "outgroup derogation",
+      "from": "derogation",
+      "verb": "of",
+      "to": "outgroup",
+      "description": "devaluation of members of another group; can serve to protect self-esteem after threat."
+    },
+    {
+      "name": "ingroup derogation",
+      "from": "derogation",
+      "verb": "of",
+      "to": "ingroup",
+      "description": "devaluation of members of one's own group."
+    },
+    {
+      "name": "intragroup aggression",
+      "from": "aggression",
+      "verb": "kind of",
+      "to": "intragroup",
+      "description": "aggression between members of the same group."
+    },
+    {
+      "name": "psychological relief",
+      "from": "relief",
+      "verb": "kind of",
+      "to": "psychological",
+      "description": "temporary reduction of distress; the hypothesized pay-off of derogation in the dialogue."
+    },
+    {
+      "name": "group identification",
+      "from": "identification",
+      "verb": "of",
+      "to": "group"
+    },
+    {
+      "name": "normative group identification",
+      "from": "group identification",
+      "verb": "kind of",
+      "to": "normative",
+      "description": "strengthened identification with the majority or norm-setting group."
+    },
+    {
+      "name": "same-sex attraction",
+      "from": "attraction",
+      "verb": "kind of",
+      "to": "same-sex"
+    },
+    {
+      "name": "repressed same-sex attraction",
+      "from": "same-sex attraction",
+      "verb": "kind of",
+      "to": "repressed",
+      "description": "same-sex attraction that a person does not acknowledge; basis of the popular attraction-based account of homophobia."
+    },
+    {
+      "name": "attraction-based account",
+      "from": "account",
+      "verb": "kind of",
+      "to": "attraction-based",
+      "description": "the claim that homophobia stems from the homophobic person's own unacknowledged same-sex attraction."
+    },
+    {
+      "name": "reaction formation",
+      "from": "formation",
+      "verb": "of",
+      "to": "reaction",
+      "description": "psychoanalytic defense in which an unacceptable impulse is expressed as its opposite.",
+      "refs": [
+        {
+          "name": "Reaction_formation",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1191669",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "implicit sexual orientation",
+      "from": "sexual orientation",
+      "verb": "kind of",
+      "to": "implicit",
+      "description": "sexual orientation assessed with a reaction-time task rather than self-report."
+    },
+    {
+      "name": "implicit-explicit discrepancy",
+      "from": "discrepancy",
+      "verb": "kind of",
+      "to": "implicit-explicit",
+      "description": "difference between self-reported and implicitly measured sexual orientation."
+    },
+    {
+      "name": "autonomy support",
+      "from": "support",
+      "verb": "of",
+      "to": "autonomy"
+    },
+    {
+      "name": "parental autonomy support",
+      "from": "autonomy support",
+      "verb": "kind of",
+      "to": "parental",
+      "description": "parenting that allows children to explore and endorse their own values and identity."
+    },
+    {
+      "name": "genital arousal",
+      "from": "arousal",
+      "verb": "kind of",
+      "to": "genital",
+      "description": "physiological sexual arousal measured by penile plethysmography."
+    },
+    {
+      "name": "erotic stimulus",
+      "from": "stimulus",
+      "verb": "kind of",
+      "to": "erotic"
+    },
+    {
+      "name": "homosexual erotic stimulus",
+      "from": "erotic stimulus",
+      "verb": "kind of",
+      "to": "homosexual",
+      "description": "sexually explicit video showing male homosexual activity, used as experimental stimulus."
+    },
+    {
+      "name": "conscious strategy",
+      "from": "strategy",
+      "verb": "kind of",
+      "to": "conscious",
+      "description": "a deliberate plan, as opposed to an unconscious process."
+    },
+    {
+      "name": "unconscious process",
+      "from": "process",
+      "verb": "kind of",
+      "to": "unconscious",
+      "description": "a psychological mechanism that operates without deliberate intention."
+    },
+    {
+      "name": "homophobic group",
+      "from": "group",
+      "verb": "kind of",
+      "to": "homophobic",
+      "description": "participants classified as homophobic by a scale score."
+    },
+    {
+      "name": "nonhomophobic group",
+      "from": "group",
+      "verb": "kind of",
+      "to": "nonhomophobic",
+      "description": "participants classified as not homophobic by a scale score."
+    },
+    {
+      "name": "heterosexual sample",
+      "from": "sample",
+      "verb": "kind of",
+      "to": "heterosexual",
+      "description": "participants who self-identify as heterosexual."
+    },
+    {
+      "name": "factor correlation",
+      "from": "correlation",
+      "verb": "of",
+      "to": "factor",
+      "description": "correlation between two factors of a scale."
+    },
+    {
+      "name": "death chance",
+      "from": "chance",
+      "verb": "of",
+      "to": "death"
+    },
+    {
+      "name": "death chance threshold",
+      "from": "threshold",
+      "verb": "of",
+      "to": "death chance",
+      "description": "minimum probability of death from intragroup conflict at which ingroup derogation evolves in the Wu 2016 simulation."
     },
     {
       "name": "measured value",
+      "from": "measured",
+      "verb": "of",
+      "to": "value",
       "description": "a value taken from a verified source."
     },
     {
       "name": "assumed value",
+      "from": "assumed",
+      "verb": "of",
+      "to": "value",
       "description": "a conjecture or estimate, not directly measured; carries a confidence number."
-    }
-  ],
-  "triples": [
+    },
     {
       "name": "gay man is a sexual minority",
       "from": "gay man",

@@ -9,28 +9,106 @@
       "description": "the Swiss Confederation as a country"
     },
     {
-      "name": "animal feed",
-      "description": "all feedstuff fed to farm animals"
+      "name": "feed",
+      "description": "what is given to an animal to eat"
+    },
+    {
+      "name": "animal"
+    },
+    {
+      "name": "farm"
+    },
+    {
+      "name": "concentrate",
+      "description": "of a feed with a high energy and protein density"
+    },
+    {
+      "name": "dairy",
+      "description": "of the keeping of animals for milk"
+    },
+    {
+      "name": "suckler",
+      "description": "of a cow that raises its calves for beef"
+    },
+    {
+      "name": "sheep"
+    },
+    {
+      "name": "goat"
+    },
+    {
+      "name": "livestock",
+      "description": "the animals kept on a farm"
+    },
+    {
+      "name": "unit"
+    },
+    {
+      "name": "head"
+    },
+    {
+      "name": "count"
+    },
+    {
+      "name": "matter",
+      "description": "the substance a thing is made of"
+    },
+    {
+      "name": "dry"
+    },
+    {
+      "name": "domestic"
+    },
+    {
+      "name": "food"
+    },
+    {
+      "name": "industry"
+    },
+    {
+      "name": "by-product",
+      "description": "a material that a process yields beside its main product"
+    },
+    {
+      "name": "yield"
+    },
+    {
+      "name": "quantity"
+    },
+    {
+      "name": "inhabitant"
+    },
+    {
+      "name": "remaining",
+      "description": "left over after a change"
+    },
+    {
+      "name": "scenario",
+      "description": "a described possible state of the world"
+    },
+    {
+      "name": "land"
+    },
+    {
+      "name": "use"
+    },
+    {
+      "name": "optimal",
+      "description": "the best possible under the given aim"
+    },
+    {
+      "name": "present"
+    },
+    {
+      "name": "state"
     },
     {
       "name": "roughage",
       "description": "bulky low-energy feed such as grass, hay and silage, digestible only by ruminants"
     },
     {
-      "name": "concentrate feed",
-      "description": "energy- and protein-dense feed, mainly cereals and oilseed meal"
-    },
-    {
       "name": "protein",
       "description": "crude protein content of a feedstuff"
-    },
-    {
-      "name": "dry matter",
-      "description": "mass of a feedstuff after removal of water"
-    },
-    {
-      "name": "domestic share",
-      "description": "share produced inside the country"
     },
     {
       "name": "import",
@@ -45,28 +123,12 @@
       "description": "quantity measured in percent"
     },
     {
-      "name": "head count",
-      "description": "number of individual animals"
-    },
-    {
-      "name": "livestock unit",
-      "description": "Swiss Grossvieheinheit GVE, a feed-demand-weighted animal equivalent"
-    },
-    {
       "name": "cattle",
       "description": "all bovine animals including calves and young stock"
     },
     {
       "name": "cow",
       "description": "adult female bovine, dairy cows plus suckler cows"
-    },
-    {
-      "name": "dairy cow",
-      "description": "cow kept for milk production"
-    },
-    {
-      "name": "suckler cow",
-      "description": "cow kept to raise calves for beef"
     },
     {
       "name": "pig",
@@ -77,20 +139,8 @@
       "description": "chickens kept for meat and eggs"
     },
     {
-      "name": "sheep and goat",
-      "description": "small ruminants"
-    },
-    {
-      "name": "farm animal",
-      "description": "all livestock species together"
-    },
-    {
       "name": "whey",
       "description": "liquid by-product of cheese making, usable as pig feed"
-    },
-    {
-      "name": "food industry by-product",
-      "description": "residues of human food processing usable as feed"
     },
     {
       "name": "milk",
@@ -101,36 +151,12 @@
       "description": "meat of all farm animal species"
     },
     {
-      "name": "per capita",
-      "description": "per inhabitant and year"
-    },
-    {
-      "name": "remaining share",
-      "description": "share of the present stock that could still be kept in a scenario"
-    },
-    {
       "name": "reduction",
       "description": "relative decrease compared to the present state"
     },
     {
-      "name": "domestic feed only scenario",
-      "description": "scenario in which no feed is imported but Swiss arable land may still grow feed crops"
-    },
-    {
-      "name": "optimal land use scenario",
-      "description": "scenario in which arable land is used for human food and animals live on grassland and by-products only"
-    },
-    {
-      "name": "present state",
-      "description": "the situation as currently recorded in official statistics"
-    },
-    {
       "name": "grassland",
       "description": "permanent and temporary grass area"
-    },
-    {
-      "name": "milk yield",
-      "description": "quantity of milk produced per year"
     },
     {
       "name": "2023",
@@ -142,6 +168,149 @@
     }
   ],
   "triples": [
+    {
+      "name": "animal feed",
+      "from": "feed",
+      "verb": "of",
+      "to": "animal",
+      "description": "all feedstuff fed to farm animals"
+    },
+    {
+      "name": "concentrate feed",
+      "from": "feed",
+      "verb": "kind of",
+      "to": "concentrate",
+      "description": "energy- and protein-dense feed, mainly cereals and oilseed meal"
+    },
+    {
+      "name": "farm animal",
+      "from": "animal",
+      "verb": "kind of",
+      "to": "farm",
+      "description": "all livestock species together"
+    },
+    {
+      "name": "dairy cow",
+      "from": "cow",
+      "verb": "kind of",
+      "to": "dairy",
+      "description": "cow kept for milk production"
+    },
+    {
+      "name": "suckler cow",
+      "from": "cow",
+      "verb": "kind of",
+      "to": "suckler",
+      "description": "cow kept to raise calves for beef"
+    },
+    {
+      "name": "sheep and goat",
+      "from": "sheep",
+      "verb": "and",
+      "to": "goat",
+      "description": "small ruminants"
+    },
+    {
+      "name": "food industry",
+      "from": "industry",
+      "verb": "of",
+      "to": "food"
+    },
+    {
+      "name": "food industry by-product",
+      "from": "by-product",
+      "verb": "of",
+      "to": "food industry",
+      "description": "residues of human food processing usable as feed"
+    },
+    {
+      "name": "dry matter",
+      "from": "matter",
+      "verb": "kind of",
+      "to": "dry",
+      "description": "mass of a feedstuff after removal of water"
+    },
+    {
+      "name": "domestic share",
+      "from": "share",
+      "verb": "kind of",
+      "to": "domestic",
+      "description": "share produced inside the country"
+    },
+    {
+      "name": "head count",
+      "from": "count",
+      "verb": "of",
+      "to": "head",
+      "description": "number of individual animals"
+    },
+    {
+      "name": "livestock unit",
+      "from": "unit",
+      "verb": "of",
+      "to": "livestock",
+      "description": "Swiss Grossvieheinheit GVE, a feed-demand-weighted animal equivalent"
+    },
+    {
+      "name": "milk yield",
+      "from": "yield",
+      "verb": "of",
+      "to": "milk",
+      "description": "quantity of milk produced per year"
+    },
+    {
+      "name": "per capita",
+      "from": "quantity",
+      "verb": "per",
+      "to": "inhabitant",
+      "description": "per inhabitant and year"
+    },
+    {
+      "name": "remaining share",
+      "from": "share",
+      "verb": "kind of",
+      "to": "remaining",
+      "description": "share of the present stock that could still be kept in a scenario"
+    },
+    {
+      "name": "domestic feed",
+      "from": "feed",
+      "verb": "kind of",
+      "to": "domestic"
+    },
+    {
+      "name": "domestic feed only scenario",
+      "from": "scenario",
+      "verb": "of",
+      "to": "domestic feed",
+      "description": "scenario in which no feed is imported but Swiss arable land may still grow feed crops"
+    },
+    {
+      "name": "land use",
+      "from": "use",
+      "verb": "of",
+      "to": "land"
+    },
+    {
+      "name": "optimal land use",
+      "from": "land use",
+      "verb": "kind of",
+      "to": "optimal"
+    },
+    {
+      "name": "optimal land use scenario",
+      "from": "scenario",
+      "verb": "of",
+      "to": "optimal land use",
+      "description": "scenario in which arable land is used for human food and animals live on grassland and by-products only"
+    },
+    {
+      "name": "present state",
+      "from": "state",
+      "verb": "kind of",
+      "to": "present",
+      "description": "the situation as currently recorded in official statistics"
+    },
     {
       "name": "roughage of switzerland",
       "from": "roughage",

@@ -6,20 +6,265 @@
   "description": "Correlation between the share of chromatic (non white/black/grey/silver) cars since the 1970s and Swiss interest rates. Requested as a rough estimate. Car color data exist only for the US and global markets and are used as a proxy for Switzerland. The strong positive correlation of the levels (both series fall over time) is a textbook spurious correlation: the correlation of first differences is much weaker. Version 0.0.2 adds the Momo hypothesis raised in the dialogue: Michael Ende's novel Momo (1973) was inspired by Silvio Gesell's demurrage money (Freigeld); the grey men steal time; stolen time, low interest rates and depression are linked; depressed people prefer grey. Each link is filed as a separate assumed value with its own confidence so the weakest link can be identified. An alternative mechanism (cheap leasing under low interest favours resale-safe grey colors) is filed alongside. The dialogue also noted that Gesell's Freigeld is negative interest, so the identification of demurrage money with high interest is inverted in sign. Version 0.0.3 adds the reversed-causality hypothesis from the dialogue: mood is the common cause; cheerful people spend, spending raises inflation, the central bank raises rates; depressed people prefer grey. The dialogue objects that this feedback loop explains cycles but not the fifty-year trend of both series, and proposes a direct test with the SECO consumer sentiment index. Version 0.0.4 folds the leasing hypothesis into the mood hypothesis (optimistic buyers ignore resale value), marks the resale advantage of grey as a belief rather than a measured fact, files the 1970s oil shocks as politically triggered with prior oil demand as a necessary condition, and adds two falsifiable predictions. Version 0.0.5 adds the scenario in which the grey men succeed: time is hoarded and frozen in the time savings bank. Two readings of the interest rate consequence are filed: Gesell's basic interest floor (hoarding keeps interest high) and the Keynesian savings glut reading (hoarding drives interest to zero or below), with the Swiss negative rate period 2015 to 2021 as evidence against the floor.",
   "words": [
     {
-      "name": "chromatic car color share",
-      "description": "share of newly sold passenger cars painted in a chromatic color (any color except white, black, grey and silver), in percent of new car sales"
+      "name": "car",
+      "description": "a passenger road vehicle"
     },
     {
-      "name": "grayscale car color share",
-      "description": "share of newly sold passenger cars painted white, black, grey or silver, in percent of new car sales"
+      "name": "color",
+      "description": "the visual appearance of a surface given by the wavelength of the light it reflects"
     },
     {
-      "name": "Swiss Confederation bond yield 10 years",
-      "description": "yield of 10-year Swiss Confederation bonds, annual average, in percent"
+      "name": "chromatic",
+      "description": "of a color other than white, black, grey and silver"
     },
     {
-      "name": "interest rate",
-      "description": "price of borrowing money, in percent per year"
+      "name": "grayscale",
+      "description": "of the achromatic colors white, black, grey and silver"
+    },
+    {
+      "name": "grey",
+      "description": "the achromatic color between white and black"
+    },
+    {
+      "name": "paint",
+      "description": "the coating that gives a surface its color"
+    },
+    {
+      "name": "share"
+    },
+    {
+      "name": "rate"
+    },
+    {
+      "name": "interest"
+    },
+    {
+      "name": "Swiss Confederation",
+      "description": "the federal state of Switzerland as the issuer of the bonds"
+    },
+    {
+      "name": "bond"
+    },
+    {
+      "name": "yield"
+    },
+    {
+      "name": "year"
+    },
+    {
+      "name": "10",
+      "description": "the natural number ten; here the maturity of the bond in years"
+    },
+    {
+      "name": "average"
+    },
+    {
+      "name": "correlation"
+    },
+    {
+      "name": "coefficient"
+    },
+    {
+      "name": "Pearson",
+      "description": "Karl Pearson, 1857 to 1936, after whom the linear correlation coefficient is named"
+    },
+    {
+      "name": "spurious",
+      "description": "of a correlation that does not come from a causal link"
+    },
+    {
+      "name": "difference"
+    },
+    {
+      "name": "first"
+    },
+    {
+      "name": "measured"
+    },
+    {
+      "name": "assumed"
+    },
+    {
+      "name": "value"
+    },
+    {
+      "name": "sales"
+    },
+    {
+      "name": "new"
+    },
+    {
+      "name": "men",
+      "description": "adult male humans"
+    },
+    {
+      "name": "time"
+    },
+    {
+      "name": "pressure"
+    },
+    {
+      "name": "depression"
+    },
+    {
+      "name": "prevalence"
+    },
+    {
+      "name": "preference",
+      "description": "the tendency to choose one option over another"
+    },
+    {
+      "name": "mood"
+    },
+    {
+      "name": "favourite",
+      "description": "preferred above the alternatives"
+    },
+    {
+      "name": "leasing",
+      "description": "the use of an asset against a periodic payment instead of a purchase"
+    },
+    {
+      "name": "leased",
+      "description": "used against a periodic payment instead of bought"
+    },
+    {
+      "name": "lessor",
+      "description": "the owner who gives an asset in lease"
+    },
+    {
+      "name": "resale",
+      "description": "the selling of a used good"
+    },
+    {
+      "name": "weighting",
+      "description": "the weight that a factor gets in a decision"
+    },
+    {
+      "name": "hypothesis",
+      "description": "a proposed explanation that can be tested"
+    },
+    {
+      "name": "causal",
+      "description": "of a claim that one thing brings about another"
+    },
+    {
+      "name": "link",
+      "description": "a directed relation between two things"
+    },
+    {
+      "name": "loop",
+      "description": "a chain that returns to its starting point"
+    },
+    {
+      "name": "feedback"
+    },
+    {
+      "name": "consumer"
+    },
+    {
+      "name": "sentiment",
+      "description": "the aggregate mood of a group as measured by a survey"
+    },
+    {
+      "name": "index"
+    },
+    {
+      "name": "SECO",
+      "description": "the State Secretariat for Economic Affairs of Switzerland"
+    },
+    {
+      "name": "household"
+    },
+    {
+      "name": "consumption"
+    },
+    {
+      "name": "measurement"
+    },
+    {
+      "name": "proposal",
+      "description": "a suggested course of action"
+    },
+    {
+      "name": "test",
+      "description": "an observation that can refute a claim"
+    },
+    {
+      "name": "advantage"
+    },
+    {
+      "name": "policy"
+    },
+    {
+      "name": "oil",
+      "description": "crude oil and the fuels refined from it"
+    },
+    {
+      "name": "price"
+    },
+    {
+      "name": "shock",
+      "description": "a sudden and large change of a quantity"
+    },
+    {
+      "name": "demand"
+    },
+    {
+      "name": "purchases",
+      "description": "the goods bought in a period"
+    },
+    {
+      "name": "1979",
+      "description": "calendar year"
+    },
+    {
+      "name": "condition"
+    },
+    {
+      "name": "necessary",
+      "description": "required for an effect, but not sufficient on its own"
+    },
+    {
+      "name": "option"
+    },
+    {
+      "name": "uptake",
+      "description": "the share of an offer that is actually taken"
+    },
+    {
+      "name": "success",
+      "description": "the achievement of an aim"
+    },
+    {
+      "name": "scenario",
+      "description": "a described possible state of the world"
+    },
+    {
+      "name": "savings"
+    },
+    {
+      "name": "bank"
+    },
+    {
+      "name": "basic"
+    },
+    {
+      "name": "glut",
+      "description": "a supply that exceeds the demand"
+    },
+    {
+      "name": "reading"
+    },
+    {
+      "name": "Keynesian",
+      "description": "of the economic school following John Maynard Keynes"
+    },
+    {
+      "name": "negative"
+    },
+    {
+      "name": "period"
     },
     {
       "name": "Switzerland",
@@ -34,44 +279,8 @@
       "description": "world-wide aggregate"
     },
     {
-      "name": "car color",
-      "description": "exterior paint color of a passenger car"
-    },
-    {
-      "name": "new car sales",
-      "description": "passenger cars sold new in a given year"
-    },
-    {
       "name": "percent",
       "description": "unit, one hundredth"
-    },
-    {
-      "name": "annual average",
-      "description": "arithmetic mean over one calendar year"
-    },
-    {
-      "name": "Pearson correlation coefficient",
-      "description": "linear correlation coefficient r between -1 and 1"
-    },
-    {
-      "name": "first differences",
-      "description": "change of a time series from one observation to the next; used to remove a common trend"
-    },
-    {
-      "name": "correlation chromatic cars and Swiss interest rates",
-      "description": "correlation between the chromatic car color share and the Swiss 10-year bond yield, 1970 to 2025, twelve observations in five-year steps"
-    },
-    {
-      "name": "spurious correlation",
-      "description": "statistical correlation between two variables that share a common trend or a common cause without one causing the other"
-    },
-    {
-      "name": "measured value",
-      "description": "value taken from a cited measurement or statistic"
-    },
-    {
-      "name": "assumed value",
-      "description": "value estimated in the dialogue, not measured; has a confidence"
     },
     {
       "name": "confidence",
@@ -142,10 +351,6 @@
       "description": "German author, 1929 to 1995"
     },
     {
-      "name": "grey men",
-      "description": "characters in Momo who persuade people to save time and steal it"
-    },
-    {
       "name": "Silvio Gesell",
       "description": "economist, 1862 to 1930, proposed Freigeld"
     },
@@ -158,84 +363,12 @@
       "description": "fee on holding money, negative interest on cash"
     },
     {
-      "name": "time pressure",
-      "description": "subjective feeling of having too little time"
-    },
-    {
-      "name": "depression prevalence",
-      "description": "share of the population with depressive symptoms, in percent"
-    },
-    {
-      "name": "grey color preference",
-      "description": "tendency to choose grey over chromatic colors"
-    },
-    {
-      "name": "mood color",
-      "description": "color a person picks to describe their day-to-day mood"
-    },
-    {
-      "name": "favourite color",
-      "description": "color a person names as favourite"
-    },
-    {
-      "name": "car leasing share",
-      "description": "share of new cars financed by leasing or bought by fleets, in percent"
-    },
-    {
-      "name": "resale value",
-      "description": "expected price of a used car"
-    },
-    {
-      "name": "Momo hypothesis",
-      "description": "causal chain proposed in the dialogue: Freigeld inspired Momo; grey men steal time; stolen time equals low interest; low interest makes people depressed; depressed people prefer grey cars"
-    },
-    {
-      "name": "leasing hypothesis",
-      "description": "alternative causal chain: low interest makes car leasing and fleet purchases cheap; leased and fleet cars are chosen for resale value, which favours white, black, grey and silver"
-    },
-    {
-      "name": "causal link",
-      "description": "directed claim that one variable influences another"
-    },
-    {
       "name": "sign",
       "description": "direction of an effect, plus one for same direction, minus one for opposite direction"
     },
     {
-      "name": "interest rate to time pressure",
-      "description": "link: higher interest rates increase time pressure"
-    },
-    {
-      "name": "interest rate to depression",
-      "description": "link: lower interest rates increase depression prevalence"
-    },
-    {
-      "name": "depression to grey color preference",
-      "description": "link: depression increases grey color preference"
-    },
-    {
-      "name": "interest rate to car leasing share",
-      "description": "link: lower interest rates increase the car leasing share"
-    },
-    {
-      "name": "car leasing share to grayscale car color share",
-      "description": "link: a higher leasing share increases the grayscale car color share"
-    },
-    {
       "name": "1973",
       "description": "calendar year"
-    },
-    {
-      "name": "consumer sentiment",
-      "description": "aggregate mood of households as measured by survey indices"
-    },
-    {
-      "name": "SECO consumer sentiment index",
-      "description": "Swiss consumer sentiment survey by the State Secretariat for Economic Affairs, quarterly since 1972"
-    },
-    {
-      "name": "household consumption",
-      "description": "spending of households on goods and services"
     },
     {
       "name": "inflation",
@@ -246,14 +379,6 @@
       "description": "central bank of Switzerland"
     },
     {
-      "name": "mood hypothesis",
-      "description": "causal chain proposed in the dialogue: mood is the common cause of car color and interest rate; cheerful people spend, spending raises inflation, the Swiss National Bank raises rates; depressed people prefer grey cars"
-    },
-    {
-      "name": "feedback loop",
-      "description": "causal chain that feeds back on its starting variable and therefore oscillates around a mean rather than trending"
-    },
-    {
       "name": "trend",
       "description": "persistent multi-decade movement of a time series"
     },
@@ -262,127 +387,596 @@
       "description": "oscillation of a time series around a mean"
     },
     {
-      "name": "consumer sentiment to household consumption",
-      "description": "link: better consumer sentiment increases household consumption"
-    },
-    {
-      "name": "household consumption to inflation",
-      "description": "link: higher household consumption increases inflation"
-    },
-    {
-      "name": "inflation to interest rate",
-      "description": "link: higher inflation makes the Swiss National Bank raise the policy rate"
-    },
-    {
-      "name": "consumer sentiment to grayscale car color share",
-      "description": "link: worse consumer sentiment increases the grayscale car color share"
-    },
-    {
-      "name": "measurement proposal",
-      "description": "test the dialogue proposes to replace an assumed value by a measured value"
-    },
-    {
-      "name": "SECO sentiment vs chromatic cars test",
-      "description": "measurement proposal: correlate the SECO consumer sentiment index with the chromatic car color share, in levels and in first differences; the mood hypothesis requires a stronger correlation than with the interest rate"
-    },
-    {
       "name": "belief",
       "description": "conviction that drives behaviour independent of whether it is true"
-    },
-    {
-      "name": "resale advantage of grey",
-      "description": "belief that white, black, grey and silver cars lose less value than chromatic cars"
-    },
-    {
-      "name": "lessor color policy",
-      "description": "rule of a lessor or fleet manager restricting car colors or charging for non-standard colors"
-    },
-    {
-      "name": "oil price shock 1973",
-      "description": "oil embargo after the Yom Kippur war, politically triggered supply shock"
-    },
-    {
-      "name": "oil price shock 1979",
-      "description": "oil supply shock after the Iranian revolution, politically triggered"
-    },
-    {
-      "name": "oil demand",
-      "description": "consumption of oil by an economy"
-    },
-    {
-      "name": "necessary condition",
-      "description": "condition without which an effect cannot occur, but which does not by itself cause it"
     },
     {
       "name": "cause",
       "description": "condition that triggers an effect"
     },
     {
-      "name": "consumer sentiment to resale weighting",
-      "description": "link: better consumer sentiment reduces the weight of resale value in the car color choice"
-    },
-    {
-      "name": "car purchases to oil demand",
-      "description": "link: more car purchases increase oil demand"
-    },
-    {
-      "name": "oil demand to oil price shock",
-      "description": "link: high oil demand makes an economy vulnerable to a supply shock"
-    },
-    {
       "name": "prediction",
       "description": "statement derived from a hypothesis that can turn out false"
-    },
-    {
-      "name": "chromatic share of leased cars test",
-      "description": "prediction: in periods of good consumer sentiment the chromatic color share must rise also among privately leased cars, not only among cash buyers"
-    },
-    {
-      "name": "paint option uptake test",
-      "description": "prediction: the uptake of paid non-standard paint options must move with consumer sentiment"
-    },
-    {
-      "name": "grey men success scenario",
-      "description": "state of the Momo novel in which the grey men win: people save time, the time is frozen in the time savings bank and smoked by the grey men; translated: hoarding without return flow, high output, joyless consumption"
-    },
-    {
-      "name": "time savings bank",
-      "description": "institution of the grey men in Momo where stolen time is stored frozen"
     },
     {
       "name": "hoarding",
       "description": "holding money or time out of circulation"
     },
     {
+      "name": "refuted",
+      "description": "status of a claim contradicted by measured data"
+    }
+  ],
+  "triples": [
+    {
+      "name": "car color",
+      "from": "color",
+      "verb": "of",
+      "to": "car",
+      "description": "exterior paint color of a passenger car"
+    },
+    {
+      "name": "car color share",
+      "from": "share",
+      "verb": "of",
+      "to": "car color"
+    },
+    {
+      "name": "chromatic car color share",
+      "from": "car color share",
+      "verb": "kind of",
+      "to": "chromatic",
+      "description": "share of newly sold passenger cars painted in a chromatic color (any color except white, black, grey and silver), in percent of new car sales"
+    },
+    {
+      "name": "grayscale car color share",
+      "from": "car color share",
+      "verb": "kind of",
+      "to": "grayscale",
+      "description": "share of newly sold passenger cars painted white, black, grey or silver, in percent of new car sales"
+    },
+    {
+      "name": "interest rate",
+      "from": "rate",
+      "verb": "of",
+      "to": "interest",
+      "description": "price of borrowing money, in percent per year"
+    },
+    {
+      "name": "bond yield",
+      "from": "yield",
+      "verb": "of",
+      "to": "bond"
+    },
+    {
+      "name": "Swiss Confederation bond yield",
+      "from": "bond yield",
+      "verb": "of",
+      "to": "Swiss Confederation"
+    },
+    {
+      "name": "10 years",
+      "from": "year",
+      "verb": "times",
+      "to": "10"
+    },
+    {
+      "name": "Swiss Confederation bond yield 10 years",
+      "from": "Swiss Confederation bond yield",
+      "verb": "with",
+      "to": "10 years",
+      "description": "yield of 10-year Swiss Confederation bonds, annual average, in percent"
+    },
+    {
+      "name": "new car",
+      "from": "car",
+      "verb": "kind of",
+      "to": "new"
+    },
+    {
+      "name": "new car sales",
+      "from": "sales",
+      "verb": "of",
+      "to": "new car",
+      "description": "passenger cars sold new in a given year"
+    },
+    {
+      "name": "annual average",
+      "from": "average",
+      "verb": "per",
+      "to": "year",
+      "description": "arithmetic mean over one calendar year"
+    },
+    {
+      "name": "correlation coefficient",
+      "from": "coefficient",
+      "verb": "of",
+      "to": "correlation"
+    },
+    {
+      "name": "Pearson correlation coefficient",
+      "from": "correlation coefficient",
+      "verb": "of",
+      "to": "Pearson",
+      "description": "linear correlation coefficient r between -1 and 1"
+    },
+    {
+      "name": "first differences",
+      "from": "difference",
+      "verb": "kind of",
+      "to": "first",
+      "description": "change of a time series from one observation to the next; used to remove a common trend"
+    },
+    {
+      "name": "spurious correlation",
+      "from": "correlation",
+      "verb": "kind of",
+      "to": "spurious",
+      "description": "statistical correlation between two variables that share a common trend or a common cause without one causing the other"
+    },
+    {
+      "name": "correlation chromatic cars and Swiss interest rates",
+      "from": "chromatic car color share",
+      "verb": "and",
+      "to": "Swiss Confederation bond yield 10 years",
+      "description": "correlation between the chromatic car color share and the Swiss 10-year bond yield, 1970 to 2025, twelve observations in five-year steps"
+    },
+    {
+      "name": "measured value",
+      "from": "measured",
+      "verb": "of",
+      "to": "value",
+      "description": "value taken from a cited measurement or statistic"
+    },
+    {
+      "name": "assumed value",
+      "from": "assumed",
+      "verb": "of",
+      "to": "value",
+      "description": "value estimated in the dialogue, not measured; has a confidence"
+    },
+    {
+      "name": "grey men",
+      "from": "men",
+      "verb": "kind of",
+      "to": "grey",
+      "description": "characters in Momo who persuade people to save time and steal it"
+    },
+    {
+      "name": "time pressure",
+      "from": "pressure",
+      "verb": "of",
+      "to": "time",
+      "description": "subjective feeling of having too little time"
+    },
+    {
+      "name": "depression prevalence",
+      "from": "prevalence",
+      "verb": "of",
+      "to": "depression",
+      "description": "share of the population with depressive symptoms, in percent"
+    },
+    {
+      "name": "grey color",
+      "from": "color",
+      "verb": "kind of",
+      "to": "grey"
+    },
+    {
+      "name": "grey color preference",
+      "from": "preference",
+      "verb": "of",
+      "to": "grey color",
+      "description": "tendency to choose grey over chromatic colors"
+    },
+    {
+      "name": "mood color",
+      "from": "color",
+      "verb": "of",
+      "to": "mood",
+      "description": "color a person picks to describe their day-to-day mood"
+    },
+    {
+      "name": "favourite color",
+      "from": "color",
+      "verb": "kind of",
+      "to": "favourite",
+      "description": "color a person names as favourite"
+    },
+    {
+      "name": "car leasing",
+      "from": "leasing",
+      "verb": "of",
+      "to": "car"
+    },
+    {
+      "name": "car leasing share",
+      "from": "share",
+      "verb": "of",
+      "to": "car leasing",
+      "description": "share of new cars financed by leasing or bought by fleets, in percent"
+    },
+    {
+      "name": "resale value",
+      "from": "value",
+      "verb": "of",
+      "to": "resale",
+      "description": "expected price of a used car"
+    },
+    {
+      "name": "resale weighting",
+      "from": "weighting",
+      "verb": "of",
+      "to": "resale"
+    },
+    {
+      "name": "Momo hypothesis",
+      "from": "hypothesis",
+      "verb": "of",
+      "to": "Momo",
+      "description": "causal chain proposed in the dialogue: Freigeld inspired Momo; grey men steal time; stolen time equals low interest; low interest makes people depressed; depressed people prefer grey cars"
+    },
+    {
+      "name": "leasing hypothesis",
+      "from": "hypothesis",
+      "verb": "of",
+      "to": "leasing",
+      "description": "alternative causal chain: low interest makes car leasing and fleet purchases cheap; leased and fleet cars are chosen for resale value, which favours white, black, grey and silver"
+    },
+    {
+      "name": "mood hypothesis",
+      "from": "hypothesis",
+      "verb": "of",
+      "to": "mood",
+      "description": "causal chain proposed in the dialogue: mood is the common cause of car color and interest rate; cheerful people spend, spending raises inflation, the Swiss National Bank raises rates; depressed people prefer grey cars"
+    },
+    {
+      "name": "causal link",
+      "from": "link",
+      "verb": "kind of",
+      "to": "causal",
+      "description": "directed claim that one variable influences another"
+    },
+    {
+      "name": "feedback loop",
+      "from": "loop",
+      "verb": "of",
+      "to": "feedback",
+      "description": "causal chain that feeds back on its starting variable and therefore oscillates around a mean rather than trending"
+    },
+    {
+      "name": "consumer sentiment",
+      "from": "sentiment",
+      "verb": "of",
+      "to": "consumer",
+      "description": "aggregate mood of households as measured by survey indices"
+    },
+    {
+      "name": "consumer sentiment index",
+      "from": "index",
+      "verb": "of",
+      "to": "consumer sentiment"
+    },
+    {
+      "name": "SECO consumer sentiment index",
+      "from": "consumer sentiment index",
+      "verb": "of",
+      "to": "SECO",
+      "description": "Swiss consumer sentiment survey by the State Secretariat for Economic Affairs, quarterly since 1972"
+    },
+    {
+      "name": "household consumption",
+      "from": "consumption",
+      "verb": "of",
+      "to": "household",
+      "description": "spending of households on goods and services"
+    },
+    {
+      "name": "measurement proposal",
+      "from": "proposal",
+      "verb": "of",
+      "to": "measurement",
+      "description": "test the dialogue proposes to replace an assumed value by a measured value"
+    },
+    {
+      "name": "SECO sentiment vs chromatic cars",
+      "from": "SECO consumer sentiment index",
+      "verb": "and",
+      "to": "chromatic car color share"
+    },
+    {
+      "name": "SECO sentiment vs chromatic cars test",
+      "from": "test",
+      "verb": "of",
+      "to": "SECO sentiment vs chromatic cars",
+      "description": "measurement proposal: correlate the SECO consumer sentiment index with the chromatic car color share, in levels and in first differences; the mood hypothesis requires a stronger correlation than with the interest rate"
+    },
+    {
+      "name": "resale advantage",
+      "from": "advantage",
+      "verb": "of",
+      "to": "resale"
+    },
+    {
+      "name": "resale advantage of grey",
+      "from": "resale advantage",
+      "verb": "of",
+      "to": "grey",
+      "description": "belief that white, black, grey and silver cars lose less value than chromatic cars"
+    },
+    {
+      "name": "color policy",
+      "from": "policy",
+      "verb": "of",
+      "to": "color"
+    },
+    {
+      "name": "lessor color policy",
+      "from": "color policy",
+      "verb": "of",
+      "to": "lessor",
+      "description": "rule of a lessor or fleet manager restricting car colors or charging for non-standard colors"
+    },
+    {
+      "name": "oil price",
+      "from": "price",
+      "verb": "of",
+      "to": "oil"
+    },
+    {
+      "name": "oil price shock",
+      "from": "shock",
+      "verb": "of",
+      "to": "oil price"
+    },
+    {
+      "name": "oil price shock 1973",
+      "from": "oil price shock",
+      "verb": "in",
+      "to": "1973",
+      "description": "oil embargo after the Yom Kippur war, politically triggered supply shock"
+    },
+    {
+      "name": "oil price shock 1979",
+      "from": "oil price shock",
+      "verb": "in",
+      "to": "1979",
+      "description": "oil supply shock after the Iranian revolution, politically triggered"
+    },
+    {
+      "name": "oil demand",
+      "from": "demand",
+      "verb": "of",
+      "to": "oil",
+      "description": "consumption of oil by an economy"
+    },
+    {
+      "name": "car purchases",
+      "from": "purchases",
+      "verb": "of",
+      "to": "car"
+    },
+    {
+      "name": "necessary condition",
+      "from": "condition",
+      "verb": "kind of",
+      "to": "necessary",
+      "description": "condition without which an effect cannot occur, but which does not by itself cause it"
+    },
+    {
+      "name": "leased car",
+      "from": "car",
+      "verb": "kind of",
+      "to": "leased"
+    },
+    {
+      "name": "chromatic share of leased cars",
+      "from": "chromatic car color share",
+      "verb": "of",
+      "to": "leased car"
+    },
+    {
+      "name": "chromatic share of leased cars test",
+      "from": "test",
+      "verb": "of",
+      "to": "chromatic share of leased cars",
+      "description": "prediction: in periods of good consumer sentiment the chromatic color share must rise also among privately leased cars, not only among cash buyers"
+    },
+    {
+      "name": "paint option",
+      "from": "option",
+      "verb": "of",
+      "to": "paint"
+    },
+    {
+      "name": "paint option uptake",
+      "from": "uptake",
+      "verb": "of",
+      "to": "paint option"
+    },
+    {
+      "name": "paint option uptake test",
+      "from": "test",
+      "verb": "of",
+      "to": "paint option uptake",
+      "description": "prediction: the uptake of paid non-standard paint options must move with consumer sentiment"
+    },
+    {
+      "name": "grey men success",
+      "from": "success",
+      "verb": "of",
+      "to": "grey men"
+    },
+    {
+      "name": "grey men success scenario",
+      "from": "scenario",
+      "verb": "of",
+      "to": "grey men success",
+      "description": "state of the Momo novel in which the grey men win: people save time, the time is frozen in the time savings bank and smoked by the grey men; translated: hoarding without return flow, high output, joyless consumption"
+    },
+    {
+      "name": "time savings",
+      "from": "savings",
+      "verb": "of",
+      "to": "time"
+    },
+    {
+      "name": "time savings bank",
+      "from": "bank",
+      "verb": "of",
+      "to": "time savings",
+      "description": "institution of the grey men in Momo where stolen time is stored frozen"
+    },
+    {
       "name": "basic interest",
+      "from": "interest",
+      "verb": "kind of",
+      "to": "basic",
       "description": "Gesell's Urzins: interest floor of about 3 percent that hoarders demand for releasing money while holding cash is free"
     },
     {
       "name": "savings glut",
+      "from": "glut",
+      "verb": "of",
+      "to": "savings",
       "description": "excess of desired saving over investment that pushes the equilibrium interest rate down"
     },
     {
+      "name": "Gesell reading",
+      "from": "reading",
+      "verb": "of",
+      "to": "Silvio Gesell"
+    },
+    {
       "name": "Gesell reading of grey men success",
+      "from": "Gesell reading",
+      "verb": "of",
+      "to": "grey men success",
       "description": "reading: success of the grey men equals hoarded capital dictating a high interest rate"
     },
     {
+      "name": "Keynesian reading",
+      "from": "reading",
+      "verb": "kind of",
+      "to": "Keynesian"
+    },
+    {
       "name": "Keynesian reading of grey men success",
+      "from": "Keynesian reading",
+      "verb": "of",
+      "to": "grey men success",
       "description": "reading: success of the grey men equals a savings glut, demand collapse and an interest rate at or below zero. When the grey men win, people save time, but the saved time never returns to them: it lies frozen in the vault of the time savings bank. Read economically this is hoarding without return flow. Everyone works faster and sets more aside, but nobody spends, nobody invests in what Ende calls life. Where demand is missing, prices and investment fall, and with them the interest rate, down to zero or below. The low interest rate is then not the cause of the grey time but its thermometer: it shows how much time and money lies in the vault instead of circulating. And the people who lack time turn grey like the men who took it from them. So do their cars."
     },
     {
+      "name": "negative interest rate",
+      "from": "interest rate",
+      "verb": "kind of",
+      "to": "negative"
+    },
+    {
+      "name": "negative interest rate period",
+      "from": "period",
+      "verb": "of",
+      "to": "negative interest rate"
+    },
+    {
       "name": "negative interest rate period Switzerland",
+      "from": "negative interest rate period",
+      "verb": "in",
+      "to": "Switzerland",
       "description": "Swiss National Bank policy rate below zero from January 2015 to September 2022"
     },
     {
-      "name": "refuted",
-      "description": "status of a claim contradicted by measured data"
+      "name": "interest rate to time pressure",
+      "from": "interest rate",
+      "verb": "can cause",
+      "to": "time pressure",
+      "description": "link: higher interest rates increase time pressure"
+    },
+    {
+      "name": "interest rate to depression",
+      "from": "interest rate",
+      "verb": "can cause",
+      "to": "depression",
+      "description": "link: lower interest rates increase depression prevalence"
+    },
+    {
+      "name": "depression to grey color preference",
+      "from": "depression",
+      "verb": "can cause",
+      "to": "grey color preference",
+      "description": "link: depression increases grey color preference"
+    },
+    {
+      "name": "interest rate to car leasing share",
+      "from": "interest rate",
+      "verb": "can cause",
+      "to": "car leasing share",
+      "description": "link: lower interest rates increase the car leasing share"
+    },
+    {
+      "name": "car leasing share to grayscale car color share",
+      "from": "car leasing share",
+      "verb": "can cause",
+      "to": "grayscale car color share",
+      "description": "link: a higher leasing share increases the grayscale car color share"
+    },
+    {
+      "name": "consumer sentiment to household consumption",
+      "from": "consumer sentiment",
+      "verb": "can cause",
+      "to": "household consumption",
+      "description": "link: better consumer sentiment increases household consumption"
+    },
+    {
+      "name": "household consumption to inflation",
+      "from": "household consumption",
+      "verb": "can cause",
+      "to": "inflation",
+      "description": "link: higher household consumption increases inflation"
+    },
+    {
+      "name": "inflation to interest rate",
+      "from": "inflation",
+      "verb": "can cause",
+      "to": "interest rate",
+      "description": "link: higher inflation makes the Swiss National Bank raise the policy rate"
+    },
+    {
+      "name": "consumer sentiment to grayscale car color share",
+      "from": "consumer sentiment",
+      "verb": "can cause",
+      "to": "grayscale car color share",
+      "description": "link: worse consumer sentiment increases the grayscale car color share"
+    },
+    {
+      "name": "consumer sentiment to resale weighting",
+      "from": "consumer sentiment",
+      "verb": "can cause",
+      "to": "resale weighting",
+      "description": "link: better consumer sentiment reduces the weight of resale value in the car color choice"
+    },
+    {
+      "name": "car purchases to oil demand",
+      "from": "car purchases",
+      "verb": "can cause",
+      "to": "oil demand",
+      "description": "link: more car purchases increase oil demand"
+    },
+    {
+      "name": "oil demand to oil price shock",
+      "from": "oil demand",
+      "verb": "can cause",
+      "to": "oil price shock",
+      "description": "link: high oil demand makes an economy vulnerable to a supply shock"
     },
     {
       "name": "hoarding to interest rate",
+      "from": "hoarding",
+      "verb": "can cause",
+      "to": "interest rate",
       "description": "link between the degree of hoarding and the interest rate; sign depends on the reading"
-    }
-  ],
-  "triples": [
+    },
     {
       "name": "chromatic car color share is a car color statistic",
       "from": "chromatic car color share",

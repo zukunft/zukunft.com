@@ -576,14 +576,9 @@ class json_validation
     private function check_file(string $sec, string $file_path, array &$find_lst, bool $update): void
     {
         $name = basename($file_path);
-        if (!in_array($file_path, $this->loaded_file_list())) {
-            $const_name = $this->file_const_name($file_path);
-            if ($const_name == '') {
-                $find_lst[self::CHK_NOT_LOADED][$sec][] = $name . ' - named by no const';
-            } elseif (!$this->const_used_in_code($const_name)) {
-                $find_lst[self::CHK_NOT_LOADED][$sec][] = $name . ' - ' . $const_name
-                    . ' is in no import list and used by no test';
-            }
+        $not_loaded = $this->not_loaded_reason($file_path);
+        if ($not_loaded != '') {
+            $find_lst[self::CHK_NOT_LOADED][$sec][] = $name . ' - ' . $not_loaded;
         }
         $json_array = json_decode(file_get_contents($file_path), true);
         if (!is_array($json_array)) {
@@ -1469,6 +1464,30 @@ class json_validation
         foreach ($find_lst as $sec_lst) {
             foreach ($sec_lst as $hits) {
                 $result += count($hits);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the reason why nothing reads the given json file, which is either that no const names it
+     * at all or that the const of the file is in no import list and used by no test
+     *
+     * shared with coding_rule_tests, which lets the test run fail on a file of the main data
+     * that nothing reads, while the report lists the files of the test imports too
+     *
+     * @param string $file_path the path of a json file as the folder scan has returned it
+     * @return string the reason or an empty string if an import or a test reads the file
+     */
+    function not_loaded_reason(string $file_path): string
+    {
+        $result = '';
+        if (!in_array($file_path, $this->loaded_file_list())) {
+            $const_name = $this->file_const_name($file_path);
+            if ($const_name == '') {
+                $result = 'named by no const';
+            } elseif (!$this->const_used_in_code($const_name)) {
+                $result = $const_name . ' is in no import list and used by no test';
             }
         }
         return $result;
