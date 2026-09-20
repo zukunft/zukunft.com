@@ -1138,6 +1138,18 @@ class views
         self::ERROR_UPDATE_ID,
     ];
 
+    // the views that select the user to show or change by url_var::USER_TO_EDIT and not by url_var::ID,
+    // because url_var::USER is always the logged-in user (see url_var::id_var); the other views of a
+    // user (e.g. the config, the jobs or the own changes) show the logged-in user and select no user
+    const array USER_TO_EDIT_MASKS_IDS = [
+        self::USER_ID,
+        self::USER_ADMIN_ADD_ID,
+        self::USER_ADMIN_EDIT_ID,
+        self::USER_ADMIN_DEL_ID,
+        // the user who sets the password with the activation link of the signup or reset mail
+        self::LOGIN_ACTIVATE_ID,
+    ];
+
     // TODO Prio 0 convert to a key value map and use id for code_id_to_id and id_to_code_id
     // list of views where the id or the code is used for system testing
     const array TEST_VIEW_IDS = [

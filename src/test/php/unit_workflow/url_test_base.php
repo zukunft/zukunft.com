@@ -185,9 +185,11 @@ class url_test_base
      * @param string $step the user reaction action const e.g. url_var::ACTION_SHOW
      * @param array $url_arr the extra url parameters of this step e.g. the fields of a pending change
      * @param int $msk_id the view shown by this step e.g. views::WORD_EDIT_ID
+     * @param bool $submit_acts true to run the action of the view only for a form submit like http/view.php,
+     *                          e.g. because opening the activation link must not confirm the email yet
      * @return string the rendered html so the caller can check the button urls against the next step
      */
-    protected function assert_step(string $step, array $url_arr, int $msk_id = 0): string
+    protected function assert_step(string $step, array $url_arr, int $msk_id = 0, bool $submit_acts = false): string
     {
         // remember the step for the next steps
         $this->step_path .= workflows::NAME_SEP . $step;
@@ -206,9 +208,12 @@ class url_test_base
         // own switch() restores this section
         global $sys;
         $sys->times->switch(system_time_type::URL_TO_ACTION);
-        $next_url = $this->ui->url_to_action($url_arr,
-            $this->req->usr_backend, $this->req->msg,
-            $this->req->dto, $this->req->do_it);
+        $next_url = $url_arr;
+        if (!$submit_acts or workflows::is_form_submit($step)) {
+            $next_url = $this->ui->url_to_action($url_arr,
+                $this->req->usr_backend, $this->req->msg,
+                $this->req->dto, $this->req->do_it);
+        }
         $sys->times->switch(system_time_type::URL_TO_HTML);
         // render in test mode so that the snapshot is reproducible without backend calls;
         // the start view, which every back step reaches, is the exception: it shows the global
@@ -288,6 +293,8 @@ class url_test_base
      */
     protected function assert_url(string $test_name, string $step, array $url_arr, string $method): void
     {
+        // a typed password (e.g. of the signup form) never goes into a committed snapshot file
+        $url_arr = url_var::without_secrets($url_arr);
         // the user reaction adds the process step (e.g. save -> to confirm) to the request url
         $script = api::HOST_SAME . api::MAIN_SCRIPT_EXT . url_var::PAR;
         $url_map = new url_mapper();

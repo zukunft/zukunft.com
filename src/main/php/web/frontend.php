@@ -63,6 +63,7 @@ include_once html_paths::USER . 'user.php';
 include_once html_paths::GROUP . 'group.php';
 include_once html_paths::HELPER . 'config.php';
 include_once html_paths::HELPER . 'data_object.php';
+include_once html_paths::HELPER . 'mail_sender.php';
 include_once html_paths::HELPER . 'url_mapper.php';
 include_once html_paths::HELPER . 'user_request.php';
 include_once html_paths::HTML . 'html_base.php';
@@ -129,6 +130,7 @@ include_once html_paths::SHARED_CONST . 'users.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::SHARED_ENUM . 'languages.php';
 include_once html_paths::SHARED_ENUM . 'language_codes.php';
+include_once html_paths::SHARED_ENUM . 'user_profiles.php';
 include_once html_paths::SHARED_HELPER . 'Message.php';
 include_once html_paths::SHARED_HELPER . 'Translator.php';
 include_once html_paths::SHARED_TYPES . 'system_time_type.php';
@@ -175,6 +177,7 @@ use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_ui;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_link as formula_link_ui;
 use Zukunft\ZukunftCom\main\php\web\group\group as group_ui;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
+use Zukunft\ZukunftCom\main\php\web\helper\mail_sender;
 use Zukunft\ZukunftCom\main\php\web\helper\url_mapper;
 use Zukunft\ZukunftCom\main\php\web\helper\user_request;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
@@ -214,6 +217,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\language_codes;
 use Zukunft\ZukunftCom\main\php\shared\enum\languages;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
 use Zukunft\ZukunftCom\main\php\shared\helper\Message;
 use Zukunft\ZukunftCom\main\php\shared\helper\Translator;
 use Zukunft\ZukunftCom\main\php\shared\library;
@@ -250,6 +254,10 @@ class frontend
     // (e.g. the session has expired); set by start() and read by http/view.php to recover the
     // session gracefully instead of running the action (see session_recovery_url)
     public bool $session_token_valid = true;
+
+    // false in a workflow test: the signup and the activation still write to the database, but neither
+    // switch the php session of the streamed test run (its headers are already sent) nor send a mail
+    public bool $live_request = true;
 
     // the main data cache of the frontend
     public ?data_object $dto = null;
@@ -388,20 +396,49 @@ class frontend
     }
 
     /**
+     * tell the user if the url names another user (url_var::USER) e.g. in a link shared by another
+     * user, because the page is always created for the user of the session, never for the url user
+     *
+     * @param array $url_array the url of the request
+     * @param user_message_ui $msg_ui with the requesting user, which gets the notice
+     * @return bool true if the url names no user or the requesting user
+     */
+    static function url_user_matches(array $url_array, user_message_ui $msg_ui): bool
+    {
+        $result = true;
+        if (array_key_exists(url_var::USER, $url_array)) {
+            $url_usr_id = (int)$url_array[url_var::USER];
+            if ($url_usr_id != ($msg_ui->usr?->id() ?? 0)) {
+                // only a notice, so that no step of this request is skipped
+                $msg_ui->add(msg_id::URL_USER_NOT_SESSION_USER, [msg_id::VAR_ID => $url_usr_id], true);
+                $result = false;
+            }
+        }
+        return $result;
+    }
+
+    /**
      * the url of the page after an action as a plain get (POST-Redirect-GET), so the address bar
      * shows the next page and a reload does not repeat the action; the submit marker, the session
      * token and a typed password are left out, because a url is visible and stored in the history
      *
      * @param array $url_array the url of the next page as returned by url_to_action
+     * @param user_message_ui $msg_ui with the user after the action, whose id the next url carries if logged in
      * @return string the url to redirect to, or empty if the next page is itself an action (e.g. logout)
      */
-    static function redirect_url(array $url_array): string
+    static function redirect_url(array $url_array, user_message_ui $msg_ui): string
     {
-        $drop = array_merge([url_var::POST_SUBMIT, url_var::SESSION_TOKEN], url_var::SECRET_VARS);
+        $drop = array_merge([url_var::POST_SUBMIT, url_var::SESSION_TOKEN, url_var::USER], url_var::SECRET_VARS);
         $next_url = array_diff_key($url_array, array_flip($drop));
+        // the user of the next page, which differs from the posted one after a login or logout
+        $usr_id = $msg_ui->usr?->id_for_url() ?? 0;
+        if ($usr_id > 0) {
+            $next_url[url_var::USER] = $usr_id;
+        }
         $result = '';
         if (!self::request_triggers_action($next_url)) {
-            $result = api::MAIN_SCRIPT . url_var::PAR . http_build_query($next_url);
+            $next_page = api::MAIN_SCRIPT . url_var::PAR . http_build_query($next_url);
+            $result = new html_base()->url_with_id_var($next_page);
         }
         return $result;
     }
@@ -660,7 +697,7 @@ class frontend
         global $sys;
         $sys->times->switch(system_time_type::LOAD_FRONTEND);
         if ($this->dto?->typ_lst_cache == null) {
-            $api_msg = $this->api_get(type_lists::class);
+            $api_msg = $this->api_get(type_lists::class, $msg_ui);
             if ($api_msg == '' or $api_msg == null) {
                 $msg_ui->add(msg_id::API_MESSAGE_EMPTY, [
                     msg_id::VAR_REQUEST => 'load cache'
@@ -1297,7 +1334,8 @@ class frontend
 
         $result = '';
         $mask_id = $url_array[url_var::MASK] ?? 0;
-        $obj_id = $url_array[url_var::ID] ?? 0;
+        // e.g. the user page names its user by url_var::USER_TO_EDIT or by the id of an old link
+        $obj_id = url_var::object_id($url_array);
         $lan = $url_array[url_var::LANGUAGE] ?? '';
         // the list size and the list page are view-only states of the same page (the more and
         // the all version of a list, see docs/llm/frontend.md), so each version is cached on its own
@@ -1314,13 +1352,14 @@ class frontend
         // (log_debug echoes, never part of the rendered html), and a process step of 0 (no action
         // started) does not change a view-only page, so all three are allowed without preventing
         // the cache and are not part of the cache key - so e.g. ?m=2&debug=6 takes the same cached
-        // path as ?m=2; the same applies to the cache switch itself, which is checked below instead
+        // path as ?m=2; the same applies to the cache switch itself, which is checked below instead,
+        // and to the user of a shared link, because the page is created for the session user only
         $is_view_only = true;
         foreach ($url_array as $url_key => $url_val) {
-            $is_key_param = in_array($url_key, [url_var::MASK, url_var::ID, url_var::LANGUAGE,
+            $is_key_param = in_array($url_key, [url_var::MASK, url_var::ID, url_var::USER_TO_EDIT, url_var::LANGUAGE,
                 url_var::DISPLAY_LIST_SIZE, url_var::DISPLAY_LIST_PAGE,
                 url_var::DISPLAY_LIST_COLUMNS, url_var::DISPLAY_LIST_RANGE,
-                url_var::SESSION_TOKEN, url_var::DEBUG, url_var::NO_CACHE]);
+                url_var::SESSION_TOKEN, url_var::DEBUG, url_var::NO_CACHE, url_var::USER]);
             $is_show_step = ($url_key == url_var::STEP and $url_val == url_var::STEP_BASE);
             if (!$is_key_param and !$is_show_step) {
                 $is_view_only = false;
@@ -1535,6 +1574,7 @@ class frontend
             $login_msg = new backend_user_message();
             $logged_in = $db_usr->login($usr_name, $pw, $login_msg);
             if ($logged_in) {
+                $this->start_user_session($db_usr->id(), $db_usr->name());
                 $usr_backend = $db_usr;
                 $usr_ui->set_from_json($db_usr->api_json([], $login_msg), $msg_ui);
             } else {
@@ -1601,7 +1641,10 @@ class frontend
                 $msg_ui->add(msg_id::SIGNUP_ERR_WHITELIST, []);
             }
             $existing = new user_backend();
-            $signup_msg = new backend_user_message();
+            // the signup system user adds the new account, so it is also the author of its change log
+            $sgn_load_msg = new backend_user_message(); // a buffer for the load of the signup user, merged below
+            $signup_msg = new backend_user_message($this->signup_user($sgn_load_msg)); // a backend buffer, merged into $msg_ui below
+            $signup_msg->merge($sgn_load_msg);
             $existing->load_by_name($usr_name, $signup_msg);
             if ($existing->has_db_id()) {
                 // the distinct message reveals that the name is taken (user enumeration), unlike
@@ -1629,29 +1672,18 @@ class frontend
                 $new_usr->name = $usr_name;
                 $new_usr->email = $email;
                 $new_usr->set_password($pw, $signup_msg);
+                $key = $this->signup_confirm_key($new_usr, $signup_msg);
                 if ($signup_msg->is_ok()) {
                     $new_usr->save($signup_msg);
                     $usr_by_name = new user_backend();
                     $usr_by_name->load_by_name($usr_name, new backend_user_message());
                     $usr_id = $usr_by_name->id();
                     if ($usr_id > 0) {
-                        session_start();
-                        // regenerate the session id on this authentication transition so a planted
-                        // session id cannot become authenticated (session fixation), matching login
-                        session_regenerate_id(true);
-                        if (empty($_SESSION[url_var::SESSION_TOKEN])) {
-                            try {
-                                $_SESSION[url_var::SESSION_TOKEN] = bin2hex(random_bytes(32));
-                            } catch (RandomException $e) {
-                                log_err('RandomException ' . $e->getMessage());
-                            }
-                        }
-                        $_SESSION[url_var::SESSION_USER_ID] = $usr_id;
-                        $_SESSION[url_var::USERNAME_HUMAN] = $usr_name;
-                        $_SESSION[url_var::SESSION_LOGGED] = true;
+                        $this->start_user_session($usr_id, $usr_name);
                         $usr_backend = $usr_by_name;
                         $usr_ui->set_from_json($usr_by_name->api_json([], $signup_msg), $msg_ui);
                         $signed_up = true;
+                        $this->send_signup_mail($usr_by_name, $key, $msg_ui);
                     } else {
                         log_err('Cannot find id for ' . $usr_name . ' after signup.', 'action_signup');
                         $signup_msg->add(msg_id::SIGNUP_ERR_FAILED, []);
@@ -1677,8 +1709,91 @@ class frontend
     }
 
     /**
-     * validate the activation key, set the new password and auto-login the user
-     * @param array $url_array the normalised URL params; expects id, key, and the two password fields
+     * log the user in for the next requests of the browser after the login, the signup or the activation;
+     * skipped if this is not a live request (see live_request)
+     * @param int $usr_id the id of the user that is logged in
+     * @param string $usr_name the name of the user shown in the navbar
+     */
+    private function start_user_session(int $usr_id, string $usr_name): void
+    {
+        if ($this->live_request) {
+            // a session can only be started before any output has been sent, and restarting the
+            // session that frontend::start has already started would only raise a php notice;
+            // in the http streamed test runs the output is already flowing, so there only the
+            // session vars are set without a php session
+            if (session_status() === PHP_SESSION_NONE and !headers_sent()) {
+                session_start();
+            }
+            // regenerate the session id on this authentication transition so a planted session id
+            // cannot become authenticated (session fixation); the new session cookie can also only
+            // be sent before any output, so the regeneration is skipped when it could not work anyway
+            if (session_status() === PHP_SESSION_ACTIVE and !headers_sent()) {
+                session_regenerate_id(true);
+            }
+            if (empty($_SESSION[url_var::SESSION_TOKEN])) {
+                try {
+                    $_SESSION[url_var::SESSION_TOKEN] = bin2hex(random_bytes(32));
+                } catch (RandomException $e) {
+                    log_err('RandomException ' . $e->getMessage());
+                }
+            }
+            $_SESSION[url_var::SESSION_USER_ID] = $usr_id;
+            $_SESSION[url_var::USERNAME_HUMAN] = $usr_name;
+            $_SESSION[url_var::SESSION_LOGGED] = true;
+        }
+    }
+
+    /**
+     * reserve the name of a new account and set the key of the mail that confirms its email
+     * @param user_backend $new_usr the account that is not yet saved
+     * @param backend_user_message $msg with the signup system user as requester and to report e.g. that it may not set the profile
+     * @return string the cleartext key for the mail or an empty string if no key could be created
+     */
+    private function signup_confirm_key(user_backend $new_usr, backend_user_message $msg): string
+    {
+        $new_usr->raise_signup_profile(user_profiles::NAME_ONLY, $msg->usr, $msg);
+        $key = $this->new_activation_key();
+        if ($key != '') {
+            $new_usr->set_activation_key($key, user_backend::SIGNUP_KEY_VALIDITY);
+        }
+        return $key;
+    }
+
+    /**
+     * send the mail with the link that confirms the email of a new account and tell the user
+     * @param user_backend $new_usr the saved account with its id and email
+     * @param string $key the cleartext key of signup_confirm_key, empty if none could be created
+     * @param user_message_ui $msg_ui to tell the user that the mail has been sent
+     */
+    private function send_signup_mail(user_backend $new_usr, string $key, user_message_ui $msg_ui): void
+    {
+        if ($key == '') {
+            // the account works anyway and the email can still be confirmed with a password reset
+            $msg_ui->add(msg_id::RESET_ERR_KEY_GEN, [], true);
+        } elseif ($this->send_activation_mail($new_usr, $key,
+            msg_id::SIGNUP_MAIL_SUBJECT, msg_id::SIGNUP_MAIL_KEY_INTRO, msg_id::SIGNUP_MAIL_IGNORE)) {
+            $msg_ui->add(msg_id::SIGNUP_MAIL_SENT, [], true);
+        } else {
+            // the account works anyway, the reason is in the system log for the admin
+            $msg_ui->add(msg_id::SIGNUP_MAIL_FAILED, [], true);
+        }
+    }
+
+    /**
+     * the system user that creates the new accounts and confirms their email (see user::can_set_profile)
+     * @param backend_user_message $msg to report a problem of the database read
+     * @return user_backend the signup system user
+     */
+    private function signup_user(backend_user_message $msg): user_backend
+    {
+        $sgn_usr = new user_backend();
+        $sgn_usr->load_by_code_id(users::SYSTEM_SIGNUP_CODE_ID, $msg);
+        return $sgn_usr;
+    }
+
+    /**
+     * validate the activation key, confirm the email, set the new password if given and auto-login the user
+     * @param array $url_array the normalised URL params; expects id, key and optionally the two password fields
      * @param user_message_ui $msg_ui collects validation and save errors shown to the user
      * @param user_backend $usr_backend updated in-place with the activated user on success
      * @param user_ui $usr_ui updated in-place from the activated user's api_json on success
@@ -1706,15 +1821,20 @@ class frontend
                 $msg_ui->add_message($mtr->txt(msg_id::ACTIVATE_ERR_MISSING_ID));
             } else {
                 $usr = new user_backend();
-                $activate_msg = new backend_user_message();
-                $usr->load_by_id($usr_id, $activate_msg);
+                $load_msg = new backend_user_message(); // a buffer for the load of the account, merged below
+                $usr->load_by_id($usr_id, $load_msg);
+                // the user changes its own account, which is only saved below after the key is valid
+                $activate_msg = new backend_user_message($usr); // a backend buffer, merged into $msg_ui below
+                $activate_msg->merge($load_msg);
 
                 // compare the stored key hash with the hash of the posted key in constant time
                 if ($usr->activation_key_valid($post_key)) {
-                    if (empty($pw)) {
+                    // without a password the link only confirms the email e.g. of a new account
+                    $pw_given = (!empty($pw) or !empty($pw_re));
+                    if ($pw_given and empty($pw)) {
                         $msg_ui->add_message($mtr->txt(msg_id::SIGNUP_ERR_PW_EMPTY));
                     }
-                    if (empty($pw_re)) {
+                    if ($pw_given and empty($pw_re)) {
                         $msg_ui->add_message($mtr->txt(msg_id::SIGNUP_ERR_PW_RETYPE_EMPTY));
                     }
                     if (!empty($pw) && !empty($pw_re) && $pw !== $pw_re) {
@@ -1722,7 +1842,11 @@ class frontend
                     }
 
                     if ($msg_ui->is_ok()) {
-                        $usr->set_password($pw, $activate_msg);
+                        if ($pw_given) {
+                            $usr->set_password($pw, $activate_msg);
+                        }
+                        // the key has been sent to the email of the account, so a valid key confirms the email
+                        $usr->raise_signup_profile(user_profiles::EMAIL, $this->signup_user($activate_msg), $activate_msg);
                         if ($activate_msg->is_ok()) {
                             $usr->activation_key = '';
                             $usr->activation_timeout = new DateTime();
@@ -1730,20 +1854,7 @@ class frontend
                             $usr_by_id = new user_backend();
                             $usr_by_id->load_by_id($usr_id, new backend_user_message());
                             if ($usr_by_id->has_db_id()) {
-                                session_start();
-                                // regenerate the session id on this authentication transition so a
-                                // planted session id cannot become authenticated (session fixation)
-                                session_regenerate_id(true);
-                                if (empty($_SESSION[url_var::SESSION_TOKEN])) {
-                                    try {
-                                        $_SESSION[url_var::SESSION_TOKEN] = bin2hex(random_bytes(32));
-                                    } catch (RandomException $e) {
-                                        log_err('RandomException ' . $e->getMessage());
-                                    }
-                                }
-                                $_SESSION[url_var::SESSION_USER_ID] = $usr_id;
-                                $_SESSION[url_var::USERNAME_HUMAN] = $usr_by_id->name();
-                                $_SESSION[url_var::SESSION_LOGGED] = true;
+                                $this->start_user_session($usr_id, $usr_by_id->name());
                                 // reject at once if a user whitelist is active and this user is not on it
                                 server_guard::enforce_user((string)$usr_id, $usr_by_id->name());
                                 $usr_backend = $usr_by_id;
@@ -1844,6 +1955,63 @@ class frontend
     }
 
     /**
+     * @return string a new random key for the activation link, or an empty string if no random bytes are available
+     */
+    private function new_activation_key(): string
+    {
+        $key = '';
+        try {
+            $key = bin2hex(random_bytes(10));
+        } catch (RandomException $e) {
+            log_err('RandomException in new_activation_key: ' . $e->getMessage());
+        }
+        return $key;
+    }
+
+    /**
+     * the link of the signup and the reset mail that opens the activation page of the user
+     * @param int $usr_id the id of the user that confirms the email or sets a new password
+     * @param string $key the cleartext activation key, of which only the hash is stored
+     * @return string e.g. 'zukunft.com/login_activate?ue=5&key=1a2b'
+     */
+    static function activation_url(int $usr_id, string $key): string
+    {
+        return POD_NAME . api::LOGIN_ACTIVATE_FORWARD
+            . url_var::PAR . url_var::USER_TO_EDIT . url_var::EQ . $usr_id
+            . url_var::ADD . url_var::POST_KEY . url_var::EQ . $key;
+    }
+
+    /**
+     * send the mail with the activation key and link e.g. to confirm the email of a new account;
+     * a test run (live_request false) builds the mail but never sends it
+     * @param user_backend $db_usr the user with the email address to which the mail is sent
+     * @param string $key the cleartext activation key
+     * @param msg_id $subject the subject e.g. msg_id::SIGNUP_MAIL_SUBJECT
+     * @param msg_id $key_intro the text in front of the key e.g. msg_id::SIGNUP_MAIL_KEY_INTRO
+     * @param msg_id $ignore the last line for a user who has not asked for the mail e.g. msg_id::SIGNUP_MAIL_IGNORE
+     * @return bool true if the mail server has accepted the mail or if this is a test run
+     */
+    private function send_activation_mail(
+        user_backend $db_usr,
+        string       $key,
+        msg_id       $subject,
+        msg_id       $key_intro,
+        msg_id       $ignore
+    ): bool
+    {
+        $mail_subject = POD_NAME . ' - ' . $this->mail_txt($subject);
+        $mail_body = $this->mail_txt(msg_id::RESET_MAIL_HELLO) . "\n\n"
+            . $this->mail_txt($key_intro) . ' ' . $key . "\n\n"
+            . $this->mail_txt(msg_id::RESET_MAIL_LINK_INTRO) . "\n" . self::activation_url($db_usr->id(), $key) . "\n\n"
+            . $this->mail_txt($ignore);
+        $result = true;
+        if ($this->live_request) {
+            $result = new mail_sender()->send($db_usr->email, $mail_subject, $mail_body);
+        }
+        return $result;
+    }
+
+    /**
      * send a password-reset email and redirect to the activation page
      * @param array $url_array the normalised URL params (expects USERNAME_HUMAN and/or EMAIL_HUMAN)
      * @param user_message_ui $msg_ui collects errors shown to the user
@@ -1861,37 +2029,24 @@ class frontend
         $usr_name = $url_array[url_var::USERNAME_HUMAN] ?? '';
         $usr_mail = $url_array[url_var::EMAIL_HUMAN] ?? '';
         $db_usr = new user_backend();
-        $key = '';
 
         if ($do_it) {
             // only a matching account gets a reset mail, but the user is told the same either way
             // (see the neutral message below), so the reset never reveals whether the account exists
             if ($db_usr->load_by_name_or_email($usr_name, $usr_mail, new backend_user_message())) {
-                $key_ok = true;
-                try {
-                    $key = bin2hex(random_bytes(10));
-                } catch (RandomException $e) {
-                    log_err('RandomException in action_login_reset: ' . $e->getMessage());
-                    $key_ok = false;
-                }
-                if ($key_ok) {
+                $key = $this->new_activation_key();
+                if ($key != '') {
                     // store only the sha256 hash of the key with a short validity; the cleartext
                     // $key is never persisted and is sent to the user by email below
                     $db_usr->set_activation_key($key);
-                    $reset_msg = new backend_user_message();
+                    // the key is written on behalf of the user of the account, which only gets it by its email
+                    $reset_msg = new backend_user_message($db_usr); // not reported, see the neutral response below
                     $db_usr->save($reset_msg);
                     // a save failure is logged, not shown, so the response stays identical for an
                     // existing and a non-existing account (do not merge it into the user message)
                     if ($reset_msg->is_ok()) {
-                        $activate_url = POD_NAME . api::LOGIN_ACTIVATE_FORWARD
-                            . url_var::PAR . url_var::ID . url_var::EQ . $db_usr->id
-                            . '&' . url_var::POST_KEY . url_var::EQ . $key;
-                        $mail_subject = POD_NAME . ' - ' . $this->mail_txt(msg_id::RESET_MAIL_SUBJECT);
-                        $mail_body = $this->mail_txt(msg_id::RESET_MAIL_HELLO) . "\n\n"
-                            . $this->mail_txt(msg_id::RESET_MAIL_KEY_INTRO) . ' ' . $key . "\n\n"
-                            . $this->mail_txt(msg_id::RESET_MAIL_LINK_INTRO) . "\n" . $activate_url . "\n\n"
-                            . $this->mail_txt(msg_id::RESET_MAIL_IGNORE);
-                        mail($db_usr->email, $mail_subject, $mail_body, users::mail_header());
+                        $this->send_activation_mail($db_usr, $key,
+                            msg_id::RESET_MAIL_SUBJECT, msg_id::RESET_MAIL_KEY_INTRO, msg_id::RESET_MAIL_IGNORE);
                     } else {
                         log_err('password reset save failed: ' . $reset_msg->all_message_text());
                     }
@@ -2329,14 +2484,16 @@ class frontend
      * get an api json as a string from the backend
      *
      * @param string $class the name of the class
+     * @param user_message_ui $msg_ui with the requesting user whose id is added to the url if logged in
      * @param array|string $ids
      * @param string $id_fld
      * @return string
      */
     function api_get(
-        string       $class,
-        array|string $ids = [],
-        string       $id_fld = 'ids'
+        string          $class,
+        user_message_ui $msg_ui,
+        array|string    $ids = [],
+        string          $id_fld = 'ids'
     ): string
     {
         $lib = new library();
@@ -2348,7 +2505,7 @@ class frontend
             $data = array($id_fld => $ids);
         }
         $ctrl = new rest_call();
-        return $ctrl->api_call(rest_ctrl::GET, $url, $data);
+        return $ctrl->api_call(rest_ctrl::GET, $url, $ctrl->data_with_user($data, $msg_ui));
     }
 
     /*

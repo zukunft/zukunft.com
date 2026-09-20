@@ -123,7 +123,7 @@ class result_list extends sandbox_list_value
         $data = array();
         $data[url_var::FORMULA] = $frm->id();
         $data[url_var::GROUP] = $lst->ids();
-        return $this->load_by($data);
+        return $this->load_by($data, $msg);
     }
 
     /**
@@ -136,7 +136,7 @@ class result_list extends sandbox_list_value
     {
         $data = array();
         $data[url_var::FORMULA] = $frm->id();
-        return $this->load_by($data);
+        return $this->load_by($data, $msg);
     }
 
     /**
@@ -149,20 +149,21 @@ class result_list extends sandbox_list_value
     {
         $data = array();
         $data[url_var::GROUP] = $grp->id();
-        return $this->load_by($data);
+        return $this->load_by($data, $msg);
     }
 
     /**
      * get a list of results via api from the backend
      *
      * @param array $data the array to select the results
+     * @param user_message $msg with the requesting user for whom the results are selected
      * @return bool true if value or phrases are found
      */
-    function load_by(array $data): bool
+    function load_by(array $data, user_message $msg): bool
     {
         $result = false;
         $api = new rest_call();
-        $json_body = $api->api_get(self::class, $data);
+        $json_body = $api->api_get(self::class, $data, $msg);
         $this->api_mapper($json_body);
         if (!$this->is_empty()) {
             $result = true;

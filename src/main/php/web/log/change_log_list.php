@@ -114,7 +114,7 @@ class change_log_list extends ListBase
         int          $page = 0
     ): user_message
     {
-        $json = $this->load_api_by_object_field($class, $id, $fld, $usr, $size, $page);
+        $json = $this->load_api_by_object_field($class, $msg, $id, $fld, $usr, $size, $page);
         $actual = json_decode($json, true);
 
         $this->set_from_json($actual);
@@ -176,6 +176,7 @@ class change_log_list extends ListBase
      * get the json of a list of changes from the api
      *
      * @param string $class the class name of the object to test
+     * @param user_message $msg with the requesting user whose id is added to the url if logged in
      * @param int|string $id the database id of the object to which the changes should be listed
      * @param string $fld the url api field name to select only some changes e.g. 'word_field'
      * @param user|null $usr to select only the changes of this user
@@ -184,12 +185,13 @@ class change_log_list extends ListBase
      * @return string the api json as a string
      */
     function load_api_by_object_field(
-        string     $class,
-        int|string $id = 1,
-        string     $fld = '',
-        user|null  $usr = null,
-        int        $limit = 0,
-        int        $page = 0
+        string       $class,
+        user_message $msg,
+        int|string   $id = 1,
+        string       $fld = '',
+        user|null    $usr = null,
+        int          $limit = 0,
+        int          $page = 0
     ): string
     {
         $lib = new library();
@@ -201,7 +203,7 @@ class change_log_list extends ListBase
         $data[url_var::ID] = $id;
         $data[url_var::LOG_FIELD] = $fld;
         $ctrl = new rest_call();
-        return $ctrl->api_call(rest_ctrl::GET, $url, $data);
+        return $ctrl->api_call(rest_ctrl::GET, $url, $ctrl->data_with_user($data, $msg));
     }
 
     /**

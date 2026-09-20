@@ -50,7 +50,9 @@ include_once paths::MODEL_LOG . 'change_values_time_norm.php';
 include_once paths::MODEL_LOG . 'change_values_text_big.php';
 include_once paths::MODEL_LOG . 'change_values_geo_prime.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_function.php';
+include_once paths::MODEL_USER . 'user.php';
 include_once paths::SHARED_CONST . 'triples.php';
+include_once paths::SHARED_CONST . 'users.php';
 include_once paths::MODEL_WORD . 'triple_db.php';
 include_once html_paths::LOG . 'user_log_display.php';
 include_once paths::SHARED_CONST_FIELDS . 'word_fields.php';
@@ -80,11 +82,13 @@ use Zukunft\ZukunftCom\main\php\cfg\log\change_values_text_big;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_time_norm;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_function;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple_db;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_db;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
@@ -278,6 +282,9 @@ class change_log_tests
         // a type row e.g. a sys log function logs to the changes table like the named objects,
         // so the test cleanup can remove the change log of a type test row via the same list load
         $this->assert_sql_list_by_field(sys_log_function::class, '', 1, $log_lst, $db_con, $t);
+        // the changes of a user row e.g. of a signed up test user, which the test cleanup removes
+        $test_name = 'get the changes of a user';
+        $this->assert_sql_list_by_field(user::class, '', users::SYSTEM_TEST_ID, $log_lst, $db_con, $t, $test_name);
 
         // sql to load the link change history of an object (used by the default word/formula/view page)
         $t->subheader($ts . 'link change list by object');

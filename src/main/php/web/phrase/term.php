@@ -649,15 +649,16 @@ class term extends combine_named
      * @param string $form
      * @param int $pos
      * @param string $class
+     * @param user_message $msg with the requesting user for whom the terms are selected
      * @param array $url_arr the url vars of the calling page for the back link
      * @return string
      */
-    function dsp_selector(term $type, string $form, int $pos, string $class, array $url_arr = []): string
+    function dsp_selector(term $type, string $form, int $pos, string $class, user_message $msg, array $url_arr = []): string
     {
         // TODO include pattern in the call
         $pattern = '';
         $trm_lst = new term_list();
-        $trm_lst->load_like($pattern);
+        $trm_lst->load_like($pattern, $msg);
 
         if ($pos > 0) {
             $name = url_var::TERM_POS . $pos;

@@ -95,6 +95,20 @@ class word_ui_tests
         // a database change is only executed for a known requesting user on the message
         // (docs/llm/state-and-messages.md); the positive twins that save with a message user
         // are the rename and delete tests in unit_write_workflow/*_write_url_tests.php
+        $t->subheader($ts . 'url mapper');
+        // the own fields of a word depend on the mapping of its parent fields e.g. the id,
+        // not on an unrelated earlier error of the request (see docs/llm/dependent-errors.md)
+        $test_name = 'the plural of the url is mapped even after an unrelated earlier error of the request';
+        $map_err_msg = new user_message();
+        $map_err_msg->add_message(msg_id::RESET_MAIL_SENT->value);
+        $wrd_map = new word();
+        $wrd_map->url_mapper([url_var::ID => word_names::MATH_ID, url_var::PLURAL => word_names::TEST_ADD_PLURAL], $map_err_msg);
+        $t->assert($test_name, $wrd_map->plural, word_names::TEST_ADD_PLURAL);
+        $test_name = '... but not if the mapping of the word itself fails e.g. because the id is missing';
+        $wrd_no_id = new word();
+        $wrd_no_id->url_mapper([url_var::PLURAL => word_names::TEST_ADD_PLURAL], new user_message());
+        $t->assert_true($test_name, $wrd_no_id->plural === null);
+
         $t->subheader($ts . 'crud guard');
         $test_name = 'add without a message user reports the missing user';
         $no_usr_msg = new user_message();

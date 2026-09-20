@@ -160,8 +160,11 @@ class ref extends sandbox
      */
     function url_mapper(array $url_array, user_message $msg, data_object|null $dto = null): user_message
     {
-        parent::url_mapper($url_array, $msg, $dto);
-        if ($msg->is_ok()) {
+        $map_msg = new user_message($msg->usr); // the problems of the parent mapping, merged into $msg right away
+        parent::url_mapper($url_array, $map_msg, $dto);
+        $msg->merge($map_msg);
+        // the own fields depend on the parent mapping e.g. of the id, not on an unrelated earlier error
+        if ($map_msg->is_ok()) {
             if (array_key_exists(url_var::PHRASE, $url_array)) {
                 $this->set_phrase_by_id($url_array[url_var::PHRASE]);
             } else {
@@ -609,15 +612,16 @@ class ref extends sandbox
 
     /**
      * @param string $form
+     * @param user_message $msg with the requesting user for whom the sources are selected
      * @param string $pattern
      * @param source_list|null $src_lst the frontend cache with the configuration, the preloaded source and the cached objects
      * @param bool $test_mode true to offer only the cached sources, because a snapshot is created without a backend call
      * @return string
      */
-    function source_selector(string $form, string $pattern, ?source_list $src_lst, bool $test_mode = false): string
+    function source_selector(string $form, user_message $msg, string $pattern, ?source_list $src_lst, bool $test_mode = false): string
     {
         $src_lst = $src_lst ?? new source_list();
-        $src_lst->load_for_selector($pattern, $test_mode);
+        $src_lst->load_for_selector($pattern, $msg, $test_mode);
         return $src_lst->selector($form, $this->id(), url_var::SOURCE, msg_id::FORM_SELECT_SOURCE);
     }
 

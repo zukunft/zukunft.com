@@ -128,7 +128,7 @@ class triple_url_tests extends url_test_base
         $this->wf_start($wf_nbr, workflows::WF_ADD_TRIPLE_FAIL, $this->t->usr1, triple_names::SYSTEM_TEST_ADD_ID, $do_it);
 
         // initial url with an empty triple
-        $url_arr = test_triples::triple_new_url($this->msg);
+        $url_arr = test_triples::triple_new_url();
         // fix the values before the changes in the url TODO Prio 2 should be done by the process automatic
         $url_pre = html_base::pre_url_array($url_arr);
         $url_arr = $url_arr + $url_pre;
@@ -165,7 +165,7 @@ class triple_url_tests extends url_test_base
         $this->set_word_norm_ids();
 
         // initial url with an empty triple
-        $url_arr = test_triples::triple_new_url($this->msg);
+        $url_arr = test_triples::triple_new_url();
 
         $this->wf_id = 0;
         $this->wf_fixed_id = triple_names::SYSTEM_TEST_ADD_ID;
@@ -245,7 +245,7 @@ class triple_url_tests extends url_test_base
 
         // initial url with the added triple
         $t_trp = new test_triples($this->t);
-        $url_arr = $t_trp->triple_add_url_resolved($this->msg);
+        $url_arr = $t_trp->triple_add_url_resolved();
         $url_arr[url_var::ID] = $this->wf_id;
         // fix the values before the changes in the url TODO Prio 2 should be done by the process automatic
         $url_pre = html_base::pre_url_array($url_arr);
@@ -308,7 +308,7 @@ class triple_url_tests extends url_test_base
         // from and to words (the snapshot files normalize the ids back to the fixed test ids); the
         // description is seeded so its kept '8' baseline can be checked after the failed save
         $t_trp = new test_triples($this->t);
-        $url_arr = $t_trp->triple_add_url_resolved($this->msg);
+        $url_arr = $t_trp->triple_add_url_resolved();
         $url_arr[url_var::ID] = $this->wf_id;
         $url_arr[url_var::DESCRIPTION] = triple_names::SYSTEM_TEST_ADD_COM;
         // fix the values before the changes in the url TODO Prio 2 should be done by the process automatic
@@ -377,7 +377,7 @@ class triple_url_tests extends url_test_base
         // its from and to words so the confirmed write targets the real rows (the snapshot files
         // normalize the ids back to the fixed test ids)
         $t_trp = new test_triples($this->t);
-        $url_arr = $t_trp->triple_add_url_resolved($this->msg);
+        $url_arr = $t_trp->triple_add_url_resolved();
         $url_arr[url_var::ID] = $this->wf_id;
         // fix the values before the changes in the url TODO Prio 2 should be done by the process automatic
         $url_pre = html_base::pre_url_array($url_arr);
@@ -492,7 +492,7 @@ class triple_url_tests extends url_test_base
         // is forced so the frontend check reads the triple as still in use and blocks the deletion
         // TODO Prio 0 remove workaround until the backend maintains the usage field
         $t_trp = new test_triples($this->t);
-        $url_arr = $t_trp->triple_add_url_resolved($this->msg);
+        $url_arr = $t_trp->triple_add_url_resolved();
         $url_arr[url_var::ID] = $this->wf_id;
         $url_arr[url_var::USAGE] = 1;
         // fix the values before the changes in the url TODO Prio 2 should be done by the process automatic
@@ -549,7 +549,7 @@ class triple_url_tests extends url_test_base
         // its from and to words so the confirmed delete targets the real rows (the snapshot files
         // normalize the ids back to the fixed test ids)
         $t_trp = new test_triples($this->t);
-        $url_arr = $t_trp->triple_add_url_resolved($this->msg);
+        $url_arr = $t_trp->triple_add_url_resolved();
         $url_arr[url_var::ID] = $this->wf_id;
         // fix the values before the changes in the url TODO Prio 2 should be done by the process automatic
         $url_pre = html_base::pre_url_array($url_arr);

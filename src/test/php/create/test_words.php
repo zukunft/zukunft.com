@@ -280,16 +280,37 @@ class test_words extends test_objects
         return new word_ui($wrd->api_json());
     }
 
-    static function word_new_url(user_message_ui $msg): array
+    /**
+     * @return array the page url of the math word (see word()) in the order the page sends the fields
+     */
+    static function math_url(): array
     {
-        $wrd_ui = new word_ui();
-        return $wrd_ui->to_url_array($msg);
+        return [
+            url_var::ID => word_names::MATH_ID,
+            url_var::PROTECTION => protection_types::ADMIN_ID,
+            url_var::NAME => word_names::MATH,
+            url_var::DESCRIPTION => word_names::MATH_COM,
+            url_var::TYPE => phrase_types::NORMAL_ID,
+        ];
     }
 
-    static function word_add_url(user_message_ui $msg): array
+    /**
+     * @return array the url of the empty add word form, which has no id yet
+     */
+    static function word_new_url(): array
     {
-        $wrd_ui = self::word_add_ui();
-        return $wrd_ui->to_url_array($msg);
+        return [url_var::ID => 0];
+    }
+
+    /**
+     * @return array the url of the added test word with its fixed snapshot id
+     */
+    static function word_add_url(): array
+    {
+        return [
+            url_var::ID => word_names::TEST_ADD_ID,
+            url_var::NAME => word_names::TEST_ADD,
+        ];
     }
 
 
@@ -328,15 +349,20 @@ class test_words extends test_objects
      *
      * @return array the edit form url parameters with every field filled
      */
-    function fill_url_array(user_message_ui $msg): array
+    static function fill_url_array(): array
     {
-        // word_filled_add is filled() carrying the reserved 'System Test Word' name, so it gives the new
-        // value of every editable url field without renaming the word the change_word workflow runs on
-        $wrd = new word_ui($this->word_filled_add()->api_json());
-        $url_arr = $wrd->to_url_array($msg);
-        // the workflow step adds the current db id of the test word, so drop the factory id
-        unset($url_arr[url_var::ID]);
-        return $url_arr;
+        // the fields of the all-fields-filled word (word_filled_add) with the reserved 'System Test Word'
+        // name, so every editable field gets a new value without renaming the word of the workflow;
+        // no id, because the workflow step adds the current db id of the test word
+        return [
+            url_var::NAME => word_names::TEST_ADD,
+            url_var::DESCRIPTION => word_names::TEST_CHANGE_COM,
+            url_var::USAGE => test_const::DUMMY_USAGE_WORD,
+            url_var::TYPE => phrase_types::SCALING_ID,
+            url_var::PLURAL => word_names::TEST_ADD_PLURAL,
+            url_var::VIEW => views::WORD_ID,
+            url_var::IMPACT => test_const::DUMMY_IMPACT,
+        ];
     }
 
     /**

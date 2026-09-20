@@ -385,6 +385,7 @@ class html_base
         // submit the search to the find view as a hidden field so the GET call is e.g. /http/view.php?m=67&pattern=ABB
         // (a query string in the form action would be dropped by the browser on a GET submit)
         $result .= $this->form_hidden(url_var::MASK, (string)views::WORD_FIND_ID) . "\n";
+        $result .= $this->form_user();
         $result .= '<' . self::LABEL . ' ' . self::FOR . '="kp" ' . self::CLASS_HTML . '="visually-hidden">' . $mtr->txt(msg_id::NAVBAR_SEARCH) . '</' . self::LABEL . '>' . "\n";
         $result .= '<' . self::INPUT . ' ' . self::CLASS_HTML . '="form-control me-2" ' . self::TYPE . '="search" ' . self::NAME . '="pattern" ' . self::ID . '="kp" ' . self::PLACEHOLDER . '="' . $mtr->txt(msg_id::NAVBAR_SEARCH_PLACEHOLDER) . '" ' . self::STYLE . '="min-width: 40vw; max-width: 800px;">' . "\n";
         $result .= '<' . self::BUTTON . ' ' . self::CLASS_HTML . '="btn btn-outline-primary" ' . self::TYPE . '="submit">' . $mtr->txt(msg_id::NAVBAR_GET_NUMBERS) . '</' . self::BUTTON . '>' . "\n";
@@ -565,6 +566,7 @@ class html_base
             log_warning('link to "' . $url . '" is blocked due to the unexpected url scheme');
             $result = $name;
         } else {
+            $url = $this->url_with_user($this->url_with_id_var($url));
             $result = '<' . self::A . ' ' . self::HREF . '="' . htmlspecialchars($url, ENT_QUOTES) . '"';
             if ($title != '' && $title != $name) {
                 $result .= ' ' . self::TITLE_HTML . '="' . htmlspecialchars($title, ENT_QUOTES) . '"';
@@ -939,11 +941,25 @@ class html_base
         return $this->prefixed_url_part($field_values, url_var::PRE);
     }
 
+    /**
+     * the given url params keyed by their url var with the given prefix char added to each key
+     *
+     * a param that already names another url part (the '7'-prefixed link vars, the '8'-prefixed db
+     * values and the '9'-prefixed back targets) is never prefixed again, because a compound key
+     * like '89m' names no url var and the url mapper would report it as missing (see url_var::PREFIXES)
+     *
+     * @param array $url_arr the params keyed by their url var e.g. ['m' => 3, '9m' => 5]
+     * @param string $prefix the prefix char of the url part e.g. url_var::PRE ('8')
+     * @return array the unprefixed params with the prefix added e.g. ['8m' => 3]
+     */
     static function prefixed_url_array(array $url_arr, string $prefix): array
     {
         $par = [];
         foreach ($url_arr as $key => $val) {
-            $par[$prefix . $key] = $val;
+            [$key_prefix,] = url_var::split_prefix((string)$key);
+            if ($key_prefix == '') {
+                $par[$prefix . $key] = $val;
+            }
         }
         return $par;
     }
@@ -1133,6 +1149,137 @@ class html_base
         $token = $_SESSION[url_var::SESSION_TOKEN] ?? '';
         $sep = str_contains($url, '?') ? '&' : '?';
         return $url . $sep . url_var::SESSION_TOKEN . '=' . rawurlencode($token);
+    }
+
+    /**
+     * add the id of the logged-in user to the url of a page of this pod, so that the address bar
+     * shows for whom the page is created; a user id that the url already carries is replaced
+     * @param string $url the target of a link or a redirect e.g. '/http/view.php?m=3&id=272'
+     * @return string e.g. '/http/view.php?m=3&id=272&u=12', unchanged if nobody is logged in
+     *                or if the url is an in-page anchor or points to another site or pod
+     */
+    function url_with_user(string $url): string
+    {
+        $usr_id = $this->url_user_id();
+        $result = $url;
+        if ($usr_id > 0 and $this->is_page_url($url)) {
+            $result = self::url_set_par($url, url_var::USER, (string)$usr_id);
+        }
+        return $result;
+    }
+
+    /**
+     * the hidden field with the id of the logged-in user, because a get form drops the
+     * parameters of its action url, so that the page after the submit also carries the user
+     * @return string the html code of the hidden field or an empty string if nobody is logged in
+     */
+    function form_user(): string
+    {
+        $usr_id = $this->url_user_id();
+        $result = '';
+        if ($usr_id > 0) {
+            $result = $this->form_hidden(url_var::USER, (string)$usr_id);
+        }
+        return $result;
+    }
+
+    /**
+     * read from the request cache, because the url builders are called without the message
+     * @return int the id of the logged-in user for the urls or 0 if nobody is logged in
+     */
+    private function url_user_id(): int
+    {
+        global $ui_sys;
+        // ?? and not ?->, because the user of the cache can be unset e.g. for an anonymous render
+        $usr = $ui_sys->usr ?? null;
+        return $usr?->id_for_url() ?? 0;
+    }
+
+    /**
+     * @param string $url the target of a link, which may be relative, absolute or an in-page anchor
+     * @return bool true if the url calls the main script of this pod
+     */
+    private function is_page_url(string $url): bool
+    {
+        $parts = parse_url($url);
+        $result = false;
+        if ($parts !== false) {
+            $path = $parts['path'] ?? '';
+            // a url with only parameters e.g. '?view=more' calls the page itself
+            $is_same_page = ($path == '' and isset($parts['query']));
+            $is_main = ($is_same_page or str_ends_with($path, api::MAIN_SCRIPT_EXT));
+            $result = ($is_main and self::is_own_host($parts));
+        }
+        return $result;
+    }
+
+    /**
+     * @param array $parts the parse_url parts of a url
+     * @return bool true if the url is relative or points to the host and port of this pod
+     */
+    private static function is_own_host(array $parts): bool
+    {
+        $own = parse_url(THIS_URL);
+        $host = $parts['host'] ?? '';
+        $same_host = ($host == ($own['host'] ?? '') and ($parts['port'] ?? 0) == ($own['port'] ?? 0));
+        return ($host == '' or $same_host);
+    }
+
+    /**
+     * set one url parameter in front of an in-page anchor and replace the value the url already carries
+     * @param string $url e.g. '/http/view.php?m=3&u=5#tab'
+     * @param string $key the url var e.g. url_var::USER
+     * @param string $val the new value e.g. '12'
+     * @return string e.g. '/http/view.php?m=3&u=12#tab'
+     */
+    static function url_set_par(string $url, string $key, string $val): string
+    {
+        $anchor_pos = strpos($url, url_var::ANCHOR);
+        $anchor = $anchor_pos === false ? '' : substr($url, $anchor_pos);
+        $base = $anchor_pos === false ? $url : substr($url, 0, $anchor_pos);
+        $par = $key . url_var::EQ . rawurlencode($val);
+        $pattern = self::par_pattern($key, '[^' . url_var::ADD . ']*');
+        if (preg_match($pattern, $base)) {
+            $base = preg_replace($pattern, '${1}' . $par, $base);
+        } elseif (str_contains($base, url_var::PAR)) {
+            $base .= url_var::ADD . $par;
+        } else {
+            $base .= url_var::PAR . $par;
+        }
+        return $base . $anchor;
+    }
+
+    /**
+     * name the object of a page url by the url var of its view, because the url builders name every
+     * object by url_var::ID, but e.g. the admin user edit view names its user by url_var::USER_TO_EDIT
+     * @param string $url e.g. '/http/view.php?m=107&id=5'
+     * @return string e.g. '/http/view.php?m=107&ue=5', unchanged for the views that use url_var::ID
+     */
+    function url_with_id_var(string $url): string
+    {
+        $result = $url;
+        if ($this->is_page_url($url)) {
+            parse_str(parse_url($url, PHP_URL_QUERY) ?? '', $url_arr);
+            $id_var = url_var::id_var($url_arr[url_var::MASK] ?? 0);
+            if ($id_var != url_var::ID and array_key_exists(url_var::ID, $url_arr)) {
+                $result = preg_replace(self::par_pattern(url_var::ID), '${1}' . $id_var . url_var::EQ, $url);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the regular expression of a url parameter that matches only the whole key after '?' or '&',
+     * so e.g. the back key '9u' or the value 'a=u' is not taken as the key 'u'
+     * @param string $key the url var e.g. url_var::USER
+     * @param string $val_pattern the regular expression of the value, empty to match the key only
+     * @return string the pattern with the separator in the first group
+     */
+    private static function par_pattern(string $key, string $val_pattern = ''): string
+    {
+        $sep_chars = preg_quote(url_var::PAR . url_var::ADD, '/');
+        $key_eq = preg_quote($key . url_var::EQ, '/');
+        return '/([' . $sep_chars . '])' . $key_eq . $val_pattern . '/';
     }
 
     /**
@@ -1905,9 +2052,9 @@ class html_base
 
         if ($url_arr == []) {
             log_err("Internal error: go back page missing.", "dsp_header->dsp_go_back");
-            header("Location: " . api::MAIN_SCRIPT); // go back to the fallback page
+            header("Location: " . $this->url_with_user(api::MAIN_SCRIPT)); // go back to the fallback page
         } else {
-            header("Location: " . $this->page_url($url_arr));
+            header("Location: " . $this->url_with_user($this->url_with_id_var($this->page_url($url_arr))));
         }
 
         return $result;
@@ -2280,6 +2427,7 @@ class html_base
         */
         $result .= ' <' . self::FORM . ' ' . self::ACTION . '="'
             . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::IMPORT . '" ' . self::METHOD . '="post" ' . self::ENCTYPE . '="multipart/form-data">';
+        $result .= $this->form_user();
         $result .= '   Select JSON to upload:';
         $result .= '   <' . self::INPUT . ' ' . self::TYPE . '="' . html_base::INPUT_FILE .
             '" ' . self::NAME . '="fileToUpload" ' . self::ID . '="fileToUpload">';
@@ -2589,7 +2737,7 @@ class html_base
 
         // every crud form carries the anti-csrf session token as its first hidden field so the
         // server can reject a data change that does not carry the matching token (see form_session_token)
-        return '<' . self::FORM . $action . $id . '>' . $this->form_session_token();
+        return '<' . self::FORM . $action . $id . '>' . $this->form_session_token() . $this->form_user();
     }
 
     /**
@@ -2605,7 +2753,7 @@ class html_base
         $action = ' ' . self::ACTION . '="' . $action . '"';
         $method = ' ' . self::METHOD . '="' . $method . '"';
 
-        return '<' . self::FORM . $action . $method . '>' . $txt . '</' . self::FORM . '>';
+        return '<' . self::FORM . $action . $method . '>' . $this->form_user() . $txt . '</' . self::FORM . '>';
     }
 
     /**

@@ -49,6 +49,7 @@ include_once paths::SHARED_CONST . 'formulas.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::SHARED_TYPES . 'formula_link_types.php';
+include_once paths::SHARED_TYPES . 'formula_types.php';
 include_once paths::SHARED_TYPES . 'protection_types.php';
 include_once paths::SHARED_TYPES . 'share_types.php';
 include_once paths::SHARED . 'url_var.php';
@@ -79,6 +80,7 @@ use Zukunft\ZukunftCom\test\php\unit\sys_log_tests;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\formula_link_types;
+use Zukunft\ZukunftCom\main\php\shared\types\formula_types;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\shared\types\share_types;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
@@ -281,10 +283,10 @@ class test_formulas extends test_objects
      * the url of the empty add formula form, mirroring test_words::word_new_url
      * @return array the url parameters of a formula without any field set
      */
-    static function formula_new_url(user_message_ui $msg): array
+    static function formula_new_url(): array
     {
-        $frm_ui = new formula_ui();
-        return $frm_ui->to_url_array($msg);
+        // unlike the other objects the empty name and description are part of the formula url
+        return [url_var::ID => 0, url_var::NAME => '', url_var::DESCRIPTION => ''];
     }
 
     /**
@@ -292,10 +294,15 @@ class test_formulas extends test_objects
      *
      * @return array the formula url parameters of the added test formula
      */
-    function formula_add_url(user_message_ui $msg): array
+    static function formula_add_url(): array
     {
-        $frm_ui = new formula_ui($this->formula_add()->api_json());
-        return $frm_ui->to_url_array($msg);
+        return [
+            url_var::ID => 0,
+            url_var::NAME => formula_names::SYSTEM_TEST_ADD,
+            url_var::DESCRIPTION => '',
+            url_var::TYPE => formula_types::CALC_ID,
+            url_var::USER_EXPRESSION => formula_names::INCREASE_EXP,
+        ];
     }
 
     /**
@@ -309,8 +316,7 @@ class test_formulas extends test_objects
      */
     function fill_url_array(int $id): array
     {
-        $msg = new user_message_ui();
-        $url_arr = $this->formula_add_url($msg);
+        $url_arr = self::formula_add_url();
         // the workflow step adds the current db id of the test formula, so drop the factory id
         unset($url_arr[url_var::ID]);
         $url_arr[url_var::DESCRIPTION] = formula_names::SYSTEM_TEST_ADD_COM;

@@ -165,7 +165,7 @@ class combine_named extends combine_object
         $result = false;
 
         $api = new rest_call();
-        $json_body = $api->api_call_name($this::class, $name);
+        $json_body = $api->api_call_name($this::class, $name, $msg);
         if ($json_body) {
             $this->api_mapper($json_body, $msg);
             if ($this->obj_id() != 0) {

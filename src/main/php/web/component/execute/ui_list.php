@@ -1043,7 +1043,7 @@ class ui_list extends ui_base
     {
         if ($phr_cac == null) {
             $phr_lst = new phrase_list();
-            $phr_lst->load_related($phr, $dir);
+            $phr_lst->load_related($phr, $dir, $msg);
         } else {
             //$vrb = new verb();
             //$vrb->id = verbs::IS_ID;

@@ -89,7 +89,7 @@ class change_log_link_list extends ListBase
      */
     function load_by_object(string $class, user_message $msg, int|string $id = 1, user|null $usr = null): user_message
     {
-        $json = $this->load_api_by_object($class, $id, $usr);
+        $json = $this->load_api_by_object($class, $msg, $id, $usr);
         $this->set_from_json(json_decode($json, true));
         return $msg;
     }
@@ -98,11 +98,12 @@ class change_log_link_list extends ListBase
      * get the json of the link change history of one object from the api
      *
      * @param string $class the class name of the object whose link changes should be loaded
+     * @param user_message $msg with the requesting user whose id is added to the url if logged in
      * @param int|string $id the database id of the object
      * @param user|null $usr the user who wants to see the changes
      * @return string the api json as a string
      */
-    function load_api_by_object(string $class, int|string $id = 1, user|null $usr = null): string
+    function load_api_by_object(string $class, user_message $msg, int|string $id = 1, user|null $usr = null): string
     {
         $lib = new library();
         $log_class = $lib->class_to_name(change_log_link_list::class);
@@ -111,7 +112,7 @@ class change_log_link_list extends ListBase
         $data[url_var::LOG_CLASS] = $lib->class_to_api_name($class);
         $data[url_var::ID] = $id;
         $ctrl = new rest_call();
-        return $ctrl->api_call(rest_ctrl::GET, $url, $data);
+        return $ctrl->api_call(rest_ctrl::GET, $url, $ctrl->data_with_user($data, $msg));
     }
 
 

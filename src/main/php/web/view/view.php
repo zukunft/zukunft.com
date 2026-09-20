@@ -235,6 +235,7 @@ class view extends view_exe
         $result .= '  <form action="' . api::MAIN_SCRIPT . '" class="form-inline my-2 my-lg-0">';
         // submit the search to the find view as a hidden field so the GET call is e.g. /http/view.php?m=67&pattern=ABB
         $result .= $html->form_hidden(url_var::MASK, (string)views::WORD_FIND_ID);
+        $result .= $html->form_user();
         $result .= $html->label('', url_var::PATTERN);
         $result .= $this->input_search_pattern();
         $result .= '    <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Get numbers</button>';
@@ -619,7 +620,7 @@ class view extends view_exe
                 $url = $html->url_back(views::VIEW_ADD_ID, $this->id(), $url_arr, word::class . '=' . $wrd->id() . '&add_entry=-1');
                 $result .= new button($url, $url_arr)->add(msg_id::COMPONENT_ADD);
                 $id_selected = 0; // no default view component to add defined yet, maybe use the last???
-                $result .= $this->component_selector($script, '', $id_selected, $ui_sys->component_list());
+                $result .= $this->component_selector($script, $msg, '', $id_selected, $ui_sys->component_list());
 
                 $result .= $html->dsp_form_end('',
                     $html->url_back(views::VIEW_EDIT_ID, $this->id(), $url_arr, 'word=' . $wrd->id()));
@@ -627,7 +628,7 @@ class view extends view_exe
                 $result .= 'Name of the new component: ';
                 $result .= $html->input(url_var::NAME, msg_id::FORM_FIELD_NAME, '', html_base::INPUT_TEXT);
                 // TODO ??? should this not be the default entry type
-                $result .= $this->component_selector($script, '', $this->type_id($msg), $ui_sys->component_list());
+                $result .= $this->component_selector($script, $msg, '', $this->type_id($msg), $ui_sys->component_list());
                 $result .= $html->dsp_form_end('',
                     $html->url_back(views::VIEW_EDIT_ID, $this->id(), $url_arr, 'word=' . $wrd->id()));
             } else {

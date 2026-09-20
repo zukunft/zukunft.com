@@ -1525,3 +1525,7 @@ pure html value add view with one form (ui_select::value_add_fields):
   because a link never posts the form; a value typed just before the click is still lost. to
   close the gap without javascript make more details a named submit button of the one form that
   switches the mask to views::VALUE_ADD_DETAIL_ID without triggering url_to_action
+- url_test_base::assert_step runs url_to_action for every step, while http/view.php runs it only
+  for a form submit or a get action mask (frontend::request_triggers_action); only the
+  signup_confirm workflow passes $submit_acts = true so far. make the view.php gate the default
+  for all workflows and regenerate their snapshots in one change

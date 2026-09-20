@@ -42,6 +42,7 @@ use Zukunft\ZukunftCom\main\php\web\value\value_list as value_list_ui;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::SHARED_TYPES . 'component_types.php';
+include_once paths::SHARED_TYPES . 'formula_types.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_HELPER . 'Config.php';
@@ -90,7 +91,9 @@ use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\component_types as comp_type_shared;
+use Zukunft\ZukunftCom\main\php\shared\types\formula_types;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\create\test_mappers;
@@ -132,6 +135,21 @@ class base_ui_tests
         $test_name = 'the language is part of the cache key';
         $url_array = [url_var::MASK => views::WORD_ID, url_var::ID => 2, url_var::LANGUAGE => 'de'];
         $t->assert($test_name, $ui->url_cache_key($url_array), 'm=' . views::WORD_ID . '&id=2&' . url_var::LANGUAGE . '=de');
+
+        // the user page names its user by user_to_edit (see url_var::id_var), so both urls share one cached page
+        $test_name = 'the user page is cached by the user to edit';
+        $url_array = [url_var::MASK => views::USER_ID, url_var::USER_TO_EDIT => users::SYSTEM_TEST_NORMAL_ID];
+        $usr_key = 'm=' . views::USER_ID . '&id=' . users::SYSTEM_TEST_NORMAL_ID;
+        $t->assert($test_name, $ui->url_cache_key($url_array), $usr_key);
+        $test_name = '... like by the id of an old link';
+        $url_array = [url_var::MASK => views::USER_ID, url_var::ID => users::SYSTEM_TEST_NORMAL_ID];
+        $t->assert($test_name, $ui->url_cache_key($url_array), $usr_key);
+        $test_name = 'the user to edit does not select the object of another view';
+        $url_array = [url_var::MASK => views::WORD_ID, url_var::ID => 2, url_var::USER_TO_EDIT => users::SYSTEM_TEST_NORMAL_ID];
+        $t->assert($test_name, $ui->url_cache_key($url_array), 'm=' . views::WORD_ID . '&id=2');
+        $test_name = 'the logged-in user of a shared link is ignored for the cache key';
+        $url_array = [url_var::MASK => views::WORD_ID, url_var::ID => 2, url_var::USER => users::SYSTEM_TEST_NORMAL_ID];
+        $t->assert($test_name, $ui->url_cache_key($url_array), 'm=' . views::WORD_ID . '&id=2');
 
         // a request of a view that changes data is never cached
         $test_name = 'a change mask request is not cached';
@@ -996,10 +1014,16 @@ class base_ui_tests
         // the confirm view keeps the link vars for the confirm submit, the page after the add does not;
         // a valid formula of the factory, so that the url reaches the confirm view
         $test_name = 'a confirm keeps the link vars of the new object';
-        $frm_url = $t_frm->formula_joule_ui()->to_url_array($msg_ui);
-        $frm_url[url_var::MASK] = views::FORMULA_ADD_ID;
-        $frm_url[url_var::STEP] = url_var::STEP_CONFIRM;
-        $frm_url[url_var::LINK . url_var::PHRASE] = word_names::MINUTE_ID;
+        $frm_url = [
+            url_var::MASK => views::FORMULA_ADD_ID,
+            url_var::NAME => formula_names::JOULE_DEF,
+            url_var::DESCRIPTION => formula_names::JOULE_DEF_COM,
+            url_var::TYPE => formula_types::CALC_ID,
+            url_var::USER_EXPRESSION => formula_names::JOULE_DEF_EXP,
+            url_var::LATEX => formula_names::JOULE_DEF_LATEX,
+            url_var::STEP => url_var::STEP_CONFIRM,
+            url_var::LINK . url_var::PHRASE => word_names::MINUTE_ID,
+        ];
         $cfm_url = $ui->url_to_action($frm_url, $t->usr1, $cfm_msg, $ui->dto, false);
         $t->assert($test_name, $cfm_url[url_var::LINK . url_var::PHRASE] ?? 0, word_names::MINUTE_ID);
         $test_name = '... on the confirm view';
@@ -1054,7 +1078,7 @@ class base_ui_tests
             url_var::SESSION_TOKEN => 'dummy session token for the redirect unit test',
             url_var::USER_PASSWORD => 'dummy unhashed password for the redirect unit test'
         ];
-        $redirect = frontend::redirect_url($act_url);
+        $redirect = frontend::redirect_url($act_url, $msg);
         $test_name = 'the redirect after an action shows the next page';
         $t->assert_text_contains($test_name, $redirect,
             api::MAIN_SCRIPT . url_var::PAR . url_var::MASK . url_var::EQ . views::WORD_ID);
@@ -1068,7 +1092,7 @@ class base_ui_tests
         $t->assert_text_not_contains($test_name, $redirect, url_var::USER_PASSWORD . url_var::EQ);
         // a get action mask (e.g. logout) would need the token again, so its page is not redirected
         $test_name = 'a next page that is itself an action is not redirected';
-        $t->assert($test_name, frontend::redirect_url([url_var::MASK => views::LOGOUT_ID]), '');
+        $t->assert($test_name, frontend::redirect_url([url_var::MASK => views::LOGOUT_ID], $msg), '');
 
         $test_name = 'a valid token needs no session recovery';
         $t->assert_true($test_name, frontend::session_recovery_url(true, true, $req_url) === null);

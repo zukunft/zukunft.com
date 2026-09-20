@@ -51,6 +51,7 @@ class url_var
     const string PAR = '?';
     const string ADD = '&';
     const string EQ = '=';
+    const string ANCHOR = '#'; // starts the in-page target, which follows the url parameters
     const string API_PATH = 'api/';
     const string ADD_ID = self::ADD . self::ID . self::EQ;
 
@@ -226,7 +227,8 @@ class url_var
     const string TRIPLE = 't';
     const string WEIGHT = 'tw';
     const string TRIPLES = 'tl'; // to select the triples that should be displayed
-    const string USER = 'u';
+    const string USER = 'u'; // the logged-in user, never the user that is shown or changed
+    const string USER_TO_EDIT = 'ue'; // the user that is shown or changed, because u is the logged-in user
     const string USER_FIRST_NAME = 'uf';
     const string IMPACT = 'ui'; // the impact value a form field
     const string USER_LAST_NAME = 'ul';
@@ -342,6 +344,7 @@ class url_var
     const array PAGE_VARS = [
         self::MASK,
         self::ID,
+        self::USER_TO_EDIT,
         self::ID_LST,
         self::PATTERN,
         self::PATTERN_HUMAN,
@@ -397,6 +400,7 @@ class url_var
         self::ORIGIN_MASK,
         self::ID,
         self::USER,
+        self::USER_TO_EDIT,
         self::STEP,
         self::ACTION,
         self::LANGUAGE,
@@ -438,10 +442,12 @@ class url_var
 
     // user
     const string USER_HUMAN = 'user';
+    const string USER_TO_EDIT_HUMAN = 'user_to_edit';
     const string USERNAME_HUMAN = 'username';
     const string EMAIL_HUMAN = 'email';
     const string USER_PASSWORD_HUMAN = 'password';
     const string USER_PASSWORD_RETYPE_HUMAN = 're_password';
+    const string POST_KEY_HUMAN = 'activation_key';
     const string USER_PROFILE_HUMAN = 'user_profile';
     const string USER_FIRST_NAME_HUMAN = 'user_first_name';
     const string USER_LAST_NAME_HUMAN = 'user_last_name';
@@ -684,10 +690,12 @@ class url_var
 
         // user
         [self::USER_HUMAN, self::USER],
+        [self::USER_TO_EDIT_HUMAN, self::USER_TO_EDIT],
         [self::USERNAME_HUMAN, self::USERNAME],
         [self::EMAIL_HUMAN, self::EMAIL],
         [self::USER_PASSWORD_HUMAN, self::USER_PASSWORD],
         [self::USER_PASSWORD_RETYPE_HUMAN, self::USER_PASSWORD_RETYPE],
+        [self::POST_KEY_HUMAN, self::POST_KEY],
         [self::USER_FIRST_NAME_HUMAN, self::USER_FIRST_NAME],
         [self::USER_LAST_NAME_HUMAN, self::USER_LAST_NAME],
         [self::USER_PROFILE_HUMAN, self::USER_PROFILE],
@@ -999,6 +1007,42 @@ class url_var
             }
         }
         return $result;
+    }
+
+    /**
+     * the url var that selects the object of a view, which is the user to edit for the user views of
+     * views::USER_TO_EDIT_MASKS_IDS, because the url var USER is always the logged-in user
+     *
+     * @param mixed $msk the id or the code id of the view e.g. views::USER_ADMIN_EDIT_ID;
+     *                   mixed, because it is user input that may also be an array e.g. from m[]=1
+     * @return string e.g. USER_TO_EDIT for the admin user edit view or ID for all other views
+     */
+    static function id_var(mixed $msk): string
+    {
+        $msk_id = 0;
+        if (is_numeric($msk)) {
+            $msk_id = (int)$msk;
+        } elseif (is_string($msk)) {
+            $msk_id = array_flip(views::TEST_VIEW_IDS)[$msk] ?? 0;
+        }
+        $result = self::ID;
+        if (in_array($msk_id, views::USER_TO_EDIT_MASKS_IDS)) {
+            $result = self::USER_TO_EDIT;
+        }
+        return $result;
+    }
+
+    /**
+     * the object id of a url before url_mapper::url_to_standard has moved e.g. the user to edit to the id
+     *
+     * @param array $url_array the url of a request e.g. [MASK => views::USER_ID, USER_TO_EDIT => 6]
+     * @return int|string the id by the url var of the view (see id_var) or else by the id of an
+     *                    old link e.g. 'm=99&id=6', 0 if the url names no object
+     */
+    static function object_id(array $url_array): int|string
+    {
+        $id_var = self::id_var($url_array[self::MASK] ?? 0);
+        return $url_array[$id_var] ?? $url_array[self::ID] ?? 0;
     }
 
     /**

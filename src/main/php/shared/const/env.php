@@ -109,6 +109,14 @@ const ENV_USER_MAIL = 'USER_MAIL';
 const ENV_CO_USER_NAME = 'CO_USER_NAME'; // the suggestion is to have always a deputy admin as fallback
 const ENV_CO_USER_PW = 'CO_USER_PW'; // if empty requested on initial startup
 const ENV_CO_USER_MAIL = 'CO_USER_MAIL';
+// the email account that sends the signup confirmation and the password reset mails via smtp;
+// without a host the mails are sent via the local sendmail of php mail() (see web/helper/mail_sender)
+const ENV_SIGNUP_MAIL = 'SIGNUP_MAIL'; // the sender address of the mails
+const ENV_SIGNUP_MAIL_HOST = 'SIGNUP_MAIL_HOST'; // the smtp server e.g. smtp.example.com
+const ENV_SIGNUP_MAIL_PORT = 'SIGNUP_MAIL_PORT'; // 587 for starttls or 465 for implicit tls
+const ENV_SIGNUP_MAIL_USER = 'SIGNUP_MAIL_USER'; // the login of the account; empty to use the sender address
+const ENV_SIGNUP_MAIL_PW = 'SIGNUP_MAIL_PW'; // the password of the account, which stays in the deployed .env
+const SIGNUP_MAIL_PORT_FALLBACK = 587;
 const POD_NAME_FALLBACK = 'zukunft.com';  // the default pod name if not defined
 const THIS_URL_FALLBACK = 'http://localhost/';  // the default pod url if not defined
 const SOURCE_REPO_URL_FALLBACK = 'https://github.com/zukunft/zukunft.com';  // the default source repository for program updates
@@ -168,9 +176,15 @@ const ENV_VARS = [
     ENV_CO_USER_NAME,
     ENV_CO_USER_PW,
     ENV_CO_USER_MAIL,
+    ENV_SIGNUP_MAIL,
+    ENV_SIGNUP_MAIL_HOST,
+    ENV_SIGNUP_MAIL_PORT,
+    ENV_SIGNUP_MAIL_USER,
+    ENV_SIGNUP_MAIL_PW,
 ];
 
 const ENV_SECRETS = [
+    ENV_SIGNUP_MAIL_PW,
     ENV_PGSQL_PASSWORD,
     ENV_PGSQL_ADMIN_PASSWORD,
     ENV_MYSQL_PASSWORD,
@@ -178,6 +192,10 @@ const ENV_SECRETS = [
     ENV_SERVER_ADMIN_PW,
     ENV_SERVER_ADMIN_2_PW,
     ENV_SERVER_ADMIN_3_PW,
+    ENV_ADMIN_PW,
+    ENV_CO_ADMIN_PW,
+    ENV_USER_PW,
+    ENV_CO_USER_PW,
 ];
 
 // the possible environments
@@ -376,6 +394,11 @@ define('USER_MAIL', getenv(ENV_USER_MAIL) ?: '');
 define('CO_USER_NAME', getenv(ENV_CO_USER_NAME) ?: '');
 define('CO_USER_PW', getenv(ENV_CO_USER_PW) ?: '');
 define('CO_USER_MAIL', getenv(ENV_CO_USER_MAIL) ?: '');
+define('SIGNUP_MAIL', getenv(ENV_SIGNUP_MAIL) ?: '');
+define('SIGNUP_MAIL_HOST', getenv(ENV_SIGNUP_MAIL_HOST) ?: '');
+define('SIGNUP_MAIL_PORT', (int)(getenv(ENV_SIGNUP_MAIL_PORT) ?: SIGNUP_MAIL_PORT_FALLBACK));
+define('SIGNUP_MAIL_USER', getenv(ENV_SIGNUP_MAIL_USER) ?: SIGNUP_MAIL);
+define('SIGNUP_MAIL_PW', getenv(ENV_SIGNUP_MAIL_PW) ?: '');
 
 // the location type for the system cache which can be the database or with some permission adjustments a file folder
 define('CACHE_LOCATION', getenv(ENV_CACHE) ?: ENV_CACHE_FALLBACK);

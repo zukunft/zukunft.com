@@ -51,6 +51,7 @@ enum user_profiles: string
     const string NORMAL_COM = 'if only the ip of the request is known';
     const string NAME_ONLY = "name";     // the user has selected and reserved a unique username
     const string EMAIL = "email";        // the email of the account has been confirmed
+    const string SIGNUP = "signup";      // for the system user that creates new users and confirms their email
     const string HUMAN = "human";        // it is confirmed that this user is a human
     const string SYS_LINK = "link";      // for technical accounts for external but trustworthy systems
     const string ADMIN = "admin";        // administrator that can add and change verbs and sees the code_id
@@ -59,6 +60,31 @@ enum user_profiles: string
     const string LOG = "log";            // reserved for the system log user
     const string SYSTEM = "system";      // reserved for the system user which is executing cleanup tasks
     const int SYSTEM_ID = 19;            // only used for the initial setup
+
+    // the profiles whose pages show the standard data without user overwrites, so their urls carry no
+    // user id (see web user::id_for_url): an ip user is not unique, so it must not use the user sandbox,
+    // and the system users (incl. the system test and log user) see the standard data by default
+    const array STANDARD_DATA = [
+        self::IP_ONLY,
+        self::SYSTEM,
+        self::TEST,
+        self::LOG,
+    ];
+
+    // the profiles that the signup system user may set: the reserved username at signup and the
+    // confirmed email with the activation link (see user::can_set_profile)
+    const array SIGNUP_CAN_SET = [
+        self::NAME_ONLY,
+        self::EMAIL,
+    ];
+
+    // the profiles of a new account in ascending order, because name and email have the same right
+    // level; a user is only raised along these steps and never lowered (see user::raise_signup_profile)
+    const array SIGNUP_STEPS = [
+        self::IP_ONLY,
+        self::NAME_ONLY,
+        self::EMAIL,
+    ];
 
     // the user profiles that are uniquely identified (beyond an ip or a chosen name)
     // and so are allowed to change e.g. the type of an object (see user::is_unique / can_set_type_id)

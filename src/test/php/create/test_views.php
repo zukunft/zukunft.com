@@ -598,10 +598,9 @@ class test_views extends test_objects
      *
      * @return array the url parameters of a view that is not yet created
      */
-    static function view_new_url(user_message_ui $msg): array
+    static function view_new_url(): array
     {
-        $msk_ui = new view_ui();
-        return $msk_ui->to_url_array($msg);
+        return [url_var::ID => 0];
     }
 
     /**
@@ -610,10 +609,9 @@ class test_views extends test_objects
      *
      * @return array the view url parameters of the added test view
      */
-    function view_add_url(user_message_ui $msg): array
+    static function view_add_url(): array
     {
-        $msk_ui = new view_ui($this->view_add()->api_json());
-        return $msk_ui->to_url_array($msg);
+        return [url_var::ID => 0, url_var::NAME => views::TEST_ADD_NAME];
     }
 
     /**
@@ -648,8 +646,7 @@ class test_views extends test_objects
      */
     function fill_url_array(int $id): array
     {
-        $msg = new user_message_ui();
-        $url_arr = $this->view_add_url($msg);
+        $url_arr = self::view_add_url();
         // the workflow step adds the current db id of the test view, so drop the factory id
         unset($url_arr[url_var::ID]);
         $url_arr[url_var::STYLE] = view_styles::COL_SM_8_ID;

@@ -33,13 +33,20 @@
 namespace Zukunft\ZukunftCom\test\php\unit;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
+include_once paths::DB . 'sql_message.php';
+include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_HELPER . 'ListOf.php';
+include_once html_paths::USER . 'user_message.php';
 include_once test_paths::CREATE . 'test_words.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_message;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\main\php\shared\helper\ListOfIdNamedCodeObjects;
 use Zukunft\ZukunftCom\main\php\shared\helper\ListOfIdNamedObjects;
@@ -64,6 +71,60 @@ class base_object_tests
         // start the test section (ts)
         $ts = 'unit base object ';
         $t->header($ts);
+
+        $t->subheader($ts . 'message status');
+        // a lower status is worse, so a setter only ever makes the status worse
+        $test_name = 'a new message is ok';
+        $t->assert_true($test_name, $msg->is_ok());
+        $test_name = 'a message set to not ok is not ok any more';
+        $msg->set_not_ok();
+        $t->assert($test_name, $msg->msg_status, msg_id::NOK);
+        $msg->reset();
+        $test_name = 'a warning of an ok message is a warning';
+        $msg->set_warning();
+        $t->assert($test_name, $msg->msg_status, msg_id::WARNING);
+        $msg->reset();
+        $test_name = 'an error of an ok message is an error';
+        $msg->set_error();
+        $t->assert($test_name, $msg->msg_status, msg_id::ERROR);
+        $test_name = '... which a later not ok does not weaken';
+        $msg->set_not_ok();
+        $t->assert($test_name, $msg->msg_status, msg_id::ERROR);
+        $test_name = '... nor a later warning';
+        $msg->set_warning();
+        $t->assert($test_name, $msg->msg_status, msg_id::ERROR);
+        $msg->reset();
+        $test_name = 'a text added to a frontend message makes it not ok, so the text is shown to the user';
+        $msg_ui = new user_message_ui();
+        $msg_ui->add_message(msg_id::RESET_MAIL_SENT->value);
+        $t->assert_false($test_name, $msg_ui->is_ok());
+        $test_name = '... and the frontend shows it';
+        $t->assert_true($test_name, $msg_ui->has_info());
+        $test_name = 'a later warning does not weaken a not ok backend message';
+        $msg_be = new user_message();
+        $msg_be->set_not_ok();
+        $msg_be->set_warning();
+        $t->assert($test_name, $msg_be->msg_status, msg_id::NOK);
+        $test_name = 'a later not ok does not weaken an error of a backend sql message';
+        $msg_sql = new sql_message();
+        $msg_sql->set_error();
+        $msg_sql->set_not_ok();
+        $t->assert($test_name, $msg_sql->msg_status, msg_id::ERROR);
+        $test_name = 'combined with an error a message keeps the error';
+        $msg_err = new user_message();
+        $msg_err->set_error();
+        $msg_be->combine_status($msg_err);
+        $t->assert($test_name, $msg_be->msg_status, msg_id::ERROR);
+        $test_name = 'combined with a warning an ok message is not ok';
+        $msg_ok = new user_message();
+        $msg_wrn = new user_message();
+        $msg_wrn->set_warning();
+        $msg_ok->combine_status($msg_wrn);
+        $t->assert($test_name, $msg_ok->msg_status, msg_id::NOK);
+        $test_name = 'combined with an ok message an ok message stays ok';
+        $msg_ok = new user_message();
+        $msg_ok->combine_status(new user_message());
+        $t->assert_true($test_name, $msg_ok->is_ok());
 
         $t->subheader($ts . 'list');
         $test_name = 'count';

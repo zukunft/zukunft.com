@@ -222,10 +222,9 @@ class test_sources extends test_objects
      *
      * @return array the source url parameters of a new source
      */
-    static function source_new_url(user_message_ui $msg): array
+    static function source_new_url(): array
     {
-        $src_ui = new source_ui();
-        return $src_ui->to_url_array($msg);
+        return [url_var::ID => 0];
     }
 
     /**
@@ -233,10 +232,9 @@ class test_sources extends test_objects
      *
      * @return array the source url parameters of the added test source
      */
-    function source_add_url(user_message_ui $msg): array
+    static function source_add_url(): array
     {
-        $src_ui = new source_ui($this->source_add()->api_json());
-        return $src_ui->to_url_array($msg);
+        return [url_var::ID => 0, url_var::NAME => sources::SYSTEM_TEST_ADD];
     }
 
     /**
@@ -272,8 +270,7 @@ class test_sources extends test_objects
      */
     function fill_url_array(int $id): array
     {
-        $msg = new user_message_ui();
-        $url_arr = $this->source_add_url($msg);
+        $url_arr = self::source_add_url();
         // the workflow step adds the current db id of the test source, so drop the factory id
         unset($url_arr[url_var::ID]);
         $url_arr[url_var::URL] = sources::TEST_URL_CHANGED;

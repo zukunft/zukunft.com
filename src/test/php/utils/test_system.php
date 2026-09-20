@@ -36,6 +36,7 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::SHARED_CONST . 'users.php';
 include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED . 'url_var.php';
 include_once paths::SERVICE . 'config.php';
 
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
@@ -44,6 +45,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_list;
 use Zukunft\ZukunftCom\main\php\service\config;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -104,7 +106,8 @@ function run_system_test(test_cleanup $t): void
     $usr_test = new user;
     $usr_test->load_by_name(users::SYSTEM_TEST_NAME, $msg);
     $usr_ui = new user_ui($usr_by_id->api_json());
-    $target = '<a href="/http/view.php?m=' . views::USER_ID . '&amp;id=' . $usr_test->id() . '">zukunft.com system test</a>';
+    // the user page names its user by url_var::USER_TO_EDIT, because url_var::USER is the logged-in user
+    $target = '<a href="/http/view.php?m=' . views::USER_ID . '&amp;' . url_var::USER_TO_EDIT . '=' . $usr_test->id() . '">zukunft.com system test</a>';
     $result = $usr_ui->display();
     $t->assert('user->load for id ' . $wrd_company->id(), $result, $target);
 

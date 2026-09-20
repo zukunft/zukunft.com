@@ -38,12 +38,14 @@ use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
 
 //include_once html_paths::API_OBJECT . 'controller.php';
 include_once html_paths::SHARED_CONST . 'rest_ctrl.php';
 include_once html_paths::SHARED . 'api.php';
 include_once html_paths::SHARED . 'url_var.php';
 include_once html_paths::SHARED . 'library.php';
+include_once html_paths::USER . 'user_message.php';
 
 class rest_call
 {
@@ -96,13 +98,14 @@ class rest_call
      * by id
      * @param string $class the frontend class name that should be loaded
      * @param int|string $id|string the id of the database object that should be loaded
+     * @param user_message $msg with the requesting user whose id is added to the url if logged in
      * @param array $data additional data that should be included in the get request
      * @return array with the body json message from the backend
      */
-    function api_call_id(string $class, int|string $id, array $data = []): array
+    function api_call_id(string $class, int|string $id, user_message $msg, array $data = []): array
     {
         $data[url_var::ID] = $id;
-        return $this->api_get($class, $data);
+        return $this->api_get($class, $data, $msg);
     }
 
     /**
@@ -110,13 +113,14 @@ class rest_call
      * by id
      * @param string $class the frontend class name that should be loaded
      * @param string $name the name of the database object that should be loaded
+     * @param user_message $msg with the requesting user whose id is added to the url if logged in
      * @return array with the body json message from the backend
      */
-    function api_call_name(string $class, string $name): array
+    function api_call_name(string $class, string $name, user_message $msg): array
     {
         $data = array();
         $data[url_var::NAME] = $name;
-        return $this->api_get($class, $data);
+        return $this->api_get($class, $data, $msg);
     }
 
     /**
@@ -124,11 +128,29 @@ class rest_call
      * by id
      * @param string $class the frontend class name that should be loaded
      * @param array $data with the parameter for the get call
+     * @param user_message $msg with the requesting user whose id is added to the url if logged in
      * @return array with the body json message from the backend
      */
-    function api_get(string $class, array $data): array
+    function api_get(string $class, array $data, user_message $msg): array
     {
-        return $this->api_curl_call($class, $data, rest_ctrl::GET);
+        return $this->api_curl_call($class, $this->data_with_user($data, $msg), rest_ctrl::GET);
+    }
+
+    /**
+     * add the id of the logged-in user to the url vars of an api get call,
+     * so that the backend returns the sandbox of this user (see user::data_user)
+     * @param array $data the url vars of the api get call
+     * @param user_message $msg with the requesting user
+     * @return array the url vars with the user id; unchanged if nobody is logged in
+     *               or if the caller has already named a data user e.g. an admin viewing another user
+     */
+    function data_with_user(array $data, user_message $msg): array
+    {
+        $usr_id = $msg->usr?->id_for_url() ?? 0;
+        if ($usr_id > 0) {
+            $data[url_var::USER] ??= $usr_id;
+        }
+        return $data;
     }
 
     /**

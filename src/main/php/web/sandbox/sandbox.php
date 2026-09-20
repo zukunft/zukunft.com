@@ -409,6 +409,7 @@ class sandbox extends db_object
 
     /**
      * @param string $form the name of the html form
+     * @param user_message $msg with the requesting user for whom the components are selected
      * @param string $pattern the pattern used to filter the components by the name
      * @param int $id the id of the component selected until now
      * @param component_list $cmp_lst with the suggested components
@@ -416,13 +417,14 @@ class sandbox extends db_object
      */
     public function component_selector(
         string         $form,
+        user_message   $msg,
         string         $pattern,
         int            $id,
         component_list $cmp_lst
     ): string
     {
         if ($pattern != '') {
-            $cmp_lst->load_like($pattern);
+            $cmp_lst->load_like($pattern, $msg);
         }
         return $cmp_lst->selector($form, $id, url_var::COMPONENT, msg_id::FORM_SELECT_COMPONENT);
     }

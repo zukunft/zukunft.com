@@ -1,0 +1,998 @@
+{
+  "version": "0.0.1",
+  "name": "attention_scarcity_vs_freedom_of_expression",
+  "description": "Does freedom of expression logically require a limit on attention, because attention received by a few restricts the effective freedom of expression of everyone else? Dataset of the argument structure (premises, counter-positions) with measured attention-concentration and amplification figures from verified studies. Measured values are untagged (default); conjectures from the dialogue carry the tag 'assumed' with a confidence number 0 to 1. Original request (German): 'muesste Meinungsfreiheit nicht auch gleichzeitig bedeuten, dass es eine Begrenzung der Aufmerksamkeit braucht, denn wenn einzelne Menschen viel Aufmerksamkeit erhalten, schraenkt dies die Meinungsfreiheit der anderen ein' followed by 'ja, gerne ein json vor allem mit studien und zahlen'.",
+  "words": [
+    {
+      "name": "freedom of expression",
+      "description": "the right to express opinions without state interference; the classical negative liberty protected by Art. 16 of the Swiss Federal Constitution and Art. 10 ECHR."
+    },
+    {
+      "name": "negative freedom",
+      "description": "freedom from interference: nobody may stop you from speaking."
+    },
+    {
+      "name": "effective freedom",
+      "description": "positive or effective freedom: the real capacity to be heard, not only to speak."
+    },
+    {
+      "name": "right to an audience",
+      "description": "a hypothetical entitlement to be listened to; not part of the classical freedom of expression."
+    },
+    {
+      "name": "freedom of information",
+      "description": "the listener-side freedom to receive information from any source of one's choice (Art. 16 para. 3 Swiss Federal Constitution)."
+    },
+    {
+      "name": "attention",
+      "description": "the finite cognitive resource of an audience; what receivers allocate to messages."
+    },
+    {
+      "name": "attention scarcity",
+      "description": "the condition that a wealth of information creates a poverty of attention (Simon 1971)."
+    },
+    {
+      "name": "attention concentration",
+      "description": "the degree to which a small share of speakers receives a large share of total attention."
+    },
+    {
+      "name": "attention cap",
+      "description": "the proposal from the dialogue: an upper limit on the attention a single speaker may receive."
+    },
+    {
+      "name": "allocating authority",
+      "description": "an institution that would have to measure and distribute attention if a cap were enforced."
+    },
+    {
+      "name": "reach",
+      "description": "the number of people a message is actually shown to; distinct from the right to speak (DiResta: free speech is not free reach)."
+    },
+    {
+      "name": "algorithmic amplification",
+      "description": "increase of a message's reach caused by ranked, personalized feeds relative to a chronological feed."
+    },
+    {
+      "name": "amplification ratio",
+      "description": "reach on ranked timelines divided by reach on chronological timelines minus one, in percent (Huszar 2022); 0% means equal reach, 100% means double reach."
+    },
+    {
+      "name": "chronological feed",
+      "description": "a feed showing posts from followed accounts in reverse time order without algorithmic personalization."
+    },
+    {
+      "name": "ranked feed",
+      "description": "a feed ordered by an engagement-optimizing personalization algorithm."
+    },
+    {
+      "name": "social influence",
+      "description": "the effect of seeing other people's choices on one's own choices; increases inequality and unpredictability of success (Salganik 2006)."
+    },
+    {
+      "name": "network effect",
+      "description": "the winner-take-all dynamic in which value and audience grow with existing audience size."
+    },
+    {
+      "name": "middleware",
+      "description": "a competitive layer of third-party curation services that lets users choose their own feed ranking (Fukuyama 2021)."
+    },
+    {
+      "name": "antitrust",
+      "description": "competition law that limits abuse of market power without capping success itself."
+    },
+    {
+      "name": "media concentration law",
+      "description": "rules limiting ownership concentration in the media sector to preserve plurality."
+    },
+    {
+      "name": "Fairness Doctrine",
+      "description": "US broadcast rule (1949 to 1987) requiring balanced coverage on scarce spectrum; a historical precedent for regulating attention distribution rather than speech."
+    },
+    {
+      "name": "regulate reach mechanism",
+      "description": "the alternative proposed in the dialogue: regulate the mechanisms that distribute attention (ranking, paid reach, transparency, interoperability) instead of capping attention."
+    },
+    {
+      "name": "libertarian position",
+      "description": "counter-position: reach is simply success with the audience and any regulation is paternalism."
+    },
+    {
+      "name": "deliberative democracy position",
+      "description": "counter-position (Habermas tradition): a functioning public sphere must not be left to the market; active structuring is legitimate."
+    },
+    {
+      "name": "Twitter",
+      "description": "microblogging platform, renamed X in 2023; studied in Wu 2011, Vosoughi 2018, Huszar 2022 and Pew 2019."
+    },
+    {
+      "name": "YouTube",
+      "description": "video platform studied in Baertl 2018."
+    },
+    {
+      "name": "Facebook",
+      "description": "social network studied in Guess 2023."
+    },
+    {
+      "name": "Instagram",
+      "description": "image platform studied in Guess 2023."
+    },
+    {
+      "name": "elite user",
+      "description": "Twitter accounts of celebrities, media outlets, organizations and bloggers as identified via Twitter lists (Wu 2011)."
+    },
+    {
+      "name": "ordinary user",
+      "description": "Twitter accounts that are not elite users (Wu 2011)."
+    },
+    {
+      "name": "top 10% tweeters",
+      "description": "the ten percent of US adult Twitter users with the most tweets (Pew 2019)."
+    },
+    {
+      "name": "median US adult Twitter user",
+      "description": "the median user in the Pew 2019 representative sample."
+    },
+    {
+      "name": "top 3% YouTube channels",
+      "description": "the three percent of channels with the most views in the Baertl 2018 random sample."
+    },
+    {
+      "name": "top 10% congress members by followers",
+      "description": "the ten percent of US congressional lawmakers with the most Facebook and Twitter followers (Pew 2020)."
+    },
+    {
+      "name": "false news",
+      "description": "stories rated false by six fact-checking organizations (Vosoughi 2018)."
+    },
+    {
+      "name": "true news",
+      "description": "stories rated true by six fact-checking organizations (Vosoughi 2018)."
+    },
+    {
+      "name": "mainstream political right",
+      "description": "the largest mainstream right-wing party in each country studied (Huszar 2022)."
+    },
+    {
+      "name": "mainstream political left",
+      "description": "the largest mainstream left-wing party in each country studied (Huszar 2022)."
+    },
+    {
+      "name": "Twitter control group",
+      "description": "randomly chosen users who never received the personalized timeline after 2016 (Huszar 2022)."
+    },
+    {
+      "name": "Twitter treatment group",
+      "description": "sample of users who received the personalized ranked timeline (Huszar 2022)."
+    },
+    {
+      "name": "MusicLab experiment",
+      "description": "artificial online music market with unknown songs in independent and social-influence conditions (Salganik 2006)."
+    },
+    {
+      "name": "chronological feed experiment",
+      "description": "field experiment assigning consenting Facebook and Instagram users to reverse-chronological feeds during the 2020 US election (Guess 2023)."
+    },
+    {
+      "name": "US Congress",
+      "description": "members of the United States Congress."
+    },
+    {
+      "name": "count",
+      "description": "number of items or persons.",
+      "type": "measure"
+    },
+    {
+      "name": "percent",
+      "description": "one hundredth, scaled by 100 in formulas.",
+      "type": "measure"
+    },
+    {
+      "name": "share of consumed URLs",
+      "description": "fraction of all URLs read by ordinary users that originated from a group.",
+      "type": "measure"
+    },
+    {
+      "name": "share of tweets",
+      "description": "fraction of all tweets produced by a group.",
+      "type": "measure"
+    },
+    {
+      "name": "share of views",
+      "description": "fraction of all video views received by a group.",
+      "type": "measure"
+    },
+    {
+      "name": "share of engagement",
+      "description": "fraction of all audience engagement (likes, shares, comments) received by a group.",
+      "type": "measure"
+    },
+    {
+      "name": "share of population",
+      "description": "fraction of all users that a group represents.",
+      "type": "measure"
+    },
+    {
+      "name": "tweets per month",
+      "description": "average number of tweets per user per month.",
+      "type": "measure"
+    },
+    {
+      "name": "retweet probability difference",
+      "description": "relative difference in the probability of being retweeted, in percent.",
+      "type": "measure"
+    },
+    {
+      "name": "time factor to reach 1500 people",
+      "description": "ratio of the time true news needs to reach 1500 people versus false news.",
+      "type": "measure"
+    },
+    {
+      "name": "cascade reach",
+      "description": "number of people reached by a diffusion cascade.",
+      "type": "measure"
+    },
+    {
+      "name": "top 1% cascades",
+      "description": "the largest one percent of rumor cascades."
+    },
+    {
+      "name": "minimum",
+      "description": "lower bound of a range."
+    },
+    {
+      "name": "maximum",
+      "description": "upper bound of a range."
+    },
+    {
+      "name": "participants",
+      "description": "number of experimental subjects."
+    },
+    {
+      "name": "songs",
+      "description": "number of songs in the MusicLab experiment."
+    },
+    {
+      "name": "worlds",
+      "description": "number of independent social-influence universes in the MusicLab experiment."
+    },
+    {
+      "name": "countries",
+      "description": "number of countries studied."
+    },
+    {
+      "name": "countries with right amplified more",
+      "description": "number of countries where the mainstream right had significantly higher amplification than the mainstream left."
+    },
+    {
+      "name": "daily active accounts",
+      "description": "number of daily active accounts."
+    },
+    {
+      "name": "study duration",
+      "description": "length of the observation period."
+    },
+    {
+      "name": "months",
+      "description": "calendar months.",
+      "type": "measure"
+    },
+    {
+      "name": "year",
+      "description": "calendar year.",
+      "type": "measure"
+    },
+    {
+      "name": "stories",
+      "description": "number of rumor stories analysed."
+    },
+    {
+      "name": "people",
+      "description": "number of persons."
+    },
+    {
+      "name": "confidence",
+      "description": "subjective probability (0 to 1) that a claim tagged assumed is true."
+    },
+    {
+      "name": "assumed",
+      "description": "a conjecture or estimate from the dialogue, not directly measured; carries a confidence number."
+    },
+    {
+      "name": "2019",
+      "description": "calendar year 2019.",
+      "type": "time"
+    },
+    {
+      "name": "2020",
+      "description": "calendar year 2020.",
+      "type": "time"
+    },
+    {
+      "name": "attention is approximately zero-sum",
+      "description": "claim: because attention is finite, attention gained by one speaker is lost to others."
+    },
+    {
+      "name": "attention cap restricts listeners more than speakers",
+      "description": "claim: an attention cap would mainly restrict the many who choose to listen, not the one who is listened to."
+    },
+    {
+      "name": "attention cap requires allocating authority",
+      "description": "claim: an enforceable cap needs an institution that measures and distributes attention."
+    },
+    {
+      "name": "regulating reach mechanisms preserves both freedoms",
+      "description": "claim: regulating ranking, paid reach, transparency and interoperability addresses concentration while preserving speaker and listener freedom."
+    },
+    {
+      "name": "algorithms are the primary cause of concentration",
+      "description": "claim: algorithmic ranking, not audience preference, is the main driver of attention concentration; contested because Wu 2011 predates ranked feeds and Salganik 2006 shows social influence alone creates inequality."
+    },
+    {
+      "name": "middleware reduces concentration",
+      "description": "claim: a competitive curation layer would measurably reduce attention concentration."
+    }
+  ],
+  "triples": [
+    {
+      "name": "freedom of expression is a negative freedom",
+      "from": "freedom of expression",
+      "verb": "is a",
+      "to": "negative freedom"
+    },
+    {
+      "name": "right to an audience is part of effective freedom",
+      "from": "right to an audience",
+      "verb": "is part of",
+      "to": "effective freedom"
+    },
+    {
+      "name": "freedom of information is part of freedom of expression",
+      "from": "freedom of information",
+      "verb": "is part of",
+      "to": "freedom of expression",
+      "description": "Art. 16 para. 3 Swiss Federal Constitution protects receiving information from generally accessible sources."
+    },
+    {
+      "name": "attention scarcity influences attention concentration",
+      "from": "attention scarcity",
+      "verb": "influences",
+      "to": "attention concentration"
+    },
+    {
+      "name": "attention concentration influences effective freedom",
+      "from": "attention concentration",
+      "verb": "influences",
+      "to": "effective freedom",
+      "description": "the premise of the dialogue: concentrated attention reduces the effective freedom of the many."
+    },
+    {
+      "name": "attention cap uses allocating authority",
+      "from": "attention cap",
+      "verb": "uses",
+      "to": "allocating authority"
+    },
+    {
+      "name": "attention cap influences freedom of information",
+      "from": "attention cap",
+      "verb": "influences",
+      "to": "freedom of information",
+      "description": "a cap restricts what listeners may choose to attend to."
+    },
+    {
+      "name": "algorithmic amplification is part of reach",
+      "from": "algorithmic amplification",
+      "verb": "is part of",
+      "to": "reach"
+    },
+    {
+      "name": "ranked feed can cause algorithmic amplification",
+      "from": "ranked feed",
+      "verb": "can cause",
+      "to": "algorithmic amplification"
+    },
+    {
+      "name": "social influence influences attention concentration",
+      "from": "social influence",
+      "verb": "influences",
+      "to": "attention concentration",
+      "description": "Salganik 2006: increasing social influence increased inequality and unpredictability of success."
+    },
+    {
+      "name": "network effect influences attention concentration",
+      "from": "network effect",
+      "verb": "influences",
+      "to": "attention concentration"
+    },
+    {
+      "name": "middleware is part of regulate reach mechanism",
+      "from": "middleware",
+      "verb": "is part of",
+      "to": "regulate reach mechanism"
+    },
+    {
+      "name": "antitrust is part of regulate reach mechanism",
+      "from": "antitrust",
+      "verb": "is part of",
+      "to": "regulate reach mechanism"
+    },
+    {
+      "name": "media concentration law is part of regulate reach mechanism",
+      "from": "media concentration law",
+      "verb": "is part of",
+      "to": "regulate reach mechanism"
+    },
+    {
+      "name": "Fairness Doctrine is a media concentration law",
+      "from": "Fairness Doctrine",
+      "verb": "is a",
+      "to": "media concentration law"
+    },
+    {
+      "name": "chronological feed influences reach",
+      "from": "chronological feed",
+      "verb": "influences",
+      "to": "reach"
+    },
+    {
+      "name": "elite user in Twitter",
+      "from": "elite user",
+      "verb": "in",
+      "to": "Twitter"
+    },
+    {
+      "name": "ordinary user in Twitter",
+      "from": "ordinary user",
+      "verb": "in",
+      "to": "Twitter"
+    },
+    {
+      "name": "top 10% tweeters in Twitter",
+      "from": "top 10% tweeters",
+      "verb": "in",
+      "to": "Twitter"
+    },
+    {
+      "name": "top 3% YouTube channels in YouTube",
+      "from": "top 3% YouTube channels",
+      "verb": "in",
+      "to": "YouTube"
+    },
+    {
+      "name": "top 10% congress members by followers in US Congress",
+      "from": "top 10% congress members by followers",
+      "verb": "in",
+      "to": "US Congress"
+    },
+    {
+      "name": "mainstream political right in Twitter",
+      "from": "mainstream political right",
+      "verb": "in",
+      "to": "Twitter"
+    },
+    {
+      "name": "mainstream political left in Twitter",
+      "from": "mainstream political left",
+      "verb": "in",
+      "to": "Twitter"
+    },
+    {
+      "name": "false news in Twitter",
+      "from": "false news",
+      "verb": "in",
+      "to": "Twitter"
+    },
+    {
+      "name": "true news in Twitter",
+      "from": "true news",
+      "verb": "in",
+      "to": "Twitter"
+    },
+    {
+      "name": "Twitter control group uses chronological feed",
+      "from": "Twitter control group",
+      "verb": "uses",
+      "to": "chronological feed"
+    },
+    {
+      "name": "Twitter treatment group uses ranked feed",
+      "from": "Twitter treatment group",
+      "verb": "uses",
+      "to": "ranked feed"
+    },
+    {
+      "name": "MusicLab experiment uses social influence",
+      "from": "MusicLab experiment",
+      "verb": "uses",
+      "to": "social influence"
+    },
+    {
+      "name": "chronological feed experiment uses chronological feed",
+      "from": "chronological feed experiment",
+      "verb": "uses",
+      "to": "chronological feed"
+    },
+    {
+      "name": "chronological feed experiment in Facebook",
+      "from": "chronological feed experiment",
+      "verb": "in",
+      "to": "Facebook"
+    },
+    {
+      "name": "chronological feed experiment in Instagram",
+      "from": "chronological feed experiment",
+      "verb": "in",
+      "to": "Instagram"
+    },
+    {
+      "name": "ranked feed influences mainstream political right",
+      "from": "ranked feed",
+      "verb": "influences",
+      "to": "mainstream political right",
+      "description": "Huszar 2022: in 6 of 7 countries the mainstream right had statistically significantly higher amplification than the mainstream left; no evidence that far-left or far-right groups were amplified more than moderates."
+    },
+    {
+      "name": "false news influences reach",
+      "from": "false news",
+      "verb": "influences",
+      "to": "reach",
+      "description": "Vosoughi 2018: falsehood diffused farther, faster, deeper and more broadly than truth in all categories; bots spread both at the same rate, so humans drive the difference."
+    },
+    {
+      "name": "chronological feed experiment influences attention",
+      "from": "chronological feed experiment",
+      "verb": "influences",
+      "to": "attention",
+      "description": "Guess 2023: moving users to a chronological feed substantially decreased time on platform, increased exposure to political and untrustworthy content, decreased uncivil content on Facebook, and did not significantly change issue polarization, affective polarization or political knowledge within 3 months."
+    },
+    {
+      "name": "attention scarcity of attention",
+      "from": "attention scarcity",
+      "verb": "of",
+      "to": "attention",
+      "description": "Simon 1971: what information consumes is the attention of its recipients; a wealth of information creates a poverty of attention."
+    },
+    {
+      "name": "middleware influences reach",
+      "from": "middleware",
+      "verb": "influences",
+      "to": "reach",
+      "description": "Fukuyama 2021: outsourcing curation to competitive middleware companies as the more promising remedy compared to antitrust breakup, content regulation, data portability and privacy law alone."
+    },
+    {
+      "name": "libertarian position influences attention cap",
+      "from": "libertarian position",
+      "verb": "influences",
+      "to": "attention cap",
+      "description": "counter-position rejecting any cap or reach regulation."
+    },
+    {
+      "name": "deliberative democracy position influences regulate reach mechanism",
+      "from": "deliberative democracy position",
+      "verb": "influences",
+      "to": "regulate reach mechanism",
+      "description": "counter-position supporting active structuring of the public sphere."
+    }
+  ],
+  "sources": [
+    {
+      "name": "dialogue 2026-09-19",
+      "description": "German-language dialogue between Timon and Claude on 2026-09-19 about attention limits and freedom of expression; source of all values tagged assumed.",
+      "url": null,
+      "doi": null,
+      "doi_verified": false,
+      "year": 2026,
+      "reliability": "dialogue"
+    },
+    {
+      "name": "Simon 1971",
+      "description": "Herbert A. Simon, Designing Organizations for an Information-Rich World, in: Martin Greenberger (ed.), Computers, Communications, and the Public Interest, Johns Hopkins Press, Baltimore 1971, pp. 37-72. Book chapter without DOI.",
+      "url": null,
+      "doi": null,
+      "doi_verified": false,
+      "year": 1971,
+      "reliability": "high"
+    },
+    {
+      "name": "Wu 2011",
+      "description": "Shaomei Wu, Jake M. Hofman, Winter A. Mason, Duncan J. Watts, Who says what to whom on Twitter, Proceedings of the 20th International Conference on World Wide Web (WWW 2011), pp. 705-714.",
+      "url": "https://doi.org/10.1145/1963405.1963504",
+      "doi": "10.1145/1963405.1963504",
+      "doi_verified": true,
+      "year": 2011,
+      "reliability": "high"
+    },
+    {
+      "name": "Salganik 2006",
+      "description": "Matthew J. Salganik, Peter Sheridan Dodds, Duncan J. Watts, Experimental Study of Inequality and Unpredictability in an Artificial Cultural Market, Science 311(5762):854-856.",
+      "url": "https://doi.org/10.1126/science.1121066",
+      "doi": "10.1126/science.1121066",
+      "doi_verified": true,
+      "year": 2006,
+      "reliability": "high"
+    },
+    {
+      "name": "Vosoughi 2018",
+      "description": "Soroush Vosoughi, Deb Roy, Sinan Aral, The spread of true and false news online, Science 359(6380):1146-1151.",
+      "url": "https://doi.org/10.1126/science.aap9559",
+      "doi": "10.1126/science.aap9559",
+      "doi_verified": true,
+      "year": 2018,
+      "reliability": "high"
+    },
+    {
+      "name": "Baertl 2018",
+      "description": "Mathias Baertl (umlaut a in the original spelling), YouTube channels, uploads and views: A statistical analysis of the past 10 years, Convergence 24(1):16-32, 2018. Random sample of channels and videos; DOI not verified in this session.",
+      "url": "https://opus.hs-offenburg.de/frontdoor/index/index/year/2018/docId/2616",
+      "doi": null,
+      "doi_verified": false,
+      "year": 2018,
+      "reliability": "medium"
+    },
+    {
+      "name": "Pew 2019",
+      "description": "Stefan Wojcik, Adam Hughes, Sizing Up Twitter Users, Pew Research Center, 24 April 2019. Representative survey of 2,791 US adult Twitter users linked to their accounts.",
+      "url": "https://www.pewresearch.org/internet/2019/04/24/sizing-up-twitter-users/",
+      "doi": null,
+      "doi_verified": false,
+      "year": 2019,
+      "reliability": "high"
+    },
+    {
+      "name": "Pew 2020",
+      "description": "Pew Research Center, Congress Soars to New Heights on Social Media, 16 July 2020, and follow-up study on prolific tweeters (data Nov 2019 to Sep 2020): the most active 10% of US adult users produced 92% of tweets.",
+      "url": "https://www.pewresearch.org/internet/2020/07/16/congress-soars-to-new-heights-on-social-media/",
+      "doi": null,
+      "doi_verified": false,
+      "year": 2020,
+      "reliability": "high"
+    },
+    {
+      "name": "Huszar 2022",
+      "description": "Ferenc Huszár, Sofia Ira Ktena, Conor O'Brien, Luca Belli, Andrew Schlaikjer, Moritz Hardt, Algorithmic amplification of politics on Twitter, PNAS 119(1):e2025334119. Authors were Twitter employees or consultants.",
+      "url": "https://doi.org/10.1073/pnas.2025334119",
+      "doi": "10.1073/pnas.2025334119",
+      "doi_verified": true,
+      "year": 2022,
+      "reliability": "high"
+    },
+    {
+      "name": "Guess 2023",
+      "description": "Andrew M. Guess et al., How do social media feed algorithms affect attitudes and behavior in an election campaign?, Science 381(6656):398-404. Meta collaboration with independent academics.",
+      "url": "https://doi.org/10.1126/science.abp9364",
+      "doi": "10.1126/science.abp9364",
+      "doi_verified": true,
+      "year": 2023,
+      "reliability": "high"
+    },
+    {
+      "name": "Fukuyama 2021",
+      "description": "Francis Fukuyama, Making the Internet Safe for Democracy, Journal of Democracy 32(2):37-44, April 2021.",
+      "url": "https://doi.org/10.1353/jod.2021.0017",
+      "doi": "10.1353/jod.2021.0017",
+      "doi_verified": true,
+      "year": 2021,
+      "reliability": "high"
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "elite user",
+        "count"
+      ],
+      "number": "20000",
+      "source": "Wu 2011"
+    },
+    {
+      "words": [
+        "elite user",
+        "share of consumed URLs",
+        "percent"
+      ],
+      "number": "50",
+      "source": "Wu 2011"
+    },
+    {
+      "words": [
+        "elite user",
+        "share of population",
+        "percent"
+      ],
+      "number": "0.05",
+      "source": "Wu 2011"
+    },
+    {
+      "words": [
+        "top 10% tweeters",
+        "share of tweets",
+        "percent",
+        "2019"
+      ],
+      "number": "80",
+      "source": "Pew 2019"
+    },
+    {
+      "words": [
+        "top 10% tweeters",
+        "tweets per month"
+      ],
+      "number": "138",
+      "source": "Pew 2019"
+    },
+    {
+      "words": [
+        "median US adult Twitter user",
+        "tweets per month"
+      ],
+      "number": "2",
+      "source": "Pew 2019"
+    },
+    {
+      "words": [
+        "participants",
+        "count"
+      ],
+      "number": "2791",
+      "source": "Pew 2019"
+    },
+    {
+      "words": [
+        "top 10% tweeters",
+        "share of tweets",
+        "percent",
+        "2020"
+      ],
+      "number": "92",
+      "source": "Pew 2020"
+    },
+    {
+      "words": [
+        "top 10% congress members by followers",
+        "share of engagement",
+        "percent"
+      ],
+      "number": "80",
+      "source": "Pew 2020"
+    },
+    {
+      "words": [
+        "top 3% YouTube channels",
+        "share of views",
+        "percent"
+      ],
+      "number": "85",
+      "source": "Baertl 2018"
+    },
+    {
+      "words": [
+        "top 3% YouTube channels",
+        "share of population",
+        "percent"
+      ],
+      "number": "3",
+      "source": "Baertl 2018"
+    },
+    {
+      "words": [
+        "stories",
+        "count"
+      ],
+      "number": "126000",
+      "source": "Vosoughi 2018"
+    },
+    {
+      "words": [
+        "people",
+        "count"
+      ],
+      "number": "3000000",
+      "source": "Vosoughi 2018"
+    },
+    {
+      "words": [
+        "false news",
+        "retweet probability difference",
+        "percent"
+      ],
+      "number": "70",
+      "source": "Vosoughi 2018"
+    },
+    {
+      "words": [
+        "true news",
+        "time factor to reach 1500 people"
+      ],
+      "number": "6",
+      "source": "Vosoughi 2018"
+    },
+    {
+      "words": [
+        "false news",
+        "top 1% cascades",
+        "cascade reach",
+        "minimum"
+      ],
+      "number": "1000",
+      "source": "Vosoughi 2018"
+    },
+    {
+      "words": [
+        "false news",
+        "top 1% cascades",
+        "cascade reach",
+        "maximum"
+      ],
+      "number": "100000",
+      "source": "Vosoughi 2018"
+    },
+    {
+      "words": [
+        "true news",
+        "cascade reach",
+        "maximum"
+      ],
+      "number": "1000",
+      "description": "true news rarely diffused to more than 1000 people.",
+      "source": "Vosoughi 2018"
+    },
+    {
+      "words": [
+        "MusicLab experiment",
+        "participants",
+        "count"
+      ],
+      "number": "14341",
+      "source": "Salganik 2006"
+    },
+    {
+      "words": [
+        "MusicLab experiment",
+        "songs",
+        "count"
+      ],
+      "number": "48",
+      "source": "Salganik 2006"
+    },
+    {
+      "words": [
+        "MusicLab experiment",
+        "worlds",
+        "count"
+      ],
+      "number": "8",
+      "source": "Salganik 2006"
+    },
+    {
+      "words": [
+        "countries",
+        "count"
+      ],
+      "number": "7",
+      "source": "Huszar 2022"
+    },
+    {
+      "words": [
+        "countries with right amplified more",
+        "count"
+      ],
+      "number": "6",
+      "source": "Huszar 2022"
+    },
+    {
+      "words": [
+        "Twitter control group",
+        "daily active accounts",
+        "count"
+      ],
+      "number": "2000000",
+      "source": "Huszar 2022"
+    },
+    {
+      "words": [
+        "Twitter control group",
+        "share of population",
+        "percent"
+      ],
+      "number": "1",
+      "source": "Huszar 2022"
+    },
+    {
+      "words": [
+        "Twitter treatment group",
+        "share of population",
+        "percent"
+      ],
+      "number": "4",
+      "source": "Huszar 2022"
+    },
+    {
+      "words": [
+        "mainstream political right",
+        "amplification ratio",
+        "maximum",
+        "percent"
+      ],
+      "number": "200",
+      "description": "group amplification of some parties exceeded 200%, i.e. three times the chronological reach; all parties had amplification above 0%.",
+      "source": "Huszar 2022"
+    },
+    {
+      "words": [
+        "chronological feed experiment",
+        "study duration",
+        "months"
+      ],
+      "number": "3",
+      "source": "Guess 2023"
+    },
+    {
+      "words": [
+        "chronological feed experiment",
+        "year"
+      ],
+      "number": "2020",
+      "source": "Guess 2023"
+    },
+    {
+      "words": [
+        "attention scarcity",
+        "year"
+      ],
+      "number": "1971",
+      "source": "Simon 1971"
+    },
+    {
+      "words": [
+        "attention is approximately zero-sum",
+        "confidence",
+        "assumed"
+      ],
+      "number": "0.8",
+      "source": "dialogue 2026-09-19"
+    },
+    {
+      "words": [
+        "attention cap restricts listeners more than speakers",
+        "confidence",
+        "assumed"
+      ],
+      "number": "0.7",
+      "source": "dialogue 2026-09-19"
+    },
+    {
+      "words": [
+        "attention cap requires allocating authority",
+        "confidence",
+        "assumed"
+      ],
+      "number": "0.9",
+      "source": "dialogue 2026-09-19"
+    },
+    {
+      "words": [
+        "regulating reach mechanisms preserves both freedoms",
+        "confidence",
+        "assumed"
+      ],
+      "number": "0.6",
+      "source": "dialogue 2026-09-19"
+    },
+    {
+      "words": [
+        "algorithms are the primary cause of concentration",
+        "confidence",
+        "assumed"
+      ],
+      "number": "0.3",
+      "source": "dialogue 2026-09-19"
+    },
+    {
+      "words": [
+        "middleware reduces concentration",
+        "confidence",
+        "assumed"
+      ],
+      "number": "0.4",
+      "source": "dialogue 2026-09-19"
+    }
+  ]
+}

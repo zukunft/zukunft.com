@@ -4,8 +4,6 @@ http://localhost/http/view.php?id=0&9m=1&pl=188%2C999%2C997&m=29&z=0
 /http/view.php?id=0&9mask_id=entry_view&phrase_ids=188%2C999%2C997&mask_id=value_add&step=no&
 {
     "id": "0",
-    "share": "",
-    "protection": "",
     "phrase_ids": "188,999,997",
     "mask_id": "value_add",
     "step": "no",

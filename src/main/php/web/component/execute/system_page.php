@@ -417,6 +417,7 @@ class system_page extends component
      * based on the context (foaf terms) and "fixed" selections like the type or the share or protection
      * limit the number of search and selection fields so that it matches a small screen
      *
+     * @param user_message $msg with the requesting user for whom the terms are searched
      * @param array $url_array the URL params; the search pattern is read from url_var::PATTERN
      *                          (the key the navbar search form submits) and falls back to the
      *                          human-readable url_var::PATTERN_HUMAN alias, because the human->standard
@@ -426,7 +427,7 @@ class system_page extends component
      *                                (e.g. for unit tests) to render a pre-loaded list without a backend call
      * @return string with the HTML code of the search body
      */
-    function body_search(array $url_array = [], ?term_list $trm_lst = null): string
+    function body_search(user_message $msg, array $url_array = [], ?term_list $trm_lst = null): string
     {
         $result = '';
 
@@ -439,7 +440,7 @@ class system_page extends component
         // most relevant (highest impact) first
         if ($trm_lst === null and $pattern != '') {
             $trm_lst = new term_list();
-            $trm_lst->get_by_pattern($pattern);
+            $trm_lst->get_by_pattern($msg, $pattern);
         }
         if ($trm_lst !== null and !$trm_lst->is_empty()) {
             $result .= $trm_lst->links_with_context($url_array);

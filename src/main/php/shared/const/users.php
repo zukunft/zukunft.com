@@ -92,6 +92,8 @@ class users
 
     // an internal zukunft.com user to automatically create normal users
     const string SYSTEM_SIGNUP_CODE_ID = 'signup';
+    const string SYSTEM_SIGNUP_NAME = 'zukunft.com system user creator';
+    const string SYSTEM_SIGNUP_EMAIL = 'signup@zukunft.com';
 
     // an internal zukunft.com user to automatically create normal users
     const int DEV_ID = 7;
@@ -127,6 +129,13 @@ class users
     CONST string TEST_USER_LOGIN_TIME = '2026-02-2T17:59:59+0100'; // fixed test login time
     CONST string TEST_USER_LOGOFF_TIME = '2026-02-2T18:59:59+0100'; // fixed test logoff time
 
+    // the user that the signup_confirm workflow test signs up; the name starts with the test row name
+    // part, so the change log of the deleted test user is removed by the test cleanup too
+    const string TEST_SIGNUP_NAME = 'System Test Signup User';
+    const string TEST_SIGNUP_EMAIL = 'system.test.signup@zukunft.com';
+    // the fixed id that replaces the volatile database id of the signed up user in the snapshots
+    const int TEST_SIGNUP_ID = 99;
+
     // list of predefined usernames used for the system and for testing that are expected to be never used or changed
     const array RESERVED_NAMES = array(
         self::SYSTEM_NAME,
@@ -135,6 +144,7 @@ class users
         self::TEST_NAME,
         self::TEST_USER_NAME,
         self::TEST_USER_NAME_UPDATED,
+        self::TEST_SIGNUP_NAME,
     );
 
     // array of usernames that used for db read testing and that should not be renamed
@@ -147,6 +157,7 @@ class users
     const array TEST_USERS = array(
         self::TEST_USER_NAME,
         self::TEST_USER_NAME_UPDATED,
+        self::TEST_SIGNUP_NAME,
     );
 
     // list of usernames that are only used for system testing and that does not create log entries

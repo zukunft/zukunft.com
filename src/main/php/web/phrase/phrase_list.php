@@ -156,10 +156,11 @@ class phrase_list extends sandbox_list_named
      * add the phrases related to the given phrase to the list
      * @param phrase $phr
      * @param foaf_direction $direction
+     * @param user_message $msg with the requesting user for whom the related phrases are selected
      * @param verb_list|null $link_types
      * @return bool
      */
-    function load_related(phrase $phr, foaf_direction $direction, ?verb_list $link_types = null): bool
+    function load_related(phrase $phr, foaf_direction $direction, user_message $msg, ?verb_list $link_types = null): bool
     {
         $result = false;
 
@@ -169,7 +170,7 @@ class phrase_list extends sandbox_list_named
         $data[url_var::PHRASE] = $phr->id();
         $data[url_var::DIRECTION] = $direction->value;
         $data[url_var::LEVELS] = 1;
-        $json_body = $api->api_get(self::class, $data);
+        $json_body = $api->api_get(self::class, $data, $msg);
         $this->api_mapper($json_body);
         if (!$this->is_empty()) {
             $result = true;
@@ -288,7 +289,7 @@ class phrase_list extends sandbox_list_named
     {
         $count = $this->count();
         $api = new rest_call();
-        $json_body = $api->api_get(self::class, $data);
+        $json_body = $api->api_get(self::class, $data, $msg);
         $msg->merge($this->api_mapper($json_body));
         return $this->count() > $count;
     }
@@ -329,7 +330,7 @@ class phrase_list extends sandbox_list_named
         $api = new rest_call();
         $data = array();
         $data[url_var::FORMULAS] = $frm->id();
-        $json_body = $api->api_get(self::class, $data);
+        $json_body = $api->api_get(self::class, $data, $msg);
         $this->api_mapper($json_body);
         if (!$this->is_empty()) {
             $result = true;

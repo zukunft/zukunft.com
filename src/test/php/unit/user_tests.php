@@ -53,6 +53,8 @@ class user_tests
 
     function run(test_cleanup $t): void
     {
+        global $sys;
+
         $msg = new user_message();
 
         // init
@@ -456,6 +458,58 @@ class user_tests
         $usr_load->activation_timeout = $expired;
         $test_name = 'an expired key is inactive even when db_now is not set';
         $t->assert_false($test_name, $usr_load->has_active_activation_key());
+
+
+        $t->subheader($ts . 'signup confirmation');
+
+        // the key of the signup mail stays valid for a day, the reset key only for an hour
+        $test_name = 'the signup key is still valid after the validity of a reset key';
+        $usr_sgn_key = new user();
+        $usr_sgn_key->set_activation_key($key, user::SIGNUP_KEY_VALIDITY);
+        $reset_end = new DateTime();
+        $reset_end->modify(user::ACTIVATION_KEY_VALIDITY);
+        $t->assert_true($test_name, $usr_sgn_key->activation_timeout > $reset_end);
+        $test_name = '... but the reset key is not';
+        $t->assert_false($test_name, $usr_load->activation_timeout > $reset_end);
+
+        // only the signup system user may raise a new account to the reserved name and the confirmed email
+        $usr_sgn = $t_usr->user_signup();
+        $test_name = 'the user with the signup profile is the signup user';
+        $t->assert_true($test_name, $usr_sgn->is_signup());
+        $usr_nrm = $t_usr->user_sys_normal();
+        $test_name = 'a normal user is not the signup user';
+        $t->assert_false($test_name, $usr_nrm->is_signup());
+        $test_name = 'the signup user may confirm the email of an account';
+        $t->assert_true($test_name, $usr_sgn->can_set_profile($sys->typ_lst->usr_pro->id(user_profiles::EMAIL)));
+        $test_name = '... but may not make it an admin';
+        $t->assert_false($test_name, $usr_sgn->can_set_profile($sys->typ_lst->usr_pro->id(user_profiles::ADMIN)));
+
+        $test_name = 'the signup reserves the name of a new account';
+        $usr_new = $t_usr->user_signed_up(user_profiles::IP_ONLY);
+        $usr_new->raise_signup_profile(user_profiles::NAME_ONLY, $usr_sgn, $msg);
+        $t->assert($test_name, $usr_new->profile_id, $sys->typ_lst->usr_pro->id(user_profiles::NAME_ONLY));
+        $msg->reset();
+        $test_name = 'the activation link confirms the email';
+        $usr_new->raise_signup_profile(user_profiles::EMAIL, $usr_sgn, $msg);
+        $t->assert($test_name, $usr_new->profile_id, $sys->typ_lst->usr_pro->id(user_profiles::EMAIL));
+        $msg->reset();
+        $test_name = 'a second signup step never lowers the confirmed email';
+        $usr_new->raise_signup_profile(user_profiles::NAME_ONLY, $usr_sgn, $msg);
+        $t->assert($test_name, $usr_new->profile_id, $sys->typ_lst->usr_pro->id(user_profiles::EMAIL));
+        $msg->reset();
+        $test_name = 'the activation link of an admin keeps the admin profile';
+        $usr_adm = $t_usr->user_sys_admin();
+        $usr_adm->raise_signup_profile(user_profiles::EMAIL, $usr_sgn, $msg);
+        $t->assert($test_name, $usr_adm->profile_id, $sys->typ_lst->usr_pro->id(user_profiles::ADMIN));
+        $msg->reset();
+        $test_name = 'a normal user cannot confirm the email of another account';
+        $usr_new = $t_usr->user_signed_up(user_profiles::NAME_ONLY);
+        $t->assert_false($test_name, $usr_new->raise_signup_profile(user_profiles::EMAIL, $usr_nrm, $msg));
+        $test_name = '... which is reported';
+        $t->assert_text_contains($test_name, $msg->text(), users::SYSTEM_TEST_NORMAL_NAME);
+        $test_name = '... and keeps the reserved name';
+        $t->assert($test_name, $usr_new->profile_id, $sys->typ_lst->usr_pro->id(user_profiles::NAME_ONLY));
+        $msg->reset();
 
 
         $t->subheader($ts . 'diff message');

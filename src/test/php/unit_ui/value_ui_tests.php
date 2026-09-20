@@ -154,9 +154,22 @@ class value_ui_tests
         // the page whose values subtitle has opened the view (see ui_list::value_add_link)
         $t->subheader($ts . 'phrase preset');
         $test_name = 'the phrase list of the url presets the phrase of a new value';
+        // like the url of the add icon, which opens the add view without an id and without the create action
         $val = $t_val->value_add_ui();
-        $val->url_mapper([url_var::PHRASE_LIST => (string)word_names::ZH_ID], $msg_ui);
+        $val->url_mapper([
+            url_var::MASK => views::VALUE_ADD_DETAIL_ID,
+            url_var::PHRASE_LIST => (string)word_names::ZH_ID
+        ], $msg_ui);
         $t->assert($test_name, implode(',', $val->phr_lst()->ids()), (string)word_names::ZH_ID);
+        $msg_ui->reset();
+        $test_name = '... but the edit view of a value without an id reports it and presets nothing';
+        $val = $t_val->value_add_ui();
+        $val->url_mapper([
+            url_var::MASK => views::VALUE_EDIT_ID,
+            url_var::PHRASE_LIST => (string)word_names::ZH_ID
+        ], $msg_ui);
+        $t->assert($test_name, $val->phr_lst()->count(), 0);
+        $msg_ui->reset();
         $test_name = 'a url without a phrase list presets no phrase';
         $val = $t_val->value_add_ui();
         $val->url_mapper([url_var::MASK => views::VALUE_ADD_DETAIL_ID], $msg_ui);
@@ -165,15 +178,19 @@ class value_ui_tests
         $cache_dto = new data_object();
         $cache_dto->phr_lst = $t_phr->list_zh_ui();
         $val = $t_val->value_add_ui();
-        $val->url_mapper([url_var::PHRASE_LIST => (string)word_names::ZH_ID], $msg_ui, $cache_dto);
+        // the urls of the add value form carry the add view, which has no id yet (see db_object::url_is_add_action)
+        $add_url = [url_var::MASK => views::VALUE_ADD_DETAIL_ID, url_var::PHRASE_LIST => (string)word_names::ZH_ID];
+        $val->url_mapper($add_url, $msg_ui, $cache_dto);
         $t->assert_true($test_name, $val->has_named_phrases());
         $test_name = '... and stay unnamed without the cache';
         $val = $t_val->value_add_ui();
-        $val->url_mapper([url_var::PHRASE_LIST => (string)word_names::ZH_ID], $msg_ui);
+        $val->url_mapper($add_url, $msg_ui);
         $t->assert_false($test_name, $val->has_named_phrases());
+        $test_name = '... but are still preset without the cache';
+        $t->assert($test_name, implode(',', $val->phr_lst()->ids()), (string)word_names::ZH_ID);
         $test_name = 'the group name of the url is the name given to the group of the value';
         $val = $t_val->value_add_ui();
-        $val->url_mapper([url_var::GROUP_NAME => groups::TN_VALUE_WORKFLOW], $msg_ui);
+        $val->url_mapper([url_var::MASK => views::VALUE_ADD_DETAIL_ID, url_var::GROUP_NAME => groups::TN_VALUE_WORKFLOW], $msg_ui);
         $t->assert($test_name, $val->grp->name, groups::TN_VALUE_WORKFLOW);
         $test_name = '... which the group field of the form shows';
         $grp_field = new system_form()->form_field_group_or_phrases($val, '');
@@ -192,12 +209,12 @@ class value_ui_tests
         $t->assert($test_name, $val->grp->name ?? '', '');
         $test_name = 'without a given group name the group field is empty and never shows the phrases';
         $val = $t_val->value_add_ui();
-        $val->url_mapper([url_var::PHRASE_LIST => (string)word_names::ZH_ID], $msg_ui, $cache_dto);
+        $val->url_mapper($add_url, $msg_ui, $cache_dto);
         $grp_field = new system_form()->form_field_group_or_phrases($val, '');
         $t->assert_text_not_contains($test_name, $grp_field, html_base::VALUE . '="');
         $test_name = 'the description of the url is the description of the group of the value';
         $val = $t_val->value_add_ui();
-        $val->url_mapper([url_var::DESCRIPTION => groups::TN_READ_COM], $msg_ui);
+        $val->url_mapper([url_var::MASK => views::VALUE_ADD_DETAIL_ID, url_var::DESCRIPTION => groups::TN_READ_COM], $msg_ui);
         $t->assert($test_name, $val->get_description(), groups::TN_READ_COM);
         $test_name = '... which is sent to the backend';
         $t->assert($test_name, $val->api_array([], $msg_ui)[json_fields::DESCRIPTION] ?? '', groups::TN_READ_COM);
@@ -498,18 +515,19 @@ class value_ui_tests
         // the changed text, time or geolocation of the url is sent to the backend and saved with the typed value class
         $test_name = 'a changed text of the url is sent to the backend as text value';
         $map = new MapObject();
-        $val_txt->url_mapper([url_var::VALUE_TEXT => word_names::TEXT], $msg_ui);
+        // a change of an existing value, so the url carries its id like the change value form
+        $val_txt->url_mapper([url_var::ID => $val_txt->id(), url_var::VALUE_TEXT => word_names::TEXT], $msg_ui);
         $t->assert($test_name, $val_txt->api_array([], $msg_ui)[json_fields::TEXT_VALUE], word_names::TEXT);
         $test_name = '... and saved as a text value';
         $t->assert($test_name, $map->dbObject($val_txt, $t->usr1)::class, value_text::class);
         $test_name = 'a changed time of the url is sent to the backend as time value';
-        $val_time->url_mapper([url_var::VALUE_TIME => values::TIME], $msg_ui);
+        $val_time->url_mapper([url_var::ID => $val_time->id(), url_var::VALUE_TIME => values::TIME], $msg_ui);
         $time_json = $val_time->api_array([], $msg_ui)[json_fields::TIME_VALUE];
         $t->assert($test_name, strtotime($time_json), strtotime(values::TIME));
         $test_name = '... and saved as a time value';
         $t->assert($test_name, $map->dbObject($val_time, $t->usr1)::class, value_time::class);
         $test_name = 'a changed geolocation of the url is sent to the backend as geo value';
-        $val_geo->url_mapper([url_var::VALUE_GEO => values::GEO], $msg_ui);
+        $val_geo->url_mapper([url_var::ID => $val_geo->id(), url_var::VALUE_GEO => values::GEO], $msg_ui);
         $t->assert($test_name, $val_geo->api_array([], $msg_ui)[json_fields::GEO_VALUE], values::GEO);
         $test_name = '... and saved as a geo value';
         $t->assert($test_name, $map->dbObject($val_geo, $t->usr1)::class, value_geo::class);
@@ -574,16 +592,16 @@ class value_ui_tests
         // can preselect it; the page value uses the reserved source, which is not in that list
         $t_src = new test_sources($t);
         $val_src = $t_val->value_form_ui($msg);
-        $sel_html = $val_src->source_selector(views::VALUE_EDIT, '', $t_src->source_list_ui());
+        $sel_html = $val_src->source_selector(views::VALUE_EDIT, $msg_ui, '', $t_src->source_list_ui());
 
         // without typed chars the selector offers the cached sources or else all sources of the database
         $test_name = 'the source selector keeps the sources of the request cache';
         $src_lst = $t_src->source_list_ui();
-        $src_lst->load_for_selector('', true);
+        $src_lst->load_for_selector('', $msg_ui, true);
         $t->assert($test_name, $src_lst->count(), $t_src->source_list_ui()->count());
         $test_name = '... and an empty cache stays empty in a test, because a snapshot never calls the backend';
         $src_lst = new source_list_ui();
-        $src_lst->load_for_selector('', true);
+        $src_lst->load_for_selector('', $msg_ui, true);
         $t->assert_true($test_name, $src_lst->is_empty());
 
         $test_name = 'the source selector links to the add source view';
@@ -607,7 +625,7 @@ class value_ui_tests
 
         // a value without a source has nothing to change, so only the add icon is shown
         $val_no_src = new value($t_val->value($msg)->api_json([api_types::INCL_PHRASES]));
-        $sel_no_src = $val_no_src->source_selector(views::VALUE_EDIT, '', $t_src->source_list_ui());
+        $sel_no_src = $val_no_src->source_selector(views::VALUE_EDIT, $msg_ui, '', $t_src->source_list_ui());
         $test_name = 'a value without a source shows no edit source link';
         $t->assert_text_not_contains($test_name, $sel_no_src,
             url_var::MASK . '=' . views::SOURCE_EDIT_ID);
@@ -621,7 +639,7 @@ class value_ui_tests
         $t_ref = new test_refs($t);
         $ref_lst = $t_ref->ref_list_math_ui();
         $val_city = new value($t_val->value_for_phrases([$t_wrd->word_city()->phrase()])->api_json([api_types::INCL_PHRASES]));
-        $ref_html = $val_city->ref_selector(views::VALUE_EDIT, '', $ref_lst);
+        $ref_html = $val_city->ref_selector(views::VALUE_EDIT, $msg_ui, '', $ref_lst);
         $test_name = 'the reference selector offers the references of the frontend cache';
         $t->assert_text_contains($test_name, $ref_html, '<option value="' . array_values($ref_lst->lst())[0]->id() . '"');
         $test_name = '... with 11/12 of the width like the source selector';
@@ -633,7 +651,7 @@ class value_ui_tests
         $t->assert_text_not_contains($test_name, $ref_html, url_var::MASK . '=' . views::REF_EDIT_ID);
         // a value has no reference of its own, so the reference of one of its phrases is preselected
         $val_pi = new value($t_val->value_for_phrases([$t_wrd->word_pi()->phrase()])->api_json([api_types::INCL_PHRASES]));
-        $ref_pi_html = $val_pi->ref_selector(views::VALUE_EDIT, '', $ref_lst);
+        $ref_pi_html = $val_pi->ref_selector(views::VALUE_EDIT, $msg_ui, '', $ref_lst);
         $test_name = 'the reference of a phrase of the value is preselected';
         $t->assert_text_contains($test_name, $ref_pi_html, '<option value="' . refs::PI_ID . '"  selected >');
         $test_name = '... and can be changed with the change icon';

@@ -381,6 +381,8 @@
     \-- dummy_all - section for function dummy_all not yet defined that it should be info in /user/user.php
     \-- set_verb - section for function set_verb is expected to be set and get in /user/user.php
     \-- set_profile - section for function set_profile is expected to be set and get in /user/user.php
+    \-- raise_signup_profile - section for function raise_signup_profile not yet defined that it should be info in /user
+            /user.php
     \-- set_type - section for function set_type is expected to be set and get in /user/user.php
     \-- set_profile_id - section for function set_profile_id is expected to be set and get in /user/user.php
     \-- log_upd - section for function log_upd is expected to be log in /user/user.php
@@ -1605,8 +1607,6 @@
     \-- get_row_id - section for function get_row_id is expected to be set and get in /db/sql_message.php
     \-- has_msg - section for function has_msg not yet defined that it should be get in /db/sql_message.php
     \-- has_row - section for function has_row not yet defined that it should be get in /db/sql_message.php
-    \-- combine_status - section for function combine_status not yet defined that it should be internal in /db/sql_messa
-            ge.php
 \-- sql_par
     \-- __construct - section for function __construct is expected to be construct and map in /db/sql_par.php
     \-- has_par - section for function has_par missing in /db/sql_par.php
@@ -3846,8 +3846,6 @@
     \-- has_msg - section for function has_msg not yet defined that it should be get in /user/user_message.php
     \-- has_row - section for function has_row not yet defined that it should be get in /user/user_message.php
     \-- get_all_messages - section for function get_all_messages is expected to be set and get in /user/user_message.php
-    \-- combine_status - section for function combine_status not yet defined that it should be internal in /user/user_me
-            ssage.php
 \-- user_profile
     \-- row_mapper_typ_obj - section for function row_mapper_typ_obj not yet defined that it should be construct and map
              in /user/user_profile.php
@@ -4924,15 +4922,9 @@
                  part
     \-- table_id
         \-- sql_creator - get the preloaded table id for change log entries
-    \-- set_not_ok
-        \-- sql_message - set the status to not OK
-        \-- user_message - set the status to not OK
     \-- set_ok
-        \-- sql_message - set the status to OK
-        \-- user_message - set the status to OK
-    \-- set_warning
-        \-- sql_message - set the status to warning
-        \-- user_message - set the status to warning
+        \-- sql_message - set the status to OK; the setters of a worse status only make the status worse (see Message)
+        \-- user_message - set the status to OK; the setters of a worse status only make the status worse (see Message)
     \-- set_db_row_id
         \-- sql_message - set the main database row to which this user message is related
         \-- user_message - set the main database row to which this user message is related
@@ -5432,18 +5424,6 @@
                 been created
         \-- user_message - @return bool true if the message is linked to a valid database row of just a database row has
                  been created
-\-- internal
-    \-- 1
-        \-- user_message - @return array with all the text messages
-    \-- combine_status
-        \-- sql_message - combine the status of two user messages and assume the worst
-        \-- user_message - combine the status of two user messages and assume the worst
-    \-- phr_id_lst
-        \-- expression - @returns phr_ids with the word and triple ids from a given formula text
-    \-- phr_id_lst_as_phr_lst
-        \-- expression - @returns phrase_list with the word and triple ids from a given formula text
-    \-- get_usr_names
-        \-- expression - @return array of the term names used in the expression based on the user text
 \-- debug
     \-- dsp_id
         \-- sql_par - combine two sql and the related parameters to one sql statement
@@ -5664,6 +5644,15 @@
 \-- filter elements
     \-- element_special_following_frm
         \-- expression - similar to element_special_following, but returns the formula and not the word
+\-- internal
+    \-- phr_id_lst
+        \-- expression - @returns phr_ids with the word and triple ids from a given formula text
+    \-- phr_id_lst_as_phr_lst
+        \-- expression - @returns phrase_list with the word and triple ids from a given formula text
+    \-- get_usr_names
+        \-- expression - @return array of the term names used in the expression based on the user text
+    \-- get_all_messages
+        \-- user_message - @return array with all the text messages
 \-- extract helper
     \-- element_part_list_old
         \-- expression - @return array of the term names used in the expression based on the user text
@@ -6842,6 +6831,8 @@
             ject.php
     \-- add_components_to_views - section for function add_components_to_views not yet defined that it should be fill in
              /helper/data_object.php
+\-- mail_sender
+    \-- send - section for function send missing in /helper/mail_sender.php
 \-- url_mapper
     \-- url_to_standard - section for function url_to_standard missing in /helper/url_mapper.php
     \-- standard_url_to_human - section for function standard_url_to_human missing in /helper/url_mapper.php
@@ -6932,6 +6923,12 @@
             in the html code in /html/html_base.php
     \-- url_with_token - section for function url_with_token not yet defined that it should be wrapper for internal refe
             rences used in the html code in /html/html_base.php
+    \-- url_with_user - section for function url_with_user not yet defined that it should be wrapper for internal refere
+            nces used in the html code in /html/html_base.php
+    \-- form_user - section for function form_user not yet defined that it should be wrapper for internal references use
+            d in the html code in /html/html_base.php
+    \-- url_with_id_var - section for function url_with_id_var not yet defined that it should be wrapper for internal re
+            ferences used in the html code in /html/html_base.php
     \-- url_api - section for function url_api not yet defined that it should be wrapper for internal references used in
              the html code in /html/html_base.php
     \-- url_ex - section for function url_ex not yet defined that it should be wrapper for internal references used in t
@@ -7127,6 +7124,7 @@
     \-- api_call_id - section for function api_call_id missing in /html/rest_call.php
     \-- api_call_name - section for function api_call_name missing in /html/rest_call.php
     \-- api_get - section for function api_get missing in /html/rest_call.php
+    \-- data_with_user - section for function data_with_user missing in /html/rest_call.php
     \-- api_post - section for function api_post missing in /html/rest_call.php
     \-- api_put - section for function api_put missing in /html/rest_call.php
     \-- api_del - section for function api_del missing in /html/rest_call.php
@@ -7767,6 +7765,9 @@
     \-- name - section for function name is expected to be debug in /user/user.php
     \-- last_term - section for function last_term not yet defined that it should be set and get in /user/user.php
     \-- password - section for function password not yet defined that it should be set and get in /user/user.php
+    \-- id_for_url - section for function id_for_url not yet defined that it should be info in /user/user.php
+    \-- uses_standard_data - section for function uses_standard_data not yet defined that it should be info in /user/use
+            r.php
     \-- sees_admin_fields - section for function sees_admin_fields not yet defined that it should be info in /user/user.
             php
     \-- can_set_type_id - section for function can_set_type_id not yet defined that it should be info in /user/user.php
@@ -7812,8 +7813,6 @@
     \-- get_all_messages - section for function get_all_messages is expected to be set and get in /user/user_message.php
     \-- get_all_var_messages - section for function get_all_var_messages is expected to be set and get in /user/user_mes
             sage.php
-    \-- combine_status - section for function combine_status not yet defined that it should be internal in /user/user_me
-            ssage.php
     \-- order error - order of section api has difference at api_mapper should be before api_array
 \-- value
     \-- url_mapper - section for function url_mapper not yet defined that it should be construct and map in /value/value
@@ -8935,6 +8934,9 @@
         \-- element_group - set the vars of this element_group list based on the given json
     \-- element_list
         \-- expression - get a list of all formula elements
+    \-- send
+        \-- mail_sender - send a plain text mail via the smtp account of the .env or, without a smtp host,
+                 via php mail()
     \-- url_to_standard
         \-- url_mapper - get the standard url array from all allowed url formats
     \-- standard_url_to_human
@@ -8962,6 +8964,8 @@
         \-- rest_call - create and execute an api call for a database object
     \-- api_get
         \-- rest_call - create and execute an api get call to get a json message of a database object
+    \-- data_with_user
+        \-- rest_call - add the id of the logged-in user to the url vars of an api get call,
     \-- api_post
         \-- rest_call - create and execute an api post call add an object to the database based on the given json
     \-- api_put
@@ -9551,6 +9555,12 @@
         \-- html_base - the url of the page that the given url parameters describe, e.g. to return to it
     \-- url_with_token
         \-- html_base - append the anti-csrf session token to a get action link (logout, error_update) so that the
+    \-- url_with_user
+        \-- html_base - add the id of the logged-in user to the url of a page of this pod, so that the address bar
+    \-- form_user
+        \-- html_base - the hidden field with the id of the logged-in user, because a get form drops the
+    \-- url_with_id_var
+        \-- html_base - name the object of a page url by the url var of its view, because the url builders name every
     \-- url_api
         \-- html_base - build a url for link a zukunft.com element
     \-- url_ex

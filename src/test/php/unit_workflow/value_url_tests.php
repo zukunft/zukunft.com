@@ -364,7 +364,7 @@ class value_url_tests extends url_test_base
      */
     private function add_value_url(int $preset_id = 0): array
     {
-        $url_arr = new test_values($this->t)->value_new_url($this->msg);
+        $url_arr = test_values::value_new_url();
         // add the previous page to the url
         $url_arr[url_var::BACK . url_var::MASK] = views::START_ID;
         if ($preset_id != 0) {

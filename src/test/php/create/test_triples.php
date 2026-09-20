@@ -368,17 +368,26 @@ class test_triples extends test_objects
         return new triple_ui($trp->api_json());
     }
 
-    static function triple_new_url(user_message_ui $msg): array
+    /**
+     * @return array the url of the empty add triple form with the 'not set' verb preselected
+     */
+    static function triple_new_url(): array
     {
-        $trp_ui = new triple_ui();
-        $trp_ui->set_verb(test_verbs::verb_ui());
-        return $trp_ui->to_url_array($msg);
+        return [url_var::ID => 0, url_var::VERB => verbs::NOT_SET_ID];
     }
 
-    static function triple_add_url(user_message_ui $msg): array
+    /**
+     * @return array the url of the added test triple, which links the two reserved test words
+     */
+    static function triple_add_url(): array
     {
-        $trp_ui = self::triple_add_ui();
-        return $trp_ui->to_url_array($msg);
+        return [
+            url_var::ID => 0,
+            url_var::NAME => triple_names::SYSTEM_TEST_ADD,
+            url_var::PHRASE_FROM => word_names::TEST_ADD_ID,
+            url_var::VERB => verbs::PART_ID,
+            url_var::PHRASE_TO => word_names::TEST_ADD_TO_ID,
+        ];
     }
 
     /**
@@ -388,10 +397,10 @@ class test_triples extends test_objects
      *
      * @return array the triple url parameters with the resolved from and to phrase ids
      */
-    function triple_add_url_resolved(user_message_ui $msg): array
+    function triple_add_url_resolved(): array
     {
         $t_wrd = new test_words($this->env);
-        $url_arr = self::triple_add_url($msg);
+        $url_arr = self::triple_add_url();
         $url_arr[url_var::PHRASE_FROM]
             = $t_wrd->word_id_or_fixed(word_names::TEST_ADD, word_names::TEST_ADD_ID);
         $url_arr[url_var::PHRASE_TO]

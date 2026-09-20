@@ -4,8 +4,6 @@ http://localhost/http/view.php?id=0&9m=5&pl=188%2C1107%2C1108&n=123.456&m=19&z=2
 /http/view.php?id=0&9mask_id=value_default&phrase_ids=188%2C1107%2C1108&number=123.456&mask_id=value_add_phrases&step=confirmed&
 {
     "id": "0",
-    "share": "",
-    "protection": "",
     "phrase_ids": "188,1107,1108",
     "number": "123.456",
     "mask_id": "value_add_phrases",
