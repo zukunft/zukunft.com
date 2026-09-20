@@ -41,7 +41,7 @@ class files
      * CAUTION! auto fix setting -> set always to false after mass update!
      */
 
-    CONST bool AUTO_UPDATE_TEST_FILES = false;
+    CONST bool AUTO_UPDATE_TEST_FILES = true;
 
     /*
      * types and extensions
@@ -210,6 +210,8 @@ class files
     CONST string IMPORT_AI_MEDIATED_COMMUNICATION = test_paths::IMPORT . 'ai_mediated_communication' . self::JSON;
     CONST string IMPORT_ALMENDE = test_paths::IMPORT . 'almende' . self::JSON;
     CONST string IMPORT_ANSER_TRUST_VS_FEAR = test_paths::IMPORT . 'anser_trush_vs_fear' . self::JSON;
+    CONST string IMPORT_ATTENTION_DISTRIBUTION_WEALTH_POLITICS_COMMENTS = test_paths::IMPORT . 'attention_distribution_wealth_politics_comments' . self::JSON;
+    CONST string IMPORT_ATTENTION_SCARCITY_VS_FREEDOM_OF_EXPRESSION = test_paths::IMPORT . 'attention_scarcity_vs_freedom_of_expression' . self::JSON;
     CONST string IMPORT_CAR_COLOR_INTEREST_RATE_CORRELATION = test_paths::IMPORT . 'car_color_interest_rate_correlation' . self::JSON;
     CONST string IMPORT_CARBON_LEAKAGE_EFFECT = test_paths::IMPORT . 'carbon_leakage_effect' . self::JSON;
     CONST string IMPORT_CBAM_ALU = test_paths::IMPORT . 'CBAM_alu' . self::JSON;
@@ -381,6 +383,8 @@ class files
         self::IMPORT_LEFT_RIGHT_DATA,
         self::IMPORT_SWISS_LIVESTOCK_WITHOUT_IMPORT,
         self::IMPORT_WHY_ASK_WHY,
+        self::IMPORT_ATTENTION_DISTRIBUTION_WEALTH_POLITICS_COMMENTS,
+        self::IMPORT_ATTENTION_SCARCITY_VS_FREEDOM_OF_EXPRESSION,
     ];
 
 
