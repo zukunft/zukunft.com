@@ -44,6 +44,7 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::LOG . 'change_log_list.php';
 include_once html_paths::SHARED_CONST . 'chars.php';
+include_once html_paths::SHARED_TYPES . 'formula_types.php';
 
 use Zukunft\ZukunftCom\main\php\shared\const\chars;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
@@ -62,6 +63,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\formula_link_types;
+use Zukunft\ZukunftCom\main\php\shared\types\formula_types;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\const\word_names;
@@ -311,6 +313,34 @@ class formula_ui_tests
         } else {
             $ui_sys->usr = $usr_tab_keep;
         }
+
+        // the formula form posts the type as url_var::FORMULA_TYPE, so a type change is only saved
+        // if the url mapper reads that key and not the generic url_var::TYPE of the parent
+        $t->subheader($ts . 'type');
+
+        $test_name = 'the formula type of the form url is mapped';
+        $frm_typ = new formula();
+        $frm_typ->url_mapper([
+            url_var::ID => formula_names::SCALE_TO_SEC_ID,
+            url_var::NAME => formula_names::SCALE_TO_SEC,
+            url_var::FORMULA_TYPE => formula_types::CALC_ID
+        ], $msg);
+        $t->assert($test_name, $frm_typ->type_id($msg), formula_types::CALC_ID);
+        $msg->reset();
+        $test_name = '... and the page url of a formula names the type by the same key';
+        $t->assert($test_name, $frm_typ->to_url_array($msg)[url_var::FORMULA_TYPE] ?? '',
+            formula_types::CALC_ID);
+        $test_name = '... so the page url has no generic type key that no form posts';
+        $t->assert($test_name, $frm_typ->to_url_array($msg)[url_var::TYPE] ?? '', '');
+        $msg->reset();
+        $test_name = 'a form url without the type leaves the formula type unset';
+        $frm_no_typ = new formula();
+        $frm_no_typ->url_mapper([
+            url_var::ID => formula_names::SCALE_TO_SEC_ID,
+            url_var::NAME => formula_names::SCALE_TO_SEC
+        ], $msg);
+        $t->assert($test_name, $frm_no_typ->type_id($msg) ?? '', '');
+        $msg->reset();
 
         $t->subheader($ts . 'link title');
 

@@ -268,6 +268,18 @@ class Message
     }
 
     /**
+     * a not ok message can be a problem of the user input (e.g. an expression that names no term),
+     * which the user can fix and which the answer to the user already names, whereas an error is
+     * a problem that only the admin can fix, so only an error belongs into the system log
+     *
+     * @return bool true if this message reports a problem that the user cannot solve
+     */
+    function is_error(): bool
+    {
+        return $this->msg_status <= msg_id::ERROR;
+    }
+
+    /**
      * the most useful message for the user
      * translated to the frontend language
      *

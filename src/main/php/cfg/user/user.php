@@ -1669,16 +1669,23 @@ class user extends db_id_object_non_sandbox
             log_debug('load by ip addr ' . $this->ip_addr);
             $req_ip = $this->ip_addr;
             $this->load_by_ip($req_ip, $msg);
-            // ip equality must never authenticate a privileged account over the web:
-            // a real admin logs in via a session (checked above), so the reserved
-            // system or admin user matched here by ip alone would be a passwordless
-            // grant. only the command line (install / unit tests) may run as the ip
-            // admin; over the web drop the account and continue as an anonymous ip user
-            if ($this->id > 0 and !$this->is_cli()
-                and ($this->id == users::SYSTEM_ID or $this->id == users::SYSTEM_ADMIN_ID)) {
-                log_warning('ip based system access blocked for ip ' . $req_ip);
+            // ip equality must never authenticate an account that has a login: a user with a login
+            // is identified by the session (checked above), and the last ip of a logged in user is
+            // kept in the user row (see save_last_ip), so matching it here would keep that user
+            // logged in after the logout and would hand the account to everybody else behind the
+            // same ip. an anonymous user carries the ip as its name (see below), so a row with
+            // another name has a login; the name decides and not the profile, because this runs
+            // before the type cache that a profile check needs is loaded. only the command line
+            // (install / unit tests) may run as the ip admin; over the web drop the account and
+            // continue as an anonymous ip user
+            if ($this->id > 0 and !$this->is_cli() and $this->name != $req_ip) {
+                log_warning('ip based access to ' . $this->dsp_id() . ' blocked for ip ' . $req_ip);
                 $this->reset();
                 $this->ip_addr = $req_ip;
+                // reset clears the profile that the constructor gives a new user, and the profile
+                // of a user to add may not be null (see save_user), so the anonymous user that is
+                // created below starts like a fresh user
+                $this->profile_id = user_profiles::NORMAL_ID;
             }
             if ($this->id <= 0) {
                 // use the ip address as the username and add the user

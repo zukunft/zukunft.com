@@ -151,6 +151,22 @@ class base_ui_tests
         $url_array = [url_var::MASK => views::WORD_ID, url_var::ID => 2, url_var::USER => users::SYSTEM_TEST_NORMAL_ID];
         $t->assert($test_name, $ui->url_cache_key($url_array), 'm=' . views::WORD_ID . '&id=2');
 
+        // the page of a logged in user is personal (the user name, the black add and edit icons and
+        // the user values), so it is cached per user: the session user, not the user of the url,
+        // names the page, so the personal page is never handed to somebody else
+        $test_name = 'the page of a logged in user is cached under the id of that user';
+        $url_array = [url_var::MASK => views::WORD_ID, url_var::ID => 2];
+        $t->assert($test_name, $ui->url_cache_key($url_array, users::SYSTEM_TEST_NORMAL_ID),
+            'm=' . views::WORD_ID . '&id=2&' . url_var::USER . '=' . users::SYSTEM_TEST_NORMAL_ID);
+        $test_name = '... and the page of a request without login names no user';
+        $t->assert($test_name, $ui->url_cache_key($url_array), 'm=' . views::WORD_ID . '&id=2');
+        $test_name = '... so the two users of one url have two cached pages';
+        $t->assert_false($test_name, $ui->url_cache_key($url_array, users::SYSTEM_TEST_NORMAL_ID)
+            == $ui->url_cache_key($url_array, users::SYSTEM_TEST_ID));
+        $test_name = 'a request that is never cached is not cached for a logged in user either';
+        $chg_url = [url_var::MASK => views::WORD_ADD_DETAIL_ID, url_var::ID => 2];
+        $t->assert($test_name, $ui->url_cache_key($chg_url, users::SYSTEM_TEST_NORMAL_ID), '');
+
         // a request of a view that changes data is never cached
         $test_name = 'a change mask request is not cached';
         $url_array = [url_var::MASK => views::WORD_ADD_DETAIL_ID, url_var::ID => 2];
@@ -180,15 +196,21 @@ class base_ui_tests
         $url_array = [url_var::MASK => views::WORD_ID, url_var::ID => 2, url_var::STEP => url_var::STEP_CONFIRM];
         $t->assert($test_name, $ui->url_cache_key($url_array), '');
 
-        // a logged in (non-ip) user gets a personalised page (e.g. the dark blue person icon,
-        // the logout link and the my tab), so it is never served from the shared page cache;
-        // the login state comes from the session, because the cache fast path runs before
-        // the type cache needed for a profile based check is loaded
+        // a logged in (non-ip) user gets a personalised page (e.g. the dark blue person icon, the
+        // logout link and the my tab), which is cached under the id of that user, so the shared
+        // page of a request without login is never served to a logged in user; the session and
+        // never the url names the user, because the cache fast path runs before the type cache
+        // needed for a profile based check is loaded
         $test_name = 'a logged in user never gets the shared cached page';
         $_SESSION[url_var::SESSION_LOGGED] = true;
+        $_SESSION[url_var::SESSION_USER_ID] = users::SYSTEM_TEST_NORMAL_ID;
         $url_array = [url_var::MASK => views::WORD_ID, url_var::ID => 2];
-        $t->assert_true($test_name, $ui->cached_page_or_null($url_array, new user_message_ui()) === null);
-        unset($_SESSION[url_var::SESSION_LOGGED]);
+        $t->assert_false($test_name, $ui->url_cache_key($url_array) == $ui->url_cache_key($url_array,
+                users::SYSTEM_TEST_NORMAL_ID));
+        $test_name = '... but the personal page of that user is cached';
+        $t->assert($test_name, $ui->url_cache_key($url_array, users::SYSTEM_TEST_NORMAL_ID),
+            'm=' . views::WORD_ID . '&id=2&' . url_var::USER . '=' . users::SYSTEM_TEST_NORMAL_ID);
+        unset($_SESSION[url_var::SESSION_LOGGED], $_SESSION[url_var::SESSION_USER_ID]);
 
         // the debug level only controls out-of-band debug output, not the cached html, so it is
         // ignored and ?m=2&debug=6 takes the same cached path as ?m=2 (same cache key)

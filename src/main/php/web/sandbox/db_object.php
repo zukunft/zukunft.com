@@ -446,8 +446,8 @@ class db_object extends TextIdObject
                 if (array_key_exists(url_var::REFRESH, $data)) {
                     // the backend has been asked to read the values that the user has entered but
                     // not yet saved (the validate button of the formula form), so its answer is
-                    // about the entered text and the user needs the reason to correct it
-                    $msg->add_warning_with_vars(msg_id::FORMULA_VALIDATION_FAILED, [
+                    // about the entry and the user needs the reason to correct it
+                    $msg->add_warning_with_vars(msg_id::INPUT_VALIDATION_FAILED, [
                         msg_id::VAR_JSON_TEXT => $body[json_fields::MSG] ?? '',
                     ]);
                 } else {

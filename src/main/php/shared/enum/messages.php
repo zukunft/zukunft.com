@@ -699,6 +699,11 @@ enum messages: string
         . ' with id '
         . self::VAR_START . self::VAR_ID . self::VAR_END
         . ' cannot be found; it may have been deleted';
+    // the answer of the backend to a form that asks it to read the entered values, e.g. the
+    // validate button of the formula form: the entry cannot be used and the backend names the
+    // reason, which the user needs to correct the entry (see db_object::load_by_id)
+    case INPUT_VALIDATION_FAILED = 'the entry cannot be used: '
+        . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END;
 
     case USER_IP_ADDR_MISSING = 'ip addr for user "'
         . self::VAR_START . self::VAR_USER_NAME . self::VAR_END
@@ -763,10 +768,6 @@ enum messages: string
         . self::VAR_START . self::VAR_FORMULA . self::VAR_END;
     case FORMULA_TERM_NAME_MISSING = 'no word, triple, formula or verb found for "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END . '"';
-    // the answer of the backend to the validate button of the formula form: the entered expression
-    // or latex cannot be read, so the reason of the backend is shown to the user (see load_by_id)
-    case FORMULA_VALIDATION_FAILED = 'the entered formula cannot be used: '
-        . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END;
     case FORMULA_LATEX_CHANGE_NOT_MAPPED = 'the latex change adds or removes a term or a number, '
         . 'which cannot be assigned to a part of the expression, so please change the expression itself';
     case FORMULA_LATEX_DIFFERS_FROM_EXPRESSION = 'the latex does not name the same terms and numbers '

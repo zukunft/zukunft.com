@@ -333,7 +333,7 @@ messages:
   form_button_confirm: "confirm"
   form_button_del: "delete"
   form_button_validate: "Validate"
-  formula_validation_failed: "The entered formula cannot be used: z$VarJsonText$z"
+  input_validation_failed: "The entry cannot be used: z$VarJsonText$z"
   button_view_show_tip: "show 'z$VarObjName$z' with the 'z$VarViewName$z' view"
   button_view_switch_tip: "adjust 'z$VarObjName$z' so that it is always shown with the 'z$VarViewName$z' view"
   button_view_edit_tip: "change the 'z$VarViewName$z' view"
