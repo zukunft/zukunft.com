@@ -55,6 +55,7 @@ include_once paths::DB . 'sql_field_default.php';
 include_once paths::DB . 'sql_field_type.php';
 include_once paths::DB . 'sql_par.php';
 include_once paths::DB . 'sql_par_field_list.php';
+include_once paths::DB . 'sql_par_type.php';
 include_once paths::DB . 'sql_type_list.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_message.php';
@@ -75,6 +76,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_default;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
@@ -317,6 +319,43 @@ class db_cache_page extends db_object_seq_id
         $this->last_update = new DateTime();
         $this->save($msg);
         return $msg->is_ok();
+    }
+
+    /**
+     * remove the cached html pages of one user, so that the next request renders them again
+     * instead of showing the data as it has been before the change of that user
+     *
+     * the key of a personal page ends with the id of the user (see frontend::url_cache_key), so
+     * the pages of a user are selected by the end of the key and the page of a user whose id
+     * merely starts with the same digits is kept
+     *
+     * @param int $usr_id the id of the user whose cached pages are outdated
+     * @param user_message $msg to report a problem of the delete
+     * @return bool true if the cached pages of the user have been removed
+     */
+    function del_by_user(int $usr_id, user_message $msg): bool
+    {
+        global $db_con;
+
+        $usr_key = url_var::ADD . url_var::USER . url_var::EQ . $usr_id;
+        $qp = $db_con->sql_creator()->del_sql_list_by_text(
+            self::class, self::FLD_URL, $usr_key, sql_par_type::LIKE_L);
+        return $db_con->delete($qp, 'cached pages of user ' . $usr_id, $msg);
+    }
+
+    /**
+     * remove every cached html page, so that the next request of any page renders it again;
+     * used when the standard data has changed, which every page of every user can show
+     *
+     * @param user_message $msg to report a problem of the delete
+     * @return bool true if the cached pages have been removed
+     */
+    function del_all(user_message $msg): bool
+    {
+        global $db_con;
+
+        $qp = $db_con->sql_creator()->del_sql_all(self::class);
+        return $db_con->delete($qp, 'all cached pages', $msg);
     }
 
 

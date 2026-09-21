@@ -6,6 +6,24 @@ One judgement call to confirm in the fix itself. REFRESH looks like a render var
 
 ## add formula
 
+the formula type seems still not tp be saved
+
+Nine triple fixtures gained a warning that needs your judgement. workflow_write/del_triple_wf6/* (8 files) and the last step of change_triple_wf5 now render: the triple with id 998 cannot be found; it may have been deleted That is a direct consequence of the api fix: before, end_api() appended an html error page behind the json, json_decode() failed, api_curl_call() returned an empty array and load_by_id() did nothing — the backend's answer was silently dropped. Now the body is clean json, so the frontend reads it and reports. The message itself is the pre-existing OBJECT_NOT_FOUND path, so the question is whether that load should fail in those steps. My suspicion is the triple id changes during the write run (a rename by a non-owner writes a new row), and del_triple_wf6 then opens the old id. Worth one look before the fixtures are accepted — it is the kind of signal the snapshot baseline exists for.
+
+Worth a decision
+
+1. Per-user caching has no invalidation. db_cache_page::html_by_url() returns the stored row regardless of age, nothing deletes it on a write, and the refresh job is still a TODO. That gap existed for the shared page, but it now applies to a user's own page: after their own change the redirect is live, yet the next plain view of that url can serve their pre-change page. The coding rules ask for is_outdated() on a cache — this one has none. I would add a max age or an invalidation on write before this reaches a real deployment.
+
+2. end_api() no longer writes a NOK message to sys_log. That is the fix for the corrupted json and the false "end_api error" rows, but a backend rejection that is not an error now leaves no admin trace at all. If you want to keep the trace, a log_warning on the non-error branch would do it without touching the response.
+
+3. The ip guard trusts the name. An anonymous row is recognised by name == ip, so an account that registers under a name that looks like an ip could still be identified by ip. Signup does not forbid such a name today. The alternative — the profile — is not available that early, as the 500 showed.
+
+4. test_mappers::formula_url() still emits the generic url_var::TYPE while the form posts fy. It only builds render urls, and the word does the same, so it is consistent within that file — but it no longer matches the mapper.
+
+Nice to have
+
+- frontend::session_user_id() reads $_SESSION inside a function. It follows the documented boundary pattern of session_token() right above it, but
+
 1. A formula message in a generic class. msg_id::FORMULA_VALIDATION_FAILED is added inside web/sandbox/db_object.php, so a word or value load carrying a refresh would tell the user "the entered formula cannot be used". Either the text becomes object-neutral or the branch moves to the formula class.
 2. The error workflows cannot fail. They only snapshot, so the silent no-message state above passes as "correct". Once the message works, each error workflow should assert the reason (assert_text_contains), which is also what makes them a regression test rather than a recording.
 3. url_var::REFRESH_TERMS now has no producer in the frontend (only refresh_from_url still accepts it). It is a url contract, so I left it — your call whether to retire it. 

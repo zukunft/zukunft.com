@@ -1524,6 +1524,40 @@ class frontend
     }
 
     /**
+     * remove the cached html pages that a write has just made outdated, so that the next request
+     * shows the change instead of the page as it has been rendered before (see db_cache_page)
+     *
+     * a user that sees the user sandbox changes only the own data, so only the own pages are
+     * outdated; a user that sees the standard data (an ip user or a system user, see
+     * user::uses_standard_data) changes the data that every page of every user can show, so then
+     * the complete cache is dropped. this is on purpose not selected by the changed object: a
+     * change can be shown by any page, e.g. a renamed word in a value list of another page
+     *
+     * like filling the cache this is a system action, so it is done as the system user and a
+     * failure is only logged: the user has the change in the database, and a page that is cleared
+     * too late is a stale page, not a lost change
+     *
+     * @param user_message_ui $msg_ui with the user that has done the change
+     * @return void
+     */
+    private function drop_cached_pages(user_message_ui $msg_ui): void
+    {
+        $cac_page = new db_cache_page();
+        $del_msg = new backend_user_message(user_backend::system()); // not reported, see above
+        $usr = $msg_ui->usr;
+        $usr_id = self::session_user_id();
+        if ($usr_id > 0 and $usr != null and !$usr->uses_standard_data()) {
+            $cac_page->del_by_user($usr_id, $del_msg);
+        } else {
+            $cac_page->del_all($del_msg);
+        }
+        if (!$del_msg->is_ok()) {
+            log_warning('removing the cached pages after a change of user ' . $usr_id
+                . ' failed because ' . $del_msg->get_message());
+        }
+    }
+
+    /**
      * request the background rendering of the user specific html page
      * a failure is only logged because the user already has the standard page
      *
@@ -2283,6 +2317,9 @@ class frontend
             if ($crud == url_var::CRUD_CREATE) {
                 $this->add_link_of_new($dbo, $url_array, $msg_ui, $dto);
             }
+            // every page that shows the written data is now outdated, so the cached pages are
+            // removed and rendered again on the next request
+            $this->drop_cached_pages($msg_ui);
         }
 
         // on success go back to the calling page: the confirm view set the object's own default view +
