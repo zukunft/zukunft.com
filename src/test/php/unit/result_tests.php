@@ -162,6 +162,15 @@ class result_tests
         $res = $t_res->result_main_filled();
         $t->assert_reset($res);
 
+        // the source group is stored as the bigint source_group_id of results_prime and
+        // results_main, so only a group of up to 4 phrases fits; the import saves a result
+        // with a bigger source group without it instead of dropping the calculated number
+        // (see result_list::drop_unsupported_src_grp)
+        $test_name = 'a source group of one phrase can be stored';
+        $t->assert_true($test_name, $t_res->result_prime()->src_grp_is_storable());
+        $test_name = '... and a source group of 16 phrases cannot';
+        $t->assert_false($test_name, $t_res->result_src_grp_big()->src_grp_is_storable());
+
 
         $t->subheader($ts . 'display');
 

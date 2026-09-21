@@ -499,6 +499,21 @@ class result extends sandbox_value
         return $this->source_group()->id();
     }
 
+    /**
+     * true if save() can write the source group of this result
+     *
+     * the source group is stored as the bigint source_group_id of results_prime and
+     * results_main, so only a "prime" group (up to 4 phrases, encoded as a 64-bit int) fits;
+     * a group of more phrases encodes as an alpha-num string, which needs a group row that
+     * the import does not yet write (see result_list::drop_unsupported_src_grp)
+     *
+     * @return bool true if the source group is missing or small enough to be written
+     */
+    function src_grp_is_storable(): bool
+    {
+        return $this->src_grp === null or $this->src_grp->is_prime();
+    }
+
     function set_formula(formula $frm): void
     {
         $this->frm = $frm;

@@ -295,6 +295,10 @@ class import_tests
         $t->assert($test_name, $dto->result_check_list()->count(), 1);
         $test_name = '... and reports no problem';
         $t->assert_true($test_name, $msg->is_ok());
+        // a checked result is a result like any other, so it is stored with the results of
+        // the file and not only used for the check
+        $test_name = '... and the checked result is stored with the results';
+        $t->assert($test_name, $dto->result_list()->count(), 1);
 
         // an operand of a formula can be a group of phrases e.g. "price","CHF", which names one
         // value, so the validation must replace the complete group with one number

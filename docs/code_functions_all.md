@@ -280,6 +280,8 @@
     \-- source_group - section for function source_group not yet defined that it should be set and get in /result/result
             .php
     \-- src_grp_id - section for function src_grp_id not yet defined that it should be set and get in /result/result.php
+    \-- src_grp_is_storable - section for function src_grp_is_storable not yet defined that it should be set and get in 
+            /result/result.php
     \-- formula_id - section for function formula_id not yet defined that it should be set and get in /result/result.php
     \-- is_std - section for function is_std is expected to be info in /result/result.php
     \-- phr_lst - section for function phr_lst not yet defined that it should be reduce code line length in /result/resu

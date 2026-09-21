@@ -1194,11 +1194,18 @@ if it really is an assumption, mark it `assumed`.
 
 ## Calc-validation
 
-Optional. A list of *expected* formula results: instead of being stored, each
-entry is **recomputed** from the file's own values and formulas and compared, so
-a broken formula or a mistyped input is caught at import time. Same shape as a
-stored `result`, but routed through `validate_results` — a mismatch is reported
-as a failed validation, never saved as a value.
+Optional. A list of *expected* formula results: each entry is **recomputed** from
+the file's own values and formulas and compared, so a broken formula or a
+mistyped input is caught at import time. Same shape as a stored `result`, and
+additionally routed through `validate_results` — a mismatch is reported as a
+failed validation and stops the import, never saved as a value.
+
+A checked entry is a result like any other, so it is **also stored** in the
+results table with its phrases, its number and the formula that calculated it.
+Its `context` is stored as the source group only if it has at most four phrases;
+a longer context does not fit the `source_group_id` column of `results_prime` and
+`results_main`, so the result is saved without it and the import logs a warning
+(`result_list::drop_unsupported_src_grp`).
 
 ```json
 {

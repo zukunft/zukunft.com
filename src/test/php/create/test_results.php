@@ -116,6 +116,18 @@ class test_results
         return $res;
     }
 
+    /**
+     * @return result with a source group of 16 phrases, which result::save cannot write
+     *                as the bigint source_group_id of results_prime and results_main
+     */
+    function result_src_grp_big(): result
+    {
+        $t_grp = new test_groups($this->env);
+        $res = $this->result_prime();
+        $res->set_src_grp($t_grp->group_16());
+        return $res;
+    }
+
     function result_prime_max(): result
     {
         $t_grp = new test_groups($this->env);

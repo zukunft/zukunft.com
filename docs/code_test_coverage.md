@@ -8,7 +8,7 @@ in a test file of the src/test/php/unit* folders; the count is by function name
 and cannot tell the classes apart, so a name that several classes declare needs
 2 calls per class and is listed as shared otherwise
 
-567 of 5803 public functions have at least 2 unit test calls; the 5236 functions below do not
+568 of 5804 public functions have at least 2 unit test calls; the 5236 functions below do not
 
 ## main backend
 
@@ -380,7 +380,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- load_system_views - 0 unit test calls
     \-- phrase_list - 12 unit test calls shared by 11 classes
     \-- reference_list - 0 unit test calls
-    \-- result_list - 1 unit test calls shared by 3 classes
+    \-- result_list - 2 unit test calls shared by 3 classes
     \-- save - 43 unit test calls shared by 27 classes
     \-- set_term_list - 0 unit test calls
     \-- set_user - 5 unit test calls shared by 15 classes
@@ -4153,7 +4153,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- ref_list_cloned - 0 unit test calls
     \-- refresh_words_via_api - 0 unit test calls
     \-- reset - 63 unit test calls shared by 64 classes
-    \-- result_list - 1 unit test calls shared by 3 classes
+    \-- result_list - 2 unit test calls shared by 3 classes
     \-- set_component_list - 0 unit test calls
     \-- set_formula_link_list - 0 unit test calls
     \-- set_formula_list - 0 unit test calls
@@ -5273,7 +5273,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- phrases_related_ex_symbols - 1 unit test calls
     \-- ref_list_word - 0 unit test calls
     \-- result_changes - 0 unit test calls
-    \-- result_list - 1 unit test calls shared by 3 classes
+    \-- result_list - 2 unit test calls shared by 3 classes
     \-- results - 0 unit test calls
     \-- results_by_value - 1 unit test calls
     \-- results_by_word - 0 unit test calls
