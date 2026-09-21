@@ -725,6 +725,24 @@ class db_object extends TextIdObject
         return new html_base()->url_back($view, $this->id(), $url_arr);
     }
 
+    /**
+     * add the opening db value of a form field to a rendered selector as the '8'-prefixed hidden field,
+     * so that the confirm view can show the value before the change and the save writes only the fields
+     * that the user has really changed (see url_var::PRE); on a re-render after a save error the opening
+     * value of the url is kept, so that the baseline stays the db snapshot of the form start
+     *
+     * @param string $selector the html code of the rendered selector
+     * @param string $url_key the url var of the selected field e.g. url_var::SOURCE
+     * @param string $used_value the value preselected by the selector, used if the url has no pre value
+     * @return string the selector followed by the hidden field with the opening value
+     */
+    public function add_pre_value(string $selector, string $url_key, string $used_value): string
+    {
+        $html = new html_base();
+        $pre_value = $this->pre_value($url_key) ?? $used_value;
+        return $selector . $html->form_hidden(url_var::PRE . $url_key, $pre_value);
+    }
+
 
     /*
      * dummy functions to prevent polymorph warning

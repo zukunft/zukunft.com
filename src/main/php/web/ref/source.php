@@ -213,6 +213,9 @@ class source extends sandbox_code_id
             fields::FLD_DESCRIPTION => url_var::DESCRIPTION,
             fields::FLD_URL => url_var::URL,
             fields::FLD_DOI => url_var::DOI,
+            // the type selector of the source form posts the source type url var, not the
+            // generic type var, so the change preview and the undo link must use it too
+            source_fields::FLD_TYPE => url_var::SOURCE_TYPE,
             fields::FLD_VIEW => url_var::VIEW,
             fields::FLD_CODE_ID => url_var::CODE_ID,
         ];
@@ -369,7 +372,9 @@ class source extends sandbox_code_id
         if ($used_source_type_id == null) {
             $used_source_type_id = $typ_lst->src_typ->default_id();
         }
-        return $typ_lst->src_typ->selector($form, $used_source_type_id);
+        // the opening type is sent as the pre value so the confirm view can show the existing type
+        $sel_html = $typ_lst->src_typ->selector($form, $used_source_type_id);
+        return $this->add_pre_value($sel_html, url_var::SOURCE_TYPE, (string)$used_source_type_id);
     }
 
     /**
@@ -392,13 +397,9 @@ class source extends sandbox_code_id
             $view_id = $msk_lst->default_id($this);
         }
         $msk_lst = $msk_lst->only_type(view_types::SOURCE, $msg);
-        // the opening view id as '8'-prefixed pre value, so that the confirm view can detect
-        // whether the user has changed the view (see url_var::PRE and word::view_selector)
-        $html = new html_base();
-        $pre_view = $this->pre_value(url_var::VIEW) ?? (string)$view_id;
-        $result = $msk_lst->selector($form, $view_id, $name, $msg_id);
-        $result .= $html->form_hidden(url_var::PRE . url_var::VIEW, $pre_view);
-        return $result;
+        // the opening view is sent as the pre value so the confirm view can show the existing view
+        $sel_html = $msk_lst->selector($form, $view_id, $name, $msg_id);
+        return $this->add_pre_value($sel_html, $name, (string)$view_id);
     }
 
 }

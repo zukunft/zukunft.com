@@ -342,6 +342,64 @@ class formula_ui_tests
         $t->assert($test_name, $frm_no_typ->type_id($msg) ?? '', '');
         $msg->reset();
 
+        // the confirm view reads the value before the change only from the '8'-prefixed url vars,
+        // so the type selector must also post the opening type, because otherwise the confirm view
+        // shows 'not set' as the old type even if the formula has always had a type (see url_var::PRE)
+        $typ_lst = $ui_sys->typ_lst_cache;
+        $typ_this_id = $typ_lst->frm_typ->id(formula_types::THIS);
+        $pre_calc = $html->form_hidden(
+            url_var::PRE . url_var::FORMULA_TYPE, (string)formula_types::CALC_ID);
+
+        $test_name = 'the formula type selector posts the opening type as pre value';
+        $typ_sel = $frm_typ->formula_type_selector(views::FORMULA_EDIT, $msg, $typ_lst);
+        $t->assert_text_contains($test_name, $typ_sel, $pre_calc);
+        $msg->reset();
+
+        $test_name = '... and a re-render keeps the opening type of the url, not the selected type';
+        $frm_typ_chg = new formula();
+        $frm_typ_chg->url_mapper([
+            url_var::ID => formula_names::SCALE_TO_SEC_ID,
+            url_var::NAME => formula_names::SCALE_TO_SEC,
+            url_var::FORMULA_TYPE => (string)$typ_this_id,
+            url_var::PRE . url_var::FORMULA_TYPE => (string)formula_types::CALC_ID
+        ], $msg);
+        $typ_sel_chg = $frm_typ_chg->formula_type_selector(views::FORMULA_EDIT, $msg, $typ_lst);
+        $t->assert_text_contains($test_name, $typ_sel_chg, $pre_calc);
+        $msg->reset();
+
+        $test_name = '... so the confirm view names the type before the change';
+        $typ_chg_url = [
+            url_var::FORMULA_TYPE => (string)$typ_this_id,
+            url_var::PRE . url_var::FORMULA_TYPE => (string)formula_types::CALC_ID
+        ];
+        $typ_chg_html = new ui_preview()->popup_changes($msg, $typ_chg_url, $frm_typ_chg, true);
+        $t->assert_text_contains($test_name, $typ_chg_html,
+            $typ_lst->frm_typ->name(formula_types::CALC_ID));
+        $test_name = '... and does not show the type before the change as not set';
+        $t->assert_text_not_contains($test_name, $typ_chg_html, $mtr->txt(msg_id::NOT_SET));
+        $msg->reset();
+
+        // add_pre_value is the shared part of every selector that a confirm view diffs, so it is
+        // tested here once for the type and used the same way for the style, source and formula
+        $sel_dummy = $html->form_hidden(url_var::FORMULA_TYPE, (string)formula_types::CALC_ID);
+
+        $test_name = 'a selector without a pre value in the url sends the shown value as pre value';
+        $frm_pre = new formula();
+        $sel_pre = $frm_pre->add_pre_value(
+            $sel_dummy, url_var::FORMULA_TYPE, (string)formula_types::CALC_ID);
+        $t->assert_text_contains($test_name, $sel_pre, $pre_calc);
+        $test_name = '... and keeps the selector itself';
+        $t->assert_text_contains($test_name, $sel_pre, $sel_dummy);
+
+        // negative: the value just selected by the user must never become the baseline of the save
+        $test_name = 'a selector keeps the opening value of the url as pre value';
+        $sel_chg = $frm_typ_chg->add_pre_value(
+            $sel_dummy, url_var::FORMULA_TYPE, (string)$typ_this_id);
+        $t->assert_text_contains($test_name, $sel_chg, $pre_calc);
+        $test_name = '... so the selected value is not used as the value before the change';
+        $t->assert_text_not_contains($test_name, $sel_chg,
+            $html->form_hidden(url_var::PRE . url_var::FORMULA_TYPE, (string)$typ_this_id));
+
         $t->subheader($ts . 'link title');
 
         // the formula link default page shows the generated link name as the page title with the

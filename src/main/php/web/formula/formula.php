@@ -558,7 +558,9 @@ class formula extends sandbox_code_id
         if ($used_formula_type_id == null) {
             $used_formula_type_id = $typ_lst->frm_typ->default_id();
         }
-        return $typ_lst->frm_typ->selector($form, $used_formula_type_id);
+        // the opening type is sent as the pre value so the confirm view can show the existing type
+        $sel_html = $typ_lst->frm_typ->selector($form, $used_formula_type_id);
+        return $this->add_pre_value($sel_html, url_var::FORMULA_TYPE, (string)$used_formula_type_id);
     }
 
 

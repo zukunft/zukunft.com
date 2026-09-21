@@ -372,7 +372,9 @@ class term_view extends sandbox_link
         if ($used_id == null) {
             $used_id = $typ_lst->msk_sty->default_id();
         }
-        return $typ_lst->msk_sty->selector($form, $used_id);
+        // the style is part of db_fld_to_url, so like the type it needs the opening value as pre value
+        $sel_html = $typ_lst->msk_sty->selector($form, $used_id);
+        return $this->add_pre_value($sel_html, url_var::STYLE, (string)$used_id);
     }
 
 

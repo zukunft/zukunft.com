@@ -494,17 +494,20 @@ class view_ui_tests
         $t->subheader($ts . 'link select');
 
         // the view link add and edit form preselects the style that the link has now, so that
-        // saving the form does not silently change it; the expected html is the same selector
-        // asked for the expected id, so the test does not depend on the html format
+        // saving the form does not silently change it, and sends the same id as the opening value
+        // for the confirm view (see db_object::add_pre_value); the expected html is the same
+        // selector asked for the expected id, so the test does not depend on the html format
         $sty_lst = $ui_sys->typ_lst_cache->msk_sty;
         $test_name = 'the style selector preselects the style of the term view';
         $t->assert($test_name,
             $trm_msk->style_selector(views::VIEW_LINK_EDIT, $ui_sys->typ_lst_cache, $msg),
-            $sty_lst->selector(views::VIEW_LINK_EDIT, view_styles::COL_SM_8_ID));
+            $sty_lst->selector(views::VIEW_LINK_EDIT, view_styles::COL_SM_8_ID)
+            . $html->form_hidden(url_var::PRE . url_var::STYLE, (string)view_styles::COL_SM_8_ID));
         $test_name = 'a fresh term view preselects the default style';
         $t->assert($test_name,
             (new term_view_ui())->style_selector(views::VIEW_LINK_ADD, $ui_sys->typ_lst_cache, $msg),
-            $sty_lst->selector(views::VIEW_LINK_ADD, $sty_lst->default_id()));
+            $sty_lst->selector(views::VIEW_LINK_ADD, $sty_lst->default_id())
+            . $html->form_hidden(url_var::PRE . url_var::STYLE, (string)$sty_lst->default_id()));
 
 
         $t->subheader($ts . 'link tab box');

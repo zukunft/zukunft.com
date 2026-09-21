@@ -558,7 +558,9 @@ class component extends sandbox_code_id
         if ($used_type_id == null) {
             $used_type_id = $typ_lst->cmp_typ->default_id();
         }
-        return $typ_lst->cmp_typ->selector($form, $used_type_id);
+        // the opening type is sent as the pre value so the confirm view can show the existing type
+        $sel_html = $typ_lst->cmp_typ->selector($form, $used_type_id);
+        return $this->add_pre_value($sel_html, url_var::COMPONENT_TYPE, (string)$used_type_id);
     }
 
 
@@ -780,7 +782,9 @@ class component extends sandbox_code_id
         if ($used_style_id == null) {
             $used_style_id = $typ_lst->msk_sty->default_id();
         }
-        return $typ_lst->msk_sty->selector($form, $used_style_id);
+        // the style is part of db_fld_to_url, so like the type it needs the opening value as pre value
+        $sel_html = $typ_lst->msk_sty->selector($form, $used_style_id);
+        return $this->add_pre_value($sel_html, url_var::STYLE, (string)$used_style_id);
     }
 
     /**
@@ -799,7 +803,11 @@ class component extends sandbox_code_id
     ): string
     {
         // no default formula, because most component types show no calculated value
-        return $frm_lst->selector($form, $this->formula_id, $name, msg_id::FORM_SELECT_FORMULA);
+        $selected = $this->formula_id ?? 0;
+        $sel_html = $frm_lst->selector($form, $selected, $name, msg_id::FORM_SELECT_FORMULA);
+        // the formula is part of db_fld_to_url, so the confirm view needs the opening formula as pre
+        // value; an unset formula is sent as a zero id like the source, which reads as 'not set'
+        return $this->add_pre_value($sel_html, $name, (string)$selected);
     }
 
 

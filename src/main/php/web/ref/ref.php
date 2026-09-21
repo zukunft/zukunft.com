@@ -607,7 +607,9 @@ class ref extends sandbox
         if ($used_ref_type_id == null) {
             $used_ref_type_id = $typ_lst->ref_typ->default_id();
         }
-        return $typ_lst->ref_typ->selector($form, $used_ref_type_id);
+        // the opening type is sent as the pre value so the confirm view can show the existing type
+        $sel_html = $typ_lst->ref_typ->selector($form, $used_ref_type_id);
+        return $this->add_pre_value($sel_html, url_var::REF_TYPE, (string)$used_ref_type_id);
     }
 
     /**
@@ -622,7 +624,11 @@ class ref extends sandbox
     {
         $src_lst = $src_lst ?? new source_list();
         $src_lst->load_for_selector($pattern, $msg, $test_mode);
-        return $src_lst->selector($form, $this->id(), url_var::SOURCE, msg_id::FORM_SELECT_SOURCE);
+        // the selected entry is the source of this reference, not the reference itself
+        $selected = $this->source?->id() ?? 0;
+        $sel_html = $src_lst->selector($form, $selected, url_var::SOURCE, msg_id::FORM_SELECT_SOURCE);
+        // the source is part of db_fld_to_url, so the confirm view needs the opening source as pre value
+        return $this->add_pre_value($sel_html, url_var::SOURCE, (string)$selected);
     }
 
 
