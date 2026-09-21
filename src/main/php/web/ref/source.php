@@ -368,13 +368,7 @@ class source extends sandbox_code_id
             log_err('type list cache missing, falling back to the request cache');
             $typ_lst = $ui_sys->typ_lst_cache;
         }
-        $used_source_type_id = $this->type_id($msg);
-        if ($used_source_type_id == null) {
-            $used_source_type_id = $typ_lst->src_typ->default_id();
-        }
-        // the opening type is sent as the pre value so the confirm view can show the existing type
-        $sel_html = $typ_lst->src_typ->selector($form, $used_source_type_id);
-        return $this->add_pre_value($sel_html, url_var::SOURCE_TYPE, (string)$used_source_type_id);
+        return $this->type_selector_with_pre($typ_lst->src_typ, $form, $this->type_id($msg));
     }
 
     /**

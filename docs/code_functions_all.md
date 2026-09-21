@@ -7738,6 +7738,8 @@
             hp
     \-- sort_by_impact - section for function sort_by_impact not yet defined that it should be display in /types/type_li
             st.php
+    \-- default_id - section for function default_id not yet defined that it should be display in /types/type_list.php
+    \-- selector - section for function selector not yet defined that it should be display in /types/type_list.php
     \-- type_selector - section for function type_selector not yet defined that it should be display in /types/type_list
             .php
     \-- order error - order of section  has difference at name should be before reset,

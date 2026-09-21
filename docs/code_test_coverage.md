@@ -8,7 +8,7 @@ in a test file of the src/test/php/unit* folders; the count is by function name
 and cannot tell the classes apart, so a name that several classes declare needs
 2 calls per class and is listed as shared otherwise
 
-568 of 5807 public functions have at least 2 unit test calls; the 5239 functions below do not
+569 of 5810 public functions have at least 2 unit test calls; the 5241 functions below do not
 
 ## main backend
 
@@ -39,7 +39,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
 \-- change_action
     \-- name_field - 0 unit test calls shared by 36 classes
 \-- change_action_list
-    \-- default_id - 0 unit test calls shared by 44 classes
+    \-- default_id - 0 unit test calls shared by 45 classes
     \-- load_dummy - 0 unit test calls shared by 36 classes
 \-- change_field
     \-- db_fields_all - 0 unit test calls shared by 40 classes
@@ -50,7 +50,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- reset - 67 unit test calls shared by 64 classes
     \-- row_mapper_typ_obj - 2 unit test calls shared by 11 classes
 \-- change_field_list
-    \-- default_id - 0 unit test calls shared by 44 classes
+    \-- default_id - 0 unit test calls shared by 45 classes
     \-- load_dummy - 0 unit test calls shared by 36 classes
 \-- change_link
     \-- add - 27 unit test calls shared by 44 classes
@@ -123,7 +123,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
 \-- change_table_field
     \-- sql_view_link - 0 unit test calls
 \-- change_table_list
-    \-- default_id - 0 unit test calls shared by 44 classes
+    \-- default_id - 0 unit test calls shared by 45 classes
     \-- load_dummy - 0 unit test calls shared by 36 classes
 \-- change_value
     \-- api_json_array - 15 unit test calls shared by 57 classes
@@ -319,7 +319,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- load_sql_names - 0 unit test calls shared by 5 classes
     \-- save - 43 unit test calls shared by 27 classes
 \-- component_type_list
-    \-- default_id - 0 unit test calls shared by 44 classes
+    \-- default_id - 0 unit test calls shared by 45 classes
     \-- load_dummy - 0 unit test calls shared by 36 classes
 \-- config_numbers
     \-- default_json - 0 unit test calls
@@ -429,12 +429,12 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- id_field - 0 unit test calls shared by 12 classes
     \-- name_field - 0 unit test calls shared by 36 classes
 \-- db_cache_status_list
-    \-- default_id - 0 unit test calls shared by 44 classes
+    \-- default_id - 0 unit test calls shared by 45 classes
     \-- load_dummy - 0 unit test calls shared by 36 classes
 \-- db_cache_type
     \-- id_field - 0 unit test calls shared by 12 classes
 \-- db_cache_type_list
-    \-- default_id - 0 unit test calls shared by 44 classes
+    \-- default_id - 0 unit test calls shared by 45 classes
     \-- load_dummy - 0 unit test calls shared by 36 classes
 \-- db_check
     \-- db_check - 0 unit test calls
@@ -614,7 +614,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- predefined_following - 0 unit test calls
     \-- term_list - 3 unit test calls shared by 7 classes
 \-- element_type_list
-    \-- default_id - 0 unit test calls shared by 44 classes
+    \-- default_id - 0 unit test calls shared by 45 classes
     \-- load_dummy - 0 unit test calls shared by 36 classes
 \-- export
     \-- get - 9 unit test calls shared by 14 classes
@@ -772,7 +772,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- reset - 67 unit test calls shared by 64 classes
     \-- row_mapper_typ_obj - 2 unit test calls shared by 11 classes
 \-- formula_link_type_list
-    \-- default_id - 0 unit test calls shared by 44 classes
+    \-- default_id - 0 unit test calls shared by 45 classes
     \-- load_dummy - 0 unit test calls shared by 36 classes
 \-- formula_list
     \-- add - 27 unit test calls shared by 44 classes
@@ -872,7 +872,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- wrd_del - 0 unit test calls
     \-- wrd_rename - 0 unit test calls
 \-- formula_type_list
-    \-- default_id - 0 unit test calls shared by 44 classes
+    \-- default_id - 0 unit test calls shared by 45 classes
     \-- load_dummy - 0 unit test calls shared by 36 classes
 \-- group
     \-- add - 27 unit test calls shared by 44 classes
@@ -1128,10 +1128,10 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- reset - 67 unit test calls shared by 64 classes
     \-- row_mapper_typ_obj - 2 unit test calls shared by 11 classes
 \-- job_status_list
-    \-- default_id - 0 unit test calls shared by 44 classes
+    \-- default_id - 0 unit test calls shared by 45 classes
     \-- load_dummy - 0 unit test calls shared by 36 classes
 \-- job_type_list
-    \-- default_id - 0 unit test calls shared by 44 classes
+    \-- default_id - 0 unit test calls shared by 45 classes
     \-- load_dummy - 0 unit test calls shared by 36 classes
 \-- language
     \-- api_json_array - 15 unit test calls shared by 57 classes
@@ -1156,10 +1156,10 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- reset - 67 unit test calls shared by 64 classes
     \-- row_mapper_typ_obj - 2 unit test calls shared by 11 classes
 \-- language_form_list
-    \-- default_id - 0 unit test calls shared by 44 classes
+    \-- default_id - 0 unit test calls shared by 45 classes
     \-- load_dummy - 0 unit test calls shared by 36 classes
 \-- language_list
-    \-- default_id - 0 unit test calls shared by 44 classes
+    \-- default_id - 0 unit test calls shared by 45 classes
     \-- load_dummy - 0 unit test calls shared by 36 classes
 \-- list_db_read
     \-- api_json_array - 15 unit test calls shared by 57 classes
@@ -1390,13 +1390,13 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- reset - 67 unit test calls shared by 64 classes
     \-- row_mapper_typ_obj - 2 unit test calls shared by 11 classes
 \-- phrase_types
-    \-- default_id - 0 unit test calls shared by 44 classes
+    \-- default_id - 0 unit test calls shared by 45 classes
     \-- load_dummy - 0 unit test calls shared by 36 classes
 \-- position_type_list
-    \-- default_id - 0 unit test calls shared by 44 classes
+    \-- default_id - 0 unit test calls shared by 45 classes
     \-- load_dummy - 0 unit test calls shared by 36 classes
 \-- protection_type_list
-    \-- default_id - 0 unit test calls shared by 44 classes
+    \-- default_id - 0 unit test calls shared by 45 classes
     \-- load_dummy - 0 unit test calls shared by 36 classes
 \-- ref
     \-- add - 27 unit test calls shared by 44 classes
@@ -1489,7 +1489,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- reset - 67 unit test calls shared by 64 classes
     \-- row_mapper_typ_obj - 2 unit test calls shared by 11 classes
 \-- ref_type_list
-    \-- default_id - 0 unit test calls shared by 44 classes
+    \-- default_id - 0 unit test calls shared by 45 classes
     \-- load_dummy - 0 unit test calls shared by 36 classes
 \-- result
     \-- api_json_array - 15 unit test calls shared by 57 classes
@@ -2210,7 +2210,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- same_origin - 0 unit test calls
     \-- user_rejected - 0 unit test calls
 \-- share_type_list
-    \-- default_id - 0 unit test calls shared by 44 classes
+    \-- default_id - 0 unit test calls shared by 45 classes
     \-- load_dummy - 0 unit test calls shared by 36 classes
 \-- source
     \-- all_sandbox_fields - 0 unit test calls shared by 10 classes
@@ -2248,7 +2248,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- load_sql_like - 0 unit test calls shared by 5 classes
     \-- save - 43 unit test calls shared by 27 classes
 \-- source_type_list
-    \-- default_id - 0 unit test calls shared by 44 classes
+    \-- default_id - 0 unit test calls shared by 45 classes
     \-- get - 9 unit test calls shared by 14 classes
     \-- get_source_type - 0 unit test calls
     \-- get_source_type_by_id - 0 unit test calls
@@ -2670,12 +2670,12 @@ and cannot tell the classes apart, so a name that several classes declare needs
 \-- sys_log_function
     \-- name_field - 0 unit test calls shared by 36 classes
 \-- sys_log_function_list
-    \-- default_id - 0 unit test calls shared by 44 classes
+    \-- default_id - 0 unit test calls shared by 45 classes
     \-- load_dummy - 0 unit test calls shared by 36 classes
 \-- sys_log_level
     \-- name_field - 0 unit test calls shared by 36 classes
 \-- sys_log_level_list
-    \-- default_id - 0 unit test calls shared by 44 classes
+    \-- default_id - 0 unit test calls shared by 45 classes
     \-- load_dummy - 0 unit test calls shared by 36 classes
 \-- sys_log_list
     \-- add - 27 unit test calls shared by 44 classes
@@ -2695,7 +2695,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- reset - 67 unit test calls shared by 64 classes
     \-- row_mapper_typ_obj - 2 unit test calls shared by 11 classes
 \-- sys_log_status_list
-    \-- default_id - 0 unit test calls shared by 44 classes
+    \-- default_id - 0 unit test calls shared by 45 classes
     \-- load_dummy - 0 unit test calls shared by 36 classes
 \-- system_object
     \-- add_verb - 0 unit test calls shared by 3 classes
@@ -3236,7 +3236,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- row_mapper - 3 unit test calls shared by 19 classes
     \-- row_mapper_typ_obj - 2 unit test calls shared by 11 classes
 \-- user_profile_list
-    \-- default_id - 0 unit test calls shared by 44 classes
+    \-- default_id - 0 unit test calls shared by 45 classes
     \-- load_dummy - 0 unit test calls shared by 36 classes
 \-- user_service
     \-- get_user - 1 unit test calls shared by 17 classes
@@ -3244,10 +3244,10 @@ and cannot tell the classes apart, so a name that several classes declare needs
 \-- user_status
     \-- name_field - 0 unit test calls shared by 36 classes
 \-- user_status_list
-    \-- default_id - 0 unit test calls shared by 44 classes
+    \-- default_id - 0 unit test calls shared by 45 classes
     \-- load_dummy - 0 unit test calls shared by 36 classes
 \-- user_type_list
-    \-- default_id - 0 unit test calls shared by 44 classes
+    \-- default_id - 0 unit test calls shared by 45 classes
     \-- load_dummy - 0 unit test calls shared by 36 classes
 \-- value
     \-- api_json_array - 15 unit test calls shared by 57 classes
@@ -3518,7 +3518,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- type_code_id - 1 unit test calls shared by 14 classes
     \-- type_name - 0 unit test calls shared by 13 classes
 \-- view_link_type_list
-    \-- default_id - 0 unit test calls shared by 44 classes
+    \-- default_id - 0 unit test calls shared by 45 classes
     \-- load_dummy - 0 unit test calls shared by 36 classes
 \-- view_list
     \-- get_user - 1 unit test calls shared by 17 classes
@@ -3579,22 +3579,22 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- save - 43 unit test calls shared by 27 classes
     \-- view_ids - 0 unit test calls shared by 2 classes
 \-- view_relation_type_list
-    \-- default_id - 0 unit test calls shared by 44 classes
+    \-- default_id - 0 unit test calls shared by 45 classes
     \-- load_dummy - 0 unit test calls shared by 36 classes
 \-- view_style
     \-- name_field - 0 unit test calls shared by 36 classes
 \-- view_style_list
-    \-- default_id - 0 unit test calls shared by 44 classes
+    \-- default_id - 0 unit test calls shared by 45 classes
     \-- load_dummy - 0 unit test calls shared by 36 classes
 \-- view_sys_list
-    \-- default_id - 0 unit test calls shared by 44 classes
+    \-- default_id - 0 unit test calls shared by 45 classes
     \-- get_user - 1 unit test calls shared by 17 classes
     \-- load - 4 unit test calls shared by 12 classes
     \-- load_dummy - 0 unit test calls shared by 36 classes
     \-- load_sql_list - 0 unit test calls
     \-- set_user - 5 unit test calls shared by 15 classes
 \-- view_type_list
-    \-- default_id - 0 unit test calls shared by 44 classes
+    \-- default_id - 0 unit test calls shared by 45 classes
     \-- load_dummy - 0 unit test calls shared by 36 classes
 \-- word
     \-- add_child - 0 unit test calls
@@ -3992,7 +3992,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- merge - 3 unit test calls shared by 12 classes
     \-- name_text - 0 unit test calls
     \-- reload - 0 unit test calls
-    \-- selector - 2 unit test calls shared by 23 classes
+    \-- selector - 2 unit test calls shared by 24 classes
     \-- selector_ui - 1 unit test calls
     \-- set_from_json - 8 unit test calls shared by 9 classes
 \-- button
@@ -4121,15 +4121,15 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- set_view_id - 0 unit test calls shared by 6 classes
     \-- url_mapper - 41 unit test calls shared by 27 classes
 \-- component_link_type_list
-    \-- selector - 2 unit test calls shared by 23 classes
+    \-- selector - 2 unit test calls shared by 24 classes
 \-- component_list
     \-- api_mapper - 23 unit test calls shared by 100 classes
     \-- load_by_view_id - 1 unit test calls shared by 2 classes
     \-- name_link - 2 unit test calls shared by 21 classes
     \-- sorted_by_position - 1 unit test calls
 \-- component_type_list
-    \-- default_id - 0 unit test calls shared by 44 classes
-    \-- selector - 2 unit test calls shared by 23 classes
+    \-- default_id - 0 unit test calls shared by 45 classes
+    \-- selector - 2 unit test calls shared by 24 classes
 \-- config
     \-- dec_point - 0 unit test calls
     \-- frontend_type - 0 unit test calls
@@ -4326,10 +4326,10 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- load_by_formula_id - 0 unit test calls
     \-- name_tip - 3 unit test calls shared by 15 classes
 \-- formula_link_type_list
-    \-- selector - 2 unit test calls shared by 23 classes
+    \-- selector - 2 unit test calls shared by 24 classes
 \-- formula_list
     \-- api_mapper - 23 unit test calls shared by 100 classes
-    \-- default_id - 0 unit test calls shared by 44 classes
+    \-- default_id - 0 unit test calls shared by 45 classes
     \-- display_old - 0 unit test calls shared by 2 classes
     \-- get_by_verb - 0 unit test calls shared by 2 classes
     \-- load_by_phr_id - 0 unit test calls shared by 2 classes
@@ -4339,8 +4339,8 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- sort_by_impact - 1 unit test calls shared by 6 classes
     \-- tbl - 3 unit test calls shared by 7 classes
 \-- formula_type_list
-    \-- default_id - 0 unit test calls shared by 44 classes
-    \-- selector - 2 unit test calls shared by 23 classes
+    \-- default_id - 0 unit test calls shared by 45 classes
+    \-- selector - 2 unit test calls shared by 24 classes
 \-- frontend
     \-- activation_url - 1 unit test calls
     \-- api_get - 0 unit test calls shared by 2 classes
@@ -4554,17 +4554,17 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- pending_first - 1 unit test calls
     \-- tbl - 3 unit test calls shared by 7 classes
 \-- job_type_list
-    \-- selector - 2 unit test calls shared by 23 classes
+    \-- selector - 2 unit test calls shared by 24 classes
 \-- language
     \-- name_link - 2 unit test calls shared by 21 classes
     \-- name_tip - 3 unit test calls shared by 15 classes
     \-- select_list_item - 1 unit test calls shared by 3 classes
     \-- url_mapper - 41 unit test calls shared by 27 classes
 \-- language_form_list
-    \-- selector - 2 unit test calls shared by 23 classes
+    \-- selector - 2 unit test calls shared by 24 classes
 \-- language_list
     \-- select_list_item - 1 unit test calls shared by 3 classes
-    \-- selector - 2 unit test calls shared by 23 classes
+    \-- selector - 2 unit test calls shared by 24 classes
 \-- list_named
     \-- name_link - 2 unit test calls shared by 21 classes
     \-- name_tip - 3 unit test calls shared by 15 classes
@@ -4679,13 +4679,13 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- view_selector - 1 unit test calls shared by 9 classes
     \-- wrd_lst_all - 2 unit test calls shared by 2 classes
 \-- phrase_type_list
-    \-- default_id - 0 unit test calls shared by 44 classes
-    \-- selector - 2 unit test calls shared by 23 classes
+    \-- default_id - 0 unit test calls shared by 45 classes
+    \-- selector - 2 unit test calls shared by 24 classes
 \-- position_type_list
-    \-- selector - 2 unit test calls shared by 23 classes
+    \-- selector - 2 unit test calls shared by 24 classes
 \-- protection
-    \-- default_id - 0 unit test calls shared by 44 classes
-    \-- selector - 2 unit test calls shared by 23 classes
+    \-- default_id - 0 unit test calls shared by 45 classes
+    \-- selector - 2 unit test calls shared by 24 classes
 \-- ref
     \-- api_array - 10 unit test calls shared by 37 classes
     \-- api_mapper - 23 unit test calls shared by 100 classes
@@ -4719,8 +4719,8 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- list - 5 unit test calls shared by 7 classes
     \-- sort_by_impact_and_type - 0 unit test calls
 \-- ref_type_list
-    \-- default_id - 0 unit test calls shared by 44 classes
-    \-- selector - 2 unit test calls shared by 23 classes
+    \-- default_id - 0 unit test calls shared by 45 classes
+    \-- selector - 2 unit test calls shared by 24 classes
     \-- url - 1 unit test calls shared by 7 classes
 \-- rest_call
     \-- api_call - 0 unit test calls
@@ -4843,8 +4843,8 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- value_linked - 0 unit test calls
     \-- value_type_selector - 0 unit test calls shared by 2 classes
 \-- share
-    \-- default_id - 0 unit test calls shared by 44 classes
-    \-- selector - 2 unit test calls shared by 23 classes
+    \-- default_id - 0 unit test calls shared by 45 classes
+    \-- selector - 2 unit test calls shared by 24 classes
 \-- sheet
     \-- calc_sheet - 0 unit test calls
 \-- source
@@ -4865,8 +4865,8 @@ and cannot tell the classes apart, so a name that several classes declare needs
 \-- source_list
     \-- api_mapper - 23 unit test calls shared by 100 classes
 \-- source_type_list
-    \-- default_id - 0 unit test calls shared by 44 classes
-    \-- selector - 2 unit test calls shared by 23 classes
+    \-- default_id - 0 unit test calls shared by 45 classes
+    \-- selector - 2 unit test calls shared by 24 classes
 \-- sys_log
     \-- api_array - 10 unit test calls shared by 37 classes
     \-- api_mapper - 23 unit test calls shared by 100 classes
@@ -5169,6 +5169,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- time_lst - 0 unit test calls shared by 3 classes
     \-- to_phrase_list - 0 unit test calls
 \-- type_list
+    \-- default_id - 0 unit test calls shared by 45 classes
     \-- dsp_id - 43 unit test calls shared by 46 classes
     \-- get - 9 unit test calls shared by 14 classes
     \-- get_by_code_id - 2 unit test calls shared by 5 classes
@@ -5178,6 +5179,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- name_link - 2 unit test calls shared by 21 classes
     \-- name_tip - 3 unit test calls shared by 15 classes
     \-- reset - 67 unit test calls shared by 64 classes
+    \-- selector - 2 unit test calls shared by 24 classes
     \-- set_from_json_array - 1 unit test calls shared by 4 classes
     \-- sort_by_impact - 1 unit test calls shared by 6 classes
     \-- sort_by_name - 1 unit test calls shared by 3 classes
@@ -5369,11 +5371,11 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- merge - 3 unit test calls shared by 12 classes
     \-- reset - 67 unit test calls shared by 64 classes
 \-- user_profile
-    \-- default_id - 0 unit test calls shared by 44 classes
-    \-- selector - 2 unit test calls shared by 23 classes
+    \-- default_id - 0 unit test calls shared by 45 classes
+    \-- selector - 2 unit test calls shared by 24 classes
 \-- user_type_list
     \-- list - 5 unit test calls shared by 7 classes
-    \-- selector - 2 unit test calls shared by 23 classes
+    \-- selector - 2 unit test calls shared by 24 classes
 \-- value
     \-- api_array - 10 unit test calls shared by 37 classes
     \-- api_mapper - 23 unit test calls shared by 100 classes
@@ -5454,8 +5456,8 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- set_from_json - 8 unit test calls shared by 9 classes
     \-- set_from_json_array - 1 unit test calls shared by 4 classes
 \-- verbs
-    \-- default_id - 0 unit test calls shared by 44 classes
-    \-- selector - 2 unit test calls shared by 23 classes
+    \-- default_id - 0 unit test calls shared by 45 classes
+    \-- selector - 2 unit test calls shared by 24 classes
 \-- view
     \-- db_fld_to_url - 6 unit test calls shared by 13 classes
     \-- dsp_edit - 0 unit test calls shared by 4 classes
@@ -5497,11 +5499,11 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- dsp_hist_links - 0 unit test calls shared by 5 classes
     \-- selector_page - 0 unit test calls shared by 2 classes
 \-- view_link_type_list
-    \-- default_id - 0 unit test calls shared by 44 classes
-    \-- selector - 2 unit test calls shared by 23 classes
+    \-- default_id - 0 unit test calls shared by 45 classes
+    \-- selector - 2 unit test calls shared by 24 classes
 \-- view_list
     \-- api_mapper - 23 unit test calls shared by 100 classes
-    \-- default_id - 0 unit test calls shared by 44 classes
+    \-- default_id - 0 unit test calls shared by 45 classes
     \-- ex_non_phrase - 0 unit test calls
     \-- ex_system - 0 unit test calls
     \-- get_by_code_id - 2 unit test calls shared by 5 classes
@@ -5510,7 +5512,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- name_link - 2 unit test calls shared by 21 classes
     \-- name_tip - 3 unit test calls shared by 15 classes
     \-- only_type - 0 unit test calls
-    \-- selector - 2 unit test calls shared by 23 classes
+    \-- selector - 2 unit test calls shared by 24 classes
 \-- view_relation
     \-- api_array - 10 unit test calls shared by 37 classes
     \-- api_mapper - 23 unit test calls shared by 100 classes
@@ -5527,13 +5529,13 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- url_mapper - 41 unit test calls shared by 27 classes
     \-- view_relation_type_selector - 0 unit test calls shared by 2 classes
 \-- view_relation_type_list
-    \-- selector - 2 unit test calls shared by 23 classes
+    \-- selector - 2 unit test calls shared by 24 classes
 \-- view_style_list
-    \-- default_id - 0 unit test calls shared by 44 classes
-    \-- selector - 2 unit test calls shared by 23 classes
+    \-- default_id - 0 unit test calls shared by 45 classes
+    \-- selector - 2 unit test calls shared by 24 classes
 \-- view_type_list
-    \-- default_id - 0 unit test calls shared by 44 classes
-    \-- selector - 2 unit test calls shared by 23 classes
+    \-- default_id - 0 unit test calls shared by 45 classes
+    \-- selector - 2 unit test calls shared by 24 classes
 \-- word
     \-- api_array - 10 unit test calls shared by 37 classes
     \-- api_mapper - 23 unit test calls shared by 100 classes
@@ -5590,7 +5592,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- percent_lst - 0 unit test calls shared by 3 classes
     \-- phrase_list - 11 unit test calls shared by 11 classes
     \-- scaling_lst - 0 unit test calls shared by 4 classes
-    \-- selector - 2 unit test calls shared by 23 classes
+    \-- selector - 2 unit test calls shared by 24 classes
     \-- tbl - 3 unit test calls shared by 7 classes
     \-- time_lst - 0 unit test calls shared by 3 classes
 ```

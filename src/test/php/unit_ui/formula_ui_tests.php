@@ -356,14 +356,14 @@ class formula_ui_tests
         $msg->reset();
 
         $test_name = '... and a re-render keeps the opening type of the url, not the selected type';
-        $frm_typ_chg = new formula();
-        $frm_typ_chg->url_mapper([
+        $frm_upd = new formula();
+        $frm_upd->url_mapper([
             url_var::ID => formula_names::SCALE_TO_SEC_ID,
             url_var::NAME => formula_names::SCALE_TO_SEC,
             url_var::FORMULA_TYPE => (string)$typ_this_id,
             url_var::PRE . url_var::FORMULA_TYPE => (string)formula_types::CALC_ID
         ], $msg);
-        $typ_sel_chg = $frm_typ_chg->formula_type_selector(views::FORMULA_EDIT, $msg, $typ_lst);
+        $typ_sel_chg = $frm_upd->formula_type_selector(views::FORMULA_EDIT, $msg, $typ_lst);
         $t->assert_text_contains($test_name, $typ_sel_chg, $pre_calc);
         $msg->reset();
 
@@ -372,7 +372,7 @@ class formula_ui_tests
             url_var::FORMULA_TYPE => (string)$typ_this_id,
             url_var::PRE . url_var::FORMULA_TYPE => (string)formula_types::CALC_ID
         ];
-        $typ_chg_html = new ui_preview()->popup_changes($msg, $typ_chg_url, $frm_typ_chg, true);
+        $typ_chg_html = new ui_preview()->popup_changes($msg, $typ_chg_url, $frm_upd, true);
         $t->assert_text_contains($test_name, $typ_chg_html,
             $typ_lst->frm_typ->name(formula_types::CALC_ID));
         $test_name = '... and does not show the type before the change as not set';
@@ -384,8 +384,8 @@ class formula_ui_tests
         $sel_dummy = $html->form_hidden(url_var::FORMULA_TYPE, (string)formula_types::CALC_ID);
 
         $test_name = 'a selector without a pre value in the url sends the shown value as pre value';
-        $frm_pre = new formula();
-        $sel_pre = $frm_pre->add_pre_value(
+        $frm_empty = new formula();
+        $sel_pre = $frm_empty->add_pre_value(
             $sel_dummy, url_var::FORMULA_TYPE, (string)formula_types::CALC_ID);
         $t->assert_text_contains($test_name, $sel_pre, $pre_calc);
         $test_name = '... and keeps the selector itself';
@@ -393,12 +393,28 @@ class formula_ui_tests
 
         // negative: the value just selected by the user must never become the baseline of the save
         $test_name = 'a selector keeps the opening value of the url as pre value';
-        $sel_chg = $frm_typ_chg->add_pre_value(
+        $sel_chg = $frm_upd->add_pre_value(
             $sel_dummy, url_var::FORMULA_TYPE, (string)$typ_this_id);
         $t->assert_text_contains($test_name, $sel_chg, $pre_calc);
         $test_name = '... so the selected value is not used as the value before the change';
         $t->assert_text_not_contains($test_name, $sel_chg,
             $html->form_hidden(url_var::PRE . url_var::FORMULA_TYPE, (string)$typ_this_id));
+
+        // type_selector_with_pre renders the complete form field of a type, so the field name and
+        // the name of its pre value both come from the type list and can never disagree
+        $test_name = 'a type selector preselects the given type';
+        $sel_typ = $frm_empty->type_selector_with_pre($typ_lst->frm_typ, views::FORMULA_EDIT, $typ_this_id);
+        $t->assert_text_contains($test_name, $sel_typ,
+            '<option value="' . $typ_this_id . '"  selected >');
+        $test_name = '... and names the field and its pre value by the url var of the type list';
+        $t->assert_text_contains($test_name, $sel_typ, 'name="' . url_var::FORMULA_TYPE . '"');
+        $t->assert_text_contains($test_name, $sel_typ,
+            $html->form_hidden(url_var::PRE . url_var::FORMULA_TYPE, (string)$typ_this_id));
+
+        // negative: an object without a type gets the default of the list, not an empty selection
+        $test_name = 'a type selector without a type preselects the default of the list';
+        $sel_def = $frm_empty->type_selector_with_pre($typ_lst->frm_typ, views::FORMULA_EDIT, null);
+        $t->assert_text_contains($test_name, $sel_def, $pre_calc);
 
         $t->subheader($ts . 'link title');
 

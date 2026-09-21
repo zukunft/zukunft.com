@@ -44,6 +44,7 @@ include_once html_paths::API_OBJECT . 'api_message.php';
 //include_once html_paths::REF . 'ref_list.php';
 //include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::CONST . 'icons.php';
+include_once html_paths::TYPES . 'type_list.php';
 include_once html_paths::HTML . 'button.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'rest_call.php';
@@ -82,6 +83,7 @@ use Zukunft\ZukunftCom\main\php\web\html\rest_call;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\ref\ref_list;
 use Zukunft\ZukunftCom\main\php\web\ref\source_list;
+use Zukunft\ZukunftCom\main\php\web\types\type_list;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\result\result_list;
@@ -741,6 +743,23 @@ class db_object extends TextIdObject
         $html = new html_base();
         $pre_value = $this->pre_value($url_key) ?? $used_value;
         return $selector . $html->form_hidden(url_var::PRE . $url_key, $pre_value);
+    }
+
+    /**
+     * the complete form field of a type: the selector of the given type list with the opening db
+     * value as the '8'-prefixed hidden field; the url var of both comes from the type list, so the
+     * field name and the name of its pre value can never disagree (see type_list::NAME)
+     *
+     * @param type_list $typ_lst the types to select from e.g. the share types
+     * @param string $form the name of the html form
+     * @param int|null $used_id the type of this object or null to preselect the default of the list
+     * @return string the type selector with the hidden field of the value before the change
+     */
+    public function type_selector_with_pre(type_list $typ_lst, string $form, ?int $used_id): string
+    {
+        $sel_id = $used_id ?? $typ_lst->default_id();
+        $sel_html = $typ_lst->selector($form, $sel_id);
+        return $this->add_pre_value($sel_html, $typ_lst::NAME, (string)$sel_id);
     }
 
 

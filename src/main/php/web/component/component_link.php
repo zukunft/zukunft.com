@@ -325,13 +325,8 @@ class component_link extends sandbox_link
             log_err('type list cache missing, falling back to the request cache');
             $typ_lst = $ui_sys->typ_lst_cache;
         }
-        $used_id = $this->style_id;
-        if ($used_id == null) {
-            $used_id = $typ_lst->msk_sty->default_id();
-        }
         // the style is part of db_fld_to_url, so like the type it needs the opening value as pre value
-        $sel_html = $typ_lst->msk_sty->selector($form, $used_id);
-        return $this->add_pre_value($sel_html, url_var::STYLE, (string)$used_id);
+        return $this->type_selector_with_pre($typ_lst->msk_sty, $form, $this->style_id);
     }
 
 

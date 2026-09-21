@@ -51,6 +51,7 @@ use Zukunft\ZukunftCom\main\php\web\const\icons;
 use Zukunft\ZukunftCom\main\php\web\component\component_link as component_link_ui;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_list;
+use Zukunft\ZukunftCom\main\php\web\component\execute\ui_preview;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
@@ -194,6 +195,20 @@ class component_ui_tests
         $test_name = 'a component without a formula shows only the formula label';
         $t->assert($test_name, $sfm->show_formula($cmp_plain),
             $t->labeled(msg_id::FORM_SELECT_FORMULA, ''));
+
+        // the confirm view gets only the ids from the url, so it resolves the formula id to the
+        // formula name like the source and the view id (see ui_preview::formula_name_by_id)
+        $test_name = 'the confirm view names the formula of a pending change';
+        $frm_chg_url = [
+            url_var::FORMULA => (string)formula_names::SCALE_TO_SEC_ID,
+            url_var::PRE . url_var::FORMULA => '0'
+        ];
+        $frm_chg_html = new ui_preview()->popup_changes($msg, $frm_chg_url, $cmp_frm, true);
+        $t->assert_text_contains($test_name, $frm_chg_html, formula_names::SCALE_TO_SEC);
+        // negative: a component that had no formula shows 'not set' as the value before the change
+        $test_name = '... and shows a formula that was not set as not set';
+        $t->assert_text_contains($test_name, $frm_chg_html, $mtr->txt(msg_id::NOT_SET));
+        $msg->reset();
 
         // the linked component and the type of that link belong together, so one page field shows
         // the name of the linked component with the link type name in brackets behind it

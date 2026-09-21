@@ -554,13 +554,7 @@ class formula extends sandbox_code_id
             log_err('type list cache missing, falling back to the request cache');
             $typ_lst = $ui_sys->typ_lst_cache;
         }
-        $used_formula_type_id = $this->type_id($msg);
-        if ($used_formula_type_id == null) {
-            $used_formula_type_id = $typ_lst->frm_typ->default_id();
-        }
-        // the opening type is sent as the pre value so the confirm view can show the existing type
-        $sel_html = $typ_lst->frm_typ->selector($form, $used_formula_type_id);
-        return $this->add_pre_value($sel_html, url_var::FORMULA_TYPE, (string)$used_formula_type_id);
+        return $this->type_selector_with_pre($typ_lst->frm_typ, $form, $this->type_id($msg));
     }
 
 

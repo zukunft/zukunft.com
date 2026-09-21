@@ -873,13 +873,7 @@ class triple extends sandbox_code_id
             log_err('type list cache missing, falling back to the request cache');
             $typ_lst = $ui_sys->typ_lst_cache;
         }
-        $used_phrase_id = $this->type_id($msg);
-        if ($used_phrase_id == null) {
-            $used_phrase_id = $typ_lst->phr_typ->default_id();
-        }
-        // the opening type is sent as the pre value so the confirm view can show the existing type
-        $sel_html = $typ_lst->phr_typ->selector($form, $used_phrase_id);
-        return $this->add_pre_value($sel_html, url_var::PHRASE_TYPE, (string)$used_phrase_id);
+        return $this->type_selector_with_pre($typ_lst->phr_typ, $form, $this->type_id($msg));
     }
 
     /**

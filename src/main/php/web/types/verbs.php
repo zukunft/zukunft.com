@@ -60,7 +60,7 @@ class verbs extends type_list
      */
     function selector(
         string $form = '',
-        int    $selected = 1,
+        ?int   $selected = 1,
         string $name = self::NAME,
         string $style = view_styles::COL_SM_4
     ): string
