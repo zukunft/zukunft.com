@@ -47,6 +47,7 @@ include_once html_paths::SHARED_CONST . 'chars.php';
 
 use Zukunft\ZukunftCom\main\php\shared\const\chars;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
+use Zukunft\ZukunftCom\main\php\web\component\execute\ui_base;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_list;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_preview;
 use Zukunft\ZukunftCom\main\php\web\formula\formula;
@@ -133,6 +134,20 @@ class formula_ui_tests
         $test_name = 'a term name without a matching term keeps the quotes';
         $t->assert_text_contains($test_name, $frm_increase->expression_named_link(),
             chars::TERM_DELIMITER . word_names::THIS_NAME . chars::TERM_DELIMITER);
+
+        // the validated expression beside the expression field of the formula form shows the same
+        // format as the formula page, and the terms are resolved again by the validate button of
+        // the field, so the column has no refresh of its own (see ui_base::expression_link)
+        $test_name = 'the validated expression column shows the terms as links';
+        $exp_col = new ui_base()->expression_link($frm_increase_linked);
+        $t->assert_text_contains($test_name, $exp_col, '>' . word_names::THIS_NAME . '</a>');
+        $test_name = '... without the quotes around a linked term name';
+        $t->assert_text_not_contains($test_name, $exp_col,
+            chars::TERM_DELIMITER . word_names::THIS_NAME . chars::TERM_DELIMITER);
+        $test_name = '... and without a refresh of its own';
+        $t->assert_text_not_contains($test_name, $exp_col, url_var::REFRESH_TERMS);
+        $test_name = 'a formula without an expression shows no validated expression column';
+        $t->assert($test_name, new ui_base()->expression_link(new formula()), '');
 
         // the latex markup of the propagation of uncertainty formulas is rendered as html without
         // a latex engine: "\approx" as the almost equal sign, "\left|" and "\right|" as the bars

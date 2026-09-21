@@ -595,6 +595,17 @@ class base_ui_tests
         $src->set_from_json($t_src->source_reserved()->api_json(), $msg);
         $t->assert($test_name, $src->btn_edit(), $target);
 
+        // the validate button of the formula form fields is limited to one twelfth of the width
+        // like the 'find and next' button of the add value view (see html_base::button_refresh_text)
+        $test_name = 'the validate button of a form field is limited in size';
+        $validate_btn = $html->button_refresh_text($mtr->txt(msg_id::FORM_BUTTON_VALIDATE), url_var::REFRESH_LATEX);
+        $t->assert_text_contains($test_name, $validate_btn, html_base::BS_BTN_FIELD_COL);
+        $test_name = '... and it is a submit, because only a submit sends the entered values';
+        $t->assert_text_contains($test_name, $validate_btn,
+            'name="' . url_var::REFRESH . '" value="' . url_var::REFRESH_LATEX . '"');
+        $test_name = '... named by the text that tells what it does';
+        $t->assert_text_contains($test_name, $validate_btn, $mtr->txt(msg_id::FORM_BUTTON_VALIDATE));
+
         $test_name = 'a sandbox object e.g. formula delete button html code';
         $target = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::FORMULA_DEL_ID . '&amp;id=1" title="delete this formula"><i class="far fa-times-circle"></i></a>';
         $frm = new formula();

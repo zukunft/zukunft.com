@@ -8,7 +8,7 @@ in a test file of the src/test/php/unit* folders; the count is by function name
 and cannot tell the classes apart, so a name that several classes declare needs
 2 calls per class and is listed as shared otherwise
 
-561 of 5801 public functions have at least 2 unit test calls; the 5240 functions below do not
+562 of 5800 public functions have at least 2 unit test calls; the 5238 functions below do not
 
 ## main backend
 
@@ -4281,7 +4281,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- dsp_used4words - 0 unit test calls
     \-- edit_link - 0 unit test calls shared by 3 classes
     \-- expression_latex_link - 1 unit test calls shared by 2 classes
-    \-- expression_link - 0 unit test calls shared by 2 classes
+    \-- expression_link - 2 unit test calls shared by 2 classes
     \-- expression_named_link - 1 unit test calls
     \-- formula_type_selector - 0 unit test calls shared by 2 classes
     \-- get_latex - 3 unit test calls shared by 2 classes
@@ -4392,8 +4392,6 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- br - 0 unit test calls
     \-- br2 - 0 unit test calls
     \-- button_bs - 1 unit test calls
-    \-- button_refresh - 0 unit test calls
-    \-- button_refresh_text - 1 unit test calls
     \-- button_submit - 0 unit test calls
     \-- change_blocked - 0 unit test calls
     \-- change_icon - 0 unit test calls
@@ -5238,7 +5236,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- all - 0 unit test calls
     \-- expression_latex_link - 1 unit test calls shared by 2 classes
     \-- expression_latex_link_form - 0 unit test calls
-    \-- expression_link - 0 unit test calls shared by 2 classes
+    \-- expression_link - 2 unit test calls shared by 2 classes
     \-- group_name - 0 unit test calls
     \-- language_name - 0 unit test calls
     \-- main_value - 0 unit test calls

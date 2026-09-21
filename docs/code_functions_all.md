@@ -7055,8 +7055,6 @@
             replace in /html/html_base.php
     \-- label - section for function label not yet defined that it should be base elements - functions for all html elem
             ents used in zukunft.com in /html/html_base.php
-    \-- button_refresh - section for function button_refresh not yet defined that it should be base elements - functions
-             for all html elements used in zukunft.com in /html/html_base.php
     \-- button_refresh_text - section for function button_refresh_text not yet defined that it should be base elements -
              functions for all html elements used in zukunft.com in /html/html_base.php
     \-- button_submit_text - section for function button_submit_text not yet defined that it should be base elements - f
@@ -8786,7 +8784,7 @@
     \-- expression_link
         \-- ui_base - @param db_object|null $dbo the formula whose expression should be displayed
     \-- name
-        \-- ui_base - the label points to the field that it validates, so that a click on it opens the field
+        \-- ui_base - the label points to the field that it validates, so that a click on it opens the field and
     \-- word_children
         \-- ui_foaf - TODO move code from component_dsp_old
     \-- word_parents
@@ -9703,8 +9701,6 @@
 \-- base elements - functions for all html elements used in zukunft.com
     \-- label
         \-- html_base - create the html code for a label
-    \-- button_refresh
-        \-- html_base - a small submit button beside a form field label that asks the backend to recalculate one
     \-- button_refresh_text
         \-- html_base - a text button that submits the form only to refresh some fields, e.g. the 'find and next' of the
     \-- button_submit_text

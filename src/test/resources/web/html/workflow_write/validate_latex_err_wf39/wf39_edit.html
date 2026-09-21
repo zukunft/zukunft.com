@@ -114,7 +114,7 @@
                                     system test zukunft.com system test
                                 </li>
                                 <li>
-                                    <a href="http://localhost/http/view.php?m=12&amp;9id=996&amp;9m=8&amp;token=5e18d78c56c5ccb645631d7e5c6657d02a2f7c579cd01d36d3f5539ba07a6c13">
+                                    <a href="http://localhost/http/view.php?m=12&amp;9m=8&amp;9id=996&amp;token=5e18d78c56c5ccb645631d7e5c6657d02a2f7c579cd01d36d3f5539ba07a6c13">
                                         logout
                                     </a>
                                 </li>
@@ -137,8 +137,8 @@
                 <input type="hidden" name="token" value="5e18d78c56c5ccb645631d7e5c6657d02a2f7c579cd01d36d3f5539ba07a6c13">
                 <input class="form-control" type="hidden" name="m" id="mask" value="33">
                 <input class="form-control" type="hidden" name="id" id="id" value="996">
-                <input type="hidden" name="9id" value="996">
                 <input type="hidden" name="9m" value="8">
+                <input type="hidden" name="9id" value="996">
                 <input class="form-control" type="hidden" name="z" id="confirm" value="1">
                 <div class="row col-md-12">
                     <div class="form-group col-md-8">
@@ -185,9 +185,9 @@
                         <label for="description">
                             Description
                         </label>
-                        <input class="form-control" type="text" name="o" id="description" value="System Test Formula Description">
+                        <input class="form-control" type="text" name="o" id="description">
                     </div>
-                    <input type="hidden" name="8o" value="System Test Formula Description">
+                    <input type="hidden" name="8o" value="">
                 </div>
                 <div class="row col-md-12">
                     <div class="form-group col-md-7">
@@ -214,9 +214,9 @@
                         <label for="latex">
                             LaTeX
                         </label>
-                        <input class="form-control" type="text" name="fx" id="latex" value="\text{percent} = \frac{ \text{this} - \text{prior} }{ \text{prior} }">
+                        <input class="form-control" type="text" name="fx" id="latex" value="\text{percent} = \frac{\text{this} - \text{prior}}{\text{prior}}">
                     </div>
-                    <input type="hidden" name="8fx" value="\text{percent} = \frac{ \text{this} - \text{prior} }{ \text{prior} }">
+                    <input type="hidden" name="8fx" value="\text{percent} = \frac{\text{this} - \text{prior}}{\text{prior}}">
                     <div class="col-1 d-flex align-items-end">
                         <button class="btn btn-outline-success w-100" type="submit" name="fr" value="fre">
                             Validate
@@ -336,6 +336,23 @@
                     <h5>
                         Formulas
                     </h5>
+                    <div>
+                        <a href="http://localhost/http/view.php?m=8&amp;id=14" title="the SI definition of the unit joule">
+                            definition of joule
+                        </a>
+                        ,
+                        <a href="http://localhost/http/view.php?m=8&amp;id=19" title="hardcoded formula to select tomorrow, next week, next year, ...">
+                            next
+                        </a>
+                        ,
+                        <a href="http://localhost/http/view.php?m=8&amp;id=20" title="hardcoded formula to select yesterday, previous week, last year, ...">
+                            prior
+                        </a>
+                        ,
+                        <a href="http://localhost/http/view.php?m=8&amp;id=17" title="convert numbers in billions (thousand millions) to one and back, so that a value given in billions can be compared and calculated with values given in ones">
+                            scale billion to one
+                        </a>
+                    </div>
                 </div>
                 <div class="col-md-4">
                     <div class="css-tabs">

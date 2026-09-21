@@ -763,6 +763,10 @@ enum messages: string
         . self::VAR_START . self::VAR_FORMULA . self::VAR_END;
     case FORMULA_TERM_NAME_MISSING = 'no word, triple, formula or verb found for "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END . '"';
+    // the answer of the backend to the validate button of the formula form: the entered expression
+    // or latex cannot be read, so the reason of the backend is shown to the user (see load_by_id)
+    case FORMULA_VALIDATION_FAILED = 'the entered formula cannot be used: '
+        . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END;
     case FORMULA_LATEX_CHANGE_NOT_MAPPED = 'the latex change adds or removes a term or a number, '
         . 'which cannot be assigned to a part of the expression, so please change the expression itself';
     case FORMULA_LATEX_DIFFERS_FROM_EXPRESSION = 'the latex does not name the same terms and numbers '
@@ -2290,8 +2294,9 @@ enum messages: string
     case FORM_BUTTON_SAVE = 'form_button_save';
     case FORM_BUTTON_CONFIRM = 'form_button_confirm';
     case FORM_BUTTON_DEL = 'form_button_del';
-    // the tooltip of the refresh icon beside a form field label
-    case FORM_BUTTON_REFRESH = 'form_button_refresh';
+    // the button beside the expression and the latex field of the formula form that asks the
+    // backend to read the entered text and to name the terms that it selects
+    case FORM_BUTTON_VALIDATE = 'form_button_validate';
     // the tooltips of the views tab of an object page: show the object with the view, set the view
     // as the default view of the object and change the view itself (see view::open_link)
     case BUTTON_VIEW_SHOW_TIP = 'button_view_show_tip';

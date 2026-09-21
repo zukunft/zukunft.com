@@ -443,10 +443,19 @@ class db_object extends TextIdObject
             // leak the internal mandatory-field messages to the page
             if (array_key_exists(json_fields::MSG, $body)
                 or ($body[json_fields::ID] ?? 0) == 0) {
-                $msg->add_warning_with_vars(msg_id::OBJECT_NOT_FOUND, [
-                    msg_id::VAR_CLASS_NAME => library::class_to_name_translated($this::class),
-                    msg_id::VAR_ID => $id,
-                ]);
+                if (array_key_exists(url_var::REFRESH, $data)) {
+                    // the backend has been asked to read the values that the user has entered but
+                    // not yet saved (the validate button of the formula form), so its answer is
+                    // about the entered text and the user needs the reason to correct it
+                    $msg->add_warning_with_vars(msg_id::FORMULA_VALIDATION_FAILED, [
+                        msg_id::VAR_JSON_TEXT => $body[json_fields::MSG] ?? '',
+                    ]);
+                } else {
+                    $msg->add_warning_with_vars(msg_id::OBJECT_NOT_FOUND, [
+                        msg_id::VAR_CLASS_NAME => library::class_to_name_translated($this::class),
+                        msg_id::VAR_ID => $id,
+                    ]);
+                }
             } else {
                 $excluded = false;
                 if (array_key_exists(json_fields::EXCLUDED, $body)) {

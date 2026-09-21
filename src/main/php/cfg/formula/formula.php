@@ -216,7 +216,10 @@ class formula extends formula_map
         $refresh = $url_array[url_var::REFRESH] ?? '';
         if ($refresh != '') {
             if (array_key_exists(url_var::USER_EXPRESSION, $url_array)) {
-                $this->usr_text = $url_array[url_var::USER_EXPRESSION];
+                // the setter converts the entered expression to the database format at once, which
+                // is the validation of the expression: the user gets the reason on the message if
+                // the text names no term or cannot be read (see generate_ref_text)
+                $this->set_user_text($url_array[url_var::USER_EXPRESSION], $msg);
             }
             if (array_key_exists(url_var::LATEX, $url_array)) {
                 $this->set_latex($url_array[url_var::LATEX]);
@@ -1766,12 +1769,16 @@ class formula extends formula_map
 
         // convert the formula text to db format and recreate the latex from the same user
         // expression, so a changed expression updates both derived db fields and an unchanged one
-        // recreates the identical value that the change detection then leaves unchanged
-        // (any error messages should have been returned from the calling user script)
-        if ($msg->is_ok()) {
-            $this->generate_ref_text(null, $msg);
-        }
-        if ($msg->is_ok()) {
+        // recreates the identical value that the change detection then leaves unchanged;
+        // both fields are derived from the expression of this formula alone, so they depend on the
+        // verdict of the conversion and never on an unrelated problem of the same request, which
+        // would else leave the latex of a saved formula silently outdated
+        $exp_msg = new user_message($msg->usr); // the verdict of the expression conversion, merged into $msg right away
+        $this->generate_ref_text(null, $exp_msg);
+        $msg->merge($exp_msg);
+        // an expression that cannot be converted has no latex format either, so the stored latex
+        // is kept and the user sees the reason of the conversion in the message above
+        if ($exp_msg->is_ok()) {
             $this->update_latex();
         }
 
