@@ -268,6 +268,18 @@ class base_ui_tests
             . url_var::DISPLAY_LIST_COLUMNS . '=' . value_list_ui::COLUMN_TIERS_ALL . '&'
             . url_var::DISPLAY_LIST_RANGE . '=' . url_var::TRUE);
 
+        // how much of a list is shown is a render mode, so it is a control var: else the "... more"
+        // link of a page without an object (e.g. view.php?m=1&dls=20) would look like a form submit
+        // and the mapping of the page object would report the missing id (see frontend::url_object_values)
+        $test_name = 'the list size is a control var';
+        $t->assert_true($test_name, in_array(url_var::DISPLAY_LIST_SIZE, url_var::CONTROL_VARS));
+        $test_name = '... like the list page, the columns and the ranges';
+        $t->assert_true($test_name, in_array(url_var::DISPLAY_LIST_PAGE, url_var::CONTROL_VARS)
+            and in_array(url_var::DISPLAY_LIST_COLUMNS, url_var::CONTROL_VARS)
+            and in_array(url_var::DISPLAY_LIST_RANGE, url_var::CONTROL_VARS));
+        $test_name = 'a field of the object is never a control var';
+        $t->assert_false($test_name, in_array(url_var::NAME, url_var::CONTROL_VARS));
+
         $t->subheader($ts . 'tab box');
 
         // the tab box switches via the url fragment with pure css (:target) and no javascript: the
