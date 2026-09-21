@@ -43,10 +43,13 @@ use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\result\result;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\results;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
 use Zukunft\ZukunftCom\main\php\web\result\result as result_ui;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\create\test_results;
@@ -66,6 +69,7 @@ class result_tests
 
         // init
         $msg = new user_message();
+        $msg_ui = new user_message_ui(); // a buffer for the frontend calls of this test
         $db_con = new sql_db();
         $sc = new sql_creator();
         $t_res = new test_results($t);
@@ -203,6 +207,15 @@ class result_tests
         $test_name = 'the result page shows the time of the last calculation';
         $t->assert_text_contains($test_name, $form->show_last_update($res_page),
             date_format(new DateTime(test_const::DUMMY_DATETIME), $ui_sys->cfg->date_time_format()));
+        // in a table a calculated number links to the result page and not to the value page,
+        // so that the reader gets to the formula that has calculated it
+        $test_name = 'the number of a result links to the result page';
+        $t->assert_text_contains($test_name, $res_page->value_edit($msg_ui),
+            url_var::MASK . '=' . views::RESULT_ID);
+        $test_name = '... and not to the value page';
+        $t->assert_text_not_contains($test_name, $res_page->value_edit($msg_ui),
+            url_var::MASK . '=' . views::VALUE_DEFAULT_ID);
+
         // a result that is not yet calculated shows the labels of the empty fields
         $res_plain = new result_ui($t_res->result_incomplete()->api_json([api_types::TEST_MODE]));
         $test_name = 'a result without a formula shows only the formula label';

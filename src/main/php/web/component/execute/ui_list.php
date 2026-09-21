@@ -1459,6 +1459,12 @@ class ui_list extends ui_base
             $val_lst = $this->value_related_list($dbo, $msg, $dto, $dto?->phr_lst);
             // a phrase without any value shows no table at all instead of an empty header row
             if ($val_lst != null) {
+                // a calculated number of a row is a result and not a value, e.g. the reward ratio
+                // of a problem, and it is shown in the same table as the measured numbers; the
+                // results are added to a copy, so that the value cache of the page stays unchanged
+                $tbl_lst = clone $val_lst;
+                $tbl_lst->add_results(
+                    $this->result_related_list($dbo, $dto, $dto?->phr_lst), $msg);
                 $phr_lst = new phrase_list();
                 $phr_lst->add_phrase($dbo->phrase());
                 // the system column tiers decide which phrase heads a column and in which order;
@@ -1469,7 +1475,7 @@ class ui_list extends ui_base
                 $col_order = $dto?->phr_lst?->column_names() ?? [];
                 // the url of the page is handed over, so that the "... more" tail can call the
                 // same page with the next list size
-                $result = $val_lst->table_by_related_columns(
+                $result = $tbl_lst->table_by_related_columns(
                     $msg, $phr_lst, $col_order, $with_header, $with_border, $dto?->phr_lst,
                     null, $url_array, $col_values_only, $col_tiers, $with_range);
             }
@@ -1498,6 +1504,35 @@ class ui_list extends ui_base
             $val_lst = $dbo->val_lst;
         }
         return $val_lst;
+    }
+
+    /**
+     * the results shown by a value table, e.g. the reward ratio of each global problem
+     *
+     * a number of a child phrase belongs to the page of the parent too (like in
+     * value_list::filter), e.g. a "global warming" result is shown on the "global problem"
+     * page, so a result is taken if its group names the page phrase or one of its children
+     *
+     * @param word|triple|db_object|type_object|null $dbo the object the results are related to
+     * @param data_object|null $dto the data cache that carries the results of the page
+     * @param phrase_list|null $ctx_lst the phrases of the page cache with their links
+     * @return result_list the results to show with the values of the given object
+     */
+    private function result_related_list(
+        word|triple|db_object|type_object|null $dbo,
+        ?data_object                           $dto,
+        ?phrase_list                           $ctx_lst = null
+    ): result_list
+    {
+        $res_lst = new result_list();
+        $row_names = $ctx_lst?->child_names($dbo->phrase()) ?? [];
+        $row_names[] = $dbo->phrase()->name();
+        foreach ($dto?->res_lst?->lst() ?? [] as $res) {
+            if (array_intersect($row_names, $res->grp->phr_lst()->names()) != []) {
+                $res_lst->add_result($res);
+            }
+        }
+        return $res_lst;
     }
 
     /**
@@ -1969,6 +2004,15 @@ class ui_list extends ui_base
             $val_lst = new value_list();
             if ($val_lst->load_by_phr_lst($dto->phr_lst->child_phrases($phr), $msg)) {
                 $dto->val_lst = $val_lst;
+            }
+        }
+        // a column of the ranking can be calculated instead of measured, e.g. the reward ratio,
+        // and such a number is a result, so the results of the problems are loaded like their
+        // values and shown in the same table
+        if ($dto->res_lst->is_empty()) {
+            $res_lst = new result_list();
+            if ($res_lst->load_by_phrase_list($dto->phr_lst->child_phrases($phr), $msg)) {
+                $dto->set_result_list($res_lst);
             }
         }
         // a defined column that no value carries names a phrase of the row instead of a number,

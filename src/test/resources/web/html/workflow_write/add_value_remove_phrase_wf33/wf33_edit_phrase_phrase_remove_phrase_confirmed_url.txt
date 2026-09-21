@@ -1,10 +1,10 @@
 GET
-http://localhost/http/view.php?id=0&9m=5&pl=188%2C1108%2C186&n=123.456&m=19&z=2&submit=
-/http/view.php?id=0&9m=5&pl=188%2C1108%2C186&n=123.456&m=19&z=2&submit=
-/http/view.php?id=0&9mask_id=value_default&phrase_ids=188%2C1108%2C186&number=123.456&mask_id=value_add_phrases&step=confirmed&
+http://localhost/http/view.php?id=0&9m=5&pl=188%2C1132%2C186&n=123.456&m=19&z=2&submit=
+/http/view.php?id=0&9m=5&pl=188%2C1132%2C186&n=123.456&m=19&z=2&submit=
+/http/view.php?id=0&9mask_id=value_default&phrase_ids=188%2C1132%2C186&number=123.456&mask_id=value_add_phrases&step=confirmed&
 {
     "id": "0",
-    "phrase_ids": "188,1108,186",
+    "phrase_ids": "188,1132,186",
     "number": "123.456",
     "mask_id": "value_add_phrases",
     "step": "confirmed",

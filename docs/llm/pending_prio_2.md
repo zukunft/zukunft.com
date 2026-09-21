@@ -190,6 +190,14 @@ what is left:
 - the other rules of `docs/llm/json_structure.md` - the triple naming rules, "a word and a triple
   must never share a name", the value qualifier rules - are still only prose and can be added as
   further check functions to the same class
+- a calc validation finding discards the complete import file: `import::put_json` hands the same
+  message to `data_object::save`, whose every step is gated by `$msg->is_ok()`, so a result that
+  cannot be reproduced drops the words, triples and values of that file too. the finding belongs
+  to the file and not to the save, so the save needs a message scoped to the mapping errors (see
+  `docs/llm/dependent-errors.md`). the consequence is hard to see, because the database setup
+  continues with the next file and only the next test run reports the missing data, e.g. as
+  'triple "PV in Switzerland" not found' when the use case file, the last step of the setup, is
+  the one that is left out
 
 ## change log object names of the link classes
 

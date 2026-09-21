@@ -36,12 +36,15 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::MODEL_CONST . 'files.php';
+include_once paths::SHARED_CONST . 'results.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED . 'url_var.php';
+include_once html_paths::RESULT . 'result_list.php';
 include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::VALUE . 'value_list.php';
 
+use Zukunft\ZukunftCom\main\php\shared\const\results;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
@@ -49,10 +52,12 @@ use Zukunft\ZukunftCom\main\php\web\component\execute\ui_list;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\result\result_list as result_list_ui;
 use Zukunft\ZukunftCom\main\php\web\value\value_list as value_list_ui;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
+use Zukunft\ZukunftCom\test\php\create\test_results;
 use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -64,6 +69,7 @@ class start_ui_tests
         $msg = new user_message();
         $t_phr = new test_phrases($t);
         $t_val = new test_values($t);
+        $t_res = new test_results($t);
         $msg = new user_message();
 
         // start the test section (ts)
@@ -108,6 +114,22 @@ class start_ui_tests
         $dto_ui->val_lst = $t_val->value_list_solution_prio_measured_ui();
         $t->assert_text_not_contains($test_name, $list->start_list($dto_ui, $msg),
             '>' . word_names::YEAR_2024 . '</a>');
+
+        // a number of the ranking can be calculated instead of measured, e.g. the happy time
+        // points that the loss of a problem costs, and such a result is shown in the same table;
+        // the full table is asked, because it shows every column that the numbers suggest
+        $test_name = 'the start page shows a calculated number of a problem';
+        $col_url = [url_var::DISPLAY_LIST_COLUMNS => value_list_ui::COLUMN_TIERS_ALL];
+        $dto_ui->val_lst = $t_val->value_list_solution_prio_ui();
+        $dto_ui->set_result_list($t_res->result_list_solution_prio_ui());
+        $t->assert_text_contains($test_name, $list->start_list($dto_ui, $msg, $col_url),
+            (string)results::TV_PRIO_LOSS_HTP);
+
+        // negative: without a result the table shows the measured numbers only
+        $test_name = '... and without a result only the measured numbers';
+        $dto_ui->set_result_list(new result_list_ui());
+        $t->assert_text_not_contains($test_name, $list->start_list($dto_ui, $msg, $col_url),
+            (string)results::TV_PRIO_LOSS_HTP);
 
         // the start page opens with the simple table, whose "..." header links to the same page
         // with every column and the range of each number; the full page has no "..." header

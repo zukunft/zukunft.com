@@ -42,8 +42,10 @@ use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\shared\types\share_types;
 use Zukunft\ZukunftCom\main\php\web\result\result as result_ui;
+use Zukunft\ZukunftCom\main\php\web\result\result_list as result_list_ui;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
+use Zukunft\ZukunftCom\test\php\utils\test_lib;
 use DateTime;
 
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
@@ -56,7 +58,9 @@ include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_TYPES . 'protection_types.php';
 include_once paths::SHARED_TYPES . 'share_types.php';
 include_once html_paths::RESULT . 'result.php';
+include_once html_paths::RESULT . 'result_list.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
+include_once test_paths::UTILS . 'test_lib.php';
 
 class test_results
 {
@@ -224,6 +228,55 @@ class test_results
         $lst->add($this->result_simple_1());
         $lst->add($this->result_pct());
         return $lst;
+    }
+
+    /**
+     * a result of the given phrases, mirroring test_values::value_for_phrases, so that a
+     * calculated number can be used like a measured one
+     *
+     * @param array $phrases the phrases that name the result
+     * @param float $number the calculated number
+     * @return result the result of the given phrases
+     */
+    function result_for_phrases(array $phrases, float $number): result
+    {
+        $lst = new phrase_list($this->env->usr1);
+        foreach ($phrases as $phr) {
+            $lst->add($phr);
+        }
+        $res = new result($this->env->usr1);
+        $res->set_grp($lst->get_grp_id(false));
+        $res->set_number($number);
+        return $res;
+    }
+
+    /**
+     * the calculated numbers of the start page ranking, e.g. the happy time points that the
+     * potential loss of a problem costs, which the table shows next to the measured numbers
+     *
+     * @return result_list the results of the start page ranking
+     */
+    function result_list_solution_prio(): result_list
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $lst = new result_list($this->env->usr1);
+        $lst->add($this->result_for_phrases([
+            $t_trp->global_warming()->phrase(),
+            $t_wrd->word_potential()->phrase(),
+            $t_wrd->word_loss()->phrase(),
+            $t_wrd->word_htp()->phrase()
+        ], results::TV_PRIO_LOSS_HTP));
+        return $lst;
+    }
+
+    /**
+     * @return result_list_ui the frontend ranking results for unit testing
+     */
+    function result_list_solution_prio_ui(): result_list_ui
+    {
+        $tl = new test_lib();
+        return $tl->list_to_ui($this->result_list_solution_prio(), [api_types::INCL_PHRASES]);
     }
 
 }

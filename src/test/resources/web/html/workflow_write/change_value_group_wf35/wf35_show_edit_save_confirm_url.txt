@@ -1,17 +1,17 @@
 GET
-http://localhost/http/view.php?id=65471461&9m=5&pl=999%2C1108&n=123.456&8id=65471461&8pl=999%2C1108&8n=123.456&9id=65471461&gn=System+Test+Group+named+via+value+workflow&m=77&z=2&submit=
-/http/view.php?id=65471461&9m=5&pl=999%2C1108&n=123.456&8id=65471461&8pl=999%2C1108&8n=123.456&9id=65471461&gn=System+Test+Group+named+via+value+workflow&m=77&z=2&submit=
-/http/view.php?id=65471461&9mask_id=value_default&phrase_ids=999%2C1108&number=123.456&8id=65471461&8phrase_ids=999%2C1108&8number=123.456&9id=65471461&group_name=System+Test+Group+named+via+value+workflow&mask_id=confirm_update&step=confirmed&
+http://localhost/http/view.php?id=65471461&9m=5&pl=999%2C1132&n=123.456&8id=65471461&8pl=999%2C1132&8n=123.456&9id=65471461&gn=System+Test+Group+named+via+value+workflow&m=77&z=2&submit=
+/http/view.php?id=65471461&9m=5&pl=999%2C1132&n=123.456&8id=65471461&8pl=999%2C1132&8n=123.456&9id=65471461&gn=System+Test+Group+named+via+value+workflow&m=77&z=2&submit=
+/http/view.php?id=65471461&9mask_id=value_default&phrase_ids=999%2C1132&number=123.456&8id=65471461&8phrase_ids=999%2C1132&8number=123.456&9id=65471461&group_name=System+Test+Group+named+via+value+workflow&mask_id=confirm_update&step=confirmed&
 {
     "id": "65471461",
-    "phrase_ids": "1107,1108",
+    "phrase_ids": "1131,1132",
     "number": "123.456",
     "group_name": "System Test Group named via value workflow",
     "mask_id": "confirm_update",
     "step": "confirmed",
     "url_part_original_data": {
         "id": "65471461",
-        "phrase_ids": "1107,1108",
+        "phrase_ids": "1131,1132",
         "number": "123.456"
     },
     "url_part_back": {

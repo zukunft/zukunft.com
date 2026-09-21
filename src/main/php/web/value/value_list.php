@@ -51,6 +51,7 @@ include_once html_paths::PHRASE . 'phrase_list.php';
 //include_once html_paths::REF . 'source.php';
 //include_once html_paths::RESULT . 'result_list.php';
 include_once html_paths::SANDBOX . 'db_object.php';
+include_once html_paths::SANDBOX . 'sandbox_value.php';
 include_once html_paths::TYPES . 'type_object.php';
 include_once html_paths::USER . 'user_message.php';
 //include_once html_paths::VALUE . 'value.php';
@@ -86,6 +87,7 @@ use Zukunft\ZukunftCom\main\php\web\ref\source;
 use Zukunft\ZukunftCom\main\php\web\result\result_list;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\sandbox\ListBase;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_value;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\types\type_object;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
@@ -230,6 +232,24 @@ class value_list extends ListBase
     }
 
     /**
+     * add the given results to this list, so that a table shows the calculated numbers of a row
+     * next to the measured ones, e.g. the reward ratio next to the potential loss of a problem
+     *
+     * a result that repeats the phrase group of a value of this list is refused and reported,
+     * because the same group says the same thing twice, once measured and once calculated
+     *
+     * @param result_list $res_lst the results to show with the values of this list
+     * @param user_message $msg to report a result that repeats the group of a value
+     * @return void
+     */
+    function add_results(result_list $res_lst, user_message $msg): void
+    {
+        foreach ($res_lst->lst() as $res) {
+            $this->add_obj($res, false, $msg);
+        }
+    }
+
+    /**
      * get a list with the values related directly to the given word, triple, source or value
      *
      * @param word|triple|source|value|formula|db_object|type_object|null $dbo to filter the values
@@ -293,7 +313,7 @@ class value_list extends ListBase
         // id is its phrase group key, packed from the word/triple db ids, which the seed assigns
         // serially and shift between test database rebuilds, so an id tiebreak reorders the list per
         // rebuild; the group name is built from the (stable) phrase names (see docs/llm/frontend.md)
-        usort($lst, fn(value $a, value $b) => $b->impact() <=> $a->impact()
+        usort($lst, fn(sandbox_value $a, sandbox_value $b) => $b->impact() <=> $a->impact()
             ?: $b->number() <=> $a->number()
                 ?: strcmp($a->name() ?? '', $b->name() ?? ''));
         $this->set_lst($lst);
@@ -472,7 +492,7 @@ class value_list extends ListBase
                 }
             }
         }
-        $rest = array_values(array_filter($pool, fn(value $val) => !isset($grouped[$val->id()])));
+        $rest = array_values(array_filter($pool, fn(sandbox_value $val) => !isset($grouped[$val->id()])));
         return [$result, $rest, $budget];
     }
 
@@ -1148,11 +1168,11 @@ class value_list extends ListBase
     }
 
     /**
-     * @param value $val the value to check
+     * @param sandbox_value $val the value or result to check
      * @param string $name the phrase name to look for
      * @return bool true if a phrase of the value has the given name
      */
-    private function has_phrase_name(value $val, string $name): bool
+    private function has_phrase_name(sandbox_value $val, string $name): bool
     {
         return in_array($name, $val->grp->phr_lst()->names());
     }
@@ -1163,21 +1183,21 @@ class value_list extends ListBase
      * such a value is shown as the tooltip of the value with the same subject (see cell), so it
      * is neither a value of a cell nor does its unit, which is always a share, name the column
      *
-     * @param value $val the value to check
+     * @param sandbox_value $val the value or result to check
      * @return bool true if the value states a confidence
      */
-    private function is_confidence(value $val): bool
+    private function is_confidence(sandbox_value $val): bool
     {
         return $this->has_phrase_name($val, words::CONFIDENCE);
     }
 
     /**
-     * @param value $val the value to describe
+     * @param sandbox_value $val the value or result to describe
      * @param user_message $msg to report a problem of reading a phrase type
      * @return array the phrase names of the value without the markers and units, which is what a
      *               value shares with its confidence value
      */
-    private function subject_names(value $val, user_message $msg): array
+    private function subject_names(sandbox_value $val, user_message $msg): array
     {
         $names = [];
         foreach ($val->grp->phr_lst()->lst() as $phr) {
@@ -1196,12 +1216,12 @@ class value_list extends ListBase
      * that problem, which names the solution too (see solution_prio.json), so a confidence value
      * that names less than the value it qualifies is still matched
      *
-     * @param value $conf_val the confidence value
-     * @param value $val the value that the confidence value may qualify
+     * @param sandbox_value $conf_val the confidence value
+     * @param sandbox_value $val the value or result that the confidence value may qualify
      * @param user_message $msg to report a problem of reading a phrase type
      * @return bool true if the value carries all subject phrases of the confidence value
      */
-    private function qualifies(value $conf_val, value $val, user_message $msg): bool
+    private function qualifies(sandbox_value $conf_val, sandbox_value $val, user_message $msg): bool
     {
         return array_diff(
                 $this->subject_names($conf_val, $msg),
@@ -1209,11 +1229,11 @@ class value_list extends ListBase
     }
 
     /**
-     * @param value $val the value to key
+     * @param sandbox_value $val the value or result to key
      * @return string the names of the unit phrases of the value, encoded like the range key, so
      *                that the values of one measure share the key e.g. "trillion EUR"
      */
-    private function unit_key(value $val, user_message $msg): string
+    private function unit_key(sandbox_value $val, user_message $msg): string
     {
         $names = [];
         foreach ($val->grp->phr_lst()->lst() as $phr) {
@@ -1264,11 +1284,11 @@ class value_list extends ListBase
      * the unit of the values that the given confidence value qualifies
      *
      * @param array $unit_lst per unit the values of that unit collected so far
-     * @param value $conf_val the confidence value to place
+     * @param sandbox_value $conf_val the confidence value to place
      * @param user_message $msg to report a problem of reading a phrase type
      * @return string the unit key of the qualified values or an empty string if none is qualified
      */
-    private function unit_of_qualified(array $unit_lst, value $conf_val, user_message $msg): string
+    private function unit_of_qualified(array $unit_lst, sandbox_value $conf_val, user_message $msg): string
     {
         $result = '';
         // the first unit with a qualified value wins, so the confidence follows the leading unit
@@ -1302,10 +1322,10 @@ class value_list extends ListBase
     }
 
     /**
-     * @param value $val the value to check
+     * @param sandbox_value $val the value or result to check
      * @return string the range word of the value e.g. "low", or an empty string for a centre value
      */
-    private function range_word(value $val): string
+    private function range_word(sandbox_value $val): string
     {
         $result = '';
         foreach ($val->grp->phr_lst()->lst() as $phr) {
@@ -1317,12 +1337,12 @@ class value_list extends ListBase
     }
 
     /**
-     * @param value $val the value to key
+     * @param sandbox_value $val the value or result to key
      * @return string the phrase names of the value without the range word, which a centre value
      *                shares with its bounds; encoded, so that a comma in a name cannot join two
      *                different phrase sets to the same key
      */
-    private function range_key(value $val): string
+    private function range_key(sandbox_value $val): string
     {
         $names = array_diff($val->grp->phr_lst()->names(), words::RANGE_WORDS);
         sort($names);
@@ -1423,11 +1443,11 @@ class value_list extends ListBase
     /**
      * the phrase of the given value that belongs into a phrase column
      *
-     * @param value $val the value whose phrases are searched
+     * @param sandbox_value $val the value or result whose phrases are searched
      * @param array $child_names the names of the phrases linked to the column phrase
      * @return phrase|null the first phrase of the value that the column covers or null if none
      */
-    private function phrase_of_column(value $val, array $child_names): ?phrase
+    private function phrase_of_column(sandbox_value $val, array $child_names): ?phrase
     {
         $result = null;
         foreach ($val->grp->phr_lst()->lst() as $phr) {

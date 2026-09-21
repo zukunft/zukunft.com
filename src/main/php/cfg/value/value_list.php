@@ -249,20 +249,23 @@ class value_list extends sandbox_value_list
     }
 
     /**
-     * get the first value of the list that is related to the given phrase name
+     * get the first value of the list that is related to all given phrase names
      * and where all phrases of the value are within the given context
      * e.g. to select the value that a formula uses to calculate a result
      *
-     * @param string $phr_name the name of the phrase that selects the value e.g. "price"
+     * several names select one value, because an operand of a formula can be a group of
+     * phrases e.g. "potential","loss","trillion","EUR" names the potential loss in trillion EUR
+     *
+     * @param array $phr_names the names of the phrases that select the value e.g. "price"
      * @param array $ctx_names the phrase names that limit the selection e.g. "apple" and "CHF"
      * @return value_base|null the first matching value or null if no value matches
      */
-    function get_by_name_and_context(string $phr_name, array $ctx_names): ?value_base
+    function get_by_names_and_context(array $phr_names, array $ctx_names): ?value_base
     {
         $result = null;
         foreach ($this->lst() as $val) {
             if ($result == null) {
-                if ($val->match_all([$phr_name]) and $val->matches_context($ctx_names)) {
+                if ($val->match_all($phr_names) and $val->matches_context($ctx_names)) {
                     $result = $val;
                 }
             }
@@ -1137,18 +1140,6 @@ class value_list extends sandbox_value_list
         $qp->par = $sc->get_par();
 
         return $qp;
-    }
-
-    /**
-     * set the word objects for all value in the list if needed
-     * not included in load, because sometimes loading of the word objects is not needed
-     */
-    function load_phrases(user_message $msg): void
-    {
-        // loading via word group is the most used case, because to save database space and reading time the value is saved with the word group id
-        foreach ($this->lst() as $val) {
-            $val->load_phrases($msg);
-        }
     }
 
     /**

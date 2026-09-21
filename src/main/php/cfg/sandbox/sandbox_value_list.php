@@ -590,6 +590,18 @@ class sandbox_value_list extends sandbox_list
         return $qp;
     }
 
+    /**
+     * set the word objects for all values or results in the list if needed
+     * not included in load, because sometimes loading of the word objects is not needed
+     */
+    function load_phrases(user_message $msg): void
+    {
+        // loading via word group is the most used case, because to save database space and reading time the value is saved with the word group id
+        foreach ($this->lst() as $val) {
+            $val->load_phrases($msg);
+        }
+    }
+
 
     /*
      * info

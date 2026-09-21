@@ -82,6 +82,7 @@ use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\value\value;
 use Zukunft\ZukunftCom\main\php\web\word\triple;
 use Zukunft\ZukunftCom\main\php\web\word\word;
+use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
 use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
@@ -136,6 +137,22 @@ class result_list extends sandbox_list_value
     {
         $data = array();
         $data[url_var::FORMULA] = $frm->id();
+        return $this->load_by($data, $msg);
+    }
+
+    /**
+     * add the results of any of the given phrases to this list
+     * e.g. the reward ratio of every global problem for the ranking table of the start page
+     *
+     * @param phrase_list $phr_lst the phrases whose results should be loaded
+     * @param user_message $msg to report a problem of the api message to the user
+     * @return bool true if at least one result has been loaded
+     */
+    function load_by_phrase_list(phrase_list $phr_lst, user_message $msg): bool
+    {
+        $data = array();
+        // comma separated like every other id list of the api e.g. url_var::ID_LST
+        $data[api::JSON_LIST_PHRASE_IDS] = implode(',', $phr_lst->ids());
         return $this->load_by($data, $msg);
     }
 

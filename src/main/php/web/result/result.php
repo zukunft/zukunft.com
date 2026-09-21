@@ -177,6 +177,15 @@ class result extends sandbox_value
     }
 
     /**
+     * a result is shown by its own page, which names the formula that has calculated it
+     * @return int the view id of the default page of a result
+     */
+    protected function default_view_id(): int
+    {
+        return views::RESULT_ID;
+    }
+
+    /**
      * @return string interface function to align the value with the other sandbox objects
      */
     function get_description(): string

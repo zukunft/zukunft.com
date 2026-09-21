@@ -83,10 +83,17 @@ out of `cfg/const/files.php`:
 1. `SYSTEM_DATA_FILES` — `system_views`, `sources`, `units`, `scaling`,
    `time_definition`, `base_phrases`, `base_views`, **`solution_prio`**,
    `country`, `currency`, `company`, …
-2. `BASE_DATA_FILES` — `math`, `physics`, `chemistry`, `economics`, … which the
+2. `SAMPLE_VIEW_DATA_FILES` — the demo files that every database setup needs to
+   render the seed views, e.g. `zurich`, `global_warming` and the `problem_*`
+   file of each start page ranking row
+3. `USE_CASE_FILES` — the last step of the database setup
+4. `BASE_DATA_FILES` — `math`, `physics`, `chemistry`, `economics`, … which the
    const block itself labels *"loaded at the end not to change the id of objects
    used by the system tests"*
-3. `BASE_DATA_PATH_FILES` — the per-topic demo files
+5. `BASE_DATA_PATH_FILES` — the per-topic demo files
+
+Only the first three are imported by every setup; the rest is added by
+`test/test_full_load.php`.
 
 So `solution_prio.json` is the home of `probability`, `score`, `deviation`,
 `return`, `market`, `tax`, … even though `math.json` and `economics.json` look
