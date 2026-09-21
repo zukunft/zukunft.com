@@ -1294,6 +1294,8 @@
             hp
     \-- del_sql_list_without_log - section for function del_sql_list_without_log is expected to be del in /db/sql_creato
             r.php
+    \-- del_sql_list_by_text - section for function del_sql_list_by_text is expected to be del in /db/sql_creator.php
+    \-- del_sql_all - section for function del_sql_all is expected to be del in /db/sql_creator.php
     \-- sql_all - section for function sql_all not yet defined that it should be final exception correction of the table
              name in /db/sql_creator.php
     \-- get_usr_field - section for function get_usr_field is expected to be set and get in /db/sql_creator.php
@@ -2110,6 +2112,8 @@
             ache_page.php
     \-- html_by_url - section for function html_by_url not yet defined that it should be load in /helper/db_cache_page.p
             hp
+    \-- del_by_user - section for function del_by_user is expected to be del in /helper/db_cache_page.php
+    \-- del_all - section for function del_all is expected to be del in /helper/db_cache_page.php
 \-- db_id_object_non_sandbox
     \-- unique_value - section for function unique_value not yet defined that it should be set and get in /helper/db_id_
             object_non_sandbox.php
@@ -4796,6 +4800,10 @@
         \-- view_relation_list - simple but slow function to add of update all list items in the database
     \-- save_html
         \-- db_cache_page - add or replace the cached html page for the given url
+    \-- del_by_user
+        \-- db_cache_page - remove the cached html pages of one user, so that the next request renders them again
+    \-- del_all
+        \-- db_cache_page - remove every cached html page, so that the next request of any page renders it again;
     \-- add
         \-- change_log - log a user change of a word, value or formula
     \-- filter_readable_by
@@ -5256,6 +5264,10 @@
         \-- sql_creator - create a SQL select statement for the connected database
     \-- del_sql_list_without_log
         \-- sql_creator - create a sql statement to delete all rows that have one of the given ids
+    \-- del_sql_list_by_text
+        \-- sql_creator - create a sql statement to delete all rows where a text field matches the given text,
+    \-- del_sql_all
+        \-- sql_creator - create a sql statement to delete every row of a table, used for a table that only caches
     \-- sql_all
         \-- sql_creator - return a sql statement to get all rows and all fields of the given class
 \-- user sandbox fields
@@ -7055,8 +7067,6 @@
             replace in /html/html_base.php
     \-- label - section for function label not yet defined that it should be base elements - functions for all html elem
             ents used in zukunft.com in /html/html_base.php
-    \-- button_refresh - section for function button_refresh not yet defined that it should be base elements - functions
-             for all html elements used in zukunft.com in /html/html_base.php
     \-- button_refresh_text - section for function button_refresh_text not yet defined that it should be base elements -
              functions for all html elements used in zukunft.com in /html/html_base.php
     \-- button_submit_text - section for function button_submit_text not yet defined that it should be base elements - f
@@ -7728,6 +7738,8 @@
             hp
     \-- sort_by_impact - section for function sort_by_impact not yet defined that it should be display in /types/type_li
             st.php
+    \-- default_id - section for function default_id not yet defined that it should be display in /types/type_list.php
+    \-- selector - section for function selector not yet defined that it should be display in /types/type_list.php
     \-- type_selector - section for function type_selector not yet defined that it should be display in /types/type_list
             .php
     \-- order error - order of section  has difference at name should be before reset,
@@ -8786,7 +8798,7 @@
     \-- expression_link
         \-- ui_base - @param db_object|null $dbo the formula whose expression should be displayed
     \-- name
-        \-- ui_base - the label points to the field that it validates, so that a click on it opens the field
+        \-- ui_base - the label points to the field that it validates, so that a click on it opens the field and
     \-- word_children
         \-- ui_foaf - TODO move code from component_dsp_old
     \-- word_parents
@@ -9703,8 +9715,6 @@
 \-- base elements - functions for all html elements used in zukunft.com
     \-- label
         \-- html_base - create the html code for a label
-    \-- button_refresh
-        \-- html_base - a small submit button beside a form field label that asks the backend to recalculate one
     \-- button_refresh_text
         \-- html_base - a text button that submits the form only to refresh some fields, e.g. the 'find and next' of the
     \-- button_submit_text

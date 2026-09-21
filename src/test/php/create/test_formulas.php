@@ -300,7 +300,8 @@ class test_formulas extends test_objects
             url_var::ID => 0,
             url_var::NAME => formula_names::SYSTEM_TEST_ADD,
             url_var::DESCRIPTION => '',
-            url_var::TYPE => formula_types::CALC_ID,
+            // the formula form posts the type as url_var::FORMULA_TYPE (see formula::url_mapper)
+            url_var::FORMULA_TYPE => formula_types::CALC_ID,
             url_var::USER_EXPRESSION => formula_names::INCREASE_EXP,
         ];
     }

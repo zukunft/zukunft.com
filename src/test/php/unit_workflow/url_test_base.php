@@ -74,6 +74,19 @@ class url_test_base
         'admin',
     ];
 
+    // the url vars that name a database row, so that a fixed test id in them is replaced by the
+    // real id of this run before the request leaves the test (see url_with_real_ids)
+    const array ID_VARS = [
+        url_var::ID,
+        url_var::PHRASE,
+        url_var::PHRASE_FROM,
+        url_var::PHRASE_TO,
+        url_var::FORMULA,
+        url_var::SOURCE,
+        url_var::VIEW,
+        url_var::USER_TO_EDIT,
+    ];
+
     // the run state shared by all workflow steps so the step calls stay short (see docs/llm/testing.md)
     protected test_cleanup $t;         // the test environment
     protected string $ts;              // the test section prefix used in the headers
@@ -203,6 +216,9 @@ class url_test_base
         $url_arr[url_var::STEP] = workflows::url_step($step);
         // compare the url with the fixed url test files
         $this->assert_url($this->step_path, $step, $url_arr, rest_ctrl::GET);
+        // the snapshot above keeps the fixed test ids, but the frontend and the backend get the
+        // real ids of this run, because a test id names another row in the database
+        $url_arr = $this->url_with_real_ids($url_arr);
         // measure the action and the rendering separately, so a slow step shows which of the two
         // is slow; an interleaved db read or write still counts as db_read / db_write because its
         // own switch() restores this section
@@ -254,6 +270,9 @@ class url_test_base
         $method = workflows::is_form_submit($step) ? $this->http_method : rest_ctrl::GET;
         // snapshot the url that this step's button press calls together with that http method
         $this->assert_wf_url($test_name, $step, $url_arr, $method);
+        // the snapshot above keeps the fixed test ids, but the frontend and the backend get the
+        // real ids of this run, because a test id names another row in the database
+        $url_arr = $this->url_with_real_ids($url_arr);
         $result = $this->ui->execute_and_next($url_arr, $this->req);
         // remember the method of the form on the rendered page so the next save / confirm uses it
         $this->http_method = $this->form_method($result);
@@ -319,6 +338,40 @@ class url_test_base
         // so a file timeout is used to avoid a false timeout
         $this->t->assert_file($test_name . '_url', $content,
             test_paths::RESOURCE . $test_name . '_url' . test_files::TXT, test_files::TXT, '', $this->t::TIMEOUT_LIMIT_FILE);
+    }
+
+    /**
+     * the way back of normalize_ids: replace the fixed test ids of a step url by the real database
+     * ids of this run, so that no test id leaves the test section
+     *
+     * a fixed test id keeps the snapshot files stable, but it names a completely different row in
+     * the database - the test triple id 998 for example is the seeded triple 'sigma of x' - so a
+     * request with it would show or, in a write run, even change the wrong object
+     *
+     * @param array $url_arr the url of the step as the test has built it
+     * @return array the same url with the real database id in every url var that names a row
+     */
+    private function url_with_real_ids(array $url_arr): array
+    {
+        // the fixed id of the prime object and of the related objects, each mapped to the real id
+        $real_ids = [];
+        $fixed_to_real = [$this->wf_fixed_id => $this->wf_id] + array_flip($this->wf_norm_ids);
+        foreach ($fixed_to_real as $fixed_id => $real_id) {
+            // without a real id there is nothing to replace and a replacement by zero would
+            // remove the object from the url, so both ids must be known
+            if ($fixed_id > 0 and $real_id > 0 and $fixed_id != $real_id) {
+                $real_ids[$fixed_id] = $real_id;
+            }
+        }
+        foreach ($url_arr as $key => $val) {
+            // a '8'-prefixed opening value and a '9'-prefixed back target name the same rows
+            [, $base_key] = url_var::split_prefix((string)$key);
+            if (in_array($base_key, self::ID_VARS)
+                and array_key_exists((int)$val, $real_ids)) {
+                $url_arr[$key] = $real_ids[(int)$val];
+            }
+        }
+        return $url_arr;
     }
 
     /**

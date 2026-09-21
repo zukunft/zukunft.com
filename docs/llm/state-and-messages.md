@@ -669,6 +669,17 @@ so that the frontend loads every object by its id; the page cache key and the
 page vars of a back target read the user by `ue` too. An old url with `id`
 (e.g. an activation link of a mail sent before the change) still selects the user.
 
+Because the page of a user is named by `u`, it is also cached per user: the
+page cache key of a logged-in request ends with `&u=<id>`
+(`frontend::url_cache_key`), so the personal page - the user name in the navbar,
+the black add and edit icons, the user values and the my tab - is reused for
+that user only, while a request without login gets the standard page of the same
+url. The id of the key comes from the session (`frontend::session_user_id`) and
+never from the url, like everywhere else. A render without a php session (a
+workflow test or a page refresh job) has no key of its own, so a page that shows
+a user is rendered live there instead of becoming the standard page of everybody
+(`frontend::shows_personal_page`).
+
 ## Back-navigation parameter convention
 
 Back navigation (where to redirect after an action) is encoded as

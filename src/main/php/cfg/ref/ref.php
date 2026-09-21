@@ -1433,8 +1433,12 @@ class ref extends sandbox_link
             return false;
         }
 
-        // check e.g. if a preserved name is used and if yes add a message and solution to $msg
-        if ($this->check_save($msg)) {
+        // check e.g. if a preserved name is used and if yes add a message and solution to $msg;
+        // the refresh of the linked objects depends on this check only, like in sandbox::save
+        $chk_msg = new user_message($msg->usr); // the verdict of the save checks, merged into $msg right away
+        $this->check_save($chk_msg);
+        $msg->merge($chk_msg);
+        if ($chk_msg->is_ok()) {
             $this->reload_objects($msg);
         }
 

@@ -328,11 +328,7 @@ class view_base extends sandbox_code_id
             $this->log_err('type list cache missing, falling back to the request cache');
             $typ_lst = $ui_sys->typ_lst_cache;
         }
-        $used_type_id = $this->type_id($msg);
-        if ($used_type_id == null) {
-            $used_type_id = $typ_lst->msk_typ->default_id();
-        }
-        return $typ_lst->msk_typ->selector($form, $used_type_id);
+        return $this->type_selector_with_pre($typ_lst->msk_typ, $form, $this->type_id($msg));
     }
 
     public function style_selector(string $form, ?type_lists $typ_lst, user_message $msg): string
@@ -343,11 +339,8 @@ class view_base extends sandbox_code_id
             $this->log_err('type list cache missing, falling back to the request cache');
             $typ_lst = $ui_sys->typ_lst_cache;
         }
-        $used_style_id = $this->get_style_id();
-        if ($used_style_id == null) {
-            $used_style_id = $typ_lst->msk_sty->default_id();
-        }
-        return $typ_lst->msk_sty->selector($form, $used_style_id);
+        // the style is part of db_fld_to_url, so like the type it needs the opening value as pre value
+        return $this->type_selector_with_pre($typ_lst->msk_sty, $form, $this->get_style_id());
     }
 
     function log_err(string $msg): void

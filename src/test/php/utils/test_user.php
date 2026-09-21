@@ -38,6 +38,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
@@ -76,6 +77,17 @@ function run_user_test(all_tests $t): void
     $result = $t->usr1->ip_check($ip_addr, $msg);
     $target = '';
     $t->assert(', usr->ip_check', $result, $target);
+
+    // the ip of the last request of a logged in user is kept in the user row (see save_last_ip),
+    // so a request without a session can find an account with a login by its ip; the session and
+    // never the ip decides who the user is, so user::get drops such an account and continues as
+    // an anonymous ip user (else a logout would not end the session for the next request)
+    $test_name = 'the admin account is found by the ip of its last request';
+    $usr_by_ip = new user();
+    $usr_by_ip->load_by_ip(users::SYSTEM_ADMIN_IP, $msg);
+    $t->assert_true($test_name, $usr_by_ip->id() > 0);
+    $test_name = '... but it is no ip user, so user::get refuses to identify it by the ip';
+    $t->assert_false($test_name, $usr_by_ip->is_ip_user());
 
     // TODO add a test signup process to
 

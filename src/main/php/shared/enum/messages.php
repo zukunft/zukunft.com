@@ -699,6 +699,11 @@ enum messages: string
         . ' with id '
         . self::VAR_START . self::VAR_ID . self::VAR_END
         . ' cannot be found; it may have been deleted';
+    // the answer of the backend to a form that asks it to read the entered values, e.g. the
+    // validate button of the formula form: the entry cannot be used and the backend names the
+    // reason, which the user needs to correct the entry (see db_object::load_by_id)
+    case INPUT_VALIDATION_FAILED = 'the entry cannot be used: '
+        . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END;
 
     case USER_IP_ADDR_MISSING = 'ip addr for user "'
         . self::VAR_START . self::VAR_USER_NAME . self::VAR_END
@@ -2290,8 +2295,9 @@ enum messages: string
     case FORM_BUTTON_SAVE = 'form_button_save';
     case FORM_BUTTON_CONFIRM = 'form_button_confirm';
     case FORM_BUTTON_DEL = 'form_button_del';
-    // the tooltip of the refresh icon beside a form field label
-    case FORM_BUTTON_REFRESH = 'form_button_refresh';
+    // the button beside the expression and the latex field of the formula form that asks the
+    // backend to read the entered text and to name the terms that it selects
+    case FORM_BUTTON_VALIDATE = 'form_button_validate';
     // the tooltips of the views tab of an object page: show the object with the view, set the view
     // as the default view of the object and change the view itself (see view::open_link)
     case BUTTON_VIEW_SHOW_TIP = 'button_view_show_tip';

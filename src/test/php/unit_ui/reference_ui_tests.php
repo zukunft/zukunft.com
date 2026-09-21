@@ -33,6 +33,7 @@
 namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
 use Zukunft\ZukunftCom\main\php\shared\const\refs;
+use Zukunft\ZukunftCom\main\php\shared\const\sources;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
@@ -43,6 +44,7 @@ use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\ref\ref;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\test\php\create\test_refs;
+use Zukunft\ZukunftCom\test\php\create\test_sources;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class reference_ui_tests
@@ -111,6 +113,35 @@ class reference_ui_tests
         $t->assert($test_name, $ref_new->phrase()->id(), 0);
         $test_name = 'the phrase of a linked reference is the linked phrase';
         $t->assert_true($test_name, $ref->phrase()->id() != 0);
+
+        $t->subheader($ts . 'source select');
+
+        // the reference add and edit form offers the sources of the request cache and preselects
+        // the source of the reference - never the reference itself - so that saving the form does
+        // not silently remove the source; the same id is sent as the opening value, so that the
+        // confirm view can show the source before the change (see db_object::add_pre_value)
+        // the selector loads the list, so each call gets its own copy of the cached sources
+        $t_src = new test_sources($t);
+
+        $test_name = 'the source selector preselects the source of the reference';
+        $sel_html = $ref_filled->source_selector(
+            views::REF_EDIT, $msg, '', $t_src->source_list_ui(), true);
+        $t->assert_text_contains($test_name, $sel_html,
+            '<option value="' . sources::SIB_ID . '"  selected >');
+        $msg->reset();
+        $test_name = '... and sends the opening source as the pre value';
+        $t->assert_text_contains($test_name, $sel_html,
+            $html->form_hidden(url_var::PRE . url_var::SOURCE, (string)sources::SIB_ID));
+
+        // negative: a reference without a source preselects none, so the user sees that it is unset
+        $test_name = 'a reference without a source preselects no source';
+        $sel_no_src = $ref->source_selector(
+            views::REF_EDIT, $msg, '', $t_src->source_list_ui(), true);
+        $t->assert_text_contains($test_name, $sel_no_src, '<option value="0" selected>');
+        $msg->reset();
+        $test_name = '... and sends no source as the pre value';
+        $t->assert_text_contains($test_name, $sel_no_src,
+            $html->form_hidden(url_var::PRE . url_var::SOURCE, '0'));
 
         $t->subheader($ts . 'view tab box');
 

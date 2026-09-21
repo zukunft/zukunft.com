@@ -419,6 +419,12 @@ class url_var
         self::POST_SUBMIT,
         self::DEBUG,
         self::NO_CACHE,
+        // how much of a list is shown is a render mode, so e.g. the "... more" link of the start
+        // page must not turn the url into a form submit of an object without an id
+        self::DISPLAY_LIST_SIZE,
+        self::DISPLAY_LIST_PAGE,
+        self::DISPLAY_LIST_COLUMNS,
+        self::DISPLAY_LIST_RANGE,
     ];
 
 

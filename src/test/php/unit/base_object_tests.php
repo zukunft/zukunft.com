@@ -126,6 +126,19 @@ class base_object_tests
         $msg_ok->combine_status(new user_message());
         $t->assert_true($test_name, $msg_ok->is_ok());
 
+        // only an error is a problem that the user cannot solve, so only an error is written to
+        // the system log e.g. at the end of an api request (see application::end_api)
+        $test_name = 'an error is a problem that only the admin can solve';
+        $t->assert_true($test_name, $msg_err->is_error());
+        $test_name = 'a rejected user entry is not an error of the program';
+        $t->assert_false($test_name, $msg_wrn->is_error());
+        $test_name = 'a not ok message is not an error of the program either';
+        $msg_nok = new user_message();
+        $msg_nok->set_not_ok();
+        $t->assert_false($test_name, $msg_nok->is_error());
+        $test_name = 'an ok message is no error';
+        $t->assert_false($test_name, $msg_ok->is_error());
+
         $t->subheader($ts . 'list');
         $test_name = 'count';
         $lst = new ListOf([$t_wrd->word(), $t_wrd->word_inhabitant(), $t_wrd->word_inhabitant()]);

@@ -779,13 +779,10 @@ class value extends sandbox_value
         // the selected entry is the source of this value, not the value itself
         $selected = $this->src?->id() ?? 0;
         $sel_html = $src_lst->selector($form, $selected, url_var::SOURCE, msg_id::FORM_SELECT_SOURCE, view_styles::COL_SM_11);
-        // also send the opening source id as the '8'-prefixed pre value so the confirm view can detect
-        // whether the user actually changed the source (see url_var::PRE and sandbox::share_type_selector)
-        $html = new html_base();
-        $pre_source = $this->pre_value(url_var::SOURCE) ?? (string)$selected;
-        return $sel_html . $this->crud_icons(views::SOURCE_ADD_ID, msg_id::SOURCE_ADD,
-                views::SOURCE_EDIT_ID, msg_id::SOURCE_EDIT, $selected)
-            . $html->form_hidden(url_var::PRE . url_var::SOURCE, $pre_source);
+        $sel_html .= $this->crud_icons(views::SOURCE_ADD_ID, msg_id::SOURCE_ADD,
+            views::SOURCE_EDIT_ID, msg_id::SOURCE_EDIT, $selected);
+        // the opening source is sent as the pre value so the confirm view can show the existing source
+        return $this->add_pre_value($sel_html, url_var::SOURCE, (string)$selected);
     }
 
     /**

@@ -1199,6 +1199,8 @@ class sql_creator
                 $this->add_par($spt, '', $name);
             } elseif ($spt == sql_par_type::LIKE_R) {
                 $this->add_par($spt, $fld_val . '%', $name);
+            } elseif ($spt == sql_par_type::LIKE_L) {
+                $this->add_par($spt, '%' . $fld_val, $name);
             } elseif ($spt == sql_par_type::LIKE
                 or $spt == sql_par_type::LIKE_OR) {
                 $this->add_par($spt, '%' . $fld_val . '%', $name);
@@ -3882,6 +3884,7 @@ class sql_creator
                 // $par_offset--;
                 $sql_where .= ''; // because added with the page statement
             } elseif ($typ == sql_par_type::LIKE_R
+                or $typ == sql_par_type::LIKE_L
                 or $typ == sql_par_type::LIKE
                 or $typ == sql_par_type::LIKE_OR) {
                 $sql_where .= $tbl . $fld . ' ' . $this->like_keyword() . ' ' . $par->name;
@@ -4084,6 +4087,7 @@ class sql_creator
                             $par_offset--;
                             $result .= ''; // because added with the page statement
                         } elseif ($typ == sql_par_type::LIKE_R
+                            or $typ == sql_par_type::LIKE_L
                             or $typ == sql_par_type::LIKE
                             or $typ == sql_par_type::LIKE_OR) {
                             $result .= $tbl_id . $this->par_lst->name($i) . ' ' . $this->like_keyword() . ' ';
@@ -5600,6 +5604,7 @@ class sql_creator
                 break;
             case sql_field_type::NAME:
             case sql_par_type::LIKE_R:
+            case sql_par_type::LIKE_L:
             case sql_par_type::LIKE:
             case sql_par_type::LIKE_OR:
             case sql_par_type::TEXT_OR:
@@ -5783,6 +5788,53 @@ class sql_creator
         $qp->name .= '_by_ids';
         $qp->sql = $this->prepare_sql($sql, $qp->name, [sql_par_type::INT_LIST]);
         $qp->par = ['{' . implode(',', $id_lst) . '}'];
+        return $qp;
+    }
+
+    /**
+     * create a sql statement to delete all rows where a text field matches the given text,
+     * e.g. to remove the cached html pages of one user (see db_cache_page::del_by_user)
+     *
+     * @param string $class the class name e.g. db_cache_page not db_cache_page_list
+     * @param string $fld the name of the text field that is checked
+     * @param string $txt the text that the field of the rows to delete matches
+     * @param sql_par_type $spt how the text is matched: the field ends with the text
+     *                          (sql_par_type::LIKE_L), starts with it (LIKE_R) or contains it (LIKE)
+     * @return sql_par the sql statement to delete the rows selected by the text
+     */
+    function del_sql_list_by_text(
+        string       $class,
+        string       $fld,
+        string       $txt,
+        sql_par_type $spt = sql_par_type::LIKE
+    ): sql_par
+    {
+        $qp = new sql_par($class, new sql_type_list([sql_type::DELETE]));
+        $this->set_class($class, new sql_type_list());
+        $this->add_where($fld, $txt, $spt);
+        $sql = sql::DELETE . ' ' . $this->name_sql_esc($this->table) . ' ';
+        $sql .= sql::WHERE . ' ' . $fld . ' ' . $this->like_keyword() . ' ' . $this->par_name(1);
+        $qp->name .= '_by_text';
+        $qp->sql = $this->prepare_sql($sql, $qp->name, [$spt]);
+        $qp->par = $this->get_par();
+        return $qp;
+    }
+
+    /**
+     * create a sql statement to delete every row of a table, used for a table that only caches
+     * data which can be created again e.g. the cached html pages (see db_cache_page::del_all)
+     *
+     * @param string $class the class name of the table to empty e.g. db_cache_page
+     * @return sql_par the sql statement to delete all rows of the table
+     */
+    function del_sql_all(string $class): sql_par
+    {
+        $qp = new sql_par($class, new sql_type_list([sql_type::DELETE]));
+        $this->set_class($class, new sql_type_list());
+        $sql = sql::DELETE . ' ' . $this->name_sql_esc($this->table);
+        $qp->name .= '_all';
+        $qp->sql = $this->prepare_sql($sql, $qp->name, []);
+        $qp->par = [];
         return $qp;
     }
 

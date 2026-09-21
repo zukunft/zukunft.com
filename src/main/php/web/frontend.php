@@ -1189,19 +1189,14 @@ class frontend
     function cached_page_or_null(array $url_array, user_message_ui $msg_ui): ?string
     {
         $result = null;
-        // only a user without own data changes may get the standard cached page; an unknown
-        // user (null) has no own data changes, so the shared page is the correct answer
-        $uses_sandbox = $msg_ui->usr?->uses_sandbox ?? false;
-        // a logged in (non-ip) user gets a personalised page (e.g. the dark blue person icon,
-        // the logout link and the my tab), which the shared cached page does not contain,
-        // so the page of a logged in user is always rendered live; the login state is read
-        // from the session, because this fast path runs before the type cache is loaded
-        // that a profile based check like is_ip_only() would need
-        // TODO Prio 1 use the page cache also for logged in users as soon as the auto refresh
-        //      job and the cache setup handle the user specific parts of the page
-        $logged_in = !empty($_SESSION[url_var::SESSION_LOGGED]);
-        if (!$uses_sandbox and !$logged_in) {
-            $url_key = $this->url_cache_key($url_array);
+        // the page of a logged in user is cached under the id of that user (see url_cache_key),
+        // so the own data changes are part of the own page; only a user whose key names no user
+        // shares the standard page, so there the own data changes must still be rendered live;
+        // an unknown user (null) has no own data changes, so the shared page is the correct answer
+        $usr_id = self::session_user_id();
+        $uses_sandbox = (($msg_ui->usr?->uses_sandbox ?? false) and $usr_id == 0);
+        if (!$uses_sandbox) {
+            $url_key = $this->url_cache_key($url_array, $usr_id);
             if ($url_key != '') {
                 $cac_page = new db_cache_page();
                 // TODO Prio 1 avoid the backend bridge
@@ -1233,6 +1228,40 @@ class frontend
     }
 
     /**
+     * the id of the logged-in user of this request, read from the session here (the request/session
+     * boundary, like session_token) because the session and never the url decides who the user is;
+     * the id is the last part of the page cache key, so a personal page is cached per user
+     *
+     * @return int the id of the logged-in user or 0 for a request without login
+     */
+    private static function session_user_id(): int
+    {
+        $result = 0;
+        if (!empty($_SESSION[url_var::SESSION_LOGGED])) {
+            $result = (int)($_SESSION[url_var::SESSION_USER_ID] ?? 0);
+        }
+        return $result;
+    }
+
+    /**
+     * true if the page of this request shows the user, e.g. the user name in the navbar, the dark
+     * blue person icon, the logout link, the black add and edit icons and the my tab
+     *
+     * the requesting user decides, like for the navbar itself (see url_to_html); such a page is
+     * cached under the id of the logged in user (see url_cache_key), so this is only asked where
+     * the key names no user, which is a render without a php session - a workflow test or a page
+     * refresh job - that would else store the page of one user as the page of everybody else
+     *
+     * @param user_message_ui $msg_ui with the requesting user of this request
+     * @return bool true if the rendered page shows the user
+     */
+    static function shows_personal_page(user_message_ui $msg_ui): bool
+    {
+        $usr = $msg_ui->usr;
+        return ($usr != null and !$usr->is_ip_only());
+    }
+
+    /**
      * create the html code for the given url and use the cached html pages
      * of the view-only requests to reduce the response time
      *
@@ -1256,20 +1285,22 @@ class frontend
         data_object     $dto = new data_object()
     ): string
     {
-        // an unknown user (null) has no own data changes, so the shared cached page is served
-        $uses_sandbox = $msg_ui->usr?->uses_sandbox ?? false;
-        // a logged in (non-ip) user gets a personalised page (e.g. the dark blue person icon,
-        // the logout link and the my tab), so it is always rendered live and never stored as
-        // the shared cached page; the login state is read from the session like in
-        // cached_page_or_null, so both cache gates always decide the same way
-        // TODO Prio 1 use the page cache also for logged in users as soon as the auto refresh
-        //      job and the cache setup handle the user specific parts of the page
-        $logged_in = !empty($_SESSION[url_var::SESSION_LOGGED]);
+        // the page of a logged in user is cached under the id of that user, so the own data
+        // changes are part of the own page and only a shared key must avoid them (like in
+        // cached_page_or_null, so both cache gates always decide the same way)
+        $usr_id = self::session_user_id();
+        $uses_sandbox = (($msg_ui->usr?->uses_sandbox ?? false) and $usr_id == 0);
         $result = '';
         // an action request is always rendered live because the data has just been changed
         $url_key = '';
-        if (!$is_action and !$logged_in) {
-            $url_key = $this->url_cache_key($url_array);
+        if (!$is_action) {
+            $url_key = $this->url_cache_key($url_array, $usr_id);
+        }
+        // a page that shows a user but is keyed without one - e.g. a render without a php session
+        // like a workflow test or a page refresh job - would become the standard page of everybody
+        // else, so it is rendered live instead (see shows_personal_page)
+        if ($usr_id == 0 and self::shows_personal_page($msg_ui)) {
+            $url_key = '';
         }
         // get the last cached html page for the url and fill in the reading user's own anti-csrf
         // token so the shared page does not carry the token of whoever cached it (see request_token_valid)
@@ -1292,7 +1323,8 @@ class frontend
                 // so add the message of this request if there is one
                 $result = db_cache_page::add_user_msg($cached_html, $this->user_msg_html($msg_ui));
             } else {
-                // remember the rendered page for the next request of any user without sandbox data
+                // remember the rendered page for the next request with the same key: the own page
+                // of the logged in user or the standard page of the users without own data
                 $result = $this->url_to_html($url_array, $msg_ui, $dto);
                 $this->save_html_page($cac_page, $url_key, $result);
             }
@@ -1325,10 +1357,16 @@ class frontend
      * the canonical cache key of a view-only page request
      * e.g. 'm=1&id=2' for the word view of the word zurich
      *
+     * the page of a logged in user is personal (the user name, the black add and edit icons, the
+     * user values and the my tab), but it is cached like every other page: the key names the user,
+     * just like every link of that page does (see html_base::url_with_user), so the personal page
+     * is reused for this user only and is never handed to somebody else
+     *
      * @param array $url_array the parsed url as an array
+     * @param int $usr_id the id of the logged-in user of this request, 0 for a request without login
      * @return string the cache key or an empty string if the request must not be cached
      */
-    function url_cache_key(array $url_array): string
+    function url_cache_key(array $url_array, int $usr_id = 0): string
     {
         global $cfg;
 
@@ -1407,6 +1445,11 @@ class frontend
             if ($list_range != '') {
                 $result .= url_var::ADD . url_var::DISPLAY_LIST_RANGE . url_var::EQ . $list_range;
             }
+            // the logged-in user is the last part of the key, so that the personal page of a user
+            // and the standard page of a request without login are two cached pages of the same url
+            if ($usr_id > 0) {
+                $result .= url_var::ADD . url_var::USER . url_var::EQ . $usr_id;
+            }
         }
         return $result;
     }
@@ -1477,6 +1520,40 @@ class frontend
         if (!$save_msg->is_ok()) {
             log_warning('caching the html page for ' . $url_key
                 . ' failed because ' . $save_msg->get_message());
+        }
+    }
+
+    /**
+     * remove the cached html pages that a write has just made outdated, so that the next request
+     * shows the change instead of the page as it has been rendered before (see db_cache_page)
+     *
+     * a user that sees the user sandbox changes only the own data, so only the own pages are
+     * outdated; a user that sees the standard data (an ip user or a system user, see
+     * user::uses_standard_data) changes the data that every page of every user can show, so then
+     * the complete cache is dropped. this is on purpose not selected by the changed object: a
+     * change can be shown by any page, e.g. a renamed word in a value list of another page
+     *
+     * like filling the cache this is a system action, so it is done as the system user and a
+     * failure is only logged: the user has the change in the database, and a page that is cleared
+     * too late is a stale page, not a lost change
+     *
+     * @param user_message_ui $msg_ui with the user that has done the change
+     * @return void
+     */
+    private function drop_cached_pages(user_message_ui $msg_ui): void
+    {
+        $cac_page = new db_cache_page();
+        $del_msg = new backend_user_message(user_backend::system()); // not reported, see above
+        $usr = $msg_ui->usr;
+        $usr_id = self::session_user_id();
+        if ($usr_id > 0 and $usr != null and !$usr->uses_standard_data()) {
+            $cac_page->del_by_user($usr_id, $del_msg);
+        } else {
+            $cac_page->del_all($del_msg);
+        }
+        if (!$del_msg->is_ok()) {
+            log_warning('removing the cached pages after a change of user ' . $usr_id
+                . ' failed because ' . $del_msg->get_message());
         }
     }
 
@@ -2240,6 +2317,9 @@ class frontend
             if ($crud == url_var::CRUD_CREATE) {
                 $this->add_link_of_new($dbo, $url_array, $msg_ui, $dto);
             }
+            // every page that shows the written data is now outdated, so the cached pages are
+            // removed and rendered again on the next request
+            $this->drop_cached_pages($msg_ui);
         }
 
         // on success go back to the calling page: the confirm view set the object's own default view +

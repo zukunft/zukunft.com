@@ -3971,6 +3971,7 @@ class sql_db
                             }
                         } else {
                             if ($par_type == sql_par_type::LIKE_R
+                                or $par_type == sql_par_type::LIKE_L
                                 or $par_type == sql_par_type::LIKE
                                 or $par_type == sql_par_type::LIKE_OR) {
                                 $this->where .= $id_fields[$used_fields] . ' like ' . $this->par_name($i + 1);
@@ -4537,6 +4538,7 @@ class sql_db
                     $result[] = 'text[]';
                     break;
                 case sql_par_type::LIKE_R:
+                case sql_par_type::LIKE_L:
                 case sql_par_type::LIKE:
                 case sql_par_type::LIKE_OR:
                 case sql_par_type::TEXT_OR:

@@ -148,6 +148,12 @@ class formula_names
     const string SYSTEM_TEST_SCALE_BIL = 'System Test Formula scale billions to one';
     const string SYSTEM_TEST_SCALE_BIL_EXP = '"one" = "System Test Scaling Word e.g. billions" * 1000000000';
 
+    // the entries of the validate workflows of the formula form: an expression that names a term
+    // which does not exist and a latex that names one term more than the expression, so that the
+    // backend answers the validate button with the reason instead of the validated text
+    const string SYSTEM_TEST_INVALID_EXP = '"System Test Word Never Added" = 2';
+    const string SYSTEM_TEST_INVALID_LATEX = self::INCREASE_LATEX . ' \cdot \text{System Test Word Never Added}';
+
     const string TEST_SPEED_PREFIX = 'System Test Formula for speed testing ';
 
     // formula names used for integration tests

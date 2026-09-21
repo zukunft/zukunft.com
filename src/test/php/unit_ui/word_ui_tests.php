@@ -143,7 +143,8 @@ class word_ui_tests
         $test_page .= $html->text_h2('select');
         $from_rows = $wrd->dsp_type_selector(views::WORD_EDIT, $msg, '', $cfg) . '<br>';
         $from_rows .= $wrd->view_selector(views::WORD_EDIT, $t_msk->view_list_ui(), $msg) . '<br>';
-        $from_rows .= $wrd->view_selector(views::WORD_EDIT, $t_msk->view_list_long_dsp(), $msg, 'view_long') . '<br>';
+        // the same field with the long view list, so the field name stays the view url var
+        $from_rows .= $wrd->view_selector(views::WORD_EDIT, $t_msk->view_list_long_dsp(), $msg) . '<br>';
         $test_page .= $html->form(views::WORD_EDIT, $from_rows);
         $test_page .= $html->text_h2('table');
         $test_page .= $html->tbl($html->tr($wrd->th()) . $wrd_pi->tr());

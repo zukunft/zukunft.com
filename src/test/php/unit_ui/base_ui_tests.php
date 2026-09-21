@@ -151,6 +151,22 @@ class base_ui_tests
         $url_array = [url_var::MASK => views::WORD_ID, url_var::ID => 2, url_var::USER => users::SYSTEM_TEST_NORMAL_ID];
         $t->assert($test_name, $ui->url_cache_key($url_array), 'm=' . views::WORD_ID . '&id=2');
 
+        // the page of a logged in user is personal (the user name, the black add and edit icons and
+        // the user values), so it is cached per user: the session user, not the user of the url,
+        // names the page, so the personal page is never handed to somebody else
+        $test_name = 'the page of a logged in user is cached under the id of that user';
+        $url_array = [url_var::MASK => views::WORD_ID, url_var::ID => 2];
+        $t->assert($test_name, $ui->url_cache_key($url_array, users::SYSTEM_TEST_NORMAL_ID),
+            'm=' . views::WORD_ID . '&id=2&' . url_var::USER . '=' . users::SYSTEM_TEST_NORMAL_ID);
+        $test_name = '... and the page of a request without login names no user';
+        $t->assert($test_name, $ui->url_cache_key($url_array), 'm=' . views::WORD_ID . '&id=2');
+        $test_name = '... so the two users of one url have two cached pages';
+        $t->assert_false($test_name, $ui->url_cache_key($url_array, users::SYSTEM_TEST_NORMAL_ID)
+            == $ui->url_cache_key($url_array, users::SYSTEM_TEST_ID));
+        $test_name = 'a request that is never cached is not cached for a logged in user either';
+        $chg_url = [url_var::MASK => views::WORD_ADD_DETAIL_ID, url_var::ID => 2];
+        $t->assert($test_name, $ui->url_cache_key($chg_url, users::SYSTEM_TEST_NORMAL_ID), '');
+
         // a request of a view that changes data is never cached
         $test_name = 'a change mask request is not cached';
         $url_array = [url_var::MASK => views::WORD_ADD_DETAIL_ID, url_var::ID => 2];
@@ -180,15 +196,21 @@ class base_ui_tests
         $url_array = [url_var::MASK => views::WORD_ID, url_var::ID => 2, url_var::STEP => url_var::STEP_CONFIRM];
         $t->assert($test_name, $ui->url_cache_key($url_array), '');
 
-        // a logged in (non-ip) user gets a personalised page (e.g. the dark blue person icon,
-        // the logout link and the my tab), so it is never served from the shared page cache;
-        // the login state comes from the session, because the cache fast path runs before
-        // the type cache needed for a profile based check is loaded
+        // a logged in (non-ip) user gets a personalised page (e.g. the dark blue person icon, the
+        // logout link and the my tab), which is cached under the id of that user, so the shared
+        // page of a request without login is never served to a logged in user; the session and
+        // never the url names the user, because the cache fast path runs before the type cache
+        // needed for a profile based check is loaded
         $test_name = 'a logged in user never gets the shared cached page';
         $_SESSION[url_var::SESSION_LOGGED] = true;
+        $_SESSION[url_var::SESSION_USER_ID] = users::SYSTEM_TEST_NORMAL_ID;
         $url_array = [url_var::MASK => views::WORD_ID, url_var::ID => 2];
-        $t->assert_true($test_name, $ui->cached_page_or_null($url_array, new user_message_ui()) === null);
-        unset($_SESSION[url_var::SESSION_LOGGED]);
+        $t->assert_false($test_name, $ui->url_cache_key($url_array) == $ui->url_cache_key($url_array,
+                users::SYSTEM_TEST_NORMAL_ID));
+        $test_name = '... but the personal page of that user is cached';
+        $t->assert($test_name, $ui->url_cache_key($url_array, users::SYSTEM_TEST_NORMAL_ID),
+            'm=' . views::WORD_ID . '&id=2&' . url_var::USER . '=' . users::SYSTEM_TEST_NORMAL_ID);
+        unset($_SESSION[url_var::SESSION_LOGGED], $_SESSION[url_var::SESSION_USER_ID]);
 
         // the debug level only controls out-of-band debug output, not the cached html, so it is
         // ignored and ?m=2&debug=6 takes the same cached path as ?m=2 (same cache key)
@@ -267,6 +289,18 @@ class base_ui_tests
         $t->assert($test_name, $ui->url_cache_key($url_array), 'm=' . views::START_ID . '&id=0&'
             . url_var::DISPLAY_LIST_COLUMNS . '=' . value_list_ui::COLUMN_TIERS_ALL . '&'
             . url_var::DISPLAY_LIST_RANGE . '=' . url_var::TRUE);
+
+        // how much of a list is shown is a render mode, so it is a control var: else the "... more"
+        // link of a page without an object (e.g. view.php?m=1&dls=20) would look like a form submit
+        // and the mapping of the page object would report the missing id (see frontend::url_object_values)
+        $test_name = 'the list size is a control var';
+        $t->assert_true($test_name, in_array(url_var::DISPLAY_LIST_SIZE, url_var::CONTROL_VARS));
+        $test_name = '... like the list page, the columns and the ranges';
+        $t->assert_true($test_name, in_array(url_var::DISPLAY_LIST_PAGE, url_var::CONTROL_VARS)
+            and in_array(url_var::DISPLAY_LIST_COLUMNS, url_var::CONTROL_VARS)
+            and in_array(url_var::DISPLAY_LIST_RANGE, url_var::CONTROL_VARS));
+        $test_name = 'a field of the object is never a control var';
+        $t->assert_false($test_name, in_array(url_var::NAME, url_var::CONTROL_VARS));
 
         $t->subheader($ts . 'tab box');
 
@@ -582,6 +616,17 @@ class base_ui_tests
         $src = new source();
         $src->set_from_json($t_src->source_reserved()->api_json(), $msg);
         $t->assert($test_name, $src->btn_edit(), $target);
+
+        // the validate button of the formula form fields is limited to one twelfth of the width
+        // like the 'find and next' button of the add value view (see html_base::button_refresh_text)
+        $test_name = 'the validate button of a form field is limited in size';
+        $validate_btn = $html->button_refresh_text($mtr->txt(msg_id::FORM_BUTTON_VALIDATE), url_var::REFRESH_LATEX);
+        $t->assert_text_contains($test_name, $validate_btn, html_base::BS_BTN_FIELD_COL);
+        $test_name = '... and it is a submit, because only a submit sends the entered values';
+        $t->assert_text_contains($test_name, $validate_btn,
+            'name="' . url_var::REFRESH . '" value="' . url_var::REFRESH_LATEX . '"');
+        $test_name = '... named by the text that tells what it does';
+        $t->assert_text_contains($test_name, $validate_btn, $mtr->txt(msg_id::FORM_BUTTON_VALIDATE));
 
         $test_name = 'a sandbox object e.g. formula delete button html code';
         $target = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::FORMULA_DEL_ID . '&amp;id=1" title="delete this formula"><i class="far fa-times-circle"></i></a>';

@@ -53,6 +53,9 @@ class workflows
     const string CANCEL = 'cancel'; // press the cancel button
     const string CONFIRM = 'confirm'; // call the page to delete an object
     const string CONFIRMED = 'confirmed'; // show the original view with the changes
+    // press the validate button beside the expression or the latex field of the formula form,
+    // which only reads the entered text and never writes (see system_form::form_formula_expression)
+    const string VALIDATE = 'validate';
     // the phrase selection steps of the value add views, which only update the form and never write
     const string PHRASE = 'phrase'; // select one phrase of the new value
     const string REMOVE = 'remove'; // press the remove icon of one already chosen phrase
@@ -329,6 +332,19 @@ class workflows
     const string WF_SIGNUP_CONFIRM = 'signup_confirm';
     // the id of the current signup_confirm workflow; increase it to add the next snapshot set
     const int WF_SIGNUP_CONFIRM_NBR = 36;
+
+    // the four validate workflows of the formula form: the user presses the validate button beside
+    // the expression or the latex field with a text that the backend cannot read and with a text
+    // that it can read; the backend answers the validation, so these workflows have no test mode
+    // twin (see formula_write_url_tests)
+    const string WF_VALIDATE_EXPRESSION_ERR = 'validate_expression_err';
+    const int WF_VALIDATE_EXPRESSION_ERR_NBR = 37;
+    const string WF_VALIDATE_EXPRESSION = 'validate_expression';
+    const int WF_VALIDATE_EXPRESSION_NBR = 38;
+    const string WF_VALIDATE_LATEX_ERR = 'validate_latex_err';
+    const int WF_VALIDATE_LATEX_ERR_NBR = 39;
+    const string WF_VALIDATE_LATEX = 'validate_latex';
+    const int WF_VALIDATE_LATEX_NBR = 40;
 
     /**
      * the user process step that a user reaction action triggers

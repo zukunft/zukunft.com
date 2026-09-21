@@ -543,6 +543,17 @@ class user_ui_tests
         $test_name = 'the api url of the system user carries no user id';
         $t->assert_false($test_name, array_key_exists(url_var::USER, $rest->data_with_user([], new user_message($sys_ui))));
 
+        // the page of a logged in user shows the user name, the logout link and the black add and
+        // edit icons, so it is never stored as or taken from the shared page cache; the requesting
+        // user decides, because a render without a php session (a workflow test or the page refresh
+        // job) has no session flag and would else share the page of one user with everybody else
+        $test_name = 'the page of a logged in user is personal';
+        $t->assert_true($test_name, frontend::shows_personal_page(new user_message($dev_ui)));
+        $test_name = 'the page of an ip user is the shared page';
+        $t->assert_false($test_name, frontend::shows_personal_page(new user_message($ip_ui)));
+        $test_name = 'the page of a request without a user is the shared page';
+        $t->assert_false($test_name, frontend::shows_personal_page(new user_message()));
+
         // after an action the next page is created for the user of the session after the action
         $act_url = [url_var::MASK => views::WORD_ID, url_var::USER => users::SYSTEM_ADMIN_ID];
         $test_name = 'the redirect after an action carries the logged-in user';

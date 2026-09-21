@@ -179,6 +179,7 @@
                             </option>
                         </select>
                     </div>
+                    <input type="hidden" name="8fy" value="1">
                 </div>
                 <div class="row col-md-12">
                     <div class="form-group col-md-12">
@@ -190,30 +191,32 @@
                     <input type="hidden" name="8o" value="">
                 </div>
                 <div class="row col-md-12">
-                    <div class="form-group col-md-8">
+                    <div class="form-group col-md-7">
                         <label for="expression">
                             Expression
                         </label>
-                        <button class="btn btn-link p-0 ms-1 align-baseline" type="submit" name="fr" value="fre">
-                            <i class="fas fa-arrows-rotate" title="recalculate this field based on the other fields">
-                            </i>
-                        </button>
                         <input class="form-control" type="text" name="fe" id="expression">
                     </div>
                     <input type="hidden" name="8fe" value="">
+                    <div class="col-1 d-flex align-items-end">
+                        <button class="btn btn-outline-success w-100" type="submit" name="fr" value="frx">
+                            Validate
+                        </button>
+                    </div>
                 </div>
                 <div class="row col-md-12">
-                    <div class="form-group col-md-8">
+                    <div class="form-group col-md-7">
                         <label for="latex">
                             LaTeX
                         </label>
-                        <button class="btn btn-link p-0 ms-1 align-baseline" type="submit" name="fr" value="frx">
-                            <i class="fas fa-arrows-rotate" title="recalculate this field based on the other fields">
-                            </i>
-                        </button>
                         <input class="form-control" type="text" name="fx" id="latex">
                     </div>
                     <input type="hidden" name="8fx" value="">
+                    <div class="col-1 d-flex align-items-end">
+                        <button class="btn btn-outline-success w-100" type="submit" name="fr" value="fre">
+                            Validate
+                        </button>
+                    </div>
                 </div>
                 <div class="row col-md-12">
                     <div class="form-check-inline">

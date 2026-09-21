@@ -225,6 +225,13 @@ class formula extends sandbox_code_id
                     $this->view_id = $url_array[url_var::VIEW];
                 }
             }
+            // the formula type field is posted as url_var::FORMULA_TYPE ('fy'), not the generic
+            // url_var::TYPE the parent reads, so capture it here to persist a formula type change
+            if (array_key_exists(url_var::FORMULA_TYPE, $url_array)) {
+                if ($url_array[url_var::FORMULA_TYPE] != null) {
+                    $this->set_type_id($url_array[url_var::FORMULA_TYPE]);
+                }
+            }
         }
         return $msg;
     }
@@ -265,6 +272,10 @@ class formula extends sandbox_code_id
     function to_url_array(user_message $msg): array
     {
         $url_array = parent::to_url_array($msg);
+        // the formula form posts the type as url_var::FORMULA_TYPE, so the generic type key of the
+        // parent is replaced, just like in component::to_url_array
+        unset($url_array[url_var::TYPE]);
+        $url_array[url_var::FORMULA_TYPE] = $this->type_id($msg);
         // an unset field is left out (not sent as an empty value) like the triple weight
         if ($this->usr_text != '') {
             $url_array[url_var::USER_EXPRESSION] = $this->usr_text;
@@ -543,11 +554,7 @@ class formula extends sandbox_code_id
             log_err('type list cache missing, falling back to the request cache');
             $typ_lst = $ui_sys->typ_lst_cache;
         }
-        $used_formula_type_id = $this->type_id($msg);
-        if ($used_formula_type_id == null) {
-            $used_formula_type_id = $typ_lst->frm_typ->default_id();
-        }
-        return $typ_lst->frm_typ->selector($form, $used_formula_type_id);
+        return $this->type_selector_with_pre($typ_lst->frm_typ, $form, $this->type_id($msg));
     }
 
 

@@ -347,7 +347,6 @@ class sandbox extends db_object
     }
 
     /**
-     * TODO Prio 0 make sure that all selectors create a hidden form field with the original values
      * @param string $form the name of the html form
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the share type
@@ -360,18 +359,8 @@ class sandbox extends db_object
             log_err('type list cache missing, falling back to the request cache');
             $typ_lst = $ui_sys->typ_lst_cache;
         }
-        $used_share_id = $this->share_id;
-        if ($used_share_id == null) {
-            $used_share_id = $typ_lst->shr_typ->default_id();
-        }
         if ($ui_sys->usr === $this->owner or $this->owner == null) {
-            // also send the opening share id as the '8'-prefixed pre value so the confirm view can show
-            // the existing share and detect whether the user actually changed it (see url_var::PRE);
-            // a re-render after a save error keeps the original db snapshot via pre_value
-            $html = new html_base();
-            $pre_share = $this->pre_value(url_var::SHARE) ?? (string)$used_share_id;
-            return $typ_lst->shr_typ->selector($form, $used_share_id)
-                . $html->form_hidden(url_var::PRE . url_var::SHARE, $pre_share);
+            return $this->type_selector_with_pre($typ_lst->shr_typ, $form, $this->share_id);
         } else {
             return '';
         }
@@ -390,18 +379,8 @@ class sandbox extends db_object
             log_err('type list cache missing, falling back to the request cache');
             $typ_lst = $ui_sys->typ_lst_cache;
         }
-        $used_protection_id = $this->protection_id;
-        if ($used_protection_id == null) {
-            $used_protection_id = $typ_lst->ptc_typ->default_id();
-        }
         if ($ui_sys->usr === $this->owner or $this->owner == null) {
-            // also send the opening protection id as the '8'-prefixed pre value so the confirm view can
-            // show the existing protection and detect whether the user changed it (see url_var::PRE);
-            // a re-render after a save error keeps the original db snapshot via pre_value
-            $html = new html_base();
-            $pre_protection = $this->pre_value(url_var::PROTECTION) ?? (string)$used_protection_id;
-            return $typ_lst->ptc_typ->selector($form, $used_protection_id)
-                . $html->form_hidden(url_var::PRE . url_var::PROTECTION, $pre_protection);
+            return $this->type_selector_with_pre($typ_lst->ptc_typ, $form, $this->protection_id);
         } else {
             return '';
         }

@@ -66,7 +66,9 @@ include_once paths::MODEL_WORD . 'word.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
+include_once paths::SHARED_HELPER . 'Config.php';
 include_once test_paths::CONST . 'files.php';
+include_once test_paths::CONST . 'word_names.php';
 include_once test_paths::CREATE . 'test_mappers.php';
 include_once test_paths::CREATE . 'test_mappers.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
@@ -108,6 +110,7 @@ use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\helper\Config;
 use Zukunft\ZukunftCom\main\php\shared\helper\MapObject;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\views as view_shared;
@@ -115,6 +118,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\create\test_mappers;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
@@ -125,6 +129,10 @@ use Zukunft\ZukunftCom\test\php\utils\test_lib;
 
 class system_view_ui_tests
 {
+
+    // added to the snapshot name of a view rendered with the more version of its list
+    const string MORE_LIST_FILE_POSTFIX = '_more';
+
     function run(test_cleanup $t): void
     {
         global $mtr;
@@ -682,6 +690,35 @@ class system_view_ui_tests
                 $msg->reset();
             }
         }
+
+        // the "... more" link of a list changes only how much of the same page is shown, so the
+        // start page renders with the longer list and reports nothing; a list size counted as an
+        // object field value would instead report the missing id of the page object, because the
+        // start page shows no object (see url_var::CONTROL_VARS)
+        $test_name = 'the more list of the start page reports no missing id';
+        $msg->usr = null;
+        $more_url = [url_var::MASK => views::START_ID, url_var::DISPLAY_LIST_SIZE => Config::LIMIT_MORE_LIST];
+        $more_html = $ui->url_to_html($more_url, $msg, $dto_start, true);
+        $t->assert_msg($test_name, $msg);
+        $msg->reset();
+
+        $test_name = '... and matches the snapshot of the more list';
+        $start_dbo = $this->view_id_to_dbo(views::START_ID, $t->usr1);
+        [$folder, $dbo_name,] = $this->view_id_to_file_info(views::START_ID, $start_dbo::class,
+            $this->view_id_to_url_action(views::START_ID), $more_url, $lib);
+        $file_path = test_paths::VIEWS_BY_ID . $folder . $dbo_name . self::MORE_LIST_FILE_POSTFIX;
+        $updated_files[] = test_paths::RESOURCE . $file_path . test_files::HTML;
+        $t->assert_html_page($test_name, $t->link_to_pod($more_html, THIS_URL), $file_path);
+        $msg->reset();
+
+        // negative: a field of the object is not a render mode, so a page without an object
+        // still reports that the id of the object to change is missing
+        $test_name = 'an object field on a page without an object reports the missing id';
+        $name_url = [url_var::MASK => views::START_ID, url_var::NAME => word_names::MATH];
+        $ui->url_to_html($name_url, $msg, $dto_start, true);
+        $t->assert_false($test_name, $msg->is_ok());
+        $msg->reset();
+
         // remove test files not used any more
         foreach ($lib->dir_files(test_paths::RESOURCE . test_paths::VIEWS_BY_ID) as $path) {
             if (str_ends_with($path, test_files::HTML) && !in_array($path, $updated_files)) {

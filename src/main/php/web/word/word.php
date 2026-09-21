@@ -694,18 +694,7 @@ class word extends sandbox_code_id
             log_err('type list cache missing, falling back to the request cache');
             $typ_lst = $ui_sys->typ_lst_cache;
         }
-        $used_phrase_id = $this->type_id($msg);
-        if ($used_phrase_id == null) {
-            $used_phrase_id = $typ_lst->phr_typ->default_id();
-        }
-        // also send the opening phrase type id as the '8'-prefixed pre value so the confirm view can show
-        // the existing type and detect whether the user actually changed it (see url_var::PRE);
-        // a re-render after a save error keeps the original db snapshot via pre_value
-        $html = new html_base();
-        $pre_type = $this->pre_value(url_var::PHRASE_TYPE) ?? (string)$used_phrase_id;
-        $result = $typ_lst->phr_typ->selector($form, $used_phrase_id);
-        $result .= $html->form_hidden(url_var::PRE . url_var::PHRASE_TYPE, $pre_type);
-        return $result;
+        return $this->type_selector_with_pre($typ_lst->phr_typ, $form, $this->type_id($msg));
     }
 
 
@@ -1003,14 +992,9 @@ class word extends sandbox_code_id
         }
         $msk_lst = $msk_lst->ex_system($msg);
         $msk_lst = $msk_lst->ex_non_phrase($msg);
-        // also send the opening view id as the '8'-prefixed pre value so the confirm view can show the
-        // existing view and detect whether the user actually changed it (see url_var::PRE);
-        // a re-render after a save error keeps the original db snapshot via pre_value
-        $html = new html_base();
-        $pre_view = $this->pre_value(url_var::VIEW) ?? (string)$view_id;
-        $result = $msk_lst->selector($form, $view_id, $name, $msg_id);
-        $result .= $html->form_hidden(url_var::PRE . url_var::VIEW, $pre_view);
-        return $result;
+        // the opening view is sent as the pre value so the confirm view can show the existing view
+        $sel_html = $msk_lst->selector($form, $view_id, $name, $msg_id);
+        return $this->add_pre_value($sel_html, $name, (string)$view_id);
     }
 
 

@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>
+            System Test Formula - Change formula - zukunft.com
+        </title>
+        <link rel="stylesheet" href="http://localhost/external_lib/bootstrap/css/bootstrap.css">
+        <link rel="stylesheet" href="http://localhost/external_lib/fontawesome/css/all.css">
+        <link rel="stylesheet" href="http://localhost/src/main/resources/style/style_html.css">
+    </head>
+    <body>
+        <nav  class="navbar site-header fixed-top">
+            <a href="http://localhost/http/view.php" title="zukunft.com" class="navbar-brand">
+                <img src="http://localhost/src/main/resources/images/ZUKUNFT_logo.svg" alt="zukunft.com" class="logo-nav">
+            </a>
+            <form action="http://localhost/http/view.php" class="d-flex align-items-center my-2 my-lg-0 flex-grow-1 mx-3">
+                <input type="hidden" name="m" value="83">
+                <label for="kp" class="visually-hidden">
+                    Search
+                </label>
+                <input class="form-control me-2" type="search" name="pattern" id="kp" placeholder="word or formula" style="min-width: 40vw; max-width: 800px;">
+                <button class="btn btn-outline-primary" type="submit">
+                    Get numbers
+                </button>
+            </form>
+            <div class="col-md-2">
+                <ul class="nav navbar-nav">
+                    <li class="active">
+                        <details class="view-menu">
+                            <summary>
+                                <i class="fas fa-edit">
+                                </i>
+                            </summary>
+                            <ul>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=view_change&amp;id=2">
+                                        alternative
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="?view=more">
+                                        ... more
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=61&amp;id=33&amp;9id=996&amp;9m=33">
+                                        change view
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=60&amp;9id=996&amp;9m=33">
+                                        add view
+                                    </a>
+                                </li>
+                            </ul>
+                        </details>
+                        <details class="lang-menu">
+                            <summary>
+                                <i class="fas fa-globe">
+                                </i>
+                            </summary>
+                            <ul>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=33&amp;q=en">
+                                        English
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=33&amp;q=en_us">
+                                        US English
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=33&amp;q=de" title="German">
+                                        Deutsch
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=33&amp;q=fr" title="French">
+                                        Français
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=33&amp;q=es" title="Spanish">
+                                        Español
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=33&amp;q=zh" title="Chinese">
+                                        漢語
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=33&amp;q=ar" title="Arabic">
+                                        العربية
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=language_select">
+                                        ... more
+                                    </a>
+                                </li>
+                            </ul>
+                        </details>
+                        <details class="user-menu">
+                            <summary>
+                                <i class="fas fa-user-circle user-logged" title="system test zukunft.com system test">
+                                </i>
+                            </summary>
+                            <ul>
+                                <li>
+                                    system test zukunft.com system test
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=12&amp;9m=8&amp;9id=996&amp;token=5e18d78c56c5ccb645631d7e5c6657d02a2f7c579cd01d36d3f5539ba07a6c13">
+                                        logout
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/settings?9id=996&amp;9m=33">
+                                        Settings
+                                    </a>
+                                </li>
+                            </ul>
+                        </details>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <main class="main-container">
+            <h4>
+                Change formula
+            </h4>
+            <form action="http://localhost/http/view.php" id="formula_edit">
+                <input type="hidden" name="token" value="5e18d78c56c5ccb645631d7e5c6657d02a2f7c579cd01d36d3f5539ba07a6c13">
+                <input class="form-control" type="hidden" name="m" id="mask" value="33">
+                <input class="form-control" type="hidden" name="id" id="id" value="996">
+                <input type="hidden" name="9m" value="8">
+                <input type="hidden" name="9id" value="996">
+                <input class="form-control" type="hidden" name="z" id="confirm" value="1">
+                <div class="row col-md-12">
+                    <div class="form-group col-md-8">
+                        <label for="name">
+                            Name
+                        </label>
+                        <input class="form-control" type="text" name="k" id="name" value="System Test Formula">
+                    </div>
+                    <input type="hidden" name="8k" value="System Test Formula">
+                    <div class="form-group col-md-4">
+                        <label for="fy_form_select_formula_type">
+                            Formula type
+                        </label>
+                        <select class="form-control" name="fy" form="formula_edit" id="fy_form_select_formula_type" >
+                            <option value="1"  selected >
+                                calc
+                            </option>
+                            <option value="0"  >
+                                ---
+                            </option>
+                            <option value="7"  >
+                                calc with R
+                            </option>
+                            <option value="2"  >
+                                next
+                            </option>
+                            <option value="3"  >
+                                prior
+                            </option>
+                            <option value="5"  >
+                                reversible
+                            </option>
+                            <option value="6"  >
+                                scaling
+                            </option>
+                            <option value="4"  >
+                                this
+                            </option>
+                        </select>
+                    </div>
+                    <input type="hidden" name="8fy" value="1">
+                </div>
+                <div class="row col-md-12">
+                    <div class="form-group col-md-12">
+                        <label for="description">
+                            Description
+                        </label>
+                        <input class="form-control" type="text" name="o" id="description">
+                    </div>
+                    <input type="hidden" name="8o" value="">
+                </div>
+                <div class="row col-md-12">
+                    <div class="form-group col-md-7">
+                        <label for="expression">
+                            Expression
+                        </label>
+                        <input class="form-control" type="text" name="fe" id="expression" value="&quot;percent&quot; = ( &quot;this&quot; - &quot;prior&quot; ) / &quot;prior&quot;">
+                    </div>
+                    <input type="hidden" name="8fe" value="&quot;percent&quot; = ( &quot;this&quot; - &quot;prior&quot; ) / &quot;prior&quot;">
+                    <div class="col-1 d-flex align-items-end">
+                        <button class="btn btn-outline-success w-100" type="submit" name="fr" value="frx">
+                            Validate
+                        </button>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="expression">
+                            Validated expression
+                        </label>
+                        <a href="http://localhost/http/view.php?m=3&amp;id=160" title="A percentage is a number or ratio expressed as a fraction of 100; the percent measure auto-scales, so a formula that produces a ratio is shown to the user as a percent without multiplying by 100.">
+                            percent
+                        </a>
+                        = (
+                        <a href="http://localhost/http/view.php?m=8&amp;id=18" title="hardcoded formula to select now, today, this year, ...">
+                            this
+                        </a>
+                        -
+                        <a href="http://localhost/http/view.php?m=8&amp;id=20" title="hardcoded formula to select yesterday, previous week, last year, ...">
+                            prior
+                        </a>
+                        ) /
+                        <a href="http://localhost/http/view.php?m=8&amp;id=20" title="hardcoded formula to select yesterday, previous week, last year, ...">
+                            prior
+                        </a>
+                    </div>
+                </div>
+                <div class="row col-md-12">
+                    <div class="form-group col-md-7">
+                        <label for="latex">
+                            LaTeX
+                        </label>
+                        <input class="form-control" type="text" name="fx" id="latex" value="\text{percent} = \frac{ \text{this} - \text{prior} }{ \text{prior} } \cdot \text{System Test Word Never Added}">
+                    </div>
+                    <input type="hidden" name="8fx" value="\text{percent} = \frac{ \text{this} - \text{prior} }{ \text{prior} } \cdot \text{System Test Word Never Added}">
+                    <div class="col-1 d-flex align-items-end">
+                        <button class="btn btn-outline-success w-100" type="submit" name="fr" value="fre">
+                            Validate
+                        </button>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="latex">
+                            Validated LaTeX
+                        </label>
+                        <span class="text-nowrap"><a href="http://localhost/http/view.php?m=3&amp;id=160" title="A percentage is a number or ratio expressed as a fraction of 100; the percent measure auto-scales, so a formula that produces a ratio is shown to the user as a percent without multiplying by 100.">percent</a> = <span class="frac"><span class="num"><a href="http://localhost/http/view.php?m=8&amp;id=18" title="hardcoded formula to select now, today, this year, ...">this</a> - <a href="http://localhost/http/view.php?m=8&amp;id=20" title="hardcoded formula to select yesterday, previous week, last year, ...">prior</a></span><span class="den"><a href="http://localhost/http/view.php?m=8&amp;id=20" title="hardcoded formula to select yesterday, previous week, last year, ...">prior</a></span></span> &middot; System Test Word Never Added</span>
+                    </div>
+                </div>
+                <div class="row col-md-12">
+                    <div class="form-check-inline">
+                        <label class="form-check-label">
+                            <input class="form-check-input" type="checkbox" name="fa" checked>
+                            calculate only if all values used in the formula exist
+                        </label>
+                    </div>
+                </div>
+                <div class="row col-md-12">
+                    <div class="form-group col-md-4">
+                        <label for="d_form_select_view">
+                            View
+                        </label>
+                        <select class="form-control" name="d" form="formula_edit" id="d_form_select_view" >
+                            <option value="8"  selected >
+                                Formula (default)
+                            </option>
+                            <option value="0"  >
+                                ---
+                            </option>
+                        </select>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="s_form_select_share_type">
+                            Share
+                        </label>
+                        <select class="form-control" name="s" form="formula_edit" id="s_form_select_share_type" >
+                            <option value="1"  selected >
+                                public
+                            </option>
+                            <option value="2"  >
+                                personal
+                            </option>
+                            <option value="3"  >
+                                group
+                            </option>
+                            <option value="4"  >
+                                private
+                            </option>
+                            <option value="5"  >
+                                personal log
+                            </option>
+                            <option value="6"  >
+                                group log
+                            </option>
+                            <option value="7"  >
+                                private log
+                            </option>
+                        </select>
+                    </div>
+                    <input type="hidden" name="8s" value="1">
+                    <div class="form-group col-md-4">
+                        <label for="sp_form_select_protection_type">
+                            Protection
+                        </label>
+                        <select class="form-control" name="sp" form="formula_edit" id="sp_form_select_protection_type" >
+                            <option value="1"  selected >
+                                no protection
+                            </option>
+                            <option value="2"  >
+                                user
+                            </option>
+                            <option value="3"  >
+                                admin
+                            </option>
+                            <option value="4"  >
+                                no change
+                            </option>
+                        </select>
+                    </div>
+                    <input type="hidden" name="8sp" value="1">
+                </div>
+                <br>
+                <div class="row col-md-12 justify-content-end">
+                    <div class="row col-md-12">
+                        <h5>
+                            Assigned words and triples
+                        </h5>
+                    </div>
+                    <a href="http://localhost/http/view.php?m=8&amp;id=996" class="btn btn-space col-1 btn-outline-secondary">
+                        cancel
+                    </a>
+                    <button class="btn btn-space col-1 btn-outline-success" type="submit" name="submit">
+                        save
+                    </button>
+                </div>
+            </form>
+            <div class="row col-md-12">
+                <div class="col-md-12">
+                    <h5>
+                        Not yet used
+                    </h5>
+                </div>
+            </div>
+            <div class="row col-md-12">
+                <div class="col-md-4">
+                    <h5>
+                        Results
+                    </h5>
+                    <div>
+                        not used for formulas
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <h5>
+                        Formulas
+                    </h5>
+                    <div>
+                        <a href="http://localhost/http/view.php?m=8&amp;id=14" title="the SI definition of the unit joule">
+                            definition of joule
+                        </a>
+                        ,
+                        <a href="http://localhost/http/view.php?m=8&amp;id=19" title="hardcoded formula to select tomorrow, next week, next year, ...">
+                            next
+                        </a>
+                        ,
+                        <a href="http://localhost/http/view.php?m=8&amp;id=20" title="hardcoded formula to select yesterday, previous week, last year, ...">
+                            prior
+                        </a>
+                        ,
+                        <a href="http://localhost/http/view.php?m=8&amp;id=17" title="convert numbers in billions (thousand millions) to one and back, so that a value given in billions can be compared and calculated with values given in ones">
+                            scale billion to one
+                        </a>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="css-tabs">
+                        <div class="css-tab" id="views">
+                            <a href="#views" class="css-tab-label">
+                                Views
+                            </a>
+                            <div class="css-tab-pane">
+                                <div class="container">
+                                    <div>
+                                        <div class="col-md-12">
+                                            view preview
+                                        </div>
+                                        <a href="http://localhost/http/view.php?m=8&amp;id=996" title="show &#039;System Test Formula&#039; with the &#039;Formula (default)&#039; view">
+                                            Formula (default)
+                                        </a>
+                                        <a href="http://localhost/http/view.php?m=33&amp;id=996&amp;d=8" title="adjust &#039;System Test Formula&#039; so that it is always shown with the &#039;Formula (default)&#039; view">
+                                            <i class="fas fa-shuffle">
+                                            </i>
+                                        </a>
+                                        <a href="http://localhost/http/view.php?m=61&amp;id=8" title="change the &#039;Formula (default)&#039; view">
+                                            <i class="fas fa-edit">
+                                            </i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="css-tab" id="changes">
+                            <a href="#changes" class="css-tab-label">
+                                Changes
+                            </a>
+                            <div class="css-tab-pane">
+                                <div class="container">
+                                    <table class="table table-borderless grey">
+                                        <tr>
+                                            <th>
+                                                when
+                                            </th>
+                                            <th>
+                                                who
+                                            </th>
+                                            <th>
+                                                what
+                                            </th>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                07-06-1997 16:01:16
+                                            </td>
+                                            <td>
+                                                <a href="http://localhost/http/view.php?m=99&amp;ue=3">
+                                                    zukunft.com system test
+                                                </a>
+                                            </td>
+                                            <td>
+                                                changed all values needed to "1" from "0"
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                07-06-1997 16:01:15
+                                            </td>
+                                            <td>
+                                                <a href="http://localhost/http/view.php?m=99&amp;ue=3">
+                                                    zukunft.com system test
+                                                </a>
+                                            </td>
+                                            <td>
+                                                added formula type "calc"
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                07-06-1997 16:01:14
+                                            </td>
+                                            <td>
+                                                <a href="http://localhost/http/view.php?m=99&amp;ue=3">
+                                                    zukunft.com system test
+                                                </a>
+                                            </td>
+                                            <td>
+                                                added protection "no protection"
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                07-06-1997 16:01:13
+                                            </td>
+                                            <td>
+                                                <a href="http://localhost/http/view.php?m=99&amp;ue=3">
+                                                    zukunft.com system test
+                                                </a>
+                                            </td>
+                                            <td>
+                                                added share "public"
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                07-06-1997 16:01:12
+                                            </td>
+                                            <td>
+                                                <a href="http://localhost/http/view.php?m=99&amp;ue=3">
+                                                    zukunft.com system test
+                                                </a>
+                                            </td>
+                                            <td>
+                                                added all values needed "0"
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                07-06-1997 16:01:11
+                                            </td>
+                                            <td>
+                                                <a href="http://localhost/http/view.php?m=99&amp;ue=3">
+                                                    zukunft.com system test
+                                                </a>
+                                            </td>
+                                            <td>
+                                                added latex "\text{percent} = \frac{\text{this} - \text{prior}}{\text{prior}}"
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                07-06-1997 16:01:10
+                                            </td>
+                                            <td>
+                                                <a href="http://localhost/http/view.php?m=99&amp;ue=3">
+                                                    zukunft.com system test
+                                                </a>
+                                            </td>
+                                            <td>
+                                                added resolved text ""percent" = ( "this" - "prior" ) / "prior""
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                07-06-1997 16:01:09
+                                            </td>
+                                            <td>
+                                                <a href="http://localhost/http/view.php?m=99&amp;ue=3">
+                                                    zukunft.com system test
+                                                </a>
+                                            </td>
+                                            <td>
+                                                added formula text "{w160}=({f18}-{f20})/{f20}"
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                07-06-1997 16:01:08
+                                            </td>
+                                            <td>
+                                                <a href="http://localhost/http/view.php?m=99&amp;ue=3">
+                                                    zukunft.com system test
+                                                </a>
+                                            </td>
+                                            <td>
+                                                added description "System Test Formula Description"
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                07-06-1997 16:01:07
+                                            </td>
+                                            <td>
+                                                <a href="http://localhost/http/view.php?m=99&amp;ue=3">
+                                                    zukunft.com system test
+                                                </a>
+                                            </td>
+                                            <td>
+                                                added protection "no protection"
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                07-06-1997 16:01:06
+                                            </td>
+                                            <td>
+                                                <a href="http://localhost/http/view.php?m=99&amp;ue=3">
+                                                    zukunft.com system test
+                                                </a>
+                                            </td>
+                                            <td>
+                                                added share "public"
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                07-06-1997 16:01:05
+                                            </td>
+                                            <td>
+                                                <a href="http://localhost/http/view.php?m=99&amp;ue=3">
+                                                    zukunft.com system test
+                                                </a>
+                                            </td>
+                                            <td>
+                                                added all values needed "0"
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                07-06-1997 16:01:04
+                                            </td>
+                                            <td>
+                                                <a href="http://localhost/http/view.php?m=99&amp;ue=3">
+                                                    zukunft.com system test
+                                                </a>
+                                            </td>
+                                            <td>
+                                                added resolved text ""percent" = ( "this" - "prior" ) / "prior""
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                07-06-1997 16:01:03
+                                            </td>
+                                            <td>
+                                                <a href="http://localhost/http/view.php?m=99&amp;ue=3">
+                                                    zukunft.com system test
+                                                </a>
+                                            </td>
+                                            <td>
+                                                added formula text "{w160}=({f18}-{f20})/{f20}"
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                07-06-1997 16:01:02
+                                            </td>
+                                            <td>
+                                                <a href="http://localhost/http/view.php?m=99&amp;ue=3">
+                                                    zukunft.com system test
+                                                </a>
+                                            </td>
+                                            <td>
+                                                added description "System Test Formula Description"
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                07-06-1997 16:01:01
+                                            </td>
+                                            <td>
+                                                <a href="http://localhost/http/view.php?m=99&amp;ue=3">
+                                                    zukunft.com system test
+                                                </a>
+                                            </td>
+                                            <td>
+                                                set owner to zukunft.com system test
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                07-06-1997 16:01:00
+                                            </td>
+                                            <td>
+                                                <a href="http://localhost/http/view.php?m=99&amp;ue=3">
+                                                    zukunft.com system test
+                                                </a>
+                                            </td>
+                                            <td>
+                                                added "System Test Formula"
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <!--usr_msg-->
+        <footer class="site-footer">
+            <p>
+                <a href="http://localhost/http/about.php">
+                    About
+                </a>
+                &middot;
+                <a href="http://localhost/http/privacy_policy.html">
+                    Privacy Policy
+                </a>
+                &middot; 
+All structured data is available under the
+                <a href="https://creativecommons.org/publicdomain/zero/1.0/" title="CC0 License">
+                    Creative Commons CC0
+                </a>
+                Licence unless otherwise stated and the
+                <a href="https://github.com/zukunft/zukunft.com">
+                    program code
+                </a>
+                of this version 0.0.3
+under the
+                <a href="https://www.gnu.org/licenses/agpl.html">
+                    AGPL3
+                </a>
+                Licence.
+            </p>
+        </footer>
+    </body>
+</html>
