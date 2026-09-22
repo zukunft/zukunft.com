@@ -115,11 +115,22 @@ class start_ui_tests
         $t->assert_text_not_contains($test_name, $list->start_list($dto_ui, $msg),
             '>' . word_names::YEAR_2024 . '</a>');
 
+        // a number whose column the simple table leaves out, e.g. the reward ratio of a problem,
+        // would add a row without any number, so the ranking shows the rows with a number only
+        $col_url = [url_var::DISPLAY_LIST_COLUMNS => value_list_ui::COLUMN_TIERS_ALL];
+        $test_name = 'a number in a column of the full table adds no row to the simple ranking';
+        $dto_ui->val_lst = $t_val->value_list_solution_prio_main_column_ui();
+        $t->assert_text_not_contains($test_name, $list->start_list($dto_ui, $msg),
+            '>' . word_names::YEAR_2024 . '</a>');
+        // the full table shows the column of that number, so there the row is not empty any more
+        $test_name = '... but the full table shows that row';
+        $t->assert_text_contains($test_name, $list->start_list($dto_ui, $msg, $col_url),
+            '>' . word_names::YEAR_2024 . '</a>');
+
         // a number of the ranking can be calculated instead of measured, e.g. the happy time
         // points that the loss of a problem costs, and such a result is shown in the same table;
         // the full table is asked, because it shows every column that the numbers suggest
         $test_name = 'the start page shows a calculated number of a problem';
-        $col_url = [url_var::DISPLAY_LIST_COLUMNS => value_list_ui::COLUMN_TIERS_ALL];
         $dto_ui->val_lst = $t_val->value_list_solution_prio_ui();
         $dto_ui->set_result_list($t_res->result_list_solution_prio_ui());
         $t->assert_text_contains($test_name, $list->start_list($dto_ui, $msg, $col_url),

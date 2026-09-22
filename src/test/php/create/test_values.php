@@ -885,6 +885,36 @@ class test_values extends test_objects
     }
 
     /**
+     * the ranking values of the start page plus a number of a problem whose only column is the
+     * "cost" column, which is a main column, so that the simple table of the mayor columns
+     * would show the row of that number without any number
+     *
+     * @return value_list the ranking values plus one number in a main column
+     */
+    function value_list_solution_prio_main_column(): value_list
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $lst = $this->value_list_solution_prio();
+        $lst->add($this->value_for_phrases([
+            $t_trp->global_warming()->phrase(),
+            $t_wrd->word_cost()->phrase(),
+            $t_wrd->word_2024()->phrase()
+        ]));
+        return $lst;
+    }
+
+    /**
+     * @return value_list_ui the frontend ranking values plus the main column number
+     */
+    function value_list_solution_prio_main_column_ui(): value_list_ui
+    {
+        $tl = new test_lib();
+        return $tl->list_to_ui(
+            $this->value_list_solution_prio_main_column(), [api_types::INCL_PHRASES]);
+    }
+
+    /**
      * the potential loss of global warming with the bounds of its probability range and its
      * confidence and the potential gain of its solution without bounds, with the numbers of
      * solution_prio.json, so that the range display of a value table can be tested: the bounds

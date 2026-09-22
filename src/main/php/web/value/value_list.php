@@ -619,6 +619,9 @@ class value_list extends ListBase
      *                       each and a "..." header that links to the full table
      * @param bool $with_range true to show the probability range behind each number by default,
      *                         false for the numbers only; the url of the page overrides both defaults
+     * @param bool $value_rows_only true to leave out the rows without a number in a shown column,
+     *                              so that the table has no empty row e.g. the ranking of the
+     *                              start page; false to show such a row with its phrases
      * @return string the html code of the value table or '' if this list is empty
      */
     function table_by_related_columns(
@@ -632,7 +635,8 @@ class value_list extends ListBase
         array        $url_array = [],
         bool         $col_values_only = false,
         int          $col_tiers = self::COLUMN_TIERS_ALL,
-        bool         $with_range = true
+        bool         $with_range = true,
+        bool         $value_rows_only = false
     ): string
     {
         $result = '';
@@ -761,6 +765,22 @@ class value_list extends ListBase
                 $cells[$row_key][$col_id][] = $val;
             }
 
+            // a phrase column is defined like a value column, so both kinds are shown in one
+            // order, e.g. the "solution" column between the "loss" and the "gain" column
+            $col_ids = $this->column_id_order($col_order, $col_phr, $phr_col);
+            // a simple table shows the first tiers only and one unit per column; the columns
+            // left out are still reachable via the "..." header, which links to the full table
+            $col_ids = $this->columns_of_tiers($col_ids, $col_phr, $phr_col, $rel_lst, $col_tiers);
+
+            // a row whose numbers are all in columns that this table does not show says nothing
+            // to the reader, e.g. the reward ratio of a problem in a table of the mayor tiers,
+            // so such a row is dropped before the cut and uses up none of the shown rows
+            if ($value_rows_only) {
+                $row_label = array_filter($row_label,
+                    fn($row_key) => $this->row_has_number($cells[$row_key], $col_ids),
+                    ARRAY_FILTER_USE_KEY);
+            }
+
             // a page must not fill the screen, because the user messages are shown below the
             // view and would else be hidden below the fold, so the rows are cut to the number
             // named by the url or else the configured number before the header is built; the
@@ -781,13 +801,6 @@ class value_list extends ListBase
                     $rest_col = true;
                 }
             }
-
-            // a phrase column is defined like a value column, so both kinds are shown in one
-            // order, e.g. the "solution" column between the "loss" and the "gain" column
-            $col_ids = $this->column_id_order($col_order, $col_phr, $phr_col);
-            // a simple table shows the first tiers only and one unit per column; the columns
-            // left out are still reachable via the "..." header, which links to the full table
-            $col_ids = $this->columns_of_tiers($col_ids, $col_phr, $phr_col, $rel_lst, $col_tiers);
 
             // the row column is headed by the phrase that the page phrase is built from, e.g.
             // "problem" for the page phrase "global problem", and stays empty if that phrase is
@@ -1438,6 +1451,23 @@ class value_list extends ListBase
             }
         }
         return $result;
+    }
+
+    /**
+     * true if the given row shows at least one number
+     *
+     * a phrase column names a phrase of the row and no number, so a row that has only phrase
+     * cells is empty for the reader; the values that fit no column are shown in the rest
+     * column, so they count as a number of the row as well
+     *
+     * @param array $row_cells the values of the row, keyed by the id of their column
+     * @param array $col_ids the ids of the columns that the table shows
+     * @return bool true if one of the shown columns has a value of this row
+     */
+    private function row_has_number(array $row_cells, array $col_ids): bool
+    {
+        $col_ids[] = '';
+        return array_intersect_key($row_cells, array_flip($col_ids)) != [];
     }
 
     /**

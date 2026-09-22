@@ -411,3 +411,13 @@ table is the "…" link (`value_list::all_columns_link`) to the same page with
 part of the page cache key, so the full version is a cached page of its own
 like the more version of a list. A page that is not known renders the "…" as
 plain text, the same gap as for the list tail.
+
+A row of the simple table whose numbers are all in a column of the full version
+would be empty, e.g. the reward ratio row of a problem, so the ranking of the
+start page is built with the `value_rows_only` option of
+`value_list::table_by_related_columns`, which drops a row without a number in a
+shown column before the row cut, so that such a row uses up none of the shown
+rows. A phrase column names a phrase of the row and no number, so a row with
+only phrase cells is dropped as well. Every other table keeps such a row, so
+the option is a default of the component (`ui_list::start_list`) and not a rule
+of the table.
