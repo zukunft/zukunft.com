@@ -3224,6 +3224,29 @@ class html_base
     }
 
     /**
+     * a popup menu that opens on a click without any javascript, because the html details
+     * element keeps the open state itself (docs/llm/frontend.md "Pure HTML, no JavaScript");
+     * the css class positions the entries below the label (see the menus of style_html.css)
+     *
+     * @param string $label the html code of the always shown part e.g. an icon or "..."
+     * @param string $items the html code of the list items of the menu
+     * @param string $style the css class of the menu e.g. styles::MENU_COLUMN
+     * @param string $title the mouseover text that says what the menu selects
+     * @return string the html code of the popup menu
+     */
+    function popup_menu(string $label, string $items, string $style, string $title = ''): string
+    {
+        $title_attr = '';
+        if ($title != '') {
+            $title_attr = ' ' . self::TITLE_HTML . '="' . htmlspecialchars($title, ENT_QUOTES) . '"';
+        }
+        $result = '<' . self::DETAILS . ' ' . self::CLASS_HTML . '="' . $style . '">';
+        $result .= '<' . self::SUMMARY . $title_attr . '>' . $label . '</' . self::SUMMARY . '>';
+        $result .= $this->list_unsorted($items);
+        return $result . '</' . self::DETAILS . '>';
+    }
+
+    /**
      * html unsorted list
      * @param string $txt the html code of the list entries
      * @param string $style the css class of the list e.g. styles::VALUE_ITEMS

@@ -46,11 +46,11 @@ include_once html_paths::VALUE . 'value_list.php';
 
 use Zukunft\ZukunftCom\main\php\shared\const\results;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
-use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_list;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\result\result_list as result_list_ui;
 use Zukunft\ZukunftCom\main\php\web\value\value_list as value_list_ui;
@@ -161,17 +161,24 @@ class start_ui_tests
         $t->assert_text_not_contains($test_name, $list->start_list($dto_ui, $msg, $col_url),
             '>' . triple_names::GLOBAL_WARMING . '</a>');
 
-        // the start page opens with the simple table, whose "..." header links to the same page
-        // with every column and the range of each number; the full page has no "..." header
-        $test_name = 'the simple start page links to the full table';
+        // the start page opens with the mayor columns, whose "..." header opens the menu that
+        // selects the columns, so every column tier of the ranking is one click away
         $url_array = [url_var::MASK => views::START_ID];
-        $t->assert_text_contains($test_name, $list->start_list($dto_ui, $msg, $url_array),
-            url_var::DISPLAY_LIST_COLUMNS . '=' . value_list_ui::COLUMN_TIERS_ALL);
-        $test_name = 'the full start page has no "..." header';
+        $start_menu = $list->start_list($dto_ui, $msg, $url_array);
+        foreach (value_list_ui::COLUMN_TIER_NAMES as $tiers => $msg_tier) {
+            $test_name = 'the start page menu selects ' . $msg_tier->text();
+            $t->assert_text_contains($test_name, $start_menu,
+                url_var::DISPLAY_LIST_COLUMNS . '=' . $tiers);
+        }
+        $test_name = 'the start page menu needs no javascript';
+        $t->assert_text_not_contains($test_name, $start_menu, '<script');
+        // the full table shows the menu as well, so that the reader can narrow the columns
+        // again without the back button
+        $test_name = 'the full start page shows the menu too';
         $url_array[url_var::DISPLAY_LIST_COLUMNS] = value_list_ui::COLUMN_TIERS_ALL;
         $url_array[url_var::DISPLAY_LIST_RANGE] = url_var::TRUE;
-        $t->assert_text_not_contains($test_name, $list->start_list($dto_ui, $msg, $url_array),
-            '<' . html_base::TH . '>' . msg_id::THREE_POINTS->text());
+        $t->assert_text_contains($test_name, $list->start_list($dto_ui, $msg, $url_array),
+            styles::MENU_COLUMN);
 
         // negative: without the values of the global issues the start page shows no table at all
         // instead of an empty header row

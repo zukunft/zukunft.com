@@ -1428,7 +1428,7 @@ class ui_list extends ui_base
      *                         call the same page with the next list size
      * @param bool $col_values_only true to leave out the values that share no column phrase, so
      *                              that the table stays a grid of its columns (see value_list)
-     * @param int $col_tiers the number of column tiers to show by default (see value_list)
+     * @param int $col_tiers the number of column tiers left out by default (see value_list)
      * @param bool $with_range true to show the probability ranges by default (see value_list)
      * @param bool $value_rows_only true to leave out the rows without a number (see value_list)
      * @return string the html code of the value table or '' if the phrase has no values
@@ -1931,7 +1931,7 @@ class ui_list extends ui_base
         // all in a column left out is no part of the ranking either, e.g. the reward ratio row
         // of a problem, so the ranking shows the rows with a number only
         return $this->table_with_related_columns($phr->obj(), $msg, $dto, true, false, $url_array,
-            true, value_list::COLUMN_TIERS_MAYOR, false, true);
+            true, value_list::COLUMN_TIERS_EX_MAIN, false, true);
     }
 
     /**

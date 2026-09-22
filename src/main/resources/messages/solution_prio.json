@@ -387,6 +387,9 @@
       "name": "minor"
     },
     {
+      "name": "marginal"
+    },
+    {
       "name": "before",
       "description": "placed ahead of another element in an order"
     },
@@ -1025,6 +1028,14 @@
       "code_id": "system_column_minor"
     },
     {
+      "name": "marginal column (system)",
+      "description": "keyword for columns that should be shown only if the screen is very wide",
+      "from": "column (system)",
+      "verb": "can be",
+      "to": "marginal",
+      "code_id": "system_column_marginal"
+    },
+    {
       "name": "column problem (high prio)",
       "description": "the table column 'problem' that should be shown also on small screens",
       "from": "problem",
@@ -1032,23 +1043,9 @@
       "to": "mayor column (system)"
     },
     {
-      "name": "column solution (high prio)",
-      "description": "the table column 'solution' that should be shown also on small screens",
-      "from": "solution",
-      "verb": "can be",
-      "to": "mayor column (system)"
-    },
-    {
-      "name": "column cost",
-      "description": "the table column 'cost' with the cost of the problem in a currency, which explains the loss column and is therefore shown only if the screen is not small",
-      "from": "cost",
-      "verb": "can be",
-      "to": "main column (system)"
-    },
-    {
-      "name": "column gain",
-      "description": "the table column 'gain' that should be shown also on small screens",
-      "from": "gain",
+      "name": "column potential loss",
+      "description": "the table column 'potential loss' with the loss of the problem as a share of the world GDP or of the global happy time points; a mayor column, so the simple start page shows it",
+      "from": "potential loss",
       "verb": "can be",
       "to": "mayor column (system)"
     },
@@ -1060,16 +1057,44 @@
       "to": "mayor column (system)"
     },
     {
-      "name": "column priority",
-      "description": "the table column 'priority' that should not be shown on small screens",
-      "from": "priority",
+      "name": "column solution (high prio)",
+      "description": "the table column 'solution' that should be shown also on small screens",
+      "from": "solution",
       "verb": "can be",
-      "to": "main column (system)"
+      "to": "mayor column (system)"
+    },
+    {
+      "name": "column potential gain",
+      "description": "the table column 'potential gain' with the gain of the solution as a share of the global happy time points; a mayor column, so the simple start page shows it",
+      "from": "potential gain",
+      "verb": "can be",
+      "to": "mayor column (system)"
+    },
+    {
+      "name": "column gain",
+      "description": "the table column 'gain' that should be shown also on small screens",
+      "from": "gain",
+      "verb": "can be",
+      "to": "mayor column (system)"
     },
     {
       "name": "column ranking",
       "description": "the table column 'ranking' that should not be shown on small screens",
       "from": "ranking",
+      "verb": "can be",
+      "to": "main column (system)"
+    },
+    {
+      "name": "column cost",
+      "description": "the table column 'cost' with the cost of the problem in a currency, which explains the loss column and is therefore shown only if the screen is not small",
+      "from": "cost",
+      "verb": "can be",
+      "to": "main column (system)"
+    },
+    {
+      "name": "column priority",
+      "description": "the table column 'priority' that should not be shown on small screens",
+      "from": "priority",
       "verb": "can be",
       "to": "main column (system)"
     },
@@ -1139,20 +1164,6 @@
       "from": "source",
       "verb": "can be",
       "to": "minor column (system)"
-    },
-    {
-      "name": "column potential loss",
-      "description": "the table column 'potential loss' with the loss of the problem as a share of the world GDP or of the global happy time points; a mayor column, so the simple start page shows it",
-      "from": "potential loss",
-      "verb": "can be",
-      "to": "mayor column (system)"
-    },
-    {
-      "name": "column potential gain",
-      "description": "the table column 'potential gain' with the gain of the solution as a share of the global happy time points; a mayor column, so the simple start page shows it",
-      "from": "potential gain",
-      "verb": "can be",
-      "to": "mayor column (system)"
     },
     {
       "name": "column confidence",
@@ -1541,7 +1552,7 @@
       "name": "column reward ratio",
       "from": "reward ratio",
       "verb": "can be",
-      "to": "main column (system)"
+      "to": "minor column (system)"
     },
     {
       "name": "probability range",
@@ -1554,7 +1565,7 @@
       "name": "column probability range",
       "from": "probability range",
       "verb": "can be",
-      "to": "main column (system)"
+      "to": "minor column (system)"
     },
     {
       "from": "wealth concentration",

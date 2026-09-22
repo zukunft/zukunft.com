@@ -112,10 +112,21 @@ class value_list extends ListBase
 
     // show every row of a table instead of the configured number (like type_list::LIMIT_ALL)
     const int LIMIT_ALL = 0;
-    // the column tiers of a table to show: every tier, every unit and the ranges, or only the
-    // mayor columns with one unit each and the numbers without ranges (docs/llm/frontend.md)
+    // the column tiers of a table to show: the number says how many tiers of
+    // triples::SYSTEM_COLUMN_TIERS are left out from the bottom, so a higher number is a
+    // narrower table and zero shows every tier, every unit and the ranges; the menu of the
+    // "..." header selects one of them (docs/llm/frontend.md)
     const int COLUMN_TIERS_ALL = 0;
-    const int COLUMN_TIERS_MAYOR = 1;
+    const int COLUMN_TIERS_EX_MARGINAL = 1;
+    const int COLUMN_TIERS_EX_MINOR = 2;
+    const int COLUMN_TIERS_EX_MAIN = 3;
+    // the name of each column tier selection for the "..." menu, the narrowest table first
+    const array COLUMN_TIER_NAMES = [
+        self::COLUMN_TIERS_EX_MAIN => msg_id::TABLE_COLUMNS_MAYOR,
+        self::COLUMN_TIERS_EX_MINOR => msg_id::TABLE_COLUMNS_MAIN,
+        self::COLUMN_TIERS_EX_MARGINAL => msg_id::TABLE_COLUMNS_MINOR,
+        self::COLUMN_TIERS_ALL => msg_id::TABLE_COLUMNS_ALL,
+    ];
     // the probability range of a value is shown behind its centre value e.g. "2.2 (0.88 – 5.5)"
     const string RANGE_START = ' (';
     const string RANGE_SEP = ' – ';
@@ -614,9 +625,10 @@ class value_list extends ListBase
      * @param bool $col_values_only true to leave out the values that share no column phrase, so
      *                              that the table stays a grid of its columns e.g. the ranking of
      *                              the start page; false to show them in a last "Values" column
-     * @param int $col_tiers the number of column tiers to show by default, self::COLUMN_TIERS_ALL
-     *                       for every column; a simple table shows the mayor columns with one unit
-     *                       each and a "..." header that links to the full table
+     * @param int $col_tiers the number of column tiers left out by default,
+     *                       self::COLUMN_TIERS_ALL for every column; a simple table shows the
+     *                       tiers above with one unit each and the "..." header whose menu
+     *                       selects the columns
      * @param bool $with_range true to show the probability range behind each number by default,
      *                         false for the numbers only; the url of the page overrides both defaults
      * @param bool $value_rows_only true to leave out the rows without a number in a shown column,
@@ -648,7 +660,6 @@ class value_list extends ListBase
         if (array_key_exists(url_var::DISPLAY_LIST_RANGE, $url_array)) {
             $with_range = ($url_array[url_var::DISPLAY_LIST_RANGE] == url_var::TRUE);
         }
-        $full_table = ($col_tiers == self::COLUMN_TIERS_ALL and $with_range);
         if (!$this->is_empty()) {
             $html = new html_base();
             // the row order follows the impact, so it never depends on the api/db row order
@@ -768,8 +779,9 @@ class value_list extends ListBase
             // a phrase column is defined like a value column, so both kinds are shown in one
             // order, e.g. the "solution" column between the "loss" and the "gain" column
             $col_ids = $this->column_id_order($col_order, $col_phr, $phr_col);
-            // a simple table shows the first tiers only and one unit per column; the columns
-            // left out are still reachable via the "..." header, which links to the full table
+            // a simple table shows the first tiers only, and the table of the mayor tier alone
+            // one unit per column; the columns left out are still reachable via the menu of
+            // the "..." header
             $col_ids = $this->columns_of_tiers($col_ids, $col_phr, $phr_col, $rel_lst, $col_tiers);
 
             // a row whose numbers are all in columns that this table does not show says nothing
@@ -821,10 +833,9 @@ class value_list extends ListBase
             if ($rest_col) {
                 $header .= $html->th(msg_id::FORM_SUB_TITLE_VALUES->text());
             }
-            // a simple table ends with the "..." header that links to the full table
-            if (!$full_table) {
-                $header .= $html->th($this->all_columns_link($url_array));
-            }
+            // every table ends with the "..." header that opens the column menu, also the full
+            // table, so that the reader can narrow the columns again from every version
+            $header .= $html->th($this->columns_menu($url_array));
             $rows = $html->tr($header);
             foreach ($shown_keys as $row_key) {
                 $row = $html->td($row_label[$row_key]);
@@ -840,9 +851,8 @@ class value_list extends ListBase
                 if ($rest_col) {
                     $row .= $this->cell($cells[$row_key][''] ?? [], $msg, $url_array, '', $with_range);
                 }
-                if (!$full_table) {
-                    $row .= $html->td('');
-                }
+                // the cell below the "..." header, which the menu of that header covers
+                $row .= $html->td('');
                 $rows .= $html->tr($row);
             }
             // the rows behind the shown ones, so a later page counts its own rest only
@@ -854,9 +864,8 @@ class value_list extends ListBase
                 if ($rest_col) {
                     $pad_styles[] = '';
                 }
-                if (!$full_table) {
-                    $pad_styles[] = '';
-                }
+                // the column of the "..." header
+                $pad_styles[] = '';
                 $more_url = $this->more_url($url_array, $row_limit, $msg);
                 $rows .= $this->tr_more($diff, $context_phr_lst, $pad_styles, $more_url);
             }
@@ -1824,7 +1833,7 @@ class value_list extends ListBase
      * @param array $col_phr the value column phrases by column id
      * @param array $phr_col the phrase column phrases by column id
      * @param phrase_list|null $rel_lst the phrases related to the page phrase with the definitions
-     * @param int $col_tiers the number of column tiers to show, self::COLUMN_TIERS_ALL for every column
+     * @param int $col_tiers the number of column tiers left out, self::COLUMN_TIERS_ALL for every column
      * @return array the ids of the columns to show
      */
     private function columns_of_tiers(
@@ -1837,11 +1846,20 @@ class value_list extends ListBase
     {
         $result = $col_ids;
         if ($col_tiers != self::COLUMN_TIERS_ALL) {
+            // the tiers are left out from the bottom, so e.g. a table that leaves out the
+            // marginal tier shows every column up to the tier above it
+            $last_tier = count(triples::SYSTEM_COLUMN_TIERS) - $col_tiers;
+            // a further unit of a column states the same measure a second way, e.g. the
+            // potential loss in percent of the GDP besides the loss in trillion EUR, so it is
+            // left to the tier below the mayor columns: only the table that shows the mayor
+            // tier alone keeps one number per column
+            $one_unit_only = ($last_tier <= 1);
             $result = [];
             foreach ($col_ids as $col_id) {
                 $phr = $col_phr[$col_id] ?? $phr_col[$col_id];
                 $is_first_unit = !str_contains((string)$col_id, self::UNIT_COLUMN_SEP);
-                if ($is_first_unit and $this->tier_level($phr->name(), $rel_lst) <= $col_tiers) {
+                $unit_shown = ($is_first_unit or !$one_unit_only);
+                if ($unit_shown and $this->tier_level($phr->name(), $rel_lst) <= $last_tier) {
                     $result[] = $col_id;
                 }
             }
@@ -1866,25 +1884,59 @@ class value_list extends ListBase
     }
 
     /**
-     * the "..." header of a simple table that links to the full table with every column tier,
-     * every unit and the range of each number, so that the simple table hides nothing for good
+     * the "..." header of a table that opens the menu to select the columns shown: one entry
+     * per column tier and each of them once with and once without the probability range, so
+     * that the reader reaches every version of the table from every version
      * (docs/llm/frontend.md "... more is always a link"); plain text if the page is not known
      *
      * @param array $url_array the url parameters of the page that shows the table
      * @return string the html code of the header cell
      */
-    private function all_columns_link(array $url_array): string
+    private function columns_menu(array $url_array): string
     {
         $html = new html_base();
         $result = msg_id::THREE_POINTS->text();
         if ($url_array != []) {
-            $url_pars = html_base::page_url_array($url_array);
-            $url_pars[url_var::DISPLAY_LIST_COLUMNS] = self::COLUMN_TIERS_ALL;
-            $url_pars[url_var::DISPLAY_LIST_RANGE] = url_var::TRUE;
-            $url = api::MAIN_SCRIPT . url_var::PAR . http_build_query($url_pars);
-            $result = $html->ref($url, $result, msg_id::TABLE_ALL_COLUMNS_TIP->text());
+            $items = '';
+            foreach (self::COLUMN_TIER_NAMES as $tiers => $tier_msg) {
+                $items .= $this->columns_menu_item($url_array, $tiers, $tier_msg, false);
+                $items .= $this->columns_menu_item($url_array, $tiers, $tier_msg, true);
+            }
+            $result = $html->popup_menu(
+                $result, $items, styles::MENU_COLUMN, msg_id::TABLE_COLUMNS_TIP->text());
         }
         return $result;
+    }
+
+    /**
+     * one entry of the column menu, which shows the same page with the given column tiers
+     *
+     * @param array $url_array the url parameters of the page that shows the table
+     * @param int $tiers the column tiers of this entry e.g. self::COLUMN_TIERS_ALL
+     * @param msg_id $tier_msg the name of the column tiers e.g. "all columns"
+     * @param bool $with_range true for the entry that shows the range behind each number
+     * @return string the html code of the menu entry
+     */
+    private function columns_menu_item(
+        array  $url_array,
+        int    $tiers,
+        msg_id $tier_msg,
+        bool   $with_range
+    ): string
+    {
+        $html = new html_base();
+        $url_pars = html_base::page_url_array($url_array);
+        // the two vars are removed first, so that a page that already selects columns creates
+        // the same url as a page that does not, which keeps one cached page per selection
+        unset($url_pars[url_var::DISPLAY_LIST_COLUMNS], $url_pars[url_var::DISPLAY_LIST_RANGE]);
+        $url_pars[url_var::DISPLAY_LIST_COLUMNS] = $tiers;
+        $url_pars[url_var::DISPLAY_LIST_RANGE] = $with_range ? url_var::TRUE : url_var::FALSE;
+        $url = api::MAIN_SCRIPT . url_var::PAR . http_build_query($url_pars);
+        $name = $tier_msg->text();
+        if ($with_range) {
+            $name .= ' ' . msg_id::TABLE_COLUMNS_WITH_RANGE->text();
+        }
+        return $html->list_item($html->ref($url, $name));
     }
 
     /**
@@ -1902,6 +1954,8 @@ class value_list extends ListBase
             $result = styles::COL_MAIN;
         } elseif ($tier == triples::SYSTEM_COLUMN_MINOR) {
             $result = styles::COL_MINOR;
+        } elseif ($tier == triples::SYSTEM_COLUMN_MARGINAL) {
+            $result = styles::COL_MARGINAL;
         }
         return $result;
     }

@@ -7109,6 +7109,7 @@
     \-- div_bs - section for function div_bs not yet defined that it should be internal in /html/html_base.php
     \-- button_bs - section for function button_bs not yet defined that it should be internal in /html/html_base.php
     \-- list_item - section for function list_item not yet defined that it should be internal in /html/html_base.php
+    \-- popup_menu - section for function popup_menu not yet defined that it should be internal in /html/html_base.php
     \-- list_unsorted - section for function list_unsorted not yet defined that it should be internal in /html/html_base
             .php
 \-- html_selector
@@ -9774,6 +9775,8 @@
         \-- html_base - wrap the button tag around html code
     \-- list_item
         \-- html_base - html list item entry
+    \-- popup_menu
+        \-- html_base - a popup menu that opens on a click without any javascript, because the html details
     \-- list_unsorted
         \-- html_base - html unsorted list
 \-- table

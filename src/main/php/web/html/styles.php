@@ -56,10 +56,15 @@ class styles
     const string STYLE_BORDERLESS_GREY = 'borderless_grey';
     const string TABLE_PUR = 'table';
     const string TEXT_RIGHT = 'text-right';
-    // a table column of the main tier is hidden on a small screen and one of the minor tier is
-    // shown on a wide screen only (see triples::SYSTEM_COLUMN_TIERS)
+    // a table column of the main tier is hidden on a small screen, one of the minor tier is
+    // shown on a wide screen only and one of the marginal tier only on the widest screen
+    // (see triples::SYSTEM_COLUMN_TIERS)
     const string COL_MAIN = 'd-none d-md-table-cell';
     const string COL_MINOR = 'd-none d-xl-table-cell';
+    const string COL_MARGINAL = 'd-none d-xxl-table-cell';
+    // the popup menu of the "..." table header that selects the columns shown, styled like
+    // the menus of the page header (see style_html.css)
+    const string MENU_COLUMN = 'column-menu';
     // bootstrap css class to center a line e.g. the phrase above a value table
     const string TEXT_CENTER = 'text-center';
     // bootstrap css class to keep a short line like 'has aliases: $, U.S. dollar' unbroken
