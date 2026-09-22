@@ -125,7 +125,7 @@ class url_var
     const string VIEW_TERM_LINK = 'dl'; // to link a view to a term
     const string DISPLAY_LIST_PAGE = 'dlp'; // the page of a list that is longer than the display list size, starting with 0
     const string DISPLAY_LIST_SIZE = 'dls'; // the number of rows of a list shown on a page, which a "... more" link raises to the next level (docs/llm/frontend.md "Short, more and all")
-    const string DISPLAY_LIST_COLUMNS = 'dlc'; // the number of column tiers of a table shown, which the "..." header raises to every column (0)
+    const string DISPLAY_LIST_COLUMNS = 'dlc'; // the number of column tiers of a table left out, which the "..." header lowers step by step from the mayor columns (3, ex main) over ex minor (2) and ex marginal (1) to every column (0)
     const string DISPLAY_LIST_RANGE = 'dlr'; // 1 to show the probability range behind each number of a table, 0 for the numbers only
     const string VIEW_CHILD = 'dm'; // the display view that modifies the parent view
     const string DOI = 'do'; // the digital object identifier of a source used to create the url to doi.org

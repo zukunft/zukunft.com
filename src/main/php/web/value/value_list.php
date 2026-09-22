@@ -51,6 +51,7 @@ include_once html_paths::PHRASE . 'phrase_list.php';
 //include_once html_paths::REF . 'source.php';
 //include_once html_paths::RESULT . 'result_list.php';
 include_once html_paths::SANDBOX . 'db_object.php';
+include_once html_paths::SANDBOX . 'sandbox_value.php';
 include_once html_paths::TYPES . 'type_object.php';
 include_once html_paths::USER . 'user_message.php';
 //include_once html_paths::VALUE . 'value.php';
@@ -86,6 +87,7 @@ use Zukunft\ZukunftCom\main\php\web\ref\source;
 use Zukunft\ZukunftCom\main\php\web\result\result_list;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\sandbox\ListBase;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_value;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\types\type_object;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
@@ -110,10 +112,21 @@ class value_list extends ListBase
 
     // show every row of a table instead of the configured number (like type_list::LIMIT_ALL)
     const int LIMIT_ALL = 0;
-    // the column tiers of a table to show: every tier, every unit and the ranges, or only the
-    // mayor columns with one unit each and the numbers without ranges (docs/llm/frontend.md)
+    // the column tiers of a table to show: the number says how many tiers of
+    // triples::SYSTEM_COLUMN_TIERS are left out from the bottom, so a higher number is a
+    // narrower table and zero shows every tier, every unit and the ranges; the menu of the
+    // "..." header selects one of them (docs/llm/frontend.md)
     const int COLUMN_TIERS_ALL = 0;
-    const int COLUMN_TIERS_MAYOR = 1;
+    const int COLUMN_TIERS_EX_MARGINAL = 1;
+    const int COLUMN_TIERS_EX_MINOR = 2;
+    const int COLUMN_TIERS_EX_MAIN = 3;
+    // the name of each column tier selection for the "..." menu, the narrowest table first
+    const array COLUMN_TIER_NAMES = [
+        self::COLUMN_TIERS_EX_MAIN => msg_id::TABLE_COLUMNS_MAYOR,
+        self::COLUMN_TIERS_EX_MINOR => msg_id::TABLE_COLUMNS_MAIN,
+        self::COLUMN_TIERS_EX_MARGINAL => msg_id::TABLE_COLUMNS_MINOR,
+        self::COLUMN_TIERS_ALL => msg_id::TABLE_COLUMNS_ALL,
+    ];
     // the probability range of a value is shown behind its centre value e.g. "2.2 (0.88 – 5.5)"
     const string RANGE_START = ' (';
     const string RANGE_SEP = ' – ';
@@ -230,6 +243,24 @@ class value_list extends ListBase
     }
 
     /**
+     * add the given results to this list, so that a table shows the calculated numbers of a row
+     * next to the measured ones, e.g. the reward ratio next to the potential loss of a problem
+     *
+     * a result that repeats the phrase group of a value of this list is refused and reported,
+     * because the same group says the same thing twice, once measured and once calculated
+     *
+     * @param result_list $res_lst the results to show with the values of this list
+     * @param user_message $msg to report a result that repeats the group of a value
+     * @return void
+     */
+    function add_results(result_list $res_lst, user_message $msg): void
+    {
+        foreach ($res_lst->lst() as $res) {
+            $this->add_obj($res, false, $msg);
+        }
+    }
+
+    /**
      * get a list with the values related directly to the given word, triple, source or value
      *
      * @param word|triple|source|value|formula|db_object|type_object|null $dbo to filter the values
@@ -293,7 +324,7 @@ class value_list extends ListBase
         // id is its phrase group key, packed from the word/triple db ids, which the seed assigns
         // serially and shift between test database rebuilds, so an id tiebreak reorders the list per
         // rebuild; the group name is built from the (stable) phrase names (see docs/llm/frontend.md)
-        usort($lst, fn(value $a, value $b) => $b->impact() <=> $a->impact()
+        usort($lst, fn(sandbox_value $a, sandbox_value $b) => $b->impact() <=> $a->impact()
             ?: $b->number() <=> $a->number()
                 ?: strcmp($a->name() ?? '', $b->name() ?? ''));
         $this->set_lst($lst);
@@ -472,7 +503,7 @@ class value_list extends ListBase
                 }
             }
         }
-        $rest = array_values(array_filter($pool, fn(value $val) => !isset($grouped[$val->id()])));
+        $rest = array_values(array_filter($pool, fn(sandbox_value $val) => !isset($grouped[$val->id()])));
         return [$result, $rest, $budget];
     }
 
@@ -594,11 +625,15 @@ class value_list extends ListBase
      * @param bool $col_values_only true to leave out the values that share no column phrase, so
      *                              that the table stays a grid of its columns e.g. the ranking of
      *                              the start page; false to show them in a last "Values" column
-     * @param int $col_tiers the number of column tiers to show by default, self::COLUMN_TIERS_ALL
-     *                       for every column; a simple table shows the mayor columns with one unit
-     *                       each and a "..." header that links to the full table
+     * @param int $col_tiers the number of column tiers left out by default,
+     *                       self::COLUMN_TIERS_ALL for every column; a simple table shows the
+     *                       tiers above with one unit each and the "..." header whose menu
+     *                       selects the columns
      * @param bool $with_range true to show the probability range behind each number by default,
      *                         false for the numbers only; the url of the page overrides both defaults
+     * @param bool $value_rows_only true to leave out the rows without a number in a shown column,
+     *                              so that the table has no empty row e.g. the ranking of the
+     *                              start page; false to show such a row with its phrases
      * @return string the html code of the value table or '' if this list is empty
      */
     function table_by_related_columns(
@@ -612,7 +647,8 @@ class value_list extends ListBase
         array        $url_array = [],
         bool         $col_values_only = false,
         int          $col_tiers = self::COLUMN_TIERS_ALL,
-        bool         $with_range = true
+        bool         $with_range = true,
+        bool         $value_rows_only = false
     ): string
     {
         $result = '';
@@ -624,7 +660,6 @@ class value_list extends ListBase
         if (array_key_exists(url_var::DISPLAY_LIST_RANGE, $url_array)) {
             $with_range = ($url_array[url_var::DISPLAY_LIST_RANGE] == url_var::TRUE);
         }
-        $full_table = ($col_tiers == self::COLUMN_TIERS_ALL and $with_range);
         if (!$this->is_empty()) {
             $html = new html_base();
             // the row order follows the impact, so it never depends on the api/db row order
@@ -741,6 +776,23 @@ class value_list extends ListBase
                 $cells[$row_key][$col_id][] = $val;
             }
 
+            // a phrase column is defined like a value column, so both kinds are shown in one
+            // order, e.g. the "solution" column between the "loss" and the "gain" column
+            $col_ids = $this->column_id_order($col_order, $col_phr, $phr_col);
+            // a simple table shows the first tiers only, and the table of the mayor tier alone
+            // one unit per column; the columns left out are still reachable via the menu of
+            // the "..." header
+            $col_ids = $this->columns_of_tiers($col_ids, $col_phr, $phr_col, $rel_lst, $col_tiers);
+
+            // a row whose numbers are all in columns that this table does not show says nothing
+            // to the reader, e.g. the reward ratio of a problem in a table of the mayor tiers,
+            // so such a row is dropped before the cut and uses up none of the shown rows
+            if ($value_rows_only) {
+                $row_label = array_filter($row_label,
+                    fn($row_key) => $this->row_has_number($cells[$row_key], $col_ids),
+                    ARRAY_FILTER_USE_KEY);
+            }
+
             // a page must not fill the screen, because the user messages are shown below the
             // view and would else be hidden below the fold, so the rows are cut to the number
             // named by the url or else the configured number before the header is built; the
@@ -762,13 +814,6 @@ class value_list extends ListBase
                 }
             }
 
-            // a phrase column is defined like a value column, so both kinds are shown in one
-            // order, e.g. the "solution" column between the "loss" and the "gain" column
-            $col_ids = $this->column_id_order($col_order, $col_phr, $phr_col);
-            // a simple table shows the first tiers only and one unit per column; the columns
-            // left out are still reachable via the "..." header, which links to the full table
-            $col_ids = $this->columns_of_tiers($col_ids, $col_phr, $phr_col, $rel_lst, $col_tiers);
-
             // the row column is headed by the phrase that the page phrase is built from, e.g.
             // "problem" for the page phrase "global problem", and stays empty if that phrase is
             // no defined column, because the row phrases differ per row
@@ -788,10 +833,9 @@ class value_list extends ListBase
             if ($rest_col) {
                 $header .= $html->th(msg_id::FORM_SUB_TITLE_VALUES->text());
             }
-            // a simple table ends with the "..." header that links to the full table
-            if (!$full_table) {
-                $header .= $html->th($this->all_columns_link($url_array));
-            }
+            // every table ends with the "..." header that opens the column menu, also the full
+            // table, so that the reader can narrow the columns again from every version
+            $header .= $html->th($this->columns_menu($url_array));
             $rows = $html->tr($header);
             foreach ($shown_keys as $row_key) {
                 $row = $html->td($row_label[$row_key]);
@@ -807,9 +851,8 @@ class value_list extends ListBase
                 if ($rest_col) {
                     $row .= $this->cell($cells[$row_key][''] ?? [], $msg, $url_array, '', $with_range);
                 }
-                if (!$full_table) {
-                    $row .= $html->td('');
-                }
+                // the cell below the "..." header, which the menu of that header covers
+                $row .= $html->td('');
                 $rows .= $html->tr($row);
             }
             // the rows behind the shown ones, so a later page counts its own rest only
@@ -821,9 +864,8 @@ class value_list extends ListBase
                 if ($rest_col) {
                     $pad_styles[] = '';
                 }
-                if (!$full_table) {
-                    $pad_styles[] = '';
-                }
+                // the column of the "..." header
+                $pad_styles[] = '';
                 $more_url = $this->more_url($url_array, $row_limit, $msg);
                 $rows .= $this->tr_more($diff, $context_phr_lst, $pad_styles, $more_url);
             }
@@ -1148,11 +1190,11 @@ class value_list extends ListBase
     }
 
     /**
-     * @param value $val the value to check
+     * @param sandbox_value $val the value or result to check
      * @param string $name the phrase name to look for
      * @return bool true if a phrase of the value has the given name
      */
-    private function has_phrase_name(value $val, string $name): bool
+    private function has_phrase_name(sandbox_value $val, string $name): bool
     {
         return in_array($name, $val->grp->phr_lst()->names());
     }
@@ -1163,21 +1205,21 @@ class value_list extends ListBase
      * such a value is shown as the tooltip of the value with the same subject (see cell), so it
      * is neither a value of a cell nor does its unit, which is always a share, name the column
      *
-     * @param value $val the value to check
+     * @param sandbox_value $val the value or result to check
      * @return bool true if the value states a confidence
      */
-    private function is_confidence(value $val): bool
+    private function is_confidence(sandbox_value $val): bool
     {
         return $this->has_phrase_name($val, words::CONFIDENCE);
     }
 
     /**
-     * @param value $val the value to describe
+     * @param sandbox_value $val the value or result to describe
      * @param user_message $msg to report a problem of reading a phrase type
      * @return array the phrase names of the value without the markers and units, which is what a
      *               value shares with its confidence value
      */
-    private function subject_names(value $val, user_message $msg): array
+    private function subject_names(sandbox_value $val, user_message $msg): array
     {
         $names = [];
         foreach ($val->grp->phr_lst()->lst() as $phr) {
@@ -1196,12 +1238,12 @@ class value_list extends ListBase
      * that problem, which names the solution too (see solution_prio.json), so a confidence value
      * that names less than the value it qualifies is still matched
      *
-     * @param value $conf_val the confidence value
-     * @param value $val the value that the confidence value may qualify
+     * @param sandbox_value $conf_val the confidence value
+     * @param sandbox_value $val the value or result that the confidence value may qualify
      * @param user_message $msg to report a problem of reading a phrase type
      * @return bool true if the value carries all subject phrases of the confidence value
      */
-    private function qualifies(value $conf_val, value $val, user_message $msg): bool
+    private function qualifies(sandbox_value $conf_val, sandbox_value $val, user_message $msg): bool
     {
         return array_diff(
                 $this->subject_names($conf_val, $msg),
@@ -1209,11 +1251,11 @@ class value_list extends ListBase
     }
 
     /**
-     * @param value $val the value to key
+     * @param sandbox_value $val the value or result to key
      * @return string the names of the unit phrases of the value, encoded like the range key, so
      *                that the values of one measure share the key e.g. "trillion EUR"
      */
-    private function unit_key(value $val, user_message $msg): string
+    private function unit_key(sandbox_value $val, user_message $msg): string
     {
         $names = [];
         foreach ($val->grp->phr_lst()->lst() as $phr) {
@@ -1264,11 +1306,11 @@ class value_list extends ListBase
      * the unit of the values that the given confidence value qualifies
      *
      * @param array $unit_lst per unit the values of that unit collected so far
-     * @param value $conf_val the confidence value to place
+     * @param sandbox_value $conf_val the confidence value to place
      * @param user_message $msg to report a problem of reading a phrase type
      * @return string the unit key of the qualified values or an empty string if none is qualified
      */
-    private function unit_of_qualified(array $unit_lst, value $conf_val, user_message $msg): string
+    private function unit_of_qualified(array $unit_lst, sandbox_value $conf_val, user_message $msg): string
     {
         $result = '';
         // the first unit with a qualified value wins, so the confidence follows the leading unit
@@ -1302,10 +1344,10 @@ class value_list extends ListBase
     }
 
     /**
-     * @param value $val the value to check
+     * @param sandbox_value $val the value or result to check
      * @return string the range word of the value e.g. "low", or an empty string for a centre value
      */
-    private function range_word(value $val): string
+    private function range_word(sandbox_value $val): string
     {
         $result = '';
         foreach ($val->grp->phr_lst()->lst() as $phr) {
@@ -1317,12 +1359,12 @@ class value_list extends ListBase
     }
 
     /**
-     * @param value $val the value to key
+     * @param sandbox_value $val the value or result to key
      * @return string the phrase names of the value without the range word, which a centre value
      *                shares with its bounds; encoded, so that a comma in a name cannot join two
      *                different phrase sets to the same key
      */
-    private function range_key(value $val): string
+    private function range_key(sandbox_value $val): string
     {
         $names = array_diff($val->grp->phr_lst()->names(), words::RANGE_WORDS);
         sort($names);
@@ -1421,13 +1463,30 @@ class value_list extends ListBase
     }
 
     /**
+     * true if the given row shows at least one number
+     *
+     * a phrase column names a phrase of the row and no number, so a row that has only phrase
+     * cells is empty for the reader; the values that fit no column are shown in the rest
+     * column, so they count as a number of the row as well
+     *
+     * @param array $row_cells the values of the row, keyed by the id of their column
+     * @param array $col_ids the ids of the columns that the table shows
+     * @return bool true if one of the shown columns has a value of this row
+     */
+    private function row_has_number(array $row_cells, array $col_ids): bool
+    {
+        $col_ids[] = '';
+        return array_intersect_key($row_cells, array_flip($col_ids)) != [];
+    }
+
+    /**
      * the phrase of the given value that belongs into a phrase column
      *
-     * @param value $val the value whose phrases are searched
+     * @param sandbox_value $val the value or result whose phrases are searched
      * @param array $child_names the names of the phrases linked to the column phrase
      * @return phrase|null the first phrase of the value that the column covers or null if none
      */
-    private function phrase_of_column(value $val, array $child_names): ?phrase
+    private function phrase_of_column(sandbox_value $val, array $child_names): ?phrase
     {
         $result = null;
         foreach ($val->grp->phr_lst()->lst() as $phr) {
@@ -1774,7 +1833,7 @@ class value_list extends ListBase
      * @param array $col_phr the value column phrases by column id
      * @param array $phr_col the phrase column phrases by column id
      * @param phrase_list|null $rel_lst the phrases related to the page phrase with the definitions
-     * @param int $col_tiers the number of column tiers to show, self::COLUMN_TIERS_ALL for every column
+     * @param int $col_tiers the number of column tiers left out, self::COLUMN_TIERS_ALL for every column
      * @return array the ids of the columns to show
      */
     private function columns_of_tiers(
@@ -1787,11 +1846,20 @@ class value_list extends ListBase
     {
         $result = $col_ids;
         if ($col_tiers != self::COLUMN_TIERS_ALL) {
+            // the tiers are left out from the bottom, so e.g. a table that leaves out the
+            // marginal tier shows every column up to the tier above it
+            $last_tier = count(triples::SYSTEM_COLUMN_TIERS) - $col_tiers;
+            // a further unit of a column states the same measure a second way, e.g. the
+            // potential loss in percent of the GDP besides the loss in trillion EUR, so it is
+            // left to the tier below the mayor columns: only the table that shows the mayor
+            // tier alone keeps one number per column
+            $one_unit_only = ($last_tier <= 1);
             $result = [];
             foreach ($col_ids as $col_id) {
                 $phr = $col_phr[$col_id] ?? $phr_col[$col_id];
                 $is_first_unit = !str_contains((string)$col_id, self::UNIT_COLUMN_SEP);
-                if ($is_first_unit and $this->tier_level($phr->name(), $rel_lst) <= $col_tiers) {
+                $unit_shown = ($is_first_unit or !$one_unit_only);
+                if ($unit_shown and $this->tier_level($phr->name(), $rel_lst) <= $last_tier) {
                     $result[] = $col_id;
                 }
             }
@@ -1816,25 +1884,59 @@ class value_list extends ListBase
     }
 
     /**
-     * the "..." header of a simple table that links to the full table with every column tier,
-     * every unit and the range of each number, so that the simple table hides nothing for good
+     * the "..." header of a table that opens the menu to select the columns shown: one entry
+     * per column tier and each of them once with and once without the probability range, so
+     * that the reader reaches every version of the table from every version
      * (docs/llm/frontend.md "... more is always a link"); plain text if the page is not known
      *
      * @param array $url_array the url parameters of the page that shows the table
      * @return string the html code of the header cell
      */
-    private function all_columns_link(array $url_array): string
+    private function columns_menu(array $url_array): string
     {
         $html = new html_base();
         $result = msg_id::THREE_POINTS->text();
         if ($url_array != []) {
-            $url_pars = html_base::page_url_array($url_array);
-            $url_pars[url_var::DISPLAY_LIST_COLUMNS] = self::COLUMN_TIERS_ALL;
-            $url_pars[url_var::DISPLAY_LIST_RANGE] = url_var::TRUE;
-            $url = api::MAIN_SCRIPT . url_var::PAR . http_build_query($url_pars);
-            $result = $html->ref($url, $result, msg_id::TABLE_ALL_COLUMNS_TIP->text());
+            $items = '';
+            foreach (self::COLUMN_TIER_NAMES as $tiers => $tier_msg) {
+                $items .= $this->columns_menu_item($url_array, $tiers, $tier_msg, false);
+                $items .= $this->columns_menu_item($url_array, $tiers, $tier_msg, true);
+            }
+            $result = $html->popup_menu(
+                $result, $items, styles::MENU_COLUMN, msg_id::TABLE_COLUMNS_TIP->text());
         }
         return $result;
+    }
+
+    /**
+     * one entry of the column menu, which shows the same page with the given column tiers
+     *
+     * @param array $url_array the url parameters of the page that shows the table
+     * @param int $tiers the column tiers of this entry e.g. self::COLUMN_TIERS_ALL
+     * @param msg_id $tier_msg the name of the column tiers e.g. "all columns"
+     * @param bool $with_range true for the entry that shows the range behind each number
+     * @return string the html code of the menu entry
+     */
+    private function columns_menu_item(
+        array  $url_array,
+        int    $tiers,
+        msg_id $tier_msg,
+        bool   $with_range
+    ): string
+    {
+        $html = new html_base();
+        $url_pars = html_base::page_url_array($url_array);
+        // the two vars are removed first, so that a page that already selects columns creates
+        // the same url as a page that does not, which keeps one cached page per selection
+        unset($url_pars[url_var::DISPLAY_LIST_COLUMNS], $url_pars[url_var::DISPLAY_LIST_RANGE]);
+        $url_pars[url_var::DISPLAY_LIST_COLUMNS] = $tiers;
+        $url_pars[url_var::DISPLAY_LIST_RANGE] = $with_range ? url_var::TRUE : url_var::FALSE;
+        $url = api::MAIN_SCRIPT . url_var::PAR . http_build_query($url_pars);
+        $name = $tier_msg->text();
+        if ($with_range) {
+            $name .= ' ' . msg_id::TABLE_COLUMNS_WITH_RANGE->text();
+        }
+        return $html->list_item($html->ref($url, $name));
     }
 
     /**
@@ -1852,6 +1954,8 @@ class value_list extends ListBase
             $result = styles::COL_MAIN;
         } elseif ($tier == triples::SYSTEM_COLUMN_MINOR) {
             $result = styles::COL_MINOR;
+        } elseif ($tier == triples::SYSTEM_COLUMN_MARGINAL) {
+            $result = styles::COL_MARGINAL;
         }
         return $result;
     }
@@ -2014,11 +2118,11 @@ class value_list extends ListBase
      * the phrases of a value that can form a phrase group: the group phrases without the context phrases
      * and without the time phrases (a time phrase groups in the time section, not here)
      *
-     * @param value $val the value whose groupable phrases are returned
+     * @param sandbox_value $val the value or result whose groupable phrases are returned
      * @param array $ctx_ids the ids of the context phrases keyed by id
      * @return array the groupable phrase objects of the value
      */
-    private function group_phrases(value $val, user_message $msg, array $ctx_ids): array
+    private function group_phrases(sandbox_value $val, user_message $msg, array $ctx_ids): array
     {
         $result = [];
         foreach ($val->grp->phr_lst()->lst() as $phr) {

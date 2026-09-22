@@ -1244,11 +1244,17 @@ class data_object
     function validate_results(user_message $msg): int
     {
         $failures = 0;
+        // a result that has been reproduced can be the operand of a later result, so that a
+        // chain like "target value, then its probability range" is checked step by step; only a
+        // reproduced result is an operand, else a wrong number would confirm the next one
+        $checked = new result_list($this->usr);
         foreach ($this->res_chk_lst->lst() as $res_chk) {
             $usr_msg = new user_message(); // a per item buffer to count the failures, merged below
-            $this->validate_result($res_chk, $usr_msg);
+            $this->validate_result($res_chk, $checked, $usr_msg);
             if (!$usr_msg->is_ok()) {
                 $failures++;
+            } else {
+                $checked->add_result_direct($res_chk);
             }
             $msg->merge($usr_msg);
         }
@@ -1260,13 +1266,12 @@ class data_object
      * based on the values and formulas of this data object
      *
      * @param result $res_chk the imported result with the expected number
+     * @param result_list $checked the results of this file that have already been reproduced
      * @param user_message $msg to collect the problems that the user should fix in the import file
      * @return void
      */
-    private function validate_result(result $res_chk, user_message $msg): void
+    private function validate_result(result $res_chk, result_list $checked, user_message $msg): void
     {
-        $lib = new library();
-
         // use the formula of this data object because the result may only know the formula name
         $frm = null;
         if (isset($res_chk->frm)) {
@@ -1282,24 +1287,7 @@ class data_object
             // select the values by the context phrases e.g. "apple", "price", "quantity" and "CHF"
             $ctx_names = $res_chk->src_grp?->phrase_list()->names() ?? $res_chk->grp()->phrase_list()->names();
             // replace the phrase names in the source part of the expression with the imported values
-            $r_part = $lib->str_right_of($frm->usr_text, chars::CHAR_CALC);
-            $exp_part_lst = explode(chars::TERM_DELIMITER, $r_part);
-            $i = 1; // the phrase names are the odd entries between the term delimiters
-            while ($i < count($exp_part_lst)) {
-                $phr_name = $exp_part_lst[$i];
-                $val = $this->value_list()->get_by_name_and_context($phr_name, $ctx_names);
-                if ($val == null) {
-                    $msg->add(msg_id::CALC_VALIDATION_VALUE_MISSING, [
-                        msg_id::VAR_WORD_NAME => $phr_name,
-                        msg_id::VAR_NAME => $res_name
-                    ]);
-                } else {
-                    $r_part = str_replace(
-                        chars::TERM_DELIMITER . $phr_name . chars::TERM_DELIMITER,
-                        $val->number(), $r_part);
-                }
-                $i = $i + 2;
-            }
+            $r_part = $this->expression_with_values($frm, $checked, $ctx_names, $res_name, $msg);
             // calculate and compare the result if all values have been found
             if ($msg->is_ok()) {
                 $calc = new calc_internal();
@@ -1315,6 +1303,68 @@ class data_object
                 }
             }
         }
+    }
+
+    /**
+     * the source part of the given formula with the imported number of each operand
+     *
+     * an operand can be a group of phrases joined by a separator, e.g. "potential","loss",
+     * "trillion","EUR", and the group names one value, so the complete group is replaced by one
+     * number; replacing each phrase on its own would leave the separators in the expression and
+     * the calculation would fail with e.g. "cannot parse 2.2,2.2,2.2,2.2 to number"
+     *
+     * an operand can also be a result that this file calculates, e.g. the target value whose
+     * probability range is the next result, so a result that has already been reproduced is
+     * used if the file states no value for the operand
+     *
+     * @param formula $frm the formula whose expression should be filled with the numbers
+     * @param result_list $checked the results of this file that have already been reproduced
+     * @param array $ctx_names the phrase names that limit the value selection
+     * @param string $res_name the name of the checked result to report a missing value
+     * @param user_message $msg to collect the values that the import file does not contain
+     * @return string the source part of the expression with a number instead of each operand
+     */
+    private function expression_with_values(
+        formula      $frm,
+        result_list  $checked,
+        array        $ctx_names,
+        string       $res_name,
+        user_message $msg
+    ): string
+    {
+        $lib = new library();
+        $result = $lib->str_right_of($frm->usr_text, chars::CHAR_CALC);
+        $exp_part_lst = explode(chars::TERM_DELIMITER, $result);
+        // the phrase names are the odd entries between the term delimiters
+        $i = 1;
+        while ($i < count($exp_part_lst)) {
+            $first = $i;
+            $phr_names = [$exp_part_lst[$i]];
+            // a separator between two phrase names joins them to the group that names one value
+            while (trim($exp_part_lst[$i + 1] ?? '') == chars::SEPARATOR) {
+                $i = $i + 2;
+                $phr_names[] = $exp_part_lst[$i];
+            }
+            $val = $this->value_list()->get_by_names_and_context($phr_names, $ctx_names);
+            if ($val == null) {
+                $val = $checked->get_by_names_and_context($phr_names, $ctx_names);
+            }
+            if ($val == null) {
+                $msg->add(msg_id::CALC_VALIDATION_VALUE_MISSING, [
+                    msg_id::VAR_WORD_NAME => implode(chars::SEPARATOR, $phr_names),
+                    msg_id::VAR_NAME => $res_name
+                ]);
+            } else {
+                // the group is replaced as it is written, so that a separator with a blank
+                // or a name with a separator inside the quotes is replaced as well
+                $grp_parts = array_slice($exp_part_lst, $first, $i - $first + 1);
+                $result = str_replace(
+                    chars::TERM_DELIMITER . implode(chars::TERM_DELIMITER, $grp_parts) . chars::TERM_DELIMITER,
+                    $val->number(), $result);
+            }
+            $i = $i + 2;
+        }
+        return $result;
     }
 
     function add_message(msg_id $msg): void

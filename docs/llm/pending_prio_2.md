@@ -190,6 +190,27 @@ what is left:
 - the other rules of `docs/llm/json_structure.md` - the triple naming rules, "a word and a triple
   must never share a name", the value qualifier rules - are still only prose and can be added as
   further check functions to the same class
+- a calc validation finding discards the complete import file: `import::put_json` hands the same
+  message to `data_object::save`, whose every step is gated by `$msg->is_ok()`, so a result that
+  cannot be reproduced drops the words, triples and values of that file too. the finding belongs
+  to the file and not to the save, so the save needs a message scoped to the mapping errors (see
+  `docs/llm/dependent-errors.md`). the consequence is hard to see, because the database setup
+  continues with the next file and only the next test run reports the missing data, e.g. as
+  'triple "PV in Switzerland" not found' when the use case file, the last step of the setup, is
+  the one that is left out
+- `result_list::load_sql_by_ids` prepares the id list as `bigint[]` and selects from the group
+  keyed `results` table only, whose key is a `char(112)`, so the result list api by ids fails
+  with a prepare error for every result that is not in a prime table; the load by id of the
+  single result and the by phrase list query take the table from the key and should be the
+  pattern for it
+- the same gate drops the results of a file whose formula names a term the file does not declare:
+  `data_object::save_formulas` merges the `EXPRESSION_TERM_MISSING` of `generate_ref_text` into
+  the import message, the words, triples, values and formulas are already stored by then, and
+  `save_results` is skipped without a word to the user, so a table shows the row without its
+  calculated numbers. seen with `global happy time points` in problem_global_warming.json before
+  the file declared `global`, `human` and `population`. a formula whose expression term is
+  missing should report that as a warning of the file and still let the results be saved, or the
+  json validation should check the expression terms like it checks the assigned phrases
 
 ## change log object names of the link classes
 

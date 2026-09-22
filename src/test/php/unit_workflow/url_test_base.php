@@ -521,31 +521,26 @@ class url_test_base
     }
 
     /**
-     * replace each change log time in the rendered html with a dummy time so the snapshot does not
-     * vary with the real change time; instead of one repeated placeholder the times form a readable
-     * sequence: the change log is shown newest first, so the last (oldest) entry gets the fixed dummy
-     * start time (workflows::WF_CHANGE_LOG_START) and every entry above it one second more, giving an
-     * ascending time from the bottom to the top of the list based on the real change time order
+     * replace every change log time in the rendered html with the same dummy time
+     * (workflows::WF_CHANGE_LOG_START), so that the snapshot does not vary with the real change time
+     *
+     * the times used to form a second by second sequence counted from the oldest entry, which reads
+     * nicely but is derived from the number of entries: one change log row more or less - e.g.
+     * because the object of the workflow was created by another test before - then moved every other
+     * time and turned a one row difference into a diff of the whole page; the row order already shows
+     * the sequence, so one repeated placeholder keeps the snapshot stable and says the same
      *
      * the whole time expression (the date time plus any trailing text up to the next tag) is replaced,
      * which covers both the change log table (a 'when' cell) and the edit view (a bare change line)
      *
      * @param string $html the rendered html of the workflow step
-     * @return string the html with the change log times replaced by the dummy time sequence
+     * @return string the html with the change log times replaced by the dummy time
      */
     private function normalize_change_log_time(string $html): string
     {
         $pattern = '#\d{2}-\d{2}-\d{4} \d{2}:\d{2}[^<\n]*#';
-        $matches = [];
-        $count = preg_match_all($pattern, $html, $matches);
-        $i = 0;
-        $result = preg_replace_callback($pattern, function () use (&$i, $count) {
-            $time = new DateTime(workflows::WF_CHANGE_LOG_START);
-            $time->modify('+' . ($count - 1 - $i) . ' second');
-            $i++;
-            return $time->format('d-m-Y H:i:s');
-        }, $html);
-        return $result;
+        $time = new DateTime(workflows::WF_CHANGE_LOG_START);
+        return preg_replace($pattern, $time->format('d-m-Y H:i:s'), $html);
     }
 
     /**

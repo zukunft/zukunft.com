@@ -103,8 +103,9 @@ class triples
     const string SYSTEM_CONFIG = 'system configuration';
     const int SYSTEM_CONFIG_ID = 103;
     // the column priority of a table, defined in solution_prio.json: a mayor column is shown
-    // on every screen, a main column only if the screen is not small and a minor column only
-    // if it is wide; a phrase is assigned to a tier with "<phrase> can be <tier>"
+    // on every screen, a main column only if the screen is not small, a minor column only if
+    // it is wide and a marginal column only on the widest screen; a phrase is assigned to a
+    // tier with "<phrase> can be <tier>"
     const string SYSTEM_COLUMN = 'column (system)';
     const string SYSTEM_COLUMN_CODE_ID = 'system_column';
     const string SYSTEM_COLUMN_MAYOR = 'mayor column (system)';
@@ -113,12 +114,15 @@ class triples
     const string SYSTEM_COLUMN_MAIN_CODE_ID = 'system_column_main';
     const string SYSTEM_COLUMN_MINOR = 'minor column (system)';
     const string SYSTEM_COLUMN_MINOR_CODE_ID = 'system_column_minor';
+    const string SYSTEM_COLUMN_MARGINAL = 'marginal column (system)';
+    const string SYSTEM_COLUMN_MARGINAL_CODE_ID = 'system_column_marginal';
 
     // the column tiers in the order they are shown, widest priority first
     const array SYSTEM_COLUMN_TIERS = [
         self::SYSTEM_COLUMN_MAYOR,
         self::SYSTEM_COLUMN_MAIN,
         self::SYSTEM_COLUMN_MINOR,
+        self::SYSTEM_COLUMN_MARGINAL,
     ];
     const string SYSTEM_ERRORS = 'system errors';
     const string TABLE_NAME = 'table name';

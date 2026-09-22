@@ -256,12 +256,24 @@ class result_list extends sandbox_value_list
         $result = false;
         if ($qp->name != '') {
             $db_rows = $db_con->get($qp, $msg, 'result list');
-            if ($db_rows != null) {
+            // get() returns false only when the query itself failed, an empty result is []
+            if ($db_rows === false) {
+                log_err('loading a ' . self::class . ' failed for the query ' . $qp->name, self::class . '->load');
+            } else {
                 foreach ($db_rows as $db_row) {
                     $res = new result($this->get_user());
-                    $res->row_mapper($db_row, $msg);
-                    $this->add_obj($res);
-                    $result = true;
+                    // the result mapper, because the inherited row_mapper of the key object is
+                    // a stub that maps nothing; a row of any result table maps to a group
+                    $res->row_mapper_multi($db_row, $msg, $qp->ext);
+                    // a result row that maps to no phrase group can never be shown or changed,
+                    // so the corrupted row is skipped and reported like in value_list
+                    if ($res->id() == 0 or $res->id() == '') {
+                        log_err('result db row without a phrase group skipped'
+                            . ' (table type "' . $qp->ext . '"): ' . implode(',', $db_row));
+                    } else {
+                        $this->add_obj($res);
+                        $result = true;
+                    }
                 }
             }
         }
@@ -1350,10 +1362,9 @@ class result_list extends sandbox_value_list
                 if ($res->grp()->id() == 0) {
                     $res->set_grp($res->grp()->phrase_list()->get_grp_id(false));
                 }
-                if ($this->can_save_result($res)) {
-                    $res->save($msg);
-                    $i++;
-                }
+                $this->drop_unsupported_src_grp($res);
+                $res->save($msg);
+                $i++;
                 $imp->display_progress($i, $est_per_sec, $res->dsp_id());
             }
             $imp->step_end($i);
@@ -1362,32 +1373,33 @@ class result_list extends sandbox_value_list
     }
 
     /**
-     * true when the result can be saved through the current result::save infrastructure
+     * replace a source group that result::save cannot write by an empty group
      *
-     * result::save writes source_group_id as a bigint column on results_main; that only
-     * works when the source group is "prime" (≤4 phrases, encoded as a 64-bit int). A
-     * 5+ phrase source group encodes as an alpha-num string and would need a separate
-     * group-save step (insert a row in groups_main, then use its bigint id) — that step
-     * does not yet exist in the import path. Until it does, skip such results with a
-     * warning rather than crashing the whole import.
+     * result::save writes source_group_id as a bigint column on results_prime and
+     * results_main; that only works when the source group is "prime" (≤4 phrases, encoded
+     * as a 64-bit int). A 5+ phrase source group encodes as an alpha-num string and would
+     * need a separate group-save step (insert a row in groups, then use its bigint id) —
+     * that step does not yet exist in the import path.
      *
-     * TODO Prio 0 save non-prime source groups via group_list::save, then drop this guard
+     * the number, its phrases and the formula that has calculated it are what the import
+     * states, so they are saved without the source group; dropping the complete result
+     * instead would silently lose the number that the import file is about
      *
-     * @param result $res the imported result whose save would otherwise hit the schema gap
-     * @return bool true when the result is safe to hand to result::save
+     * TODO Prio 0 save non-prime source groups via a group save, then keep the source group
+     *
+     * @param result $res the imported result whose source group may not be writable
+     * @return void
      */
-    private function can_save_result(result $res): bool
+    private function drop_unsupported_src_grp(result $res): void
     {
-        $result = true;
-        if ($res->src_grp !== null and !$res->src_grp->is_prime()) {
+        if (!$res->src_grp_is_storable()) {
             log_warning(
-                'skipping import of result ' . $res->dsp_id()
-                . ' because its source group has more than 4 phrases'
+                'the source group of result ' . $res->dsp_id()
+                . ' is not saved because it has more than 4 phrases'
                 . ' and saving non-prime source groups is not yet supported'
             );
-            $result = false;
+            $res->set_src_grp(new group($res->get_user()));
         }
-        return $result;
     }
 
     /**

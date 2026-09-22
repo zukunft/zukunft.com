@@ -141,6 +141,16 @@ class result extends sandbox_value
     }
 
     /**
+     * to select the results of a formula e.g. for the list of results on the formula page
+     * @param formula $frm the formula that may have calculated this result
+     * @return bool true if the given formula has calculated this result
+     */
+    function calculated_by_formula(formula $frm): bool
+    {
+        return ($this->formula_id() != null and $this->formula_id() == $frm->id());
+    }
+
+    /**
      * load the result by id AND ask the backend to include the names of the result phrases
      * and of the formula that calculated the result, which the result default page shows as
      * links (see the incl_related emit of the backend cfg/result/result::api_json_array)
@@ -174,6 +184,15 @@ class result extends sandbox_value
     function name(): string|null
     {
         return $this->grp->name();
+    }
+
+    /**
+     * a result is shown by its own page, which names the formula that has calculated it
+     * @return int the view id of the default page of a result
+     */
+    protected function default_view_id(): int
+    {
+        return views::RESULT_ID;
     }
 
     /**

@@ -1,6 +1,6 @@
 [
     {
-        "id": 848,
+        "id": 849,
         "name": "agglomeration",
         "description": "urban core plus surrounding built\u2011up areas",
         "type_id": 1,
@@ -29,20 +29,20 @@
         "class": "word"
     },
     {
-        "id": 560,
+        "id": 561,
         "name": "Cooperative",
         "type_id": 1,
         "class": "word"
     },
     {
-        "id": 324,
+        "id": 325,
         "name": "country",
         "description": "a distinct part of the world, such as a state, nation, or other political entity.",
         "type_id": 1,
         "class": "word"
     },
     {
-        "id": 344,
+        "id": 345,
         "name": "currency",
         "description": "A currency is a system of money in common use within a specific environment over time, especially for people in a nation state. It is typically issued and controlled by a central bank or monetary authority and serves as a medium of exchange, unit of account, and store of value.",
         "type_id": 1,
@@ -55,13 +55,13 @@
         "class": "triple"
     },
     {
-        "id": 910,
+        "id": 911,
         "name": "greenhouse gas",
         "description": "a gas that absorbs and emits infrared radiation, trapping heat in the atmosphere and warming the surface.",
         "class": "triple"
     },
     {
-        "id": 325,
+        "id": 326,
         "name": "ISO 4217 code",
         "description": "ISO 4217 is the international standard published by the International Organization for Standardization that defines three-letter alphabetic and three-digit numeric codes for the representation of currencies. For example, USD identifies the United States dollar and EUR identifies the euro.",
         "class": "triple"
@@ -82,7 +82,7 @@
         "class": "triple"
     },
     {
-        "id": 258,
+        "id": 259,
         "name": "most relevant",
         "description": "The superlative form of relevance, used to identify the items deemed most important within a given set according to chosen criteria.",
         "class": "triple"
@@ -102,14 +102,14 @@
         "class": "triple"
     },
     {
-        "id": 866,
+        "id": 867,
         "name": "region",
         "description": "an area of land larger than a city and its surroundings",
         "type_id": 1,
         "class": "word"
     },
     {
-        "id": 562,
+        "id": 563,
         "name": "scaling",
         "description": "the multiplication of a quantity by a constant factor",
         "type_id": 7,
@@ -130,7 +130,7 @@
         "class": "word"
     },
     {
-        "id": 326,
+        "id": 327,
         "name": "Symbol or abbreviation",
         "description": "A symbol or abbreviation used to represent a currency in writing, such as $ for the US dollar, \u20ac for the euro, or \u00a3 for pound sterling. Currency symbols are typographic shorthand and are not standardised internationally (unlike ISO 4217 codes).",
         "class": "triple"

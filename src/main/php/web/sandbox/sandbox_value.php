@@ -38,6 +38,7 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::GROUP . 'group.php';
 include_once html_paths::HELPER . 'data_object.php';
+include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'html_selector.php';
 include_once html_paths::SANDBOX . 'sandbox.php';
 include_once html_paths::SANDBOX . 'db_object.php';
@@ -49,17 +50,20 @@ include_once html_paths::SHARED . 'api.php';
 include_once html_paths::SHARED . 'url_var.php';
 include_once html_paths::SHARED . 'json_fields.php';
 include_once html_paths::SHARED . 'library.php';
+include_once html_paths::SHARED_CONST . 'views.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::SHARED_ENUM . 'value_types.php';
 include_once html_paths::SHARED_TYPES . 'view_styles.php';
 
 use Zukunft\ZukunftCom\main\php\web\group\group;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\html_selector;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\enum\value_types;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
@@ -385,6 +389,64 @@ class sandbox_value extends sandbox
     /*
      * display
      */
+
+    /**
+     * the impact of a value or a result is the highest impact of the phrases it is assigned to
+     * so that the most relevant numbers (e.g. of the highest ranked phrase) are shown first
+     * @return float the system calculated impact used to sort the numbers
+     */
+    function impact(): float
+    {
+        return $this->grp->phr_lst()->max_impact();
+    }
+
+    /**
+     * to select a value or a result by a phrase
+     * @param phrase $phr the phrase to select the number
+     * @param user_message $msg to report a problem of reading a phrase type
+     * @return bool true if the number is related to the given phrase or to a phrase of its type
+     */
+    function has_phrase(phrase $phr, user_message $msg): bool
+    {
+        $result = false;
+        foreach ($this->grp->phr_lst()->lst() as $val_phr) {
+            if ($val_phr->is_same($phr)) {
+                $result = true;
+            } elseif ($val_phr->is_type_phrase($phr, $msg)) {
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the number as a link to the page of the value or of the result, so that a table cell
+     * leads to the number itself and a result to the formula that has calculated it
+     *
+     * @param user_message $msg to report a problem while formatting the number
+     * @param array $url_arr with the url vars of the calling page for the back link
+     * @return string the html code of the linked number
+     */
+    function value_edit(user_message $msg, array $url_arr = []): string
+    {
+        $html = new html_base();
+        $url = $html->url_back($this->default_view_id(), $this->id(), $url_arr);
+        $txt = $this->value($msg);
+        // value() already returns escaped/safe html, so ref() must not escape it again
+        return $html->ref($url, $txt, '', '', true);
+    }
+
+    /**
+     * the page that shows the number on its own, overwritten by the result, which has its own
+     * page; the class to view map of view_list::default_id cannot be used here, because
+     * including the view list would close the circle value -> sandbox_value -> view_list -> value
+     *
+     * @return int the view id of the default page of a value
+     */
+    protected function default_view_id(): int
+    {
+        return views::VALUE_DEFAULT_ID;
+    }
 
     /**
      * @returns string the html code to display the value with reference links

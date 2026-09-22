@@ -1,0 +1,113 @@
+{
+  "version": "0.0.3",
+  "data_version": "0.0.1",
+  "time": "2026-09-21 12:00:00",
+  "user": "zukunft.com system batch job",
+  "selection": [
+    "unit test message where a checked result is the operand of the next checked result"
+  ],
+  "words": [
+    {
+      "name": "price"
+    },
+    {
+      "name": "quantity"
+    },
+    {
+      "name": "total"
+    },
+    {
+      "name": "tax"
+    },
+    {
+      "name": "CHF",
+      "type": "measure"
+    },
+    {
+      "name": "percent",
+      "type": "percent"
+    },
+    {
+      "name": "apple"
+    }
+  ],
+  "formulas": [
+    {
+      "name": "total formula with the measure",
+      "description": "the total is the price times the quantity",
+      "expression": "\"total\",\"CHF\" = \"price\",\"CHF\" * \"quantity\"",
+      "assigned": [
+        "price",
+        "quantity"
+      ]
+    },
+    {
+      "name": "tax of the total formula",
+      "description": "the tax is the total times the tax share, so this formula needs the result of the total formula as its operand",
+      "expression": "\"tax\",\"CHF\" = \"total\",\"CHF\" * \"tax\",\"percent\"",
+      "assigned": [
+        "total",
+        "tax"
+      ]
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "apple",
+        "price",
+        "CHF"
+      ],
+      "number": "2"
+    },
+    {
+      "words": [
+        "apple",
+        "quantity"
+      ],
+      "number": "5"
+    },
+    {
+      "words": [
+        "apple",
+        "tax",
+        "percent"
+      ],
+      "number": "0.2"
+    }
+  ],
+  "calc-validation": [
+    {
+      "context": [
+        "apple",
+        "price",
+        "quantity",
+        "CHF"
+      ],
+      "formula": "total formula with the measure",
+      "words": [
+        "apple",
+        "total",
+        "CHF"
+      ],
+      "number": "10"
+    },
+    {
+      "context": [
+        "apple",
+        "total",
+        "CHF",
+        "tax",
+        "percent"
+      ],
+      "formula": "tax of the total formula",
+      "words": [
+        "apple",
+        "tax",
+        "CHF"
+      ],
+      "number": "2",
+      "note": "10 CHF total * 20 percent; the total is no value of this file but the result checked before"
+    }
+  ]
+}

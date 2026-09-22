@@ -57,6 +57,81 @@
     },
     {
       "name": "assumed"
+    },
+    {
+      "name": "potential"
+    },
+    {
+      "name": "loss"
+    },
+    {
+      "name": "gain"
+    },
+    {
+      "name": "reward"
+    },
+    {
+      "name": "ratio"
+    },
+    {
+      "name": "effort"
+    },
+    {
+      "name": "initial"
+    },
+    {
+      "name": "person"
+    },
+    {
+      "name": "year"
+    },
+    {
+      "name": "htp"
+    },
+    {
+      "name": "GDP"
+    },
+    {
+      "name": "EUR"
+    },
+    {
+      "name": "billion"
+    },
+    {
+      "name": "trillion"
+    },
+    {
+      "name": "low"
+    },
+    {
+      "name": "high"
+    },
+    {
+      "name": "probability"
+    },
+    {
+      "name": "range"
+    },
+    {
+      "name": "factor"
+    },
+    {
+      "name": "world"
+    },
+    {
+      "name": "annual"
+    },
+    {
+      "name": "2024"
+    },
+    {
+      "name": "global"
+    },
+    {
+      "name": "human"
+    },
+    {
+      "name": "population"
     }
   ],
   "triples": [
@@ -116,6 +191,127 @@
       "from": "coverage",
       "verb": "of",
       "to": "carbon price"
+    },
+    {
+      "name": "loss reduction",
+      "from": "reduction",
+      "verb": "of",
+      "to": "loss"
+    },
+    {
+      "name": "initial effort",
+      "from": "effort",
+      "verb": "kind of",
+      "to": "initial"
+    },
+    {
+      "name": "person year",
+      "from": "person",
+      "verb": "times",
+      "to": "year"
+    },
+    {
+      "name": "reward ratio",
+      "from": "ratio",
+      "verb": "of",
+      "to": "reward"
+    },
+    {
+      "name": "EUR per person year",
+      "from": "EUR",
+      "verb": "per",
+      "to": "person year"
+    },
+    {
+      "name": "probability range",
+      "from": "range",
+      "verb": "of",
+      "to": "probability"
+    },
+    {
+      "name": "probability range factor",
+      "description": "the number that the centre of an estimate is multiplied by to get one bound of its probability range; each bound has its own factor, because a range can be asymmetric, e.g. if one side is limited by a zero level",
+      "from": "factor",
+      "verb": "of",
+      "to": "probability range"
+    }
+  ],
+  "formulas": [
+    {
+      "name": "global happy time points",
+      "description": "convert a share of the global welfare given in percent into happy time points by multiplying it with the number of humans on earth, so that a percent loss or gain can be compared with absolute welfare numbers",
+      "expression": "\"htp\" = \"htp\",\"percent\" * \"global\",\"human\",\"population\"",
+      "assigned_word": "htp"
+    },
+    {
+      "name": "avoided potential loss",
+      "description": "the reward of a solution in trillion EUR, the potential loss of the problem multiplied by the share of the loss that the solution is expected to avoid",
+      "expression": "\"reward\",\"trillion\",\"EUR\" = \"potential\",\"loss\",\"trillion\",\"EUR\" * \"loss reduction\",\"percent\"",
+      "latex": "R = L_{pot} \\cdot r",
+      "assigned_word": "reward"
+    },
+    {
+      "name": "reward ratio (formula)",
+      "description": "the avoided loss per person year of effort, the potential loss multiplied by the expected loss reduction and divided by the effort needed, to rank the solutions by their leverage",
+      "expression": "\"reward ratio\",\"trillion\",\"EUR per person year\" = \"potential\",\"loss\",\"trillion\",\"EUR\" * \"loss reduction\",\"percent\" / \"initial effort\",\"person year\"",
+      "latex": "\\rho = \\frac{L_{pot} \\cdot r}{E_{init}}",
+      "assigned_word": "reward ratio"
+    },
+    {
+      "name": "probability range low",
+      "description": "the lower bound of the probability range of an estimate, the estimate multiplied by its low range factor; the centre is the stated target value and each bound is calculated on its own, so that a range can be asymmetric",
+      "expression": "\"low\" = \"assumed\" * \"probability range factor\"",
+      "latex": "x_{low} = x \\cdot f_{low}",
+      "assigned_word": "probability range factor"
+    },
+    {
+      "name": "probability range high",
+      "description": "the upper bound of the probability range of an estimate, the estimate multiplied by its high range factor; the centre is the stated target value and each bound is calculated on its own, so that a range can be asymmetric",
+      "expression": "\"high\" = \"assumed\" * \"probability range factor\"",
+      "latex": "x_{high} = x \\cdot f_{high}",
+      "assigned_word": "probability range factor"
+    },
+    {
+      "name": "annual damage in money",
+      "description": "the loss that a problem causes each year in money, the world GDP multiplied by the share of it that the problem costs per year",
+      "expression": "\"potential\",\"loss\",\"trillion\",\"EUR\" = \"world\",\"GDP\",\"trillion\",\"EUR\" * \"percent\",\"GDP\",\"annual\"",
+      "latex": "L_{pot} = GDP_{world} \\cdot d_{annual}",
+      "assigned_word": "GDP"
+    },
+    {
+      "name": "loss reduction by a carbon tariff",
+      "description": "the share of the potential loss that the emission reduction avoids, the share of the emissions that the carbon tariff keeps from leaking into a region without a carbon price; the leakage rate change is negative, because it is a reduction, while the avoided share of the loss is stated positive",
+      "expression": "\"loss reduction\",\"percent\" = 0 - \"carbon leakage rate\",\"percent\",\"assumed\"",
+      "latex": "r = -\\Delta l",
+      "assigned_word": "carbon leakage rate"
+    },
+    {
+      "name": "long run damage share of the GDP",
+      "description": "the share of the world GDP that a problem costs at the end of its development, the share it costs today multiplied by the factor by which the damage still grows; the share is stated negative, because it is a loss",
+      "expression": "\"potential\",\"loss\",\"percent\",\"GDP\" = 0 - \"percent\",\"GDP\",\"annual\" * \"percent\",\"GDP\",\"factor\"",
+      "latex": "d_{long} = -d_{annual} \\cdot g",
+      "assigned_word": "annual"
+    },
+    {
+      "name": "welfare damage share",
+      "description": "the share of the global happy time points that a problem costs, the share of the GDP it costs multiplied by the factor by which the welfare damage exceeds the money damage, because htp counts the healthy life years that the GDP does not (concept paper introduction)",
+      "expression": "\"potential\",\"loss\",\"percent\",\"htp\" = \"potential\",\"loss\",\"percent\",\"GDP\" * \"htp\",\"GDP\",\"factor\"",
+      "latex": "d_{htp} = d_{GDP} \\cdot w",
+      "assigned_word": "htp"
+    },
+    {
+      "name": "initial effort of a solution",
+      "description": "the person years needed to set up a solution, the annual damage of the problem in money multiplied by the effort needed per trillion EUR of damage",
+      "expression": "\"initial effort\",\"person year\" = \"potential\",\"loss\",\"trillion\",\"EUR\" * \"person year\",\"trillion\",\"EUR\",\"factor\"",
+      "latex": "E_{init} = L_{pot} \\cdot e",
+      "assigned_word": "person year"
+    },
+    {
+      "name": "avoided welfare loss",
+      "description": "the happy time points that a solution saves, the world happy time points multiplied by the share of them that the problem costs and by the share of that loss which the solution avoids; the result is stated positive, because it is a gain",
+      "expression": "\"potential\",\"gain\",\"billion\",\"htp\" = 0 - \"potential\",\"loss\",\"percent\",\"htp\" * \"world\",\"htp\",\"billion\" * \"loss reduction\",\"percent\"",
+      "latex": "G = -d_{htp} \\cdot HTP_{world} \\cdot r",
+      "assigned_word": "loss reduction"
     }
   ],
   "sources": [
@@ -184,6 +380,752 @@
       ],
       "number": "-0.08",
       "source": "Branger & Quirion (2014b)"
+    },
+    {
+      "words": [
+        "world",
+        "GDP",
+        "trillion",
+        "EUR",
+        "2024"
+      ],
+      "number": "110.047109",
+      "description": "the world GDP of solution_prio.json in trillion instead of million EUR, so that the annual damage of a problem can be calculated within this file"
+    },
+    {
+      "words": [
+        "global warming",
+        "percent",
+        "GDP",
+        "annual",
+        "assumed"
+      ],
+      "number": "0.02",
+      "description": "the share of the world GDP that the warming costs per year today; the long run share of the potential loss column is far higher, because it states the loss at the end of the warming and not the loss already realised per year"
+    },
+    {
+      "words": [
+        "global warming",
+        "trillion",
+        "EUR",
+        "probability range factor",
+        "low"
+      ],
+      "number": "0.4",
+      "description": "the centre divided by 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent (see the view-validation of solution_prio.json); a range factor names no column of the ranking, so it is an input of the table and no cell of it"
+    },
+    {
+      "words": [
+        "global warming",
+        "trillion",
+        "EUR",
+        "probability range factor",
+        "high"
+      ],
+      "number": "2.5",
+      "description": "the centre times 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
+    },
+    {
+      "words": [
+        "global warming",
+        "GDP",
+        "probability range factor",
+        "low"
+      ],
+      "number": "2.5",
+      "description": "the loss is stated as a negative share, so the bigger share is the numerically lower bound"
+    },
+    {
+      "words": [
+        "global warming",
+        "GDP",
+        "probability range factor",
+        "high"
+      ],
+      "number": "0.4",
+      "description": "the loss is stated as a negative share, so the smaller share is the numerically higher bound"
+    },
+    {
+      "words": [
+        "global warming",
+        "percent",
+        "htp",
+        "probability range factor",
+        "low"
+      ],
+      "number": "2.5",
+      "description": "the loss is stated as a negative share, so the bigger share is the numerically lower bound"
+    },
+    {
+      "words": [
+        "global warming",
+        "percent",
+        "htp",
+        "probability range factor",
+        "high"
+      ],
+      "number": "0.4",
+      "description": "the loss is stated as a negative share, so the smaller share is the numerically higher bound"
+    },
+    {
+      "words": [
+        "global warming",
+        "reduce climate gas emissions",
+        "billion",
+        "htp",
+        "probability range factor",
+        "low"
+      ],
+      "number": "0.6667",
+      "description": "the centre divided by 1.5, the range factor of a structural number, which is narrower than the factor of an estimate"
+    },
+    {
+      "words": [
+        "global warming",
+        "reduce climate gas emissions",
+        "billion",
+        "htp",
+        "probability range factor",
+        "high"
+      ],
+      "number": "1.5",
+      "description": "the centre times 1.5, the range factor of a structural number"
+    },
+    {
+      "words": [
+        "global warming",
+        "reduce climate gas emissions",
+        "person year",
+        "probability range factor",
+        "low"
+      ],
+      "number": "0.4",
+      "description": "the centre divided by 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
+    },
+    {
+      "words": [
+        "global warming",
+        "reduce climate gas emissions",
+        "person year",
+        "probability range factor",
+        "high"
+      ],
+      "number": "2.5",
+      "description": "the centre times 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
+    },
+    {
+      "words": [
+        "global warming",
+        "reduce climate gas emissions",
+        "percent",
+        "probability range factor",
+        "low"
+      ],
+      "number": "0.4",
+      "description": "the centre divided by 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
+    },
+    {
+      "words": [
+        "global warming",
+        "reduce climate gas emissions",
+        "percent",
+        "probability range factor",
+        "high"
+      ],
+      "number": "2.5",
+      "description": "the centre times 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
+    },
+    {
+      "words": [
+        "global warming",
+        "percent",
+        "GDP",
+        "factor",
+        "assumed"
+      ],
+      "number": "16",
+      "description": "how many times bigger the loss at the end of the warming is than the loss already realised per year; tuned so that the calculated long run share matches the number that the start page has used until now, to be replaced by a damage function of the expected warming"
+    },
+    {
+      "words": [
+        "global warming",
+        "htp",
+        "GDP",
+        "factor",
+        "assumed"
+      ],
+      "number": "1.15625",
+      "description": "how much bigger the loss in happy time points is than the loss in GDP, because htp counts the healthy life years that a warming costs and the GDP does not (concept paper: htp extends the lower two levels of Maslow by the DALY index); tuned so that the calculated share matches the number that the start page has used until now"
+    },
+    {
+      "words": [
+        "world",
+        "htp",
+        "billion",
+        "assumed"
+      ],
+      "number": "1189.19",
+      "description": "the happy time points of the whole world over the horizon of the ranking, the healthy life years that all humans can live (concept paper: htp is the DALY index of the World Health Organization extended by the basic needs); tuned so that the calculated gain matches the number that the start page has used until now, to be replaced by the population times the horizon"
+    },
+    {
+      "words": [
+        "global warming",
+        "person year",
+        "trillion",
+        "EUR",
+        "factor",
+        "assumed"
+      ],
+      "number": "1.3636",
+      "description": "the person years needed to set up a solution per trillion EUR of annual damage, because a bigger problem needs a bigger first step; tuned so that the calculated effort matches the number that the start page has used until now"
+    }
+  ],
+  "results": [
+    {
+      "context": [
+        "global warming",
+        "potential",
+        "loss",
+        "percent",
+        "htp"
+      ],
+      "formula": "global happy time points",
+      "words": [
+        "global warming",
+        "potential",
+        "loss",
+        "htp"
+      ],
+      "number": "31.5"
+    },
+    {
+      "context": [
+        "global warming",
+        "potential",
+        "loss",
+        "loss reduction",
+        "initial effort"
+      ],
+      "formula": "reward ratio (formula)",
+      "words": [
+        "global warming",
+        "reward ratio",
+        "trillion",
+        "EUR per person year"
+      ],
+      "number": "0.059",
+      "note": "2.2 * 0.08 / 3"
+    },
+    {
+      "context": [
+        "global warming",
+        "potential",
+        "loss",
+        "loss reduction",
+        "initial effort",
+        "low"
+      ],
+      "formula": "reward ratio (formula)",
+      "words": [
+        "global warming",
+        "reward ratio",
+        "trillion",
+        "EUR per person year",
+        "low"
+      ],
+      "number": "0.0038",
+      "note": "0.88 * 0.032 / 7.5"
+    },
+    {
+      "context": [
+        "global warming",
+        "potential",
+        "loss",
+        "loss reduction",
+        "initial effort",
+        "high"
+      ],
+      "formula": "reward ratio (formula)",
+      "words": [
+        "global warming",
+        "reward ratio",
+        "trillion",
+        "EUR per person year",
+        "high"
+      ],
+      "number": "0.9167",
+      "note": "5.5 * 0.2 / 1.2"
+    }
+  ],
+  "calc-validation": [
+    {
+      "context": [
+        "global warming",
+        "world",
+        "GDP",
+        "trillion",
+        "EUR",
+        "2024",
+        "percent",
+        "annual",
+        "assumed"
+      ],
+      "formula": "annual damage in money",
+      "words": [
+        "global warming",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed"
+      ],
+      "number": "2.2",
+      "note": "110.047109 trillion EUR world GDP * 2 percent; the comparison rounds to two decimals, so 2.2"
+    },
+    {
+      "context": [
+        "reduce climate gas emissions",
+        "carbon tariff",
+        "carbon leakage rate",
+        "assumed",
+        "percent"
+      ],
+      "formula": "loss reduction by a carbon tariff",
+      "words": [
+        "global warming",
+        "reduce climate gas emissions",
+        "loss reduction",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.08",
+      "note": "0 - -0.08, the leakage rate that the carbon tariff avoids"
+    },
+    {
+      "context": [
+        "global warming",
+        "percent",
+        "GDP",
+        "annual",
+        "factor",
+        "assumed"
+      ],
+      "formula": "long run damage share of the GDP",
+      "words": [
+        "global warming",
+        "potential",
+        "loss",
+        "percent",
+        "GDP",
+        "assumed"
+      ],
+      "number": "-0.32",
+      "note": "0 - 2 percent annual damage * 16"
+    },
+    {
+      "context": [
+        "global warming",
+        "potential",
+        "loss",
+        "percent",
+        "GDP",
+        "htp",
+        "factor",
+        "assumed"
+      ],
+      "formula": "welfare damage share",
+      "words": [
+        "global warming",
+        "potential",
+        "loss",
+        "percent",
+        "htp",
+        "assumed"
+      ],
+      "number": "-0.37",
+      "note": "-0.32 * 1.15625"
+    },
+    {
+      "context": [
+        "global warming",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "person year",
+        "factor",
+        "assumed"
+      ],
+      "formula": "initial effort of a solution",
+      "words": [
+        "global warming",
+        "reduce climate gas emissions",
+        "initial effort",
+        "person year",
+        "assumed"
+      ],
+      "number": "3",
+      "note": "2.2 trillion EUR * 1.3636 person years per trillion EUR; the comparison rounds to two decimals, so 3"
+    },
+    {
+      "context": [
+        "global warming",
+        "reduce climate gas emissions",
+        "potential",
+        "loss",
+        "percent",
+        "htp",
+        "world",
+        "billion",
+        "loss reduction",
+        "assumed"
+      ],
+      "formula": "avoided welfare loss",
+      "words": [
+        "global warming",
+        "reduce climate gas emissions",
+        "potential",
+        "gain",
+        "billion",
+        "htp",
+        "assumed"
+      ],
+      "number": "35.2",
+      "note": "0 - -0.37 * 1189.19 billion htp * 8 percent"
+    },
+    {
+      "context": [
+        "global warming",
+        "reduce climate gas emissions",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "loss reduction",
+        "percent",
+        "assumed"
+      ],
+      "formula": "avoided potential loss",
+      "words": [
+        "global warming",
+        "reduce climate gas emissions",
+        "reward",
+        "trillion",
+        "EUR",
+        "assumed"
+      ],
+      "number": "0.176",
+      "note": "2.2 trillion EUR potential loss * 8 percent loss reduction; only the centre is validated, because a context that names low or high would match the centre value as well"
+    },
+    {
+      "context": [
+        "global warming",
+        "reduce climate gas emissions",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "loss reduction",
+        "percent",
+        "initial effort",
+        "person year",
+        "assumed"
+      ],
+      "formula": "reward ratio (formula)",
+      "words": [
+        "global warming",
+        "reduce climate gas emissions",
+        "reward ratio",
+        "trillion",
+        "EUR per person year",
+        "assumed"
+      ],
+      "number": "0.0587",
+      "note": "2.2 trillion EUR * 8 percent / 3 person years; the comparison rounds to two decimals, so 0.06"
+    },
+    {
+      "context": [
+        "global warming",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "low"
+      ],
+      "formula": "probability range low",
+      "words": [
+        "global warming",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed",
+        "low"
+      ],
+      "number": "0.88",
+      "note": "2.2 * 0.4"
+    },
+    {
+      "context": [
+        "global warming",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "high"
+      ],
+      "formula": "probability range high",
+      "words": [
+        "global warming",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed",
+        "high"
+      ],
+      "number": "5.5",
+      "note": "2.2 * 2.5"
+    },
+    {
+      "context": [
+        "global warming",
+        "potential",
+        "loss",
+        "percent",
+        "GDP",
+        "assumed",
+        "probability range factor",
+        "low"
+      ],
+      "formula": "probability range low",
+      "words": [
+        "global warming",
+        "potential",
+        "loss",
+        "percent",
+        "GDP",
+        "assumed",
+        "low"
+      ],
+      "number": "-0.8",
+      "note": "-0.32 * 2.5"
+    },
+    {
+      "context": [
+        "global warming",
+        "potential",
+        "loss",
+        "percent",
+        "GDP",
+        "assumed",
+        "probability range factor",
+        "high"
+      ],
+      "formula": "probability range high",
+      "words": [
+        "global warming",
+        "potential",
+        "loss",
+        "percent",
+        "GDP",
+        "assumed",
+        "high"
+      ],
+      "number": "-0.128",
+      "note": "-0.32 * 0.4"
+    },
+    {
+      "context": [
+        "global warming",
+        "potential",
+        "loss",
+        "percent",
+        "htp",
+        "assumed",
+        "probability range factor",
+        "low"
+      ],
+      "formula": "probability range low",
+      "words": [
+        "global warming",
+        "potential",
+        "loss",
+        "percent",
+        "htp",
+        "assumed",
+        "low"
+      ],
+      "number": "-0.925",
+      "note": "-0.37 * 2.5"
+    },
+    {
+      "context": [
+        "global warming",
+        "potential",
+        "loss",
+        "percent",
+        "htp",
+        "assumed",
+        "probability range factor",
+        "high"
+      ],
+      "formula": "probability range high",
+      "words": [
+        "global warming",
+        "potential",
+        "loss",
+        "percent",
+        "htp",
+        "assumed",
+        "high"
+      ],
+      "number": "-0.148",
+      "note": "-0.37 * 0.4"
+    },
+    {
+      "context": [
+        "global warming",
+        "reduce climate gas emissions",
+        "potential",
+        "gain",
+        "billion",
+        "htp",
+        "assumed",
+        "probability range factor",
+        "low"
+      ],
+      "formula": "probability range low",
+      "words": [
+        "global warming",
+        "reduce climate gas emissions",
+        "potential",
+        "gain",
+        "billion",
+        "htp",
+        "assumed",
+        "low"
+      ],
+      "number": "23.47",
+      "note": "35.2 * 0.6667; the comparison rounds to two decimals, so 23.47"
+    },
+    {
+      "context": [
+        "global warming",
+        "reduce climate gas emissions",
+        "potential",
+        "gain",
+        "billion",
+        "htp",
+        "assumed",
+        "probability range factor",
+        "high"
+      ],
+      "formula": "probability range high",
+      "words": [
+        "global warming",
+        "reduce climate gas emissions",
+        "potential",
+        "gain",
+        "billion",
+        "htp",
+        "assumed",
+        "high"
+      ],
+      "number": "52.8",
+      "note": "35.2 * 1.5"
+    },
+    {
+      "context": [
+        "global warming",
+        "reduce climate gas emissions",
+        "initial effort",
+        "person year",
+        "assumed",
+        "probability range factor",
+        "low"
+      ],
+      "formula": "probability range low",
+      "words": [
+        "global warming",
+        "reduce climate gas emissions",
+        "initial effort",
+        "person year",
+        "assumed",
+        "low"
+      ],
+      "number": "1.2",
+      "note": "3 * 0.4"
+    },
+    {
+      "context": [
+        "global warming",
+        "reduce climate gas emissions",
+        "initial effort",
+        "person year",
+        "assumed",
+        "probability range factor",
+        "high"
+      ],
+      "formula": "probability range high",
+      "words": [
+        "global warming",
+        "reduce climate gas emissions",
+        "initial effort",
+        "person year",
+        "assumed",
+        "high"
+      ],
+      "number": "7.5",
+      "note": "3 * 2.5"
+    },
+    {
+      "context": [
+        "global warming",
+        "reduce climate gas emissions",
+        "loss reduction",
+        "percent",
+        "assumed",
+        "probability range factor",
+        "low"
+      ],
+      "formula": "probability range low",
+      "words": [
+        "global warming",
+        "reduce climate gas emissions",
+        "loss reduction",
+        "percent",
+        "assumed",
+        "low"
+      ],
+      "number": "0.032",
+      "note": "0.08 * 0.4"
+    },
+    {
+      "context": [
+        "global warming",
+        "reduce climate gas emissions",
+        "loss reduction",
+        "percent",
+        "assumed",
+        "probability range factor",
+        "high"
+      ],
+      "formula": "probability range high",
+      "words": [
+        "global warming",
+        "reduce climate gas emissions",
+        "loss reduction",
+        "percent",
+        "assumed",
+        "high"
+      ],
+      "number": "0.2",
+      "note": "0.08 * 2.5"
     }
   ]
 }

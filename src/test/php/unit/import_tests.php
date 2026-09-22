@@ -295,6 +295,52 @@ class import_tests
         $t->assert($test_name, $dto->result_check_list()->count(), 1);
         $test_name = '... and reports no problem';
         $t->assert_true($test_name, $msg->is_ok());
+        // a checked result is a result like any other, so it is stored with the results of
+        // the file and not only used for the check
+        $test_name = '... and the checked result is stored with the results';
+        $t->assert($test_name, $dto->result_list()->count(), 1);
+
+        // an operand of a formula can be a group of phrases e.g. "price","CHF", which names one
+        // value, so the validation must replace the complete group with one number
+        $test_name = 'JSON import calc validation fills a phrase group with one number';
+        $msg = new user_message($t->usr1);
+        $json_str = file_get_contents(test_files::IMPORT_CALC_VALIDATION_GROUP . test_files::JSON);
+        $json_array = json_decode($json_str, true);
+        $dto = $imp->get_data_object($json_array, $msg);
+        $t->assert($test_name, $dto->result_check_list()->count(), 1);
+        $test_name = '... and reports no problem';
+        $t->assert_true($test_name, $msg->is_ok());
+
+        // negative: the missing value is reported by the complete group and not by a single phrase
+        $test_name = 'JSON import calc validation reports a missing phrase group value';
+        $msg = new user_message($t->usr1);
+        $json_str = file_get_contents(test_files::IMPORT_CALC_VALIDATION_GROUP_MISSING . test_files::JSON);
+        $json_array = json_decode($json_str, true);
+        $dto = $imp->get_data_object($json_array, $msg);
+        $target = 'the value for "price,CHF" to validate the result of '
+            . $dto->result_check_list()->lst()[0]->grp()->phrase_list()->dsp_name()
+            . ' is missing in the import message';
+        $t->assert($test_name, $msg->all_message_text(), $target);
+
+        // a result that has been reproduced is the operand of a later result, so that a file can
+        // calculate a target value first and its probability range from that target afterwards
+        $test_name = 'JSON import calc validation uses a checked result as an operand';
+        $msg = new user_message($t->usr1);
+        $json_str = file_get_contents(test_files::IMPORT_CALC_VALIDATION_CHAIN . test_files::JSON);
+        $json_array = json_decode($json_str, true);
+        $dto = $imp->get_data_object($json_array, $msg);
+        $t->assert($test_name, $dto->result_check_list()->count(), 2);
+        $test_name = '... and reports no problem';
+        $t->assert_true($test_name, $msg->is_ok());
+
+        // negative: a result that could not be reproduced is no operand, else a wrong number
+        // would confirm the next result instead of being reported
+        $test_name = 'JSON import calc validation uses no failed result as an operand';
+        $msg = new user_message($t->usr1);
+        $json_str = file_get_contents(test_files::IMPORT_CALC_VALIDATION_CHAIN_BROKEN . test_files::JSON);
+        $json_array = json_decode($json_str, true);
+        $imp->get_data_object($json_array, $msg);
+        $t->assert_text_contains($test_name, $msg->all_message_text(), 'the value for "total,CHF"');
 
         $test_name = 'JSON import calc validation reports a result mismatch';
         $msg = new user_message($t->usr1);

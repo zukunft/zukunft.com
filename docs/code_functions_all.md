@@ -299,6 +299,8 @@
             esult.php
     \-- figure - section for function figure not yet defined that it should be im- and export in /result/result.php
     \-- phr_ids - section for function phr_ids not yet defined that it should be im- and export in /result/result.php
+    \-- src_grp_is_storable - section for function src_grp_is_storable not yet defined that it should be info in /result
+            /result.php
     \-- delta - section for function delta is expected to be del in /result/result.php
     \-- name - section for function name is expected to be debug in /result/result.php
     \-- name_linked - section for function name_linked not yet defined that it should be display in /result/result.php
@@ -3561,6 +3563,7 @@
 \-- sandbox_value
     \-- clone_all - section for function clone_all not yet defined that it should be construct and map in /sandbox/sandb
             ox_value.php
+    \-- set_grp_by_row - section for function set_grp_by_row is expected to be set and get in /sandbox/sandbox_value.php
     \-- row_mapper_multi - section for function row_mapper_multi not yet defined that it should be construct and map in 
             /sandbox/sandbox_value.php
     \-- grp - section for function grp not yet defined that it should be set and get in /sandbox/sandbox_value.php
@@ -3609,6 +3612,10 @@
             php
     \-- load_sql_median_user - section for function load_sql_median_user is expected to be load sql in /sandbox/sandbox_
             value.php
+    \-- match_all - section for function match_all not yet defined that it should be select in /sandbox/sandbox_value.ph
+            p
+    \-- matches_context - section for function matches_context not yet defined that it should be select in /sandbox/sand
+            box_value.php
     \-- delta - section for function delta is expected to be del in /sandbox/sandbox_value.php
     \-- id_fvt_lst - section for function id_fvt_lst not yet defined that it should be info in /sandbox/sandbox_value.ph
             p
@@ -3658,6 +3665,8 @@
     \-- load_sql_by_phr_lst_single - section for function load_sql_by_phr_lst_single is expected to be load sql in /sand
             box/sandbox_value_list.php
     \-- load_sql_init - section for function load_sql_init is expected to be load sql in /sandbox/sandbox_value_list.php
+    \-- get_by_names_and_context - section for function get_by_names_and_context is expected to be set and get in /sandb
+            ox/sandbox_value_list.php
     \-- id_lst - section for function id_lst not yet defined that it should be info in /sandbox/sandbox_value_list.php
     \-- add_by_group - section for function add_by_group not yet defined that it should be modify in /sandbox/sandbox_va
             lue_list.php
@@ -3878,9 +3887,6 @@
     \-- source_name - section for function source_name not yet defined that it should be info in /value/value_base.php
     \-- phr_lst - section for function phr_lst not yet defined that it should be info in /value/value_base.php
     \-- phr_names - section for function phr_names not yet defined that it should be info in /value/value_base.php
-    \-- match_all - section for function match_all not yet defined that it should be select in /value/value_base.php
-    \-- matches_context - section for function matches_context not yet defined that it should be select in /value/value_
-            base.php
     \-- check - section for function check not yet defined that it should be check in /value/value_base.php
     \-- is_same_val - section for function is_same_val is expected to be info in /value/value_base.php
     \-- scale_new - section for function scale_new not yet defined that it should be TODO activate in /value/value_base.
@@ -3929,8 +3935,6 @@
 \-- value_list
     \-- grp_ids - section for function grp_ids not yet defined that it should be set and get in /value/value_list.php
     \-- get_by_names - section for function get_by_names is expected to be set and get in /value/value_list.php
-    \-- get_by_name_and_context - section for function get_by_name_and_context is expected to be set and get in /value/v
-            alue_list.php
     \-- load_sql_by_phr_lst - section for function load_sql_by_phr_lst is expected to be load sql in /value/value_list.p
             hp
     \-- load_sql_by_phr - section for function load_sql_by_phr is expected to be load sql in /value/value_list.php
@@ -3941,7 +3945,6 @@
             hp
     \-- load_sql_by_phr_single - section for function load_sql_by_phr_single is expected to be load sql in /value/value_
             list.php
-    \-- load_phrases - section for function load_phrases is expected to be load in /value/value_list.php
     \-- load_names_related - section for function load_names_related is expected to be load in /value/value_list.php
     \-- add_value_direct - section for function add_value_direct not yet defined that it should be modify in /value/valu
             e_list.php
@@ -4433,13 +4436,15 @@
     \-- get_by_link_id
         \-- element_list - set the SQL query parameters to load a list of formula elements by the formula id and filter 
                 by the element type
+    \-- 5
+        \-- group_list - set the SQL query parameters to load a list of phrase groups names by the ids
+        \-- sandbox_value_list - get the first value or result of the list that is related to all given phrase names
     \-- load_phrases
         \-- figure_list - set the SQL query parameters to load a list of figure objects
+        \-- sandbox_value_list - set the word objects for all values or results in the list if needed
     \-- load_by_frm_id
         \-- formula_link_list - load a list of formula links with the direct linked phrases related to the given formula
                  id
-    \-- 5
-        \-- group_list - set the SQL query parameters to load a list of phrase groups names by the ids
     \-- load_sql_by_ids
         \-- formula_link_list - set the SQL query parameters to load a list of formula links by the formula link ids
         \-- group_list - set the SQL query parameters to load a list of phrase groups by the ids
@@ -4568,16 +4573,6 @@
                 y parameters
     \-- load_user_changes
         \-- sandbox_list - load the changes that the given user has done compared to the standard
-    \-- load_by_phr_lst_multi
-        \-- sandbox_value_list - if $or is false or null
-    \-- load_sql_by_phr_lst_multi
-        \-- sandbox_value_list - create an SQL statement to retrieve a list of values by a list of phrases from the data
-                base
-    \-- load_sql_by_phr_lst_single
-        \-- sandbox_value_list - create an SQL statement to retrieve a list of values linked to a phrase from the databa
-                se
-    \-- load_sql_init
-        \-- sandbox_value_list - set the SQL query parameters to load a list of values or results
     \-- load_by_id
         \-- ip_range - load an ip range from the database selected by id
     \-- load_by_ip_addresses
@@ -7124,6 +7119,7 @@
     \-- div_bs - section for function div_bs not yet defined that it should be internal in /html/html_base.php
     \-- button_bs - section for function button_bs not yet defined that it should be internal in /html/html_base.php
     \-- list_item - section for function list_item not yet defined that it should be internal in /html/html_base.php
+    \-- popup_menu - section for function popup_menu not yet defined that it should be internal in /html/html_base.php
     \-- list_unsorted - section for function list_unsorted not yet defined that it should be internal in /html/html_base
             .php
 \-- html_selector
@@ -7406,6 +7402,8 @@
 \-- result
     \-- api_mapper - section for function api_mapper is expected to be construct and map in /result/result.php
     \-- formula_id - section for function formula_id not yet defined that it should be set and get in /result/result.php
+    \-- calculated_by_formula - section for function calculated_by_formula not yet defined that it should be set and get
+             in /result/result.php
     \-- load_by_id_with_related - section for function load_by_id_with_related is expected to be load in /result/result.
             php
     \-- display - section for function display not yet defined that it should be display in /result/result.php
@@ -7641,6 +7639,11 @@
     \-- phr_lst - section for function phr_lst not yet defined that it should be set and get in /sandbox/sandbox_value.p
             hp
     \-- api_mapper - section for function api_mapper is expected to be construct and map in /sandbox/sandbox_value.php
+    \-- impact - section for function impact not yet defined that it should be display in /sandbox/sandbox_value.php
+    \-- has_phrase - section for function has_phrase not yet defined that it should be display in /sandbox/sandbox_value
+            .php
+    \-- value_edit - section for function value_edit not yet defined that it should be display in /sandbox/sandbox_value
+            .php
     \-- value_linked - section for function value_linked not yet defined that it should be display in /sandbox/sandbox_v
             alue.php
     \-- val_formatted - section for function val_formatted not yet defined that it should be display in /sandbox/sandbox
@@ -7838,13 +7841,11 @@
     \-- figure - section for function figure not yet defined that it should be cast in /value/value.php
     \-- value - section for function value not yet defined that it should be base in /value/value.php
     \-- value_link - section for function value_link not yet defined that it should be base in /value/value.php
-    \-- value_edit - section for function value_edit not yet defined that it should be base in /value/value.php
     \-- links_and_measure - section for function links_and_measure is expected to be link in /value/value.php
     \-- with_unit_and_info - section for function with_unit_and_info not yet defined that it should be base in /value/va
             lue.php
     \-- warning_text - section for function warning_text not yet defined that it should be base in /value/value.php
     \-- name - section for function name is expected to be debug in /value/value.php
-    \-- impact - section for function impact not yet defined that it should be base in /value/value.php
     \-- time_phrase - section for function time_phrase not yet defined that it should be base in /value/value.php
     \-- get_description - section for function get_description is expected to be set and get in /value/value.php
     \-- name_tip - section for function name_tip not yet defined that it should be base in /value/value.php
@@ -7853,7 +7854,6 @@
     \-- source_selector - section for function source_selector not yet defined that it should be base in /value/value.ph
             p
     \-- ref_selector - section for function ref_selector not yet defined that it should be base in /value/value.php
-    \-- has_phrase - section for function has_phrase not yet defined that it should be info in /value/value.php
     \-- btn_add - section for function btn_add not yet defined that it should be buttons in /value/value.php
     \-- btn_edit - section for function btn_edit not yet defined that it should be buttons in /value/value.php
     \-- btn_del - section for function btn_del not yet defined that it should be buttons in /value/value.php
@@ -7881,6 +7881,7 @@
     \-- phrase_list - section for function phrase_list is expected to be cast in /value/value_list.php
     \-- get_by_names - section for function get_by_names is expected to be set and get in /value/value_list.php
     \-- add - section for function add not yet defined that it should be modify in /value/value_list.php
+    \-- add_results - section for function add_results not yet defined that it should be modify in /value/value_list.php
     \-- filter - section for function filter not yet defined that it should be modify in /value/value_list.php
     \-- sort_by_impact - section for function sort_by_impact not yet defined that it should be modify in /value/value_li
             st.php
@@ -7899,7 +7900,8 @@
             hp
     \-- dsp_table - section for function dsp_table not yet defined that it should be to review in /value/value_list.php
     \-- html - section for function html not yet defined that it should be to review in /value/value_list.php
-    \-- order error - order of section display has difference at table should be before list_most_relevant
+    \-- order error - order of section modify has difference at filter should be before add_results,
+            order of section display has difference at table should be before list_most_relevant
 \-- verb
     \-- url_mapper - section for function url_mapper not yet defined that it should be construct and map in /verb/verb.p
             hp
@@ -8652,6 +8654,8 @@
         \-- result_list - load all a result by the phrase group id and time phrase
     \-- load_by_formula
         \-- result_list - load a list of results linked to a formula
+    \-- load_by_phrase_list
+        \-- result_list - add the results of any of the given phrases to this list
     \-- load_by_group
         \-- result_list - load a list of results linked to a phrase group
     \-- load_by
@@ -9358,7 +9362,7 @@
     \-- get_by_formula
         \-- result_list - add a formula result to the list
     \-- filter
-        \-- result_list - get a list with the results related directly to the given formula, word, triple, source
+        \-- result_list - get a list with the results related directly to the given formula, word, triple or value
     \-- is_empty
         \-- sys_log_list - @return bool true when the list contains no entries; mirrors the ListBase API so callers
     \-- head
@@ -9781,6 +9785,8 @@
         \-- html_base - wrap the button tag around html code
     \-- list_item
         \-- html_base - html list item entry
+    \-- popup_menu
+        \-- html_base - a popup menu that opens on a click without any javascript, because the html details
     \-- list_unsorted
         \-- html_base - html unsorted list
 \-- table

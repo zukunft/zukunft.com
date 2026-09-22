@@ -133,12 +133,20 @@ class system_views_read_tests
                 url_var::DISPLAY_LIST_RANGE => url_var::TRUE]);
         $t->assert_view(views::START_CODE, $t->usr1, new triple($t->usr1), triple_names::GLOBAL_PROBLEM_ID,
             null, [url_var::DISPLAY_LIST_SIZE => Config::LIMIT_MORE_LIST,
-                url_var::DISPLAY_LIST_COLUMNS => value_list_ui::COLUMN_TIERS_MAYOR,
+                url_var::DISPLAY_LIST_COLUMNS => value_list_ui::COLUMN_TIERS_EX_MAIN,
                 url_var::DISPLAY_LIST_RANGE => url_var::TRUE]);
         $t->assert_view(views::START_CODE, $t->usr1, new triple($t->usr1), triple_names::GLOBAL_PROBLEM_ID,
             null, [url_var::DISPLAY_LIST_SIZE => Config::LIMIT_MORE_LIST,
-                url_var::DISPLAY_LIST_COLUMNS => value_list_ui::COLUMN_TIERS_MAYOR,
+                url_var::DISPLAY_LIST_COLUMNS => value_list_ui::COLUMN_TIERS_EX_MAIN,
                 url_var::DISPLAY_LIST_RANGE => url_var::FALSE]);
+        // the steps between the mayor columns and the full table, which the "..." clicks
+        // request: one tier is added per step, but still one unit per column and no range
+        $t->assert_view(views::START_CODE, $t->usr1, new triple($t->usr1), triple_names::GLOBAL_PROBLEM_ID,
+            null, [url_var::DISPLAY_LIST_SIZE => Config::LIMIT_MORE_LIST,
+                url_var::DISPLAY_LIST_COLUMNS => value_list_ui::COLUMN_TIERS_EX_MINOR]);
+        $t->assert_view(views::START_CODE, $t->usr1, new triple($t->usr1), triple_names::GLOBAL_PROBLEM_ID,
+            null, [url_var::DISPLAY_LIST_SIZE => Config::LIMIT_MORE_LIST,
+                url_var::DISPLAY_LIST_COLUMNS => value_list_ui::COLUMN_TIERS_EX_MARGINAL]);
 
         $t->assert_view(views::WORD, $t->usr1, new word($t->usr1), word_names::MATH_ID, $cfg);
         // Zurich and CHF is the example for the page-title symbol-line layout

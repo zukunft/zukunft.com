@@ -1,0 +1,64 @@
+{
+  "version": "0.0.3",
+  "data_version": "0.0.1",
+  "time": "2026-09-21 12:00:00",
+  "user": "zukunft.com system batch job",
+  "selection": [
+    "unit test message where the value of a phrase group is missing to validate the result"
+  ],
+  "words": [
+    {
+      "name": "price"
+    },
+    {
+      "name": "quantity"
+    },
+    {
+      "name": "total"
+    },
+    {
+      "name": "CHF",
+      "type": "measure"
+    },
+    {
+      "name": "apple"
+    }
+  ],
+  "formulas": [
+    {
+      "name": "total formula with the measure",
+      "description": "the same total as the simple validation, but with an operand of two phrases, so that the validation must replace the complete group with one number",
+      "expression": "\"total\",\"CHF\" = \"price\",\"CHF\" * \"quantity\"",
+      "assigned": [
+        "price",
+        "quantity"
+      ]
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "apple",
+        "quantity"
+      ],
+      "number": "5"
+    }
+  ],
+  "calc-validation": [
+    {
+      "context": [
+        "apple",
+        "price",
+        "quantity",
+        "CHF"
+      ],
+      "formula": "total formula with the measure",
+      "words": [
+        "apple",
+        "total",
+        "CHF"
+      ],
+      "number": "10"
+    }
+  ]
+}

@@ -13,6 +13,10 @@ client-side handler.
   renders one `.css-tab` section per tab; the `.css-tab:target` rules in
   `style_html.css` show the matched content **and** highlight its label, first tab
   default): a link to `…#changes` opens the "Changes" tab — no script needed.
+- A popup menu is the html `details` element, which keeps the open state itself:
+  `html_base::popup_menu` wraps the always shown label in the `summary` and the
+  entries in a list, and the `.<name>-menu` rules in `style_html.css` float the
+  list below the label (the header menus and the "…" column menu of a value table).
 - Never emit a `<script>` tag or an inline event handler (`onclick=…`, `data-toggle`
   for a JS plugin, …) from a `web/` renderer.
 
@@ -397,17 +401,47 @@ and that is a gap to close by threading the context, not a licence to skip the
 link. When adding a new truncated list, pick (or create) the "show all" view
 first, then wire the tail to it.
 
-## The simple table and its "…" header
+## The simple table and its "…" menu
 
 A value table has a simple and a full version, like a list has a short and a
 more version. The simple version shows the columns of the mayor tier only, one
 unit per column, and each cell the number without its probability range; the
 full version shows every tier, every unit and the range behind each number. The
-start page opens with the simple version. The last header cell of a simple
-table is the "…" link (`value_list::all_columns_link`) to the same page with
-`url_var::DISPLAY_LIST_COLUMNS` (`dlc`, human `display_list_columns`) set to
-`value_list::COLUMN_TIERS_ALL` and `url_var::DISPLAY_LIST_RANGE` (`dlr`,
-`display_list_range`) set to `url_var::TRUE`. Both are `url_var::PAGE_VARS` and
-part of the page cache key, so the full version is a cached page of its own
-like the more version of a list. A page that is not known renders the "…" as
-plain text, the same gap as for the list tail.
+versions between them show every unit of a shown column, e.g. the potential
+loss of a problem in trillion EUR, in percent of the GDP and in percent of the
+happy time points, because only the smallest screen needs one number per
+column. The start page opens with the simple version. The last header cell of every table,
+the full one included, is the "…" menu (`value_list::columns_menu`, built with
+`html_base::popup_menu`), which lets the reader pick the version directly
+instead of stepping through them — and from the full table it is the only way
+back to the fewer columns.
+
+The menu sets `url_var::DISPLAY_LIST_COLUMNS` (`dlc`, human
+`display_list_columns`). That number says how many tiers of
+`triples::SYSTEM_COLUMN_TIERS` (mayor, main, minor, marginal) the table leaves
+out from the bottom, so it names one entry per tier
+(`value_list::COLUMN_TIER_NAMES`): `COLUMN_TIERS_EX_MAIN` (3, "mayor") →
+`COLUMN_TIERS_EX_MINOR` (2, "main") → `COLUMN_TIERS_EX_MARGINAL` (1, "minor")
+→ `COLUMN_TIERS_ALL` (0, "all"). The entry is named by the tier alone, because
+the menu header says what is selected. Each entry exists twice, once with
+`url_var::DISPLAY_LIST_RANGE` (`dlr`, `display_list_range`) off and once on
+(`msg_id::TABLE_COLUMNS_WITH_RANGE`), so every version of the table is one
+click away. Both vars are `url_var::PAGE_VARS` and part of the page cache key,
+so every selection is a cached page of its own like the more version of a list.
+A page that is not known renders the "…" as plain text, the same gap as for the
+list tail.
+
+A tier also says on which screen a column is shown: the css class of
+`value_list::column_style` hides a main column on a small screen
+(`styles::COL_MAIN`), a minor column below a wide screen (`COL_MINOR`) and a
+marginal column below the widest one (`COL_MARGINAL`).
+
+A row of the simple table whose numbers are all in a column of the full version
+would be empty, e.g. the reward ratio row of a problem, so the ranking of the
+start page is built with the `value_rows_only` option of
+`value_list::table_by_related_columns`, which drops a row without a number in a
+shown column before the row cut, so that such a row uses up none of the shown
+rows. A phrase column names a phrase of the row and no number, so a row with
+only phrase cells is dropped as well. Every other table keeps such a row, so
+the option is a default of the component (`ui_list::start_list`) and not a rule
+of the table.

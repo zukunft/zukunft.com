@@ -75,6 +75,56 @@ if in the component 'table with related columns' all values of the column are in
 
 add column 'reasons' with sub column to start page as a second column extensions option so click ... once add the 'reason' column and the next time it will add the minor columns
 
+the global warming row of `start_page/problem_global_warming.json` is done and is the pattern for
+the other twelve problem files: all eighteen numbers of the row are results, six target values and
+their twelve bounds, and the file states only the inputs behind them. a calc validation may use a
+result that the same file has reproduced before it, so the entries are ordered target first, range
+afterwards, and a result that did not reproduce is never an operand.
+
+the chain of the row, each step an own formula:
+
+| result | from |
+| --- | --- |
+| potential loss in trillion EUR | world GDP * annual damage share |
+| loss reduction in percent | minus the leakage rate that the carbon tariff avoids |
+| potential loss in GDP percent | minus the annual damage share * the long run growth factor |
+| potential loss in htp percent | the GDP share * the htp to GDP damage factor |
+| initial effort in person year | the annual damage in money * the effort per trillion EUR |
+| potential gain in billion htp | minus the htp share * the world htp * the loss reduction |
+| each low and high bound | the target * an own probability range factor |
+
+four rules that the pattern depends on:
+
+- the range formula selects the target by the word `assumed` and the factor by
+  `probability range factor`, so a factor value never carries `assumed` and every target does
+- a factor value must carry no phrase that names a column of the ranking (`potential`, `loss`,
+  `gain`, `initial effort`, `loss reduction`), else the table sorts it into that column and shows it
+  as the bound of the cell. it is scoped by the units and the subject instead, e.g.
+  `global warming, trillion, EUR, probability range factor, low`
+- the factor of each measure must be the only factor whose phrases fit the context of that measure
+- the two bounds are calculated separately, so a range may be asymmetric; a loss stated as a
+  negative share simply gets the two factors the other way round
+
+what is still open:
+
+- four inputs are tuned so that the results match the numbers that the start page has used until
+  now, and they are placeholders for a real model: the long run growth factor of 16, the htp to GDP
+  damage factor of 1.15625, the world htp of 1189.19 billion and the effort of 1.3636 person years
+  per trillion EUR. the growth factor should become a damage function of the expected warming and
+  the world htp the population times the horizon of the ranking
+- the world htp of 1189.19 billion does not fit the other htp numbers of the pod: the global welfare
+  baseline of theses_complex_simple.json is 8 billion people * 0.6 waking welfare fraction = 4.8
+  billion HTP per year, and `htp = htp percent * global human population` of solution_prio.json
+  gives 8.5 billion, so the tuned number is about 250 times bigger. it is the horizon that is
+  missing, and until it is stated the gain column of every problem file carries the same open factor
+- the probability range factor is stated per measure. it is a step function of the confidence in the
+  view-validation table of solution_prio.json, and `factor = 0.5 / confidence` reproduces every row
+  of that table, so it could be calculated from the confidence value instead
+- one pair of formulas per file, because a formula names its operands by phrase and the centre has
+  no phrase of its own. marking the centre with the word `centre` (already declared in
+  solution_prio.json and used by nothing) would let all problem files share one pair, but it changes
+  the phrase group of every start page number
+
 ## fill the configuration and quarantine views
 
 the views user_config, system_config, admin_config, user_quarantine and all_quarantine still show only the "system body

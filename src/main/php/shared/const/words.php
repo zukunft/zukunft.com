@@ -126,7 +126,7 @@ class words
     const string CHANGES = 'changes';
     const string CHECK = 'check';
     const string CHF = 'CHF';
-    const int CHF_ID = 407;
+    const int CHF_ID = 408;
     const string COLUMNS = 'columns';
     const string COMBINATION = 'combination';
     const string COMPONENT = 'component';
@@ -162,7 +162,7 @@ class words
     const string FREEZE = 'freeze';
     const string FUTURE = 'future';
     const string HAPPY = 'happy';
-    const int HAPPY_ID = 264;
+    const int HAPPY_ID = 265;
     const string HARDWARE = 'hardware';
     const string HTML = 'html';
     const string IMPACT = 'impact';
@@ -224,7 +224,7 @@ class words
     const string POINT = 'point';
     const int POINT_ID = 204;
     const string POINTS = 'points';
-    const int POINTS_ID = 266;
+    const int POINTS_ID = 267;
     const string PREDICTION = 'prediction';
     const string PRELOAD = 'preload';
     const string PRESELECT = 'preselect';
@@ -266,7 +266,7 @@ class words
     const string TOLERANCE = 'tolerance';
     const string TOP = 'top';
     const string TOTAL_PRE = 'total';
-    const int TOTAL_ID = 334;
+    const int TOTAL_ID = 335;
     const string TRIPLES = 'triples';
     const string TRUSTED = 'trusted';
     const string TYPE = 'type';
@@ -278,7 +278,7 @@ class words
     const string VALUE = 'value';
     const string VALUES = 'values';
     const string VERBS = 'verbs';
-    const int VERBS_ID = 778;
+    const int VERBS_ID = 781;
     const string VERSION = 'version';
     const string VIEW = 'view';
     const string VIEWS = 'views';

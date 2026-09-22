@@ -42,5 +42,8 @@ class results
     CONST float TV_FLOAT = 12.3456;
     CONST float TV_PCT = 0.01234;
     CONST string TV_INCREASE_LONG = '0.0078718332961637'; // the increase of the swiss inhabitants from 2019 to 2020
+    // a calculated number of the start page ranking, e.g. the happy time points that the
+    // potential loss of a problem costs, used to test that a table shows the results too
+    CONST float TV_PRIO_LOSS_HTP = 29.9;
 
 }

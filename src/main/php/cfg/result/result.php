@@ -71,6 +71,7 @@ include_once paths::MODEL_GROUP . 'group.php';
 include_once paths::MODEL_GROUP . 'group_db.php';
 include_once paths::MODEL_GROUP . 'group_id.php';
 include_once paths::MODEL_GROUP . 'group_list.php';
+include_once paths::MODEL_GROUP . 'result_id.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_HELPER . 'db_object_multi.php';
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
@@ -109,6 +110,7 @@ use Zukunft\ZukunftCom\main\php\cfg\group\group;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_db;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_id;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_list;
+use Zukunft\ZukunftCom\main\php\cfg\group\result_id;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_multi;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
@@ -227,17 +229,29 @@ class result extends sandbox_value
     function row_mapper_multi(?array $db_row, user_message $msg, string $ext, string $id_fld = '', bool $one_id_fld = true): bool
     {
         $lib = new library();
-        $result = parent::row_mapper_multi($db_row, $msg, $ext, result_fields::FLD_ID);
+        $result = false;
+        if ($db_row !== null and $db_row !== []) {
+            // a row of the group keyed result tables carries the text group key, a row of the
+            // prime and main tables the phrase id columns, and a union of both kinds shows an
+            // empty key for the latter, so the key decides the group (see set_grp_by_row)
+            $one_id_fld = $this->set_grp_by_row($db_row, $msg, result_fields::FLD_ID,
+                $this->id_fields_main(1, result_id::MAIN_PHRASES_ALL));
+            $result = parent::row_mapper_multi($db_row, $msg, $ext, result_fields::FLD_ID, $one_id_fld);
+        }
         if ($result) {
-            // only the id is mapped, because the result row does not carry the formula name;
-            // the direct int assign would fatal on the formula typed var (see api_json_array
-            // for the on demand load of the name)
+            // only the id is mapped, because the result row does not carry the formula name
+            // (see api_json_array for the on demand load of the name)
             $this->frm = new formula($this->get_user());
-            $this->frm->set_id($db_row[formula_fields::FLD_ID]);
-            if (substr($ext, 0, 2) == group_id::TBL_EXT_PHRASE_ID) {
-                $this->src_grp->set_id((int)$db_row[result_fields::FLD_SOURCE_GRP]);
-            } else {
-                $this->src_grp->set_id($db_row[result_fields::FLD_SOURCE_GRP]);
+            $this->frm->set((int)$db_row[formula_fields::FLD_ID]);
+            // a result imported without a source group has none in the database
+            // (see result_list::drop_unsupported_src_grp)
+            $src_grp_id = $db_row[result_fields::FLD_SOURCE_GRP] ?? null;
+            if ($src_grp_id !== null and $src_grp_id !== '') {
+                if (substr($ext, 0, 2) == group_id::TBL_EXT_PHRASE_ID) {
+                    $this->src_grp->set_id((int)$src_grp_id);
+                } else {
+                    $this->src_grp->set_id($src_grp_id);
+                }
             }
             $this->set_number($db_row[sandbox_multi::FLD_VALUE]);
             $this->set_owner_id($db_row[user_db::FLD_ID]);
@@ -938,12 +952,16 @@ class result extends sandbox_value
                 }
             }
         }
-        if ($this->src_grp->phrase_list() != null) {
-            if ($this->src_grp->phrase_list()->empty()) {
+        // a result imported without a source group has no source words to miss
+        // (see result_list::drop_unsupported_src_grp), so only a set group is checked
+        if ($this->src_grp->is_id_set()) {
+            if ($this->src_grp->phrase_list() != null) {
+                if ($this->src_grp->phrase_list()->empty()) {
+                    log_warning("Missing source words for the calculated value " . $this->id() . ' (group id ' . $this->src_grp->dsp_id() . ').', "result->load_phr_lst_src");
+                }
+            } else {
                 log_warning("Missing source words for the calculated value " . $this->id() . ' (group id ' . $this->src_grp->dsp_id() . ').', "result->load_phr_lst_src");
             }
-        } else {
-            log_warning("Missing source words for the calculated value " . $this->id() . ' (group id ' . $this->src_grp->dsp_id() . ').', "result->load_phr_lst_src");
         }
     }
 
@@ -1215,6 +1233,21 @@ class result extends sandbox_value
     /*
      * info
      */
+
+    /**
+     * true if save() can write the source group of this result
+     *
+     * the source group is stored as the bigint source_group_id of results_prime and
+     * results_main, so only a "prime" group (up to 4 phrases, encoded as a 64-bit int) fits;
+     * a group of more phrases encodes as an alpha-num string, which needs a group row that
+     * the import does not yet write (see result_list::drop_unsupported_src_grp)
+     *
+     * @return bool true if the source group is missing or small enough to be written
+     */
+    function src_grp_is_storable(): bool
+    {
+        return $this->src_grp === null or $this->src_grp->is_prime();
+    }
 
     /**
      * Create an object where only the vars are set

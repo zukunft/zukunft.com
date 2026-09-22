@@ -328,6 +328,43 @@ class sandbox_value extends sandbox_multi
      * @param bool $one_id_fld false if the unique database id is based on more than one field and due to that the database id should not be used for the object id
      * @return bool true if the user sandbox object is loaded and valid
      */
+    /**
+     * set the phrase group of a value or result from a database row
+     *
+     * a row of the group keyed tables carries the text group key, which encodes the phrase
+     * ids, whereas a row of a prime or main table carries one column per phrase id, so there
+     * the group is built from those columns; a row of a union of both kinds shows an empty
+     * key for the prime and main rows, which is why the key decides and not the table
+     *
+     * @param array $db_row the database row
+     * @param user_message $msg to report a key that cannot be decoded
+     * @param string $id_fld the name of the text group key field
+     * @param array $phr_id_flds the names of the phrase id fields of the prime and main tables
+     * @return bool true if the row carries the text group key
+     */
+    function set_grp_by_row(array $db_row, user_message $msg, string $id_fld, array $phr_id_flds): bool
+    {
+        $key = $db_row[$id_fld] ?? null;
+        $has_key = ($key !== null and $key !== '' and $key !== 'null');
+        $grp = new group($this->get_user());
+        if ($has_key) {
+            $grp->set_phrase_list_by_id($key, $msg);
+            $grp->set_id($key);
+        } else {
+            $phr_lst = new phrase_list($this->get_user());
+            foreach ($phr_id_flds as $fld_name) {
+                $id = $db_row[$fld_name] ?? 0;
+                if ($id != 0) {
+                    $phr_lst->add(new phrase($this->get_user(), $id));
+                }
+            }
+            $grp->set_id(new group_id()->get_id($phr_lst));
+            $grp->set_phrase_list($phr_lst);
+        }
+        $this->set_grp($grp);
+        return $has_key;
+    }
+
     function row_mapper_multi(?array $db_row, user_message $msg, string $ext, string $id_fld = '', bool $one_id_fld = true): bool
     {
         $this->set_last_update(null);
@@ -1149,6 +1186,39 @@ class sandbox_value extends sandbox_multi
         $sc->set_fields(array(user_db::FLD_ID));
 
         return $this->load_sql_set_where($qp, $sc, $id_ext);
+    }
+
+
+    /*
+     * select
+     */
+
+    /**
+     * to select the value or result if it matches all given phrase names
+     * @param array $names the phrase names for the selection
+     * @return bool true if this value is related to all phrase names
+     */
+    function match_all(array $names): bool
+    {
+        $result = true;
+        $phr_names = $this->grp()->phrase_list()->names();
+        foreach ($names as $name) {
+            if ($result) {
+                if (!in_array($name, $phr_names)) {
+                    $result = false;
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param array $names list of phrase names e.g. the context phrases of a result validation
+     * @return bool true if all phrases of this value are part of the given phrase names
+     */
+    function matches_context(array $names): bool
+    {
+        return empty(array_diff($this->grp()->phrase_list()->names(), $names));
     }
 
 

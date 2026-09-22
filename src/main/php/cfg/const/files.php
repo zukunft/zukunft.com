@@ -286,20 +286,6 @@ class files
         self::IMPORT_WIND_INVESTMENT,
         self::CONFORMITY_MRI_BERNS_FILE,
         self::CO2_EQ_REDUCTION_RANKING_FILE,
-        // the problems of the start page ranking in the order of the ranking
-        self::PROBLEM_GLOBAL_WARMING_FILE,
-        self::PROBLEM_POPULISM_FILE,
-        self::PROBLEM_POVERTY_FILE,
-        self::PROBLEM_HEALTH_FILE,
-        self::PROBLEM_EDUCATION_FILE,
-        self::PROBLEM_WEALTH_CONCENTRATION_FILE,
-        self::PROBLEM_DISINFORMATION_FILE,
-        self::PROBLEM_MARKET_POWER_FILE,
-        self::PROBLEM_BIASED_INFORMATION_FILE,
-        self::PROBLEM_BLACK_BOX_AI_FILE,
-        self::PROBLEM_CITIZEN_PARTICIPATION_FILE,
-        self::PROBLEM_GDP_MISMEASUREMENT_FILE,
-        self::PROBLEM_PROPRIETARY_SOFTWARE_FILE,
     ];
 
     // sample data that only test/test_full_load.php imports, loaded after the data of a pod,
@@ -325,7 +311,10 @@ class files
     ];
 
     // sample data for the view unit tests, imported in the db setup right after the system config
-    // so that the views can be tested by name without relying on database ids
+    // so that the views can be tested by name without relying on database ids;
+    // the problem files are part of it, because each of them owns the numbers of one row of the
+    // start page ranking table, which the view tests render, and they are imported after
+    // solution_prio.json, the home of the problem and solution keywords they re-declare
     const array SAMPLE_VIEW_DATA_FILES = [
         self::ZURICH_FILE,
         self::ZH_CITY_FILE,
@@ -338,6 +327,20 @@ class files
         self::POVERTY_FILE,
         self::EDUCATION_FILE,
         self::MATH_PROPAGATION_OF_UNCERTAINTY_FILE,
+        // the problems of the start page ranking in the order of the ranking
+        self::PROBLEM_GLOBAL_WARMING_FILE,
+        self::PROBLEM_POPULISM_FILE,
+        self::PROBLEM_POVERTY_FILE,
+        self::PROBLEM_HEALTH_FILE,
+        self::PROBLEM_EDUCATION_FILE,
+        self::PROBLEM_WEALTH_CONCENTRATION_FILE,
+        self::PROBLEM_DISINFORMATION_FILE,
+        self::PROBLEM_MARKET_POWER_FILE,
+        self::PROBLEM_BIASED_INFORMATION_FILE,
+        self::PROBLEM_BLACK_BOX_AI_FILE,
+        self::PROBLEM_CITIZEN_PARTICIPATION_FILE,
+        self::PROBLEM_GDP_MISMEASUREMENT_FILE,
+        self::PROBLEM_PROPRIETARY_SOFTWARE_FILE,
     ];
 
 }

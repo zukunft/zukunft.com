@@ -307,13 +307,16 @@ class phrase_ui_tests
         // no value carries it and no phrase is linked to it, so the table shows four columns
         // each headed by its own unit behind a translatable "in", except the solution column,
         // which holds no number and therefore no unit
+        // the last header cell opens the menu that selects the columns, which without a page
+        // url is the plain "..." text
         $test_name = 'the header shows the columns in the defined order with their unit';
         $unit_sep = ' ' . msg_id::VALUE_TBL_UNIT->text() . ' ';
         $t->assert($test_name, $lib->html_to_text($tbl_header_row),
             word_names::PROBLEM
             . ' ' . word_names::LOSS . $unit_sep . word_names::TRILLION . ' ' . word_names::EUR
             . ' ' . word_names::SOLUTION
-            . ' ' . word_names::GAIN . $unit_sep . word_names::BILLION . ' ' . word_names::HTP);
+            . ' ' . word_names::GAIN . $unit_sep . word_names::BILLION . ' ' . word_names::HTP
+            . ' ' . msg_id::THREE_POINTS->text());
 
         // negative: a phrase column exists only where a definition names it, so without the
         // definitions the same values show no solution column and the impact ranking alone

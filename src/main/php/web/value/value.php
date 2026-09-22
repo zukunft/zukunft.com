@@ -477,22 +477,6 @@ class value extends sandbox_value
     }
 
     /**
-     * create the html code to show only the value formatted based on the user settings
-     * with a link to change the value itself or the value parameters
-     * @param user_message $msg to collect the error messages
-     * @param array $url_arr the url vars of the calling page for the back link
-     * @return string the formatted value with a link to change this value
-     */
-    function value_edit(user_message $msg, array $url_arr = []): string
-    {
-        $html = new html_base();
-        $url = $html->url_back(views::VALUE_DEFAULT_ID, $this->id(), $url_arr);
-        $txt = $this->value($msg);
-        // value() already returns escaped/safe html, so ref() must not escape it again
-        return $html->ref($url, $txt, '', '', true);
-    }
-
-    /**
      * create the html code to show the phrase names related to a value in declining order of impact
      * and the measure types behind the value as a symbol
      * but with the tooltip of the main measure type
@@ -662,16 +646,6 @@ class value extends sandbox_value
     {
         // a value is shown by its phrases, the name given to its group only in the group name form field
         return $this->grp->phrase_names();
-    }
-
-    /**
-     * the impact of a value is the highest impact of the phrases it is assigned to
-     * so that the most relevant values (e.g. of the highest ranked phrase) are shown first
-     * @return float the system calculated impact used to sort the values
-     */
-    function impact(): float
-    {
-        return $this->grp->phr_lst()->max_impact();
     }
 
     /**
@@ -854,25 +828,6 @@ class value extends sandbox_value
     /*
      * info
      */
-
-    /**
-     * to select a value by a phrase
-     * @param phrase $phr the phrase to select the value
-     * @return bool true if the value contains the given phrase
-     */
-    function has_phrase(phrase $phr, user_message $msg): bool
-    {
-        $result = false;
-        $phr_lst = $this->grp->phr_lst();
-        foreach ($phr_lst->lst() as $val_phr) {
-            if ($val_phr->is_same($phr)) {
-                $result = true;
-            } elseif ($val_phr->is_type_phrase($phr, $msg)) {
-                $result = true;
-            }
-        }
-        return $result;
-    }
 
     /*
      * buttons

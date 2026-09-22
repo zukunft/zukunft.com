@@ -235,11 +235,11 @@ class value_list_ui_tests
         $t->assert_text_contains($test_name, $tbl_html, word_names::ABB);
         $test_name = 'the value that shares no column phrase is still shown';
         $t->assert_text_contains($test_name, $tbl_html, word_names::PI);
-        // one header cell per column phrase, plus the empty top left cell and the "Values" cell
-        // of the values that share no column phrase
+        // one header cell per column phrase, plus the empty top left cell, the "Values" cell
+        // of the values that share no column phrase and the "..." cell of the column menu
         $test_name = 'never more phrase columns than fit on the widest screen';
         $t->assert_true($test_name,
-            substr_count($tbl_html, '<th') <= position_types::MAX_SIDE_COLUMNS + 2);
+            substr_count($tbl_html, '<th') <= position_types::MAX_SIDE_COLUMNS + 3);
         $test_name = 'the header is shown before the first row';
         $t->assert_text_order($test_name, $tbl_html, '<th', '<td');
 
@@ -344,6 +344,21 @@ class value_list_ui_tests
         $test_name = '... and a cell holds the values of its unit only';
         $t->assert_text_not_contains($test_name, $lib->html_to_text($tbl_units), '2.2, ');
 
+        // only the table of the mayor tier alone keeps one number per column, so the second
+        // unit is shown as soon as the main columns are shown too
+        $tbl_unit_mayor = $t_val->value_list_two_units_ui()->table_by_related_columns(
+            $msg_ui, new phrase_list_ui(), $loss_lst->column_names(), false, true, $loss_lst,
+            null, [], false, value_list_ui::COLUMN_TIERS_EX_MAIN);
+        $hdr_unit_mayor = $lib->html_to_text($lib->str_left_of($tbl_unit_mayor, '</tr>'));
+        $test_name = 'the mayor columns show one unit per column';
+        $t->assert($test_name, substr_count($hdr_unit_mayor, word_names::LOSS . $unit_sep), 1);
+        $tbl_unit_main = $t_val->value_list_two_units_ui()->table_by_related_columns(
+            $msg_ui, new phrase_list_ui(), $loss_lst->column_names(), false, true, $loss_lst,
+            null, [], false, value_list_ui::COLUMN_TIERS_EX_MINOR);
+        $hdr_unit_main = $lib->html_to_text($lib->str_left_of($tbl_unit_main, '</tr>'));
+        $test_name = '... and with the main columns every unit is shown';
+        $t->assert($test_name, substr_count($hdr_unit_main, word_names::LOSS . $unit_sep), 2);
+
         // a unit can be a triple, e.g. "gram per kWh", which the import types "measure" like
         // its words (see pv_switzerland_co2.json), so the header puts it behind the "in" too
         $tbl_unit_trp = $t_val->value_list_unit_triple_ui()->table_by_related_columns(
@@ -381,11 +396,12 @@ class value_list_ui_tests
         // every defined column is shown, because the tiers hide the columns per screen size, so
         // the number of columns that fit on the widest screen limits only the columns that the
         // data suggests; five defined columns give five column headers plus the row name header
+        // and the "..." header with the column menu
         $rel_lst = $t_phr->list_columns_ordered_ui();
         $tbl_def = $t_val->value_list_defined_columns_ui()->table_by_related_columns(
             $msg_ui, new phrase_list_ui(), $rel_lst->column_names(), false, true, $rel_lst);
         $test_name = 'every defined column is shown even above the number that fit on the widest screen';
-        $t->assert($test_name, substr_count($tbl_def, '<th'), count($rel_lst->column_names()) + 1);
+        $t->assert($test_name, substr_count($tbl_def, '<th'), count($rel_lst->column_names()) + 2);
 
         // the tier of a defined column says on which screens it is shown: a main column carries
         // the class that hides it on a small screen, a mayor column has no class and is shown on
@@ -402,7 +418,7 @@ class value_list_ui_tests
         // full table and the "..." header says that more columns exist
         $tbl_mayor = $t_val->value_list_defined_columns_ui()->table_by_related_columns(
             $msg_ui, new phrase_list_ui(), $rel_lst->column_names(), false, true, $rel_lst,
-            null, [], false, value_list_ui::COLUMN_TIERS_MAYOR);
+            null, [], false, value_list_ui::COLUMN_TIERS_EX_MAIN);
         $hdr_mayor = $lib->html_to_text($lib->str_left_of($tbl_mayor, '</tr>'));
         $hdr_def = $lib->html_to_text($lib->str_left_of($tbl_def, '</tr>'));
         $test_name = 'a simple table leaves out the main column';
@@ -411,9 +427,36 @@ class value_list_ui_tests
         $t->assert_text_contains($test_name, $hdr_mayor, word_names::LOSS);
         $test_name = '... and ends with the "..." header';
         $t->assert_text_contains($test_name, $hdr_mayor, msg_id::THREE_POINTS->text());
-        $test_name = 'the full table shows the main column and has no "..." header';
+        // the full table shows every column and still ends with the "..." header, because its
+        // menu is the only way back to the fewer columns
+        $test_name = 'the full table shows the main column and the "..." header';
         $t->assert_text_contains($test_name, $hdr_def, word_names::COST);
-        $t->assert_text_not_contains($test_name, $hdr_def, msg_id::THREE_POINTS->text());
+        $t->assert_text_contains($test_name, $hdr_def, msg_id::THREE_POINTS->text());
+
+        // the "..." header opens the menu that selects the columns, so it offers every column
+        // tier and each of them once with and once without the ranges
+        $page_url = [url_var::MASK => views::START_ID];
+        $tbl_menu = $t_val->value_list_defined_columns_ui()->table_by_related_columns(
+            $msg_ui, new phrase_list_ui(), $rel_lst->column_names(), false, true, $rel_lst,
+            null, $page_url, false, value_list_ui::COLUMN_TIERS_EX_MAIN);
+        $test_name = 'the "..." header opens a menu without any javascript';
+        $t->assert_text_contains($test_name, $tbl_menu,
+            '<' . html_base::DETAILS . ' class="' . styles::MENU_COLUMN . '">');
+        $t->assert_text_not_contains($test_name, $tbl_menu, '<script');
+        foreach (value_list_ui::COLUMN_TIER_NAMES as $tiers => $msg_tier) {
+            $test_name = 'the column menu offers ' . $msg_tier->text();
+            $t->assert_text_contains($test_name, $lib->html_to_text($tbl_menu), $msg_tier->text());
+            // the entry of one tier without and the entry with the range of each number
+            $t->assert_text_contains($test_name, $tbl_menu,
+                url_var::DISPLAY_LIST_COLUMNS . '=' . $tiers . '&amp;'
+                . url_var::DISPLAY_LIST_RANGE . '=' . url_var::FALSE);
+            $t->assert_text_contains($test_name, $tbl_menu,
+                url_var::DISPLAY_LIST_COLUMNS . '=' . $tiers . '&amp;'
+                . url_var::DISPLAY_LIST_RANGE . '=' . url_var::TRUE);
+        }
+        $test_name = '... and names the entry with the range';
+        $t->assert_text_contains($test_name, $lib->html_to_text($tbl_menu),
+            msg_id::TABLE_COLUMNS_ALL->text() . ' ' . msg_id::TABLE_COLUMNS_WITH_RANGE->text());
 
         $test_name = 'the table of an empty value list renders nothing';
         $t->assert($test_name, new value_list_ui()->table_by_related_columns($msg_ui), '');

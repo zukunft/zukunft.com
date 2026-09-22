@@ -71,6 +71,7 @@ use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref_list;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
 use Zukunft\ZukunftCom\main\php\cfg\result\result;
+use Zukunft\ZukunftCom\main\php\cfg\result\result_list;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_list;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
 use Zukunft\ZukunftCom\main\php\cfg\system\list_db_read;
@@ -107,6 +108,7 @@ use Zukunft\ZukunftCom\main\php\web\ref\ref_list as ref_list_ui;
 use Zukunft\ZukunftCom\main\php\web\ref\source as source_ui;
 use Zukunft\ZukunftCom\main\php\web\ref\source_list as source_list_ui;
 use Zukunft\ZukunftCom\main\php\web\result\result as result_ui;
+use Zukunft\ZukunftCom\main\php\web\result\result_list as result_list_ui;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object as db_object_ui;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
@@ -295,7 +297,7 @@ class test_lib
     function list_to_ui(
         sandbox_list|type_list|change_log_list $lst,
         api_type_list|array                    $typ_lst = []
-    ): word_list_ui|triple_list_ui|source_list_ui|ref_list_ui|value_list_ui|formula_list_ui|formula_link_list_ui|change_log_list_ui|list_ui
+    ): word_list_ui|triple_list_ui|source_list_ui|ref_list_ui|value_list_ui|result_list_ui|formula_list_ui|formula_link_list_ui|change_log_list_ui|list_ui
     {
         $tl = new test_lib();
         $lst_ui = $tl->obj_to_ui_obj($lst);
@@ -344,6 +346,7 @@ class test_lib
             ref_list::class => new ref_list_ui(),
             source_list::class => new source_list_ui(),
             value_list::class => new value_list_ui(),
+            result_list::class => new result_list_ui(),
             formula_list::class => new formula_list_ui(),
             formula_link_list::class => new formula_link_list_ui(),
             change_log_list::class => new change_log_list_ui(),

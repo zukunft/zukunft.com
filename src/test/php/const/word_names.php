@@ -75,7 +75,7 @@ class word_names
     const string MIO_COM = '10⁶';
     // "mio" is the symbol word of "million" and has its own database row
     const string MIO_SHORT = 'mio';
-    const int MIO_SHORT_ID = 271;
+    const int MIO_SHORT_ID = 272;
     const string MIO_SHORT_COM = 'the symbol used in formulas for million';
     const string BILLION = 'billion';
     const int BILLION_ID = 159;
@@ -121,7 +121,7 @@ class word_names
     const string HUMAN = 'human';
     const int HUMAN_ID = 14;
     const string POPULATION = 'population';
-    const int POPULATION_ID = 268;
+    const int POPULATION_ID = 269;
     const string POTENTIAL = 'potential';
     const int POTENTIAL_ID = 222;
     const string SOLUTION = 'solution';
@@ -136,9 +136,9 @@ class word_names
     const int WARMER_ID = 229;
     // the two measure words of the unit triple "gram per kWh" (see triple_names::GRAM_PER_KWH)
     const string GRAM = 'gram';
-    const int GRAM_ID = 555;
+    const int GRAM_ID = 123;
     const string KWH = 'kWh';
-    const int KWH_ID = 556;
+    const int KWH_ID = 122;
     const string POPULISM = 'populism';
     const int POPULISM_ID = 233;
     const string POPULISM_COM = 'a range of political stances that emphasise the idea of the common people and often contrast this group against a privileged elite.';
@@ -153,18 +153,18 @@ class word_names
     const string EDUCATION_COM = 'process of teaching and learning';
     // the qualifier of a value that is estimated instead of taken from a source
     const string ASSUMED = 'assumed';
-    const int ASSUMED_ID = 308;
+    const int ASSUMED_ID = 309;
     // the bounds of the probability range of a value
     const string LOW = 'low';
-    const int LOW_ID = 316;
+    const int LOW_ID = 317;
     const string HIGH = 'high';
-    const int HIGH_ID = 317;
+    const int HIGH_ID = 318;
     // the confidence that the range of a value contains the true value
     const string CONFIDENCE = 'confidence';
-    const int CONFIDENCE_ID = 311;
+    const int CONFIDENCE_ID = 312;
     // the problems and solutions of solution_prio.json that are a word, not a triple
     const string DISINFORMATION = 'disinformation';
-    const int DISINFORMATION_ID = 277;
+    const int DISINFORMATION_ID = 278;
     const string RESEARCH = 'research';
     const int RESEARCH_ID = 250;
     const string TAXES = 'taxes';
@@ -172,25 +172,25 @@ class word_names
     const string SPENDING = 'spending';
     const int SPENDING_ID = 254;
     const string HTP = 'htp';
-    const int HTP_ID = 269;
+    const int HTP_ID = 270;
     const string TRILLION = 'trillion';
-    const int TRILLION_ID = 270;
+    const int TRILLION_ID = 271;
     const string USD = 'USD';
-    const int USD_ID = 393;
+    const int USD_ID = 394;
 
     // words from import file company.json used for the start page in order of appearance
     const string SALES = 'sales';
-    const int SALES_ID = 550;
+    const int SALES_ID = 551;
     const string CASH = 'cash';
-    const int CASH_ID = 551;
+    const int CASH_ID = 552;
     const string STATEMENT = 'statement';
-    const int STATEMENT_ID = 552;
+    const int STATEMENT_ID = 553;
     const string PARTS = 'parts';
-    const int PARTS_ID = 554;
+    const int PARTS_ID = 555;
     const string INCOME = 'income';
-    const int INCOME_ID = 298;
+    const int INCOME_ID = 299;
     const string TAX = 'tax';
-    const int TAX_ID = 301;
+    const int TAX_ID = 302;
 
     // words from import file country.json used for the start page in order of appearance
     const string GERMANY = 'Germany';
@@ -208,26 +208,26 @@ class word_names
     // TODO add test to search for words in all language forms e.g. plural
     const string INHABITANTS = 'inhabitants';
     const string YEAR_2013 = '2013';
-    const int YEAR_2013_ID = 326;
+    const int YEAR_2013_ID = 327;
     const string YEAR_2014 = '2014';
-    const int YEAR_2014_ID = 327;
+    const int YEAR_2014_ID = 328;
     const string YEAR_2015 = '2015';
-    const int YEAR_2015_ID = 328;
+    const int YEAR_2015_ID = 329;
     const string YEAR_2016 = '2016';
-    const int YEAR_2016_ID = 329;
+    const int YEAR_2016_ID = 330;
     const string YEAR_2017 = '2017';
-    const int YEAR_2017_ID = 330;
+    const int YEAR_2017_ID = 331;
     const string YEAR_2018 = '2018';
-    const int YEAR_2018_ID = 331;
+    const int YEAR_2018_ID = 332;
 
     // words from import test file companies.json used for the start page in order of appearance
     const string COMPANY = 'company';
     const string COMPANY_COM = 'legal entity made up of an association of people for the purpose of carrying on a commercial or industrial enterprise';
     const int COMPANY_ID = 189;
     const string ABB = 'ABB';
-    const int ABB_ID = 548;
+    const int ABB_ID = 549;
     const string VESTAS = 'Vestas';
-    const int VESTAS_ID = 549;
+    const int VESTAS_ID = 550;
 
     const string TEXT = 'text';
     const string HTML = 'html';
@@ -244,7 +244,7 @@ class word_names
     const string PROFIT = 'profit';
     const string GROSS = 'gross';
     const string COST = 'cost';
-    const int COST_ID = 309;
+    const int COST_ID = 310;
     const string REVENUE = 'revenue';
 
     const string LAYOUT_COM = 'the settings to position the components on the screen';
@@ -261,25 +261,25 @@ class word_names
     const int HOUR_ID = 101;
     const string YEAR_2020_COM = 'the year 2020';
     const string YEAR_2021 = '2021';
-    const int YEAR_2021_ID = 616;
+    const int YEAR_2021_ID = 617;
     const string YEAR_2022 = '2022';
-    const int YEAR_2022_ID = 391;
+    const int YEAR_2022_ID = 392;
     const string YEAR_2023 = '2023';
-    const int YEAR_2023_ID = 615;
+    const int YEAR_2023_ID = 616;
     const string YEAR_2024 = '2024';
-    const int YEAR_2024_ID = 276;
+    const int YEAR_2024_ID = 277;
     const string YEAR_2025 = '2025';
-    const int YEAR_2025_ID = 614;
+    const int YEAR_2025_ID = 615;
     const string YEAR_2026 = '2026';
-    const int YEAR_2026_ID = 613;
+    const int YEAR_2026_ID = 614;
     const string YEAR_2027 = '2027';
-    const int YEAR_2027_ID = 612;
+    const int YEAR_2027_ID = 613;
     const string YEAR_2028 = '2028';
-    const int YEAR_2028_ID = 611;
+    const int YEAR_2028_ID = 612;
     const string YEAR_2029 = '2029';
-    const int YEAR_2029_ID = 610;
+    const int YEAR_2029_ID = 611;
     const string YEAR_2030 = '2030';
-    const int YEAR_2030_ID = 609;
+    const int YEAR_2030_ID = 610;
     const string LIGHT = 'light';
     const int LIGHT_ID = 84;
     const string SPEED = 'speed';
@@ -310,14 +310,14 @@ class word_names
     const int THIS_ID = 180;
     const int PRIOR_ID = 182;
     const string EUR = 'EUR';
-    const int EUR_ID = 272;
+    const int EUR_ID = 273;
     const string EURO = 'Euro';
-    const int EURO_ID = 381;
+    const int EURO_ID = 382;
     const string DOLLAR = '$';
-    const int DOLLAR_ID = 395;
+    const int DOLLAR_ID = 396;
     const string EURO_SIGN = '€';
-    const int EURO_SIGN_ID = 397;
-    const int CURRENCY_ID = 344;
+    const int EURO_SIGN_ID = 398;
+    const int CURRENCY_ID = 345;
     const string US = 'US';
 
 
