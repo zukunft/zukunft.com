@@ -131,6 +131,25 @@ class start_ui_tests
         $t->assert_text_not_contains($test_name, $list->start_list($dto_ui, $msg, $col_url),
             (string)results::TV_PRIO_LOSS_HTP);
 
+        // a problem whose target values are all calculated has no value of its own in any column,
+        // so its row is built from the results alone, which is how the start page shows a problem
+        // file that states only the inputs behind its numbers
+        $test_name = 'the start page shows a row whose numbers are all results';
+        $dto_ui->val_lst = $t_val->value_list_solution_prio_other_rows_ui();
+        $dto_ui->set_result_list($t_res->result_list_solution_prio_first_row_ui());
+        $row_html = $list->start_list($dto_ui, $msg, $col_url);
+        $t->assert_text_contains($test_name, $row_html,
+            '>' . triple_names::GLOBAL_WARMING . '</a>');
+        $test_name = '... with the solution of that row';
+        $t->assert_text_contains($test_name, $row_html,
+            '>' . triple_names::REDUCE_EMISSIONS . '</a>');
+
+        // negative: without the results the row of that problem is gone
+        $test_name = '... and without the results the row is not shown';
+        $dto_ui->set_result_list(new result_list_ui());
+        $t->assert_text_not_contains($test_name, $list->start_list($dto_ui, $msg, $col_url),
+            '>' . triple_names::GLOBAL_WARMING . '</a>');
+
         // the start page opens with the simple table, whose "..." header links to the same page
         // with every column and the range of each number; the full page has no "..." header
         $test_name = 'the simple start page links to the full table';

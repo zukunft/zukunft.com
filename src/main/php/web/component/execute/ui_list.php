@@ -1633,7 +1633,7 @@ class ui_list extends ui_base
             // all phrases of the value (see result_list::filter)
             $res_lst = $dbo->results_related;
             if ($res_lst == null and $dto?->res_lst != null) {
-                $res_lst = $dto->res_lst->filter($dbo);
+                $res_lst = $dto->res_lst->filter($msg, $dbo);
             }
             if ($res_lst == null) {
                 log_err_msg_ui('the result cache is missing to select the results', $msg);
@@ -1832,7 +1832,7 @@ class ui_list extends ui_base
             log_err_msg_ui('the formula or the result cache is missing to select the results of a formula', $msg);
         } elseif ($dbo::class == formula::class) {
             $res_lst = clone $cfg->res_lst;
-            $res_lst = $res_lst->get_by_formula($dbo);
+            $res_lst = $res_lst->get_by_formula($dbo, $msg);
             $result = $res_lst->name_link();
             if ($result == '') {
                 $result = $mtr->txt(msg_id::INFO_NOT_USED_FOR_FORMULAS);
@@ -2015,14 +2015,18 @@ class ui_list extends ui_base
                 $dto->set_result_list($res_lst);
             }
         }
-        // a defined column that no value carries names a phrase of the row instead of a number,
+        // a defined column that no number carries names a phrase of the row instead of a number,
         // e.g. the solution column shows the solution of the problem row; the table recognises
         // that phrase by the triple that links it to the column, e.g. "reduce climate gas
-        // emissions is a solution", so the links of every phrase of the values are loaded once
-        $val_phr_lst = $dto->val_lst->phrase_list();
-        if (!$val_phr_lst->is_empty() and !$this->column_links_loaded($dto)) {
+        // emissions is a solution", so the links of every phrase of the numbers are loaded once;
+        // the results are included, because a row whose numbers are all calculated names its
+        // solution only in the phrases of its results
+        $num_lst = clone $dto->val_lst;
+        $num_lst->add_results($dto->res_lst, $msg);
+        $num_phr_lst = $num_lst->phrase_list();
+        if (!$num_phr_lst->is_empty() and !$this->column_links_loaded($dto)) {
             $lnk_lst = new phrase_list();
-            if ($lnk_lst->load_related_by_ids($val_phr_lst, foaf_direction::UP, $msg)) {
+            if ($lnk_lst->load_related_by_ids($num_phr_lst, foaf_direction::UP, $msg)) {
                 $dto->add_phrases($lnk_lst, $msg);
             }
         }

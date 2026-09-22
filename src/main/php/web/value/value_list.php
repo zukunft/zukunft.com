@@ -2034,11 +2034,11 @@ class value_list extends ListBase
      * the phrases of a value that can form a phrase group: the group phrases without the context phrases
      * and without the time phrases (a time phrase groups in the time section, not here)
      *
-     * @param value $val the value whose groupable phrases are returned
+     * @param sandbox_value $val the value or result whose groupable phrases are returned
      * @param array $ctx_ids the ids of the context phrases keyed by id
      * @return array the groupable phrase objects of the value
      */
-    private function group_phrases(value $val, user_message $msg, array $ctx_ids): array
+    private function group_phrases(sandbox_value $val, user_message $msg, array $ctx_ids): array
     {
         $result = [];
         foreach ($val->grp->phr_lst()->lst() as $phr) {

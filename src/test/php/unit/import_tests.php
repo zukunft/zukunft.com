@@ -322,6 +322,26 @@ class import_tests
             . ' is missing in the import message';
         $t->assert($test_name, $msg->all_message_text(), $target);
 
+        // a result that has been reproduced is the operand of a later result, so that a file can
+        // calculate a target value first and its probability range from that target afterwards
+        $test_name = 'JSON import calc validation uses a checked result as an operand';
+        $msg = new user_message($t->usr1);
+        $json_str = file_get_contents(test_files::IMPORT_CALC_VALIDATION_CHAIN . test_files::JSON);
+        $json_array = json_decode($json_str, true);
+        $dto = $imp->get_data_object($json_array, $msg);
+        $t->assert($test_name, $dto->result_check_list()->count(), 2);
+        $test_name = '... and reports no problem';
+        $t->assert_true($test_name, $msg->is_ok());
+
+        // negative: a result that could not be reproduced is no operand, else a wrong number
+        // would confirm the next result instead of being reported
+        $test_name = 'JSON import calc validation uses no failed result as an operand';
+        $msg = new user_message($t->usr1);
+        $json_str = file_get_contents(test_files::IMPORT_CALC_VALIDATION_CHAIN_BROKEN . test_files::JSON);
+        $json_array = json_decode($json_str, true);
+        $imp->get_data_object($json_array, $msg);
+        $t->assert_text_contains($test_name, $msg->all_message_text(), 'the value for "total,CHF"');
+
         $test_name = 'JSON import calc validation reports a result mismatch';
         $msg = new user_message($t->usr1);
         $json_str = file_get_contents(test_files::IMPORT_CALC_VALIDATION_MISMATCH . test_files::JSON);

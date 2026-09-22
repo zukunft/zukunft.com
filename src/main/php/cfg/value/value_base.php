@@ -339,42 +339,12 @@ class value_base extends sandbox_value
     {
         $lib = new library();
 
-        // check if text group id field is given and filled
-        $one_id_fld = false;
-        if (array_key_exists($id_fld, $db_row)) {
-            if ($db_row[$id_fld] != '' and $db_row[$id_fld] != 'null' and $db_row[$id_fld] != null) {
-                $one_id_fld = true;
-            }
-        }
-
-        if ($one_id_fld) {
-            // if the value is not of prime or main type, use the text group id
-            $id = $db_row[$id_fld];
-            $grp = new group($this->get_user());
-            $grp->set_phrase_list_by_id($id, $msg);
-            $grp->set_id($id);
-            $this->set_grp($grp);
-        } else {
-            // for prime and main values an array with the prime id fields is used
-            $id_fld = $this->id_field();
-            if (is_array($id_fld)) {
-                $grp_id = new group_id();
-                $phr_lst = new phrase_list($this->get_user());
-                foreach ($id_fld as $fld_name) {
-                    if (array_key_exists($fld_name, $db_row)) {
-                        $id = $db_row[$fld_name];
-                        if ($id != 0) {
-                            $phr = new phrase($this->get_user(), $id);
-                            $phr_lst->add($phr);
-                        }
-                    }
-                }
-                $grp = new group($this->get_user());
-                $grp->set_id($grp_id->get_id($phr_lst));
-                $grp->set_phrase_list($phr_lst);
-                $this->set_grp($grp);
-                $id_fld = $id_fld[0];
-            }
+        // the text group key of the row decides the group, else the phrase id fields of a
+        // prime table row do (see set_grp_by_row), and the sandbox mapper gets the field used
+        $phr_id_flds = $this->id_field();
+        $one_id_fld = $this->set_grp_by_row($db_row, $msg, $id_fld, is_array($phr_id_flds) ? $phr_id_flds : []);
+        if (!$one_id_fld and is_array($phr_id_flds)) {
+            $id_fld = $phr_id_flds[0];
         }
         $result = parent::row_mapper_sandbox_multi($db_row, $msg, $ext, $load_std, $allow_usr_protect, $id_fld, $one_id_fld);
         if ($result) {
@@ -1236,34 +1206,6 @@ class value_base extends sandbox_value
     /*
      * select
      */
-
-    /**
-     * to select the value if it matches all given phrase names
-     * @param array $names the phrase names for the selection
-     * @return bool true if this values is related to all phrase names
-     */
-    function match_all(array $names): bool
-    {
-        $result = true;
-        $phr_names = $this->phr_lst()->names();
-        foreach ($names as $name) {
-            if ($result) {
-                if (!in_array($name, $phr_names)) {
-                    $result = false;
-                }
-            }
-        }
-        return $result;
-    }
-
-    /**
-     * @param array $names list of phrase names e.g. the context phrases of a result validation
-     * @return bool true if all phrases of this value are part of the given phrase names
-     */
-    function matches_context(array $names): bool
-    {
-        return empty(array_diff($this->phr_lst()->names(), $names));
-    }
 
 
     /*

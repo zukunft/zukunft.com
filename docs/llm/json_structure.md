@@ -1200,6 +1200,13 @@ mistyped input is caught at import time. Same shape as a stored `result`, and
 additionally routed through `validate_results` — a mismatch is reported as a
 failed validation and stops the import, never saved as a value.
 
+An operand is looked up in the `values` of the file first and, if the file states
+no value for it, in the entries of `calc-validation` that have **already been
+reproduced**. Entries are checked in file order, so a file can calculate a target
+value first and its probability range from that target afterwards. A result that
+did not reproduce is never an operand, else a wrong number would confirm the next
+one instead of being reported.
+
 A checked entry is a result like any other, so it is **also stored** in the
 results table with its phrases, its number and the formula that calculated it.
 Its `context` is stored as the source group only if it has at most four phrases;

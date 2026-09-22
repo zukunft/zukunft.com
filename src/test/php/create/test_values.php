@@ -731,19 +731,42 @@ class test_values extends test_objects
      */
     function value_list_solution_prio(): value_list
     {
+        return $this->value_list_of_rows($this->solution_prio_rows());
+    }
+
+    /**
+     * the ranking values without the first problem, so that a test can show that row from the
+     * results instead (see test_results::result_list_solution_prio_first_row)
+     *
+     * @return value_list the cost and gain values of every global problem but the first
+     */
+    function value_list_solution_prio_other_rows(): value_list
+    {
+        return $this->value_list_of_rows(array_slice($this->solution_prio_rows(), 1));
+    }
+
+    /**
+     * @return value_list_ui the frontend ranking values without the first problem
+     */
+    function value_list_solution_prio_other_rows_ui(): value_list_ui
+    {
+        $tl = new test_lib();
+        return $tl->list_to_ui($this->value_list_solution_prio_other_rows(), [api_types::INCL_PHRASES]);
+    }
+
+    /**
+     * per problem the phrase, the loss, the solution phrase, the gain and whether the two
+     * numbers are estimated, in the order of the start page ranking
+     *
+     * shared with test_results, which builds the first row as results instead of values
+     *
+     * @return array one entry per row of the start page ranking
+     */
+    function solution_prio_rows(): array
+    {
         $t_wrd = new test_words($this->env);
         $t_trp = new test_triples($this->env);
-        $potential = $t_wrd->word_potential()->phrase();
-        $loss = $t_wrd->word_loss()->phrase();
-        $gain = $t_wrd->word_gain()->phrase();
-        $trillion = $t_wrd->word_trillion()->phrase();
-        $billion = $t_wrd->word_billion()->phrase();
-        $eur = $t_wrd->word_eur()->phrase();
-        $htp = $t_wrd->word_htp()->phrase();
-        $assumed = $t_wrd->word_assumed()->phrase();
-        // per problem the phrase, the loss, the solution phrase, the gain and whether the two
-        // numbers are estimated, in the order of the start page ranking
-        $prio_lst = [
+        return [
             [$t_trp->global_warming()->phrase(), 31.5, $t_trp->reduce_emissions()->phrase(), 35.2, false],
             [$t_wrd->word_populism()->phrase(), 23.8, $t_trp->avoid_wrong_decisions()->phrase(), 34.1, false],
             [$t_wrd->word_poverty()->phrase(), 20.4, $t_wrd->word_research()->phrase(), 34.1, false],
@@ -758,18 +781,72 @@ class test_values extends test_objects
             [$t_trp->gdp_mismeasurement()->phrase(), 2.5, $t_trp->gross_domestic_usage()->phrase(), 4, true],
             [$t_trp->proprietary_software()->phrase(), 1.8, $t_trp->free_software()->phrase(), 3, true],
         ];
+    }
+
+    /**
+     * the loss and the gain of each given ranking row as a value
+     *
+     * @param array $rows the rows of solution_prio_rows that should be built
+     * @return value_list the cost and gain values of the given rows
+     */
+    private function value_list_of_rows(array $rows): value_list
+    {
         $lst = new value_list($this->env->usr1);
-        foreach ($prio_lst as [$problem, $loss_nbr, $solution, $gain_nbr, $is_assumed]) {
-            $loss_phr = [$problem, $potential, $loss, $trillion, $eur];
-            $gain_phr = [$problem, $solution, $potential, $gain, $billion, $htp];
-            if ($is_assumed) {
-                $loss_phr[] = $assumed;
-                $gain_phr[] = $assumed;
-            }
-            $lst->add($this->value_for_phrases($loss_phr, $loss_nbr));
-            $lst->add($this->value_for_phrases($gain_phr, $gain_nbr));
+        foreach ($rows as [$problem, $loss_nbr, $solution, $gain_nbr, $is_assumed]) {
+            $lst->add($this->value_for_phrases(
+                $this->solution_prio_loss_phrases($problem, $is_assumed), $loss_nbr));
+            $lst->add($this->value_for_phrases(
+                $this->solution_prio_gain_phrases($problem, $solution, $is_assumed), $gain_nbr));
         }
         return $lst;
+    }
+
+    /**
+     * the phrases of the potential loss of a ranking row, shared with test_results
+     *
+     * @param phrase $problem the problem of the row
+     * @param bool $is_assumed true if the number is an estimate and not taken from a source
+     * @return array the phrases of the potential loss in trillion EUR
+     */
+    function solution_prio_loss_phrases(phrase $problem, bool $is_assumed): array
+    {
+        $t_wrd = new test_words($this->env);
+        $phrases = [
+            $problem,
+            $t_wrd->word_potential()->phrase(),
+            $t_wrd->word_loss()->phrase(),
+            $t_wrd->word_trillion()->phrase(),
+            $t_wrd->word_eur()->phrase()
+        ];
+        if ($is_assumed) {
+            $phrases[] = $t_wrd->word_assumed()->phrase();
+        }
+        return $phrases;
+    }
+
+    /**
+     * the phrases of the potential gain of a ranking row, shared with test_results
+     *
+     * @param phrase $problem the problem of the row
+     * @param phrase $solution the solution of the row
+     * @param bool $is_assumed true if the number is an estimate and not taken from a source
+     * @return array the phrases of the potential gain in billion htp
+     */
+    function solution_prio_gain_phrases(phrase $problem, phrase $solution, bool $is_assumed): array
+    {
+        $t_wrd = new test_words($this->env);
+        $phrases = [
+            $problem,
+            $solution,
+            $t_wrd->word_potential()->phrase(),
+            $t_wrd->word_gain()->phrase(),
+            $t_wrd->word_billion()->phrase(),
+            $t_wrd->word_htp()->phrase()
+        ];
+        if ($is_assumed) {
+            $phrases[] = $t_wrd->word_assumed()->phrase();
+        }
+        return $phrases;
     }
 
     /**

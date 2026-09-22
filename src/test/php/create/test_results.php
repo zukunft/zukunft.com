@@ -291,4 +291,32 @@ class test_results
         return $tl->list_to_ui($this->result_list_solution_prio(), [api_types::INCL_PHRASES]);
     }
 
+    /**
+     * the complete first row of the start page ranking as results, as it is after the target
+     * values of a problem file are calculated instead of stated (see
+     * src/main/resources/messages/start_page/problem_global_warming.json)
+     *
+     * @return result_list the potential loss and the potential gain of the first ranking row
+     */
+    function result_list_solution_prio_first_row(): result_list
+    {
+        $t_val = new test_values($this->env);
+        [$problem, $loss_nbr, $solution, $gain_nbr, $is_assumed] = $t_val->solution_prio_rows()[0];
+        $lst = new result_list($this->env->usr1);
+        $lst->add($this->result_for_phrases(
+            $t_val->solution_prio_loss_phrases($problem, $is_assumed), $loss_nbr));
+        $lst->add($this->result_for_phrases(
+            $t_val->solution_prio_gain_phrases($problem, $solution, $is_assumed), $gain_nbr));
+        return $lst;
+    }
+
+    /**
+     * @return result_list_ui the frontend first ranking row as results for unit testing
+     */
+    function result_list_solution_prio_first_row_ui(): result_list_ui
+    {
+        $tl = new test_lib();
+        return $tl->list_to_ui($this->result_list_solution_prio_first_row(), [api_types::INCL_PHRASES]);
+    }
+
 }

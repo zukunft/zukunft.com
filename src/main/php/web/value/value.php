@@ -832,25 +832,6 @@ class value extends sandbox_value
      * info
      */
 
-    /**
-     * to select a value by a phrase
-     * @param phrase $phr the phrase to select the value
-     * @return bool true if the value contains the given phrase
-     */
-    function has_phrase(phrase $phr, user_message $msg): bool
-    {
-        $result = false;
-        $phr_lst = $this->grp->phr_lst();
-        foreach ($phr_lst->lst() as $val_phr) {
-            if ($val_phr->is_same($phr)) {
-                $result = true;
-            } elseif ($val_phr->is_type_phrase($phr, $msg)) {
-                $result = true;
-            }
-        }
-        return $result;
-    }
-
     /*
      * buttons
      */

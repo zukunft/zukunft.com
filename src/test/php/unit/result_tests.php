@@ -39,25 +39,33 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_list;
+use Zukunft\ZukunftCom\main\php\cfg\group\result_id;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\result\result;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\result_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\results;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
+use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_ui;
 use Zukunft\ZukunftCom\main\php\web\result\result as result_ui;
+use Zukunft\ZukunftCom\main\php\web\result\result_list as result_list_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\create\test_const;
+use Zukunft\ZukunftCom\test\php\create\test_formulas;
+use Zukunft\ZukunftCom\test\php\create\test_groups;
 use Zukunft\ZukunftCom\test\php\create\test_results;
 use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use DateTime;
 
+include_once paths::MODEL_GROUP . 'result_id.php';
 include_once paths::SHARED_CONST . 'words.php';
+include_once paths::SHARED_CONST_FIELDS . 'result_fields.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 
 class result_tests
@@ -73,6 +81,8 @@ class result_tests
         $db_con = new sql_db();
         $sc = new sql_creator();
         $t_res = new test_results($t);
+        $t_frm = new test_formulas($t);
+        $t_grp = new test_groups($t);
         $t_wrd = new test_words($t);
         $t->name = 'result->';
         $t->resource_path = 'db/result/';
@@ -171,6 +181,30 @@ class result_tests
         $test_name = '... and a source group of 16 phrases cannot';
         $t->assert_false($test_name, $t_res->result_src_grp_big()->src_grp_is_storable());
 
+        // a row of a result table carries either the text group key or the phrase id columns
+        // of a prime or main table, and a union of both kinds shows an empty key for the latter,
+        // so the mapper must build the same group from both (see sandbox_value::set_grp_by_row)
+        $test_name = 'a row with the group key sets the group of the result';
+        $res = $t_res->result();
+        $grp = $t_grp->group_16();
+        $phr_id_flds = $res->id_fields_main(1, result_id::MAIN_PHRASES_ALL);
+        $t->assert_true($test_name, $res->set_grp_by_row(
+            [result_fields::FLD_ID => $grp->id()], $msg, result_fields::FLD_ID, $phr_id_flds));
+        $t->assert($test_name . ' id', $res->grp()->id(), $grp->id());
+        $test_name = 'a row with the phrase id columns sets the same group as the key would';
+        $grp = $t_grp->group_prime_3();
+        $db_row = [result_fields::FLD_ID => ''];
+        foreach ($grp->phrase_list()->ids() as $pos => $phr_id) {
+            $db_row[$phr_id_flds[$pos]] = $phr_id;
+        }
+        $t->assert_false($test_name, $res->set_grp_by_row($db_row, $msg, result_fields::FLD_ID, $phr_id_flds));
+        $t->assert($test_name . ' id', $res->grp()->id(), $grp->id());
+        // negative: a row without the key and without a phrase id gives an empty group
+        $test_name = 'a row without the key and without phrase ids gives an empty group';
+        $res->set_grp_by_row([result_fields::FLD_ID => ''], $msg, result_fields::FLD_ID, $phr_id_flds);
+        $t->assert_true($test_name, $res->grp()->phrase_list()->is_empty());
+        $msg->reset();
+
 
         $t->subheader($ts . 'display');
 
@@ -224,6 +258,25 @@ class result_tests
         $test_name = '... and not to the value page';
         $t->assert_text_not_contains($test_name, $res_page->value_edit($msg_ui),
             url_var::MASK . '=' . views::VALUE_DEFAULT_ID);
+
+        // the formula page lists its results, so a result must know which formula has
+        // calculated it, and a phrase page its results, so a result must know its phrases
+        $test_name = 'a result knows the formula that has calculated it';
+        $frm_ui = new formula_ui($t_frm->formula()->api_json());
+        $t->assert_true($test_name, $res_page->calculated_by_formula($frm_ui));
+        $test_name = '... and not another formula';
+        $t->assert_false($test_name, $res_page->calculated_by_formula($t_frm->formula_joule_ui()));
+        $test_name = 'a result knows a phrase of its group';
+        $t->assert_true($test_name, $res_page->has_phrase($res_page->grp->phr_lst()->lst()[0], $msg_ui));
+        $test_name = '... and not a phrase outside its group';
+        $t->assert_false($test_name, $res_page->has_phrase($t_wrd->zh_ui()->phrase(), $msg_ui));
+        $test_name = 'the result list keeps the results of the given formula';
+        $res_lst_ui = new result_list_ui();
+        $res_lst_ui->add_result($res_page);
+        $t->assert($test_name, $res_lst_ui->filter($msg_ui, $frm_ui)->count(), 1);
+        $test_name = '... and drops the results of another formula';
+        $t->assert($test_name, $res_lst_ui->filter($msg_ui, $t_frm->formula_joule_ui())->count(), 0);
+        $msg_ui->reset();
 
         // a result that is not yet calculated shows the labels of the empty fields
         $res_plain = new result_ui($t_res->result_incomplete()->api_json([api_types::TEST_MODE]));

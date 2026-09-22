@@ -142,6 +142,8 @@ class files
     CONST string IMPORT_CALC_VALIDATION = test_paths::IMPORT_UNIT . 'calc_validation';
     // the same validation with an operand of several phrases e.g. the price in CHF
     CONST string IMPORT_CALC_VALIDATION_GROUP = test_paths::IMPORT_UNIT . 'calc_validation_phrase_group';
+    // a validation whose operand is the result that the validation before has reproduced
+    CONST string IMPORT_CALC_VALIDATION_CHAIN = test_paths::IMPORT_UNIT . 'calc_validation_chain';
     // the three sample files for the data object merge test and the expected merge result
     CONST string IMPORT_MERGE_1 = test_paths::IMPORT_UNIT . 'offline_is_better_than_online1';
     CONST string IMPORT_MERGE_2 = test_paths::IMPORT_UNIT . 'offline_is_better_than_online2';
@@ -150,6 +152,7 @@ class files
     CONST string IMPORT_CALC_VALIDATION_MISMATCH = test_paths::IMPORT_INCONSISTENCY . 'calc_validation_mismatch';
     CONST string IMPORT_CALC_VALIDATION_VALUE_MISSING = test_paths::IMPORT_INCONSISTENCY . 'calc_validation_value_missing';
     CONST string IMPORT_CALC_VALIDATION_GROUP_MISSING = test_paths::IMPORT_INCONSISTENCY . 'calc_validation_phrase_group_missing';
+    CONST string IMPORT_CALC_VALIDATION_CHAIN_BROKEN = test_paths::IMPORT_INCONSISTENCY . 'calc_validation_chain_broken';
     CONST string IMPORT_VIEW_ROW_NOT_CLOSED = test_paths::IMPORT_INCONSISTENCY . 'view_row_not_closed';
     CONST string IMPORT_VIEW_COMPONENT_POS_DOUBLE = test_paths::IMPORT_INCONSISTENCY . 'view_component_pos_double';
     CONST string IMPORT_TRIPLE_LINK_AMBIGUOUS = test_paths::IMPORT_INCONSISTENCY . 'triple_link_ambiguous';

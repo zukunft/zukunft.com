@@ -165,7 +165,7 @@ ref_type: $ref_typ, $type_obj
 ref_type_list: $lst, $ref_type_list
 rest_call: $api, $ctrl, $rest
 result_id: $res_id
-result_list: $lst, $res_lst, $res_to_validate
+result_list: $checked, $lst, $res_lst, $res_lst_ui, $res_to_validate
 sandbox_related: $rel
 share_type: $shr_typ
 share_type_list: $lst

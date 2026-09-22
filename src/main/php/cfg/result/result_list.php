@@ -256,12 +256,24 @@ class result_list extends sandbox_value_list
         $result = false;
         if ($qp->name != '') {
             $db_rows = $db_con->get($qp, $msg, 'result list');
-            if ($db_rows != null) {
+            // get() returns false only when the query itself failed, an empty result is []
+            if ($db_rows === false) {
+                log_err('loading a ' . self::class . ' failed for the query ' . $qp->name, self::class . '->load');
+            } else {
                 foreach ($db_rows as $db_row) {
                     $res = new result($this->get_user());
-                    $res->row_mapper($db_row, $msg);
-                    $this->add_obj($res);
-                    $result = true;
+                    // the result mapper, because the inherited row_mapper of the key object is
+                    // a stub that maps nothing; a row of any result table maps to a group
+                    $res->row_mapper_multi($db_row, $msg, $qp->ext);
+                    // a result row that maps to no phrase group can never be shown or changed,
+                    // so the corrupted row is skipped and reported like in value_list
+                    if ($res->id() == 0 or $res->id() == '') {
+                        log_err('result db row without a phrase group skipped'
+                            . ' (table type "' . $qp->ext . '"): ' . implode(',', $db_row));
+                    } else {
+                        $this->add_obj($res);
+                        $result = true;
+                    }
                 }
             }
         }

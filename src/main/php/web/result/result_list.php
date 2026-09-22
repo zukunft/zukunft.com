@@ -210,19 +210,25 @@ class result_list extends sandbox_list_value
         return $result;
     }
 
-    function get_by_formula(formula $frm): result_list
+    function get_by_formula(formula $frm, user_message $msg): result_list
     {
-        return $this->filter($frm);
+        return $this->filter($msg, $frm);
     }
 
     /**
-     * get a list with the results related directly to the given formula, word, triple, source
-     * or value
+     * get a list with the results related directly to the given formula, word, triple or value
      *
-     * @param word|triple|source|value|formula|db_object|null $dbo to filter the values
-     * @return result_list with only the direct linked values
+     * a result carries no source, because it is calculated and not measured, so a source
+     * selects no result
+     *
+     * @param user_message $msg to report a problem of reading a phrase type
+     * @param word|triple|value|formula|db_object|null $dbo to filter the results
+     * @return result_list with only the direct linked results
      */
-    function filter(word|triple|source|value|formula|db_object|null $dbo = null): result_list
+    function filter(
+        user_message                                $msg,
+        word|triple|value|formula|db_object|null $dbo = null
+    ): result_list
     {
         $res_lst = new result_list();
         if ($dbo::class == formula::class) {
@@ -234,14 +240,7 @@ class result_list extends sandbox_list_value
         }
         if ($dbo::class == word::class or $dbo::class == triple::class) {
             foreach ($this->lst() as $res) {
-                if ($res->has_phrase($dbo->phrase())) {
-                    $res_lst->add_result($res);
-                }
-            }
-        }
-        if ($dbo::class == source::class) {
-            foreach ($this->lst() as $res) {
-                if ($res->source_id() == $dbo->id()) {
+                if ($res->has_phrase($dbo->phrase(), $msg)) {
                     $res_lst->add_result($res);
                 }
             }

@@ -401,6 +401,25 @@ class sandbox_value extends sandbox
     }
 
     /**
+     * to select a value or a result by a phrase
+     * @param phrase $phr the phrase to select the number
+     * @param user_message $msg to report a problem of reading a phrase type
+     * @return bool true if the number is related to the given phrase or to a phrase of its type
+     */
+    function has_phrase(phrase $phr, user_message $msg): bool
+    {
+        $result = false;
+        foreach ($this->grp->phr_lst()->lst() as $val_phr) {
+            if ($val_phr->is_same($phr)) {
+                $result = true;
+            } elseif ($val_phr->is_type_phrase($phr, $msg)) {
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+    /**
      * the number as a link to the page of the value or of the result, so that a table cell
      * leads to the number itself and a result to the formula that has calculated it
      *
