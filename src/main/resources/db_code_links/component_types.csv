@@ -258,3 +258,6 @@ component_type_id, type_name, description, code_id
 257, 'system body all jobs', 'the jobs of all users for an admin with the pending jobs on top and the buttons to up- or downgrade or cancel a job', 'system_body_all_jobs'
 258, 'system form triple add simple', 'add a triple by its name without the confirm view if no term with the same name exists', 'system_form_triple_add_simple'
 259, 'system form phrase value line', 'the phrases, the value type and the value of a new value in one line of the detailed value add form', 'system_form_phrase_value_line'
+260, 'values used', 'show the values that the calculation of the shown result has used e.g. the inhabitants that an increase is based on', 'values_used'
+261, 'formulas used', 'show the formulas that have calculated the results used for the shown result', 'formulas_used'
+262, 'results used', 'show the results that the calculation of the shown result has used e.g. the increase used by a growth rate', 'results_used'

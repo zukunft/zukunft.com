@@ -44,6 +44,8 @@ include_once html_paths::FORMULA . 'formula.php';
 include_once html_paths::FORMULA . 'formula_list.php';
 include_once html_paths::GROUP . 'group.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
+include_once html_paths::RESULT . 'result_list.php';
+include_once html_paths::VALUE . 'value_list.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::SHARED_CONST . 'views.php';
@@ -59,6 +61,7 @@ use Zukunft\ZukunftCom\main\php\web\group\group;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_value;
+use Zukunft\ZukunftCom\main\php\web\value\value_list;
 use Zukunft\ZukunftCom\main\php\web\figure\figure;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
@@ -97,6 +100,12 @@ class result extends sandbox_value
     // the formula object used to calculate this result
     public ?formula $frm = null;
 
+    // the values, formulas and results used for the calculation, filled only if the result has
+    // been loaded for its page (see load_by_id_with_related), otherwise null
+    public ?value_list $values_used = null;
+    public ?formula_list $formulas_used = null;
+    public ?result_list $results_used = null;
+
 
     /*
      * set and get
@@ -123,6 +132,30 @@ class result extends sandbox_value
             $frm = new formula();
             $frm->set_id($json_array[json_fields::FORMULA_ID]);
             $this->frm = $frm;
+        }
+
+        // only the result page asks for the values, formulas and results used for the calculation,
+        // so a missing list is not an empty list (see value::api_mapper for the same pattern)
+        if (is_array($json_array[json_fields::VALUES] ?? null)) {
+            $val_lst = new value_list();
+            $val_lst->api_mapper($json_array[json_fields::VALUES]);
+            $this->values_used = $val_lst;
+        } else {
+            $this->values_used = null;
+        }
+        if (is_array($json_array[json_fields::FORMULAS] ?? null)) {
+            $frm_lst = new formula_list();
+            $frm_lst->api_mapper($json_array[json_fields::FORMULAS]);
+            $this->formulas_used = $frm_lst;
+        } else {
+            $this->formulas_used = null;
+        }
+        if (is_array($json_array[json_fields::RESULTS] ?? null)) {
+            $res_lst = new result_list();
+            $res_lst->api_mapper($json_array[json_fields::RESULTS]);
+            $this->results_used = $res_lst;
+        } else {
+            $this->results_used = null;
         }
 
         /* TODO add all result fields that are not part of the sandbox value object

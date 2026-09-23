@@ -173,6 +173,31 @@ class test_results
     }
 
     /**
+     * @return result_ui the filled result as the api sends it for a page request, with the values,
+     *                   the formulas and the results that the calculation has used, so that the
+     *                   three columns of the result default page can be tested; the test mode
+     *                   skips the database, so the lists are set here like the backend loads them
+     *                   (see result::load_values_used)
+     */
+    function result_page_related_ui(): result_ui
+    {
+        $t_val = new test_values($this->env);
+        $t_frm = new test_formulas($this->env);
+        $res = $this->result_main_max();
+        $res->set_last_update(new DateTime(test_const::DUMMY_DATETIME));
+        $res->values_used = $t_val->value_list_math();
+        // the formula of the result itself is named in the page title, so the loader keeps it out
+        // of the used formulas and the result out of the used results (see load_formulas_used)
+        $frm_used = $t_frm->formula_list();
+        $frm_used->unset_by_id($res->formula_id());
+        $res->formulas_used = $frm_used;
+        $res_used = $this->result_list();
+        $res_used->unset_by_id($res->id());
+        $res->results_used = $res_used;
+        return new result_ui($res->api_json([api_types::INCL_RELATED, api_types::TEST_MODE]));
+    }
+
+    /**
      * @return result with all fields set to none standard to test if all fields are updated
      */
     function result_main_filled(): result

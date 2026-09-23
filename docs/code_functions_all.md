@@ -295,6 +295,9 @@
             ult.php
     \-- load_sql_where - section for function load_sql_where is expected to be load sql in /result/result.php
     \-- load_phrases - section for function load_phrases is expected to be load in /result/result.php
+    \-- load_values_used - section for function load_values_used is expected to be load in /result/result.php
+    \-- load_results_used - section for function load_results_used is expected to be load in /result/result.php
+    \-- load_formulas_used - section for function load_formulas_used is expected to be load in /result/result.php
     \-- val_formatted - section for function val_formatted not yet defined that it should be im- and export in /result/r
             esult.php
     \-- figure - section for function figure not yet defined that it should be im- and export in /result/result.php
@@ -6549,6 +6552,9 @@
     \-- values_by_triple - section for function values_by_triple missing in /component/execute/ui_list.php
     \-- values_similar - section for function values_similar missing in /component/execute/ui_list.php
     \-- results_by_value - section for function results_by_value missing in /component/execute/ui_list.php
+    \-- values_used - section for function values_used missing in /component/execute/ui_list.php
+    \-- formulas_used - section for function formulas_used missing in /component/execute/ui_list.php
+    \-- results_used - section for function results_used missing in /component/execute/ui_list.php
     \-- values_by_source - section for function values_by_source missing in /component/execute/ui_list.php
     \-- results_by_word - section for function results_by_word missing in /component/execute/ui_list.php
     \-- result_list - section for function result_list missing in /component/execute/ui_list.php
@@ -7644,6 +7650,8 @@
             .php
     \-- value_edit - section for function value_edit not yet defined that it should be display in /sandbox/sandbox_value
             .php
+    \-- name_link - section for function name_link not yet defined that it should be display in /sandbox/sandbox_value.p
+            hp
     \-- value_linked - section for function value_linked not yet defined that it should be display in /sandbox/sandbox_v
             alue.php
     \-- val_formatted - section for function val_formatted not yet defined that it should be display in /sandbox/sandbox
@@ -8880,6 +8888,12 @@
         \-- ui_list - the values of the same category as the given value grouped by their phrases like the
     \-- results_by_value
         \-- ui_list - the results that use the given value as a table, used by the results column of the value
+    \-- values_used
+        \-- ui_list - the values used to calculate the given result grouped by their phrases like the default word
+    \-- formulas_used
+        \-- ui_list - the formulas that have calculated the results used for the given result, used by the formulas
+    \-- results_used
+        \-- ui_list - the results used to calculate the given result as a table, used by the results column of the
     \-- values_by_source
         \-- ui_list - the values that name the given source grouped by their phrases like the default word view,
     \-- results_by_word

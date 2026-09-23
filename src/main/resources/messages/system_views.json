@@ -2585,6 +2585,24 @@
       "type": "system_sub_title",
       "code_id": "system_sub_title_expression",
       "ui_msg_code_id": "system_sub_title_expression"
+    },
+    {
+      "name": "values used",
+      "description": "the values that the calculation of this result has used e.g. the inhabitants that an increase is based on",
+      "type": "values_used",
+      "code_id": "values_used"
+    },
+    {
+      "name": "formulas used",
+      "description": "the formulas that have calculated the results used for this result",
+      "type": "formulas_used",
+      "code_id": "formulas_used"
+    },
+    {
+      "name": "results used",
+      "description": "the results that the calculation of this result has used e.g. the increase used by a growth rate",
+      "type": "results_used",
+      "code_id": "results_used"
     }
   ],
   "views": [
@@ -3036,21 +3054,52 @@
       "components": [
         {
           "position": "1",
-          "name": "system show result value"
+          "name": "Value title"
         },
         {
           "position": "2",
-          "name": "system show result formula",
-          "position_type": "combine"
+          "name": "system show field last update",
+          "style": "fields-in-line"
         },
         {
           "position": "3",
-          "name": "system show field last update",
-          "position_type": "combine"
+          "name": "system show result formula",
+          "position_type": "same_line"
         },
         {
           "position": "4",
-          "name": "related results"
+          "name": "system sub title values",
+          "position_type": "side_or_first_below"
+        },
+        {
+          "position": "5",
+          "name": "values used",
+          "position_type": "combine"
+        },
+        {
+          "position": "6",
+          "name": "system sub title formulas",
+          "position_type": "side_or_below"
+        },
+        {
+          "position": "7",
+          "name": "formulas used",
+          "position_type": "combine"
+        },
+        {
+          "position": "8",
+          "name": "system sub title results",
+          "position_type": "side_or_below"
+        },
+        {
+          "position": "9",
+          "name": "results used",
+          "position_type": "combine"
+        },
+        {
+          "position": "10",
+          "name": "value tab box",
+          "position_type": "side_or_last_below"
         }
       ]
     },
