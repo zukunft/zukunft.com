@@ -1738,6 +1738,10 @@ enum messages: string
     case INFO_NOT_USED_FOR_VALUES = 'info_not_used_for_values';
     case INFO_NOT_USED_FOR_RESULTS = 'info_not_used_for_results';
     case INFO_NO_SIMILAR_VALUES = 'info_no_similar_values';
+    // shown on the result page if the calculation has used no value, formula or result of its own
+    case INFO_NO_VALUES_USED = 'info_no_values_used';
+    case INFO_NO_FORMULAS_USED = 'info_no_formulas_used';
+    case INFO_NO_RESULTS_USED = 'info_no_results_used';
     case INFO_VIEW_HAS_NO_COMPONENTS = 'info_view_has_no_components';
     case INFO_NOT_USED_IN_VIEWS = 'info_not_used_in_views';
     case INFO_NOT_USED_BY_TERMS = 'info_not_used_by_terms';

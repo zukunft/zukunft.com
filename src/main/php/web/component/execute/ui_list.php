@@ -55,6 +55,7 @@ include_once html_paths::PHRASE . 'phrase.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::PHRASE . 'term_list.php';
 include_once html_paths::REF . 'source.php';
+include_once html_paths::RESULT . 'result.php';
 include_once html_paths::VALUE . 'value.php';
 include_once html_paths::TYPES . 'type_object.php';
 //include_once html_paths::RESULT . 'result_list.php';
@@ -96,6 +97,7 @@ use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\phrase\term_list;
 use Zukunft\ZukunftCom\main\php\web\ref\source;
+use Zukunft\ZukunftCom\main\php\web\result\result;
 use Zukunft\ZukunftCom\main\php\web\result\result_list;
 use Zukunft\ZukunftCom\main\php\web\types\type_object;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
@@ -1649,6 +1651,104 @@ class ui_list extends ui_base
             }
         } else {
             log_err_msg_ui($dbo::class . ' is not expected to have results', $msg);
+        }
+        return $result;
+    }
+
+    /**
+     * the values used to calculate the given result grouped by their phrases like the default word
+     * view, used by the values column of the result default page e.g. the inhabitants of a country
+     * that an increase has been calculated from
+     *
+     * @param result|db_object|null $dbo the result whose used values should be listed
+     * @param user_message $msg to report a missing list or an unexpected selection object
+     * @param int|null $style_id the optional list column style
+     * @return string the used values or the message that no value has been used
+     */
+    function values_used(result|db_object|null $dbo, user_message $msg, ?int $style_id = null): string
+    {
+        global $mtr;
+
+        $result = '';
+        if ($dbo == null) {
+            log_err_msg_ui('the result is missing to select the used values', $msg);
+        } elseif ($dbo::class == result::class) {
+            // only a page request loads the used values (see result::load_values_used), so a result
+            // built from an url shows no column instead of the none-used message, which would tell
+            // the user that no value has been used, which is not known here (like the formula
+            // column of a word, see formula_list)
+            if ($dbo->values_used != null) {
+                // the result itself is the context of the column, so its phrases are left out
+                $result = $this->value_list($dbo->values_used, $dbo->grp->phr_lst(), $msg, $style_id, true);
+                if ($result == '') {
+                    $result = $mtr->txt(msg_id::INFO_NO_VALUES_USED);
+                }
+            }
+        } else {
+            log_err_msg_ui($dbo::class . ' is not expected to use values for a calculation', $msg);
+        }
+        return $result;
+    }
+
+    /**
+     * the formulas that have calculated the results used for the given result, used by the formulas
+     * column of the result default page; the formula of the result itself is named in the title
+     *
+     * @param result|db_object|null $dbo the result whose used formulas should be listed
+     * @param user_message $msg to report a missing list or an unexpected selection object
+     * @return string the linked formula names or the message that no other formula has been used
+     */
+    function formulas_used(result|db_object|null $dbo, user_message $msg): string
+    {
+        global $mtr;
+
+        $result = '';
+        if ($dbo == null) {
+            log_err_msg_ui('the result is missing to select the used formulas', $msg);
+        } elseif ($dbo::class == result::class) {
+            // like the used values only a page request loads the used formulas
+            if ($dbo->formulas_used != null) {
+                // name_link sorts the formulas by impact, so the most relevant one is named first
+                $result = $dbo->formulas_used->name_link();
+                if ($result == '') {
+                    $result = $mtr->txt(msg_id::INFO_NO_FORMULAS_USED);
+                }
+            }
+        } else {
+            log_err_msg_ui($dbo::class . ' is not expected to use formulas for a calculation', $msg);
+        }
+        return $result;
+    }
+
+    /**
+     * the results used to calculate the given result as a table, used by the results column of the
+     * result default page e.g. the increase that a growth rate has been calculated from
+     *
+     * @param result|db_object|null $dbo the result whose used results should be listed
+     * @param user_message $msg to report a missing list or an unexpected selection object
+     * @return string the used results or the message that no other result has been used
+     */
+    function results_used(result|db_object|null $dbo, user_message $msg): string
+    {
+        global $mtr;
+
+        $result = '';
+        if ($dbo == null) {
+            log_err_msg_ui('the result is missing to select the used results', $msg);
+        } elseif ($dbo::class == result::class) {
+            // like the used values only a page request loads the used results, so an url-built
+            // result shows no column instead of a message about a list that is not known here
+            if ($dbo->results_used != null) {
+                if ($dbo->results_used->is_empty()) {
+                    // the list is asked, not the rendered html, because result_list::table returns
+                    // the empty table tags for an empty list, which would tell the user nothing
+                    $result = $mtr->txt(msg_id::INFO_NO_RESULTS_USED);
+                } else {
+                    $result = $dbo->results_used->table($dbo->grp->phr_lst());
+                }
+            }
+        } else {
+            log_err_msg_ui($dbo::class . ' is not expected to use results for a calculation', $msg);
         }
         return $result;
     }

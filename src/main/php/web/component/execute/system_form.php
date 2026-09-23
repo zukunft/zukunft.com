@@ -362,9 +362,10 @@ class system_form extends component
         array        $url_array = []
     ): string
     {
-        // the heading shows the related phrases as links with tooltip plus the value
+        // the heading shows the related phrases as links with tooltip plus the number, which a
+        // result shows the same way as a value (see sandbox_value::name_link)
         $heading_content = $this->esc($dbo->name());
-        if ($dbo::class == value::class) {
+        if ($dbo instanceof sandbox_value) {
             $heading_content = $dbo->name_link($msg);
         }
         return $this->subtitle($dbo, $heading_content, $msg, $max, '', $url_array);
@@ -450,8 +451,8 @@ class system_form extends component
             if ($dbo->phr_lst != null) {
                 $result = $dbo->phr_lst->assigned_subtitle($max);
             }
-        } elseif ($dbo::class == value::class) {
-            // a value lists its related phrases already in the title heading, so the
+        } elseif ($dbo instanceof sandbox_value) {
+            // a value and a result list their related phrases already in the title heading, so the
             // subtitle is left to the type, share and protection parts
             $result = '';
         } else {

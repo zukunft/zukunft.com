@@ -40,6 +40,7 @@ include_once html_paths::GROUP . 'group.php';
 include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'html_selector.php';
+include_once html_paths::HTML . 'styles.php';
 include_once html_paths::SANDBOX . 'sandbox.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::PHRASE . 'phrase.php';
@@ -59,6 +60,7 @@ use Zukunft\ZukunftCom\main\php\web\group\group;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\html_selector;
+use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
@@ -446,6 +448,23 @@ class sandbox_value extends sandbox
     protected function default_view_id(): int
     {
         return views::VALUE_DEFAULT_ID;
+    }
+
+    /**
+     * the phrases of this number as links followed by the number itself, which is the page title
+     * of a value and of a result (see system_form::title_value); the value overwrites it, because
+     * it can also show a text, a time or a geo value and marks a user value
+     *
+     * @param user_message $msg to report a problem while formatting the number
+     * @param phrase_list|null $phr_lst_exclude the phrases already shown in the context e.g. a table header
+     * @param string $sep the separator between the phrase links and the number
+     * @return string the html code of the phrase links with the number
+     */
+    function name_link(user_message $msg, ?phrase_list $phr_lst_exclude = null, string $sep = ' '): string
+    {
+        $html = new html_base();
+        $num_grey = $html->span($this->val_formatted($msg), styles::STYLE_GREY);
+        return $this->grp->phrase_link_list($phr_lst_exclude) . $sep . $num_grey;
     }
 
     /**

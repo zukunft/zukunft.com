@@ -75,15 +75,18 @@ include_once paths::MODEL_GROUP . 'result_id.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_HELPER . 'db_object_multi.php';
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
+include_once paths::MODEL_RESULT . 'result_list.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_multi.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_value.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VALUE . 'value_base.php';
+include_once paths::MODEL_VALUE . 'value_list.php';
 include_once paths::SHARED_CONST . 'chars.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::SHARED_TYPES . 'element_types.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
@@ -119,9 +122,11 @@ use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_value;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
 use Zukunft\ZukunftCom\main\php\shared\const\chars;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\element_types;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
@@ -194,6 +199,12 @@ class result extends sandbox_value
     public ?DateTime $last_val_update = null;  // the time of the last update of an underlying value, formula result or formula
     //                                            if this is later than the last update the result needs to be updated
     private string $symbol = '';               // the symbol of the related formula element
+
+    // the values, formulas and results that the calculation of this result has used, filled only
+    // if the result has been loaded for its page (see api_json_array), otherwise null
+    public ?value_list $values_used = null;
+    public ?formula_list $formulas_used = null;
+    public ?result_list $results_used = null;
 
 
     /*
@@ -469,6 +480,39 @@ class result extends sandbox_value
             if ($this->last_update() != null) {
                 $vars[json_fields::LAST_UPDATE] = $this->last_update()->format(DateTimeInterface::ATOM);
             }
+            // the page also shows what the number is based on: the values, the formulas and the
+            // results used for the calculation; each list is filtered by the read permission
+            // before the empty check, so that a list of only unreadable entries is not emitted
+            // as an empty list, which would tell the requester that entries exist (idor,
+            // the same gate as in value::api_json_array)
+            if ($this->values_used == null and !$typ_lst->test_mode() and $this->id() != 0) {
+                $this->load_values_used($msg);
+            }
+            $this->values_used?->filter_readable_by($usr);
+            if ($this->values_used != null and !$this->values_used->is_empty()) {
+                // INCL_PHRASES so each value carries its group phrases, which the frontend
+                // needs for the value name
+                $vars[json_fields::VALUES] = $this->values_used->api_json_array(
+                    new api_type_list([api_types::INCL_PHRASES]), $msg, $usr);
+            }
+            if ($this->results_used == null and !$typ_lst->test_mode() and $this->id() != 0) {
+                $this->load_results_used($msg);
+            }
+            $this->results_used?->filter_readable_by($usr);
+            if ($this->results_used != null and !$this->results_used->is_empty()) {
+                $vars[json_fields::RESULTS] = $this->results_used->api_json_array(
+                    new api_type_list([api_types::INCL_PHRASES]), $msg, $usr);
+            }
+            if ($this->formulas_used == null and !$typ_lst->test_mode() and $this->id() != 0) {
+                $this->load_formulas_used($msg);
+            }
+            $this->formulas_used?->filter_readable_by($usr);
+            if ($this->formulas_used != null and !$this->formulas_used->is_empty()) {
+                $vars[json_fields::FORMULAS] = $this->formulas_used->api_json_array([], $msg, $usr);
+            }
+            // the changes and the overwrites tabs of the result default page
+            $vars = array_merge($vars, $this->api_changes_array($typ_lst, $msg, $usr));
+            $vars = array_merge($vars, $this->api_overwrites_array($typ_lst, $msg, $usr));
         }
 
         return $vars;
@@ -1004,6 +1048,97 @@ class result extends sandbox_value
             $this->load_phr_lst_src($msg, $force_reload);
             $this->load_phr_lst($msg, $force_reload);
         }
+    }
+
+    /**
+     * the phrases that name the numbers used to calculate this result: the source phrases that the
+     * calculation has saved with the result, or the phrases of the result itself if the source group
+     * is not set, e.g. because the group was too big to be saved (see result_list::drop_unsupported_src_grp),
+     * so that the result page can always show what the number is based on; returned with the
+     * selection type, because only the saved source phrases name the numbers exactly
+     *
+     * @param user_message $msg to collect any problem while loading the phrases
+     * @return array the phrases that select the numbers used for the calculation and true if a
+     *               number with any of them is related, which is the case for the fallback
+     */
+    private function used_phrase_selection(user_message $msg): array
+    {
+        $this->load_phrases($msg);
+        $phr_lst = $this->src_grp?->phrase_list();
+        // the source phrases name exactly the numbers used, so a number must carry all of them;
+        // the result phrases of the fallback name the result, so any of them makes a number related
+        $any_phrase = false;
+        if ($phr_lst == null or $phr_lst->empty()) {
+            $phr_lst = $this->grp()->phrase_list();
+            $any_phrase = true;
+        }
+        return [$phr_lst ?? new phrase_list($this->get_user()), $any_phrase];
+    }
+
+    /**
+     * load the values used for this calculation into the in-memory values_used list so that
+     * api_json_array() can emit them under the INCL_RELATED flag, which the 'values used'
+     * component of the result default page shows e.g. the inhabitants of Switzerland in 2020
+     *
+     * @param user_message $msg to collect any problem while loading the values
+     * @return void
+     */
+    function load_values_used(user_message $msg): void
+    {
+        $val_lst = new value_list($this->get_user());
+        [$phr_lst, $any_phrase] = $this->used_phrase_selection($msg);
+        if (!$phr_lst->empty()) {
+            $val_lst->load_by_phr_lst($phr_lst, $msg, $any_phrase, value_list::read_limit());
+        }
+        $this->values_used = $val_lst;
+    }
+
+    /**
+     * load the results used for this calculation into the in-memory results_used list so that
+     * api_json_array() can emit them under the INCL_RELATED flag, which the 'results used'
+     * component of the result default page shows e.g. the increase used by a growth rate;
+     * this result itself is removed, because a page never lists what it shows
+     *
+     * @param user_message $msg to collect any problem while loading the results
+     * @return void
+     */
+    function load_results_used(user_message $msg): void
+    {
+        $res_lst = new result_list($this->get_user());
+        [$phr_lst, $any_phrase] = $this->used_phrase_selection($msg);
+        if (!$phr_lst->empty()) {
+            $res_lst->load_by_phrase_list($phr_lst, $msg, $any_phrase);
+            $res_lst->unset_by_id($this->id());
+        }
+        $this->results_used = $res_lst;
+    }
+
+    /**
+     * load the formulas that have calculated the used results into the in-memory formulas_used list
+     * so that api_json_array() can emit them under the INCL_RELATED flag, which the 'formulas used'
+     * component of the result default page shows; the formula of this result is not repeated,
+     * because the page title already names it
+     *
+     * @param user_message $msg to collect any problem while loading the formulas
+     * @return void
+     */
+    function load_formulas_used(user_message $msg): void
+    {
+        $frm_lst = new formula_list($this->get_user());
+        if ($this->results_used == null) {
+            $this->load_results_used($msg);
+        }
+        $frm_ids = [];
+        foreach ($this->results_used->lst() as $res) {
+            $frm_id = $res->formula_id();
+            if ($frm_id != 0 and $frm_id != $this->formula_id() and !in_array($frm_id, $frm_ids)) {
+                $frm_ids[] = $frm_id;
+            }
+        }
+        if ($frm_ids != []) {
+            $frm_lst->load_by_ids($frm_ids, $msg);
+        }
+        $this->formulas_used = $frm_lst;
     }
 
     /**
