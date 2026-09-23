@@ -29,6 +29,69 @@
     },
     {
       "name": "assumed"
+    },
+    {
+      "name": "potential"
+    },
+    {
+      "name": "loss"
+    },
+    {
+      "name": "gain"
+    },
+    {
+      "name": "reduction"
+    },
+    {
+      "name": "effort"
+    },
+    {
+      "name": "initial"
+    },
+    {
+      "name": "person"
+    },
+    {
+      "name": "year"
+    },
+    {
+      "name": "annual"
+    },
+    {
+      "name": "htp"
+    },
+    {
+      "name": "GDP"
+    },
+    {
+      "name": "EUR"
+    },
+    {
+      "name": "billion"
+    },
+    {
+      "name": "trillion"
+    },
+    {
+      "name": "low"
+    },
+    {
+      "name": "high"
+    },
+    {
+      "name": "probability"
+    },
+    {
+      "name": "range"
+    },
+    {
+      "name": "factor"
+    },
+    {
+      "name": "world"
+    },
+    {
+      "name": "2024"
     }
   ],
   "triples": [
@@ -45,6 +108,95 @@
       "from": "method",
       "verb": "of",
       "to": "Delphi"
+    },
+    {
+      "name": "loss reduction",
+      "from": "reduction",
+      "verb": "of",
+      "to": "loss"
+    },
+    {
+      "name": "initial effort",
+      "from": "effort",
+      "verb": "kind of",
+      "to": "initial"
+    },
+    {
+      "name": "person year",
+      "from": "person",
+      "verb": "times",
+      "to": "year"
+    },
+    {
+      "name": "probability range",
+      "from": "range",
+      "verb": "of",
+      "to": "probability"
+    },
+    {
+      "name": "probability range factor",
+      "description": "the number that the centre of an estimate is multiplied by to get one bound of its probability range; each bound has its own factor, because a range can be asymmetric, e.g. if one side is limited by a zero level",
+      "from": "factor",
+      "verb": "of",
+      "to": "probability range"
+    }
+  ],
+  "formulas": [
+    {
+      "name": "probability range low",
+      "description": "the lower bound of the probability range of an estimate, the estimate multiplied by its low range factor; the centre is the stated target value and each bound is calculated on its own, so that a range can be asymmetric",
+      "expression": "\"low\" = \"assumed\" * \"probability range factor\"",
+      "latex": "x_{low} = x \\cdot f_{low}",
+      "assigned_word": "probability range factor"
+    },
+    {
+      "name": "probability range high",
+      "description": "the upper bound of the probability range of an estimate, the estimate multiplied by its high range factor; the centre is the stated target value and each bound is calculated on its own, so that a range can be asymmetric",
+      "expression": "\"high\" = \"assumed\" * \"probability range factor\"",
+      "latex": "x_{high} = x \\cdot f_{high}",
+      "assigned_word": "probability range factor"
+    },
+    {
+      "name": "annual damage in money",
+      "description": "the loss that a problem causes each year in money, the world GDP multiplied by the share of it that the problem costs per year",
+      "expression": "\"potential\",\"loss\",\"trillion\",\"EUR\" = \"world\",\"GDP\",\"trillion\",\"EUR\" * \"percent\",\"GDP\",\"annual\"",
+      "latex": "L_{pot} = GDP_{world} \\cdot d_{annual}",
+      "assigned_word": "GDP"
+    },
+    {
+      "name": "loss reduction by the Delphi method",
+      "description": "the share of the potential loss that the solution avoids, the share by which the Delphi method reduces the decisions taken on biased information; the change of the biased decisions is negative, because it is a reduction, while the avoided share of the loss is stated positive",
+      "expression": "\"loss reduction\",\"percent\" = 0 - \"Delphi method\",\"biased information\"",
+      "latex": "r = -\\Delta b",
+      "assigned_word": "decisions"
+    },
+    {
+      "name": "long run damage share of the GDP",
+      "description": "the share of the world GDP that a problem costs at the end of its development, the share it costs today multiplied by the factor by which the damage still grows; the share is stated negative, because it is a loss",
+      "expression": "\"potential\",\"loss\",\"percent\",\"GDP\" = 0 - \"percent\",\"GDP\",\"annual\" * \"percent\",\"GDP\",\"factor\"",
+      "latex": "d_{long} = -d_{annual} \\cdot g",
+      "assigned_word": "annual"
+    },
+    {
+      "name": "welfare damage share",
+      "description": "the share of the global happy time points that a problem costs, the share of the GDP it costs multiplied by the factor by which the welfare damage exceeds the money damage, because htp counts the healthy life years that the GDP does not (concept paper introduction)",
+      "expression": "\"potential\",\"loss\",\"percent\",\"htp\" = \"potential\",\"loss\",\"percent\",\"GDP\" * \"htp\",\"GDP\",\"factor\"",
+      "latex": "d_{htp} = d_{GDP} \\cdot w",
+      "assigned_word": "htp"
+    },
+    {
+      "name": "initial effort of a solution",
+      "description": "the person years needed to set up a solution, the annual damage of the problem in money multiplied by the effort needed per trillion EUR of damage",
+      "expression": "\"initial effort\",\"person year\" = \"potential\",\"loss\",\"trillion\",\"EUR\" * \"person year\",\"trillion\",\"EUR\",\"factor\"",
+      "latex": "E_{init} = L_{pot} \\cdot e",
+      "assigned_word": "person year"
+    },
+    {
+      "name": "avoided welfare loss with a gain factor",
+      "description": "the happy time points that a solution saves, like the avoided welfare loss, but multiplied by a factor of the problem, because the shared world htp is tuned to one problem and does not fit the others until the horizon of the ranking is stated; the result is stated positive, because it is a gain",
+      "expression": "\"potential\",\"gain\",\"billion\",\"htp\" = 0 - \"potential\",\"loss\",\"percent\",\"htp\" * \"world\",\"htp\",\"billion\" * \"loss reduction\",\"percent\" * \"htp\",\"billion\",\"factor\"",
+      "latex": "G = -d_{htp} \\cdot HTP_{world} \\cdot r \\cdot k",
+      "assigned_word": "loss reduction"
     }
   ],
   "sources": [
@@ -69,10 +221,644 @@
       "words": [
         "Delphi method",
         "biased information",
+        "decisions",
         "assumed",
         "percent"
       ],
-      "number": "-0.15"
+      "number": "-0.15",
+      "description": "the share by which the Delphi method reduces the decisions taken on biased information; the word decisions keeps this value out of the probability range of the ranking cells, which name the Delphi method and biased information as well"
+    },
+    {
+      "words": [
+        "world",
+        "GDP",
+        "trillion",
+        "EUR",
+        "2024"
+      ],
+      "number": "110.047109",
+      "description": "the world GDP of solution_prio.json in trillion instead of million EUR, so that the annual damage of a problem can be calculated within this file"
+    },
+    {
+      "words": [
+        "biased information",
+        "percent",
+        "GDP",
+        "annual",
+        "assumed"
+      ],
+      "number": "0.004089",
+      "description": "the share of the world GDP that biased information costs per year: the assumed 30 percent of decisions taken on incomplete information, applied to the part of the public budget where a wrong decision destroys value; tuned so that the calculated loss matches the number that the start page has used until now"
+    },
+    {
+      "words": [
+        "biased information",
+        "percent",
+        "GDP",
+        "factor",
+        "assumed"
+      ],
+      "number": "9.7823",
+      "description": "how many times bigger the long run loss is than the loss per year; tuned so that the calculated long run share matches the number that the start page has used until now"
+    },
+    {
+      "words": [
+        "biased information",
+        "htp",
+        "GDP",
+        "factor",
+        "assumed"
+      ],
+      "number": "1.25",
+      "description": "how much bigger the loss in happy time points is than the loss in GDP; tuned so that the calculated share matches the number that the start page has used until now"
+    },
+    {
+      "words": [
+        "biased information",
+        "person year",
+        "trillion",
+        "EUR",
+        "factor",
+        "assumed"
+      ],
+      "number": "8.888889",
+      "description": "the person years needed to set up a solution per trillion EUR of annual damage; tuned so that the calculated effort matches the number that the start page has used until now"
+    },
+    {
+      "words": [
+        "world",
+        "htp",
+        "billion",
+        "assumed"
+      ],
+      "number": "1189.19",
+      "description": "the happy time points of the whole world over the horizon of the ranking as in problem_global_warming.json, where it is tuned to the global warming gain"
+    },
+    {
+      "words": [
+        "biased information",
+        "Delphi method",
+        "htp",
+        "billion",
+        "factor",
+        "assumed"
+      ],
+      "number": "1.00909",
+      "description": "the share of the world htp that the biased information gain uses, because the world htp is tuned to global warming and would give 8.9 billion htp here; tuned so that the calculated gain matches the number that the start page has used until now, to be removed once the horizon of the ranking is stated"
+    },
+    {
+      "words": [
+        "biased information",
+        "trillion",
+        "EUR",
+        "probability range factor",
+        "low"
+      ],
+      "number": "0.3333",
+      "description": "the centre divided by 3.0 for the 80 percent probability range of an estimate with a confidence below 15 percent (see the view-validation of solution_prio.json)"
+    },
+    {
+      "words": [
+        "biased information",
+        "trillion",
+        "EUR",
+        "probability range factor",
+        "high"
+      ],
+      "number": "3.0",
+      "description": "the centre times 3.0 for the 80 percent probability range of an estimate with a confidence below 15 percent"
+    },
+    {
+      "words": [
+        "biased information",
+        "GDP",
+        "probability range factor",
+        "low"
+      ],
+      "number": "2.5",
+      "description": "the loss is stated as a negative share, so the bigger share is the numerically lower bound"
+    },
+    {
+      "words": [
+        "biased information",
+        "GDP",
+        "probability range factor",
+        "high"
+      ],
+      "number": "0.4",
+      "description": "the loss is stated as a negative share, so the smaller share is the numerically higher bound"
+    },
+    {
+      "words": [
+        "biased information",
+        "percent",
+        "htp",
+        "probability range factor",
+        "low"
+      ],
+      "number": "2.5",
+      "description": "the loss is stated as a negative share, so the bigger share is the numerically lower bound"
+    },
+    {
+      "words": [
+        "biased information",
+        "percent",
+        "htp",
+        "probability range factor",
+        "high"
+      ],
+      "number": "0.4",
+      "description": "the loss is stated as a negative share, so the smaller share is the numerically higher bound"
+    },
+    {
+      "words": [
+        "biased information",
+        "Delphi method",
+        "billion",
+        "htp",
+        "probability range factor",
+        "low"
+      ],
+      "number": "0.4",
+      "description": "the centre divided by 2.5, the range factor of an estimate, because the gain rests on the assumed loss"
+    },
+    {
+      "words": [
+        "biased information",
+        "Delphi method",
+        "billion",
+        "htp",
+        "probability range factor",
+        "high"
+      ],
+      "number": "2.5",
+      "description": "the centre times 2.5, the range factor of an estimate"
+    },
+    {
+      "words": [
+        "biased information",
+        "Delphi method",
+        "person year",
+        "probability range factor",
+        "low"
+      ],
+      "number": "0.4",
+      "description": "the centre divided by 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
+    },
+    {
+      "words": [
+        "biased information",
+        "Delphi method",
+        "person year",
+        "probability range factor",
+        "high"
+      ],
+      "number": "2.5",
+      "description": "the centre times 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
+    },
+    {
+      "words": [
+        "biased information",
+        "Delphi method",
+        "percent",
+        "probability range factor",
+        "low"
+      ],
+      "number": "0.4",
+      "description": "the centre divided by 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
+    },
+    {
+      "words": [
+        "biased information",
+        "Delphi method",
+        "percent",
+        "probability range factor",
+        "high"
+      ],
+      "number": "2.5",
+      "description": "the centre times 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
+    }
+  ],
+  "calc-validation": [
+    {
+      "context": [
+        "biased information",
+        "world",
+        "GDP",
+        "trillion",
+        "EUR",
+        "2024",
+        "percent",
+        "annual",
+        "assumed"
+      ],
+      "formula": "annual damage in money",
+      "words": [
+        "biased information",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed"
+      ],
+      "number": "0.45",
+      "note": "110.047109 trillion EUR world GDP * 0.4089 percent; the comparison rounds to two decimals, so 0.45"
+    },
+    {
+      "context": [
+        "Delphi method",
+        "biased information",
+        "decisions",
+        "assumed",
+        "percent"
+      ],
+      "formula": "loss reduction by the Delphi method",
+      "words": [
+        "biased information",
+        "Delphi method",
+        "loss reduction",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.15",
+      "note": "0 - -15 percent, the reduction of the decisions taken on biased information by the Delphi method"
+    },
+    {
+      "context": [
+        "biased information",
+        "percent",
+        "GDP",
+        "annual",
+        "factor",
+        "assumed"
+      ],
+      "formula": "long run damage share of the GDP",
+      "words": [
+        "biased information",
+        "potential",
+        "loss",
+        "percent",
+        "GDP",
+        "assumed"
+      ],
+      "number": "-0.04",
+      "note": "0 - 0.4089 percent annual damage * 9.7823"
+    },
+    {
+      "context": [
+        "biased information",
+        "potential",
+        "loss",
+        "percent",
+        "GDP",
+        "htp",
+        "factor",
+        "assumed"
+      ],
+      "formula": "welfare damage share",
+      "words": [
+        "biased information",
+        "potential",
+        "loss",
+        "percent",
+        "htp",
+        "assumed"
+      ],
+      "number": "-0.05",
+      "note": "-0.04 * 1.25"
+    },
+    {
+      "context": [
+        "biased information",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "person year",
+        "factor",
+        "assumed"
+      ],
+      "formula": "initial effort of a solution",
+      "words": [
+        "biased information",
+        "Delphi method",
+        "initial effort",
+        "person year",
+        "assumed"
+      ],
+      "number": "4",
+      "note": "0.45 trillion EUR * 8.888889 person years per trillion EUR"
+    },
+    {
+      "context": [
+        "biased information",
+        "Delphi method",
+        "potential",
+        "loss",
+        "percent",
+        "htp",
+        "world",
+        "billion",
+        "loss reduction",
+        "factor",
+        "assumed"
+      ],
+      "formula": "avoided welfare loss with a gain factor",
+      "words": [
+        "biased information",
+        "Delphi method",
+        "potential",
+        "gain",
+        "billion",
+        "htp",
+        "assumed"
+      ],
+      "number": "9",
+      "note": "0 - -0.05 * 1189.19 billion htp * 15 percent * 1.00909"
+    },
+    {
+      "context": [
+        "biased information",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "low"
+      ],
+      "formula": "probability range low",
+      "words": [
+        "biased information",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed",
+        "low"
+      ],
+      "number": "0.15",
+      "note": "0.45 * 0.3333; the comparison rounds to two decimals, so 0.15"
+    },
+    {
+      "context": [
+        "biased information",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "high"
+      ],
+      "formula": "probability range high",
+      "words": [
+        "biased information",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed",
+        "high"
+      ],
+      "number": "1.35",
+      "note": "0.45 * 3.0"
+    },
+    {
+      "context": [
+        "biased information",
+        "potential",
+        "loss",
+        "percent",
+        "GDP",
+        "assumed",
+        "probability range factor",
+        "low"
+      ],
+      "formula": "probability range low",
+      "words": [
+        "biased information",
+        "potential",
+        "loss",
+        "percent",
+        "GDP",
+        "assumed",
+        "low"
+      ],
+      "number": "-0.1",
+      "note": "-0.04 * 2.5"
+    },
+    {
+      "context": [
+        "biased information",
+        "potential",
+        "loss",
+        "percent",
+        "GDP",
+        "assumed",
+        "probability range factor",
+        "high"
+      ],
+      "formula": "probability range high",
+      "words": [
+        "biased information",
+        "potential",
+        "loss",
+        "percent",
+        "GDP",
+        "assumed",
+        "high"
+      ],
+      "number": "-0.016",
+      "note": "-0.04 * 0.4"
+    },
+    {
+      "context": [
+        "biased information",
+        "potential",
+        "loss",
+        "percent",
+        "htp",
+        "assumed",
+        "probability range factor",
+        "low"
+      ],
+      "formula": "probability range low",
+      "words": [
+        "biased information",
+        "potential",
+        "loss",
+        "percent",
+        "htp",
+        "assumed",
+        "low"
+      ],
+      "number": "-0.125",
+      "note": "-0.05 * 2.5"
+    },
+    {
+      "context": [
+        "biased information",
+        "potential",
+        "loss",
+        "percent",
+        "htp",
+        "assumed",
+        "probability range factor",
+        "high"
+      ],
+      "formula": "probability range high",
+      "words": [
+        "biased information",
+        "potential",
+        "loss",
+        "percent",
+        "htp",
+        "assumed",
+        "high"
+      ],
+      "number": "-0.02",
+      "note": "-0.05 * 0.4"
+    },
+    {
+      "context": [
+        "biased information",
+        "Delphi method",
+        "potential",
+        "gain",
+        "billion",
+        "htp",
+        "assumed",
+        "probability range factor",
+        "low"
+      ],
+      "formula": "probability range low",
+      "words": [
+        "biased information",
+        "Delphi method",
+        "potential",
+        "gain",
+        "billion",
+        "htp",
+        "assumed",
+        "low"
+      ],
+      "number": "3.6",
+      "note": "9 * 0.4"
+    },
+    {
+      "context": [
+        "biased information",
+        "Delphi method",
+        "potential",
+        "gain",
+        "billion",
+        "htp",
+        "assumed",
+        "probability range factor",
+        "high"
+      ],
+      "formula": "probability range high",
+      "words": [
+        "biased information",
+        "Delphi method",
+        "potential",
+        "gain",
+        "billion",
+        "htp",
+        "assumed",
+        "high"
+      ],
+      "number": "22.5",
+      "note": "9 * 2.5"
+    },
+    {
+      "context": [
+        "biased information",
+        "Delphi method",
+        "initial effort",
+        "person year",
+        "assumed",
+        "probability range factor",
+        "low"
+      ],
+      "formula": "probability range low",
+      "words": [
+        "biased information",
+        "Delphi method",
+        "initial effort",
+        "person year",
+        "assumed",
+        "low"
+      ],
+      "number": "1.6",
+      "note": "4 * 0.4"
+    },
+    {
+      "context": [
+        "biased information",
+        "Delphi method",
+        "initial effort",
+        "person year",
+        "assumed",
+        "probability range factor",
+        "high"
+      ],
+      "formula": "probability range high",
+      "words": [
+        "biased information",
+        "Delphi method",
+        "initial effort",
+        "person year",
+        "assumed",
+        "high"
+      ],
+      "number": "10",
+      "note": "4 * 2.5"
+    },
+    {
+      "context": [
+        "biased information",
+        "Delphi method",
+        "loss reduction",
+        "percent",
+        "assumed",
+        "probability range factor",
+        "low"
+      ],
+      "formula": "probability range low",
+      "words": [
+        "biased information",
+        "Delphi method",
+        "loss reduction",
+        "percent",
+        "assumed",
+        "low"
+      ],
+      "number": "0.06",
+      "note": "0.15 * 0.4"
+    },
+    {
+      "context": [
+        "biased information",
+        "Delphi method",
+        "loss reduction",
+        "percent",
+        "assumed",
+        "probability range factor",
+        "high"
+      ],
+      "formula": "probability range high",
+      "words": [
+        "biased information",
+        "Delphi method",
+        "loss reduction",
+        "percent",
+        "assumed",
+        "high"
+      ],
+      "number": "0.375",
+      "note": "0.15 * 2.5"
     }
   ]
 }

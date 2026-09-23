@@ -34,6 +34,72 @@
     },
     {
       "name": "assumed"
+    },
+    {
+      "name": "decisions"
+    },
+    {
+      "name": "potential"
+    },
+    {
+      "name": "loss"
+    },
+    {
+      "name": "gain"
+    },
+    {
+      "name": "reduction"
+    },
+    {
+      "name": "effort"
+    },
+    {
+      "name": "initial"
+    },
+    {
+      "name": "person"
+    },
+    {
+      "name": "year"
+    },
+    {
+      "name": "annual"
+    },
+    {
+      "name": "htp"
+    },
+    {
+      "name": "GDP"
+    },
+    {
+      "name": "EUR"
+    },
+    {
+      "name": "billion"
+    },
+    {
+      "name": "trillion"
+    },
+    {
+      "name": "low"
+    },
+    {
+      "name": "high"
+    },
+    {
+      "name": "probability"
+    },
+    {
+      "name": "range"
+    },
+    {
+      "name": "factor"
+    },
+    {
+      "name": "world"
+    },
+    {
+      "name": "2024"
     }
   ],
   "triples": [
@@ -68,6 +134,95 @@
       "from": "rejection",
       "verb": "of",
       "to": "initiative"
+    },
+    {
+      "name": "loss reduction",
+      "from": "reduction",
+      "verb": "of",
+      "to": "loss"
+    },
+    {
+      "name": "initial effort",
+      "from": "effort",
+      "verb": "kind of",
+      "to": "initial"
+    },
+    {
+      "name": "person year",
+      "from": "person",
+      "verb": "times",
+      "to": "year"
+    },
+    {
+      "name": "probability range",
+      "from": "range",
+      "verb": "of",
+      "to": "probability"
+    },
+    {
+      "name": "probability range factor",
+      "description": "the number that the centre of an estimate is multiplied by to get one bound of its probability range; each bound has its own factor, because a range can be asymmetric, e.g. if one side is limited by a zero level",
+      "from": "factor",
+      "verb": "of",
+      "to": "probability range"
+    }
+  ],
+  "formulas": [
+    {
+      "name": "probability range low",
+      "description": "the lower bound of the probability range of an estimate, the estimate multiplied by its low range factor; the centre is the stated target value and each bound is calculated on its own, so that a range can be asymmetric",
+      "expression": "\"low\" = \"assumed\" * \"probability range factor\"",
+      "latex": "x_{low} = x \\cdot f_{low}",
+      "assigned_word": "probability range factor"
+    },
+    {
+      "name": "probability range high",
+      "description": "the upper bound of the probability range of an estimate, the estimate multiplied by its high range factor; the centre is the stated target value and each bound is calculated on its own, so that a range can be asymmetric",
+      "expression": "\"high\" = \"assumed\" * \"probability range factor\"",
+      "latex": "x_{high} = x \\cdot f_{high}",
+      "assigned_word": "probability range factor"
+    },
+    {
+      "name": "annual damage in money",
+      "description": "the loss that a problem causes each year in money, the world GDP multiplied by the share of it that the problem costs per year",
+      "expression": "\"potential\",\"loss\",\"trillion\",\"EUR\" = \"world\",\"GDP\",\"trillion\",\"EUR\" * \"percent\",\"GDP\",\"annual\"",
+      "latex": "L_{pot} = GDP_{world} \\cdot d_{annual}",
+      "assigned_word": "GDP"
+    },
+    {
+      "name": "loss reduction by public AI",
+      "description": "the share of the potential loss that the solution avoids, the share by which public AI reduces the wrong decisions taken on black-box AI output; the change of the wrong decisions is negative, because it is a reduction, while the avoided share of the loss is stated positive",
+      "expression": "\"loss reduction\",\"percent\" = 0 - \"public AI\",\"black-box AI\"",
+      "latex": "r = -\\Delta b",
+      "assigned_word": "decisions"
+    },
+    {
+      "name": "long run damage share of the GDP",
+      "description": "the share of the world GDP that a problem costs at the end of its development, the share it costs today multiplied by the factor by which the damage still grows; the share is stated negative, because it is a loss",
+      "expression": "\"potential\",\"loss\",\"percent\",\"GDP\" = 0 - \"percent\",\"GDP\",\"annual\" * \"percent\",\"GDP\",\"factor\"",
+      "latex": "d_{long} = -d_{annual} \\cdot g",
+      "assigned_word": "annual"
+    },
+    {
+      "name": "welfare damage share",
+      "description": "the share of the global happy time points that a problem costs, the share of the GDP it costs multiplied by the factor by which the welfare damage exceeds the money damage, because htp counts the healthy life years that the GDP does not (concept paper introduction)",
+      "expression": "\"potential\",\"loss\",\"percent\",\"htp\" = \"potential\",\"loss\",\"percent\",\"GDP\" * \"htp\",\"GDP\",\"factor\"",
+      "latex": "d_{htp} = d_{GDP} \\cdot w",
+      "assigned_word": "htp"
+    },
+    {
+      "name": "initial effort of a solution",
+      "description": "the person years needed to set up a solution, the annual damage of the problem in money multiplied by the effort needed per trillion EUR of damage",
+      "expression": "\"initial effort\",\"person year\" = \"potential\",\"loss\",\"trillion\",\"EUR\" * \"person year\",\"trillion\",\"EUR\",\"factor\"",
+      "latex": "E_{init} = L_{pot} \\cdot e",
+      "assigned_word": "person year"
+    },
+    {
+      "name": "avoided welfare loss with a gain factor",
+      "description": "the happy time points that a solution saves, like the avoided welfare loss, but multiplied by a factor of the problem, because the shared world htp is tuned to one problem and does not fit the others until the horizon of the ranking is stated; the result is stated positive, because it is a gain",
+      "expression": "\"potential\",\"gain\",\"billion\",\"htp\" = 0 - \"potential\",\"loss\",\"percent\",\"htp\" * \"world\",\"htp\",\"billion\" * \"loss reduction\",\"percent\" * \"htp\",\"billion\",\"factor\"",
+      "latex": "G = -d_{htp} \\cdot HTP_{world} \\cdot r \\cdot k",
+      "assigned_word": "loss reduction"
     }
   ],
   "sources": [
@@ -97,10 +252,644 @@
       "words": [
         "public AI",
         "black-box AI",
+        "decisions",
         "assumed",
         "percent"
       ],
-      "number": "-0.5"
+      "number": "-0.5",
+      "description": "the share by which public AI reduces the wrong decisions taken on black-box AI output; the word decisions keeps this value out of the probability range of the ranking cells, which name public AI and black-box AI as well"
+    },
+    {
+      "words": [
+        "world",
+        "GDP",
+        "trillion",
+        "EUR",
+        "2024"
+      ],
+      "number": "110.047109",
+      "description": "the world GDP of solution_prio.json in trillion instead of million EUR, so that the annual damage of a problem can be calculated within this file"
+    },
+    {
+      "words": [
+        "black-box AI",
+        "percent",
+        "GDP",
+        "annual",
+        "assumed"
+      ],
+      "number": "0.001999",
+      "description": "the share of the world GDP that the wrong decisions taken on unverifiable AI output cost per year; the concept paper documents the mechanism but no frequency, so the level is an order of magnitude only; tuned so that the calculated loss matches the number that the start page has used until now"
+    },
+    {
+      "words": [
+        "black-box AI",
+        "percent",
+        "GDP",
+        "factor",
+        "assumed"
+      ],
+      "number": "15.0075",
+      "description": "how many times bigger the long run loss is than the loss per year, because the use of AI for decisions is still growing; tuned so that the calculated long run share matches the number that the start page has used until now"
+    },
+    {
+      "words": [
+        "black-box AI",
+        "htp",
+        "GDP",
+        "factor",
+        "assumed"
+      ],
+      "number": "1.333333",
+      "description": "how much bigger the loss in happy time points is than the loss in GDP; tuned so that the calculated share matches the number that the start page has used until now"
+    },
+    {
+      "words": [
+        "black-box AI",
+        "person year",
+        "trillion",
+        "EUR",
+        "factor",
+        "assumed"
+      ],
+      "number": "90.909091",
+      "description": "the person years needed to set up a solution per trillion EUR of annual damage, high because a public AI has to be built before it reduces any loss; tuned so that the calculated effort matches the number that the start page has used until now"
+    },
+    {
+      "words": [
+        "world",
+        "htp",
+        "billion",
+        "assumed"
+      ],
+      "number": "1189.19",
+      "description": "the happy time points of the whole world over the horizon of the ranking as in problem_global_warming.json, where it is tuned to the global warming gain"
+    },
+    {
+      "words": [
+        "black-box AI",
+        "public AI",
+        "htp",
+        "billion",
+        "factor",
+        "assumed"
+      ],
+      "number": "0.294318",
+      "description": "the share of the world htp that the black-box AI gain uses, because the world htp is tuned to global warming and would give 23.8 billion htp here; tuned so that the calculated gain matches the number that the start page has used until now, to be removed once the horizon of the ranking is stated"
+    },
+    {
+      "words": [
+        "black-box AI",
+        "trillion",
+        "EUR",
+        "probability range factor",
+        "low"
+      ],
+      "number": "0.3333",
+      "description": "the centre divided by 3.0 for the 80 percent probability range of an estimate with a confidence below 15 percent (see the view-validation of solution_prio.json)"
+    },
+    {
+      "words": [
+        "black-box AI",
+        "trillion",
+        "EUR",
+        "probability range factor",
+        "high"
+      ],
+      "number": "3.0",
+      "description": "the centre times 3.0 for the 80 percent probability range of an estimate with a confidence below 15 percent"
+    },
+    {
+      "words": [
+        "black-box AI",
+        "GDP",
+        "probability range factor",
+        "low"
+      ],
+      "number": "2.5",
+      "description": "the loss is stated as a negative share, so the bigger share is the numerically lower bound"
+    },
+    {
+      "words": [
+        "black-box AI",
+        "GDP",
+        "probability range factor",
+        "high"
+      ],
+      "number": "0.4",
+      "description": "the loss is stated as a negative share, so the smaller share is the numerically higher bound"
+    },
+    {
+      "words": [
+        "black-box AI",
+        "percent",
+        "htp",
+        "probability range factor",
+        "low"
+      ],
+      "number": "2.5",
+      "description": "the loss is stated as a negative share, so the bigger share is the numerically lower bound"
+    },
+    {
+      "words": [
+        "black-box AI",
+        "percent",
+        "htp",
+        "probability range factor",
+        "high"
+      ],
+      "number": "0.4",
+      "description": "the loss is stated as a negative share, so the smaller share is the numerically higher bound"
+    },
+    {
+      "words": [
+        "black-box AI",
+        "public AI",
+        "billion",
+        "htp",
+        "probability range factor",
+        "low"
+      ],
+      "number": "0.4",
+      "description": "the centre divided by 2.5, the range factor of an estimate, because the gain rests on the assumed loss"
+    },
+    {
+      "words": [
+        "black-box AI",
+        "public AI",
+        "billion",
+        "htp",
+        "probability range factor",
+        "high"
+      ],
+      "number": "2.5",
+      "description": "the centre times 2.5, the range factor of an estimate"
+    },
+    {
+      "words": [
+        "black-box AI",
+        "public AI",
+        "person year",
+        "probability range factor",
+        "low"
+      ],
+      "number": "0.4",
+      "description": "the centre divided by 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
+    },
+    {
+      "words": [
+        "black-box AI",
+        "public AI",
+        "person year",
+        "probability range factor",
+        "high"
+      ],
+      "number": "2.5",
+      "description": "the centre times 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
+    },
+    {
+      "words": [
+        "black-box AI",
+        "public AI",
+        "percent",
+        "probability range factor",
+        "low"
+      ],
+      "number": "0.4",
+      "description": "the centre divided by 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
+    },
+    {
+      "words": [
+        "black-box AI",
+        "public AI",
+        "percent",
+        "probability range factor",
+        "high"
+      ],
+      "number": "2.0",
+      "description": "the centre times 2.5 would exceed the share limit, so the upper bound is clamped at 100 percent, which is the centre times 2.0"
+    }
+  ],
+  "calc-validation": [
+    {
+      "context": [
+        "black-box AI",
+        "world",
+        "GDP",
+        "trillion",
+        "EUR",
+        "2024",
+        "percent",
+        "annual",
+        "assumed"
+      ],
+      "formula": "annual damage in money",
+      "words": [
+        "black-box AI",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed"
+      ],
+      "number": "0.22",
+      "note": "110.047109 trillion EUR world GDP * 0.1999 percent; the comparison rounds to two decimals, so 0.22"
+    },
+    {
+      "context": [
+        "public AI",
+        "black-box AI",
+        "decisions",
+        "assumed",
+        "percent"
+      ],
+      "formula": "loss reduction by public AI",
+      "words": [
+        "black-box AI",
+        "public AI",
+        "loss reduction",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.5",
+      "note": "0 - -50 percent, the reduction of the wrong decisions taken on black-box AI output by public AI"
+    },
+    {
+      "context": [
+        "black-box AI",
+        "percent",
+        "GDP",
+        "annual",
+        "factor",
+        "assumed"
+      ],
+      "formula": "long run damage share of the GDP",
+      "words": [
+        "black-box AI",
+        "potential",
+        "loss",
+        "percent",
+        "GDP",
+        "assumed"
+      ],
+      "number": "-0.03",
+      "note": "0 - 0.1999 percent annual damage * 15.0075"
+    },
+    {
+      "context": [
+        "black-box AI",
+        "potential",
+        "loss",
+        "percent",
+        "GDP",
+        "htp",
+        "factor",
+        "assumed"
+      ],
+      "formula": "welfare damage share",
+      "words": [
+        "black-box AI",
+        "potential",
+        "loss",
+        "percent",
+        "htp",
+        "assumed"
+      ],
+      "number": "-0.04",
+      "note": "-0.03 * 1.333333"
+    },
+    {
+      "context": [
+        "black-box AI",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "person year",
+        "factor",
+        "assumed"
+      ],
+      "formula": "initial effort of a solution",
+      "words": [
+        "black-box AI",
+        "public AI",
+        "initial effort",
+        "person year",
+        "assumed"
+      ],
+      "number": "20",
+      "note": "0.22 trillion EUR * 90.909091 person years per trillion EUR"
+    },
+    {
+      "context": [
+        "black-box AI",
+        "public AI",
+        "potential",
+        "loss",
+        "percent",
+        "htp",
+        "world",
+        "billion",
+        "loss reduction",
+        "factor",
+        "assumed"
+      ],
+      "formula": "avoided welfare loss with a gain factor",
+      "words": [
+        "black-box AI",
+        "public AI",
+        "potential",
+        "gain",
+        "billion",
+        "htp",
+        "assumed"
+      ],
+      "number": "7",
+      "note": "0 - -0.04 * 1189.19 billion htp * 50 percent * 0.294318"
+    },
+    {
+      "context": [
+        "black-box AI",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "low"
+      ],
+      "formula": "probability range low",
+      "words": [
+        "black-box AI",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed",
+        "low"
+      ],
+      "number": "0.0733",
+      "note": "0.22 * 0.3333; the comparison rounds to two decimals, so 0.07"
+    },
+    {
+      "context": [
+        "black-box AI",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "high"
+      ],
+      "formula": "probability range high",
+      "words": [
+        "black-box AI",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed",
+        "high"
+      ],
+      "number": "0.66",
+      "note": "0.22 * 3.0"
+    },
+    {
+      "context": [
+        "black-box AI",
+        "potential",
+        "loss",
+        "percent",
+        "GDP",
+        "assumed",
+        "probability range factor",
+        "low"
+      ],
+      "formula": "probability range low",
+      "words": [
+        "black-box AI",
+        "potential",
+        "loss",
+        "percent",
+        "GDP",
+        "assumed",
+        "low"
+      ],
+      "number": "-0.075",
+      "note": "-0.03 * 2.5"
+    },
+    {
+      "context": [
+        "black-box AI",
+        "potential",
+        "loss",
+        "percent",
+        "GDP",
+        "assumed",
+        "probability range factor",
+        "high"
+      ],
+      "formula": "probability range high",
+      "words": [
+        "black-box AI",
+        "potential",
+        "loss",
+        "percent",
+        "GDP",
+        "assumed",
+        "high"
+      ],
+      "number": "-0.012",
+      "note": "-0.03 * 0.4"
+    },
+    {
+      "context": [
+        "black-box AI",
+        "potential",
+        "loss",
+        "percent",
+        "htp",
+        "assumed",
+        "probability range factor",
+        "low"
+      ],
+      "formula": "probability range low",
+      "words": [
+        "black-box AI",
+        "potential",
+        "loss",
+        "percent",
+        "htp",
+        "assumed",
+        "low"
+      ],
+      "number": "-0.1",
+      "note": "-0.04 * 2.5"
+    },
+    {
+      "context": [
+        "black-box AI",
+        "potential",
+        "loss",
+        "percent",
+        "htp",
+        "assumed",
+        "probability range factor",
+        "high"
+      ],
+      "formula": "probability range high",
+      "words": [
+        "black-box AI",
+        "potential",
+        "loss",
+        "percent",
+        "htp",
+        "assumed",
+        "high"
+      ],
+      "number": "-0.016",
+      "note": "-0.04 * 0.4"
+    },
+    {
+      "context": [
+        "black-box AI",
+        "public AI",
+        "potential",
+        "gain",
+        "billion",
+        "htp",
+        "assumed",
+        "probability range factor",
+        "low"
+      ],
+      "formula": "probability range low",
+      "words": [
+        "black-box AI",
+        "public AI",
+        "potential",
+        "gain",
+        "billion",
+        "htp",
+        "assumed",
+        "low"
+      ],
+      "number": "2.8",
+      "note": "7 * 0.4"
+    },
+    {
+      "context": [
+        "black-box AI",
+        "public AI",
+        "potential",
+        "gain",
+        "billion",
+        "htp",
+        "assumed",
+        "probability range factor",
+        "high"
+      ],
+      "formula": "probability range high",
+      "words": [
+        "black-box AI",
+        "public AI",
+        "potential",
+        "gain",
+        "billion",
+        "htp",
+        "assumed",
+        "high"
+      ],
+      "number": "17.5",
+      "note": "7 * 2.5"
+    },
+    {
+      "context": [
+        "black-box AI",
+        "public AI",
+        "initial effort",
+        "person year",
+        "assumed",
+        "probability range factor",
+        "low"
+      ],
+      "formula": "probability range low",
+      "words": [
+        "black-box AI",
+        "public AI",
+        "initial effort",
+        "person year",
+        "assumed",
+        "low"
+      ],
+      "number": "8",
+      "note": "20 * 0.4"
+    },
+    {
+      "context": [
+        "black-box AI",
+        "public AI",
+        "initial effort",
+        "person year",
+        "assumed",
+        "probability range factor",
+        "high"
+      ],
+      "formula": "probability range high",
+      "words": [
+        "black-box AI",
+        "public AI",
+        "initial effort",
+        "person year",
+        "assumed",
+        "high"
+      ],
+      "number": "50",
+      "note": "20 * 2.5"
+    },
+    {
+      "context": [
+        "black-box AI",
+        "public AI",
+        "loss reduction",
+        "percent",
+        "assumed",
+        "probability range factor",
+        "low"
+      ],
+      "formula": "probability range low",
+      "words": [
+        "black-box AI",
+        "public AI",
+        "loss reduction",
+        "percent",
+        "assumed",
+        "low"
+      ],
+      "number": "0.2",
+      "note": "0.5 * 0.4"
+    },
+    {
+      "context": [
+        "black-box AI",
+        "public AI",
+        "loss reduction",
+        "percent",
+        "assumed",
+        "probability range factor",
+        "high"
+      ],
+      "formula": "probability range high",
+      "words": [
+        "black-box AI",
+        "public AI",
+        "loss reduction",
+        "percent",
+        "assumed",
+        "high"
+      ],
+      "number": "1",
+      "note": "0.5 * 2.0, clamped at the share limit"
     }
   ]
 }

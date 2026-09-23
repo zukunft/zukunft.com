@@ -28,6 +28,69 @@
     },
     {
       "name": "assumed"
+    },
+    {
+      "name": "potential"
+    },
+    {
+      "name": "loss"
+    },
+    {
+      "name": "gain"
+    },
+    {
+      "name": "reduction"
+    },
+    {
+      "name": "effort"
+    },
+    {
+      "name": "initial"
+    },
+    {
+      "name": "person"
+    },
+    {
+      "name": "year"
+    },
+    {
+      "name": "annual"
+    },
+    {
+      "name": "htp"
+    },
+    {
+      "name": "GDP"
+    },
+    {
+      "name": "EUR"
+    },
+    {
+      "name": "billion"
+    },
+    {
+      "name": "trillion"
+    },
+    {
+      "name": "low"
+    },
+    {
+      "name": "high"
+    },
+    {
+      "name": "probability"
+    },
+    {
+      "name": "range"
+    },
+    {
+      "name": "factor"
+    },
+    {
+      "name": "world"
+    },
+    {
+      "name": "2024"
     }
   ],
   "triples": [
@@ -43,6 +106,95 @@
       "from": "regulation",
       "verb": "of",
       "to": "platform"
+    },
+    {
+      "name": "loss reduction",
+      "from": "reduction",
+      "verb": "of",
+      "to": "loss"
+    },
+    {
+      "name": "initial effort",
+      "from": "effort",
+      "verb": "kind of",
+      "to": "initial"
+    },
+    {
+      "name": "person year",
+      "from": "person",
+      "verb": "times",
+      "to": "year"
+    },
+    {
+      "name": "probability range",
+      "from": "range",
+      "verb": "of",
+      "to": "probability"
+    },
+    {
+      "name": "probability range factor",
+      "description": "the number that the centre of an estimate is multiplied by to get one bound of its probability range; each bound has its own factor, because a range can be asymmetric, e.g. if one side is limited by a zero level",
+      "from": "factor",
+      "verb": "of",
+      "to": "probability range"
+    }
+  ],
+  "formulas": [
+    {
+      "name": "probability range low",
+      "description": "the lower bound of the probability range of an estimate, the estimate multiplied by its low range factor; the centre is the stated target value and each bound is calculated on its own, so that a range can be asymmetric",
+      "expression": "\"low\" = \"assumed\" * \"probability range factor\"",
+      "latex": "x_{low} = x \\cdot f_{low}",
+      "assigned_word": "probability range factor"
+    },
+    {
+      "name": "probability range high",
+      "description": "the upper bound of the probability range of an estimate, the estimate multiplied by its high range factor; the centre is the stated target value and each bound is calculated on its own, so that a range can be asymmetric",
+      "expression": "\"high\" = \"assumed\" * \"probability range factor\"",
+      "latex": "x_{high} = x \\cdot f_{high}",
+      "assigned_word": "probability range factor"
+    },
+    {
+      "name": "annual damage in money",
+      "description": "the loss that a problem causes each year in money, the world GDP multiplied by the share of it that the problem costs per year",
+      "expression": "\"potential\",\"loss\",\"trillion\",\"EUR\" = \"world\",\"GDP\",\"trillion\",\"EUR\" * \"percent\",\"GDP\",\"annual\"",
+      "latex": "L_{pot} = GDP_{world} \\cdot d_{annual}",
+      "assigned_word": "GDP"
+    },
+    {
+      "name": "loss reduction by platform regulation",
+      "description": "the share of the potential loss that the solution avoids, the share by which the platform regulation reduces the disinformation in the public discourse; the change of the disinformation is negative, because it is a reduction, while the avoided share of the loss is stated positive",
+      "expression": "\"loss reduction\",\"percent\" = 0 - \"platform regulation\",\"disinformation\"",
+      "latex": "r = -\\Delta d",
+      "assigned_word": "regulation"
+    },
+    {
+      "name": "long run damage share of the GDP",
+      "description": "the share of the world GDP that a problem costs at the end of its development, the share it costs today multiplied by the factor by which the damage still grows; the share is stated negative, because it is a loss",
+      "expression": "\"potential\",\"loss\",\"percent\",\"GDP\" = 0 - \"percent\",\"GDP\",\"annual\" * \"percent\",\"GDP\",\"factor\"",
+      "latex": "d_{long} = -d_{annual} \\cdot g",
+      "assigned_word": "annual"
+    },
+    {
+      "name": "welfare damage share",
+      "description": "the share of the global happy time points that a problem costs, the share of the GDP it costs multiplied by the factor by which the welfare damage exceeds the money damage, because htp counts the healthy life years that the GDP does not (concept paper introduction)",
+      "expression": "\"potential\",\"loss\",\"percent\",\"htp\" = \"potential\",\"loss\",\"percent\",\"GDP\" * \"htp\",\"GDP\",\"factor\"",
+      "latex": "d_{htp} = d_{GDP} \\cdot w",
+      "assigned_word": "htp"
+    },
+    {
+      "name": "initial effort of a solution",
+      "description": "the person years needed to set up a solution, the annual damage of the problem in money multiplied by the effort needed per trillion EUR of damage",
+      "expression": "\"initial effort\",\"person year\" = \"potential\",\"loss\",\"trillion\",\"EUR\" * \"person year\",\"trillion\",\"EUR\",\"factor\"",
+      "latex": "E_{init} = L_{pot} \\cdot e",
+      "assigned_word": "person year"
+    },
+    {
+      "name": "avoided welfare loss with a gain factor",
+      "description": "the happy time points that a solution saves, like the avoided welfare loss, but multiplied by a factor of the problem, because the shared world htp is tuned to one problem and does not fit the others until the horizon of the ranking is stated; the result is stated positive, because it is a gain",
+      "expression": "\"potential\",\"gain\",\"billion\",\"htp\" = 0 - \"potential\",\"loss\",\"percent\",\"htp\" * \"world\",\"htp\",\"billion\" * \"loss reduction\",\"percent\" * \"htp\",\"billion\",\"factor\"",
+      "latex": "G = -d_{htp} \\cdot HTP_{world} \\cdot r \\cdot k",
+      "assigned_word": "loss reduction"
     }
   ],
   "sources": [
@@ -73,10 +225,644 @@
       "words": [
         "platform regulation",
         "disinformation",
+        "public discourse",
         "assumed",
         "percent"
       ],
-      "number": "-0.1"
+      "number": "-0.1",
+      "description": "the share by which the platform regulation reduces the disinformation in the public discourse; the phrase public discourse keeps this value out of the probability range of the ranking cells, which name the platform regulation and disinformation as well"
+    },
+    {
+      "words": [
+        "world",
+        "GDP",
+        "trillion",
+        "EUR",
+        "2024"
+      ],
+      "number": "110.047109",
+      "description": "the world GDP of solution_prio.json in trillion instead of million EUR, so that the annual damage of a problem can be calculated within this file"
+    },
+    {
+      "words": [
+        "disinformation",
+        "percent",
+        "GDP",
+        "annual",
+        "assumed"
+      ],
+      "number": "0.00318",
+      "description": "the share of the world GDP that disinformation costs per year: the assumed 20 percent of the public discourse, valued through its effect on the quality of political decisions; tuned so that the calculated loss matches the number that the start page has used until now"
+    },
+    {
+      "words": [
+        "disinformation",
+        "percent",
+        "GDP",
+        "factor",
+        "assumed"
+      ],
+      "number": "15.7233",
+      "description": "how many times bigger the long run loss is than the loss per year, because the declining share of people living in a democracy accumulates; tuned so that the calculated long run share matches the number that the start page has used until now"
+    },
+    {
+      "words": [
+        "disinformation",
+        "htp",
+        "GDP",
+        "factor",
+        "assumed"
+      ],
+      "number": "1.6",
+      "description": "how much bigger the loss in happy time points is than the loss in GDP, because disinformation also costs democratic participation that the GDP does not count; tuned so that the calculated share matches the number that the start page has used until now"
+    },
+    {
+      "words": [
+        "disinformation",
+        "person year",
+        "trillion",
+        "EUR",
+        "factor",
+        "assumed"
+      ],
+      "number": "34.285714",
+      "description": "the person years needed to set up a solution per trillion EUR of annual damage; tuned so that the calculated effort matches the number that the start page has used until now"
+    },
+    {
+      "words": [
+        "world",
+        "htp",
+        "billion",
+        "assumed"
+      ],
+      "number": "1189.19",
+      "description": "the happy time points of the whole world over the horizon of the ranking as in problem_global_warming.json, where it is tuned to the global warming gain"
+    },
+    {
+      "words": [
+        "disinformation",
+        "platform regulation",
+        "htp",
+        "billion",
+        "factor",
+        "assumed"
+      ],
+      "number": "1.261363",
+      "description": "the share of the world htp that the disinformation gain uses, because the world htp is tuned to global warming and would give 9.5 billion htp here; tuned so that the calculated gain matches the number that the start page has used until now, to be removed once the horizon of the ranking is stated"
+    },
+    {
+      "words": [
+        "disinformation",
+        "trillion",
+        "EUR",
+        "probability range factor",
+        "low"
+      ],
+      "number": "0.3333",
+      "description": "the centre divided by 3.0 for the 80 percent probability range of an estimate with a confidence below 15 percent (see the view-validation of solution_prio.json)"
+    },
+    {
+      "words": [
+        "disinformation",
+        "trillion",
+        "EUR",
+        "probability range factor",
+        "high"
+      ],
+      "number": "3.0",
+      "description": "the centre times 3.0 for the 80 percent probability range of an estimate with a confidence below 15 percent"
+    },
+    {
+      "words": [
+        "disinformation",
+        "GDP",
+        "probability range factor",
+        "low"
+      ],
+      "number": "2.5",
+      "description": "the loss is stated as a negative share, so the bigger share is the numerically lower bound"
+    },
+    {
+      "words": [
+        "disinformation",
+        "GDP",
+        "probability range factor",
+        "high"
+      ],
+      "number": "0.4",
+      "description": "the loss is stated as a negative share, so the smaller share is the numerically higher bound"
+    },
+    {
+      "words": [
+        "disinformation",
+        "percent",
+        "htp",
+        "probability range factor",
+        "low"
+      ],
+      "number": "2.5",
+      "description": "the loss is stated as a negative share, so the bigger share is the numerically lower bound"
+    },
+    {
+      "words": [
+        "disinformation",
+        "percent",
+        "htp",
+        "probability range factor",
+        "high"
+      ],
+      "number": "0.4",
+      "description": "the loss is stated as a negative share, so the smaller share is the numerically higher bound"
+    },
+    {
+      "words": [
+        "disinformation",
+        "platform regulation",
+        "billion",
+        "htp",
+        "probability range factor",
+        "low"
+      ],
+      "number": "0.4",
+      "description": "the centre divided by 2.5, the range factor of an estimate, because the gain rests on the assumed loss"
+    },
+    {
+      "words": [
+        "disinformation",
+        "platform regulation",
+        "billion",
+        "htp",
+        "probability range factor",
+        "high"
+      ],
+      "number": "2.5",
+      "description": "the centre times 2.5, the range factor of an estimate"
+    },
+    {
+      "words": [
+        "disinformation",
+        "platform regulation",
+        "person year",
+        "probability range factor",
+        "low"
+      ],
+      "number": "0.4",
+      "description": "the centre divided by 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
+    },
+    {
+      "words": [
+        "disinformation",
+        "platform regulation",
+        "person year",
+        "probability range factor",
+        "high"
+      ],
+      "number": "2.5",
+      "description": "the centre times 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
+    },
+    {
+      "words": [
+        "disinformation",
+        "platform regulation",
+        "percent",
+        "probability range factor",
+        "low"
+      ],
+      "number": "0.4",
+      "description": "the centre divided by 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
+    },
+    {
+      "words": [
+        "disinformation",
+        "platform regulation",
+        "percent",
+        "probability range factor",
+        "high"
+      ],
+      "number": "2.5",
+      "description": "the centre times 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
+    }
+  ],
+  "calc-validation": [
+    {
+      "context": [
+        "disinformation",
+        "world",
+        "GDP",
+        "trillion",
+        "EUR",
+        "2024",
+        "percent",
+        "annual",
+        "assumed"
+      ],
+      "formula": "annual damage in money",
+      "words": [
+        "disinformation",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed"
+      ],
+      "number": "0.35",
+      "note": "110.047109 trillion EUR world GDP * 0.318 percent; the comparison rounds to two decimals, so 0.35"
+    },
+    {
+      "context": [
+        "platform regulation",
+        "disinformation",
+        "public discourse",
+        "assumed",
+        "percent"
+      ],
+      "formula": "loss reduction by platform regulation",
+      "words": [
+        "disinformation",
+        "platform regulation",
+        "loss reduction",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.1",
+      "note": "0 - -10 percent, the reduction of the disinformation in the public discourse by the platform regulation"
+    },
+    {
+      "context": [
+        "disinformation",
+        "percent",
+        "GDP",
+        "annual",
+        "factor",
+        "assumed"
+      ],
+      "formula": "long run damage share of the GDP",
+      "words": [
+        "disinformation",
+        "potential",
+        "loss",
+        "percent",
+        "GDP",
+        "assumed"
+      ],
+      "number": "-0.05",
+      "note": "0 - 0.318 percent annual damage * 15.7233"
+    },
+    {
+      "context": [
+        "disinformation",
+        "potential",
+        "loss",
+        "percent",
+        "GDP",
+        "htp",
+        "factor",
+        "assumed"
+      ],
+      "formula": "welfare damage share",
+      "words": [
+        "disinformation",
+        "potential",
+        "loss",
+        "percent",
+        "htp",
+        "assumed"
+      ],
+      "number": "-0.08",
+      "note": "-0.05 * 1.6"
+    },
+    {
+      "context": [
+        "disinformation",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "person year",
+        "factor",
+        "assumed"
+      ],
+      "formula": "initial effort of a solution",
+      "words": [
+        "disinformation",
+        "platform regulation",
+        "initial effort",
+        "person year",
+        "assumed"
+      ],
+      "number": "12",
+      "note": "0.35 trillion EUR * 34.285714 person years per trillion EUR"
+    },
+    {
+      "context": [
+        "disinformation",
+        "platform regulation",
+        "potential",
+        "loss",
+        "percent",
+        "htp",
+        "world",
+        "billion",
+        "loss reduction",
+        "factor",
+        "assumed"
+      ],
+      "formula": "avoided welfare loss with a gain factor",
+      "words": [
+        "disinformation",
+        "platform regulation",
+        "potential",
+        "gain",
+        "billion",
+        "htp",
+        "assumed"
+      ],
+      "number": "12",
+      "note": "0 - -0.08 * 1189.19 billion htp * 10 percent * 1.261363"
+    },
+    {
+      "context": [
+        "disinformation",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "low"
+      ],
+      "formula": "probability range low",
+      "words": [
+        "disinformation",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed",
+        "low"
+      ],
+      "number": "0.1167",
+      "note": "0.35 * 0.3333; the comparison rounds to two decimals, so 0.12"
+    },
+    {
+      "context": [
+        "disinformation",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "high"
+      ],
+      "formula": "probability range high",
+      "words": [
+        "disinformation",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed",
+        "high"
+      ],
+      "number": "1.05",
+      "note": "0.35 * 3.0"
+    },
+    {
+      "context": [
+        "disinformation",
+        "potential",
+        "loss",
+        "percent",
+        "GDP",
+        "assumed",
+        "probability range factor",
+        "low"
+      ],
+      "formula": "probability range low",
+      "words": [
+        "disinformation",
+        "potential",
+        "loss",
+        "percent",
+        "GDP",
+        "assumed",
+        "low"
+      ],
+      "number": "-0.125",
+      "note": "-0.05 * 2.5"
+    },
+    {
+      "context": [
+        "disinformation",
+        "potential",
+        "loss",
+        "percent",
+        "GDP",
+        "assumed",
+        "probability range factor",
+        "high"
+      ],
+      "formula": "probability range high",
+      "words": [
+        "disinformation",
+        "potential",
+        "loss",
+        "percent",
+        "GDP",
+        "assumed",
+        "high"
+      ],
+      "number": "-0.02",
+      "note": "-0.05 * 0.4"
+    },
+    {
+      "context": [
+        "disinformation",
+        "potential",
+        "loss",
+        "percent",
+        "htp",
+        "assumed",
+        "probability range factor",
+        "low"
+      ],
+      "formula": "probability range low",
+      "words": [
+        "disinformation",
+        "potential",
+        "loss",
+        "percent",
+        "htp",
+        "assumed",
+        "low"
+      ],
+      "number": "-0.2",
+      "note": "-0.08 * 2.5"
+    },
+    {
+      "context": [
+        "disinformation",
+        "potential",
+        "loss",
+        "percent",
+        "htp",
+        "assumed",
+        "probability range factor",
+        "high"
+      ],
+      "formula": "probability range high",
+      "words": [
+        "disinformation",
+        "potential",
+        "loss",
+        "percent",
+        "htp",
+        "assumed",
+        "high"
+      ],
+      "number": "-0.032",
+      "note": "-0.08 * 0.4"
+    },
+    {
+      "context": [
+        "disinformation",
+        "platform regulation",
+        "potential",
+        "gain",
+        "billion",
+        "htp",
+        "assumed",
+        "probability range factor",
+        "low"
+      ],
+      "formula": "probability range low",
+      "words": [
+        "disinformation",
+        "platform regulation",
+        "potential",
+        "gain",
+        "billion",
+        "htp",
+        "assumed",
+        "low"
+      ],
+      "number": "4.8",
+      "note": "12 * 0.4"
+    },
+    {
+      "context": [
+        "disinformation",
+        "platform regulation",
+        "potential",
+        "gain",
+        "billion",
+        "htp",
+        "assumed",
+        "probability range factor",
+        "high"
+      ],
+      "formula": "probability range high",
+      "words": [
+        "disinformation",
+        "platform regulation",
+        "potential",
+        "gain",
+        "billion",
+        "htp",
+        "assumed",
+        "high"
+      ],
+      "number": "30",
+      "note": "12 * 2.5"
+    },
+    {
+      "context": [
+        "disinformation",
+        "platform regulation",
+        "initial effort",
+        "person year",
+        "assumed",
+        "probability range factor",
+        "low"
+      ],
+      "formula": "probability range low",
+      "words": [
+        "disinformation",
+        "platform regulation",
+        "initial effort",
+        "person year",
+        "assumed",
+        "low"
+      ],
+      "number": "4.8",
+      "note": "12 * 0.4"
+    },
+    {
+      "context": [
+        "disinformation",
+        "platform regulation",
+        "initial effort",
+        "person year",
+        "assumed",
+        "probability range factor",
+        "high"
+      ],
+      "formula": "probability range high",
+      "words": [
+        "disinformation",
+        "platform regulation",
+        "initial effort",
+        "person year",
+        "assumed",
+        "high"
+      ],
+      "number": "30",
+      "note": "12 * 2.5"
+    },
+    {
+      "context": [
+        "disinformation",
+        "platform regulation",
+        "loss reduction",
+        "percent",
+        "assumed",
+        "probability range factor",
+        "low"
+      ],
+      "formula": "probability range low",
+      "words": [
+        "disinformation",
+        "platform regulation",
+        "loss reduction",
+        "percent",
+        "assumed",
+        "low"
+      ],
+      "number": "0.04",
+      "note": "0.1 * 0.4"
+    },
+    {
+      "context": [
+        "disinformation",
+        "platform regulation",
+        "loss reduction",
+        "percent",
+        "assumed",
+        "probability range factor",
+        "high"
+      ],
+      "formula": "probability range high",
+      "words": [
+        "disinformation",
+        "platform regulation",
+        "loss reduction",
+        "percent",
+        "assumed",
+        "high"
+      ],
+      "number": "0.25",
+      "note": "0.1 * 2.5"
     }
   ]
 }

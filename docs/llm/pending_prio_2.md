@@ -146,7 +146,7 @@ hardcoded rows whose only dispatch is commented out at component_exe.php:189 —
 
 6. Scope note, not a defect. dlp is wired into the slicing and the url mapping, but no page renders prev/next links yet — the "all" version remains unpaged from the user's side. That is consistent with what was asked (the more link), and the frontend.md update says so.
 
-### start paghe data
+### start page data
 
 1. Poverty gain 34.1: it needs a tuned factor of 17.9, while the other problems need 0.10 to 2.2. Poverty's gain and bounds are exactly the same as populism's (34.1 / 22.73 / 51.15), and solution_prio.json notes a health/poverty swap. So 34.1 is probably a copy mistake. Only the gain factor value would change.
 2. Market power and wealth concentration loss reduction: in both, the result only restates an assumed input (the markup share, the demand share = 0.3). The row is formally a result, but nothing is derived.
@@ -154,6 +154,11 @@ hardcoded rows whose only dispatch is commented out at component_exe.php:189 —
 4. The 2-decimal check is too coarse for the small bounds. At 2 decimals, numbers such as 0.004, 0.025, -0.032 and 0.0003 are hardly checked. The education high bound 1.375 → 1.38 only just passes, on half-up rounding.
 5. Stale test data: src/test/php/create/test_values.php:771 still uses the old populism loss of 23.8. It is in-memory test data, so it doesn't break anything, but it no longer matches the start page.
 6. The formula snapshots grow with each problem file. change_formula_wf15 and del_formula_wf16 went from 48 to 156 table rows, because the formula page lists every result. Each further problem file adds about 18 rows to about 15 snapshots.
+7. Three existing values changed their words, not just their location. The solution values of biased information and black-box AI gained decisions, and disinformation's gained public discourse. A fresh import is fine. An existing database would keep the old value under its old group next to the new one, so a re-import there leaves three orphan values unless the database is reset.
+8. Citizen participation has the same weakness as item 2 in pending_prio_2.md. Its loss reduction of 0.5 only restates an assumed input. That item currently names only market power and wealth concentration.
+9. The GDP mismeasurement loss reduction of 1.0 depends on the chosen end of the range. It divides by the new upper-end value 0.0011; the existing lower end 0.0005 would give 2.2. The new value carries high, while the existing 0.0005 value carries no low.
+10. The effort factors are now spread wide. Black-box AI 90.9, disinformation 34.3 and citizen participation 33.3 person years per trillion EUR, against 1.25 to 16 elsewhere. They are placeholders, but the spread shows that effort isn't really proportional to the loss.
+11. The pending_prio_2.md change is your typo fix ("paghe" → "page"). It's fine to include.
 
 ## view
 
