@@ -1,39 +1,8 @@
 # pending - list of planned llm prompts with prio 1
 
-## temp
+## json test
 
-One judgement call to confirm in the fix itself. REFRESH looks like a render var but is deliberately not in CONTROL_VARS, because formula::url_mapper() reads it, so it does influence the mapping. PATTERN is also left out, as it is form state of the search and add views. If you disagree with either, that is the place to say so.
-
-## add formula
-
-the formula type seems still not tp be saved
-
-Nine triple fixtures gained a warning that needs your judgement. workflow_write/del_triple_wf6/* (8 files) and the last step of change_triple_wf5 now render: the triple with id 998 cannot be found; it may have been deleted That is a direct consequence of the api fix: before, end_api() appended an html error page behind the json, json_decode() failed, api_curl_call() returned an empty array and load_by_id() did nothing — the backend's answer was silently dropped. Now the body is clean json, so the frontend reads it and reports. The message itself is the pre-existing OBJECT_NOT_FOUND path, so the question is whether that load should fail in those steps. My suspicion is the triple id changes during the write run (a rename by a non-owner writes a new row), and del_triple_wf6 then opens the old id. Worth one look before the fixtures are accepted — it is the kind of signal the snapshot baseline exists for.
-
-Worth a decision
-
-1. Per-user caching has no invalidation. db_cache_page::html_by_url() returns the stored row regardless of age, nothing deletes it on a write, and the refresh job is still a TODO. That gap existed for the shared page, but it now applies to a user's own page: after their own change the redirect is live, yet the next plain view of that url can serve their pre-change page. The coding rules ask for is_outdated() on a cache — this one has none. I would add a max age or an invalidation on write before this reaches a real deployment.
-
-2. end_api() no longer writes a NOK message to sys_log. That is the fix for the corrupted json and the false "end_api error" rows, but a backend rejection that is not an error now leaves no admin trace at all. If you want to keep the trace, a log_warning on the non-error branch would do it without touching the response.
-
-3. The ip guard trusts the name. An anonymous row is recognised by name == ip, so an account that registers under a name that looks like an ip could still be identified by ip. Signup does not forbid such a name today. The alternative — the profile — is not available that early, as the 500 showed.
-
-4. test_mappers::formula_url() still emits the generic url_var::TYPE while the form posts fy. It only builds render urls, and the word does the same, so it is consistent within that file — but it no longer matches the mapper.
-
-Nice to have
-
-- frontend::session_user_id() reads $_SESSION inside a function. It follows the documented boundary pattern of session_token() right above it, but
-
-1. A formula message in a generic class. msg_id::FORMULA_VALIDATION_FAILED is added inside web/sandbox/db_object.php, so a word or value load carrying a refresh would tell the user "the entered formula cannot be used". Either the text becomes object-neutral or the branch moves to the formula class.
-2. The error workflows cannot fail. They only snapshot, so the silent no-message state above passes as "correct". Once the message works, each error workflow should assert the reason (assert_text_contains), which is also what makes them a regression test rather than a recording.
-3. url_var::REFRESH_TERMS now has no producer in the frontend (only refresh_from_url still accepts it). It is a url contract, so I left it — your call whether to retire it. 
-4. formula_names::SYSTEM_TEST_INVALID_EXP names a word ("System Test Word Never Added") from formula_names; a reserved-but-never-added name would sit better in word_names. 
-5. docs/llm/pending.md still carries your temp notes and the item on line 21 that this change implements. 
-6. Process slip on my side: I removed the dead form_button_refresh line from both yaml files with a python one-liner instead of the Edit tool. The result is one clean line per file, but it broke your "Edit/Write only" rule.
-
-## start page temp
-
-The new snapshot does not actually show a longer list. 1_start_page_more.html is line-for-line identical to 1_start_page.html apart from the 9dls=20 back targets and the dls=20 carried into the full-table link — same six table rows. So the test pins the url and mapping contract, which is the regression, but not the "more rows" behaviour, because the test cache's value list is shorter than the short limit. The _more name may mislead a later reader; making it a real witness needs a start-page fixture with more rows than the short limit.
+add to the json check that creates docs/json_findings.md a test that all values should have a valide source
 
 ## email accounts
 
@@ -58,10 +27,6 @@ add a list with the triples and a plus sign to add a new triple
 ## triple view
 
 add values icon and add formula icon
-
-### add formula
-
-propagation of uncertainty
 
 ## start page
 
@@ -124,6 +89,51 @@ what is still open:
   no phrase of its own. marking the centre with the word `centre` (already declared in
   solution_prio.json and used by nothing) would let all problem files share one pair, but it changes
   the phrase group of every start page number
+
+## temp
+
+One judgement call to confirm in the fix itself. REFRESH looks like a render var but is deliberately not in CONTROL_VARS, because formula::url_mapper() reads it, so it does influence the mapping. PATTERN is also left out, as it is form state of the search and add views. If you disagree with either, that is the place to say so.
+
+## add formula
+
+Nine triple fixtures gained a warning that needs your judgement. workflow_write/del_triple_wf6/* (8 files) and the last step of change_triple_wf5 now render: the triple with id 998 cannot be found; it may have been deleted That is a direct consequence of the api fix: before, end_api() appended an html error page behind the json, json_decode() failed, api_curl_call() returned an empty array and load_by_id() did nothing — the backend's answer was silently dropped. Now the body is clean json, so the frontend reads it and reports. The message itself is the pre-existing OBJECT_NOT_FOUND path, so the question is whether that load should fail in those steps. My suspicion is the triple id changes during the write run (a rename by a non-owner writes a new row), and del_triple_wf6 then opens the old id. Worth one look before the fixtures are accepted — it is the kind of signal the snapshot baseline exists for.
+
+Worth a decision
+
+1. Per-user caching has no invalidation. db_cache_page::html_by_url() returns the stored row regardless of age, nothing deletes it on a write, and the refresh job is still a TODO. That gap existed for the shared page, but it now applies to a user's own page: after their own change the redirect is live, yet the next plain view of that url can serve their pre-change page. The coding rules ask for is_outdated() on a cache — this one has none. I would add a max age or an invalidation on write before this reaches a real deployment.
+
+2. end_api() no longer writes a NOK message to sys_log. That is the fix for the corrupted json and the false "end_api error" rows, but a backend rejection that is not an error now leaves no admin trace at all. If you want to keep the trace, a log_warning on the non-error branch would do it without touching the response.
+
+3. The ip guard trusts the name. An anonymous row is recognised by name == ip, so an account that registers under a name that looks like an ip could still be identified by ip. Signup does not forbid such a name today. The alternative — the profile — is not available that early, as the 500 showed.
+
+4. test_mappers::formula_url() still emits the generic url_var::TYPE while the form posts fy. It only builds render urls, and the word does the same, so it is consistent within that file — but it no longer matches the mapper.
+
+Nice to have
+
+- frontend::session_user_id() reads $_SESSION inside a function. It follows the documented boundary pattern of session_token() right above it, but
+
+1. A formula message in a generic class. msg_id::FORMULA_VALIDATION_FAILED is added inside web/sandbox/db_object.php, so a word or value load carrying a refresh would tell the user "the entered formula cannot be used". Either the text becomes object-neutral or the branch moves to the formula class.
+2. The error workflows cannot fail. They only snapshot, so the silent no-message state above passes as "correct". Once the message works, each error workflow should assert the reason (assert_text_contains), which is also what makes them a regression test rather than a recording.
+3. url_var::REFRESH_TERMS now has no producer in the frontend (only refresh_from_url still accepts it). It is a url contract, so I left it — your call whether to retire it.
+4. formula_names::SYSTEM_TEST_INVALID_EXP names a word ("System Test Word Never Added") from formula_names; a reserved-but-never-added name would sit better in word_names.
+5. docs/llm/pending.md still carries your temp notes and the item on line 21 that this change implements.
+6. Process slip on my side: I removed the dead form_button_refresh line from both yaml files with a python one-liner instead of the Edit tool. The result is one clean line per file, but it broke your "Edit/Write only" rule.
+
+## start page temp
+
+The new snapshot does not actually show a longer list. 1_start_page_more.html is line-for-line identical to 1_start_page.html apart from the 9dls=20 back targets and the dls=20 carried into the full-table link — same six table rows. So the test pins the url and mapping contract, which is the regression, but not the "more rows" behaviour, because the test cache's value list is shorter than the short limit. The _more name may mislead a later reader; making it a real witness needs a start-page fixture with more rows than the short limit.
+
+1. Should fix — the three backend loaders are untested. The regenerated coverage doc lists load_values_used, load_results_used and load_formulas_used each with 0 unit test calls (code_test_coverage.md:1512-1523). The three renderers and name_link are covered (2 → 4 calls), but the new selection rule — source-group phrases matched with and, fallback to the result phrases matched with or — is the core behaviour of this change and nothing exercises it. The project's pattern for a db loader is an sql-creation test (result_list_tests::assert_sql_by_val), which would fit here.
+
+2. Should fix — no snapshot shows the page with data. system_views_read_tests renders only views::RESULT_OVERWRITE by factory, and views_by_id/result/9_… is built from an url, so its three columns are empty. The committed baseline therefore never shows a filled Values/Formulas/Results column, and a regression in the api emit or the mapping would not change any snapshot. An assert_view_by_factory(views::RESULT, …) case would close that.
+
+3. Nice to have — the result changes query has no table filter. The new fixture change_value_by_res_prime_last.sql selects change_values_prime by group_id alone (inherited from the value path), so a value change with the same id would show up in a result's changes tab. Result ids carry the formula id, so the id spaces do not collide today — worth a comment or an explicit table filter if that ever changes.
+
+4. Nice to have — web/result/result.php:47: the two new includes make the local alphabetical run PHRASE → RESULT → VALUE → USER; VALUE belongs after USER.
+
+5. Nice to have — docs/code_object_name_exceptions.md gained $res_tab (the tab-box test variable, mirroring $val_tab on the value side).
+
+6. For the record: a result built from an url renders the three columns as nothing — no message, no error (the choice documented in the renderers, following ui_list::formula_list() for a word). An empty column therefore means either "nothing used" or "not loaded"; only the loaded page distinguishes them via the info messages. And system show result value is now linked by no view, left defined so the component ids do not shift again.
 
 ## fill the configuration and quarantine views
 

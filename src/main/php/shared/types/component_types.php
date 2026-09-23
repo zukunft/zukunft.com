@@ -485,6 +485,13 @@ class component_types
     const int LIST_VALUES_SIMILAR_ID = 247;
     const string LIST_RESULTS_BY_VALUE = "results_by_value";
     const int LIST_RESULTS_BY_VALUE_ID = 248;
+    // the values, formulas and results used for the calculation shown on the result default page
+    const string LIST_VALUES_USED = "values_used";
+    const int LIST_VALUES_USED_ID = 260;
+    const string LIST_FORMULAS_USED = "formulas_used";
+    const int LIST_FORMULAS_USED_ID = 261;
+    const string LIST_RESULTS_USED = "results_used";
+    const int LIST_RESULTS_USED_ID = 262;
     const string LIST_FORMULAS_OF_VERB = "formulas_by_verb";
     const int LIST_FORMULAS_OF_VERB_ID = 148;
     const string LIST_FORMULAS_OF_PARENTS = "formulas_of_parents";

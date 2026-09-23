@@ -49,6 +49,7 @@ include_once paths::MODEL_LOG . 'change_values_prime.php';
 include_once paths::MODEL_LOG . 'change_values_time_norm.php';
 include_once paths::MODEL_LOG . 'change_values_text_big.php';
 include_once paths::MODEL_LOG . 'change_values_geo_prime.php';
+include_once paths::MODEL_RESULT . 'result.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_function.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::SHARED_CONST . 'triples.php';
@@ -80,6 +81,7 @@ use Zukunft\ZukunftCom\main\php\cfg\log\change_values_norm;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_prime;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_text_big;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_time_norm;
+use Zukunft\ZukunftCom\main\php\cfg\result\result;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_function;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
@@ -264,6 +266,9 @@ class change_log_tests
         // the last-change query must use its own prepared name (change_by_wrd_last), because the
         // all-changes query of a word (change_by_wrd) selects with one more parameter
         $this->assert_sql_list_last(word::class, 1, $log_lst, $db_con, $t);
+        // a result change is logged like a value change, so the changes tab of the result page
+        // reads the value change tables by the group id (see change_log_list::load_sql_obj_last)
+        $this->assert_sql_list_last(result::class, 1, $log_lst, $db_con, $t);
         $test_name = 'get the latest changes of an user';
         $test_name = 'get the latest 5 changes of an user';
         $test_name = 'get the second last change of an user';

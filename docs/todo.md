@@ -73,6 +73,7 @@ A proper issue ticket should be created for these TODOs notes:
     TODO fix to bugs in the component types so that all component type returns a nice result
     TODO add unit test for all system pages including the login page to be able to use the view.php script also for the login page
     TODO deprecate the old $back parameter and use instead back prefixed parameters
+    TODO in the start page suggest also to have a look at a list of problems by continent, courty, region and personal issue, which can be created if the user is logged in
 
     TODO add horitontal write test that includes all cases of changing any unique key e.g. the name, code_id, linked object and group_id for values
     TODO finish the frontend component tests

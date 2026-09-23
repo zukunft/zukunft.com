@@ -53,6 +53,7 @@ include_once paths::DB . 'sql_type.php';
 //include_once paths::MODEL_SANDBOX . 'sandbox_multi.php';
 //include_once paths::MODEL_REF . 'ref.php';
 //include_once paths::MODEL_REF . 'source.php';
+//include_once paths::MODEL_RESULT . 'result.php';
 //include_once paths::MODEL_USER . 'user.php';
 //include_once paths::MODEL_USER . 'user_db.php';
 //include_once paths::MODEL_USER . 'user_message.php';
@@ -122,6 +123,7 @@ use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref_list;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source_list;
+use Zukunft\ZukunftCom\main\php\cfg\result\result;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_list;
@@ -874,6 +876,15 @@ class change_log_list extends list_db_read
         } elseif ($class == value::class) {
             $result = $field_name . '_of_val';
             log_info('field name ' . $field_name . ' not expected for table ' . $class);
+        } elseif ($class == result::class) {
+            // the changes tab of the result page asks for the changes of the result without a
+            // field name, because a result has only the number that a user can overwrite
+            if ($field_name != '') {
+                $result = $field_name . '_of_res';
+                log_info('field name ' . $field_name . ' not expected for table ' . $class);
+            } else {
+                $result = 'res';
+            }
         } elseif ($class == formula::class) {
             $result = $field_name . '_of_frm';
             log_info('field name ' . $field_name . ' not expected for table ' . $class);
@@ -1020,7 +1031,10 @@ class change_log_list extends list_db_read
         // prepare sql to get the view changes of a user sandbox object e.g. word
         $log_named = new change($usr);
         $query_ext = $this->table_field_to_query_name($class, '');
-        if ($class == value::class) {
+        // a result change is written to the same change tables as a value change and with the
+        // group id instead of the row id (see sandbox_multi::log_prime), so both are read the same
+        $by_group_id = ($class == value::class or $class == result::class);
+        if ($by_group_id) {
             $grp_id = new group_id();
             $typ = $grp_id->table_type($id);
             if ($typ == sql_type::PRIME) {
@@ -1053,7 +1067,7 @@ class change_log_list extends list_db_read
         // the database reject the second bind
         $query_ext .= sql::NAME_SEP . 'last';
         $qp = $log_named->load_sql($sc, $query_ext);
-        if ($class == value::class) {
+        if ($by_group_id) {
             $sc->add_where(group_fields::FLD_ID, $id);
         } else {
             // a row id is unique only within a table, so without the table filter the changes of
