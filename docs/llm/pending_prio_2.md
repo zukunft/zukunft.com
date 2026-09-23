@@ -146,6 +146,14 @@ hardcoded rows whose only dispatch is commented out at component_exe.php:189 —
 
 6. Scope note, not a defect. dlp is wired into the slicing and the url mapping, but no page renders prev/next links yet — the "all" version remains unpaged from the user's side. That is consistent with what was asked (the more link), and the frontend.md update says so.
 
+### start paghe data
+
+1. Poverty gain 34.1: it needs a tuned factor of 17.9, while the other problems need 0.10 to 2.2. Poverty's gain and bounds are exactly the same as populism's (34.1 / 22.73 / 51.15), and solution_prio.json notes a health/poverty swap. So 34.1 is probably a copy mistake. Only the gain factor value would change.
+2. Market power and wealth concentration loss reduction: in both, the result only restates an assumed input (the markup share, the demand share = 0.3). The row is formally a result, but nothing is derived.
+3. The same definitions are repeated in 7 files. The shared formulas, world GDP 110.047109 and world htp 1189.19 are copied into each problem file, because the importer only reads the file's own data. If one copy changes, the last imported file wins without any warning. The note on "one pair of formulas per file" in docs/llm/pending.md covers the range formulas only. It could be extended to these, and to the fact that the gain factors are placeholders for the missing horizon of the ranking.
+4. The 2-decimal check is too coarse for the small bounds. At 2 decimals, numbers such as 0.004, 0.025, -0.032 and 0.0003 are hardly checked. The education high bound 1.375 → 1.38 only just passes, on half-up rounding.
+5. Stale test data: src/test/php/create/test_values.php:771 still uses the old populism loss of 23.8. It is in-memory test data, so it doesn't break anything, but it no longer matches the start page.
+6. The formula snapshots grow with each problem file. change_formula_wf15 and del_formula_wf16 went from 48 to 156 table rows, because the formula page lists every result. Each further problem file adds about 18 rows to about 15 snapshots.
 
 ## view
 

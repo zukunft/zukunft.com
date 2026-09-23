@@ -45,6 +45,72 @@
     },
     {
       "name": "assumed"
+    },
+    {
+      "name": "demand"
+    },
+    {
+      "name": "potential"
+    },
+    {
+      "name": "loss"
+    },
+    {
+      "name": "gain"
+    },
+    {
+      "name": "reduction"
+    },
+    {
+      "name": "effort"
+    },
+    {
+      "name": "initial"
+    },
+    {
+      "name": "person"
+    },
+    {
+      "name": "year"
+    },
+    {
+      "name": "annual"
+    },
+    {
+      "name": "htp"
+    },
+    {
+      "name": "GDP"
+    },
+    {
+      "name": "EUR"
+    },
+    {
+      "name": "billion"
+    },
+    {
+      "name": "trillion"
+    },
+    {
+      "name": "low"
+    },
+    {
+      "name": "high"
+    },
+    {
+      "name": "probability"
+    },
+    {
+      "name": "range"
+    },
+    {
+      "name": "factor"
+    },
+    {
+      "name": "world"
+    },
+    {
+      "name": "2024"
     }
   ],
   "triples": [
@@ -93,6 +159,95 @@
       "from": "supply",
       "verb": "of",
       "to": "labour"
+    },
+    {
+      "name": "loss reduction",
+      "from": "reduction",
+      "verb": "of",
+      "to": "loss"
+    },
+    {
+      "name": "initial effort",
+      "from": "effort",
+      "verb": "kind of",
+      "to": "initial"
+    },
+    {
+      "name": "person year",
+      "from": "person",
+      "verb": "times",
+      "to": "year"
+    },
+    {
+      "name": "probability range",
+      "from": "range",
+      "verb": "of",
+      "to": "probability"
+    },
+    {
+      "name": "probability range factor",
+      "description": "the number that the centre of an estimate is multiplied by to get one bound of its probability range; each bound has its own factor, because a range can be asymmetric, e.g. if one side is limited by a zero level",
+      "from": "factor",
+      "verb": "of",
+      "to": "probability range"
+    }
+  ],
+  "formulas": [
+    {
+      "name": "probability range low",
+      "description": "the lower bound of the probability range of an estimate, the estimate multiplied by its low range factor; the centre is the stated target value and each bound is calculated on its own, so that a range can be asymmetric",
+      "expression": "\"low\" = \"assumed\" * \"probability range factor\"",
+      "latex": "x_{low} = x \\cdot f_{low}",
+      "assigned_word": "probability range factor"
+    },
+    {
+      "name": "probability range high",
+      "description": "the upper bound of the probability range of an estimate, the estimate multiplied by its high range factor; the centre is the stated target value and each bound is calculated on its own, so that a range can be asymmetric",
+      "expression": "\"high\" = \"assumed\" * \"probability range factor\"",
+      "latex": "x_{high} = x \\cdot f_{high}",
+      "assigned_word": "probability range factor"
+    },
+    {
+      "name": "annual damage in money",
+      "description": "the loss that a problem causes each year in money, the world GDP multiplied by the share of it that the problem costs per year",
+      "expression": "\"potential\",\"loss\",\"trillion\",\"EUR\" = \"world\",\"GDP\",\"trillion\",\"EUR\" * \"percent\",\"GDP\",\"annual\"",
+      "latex": "L_{pot} = GDP_{world} \\cdot d_{annual}",
+      "assigned_word": "GDP"
+    },
+    {
+      "name": "loss reduction by a basic income",
+      "description": "the share of the potential loss that the solution avoids, the share of the demand lost by the wealth concentration that the basic income restores",
+      "expression": "\"loss reduction\",\"percent\" = \"basic income\",\"demand\",\"percent\"",
+      "latex": "r = q",
+      "assigned_word": "demand"
+    },
+    {
+      "name": "long run damage share of the GDP",
+      "description": "the share of the world GDP that a problem costs at the end of its development, the share it costs today multiplied by the factor by which the damage still grows; the share is stated negative, because it is a loss",
+      "expression": "\"potential\",\"loss\",\"percent\",\"GDP\" = 0 - \"percent\",\"GDP\",\"annual\" * \"percent\",\"GDP\",\"factor\"",
+      "latex": "d_{long} = -d_{annual} \\cdot g",
+      "assigned_word": "annual"
+    },
+    {
+      "name": "welfare damage share",
+      "description": "the share of the global happy time points that a problem costs, the share of the GDP it costs multiplied by the factor by which the welfare damage exceeds the money damage, because htp counts the healthy life years that the GDP does not (concept paper introduction)",
+      "expression": "\"potential\",\"loss\",\"percent\",\"htp\" = \"potential\",\"loss\",\"percent\",\"GDP\" * \"htp\",\"GDP\",\"factor\"",
+      "latex": "d_{htp} = d_{GDP} \\cdot w",
+      "assigned_word": "htp"
+    },
+    {
+      "name": "initial effort of a solution",
+      "description": "the person years needed to set up a solution, the annual damage of the problem in money multiplied by the effort needed per trillion EUR of damage",
+      "expression": "\"initial effort\",\"person year\" = \"potential\",\"loss\",\"trillion\",\"EUR\" * \"person year\",\"trillion\",\"EUR\",\"factor\"",
+      "latex": "E_{init} = L_{pot} \\cdot e",
+      "assigned_word": "person year"
+    },
+    {
+      "name": "avoided welfare loss with a gain factor",
+      "description": "the happy time points that a solution saves, like the avoided welfare loss, but multiplied by a factor of the problem, because the shared world htp is tuned to one problem and does not fit the others until the horizon of the ranking is stated; the result is stated positive, because it is a gain",
+      "expression": "\"potential\",\"gain\",\"billion\",\"htp\" = 0 - \"potential\",\"loss\",\"percent\",\"htp\" * \"world\",\"htp\",\"billion\" * \"loss reduction\",\"percent\" * \"htp\",\"billion\",\"factor\"",
+      "latex": "G = -d_{htp} \\cdot HTP_{world} \\cdot r \\cdot k",
+      "assigned_word": "loss reduction"
     }
   ],
   "sources": [
@@ -127,6 +282,649 @@
       ],
       "number": "-0.05",
       "source": "Robins (1985) negative income tax experiments"
+    },
+    {
+      "words": [
+        "wealth concentration",
+        "basic income",
+        "demand",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.3",
+      "description": "the share of the demand lost by the wealth concentration that the basic income restores; no source states it, so the share is an own assumption with low confidence"
+    },
+    {
+      "words": [
+        "world",
+        "GDP",
+        "trillion",
+        "EUR",
+        "2024"
+      ],
+      "number": "110.047109",
+      "description": "the world GDP of solution_prio.json in trillion instead of million EUR, so that the annual damage of a problem can be calculated within this file"
+    },
+    {
+      "words": [
+        "wealth concentration",
+        "percent",
+        "GDP",
+        "annual",
+        "assumed"
+      ],
+      "number": "0.012722",
+      "description": "the share of the world GDP that the capital misallocation and the lost demand cost per year; no accepted measurement exists, so this is an order of magnitude only; tuned so that the calculated loss matches the number that the start page has used until now"
+    },
+    {
+      "words": [
+        "wealth concentration",
+        "percent",
+        "GDP",
+        "factor",
+        "assumed"
+      ],
+      "number": "7.8604",
+      "description": "how many times bigger the long run loss is than the loss per year; tuned so that the calculated long run share matches the number that the start page has used until now"
+    },
+    {
+      "words": [
+        "wealth concentration",
+        "htp",
+        "GDP",
+        "factor",
+        "assumed"
+      ],
+      "number": "1.5",
+      "description": "how much bigger the loss in happy time points is than the loss in GDP, because the concentration of money and power also costs democratic participation that the GDP does not count; tuned so that the calculated share matches the number that the start page has used until now"
+    },
+    {
+      "words": [
+        "wealth concentration",
+        "person year",
+        "trillion",
+        "EUR",
+        "factor",
+        "assumed"
+      ],
+      "number": "3.571429",
+      "description": "the person years needed to set up a solution per trillion EUR of annual damage; tuned so that the calculated effort matches the number that the start page has used until now"
+    },
+    {
+      "words": [
+        "world",
+        "htp",
+        "billion",
+        "assumed"
+      ],
+      "number": "1189.19",
+      "description": "the happy time points of the whole world over the horizon of the ranking as in problem_global_warming.json, where it is tuned to the global warming gain"
+    },
+    {
+      "words": [
+        "wealth concentration",
+        "basic income",
+        "htp",
+        "billion",
+        "factor",
+        "assumed"
+      ],
+      "number": "0.29899",
+      "description": "the share of the world htp that the wealth concentration gain uses, because the world htp is tuned to global warming and would give 53.5 billion htp here; tuned so that the calculated gain matches the number that the start page has used until now, to be removed once the horizon of the ranking is stated"
+    },
+    {
+      "words": [
+        "wealth concentration",
+        "trillion",
+        "EUR",
+        "probability range factor",
+        "low"
+      ],
+      "number": "0.3333",
+      "description": "the centre divided by 3.0 for the 80 percent probability range of an estimate with a confidence below 15 percent (see the view-validation of solution_prio.json)"
+    },
+    {
+      "words": [
+        "wealth concentration",
+        "trillion",
+        "EUR",
+        "probability range factor",
+        "high"
+      ],
+      "number": "3.0",
+      "description": "the centre times 3.0 for the 80 percent probability range of an estimate with a confidence below 15 percent"
+    },
+    {
+      "words": [
+        "wealth concentration",
+        "GDP",
+        "probability range factor",
+        "low"
+      ],
+      "number": "2.5",
+      "description": "the loss is stated as a negative share, so the bigger share is the numerically lower bound"
+    },
+    {
+      "words": [
+        "wealth concentration",
+        "GDP",
+        "probability range factor",
+        "high"
+      ],
+      "number": "0.4",
+      "description": "the loss is stated as a negative share, so the smaller share is the numerically higher bound"
+    },
+    {
+      "words": [
+        "wealth concentration",
+        "percent",
+        "htp",
+        "probability range factor",
+        "low"
+      ],
+      "number": "2.5",
+      "description": "the loss is stated as a negative share, so the bigger share is the numerically lower bound"
+    },
+    {
+      "words": [
+        "wealth concentration",
+        "percent",
+        "htp",
+        "probability range factor",
+        "high"
+      ],
+      "number": "0.4",
+      "description": "the loss is stated as a negative share, so the smaller share is the numerically higher bound"
+    },
+    {
+      "words": [
+        "wealth concentration",
+        "basic income",
+        "billion",
+        "htp",
+        "probability range factor",
+        "low"
+      ],
+      "number": "0.4",
+      "description": "the centre divided by 2.5, the range factor of an estimate, because the gain rests on the assumed loss reduction"
+    },
+    {
+      "words": [
+        "wealth concentration",
+        "basic income",
+        "billion",
+        "htp",
+        "probability range factor",
+        "high"
+      ],
+      "number": "2.5",
+      "description": "the centre times 2.5, the range factor of an estimate"
+    },
+    {
+      "words": [
+        "wealth concentration",
+        "basic income",
+        "person year",
+        "probability range factor",
+        "low"
+      ],
+      "number": "0.4",
+      "description": "the centre divided by 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
+    },
+    {
+      "words": [
+        "wealth concentration",
+        "basic income",
+        "person year",
+        "probability range factor",
+        "high"
+      ],
+      "number": "2.5",
+      "description": "the centre times 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
+    },
+    {
+      "words": [
+        "wealth concentration",
+        "basic income",
+        "percent",
+        "probability range factor",
+        "low"
+      ],
+      "number": "0.4",
+      "description": "the centre divided by 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
+    },
+    {
+      "words": [
+        "wealth concentration",
+        "basic income",
+        "percent",
+        "probability range factor",
+        "high"
+      ],
+      "number": "2.5",
+      "description": "the centre times 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
+    }
+  ],
+  "calc-validation": [
+    {
+      "context": [
+        "wealth concentration",
+        "world",
+        "GDP",
+        "trillion",
+        "EUR",
+        "2024",
+        "percent",
+        "annual",
+        "assumed"
+      ],
+      "formula": "annual damage in money",
+      "words": [
+        "wealth concentration",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed"
+      ],
+      "number": "1.4",
+      "note": "110.047109 trillion EUR world GDP * 1.2722 percent; the comparison rounds to two decimals, so 1.4"
+    },
+    {
+      "context": [
+        "wealth concentration",
+        "basic income",
+        "demand",
+        "percent",
+        "assumed"
+      ],
+      "formula": "loss reduction by a basic income",
+      "words": [
+        "wealth concentration",
+        "basic income",
+        "loss reduction",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.3",
+      "note": "the assumed 30 percent of the lost demand that the basic income restores"
+    },
+    {
+      "context": [
+        "wealth concentration",
+        "percent",
+        "GDP",
+        "annual",
+        "factor",
+        "assumed"
+      ],
+      "formula": "long run damage share of the GDP",
+      "words": [
+        "wealth concentration",
+        "potential",
+        "loss",
+        "percent",
+        "GDP",
+        "assumed"
+      ],
+      "number": "-0.1",
+      "note": "0 - 1.2722 percent annual damage * 7.8604"
+    },
+    {
+      "context": [
+        "wealth concentration",
+        "potential",
+        "loss",
+        "percent",
+        "GDP",
+        "htp",
+        "factor",
+        "assumed"
+      ],
+      "formula": "welfare damage share",
+      "words": [
+        "wealth concentration",
+        "potential",
+        "loss",
+        "percent",
+        "htp",
+        "assumed"
+      ],
+      "number": "-0.15",
+      "note": "-0.1 * 1.5"
+    },
+    {
+      "context": [
+        "wealth concentration",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "person year",
+        "factor",
+        "assumed"
+      ],
+      "formula": "initial effort of a solution",
+      "words": [
+        "wealth concentration",
+        "basic income",
+        "initial effort",
+        "person year",
+        "assumed"
+      ],
+      "number": "5",
+      "note": "1.4 trillion EUR * 3.571429 person years per trillion EUR; the comparison rounds to two decimals, so 5"
+    },
+    {
+      "context": [
+        "wealth concentration",
+        "basic income",
+        "potential",
+        "loss",
+        "percent",
+        "htp",
+        "world",
+        "billion",
+        "loss reduction",
+        "factor",
+        "assumed"
+      ],
+      "formula": "avoided welfare loss with a gain factor",
+      "words": [
+        "wealth concentration",
+        "basic income",
+        "potential",
+        "gain",
+        "billion",
+        "htp",
+        "assumed"
+      ],
+      "number": "16",
+      "note": "0 - -0.15 * 1189.19 billion htp * 30 percent * 0.29899"
+    },
+    {
+      "context": [
+        "wealth concentration",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "low"
+      ],
+      "formula": "probability range low",
+      "words": [
+        "wealth concentration",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed",
+        "low"
+      ],
+      "number": "0.4667",
+      "note": "1.4 * 0.3333; the comparison rounds to two decimals, so 0.47"
+    },
+    {
+      "context": [
+        "wealth concentration",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "high"
+      ],
+      "formula": "probability range high",
+      "words": [
+        "wealth concentration",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed",
+        "high"
+      ],
+      "number": "4.2",
+      "note": "1.4 * 3.0"
+    },
+    {
+      "context": [
+        "wealth concentration",
+        "potential",
+        "loss",
+        "percent",
+        "GDP",
+        "assumed",
+        "probability range factor",
+        "low"
+      ],
+      "formula": "probability range low",
+      "words": [
+        "wealth concentration",
+        "potential",
+        "loss",
+        "percent",
+        "GDP",
+        "assumed",
+        "low"
+      ],
+      "number": "-0.25",
+      "note": "-0.1 * 2.5"
+    },
+    {
+      "context": [
+        "wealth concentration",
+        "potential",
+        "loss",
+        "percent",
+        "GDP",
+        "assumed",
+        "probability range factor",
+        "high"
+      ],
+      "formula": "probability range high",
+      "words": [
+        "wealth concentration",
+        "potential",
+        "loss",
+        "percent",
+        "GDP",
+        "assumed",
+        "high"
+      ],
+      "number": "-0.04",
+      "note": "-0.1 * 0.4"
+    },
+    {
+      "context": [
+        "wealth concentration",
+        "potential",
+        "loss",
+        "percent",
+        "htp",
+        "assumed",
+        "probability range factor",
+        "low"
+      ],
+      "formula": "probability range low",
+      "words": [
+        "wealth concentration",
+        "potential",
+        "loss",
+        "percent",
+        "htp",
+        "assumed",
+        "low"
+      ],
+      "number": "-0.375",
+      "note": "-0.15 * 2.5"
+    },
+    {
+      "context": [
+        "wealth concentration",
+        "potential",
+        "loss",
+        "percent",
+        "htp",
+        "assumed",
+        "probability range factor",
+        "high"
+      ],
+      "formula": "probability range high",
+      "words": [
+        "wealth concentration",
+        "potential",
+        "loss",
+        "percent",
+        "htp",
+        "assumed",
+        "high"
+      ],
+      "number": "-0.06",
+      "note": "-0.15 * 0.4"
+    },
+    {
+      "context": [
+        "wealth concentration",
+        "basic income",
+        "potential",
+        "gain",
+        "billion",
+        "htp",
+        "assumed",
+        "probability range factor",
+        "low"
+      ],
+      "formula": "probability range low",
+      "words": [
+        "wealth concentration",
+        "basic income",
+        "potential",
+        "gain",
+        "billion",
+        "htp",
+        "assumed",
+        "low"
+      ],
+      "number": "6.4",
+      "note": "16 * 0.4"
+    },
+    {
+      "context": [
+        "wealth concentration",
+        "basic income",
+        "potential",
+        "gain",
+        "billion",
+        "htp",
+        "assumed",
+        "probability range factor",
+        "high"
+      ],
+      "formula": "probability range high",
+      "words": [
+        "wealth concentration",
+        "basic income",
+        "potential",
+        "gain",
+        "billion",
+        "htp",
+        "assumed",
+        "high"
+      ],
+      "number": "40",
+      "note": "16 * 2.5"
+    },
+    {
+      "context": [
+        "wealth concentration",
+        "basic income",
+        "initial effort",
+        "person year",
+        "assumed",
+        "probability range factor",
+        "low"
+      ],
+      "formula": "probability range low",
+      "words": [
+        "wealth concentration",
+        "basic income",
+        "initial effort",
+        "person year",
+        "assumed",
+        "low"
+      ],
+      "number": "2",
+      "note": "5 * 0.4"
+    },
+    {
+      "context": [
+        "wealth concentration",
+        "basic income",
+        "initial effort",
+        "person year",
+        "assumed",
+        "probability range factor",
+        "high"
+      ],
+      "formula": "probability range high",
+      "words": [
+        "wealth concentration",
+        "basic income",
+        "initial effort",
+        "person year",
+        "assumed",
+        "high"
+      ],
+      "number": "12.5",
+      "note": "5 * 2.5"
+    },
+    {
+      "context": [
+        "wealth concentration",
+        "basic income",
+        "loss reduction",
+        "percent",
+        "assumed",
+        "probability range factor",
+        "low"
+      ],
+      "formula": "probability range low",
+      "words": [
+        "wealth concentration",
+        "basic income",
+        "loss reduction",
+        "percent",
+        "assumed",
+        "low"
+      ],
+      "number": "0.12",
+      "note": "0.3 * 0.4"
+    },
+    {
+      "context": [
+        "wealth concentration",
+        "basic income",
+        "loss reduction",
+        "percent",
+        "assumed",
+        "probability range factor",
+        "high"
+      ],
+      "formula": "probability range high",
+      "words": [
+        "wealth concentration",
+        "basic income",
+        "loss reduction",
+        "percent",
+        "assumed",
+        "high"
+      ],
+      "number": "0.75",
+      "note": "0.3 * 2.5"
     }
   ]
 }

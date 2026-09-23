@@ -35,6 +35,66 @@
     },
     {
       "name": "assumed"
+    },
+    {
+      "name": "potential"
+    },
+    {
+      "name": "loss"
+    },
+    {
+      "name": "gain"
+    },
+    {
+      "name": "reduction"
+    },
+    {
+      "name": "effort"
+    },
+    {
+      "name": "initial"
+    },
+    {
+      "name": "year"
+    },
+    {
+      "name": "annual"
+    },
+    {
+      "name": "htp"
+    },
+    {
+      "name": "GDP"
+    },
+    {
+      "name": "EUR"
+    },
+    {
+      "name": "billion"
+    },
+    {
+      "name": "trillion"
+    },
+    {
+      "name": "low"
+    },
+    {
+      "name": "high"
+    },
+    {
+      "name": "probability"
+    },
+    {
+      "name": "range"
+    },
+    {
+      "name": "factor"
+    },
+    {
+      "name": "world"
+    },
+    {
+      "name": "2024"
     }
   ],
   "triples": [
@@ -56,6 +116,95 @@
       "from": "research",
       "verb": "of",
       "to": "poverty"
+    },
+    {
+      "name": "loss reduction",
+      "from": "reduction",
+      "verb": "of",
+      "to": "loss"
+    },
+    {
+      "name": "initial effort",
+      "from": "effort",
+      "verb": "kind of",
+      "to": "initial"
+    },
+    {
+      "name": "person year",
+      "from": "person",
+      "verb": "times",
+      "to": "year"
+    },
+    {
+      "name": "probability range",
+      "from": "range",
+      "verb": "of",
+      "to": "probability"
+    },
+    {
+      "name": "probability range factor",
+      "description": "the number that the centre of an estimate is multiplied by to get one bound of its probability range; each bound has its own factor, because a range can be asymmetric, e.g. if one side is limited by a zero level",
+      "from": "factor",
+      "verb": "of",
+      "to": "probability range"
+    }
+  ],
+  "formulas": [
+    {
+      "name": "probability range low",
+      "description": "the lower bound of the probability range of an estimate, the estimate multiplied by its low range factor; the centre is the stated target value and each bound is calculated on its own, so that a range can be asymmetric",
+      "expression": "\"low\" = \"assumed\" * \"probability range factor\"",
+      "latex": "x_{low} = x \\cdot f_{low}",
+      "assigned_word": "probability range factor"
+    },
+    {
+      "name": "probability range high",
+      "description": "the upper bound of the probability range of an estimate, the estimate multiplied by its high range factor; the centre is the stated target value and each bound is calculated on its own, so that a range can be asymmetric",
+      "expression": "\"high\" = \"assumed\" * \"probability range factor\"",
+      "latex": "x_{high} = x \\cdot f_{high}",
+      "assigned_word": "probability range factor"
+    },
+    {
+      "name": "annual damage in money",
+      "description": "the loss that a problem causes each year in money, the world GDP multiplied by the share of it that the problem costs per year",
+      "expression": "\"potential\",\"loss\",\"trillion\",\"EUR\" = \"world\",\"GDP\",\"trillion\",\"EUR\" * \"percent\",\"GDP\",\"annual\"",
+      "latex": "L_{pot} = GDP_{world} \\cdot d_{annual}",
+      "assigned_word": "GDP"
+    },
+    {
+      "name": "loss reduction by poverty research",
+      "description": "the share of the potential loss that the solution avoids, the share by which the poverty research reduces the extreme poverty; the change of the extreme poverty is negative, because it is a reduction, while the avoided share of the loss is stated positive",
+      "expression": "\"loss reduction\",\"percent\" = 0 - \"poverty research\",\"extreme poverty\"",
+      "latex": "r = -\\Delta p",
+      "assigned_word": "research"
+    },
+    {
+      "name": "long run damage share of the GDP",
+      "description": "the share of the world GDP that a problem costs at the end of its development, the share it costs today multiplied by the factor by which the damage still grows; the share is stated negative, because it is a loss",
+      "expression": "\"potential\",\"loss\",\"percent\",\"GDP\" = 0 - \"percent\",\"GDP\",\"annual\" * \"percent\",\"GDP\",\"factor\"",
+      "latex": "d_{long} = -d_{annual} \\cdot g",
+      "assigned_word": "annual"
+    },
+    {
+      "name": "welfare damage share",
+      "description": "the share of the global happy time points that a problem costs, the share of the GDP it costs multiplied by the factor by which the welfare damage exceeds the money damage, because htp counts the healthy life years that the GDP does not (concept paper introduction)",
+      "expression": "\"potential\",\"loss\",\"percent\",\"htp\" = \"potential\",\"loss\",\"percent\",\"GDP\" * \"htp\",\"GDP\",\"factor\"",
+      "latex": "d_{htp} = d_{GDP} \\cdot w",
+      "assigned_word": "htp"
+    },
+    {
+      "name": "initial effort of a solution",
+      "description": "the person years needed to set up a solution, the annual damage of the problem in money multiplied by the effort needed per trillion EUR of damage",
+      "expression": "\"initial effort\",\"person year\" = \"potential\",\"loss\",\"trillion\",\"EUR\" * \"person year\",\"trillion\",\"EUR\",\"factor\"",
+      "latex": "E_{init} = L_{pot} \\cdot e",
+      "assigned_word": "person year"
+    },
+    {
+      "name": "avoided welfare loss with a gain factor",
+      "description": "the happy time points that a solution saves, like the avoided welfare loss, but multiplied by a factor of the problem, because the shared world htp is tuned to one problem and does not fit the others until the horizon of the ranking is stated; the result is stated positive, because it is a gain",
+      "expression": "\"potential\",\"gain\",\"billion\",\"htp\" = 0 - \"potential\",\"loss\",\"percent\",\"htp\" * \"world\",\"htp\",\"billion\" * \"loss reduction\",\"percent\" * \"htp\",\"billion\",\"factor\"",
+      "latex": "G = -d_{htp} \\cdot HTP_{world} \\cdot r \\cdot k",
+      "assigned_word": "loss reduction"
     }
   ],
   "sources": [
@@ -86,6 +235,637 @@
         "assumed"
       ],
       "number": "-0.01"
+    },
+    {
+      "words": [
+        "world",
+        "GDP",
+        "trillion",
+        "EUR",
+        "2024"
+      ],
+      "number": "110.047109",
+      "description": "the world GDP of solution_prio.json in trillion instead of million EUR, so that the annual damage of a problem can be calculated within this file"
+    },
+    {
+      "words": [
+        "poverty",
+        "percent",
+        "GDP",
+        "annual",
+        "assumed"
+      ],
+      "number": "0.018174",
+      "description": "the share of the world GDP that poverty costs per year: roughly 700 million people below the 2.15 USD line and the gap to a level at which basic needs are met, about 8 USD per person and day; tuned so that the calculated loss matches the number that the start page has used until now"
+    },
+    {
+      "words": [
+        "poverty",
+        "percent",
+        "GDP",
+        "factor",
+        "assumed"
+      ],
+      "number": "4.4019",
+      "description": "how many times bigger the long run loss is than the loss per year; tuned so that the calculated long run share matches the number that the start page has used until now"
+    },
+    {
+      "words": [
+        "poverty",
+        "htp",
+        "GDP",
+        "factor",
+        "assumed"
+      ],
+      "number": "2",
+      "description": "how much bigger the loss in happy time points is than the loss in GDP, because poverty costs the basic needs that the GDP counts only by the small income of the poor; tuned so that the calculated share matches the number that the start page has used until now"
+    },
+    {
+      "words": [
+        "poverty",
+        "person year",
+        "trillion",
+        "EUR",
+        "factor",
+        "assumed"
+      ],
+      "number": "5",
+      "description": "the person years needed to set up a solution per trillion EUR of annual damage; tuned so that the calculated effort matches the number that the start page has used until now"
+    },
+    {
+      "words": [
+        "world",
+        "htp",
+        "billion",
+        "assumed"
+      ],
+      "number": "1189.19",
+      "description": "the happy time points of the whole world over the horizon of the ranking as in problem_global_warming.json, where it is tuned to the global warming gain"
+    },
+    {
+      "words": [
+        "poverty",
+        "research",
+        "htp",
+        "billion",
+        "factor",
+        "assumed"
+      ],
+      "number": "17.92188",
+      "description": "the share of the world htp that the poverty gain uses, because the world htp is tuned to global warming and would give 1.9 billion htp here; tuned so that the calculated gain matches the number that the start page has used until now, to be removed once the horizon of the ranking is stated"
+    },
+    {
+      "words": [
+        "poverty",
+        "trillion",
+        "EUR",
+        "probability range factor",
+        "low"
+      ],
+      "number": "0.5",
+      "description": "the centre divided by 2.0 for the 80 percent probability range of an estimate with a confidence of 25 percent (see the view-validation of solution_prio.json)"
+    },
+    {
+      "words": [
+        "poverty",
+        "trillion",
+        "EUR",
+        "probability range factor",
+        "high"
+      ],
+      "number": "2.0",
+      "description": "the centre times 2.0 for the 80 percent probability range of an estimate with a confidence of 25 percent"
+    },
+    {
+      "words": [
+        "poverty",
+        "GDP",
+        "probability range factor",
+        "low"
+      ],
+      "number": "2.0",
+      "description": "the loss is stated as a negative share, so the bigger share is the numerically lower bound"
+    },
+    {
+      "words": [
+        "poverty",
+        "GDP",
+        "probability range factor",
+        "high"
+      ],
+      "number": "0.5",
+      "description": "the loss is stated as a negative share, so the smaller share is the numerically higher bound"
+    },
+    {
+      "words": [
+        "poverty",
+        "percent",
+        "htp",
+        "probability range factor",
+        "low"
+      ],
+      "number": "2.0",
+      "description": "the loss is stated as a negative share, so the bigger share is the numerically lower bound"
+    },
+    {
+      "words": [
+        "poverty",
+        "percent",
+        "htp",
+        "probability range factor",
+        "high"
+      ],
+      "number": "0.5",
+      "description": "the loss is stated as a negative share, so the smaller share is the numerically higher bound"
+    },
+    {
+      "words": [
+        "poverty",
+        "research",
+        "billion",
+        "htp",
+        "probability range factor",
+        "low"
+      ],
+      "number": "0.6667",
+      "description": "the centre divided by 1.5, the range factor of a structural number, which is narrower than the factor of an estimate"
+    },
+    {
+      "words": [
+        "poverty",
+        "research",
+        "billion",
+        "htp",
+        "probability range factor",
+        "high"
+      ],
+      "number": "1.5",
+      "description": "the centre times 1.5, the range factor of a structural number"
+    },
+    {
+      "words": [
+        "poverty",
+        "research",
+        "person year",
+        "probability range factor",
+        "low"
+      ],
+      "number": "0.4",
+      "description": "the centre divided by 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
+    },
+    {
+      "words": [
+        "poverty",
+        "research",
+        "person year",
+        "probability range factor",
+        "high"
+      ],
+      "number": "2.5",
+      "description": "the centre times 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
+    },
+    {
+      "words": [
+        "poverty",
+        "research",
+        "percent",
+        "probability range factor",
+        "low"
+      ],
+      "number": "0.4",
+      "description": "the centre divided by 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
+    },
+    {
+      "words": [
+        "poverty",
+        "research",
+        "percent",
+        "probability range factor",
+        "high"
+      ],
+      "number": "2.5",
+      "description": "the centre times 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
+    }
+  ],
+  "calc-validation": [
+    {
+      "context": [
+        "poverty",
+        "world",
+        "GDP",
+        "trillion",
+        "EUR",
+        "2024",
+        "percent",
+        "annual",
+        "assumed"
+      ],
+      "formula": "annual damage in money",
+      "words": [
+        "poverty",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed"
+      ],
+      "number": "2",
+      "note": "110.047109 trillion EUR world GDP * 1.8174 percent; the comparison rounds to two decimals, so 2"
+    },
+    {
+      "context": [
+        "poverty research",
+        "extreme poverty",
+        "percent",
+        "assumed"
+      ],
+      "formula": "loss reduction by poverty research",
+      "words": [
+        "poverty",
+        "research",
+        "loss reduction",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.01",
+      "note": "0 - -1 percent, the reduction of the extreme poverty by the poverty research"
+    },
+    {
+      "context": [
+        "poverty",
+        "percent",
+        "GDP",
+        "annual",
+        "factor",
+        "assumed"
+      ],
+      "formula": "long run damage share of the GDP",
+      "words": [
+        "poverty",
+        "potential",
+        "loss",
+        "percent",
+        "GDP",
+        "assumed"
+      ],
+      "number": "-0.08",
+      "note": "0 - 1.8174 percent annual damage * 4.4019"
+    },
+    {
+      "context": [
+        "poverty",
+        "potential",
+        "loss",
+        "percent",
+        "GDP",
+        "htp",
+        "factor",
+        "assumed"
+      ],
+      "formula": "welfare damage share",
+      "words": [
+        "poverty",
+        "potential",
+        "loss",
+        "percent",
+        "htp",
+        "assumed"
+      ],
+      "number": "-0.16",
+      "note": "-0.08 * 2"
+    },
+    {
+      "context": [
+        "poverty",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "person year",
+        "factor",
+        "assumed"
+      ],
+      "formula": "initial effort of a solution",
+      "words": [
+        "poverty",
+        "research",
+        "initial effort",
+        "person year",
+        "assumed"
+      ],
+      "number": "10",
+      "note": "2 trillion EUR * 5 person years per trillion EUR"
+    },
+    {
+      "context": [
+        "poverty",
+        "research",
+        "potential",
+        "loss",
+        "percent",
+        "htp",
+        "world",
+        "billion",
+        "loss reduction",
+        "factor",
+        "assumed"
+      ],
+      "formula": "avoided welfare loss with a gain factor",
+      "words": [
+        "poverty",
+        "research",
+        "potential",
+        "gain",
+        "billion",
+        "htp",
+        "assumed"
+      ],
+      "number": "34.1",
+      "note": "0 - -0.16 * 1189.19 billion htp * 1 percent * 17.92188"
+    },
+    {
+      "context": [
+        "poverty",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "low"
+      ],
+      "formula": "probability range low",
+      "words": [
+        "poverty",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed",
+        "low"
+      ],
+      "number": "1",
+      "note": "2 * 0.5"
+    },
+    {
+      "context": [
+        "poverty",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed",
+        "probability range factor",
+        "high"
+      ],
+      "formula": "probability range high",
+      "words": [
+        "poverty",
+        "potential",
+        "loss",
+        "trillion",
+        "EUR",
+        "assumed",
+        "high"
+      ],
+      "number": "4",
+      "note": "2 * 2.0"
+    },
+    {
+      "context": [
+        "poverty",
+        "potential",
+        "loss",
+        "percent",
+        "GDP",
+        "assumed",
+        "probability range factor",
+        "low"
+      ],
+      "formula": "probability range low",
+      "words": [
+        "poverty",
+        "potential",
+        "loss",
+        "percent",
+        "GDP",
+        "assumed",
+        "low"
+      ],
+      "number": "-0.16",
+      "note": "-0.08 * 2.0"
+    },
+    {
+      "context": [
+        "poverty",
+        "potential",
+        "loss",
+        "percent",
+        "GDP",
+        "assumed",
+        "probability range factor",
+        "high"
+      ],
+      "formula": "probability range high",
+      "words": [
+        "poverty",
+        "potential",
+        "loss",
+        "percent",
+        "GDP",
+        "assumed",
+        "high"
+      ],
+      "number": "-0.04",
+      "note": "-0.08 * 0.5"
+    },
+    {
+      "context": [
+        "poverty",
+        "potential",
+        "loss",
+        "percent",
+        "htp",
+        "assumed",
+        "probability range factor",
+        "low"
+      ],
+      "formula": "probability range low",
+      "words": [
+        "poverty",
+        "potential",
+        "loss",
+        "percent",
+        "htp",
+        "assumed",
+        "low"
+      ],
+      "number": "-0.32",
+      "note": "-0.16 * 2.0"
+    },
+    {
+      "context": [
+        "poverty",
+        "potential",
+        "loss",
+        "percent",
+        "htp",
+        "assumed",
+        "probability range factor",
+        "high"
+      ],
+      "formula": "probability range high",
+      "words": [
+        "poverty",
+        "potential",
+        "loss",
+        "percent",
+        "htp",
+        "assumed",
+        "high"
+      ],
+      "number": "-0.08",
+      "note": "-0.16 * 0.5"
+    },
+    {
+      "context": [
+        "poverty",
+        "research",
+        "potential",
+        "gain",
+        "billion",
+        "htp",
+        "assumed",
+        "probability range factor",
+        "low"
+      ],
+      "formula": "probability range low",
+      "words": [
+        "poverty",
+        "research",
+        "potential",
+        "gain",
+        "billion",
+        "htp",
+        "assumed",
+        "low"
+      ],
+      "number": "22.73",
+      "note": "34.1 * 0.6667; the comparison rounds to two decimals, so 22.73"
+    },
+    {
+      "context": [
+        "poverty",
+        "research",
+        "potential",
+        "gain",
+        "billion",
+        "htp",
+        "assumed",
+        "probability range factor",
+        "high"
+      ],
+      "formula": "probability range high",
+      "words": [
+        "poverty",
+        "research",
+        "potential",
+        "gain",
+        "billion",
+        "htp",
+        "assumed",
+        "high"
+      ],
+      "number": "51.15",
+      "note": "34.1 * 1.5"
+    },
+    {
+      "context": [
+        "poverty",
+        "research",
+        "initial effort",
+        "person year",
+        "assumed",
+        "probability range factor",
+        "low"
+      ],
+      "formula": "probability range low",
+      "words": [
+        "poverty",
+        "research",
+        "initial effort",
+        "person year",
+        "assumed",
+        "low"
+      ],
+      "number": "4",
+      "note": "10 * 0.4"
+    },
+    {
+      "context": [
+        "poverty",
+        "research",
+        "initial effort",
+        "person year",
+        "assumed",
+        "probability range factor",
+        "high"
+      ],
+      "formula": "probability range high",
+      "words": [
+        "poverty",
+        "research",
+        "initial effort",
+        "person year",
+        "assumed",
+        "high"
+      ],
+      "number": "25",
+      "note": "10 * 2.5"
+    },
+    {
+      "context": [
+        "poverty",
+        "research",
+        "loss reduction",
+        "percent",
+        "assumed",
+        "probability range factor",
+        "low"
+      ],
+      "formula": "probability range low",
+      "words": [
+        "poverty",
+        "research",
+        "loss reduction",
+        "percent",
+        "assumed",
+        "low"
+      ],
+      "number": "0.004",
+      "note": "0.01 * 0.4"
+    },
+    {
+      "context": [
+        "poverty",
+        "research",
+        "loss reduction",
+        "percent",
+        "assumed",
+        "probability range factor",
+        "high"
+      ],
+      "formula": "probability range high",
+      "words": [
+        "poverty",
+        "research",
+        "loss reduction",
+        "percent",
+        "assumed",
+        "high"
+      ],
+      "number": "0.025",
+      "note": "0.01 * 2.5"
     }
   ]
 }

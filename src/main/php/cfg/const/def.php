@@ -879,6 +879,7 @@ class def
     const array VOLATILE_DB_FIELDS = [
         [value::class, fields::FLD_LAST_UPDATE],
         [formula::class, fields::FLD_LAST_UPDATE],
+        [result::class, fields::FLD_LAST_UPDATE],
         [user::class, user_db::FLD_CREATED],
         [user::class, user_db::FLD_LAST_LOGIN],
         [user::class, user_db::FLD_LAST_LOGOUT],
