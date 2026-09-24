@@ -4206,8 +4206,17 @@ class sql_creator
      * @param string $order_field the name of the order field
      * @param string $direction the SQL direction name (ASC or DESC)
      * @param string $table_prefix
+     * @param string $tie_field a second order field with the same direction that decides the order
+     *                          of the rows with the same value in the order field, so that a query
+     *                          with a row limit always returns the same rows (e.g. the change id of
+     *                          the changes written in one transaction, which share the change time)
      */
-    function set_order(string $order_field, string $direction = '', string $table_prefix = ''): void
+    function set_order(
+        string $order_field,
+        string $direction = '',
+        string $table_prefix = '',
+        string $tie_field = ''
+    ): void
     {
         if ($direction <> sql::ORDER_DESC) {
             $direction = '';
@@ -4223,7 +4232,11 @@ class sql_creator
             $table_prefix .= '.';
         }
 
-        $this->set_order_text(trim($table_prefix . $order_field . ' ' . $direction));
+        $order_txt = trim($table_prefix . $order_field . ' ' . $direction);
+        if ($tie_field != '') {
+            $order_txt .= ', ' . trim($table_prefix . $tie_field . ' ' . $direction);
+        }
+        $this->set_order_text($order_txt);
         if ($this->all_query) {
             $this->order .= ', ' . $table_prefix . user_db::FLD_ID;
         }

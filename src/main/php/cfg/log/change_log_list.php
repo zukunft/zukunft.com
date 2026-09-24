@@ -836,7 +836,9 @@ class change_log_list extends list_db_read
         $sc->set_fields(change::FLD_NAMES);
         $sc->set_join_fields(array(user_db::FLD_NAME), user::class);
         $sc->set_join_fields(array(change_fields::FLD_TABLE), change_field::class);
-        $sc->set_order(change_log::FLD_TIME, sql::ORDER_DESC);
+        // the change id decides the order of the changes of one save, which all have the same
+        // change time (see change::load_sql)
+        $sc->set_order(change_log::FLD_TIME, sql::ORDER_DESC, '', change_log::FLD_ID);
 
         return $qp;
     }

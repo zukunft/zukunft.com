@@ -295,6 +295,8 @@
             ult.php
     \-- load_sql_where - section for function load_sql_where is expected to be load sql in /result/result.php
     \-- load_phrases - section for function load_phrases is expected to be load in /result/result.php
+    \-- used_phrase_selection - section for function used_phrase_selection not yet defined that it should be phrase load
+            ing methods in /result/result.php
     \-- load_values_used - section for function load_values_used is expected to be load in /result/result.php
     \-- load_results_used - section for function load_results_used is expected to be load in /result/result.php
     \-- load_formulas_used - section for function load_formulas_used is expected to be load in /result/result.php

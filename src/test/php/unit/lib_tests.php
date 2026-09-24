@@ -133,6 +133,10 @@ class lib_tests
         $this->assert_sql_format($test_name, test_paths::DB_FORMAT_TEST . test_files::SQL_FORMAT_TEST_SELECT_JOINED, $t);
         $test_name = 'sql_format select of a joined object MariaSQL';
         $this->assert_sql_format($test_name, test_paths::DB_FORMAT_TEST . test_files::SQL_FORMAT_TEST_SELECT_JOINED_MYSQL, $t);
+        $test_name = 'sql_format select with two joins, sort and paging';
+        $this->assert_sql_format($test_name, test_paths::DB_FORMAT_TEST . test_files::SQL_FORMAT_TEST_SELECT_SORTED, $t);
+        $test_name = 'sql_format select with two joins, sort and paging MariaSQL';
+        $this->assert_sql_format($test_name, test_paths::DB_FORMAT_TEST . test_files::SQL_FORMAT_TEST_SELECT_SORTED_MYSQL, $t);
         $test_name = 'sql_format select union';
         $this->assert_sql_format($test_name, test_paths::DB_FORMAT_TEST . test_files::SQL_FORMAT_TEST_UNION, $t);
         $test_name = 'sql_format select union MariaSQL';

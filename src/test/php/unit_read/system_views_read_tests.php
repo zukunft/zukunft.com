@@ -225,8 +225,13 @@ class system_views_read_tests
         $t->assert_view(views::FORMULA_DEL, $t->usr1, new formula($t->usr1), 1, $cfg);
         // FORMULA TEST
         // RESULT
-        // no seeded result id is known, so the form that overwrites just the number of a result uses the factory result
+        // no seeded result id is known, so the result pages are rendered from the factory result;
+        // the default page shows beside the number the values, formulas and results that the
+        // calculation has used, which the api reads for the phrases of the result (see
+        // result::used_phrase_selection), so the page needs the database
         $t_res = new test_results($t);
+        $t->assert_view_by_factory(views::RESULT, $t->usr1, $t_res->result_simple(), test_files::VIEW_CASE_SIMPLE, $cfg, result::class);
+        // the form that overwrites just the number of a result
         $t->assert_view_by_factory(views::RESULT_OVERWRITE, $t->usr1, $t_res->result_simple(), test_files::VIEW_CASE_SIMPLE, $cfg, result::class);
         // VIEW
         // the word default view is the example for the view default page, because it is the view

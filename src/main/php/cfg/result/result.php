@@ -1057,11 +1057,13 @@ class result extends sandbox_value
      * so that the result page can always show what the number is based on; returned with the
      * selection type, because only the saved source phrases name the numbers exactly
      *
+     * public because the selection rule is the base of the three used lists, so it is unit tested
+     *
      * @param user_message $msg to collect any problem while loading the phrases
      * @return array the phrases that select the numbers used for the calculation and true if a
      *               number with any of them is related, which is the case for the fallback
      */
-    private function used_phrase_selection(user_message $msg): array
+    function used_phrase_selection(user_message $msg): array
     {
         $this->load_phrases($msg);
         $phr_lst = $this->src_grp?->phrase_list();

@@ -181,6 +181,27 @@ class result_tests
         $test_name = '... and a source group of 16 phrases cannot';
         $t->assert_false($test_name, $t_res->result_src_grp_big()->src_grp_is_storable());
 
+        // the result page shows the values, formulas and results used for the calculation; the
+        // saved source phrases name these numbers exactly, so a number must carry all of them
+        $test_name = 'the used numbers are selected by the source phrases of the calculation';
+        $res_src = $t_res->result_main_max();
+        [$phr_lst, $any_phrase] = $res_src->used_phrase_selection($msg);
+        $t->assert($test_name, $phr_lst->name(), $res_src->source_group()->phrase_list()->name());
+        $test_name = '... and only a number with all of them is used';
+        $t->assert_false($test_name, $any_phrase);
+        $msg->reset();
+
+        // negative: a result saved without the source group (see drop_unsupported_src_grp) falls
+        // back to its own phrases, where any match makes a number related, so that the page of
+        // such a result is not empty
+        $test_name = 'without a source group the used numbers are selected by the result phrases';
+        $res_no_src = $t_res->result_simple();
+        [$phr_lst_fb, $any_fallback] = $res_no_src->used_phrase_selection($msg);
+        $t->assert($test_name, $phr_lst_fb->name(), $res_no_src->grp()->phrase_list()->name());
+        $test_name = '... where a number with any of them is related';
+        $t->assert_true($test_name, $any_fallback);
+        $msg->reset();
+
         // a row of a result table carries either the text group key or the phrase id columns
         // of a prime or main table, and a union of both kinds shows an empty key for the latter,
         // so the mapper must build the same group from both (see sandbox_value::set_grp_by_row)

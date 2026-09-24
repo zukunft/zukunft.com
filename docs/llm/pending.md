@@ -1,5 +1,24 @@
 # pending - list of planned llm prompts with prio 1
 
+## result and value default view
+
+in title of the value and result default view show the scaling and measure type phrases behind the value e.g. for http://localhost/http/view.php?m=9&id=....0R-....1S%2B....1V%2B....2D%2B....2F%2B....2p%2B......%2B......%2B......%2B......%2B......%2B......%2B......%2B......%2B......%2B......%2B&9m=1&9dls=20&9dlc=2&9dlr=1 'assumed, black-box AI, loss, potential 0.22 trillion EUR' instead of 'EUR, assumed, black-box AI, loss, potential, trillion 0.22'
+
+add a phrase type 'value quality'
+
+## type and component order
+
+review the initial order of the types e.g.
+
+- change tables
+- change fields
+- component types
+- phrase types
+- source types
+
+review the initial order of the components
+review the initial order of the verbs
+
 ## json test
 
 add to the json check that creates docs/json_findings.md a test that all values should have a valide source
