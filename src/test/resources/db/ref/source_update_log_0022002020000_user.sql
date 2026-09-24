@@ -53,7 +53,7 @@ SELECT source_update_log_0022002020000_user
         'Bureau International des Poids et Mesures - The intergovernmental organization through which Member States act together on matters related to measurement science and measurement standards'::text,
         null::text,
         171::smallint,
-        4::smallint,
+        3::smallint,
         null::smallint,
         62::smallint,
         'https://www.bipm.org/documents/20126/41483022/SI-Brochure-9.pdf'::text,

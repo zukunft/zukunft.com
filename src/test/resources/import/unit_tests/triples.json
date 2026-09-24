@@ -8,17 +8,7 @@
   ],
   "words": [
     {
-      "name": "second",
-      "description": "The second is defined by taking the fixed numerical value of the caesium frequency, ΔνCs, the unperturbed ground-state hyperfine transition frequency of the caesium 133 atom, to be 9192631770 when expressed in the unit Hz, which is equal to s−1.",
-      "plural": "seconds",
-      "type": "measure",
-      "protection": "admin_protection",
-      "refs": [
-        {
-          "name": "Second",
-          "type": "wikipedia"
-        }
-      ]
+      "name": "second"
     },
     {
       "name": "hertz",
@@ -44,7 +34,6 @@
     },
     {
       "name": "global",
-      "description": "here more a something that effects all people on earth (wikipedia does not really match)",
       "refs": [
         {
           "name": "Globalization",
@@ -56,7 +45,7 @@
       "name": "solution",
       "refs": [
         {
-          "name": "Problem solving",
+          "name": "Problem_solving",
           "type": "wikipedia"
         },
         {
@@ -82,7 +71,7 @@
       "name": "warm",
       "refs": [
         {
-          "name": "heating",
+          "name": "Heating",
           "type": "wikipedia"
         },
         {

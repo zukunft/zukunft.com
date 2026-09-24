@@ -36,6 +36,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
+include_once paths::MODEL_COMPONENT . 'component.php';
 include_once paths::MODEL_FORMULA . 'formula_link.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED . 'json_fields.php';
@@ -44,6 +45,7 @@ include_once html_paths::REF . 'ref.php';
 include_once test_paths::CONST . 'files.php';
 include_once paths::SHARED_CONST . 'users.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\component\component;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
@@ -417,6 +419,46 @@ class lib_tests
         $t->assert($test_name, $lib->class_to_api_route(ref_ui::class), url_var::REF_API);
         $test_name = 'api route of any other class is the camelized class name';
         $t->assert($test_name, $lib->class_to_api_route(formula_link::class), 'formulaLink');
+
+        // test class_csv_file_path: the rows expected after a database reset are in the folder of
+        // the class and the types of the class in the types csv of the same folder; the files
+        // themselves are written by the database reset (see test_db_load::csv_recreate)
+        $test_name = 'the expected rows of a class are in the list csv of the class folder';
+        $t->assert($test_name, $lib->class_csv_file_path(component::class),
+            test_paths::UNIT_RES . 'component' . DIRECTORY_SEPARATOR . test_files::FIXED_DB_CSV);
+        $test_name = 'and the expected types of the same class in the types csv';
+        $t->assert($test_name, $lib->class_csv_file_path(component::class, test_files::FIXED_DB_TYPES_CSV),
+            test_paths::UNIT_RES . 'component' . DIRECTORY_SEPARATOR . test_files::FIXED_DB_TYPES_CSV);
+
+        // test csv_line: a value that contains the delimiter or a quote is enclosed
+        $test_name = 'a value with a comma is enclosed in double quotes';
+        $t->assert($test_name, $lib->csv_line(['7', 'word list up', 'a list, of words']),
+            '7,word list up,"a list, of words"');
+        $test_name = 'a quote within a value is doubled';
+        $t->assert($test_name, $lib->csv_line(['e.g. Verb "is a"']), '"e.g. Verb ""is a"""');
+
+        // test csv_line_to_array: an enclosed value is read as one value, whichever quote is used
+        $test_name = 'a double quoted value with a comma is read as one value';
+        $t->assert($test_name, implode('|', $lib->csv_line_to_array('7,word list up,"a list, of words"')),
+            '7|word list up|a list, of words');
+        $test_name = 'the same for the single quotes of the code link files';
+        $t->assert($test_name, implode('|', $lib->csv_line_to_array("7, 'word list up', 'a list, of words'")),
+            '7|word list up|a list, of words');
+        $test_name = 'a doubled quote within an enclosed value is one quote';
+        $t->assert($test_name, implode('|', $lib->csv_line_to_array('1,"""one"" is needed, but not shown"')),
+            '1|"one" is needed, but not shown');
+        $test_name = 'so a value with a comma and a quote survives the round trip';
+        $row = ['a', 'b, c', 'd"e', ''];
+        $t->assert($test_name, implode('|', $lib->csv_line_to_array($lib->csv_line($row))), implode('|', $row));
+
+        // the negative cases: without an enclosure the delimiter separates two values
+        // and a quote within a value is just a char of the value
+        $test_name = 'a comma without an enclosure separates two values';
+        $t->assert($test_name, implode('|', $lib->csv_line_to_array('1,a list, of words')),
+            '1|a list| of words');
+        $test_name = 'an apostrophe within a value does not enclose';
+        $t->assert($test_name, implode('|', $lib->csv_line_to_array("1,it doesn't split")),
+            "1|it doesn't split");
 
 
         $t->subheader($ts . 'arrays and lists');

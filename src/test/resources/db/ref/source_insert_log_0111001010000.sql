@@ -59,6 +59,6 @@ SELECT source_insert_log_0111001010000
         58::smallint,
         'The Federal Statistical Office is a Federal agency of the Swiss Confederation. It is the statistics office of Switzerland.'::text,
         59::smallint,
-        4::smallint,
+        3::smallint,
         60::smallint,
         'https://www.bfs.admin.ch/bfs/en/home.html'::text);

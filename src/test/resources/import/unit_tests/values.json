@@ -19,15 +19,10 @@
     },
     {
       "name": "global",
-      "description": "here more a something that effects all people on earth (wikipedia does not really match)",
       "refs": [
         {
           "name": "Globalization",
           "type": "wikipedia"
-        },
-        {
-          "name": "Q7181",
-          "type": "wikidata"
         }
       ]
     },
@@ -35,7 +30,7 @@
       "name": "solution",
       "refs": [
         {
-          "name": "Problem solving",
+          "name": "Problem_solving",
           "type": "wikipedia"
         },
         {
@@ -106,7 +101,7 @@
       "name": "warm",
       "refs": [
         {
-          "name": "heating",
+          "name": "Heating",
           "type": "wikipedia"
         },
         {
@@ -128,7 +123,7 @@
       "name": "gas",
       "refs": [
         {
-          "name": "gas",
+          "name": "Gas",
           "type": "wikipedia"
         },
         {
@@ -333,12 +328,8 @@
       "to": "warming",
       "refs": [
         {
-          "name": "Climate_change",
+          "name": "Greenhouse_gas",
           "type": "wikipedia"
-        },
-        {
-          "name": "Q7942",
-          "type": "wikidata"
         }
       ]
     },

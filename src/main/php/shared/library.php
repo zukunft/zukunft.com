@@ -189,6 +189,13 @@ class library
     const int DSP_MAX = 7;         // max entries before truncation kicks in
     const int DSP_HEAD = 3;        // entries shown at the head of a truncated array
 
+    // the csv format used for the code link files and the expected database rows
+    const string CSV_DELIMITER = ',';
+    // a value that contains the delimiter is enclosed in double quotes when it is written
+    const string CSV_ENCLOSURE = '"';
+    // but both quotes are accepted when a csv line is read e.g. to read 'one, two and three'
+    const array CSV_ENCLOSURES = ['"', "'"];
+
     // the compact json format (see json_compact_format)
     const int JSON_MAX_LINE_LEN = 140; // an object or array is kept on one line up to this length
     const int JSON_INDENT = 2;         // the added spaces per level for the objects that need more lines
@@ -2800,12 +2807,18 @@ class library
         return $result;
     }
 
-    function class_csv_file_path(string $class): string
+    /**
+     * the resource file with the expected database rows of a class
+     *
+     * @param string $class the class whose rows are expected in the file e.g. component
+     * @param string $file the file name within the folder of the class, e.g. the types of the class
+     * @return string the path of the resource file e.g. unit/component/list.csv
+     */
+    function class_csv_file_path(string $class, string $file = test_files::FIXED_DB_CSV): string
     {
         $lib = new library();
         $name = $lib->class_to_name($class);
         $path = test_paths::UNIT_RES . $name . DIRECTORY_SEPARATOR;
-        $file = test_files::FIXED_DB_CSV;
         return $path . $file;
     }
 
@@ -2827,8 +2840,7 @@ class library
                 $header = implode(',', $header_lst);
                 $csv[] = $header . "\n";
             }
-            $db_row = array_intersect_key($db_row, $header_lst);
-            $line = implode(',', $db_row);
+            $line = $this->csv_line(array_intersect_key($db_row, $header_lst));
             // remove line feeds to make compare easier
             $line = str_replace("\n", ' ', $line);
             $csv[] = $line . "\n";
@@ -2849,18 +2861,96 @@ class library
         if (count($csv) < 2) {
             return $csv;
         }
-        $header_cols = explode(',', rtrim($csv[0], "\n"));
+        $header_cols = $this->csv_line_to_array($csv[0]);
         $idx = array_search($col, $header_cols);
         if ($idx === false) {
             return $csv;
         }
         $result = [$csv[0]];
         for ($i = 1; $i < count($csv); $i++) {
-            $fields = explode(',', rtrim($csv[$i], "\n"));
+            $fields = $this->csv_line_to_array($csv[$i]);
             $fields[$idx] = '';
-            $result[] = implode(',', $fields) . "\n";
+            $result[] = $this->csv_line($fields) . "\n";
         }
         return $result;
+    }
+
+    /**
+     * combine the values of one database row to a csv line
+     *
+     * @param array $fields the values of one row in the order of the csv header
+     * @return string the csv line without the line feed
+     */
+    function csv_line(array $fields): string
+    {
+        $result = [];
+        foreach ($fields as $fld) {
+            $result[] = $this->csv_field($fld);
+        }
+        return implode(',', $result);
+    }
+
+    /**
+     * encode one value for a csv line
+     * a value that contains the delimiter or a quote is enclosed in double quotes
+     * and a quote within the value is escaped by doubling it
+     *
+     * @param string|null $value the value e.g. as read from the database
+     * @return string the value ready to be added to a csv line
+     */
+    function csv_field(?string $value): string
+    {
+        $result = (string)$value;
+        if (str_contains($result, self::CSV_DELIMITER) or str_contains($result, self::CSV_ENCLOSURE)) {
+            $quote = self::CSV_ENCLOSURE;
+            $result = $quote . str_replace($quote, $quote . $quote, $result) . $quote;
+        }
+        return $result;
+    }
+
+    /**
+     * split one csv line into the values
+     * a value that contains the delimiter can be enclosed in single or double quotes
+     * e.g. to import 'one, two and three' or "one, two and three" as one value
+     * and a quote within an enclosed value is expected to be doubled
+     *
+     * @param string $line one line of a csv file with or without the line feed
+     * @return array the values of the line without the enclosing quotes
+     */
+    function csv_line_to_array(string $line): array
+    {
+        $fields = [];
+        $field = '';
+        // the quote that has opened the value or empty if the value is not enclosed
+        $quote = '';
+        $line = rtrim($line, "\r\n");
+        $pos = 0;
+        while ($pos < strlen($line)) {
+            $char = $line[$pos];
+            if ($quote != '') {
+                if ($char != $quote) {
+                    $field .= $char;
+                } elseif (($line[$pos + 1] ?? '') == $quote) {
+                    // a doubled quote is part of the value
+                    $field .= $quote;
+                    $pos++;
+                } else {
+                    $quote = '';
+                }
+            } elseif ($char == self::CSV_DELIMITER) {
+                $fields[] = $field;
+                $field = '';
+            } elseif (in_array($char, self::CSV_ENCLOSURES) and trim($field) == '') {
+                // a quote encloses the value only if it is the first char of the value
+                $quote = $char;
+                $field = '';
+            } else {
+                $field .= $char;
+            }
+            $pos++;
+        }
+        $fields[] = $field;
+        return $fields;
     }
 
     function is_volatile_db_field(string $class, string $fld): bool

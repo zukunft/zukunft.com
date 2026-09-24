@@ -8,7 +8,7 @@ in a test file of the src/test/php/unit* folders; the count is by function name
 and cannot tell the classes apart, so a name that several classes declare needs
 2 calls per class and is listed as shared otherwise
 
-582 of 5824 public functions have at least 2 unit test calls; the 5242 functions below do not
+585 of 5827 public functions have at least 2 unit test calls; the 5242 functions below do not
 
 ## main backend
 
@@ -3860,7 +3860,6 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- array_trim - 0 unit test calls
     \-- camelize - 0 unit test calls
     \-- camelize_ex_1 - 0 unit test calls
-    \-- class_csv_file_path - 0 unit test calls
     \-- class_is_sandbox - 0 unit test calls
     \-- class_to_add_msg_id - 0 unit test calls
     \-- class_to_api_name - 0 unit test calls shared by 2 classes
@@ -3873,6 +3872,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- class_to_word - 0 unit test calls
     \-- count_recursive - 0 unit test calls
     \-- csv_clear_col - 0 unit test calls
+    \-- csv_field - 0 unit test calls
     \-- csv_form_db_lst - 0 unit test calls
     \-- diff_msg - 31 unit test calls shared by 28 classes
     \-- dir_files - 0 unit test calls

@@ -273,6 +273,8 @@ class files
     CONST string IMPORT_XBRL_MISSING_NAME = 'does_not_exist';
 
     CONST string FIXED_DB_CSV = 'list' . self::CSV;
+    // the expected types of a class, stored in the folder of that class e.g. the component types
+    CONST string FIXED_DB_TYPES_CSV = 'list_types' . self::CSV;
 
     // for the SQL formatter
     CONST string SQL_FORMAT_TEST = 'word_update_log_0022004000002_user' . self::SQL;

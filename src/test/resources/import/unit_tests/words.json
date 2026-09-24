@@ -19,7 +19,6 @@
     },
     {
       "name": "global",
-      "description": "here more a something that effects all people on earth (wikipedia does not really match)",
       "refs": [
         {
           "name": "Globalization",
@@ -31,7 +30,7 @@
       "name": "solution",
       "refs": [
         {
-          "name": "Problem solving",
+          "name": "Problem_solving",
           "type": "wikipedia"
         },
         {

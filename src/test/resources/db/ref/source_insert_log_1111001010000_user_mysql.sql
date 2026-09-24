@@ -38,6 +38,6 @@ SELECT source_insert_log_1111001010000_user
         61,
         'Bureau International des Poids et Mesures - The intergovernmental organization through which Member States act together on matters related to measurement science and measurement standards',
         171,
-        4,
+        3,
         62,
         'https://www.bipm.org/documents/20126/41483022/SI-Brochure-9.pdf');

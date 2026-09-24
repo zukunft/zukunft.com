@@ -1542,14 +1542,17 @@ class sql_db
         $csv_path = files::CODE_LINK_PATH . $table_name . files::CODE_LINK_TYPE;
 
         $row = 1;
-        // TODO ignore empty rows
-        // TODO ignore comma within text e.g. allow 'one, two and three'
         log_debug('load "' . $table_name . '"');
         if (($handle = fopen($csv_path, "r")) !== FALSE) {
             $continue = true;
             $id_col_name = '';
             $col_names = array();
-            while (($data = fgetcsv($handle, 0, ",", "'")) !== FALSE) {
+            while (($line = fgets($handle)) !== FALSE) {
+                // a line without any char does not contain a row
+                if (trim($line) == '') {
+                    continue;
+                }
+                $data = $lib->csv_line_to_array($line);
                 if ($continue) {
                     if ($row == 1) {
                         // check if the csv column names match the table names

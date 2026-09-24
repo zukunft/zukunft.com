@@ -19,6 +19,56 @@ review the initial order of the types e.g.
 review the initial order of the components
 review the initial order of the verbs
 
+### source types
+
+Add columns group and wikipedia where the groups are:
+
+Documents
+
+PDF
+MD
+TXT
+HTML
+
+Structured data formats
+
+JSON
+YAML
+TOML
+XML
+CSV
+TSV
+XLSX
+ODS
+JSON-LD
+RDF/Turtle
+GeoJSON
+JSON-stat
+XBRL
+SDMX
+Parquet
+Avro
+NetCDF
+HDF5
+
+Database / data exchange
+
+SQLite
+SQL Dump
+Arrow
+
+Data access/query mechanisms
+
+API
+OData
+SPARQL
+
+Web/archival sources
+
+RSS
+Atom
+WARC
+
 ## json test
 
 add to the json check that creates docs/json_findings.md a test that all values should have a valide source
