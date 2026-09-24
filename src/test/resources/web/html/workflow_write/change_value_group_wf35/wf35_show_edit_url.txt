@@ -1,16 +1,16 @@
 GET
-http://localhost/http/view.php?id=65471461&9m=5&pl=999%2C1156&n=123.456&8id=65471461&8pl=999%2C1156&8n=123.456&9id=65471461&m=30&z=0
-/http/view.php?id=65471461&9m=5&pl=999%2C1156&n=123.456&8id=65471461&8pl=999%2C1156&8n=123.456&9id=65471461&m=30&z=0
-/http/view.php?id=65471461&9mask_id=value_default&phrase_ids=999%2C1156&number=123.456&8id=65471461&8phrase_ids=999%2C1156&8number=123.456&9id=65471461&mask_id=value_edit&step=no&
+http://localhost/http/view.php?id=65471461&9m=5&pl=999%2C1212&n=123.456&8id=65471461&8pl=999%2C1212&8n=123.456&9id=65471461&m=30&z=0
+/http/view.php?id=65471461&9m=5&pl=999%2C1212&n=123.456&8id=65471461&8pl=999%2C1212&8n=123.456&9id=65471461&m=30&z=0
+/http/view.php?id=65471461&9mask_id=value_default&phrase_ids=999%2C1212&number=123.456&8id=65471461&8phrase_ids=999%2C1212&8number=123.456&9id=65471461&mask_id=value_edit&step=no&
 {
     "id": "65471461",
-    "phrase_ids": "1155,1156",
+    "phrase_ids": "1211,1212",
     "number": "123.456",
     "mask_id": "value_edit",
     "step": "no",
     "url_part_original_data": {
         "id": "65471461",
-        "phrase_ids": "1155,1156",
+        "phrase_ids": "1211,1212",
         "number": "123.456"
     },
     "url_part_back": {

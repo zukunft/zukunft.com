@@ -21,6 +21,12 @@
         "class": "word"
     },
     {
+        "id": 1015,
+        "name": "climate solution",
+        "description": "A mitigation option that reduces global greenhouse gas emissions, ranked here by effort return score.",
+        "class": "triple"
+    },
+    {
         "id": 189,
         "protection": 3,
         "name": "company",
