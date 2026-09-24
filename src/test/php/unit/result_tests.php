@@ -41,12 +41,16 @@ use Zukunft\ZukunftCom\main\php\cfg\group\group;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_list;
 use Zukunft\ZukunftCom\main\php\cfg\group\result_id;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\cfg\result\result;
+use Zukunft\ZukunftCom\main\php\cfg\result\result_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\result_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\results;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
@@ -63,7 +67,11 @@ use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use DateTime;
 
+include_once paths::MODEL_FORMULA . 'formula_list.php';
 include_once paths::MODEL_GROUP . 'result_id.php';
+include_once paths::MODEL_RESULT . 'result_list.php';
+include_once paths::MODEL_VALUE . 'value_list.php';
+include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_CONST_FIELDS . 'result_fields.php';
 include_once paths::SHARED_ENUM . 'messages.php';
@@ -200,6 +208,30 @@ class result_tests
         $t->assert($test_name, $phr_lst_fb->name(), $res_no_src->grp()->phrase_list()->name());
         $test_name = '... where a number with any of them is related';
         $t->assert_true($test_name, $any_fallback);
+        $msg->reset();
+
+        // a calculation that has used nothing sends the empty lists, because only an empty list
+        // tells the page that nothing has been used, whereas a missing list says that the result
+        // has not been asked for it (see ui_list::values_used)
+        $test_name = 'a result that has used nothing sends an empty list of used values';
+        $res_none = $t_res->result_main_max();
+        $res_none->values_used = new value_list($t->usr1);
+        $res_none->formulas_used = new formula_list($t->usr1);
+        $res_none->results_used = new result_list($t->usr1);
+        $none_json = json_decode($res_none->api_json(
+            [api_types::TEST_MODE, api_types::INCL_RELATED], $msg), true);
+        $t->assert_true($test_name, array_key_exists(json_fields::VALUES, $none_json));
+        $test_name = '... and of used formulas and results';
+        $t->assert_true($test_name, array_key_exists(json_fields::FORMULAS, $none_json)
+            and array_key_exists(json_fields::RESULTS, $none_json));
+        $msg->reset();
+
+        // negative: a result that has not been asked for the used numbers sends no list at all,
+        // so that the page shows no column instead of a wrong "nothing used"
+        $test_name = 'a result without the used lists sends no used values';
+        $plain_json = json_decode($t_res->result_main_max()->api_json(
+            [api_types::TEST_MODE, api_types::INCL_RELATED], $msg), true);
+        $t->assert_false($test_name, array_key_exists(json_fields::VALUES, $plain_json));
         $msg->reset();
 
         // a row of a result table carries either the text group key or the phrase id columns
