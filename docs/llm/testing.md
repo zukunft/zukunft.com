@@ -706,6 +706,13 @@ class stays the same. Never reformat a seed file and never add or remove a
 word, triple or other object on the side — see *Change as little as the task
 asks for* in `docs/llm/json_structure.md`.
 
+A shift itself is planned and accepted, not a reason to keep data out of the
+setup: the phrases the tests use most often are imported first, so a new seed
+file or a grown one shifts few pinned ids, and importing more data on every
+setup keeps the pressure high to speed up the import. A re-baseline is the
+normal follow-up of such a change, done by the reviewer with the sequence
+below, never avoided by leaving data out.
+
 The authority for the new ids is `src/test/resources/unit/<class>/list.csv`. That
 file is not hand-maintained: `test_db_load::csv_recreate()` dumps the whole table
 with `sql_db::csv_from_class()` after a database reset. So the sequence is

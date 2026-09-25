@@ -73,6 +73,13 @@ When a file *references* a base word it doesn't own (e.g. `chemistry`
 `{"name": "science"}` / `{"name": "law"}`. On import the name-only entry merges
 with the canonical definition in its home file — no data duplicated.
 
+A long json file is not a problem. The json files are data, not code, so the
+"reduce to the max" rule of the code does not apply to them: more data is
+better, and a file with thousands of values or calc-validation entries is as
+welcome as a short one, as long as each entry follows the rules of this
+document. Never shorten a file to make it easier to read; split it by topic if
+a reader needs a smaller unit (see *Split a large domain* below).
+
 ### The home file is the one imported **first**, not the one that sounds canonical
 
 Which file owns a phrase is decided by the **import order**, because the first
@@ -94,6 +101,15 @@ out of `cfg/const/files.php`:
 
 Only the first three are imported by every setup; the rest is added by
 `test/test_full_load.php`.
+
+Importing more data on every setup is not a cost to avoid: it keeps the
+pressure high to speed up the import, which is a kind of feature, so a file
+that every pod should have goes into the setup lists even if it is large. The
+id shift that such a file causes for everything imported after it is planned
+and accepted: that is why the phrases the tests use most often sit at the top
+of the import order, so that a shift touches few pinned ids, and why an id is
+re-baselined from the regenerated `list.csv` and never treated as stable (see
+*Phrase id consts are re-baselined …* in `docs/llm/testing.md`).
 
 So `solution_prio.json` is the home of `probability`, `score`, `deviation`,
 `return`, `market`, `tax`, … even though `math.json` and `economics.json` look
@@ -1000,6 +1016,18 @@ source name.
 An optional `"name"` is the name that a user has given to the phrase group of the value. It is
 exported only if a user has set one and never repeats the name generated from the `words`.
 
+### Different numbers for the same value in different files are a feature, not a problem
+
+Two files may state a different number for the same phrase group, e.g. one estimate of the
+world htp in `problem_global_warming.json` and another in a later file, **if the files belong
+to different users**: the target of zukunft.com is to show transparently which options and
+results are possible, so each user's number is kept as that user's value and the reader sees
+where the estimates differ and why. Do not "correct" a number in one file to match another
+file, and do not remove a file's number because another file has one; state the reasoning in
+the `description` instead. Only within one user is a phrase group one value, so two files of
+the **same** user that state the same group are the duplication that the *home file* rule
+avoids: the later import overwrites the earlier number silently.
+
 ### Qualify a value as specifically as the data allows — build from single words
 
 A value's `words` array is the phrase group the number belongs to. **Always
@@ -1206,6 +1234,11 @@ reproduced**. Entries are checked in file order, so a file can calculate a targe
 value first and its probability range from that target afterwards. A result that
 did not reproduce is never an operand, else a wrong number would confirm the next
 one instead of being reported.
+
+The database is never asked for an operand, so a chain that needs the numbers of
+another file belongs into that file: the climate solutions are calculated in
+`problem_global_warming.json`, because their gain uses the welfare loss share of
+the global warming problem (see *Self-consistency* above).
 
 A checked entry is a result like any other, so it is **also stored** in the
 results table with its phrases, its number and the formula that calculated it.

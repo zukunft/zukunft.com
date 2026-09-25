@@ -90,6 +90,33 @@ what is still open:
   solution_prio.json and used by nothing) would let all problem files share one pair, but it changes
   the phrase group of every start page number
 
+the 46 climate solutions of the former `start_page/co2_eq_reduction_ranking.json` live in
+`problem_global_warming.json` since 2026-09-25, because the ranking of the solutions and the
+problem row are one topic: each solution has its reduction potential, fulfillment probability and
+initial effort in billion USD, the expected return and effort return score of the co2 ranking, and
+as parts of the solution "reduce climate gas emissions" the expected return centre, loss reduction,
+gain and initial effort in the measures of the start page ranking, with bounds, 10 results per
+solution. the file is self-consistent again, so no import order and no database is needed to check
+it. what is still open:
+
+- the file is imported by every database setup (`files::SAMPLE_VIEW_DATA_FILES`), so the ids of
+  everything imported after it shift once and the pinned ids need a re-baseline from the
+  regenerated `list.csv`
+- the emissions 52.4 and 65.6 (`minimum`/`maximum` of `global greenhouse gas emissions 2019`) would
+  make every context with `minimum` or `maximum` ambiguous, so the chain computes the expected
+  return centre without the emissions first and divides by the emissions in a context without the
+  two words; the bounds use one probability range factor per solution for the loss reduction and
+  the gain
+- four expected return centres (nuclear energy, soil carbon buildup, green hydrogen, supply chain
+  laws) are exact halves at the third decimal, e.g. 0.225: `calc_internal` passes the result of
+  a bracket through a string, which rounds 0.44999999999999996 to 0.45, so the parser yields the
+  exact 0.225 and the plain number reproduces; a check that calculates with floats only (e.g. a
+  python replay) gets 0.22499999999999998 and rounds the other way, so a replay must use the php
+  parser; a calc validation that compares with a tolerance instead of rounding would end the issue
+- the co2 entries keep their style (numbers as json numbers, `"assigned"` lists) next to the
+  problem entries (numbers as strings, `"assigned_word"`); the repo formatter can unify them
+- the co2 file's own `expected return` bounds are validated for coal phase-out only (2 entries)
+
 ## temp
 
 One judgement call to confirm in the fix itself. REFRESH looks like a render var but is deliberately not in CONTROL_VARS, because formula::url_mapper() reads it, so it does influence the mapping. PATTERN is also left out, as it is form state of the search and add views. If you disagree with either, that is the place to say so.
