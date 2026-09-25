@@ -1,10 +1,10 @@
 GET
-http://localhost/http/view.php?id=0&9m=1&pl=188%2C1213&p=186&fr=frp&m=19&z=0
-/http/view.php?id=0&9m=1&pl=188%2C1213&p=186&fr=frp&m=19&z=0
-/http/view.php?id=0&9mask_id=entry_view&phrase_ids=188%2C1213&phrase_id=186&refresh=phrases_from_pattern&mask_id=value_add_phrases&step=no&
+http://localhost/http/view.php?id=0&9m=1&pl=188%2C1259&p=186&fr=frp&m=19&z=0
+/http/view.php?id=0&9m=1&pl=188%2C1259&p=186&fr=frp&m=19&z=0
+/http/view.php?id=0&9mask_id=entry_view&phrase_ids=188%2C1259&phrase_id=186&refresh=phrases_from_pattern&mask_id=value_add_phrases&step=no&
 {
     "id": "0",
-    "phrase_ids": "188,1213",
+    "phrase_ids": "188,1259",
     "phrase_id": "186",
     "refresh": "phrases_from_pattern",
     "mask_id": "value_add_phrases",

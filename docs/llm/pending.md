@@ -117,6 +117,29 @@ it. what is still open:
   problem entries (numbers as strings, `"assigned_word"`); the repo formatter can unify them
 - the co2 file's own `expected return` bounds are validated for coal phase-out only (2 entries)
 
+the 44 populism solutions of `problem_populism.json` (since 2026-09-25) follow the climate solutions:
+a triple `populism solution` (solution of populism), `populism solution is part of avoid wrong
+decisions`, one word plus `<name> is a populism solution` per measure, and per measure the assumed
+reduction potential (share of the GDP decline it avoids when fully in place), fulfillment probability
+and cost in billion USD, from which the loss reduction (potential times probability), the gain (the
+gain formula of the problem, so a measure's gain is its share of the 34.1) and the effort (cost times
+the 0.054545 person years per billion USD of the carbon border tariff) are calculated with bounds by
+one range factor pair 0.4 / 2.5 per measure, 9 results per solution. what is still open:
+
+- no source has such numbers for populism: every potential, probability and cost is an own
+  estimate, marked `assumed` and reasoned in the value description, and the potentials are not
+  additive (they sum to about 3.3, because the measures overlap)
+- values and results use the qualified name `fact-checking (populism solution)` for every measure,
+  because fact-checking, media literacy, prebunking etc. are measures of the disinformation problem
+  too and the same user must not state two numbers for one phrase group; the climate solutions
+  qualify only the names that clashed at the time (`research (climate solution)`)
+- `open data` is merged into `transparent government data` and `local self-government` into
+  `decentralization`; the merged names are only mentioned in the descriptions
+- the costs are in billion USD next to the EUR of the problem row, so that the climate calibration
+  of the effort is reused verbatim
+- the gain factor 0.102411 is shared by the solution and its parts, so its phrase group no longer
+  names `avoid wrong decisions`
+
 ## temp
 
 One judgement call to confirm in the fix itself. REFRESH looks like a render var but is deliberately not in CONTROL_VARS, because formula::url_mapper() reads it, so it does influence the mapping. PATTERN is also left out, as it is form state of the search and add views. If you disagree with either, that is the place to say so.

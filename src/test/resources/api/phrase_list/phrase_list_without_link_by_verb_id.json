@@ -108,6 +108,12 @@
         "class": "triple"
     },
     {
+        "id": 1110,
+        "name": "populism solution",
+        "description": "a measure that reduces the GDP decline of populism, ranked here by its share of the avoided loss",
+        "class": "triple"
+    },
+    {
         "id": 867,
         "name": "region",
         "description": "an area of land larger than a city and its surroundings",
