@@ -49,7 +49,7 @@ SELECT source_update_log_0022002020000
         'The Federal Statistical Office is a Federal agency of the Swiss Confederation. It is the statistics office of Switzerland.',
         null,
         59,
-        4,
+        3,
         null,
         60,
         'https://www.bfs.admin.ch/bfs/en/home.html',

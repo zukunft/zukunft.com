@@ -621,11 +621,25 @@ class sandbox_value extends sandbox_multi
         } else {
             if ($this->is_main()) {
                 $grp_id = new group_id();
-                return group_id::TBL_EXT_PHRASE_ID . $grp_id->count($this->grp_id());
+                return group_id::TBL_EXT_PHRASE_ID . $grp_id->count($this->grp_key_id());
             } else {
                 return $this->grp()->table_extension();
             }
         }
+    }
+
+    /**
+     * the group id that selects the table of this value or result: the database id if it is set,
+     * else the id created from the phrase list, so that the table name, its key fields and the
+     * matching change log table are always derived from the same id (see group::id_or_phrase_list_id)
+     * e.g. a result with a phrase list but without a group id is not a prime result with zero
+     * phrases, because the table of its group is selected by the phrase list
+     *
+     * @return int|string the group id used to select the table and the key fields
+     */
+    function grp_key_id(): int|string
+    {
+        return $this->grp()->id_or_phrase_list_id();
     }
 
     /**
@@ -648,7 +662,7 @@ class sandbox_value extends sandbox_multi
             return $this->grp()->is_prime();
         } else {
             $grp_id = new group_id();
-            $nbr_of_ids = $grp_id->count($this->grp_id());
+            $nbr_of_ids = $grp_id->count($this->grp_key_id());
             if ($nbr_of_ids <= result_id::PRIME_PHRASES_STD) {
                 return true;
             } else {
@@ -663,7 +677,7 @@ class sandbox_value extends sandbox_multi
             return false;
         } else {
             $grp_id = new group_id();
-            $nbr_of_ids = $grp_id->count($this->grp_id());
+            $nbr_of_ids = $grp_id->count($this->grp_key_id());
             if ($nbr_of_ids > result_id::PRIME_PHRASES_STD
                 and $nbr_of_ids <= group_id::MAIN_PHRASES_STD) {
                 return true;
@@ -1129,6 +1143,11 @@ class sandbox_value extends sandbox_multi
         $sc_par_lst->add($this->value_type());
         $id_ext = $this->table_extension();
         $qp = $this->load_sql_multi($sc, $query_name, $this::class, $sc_par_lst, '', $id_ext);
+        // the overlay row to load is the one of the user of this value, so set the user after
+        // load_sql_multi, because set_class takes the requesting user of the database connection,
+        // which would join the overlay row of another user and hide an existing user row
+        // (e.g. the exclude of a value would add a second user row, see save_fields_func)
+        $sc->set_usr($this->get_user()->id());
         return $this->load_sql_set_where($qp, $sc, $id_ext);
     }
 
@@ -1391,16 +1410,26 @@ class sandbox_value extends sandbox_multi
                 }
             }
         } else {
+            // the group is the key of a value, so use the same id as the prime branch above and as
+            // the table selection, never the object id, which can have lost the group id e.g. by a
+            // row mapper that has written the text group id to the int object id (see group::id_or_phrase_list_id)
+            $grp_key = $this->grp()->id_or_phrase_list_id();
+            // a read without a key simply finds no row, but a write would add or change a row with
+            // the key 0, which no user can ever select again, so report the missing key
+            if (($grp_key === 0 or $grp_key === '')
+                and ($sc_par_lst->is_insert() or $sc_par_lst->is_update() or $sc_par_lst->is_delete())) {
+                log_err('the group id of ' . $this->dsp_id() . ' is missing, so the row cannot be written');
+            }
             if ($this->is_big()) {
                 $lst->add_field(
                     $this->id_field_group(),
-                    $this->id(),
+                    $grp_key,
                     sql_field_type::TEXT
                 );
             } else {
                 $lst->add_field(
                     $this->id_field_group(),
-                    $this->id(),
+                    $grp_key,
                     sql_field_type::KEY_512
                 );
             }
@@ -1686,7 +1715,8 @@ class sandbox_value extends sandbox_multi
         log_debug($this->dsp_id());
         $log->set_action(change_actions::ADD, $msg);
         $log->set_field(change_fields::FLD_NUMERIC_VALUE, $msg);
-        $log->group_id = $this->grp_id();
+        // the log names the row by the same group id as the write (see grp_key_id)
+        $log->group_id = $this->grp_key_id();
         $log->old_value = null;
         $log->new_value = $this->get_value();
 

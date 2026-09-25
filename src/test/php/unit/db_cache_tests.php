@@ -113,6 +113,14 @@ class db_cache_tests
         $qp = $cac->load_sql_by_type_id($sc, db_cache_types::SYSTEM_CONFIG_ID, $t->usr1->id());
         $t->assert_qp($qp, $sc->db_type);
 
+        // sql to remove the cache entries of one user e.g. before the user is deleted
+        $sc->reset(sql_db::POSTGRES);
+        $qp = $cac->del_sql_by_user($sc, $t->usr1->id());
+        $t->assert_qp($qp, $sc->db_type);
+        $sc->reset(sql_db::MYSQL);
+        $qp = $cac->del_sql_by_user($sc, $t->usr1->id());
+        $t->assert_qp($qp, $sc->db_type);
+
         // sql to load a list of open batch db_caches
         $t_usr = new test_users($t);
         $sys_usr = $t_usr->system_user();

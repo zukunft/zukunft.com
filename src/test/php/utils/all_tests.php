@@ -236,10 +236,11 @@ class all_tests extends all_unit_write_tests
                 new all_ui_tests()->run($this, $ui);
             }
 
-            // check the fixed csv files before the database tests for consistency
+            // check the fixed csv files before the database tests for consistency, without the
+            // anonymous user that the ui tests above have created with their calls to localhost
             if ($sys->errors <= ERROR_LIMIT) {
-                // TODO Prio 0 activate
-                //$t_db->csv_recreate();
+                $this->cleanup_guest_users();
+                $t_db->csv_recreate($msg);
             }
 
             if ($sys->errors <= ERROR_LIMIT and WORKFLOW_TEST) {
@@ -251,10 +252,10 @@ class all_tests extends all_unit_write_tests
                 $this->run_db_write_tests($this);
             }
 
-            // check the fixed csv files after the write test if it still matches and the write test has undone all changes
+            // check after the write tests that they have removed all rows they have added and undone
+            // all changes, by comparing the fixed rows with the rows read before the write tests
             if ($sys->errors <= ERROR_LIMIT and WRITE_TEST) {
-                // TODO Prio 0 activate
-                //$t_db->csv_recreate();
+                $t_db->csv_leftover_check($msg);
             }
 
             // refresh the api test files that still contain database ids which are not yet fixed

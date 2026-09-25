@@ -1,6 +1,6 @@
 GET
-http://localhost/http/view.php?ue=99&key=%2A%2A%2A&m=99&z=0
-/http/view.php?ue=99&key=%2A%2A%2A&m=99&z=0
+http://localhost/http/view.php?ue=99&key=%2A%2A%2A&m=14&z=0
+/http/view.php?ue=99&key=%2A%2A%2A&m=14&z=0
 /http/view.php?user_to_edit=99&activation_key=%2A%2A%2A&mask_id=login_activate&step=no&
 {
     "user_to_edit": "99",

@@ -37,7 +37,9 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once test_paths::UTILS . 'test_api.php';
 include_once test_paths::CREATE . 'test_const.php';
+include_once paths::MODEL_GROUP . 'group.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
+include_once paths::SHARED_CONST . 'users.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once test_paths::CONST . 'word_names.php';
 
@@ -47,6 +49,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_type;
+use Zukunft\ZukunftCom\main\php\cfg\group\group;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
@@ -62,6 +65,7 @@ use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
 use Zukunft\ZukunftCom\main\php\shared\const\sources;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -138,7 +142,7 @@ class test_cleanup extends test_api
         $t_msk->cleanup($ts);
         //$t_res->cleanup($ts);
         $t_frm->cleanup($ts);
-        //$t_grp->cleanup($ts);
+        $t_grp->cleanup($ts);
         //$t_val->cleanup($ts);
         $t_ref->cleanup($ts);
         $t_src->cleanup($ts);
@@ -170,20 +174,29 @@ class test_cleanup extends test_api
 
         if ($this->test_val_ids != []) {
             foreach ($this->test_val_ids as $val_id) {
-                if ($val_id > 0) {
+                // the id of a value is the id of its group, which is a text for more than a few phrases
+                if ($val_id !== 0 and $val_id !== '') {
                     // request to delete the added test value
                     $val = new value($this->usr1);
                     $val->load_by_id($val_id, $msg);
                     // check again, because some id may be added twice
                     if ($val->is_id_set()) {
-                        $val->del($msg, false);
+                        $this->del_value($val, $msg);
                         $result .= $msg->get_last_message();
                         $target = '';
                         $this->assert('value->del test value for "' . word_names::TEST_RENAMED . '"', $result, $target, self::TIMEOUT_LIMIT_DB_MULTI);
+                    } else {
+                        // a test that has removed its value itself may have left the group row behind
+                        $this->del_group_row($val_id, $msg);
                     }
                 }
             }
         }
+
+        // remove the fixed test groups that create_test_groups has added for the write tests like
+        // the test words below, because the next read or write tests add them again if needed
+        $t_grp = new test_groups($this);
+        $t_grp->cleanup($ts);
 
         // secure cleanup the test views
         // TODO: if a user has changed the view during the test, delete also the user views
@@ -463,6 +476,8 @@ class test_cleanup extends test_api
         echo_timestamped($db_con->seq_reset(component_link::class, $msg));
         echo_timestamped($db_con->seq_reset(source::class, $msg));
 
+        $this->cleanup_guest_users();
+
         // the deletes above write change log entries naming the test rows themselves,
         // so remove them by the reserved test name pattern as the last cleanup step
         $this->cleanup_change_log_deleted();
@@ -473,6 +488,59 @@ class test_cleanup extends test_api
             return false;
         }
 
+    }
+
+    /**
+     * remove the anonymous users that the test calls to localhost have created, because such a
+     * user is a leftover of the calling test (ui, workflow or write) and not a fixed row
+     *
+     * @return void
+     */
+    function cleanup_guest_users(): void
+    {
+        foreach (users::TEST_GUEST_NAMES as $usr_name) {
+            $this->write_named_cleanup_user($usr_name, $this->usr_system);
+        }
+    }
+
+    /**
+     * remove a test value together with the group row that its creation has added, because
+     * the value delete keeps the group row, which would otherwise stay as a leftover of the test
+     *
+     * @param value $val the test value to remove
+     * @param user_message $msg to collect the messages of the delete
+     * @return bool true if the value and its group row are removed
+     */
+    function del_value(value $val, user_message $msg): bool
+    {
+        $grp_id = $val->grp()->id();
+        $val->del($msg, false);
+        $this->del_group_row($grp_id, $msg);
+        return $msg->is_ok();
+    }
+
+    /**
+     * remove the group row of a test value if one exists, e.g. because a test has named the group
+     * or saved a description; a group works via its id alone, so the row is only needed for the
+     * name or the description (see group::load_by_id) and is checked after the value delete
+     *
+     * @param int|string $grp_id the id of the group of the test value
+     * @param user_message $msg to collect the messages of the delete
+     * @return void
+     */
+    private function del_group_row(int|string $grp_id, user_message $msg): void
+    {
+        global $db_con;
+
+        $grp = new group($this->usr1);
+        $grp->load_by_id($grp_id, $msg);
+        if ($grp->is_saved()) {
+            $grp->del($msg);
+            // the reload reports if the logged delete of the group has not removed the row
+            $grp->reset();
+            $grp->load_by_id($grp_id, $msg);
+            $this->assert_false('the group row of the test value ' . $grp_id . ' is removed', $grp->is_saved());
+        }
     }
 
     /*

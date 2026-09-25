@@ -12,5 +12,10 @@ PREPARE change_value_by_res_prime_last FROM
                l.user_name,
                l2.table_id
           FROM change_values_prime s
-     LEFT JOIN users l ON s.user_id = l.user_id LEFT JOIN change_fields l2 ON s.change_field_id = l2.change_field_id
-         WHERE s.group_id = ? ORDER BY s.change_time DESC LIMIT ? OFFSET ?';
+     LEFT JOIN users l          ON s.user_id         = l.user_id
+     LEFT JOIN change_fields l2 ON s.change_field_id = l2.change_field_id
+         WHERE s.group_id = ?
+      ORDER BY s.change_time DESC,
+               s.change_id   DESC
+         LIMIT ?
+        OFFSET ?';

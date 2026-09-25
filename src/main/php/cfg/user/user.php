@@ -90,6 +90,7 @@ include_once paths::EXPORT . 'export_type_list.php';
 //include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_HELPER . 'type_object.php';
 include_once paths::MODEL_HELPER . 'object_mapper.php';
+include_once paths::MODEL_HELPER . 'db_cache.php';
 //include_once paths::MODEL_IMPORT . 'import_file.php';
 include_once paths::MODEL_SYSTEM . 'ip_range_list.php';
 include_once paths::SHARED_TYPES . 'system_time_type.php';
@@ -140,6 +141,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_id_object_non_sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
 use Zukunft\ZukunftCom\main\php\cfg\helper\object_mapper;
@@ -4169,6 +4171,10 @@ class user extends db_id_object_non_sandbox
                             'Delete failed, because it seems that the ' . $class_name . ' ' . $this->dsp_id()
                             . ' has been deleted in the meantime.', (new Exception)->getTraceAsString());
                     } else {
+                        // the cache entries of the user reference the user row, so they are
+                        // removed first (see db_cache::del_by_user)
+                        $cac = new db_cache($this);
+                        $cac->del_by_user($this->id, $msg);
                         // TODO check if there are related log entries and if yes exclude it instead of delete
                         parent::del_exe($msg);
                     }

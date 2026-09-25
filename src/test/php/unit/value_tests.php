@@ -36,6 +36,8 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::DB . 'sql.php';
 include_once paths::DB . 'sql_type_list.php';
+include_once paths::MODEL_GROUP . 'group_id.php';
+include_once paths::MODEL_SANDBOX . 'sandbox.php';
 include_once paths::MODEL_VALUE . 'value_time_series.php';
 include_once paths::MODEL_VALUE . 'value_obj.php';
 include_once paths::SHARED_CONST . 'sources.php';
@@ -49,6 +51,8 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\group\group_id;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
@@ -243,6 +247,111 @@ class value_tests
         $val_bad->row_mapper_sandbox_multi($db_row, $msg, '');
         $t->assert_true($test_name, $val_bad->id() == 0 or $val_bad->id() == '');
 
+        // the single steps of the delete of a value: the delete either removes the row or, if another
+        // user has used the value, excludes it with a user row, so each step of this decision is
+        // checked here, because a wrong step writes a row that no user can select again
+        // (see sandbox_multi::del and save_fields_func)
+        $t->subheader($ts . 'delete steps');
+
+        // step 1: the delete is skipped if the value has no key, so the key check must never
+        // compare a text id with a number, because php reports '....06+' <= 0 as true
+        $test_name = 'the id of a value with the text group id of 16 phrases is set, '
+            . 'so that its delete is not skipped';
+        $t->assert_true($test_name, $t_val->value_16()->is_id_set());
+        $test_name = '... and a value without a group has no id set';
+        $t->assert_false($test_name, new value($t->usr1)->is_id_set());
+
+        // step 2: the reload of the value and of the database record before the change reads the
+        // user overlay row (see the by id query above in the sql read section)
+
+        // step 3: the owner can change or remove the standard row, another user only his overlay row
+        $test_name = 'the owner of a value can change the value for all users';
+        $val = $t_val->value_16();
+        $val->set_owner_id($t->usr1->id());
+        $t->assert_true($test_name, $val->can_change());
+        $test_name = '... but another user can only change his own overlay row';
+        $val->set_owner_id($t->usr2->id());
+        $t->assert_false($test_name, $val->can_change());
+
+        // step 4: if the value is used by another user it is excluded with a user row instead of
+        // being removed, so the exclude must be detected as a change of the value
+        $test_name = 'an excluded value differs from the database record, '
+            . 'so that the exclude is not skipped';
+        $val_db = $t_val->value_16();
+        $val_ex = $t_val->value_16();
+        $val_ex->exclude();
+        $t->assert_false($test_name, $val_ex->no_diff($val_db, $msg));
+        $test_name = '... and the excluded flag is written to the user row of the value, '
+            . 'because otherwise the value would still be used after the delete';
+        $fvt_lst = $val_ex->db_fields_changed($val_db, $msg, new sql_type_list([sql_type::USER]));
+        $t->assert_true($test_name, $fvt_lst->has_name(fields::FLD_EXCLUDED));
+        $test_name = '... and the insert of the user row contains the excluded field';
+        $qp_ex = $val_ex->sql_insert($sc, $msg, new sql_type_list([sql_type::USER, sql_type::LOG]));
+        $t->assert_text_contains($test_name, $qp_ex?->sql ?? '', fields::FLD_EXCLUDED);
+        $msg->reset();
+
+        // step 5: the user row of the exclude is added only if the user has no overlay row yet
+        $test_name = 'a value row with a user row reports a user overwrite, so that the exclude '
+            . 'updates the existing user row instead of adding a second one';
+        $val = new value($t->usr1);
+        $db_row = [
+            group_fields::FLD_ID => '',
+            $id_flds[0] => word_names::MATH_ID,
+            $id_flds[1] => shared_words::CHF_ID,
+            $id_flds[2] => null,
+            $id_flds[3] => null,
+            user_db::FLD_ID => 0,
+            value::FLD_VALUE => values::EARNINGS_PER_SHARE,
+            source_fields::FLD_ID => null,
+            fields::FLD_LAST_UPDATE => null,
+            sandbox::FLD_CHANGE_USER => $t->usr1->id(),
+        ];
+        $val->row_mapper_sandbox_multi($db_row, $msg, '');
+        $t->assert_true($test_name, $val->has_usr_cfg());
+        $test_name = '... and without a user row no user overwrite is reported';
+        $val = new value($t->usr1);
+        $db_row[sandbox::FLD_CHANGE_USER] = null;
+        $val->row_mapper_sandbox_multi($db_row, $msg, '');
+        $t->assert_false($test_name, $val->has_usr_cfg());
+
+        // step 6: each reload of the delete must keep the key of the value, but the group id of a
+        // main or big row is a text, which a cast to int would turn into 0
+        $test_name = 'the text group id of a row is kept even if the table type says prime';
+        $val = new value($t->usr1);
+        $db_row_main = [
+            group_fields::FLD_ID => groups::CH_2019_MIO,
+            user_db::FLD_ID => 0,
+            value::FLD_VALUE => values::CH_INHABITANTS_2019_IN_MIO,
+        ];
+        $val->row_mapper_multi($db_row_main, $msg, group_id::TBL_EXT_PHRASE_ID . '1',
+            group_fields::FLD_ID);
+        $t->assert($test_name, $val->id(), groups::CH_2019_MIO);
+        $test_name = '... and a row with the group id zero is not mapped, because such a row '
+            . 'can never be selected, changed or deleted again';
+        $val = new value($t->usr1);
+        $db_row_main[group_fields::FLD_ID] = 0;
+        $t->assert_false($test_name,
+            $val->row_mapper_multi($db_row_main, $msg, '', group_fields::FLD_ID));
+
+        // step 7: the group is the key of a value, so the write of the exclude always uses the group
+        // id, even if the object id has been lost e.g. by a row mapper of another table type
+        $test_name = 'the key field of a main value write is the group id';
+        $val = $t_val->value_16();
+        $grp_key = $val->grp()->id();
+        $fvt_lst = $val->id_fvt_lst(new sql_type_list([sql_type::INSERT]));
+        $t->assert($test_name, $fvt_lst->get_value(group_fields::FLD_ID), $grp_key);
+        $test_name = '... also if the object id of the value has been lost';
+        $val->id = 0;
+        $fvt_lst = $val->id_fvt_lst(new sql_type_list([sql_type::INSERT]));
+        $t->assert($test_name, $fvt_lst->get_value(group_fields::FLD_ID), $grp_key);
+        // a prime value is not selected by the group id but by the phrase ids of the group
+        $test_name = '... and the key fields of a prime value write are the phrases of the group';
+        $val_prime = $t_val->value_ch();
+        $val_prime->id = 0;
+        $fvt_lst = $val_prime->id_fvt_lst(new sql_type_list([sql_type::INSERT]));
+        $t->assert($test_name, $fvt_lst->get_value($val_prime->id_fields_prime()[0]),
+            $val_prime->grp()->id_lst()[0]);
+
         $t->subheader($ts . 'scaling');
         $test_name = 'scale the Swiss inhabitants from millions to one';
         $msg = new user_message();
@@ -311,11 +420,31 @@ class value_tests
         $val = $t_val->value($msg);
         $val_16 = $t_val->value_16();
         $val_txt = $t_val->text_value();
+        // the load by group is checked for each value table and value type, because the table name
+        // and its key fields must always match e.g. the main table has no phrase_id_1 field
         $this->assert_sql_by_grp($t, $db_con, $val, $t_grp->group_prime_3());
         $this->assert_sql_by_grp($t, $db_con, $val, $t_grp->group_16());
         $this->assert_sql_by_grp($t, $db_con, $val, $t_grp->group_17_plus());
         $this->assert_sql_by_grp($t, $db_con, $val_txt, $t_grp->group_pod_url());
+        $this->assert_sql_by_grp($t, $db_con, $t_val->time_value(), $t_grp->group_pod_launch());
+        $this->assert_sql_by_grp($t, $db_con, $t_val->geo_value(), $t_grp->group_pod_point());
+        // a value of an import or a calculation has only the phrase list of its group, so the table
+        // and its key fields must follow the phrase list and must not report the value as prime
+        // with zero phrases (see group::id_or_phrase_list_id)
+        $test_name = 'the query to load a value by a group without an id '
+            . 'is the same as by the group with the id';
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp_no_id = $val->load_sql_by_grp($db_con->sql_creator(), $t_grp->group_incomplete());
+        $qp_id = $val->load_sql_by_grp($db_con->sql_creator(), $t_grp->group());
+        $t->assert($test_name, $qp_no_id->sql, $qp_id->sql);
         $t->assert_sql_by_id($sc, $val_16);
+        // the user overlay row of a value must be read for the user of the value and not for the
+        // requesting user of the database connection, because otherwise an existing user row is
+        // hidden and e.g. the exclude of the value would add a second user row
+        $test_name = 'the load of a value by id reads the overlay row of the user of the value';
+        $val_usr2 = new value($t->usr2);
+        $qp = $val_usr2->load_sql_by_id($sc, groups::CH_2019_MIO);
+        $t->assert_true($test_name, in_array($t->usr2->id(), $qp->par));
 
         $t->subheader($ts . 'sql read default and user changes');
         $val = $t_val->value($msg);

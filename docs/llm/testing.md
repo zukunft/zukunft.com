@@ -117,6 +117,21 @@ cleanup `del()` calls themselves have written about the test rows.
   pointing to the deleted test words — or removes the entries with a manual
   `DELETE`.
 
+## A cleanup deletes through `del()` — never with a plain delete
+
+Top rule 4 of `docs/llm/coding.md` applies to test code without exception: a
+cleanup removes a test row with the object's logged `del()` and afterwards
+removes the change log entries of that row with the `cleanup_change_log*`
+helpers above. When a logged delete does not remove the row, the cleanup does
+not fall back to a plain sql delete — it asserts that the row is gone, so the
+run names the broken logged delete, and that delete is repaired. A plain delete
+in a test cleanup hides a defect of the product and destroys the audit trail
+that the leftover check needs to explain a row.
+
+- **Right**: `$grp->del($msg)`, reload, `assert_false(..., $grp->is_saved())`.
+- **Wrong**: `$db_con->delete($grp->sql_delete($sc, $msg), ...)` "because the
+  logged delete does not work".
+
 ## An LLM never runs the `/test/*` scripts — the developer does
 
 The predefined test scripts in `/test/*` — `test.php`, `test_unit.php`,

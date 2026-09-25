@@ -727,7 +727,12 @@ class type_list extends ListOfIdNamedCodeObjects
             // change log field specific
             $table_col = 0;
             if (($handle = fopen($csv_path, "r")) !== FALSE) {
-                while (($data = fgetcsv($handle, 0, ",", "'")) !== FALSE) {
+                while (($line = fgets($handle)) !== FALSE) {
+                    // a line without any char does not contain a type
+                    if (trim($line) == '') {
+                        continue;
+                    }
+                    $data = $lib->csv_line_to_array($line);
                     if ($row == 1) {
                         $col_names = $lib->array_trim($data);
                         // TODO Prio 2 try to avoid these exception and use e.g. name_field() function

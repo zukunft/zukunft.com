@@ -114,8 +114,14 @@ class db_object_multi extends db_object_key
         if ($db_row !== false and $db_row !== null and $db_row !== []) {
             if ($one_id_fld) {
                 if (array_key_exists($id_fld, $db_row)) {
-                    if ($db_row[$id_fld] != 0 or $db_row[$id_fld] != '') {
-                        if (substr($ext, 0, 2) == group_id::TBL_EXT_PHRASE_ID) {
+                    // a row without a usable id is not a mapped row, because an object with the id 0
+                    // can never be selected, changed or deleted again (and 'or' was always true)
+                    if ($db_row[$id_fld] != 0 and $db_row[$id_fld] != '') {
+                        // the id of a prime row is an int, but only a numeric id can be cast, because
+                        // the text group id of a main or big row would become 0 and the object would
+                        // lose its key (see group::id_or_phrase_list_id)
+                        if (substr($ext, 0, 2) == group_id::TBL_EXT_PHRASE_ID
+                            and is_numeric($db_row[$id_fld])) {
                             $this->id = (int)$db_row[$id_fld];
                         } else {
                             $this->id = $db_row[$id_fld];
@@ -237,6 +243,28 @@ class db_object_multi extends db_object_key
     function id(): string|int
     {
         return $this->id;
+    }
+
+    /**
+     * set the unique database id of a multi table object
+     * overwritten e.g. by the value to set the id of its group as well
+     *
+     * @param int|string $id the database id of the object
+     */
+    function set_id(int|string $id): void
+    {
+        $this->id = $id;
+    }
+
+    /**
+     * @return bool true if the database id is set
+     *              the id of a main or big table row is a text such as '....06+....0S+' that must
+     *              never be compared with a number, because php compares a non-numeric text with
+     *              0 as text and reports e.g. '....06+' <= 0 as true (see the group id format)
+     */
+    function is_id_set(): bool
+    {
+        return $this->id() != 0 and $this->id() != '';
     }
 
 
@@ -381,6 +409,10 @@ class db_object_multi extends db_object_key
         global $db_con;
 
         log_debug($id);
+        // the requested id is applied to the object by the query creation of the child class
+        // (e.g. sandbox_value::load_sql_by_id sets the group id), because the table and the key
+        // fields of a multi table object are selected by the object vars and the row mapper needs
+        // the same id to know the key fields of the row, so never reset the id here
         $qp = $this->load_sql_by_id($db_con->sql_creator(), $id);
         return $this->load($qp, $msg);
     }

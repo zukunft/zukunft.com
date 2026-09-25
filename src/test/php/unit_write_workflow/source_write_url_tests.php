@@ -84,6 +84,11 @@ class source_write_url_tests extends source_url_tests
     private function cleanup_test_sources(test_cleanup $t): void
     {
         $src = new source($t->usr1);
+        // remove the change log entries of the test sources before the rows themselves, because a
+        // change log entry must never point to a deleted test row (see docs/llm/testing.md) and
+        // because the change log is shown on the source page: without this the entries of a
+        // previous run stay in the database and the workflow page snapshots change with every run
+        $t->cleanup_change_log($src, sources::TEST_SOURCES);
         foreach (sources::TEST_SOURCES as $src_name) {
             // write_named_cleanup removes the usr1 / usr2 sandbox rows
             $t->write_named_cleanup($src, $src_name);

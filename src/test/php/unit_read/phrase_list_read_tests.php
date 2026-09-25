@@ -34,14 +34,22 @@ namespace Zukunft\ZukunftCom\test\php\unit_read;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_CONST . 'def.php';
+include_once paths::SHARED . 'library.php';
 include_once paths::SHARED_CONST . 'formulas.php';
 include_once paths::SHARED_ENUM . 'foaf_direction.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'words.php';
+include_once test_paths::CONST . 'files.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple_list;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\test\php\const\files as test_files;
+use Zukunft\ZukunftCom\test\php\create\test_verbs;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phr_ids;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
@@ -101,6 +109,73 @@ class phrase_list_read_tests
         $switzerland->load_by_name(words::CH, $msg);
         $lst->load_like('S', $msg);
         $t->assert_contains($test_name, $lst->names(), words::CH);
+        // the phrase select of e.g. the value add form sends the typed chars to the phrase list
+        // api, which reads the matching words and triples with load_like (see ui_select::phrase_matches
+        // and api/phraseList), so the list of a typed start is compared with a fixed list of the
+        // phrases of the seed that start with it, in the order of the names
+        $test_name = 'the phrases starting with "' . word_names::MATH_PATTERN
+            . '" are the constant triple and the word';
+        $lst = new phrase_list($t->usr1);
+        $lst->load_like(word_names::MATH_PATTERN, $msg);
+        $t->assert($test_name, $lst->names(), [triple_names::MATH_CONST, word_names::MATH]);
+
+        // before anything is typed the phrase select offers the base phrases, which the frontend
+        // knows by name and id without a backend call (see phrase_list_ui::load_fallback), so the
+        // same phrases are read from the database and compared with the frontend constants and
+        // saved as a fixed list, to detect a seed change that would let the select offer a wrong phrase
+        $test_name = 'the base phrases offered by the phrase select match the frontend constants';
+        $base_ids = [];
+        $expected_names = [];
+        foreach (words::BASE_WORDS as $wrd_array) {
+            $base_ids[] = $wrd_array[1];
+            $expected_names[$wrd_array[1]] = $wrd_array[0];
+        }
+        foreach (triples::BASE_TRIPLES as $trp_array) {
+            $base_ids[] = $trp_array[1] * -1;
+            $expected_names[$trp_array[1] * -1] = $trp_array[0];
+        }
+        $lst = new phrase_list($t->usr1);
+        $lst->load_names_by_ids(new phr_ids($base_ids), $msg);
+        ksort($expected_names);
+        $actual_names = $this->names_by_id($lst);
+        $t->assert($test_name, $actual_names, $expected_names);
+        $this->assert_names_file($t, '... and are the saved fixed list', $actual_names, 'list_datalist.csv');
+
+        // the phrase selects and pages that list the problems and solutions of the start page
+        // have lost e.g. "global warming (global problem)", so the reads behind these pages are
+        // repeated here and each list is saved, to see if the rows are read from the database
+        $t->subheader($ts . 'global problems');
+        // read by id (each page names a phrase by its id)
+        $test_name = 'the problem and the solution triple of the start page are read by their ids';
+        $lst = new phrase_list($t->usr1);
+        $lst->load_names_by_ids(new phr_ids([
+            triple_names::GLOBAL_WARMING_PROBLEM_ID * -1,
+            triple_names::REDUCE_EMISSIONS_SOLUTION_ID * -1]), $msg);
+        $t->assert($test_name, $this->names_by_id($lst), [
+            triple_names::REDUCE_EMISSIONS_SOLUTION_ID * -1 => triple_names::REDUCE_EMISSIONS_SOLUTION,
+            triple_names::GLOBAL_WARMING_PROBLEM_ID * -1 => triple_names::GLOBAL_WARMING_PROBLEM]);
+        // read as the children of the page phrase (see ui_list::start_page_phrase, which asks the
+        // phrase list api for the phrases linked to "global problem" downwards)
+        $test_name = 'the phrases linked to "global problem" contain the global warming problem';
+        $phr = new phrase($t->usr1);
+        $phr->load_by_name(triple_names::GLOBAL_PROBLEM, $msg);
+        $lst = new phrase_list($t->usr1);
+        $lst->load_by_phr($phr, $msg, null, foaf_direction::DOWN);
+        $t->assert_contains($test_name, $lst->names(), triple_names::GLOBAL_WARMING_PROBLEM);
+        $this->assert_names_file($t, '... and are the saved fixed list',
+            $this->names_by_id($lst), 'list_global_problem_children.csv');
+        // read by the verb (the verb page lists the triples that use the verb)
+        $test_name = 'the triples with the verb "is a" contain the global warming problem';
+        $t_vrb = new test_verbs($t);
+        $trp_lst = new triple_list($t->usr1);
+        $trp_lst->load_by_verb($t_vrb->verb_is(), $msg, false, sql_db::ROW_MAX);
+        $t->assert_contains($test_name, $trp_lst->names(), triple_names::GLOBAL_WARMING_PROBLEM);
+        $names_by_id = [];
+        foreach ($trp_lst->lst() as $trp) {
+            $names_by_id[$trp->id() * -1] = $trp->name();
+        }
+        ksort($names_by_id);
+        $this->assert_names_file($t, '... and are the saved fixed list', $names_by_id, 'list_is_a.csv');
 
 
         $t->subheader($ts . 'get related');
@@ -195,6 +270,51 @@ class phrase_list_read_tests
         $test_name = 'a phrase that is no category has no members but itself';
         $t->assert($test_name, $lst_sym->category_members($msg)->count(), 1);
 
+    }
+
+    /**
+     * @param phrase_list $lst the loaded phrases
+     * @return array the phrase names by the phrase id, sorted by the id, so that a compare does not
+     *               depend on the order of the load
+     */
+    private function names_by_id(phrase_list $lst): array
+    {
+        $result = [];
+        foreach ($lst->lst() as $phr) {
+            $result[$phr->id()] = $phr->name();
+        }
+        ksort($result);
+        return $result;
+    }
+
+    /**
+     * compare a list of phrase names by id with the saved expected list in the phrase resources
+     * a list that is checked for the first time has no expected file yet, which is created if the
+     * auto update of the test files is on and reported like a missing csv of the fixed rows
+     *
+     * @param test_cleanup $t the test object that includes the test results collected until now
+     * @param string $test_name the name of the test shown in the result
+     * @param array $names_by_id the phrase names by the phrase id
+     * @param string $file_name the name of the expected csv file in the phrase resource folder
+     * @return void
+     */
+    private function assert_names_file(test_cleanup $t, string $test_name, array $names_by_id, string $file_name): void
+    {
+        $lib = new library();
+        $csv_lines = [$lib->csv_line(['phrase_id', 'phrase_name'])];
+        foreach ($names_by_id as $id => $name) {
+            $csv_lines[] = $lib->csv_line([$id, $name]);
+        }
+        $csv_text = implode("\n", $csv_lines) . "\n";
+        $csv_file_path = test_paths::UNIT_RES . 'phrase' . DIRECTORY_SEPARATOR . $file_name;
+        if (file_exists($csv_file_path)) {
+            $t->assert_file($test_name, $csv_text, $csv_file_path);
+        } else {
+            $t->assert_true($test_name . ' and the expected file exists', false);
+            if (test_files::AUTO_UPDATE_TEST_FILES) {
+                $t->update_path_file($csv_file_path, $csv_text);
+            }
+        }
     }
 
 }

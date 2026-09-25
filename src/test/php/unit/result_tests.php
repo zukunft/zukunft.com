@@ -41,12 +41,16 @@ use Zukunft\ZukunftCom\main\php\cfg\group\group;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_list;
 use Zukunft\ZukunftCom\main\php\cfg\group\result_id;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\cfg\result\result;
+use Zukunft\ZukunftCom\main\php\cfg\result\result_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\result_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\results;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
@@ -63,7 +67,11 @@ use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use DateTime;
 
+include_once paths::MODEL_FORMULA . 'formula_list.php';
 include_once paths::MODEL_GROUP . 'result_id.php';
+include_once paths::MODEL_RESULT . 'result_list.php';
+include_once paths::MODEL_VALUE . 'value_list.php';
+include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_CONST_FIELDS . 'result_fields.php';
 include_once paths::SHARED_ENUM . 'messages.php';
@@ -106,8 +114,24 @@ class result_tests
         $t->assert_sql_by_id($sc, $res);
         $t->assert_sql_by_id($sc, $res_main);
         $t->assert_sql_by_id($sc, $res_big);
+        // the load by group is checked for each result table, because the table name and its key
+        // fields must always match e.g. the main table has no phrase_id_1 field
         $this->assert_sql_by_group($t, $db_con, $res_prime);
         $this->assert_sql_by_group($t, $db_con, $res);
+        $this->assert_sql_by_group($t, $db_con, $res_main);
+        $this->assert_sql_by_group($t, $db_con, $res_big);
+        // a result of a calculation or an export has only the phrase list of its group, so the
+        // table and its key fields must follow the phrase list and must not report the result as
+        // prime with zero phrases (see sandbox_value::grp_key_id)
+        $test_name = 'the query to load a result by a group without an id '
+            . 'is the same as by the group with the id';
+        $db_con->db_type = sql_db::POSTGRES;
+        // the same phrases on both sides, but once without the group id
+        $grp_no_id = $t_grp->group_16();
+        $grp_no_id->set_id('');
+        $qp_no_id = $t_res->result()->load_sql_by_grp($db_con->sql_creator(), $grp_no_id);
+        $qp_id = $t_res->result()->load_sql_by_grp($db_con->sql_creator(), $t_grp->group_16());
+        $t->assert($test_name, $qp_no_id->sql, $qp_id->sql);
         $this->assert_sql_by_formula_and_group($t, $db_con, $res);
         $this->assert_sql_by_formula_and_group_list($t, $db_con, $res);
         $this->assert_sql_load_std_by_group_id($t, $db_con, $res);
@@ -180,6 +204,51 @@ class result_tests
         $t->assert_true($test_name, $t_res->result_prime()->src_grp_is_storable());
         $test_name = '... and a source group of 16 phrases cannot';
         $t->assert_false($test_name, $t_res->result_src_grp_big()->src_grp_is_storable());
+
+        // the result page shows the values, formulas and results used for the calculation; the
+        // saved source phrases name these numbers exactly, so a number must carry all of them
+        $test_name = 'the used numbers are selected by the source phrases of the calculation';
+        $res_src = $t_res->result_main_max();
+        [$phr_lst, $any_phrase] = $res_src->used_phrase_selection($msg);
+        $t->assert($test_name, $phr_lst->name(), $res_src->source_group()->phrase_list()->name());
+        $test_name = '... and only a number with all of them is used';
+        $t->assert_false($test_name, $any_phrase);
+        $msg->reset();
+
+        // negative: a result saved without the source group (see drop_unsupported_src_grp) falls
+        // back to its own phrases, where any match makes a number related, so that the page of
+        // such a result is not empty
+        $test_name = 'without a source group the used numbers are selected by the result phrases';
+        $res_no_src = $t_res->result_simple();
+        [$phr_lst_fb, $any_fallback] = $res_no_src->used_phrase_selection($msg);
+        $t->assert($test_name, $phr_lst_fb->name(), $res_no_src->grp()->phrase_list()->name());
+        $test_name = '... where a number with any of them is related';
+        $t->assert_true($test_name, $any_fallback);
+        $msg->reset();
+
+        // a calculation that has used nothing sends the empty lists, because only an empty list
+        // tells the page that nothing has been used, whereas a missing list says that the result
+        // has not been asked for it (see ui_list::values_used)
+        $test_name = 'a result that has used nothing sends an empty list of used values';
+        $res_none = $t_res->result_main_max();
+        $res_none->values_used = new value_list($t->usr1);
+        $res_none->formulas_used = new formula_list($t->usr1);
+        $res_none->results_used = new result_list($t->usr1);
+        $none_json = json_decode($res_none->api_json(
+            [api_types::TEST_MODE, api_types::INCL_RELATED], $msg), true);
+        $t->assert_true($test_name, array_key_exists(json_fields::VALUES, $none_json));
+        $test_name = '... and of used formulas and results';
+        $t->assert_true($test_name, array_key_exists(json_fields::FORMULAS, $none_json)
+            and array_key_exists(json_fields::RESULTS, $none_json));
+        $msg->reset();
+
+        // negative: a result that has not been asked for the used numbers sends no list at all,
+        // so that the page shows no column instead of a wrong "nothing used"
+        $test_name = 'a result without the used lists sends no used values';
+        $plain_json = json_decode($t_res->result_main_max()->api_json(
+            [api_types::TEST_MODE, api_types::INCL_RELATED], $msg), true);
+        $t->assert_false($test_name, array_key_exists(json_fields::VALUES, $plain_json));
+        $msg->reset();
 
         // a row of a result table carries either the text group key or the phrase id columns
         // of a prime or main table, and a union of both kinds shows an empty key for the latter,

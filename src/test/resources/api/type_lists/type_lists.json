@@ -7840,40 +7840,196 @@
         ],
         "source_types": [
             {
+                "name": "JSON",
+                "code_id": "json",
+                "description": "JavaScript Object Notation is a lightweight, human-readable text format for exchanging structured data as key-value pairs and arrays",
+                "id": 1
+            },
+            {
+                "name": "YAML",
+                "code_id": "yaml",
+                "description": "YAML Ain't Markup Language is a human-readable data serialization format based on indentation, often used for configuration files",
+                "id": 2
+            },
+            {
+                "name": "PDF",
+                "code_id": "pdf",
+                "description": "Portable Document Format is an ISO standard for fixed-layout documents; data usually has to be extracted from text or tables for import",
+                "id": 3
+            },
+            {
+                "name": "MD",
+                "code_id": "md",
+                "description": "Markdown is a lightweight markup language with plain-text formatting syntax that stays readable as-is; headings, lists and tables can be parsed for import",
+                "id": 4
+            },
+            {
+                "name": "TXT",
+                "code_id": "txt",
+                "description": "Plain text is unstructured or loosely structured text without markup; values have to be identified by parsing or manual review",
+                "id": 5
+            },
+            {
+                "name": "TOML",
+                "code_id": "toml",
+                "description": "Tom's Obvious Minimal Language is a minimal configuration file format with explicit typing that maps unambiguously to a hash table",
+                "id": 6
+            },
+            {
                 "name": "XML",
                 "code_id": "xml",
-                "description": "",
-                "id": 1
+                "description": "eXtensible Markup Language is a W3C standard text format for storing and exchanging hierarchically structured data using self-describing tags",
+                "id": 7
             },
             {
                 "name": "XBRL",
                 "code_id": "xbrl",
                 "description": "eXtensible Business Reporting Language is a freely available global framework for exchanging business information",
-                "id": 2
+                "id": 8
             },
             {
                 "name": "CSV",
                 "code_id": "csv",
-                "description": "",
-                "id": 3
+                "description": "Comma-Separated Values is a simple plain-text format for tabular data where each line is a row and values are separated by a delimiter",
+                "id": 9
             },
             {
-                "name": "PDF",
-                "code_id": "pdf",
-                "description": "",
-                "id": 4
+                "name": "TSV",
+                "code_id": "tsv",
+                "description": "Tab-Separated Values is a plain-text format for tabular data like CSV, but uses tab characters as delimiters, which avoids most quoting problems",
+                "id": 10
+            },
+            {
+                "name": "XLSX",
+                "code_id": "xlsx",
+                "description": "Office Open XML Spreadsheet is the ISO\/IEC 29500 standard spreadsheet format used by Microsoft Excel, stored as zipped XML files",
+                "id": 11
+            },
+            {
+                "name": "ODS",
+                "code_id": "ods",
+                "description": "OpenDocument Spreadsheet is the ISO\/IEC 26300 open standard spreadsheet format used by LibreOffice Calc and other office suites",
+                "id": 12
             },
             {
                 "name": "API",
                 "code_id": "api",
-                "description": "",
-                "id": 5
+                "description": "An Application Programming Interface is a machine-readable web service endpoint that delivers data on request, often as JSON or XML",
+                "id": 13
             },
             {
-                "name": "JSON",
-                "code_id": "json",
-                "description": "",
-                "id": 6
+                "name": "OData",
+                "code_id": "odata",
+                "description": "Open Data Protocol is an OASIS standard for REST APIs that allows querying and filtering of data through standardized URL conventions",
+                "id": 14
+            },
+            {
+                "name": "JSON-LD",
+                "code_id": "json-ld",
+                "description": "JSON for Linked Data is a W3C standard for encoding linked data in JSON, so that RDF triples can be exchanged in a web-developer-friendly format",
+                "id": 15
+            },
+            {
+                "name": "RDF",
+                "code_id": "rdf",
+                "description": "Resource Description Framework is a W3C standard for describing linked data as subject-predicate-object triples, serialized for example as Turtle or RDF\/XML",
+                "id": 16
+            },
+            {
+                "name": "SPARQL",
+                "code_id": "sparql",
+                "description": "SPARQL Protocol and RDF Query Language endpoint is a W3C standard query service for retrieving linked data from triple stores such as Wikidata",
+                "id": 17
+            },
+            {
+                "name": "SDMX",
+                "code_id": "sdmx",
+                "description": "Statistical Data and Metadata eXchange is an ISO standard used by statistical offices and central banks to exchange time series and their metadata",
+                "id": 18
+            },
+            {
+                "name": "JSON-stat",
+                "code_id": "json-stat",
+                "description": "JSON-stat is a lightweight JSON format for multidimensional statistical tables, used by several national statistical offices",
+                "id": 19
+            },
+            {
+                "name": "GeoJSON",
+                "code_id": "geojson",
+                "description": "GeoJSON is a JSON-based format (RFC 7946) for encoding geographic features such as points, lines and polygons with their properties",
+                "id": 20
+            },
+            {
+                "name": "Parquet",
+                "code_id": "parquet",
+                "description": "Apache Parquet is an open columnar binary storage format optimized for efficient compression and fast analytical queries on large datasets",
+                "id": 21
+            },
+            {
+                "name": "Avro",
+                "code_id": "avro",
+                "description": "Apache Avro is a row-based binary serialization format with an embedded JSON schema, often used for data streams and schema evolution",
+                "id": 22
+            },
+            {
+                "name": "NetCDF",
+                "code_id": "netcdf",
+                "description": "Network Common Data Form is a self-describing binary format for multidimensional array data, widely used in climate and earth sciences",
+                "id": 23
+            },
+            {
+                "name": "HDF5",
+                "code_id": "hdf5",
+                "description": "Hierarchical Data Format version 5 is a binary format for storing large, complex scientific datasets in a file-system-like hierarchy",
+                "id": 24
+            },
+            {
+                "name": "SQL",
+                "code_id": "sql",
+                "description": "Structured Query Language dump is a text file of SQL statements that recreates database tables and their content when executed",
+                "id": 25
+            },
+            {
+                "name": "HTML",
+                "code_id": "html",
+                "description": "HyperText Markup Language is the standard markup language of web pages; data is usually extracted from tables or structured elements by scraping",
+                "id": 26
+            },
+            {
+                "name": "SQLite",
+                "code_id": "sqlite",
+                "description": "SQLite is a self-contained serverless relational database engine that stores an entire database, including tables and indexes, in a single file",
+                "id": 27
+            },
+            {
+                "name": "WARC",
+                "code_id": "warc",
+                "description": "Web ARChive is a standardized file format for storing web content together with metadata from web crawling and archiving",
+                "id": 28
+            },
+            {
+                "name": "RSS",
+                "code_id": "rss",
+                "description": "Really Simple Syndication is an XML-based format for distributing frequently updated web content such as news articles and feeds",
+                "id": 29
+            },
+            {
+                "name": "Atom",
+                "code_id": "atom",
+                "description": "Atom is an XML-based web syndication format and protocol for distributing periodically updated content",
+                "id": 30
+            },
+            {
+                "name": "Turtle",
+                "code_id": "ttl",
+                "description": "Turtle is a compact, human-readable RDF serialization format using prefixes and subject-predicate-object statements",
+                "id": 31
+            },
+            {
+                "name": "N-Triples",
+                "code_id": "nt",
+                "description": "N-Triples is a simple line-based RDF serialization in which each line represents one subject-predicate-object triple",
+                "id": 32
             }
         ],
         "formula_types": [

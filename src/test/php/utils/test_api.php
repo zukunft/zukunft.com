@@ -41,8 +41,10 @@ namespace Zukunft\ZukunftCom\test\php\utils;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
+include_once test_paths::CONST . 'files.php';
 include_once paths::MODEL_LOG . 'change_log.php';
 include_once paths::MODEL_LOG . 'change_field.php';
 include_once paths::MODEL_LOG . 'change_field_list.php';
@@ -751,8 +753,10 @@ class test_api extends test_base
         $lib = new library();
         $url_map = new url_mapper();
         $name = $lib->class_to_name($class);
-        if ($class == phrase_list::class) {
-            if ($filename == '' and $id_fld != url_var::ID_LST) {
+        // a given file name is kept also for a phrase list, so that more than one request with the
+        // same url field can have its own expected file e.g. a full name and a typed start as pattern
+        if ($class == phrase_list::class and $filename == '') {
+            if ($id_fld != url_var::ID_LST) {
                 $file_by_name = $url_map->name_to_human($id_fld, $msg);
                 $filename = $name . '_without_link' . '_by_' . $file_by_name;
             } else {
@@ -1125,8 +1129,20 @@ class test_api extends test_base
         }
 
         if ($expected === null) {
-            log_err('the file ' . $filename . ' for ' . $class_for_file . ' is missing');
-            return false;
+            // an expected file that does not exist yet is created from the api answer if the auto
+            // update of the test files is on, like a missing csv or html expected file, and the
+            // missing file is reported, so that the created file is checked before it is committed
+            $file = $filename;
+            if ($file == '') {
+                $file = $class_for_file;
+            }
+            if (test_files::AUTO_UPDATE_TEST_FILES and $actual !== null) {
+                $path = test_paths::RESOURCE . self::API_PATH . DIRECTORY_SEPARATOR . $class_for_file
+                    . DIRECTORY_SEPARATOR . $file . self::JSON_EXT;
+                $this->update_path_file($path, library::json_for_humans($actual) . "\n");
+            }
+            return $this->assert_true($class . ' API GET and the expected file ' . $file
+                . ' for ' . $class_for_file . ' exists', false);
         } else {
 
             // TODO remove, for faster debugging only

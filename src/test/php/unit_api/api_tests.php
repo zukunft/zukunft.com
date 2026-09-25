@@ -74,6 +74,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\components;
 use Zukunft\ZukunftCom\main\php\shared\const\groups;
 use Zukunft\ZukunftCom\main\php\shared\const\refs;
 use Zukunft\ZukunftCom\main\php\shared\const\sources;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
@@ -101,6 +102,7 @@ include_once paths::MODEL_LOG . 'change_log_list.php';
 include_once paths::MODEL_SYSTEM . 'job.php';
 include_once html_paths::TYPES . 'type_lists.php';
 include_once paths::SHARED_CONST . 'formulas.php';
+include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once test_paths::CONST . 'word_names.php';
@@ -181,6 +183,24 @@ class api_tests
         // TODO Prio 1 review and add triple links to phrases
         $t->assert_api_get_list(phrase_list::class, [word_names::MATH_ID, word_names::CONST_ID, word_names::PI_ID, triple_names::MATH_CONST_ID * -1, triple_names::PI_ID * -1]);
         $t->assert_api_get_list(phrase_list::class, word_names::MATH, url_var::PATTERN);
+        // the phrase select of e.g. the value add form sends the typed chars as the pattern and
+        // lists the matching words and triples (see ui_select::phrase_matches), so the list of a
+        // typed start is compared with a fixed list of a word and a triple
+        $t->assert_api_get_list(phrase_list::class, word_names::MATH_PATTERN, url_var::PATTERN,
+            'phrase_list_without_link_by_pattern_prefix');
+        // before anything is typed the phrase select offers the base phrases, which the frontend
+        // knows by name and id without an api call (see ui_select::phrase_preload and
+        // phrase_list_ui::load_fallback), so the api answer for exactly these ids is compared with
+        // a saved list to detect a seed change that would let the select offer a wrong phrase
+        $base_ids = [];
+        foreach (words::BASE_WORDS as $wrd_array) {
+            $base_ids[] = $wrd_array[1];
+        }
+        foreach (triples::BASE_TRIPLES as $trp_array) {
+            $base_ids[] = $trp_array[1] * -1;
+        }
+        $t->assert_api_get_list(phrase_list::class, $base_ids, url_var::ID_LST,
+            'phrase_list_without_link_datalist');
         // the phrases used as the to side of the "is a" triples, each once, e.g. to define a word as one of them
         $up_par = [url_var::DIRECTION => foaf_direction::UP->value];
         $t->assert_api_get_list(phrase_list::class, verbs::IS_ID, url_var::VERB, '', false, $up_par);

@@ -54,6 +54,6 @@ SELECT source_insert_log_0111001010000
         58,
         'The Federal Statistical Office is a Federal agency of the Swiss Confederation. It is the statistics office of Switzerland.',
         59,
-        4,
+        3,
         60,
         'https://www.bfs.admin.ch/bfs/en/home.html');

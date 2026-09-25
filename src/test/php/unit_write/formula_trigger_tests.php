@@ -137,9 +137,9 @@ class formula_trigger_tests
         // TODO Prio 0 activate
         //$t->assert('formula result for ' . $frm->dsp_id() . ' from ' . $phr_lst1->dsp_id() . ' to ' . $phr_lst2->dsp_id() . '', $result, $target, $t::TIMEOUT_LIMIT_LONG);
 
-        // remove the test values
-        $val_add1->del($msg);
-        $val_add2->del($msg);
+        // remove the test values with the group rows that the saves above have added
+        $t->del_value($val_add1, $msg);
+        $t->del_value($val_add2, $msg);
 
         // change the second number and test if the result has been updated
         // a second user changes the value back to the original value and check if for the second number the result is updated

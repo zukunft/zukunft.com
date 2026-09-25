@@ -1249,7 +1249,7 @@ class sandbox_multi extends db_object_multi_user
         global $db_con;
         $result = false;
 
-        if ($this->id() > 0) {
+        if ($this->is_id_set()) {
 
             // TODO: try to avoid using load_test_user
             if ($this->owner_id() > 0) {
@@ -2181,7 +2181,7 @@ class sandbox_multi extends db_object_multi_user
 
         global $db_con;
 
-        if ($this->id() > 0 and $this->get_user()->id() > 0) {
+        if ($this->is_id_set() and $this->get_user()->id() > 0) {
             $db_con->usr_id = $this->get_user()->id();
             $qp = $this->sql_delete($db_con->sql_creator(), $msg, new sql_type_list([sql_type::LOG, sql_type::USER]));
             $db_con->delete($qp, 'del and log user ' . $this->dsp_id(), $msg);
@@ -3371,13 +3371,20 @@ class sandbox_multi extends db_object_multi_user
      *                     or if something went wrong
      *                     the message that should be shown to the user
      *                     including suggested solutions
+     * @param sql_type_list $sc_par_lst with sql_type::NO_USER_SANDBOX if the object must never be
+     *                                  excluded for one user e.g. because it is deleted together
+     *                                  with a phrase of its group (see word::del_links)
      * @return bool true if the value has been deleted without issues
      *
      * TODO if the owner deletes it, change the owner to the new median user
      * TODO check if all have deleted the object
      *      does not remove the user excluding if no one else is using it
      */
-    function del(user_message $msg, bool $must_exist = true): bool
+    function del(
+        user_message  $msg,
+        bool          $must_exist = true,
+        sql_type_list $sc_par_lst = new sql_type_list()
+    ): bool
     {
         log_debug($this->dsp_id());
         $lib = new library();
@@ -3386,7 +3393,7 @@ class sandbox_multi extends db_object_multi_user
         // an object without a group id can never be addressed in the database, so there is
         // nothing to delete; report the inconsistency to the admin and let the caller continue
         // e.g. with the deletion of a linked word instead of failing the complete request
-        if ($this->id() == 0 or $this->id() == '') {
+        if (!$this->is_id_set()) {
             log_err('delete of ' . $class_name . ' ' . $this->dsp_id()
                 . ' skipped, because the group of the object is not set');
             return $msg->is_ok();
@@ -3408,7 +3415,10 @@ class sandbox_multi extends db_object_multi_user
         } else {
             log_debug('reloaded ' . $this->dsp_id());
             // check if the object is still valid
-            if ($this->id() <= 0) {
+            // never compare the id with a number, because the text id of a main or big table
+            // row such as '....06+' is less than 0 for php, which has skipped the delete of
+            // every value with more than four phrases (see db_object_multi::is_id_set)
+            if (!$this->is_id_set()) {
                 log_warning('Delete failed', $this::class . '->del', 'Delete failed, because it seems that the ' . $class_name . ' ' . $this->dsp_id() . ' has been deleted in the meantime.', (new Exception)->getTraceAsString(), $this->get_user());
             } else {
                 // reload the objects if needed
@@ -3421,6 +3431,17 @@ class sandbox_multi extends db_object_multi_user
                 // del_exe reports any problem on $msg, so the bool return can be ignored here
                 if (!$this->used_by_someone_else($msg)) {
                     $this->del_exe($msg);
+                } elseif ($sc_par_lst->no_user_sandbox()) {
+                    // an object that is removed together with a phrase of its group can never be
+                    // excluded for one user, because after the delete of the phrase no user can
+                    // select the row any more; the caller is expected to check the usage before,
+                    // so a still used object is an internal inconsistency and not a user decision
+                    log_err_msg('delete of ' . $class_name . ' ' . $this->dsp_id()
+                        . ' refused, because it is still used by another user than '
+                        . $this->get_user()->dsp_id() . ' and it cannot be excluded for one user'
+                        . ' (owner id ' . $this->owner_id()
+                        . ', changed by user id ' . $this->changer($msg) . ')',
+                        $msg);
                 } else {
                     // if the owner deletes the object find a new owner or delete the object completely
                     if ($this->owner_id() == $this->get_user()->id) {
@@ -3721,7 +3742,9 @@ class sandbox_multi extends db_object_multi_user
         // get the fields for the value log entry
         // TODO review check why a different list for the log is needed; instead use the field names like in sandbox
         $fvt_lst_log = clone $fvt_lst;
-        $fvt_lst_log->add_field(group_fields::FLD_ID, $this->grp()->id());
+        // the change log names the row by the same group id as the key fields of the data table
+        // (see sandbox_value::id_fvt_lst and group::id_or_phrase_list_id)
+        $fvt_lst_log->add_field(group_fields::FLD_ID, $this->grp()->id_or_phrase_list_id());
         $fvt_lst_log->add_field(user_db::FLD_ID, $this->get_user_id(), sql_par_type::INT);
 
         // create the log entry for the value
@@ -3840,6 +3863,10 @@ class sandbox_multi extends db_object_multi_user
         }
 
         // sandbox fields
+        // the excluded field must be written like share and protect, because otherwise the exclude
+        // of a value only writes the change log entry and the row still says that the value is used,
+        // so the next delete would try to add the same user row again (see del and value_list::del)
+        $fvt_lst_write->add($fvt_lst_all->get(fields::FLD_EXCLUDED, $msg, true));
         $fvt_lst_write->add($fvt_lst_all->get(fields::FLD_SHARE, $msg, true));
         $fvt_lst_write->add($fvt_lst_all->get(fields::FLD_PROTECT, $msg, true));
 

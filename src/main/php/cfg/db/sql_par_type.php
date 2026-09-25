@@ -63,6 +63,11 @@ enum sql_par_type: string
     case LIKE_L = 'like_end_with'; // add a wildcard to the left to find the values that end with the given text
     case LIKE = 'like';
     case LIKE_OR = 'like_or'; // connect with the previous condition with OR and like
+    // the case-sensitive pattern match for the alpha_num key of a phrase within a group id, because
+    // the key uses upper and lower case letters for different ids e.g. '....FW+' and '....Fw+'
+    // (see id::int2char), so the case-insensitive match of a name would find the wrong values
+    case LIKE_KEY = 'like_key';
+    case LIKE_KEY_OR = 'like_key_or'; // connect with the previous condition with OR and the key like
     case CONST = 'const';
     case CONST_NOT = 'const_not';
     case CONST_OR_NULL = 'const_or_null';
@@ -88,7 +93,8 @@ enum sql_par_type: string
     function is_or(): bool
     {
         return match($this) {
-            self::TEXT_OR, self::INT_OR, self::INT_LIST_OR, self::LIKE_OR, self::INT_SAME_OR => true,
+            self::TEXT_OR, self::INT_OR, self::INT_LIST_OR, self::LIKE_OR, self::LIKE_KEY_OR,
+            self::INT_SAME_OR => true,
             default => false,
         };
     }

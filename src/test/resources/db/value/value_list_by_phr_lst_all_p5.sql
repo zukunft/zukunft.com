@@ -50,11 +50,11 @@ PREPARE value_list_by_phr_lst_all_p5 (bigint, bigint, bigint, bigint, bigint, te
                0 AS change_user_id,
                0 AS share_type_id
           FROM values_standard
-         WHERE ( group_id ilike $6
-            OR   group_id ilike $7
-            OR   group_id ilike $8
-            OR   group_id ilike $9
-            OR   group_id ilike $10 )
+         WHERE ( group_id like $6
+            OR   group_id like $7
+            OR   group_id like $8
+            OR   group_id like $9
+            OR   group_id like $10 )
 
   UNION SELECT s.group_id,
                u.group_id AS user_group_id,
@@ -73,11 +73,11 @@ PREPARE value_list_by_phr_lst_all_p5 (bigint, bigint, bigint, bigint, bigint, te
           FROM values s
      LEFT JOIN user_values u ON s.group_id = u.group_id
                             AND u.user_id = $11
-         WHERE ( s.group_id ilike $6
-            OR   s.group_id ilike $7
-            OR   s.group_id ilike $8
-            OR   s.group_id ilike $9
-            OR   s.group_id ilike $10 )
+         WHERE ( s.group_id like $6
+            OR   s.group_id like $7
+            OR   s.group_id like $8
+            OR   s.group_id like $9
+            OR   s.group_id like $10 )
 
   UNION SELECT '' AS group_id,
                '' AS user_group_id,
@@ -137,8 +137,8 @@ PREPARE value_list_by_phr_lst_all_p5 (bigint, bigint, bigint, bigint, bigint, te
           FROM values_big s
      LEFT JOIN user_values_big u ON s.group_id = u.group_id
                                 AND u.user_id = $11
-         WHERE ( s.group_id ilike $6
-            OR   s.group_id ilike $7
-            OR   s.group_id ilike $8
-            OR   s.group_id ilike $9
-            OR   s.group_id ilike $10 ) ;
+         WHERE ( s.group_id like $6
+            OR   s.group_id like $7
+            OR   s.group_id like $8
+            OR   s.group_id like $9
+            OR   s.group_id like $10 ) ;

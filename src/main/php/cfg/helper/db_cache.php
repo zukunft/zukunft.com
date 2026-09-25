@@ -54,6 +54,8 @@ include_once paths::DB . 'sql_db.php';
 include_once paths::DB . 'sql_field_type.php';
 include_once paths::DB . 'sql_par.php';
 include_once paths::DB . 'sql_par_field_list.php';
+include_once paths::DB . 'sql_par_type.php';
+include_once paths::DB . 'sql_type.php';
 include_once paths::DB . 'sql_type_list.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_db.php';
@@ -72,6 +74,8 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
@@ -357,6 +361,42 @@ class db_cache extends db_object_seq_id_user
             $result = $msg->is_ok();
         }
         return $result;
+    }
+
+    /**
+     * remove the cache entries of one user, because they reference the user row and are derived
+     * data that the next request creates again, so they must not block the delete of the user
+     *
+     * @param int $usr_id the id of the user whose cache entries are removed
+     * @param user_message $msg to report a problem of the delete
+     * @return bool true if the cache entries of the user have been removed
+     */
+    function del_by_user(int $usr_id, user_message $msg): bool
+    {
+        global $db_con;
+
+        $qp = $this->del_sql_by_user($db_con->sql_creator(), $usr_id);
+        return $db_con->delete($qp, 'cache entries of user ' . $usr_id, $msg);
+    }
+
+    /**
+     * create the sql statement to delete the cache entries of one user
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param int $usr_id the id of the user whose cache entries are removed
+     * @return sql_par the sql statement to delete the cache entries of the user
+     */
+    function del_sql_by_user(sql_creator $sc, int $usr_id): sql_par
+    {
+        $qp = new sql_par(self::class, new sql_type_list([sql_type::DELETE]));
+        $sc->set_class(self::class);
+        $sc->add_where(user_db::FLD_ID, $usr_id);
+        $sql = sql::DELETE . ' ' . $sc->name_sql_esc($sc->get_table()) . ' ';
+        $sql .= sql::WHERE . ' ' . user_db::FLD_ID . ' = ' . $sc->par_name(1);
+        $qp->name .= '_by_user';
+        $qp->sql = $sc->prepare_sql($sql, $qp->name, [sql_par_type::INT]);
+        $qp->par = $sc->get_par();
+        return $qp;
     }
 
 
