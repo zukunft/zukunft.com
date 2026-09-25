@@ -117,5 +117,13 @@ function run_sandbox_test(all_tests $t): void
     $target = sources::IPCC_AR6_SYNTHESIS_URL;
     $t->assert('_sandbox->save check if the source url has been updates', $result, $target);
 
+    // remove the source again, so that the sandbox test does not leave a row behind
+    $src->del($msg);
+    $src = new source($t->usr1);
+    $src->load_by_name(sources::IPCC_AR6_SYNTHESIS, $msg);
+    $t->assert('_sandbox->save check if the created source has been removed', $src->id(), 0);
+    // fallback cleanup e.g. of an overlay row of a previous run
+    $t->write_named_cleanup($src, sources::IPCC_AR6_SYNTHESIS);
+
 }
 

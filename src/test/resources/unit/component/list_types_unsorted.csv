@@ -1,0 +1,263 @@
+component_type_id,type_name,code_id,description
+1,word selector,select_phrase,to select a word or triple
+2,view selector,select_view,to select an existing mask e.g. to set the default view
+3,text,text,simply to display a variable text
+4,fixed word,phrase,show the user-specific name of a word or a triple as a text
+5,linked word,link,display a word and offer a link
+6,formula results,formula_results,show the results of a formula
+7,word list up,word_list_up,"Show a list of words related with a specified verb e.g. for the triple <canton of Zurich> show the word <canton>, because they are linked with verb <is a>"
+8,word name,phrase_name,show the word name and give the user the possibility to change the word name
+9,word list down,word_list_down,"Show a list of words related with a specified verb e.g. for word <canton> list <canton of Zurich> and others, because they are linked with verb <is a>"
+10,all relations,values_all,show the complete list of all relations
+11,values related to,values_related,display all values that are related to a defined term
+12,formulas,formula_list,show all related formulas
+13,word value list,word_value_list,A list of words with some key values e.g. a company list with the PE ratio
+14,XML export,xml_export,"offer to configure and start the XML export of a phrase and all related words, numbers and formulas"
+15,CSV export,csv_export,"to define the main phrase, the column and row for the CSV export"
+16,JSON Export,json_export,To start or configure the JSON export
+17,system form title,system_form_title,a form title only allowed for system views where the user can only change the order
+18,system form hidden back stack,system_form_back_stack,the hidden form field with the back stack only allowed for system views where the user can only change the order
+19,system form confirm status,system_form_confirm_status,the hidden form field for the user confirm status only allowed for system views where the user can only change the order
+20,show name,system_show_field_name,show the object name without link or form field
+21,form field name,system_form_field_name,the form field for the name of a word or formula
+22,form field description,system_form_field_description,the form field for the description of a word or formula
+23,form select phrase,form_select_phrase,the form field to select one word or triple
+24,form select verb,form_select_verb,the form field to select a verb
+25,form field phrase type,form_select_phrase_type,the phrase type field in a form
+26,form field share type,form_select_share,the share type field in a form
+27,form field protection type,form_select_protection,the protection type field in a form
+28,button cancel,system_button_cancel,a button of a form to cancel the form action
+29,button save,system_button_save,a button of a form to save the changes to the database
+30,button delete,system_button_del,"a button of a form to delete or exclude a word, triple, verb, value, formula view or component"
+31,form end,form_end,just to indicate that a form ends
+32,row start,row_start,combine the next elements to one row
+33,row right,row_right,combine the next elements to one row and align to the right
+34,row end,row_end,just to indicate that a row ends
+35,spreadsheet,calc_sheet,spreadsheet that allows calculations by adding formulas to cells
+36,term name,term_name,"show the name of a word, triple, verb or formula and give the user the possibility to change the name"
+37,verb name,verb_name,show the name of a verb and give the admin user the possibility to change the name
+38,main value,main_value,show the main values related to the given term
+39,system form select source type,form_select_source_type,the source type field in a form
+40,system form select view,form_select_view,select the default view in a system mask
+41,system form ref list,ref_list,changeable list of reference
+42,system form link list,link_list,changeable list of links
+43,system usage,usage,show where this object has been used
+44,system change log,change_log,show the change log of this object
+45,ranking parameters,ranking_parameters,the parameters used to calculate a ranking
+46,ranking list,ranking_list,list sorted by the calculated ranking
+47,related triples,list_children_of_word,display the triples where a verb is used
+48,system form select reference type,form_select_ref_type,selector for the reference type
+49,system form select formula type,form_select_formula_type,selector for the formula type
+50,system form select view type,form_select_view_type,selector for the view type
+51,system form select view style,form_select_view_style,selector for the view style
+52,system form select component type,form_select_component_type,selector for the component type
+53,system form field formula text,system_form_field_formula_expression,the form field the formula expression
+54,form field name,system_form_field_formula_all_vars,the form flag to set the formula to need all variables for a valid result
+55,form field plural,system_form_field_plural,fixed form field the language form plural
+56,word results,word_results,show the results related to a word
+57,triple name,triple_name,show the name of a triple and give the admin user the possibility to change the name
+58,source name,source_name,show the name of a source and give the admin user the possibility to change the name
+59,reference name,reference_name,show the name of a reference and give the admin user the possibility to change the name
+60,language name,language_name,show the name of a language and give the admin user the possibility to change the name
+61,results related to,results_related,display all results that are related to a defined term
+62,expression,expression,display expression of a formula
+63,system title,system_title,title of a fixed system view where the user can only change the order of the components
+64,system about,system_body_about,the fixed system about html page body
+65,system body error log,system_body_error_log,show the body of the error log page
+66,system body error update,system_body_error_update,show the body of the error update page
+67,system body process progress,system_body_process_progress,show the progress of one process
+68,system body process list,system_body_process_list,show all progress of one progress
+69,system form field group,system_form_field_group,the group name field in a form
+70,system form field group or phrase list,system_form_field_group_or_phrase_list,a form field for the group name or a list of prase names
+71,system form field url,system_form_field_url,the url field in a form
+72,system form field selection name,system_form_selection_name,the unique name of a selection
+73,system form field selection description,system_form_selection_description,text that explains this selection
+74,system form field selection text,system_form_selection_text,free text field to define a selection
+75,system form select multi phrases,form_select_multi_phrases,select one or many words and triples
+76,system form select multi verbs,form_select_multi_verbs,select one or many verbs
+77,system form select formula,form_select_formula,select one formula
+78,system form select multi formulas,form_select_multi_formulas,select one or many formulas
+79,system form select term,form_select_term,select one term
+80,system form select multi terms,form_select_multi_terms,"select one or many words, verbs, triples and formulas"
+81,system form select value,form_select_value,select one value
+82,system form select multi values,form_select_multi_values,select one or many values
+83,system form select result,form_select_result,select one result
+84,system form select multi results,form_select_multi_results,select one or many results
+85,system form field source group,system_form_field_source_group,the result source group name field in a form
+86,system form select multi views,form_select_multi_views,select one or many views
+87,system form select component,form_select_component,select one component
+88,system form select multi components,form_select_multi_components,select one or many components
+89,system form preview,system_form_preview,preview if view component is changed based on a selectable sample object
+90,system form select view default,form_select_view_default,selector for the default view to show this object to the user e.g. the word physics should be shown with the view science
+91,system form select file,form_select_file,selector for a file to import
+92,system form select export format,form_select_export_format,selector for the export format e.g. json
+93,system form link table,system_form_link_table,show the linked views as a table with the possibility to add or remove a view
+94,system button import,system_button_import,button to start the import
+95,system button export,system_button_export,button to start the export
+96,parents of this word,list_parents_of_word,lists of words or triples lead to this word e.g. at least city and canton if this word is Zurich
+97,result list,result_list,list of results related to a phrase or calculated by this formula
+98,formula list,formula_list_changeable,changeable list of formulas related to this word
+99,system form select component link type,form_select_component_link_type,system form field to select the type that a component is linked to a view
+100,system form select formula link type,form_select_formula_link_type,system form field to select the type that a formula is linked to a phrase
+101,system form select view link type,form_select_view_link_type,system form field to select the type that a view is linked to a term
+102,system setup,system_body_setup,the fixed system setup html page body
+103,system signup,system_body_signup,the fixed system signup html page body
+104,system login,system_body_login,the fixed system login html page body
+105,system activate,system_body_login_activate,the fixed system activate html page body
+106,system reset,system_body_login_reset,the fixed system reset html page body
+107,system logout,system_body_logout,the fixed system logout html page body
+108,system search,system_body_search,the fixed system search html page body
+109,system search full,system_body_search_full,the fixed system search full html page body
+110,system value detail,system_body_value_detail,the fixed system value detail html page body
+111,system result explain,system_body_result_explain,the fixed system result explain html page body
+112,system formula test,system_body_formula_test,the fixed system formula test html page body
+113,system sandbox,system_body_sandbox,the fixed system sandbox html page body
+114,system undo,system_body_undo,the fixed system undo html page body
+115,system user settings,system_body_user_settings,the fixed system user settings html page body
+116,system process,system_body_process,the fixed system process html page body
+117,system form field source group or phrase list,system_form_field_source_group_or_phrase_list,a form field for the source group name or a list of prase names
+118,form select source,form_select_source,the form field to select a source
+119,form select multi source,form_select_multi_sources,select one or many sources
+120,form select ref,form_select_ref,the form field to select a reference
+121,form select multi ref,form_select_multi_refs,select one or many references
+122,views,view_list,show all views linked to here
+123,form field value type,form_select_value_type,the value type field in a form
+124,system form select component style,form_select_component_style,selector for the component style
+125,system form view link priority,form_select_view_link_priority,to set the priority of the view link
+126,system form component link position,form_select_component_link_order_number,to set the position of the component link
+127,system form select formula link priority,form_select_formula_link_priority,to set the priority of the formula link
+128,system show field usage,system_show_field_usage,the value usage as read only
+129,used in as text,used_in_as_text,text of the views where e.g. this component is used with the tooltip
+130,used in as text with link,used_in_as_text_with_link,text of the views where e.g. this component is used with the link to the view
+131,export ods,export_ods,"to define the main phrase, the column and row for the ODS export"
+132,export json,export_json,"to define the main phrase, the column and row for the JSON export"
+133,export xml,export_xml,"to define the main phrase, the column and row for the XML export"
+134,export csv,export_csv,"to define the main phrase, the column and row for the CSV export"
+135,form field reverse,system_form_field_reverse,fixed form field the language form reverse
+136,form field plural reverse,system_form_field_plural_reverse,fixed form field the language form plural reverse
+137,verb usage,triples_by_verb,display the triples where a verb is used
+138,words or triples liked to formula,list_phrases_of_formula,words or triples that like to this formula
+139,system form field value,system_form_field_value,the numeric value field in a form
+140,group or phrase list,group_or_phrase_list,show the group name or a list of prase names
+141,group name,group_name,show the group name
+142,numeric value,value_numeric,show the numeric value
+143,system preview after change,system_show_after_change,show a preview if the changes are confirmed
+144,system view before change,system_show_before_change,show the view like it is without the changes
+145,system sub title,system_sub_title,sub title also used for system views
+146,system sub title var,system_sub_title_var,sub title with a variable number also used for system views
+147,show description,system_show_field_description,show the object description without link or form field
+148,formulas by verb,formulas_by_verb,list of formulas which use a given verb
+149,form field formula name,system_form_field_name_in_formulas,form field the verb name used in formulas
+150,form field weight,system_form_field_weight,fixed form field the triple weight
+151,values by triple,values_by_triple,list of values which use a given triple
+152,values by source,values_by_source,list of values which use a given source
+153,system form select component position type,form_select_component_position_type,selector for the position type of a component to a view
+154,results that changes,system_show_result_diff,list of results that changes if the user confirms the change
+155,context for table import,system_paste_table_context,show the context used to import a data table
+156,drop area for data import,system_paste_table_body,show the drop fields to import a data table
+157,selection name,system_selection_text,show the description of a named selection
+158,popup title,system_title_named_object,for the universal confirmation popup show title of the action
+159,popup object,form_class,"for the universal confirmation popup show e.g. word, value, formula depending on the object that is changed"
+160,popup changes,form_changes,for the universal confirmation popup show the changes
+161,popup impact,form_impact,for the universal confirmation popup show the impact of the changes
+162,view differences,system_show_view_diff,highlight the differences due to a change to the user
+163,show reference type,system_show_field_ref_type,show the reference type as read only
+164,show external key,system_show_field_ref_key,show the external key of a reference as read only
+165,show reference source,system_show_field_ref_source,show the reference source name of a reference as read only
+166,show reference url,system_show_field_ref_url,show the reference url of a reference as read only
+167,form field external key of reference,system_form_field_external_key,the reference external key form field in a form
+168,admin form field username,admin_form_field_username,the user name in admin form so that the name can be overwritten
+169,admin form field user email,admin_form_field_user_email,the user email in admin form so that the email can be overwritten
+170,admin form field user password,admin_form_field_user_password,the user password in admin form so that the password can be overwritten
+171,system form select parent view,form_select_parent_view,select the parent view for a view relation
+172,system form select child view,form_select_child_view,select the child view for a view relation
+173,system form select view relation type,form_select_view_relation_type,selector for the view relation type
+174,system form select view relation start position,system_form_field_view_relation_start_pos,the position where the modifications of the child view should start
+175,system field parent view,system_show_parent_view,show the name of the parent view e.g. of a view relation
+176,system field child view,system_show_child_view,show the name of the child view e.g. of a view relation
+177,system field relation type,system_show_view_relation_type,show the view relation type
+178,system field view modification start position,system_show_view_start_pos,show the position where the modification should start
+179,admin form field language symbol,admin_form_field_language_symbol,form field for admin users only to add or change the language symbol
+180,field language symbol,field_language_symbol,show the language symbol
+181,system admin response times,system_admin_url_delay,show the most relevant delays in response to user request
+182,system admin failed logins,system_admin_login_fails,show last and most critical failed login trails to be able to detect hacking attempts
+183,system admin unassigned errors,system_admin_errors_unassigned,show new detected internal errors that do not yet have a human check priority and that are not yet assigned to a developer
+184,system admin pending error fixes,system_admin_errors_delayed_fix,show a list of errors where the fix has been expected but that are not yet fixed
+185,system admin delayed jobs,system_admin_jobs_delayed,list of critical jobs that are delayed with the possibility to de-prioritise blocking jobs
+186,selection page,select_list,show a list e.g. of languages and let the user pick on that should be used
+187,button request new,button_request,show a button to request a new e.g. type item that needs to be confirmed and / or modified by an admin
+188,phrases with details related to,phrases_related,show the related phrase with as much details as fit to the screen
+189,phrases with details on 1/3 screen,phrases_related_1/3,show a number of related phrases with so many details that it fits 1/3 of the screen; the number of related phrases if taken from the user configuration var selections/target
+190,show plural,system_show_field_plural,show the plural form of a word without link or form field
+191,show phrase type,system_show_field_phrase_type,show the phrase type name of a word without link or form field
+192,title of named with edit link,title_of_named_with_edit_link,shows the object name as a page title with a link to the edit view; the name is rendered in the user frontend language by loading the same object in that language once the sandbox language field is added
+193,user system errors,user_system_errors,show the most relevant open system errors linked to the user
+194,phrase aliases,phrase_aliases,show the phrases that are an alias of the given phrase e.g. has aliases: $ and U.S. dollar for US dollar
+195,phrase symbols,phrase_symbols,show the symbols of the given phrase e.g. has symbol: USD for US dollar
+196,related phrases without symbols,list_phrases_related_ex_symbols,list of phrases related to the given phrase excluding the alias and symbol entries
+197,related phrases without subtitles,list_phrases_related_ex_subtitle,"list of phrases related to the given phrase excluding the alias, symbol and is a entries that are already shown by the alias, symbol and subtitle components"
+198,value chart,value_chart,show a chart of the most relevant values by impact on top of the value list
+199,view tab box,view_tab_box,a tab box with the related views (preview plus open and switch buttons) and the change log of the shown object
+200,title of triple with edit link,title_of_triple_with_edit_link,"show the from, verb and to of a triple with links as the page title plus the edit link and subtitle"
+201,title of formula with edit link,title_of_formula_with_edit_link,show the formula name as the page title and the assigned phrases with links in the subtitle plus the edit link
+202,expression latex link,expression_latex_link,display the formula expression in the latex format with a tooltip and a link for each term
+203,title of value with edit link,title_of_value_with_edit_link,show the related phrases of a value with links as the page title and the value itself plus the edit link and the share and protection subtitle
+204,button confirm,system_button_confirm,a button of a form to confirm the change before it is written to the database
+205,formatter row center,row_center,to start a new row and center the following components in one row until the row end is triggered
+206,formulas of parents,formulas_of_parents,"list of formulas assigned to the ancestor phrases of a word, grouped per ancestor"
+207,most relevant values,values_most_relevant,"grouped list of the most relevant values related to this word: newest time period first, then the phrases used by several values, then the remaining values by impact"
+208,show name center,system_show_field_name_big,show the object name big in the center without link or form field
+209,admin form field user uses sandbox,admin_form_field_user_uses_sandbox,checkbox in the admin form so that an admin can switch if the pages for the user must be created from the user sandbox
+210,change log table pure,invisible_change_log_table,"a borderless change log table with the three columns when, who and what limited to a config char count"
+211,system form field latex,system_form_field_formula_latex,the form field for the formula in the latex format
+212,values in columns,values_in_columns,"show the values related to a phrase in up to four columns that wrap on narrow screens, each column headed by one of the phrases used most often within these values"
+213,phrase title,phrase_title,"show the phrase name as the page title with the subheader of a word (the related phrases) or of a triple (the from, verb and to with links), plus the edit link"
+214,table with related columns,table_with_related_columns,show the values related to a phrase as a table with one column per phrase used most often within the values and one row per remaining phrase combination
+215,system title with object name,system_title_with_object_name,"page title that shows the translated object word of the component and the name of the shown object e.g. Verb ""is a"""
+216,all user overwrites,all_user_overwrites,show all changes that the shown user has written to the user sandbox tables e.g. the word overwrites
+217,system form field doi,system_form_field_doi,the doi field in a form
+218,source doi link,source_doi_link,show the doi of a source behind its label as a link to doi.org
+219,show reverse,system_show_field_reverse,show the reverse name of a verb without link or form field
+220,show plural reverse,system_show_field_plural_reverse,show the plural reverse name of a verb without link or form field
+221,source url link,source_url_link,show the url of a source behind its label as a link to the source
+222,link title,title_of_link_with_edit_link,show the generated name of a link object as the page title and the two linked objects with links in the subtitle
+223,show style,system_show_field_style,show the name of the display style of a view or component without link or form field
+224,show owner,system_show_field_owner,show the name of the user who owns the object without link or form field
+225,view components,components_of_view,the components of the shown view sorted by their position with a link to each component
+226,show formula,system_show_field_formula,show the name of the calculation formula of a component with a link to the formula
+227,show row phrase,system_show_field_phrase_row,show the name of the row phrase of a component with a link to the phrase
+228,show column phrase,system_show_field_phrase_col,show the name of the column phrase of a component with a link to the phrase
+229,show sub column phrase,system_show_field_phrase_col_sub,show the name of the sub column phrase of a component with a link to the phrase
+230,component views,views_of_component,the views that use the shown component with a link to each view
+231,show link type,system_show_field_link_type,show the name of the link type of a link without link or form field
+232,show order number,system_show_field_order_nbr,show the order number of a link without link or form field
+233,show name in formulas,system_show_field_name_in_formulas,show the verb name used in formulas without link or form field
+234,expression with links,expression_link,show the formula expression with a tooltip and a link for each term
+235,latex with links in a form,expression_latex_link_form,show the formula latex beside the latex field with a tooltip and a link for each term
+236,show weight,system_show_field_weight,show the weight of a triple without link or form field
+237,show condition formula,system_show_field_condition_formula,show the formula that decides if a triple is used with a link to the formula
+238,show source,system_show_field_source,show the source of a value with a link to the source
+239,show last update,system_show_field_last_update,show the time when a value has been updated by the user or a calculation job
+240,code id field,system_form_field_code_id,"the code id field in a form, only shown to a user whose profile may change the code id"
+241,show impact,system_show_field_impact,show the system calculated impact of a reference without link or form field
+242,show reference phrase,system_show_field_ref_phrase,show the word or triple a reference belongs to with a link to the phrase
+243,show all values needed,system_show_field_formula_all_vars,show if a formula only calculates when all used values exist
+244,show result value,system_show_result_value,show the calculated number of a result behind its phrase group with links
+245,show result formula,system_show_result_formula,show the formula that calculated a result with a link to the formula
+246,ui message fields,system_form_field_ui_msg,"the user interface message link fields in a form, only shown to a user whose profile may change the code id"
+247,values similar,values_similar,show the values that share a phrase with the shown value sorted by impact e.g. the other mathematical constants of pi
+248,results of value,results_by_value,show the results that use the shown value e.g. the increase calculated from it
+249,terms of view,terms_of_view,show the terms that use the shown view e.g. for the used by column of the view add and edit pages
+250,show linked component,system_show_field_linked_component,show the component that the shown component links to with the type of that link and a link to the linked component
+251,system form phrase steps,system_form_phrase_steps,select the phrases of a new value one after the other by checking the typed name or the first chars of a word or triple
+252,system form word add simple,system_form_word_add_simple,add a word by its name without the confirm view if no term with the same name exists
+253,system form value add simple,system_form_value_add_simple,select the phrases of a new value step by step and add the value with the number without the confirm view
+254,system form value overwrite,system_form_value_overwrite,"change the number, text, time or geolocation of a value or the number of a result for the user without the confirm view"
+255,system body not yet available,system_body_not_yet_available,the body of a system view whose data and actions are not yet implemented
+256,system body user jobs,system_body_user_jobs,the jobs of the requesting user with the pending jobs on top and the buttons to downgrade or cancel a job
+257,system body all jobs,system_body_all_jobs,the jobs of all users for an admin with the pending jobs on top and the buttons to up- or downgrade or cancel a job
+258,system form triple add simple,system_form_triple_add_simple,add a triple by its name without the confirm view if no term with the same name exists
+259,system form phrase value line,system_form_phrase_value_line,"the phrases, the value type and the value of a new value in one line of the detailed value add form"
+260,values used,values_used,show the values that the calculation of the shown result has used e.g. the inhabitants that an increase is based on
+261,formulas used,formulas_used,show the formulas that have calculated the results used for the shown result
+262,results used,results_used,show the results that the calculation of the shown result has used e.g. the increase used by a growth rate

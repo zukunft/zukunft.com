@@ -115,12 +115,18 @@ class formula_write_url_tests extends formula_url_tests
     private function cleanup_test_formulas(test_cleanup $t): void
     {
         $frm = new formula($t->usr1);
+        // remove the change log entries of the test formulas before the rows themselves, because a
+        // change log entry must never point to a deleted test row (see docs/llm/testing.md) and
+        // because the change log is shown on the formula page: without this the entries of a
+        // previous run stay in the database and the workflow page snapshots change with every run
+        $t->cleanup_change_log($frm, formula_names::TEST_FORMULAS);
         foreach (formula_names::TEST_FORMULAS as $frm_name) {
             // write_named_cleanup removes the usr1 / usr2 sandbox rows
             $t->write_named_cleanup($frm, $frm_name);
             $t->write_named_cleanup_one($frm, $t->usr_system, $frm_name);
         }
         $wrd = new word($t->usr1);
+        $t->cleanup_change_log($wrd, word_names::TEST_WORDS);
         foreach (word_names::TEST_WORDS as $wrd_name) {
             $t->write_named_cleanup($wrd, $wrd_name);
             $t->write_named_cleanup_one($wrd, $t->usr_system, $wrd_name);

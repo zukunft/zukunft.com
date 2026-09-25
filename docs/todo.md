@@ -12,8 +12,14 @@ A proper issue ticket should be created for these TODOs notes:
     TODO Release 0.0.3
     TODO target approche to finish frontend: small commits and final solution
 
-    TODO formula add / edit
     TODO use case PV calculator
+
+    TODO add admin dashboard, user settings, jobs  and system settings
+    TODO the user settings should have some (config.yaml) quick settings 
+    TODO add a min value quality level (including or excluding own overwrites)
+    TODO the admin dashboard the x most changed user settings
+    TODO add default ranking 
+    TODO add default sort asc or desc for tables
 
     ->  launch
 

@@ -75,6 +75,8 @@ namespace Zukunft\ZukunftCom\main\php\cfg\const;
 //include_once paths::MODEL_LOG . 'change_values_geo_prime.php';
 //include_once paths::MODEL_LOG . 'changes_big.php';
 //include_once paths::MODEL_LOG . 'changes_norm.php';
+//include_once paths::MODEL_PHRASE . 'phrase.php';
+//include_once paths::MODEL_PHRASE . 'phrase_type.php';
 //include_once paths::MODEL_PHRASE . 'phrase_types.php';
 //include_once paths::MODEL_REF . 'ref.php';
 //include_once paths::MODEL_REF . 'ref_type.php';
@@ -183,6 +185,8 @@ use Zukunft\ZukunftCom\main\php\cfg\language\language_form;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_action;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_table;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_field;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_type;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_types;
 use Zukunft\ZukunftCom\main\php\cfg\result\result_db;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
@@ -340,6 +344,24 @@ class def
         term_view::class,
         component::class,
         component_link::class,
+    ];
+
+    // the type class of a main class whose types are fixed rows like the main rows above, so that
+    // a type added, removed or renamed by a database reset is detected (see test_db_load::csv_recreate);
+    // the expected types are stored in the folder of the main class e.g. unit/component/list_types.csv,
+    // and a main class whose types are not checked yet is simply not listed here
+    const array MAIN_CLASS_TYPES = [
+        component::class => component_type::class,
+        phrase::class => phrase_type::class,
+        source::class => source_type::class,
+    ];
+
+    // classes with fixed rows that are not the rows or the types of a main class, but that are
+    // checked in the same way e.g. the change log tables and fields, so their expected rows are
+    // in the folder of the class e.g. unit/change_table/list.csv
+    const array FIXED_ROW_CLASSES = [
+        change_table::class,
+        change_field::class,
     ];
 
     // classes that should not be delete (the only exception is that system users can delete test rows)

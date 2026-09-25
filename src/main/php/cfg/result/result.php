@@ -481,15 +481,17 @@ class result extends sandbox_value
                 $vars[json_fields::LAST_UPDATE] = $this->last_update()->format(DateTimeInterface::ATOM);
             }
             // the page also shows what the number is based on: the values, the formulas and the
-            // results used for the calculation; each list is filtered by the read permission
-            // before the empty check, so that a list of only unreadable entries is not emitted
-            // as an empty list, which would tell the requester that entries exist (idor,
-            // the same gate as in value::api_json_array)
+            // results used for the calculation; a loaded list is emitted even if it is empty,
+            // because only the empty list tells the page that nothing has been used, whereas a
+            // missing list says that the result has not been asked for it and the page then shows
+            // no column instead of a wrong "nothing used" (see ui_list::values_used)
+            // each list is filtered by the read permission first, so that a list of only
+            // unreadable entries reads like an empty one (idor, see value::api_json_array)
             if ($this->values_used == null and !$typ_lst->test_mode() and $this->id() != 0) {
                 $this->load_values_used($msg);
             }
             $this->values_used?->filter_readable_by($usr);
-            if ($this->values_used != null and !$this->values_used->is_empty()) {
+            if ($this->values_used != null) {
                 // INCL_PHRASES so each value carries its group phrases, which the frontend
                 // needs for the value name
                 $vars[json_fields::VALUES] = $this->values_used->api_json_array(
@@ -499,7 +501,7 @@ class result extends sandbox_value
                 $this->load_results_used($msg);
             }
             $this->results_used?->filter_readable_by($usr);
-            if ($this->results_used != null and !$this->results_used->is_empty()) {
+            if ($this->results_used != null) {
                 $vars[json_fields::RESULTS] = $this->results_used->api_json_array(
                     new api_type_list([api_types::INCL_PHRASES]), $msg, $usr);
             }
@@ -507,7 +509,7 @@ class result extends sandbox_value
                 $this->load_formulas_used($msg);
             }
             $this->formulas_used?->filter_readable_by($usr);
-            if ($this->formulas_used != null and !$this->formulas_used->is_empty()) {
+            if ($this->formulas_used != null) {
                 $vars[json_fields::FORMULAS] = $this->formulas_used->api_json_array([], $msg, $usr);
             }
             // the changes and the overwrites tabs of the result default page
@@ -1057,11 +1059,13 @@ class result extends sandbox_value
      * so that the result page can always show what the number is based on; returned with the
      * selection type, because only the saved source phrases name the numbers exactly
      *
+     * public because the selection rule is the base of the three used lists, so it is unit tested
+     *
      * @param user_message $msg to collect any problem while loading the phrases
      * @return array the phrases that select the numbers used for the calculation and true if a
      *               number with any of them is related, which is the case for the fallback
      */
-    private function used_phrase_selection(user_message $msg): array
+    function used_phrase_selection(user_message $msg): array
     {
         $this->load_phrases($msg);
         $phr_lst = $this->src_grp?->phrase_list();

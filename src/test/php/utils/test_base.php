@@ -4520,6 +4520,31 @@ class test_base
     }
 
     /**
+     * remove the row of a test group by its reserved name with the logged delete like any other
+     * test row (docs/llm/testing.md), e.g. a fixed group of groups::TEST_GROUPS_CREATE that
+     * create_test_groups adds again for the next read or write tests; the name load covers the
+     * prime, main and big group tables and only finds a row named by a user, so a group that
+     * exists only by its phrases is never touched
+     *
+     * @param group $grp the group object used for the load and the delete
+     * @param string $name the reserved test name of the group row that should be removed
+     * @return void
+     */
+    function write_group_cleanup(group $grp, string $name): void
+    {
+        $msg = new user_message($this->usr1);
+        $grp->set_user($this->usr1);
+        $grp->load_by_name($name, $msg);
+        if ($grp->is_saved()) {
+            $grp->del($msg);
+            // the reload reports if the logged delete of the group has not removed the row
+            $grp->reset();
+            $grp->load_by_name($name, $msg);
+            $this->assert_false('the test group "' . $name . '" is removed', $grp->is_saved());
+        }
+    }
+
+    /**
      * remove all remaining test rows of a named user sandbox object
      *
      * @param sandbox_named|sandbox_link_named|verb|phrase|ref|group|type_object $sbx the named user sandbox object e.g. a word

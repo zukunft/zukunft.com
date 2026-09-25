@@ -160,6 +160,10 @@ class users
         self::TEST_SIGNUP_NAME,
     );
 
+    // the names of the anonymous users that the test calls to localhost create, because an
+    // anonymous user carries the request ip as its name (see user::get), so the cleanup removes them
+    const array TEST_GUEST_NAMES = ['::1', '127.0.0.1'];
+
     // list of usernames that are only used for system testing and that does not create log entries
     const array TEST_NO_LOG = [
         self::TEST_USER_NAME,

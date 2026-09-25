@@ -165,6 +165,12 @@ class group_tests
             '1FajJ2-.4LYK3-..8jId-...I1A-....Yz-..../.-.....Z-.....9-...../+.....A+.....a+....3s+...1Ao+../vLC+.//ZSB+.ZSahL+');
         $t->assert('group_id phrase list 16', $grp_id->get_id($t_phr->phrase_list_17_plus()),
             '1FajJ2-.4LYK3-..8jId-...I1A-....Yz-..../.-.....Z-.....9-...../+.....A+.....a+....3s+...1Ao+../vLC+.//ZSB+.ZSahL+.uraWl+');
+        // the key uses upper and lower case letters for different ids, so a phrase is searched within
+        // a group id with a case-sensitive pattern (sql_par_type::LIKE_KEY); a case-insensitive match
+        // would e.g. find the values of "position" (1122) when deleting the phrase 1148
+        $test_name = 'the keys of two phrase ids can differ only in the case of a letter';
+        $t->assert($test_name, strtolower($grp_id->int2alpha_num(1148)), strtolower($grp_id->int2alpha_num(1122)));
+        $t->assert_true($test_name, $grp_id->int2alpha_num(1148) != $grp_id->int2alpha_num(1122));
         $t->assert('group_id revers phrase list 16',
             implode(',', $grp_id->get_array('...../+.....9-.....A+.....Z-.....a+..../.-....3s+....Yz-...1Ao+...I1A-../vLC+..8jId-.//ZSB+.4LYK3-.ZSahL+1FajJ2-')),
             '1,-11,12,-37,38,-64,376,-2367,13108,-82124,505294,-2815273,17192845,-106841477,628779863,-3516593476');
@@ -181,6 +187,29 @@ class group_tests
         $t->assert_true($test_name, $grp->is_big());
         $test_name = 'a group without an id is prime by its phrase list';
         $t->assert_true($test_name, $t_grp->group_incomplete()->is_prime());
+
+        // the table name, its key fields and the matching change log table must be derived from the
+        // same id, because a mix creates an sql statement for a table that does not exist, e.g. the
+        // prime function name value_prime_p0_insert_log with the log table change_values_norm_prime
+        $test_name = 'the table of a group with the text id of 16 phrases is the main table';
+        $grp = $t_grp->group_16();
+        $t->assert($test_name, $grp->table_type()->value, sql_type::MOST->value);
+        $t->assert($test_name, $grp->table_extension(), '');
+        $test_name = '... and the table of a group with a prime id is the prime table';
+        $grp = $t_grp->group();
+        $t->assert($test_name, $grp->table_type()->value, sql_type::PRIME->value);
+        $t->assert($test_name, $grp->table_extension(), group_id::TBL_EXT_PHRASE_ID . '1');
+        $test_name = '... and the id list of the key fields has the phrases of the id';
+        $t->assert($test_name, $grp->id_lst(), $t_grp->group()->phrase_list()->ids());
+        $test_name = 'the table of a group without an id follows its phrase list like is_prime';
+        $grp = $t_grp->group_16();
+        $grp->set_id('');
+        $t->assert($test_name, $grp->table_type()->value, sql_type::MOST->value);
+        $t->assert($test_name, $grp->table_extension(), '');
+        $t->assert_false($test_name, $grp->is_prime());
+        $test_name = 'a group without an id and without phrases has no phrase count for the table';
+        $t->assert($test_name, $t_grp->group_without_key()->table_extension(),
+            group_id::TBL_EXT_PHRASE_ID . '0');
 
         $t->subheader($ts . 'given name');
         $test_name = 'a group named by a user reports the given name';
@@ -308,6 +337,9 @@ class group_tests
         //$grp->set_phrase_list($t_phr->phrase_list_prime());
         //$t->assert_sql_delete($sc, $grp, [sql_type::LOG]);
         $grp->set_phrase_list($t_phr->phrase_list_16());
+        // the logged delete of a main group is used by the test cleanup to remove a group that a
+        // test has named (see test_base::write_group_cleanup), so it needs its own expected sql
+        $t->assert_sql_delete($sc, $grp, [sql_type::LOG]);
         $t->assert_sql_delete($sc, $grp, [sql_type::LOG, sql_type::USER]);
         $grp->set_phrase_list($t_phr->phrase_list_17_plus());
         $t->assert_sql_delete($sc, $grp);

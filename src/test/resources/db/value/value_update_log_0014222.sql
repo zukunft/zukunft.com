@@ -30,6 +30,7 @@ BEGIN
 
     UPDATE values
        SET source_id     = _source_id,
+           excluded      = _excluded,
            share_type_id = _share_type_id,
            protect_id    = _protect_id,
            last_update   = Now()

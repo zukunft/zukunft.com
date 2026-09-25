@@ -1,57 +1,57 @@
 word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact,inactive,code_id,excluded,share_type_id,protect_id
 1,1,mathematics,,Mathematics is an area of knowledge that includes the topics of numbers and formulas,1,,,,,,,,3
 2,1,constant,,fixed and well-defined number,17,,,,,,,,3
-3,1,zero,,0 (zero) is a number representing an empty quantity. Adding (or subtracting) 0 to any number leaves that number unchanged; in mathematical terminology, 0 is the additive identity of the integers, rational numbers, real numbers, and complex numbers, as well as other algebraic structures,8,,,,,,,,3
-4,1,one,,1 (one, unit, unity) is a number, numeral, and glyph. It is the first and smallest positive integer of the infinite sequence of natural numbers. Used to force the scaling to one unit,8,,,,,,,,3
+3,1,zero,,"0 (zero) is a number representing an empty quantity. Adding (or subtracting) 0 to any number leaves that number unchanged; in mathematical terminology, 0 is the additive identity of the integers, rational numbers, real numbers, and complex numbers, as well as other algebraic structures",8,,,,,,,,3
+4,1,one,,"1 (one, unit, unity) is a number, numeral, and glyph. It is the first and smallest positive integer of the infinite sequence of natural numbers. Used to force the scaling to one unit",8,,,,,,,,3
 5,1,π,,Symbol for the ratio of the circumference of a circle to its diameter,17,,,,,,,,3
-6,1,𝑒,,Symbol for the Euler's number, which is a mathematical constant approximately equal to 2.71828 that is the base of the natural logarithm and exponential function.,17,,,,,,,,3
+6,1,𝑒,,"Symbol for the Euler's number, which is a mathematical constant approximately equal to 2.71828 that is the base of the natural logarithm and exponential function.",17,,,,,,,,3
 7,1,physics,,Physics is the natural science of matter,1,,,,,,,,3
 8,1,science,,Science organizes knowledge in the form of testable explanations and predictions about the universe,1,,,,,,,,3
-9,1,natural,,Nature is an inherent character or constitution, particularly of the universe as a whole,1,,,,,,,,3
-10,1,universe,,The universe is all of space and time and their contents. It comprises all of existence, any fundamental interaction, physical process and physical constant, and therefore all forms of matter and energy, and the structures they form, from sub-atomic particles to entire galactic filaments.,1,,,,,,,,3
-11,1,earth,,Earth is the third planet from the Sun and the only astronomical object known to harbor life. This is enabled by Earth being an ocean world, the only one in the Solar System sustaining liquid surface water.,1,,,,,,,,3
-12,1,life,,Life, sometimes referred to as biota, is a quality that distinguishes matter that has biological processes, such as signaling and self-sustaining processes, from matter that does not.,1,,,,,,,,3
+9,1,natural,,"Nature is an inherent character or constitution, particularly of the universe as a whole",1,,,,,,,,3
+10,1,universe,,"The universe is all of space and time and their contents. It comprises all of existence, any fundamental interaction, physical process and physical constant, and therefore all forms of matter and energy, and the structures they form, from sub-atomic particles to entire galactic filaments.",1,,,,,,,,3
+11,1,earth,,"Earth is the third planet from the Sun and the only astronomical object known to harbor life. This is enabled by Earth being an ocean world, the only one in the Solar System sustaining liquid surface water.",1,,,,,,,,3
+12,1,life,,"Life, sometimes referred to as biota, is a quality that distinguishes matter that has biological processes, such as signaling and self-sustaining processes, from matter that does not.",1,,,,,,,,3
 13,1,death,,Death is the end of life; the irreversible cessation of all biological functions that sustain a living organism.,1,,,,,,,,3
-14,1,human,,Humans (Homo sapiens) or modern humans are the most common and widespread species of primate, and the last surviving species of the genus Homo.,1,,,,,,,,3
-15,1,circumference,,In geometry, the circumference meaning is the perimeter of a circle or ellipse,1,,,,,,,,3
-16,1,diameter,,In geometry, a diameter of a circle is any straight line segment that passes through the centre of the circle and whose endpoints lie on the circle,1,,,,,,,,3
+14,1,human,,"Humans (Homo sapiens) or modern humans are the most common and widespread species of primate, and the last surviving species of the genus Homo.",1,,,,,,,,3
+15,1,circumference,,"In geometry, the circumference meaning is the perimeter of a circle or ellipse",1,,,,,,,,3
+16,1,diameter,,"In geometry, a diameter of a circle is any straight line segment that passes through the centre of the circle and whose endpoints lie on the circle",1,,,,,,,,3
 17,1,Pi,,ratio of the circumference of a circle to its diameter,17,,,,,,,,3
-18,1,base,,A base is something that serves as a foundation, reference point or starting value from which other things are built, derived or measured.,1,,,,,,,,3
-19,1,unit,,A unit is a defined amount of a quantity, fixed by convention or standard, that is used as a reference to measure or count other amounts of the same kind.,1,,,,,,,,3
+18,1,base,,"A base is something that serves as a foundation, reference point or starting value from which other things are built, derived or measured.",1,,,,,,,,3
+19,1,unit,,"A unit is a defined amount of a quantity, fixed by convention or standard, that is used as a reference to measure or count other amounts of the same kind.",1,,,,,,,,3
 20,1,system,,A system is a group of interacting or interrelated elements that act according to a set of rules to form a unified whole.,1,,,,,system,,,3
 21,1,international,,Internationalism is a political principle that advocates greater political or economic cooperation among states and nations.,1,,,,,,,,3
-22,1,second,seconds,Ambiguous word: either a unit to measure a duration or an ordinal position in a ranking (first, second, third, ...),1,,,,,,,,
-23,1,s,,The symbol for second is a unit of time derived from the division of the day first into 24 hours, then to 60 minutes and finally to 60 seconds each (24 × 60 × 60 = 86400).,3,,,,,,,,3
+22,1,second,seconds,"Ambiguous word: either a unit to measure a duration or an ordinal position in a ranking (first, second, third, ...)",1,,,,,,,,
+23,1,s,,"The symbol for second is a unit of time derived from the division of the day first into 24 hours, then to 60 minutes and finally to 60 seconds each (24 × 60 × 60 = 86400).",3,,,,,,,,3
 24,1,millisecond,milliseconds,The 1/1000th part of a second.,3,,,,,millisecond,,,3
-25,1,metre,,The metre (or meter in US spelling) has been defined as the length of the path travelled by light in vacuum during a time interval of ⁠1/299792458⁠ of a second, where the second is defined by a hyperfine transition frequency of caesium.,3,,,,,,,,3
-26,1,m,,Is a symbol for the metre, the base unit of length in the International System of Units (SI).,3,,,,,,,,3
-27,1,kilogram,,The kilogram is the SI unit of mass. It is defined by taking the fixed numerical value of the Planck constant h to be 6.62607015×10−34 when expressed in the unit J⋅s, which is equal to kg⋅m2⋅s−1, where the metre and the second are defined in terms of c and ΔνCs.,3,,,,,,,,3
+25,1,metre,,"The metre (or meter in US spelling) has been defined as the length of the path travelled by light in vacuum during a time interval of ⁠1/299792458⁠ of a second, where the second is defined by a hyperfine transition frequency of caesium.",3,,,,,,,,3
+26,1,m,,"Is a symbol for the metre, the base unit of length in the International System of Units (SI).",3,,,,,,,,3
+27,1,kilogram,,"The kilogram is the SI unit of mass. It is defined by taking the fixed numerical value of the Planck constant h to be 6.62607015×10−34 when expressed in the unit J⋅s, which is equal to kg⋅m2⋅s−1, where the metre and the second are defined in terms of c and ΔνCs.",3,,,,,,,,3
 28,1,kg,,The symbol for the kilogram. The kilogram was originally defined in 1795 during the French Revolution as the mass of one litre of water.,3,,,,,,,,3
 29,1,ampere,,The ampere is the unit of electric current in the International System of Units (SI). One ampere is equal to 1 coulomb (C) moving past a point per second.,3,,,,,,,,3
 30,1,A,,Is a symbol for ampere,3,,,,,,,,3
-31,1,kelvin,,The kelvin is the base unit for temperature in the International System of Units (SI). The Kelvin scale is an absolute temperature scale that starts at the lowest possible temperature (absolute zero), taken to be 0 K.,3,,,,,,,,3
+31,1,kelvin,,"The kelvin is the base unit for temperature in the International System of Units (SI). The Kelvin scale is an absolute temperature scale that starts at the lowest possible temperature (absolute zero), taken to be 0 K.",3,,,,,,,,3
 32,1,K,,Is a symbol for kelvin,3,,,,,,,,3
-33,1,mole,,The mole (symbol mol) is a unit of measurement, the base unit in the International System of Units (SI) for amount of substance, an SI base quantity proportional to the number of elementary entities of a substance.,3,,,,,,,,3
+33,1,mole,,"The mole (symbol mol) is a unit of measurement, the base unit in the International System of Units (SI) for amount of substance, an SI base quantity proportional to the number of elementary entities of a substance.",3,,,,,,,,3
 34,1,mol,,Is a symbol for mole,3,,,,,,,,3
 35,1,candela,,The candela is the unit of luminous intensity in the International System of Units (SI). It measures luminous power per unit solid angle emitted by a light source in a particular direction.,3,,,,,,,,3
 36,1,cd,,Is a symbol for candela,3,,,,,,,,3
-37,1,derived,,In phylogenetics, an apomorphy (or derived trait) is a novel character or character state that has evolved from its ancestral form.,1,,,,,,,,3
-38,1,named,,A name is a term used for identification by an external observer. They can identify a class or category of things, or a single thing, either uniquely, or within a given context.,1,,,,,,,,3
-39,1,hertz,,The hertz (symbol: Hz) is the unit of frequency in the International System of Units (SI), often described as being equivalent to one event (or cycle) per second,3,,,,,,,,3
-40,1,Hz,,Is a symbol for hertz, which is the unit of frequency in the International System of Units (SI), often described as being equivalent to one event (or cycle) per second,3,,,,,,,,3
-41,1,radian,,The radian, denoted by the symbol rad, is the unit of angle in the International System of Units (SI) and is the standard unit of angular measure used in many areas of mathematics.,3,,,,,,,,3
+37,1,derived,,"In phylogenetics, an apomorphy (or derived trait) is a novel character or character state that has evolved from its ancestral form.",1,,,,,,,,3
+38,1,named,,"A name is a term used for identification by an external observer. They can identify a class or category of things, or a single thing, either uniquely, or within a given context.",1,,,,,,,,3
+39,1,hertz,,"The hertz (symbol: Hz) is the unit of frequency in the International System of Units (SI), often described as being equivalent to one event (or cycle) per second",3,,,,,,,,3
+40,1,Hz,,"Is a symbol for hertz, which is the unit of frequency in the International System of Units (SI), often described as being equivalent to one event (or cycle) per second",3,,,,,,,,3
+41,1,radian,,"The radian, denoted by the symbol rad, is the unit of angle in the International System of Units (SI) and is the standard unit of angular measure used in many areas of mathematics.",3,,,,,,,,3
 42,1,rad,,Is a symbol for radian,3,,,,,,,,3
-43,1,steradian,,The steradian or square radian[1][2] is the unit of solid angle in the International System of Units (SI). It is used in three dimensional geometry, and is analogous to the radian, which quantifies planar angles.,3,,,,,,,,3
+43,1,steradian,,"The steradian or square radian[1][2] is the unit of solid angle in the International System of Units (SI). It is used in three dimensional geometry, and is analogous to the radian, which quantifies planar angles.",3,,,,,,,,3
 44,1,sr,,Is a symbol for steradian,3,,,,,,,,3
-45,1,newton,,The newton is the unit of force in the International System of Units (SI). Expressed in terms of SI base units, it is 1 kg⋅m/s2, the force that accelerates a mass of one kilogram at one metre per second squared.,3,,,,,,,,3
+45,1,newton,,"The newton is the unit of force in the International System of Units (SI). Expressed in terms of SI base units, it is 1 kg⋅m/s2, the force that accelerates a mass of one kilogram at one metre per second squared.",3,,,,,,,,3
 46,1,N,,Is a symbol for newton,3,,,,,,,,3
-47,1,pascal,,The pascal is the unit of pressure in the International System of Units (SI). It is also used to quantify internal pressure, stress, Young's modulus, and ultimate tensile strength.,3,,,,,,,,3
+47,1,pascal,,"The pascal is the unit of pressure in the International System of Units (SI). It is also used to quantify internal pressure, stress, Young's modulus, and ultimate tensile strength.",3,,,,,,,,3
 48,1,Pa,,Is a symbol for pascal,3,,,,,,,,3
 49,1,joule,,One joule is equal to the amount of work done when a force of one newton displaces a body through a distance of one metre in the direction of that force.,3,,,,,,,,3
 50,1,J,,Is a symbol for joule,3,,,,,,,,3
-51,1,watt,,The watt is the unit of power or radiant flux in the International System of Units (SI), equal to 1 joule per second or 1 kg⋅m2⋅s−3,3,,,,,,,,3
+51,1,watt,,"The watt is the unit of power or radiant flux in the International System of Units (SI), equal to 1 joule per second or 1 kg⋅m2⋅s−3",3,,,,,,,,3
 52,1,W,,Is a symbol for watt,3,,,,,,,,3
-53,1,coulomb,,The SI defines the coulomb as "the quantity of electricity carried in 1 second by a current of 1 ampere". Then the value of the elementary charge e is defined to be 1.602176634×10−19 C.,3,,,,,,,,3
+53,1,coulomb,,"The SI defines the coulomb as ""the quantity of electricity carried in 1 second by a current of 1 ampere"". Then the value of the elementary charge e is defined to be 1.602176634×10−19 C.",3,,,,,,,,3
 54,1,C,,Is a symbol for coulomb,3,,,,,,,,3
 55,1,volt,,One volt is defined as the electric potential between two points of a conducting wire when an electric current of one ampere dissipates one watt of power between those points.,3,,,,,,,,3
 56,1,V,,Is a symbol for volt,3,,,,,,,,3
@@ -59,85 +59,85 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 58,1,Wb,,Is a symbol for Weber,3,,,,,,,,3
 59,1,tesla,,The tesla is the unit of magnetic flux density (also called magnetic B-field strength) in the International System of Units (SI).  One tesla is equal to one weber per square metre.,3,,,,,,,,3
 60,1,T,,Is a symbol for tesla,3,,,,,,,,3
-61,1,farad,,The farad is the unit of electrical capacitance, the ability of a body to store an electrical charge, in the International System of Units (SI), equivalent to 1 coulomb per volt (C/V).,3,,,,,,,,3
+61,1,farad,,"The farad is the unit of electrical capacitance, the ability of a body to store an electrical charge, in the International System of Units (SI), equivalent to 1 coulomb per volt (C/V).",3,,,,,,,,3
 62,1,F,,Is a symbol for farad,3,,,,,,,,3
 63,1,ohm,,The ohm is the unit of electrical resistance in the International System of Units (SI).,3,,,,,,,,3
 64,1,Ω,,Is a symbol for ohm,3,,,,,,,,3
-65,1,siemens,,The siemens is the unit of electric conductance, electric susceptance, and electric admittance in the International System of Units (SI). Conductance, susceptance, and admittance are the reciprocals of resistance, reactance, and impedance respectively; hence one siemens is equal to the reciprocal of one ohm (Ω−1) and is also referred to as the mho.,3,,,,,,,,3
+65,1,siemens,,"The siemens is the unit of electric conductance, electric susceptance, and electric admittance in the International System of Units (SI). Conductance, susceptance, and admittance are the reciprocals of resistance, reactance, and impedance respectively; hence one siemens is equal to the reciprocal of one ohm (Ω−1) and is also referred to as the mho.",3,,,,,,,,3
 66,1,S,,Is a symbol for siemens,3,,,,,,,,3
-67,1,henry,,The henry is the unit of electrical inductance in the International System of Units (SI).[1] If a current of 1 ampere flowing through a coil produces flux linkage of 1 weber turn, that coil has a self-inductance of 1 henry.,3,,,,,,,,3
+67,1,henry,,"The henry is the unit of electrical inductance in the International System of Units (SI).[1] If a current of 1 ampere flowing through a coil produces flux linkage of 1 weber turn, that coil has a self-inductance of 1 henry.",3,,,,,,,,3
 68,1,H,,Is a symbol for henry,3,,,,,,,,3
-69,1,celsius,,The degree Celsius is the unit of temperature on the Celsius temperature scale one of two temperature scales used in the International System of Units (SI), the other being the closely related Kelvin scale.,3,,,,,,,,3
+69,1,celsius,,"The degree Celsius is the unit of temperature on the Celsius temperature scale one of two temperature scales used in the International System of Units (SI), the other being the closely related Kelvin scale.",3,,,,,,,,3
 70,1,°C,,Is a symbol for celsius,3,,,,,,,,3
-71,1,lumen,,The lumen is the unit of luminous flux, a measure of the perceived power of visible light emitted by a source, in the International System of Units (SI).,3,,,,,,,,3
+71,1,lumen,,"The lumen is the unit of luminous flux, a measure of the perceived power of visible light emitted by a source, in the International System of Units (SI).",3,,,,,,,,3
 72,1,lm,,Is a symbol for lumen,3,,,,,,,,3
-73,1,lux,,The lux is the unit of illuminance, or luminous flux per unit area, in the International System of Units (SI).,3,,,,,,,,3
+73,1,lux,,"The lux is the unit of illuminance, or luminous flux per unit area, in the International System of Units (SI).",3,,,,,,,,3
 74,1,lx,,Is a symbol for lux,3,,,,,,,,3
-75,1,becquerel,,The becquerel is the unit of radioactivity in the International System of Units (SI). One becquerel is defined as an activity of one decay per second, on average, for aperiodic decay events of a radionuclide.,3,,,,,,,,3
+75,1,becquerel,,"The becquerel is the unit of radioactivity in the International System of Units (SI). One becquerel is defined as an activity of one decay per second, on average, for aperiodic decay events of a radionuclide.",3,,,,,,,,3
 76,1,Bq,,Is a symbol for becquerel,3,,,,,,,,3
-77,1,gray,,The gray is the unit of ionizing radiation dose in the International System of Units (SI), defined as the absorption of one joule of radiation energy per kilogram of matter.,3,,,,,,,,3
+77,1,gray,,"The gray is the unit of ionizing radiation dose in the International System of Units (SI), defined as the absorption of one joule of radiation energy per kilogram of matter.",3,,,,,,,,3
 78,1,Gy,,Is a symbol for gray,3,,,,,,,,3
-79,1,sievert,,The sievert is a derived unit in the International System of Units (SI) intended to represent the stochastic health risk of ionizing radiation, which is defined as the probability of causing radiation-induced cancer and genetic damage.,3,,,,,,,,3
+79,1,sievert,,"The sievert is a derived unit in the International System of Units (SI) intended to represent the stochastic health risk of ionizing radiation, which is defined as the probability of causing radiation-induced cancer and genetic damage.",3,,,,,,,,3
 80,1,Sv,,Is a symbol for sievert,3,,,,,,,,3
-81,1,katal,,The katal is a unit of the International System of Units (SI) used for quantifying the catalytic activity of enzymes (that is, measuring the enzymatic activity level in enzyme catalysis) and other catalysts.,3,,,,,,,,3
+81,1,katal,,"The katal is a unit of the International System of Units (SI) used for quantifying the catalytic activity of enzymes (that is, measuring the enzymatic activity level in enzyme catalysis) and other catalysts.",3,,,,,,,,3
 82,1,kat,,Is a symbol for katal,3,,,,,,,,3
-83,1,kinematic,,Kinematics is a subfield of physics and mathematics, developed in classical mechanics, that describes the motion of points, bodies (objects), and systems of bodies (groups of objects) without considering the forces that cause them to move.,3,,,,,,,,3
-84,1,light,,Light, visible light, or visible radiation is electromagnetic radiation that can be perceived by the human eye.,3,,,,,,,,3
-85,1,speed,,In kinematics, the speed (commonly referred to as v) of an object is the magnitude of the change of its position over time or the magnitude of the change of its position per unit of time.,3,,,,,,,,3
-86,1,acceleration,,In mechanics, acceleration is the rate of change of the velocity of an object with respect to time. Acceleration is one of several components of kinematics, the study of motion.,3,,,,,,,,3
-87,1,square,,In mathematics, a square is the result of multiplying a number by itself. The verb "to square" is used to denote this operation. Squaring is the same as raising to the power 2, and is denoted by a superscript 2.,1,,,,,,,,3
-88,1,cube,,In geometry, a cube or regular hexahedron is a three-dimensional solid object bounded by six congruent square faces, a type of polyhedron.,1,,,,,,,,3
-89,1,elementary,,In particle physics, an elementary particle or fundamental particle is a subatomic particle that is not composed of other particles. The Standard Model presently recognizes seventeen distinct particles—twelve fermions and five bosons.,1,,,,,,,,3
-90,1,charge,,Electric charge (symbol q, sometimes Q) is a physical property of matter that causes it to experience a force when placed in an electromagnetic field. Electric charge can be positive or negative.,1,,,,,,,,3
-91,1,luminous,,Luminosity is an absolute measure of radiated electromagnetic energy per unit time, and is synonymous with the radiant power emitted by a light-emitting object.,1,,,,,,,,3
+83,1,kinematic,,"Kinematics is a subfield of physics and mathematics, developed in classical mechanics, that describes the motion of points, bodies (objects), and systems of bodies (groups of objects) without considering the forces that cause them to move.",3,,,,,,,,3
+84,1,light,,"Light, visible light, or visible radiation is electromagnetic radiation that can be perceived by the human eye.",3,,,,,,,,3
+85,1,speed,,"In kinematics, the speed (commonly referred to as v) of an object is the magnitude of the change of its position over time or the magnitude of the change of its position per unit of time.",3,,,,,,,,3
+86,1,acceleration,,"In mechanics, acceleration is the rate of change of the velocity of an object with respect to time. Acceleration is one of several components of kinematics, the study of motion.",3,,,,,,,,3
+87,1,square,,"In mathematics, a square is the result of multiplying a number by itself. The verb ""to square"" is used to denote this operation. Squaring is the same as raising to the power 2, and is denoted by a superscript 2.",1,,,,,,,,3
+88,1,cube,,"In geometry, a cube or regular hexahedron is a three-dimensional solid object bounded by six congruent square faces, a type of polyhedron.",1,,,,,,,,3
+89,1,elementary,,"In particle physics, an elementary particle or fundamental particle is a subatomic particle that is not composed of other particles. The Standard Model presently recognizes seventeen distinct particles—twelve fermions and five bosons.",1,,,,,,,,3
+90,1,charge,,"Electric charge (symbol q, sometimes Q) is a physical property of matter that causes it to experience a force when placed in an electromagnetic field. Electric charge can be positive or negative.",1,,,,,,,,3
+91,1,luminous,,"Luminosity is an absolute measure of radiated electromagnetic energy per unit time, and is synonymous with the radiant power emitted by a light-emitting object.",1,,,,,,,,3
 92,1,efficacy,,Efficacy is the ability to perform a task to a satisfactory or expected degree.,1,,,,,,,,3
-93,1,angle,,In Euclidean geometry, an angle or plane angle is the figure formed by two rays, called the sides of the angle, sharing a common endpoint, called the vertex of the angle.,3,,,,,,,,3
-94,1,velocity,,Velocity is the speed in combination with the direction of motion of an object. It is a fundamental concept in kinematics, the branch of classical mechanics that describes the motion of bodies. ,3,,,,,,,,3
-95,1,drift,,In electrical engineering, frequency drift is an unintended and generally arbitrary offset of an oscillator from its nominal frequency.,3,,,,,,,,3
-96,1,volumetric,,Volume is a measure of regions in three-dimensional space.[1] It is often quantified numerically using SI derived units (such as the cubic metre and litre) or by various imperial or US customary units (such as the gallon, quart, cubic inch).,1,,,,,,,,3
-97,1,flow,,In physics, physical chemistry and engineering, fluid dynamics is a subdiscipline of fluid mechanics that describes the flow of fluids – liquids and gases.,1,,,,,,,,3
-98,1,rate,,In mathematics, a rate is the quotient of two quantities, often represented as a fraction.,1,,,,,,,,3
-99,1,time,,Time is the continued sequence of existence and events that occurs in an apparently irreversible succession from the past, through the present, into the future,2,,,,,time,,,3
-100,1,minute,,A minute is a unit of time equal to 60 seconds, or one sixtieth of an hour.,2,,,,,,,,3
-101,1,hour,,An hour is a unit of time equal to 60 minutes, or 3600 seconds.,3,,,,,,,,3
-102,1,day,days,A day is a unit of time equal to 24 hours, approximately the period of one rotation of the Earth about its own axis.,2,,,,,,,,3
+93,1,angle,,"In Euclidean geometry, an angle or plane angle is the figure formed by two rays, called the sides of the angle, sharing a common endpoint, called the vertex of the angle.",3,,,,,,,,3
+94,1,velocity,,"Velocity is the speed in combination with the direction of motion of an object. It is a fundamental concept in kinematics, the branch of classical mechanics that describes the motion of bodies. ",3,,,,,,,,3
+95,1,drift,,"In electrical engineering, frequency drift is an unintended and generally arbitrary offset of an oscillator from its nominal frequency.",3,,,,,,,,3
+96,1,volumetric,,"Volume is a measure of regions in three-dimensional space.[1] It is often quantified numerically using SI derived units (such as the cubic metre and litre) or by various imperial or US customary units (such as the gallon, quart, cubic inch).",1,,,,,,,,3
+97,1,flow,,"In physics, physical chemistry and engineering, fluid dynamics is a subdiscipline of fluid mechanics that describes the flow of fluids – liquids and gases.",1,,,,,,,,3
+98,1,rate,,"In mathematics, a rate is the quotient of two quantities, often represented as a fraction.",1,,,,,,,,3
+99,1,time,,"Time is the continued sequence of existence and events that occurs in an apparently irreversible succession from the past, through the present, into the future",2,,,,,time,,,3
+100,1,minute,,"A minute is a unit of time equal to 60 seconds, or one sixtieth of an hour.",2,,,,,,,,3
+101,1,hour,,"An hour is a unit of time equal to 60 minutes, or 3600 seconds.",3,,,,,,,,3
+102,1,day,days,"A day is a unit of time equal to 24 hours, approximately the period of one rotation of the Earth about its own axis.",2,,,,,,,,3
 103,1,week,weeks,A week is a unit of time equal to 7 days.,2,,,,,,,,3
-104,1,month,months,A month is a unit of time, used with calendars, that is approximately as long as a natural orbital period of the Moon, roughly 30 days.,3,,,,,,,,3
-105,1,year,years,A year is the time taken for astronomical objects to complete one orbit. For example, a year on Earth is the time taken for Earth to revolve around the Sun.,2,,,,,year,,,3
+104,1,month,months,"A month is a unit of time, used with calendars, that is approximately as long as a natural orbital period of the Moon, roughly 30 days.",3,,,,,,,,3
+105,1,year,years,"A year is the time taken for astronomical objects to complete one orbit. For example, a year on Earth is the time taken for Earth to revolve around the Sun.",2,,,,,year,,,3
 106,1,Planck,,Max Planck was a German theoretical physicist whose discovery of energy quanta won him the Nobel Prize in Physics in 1918.,1,,,,,,,,3
 107,1,Boltzmann,,Ludwig Boltzmann was an Austrian physicist and philosopher; his greatest achievements were the development of statistical mechanics.,1,,,,,,,,3
-108,1,Avogadro,,Italian scientist, most noted for his contribution to molecular theory now known as Avogadro's law, which states that equal volumes of gases under the same conditions of temperature and pressure contain equal numbers of molecules.,1,,,,,,,,3
-109,1,mechanics,,Mechanics is the area of physics concerned with the relationships between force, matter, and motion among physical objects.,1,,,,,,,,3
-110,1,distance,,Distance is a numerical or occasionally qualitative measurement of how far apart objects, points, people, or ideas are.,3,,,,,,,,3
+108,1,Avogadro,,"Italian scientist, most noted for his contribution to molecular theory now known as Avogadro's law, which states that equal volumes of gases under the same conditions of temperature and pressure contain equal numbers of molecules.",1,,,,,,,,3
+109,1,mechanics,,"Mechanics is the area of physics concerned with the relationships between force, matter, and motion among physical objects.",1,,,,,,,,3
+110,1,distance,,"Distance is a numerical or occasionally qualitative measurement of how far apart objects, points, people, or ideas are.",3,,,,,,,,3
 111,1,kilometre,,A kilometre is a unit of length in the International System of Units (SI) equal to one thousand metres.,3,,,,,,,,3
 112,1,km,,Is a symbol for kilometre,3,,,,,,,,3
 113,1,area,,Area is the measure of a region's size on a surface.,3,,,,,,,,3
-114,1,are,,A unit of area equal to 100 square metres, defined by older forms of the metric system but now outside the modern International System of Units.,3,,,,,,,,3
+114,1,are,,"A unit of area equal to 100 square metres, defined by older forms of the metric system but now outside the modern International System of Units.",3,,,,,,,,3
 115,1,m2,,Is a symbol for square metre,3,,,,,,,,3
-116,1,hectare,,A non-SI metric unit of area equal to a square with 100-metre sides, or 10,000 square metres, primarily used in land measurement.,3,,,,,,,,3
+116,1,hectare,,"A non-SI metric unit of area equal to a square with 100-metre sides, or 10,000 square metres, primarily used in land measurement.",3,,,,,,,,3
 117,1,ha,,Is a symbol for hectare,3,,,,,,,,3
-118,1,volume,,Volume is a measure of regions in three-dimensional space. It is often quantified numerically using SI derived units such as the cubic metre and litre, or by various imperial or US customary units.,3,,,,,,,,3
+118,1,volume,,"Volume is a measure of regions in three-dimensional space. It is often quantified numerically using SI derived units such as the cubic metre and litre, or by various imperial or US customary units.",3,,,,,,,,3
 119,1,m3,,Is a symbol for cubic metre,3,,,,,,,,3
-120,1,litre,,The litre is a metric unit of volume equal to 1 cubic decimetre, or 1000 cubic centimetres. It is not an official SI unit, though the SI unit for volume is the cubic metre.,3,,,,,,,,3
+120,1,litre,,"The litre is a metric unit of volume equal to 1 cubic decimetre, or 1000 cubic centimetres. It is not an official SI unit, though the SI unit for volume is the cubic metre.",3,,,,,,,,3
 121,1,l,,Is a symbol for litre,3,,,,,,,,3
-122,1,kWh,,A kilowatt-hour is a non-SI unit of energy equal to 3.6 megajoules in SI units, which is the energy delivered by one kilowatt of power for one hour.,3,,,,,,,,3
+122,1,kWh,,"A kilowatt-hour is a non-SI unit of energy equal to 3.6 megajoules in SI units, which is the energy delivered by one kilowatt of power for one hour.",3,,,,,,,,3
 123,1,gram,,The gram is a unit of mass in the International System of Units (SI) equal to one thousandth of a kilogram.,3,,,,,,,,3
 124,1,g,,Is a symbol for gram,3,,,,,,,,3
-125,1,tonne,,A metric unit of mass equal to 1,000 kilograms, also called a metric ton.,3,,,,,,,,3
+125,1,tonne,,"A metric unit of mass equal to 1,000 kilograms, also called a metric ton.",3,,,,,,,,3
 126,1,t,,Is a symbol for tonne,3,,,,,,,,3
-127,1,hyperfine,,In atomic physics, hyperfine structure refers to small shifts in otherwise degenerate electronic energy levels caused by electromagnetic interactions between atomic nuclei and electron clouds.,1,,,,,,,,3
-128,1,transition,,In atomic physics and chemistry, an atomic electron transition (also called an atomic transition, quantum jump, or quantum leap) is an electron changing from one energy level to another within an atom[1] or artificial atom.,1,,,,,,,,3
+127,1,hyperfine,,"In atomic physics, hyperfine structure refers to small shifts in otherwise degenerate electronic energy levels caused by electromagnetic interactions between atomic nuclei and electron clouds.",1,,,,,,,,3
+128,1,transition,,"In atomic physics and chemistry, an atomic electron transition (also called an atomic transition, quantum jump, or quantum leap) is an electron changing from one energy level to another within an atom[1] or artificial atom.",1,,,,,,,,3
 129,1,frequency,,A frequency standard is a stable oscillator used for frequency calibration or reference that generates a fundamental frequency with high accuracy and precision.,1,,,,,,,,3
-130,1,Caesium,,Caesium is a soft, silvery-golden alkali metal with a melting point of 28.5 °C, making it one of only five elemental metals that are liquid at or near room temperature.,1,,,,,,,,3
-131,1,definition,,A definition is a semantic statement that attaches meaning to a term, such as a word or phrase. Definitions can be classified into intensional definitions, which convey the sense of a term, and extensional definitions, which list the objects a term describes.,1,,,,,,,,3
+130,1,Caesium,,"Caesium is a soft, silvery-golden alkali metal with a melting point of 28.5 °C, making it one of only five elemental metals that are liquid at or near room temperature.",1,,,,,,,,3
+131,1,definition,,"A definition is a semantic statement that attaches meaning to a term, such as a word or phrase. Definitions can be classified into intensional definitions, which convey the sense of a term, and extensional definitions, which list the objects a term describes.",1,,,,,,,,3
 132,1,1967,,,2,,,,,,,,
 133,1,1979,,,2,,,,,,,,
 134,1,1983,,,2,,,,,,,,
-135,1,2019,,Calendar year 2019, reference year for the emission baseline.,2,,,,,,,,
+135,1,2019,,"Calendar year 2019, reference year for the emission baseline.",2,,,,,,,,
 136,1,2020,,,2,,,,,,,,
-137,1,number,,A number is a mathematical object used to count, measure, and label.,1,,,,,,,,
-138,1,ranking,,A ranking is a relationship between a set of items such that each is ranked higher, lower, or equal to the others according to some criterion.,1,,,,,,,,
-139,1,Euler,,Leonhard Euler was a Swiss mathematician, physicist, astronomer, geographer, logician and engineer.,1,,,,,,,,
+137,1,number,,"A number is a mathematical object used to count, measure, and label.",1,,,,,,,,
+138,1,ranking,,"A ranking is a relationship between a set of items such that each is ranked higher, lower, or equal to the others according to some criterion.",1,,,,,,,,
+139,1,Euler,,"Leonhard Euler was a Swiss mathematician, physicist, astronomer, geographer, logician and engineer.",1,,,,,,,,
 140,1,jerk,,,1,,,,,,,,
 141,1,100,,,1,,,,,,,,
 142,1,133,,,1,,,,,,,,
@@ -158,7 +158,7 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 157,1,thousand,,to specify numbers in thousand,7,,,,,,,,3
 158,1,million,,to specify numbers in millions,7,,,,,,,,3
 159,1,billion,,to specify numbers in billions - 10⁹,7,,,,,,,,3
-160,1,percent,,A percentage is a number or ratio expressed as a fraction of 100; the percent measure auto-scales, so a formula that produces a ratio is shown to the user as a percent without multiplying by 100.,6,,,,,percent,,,3
+160,1,percent,,"A percentage is a number or ratio expressed as a fraction of 100; the percent measure auto-scales, so a formula that produces a ratio is shown to the user as a percent without multiplying by 100.",6,,,,,percent,,,3
 161,1,tsd.,,,7,,,,,,,,
 162,1,b,,the symbol used in formulas for billion,1,,,,,,,,
 163,1,scale thousand to one,,,10,,,,,,,,
@@ -182,7 +182,7 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 181,1,next,,,10,,,,,,,,
 182,1,prior,,,10,,,,,,,,
 183,1,increase,,,10,,,,,,,,
-184,1,child,,a human being between birth and puberty, or between infancy and adulthood.,1,,,,,,,,
+184,1,child,,"a human being between birth and puberty, or between infancy and adulthood.",1,,,,,,,,
 185,1,Bern,,,1,,,,,,,,
 186,1,canton,,a member state of the Swiss federation,1,,,,,,,,
 187,1,configuration,,,1,,,,,configuration,,,3
@@ -191,9 +191,9 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 190,1,eye,,,1,,,,,,,,
 191,1,fact,,,1,,,,,,,,
 192,1,Geneva,,,1,,,,,,,,
-193,1,government,,the system or group of people governing an organized community, generally a state.,1,,,,,,,,
+193,1,government,,"the system or group of people governing an organized community, generally a state.",1,,,,,,,,
 194,1,global,,relating to the whole world - here more a something that effects all people on earth (wikipedia does not really match),1,,,,,,,,
-195,1,group,,the social source of external information, i.e. the four peer actors,1,,,,,,,,
+195,1,group,,"the social source of external information, i.e. the four peer actors",1,,,,,,,,
 196,1,hand,,,1,,,,,,,,
 197,1,inhabitants,,,1,,,,,,,,
 198,1,launch,,,1,,,,,,,,
@@ -203,28 +203,28 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 202,1,place,,,1,,,,,,,,
 203,1,pod,,,1,,,,,pod,,,3
 204,1,point,,a single unit on a scale,1,,,,,,,,
-205,1,problem,,A problem is if someone is getting unhappy. This can be measured with "happy time points".,1,,,,,,,,
-206,1,Switzerland,,a landlocked country at the confluence of Western, Central and Southern Europe.,1,,,,,,,,
+205,1,problem,,"A problem is if someone is getting unhappy. This can be measured with ""happy time points"".",1,,,,,,,,
+206,1,Switzerland,,"a landlocked country at the confluence of Western, Central and Southern Europe.",1,,,,,,,,
 207,1,url,,,1,,,,,url,,,3
 208,1,way,,,1,,,,,,,,
 209,1,woman,,an adult female human,1,,,,,,,,
-210,1,work,,In physics, work is the energy transferred to or from an object via the application of force along a displacement.,1,,,,,,,,
+210,1,work,,"In physics, work is the energy transferred to or from an object via the application of force along a displacement.",1,,,,,,,,
 211,1,world,,all countries of the earth taken together,1,,,,,,,,
-212,1,zukunft.com,,the name of this system, used to mark its internal keywords,23,,,,,zukunft.com,,,3
+212,1,zukunft.com,,"the name of this system, used to mark its internal keywords",23,,,,,zukunft.com,,,3
 213,1,Zurich,,place name used for both the city and the canton of Zurich; The prefered use for values is City of Zurich or Canton of Zurich.,1,,,,,,,,
 214,1,solution,,a homogeneous mixture of a solute dissolved in a solvent,1,,,,,,,,
 215,1,priority,,the rank that decides which problem is worked on first,1,,,,,,,,
 216,1,probability,,Probability is the branch of mathematics concerning numerical descriptions of how likely an event is to occur.,1,,,,,,,,
-217,1,expected,,the value weighted by its probability, as opposed to the value of a single outcome,1,,,,,expected,,,3
-218,1,return,,the money made or lost on an investment over a period, as a change in value or a percentage of the amount invested,1,,,,,,,,
-219,1,score,,a standardized value derived from data, e.g. a z score,1,,,,,,,,
-220,1,standard,,describes the conventional reference form, e.g. standard deviation,1,,,,,,,,
-221,1,deviation,,In mathematics and statistics, deviation is a measure of difference between the observed value of a variable and some other value, often that variable's mean.,1,,,,,,,,
+217,1,expected,,"the value weighted by its probability, as opposed to the value of a single outcome",1,,,,,expected,,,3
+218,1,return,,"the money made or lost on an investment over a period, as a change in value or a percentage of the amount invested",1,,,,,,,,
+219,1,score,,"a standardized value derived from data, e.g. a z score",1,,,,,,,,
+220,1,standard,,"describes the conventional reference form, e.g. standard deviation",1,,,,,,,,
+221,1,deviation,,"In mathematics and statistics, deviation is a measure of difference between the observed value of a variable and some other value, often that variable's mean.",1,,,,,,,,
 222,1,potential,,the size an effect can reach if nothing counteracts it,1,,,,,,,,
 223,1,gain,,the ratio of output to input of a system or amplifier,1,,,,,,,,
-224,1,effort,,the work needed to implement a solution, the counterpart of the gain,1,,,,,,,,
+224,1,effort,,"the work needed to implement a solution, the counterpart of the gain",1,,,,,,,,
 225,1,loss,,the part of a value that is destroyed or never created,1,,,,,,,,
-226,1,climate,,long-term statistical characterization of atmospheric conditions in a region, typically averaged over periods of 30 years or more,1,,,,,,,,
+226,1,climate,,"long-term statistical characterization of atmospheric conditions in a region, typically averaged over periods of 30 years or more",1,,,,,,,,
 227,1,warm,,having or giving off heat,1,,,,,,,,
 228,1,warming,,the process of getting warmer,1,,,,,,,,
 229,1,warmer,,having a higher temperature than before,1,,,,,,,,
@@ -232,32 +232,32 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 231,1,gas,,a state of matter that has neither a fixed shape nor a fixed volume,1,,,,,,,,
 232,1,emissions,,the substances released into the air by a process,1,,,,,,,,
 233,1,populism,,a range of political stances that emphasise the idea of the common people and often contrast this group against a privileged elite.,1,,,,,,,,
-234,1,right,,on the right side or, in answers, matching the correct option,1,,,,,,,,
+234,1,right,,"on the right side or, in answers, matching the correct option",1,,,,,,,,
 235,1,left,,on the left side of the brain,1,,,,,,,,
-236,1,wing,,a side of the political spectrum, left or right,1,,,,,,,,
+236,1,wing,,"a side of the political spectrum, left or right",1,,,,,,,,
 237,1,simple,,built from few parts and therefore easy to understand,1,,,,,,,,
-238,1,ordinary,,the plain form of a method, without weighting or another refinement,1,,,,,,,,
+238,1,ordinary,,"the plain form of a method, without weighting or another refinement",1,,,,,,,,
 239,1,least,,the smallest of the compared values,1,,,,,,,,
 240,1,OLS,,the symbol used in formulas for ordinary least squares,1,,,,,,,,
-241,1,aftermath,,the period following an event, in which its consequences are measured,1,,,,,,,,
+241,1,aftermath,,"the period following an event, in which its consequences are measured",1,,,,,,,,
 242,1,5-year,,covering the five years after the event,1,,,,,,,,
 243,1,15-year,,covering the fifteen years after the event,1,,,,,,,,
 244,1,avoid,,to keep something from happening,1,,,,,,,,
 245,1,wrong,,not matching the facts or not reaching the intended goal,1,,,,,,,,
-246,1,decisions,,Decision-making is the process of making choices by identifying a decision, gathering information, and assessing alternative resolutions.,1,,,,,,,,
+246,1,decisions,,"Decision-making is the process of making choices by identifying a decision, gathering information, and assessing alternative resolutions.",1,,,,,,,,
 247,1,artificial,,made by humans rather than occurring in nature,1,,,,,,,,
 248,1,intelligence,,Intelligence is the ability to perceive or infer information and to retain it as knowledge to be applied to adaptive behaviours within an environment or context.,1,,,,,,,,
-249,1,health,,a state of complete physical, mental and social well-being and not merely the absence of disease or infirmity.,1,,,,,,,,
+249,1,health,,"a state of complete physical, mental and social well-being and not merely the absence of disease or infirmity.",1,,,,,,,,
 250,1,research,,systematic investigation to discover new knowledge,1,,,,,,,,
-251,1,poverty,,the state of having insufficient income or resources to meet basic human needs such as food, shelter and clothing.,1,,,,,,,,
+251,1,poverty,,"the state of having insufficient income or resources to meet basic human needs such as food, shelter and clothing.",1,,,,,,,,
 252,1,taxes,,A tax is a mandatory financial charge imposed on a taxpayer by a governmental organisation to fund government spending and public expenditures.,1,,,,,,,,
 253,1,education,,process of teaching and learning,1,,,,,,,,
 254,1,spending,,an outlay of money for goods or services,1,,,,,,,,
 255,1,column,,a vertical structural element that carries compressive loads,1,,,,,,,,
-256,1,prime,,of the first rank, shown before everything else,1,,,,,,,,
+256,1,prime,,"of the first rank, shown before everything else",1,,,,,,,,
 257,1,third,,the third in an order,1,,,,,,,,
 258,1,mayor,,,1,,,,,,,,
-259,1,main,,primary, isolated from interactions,1,,,,,,,,
+259,1,main,,"primary, isolated from interactions",1,,,,,,,,
 260,1,minor,,,1,,,,,,,,
 261,1,marginal,,,1,,,,,,,,
 262,1,before,,placed ahead of another element in an order,1,,,,,,,,
@@ -266,20 +266,20 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 265,1,happy,,feeling or showing pleasure or contentment,1,,,,,,,,
 266,1,unhappy,,feeling worse than the personal normal state,1,,,,,,,,
 267,1,points,,a counted unit on a rating scale,1,,,,,,,,
-268,1,DALY,,a measure of overall disease burden, expressed as the number of years lost to ill health, disability, or early death; one DALY is one lost year of healthy life.,3,,,,,,,,
+268,1,DALY,,"a measure of overall disease burden, expressed as the number of years lost to ill health, disability, or early death; one DALY is one lost year of healthy life.",3,,,,,,,,
 269,1,population,,number of people living in a place,1,,,,,,,,
 270,1,htp,,the symbol used in formulas for happy time points,3,,,,,,,,
 271,1,trillion,,the scaling factor of 10^12,7,,,,,,,,
-272,1,mio,,the symbol used in formulas for million,1,,,,,,,,
+272,1,mio,,the symbol used in formulas for million,7,,,,,,,,
 273,1,EUR,,ISO 4217 alphabetic code for the euro.,3,,,,,,,,
 274,1,annual,,measured over one year,1,,,,,,,,
 275,1,GDP,,a monetary measure of the market value of all the final goods and services produced and rendered in a specific time period by a country.,3,,,,,,,,
 276,1,decline,,downward change of a quantity over a period,1,,,,,,,,
 277,1,2024,,the year 2024,2,,,,,,,,
-278,1,disinformation,,false information deliberately spread to deceive or mislead, often to influence opinion or obscure the truth.,1,,,,,,,,
-279,1,wealth,,the total value of the assets owned by a person, community or country, minus liabilities.,1,,,,,,,,
+278,1,disinformation,,"false information deliberately spread to deceive or mislead, often to influence opinion or obscure the truth.",1,,,,,,,,
+279,1,wealth,,"the total value of the assets owned by a person, community or country, minus liabilities.",1,,,,,,,,
 280,1,concentration,,the amount of a substance in a defined volume or mass,1,,,,,,,,
-281,1,market,,mechanisms whereby supply and demand confront each other and deals are made, involving places, processes and institutions in which exchanges occur (for physical venues, use Q132510 or Q330284),1,,,,,,,,
+281,1,market,,"mechanisms whereby supply and demand confront each other and deals are made, involving places, processes and institutions in which exchanges occur (for physical venues, use Q132510 or Q330284)",1,,,,,,,,
 282,1,power,,Power is the amount of energy transferred or converted per unit time; the SI unit is the watt.,1,,,,,,,,
 283,1,biased,,systematically leaning to one side instead of showing the full picture,1,,,,,,,,
 284,1,information,,message provided to the participant about the correct response,1,,,,,,,,
@@ -288,7 +288,7 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 287,1,citizen,,Citizenship is a membership and allegiance to a sovereign state.,1,,,,,,,,
 288,1,participation,,taking part in a decision that affects oneself,1,,,,,,,,
 289,1,mismeasurement,,measuring something other than what is meant to be measured,1,,,,,,,,
-290,1,proprietary,,owned by one party, who decides who may use and change it,1,,,,,,,,
+290,1,proprietary,,"owned by one party, who decides who may use and change it",1,,,,,,,,
 291,1,software,,Software consists of computer programs that instruct the execution of a computer.,1,,,,,,,,
 292,1,reduction,,the gain of electrons by a species during a reaction,1,,,,,,,,
 293,1,avoidance,,the act of keeping something from happening,1,,,,,,,,
@@ -297,34 +297,34 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 296,1,Delphi,,the ancient oracle after which the Delphi method is named,1,,,,,,,,
 297,1,method,,a defined procedure for reaching a result,1,,,,,,,,
 298,1,basic,,covering the minimum that is needed,1,,,,,,,,
-299,1,income,,Income is the consumption and saving opportunity gained by an entity within a specified time frame, which is generally expressed in monetary terms.,1,,,,,,,,
+299,1,income,,"Income is the consumption and saving opportunity gained by an entity within a specified time frame, which is generally expressed in monetary terms.",1,,,,,,,,
 300,1,public,,provided by or open to the general population,1,,,,,,,,
-301,1,share,,attributable proportion of a whole, 0..1,1,,,,,,,,
+301,1,share,,"attributable proportion of a whole, 0..1",1,,,,,,,,
 302,1,tax,,compulsory financial charge to public authority,1,,,,,,,,
-303,1,free,,usable, studyable, shareable and improvable by everyone,1,,,,,,,,
+303,1,free,,"usable, studyable, shareable and improvable by everyone",1,,,,,,,,
 304,1,fluid,,changing continuously instead of only at fixed points in time,1,,,,,,,,
 305,1,democracy,,system of government by the whole population,1,,,,,,,,
 306,1,gross,,counted before any deduction,1,,,,,,,,
 307,1,domestic,,within the borders of one country,1,,,,,,,,
-308,1,usage,,how frequently a word, term, or service is used,1,,,,,,,,
+308,1,usage,,"how frequently a word, term, or service is used",1,,,,,,,,
 309,1,assumed,,qualifier: value is an explicit modelling assumption,1,,,,,,,,
 310,1,cost,,value of money that has been used up to produce something,1,,,,,,,,
-311,1,source,,The origin or starting point of something. In a currency conversion, the source side refers to the currency being converted from.,1,,,,,source,,,3
+311,1,source,,"The origin or starting point of something. In a currency conversion, the source side refers to the currency being converted from.",1,,,,,source,,,3
 312,1,confidence,,Subjective probability (0 to 1) that the tagged estimate range contains the true value.,1,,,,,,,,
-313,1,initial,,the first of a series: of a work the first step before any repetition or roll-out, of a measure the value before any correction or exclusion,1,,,,,initial,,,3
+313,1,initial,,"the first of a series: of a work the first step before any repetition or roll-out, of a measure the value before any correction or exclusion",1,,,,,initial,,,3
 314,1,reward,,the part of the potential loss that a solution can avoid,1,,,,,,,,
 315,1,ratio,,the quotient of two values of the same or of a different unit,1,,,,,,,,
 316,1,validation,,the check that a shown table can be reproduced from the values,1,,,,,,,,
 317,1,low,,the lower bound of the probability range of a value; the width of the range is defined by the file that states it,1,,,,,,,,
 318,1,high,,the upper bound of the probability range of a value; the width of the range is defined by the file that states it,1,,,,,,,,
-319,1,centre,,the middle of a range or of an area; of a value it is the best guess between the low and the high bound, so a value without a range word is the centre,1,,,,,,,,
+319,1,centre,,"the middle of a range or of an area; of a value it is the best guess between the low and the high bound, so a value without a range word is the centre",1,,,,,,,,
 320,1,range,,the interval between a lower and an upper bound,1,,,,,,,,
 321,1,scale trillion to one,,,10,,,,,,,,
 322,1,global happy time points,,,10,,,,,,,,
 323,1,avoided potential loss,,,10,,,,,,,,
 324,1,reward ratio (formula),,,10,,,,,,,,
-325,1,country,,a distinct part of the world, such as a state, nation, or other political entity.,1,,,,,,,,
-326,1,Germany,,a country in Central Europe, between the Baltic and North seas and the Alps.,1,,,,,,,,
+325,1,country,,"a distinct part of the world, such as a state, nation, or other political entity.",1,,,,,,,,
+326,1,Germany,,"a country in Central Europe, between the Baltic and North seas and the Alps.",1,,,,,,,,
 327,1,2013,,,2,,,,,,,,
 328,1,2014,,,2,,,,,,,,
 329,1,2015,,,2,,,,,,,,
@@ -333,7 +333,7 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 332,1,2018,,,2,,,,,,,,
 333,1,countryside,,,1,,,,,,,,
 334,1,suburb,,,1,,,,,,,,
-335,1,total,,the whole amount or count, e.g. the total number of possible outcomes,1,,,,,,,,
+335,1,total,,"the whole amount or count, e.g. the total number of possible outcomes",1,,,,,,,,
 336,1,k,,,1,,,,,,,,
 337,1,ZU,,,1,,,,,,,,
 338,1,city population,,,10,,,,,,,,
@@ -343,28 +343,28 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 342,1,population in the city of Zurich in percent of Switzerland,,,10,,,,,,,,
 343,1,purchasing,,the act of buying a good or a service,1,,,,,,,,
 344,1,parity,,the state of being equal in value,1,,,,,,,,
-345,1,currency,,A currency is a system of money in common use within a specific environment over time, especially for people in a nation state. It is typically issued and controlled by a central bank or monetary authority and serves as a medium of exchange, unit of account, and store of value.,1,,,,,,,,
-346,1,conversion,,The process of changing something from one form to another. Currency conversion refers to exchanging an amount of money in one currency for the equivalent value in another currency, typically using an exchange rate.,1,,,,,,,,
-347,1,bid,,The price at which a buyer is willing to purchase a currency or other asset. In a quoted currency pair, the bid is the lower of the two prices and represents what a dealer will pay to buy the base currency.,1,,,,,,,,
-348,1,ask,,The price at which a seller is willing to sell a currency or other asset. In a quoted currency pair, the ask is the higher of the two prices and represents what a dealer will accept to sell the base currency.,1,,,,,,,,
-349,1,spread,,The difference between two prices, rates, or yields. In foreign exchange, the bid-ask spread is the difference between the ask price (at which a dealer sells) and the bid price (at which a dealer buys), and represents a transaction cost.,1,,,,,,,,
-350,1,quote,,In a currency pair, the quote currency (also called the counter currency) is the second currency listed and indicates how much of it is required to buy one unit of the base currency. For example, in EUR/USD, USD is the quote currency.,1,,,,,,,,
-351,1,forward,,Relating to a future date. A forward exchange rate is the rate agreed today for a currency transaction to be settled on a specified future date, derived from the spot rate and the interest rate differential between the two currencies.,1,,,,,,,,
-352,1,spot,,A spot transaction is a foreign exchange deal in which two parties agree to exchange currencies at the current market rate, with settlement typically occurring within two business days.,1,,,,,,,,
-353,1,target,,The intended destination or endpoint of a process. In a currency conversion, the target side refers to the currency being converted into.,1,,,,,,,,
+345,1,currency,,"A currency is a system of money in common use within a specific environment over time, especially for people in a nation state. It is typically issued and controlled by a central bank or monetary authority and serves as a medium of exchange, unit of account, and store of value.",1,,,,,,,,
+346,1,conversion,,"The process of changing something from one form to another. Currency conversion refers to exchanging an amount of money in one currency for the equivalent value in another currency, typically using an exchange rate.",1,,,,,,,,
+347,1,bid,,"The price at which a buyer is willing to purchase a currency or other asset. In a quoted currency pair, the bid is the lower of the two prices and represents what a dealer will pay to buy the base currency.",1,,,,,,,,
+348,1,ask,,"The price at which a seller is willing to sell a currency or other asset. In a quoted currency pair, the ask is the higher of the two prices and represents what a dealer will accept to sell the base currency.",1,,,,,,,,
+349,1,spread,,"The difference between two prices, rates, or yields. In foreign exchange, the bid-ask spread is the difference between the ask price (at which a dealer sells) and the bid price (at which a dealer buys), and represents a transaction cost.",1,,,,,,,,
+350,1,quote,,"In a currency pair, the quote currency (also called the counter currency) is the second currency listed and indicates how much of it is required to buy one unit of the base currency. For example, in EUR/USD, USD is the quote currency.",1,,,,,,,,
+351,1,forward,,"Relating to a future date. A forward exchange rate is the rate agreed today for a currency transaction to be settled on a specified future date, derived from the spot rate and the interest rate differential between the two currencies.",1,,,,,,,,
+352,1,spot,,"A spot transaction is a foreign exchange deal in which two parties agree to exchange currencies at the current market rate, with settlement typically occurring within two business days.",1,,,,,,,,
+353,1,target,,"The intended destination or endpoint of a process. In a currency conversion, the target side refers to the currency being converted into.",1,,,,,,,,
 354,1,exchange,,,1,,,,,,,,
 355,1,cross,,,1,,,,,,,,
-356,1,interest,,In finance and economics, interest is payment from a borrower or deposit-taking financial institution to a lender or depositor of an amount above repayment of the principal sum.,1,,,,,,,,
+356,1,interest,,"In finance and economics, interest is payment from a borrower or deposit-taking financial institution to a lender or depositor of an amount above repayment of the principal sum.",1,,,,,,,,
 357,1,amount,,,1,,,,,,,,
-358,1,old,,the previous or earlier value in a comparison, e.g. in percent change,1,,,,,,,,
-359,1,new,,the current or later value in a comparison, e.g. in percent change,1,,,,,,,,
+358,1,old,,"the previous or earlier value in a comparison, e.g. in percent change",1,,,,,,,,
+359,1,new,,"the current or later value in a comparison, e.g. in percent change",1,,,,,,,,
 360,1,change,,,1,,,,,change,,,3
 361,1,price,,amount of money required to buy something,1,,,,,,,,
-362,1,criteria,,Standards or principles used as a basis for judgement, decision, or classification. Ranking criteria define how items are ordered relative to one another.,1,,,,,,,,
-363,1,most,,Denoting the greatest in quantity, extent, or degree among a group of compared items. Used in superlative constructions such as 'most relevant' or 'most traded'.,1,,,,,,,,
-364,1,relevant,,Closely connected or appropriate to the matter at hand. In this dataset, relevance is determined by trading turnover, with currencies ranked by yearly turnover being considered the most relevant.,1,,,,,,,,
-365,1,daily,,Occurring or measured every day. In foreign exchange statistics, daily averages are a standard reporting metric showing typical turnover over a 24-hour trading day.,1,,,,,daily,,,3
-366,1,weekly,,Occurring or measured every week. In financial reporting, weekly averages aggregate daily figures across a calendar week.,1,,,,,,,,
+362,1,criteria,,"Standards or principles used as a basis for judgement, decision, or classification. Ranking criteria define how items are ordered relative to one another.",1,,,,,,,,
+363,1,most,,"Denoting the greatest in quantity, extent, or degree among a group of compared items. Used in superlative constructions such as 'most relevant' or 'most traded'.",1,,,,,,,,
+364,1,relevant,,"Closely connected or appropriate to the matter at hand. In this dataset, relevance is determined by trading turnover, with currencies ranked by yearly turnover being considered the most relevant.",1,,,,,,,,
+365,1,daily,,"Occurring or measured every day. In foreign exchange statistics, daily averages are a standard reporting metric showing typical turnover over a 24-hour trading day.",1,,,,,daily,,,3
+366,1,weekly,,"Occurring or measured every week. In financial reporting, weekly averages aggregate daily figures across a calendar week.",1,,,,,,,,
 367,1,monthly,,Occurring or measured every month. Monthly turnover figures are widely used in financial reporting and serve as a building block for higher-frequency aggregations such as yearly averages.,1,,,,,,,,
 368,1,yearly,,Occurring or measured every year. Yearly turnover figures provide a long-term view of trading activity and are often used as the primary ranking criterion for currencies.,1,,,,,,,,
 369,1,turnover,,,1,,,,,,,,
@@ -378,47 +378,47 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 377,1,forward rate from spot,,,10,,,,,,,,
 378,1,yearly average turnover by month sum,,,10,,,,,,,,
 379,1,OTC,,Over-the-counter (OTC) refers to trading conducted directly between two parties without the supervision of an exchange. Most foreign exchange trading takes place on OTC markets rather than on centralised exchanges.,1,,,,,,,,
-380,1,foreign,,Originating from or characteristic of a country other than the one being referenced. In finance the term typically qualifies currencies, transactions, or instruments tied to a country other than the domestic one.,1,,,,,,,,
-381,1,instruments,,Financial instruments are monetary contracts between parties. In foreign exchange markets, the main instruments include spot transactions, outright forwards, foreign exchange swaps, currency swaps, and options.,1,,,,,,,,
-382,1,Euro,,The euro (symbol: €; currency code: EUR) is the official currency of 21 of the 27 member states of the European Union. This group of states is officially known as the euro area, more commonly named the eurozone. The euro is divided into 100 euro cents.,1,,,,,,,,
-383,1,Yen,,The yen (symbol: ¥; currency code: JPY) is the official currency of Japan. It is the third most-traded currency in the foreign exchange market after the United States dollar and the euro, and is widely used as a reserve currency. The yen is divided into 100 sen, though sen are no longer used in everyday transactions.,1,,,,,,,,
-384,1,Renminbi,,The renminbi (symbol: ¥; currency code: CNY; abbreviation: RMB) is the official currency of the People's Republic of China. Its primary unit is the yuan. Issued by the People's Bank of China, the renminbi is one of the world's most-traded currencies and is included in the IMF's Special Drawing Rights basket.,1,,,,,,,,
-385,1,other,,A residual category used to group together items that are not individually itemised. In currency turnover statistics, 'other currencies' aggregates the trading volume of all currencies outside the top-ranked ones.,1,,,,,,,,
-386,1,net,,A value that remains after specified deductions or adjustments. In foreign exchange turnover statistics, 'net' refers to adjustments removing double-counting between reporting dealers.,1,,,,,,,,
-387,1,transaction,,A completed agreement between a buyer and a seller to exchange goods, services, or financial instruments. In foreign exchange, a transaction typically involves the exchange of one currency for another at an agreed rate.,1,,,,,,,,
+380,1,foreign,,"Originating from or characteristic of a country other than the one being referenced. In finance the term typically qualifies currencies, transactions, or instruments tied to a country other than the domestic one.",1,,,,,,,,
+381,1,instruments,,"Financial instruments are monetary contracts between parties. In foreign exchange markets, the main instruments include spot transactions, outright forwards, foreign exchange swaps, currency swaps, and options.",1,,,,,,,,
+382,1,Euro,,"The euro (symbol: €; currency code: EUR) is the official currency of 21 of the 27 member states of the European Union. This group of states is officially known as the euro area, more commonly named the eurozone. The euro is divided into 100 euro cents.",1,,,,,,,,
+383,1,Yen,,"The yen (symbol: ¥; currency code: JPY) is the official currency of Japan. It is the third most-traded currency in the foreign exchange market after the United States dollar and the euro, and is widely used as a reserve currency. The yen is divided into 100 sen, though sen are no longer used in everyday transactions.",1,,,,,,,,
+384,1,Renminbi,,"The renminbi (symbol: ¥; currency code: CNY; abbreviation: RMB) is the official currency of the People's Republic of China. Its primary unit is the yuan. Issued by the People's Bank of China, the renminbi is one of the world's most-traded currencies and is included in the IMF's Special Drawing Rights basket.",1,,,,,,,,
+385,1,other,,"A residual category used to group together items that are not individually itemised. In currency turnover statistics, 'other currencies' aggregates the trading volume of all currencies outside the top-ranked ones.",1,,,,,,,,
+386,1,net,,"A value that remains after specified deductions or adjustments. In foreign exchange turnover statistics, 'net' refers to adjustments removing double-counting between reporting dealers.",1,,,,,,,,
+387,1,transaction,,"A completed agreement between a buyer and a seller to exchange goods, services, or financial instruments. In foreign exchange, a transaction typically involves the exchange of one currency for another at an agreed rate.",1,,,,,,,,
 388,1,outright,,An outright forward is a foreign exchange contract obliging two parties to exchange currencies at a specified rate on a future date beyond the spot settlement window. It differs from a swap in that it consists of a single leg rather than two.,1,,,,,,,,
 389,1,forwards,,Forward contracts are agreements to buy or sell an asset at a predetermined price on a specified future date. Currency forwards are widely used to hedge foreign exchange risk arising from future cash flows in foreign currencies.,1,,,,,,,,
 390,1,swap,,A currency swap (or FX swap) is a foreign exchange transaction that combines a spot purchase or sale of a currency with a simultaneous forward sale or purchase of the same currency. It is widely used to manage liquidity and hedge foreign exchange exposure.,1,,,,,,,,
-391,1,option,,A foreign exchange option gives the holder the right, but not the obligation, to exchange one currency for another at a specified rate on or before a specified date. Options are typically used to hedge or to speculate on currency movements.,1,,,,,,,,
-392,1,2022,,The Gregorian calendar year 2022 (MMXXII), in which the BIS conducted its most recent Triennial Survey of foreign exchange turnover at the time this dataset was compiled.,2,,,,,,,,
+391,1,option,,"A foreign exchange option gives the holder the right, but not the obligation, to exchange one currency for another at a specified rate on or before a specified date. Options are typically used to hedge or to speculate on currency movements.",1,,,,,,,,
+392,1,2022,,"The Gregorian calendar year 2022 (MMXXII), in which the BIS conducted its most recent Triennial Survey of foreign exchange turnover at the time this dataset was compiled.",2,,,,,,,,
 393,1,¥,,The yen and yuan sign (¥) is a currency symbol used both for the Japanese yen and the Chinese yuan (the primary unit of the renminbi). It consists of the Latin letter Y crossed by one or two horizontal strokes.,1,,,,,,,,
 394,1,USD,,ISO 4217 alphabetic code for the United States dollar.,3,,,,,,,,
-395,1,US$,,Symbol or abbreviation for the United States dollar, used to disambiguate from other dollar-denominated currencies.,1,,,,,,,,
-396,1,$,,The dollar sign, most commonly used as the symbol for the United States dollar, although it is also used for many other dollar-denominated currencies.,1,,,,,,,,
+395,1,US$,,"Symbol or abbreviation for the United States dollar, used to disambiguate from other dollar-denominated currencies.",1,,,,,,,,
+396,1,$,,"The dollar sign, most commonly used as the symbol for the United States dollar, although it is also used for many other dollar-denominated currencies.",1,,,,,,,,
 397,1,US-Dollar,,Alternative (German) spelling of the United States dollar; an alias of 'US dollar'.,1,,,,,,,,
-398,1,€,,The euro sign (€), the currency symbol for the euro.,1,,,,,,,,
+398,1,€,,"The euro sign (€), the currency symbol for the euro.",1,,,,,,,,
 399,1,JPY,,ISO 4217 alphabetic code for the Japanese yen.,1,,,,,,,,
 400,1,Sterling,,Pound sterling (symbol: £; currency code: GBP) is the official currency of the United Kingdom and several British overseas territories and Crown Dependencies. It is the oldest currency still in continuous use and the fourth most-traded currency on the foreign exchange market. One pound is divided into 100 pence.,1,,,,,,,,
 401,1,GBP,,ISO 4217 alphabetic code for pound sterling (Great Britain Pound).,1,,,,,,,,
-402,1,£,,The pound sign (£), the currency symbol for pound sterling.,1,,,,,,,,
+402,1,£,,"The pound sign (£), the currency symbol for pound sterling.",1,,,,,,,,
 403,1,CNY,,ISO 4217 alphabetic code for the renminbi (Chinese Yuan).,1,,,,,,,,
 404,1,AUD,,ISO 4217 alphabetic code for the Australian dollar.,1,,,,,,,,
-405,1,A$,,Symbol or abbreviation for the Australian dollar, used to disambiguate from other dollar-denominated currencies.,1,,,,,,,,
+405,1,A$,,"Symbol or abbreviation for the Australian dollar, used to disambiguate from other dollar-denominated currencies.",1,,,,,,,,
 406,1,CAD,,ISO 4217 alphabetic code for the Canadian dollar.,1,,,,,,,,
-407,1,C$,,Symbol or abbreviation for the Canadian dollar, used to disambiguate from other dollar-denominated currencies.,1,,,,,,,,
-408,1,CHF,,ISO 4217 alphabetic code for the Swiss franc (Confoederatio Helvetica Franc), also widely used as the currency's typographic symbol.,3,,,,,,,,
+407,1,C$,,"Symbol or abbreviation for the Canadian dollar, used to disambiguate from other dollar-denominated currencies.",1,,,,,,,,
+408,1,CHF,,"ISO 4217 alphabetic code for the Swiss franc (Confoederatio Helvetica Franc), also widely used as the currency's typographic symbol.",3,,,,,,,,
 409,1,HKD,,ISO 4217 alphabetic code for the Hong Kong dollar.,1,,,,,,,,
 410,1,HK$,,Symbol or abbreviation for the Hong Kong dollar.,1,,,,,,,,
 411,1,SGD,,ISO 4217 alphabetic code for the Singapore dollar.,1,,,,,,,,
 412,1,S$,,Symbol or abbreviation for the Singapore dollar.,1,,,,,,,,
 413,1,SEK,,ISO 4217 alphabetic code for the Swedish krona.,1,,,,,,,,
-414,1,kr,,Abbreviation shared by several Scandinavian krona/krone currencies, including the Swedish krona, Norwegian krone, and Danish krone.,1,,,,,,,,
+414,1,kr,,"Abbreviation shared by several Scandinavian krona/krone currencies, including the Swedish krona, Norwegian krone, and Danish krone.",1,,,,,,,,
 415,1,KRW,,ISO 4217 alphabetic code for the South Korean won.,1,,,,,,,,
 416,1,NOK,,ISO 4217 alphabetic code for the Norwegian krone.,1,,,,,,,,
 417,1,NZD,,ISO 4217 alphabetic code for the New Zealand dollar.,1,,,,,,,,
 418,1,NZ$,,Symbol or abbreviation for the New Zealand dollar.,1,,,,,,,,
 419,1,INR,,ISO 4217 alphabetic code for the Indian rupee.,1,,,,,,,,
-420,1,₹,,The Indian rupee sign (₹), officially adopted in 2010 as the currency symbol for the Indian rupee.,1,,,,,,,,
+420,1,₹,,"The Indian rupee sign (₹), officially adopted in 2010 as the currency symbol for the Indian rupee.",1,,,,,,,,
 421,1,MXN,,ISO 4217 alphabetic code for the Mexican peso.,1,,,,,,,,
 422,1,MX$,,Symbol or abbreviation for the Mexican peso.,1,,,,,,,,
 423,1,TWD,,ISO 4217 alphabetic code for the New Taiwan dollar.,1,,,,,,,,
@@ -429,44 +429,44 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 428,1,R$,,Symbol or abbreviation for the Brazilian real.,1,,,,,,,,
 429,1,DKK,,ISO 4217 alphabetic code for the Danish krone.,1,,,,,,,,
 430,1,PLN,,ISO 4217 alphabetic code for the Polish złoty.,1,,,,,,,,
-431,1,zł,,The 'zł' abbreviation, the currency symbol for the Polish złoty.,1,,,,,,,,
+431,1,zł,,"The 'zł' abbreviation, the currency symbol for the Polish złoty.",1,,,,,,,,
 432,1,THB,,ISO 4217 alphabetic code for the Thai baht.,1,,,,,,,,
-433,1,฿,,The baht sign (฿), the currency symbol for the Thai baht.,1,,,,,,,,
+433,1,฿,,"The baht sign (฿), the currency symbol for the Thai baht.",1,,,,,,,,
 434,1,ILS,,ISO 4217 alphabetic code for the Israeli new shekel.,1,,,,,,,,
-435,1,₪,,The new shekel sign (₪), the currency symbol for the Israeli new shekel.,1,,,,,,,,
+435,1,₪,,"The new shekel sign (₪), the currency symbol for the Israeli new shekel.",1,,,,,,,,
 436,1,IDR,,ISO 4217 alphabetic code for the Indonesian rupiah.,1,,,,,,,,
 437,1,Rp,,Symbol or abbreviation for the Indonesian rupiah.,1,,,,,,,,
 438,1,CZK,,ISO 4217 alphabetic code for the Czech koruna.,1,,,,,,,,
-439,1,Kč,,The 'Kč' abbreviation, the currency symbol for the Czech koruna.,1,,,,,,,,
+439,1,Kč,,"The 'Kč' abbreviation, the currency symbol for the Czech koruna.",1,,,,,,,,
 440,1,AED,,ISO 4217 alphabetic code for the United Arab Emirates dirham.,1,,,,,,,,
-441,1,د.إ,,The Arabic abbreviation د.إ, the currency symbol for the UAE dirham.,1,,,,,,,,
+441,1,د.إ,,"The Arabic abbreviation د.إ, the currency symbol for the UAE dirham.",1,,,,,,,,
 442,1,TRY,,ISO 4217 alphabetic code for the Turkish lira.,1,,,,,,,,
-443,1,₺,,The Turkish lira sign (₺), introduced in 2012 as the currency symbol for the Turkish lira.,1,,,,,,,,
+443,1,₺,,"The Turkish lira sign (₺), introduced in 2012 as the currency symbol for the Turkish lira.",1,,,,,,,,
 444,1,HUF,,ISO 4217 alphabetic code for the Hungarian forint.,1,,,,,,,,
 445,1,Ft,,Symbol or abbreviation for the Hungarian forint.,1,,,,,,,,
 446,1,CLP,,ISO 4217 alphabetic code for the Chilean peso.,1,,,,,,,,
 447,1,CLP$,,Symbol or abbreviation for the Chilean peso.,1,,,,,,,,
 448,1,SAR,,ISO 4217 alphabetic code for the Saudi riyal.,1,,,,,,,,
-449,1,﷼,,The Arabic ligature ﷼, used as the currency symbol for several riyal currencies including the Saudi riyal.,1,,,,,,,,
+449,1,﷼,,"The Arabic ligature ﷼, used as the currency symbol for several riyal currencies including the Saudi riyal.",1,,,,,,,,
 450,1,PHP,,ISO 4217 alphabetic code for the Philippine peso.,1,,,,,,,,
-451,1,₱,,The peso sign (₱), the currency symbol for the Philippine peso.,1,,,,,,,,
+451,1,₱,,"The peso sign (₱), the currency symbol for the Philippine peso.",1,,,,,,,,
 452,1,MYR,,ISO 4217 alphabetic code for the Malaysian ringgit.,1,,,,,,,,
-453,1,RM,,Symbol or abbreviation for the Malaysian ringgit, derived from 'Ringgit Malaysia'.,1,,,,,,,,
+453,1,RM,,"Symbol or abbreviation for the Malaysian ringgit, derived from 'Ringgit Malaysia'.",1,,,,,,,,
 454,1,COP,,ISO 4217 alphabetic code for the Colombian peso.,1,,,,,,,,
 455,1,COL$,,Symbol or abbreviation for the Colombian peso.,1,,,,,,,,
 456,1,RUB,,ISO 4217 alphabetic code for the Russian ruble.,1,,,,,,,,
-457,1,₽,,The Russian ruble sign (₽), officially adopted in 2013 as the currency symbol for the Russian ruble.,1,,,,,,,,
+457,1,₽,,"The Russian ruble sign (₽), officially adopted in 2013 as the currency symbol for the Russian ruble.",1,,,,,,,,
 458,1,RON,,ISO 4217 alphabetic code for the Romanian leu.,1,,,,,,,,
-459,1,L,,Symbol or abbreviation for the Romanian leu (and also several other currencies, such as the Albanian lek).,1,,,,,,,,
+459,1,L,,"Symbol or abbreviation for the Romanian leu (and also several other currencies, such as the Albanian lek).",1,,,,,,,,
 460,1,PEN,,ISO 4217 alphabetic code for the Peruvian sol.,1,,,,,,,,
 461,1,S/,,Symbol or abbreviation for the Peruvian sol.,1,,,,,,,,
 462,1,BHD,,ISO 4217 alphabetic code for the Bahraini dinar.,1,,,,,,,,
-463,1,.د.ب,,The Arabic abbreviation .د.ب, the currency symbol for the Bahraini dinar.,1,,,,,,,,
-464,1,BGN,,ISO 4217 alphabetic code for the Bulgarian lev, also widely used as the currency's typographic symbol.,1,,,,,,,,
+463,1,.د.ب,,"The Arabic abbreviation .د.ب, the currency symbol for the Bahraini dinar.",1,,,,,,,,
+464,1,BGN,,"ISO 4217 alphabetic code for the Bulgarian lev, also widely used as the currency's typographic symbol.",1,,,,,,,,
 465,1,ARS,,ISO 4217 alphabetic code for the Argentine peso.,1,,,,,,,,
 466,1,ARG$,,Symbol or abbreviation for the Argentine peso.,1,,,,,,,,
 467,1,Other,,Residual category aggregating all currencies not individually itemised in this dataset.,1,,,,,,,,
-468,1,Total,,The complete sum across all categories, with no items excluded.,1,,,,,,,,
+468,1,Total,,"The complete sum across all categories, with no items excluded.",1,,,,,,,,
 469,1,dollar,,,1,,,,,,,,
 470,1,US,,,1,,,,,,,,
 471,1,U.S.,,,1,,,,,,,,
@@ -556,7 +556,7 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 555,1,parts,,,1,,,,,,,,
 556,1,PE Ratio,,,10,,,,,,,,
 557,1,scale pence to Pound,,,10,,,,,,,,
-558,1,Danone,,Danone S.A. is a French multinational food-products corporation based in Paris. It was founded in 1919 in Barcelona, Spain.,1,,,,,,,,
+558,1,Danone,,"Danone S.A. is a French multinational food-products corporation based in Paris. It was founded in 1919 in Barcelona, Spain.",1,,,,,,,,
 559,1,Nestlé,,,1,,,,,,,,
 560,1,Migros,,,1,,,,,,,,
 561,1,Cooperative,,,1,,,,,,,,
@@ -606,7 +606,7 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 605,1,Prepared,,,1,,,,,,,,
 606,1,dishes,,,1,,,,,,,,
 607,1,Operating,,,1,,,,,,,,
-608,1,profit,,financial gain, revenue minus costs,1,,,,,,,,
+608,1,profit,,"financial gain, revenue minus costs",1,,,,,,,,
 609,1,max,,The maximal numeric value.,1,,,,,max,,,3
 610,1,2030,,,2,,,,,,,,
 611,1,2029,,,2,,,,,,,,
@@ -623,8 +623,8 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 622,1,Other trading net,,,10,,,,,,,,
 623,1,Cost of sales formula,,,10,,,,,,,,
 624,1,Operating Profit,,,10,,,,,,,,
-625,1,Financial income/expense, net,,,10,,,,,,,,
-626,1,Interest income/expense, net,,,10,,,,,,,,
+625,1,"Financial income/expense, net",,,10,,,,,,,,
+626,1,"Interest income/expense, net",,,10,,,,,,,,
 627,1,Profit before income taxes,,,10,,,,,,,,
 628,1,Net profit,,,10,,,,,,,,
 629,1,Profit attributable to shareholders,,,10,,,,,,,,
@@ -632,7 +632,7 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 631,1,Price Earning ratio,,,10,,,,,,,,
 632,1,Target Price,,,10,,,,,,,,
 633,1,allowed,,,,,,,,allowed,,,3
-634,1,automatic,,,1,,,,,automatic,,,3
+634,1,automatic,,,,,,,,automatic,,,3
 635,1,backend,,,,,,,,backend,,,3
 636,1,block,,,,,,,,block,,,3
 637,1,cache,,,,,,,,cache,,,3
@@ -640,7 +640,7 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 639,1,columns,,,,,,,,columns,,,3
 640,1,config,,,,,,,,config,,,3
 641,1,create,,Bloom level: produce new or original work,1,,,,,create,,,3
-642,1,data,,,1,,,,,data,,,3
+642,1,data,,,,,,,,data,,,3
 643,1,database,,An organized collection of data stored and accessed electronically.,,,,,,database,,,3
 644,1,default,,The setting used if nothing else is specified.,,,,,,default,,,3
 645,1,delay,,,,,,,,delay,,,3
@@ -655,7 +655,7 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 654,1,import,,a good or service brought into one country from another.,1,,,,,import,,,3
 655,1,insert,,,,,,,,insert,,,3
 656,1,ip,,,,,,,,ip,,,3
-657,1,job,,,1,,,,,job,,,3
+657,1,job,,,,,,,,job,,,3
 658,1,min,,The minimal numeric value.,,,,,,min,,,3
 659,1,name,,,,,,,,name,,,3
 660,1,page,,,,,,,,page,,,3
@@ -673,8 +673,8 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 672,1,triple,,,,,,,,triple,,,3
 673,1,type,,,,,,,,type,,,3
 674,1,update,,,,,,,,update,,,3
-675,1,user,,a person who uses a computer, network, or online service.,1,,,,,user,,,3
-676,1,value,,,1,,,,,value,,,3
+675,1,user,,"a person who uses a computer, network, or online service.",1,,,,,user,,,3
+676,1,value,,,,,,,,value,,,3
 677,1,version,,,,,,,,version,,,3
 678,1,view,,,,,,,,view,,,3
 679,1,tooltip-comment,,keyword to read the word or triple description from the config.yaml,,,,,,tooltip-comment,,,3
@@ -684,10 +684,10 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 683,1,also used by the system to force selecting only one value,,most,,,,,,also used by the system to force selecting only one value,,,3
 684,1,also used by the system to select some highlighted entries,,relevant,,,,,,also used by the system to select some highlighted entries,,,3
 685,1,row,,,,,,,,,,,
-686,1,limit,,,1,,,,,,,,
-687,1,access,,,1,,,,,,,,
+686,1,limit,,,,,,,,,,,
+687,1,access,,,,,,,,,,,
 688,1,log,,,,,,,,,,,
-689,1,storage,,,1,,,,,,,,
+689,1,storage,,,,,,,,,,,
 690,1,MB,,,,,,,,,,,
 691,1,days,,,,,,,,,,,
 692,1,validate,,,,,,,,,,,
@@ -718,12 +718,12 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 717,1,risk,,,,,,,,,,,
 718,1,account,,,,,,,,,,,
 719,1,peers,,,,,,,,,,,
-720,1,prediction,,,1,,,,,,,,
+720,1,prediction,,,,,,,,,,,
 721,1,factors,,,,,,,,,,,
 722,1,factor,,,1,,,,,,,,
 723,1,contribution,,,,,,,,,,,
 724,1,weights,,,,,,,,,,,
-725,1,combination,,an expression built from a set of terms, e.g. by adding each term multiplied by a coefficient,1,,,,,,,,
+725,1,combination,,"an expression built from a set of terms, e.g. by adding each term multiplied by a coefficient",1,,,,,,,,
 726,1,format,,,,,,,,,,,
 727,1,language,,system of communication,1,,,,,,,,
 728,1,selections,,,,,,,,,,,
@@ -774,7 +774,7 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 773,1,server,,,,,,,,,,,
 774,1,not,,,,,,,,,,,
 775,1,trusted,,,,,,,,,,,
-776,1,limits,,,1,,,,,,,,
+776,1,limits,,,,,,,,,,,
 777,1,login,,,,,,,,,,,
 778,1,by,,,,,,,,,,,
 779,1,ip-address,,,,,,,,,,,
@@ -787,16 +787,16 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 786,1,hardware,,,,,,,,,,,
 787,1,CPU,,,,,,,,,,,
 788,1,info,,,,,,,,,,,
-789,1,warning,,,1,,,,,,,,
+789,1,warning,,,,,,,,,,,
 790,1,network,,,,,,,,,,,
 791,1,memory,,,1,,,,,,,,
 792,1,density,,quantity per unit area or volume,1,,,,,,,,
 793,1,birth,,start of life,1,,,,,,,,
 794,1,welfare,,,1,,,,,,,,
-795,1,waking,,waking, net-positive part of lived time,1,,,,,,,,
+795,1,waking,,"waking, net-positive part of lived time",1,,,,,,,,
 796,1,fraction,,,1,,,,,,,,
 797,1,km2,,,3,,,,,,,,
-798,1,HTP,,Happy Time Point, the zukunft.com DALY-extended wellbeing unit,3,,,,,,,,
+798,1,HTP,,"Happy Time Point, the zukunft.com DALY-extended wellbeing unit",3,,,,,,,,
 799,1,measured,,qualifier: value taken from an official measurement/statistic,1,,,,,,,,
 800,1,count,,the number of items of the kind that the count is of,1,,,,,,,,
 801,1,national,,a citizen of a country,1,,,,,,,,
@@ -836,7 +836,7 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 835,1,doctor,,qualified medical practitioner,1,,,,,,,,
 836,1,environment,,surroundings in which organisms live,1,,,,,,,,
 837,1,forest,,large area covered chiefly with trees,1,,,,,,,,
-838,1,water,,liquid H₂O, essential for life,1,,,,,,,,
+838,1,water,,"liquid H₂O, essential for life",1,,,,,,,,
 839,1,lake,,large inland body of water,1,,,,,,,,
 840,1,carbon,,,1,,,,,,,,
 841,1,dioxide,,,1,,,,,,,,
@@ -846,14 +846,14 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 845,1,safety,,condition of being protected from harm,1,,,,,,,,
 846,1,homicide,,killing of one human by another,1,,,,,,,,
 847,1,district,,administrative subdivision of a city,1,,,,,,,,
-848,1,German,,West‑Germanic language, official in Zurich,1,,,,,,,,
+848,1,German,,"West‑Germanic language, official in Zurich",1,,,,,,,,
 849,1,agglomeration,,urban core plus surrounding built‑up areas,1,,,,,,,,
 850,1,commuter,,person travelling regularly between home and work,1,,,,,,,,
 851,1,inbound,,coming into the place,1,,,,,,,,
 852,1,outbound,,going out of the place,1,,,,,,,,
 853,1,internet,,global computer network,1,,,,,,,,
 854,1,sunshine,,direct sunlight reaching the ground,1,,,,,,,,
-855,1,precipitation,,rain, snow, hail etc. falling from atmosphere,1,,,,,,,,
+855,1,precipitation,,"rain, snow, hail etc. falling from atmosphere",1,,,,,,,,
 856,1,millimetre,,one thousandth of a metre,3,,,,,,,,
 857,1,index,,number representing change relative to a base,1,,,,,,,,
 858,1,service,,economic activity not producing tangible goods,1,,,,,,,,
@@ -863,7 +863,7 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 862,1,space,,an area reserved for a particular purpose,1,,,,,,,,
 863,1,fare,,the price charged to a passenger for public transport,1,,,,,,,,
 864,1,zone,,a subdivided area with a common tariff or purpose,1,,,,,,,,
-865,1,QS,,Quacquarelli Symonds, publisher of the QS World University Rankings,1,,,,,,,,
+865,1,QS,,"Quacquarelli Symonds, publisher of the QS World University Rankings",1,,,,,,,,
 866,1,patent,,an exclusive right granted for an invention,1,,,,,,,,
 867,1,region,,an area of land larger than a city and its surroundings,1,,,,,,,,
 868,1,seat,,a membership position in an elected assembly,1,,,,,,,,
@@ -883,15 +883,15 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 882,1,mortality,,the incidence of death in a population,1,,,,,,,,
 883,1,drinking,,suitable or intended for consumption as a drink,1,,,,,,,,
 884,1,reading,,the skill of interpreting written text,1,,,,,,,,
-885,1,S&P,,S&P Global Ratings, a credit rating agency,1,,,,,,,,
-886,1,Fitch,,Fitch Ratings, a credit rating agency,1,,,,,,,,
-887,1,VBZ,,Verkehrsbetriebe Zürich, the public transport operator of the city,1,,,,,,,,
-888,1,ZVV,,Zürcher Verkehrsverbund, the transport network of the canton,1,,,,,,,,
-889,1,RSF,,Reporters Without Borders, publisher of the World Press Freedom Index,1,,,,,,,,
+885,1,S&P,,"S&P Global Ratings, a credit rating agency",1,,,,,,,,
+886,1,Fitch,,"Fitch Ratings, a credit rating agency",1,,,,,,,,
+887,1,VBZ,,"Verkehrsbetriebe Zürich, the public transport operator of the city",1,,,,,,,,
+888,1,ZVV,,"Zürcher Verkehrsverbund, the transport network of the canton",1,,,,,,,,
+889,1,RSF,,"Reporters Without Borders, publisher of the World Press Freedom Index",1,,,,,,,,
 890,1,GFCI 36,,the 36th edition of the Global Financial Centres Index,1,,,,,,,,
 891,1,scale,,,1,,,,,,,,
 892,1,bit,,the smallest unit of digital information,1,,,,,,,,
-893,1,product,,the goods and services that are produced,1,,,,,,,,
+893,1,product,,the result of multiplying two or more numbers,1,,,,,,,,
 894,1,financial,,qualifier: belonging to the finance business,1,,,,,,,,
 895,1,home,,a dwelling used by a person to live in,1,,,,,,,,
 896,1,transport,,the movement of people or goods from one place to another,1,,,,,,,,
@@ -900,8 +900,8 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 899,1,overnight,,qualifier: lasting for one night,1,,,,,,,,
 900,1,quality,,the degree to which something is good,1,,,,,,,,
 901,1,development,,the process of growing or improving,1,,,,,,,,
-902,1,coefficient,,a number that describes a property of a system,1,,,,,,,,
-903,1,Gini,,Corrado Gini, the statistician who defined the coefficient,1,,,,,,,,
+902,1,coefficient,,"a multiplicative factor in a term of a polynomial, a series, or any expression",1,,,,,,,,
+903,1,Gini,,"Corrado Gini, the statistician who defined the coefficient",1,,,,,,,,
 904,1,full‑time,,qualifier: with the complete regular working time,1,,,,,,,,
 905,1,equivalent,,the amount that corresponds to a reference amount,1,,,,,,,,
 906,1,2020-2024,,,2,,,,,,,,
@@ -917,9 +917,9 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 916,1,railway,,tracked transport system,1,,,,,,,,
 917,1,agricultural,,relating to farming,1,,,,,,,,
 918,1,councillor,,member of a council,1,,,,,,,,
-919,1,GWh,,gigawatt hour, unit of energy,3,,,,,,,,
-920,1,Schnebelhorn,,highest summit of the canton of Zurich, 1292 m,1,,,,,,,,
-921,1,Rhine Weiach,,lowest point of the canton of Zurich on the river Rhine near Weiach, 332 m,1,,,,,,,,
+919,1,GWh,,"gigawatt hour, unit of energy",3,,,,,,,,
+920,1,Schnebelhorn,,"highest summit of the canton of Zurich, 1292 m",1,,,,,,,,
+921,1,Rhine Weiach,,"lowest point of the canton of Zurich on the river Rhine near Weiach, 332 m",1,,,,,,,,
 922,1,Kilchberg,,municipality on Lake Zurich with the lowest tax multiplier,1,,,,,,,,
 923,1,Maschwanden,,municipality in the Knonau district with the highest tax multiplier,1,,,,,,,,
 924,1,Regierungsrat,,the seven-member executive council of the canton of Zurich,1,,,,,,,,
@@ -927,7 +927,7 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 926,1,bed,,a place for one patient in a hospital,1,,,,,,,,
 927,1,walking,,travelling on foot,1,,,,,,,,
 928,1,teenager,,a person below the age of 20,1,,,,,,,,
-929,1,pensioner,,a person older than 64, the age of the ordinary retirement in Switzerland,1,,,,,,,,
+929,1,pensioner,,"a person older than 64, the age of the ordinary retirement in Switzerland",1,,,,,,,,
 930,1,2023–2027,,the period 2023 to 2027,2,,,,,,,,
 931,1,2024‑12‑31,,the date 31 December 2024,2,,,,,,,,
 932,1,2025‑06,,the month June 2025,2,,,,,,,,
@@ -935,16 +935,16 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 934,1,2026‑01,,the month January 2026,2,,,,,,,,
 935,1,population density formula,,,10,,,,,,,,
 936,1,foreign nationals count formula,,,10,,,,,,,,
-937,1,United States,,a country primarily located in North America, comprising 50 states.,1,,,,,,,,
-938,1,consumption,,the use of goods and services by households to satisfy current needs and wants.,1,,,,,,,,
+937,1,United States,,"a country primarily located in North America, comprising 50 states.",1,,,,,,,,
+938,1,consumption,,"the use of a good or an energy, here the electricity taken from the grid by the consumers of a country",1,,,,,,,,
 939,1,investment,,the commitment of money or resources now in order to gain a future return or benefit.,1,,,,,,,,
 940,1,export,,a good or service produced in one country and sold into another country.,1,,,,,,,,
-941,1,nominal,,qualifier: measured at current prices, not adjusted for inflation,1,,,,,,,,
+941,1,nominal,,"qualifier: measured at current prices, not adjusted for inflation",1,,,,,,,,
 942,1,net exports (formula),,,10,,,,,,,,
 943,1,GDP (expenditure),,,10,,,,,,,,
-944,1,CO2,,a colourless greenhouse gas with the formula CO2, the main driver of present-day global warming.,1,,,,,,,,
-945,1,emission,,the release of greenhouse gases into the atmosphere, chiefly from burning fossil fuels and land-use change.,1,,,,,,,,
-946,1,pre-industrial,,the period before the Industrial Revolution (about 1850-1900), used as the baseline for measuring global warming,1,,,,,,,,
+944,1,CO2,,"a colourless greenhouse gas with the formula CO2, the main driver of present-day global warming.",1,,,,,,,,
+945,1,emission,,the release of a substance into the environment,1,,,,,,,,
+946,1,pre-industrial,,"the period before the Industrial Revolution (about 1850-1900), used as the baseline for measuring global warming",1,,,,,,,,
 947,1,excess,,the amount by which a quantity exceeds a reference or baseline level,1,,,,,,,,
 948,1,Earth,,,1,,,,,,,,
 949,1,greenhouse,,,1,,,,,,,,
@@ -954,9 +954,9 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 953,1,excess CO2 (formula),,,10,,,,,,,,
 954,1,excess CO2 share (formula),,,10,,,,,,,,
 955,1,misinformation,,false or inaccurate information that is spread regardless of an intent to deceive.,1,,,,,,,,
-956,1,agnotology,,the study of culturally induced ignorance or doubt, particularly through the publication of inaccurate or misleading data.,1,,,,,,,,
+956,1,agnotology,,"the study of culturally induced ignorance or doubt, particularly through the publication of inaccurate or misleading data.",1,,,,,,,,
 957,1,polarization,,the division of public opinion into two sharply contrasting and opposing groups.,1,,,,,,,,
-958,1,ignorance,,a lack of knowledge, understanding, or information about something.,1,,,,,,,,
+958,1,ignorance,,"a lack of knowledge, understanding, or information about something.",1,,,,,,,,
 959,1,virality,,the tendency of a piece of information to be circulated rapidly and widely from one user to another.,1,,,,,,,,
 960,1,media,,,1,,,,,,,,
 961,1,social,,,1,,,,,,,,
@@ -968,48 +968,48 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 967,1,social media share (formula),,,10,,,,,,,,
 968,1,disease,,a particular abnormal condition that negatively affects the structure or function of all or part of an organism.,1,,,,,,,,
 969,1,burden,,,1,,,,,,,,
-970,1,YLL,,the years of potential life lost due to premature death, the mortality component of the disease burden.,1,,,,,,,,
-971,1,YLD,,the years lived with disability, the morbidity component of the disease burden; healthy life lost to living in less than full health.,1,,,,,,,,
-972,1,replacement,,the fertility level, about 2.1 children per woman, at which a population exactly replaces itself from one generation to the next,1,,,,,,,,
+970,1,YLL,,"the years of potential life lost due to premature death, the mortality component of the disease burden.",1,,,,,,,,
+971,1,YLD,,"the years lived with disability, the morbidity component of the disease burden; healthy life lost to living in less than full health.",1,,,,,,,,
+972,1,replacement,,"the fertility level, about 2.1 children per woman, at which a population exactly replaces itself from one generation to the next",1,,,,,,,,
 973,1,surplus,,the amount by which a quantity exceeds a reference level,1,,,,,,,,
 974,1,disease burden (formula),,,10,,,,,,,,
 975,1,fertility above replacement (formula),,,10,,,,,,,,
 976,1,illness,,a state of poor health; the subjective experience of being unwell,1,,,,,,,,
-977,1,wellbeing,,the state of being comfortable, healthy, or happy.,1,,,,,,,,
+977,1,wellbeing,,"the state of being comfortable, healthy, or happy.",1,,,,,,,,
 978,1,morbidity,,the rate or condition of being diseased in a population; the prevalence or incidence of ill health,1,,,,,,,,
-979,1,HALE,,the average number of years a person can expect to live in full health, adjusting for time lived in less than full health.,1,,,,,,,,
+979,1,HALE,,"the average number of years a person can expect to live in full health, adjusting for time lived in less than full health.",1,,,,,,,,
 980,1,prevalence,,the proportion of a population found to be affected by a medical condition at a specific time.,1,,,,,,,,
 981,1,incidence,,the rate of new cases of a condition in a population over a specified period of time.,1,,,,,,,,
 982,1,duration,,the average length of time a health condition lasts,1,,,,,,,,
-983,1,QALY,,a measure that combines the quality and the quantity of life lived, used to assess the value of medical interventions.,1,,,,,,,,
-984,1,HALY,,health-adjusted life year, an umbrella measure of disease burden combining the length and the quality of life, such as the QALY and the DALY,1,,,,,,,,
-985,1,utility,,the health-related quality-of-life weight of a state, from 0 (death) to 1 (full health),1,,,,,,,,
-986,1,treatment,,the attempted remediation of a health problem, usually following a medical diagnosis.,1,,,,,,,,
+983,1,QALY,,"a measure that combines the quality and the quantity of life lived, used to assess the value of medical interventions.",1,,,,,,,,
+984,1,HALY,,"health-adjusted life year, an umbrella measure of disease burden combining the length and the quality of life, such as the QALY and the DALY",1,,,,,,,,
+985,1,utility,,"the health-related quality-of-life weight of a state, from 0 (death) to 1 (full health)",1,,,,,,,,
+986,1,treatment,,"the attempted remediation of a health problem, usually following a medical diagnosis.",1,,,,,,,,
 987,1,chronic,,persisting for a long time or constantly recurring,1,,,,,,,,
 988,1,health gap (formula),,,10,,,,,,,,
 989,1,prevalence (formula),,,10,,,,,,,,
 990,1,QALY (formula),,,10,,,,,,,,
-991,1,PPP,,purchasing power parity: a way of comparing currencies by the amount of goods and services each can buy, used to make cross-country income comparisons.,1,,,,,,,,
-992,1,inequality,,the unequal distribution of income, wealth or opportunity among individuals or groups within a society.,1,,,,,,,,
-993,1,MPI,,the multidimensional poverty index, a measure that captures the deprivations people face in health, education and living standards.,1,,,,,,,,
+991,1,PPP,,"purchasing power parity: a way of comparing currencies by the amount of goods and services each can buy, used to make cross-country income comparisons.",1,,,,,,,,
+992,1,inequality,,"the unequal distribution of income, wealth or opportunity among individuals or groups within a society.",1,,,,,,,,
+993,1,MPI,,"the multidimensional poverty index, a measure that captures the deprivations people face in health, education and living standards.",1,,,,,,,,
 994,1,European Union,,a political and economic union of 27 member states located primarily in Europe.,1,,,,,,,,
 995,1,deprivation,,the lack of resources or conditions regarded as necessary for an adequate standard of living,1,,,,,,,,
-996,1,absolute,,measured against a fixed standard, not relative to others,1,,,,,,,,
+996,1,absolute,,"measured against a fixed standard, not relative to others",1,,,,,,,,
 997,1,relative,,measured in relation to others in the same society,1,,,,,,,,
 998,1,extreme,,the most severe degree,1,,,,,,,,
 999,1,subjective,,based on personal perception or self-assessment,1,,,,,,,,
-1000,1,multidimensional,,covering several dimensions such as health, education and living standards,1,,,,,,,,
+1000,1,multidimensional,,"covering several dimensions such as health, education and living standards",1,,,,,,,,
 1001,1,line,,a fixed level used as a boundary,1,,,,,,,,
 1002,1,trap,,a situation that is difficult to escape,1,,,,,,,,
-1003,1,economic,,relating to the economy, income and wealth,1,,,,,,,,
+1003,1,economic,,"relating to the economy, income and wealth",1,,,,,,,,
 1004,1,mobility,,,1,,,,,,,,
 1005,1,poverty rate (formula),,,10,,,,,,,,
 1006,1,relative poverty line (formula),,,10,,,,,,,,
 1007,1,income ratio (formula),,,10,,,,,,,,
-1008,1,knowledge,,an awareness of facts, a familiarity with individuals and situations, or a practical skill.,1,,,,,,,,
+1008,1,knowledge,,"an awareness of facts, a familiarity with individuals and situations, or a practical skill.",1,,,,,,,,
 1009,1,metacognition,,awareness and understanding of one's own thought processes; thinking about thinking.,1,,,,,,,,
 1010,1,constructivism,,a theory of learning holding that learners actively construct knowledge rather than passively receive it.,1,,,,,,,,
-1011,1,ZPD,,the zone of proximal development: the gap between what a learner can do unaided and what they can do with guidance, in Vygotsky's theory.,1,,,,,,,,
+1011,1,ZPD,,"the zone of proximal development: the gap between what a learner can do unaided and what they can do with guidance, in Vygotsky's theory.",1,,,,,,,,
 1012,1,chunk,,a unit of information grouped together so it can be held more easily in working memory.,1,,,,,,,,
 1013,1,outcome,,a result or effect of an action or process,1,,,,,,,,
 1014,1,retention,,the continued possession or recall of learned information,1,,,,,,,,
@@ -1033,25 +1033,25 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 1032,1,efficiency,,the ratio of useful output to total input of a system,1,,,,,,,,
 1033,1,working,,,1,,,,,,,,
 1034,1,cognitive,,,1,,,,,,,,
-1035,1,Bloom,,Benjamin Bloom, the educational psychologist who chaired the committee of the taxonomy,1,,,,,,,,
+1035,1,Bloom,,"Benjamin Bloom, the educational psychologist who chaired the committee of the taxonomy",1,,,,,,,,
 1036,1,taxonomy,,,1,,,,,,,,
 1037,1,effect,,,1,,,,,,,,
 1038,1,knowledge retention (formula),,,10,,,,,,,,
 1039,1,effect size (formula),,,10,,,,,,,,
 1040,1,transfer efficiency (formula),,,10,,,,,,,,
-1041,1,propagation,,the spreading of an effect from its source, e.g. of the uncertainty of the inputs to the result of a calculation,1,,,,,,,,
-1042,1,uncertainty,,epistemic situations involving imperfect or unknown information, in measurements the range in which the true value is expected,1,,,,,,,,
-1043,1,statistics,,Statistics is the discipline that concerns the collection, organization, analysis, interpretation, and presentation of data.,1,,,,,,,,
-1044,1,variance,,In probability theory and statistics, variance is the expectation of the squared deviation of a random variable from its mean.,1,,,,,,,,
-1045,1,covariance,,In probability theory and statistics, covariance is a measure of the joint variability of two random variables.,1,,,,,,,,
-1046,1,correlation,,In statistics, correlation or dependence is any statistical relationship, whether causal or not, between two random variables.,1,,,,,,,,
+1041,1,propagation,,"the spreading of an effect from its source, e.g. of the uncertainty of the inputs to the result of a calculation",1,,,,,,,,
+1042,1,uncertainty,,"epistemic situations involving imperfect or unknown information, in measurements the range in which the true value is expected",1,,,,,,,,
+1043,1,statistics,,"Statistics is the discipline that concerns the collection, organization, analysis, interpretation, and presentation of data.",1,,,,,,,,
+1044,1,variance,,"In probability theory and statistics, variance is the expectation of the squared deviation of a random variable from its mean.",1,,,,,,,,
+1045,1,covariance,,"In probability theory and statistics, covariance is a measure of the joint variability of two random variables.",1,,,,,,,,
+1046,1,correlation,,"In statistics, correlation or dependence is any statistical relationship, whether causal or not, between two random variables.",1,,,,,,,,
 1047,1,sigma,,the symbol of the standard deviation of a quantity,1,,,,,,,,
 1048,1,linear,,relating to a straight line or to a function of the first degree,1,,,,,,,,
 1049,1,sum,,the result of adding two or more numbers,1,,,,,,,,
 1050,1,difference,,arithmetic difference between two values,1,,,,,,,,
 1051,1,quotient,,the result of dividing one number by another,1,,,,,,,,
 1052,1,exponential,,a function in which the variable is the exponent,1,,,,,,,,
-1053,1,logarithm,,the inverse function of exponentiation, the exponent to which a base must be raised to produce a number,1,,,,,,,,
+1053,1,logarithm,,"the inverse function of exponentiation, the exponent to which a base must be raised to produce a number",1,,,,,,,,
 1054,1,Goodman,,American statistician after whom the exact variance of a product of two independent random variables is named,1,,,,,,,,
 1055,1,x,,,1,,,,,,,,
 1056,1,y,,,1,,,,,,,,
@@ -1086,346 +1086,57 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 1085,1,leakage,,,1,,,,,,,,
 1086,1,tariff,,,1,,,,,,,,
 1087,1,coverage,,,1,,,,,,,,
-1088,1,afforestation,,Afforestation and reforestation as carbon sinks. Wide IPCC range; permanence, land competition and fire risk limit reliability. Translation of the German keyword 'Aufforstung'.,1,,,,,,,,
-1089,1,agreements,,,1,,,,,,,,
-1090,1,aviation,,,1,,,,,,,,
-1091,1,border,,,1,,,,,,,,
-1092,1,building,,,1,,,,,,,,
-1093,1,buildup,,,1,,,,,,,,
-1094,1,capture,,,1,,,,,,,,
-1095,1,chain,,,1,,,,,,,,
-1096,1,circular,,,1,,,,,,,,
-1097,1,coal,,,1,,,,,,,,
-1098,1,cycling,,Shift of short trips to bikes and e-bikes via safe infrastructure. Small global potential but very cheap per tonne. Translation of the German keyword 'Radverkehr'.,1,,,,,,,,
-1099,1,digitalization,,Smart grids, building automation and logistics optimization, net of rebound and data-center growth. Translation of the German keyword 'Digitalisierung'.,1,,,,,,,,
-1100,1,dividend,,,1,,,,,,,,
-1101,1,electric,,,1,,,,,,,,
-1102,1,electrification,,Switching industrial processes, transport and heat from fossil fuels to clean electricity. Translation of the German keyword 'Elektrifizierung'.,1,,,,,,,,
-1103,1,energy,,,1,,,,,,,,
-1104,1,expansion,,,1,,,,,,,,
-1105,1,finance,,,1,,,,,,,,
-1106,1,food,,,1,,,,,,,,
-1107,1,fossil,,,1,,,,,,,,
-1108,1,freight,,,1,,,,,,,,
-1109,1,fulfillment,,,1,,,,,,,,
-1110,1,geothermal,,,1,,,,,,,,
-1111,1,grid,,,1,,,,,,,,
-1112,1,heat,,,1,,,,,,,,
-1113,1,heating,,,1,,,,,,,,
-1114,1,hydrogen,,,1,,,,,,,,
-1115,1,hydropower,,Expansion and modernization of hydroelectric generation, limited by sites, ecology and drought risk. Translation of the German keyword 'Wasserkraft'.,1,,,,,,,,
-1116,1,innovation,,Commercialization, scale-up and learning-curve effects turning research into deployed technology. Overlaps with research. Translation of the German keyword 'Innovation'.,1,,,,,,,,
-1117,1,laws,,,1,,,,,,,,
-1118,1,material,,,1,,,,,,,,
-1119,1,maximum,,,1,,,,,,,,
-1120,1,meat,,,1,,,,,,,,
-1121,1,methane,,,1,,,,,,,,
-1122,1,minimum,,,1,,,,,,,,
-1123,1,nuclear,,,1,,,,,,,,
-1124,1,peatland,,,1,,,,,,,,
-1125,1,phase-out,,,1,,,,,,,,
-1126,1,pumps,,,1,,,,,,,,
-1127,1,reduced,,,1,,,,,,,,
-1128,1,removal,,,1,,,,,,,,
-1129,1,renovation,,,1,,,,,,,,
-1130,1,rewetting,,,1,,,,,,,,
-1131,1,soil,,,1,,,,,,,,
-1132,1,solar,,,1,,,,,,,,
-1133,1,standards,,,1,,,,,,,,
-1134,1,subsidy,,,1,,,,,,,,
-1135,1,sufficiency,,Demand reduction through changed consumption patterns: smaller living space, less driving and flying, longer product use. Cheap in money, hard socially. Translation of the German keyword 'Suffizienz'.,1,,,,,,,,
-1136,1,supply,,,1,,,,,,,,
-1137,1,utilization,,,1,,,,,,,,
-1138,1,wind,,,1,,,,,,,,
-1139,1,probability range low,,,10,,,,,,,,
-1140,1,probability range high,,,10,,,,,,,,
-1141,1,annual damage in money,,,10,,,,,,,,
-1142,1,loss reduction by a carbon tariff,,,10,,,,,,,,
-1143,1,long run damage share of the GDP,,,10,,,,,,,,
-1144,1,welfare damage share,,,10,,,,,,,,
-1145,1,initial effort of a solution,,,10,,,,,,,,
-1146,1,avoided welfare loss,,,10,,,,,,,,
-1147,1,expected return formula,,,10,,,,,,,,
-1148,1,effort return score formula,,,10,,,,,,,,
-1149,1,expected return centre formula,,,10,,,,,,,,
-1150,1,loss reduction by a climate solution,,,10,,,,,,,,
-1151,1,person years per billion USD by the carbon border tariff,,,10,,,,,,,,
-1152,1,initial effort of a climate solution,,,10,,,,,,,,
-1153,1,initial effort of a climate solution low,,,10,,,,,,,,
-1154,1,initial effort of a climate solution high,,,10,,,,,,,,
-1155,1,hide,,,1,,,,,,,,
-1156,1,one-click,,,1,,,,,,,,
-1157,1,civic,,,1,,,,,,,,
-1158,1,literacy,,,1,,,,,,,,
-1159,1,fact-checking,,independent checks of public claims, published next to the claim,1,,,,,,,,
-1160,1,broadcasting,,,1,,,,,,,,
-1161,1,independent,,,1,,,,,,,,
-1162,1,transparency,,,1,,,,,,,,
-1163,1,algorithm,,,1,,,,,,,,
-1164,1,regional,,,1,,,,,,,,
-1165,1,nets,,,1,,,,,,,,
-1166,1,retraining,,,1,,,,,,,,
-1167,1,housing,,,1,,,,,,,,
-1168,1,affordable,,,1,,,,,,,,
-1169,1,measures,,,1,,,,,,,,
-1170,1,anti-corruption,,,1,,,,,,,,
-1171,1,lobbying,,,1,,,,,,,,
-1172,1,reform,,,1,,,,,,,,
-1173,1,campaign,,,1,,,,,,,,
-1174,1,judiciary,,,1,,,,,,,,
-1175,1,strong,,,1,,,,,,,,
-1176,1,press,,,1,,,,,,,,
-1177,1,direct,,,1,,,,,,,,
-1178,1,assemblies,,,1,,,,,,,,
-1179,1,citizens,,,1,,,,,,,,
-1180,1,polling,,,1,,,,,,,,
-1181,1,deliberative,,,1,,,,,,,,
-1182,1,budgeting,,,1,,,,,,,,
-1183,1,participatory,,,1,,,,,,,,
-1184,1,electoral,,,1,,,,,,,,
-1185,1,representation,,,1,,,,,,,,
-1186,1,proportional,,,1,,,,,,,,
-1187,1,decentralization,,moving decisions and budgets to regions and municipalities, so that citizens see who decides and can reach them; includes local self-government,1,,,,,,,,
-1188,1,parties,,,1,,,,,,,,
-1189,1,mainstream,,,1,,,,,,,,
-1190,1,responsive,,,1,,,,,,,,
-1191,1,addressing,,,1,,,,,,,,
-1192,1,concerns,,,1,,,,,,,,
-1193,1,migration,,,1,,,,,,,,
-1194,1,policies,,,1,,,,,,,,
-1195,1,integration,,,1,,,,,,,,
-1196,1,policymaking,,,1,,,,,,,,
-1197,1,evidence-based,,,1,,,,,,,,
-1198,1,transparent,,,1,,,,,,,,
-1199,1,institutions,,,1,,,,,,,,
-1200,1,trust-building,,,1,,,,,,,,
-1201,1,dialogue,,,1,,,,,,,,
-1202,1,cross-partisan,,,1,,,,,,,,
-1203,1,community,,,1,,,,,,,,
-1204,1,support,,,1,,,,,,,,
-1205,1,society,,,1,,,,,,,,
-1206,1,civil,,,1,,,,,,,,
-1207,1,lifelong,,,1,,,,,,,,
-1208,1,thinking,,,1,,,,,,,,
-1209,1,critical,,,1,,,,,,,,
-1210,1,campaigns,,,1,,,,,,,,
-1211,1,counter-disinformation,,,1,,,,,,,,
-1212,1,prebunking,,warning about a manipulation technique before it is met, so that it is recognised,1,,,,,,,,
-1213,1,preparedness,,,1,,,,,,,,
-1214,1,crisis,,,1,,,,,,,,
-1215,1,globalization,,,1,,,,,,,,
-1216,1,fair,,,1,,,,,,,,
-1217,1,assistance,,,1,,,,,,,,
-1218,1,adjustment,,,1,,,,,,,,
-1219,1,trade,,,1,,,,,,,,
-1220,1,cordon,,,1,,,,,,,,
-1221,1,sanitaire,,,1,,,,,,,,
-1222,1,identity,,,1,,,,,,,,
-1223,1,inclusive,,,1,,,,,,,,
-1224,1,elites,,,1,,,,,,,,
-1225,1,accountable,,,1,,,,,,,,
-1226,1,sphere,,,1,,,,,,,,
-1227,1,digital,,,1,,,,,,,,
-1228,1,loss reduction by avoiding wrong decisions,,,10,,,,,,,,
-1229,1,avoided welfare loss with a gain factor,,,10,,,,,,,,
-1230,1,loss reduction of a solution part,,,10,,,,,,,,
-1231,1,initial effort of a solution part,,,10,,,,,,,,
-1232,1,rights,,,1,,,,,,,,
-1233,1,property,,,1,,,,,,,,
-1234,1,rule,,,1,,,,,,,,
-1235,1,law,,,1,,,,,,,,
-1236,1,primary,,,1,,,,,,,,
-1237,1,universal,,,1,,,,,,,,
-1238,1,programs,,,1,,,,,,,,
-1239,1,childhood,,,1,,,,,,,,
-1240,1,early,,,1,,,,,,,,
-1241,1,mother,,,1,,,,,,,,
-1242,1,vaccination,,immunisation of every child against the common diseases,1,,,,,,,,
-1243,1,clean,,,1,,,,,,,,
-1244,1,sanitation,,toilets and sewage for every household,1,,,,,,,,
-1245,1,nutrition,,,1,,,,,,,,
-1246,1,transfers,,,1,,,,,,,,
-1247,1,unconditional,,,1,,,,,,,,
-1248,1,conditional,,,1,,,,,,,,
-1249,1,graduation,,,1,,,,,,,,
-1250,1,credit,,,1,,,,,,,,
-1251,1,earned,,,1,,,,,,,,
-1252,1,benefits,,,1,,,,,,,,
-1253,1,insurance,,,1,,,,,,,,
-1254,1,roads,,,1,,,,,,,,
-1255,1,rural,,,1,,,,,,,,
-1256,1,inclusion,,,1,,,,,,,,
-1257,1,titling,,,1,,,,,,,,
-1258,1,land,,,1,,,,,,,,
-1259,1,extension,,,1,,,,,,,,
-1260,1,wage,,,1,,,,,,,,
-1261,1,first,,,1,,,,,,,,
-1262,1,training,,,1,,,,,,,,
-1263,1,schemes,,,1,,,,,,,,
-1264,1,microfinance,,small loans to the poor without collateral,1,,,,,,,,
-1265,1,subsidies,,,1,,,,,,,,
-1266,1,charity,,private gifts from the rich to the poor, direct or through organisations,1,,,,,,,,
-1267,1,loss reduction by poverty research,,,10,,,,,,,,
-1268,1,happiness,,,1,,,,,,,,
-1269,1,loss reduction by health taxes,,,10,,,,,,,,
-1270,1,loss reduction by education spending,,,10,,,,,,,,
-1271,1,surcharge,,,1,,,,,,,,
-1272,1,labour,,,1,,,,,,,,
-1273,1,demand,,,1,,,,,,,,
-1274,1,coordination,,,1,,,,,,,,
-1275,1,registry,,,1,,,,,,,,
-1276,1,asset,,,1,,,,,,,,
-1277,1,registers,,,1,,,,,,,,
-1278,1,ownership,,,1,,,,,,,,
-1279,1,beneficial,,,1,,,,,,,,
-1280,1,closing,,,1,,,,,,,,
-1281,1,loopholes,,,1,,,,,,,,
-1282,1,inheritance,,,1,,,,,,,,
-1283,1,ending,,,1,,,,,,,,
-1284,1,step-up,,,1,,,,,,,,
-1285,1,basis,,,1,,,,,,,,
-1286,1,gains,,,1,,,,,,,,
-1287,1,capital,,,1,,,,,,,,
-1288,1,billionaire,,,1,,,,,,,,
-1289,1,exit,,,1,,,,,,,,
-1290,1,progressive,,,1,,,,,,,,
-1291,1,codetermination,,workers hold seats on the board of large companies,1,,,,,,,,
-1292,1,bargaining,,,1,,,,,,,,
-1293,1,collective,,,1,,,,,,,,
-1294,1,fund,,,1,,,,,,,,
-1295,1,sovereign,,,1,,,,,,,,
-1296,1,enforcement,,,1,,,,,,,,
-1297,1,antitrust,,,1,,,,,,,,
-1298,1,statistical,,,1,,,,,,,,
-1299,1,windfall,,,1,,,,,,,,
-1300,1,caps,,,1,,,,,,,,
-1301,1,pay,,,1,,,,,,,,
-1302,1,executive,,,1,,,,,,,,
-1303,1,loss reduction by a basic income,,,10,,,,,,,,
-1304,1,discourse,,,1,,,,,,,,
-1305,1,loss reduction by platform regulation,,,10,,,,,,,,
-1306,1,revenue,,,1,,,,,,,,
-1307,1,search,,,1,,,,,,,,
-1308,1,engine,,,1,,,,,,,,
-1309,1,mortgage,,,1,,,,,,,,
-1310,1,markup,,,1,,,,,,,,
-1311,1,loss reduction by a market share tax,,,10,,,,,,,,
-1312,1,aggregation,,,1,,,,,,,,
-1313,1,judgment,,,1,,,,,,,,
-1314,1,teams,,,1,,,,,,,,
-1315,1,superforecasting,,,1,,,,,,,,
-1316,1,markets,,,1,,,,,,,,
-1317,1,forecasting,,,1,,,,,,,,
-1318,1,class,,,1,,,,,,,,
-1319,1,reference,,,1,,,,,,,,
-1320,1,pre-registration,,publishing the question, the method and the analysis before the data is collected,1,,,,,,,,
-1321,1,blinding,,hiding from the participants and the analysts which case is which, so that the expectation cannot shape the result,1,,,,,,,,
-1322,1,review,,,1,,,,,,,,
-1323,1,double-blind,,,1,,,,,,,,
-1324,1,reviews,,,1,,,,,,,,
-1325,1,systematic,,,1,,,,,,,,
-1326,1,meta-analysis,,combining the numbers of many studies into one estimate with its uncertainty,1,,,,,,,,
-1327,1,studies,,,1,,,,,,,,
-1328,1,replication,,,1,,,,,,,,
-1329,1,collaboration,,,1,,,,,,,,
-1330,1,adversarial,,,1,,,,,,,,
-1331,1,teaming,,,1,,,,,,,,
-1332,1,red,,,1,,,,,,,,
-1333,1,analysis,,,1,,,,,,,,
-1334,1,hypotheses,,,1,,,,,,,,
-1335,1,competing,,,1,,,,,,,,
-1336,1,pre-mortem,,imagining before the start that the plan has failed and asking why,1,,,,,,,,
-1337,1,advocate,,,1,,,,,,,,
-1338,1,devil,,,1,,,,,,,,
-1339,1,calibration,,,1,,,,,,,,
-1340,1,triangulation,,,1,,,,,,,,
-1341,1,lateral,,,1,,,,,,,,
-1342,1,tracking,,,1,,,,,,,,
-1343,1,provenance,,,1,,,,,,,,
-1344,1,disclosure,,,1,,,,,,,,
-1345,1,conflict-of-interest,,,1,,,,,,,,
-1346,1,open,,,1,,,,,,,,
-1347,1,methods,,,1,,,,,,,,
-1348,1,calculations,,,1,,,,,,,,
-1349,1,traceable,,,1,,,,,,,,
-1350,1,mapping,,,1,,,,,,,,
-1351,1,argument,,,1,,,,,,,,
-1352,1,structured,,,1,,,,,,,,
-1353,1,panels,,,1,,,,,,,,
-1354,1,expert,,,1,,,,,,,,
-1355,1,diverse,,,1,,,,,,,,
-1356,1,feedback,,,1,,,,,,,,
-1357,1,anonymous,,,1,,,,,,,,
-1358,1,notices,,,1,,,,,,,,
-1359,1,correction,,,1,,,,,,,,
-1360,1,nudges,,,1,,,,,,,,
-1361,1,accuracy,,,1,,,,,,,,
-1362,1,awareness,,,1,,,,,,,,
-1363,1,bias,,,1,,,,,,,,
-1364,1,loss reduction by the Delphi method,,,10,,,,,,,,
-1365,1,initiative,,,1,,,,,,,,
-1366,1,rejection,,,1,,,,,,,,
-1367,1,evaluations,,,1,,,,,,,,
-1368,1,deployment,,,1,,,,,,,,
-1369,1,rules,,,1,,,,,,,,
-1370,1,liability,,,1,,,,,,,,
-1371,1,reporting,,,1,,,,,,,,
-1372,1,incident,,,1,,,,,,,,
-1373,1,governance,,,1,,,,,,,,
-1374,1,compute,,,1,,,,,,,,
-1375,1,controls,,,1,,,,,,,,
-1376,1,model,,,1,,,,,,,,
-1377,1,staged,,,1,,,,,,,,
-1378,1,oversight,,,1,,,,,,,,
-1379,1,trails,,,1,,,,,,,,
-1380,1,audit,,,1,,,,,,,,
-1381,1,interpretability,,,1,,,,,,,,
-1382,1,mechanistic,,,1,,,,,,,,
-1383,1,alignment,,,1,,,,,,,,
-1384,1,systems,,,1,,,,,,,,
-1385,1,reasoning,,,1,,,,,,,,
-1386,1,citation,,,1,,,,,,,,
-1387,1,content,,,1,,,,,,,,
-1388,1,watermarking,,a hidden mark in generated text, images and audio that shows they come from a model,1,,,,,,,,
-1389,1,audits,,,1,,,,,,,,
-1390,1,certification,,,1,,,,,,,,
-1391,1,third-party,,,1,,,,,,,,
-1392,1,risk-based,,,1,,,,,,,,
-1393,1,protection,,,1,,,,,,,,
-1394,1,whistleblower,,,1,,,,,,,,
-1395,1,documentation,,,1,,,,,,,,
-1396,1,licensing,,,1,,,,,,,,
-1397,1,copyright,,,1,,,,,,,,
-1398,1,design,,,1,,,,,,,,
-1399,1,privacy,,,1,,,,,,,,
-1400,1,testing,,,1,,,,,,,,
-1401,1,infrastructure,,,1,,,,,,,,
-1402,1,models,,,1,,,,,,,,
-1403,1,open-source,,,1,,,,,,,,
-1404,1,labor,,,1,,,,,,,,
-1405,1,treaties,,,1,,,,,,,,
-1406,1,commitments,,,1,,,,,,,,
-1407,1,voluntary,,,1,,,,,,,,
-1408,1,detectors,,,1,,,,,,,,
-1409,1,loss reduction by public AI,,,10,,,,,,,,
-1410,1,solidarity,,,1,,,,,,,,
-1411,1,compass,,,1,,,,,,,,
-1412,1,position,,,1,,,,,,,,
-1413,1,referendum,,,1,,,,,,,,
-1414,1,loss reduction by fluid democracy,,,10,,,,,,,,
-1415,1,good,,,1,,,,,,,,
-1416,1,willingness,,,1,,,,,,,,
-1417,1,acceptance,,,1,,,,,,,,
-1418,1,loss reduction by gross domestic usage,,,10,,,,,,,,
-1419,1,licence,,,1,,,,,,,,
-1420,1,loss reduction by free software,,,10,,,,,,,,
-1421,1,photovoltaic,,,1,,,,,,,,
-1422,1,PV,,the usual acronym for photovoltaic,1,,,,,,,,
-1423,1,mix,,the combination of generation technologies behind one kWh of electricity, weighted by their share,1,,,,,,,,
-1424,1,production,,the making of a good or an energy, here the electricity generated within a country,1,,,,,,,,
-1425,1,displacement,,the pushing out of one thing by another; for electricity the generation that an additional kWh of a new source removes from the market,1,,,,,,,,
-1426,1,avoided,,not caused, because something else has taken its place,1,,,,,,,,
-1427,1,CO2-eq,,carbon dioxide equivalent: the amount of CO2 with the same global warming effect as the mix of climate gases released,1,,,,,,,,
-1428,1,cycle,,,1,,,,,,,,
-1429,1,avoided emission by consumption mix,,,10,,,,,,,,
-1430,1,avoided emission by displacement mix,,,10,,,,,,,,
+1088,1,probability range low,,,10,,,,,,,,
+1089,1,probability range high,,,10,,,,,,,,
+1090,1,annual damage in money,,,10,,,,,,,,
+1091,1,loss reduction by a carbon tariff,,,10,,,,,,,,
+1092,1,long run damage share of the GDP,,,10,,,,,,,,
+1093,1,welfare damage share,,,10,,,,,,,,
+1094,1,initial effort of a solution,,,10,,,,,,,,
+1095,1,avoided welfare loss,,,10,,,,,,,,
+1096,1,loss reduction by avoiding wrong decisions,,,10,,,,,,,,
+1097,1,avoided welfare loss with a gain factor,,,10,,,,,,,,
+1098,1,loss reduction by poverty research,,,10,,,,,,,,
+1099,1,happiness,,,1,,,,,,,,
+1100,1,loss reduction by health taxes,,,10,,,,,,,,
+1101,1,loss reduction by education spending,,,10,,,,,,,,
+1102,1,surcharge,,,1,,,,,,,,
+1103,1,maximum,,,1,,,,,,,,
+1104,1,labour,,,1,,,,,,,,
+1105,1,supply,,,1,,,,,,,,
+1106,1,demand,,,1,,,,,,,,
+1107,1,loss reduction by a basic income,,,10,,,,,,,,
+1108,1,discourse,,,1,,,,,,,,
+1109,1,loss reduction by platform regulation,,,10,,,,,,,,
+1110,1,revenue,,,1,,,,,,,,
+1111,1,search,,,1,,,,,,,,
+1112,1,engine,,,1,,,,,,,,
+1113,1,mortgage,,,1,,,,,,,,
+1114,1,markup,,,1,,,,,,,,
+1115,1,loss reduction by a market share tax,,,10,,,,,,,,
+1116,1,loss reduction by the Delphi method,,,10,,,,,,,,
+1117,1,initiative,,,1,,,,,,,,
+1118,1,rejection,,,1,,,,,,,,
+1119,1,loss reduction by public AI,,,10,,,,,,,,
+1120,1,solidarity,,,1,,,,,,,,
+1121,1,compass,,,1,,,,,,,,
+1122,1,position,,,1,,,,,,,,
+1123,1,referendum,,,1,,,,,,,,
+1124,1,argument,,,1,,,,,,,,
+1125,1,loss reduction by fluid democracy,,,10,,,,,,,,
+1126,1,good,,,1,,,,,,,,
+1127,1,willingness,,,1,,,,,,,,
+1128,1,acceptance,,,1,,,,,,,,
+1129,1,loss reduction by gross domestic usage,,,10,,,,,,,,
+1130,1,licence,,,1,,,,,,,,
+1131,1,loss reduction by free software,,,10,,,,,,,,
+1132,1,photovoltaic,,,1,,,,,,,,
+1133,1,PV,,the usual acronym for photovoltaic,1,,,,,,,,
+1134,1,mix,,"the combination of generation technologies behind one kWh of electricity, weighted by their share",1,,,,,,,,
+1135,1,production,,"the making of a good or an energy, here the electricity generated within a country",1,,,,,,,,
+1136,1,displacement,,the pushing out of one thing by another; for electricity the generation that an additional kWh of a new source removes from the market,1,,,,,,,,
+1137,1,avoided,,"not caused, because something else has taken its place",1,,,,,,,,
+1138,1,CO2-eq,,carbon dioxide equivalent: the amount of CO2 with the same global warming effect as the mix of climate gases released,1,,,,,,,,
+1139,1,cycle,,,1,,,,,,,,
+1140,1,avoided emission by consumption mix,,,10,,,,,,,,
+1141,1,avoided emission by displacement mix,,,10,,,,,,,,

@@ -1,0 +1,8 @@
+source_type_id,type_name,code_id,description
+1,JSON,json,
+2,YAML,yaml,
+3,XML,xml,
+4,XBRL,xbrl,eXtensible Business Reporting Language is a freely available global framework for exchanging business information
+5,CSV,csv,
+6,API,api,
+7,PDF,pdf,

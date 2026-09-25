@@ -36,6 +36,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
+include_once paths::DB . 'sql.php';
 include_once paths::DB . 'sql_type.php';
 include_once paths::DB . 'sql_type_list.php';
 include_once paths::MODEL_GROUP . 'group_db.php';
@@ -60,6 +61,7 @@ include_once paths::SHARED_CONST_FIELDS . 'word_fields.php';
 include_once paths::SHARED_CONST_FIELDS . 'triple_fields.php';
 include_once paths::SHARED_CONST_FIELDS . 'group_fields.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
@@ -269,6 +271,15 @@ class change_log_tests
         // a result change is logged like a value change, so the changes tab of the result page
         // reads the value change tables by the group id (see change_log_list::load_sql_obj_last)
         $this->assert_sql_list_last(result::class, 1, $log_lst, $db_con, $t);
+        // every change of one save has the same change time, because the time is the transaction
+        // time of the database, so without a second order field the row limit of the query would
+        // return a different set of changes each time (see change::load_sql)
+        $test_name = 'the changes of one save are ordered by the change id';
+        $sc->reset(sql_db::POSTGRES);
+        $qp_order = $log_lst->load_sql_obj_last($sc, word::class, 1, $t->usr1);
+        $t->assert_text_contains($test_name, $qp_order->sql,
+            change_log::FLD_TIME . ' ' . sql::ORDER_DESC
+            . ', ' . sql_db::STD_TBL . '.' . change_log::FLD_ID);
         $test_name = 'get the latest changes of an user';
         $test_name = 'get the latest 5 changes of an user';
         $test_name = 'get the second last change of an user';

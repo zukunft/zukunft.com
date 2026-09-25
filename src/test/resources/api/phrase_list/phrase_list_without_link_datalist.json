@@ -1,0 +1,622 @@
+[
+    {
+        "id": 327,
+        "name": "2013",
+        "type_id": 2,
+        "class": "word"
+    },
+    {
+        "id": 328,
+        "name": "2014",
+        "type_id": 2,
+        "class": "word"
+    },
+    {
+        "id": 329,
+        "name": "2015",
+        "type_id": 2,
+        "class": "word"
+    },
+    {
+        "id": 330,
+        "name": "2016",
+        "type_id": 2,
+        "class": "word"
+    },
+    {
+        "id": 331,
+        "name": "2017",
+        "type_id": 2,
+        "class": "word"
+    },
+    {
+        "id": 332,
+        "name": "2018",
+        "type_id": 2,
+        "class": "word"
+    },
+    {
+        "id": 135,
+        "name": "2019",
+        "description": "Calendar year 2019, reference year for the emission baseline.",
+        "type_id": 2,
+        "class": "word"
+    },
+    {
+        "id": 136,
+        "name": "2020",
+        "type_id": 2,
+        "class": "word"
+    },
+    {
+        "id": 549,
+        "name": "ABB",
+        "description": "ABB (ASEA Brown Boveri) is a Swedish-Swiss multinational corporation headquartered in Zürich",
+        "type_id": 1,
+        "class": "word"
+    },
+    {
+        "id": 185,
+        "name": "Bern",
+        "type_id": 1,
+        "class": "word"
+    },
+    {
+        "id": 106,
+        "name": "Bern (city)",
+        "class": "triple"
+    },
+    {
+        "id": 159,
+        "protection": 3,
+        "name": "billion",
+        "description": "to specify numbers in billions - 10⁹",
+        "type_id": 7,
+        "class": "word"
+    },
+    {
+        "id": 186,
+        "name": "canton",
+        "description": "a member state of the Swiss federation",
+        "type_id": 1,
+        "class": "word"
+    },
+    {
+        "id": 552,
+        "name": "cash",
+        "type_id": 1,
+        "class": "word"
+    },
+    {
+        "id": 551,
+        "name": "cash flow",
+        "class": "triple"
+    },
+    {
+        "id": 554,
+        "name": "cash flow statement",
+        "description": "financial statement that shows how changes in balance sheet accounts and income affect cash and cash equivalents, and breaks the analysis down to operating, investing and financing activities. see Wikipedia: Cash flow statement (Q460184)",
+        "class": "triple"
+    },
+    {
+        "id": 408,
+        "name": "CHF",
+        "description": "ISO 4217 alphabetic code for the Swiss franc (Confoederatio Helvetica Franc), also widely used as the currency's typographic symbol.",
+        "type_id": 3,
+        "class": "word"
+    },
+    {
+        "id": 385,
+        "name": "CHF is symbol for Swiss franc",
+        "class": "triple"
+    },
+    {
+        "id": 15,
+        "protection": 3,
+        "name": "circumference",
+        "description": "In geometry, the circumference meaning is the perimeter of a circle or ellipse",
+        "type_id": 1,
+        "class": "word"
+    },
+    {
+        "id": 188,
+        "name": "city",
+        "description": "a large permanent human settlement",
+        "type_id": 1,
+        "class": "word"
+    },
+    {
+        "id": 226,
+        "name": "climate",
+        "description": "long-term statistical characterization of atmospheric conditions in a region, typically averaged over periods of 30 years or more",
+        "type_id": 1,
+        "class": "word"
+    },
+    {
+        "id": 189,
+        "protection": 3,
+        "name": "company",
+        "description": "legal entity made up of an association of people for the purpose of carrying on a commercial or industrial enterprise",
+        "type_id": 1,
+        "class": "word"
+    },
+    {
+        "id": 102,
+        "protection": 3,
+        "name": "day",
+        "description": "A day is a unit of time equal to 24 hours, approximately the period of one rotation of the Earth about its own axis.",
+        "type_id": 2,
+        "class": "word"
+    },
+    {
+        "id": 16,
+        "protection": 3,
+        "name": "diameter",
+        "description": "In geometry, a diameter of a circle is any straight line segment that passes through the centre of the circle and whose endpoints lie on the circle",
+        "type_id": 1,
+        "class": "word"
+    },
+    {
+        "id": 6,
+        "protection": 3,
+        "name": "𝑒",
+        "description": "Symbol for the Euler's number, which is a mathematical constant approximately equal to 2.71828 that is the base of the natural logarithm and exponential function.",
+        "type_id": 17,
+        "class": "word"
+    },
+    {
+        "id": 253,
+        "name": "education",
+        "description": "process of teaching and learning",
+        "type_id": 1,
+        "class": "word"
+    },
+    {
+        "id": 120,
+        "name": "education can be global problem",
+        "class": "triple"
+    },
+    {
+        "id": 58,
+        "name": "𝑒 (unit symbol)",
+        "description": "Is the limit of (1 + 1/n)^n as n approaches infinity",
+        "type_id": 22,
+        "class": "triple"
+    },
+    {
+        "id": 191,
+        "name": "fact",
+        "type_id": 1,
+        "class": "word"
+    },
+    {
+        "id": 97,
+        "protection": 3,
+        "name": "flow",
+        "description": "In physics, physical chemistry and engineering, fluid dynamics is a subdiscipline of fluid mechanics that describes the flow of fluids – liquids and gases.",
+        "type_id": 1,
+        "class": "word"
+    },
+    {
+        "id": 192,
+        "name": "Geneva",
+        "type_id": 1,
+        "class": "word"
+    },
+    {
+        "id": 107,
+        "name": "Geneva (city)",
+        "class": "triple"
+    },
+    {
+        "id": 194,
+        "name": "global",
+        "description": "relating to the whole world - here more a something that effects all people on earth (wikipedia does not really match)",
+        "type_id": 1,
+        "class": "word"
+    },
+    {
+        "id": 102,
+        "name": "global problem",
+        "description": "here more a personal issue (wikipedia does not really match)",
+        "class": "triple"
+    },
+    {
+        "id": 110,
+        "name": "global warming",
+        "description": "the long-term rise in Earth's average surface temperature, driven mainly by human greenhouse-gas emissions, measured relative to the 1850-1900 pre-industrial baseline.",
+        "class": "triple"
+    },
+    {
+        "id": 152,
+        "name": "global warming (global problem)",
+        "class": "triple"
+    },
+    {
+        "id": 111,
+        "name": "global warming potential",
+        "description": "see Wikipedia: Global warming potential",
+        "class": "triple"
+    },
+    {
+        "id": 193,
+        "name": "government",
+        "description": "the system or group of people governing an organized community, generally a state.",
+        "type_id": 1,
+        "class": "word"
+    },
+    {
+        "id": 195,
+        "name": "group",
+        "description": "the social source of external information, i.e. the four peer actors",
+        "type_id": 1,
+        "class": "word"
+    },
+    {
+        "id": 196,
+        "name": "hand",
+        "type_id": 1,
+        "class": "word"
+    },
+    {
+        "id": 265,
+        "name": "happy",
+        "description": "feeling or showing pleasure or contentment",
+        "type_id": 1,
+        "class": "word"
+    },
+    {
+        "id": 151,
+        "name": "happy time points",
+        "description": "To measure the \"happy points\" ask the person how happy he feels let's say on a scale from 1 (least happy) to 10 (most happy). If you sum the number of happy points over a period, you get the \"happy time points\".",
+        "class": "triple"
+    },
+    {
+        "id": 249,
+        "name": "health",
+        "description": "a state of complete physical, mental and social well-being and not merely the absence of disease or infirmity.",
+        "type_id": 1,
+        "class": "word"
+    },
+    {
+        "id": 117,
+        "name": "health can be a global problem",
+        "description": "poor health of many people is one of the problems ranked on the start page",
+        "class": "triple"
+    },
+    {
+        "id": 270,
+        "name": "htp",
+        "description": "the symbol used in formulas for happy time points",
+        "type_id": 3,
+        "class": "word"
+    },
+    {
+        "id": 299,
+        "name": "income",
+        "description": "Income is the consumption and saving opportunity gained by an entity within a specified time frame, which is generally expressed in monetary terms.",
+        "type_id": 1,
+        "class": "word"
+    },
+    {
+        "id": 552,
+        "name": "income taxes",
+        "class": "triple"
+    },
+    {
+        "id": 197,
+        "name": "inhabitants",
+        "type_id": 1,
+        "class": "word"
+    },
+    {
+        "id": 12,
+        "protection": 3,
+        "name": "life",
+        "description": "Life, sometimes referred to as biota, is a quality that distinguishes matter that has biological processes, such as signaling and self-sustaining processes, from matter that does not.",
+        "type_id": 1,
+        "class": "word"
+    },
+    {
+        "id": 199,
+        "name": "man",
+        "type_id": 1,
+        "class": "word"
+    },
+    {
+        "id": 1,
+        "protection": 3,
+        "name": "mathematical constant",
+        "description": "A mathematical constant that never changes e.g. Pi",
+        "type_id": 17,
+        "class": "triple"
+    },
+    {
+        "id": 1,
+        "protection": 3,
+        "name": "mathematics",
+        "description": "Mathematics is an area of knowledge that includes the topics of numbers and formulas",
+        "type_id": 1,
+        "class": "word"
+    },
+    {
+        "id": 158,
+        "protection": 3,
+        "name": "million",
+        "description": "to specify numbers in millions",
+        "type_id": 7,
+        "class": "word"
+    },
+    {
+        "id": 100,
+        "protection": 3,
+        "name": "minute",
+        "description": "A minute is a unit of time equal to 60 seconds, or one sixtieth of an hour.",
+        "type_id": 2,
+        "class": "word"
+    },
+    {
+        "id": 137,
+        "name": "number",
+        "description": "A number is a mathematical object used to count, measure, and label.",
+        "type_id": 1,
+        "class": "word"
+    },
+    {
+        "id": 4,
+        "protection": 3,
+        "name": "one",
+        "description": "1 (one, unit, unity) is a number, numeral, and glyph. It is the first and smallest positive integer of the infinite sequence of natural numbers. Used to force the scaling to one unit",
+        "type_id": 8,
+        "class": "word"
+    },
+    {
+        "id": 200,
+        "name": "part",
+        "type_id": 1,
+        "class": "word"
+    },
+    {
+        "id": 555,
+        "name": "parts",
+        "type_id": 1,
+        "class": "word"
+    },
+    {
+        "id": 160,
+        "protection": 3,
+        "name": "percent",
+        "description": "A percentage is a number or ratio expressed as a fraction of 100; the percent measure auto-scales, so a formula that produces a ratio is shown to the user as a percent without multiplying by 100.",
+        "type_id": 6,
+        "class": "word"
+    },
+    {
+        "id": 201,
+        "name": "person",
+        "description": "an individual human being",
+        "type_id": 3,
+        "class": "word"
+    },
+    {
+        "id": 17,
+        "protection": 3,
+        "name": "Pi",
+        "description": "ratio of the circumference of a circle to its diameter",
+        "type_id": 17,
+        "class": "word"
+    },
+    {
+        "id": 56,
+        "name": "Pi (math)",
+        "description": "ratio of the circumference of a circle to its diameter",
+        "type_id": 22,
+        "class": "triple"
+    },
+    {
+        "id": 202,
+        "name": "place",
+        "type_id": 1,
+        "class": "word"
+    },
+    {
+        "id": 267,
+        "name": "points",
+        "description": "a counted unit on a rating scale",
+        "type_id": 1,
+        "class": "word"
+    },
+    {
+        "id": 233,
+        "name": "populism",
+        "description": "a range of political stances that emphasise the idea of the common people and often contrast this group against a privileged elite.",
+        "type_id": 1,
+        "class": "word"
+    },
+    {
+        "id": 116,
+        "name": "populism (global problem)",
+        "class": "triple"
+    },
+    {
+        "id": 222,
+        "name": "potential",
+        "description": "the size an effect can reach if nothing counteracts it",
+        "type_id": 1,
+        "class": "word"
+    },
+    {
+        "id": 251,
+        "name": "poverty",
+        "description": "the state of having insufficient income or resources to meet basic human needs such as food, shelter and clothing.",
+        "type_id": 1,
+        "class": "word"
+    },
+    {
+        "id": 119,
+        "name": "poverty (global problem)",
+        "class": "triple"
+    },
+    {
+        "id": 205,
+        "name": "problem",
+        "description": "A problem is if someone is getting unhappy. This can be measured with \"happy time points\".",
+        "type_id": 1,
+        "class": "word"
+    },
+    {
+        "id": 551,
+        "name": "sales",
+        "type_id": 1,
+        "class": "word"
+    },
+    {
+        "id": 22,
+        "name": "second",
+        "description": "Ambiguous word: either a unit to measure a duration or an ordinal position in a ranking (first, second, third, ...)",
+        "type_id": 1,
+        "class": "word"
+    },
+    {
+        "id": 214,
+        "name": "solution",
+        "description": "a homogeneous mixture of a solute dissolved in a solvent",
+        "type_id": 1,
+        "class": "word"
+    },
+    {
+        "id": 553,
+        "name": "statement",
+        "type_id": 1,
+        "class": "word"
+    },
+    {
+        "id": 206,
+        "name": "Switzerland",
+        "description": "a landlocked country at the confluence of Western, Central and Southern Europe.",
+        "type_id": 1,
+        "class": "word"
+    },
+    {
+        "id": 302,
+        "name": "tax",
+        "description": "compulsory financial charge to public authority",
+        "type_id": 1,
+        "class": "word"
+    },
+    {
+        "id": 114,
+        "name": "time points",
+        "description": "a value multiplied by the time e.g. used for the UN Disability-adjusted life year (DALYs)",
+        "class": "triple"
+    },
+    {
+        "id": 335,
+        "name": "total",
+        "description": "the whole amount or count, e.g. the total number of possible outcomes",
+        "type_id": 1,
+        "class": "word"
+    },
+    {
+        "id": 271,
+        "name": "trillion",
+        "description": "the scaling factor of 10^12",
+        "type_id": 7,
+        "class": "word"
+    },
+    {
+        "id": 394,
+        "name": "USD",
+        "description": "ISO 4217 alphabetic code for the United States dollar.",
+        "type_id": 3,
+        "class": "word"
+    },
+    {
+        "id": 550,
+        "name": "Vestas",
+        "type_id": 1,
+        "class": "word"
+    },
+    {
+        "id": 229,
+        "name": "warmer",
+        "description": "having a higher temperature than before",
+        "type_id": 1,
+        "class": "word"
+    },
+    {
+        "id": 208,
+        "name": "way",
+        "type_id": 1,
+        "class": "word"
+    },
+    {
+        "id": 103,
+        "protection": 3,
+        "name": "week",
+        "description": "A week is a unit of time equal to 7 days.",
+        "type_id": 2,
+        "class": "word"
+    },
+    {
+        "id": 209,
+        "name": "woman",
+        "description": "an adult female human",
+        "type_id": 1,
+        "class": "word"
+    },
+    {
+        "id": 210,
+        "name": "work",
+        "description": "In physics, work is the energy transferred to or from an object via the application of force along a displacement.",
+        "type_id": 1,
+        "class": "word"
+    },
+    {
+        "id": 211,
+        "name": "world",
+        "description": "all countries of the earth taken together",
+        "type_id": 1,
+        "class": "word"
+    },
+    {
+        "id": 213,
+        "name": "Zurich",
+        "description": "place name used for both the city and the canton of Zurich; The prefered use for values is City of Zurich or Canton of Zurich.",
+        "type_id": 1,
+        "class": "word"
+    },
+    {
+        "id": 105,
+        "protection": 3,
+        "name": "Zurich (canton)",
+        "description": "The canton of Zurich is an administrative unit (canton) of Switzerland, situated in the northeastern part of the country.",
+        "class": "triple"
+    },
+    {
+        "id": 104,
+        "protection": 3,
+        "name": "Zurich (city)",
+        "description": "Zurich is the largest city in Switzerland and the capital of the canton of Zurich. It is in north-central Switzerland, at the northwestern tip of Lake Zurich.",
+        "class": "triple"
+    },
+    {
+        "id": 227,
+        "name": "Zurich Insurance",
+        "description": "Zurich Insurance Group, a global multi-line insurer headquartered in Zurich",
+        "class": "triple"
+    },
+    {
+        "id": 5,
+        "protection": 3,
+        "name": "π",
+        "description": "Symbol for the ratio of the circumference of a circle to its diameter",
+        "type_id": 17,
+        "class": "word"
+    },
+    {
+        "id": 5,
+        "name": "π (unit symbol)",
+        "type_id": 22,
+        "class": "triple"
+    }
+]

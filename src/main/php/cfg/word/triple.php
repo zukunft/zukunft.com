@@ -3075,8 +3075,10 @@ class triple extends sandbox_link_named
         $val_lst->load_by_phr($this->phrase(), $msg);
 
         // if there are still values, ask if they really should be deleted
+        // a value of this triple can never be excluded for one user, because its key contains the
+        // id of this triple, so a value that another user still uses is refused and reported
         if ($val_lst->has_values()) {
-            $val_lst->del($msg);
+            $val_lst->del($msg, new sql_type_list([sql_type::NO_USER_SANDBOX]));
         }
 
         // if the user confirms the deletion, the removal process is started with a retry of the triple deletion at the end

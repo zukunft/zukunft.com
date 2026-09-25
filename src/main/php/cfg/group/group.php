@@ -416,7 +416,9 @@ class group extends sandbox_multi
     function id_lst(): array
     {
         $grp_id = new group_id();
-        return $grp_id->get_array($this->id());
+        // the same id as for the table selection, because these ids are the key fields
+        // of the table that table_type() selects (see id_or_phrase_list_id)
+        return $grp_id->get_array($this->id_or_phrase_list_id());
     }
 
     /**
@@ -511,7 +513,7 @@ class group extends sandbox_multi
     function table_extension(bool $with_phrase_count = true): string
     {
         $grp_id = new group_id();
-        return $grp_id->table_extension($this->id(), $with_phrase_count);
+        return $grp_id->table_extension($this->id_or_phrase_list_id(), $with_phrase_count);
     }
 
     /**
@@ -521,7 +523,7 @@ class group extends sandbox_multi
     function table_type(): sql_type
     {
         $grp_id = new group_id();
-        return $grp_id->table_type($this->id());
+        return $grp_id->table_type($this->id_or_phrase_list_id());
     }
 
     /**
@@ -1623,12 +1625,21 @@ class group extends sandbox_multi
      * the id that selects the table of the group like table_type(): the database id if it is set, because the
      * phrase list of a loaded group can be incomplete, and else the id created from the phrase list
      *
+     * used by table_type(), table_extension(), id_lst(), is_prime() and is_big() and by the value key
+     * (see sandbox_value::id_fvt_lst), because a table name, its key fields and the matching change log
+     * table must always be derived from the same id: with the database id alone a group with an unset id
+     * but a set phrase list is a prime group with zero phrases (e.g. the sql function name
+     * value_prime_p0_insert_log), while is_prime() reports it as a main group, which creates an sql
+     * statement for a table that does not exist
+     *
      * @return int|string the database id of this group or the id of its phrase list
      */
-    private function id_or_phrase_list_id(): int|string
+    function id_or_phrase_list_id(): int|string
     {
         $result = $this->id();
-        if ($result === 0 or $result === '') {
+        // an empty phrase list has no id, so keep the unset id of e.g. a just reset group
+        // instead of replacing it with the prime id of zero phrases
+        if (($result === 0 or $result === '') and $this->has_phrase_list()) {
             $grp_id = new group_id();
             $result = $grp_id->get_id($this->phr_lst);
         }
@@ -1986,9 +1997,15 @@ class group extends sandbox_multi
      *
      * @param user_message $msg
      * @param bool $must_exist if false no error message is created if the group has already been deleted
+     * @param sql_type_list $sc_par_lst not used, because a group row is never user specific and
+     *                                  therefore never excluded for one user (see sandbox_multi::del)
      * @return bool
      */
-    function del(user_message $msg, bool $must_exist = true): bool
+    function del(
+        user_message  $msg,
+        bool          $must_exist = true,
+        sql_type_list $sc_par_lst = new sql_type_list()
+    ): bool
     {
         global $db_con;
         $sc = $db_con->sql_creator();

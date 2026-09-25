@@ -273,6 +273,8 @@ class files
     CONST string IMPORT_XBRL_MISSING_NAME = 'does_not_exist';
 
     CONST string FIXED_DB_CSV = 'list' . self::CSV;
+    // the expected types of a class, stored in the folder of that class e.g. the component types
+    CONST string FIXED_DB_TYPES_CSV = 'list_types' . self::CSV;
 
     // for the SQL formatter
     CONST string SQL_FORMAT_TEST = 'word_update_log_0022004000002_user' . self::SQL;
@@ -290,6 +292,10 @@ class files
     // standard table alias (l2) and each of the two is padded with the width of its own column
     CONST string SQL_FORMAT_TEST_SELECT_JOINED = 'component_link_by_view_id' . self::SQL;
     CONST string SQL_FORMAT_TEST_SELECT_JOINED_MYSQL = 'component_link_by_view_id_mysql' . self::SQL;
+    // a select with two joins, which are aligned with each other, and with the sort and the paging
+    // lines of a change log query (see change::load_sql)
+    CONST string SQL_FORMAT_TEST_SELECT_SORTED = 'change_by_group_name_of_grp_big' . self::SQL;
+    CONST string SQL_FORMAT_TEST_SELECT_SORTED_MYSQL = 'change_by_group_name_of_grp_big_mysql' . self::SQL;
     // a select that is a union of selects, because a prime value is selected by its phrase ids
     // and therefore one sub select per value is needed (see sandbox_multi::load_sql_by_ids_union)
     CONST string SQL_FORMAT_TEST_UNION = 'value_prime_p3_by_user_list_by_ids_2' . self::SQL;

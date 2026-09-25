@@ -189,6 +189,13 @@ class library
     const int DSP_MAX = 7;         // max entries before truncation kicks in
     const int DSP_HEAD = 3;        // entries shown at the head of a truncated array
 
+    // the csv format used for the code link files and the expected database rows
+    const string CSV_DELIMITER = ',';
+    // a value that contains the delimiter is enclosed in double quotes when it is written
+    const string CSV_ENCLOSURE = '"';
+    // but both quotes are accepted when a csv line is read e.g. to read 'one, two and three'
+    const array CSV_ENCLOSURES = ['"', "'"];
+
     // the compact json format (see json_compact_format)
     const int JSON_MAX_LINE_LEN = 140; // an object or array is kept on one line up to this length
     const int JSON_INDENT = 2;         // the added spaces per level for the objects that need more lines
@@ -1354,11 +1361,11 @@ class library
     }
 
     /**
-     * format the from, join and where part of a prepared select query
+     * format the from, join, where, order, limit and offset part of a prepared select query
      * with the keywords right aligned below the select
      *
      * @param string $tail the part of the query after the FROM keyword
-     * @return string the formatted from, join and where lines
+     * @return string the formatted from, join, where, order, limit and offset lines
      */
     private function sql_format_select_tail(string $tail): string
     {
@@ -1366,33 +1373,136 @@ class library
         if (str_contains($tail, ' LEFT JOIN (')) {
             return $this->sql_format_count_tail($tail);
         }
-        if (!preg_match('/^(\S+( \S+)?)( LEFT JOIN (\S+( \S+)?) ON (.+?))?( WHERE (.+))?$/', $tail, $prt)) {
-            return '          FROM ' . $tail;
+        // the paging and sorting clauses each get an own line, split from the end, because the
+        // keywords follow each other in this order; the statement end (e.g. ";") rides on the
+        // last clause like it rides on the last where condition
+        [$rest, $offset] = $this->sql_split_clause($tail, ' OFFSET ');
+        [$rest, $limit] = $this->sql_split_clause($rest, ' LIMIT ');
+        [$rest, $order] = $this->sql_split_clause($rest, ' ORDER BY ');
+        [$rest, $where] = $this->sql_split_clause($rest, ' WHERE ');
+        $joins = explode(' LEFT JOIN ', $rest);
+        $from = array_shift($joins);
+        // a from part that is neither a table nor a table with an alias is not formatted further,
+        // so that an unexpected select is shown unchanged instead of cut into wrong lines
+        if (count(explode(' ', $from)) > 2) {
+            $result = '          FROM ' . $tail;
+        } else {
+            $result = '          FROM ' . $from;
+            $result .= $this->sql_format_joins($joins);
+            if ($where != '') {
+                $where_line = '         WHERE ';
+                $conds = explode(' AND ', $where);
+                // the OR of a bracketed where condition is right aligned to the WHERE
+                $or_off = strlen($where_line) - 3;
+                $result .= "\n" . $where_line . $this->sql_format_or_group($conds[0], $or_off);
+                // the AND of a where condition is right aligned to the WHERE like the one of a join
+                $and_off = strlen($where_line) - 4;
+                for ($i = 1; $i < count($conds); $i++) {
+                    $result .= "\n" . str_pad('', $and_off) . 'AND ' . $this->sql_format_or_group($conds[$i], $or_off);
+                }
+            }
+            if ($order != '') {
+                $result .= "\n      ORDER BY " . $this->sql_format_order($order);
+            }
+            if ($limit != '') {
+                $result .= "\n         LIMIT " . $limit;
+            }
+            if ($offset != '') {
+                $result .= "\n        OFFSET " . $offset;
+            }
         }
-        $result = '          FROM ' . $prt[1];
-        if (($prt[3] ?? '') != '') {
-            $join_line = '     LEFT JOIN ' . $prt[4] . ' ON ';
-            $conds = explode(' AND ', $prt[6]);
-            $result .= "\n" . $join_line . $conds[0];
+        return $result;
+    }
+
+    /**
+     * split the last clause of the given keyword from a select tail
+     *
+     * @param string $tail the part of the query that may end with the clause
+     * @param string $keyword the clause keyword with the spaces around it e.g. " ORDER BY "
+     * @return array the tail without the clause and the clause itself or an empty text
+     */
+    private function sql_split_clause(string $tail, string $keyword): array
+    {
+        $result = [$tail, ''];
+        $pos = strrpos($tail, $keyword);
+        if ($pos !== false) {
+            $result = [substr($tail, 0, $pos), substr($tail, $pos + strlen($keyword))];
+        }
+        return $result;
+    }
+
+    /**
+     * format the joins of a select with one join per line, the ON keywords below each other and
+     * the equal signs of the join conditions in one column, so that the joins read as a table
+     *
+     * @param array $joins the joined tables with their alias and the on conditions
+     * @return array the formatted join lines each starting with a line break
+     */
+    private function sql_format_joins(array $joins): string
+    {
+        // the widths of the two columns: the table with its alias and the left side of the condition
+        $tbl_len = 0;
+        $fld_len = 0;
+        $join_lst = [];
+        foreach ($joins as $join) {
+            $on_pos = strpos($join, ' ON ');
+            if ($on_pos !== false) {
+                $tbl = substr($join, 0, $on_pos);
+                $conds = explode(' AND ', substr($join, $on_pos + strlen(' ON ')));
+                $tbl_len = max($tbl_len, strlen($tbl));
+                $eq_pos = strpos($conds[0], ' = ');
+                if ($eq_pos !== false) {
+                    $fld_len = max($fld_len, $eq_pos);
+                }
+                $join_lst[] = [$tbl, $conds];
+            }
+        }
+        $result = '';
+        foreach ($join_lst as [$tbl, $conds]) {
+            $join_line = '     LEFT JOIN ' . str_pad($tbl, $tbl_len) . ' ON ';
+            $cond = $conds[0];
+            $eq_pos = strpos($cond, ' = ');
+            if ($eq_pos !== false) {
+                $cond = str_pad(substr($cond, 0, $eq_pos), $fld_len) . substr($cond, $eq_pos);
+            }
+            $result .= "\n" . $join_line . $cond;
             // the AND of a join condition is right aligned to the ON
             $and_off = strlen($join_line) - 4;
             for ($i = 1; $i < count($conds); $i++) {
                 $result .= "\n" . str_pad('', $and_off) . 'AND ' . $conds[$i];
             }
         }
-        if (($prt[7] ?? '') != '') {
-            $where_line = '         WHERE ';
-            $conds = explode(' AND ', $prt[8]);
-            // the OR of a bracketed where condition is right aligned to the WHERE
-            $or_off = strlen($where_line) - 3;
-            $result .= "\n" . $where_line . $this->sql_format_or_group($conds[0], $or_off);
-            // the AND of a where condition is right aligned to the WHERE like the one of a join
-            $and_off = strlen($where_line) - 4;
-            for ($i = 1; $i < count($conds); $i++) {
-                $result .= "\n" . str_pad('', $and_off) . 'AND ' . $this->sql_format_or_group($conds[$i], $or_off);
-            }
-        }
         return $result;
+    }
+
+    /**
+     * format the order fields of a select with one field per line and the sort direction of all
+     * fields in one column, so that the direction of a field is never overlooked
+     *
+     * @param string $order the order fields with their direction as one comma separated text
+     * @return string the order fields with a line break and the field indent between them
+     */
+    private function sql_format_order(string $order): string
+    {
+        // the width of the field column, which is the longest field name
+        $fld_len = 0;
+        $fld_lst = [];
+        foreach (explode(', ', $order) as $fld) {
+            $dir = '';
+            $name = $fld;
+            $dir_pos = strpos($fld, ' ');
+            if ($dir_pos !== false) {
+                $name = substr($fld, 0, $dir_pos);
+                $dir = substr($fld, $dir_pos + 1);
+            }
+            $fld_len = max($fld_len, strlen($name));
+            $fld_lst[] = [$name, $dir];
+        }
+        $lines = [];
+        foreach ($fld_lst as [$name, $dir]) {
+            $lines[] = $dir == '' ? $name : str_pad($name, $fld_len) . ' ' . $dir;
+        }
+        return implode(",\n" . str_pad('', 15), $lines);
     }
 
     /**
@@ -2697,12 +2807,18 @@ class library
         return $result;
     }
 
-    function class_csv_file_path(string $class): string
+    /**
+     * the resource file with the expected database rows of a class
+     *
+     * @param string $class the class whose rows are expected in the file e.g. component
+     * @param string $file the file name within the folder of the class, e.g. the types of the class
+     * @return string the path of the resource file e.g. unit/component/list.csv
+     */
+    function class_csv_file_path(string $class, string $file = test_files::FIXED_DB_CSV): string
     {
         $lib = new library();
         $name = $lib->class_to_name($class);
         $path = test_paths::UNIT_RES . $name . DIRECTORY_SEPARATOR;
-        $file = test_files::FIXED_DB_CSV;
         return $path . $file;
     }
 
@@ -2724,8 +2840,7 @@ class library
                 $header = implode(',', $header_lst);
                 $csv[] = $header . "\n";
             }
-            $db_row = array_intersect_key($db_row, $header_lst);
-            $line = implode(',', $db_row);
+            $line = $this->csv_line(array_intersect_key($db_row, $header_lst));
             // remove line feeds to make compare easier
             $line = str_replace("\n", ' ', $line);
             $csv[] = $line . "\n";
@@ -2746,18 +2861,96 @@ class library
         if (count($csv) < 2) {
             return $csv;
         }
-        $header_cols = explode(',', rtrim($csv[0], "\n"));
+        $header_cols = $this->csv_line_to_array($csv[0]);
         $idx = array_search($col, $header_cols);
         if ($idx === false) {
             return $csv;
         }
         $result = [$csv[0]];
         for ($i = 1; $i < count($csv); $i++) {
-            $fields = explode(',', rtrim($csv[$i], "\n"));
+            $fields = $this->csv_line_to_array($csv[$i]);
             $fields[$idx] = '';
-            $result[] = implode(',', $fields) . "\n";
+            $result[] = $this->csv_line($fields) . "\n";
         }
         return $result;
+    }
+
+    /**
+     * combine the values of one database row to a csv line
+     *
+     * @param array $fields the values of one row in the order of the csv header
+     * @return string the csv line without the line feed
+     */
+    function csv_line(array $fields): string
+    {
+        $result = [];
+        foreach ($fields as $fld) {
+            $result[] = $this->csv_field($fld);
+        }
+        return implode(',', $result);
+    }
+
+    /**
+     * encode one value for a csv line
+     * a value that contains the delimiter or a quote is enclosed in double quotes
+     * and a quote within the value is escaped by doubling it
+     *
+     * @param string|null $value the value e.g. as read from the database
+     * @return string the value ready to be added to a csv line
+     */
+    function csv_field(?string $value): string
+    {
+        $result = (string)$value;
+        if (str_contains($result, self::CSV_DELIMITER) or str_contains($result, self::CSV_ENCLOSURE)) {
+            $quote = self::CSV_ENCLOSURE;
+            $result = $quote . str_replace($quote, $quote . $quote, $result) . $quote;
+        }
+        return $result;
+    }
+
+    /**
+     * split one csv line into the values
+     * a value that contains the delimiter can be enclosed in single or double quotes
+     * e.g. to import 'one, two and three' or "one, two and three" as one value
+     * and a quote within an enclosed value is expected to be doubled
+     *
+     * @param string $line one line of a csv file with or without the line feed
+     * @return array the values of the line without the enclosing quotes
+     */
+    function csv_line_to_array(string $line): array
+    {
+        $fields = [];
+        $field = '';
+        // the quote that has opened the value or empty if the value is not enclosed
+        $quote = '';
+        $line = rtrim($line, "\r\n");
+        $pos = 0;
+        while ($pos < strlen($line)) {
+            $char = $line[$pos];
+            if ($quote != '') {
+                if ($char != $quote) {
+                    $field .= $char;
+                } elseif (($line[$pos + 1] ?? '') == $quote) {
+                    // a doubled quote is part of the value
+                    $field .= $quote;
+                    $pos++;
+                } else {
+                    $quote = '';
+                }
+            } elseif ($char == self::CSV_DELIMITER) {
+                $fields[] = $field;
+                $field = '';
+            } elseif (in_array($char, self::CSV_ENCLOSURES) and trim($field) == '') {
+                // a quote encloses the value only if it is the first char of the value
+                $quote = $char;
+                $field = '';
+            } else {
+                $field .= $char;
+            }
+            $pos++;
+        }
+        $fields[] = $field;
+        return $fields;
     }
 
     function is_volatile_db_field(string $class, string $fld): bool

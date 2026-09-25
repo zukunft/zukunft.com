@@ -488,7 +488,8 @@
     },
     {
       "name": "mio",
-      "description": "the symbol used in formulas for million"
+      "description": "the symbol used in formulas for million",
+      "type": "scaling"
     },
     {
       "name": "m"
@@ -881,7 +882,7 @@
       "from": "happy",
       "verb": "and",
       "to": "time points",
-      "description": "To measure the \"happy points\" ask the person how happy he feels let's say on a scale from 1 (least happy) to 10 (most happy). If you sum the number of happy points over a period, you get the \"happy time points\". "
+      "description": "To measure the \"happy points\" ask the person how happy he feels let's say on a scale from 1 (least happy) to 10 (most happy). If you sum the number of happy points over a period, you get the \"happy time points\"."
     },
     {
       "from": "htp",
