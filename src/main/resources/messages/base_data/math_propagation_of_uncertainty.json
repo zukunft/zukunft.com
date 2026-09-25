@@ -72,7 +72,6 @@
     },
     {
       "name": "coefficient",
-      "description": "a multiplicative factor in a term of a polynomial, a series, or any expression",
       "refs": [
         {
           "name": "Coefficient",
@@ -125,8 +124,7 @@
       "description": "arithmetic difference between two values"
     },
     {
-      "name": "product",
-      "description": "the result of multiplying two or more numbers"
+      "name": "product"
     },
     {
       "name": "quotient",

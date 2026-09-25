@@ -768,8 +768,7 @@
       "name": "purchasing"
     },
     {
-      "name": "power",
-      "description": "Power is the amount of energy transferred or converted per unit time; the SI unit is the watt."
+      "name": "power"
     },
     {
       "name": "parity"

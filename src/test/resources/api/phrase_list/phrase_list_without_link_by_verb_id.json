@@ -7,6 +7,18 @@
         "class": "word"
     },
     {
+        "id": 1380,
+        "name": "biased information solution",
+        "description": "a measure that reduces the loss of decisions based on biased information, ranked here by its share of the avoided loss",
+        "class": "triple"
+    },
+    {
+        "id": 1453,
+        "name": "black-box AI solution",
+        "description": "a measure that reduces the loss of decisions based on black-box AI, ranked here by its share of the avoided loss",
+        "class": "triple"
+    },
+    {
         "id": 186,
         "name": "canton",
         "description": "a member state of the Swiss federation",
@@ -114,6 +126,12 @@
         "class": "triple"
     },
     {
+        "id": 1214,
+        "name": "poverty solution",
+        "description": "a measure that reduces the loss of poverty, ranked here by its share of the avoided loss",
+        "class": "triple"
+    },
+    {
         "id": 867,
         "name": "region",
         "description": "an area of land larger than a city and its surroundings",
@@ -161,6 +179,12 @@
         "description": "having or giving off heat",
         "type_id": 1,
         "class": "word"
+    },
+    {
+        "id": 1291,
+        "name": "wealth concentration solution",
+        "description": "a measure that reduces the loss of wealth concentration, ranked here by its share of the avoided loss",
+        "class": "triple"
     },
     {
         "id": 105,

@@ -585,7 +585,6 @@
     },
     {
       "name": "logarithm",
-      "description": "In mathematics, the logarithm is the inverse function to exponentiation.",
       "refs": [
         {
           "name": "Logarithm",
@@ -1039,7 +1038,6 @@
     },
     {
       "name": "combination",
-      "description": "In mathematics, a combination is a selection of items from a set that has distinct members, such that the order of selection does not matter.",
       "refs": [
         {
           "name": "Combination",

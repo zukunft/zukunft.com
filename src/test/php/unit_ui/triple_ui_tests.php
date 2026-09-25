@@ -116,8 +116,10 @@ class triple_ui_tests
         $sub_html = $list->phrases_related_ex_subtitle($trp_problem, $msg);
         $test_name = 'the "can be" related phrase is shown grouped under its verb';
         $t->assert_text_contains($test_name, $sub_html, word_names::HEALTH);
+        // the link text and not the bare name, because the "define as" selector of the same
+        // html lists categories like "poverty solution"
         $test_name = 'the is-a parents are excluded from the related phrases without subtitles';
-        $t->assert_text_not_contains($test_name, $sub_html, word_names::POVERTY);
+        $t->assert_text_not_contains($test_name, $sub_html, '>' . word_names::POVERTY . '</a>');
 
         $t->subheader($ts . 'phrase title');
         $test_name = 'the phrase title of a triple is the triple title';

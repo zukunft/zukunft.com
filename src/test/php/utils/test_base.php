@@ -394,6 +394,8 @@ class test_base
 
     const string TEST_TYPE_CONTAINS = 'contains';
     const string TEST_TYPE_NOT = 'not';
+    // the chars shown before and after an unexpected hit of assert_text_not_contains
+    const int NOT_CONTAINS_CONTEXT = 100;
     const string FILE_EXT = '.sql';
     const string FILE_MYSQL = '_mysql';
 
@@ -1017,12 +1019,19 @@ class test_base
         float  $exe_max_time = self::TIMEOUT_LIMIT,
         string $comment = ''): bool
     {
-        if (str_contains($haystack, $needle)) {
-            $result = $needle;
-        } else {
-            $result = '';
+        $pos = strpos($haystack, $needle);
+        $result = '';
+        $diff = '';
+        if ($pos !== false) {
+            // only the text around the first hit, because the haystack is often a whole html page
+            $start = max(0, $pos - self::NOT_CONTAINS_CONTEXT);
+            $result = substr($haystack, $start, $pos - $start + strlen($needle) + self::NOT_CONTAINS_CONTEXT);
+            $diff = '"' . $needle . '" found at position ' . $pos;
         }
-        return $this->assert($msg, $result, $needle, $exe_max_time, $comment, self::TEST_TYPE_NOT);
+        if ($comment != '') {
+            $msg .= ' (' . $comment . ')';
+        }
+        return $this->assert_dsp($msg, $pos === false, 'a text without ' . $needle, $result, $diff, $exe_max_time);
     }
 
     /**

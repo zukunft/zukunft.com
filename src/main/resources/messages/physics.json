@@ -183,7 +183,6 @@
     },
     {
       "name": "displacement",
-      "description": "In geometry and mechanics, a displacement is a vector whose length is the shortest distance from the initial to the final position of a point.",
       "type": "measure",
       "refs": [
         {

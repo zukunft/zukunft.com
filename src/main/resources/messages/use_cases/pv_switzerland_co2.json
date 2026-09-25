@@ -30,8 +30,7 @@
       "description": "the combination of generation technologies behind one kWh of electricity, weighted by their share"
     },
     {
-      "name": "consumption",
-      "description": "the use of a good or an energy, here the electricity taken from the grid by the consumers of a country"
+      "name": "consumption"
     },
     {
       "name": "production",
@@ -42,8 +41,7 @@
       "description": "the pushing out of one thing by another; for electricity the generation that an additional kWh of a new source removes from the market"
     },
     {
-      "name": "emission",
-      "description": "the release of a substance into the environment"
+      "name": "emission"
     },
     {
       "name": "avoided",
@@ -242,8 +240,7 @@
       ],
       "number": "46.8",
       "source": "KBOB energy systems 2022",
-      "note": "0.013 kg CO2-eq per MJ * 3.6",
-      "description": "life cycle emission of one kWh of photovoltaic electricity taken from the grid in Switzerland (table Elektrizität, Bezug via Netz, Fotovoltaik: 0.013 kg CO2-eq/MJ), mostly from the production of the modules; the source rounds to three decimals per MJ, so the figure per kWh is exact to about 2 g"
+      "description": "life cycle emission of one kWh of photovoltaic electricity taken from the grid in Switzerland (table Elektrizität, Bezug via Netz, Fotovoltaik: 0.013 kg CO2-eq/MJ times 3.6 MJ per kWh), mostly from the production of the modules; the source rounds to three decimals per MJ, so the figure per kWh is exact to about 2 g"
     },
     {
       "words": [
@@ -257,8 +254,7 @@
       ],
       "number": "126",
       "source": "KBOB energy systems 2022",
-      "note": "0.035 kg CO2-eq per MJ * 3.6",
-      "description": "the average Swiss consumption mix of 2018 incl. the imports per hour (table Elektrizität, Bezug via Netz, CH-Verbrauchermix: 0.035 kg CO2-eq/MJ); exact to about 2 g per kWh"
+      "description": "the average Swiss consumption mix of 2018 incl. the imports per hour (table Elektrizität, Bezug via Netz, CH-Verbrauchermix: 0.035 kg CO2-eq/MJ times 3.6 MJ per kWh); exact to about 2 g per kWh"
     },
     {
       "words": [
@@ -272,8 +268,7 @@
       ],
       "number": "32.4",
       "source": "KBOB energy systems 2022",
-      "note": "0.009 kg CO2-eq per MJ * 3.6",
-      "description": "the average Swiss production mix of 2018, mostly hydro and nuclear (table Elektrizität, Bezug via Netz, CH-Produktionsmix: 0.009 kg CO2-eq/MJ); exact to about 2 g per kWh"
+      "description": "the average Swiss production mix of 2018, mostly hydro and nuclear (table Elektrizität, Bezug via Netz, CH-Produktionsmix: 0.009 kg CO2-eq/MJ times 3.6 MJ per kWh); exact to about 2 g per kWh"
     },
     {
       "words": [
@@ -313,8 +308,7 @@
         "gram per kWh"
       ],
       "number": "79.2",
-      "note": "126 - 46.8",
-      "description": "the climate benefit of one kWh of Swiss PV without the displacement concept: the Swiss consumption mix minus the PV life cycle emission"
+      "description": "the climate benefit of one kWh of Swiss PV without the displacement concept: the Swiss consumption mix minus the PV life cycle emission, 126 - 46.8"
     },
     {
       "words": [
@@ -325,8 +319,7 @@
         "gram per kWh"
       ],
       "number": "939.2",
-      "note": "986 - 46.8",
-      "description": "the climate benefit of one kWh of Swiss PV with the displacement concept: the EU displacement mix minus the PV life cycle emission, about twelve times the benefit of the classic comparison"
+      "description": "the climate benefit of one kWh of Swiss PV with the displacement concept: the EU displacement mix minus the PV life cycle emission, 986 - 46.8, about twelve times the benefit of the classic comparison"
     }
   ],
   "calc-validation": [

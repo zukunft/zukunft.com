@@ -115,7 +115,9 @@ it. what is still open:
   parser; a calc validation that compares with a tolerance instead of rounding would end the issue
 - the co2 entries keep their style (numbers as json numbers, `"assigned"` lists) next to the
   problem entries (numbers as strings, `"assigned_word"`); the repo formatter can unify them
-- the co2 file's own `expected return` bounds are validated for coal phase-out only (2 entries)
+- the `expected return` bounds of all 46 climate solutions are calc-validations of the
+  `expected return formula` (minimum times minimum, maximum times maximum) since 2026-09-25; the
+  stated values stay next to the results, as the coal phase-out entries did before
 
 the 44 populism solutions of `problem_populism.json` (since 2026-09-25) follow the climate solutions:
 a triple `populism solution` (solution of populism), `populism solution is part of avoid wrong
@@ -133,12 +135,85 @@ one range factor pair 0.4 / 2.5 per measure, 9 results per solution. what is sti
   because fact-checking, media literacy, prebunking etc. are measures of the disinformation problem
   too and the same user must not state two numbers for one phrase group; the climate solutions
   qualify only the names that clashed at the time (`research (climate solution)`)
+- a measure with a space is a composition triple of single word atoms (`civic education` =
+  education kind of civic, `campaign finance reform` = reform of `campaign finance`), the head noun
+  as from, an adjective joined by `kind of`, a noun by `of`, a preposition of the name by its verb
+  (`access to electricity`, `step-up in basis`); a measure whose name has no preposition that a
+  verb covers is rephrased (`taxing capital gains as income` = `income tax` on `capital gains`,
+  `privacy by design` = design with privacy, `safety evaluations before deployment` = safety
+  evaluations of deployment, because `before` is a word and no verb); the same table serves all
+  problem files, so a shared building block is declared verbatim in every file that uses it
 - `open data` is merged into `transparent government data` and `local self-government` into
   `decentralization`; the merged names are only mentioned in the descriptions
 - the costs are in billion USD next to the EUR of the problem row, so that the climate calibration
   of the effort is reused verbatim
 - the gain factor 0.102411 is shared by the solution and its parts, so its phrase group no longer
   names `avoid wrong decisions`
+
+the 35 biased information solutions of `problem_biased_information.json` (since 2026-09-25) follow
+the same pattern as parts of the Delphi method: `biased information solution`, `<name> (biased
+information solution)`, assumed reduction potential, fulfillment probability and cost in billion USD,
+9 results per solution, the gain factor 1.00909 shared with the solution. what is still open:
+
+- own estimates without a source, as for populism; the potentials sum to about 2, so they are not
+  additive either
+- `wisdom of crowds` is merged into `independent judgment aggregation` and `inoculation` into
+  `prebunking`; the Delphi method itself is the whole and has no part of its own
+- `prebunking` and `fact-checking` are re-declared name-only and `media literacy` as the verbatim
+  triple, because `problem_populism.json` imports first and owns them; each problem qualifies its
+  own copy
+- the five problem files share one general formula pair `loss reduction of a solution part` /
+  `initial effort of a solution part`: the home is `problem_populism.json` (the first import), the
+  other four repeat the two formulas verbatim, so the import merges them by name
+
+the 31 wealth concentration solutions of `problem_wealth_concentration.json` (since 2026-09-25)
+follow the same pattern as parts of the basic income, the gain factor 0.29899 shared with the
+solution. what is still open:
+
+- own estimates without a source; the potentials sum to about 2.4
+- `universal basic income` is the solution `basic income` itself and has no part of its own;
+  `estate tax` is merged into `inheritance tax` and `baby bonds` into `universal basic capital`
+- `wealth cap at the value of a statistical life` is built on the `wealth surcharge` of the file
+  (`wealth surcharge` on `value of a statistical life`), so the measure of the list and the concept
+  paper phrase are linked
+- `affordable housing`, `anti-corruption measures` and `minimum wage` are re-declared as the
+  verbatim triples without description, because `problem_populism.json` resp. `problem_poverty.json`
+  import first and own them
+
+the 34 poverty solutions of `problem_poverty.json` (since 2026-09-25) follow the same pattern as
+parts of the poverty research, the gain factor 17.92188 shared with the solution. what is still open:
+
+- the gain factor is tuned so that the 1 percent loss reduction of the research gives 34.1 billion
+  htp, so the parts get gains far above every row of the ranking: economic growth 614, unconditional
+  cash transfers 273, vaccination 164 billion htp (global warming 35). this is the consequence of the
+  34.1 of the row, which is probably a copy of the populism gain (the htp share gives 13.6, see
+  above); once the row is corrected the factor and all 34 gains follow from the regenerated chain
+- own estimates without a source; the potentials sum to about 2.6
+- `negative income tax` is merged into `universal basic income` and `mobile money` into `financial
+  inclusion`; `anti-corruption` of the list is the existing word `anti-corruption measures`
+- `anti-corruption measures`, `social safety nets` and `affordable housing` are re-declared as the
+  verbatim triples of problem_populism.json without description; `economic growth` is the triple
+  of economics.json (growth kind of economic), which imports later, so the poverty file is its home
+  and carries the description
+
+the 35 black-box AI solutions of `problem_black_box_ai.json` (since 2026-09-25) follow the same
+pattern as parts of the public AI, the gain factor 0.294318 shared with the solution. what is still
+open:
+
+- own estimates without a source; the potentials sum to about 2.1
+- `EU AI Act` is merged into `risk-based regulation` and `model cards` into `open model
+  documentation`; `red teaming` is re-declared as the verbatim triple, because
+  `problem_biased_information.json` owns it
+- `open-source models` and `public AI infrastructure` are parts of the definition of the solution
+  `public AI` (open source availability, public good), so they overlap with the whole more than the
+  other parts do
+
+two words carry two concepts in the main data and lost the later description on 2026-09-25, because
+the import merges by name and the home file wins: `power` (the exponent of
+math_propagation_of_uncertainty.json, the energy per time of economics.json) and `displacement`
+(the pushed out generation of pv_switzerland_co2.json, the vector of physics.json); a `must be one
+of` qualifier triple per meaning (`power (math)`, `power (physics)`) would give each its description
+back, but changes the phrase groups of the values that use the bare word
 
 ## temp
 

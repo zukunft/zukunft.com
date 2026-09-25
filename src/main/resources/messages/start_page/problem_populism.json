@@ -117,180 +117,289 @@
       "name": "USD"
     },
     {
-      "name": "one-click hide",
-      "description": "a button that lets a reader hide a post or an account with one click, so that emotional content spreads less far (see fermi_internet_pro_contra.json)"
+      "name": "hide"
     },
     {
-      "name": "civic education",
-      "description": "teaching how the institutions work, why they limit power and how a citizen checks a claim before voting on it"
+      "name": "one-click"
     },
     {
-      "name": "media literacy",
-      "description": "teaching how to read news, how a source is checked and how an algorithm selects what is shown"
+      "name": "education"
+    },
+    {
+      "name": "civic"
+    },
+    {
+      "name": "literacy"
+    },
+    {
+      "name": "media"
     },
     {
       "name": "fact-checking",
       "description": "independent checks of public claims, published next to the claim"
     },
     {
-      "name": "independent public broadcasting",
-      "description": "news and background financed by the public, but protected from the government of the day"
+      "name": "broadcasting"
     },
     {
-      "name": "platform algorithm transparency",
-      "description": "platforms disclose how their ranking selects what a user sees and let researchers audit it"
+      "name": "public"
     },
     {
-      "name": "reducing economic inequality",
-      "description": "narrowing the income and wealth gap by taxes and transfers, so that fewer voters feel left behind"
+      "name": "independent"
     },
     {
-      "name": "regional development",
-      "description": "investment in the regions that lost jobs and services, so that the places that do not matter matter again"
+      "name": "transparency"
     },
     {
-      "name": "social safety nets",
-      "description": "unemployment, health and pension protection that limits the fall after a job loss"
+      "name": "algorithm"
     },
     {
-      "name": "job retraining",
-      "description": "programmes that train workers of shrinking industries for new jobs"
+      "name": "platform"
     },
     {
-      "name": "affordable housing",
-      "description": "building and regulating so that rent and purchase prices stay within reach of an average income"
+      "name": "inequality"
     },
     {
-      "name": "anti-corruption measures",
-      "description": "independent prosecution, asset disclosure and audits that limit the private use of public office"
+      "name": "economic"
     },
     {
-      "name": "lobbying transparency",
-      "description": "public registers of who influences which law and with how much money"
+      "name": "development"
     },
     {
-      "name": "campaign finance reform",
-      "description": "limits and disclosure of the money spent to win elections"
+      "name": "regional"
     },
     {
-      "name": "strong independent judiciary",
-      "description": "courts that a government cannot pack, defund or bypass"
+      "name": "nets"
     },
     {
-      "name": "press freedom",
-      "description": "legal protection of journalists and media from the government and from capture by owners"
+      "name": "safety"
     },
     {
-      "name": "direct democracy",
-      "description": "referendums and initiatives that let citizens decide on single questions"
+      "name": "social"
     },
     {
-      "name": "citizens' assemblies",
-      "description": "randomly selected citizens who deliberate on one question and recommend a decision"
+      "name": "retraining"
     },
     {
-      "name": "deliberative polling",
-      "description": "a poll before and after a random sample has been informed and has discussed the question"
+      "name": "job"
     },
     {
-      "name": "participatory budgeting",
-      "description": "citizens decide directly on part of the local budget"
+      "name": "housing"
     },
     {
-      "name": "electoral system reform",
-      "description": "changing how votes turn into seats, e.g. ranked choice or larger districts, so that an extreme candidate needs a majority"
+      "name": "affordable"
     },
     {
-      "name": "proportional representation",
-      "description": "seats in proportion to the votes, so that no party wins a majority with a minority of the votes"
+      "name": "measures"
+    },
+    {
+      "name": "anti-corruption"
+    },
+    {
+      "name": "lobbying"
+    },
+    {
+      "name": "reform"
+    },
+    {
+      "name": "finance"
+    },
+    {
+      "name": "campaign"
+    },
+    {
+      "name": "judiciary"
+    },
+    {
+      "name": "strong"
+    },
+    {
+      "name": "freedom"
+    },
+    {
+      "name": "press"
+    },
+    {
+      "name": "democracy"
+    },
+    {
+      "name": "direct"
+    },
+    {
+      "name": "assemblies"
+    },
+    {
+      "name": "citizens"
+    },
+    {
+      "name": "polling"
+    },
+    {
+      "name": "deliberative"
+    },
+    {
+      "name": "budgeting"
+    },
+    {
+      "name": "participatory"
+    },
+    {
+      "name": "system"
+    },
+    {
+      "name": "electoral"
+    },
+    {
+      "name": "representation"
+    },
+    {
+      "name": "proportional"
     },
     {
       "name": "decentralization",
       "description": "moving decisions and budgets to regions and municipalities, so that citizens see who decides and can reach them; includes local self-government"
     },
     {
-      "name": "responsive mainstream parties",
-      "description": "established parties that take up the concerns of the protest vote before a populist does"
+      "name": "parties"
     },
     {
-      "name": "addressing migration concerns",
-      "description": "orderly migration rules, enforced and explained, so that the topic cannot be owned by one side"
+      "name": "mainstream"
     },
     {
-      "name": "integration policies",
-      "description": "language, work and housing support so that immigrants become part of the society"
+      "name": "responsive"
     },
     {
-      "name": "evidence-based policymaking",
-      "description": "decisions based on tested evidence and evaluated afterwards, the core of the solution avoid wrong decisions"
+      "name": "addressing"
     },
     {
-      "name": "transparent government data",
-      "description": "government data published in machine readable form, so that anyone can check a claim; includes open data"
+      "name": "concerns"
     },
     {
-      "name": "trust-building institutions",
-      "description": "public services that work and treat every citizen the same, the daily proof that the state is not the enemy"
+      "name": "migration"
     },
     {
-      "name": "reducing polarization",
-      "description": "measures against the sorting of the society into two hostile camps, from media rules to cross-cutting institutions"
+      "name": "policies"
     },
     {
-      "name": "cross-partisan dialogue",
-      "description": "formats where supporters of opposed parties meet and talk"
+      "name": "integration"
     },
     {
-      "name": "community building",
-      "description": "local associations, clubs and meeting places that give belonging outside politics"
+      "name": "policymaking"
     },
     {
-      "name": "civil society support",
-      "description": "funding and legal protection of independent organisations that watch the state"
+      "name": "evidence-based"
     },
     {
-      "name": "lifelong learning",
-      "description": "education after school, so that workers keep up with the change of their jobs"
+      "name": "data"
     },
     {
-      "name": "critical thinking education",
-      "description": "teaching how to weigh an argument and detect a fallacy, beyond the media literacy of the news"
+      "name": "government"
     },
     {
-      "name": "counter-disinformation campaigns",
-      "description": "public campaigns that expose disinformation operations and their methods"
+      "name": "transparent"
+    },
+    {
+      "name": "institutions"
+    },
+    {
+      "name": "trust-building"
+    },
+    {
+      "name": "polarization"
+    },
+    {
+      "name": "dialogue"
+    },
+    {
+      "name": "cross-partisan"
+    },
+    {
+      "name": "building"
+    },
+    {
+      "name": "community"
+    },
+    {
+      "name": "support"
+    },
+    {
+      "name": "society"
+    },
+    {
+      "name": "civil"
+    },
+    {
+      "name": "learning"
+    },
+    {
+      "name": "lifelong"
+    },
+    {
+      "name": "thinking"
+    },
+    {
+      "name": "critical"
+    },
+    {
+      "name": "campaigns"
+    },
+    {
+      "name": "counter-disinformation"
     },
     {
       "name": "prebunking",
       "description": "warning about a manipulation technique before it is met, so that it is recognised"
     },
     {
-      "name": "crisis preparedness",
-      "description": "plans, stocks and institutions that keep a crisis from becoming a shock, because shocks feed populism"
+      "name": "preparedness"
     },
     {
-      "name": "fair globalization",
-      "description": "trade rules that share the gains of trade with the workers who lose their jobs to it"
+      "name": "crisis"
     },
     {
-      "name": "trade adjustment assistance",
-      "description": "support for workers and regions that lose to imports"
+      "name": "globalization"
     },
     {
-      "name": "cordon sanitaire",
-      "description": "the agreement of the other parties not to govern with a populist party"
+      "name": "fair"
     },
     {
-      "name": "inclusive national identity",
-      "description": "a story of the nation that includes newcomers and minorities, so that the populist claim to own the people has a rival"
+      "name": "assistance"
     },
     {
-      "name": "accountable elites",
-      "description": "leaders who face consequences for failure and abuse, so that the anti-elite message finds less ground"
+      "name": "adjustment"
     },
     {
-      "name": "digital public sphere regulation",
-      "description": "rules for the platforms as the place of the public debate, from duty of care to interoperability"
+      "name": "trade"
+    },
+    {
+      "name": "cordon"
+    },
+    {
+      "name": "sanitaire"
+    },
+    {
+      "name": "identity"
+    },
+    {
+      "name": "national"
+    },
+    {
+      "name": "inclusive"
+    },
+    {
+      "name": "elites"
+    },
+    {
+      "name": "accountable"
+    },
+    {
+      "name": "regulation"
+    },
+    {
+      "name": "sphere"
+    },
+    {
+      "name": "digital"
     }
   ],
   "triples": [
@@ -370,6 +479,13 @@
       "to": "fulfillment"
     },
     {
+      "name": "one-click hide",
+      "from": "hide",
+      "verb": "with",
+      "to": "one-click",
+      "description": "a button that lets a reader hide a post or an account with one click, so that emotional content spreads less far (see fermi_internet_pro_contra.json)"
+    },
+    {
       "name": "one-click hide (populism solution)",
       "from": "one-click hide",
       "verb": "is a",
@@ -377,11 +493,25 @@
       "description": "'one-click hide' is one of the compared populism solutions."
     },
     {
+      "name": "civic education",
+      "from": "education",
+      "verb": "kind of",
+      "to": "civic",
+      "description": "teaching how the institutions work, why they limit power and how a citizen checks a claim before voting on it"
+    },
+    {
       "name": "civic education (populism solution)",
       "from": "civic education",
       "verb": "is a",
       "to": "populism solution",
       "description": "'civic education' is one of the compared populism solutions."
+    },
+    {
+      "name": "media literacy",
+      "from": "literacy",
+      "verb": "of",
+      "to": "media",
+      "description": "teaching how to read news, how a source is checked and how an algorithm selects what is shown"
     },
     {
       "name": "media literacy (populism solution)",
@@ -398,11 +528,37 @@
       "description": "'fact-checking' is one of the compared populism solutions."
     },
     {
+      "name": "public broadcasting",
+      "from": "broadcasting",
+      "verb": "kind of",
+      "to": "public"
+    },
+    {
+      "name": "independent public broadcasting",
+      "from": "public broadcasting",
+      "verb": "kind of",
+      "to": "independent",
+      "description": "news and background financed by the public, but protected from the government of the day"
+    },
+    {
       "name": "independent public broadcasting (populism solution)",
       "from": "independent public broadcasting",
       "verb": "is a",
       "to": "populism solution",
       "description": "'independent public broadcasting' is one of the compared populism solutions."
+    },
+    {
+      "name": "platform algorithm",
+      "from": "algorithm",
+      "verb": "of",
+      "to": "platform"
+    },
+    {
+      "name": "platform algorithm transparency",
+      "from": "transparency",
+      "verb": "of",
+      "to": "platform algorithm",
+      "description": "platforms disclose how their ranking selects what a user sees and let researchers audit it"
     },
     {
       "name": "platform algorithm transparency (populism solution)",
@@ -412,11 +568,31 @@
       "description": "'platform algorithm transparency' is one of the compared populism solutions."
     },
     {
+      "name": "economic inequality",
+      "from": "inequality",
+      "verb": "kind of",
+      "to": "economic"
+    },
+    {
+      "name": "reducing economic inequality",
+      "from": "reduction",
+      "verb": "of",
+      "to": "economic inequality",
+      "description": "narrowing the income and wealth gap by taxes and transfers, so that fewer voters feel left behind"
+    },
+    {
       "name": "reducing economic inequality (populism solution)",
       "from": "reducing economic inequality",
       "verb": "is a",
       "to": "populism solution",
       "description": "'reducing economic inequality' is one of the compared populism solutions."
+    },
+    {
+      "name": "regional development",
+      "from": "development",
+      "verb": "kind of",
+      "to": "regional",
+      "description": "investment in the regions that lost jobs and services, so that the places that do not matter matter again"
     },
     {
       "name": "regional development (populism solution)",
@@ -426,11 +602,31 @@
       "description": "'regional development' is one of the compared populism solutions."
     },
     {
+      "name": "safety nets",
+      "from": "nets",
+      "verb": "of",
+      "to": "safety"
+    },
+    {
+      "name": "social safety nets",
+      "from": "safety nets",
+      "verb": "kind of",
+      "to": "social",
+      "description": "unemployment, health and pension protection that limits the fall after a job loss"
+    },
+    {
       "name": "social safety nets (populism solution)",
       "from": "social safety nets",
       "verb": "is a",
       "to": "populism solution",
       "description": "'social safety nets' is one of the compared populism solutions."
+    },
+    {
+      "name": "job retraining",
+      "from": "retraining",
+      "verb": "of",
+      "to": "job",
+      "description": "programmes that train workers of shrinking industries for new jobs"
     },
     {
       "name": "job retraining (populism solution)",
@@ -440,11 +636,25 @@
       "description": "'job retraining' is one of the compared populism solutions."
     },
     {
+      "name": "affordable housing",
+      "from": "housing",
+      "verb": "kind of",
+      "to": "affordable",
+      "description": "building and regulating so that rent and purchase prices stay within reach of an average income"
+    },
+    {
       "name": "affordable housing (populism solution)",
       "from": "affordable housing",
       "verb": "is a",
       "to": "populism solution",
       "description": "'affordable housing' is one of the compared populism solutions."
+    },
+    {
+      "name": "anti-corruption measures",
+      "from": "measures",
+      "verb": "kind of",
+      "to": "anti-corruption",
+      "description": "independent prosecution, asset disclosure and audits that limit the private use of public office"
     },
     {
       "name": "anti-corruption measures (populism solution)",
@@ -454,11 +664,31 @@
       "description": "'anti-corruption measures' is one of the compared populism solutions."
     },
     {
+      "name": "lobbying transparency",
+      "from": "transparency",
+      "verb": "of",
+      "to": "lobbying",
+      "description": "public registers of who influences which law and with how much money"
+    },
+    {
       "name": "lobbying transparency (populism solution)",
       "from": "lobbying transparency",
       "verb": "is a",
       "to": "populism solution",
       "description": "'lobbying transparency' is one of the compared populism solutions."
+    },
+    {
+      "name": "campaign finance",
+      "from": "finance",
+      "verb": "of",
+      "to": "campaign"
+    },
+    {
+      "name": "campaign finance reform",
+      "from": "reform",
+      "verb": "of",
+      "to": "campaign finance",
+      "description": "limits and disclosure of the money spent to win elections"
     },
     {
       "name": "campaign finance reform (populism solution)",
@@ -468,11 +698,31 @@
       "description": "'campaign finance reform' is one of the compared populism solutions."
     },
     {
+      "name": "independent judiciary",
+      "from": "judiciary",
+      "verb": "kind of",
+      "to": "independent"
+    },
+    {
+      "name": "strong independent judiciary",
+      "from": "independent judiciary",
+      "verb": "kind of",
+      "to": "strong",
+      "description": "courts that a government cannot pack, defund or bypass"
+    },
+    {
       "name": "strong independent judiciary (populism solution)",
       "from": "strong independent judiciary",
       "verb": "is a",
       "to": "populism solution",
       "description": "'strong independent judiciary' is one of the compared populism solutions."
+    },
+    {
+      "name": "press freedom",
+      "from": "freedom",
+      "verb": "of",
+      "to": "press",
+      "description": "legal protection of journalists and media from the government and from capture by owners"
     },
     {
       "name": "press freedom (populism solution)",
@@ -482,11 +732,25 @@
       "description": "'press freedom' is one of the compared populism solutions."
     },
     {
+      "name": "direct democracy",
+      "from": "democracy",
+      "verb": "kind of",
+      "to": "direct",
+      "description": "referendums and initiatives that let citizens decide on single questions"
+    },
+    {
       "name": "direct democracy (populism solution)",
       "from": "direct democracy",
       "verb": "is a",
       "to": "populism solution",
       "description": "'direct democracy' is one of the compared populism solutions."
+    },
+    {
+      "name": "citizens' assemblies",
+      "from": "assemblies",
+      "verb": "of",
+      "to": "citizens",
+      "description": "randomly selected citizens who deliberate on one question and recommend a decision"
     },
     {
       "name": "citizens' assemblies (populism solution)",
@@ -496,11 +760,25 @@
       "description": "'citizens' assemblies' is one of the compared populism solutions."
     },
     {
+      "name": "deliberative polling",
+      "from": "polling",
+      "verb": "kind of",
+      "to": "deliberative",
+      "description": "a poll before and after a random sample has been informed and has discussed the question"
+    },
+    {
       "name": "deliberative polling (populism solution)",
       "from": "deliberative polling",
       "verb": "is a",
       "to": "populism solution",
       "description": "'deliberative polling' is one of the compared populism solutions."
+    },
+    {
+      "name": "participatory budgeting",
+      "from": "budgeting",
+      "verb": "kind of",
+      "to": "participatory",
+      "description": "citizens decide directly on part of the local budget"
     },
     {
       "name": "participatory budgeting (populism solution)",
@@ -510,11 +788,31 @@
       "description": "'participatory budgeting' is one of the compared populism solutions."
     },
     {
+      "name": "electoral system",
+      "from": "system",
+      "verb": "kind of",
+      "to": "electoral"
+    },
+    {
+      "name": "electoral system reform",
+      "from": "reform",
+      "verb": "of",
+      "to": "electoral system",
+      "description": "changing how votes turn into seats, e.g. ranked choice or larger districts, so that an extreme candidate needs a majority"
+    },
+    {
       "name": "electoral system reform (populism solution)",
       "from": "electoral system reform",
       "verb": "is a",
       "to": "populism solution",
       "description": "'electoral system reform' is one of the compared populism solutions."
+    },
+    {
+      "name": "proportional representation",
+      "from": "representation",
+      "verb": "kind of",
+      "to": "proportional",
+      "description": "seats in proportion to the votes, so that no party wins a majority with a minority of the votes"
     },
     {
       "name": "proportional representation (populism solution)",
@@ -531,11 +829,37 @@
       "description": "'decentralization' is one of the compared populism solutions."
     },
     {
+      "name": "mainstream parties",
+      "from": "parties",
+      "verb": "kind of",
+      "to": "mainstream"
+    },
+    {
+      "name": "responsive mainstream parties",
+      "from": "mainstream parties",
+      "verb": "kind of",
+      "to": "responsive",
+      "description": "established parties that take up the concerns of the protest vote before a populist does"
+    },
+    {
       "name": "responsive mainstream parties (populism solution)",
       "from": "responsive mainstream parties",
       "verb": "is a",
       "to": "populism solution",
       "description": "'responsive mainstream parties' is one of the compared populism solutions."
+    },
+    {
+      "name": "migration concerns",
+      "from": "concerns",
+      "verb": "of",
+      "to": "migration"
+    },
+    {
+      "name": "addressing migration concerns",
+      "from": "addressing",
+      "verb": "of",
+      "to": "migration concerns",
+      "description": "orderly migration rules, enforced and explained, so that the topic cannot be owned by one side"
     },
     {
       "name": "addressing migration concerns (populism solution)",
@@ -545,11 +869,25 @@
       "description": "'addressing migration concerns' is one of the compared populism solutions."
     },
     {
+      "name": "integration policies",
+      "from": "policies",
+      "verb": "of",
+      "to": "integration",
+      "description": "language, work and housing support so that immigrants become part of the society"
+    },
+    {
       "name": "integration policies (populism solution)",
       "from": "integration policies",
       "verb": "is a",
       "to": "populism solution",
       "description": "'integration policies' is one of the compared populism solutions."
+    },
+    {
+      "name": "evidence-based policymaking",
+      "from": "policymaking",
+      "verb": "kind of",
+      "to": "evidence-based",
+      "description": "decisions based on tested evidence and evaluated afterwards, the core of the solution avoid wrong decisions"
     },
     {
       "name": "evidence-based policymaking (populism solution)",
@@ -559,11 +897,31 @@
       "description": "'evidence-based policymaking' is one of the compared populism solutions."
     },
     {
+      "name": "government data",
+      "from": "data",
+      "verb": "of",
+      "to": "government"
+    },
+    {
+      "name": "transparent government data",
+      "from": "government data",
+      "verb": "kind of",
+      "to": "transparent",
+      "description": "government data published in machine readable form, so that anyone can check a claim; includes open data"
+    },
+    {
       "name": "transparent government data (populism solution)",
       "from": "transparent government data",
       "verb": "is a",
       "to": "populism solution",
       "description": "'transparent government data' is one of the compared populism solutions."
+    },
+    {
+      "name": "trust-building institutions",
+      "from": "institutions",
+      "verb": "kind of",
+      "to": "trust-building",
+      "description": "public services that work and treat every citizen the same, the daily proof that the state is not the enemy"
     },
     {
       "name": "trust-building institutions (populism solution)",
@@ -573,11 +931,25 @@
       "description": "'trust-building institutions' is one of the compared populism solutions."
     },
     {
+      "name": "reducing polarization",
+      "from": "reduction",
+      "verb": "of",
+      "to": "polarization",
+      "description": "measures against the sorting of the society into two hostile camps, from media rules to cross-cutting institutions"
+    },
+    {
       "name": "reducing polarization (populism solution)",
       "from": "reducing polarization",
       "verb": "is a",
       "to": "populism solution",
       "description": "'reducing polarization' is one of the compared populism solutions."
+    },
+    {
+      "name": "cross-partisan dialogue",
+      "from": "dialogue",
+      "verb": "kind of",
+      "to": "cross-partisan",
+      "description": "formats where supporters of opposed parties meet and talk"
     },
     {
       "name": "cross-partisan dialogue (populism solution)",
@@ -587,11 +959,31 @@
       "description": "'cross-partisan dialogue' is one of the compared populism solutions."
     },
     {
+      "name": "community building",
+      "from": "building",
+      "verb": "of",
+      "to": "community",
+      "description": "local associations, clubs and meeting places that give belonging outside politics"
+    },
+    {
       "name": "community building (populism solution)",
       "from": "community building",
       "verb": "is a",
       "to": "populism solution",
       "description": "'community building' is one of the compared populism solutions."
+    },
+    {
+      "name": "civil society",
+      "from": "society",
+      "verb": "kind of",
+      "to": "civil"
+    },
+    {
+      "name": "civil society support",
+      "from": "support",
+      "verb": "of",
+      "to": "civil society",
+      "description": "funding and legal protection of independent organisations that watch the state"
     },
     {
       "name": "civil society support (populism solution)",
@@ -601,6 +993,13 @@
       "description": "'civil society support' is one of the compared populism solutions."
     },
     {
+      "name": "lifelong learning",
+      "from": "learning",
+      "verb": "kind of",
+      "to": "lifelong",
+      "description": "education after school, so that workers keep up with the change of their jobs"
+    },
+    {
       "name": "lifelong learning (populism solution)",
       "from": "lifelong learning",
       "verb": "is a",
@@ -608,11 +1007,31 @@
       "description": "'lifelong learning' is one of the compared populism solutions."
     },
     {
+      "name": "critical thinking",
+      "from": "thinking",
+      "verb": "kind of",
+      "to": "critical"
+    },
+    {
+      "name": "critical thinking education",
+      "from": "education",
+      "verb": "of",
+      "to": "critical thinking",
+      "description": "teaching how to weigh an argument and detect a fallacy, beyond the media literacy of the news"
+    },
+    {
       "name": "critical thinking education (populism solution)",
       "from": "critical thinking education",
       "verb": "is a",
       "to": "populism solution",
       "description": "'critical thinking education' is one of the compared populism solutions."
+    },
+    {
+      "name": "counter-disinformation campaigns",
+      "from": "campaigns",
+      "verb": "kind of",
+      "to": "counter-disinformation",
+      "description": "public campaigns that expose disinformation operations and their methods"
     },
     {
       "name": "counter-disinformation campaigns (populism solution)",
@@ -629,11 +1048,25 @@
       "description": "'prebunking' is one of the compared populism solutions."
     },
     {
+      "name": "crisis preparedness",
+      "from": "preparedness",
+      "verb": "of",
+      "to": "crisis",
+      "description": "plans, stocks and institutions that keep a crisis from becoming a shock, because shocks feed populism"
+    },
+    {
       "name": "crisis preparedness (populism solution)",
       "from": "crisis preparedness",
       "verb": "is a",
       "to": "populism solution",
       "description": "'crisis preparedness' is one of the compared populism solutions."
+    },
+    {
+      "name": "fair globalization",
+      "from": "globalization",
+      "verb": "kind of",
+      "to": "fair",
+      "description": "trade rules that share the gains of trade with the workers who lose their jobs to it"
     },
     {
       "name": "fair globalization (populism solution)",
@@ -643,11 +1076,31 @@
       "description": "'fair globalization' is one of the compared populism solutions."
     },
     {
+      "name": "trade adjustment",
+      "from": "adjustment",
+      "verb": "of",
+      "to": "trade"
+    },
+    {
+      "name": "trade adjustment assistance",
+      "from": "assistance",
+      "verb": "of",
+      "to": "trade adjustment",
+      "description": "support for workers and regions that lose to imports"
+    },
+    {
       "name": "trade adjustment assistance (populism solution)",
       "from": "trade adjustment assistance",
       "verb": "is a",
       "to": "populism solution",
       "description": "'trade adjustment assistance' is one of the compared populism solutions."
+    },
+    {
+      "name": "cordon sanitaire",
+      "from": "cordon",
+      "verb": "kind of",
+      "to": "sanitaire",
+      "description": "the agreement of the other parties not to govern with a populist party"
     },
     {
       "name": "cordon sanitaire (populism solution)",
@@ -657,6 +1110,19 @@
       "description": "'cordon sanitaire' is one of the compared populism solutions."
     },
     {
+      "name": "national identity",
+      "from": "identity",
+      "verb": "kind of",
+      "to": "national"
+    },
+    {
+      "name": "inclusive national identity",
+      "from": "national identity",
+      "verb": "kind of",
+      "to": "inclusive",
+      "description": "a story of the nation that includes newcomers and minorities, so that the populist claim to own the people has a rival"
+    },
+    {
       "name": "inclusive national identity (populism solution)",
       "from": "inclusive national identity",
       "verb": "is a",
@@ -664,11 +1130,37 @@
       "description": "'inclusive national identity' is one of the compared populism solutions."
     },
     {
+      "name": "accountable elites",
+      "from": "elites",
+      "verb": "kind of",
+      "to": "accountable",
+      "description": "leaders who face consequences for failure and abuse, so that the anti-elite message finds less ground"
+    },
+    {
       "name": "accountable elites (populism solution)",
       "from": "accountable elites",
       "verb": "is a",
       "to": "populism solution",
       "description": "'accountable elites' is one of the compared populism solutions."
+    },
+    {
+      "name": "public sphere",
+      "from": "sphere",
+      "verb": "kind of",
+      "to": "public"
+    },
+    {
+      "name": "digital public sphere",
+      "from": "public sphere",
+      "verb": "kind of",
+      "to": "digital"
+    },
+    {
+      "name": "digital public sphere regulation",
+      "from": "regulation",
+      "verb": "of",
+      "to": "digital public sphere",
+      "description": "rules for the platforms as the place of the public debate, from duty of care to interoperability"
     },
     {
       "name": "digital public sphere regulation (populism solution)",
@@ -736,15 +1228,15 @@
       "assigned_word": "loss reduction"
     },
     {
-      "name": "loss reduction by a populism solution",
-      "description": "the share of the potential loss of populism that one populism solution avoids, the share of the GDP decline it avoids if it is fully in place multiplied by the probability that it is fully in place; the same measure as the loss reduction of the solution avoid wrong decisions, which is the whole",
+      "name": "loss reduction of a solution part",
+      "description": "the share of the potential loss of a problem that one part of its solution avoids, the share of the loss it avoids if it is fully in place multiplied by the probability that it is fully in place; the same measure as the loss reduction of the whole solution in the start page ranking",
       "expression": "\"loss reduction\",\"percent\" = \"reduction potential\",\"percent\" * \"fulfillment probability\"",
       "latex": "r = p \\cdot q",
       "assigned_word": "reduction potential"
     },
     {
-      "name": "initial effort of a populism solution",
-      "description": "the person years needed to set up a populism solution, its cost in billion USD multiplied by the person years per billion USD",
+      "name": "initial effort of a solution part",
+      "description": "the person years needed to set up one part of a solution, its cost in billion USD multiplied by the person years per billion USD",
       "expression": "\"initial effort\",\"person year\" = \"initial effort\",\"billion\",\"USD\" * \"person year\",\"billion\",\"USD\",\"factor\"",
       "latex": "E_{init} = C \\cdot e",
       "assigned_word": "initial effort"
@@ -1028,7 +1520,7 @@
         "assumed"
       ],
       "number": "0.04",
-      "description": "the share of the GDP decline of populism that the solution avoids if it is fully in place: a small share of the decline, because it only slows the spread of one channel"
+      "description": "the share of the loss of populism that the solution avoids if it is fully in place: a small share of the decline, because it only slows the spread of one channel"
     },
     {
       "words": [
@@ -1076,7 +1568,7 @@
         "assumed"
       ],
       "number": "0.12",
-      "description": "the share of the GDP decline of populism that the solution avoids if it is fully in place: one of the bigger shares, because it works against the demand for simple answers"
+      "description": "the share of the loss of populism that the solution avoids if it is fully in place: one of the bigger shares, because it works against the demand for simple answers"
     },
     {
       "words": [
@@ -1124,7 +1616,7 @@
         "assumed"
       ],
       "number": "0.08",
-      "description": "the share of the GDP decline of populism that the solution avoids if it is fully in place: a medium share, because it reduces the effect of disinformation on voters"
+      "description": "the share of the loss of populism that the solution avoids if it is fully in place: a medium share, because it reduces the effect of disinformation on voters"
     },
     {
       "words": [
@@ -1172,7 +1664,7 @@
         "assumed"
       ],
       "number": "0.03",
-      "description": "the share of the GDP decline of populism that the solution avoids if it is fully in place: a small share, because a check reaches fewer people than the claim and is often rejected by the target group"
+      "description": "the share of the loss of populism that the solution avoids if it is fully in place: a small share, because a check reaches fewer people than the claim and is often rejected by the target group"
     },
     {
       "words": [
@@ -1220,7 +1712,7 @@
         "assumed"
       ],
       "number": "0.1",
-      "description": "the share of the GDP decline of populism that the solution avoids if it is fully in place: a medium share, because a shared factual base limits the space for populist claims"
+      "description": "the share of the loss of populism that the solution avoids if it is fully in place: a medium share, because a shared factual base limits the space for populist claims"
     },
     {
       "words": [
@@ -1268,7 +1760,7 @@
         "assumed"
       ],
       "number": "0.06",
-      "description": "the share of the GDP decline of populism that the solution avoids if it is fully in place: a medium-small share, because it exposes the amplification of outrage but does not stop it"
+      "description": "the share of the loss of populism that the solution avoids if it is fully in place: a medium-small share, because it exposes the amplification of outrage but does not stop it"
     },
     {
       "words": [
@@ -1316,7 +1808,7 @@
         "assumed"
       ],
       "number": "0.2",
-      "description": "the share of the GDP decline of populism that the solution avoids if it is fully in place: one of the biggest shares, because the felt loss of status is the main driver of the populist vote"
+      "description": "the share of the loss of populism that the solution avoids if it is fully in place: one of the biggest shares, because the felt loss of status is the main driver of the populist vote"
     },
     {
       "words": [
@@ -1364,7 +1856,7 @@
         "assumed"
       ],
       "number": "0.1",
-      "description": "the share of the GDP decline of populism that the solution avoids if it is fully in place: a medium share, because the populist vote is concentrated in left-behind regions"
+      "description": "the share of the loss of populism that the solution avoids if it is fully in place: a medium share, because the populist vote is concentrated in left-behind regions"
     },
     {
       "words": [
@@ -1412,7 +1904,7 @@
         "assumed"
       ],
       "number": "0.12",
-      "description": "the share of the GDP decline of populism that the solution avoids if it is fully in place: a bigger share, because economic insecurity feeds the populist vote more than poverty itself"
+      "description": "the share of the loss of populism that the solution avoids if it is fully in place: a bigger share, because economic insecurity feeds the populist vote more than poverty itself"
     },
     {
       "words": [
@@ -1460,7 +1952,7 @@
         "assumed"
       ],
       "number": "0.06",
-      "description": "the share of the GDP decline of populism that the solution avoids if it is fully in place: a medium-small share, because retraining reaches only part of the affected workers"
+      "description": "the share of the loss of populism that the solution avoids if it is fully in place: a medium-small share, because retraining reaches only part of the affected workers"
     },
     {
       "words": [
@@ -1508,7 +2000,7 @@
         "assumed"
       ],
       "number": "0.08",
-      "description": "the share of the GDP decline of populism that the solution avoids if it is fully in place: a medium share, because housing costs are a major source of the felt decline of the middle class"
+      "description": "the share of the loss of populism that the solution avoids if it is fully in place: a medium share, because housing costs are a major source of the felt decline of the middle class"
     },
     {
       "words": [
@@ -1556,7 +2048,7 @@
         "assumed"
       ],
       "number": "0.1",
-      "description": "the share of the GDP decline of populism that the solution avoids if it is fully in place: a medium share, because corruption is the strongest fuel of the anti-elite message"
+      "description": "the share of the loss of populism that the solution avoids if it is fully in place: a medium share, because corruption is the strongest fuel of the anti-elite message"
     },
     {
       "words": [
@@ -1604,7 +2096,7 @@
         "assumed"
       ],
       "number": "0.04",
-      "description": "the share of the GDP decline of populism that the solution avoids if it is fully in place: a small share, because a register alone changes little"
+      "description": "the share of the loss of populism that the solution avoids if it is fully in place: a small share, because a register alone changes little"
     },
     {
       "words": [
@@ -1652,7 +2144,7 @@
         "assumed"
       ],
       "number": "0.06",
-      "description": "the share of the GDP decline of populism that the solution avoids if it is fully in place: a medium-small share, because it reduces the advantage of big donors but not the demand for populism"
+      "description": "the share of the loss of populism that the solution avoids if it is fully in place: a medium-small share, because it reduces the advantage of big donors but not the demand for populism"
     },
     {
       "words": [
@@ -1700,7 +2192,7 @@
         "assumed"
       ],
       "number": "0.1",
-      "description": "the share of the GDP decline of populism that the solution avoids if it is fully in place: a medium share, because it limits the damage a populist leader can do once in office"
+      "description": "the share of the loss of populism that the solution avoids if it is fully in place: a medium share, because it limits the damage a populist leader can do once in office"
     },
     {
       "words": [
@@ -1748,7 +2240,7 @@
         "assumed"
       ],
       "number": "0.08",
-      "description": "the share of the GDP decline of populism that the solution avoids if it is fully in place: a medium share, because a free press exposes what a populist leader does"
+      "description": "the share of the loss of populism that the solution avoids if it is fully in place: a medium share, because a free press exposes what a populist leader does"
     },
     {
       "words": [
@@ -1796,7 +2288,7 @@
         "assumed"
       ],
       "number": "0.06",
-      "description": "the share of the GDP decline of populism that the solution avoids if it is fully in place: a medium-small share, because it gives the protest vote a channel that does not hand power to one leader"
+      "description": "the share of the loss of populism that the solution avoids if it is fully in place: a medium-small share, because it gives the protest vote a channel that does not hand power to one leader"
     },
     {
       "words": [
@@ -1844,7 +2336,7 @@
         "assumed"
       ],
       "number": "0.04",
-      "description": "the share of the GDP decline of populism that the solution avoids if it is fully in place: a small share, because an assembly reaches few citizens directly"
+      "description": "the share of the loss of populism that the solution avoids if it is fully in place: a small share, because an assembly reaches few citizens directly"
     },
     {
       "words": [
@@ -1892,7 +2384,7 @@
         "assumed"
       ],
       "number": "0.02",
-      "description": "the share of the GDP decline of populism that the solution avoids if it is fully in place: a small share, because it informs the debate but decides nothing"
+      "description": "the share of the loss of populism that the solution avoids if it is fully in place: a small share, because it informs the debate but decides nothing"
     },
     {
       "words": [
@@ -1940,7 +2432,7 @@
         "assumed"
       ],
       "number": "0.04",
-      "description": "the share of the GDP decline of populism that the solution avoids if it is fully in place: a small share, because the shares of the budget are small"
+      "description": "the share of the loss of populism that the solution avoids if it is fully in place: a small share, because the shares of the budget are small"
     },
     {
       "words": [
@@ -1988,7 +2480,7 @@
         "assumed"
       ],
       "number": "0.06",
-      "description": "the share of the GDP decline of populism that the solution avoids if it is fully in place: a medium-small share, because the system shapes which candidates can win"
+      "description": "the share of the loss of populism that the solution avoids if it is fully in place: a medium-small share, because the system shapes which candidates can win"
     },
     {
       "words": [
@@ -2036,7 +2528,7 @@
         "assumed"
       ],
       "number": "0.06",
-      "description": "the share of the GDP decline of populism that the solution avoids if it is fully in place: a medium-small share, because it forces coalitions and limits the power of one leader"
+      "description": "the share of the loss of populism that the solution avoids if it is fully in place: a medium-small share, because it forces coalitions and limits the power of one leader"
     },
     {
       "words": [
@@ -2084,7 +2576,7 @@
         "assumed"
       ],
       "number": "0.06",
-      "description": "the share of the GDP decline of populism that the solution avoids if it is fully in place: a medium-small share, because closeness to the decision reduces the feeling of being ruled from far away"
+      "description": "the share of the loss of populism that the solution avoids if it is fully in place: a medium-small share, because closeness to the decision reduces the feeling of being ruled from far away"
     },
     {
       "words": [
@@ -2132,7 +2624,7 @@
         "assumed"
       ],
       "number": "0.12",
-      "description": "the share of the GDP decline of populism that the solution avoids if it is fully in place: a bigger share, because most populist votes are protest votes that a mainstream party could win back"
+      "description": "the share of the loss of populism that the solution avoids if it is fully in place: a bigger share, because most populist votes are protest votes that a mainstream party could win back"
     },
     {
       "words": [
@@ -2180,7 +2672,7 @@
         "assumed"
       ],
       "number": "0.12",
-      "description": "the share of the GDP decline of populism that the solution avoids if it is fully in place: a bigger share, because migration is the top issue of the populist right"
+      "description": "the share of the loss of populism that the solution avoids if it is fully in place: a bigger share, because migration is the top issue of the populist right"
     },
     {
       "words": [
@@ -2228,7 +2720,7 @@
         "assumed"
       ],
       "number": "0.08",
-      "description": "the share of the GDP decline of populism that the solution avoids if it is fully in place: a medium share, because visible integration removes the ground of the anti-immigrant message"
+      "description": "the share of the loss of populism that the solution avoids if it is fully in place: a medium share, because visible integration removes the ground of the anti-immigrant message"
     },
     {
       "words": [
@@ -2276,7 +2768,7 @@
         "assumed"
       ],
       "number": "0.1",
-      "description": "the share of the GDP decline of populism that the solution avoids if it is fully in place: a medium share, because decisions that work reduce the demand for simple answers"
+      "description": "the share of the loss of populism that the solution avoids if it is fully in place: a medium share, because decisions that work reduce the demand for simple answers"
     },
     {
       "words": [
@@ -2324,7 +2816,7 @@
         "assumed"
       ],
       "number": "0.04",
-      "description": "the share of the GDP decline of populism that the solution avoids if it is fully in place: a small share, because data alone convinces few voters"
+      "description": "the share of the loss of populism that the solution avoids if it is fully in place: a small share, because data alone convinces few voters"
     },
     {
       "words": [
@@ -2372,7 +2864,7 @@
         "assumed"
       ],
       "number": "0.1",
-      "description": "the share of the GDP decline of populism that the solution avoids if it is fully in place: a medium share, because trust in the institutions is what populism attacks"
+      "description": "the share of the loss of populism that the solution avoids if it is fully in place: a medium share, because trust in the institutions is what populism attacks"
     },
     {
       "words": [
@@ -2420,7 +2912,7 @@
         "assumed"
       ],
       "number": "0.1",
-      "description": "the share of the GDP decline of populism that the solution avoids if it is fully in place: a medium share, because polarization is the soil of populism"
+      "description": "the share of the loss of populism that the solution avoids if it is fully in place: a medium share, because polarization is the soil of populism"
     },
     {
       "words": [
@@ -2468,7 +2960,7 @@
         "assumed"
       ],
       "number": "0.04",
-      "description": "the share of the GDP decline of populism that the solution avoids if it is fully in place: a small share, because the formats reach few people"
+      "description": "the share of the loss of populism that the solution avoids if it is fully in place: a small share, because the formats reach few people"
     },
     {
       "words": [
@@ -2516,7 +3008,7 @@
         "assumed"
       ],
       "number": "0.06",
-      "description": "the share of the GDP decline of populism that the solution avoids if it is fully in place: a medium-small share, because isolated people are more open to the populist offer of belonging"
+      "description": "the share of the loss of populism that the solution avoids if it is fully in place: a medium-small share, because isolated people are more open to the populist offer of belonging"
     },
     {
       "words": [
@@ -2564,7 +3056,7 @@
         "assumed"
       ],
       "number": "0.06",
-      "description": "the share of the GDP decline of populism that the solution avoids if it is fully in place: a medium-small share, because watchdogs limit the damage but do not win votes"
+      "description": "the share of the loss of populism that the solution avoids if it is fully in place: a medium-small share, because watchdogs limit the damage but do not win votes"
     },
     {
       "words": [
@@ -2612,7 +3104,7 @@
         "assumed"
       ],
       "number": "0.06",
-      "description": "the share of the GDP decline of populism that the solution avoids if it is fully in place: a medium-small share, because it reduces the fear of being left behind by the change"
+      "description": "the share of the loss of populism that the solution avoids if it is fully in place: a medium-small share, because it reduces the fear of being left behind by the change"
     },
     {
       "words": [
@@ -2660,7 +3152,7 @@
         "assumed"
       ],
       "number": "0.08",
-      "description": "the share of the GDP decline of populism that the solution avoids if it is fully in place: a medium share, because it works against the simple answers themselves"
+      "description": "the share of the loss of populism that the solution avoids if it is fully in place: a medium share, because it works against the simple answers themselves"
     },
     {
       "words": [
@@ -2708,7 +3200,7 @@
         "assumed"
       ],
       "number": "0.04",
-      "description": "the share of the GDP decline of populism that the solution avoids if it is fully in place: a small share, because the campaigns reach mainly those who already agree"
+      "description": "the share of the loss of populism that the solution avoids if it is fully in place: a small share, because the campaigns reach mainly those who already agree"
     },
     {
       "words": [
@@ -2756,7 +3248,7 @@
         "assumed"
       ],
       "number": "0.04",
-      "description": "the share of the GDP decline of populism that the solution avoids if it is fully in place: a small share, because the effect fades after weeks"
+      "description": "the share of the loss of populism that the solution avoids if it is fully in place: a small share, because the effect fades after weeks"
     },
     {
       "words": [
@@ -2804,7 +3296,7 @@
         "assumed"
       ],
       "number": "0.08",
-      "description": "the share of the GDP decline of populism that the solution avoids if it is fully in place: a medium share, because economic and health shocks are followed by populist gains"
+      "description": "the share of the loss of populism that the solution avoids if it is fully in place: a medium share, because economic and health shocks are followed by populist gains"
     },
     {
       "words": [
@@ -2852,7 +3344,7 @@
         "assumed"
       ],
       "number": "0.1",
-      "description": "the share of the GDP decline of populism that the solution avoids if it is fully in place: a medium share, because the losers of trade are a core of the populist vote"
+      "description": "the share of the loss of populism that the solution avoids if it is fully in place: a medium share, because the losers of trade are a core of the populist vote"
     },
     {
       "words": [
@@ -2900,7 +3392,7 @@
         "assumed"
       ],
       "number": "0.04",
-      "description": "the share of the GDP decline of populism that the solution avoids if it is fully in place: a small share, because the programmes so far reached few workers"
+      "description": "the share of the loss of populism that the solution avoids if it is fully in place: a small share, because the programmes so far reached few workers"
     },
     {
       "words": [
@@ -2948,7 +3440,7 @@
         "assumed"
       ],
       "number": "0.06",
-      "description": "the share of the GDP decline of populism that the solution avoids if it is fully in place: a medium-small share, because it keeps the populist party out of office but can strengthen its protest appeal"
+      "description": "the share of the loss of populism that the solution avoids if it is fully in place: a medium-small share, because it keeps the populist party out of office but can strengthen its protest appeal"
     },
     {
       "words": [
@@ -2996,7 +3488,7 @@
         "assumed"
       ],
       "number": "0.08",
-      "description": "the share of the GDP decline of populism that the solution avoids if it is fully in place: a medium share, because populism claims to speak for the true people"
+      "description": "the share of the loss of populism that the solution avoids if it is fully in place: a medium share, because populism claims to speak for the true people"
     },
     {
       "words": [
@@ -3044,7 +3536,7 @@
         "assumed"
       ],
       "number": "0.08",
-      "description": "the share of the GDP decline of populism that the solution avoids if it is fully in place: a medium share, because unaccountable elites are the true core of the populist complaint"
+      "description": "the share of the loss of populism that the solution avoids if it is fully in place: a medium share, because unaccountable elites are the true core of the populist complaint"
     },
     {
       "words": [
@@ -3092,7 +3584,7 @@
         "assumed"
       ],
       "number": "0.08",
-      "description": "the share of the GDP decline of populism that the solution avoids if it is fully in place: a medium share, because the platforms are where the populist message spreads"
+      "description": "the share of the loss of populism that the solution avoids if it is fully in place: a medium share, because the platforms are where the populist message spreads"
     },
     {
       "words": [
@@ -3568,7 +4060,7 @@
         "fulfillment probability",
         "assumed"
       ],
-      "formula": "loss reduction by a populism solution",
+      "formula": "loss reduction of a solution part",
       "words": [
         "one-click hide (populism solution)",
         "loss reduction",
@@ -3703,7 +4195,7 @@
         "factor",
         "assumed"
       ],
-      "formula": "initial effort of a populism solution",
+      "formula": "initial effort of a solution part",
       "words": [
         "one-click hide (populism solution)",
         "initial effort",
@@ -3762,7 +4254,7 @@
         "fulfillment probability",
         "assumed"
       ],
-      "formula": "loss reduction by a populism solution",
+      "formula": "loss reduction of a solution part",
       "words": [
         "civic education (populism solution)",
         "loss reduction",
@@ -3897,7 +4389,7 @@
         "factor",
         "assumed"
       ],
-      "formula": "initial effort of a populism solution",
+      "formula": "initial effort of a solution part",
       "words": [
         "civic education (populism solution)",
         "initial effort",
@@ -3956,7 +4448,7 @@
         "fulfillment probability",
         "assumed"
       ],
-      "formula": "loss reduction by a populism solution",
+      "formula": "loss reduction of a solution part",
       "words": [
         "media literacy (populism solution)",
         "loss reduction",
@@ -4091,7 +4583,7 @@
         "factor",
         "assumed"
       ],
-      "formula": "initial effort of a populism solution",
+      "formula": "initial effort of a solution part",
       "words": [
         "media literacy (populism solution)",
         "initial effort",
@@ -4150,7 +4642,7 @@
         "fulfillment probability",
         "assumed"
       ],
-      "formula": "loss reduction by a populism solution",
+      "formula": "loss reduction of a solution part",
       "words": [
         "fact-checking (populism solution)",
         "loss reduction",
@@ -4271,7 +4763,7 @@
         "assumed",
         "high"
       ],
-      "number": "1.7903",
+      "number": "1.7902",
       "note": "0.7161 * 2.5"
     },
     {
@@ -4285,7 +4777,7 @@
         "factor",
         "assumed"
       ],
-      "formula": "initial effort of a populism solution",
+      "formula": "initial effort of a solution part",
       "words": [
         "fact-checking (populism solution)",
         "initial effort",
@@ -4332,7 +4824,7 @@
         "assumed",
         "high"
       ],
-      "number": "0.6818",
+      "number": "0.6817",
       "note": "0.2727 * 2.5"
     },
     {
@@ -4344,7 +4836,7 @@
         "fulfillment probability",
         "assumed"
       ],
-      "formula": "loss reduction by a populism solution",
+      "formula": "loss reduction of a solution part",
       "words": [
         "independent public broadcasting (populism solution)",
         "loss reduction",
@@ -4479,7 +4971,7 @@
         "factor",
         "assumed"
       ],
-      "formula": "initial effort of a populism solution",
+      "formula": "initial effort of a solution part",
       "words": [
         "independent public broadcasting (populism solution)",
         "initial effort",
@@ -4506,7 +4998,7 @@
         "assumed",
         "low"
       ],
-      "number": "0.6545",
+      "number": "0.6546",
       "note": "1.6364 * 0.4"
     },
     {
@@ -4526,7 +5018,7 @@
         "assumed",
         "high"
       ],
-      "number": "4.0909",
+      "number": "4.091",
       "note": "1.6364 * 2.5"
     },
     {
@@ -4538,7 +5030,7 @@
         "fulfillment probability",
         "assumed"
       ],
-      "formula": "loss reduction by a populism solution",
+      "formula": "loss reduction of a solution part",
       "words": [
         "platform algorithm transparency (populism solution)",
         "loss reduction",
@@ -4673,7 +5165,7 @@
         "factor",
         "assumed"
       ],
-      "formula": "initial effort of a populism solution",
+      "formula": "initial effort of a solution part",
       "words": [
         "platform algorithm transparency (populism solution)",
         "initial effort",
@@ -4732,7 +5224,7 @@
         "fulfillment probability",
         "assumed"
       ],
-      "formula": "loss reduction by a populism solution",
+      "formula": "loss reduction of a solution part",
       "words": [
         "reducing economic inequality (populism solution)",
         "loss reduction",
@@ -4867,7 +5359,7 @@
         "factor",
         "assumed"
       ],
-      "formula": "initial effort of a populism solution",
+      "formula": "initial effort of a solution part",
       "words": [
         "reducing economic inequality (populism solution)",
         "initial effort",
@@ -4926,7 +5418,7 @@
         "fulfillment probability",
         "assumed"
       ],
-      "formula": "loss reduction by a populism solution",
+      "formula": "loss reduction of a solution part",
       "words": [
         "regional development (populism solution)",
         "loss reduction",
@@ -5061,7 +5553,7 @@
         "factor",
         "assumed"
       ],
-      "formula": "initial effort of a populism solution",
+      "formula": "initial effort of a solution part",
       "words": [
         "regional development (populism solution)",
         "initial effort",
@@ -5120,7 +5612,7 @@
         "fulfillment probability",
         "assumed"
       ],
-      "formula": "loss reduction by a populism solution",
+      "formula": "loss reduction of a solution part",
       "words": [
         "social safety nets (populism solution)",
         "loss reduction",
@@ -5255,7 +5747,7 @@
         "factor",
         "assumed"
       ],
-      "formula": "initial effort of a populism solution",
+      "formula": "initial effort of a solution part",
       "words": [
         "social safety nets (populism solution)",
         "initial effort",
@@ -5314,7 +5806,7 @@
         "fulfillment probability",
         "assumed"
       ],
-      "formula": "loss reduction by a populism solution",
+      "formula": "loss reduction of a solution part",
       "words": [
         "job retraining (populism solution)",
         "loss reduction",
@@ -5449,7 +5941,7 @@
         "factor",
         "assumed"
       ],
-      "formula": "initial effort of a populism solution",
+      "formula": "initial effort of a solution part",
       "words": [
         "job retraining (populism solution)",
         "initial effort",
@@ -5508,7 +6000,7 @@
         "fulfillment probability",
         "assumed"
       ],
-      "formula": "loss reduction by a populism solution",
+      "formula": "loss reduction of a solution part",
       "words": [
         "affordable housing (populism solution)",
         "loss reduction",
@@ -5643,7 +6135,7 @@
         "factor",
         "assumed"
       ],
-      "formula": "initial effort of a populism solution",
+      "formula": "initial effort of a solution part",
       "words": [
         "affordable housing (populism solution)",
         "initial effort",
@@ -5702,7 +6194,7 @@
         "fulfillment probability",
         "assumed"
       ],
-      "formula": "loss reduction by a populism solution",
+      "formula": "loss reduction of a solution part",
       "words": [
         "anti-corruption measures (populism solution)",
         "loss reduction",
@@ -5837,7 +6329,7 @@
         "factor",
         "assumed"
       ],
-      "formula": "initial effort of a populism solution",
+      "formula": "initial effort of a solution part",
       "words": [
         "anti-corruption measures (populism solution)",
         "initial effort",
@@ -5896,7 +6388,7 @@
         "fulfillment probability",
         "assumed"
       ],
-      "formula": "loss reduction by a populism solution",
+      "formula": "loss reduction of a solution part",
       "words": [
         "lobbying transparency (populism solution)",
         "loss reduction",
@@ -6031,7 +6523,7 @@
         "factor",
         "assumed"
       ],
-      "formula": "initial effort of a populism solution",
+      "formula": "initial effort of a solution part",
       "words": [
         "lobbying transparency (populism solution)",
         "initial effort",
@@ -6090,7 +6582,7 @@
         "fulfillment probability",
         "assumed"
       ],
-      "formula": "loss reduction by a populism solution",
+      "formula": "loss reduction of a solution part",
       "words": [
         "campaign finance reform (populism solution)",
         "loss reduction",
@@ -6225,7 +6717,7 @@
         "factor",
         "assumed"
       ],
-      "formula": "initial effort of a populism solution",
+      "formula": "initial effort of a solution part",
       "words": [
         "campaign finance reform (populism solution)",
         "initial effort",
@@ -6284,7 +6776,7 @@
         "fulfillment probability",
         "assumed"
       ],
-      "formula": "loss reduction by a populism solution",
+      "formula": "loss reduction of a solution part",
       "words": [
         "strong independent judiciary (populism solution)",
         "loss reduction",
@@ -6419,7 +6911,7 @@
         "factor",
         "assumed"
       ],
-      "formula": "initial effort of a populism solution",
+      "formula": "initial effort of a solution part",
       "words": [
         "strong independent judiciary (populism solution)",
         "initial effort",
@@ -6478,7 +6970,7 @@
         "fulfillment probability",
         "assumed"
       ],
-      "formula": "loss reduction by a populism solution",
+      "formula": "loss reduction of a solution part",
       "words": [
         "press freedom (populism solution)",
         "loss reduction",
@@ -6613,7 +7105,7 @@
         "factor",
         "assumed"
       ],
-      "formula": "initial effort of a populism solution",
+      "formula": "initial effort of a solution part",
       "words": [
         "press freedom (populism solution)",
         "initial effort",
@@ -6672,7 +7164,7 @@
         "fulfillment probability",
         "assumed"
       ],
-      "formula": "loss reduction by a populism solution",
+      "formula": "loss reduction of a solution part",
       "words": [
         "direct democracy (populism solution)",
         "loss reduction",
@@ -6807,7 +7299,7 @@
         "factor",
         "assumed"
       ],
-      "formula": "initial effort of a populism solution",
+      "formula": "initial effort of a solution part",
       "words": [
         "direct democracy (populism solution)",
         "initial effort",
@@ -6866,7 +7358,7 @@
         "fulfillment probability",
         "assumed"
       ],
-      "formula": "loss reduction by a populism solution",
+      "formula": "loss reduction of a solution part",
       "words": [
         "citizens' assemblies (populism solution)",
         "loss reduction",
@@ -7001,7 +7493,7 @@
         "factor",
         "assumed"
       ],
-      "formula": "initial effort of a populism solution",
+      "formula": "initial effort of a solution part",
       "words": [
         "citizens' assemblies (populism solution)",
         "initial effort",
@@ -7060,7 +7552,7 @@
         "fulfillment probability",
         "assumed"
       ],
-      "formula": "loss reduction by a populism solution",
+      "formula": "loss reduction of a solution part",
       "words": [
         "deliberative polling (populism solution)",
         "loss reduction",
@@ -7195,7 +7687,7 @@
         "factor",
         "assumed"
       ],
-      "formula": "initial effort of a populism solution",
+      "formula": "initial effort of a solution part",
       "words": [
         "deliberative polling (populism solution)",
         "initial effort",
@@ -7254,7 +7746,7 @@
         "fulfillment probability",
         "assumed"
       ],
-      "formula": "loss reduction by a populism solution",
+      "formula": "loss reduction of a solution part",
       "words": [
         "participatory budgeting (populism solution)",
         "loss reduction",
@@ -7389,7 +7881,7 @@
         "factor",
         "assumed"
       ],
-      "formula": "initial effort of a populism solution",
+      "formula": "initial effort of a solution part",
       "words": [
         "participatory budgeting (populism solution)",
         "initial effort",
@@ -7448,7 +7940,7 @@
         "fulfillment probability",
         "assumed"
       ],
-      "formula": "loss reduction by a populism solution",
+      "formula": "loss reduction of a solution part",
       "words": [
         "electoral system reform (populism solution)",
         "loss reduction",
@@ -7583,7 +8075,7 @@
         "factor",
         "assumed"
       ],
-      "formula": "initial effort of a populism solution",
+      "formula": "initial effort of a solution part",
       "words": [
         "electoral system reform (populism solution)",
         "initial effort",
@@ -7642,7 +8134,7 @@
         "fulfillment probability",
         "assumed"
       ],
-      "formula": "loss reduction by a populism solution",
+      "formula": "loss reduction of a solution part",
       "words": [
         "proportional representation (populism solution)",
         "loss reduction",
@@ -7777,7 +8269,7 @@
         "factor",
         "assumed"
       ],
-      "formula": "initial effort of a populism solution",
+      "formula": "initial effort of a solution part",
       "words": [
         "proportional representation (populism solution)",
         "initial effort",
@@ -7836,7 +8328,7 @@
         "fulfillment probability",
         "assumed"
       ],
-      "formula": "loss reduction by a populism solution",
+      "formula": "loss reduction of a solution part",
       "words": [
         "decentralization (populism solution)",
         "loss reduction",
@@ -7971,7 +8463,7 @@
         "factor",
         "assumed"
       ],
-      "formula": "initial effort of a populism solution",
+      "formula": "initial effort of a solution part",
       "words": [
         "decentralization (populism solution)",
         "initial effort",
@@ -8030,7 +8522,7 @@
         "fulfillment probability",
         "assumed"
       ],
-      "formula": "loss reduction by a populism solution",
+      "formula": "loss reduction of a solution part",
       "words": [
         "responsive mainstream parties (populism solution)",
         "loss reduction",
@@ -8165,7 +8657,7 @@
         "factor",
         "assumed"
       ],
-      "formula": "initial effort of a populism solution",
+      "formula": "initial effort of a solution part",
       "words": [
         "responsive mainstream parties (populism solution)",
         "initial effort",
@@ -8224,7 +8716,7 @@
         "fulfillment probability",
         "assumed"
       ],
-      "formula": "loss reduction by a populism solution",
+      "formula": "loss reduction of a solution part",
       "words": [
         "addressing migration concerns (populism solution)",
         "loss reduction",
@@ -8359,7 +8851,7 @@
         "factor",
         "assumed"
       ],
-      "formula": "initial effort of a populism solution",
+      "formula": "initial effort of a solution part",
       "words": [
         "addressing migration concerns (populism solution)",
         "initial effort",
@@ -8418,7 +8910,7 @@
         "fulfillment probability",
         "assumed"
       ],
-      "formula": "loss reduction by a populism solution",
+      "formula": "loss reduction of a solution part",
       "words": [
         "integration policies (populism solution)",
         "loss reduction",
@@ -8553,7 +9045,7 @@
         "factor",
         "assumed"
       ],
-      "formula": "initial effort of a populism solution",
+      "formula": "initial effort of a solution part",
       "words": [
         "integration policies (populism solution)",
         "initial effort",
@@ -8612,7 +9104,7 @@
         "fulfillment probability",
         "assumed"
       ],
-      "formula": "loss reduction by a populism solution",
+      "formula": "loss reduction of a solution part",
       "words": [
         "evidence-based policymaking (populism solution)",
         "loss reduction",
@@ -8747,7 +9239,7 @@
         "factor",
         "assumed"
       ],
-      "formula": "initial effort of a populism solution",
+      "formula": "initial effort of a solution part",
       "words": [
         "evidence-based policymaking (populism solution)",
         "initial effort",
@@ -8806,7 +9298,7 @@
         "fulfillment probability",
         "assumed"
       ],
-      "formula": "loss reduction by a populism solution",
+      "formula": "loss reduction of a solution part",
       "words": [
         "transparent government data (populism solution)",
         "loss reduction",
@@ -8941,7 +9433,7 @@
         "factor",
         "assumed"
       ],
-      "formula": "initial effort of a populism solution",
+      "formula": "initial effort of a solution part",
       "words": [
         "transparent government data (populism solution)",
         "initial effort",
@@ -9000,7 +9492,7 @@
         "fulfillment probability",
         "assumed"
       ],
-      "formula": "loss reduction by a populism solution",
+      "formula": "loss reduction of a solution part",
       "words": [
         "trust-building institutions (populism solution)",
         "loss reduction",
@@ -9135,7 +9627,7 @@
         "factor",
         "assumed"
       ],
-      "formula": "initial effort of a populism solution",
+      "formula": "initial effort of a solution part",
       "words": [
         "trust-building institutions (populism solution)",
         "initial effort",
@@ -9194,7 +9686,7 @@
         "fulfillment probability",
         "assumed"
       ],
-      "formula": "loss reduction by a populism solution",
+      "formula": "loss reduction of a solution part",
       "words": [
         "reducing polarization (populism solution)",
         "loss reduction",
@@ -9329,7 +9821,7 @@
         "factor",
         "assumed"
       ],
-      "formula": "initial effort of a populism solution",
+      "formula": "initial effort of a solution part",
       "words": [
         "reducing polarization (populism solution)",
         "initial effort",
@@ -9388,7 +9880,7 @@
         "fulfillment probability",
         "assumed"
       ],
-      "formula": "loss reduction by a populism solution",
+      "formula": "loss reduction of a solution part",
       "words": [
         "cross-partisan dialogue (populism solution)",
         "loss reduction",
@@ -9523,7 +10015,7 @@
         "factor",
         "assumed"
       ],
-      "formula": "initial effort of a populism solution",
+      "formula": "initial effort of a solution part",
       "words": [
         "cross-partisan dialogue (populism solution)",
         "initial effort",
@@ -9582,7 +10074,7 @@
         "fulfillment probability",
         "assumed"
       ],
-      "formula": "loss reduction by a populism solution",
+      "formula": "loss reduction of a solution part",
       "words": [
         "community building (populism solution)",
         "loss reduction",
@@ -9717,7 +10209,7 @@
         "factor",
         "assumed"
       ],
-      "formula": "initial effort of a populism solution",
+      "formula": "initial effort of a solution part",
       "words": [
         "community building (populism solution)",
         "initial effort",
@@ -9776,7 +10268,7 @@
         "fulfillment probability",
         "assumed"
       ],
-      "formula": "loss reduction by a populism solution",
+      "formula": "loss reduction of a solution part",
       "words": [
         "civil society support (populism solution)",
         "loss reduction",
@@ -9911,7 +10403,7 @@
         "factor",
         "assumed"
       ],
-      "formula": "initial effort of a populism solution",
+      "formula": "initial effort of a solution part",
       "words": [
         "civil society support (populism solution)",
         "initial effort",
@@ -9970,7 +10462,7 @@
         "fulfillment probability",
         "assumed"
       ],
-      "formula": "loss reduction by a populism solution",
+      "formula": "loss reduction of a solution part",
       "words": [
         "lifelong learning (populism solution)",
         "loss reduction",
@@ -10105,7 +10597,7 @@
         "factor",
         "assumed"
       ],
-      "formula": "initial effort of a populism solution",
+      "formula": "initial effort of a solution part",
       "words": [
         "lifelong learning (populism solution)",
         "initial effort",
@@ -10164,7 +10656,7 @@
         "fulfillment probability",
         "assumed"
       ],
-      "formula": "loss reduction by a populism solution",
+      "formula": "loss reduction of a solution part",
       "words": [
         "critical thinking education (populism solution)",
         "loss reduction",
@@ -10299,7 +10791,7 @@
         "factor",
         "assumed"
       ],
-      "formula": "initial effort of a populism solution",
+      "formula": "initial effort of a solution part",
       "words": [
         "critical thinking education (populism solution)",
         "initial effort",
@@ -10358,7 +10850,7 @@
         "fulfillment probability",
         "assumed"
       ],
-      "formula": "loss reduction by a populism solution",
+      "formula": "loss reduction of a solution part",
       "words": [
         "counter-disinformation campaigns (populism solution)",
         "loss reduction",
@@ -10493,7 +10985,7 @@
         "factor",
         "assumed"
       ],
-      "formula": "initial effort of a populism solution",
+      "formula": "initial effort of a solution part",
       "words": [
         "counter-disinformation campaigns (populism solution)",
         "initial effort",
@@ -10552,7 +11044,7 @@
         "fulfillment probability",
         "assumed"
       ],
-      "formula": "loss reduction by a populism solution",
+      "formula": "loss reduction of a solution part",
       "words": [
         "prebunking (populism solution)",
         "loss reduction",
@@ -10687,7 +11179,7 @@
         "factor",
         "assumed"
       ],
-      "formula": "initial effort of a populism solution",
+      "formula": "initial effort of a solution part",
       "words": [
         "prebunking (populism solution)",
         "initial effort",
@@ -10746,7 +11238,7 @@
         "fulfillment probability",
         "assumed"
       ],
-      "formula": "loss reduction by a populism solution",
+      "formula": "loss reduction of a solution part",
       "words": [
         "crisis preparedness (populism solution)",
         "loss reduction",
@@ -10881,7 +11373,7 @@
         "factor",
         "assumed"
       ],
-      "formula": "initial effort of a populism solution",
+      "formula": "initial effort of a solution part",
       "words": [
         "crisis preparedness (populism solution)",
         "initial effort",
@@ -10940,7 +11432,7 @@
         "fulfillment probability",
         "assumed"
       ],
-      "formula": "loss reduction by a populism solution",
+      "formula": "loss reduction of a solution part",
       "words": [
         "fair globalization (populism solution)",
         "loss reduction",
@@ -11075,7 +11567,7 @@
         "factor",
         "assumed"
       ],
-      "formula": "initial effort of a populism solution",
+      "formula": "initial effort of a solution part",
       "words": [
         "fair globalization (populism solution)",
         "initial effort",
@@ -11134,7 +11626,7 @@
         "fulfillment probability",
         "assumed"
       ],
-      "formula": "loss reduction by a populism solution",
+      "formula": "loss reduction of a solution part",
       "words": [
         "trade adjustment assistance (populism solution)",
         "loss reduction",
@@ -11269,7 +11761,7 @@
         "factor",
         "assumed"
       ],
-      "formula": "initial effort of a populism solution",
+      "formula": "initial effort of a solution part",
       "words": [
         "trade adjustment assistance (populism solution)",
         "initial effort",
@@ -11328,7 +11820,7 @@
         "fulfillment probability",
         "assumed"
       ],
-      "formula": "loss reduction by a populism solution",
+      "formula": "loss reduction of a solution part",
       "words": [
         "cordon sanitaire (populism solution)",
         "loss reduction",
@@ -11463,7 +11955,7 @@
         "factor",
         "assumed"
       ],
-      "formula": "initial effort of a populism solution",
+      "formula": "initial effort of a solution part",
       "words": [
         "cordon sanitaire (populism solution)",
         "initial effort",
@@ -11522,7 +12014,7 @@
         "fulfillment probability",
         "assumed"
       ],
-      "formula": "loss reduction by a populism solution",
+      "formula": "loss reduction of a solution part",
       "words": [
         "inclusive national identity (populism solution)",
         "loss reduction",
@@ -11657,7 +12149,7 @@
         "factor",
         "assumed"
       ],
-      "formula": "initial effort of a populism solution",
+      "formula": "initial effort of a solution part",
       "words": [
         "inclusive national identity (populism solution)",
         "initial effort",
@@ -11716,7 +12208,7 @@
         "fulfillment probability",
         "assumed"
       ],
-      "formula": "loss reduction by a populism solution",
+      "formula": "loss reduction of a solution part",
       "words": [
         "accountable elites (populism solution)",
         "loss reduction",
@@ -11851,7 +12343,7 @@
         "factor",
         "assumed"
       ],
-      "formula": "initial effort of a populism solution",
+      "formula": "initial effort of a solution part",
       "words": [
         "accountable elites (populism solution)",
         "initial effort",
@@ -11910,7 +12402,7 @@
         "fulfillment probability",
         "assumed"
       ],
-      "formula": "loss reduction by a populism solution",
+      "formula": "loss reduction of a solution part",
       "words": [
         "digital public sphere regulation (populism solution)",
         "loss reduction",
@@ -12045,7 +12537,7 @@
         "factor",
         "assumed"
       ],
-      "formula": "initial effort of a populism solution",
+      "formula": "initial effort of a solution part",
       "words": [
         "digital public sphere regulation (populism solution)",
         "initial effort",

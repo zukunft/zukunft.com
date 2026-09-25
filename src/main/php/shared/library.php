@@ -2271,7 +2271,7 @@ class library
     {
         $msg = '';
         if ($result == $target) {
-            $msg = $result . ' should not be' . $target;
+            $msg = $result . ' should not be ' . $target;
         }
         return $msg;
     }

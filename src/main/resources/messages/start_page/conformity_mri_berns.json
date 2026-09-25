@@ -383,8 +383,7 @@
       "description": "matching the ground truth answer"
     },
     {
-      "name": "correlation",
-      "description": "statistical association between two variables"
+      "name": "correlation"
     },
     {
       "name": "decision",
@@ -889,8 +888,7 @@
       "name": "correlation coefficient",
       "from": "coefficient",
       "verb": "of",
-      "to": "correlation",
-      "description": "Pearson correlation R"
+      "to": "correlation"
     },
     {
       "name": "regression intercept",
