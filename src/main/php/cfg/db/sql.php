@@ -124,6 +124,8 @@ class sql
     // lower case like the pattern search of the existing queries
     const string LIKE_LOWER_CASE = 'like';
     const string LIKE_NO_UP_CASE = 'ilike';
+    // the case-sensitive pattern search of mysql, because the default collation ignores the case
+    const string LIKE_BINARY = 'LIKE BINARY';
     const string COALESCE = 'COALESCE';
 
     // to separate one SQL statement from the next

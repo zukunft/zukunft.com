@@ -19,9 +19,15 @@ PREPARE result_list_by_src_phr_lst_p3 (bigint, bigint, bigint, text, text, text,
                0 AS change_user_id,
                0 AS share_type_id
           FROM results_standard_prime
-         WHERE ( phrase_id_1 = $1 OR phrase_id_2 = $1 OR phrase_id_3 = $1 )
-           AND ( phrase_id_1 = $2 OR phrase_id_2 = $2 OR phrase_id_3 = $2 )
-           AND ( phrase_id_1 = $3 OR phrase_id_2 = $3 OR phrase_id_3 = $3 )
+         WHERE ( phrase_id_1 = $1
+            OR   phrase_id_2 = $1
+            OR   phrase_id_3 = $1 )
+           AND ( phrase_id_1 = $2
+            OR   phrase_id_2 = $2
+            OR   phrase_id_3 = $2 )
+           AND ( phrase_id_1 = $3
+            OR   phrase_id_2 = $3
+            OR   phrase_id_3 = $3 )
 
   UNION SELECT '' AS group_id,
                '' AS user_group_id,
@@ -43,9 +49,27 @@ PREPARE result_list_by_src_phr_lst_p3 (bigint, bigint, bigint, text, text, text,
                0 AS change_user_id,
                0 AS share_type_id
           FROM results_standard_main
-         WHERE ( phrase_id_1 = $1 OR phrase_id_2 = $1 OR phrase_id_3 = $1 OR phrase_id_4 = $1 OR phrase_id_5 = $1 OR phrase_id_6 = $1 OR phrase_id_7 = $1 )
-           AND ( phrase_id_1 = $2 OR phrase_id_2 = $2 OR phrase_id_3 = $2 OR phrase_id_4 = $2 OR phrase_id_5 = $2 OR phrase_id_6 = $2 OR phrase_id_7 = $2 )
-           AND ( phrase_id_1 = $3 OR phrase_id_2 = $3 OR phrase_id_3 = $3 OR phrase_id_4 = $3 OR phrase_id_5 = $3 OR phrase_id_6 = $3 OR phrase_id_7 = $3 )
+         WHERE ( phrase_id_1 = $1
+            OR   phrase_id_2 = $1
+            OR   phrase_id_3 = $1
+            OR   phrase_id_4 = $1
+            OR   phrase_id_5 = $1
+            OR   phrase_id_6 = $1
+            OR   phrase_id_7 = $1 )
+           AND ( phrase_id_1 = $2
+            OR   phrase_id_2 = $2
+            OR   phrase_id_3 = $2
+            OR   phrase_id_4 = $2
+            OR   phrase_id_5 = $2
+            OR   phrase_id_6 = $2
+            OR   phrase_id_7 = $2 )
+           AND ( phrase_id_1 = $3
+            OR   phrase_id_2 = $3
+            OR   phrase_id_3 = $3
+            OR   phrase_id_4 = $3
+            OR   phrase_id_5 = $3
+            OR   phrase_id_6 = $3
+            OR   phrase_id_7 = $3 )
 
   UNION SELECT group_id,
                '' AS user_group_id,
@@ -67,9 +91,9 @@ PREPARE result_list_by_src_phr_lst_p3 (bigint, bigint, bigint, text, text, text,
                0 AS change_user_id,
                0 AS share_type_id
           FROM results_standard
-         WHERE group_id ilike $4
-           AND group_id ilike $5
-           AND group_id ilike $6
+         WHERE group_id like $4
+           AND group_id like $5
+           AND group_id like $6
 
   UNION SELECT s.group_id,
                u.group_id AS user_group_id,
@@ -93,9 +117,9 @@ PREPARE result_list_by_src_phr_lst_p3 (bigint, bigint, bigint, text, text, text,
           FROM results s
      LEFT JOIN user_results u ON s.group_id = u.group_id
                              AND u.user_id = $7
-         WHERE s.group_id ilike $4
-           AND s.group_id ilike $5
-           AND s.group_id ilike $6
+         WHERE s.group_id like $4
+           AND s.group_id like $5
+           AND s.group_id like $6
 
   UNION SELECT '' AS group_id,
                '' AS user_group_id,
@@ -122,9 +146,18 @@ PREPARE result_list_by_src_phr_lst_p3 (bigint, bigint, bigint, text, text, text,
                                    AND s.phrase_id_3 = u.phrase_id_3
                                    AND s.phrase_id_4 = u.phrase_id_4
                                    AND u.user_id = $7
-         WHERE ( s.phrase_id_1 = $1 OR s.phrase_id_2 = $1 OR s.phrase_id_3 = $1 OR s.phrase_id_4 = $1 )
-           AND ( s.phrase_id_1 = $2 OR s.phrase_id_2 = $2 OR s.phrase_id_3 = $2 OR s.phrase_id_4 = $2 )
-           AND ( s.phrase_id_1 = $3 OR s.phrase_id_2 = $3 OR s.phrase_id_3 = $3 OR s.phrase_id_4 = $3 )
+         WHERE ( s.phrase_id_1 = $1
+            OR   s.phrase_id_2 = $1
+            OR   s.phrase_id_3 = $1
+            OR   s.phrase_id_4 = $1 )
+           AND ( s.phrase_id_1 = $2
+            OR   s.phrase_id_2 = $2
+            OR   s.phrase_id_3 = $2
+            OR   s.phrase_id_4 = $2 )
+           AND ( s.phrase_id_1 = $3
+            OR   s.phrase_id_2 = $3
+            OR   s.phrase_id_3 = $3
+            OR   s.phrase_id_4 = $3 )
 
   UNION SELECT '' AS group_id,
                '' AS user_group_id,
@@ -155,9 +188,30 @@ PREPARE result_list_by_src_phr_lst_p3 (bigint, bigint, bigint, text, text, text,
                                   AND s.phrase_id_7 = u.phrase_id_7
                                   AND s.phrase_id_8 = u.phrase_id_8
                                   AND u.user_id = $7
-         WHERE ( s.phrase_id_1 = $1 OR s.phrase_id_2 = $1 OR s.phrase_id_3 = $1 OR s.phrase_id_4 = $1 OR s.phrase_id_5 = $1 OR s.phrase_id_6 = $1 OR s.phrase_id_7 = $1 OR s.phrase_id_8 = $1 )
-           AND ( s.phrase_id_1 = $2 OR s.phrase_id_2 = $2 OR s.phrase_id_3 = $2 OR s.phrase_id_4 = $2 OR s.phrase_id_5 = $2 OR s.phrase_id_6 = $2 OR s.phrase_id_7 = $2 OR s.phrase_id_8 = $2 )
-           AND ( s.phrase_id_1 = $3 OR s.phrase_id_2 = $3 OR s.phrase_id_3 = $3 OR s.phrase_id_4 = $3 OR s.phrase_id_5 = $3 OR s.phrase_id_6 = $3 OR s.phrase_id_7 = $3 OR s.phrase_id_8 = $3 )
+         WHERE ( s.phrase_id_1 = $1
+            OR   s.phrase_id_2 = $1
+            OR   s.phrase_id_3 = $1
+            OR   s.phrase_id_4 = $1
+            OR   s.phrase_id_5 = $1
+            OR   s.phrase_id_6 = $1
+            OR   s.phrase_id_7 = $1
+            OR   s.phrase_id_8 = $1 )
+           AND ( s.phrase_id_1 = $2
+            OR   s.phrase_id_2 = $2
+            OR   s.phrase_id_3 = $2
+            OR   s.phrase_id_4 = $2
+            OR   s.phrase_id_5 = $2
+            OR   s.phrase_id_6 = $2
+            OR   s.phrase_id_7 = $2
+            OR   s.phrase_id_8 = $2 )
+           AND ( s.phrase_id_1 = $3
+            OR   s.phrase_id_2 = $3
+            OR   s.phrase_id_3 = $3
+            OR   s.phrase_id_4 = $3
+            OR   s.phrase_id_5 = $3
+            OR   s.phrase_id_6 = $3
+            OR   s.phrase_id_7 = $3
+            OR   s.phrase_id_8 = $3 )
 
   UNION SELECT s.group_id,
                u.group_id AS user_group_id,
@@ -181,6 +235,6 @@ PREPARE result_list_by_src_phr_lst_p3 (bigint, bigint, bigint, text, text, text,
           FROM results_big s
      LEFT JOIN user_results_big u ON s.group_id = u.group_id
                                  AND u.user_id = $7
-         WHERE s.group_id ilike $4
-           AND s.group_id ilike $5
-           AND s.group_id ilike $6;
+         WHERE s.group_id like $4
+           AND s.group_id like $5
+           AND s.group_id like $6;

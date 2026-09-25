@@ -1202,7 +1202,9 @@ class sql_creator
             } elseif ($spt == sql_par_type::LIKE_L) {
                 $this->add_par($spt, '%' . $fld_val, $name);
             } elseif ($spt == sql_par_type::LIKE
-                or $spt == sql_par_type::LIKE_OR) {
+                or $spt == sql_par_type::LIKE_OR
+                or $spt == sql_par_type::LIKE_KEY
+                or $spt == sql_par_type::LIKE_KEY_OR) {
                 $this->add_par($spt, '%' . $fld_val . '%', $name);
             } else {
                 log_err('SQL parameter type ' . $spt->value . ' not expected');
@@ -1872,8 +1874,14 @@ class sql_creator
             if ($this->is_value_class($class)) {
                 if (in_array($fld, def::NAMED_ID_FIELDS)) {
                     $log = $val->log_named_id_object();
-                } else {
+                } elseif ($class == group::class) {
                     $log = $val->log_object($msg);
+                } else {
+                    // select the log table with the same parameters as the data table (see
+                    // sql_func_log_value), because the change log class of a value already
+                    // contains the table type and set_table adds the type of the parameter
+                    // list to a class that does not match, e.g. change_values_norm_prime
+                    $log = $this->log_value_object($val, $usr, $sc_par_lst);
                 }
             } else {
                 $log = new change($usr);
@@ -3888,6 +3896,9 @@ class sql_creator
                 or $typ == sql_par_type::LIKE
                 or $typ == sql_par_type::LIKE_OR) {
                 $sql_where .= $tbl . $fld . ' ' . $this->like_keyword() . ' ' . $par->name;
+            } elseif ($typ == sql_par_type::LIKE_KEY
+                or $typ == sql_par_type::LIKE_KEY_OR) {
+                $sql_where .= $tbl . $fld . ' ' . $this->like_key_keyword() . ' ' . $par->name;
             } elseif ($typ == sql_par_type::CONST) {
                 // $par_offset--;
                 $sql_where .= $tbl . $fld . ' = ' . $par->value;
@@ -3991,6 +4002,21 @@ class sql_creator
     }
 
     /**
+     * @return string the pattern match that respects the upper and lower case e.g. for the alpha_num
+     *                key of a phrase within a group id (see sql_par_type::LIKE_KEY): the postgres LIKE
+     *                is case-sensitive, while mysql needs LIKE BINARY because the default collation
+     *                ignores the case
+     */
+    private function like_key_keyword(): string
+    {
+        $result = sql::LIKE_BINARY;
+        if ($this->db_type == sql_db::POSTGRES) {
+            $result = sql::LIKE_LOWER_CASE;
+        }
+        return $result;
+    }
+
+    /**
      * set the where statement based on the parameter set until now
      * @param int $par_offset in case of a sub query the number of parameter set until here of the main query
      * @return string the sql where statement
@@ -4089,8 +4115,15 @@ class sql_creator
                         } elseif ($typ == sql_par_type::LIKE_R
                             or $typ == sql_par_type::LIKE_L
                             or $typ == sql_par_type::LIKE
-                            or $typ == sql_par_type::LIKE_OR) {
-                            $result .= $tbl_id . $this->par_lst->name($i) . ' ' . $this->like_keyword() . ' ';
+                            or $typ == sql_par_type::LIKE_OR
+                            or $typ == sql_par_type::LIKE_KEY
+                            or $typ == sql_par_type::LIKE_KEY_OR) {
+                            if ($typ == sql_par_type::LIKE_KEY or $typ == sql_par_type::LIKE_KEY_OR) {
+                                $like = $this->like_key_keyword();
+                            } else {
+                                $like = $this->like_keyword();
+                            }
+                            $result .= $tbl_id . $this->par_lst->name($i) . ' ' . $like . ' ';
                             if ($this->par_named[$i]) {
                                 if ($this->par_name[$i] != '' and $this->db_type() != sql_db::MYSQL) {
                                     // if the same parameter is used more than once use the same placeholder again
@@ -5620,6 +5653,8 @@ class sql_creator
             case sql_par_type::LIKE_L:
             case sql_par_type::LIKE:
             case sql_par_type::LIKE_OR:
+            case sql_par_type::LIKE_KEY:
+            case sql_par_type::LIKE_KEY_OR:
             case sql_par_type::TEXT_OR:
             case sql_par_type::TEXT_USR:
             case sql_par_type::KEY_512:

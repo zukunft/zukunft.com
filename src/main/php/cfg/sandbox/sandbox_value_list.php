@@ -305,9 +305,9 @@ class sandbox_value_list extends sandbox_list
             $pos_grp_lst[] = $par_pos;
             $par_pos++;
             $par_name = $sc->par_name($par_pos);
-            $spt = sql_par_type::LIKE;
+            $spt = sql_par_type::LIKE_KEY;
             if ($or) {
-                $spt = sql_par_type::LIKE_OR;
+                $spt = sql_par_type::LIKE_KEY_OR;
             }
             $grp_id = new group_id();
             $sc->add_where_par(group_fields::FLD_ID, $grp_id->int2alpha_num($phr->id()), $spt, '', $par_name);
@@ -403,9 +403,9 @@ class sandbox_value_list extends sandbox_list
             $this->load_sql_set_phrase_fields($sc, $phr_pos_lst, $or, $max_phr);
         } else {
             foreach ($grp_pos_lst as $grp_pos) {
-                $spt = sql_par_type::LIKE;
+                $spt = sql_par_type::LIKE_KEY;
                 if ($or) {
-                    $spt = sql_par_type::LIKE_OR;
+                    $spt = sql_par_type::LIKE_KEY_OR;
                 }
                 $sc->add_where_no_par('', group_fields::FLD_ID, $spt, $grp_pos);
             }

@@ -83,6 +83,11 @@ enum sql_type: string
     case UPDATE_PART = 'update_part'; // the sql statement is part of an update action which implies that no new db row id is added
     case DELETE_PART = 'delete_part'; // the sql statement is part of a delete function which implies that only old fields are used
     case EXCLUDE = 'exclude'; // instead of delete create a sql to exclude one row and log the deletion
+    // a delete that must never write a user sandbox row, because the row cannot be addressed any
+    // more afterwards e.g. the values of a phrase that is deleted (see sandbox_multi::del);
+    // if such a row is still used by another user the delete is refused and reported, because
+    // the caller should have checked the usage before (second line of defence)
+    case NO_USER_SANDBOX = 'no_user_sandbox';
     case EXCL_NAME_ONLY = 'excl_name_only';
     case SANDBOX = 'sandbox'; // to include the standard sandbox fields in the sql statement
     case KEY_SMALL_INT = 'key_small_int'; // use a smallint as the prime db key e.g. for types

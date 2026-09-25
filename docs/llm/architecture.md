@@ -292,6 +292,35 @@ with the next free id if missing. Example: logged writes of
 new loggable column is added to any table: register it in `change_fields.csv`
 in the same change.
 
+**Delete always with change log — top rule 4 of `docs/llm/coding.md`**: a row
+leaves the database only through the logged delete of its object (`del()`,
+which builds the sql with `sql_type::LOG`, e.g. `value_delete_log`,
+`group_prime_delete_log`). The change log is the audit trail (who removed what
+and when), the base of the undo and the only way a lost row can be explained
+later, so a plain `DELETE` that leaves no entry destroys information that
+nothing can bring back. This is why a plain delete is never the fix for a
+logged delete that does not remove a row — the logged delete is repaired
+instead — and why test cleanups delete through `del()` as well.
+
+An exception is possible only for rows that carry no user history because the
+next read recreates them, and it must be guarded by **more than one layer at
+the same time**, so that a single oversight can never open a plain delete:
+
+1. the class is listed in `def::CLASSES_NO_CHANGE_LOG` (or `CLASSES_NO_LOG`),
+   which documents that the table holds derived data;
+2. the sql builder names the exception (`del_sql_list_without_log`,
+   `db_cache_page::del_all`, `db_cache::del_by_user`), never the plain default
+   of a generic delete;
+3. a unit test with the sql fixture (`db/<class>/<class>_delete_…sql`) covers
+   the statement, so the exception is visible in the resources and reviewed.
+
+The exceptions that exist today: cache rows (`db_cache`, `db_cache_page`),
+formula elements (`element_list`, recreated from the expression) and the
+change log rows of deleted **test** rows, which the `test_base`
+`cleanup_change_log*` helpers remove so that no change log entry points to a
+row that only ever existed for a test. Anything else that needs a plain
+delete is a defect to report, not a shortcut to take.
+
 ## Standard object sections (in file order)
 
 Each main object file follows this section order:

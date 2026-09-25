@@ -34,6 +34,7 @@ namespace Zukunft\ZukunftCom\test\php\unit;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
+include_once paths::DB . 'sql_type_list.php';
 include_once paths::MODEL_CONST . 'files.php';
 include_once paths::MODEL_HELPER . 'db_cache_page.php';
 include_once paths::SHARED . 'url_var.php';
@@ -46,6 +47,8 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\main\php\cfg\element\element;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
@@ -92,6 +95,16 @@ class sql_tests
         $created = $sc->count_sql();
         $expected = file_get_contents(test_files::USER_COUNT);
         $t->assert_sql($test_name, $created, $expected);
+
+        // a delete of a row that cannot be addressed any more afterwards e.g. a value of a phrase
+        // that is deleted must never write a user sandbox row, which the caller requests with
+        // sql_type::NO_USER_SANDBOX (see word::del_links and sandbox_multi::del)
+        $t->subheader($ts . 'no user sandbox');
+        $test_name = 'a delete of the values of a phrase asks for no user sandbox row';
+        $t->assert_true($test_name,
+            new sql_type_list([sql_type::NO_USER_SANDBOX])->no_user_sandbox());
+        $test_name = '... but a normal delete can exclude the row for one user';
+        $t->assert_false($test_name, new sql_type_list([sql_type::DELETE])->no_user_sandbox());
 
         // del_sql_list_without_log deletes all rows of a class whose id is in the given list, used
         // e.g. to remove the formula elements of a list or the change log during the test cleanup

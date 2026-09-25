@@ -114,8 +114,24 @@ class result_tests
         $t->assert_sql_by_id($sc, $res);
         $t->assert_sql_by_id($sc, $res_main);
         $t->assert_sql_by_id($sc, $res_big);
+        // the load by group is checked for each result table, because the table name and its key
+        // fields must always match e.g. the main table has no phrase_id_1 field
         $this->assert_sql_by_group($t, $db_con, $res_prime);
         $this->assert_sql_by_group($t, $db_con, $res);
+        $this->assert_sql_by_group($t, $db_con, $res_main);
+        $this->assert_sql_by_group($t, $db_con, $res_big);
+        // a result of a calculation or an export has only the phrase list of its group, so the
+        // table and its key fields must follow the phrase list and must not report the result as
+        // prime with zero phrases (see sandbox_value::grp_key_id)
+        $test_name = 'the query to load a result by a group without an id '
+            . 'is the same as by the group with the id';
+        $db_con->db_type = sql_db::POSTGRES;
+        // the same phrases on both sides, but once without the group id
+        $grp_no_id = $t_grp->group_16();
+        $grp_no_id->set_id('');
+        $qp_no_id = $t_res->result()->load_sql_by_grp($db_con->sql_creator(), $grp_no_id);
+        $qp_id = $t_res->result()->load_sql_by_grp($db_con->sql_creator(), $t_grp->group_16());
+        $t->assert($test_name, $qp_no_id->sql, $qp_id->sql);
         $this->assert_sql_by_formula_and_group($t, $db_con, $res);
         $this->assert_sql_by_formula_and_group_list($t, $db_con, $res);
         $this->assert_sql_load_std_by_group_id($t, $db_con, $res);

@@ -3978,6 +3978,14 @@ class sql_db
                                 or $par_type == sql_par_type::LIKE
                                 or $par_type == sql_par_type::LIKE_OR) {
                                 $this->where .= $id_fields[$used_fields] . ' like ' . $this->par_name($i + 1);
+                            } elseif ($par_type == sql_par_type::LIKE_KEY
+                                or $par_type == sql_par_type::LIKE_KEY_OR) {
+                                // the alpha_num key of a phrase must match the case (see sql_par_type::LIKE_KEY)
+                                if ($this->db_type == sql_db::POSTGRES) {
+                                    $this->where .= $id_fields[$used_fields] . ' ' . sql::LIKE_LOWER_CASE . ' ' . $this->par_name($i + 1);
+                                } else {
+                                    $this->where .= $id_fields[$used_fields] . ' ' . sql::LIKE_BINARY . ' ' . $this->par_name($i + 1);
+                                }
                             } else {
                                 if ($par_type == sql_par_type::CONST) {
                                     $this->where .= $this->par_value($i + 1);

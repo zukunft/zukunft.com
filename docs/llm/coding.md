@@ -10,7 +10,7 @@ build personal OLAP cubes from words, triples, formulas, and values
 ("calculating with words"). Architecture, source layout, and domain
 terminology: `docs/llm/architecture.md`. Read it before navigating unfamiliar code.
 
-## The three rules above all others
+## The four rules above all others
 
 1. **Reduce to the max.** This is about the **resulting code**, so that a human
    reads it easily: fewer lines, functions, assertions, parameters. When in
@@ -36,6 +36,29 @@ terminology: `docs/llm/architecture.md`. Read it before navigating unfamiliar co
    change, say so and record the gap in `docs/llm/pending_prio_2.md`; a visible
    gap is honest, a quiet approximation is not. Worked example and the review
    question: `docs/llm/structure.md`.
+4. **Never a plain delete without change log.** Every database row is removed
+   through the object's logged delete (`del()` → `sql_type::LOG`), so that who
+   removed what and when can always be reconstructed and the row can be undone.
+   This holds for test cleanups too: a cleanup that needs a plain delete is a
+   bug in the logged delete, not a reason to bypass it. The only rows that may
+   go without a log entry are derived data that the next read recreates (cache
+   rows, formula elements) and the change log rows of deleted test rows — and
+   every such exception is guarded by more than one layer at once: the class is
+   listed in `def::CLASSES_NO_CHANGE_LOG`, the sql builder says so in its name
+   (`del_sql_list_without_log`, `del_all`), and a unit test with the sql
+   fixture covers the statement. A plain delete that misses one layer is
+   rejected in review. Details and the current exceptions:
+   `docs/llm/architecture.md`.
+5. Every database access uses a prepared sql statement
+   Every read and every write goes through one named, prepared statement (or one sql function
+   that wraps the writes and their change log), created by the sql creator and covered by an
+   sql fixture in `src/test/resources/db/<class>/`. Never assemble a statement per field at
+   runtime: `sandbox_multi::save_fields_func()` and the remaining `*_fields_func` code are
+   legacy and must not be called any more. A new write needs its own prepared statement
+   (e.g. an exclude of a user value), its fixture and a unit test that compares the two
+   (see docs/llm/testing.md), so the statement is reviewable before it ever touches the
+   database. This is what rule 4 relies on: a delete or exclusion that is not one prepared
+   statement together with its change log entry cannot be audited.
 
 ## Build / test / commit
 
@@ -189,6 +212,7 @@ words, triples, formulas, sources, values) and `docs/llm/json_views.md`
 - A seed component's (or view's) database id is its import position, so a new one is **appended at the end** of the `components` block of the latest-imported file — inserting mid-sequence shifts every later id and churns the generated `list.csv` baselines; where a test needs the numeric id, pin it as a `*_ID` const re-baselined from the regenerated `list.csv`, never guessed. → `docs/llm/json_views.md`
 - A `sys_log` row insert is never written to the change log; an update of an existing `sys_log` row is always written to the change log. → `docs/llm/architecture.md`
 - Every field written with `sql_type::LOG` needs a row in `db_code_links/change_fields.csv` (field name + `change_tables.csv` table id); a per-field change log error usually means that row is missing. → `docs/llm/architecture.md`
+- A row is deleted only through the logged `del()` of its object (top rule 4); a plain delete is allowed only for derived rows and only when all guard layers are in place: class in `def::CLASSES_NO_CHANGE_LOG`, a builder named `…without_log`/`del_all`, and a unit test with the sql fixture. → `docs/llm/architecture.md`
 
 ## Testing rules
 

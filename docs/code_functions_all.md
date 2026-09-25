@@ -216,6 +216,8 @@
     \-- add_word - section for function add_word not yet defined that it should be modify in /group/group.php
     \-- add_phrase_names - section for function add_phrase_names not yet defined that it should be modify in /group/grou
             p.php
+    \-- id_or_phrase_list_id - section for function id_or_phrase_list_id not yet defined that it should be info in /grou
+            p/group.php
     \-- needs_similar_check - section for function needs_similar_check not yet defined that it should be save in /group/
             group.php
     \-- add - section for function add not yet defined that it should be save in /group/group.php
@@ -2114,6 +2116,8 @@
             p
     \-- load_sql - section for function load_sql is expected to be load sql in /helper/db_cache.php
     \-- del - section for function del is expected to be del in /helper/db_cache.php
+    \-- del_by_user - section for function del_by_user is expected to be del in /helper/db_cache.php
+    \-- del_sql_by_user - section for function del_sql_by_user is expected to be del in /helper/db_cache.php
 \-- db_cache_page
     \-- row_mapper - section for function row_mapper not yet defined that it should be construct and map in /helper/db_c
             ache_page.php
@@ -2173,6 +2177,7 @@
     \-- import_mapper - section for function import_mapper is expected to be construct and map in /helper/db_object_mult
             i.php
     \-- id - section for function id not yet defined that it should be set and get in /helper/db_object_multi.php
+    \-- is_id_set - section for function is_id_set is expected to be info in /helper/db_object_multi.php
     \-- delta - section for function delta is expected to be del in /helper/db_object_multi.php
     \-- isset - section for function isset not yet defined that it should be info in /helper/db_object_multi.php
     \-- name - section for function name is expected to be debug in /helper/db_object_multi.php
@@ -3590,6 +3595,8 @@
     \-- is_geo_value - section for function is_geo_value is expected to be info in /sandbox/sandbox_value.php
     \-- table_extension - section for function table_extension not yet defined that it should be set and get in /sandbox
             /sandbox_value.php
+    \-- grp_key_id - section for function grp_key_id not yet defined that it should be set and get in /sandbox/sandbox_v
+            alue.php
     \-- formula_id - section for function formula_id not yet defined that it should be set and get in /sandbox/sandbox_v
             alue.php
     \-- is_prime - section for function is_prime is expected to be info in /sandbox/sandbox_value.php
@@ -3659,6 +3666,7 @@
     \-- dsp - section for function dsp not yet defined that it should be debug in /sandbox/sandbox_value.php
     \-- dsp_db - section for function dsp_db not yet defined that it should be debug in /sandbox/sandbox_value.php
     \-- order error - order of section construct and map has difference at api_mapper should be before row_mapper_multi,
+            order of section set and get has difference at set_description should be before set_id,
             order of section load has difference at load_phrases should be before load_sql_by_grp,
             order of section info has difference at id_field should be before diff_msg,
             order of section sql write has difference at sql_delete should be before sql_update_fields
@@ -4689,6 +4697,10 @@
         \-- ref_list - add a reference to the list that does not yet have an id but has the phrase name,
                  the type and the external key set
         \-- view_relation_list - delete all loaded view relations e.g. to delete all the links assigned to a view
+    \-- del_by_user
+        \-- db_cache - remove the cache entries of one user, because they reference the user row and are derived
+    \-- del_sql_by_user
+        \-- db_cache - create the sql statement to delete the cache entries of one user
     \-- fill
         \-- db_object_multi - fill this seq id object based on the given object
         \-- db_object_multi_user - fill this db user object based on the given object
@@ -5019,6 +5031,10 @@
         \-- db_id_object_non_sandbox - set the vars of this object based on json string from the frontend object
     \-- id
         \-- db_object_multi - general part to import a database multi table object from a JSON array object
+    \-- set_id
+        \-- db_object_multi - set the unique database id of a multi table object
+    \-- is_id_set
+        \-- db_object_multi - @return bool true if the database id is set
     \-- set_user
         \-- db_object_multi_user - set the user of the user sandbox object
         \-- sandbox_list - set the user of the phrase list

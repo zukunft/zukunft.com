@@ -1999,7 +1999,8 @@ class value_base extends sandbox_value
         } else {
             $log->set_table(change_tables::VALUE_USR, $msg);
         }
-        $log->group_id = $this->grp_id();
+        // the log names the row by the same group id as the write (see sandbox_value::grp_key_id)
+        $log->group_id = $this->grp_key_id();
 
         return $log;
     }
@@ -2025,7 +2026,8 @@ class value_base extends sandbox_value
         } else {
             $log->set_table(change_tables::VALUE_USR, $msg);
         }
-        $log->row_id = $this->grp_id();
+        // the log names the row by the same group id as the write (see sandbox_value::grp_key_id)
+        $log->row_id = $this->grp_key_id();
 
         return $log;
     }
@@ -2313,14 +2315,21 @@ class value_base extends sandbox_value
      *
      * @param user_message $msg the user who has requested the deletion and to collect the reject reason
      * @param bool $must_exist true if the value is expected to still exist in the database
+     * @param sql_type_list $sc_par_lst with sql_type::NO_USER_SANDBOX if the value must never be
+     *                                  excluded for one user e.g. because a phrase of its group
+     *                                  is deleted (see word::del_links)
      * @return bool true if the value has been deleted or excluded
      */
-    function del(user_message $msg, bool $must_exist = true): bool
+    function del(
+        user_message  $msg,
+        bool          $must_exist = true,
+        sql_type_list $sc_par_lst = new sql_type_list()
+    ): bool
     {
         if ($this->change_blocked($msg)) {
             return false;
         }
-        return parent::del($msg, $must_exist);
+        return parent::del($msg, $must_exist, $sc_par_lst);
     }
 
 

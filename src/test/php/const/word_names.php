@@ -47,6 +47,10 @@ class word_names
     const string MATH = 'mathematics';
     const string MATH_COM = 'Mathematics is an area of knowledge that includes the topics of numbers and formulas';
     const int MATH_ID = 1;
+    // the typed start of a phrase name as the phrase select of a form sends it to the phrase list
+    // api (see ui_select::phrase_matches): matches exactly the word "mathematics" and the triple
+    // "mathematical constant" of the seed, in this order
+    const string MATH_PATTERN = 'mathemat';
     const string CONST_NAME = 'constant';
     const string ONE = 'one';
     const int ONE_ID = 4;

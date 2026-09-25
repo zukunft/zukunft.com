@@ -14,9 +14,18 @@ PREPARE value_list_by_phr_lst_p3 (bigint, bigint, bigint, text, text, text, bigi
                0 AS change_user_id,
                0 AS share_type_id
           FROM values_standard_prime
-         WHERE ( phrase_id_1 = $1 OR phrase_id_2 = $1 OR phrase_id_3 = $1 OR phrase_id_4 = $1 )
-           AND ( phrase_id_1 = $2 OR phrase_id_2 = $2 OR phrase_id_3 = $2 OR phrase_id_4 = $2 )
-           AND ( phrase_id_1 = $3 OR phrase_id_2 = $3 OR phrase_id_3 = $3 OR phrase_id_4 = $3 )
+         WHERE ( phrase_id_1 = $1
+            OR   phrase_id_2 = $1
+            OR   phrase_id_3 = $1
+            OR   phrase_id_4 = $1 )
+           AND ( phrase_id_1 = $2
+            OR   phrase_id_2 = $2
+            OR   phrase_id_3 = $2
+            OR   phrase_id_4 = $2 )
+           AND ( phrase_id_1 = $3
+            OR   phrase_id_2 = $3
+            OR   phrase_id_3 = $3
+            OR   phrase_id_4 = $3 )
 
   UNION SELECT group_id,
                '' AS user_group_id,
@@ -33,9 +42,9 @@ PREPARE value_list_by_phr_lst_p3 (bigint, bigint, bigint, text, text, text, bigi
                0 AS change_user_id,
                0 AS share_type_id
           FROM values_standard
-         WHERE group_id ilike $4
-           AND group_id ilike $5
-           AND group_id ilike $6
+         WHERE group_id like $4
+           AND group_id like $5
+           AND group_id like $6
 
   UNION SELECT s.group_id,
                u.group_id AS user_group_id,
@@ -54,9 +63,9 @@ PREPARE value_list_by_phr_lst_p3 (bigint, bigint, bigint, text, text, text, bigi
           FROM values s
      LEFT JOIN user_values u ON s.group_id = u.group_id
                             AND u.user_id = $7
-         WHERE s.group_id ilike $4
-           AND s.group_id ilike $5
-           AND s.group_id ilike $6
+         WHERE s.group_id like $4
+           AND s.group_id like $5
+           AND s.group_id like $6
 
   UNION SELECT '' AS group_id,
                '' AS user_group_id,
@@ -78,9 +87,18 @@ PREPARE value_list_by_phr_lst_p3 (bigint, bigint, bigint, text, text, text, bigi
                                   AND s.phrase_id_3 = u.phrase_id_3
                                   AND s.phrase_id_4 = u.phrase_id_4
                                   AND u.user_id = $7
-         WHERE ( s.phrase_id_1 = $1 OR s.phrase_id_2 = $1 OR s.phrase_id_3 = $1 OR s.phrase_id_4 = $1 )
-           AND ( s.phrase_id_1 = $2 OR s.phrase_id_2 = $2 OR s.phrase_id_3 = $2 OR s.phrase_id_4 = $2 )
-           AND ( s.phrase_id_1 = $3 OR s.phrase_id_2 = $3 OR s.phrase_id_3 = $3 OR s.phrase_id_4 = $3 )
+         WHERE ( s.phrase_id_1 = $1
+            OR   s.phrase_id_2 = $1
+            OR   s.phrase_id_3 = $1
+            OR   s.phrase_id_4 = $1 )
+           AND ( s.phrase_id_1 = $2
+            OR   s.phrase_id_2 = $2
+            OR   s.phrase_id_3 = $2
+            OR   s.phrase_id_4 = $2 )
+           AND ( s.phrase_id_1 = $3
+            OR   s.phrase_id_2 = $3
+            OR   s.phrase_id_3 = $3
+            OR   s.phrase_id_4 = $3 )
 
   UNION SELECT s.group_id,
                u.group_id AS user_group_id,
@@ -99,6 +117,6 @@ PREPARE value_list_by_phr_lst_p3 (bigint, bigint, bigint, text, text, text, bigi
           FROM values_big s
      LEFT JOIN user_values_big u ON s.group_id = u.group_id
                                 AND u.user_id = $7
-         WHERE s.group_id ilike $4
-           AND s.group_id ilike $5
-           AND s.group_id ilike $6;
+         WHERE s.group_id like $4
+           AND s.group_id like $5
+           AND s.group_id like $6;

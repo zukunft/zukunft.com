@@ -80,6 +80,7 @@ include_once paths::DB . 'sql_db.php';
 include_once paths::DB . 'sql_par.php';
 include_once paths::DB . 'sql_par_field_list.php';
 include_once paths::DB . 'sql_par_type.php';
+include_once paths::DB . 'sql_type.php';
 include_once paths::DB . 'sql_type_list.php';
 include_once paths::MODEL_CONST . 'def.php';
 include_once paths::SHARED_CONST . 'def.php';
@@ -140,6 +141,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
@@ -2027,8 +2029,10 @@ class word extends sandbox_code_id
         $val_lst->load_by_phr($this->phrase(), $msg);
 
         // if there are still values, ask if they really should be deleted
+        // a value of this word can never be excluded for one user, because its key contains the id
+        // of this word, so a value that another user still uses is refused and reported
         if ($val_lst->has_values()) {
-            $val_lst->del($msg);
+            $val_lst->del($msg, new sql_type_list([sql_type::NO_USER_SANDBOX]));
         }
 
         // if there are still triples, ask if they really should be deleted

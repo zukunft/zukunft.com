@@ -562,17 +562,19 @@ class change_log_list extends list_db_read
      * load a list of sandbox object changes
      * e.g. the change of a value
      * @param string $class the name of the class
-     * @param int|string|null $id the unique database id of the sandbox object to filter the changes
-     * @param user|null $usr if set load only the changes of the given user
+     * @param user_message $msg to collect a problem of the database read
+     * @param int|string $id the unique database id of the sandbox object to filter the changes
+     * @param user $usr the user who views the changes
      * @param string|null $field_name the field that has been change e.g. 'view_id'
      *                                if not set, all changes are returned
      * @return bool true if at least one change found
      */
     function load_by_obj_fld(
-        string          $class,
-        user_message $msg, int|string|null $id = null,
-        user|null       $usr = null,
-        string|null     $field_name = ''
+        string       $class,
+        user_message $msg,
+        int|string   $id,
+        user         $usr,
+        string|null  $field_name = ''
     ): bool
     {
         global $db_con;

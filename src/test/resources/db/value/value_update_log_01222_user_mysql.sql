@@ -23,7 +23,8 @@ BEGIN
          SELECT                     _user_id,_change_action_id,_field_id_protect_id,   _protect_id_old,   _group_id ;
 
     UPDATE user_values
-       SET share_type_id = _share_type_id,
+       SET excluded      = _excluded,
+           share_type_id = _share_type_id,
            protect_id    = _protect_id,
            last_update   = Now()
      WHERE group_id = _group_id
