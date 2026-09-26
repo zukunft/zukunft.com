@@ -158,7 +158,7 @@ class group_tests
         $phr_lst->merge($t_wrd->word_list()->phrase_list());
         $phr_lst->merge($t_trp->triple_list_short()->phrase_list());
         $t->assert('group_id combine phrase list', $grp_id->get_id($phr_lst),
-            '..../j-.....3-...../-...../+.....0+.....3+.....4+......+......+......+......+......+......+......+......+......+');
+            '..../k-.....3-...../-...../+.....0+.....3+.....4+......+......+......+......+......+......+......+......+......+');
         $t->assert('group_id phrase list', $grp_id->get_id($t_phr->phrase_list()),
             '.....3-...../-...../+.....0+.....F+......+......+......+......+......+......+......+......+......+......+......+');
         $t->assert('group_id phrase list 16', $grp_id->get_id($t_phr->phrase_list_16()),
@@ -264,11 +264,11 @@ class group_tests
         $t->assert('64 bit result_id for the formula increase, '
             . 'the phrases Zurich (city) and inhabitants and the result only phrase 2023 (year)',
             $res_id->get_id($t_phr->zh_inhabitants_2020(), $t_phr->zh_inhabitants_2020(), $t_frm->formula_increase(), $msg),
-            6052158684790981);
+            6052162979758279);
         $t->assert('128 bit result_id for the formula increase, '
             . 'the phrases Zurich (city), Geneva (city) and inhabitants and the result only phrase 2023 (year)',
             $res_id->get_id($t_phr->zh_ge_inhabitants_2020(), $t_phr->zh_ge_inhabitants_2020(), $t_frm->formula_increase(), $msg),
-            '9234884208812910592');
+            '9234890762513041664');
         // building the 512 bit result id from long phrase lists takes longer than a normal unit function
         $t->assert('512 bit result_id ',
             $res_id->get_id($t_phr->phrase_list_14(), $t_phr->phrase_list_14b(), $t_frm->formula_increase(), $msg),

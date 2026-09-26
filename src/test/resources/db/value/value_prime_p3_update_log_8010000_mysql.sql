@@ -36,8 +36,8 @@ SELECT value_prime_p3_update_log_8010000
         'zukunft.com system test',
         3,
         'zukunft.com system test partner',
-        914840944775,
-        213,
-        197,
+        923431010439,
+        215,
+        199,
         135,
         0);

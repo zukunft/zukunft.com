@@ -80,6 +80,7 @@ class phrase_types extends type_list
         phrase_type_shared::RANK_NAME => phrase_type_shared::RANK,
         phrase_type_shared::IGNORE_NAME => phrase_type_shared::IGNORE,
         phrase_type_shared::TIME_NUMBER_NAME => phrase_type_shared::TIME_NUMBER,
+        phrase_type_shared::FACTOR_NAME => phrase_type_shared::FACTOR,
     );
 
     /*

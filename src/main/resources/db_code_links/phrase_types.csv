@@ -27,3 +27,4 @@ phrase_type_id, type_name, description, code_id, scaling_factor, symbol
 26, 'rank', 'words that indicate e.g. that a table column contains a ranking number', 'rank', NULL, ''
 27, 'ignore', 'words that indicate e.g. to set column names to be excluded from the import', 'ignore', NULL, ''
 28, 'time number', 'A numeric time word that defines the time period for which a value is valid and values with a time can be used to display time series and where the order can be defined automatically based on the numeric value e.g. year 2025 or month 6.', 'time_number', NULL, ''
+29, 'scaling factor', 'a phrase that marks the number as a factor so that the number is shown with an x behind it e.g. 13.2 x', 'factor', NULL, 'x'

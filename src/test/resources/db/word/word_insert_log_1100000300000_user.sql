@@ -31,4 +31,4 @@ SELECT word_insert_log_1100000300000_user
         155::bigint,
         null::text,
         null::bigint,
-        189::bigint);
+        191::bigint);

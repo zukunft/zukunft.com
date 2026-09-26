@@ -7813,6 +7813,12 @@
                 "code_id": "time_number",
                 "description": "A numeric time word that defines the time period for which a value is valid and values with a time can be used to display time series and where the order can be defined automatically based on the numeric value e.g. year 2025 or month 6.",
                 "id": 28
+            },
+            {
+                "name": "scaling factor",
+                "code_id": "factor",
+                "description": "a phrase that marks the number as a factor so that the number is shown with an x behind it e.g. 13.2 x",
+                "id": 29
             }
         ],
         "ref_types": [

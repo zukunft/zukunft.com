@@ -69,8 +69,8 @@ class values
     // the share and protection subtitle of the value default view
     // the group of one triple is the triple id with the sign bit of a 16 bit slot, so this is a
     // pinned phrase id and is re-baselined like word_names::*_ID (docs/llm/testing.md):
-    // 32768 + 642 for the "Target Price Earning Ratio" triple
-    const int TARGET_PE_RATIO_ID = 33410;
+    // 32768 + 643 for the "Target Price Earning Ratio" triple
+    const int TARGET_PE_RATIO_ID = 33411;
     const int TRANSITION_OF_CS = 9192631770;
     const int SPEED_OF_LIGHT = 299792458;
     const string SPEED_OF_LIGHT_TXT = "299'792'458";

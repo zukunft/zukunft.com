@@ -1,45 +1,45 @@
 [
     {
-        "id": 849,
+        "id": 850,
         "name": "agglomeration",
         "description": "urban core plus surrounding built\u2011up areas",
         "type_id": 1,
         "class": "word"
     },
     {
-        "id": 1380,
+        "id": 1381,
         "name": "biased information solution",
         "description": "a measure that reduces the loss of decisions based on biased information, ranked here by its share of the avoided loss",
         "class": "triple"
     },
     {
-        "id": 1453,
+        "id": 1454,
         "name": "black-box AI solution",
         "description": "a measure that reduces the loss of decisions based on black-box AI, ranked here by its share of the avoided loss",
         "class": "triple"
     },
     {
-        "id": 186,
+        "id": 188,
         "name": "canton",
         "description": "a member state of the Swiss federation",
         "type_id": 1,
         "class": "word"
     },
     {
-        "id": 188,
+        "id": 190,
         "name": "city",
         "description": "a large permanent human settlement",
         "type_id": 1,
         "class": "word"
     },
     {
-        "id": 1011,
+        "id": 1012,
         "name": "climate solution",
         "description": "A mitigation option that reduces global greenhouse gas emissions, ranked here by effort return score.",
         "class": "triple"
     },
     {
-        "id": 189,
+        "id": 191,
         "protection": 3,
         "name": "company",
         "description": "legal entity made up of an association of people for the purpose of carrying on a commercial or industrial enterprise",
@@ -47,39 +47,39 @@
         "class": "word"
     },
     {
-        "id": 561,
+        "id": 563,
         "name": "Cooperative",
         "type_id": 1,
         "class": "word"
     },
     {
-        "id": 325,
+        "id": 327,
         "name": "country",
         "description": "a distinct part of the world, such as a state, nation, or other political entity.",
         "type_id": 1,
         "class": "word"
     },
     {
-        "id": 345,
+        "id": 347,
         "name": "currency",
         "description": "A currency is a system of money in common use within a specific environment over time, especially for people in a nation state. It is typically issued and controlled by a central bank or monetary authority and serves as a medium of exchange, unit of account, and store of value.",
         "type_id": 1,
         "class": "word"
     },
     {
-        "id": 102,
+        "id": 103,
         "name": "global problem",
         "description": "here more a personal issue (wikipedia does not really match)",
         "class": "triple"
     },
     {
-        "id": 911,
+        "id": 912,
         "name": "greenhouse gas",
         "description": "a gas that absorbs and emits infrared radiation, trapping heat in the atmosphere and warming the surface.",
         "class": "triple"
     },
     {
-        "id": 326,
+        "id": 327,
         "name": "ISO 4217 code",
         "description": "ISO 4217 is the international standard published by the International Organization for Standardization that defines three-letter alphabetic and three-digit numeric codes for the representation of currencies. For example, USD identifies the United States dollar and EUR identifies the euro.",
         "class": "triple"
@@ -100,7 +100,7 @@
         "class": "triple"
     },
     {
-        "id": 259,
+        "id": 260,
         "name": "most relevant",
         "description": "The superlative form of relevance, used to identify the items deemed most important within a given set according to chosen criteria.",
         "class": "triple"
@@ -120,26 +120,26 @@
         "class": "triple"
     },
     {
-        "id": 1110,
+        "id": 1111,
         "name": "populism solution",
         "description": "a measure that reduces the GDP decline of populism, ranked here by its share of the avoided loss",
         "class": "triple"
     },
     {
-        "id": 1214,
+        "id": 1215,
         "name": "poverty solution",
         "description": "a measure that reduces the loss of poverty, ranked here by its share of the avoided loss",
         "class": "triple"
     },
     {
-        "id": 867,
+        "id": 868,
         "name": "region",
         "description": "an area of land larger than a city and its surroundings",
         "type_id": 1,
         "class": "word"
     },
     {
-        "id": 563,
+        "id": 565,
         "name": "scaling",
         "description": "the multiplication of a quantity by a constant factor",
         "type_id": 7,
@@ -153,14 +153,14 @@
         "class": "triple"
     },
     {
-        "id": 214,
+        "id": 216,
         "name": "solution",
         "description": "a homogeneous mixture of a solute dissolved in a solvent",
         "type_id": 1,
         "class": "word"
     },
     {
-        "id": 327,
+        "id": 328,
         "name": "Symbol or abbreviation",
         "description": "A symbol or abbreviation used to represent a currency in writing, such as $ for the US dollar, \u20ac for the euro, or \u00a3 for pound sterling. Currency symbols are typographic shorthand and are not standardised internationally (unlike ISO 4217 codes).",
         "class": "triple"
@@ -174,14 +174,14 @@
         "class": "word"
     },
     {
-        "id": 227,
+        "id": 229,
         "name": "warm",
         "description": "having or giving off heat",
         "type_id": 1,
         "class": "word"
     },
     {
-        "id": 1291,
+        "id": 1292,
         "name": "wealth concentration solution",
         "description": "a measure that reduces the loss of wealth concentration, ranked here by its share of the avoided loss",
         "class": "triple"

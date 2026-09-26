@@ -52,6 +52,12 @@ class phrase_types
     const string LATEST_NAME = "latest";
     const string PERCENT = "percent";
     const string PERCENT_NAME = "format percent";
+    // a number with a factor phrase is a multiplier e.g. "13.2 x", so the phrase is not named with
+    // the other phrases of the number but shown as its symbol behind the number; the symbol itself
+    // is data: the triple "x is symbol for factor" of scaling.json defines it
+    // (see phrase::number_symbol and sandbox_value::number_symbols)
+    const string FACTOR = "factor";
+    const string FACTOR_NAME = "scaling factor";
     const string MEASURE = "measure";
     const int MEASURE_ID = 3;
     const string MEASURE_NAME = "measure type";

@@ -519,9 +519,12 @@ class value extends sandbox_value
         $measure_lst = $phr_lst->measure_list($msg);
         $scale_lst = $phr_lst->scaling_list($msg);
         $info_lst = $phr_lst->info_list($msg);
+        // a phrase with a symbol e.g. the factor is shown as its symbol behind the number
+        $symbol_lst = $phr_lst->symbol_phrases($msg);
         $phr_lst = $phr_lst->ex_measure_list($msg);
         $phr_lst = $phr_lst->ex_scaling_list($msg);
         $phr_lst = $phr_lst->ex_info_list($msg);
+        $phr_lst = $phr_lst->remove($symbol_lst);
         if ($measure_lst->count() > 1) {
             log_warning($this->dsp_id() . ' is not expected to have more than one measure');
         }
@@ -542,7 +545,8 @@ class value extends sandbox_value
         // a symbol like "mio" has no description of its own, so the cache supplies the
         // description of the word it is a symbol for (e.g. "million") as the tooltip
         $unit_txt = trim($this->phrase_links($scale_lst, $dto)
-            . ' ' . $this->phrase_links($measure_lst, $dto));
+            . ' ' . $this->phrase_links($measure_lst, $dto)
+            . ' ' . $symbol_lst->symbol_links($msg));
 
         // each part is a span of its own, so that the css keeps the name, the number and the
         // measure side by side on one row and wraps the name first if the space gets tight;
@@ -697,9 +701,9 @@ class value extends sandbox_value
     function name_link(user_message $msg, phrase_list|null $phr_lst_exclude = null, string $sep = ' '): string
     {
         $html = new html_base();
-        $phr_links = $this->grp->phrase_link_list($phr_lst_exclude);
+        $phr_links = $this->phrase_link_list($msg, $phr_lst_exclude);
         $val_grey = $html->span($this->value($msg), styles::STYLE_GREY);
-        return $phr_links . $sep . $val_grey;
+        return $phr_links . $sep . $val_grey . $this->number_symbols($msg);
     }
 
     /**

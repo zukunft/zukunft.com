@@ -266,7 +266,10 @@ A word is the atomic phrase:
 ```
 
 - `name` is the unique key. Descriptions and `refs` are optional.
-- `type` is set only when the word is a measure (SI unit, `percent`, etc.).
+- `type` is set only when the word says how the number is read: a measure (SI unit), or a
+  format like `percent` or `factor`. A format word is shown as its symbol behind the number,
+  and the symbol is data too: a triple like `x is symbol for factor` in the same file defines
+  it (see `phrase_types` and `phrase::number_symbol`).
 - `refs` lists external citations (Wikipedia article slug, Wikidata Q-id).
 
 ### Prefer a Wikipedia link over a free-text description

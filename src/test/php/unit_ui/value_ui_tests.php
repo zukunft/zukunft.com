@@ -569,6 +569,36 @@ class value_ui_tests
         $t->assert_text_contains($test_name,
             $val_zh->links_and_measure($msg_ui, $url_arr), '</a>, <a ');
 
+        // a factor says that the number is a multiplier, so the phrase is not named with the other
+        // phrases of the value but shown as its symbol behind the number; the symbol itself is
+        // data: the triple "x is symbol for factor" of scaling.json defines it
+        $t->subheader($ts . 'factor');
+        $val_fact = $tl->ui_value($t_val->value_factor());
+        // negative: without the symbol triple the request cache knows no symbol, so the factor is
+        // named like any other phrase of the value and nothing is lost
+        $test_name = 'without the symbol triple the factor is named with the other phrases';
+        $t->assert_text_contains($test_name, $val_fact->name_link($msg_ui),
+            '>' . words::FACTOR . '</a>');
+        // the request cache of the page supplies the symbol triple
+        $phr_lst_keep = $ui_sys->phr_lst;
+        $ui_sys->phr_lst = $t_phr->list_factor_symbol_cache_ui();
+        $fact_html = $val_fact->name_link($msg_ui);
+        $test_name = 'the factor phrase is not named with the other phrases of the value';
+        $t->assert_text_not_contains($test_name, $fact_html, '>' . words::FACTOR . '</a>');
+        $test_name = '... but shown as the symbol of the triple behind the number';
+        $t->assert_text_order($test_name, $fact_html,
+            $val_fact->val_formatted($msg_ui), '>' . word_names::FACTOR_SYMBOL . '</a>');
+        $test_name = '... with the description of the factor as the tooltip of the symbol';
+        $t->assert_text_contains($test_name, $fact_html,
+            html_base::TITLE_HTML . '="' . words::FACTOR_COM . '"');
+        $test_name = '... and with the link to the word factor';
+        $t->assert_text_contains($test_name, $fact_html,
+            url_var::ID . '=' . words::FACTOR_ID);
+        $test_name = 'the other phrases of the value are still named';
+        $t->assert_text_contains($test_name, $fact_html, word_names::MATH);
+        // the following tests use the request cache of the test setup again
+        $ui_sys->phr_lst = $phr_lst_keep;
+
         $t->subheader($ts . 'tooltips from the data object');
         // the scaling symbol "mio" has no description, so without the cache it has no tooltip
         $test_name = 'without the data object the symbol has no tooltip';

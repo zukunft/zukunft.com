@@ -297,6 +297,18 @@ class test_values extends test_objects
      * @param float $number the number assigned to the value (a sample number by default)
      * @return value with the given number assigned to the group of the given phrases
      */
+    /**
+     * @return value with a factor phrase, so that the number is shown as e.g. "123.46 x" with the
+     *               factor as the symbol behind it instead of naming it (see phrase_types::FACTOR)
+     */
+    function value_factor(): value
+    {
+        $t_wrd = new test_words($this->env);
+        return $this->value_for_phrases([
+            $t_wrd->word()->phrase(),
+            $t_wrd->word_factor()->phrase()]);
+    }
+
     function value_for_phrases(array $phrases, float $number = values::SAMPLE_FLOAT): value
     {
         $lst = new phrase_list($this->env->usr1);

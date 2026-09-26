@@ -54,6 +54,15 @@
     {
       "name": "b",
       "description": "the symbol used in formulas for billion"
+    },
+    {
+      "name": "factor",
+      "description": "how many times bigger one number is than the number it is compared with",
+      "type": "factor"
+    },
+    {
+      "name": "x",
+      "description": "the symbol shown behind a number that is a factor"
     }
   ],
   "triples": [
@@ -71,6 +80,11 @@
       "from": "b",
       "verb": "is symbol for",
       "to": "billion"
+    },
+    {
+      "from": "x",
+      "verb": "is symbol for",
+      "to": "factor"
     }
   ],
   "formulas": [

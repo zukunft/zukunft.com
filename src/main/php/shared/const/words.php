@@ -76,9 +76,9 @@ class words
 
     // for the system setup and all pods of zukunft.com
     const string POD = 'pod';
-    const int POD_ID = 203;
+    const int POD_ID = 205;
     const string MASTER_POD_NAME = 'zukunft.com';
-    const int MASTER_POD_NAME_ID = 212;
+    const int MASTER_POD_NAME_ID = 214;
     const string JOB = 'job';
     const string USER = 'user';
     const string FRONTEND = 'frontend';
@@ -121,12 +121,12 @@ class words
     const string CALCULATION_COM = 'A calculation is a deliberate mathematical process that transforms one or more inputs into one or more outputs or results';
     const string CATEGORY = 'category';
     const string CH = 'Switzerland';
-    const int CH_ID = 206;
+    const int CH_ID = 208;
     const string CHANGE = 'change';
     const string CHANGES = 'changes';
     const string CHECK = 'check';
     const string CHF = 'CHF';
-    const int CHF_ID = 408;
+    const int CHF_ID = 410;
     const string COLUMNS = 'columns';
     const string COMBINATION = 'combination';
     const string COMPONENT = 'component';
@@ -155,6 +155,11 @@ class words
     const string ENTRY = 'entry';
     const string ERRORS = 'errors';
     const string EXPECTED = 'expected';
+    // a number with this phrase is a multiplier, so it is shown as e.g. "13.2 x"
+    // (see phrase_types::FACTOR and problem_gdp_mismeasurement.json)
+    const string FACTOR = 'factor';
+    const int FACTOR_ID = 163;
+    const string FACTOR_COM = 'how many times bigger one number is than the number it is compared with';
     const string FACTORS = 'factors';
     const string FILE = 'file';
     const string FORMAT = 'format';
@@ -162,7 +167,7 @@ class words
     const string FREEZE = 'freeze';
     const string FUTURE = 'future';
     const string HAPPY = 'happy';
-    const int HAPPY_ID = 265;
+    const int HAPPY_ID = 267;
     const string HARDWARE = 'hardware';
     const string HTML = 'html';
     const string IMPACT = 'impact';
@@ -173,7 +178,7 @@ class words
     const string IP = 'ip';
     const string IP_RANGES = 'ip-ranges';
     const string LAUNCH = 'launch';
-    const int LAUNCH_ID = 198;
+    const int LAUNCH_ID = 200;
     const string LAYOUT = 'layout';
     const string LAYOUT_COM = 'the settings to position the components on the screen';
     const string LEVEL = 'level';
@@ -222,9 +227,9 @@ class words
     const string PHRASE = 'phrase';
     const string PODS = 'pods';
     const string POINT = 'point';
-    const int POINT_ID = 204;
+    const int POINT_ID = 206;
     const string POINTS = 'points';
-    const int POINTS_ID = 267;
+    const int POINTS_ID = 269;
     const string PREDICTION = 'prediction';
     const string PRELOAD = 'preload';
     const string PRESELECT = 'preselect';
@@ -266,19 +271,19 @@ class words
     const string TOLERANCE = 'tolerance';
     const string TOP = 'top';
     const string TOTAL_PRE = 'total';
-    const int TOTAL_ID = 335;
+    const int TOTAL_ID = 337;
     const string TRIPLES = 'triples';
     const string TRUSTED = 'trusted';
     const string TYPE = 'type';
     const string UPDATE = 'update';
     const string URL = 'url';
-    const int URL_ID = 207;
+    const int URL_ID = 209;
     const string USAGE = 'usage';
     const string VALIDATE = 'validate';
     const string VALUE = 'value';
     const string VALUES = 'values';
     const string VERBS = 'verbs';
-    const int VERBS_ID = 781;
+    const int VERBS_ID = 782;
     const string VERSION = 'version';
     const string VIEW = 'view';
     const string VIEWS = 'views';

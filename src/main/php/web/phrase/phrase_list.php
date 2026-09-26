@@ -834,6 +834,34 @@ class phrase_list extends sandbox_list_named
     }
 
     /**
+     * the phrase that "is symbol for" the given phrase, e.g. "x" for the factor, taken from this
+     * list, which is usually the request cache with the related phrases (the mirror of tooltip)
+     *
+     * @param phrase $phr the phrase whose symbol is searched
+     * @return phrase|null the symbol phrase or null if this list has no symbol of the given phrase
+     */
+    function symbol_of(phrase $phr): ?phrase
+    {
+        global $ui_sys;
+
+        $result = null;
+        $vrb = $ui_sys?->typ_lst_cache?->vrb?->get_by_code_id(verbs::SYMBOL);
+        if ($vrb != null) {
+            foreach ($this->lst() as $cac_phr) {
+                if ($cac_phr->is_triple() and $result == null) {
+                    $trp = $cac_phr->obj();
+                    // the symbol is the from side, so the phrase it stands for is the to side
+                    if ($trp->get_verb()?->id() == $vrb->id()
+                        and $trp->get_to()?->id() == $phr->id()) {
+                        $result = $trp->get_from();
+                    }
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
      * get all phrases that are connected to the given phrase
      * selected by the given verb
      * @param phrase $phr the parent phrase
@@ -1354,6 +1382,37 @@ class phrase_list extends sandbox_list_named
             if ($phr->is_percent($msg)) {
                 $result = true;
             }
+        }
+        return $result;
+    }
+
+    /**
+     * the phrases that are shown as a symbol behind the number instead of being named with the
+     * other phrases of the number, e.g. the factor of "13.2 x" (see phrase::number_symbol)
+     *
+     * @return phrase_list the phrases of this list that have a symbol
+     */
+    function symbol_phrases(user_message $msg): phrase_list
+    {
+        $result = new phrase_list();
+        foreach ($this->lst() as $phr) {
+            if ($phr->number_symbol($msg) != '') {
+                $result->add_phrase($phr);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the symbols of the phrases of this list, each linked to its phrase, e.g. the "x" of a factor
+     *
+     * @return string the html code of the symbols, empty if no phrase of this list has one
+     */
+    function symbol_links(user_message $msg): string
+    {
+        $result = '';
+        foreach ($this->lst() as $phr) {
+            $result .= $phr->number_symbol($msg);
         }
         return $result;
     }

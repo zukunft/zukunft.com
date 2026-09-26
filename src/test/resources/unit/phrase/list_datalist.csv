@@ -1,23 +1,23 @@
 phrase_id,phrase_name
--554,cash flow statement
--552,income taxes
--551,cash flow
--385,CHF is symbol for Swiss franc
--227,Zurich Insurance
--152,global warming (global problem)
--151,happy time points
--120,education can be global problem
--119,poverty (global problem)
--117,health can be a global problem
--116,populism (global problem)
--114,time points
--111,global warming potential
--110,global warming
--107,Geneva (city)
--106,Bern (city)
--105,Zurich (canton)
--104,Zurich (city)
--102,global problem
+-555,cash flow statement
+-553,income taxes
+-552,cash flow
+-386,CHF is symbol for Swiss franc
+-228,Zurich Insurance
+-153,global warming (global problem)
+-152,happy time points
+-121,education can be global problem
+-120,poverty (global problem)
+-118,health can be a global problem
+-117,populism (global problem)
+-115,time points
+-112,global warming potential
+-111,global warming
+-108,Geneva (city)
+-107,Bern (city)
+-106,Zurich (canton)
+-105,Zurich (city)
+-103,global problem
 -58,𝑒 (unit symbol)
 -56,Pi (math)
 -5,π (unit symbol)
@@ -41,54 +41,54 @@ phrase_id,phrase_name
 158,million
 159,billion
 160,percent
-185,Bern
-186,canton
-188,city
-189,company
-191,fact
-192,Geneva
-193,government
-194,global
-195,group
-196,hand
-197,inhabitants
-199,man
-200,part
-201,person
-202,place
-205,problem
-206,Switzerland
-208,way
-209,woman
-210,work
-211,world
-213,Zurich
-214,solution
-222,potential
-226,climate
-229,warmer
-233,populism
-249,health
-251,poverty
-253,education
-265,happy
-267,points
-270,htp
-271,trillion
-299,income
-302,tax
-327,2013
-328,2014
-329,2015
-330,2016
-331,2017
-332,2018
-335,total
-394,USD
-408,CHF
-549,ABB
-550,Vestas
-551,sales
-552,cash
-553,statement
-555,parts
+187,Bern
+188,canton
+190,city
+191,company
+193,fact
+194,Geneva
+195,government
+196,global
+197,group
+198,hand
+199,inhabitants
+201,man
+202,part
+203,person
+204,place
+207,problem
+208,Switzerland
+210,way
+211,woman
+212,work
+213,world
+215,Zurich
+216,solution
+224,potential
+228,climate
+231,warmer
+235,populism
+251,health
+253,poverty
+255,education
+267,happy
+269,points
+272,htp
+273,trillion
+301,income
+304,tax
+329,2013
+330,2014
+331,2015
+332,2016
+333,2017
+334,2018
+337,total
+396,USD
+410,CHF
+551,ABB
+552,Vestas
+553,sales
+554,cash
+555,statement
+557,parts

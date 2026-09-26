@@ -101,7 +101,7 @@ class triples
     const string START_DELAY = 'start delay';
     const string STORAGE_SIZE = 'storage size';
     const string SYSTEM_CONFIG = 'system configuration';
-    const int SYSTEM_CONFIG_ID = 103;
+    const int SYSTEM_CONFIG_ID = 104;
     // the column priority of a table, defined in solution_prio.json: a mayor column is shown
     // on every screen, a main column only if the screen is not small, a minor column only if
     // it is wide and a marginal column only on the widest screen; a phrase is assigned to a

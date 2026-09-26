@@ -351,6 +351,42 @@ class phrase extends combine_named
         return $this->obj()->is_percent($msg);
     }
 
+    /**
+     * @return bool true if this phrase is of type factor, so that a number with this phrase is
+     *              shown as a multiplier e.g. "13.2 x" (see number_symbol)
+     */
+    function is_factor(user_message $msg): bool
+    {
+        return $this->obj()->is_factor($msg);
+    }
+
+    /**
+     * the symbol that is shown behind a number instead of naming this phrase with the other
+     * phrases of the number, e.g. the "x" of a factor, as a link to this phrase with its
+     * description as the tooltip, so that the reader can look up what the symbol means
+     *
+     * the symbol is not coded but given by a triple e.g. "x is symbol for factor", so it is shown
+     * only if the request cache knows that triple; without it the phrase is named like any other
+     * phrase of the number, so that nothing is lost (see phrase_list::symbol_of)
+     *
+     * @return string the html code of the symbol link, empty if this phrase has no symbol
+     */
+    function number_symbol(user_message $msg): string
+    {
+        global $ui_sys;
+
+        $result = '';
+        if ($this->is_factor($msg)) {
+            $symbol = $ui_sys?->phr_lst?->symbol_of($this);
+            if ($symbol != null) {
+                $html = new html_base();
+                $url = $html->url_back($this->view_id(), $this->id());
+                $result = $html->ref($url, $symbol->name(), $this->get_description() ?? '');
+            }
+        }
+        return $result;
+    }
+
     function is_measure(user_message $msg): bool
     {
         return $this->obj()->is_measure($msg);

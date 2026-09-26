@@ -34,7 +34,7 @@ SELECT word_insert_log_1110000500001_user
         1::smallint,
         88::smallint,
         'company'::text,
-        189::bigint,
+        191::bigint,
         90::smallint,
         null::text,
         155::bigint,

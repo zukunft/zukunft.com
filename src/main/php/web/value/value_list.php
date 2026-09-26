@@ -398,7 +398,10 @@ class value_list extends ListBase
         $html = new html_base();
         // keep the phrases and the value of one value on a single row (text-nowrap) so they are never
         // wrapped and the html snapshot keeps them on one line as well (see library::format_html)
-        $line = $val->grp->phrase_link_list($context_phr_lst) . ' ' . $val->value_edit($msg, $url_arr);
+        // a phrase with a symbol e.g. the factor is not named but shown behind the number as "x",
+        // and the symbol link stays outside the value link (see sandbox_value::number_symbols)
+        $line = $val->phrase_link_list($msg, $context_phr_lst) . ' ' . $val->value_edit($msg, $url_arr)
+            . $val->number_symbols($msg);
         $row = $html->span($line, styles::TEXT_NOWRAP) . $html->lf();
         return $row;
     }
@@ -896,16 +899,17 @@ class value_list extends ListBase
     /**
      * true if the phrase describes the number instead of the row or the column
      *
-     * the scaling, the measure and the percent format all belong to the value, e.g. "35.2 billion
-     * htp" or "10 percent", so such a phrase is shown once in the column header behind the phrase
-     * that names the column and never heads a column of its own
+     * the scaling, the measure, the percent format and the factor all belong to the value, e.g.
+     * "35.2 billion htp", "10 percent" or "13.2 x", so such a phrase is shown once in the column
+     * header behind the phrase that names the column and never heads a column of its own
      *
      * @param phrase $phr the phrase to check
      * @return bool true if the phrase is a unit of the number
      */
     private function is_unit(phrase $phr, user_message $msg): bool
     {
-        return ($phr->is_scaling($msg) or $phr->is_measure($msg) or $phr->is_percent($msg));
+        return ($phr->is_scaling($msg) or $phr->is_measure($msg) or $phr->is_percent($msg)
+            or $phr->is_factor($msg));
     }
 
     /**
@@ -1791,8 +1795,8 @@ class value_list extends ListBase
     private function value_item(value $val, user_message $msg, phrase_list $context_phr_lst, array $url_arr): string
     {
         $html = new html_base();
-        $name = $html->span($val->grp->phrase_link_list($context_phr_lst), styles::VALUE_NAME);
-        $num = $html->span($val->value_edit($msg, $url_arr), styles::VALUE_NUM);
+        $name = $html->span($val->phrase_link_list($msg, $context_phr_lst), styles::VALUE_NAME);
+        $num = $html->span($val->value_edit($msg, $url_arr) . $val->number_symbols($msg), styles::VALUE_NUM);
         $result = $html->list_item($name . $num);
         return $result;
     }

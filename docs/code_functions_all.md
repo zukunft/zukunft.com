@@ -7226,6 +7226,7 @@
     \-- obj_id - section for function obj_id not yet defined that it should be set and get in /phrase/phrase.php
     \-- is_word - section for function is_word is expected to be info in /phrase/phrase.php
     \-- is_triple - section for function is_triple is expected to be info in /phrase/phrase.php
+    \-- number_symbol - section for function number_symbol not yet defined that it should be info in /phrase/phrase.php
     \-- impact - section for function impact not yet defined that it should be info in /phrase/phrase.php
     \-- parents - section for function parents is expected to be foaf in /phrase/phrase.php
     \-- children - section for function children is expected to be foaf in /phrase/phrase.php
@@ -7278,6 +7279,7 @@
     \-- cached_phrase - section for function cached_phrase not yet defined that it should be select in /phrase/phrase_li
             st.php
     \-- tooltip - section for function tooltip not yet defined that it should be select in /phrase/phrase_list.php
+    \-- symbol_of - section for function symbol_of not yet defined that it should be select in /phrase/phrase_list.php
     \-- parents - section for function parents is expected to be foaf in /phrase/phrase_list.php
     \-- parent_triples - section for function parent_triples not yet defined that it should be select in /phrase/phrase_
             list.php
@@ -7316,6 +7318,10 @@
     \-- ex_info_list - section for function ex_info_list not yet defined that it should be filter in /phrase/phrase_list
             .php
     \-- has_percent - section for function has_percent not yet defined that it should be info in /phrase/phrase_list.php
+    \-- symbol_phrases - section for function symbol_phrases not yet defined that it should be info in /phrase/phrase_li
+            st.php
+    \-- symbol_links - section for function symbol_links not yet defined that it should be info in /phrase/phrase_list.p
+            hp
     \-- intersect - section for function intersect not yet defined that it should be modify in /phrase/phrase_list.php
     \-- mainly - section for function mainly not yet defined that it should be modify in /phrase/phrase_list.php
     \-- add_phrase - section for function add_phrase not yet defined that it should be modify in /phrase/phrase_list.php
@@ -7670,6 +7676,10 @@
             .php
     \-- name_link - section for function name_link not yet defined that it should be display in /sandbox/sandbox_value.p
             hp
+    \-- phrase_link_list - section for function phrase_link_list not yet defined that it should be display in /sandbox/s
+            andbox_value.php
+    \-- number_symbols - section for function number_symbols not yet defined that it should be display in /sandbox/sandb
+            ox_value.php
     \-- value_linked - section for function value_linked not yet defined that it should be display in /sandbox/sandbox_v
             alue.php
     \-- val_formatted - section for function val_formatted not yet defined that it should be display in /sandbox/sandbox
@@ -8059,6 +8069,7 @@
             php
     \-- is_type - section for function is_type is expected to be info in /word/triple.php
     \-- is_percent - section for function is_percent is expected to be info in /word/triple.php
+    \-- is_factor - section for function is_factor is expected to be info in /word/triple.php
     \-- is_measure - section for function is_measure is expected to be info in /word/triple.php
     \-- is_scaling - section for function is_scaling is expected to be info in /word/triple.php
     \-- is_time - section for function is_time is expected to be info in /word/triple.php
@@ -8137,6 +8148,7 @@
     \-- is_info - section for function is_info is expected to be info in /word/word.php
     \-- is_scaling - section for function is_scaling is expected to be info in /word/word.php
     \-- is_percent - section for function is_percent is expected to be info in /word/word.php
+    \-- is_factor - section for function is_factor is expected to be info in /word/word.php
     \-- is_hidden - section for function is_hidden is expected to be info in /word/word.php
     \-- header - section for function header not yet defined that it should be views in /word/word.php
     \-- dsp_graph - section for function dsp_graph not yet defined that it should be to review in /word/word.php
@@ -8254,6 +8266,8 @@
         \-- phrase_list - get the phrase of this cache that matches the given phrase, so that a phrase which
     \-- tooltip
         \-- phrase_list - get the tooltip text for the given phrase based on this cache:
+    \-- symbol_of
+        \-- phrase_list - the phrase that "is symbol for" the given phrase, e.g. "x" for the factor, taken from this
     \-- parents
         \-- phrase_list - get all phrases that are connected to the given phrase
     \-- parent_triples
@@ -8328,6 +8342,10 @@
         \-- change_log - @return string the pure field name of the change e.g. 'impact',
     \-- has_percent
         \-- phrase_list - @return bool true if one of the phrases is of type percent
+    \-- symbol_phrases
+        \-- phrase_list - the phrases that are shown as a symbol behind the number instead of being named with the
+    \-- symbol_links
+        \-- phrase_list - the symbols of the phrases of this list, each linked to its phrase, e.g. the "x" of a factor
 \-- to be replaced
     \-- form_edit
         \-- component - HTML code to edit all component fields

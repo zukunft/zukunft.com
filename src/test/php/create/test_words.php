@@ -776,6 +776,30 @@ class test_words extends test_objects
     }
 
     /**
+     * @return word factor to test that a number with a factor is shown as e.g. "13.2 x"
+     *              with the description of the word as the tooltip of the symbol
+     */
+    function word_factor(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(words::FACTOR_ID, words::FACTOR);
+        $wrd->set_description(words::FACTOR_COM);
+        $wrd->set_type(phrase_types::FACTOR, new user_message($this->env->usr1));
+        return $wrd;
+    }
+
+    /**
+     * @return word "x", the symbol word of the factor, which the triple of scaling.json links to
+     *              the word factor (see test_triples::factor_symbol)
+     */
+    function word_factor_symbol(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::FACTOR_SYMBOL_ID, word_names::FACTOR_SYMBOL);
+        return $wrd;
+    }
+
+    /**
      * @return word of the master pod name
      */
     function word_zukunft_com(): word
