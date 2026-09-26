@@ -2058,20 +2058,29 @@
       "assigned_word": "capacitor"
     }
   ],
+  "sources": [
+    {
+      "name": "by definition"
+    }
+  ],
   "values": [
     {
       "words": [
         "standard gravity"
       ],
       "number": "9.80665",
-      "share": "public"
+      "share": "public",
+      "source": "by definition",
+      "description": "the conventional standard acceleration of gravity in metre per square second, fixed by the 3rd General Conference on Weights and Measures (CGPM) in 1901"
     },
     {
       "words": [
         "standard atmosphere"
       ],
       "number": "101325",
-      "share": "public"
+      "share": "public",
+      "source": "by definition",
+      "description": "the standard atmosphere in pascal, fixed by the 10th General Conference on Weights and Measures (CGPM) in 1954"
     }
   ]
 }

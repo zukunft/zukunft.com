@@ -360,15 +360,6 @@
     },
     {
       "words": [
-        "world",
-        "poverty rate",
-        "2024",
-        "percent"
-      ],
-      "number": "0.08480392156862745"
-    },
-    {
-      "words": [
         "international poverty line",
         "consumption",
         "USD"
@@ -408,15 +399,6 @@
     {
       "words": [
         "European Union",
-        "relative poverty line",
-        "2023",
-        "USD"
-      ],
-      "number": "12000"
-    },
-    {
-      "words": [
-        "European Union",
         "top income share",
         "2023",
         "percent"
@@ -433,14 +415,6 @@
       ],
       "number": "0.08",
       "source": "Eurostat Income and Living Conditions 2023"
-    },
-    {
-      "words": [
-        "European Union",
-        "income ratio",
-        "2023"
-      ],
-      "number": "5"
     }
   ],
   "formulas": [

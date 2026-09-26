@@ -1030,6 +1030,9 @@
     {
       "name": "Robins (1985) negative income tax experiments",
       "description": "Robins, P. K. (1985): A Comparison of the Labor Supply Findings from the Four Negative Income Tax Experiments. Cited by the concept paper section 5 together with Widerquist (2004) for an average labour supply reduction of about 5 percent."
+    },
+    {
+      "name": "IMF World Economic Outlook 2024"
     }
   ],
   "values": [
@@ -1079,6 +1082,7 @@
         "2024"
       ],
       "number": "110.047109",
+      "source": "IMF World Economic Outlook 2024",
       "description": "the world GDP of solution_prio.json in trillion instead of million EUR, so that the annual damage of a problem can be calculated within this file"
     },
     {

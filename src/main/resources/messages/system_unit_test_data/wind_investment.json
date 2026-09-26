@@ -8,6 +8,9 @@
   ],
   "words": [
     {
+      "name": "assumed"
+    },
+    {
       "name": "2022",
       "type": "time"
     },
@@ -721,7 +724,8 @@
         "Wind",
         "Turbine",
         "lifetime",
-        "years"
+        "years",
+        "assumed"
       ],
       "number": "20"
     },
@@ -732,7 +736,8 @@
         "North Germany",
         "CO2-eq",
         "gram",
-        "kilowatt hour"
+        "kilowatt hour",
+        "assumed"
       ],
       "number": "600"
     },
@@ -745,7 +750,8 @@
         "Wind",
         "Turbine",
         "CO2-eq",
-        "gram"
+        "gram",
+        "assumed"
       ],
       "number": "15"
     },
@@ -756,7 +762,8 @@
         "production",
         "plant",
         "proportion",
-        "percent"
+        "percent",
+        "assumed"
       ],
       "number": "0.85"
     },
@@ -765,7 +772,8 @@
         "Vestas",
         "Equity",
         "price",
-        "DKK"
+        "DKK",
+        "assumed"
       ],
       "number": "168.5"
     },
@@ -773,13 +781,15 @@
       "words": [
         "Vestas",
         "Outstanding",
-        "Share"
+        "Share",
+        "assumed"
       ],
       "number": "3.03"
     },
     {
       "words": [
-        "Investment duration"
+        "Investment duration",
+        "assumed"
       ],
       "number": "18"
     },
@@ -788,7 +798,8 @@
         "Vestas",
         "Production per year",
         "MW",
-        "Power rating"
+        "Power rating",
+        "assumed"
       ],
       "number": "12000"
     }

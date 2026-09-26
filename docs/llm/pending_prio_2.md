@@ -1,5 +1,9 @@
 # pending prio 2
 
+## sources
+
+make sure that at least the initial import does not import a source with the same name but two different urls of doi links
+
 ## frontend values
 
 the value page of a geo value shows no geolocation, while a text value is already shown (see the value_default_value_geo snapshot); add the mapping of json_fields::GEO_VALUE to the frontend value object (web/value/value.php) and show the geolocation on the value page
@@ -1565,3 +1569,12 @@ pure html value add view with one form (ui_select::value_add_fields):
   for a form submit or a get action mask (frontend::request_triggers_action); only the
   signup_confirm workflow passes $submit_acts = true so far. make the view.php gate the default
   for all workflows and regenerate their snapshots in one change
+- the world GDP of 110.047109 trillion EUR 2024 (110047109 million EUR in solution_prio.json and
+  one copy per start_page/problem_*.json) is sourced to the IMF World Economic Outlook 2024, which
+  states it in USD, so the EUR label is probably wrong: 110 trillion USD are about 101 trillion EUR.
+  fix the unit or the number and regenerate the start page chains, because every potential loss of
+  the ranking is calculated from it
+- the low and high bounds of the world GDP and of the global human population in
+  solution_prio.json (factor 1.5 on the centre) are stated values marked "assumed"; they could be
+  replaced by range factor results like the bounds of the problem files, so that the factor is
+  stated once and the bounds follow the centre

@@ -263,15 +263,6 @@
     {
       "words": [
         "world",
-        "health gap",
-        "2021",
-        "year"
-      ],
-      "number": "9.4"
-    },
-    {
-      "words": [
-        "world",
         "mortality",
         "2021",
         "percent"
@@ -298,14 +289,6 @@
     },
     {
       "words": [
-        "chronic disease",
-        "prevalence",
-        "2021"
-      ],
-      "number": "0.05"
-    },
-    {
-      "words": [
         "treatment",
         "life year"
       ],
@@ -319,13 +302,6 @@
       ],
       "number": "0.7",
       "source": "Weinstein Stason 1977 NEJM"
-    },
-    {
-      "words": [
-        "treatment",
-        "QALY"
-      ],
-      "number": "7"
     }
   ],
   "formulas": [

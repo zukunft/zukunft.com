@@ -46,6 +46,7 @@ include_once paths::MODEL_CONST . 'def.php';
 include_once paths::MODEL_CONST . 'files.php';
 include_once paths::SHARED_CONST . 'def.php';
 include_once paths::SHARED_CONST . 'files.php';
+include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
@@ -58,6 +59,7 @@ use Zukunft\ZukunftCom\main\php\cfg\import\import;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\main\php\shared\const\def as shared_def;
 use Zukunft\ZukunftCom\main\php\shared\const\files;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
@@ -142,6 +144,14 @@ class json_validation
     // the reasons of a value source finding, the first part of the finding key
     const string SOURCE_MISSING = 'no source';
     const string SOURCE_NOT_IN_FILE = 'source not defined in the file';
+    // a value with one of these phrases states the uncertainty of another value and is an own
+    // assessment and not data, so it needs no source; a range factor cannot carry "assumed",
+    // because the range formula selects its target by that word
+    const array SOURCE_EXEMPT_PHRASES = [
+        words::ASSUMED,
+        words::CONFIDENCE,
+        triples::PROBABILITY_RANGE_FACTOR,
+    ];
     const string CHK_VERB = 'verb not defined';
     const string CHK_FIELD = 'field not read by the import';
     const string CHK_WORD_SPACE = 'word with a space';
@@ -297,7 +307,8 @@ class json_validation
             . ' that borrows it; only the deviation, the word "assumed", is worth recording');
         $md_txt .= $this->section_md(self::CHK_SOURCE, $find_lst,
             'a measured value names the source it is taken from, so that a reader can check it;'
-            . ' a value with the word "' . words::ASSUMED . '" is an own estimate and needs none;'
+            . ' a value with one of the phrases "' . implode('", "', self::SOURCE_EXEMPT_PHRASES) . '"'
+            . ' is an own estimate or assesses the uncertainty of another value and needs none;'
             . ' the import resolves the source by its name within the file only (import_mapper'
             . ' reads the data object of the file), so a source that the file does not define in'
             . ' its "sources" section is reported as missing on import; the list shows the values'
@@ -688,7 +699,8 @@ class json_validation
     /**
      * the values of the given file that name no source or a source that the file does not define
      *
-     * a measured value needs its source, while a value with the word "assumed" is an own estimate
+     * a measured value needs its source, while an own estimate or assessment needs none (see
+     * SOURCE_EXEMPT_PHRASES)
      * (docs/llm/json_structure.md); the import resolves the source name within the file only
      *
      * @param array $json_array the decoded json file
@@ -712,7 +724,7 @@ class json_validation
                 $src_name = $val[json_fields::SOURCE_NAME] ?? '';
                 $reason = '';
                 if (!is_string($src_name) or $src_name == '') {
-                    if (!in_array(words::ASSUMED, $phr_names, true)) {
+                    if (empty(array_intersect(self::SOURCE_EXEMPT_PHRASES, $phr_names))) {
                         $reason = self::SOURCE_MISSING;
                     }
                 } elseif (!in_array($src_name, $src_names, true)) {

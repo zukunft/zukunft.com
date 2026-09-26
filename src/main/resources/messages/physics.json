@@ -3476,62 +3476,82 @@
       "assigned_word": "atom"
     }
   ],
+  "sources": [
+    {
+      "name": "CODATA 2018",
+      "description": "the CODATA recommended values of the fundamental physical constants 2018, published by NIST; since the SI revision of 2019 the Faraday constant (e * NA) and the molar volume of an ideal gas at 273.15 K and 101.325 kPa (R * T / p) are exact, the published figures are truncated to ten significant digits",
+      "url": "https://physics.nist.gov/cuu/Constants/"
+    },
+    {
+      "name": "by definition"
+    }
+  ],
   "values": [
     {
       "words": [
         "G"
       ],
       "number": "6.67430E-11",
-      "share": "public"
+      "share": "public",
+      "source": "CODATA 2018"
     },
     {
       "words": [
         "g"
       ],
       "number": "9.80665",
-      "share": "public"
+      "share": "public",
+      "source": "by definition",
+      "description": "the conventional standard acceleration of gravity in metre per square second, fixed by the 3rd General Conference on Weights and Measures (CGPM) in 1901"
     },
     {
       "words": [
         "ℏ"
       ],
       "number": "1.054571817E-34",
-      "share": "public"
+      "share": "public",
+      "source": "CODATA 2018"
     },
     {
       "words": [
         "R"
       ],
       "number": "8.314462618",
-      "share": "public"
+      "share": "public",
+      "source": "CODATA 2018"
     },
     {
       "words": [
         "σ"
       ],
       "number": "5.670374419E-8",
-      "share": "public"
+      "share": "public",
+      "source": "CODATA 2018"
     },
     {
       "words": [
         "ε0"
       ],
       "number": "8.8541878128E-12",
-      "share": "public"
+      "share": "public",
+      "source": "CODATA 2018"
     },
     {
       "words": [
         "μ0"
       ],
       "number": "1.25663706212E-6",
-      "share": "public"
+      "share": "public",
+      "source": "CODATA 2018"
     },
     {
       "words": [
         "ke"
       ],
-      "number": "8.9875517873681764E9",
-      "share": "public"
+      "number": "8.9875517923E9",
+      "share": "public",
+      "source": "CODATA 2018",
+      "description": "1 / (4 pi ε0) with the CODATA 2018 value of ε0, rounded to the eleven digits of ε0; the former 8.9875517873681764E9 was the exact value before the SI revision of 2019, when μ0 was still fixed"
     }
   ]
 }

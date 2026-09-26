@@ -272,6 +272,16 @@ class coding_rule_tests
         $hits = $chk->value_source_hits([json_fields::VALUES => [$val]]);
         $t->assert($test_name, array_keys($hits), []);
 
+        $test_name = 'a probability range factor without a source is not listed';
+        $val[json_fields::WORDS] = [words::YEAR, triples::PROBABILITY_RANGE_FACTOR, words::LOW];
+        $hits = $chk->value_source_hits([json_fields::VALUES => [$val]]);
+        $t->assert($test_name, array_keys($hits), []);
+
+        $test_name = 'a confidence without a source is not listed';
+        $val[json_fields::WORDS] = [words::YEAR, words::CONFIDENCE];
+        $hits = $chk->value_source_hits([json_fields::VALUES => [$val]]);
+        $t->assert($test_name, array_keys($hits), []);
+
         $test_name = 'a value with a source of the file is not listed';
         $val = [json_fields::WORDS => $phr_names, json_fields::SOURCE_NAME => sources::WIKIDATA];
         $src = [json_fields::NAME => sources::WIKIDATA];

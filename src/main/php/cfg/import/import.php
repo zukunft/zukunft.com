@@ -1101,8 +1101,9 @@ class import
 
     /**
      * calc the import times and show the result to the user
-     * @param int $nbr the number of precessed objects e.g. count(word)
-     * @param float $est_per_sec the expected number of objects that can be processed per second
+     * @param user_message $msg the result of the import, shown as "done" if it is fine
+     * @param int $nbr the size of the imported file in bytes
+     * @param float $est_per_sec the expected number of bytes that can be stored per second
      */
     function end(
         user_message $msg,
@@ -1120,13 +1121,14 @@ class import
             $step = $msg->all_message_text();
         }
 
-        $lib = new library();
         if ($nbr > 0) {
             $this->display_progress($nbr, $est_per_sec);
             $expected_time = $nbr / $est_per_sec;
             $real_time = $end_time - $this->start_time;
             $name = $mtr->txt($this->msg_id) . ' ' . basename($this->file_name);
-            $part = $lib->class_to_table($this->class) . ' ' . $step . ': ' . $nbr;
+            // the number is the size of the whole file, so the unit is named instead of the
+            // class of the last step, which would read as if the number counted these objects
+            $part = $step . ': ' . $nbr . ' ' . words::BYTE;
             echo $this->time_stamp() . $name . ' ' . $part . "\n";
         }
     }
