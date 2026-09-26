@@ -1,5 +1,11 @@
 # pending - list of planned llm prompts with prio 1
 
+## phrase types
+
+add a phrase type 'scaling factor' and assign this type to the word 'factor'. Similar to 'percent' if a value or result has this phrase and is shown e.g. in the word default page in the values table, remove the phrase from the named phrase and instead show 'x' behind the number with the tooltip of the factor and the link to the word factor
+
+add a phrase type 'value quality' and assign the type to the word 'assumed'. Add in the json which defines 'assumed' add alternative value quality type phrases e.g. 'peer reviewed by quality journal' 
+
 ## result and value default view
 
 in title of the value and result default view show the scaling and measure type phrases behind the value e.g. for http://localhost/http/view.php?m=9&id=....0R-....1S%2B....1V%2B....2D%2B....2F%2B....2p%2B......%2B......%2B......%2B......%2B......%2B......%2B......%2B......%2B......%2B......%2B&9m=1&9dls=20&9dlc=2&9dlr=1 'assumed, black-box AI, loss, potential 0.22 trillion EUR' instead of 'EUR, assumed, black-box AI, loss, potential, trillion 0.22'
