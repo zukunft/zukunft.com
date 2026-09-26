@@ -431,15 +431,6 @@
     },
     {
       "words": [
-        "United States",
-        "net exports",
-        "2023",
-        "USD"
-      ],
-      "number": "-945300000000"
-    },
-    {
-      "words": [
         "Germany",
         "GDP",
         "2023",
@@ -477,30 +468,6 @@
       ],
       "number": "8849852",
       "source": "UN World Population Prospects 2024"
-    },
-    {
-      "words": [
-        "United States",
-        "GDP per capita",
-        "USD"
-      ],
-      "number": "81698.37"
-    },
-    {
-      "words": [
-        "Germany",
-        "GDP per capita",
-        "USD"
-      ],
-      "number": "52745.76"
-    },
-    {
-      "words": [
-        "Switzerland",
-        "GDP per capita",
-        "USD"
-      ],
-      "number": "99994.89"
     }
   ],
   "formulas": [

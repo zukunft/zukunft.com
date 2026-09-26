@@ -46,6 +46,7 @@ include_once paths::MODEL_CONST . 'def.php';
 include_once paths::MODEL_CONST . 'files.php';
 include_once paths::SHARED_CONST . 'def.php';
 include_once paths::SHARED_CONST . 'files.php';
+include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 include_once test_paths::CONST . 'files.php';
@@ -57,6 +58,7 @@ use Zukunft\ZukunftCom\main\php\cfg\import\import;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\main\php\shared\const\def as shared_def;
 use Zukunft\ZukunftCom\main\php\shared\const\files;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use RecursiveDirectoryIterator;
@@ -136,6 +138,10 @@ class json_validation
     // the check names used as the section names of the report
     const string CHK_SYNTAX = 'not a valid json';
     const string CHK_MEASURED = 'measured value qualifier';
+    const string CHK_SOURCE = 'value without a valid source';
+    // the reasons of a value source finding, the first part of the finding key
+    const string SOURCE_MISSING = 'no source';
+    const string SOURCE_NOT_IN_FILE = 'source not defined in the file';
     const string CHK_VERB = 'verb not defined';
     const string CHK_FIELD = 'field not read by the import';
     const string CHK_WORD_SPACE = 'word with a space';
@@ -289,6 +295,13 @@ class json_validation
             'every value is assumed to be measured, so the qualifier only repeats the default'
             . ' while it lengthens the phrase group and needs a word or triple in every file'
             . ' that borrows it; only the deviation, the word "assumed", is worth recording');
+        $md_txt .= $this->section_md(self::CHK_SOURCE, $find_lst,
+            'a measured value names the source it is taken from, so that a reader can check it;'
+            . ' a value with the word "' . words::ASSUMED . '" is an own estimate and needs none;'
+            . ' the import resolves the source by its name within the file only (import_mapper'
+            . ' reads the data object of the file), so a source that the file does not define in'
+            . ' its "sources" section is reported as missing on import; the list shows the values'
+            . ' that still need their source');
         $md_txt .= $this->section_md(self::CHK_VERB, $find_lst,
             'the import resolves a verb by an exact name match and creates the verb when the name'
             . ' is unknown (see triple::import_mapper), so a typo silently grows the shared verb'
@@ -589,6 +602,11 @@ class json_validation
                 $find_lst[self::CHK_MEASURED][$sec][] = $name . ' (' . $sec_name . ') - ' . $sample;
                 $clean = false;
             }
+            // a missing source is missing data and not an outdated format, so it does not
+            // block the version update of the file
+            foreach ($this->value_source_hits($json_array) as $val_name => $sample) {
+                $find_lst[self::CHK_SOURCE][$sec][] = $name . ' - ' . $val_name . ' - ' . $sample;
+            }
             foreach ($this->verb_undefined_hits($json_array) as $verb_name => $sample) {
                 $find_lst[self::CHK_VERB][$sec][] = $name . ' - "' . $verb_name . '" in ' . $sample;
                 $clean = false;
@@ -661,6 +679,48 @@ class json_validation
             foreach ([json_fields::NAME, json_fields::EX_FROM, json_fields::EX_TO] as $fld) {
                 if (($trp[$fld] ?? '') == self::MEASURED_VALUE) {
                     $hits['triple'] ??= $this->sample($trp);
+                }
+            }
+        }
+        return $hits;
+    }
+
+    /**
+     * the values of the given file that name no source or a source that the file does not define
+     *
+     * a measured value needs its source, while a value with the word "assumed" is an own estimate
+     * (docs/llm/json_structure.md); the import resolves the source name within the file only
+     *
+     * @param array $json_array the decoded json file
+     * @return array map of the reason and the phrase names of the value to the value entry
+     */
+    function value_source_hits(array $json_array): array
+    {
+        $src_names = [];
+        foreach ($json_array[json_fields::SOURCES] ?? [] as $src) {
+            if (is_array($src)) {
+                $src_names[] = $src[json_fields::NAME] ?? '';
+            }
+        }
+        $hits = [];
+        foreach ($json_array[json_fields::VALUES] ?? [] as $val) {
+            if (is_array($val)) {
+                $phr_names = $val[json_fields::WORDS] ?? [];
+                if (!is_array($phr_names)) {
+                    $phr_names = [];
+                }
+                $src_name = $val[json_fields::SOURCE_NAME] ?? '';
+                $reason = '';
+                if (!is_string($src_name) or $src_name == '') {
+                    if (!in_array(words::ASSUMED, $phr_names, true)) {
+                        $reason = self::SOURCE_MISSING;
+                    }
+                } elseif (!in_array($src_name, $src_names, true)) {
+                    $reason = self::SOURCE_NOT_IN_FILE . ' "' . $src_name . '"';
+                }
+                if ($reason != '') {
+                    $hits[$reason . ' - ' . json_encode($phr_names, self::SAMPLE_ENCODING)]
+                        ??= $this->sample($val);
                 }
             }
         }

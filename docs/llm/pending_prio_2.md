@@ -6,6 +6,8 @@ the value page of a geo value shows no geolocation, while a text value is alread
 
 ## tests
 
+add to the json_validation test a check for which words, triples, verb, formula or type objects a description is missing
+
 add a write workflow test for the formula add from a word page: the confirmed add must also write the formula link to the phrase of the '7'-prefixed link vars (frontend::add_link_of_new), which the unit tests cannot check because they never write the formula
 
 ## data cleanup for final database setup

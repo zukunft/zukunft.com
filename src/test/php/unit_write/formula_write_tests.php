@@ -312,7 +312,7 @@ class formula_write_tests
         } else {
             $result = '';
         }
-        $target = '8505251.0';
+        $target = '8670300.0';
         $t->assert('formula->calc "' . $frm->name() . '" for a tern list ' . $phr_lst->dsp_id(), $result, $target, $t::TIMEOUT_LIMIT_CALC);
 
         // test the scaling back to a thousand
@@ -328,7 +328,7 @@ class formula_write_tests
         } else {
             $result = '';
         }
-        $target = 8505.251;
+        $target = 8670.3;
         // TODO Prio 1 activate
         // TODO if possible move as many tests as possible to unit tests
         //$t->assert('formula->calc "' . $frm->name() . '" for a tern list ' . $phr_lst->dsp_id(), $result, $target);
@@ -374,7 +374,7 @@ class formula_write_tests
         $wrd->load_by_name(words::CH, $msg);
         /*
         $result = trim($frm_ui->dsp_result($wrd, $back));
-        $target = '0.79 %';
+        $target = '0.75 %';
         $t->assert('formula->dsp_result for ' . $frm->dsp_id() . ' and ' . $wrd->name(), $result, $target);
         */
 

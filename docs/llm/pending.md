@@ -69,10 +69,6 @@ RSS
 Atom
 WARC
 
-## json test
-
-add to the json check that creates docs/json_findings.md a test that all values should have a valide source
-
 ## email accounts
 
 add to .env (.env.example) a system@zukunft.com email account that is used to email admin@zukunft.com any time a system error has accused but max 5 (config.yaml parameter) emails per day.

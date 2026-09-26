@@ -132,7 +132,7 @@ class formula_trigger_tests
         if ($result == values::SALES_INCREASE_2017_FORM) {
             $target = values::SALES_INCREASE_2017_FORM;
         } else {
-            $target = "0.79%";
+            $target = "0.75%";
         }
         // TODO Prio 0 activate
         //$t->assert('formula result for ' . $frm->dsp_id() . ' from ' . $phr_lst1->dsp_id() . ' to ' . $phr_lst2->dsp_id() . '', $result, $target, $t::TIMEOUT_LIMIT_LONG);

@@ -149,7 +149,7 @@ class result_write_tests
         if ($result == null) {
             $result = '';
         }
-        $target = 8505.251;
+        $target = 8670.3;
         // TODO Prio 1 activate
         //$t->assert('value->val_scaling for a tern list ' . $phr_lst->dsp_id(), $result, $target, $t::TIMEOUT_LIMIT_PAGE);
 
@@ -166,7 +166,7 @@ class result_write_tests
         /*
         $target = 0.18264281677284;
         if ($result != $target) {
-            $target = 0.007871833296164;
+            $target = 0.00746766832058385;
         }
         $t->assert('value->load the best guess for ' . $phr_lst->dsp_id(), $result, $target, $t::TIMEOUT_LIMIT_PAGE);
         */
@@ -206,7 +206,7 @@ class result_write_tests
         $res_lst = new result_list($t->usr1);
         $res_lst->load_by_formula($frm, $msg);
         $result = $res_lst->dsp_id();
-        $target = '0.0078';
+        $target = '0.0074';
         $t->dsp_contains(', result_list->load of the formula results for ' . $frm->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 
         // load results by phrase group
@@ -214,7 +214,7 @@ class result_write_tests
         $res_lst = new result_list($t->usr1);
         $res_lst->load_by_grp($grp, $msg);
         $result = $res_lst->dsp_id();
-        $target = '8505.251';
+        $target = '8670.3';
         $t->dsp_contains(', result_list->load of the formula results for ' . $grp->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 
         // ... and also with time selection
@@ -229,7 +229,7 @@ class result_write_tests
         $res_lst = new result_list($t->usr1);
         $res_lst->load_by_grp( $grp, $msg, true );
         $result = $res_lst->dsp_id();
-        $target = '0.0078';
+        $target = '0.0074';
         $t->dsp_contains(', result_list->load of the formula results for source ' . $grp->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 
         // ... and also with time selection
@@ -244,7 +244,7 @@ class result_write_tests
         $res_lst = new result_list($t->usr1);
         $res_lst->load_by_phrase($wrd->phrase(), $msg);
         $result = $res_lst->dsp_id();
-        $target = '0.0078';
+        $target = '0.0074';
         $t->dsp_contains(', result_list->load of the formula results for ' . $grp->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 
         // TODO add PE frm test

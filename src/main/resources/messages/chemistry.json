@@ -2415,19 +2415,28 @@
       "assigned_word": "atomic number"
     }
   ],
+  "sources": [
+    {
+      "name": "CODATA 2018",
+      "description": "the CODATA recommended values of the fundamental physical constants 2018, published by NIST; since the SI revision of 2019 the Faraday constant (e * NA) and the molar volume of an ideal gas at 273.15 K and 101.325 kPa (R * T / p) are exact, the published figures are truncated to ten significant digits",
+      "url": "https://physics.nist.gov/cuu/Constants/"
+    }
+  ],
   "values": [
     {
       "words": [
         "Faraday constant"
       ],
       "number": "96485.33212",
-      "share": "public"
+      "share": "public",
+      "source": "CODATA 2018"
     },
     {
       "words": [
         "standard molar volume"
       ],
-      "number": "0.022413969954",
+      "number": "0.02241396954",
+      "source": "CODATA 2018",
       "share": "public"
     }
   ]

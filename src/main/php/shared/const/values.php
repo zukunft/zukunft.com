@@ -82,11 +82,11 @@ class values
     CONST string SAMPLE_FLOAT_HIGH_QUOTE_FORM = "123'456";
     CONST string SAMPLE_FLOAT_SPACE_FORM = "123 456";
     CONST float SAMPLE_PCT = 0.182642816772838; // to test the percentage calculation by the percent of Swiss inhabitants living in canton Zurich
-    CONST float INCREASE = 0.007871833296164; // to test the increase calculation by the increase of inhabitants in Switzerland from 2019 to 2020
+    CONST float INCREASE = 0.0074676683205838; // to test the increase calculation by the increase of inhabitants in Switzerland from 2019 to 2020
     CONST float CANTON_ZH_INHABITANTS_2020_IN_MIO = 1.553423;
     CONST int CITY_ZH_INHABITANTS_2019 = 415367;
-    CONST float CH_INHABITANTS_2019_IN_MIO = 8.438822;
-    CONST float CH_INHABITANTS_2020_IN_MIO = 8.505251;
+    CONST float CH_INHABITANTS_2019_IN_MIO = 8.606033;
+    CONST float CH_INHABITANTS_2020_IN_MIO = 8.6703;
     CONST float SHARE_PRICE = 17.08;
     CONST float EARNINGS_PER_SHARE = 1.22;
     CONST string SALES_INCREASE_2017_FORM = '90.03 %';

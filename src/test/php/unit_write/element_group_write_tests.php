@@ -135,7 +135,7 @@ class element_group_write_tests
             /*
             $result = $elm_grp_ui->dsp_values();
             $fig_lst = $elm_grp->figures();
-            $target = '<a href="/http/result_edit.php?id=' . $fig_lst->get_first_id() . '" title="8.51">8.51</a>';
+            $target = '<a href="/http/result_edit.php?id=' . $fig_lst->get_first_id() . '" title="8.67">8.67</a>';
             $t->assert('element_group->dsp_values', $result, $target);
             */
 
@@ -158,13 +158,13 @@ class element_group_write_tests
                     $t_api = new test_api();
                     $fig_ui = $tl->ui_obj($fig, new figure_ui());
                     $result = $fig_ui->display();
-                    $target = "8.51";
+                    $target = "8.67";
                     $t->assert('figure->display', $result, $target);
 
                     $result = $fig_ui->display_linked();
                     //$target = '<a href="/http/value_edit.php?id=438&back=1" class="' . styles::STYLE_USER . '">35\'481</a>';
                     // a group id can contain a '+', which the link encodes (see html_base::url_back)
-                    $target = '<a href="/http/view.php?m=' . views::RESULT_EDIT_ID . '&id=' . rawurlencode((string)$fig->id()) . '">8.51</a>';
+                    $target = '<a href="/http/view.php?m=' . views::RESULT_EDIT_ID . '&id=' . rawurlencode((string)$fig->id()) . '">8.67</a>';
                     $t->assert('figure->display_linked', $result, $target);
                 }
             } else {
@@ -184,12 +184,12 @@ class element_group_write_tests
             //$target = str_replace("<", "&lt;", str_replace(">", "&gt;", $target));
             $fig_lst = $elm_grp->figures();
             $fig_id = $fig_lst->get_first_id();
-            $target = ' 8.505251 {f18}'  . word_names::YEAR_2020 . ','  . word_names::INHABITANTS . ','  . word_names::MIO . ','  . words::CH . '  (58266170593050764)';
+            $target = ' 8.6703 {f18}'  . word_names::YEAR_2020 . ','  . word_names::INHABITANTS . ','  . word_names::MIO . ','  . words::CH . '  (58266170593050764)';
             $t->assert('figure_list->dsp_id', $result, $target);
 
             $fig_lst_ui = new figure_list($fig_lst->api_json());
             $result = $fig_lst_ui->display();
-            $target = "8.51 ";
+            $target = "8.67 ";
             // TODO Prio 0 activate
             //$t->assert('figure_list->display', $result, $target);
 

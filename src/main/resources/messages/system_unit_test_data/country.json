@@ -92,7 +92,8 @@
         "inhabitants",
         "2015"
       ],
-      "number": "8327126"
+      "number": "8327126",
+      "source": "Federal Statistical Office - Key population figures, 1950-2024"
     },
     {
       "words": [
@@ -101,7 +102,8 @@
         "k",
         "2016"
       ],
-      "number": "8419.55"
+      "number": "8419.55",
+      "source": "Federal Statistical Office - Key population figures, 1950-2024"
     },
     {
       "words": [
@@ -110,7 +112,8 @@
         "million",
         "2020"
       ],
-      "number": "8.505251"
+      "number": "8.6703",
+      "source": "Federal Statistical Office - Key population figures, 1950-2024"
     },
     {
       "words": [
@@ -119,7 +122,8 @@
         "million",
         "2019"
       ],
-      "number": "8.438822"
+      "number": "8.606033",
+      "source": "Federal Statistical Office - Key population figures, 1950-2024"
     }
   ],
   "formulas": [
