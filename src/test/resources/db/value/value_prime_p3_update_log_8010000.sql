@@ -39,8 +39,8 @@ SELECT value_prime_p3_update_log_8010000
         'zukunft.com system test'::text,
         3::bigint,
         'zukunft.com system test partner'::text,
-        923431010439::bigint,
-        215::smallint,
-        199::smallint,
+        927726043271::bigint,
+        216::smallint,
+        200::smallint,
         135::smallint,
         0::smallint);

@@ -2,8 +2,6 @@
 
 ## phrase types
 
-add a formula to scale a value by the factor and assign it to the phrase 'factor'
-
 create a triple like '% is symbol for percent' and try to remove the fixed const for '%'
 
 add a phrase type 'value quality' and assign the type to the word 'assumed'. Add in the json which defines 'assumed' add alternative value quality type phrases e.g. 'peer reviewed by quality journal' 
@@ -51,7 +49,7 @@ add a Confidence number and description to all value quality phrases: The qualit
 
 ## preloaded phrases
 
-define a list of phrases that are often used by the system that should be included in the initial cache load similar to the types e.g. cache/ui_types.json. Include all triples and related words with the verb 'is symbol of' and 'is alias of' in this list  
+define a list of phrases that are often used by the system that should be included in the initial cache load similar to the types e.g. cache/ui_types.json. Include all triples and related words with the verb 'is symbol of' and 'is alias of' in this list
 
 ## result and value default view
 

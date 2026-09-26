@@ -100,10 +100,10 @@ class formula_names
     const int SCALE_BIL_TO_ONE_ID = 17;
     const string SCALE_BIL_TO_ONE_EXP = '"' . word_names::ONE . '" = "' . word_names::BILLION . '" * 1000000000';
     const string SCALE_TRILLION_TO_ONE = 'scale trillion to one';
-    const int SCALE_TRILLION_TO_ONE_ID = 22;
+    const int SCALE_TRILLION_TO_ONE_ID = 23;
     const string SCALE_TRILLION_TO_ONE_EXP = '"' . word_names::ONE . '" = "' . word_names::TRILLION . '" * 1000000000000';
     const string GLOBAL_HTP = 'global happy time points';
-    const int GLOBAL_HTP_ID = 23;
+    const int GLOBAL_HTP_ID = 24;
     const string GLOBAL_HTP_EXP = '"' . word_names::HTP . '" = "' . word_names::HTP . '","' . words::PERCENT
         . '" * "' . word_names::GLOBAL . '","' . word_names::HUMAN . '","' . word_names::POPULATION . '"';
     const string JOULE_DEF = 'definition of joule';
@@ -123,7 +123,7 @@ class formula_names
     const string PARTS_IN_PERCENT_EXP = '"' . words::PERCENT . '" = "parts" "' . verbs::OF_NAME . '" / "total"'; // TODO check if separate verb "of each" is needed
     const string PARTS_IN_PERCENT_DB = '{w' . words::PCT_ID . '}={w' . word_names::PARTS_ID . '}{v' . verbs::OF_ID . '}/{w' . words::TOTAL_ID . '}';
     const string CITY_POPULATION = 'city population';
-    const int CITY_POPULATION_ID = 26;
+    const int CITY_POPULATION_ID = 27;
     const string CITY_POPULATION_EXP = '"total" = &sum; ( "inhabitants" "of all" "city" )';
 
     // persevered formula names for unit and integration tests

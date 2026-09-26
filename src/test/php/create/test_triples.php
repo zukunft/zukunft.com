@@ -1004,10 +1004,6 @@ class test_triples extends test_objects
     }
 
     /**
-     * @return triple "mio is symbol for million" used to test that a symbol shows the
-     *         description of the word it stands for as its tooltip
-     */
-    /**
      * @return triple "x is symbol for factor" of scaling.json, which defines the symbol that is
      *                shown behind a number with a factor phrase (see phrase::number_symbol)
      */
@@ -1023,6 +1019,10 @@ class test_triples extends test_objects
         return $trp;
     }
 
+    /**
+     * @return triple "mio is symbol for million" used to test that a symbol shows the
+     *         description of the word it stands for as its tooltip
+     */
     function mio_symbol(): triple
     {
         $t_wrd = new test_words($this->env);

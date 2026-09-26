@@ -199,7 +199,8 @@ class system_tests
         $t->assert_dsp_id($t_trm->term(), '"mathematics" (word_id 1) for user 3 (zukunft.com system test) as term');
         $t->assert_dsp_id($t_trm->term_list_short(), '"mathematical constant","mathematics","not set","scale minute to sec" (-2,-1,1,2)');
         $t->assert_dsp_id($t_val->value($msg), 'π (unit symbol): 3.1415926535898 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = 5,,,) for user 3 (zukunft.com system test)');
-        $t->assert_dsp_id($t_val->value_list_short($msg), 'π (unit symbol): 3.1415926535898 / Zurich city inhabitants (2019): 415367 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = 5,,, / 215,199,135,) for user 3 (zukunft.com system test)');
+        $t->assert_dsp_id($t_val->value_list_short($msg), 'π (unit symbol): 3.1415926535898 / Zurich city inhabitants (2019): 415367 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = 5,,, / '
+            . word_names::ZH_ID . ',' . word_names::INHABITANT_ID . ',' . word_names::YEAR_2019_ID . ',) for user 3 (zukunft.com system test)');
         $t->assert_dsp_id($t_src->source_reserved(), '"The International System of Units" (source_id 1) for user 3 (zukunft.com system test)');
         $t->assert_dsp_id($t_ref->reference(), 'ref of "Pi" to "wikidata" (' . refs::PI_ID . ')');
         $t->assert_dsp_id($t_frm->formula(), '"scale minute to sec" (formula_id 1) for user 3 (zukunft.com system test)');
@@ -225,7 +226,8 @@ class system_tests
         $t->assert_dsp_id($t_log->log_list_short(), 'log add words,word_name mathematics (id ) in row 1 at 2022-12-26T18:23:45+01:00 / log add verbs,verb_name is (id ) in row 2 at 2022-12-26T18:23:45+01:00 / log add triples,triple_name mathematical constant (id ) in row 1 at 2022-12-26T18:23:45+01:00');
         $t->assert_dsp_id($t_log->log_link(), 'user_log_link for user zukunft.com system test (3) action add (1) table triples (7)');
         $t->assert_dsp_id($t_log->log_value(), 'log add values,numeric_value (5,,,) 3.1415927');
-        $t->assert_dsp_id($t_log->log_value_prime(), 'log add values,numeric_value (215,199,135,) 3.1415927');
+        $t->assert_dsp_id($t_log->log_value_prime(), 'log add values,numeric_value ('
+            . word_names::ZH_ID . ',' . word_names::INHABITANT_ID . ',' . word_names::YEAR_2019_ID . ',) 3.1415927');
         // the id of a big group packs the phrase ids into a text, so the group of the log entry
         // is compared with the same group loaded by id, which is what change_value::name() does
         $grp_big = new group($t->usr1, $t_grp->group_17_plus()->id());

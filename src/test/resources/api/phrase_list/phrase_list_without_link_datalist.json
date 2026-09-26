@@ -1,36 +1,36 @@
 [
   {
-    "id": 329,
+    "id": 330,
     "name": "2013",
     "type_id": 2,
     "class": "word"
   },
   {
-    "id": 330,
+    "id": 331,
     "name": "2014",
     "type_id": 2,
     "class": "word"
   },
   {
-    "id": 331,
+    "id": 332,
     "name": "2015",
     "type_id": 2,
     "class": "word"
   },
   {
-    "id": 332,
+    "id": 333,
     "name": "2016",
     "type_id": 2,
     "class": "word"
   },
   {
-    "id": 333,
+    "id": 334,
     "name": "2017",
     "type_id": 2,
     "class": "word"
   },
   {
-    "id": 334,
+    "id": 335,
     "name": "2018",
     "type_id": 2,
     "class": "word"
@@ -49,14 +49,14 @@
     "class": "word"
   },
   {
-    "id": 551,
+    "id": 552,
     "name": "ABB",
     "description": "ABB (ASEA Brown Boveri) is a Swedish-Swiss multinational corporation headquartered in Z\u00fcrich",
     "type_id": 1,
     "class": "word"
   },
   {
-    "id": 187,
+    "id": 188,
     "name": "Bern",
     "type_id": 1,
     "class": "word"
@@ -75,14 +75,14 @@
     "class": "word"
   },
   {
-    "id": 188,
+    "id": 189,
     "name": "canton",
     "description": "a member state of the Swiss federation",
     "type_id": 1,
     "class": "word"
   },
   {
-    "id": 554,
+    "id": 555,
     "name": "cash",
     "type_id": 1,
     "class": "word"
@@ -99,7 +99,7 @@
     "class": "triple"
   },
   {
-    "id": 410,
+    "id": 411,
     "name": "CHF",
     "description": "ISO 4217 alphabetic code for the Swiss franc (Confoederatio Helvetica Franc), also widely used as the currency's typographic symbol.",
     "type_id": 3,
@@ -119,21 +119,21 @@
     "class": "word"
   },
   {
-    "id": 190,
+    "id": 191,
     "name": "city",
     "description": "a large permanent human settlement",
     "type_id": 1,
     "class": "word"
   },
   {
-    "id": 228,
+    "id": 229,
     "name": "climate",
     "description": "long-term statistical characterization of atmospheric conditions in a region, typically averaged over periods of 30 years or more",
     "type_id": 1,
     "class": "word"
   },
   {
-    "id": 191,
+    "id": 192,
     "protection": 3,
     "name": "company",
     "description": "legal entity made up of an association of people for the purpose of carrying on a commercial or industrial enterprise",
@@ -165,7 +165,7 @@
     "class": "word"
   },
   {
-    "id": 255,
+    "id": 256,
     "name": "education",
     "description": "process of teaching and learning",
     "type_id": 1,
@@ -184,7 +184,7 @@
     "class": "triple"
   },
   {
-    "id": 193,
+    "id": 194,
     "name": "fact",
     "type_id": 1,
     "class": "word"
@@ -198,7 +198,7 @@
     "class": "word"
   },
   {
-    "id": 194,
+    "id": 195,
     "name": "Geneva",
     "type_id": 1,
     "class": "word"
@@ -209,7 +209,7 @@
     "class": "triple"
   },
   {
-    "id": 196,
+    "id": 197,
     "name": "global",
     "description": "relating to the whole world - here more a something that effects all people on earth (wikipedia does not really match)",
     "type_id": 1,
@@ -239,27 +239,27 @@
     "class": "triple"
   },
   {
-    "id": 195,
+    "id": 196,
     "name": "government",
     "description": "the system or group of people governing an organized community, generally a state.",
     "type_id": 1,
     "class": "word"
   },
   {
-    "id": 197,
+    "id": 198,
     "name": "group",
     "description": "the social source of external information, i.e. the four peer actors",
     "type_id": 1,
     "class": "word"
   },
   {
-    "id": 198,
+    "id": 199,
     "name": "hand",
     "type_id": 1,
     "class": "word"
   },
   {
-    "id": 267,
+    "id": 268,
     "name": "happy",
     "description": "feeling or showing pleasure or contentment",
     "type_id": 1,
@@ -272,7 +272,7 @@
     "class": "triple"
   },
   {
-    "id": 251,
+    "id": 252,
     "name": "health",
     "description": "a state of complete physical, mental and social well-being and not merely the absence of disease or infirmity.",
     "type_id": 1,
@@ -285,14 +285,14 @@
     "class": "triple"
   },
   {
-    "id": 272,
+    "id": 273,
     "name": "htp",
     "description": "the symbol used in formulas for happy time points",
     "type_id": 3,
     "class": "word"
   },
   {
-    "id": 301,
+    "id": 302,
     "name": "income",
     "description": "Income is the consumption and saving opportunity gained by an entity within a specified time frame, which is generally expressed in monetary terms.",
     "type_id": 1,
@@ -304,7 +304,7 @@
     "class": "triple"
   },
   {
-    "id": 199,
+    "id": 200,
     "name": "inhabitants",
     "type_id": 1,
     "class": "word"
@@ -318,7 +318,7 @@
     "class": "word"
   },
   {
-    "id": 201,
+    "id": 202,
     "name": "man",
     "type_id": 1,
     "class": "word"
@@ -371,13 +371,13 @@
     "class": "word"
   },
   {
-    "id": 202,
+    "id": 203,
     "name": "part",
     "type_id": 1,
     "class": "word"
   },
   {
-    "id": 557,
+    "id": 558,
     "name": "parts",
     "type_id": 1,
     "class": "word"
@@ -391,7 +391,7 @@
     "class": "word"
   },
   {
-    "id": 203,
+    "id": 204,
     "name": "person",
     "description": "an individual human being",
     "type_id": 3,
@@ -413,20 +413,20 @@
     "class": "triple"
   },
   {
-    "id": 204,
+    "id": 205,
     "name": "place",
     "type_id": 1,
     "class": "word"
   },
   {
-    "id": 269,
+    "id": 270,
     "name": "points",
     "description": "a counted unit on a rating scale",
     "type_id": 1,
     "class": "word"
   },
   {
-    "id": 235,
+    "id": 236,
     "name": "populism",
     "description": "a range of political stances that emphasise the idea of the common people and often contrast this group against a privileged elite.",
     "type_id": 1,
@@ -438,14 +438,14 @@
     "class": "triple"
   },
   {
-    "id": 224,
+    "id": 225,
     "name": "potential",
     "description": "the size an effect can reach if nothing counteracts it",
     "type_id": 1,
     "class": "word"
   },
   {
-    "id": 253,
+    "id": 254,
     "name": "poverty",
     "description": "the state of having insufficient income or resources to meet basic human needs such as food, shelter and clothing.",
     "type_id": 1,
@@ -457,14 +457,14 @@
     "class": "triple"
   },
   {
-    "id": 207,
+    "id": 208,
     "name": "problem",
     "description": "A problem is if someone is getting unhappy. This can be measured with \"happy time points\".",
     "type_id": 1,
     "class": "word"
   },
   {
-    "id": 553,
+    "id": 554,
     "name": "sales",
     "type_id": 1,
     "class": "word"
@@ -477,27 +477,27 @@
     "class": "word"
   },
   {
-    "id": 216,
+    "id": 217,
     "name": "solution",
     "description": "a homogeneous mixture of a solute dissolved in a solvent",
     "type_id": 1,
     "class": "word"
   },
   {
-    "id": 555,
+    "id": 556,
     "name": "statement",
     "type_id": 1,
     "class": "word"
   },
   {
-    "id": 208,
+    "id": 209,
     "name": "Switzerland",
     "description": "a landlocked country at the confluence of Western, Central and Southern Europe.",
     "type_id": 1,
     "class": "word"
   },
   {
-    "id": 304,
+    "id": 305,
     "name": "tax",
     "description": "compulsory financial charge to public authority",
     "type_id": 1,
@@ -510,41 +510,41 @@
     "class": "triple"
   },
   {
-    "id": 337,
+    "id": 338,
     "name": "total",
     "description": "the whole amount or count, e.g. the total number of possible outcomes",
     "type_id": 1,
     "class": "word"
   },
   {
-    "id": 273,
+    "id": 274,
     "name": "trillion",
     "description": "the scaling factor of 10^12",
     "type_id": 7,
     "class": "word"
   },
   {
-    "id": 396,
+    "id": 397,
     "name": "USD",
     "description": "ISO 4217 alphabetic code for the United States dollar.",
     "type_id": 3,
     "class": "word"
   },
   {
-    "id": 552,
+    "id": 553,
     "name": "Vestas",
     "type_id": 1,
     "class": "word"
   },
   {
-    "id": 231,
+    "id": 232,
     "name": "warmer",
     "description": "having a higher temperature than before",
     "type_id": 1,
     "class": "word"
   },
   {
-    "id": 210,
+    "id": 211,
     "name": "way",
     "type_id": 1,
     "class": "word"
@@ -558,28 +558,28 @@
     "class": "word"
   },
   {
-    "id": 211,
+    "id": 212,
     "name": "woman",
     "description": "an adult female human",
     "type_id": 1,
     "class": "word"
   },
   {
-    "id": 212,
+    "id": 213,
     "name": "work",
     "description": "In physics, work is the energy transferred to or from an object via the application of force along a displacement.",
     "type_id": 1,
     "class": "word"
   },
   {
-    "id": 213,
+    "id": 214,
     "name": "world",
     "description": "all countries of the earth taken together",
     "type_id": 1,
     "class": "word"
   },
   {
-    "id": 215,
+    "id": 216,
     "name": "Zurich",
     "description": "place name used for both the city and the canton of Zurich; The prefered use for values is City of Zurich or Canton of Zurich.",
     "type_id": 1,

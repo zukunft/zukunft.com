@@ -264,11 +264,11 @@ class group_tests
         $t->assert('64 bit result_id for the formula increase, '
             . 'the phrases Zurich (city) and inhabitants and the result only phrase 2023 (year)',
             $res_id->get_id($t_phr->zh_inhabitants_2020(), $t_phr->zh_inhabitants_2020(), $t_frm->formula_increase(), $msg),
-            6052162979758279);
+            6052162979758280);
         $t->assert('128 bit result_id for the formula increase, '
             . 'the phrases Zurich (city), Geneva (city) and inhabitants and the result only phrase 2023 (year)',
             $res_id->get_id($t_phr->zh_ge_inhabitants_2020(), $t_phr->zh_ge_inhabitants_2020(), $t_frm->formula_increase(), $msg),
-            '9234890762513041664');
+            '9234890762513107200');
         // building the 512 bit result id from long phrase lists takes longer than a normal unit function
         $t->assert('512 bit result_id ',
             $res_id->get_id($t_phr->phrase_list_14(), $t_phr->phrase_list_14b(), $t_frm->formula_increase(), $msg),

@@ -163,6 +163,9 @@
     },
     {
       "name": "percent"
+    },
+    {
+      "name": "factor"
     }
   ],
   "formulas": [
@@ -196,6 +199,14 @@
       "expression": "\"percent\" = ( \"this\" - \"prior\" ) / \"prior\"",
       "latex": "\\text{percent} = \\frac{ \\text{this} - \\text{prior} }{ \\text{prior} }",
       "assigned_word": "year",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "scale by factor",
+      "description": "a value scaled by its factor, the value of the previous period multiplied by the number that says how many times bigger this value is, e.g. a long run loss that is 13.2 times the loss of one year",
+      "expression": "\"one\" = \"prior\" * \"factor\"",
+      "latex": "\\text{one} = \\text{prior} \\cdot \\text{factor}",
+      "assigned_word": "factor",
       "protection": "admin_protection"
     }
   ]

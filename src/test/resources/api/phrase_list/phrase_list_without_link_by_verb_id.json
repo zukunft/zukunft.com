@@ -1,6 +1,6 @@
 [
     {
-        "id": 850,
+        "id": 851,
         "name": "agglomeration",
         "description": "urban core plus surrounding built\u2011up areas",
         "type_id": 1,
@@ -19,14 +19,14 @@
         "class": "triple"
     },
     {
-        "id": 188,
+        "id": 189,
         "name": "canton",
         "description": "a member state of the Swiss federation",
         "type_id": 1,
         "class": "word"
     },
     {
-        "id": 190,
+        "id": 191,
         "name": "city",
         "description": "a large permanent human settlement",
         "type_id": 1,
@@ -39,7 +39,7 @@
         "class": "triple"
     },
     {
-        "id": 191,
+        "id": 192,
         "protection": 3,
         "name": "company",
         "description": "legal entity made up of an association of people for the purpose of carrying on a commercial or industrial enterprise",
@@ -47,20 +47,20 @@
         "class": "word"
     },
     {
-        "id": 563,
+        "id": 564,
         "name": "Cooperative",
         "type_id": 1,
         "class": "word"
     },
     {
-        "id": 327,
+        "id": 328,
         "name": "country",
         "description": "a distinct part of the world, such as a state, nation, or other political entity.",
         "type_id": 1,
         "class": "word"
     },
     {
-        "id": 347,
+        "id": 348,
         "name": "currency",
         "description": "A currency is a system of money in common use within a specific environment over time, especially for people in a nation state. It is typically issued and controlled by a central bank or monetary authority and serves as a medium of exchange, unit of account, and store of value.",
         "type_id": 1,
@@ -132,14 +132,14 @@
         "class": "triple"
     },
     {
-        "id": 868,
+        "id": 869,
         "name": "region",
         "description": "an area of land larger than a city and its surroundings",
         "type_id": 1,
         "class": "word"
     },
     {
-        "id": 565,
+        "id": 566,
         "name": "scaling",
         "description": "the multiplication of a quantity by a constant factor",
         "type_id": 7,
@@ -153,7 +153,7 @@
         "class": "triple"
     },
     {
-        "id": 216,
+        "id": 217,
         "name": "solution",
         "description": "a homogeneous mixture of a solute dissolved in a solvent",
         "type_id": 1,
@@ -174,7 +174,7 @@
         "class": "word"
     },
     {
-        "id": 229,
+        "id": 230,
         "name": "warm",
         "description": "having or giving off heat",
         "type_id": 1,
