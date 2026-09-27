@@ -574,13 +574,16 @@ class value_ui_tests
         // data: the triple "x is symbol for factor" of scaling.json defines it
         $t->subheader($ts . 'factor');
         $val_fact = $tl->ui_value($t_val->value_factor());
-        // negative: without the symbol triple the request cache knows no symbol, so the factor is
-        // named like any other phrase of the value and nothing is lost
+        // negative: with the symbol triple in neither the preloaded nor the page phrases no symbol
+        // is known, so the factor is named like any other phrase of the value and nothing is lost
         $test_name = 'without the symbol triple the factor is named with the other phrases';
+        $phr_sys_keep = $ui_sys->typ_lst_cache->phr_sys;
+        $phr_lst_keep = $ui_sys->phr_lst;
+        $ui_sys->typ_lst_cache->phr_sys = new phrase_list_ui();
+        $ui_sys->phr_lst = new phrase_list_ui();
         $t->assert_text_contains($test_name, $val_fact->name_link($msg_ui),
             '>' . words::FACTOR . '</a>');
         // the request cache of the page supplies the symbol triple
-        $phr_lst_keep = $ui_sys->phr_lst;
         $ui_sys->phr_lst = $t_phr->list_factor_symbol_cache_ui();
         $fact_html = $val_fact->name_link($msg_ui);
         $test_name = 'the factor phrase is not named with the other phrases of the value';
@@ -596,7 +599,8 @@ class value_ui_tests
             url_var::ID . '=' . words::FACTOR_ID);
         $test_name = 'the other phrases of the value are still named';
         $t->assert_text_contains($test_name, $fact_html, word_names::MATH);
-        // the following tests use the request cache of the test setup again
+        // the following tests use the caches of the test setup again
+        $ui_sys->typ_lst_cache->phr_sys = $phr_sys_keep;
         $ui_sys->phr_lst = $phr_lst_keep;
 
         $t->subheader($ts . 'tooltips from the data object');

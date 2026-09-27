@@ -519,16 +519,16 @@ class base_ui_tests
         $res_canton->set_number(values::CANTON_ZH_INHABITANTS_2020_IN_MIO / values::CH_INHABITANTS_2019_IN_MIO);
         $res_canton_ui = new value_ui($res_canton->api_json([api_types::INCL_PHRASES]));
         // the percent sign is not coded but given by the triple "% is symbol for percent" of
-        // scaling.json, so the request cache of the page must know it (see phrase::symbol_name)
+        // scaling.json, which normally reaches the page with the initial cache load; it is set here
+        // as a phrase of the page, so that this test does not depend on the type_lists.json fixture
+        // that reset_db regenerates only after the unit tests (see phrase::symbol_name)
         $phr_lst_keep = $ui_sys->phr_lst;
         $ui_sys->phr_lst = $t_phr->list_percent_symbol_cache_ui();
         $res_canton_html = $res_canton_ui->value_edit($msg_ui);
         $res_canton_number = round((values::CANTON_ZH_INHABITANTS_2020_IN_MIO / values::CH_INHABITANTS_2019_IN_MIO) * 100, 2)
             . word_names::PERCENT_SYMBOL;
         $t->assert_text_contains('', $res_canton_html, $res_canton_number);
-        // the cache of the test setup is used again below, which knows the symbol triples only
-        // after reset_db has regenerated the type_lists.json fixture, because that happens after
-        // the unit tests (see system_view_ui_tests) and this test must not depend on the order
+        // the phrases of the test setup are used again for the snapshots below
         $ui_sys->phr_lst = $phr_lst_keep;
 
         // create the formula result list and the table to display the results

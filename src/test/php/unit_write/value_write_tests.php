@@ -210,7 +210,8 @@ class value_write_tests
         $api_msg = $pct_val->api_json([api_types::INCL_PHRASES]);
         $val_ui = new value_ui($api_msg);
         // the percent sign is not coded but given by the triple "% is symbol for percent" of
-        // scaling.json, so the request cache of the page must know it (see phrase::symbol_name)
+        // scaling.json, which normally reaches the page with the initial cache load; it is set here
+        // as a phrase of the page, so that this test does not depend on the cache of the test setup
         $phr_lst_keep = $ui_sys->phr_lst;
         $ui_sys->phr_lst = $t_phr->list_percent_symbol_cache_ui();
         $result = $val_ui->value($msg_ui);

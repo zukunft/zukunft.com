@@ -8,7 +8,7 @@ in a test file of the src/test/php/unit* folders; the count is by function name
 and cannot tell the classes apart, so a name that several classes declare needs
 2 calls per class and is listed as shared otherwise
 
-596 of 5848 public functions have at least 2 unit test calls; the 5252 functions below do not
+600 of 5848 public functions have at least 2 unit test calls; the 5248 functions below do not
 
 ## main backend
 
@@ -1541,7 +1541,6 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- src_grp_id - 0 unit test calls
     \-- update - 1 unit test calls shared by 5 classes
     \-- update_depending - 0 unit test calls
-    \-- val_formatted - 7 unit test calls shared by 4 classes
 \-- result_id
     \-- get_id - 0 unit test calls shared by 4 classes
 \-- result_list
@@ -4258,7 +4257,6 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- is_result - 0 unit test calls shared by 2 classes
     \-- name_linked - 0 unit test calls shared by 10 classes
     \-- obj_id - 2 unit test calls shared by 6 classes
-    \-- val_formatted - 7 unit test calls shared by 4 classes
 \-- figure_list
     \-- add - 27 unit test calls shared by 44 classes
     \-- api_mapper - 23 unit test calls shared by 100 classes
@@ -4847,7 +4845,6 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- set_phrases_by_is_list - 0 unit test calls
     \-- time_value - 1 unit test calls
     \-- url_mapper - 41 unit test calls shared by 27 classes
-    \-- val_formatted - 7 unit test calls shared by 4 classes
     \-- value - 12 unit test calls shared by 7 classes
     \-- value_linked - 0 unit test calls
     \-- value_type_selector - 0 unit test calls shared by 2 classes
@@ -5419,7 +5416,6 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- source_selector - 2 unit test calls shared by 4 classes
     \-- time_phrase - 0 unit test calls
     \-- url_mapper - 41 unit test calls shared by 27 classes
-    \-- val_formatted - 7 unit test calls shared by 4 classes
     \-- value - 12 unit test calls shared by 7 classes
     \-- value_link - 0 unit test calls
     \-- warning_text - 0 unit test calls

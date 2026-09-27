@@ -43,6 +43,7 @@ use Zukunft\ZukunftCom\main\php\web\component\execute\ui_base;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_list;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
 use Zukunft\ZukunftCom\main\php\web\result\result;
 use Zukunft\ZukunftCom\main\php\web\result\result_list;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
@@ -199,18 +200,27 @@ class result_ui_tests
         $t->assert($test_name, $res->val_formatted($msg), "123'456");
 
         // the percent sign is not coded but given by the triple "% is symbol for percent" of
-        // scaling.json, so it is shown only if the request cache of the page knows that triple
-        $test_name = 'percent values use the user config percent decimals';
+        // scaling.json, which reaches the page either with the initial cache load or with the
+        // phrases of the page, so both sources are set here instead of relying on the fixture
         $api_json = $t_res->result_pct()->api_json([api_types::TEST_MODE, api_types::INCL_PHRASES]);
         $res = new result($api_json);
+        $phr_sys_keep = $ui_sys->typ_lst_cache->phr_sys;
         $phr_lst_keep = $ui_sys->phr_lst;
+        $test_name = 'percent values use the user config percent decimals';
+        $ui_sys->typ_lst_cache->phr_sys = $t_phr->list_percent_symbol_cache_ui();
+        $ui_sys->phr_lst = new phrase_list_ui();
+        $t->assert($test_name, $res->val_formatted($msg), '1.23' . word_names::PERCENT_SYMBOL);
+        $test_name = '... also if only the phrases of the page know the symbol';
+        $ui_sys->typ_lst_cache->phr_sys = new phrase_list_ui();
         $ui_sys->phr_lst = $t_phr->list_percent_symbol_cache_ui();
         $t->assert($test_name, $res->val_formatted($msg), '1.23' . word_names::PERCENT_SYMBOL);
-        // negative: without the symbol triple the cache knows no symbol, so the number is shown
-        // without the sign instead of falling back to a coded one
-        $test_name = '... and without the symbol triple the number is shown without the sign';
-        $ui_sys->phr_lst = $phr_lst_keep;
+        // negative: with the symbol triple in neither cache the number is shown without the sign
+        // instead of falling back to a coded one
+        $test_name = '... but without the symbol triple in any cache the sign is missing';
+        $ui_sys->phr_lst = new phrase_list_ui();
         $t->assert($test_name, $res->val_formatted($msg), '1.23');
+        $ui_sys->typ_lst_cache->phr_sys = $phr_sys_keep;
+        $ui_sys->phr_lst = $phr_lst_keep;
 
         $test_name = 'a missing number returns an empty text';
         $res = new result();

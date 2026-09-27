@@ -744,10 +744,16 @@ class data_object
                 log_err_msg('the verb ' . $code_id . ' is missing, so the phrases of this verb '
                     . 'cannot be preloaded and a symbol of a number is not shown', $msg);
             } else {
-                $trp_lst = new triple_list($this->get_user());
-                $trp_lst->load_by_verb($vrb, $msg);
-                $this->sys_phr->merge($trp_lst->phrase_list());
-                $this->sys_phr->merge($trp_lst->phrase_parts());
+                // read page by page, because a symbol that the row limit of a single read cuts off
+                // would silently take the symbol away from every number that uses it
+                $page = 0;
+                do {
+                    $trp_lst = new triple_list($this->get_user());
+                    $trp_lst->load_by_verb($vrb, $msg, false, sql_db::ROW_LIMIT, $page);
+                    $this->sys_phr->merge($trp_lst->phrase_list());
+                    $this->sys_phr->merge($trp_lst->phrase_parts());
+                    $page++;
+                } while ($trp_lst->count() >= sql_db::ROW_LIMIT);
             }
         }
         return !$this->sys_phr->is_empty();
