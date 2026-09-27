@@ -2432,19 +2432,32 @@
       "assigned_word": "net primary production"
     }
   ],
+  "sources": [
+    {
+      "name": "Wunderlich 1868",
+      "description": "Carl Reinhold August Wunderlich: Das Verhalten der Eigenwärme in Krankheiten, Leipzig 1868; set 37 degree Celsius as the mean temperature of a healthy adult from about a million axillary readings; later studies find a slightly lower mean of about 36.6 degree Celsius"
+    },
+    {
+      "name": "Tjio and Levan 1956",
+      "description": "Joe Hin Tjio and Albert Levan: The chromosome number of man, Hereditas 42 (1-2), 1-6, 1956; the first count of 46 chromosomes in human somatic cells",
+      "url": "https://doi.org/10.1111/j.1601-5223.1956.tb03010.x"
+    }
+  ],
   "values": [
     {
       "words": [
         "normal human body temperature"
       ],
       "number": "37",
-      "share": "public"
+      "share": "public",
+      "source": "Wunderlich 1868"
     },
     {
       "words": [
         "human chromosome number"
       ],
       "number": "46",
+      "source": "Tjio and Levan 1956",
       "share": "public"
     }
   ]

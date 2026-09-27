@@ -2600,6 +2600,11 @@
     {
       "name": "BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover",
       "url": "https://www.bis.org/statistics/rpfx22_fx.htm"
+    },
+    {
+      "name": "Wikipedia Template:Most traded currencies",
+      "description": "the table of the most traded currencies on Wikipedia, which lists the shares of the BIS Triennial Central Bank Survey 2022 and adds the growth rate of each share from April 2019 to April 2022, calculated by the Wikipedia editors and not published by the BIS",
+      "url": "https://en.wikipedia.org/wiki/Template:Most_traded_currencies"
     }
   ],
   "values": [
@@ -2725,854 +2730,976 @@
         "US dollar",
         "Proportion of daily volume April 2019"
       ],
-      "number": 88.3
+      "number": 88.3,
+      "source": "BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover"
     },
     {
       "words": [
         "US dollar",
         "Proportion of daily volume April 2022"
       ],
-      "number": 88.5
+      "number": 88.5,
+      "source": "BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover"
     },
     {
       "words": [
         "US dollar",
         "Growth rate (2019–2022)"
       ],
-      "number": 0.2
+      "number": 0.2,
+      "source": "Wikipedia Template:Most traded currencies"
     },
     {
       "words": [
         "Euro",
         "Proportion of daily volume April 2019"
       ],
-      "number": 32.3
+      "number": 32.3,
+      "source": "BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover"
     },
     {
       "words": [
         "Euro",
         "Proportion of daily volume April 2022"
       ],
-      "number": 30.5
+      "number": 30.5,
+      "source": "BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover"
     },
     {
       "words": [
         "Euro",
         "Growth rate (2019–2022)"
       ],
-      "number": 5.5
+      "number": 5.5,
+      "source": "Wikipedia Template:Most traded currencies"
     },
     {
       "words": [
         "Japanese yen",
         "Proportion of daily volume April 2019"
       ],
-      "number": 16.8
+      "number": 16.8,
+      "source": "BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover"
     },
     {
       "words": [
         "Japanese yen",
         "Proportion of daily volume April 2022"
       ],
-      "number": 16.7
+      "number": 16.7,
+      "source": "BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover"
     },
     {
       "words": [
         "Japanese yen",
         "Growth rate (2019–2022)"
       ],
-      "number": 0.6
+      "number": 0.6,
+      "source": "Wikipedia Template:Most traded currencies"
     },
     {
       "words": [
         "Sterling",
         "Proportion of daily volume April 2019"
       ],
-      "number": 12.8
+      "number": 12.8,
+      "source": "BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover"
     },
     {
       "words": [
         "Sterling",
         "Proportion of daily volume April 2022"
       ],
-      "number": 12.9
+      "number": 12.9,
+      "source": "BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover"
     },
     {
       "words": [
         "Sterling",
         "Growth rate (2019–2022)"
       ],
-      "number": 0.7
+      "number": 0.7,
+      "source": "Wikipedia Template:Most traded currencies"
     },
     {
       "words": [
         "Renminbi",
         "Proportion of daily volume April 2019"
       ],
-      "number": 4.3
+      "number": 4.3,
+      "source": "BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover"
     },
     {
       "words": [
         "Renminbi",
         "Proportion of daily volume April 2022"
       ],
-      "number": 7
+      "number": 7,
+      "source": "BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover"
     },
     {
       "words": [
         "Renminbi",
         "Growth rate (2019–2022)"
       ],
-      "number": 62.7
+      "number": 62.7,
+      "source": "Wikipedia Template:Most traded currencies"
     },
     {
       "words": [
         "Australian dollar",
         "Proportion of daily volume April 2019"
       ],
-      "number": 6.8
+      "number": 6.8,
+      "source": "BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover"
     },
     {
       "words": [
         "Australian dollar",
         "Proportion of daily volume April 2022"
       ],
-      "number": 6.4
+      "number": 6.4,
+      "source": "BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover"
     },
     {
       "words": [
         "Australian dollar",
         "Growth rate (2019–2022)"
       ],
-      "number": 5.8
+      "number": 5.8,
+      "source": "Wikipedia Template:Most traded currencies"
     },
     {
       "words": [
         "Canadian dollar",
         "Proportion of daily volume April 2019"
       ],
-      "number": 5
+      "number": 5,
+      "source": "BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover"
     },
     {
       "words": [
         "Canadian dollar",
         "Proportion of daily volume April 2022"
       ],
-      "number": 6.2
+      "number": 6.2,
+      "source": "BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover"
     },
     {
       "words": [
         "Canadian dollar",
         "Growth rate (2019–2022)"
       ],
-      "number": 24
+      "number": 24,
+      "source": "Wikipedia Template:Most traded currencies"
     },
     {
       "words": [
         "Swiss franc",
         "Proportion of daily volume April 2019"
       ],
-      "number": 4.9
+      "number": 4.9,
+      "source": "BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover"
     },
     {
       "words": [
         "Swiss franc",
         "Proportion of daily volume April 2022"
       ],
-      "number": 5.2
+      "number": 5.2,
+      "source": "BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover"
     },
     {
       "words": [
         "Swiss franc",
         "Growth rate (2019–2022)"
       ],
-      "number": 6.1
+      "number": 6.1,
+      "source": "Wikipedia Template:Most traded currencies"
     },
     {
       "words": [
         "Hong Kong dollar",
         "Proportion of daily volume April 2019"
       ],
-      "number": 3.5
+      "number": 3.5,
+      "source": "BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover"
     },
     {
       "words": [
         "Hong Kong dollar",
         "Proportion of daily volume April 2022"
       ],
-      "number": 2.6
+      "number": 2.6,
+      "source": "BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover"
     },
     {
       "words": [
         "Hong Kong dollar",
         "Growth rate (2019–2022)"
       ],
-      "number": 25.7
+      "number": 25.7,
+      "source": "Wikipedia Template:Most traded currencies"
     },
     {
       "words": [
         "Singapore dollar",
         "Proportion of daily volume April 2019"
       ],
-      "number": 1.8
+      "number": 1.8,
+      "source": "BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover"
     },
     {
       "words": [
         "Singapore dollar",
         "Proportion of daily volume April 2022"
       ],
-      "number": 2.4
+      "number": 2.4,
+      "source": "BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover"
     },
     {
       "words": [
         "Singapore dollar",
         "Growth rate (2019–2022)"
       ],
-      "number": 33.3
+      "number": 33.3,
+      "source": "Wikipedia Template:Most traded currencies"
     },
     {
       "words": [
         "Swedish krona",
         "Proportion of daily volume April 2019"
       ],
-      "number": 2
+      "number": 2,
+      "source": "BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover"
     },
     {
       "words": [
         "Swedish krona",
         "Proportion of daily volume April 2022"
       ],
-      "number": 2.2
+      "number": 2.2,
+      "source": "BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover"
     },
     {
       "words": [
         "Swedish krona",
         "Growth rate (2019–2022)"
       ],
-      "number": 10
+      "number": 10,
+      "source": "Wikipedia Template:Most traded currencies"
     },
     {
       "words": [
         "South Korean won",
         "Proportion of daily volume April 2019"
       ],
-      "number": 2
+      "number": 2,
+      "source": "BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover"
     },
     {
       "words": [
         "South Korean won",
         "Proportion of daily volume April 2022"
       ],
-      "number": 1.9
+      "number": 1.9,
+      "source": "BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover"
     },
     {
       "words": [
         "South Korean won",
         "Growth rate (2019–2022)"
       ],
-      "number": 5
+      "number": 5,
+      "source": "Wikipedia Template:Most traded currencies"
     },
     {
       "words": [
         "Norwegian krone",
         "Proportion of daily volume April 2019"
       ],
-      "number": 1.8
+      "number": 1.8,
+      "source": "BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover"
     },
     {
       "words": [
         "Norwegian krone",
         "Proportion of daily volume April 2022"
       ],
-      "number": 1.7
+      "number": 1.7,
+      "source": "BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover"
     },
     {
       "words": [
         "Norwegian krone",
         "Growth rate (2019–2022)"
       ],
-      "number": 5.5
+      "number": 5.5,
+      "source": "Wikipedia Template:Most traded currencies"
     },
     {
       "words": [
         "New Zealand dollar",
         "Proportion of daily volume April 2019"
       ],
-      "number": 2.1
+      "number": 2.1,
+      "source": "BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover"
     },
     {
       "words": [
         "New Zealand dollar",
         "Proportion of daily volume April 2022"
       ],
-      "number": 1.7
+      "number": 1.7,
+      "source": "BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover"
     },
     {
       "words": [
         "New Zealand dollar",
         "Growth rate (2019–2022)"
       ],
-      "number": 19
+      "number": 19,
+      "source": "Wikipedia Template:Most traded currencies"
     },
     {
       "words": [
         "Indian rupee",
         "Proportion of daily volume April 2019"
       ],
-      "number": 1.7
+      "number": 1.7,
+      "source": "BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover"
     },
     {
       "words": [
         "Indian rupee",
         "Proportion of daily volume April 2022"
       ],
-      "number": 1.6
+      "number": 1.6,
+      "source": "BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover"
     },
     {
       "words": [
         "Indian rupee",
         "Growth rate (2019–2022)"
       ],
-      "number": 5.8
+      "number": 5.8,
+      "source": "Wikipedia Template:Most traded currencies"
     },
     {
       "words": [
         "Mexican peso",
         "Proportion of daily volume April 2019"
       ],
-      "number": 1.7
+      "number": 1.7,
+      "source": "BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover"
     },
     {
       "words": [
         "Mexican peso",
         "Proportion of daily volume April 2022"
       ],
-      "number": 1.5
+      "number": 1.5,
+      "source": "BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover"
     },
     {
       "words": [
         "Mexican peso",
         "Growth rate (2019–2022)"
       ],
-      "number": 11.7
+      "number": 11.7,
+      "source": "Wikipedia Template:Most traded currencies"
     },
     {
       "words": [
         "New Taiwan dollar",
         "Proportion of daily volume April 2019"
       ],
-      "number": 0.9
+      "number": 0.9,
+      "source": "BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover"
     },
     {
       "words": [
         "New Taiwan dollar",
         "Proportion of daily volume April 2022"
       ],
-      "number": 1.1
+      "number": 1.1,
+      "source": "BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover"
     },
     {
       "words": [
         "New Taiwan dollar",
         "Growth rate (2019–2022)"
       ],
-      "number": 22.2
+      "number": 22.2,
+      "source": "Wikipedia Template:Most traded currencies"
     },
     {
       "words": [
         "South African rand",
         "Proportion of daily volume April 2019"
       ],
-      "number": 1.1
+      "number": 1.1,
+      "source": "BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover"
     },
     {
       "words": [
         "South African rand",
         "Proportion of daily volume April 2022"
       ],
-      "number": 1
+      "number": 1,
+      "source": "BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover"
     },
     {
       "words": [
         "South African rand",
         "Growth rate (2019–2022)"
       ],
-      "number": 9
+      "number": 9,
+      "source": "Wikipedia Template:Most traded currencies"
     },
     {
       "words": [
         "Brazilian real",
         "Proportion of daily volume April 2019"
       ],
-      "number": 1.1
+      "number": 1.1,
+      "source": "BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover"
     },
     {
       "words": [
         "Brazilian real",
         "Proportion of daily volume April 2022"
       ],
-      "number": 0.9
+      "number": 0.9,
+      "source": "BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover"
     },
     {
       "words": [
         "Brazilian real",
         "Growth rate (2019–2022)"
       ],
-      "number": 18.1
+      "number": 18.1,
+      "source": "Wikipedia Template:Most traded currencies"
     },
     {
       "words": [
         "Danish krone",
         "Proportion of daily volume April 2019"
       ],
-      "number": 0.6
+      "number": 0.6,
+      "source": "BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover"
     },
     {
       "words": [
         "Danish krone",
         "Proportion of daily volume April 2022"
       ],
-      "number": 0.7
+      "number": 0.7,
+      "source": "BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover"
     },
     {
       "words": [
         "Danish krone",
         "Growth rate (2019–2022)"
       ],
-      "number": 16.6
+      "number": 16.6,
+      "source": "Wikipedia Template:Most traded currencies"
     },
     {
       "words": [
         "Polish złoty",
         "Proportion of daily volume April 2019"
       ],
-      "number": 0.6
+      "number": 0.6,
+      "source": "BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover"
     },
     {
       "words": [
         "Polish złoty",
         "Proportion of daily volume April 2022"
       ],
-      "number": 0.7
+      "number": 0.7,
+      "source": "BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover"
     },
     {
       "words": [
         "Polish złoty",
         "Growth rate (2019–2022)"
       ],
-      "number": 16.6
+      "number": 16.6,
+      "source": "Wikipedia Template:Most traded currencies"
     },
     {
       "words": [
         "Thai baht",
         "Proportion of daily volume April 2019"
       ],
-      "number": 0.5
+      "number": 0.5,
+      "source": "BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover"
     },
     {
       "words": [
         "Thai baht",
         "Proportion of daily volume April 2022"
       ],
-      "number": 0.4
+      "number": 0.4,
+      "source": "BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover"
     },
     {
       "words": [
         "Thai baht",
         "Growth rate (2019–2022)"
       ],
-      "number": 20
+      "number": 20,
+      "source": "Wikipedia Template:Most traded currencies"
     },
     {
       "words": [
         "Israeli new shekel",
         "Proportion of daily volume April 2019"
       ],
-      "number": 0.3
+      "number": 0.3,
+      "source": "BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover"
     },
     {
       "words": [
         "Israeli new shekel",
         "Proportion of daily volume April 2022"
       ],
-      "number": 0.4
+      "number": 0.4,
+      "source": "BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover"
     },
     {
       "words": [
         "Israeli new shekel",
         "Growth rate (2019–2022)"
       ],
-      "number": 33.3
+      "number": 33.3,
+      "source": "Wikipedia Template:Most traded currencies"
     },
     {
       "words": [
         "Indonesian rupiah",
         "Proportion of daily volume April 2019"
       ],
-      "number": 0.4
+      "number": 0.4,
+      "source": "BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover"
     },
     {
       "words": [
         "Indonesian rupiah",
         "Proportion of daily volume April 2022"
       ],
-      "number": 0.4
+      "number": 0.4,
+      "source": "BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover"
     },
     {
       "words": [
         "Indonesian rupiah",
         "Growth rate (2019–2022)"
       ],
-      "number": 0
+      "number": 0,
+      "source": "Wikipedia Template:Most traded currencies"
     },
     {
       "words": [
         "Czech koruna",
         "Proportion of daily volume April 2019"
       ],
-      "number": 0.4
+      "number": 0.4,
+      "source": "BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover"
     },
     {
       "words": [
         "Czech koruna",
         "Proportion of daily volume April 2022"
       ],
-      "number": 0.4
+      "number": 0.4,
+      "source": "BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover"
     },
     {
       "words": [
         "Czech koruna",
         "Growth rate (2019–2022)"
       ],
-      "number": 0
+      "number": 0,
+      "source": "Wikipedia Template:Most traded currencies"
     },
     {
       "words": [
         "UAE dirham",
         "Proportion of daily volume April 2019"
       ],
-      "number": 0.2
+      "number": 0.2,
+      "source": "BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover"
     },
     {
       "words": [
         "UAE dirham",
         "Proportion of daily volume April 2022"
       ],
-      "number": 0.4
+      "number": 0.4,
+      "source": "BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover"
     },
     {
       "words": [
         "UAE dirham",
         "Growth rate (2019–2022)"
       ],
-      "number": 100
+      "number": 100,
+      "source": "Wikipedia Template:Most traded currencies"
     },
     {
       "words": [
         "Turkish lira",
         "Proportion of daily volume April 2019"
       ],
-      "number": 1.1
+      "number": 1.1,
+      "source": "BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover"
     },
     {
       "words": [
         "Turkish lira",
         "Proportion of daily volume April 2022"
       ],
-      "number": 0.4
+      "number": 0.4,
+      "source": "BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover"
     },
     {
       "words": [
         "Turkish lira",
         "Growth rate (2019–2022)"
       ],
-      "number": 63.6
+      "number": 63.6,
+      "source": "Wikipedia Template:Most traded currencies"
     },
     {
       "words": [
         "Hungarian forint",
         "Proportion of daily volume April 2019"
       ],
-      "number": 0.4
+      "number": 0.4,
+      "source": "BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover"
     },
     {
       "words": [
         "Hungarian forint",
         "Proportion of daily volume April 2022"
       ],
-      "number": 0.3
+      "number": 0.3,
+      "source": "BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover"
     },
     {
       "words": [
         "Hungarian forint",
         "Growth rate (2019–2022)"
       ],
-      "number": 25
+      "number": 25,
+      "source": "Wikipedia Template:Most traded currencies"
     },
     {
       "words": [
         "Chilean peso",
         "Proportion of daily volume April 2019"
       ],
-      "number": 0.3
+      "number": 0.3,
+      "source": "BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover"
     },
     {
       "words": [
         "Chilean peso",
         "Proportion of daily volume April 2022"
       ],
-      "number": 0.3
+      "number": 0.3,
+      "source": "BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover"
     },
     {
       "words": [
         "Chilean peso",
         "Growth rate (2019–2022)"
       ],
-      "number": 0
+      "number": 0,
+      "source": "Wikipedia Template:Most traded currencies"
     },
     {
       "words": [
         "Saudi riyal",
         "Proportion of daily volume April 2019"
       ],
-      "number": 0.2
+      "number": 0.2,
+      "source": "BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover"
     },
     {
       "words": [
         "Saudi riyal",
         "Proportion of daily volume April 2022"
       ],
-      "number": 0.2
+      "number": 0.2,
+      "source": "BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover"
     },
     {
       "words": [
         "Saudi riyal",
         "Growth rate (2019–2022)"
       ],
-      "number": 0
+      "number": 0,
+      "source": "Wikipedia Template:Most traded currencies"
     },
     {
       "words": [
         "Philippine peso",
         "Proportion of daily volume April 2019"
       ],
-      "number": 0.3
+      "number": 0.3,
+      "source": "BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover"
     },
     {
       "words": [
         "Philippine peso",
         "Proportion of daily volume April 2022"
       ],
-      "number": 0.2
+      "number": 0.2,
+      "source": "BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover"
     },
     {
       "words": [
         "Philippine peso",
         "Growth rate (2019–2022)"
       ],
-      "number": 33.3
+      "number": 33.3,
+      "source": "Wikipedia Template:Most traded currencies"
     },
     {
       "words": [
         "Malaysian ringgit",
         "Proportion of daily volume April 2019"
       ],
-      "number": 0.2
+      "number": 0.2,
+      "source": "BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover"
     },
     {
       "words": [
         "Malaysian ringgit",
         "Proportion of daily volume April 2022"
       ],
-      "number": 0.2
+      "number": 0.2,
+      "source": "BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover"
     },
     {
       "words": [
         "Malaysian ringgit",
         "Growth rate (2019–2022)"
       ],
-      "number": 0
+      "number": 0,
+      "source": "Wikipedia Template:Most traded currencies"
     },
     {
       "words": [
         "Colombian peso",
         "Proportion of daily volume April 2019"
       ],
-      "number": 0.2
+      "number": 0.2,
+      "source": "BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover"
     },
     {
       "words": [
         "Colombian peso",
         "Proportion of daily volume April 2022"
       ],
-      "number": 0.2
+      "number": 0.2,
+      "source": "BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover"
     },
     {
       "words": [
         "Colombian peso",
         "Growth rate (2019–2022)"
       ],
-      "number": 0
+      "number": 0,
+      "source": "Wikipedia Template:Most traded currencies"
     },
     {
       "words": [
         "Russian ruble",
         "Proportion of daily volume April 2019"
       ],
-      "number": 1.1
+      "number": 1.1,
+      "source": "BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover"
     },
     {
       "words": [
         "Russian ruble",
         "Proportion of daily volume April 2022"
       ],
-      "number": 0.2
+      "number": 0.2,
+      "source": "BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover"
     },
     {
       "words": [
         "Russian ruble",
         "Growth rate (2019–2022)"
       ],
-      "number": 81.8
+      "number": 81.8,
+      "source": "Wikipedia Template:Most traded currencies"
     },
     {
       "words": [
         "Romanian leu",
         "Proportion of daily volume April 2019"
       ],
-      "number": 0.1
+      "number": 0.1,
+      "source": "BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover"
     },
     {
       "words": [
         "Romanian leu",
         "Proportion of daily volume April 2022"
       ],
-      "number": 0.1
+      "number": 0.1,
+      "source": "BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover"
     },
     {
       "words": [
         "Romanian leu",
         "Growth rate (2019–2022)"
       ],
-      "number": 0
+      "number": 0,
+      "source": "Wikipedia Template:Most traded currencies"
     },
     {
       "words": [
         "Peruvian sol",
         "Proportion of daily volume April 2019"
       ],
-      "number": 0.1
+      "number": 0.1,
+      "source": "BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover"
     },
     {
       "words": [
         "Peruvian sol",
         "Proportion of daily volume April 2022"
       ],
-      "number": 0.1
+      "number": 0.1,
+      "source": "BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover"
     },
     {
       "words": [
         "Peruvian sol",
         "Growth rate (2019–2022)"
       ],
-      "number": 0
+      "number": 0,
+      "source": "Wikipedia Template:Most traded currencies"
     },
     {
       "words": [
         "Bahraini dinar",
         "Proportion of daily volume April 2019"
       ],
-      "number": 0
+      "number": 0,
+      "source": "BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover"
     },
     {
       "words": [
         "Bahraini dinar",
         "Proportion of daily volume April 2022"
       ],
-      "number": 0
+      "number": 0,
+      "source": "BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover"
     },
     {
       "words": [
         "Bahraini dinar",
         "Growth rate (2019–2022)"
       ],
-      "number": 0
+      "number": 0,
+      "source": "Wikipedia Template:Most traded currencies"
     },
     {
       "words": [
         "Bulgarian lev",
         "Proportion of daily volume April 2019"
       ],
-      "number": 0
+      "number": 0,
+      "source": "BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover"
     },
     {
       "words": [
         "Bulgarian lev",
         "Proportion of daily volume April 2022"
       ],
-      "number": 0
+      "number": 0,
+      "source": "BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover"
     },
     {
       "words": [
         "Bulgarian lev",
         "Growth rate (2019–2022)"
       ],
-      "number": 0
+      "number": 0,
+      "source": "Wikipedia Template:Most traded currencies"
     },
     {
       "words": [
         "Argentine peso",
         "Proportion of daily volume April 2019"
       ],
-      "number": 0.1
+      "number": 0.1,
+      "source": "BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover"
     },
     {
       "words": [
         "Argentine peso",
         "Proportion of daily volume April 2022"
       ],
-      "number": 0
+      "number": 0,
+      "source": "BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover"
     },
     {
       "words": [
         "Argentine peso",
         "Growth rate (2019–2022)"
       ],
-      "number": 100
+      "number": 100,
+      "source": "Wikipedia Template:Most traded currencies"
     },
     {
       "words": [
         "Other",
         "Proportion of daily volume April 2019"
       ],
-      "number": 1.8
+      "number": 1.8,
+      "source": "BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover"
     },
     {
       "words": [
         "Other",
         "Proportion of daily volume April 2022"
       ],
-      "number": 2.3
+      "number": 2.3,
+      "source": "BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover"
     },
     {
       "words": [
         "Other",
         "Growth rate (2019–2022)"
       ],
-      "number": 27.7
+      "number": 27.7,
+      "source": "Wikipedia Template:Most traded currencies"
     },
     {
       "words": [
         "total",
         "Proportion of daily volume April 2019"
       ],
-      "number": 200
+      "number": 200,
+      "source": "BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover"
     },
     {
       "words": [
         "total",
         "Proportion of daily volume April 2022"
       ],
-      "number": 200
+      "number": 200,
+      "source": "BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover"
     }
   ],
   "formulas": [

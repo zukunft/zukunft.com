@@ -1655,6 +1655,16 @@
       "description": "Journal Article\nPopulist Leaders and the Economy\n\nAmerican Economic Review, 113 (2): 3249-3288 ",
       "url": "https://www.ifw-kiel.de/fileadmin/Dateiverwaltung/IfW-Publications/fis-import/63738460-817f-4a88-837b-794a7c021251-KWP_2169_update_june_2022.pdf",
       "type": "pdf"
+    },
+    {
+      "name": "IMF World Economic Outlook 2024",
+      "description": "International Monetary Fund, World Economic Outlook database 2024, GDP at current prices in US dollars: world 2024 about 110047 billion, Germany 2023 about 4456 billion, Switzerland 2023 about 885 billion.",
+      "url": "https://www.imf.org/en/Publications/WEO"
+    },
+    {
+      "name": "UN World Population Prospects 2024",
+      "description": "United Nations, World Population Prospects 2024: world population about 8.09 billion mid-2023 and 8.16 billion mid-2024, about 8.5 billion projected for 2030; global total fertility rate about 2.25 children per woman in 2023.",
+      "url": "https://population.un.org/wpp/"
     }
   ],
   "values": [
@@ -1665,7 +1675,9 @@
         "population",
         "billion"
       ],
-      "number": "8.5"
+      "number": "8.5",
+      "source": "UN World Population Prospects 2024",
+      "description": "the world population projected for 2030 (medium variant), the horizon of the start page ranking; the estimate for mid-2024 is 8.16 billion"
     },
     {
       "words": [
@@ -1675,7 +1687,9 @@
         "EUR",
         "2024"
       ],
-      "number": "110047109"
+      "number": "110047109",
+      "source": "IMF World Economic Outlook 2024",
+      "description": "the IMF world GDP 2024, which the IMF states in US dollars; the EUR label is still open (see docs/llm/pending_prio_2.md)"
     },
     {
       "words": [
@@ -1997,10 +2011,11 @@
         "human",
         "population",
         "billion",
-        "low"
+        "low",
+        "assumed"
       ],
       "number": "5.67",
-      "description": "80 percent probability range, factor 1.5 on the centre"
+      "description": "80 percent probability range, factor 1.5 on the centre; an own assessment, the sourced centre divided by the factor of a structural number of the range table"
     },
     {
       "words": [
@@ -2008,10 +2023,11 @@
         "human",
         "population",
         "billion",
-        "high"
+        "high",
+        "assumed"
       ],
       "number": "12.75",
-      "description": "80 percent probability range, factor 1.5 on the centre"
+      "description": "80 percent probability range, factor 1.5 on the centre; an own assessment, the sourced centre times the factor of a structural number of the range table"
     },
     {
       "words": [
@@ -2020,10 +2036,11 @@
         "million",
         "EUR",
         "2024",
-        "low"
+        "low",
+        "assumed"
       ],
       "number": "73364739",
-      "description": "80 percent probability range, factor 1.5 on the centre"
+      "description": "80 percent probability range, factor 1.5 on the centre; an own assessment, the sourced centre divided by the factor of a structural number of the range table"
     },
     {
       "words": [
@@ -2032,10 +2049,11 @@
         "million",
         "EUR",
         "2024",
-        "high"
+        "high",
+        "assumed"
       ],
       "number": "165070664",
-      "description": "80 percent probability range, factor 1.5 on the centre"
+      "description": "80 percent probability range, factor 1.5 on the centre; an own assessment, the sourced centre times the factor of a structural number of the range table"
     },
     {
       "words": [

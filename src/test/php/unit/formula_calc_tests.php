@@ -163,7 +163,7 @@ class formula_calc_tests
             $frm_html = new formula_dsp($frm->api_json());
             $trm_lst_ui = new term_list_dsp($trm_lst->api_json());
             $result = $frm_html->dsp_text($msg_ui, [], $trm_lst_ui);
-            $target = '<a href="/http/result_edit.php?id=' . $fig_lst->get_first_id() . '" title="8.51">8.51</a>';
+            $target = '<a href="/http/result_edit.php?id=' . $fig_lst->get_first_id() . '" title="8.67">8.67</a>';
             $t->assert($test_name, $result, $target);
         }
         */

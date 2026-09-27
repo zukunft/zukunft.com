@@ -172,7 +172,11 @@ class phrase_list_read_tests
         $t->assert_contains($test_name, $trp_lst->names(), triple_names::GLOBAL_WARMING_PROBLEM);
         $names_by_id = [];
         foreach ($trp_lst->lst() as $trp) {
-            $names_by_id[$trp->id() * -1] = $trp->name();
+            // a triple of a test word is created and deleted by every run, so its id changes
+            // each time and it is no part of the fixed list of the seed data
+            if (!in_array($trp->get_from()?->name(), word_names::TEST_WORDS)) {
+                $names_by_id[$trp->id() * -1] = $trp->name();
+            }
         }
         ksort($names_by_id);
         $this->assert_names_file($t, '... and are the saved fixed list', $names_by_id, 'list_is_a.csv');

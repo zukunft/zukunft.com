@@ -214,6 +214,9 @@
       "description": "Bloom, D. E., Canning, D. & Sevilla, J. (2004): The Effect of Health on Economic Growth: A Production Function Approach. World Development, 32(1), 1-13.",
       "doi": "10.1016/j.worlddev.2003.07.002",
       "type": "pdf"
+    },
+    {
+      "name": "IMF World Economic Outlook 2024"
     }
   ],
   "values": [
@@ -244,6 +247,7 @@
         "2024"
       ],
       "number": "110.047109",
+      "source": "IMF World Economic Outlook 2024",
       "description": "the world GDP of solution_prio.json in trillion instead of million EUR, so that the annual damage of a problem can be calculated within this file"
     },
     {

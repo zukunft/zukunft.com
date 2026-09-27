@@ -1367,6 +1367,9 @@
       "description": "Black, Liu, Parry, Vernon, 2023: IMF Fossil Fuel Subsidies Data: 2023 Update. IMF Working Paper WP/23/169. Total subsidies 7 trillion USD in 2022; full price reform would cut global CO2 about 43 percent below baseline by 2030.",
       "url": "https://www.imf.org/en/publications/wp/issues/2023/08/22/imf-fossil-fuel-subsidies-data-2023-update-537281",
       "doi": "10.5089/9798400249006.001"
+    },
+    {
+      "name": "IMF World Economic Outlook 2024"
     }
   ],
   "values": [
@@ -1425,6 +1428,7 @@
         "2024"
       ],
       "number": "110.047109",
+      "source": "IMF World Economic Outlook 2024",
       "description": "the world GDP of solution_prio.json in trillion instead of million EUR, so that the annual damage of a problem can be calculated within this file"
     },
     {

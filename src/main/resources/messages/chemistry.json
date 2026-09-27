@@ -2415,19 +2415,26 @@
       "assigned_word": "atomic number"
     }
   ],
+  "sources": [
+    {
+      "name": "CODATA 2018"
+    }
+  ],
   "values": [
     {
       "words": [
         "Faraday constant"
       ],
       "number": "96485.33212",
-      "share": "public"
+      "share": "public",
+      "source": "CODATA 2018"
     },
     {
       "words": [
         "standard molar volume"
       ],
-      "number": "0.022413969954",
+      "number": "0.02241396954",
+      "source": "CODATA 2018",
       "share": "public"
     }
   ]

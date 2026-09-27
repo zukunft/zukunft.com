@@ -209,6 +209,9 @@
       "description": "Berns, G. S., Chappelow, J., Zink, C. F., Pagnoni, G., Martin-Skurski, M. E. & Richards, J. (2005): Neurobiological Correlates of Social Conformity and Independence During Mental Rotation. Biological Psychiatry, 58(4), 245-253.",
       "doi": "10.1016/j.biopsych.2005.04.012",
       "type": "pdf"
+    },
+    {
+      "name": "IMF World Economic Outlook 2024"
     }
   ],
   "values": [
@@ -241,6 +244,7 @@
         "2024"
       ],
       "number": "110.047109",
+      "source": "IMF World Economic Outlook 2024",
       "description": "the world GDP of solution_prio.json in trillion instead of million EUR, so that the annual damage of a problem can be calculated within this file"
     },
     {

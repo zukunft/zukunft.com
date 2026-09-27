@@ -110,7 +110,7 @@ class view_write_tests
         // TODO review and activate
         //$t->dsp_contains(', view->display "' . $msk->name() . '" for "' . $wrd->name() . '" contains', $target, $result, $t::TIMEOUT_LIMIT_LONG);
         // check if the view contains at least one value
-        $target = 'back=' . $wrd->id() . '">8.51</a>';
+        $target = 'back=' . $wrd->id() . '">8.67</a>';
         /* TODO fix the result display
         $t->dsp_contains(', view->display "' . $msk->name . '" for "' . $wrd->name() . '" contains', $result, $target);
         // check if the view contains at least the main formulas
@@ -118,7 +118,7 @@ class view_write_tests
         $t->dsp_contains(', view->display "' . $msk->name . '" for "' . $wrd->name() . '" contains', $result, $target);
         */
         /* TODO fix the result loading
-        $target = 'back='.$wrd->id.'">0.79%</a>';
+        $target = 'back='.$wrd->id.'">0.75%</a>';
         $t->dsp_contains(', view->display "' . $msk->name . '" for "' . $wrd->name() . '" contains', $result, $target);
         */
 

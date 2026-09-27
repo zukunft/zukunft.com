@@ -1193,9 +1193,14 @@
       "words": [
         "Nestlé",
         "Prepared dishes",
+        "sales",
+        "CHF",
+        "million",
         "2016"
       ],
-      "number": "6512"
+      "number": "12148",
+      "source": "Consolidated Financial Statements of the Nestlé Group 2016",
+      "description": "the sales of the category prepared dishes and cooking aids (note 3.2); the former 6512 was only the frozen and chilled part of it (Nestlé Annual Review 2016, page 48)"
     },
     {
       "words": [

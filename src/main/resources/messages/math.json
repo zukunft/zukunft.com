@@ -3259,20 +3259,29 @@
       "assigned_word": "continuous compounding"
     }
   ],
+  "sources": [
+    {
+      "name": "by definition"
+    }
+  ],
   "values": [
     {
       "words": [
         "tau"
       ],
       "number": "6.283185307179586",
-      "share": "public"
+      "share": "public",
+      "source": "by definition",
+      "description": "tau is defined as two times pi"
     },
     {
       "words": [
         "golden ratio"
       ],
       "number": "1.618033988749895",
-      "share": "public"
+      "share": "public",
+      "source": "by definition",
+      "description": "the golden ratio is defined as (1 + square root of 5) / 2"
     }
   ]
 }

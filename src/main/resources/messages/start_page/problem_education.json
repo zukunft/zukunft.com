@@ -209,6 +209,9 @@
       "description": "World Bank, UNESCO, UNICEF, FCDO, USAID, BMGF (2022): The State of Global Learning Poverty - 2022 Update. Learning poverty is the share of 10-year-olds who cannot read and understand a simple text.",
       "url": "https://www.worldbank.org/en/topic/education",
       "type": "pdf"
+    },
+    {
+      "name": "IMF World Economic Outlook 2024"
     }
   ],
   "values": [
@@ -240,6 +243,7 @@
         "2024"
       ],
       "number": "110.047109",
+      "source": "IMF World Economic Outlook 2024",
       "description": "the world GDP of solution_prio.json in trillion instead of million EUR, so that the annual damage of a problem can be calculated within this file"
     },
     {

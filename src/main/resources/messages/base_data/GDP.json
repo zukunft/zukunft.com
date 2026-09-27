@@ -339,12 +339,10 @@
     },
     {
       "name": "IMF World Economic Outlook 2024",
-      "description": "International Monetary Fund, nominal GDP at current prices 2023 (current US dollars): Germany ~4456 bn, Switzerland ~885 bn.",
       "url": "https://www.imf.org/en/Publications/WEO"
     },
     {
       "name": "UN World Population Prospects 2024",
-      "description": "United Nations, World Population Prospects 2024: world population about 8.09 billion mid-2023 and 8.16 billion mid-2024; global total fertility rate about 2.25 children per woman in 2023.",
       "url": "https://population.un.org/wpp/"
     }
   ],
@@ -431,15 +429,6 @@
     },
     {
       "words": [
-        "United States",
-        "net exports",
-        "2023",
-        "USD"
-      ],
-      "number": "-945300000000"
-    },
-    {
-      "words": [
         "Germany",
         "GDP",
         "2023",
@@ -477,30 +466,6 @@
       ],
       "number": "8849852",
       "source": "UN World Population Prospects 2024"
-    },
-    {
-      "words": [
-        "United States",
-        "GDP per capita",
-        "USD"
-      ],
-      "number": "81698.37"
-    },
-    {
-      "words": [
-        "Germany",
-        "GDP per capita",
-        "USD"
-      ],
-      "number": "52745.76"
-    },
-    {
-      "words": [
-        "Switzerland",
-        "GDP per capita",
-        "USD"
-      ],
-      "number": "99994.89"
     }
   ],
   "formulas": [

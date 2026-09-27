@@ -1261,6 +1261,9 @@
     {
       "name": "UNDP",
       "url": "https://hdr.undp.org"
+    },
+    {
+      "name": "by definition"
     }
   ],
   "values": [
@@ -1451,6 +1454,7 @@
         "year"
       ],
       "number": "19",
+      "source": "by definition",
       "description": "the age of a teenager is below 20"
     },
     {
@@ -1461,7 +1465,8 @@
         "year"
       ],
       "number": "65",
-      "description": "a pensioner is older than 64"
+      "source": "by definition",
+      "description": "a pensioner is older than 64, the reference age of the Swiss old-age insurance (AHV, federal act art. 21), which the AHV 21 reform raises to 65 for women too by 2028"
     },
     {
       "words": [

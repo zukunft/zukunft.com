@@ -52,7 +52,7 @@ class source_write_tests
 
         // init
         $t_src = new test_sources($t);
-        $msg = new user_message();
+        $msg = new user_message($t->usr1);
 
         // start the test section (ts)
         $ts = 'db write source ';
@@ -64,6 +64,39 @@ class source_write_tests
 
         $t->subheader($ts . 'for ' . sources::SYSTEM_TEST_ADD);
         $t->assert_write_named($t_src->source_filled_add(), sources::SYSTEM_TEST_ADD, $msg);
+
+        $t->subheader($ts . 'same name with another link');
+        $test_name = 'add the test source with its url';
+        $src = $t_src->source_filled_add();
+        $t->assert_true($test_name, $src->save($msg));
+        $msg->reset();
+
+        $test_name = 'adding the same source name with another url is rejected';
+        $src_other = $t_src->source_add_other_url();
+        $t->assert_false($test_name, $src_other->save($msg));
+        $msg->reset();
+
+        $test_name = '... and the existing source keeps its url';
+        $src_db = new source($t->usr1);
+        $src_db->load_by_name(sources::SYSTEM_TEST_ADD, $msg);
+        $t->assert($test_name, $src_db->url, sources::BFS_ULR);
+        $msg->reset();
+
+        $test_name = 'add a second source with another url';
+        $src_ren = $t_src->source_renamed_other_url();
+        $t->assert_true($test_name, $src_ren->save($msg));
+        $msg->reset();
+
+        $test_name = 'renaming it to the name of the first source is rejected';
+        $src_ren->set_name(sources::SYSTEM_TEST_ADD);
+        $t->assert_false($test_name, $src_ren->save($msg));
+        $msg->reset();
+
+        $test_name = '... and the second source keeps its name';
+        $src_db = new source($t->usr1);
+        $src_db->load_by_id($src_ren->id(), $msg);
+        $t->assert($test_name, $src_db->name(), sources::SYSTEM_TEST_RENAMED);
+        $msg->reset();
 
         /*
         TODO remove but check upfront the replacement

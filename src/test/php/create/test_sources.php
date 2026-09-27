@@ -163,6 +163,53 @@ class test_sources extends test_objects
     }
 
     /**
+     * @return source that is about to be added with the name of the reserved source but another
+     *                url, which must not be merged into the reserved source
+     */
+    function source_reserved_other_url(): source
+    {
+        $src = $this->source_reserved();
+        $src->id = 0;
+        $src->url = sources::BFS_ULR;
+        return $src;
+    }
+
+    /**
+     * @return source that is about to be added with the name and url of the filled source but
+     *                another doi, which must not be merged into the filled source
+     */
+    function source_filled_other_doi(): source
+    {
+        $src = $this->source_filled_included();
+        $src->id = 0;
+        $src->doi = sources::TEST_DOI_OTHER;
+        return $src;
+    }
+
+    /**
+     * @return source with the name of the db write test source but another url, which the save of
+     *                a new source must reject once the test source has been added
+     */
+    function source_add_other_url(): source
+    {
+        $src = $this->source_filled_add();
+        $src->url = sources::SIB_URL;
+        return $src;
+    }
+
+    /**
+     * @return source with the renamed test name and another url, which the save must reject
+     *                when it is renamed to the name of the db write test source
+     */
+    function source_renamed_other_url(): source
+    {
+        $src = new source($this->env->usr1);
+        $src->set_name(sources::SYSTEM_TEST_RENAMED);
+        $src->url = sources::SIB_URL;
+        return $src;
+    }
+
+    /**
      * @return source used for the reference
      */
     function source_ref(): source

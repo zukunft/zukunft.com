@@ -223,6 +223,9 @@
       "description": "Free Software Foundation Europe (2017): Public Money, Public Code. Demands that software developed with public funds is released as free software.",
       "url": "https://publiccode.eu",
       "type": "api"
+    },
+    {
+      "name": "IMF World Economic Outlook 2024"
     }
   ],
   "values": [
@@ -256,6 +259,7 @@
         "2024"
       ],
       "number": "110.047109",
+      "source": "IMF World Economic Outlook 2024",
       "description": "the world GDP of solution_prio.json in trillion instead of million EUR, so that the annual damage of a problem can be calculated within this file"
     },
     {

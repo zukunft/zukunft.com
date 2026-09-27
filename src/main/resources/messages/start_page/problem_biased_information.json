@@ -950,6 +950,9 @@
       "description": "Linstone, H. A. & Turoff, M. (Eds.) (1975): The Delphi Method: Techniques and Applications. Addison-Wesley.",
       "url": "https://web.njit.edu/~turoff/pubs/delphibook/index.html",
       "type": "api"
+    },
+    {
+      "name": "IMF World Economic Outlook 2024"
     }
   ],
   "values": [
@@ -982,6 +985,7 @@
         "2024"
       ],
       "number": "110.047109",
+      "source": "IMF World Economic Outlook 2024",
       "description": "the world GDP of solution_prio.json in trillion instead of million EUR, so that the annual damage of a problem can be calculated within this file"
     },
     {

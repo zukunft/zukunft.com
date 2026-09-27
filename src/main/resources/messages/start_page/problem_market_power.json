@@ -274,6 +274,9 @@
       "description": "Konrad, K. A., Mueller, W. & Morath, F. (2010): Taxation and Market Power. Discussion Paper SP II 2010-07, WZB Berlin Social Science Center.",
       "url": "https://www.wzb.eu/en",
       "type": "api"
+    },
+    {
+      "name": "IMF World Economic Outlook 2024"
     }
   ],
   "values": [
@@ -335,6 +338,7 @@
         "2024"
       ],
       "number": "110.047109",
+      "source": "IMF World Economic Outlook 2024",
       "description": "the world GDP of solution_prio.json in trillion instead of million EUR, so that the annual damage of a problem can be calculated within this file"
     },
     {

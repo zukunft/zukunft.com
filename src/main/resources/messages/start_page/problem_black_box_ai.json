@@ -1017,6 +1017,9 @@
       "description": "Official result of the Swiss popular vote of 26 September 2021 on the \"99 percent initiative\": rejected with 64.9 percent no votes and by every canton.",
       "url": "https://www.bk.admin.ch/",
       "type": "api"
+    },
+    {
+      "name": "IMF World Economic Outlook 2024"
     }
   ],
   "values": [
@@ -1048,6 +1051,7 @@
         "2024"
       ],
       "number": "110.047109",
+      "source": "IMF World Economic Outlook 2024",
       "description": "the world GDP of solution_prio.json in trillion instead of million EUR, so that the annual damage of a problem can be calculated within this file"
     },
     {

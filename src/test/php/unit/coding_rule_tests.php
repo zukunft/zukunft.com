@@ -41,6 +41,7 @@ include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED_CONST . 'files.php';
+include_once paths::SHARED_CONST . 'sources.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once test_paths::UTILS . 'code_test_coverage.php';
@@ -51,6 +52,7 @@ include_once test_paths::CONST . 'files.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\shared\const\files;
+use Zukunft\ZukunftCom\main\php\shared\const\sources;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
@@ -155,6 +157,8 @@ class coding_rule_tests
         $t->subheader($ts . 'import json consistency');
         // TODO Prio 3 maybe switch it on as a warning
         //$this->json_no_measured_value_tests($t);
+        $this->json_value_source_tests($t);
+        $this->json_source_link_tests($t);
         $this->json_view_component_defined_tests($t);
         $this->json_section_covered_tests($t);
         $this->json_file_loaded_tests($t);
@@ -243,6 +247,93 @@ class coding_rule_tests
 
         $test_name = 'no import json adds a "' . json_validation::MEASURED_VALUE . '" qualifier';
         $t->assert($test_name, implode(', ', $names), '');
+    }
+
+    /**
+     * verify that no source name of the main data links to two different urls or dois, because
+     * the initial import merges a source by its name, so the second link would be rejected or
+     * would replace the first one; the conflict detection is shared with test/json_validation.php
+     *
+     * @param test_cleanup $t the test environment
+     * @return void
+     */
+    function json_source_link_tests(test_cleanup $t): void
+    {
+        $test_name = 'a source name with two different urls is listed';
+        $chk = new json_validation();
+        $src = [json_fields::NAME => sources::WIKIDATA, json_fields::URL => sources::SIB_URL];
+        $src_other = [json_fields::NAME => sources::WIKIDATA, json_fields::URL => sources::BFS_ULR];
+        // two file names of the main data as the keys of the files that declare the source
+        $hits = $chk->source_link_conflicts([
+            files::SYSTEM_VIEWS_FILE => [json_fields::SOURCES => [$src]],
+            files::BASE_VIEWS_FILE => [json_fields::SOURCES => [$src_other]],
+        ]);
+        $t->assert($test_name, count($hits), 1);
+
+        $test_name = 'a source name with the same url or without a url is not listed';
+        $src_name_only = [json_fields::NAME => sources::WIKIDATA];
+        $hits = $chk->source_link_conflicts([
+            files::SYSTEM_VIEWS_FILE => [json_fields::SOURCES => [$src]],
+            files::BASE_VIEWS_FILE => [json_fields::SOURCES => [$src, $src_name_only]],
+        ]);
+        $t->assert($test_name, $hits, []);
+
+        $test_name = 'no source name of the main data links to two different urls or dois';
+        $json_by_file = [];
+        foreach ($chk->json_file_list(files::MESSAGE_PATH) as $path) {
+            $json_array = json_decode(file_get_contents($path), true);
+            if (is_array($json_array)) {
+                $json_by_file[basename($path)] = $json_array;
+            }
+        }
+        $t->assert($test_name, implode(', ', $chk->source_link_conflicts($json_by_file)), '');
+    }
+
+    /**
+     * verify that the source check of json_validation lists a measured value without a source
+     * and a source that the file does not define, but neither an assumed value nor a value with
+     * a defined source; the main data is only listed in docs/json_findings.md and not asserted,
+     * because many values still wait for their source
+     *
+     * @param test_cleanup $t the test environment
+     * @return void
+     */
+    function json_value_source_tests(test_cleanup $t): void
+    {
+        $test_name = 'a measured value without a source is listed';
+        $chk = new json_validation();
+        $phr_names = [words::YEAR];
+        $val = [json_fields::WORDS => $phr_names, json_fields::NUMBER => 1];
+        $hits = $chk->value_source_hits([json_fields::VALUES => [$val]]);
+        $t->assert($test_name, array_keys($hits),
+            [json_validation::SOURCE_MISSING . ' - ' . json_encode($phr_names, json_validation::SAMPLE_ENCODING)]);
+
+        $test_name = 'an assumed value without a source is not listed';
+        $val[json_fields::WORDS] = [words::YEAR, words::ASSUMED];
+        $hits = $chk->value_source_hits([json_fields::VALUES => [$val]]);
+        $t->assert($test_name, array_keys($hits), []);
+
+        $test_name = 'a probability range factor without a source is not listed';
+        $val[json_fields::WORDS] = [words::YEAR, triples::PROBABILITY_RANGE_FACTOR, words::LOW];
+        $hits = $chk->value_source_hits([json_fields::VALUES => [$val]]);
+        $t->assert($test_name, array_keys($hits), []);
+
+        $test_name = 'a confidence without a source is not listed';
+        $val[json_fields::WORDS] = [words::YEAR, words::CONFIDENCE];
+        $hits = $chk->value_source_hits([json_fields::VALUES => [$val]]);
+        $t->assert($test_name, array_keys($hits), []);
+
+        $test_name = 'a value with a source of the file is not listed';
+        $val = [json_fields::WORDS => $phr_names, json_fields::SOURCE_NAME => sources::WIKIDATA];
+        $src = [json_fields::NAME => sources::WIKIDATA];
+        $hits = $chk->value_source_hits([json_fields::SOURCES => [$src], json_fields::VALUES => [$val]]);
+        $t->assert($test_name, array_keys($hits), []);
+
+        $test_name = 'a value with a source that the file does not define is listed';
+        $hits = $chk->value_source_hits([json_fields::VALUES => [$val]]);
+        $src_key = json_validation::SOURCE_NOT_IN_FILE . ' "' . sources::WIKIDATA . '" - '
+            . json_encode($phr_names, json_validation::SAMPLE_ENCODING);
+        $t->assert($test_name, array_keys($hits), [$src_key]);
     }
 
     /**

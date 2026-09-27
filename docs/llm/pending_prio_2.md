@@ -6,6 +6,8 @@ the value page of a geo value shows no geolocation, while a text value is alread
 
 ## tests
 
+add to the json_validation test a check for which words, triples, verb, formula or type objects a description is missing
+
 add a write workflow test for the formula add from a word page: the confirmed add must also write the formula link to the phrase of the '7'-prefixed link vars (frontend::add_link_of_new), which the unit tests cannot check because they never write the formula
 
 ## data cleanup for final database setup
@@ -1563,3 +1565,12 @@ pure html value add view with one form (ui_select::value_add_fields):
   for a form submit or a get action mask (frontend::request_triggers_action); only the
   signup_confirm workflow passes $submit_acts = true so far. make the view.php gate the default
   for all workflows and regenerate their snapshots in one change
+- the world GDP of 110.047109 trillion EUR 2024 (110047109 million EUR in solution_prio.json and
+  one copy per start_page/problem_*.json) is sourced to the IMF World Economic Outlook 2024, which
+  states it in USD, so the EUR label is probably wrong: 110 trillion USD are about 101 trillion EUR.
+  fix the unit or the number and regenerate the start page chains, because every potential loss of
+  the ranking is calculated from it
+- the low and high bounds of the world GDP and of the global human population in
+  solution_prio.json (factor 1.5 on the centre) are stated values marked "assumed"; they could be
+  replaced by range factor results like the bounds of the problem files, so that the factor is
+  stated once and the bounds follow the centre

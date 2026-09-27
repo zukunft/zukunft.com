@@ -248,6 +248,9 @@
       "description": "Brynjolfsson, E., Collis, A., Diewert, W. E., Eggers, F. & Fox, K. J. (2019): GDP-B: Accounting for the Value of New and Free Goods in the Digital Economy. NBER Working Paper 25695.",
       "url": "https://ssrn.com/abstract=3356697",
       "type": "pdf"
+    },
+    {
+      "name": "IMF World Economic Outlook 2024"
     }
   ],
   "values": [
@@ -303,6 +306,7 @@
         "2024"
       ],
       "number": "110.047109",
+      "source": "IMF World Economic Outlook 2024",
       "description": "the world GDP of solution_prio.json in trillion instead of million EUR, so that the annual damage of a problem can be calculated within this file"
     },
     {

@@ -952,6 +952,9 @@
       "description": "World Bank: the international extreme poverty line of 2.15 USD per person and day in 2017 purchasing power parity, used to count the people in extreme poverty.",
       "url": "https://www.worldbank.org/en/topic/poverty",
       "type": "api"
+    },
+    {
+      "name": "IMF World Economic Outlook 2024"
     }
   ],
   "values": [
@@ -984,6 +987,7 @@
         "2024"
       ],
       "number": "110.047109",
+      "source": "IMF World Economic Outlook 2024",
       "description": "the world GDP of solution_prio.json in trillion instead of million EUR, so that the annual damage of a problem can be calculated within this file"
     },
     {
