@@ -161,6 +161,9 @@ class json_validation
     const string CHK_CROSS_NAME = 'triple name with different keys across the main data';
     const string CHK_CROSS_KEY = 'triple key with different names across the main data';
     const string CHK_CROSS_DESC = 'description differs across the main data';
+    const string CHK_CROSS_SOURCE = 'source with different links across the main data';
+    // the fields of a source that link to the publication and must be the same in every file
+    const array SOURCE_LINK_FIELDS = [json_fields::URL, json_fields::DOI];
     const string CHK_CMP_PHRASE = 'component uses a phrase that no main data file defines';
     const string CHK_NOT_LOADED = 'json file that neither an import nor a test reads';
     const string CHK_SECTION = 'import section not covered by this check';
@@ -362,6 +365,11 @@ class json_validation
             . ' descriptions and stops the whole file with "description is ... instead of ...";'
             . ' the description belongs in the home file (the one imported first, see'
             . ' docs/llm/json_structure.md) and every other file repeats the name without it');
+        $md_txt .= $this->section_md(self::CHK_CROSS_SOURCE, $find_lst,
+            'the import merges a source by its name, so a second url or doi for the same name'
+            . ' is either rejected by the system import (no_upd) or silently replaces the first'
+            . ' link, and the values of the first file then point to a publication they are not'
+            . ' taken from; give the second publication its own source name or use the same link');
         $md_txt .= $this->section_md(self::CHK_CMP_PHRASE, $find_lst,
             'a component selects its rows and columns by the phrase name, so a name that no file'
             . ' of the pod defines can never be resolved and the component stays empty; define'
@@ -404,6 +412,7 @@ class json_validation
         }
         $this->cross_file_hits($result);
         $this->cross_description_hits($result);
+        $this->cross_source_hits($result);
         $this->component_phrase_hits($result);
         $this->section_check_hits($result);
         foreach ($result as $chk => $sec_lst) {
@@ -499,6 +508,69 @@ class json_validation
                 }
             }
         }
+    }
+
+    /**
+     * check that the main data files agree on the url and the doi of a source name
+     *
+     * only the main data, because these files are all imported into the same pod
+     *
+     * @param array $find_lst (in/out) map of the check name and the folder to the findings
+     * @return void
+     */
+    private function cross_source_hits(array &$find_lst): void
+    {
+        $sec = array_key_first(self::SCAN_PATHS);
+        $json_by_file = [];
+        foreach ($this->json_file_list(self::SCAN_PATHS[$sec]) as $file_path) {
+            $json_array = json_decode(file_get_contents($file_path), true);
+            if (is_array($json_array)) {
+                $json_by_file[basename($file_path)] = $json_array;
+            }
+        }
+        foreach ($this->source_link_conflicts($json_by_file) as $hit) {
+            $find_lst[self::CHK_CROSS_SOURCE][$sec][] = $hit;
+        }
+    }
+
+    /**
+     * the source names that the given files link to more than one url or doi
+     *
+     * a source without a link is the correct re-declaration of a borrowed source, so only a filled
+     * link is a claim and only two filled ones can disagree
+     *
+     * @param array $json_by_file map of the file name to the decoded json file
+     * @return array one finding per source name and link field with more than one link
+     */
+    function source_link_conflicts(array $json_by_file): array
+    {
+        $links = [];
+        foreach ($json_by_file as $file_name => $json_array) {
+            foreach ($json_array[json_fields::SOURCES] ?? [] as $src) {
+                if (is_array($src)) {
+                    $name = $src[json_fields::NAME] ?? '';
+                    foreach (self::SOURCE_LINK_FIELDS as $fld) {
+                        $link = $src[$fld] ?? '';
+                        if (is_string($link) and trim($link) != '' and $name != '') {
+                            $links[$name][$fld][trim($link)] ??= $file_name;
+                        }
+                    }
+                }
+            }
+        }
+        $result = [];
+        foreach ($links as $name => $fld_lst) {
+            foreach ($fld_lst as $fld => $link_lst) {
+                if (count($link_lst) > 1) {
+                    $dsp = [];
+                    foreach ($link_lst as $link => $file) {
+                        $dsp[] = '"' . $link . '" (' . $file . ')';
+                    }
+                    $result[] = 'source "' . $name . '" - ' . $fld . ' ' . implode(' vs ', $dsp);
+                }
+            }
+        }
+        return $result;
     }
 
     /**

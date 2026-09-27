@@ -1,9 +1,5 @@
 # pending prio 2
 
-## sources
-
-make sure that at least the initial import does not import a source with the same name but two different urls of doi links
-
 ## frontend values
 
 the value page of a geo value shows no geolocation, while a text value is already shown (see the value_default_value_geo snapshot); add the mapping of json_fields::GEO_VALUE to the frontend value object (web/value/value.php) and show the geolocation on the value page

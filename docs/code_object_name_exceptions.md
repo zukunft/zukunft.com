@@ -36,7 +36,7 @@ phrase: $country, $dbo, $dbo_ui, $debug_phr, $e_sym, $from, $max_phr, $new_phras
 protection_type_list: $lst
 ref: $dbo, $dbo_ui, $obj, $ref2, $ref_empty, $ref_filled, $ref_new, $ref_obj, $ref_plain, $std_rec, $type
 result: $ch_increase, $dbo, $dbo_ui, $grp_res, $k_val, $obj, $res_canton, $res_city, $res_db, $res_map, $res_no_id, $res_plain, $res_tab, $res_ui, $res_upd, $result, $rst
-source: $dbo, $dbo_ui, $msk, $obj, $scr_ui, $src1, $src2, $src_filled, $src_no_url, $src_plain, $src_tab, $src_ui, $src_unused, $src_usr2, $src_usr2_reloaded
+source: $dbo, $dbo_ui, $msk, $obj, $scr_ui, $src1, $src2, $src_db, $src_filled, $src_no_url, $src_plain, $src_tab, $src_ui, $src_unused, $src_usr2, $src_usr2_reloaded
 sql_message: $msg, $msg_sql
 sys_log: $dbo, $dbo_ui, $err, $err_entry, $log, $log_ui, $new, $sys_log
 term: $frm, $msk, $result, $term, $trm_by_obj_id, $trm_case, $trm_start, $trm_wrd, $trm_zero, $trp, $vrb, $wrd

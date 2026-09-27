@@ -63,6 +63,8 @@ class sources
     const string BFS_ULR = 'https://www.bfs.admin.ch/bfs/en/home.html';
     // the digital object identifier used for testing (the doi of the zukunft.com concept paper)
     const string TEST_DOI = '10.5281/zenodo.19443909';
+    // a second doi used only to test that one source name cannot link to two publications
+    const string TEST_DOI_OTHER = '10.5281/zenodo.19443910';
     const int TRUST_ME_BRO_ID = 14;
     const string TRUST_ME_BRO = 'my estimates';
     const string SYSTEM_TEST_ADD = 'System Test Source';
