@@ -33,8 +33,10 @@
 namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::SHARED_CONST . 'views.php';
+include_once test_paths::CONST . 'files.php';
 
 use Zukunft\ZukunftCom\main\php\web\user\user;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
@@ -42,6 +44,7 @@ use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\shared\const\views as view_shared;
+use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -55,7 +58,7 @@ class spacial_cases_ui_tests
         $ui = new frontend('spacial_cases_ui_tests');
         $usr_ui = new user($t->usr1->api_json());
         $msg = new user_message($usr_ui);
-        $ui->load_dummy_cache_from_test_resources($msg);
+        $ui->load_dummy_cache_from_test_resources($msg, file_get_contents(test_files::TYPE_LISTS_CACHE));
 
         // start the test section (ts)
         $ts = 'unit ui html system view ';

@@ -48,6 +48,7 @@ include_once 'test_const.php';
 include_once TEST_PHP_PATH . 'test_app.php';
 
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
+use Zukunft\ZukunftCom\test\php\const\files as test_files;
 
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
@@ -105,7 +106,7 @@ if ($db_con->is_open()) {
             $ui = new frontend('full data load tests');
             $usr_ui = new user_ui($t->usr1->api_json());
             $msg_ui = new user_message_ui($usr_ui);
-            $ui->load_dummy_cache_from_test_resources($msg_ui);
+            $ui->load_dummy_cache_from_test_resources($msg_ui, file_get_contents(test_files::TYPE_LISTS_CACHE));
 
             // run the unit tests upfront (no database connection needed)
             $t->run_unit($ui);
@@ -113,7 +114,7 @@ if ($db_con->is_open()) {
             // create the html frontend pages based on the url (no database access)
             if ($sys->errors <= ERROR_LIMIT and FRONTEND_TEST) {
                 $ui = new frontend('unit ui tests');
-                $ui->load_dummy_cache_from_test_resources($msg_ui);
+                $ui->load_dummy_cache_from_test_resources($msg_ui, file_get_contents(test_files::TYPE_LISTS_CACHE));
                 new all_ui_tests()->run($t, $ui);
             }
 

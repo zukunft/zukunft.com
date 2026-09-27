@@ -148,14 +148,6 @@ class value_list extends sandbox_value_list
         $result = false;
         if ($db_rows != null) {
             foreach ($db_rows as $db_row) {
-                // TODO remove temp
-                if (array_key_exists(group_fields::FLD_ID, $db_row)) {
-                    if ($db_row[group_fields::FLD_ID] == '....0/-....2t+....39+....3o+....3p+......+......+......+......+......+......+......+......+......+......+......+') {
-                        log_info('got value');
-                    }
-                } else {
-                    log_info('group id missing');
-                }
                 $excluded = null;
                 if (array_key_exists(fields::FLD_EXCLUDED, $db_row)) {
                     $excluded = $db_row[fields::FLD_EXCLUDED];

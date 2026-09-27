@@ -98,10 +98,7 @@ include_once html_paths::SHARED . 'url_var.php';
 include_once html_paths::SHARED . 'json_fields.php';
 include_once html_paths::SHARED . 'library.php';
 
-//include_once test_paths::CONST . 'word_names.php';
-
 use Zukunft\ZukunftCom\main\php\api\api_message;
-use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\button;
@@ -856,6 +853,14 @@ class word extends sandbox_code_id
     }
 
     /**
+     * @return bool true if the word has the type "factor" (e.g. "factor")
+     */
+    function is_factor(user_message $msg): bool
+    {
+        return $this->is_type(phrase_types::FACTOR, $msg);
+    }
+
+    /**
      * @return bool true if the word is normally not shown to the user e.g. scaling of one is assumed
      */
     function is_hidden(user_message $msg): bool
@@ -1006,8 +1011,8 @@ class word extends sandbox_code_id
     function math(): word
     {
         $wrd = new word();
-        $wrd->id = word_names::MATH_ID;
-        $wrd->name = word_names::MATH;
+        $wrd->id = words::MATH_ID;
+        $wrd->name = words::MATH;
         return $wrd;
     }
 

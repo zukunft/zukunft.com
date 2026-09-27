@@ -38,7 +38,6 @@
 namespace Zukunft\ZukunftCom\main\php\web\component\execute;
 
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
-use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once html_paths::DB . 'sql_db.php';
 include_once html_paths::COMPONENT . 'component.php';
@@ -47,7 +46,7 @@ include_once html_paths::COMPONENT . 'component_list.php';
 include_once html_paths::EXECUTE . 'ui_base.php';
 include_once html_paths::FORMULA . 'formula.php';
 include_once html_paths::FORMULA . 'formula_link.php';
-include_once html_paths::FORMULA . 'formula_list.php';
+//include_once html_paths::FORMULA . 'formula_list.php';
 include_once html_paths::CONST . 'icons.php';
 include_once html_paths::HTML . 'html_names.php';
 include_once html_paths::HTML . 'html_base.php';
@@ -91,7 +90,6 @@ include_once html_paths::SHARED_TYPES . 'view_styles.php';
 include_once html_paths::SHARED . 'api.php';
 include_once html_paths::SHARED . 'url_var.php';
 include_once html_paths::SHARED . 'library.php';
-include_once test_paths::CONST . 'word_names.php';
 
 use Zukunft\ZukunftCom\main\php\web\component\component;
 use Zukunft\ZukunftCom\main\php\web\component\component_link;
@@ -139,7 +137,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
-use Zukunft\ZukunftCom\test\php\const\word_names;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
 
 class system_form extends component
 {
@@ -2133,7 +2131,7 @@ class system_form extends component
         // TODO use a pattern base on user entry
         $pattern = '';
         if ($test_mode) {
-            $pattern = word_names::MATH;
+            $pattern = words::MATH;
         }
 
         // get the selected phrase id
@@ -2199,7 +2197,7 @@ class system_form extends component
         // TODO use a pattern base on user entry
         $pattern = '';
         if ($test_mode) {
-            $pattern = word_names::MATH;
+            $pattern = words::MATH;
         }
 
         // get the selected phrase id
@@ -2265,7 +2263,7 @@ class system_form extends component
         // TODO use a pattern base on user entry
         $pattern = '';
         if ($test_mode) {
-            $pattern = word_names::MATH;
+            $pattern = words::MATH;
         }
 
         // get the selected phrase id
@@ -2313,7 +2311,7 @@ class system_form extends component
         // TODO use a pattern base on user entry
         $pattern = '';
         if ($test_mode) {
-            $pattern = word_names::MATH;
+            $pattern = words::MATH;
         }
 
         // get the selected phrase id

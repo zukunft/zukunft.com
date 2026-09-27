@@ -86,7 +86,6 @@ use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\web\word\word_list;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
-use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
 use Zukunft\ZukunftCom\main\php\shared\enum\languages;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -347,7 +346,6 @@ class phrase_list extends sandbox_list_named
     {
         $result = false;
         if ($this->is_empty()) {
-            // TODO Prio 3 replace with an frequently generated preloaded list
             $this->set_lst($this->phrases_often_used($msg)->lst());
             $result = true;
         }
@@ -355,23 +353,17 @@ class phrase_list extends sandbox_list_named
     }
 
     /**
+     * the phrases that the system uses most often are part of the initial cache load, so they are
+     * known even if the backend connection is temporary lost (see api\ui_config::api_json)
+     *
      * @return phrase_list with the most often used phrases as a frontend fallback list
      */
     private function phrases_often_used(user_message $msg): phrase_list
     {
+        global $ui_sys;
+
         $lst = new phrase_list();
-        foreach (words::BASE_WORDS as $wrd_array) {
-            $wrd = new word();
-            $wrd->set_name($wrd_array[0]);
-            $wrd->set_id($wrd_array[1]);
-            $lst->add($wrd->phrase(), $msg);
-        }
-        foreach (triples::BASE_TRIPLES as $trp_array) {
-            $trp = new triple();
-            $trp->set_name($trp_array[0]);
-            $trp->set_id($trp_array[1]);
-            $lst->add($trp->phrase(), $msg);
-        }
+        $lst->merge($ui_sys?->typ_lst_cache?->phr_sys ?? new phrase_list(), $msg);
         return $lst;
     }
 
@@ -826,6 +818,34 @@ class phrase_list extends sandbox_list_named
                             and $trp->get_from()?->id() == $phr->id()) {
                             $result = $this->cached_phrase($trp->get_to())->get_description() ?? '';
                         }
+                    }
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the phrase that "is symbol for" the given phrase, e.g. "x" for the factor, taken from this
+     * list, which is usually the request cache with the related phrases (the mirror of tooltip)
+     *
+     * @param phrase $phr the phrase whose symbol is searched
+     * @return phrase|null the symbol phrase or null if this list has no symbol of the given phrase
+     */
+    function symbol_of(phrase $phr): ?phrase
+    {
+        global $ui_sys;
+
+        $result = null;
+        $vrb = $ui_sys?->typ_lst_cache?->vrb?->get_by_code_id(verbs::SYMBOL);
+        if ($vrb != null) {
+            foreach ($this->lst() as $cac_phr) {
+                if ($cac_phr->is_triple() and $result == null) {
+                    $trp = $cac_phr->obj();
+                    // the symbol is the from side, so the phrase it stands for is the to side
+                    if ($trp->get_verb()?->id() == $vrb->id()
+                        and $trp->get_to()?->id() == $phr->id()) {
+                        $result = $trp->get_from();
                     }
                 }
             }
@@ -1349,11 +1369,53 @@ class phrase_list extends sandbox_list_named
      */
     function has_percent(user_message $msg): bool
     {
-        $result = false;
+        return $this->percent_phrase($msg) != null;
+    }
+
+    /**
+     * the phrase of this list that forces the percent format, so that the caller can ask it for
+     * its symbol (see phrase::symbol_name)
+     *
+     * @return phrase|null the percent phrase or null if no phrase of this list forces the format
+     */
+    function percent_phrase(user_message $msg): ?phrase
+    {
+        $result = null;
         foreach ($this->lst() as $phr) {
-            if ($phr->is_percent($msg)) {
-                $result = true;
+            if ($phr->is_percent($msg) and $result == null) {
+                $result = $phr;
             }
+        }
+        return $result;
+    }
+
+    /**
+     * the phrases that are shown as a symbol behind the number instead of being named with the
+     * other phrases of the number, e.g. the factor of "13.2 x" (see phrase::number_symbol)
+     *
+     * @return phrase_list the phrases of this list that have a symbol
+     */
+    function symbol_phrases(user_message $msg): phrase_list
+    {
+        $result = new phrase_list();
+        foreach ($this->lst() as $phr) {
+            if ($phr->number_symbol($msg) != '') {
+                $result->add_phrase($phr);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the symbols of the phrases of this list, each linked to its phrase, e.g. the "x" of a factor
+     *
+     * @return string the html code of the symbols, empty if no phrase of this list has one
+     */
+    function symbol_links(user_message $msg): string
+    {
+        $result = '';
+        foreach ($this->lst() as $phr) {
+            $result .= $phr->number_symbol($msg);
         }
         return $result;
     }

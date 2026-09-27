@@ -464,7 +464,35 @@ class sandbox_value extends sandbox
     {
         $html = new html_base();
         $num_grey = $html->span($this->val_formatted($msg), styles::STYLE_GREY);
-        return $this->grp->phrase_link_list($phr_lst_exclude) . $sep . $num_grey;
+        return $this->phrase_link_list($msg, $phr_lst_exclude) . $sep . $num_grey . $this->number_symbols($msg);
+    }
+
+    /**
+     * the phrases of this number as links, without the phrases already shown in the context and
+     * without the phrases that are shown as a symbol behind the number (see number_symbols)
+     *
+     * @param phrase_list|null $phr_lst_exclude the phrases already shown in the context e.g. a table header
+     * @return string the html code of the phrase links
+     */
+    function phrase_link_list(user_message $msg, ?phrase_list $phr_lst_exclude = null): string
+    {
+        $exclude = new phrase_list();
+        if ($phr_lst_exclude != null) {
+            $exclude->merge($phr_lst_exclude, $msg);
+        }
+        $exclude->merge($this->grp->phr_lst()->symbol_phrases($msg), $msg);
+        return $this->grp->phrase_link_list($exclude);
+    }
+
+    /**
+     * the symbol of every phrase of this number that is shown behind the number instead of being
+     * named with the other phrases, e.g. the "x" of a factor (see phrase::number_symbol)
+     *
+     * @return string the html code of the symbol links, empty if no phrase of the number has one
+     */
+    function number_symbols(user_message $msg): string
+    {
+        return $this->grp->phr_lst()->symbol_links($msg);
     }
 
     /**
@@ -492,7 +520,7 @@ class sandbox_value extends sandbox
 
         if (!$this->is_null()) {
             if ($this->is_percent($msg)) {
-                $result = round($this->number() * 100, $cfg->percent_decimals()) . "%";
+                $result = round($this->number() * 100, $cfg->percent_decimals()) . $this->percent_symbol($msg);
             } else {
                 if ($this->number() >= 1000 or $this->number() <= -1000) {
                     $result .= number_format($this->number(), 0, $cfg->dec_point(), $cfg->thousand_sep());
@@ -519,6 +547,19 @@ class sandbox_value extends sandbox
         } else {
             return false;
         }
+    }
+
+    /**
+     * the symbol that is shown behind a percent number, e.g. "%"
+     *
+     * the symbol is not coded but given by a triple e.g. "% is symbol for percent", so it is shown
+     * only if the request cache knows that triple (see phrase::symbol_name)
+     *
+     * @return string the symbol name, empty if the cache knows no symbol of the percent phrase
+     */
+    function percent_symbol(user_message $msg): string
+    {
+        return $this->grp->phr_lst()->percent_phrase($msg)?->symbol_name() ?? '';
     }
 
     /**

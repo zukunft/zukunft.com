@@ -32,8 +32,6 @@
 
 namespace Zukunft\ZukunftCom\main\php\shared\const;
 
-use Zukunft\ZukunftCom\test\php\const\word_names;
-
 class views
 {
 
@@ -1452,7 +1450,7 @@ class views
     // it should be checked during the build process that the word, triples and views exists
     // and that the result with the base setup still looks fine
     const array PHRASE_VIEWS = [
-        word_names::CURRENCY => self::CONFIRM_MASKS_IDS
+        words::CURRENCY => self::CONFIRM_MASKS_IDS
     ];
 
 

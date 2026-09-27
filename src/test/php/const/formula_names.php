@@ -34,6 +34,7 @@
 
 namespace Zukunft\ZukunftCom\test\php\const;
 
+use Zukunft\ZukunftCom\main\php\shared\const\formulas as shared_formulas;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 
@@ -45,7 +46,8 @@ class formula_names
     // *_ID is the expected database id only used for system testing
     // *_EXP is the formula expression in the human-readable format
     // *_DB is the formula expression in the database reference format
-    const int NOT_SET_ID = 0;
+    // the frontend preselects these formulas, so their ids are defined in the shared const
+    const int NOT_SET_ID = shared_formulas::NOT_SET_ID;
     const string SCALE_TO_SEC = 'scale minute to sec';
     const string SCALE_TO_SEC_EXP = '"second (time)" = "minute" * 60';
     const string SCALE_TO_SEC_EXP_REF = '{w24}={w104}*60';
@@ -70,8 +72,8 @@ class formula_names
     const int PRIOR_ID = 20;
     const string PRIOR_EXP = '=value["time jump"->,"Now"->"follower"]';
     const string PERCENT = 'percent';
-    const string INCREASE = 'increase';
-    const int INCREASE_ID = 21;
+    const string INCREASE = shared_formulas::INCREASE;
+    const int INCREASE_ID = shared_formulas::INCREASE_ID;
     const string INCREASE_EXP = '"' . words::PERCENT . '" = ( "' . word_names::THIS_NAME . '" - "' . word_names::PRIOR_NAME . '" ) / "' . word_names::PRIOR_NAME . '"';
     const string INCREASE_TEST_EXP = '"' . word_names::TEST_PERCENT . '" = ( "' . word_names::TEST_THIS . '" - "' . word_names::TEST_PRIOR . '" ) / "' . word_names::TEST_PRIOR . '"';
     const string INCREASE_ALTERNATIVE_EXP = '"' . words::PERCENT . '" = 1 - ( "' . word_names::THIS_NAME . '" / "' . word_names::PRIOR_NAME . '" )';
@@ -100,10 +102,10 @@ class formula_names
     const int SCALE_BIL_TO_ONE_ID = 17;
     const string SCALE_BIL_TO_ONE_EXP = '"' . word_names::ONE . '" = "' . word_names::BILLION . '" * 1000000000';
     const string SCALE_TRILLION_TO_ONE = 'scale trillion to one';
-    const int SCALE_TRILLION_TO_ONE_ID = 22;
+    const int SCALE_TRILLION_TO_ONE_ID = 23;
     const string SCALE_TRILLION_TO_ONE_EXP = '"' . word_names::ONE . '" = "' . word_names::TRILLION . '" * 1000000000000';
     const string GLOBAL_HTP = 'global happy time points';
-    const int GLOBAL_HTP_ID = 23;
+    const int GLOBAL_HTP_ID = 24;
     const string GLOBAL_HTP_EXP = '"' . word_names::HTP . '" = "' . word_names::HTP . '","' . words::PERCENT
         . '" * "' . word_names::GLOBAL . '","' . word_names::HUMAN . '","' . word_names::POPULATION . '"';
     const string JOULE_DEF = 'definition of joule';
@@ -123,7 +125,7 @@ class formula_names
     const string PARTS_IN_PERCENT_EXP = '"' . words::PERCENT . '" = "parts" "' . verbs::OF_NAME . '" / "total"'; // TODO check if separate verb "of each" is needed
     const string PARTS_IN_PERCENT_DB = '{w' . words::PCT_ID . '}={w' . word_names::PARTS_ID . '}{v' . verbs::OF_ID . '}/{w' . words::TOTAL_ID . '}';
     const string CITY_POPULATION = 'city population';
-    const int CITY_POPULATION_ID = 26;
+    const int CITY_POPULATION_ID = 27;
     const string CITY_POPULATION_EXP = '"total" = &sum; ( "inhabitants" "of all" "city" )';
 
     // persevered formula names for unit and integration tests

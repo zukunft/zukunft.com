@@ -1,5 +1,50 @@
 # pending - list of planned llm prompts with prio 1
 
+## phrase types
+
+add a phrase type 'value quality' and assign the type to the word 'assumed'. Add in the json which defines 'assumed' add alternative value quality type phrases e.g. 'peer reviewed by quality journal' 
+
+add and group the 'value qualities' at least like:
+
+Conjecture (no direct observation)
+
+assumed value — plain guess, no source; the base case
+expert estimate — single expert's judgment, named but unverified
+delphi consensus — aggregated estimate from a Delphi/Real-Time-Delphi round (fits your existing method)
+extrapolated value — projection from past data beyond the observed range
+interpolated value — filled in between two known values
+model result — output of a simulation/model; quality is bounded by its inputs
+calculated value — formula result inside zukunft.com; inherits the lowest quality of its inputs (worth making this inheritance rule explicit)
+
+Reported (observed, but by an interested or single party)
+
+self reported — survey answer, company disclosure, questionnaire
+single measurement — one observation, no repetition
+repeated measurement — same method, several observations, same team
+official statistic — statistical office, central bank, regulator
+audited value — checked by an independent third party (financial audit, certified lab)
+
+Scientific (method documented, exposed to challenge)
+
+preprint — published, not yet reviewed
+observational study — cohort / case-control / cross-sectional
+peer reviewed — passed journal review
+pre-registered study — hypothesis and method fixed before data collection
+randomized controlled trial
+double blind randomized controlled trial
+independently replicated — reproduced by a different team
+meta-analysis / systematic review — pooled across studies
+
+Fixed by convention (not measured at all)
+
+defined value — exact by definition, e.g. the speed of light in SI
+legal value — set by law or contract, e.g. a tax rate or CBAM benchmark
+proven value — mathematically derived, no empirical uncertaint
+
+add Status: disputed, retracted, superseded, outdated — a peer-reviewed value can still be retracted, so this shouldn't be a rung on the ladder.
+
+add a Confidence number and description to all value quality phrases: The quality type gives a sensible default (e.g. assumed value → 0.3, double blind RCT → 0.9) but should stay overridable, because a small double-blind trial can deserve less confidence than a large observational cohort.
+
 ## result and value default view
 
 in title of the value and result default view show the scaling and measure type phrases behind the value e.g. for http://localhost/http/view.php?m=9&id=....0R-....1S%2B....1V%2B....2D%2B....2F%2B....2p%2B......%2B......%2B......%2B......%2B......%2B......%2B......%2B......%2B......%2B......%2B&9m=1&9dls=20&9dlc=2&9dlr=1 'assumed, black-box AI, loss, potential 0.22 trillion EUR' instead of 'EUR, assumed, black-box AI, loss, potential, trillion 0.22'

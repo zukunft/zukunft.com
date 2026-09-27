@@ -38,8 +38,11 @@ namespace Zukunft\ZukunftCom\main\php\web\types;
 
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
+// including of the child objects is deactivated to avoid loops in including and to keep this file,
+// which the frontend init loads, free of the value and view chain (see web\helper\data_object)
 //include_once html_paths::COMPONENT . 'component.php';
 //include_once html_paths::FORMULA . 'formula.php';
+//include_once html_paths::PHRASE . 'phrase_list.php';
 //include_once html_paths::REF . 'ref.php';
 //include_once html_paths::REF . 'source.php';
 include_once html_paths::SYSTEM . 'language.php';
@@ -94,6 +97,7 @@ use Zukunft\ZukunftCom\main\php\web\system\language;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\verb\verb;
 use Zukunft\ZukunftCom\main\php\web\view\view;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
 use Zukunft\ZukunftCom\main\php\web\view\view_list as view_list_ui;
 use Zukunft\ZukunftCom\main\php\web\word\triple;
 use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
@@ -140,6 +144,8 @@ class type_lists
     public ?change_table_list $cng_tbl = null;
     public ?change_field_list $cng_fld = null;
     public ?view_list_ui $msk_sys = null;
+    // the phrases of the initial cache load e.g. the symbol triples (see verbs::PRELOAD_VERBS)
+    public ?phrase_list_ui $phr_sys = null;
 
 
     /*
@@ -402,6 +408,13 @@ class type_lists
             //$usr_msg->add_error_text('Mandatory system_views missing in API JSON ' . json_encode($json_array));
             $this->set_system_views([], $msg);
         }
+        // a pod without any symbol or alias triple sends no phrases, so an empty list is normal
+        // and only means that no number shows a symbol (see web\phrase::symbol_name)
+        if (array_key_exists(api::JSON_LIST_SYSTEM_PHRASES, $json_array)) {
+            $this->set_system_phrases($json_array[api::JSON_LIST_SYSTEM_PHRASES]);
+        } else {
+            $this->set_system_phrases([]);
+        }
         if (array_key_exists(api::JSON_LIST_SYS_LOG_STATUUS, $json_array)) {
             $this->set_sys_log_statuum($json_array[api::JSON_LIST_SYS_LOG_STATUUS], $msg);
         } else {
@@ -577,6 +590,20 @@ class type_lists
     {
         $this->msk_sys = new view_list_ui();
         $this->msk_sys->api_mapper($json_array);
+    }
+
+    /**
+     * set the phrases that the frontend needs on every page e.g. the triple "% is symbol for
+     * percent", which tells the value display what to show behind the number
+     *
+     * @param array|null $json_array the phrase part of the initial cache api message
+     */
+    function set_system_phrases(?array $json_array = null): void
+    {
+        $this->phr_sys = new phrase_list_ui();
+        if ($json_array != null) {
+            $this->phr_sys->api_mapper($json_array);
+        }
     }
 
     // TODO add similar functions for all cache types

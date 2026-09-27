@@ -1114,7 +1114,11 @@ class test_api extends test_base
             $class_for_file = $class;
         }
         $class_for_file = $this->class_without_namespace($class_for_file);
-        if ($expected == null) {
+        // the compare file is the expected result only if the caller has not given one, because
+        // some callers compare two api messages with each other e.g. the json to the frontend
+        // with the json to the backend, and such a compare must never overwrite a file
+        $from_file = ($expected == null);
+        if ($from_file) {
             $expected = json_decode($this->api_json_expected($class_for_file, $filename), true);
         }
 
@@ -1128,20 +1132,22 @@ class test_api extends test_base
             $expected = $this->json_remove_fields_only_to_ui($expected);
         }
 
+        // the expected file is named after the class unless the caller overwrites the name
+        $file = $filename;
+        if ($file == '') {
+            $file = $class_for_file;
+        }
+        $path = test_paths::RESOURCE . self::API_PATH . DIRECTORY_SEPARATOR . $class_for_file
+            . DIRECTORY_SEPARATOR . $file . self::JSON_EXT;
+
         if ($expected === null) {
             // an expected file that does not exist yet is created from the api answer if the auto
             // update of the test files is on, like a missing csv or html expected file, and the
             // missing file is reported, so that the created file is checked before it is committed
-            $file = $filename;
-            if ($file == '') {
-                $file = $class_for_file;
-            }
             if (test_files::AUTO_UPDATE_TEST_FILES and $actual !== null) {
-                $path = test_paths::RESOURCE . self::API_PATH . DIRECTORY_SEPARATOR . $class_for_file
-                    . DIRECTORY_SEPARATOR . $file . self::JSON_EXT;
                 $this->update_path_file($path, library::json_for_humans($actual) . "\n");
             }
-            return $this->assert_true($class . ' API GET and the expected file ' . $file
+            $result = $this->assert_true($class . ' API GET and the expected file ' . $file
                 . ' for ' . $class_for_file . ' exists', false);
         } else {
 
@@ -1150,11 +1156,19 @@ class test_api extends test_base
             $json_expected = json_encode($expected);
             if ($contains) {
                 // the actual json comes from a real http REST call, so a REST timeout is used to avoid a false timeout
-                return $this->assert($class . ' API GET', $lib->json_contains($expected, $actual), true, self::TIMEOUT_LIMIT_REST);
+                $result = $this->assert($class . ' API GET', $lib->json_contains($expected, $actual), true, self::TIMEOUT_LIMIT_REST);
             } else {
-                return $this->assert_json($class . ' API GET', $actual, $expected);
+                $result = $this->assert_json($class . ' API GET', $actual, $expected);
+                // a failed compare updates the expected file if the auto update is on, so that one
+                // run re-baselines all api files and the diff shows what the change has changed;
+                // only the exact compare of a file may do this, because a "contains" file is a
+                // subset of the api answer on purpose and writing the answer would lose that
+                if (!$result and $from_file and test_files::AUTO_UPDATE_TEST_FILES and $actual !== null) {
+                    $this->update_path_file($path, library::json_for_humans($actual) . "\n");
+                }
             }
         }
+        return $result;
     }
 
     /**

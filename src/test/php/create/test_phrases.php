@@ -734,6 +734,52 @@ class test_phrases
         return $this->ui_list($this->list_canton_mio_cache());
     }
 
+    /**
+     * @return phrase_list the request cache that knows the symbol of the factor, so that a number
+     *                     with a factor phrase can be shown as e.g. "123.46 x"
+     */
+    function list_factor_symbol_cache(): phrase_list
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $lst = new phrase_list($this->env->usr1);
+        $lst->add($t_wrd->word_factor_symbol()->phrase());
+        $lst->add($t_wrd->word_factor()->phrase());
+        $lst->add($t_trp->factor_symbol()->phrase());
+        return $lst;
+    }
+
+    /**
+     * @return phrase_list the request cache that knows the symbol of percent, so that a number
+     *                     with a percent phrase can be shown as e.g. "1.23%"
+     */
+    function list_percent_symbol_cache(): phrase_list
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $lst = new phrase_list($this->env->usr1);
+        $lst->add($t_wrd->word_percent_symbol()->phrase());
+        $lst->add($t_wrd->word_percent()->phrase());
+        $lst->add($t_trp->percent_symbol()->phrase());
+        return $lst;
+    }
+
+    /**
+     * @return phrase_list_ui the frontend request cache that knows the symbol of percent
+     */
+    function list_percent_symbol_cache_ui(): phrase_list_ui
+    {
+        return $this->ui_list($this->list_percent_symbol_cache());
+    }
+
+    /**
+     * @return phrase_list_ui the frontend request cache that knows the symbol of the factor
+     */
+    function list_factor_symbol_cache_ui(): phrase_list_ui
+    {
+        return $this->ui_list($this->list_factor_symbol_cache());
+    }
+
     function phrase_list_zh_mio(): phrase_list
     {
         $t_wrd = new test_words($this->env);

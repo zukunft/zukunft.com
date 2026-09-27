@@ -960,6 +960,14 @@ class triple extends sandbox_code_id
         return $this->is_type(phrase_types::PERCENT, $msg);
     }
 
+    /**
+     * @return bool true if the triple has the type "factor" (e.g. "factor")
+     */
+    function is_factor(user_message $msg): bool
+    {
+        return $this->is_type(phrase_types::FACTOR, $msg);
+    }
+
     function is_measure(user_message $msg): bool
     {
         return $this->is_type(phrase_types::MEASURE, $msg);

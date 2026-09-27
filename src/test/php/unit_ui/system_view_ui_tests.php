@@ -211,7 +211,7 @@ class system_view_ui_tests
         $dto = $tl->ui_test_cache($t->usr_dev, $t, $cac_msg);
         $ui->set_cache($dto);
         // TODO Prio 1 deprecate
-        $ui->load_dummy_cache_from_test_resources($msg);
+        $ui->load_dummy_cache_from_test_resources($msg, file_get_contents(test_files::TYPE_LISTS_CACHE));
         $usr_sys_ui = $tl->cast_user($t->usr1);
 
         // the anti-csrf gate must fail closed for every form submit, not only the crud masks, so a

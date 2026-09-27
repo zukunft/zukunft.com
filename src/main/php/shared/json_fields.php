@@ -384,6 +384,8 @@ class json_fields
     const string LIST_CHANGE_LOG_FIELDS = 'change_field_list';
     const string LIST_VERBS = 'verbs';
     const string LIST_SYSTEM_VIEWS = 'system_views';
+    // the phrases that the frontend needs on every page e.g. the symbol triples (see verbs::PRELOAD_VERBS)
+    const string LIST_SYSTEM_PHRASES = 'system_phrases';
 
     /*
      * im- and export - fields used only for the im- and export json messages

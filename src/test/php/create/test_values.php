@@ -293,6 +293,18 @@ class test_values extends test_objects
     }
 
     /**
+     * @return value with a factor phrase, so that the number is shown as e.g. "123.46 x" with the
+     *               factor as the symbol behind it instead of naming it (see phrase_types::FACTOR)
+     */
+    function value_factor(): value
+    {
+        $t_wrd = new test_words($this->env);
+        return $this->value_for_phrases([
+            $t_wrd->word()->phrase(),
+            $t_wrd->word_factor()->phrase()]);
+    }
+
+    /**
      * @param phrase[] $phrases the phrases that should build the group of the value
      * @param float $number the number assigned to the value (a sample number by default)
      * @return value with the given number assigned to the group of the given phrases
@@ -586,9 +598,6 @@ class test_values extends test_objects
     }
 
     /**
-     * @return value with the inhabitants of the canton of zurich
-     */
-    /**
      * @return value the inhabitants of the canton Zurich scaled with the symbol word "mio",
      *               so that the symbol tooltip of the related word "million" can be tested
      */
@@ -605,6 +614,9 @@ class test_values extends test_objects
         return $tl->ui_value($this->people_zh_canton_mio_symbol());
     }
 
+    /**
+     * @return value with the inhabitants of the canton of zurich
+     */
     function people_zh_canton_mio(): value
     {
         $t_grp = new test_groups($this->env);

@@ -40,7 +40,6 @@
 namespace Zukunft\ZukunftCom\main\php\web\view;
 
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
-use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once html_paths::VIEW . 'view_exe.php';
 include_once html_paths::CONST . 'icons.php';

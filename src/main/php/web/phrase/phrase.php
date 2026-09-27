@@ -351,6 +351,64 @@ class phrase extends combine_named
         return $this->obj()->is_percent($msg);
     }
 
+    /**
+     * @return bool true if this phrase is of type factor, so that a number with this phrase is
+     *              shown as a multiplier e.g. "13.2 x" (see number_symbol)
+     */
+    function is_factor(user_message $msg): bool
+    {
+        return $this->obj()->is_factor($msg);
+    }
+
+    /**
+     * the symbol that is shown behind a number instead of naming this phrase with the other
+     * phrases of the number, e.g. the "x" of a factor, as a link to this phrase with its
+     * description as the tooltip, so that the reader can look up what the symbol means
+     *
+     * the symbol is not coded but given by a triple e.g. "x is symbol for factor", so it is shown
+     * only if the request cache knows that triple; without it the phrase is named like any other
+     * phrase of the number, so that nothing is lost (see phrase_list::symbol_of)
+     *
+     * @return string the html code of the symbol link, empty if this phrase has no symbol
+     */
+    function number_symbol(user_message $msg): string
+    {
+        $result = '';
+        if ($this->is_factor($msg)) {
+            $symbol = $this->symbol_name();
+            if ($symbol != '') {
+                $html = new html_base();
+                $url = $html->url_back($this->view_id(), $this->id());
+                $result = $html->ref($url, $symbol, $this->get_description() ?? '');
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the name of the symbol that stands for this phrase, e.g. "%" for percent or "x" for the
+     * factor, taken from the request cache, which knows the symbol only if the page has loaded
+     * the triple that defines it (see phrase_list::symbol_of)
+     *
+     * the symbol is nowhere coded, so an empty result is a normal state and never an error: the
+     * caller then shows the number without the symbol and names the phrase like any other
+     *
+     * @return string the symbol name, empty if the cache knows no symbol of this phrase
+     */
+    function symbol_name(): string
+    {
+        global $ui_sys;
+
+        // the symbol triples are part of the initial cache load, so they are known on every page;
+        // the phrases of the page are asked as well, because a page can carry a symbol triple that
+        // the preload does not have e.g. a triple of a verb that is not preloaded
+        $symbol = $ui_sys?->typ_lst_cache?->phr_sys?->symbol_of($this);
+        if ($symbol == null) {
+            $symbol = $ui_sys?->phr_lst?->symbol_of($this);
+        }
+        return $symbol?->name() ?? '';
+    }
+
     function is_measure(user_message $msg): bool
     {
         return $this->obj()->is_measure($msg);

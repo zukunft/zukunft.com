@@ -70,6 +70,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
+use Zukunft\ZukunftCom\test\php\create\test_phrases;
 use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -86,11 +87,13 @@ class value_write_tests
 
     function run(test_cleanup $t): void
     {
+        global $ui_sys;
 
         // init
         $t->name = 'value->';
         $t_val = new test_values($t);
         $t_wrd = new test_words($t);
+        $t_phr = new test_phrases($t);
         $t_db = new test_db_load($t);
         $tl = new test_lib();
         $lib = new library();
@@ -206,8 +209,14 @@ class value_write_tests
             word_names::YEAR_2020));
         $api_msg = $pct_val->api_json([api_types::INCL_PHRASES]);
         $val_ui = new value_ui($api_msg);
+        // the percent sign is not coded but given by the triple "% is symbol for percent" of
+        // scaling.json, which normally reaches the page with the initial cache load; it is set here
+        // as a phrase of the page, so that this test does not depend on the cache of the test setup
+        $phr_lst_keep = $ui_sys->phr_lst;
+        $ui_sys->phr_lst = $t_phr->list_percent_symbol_cache_ui();
         $result = $val_ui->value($msg_ui);
-        $target = number_format(round(values::SAMPLE_PCT * 100, 2), 2) . '%';
+        $ui_sys->phr_lst = $phr_lst_keep;
+        $target = number_format(round(values::SAMPLE_PCT * 100, 2), 2) . word_names::PERCENT_SYMBOL;
         $t->assert(', value->val_formatted for ' . $pct_val->dsp_id(), $result, $target);
 
         // test the scaling of a value

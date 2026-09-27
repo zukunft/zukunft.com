@@ -46,6 +46,12 @@ component, formula or source shifts the id of every later object of that class**
 wave of failing tests that can only be repaired by a full reset and a
 re-baseline run (`docs/llm/testing.md`).
 
+A **formula shifts two id sequences at once**: the import also creates a word of
+the same name with the phrase type `formula link`, so an added formula moves
+every later *word* id as well, not only the formula ids. The formula-link words
+sit directly after the words of their own file, e.g. `scale by factor` is the
+word right behind `increase` of `time_definition.json`.
+
 Therefore, when the task is to fix one entry:
 
 - change that entry and nothing else — no reformatting, no re-indenting, no
@@ -266,7 +272,10 @@ A word is the atomic phrase:
 ```
 
 - `name` is the unique key. Descriptions and `refs` are optional.
-- `type` is set only when the word is a measure (SI unit, `percent`, etc.).
+- `type` is set only when the word says how the number is read: a measure (SI unit), or a
+  format like `percent` or `factor`. A format word is shown as its symbol behind the number,
+  and the symbol is data too: a triple like `x is symbol for factor` in the same file defines
+  it (see `phrase_types` and `phrase::number_symbol`).
 - `refs` lists external citations (Wikipedia article slug, Wikidata Q-id).
 
 ### Prefer a Wikipedia link over a free-text description
@@ -882,6 +891,24 @@ an import *adds* its parent phrase to the formula's existing assignments and
 never replaces assignments made by other files, unless the import states
 otherwise.
 
+### Declare the assigned phrase in the same file
+
+Cumulative does **not** mean the phrase may be named from anywhere: the import
+resolves `assigned_word` / `assigned` only against the phrases of the file
+being imported (`formula_map::link_assigned_phrase` looks in the file's own
+`data_object`). A name that the file does not declare adds
+`IMPORT_FORMULA_ASSIGN_PHRASE_MISSING` to the **shared** import message, and
+because `data_object::save()` gates every step on `$msg->is_ok()`, the whole
+file is then skipped — no words, no triples, no formulas, and the ids of every
+later object shift. The symptom is silent: the import reports the error, but a
+later file that re-declares part of the same data hides the gap.
+
+So re-declare the phrase by name in the file that holds the formula, which
+costs nothing because an existing word is matched by name and keeps its id.
+`time_definition.json` does exactly this with `{"name": "percent"}` for
+`increase` and `{"name": "factor"}` for `scale by factor`, both owned by
+`scaling.json`.
+
 ### The `percent` measure auto-scales
 
 A formula whose result is assigned to `percent` and that computes a ratio
@@ -889,6 +916,18 @@ A formula whose result is assigned to `percent` and that computes a ratio
 explicit `* 100`. Do not "fix" such formulas by adding `* 100` — the missing
 factor is intentional; scaling happens via the `percent` measure, not the
 expression.
+
+The ×100 is coded, the sign is not: the triple `% is symbol for percent` of
+`scaling.json` defines what is shown behind the number, exactly like
+`x is symbol for factor`, so the frontend reads it from the cache and never from
+a literal (see `phrase::symbol_name`).
+
+A symbol is needed on pages that have nothing to do with the phrase it stands
+for, so the triples of `verbs::PRELOAD_VERBS` (`is symbol for`, `is alias of`)
+and the phrases they link travel with the **initial cache load**, next to the
+types and the system views (`data_object::load_system_phrases` fills them,
+`api\ui_config` sends them as `system_phrases`). A new symbol triple therefore
+needs no display code and no api change, only the seed entry.
 
 ### A `percent` value is stored as the decimal ratio, never as the ×100 number
 
@@ -940,6 +979,22 @@ predecessor. The result goes to `percent`, so there is **no `* 100`** (above).
 so it **cannot be reproduced by `calc-validation`** (which does literal value
 lookup — see below). That is why no base file calc-validates `increase`: leave
 the period-over-period result out of your `calc-validation` block.
+
+### Scaling by a factor: reuse the system `scale by factor` formula
+
+A value that says how many times bigger one number is than the number it is
+compared with carries the phrase `factor` (phrase type `scaling factor`, shown
+as its symbol `x` behind the number). `time_definition.json` ships the general
+formula next to `increase`:
+
+```json
+{ "name": "scale by factor", "expression": "\"one\" = \"prior\" * \"factor\"", "assigned_word": "factor" }
+```
+
+So do **not** write the multiplication out per case. It is assigned to `factor`,
+so it applies wherever a value has a factor and a predecessor, and like
+`increase` it resolves `prior` only at calc time, which keeps it out of
+`calc-validation`.
 
 ### Formula name uniqueness across types
 
