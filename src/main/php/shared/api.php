@@ -132,6 +132,7 @@ class api
     const string JSON_LIST_CHANGE_LOG_FIELDS = 'change_field_list';
     const string JSON_LIST_VERBS = 'verbs';
     const string JSON_LIST_SYSTEM_VIEWS = 'system_views';
+    const string JSON_LIST_SYSTEM_PHRASES = 'system_phrases';
     const string JSON_LIST_PHRASE_IDS = 'phrase_ids';
 
 

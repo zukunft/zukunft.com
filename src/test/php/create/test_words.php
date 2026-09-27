@@ -800,6 +800,17 @@ class test_words extends test_objects
     }
 
     /**
+     * @return word "%", the symbol word of percent, which the triple of scaling.json links to
+     *              the word percent (see test_triples::percent_symbol)
+     */
+    function word_percent_symbol(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::PERCENT_SYMBOL_ID, word_names::PERCENT_SYMBOL);
+        return $wrd;
+    }
+
+    /**
      * @return word of the master pod name
      */
     function word_zukunft_com(): word

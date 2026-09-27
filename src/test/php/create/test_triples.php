@@ -1020,6 +1020,22 @@ class test_triples extends test_objects
     }
 
     /**
+     * @return triple "% is symbol for percent" of scaling.json, which defines the symbol that is
+     *                shown behind a percent number (see sandbox_value::percent_symbol)
+     */
+    function percent_symbol(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::PERCENT_SYMBOL_ID, triple_names::PERCENT_SYMBOL);
+        $trp->set_from($t_wrd->word_percent_symbol()->phrase());
+        $trp->set_verb($t_vrb->verb_is_symbol());
+        $trp->set_to($t_wrd->word_percent()->phrase());
+        return $trp;
+    }
+
+    /**
      * @return triple "mio is symbol for million" used to test that a symbol shows the
      *         description of the word it stands for as its tooltip
      */

@@ -1,28 +1,28 @@
 {
-  "id": 60518021949456488,
-  "description": "URL of this zukunft.com pod from the system configuration",
-  "phrases": [
-    {
-      "id": 215,
-      "name": "zukunft.com",
-      "class": "word"
-    },
-    {
-      "id": 104,
-      "name": "system configuration",
-      "class": "triple"
-    },
-    {
-      "id": 206,
-      "name": "pod",
-      "class": "word"
-    },
-    {
-      "id": 210,
-      "name": "url",
-      "class": "word"
-    }
-  ],
-  "name": "zukunft.com pod URL",
-  "text_value": "zukunft.com"
+    "id": 60799501221199977,
+    "description": "URL of this zukunft.com pod from the system configuration",
+    "phrases": [
+        {
+            "id": 216,
+            "name": "zukunft.com",
+            "class": "word"
+        },
+        {
+            "id": 105,
+            "name": "system configuration",
+            "class": "triple"
+        },
+        {
+            "id": 207,
+            "name": "pod",
+            "class": "word"
+        },
+        {
+            "id": 211,
+            "name": "url",
+            "class": "word"
+        }
+    ],
+    "name": "zukunft.com pod URL",
+    "text_value": "zukunft.com"
 }

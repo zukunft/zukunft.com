@@ -63,6 +63,10 @@
     {
       "name": "x",
       "description": "the symbol shown behind a number that is a factor"
+    },
+    {
+      "name": "%",
+      "description": "the symbol shown behind a number that is a percentage"
     }
   ],
   "triples": [
@@ -85,6 +89,11 @@
       "from": "x",
       "verb": "is symbol for",
       "to": "factor"
+    },
+    {
+      "from": "%",
+      "verb": "is symbol for",
+      "to": "percent"
     }
   ],
   "formulas": [

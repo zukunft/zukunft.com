@@ -189,10 +189,22 @@ class system_tests
         $t->assert_dsp_id($t_wrd->word_list(), '"mathematics","constant","π","𝑒" (word_id 1,2,5,6) for user 3 (zukunft.com system test)');
         $t->assert_dsp_id($t_vrb->verb(), 'not set/not_set (verb_id 1) for user 3 (zukunft.com system test)');
         $t->assert_dsp_id($t_trp->triple(), '"constant" "is part of" "mathematics" (2,3,1 -> triple_id 1) for user 3 (zukunft.com system test)');
-        $t->assert_dsp_id($t_trp->triple_list_short(), '"π (unit symbol)","global warming potential" (triple_id 1,5,112) for user 3 (zukunft.com system test)');
+        $t->assert_dsp_id($t_trp->triple_list_short(), '"π (unit symbol)","global warming potential" (triple_id '
+            . triple_names::MATH_CONST_ID . ',' . triple_names::PI_SYMBOL_ID . ',' . triple_names::GWP_ID
+            . ') for user 3 (zukunft.com system test)');
         $t->assert_dsp_id($t_trp->triple()->phrase(), '"constant" "is part of" "mathematics" (2,3,1 -> triple_id 1) for user 3 (zukunft.com system test) as phrase');
         $t->assert_dsp_id($t_phr->phrase_list_prime(), '"mathematics","constant","mathematical constant","π (unit symbol)" (phrase_id 1,2,-1,-5) for user 3 (zukunft.com system test)');
-        $t->assert_dsp_id($t_phr->phrase_list_long(), '"mathematics","constant","π" ... total 13 (phrase_id 1,2,5,-2,135,4,158,160,-1,-5,-106,-107,-108) for user 3 (zukunft.com system test)');
+        // a triple phrase is the negative triple id, so the phrase ids of the list mix both id
+        // sequences and every one of them is pinned (see docs/llm/testing.md)
+        $t->assert_dsp_id($t_phr->phrase_list_long(), '"mathematics","constant","π" ... total 13 (phrase_id '
+            . word_names::MATH_ID . ',' . word_names::CONST_ID . ',' . word_names::PI_SYMBOL_ID
+            . ',-' . triple_names::EULER_NUMBER_ID
+            . ',' . word_names::YEAR_2019_ID . ',' . word_names::ONE_ID . ',' . word_names::MIO_ID
+            . ',' . words::PCT_ID
+            . ',-' . triple_names::MATH_CONST_ID . ',-' . triple_names::PI_SYMBOL_ID
+            . ',-' . triple_names::CANTON_ZURICH_ID . ',-' . triple_names::CITY_BE_ID
+            . ',-' . triple_names::CITY_GE_ID
+            . ') for user 3 (zukunft.com system test)');
         $t->assert_dsp_id($t_grp->group(), '"π (unit symbol)" (group_id 5) as "π (unit symbol)" for user 3 (zukunft.com system test)');
         $t->assert_dsp_id($t_grp->group_list(), 'π (unit symbol)');
         $t->assert_dsp_id($t_grp->group_list_long(), 'π (unit symbol) / Zurich city inhabitants (2019) / Zurich city inhabitants (2019) in million / System Test Word Increase in Switzerland\'s inhabitants from 2019 to 2020 in percent ... total 6');

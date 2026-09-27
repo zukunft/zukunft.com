@@ -86,7 +86,6 @@ use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\web\word\word_list;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
-use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
 use Zukunft\ZukunftCom\main\php\shared\enum\languages;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -347,7 +346,6 @@ class phrase_list extends sandbox_list_named
     {
         $result = false;
         if ($this->is_empty()) {
-            // TODO Prio 3 replace with an frequently generated preloaded list
             $this->set_lst($this->phrases_often_used($msg)->lst());
             $result = true;
         }
@@ -355,23 +353,17 @@ class phrase_list extends sandbox_list_named
     }
 
     /**
+     * the phrases that the system uses most often are part of the initial cache load, so they are
+     * known even if the backend connection is temporary lost (see api\ui_config::api_json)
+     *
      * @return phrase_list with the most often used phrases as a frontend fallback list
      */
     private function phrases_often_used(user_message $msg): phrase_list
     {
+        global $ui_sys;
+
         $lst = new phrase_list();
-        foreach (words::BASE_WORDS as $wrd_array) {
-            $wrd = new word();
-            $wrd->set_name($wrd_array[0]);
-            $wrd->set_id($wrd_array[1]);
-            $lst->add($wrd->phrase(), $msg);
-        }
-        foreach (triples::BASE_TRIPLES as $trp_array) {
-            $trp = new triple();
-            $trp->set_name($trp_array[0]);
-            $trp->set_id($trp_array[1]);
-            $lst->add($trp->phrase(), $msg);
-        }
+        $lst->merge($ui_sys?->typ_lst_cache?->phr_sys ?? new phrase_list(), $msg);
         return $lst;
     }
 
@@ -1377,10 +1369,21 @@ class phrase_list extends sandbox_list_named
      */
     function has_percent(user_message $msg): bool
     {
-        $result = false;
+        return $this->percent_phrase($msg) != null;
+    }
+
+    /**
+     * the phrase of this list that forces the percent format, so that the caller can ask it for
+     * its symbol (see phrase::symbol_name)
+     *
+     * @return phrase|null the percent phrase or null if no phrase of this list forces the format
+     */
+    function percent_phrase(user_message $msg): ?phrase
+    {
+        $result = null;
         foreach ($this->lst() as $phr) {
-            if ($phr->is_percent($msg)) {
-                $result = true;
+            if ($phr->is_percent($msg) and $result == null) {
+                $result = $phr;
             }
         }
         return $result;

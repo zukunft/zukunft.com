@@ -373,18 +373,40 @@ class phrase extends combine_named
      */
     function number_symbol(user_message $msg): string
     {
-        global $ui_sys;
-
         $result = '';
         if ($this->is_factor($msg)) {
-            $symbol = $ui_sys?->phr_lst?->symbol_of($this);
-            if ($symbol != null) {
+            $symbol = $this->symbol_name();
+            if ($symbol != '') {
                 $html = new html_base();
                 $url = $html->url_back($this->view_id(), $this->id());
-                $result = $html->ref($url, $symbol->name(), $this->get_description() ?? '');
+                $result = $html->ref($url, $symbol, $this->get_description() ?? '');
             }
         }
         return $result;
+    }
+
+    /**
+     * the name of the symbol that stands for this phrase, e.g. "%" for percent or "x" for the
+     * factor, taken from the request cache, which knows the symbol only if the page has loaded
+     * the triple that defines it (see phrase_list::symbol_of)
+     *
+     * the symbol is nowhere coded, so an empty result is a normal state and never an error: the
+     * caller then shows the number without the symbol and names the phrase like any other
+     *
+     * @return string the symbol name, empty if the cache knows no symbol of this phrase
+     */
+    function symbol_name(): string
+    {
+        global $ui_sys;
+
+        // the symbol triples are part of the initial cache load, so they are known on every page;
+        // the phrases of the page are asked as well, because a page can carry a symbol triple that
+        // the preload does not have e.g. a triple of a verb that is not preloaded
+        $symbol = $ui_sys?->typ_lst_cache?->phr_sys?->symbol_of($this);
+        if ($symbol == null) {
+            $symbol = $ui_sys?->phr_lst?->symbol_of($this);
+        }
+        return $symbol?->name() ?? '';
     }
 
     function is_measure(user_message $msg): bool

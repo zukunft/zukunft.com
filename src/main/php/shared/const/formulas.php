@@ -38,6 +38,12 @@ use Zukunft\ZukunftCom\test\php\const\formula_names;
 class formulas
 {
 
+    // the formula that the frontend preselects in a selector; the id is needed, because a formula
+    // has no code_id, so the seed id is the only handle (see web\formula\formula_list::default_id)
+    const int NOT_SET_ID = 0;
+    const string INCREASE = 'increase';
+    const int INCREASE_ID = 21;
+
     // formula names that are reserved either
     // for creating the test formulas, that are removed after the test
     // so these formula names cannot be used for user formulas

@@ -88,6 +88,7 @@ include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_HELPER . 'IdObject.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
@@ -144,6 +145,7 @@ use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 
 class data_object
 {
@@ -197,6 +199,9 @@ class data_object
     // all preloaded views which can be user-specific
     public view_sys_list $sys_msk;
 
+    // all preloaded phrases that the frontend needs on every page (see load_system_phrases)
+    public phrase_list $sys_phr;
+
 
     /*
      * construct and map
@@ -234,6 +239,7 @@ class data_object
         $this->msg = new user_message(); // an object field of this cache, not the message of a request
         $this->typ_lst = new type_lists();
         $this->sys_msk = new view_sys_list($usr);
+        $this->sys_phr = new phrase_list($usr);
     }
 
 
@@ -716,6 +722,35 @@ class data_object
     function load_system_views(sql_db $db_con, user_message $msg): bool
     {
         return $this->sys_msk->load($db_con, $msg);
+    }
+
+    /**
+     * load the phrases that the frontend needs on every page: the triples of the verbs of
+     * verbs::PRELOAD_VERBS and the phrases they link, e.g. the triple "% is symbol for percent"
+     * with the words "%" and "percent", so that a page can show the symbol behind a number
+     * without knowing the triple that defines it (see web\phrase::symbol_name)
+     *
+     * @param user_message $msg to report a verb that the pod does not have
+     * @return bool true if at least one phrase has been preloaded
+     */
+    function load_system_phrases(user_message $msg): bool
+    {
+        global $sys;
+
+        $this->sys_phr = new phrase_list($this->get_user());
+        foreach (verbs::PRELOAD_VERBS as $code_id) {
+            $vrb = $sys->verb($code_id);
+            if ($vrb->id() == 0) {
+                log_err_msg('the verb ' . $code_id . ' is missing, so the phrases of this verb '
+                    . 'cannot be preloaded and a symbol of a number is not shown', $msg);
+            } else {
+                $trp_lst = new triple_list($this->get_user());
+                $trp_lst->load_by_verb($vrb, $msg);
+                $this->sys_phr->merge($trp_lst->phrase_list());
+                $this->sys_phr->merge($trp_lst->phrase_parts());
+            }
+        }
+        return !$this->sys_phr->is_empty();
     }
 
 

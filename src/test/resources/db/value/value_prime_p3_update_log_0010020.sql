@@ -37,8 +37,8 @@ SELECT value_prime_p3_update_log_0010020
         3::smallint,
         3::smallint,
         null::smallint,
-        927726043271::bigint,
-        216::smallint,
-        200::smallint,
+        932021076103::bigint,
+        217::smallint,
+        201::smallint,
         135::smallint,
         0::smallint);

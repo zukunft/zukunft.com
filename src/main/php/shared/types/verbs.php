@@ -377,6 +377,15 @@ class verbs
         self::RANK,
     );
 
+    // the verbs whose triples the frontend needs on every page, so that they are sent with the
+    // initial cache load instead of with the phrases of a page (see api\ui_config::api_json):
+    // a symbol or alias is shown behind the number of a value e.g. the "%" of a percent value,
+    // and the phrase it stands for is nowhere near the page that shows the number
+    const array PRELOAD_VERBS = array(
+        self::SYMBOL,
+        self::ALIAS
+    );
+
     // ordered list of verbs to create the subtitle phrase category description;
     // ordering goes from most specific naming/measuring relations to the broader
     // taxonomy ones so the subtitle renderer prefers the tightest category label

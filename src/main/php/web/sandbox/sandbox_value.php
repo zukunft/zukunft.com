@@ -520,7 +520,7 @@ class sandbox_value extends sandbox
 
         if (!$this->is_null()) {
             if ($this->is_percent($msg)) {
-                $result = round($this->number() * 100, $cfg->percent_decimals()) . "%";
+                $result = round($this->number() * 100, $cfg->percent_decimals()) . $this->percent_symbol($msg);
             } else {
                 if ($this->number() >= 1000 or $this->number() <= -1000) {
                     $result .= number_format($this->number(), 0, $cfg->dec_point(), $cfg->thousand_sep());
@@ -547,6 +547,19 @@ class sandbox_value extends sandbox
         } else {
             return false;
         }
+    }
+
+    /**
+     * the symbol that is shown behind a percent number, e.g. "%"
+     *
+     * the symbol is not coded but given by a triple e.g. "% is symbol for percent", so it is shown
+     * only if the request cache knows that triple (see phrase::symbol_name)
+     *
+     * @return string the symbol name, empty if the cache knows no symbol of the percent phrase
+     */
+    function percent_symbol(user_message $msg): string
+    {
+        return $this->grp->phr_lst()->percent_phrase($msg)?->symbol_name() ?? '';
     }
 
     /**

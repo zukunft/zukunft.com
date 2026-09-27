@@ -79,8 +79,6 @@ include_once html_paths::SHARED . 'url_var.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::SHARED_ENUM . 'foaf_direction.php';
 
-//include_once test_paths::CONST . 'triple_names.php';
-
 use Zukunft\ZukunftCom\main\php\web\component\component;
 use Zukunft\ZukunftCom\main\php\web\const\icons;
 use Zukunft\ZukunftCom\main\php\web\formula\formula;
@@ -111,8 +109,6 @@ use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
-use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
-use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -2049,11 +2045,11 @@ class ui_list extends ui_base
      */
     private function start_page_phrase(data_object $dto, user_message $msg): phrase
     {
-        $result = $dto->phr_lst->get_by_name(triple_names::GLOBAL_PROBLEM, $msg);
+        $result = $dto->phr_lst->get_by_name(triples::GLOBAL_PROBLEM, $msg);
         if ($result == null) {
             $child_lst = new phrase_list();
             if ($child_lst->load_related_by_name(
-                triple_names::GLOBAL_PROBLEM, foaf_direction::DOWN, $msg)) {
+                triples::GLOBAL_PROBLEM, foaf_direction::DOWN, $msg)) {
                 $dto->add_phrases($child_lst, $msg);
                 // every child is a triple that links to the page phrase, so the first one
                 // carries it; the sort makes the pick deterministic
@@ -2074,7 +2070,7 @@ class ui_list extends ui_base
             // no problem is linked to the page phrase, so the table has no row, but the page
             // phrase itself is still needed to head the empty table
             $result = new phrase();
-            $result->load_by_name(triple_names::GLOBAL_PROBLEM, $msg);
+            $result->load_by_name(triples::GLOBAL_PROBLEM, $msg);
         }
         return $result;
     }
@@ -2098,7 +2094,7 @@ class ui_list extends ui_base
         if ($dto->phr_lst->child_phrases($phr)->is_empty()) {
             $child_lst = new phrase_list();
             if ($child_lst->load_related_by_name(
-                triple_names::GLOBAL_PROBLEM, foaf_direction::DOWN, $msg)) {
+                triples::GLOBAL_PROBLEM, foaf_direction::DOWN, $msg)) {
                 $dto->add_phrases($child_lst, $msg);
             }
         }

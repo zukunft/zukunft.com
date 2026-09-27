@@ -917,6 +917,18 @@ explicit `* 100`. Do not "fix" such formulas by adding `* 100` — the missing
 factor is intentional; scaling happens via the `percent` measure, not the
 expression.
 
+The ×100 is coded, the sign is not: the triple `% is symbol for percent` of
+`scaling.json` defines what is shown behind the number, exactly like
+`x is symbol for factor`, so the frontend reads it from the cache and never from
+a literal (see `phrase::symbol_name`).
+
+A symbol is needed on pages that have nothing to do with the phrase it stands
+for, so the triples of `verbs::PRELOAD_VERBS` (`is symbol for`, `is alias of`)
+and the phrases they link travel with the **initial cache load**, next to the
+types and the system views (`data_object::load_system_phrases` fills them,
+`api\ui_config` sends them as `system_phrases`). A new symbol triple therefore
+needs no display code and no api change, only the seed entry.
+
 ### A `percent` value is stored as the decimal ratio, never as the ×100 number
 
 The same scaling applies to a stored value: a value qualified with `percent`

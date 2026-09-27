@@ -34,6 +34,7 @@
 
 namespace Zukunft\ZukunftCom\test\php\const;
 
+use Zukunft\ZukunftCom\main\php\shared\const\formulas as shared_formulas;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 
@@ -45,7 +46,8 @@ class formula_names
     // *_ID is the expected database id only used for system testing
     // *_EXP is the formula expression in the human-readable format
     // *_DB is the formula expression in the database reference format
-    const int NOT_SET_ID = 0;
+    // the frontend preselects these formulas, so their ids are defined in the shared const
+    const int NOT_SET_ID = shared_formulas::NOT_SET_ID;
     const string SCALE_TO_SEC = 'scale minute to sec';
     const string SCALE_TO_SEC_EXP = '"second (time)" = "minute" * 60';
     const string SCALE_TO_SEC_EXP_REF = '{w24}={w104}*60';
@@ -70,8 +72,8 @@ class formula_names
     const int PRIOR_ID = 20;
     const string PRIOR_EXP = '=value["time jump"->,"Now"->"follower"]';
     const string PERCENT = 'percent';
-    const string INCREASE = 'increase';
-    const int INCREASE_ID = 21;
+    const string INCREASE = shared_formulas::INCREASE;
+    const int INCREASE_ID = shared_formulas::INCREASE_ID;
     const string INCREASE_EXP = '"' . words::PERCENT . '" = ( "' . word_names::THIS_NAME . '" - "' . word_names::PRIOR_NAME . '" ) / "' . word_names::PRIOR_NAME . '"';
     const string INCREASE_TEST_EXP = '"' . word_names::TEST_PERCENT . '" = ( "' . word_names::TEST_THIS . '" - "' . word_names::TEST_PRIOR . '" ) / "' . word_names::TEST_PRIOR . '"';
     const string INCREASE_ALTERNATIVE_EXP = '"' . words::PERCENT . '" = 1 - ( "' . word_names::THIS_NAME . '" / "' . word_names::PRIOR_NAME . '" )';

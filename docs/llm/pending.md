@@ -2,8 +2,6 @@
 
 ## phrase types
 
-create a triple like '% is symbol for percent' and try to remove the fixed const for '%'
-
 add a phrase type 'value quality' and assign the type to the word 'assumed'. Add in the json which defines 'assumed' add alternative value quality type phrases e.g. 'peer reviewed by quality journal' 
 
 add and group the 'value qualities' at least like:
@@ -46,10 +44,6 @@ proven value — mathematically derived, no empirical uncertaint
 add Status: disputed, retracted, superseded, outdated — a peer-reviewed value can still be retracted, so this shouldn't be a rung on the ladder.
 
 add a Confidence number and description to all value quality phrases: The quality type gives a sensible default (e.g. assumed value → 0.3, double blind RCT → 0.9) but should stay overridable, because a small double-blind trial can deserve less confidence than a large observational cohort.
-
-## preloaded phrases
-
-define a list of phrases that are often used by the system that should be included in the initial cache load similar to the types e.g. cache/ui_types.json. Include all triples and related words with the verb 'is symbol of' and 'is alias of' in this list
 
 ## result and value default view
 

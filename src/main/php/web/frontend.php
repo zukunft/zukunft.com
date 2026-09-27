@@ -48,7 +48,6 @@
 namespace Zukunft\ZukunftCom\main\php\web;
 
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
-use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 // get library that is shared between the backend and the html frontend
 include_once html_paths::SHARED . 'library.php';
@@ -118,11 +117,6 @@ include_once html_paths::VIEW . 'view_relation.php';
 include_once html_paths::VIEW . 'term_view.php';
 include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'word.php';
-//include_once test_paths::CONST . 'files.php';
-// to avoid that names used for testing are used in production
-include_once test_paths::CONST . 'formula_names.php';
-include_once test_paths::CONST . 'triple_names.php';
-include_once test_paths::CONST . 'word_names.php';
 include_once html_paths::SHARED_CONST . 'files.php';
 include_once html_paths::SHARED_CONST . 'rest_ctrl.php';
 include_once html_paths::SHARED_CONST . 'views.php';
@@ -226,8 +220,6 @@ use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\main\php\shared\types\view_types;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
-// test group (alphabetic by FQN)
-use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use DateTime;
 use Exception;
 use Random\RandomException;
@@ -716,15 +708,18 @@ class frontend
     }
 
     /**
-     * load the frontend cache from the test resource
+     * load the frontend cache from a dummy api message instead of an api call
      * TODO move to test to avoid usage of backend in frontend
+     *
      * @param user_message_ui $msg_ui the backend user used for the import e.g. of the system views
+     * @param string $api_msg the cache api message that the caller reads from the test resource,
+     *                        because the path of a test file is never known by the frontend;
+     *                        without a default, so that a caller cannot silently get an empty cache
      * @return void
      */
-    function load_dummy_cache_from_test_resources(user_message_ui $msg_ui): void
+    function load_dummy_cache_from_test_resources(user_message_ui $msg_ui, string $api_msg): void
     {
         if ($this->dto?->typ_lst_cache == null) {
-            $api_msg = file_get_contents(test_files::TYPE_LISTS_CACHE);
             $this->set_type_cache($api_msg, $msg_ui);
         }
         // load the system view from resource json if not already included in the cache

@@ -151,6 +151,7 @@ const WRITE_TEST = true; // perform also the db write tests
 const INTEGRATION_TEST = true; // perform also actual requests to external systems like wikidata and check if the responses are as expected
 
 
+include_once test_paths::CONST . 'files.php';
 include_once test_paths::UNIT_WRITE . 'all_unit_write_tests.php';
 include_once test_paths::UNIT_API . 'all_api_tests.php';
 include_once test_paths::UNIT_WORKFLOW . 'all_workflow_tests.php';
@@ -166,6 +167,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\shared\helper\MapObject;
 use Zukunft\ZukunftCom\main\php\web\frontend;
+use Zukunft\ZukunftCom\test\php\const\files as test_files;
 
 class all_tests extends all_unit_write_tests
 {
@@ -197,7 +199,7 @@ class all_tests extends all_unit_write_tests
         $ui = new frontend('all tests');
         $usr_ui = new user($this->usr1->api_json());
         $msg_ui = new user_message_ui($usr_ui);
-        $ui->load_dummy_cache_from_test_resources($msg_ui);
+        $ui->load_dummy_cache_from_test_resources($msg_ui, file_get_contents(test_files::TYPE_LISTS_CACHE));
 
         // if requested only run some selected tests
         if (QUICK_TEST_ONLY) {
@@ -232,7 +234,7 @@ class all_tests extends all_unit_write_tests
                 $ui = new frontend('unit ui tests');
                 $usr_ui = new user($this->usr1->api_json());
                 $msg_ui = new user_message_ui($usr_ui);
-                $ui->load_dummy_cache_from_test_resources($msg_ui);
+                $ui->load_dummy_cache_from_test_resources($msg_ui, file_get_contents(test_files::TYPE_LISTS_CACHE));
                 new all_ui_tests()->run($this, $ui);
             }
 

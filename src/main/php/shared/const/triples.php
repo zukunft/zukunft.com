@@ -62,6 +62,8 @@ class triples
     const string FILE_SIZE = 'file size';
     const string FORMULA_LIST = 'formula list';
     const string FUTURE_PERCENT = 'future percent';
+    // the start page lists the children of this triple, so the frontend needs its name
+    const string GLOBAL_PROBLEM = 'global problem';
     const string INCREASE_LIST = 'increase list';
     const string IP_USER = 'ip user';
     const string LINK_LIST = 'link list';
@@ -101,7 +103,7 @@ class triples
     const string START_DELAY = 'start delay';
     const string STORAGE_SIZE = 'storage size';
     const string SYSTEM_CONFIG = 'system configuration';
-    const int SYSTEM_CONFIG_ID = 104;
+    const int SYSTEM_CONFIG_ID = 105;
     // the column priority of a table, defined in solution_prio.json: a mayor column is shown
     // on every screen, a main column only if the screen is not small, a minor column only if
     // it is wide and a marginal column only on the widest screen; a phrase is assigned to a

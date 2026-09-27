@@ -33,8 +33,10 @@
 namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::SHARED_TYPES . 'api_types.php';
+include_once test_paths::CREATE . 'test_phrases.php';
 
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_base;
@@ -57,6 +59,7 @@ use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_log;
+use Zukunft\ZukunftCom\test\php\create\test_phrases;
 use Zukunft\ZukunftCom\test\php\create\test_results;
 use Zukunft\ZukunftCom\test\php\create\test_users;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -70,6 +73,7 @@ class result_ui_tests
 
         $html = new html_base();
         $t_res = new test_results($t);
+        $t_phr = new test_phrases($t);
         $msg = new user_message();
 
         // start the test section (ts)
@@ -194,10 +198,19 @@ class result_ui_tests
         $test_name = 'big numbers use the user config thousand separator';
         $t->assert($test_name, $res->val_formatted($msg), "123'456");
 
+        // the percent sign is not coded but given by the triple "% is symbol for percent" of
+        // scaling.json, so it is shown only if the request cache of the page knows that triple
         $test_name = 'percent values use the user config percent decimals';
         $api_json = $t_res->result_pct()->api_json([api_types::TEST_MODE, api_types::INCL_PHRASES]);
         $res = new result($api_json);
-        $t->assert($test_name, $res->val_formatted($msg), '1.23%');
+        $phr_lst_keep = $ui_sys->phr_lst;
+        $ui_sys->phr_lst = $t_phr->list_percent_symbol_cache_ui();
+        $t->assert($test_name, $res->val_formatted($msg), '1.23' . word_names::PERCENT_SYMBOL);
+        // negative: without the symbol triple the cache knows no symbol, so the number is shown
+        // without the sign instead of falling back to a coded one
+        $test_name = '... and without the symbol triple the number is shown without the sign';
+        $ui_sys->phr_lst = $phr_lst_keep;
+        $t->assert($test_name, $res->val_formatted($msg), '1.23');
 
         $test_name = 'a missing number returns an empty text';
         $res = new result();

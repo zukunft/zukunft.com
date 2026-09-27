@@ -722,7 +722,7 @@ class value extends sandbox_value
             // load the list of phrases if needed
             if (!$this->grp->phr_lst()->is_empty()) {
                 if ($this->grp->phr_lst()->has_percent($msg)) {
-                    $result = round($this->number() * 100, $cfg->percent_decimals()) . "%";
+                    $result = round($this->number() * 100, $cfg->percent_decimals()) . $this->percent_symbol($msg);
                 } else {
                     if ($this->number() >= 1000 or $this->number() <= -1000) {
                         $result .= number_format($this->number(), 0, $cfg->dec_point(), $cfg->thousand_sep());

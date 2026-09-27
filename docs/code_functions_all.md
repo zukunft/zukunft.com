@@ -7227,6 +7227,7 @@
     \-- is_word - section for function is_word is expected to be info in /phrase/phrase.php
     \-- is_triple - section for function is_triple is expected to be info in /phrase/phrase.php
     \-- number_symbol - section for function number_symbol not yet defined that it should be info in /phrase/phrase.php
+    \-- symbol_name - section for function symbol_name not yet defined that it should be info in /phrase/phrase.php
     \-- impact - section for function impact not yet defined that it should be info in /phrase/phrase.php
     \-- parents - section for function parents is expected to be foaf in /phrase/phrase.php
     \-- children - section for function children is expected to be foaf in /phrase/phrase.php
@@ -7318,6 +7319,8 @@
     \-- ex_info_list - section for function ex_info_list not yet defined that it should be filter in /phrase/phrase_list
             .php
     \-- has_percent - section for function has_percent not yet defined that it should be info in /phrase/phrase_list.php
+    \-- percent_phrase - section for function percent_phrase not yet defined that it should be info in /phrase/phrase_li
+            st.php
     \-- symbol_phrases - section for function symbol_phrases not yet defined that it should be info in /phrase/phrase_li
             st.php
     \-- symbol_links - section for function symbol_links not yet defined that it should be info in /phrase/phrase_list.p
@@ -7684,6 +7687,8 @@
             alue.php
     \-- val_formatted - section for function val_formatted not yet defined that it should be display in /sandbox/sandbox
             _value.php
+    \-- percent_symbol - section for function percent_symbol not yet defined that it should be info in /sandbox/sandbox_
+            value.php
     \-- order error - order of section construct and map has difference at url_mapper should be before __construct,
             order of section set and get has difference at api_mapper should be before number
 \-- job
@@ -8342,6 +8347,8 @@
         \-- change_log - @return string the pure field name of the change e.g. 'impact',
     \-- has_percent
         \-- phrase_list - @return bool true if one of the phrases is of type percent
+    \-- percent_phrase
+        \-- phrase_list - the phrase of this list that forces the percent format, so that the caller can ask it for
     \-- symbol_phrases
         \-- phrase_list - the phrases that are shown as a symbol behind the number instead of being named with the
     \-- symbol_links
@@ -9464,7 +9471,7 @@
     \-- set_cache
         \-- frontend - load the frontend cache once upfront via api
     \-- load_dummy_cache_from_test_resources
-        \-- frontend - load the frontend cache from the test resource
+        \-- frontend - load the frontend cache from a dummy api message instead of an api call
     \-- set_type_cache
         \-- frontend - set the frontend cache once upfront base on the api message
     \-- set_view_cache
