@@ -97,7 +97,7 @@ SELECT word_update_log_0022224422200
         null::text,
         null::smallint,
         85::smallint,
-        'math const'::text,
+        'Mathematical constant'::text,
         161::bigint,
         null::text,
         null::bigint,

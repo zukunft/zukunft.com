@@ -69,6 +69,7 @@ include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VALUE . 'value.php';
 include_once paths::MODEL_VERB . 'verb.php';
+include_once paths::MODEL_VIEW . 'term_view.php';
 include_once paths::MODEL_VIEW . 'view.php';
 include_once paths::MODEL_WORD . 'triple.php';
 include_once paths::MODEL_WORD . 'word.php';
@@ -127,6 +128,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
+use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
@@ -825,12 +827,28 @@ class test_db_load
 
     /**
      * load a phrase group by the list of phrase names
+     *
+     * a value is named by its complete group, so a group built from a list that misses one name
+     * names another value: without the test word the group of a test value is the group of the
+     * seed phrases alone, and the number written to it stays on their page, because the cleanup
+     * refuses to delete a value by an incomplete name (see test_objects::cleanup_objects)
+     *
+     * a missing name returns the empty group instead of null, so that a caller can name the group
+     * in its test name without a null check and a value saved with it is refused
+     *
      * @param array $array_of_phrase_str with the names of the words or triples
-     * @return group|null
+     * @return group the group of all given phrases or the empty group if one of them is missing
      */
-    function load_phrase_group(array $array_of_phrase_str): ?group
+    function load_phrase_group(array $array_of_phrase_str): group
     {
-        return $this->load_phrase_list($array_of_phrase_str)->get_grp_id();
+        $result = new group($this->env->usr1);
+        $phr_lst = $this->load_phrase_list($array_of_phrase_str);
+        $missing = array_diff($array_of_phrase_str, $phr_lst->names());
+        $test_name = 'the phrases "' . implode('","', $array_of_phrase_str) . '" of the group exist';
+        if ($this->env->assert($test_name, implode(',', $missing), '')) {
+            $result = $phr_lst->get_grp_id() ?? $result;
+        }
+        return $result;
     }
 
     /**
@@ -1227,6 +1245,33 @@ class test_db_load
             $cmp->unlink($msk, $msg);
         }
         return $msg->get_last_message();
+    }
+
+    /**
+     * remove the link of a term to a view that a test has created
+     *
+     * a term view is a fixed row class whose expected rows after a database reset are none
+     * (see def::MAIN_CLASSES and the empty unit/term_view/list.csv), so every link that a test
+     * writes is removed again; the link has no name, so the linked objects of the fixture name it
+     *
+     * @param user_message $msg to collect the messages of the delete
+     * @param term_view $trm_msk the fixture of the link that should be removed
+     * @return string the message of the delete or an empty text if there is no link
+     */
+    function test_term_view_unlink(user_message $msg, term_view $trm_msk): string
+    {
+        $result = '';
+        $msk_id = $trm_msk->get_view()?->id() ?? 0;
+        $trm_id = $trm_msk->term()?->id() ?? 0;
+        if ($msk_id > 0 and $trm_id != 0) {
+            $trm_msk_db = new term_view($this->env->usr1);
+            $trm_msk_db->load_by_link_id($msk_id, $msg, 0, $trm_id);
+            if ($trm_msk_db->id() > 0) {
+                $trm_msk_db->del($msg);
+                $result = $msg->get_last_message();
+            }
+        }
+        return $result;
     }
 
     function test_formula_link(string $formula_name, string $word_name, bool $auto_create = true): string

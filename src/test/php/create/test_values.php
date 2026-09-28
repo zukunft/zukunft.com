@@ -41,7 +41,6 @@ include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VALUE . 'value.php';
-include_once paths::MODEL_VALUE . 'value_base.php';
 include_once paths::MODEL_VALUE . 'value_geo.php';
 include_once paths::MODEL_VALUE . 'value_list.php';
 include_once paths::MODEL_VALUE . 'value_text.php';
@@ -67,7 +66,6 @@ use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
-use Zukunft\ZukunftCom\main\php\cfg\value\value_base;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_geo;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_text;
@@ -98,7 +96,9 @@ class test_values extends test_objects
      */
     function cleanup(string $ts): void
     {
-        parent::cleanup_objects($ts, values::TEST_VALUES, new value_base($this->env->usr1));
+        // the test values are numbers, so the numeric value class is used, because the table
+        // name is derived from the class and the base class has no table (value_bases_main)
+        parent::cleanup_objects($ts, values::TEST_VALUES, new value($this->env->usr1));
     }
 
 

@@ -538,14 +538,23 @@ class test_views extends test_objects
         return $trm_msk;
     }
 
+    /**
+     * the math const triple linked to the math const view, which is the view that shows a
+     * mathematical constant with its related words and formulas, so the link says what it means
+     *
+     * both are seed rows with a pinned id, so the fixture carries the database ids, the link is
+     * db_ready and a row written from it names the rows that the database really has
+     *
+     * @return term_view the standard test link of a term to a view
+     */
     function term_view(): term_view
     {
         $trm_msk = new term_view($this->env->usr1);
-        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
         $trm_msk->id = 1;
-        $trm_msk->set_term($t_wrd->word()->term());
+        $trm_msk->set_term($t_trp->triple()->term());
         $trm_msk->set_predicate(view_link_types::DEFAULT);
-        $trm_msk->set_view($this->view());
+        $trm_msk->set_view($this->view_math());
         return $trm_msk;
     }
 

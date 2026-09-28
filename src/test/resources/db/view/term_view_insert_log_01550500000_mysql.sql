@@ -33,13 +33,13 @@ PREPARE term_view_insert_log_01550500000_call FROM
     'SELECT term_view_insert_log_01550500000 (?,?,?,?,?,?,?,?,?,?)';
 
 SELECT term_view_insert_log_01550500000
-       (1,
+       (161,
         1,
-        1,
+        -1,
         3,
         1,
         89,
-        'Start view',
+        'Mathematical constant',
         'main word',
-        'mathematics',
+        'mathematical constant',
         725);

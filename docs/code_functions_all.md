@@ -2043,6 +2043,8 @@
             t.php
     \-- get_word_by_name - section for function get_word_by_name is expected to be set and get in /helper/data_object.ph
             p
+    \-- get_triple_by_name - section for function get_triple_by_name is expected to be set and get in /helper/data_objec
+            t.php
     \-- get_phrase_by_id - section for function get_phrase_by_id is expected to be set and get in /helper/data_object.ph
             p
     \-- get_phrase_by_name - section for function get_phrase_by_name is expected to be set and get in /helper/data_objec
@@ -4005,8 +4007,8 @@
 \-- value_time
     \-- delta - section for function delta is expected to be del in /value/value_time.php
 \-- value_time_series
-    \-- row_mapper_sandbox - section for function row_mapper_sandbox is expected to be construct and map in /value/value
-            _time_series.php
+    \-- row_mapper_sandbox_multi - section for function row_mapper_sandbox_multi not yet defined that it should be datab
+            ase load functions that reads the object from the database in /value/value_time_series.php
     \-- load_sql_standard - section for function load_sql_standard is expected to be load sql in /value/value_time_serie
             s.php
     \-- load_sql - section for function load_sql is expected to be load sql in /value/value_time_series.php
@@ -4017,7 +4019,6 @@
     \-- load_by_grp - section for function load_by_grp is expected to be load in /value/value_time_series.php
     \-- add - section for function add not yet defined that it should be database load functions that reads the object f
             rom the database in /value/value_time_series.php
-    \-- id_field - section for function id_field not yet defined that it should be info in /value/value_time_series.php
     \-- save - section for function save is expected to be save in /value/value_time_series.php
 \-- value_ts_data
     \-- sql_table - section for function sql_table not yet defined that it should be sql create in /value/value_ts_data.
@@ -4769,8 +4770,6 @@
         \-- db_object - name of the prime index field of the table
         \-- db_object_key - name of prime index field of the table
         \-- db_object_no_id - name of prime index field of the table
-        \-- value_time_series - temp overwrite of the id_field function of sandbox_value class until this class is revie
-                wed
     \-- db_ready
         \-- combine_object - checks if the combine object can be added to the database
     \-- is_outdated
@@ -6101,7 +6100,7 @@
         \-- value_text - @param user_message $msg to report a change log entry that cannot be written
         \-- value_time - @param user_message $msg to report a change log entry that cannot be written
 \-- database load functions that reads the object from the database
-    \-- row_mapper_sandbox
+    \-- row_mapper_sandbox_multi
         \-- value_time_series - map the database fields to the object fields
     \-- load_sql_standard
         \-- value_time_series - create the SQL to load the default time series always by the id
@@ -7658,7 +7657,6 @@
 \-- sandbox_value
     \-- url_mapper - section for function url_mapper not yet defined that it should be construct and map in /sandbox/san
             dbox_value.php
-    \-- value - section for function value not yet defined that it should be set and get in /sandbox/sandbox_value.php
     \-- number - section for function number not yet defined that it should be set and get in /sandbox/sandbox_value.php
     \-- text_value - section for function text_value not yet defined that it should be set and get in /sandbox/sandbox_v
             alue.php
@@ -7675,6 +7673,7 @@
     \-- impact - section for function impact not yet defined that it should be display in /sandbox/sandbox_value.php
     \-- has_phrase - section for function has_phrase not yet defined that it should be display in /sandbox/sandbox_value
             .php
+    \-- value - section for function value not yet defined that it should be display in /sandbox/sandbox_value.php
     \-- value_edit - section for function value_edit not yet defined that it should be display in /sandbox/sandbox_value
             .php
     \-- name_link - section for function name_link not yet defined that it should be display in /sandbox/sandbox_value.p
@@ -7891,7 +7890,6 @@
     \-- get_description - section for function get_description is expected to be set and get in /value/value.php
     \-- name_tip - section for function name_tip not yet defined that it should be base in /value/value.php
     \-- name_link - section for function name_link not yet defined that it should be base in /value/value.php
-    \-- val_formatted - section for function val_formatted not yet defined that it should be base in /value/value.php
     \-- source_selector - section for function source_selector not yet defined that it should be base in /value/value.ph
             p
     \-- ref_selector - section for function ref_selector not yet defined that it should be base in /value/value.php
@@ -8238,8 +8236,8 @@
         \-- figure - @param phrase_list|null $phr_lst_header list of phrases that are shown already in the context e.g. 
                 the table header and that should not be shown again
     \-- display
-        \-- figure - return the html code to display a value
-        \-- figure_list - @return string with a list of the figure names with html links
+        \-- figure - the number of the value or the result in the format of the user, so that a figure shows
+        \-- figure_list - @param user_message $msg to report a problem while formatting a number
     \-- display_linked
         \-- figure - html code to show the value with the possibility to click for the result explanation
         \-- figure_list - @param array $url_arr the url parameters of the calling page,

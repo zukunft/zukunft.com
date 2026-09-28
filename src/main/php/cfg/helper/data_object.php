@@ -546,6 +546,8 @@ class data_object
         $sbx = null;
         if ($named_obj::class == word::class) {
             $sbx = $this->get_word_by_name($named_obj->name(), $msg);
+        } elseif ($named_obj::class == triple::class) {
+            $sbx = $this->get_triple_by_name($named_obj->name(), $msg);
         } elseif ($named_obj::class == phrase::class) {
             $sbx = $this->get_phrase_by_name($named_obj->name(), $msg);
         } elseif ($named_obj::class == source::class) {
@@ -571,6 +573,19 @@ class data_object
     function get_word_by_name(string $name, user_message $msg): ?word
     {
         return $this->word_list()->get_by_name($name, $msg);
+    }
+
+    /**
+     * get a triple by the name from this cache object, so that an import can fill a triple that
+     * is named by an import json like a word (see sandbox_link_named::import_mapper)
+     *
+     * @param string $name the name of the triple
+     * @param user_message $msg to report a problem while matching the name
+     * @return triple|null the triple of this cache or null if the cache does not have it
+     */
+    function get_triple_by_name(string $name, user_message $msg): ?triple
+    {
+        return $this->triple_list()->get_by_name($name, $msg);
     }
 
     /**

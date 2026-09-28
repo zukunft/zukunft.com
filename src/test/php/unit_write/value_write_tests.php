@@ -279,6 +279,11 @@ class value_write_tests
         $target = values::SAMPLE_INT;
         $t->assert(', value->convert user input', $result, $target);
 
+        // the word tests delete the renamed test word again, so it is created here like the
+        // triple tests do (see triple_write_tests), because a group that misses one of its
+        // phrases names the value of the remaining seed phrases (see load_phrase_group)
+        $t_db->test_word($msg, word_names::TEST_RENAMED);
+
         // test adding a value in the database
         // as it is call from value_add.php with all phrases in an id list including the time phrase,
         // so the time phrase must be excluded
@@ -286,7 +291,10 @@ class value_write_tests
         $add_val = new value($t->usr1);
         $add_val->set_grp($phr_grp);
         $add_val->set_number(values::SAMPLE_BIG);
-        $add_val->save($msg);
+        // the save depends on the group, which is empty if a phrase name is missing (see load_phrase_group)
+        if (!$phr_grp->phrase_list()->is_empty()) {
+            $add_val->save($msg);
+        }
         $result = $msg->get_last_message();
         $target = '';
         $t->assert(', value->save ' . $add_val->number() . ' for ' . $phr_grp->dsp_id() . ' by user "' . $t->usr1->name . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
@@ -322,7 +330,9 @@ class value_write_tests
         $add_val2 = new value($t->usr1);
         $add_val2->set_grp($phr_grp2);
         $add_val2->set_number(values::SAMPLE_BIGGER);
-        $add_val2->save($msg);
+        if (!$phr_grp2->phrase_list()->is_empty()) {
+            $add_val2->save($msg);
+        }
         $result = $msg->get_last_message();
         $target = '';
         $t->assert(', value->save ' . $add_val2->number() . ' for ' . $phr_grp2->name() . ' by user "' . $t->usr1->name . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
@@ -495,6 +505,11 @@ class value_write_tests
         $val_usr2->load_by_grp($phr_grp);
         $val_usr2->del($usr_msg);
         */
+
+        // the word tests rename the added test word away, so it is created here like the ref
+        // tests do (see ref_write_tests), because a group that misses one of its phrases names
+        // the value of the remaining seed phrases (see load_phrase_group)
+        $t_db->test_word($msg, word_names::TEST_ADD);
 
         // the group name that the user types in the detailed value add form is written with the new value
         $t->subheader($ts . 'given group name');

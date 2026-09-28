@@ -94,14 +94,15 @@ class figure_list extends ListBase
      */
 
     /**
+     * @param user_message $msg to report a problem while formatting a number
      * @return string with a list of the figure names with html links
      * ex. names_linked
      */
-    function display(): string
+    function display(user_message $msg): string
     {
         $figures = array();
         foreach ($this->lst() as $fig) {
-            $figures[] = $fig->display();
+            $figures[] = $fig->display($msg);
         }
         return implode(', ', $figures);
     }

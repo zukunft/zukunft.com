@@ -143,7 +143,9 @@ class test_cleanup extends test_api
         //$t_res->cleanup($ts);
         $t_frm->cleanup($ts);
         $t_grp->cleanup($ts);
-        //$t_val->cleanup($ts);
+        // the values are removed by their phrase names, so they must go before the test words,
+        // because a value whose word is already deleted cannot be found by its name any more
+        $t_val->cleanup($ts);
         $t_ref->cleanup($ts);
         $t_src->cleanup($ts);
         $t_trp->cleanup($ts);
@@ -207,6 +209,10 @@ class test_cleanup extends test_api
         $result .= $t_db->test_component_unlink(views::TEST_EXCLUDED_NAME, components::TEST_EXCLUDED_NAME);
         $result .= $t_db->test_component_unlink(views::TEST_TABLE_NAME, components::TEST_TITLE_NAME);
         $result .= $t_db->test_component_unlink(views::TEST_TABLE_NAME, components::TEST_TABLE_NAME);
+
+        // a term view is not expected after a database reset, so the link that the write tests
+        // create is removed here (see test_db_load::test_term_view_unlink)
+        $result .= $t_db->test_term_view_unlink($msg, new test_views($this)->term_view());
 
         // load the test view
         $msk = $t_db->load_view(views::TEST_ADD_NAME);
@@ -406,12 +412,12 @@ class test_cleanup extends test_api
             }
         }
 
-        // request to delete some triples not yet covered by the other cleanup jobs
-        $t_db->del_triple($msg, word_names::YEAR_2019, verbs::IS, words::YEAR_CAP);
-        $t_db->del_triple($msg, word_names::YEAR_2020, verbs::IS, words::YEAR_CAP);
+        // request to delete some triples not yet covered by the other cleanup jobs; only a triple
+        // whose "from" is a test word is a test row: the triples of the real year words are seed
+        // rows of companies.json with a pinned id (triple_names::YEAR_2019_ID and YEAR_2020_ID)
+        // and deleting one excludes it for the test user, which takes it out of every later read
         $t_db->del_triple($msg, word_names::TEST_2021, verbs::IS, words::YEAR_CAP);
         $t_db->del_triple($msg, word_names::TEST_2022, verbs::IS, words::YEAR_CAP);
-        $t_db->del_triple($msg, word_names::YEAR_2020, verbs::FOLLOW, word_names::YEAR_2019);
         $t_db->del_triple($msg, word_names::TEST_2021, verbs::FOLLOW, word_names::YEAR_2020);
         $t_db->del_triple($msg, word_names::TEST_2022, verbs::FOLLOW, word_names::TEST_2021);
         $t_db->del_triple($msg, word_names::TEST_CASH_FLOW, verbs::IS, word_names::TEST_FIN_REPORT);

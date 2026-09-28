@@ -159,7 +159,7 @@ view_id,user_id,view_name,description,view_type_id,view_style_id,usage,code_id,e
 158,1,Touristic,show things to see,,,,touristic,,,
 159,1,Graph,show the related topics as a visual graph,,,,graph,,,
 160,1,Simple,show only the most relevant facts,,,,simple,,,
-161,1,Mathematical constance,Show a mathematical constance and the related words and formulas,,,,math_const,,,
+161,1,Mathematical constant,Show a mathematical constant and the related words and formulas,,,,math_const,,,
 162,1,problem with solutions,Explain a problem and show the potential solutions,,,,global_problem,,,
 163,1,Currency,Show a currency with the most relevant exchange rates and related formulas,,,,currency,,,
 164,1,solution priority validation,"the ranking of the global problems by potential loss with the solution, its loss reduction, the initial effort and the reward ratio",11,,,solution_prio_validation,,,

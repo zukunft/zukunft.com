@@ -544,6 +544,19 @@ class value_tests
         $t->assert_sql_update_owner($sc, $t->usr2, $val_3, [sql_type::LOG]);
         $t->assert_sql_update_owner($sc, $t->usr2, $val_16, [sql_type::LOG]);
         $t->assert_sql_update_owner($sc, $t->usr2, $val_17, [sql_type::LOG]);
+        // the owner is the user of the standard row, so an owner change is only detected against
+        // a db row of the old owner and never against a db row of the same user as save uses it,
+        // which has left the owner unchanged when a value was deleted (see sandbox_multi::set_owner)
+        $test_name = 'a value of the new owner writes the owner';
+        $val_owner = $t_val->value($msg);
+        $val_new_owner = clone $val_owner;
+        $val_new_owner->set_user($t->usr2);
+        $fvt_lst = $val_new_owner->db_fields_changed($val_owner, $msg, new sql_type_list([sql_type::LOG]));
+        $t->assert_true($test_name, in_array(user_db::FLD_ID, $fvt_lst->names()));
+        // negative: the db row of the same user, as save compares with it, has no owner change
+        $test_name = '... but the db row of the same user has no owner change';
+        $fvt_lst = $val_owner->db_fields_changed(clone $val_owner, $msg, new sql_type_list([sql_type::LOG]));
+        $t->assert_false($test_name, in_array(user_db::FLD_ID, $fvt_lst->names()));
         // update only the last_update date to trigger calculation
         $this->assert_sql_update_trigger($t, $db_con, $val_upd, $val);
 

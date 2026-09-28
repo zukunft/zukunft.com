@@ -213,6 +213,17 @@ class sandbox_link_named extends sandbox_link
         if (key_exists(json_fields::NAME, $in_ex_json)) {
             $this->set_name($in_ex_json[json_fields::NAME]);
         }
+
+        // fill up the object if it has only the name, so that the id is not lost on import
+        if ($this->no_id_but_name()) {
+            if ($dto != null) {
+                $cac_obj = $dto->get_object_by_name($this, $msg);
+                if ($cac_obj != null) {
+                    $this->fill($cac_obj, $this->get_user());
+                }
+            }
+        }
+
         if (key_exists(json_fields::DESCRIPTION, $in_ex_json)) {
             $this->description = $in_ex_json[json_fields::DESCRIPTION];
         }

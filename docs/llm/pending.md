@@ -134,6 +134,10 @@ edit icon for formulas that allow to unlink formulas
 
 add a list with the triples and a plus sign to add a new triple
 
+## json import: word and triple names
+
+add to the jsom import check that word and triple names in english start always with a small letter with a few exceptions based on triples on the same json import file: if the name is a symbol or a country 
+
 ## triple view
 
 add values icon and add formula icon
@@ -482,6 +486,14 @@ if the 'views tab' add after the view name a link to edit the view and make the 
 page
 
 fix the view selector link in the word_default page
+
+make value_base abstract: value_base is only the shared parent of value, value_time, value_text, value_geo and
+value_time_series, but it can still be created, and because the table name is derived from the class a value_base
+object queries the not existing table value_bases_main (e.g. test_values::cleanup used new value_base() until the test
+value cleanup was activated). declare the class abstract, turn the functions that each child must overwrite into
+abstract functions (e.g. value(), which sandbox_value today only reports at runtime as 'expected to be overwritten'),
+check if sandbox_value can be abstract as well, and replace any remaining creation of value_base or class based
+creation from def::VALUE_CLASSES (e.g. in the test mappers) with the matching concrete value class
 
 ### verb default view
 

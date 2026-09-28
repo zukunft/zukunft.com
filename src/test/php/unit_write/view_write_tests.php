@@ -86,7 +86,10 @@ class view_write_tests
         $t->assert_write_named($t_msk->view_filled_add(), views::TEST_ADD_NAME, $msg);
 
 
-        $db_con->import_system_views($t->usr1, $msg_ui);
+        // the system views are system data, so they are imported by their owner: an import by the
+        // test user would write every field that the seed has set, e.g. the protection of the
+        // start view, into the user sandbox of the test user and change the page of a seed view
+        $db_con->import_system_views($t->usr_system, $msg_ui);
 
         $this->create_test_views($t);
 

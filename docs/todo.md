@@ -20,6 +20,8 @@ A proper issue ticket should be created for these TODOs notes:
     TODO the admin dashboard the x most changed user settings
     TODO add default ranking 
     TODO add default sort asc or desc for tables
+    TODO limit the prime phrase id by the int number that can be processed in JavaScript
+    TODO remove the dots from the value and result id
 
     ->  launch
 
