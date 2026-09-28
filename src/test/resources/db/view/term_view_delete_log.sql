@@ -30,7 +30,7 @@ $$ LANGUAGE plpgsql;
 SELECT term_view_delete_log
        (3::bigint,
         3::smallint,
-        89::smallint,
+        103::smallint,
         'Mathematical constant'::text,
         'main word'::text,
         'mathematical constant'::text,

@@ -38,8 +38,8 @@ SELECT term_view_insert_log_01550500000
         -1,
         3,
         1,
-        89,
+        103,
         'Mathematical constant',
         'main word',
         'mathematical constant',
-        725);
+        759);

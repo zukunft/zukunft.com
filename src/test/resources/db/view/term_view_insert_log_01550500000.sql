@@ -43,8 +43,8 @@ SELECT term_view_insert_log_01550500000
         -1::bigint,
         3::bigint,
         1::smallint,
-        89::smallint,
+        103::smallint,
         'Mathematical constant'::text,
         'main word'::text,
         'mathematical constant'::text,
-        725::smallint);
+        759::smallint);
