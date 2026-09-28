@@ -1869,10 +1869,16 @@ class sandbox_multi extends db_object_multi_user
         if ($this->has_id() > 0 and $new_owner_id > 0) {
             // load the standard db row
             $db_std = $this->clone_reset();
-            $get_msg = clone $own_msg;
+            $get_msg = new user_message($msg->usr); // the verdict of the load, not reported if the row may be missing
             $db_std->load_standard($this->id(), $get_msg);
 
-            if ($get_msg->is_ok() or $must_exist) {
+            // a standard row that cannot be loaded cannot get a new owner, and the load problem
+            // is only an error for the caller if the row is expected to exist (see must_exist)
+            if (!$get_msg->is_ok()) {
+                if ($must_exist) {
+                    $own_msg->merge($get_msg);
+                }
+            } else {
                 $new_owner = new user();
                 $new_owner->load_by_id($new_owner_id, $own_msg);
                 // the owner is the user of the standard row, so the change is written like a
