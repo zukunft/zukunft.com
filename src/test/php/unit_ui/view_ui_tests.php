@@ -355,9 +355,9 @@ class view_ui_tests
             [api_types::TEST_MODE, api_types::INCL_RELATED]));
         $ttl_html = $sfm->title_link($trm_msk, $msg);
         $test_name = 'the term view title names the linked view';
-        $t->assert_text_contains($test_name, $ttl_html, views::START_NAME);
+        $t->assert_text_contains($test_name, $ttl_html, views::MATH_CONST_NAME);
         $test_name = '... and the linked term';
-        $t->assert_text_contains($test_name, $ttl_html, word_names::MATH);
+        $t->assert_text_contains($test_name, $ttl_html, triple_names::MATH_CONST);
         $test_name = 'the term view title links to the term view edit view';
         $t->assert_text_contains($test_name, $ttl_html, url_var::MASK . '=' . views::VIEW_LINK_EDIT_ID);
         $test_name = 'the term view title has a subtitle for the share and protection';

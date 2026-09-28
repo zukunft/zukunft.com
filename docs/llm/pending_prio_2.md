@@ -1,9 +1,5 @@
 # pending prio 2
 
-## frontend values
-
-the value page of a geo value shows no geolocation, while a text value is already shown (see the value_default_value_geo snapshot); add the mapping of json_fields::GEO_VALUE to the frontend value object (web/value/value.php) and show the geolocation on the value page
-
 ## tests
 
 add to the json_validation test a check for which words, triples, verb, formula or type objects a description is missing
@@ -251,7 +247,13 @@ a value is named by the phrases of its group, so change_log_list::load_row_names
 
 ## test value and result leftovers survive an aborted write test run
 
-test_cleanup::cleanup_objects_ex_user() runs $t_wrd->cleanup() but has $t_val->cleanup(), $t_res->cleanup() and $t_grp->cleanup() commented out (since the function was added in de52d9c08), so the test words are deleted while the values and results that use them stay. After that the leftover row cannot be found by phrase names any more, because one of its phrases no longer exists, and only a database reset removes it. That is what makes a read test fail with extra rows on the word default page of 'inhabitants' (2026-09: the 987'654'321 of value_write_tests and the 0.79% result of the test increase formula assigned to 'System Test Word Percent'). The two value groups of value_write_tests are now in values::TEST_VALUES so the by-name cleanup covers them while the words still exist; the remaining step is to enable the value, result and group cleanup in cleanup_objects_ex_user before the word cleanup - they were switched off deliberately, so check first why
+the group and the value cleanup of test_cleanup::cleanup_objects_ex_user() are enabled now and run before $t_wrd->cleanup(), sandbox::del_exe() no longer deletes an object whose del_links() has failed, and test_db_load::load_phrase_group() reports a phrase name it cannot find instead of building the group of the remaining names, so a test number can no longer land in the group of the seed phrases alone (2026-09: the 987'654'321 of value_write_tests under 'inhabitants, million, 2020' on the word default page of 'inhabitants'). Such a row is named by seed phrases only, so no by-name cleanup may remove it and only a database reset does. The result cleanup is still commented out, because test_results has no cleanup() function yet and no results::TEST_RESULTS const to name the rows; until it has one an aborted write test run can still leave a result of a deleted test word behind (the 0.79% result of the test increase formula assigned to 'System Test Word Percent'). A write test of the refused delete is missing as well: it should check that del() keeps the object and reports the reason when one of its values cannot be deleted
+
+## the read phase view snapshots contain volatile test row ids
+
+the html snapshots of system_views_read_tests (test_base::assert_view) are taken before run_db_recreate, so they show the test rows that create_test_db_entries has just written, with the id that the database sequence happens to give them. A sequence never reuses the id of a row that an earlier run has created and deleted, so the same page has a different id on every database that has been used before, e.g. the word default page of 'inhabitants' names 'System Test Word Increase' with id 1453 right after a reset and with 1476 on the database the committed snapshot was taken on (the highest seed word id is 1432), and the value link of that word differs as well, because the group key encodes the phrase ids. The workflow snapshots already solve this with url_test_base::normalize_ids(), wf_fixed_id and wf_norm_ids; the same normalization is missing for assert_view and would additionally have to re-encode the group key with id::int2alpha_num. Until then a snapshot of these pages is only reproducible directly after reset_db
+
+a second source of the same kind is a user overlay that a test leaves on a seed row: the page of the seed row then shows the 'My' tab and the user change log row of the test user, so it differs between a run after reset_db and a run on a database where the write tests have run before (2026-09: view_write_tests imported the system views as the test user, which wrote the protection of the start view into the sandbox of the test user, see the fix at the import_system_views call). A test may change a seed row for a user only if it undoes the overwrite with del_usr_cfg, like write_named_cleanup_force does before a delete
 
 ## code cleanup
 The cleanup deleted 14 snapshots and the blast radius is wider than the orphan case. delete_unused_files() removes every .html under views_by_object/ that this run did not write. That is correct for a full run, but a partial run — test_part.php, a single test class, or

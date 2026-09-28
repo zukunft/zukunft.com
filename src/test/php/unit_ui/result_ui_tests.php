@@ -214,6 +214,13 @@ class result_ui_tests
         $ui_sys->typ_lst_cache->phr_sys = new phrase_list_ui();
         $ui_sys->phr_lst = $t_phr->list_percent_symbol_cache_ui();
         $t->assert($test_name, $res->val_formatted($msg), '1.23' . word_names::PERCENT_SYMBOL);
+        // a calculated number is shown in the same format as a measured one, so the cell text of
+        // a result is the formatted number and never the raw one
+        $test_name = '... and a table cell of a result uses the same format';
+        $t->assert($test_name, $res->value($msg), '1.23' . word_names::PERCENT_SYMBOL);
+        $test_name = '... also as the linked number of the cell';
+        $t->assert_text_contains($test_name, $res->value_edit($msg),
+            '>1.23' . word_names::PERCENT_SYMBOL . '<');
         // negative: with the symbol triple in neither cache the number is shown without the sign
         // instead of falling back to a coded one
         $test_name = '... but without the symbol triple in any cache the sign is missing';
@@ -222,9 +229,18 @@ class result_ui_tests
         $ui_sys->typ_lst_cache->phr_sys = $phr_sys_keep;
         $ui_sys->phr_lst = $phr_lst_keep;
 
+        // a number of zero is a number like any other, so it is shown and not left out
+        $test_name = 'a result of zero shows the number';
+        $res_zero = new result();
+        $res_zero->number = 0;
+        $t->assert($test_name, $res_zero->val_formatted($msg), '0');
+
         $test_name = 'a missing number returns an empty text';
         $res = new result();
         $t->assert($test_name, $res->val_formatted($msg), '');
+        // negative: a result that is not yet calculated has nothing to show in its cell
+        $test_name = '... also in a table cell';
+        $t->assert($test_name, $res->value($msg), '');
         $test_name = '... also as the numeric value component of a view, which would else stop the page';
         $t->assert($test_name, new ui_base()->num_value($msg, $res), '');
         $test_name = 'the number of the url is mapped even after an unrelated earlier error of the request';

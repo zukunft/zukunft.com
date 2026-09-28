@@ -37,7 +37,9 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::DB . 'sql_creator.php';
 include_once paths::DB . 'sql_type.php';
+include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VIEW . 'term_view.php';
+include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_TYPES . 'view_styles.php';
 include_once test_paths::CREATE . 'test_links.php';
@@ -46,9 +48,11 @@ include_once test_paths::UTILS . 'test_cleanup.php';
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
 use Zukunft\ZukunftCom\main\php\cfg\view\term_view_list;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\test\php\create\test_links;
 use Zukunft\ZukunftCom\test\php\create\test_views;
@@ -151,6 +155,29 @@ class term_view_tests
         $t->assert_sql_delete($sc, $lnk, [sql_type::LOG, sql_type::USER]);
         $t->assert_sql_delete($sc, $lnk, [sql_type::EXCLUDE]);
         $t->assert_sql_delete($sc, $lnk, [sql_type::USER, sql_type::EXCLUDE]);
+
+        $t->subheader($ts . 'term_view api mapping');
+        // a page url and an api message carry only the term id, which encodes the class of the
+        // term, so a term view of a triple must not be mapped back to the word of the same id
+        $msg = new user_message($t->usr1);
+        $test_name = 'the term of a term view of a triple survives the api mapping';
+        $trm_msk = $t_msk->term_view();
+        $lnk = new term_view($t->usr1);
+        $lnk->api_mapper([json_fields::TERM_ID => $trm_msk->term()->id()], $msg);
+        $t->assert($test_name, $lnk->term()->id(), $trm_msk->term()->id());
+        $test_name = '... and the mapped term is the triple';
+        $t->assert_true($test_name, $lnk->term()->is_triple());
+        // negative: the dummy word that the term creation uses must not remain the term object
+        $test_name = '... and not the word of the same object id';
+        $t->assert_false($test_name, $lnk->term()->is_word());
+        // a term view of a word keeps the word, so that the sign is not simply inverted
+        $test_name = 'the term of a term view of a word survives the api mapping';
+        $trm_msk = $t_msk->term_view_add();
+        $lnk = new term_view($t->usr1);
+        $lnk->api_mapper([json_fields::TERM_ID => $trm_msk->term()->id()], $msg);
+        $t->assert($test_name, $lnk->term()->id(), $trm_msk->term()->id());
+        $test_name = '... and the mapped term is the word';
+        $t->assert_true($test_name, $lnk->term()->is_word());
 
         $t->subheader($ts . 'triple api');
         $lnk = $t_lnk->term_view();

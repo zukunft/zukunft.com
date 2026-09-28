@@ -466,8 +466,8 @@ class views
     const string SIMPLE_COM = 'show mainly related words that are relevant in sciences';
     const string MATH_CONST = 'math_const';
     const int MATH_CONST_ID = 161;
-    const string MATH_CONST_NAME = 'math const';
-    const string MATH_CONST_COM = 'Show a mathematical constance and the related words and formulas';
+    const string MATH_CONST_NAME = 'Mathematical constant';
+    const string MATH_CONST_COM = 'Show a mathematical constant and the related words and formulas';
     const string GLOBAL_PROBLEM = 'global_problem';
     const int GLOBAL_PROBLEM_ID = 162;
 

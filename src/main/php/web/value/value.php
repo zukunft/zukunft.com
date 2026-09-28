@@ -436,27 +436,16 @@ class value extends sandbox_value
      */
 
     /**
-     * create the html code to show only the value in default format to the user
-     * this is the opposite of the convert function
+     * the value in the format of the user like a result (see sandbox_value::value), but marked
+     * if this user has changed the number, so that the reader sees that it is not the standard
      * @return string the html code to show only the value
      */
     function value(user_message $msg): string
     {
-        $html = new html_base();
-        if ($this->number() != null) {
-            $result = $this->val_formatted($msg);
-            if (!$this->is_std()) {
-                $result = $html->span($result, styles::STYLE_USER);
-            }
-        } elseif ($this->text_value() != null) {
-            // escape the user text value: value() returns display-ready html (the number branch
-            // already returns a span) and the span/name callers emit it without escaping, so an
-            // un-escaped text value would be stored xss
-            $result = $html->esc($this->text_value());
-        } elseif ($this->time_value() != null) {
-            $result = $html->esc($this->time_value());
-        } else {
-            $result = '';
+        $result = parent::value($msg);
+        if ($this->number() !== null and !$this->is_std()) {
+            $html = new html_base();
+            $result = $html->span($result, styles::STYLE_USER);
         }
         return $result;
     }
@@ -704,38 +693,6 @@ class value extends sandbox_value
         $phr_links = $this->phrase_link_list($msg, $phr_lst_exclude);
         $val_grey = $html->span($this->value($msg), styles::STYLE_GREY);
         return $phr_links . $sep . $val_grey . $this->number_symbols($msg);
-    }
-
-    /**
-     * depending on the word list format the numeric value
-     * format the value for on screen display
-     * similar to the corresponding function in the "result" class
-     * @returns string the HTML code to display this value
-     */
-    function val_formatted(user_message $msg): string
-    {
-        global $ui_sys;
-        $cfg = $ui_sys->cfg;
-        $result = '';
-
-        if (!is_null($this->number())) {
-            // load the list of phrases if needed
-            if (!$this->grp->phr_lst()->is_empty()) {
-                if ($this->grp->phr_lst()->has_percent($msg)) {
-                    $result = round($this->number() * 100, $cfg->percent_decimals()) . $this->percent_symbol($msg);
-                } else {
-                    if ($this->number() >= 1000 or $this->number() <= -1000) {
-                        $result .= number_format($this->number(), 0, $cfg->dec_point(), $cfg->thousand_sep());
-                    } else {
-                        $result = round($this->number(), 2);
-                    }
-                }
-            } else {
-                // use default settings
-                $result = round($this->number(), 2);
-            }
-        }
-        return $result;
     }
 
     /**

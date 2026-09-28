@@ -338,8 +338,15 @@ class term extends combine_named
                 } else {
                     log_err_msg('Term ' . $this->dsp_id() . ' is of unknown type', $msg);
                 }
-                // overwrite the term id in the object with the real object id
-                $this->set_id($db_row[$id_fld]);
+                // overwrite the id of the term object with the real object id: a row of the
+                // terms view carries the term id, which encodes the class and must be decoded
+                // (e.g. term id 36 is formula 18), whereas a row of the word, triple, formula
+                // or verb table carries the object id itself, which set_id would misread
+                if ($id_fld == term::FLD_ID) {
+                    $this->set_id($db_row[$id_fld]);
+                } else {
+                    $this->set_obj_id($db_row[$id_fld]);
+                }
             } else {
                 log_err_msg('id field missing when trying to map term from ' . implode(',', $db_row), $msg);
             }
@@ -415,10 +422,26 @@ class term extends combine_named
      */
     function set_id(int $id): void
     {
-        if ($id % 2 == 0) {
-            $this->set_obj_id(abs($id) / 2);
+        // the term id encodes the class of the term object: an odd id is a phrase (positive a
+        // word, negative a triple) and an even id is a formula (positive) or a verb (negative),
+        // so without setting the class the term of a triple would be read back as a word,
+        // because the term constructor creates a word as dummy object (see id())
+        if ($id == 0) {
+            // a term id of zero encodes no class, so the object class is not changed
+            $this->set_obj_id(0);
         } else {
-            $this->set_obj_id((abs($id) + 1) / 2);
+            if ($id % 2 == 0) {
+                $class = $id > 0 ? formula::class : verb::class;
+                $obj_id = abs($id) / 2;
+            } else {
+                $class = $id > 0 ? word::class : triple::class;
+                $obj_id = (abs($id) + 1) / 2;
+            }
+            // an already loaded object of the same class is kept, so that its name is not lost
+            if ($this->obj() == null or $this->obj()::class != $class) {
+                $this->set_obj_by_class($class);
+            }
+            $this->set_obj_id($obj_id);
         }
     }
 
@@ -463,12 +486,17 @@ class term extends combine_named
      */
     private function set_obj_by_class(string $class): void
     {
+        // TODO Prio 1 if the user is missing create at least a warning message with trace because this should never happen
+        // the user of the previous term object is reused, but a verb is system vocabulary
+        // without a user, so an empty user is the fallback, because a word, triple and
+        // formula cannot be created without a user
+        $usr = $this->get_user() ?? new user();
         if ($class == word::class) {
-            $this->obj = new word($this->get_user());
+            $this->obj = new word($usr);
         } elseif ($class == triple::class) {
-            $this->obj = new triple($this->get_user());
+            $this->obj = new triple($usr);
         } elseif ($class == formula::class) {
-            $this->obj = new formula($this->get_user());
+            $this->obj = new formula($usr);
         } elseif ($class == verb::class) {
             $this->obj = new verb();
         } else {

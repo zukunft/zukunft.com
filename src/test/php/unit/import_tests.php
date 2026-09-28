@@ -40,10 +40,12 @@ include_once paths::MODEL_IMPORT . 'convert_wikipedia_table.php';
 include_once paths::MODEL_IMPORT . 'import_convert_xbrl.php';
 include_once paths::MODEL_CONST . 'files.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
+include_once paths::MODEL_WORD . 'triple.php';
 include_once paths::SHARED . 'library.php';
 include_once paths::SHARED_CONST . 'refs.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once test_paths::CONST . 'files.php';
+include_once test_paths::CONST . 'triple_names.php';
 include_once test_paths::CONST . 'word_names.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
@@ -53,6 +55,7 @@ use Zukunft\ZukunftCom\main\php\cfg\import\convert_wikipedia_table;
 use Zukunft\ZukunftCom\main\php\cfg\import\import;
 use Zukunft\ZukunftCom\main\php\cfg\import\import_convert_xbrl;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
 use Zukunft\ZukunftCom\main\php\shared\const\refs;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
@@ -153,6 +156,21 @@ class import_tests
         $test_name = '... and a triple without a type is no measure';
         $trp = $dto->triple_list()->get_by_name('global warming', $msg);
         $t->assert_false($test_name, $trp?->is_measure() ?? true);
+
+        // a triple that an import json names is filled from the cache like a word, so that e.g.
+        // the triple of a term view keeps its id (see sandbox_link_named::import_mapper); the measure
+        // type proves that the cached triple is returned and not the name-only triple given
+        $test_name = 'the import cache finds a triple by its name';
+        $trp_by_name = new triple($t->usr1);
+        $trp_by_name->set_name('hertz per second');
+        $trp_cac = $dto->get_object_by_name($trp_by_name, $msg);
+        $t->assert_true($test_name, $trp_cac?->is_measure() ?? false);
+        // negative: a triple that the cache does not have is not replaced by a placeholder
+        // the math const triple is a seed triple that this import json does not contain
+        $test_name = '... but a triple that the cache does not have is not found';
+        $trp_missing = new triple($t->usr1);
+        $trp_missing->set_name(triple_names::MATH_CONST);
+        $t->assert_null($test_name, $dto->get_object_by_name($trp_missing, $msg)?->name());
 
         $test_name = 'JSON import source count';
         $json_str = file_get_contents(test_files::IMPORT_SOURCES . test_files::JSON);

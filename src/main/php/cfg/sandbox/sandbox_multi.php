@@ -1858,28 +1858,55 @@ class sandbox_multi extends db_object_multi_user
      */
     function set_owner(int $new_owner_id, user_message $msg, bool $must_exist = true): bool
     {
+        global $db_con;
+
         log_debug($this->dsp_id() . ' to ' . $new_owner_id);
 
+        $result = false;
+        // the verdict of this owner change, merged into $msg right away, because a message that
+        // the caller has collected before must not turn a successful owner change into a failure
+        $own_msg = new user_message($msg->usr);
         if ($this->has_id() > 0 and $new_owner_id > 0) {
             // load the standard db row
-            $std = $this->clone_reset();
-            $get_msg = clone $msg;
-            $std->load_standard($this->id(), $get_msg);
+            $db_std = $this->clone_reset();
+            $get_msg = clone $own_msg;
+            $db_std->load_standard($this->id(), $get_msg);
 
             if ($get_msg->is_ok() or $must_exist) {
+                $new_owner = new user();
+                $new_owner->load_by_id($new_owner_id, $own_msg);
+                // the owner is the user of the standard row, so the change is written like a
+                // change of the user (see db_fields_changed) and not via save, which compares
+                // with a db row of the same user and would never detect the owner change;
+                // a missing owner is compared as an empty user, so that the new owner is written
+                $db_std->set_user($db_std->owner($own_msg) ?? new user());
+                $std = clone $db_std;
+                $std->set_user($new_owner);
+                if ($own_msg->is_ok()) {
+                    $sc = $db_con->sql_creator();
+                    $sc_par_lst = new sql_type_list([sql_type::LOG]);
+                    $fvt_lst = $std->db_fields_changed($db_std, $own_msg, $sc_par_lst);
+                    if (!$fvt_lst->is_empty_except_internal_fields()) {
+                        $sc_par_lst->add(sql_type::UPDATE);
+                        $qp = $std->sql_write($sc, $db_std, $std->db_fields_all(), $own_msg, $sc_par_lst);
+                        $db_con->update($qp, 'set owner of ' . $this->dsp_id(), $own_msg);
+                    }
+                }
 
-                // set the owner and save
-                $std->owner_id = $new_owner_id;
-                $std->save($msg);
-
-                // update the current object
-                if ($msg->is_ok()) {
+                // update the current object and continue as the new owner like sandbox::set_owner,
+                // so that e.g. del removes the user row of the new owner and not of the requester
+                if ($own_msg->is_ok()) {
                     $this->owner_id = $new_owner_id;
+                    if ($this->get_user()->id() != $new_owner_id) {
+                        $this->set_user($new_owner);
+                    }
+                    $result = true;
                 }
             }
 
         }
-        return $msg->is_ok();
+        $msg->merge($own_msg);
+        return $result;
     }
 
     /**

@@ -280,8 +280,8 @@
       ]
     },
     {
-      "name": "Mathematical constance",
-      "description": "Show a mathematical constance and the related words and formulas",
+      "name": "Mathematical constant",
+      "description": "Show a mathematical constant and the related words and formulas",
       "code_id": "math_const",
       "components": [
         {

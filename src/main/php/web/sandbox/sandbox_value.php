@@ -204,22 +204,6 @@ class sandbox_value extends sandbox
         $this->is_std = $is_std;
     }
 
-    // TODO review (split value objects?)
-    function value(user_message $msg): float|string|DateTime|null
-    {
-        if ($this->number() != null) {
-            return $this->number();
-        } elseif ($this->text_value() != null) {
-            return $this->text_value();
-        } elseif ($this->time_value() != null) {
-            return $this->time_value();
-        } elseif ($this->geo_value() != null) {
-            return $this->geo_value();
-        } else {
-            return null;
-        }
-    }
-
     function number(): ?float
     {
         return $this->number;
@@ -422,6 +406,36 @@ class sandbox_value extends sandbox
     }
 
     /**
+     * the number of a value or of a result as display-ready html, so that a table cell shows
+     * a calculated number in the same format as a measured one e.g. "-32%" for a percent result
+     *
+     * a text, a time or a geo value is escaped here, because the callers emit the result
+     * without escaping it again (see value_edit)
+     *
+     * @param user_message $msg to report a problem while formatting the number
+     * @return string the html code of the number, the text, the time or the geo value
+     */
+    function value(user_message $msg): string
+    {
+        global $ui_sys;
+        $html = new html_base();
+        if ($this->number() !== null) {
+            $result = $this->val_formatted($msg);
+        } elseif ($this->text_value() !== null) {
+            $result = $html->esc($this->text_value());
+        } elseif ($this->time_value() !== null) {
+            // a DateTime cannot be escaped, so it is formatted before, which also applies the
+            // date format that the user has configured
+            $result = $html->esc(date_format($this->time_value(), $ui_sys->cfg->date_time_format()));
+        } elseif ($this->geo_value() !== null) {
+            $result = $html->esc($this->geo_value());
+        } else {
+            $result = '';
+        }
+        return $result;
+    }
+
+    /**
      * the number as a link to the page of the value or of the result, so that a table cell
      * leads to the number itself and a result to the formula that has calculated it
      *
@@ -563,11 +577,12 @@ class sandbox_value extends sandbox
     }
 
     /**
+     * a number of zero is a number like any other, so only a missing number is null
      * @return bool true if the value is not available
      */
     function is_null(): bool
     {
-        if ($this->number() == null) {
+        if ($this->number() === null) {
             return true;
         } else {
             return false;

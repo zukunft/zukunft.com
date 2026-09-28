@@ -209,12 +209,15 @@ class figure extends combine_named
 
 
     /**
-     * return the html code to display a value
-     * this is the opposite of the convert function
+     * the number of the value or the result in the format of the user, so that a figure shows
+     * e.g. a percent as "-32%" and not as the raw ratio (see sandbox_value::val_formatted)
+     *
+     * @param user_message $msg to report a problem while formatting the number
+     * @return string the html code to display the number
      */
-    function display(): string
+    function display(user_message $msg): string
     {
-        return round($this->number(), 2);
+        return $this->val_formatted($msg);
     }
 
     /**

@@ -45,6 +45,7 @@ use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\web\element\element_group;
 use Zukunft\ZukunftCom\main\php\web\figure\figure as figure_ui;
 use Zukunft\ZukunftCom\main\php\web\figure\figure_list;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
@@ -69,6 +70,7 @@ class element_group_write_tests
         $t_trm = new test_terms($t);
         $tl = new test_lib();
         $msg = new user_message($t->usr1);
+        $msg_ui = new user_message_ui();
 
         // start the test section (ts)
         $ts = 'db write formula element group ';
@@ -157,11 +159,11 @@ class element_group_write_tests
                 if (isset($fig)) {
                     $t_api = new test_api();
                     $fig_ui = $tl->ui_obj($fig, new figure_ui());
-                    $result = $fig_ui->display();
+                    $result = $fig_ui->display($msg_ui);
                     $target = "8.67";
                     $t->assert('figure->display', $result, $target);
 
-                    $result = $fig_ui->display_linked();
+                    $result = $fig_ui->display_linked($msg_ui);
                     //$target = '<a href="/http/value_edit.php?id=438&back=1" class="' . styles::STYLE_USER . '">35\'481</a>';
                     // a group id can contain a '+', which the link encodes (see html_base::url_back)
                     $target = '<a href="/http/view.php?m=' . views::RESULT_EDIT_ID . '&id=' . rawurlencode((string)$fig->id()) . '">8.67</a>';
@@ -188,7 +190,7 @@ class element_group_write_tests
             $t->assert('figure_list->dsp_id', $result, $target);
 
             $fig_lst_ui = new figure_list($fig_lst->api_json());
-            $result = $fig_lst_ui->display();
+            $result = $fig_lst_ui->display($msg_ui);
             $target = "8.67 ";
             // TODO Prio 0 activate
             //$t->assert('figure_list->display', $result, $target);

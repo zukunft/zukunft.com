@@ -4625,6 +4625,60 @@ class test_base
     {
         $this->write_value_cleanup_one($sbx, $this->usr1, $grp, $check);
         $this->write_value_cleanup_one($sbx, $this->usr2, $grp, $check);
+        // remove a value that resists the single user cleanups above
+        $this->write_value_cleanup_force($sbx, $grp);
+    }
+
+    /**
+     * remove a test value that resists the single user cleanup, e.g. a value owned by one test
+     * user and changed by another: del() of the owner then only hands the value over or writes an
+     * exclusion overlay, so the value would survive and the later cleanup of its test word is
+     * refused, because a value of a deleted word can never be excluded for one user
+     * (see word::del_links)
+     *
+     * @param value_base|sandbox_multi $sbx the value object
+     * @param group $grp the phrase group that specifies the value
+     * @return void
+     */
+    private function write_value_cleanup_force(value_base|sandbox_multi $sbx, group $grp): void
+    {
+        $msg = new user_message($this->usr_system);
+        $sbx_sys = clone $sbx;
+        $sbx_sys->reset();
+        $sbx_sys->set_user($this->usr_system);
+        $sbx_sys->load_by_grp($grp, $msg);
+        if ($sbx_sys->id() != 0) {
+            // remove the overlay rows of all test users, so that no other user uses the value
+            $test_users = [$this->usr1, $this->usr2, $this->usr_normal];
+            foreach ($test_users as $usr) {
+                $sbx_sys->set_user($usr);
+                $sbx_sys->del_usr_cfg($msg);
+            }
+            // only the owner can delete an unused value completely (see used_by_someone_else)
+            $owner = $this->usr_system;
+            foreach ($test_users as $usr) {
+                if ($usr->id() == $sbx_sys->owner_id()) {
+                    $owner = $usr;
+                }
+            }
+            $sbx_sys->set_user($owner);
+            $sbx_sys->del($msg);
+            // report a value that survives the forced cleanup with the state that has blocked the
+            // delete, because the later cleanup of its test word would otherwise only report the
+            // refused delete of the value without the reason (see word::del_links)
+            $chk = clone $sbx;
+            $chk->reset();
+            $chk->set_user($this->usr_system);
+            $chk_msg = new user_message($this->usr_system);
+            $chk->load_by_grp($grp, $chk_msg);
+            if ($chk->id() != 0) {
+                log_warning('forced cleanup of test value ' . $chk->dsp_id()
+                    . ' failed: owner id ' . $chk->owner_id()
+                    . ', changed by user id ' . $chk->changer($chk_msg)
+                    . ', deleted as user id ' . $owner->id()
+                    . ', messages: ' . $msg->all_message_text() . $chk_msg->all_message_text());
+            }
+        }
     }
 
     /**

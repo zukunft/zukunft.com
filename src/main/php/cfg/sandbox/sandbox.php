@@ -3342,14 +3342,25 @@ class sandbox extends db_object_seq_id_user
 
         global $db_con;
 
-        // if this object has related objects delete the related object before deleting this
-        $this->del_links($msg);
+        // if this object has related objects delete the related object before deleting this;
+        // an unrelated earlier problem of the request says nothing about the links of this object
+        $lnk_msg = new user_message($msg->usr); // the verdict of the link deletes, merged into $msg right away
+        $this->del_links($lnk_msg);
+        $msg->merge($lnk_msg);
 
-        // actually delete to object
-        $sc = $db_con->sql_creator();
-        // TODO include deleting of user excludes in the sql function
-        $qp = $this->sql_delete($sc, $msg, new sql_type_list([sql_type::LOG]));
-        $db_con->delete($qp, 'del and log ' . $this->dsp_id(), $msg);
+        // a value or a triple that is left names this object in its key, so deleting the object
+        // anyway would leave a row pointing to an object that does not exist any more
+        if ($lnk_msg->is_ok()) {
+            // actually delete to object
+            $sc = $db_con->sql_creator();
+            // TODO include deleting of user excludes in the sql function
+            $qp = $this->sql_delete($sc, $msg, new sql_type_list([sql_type::LOG]));
+            $db_con->delete($qp, 'del and log ' . $this->dsp_id(), $msg);
+        } else {
+            $msg->add(msg_id::FAILED_TO_DELETE_UNUSED, [
+                msg_id::VAR_CLASS_NAME => $this::class
+            ]);
+        }
 
         return $msg->is_ok();
     }
