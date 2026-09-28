@@ -43,8 +43,8 @@ SELECT protection_type_insert_log_1111
        ('no protection'::text,
         3::bigint,
         1::smallint,
-        190::smallint,
-        191::smallint,
+        98::smallint,
+        99::smallint,
         'no_protection'::text,
-        192::smallint,
+        100::smallint,
         'anyone can take the ownership'::text);

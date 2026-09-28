@@ -39,7 +39,7 @@ PREPARE component_link_insert_log_110100100_user_call FROM
 SELECT component_link_insert_log_110100100_user
        (3,
         1,
-        16,
+        110,
         'Start view',
         null,
         'Word',
@@ -52,8 +52,8 @@ SELECT component_link_insert_log_110100100_user
         null,
         null,
         null,
-        50,
+        840,
         1,
         1,
-        140,
+        844,
         1);

@@ -38,15 +38,15 @@ PREPARE word_update_log_0202008010000_user_call FROM
 SELECT word_update_log_0202008010000_user
        (1,
         2,
-        17,
+        129,
         'Mathematics is an area of knowledge that includes the topics of numbers and formulas',
         'System Test Word Renamed',
         1,
-        15,
+        130,
         'standard',
         1,
         'time',
         2,
-        16,
+        128,
         null,
         'System Test Word Renamed');

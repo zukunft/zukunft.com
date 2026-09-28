@@ -30,7 +30,7 @@ END;
 SELECT component_link_delete_log
        (3,
         3,
-        16,
+        110,
         'Start view',
         'always',
         'Word',

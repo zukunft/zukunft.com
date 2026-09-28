@@ -49,10 +49,10 @@ SELECT formula_link_insert_log_015510000
         100::bigint,
         3::bigint,
         1::smallint,
-        12::smallint,
+        92::smallint,
         'scale minute to sec'::text,
         'time period based'::text,
         'minute'::text,
-        699::smallint,
-        700::smallint,
+        669::smallint,
+        671::smallint,
         2::bigint);

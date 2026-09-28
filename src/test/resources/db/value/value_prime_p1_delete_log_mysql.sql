@@ -27,7 +27,7 @@ END;
 SELECT value_prime_p1_delete_log
        (3,
         3,
-        1,
+        283,
         3.1415926535898,
         5,
         5,

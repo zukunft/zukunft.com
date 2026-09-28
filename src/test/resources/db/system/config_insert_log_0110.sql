@@ -37,6 +37,6 @@ SELECT config_insert_log_0110
        ('version_database'::text,
         3::bigint,
         1::smallint,
-        177::smallint,
-        178::smallint,
+        3::smallint,
+        4::smallint,
         '0.0.2'::text);

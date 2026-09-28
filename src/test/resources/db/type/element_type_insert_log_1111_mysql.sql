@@ -38,8 +38,8 @@ SELECT element_type_insert_log_1111
        ('Word selector',
         3,
         1,
-        687,
-        688,
+        593,
+        594,
         'word',
-        689,
+        595,
         'a reference to a word used to select values using "and"');

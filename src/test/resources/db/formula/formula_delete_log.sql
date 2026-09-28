@@ -25,6 +25,6 @@ $$ LANGUAGE plpgsql;
 SELECT formula_delete_log
        (3::bigint,
         3::smallint,
-        30::smallint,
+        631::smallint,
         'scale hour to sec'::text,
         2::bigint);

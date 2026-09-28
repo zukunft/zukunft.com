@@ -29,7 +29,7 @@ SELECT source_update_log_0000000500000_user
 SELECT source_update_log_0000000500000_user
        (3::bigint,
         2::smallint,
-        906::smallint,
+        211::smallint,
         null::text,
         null::bigint,
         null::text,

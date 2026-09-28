@@ -43,8 +43,8 @@ SELECT share_type_insert_log_1111
        ('public'::text,
         3::bigint,
         1::smallint,
-        194::smallint,
-        195::smallint,
+        102::smallint,
+        103::smallint,
         'public'::text,
-        196::smallint,
+        104::smallint,
         'value can be seen and used by everyone (default)'::text);

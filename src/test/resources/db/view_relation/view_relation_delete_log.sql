@@ -30,7 +30,7 @@ $$ LANGUAGE plpgsql;
 SELECT view_relation_delete_log
        (3::bigint,
         3::smallint,
-        108::smallint,
+        100::smallint,
         'word_edit'::text,
         'add components'::text,
         'word_usage'::text,

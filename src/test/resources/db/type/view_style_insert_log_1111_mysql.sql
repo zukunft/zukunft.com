@@ -38,8 +38,8 @@ SELECT view_style_insert_log_1111
        ('1/3 width',
         3,
         1,
-        785,
-        786,
+        694,
+        695,
         'col-md-4',
-        783,
+        696,
         'use 1/3 of the width (col-md-4)');

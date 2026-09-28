@@ -38,8 +38,8 @@ SELECT position_type_insert_log_1111
        ('below',
         3,
         1,
-        764,
-        765,
+        824,
+        825,
         'below',
-        766,
+        826,
         'below the previous entry');

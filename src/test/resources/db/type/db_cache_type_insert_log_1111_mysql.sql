@@ -38,8 +38,8 @@ SELECT db_cache_type_insert_log_1111
        ('system configuration',
         3,
         1,
-        875,
-        876,
+        890,
+        891,
         'system_config',
-        877,
+        892,
         'the complete json of the system configuration');

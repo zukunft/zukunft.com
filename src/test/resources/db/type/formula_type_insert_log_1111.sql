@@ -43,8 +43,8 @@ SELECT formula_type_insert_log_1111
        ('calc'::text,
         3::bigint,
         1::smallint,
-        691::smallint,
-        692::smallint,
+        626::smallint,
+        627::smallint,
         'default'::text,
-        693::smallint,
+        628::smallint,
         'a normal calculation formula'::text);

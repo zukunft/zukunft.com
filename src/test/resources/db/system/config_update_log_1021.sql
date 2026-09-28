@@ -38,13 +38,13 @@ SELECT config_update_log_1021
 SELECT config_update_log_1021
        (3::bigint,
         2::smallint,
-        176::smallint,
+        2::smallint,
         null::text,
         'Database version'::text,
         0::smallint,
-        178::smallint,
+        4::smallint,
         '0.0.2'::text,
         '0.0.3'::text,
-        179::smallint,
+        5::smallint,
         null::text,
         'version that the database has now; after the upgrade the new version number is written to the database'::text);

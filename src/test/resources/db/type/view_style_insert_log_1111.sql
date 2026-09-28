@@ -43,8 +43,8 @@ SELECT view_style_insert_log_1111
        ('1/3 width'::text,
         3::bigint,
         1::smallint,
-        785::smallint,
-        786::smallint,
+        694::smallint,
+        695::smallint,
         'col-md-4'::text,
-        783::smallint,
+        696::smallint,
         'use 1/3 of the width (col-md-4)'::text);

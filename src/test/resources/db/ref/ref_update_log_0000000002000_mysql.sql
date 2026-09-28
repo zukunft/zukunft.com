@@ -23,7 +23,7 @@ PREPARE ref_update_log_0000000002000_call FROM
 SELECT ref_update_log_0000000002000
        (3,
         2,
-        65,
+        229,
         'Q901028',
         null,
         12);

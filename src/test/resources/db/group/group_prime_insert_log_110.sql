@@ -26,7 +26,7 @@ SELECT group_prime_insert_log_110
 SELECT group_prime_insert_log_110
        (3::bigint,
         1::smallint,
-        320::smallint,
+        250::smallint,
         'π (unit symbol)'::text,
-        319::smallint,
+        249::smallint,
         5::bigint);

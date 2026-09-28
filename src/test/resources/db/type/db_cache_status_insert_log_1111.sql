@@ -43,8 +43,8 @@ SELECT db_cache_status_insert_log_1111
        ('clean'::text,
         3::bigint,
         1::smallint,
-        871::smallint,
-        872::smallint,
+        894::smallint,
+        895::smallint,
         'clean'::text,
-        873::smallint,
+        896::smallint,
         'no reason known why the cache should NOT be used'::text);

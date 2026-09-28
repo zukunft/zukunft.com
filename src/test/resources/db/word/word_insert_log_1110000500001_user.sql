@@ -32,11 +32,11 @@ SELECT word_insert_log_1110000500001_user
 SELECT word_insert_log_1110000500001_user
        (3::bigint,
         1::smallint,
-        88::smallint,
+        127::smallint,
         'company'::text,
         193::bigint,
-        90::smallint,
+        131::smallint,
         null::text,
         155::bigint,
-        93::smallint,
+        136::smallint,
         3::smallint);

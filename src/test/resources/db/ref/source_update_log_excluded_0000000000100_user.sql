@@ -31,9 +31,9 @@ SELECT source_update_log_excluded_0000000000100_user
 SELECT source_update_log_excluded_0000000000100_user
        (3::bigint,
         2::smallint,
-        172::smallint,
+        216::smallint,
         null::smallint,
         1::smallint,
         1::bigint,
-        170::smallint,
+        208::smallint,
         'The International System of Units'::text);

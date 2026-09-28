@@ -43,8 +43,8 @@ SELECT phrase_type_insert_log_111100
        ('standard'::text,
         3::bigint,
         1::smallint,
-        835::smallint,
-        836::smallint,
+        106::smallint,
+        107::smallint,
         'default'::text,
-        837::smallint,
+        108::smallint,
         '1'::text);

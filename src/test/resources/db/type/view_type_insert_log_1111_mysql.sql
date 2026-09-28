@@ -38,8 +38,8 @@ SELECT view_type_insert_log_1111
        ('standard',
         3,
         1,
-        714,
-        715,
+        690,
+        691,
         'default',
-        716,
+        692,
         'the base display mask without additional functionalities');

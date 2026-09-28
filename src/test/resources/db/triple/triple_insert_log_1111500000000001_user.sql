@@ -36,13 +36,13 @@ SELECT triple_insert_log_1111500000000001_user
 SELECT triple_insert_log_1111500000000001_user
        (3::bigint,
         1::smallint,
-        22::smallint,
+        175::smallint,
         'mathematical constant'::text,
         1::bigint,
-        100::smallint,
+        178::smallint,
         'A mathematical constant that never changes e.g. Pi'::text,
-        101::smallint,
+        181::smallint,
         'math constant'::text,
         17::smallint,
-        105::smallint,
+        187::smallint,
         3::smallint);

@@ -28,9 +28,9 @@ SELECT phrase_type_update_log_100200
 SELECT phrase_type_update_log_100200
        (3::bigint,
         1::smallint,
-        837::smallint,
+        108::smallint,
         'changed description'::text,
         '1'::text,
         1::bigint,
-        835::smallint,
+        106::smallint,
         'standard'::text);

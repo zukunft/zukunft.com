@@ -32,6 +32,6 @@ SELECT user_official_type_insert_log_1110
        ('EU passport',
         3,
         1,
-        181,
-        182,
+        49,
+        50,
         'passport_eu');

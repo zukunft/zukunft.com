@@ -37,15 +37,15 @@ PREPARE view_relation_update_log_0000420001_call FROM
 SELECT view_relation_update_log_0000420001
        (3,
         2,
-        816,
+        737,
         'add components',
         1,
         null,
         null,
         1,
-        817,
+        738,
         15,
         null,
-        821,
+        742,
         null,
         2);

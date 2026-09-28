@@ -20,6 +20,6 @@ END;
 SELECT phrase_type_delete_log
        (1,
         3,
-        835,
+        106,
         'standard',
         1);

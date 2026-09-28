@@ -20,6 +20,6 @@ END;
 SELECT user_delete_log_ip_address
        (1,
         3,
-        75,
+        54,
         '258.257.256.255',
         0);

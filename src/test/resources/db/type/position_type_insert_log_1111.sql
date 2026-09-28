@@ -43,8 +43,8 @@ SELECT position_type_insert_log_1111
        ('below'::text,
         3::bigint,
         1::smallint,
-        764::smallint,
-        765::smallint,
+        824::smallint,
+        825::smallint,
         'below'::text,
-        766::smallint,
+        826::smallint,
         'below the previous entry'::text);

@@ -26,7 +26,7 @@ END;
 SELECT formula_link_delete_log_user
        (3,
         3,
-        13,
+        93,
         'scale minute to sec',
         'time period based',
         'minute',

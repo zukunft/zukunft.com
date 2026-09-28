@@ -25,6 +25,6 @@ END;
 SELECT source_delete_log
        (3,
         3,
-        57,
+        195,
         'Federal Statistical Office',
         7);

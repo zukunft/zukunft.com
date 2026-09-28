@@ -35,13 +35,13 @@ PREPARE config_update_log_1021_call FROM
 SELECT config_update_log_1021
        (3,
         2,
-        176,
+        2,
         null,
         'Database version',
         0,
-        178,
+        4,
         '0.0.2',
         '0.0.3',
-        179,
+        5,
         null,
         'version that the database has now; after the upgrade the new version number is written to the database');

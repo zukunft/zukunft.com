@@ -42,7 +42,7 @@ SELECT triple_insert_log_1100040000000101_user
 SELECT triple_insert_log_1100040000000101_user
        (3::bigint,
         1::smallint,
-        7::smallint,
+        30::smallint,
         'constant'::text,
         'is part of'::text,
         'mathematics'::text,
@@ -55,8 +55,8 @@ SELECT triple_insert_log_1100040000000101_user
         null::bigint,
         null::smallint,
         null::bigint,
-        103::smallint,
+        185::smallint,
         1::smallint,
         1::bigint,
-        105::smallint,
+        187::smallint,
         3::smallint);

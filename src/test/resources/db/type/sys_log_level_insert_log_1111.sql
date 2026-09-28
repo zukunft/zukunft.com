@@ -43,8 +43,8 @@ SELECT sys_log_level_insert_log_1111
        ('Info'::text,
         3::bigint,
         1::smallint,
-        839::smallint,
-        840::smallint,
+        7::smallint,
+        8::smallint,
         'log_info'::text,
-        841::smallint,
+        9::smallint,
         'Information only message for debugging and execution time details'::text);

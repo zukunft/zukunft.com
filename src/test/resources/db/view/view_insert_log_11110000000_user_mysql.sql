@@ -24,8 +24,8 @@ PREPARE view_insert_log_11110000000_user_call FROM
 SELECT view_insert_log_11110000000_user
        (3,
         1,
-        720,
+        721,
         'Start view',
         1,
-        46,
+        722,
         'A dynamic entry mask that initially shows a table for calculations with the biggest problems from the user point of view and suggestions what the user can do to solve these problems. Used also as fallback view.');

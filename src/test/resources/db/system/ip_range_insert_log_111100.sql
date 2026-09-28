@@ -43,8 +43,8 @@ SELECT ip_range_insert_log_111100
        ('66.249.64.95-66.249.64.95'::text,
         3::bigint,
         1::smallint,
-        859::smallint,
-        185::smallint,
+        849::smallint,
+        850::smallint,
         '66.249.64.95'::text,
-        186::smallint,
+        851::smallint,
         '66.249.64.95'::text);

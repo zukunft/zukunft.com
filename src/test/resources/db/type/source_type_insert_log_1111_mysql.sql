@@ -38,8 +38,8 @@ SELECT source_type_insert_log_1111
        ('XBRL',
         3,
         1,
-        343,
-        344,
+        190,
+        191,
         'xbrl',
-        345,
+        192,
         'eXtensible Business Reporting Language is a freely available global framework for exchanging business information');

@@ -27,7 +27,7 @@ SELECT formula_link_update_log_0001000_user
 SELECT formula_link_update_log_0001000_user
        (3::bigint,
         2::smallint,
-        904::smallint,
+        683::smallint,
         null::text,
         'System Test description for a formula link'::text,
         1::bigint);

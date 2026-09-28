@@ -43,8 +43,8 @@ SELECT user_type_insert_log_1111
        ('Verified'::text,
         3::bigint,
         1::smallint,
-        255::smallint,
-        256::smallint,
+        41::smallint,
+        42::smallint,
         'verified'::text,
-        257::smallint,
+        43::smallint,
         'verified by email or mobile'::text);

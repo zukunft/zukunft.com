@@ -38,8 +38,8 @@ SELECT sys_log_level_insert_log_1111
        ('Info',
         3,
         1,
-        839,
-        840,
+        7,
+        8,
         'log_info',
-        841,
+        9,
         'Information only message for debugging and execution time details');

@@ -27,7 +27,7 @@ $$ LANGUAGE plpgsql;
 SELECT value_prime_p1_delete_log
        (3::bigint,
         3::smallint,
-        1::smallint,
+        283::smallint,
         3.1415926535898::numeric,
         5::bigint,
         5::smallint,

@@ -21,6 +21,6 @@ END;
 SELECT group_delete_log_user
        (3,
         3,
-        324,
+        254,
         'π',
         '1FajJ2-.4LYK3-..8jId-...I1A-....Yz-..../.-.....Z-.....9-...../+.....A+.....a+....3s+...1Ao+../vLC+.//ZSB+.ZSahL+');

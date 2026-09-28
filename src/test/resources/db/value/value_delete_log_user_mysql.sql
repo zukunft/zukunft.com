@@ -23,7 +23,7 @@ END;
 SELECT value_delete_log_user
        (3,
         3,
-        6,
+        295,
         3.1415926535898,
         '1FajJ2-.4LYK3-..8jId-...I1A-....Yz-..../.-.....Z-.....9-...../+.....A+.....a+....3s+...1Ao+../vLC+.//ZSB+.ZSahL+',
         null);

@@ -78,6 +78,7 @@ change_action: $act, $typ
 change_field: $fld, $typ
 change_field_list: $cng_fld_cac
 change_link: $chg, $log, $log_empty
+change_link_validation: $lnk_chk
 change_log_link_list: $cl_lst, $link_lst, $log_link_ui, $lst
 change_log_list: $chg_lst, $chg_lst_lng_ui, $chg_lst_ui, $log, $log_lst, $log_rem_ui, $log_ui, $lst, $my_lst, $result
 change_log_named: $chg_rem_ui, $chg_ui, $chg_usr_ui, $log_ui

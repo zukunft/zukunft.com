@@ -43,8 +43,8 @@ SELECT formula_link_type_insert_log_111100
        ('default'::text,
         3::bigint,
         1::smallint,
-        704::smallint,
-        705::smallint,
+        662::smallint,
+        663::smallint,
         'default'::text,
-        706::smallint,
+        664::smallint,
         'default'::text);

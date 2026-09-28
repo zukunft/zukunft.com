@@ -43,8 +43,8 @@ SELECT db_cache_type_insert_log_1111
        ('system configuration'::text,
         3::bigint,
         1::smallint,
-        875::smallint,
-        876::smallint,
+        890::smallint,
+        891::smallint,
         'system_config'::text,
-        877::smallint,
+        892::smallint,
         'the complete json of the system configuration'::text);

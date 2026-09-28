@@ -32,10 +32,10 @@ SELECT view_update_log_00220000000
 SELECT view_update_log_00220000000
        (3::bigint,
         2::smallint,
-        42::smallint,
+        699::smallint,
         'Historic'::text,
         'System Test View Renamed'::text,
         155::bigint,
-        43::smallint,
+        700::smallint,
         'show mainly related words that are relevant in sciences'::text,
         null::text);

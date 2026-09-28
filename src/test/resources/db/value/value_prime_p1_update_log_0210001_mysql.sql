@@ -36,11 +36,11 @@ PREPARE value_prime_p1_update_log_0210001_call FROM
 SELECT value_prime_p1_update_log_0210001
        (3,
         1,
-        1,
+        283,
         3.1415926535898,
         123.456,
         5,
-        4,
+        289,
         2,
         5,
         0,

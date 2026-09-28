@@ -43,8 +43,8 @@ SELECT verb_insert_log_1111000000
        ('not set'::text,
         3::bigint,
         1::smallint,
-        23::smallint,
-        24::smallint,
+        140::smallint,
+        141::smallint,
         'not_set'::text,
-        25::smallint,
+        142::smallint,
         'no verb / predicate selected'::text);

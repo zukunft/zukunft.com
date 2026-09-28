@@ -26,7 +26,7 @@ $$ LANGUAGE plpgsql;
 SELECT formula_link_delete_log_user
        (3::bigint,
         3::smallint,
-        13::smallint,
+        93::smallint,
         'scale minute to sec'::text,
         'time period based'::text,
         'minute'::text,

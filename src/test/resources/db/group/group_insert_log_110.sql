@@ -26,7 +26,7 @@ SELECT group_insert_log_110
 SELECT group_insert_log_110
        (3::bigint,
         1::smallint,
-        320::smallint,
+        250::smallint,
         'π'::text,
-        319::smallint,
+        249::smallint,
         '1FajJ2-.4LYK3-..8jId-...I1A-....Yz-..../.-.....Z-.....9-...../+.....A+.....a+....3s+...1Ao+../vLC+.//ZSB+.ZSahL+'::text);

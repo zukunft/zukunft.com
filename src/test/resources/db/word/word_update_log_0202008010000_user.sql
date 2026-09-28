@@ -41,15 +41,15 @@ SELECT word_update_log_0202008010000_user
 SELECT word_update_log_0202008010000_user
        (1::bigint,
         2::smallint,
-        17::smallint,
+        129::smallint,
         'Mathematics is an area of knowledge that includes the topics of numbers and formulas'::text,
         'System Test Word Renamed'::text,
         1::bigint,
-        15::smallint,
+        130::smallint,
         'standard'::text,
         1::smallint,
         'time'::text,
         2::smallint,
-        16::smallint,
+        128::smallint,
         null::text,
         'System Test Word Renamed'::text);

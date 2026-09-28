@@ -30,7 +30,7 @@ END;
 SELECT view_relation_delete_log
        (3,
         3,
-        108,
+        100,
         'word_edit',
         'add components',
         'word_usage',

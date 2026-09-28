@@ -43,8 +43,8 @@ SELECT language_form_insert_log_11110
        ('plural'::text,
         3::bigint,
         1::smallint,
-        301::smallint,
-        302::smallint,
+        93::smallint,
+        94::smallint,
         'standard'::text,
-        303::smallint,
+        95::smallint,
         'The noun denotes a quantity greater than the default quantity represented by that noun. This default quantity is most commonly one'::text);

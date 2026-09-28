@@ -33,10 +33,10 @@ SELECT formula_update_log_00200020000100000
 SELECT formula_update_log_00200020000100000
        (3::bigint,
         2::smallint,
-        30::smallint,
+        631::smallint,
         'scale hour to sec'::text,
         'System Test Formula Renamed'::text,
         2::bigint,
-        31::smallint,
+        636::smallint,
         1::smallint,
         null::smallint);

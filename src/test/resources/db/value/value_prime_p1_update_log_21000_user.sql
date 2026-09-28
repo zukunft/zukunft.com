@@ -37,7 +37,7 @@ SELECT value_prime_p1_update_log_21000_user
 SELECT value_prime_p1_update_log_21000_user
        (3::bigint,
         1::smallint,
-        6::smallint,
+        295::smallint,
         123.456::numeric,
         3.1415926535898::numeric,
         5::bigint,
