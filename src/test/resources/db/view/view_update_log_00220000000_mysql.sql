@@ -29,10 +29,10 @@ PREPARE view_update_log_00220000000_call FROM
 SELECT view_update_log_00220000000
        (3,
         2,
-        42,
+        699,
         'Historic',
         'System Test View Renamed',
         155,
-        43,
+        700,
         'show mainly related words that are relevant in sciences',
         null);

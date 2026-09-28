@@ -36,5 +36,5 @@ SELECT word_insert_log_0110000000000
        ('System Test Word'::text,
         3::bigint,
         1::smallint,
-        10::smallint,
-        9::smallint);
+        112::smallint,
+        111::smallint);

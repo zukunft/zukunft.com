@@ -8,6 +8,8 @@ the value page of a geo value shows no geolocation, while a text value is alread
 
 add to the json_validation test a check for which words, triples, verb, formula or type objects a description is missing
 
+after the renumbering of the change tables and fields (#267) is merged, remove the check() test of change_link_validation_tests and the change_link_validation call of test/json_validation.php: both compare against the snapshot unit/change_table/list_unsorted.csv and unit/change_field/list_unsorted.csv from before the renumbering, so the first change field added to db_code_links/change_fields.csv later fails the unit run
+
 add a write workflow test for the formula add from a word page: the confirmed add must also write the formula link to the phrase of the '7'-prefixed link vars (frontend::add_link_of_new), which the unit tests cannot check because they never write the formula
 
 ## data cleanup for final database setup

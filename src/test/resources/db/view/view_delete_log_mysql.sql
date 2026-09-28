@@ -25,6 +25,6 @@ END;
 SELECT view_delete_log
        (3,
         3,
-        42,
+        699,
         'Historic',
         155);

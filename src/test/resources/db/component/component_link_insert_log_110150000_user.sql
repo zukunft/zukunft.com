@@ -28,9 +28,9 @@ SELECT component_link_insert_log_110150000_user
 SELECT component_link_insert_log_110150000_user
        (3::bigint,
         1::smallint,
-        50::smallint,
+        840::smallint,
         1::bigint,
         1::bigint,
-        139::smallint,
+        842::smallint,
         'below'::text,
         1::smallint);

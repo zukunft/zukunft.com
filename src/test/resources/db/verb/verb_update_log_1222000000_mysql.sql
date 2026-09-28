@@ -35,13 +35,13 @@ PREPARE verb_update_log_1222000000_call FROM
 SELECT verb_update_log_1222000000
        (3,
         1,
-        23,
+        140,
         'not set',
         'System Test Verb Renamed',
         1,
-        24,
+        141,
         'not_set',
         null,
-        25,
+        142,
         'no verb / predicate selected',
         null);

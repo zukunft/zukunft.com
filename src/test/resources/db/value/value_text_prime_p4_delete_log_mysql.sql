@@ -27,7 +27,7 @@ END;
 SELECT value_text_prime_p4_delete_log
        (3,
         3,
-        421,
+        350,
         'zukunft.com',
         60799501221199977,
         216,

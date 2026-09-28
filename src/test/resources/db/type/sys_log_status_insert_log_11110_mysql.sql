@@ -38,8 +38,8 @@ SELECT sys_log_status_insert_log_11110
        ('new',
         3,
         1,
-        843,
-        844,
+        11,
+        12,
         'new',
-        845,
+        13,
         'the error has just being logged and no one has yet looked at it');

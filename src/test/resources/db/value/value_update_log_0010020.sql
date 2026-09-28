@@ -27,7 +27,7 @@ SELECT value_update_log_0010020
 SELECT value_update_log_0010020
        (3::bigint,
         1::smallint,
-        3::smallint,
+        288::smallint,
         3::smallint,
         null::smallint,
         '....06+....0S+....0U+....0r+....0t+....17+....1G+......+......+......+......+......+......+......+......+......+'::text);

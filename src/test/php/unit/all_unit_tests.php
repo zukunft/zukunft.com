@@ -53,6 +53,7 @@ include_once html_paths::USER . 'user_message.php';
 include_once test_paths::CREATE . 'test_types.php';
 include_once test_paths::CREATE . 'unit_env.php';
 include_once test_paths::UNIT . 'base_object_tests.php';
+include_once test_paths::UNIT . 'change_link_validation_tests.php';
 include_once test_paths::UNIT . 'coding_rule_tests.php';
 include_once test_paths::UNIT . 'permission_tests.php';
 include_once test_paths::UNIT_API . 'api_tests.php';
@@ -122,6 +123,7 @@ class all_unit_tests extends test_cleanup
         new config_tests()->run($this);
         new ip_range_tests()->run($this);
         new coding_rule_tests()->run($this);
+        new change_link_validation_tests()->run($this);
         new sql_tests()->run($this);
         new sys_log_tests()->run($this); // TODO add assert_api_to_ui
         new change_log_tests()->run($this); // TODO add assert_api_to_ui  // TODO for version 0.0.6 add import test

@@ -28,4 +28,4 @@ SELECT verb_insert_log_1100000000
        ('System Test Verb'::text,
         3::bigint,
         1::smallint,
-        23::smallint);
+        140::smallint);

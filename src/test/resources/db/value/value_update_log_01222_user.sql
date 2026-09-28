@@ -42,14 +42,14 @@ SELECT value_update_log_01222_user
 SELECT value_update_log_01222_user
        (3::bigint,
         1::smallint,
-        109::smallint,
+        298::smallint,
         1::smallint,
         null::smallint,
         '1FajJ2-.4LYK3-..8jId-...I1A-....Yz-..../.-.....Z-.....9-...../+.....A+.....a+....3s+...1Ao+../vLC+.//ZSB+.ZSahL+'::text,
-        8::smallint,
+        299::smallint,
         3::smallint,
         null::smallint,
-        7::smallint,
+        300::smallint,
         2::smallint,
         null::smallint,
         null::bigint);

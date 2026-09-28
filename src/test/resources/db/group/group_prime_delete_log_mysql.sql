@@ -20,6 +20,6 @@ END;
 SELECT group_prime_delete_log
        (3,
         3,
-        320,
+        250,
         'π (unit symbol)',
         5);

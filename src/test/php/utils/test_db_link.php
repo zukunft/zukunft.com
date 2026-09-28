@@ -47,7 +47,7 @@ function run_db_link_test(all_tests $t): void
 
     // test code link
     $id = change_tables::WORD;
-    $target = 5;
+    $target = change_tables::WORD_ID;
     $result = $sys->typ_lst->cng_tbl->id($id);
     $t->assert(", sql_code_link " . $id, $result, $target);
 

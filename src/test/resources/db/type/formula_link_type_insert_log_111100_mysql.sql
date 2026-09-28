@@ -38,8 +38,8 @@ SELECT formula_link_type_insert_log_111100
        ('default',
         3,
         1,
-        704,
-        705,
+        662,
+        663,
         'default',
-        706,
+        664,
         'default');

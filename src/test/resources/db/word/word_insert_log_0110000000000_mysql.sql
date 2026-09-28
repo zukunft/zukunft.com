@@ -31,5 +31,5 @@ SELECT word_insert_log_0110000000000
        ('System Test Word',
         3,
         1,
-        10,
-        9);
+        112,
+        111);

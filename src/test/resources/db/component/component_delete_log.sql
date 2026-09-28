@@ -25,6 +25,6 @@ $$ LANGUAGE plpgsql;
 SELECT component_delete_log
        (3::bigint,
         3::smallint,
-        51::smallint,
+        782::smallint,
         'system form field name'::text,
         130::bigint);

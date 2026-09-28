@@ -28,7 +28,7 @@ SELECT formula_update_log_00200000000100000_user
 SELECT formula_update_log_00200000000100000_user
        (3::bigint,
         2::smallint,
-        119::smallint,
+        647::smallint,
         '"one" = "millions" * 1000000'::text,
         'System Test Formula Renamed'::text,
         1::bigint);

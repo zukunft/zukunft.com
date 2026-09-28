@@ -31,7 +31,7 @@ PREPARE value_prime_p3_update_log_0010020_call FROM
 SELECT value_prime_p3_update_log_0010020
        (3,
         1,
-        3,
+        288,
         3,
         null,
         932021076103,

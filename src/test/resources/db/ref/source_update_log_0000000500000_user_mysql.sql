@@ -26,7 +26,7 @@ PREPARE source_update_log_0000000500000_user_call FROM
 SELECT source_update_log_0000000500000_user
        (3,
         2,
-        906,
+        211,
         null,
         null,
         null,

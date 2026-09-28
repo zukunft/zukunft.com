@@ -25,6 +25,6 @@ SELECT group_prime_update_log_100
 SELECT group_prime_update_log_100
        (3::bigint,
         1::smallint,
-        320::smallint,
+        250::smallint,
         'System Test Group Renamed'::text,
         5::bigint);

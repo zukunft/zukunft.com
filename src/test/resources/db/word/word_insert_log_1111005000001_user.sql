@@ -36,13 +36,13 @@ SELECT word_insert_log_1111005000001_user
 SELECT word_insert_log_1111005000001_user
        (3::bigint,
         1::smallint,
-        88::smallint,
+        127::smallint,
         'mathematics'::text,
         1::bigint,
-        17::smallint,
+        129::smallint,
         'Mathematics is an area of knowledge that includes the topics of numbers and formulas'::text,
-        15::smallint,
+        130::smallint,
         'standard'::text,
         1::smallint,
-        93::smallint,
+        136::smallint,
         3::smallint);

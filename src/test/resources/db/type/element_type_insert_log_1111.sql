@@ -43,8 +43,8 @@ SELECT element_type_insert_log_1111
        ('Word selector'::text,
         3::bigint,
         1::smallint,
-        687::smallint,
-        688::smallint,
+        593::smallint,
+        594::smallint,
         'word'::text,
-        689::smallint,
+        595::smallint,
         'a reference to a word used to select values using "and"'::text);

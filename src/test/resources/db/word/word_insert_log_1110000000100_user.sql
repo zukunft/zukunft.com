@@ -27,8 +27,8 @@ SELECT word_insert_log_1110000000100_user
 SELECT word_insert_log_1110000000100_user
        (4::bigint,
         1::smallint,
-        88::smallint,
+        127::smallint,
         'company'::text,
         193::bigint,
-        91::smallint,
+        134::smallint,
         1::smallint);

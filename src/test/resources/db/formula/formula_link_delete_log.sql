@@ -30,7 +30,7 @@ $$ LANGUAGE plpgsql;
 SELECT formula_link_delete_log
        (3::bigint,
         3::smallint,
-        12::smallint,
+        92::smallint,
         'scale minute to sec'::text,
         'time period based'::text,
         'minute'::text,

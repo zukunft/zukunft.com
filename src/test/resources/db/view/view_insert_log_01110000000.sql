@@ -42,7 +42,7 @@ SELECT view_insert_log_01110000000
        ('Historic'::text,
         3::bigint,
         1::smallint,
-        42::smallint,
-        278::smallint,
-        43::smallint,
+        699::smallint,
+        698::smallint,
+        700::smallint,
         'show mainly related words that are relevant in sciences'::text);

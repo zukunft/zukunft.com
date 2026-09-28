@@ -39,7 +39,7 @@ PREPARE triple_insert_log_1100040000000101_user_call FROM
 SELECT triple_insert_log_1100040000000101_user
        (3,
         1,
-        7,
+        30,
         'constant',
         'is part of',
         'mathematics',
@@ -52,8 +52,8 @@ SELECT triple_insert_log_1100040000000101_user
         null,
         null,
         null,
-        103,
+        185,
         1,
         1,
-        105,
+        187,
         3);

@@ -42,7 +42,7 @@ SELECT component_link_insert_log_110100100_user
 SELECT component_link_insert_log_110100100_user
        (3::bigint,
         1::smallint,
-        16::smallint,
+        110::smallint,
         'Start view'::text,
         null::text,
         'Word'::text,
@@ -55,8 +55,8 @@ SELECT component_link_insert_log_110100100_user
         null::bigint,
         null::smallint,
         null::bigint,
-        50::smallint,
+        840::smallint,
         1::bigint,
         1::bigint,
-        140::smallint,
+        844::smallint,
         1::smallint);

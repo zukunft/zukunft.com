@@ -38,8 +38,8 @@ SELECT sys_log_function_insert_log_1111
        ('Import system configuration',
         3,
         1,
-        847,
-        848,
+        16,
+        17,
         'import_base_config',
-        849,
+        18,
         'import all zukunft.com base configuration json files');

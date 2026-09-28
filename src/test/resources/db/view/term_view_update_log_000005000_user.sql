@@ -29,7 +29,7 @@ SELECT term_view_update_log_000005000_user
 SELECT term_view_update_log_000005000_user
        (3::bigint,
         2::smallint,
-        902::smallint,
+        771::smallint,
         null::text,
         null::smallint,
         '2/3 width'::text,

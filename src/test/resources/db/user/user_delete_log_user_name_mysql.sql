@@ -20,6 +20,6 @@ END;
 SELECT user_delete_log_user_name
        (1,
         3,
-        211,
+        53,
         'zukunft.com system test',
         3);

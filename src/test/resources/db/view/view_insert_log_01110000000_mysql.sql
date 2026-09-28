@@ -37,7 +37,7 @@ SELECT view_insert_log_01110000000
        ('Historic',
         3,
         1,
-        42,
-        278,
-        43,
+        699,
+        698,
+        700,
         'show mainly related words that are relevant in sciences');

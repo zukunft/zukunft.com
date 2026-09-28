@@ -26,7 +26,7 @@ SELECT view_relation_update_log_0000020000
 SELECT view_relation_update_log_0000020000
        (3::bigint,
         2::smallint,
-        817::smallint,
+        738::smallint,
         15::bigint,
         16::bigint,
         1::bigint);

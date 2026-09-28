@@ -20,6 +20,6 @@ $$ LANGUAGE plpgsql;
 SELECT group_prime_delete_log
        (3::bigint,
         3::smallint,
-        320::smallint,
+        250::smallint,
         'π (unit symbol)'::text,
         5::bigint);

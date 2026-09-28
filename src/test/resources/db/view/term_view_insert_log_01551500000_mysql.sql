@@ -44,10 +44,10 @@ SELECT term_view_insert_log_01551500000
         1,
         3,
         1,
-        89,
+        103,
         'Start view',
         'main word',
         'mathematics',
-        725,
-        727,
+        759,
+        762,
         'System Test description for a view term link');

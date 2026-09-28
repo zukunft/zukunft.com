@@ -21,6 +21,6 @@ $$ LANGUAGE plpgsql;
 SELECT word_delete_log_user
        (3::bigint,
         3::smallint,
-        88::smallint,
+        127::smallint,
         'mathematics'::text,
         1::bigint);

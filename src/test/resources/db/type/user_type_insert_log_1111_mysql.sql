@@ -38,8 +38,8 @@ SELECT user_type_insert_log_1111
        ('Verified',
         3,
         1,
-        255,
-        256,
+        41,
+        42,
         'verified',
-        257,
+        43,
         'verified by email or mobile');

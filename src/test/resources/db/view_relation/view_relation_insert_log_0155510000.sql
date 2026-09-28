@@ -49,10 +49,10 @@ SELECT view_relation_insert_log_0155510000
         92::bigint,
         3::bigint,
         1::smallint,
-        108::smallint,
+        100::smallint,
         'word_edit'::text,
         'add components'::text,
         'word_usage'::text,
-        815::smallint,
-        817::smallint,
+        736::smallint,
+        738::smallint,
         15::bigint);

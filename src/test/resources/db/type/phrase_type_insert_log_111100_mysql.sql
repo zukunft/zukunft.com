@@ -38,8 +38,8 @@ SELECT phrase_type_insert_log_111100
        ('standard',
         3,
         1,
-        835,
-        836,
+        106,
+        107,
         'default',
-        837,
+        108,
         '1');

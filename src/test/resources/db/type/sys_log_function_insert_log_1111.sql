@@ -43,8 +43,8 @@ SELECT sys_log_function_insert_log_1111
        ('Import system configuration'::text,
         3::bigint,
         1::smallint,
-        847::smallint,
-        848::smallint,
+        16::smallint,
+        17::smallint,
         'import_base_config'::text,
-        849::smallint,
+        18::smallint,
         'import all zukunft.com base configuration json files'::text);

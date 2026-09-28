@@ -38,8 +38,8 @@ SELECT term_view_insert_log_01550500000
         1,
         3,
         1,
-        89,
+        103,
         'Start view',
         'main word',
         'mathematics',
-        725);
+        759);

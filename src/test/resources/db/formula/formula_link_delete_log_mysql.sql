@@ -30,7 +30,7 @@ END;
 SELECT formula_link_delete_log
        (3,
         3,
-        12,
+        92,
         'scale minute to sec',
         'time period based',
         'minute',

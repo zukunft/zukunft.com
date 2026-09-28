@@ -21,6 +21,6 @@ END;
 SELECT formula_delete_log_user
        (3,
         3,
-        119,
+        647,
         '"one" = "millions" * 1000000',
         1);

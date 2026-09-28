@@ -20,6 +20,6 @@ $$ LANGUAGE plpgsql;
 SELECT verb_delete_log
        (1::bigint,
         3::smallint,
-        23::smallint,
+        140::smallint,
         'not set'::text,
         1::bigint);

@@ -30,7 +30,7 @@ $$ LANGUAGE plpgsql;
 SELECT component_link_delete_log
        (3::bigint,
         3::smallint,
-        16::smallint,
+        110::smallint,
         'Start view'::text,
         'always'::text,
         'Word'::text,

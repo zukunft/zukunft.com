@@ -55,11 +55,8 @@ add a phrase type 'value quality'
 
 review the initial order of the types e.g.
 
-- change tables
-- change fields
 - component types
 - phrase types
-- source types
 
 review the initial order of the components
 review the initial order of the verbs
@@ -464,7 +461,6 @@ Limit before sort — load_values_similar () reads with value_list::read_limit (
    sorting. Same pattern as word/source::load_values_related, so consistent — just noting it.
 
 ## cleanup
-
 check why diff for docs/code_functions_all.md still takes very long
 
 write a php script that checks that a default page for all main classes exists and that the default pages show all

@@ -38,8 +38,8 @@ SELECT db_cache_status_insert_log_1111
        ('clean',
         3,
         1,
-        871,
-        872,
+        894,
+        895,
         'clean',
-        873,
+        896,
         'no reason known why the cache should NOT be used');

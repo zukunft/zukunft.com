@@ -34,12 +34,12 @@ SELECT formula_link_update_log_000420000
 SELECT formula_link_update_log_000420000
        (3::bigint,
         2::smallint,
-        702::smallint,
+        674::smallint,
         'minute'::text,
         100::bigint,
         null::text,
         0::bigint,
         1::bigint,
-        700::smallint,
+        671::smallint,
         2::bigint,
         null::bigint);

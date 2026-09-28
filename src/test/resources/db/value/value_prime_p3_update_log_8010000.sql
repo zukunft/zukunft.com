@@ -35,7 +35,7 @@ SELECT value_prime_p3_update_log_8010000
 SELECT value_prime_p3_update_log_8010000
        (4::bigint,
         1::smallint,
-        370::smallint,
+        286::smallint,
         'zukunft.com system test'::text,
         3::bigint,
         'zukunft.com system test partner'::text,

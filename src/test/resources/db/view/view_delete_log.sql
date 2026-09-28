@@ -25,6 +25,6 @@ $$ LANGUAGE plpgsql;
 SELECT view_delete_log
        (3::bigint,
         3::smallint,
-        42::smallint,
+        699::smallint,
         'Historic'::text,
         155::bigint);

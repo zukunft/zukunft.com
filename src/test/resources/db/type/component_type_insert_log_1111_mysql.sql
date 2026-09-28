@@ -38,8 +38,8 @@ SELECT component_type_insert_log_1111
        ('spreadsheet',
         3,
         1,
-        747,
-        748,
+        777,
+        778,
         'calc_sheet',
-        749,
+        779,
         'changeable spreadsheet with words, number and formulas that allow changes');

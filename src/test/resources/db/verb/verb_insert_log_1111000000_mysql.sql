@@ -38,8 +38,8 @@ SELECT verb_insert_log_1111000000
        ('not set',
         3,
         1,
-        23,
-        24,
+        140,
+        141,
         'not_set',
-        25,
+        142,
         'no verb / predicate selected');

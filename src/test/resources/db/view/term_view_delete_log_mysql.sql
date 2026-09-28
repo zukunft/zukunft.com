@@ -30,7 +30,7 @@ END;
 SELECT term_view_delete_log
        (3,
         3,
-        89,
+        103,
         'Start view',
         'main word',
         'mathematics',

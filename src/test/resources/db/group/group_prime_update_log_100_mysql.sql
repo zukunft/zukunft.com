@@ -22,6 +22,6 @@ PREPARE group_prime_update_log_100_call FROM
 SELECT group_prime_update_log_100
        (3,
         1,
-        320,
+        250,
         'System Test Group Renamed',
         5);

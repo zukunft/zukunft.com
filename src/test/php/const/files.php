@@ -41,7 +41,7 @@ class files
      * CAUTION! auto fix setting -> set always to false after mass update!
      */
 
-    CONST bool AUTO_UPDATE_TEST_FILES = true;
+    CONST bool AUTO_UPDATE_TEST_FILES = false;
 
     /*
      * types and extensions
@@ -273,6 +273,15 @@ class files
     CONST string IMPORT_XBRL_MISSING_NAME = 'does_not_exist';
 
     CONST string FIXED_DB_CSV = 'list' . self::CSV;
+    // the rows of a class before the ids have been renumbered, to check that no row is lost
+    CONST string FIXED_DB_UNSORTED_CSV = 'list_unsorted' . self::CSV;
+    // the rows before and after the renumbering with the name instead of the id of a linked row
+    CONST string FIXED_DB_UNSORTED_TEXT_REF_CSV = 'list_unsorted_with_text_ref' . self::CSV;
+    CONST string FIXED_DB_SORTED_TEXT_REF_CSV = 'list_sorted_with_text_ref' . self::CSV;
+    // a csv with an empty line, a quoted comma and a line with fewer values than the header
+    CONST string FIXED_DB_BROKEN_CSV = 'list_broken' . self::CSV;
+    // a csv file that does not exist to test the reading error
+    CONST string FIXED_DB_MISSING_CSV = 'list_missing' . self::CSV;
     // the expected types of a class, stored in the folder of that class e.g. the component types
     CONST string FIXED_DB_TYPES_CSV = 'list_types' . self::CSV;
 

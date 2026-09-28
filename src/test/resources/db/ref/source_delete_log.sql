@@ -25,6 +25,6 @@ $$ LANGUAGE plpgsql;
 SELECT source_delete_log
        (3::bigint,
         3::smallint,
-        57::smallint,
+        195::smallint,
         'Federal Statistical Office'::text,
         7::bigint);

@@ -23,4 +23,4 @@ SELECT verb_insert_log_1100000000
        ('System Test Verb',
         3,
         1,
-        23);
+        140);

@@ -49,10 +49,10 @@ SELECT ref_insert_log_0151551001000
         'Q167'::text,
         3::bigint,
         1::smallint,
-        22::smallint,
+        36::smallint,
         'Pi'::text,
         'wikidata'::text,
         'Q167'::text,
-        246::smallint,
-        65::smallint,
+        225::smallint,
+        229::smallint,
         'pi - ratio of the circumference of a circle to its diameter'::text);

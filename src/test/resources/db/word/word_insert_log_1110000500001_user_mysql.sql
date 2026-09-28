@@ -29,11 +29,11 @@ PREPARE word_insert_log_1110000500001_user_call FROM
 SELECT word_insert_log_1110000500001_user
        (3,
         1,
-        88,
+        127,
         'company',
         193,
-        90,
+        131,
         null,
         155,
-        93,
+        136,
         3);

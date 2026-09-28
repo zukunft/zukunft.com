@@ -44,10 +44,10 @@ SELECT ref_insert_log_0151551001000
         'Q167',
         3,
         1,
-        22,
+        36,
         'Pi',
         'wikidata',
         'Q167',
-        246,
-        65,
+        225,
+        229,
         'pi - ratio of the circumference of a circle to its diameter');

@@ -22,6 +22,6 @@ END;
 SELECT source_delete_log_excluded_user
        (3,
         3,
-        170,
+        208,
         'The International System of Units',
         1);

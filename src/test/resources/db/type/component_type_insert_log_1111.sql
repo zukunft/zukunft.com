@@ -43,8 +43,8 @@ SELECT component_type_insert_log_1111
        ('spreadsheet'::text,
         3::bigint,
         1::smallint,
-        747::smallint,
-        748::smallint,
+        777::smallint,
+        778::smallint,
         'calc_sheet'::text,
-        749::smallint,
+        779::smallint,
         'changeable spreadsheet with words, number and formulas that allow changes'::text);

@@ -236,7 +236,7 @@ class system_tests
         $t->assert_dsp_id($t_log->log_norm(), 'log add words,word_name mathematics (id ) in row 1 at 2022-12-26T18:23:45+01:00');
         $t->assert_dsp_id($t_log->log_big(), 'log add words,word_name mathematics (id ) in row 1 at 2022-12-26T18:23:45+01:00');
         $t->assert_dsp_id($t_log->log_list_short(), 'log add words,word_name mathematics (id ) in row 1 at 2022-12-26T18:23:45+01:00 / log add verbs,verb_name is (id ) in row 2 at 2022-12-26T18:23:45+01:00 / log add triples,triple_name mathematical constant (id ) in row 1 at 2022-12-26T18:23:45+01:00');
-        $t->assert_dsp_id($t_log->log_link(), 'user_log_link for user zukunft.com system test (3) action add (1) table triples (7)');
+        $t->assert_dsp_id($t_log->log_link(), 'user_log_link for user zukunft.com system test (3) action add (1) table ' . change_tables::TRIPLE . ' (' . change_tables::TRIPLE_ID . ')');
         $t->assert_dsp_id($t_log->log_value(), 'log add values,numeric_value (5,,,) 3.1415927');
         $t->assert_dsp_id($t_log->log_value_prime(), 'log add values,numeric_value ('
             . word_names::ZH_ID . ',' . word_names::INHABITANT_ID . ',' . word_names::YEAR_2019_ID . ',) 3.1415927');

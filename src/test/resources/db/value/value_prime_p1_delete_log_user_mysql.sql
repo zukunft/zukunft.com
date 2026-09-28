@@ -30,7 +30,7 @@ END;
 SELECT value_prime_p1_delete_log_user
        (3,
         3,
-        6,
+        295,
         3.1415926535898,
         5,
         5,

@@ -29,7 +29,7 @@ END;
 SELECT ref_delete_log
        (3,
         3,
-        22,
+        36,
         'Pi',
         'wikidata',
         'Q167',

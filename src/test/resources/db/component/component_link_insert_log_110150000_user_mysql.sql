@@ -25,9 +25,9 @@ PREPARE component_link_insert_log_110150000_user_call FROM
 SELECT component_link_insert_log_110150000_user
        (3,
         1,
-        50,
+        840,
         1,
         1,
-        139,
+        842,
         'below',
         1);

@@ -25,7 +25,7 @@ PREPARE value_big_update_log_8010000_call FROM
 SELECT value_big_update_log_8010000
        (4,
         1,
-        370,
+        286,
         'zukunft.com system test',
         3,
         'zukunft.com system test partner',

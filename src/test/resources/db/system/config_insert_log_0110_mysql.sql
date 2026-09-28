@@ -32,6 +32,6 @@ SELECT config_insert_log_0110
        ('version_database',
         3,
         1,
-        177,
-        178,
+        3,
+        4,
         '0.0.2');

@@ -27,7 +27,7 @@ $$ LANGUAGE plpgsql;
 SELECT value_text_prime_p4_delete_log
        (3::bigint,
         3::smallint,
-        421::smallint,
+        350::smallint,
         'zukunft.com'::text,
         60799501221199977::bigint,
         216::smallint,

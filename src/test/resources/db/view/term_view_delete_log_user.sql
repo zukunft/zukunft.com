@@ -26,7 +26,7 @@ $$ LANGUAGE plpgsql;
 SELECT term_view_delete_log_user
        (3::bigint,
         3::smallint,
-        91::smallint,
+        104::smallint,
         'Start view'::text,
         'main word'::text,
         'mathematics'::text,

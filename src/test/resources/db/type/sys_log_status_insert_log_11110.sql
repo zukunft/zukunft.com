@@ -43,8 +43,8 @@ SELECT sys_log_status_insert_log_11110
        ('new'::text,
         3::bigint,
         1::smallint,
-        843::smallint,
-        844::smallint,
+        11::smallint,
+        12::smallint,
         'new'::text,
-        845::smallint,
+        13::smallint,
         'the error has just being logged and no one has yet looked at it'::text);

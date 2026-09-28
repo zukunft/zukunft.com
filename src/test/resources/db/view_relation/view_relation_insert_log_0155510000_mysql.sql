@@ -44,10 +44,10 @@ SELECT view_relation_insert_log_0155510000
         92,
         3,
         1,
-        108,
+        100,
         'word_edit',
         'add components',
         'word_usage',
-        815,
-        817,
+        736,
+        738,
         15);

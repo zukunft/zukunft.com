@@ -33,13 +33,13 @@ PREPARE triple_insert_log_1111500000000001_user_call FROM
 SELECT triple_insert_log_1111500000000001_user
        (3,
         1,
-        22,
+        175,
         'mathematical constant',
         1,
-        100,
+        178,
         'A mathematical constant that never changes e.g. Pi',
-        101,
+        181,
         'math constant',
         17,
-        105,
+        187,
         3);

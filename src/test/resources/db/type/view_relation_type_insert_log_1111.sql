@@ -43,8 +43,8 @@ SELECT view_relation_type_insert_log_1111
        ('add components'::text,
         3::bigint,
         1::smallint,
-        823::smallint,
-        824::smallint,
+        730::smallint,
+        731::smallint,
         'add_components'::text,
-        825::smallint,
+        732::smallint,
         'add the components of the child view to the parent view at the start position'::text);

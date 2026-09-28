@@ -23,7 +23,7 @@ PREPARE view_relation_update_log_0000020000_call FROM
 SELECT view_relation_update_log_0000020000
        (3,
         2,
-        817,
+        738,
         15,
         16,
         1);

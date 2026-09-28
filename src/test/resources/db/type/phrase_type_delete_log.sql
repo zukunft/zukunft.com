@@ -20,6 +20,6 @@ $$ LANGUAGE plpgsql;
 SELECT phrase_type_delete_log
        (1::bigint,
         3::smallint,
-        835::smallint,
+        106::smallint,
         'standard'::text,
         1::bigint);

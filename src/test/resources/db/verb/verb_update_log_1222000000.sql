@@ -38,13 +38,13 @@ SELECT verb_update_log_1222000000
 SELECT verb_update_log_1222000000
        (3::bigint,
         1::smallint,
-        23::smallint,
+        140::smallint,
         'not set'::text,
         'System Test Verb Renamed'::text,
         1::bigint,
-        24::smallint,
+        141::smallint,
         'not_set'::text,
         null::text,
-        25::smallint,
+        142::smallint,
         'no verb / predicate selected'::text,
         null::text);
