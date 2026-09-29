@@ -872,6 +872,40 @@
       "verb": "is a",
       "to": "poverty solution",
       "description": "'charity' is one of the compared poverty solutions."
+    },
+    {
+      "name": "trillion EUR",
+      "from": "trillion",
+      "verb": "of",
+      "to": "EUR"
+    },
+    {
+      "from": "person year",
+      "verb": "per",
+      "to": "trillion EUR"
+    },
+    {
+      "name": "billion USD",
+      "from": "billion",
+      "verb": "of",
+      "to": "USD"
+    },
+    {
+      "from": "person year",
+      "verb": "per",
+      "to": "billion USD"
+    },
+    {
+      "name": "potential loss",
+      "from": "loss",
+      "verb": "kind of",
+      "to": "potential"
+    },
+    {
+      "name": "potential gain",
+      "from": "gain",
+      "verb": "kind of",
+      "to": "potential"
     }
   ],
   "formulas": [
@@ -892,7 +926,7 @@
     {
       "name": "annual damage in money",
       "description": "the loss that a problem causes each year in money, the world GDP multiplied by the share of it that the problem costs per year",
-      "expression": "\"potential\",\"loss\",\"trillion\",\"EUR\" = \"world\",\"GDP\",\"trillion\",\"EUR\" * \"percent\",\"GDP\",\"annual\"",
+      "expression": "\"potential loss\",\"trillion\",\"EUR\" = \"world\",\"GDP\",\"trillion\",\"EUR\" * \"percent\",\"GDP\",\"annual\"",
       "latex": "L_{pot} = GDP_{world} \\cdot d_{annual}",
       "assigned_word": "GDP"
     },
@@ -906,28 +940,28 @@
     {
       "name": "long run damage share of the GDP",
       "description": "the share of the world GDP that a problem costs at the end of its development, the share it costs today multiplied by the factor by which the damage still grows; the share is stated negative, because it is a loss",
-      "expression": "\"potential\",\"loss\",\"percent\",\"GDP\" = 0 - \"percent\",\"GDP\",\"annual\" * \"percent\",\"GDP\",\"factor\"",
+      "expression": "\"potential loss\",\"percent\",\"GDP\" = 0 - \"percent\",\"GDP\",\"annual\" * \"percent\",\"GDP\",\"factor\"",
       "latex": "d_{long} = -d_{annual} \\cdot g",
       "assigned_word": "annual"
     },
     {
       "name": "welfare damage share",
       "description": "the share of the global happy time points that a problem costs, the share of the GDP it costs multiplied by the factor by which the welfare damage exceeds the money damage, because htp counts the healthy life years that the GDP does not (concept paper introduction)",
-      "expression": "\"potential\",\"loss\",\"percent\",\"htp\" = \"potential\",\"loss\",\"percent\",\"GDP\" * \"htp\",\"GDP\",\"factor\"",
+      "expression": "\"potential loss\",\"percent\",\"htp\" = \"potential loss\",\"percent\",\"GDP\" * \"htp\",\"GDP\",\"factor\"",
       "latex": "d_{htp} = d_{GDP} \\cdot w",
       "assigned_word": "htp"
     },
     {
       "name": "initial effort of a solution",
       "description": "the person years needed to set up a solution, the annual damage of the problem in money multiplied by the effort needed per trillion EUR of damage",
-      "expression": "\"initial effort\",\"person year\" = \"potential\",\"loss\",\"trillion\",\"EUR\" * \"person year\",\"trillion\",\"EUR\",\"factor\"",
+      "expression": "\"initial effort\",\"person year\" = \"potential loss\",\"trillion\",\"EUR\" * \"person year per trillion EUR\",\"factor\"",
       "latex": "E_{init} = L_{pot} \\cdot e",
       "assigned_word": "person year"
     },
     {
       "name": "avoided welfare loss with a gain factor",
       "description": "the happy time points that a solution saves, like the avoided welfare loss, but multiplied by a factor of the problem, because the shared world htp is tuned to one problem and does not fit the others until the horizon of the ranking is stated; the result is stated positive, because it is a gain",
-      "expression": "\"potential\",\"gain\",\"billion\",\"htp\" = 0 - \"potential\",\"loss\",\"percent\",\"htp\" * \"world\",\"htp\",\"billion\" * \"loss reduction\",\"percent\" * \"htp\",\"billion\",\"factor\"",
+      "expression": "\"potential gain\",\"billion\",\"htp\" = 0 - \"potential loss\",\"percent\",\"htp\" * \"world\",\"htp\",\"billion\" * \"loss reduction\",\"percent\" * \"htp\",\"billion\",\"factor\"",
       "latex": "G = -d_{htp} \\cdot HTP_{world} \\cdot r \\cdot k",
       "assigned_word": "loss reduction"
     },
@@ -941,7 +975,7 @@
     {
       "name": "initial effort of a solution part",
       "description": "the person years needed to set up one part of a solution, its cost in billion USD multiplied by the person years per billion USD",
-      "expression": "\"initial effort\",\"person year\" = \"initial effort\",\"billion\",\"USD\" * \"person year\",\"billion\",\"USD\",\"factor\"",
+      "expression": "\"initial effort\",\"person year\" = \"initial effort\",\"billion\",\"USD\" * \"person year per billion USD\",\"factor\"",
       "latex": "E_{init} = C \\cdot e",
       "assigned_word": "initial effort"
     }
@@ -1026,9 +1060,7 @@
     {
       "words": [
         "poverty",
-        "person year",
-        "trillion",
-        "EUR",
+        "person year per trillion EUR",
         "factor",
         "assumed"
       ],
@@ -1191,9 +1223,7 @@
     {
       "words": [
         "poverty",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -2849,8 +2879,7 @@
       "formula": "annual damage in money",
       "words": [
         "poverty",
-        "potential",
-        "loss",
+        "potential loss",
         "trillion",
         "EUR",
         "assumed"
@@ -2888,8 +2917,7 @@
       "formula": "long run damage share of the GDP",
       "words": [
         "poverty",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "GDP",
         "assumed"
@@ -2900,8 +2928,7 @@
     {
       "context": [
         "poverty",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "GDP",
         "htp",
@@ -2911,8 +2938,7 @@
       "formula": "welfare damage share",
       "words": [
         "poverty",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "assumed"
@@ -2923,11 +2949,10 @@
     {
       "context": [
         "poverty",
-        "potential",
-        "loss",
+        "potential loss",
         "trillion",
         "EUR",
-        "person year",
+        "person year per trillion EUR",
         "factor",
         "assumed"
       ],
@@ -2946,8 +2971,7 @@
       "context": [
         "poverty",
         "research",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -2960,8 +2984,7 @@
       "words": [
         "poverty",
         "research",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -2972,8 +2995,7 @@
     {
       "context": [
         "poverty",
-        "potential",
-        "loss",
+        "potential loss",
         "trillion",
         "EUR",
         "assumed",
@@ -2983,8 +3005,7 @@
       "formula": "probability range low",
       "words": [
         "poverty",
-        "potential",
-        "loss",
+        "potential loss",
         "trillion",
         "EUR",
         "assumed",
@@ -2996,8 +3017,7 @@
     {
       "context": [
         "poverty",
-        "potential",
-        "loss",
+        "potential loss",
         "trillion",
         "EUR",
         "assumed",
@@ -3007,8 +3027,7 @@
       "formula": "probability range high",
       "words": [
         "poverty",
-        "potential",
-        "loss",
+        "potential loss",
         "trillion",
         "EUR",
         "assumed",
@@ -3020,8 +3039,7 @@
     {
       "context": [
         "poverty",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "GDP",
         "assumed",
@@ -3031,8 +3049,7 @@
       "formula": "probability range low",
       "words": [
         "poverty",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "GDP",
         "assumed",
@@ -3044,8 +3061,7 @@
     {
       "context": [
         "poverty",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "GDP",
         "assumed",
@@ -3055,8 +3071,7 @@
       "formula": "probability range high",
       "words": [
         "poverty",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "GDP",
         "assumed",
@@ -3068,8 +3083,7 @@
     {
       "context": [
         "poverty",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "assumed",
@@ -3079,8 +3093,7 @@
       "formula": "probability range low",
       "words": [
         "poverty",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "assumed",
@@ -3092,8 +3105,7 @@
     {
       "context": [
         "poverty",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "assumed",
@@ -3103,8 +3115,7 @@
       "formula": "probability range high",
       "words": [
         "poverty",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "assumed",
@@ -3117,8 +3128,7 @@
       "context": [
         "poverty",
         "research",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -3129,8 +3139,7 @@
       "words": [
         "poverty",
         "research",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -3143,8 +3152,7 @@
       "context": [
         "poverty",
         "research",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -3155,8 +3163,7 @@
       "words": [
         "poverty",
         "research",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -3316,8 +3323,7 @@
       "context": [
         "poverty",
         "economic growth (poverty solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -3329,8 +3335,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "economic growth (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -3341,8 +3346,7 @@
     {
       "context": [
         "economic growth (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -3352,8 +3356,7 @@
       "formula": "probability range low",
       "words": [
         "economic growth (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -3365,8 +3368,7 @@
     {
       "context": [
         "economic growth (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -3376,8 +3378,7 @@
       "formula": "probability range high",
       "words": [
         "economic growth (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -3393,7 +3394,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -3510,8 +3511,7 @@
       "context": [
         "poverty",
         "property rights (poverty solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -3523,8 +3523,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "property rights (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -3535,8 +3534,7 @@
     {
       "context": [
         "property rights (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -3546,8 +3544,7 @@
       "formula": "probability range low",
       "words": [
         "property rights (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -3559,8 +3556,7 @@
     {
       "context": [
         "property rights (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -3570,8 +3566,7 @@
       "formula": "probability range high",
       "words": [
         "property rights (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -3587,7 +3582,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -3704,8 +3699,7 @@
       "context": [
         "poverty",
         "rule of law (poverty solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -3717,8 +3711,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "rule of law (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -3729,8 +3722,7 @@
     {
       "context": [
         "rule of law (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -3740,8 +3732,7 @@
       "formula": "probability range low",
       "words": [
         "rule of law (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -3753,8 +3744,7 @@
     {
       "context": [
         "rule of law (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -3764,8 +3754,7 @@
       "formula": "probability range high",
       "words": [
         "rule of law (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -3781,7 +3770,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -3898,8 +3887,7 @@
       "context": [
         "poverty",
         "anti-corruption measures (poverty solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -3911,8 +3899,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "anti-corruption measures (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -3923,8 +3910,7 @@
     {
       "context": [
         "anti-corruption measures (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -3934,8 +3920,7 @@
       "formula": "probability range low",
       "words": [
         "anti-corruption measures (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -3947,8 +3932,7 @@
     {
       "context": [
         "anti-corruption measures (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -3958,8 +3942,7 @@
       "formula": "probability range high",
       "words": [
         "anti-corruption measures (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -3975,7 +3958,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -4092,8 +4075,7 @@
       "context": [
         "poverty",
         "universal primary education (poverty solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -4105,8 +4087,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "universal primary education (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -4117,8 +4098,7 @@
     {
       "context": [
         "universal primary education (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -4128,8 +4108,7 @@
       "formula": "probability range low",
       "words": [
         "universal primary education (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -4141,8 +4120,7 @@
     {
       "context": [
         "universal primary education (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -4152,8 +4130,7 @@
       "formula": "probability range high",
       "words": [
         "universal primary education (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -4169,7 +4146,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -4286,8 +4263,7 @@
       "context": [
         "poverty",
         "early childhood programs (poverty solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -4299,8 +4275,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "early childhood programs (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -4311,8 +4286,7 @@
     {
       "context": [
         "early childhood programs (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -4322,8 +4296,7 @@
       "formula": "probability range low",
       "words": [
         "early childhood programs (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -4335,8 +4308,7 @@
     {
       "context": [
         "early childhood programs (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -4346,8 +4318,7 @@
       "formula": "probability range high",
       "words": [
         "early childhood programs (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -4363,7 +4334,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -4480,8 +4451,7 @@
       "context": [
         "poverty",
         "maternal and child health (poverty solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -4493,8 +4463,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "maternal and child health (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -4505,8 +4474,7 @@
     {
       "context": [
         "maternal and child health (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -4516,8 +4484,7 @@
       "formula": "probability range low",
       "words": [
         "maternal and child health (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -4529,8 +4496,7 @@
     {
       "context": [
         "maternal and child health (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -4540,8 +4506,7 @@
       "formula": "probability range high",
       "words": [
         "maternal and child health (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -4557,7 +4522,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -4674,8 +4639,7 @@
       "context": [
         "poverty",
         "vaccination (poverty solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -4687,8 +4651,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "vaccination (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -4699,8 +4662,7 @@
     {
       "context": [
         "vaccination (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -4710,8 +4672,7 @@
       "formula": "probability range low",
       "words": [
         "vaccination (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -4723,8 +4684,7 @@
     {
       "context": [
         "vaccination (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -4734,8 +4694,7 @@
       "formula": "probability range high",
       "words": [
         "vaccination (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -4751,7 +4710,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -4868,8 +4827,7 @@
       "context": [
         "poverty",
         "clean water (poverty solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -4881,8 +4839,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "clean water (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -4893,8 +4850,7 @@
     {
       "context": [
         "clean water (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -4904,8 +4860,7 @@
       "formula": "probability range low",
       "words": [
         "clean water (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -4917,8 +4872,7 @@
     {
       "context": [
         "clean water (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -4928,8 +4882,7 @@
       "formula": "probability range high",
       "words": [
         "clean water (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -4945,7 +4898,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -5062,8 +5015,7 @@
       "context": [
         "poverty",
         "sanitation (poverty solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -5075,8 +5027,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "sanitation (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -5087,8 +5038,7 @@
     {
       "context": [
         "sanitation (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -5098,8 +5048,7 @@
       "formula": "probability range low",
       "words": [
         "sanitation (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -5111,8 +5060,7 @@
     {
       "context": [
         "sanitation (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -5122,8 +5070,7 @@
       "formula": "probability range high",
       "words": [
         "sanitation (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -5139,7 +5086,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -5256,8 +5203,7 @@
       "context": [
         "poverty",
         "nutrition programs (poverty solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -5269,8 +5215,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "nutrition programs (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -5281,8 +5226,7 @@
     {
       "context": [
         "nutrition programs (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -5292,8 +5236,7 @@
       "formula": "probability range low",
       "words": [
         "nutrition programs (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -5305,8 +5248,7 @@
     {
       "context": [
         "nutrition programs (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -5316,8 +5258,7 @@
       "formula": "probability range high",
       "words": [
         "nutrition programs (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -5333,7 +5274,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -5450,8 +5391,7 @@
       "context": [
         "poverty",
         "unconditional cash transfers (poverty solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -5463,8 +5403,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "unconditional cash transfers (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -5475,8 +5414,7 @@
     {
       "context": [
         "unconditional cash transfers (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -5486,8 +5424,7 @@
       "formula": "probability range low",
       "words": [
         "unconditional cash transfers (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -5499,8 +5436,7 @@
     {
       "context": [
         "unconditional cash transfers (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -5510,8 +5446,7 @@
       "formula": "probability range high",
       "words": [
         "unconditional cash transfers (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -5527,7 +5462,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -5644,8 +5579,7 @@
       "context": [
         "poverty",
         "conditional cash transfers (poverty solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -5657,8 +5591,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "conditional cash transfers (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -5669,8 +5602,7 @@
     {
       "context": [
         "conditional cash transfers (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -5680,8 +5612,7 @@
       "formula": "probability range low",
       "words": [
         "conditional cash transfers (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -5693,8 +5624,7 @@
     {
       "context": [
         "conditional cash transfers (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -5704,8 +5634,7 @@
       "formula": "probability range high",
       "words": [
         "conditional cash transfers (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -5721,7 +5650,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -5838,8 +5767,7 @@
       "context": [
         "poverty",
         "graduation programs (poverty solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -5851,8 +5779,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "graduation programs (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -5863,8 +5790,7 @@
     {
       "context": [
         "graduation programs (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -5874,8 +5800,7 @@
       "formula": "probability range low",
       "words": [
         "graduation programs (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -5887,8 +5812,7 @@
     {
       "context": [
         "graduation programs (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -5898,8 +5822,7 @@
       "formula": "probability range high",
       "words": [
         "graduation programs (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -5915,7 +5838,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -6032,8 +5955,7 @@
       "context": [
         "poverty",
         "earned income tax credit (poverty solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -6045,8 +5967,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "earned income tax credit (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -6057,8 +5978,7 @@
     {
       "context": [
         "earned income tax credit (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -6068,8 +5988,7 @@
       "formula": "probability range low",
       "words": [
         "earned income tax credit (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -6081,8 +6000,7 @@
     {
       "context": [
         "earned income tax credit (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -6092,8 +6010,7 @@
       "formula": "probability range high",
       "words": [
         "earned income tax credit (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -6109,7 +6026,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -6226,8 +6143,7 @@
       "context": [
         "poverty",
         "child benefits (poverty solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -6239,8 +6155,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "child benefits (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -6251,8 +6166,7 @@
     {
       "context": [
         "child benefits (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -6262,8 +6176,7 @@
       "formula": "probability range low",
       "words": [
         "child benefits (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -6275,8 +6188,7 @@
     {
       "context": [
         "child benefits (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -6286,8 +6198,7 @@
       "formula": "probability range high",
       "words": [
         "child benefits (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -6303,7 +6214,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -6420,8 +6331,7 @@
       "context": [
         "poverty",
         "universal basic income (poverty solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -6433,8 +6343,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "universal basic income (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -6445,8 +6354,7 @@
     {
       "context": [
         "universal basic income (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -6456,8 +6364,7 @@
       "formula": "probability range low",
       "words": [
         "universal basic income (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -6469,8 +6376,7 @@
     {
       "context": [
         "universal basic income (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -6480,8 +6386,7 @@
       "formula": "probability range high",
       "words": [
         "universal basic income (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -6497,7 +6402,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -6614,8 +6519,7 @@
       "context": [
         "poverty",
         "pension coverage (poverty solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -6627,8 +6531,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "pension coverage (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -6639,8 +6542,7 @@
     {
       "context": [
         "pension coverage (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -6650,8 +6552,7 @@
       "formula": "probability range low",
       "words": [
         "pension coverage (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -6663,8 +6564,7 @@
     {
       "context": [
         "pension coverage (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -6674,8 +6574,7 @@
       "formula": "probability range high",
       "words": [
         "pension coverage (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -6691,7 +6590,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -6808,8 +6707,7 @@
       "context": [
         "poverty",
         "health insurance (poverty solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -6821,8 +6719,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "health insurance (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -6833,8 +6730,7 @@
     {
       "context": [
         "health insurance (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -6844,8 +6740,7 @@
       "formula": "probability range low",
       "words": [
         "health insurance (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -6857,8 +6752,7 @@
     {
       "context": [
         "health insurance (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -6868,8 +6762,7 @@
       "formula": "probability range high",
       "words": [
         "health insurance (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -6885,7 +6778,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -7002,8 +6895,7 @@
       "context": [
         "poverty",
         "social safety nets (poverty solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -7015,8 +6907,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "social safety nets (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -7027,8 +6918,7 @@
     {
       "context": [
         "social safety nets (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -7038,8 +6928,7 @@
       "formula": "probability range low",
       "words": [
         "social safety nets (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -7051,8 +6940,7 @@
     {
       "context": [
         "social safety nets (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -7062,8 +6950,7 @@
       "formula": "probability range high",
       "words": [
         "social safety nets (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -7079,7 +6966,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -7196,8 +7083,7 @@
       "context": [
         "poverty",
         "access to electricity (poverty solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -7209,8 +7095,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "access to electricity (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -7221,8 +7106,7 @@
     {
       "context": [
         "access to electricity (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -7232,8 +7116,7 @@
       "formula": "probability range low",
       "words": [
         "access to electricity (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -7245,8 +7128,7 @@
     {
       "context": [
         "access to electricity (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -7256,8 +7138,7 @@
       "formula": "probability range high",
       "words": [
         "access to electricity (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -7273,7 +7154,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -7390,8 +7271,7 @@
       "context": [
         "poverty",
         "rural roads (poverty solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -7403,8 +7283,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "rural roads (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -7415,8 +7294,7 @@
     {
       "context": [
         "rural roads (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -7426,8 +7304,7 @@
       "formula": "probability range low",
       "words": [
         "rural roads (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -7439,8 +7316,7 @@
     {
       "context": [
         "rural roads (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -7450,8 +7326,7 @@
       "formula": "probability range high",
       "words": [
         "rural roads (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -7467,7 +7342,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -7584,8 +7459,7 @@
       "context": [
         "poverty",
         "financial inclusion (poverty solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -7597,8 +7471,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "financial inclusion (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -7609,8 +7482,7 @@
     {
       "context": [
         "financial inclusion (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -7620,8 +7492,7 @@
       "formula": "probability range low",
       "words": [
         "financial inclusion (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -7633,8 +7504,7 @@
     {
       "context": [
         "financial inclusion (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -7644,8 +7514,7 @@
       "formula": "probability range high",
       "words": [
         "financial inclusion (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -7661,7 +7530,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -7778,8 +7647,7 @@
       "context": [
         "poverty",
         "land titling (poverty solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -7791,8 +7659,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "land titling (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -7803,8 +7670,7 @@
     {
       "context": [
         "land titling (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -7814,8 +7680,7 @@
       "formula": "probability range low",
       "words": [
         "land titling (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -7827,8 +7692,7 @@
     {
       "context": [
         "land titling (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -7838,8 +7702,7 @@
       "formula": "probability range high",
       "words": [
         "land titling (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -7855,7 +7718,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -7972,8 +7835,7 @@
       "context": [
         "poverty",
         "agricultural extension (poverty solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -7985,8 +7847,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "agricultural extension (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -7997,8 +7858,7 @@
     {
       "context": [
         "agricultural extension (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -8008,8 +7868,7 @@
       "formula": "probability range low",
       "words": [
         "agricultural extension (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -8021,8 +7880,7 @@
     {
       "context": [
         "agricultural extension (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -8032,8 +7890,7 @@
       "formula": "probability range high",
       "words": [
         "agricultural extension (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -8049,7 +7906,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -8166,8 +8023,7 @@
       "context": [
         "poverty",
         "trade access (poverty solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -8179,8 +8035,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "trade access (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -8191,8 +8046,7 @@
     {
       "context": [
         "trade access (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -8202,8 +8056,7 @@
       "formula": "probability range low",
       "words": [
         "trade access (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -8215,8 +8068,7 @@
     {
       "context": [
         "trade access (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -8226,8 +8078,7 @@
       "formula": "probability range high",
       "words": [
         "trade access (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -8243,7 +8094,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -8360,8 +8211,7 @@
       "context": [
         "poverty",
         "minimum wage (poverty solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -8373,8 +8223,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "minimum wage (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -8385,8 +8234,7 @@
     {
       "context": [
         "minimum wage (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -8396,8 +8244,7 @@
       "formula": "probability range low",
       "words": [
         "minimum wage (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -8409,8 +8256,7 @@
     {
       "context": [
         "minimum wage (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -8420,8 +8266,7 @@
       "formula": "probability range high",
       "words": [
         "minimum wage (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -8437,7 +8282,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -8554,8 +8399,7 @@
       "context": [
         "poverty",
         "affordable housing (poverty solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -8567,8 +8411,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "affordable housing (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -8579,8 +8422,7 @@
     {
       "context": [
         "affordable housing (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -8590,8 +8432,7 @@
       "formula": "probability range low",
       "words": [
         "affordable housing (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -8603,8 +8444,7 @@
     {
       "context": [
         "affordable housing (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -8614,8 +8454,7 @@
       "formula": "probability range high",
       "words": [
         "affordable housing (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -8631,7 +8470,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -8748,8 +8587,7 @@
       "context": [
         "poverty",
         "housing first (poverty solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -8761,8 +8599,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "housing first (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -8773,8 +8610,7 @@
     {
       "context": [
         "housing first (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -8784,8 +8620,7 @@
       "formula": "probability range low",
       "words": [
         "housing first (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -8797,8 +8632,7 @@
     {
       "context": [
         "housing first (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -8808,8 +8642,7 @@
       "formula": "probability range high",
       "words": [
         "housing first (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -8825,7 +8658,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -8942,8 +8775,7 @@
       "context": [
         "poverty",
         "job training (poverty solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -8955,8 +8787,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "job training (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -8967,8 +8798,7 @@
     {
       "context": [
         "job training (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -8978,8 +8808,7 @@
       "formula": "probability range low",
       "words": [
         "job training (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -8991,8 +8820,7 @@
     {
       "context": [
         "job training (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -9002,8 +8830,7 @@
       "formula": "probability range high",
       "words": [
         "job training (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -9019,7 +8846,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -9136,8 +8963,7 @@
       "context": [
         "poverty",
         "public employment schemes (poverty solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -9149,8 +8975,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "public employment schemes (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -9161,8 +8986,7 @@
     {
       "context": [
         "public employment schemes (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -9172,8 +8996,7 @@
       "formula": "probability range low",
       "words": [
         "public employment schemes (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -9185,8 +9008,7 @@
     {
       "context": [
         "public employment schemes (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -9196,8 +9018,7 @@
       "formula": "probability range high",
       "words": [
         "public employment schemes (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -9213,7 +9034,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -9330,8 +9151,7 @@
       "context": [
         "poverty",
         "microfinance (poverty solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -9343,8 +9163,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "microfinance (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -9355,8 +9174,7 @@
     {
       "context": [
         "microfinance (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -9366,8 +9184,7 @@
       "formula": "probability range low",
       "words": [
         "microfinance (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -9379,8 +9196,7 @@
     {
       "context": [
         "microfinance (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -9390,8 +9206,7 @@
       "formula": "probability range high",
       "words": [
         "microfinance (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -9407,7 +9222,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -9524,8 +9339,7 @@
       "context": [
         "poverty",
         "food subsidies (poverty solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -9537,8 +9351,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "food subsidies (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -9549,8 +9362,7 @@
     {
       "context": [
         "food subsidies (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -9560,8 +9372,7 @@
       "formula": "probability range low",
       "words": [
         "food subsidies (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -9573,8 +9384,7 @@
     {
       "context": [
         "food subsidies (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -9584,8 +9394,7 @@
       "formula": "probability range high",
       "words": [
         "food subsidies (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -9601,7 +9410,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -9718,8 +9527,7 @@
       "context": [
         "poverty",
         "charity (poverty solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -9731,8 +9539,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "charity (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -9743,8 +9550,7 @@
     {
       "context": [
         "charity (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -9754,8 +9560,7 @@
       "formula": "probability range low",
       "words": [
         "charity (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -9767,8 +9572,7 @@
     {
       "context": [
         "charity (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -9778,8 +9582,7 @@
       "formula": "probability range high",
       "words": [
         "charity (poverty solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -9795,7 +9598,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],

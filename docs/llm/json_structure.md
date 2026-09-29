@@ -1182,6 +1182,58 @@ two different numbers. The same holds for any ratio (`revenue per cost`), any
 directed flow (exports *from* Switzerland *to* Germany) and any signed change
 over a period (*from* 2023 *to* 2024 flips sign if the years swap).
 
+**A scale or unit of the divisor → triple.** A flat scaling word (`million`,
+`billion`, `trillion`) and a flat unit (`EUR`, `USD`) describe the **number
+itself**, and the calculation scales the whole value by the scaling word. So a
+ratio whose divisor carries the scale or the unit must build the divisor as its
+own triple and the quotient with `per` on top of it. The effort factor of
+`start_page/problem_black_box_ai.json` is *"the person years needed to set up a
+solution per trillion EUR of annual damage"*:
+
+- **Wrong** — reads as a number of person years **in trillion EUR**:
+
+```json
+{ "words": ["black-box AI", "person year", "trillion", "EUR", "factor", "assumed"], "number": "90.909091" }
+```
+
+- **Right** — the scale and the currency stay with the divisor:
+
+```json
+{ "name": "trillion EUR", "from": "trillion", "verb": "of", "to": "EUR" },
+{ "from": "person year", "verb": "per", "to": "trillion EUR" }
+
+{ "words": ["black-box AI", "person year per trillion EUR", "factor", "assumed"], "number": "90.909091" }
+```
+
+A formula names the operand the same way (`"person year per trillion EUR","factor"`)
+and a calc-validation `context` lists the triple instead of `person year`. A
+scale of the **whole** ratio stays a flat word: `"trillion","EUR per person year"`
+is the reward ratio in trillion EUR per person year.
+
+**A qualifier of one phrase of the group → triple.** The flat words of a value
+qualify the whole number and none of them says which other word it belongs to.
+So `["potential", "loss", "trillion", "EUR"]` does not tell that the loss is the
+potential one: `potential` could as well qualify `EUR` or the whole group. The
+triple `potential loss` (`loss` `kind of` `potential`, defined in
+`solution_prio.json`) links the qualifier to the phrase it qualifies, so use it:
+
+- **Wrong** — `potential` floats in the group:
+
+```json
+{ "words": ["citizen participation", "potential", "loss", "trillion", "EUR", "assumed"] }
+```
+
+- **Right** — the loss is the potential one:
+
+```json
+{ "words": ["citizen participation", "potential loss", "trillion", "EUR", "assumed"] }
+```
+
+The formula names the operand the same way (`"potential loss","trillion","EUR"`),
+and so does a calc-validation `context`. A file that uses the triple repeats its
+`from`/`verb`/`to` from the home file (see *Self-consistency*). The same holds for
+`potential gain`.
+
 **The verb carries meaning → triple.** Two phrases can be linked by more than one
 relation, and then the verb alone decides which number is meant. `zh_city.json`
 uses the same `from` and the same `to` twice and only changes the verb:

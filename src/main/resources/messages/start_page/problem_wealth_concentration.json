@@ -952,6 +952,40 @@
       "verb": "is a",
       "to": "wealth concentration solution",
       "description": "'anti-corruption measures' is one of the compared wealth concentration solutions."
+    },
+    {
+      "name": "trillion EUR",
+      "from": "trillion",
+      "verb": "of",
+      "to": "EUR"
+    },
+    {
+      "from": "person year",
+      "verb": "per",
+      "to": "trillion EUR"
+    },
+    {
+      "name": "billion USD",
+      "from": "billion",
+      "verb": "of",
+      "to": "USD"
+    },
+    {
+      "from": "person year",
+      "verb": "per",
+      "to": "billion USD"
+    },
+    {
+      "name": "potential loss",
+      "from": "loss",
+      "verb": "kind of",
+      "to": "potential"
+    },
+    {
+      "name": "potential gain",
+      "from": "gain",
+      "verb": "kind of",
+      "to": "potential"
     }
   ],
   "formulas": [
@@ -972,7 +1006,7 @@
     {
       "name": "annual damage in money",
       "description": "the loss that a problem causes each year in money, the world GDP multiplied by the share of it that the problem costs per year",
-      "expression": "\"potential\",\"loss\",\"trillion\",\"EUR\" = \"world\",\"GDP\",\"trillion\",\"EUR\" * \"percent\",\"GDP\",\"annual\"",
+      "expression": "\"potential loss\",\"trillion\",\"EUR\" = \"world\",\"GDP\",\"trillion\",\"EUR\" * \"percent\",\"GDP\",\"annual\"",
       "latex": "L_{pot} = GDP_{world} \\cdot d_{annual}",
       "assigned_word": "GDP"
     },
@@ -986,28 +1020,28 @@
     {
       "name": "long run damage share of the GDP",
       "description": "the share of the world GDP that a problem costs at the end of its development, the share it costs today multiplied by the factor by which the damage still grows; the share is stated negative, because it is a loss",
-      "expression": "\"potential\",\"loss\",\"percent\",\"GDP\" = 0 - \"percent\",\"GDP\",\"annual\" * \"percent\",\"GDP\",\"factor\"",
+      "expression": "\"potential loss\",\"percent\",\"GDP\" = 0 - \"percent\",\"GDP\",\"annual\" * \"percent\",\"GDP\",\"factor\"",
       "latex": "d_{long} = -d_{annual} \\cdot g",
       "assigned_word": "annual"
     },
     {
       "name": "welfare damage share",
       "description": "the share of the global happy time points that a problem costs, the share of the GDP it costs multiplied by the factor by which the welfare damage exceeds the money damage, because htp counts the healthy life years that the GDP does not (concept paper introduction)",
-      "expression": "\"potential\",\"loss\",\"percent\",\"htp\" = \"potential\",\"loss\",\"percent\",\"GDP\" * \"htp\",\"GDP\",\"factor\"",
+      "expression": "\"potential loss\",\"percent\",\"htp\" = \"potential loss\",\"percent\",\"GDP\" * \"htp\",\"GDP\",\"factor\"",
       "latex": "d_{htp} = d_{GDP} \\cdot w",
       "assigned_word": "htp"
     },
     {
       "name": "initial effort of a solution",
       "description": "the person years needed to set up a solution, the annual damage of the problem in money multiplied by the effort needed per trillion EUR of damage",
-      "expression": "\"initial effort\",\"person year\" = \"potential\",\"loss\",\"trillion\",\"EUR\" * \"person year\",\"trillion\",\"EUR\",\"factor\"",
+      "expression": "\"initial effort\",\"person year\" = \"potential loss\",\"trillion\",\"EUR\" * \"person year per trillion EUR\",\"factor\"",
       "latex": "E_{init} = L_{pot} \\cdot e",
       "assigned_word": "person year"
     },
     {
       "name": "avoided welfare loss with a gain factor",
       "description": "the happy time points that a solution saves, like the avoided welfare loss, but multiplied by a factor of the problem, because the shared world htp is tuned to one problem and does not fit the others until the horizon of the ranking is stated; the result is stated positive, because it is a gain",
-      "expression": "\"potential\",\"gain\",\"billion\",\"htp\" = 0 - \"potential\",\"loss\",\"percent\",\"htp\" * \"world\",\"htp\",\"billion\" * \"loss reduction\",\"percent\" * \"htp\",\"billion\",\"factor\"",
+      "expression": "\"potential gain\",\"billion\",\"htp\" = 0 - \"potential loss\",\"percent\",\"htp\" * \"world\",\"htp\",\"billion\" * \"loss reduction\",\"percent\" * \"htp\",\"billion\",\"factor\"",
       "latex": "G = -d_{htp} \\cdot HTP_{world} \\cdot r \\cdot k",
       "assigned_word": "loss reduction"
     },
@@ -1021,7 +1055,7 @@
     {
       "name": "initial effort of a solution part",
       "description": "the person years needed to set up one part of a solution, its cost in billion USD multiplied by the person years per billion USD",
-      "expression": "\"initial effort\",\"person year\" = \"initial effort\",\"billion\",\"USD\" * \"person year\",\"billion\",\"USD\",\"factor\"",
+      "expression": "\"initial effort\",\"person year\" = \"initial effort\",\"billion\",\"USD\" * \"person year per billion USD\",\"factor\"",
       "latex": "E_{init} = C \\cdot e",
       "assigned_word": "initial effort"
     }
@@ -1121,9 +1155,7 @@
     {
       "words": [
         "wealth concentration",
-        "person year",
-        "trillion",
-        "EUR",
+        "person year per trillion EUR",
         "factor",
         "assumed"
       ],
@@ -1286,9 +1318,7 @@
     {
       "words": [
         "wealth concentration",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -2800,8 +2830,7 @@
       "formula": "annual damage in money",
       "words": [
         "wealth concentration",
-        "potential",
-        "loss",
+        "potential loss",
         "trillion",
         "EUR",
         "assumed"
@@ -2840,8 +2869,7 @@
       "formula": "long run damage share of the GDP",
       "words": [
         "wealth concentration",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "GDP",
         "assumed"
@@ -2852,8 +2880,7 @@
     {
       "context": [
         "wealth concentration",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "GDP",
         "htp",
@@ -2863,8 +2890,7 @@
       "formula": "welfare damage share",
       "words": [
         "wealth concentration",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "assumed"
@@ -2875,11 +2901,10 @@
     {
       "context": [
         "wealth concentration",
-        "potential",
-        "loss",
+        "potential loss",
         "trillion",
         "EUR",
-        "person year",
+        "person year per trillion EUR",
         "factor",
         "assumed"
       ],
@@ -2898,8 +2923,7 @@
       "context": [
         "wealth concentration",
         "basic income",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -2912,8 +2936,7 @@
       "words": [
         "wealth concentration",
         "basic income",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -2924,8 +2947,7 @@
     {
       "context": [
         "wealth concentration",
-        "potential",
-        "loss",
+        "potential loss",
         "trillion",
         "EUR",
         "assumed",
@@ -2935,8 +2957,7 @@
       "formula": "probability range low",
       "words": [
         "wealth concentration",
-        "potential",
-        "loss",
+        "potential loss",
         "trillion",
         "EUR",
         "assumed",
@@ -2948,8 +2969,7 @@
     {
       "context": [
         "wealth concentration",
-        "potential",
-        "loss",
+        "potential loss",
         "trillion",
         "EUR",
         "assumed",
@@ -2959,8 +2979,7 @@
       "formula": "probability range high",
       "words": [
         "wealth concentration",
-        "potential",
-        "loss",
+        "potential loss",
         "trillion",
         "EUR",
         "assumed",
@@ -2972,8 +2991,7 @@
     {
       "context": [
         "wealth concentration",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "GDP",
         "assumed",
@@ -2983,8 +3001,7 @@
       "formula": "probability range low",
       "words": [
         "wealth concentration",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "GDP",
         "assumed",
@@ -2996,8 +3013,7 @@
     {
       "context": [
         "wealth concentration",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "GDP",
         "assumed",
@@ -3007,8 +3023,7 @@
       "formula": "probability range high",
       "words": [
         "wealth concentration",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "GDP",
         "assumed",
@@ -3020,8 +3035,7 @@
     {
       "context": [
         "wealth concentration",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "assumed",
@@ -3031,8 +3045,7 @@
       "formula": "probability range low",
       "words": [
         "wealth concentration",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "assumed",
@@ -3044,8 +3057,7 @@
     {
       "context": [
         "wealth concentration",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "assumed",
@@ -3055,8 +3067,7 @@
       "formula": "probability range high",
       "words": [
         "wealth concentration",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "assumed",
@@ -3069,8 +3080,7 @@
       "context": [
         "wealth concentration",
         "basic income",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -3081,8 +3091,7 @@
       "words": [
         "wealth concentration",
         "basic income",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -3095,8 +3104,7 @@
       "context": [
         "wealth concentration",
         "basic income",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -3107,8 +3115,7 @@
       "words": [
         "wealth concentration",
         "basic income",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -3268,8 +3275,7 @@
       "context": [
         "wealth concentration",
         "international tax coordination (wealth concentration solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -3281,8 +3287,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "international tax coordination (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -3293,8 +3298,7 @@
     {
       "context": [
         "international tax coordination (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -3304,8 +3308,7 @@
       "formula": "probability range low",
       "words": [
         "international tax coordination (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -3317,8 +3320,7 @@
     {
       "context": [
         "international tax coordination (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -3328,8 +3330,7 @@
       "formula": "probability range high",
       "words": [
         "international tax coordination (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -3345,7 +3346,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -3462,8 +3463,7 @@
       "context": [
         "wealth concentration",
         "automatic exchange of tax information (wealth concentration solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -3475,8 +3475,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "automatic exchange of tax information (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -3487,8 +3486,7 @@
     {
       "context": [
         "automatic exchange of tax information (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -3498,8 +3496,7 @@
       "formula": "probability range low",
       "words": [
         "automatic exchange of tax information (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -3511,8 +3508,7 @@
     {
       "context": [
         "automatic exchange of tax information (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -3522,8 +3518,7 @@
       "formula": "probability range high",
       "words": [
         "automatic exchange of tax information (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -3539,7 +3534,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -3656,8 +3651,7 @@
       "context": [
         "wealth concentration",
         "global asset registry (wealth concentration solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -3669,8 +3663,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "global asset registry (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -3681,8 +3674,7 @@
     {
       "context": [
         "global asset registry (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -3692,8 +3684,7 @@
       "formula": "probability range low",
       "words": [
         "global asset registry (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -3705,8 +3696,7 @@
     {
       "context": [
         "global asset registry (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -3716,8 +3706,7 @@
       "formula": "probability range high",
       "words": [
         "global asset registry (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -3733,7 +3722,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -3850,8 +3839,7 @@
       "context": [
         "wealth concentration",
         "beneficial ownership registers (wealth concentration solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -3863,8 +3851,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "beneficial ownership registers (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -3875,8 +3862,7 @@
     {
       "context": [
         "beneficial ownership registers (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -3886,8 +3872,7 @@
       "formula": "probability range low",
       "words": [
         "beneficial ownership registers (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -3899,8 +3884,7 @@
     {
       "context": [
         "beneficial ownership registers (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -3910,8 +3894,7 @@
       "formula": "probability range high",
       "words": [
         "beneficial ownership registers (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -3927,7 +3910,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -4044,8 +4027,7 @@
       "context": [
         "wealth concentration",
         "closing tax loopholes (wealth concentration solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -4057,8 +4039,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "closing tax loopholes (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -4069,8 +4050,7 @@
     {
       "context": [
         "closing tax loopholes (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -4080,8 +4060,7 @@
       "formula": "probability range low",
       "words": [
         "closing tax loopholes (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -4093,8 +4072,7 @@
     {
       "context": [
         "closing tax loopholes (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -4104,8 +4082,7 @@
       "formula": "probability range high",
       "words": [
         "closing tax loopholes (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -4121,7 +4098,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -4238,8 +4215,7 @@
       "context": [
         "wealth concentration",
         "inheritance tax (wealth concentration solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -4251,8 +4227,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "inheritance tax (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -4263,8 +4238,7 @@
     {
       "context": [
         "inheritance tax (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -4274,8 +4248,7 @@
       "formula": "probability range low",
       "words": [
         "inheritance tax (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -4287,8 +4260,7 @@
     {
       "context": [
         "inheritance tax (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -4298,8 +4270,7 @@
       "formula": "probability range high",
       "words": [
         "inheritance tax (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -4315,7 +4286,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -4432,8 +4403,7 @@
       "context": [
         "wealth concentration",
         "ending step-up in basis (wealth concentration solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -4445,8 +4415,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "ending step-up in basis (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -4457,8 +4426,7 @@
     {
       "context": [
         "ending step-up in basis (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -4468,8 +4436,7 @@
       "formula": "probability range low",
       "words": [
         "ending step-up in basis (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -4481,8 +4448,7 @@
     {
       "context": [
         "ending step-up in basis (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -4492,8 +4458,7 @@
       "formula": "probability range high",
       "words": [
         "ending step-up in basis (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -4509,7 +4474,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -4626,8 +4591,7 @@
       "context": [
         "wealth concentration",
         "taxing capital gains as income (wealth concentration solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -4639,8 +4603,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "taxing capital gains as income (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -4651,8 +4614,7 @@
     {
       "context": [
         "taxing capital gains as income (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -4662,8 +4624,7 @@
       "formula": "probability range low",
       "words": [
         "taxing capital gains as income (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -4675,8 +4636,7 @@
     {
       "context": [
         "taxing capital gains as income (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -4686,8 +4646,7 @@
       "formula": "probability range high",
       "words": [
         "taxing capital gains as income (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -4703,7 +4662,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -4820,8 +4779,7 @@
       "context": [
         "wealth concentration",
         "billionaire minimum tax (wealth concentration solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -4833,8 +4791,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "billionaire minimum tax (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -4845,8 +4802,7 @@
     {
       "context": [
         "billionaire minimum tax (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -4856,8 +4812,7 @@
       "formula": "probability range low",
       "words": [
         "billionaire minimum tax (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -4869,8 +4824,7 @@
     {
       "context": [
         "billionaire minimum tax (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -4880,8 +4834,7 @@
       "formula": "probability range high",
       "words": [
         "billionaire minimum tax (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -4897,7 +4850,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -5014,8 +4967,7 @@
       "context": [
         "wealth concentration",
         "exit tax (wealth concentration solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -5027,8 +4979,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "exit tax (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -5039,8 +4990,7 @@
     {
       "context": [
         "exit tax (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -5050,8 +5000,7 @@
       "formula": "probability range low",
       "words": [
         "exit tax (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -5063,8 +5012,7 @@
     {
       "context": [
         "exit tax (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -5074,8 +5022,7 @@
       "formula": "probability range high",
       "words": [
         "exit tax (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -5091,7 +5038,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -5208,8 +5155,7 @@
       "context": [
         "wealth concentration",
         "land value tax (wealth concentration solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -5221,8 +5167,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "land value tax (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -5233,8 +5178,7 @@
     {
       "context": [
         "land value tax (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -5244,8 +5188,7 @@
       "formula": "probability range low",
       "words": [
         "land value tax (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -5257,8 +5200,7 @@
     {
       "context": [
         "land value tax (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -5268,8 +5210,7 @@
       "formula": "probability range high",
       "words": [
         "land value tax (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -5285,7 +5226,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -5402,8 +5343,7 @@
       "context": [
         "wealth concentration",
         "progressive property tax (wealth concentration solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -5415,8 +5355,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "progressive property tax (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -5427,8 +5366,7 @@
     {
       "context": [
         "progressive property tax (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -5438,8 +5376,7 @@
       "formula": "probability range low",
       "words": [
         "progressive property tax (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -5451,8 +5388,7 @@
     {
       "context": [
         "progressive property tax (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -5462,8 +5398,7 @@
       "formula": "probability range high",
       "words": [
         "progressive property tax (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -5479,7 +5414,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -5596,8 +5531,7 @@
       "context": [
         "wealth concentration",
         "universal public education (wealth concentration solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -5609,8 +5543,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "universal public education (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -5621,8 +5554,7 @@
     {
       "context": [
         "universal public education (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -5632,8 +5564,7 @@
       "formula": "probability range low",
       "words": [
         "universal public education (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -5645,8 +5576,7 @@
     {
       "context": [
         "universal public education (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -5656,8 +5586,7 @@
       "formula": "probability range high",
       "words": [
         "universal public education (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -5673,7 +5602,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -5790,8 +5719,7 @@
       "context": [
         "wealth concentration",
         "affordable housing (wealth concentration solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -5803,8 +5731,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "affordable housing (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -5815,8 +5742,7 @@
     {
       "context": [
         "affordable housing (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -5826,8 +5752,7 @@
       "formula": "probability range low",
       "words": [
         "affordable housing (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -5839,8 +5764,7 @@
     {
       "context": [
         "affordable housing (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -5850,8 +5774,7 @@
       "formula": "probability range high",
       "words": [
         "affordable housing (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -5867,7 +5790,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -5984,8 +5907,7 @@
       "context": [
         "wealth concentration",
         "codetermination (wealth concentration solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -5997,8 +5919,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "codetermination (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -6009,8 +5930,7 @@
     {
       "context": [
         "codetermination (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -6020,8 +5940,7 @@
       "formula": "probability range low",
       "words": [
         "codetermination (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -6033,8 +5952,7 @@
     {
       "context": [
         "codetermination (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -6044,8 +5962,7 @@
       "formula": "probability range high",
       "words": [
         "codetermination (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -6061,7 +5978,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -6178,8 +6095,7 @@
       "context": [
         "wealth concentration",
         "collective bargaining (wealth concentration solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -6191,8 +6107,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "collective bargaining (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -6203,8 +6118,7 @@
     {
       "context": [
         "collective bargaining (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -6214,8 +6128,7 @@
       "formula": "probability range low",
       "words": [
         "collective bargaining (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -6227,8 +6140,7 @@
     {
       "context": [
         "collective bargaining (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -6238,8 +6150,7 @@
       "formula": "probability range high",
       "words": [
         "collective bargaining (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -6255,7 +6166,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -6372,8 +6283,7 @@
       "context": [
         "wealth concentration",
         "minimum wage (wealth concentration solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -6385,8 +6295,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "minimum wage (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -6397,8 +6306,7 @@
     {
       "context": [
         "minimum wage (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -6408,8 +6316,7 @@
       "formula": "probability range low",
       "words": [
         "minimum wage (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -6421,8 +6328,7 @@
     {
       "context": [
         "minimum wage (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -6432,8 +6338,7 @@
       "formula": "probability range high",
       "words": [
         "minimum wage (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -6449,7 +6354,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -6566,8 +6471,7 @@
       "context": [
         "wealth concentration",
         "employee ownership (wealth concentration solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -6579,8 +6483,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "employee ownership (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -6591,8 +6494,7 @@
     {
       "context": [
         "employee ownership (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -6602,8 +6504,7 @@
       "formula": "probability range low",
       "words": [
         "employee ownership (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -6615,8 +6516,7 @@
     {
       "context": [
         "employee ownership (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -6626,8 +6526,7 @@
       "formula": "probability range high",
       "words": [
         "employee ownership (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -6643,7 +6542,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -6760,8 +6659,7 @@
       "context": [
         "wealth concentration",
         "universal basic capital (wealth concentration solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -6773,8 +6671,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "universal basic capital (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -6785,8 +6682,7 @@
     {
       "context": [
         "universal basic capital (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -6796,8 +6692,7 @@
       "formula": "probability range low",
       "words": [
         "universal basic capital (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -6809,8 +6704,7 @@
     {
       "context": [
         "universal basic capital (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -6820,8 +6714,7 @@
       "formula": "probability range high",
       "words": [
         "universal basic capital (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -6837,7 +6730,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -6954,8 +6847,7 @@
       "context": [
         "wealth concentration",
         "sovereign wealth fund (wealth concentration solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -6967,8 +6859,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "sovereign wealth fund (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -6979,8 +6870,7 @@
     {
       "context": [
         "sovereign wealth fund (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -6990,8 +6880,7 @@
       "formula": "probability range low",
       "words": [
         "sovereign wealth fund (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -7003,8 +6892,7 @@
     {
       "context": [
         "sovereign wealth fund (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -7014,8 +6902,7 @@
       "formula": "probability range high",
       "words": [
         "sovereign wealth fund (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -7031,7 +6918,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -7148,8 +7035,7 @@
       "context": [
         "wealth concentration",
         "citizen dividend (wealth concentration solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -7161,8 +7047,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "citizen dividend (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -7173,8 +7058,7 @@
     {
       "context": [
         "citizen dividend (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -7184,8 +7068,7 @@
       "formula": "probability range low",
       "words": [
         "citizen dividend (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -7197,8 +7080,7 @@
     {
       "context": [
         "citizen dividend (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -7208,8 +7090,7 @@
       "formula": "probability range high",
       "words": [
         "citizen dividend (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -7225,7 +7106,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -7342,8 +7223,7 @@
       "context": [
         "wealth concentration",
         "antitrust enforcement (wealth concentration solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -7355,8 +7235,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "antitrust enforcement (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -7367,8 +7246,7 @@
     {
       "context": [
         "antitrust enforcement (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -7378,8 +7256,7 @@
       "formula": "probability range low",
       "words": [
         "antitrust enforcement (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -7391,8 +7268,7 @@
     {
       "context": [
         "antitrust enforcement (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -7402,8 +7278,7 @@
       "formula": "probability range high",
       "words": [
         "antitrust enforcement (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -7419,7 +7294,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -7536,8 +7411,7 @@
       "context": [
         "wealth concentration",
         "patent reform (wealth concentration solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -7549,8 +7423,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "patent reform (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -7561,8 +7434,7 @@
     {
       "context": [
         "patent reform (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -7572,8 +7444,7 @@
       "formula": "probability range low",
       "words": [
         "patent reform (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -7585,8 +7456,7 @@
     {
       "context": [
         "patent reform (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -7596,8 +7466,7 @@
       "formula": "probability range high",
       "words": [
         "patent reform (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -7613,7 +7482,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -7730,8 +7599,7 @@
       "context": [
         "wealth concentration",
         "progressive income tax (wealth concentration solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -7743,8 +7611,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "progressive income tax (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -7755,8 +7622,7 @@
     {
       "context": [
         "progressive income tax (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -7766,8 +7632,7 @@
       "formula": "probability range low",
       "words": [
         "progressive income tax (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -7779,8 +7644,7 @@
     {
       "context": [
         "progressive income tax (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -7790,8 +7654,7 @@
       "formula": "probability range high",
       "words": [
         "progressive income tax (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -7807,7 +7670,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -7924,8 +7787,7 @@
       "context": [
         "wealth concentration",
         "annual wealth tax (wealth concentration solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -7937,8 +7799,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "annual wealth tax (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -7949,8 +7810,7 @@
     {
       "context": [
         "annual wealth tax (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -7960,8 +7820,7 @@
       "formula": "probability range low",
       "words": [
         "annual wealth tax (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -7973,8 +7832,7 @@
     {
       "context": [
         "annual wealth tax (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -7984,8 +7842,7 @@
       "formula": "probability range high",
       "words": [
         "annual wealth tax (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -8001,7 +7858,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -8118,8 +7975,7 @@
       "context": [
         "wealth concentration",
         "wealth cap at the value of a statistical life (wealth concentration solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -8131,8 +7987,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "wealth cap at the value of a statistical life (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -8143,8 +7998,7 @@
     {
       "context": [
         "wealth cap at the value of a statistical life (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -8154,8 +8008,7 @@
       "formula": "probability range low",
       "words": [
         "wealth cap at the value of a statistical life (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -8167,8 +8020,7 @@
     {
       "context": [
         "wealth cap at the value of a statistical life (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -8178,8 +8030,7 @@
       "formula": "probability range high",
       "words": [
         "wealth cap at the value of a statistical life (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -8195,7 +8046,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -8312,8 +8163,7 @@
       "context": [
         "wealth concentration",
         "windfall taxes (wealth concentration solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -8325,8 +8175,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "windfall taxes (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -8337,8 +8186,7 @@
     {
       "context": [
         "windfall taxes (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -8348,8 +8196,7 @@
       "formula": "probability range low",
       "words": [
         "windfall taxes (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -8361,8 +8208,7 @@
     {
       "context": [
         "windfall taxes (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -8372,8 +8218,7 @@
       "formula": "probability range high",
       "words": [
         "windfall taxes (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -8389,7 +8234,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -8506,8 +8351,7 @@
       "context": [
         "wealth concentration",
         "financial transaction tax (wealth concentration solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -8519,8 +8363,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "financial transaction tax (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -8531,8 +8374,7 @@
     {
       "context": [
         "financial transaction tax (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -8542,8 +8384,7 @@
       "formula": "probability range low",
       "words": [
         "financial transaction tax (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -8555,8 +8396,7 @@
     {
       "context": [
         "financial transaction tax (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -8566,8 +8406,7 @@
       "formula": "probability range high",
       "words": [
         "financial transaction tax (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -8583,7 +8422,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -8700,8 +8539,7 @@
       "context": [
         "wealth concentration",
         "executive pay ratio caps (wealth concentration solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -8713,8 +8551,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "executive pay ratio caps (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -8725,8 +8562,7 @@
     {
       "context": [
         "executive pay ratio caps (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -8736,8 +8572,7 @@
       "formula": "probability range low",
       "words": [
         "executive pay ratio caps (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -8749,8 +8584,7 @@
     {
       "context": [
         "executive pay ratio caps (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -8760,8 +8594,7 @@
       "formula": "probability range high",
       "words": [
         "executive pay ratio caps (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -8777,7 +8610,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -8894,8 +8727,7 @@
       "context": [
         "wealth concentration",
         "campaign finance limits (wealth concentration solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -8907,8 +8739,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "campaign finance limits (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -8919,8 +8750,7 @@
     {
       "context": [
         "campaign finance limits (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -8930,8 +8760,7 @@
       "formula": "probability range low",
       "words": [
         "campaign finance limits (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -8943,8 +8772,7 @@
     {
       "context": [
         "campaign finance limits (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -8954,8 +8782,7 @@
       "formula": "probability range high",
       "words": [
         "campaign finance limits (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -8971,7 +8798,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -9088,8 +8915,7 @@
       "context": [
         "wealth concentration",
         "anti-corruption measures (wealth concentration solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -9101,8 +8927,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "anti-corruption measures (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -9113,8 +8938,7 @@
     {
       "context": [
         "anti-corruption measures (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -9124,8 +8948,7 @@
       "formula": "probability range low",
       "words": [
         "anti-corruption measures (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -9137,8 +8960,7 @@
     {
       "context": [
         "anti-corruption measures (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -9148,8 +8970,7 @@
       "formula": "probability range high",
       "words": [
         "anti-corruption measures (wealth concentration solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -9165,7 +8986,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],

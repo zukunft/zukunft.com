@@ -202,6 +202,29 @@
       "from": "factor",
       "verb": "of",
       "to": "probability range"
+    },
+    {
+      "name": "trillion EUR",
+      "from": "trillion",
+      "verb": "of",
+      "to": "EUR"
+    },
+    {
+      "from": "person year",
+      "verb": "per",
+      "to": "trillion EUR"
+    },
+    {
+      "name": "potential loss",
+      "from": "loss",
+      "verb": "kind of",
+      "to": "potential"
+    },
+    {
+      "name": "potential gain",
+      "from": "gain",
+      "verb": "kind of",
+      "to": "potential"
     }
   ],
   "formulas": [
@@ -222,7 +245,7 @@
     {
       "name": "annual damage in money",
       "description": "the loss that a problem causes each year in money, the world GDP multiplied by the share of it that the problem costs per year",
-      "expression": "\"potential\",\"loss\",\"trillion\",\"EUR\" = \"world\",\"GDP\",\"trillion\",\"EUR\" * \"percent\",\"GDP\",\"annual\"",
+      "expression": "\"potential loss\",\"trillion\",\"EUR\" = \"world\",\"GDP\",\"trillion\",\"EUR\" * \"percent\",\"GDP\",\"annual\"",
       "latex": "L_{pot} = GDP_{world} \\cdot d_{annual}",
       "assigned_word": "GDP"
     },
@@ -236,28 +259,28 @@
     {
       "name": "long run damage share of the GDP",
       "description": "the share of the world GDP that a problem costs at the end of its development, the share it costs today multiplied by the factor by which the damage still grows; the share is stated negative, because it is a loss",
-      "expression": "\"potential\",\"loss\",\"percent\",\"GDP\" = 0 - \"percent\",\"GDP\",\"annual\" * \"percent\",\"GDP\",\"factor\"",
+      "expression": "\"potential loss\",\"percent\",\"GDP\" = 0 - \"percent\",\"GDP\",\"annual\" * \"percent\",\"GDP\",\"factor\"",
       "latex": "d_{long} = -d_{annual} \\cdot g",
       "assigned_word": "annual"
     },
     {
       "name": "welfare damage share",
       "description": "the share of the global happy time points that a problem costs, the share of the GDP it costs multiplied by the factor by which the welfare damage exceeds the money damage, because htp counts the healthy life years that the GDP does not (concept paper introduction)",
-      "expression": "\"potential\",\"loss\",\"percent\",\"htp\" = \"potential\",\"loss\",\"percent\",\"GDP\" * \"htp\",\"GDP\",\"factor\"",
+      "expression": "\"potential loss\",\"percent\",\"htp\" = \"potential loss\",\"percent\",\"GDP\" * \"htp\",\"GDP\",\"factor\"",
       "latex": "d_{htp} = d_{GDP} \\cdot w",
       "assigned_word": "htp"
     },
     {
       "name": "initial effort of a solution",
       "description": "the person years needed to set up a solution, the annual damage of the problem in money multiplied by the effort needed per trillion EUR of damage",
-      "expression": "\"initial effort\",\"person year\" = \"potential\",\"loss\",\"trillion\",\"EUR\" * \"person year\",\"trillion\",\"EUR\",\"factor\"",
+      "expression": "\"initial effort\",\"person year\" = \"potential loss\",\"trillion\",\"EUR\" * \"person year per trillion EUR\",\"factor\"",
       "latex": "E_{init} = L_{pot} \\cdot e",
       "assigned_word": "person year"
     },
     {
       "name": "avoided welfare loss with a gain factor",
       "description": "the happy time points that a solution saves, like the avoided welfare loss, but multiplied by a factor of the problem, because the shared world htp is tuned to one problem and does not fit the others until the horizon of the ranking is stated; the result is stated positive, because it is a gain",
-      "expression": "\"potential\",\"gain\",\"billion\",\"htp\" = 0 - \"potential\",\"loss\",\"percent\",\"htp\" * \"world\",\"htp\",\"billion\" * \"loss reduction\",\"percent\" * \"htp\",\"billion\",\"factor\"",
+      "expression": "\"potential gain\",\"billion\",\"htp\" = 0 - \"potential loss\",\"percent\",\"htp\" * \"world\",\"htp\",\"billion\" * \"loss reduction\",\"percent\" * \"htp\",\"billion\",\"factor\"",
       "latex": "G = -d_{htp} \\cdot HTP_{world} \\cdot r \\cdot k",
       "assigned_word": "loss reduction"
     }
@@ -377,9 +400,7 @@
     {
       "words": [
         "market power",
-        "person year",
-        "trillion",
-        "EUR",
+        "person year per trillion EUR",
         "factor",
         "assumed"
       ],
@@ -557,8 +578,7 @@
       "formula": "annual damage in money",
       "words": [
         "market power",
-        "potential",
-        "loss",
+        "potential loss",
         "trillion",
         "EUR",
         "assumed"
@@ -597,8 +617,7 @@
       "formula": "long run damage share of the GDP",
       "words": [
         "market power",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "GDP",
         "assumed"
@@ -609,8 +628,7 @@
     {
       "context": [
         "market power",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "GDP",
         "htp",
@@ -620,8 +638,7 @@
       "formula": "welfare damage share",
       "words": [
         "market power",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "assumed"
@@ -632,11 +649,10 @@
     {
       "context": [
         "market power",
-        "potential",
-        "loss",
+        "potential loss",
         "trillion",
         "EUR",
-        "person year",
+        "person year per trillion EUR",
         "factor",
         "assumed"
       ],
@@ -655,8 +671,7 @@
       "context": [
         "market power",
         "market share tax",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -669,8 +684,7 @@
       "words": [
         "market power",
         "market share tax",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -681,8 +695,7 @@
     {
       "context": [
         "market power",
-        "potential",
-        "loss",
+        "potential loss",
         "trillion",
         "EUR",
         "assumed",
@@ -692,8 +705,7 @@
       "formula": "probability range low",
       "words": [
         "market power",
-        "potential",
-        "loss",
+        "potential loss",
         "trillion",
         "EUR",
         "assumed",
@@ -705,8 +717,7 @@
     {
       "context": [
         "market power",
-        "potential",
-        "loss",
+        "potential loss",
         "trillion",
         "EUR",
         "assumed",
@@ -716,8 +727,7 @@
       "formula": "probability range high",
       "words": [
         "market power",
-        "potential",
-        "loss",
+        "potential loss",
         "trillion",
         "EUR",
         "assumed",
@@ -729,8 +739,7 @@
     {
       "context": [
         "market power",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "GDP",
         "assumed",
@@ -740,8 +749,7 @@
       "formula": "probability range low",
       "words": [
         "market power",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "GDP",
         "assumed",
@@ -753,8 +761,7 @@
     {
       "context": [
         "market power",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "GDP",
         "assumed",
@@ -764,8 +771,7 @@
       "formula": "probability range high",
       "words": [
         "market power",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "GDP",
         "assumed",
@@ -777,8 +783,7 @@
     {
       "context": [
         "market power",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "assumed",
@@ -788,8 +793,7 @@
       "formula": "probability range low",
       "words": [
         "market power",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "assumed",
@@ -801,8 +805,7 @@
     {
       "context": [
         "market power",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "assumed",
@@ -812,8 +815,7 @@
       "formula": "probability range high",
       "words": [
         "market power",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "assumed",
@@ -826,8 +828,7 @@
       "context": [
         "market power",
         "market share tax",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -838,8 +839,7 @@
       "words": [
         "market power",
         "market share tax",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -852,8 +852,7 @@
       "context": [
         "market power",
         "market share tax",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -864,8 +863,7 @@
       "words": [
         "market power",
         "market share tax",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",

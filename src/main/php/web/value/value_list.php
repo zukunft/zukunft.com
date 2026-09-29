@@ -1553,8 +1553,8 @@ class value_list extends ListBase
      * the group phrase ids that a value must carry to belong to the column of the given phrase
      *
      * a column of a triple that no value carries stands for the values that carry both parts of
-     * the triple, e.g. the "potential loss" column for the values with "potential" and "loss",
-     * because the values name the measure with the two words (see solution_prio.json)
+     * the triple, e.g. the "potential loss" column for values that name the measure with the two
+     * words "potential" and "loss" instead of the triple (see docs/llm/json_structure.md)
      *
      * @param phrase $phr the phrase that heads the column
      * @param array $all every groupable phrase keyed by phrase id

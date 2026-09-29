@@ -931,6 +931,40 @@
       "verb": "is a",
       "to": "black-box AI solution",
       "description": "'AI detectors' is one of the compared black-box AI solutions."
+    },
+    {
+      "name": "trillion EUR",
+      "from": "trillion",
+      "verb": "of",
+      "to": "EUR"
+    },
+    {
+      "from": "person year",
+      "verb": "per",
+      "to": "trillion EUR"
+    },
+    {
+      "name": "billion USD",
+      "from": "billion",
+      "verb": "of",
+      "to": "USD"
+    },
+    {
+      "from": "person year",
+      "verb": "per",
+      "to": "billion USD"
+    },
+    {
+      "name": "potential loss",
+      "from": "loss",
+      "verb": "kind of",
+      "to": "potential"
+    },
+    {
+      "name": "potential gain",
+      "from": "gain",
+      "verb": "kind of",
+      "to": "potential"
     }
   ],
   "formulas": [
@@ -951,7 +985,7 @@
     {
       "name": "annual damage in money",
       "description": "the loss that a problem causes each year in money, the world GDP multiplied by the share of it that the problem costs per year",
-      "expression": "\"potential\",\"loss\",\"trillion\",\"EUR\" = \"world\",\"GDP\",\"trillion\",\"EUR\" * \"percent\",\"GDP\",\"annual\"",
+      "expression": "\"potential loss\",\"trillion\",\"EUR\" = \"world\",\"GDP\",\"trillion\",\"EUR\" * \"percent\",\"GDP\",\"annual\"",
       "latex": "L_{pot} = GDP_{world} \\cdot d_{annual}",
       "assigned_word": "GDP"
     },
@@ -965,28 +999,28 @@
     {
       "name": "long run damage share of the GDP",
       "description": "the share of the world GDP that a problem costs at the end of its development, the share it costs today multiplied by the factor by which the damage still grows; the share is stated negative, because it is a loss",
-      "expression": "\"potential\",\"loss\",\"percent\",\"GDP\" = 0 - \"percent\",\"GDP\",\"annual\" * \"percent\",\"GDP\",\"factor\"",
+      "expression": "\"potential loss\",\"percent\",\"GDP\" = 0 - \"percent\",\"GDP\",\"annual\" * \"percent\",\"GDP\",\"factor\"",
       "latex": "d_{long} = -d_{annual} \\cdot g",
       "assigned_word": "annual"
     },
     {
       "name": "welfare damage share",
       "description": "the share of the global happy time points that a problem costs, the share of the GDP it costs multiplied by the factor by which the welfare damage exceeds the money damage, because htp counts the healthy life years that the GDP does not (concept paper introduction)",
-      "expression": "\"potential\",\"loss\",\"percent\",\"htp\" = \"potential\",\"loss\",\"percent\",\"GDP\" * \"htp\",\"GDP\",\"factor\"",
+      "expression": "\"potential loss\",\"percent\",\"htp\" = \"potential loss\",\"percent\",\"GDP\" * \"htp\",\"GDP\",\"factor\"",
       "latex": "d_{htp} = d_{GDP} \\cdot w",
       "assigned_word": "htp"
     },
     {
       "name": "initial effort of a solution",
       "description": "the person years needed to set up a solution, the annual damage of the problem in money multiplied by the effort needed per trillion EUR of damage",
-      "expression": "\"initial effort\",\"person year\" = \"potential\",\"loss\",\"trillion\",\"EUR\" * \"person year\",\"trillion\",\"EUR\",\"factor\"",
+      "expression": "\"initial effort\",\"person year\" = \"potential loss\",\"trillion\",\"EUR\" * \"person year per trillion EUR\",\"factor\"",
       "latex": "E_{init} = L_{pot} \\cdot e",
       "assigned_word": "person year"
     },
     {
       "name": "avoided welfare loss with a gain factor",
       "description": "the happy time points that a solution saves, like the avoided welfare loss, but multiplied by a factor of the problem, because the shared world htp is tuned to one problem and does not fit the others until the horizon of the ranking is stated; the result is stated positive, because it is a gain",
-      "expression": "\"potential\",\"gain\",\"billion\",\"htp\" = 0 - \"potential\",\"loss\",\"percent\",\"htp\" * \"world\",\"htp\",\"billion\" * \"loss reduction\",\"percent\" * \"htp\",\"billion\",\"factor\"",
+      "expression": "\"potential gain\",\"billion\",\"htp\" = 0 - \"potential loss\",\"percent\",\"htp\" * \"world\",\"htp\",\"billion\" * \"loss reduction\",\"percent\" * \"htp\",\"billion\",\"factor\"",
       "latex": "G = -d_{htp} \\cdot HTP_{world} \\cdot r \\cdot k",
       "assigned_word": "loss reduction"
     },
@@ -1000,7 +1034,7 @@
     {
       "name": "initial effort of a solution part",
       "description": "the person years needed to set up one part of a solution, its cost in billion USD multiplied by the person years per billion USD",
-      "expression": "\"initial effort\",\"person year\" = \"initial effort\",\"billion\",\"USD\" * \"person year\",\"billion\",\"USD\",\"factor\"",
+      "expression": "\"initial effort\",\"person year\" = \"initial effort\",\"billion\",\"USD\" * \"person year per billion USD\",\"factor\"",
       "latex": "E_{init} = C \\cdot e",
       "assigned_word": "initial effort"
     }
@@ -1090,9 +1124,7 @@
     {
       "words": [
         "black-box AI",
-        "person year",
-        "trillion",
-        "EUR",
+        "person year per trillion EUR",
         "factor",
         "assumed"
       ],
@@ -1255,9 +1287,7 @@
     {
       "words": [
         "black-box AI",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -2961,8 +2991,7 @@
       "formula": "annual damage in money",
       "words": [
         "black-box AI",
-        "potential",
-        "loss",
+        "potential loss",
         "trillion",
         "EUR",
         "assumed"
@@ -3001,8 +3030,7 @@
       "formula": "long run damage share of the GDP",
       "words": [
         "black-box AI",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "GDP",
         "assumed"
@@ -3013,8 +3041,7 @@
     {
       "context": [
         "black-box AI",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "GDP",
         "htp",
@@ -3024,8 +3051,7 @@
       "formula": "welfare damage share",
       "words": [
         "black-box AI",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "assumed"
@@ -3036,11 +3062,10 @@
     {
       "context": [
         "black-box AI",
-        "potential",
-        "loss",
+        "potential loss",
         "trillion",
         "EUR",
-        "person year",
+        "person year per trillion EUR",
         "factor",
         "assumed"
       ],
@@ -3059,8 +3084,7 @@
       "context": [
         "black-box AI",
         "public AI",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -3073,8 +3097,7 @@
       "words": [
         "black-box AI",
         "public AI",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -3085,8 +3108,7 @@
     {
       "context": [
         "black-box AI",
-        "potential",
-        "loss",
+        "potential loss",
         "trillion",
         "EUR",
         "assumed",
@@ -3096,8 +3118,7 @@
       "formula": "probability range low",
       "words": [
         "black-box AI",
-        "potential",
-        "loss",
+        "potential loss",
         "trillion",
         "EUR",
         "assumed",
@@ -3109,8 +3130,7 @@
     {
       "context": [
         "black-box AI",
-        "potential",
-        "loss",
+        "potential loss",
         "trillion",
         "EUR",
         "assumed",
@@ -3120,8 +3140,7 @@
       "formula": "probability range high",
       "words": [
         "black-box AI",
-        "potential",
-        "loss",
+        "potential loss",
         "trillion",
         "EUR",
         "assumed",
@@ -3133,8 +3152,7 @@
     {
       "context": [
         "black-box AI",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "GDP",
         "assumed",
@@ -3144,8 +3162,7 @@
       "formula": "probability range low",
       "words": [
         "black-box AI",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "GDP",
         "assumed",
@@ -3157,8 +3174,7 @@
     {
       "context": [
         "black-box AI",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "GDP",
         "assumed",
@@ -3168,8 +3184,7 @@
       "formula": "probability range high",
       "words": [
         "black-box AI",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "GDP",
         "assumed",
@@ -3181,8 +3196,7 @@
     {
       "context": [
         "black-box AI",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "assumed",
@@ -3192,8 +3206,7 @@
       "formula": "probability range low",
       "words": [
         "black-box AI",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "assumed",
@@ -3205,8 +3218,7 @@
     {
       "context": [
         "black-box AI",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "assumed",
@@ -3216,8 +3228,7 @@
       "formula": "probability range high",
       "words": [
         "black-box AI",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "assumed",
@@ -3230,8 +3241,7 @@
       "context": [
         "black-box AI",
         "public AI",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -3242,8 +3252,7 @@
       "words": [
         "black-box AI",
         "public AI",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -3256,8 +3265,7 @@
       "context": [
         "black-box AI",
         "public AI",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -3268,8 +3276,7 @@
       "words": [
         "black-box AI",
         "public AI",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -3429,8 +3436,7 @@
       "context": [
         "black-box AI",
         "safety evaluations before deployment (black-box AI solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -3442,8 +3448,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "safety evaluations before deployment (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -3454,8 +3459,7 @@
     {
       "context": [
         "safety evaluations before deployment (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -3465,8 +3469,7 @@
       "formula": "probability range low",
       "words": [
         "safety evaluations before deployment (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -3478,8 +3481,7 @@
     {
       "context": [
         "safety evaluations before deployment (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -3489,8 +3491,7 @@
       "formula": "probability range high",
       "words": [
         "safety evaluations before deployment (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -3506,7 +3507,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -3623,8 +3624,7 @@
       "context": [
         "black-box AI",
         "red teaming (black-box AI solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -3636,8 +3636,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "red teaming (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -3648,8 +3647,7 @@
     {
       "context": [
         "red teaming (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -3659,8 +3657,7 @@
       "formula": "probability range low",
       "words": [
         "red teaming (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -3672,8 +3669,7 @@
     {
       "context": [
         "red teaming (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -3683,8 +3679,7 @@
       "formula": "probability range high",
       "words": [
         "red teaming (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -3700,7 +3695,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -3817,8 +3812,7 @@
       "context": [
         "black-box AI",
         "liability rules (black-box AI solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -3830,8 +3824,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "liability rules (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -3842,8 +3835,7 @@
     {
       "context": [
         "liability rules (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -3853,8 +3845,7 @@
       "formula": "probability range low",
       "words": [
         "liability rules (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -3866,8 +3857,7 @@
     {
       "context": [
         "liability rules (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -3877,8 +3867,7 @@
       "formula": "probability range high",
       "words": [
         "liability rules (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -3894,7 +3883,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -4011,8 +4000,7 @@
       "context": [
         "black-box AI",
         "incident reporting (black-box AI solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -4024,8 +4012,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "incident reporting (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -4036,8 +4023,7 @@
     {
       "context": [
         "incident reporting (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -4047,8 +4033,7 @@
       "formula": "probability range low",
       "words": [
         "incident reporting (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -4060,8 +4045,7 @@
     {
       "context": [
         "incident reporting (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -4071,8 +4055,7 @@
       "formula": "probability range high",
       "words": [
         "incident reporting (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -4088,7 +4071,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -4205,8 +4188,7 @@
       "context": [
         "black-box AI",
         "compute governance (black-box AI solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -4218,8 +4200,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "compute governance (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -4230,8 +4211,7 @@
     {
       "context": [
         "compute governance (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -4241,8 +4221,7 @@
       "formula": "probability range low",
       "words": [
         "compute governance (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -4254,8 +4233,7 @@
     {
       "context": [
         "compute governance (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -4265,8 +4243,7 @@
       "formula": "probability range high",
       "words": [
         "compute governance (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -4282,7 +4259,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -4399,8 +4376,7 @@
       "context": [
         "black-box AI",
         "export controls (black-box AI solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -4412,8 +4388,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "export controls (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -4424,8 +4399,7 @@
     {
       "context": [
         "export controls (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -4435,8 +4409,7 @@
       "formula": "probability range low",
       "words": [
         "export controls (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -4448,8 +4421,7 @@
     {
       "context": [
         "export controls (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -4459,8 +4431,7 @@
       "formula": "probability range high",
       "words": [
         "export controls (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -4476,7 +4447,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -4593,8 +4564,7 @@
       "context": [
         "black-box AI",
         "model access controls (black-box AI solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -4606,8 +4576,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "model access controls (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -4618,8 +4587,7 @@
     {
       "context": [
         "model access controls (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -4629,8 +4597,7 @@
       "formula": "probability range low",
       "words": [
         "model access controls (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -4642,8 +4609,7 @@
     {
       "context": [
         "model access controls (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -4653,8 +4619,7 @@
       "formula": "probability range high",
       "words": [
         "model access controls (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -4670,7 +4635,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -4787,8 +4752,7 @@
       "context": [
         "black-box AI",
         "staged deployment (black-box AI solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -4800,8 +4764,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "staged deployment (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -4812,8 +4775,7 @@
     {
       "context": [
         "staged deployment (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -4823,8 +4785,7 @@
       "formula": "probability range low",
       "words": [
         "staged deployment (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -4836,8 +4797,7 @@
     {
       "context": [
         "staged deployment (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -4847,8 +4807,7 @@
       "formula": "probability range high",
       "words": [
         "staged deployment (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -4864,7 +4823,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -4981,8 +4940,7 @@
       "context": [
         "black-box AI",
         "human oversight (black-box AI solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -4994,8 +4952,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "human oversight (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -5006,8 +4963,7 @@
     {
       "context": [
         "human oversight (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -5017,8 +4973,7 @@
       "formula": "probability range low",
       "words": [
         "human oversight (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -5030,8 +4985,7 @@
     {
       "context": [
         "human oversight (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -5041,8 +4995,7 @@
       "formula": "probability range high",
       "words": [
         "human oversight (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -5058,7 +5011,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -5175,8 +5128,7 @@
       "context": [
         "black-box AI",
         "audit trails (black-box AI solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -5188,8 +5140,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "audit trails (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -5200,8 +5151,7 @@
     {
       "context": [
         "audit trails (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -5211,8 +5161,7 @@
       "formula": "probability range low",
       "words": [
         "audit trails (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -5224,8 +5173,7 @@
     {
       "context": [
         "audit trails (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -5235,8 +5183,7 @@
       "formula": "probability range high",
       "words": [
         "audit trails (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -5252,7 +5199,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -5369,8 +5316,7 @@
       "context": [
         "black-box AI",
         "mechanistic interpretability (black-box AI solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -5382,8 +5328,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "mechanistic interpretability (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -5394,8 +5339,7 @@
     {
       "context": [
         "mechanistic interpretability (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -5405,8 +5349,7 @@
       "formula": "probability range low",
       "words": [
         "mechanistic interpretability (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -5418,8 +5361,7 @@
     {
       "context": [
         "mechanistic interpretability (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -5429,8 +5371,7 @@
       "formula": "probability range high",
       "words": [
         "mechanistic interpretability (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -5446,7 +5387,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -5563,8 +5504,7 @@
       "context": [
         "black-box AI",
         "alignment research (black-box AI solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -5576,8 +5516,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "alignment research (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -5588,8 +5527,7 @@
     {
       "context": [
         "alignment research (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -5599,8 +5537,7 @@
       "formula": "probability range low",
       "words": [
         "alignment research (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -5612,8 +5549,7 @@
     {
       "context": [
         "alignment research (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -5623,8 +5559,7 @@
       "formula": "probability range high",
       "words": [
         "alignment research (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -5640,7 +5575,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -5757,8 +5692,7 @@
       "context": [
         "black-box AI",
         "human transparent expert systems (black-box AI solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -5770,8 +5704,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "human transparent expert systems (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -5782,8 +5715,7 @@
     {
       "context": [
         "human transparent expert systems (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -5793,8 +5725,7 @@
       "formula": "probability range low",
       "words": [
         "human transparent expert systems (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -5806,8 +5737,7 @@
     {
       "context": [
         "human transparent expert systems (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -5817,8 +5747,7 @@
       "formula": "probability range high",
       "words": [
         "human transparent expert systems (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -5834,7 +5763,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -5951,8 +5880,7 @@
       "context": [
         "black-box AI",
         "traceable reasoning (black-box AI solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -5964,8 +5892,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "traceable reasoning (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -5976,8 +5903,7 @@
     {
       "context": [
         "traceable reasoning (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -5987,8 +5913,7 @@
       "formula": "probability range low",
       "words": [
         "traceable reasoning (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -6000,8 +5925,7 @@
     {
       "context": [
         "traceable reasoning (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -6011,8 +5935,7 @@
       "formula": "probability range high",
       "words": [
         "traceable reasoning (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -6028,7 +5951,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -6145,8 +6068,7 @@
       "context": [
         "black-box AI",
         "source citation (black-box AI solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -6158,8 +6080,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "source citation (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -6170,8 +6091,7 @@
     {
       "context": [
         "source citation (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -6181,8 +6101,7 @@
       "formula": "probability range low",
       "words": [
         "source citation (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -6194,8 +6113,7 @@
     {
       "context": [
         "source citation (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -6205,8 +6123,7 @@
       "formula": "probability range high",
       "words": [
         "source citation (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -6222,7 +6139,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -6339,8 +6256,7 @@
       "context": [
         "black-box AI",
         "content provenance (black-box AI solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -6352,8 +6268,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "content provenance (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -6364,8 +6279,7 @@
     {
       "context": [
         "content provenance (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -6375,8 +6289,7 @@
       "formula": "probability range low",
       "words": [
         "content provenance (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -6388,8 +6301,7 @@
     {
       "context": [
         "content provenance (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -6399,8 +6311,7 @@
       "formula": "probability range high",
       "words": [
         "content provenance (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -6416,7 +6327,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -6533,8 +6444,7 @@
       "context": [
         "black-box AI",
         "watermarking (black-box AI solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -6546,8 +6456,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "watermarking (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -6558,8 +6467,7 @@
     {
       "context": [
         "watermarking (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -6569,8 +6477,7 @@
       "formula": "probability range low",
       "words": [
         "watermarking (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -6582,8 +6489,7 @@
     {
       "context": [
         "watermarking (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -6593,8 +6499,7 @@
       "formula": "probability range high",
       "words": [
         "watermarking (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -6610,7 +6515,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -6727,8 +6632,7 @@
       "context": [
         "black-box AI",
         "independent audits (black-box AI solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -6740,8 +6644,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "independent audits (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -6752,8 +6655,7 @@
     {
       "context": [
         "independent audits (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -6763,8 +6665,7 @@
       "formula": "probability range low",
       "words": [
         "independent audits (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -6776,8 +6677,7 @@
     {
       "context": [
         "independent audits (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -6787,8 +6687,7 @@
       "formula": "probability range high",
       "words": [
         "independent audits (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -6804,7 +6703,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -6921,8 +6820,7 @@
       "context": [
         "black-box AI",
         "third-party certification (black-box AI solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -6934,8 +6832,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "third-party certification (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -6946,8 +6843,7 @@
     {
       "context": [
         "third-party certification (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -6957,8 +6853,7 @@
       "formula": "probability range low",
       "words": [
         "third-party certification (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -6970,8 +6865,7 @@
     {
       "context": [
         "third-party certification (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -6981,8 +6875,7 @@
       "formula": "probability range high",
       "words": [
         "third-party certification (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -6998,7 +6891,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -7115,8 +7008,7 @@
       "context": [
         "black-box AI",
         "risk-based regulation (black-box AI solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -7128,8 +7020,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "risk-based regulation (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -7140,8 +7031,7 @@
     {
       "context": [
         "risk-based regulation (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -7151,8 +7041,7 @@
       "formula": "probability range low",
       "words": [
         "risk-based regulation (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -7164,8 +7053,7 @@
     {
       "context": [
         "risk-based regulation (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -7175,8 +7063,7 @@
       "formula": "probability range high",
       "words": [
         "risk-based regulation (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -7192,7 +7079,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -7309,8 +7196,7 @@
       "context": [
         "black-box AI",
         "whistleblower protection (black-box AI solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -7322,8 +7208,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "whistleblower protection (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -7334,8 +7219,7 @@
     {
       "context": [
         "whistleblower protection (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -7345,8 +7229,7 @@
       "formula": "probability range low",
       "words": [
         "whistleblower protection (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -7358,8 +7241,7 @@
     {
       "context": [
         "whistleblower protection (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -7369,8 +7251,7 @@
       "formula": "probability range high",
       "words": [
         "whistleblower protection (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -7386,7 +7267,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -7503,8 +7384,7 @@
       "context": [
         "black-box AI",
         "open model documentation (black-box AI solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -7516,8 +7396,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "open model documentation (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -7528,8 +7407,7 @@
     {
       "context": [
         "open model documentation (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -7539,8 +7417,7 @@
       "formula": "probability range low",
       "words": [
         "open model documentation (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -7552,8 +7429,7 @@
     {
       "context": [
         "open model documentation (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -7563,8 +7439,7 @@
       "formula": "probability range high",
       "words": [
         "open model documentation (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -7580,7 +7455,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -7697,8 +7572,7 @@
       "context": [
         "black-box AI",
         "data governance (black-box AI solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -7710,8 +7584,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "data governance (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -7722,8 +7595,7 @@
     {
       "context": [
         "data governance (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -7733,8 +7605,7 @@
       "formula": "probability range low",
       "words": [
         "data governance (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -7746,8 +7617,7 @@
     {
       "context": [
         "data governance (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -7757,8 +7627,7 @@
       "formula": "probability range high",
       "words": [
         "data governance (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -7774,7 +7643,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -7891,8 +7760,7 @@
       "context": [
         "black-box AI",
         "copyright licensing (black-box AI solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -7904,8 +7772,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "copyright licensing (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -7916,8 +7783,7 @@
     {
       "context": [
         "copyright licensing (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -7927,8 +7793,7 @@
       "formula": "probability range low",
       "words": [
         "copyright licensing (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -7940,8 +7805,7 @@
     {
       "context": [
         "copyright licensing (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -7951,8 +7815,7 @@
       "formula": "probability range high",
       "words": [
         "copyright licensing (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -7968,7 +7831,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -8085,8 +7948,7 @@
       "context": [
         "black-box AI",
         "privacy by design (black-box AI solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -8098,8 +7960,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "privacy by design (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -8110,8 +7971,7 @@
     {
       "context": [
         "privacy by design (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -8121,8 +7981,7 @@
       "formula": "probability range low",
       "words": [
         "privacy by design (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -8134,8 +7993,7 @@
     {
       "context": [
         "privacy by design (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -8145,8 +8003,7 @@
       "formula": "probability range high",
       "words": [
         "privacy by design (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -8162,7 +8019,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -8279,8 +8136,7 @@
       "context": [
         "black-box AI",
         "bias testing (black-box AI solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -8292,8 +8148,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "bias testing (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -8304,8 +8159,7 @@
     {
       "context": [
         "bias testing (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -8315,8 +8169,7 @@
       "formula": "probability range low",
       "words": [
         "bias testing (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -8328,8 +8181,7 @@
     {
       "context": [
         "bias testing (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -8339,8 +8191,7 @@
       "formula": "probability range high",
       "words": [
         "bias testing (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -8356,7 +8207,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -8473,8 +8324,7 @@
       "context": [
         "black-box AI",
         "energy efficiency standards (black-box AI solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -8486,8 +8336,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "energy efficiency standards (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -8498,8 +8347,7 @@
     {
       "context": [
         "energy efficiency standards (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -8509,8 +8357,7 @@
       "formula": "probability range low",
       "words": [
         "energy efficiency standards (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -8522,8 +8369,7 @@
     {
       "context": [
         "energy efficiency standards (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -8533,8 +8379,7 @@
       "formula": "probability range high",
       "words": [
         "energy efficiency standards (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -8550,7 +8395,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -8667,8 +8512,7 @@
       "context": [
         "black-box AI",
         "antitrust for AI (black-box AI solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -8680,8 +8524,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "antitrust for AI (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -8692,8 +8535,7 @@
     {
       "context": [
         "antitrust for AI (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -8703,8 +8545,7 @@
       "formula": "probability range low",
       "words": [
         "antitrust for AI (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -8716,8 +8557,7 @@
     {
       "context": [
         "antitrust for AI (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -8727,8 +8567,7 @@
       "formula": "probability range high",
       "words": [
         "antitrust for AI (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -8744,7 +8583,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -8861,8 +8700,7 @@
       "context": [
         "black-box AI",
         "public AI infrastructure (black-box AI solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -8874,8 +8712,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "public AI infrastructure (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -8886,8 +8723,7 @@
     {
       "context": [
         "public AI infrastructure (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -8897,8 +8733,7 @@
       "formula": "probability range low",
       "words": [
         "public AI infrastructure (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -8910,8 +8745,7 @@
     {
       "context": [
         "public AI infrastructure (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -8921,8 +8755,7 @@
       "formula": "probability range high",
       "words": [
         "public AI infrastructure (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -8938,7 +8771,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -9055,8 +8888,7 @@
       "context": [
         "black-box AI",
         "open-source models (black-box AI solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -9068,8 +8900,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "open-source models (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -9080,8 +8911,7 @@
     {
       "context": [
         "open-source models (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -9091,8 +8921,7 @@
       "formula": "probability range low",
       "words": [
         "open-source models (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -9104,8 +8933,7 @@
     {
       "context": [
         "open-source models (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -9115,8 +8943,7 @@
       "formula": "probability range high",
       "words": [
         "open-source models (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -9132,7 +8959,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -9249,8 +9076,7 @@
       "context": [
         "black-box AI",
         "AI literacy (black-box AI solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -9262,8 +9088,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "AI literacy (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -9274,8 +9099,7 @@
     {
       "context": [
         "AI literacy (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -9285,8 +9109,7 @@
       "formula": "probability range low",
       "words": [
         "AI literacy (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -9298,8 +9121,7 @@
     {
       "context": [
         "AI literacy (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -9309,8 +9131,7 @@
       "formula": "probability range high",
       "words": [
         "AI literacy (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -9326,7 +9147,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -9443,8 +9264,7 @@
       "context": [
         "black-box AI",
         "labor transition support (black-box AI solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -9456,8 +9276,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "labor transition support (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -9468,8 +9287,7 @@
     {
       "context": [
         "labor transition support (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -9479,8 +9297,7 @@
       "formula": "probability range low",
       "words": [
         "labor transition support (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -9492,8 +9309,7 @@
     {
       "context": [
         "labor transition support (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -9503,8 +9319,7 @@
       "formula": "probability range high",
       "words": [
         "labor transition support (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -9520,7 +9335,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -9637,8 +9452,7 @@
       "context": [
         "black-box AI",
         "international AI treaties (black-box AI solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -9650,8 +9464,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "international AI treaties (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -9662,8 +9475,7 @@
     {
       "context": [
         "international AI treaties (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -9673,8 +9485,7 @@
       "formula": "probability range low",
       "words": [
         "international AI treaties (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -9686,8 +9497,7 @@
     {
       "context": [
         "international AI treaties (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -9697,8 +9507,7 @@
       "formula": "probability range high",
       "words": [
         "international AI treaties (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -9714,7 +9523,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -9831,8 +9640,7 @@
       "context": [
         "black-box AI",
         "voluntary commitments (black-box AI solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -9844,8 +9652,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "voluntary commitments (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -9856,8 +9663,7 @@
     {
       "context": [
         "voluntary commitments (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -9867,8 +9673,7 @@
       "formula": "probability range low",
       "words": [
         "voluntary commitments (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -9880,8 +9685,7 @@
     {
       "context": [
         "voluntary commitments (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -9891,8 +9695,7 @@
       "formula": "probability range high",
       "words": [
         "voluntary commitments (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -9908,7 +9711,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -10025,8 +9828,7 @@
       "context": [
         "black-box AI",
         "AI detectors (black-box AI solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -10038,8 +9840,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "AI detectors (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -10050,8 +9851,7 @@
     {
       "context": [
         "AI detectors (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -10061,8 +9861,7 @@
       "formula": "probability range low",
       "words": [
         "AI detectors (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -10074,8 +9873,7 @@
     {
       "context": [
         "AI detectors (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -10085,8 +9883,7 @@
       "formula": "probability range high",
       "words": [
         "AI detectors (black-box AI solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -10102,7 +9899,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],

@@ -1168,6 +1168,40 @@
       "verb": "is a",
       "to": "populism solution",
       "description": "'digital public sphere regulation' is one of the compared populism solutions."
+    },
+    {
+      "name": "trillion EUR",
+      "from": "trillion",
+      "verb": "of",
+      "to": "EUR"
+    },
+    {
+      "from": "person year",
+      "verb": "per",
+      "to": "trillion EUR"
+    },
+    {
+      "name": "billion USD",
+      "from": "billion",
+      "verb": "of",
+      "to": "USD"
+    },
+    {
+      "from": "person year",
+      "verb": "per",
+      "to": "billion USD"
+    },
+    {
+      "name": "potential loss",
+      "from": "loss",
+      "verb": "kind of",
+      "to": "potential"
+    },
+    {
+      "name": "potential gain",
+      "from": "gain",
+      "verb": "kind of",
+      "to": "potential"
     }
   ],
   "formulas": [
@@ -1188,7 +1222,7 @@
     {
       "name": "annual damage in money",
       "description": "the loss that a problem causes each year in money, the world GDP multiplied by the share of it that the problem costs per year",
-      "expression": "\"potential\",\"loss\",\"trillion\",\"EUR\" = \"world\",\"GDP\",\"trillion\",\"EUR\" * \"percent\",\"GDP\",\"annual\"",
+      "expression": "\"potential loss\",\"trillion\",\"EUR\" = \"world\",\"GDP\",\"trillion\",\"EUR\" * \"percent\",\"GDP\",\"annual\"",
       "latex": "L_{pot} = GDP_{world} \\cdot d_{annual}",
       "assigned_word": "GDP"
     },
@@ -1202,28 +1236,28 @@
     {
       "name": "long run damage share of the GDP",
       "description": "the share of the world GDP that a problem costs at the end of its development, the share it costs today multiplied by the factor by which the damage still grows; the share is stated negative, because it is a loss",
-      "expression": "\"potential\",\"loss\",\"percent\",\"GDP\" = 0 - \"percent\",\"GDP\",\"annual\" * \"percent\",\"GDP\",\"factor\"",
+      "expression": "\"potential loss\",\"percent\",\"GDP\" = 0 - \"percent\",\"GDP\",\"annual\" * \"percent\",\"GDP\",\"factor\"",
       "latex": "d_{long} = -d_{annual} \\cdot g",
       "assigned_word": "annual"
     },
     {
       "name": "welfare damage share",
       "description": "the share of the global happy time points that a problem costs, the share of the GDP it costs multiplied by the factor by which the welfare damage exceeds the money damage, because htp counts the healthy life years that the GDP does not (concept paper introduction)",
-      "expression": "\"potential\",\"loss\",\"percent\",\"htp\" = \"potential\",\"loss\",\"percent\",\"GDP\" * \"htp\",\"GDP\",\"factor\"",
+      "expression": "\"potential loss\",\"percent\",\"htp\" = \"potential loss\",\"percent\",\"GDP\" * \"htp\",\"GDP\",\"factor\"",
       "latex": "d_{htp} = d_{GDP} \\cdot w",
       "assigned_word": "htp"
     },
     {
       "name": "initial effort of a solution",
       "description": "the person years needed to set up a solution, the annual damage of the problem in money multiplied by the effort needed per trillion EUR of damage",
-      "expression": "\"initial effort\",\"person year\" = \"potential\",\"loss\",\"trillion\",\"EUR\" * \"person year\",\"trillion\",\"EUR\",\"factor\"",
+      "expression": "\"initial effort\",\"person year\" = \"potential loss\",\"trillion\",\"EUR\" * \"person year per trillion EUR\",\"factor\"",
       "latex": "E_{init} = L_{pot} \\cdot e",
       "assigned_word": "person year"
     },
     {
       "name": "avoided welfare loss with a gain factor",
       "description": "the happy time points that a solution saves, like the avoided welfare loss, but multiplied by a factor of the problem, because the shared world htp is tuned to one problem and does not fit the others until the horizon of the ranking is stated; the result is stated positive, because it is a gain",
-      "expression": "\"potential\",\"gain\",\"billion\",\"htp\" = 0 - \"potential\",\"loss\",\"percent\",\"htp\" * \"world\",\"htp\",\"billion\" * \"loss reduction\",\"percent\" * \"htp\",\"billion\",\"factor\"",
+      "expression": "\"potential gain\",\"billion\",\"htp\" = 0 - \"potential loss\",\"percent\",\"htp\" * \"world\",\"htp\",\"billion\" * \"loss reduction\",\"percent\" * \"htp\",\"billion\",\"factor\"",
       "latex": "G = -d_{htp} \\cdot HTP_{world} \\cdot r \\cdot k",
       "assigned_word": "loss reduction"
     },
@@ -1237,7 +1271,7 @@
     {
       "name": "initial effort of a solution part",
       "description": "the person years needed to set up one part of a solution, its cost in billion USD multiplied by the person years per billion USD",
-      "expression": "\"initial effort\",\"person year\" = \"initial effort\",\"billion\",\"USD\" * \"person year\",\"billion\",\"USD\",\"factor\"",
+      "expression": "\"initial effort\",\"person year\" = \"initial effort\",\"billion\",\"USD\" * \"person year per billion USD\",\"factor\"",
       "latex": "E_{init} = C \\cdot e",
       "assigned_word": "initial effort"
     }
@@ -1342,9 +1376,7 @@
     {
       "words": [
         "populism",
-        "person year",
-        "trillion",
-        "EUR",
+        "person year per trillion EUR",
         "factor",
         "assumed"
       ],
@@ -1507,9 +1539,7 @@
     {
       "words": [
         "populism",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -3645,8 +3675,7 @@
       "formula": "annual damage in money",
       "words": [
         "populism",
-        "potential",
-        "loss",
+        "potential loss",
         "trillion",
         "EUR",
         "assumed"
@@ -3690,8 +3719,7 @@
       "formula": "long run damage share of the GDP",
       "words": [
         "populism",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "GDP",
         "assumed"
@@ -3702,8 +3730,7 @@
     {
       "context": [
         "populism",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "GDP",
         "htp",
@@ -3713,8 +3740,7 @@
       "formula": "welfare damage share",
       "words": [
         "populism",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "assumed"
@@ -3725,11 +3751,10 @@
     {
       "context": [
         "populism",
-        "potential",
-        "loss",
+        "potential loss",
         "trillion",
         "EUR",
-        "person year",
+        "person year per trillion EUR",
         "factor",
         "assumed"
       ],
@@ -3748,8 +3773,7 @@
       "context": [
         "populism",
         "avoid wrong decisions",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -3762,8 +3786,7 @@
       "words": [
         "populism",
         "avoid wrong decisions",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -3774,8 +3797,7 @@
     {
       "context": [
         "populism",
-        "potential",
-        "loss",
+        "potential loss",
         "trillion",
         "EUR",
         "assumed",
@@ -3785,8 +3807,7 @@
       "formula": "probability range low",
       "words": [
         "populism",
-        "potential",
-        "loss",
+        "potential loss",
         "trillion",
         "EUR",
         "assumed",
@@ -3798,8 +3819,7 @@
     {
       "context": [
         "populism",
-        "potential",
-        "loss",
+        "potential loss",
         "trillion",
         "EUR",
         "assumed",
@@ -3809,8 +3829,7 @@
       "formula": "probability range high",
       "words": [
         "populism",
-        "potential",
-        "loss",
+        "potential loss",
         "trillion",
         "EUR",
         "assumed",
@@ -3822,8 +3841,7 @@
     {
       "context": [
         "populism",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "GDP",
         "assumed",
@@ -3833,8 +3851,7 @@
       "formula": "probability range low",
       "words": [
         "populism",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "GDP",
         "assumed",
@@ -3846,8 +3863,7 @@
     {
       "context": [
         "populism",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "GDP",
         "assumed",
@@ -3857,8 +3873,7 @@
       "formula": "probability range high",
       "words": [
         "populism",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "GDP",
         "assumed",
@@ -3870,8 +3885,7 @@
     {
       "context": [
         "populism",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "assumed",
@@ -3881,8 +3895,7 @@
       "formula": "probability range low",
       "words": [
         "populism",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "assumed",
@@ -3894,8 +3907,7 @@
     {
       "context": [
         "populism",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "assumed",
@@ -3905,8 +3917,7 @@
       "formula": "probability range high",
       "words": [
         "populism",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "assumed",
@@ -3919,8 +3930,7 @@
       "context": [
         "populism",
         "avoid wrong decisions",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -3931,8 +3941,7 @@
       "words": [
         "populism",
         "avoid wrong decisions",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -3945,8 +3954,7 @@
       "context": [
         "populism",
         "avoid wrong decisions",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -3957,8 +3965,7 @@
       "words": [
         "populism",
         "avoid wrong decisions",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -4118,8 +4125,7 @@
       "context": [
         "populism",
         "one-click hide (populism solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -4131,8 +4137,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "one-click hide (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -4143,8 +4148,7 @@
     {
       "context": [
         "one-click hide (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -4154,8 +4158,7 @@
       "formula": "probability range low",
       "words": [
         "one-click hide (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -4167,8 +4170,7 @@
     {
       "context": [
         "one-click hide (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -4178,8 +4180,7 @@
       "formula": "probability range high",
       "words": [
         "one-click hide (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -4195,7 +4196,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -4312,8 +4313,7 @@
       "context": [
         "populism",
         "civic education (populism solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -4325,8 +4325,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "civic education (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -4337,8 +4336,7 @@
     {
       "context": [
         "civic education (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -4348,8 +4346,7 @@
       "formula": "probability range low",
       "words": [
         "civic education (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -4361,8 +4358,7 @@
     {
       "context": [
         "civic education (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -4372,8 +4368,7 @@
       "formula": "probability range high",
       "words": [
         "civic education (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -4389,7 +4384,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -4506,8 +4501,7 @@
       "context": [
         "populism",
         "media literacy (populism solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -4519,8 +4513,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "media literacy (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -4531,8 +4524,7 @@
     {
       "context": [
         "media literacy (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -4542,8 +4534,7 @@
       "formula": "probability range low",
       "words": [
         "media literacy (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -4555,8 +4546,7 @@
     {
       "context": [
         "media literacy (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -4566,8 +4556,7 @@
       "formula": "probability range high",
       "words": [
         "media literacy (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -4583,7 +4572,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -4700,8 +4689,7 @@
       "context": [
         "populism",
         "fact-checking (populism solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -4713,8 +4701,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "fact-checking (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -4725,8 +4712,7 @@
     {
       "context": [
         "fact-checking (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -4736,8 +4722,7 @@
       "formula": "probability range low",
       "words": [
         "fact-checking (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -4749,8 +4734,7 @@
     {
       "context": [
         "fact-checking (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -4760,8 +4744,7 @@
       "formula": "probability range high",
       "words": [
         "fact-checking (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -4777,7 +4760,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -4894,8 +4877,7 @@
       "context": [
         "populism",
         "independent public broadcasting (populism solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -4907,8 +4889,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "independent public broadcasting (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -4919,8 +4900,7 @@
     {
       "context": [
         "independent public broadcasting (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -4930,8 +4910,7 @@
       "formula": "probability range low",
       "words": [
         "independent public broadcasting (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -4943,8 +4922,7 @@
     {
       "context": [
         "independent public broadcasting (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -4954,8 +4932,7 @@
       "formula": "probability range high",
       "words": [
         "independent public broadcasting (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -4971,7 +4948,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -5088,8 +5065,7 @@
       "context": [
         "populism",
         "platform algorithm transparency (populism solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -5101,8 +5077,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "platform algorithm transparency (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -5113,8 +5088,7 @@
     {
       "context": [
         "platform algorithm transparency (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -5124,8 +5098,7 @@
       "formula": "probability range low",
       "words": [
         "platform algorithm transparency (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -5137,8 +5110,7 @@
     {
       "context": [
         "platform algorithm transparency (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -5148,8 +5120,7 @@
       "formula": "probability range high",
       "words": [
         "platform algorithm transparency (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -5165,7 +5136,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -5282,8 +5253,7 @@
       "context": [
         "populism",
         "reducing economic inequality (populism solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -5295,8 +5265,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "reducing economic inequality (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -5307,8 +5276,7 @@
     {
       "context": [
         "reducing economic inequality (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -5318,8 +5286,7 @@
       "formula": "probability range low",
       "words": [
         "reducing economic inequality (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -5331,8 +5298,7 @@
     {
       "context": [
         "reducing economic inequality (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -5342,8 +5308,7 @@
       "formula": "probability range high",
       "words": [
         "reducing economic inequality (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -5359,7 +5324,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -5476,8 +5441,7 @@
       "context": [
         "populism",
         "regional development (populism solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -5489,8 +5453,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "regional development (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -5501,8 +5464,7 @@
     {
       "context": [
         "regional development (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -5512,8 +5474,7 @@
       "formula": "probability range low",
       "words": [
         "regional development (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -5525,8 +5486,7 @@
     {
       "context": [
         "regional development (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -5536,8 +5496,7 @@
       "formula": "probability range high",
       "words": [
         "regional development (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -5553,7 +5512,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -5670,8 +5629,7 @@
       "context": [
         "populism",
         "social safety nets (populism solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -5683,8 +5641,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "social safety nets (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -5695,8 +5652,7 @@
     {
       "context": [
         "social safety nets (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -5706,8 +5662,7 @@
       "formula": "probability range low",
       "words": [
         "social safety nets (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -5719,8 +5674,7 @@
     {
       "context": [
         "social safety nets (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -5730,8 +5684,7 @@
       "formula": "probability range high",
       "words": [
         "social safety nets (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -5747,7 +5700,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -5864,8 +5817,7 @@
       "context": [
         "populism",
         "job retraining (populism solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -5877,8 +5829,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "job retraining (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -5889,8 +5840,7 @@
     {
       "context": [
         "job retraining (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -5900,8 +5850,7 @@
       "formula": "probability range low",
       "words": [
         "job retraining (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -5913,8 +5862,7 @@
     {
       "context": [
         "job retraining (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -5924,8 +5872,7 @@
       "formula": "probability range high",
       "words": [
         "job retraining (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -5941,7 +5888,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -6058,8 +6005,7 @@
       "context": [
         "populism",
         "affordable housing (populism solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -6071,8 +6017,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "affordable housing (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -6083,8 +6028,7 @@
     {
       "context": [
         "affordable housing (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -6094,8 +6038,7 @@
       "formula": "probability range low",
       "words": [
         "affordable housing (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -6107,8 +6050,7 @@
     {
       "context": [
         "affordable housing (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -6118,8 +6060,7 @@
       "formula": "probability range high",
       "words": [
         "affordable housing (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -6135,7 +6076,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -6252,8 +6193,7 @@
       "context": [
         "populism",
         "anti-corruption measures (populism solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -6265,8 +6205,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "anti-corruption measures (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -6277,8 +6216,7 @@
     {
       "context": [
         "anti-corruption measures (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -6288,8 +6226,7 @@
       "formula": "probability range low",
       "words": [
         "anti-corruption measures (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -6301,8 +6238,7 @@
     {
       "context": [
         "anti-corruption measures (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -6312,8 +6248,7 @@
       "formula": "probability range high",
       "words": [
         "anti-corruption measures (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -6329,7 +6264,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -6446,8 +6381,7 @@
       "context": [
         "populism",
         "lobbying transparency (populism solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -6459,8 +6393,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "lobbying transparency (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -6471,8 +6404,7 @@
     {
       "context": [
         "lobbying transparency (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -6482,8 +6414,7 @@
       "formula": "probability range low",
       "words": [
         "lobbying transparency (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -6495,8 +6426,7 @@
     {
       "context": [
         "lobbying transparency (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -6506,8 +6436,7 @@
       "formula": "probability range high",
       "words": [
         "lobbying transparency (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -6523,7 +6452,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -6640,8 +6569,7 @@
       "context": [
         "populism",
         "campaign finance reform (populism solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -6653,8 +6581,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "campaign finance reform (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -6665,8 +6592,7 @@
     {
       "context": [
         "campaign finance reform (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -6676,8 +6602,7 @@
       "formula": "probability range low",
       "words": [
         "campaign finance reform (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -6689,8 +6614,7 @@
     {
       "context": [
         "campaign finance reform (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -6700,8 +6624,7 @@
       "formula": "probability range high",
       "words": [
         "campaign finance reform (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -6717,7 +6640,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -6834,8 +6757,7 @@
       "context": [
         "populism",
         "strong independent judiciary (populism solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -6847,8 +6769,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "strong independent judiciary (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -6859,8 +6780,7 @@
     {
       "context": [
         "strong independent judiciary (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -6870,8 +6790,7 @@
       "formula": "probability range low",
       "words": [
         "strong independent judiciary (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -6883,8 +6802,7 @@
     {
       "context": [
         "strong independent judiciary (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -6894,8 +6812,7 @@
       "formula": "probability range high",
       "words": [
         "strong independent judiciary (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -6911,7 +6828,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -7028,8 +6945,7 @@
       "context": [
         "populism",
         "press freedom (populism solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -7041,8 +6957,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "press freedom (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -7053,8 +6968,7 @@
     {
       "context": [
         "press freedom (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -7064,8 +6978,7 @@
       "formula": "probability range low",
       "words": [
         "press freedom (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -7077,8 +6990,7 @@
     {
       "context": [
         "press freedom (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -7088,8 +7000,7 @@
       "formula": "probability range high",
       "words": [
         "press freedom (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -7105,7 +7016,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -7222,8 +7133,7 @@
       "context": [
         "populism",
         "direct democracy (populism solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -7235,8 +7145,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "direct democracy (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -7247,8 +7156,7 @@
     {
       "context": [
         "direct democracy (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -7258,8 +7166,7 @@
       "formula": "probability range low",
       "words": [
         "direct democracy (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -7271,8 +7178,7 @@
     {
       "context": [
         "direct democracy (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -7282,8 +7188,7 @@
       "formula": "probability range high",
       "words": [
         "direct democracy (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -7299,7 +7204,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -7416,8 +7321,7 @@
       "context": [
         "populism",
         "citizens' assemblies (populism solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -7429,8 +7333,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "citizens' assemblies (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -7441,8 +7344,7 @@
     {
       "context": [
         "citizens' assemblies (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -7452,8 +7354,7 @@
       "formula": "probability range low",
       "words": [
         "citizens' assemblies (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -7465,8 +7366,7 @@
     {
       "context": [
         "citizens' assemblies (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -7476,8 +7376,7 @@
       "formula": "probability range high",
       "words": [
         "citizens' assemblies (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -7493,7 +7392,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -7610,8 +7509,7 @@
       "context": [
         "populism",
         "deliberative polling (populism solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -7623,8 +7521,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "deliberative polling (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -7635,8 +7532,7 @@
     {
       "context": [
         "deliberative polling (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -7646,8 +7542,7 @@
       "formula": "probability range low",
       "words": [
         "deliberative polling (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -7659,8 +7554,7 @@
     {
       "context": [
         "deliberative polling (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -7670,8 +7564,7 @@
       "formula": "probability range high",
       "words": [
         "deliberative polling (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -7687,7 +7580,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -7804,8 +7697,7 @@
       "context": [
         "populism",
         "participatory budgeting (populism solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -7817,8 +7709,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "participatory budgeting (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -7829,8 +7720,7 @@
     {
       "context": [
         "participatory budgeting (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -7840,8 +7730,7 @@
       "formula": "probability range low",
       "words": [
         "participatory budgeting (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -7853,8 +7742,7 @@
     {
       "context": [
         "participatory budgeting (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -7864,8 +7752,7 @@
       "formula": "probability range high",
       "words": [
         "participatory budgeting (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -7881,7 +7768,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -7998,8 +7885,7 @@
       "context": [
         "populism",
         "electoral system reform (populism solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -8011,8 +7897,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "electoral system reform (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -8023,8 +7908,7 @@
     {
       "context": [
         "electoral system reform (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -8034,8 +7918,7 @@
       "formula": "probability range low",
       "words": [
         "electoral system reform (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -8047,8 +7930,7 @@
     {
       "context": [
         "electoral system reform (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -8058,8 +7940,7 @@
       "formula": "probability range high",
       "words": [
         "electoral system reform (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -8075,7 +7956,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -8192,8 +8073,7 @@
       "context": [
         "populism",
         "proportional representation (populism solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -8205,8 +8085,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "proportional representation (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -8217,8 +8096,7 @@
     {
       "context": [
         "proportional representation (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -8228,8 +8106,7 @@
       "formula": "probability range low",
       "words": [
         "proportional representation (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -8241,8 +8118,7 @@
     {
       "context": [
         "proportional representation (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -8252,8 +8128,7 @@
       "formula": "probability range high",
       "words": [
         "proportional representation (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -8269,7 +8144,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -8386,8 +8261,7 @@
       "context": [
         "populism",
         "decentralization (populism solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -8399,8 +8273,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "decentralization (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -8411,8 +8284,7 @@
     {
       "context": [
         "decentralization (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -8422,8 +8294,7 @@
       "formula": "probability range low",
       "words": [
         "decentralization (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -8435,8 +8306,7 @@
     {
       "context": [
         "decentralization (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -8446,8 +8316,7 @@
       "formula": "probability range high",
       "words": [
         "decentralization (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -8463,7 +8332,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -8580,8 +8449,7 @@
       "context": [
         "populism",
         "responsive mainstream parties (populism solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -8593,8 +8461,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "responsive mainstream parties (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -8605,8 +8472,7 @@
     {
       "context": [
         "responsive mainstream parties (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -8616,8 +8482,7 @@
       "formula": "probability range low",
       "words": [
         "responsive mainstream parties (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -8629,8 +8494,7 @@
     {
       "context": [
         "responsive mainstream parties (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -8640,8 +8504,7 @@
       "formula": "probability range high",
       "words": [
         "responsive mainstream parties (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -8657,7 +8520,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -8774,8 +8637,7 @@
       "context": [
         "populism",
         "addressing migration concerns (populism solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -8787,8 +8649,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "addressing migration concerns (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -8799,8 +8660,7 @@
     {
       "context": [
         "addressing migration concerns (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -8810,8 +8670,7 @@
       "formula": "probability range low",
       "words": [
         "addressing migration concerns (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -8823,8 +8682,7 @@
     {
       "context": [
         "addressing migration concerns (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -8834,8 +8692,7 @@
       "formula": "probability range high",
       "words": [
         "addressing migration concerns (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -8851,7 +8708,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -8968,8 +8825,7 @@
       "context": [
         "populism",
         "integration policies (populism solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -8981,8 +8837,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "integration policies (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -8993,8 +8848,7 @@
     {
       "context": [
         "integration policies (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -9004,8 +8858,7 @@
       "formula": "probability range low",
       "words": [
         "integration policies (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -9017,8 +8870,7 @@
     {
       "context": [
         "integration policies (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -9028,8 +8880,7 @@
       "formula": "probability range high",
       "words": [
         "integration policies (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -9045,7 +8896,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -9162,8 +9013,7 @@
       "context": [
         "populism",
         "evidence-based policymaking (populism solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -9175,8 +9025,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "evidence-based policymaking (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -9187,8 +9036,7 @@
     {
       "context": [
         "evidence-based policymaking (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -9198,8 +9046,7 @@
       "formula": "probability range low",
       "words": [
         "evidence-based policymaking (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -9211,8 +9058,7 @@
     {
       "context": [
         "evidence-based policymaking (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -9222,8 +9068,7 @@
       "formula": "probability range high",
       "words": [
         "evidence-based policymaking (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -9239,7 +9084,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -9356,8 +9201,7 @@
       "context": [
         "populism",
         "transparent government data (populism solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -9369,8 +9213,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "transparent government data (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -9381,8 +9224,7 @@
     {
       "context": [
         "transparent government data (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -9392,8 +9234,7 @@
       "formula": "probability range low",
       "words": [
         "transparent government data (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -9405,8 +9246,7 @@
     {
       "context": [
         "transparent government data (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -9416,8 +9256,7 @@
       "formula": "probability range high",
       "words": [
         "transparent government data (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -9433,7 +9272,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -9550,8 +9389,7 @@
       "context": [
         "populism",
         "trust-building institutions (populism solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -9563,8 +9401,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "trust-building institutions (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -9575,8 +9412,7 @@
     {
       "context": [
         "trust-building institutions (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -9586,8 +9422,7 @@
       "formula": "probability range low",
       "words": [
         "trust-building institutions (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -9599,8 +9434,7 @@
     {
       "context": [
         "trust-building institutions (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -9610,8 +9444,7 @@
       "formula": "probability range high",
       "words": [
         "trust-building institutions (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -9627,7 +9460,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -9744,8 +9577,7 @@
       "context": [
         "populism",
         "reducing polarization (populism solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -9757,8 +9589,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "reducing polarization (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -9769,8 +9600,7 @@
     {
       "context": [
         "reducing polarization (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -9780,8 +9610,7 @@
       "formula": "probability range low",
       "words": [
         "reducing polarization (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -9793,8 +9622,7 @@
     {
       "context": [
         "reducing polarization (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -9804,8 +9632,7 @@
       "formula": "probability range high",
       "words": [
         "reducing polarization (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -9821,7 +9648,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -9938,8 +9765,7 @@
       "context": [
         "populism",
         "cross-partisan dialogue (populism solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -9951,8 +9777,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "cross-partisan dialogue (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -9963,8 +9788,7 @@
     {
       "context": [
         "cross-partisan dialogue (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -9974,8 +9798,7 @@
       "formula": "probability range low",
       "words": [
         "cross-partisan dialogue (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -9987,8 +9810,7 @@
     {
       "context": [
         "cross-partisan dialogue (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -9998,8 +9820,7 @@
       "formula": "probability range high",
       "words": [
         "cross-partisan dialogue (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -10015,7 +9836,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -10132,8 +9953,7 @@
       "context": [
         "populism",
         "community building (populism solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -10145,8 +9965,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "community building (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -10157,8 +9976,7 @@
     {
       "context": [
         "community building (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -10168,8 +9986,7 @@
       "formula": "probability range low",
       "words": [
         "community building (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -10181,8 +9998,7 @@
     {
       "context": [
         "community building (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -10192,8 +10008,7 @@
       "formula": "probability range high",
       "words": [
         "community building (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -10209,7 +10024,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -10326,8 +10141,7 @@
       "context": [
         "populism",
         "civil society support (populism solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -10339,8 +10153,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "civil society support (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -10351,8 +10164,7 @@
     {
       "context": [
         "civil society support (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -10362,8 +10174,7 @@
       "formula": "probability range low",
       "words": [
         "civil society support (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -10375,8 +10186,7 @@
     {
       "context": [
         "civil society support (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -10386,8 +10196,7 @@
       "formula": "probability range high",
       "words": [
         "civil society support (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -10403,7 +10212,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -10520,8 +10329,7 @@
       "context": [
         "populism",
         "lifelong learning (populism solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -10533,8 +10341,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "lifelong learning (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -10545,8 +10352,7 @@
     {
       "context": [
         "lifelong learning (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -10556,8 +10362,7 @@
       "formula": "probability range low",
       "words": [
         "lifelong learning (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -10569,8 +10374,7 @@
     {
       "context": [
         "lifelong learning (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -10580,8 +10384,7 @@
       "formula": "probability range high",
       "words": [
         "lifelong learning (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -10597,7 +10400,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -10714,8 +10517,7 @@
       "context": [
         "populism",
         "critical thinking education (populism solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -10727,8 +10529,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "critical thinking education (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -10739,8 +10540,7 @@
     {
       "context": [
         "critical thinking education (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -10750,8 +10550,7 @@
       "formula": "probability range low",
       "words": [
         "critical thinking education (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -10763,8 +10562,7 @@
     {
       "context": [
         "critical thinking education (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -10774,8 +10572,7 @@
       "formula": "probability range high",
       "words": [
         "critical thinking education (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -10791,7 +10588,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -10908,8 +10705,7 @@
       "context": [
         "populism",
         "counter-disinformation campaigns (populism solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -10921,8 +10717,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "counter-disinformation campaigns (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -10933,8 +10728,7 @@
     {
       "context": [
         "counter-disinformation campaigns (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -10944,8 +10738,7 @@
       "formula": "probability range low",
       "words": [
         "counter-disinformation campaigns (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -10957,8 +10750,7 @@
     {
       "context": [
         "counter-disinformation campaigns (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -10968,8 +10760,7 @@
       "formula": "probability range high",
       "words": [
         "counter-disinformation campaigns (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -10985,7 +10776,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -11102,8 +10893,7 @@
       "context": [
         "populism",
         "prebunking (populism solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -11115,8 +10905,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "prebunking (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -11127,8 +10916,7 @@
     {
       "context": [
         "prebunking (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -11138,8 +10926,7 @@
       "formula": "probability range low",
       "words": [
         "prebunking (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -11151,8 +10938,7 @@
     {
       "context": [
         "prebunking (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -11162,8 +10948,7 @@
       "formula": "probability range high",
       "words": [
         "prebunking (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -11179,7 +10964,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -11296,8 +11081,7 @@
       "context": [
         "populism",
         "crisis preparedness (populism solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -11309,8 +11093,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "crisis preparedness (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -11321,8 +11104,7 @@
     {
       "context": [
         "crisis preparedness (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -11332,8 +11114,7 @@
       "formula": "probability range low",
       "words": [
         "crisis preparedness (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -11345,8 +11126,7 @@
     {
       "context": [
         "crisis preparedness (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -11356,8 +11136,7 @@
       "formula": "probability range high",
       "words": [
         "crisis preparedness (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -11373,7 +11152,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -11490,8 +11269,7 @@
       "context": [
         "populism",
         "fair globalization (populism solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -11503,8 +11281,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "fair globalization (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -11515,8 +11292,7 @@
     {
       "context": [
         "fair globalization (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -11526,8 +11302,7 @@
       "formula": "probability range low",
       "words": [
         "fair globalization (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -11539,8 +11314,7 @@
     {
       "context": [
         "fair globalization (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -11550,8 +11324,7 @@
       "formula": "probability range high",
       "words": [
         "fair globalization (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -11567,7 +11340,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -11684,8 +11457,7 @@
       "context": [
         "populism",
         "trade adjustment assistance (populism solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -11697,8 +11469,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "trade adjustment assistance (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -11709,8 +11480,7 @@
     {
       "context": [
         "trade adjustment assistance (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -11720,8 +11490,7 @@
       "formula": "probability range low",
       "words": [
         "trade adjustment assistance (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -11733,8 +11502,7 @@
     {
       "context": [
         "trade adjustment assistance (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -11744,8 +11512,7 @@
       "formula": "probability range high",
       "words": [
         "trade adjustment assistance (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -11761,7 +11528,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -11878,8 +11645,7 @@
       "context": [
         "populism",
         "cordon sanitaire (populism solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -11891,8 +11657,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "cordon sanitaire (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -11903,8 +11668,7 @@
     {
       "context": [
         "cordon sanitaire (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -11914,8 +11678,7 @@
       "formula": "probability range low",
       "words": [
         "cordon sanitaire (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -11927,8 +11690,7 @@
     {
       "context": [
         "cordon sanitaire (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -11938,8 +11700,7 @@
       "formula": "probability range high",
       "words": [
         "cordon sanitaire (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -11955,7 +11716,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -12072,8 +11833,7 @@
       "context": [
         "populism",
         "inclusive national identity (populism solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -12085,8 +11845,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "inclusive national identity (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -12097,8 +11856,7 @@
     {
       "context": [
         "inclusive national identity (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -12108,8 +11866,7 @@
       "formula": "probability range low",
       "words": [
         "inclusive national identity (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -12121,8 +11878,7 @@
     {
       "context": [
         "inclusive national identity (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -12132,8 +11888,7 @@
       "formula": "probability range high",
       "words": [
         "inclusive national identity (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -12149,7 +11904,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -12266,8 +12021,7 @@
       "context": [
         "populism",
         "accountable elites (populism solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -12279,8 +12033,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "accountable elites (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -12291,8 +12044,7 @@
     {
       "context": [
         "accountable elites (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -12302,8 +12054,7 @@
       "formula": "probability range low",
       "words": [
         "accountable elites (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -12315,8 +12066,7 @@
     {
       "context": [
         "accountable elites (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -12326,8 +12076,7 @@
       "formula": "probability range high",
       "words": [
         "accountable elites (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -12343,7 +12092,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -12460,8 +12209,7 @@
       "context": [
         "populism",
         "digital public sphere regulation (populism solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -12473,8 +12221,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "digital public sphere regulation (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -12485,8 +12232,7 @@
     {
       "context": [
         "digital public sphere regulation (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -12496,8 +12242,7 @@
       "formula": "probability range low",
       "words": [
         "digital public sphere regulation (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -12509,8 +12254,7 @@
     {
       "context": [
         "digital public sphere regulation (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -12520,8 +12264,7 @@
       "formula": "probability range high",
       "words": [
         "digital public sphere regulation (populism solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -12537,7 +12280,7 @@
         "initial effort",
         "billion",
         "USD",
-        "person year",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
