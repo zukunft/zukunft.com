@@ -499,6 +499,32 @@ class sandbox_value extends sandbox
     }
 
     /**
+     * the name of this number in the browser tab title: only the phrase that the page heading
+     * names first (see phrase_link_list), because a tab title must stay short, while the heading
+     * links all phrases
+     *
+     * @param user_message $msg to report a problem of reading the symbol of a phrase
+     * @return string the name of the most relevant phrase, or the name of the number if no phrase has a name
+     */
+    function title_name(user_message $msg): string
+    {
+        $result = '';
+        // a copy, because the sort must not change the phrase order of the number
+        $phr_lst = clone $this->grp->phr_lst();
+        $phr_lst->remove($phr_lst->symbol_phrases($msg));
+        $phr_lst->sort_by_impact();
+        foreach ($phr_lst->lst() as $phr) {
+            if ($result == '' and $phr->name() != '') {
+                $result = $phr->name();
+            }
+        }
+        if ($result == '') {
+            $result = $this->name() ?? '';
+        }
+        return $result;
+    }
+
+    /**
      * the symbol of every phrase of this number that is shown behind the number instead of being
      * named with the other phrases, e.g. the "x" of a factor (see phrase::number_symbol)
      *

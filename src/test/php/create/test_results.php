@@ -300,8 +300,7 @@ class test_results
         $lst = new result_list($this->env->usr1);
         $lst->add($this->result_for_phrases([
             $t_trp->global_warming()->phrase(),
-            $t_wrd->word_potential()->phrase(),
-            $t_wrd->word_loss()->phrase(),
+            $t_trp->potential_loss()->phrase(),
             $t_wrd->word_htp()->phrase()
         ], results::TV_PRIO_LOSS_HTP));
         return $lst;

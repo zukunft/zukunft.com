@@ -1518,8 +1518,8 @@ class test_triples extends test_objects
     }
 
     /**
-     * @return triple "potential loss" - the loss that a problem can cause, which the values name
-     *         with the two words "potential" and "loss"
+     * @return triple "potential loss" - the loss that a problem can cause, the measure of the
+     *         loss values of the start page (see solution_prio.json)
      */
     function potential_loss(): triple
     {
@@ -1528,6 +1528,22 @@ class test_triples extends test_objects
         $trp = new triple($this->env->usr1);
         $trp->set(triple_names::POTENTIAL_LOSS_ID, triple_names::POTENTIAL_LOSS);
         $trp->set_from($t_wrd->word_loss()->phrase());
+        $trp->set_verb($t_vrb->verb_kind_of());
+        $trp->set_to($t_wrd->word_potential()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "potential gain" - the gain that a solution can reach, the measure of the
+     *         gain values of the start page (see solution_prio.json)
+     */
+    function potential_gain(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::POTENTIAL_GAIN_ID, triple_names::POTENTIAL_GAIN);
+        $trp->set_from($t_wrd->word_gain()->phrase());
         $trp->set_verb($t_vrb->verb_kind_of());
         $trp->set_to($t_wrd->word_potential()->phrase());
         return $trp;
@@ -1562,6 +1578,48 @@ class test_triples extends test_objects
         $trp->set_from($this->potential_loss()->phrase());
         $trp->set_verb($t_vrb->verb_can_be());
         $trp->set_to($this->column_mayor()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "column potential gain" that defines "potential gain" as a mayor table column
+     */
+    function column_potential_gain(): triple
+    {
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::COLUMN_POTENTIAL_GAIN_ID, triple_names::COLUMN_POTENTIAL_GAIN);
+        $trp->set_from($this->potential_gain()->phrase());
+        $trp->set_verb($t_vrb->verb_can_be());
+        $trp->set_to($this->column_mayor()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "column potential loss is explaining column for column problem (high prio)"
+     */
+    function column_potential_loss_explains_problem(): triple
+    {
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::COLUMN_POTENTIAL_LOSS_EXPLAINS_PROBLEM_ID);
+        $trp->set_from($this->column_potential_loss()->phrase());
+        $trp->set_verb($t_vrb->verb_after());
+        $trp->set_to($this->column_problem()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "column potential gain is explaining column for column solution (high prio)"
+     */
+    function column_potential_gain_explains_solution(): triple
+    {
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::COLUMN_POTENTIAL_GAIN_EXPLAINS_SOLUTION_ID);
+        $trp->set_from($this->column_potential_gain()->phrase());
+        $trp->set_verb($t_vrb->verb_after());
+        $trp->set_to($this->column_solution()->phrase());
         return $trp;
     }
 

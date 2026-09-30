@@ -823,10 +823,10 @@ class test_values extends test_objects
     function solution_prio_loss_phrases(phrase $problem, bool $is_assumed): array
     {
         $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
         $phrases = [
             $problem,
-            $t_wrd->word_potential()->phrase(),
-            $t_wrd->word_loss()->phrase(),
+            $t_trp->potential_loss()->phrase(),
             $t_wrd->word_trillion()->phrase(),
             $t_wrd->word_eur()->phrase()
         ];
@@ -847,11 +847,11 @@ class test_values extends test_objects
     function solution_prio_gain_phrases(phrase $problem, phrase $solution, bool $is_assumed): array
     {
         $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
         $phrases = [
             $problem,
             $solution,
-            $t_wrd->word_potential()->phrase(),
-            $t_wrd->word_gain()->phrase(),
+            $t_trp->potential_gain()->phrase(),
             $t_wrd->word_billion()->phrase(),
             $t_wrd->word_htp()->phrase()
         ];
@@ -868,6 +868,31 @@ class test_values extends test_objects
     {
         $tl = new test_lib();
         return $tl->list_to_ui($this->value_list_solution_prio(), [api_types::INCL_PHRASES]);
+    }
+
+    /**
+     * the potential loss of every problem of the start page ranking without the gain, so that
+     * every value carries the triple "potential loss" as a whole
+     *
+     * @return value_list the loss values of the ranking
+     */
+    function value_list_solution_prio_losses(): value_list
+    {
+        $lst = new value_list($this->env->usr1);
+        foreach ($this->solution_prio_rows() as [$problem, $loss_nbr, , , $is_assumed]) {
+            $lst->add($this->value_for_phrases(
+                $this->solution_prio_loss_phrases($problem, $is_assumed), $loss_nbr));
+        }
+        return $lst;
+    }
+
+    /**
+     * @return value_list_ui the loss values of the ranking for frontend unit testing
+     */
+    function value_list_solution_prio_losses_ui(): value_list_ui
+    {
+        $tl = new test_lib();
+        return $tl->list_to_ui($this->value_list_solution_prio_losses(), [api_types::INCL_PHRASES]);
     }
 
     /**

@@ -1084,7 +1084,13 @@ class frontend
                     $usr_id = $usr?->id() ?? 0;
                     // the url may ask the backend for more than the stored object, e.g. the formula
                     // form asks to recalculate the latex based on the entered expression
-                    $dbo->load_by_id($id, $msg_ui, $dbo->api_par_from_url($url_array), $usr_id);
+                    $api_par = $dbo->api_par_from_url($url_array);
+                    // like the plain page load, so that e.g. the from, verb and to of a triple come
+                    // with their names and a link to them is never shown without a text
+                    if (!in_array($view_code_id, views::VIEWS_WITHOUT_RELATED, true)) {
+                        $api_par[url_var::INCL_RELATED] = url_var::TRUE;
+                    }
+                    $dbo->load_by_id($id, $msg_ui, $api_par, $usr_id);
                 }
                 $dbo->url_mapper($url_array, $msg_ui, $dto);
             }

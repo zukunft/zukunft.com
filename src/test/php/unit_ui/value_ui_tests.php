@@ -569,6 +569,20 @@ class value_ui_tests
         $t->assert_text_contains($test_name,
             $val_zh->links_and_measure($msg_ui, $url_arr), '</a>, <a ');
 
+        // the browser tab title names only the phrase that the page heading names first, because
+        // the names of all phrases of a value would fill the tab; the heading still links them all
+        $t->subheader($ts . 'tab title');
+        $test_name = 'the tab title names the first phrase of the heading';
+        $first_link = $lib->str_left_of($val_zh->phrase_link_list($msg_ui), '</a>');
+        $t->assert($test_name, $val_zh->title_name($msg_ui), $lib->html_to_text($first_link));
+        $test_name = '... which is a name and not an empty text';
+        $t->assert_not($test_name, $val_zh->title_name($msg_ui), '');
+        $test_name = '... and no list of the phrases like the name of the value';
+        $t->assert_not($test_name, $val_zh->title_name($msg_ui), $val_zh->name());
+        // negative: a value without a phrase has nothing to name it
+        $test_name = 'a value without phrases has an empty tab title name';
+        $t->assert($test_name, new value()->title_name($msg_ui), '');
+
         // a factor says that the number is a multiplier, so the phrase is not named with the other
         // phrases of the value but shown as its symbol behind the number; the symbol itself is
         // data: the triple "x is symbol for factor" of scaling.json defines it

@@ -1,5 +1,15 @@
 # pending - list of planned llm prompts with prio 1
 
+## json structure
+
+add to json_structure that a value or result could only be one phrase of a measure phrase type, percent phrase type or factor phrase type. e.g. http://localhost/http/view.php?m=5&id=....0U%2B....0X%2B....2L%2B....2O%2B....2t%2B......%2B......%2B......%2B......%2B......%2B......%2B......%2B......%2B......%2B......%2B......%2B should have only one symbol which is in this case percent because this is already a kind of factor. add more samples to the md file. use a triple if more than one type needs to be assigned.
+
+add to json_validation.php a check that each value contains only one measure, percent or factor phrase
+
+## value an result id url
+ 
+for the group id url replace the + char with _ (95) if it is not yet used for the number coding and remove all chars from the url that are not needed e.g. the filler . or the empty fillers at the end
+
 ## phrase types
 
 add a phrase type 'value quality' and assign the type to the word 'assumed'. Add in the json which defines 'assumed' add alternative value quality type phrases e.g. 'peer reviewed by quality journal' 

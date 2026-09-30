@@ -371,9 +371,10 @@ class term extends combine_named
             } elseif ($this->is_triple()) {
                 $vars[json_fields::OBJECT_CLASS] = json_fields::CLASS_TRIPLE;
                 $trp = $this->obj();
-                $vars[json_fields::FROM] = $trp->get_from()->id();
-                $vars[json_fields::VERB] = $trp->get_verb()->id();
-                $vars[json_fields::TO] = $trp->get_to()->id();
+                // a triple known only by its id has no from, verb and to (see phrase::api_array)
+                $vars[json_fields::FROM] = $trp->get_from()?->id();
+                $vars[json_fields::VERB] = $trp->verb?->id();
+                $vars[json_fields::TO] = $trp->get_to()?->id();
                 // like the backend emit the fields are only sent if the triple uses them
                 if ($trp->weight != null) {
                     $vars[json_fields::WEIGHT] = $trp->weight;

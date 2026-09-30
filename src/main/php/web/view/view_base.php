@@ -53,6 +53,7 @@ include_once html_paths::SANDBOX . 'combine_named.php';
 include_once html_paths::SANDBOX . 'sandbox_list.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::SANDBOX . 'sandbox_code_id.php';
+include_once html_paths::SANDBOX . 'sandbox_value.php';
 include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::TYPES . 'type_object.php';
 include_once html_paths::USER . 'user_message.php';
@@ -73,6 +74,7 @@ use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_list;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_code_id;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_value;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\types\type_object;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
@@ -305,7 +307,12 @@ class view_base extends sandbox_code_id
     {
         // the object name comes first, then the view name, joined by the configured title separator
         $html = new html_base();
-        return $html->concat_title_text($dbo->name(), $this->name(), $msg);
+        $name = $dbo->name();
+        // a value or a result is named by all its phrases, which is too long for a tab title
+        if ($dbo instanceof sandbox_value) {
+            $name = $dbo->title_name($msg);
+        }
+        return $html->concat_title_text($name, $this->name(), $msg);
     }
 
 

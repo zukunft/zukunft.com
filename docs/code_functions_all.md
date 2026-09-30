@@ -2815,6 +2815,7 @@
     \-- load_by_phr - section for function load_by_phr is expected to be load in /phrase/phrase_list.php
     \-- load_by_phr_levels - section for function load_by_phr_levels is expected to be load in /phrase/phrase_list.php
     \-- load_linked_sides - section for function load_linked_sides is expected to be load in /phrase/phrase_list.php
+    \-- load_triple_sides - section for function load_triple_sides is expected to be load in /phrase/phrase_list.php
     \-- load_by_phr_vrb_and_type - section for function load_by_phr_vrb_and_type is expected to be load in /phrase/phras
             e_list.php
     \-- load_sql_linked_phrases - section for function load_sql_linked_phrases is expected to be load sql in /phrase/phr
@@ -7680,6 +7681,8 @@
             hp
     \-- phrase_link_list - section for function phrase_link_list not yet defined that it should be display in /sandbox/s
             andbox_value.php
+    \-- title_name - section for function title_name not yet defined that it should be display in /sandbox/sandbox_value
+            .php
     \-- number_symbols - section for function number_symbols not yet defined that it should be display in /sandbox/sandb
             ox_value.php
     \-- value_linked - section for function value_linked not yet defined that it should be display in /sandbox/sandbox_v

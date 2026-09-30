@@ -281,11 +281,19 @@ class phrase_ui_tests
         // repeated in every row
         $test_name = 'without a header a phrase of every value is not shown';
         $t->assert_text_not_contains($test_name, $tbl_html, '>' . word_names::POTENTIAL . '</a>');
-        // the values name the measure with the words "potential" and "loss", so "column loss"
-        // of solution_prio.json is the definition that heads the potential loss column
-        $test_name = 'the defined loss column heads the potential loss';
+        // the values carry the triples "potential loss" and "potential gain", whose common part
+        // "potential" the table header names already, so the column is headed by the other part
+        $test_name = 'the column of the potential loss is headed by the loss';
         $tbl_header_row = $lib->str_left_of($tbl_html, '</tr>');
         $t->assert_text_contains($test_name, $tbl_header_row, '>' . word_names::LOSS . '</a>');
+        // negative: if every value carries the triple as a whole, no part of it names the table,
+        // so the column keeps the name of the triple
+        $test_name = 'a triple that every value carries heads its column with its full name';
+        $tbl_losses = $t_val->value_list_solution_prio_losses_ui()->table_by_related_columns(
+            $msg, $t_phr->list_global_problem_context_ui(), $rel_lst->column_names(),
+            false, true, $rel_lst);
+        $t->assert_text_contains($test_name, $lib->str_left_of($tbl_losses, '</tr>'),
+            '>' . triple_names::POTENTIAL_LOSS . '</a>');
         // without the definition the impact ranking would head that column by "potential", which
         // every value of the table carries and which therefore tells the reader nothing
         $test_name = '... instead of a phrase that every value carries';

@@ -39,6 +39,7 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 include_once paths::MODEL_CONST . 'def.php';
 include_once html_paths::EXECUTE . 'system_page.php';
 include_once html_paths::HELPER . 'data_object.php';
+include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::USER . 'user.php';
 include_once paths::MODEL_CONST . 'def.php';
 include_once paths::API_OBJECT . 'controller.php';
@@ -71,6 +72,8 @@ include_once test_paths::CONST . 'files.php';
 include_once test_paths::CONST . 'word_names.php';
 include_once test_paths::CREATE . 'test_mappers.php';
 include_once test_paths::CREATE . 'test_mappers.php';
+include_once test_paths::CREATE . 'test_results.php';
+include_once test_paths::CREATE . 'test_words.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 include_once test_paths::UTILS . 'test_lib.php';
 
@@ -103,6 +106,7 @@ use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_page;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
 use Zukunft\ZukunftCom\main\php\cfg\helper\server_guard;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\web\const\icons;
@@ -122,8 +126,10 @@ use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\create\test_mappers;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
+use Zukunft\ZukunftCom\test\php\create\test_results;
 use Zukunft\ZukunftCom\test\php\create\test_users;
 use Zukunft\ZukunftCom\test\php\create\test_values;
+use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
 
@@ -648,7 +654,22 @@ class system_view_ui_tests
         $dto_start->typ_lst_cache = $ui->dto->typ_lst_cache;
         $dto_start->msk_lst = $ui->dto->msk_lst;
         $dto_start->add_phrases($t_phr->list_global_problems_ui(), $msg);
+        // the calculator shows the triple "global warming", whose from and to are named from the cache
+        $t_wrd = new test_words($t);
+        $gw_parts = new phrase_list($t->usr1);
+        $gw_parts->add($t_wrd->word_climate()->phrase());
+        $gw_parts->add($t_wrd->word_warmer()->phrase());
+        $dto_start->add_phrases(new phrase_list_ui($gw_parts->api_json()), $msg);
         $dto_start->val_lst = $t_val->value_list_solution_prio_ui();
+        // a value or a result page names the phrases of its sample object, which a unit test can
+        // only take from the request cache, so a copy of that cache also holds these phrases; the
+        // phrase list is copied too, so that the other views keep the unchanged cache
+        $t_res = new test_results($t);
+        $smp_lst = $t_val->value_16_filled()->phrase_list();
+        $smp_lst->merge($t_res->result_main_filled()->phrase_list());
+        $dto_smp = clone $ui->dto;
+        $dto_smp->phr_lst = clone $ui->dto->phr_lst;
+        $dto_smp->add_phrases(new phrase_list_ui($smp_lst->api_json()), $msg);
         // TODO Prio 3 review and use random?
         for ($msk_typ = 1; $msk_typ < 2; $msk_typ++) {
             for ($id = views::MIN_TEST_ID; $id <= views::MAX_TEST_ID; $id++) {
@@ -677,6 +698,8 @@ class system_view_ui_tests
                 $dto = $ui->dto;
                 if ($id == views::START_ID or $id == views::CALCULATOR_ID) {
                     $dto = $dto_start;
+                } elseif ($dbo instanceof value or $dbo instanceof result) {
+                    $dto = $dto_smp;
                 }
                 $html = $ui->url_to_html($url_array, $msg, $dto, true);
                 [$folder, $dbo_name, $test_name] = $this->view_id_to_file_info($id, $dbo::class, $action, $url_array, $lib);

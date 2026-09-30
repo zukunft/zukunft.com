@@ -44,6 +44,7 @@ include_once paths::SHARED_CONST . 'files.php';
 include_once paths::SHARED_CONST . 'sources.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'words.php';
+include_once html_paths::HTML . 'html_base.php';
 include_once test_paths::UTILS . 'code_test_coverage.php';
 include_once test_paths::UTILS . 'code_user_message_exceptions.php';
 include_once test_paths::UTILS . 'json_validation.php';
@@ -58,6 +59,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\test\php\utils\code_test_coverage;
 use Zukunft\ZukunftCom\test\php\utils\code_user_message_exceptions;
 use Zukunft\ZukunftCom\test\php\utils\json_validation;
@@ -170,6 +172,53 @@ class coding_rule_tests
         $t->subheader($ts . 'path consts');
         $this->php_path_const_tests($t);
 
+        $t->subheader($ts . 'html snapshots');
+        $this->html_no_empty_link_tests($t);
+
+    }
+
+    /**
+     * check that no html snapshot contains a link without a visible text, because a reader
+     * cannot follow a link that shows nothing; the usual cause is a phrase without id or name,
+     * which the frontend mapper turns into an empty link (see docs/llm/testing.md)
+     *
+     * @param test_cleanup $t the test harness used for the assertion
+     */
+    function html_no_empty_link_tests(test_cleanup $t): void
+    {
+        $test_name = 'a link with only white space inside is found';
+        $t->assert($test_name, $this->empty_links('<a href="view.php?m=3">' . "\n  " . '</a>'),
+            ['<a href="view.php?m=3">' . "\n  " . '</a>']);
+        $test_name = 'a link with a text or an icon is no empty link';
+        $t->assert($test_name, $this->empty_links(
+            '<a href="view.php?m=3">loss</a><a href="view.php?m=27"><i class="fas fa-edit"></i></a>'), []);
+
+        $lib = new library();
+        $files_checked = 0;
+        foreach ($lib->dir_files(test_paths::WEB_RES) as $html_file) {
+            if (str_ends_with($html_file, test_files::HTML)) {
+                $files_checked++;
+                $links = $this->empty_links(file_get_contents($html_file));
+                if ($links != []) {
+                    $test_name = 'no link without text in ' . $html_file;
+                    $t->assert($test_name, implode("\n", $links), '');
+                }
+            }
+        }
+        // one summary assertion so that a clean tree also produces a visible pass
+        $test_name = 'links without text checked in ' . $files_checked . ' html files';
+        $t->assert_greater($test_name, 0, $files_checked);
+    }
+
+    /**
+     * @param string $html the html code of a page or a part of it
+     * @return array every link of the html with nothing but white space between its tags
+     */
+    function empty_links(string $html): array
+    {
+        $tag = html_base::A;
+        preg_match_all('/<' . $tag . '\b[^>]*>\s*<\/' . $tag . '>/', $html, $matches);
+        return $matches[0];
     }
 
     /**

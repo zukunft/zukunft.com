@@ -36,10 +36,18 @@ namespace Zukunft\ZukunftCom\test\php\unit_workflow;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
+include_once paths::MODEL_PHRASE . 'phrase_list.php';
+include_once html_paths::PHRASE . 'phrase_list.php';
 include_once test_paths::CONST . 'workflows.php';
+include_once test_paths::CREATE . 'test_words.php';
 include_once paths::SHARED_TYPES . 'system_time_type.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
+use Zukunft\ZukunftCom\test\php\create\test_words;
 
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
@@ -185,6 +193,32 @@ class url_test_base
         $base_path = $do_it ? test_paths::WORKFLOW_WRITE : test_paths::WORKFLOW;
         $this->step_path = $base_path
             . $name . workflows::NAME_SEP . $wf . DIRECTORY_SEPARATOR . $wf;
+    }
+
+    /**
+     * the reserved test words of the workflow objects in the request cache, because a read run
+     * renders without backend calls, so a page would else link these words without a name
+     *
+     * the url of a step names a word by its database id if the word exists (see
+     * test_words::word_id_or_fixed), so the cached word gets that id from the norm ids of the
+     * workflow, which map the database id to the fixed id of the snapshot
+     */
+    protected function add_test_words_to_cache(): void
+    {
+        $lst = new phrase_list($this->t->usr1);
+        foreach ([test_words::word_add(), test_words::word_add_to()] as $wrd) {
+            $db_id = array_search($wrd->id(), $this->wf_norm_ids);
+            if ($db_id !== false) {
+                $wrd->id = $db_id;
+            }
+            if ($this->req->dto->phr_lst->get($wrd->id()) == null) {
+                $lst->add($wrd->phrase());
+            }
+        }
+        if (!$lst->is_empty()) {
+            $cac_msg = new user_message(); // a test setup without a user action, so nothing to report
+            $this->req->dto->add_phrases(new phrase_list_ui($lst->api_json()), $cac_msg);
+        }
     }
 
     /**

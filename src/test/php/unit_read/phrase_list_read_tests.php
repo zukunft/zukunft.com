@@ -237,6 +237,23 @@ class phrase_list_read_tests
         $t->assert($test_name,
             $col_phr?->obj()?->get_from()?->obj()?->get_from()?->name(), word_names::LOSS);
 
+        $t->subheader($ts . 'triple sides');
+        // a value group loads its phrases with the id and the name only, so a triple of the group
+        // has no from and to; load_triple_sides adds them e.g. to head a column by "loss"
+        $test_name = 'a triple loaded by its name has no from before the sides are loaded';
+        $lst = new phrase_list($t->usr1);
+        $lst->load_names_by_ids(new phr_ids([triple_names::POTENTIAL_LOSS_ID * -1, word_names::LOSS_ID]), $msg);
+        $trp_phr = $lst->get_by_name(triple_names::POTENTIAL_LOSS, $msg);
+        $t->assert($test_name, $trp_phr?->obj()?->get_from()?->name() ?? '', '');
+        $test_name = '... but the from and the to after load_triple_sides';
+        $lst->load_triple_sides($msg);
+        $trp_phr = $lst->get_by_name(triple_names::POTENTIAL_LOSS, $msg);
+        $t->assert($test_name, [$trp_phr?->obj()?->get_from()?->name(), $trp_phr?->obj()?->get_to()?->name()],
+            [word_names::LOSS, word_names::POTENTIAL]);
+        // negative: a word has no sides, so it is kept as it is
+        $test_name = '... while a word of the same list is unchanged';
+        $t->assert($test_name, $lst->get_by_name(word_names::LOSS, $msg)?->id(), word_names::LOSS_ID);
+
 
         $t->subheader($ts . 'categories');
 

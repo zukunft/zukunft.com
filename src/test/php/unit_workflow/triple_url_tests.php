@@ -109,6 +109,7 @@ class triple_url_tests extends url_test_base
             $t_wrd->word_id_or_fixed(word_names::TEST_ADD_TO, word_names::TEST_ADD_TO_ID)
             => word_names::TEST_ADD_TO_ID,
         ];
+        $this->add_test_words_to_cache();
     }
 
     /**

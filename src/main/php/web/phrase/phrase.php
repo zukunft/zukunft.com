@@ -163,9 +163,11 @@ class phrase extends combine_named
             $trp = $this->obj();
             if ($trp != null) {
                 $vars[json_fields::OBJECT_CLASS] = json_fields::CLASS_TRIPLE;
-                $vars[json_fields::FROM] = $trp->get_from()->id();
-                $vars[json_fields::VERB] = $trp->get_verb()->id();
-                $vars[json_fields::TO] = $trp->get_to()->id();
+                // a triple known only by its id, e.g. a phrase of a value group named in the url,
+                // has no from, verb and to, which is normal and therefore sent without them
+                $vars[json_fields::FROM] = $trp->get_from()?->id();
+                $vars[json_fields::VERB] = $trp->verb?->id();
+                $vars[json_fields::TO] = $trp->get_to()?->id();
             }
         }
         $vars[json_fields::ID] = $this->obj_id();
@@ -207,6 +209,11 @@ class phrase extends combine_named
      */
     function set_id(int $id): void
     {
+        // a negative phrase id is always a triple, so a phrase that holds a word so far, e.g. a
+        // fresh phrase, becomes a triple, else the sign is lost and the id names a word
+        if ($id < 0 and !($this->obj() instanceof triple)) {
+            $this->set_obj(new triple());
+        }
         $this->set_obj_id(abs($id));
     }
 

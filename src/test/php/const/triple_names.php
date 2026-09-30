@@ -228,15 +228,23 @@ class triple_names
     const int COLUMN_GAIN_ID = 194;
     const string COLUMN_LOSS = 'column loss';
     const int COLUMN_LOSS_ID = 191;
-    // the measure that the values name with the words "potential" and "loss", and its column
+    // the measures of the start page values, their columns and the triples that order them
     const string POTENTIAL_LOSS = 'potential loss';
     const int POTENTIAL_LOSS_ID = 125;
+    const string POTENTIAL_GAIN = 'potential gain';
+    const int POTENTIAL_GAIN_ID = 126;
     const string COLUMN_POTENTIAL_LOSS = 'column potential loss';
     const int COLUMN_POTENTIAL_LOSS_ID = 190;
+    const string COLUMN_POTENTIAL_GAIN = 'column potential gain';
+    const int COLUMN_POTENTIAL_GAIN_ID = 193;
+    const string COLUMN_POTENTIAL_LOSS_EXPLAINS_PROBLEM = 'column potential loss is explaining column for column problem (high prio)';
+    const int COLUMN_POTENTIAL_LOSS_EXPLAINS_PROBLEM_ID = 218;
+    const string COLUMN_POTENTIAL_GAIN_EXPLAINS_SOLUTION = 'column potential gain is explaining column for column solution (high prio)';
+    const int COLUMN_POTENTIAL_GAIN_EXPLAINS_SOLUTION_ID = 222;
     // a unit triple typed "measure", so that a table header puts it behind the "in" like a
     // measure word (see pv_switzerland_co2.json)
     const string GRAM_PER_KWH = 'gram per kWh';
-    const int GRAM_PER_KWH_ID = 1547;
+    const int GRAM_PER_KWH_ID = 1551;
     // TODO use the name and not the id for the use cases
     // the subject of the use case pv_switzerland_co2.json; a use case is user data, so its
     // objects are selected by the name only and never by a database id or a code id
