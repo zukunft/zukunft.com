@@ -284,6 +284,9 @@ class triple_names
     const int COMPANY_ZURICH_ID = 229;
     const string MIO_SYMBOL = 'mio is symbol for million';
     const int MIO_SYMBOL_ID = 117;
+    // the second symbol of million, which is not used behind a number, because "m" is a unit too
+    const string M_SYMBOL = 'm is symbol for million';
+    const int M_SYMBOL_ID = 100;
     // the triple of scaling.json that defines "x" as the symbol shown behind a factor number
     const string FACTOR_SYMBOL = 'x is symbol for factor';
     const int FACTOR_SYMBOL_ID = 102;
@@ -318,6 +321,8 @@ class triple_names
     const int IN_USD_ID = 354;
     const string EUR_SYMBOL = "EUR is symbol for Euro";
     const int EUR_SYMBOL_ID = 337;
+    const string EURO_SIGN_SYMBOL = "€ is symbol for Euro";
+    const int EURO_SIGN_SYMBOL_ID = 338;
     const string EURO_SIGN_ALIAS = "€ is alias of Euro";
     const int EURO_SIGN_ALIAS_ID = 348;
     const string IN_EUR = "in EUR";

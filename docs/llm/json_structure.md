@@ -275,7 +275,13 @@ A word is the atomic phrase:
 - `type` is set only when the word says how the number is read: a `measure_unit` (SI unit,
   currency), or a format like `percent` or `factor`. A format word is shown as its symbol behind the number,
   and the symbol is data too: a triple like `x is symbol for factor` in the same file defines
-  it (see `phrase_types` and `phrase::number_symbol`).
+  it (see `phrase_types` and `phrase::number_symbol`). A scaling and a unit are shown as their
+  symbol as well, so a value reads like a price tag (`165'070'664 mio €` instead of naming
+  `million` and `EUR`): the symbol links to the phrase it stands for with its description as the
+  tooltip, a unit that is itself a symbol (`EUR is symbol for Euro`) shows the symbol of that
+  phrase (`€`), and of several symbols the shortest one without a meaning of its own is taken
+  (`m` stands for million too, but it is the unit of the metre, so `mio` is shown; see
+  `phrase_list::symbol_of`).
 - `measure_unit` is only the **unit** of a numeric value (`EUR`, `metre`, `person`), never
   *what* is measured. `GDP`, `population`, `force` or `temperature` name the quantity; they get
   no type, and the unit the number is stated in is a separate phrase of the value

@@ -613,6 +613,43 @@ class value_ui_tests
             url_var::ID . '=' . words::FACTOR_ID);
         $test_name = 'the other phrases of the value are still named';
         $t->assert_text_contains($test_name, $fact_html, word_names::MATH);
+
+        // a scaling and a unit are shown as their symbols behind the number as well, so that a
+        // number reads like a price tag e.g. "165'070'664 mio €"; the tooltip is the description
+        // of the phrase the symbol stands for, and a unit can be a symbol itself: "EUR" stands
+        // for "Euro", so the symbol of "Euro" is shown; "m" stands for million too, but it is
+        // the unit of the metre, so the symbol "mio" is used
+        $t->subheader($ts . 'scaling and unit symbol');
+        $val_unit = $tl->ui_value($t_val->value_mio_eur());
+        // negative: without the symbol triples the scaling and the unit are named as before
+        $test_name = 'without the symbol triples the scaling and the unit are named with the other phrases';
+        $ui_sys->phr_lst = new phrase_list_ui();
+        $unit_html = $val_unit->name_link($msg_ui);
+        $t->assert_text_contains($test_name, $unit_html, '>' . word_names::MIO . '</a>');
+        $t->assert_text_contains($test_name, $unit_html, '>' . word_names::EUR . '</a>');
+        $ui_sys->phr_lst = $t_phr->list_unit_symbol_cache_ui();
+        $unit_html = $val_unit->name_link($msg_ui);
+        $test_name = 'the scaling and the unit are not named with the other phrases';
+        $t->assert_text_not_contains($test_name, $unit_html, '>' . word_names::MIO . '</a>');
+        $t->assert_text_not_contains($test_name, $unit_html, '>' . word_names::EUR . '</a>');
+        $test_name = '... but the scaling symbol follows the number';
+        $t->assert_text_order($test_name, $unit_html,
+            $val_unit->val_formatted($msg_ui), '>' . word_names::MIO_SHORT . '</a>');
+        $test_name = '... and the unit symbol follows the scaling symbol';
+        $t->assert_text_order($test_name, $unit_html,
+            '>' . word_names::MIO_SHORT . '</a>', '>' . word_names::EURO_SIGN . '</a>');
+        $test_name = 'a symbol that is a unit of its own is not used for the scaling';
+        $t->assert_text_not_contains($test_name, $unit_html, '>' . word_names::M . '</a>');
+        $test_name = 'the description of million is the tooltip of its symbol';
+        $t->assert_text_contains($test_name, $unit_html,
+            html_base::TITLE_HTML . '="' . word_names::MIO_COM . '"');
+        $test_name = 'the description of Euro is the tooltip of the unit symbol';
+        $t->assert_text_contains($test_name, $unit_html,
+            html_base::TITLE_HTML . '="' . word_names::EURO_COM . '"');
+        $test_name = '... which links to Euro';
+        $t->assert_text_contains($test_name, $unit_html, url_var::ID . '=' . word_names::EURO_ID);
+        $test_name = 'the other phrases of the value are still named';
+        $t->assert_text_contains($test_name, $unit_html, word_names::ASSUMED);
         // the following tests use the caches of the test setup again
         $ui_sys->typ_lst_cache->phr_sys = $phr_sys_keep;
         $ui_sys->phr_lst = $phr_lst_keep;

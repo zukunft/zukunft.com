@@ -1052,6 +1052,36 @@ class test_triples extends test_objects
     }
 
     /**
+     * @return triple "m is symbol for million", the second symbol of million next to "mio"
+     */
+    function m_symbol(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::M_SYMBOL_ID, triple_names::M_SYMBOL);
+        $trp->set_from($t_wrd->word_m_symbol()->phrase());
+        $trp->set_verb($t_vrb->verb_is_symbol());
+        $trp->set_to($t_wrd->word_million()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "€ is symbol for Euro", the symbol shown behind a number in euro
+     */
+    function euro_sign_symbol(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::EURO_SIGN_SYMBOL_ID, triple_names::EURO_SIGN_SYMBOL);
+        $trp->set_from($t_wrd->word_euro_sign()->phrase());
+        $trp->set_verb($t_vrb->verb_is_symbol());
+        $trp->set_to($t_wrd->euro()->phrase());
+        return $trp;
+    }
+
+    /**
      * @return triple "CHF is symbol for Swiss franc" used for unit testing the
      *         page-title category subtitle for SYMBOL-typed related entries
      */

@@ -508,11 +508,12 @@ class value extends sandbox_value
         $measure_lst = $phr_lst->measure_list($msg);
         $scale_lst = $phr_lst->scaling_list($msg);
         $info_lst = $phr_lst->info_list($msg);
-        // a phrase with a symbol e.g. the factor is shown as its symbol behind the number
-        $symbol_lst = $phr_lst->symbol_phrases($msg);
         $phr_lst = $phr_lst->ex_measure_list($msg);
         $phr_lst = $phr_lst->ex_scaling_list($msg);
         $phr_lst = $phr_lst->ex_info_list($msg);
+        // a phrase with a symbol e.g. the factor is shown as its symbol behind the number; the
+        // measure and the scaling are named here, because the given cache supplies their tooltip
+        $symbol_lst = $phr_lst->symbol_phrases($msg);
         $phr_lst = $phr_lst->remove($symbol_lst);
         if ($measure_lst->count() > 1) {
             log_warning($this->dsp_id() . ' is not expected to have more than one measure');

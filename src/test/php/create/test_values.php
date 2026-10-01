@@ -305,6 +305,21 @@ class test_values extends test_objects
     }
 
     /**
+     * @return value in million EUR, so that the number is expected to be shown as e.g.
+     *               "123.46 mio €" with the symbols of the scaling and of the unit behind it
+     */
+    function value_mio_eur(): value
+    {
+        $t_wrd = new test_words($this->env);
+        return $this->value_for_phrases([
+            $t_wrd->word()->phrase(),
+            $t_wrd->word_assumed()->phrase(),
+            $t_wrd->word_high()->phrase(),
+            $t_wrd->word_million()->phrase(),
+            $t_wrd->word_eur()->phrase()]);
+    }
+
+    /**
      * @param phrase[] $phrases the phrases that should build the group of the value
      * @param float $number the number assigned to the value (a sample number by default)
      * @return value with the given number assigned to the group of the given phrases

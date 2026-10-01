@@ -7228,6 +7228,8 @@
     \-- is_triple - section for function is_triple is expected to be info in /phrase/phrase.php
     \-- number_symbol - section for function number_symbol not yet defined that it should be info in /phrase/phrase.php
     \-- symbol_name - section for function symbol_name not yet defined that it should be info in /phrase/phrase.php
+    \-- stands_for - section for function stands_for not yet defined that it should be info in /phrase/phrase.php
+    \-- tooltip - section for function tooltip not yet defined that it should be info in /phrase/phrase.php
     \-- impact - section for function impact not yet defined that it should be info in /phrase/phrase.php
     \-- parents - section for function parents is expected to be foaf in /phrase/phrase.php
     \-- children - section for function children is expected to be foaf in /phrase/phrase.php
@@ -7280,6 +7282,8 @@
     \-- cached_phrase - section for function cached_phrase not yet defined that it should be select in /phrase/phrase_li
             st.php
     \-- tooltip - section for function tooltip not yet defined that it should be select in /phrase/phrase_list.php
+    \-- stands_for - section for function stands_for not yet defined that it should be select in /phrase/phrase_list.php
+    \-- symbols_of - section for function symbols_of not yet defined that it should be select in /phrase/phrase_list.php
     \-- symbol_of - section for function symbol_of not yet defined that it should be select in /phrase/phrase_list.php
     \-- parents - section for function parents is expected to be foaf in /phrase/phrase_list.php
     \-- parent_triples - section for function parent_triples not yet defined that it should be select in /phrase/phrase_
@@ -8274,8 +8278,12 @@
         \-- phrase_list - get the phrase of this cache that matches the given phrase, so that a phrase which
     \-- tooltip
         \-- phrase_list - get the tooltip text for the given phrase based on this cache:
+    \-- stands_for
+        \-- phrase_list - the phrase that the given symbol stands for, e.g. "Euro" for "EUR", taken from this list,
+    \-- symbols_of
+        \-- phrase_list - the phrases that "are symbol for" the given phrase, e.g. "m" and "mio" for million, taken
     \-- symbol_of
-        \-- phrase_list - the phrase that "is symbol for" the given phrase, e.g. "x" for the factor, taken from this
+        \-- phrase_list - the symbol that stands for the given phrase, e.g. "x" for the factor or "mio" for million
     \-- parents
         \-- phrase_list - get all phrases that are connected to the given phrase
     \-- parent_triples
@@ -8355,7 +8363,7 @@
     \-- symbol_phrases
         \-- phrase_list - the phrases that are shown as a symbol behind the number instead of being named with the
     \-- symbol_links
-        \-- phrase_list - the symbols of the phrases of this list, each linked to its phrase, e.g. the "x" of a factor
+        \-- phrase_list - the symbols of the phrases of this list, each linked to its phrase and separated from the
 \-- to be replaced
     \-- form_edit
         \-- component - HTML code to edit all component fields

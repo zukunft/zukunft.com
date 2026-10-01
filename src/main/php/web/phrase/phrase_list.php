@@ -804,49 +804,132 @@ class phrase_list extends sandbox_list_named
      */
     function tooltip(phrase $phr, user_message $msg): string
     {
-        global $ui_sys;
-
         $result = $this->cached_phrase($phr)->get_description() ?? '';
         if ($result == '') {
-            $vrb = $ui_sys?->typ_lst_cache?->vrb?->get_by_code_id(verbs::SYMBOL);
-            if ($vrb != null) {
-                // the symbol is the from side, so the described phrase is the to side
-                foreach ($this->lst() as $cac_phr) {
-                    if ($cac_phr->is_triple() and $result == '') {
-                        $trp = $cac_phr->obj();
-                        if ($trp->get_verb()?->id() == $vrb->id()
-                            and $trp->get_from()?->id() == $phr->id()) {
-                            $result = $this->cached_phrase($trp->get_to())->get_description() ?? '';
-                        }
-                    }
-                }
+            $main_phr = $this->stands_for($phr);
+            if ($main_phr != null) {
+                $result = $this->cached_phrase($main_phr)->get_description() ?? '';
             }
         }
         return $result;
     }
 
     /**
-     * the phrase that "is symbol for" the given phrase, e.g. "x" for the factor, taken from this
-     * list, which is usually the request cache with the related phrases (the mirror of tooltip)
+     * the phrase that the given symbol stands for, e.g. "Euro" for "EUR", taken from this list,
+     * which is usually the request cache with the related phrases (the mirror of symbols_of)
+     *
+     * @param phrase $symbol the phrase that may be a symbol
+     * @return phrase|null the phrase the symbol stands for or null if this list has no such triple
+     */
+    function stands_for(phrase $symbol): ?phrase
+    {
+        $result = null;
+        foreach ($this->symbol_triples() as $trp) {
+            // the symbol is the from side, so the phrase it stands for is the to side
+            if ($result == null and $trp->get_from()?->id() == $symbol->id()) {
+                $result = $trp->get_to();
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the phrases that "are symbol for" the given phrase, e.g. "m" and "mio" for million, taken
+     * from this list, which is usually the request cache with the related phrases
+     *
+     * @param phrase $phr the phrase whose symbols are searched
+     * @return phrase_list the symbol phrases, empty if this list has no symbol of the given phrase
+     */
+    function symbols_of(phrase $phr): phrase_list
+    {
+        $result = new phrase_list();
+        foreach ($this->symbol_triples() as $trp) {
+            $symbol = $trp->get_from();
+            if ($symbol != null and $trp->get_to()?->id() == $phr->id()) {
+                // the cached phrase, because the side of a triple may carry no type
+                $result->add_phrase($this->cached_phrase($symbol));
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the symbol that stands for the given phrase, e.g. "x" for the factor or "mio" for million
+     *
+     * a phrase can have several symbols, so the shortest one is taken that has no meaning of its
+     * own: "m" stands for million, but it is the unit metre too, so "mio" is the symbol of million
      *
      * @param phrase $phr the phrase whose symbol is searched
      * @return phrase|null the symbol phrase or null if this list has no symbol of the given phrase
      */
-    function symbol_of(phrase $phr): ?phrase
+    function symbol_of(phrase $phr, user_message $msg): ?phrase
+    {
+        $result = null;
+        foreach ($this->symbols_of($phr)->lst() as $symbol) {
+            if ($this->is_better_symbol($symbol, $result, $phr, $msg)) {
+                $result = $symbol;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param phrase $symbol a symbol of the phrase
+     * @param phrase|null $best the best symbol found so far, null if none has been found yet
+     * @param phrase $phr the phrase the symbols stand for
+     * @return bool true if the symbol should be used instead of the best symbol found so far
+     */
+    private function is_better_symbol(phrase $symbol, ?phrase $best, phrase $phr, user_message $msg): bool
+    {
+        $result = ($best == null);
+        if (!$result) {
+            $own = $this->has_own_meaning($symbol, $phr, $msg);
+            $best_own = $this->has_own_meaning($best, $phr, $msg);
+            if ($own == $best_own) {
+                $result = (mb_strlen($symbol->name()) < mb_strlen($best->name()));
+            } else {
+                $result = !$own;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * true if the symbol is more than a symbol of the given phrase: it is typed in another way
+     * than the phrase (the unit "m" is a symbol of million) or it stands for a second phrase too
+     *
+     * @param phrase $symbol a symbol of the phrase
+     * @param phrase $phr the phrase the symbol stands for
+     * @return bool true if the symbol has a meaning of its own, so another symbol is preferred
+     */
+    private function has_own_meaning(phrase $symbol, phrase $phr, user_message $msg): bool
     {
         global $ui_sys;
 
-        $result = null;
+        $default_id = $ui_sys?->typ_lst_cache?->phr_typ?->default_id();
+        $typ_id = $symbol->type_id($msg);
+        $result = ($typ_id != null and $typ_id != $default_id and $typ_id != $phr->type_id($msg));
+        foreach ($this->symbol_triples() as $trp) {
+            if ($trp->get_from()?->id() == $symbol->id() and $trp->get_to()?->id() != $phr->id()) {
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @return array the triples of this list with the verb "is symbol for"
+     */
+    private function symbol_triples(): array
+    {
+        global $ui_sys;
+
+        $result = [];
         $vrb = $ui_sys?->typ_lst_cache?->vrb?->get_by_code_id(verbs::SYMBOL);
         if ($vrb != null) {
             foreach ($this->lst() as $cac_phr) {
-                if ($cac_phr->is_triple() and $result == null) {
-                    $trp = $cac_phr->obj();
-                    // the symbol is the from side, so the phrase it stands for is the to side
-                    if ($trp->get_verb()?->id() == $vrb->id()
-                        and $trp->get_to()?->id() == $phr->id()) {
-                        $result = $trp->get_from();
-                    }
+                if ($cac_phr->is_triple() and $cac_phr->obj()->get_verb()?->id() == $vrb->id()) {
+                    $result[] = $cac_phr->obj();
                 }
             }
         }
@@ -1393,13 +1476,23 @@ class phrase_list extends sandbox_list_named
      * the phrases that are shown as a symbol behind the number instead of being named with the
      * other phrases of the number, e.g. the factor of "13.2 x" (see phrase::number_symbol)
      *
-     * @return phrase_list the phrases of this list that have a symbol
+     * the scaling comes first and the unit second, so the symbols read like the number e.g.
+     * "2.5 mio €"; a symbol of another kind e.g. the "x" of a factor follows
+     *
+     * @return phrase_list the phrases of this list that have a symbol, in the display order
      */
     function symbol_phrases(user_message $msg): phrase_list
     {
         $result = new phrase_list();
+        $ranked = [];
         foreach ($this->lst() as $phr) {
             if ($phr->number_symbol($msg) != '') {
+                $ranked[$this->symbol_rank($phr, $msg)][] = $phr;
+            }
+        }
+        ksort($ranked);
+        foreach ($ranked as $phr_lst) {
+            foreach ($phr_lst as $phr) {
                 $result->add_phrase($phr);
             }
         }
@@ -1407,15 +1500,31 @@ class phrase_list extends sandbox_list_named
     }
 
     /**
-     * the symbols of the phrases of this list, each linked to its phrase, e.g. the "x" of a factor
+     * @param phrase $phr a phrase that is shown as a symbol behind the number
+     * @return int the position of the symbol behind the number: 0 for a scaling, 1 for a unit, 2 for the rest
+     */
+    private function symbol_rank(phrase $phr, user_message $msg): int
+    {
+        $result = 2;
+        if ($phr->is_scaling($msg)) {
+            $result = 0;
+        } elseif ($phr->is_measure($msg)) {
+            $result = 1;
+        }
+        return $result;
+    }
+
+    /**
+     * the symbols of the phrases of this list, each linked to its phrase and separated from the
+     * number and from each other by a space, e.g. " mio €" or " x" (see symbol_phrases)
      *
      * @return string the html code of the symbols, empty if no phrase of this list has one
      */
     function symbol_links(user_message $msg): string
     {
         $result = '';
-        foreach ($this->lst() as $phr) {
-            $result .= $phr->number_symbol($msg);
+        foreach ($this->symbol_phrases($msg)->lst() as $phr) {
+            $result .= ' ' . $phr->number_symbol($msg);
         }
         return $result;
     }

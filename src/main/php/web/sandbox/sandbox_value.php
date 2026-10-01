@@ -599,7 +599,7 @@ class sandbox_value extends sandbox
      */
     function percent_symbol(user_message $msg): string
     {
-        return $this->grp->phr_lst()->percent_phrase($msg)?->symbol_name() ?? '';
+        return $this->grp->phr_lst()->percent_phrase($msg)?->symbol_name($msg) ?? '';
     }
 
     /**
