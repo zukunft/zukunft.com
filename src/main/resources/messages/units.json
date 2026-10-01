@@ -984,7 +984,6 @@
     {
       "name": "kinematic",
       "description": "Kinematics is a subfield of physics and mathematics, developed in classical mechanics, that describes the motion of points, bodies (objects), and systems of bodies (groups of objects) without considering the forces that cause them to move.",
-      "type": "measure",
       "protection": "admin_protection",
       "refs": [
         {
@@ -1000,7 +999,6 @@
     {
       "name": "light",
       "description": "Light, visible light, or visible radiation is electromagnetic radiation that can be perceived by the human eye.",
-      "type": "measure",
       "protection": "admin_protection",
       "refs": [
         {
@@ -1016,7 +1014,6 @@
     {
       "name": "speed",
       "description": "In kinematics, the speed (commonly referred to as v) of an object is the magnitude of the change of its position over time or the magnitude of the change of its position per unit of time.",
-      "type": "measure",
       "protection": "admin_protection",
       "refs": [
         {
@@ -1032,7 +1029,6 @@
     {
       "name": "acceleration",
       "description": "In mechanics, acceleration is the rate of change of the velocity of an object with respect to time. Acceleration is one of several components of kinematics, the study of motion.",
-      "type": "measure",
       "protection": "admin_protection",
       "refs": [
         {
@@ -1138,7 +1134,6 @@
     {
       "name": "angle",
       "description": "In Euclidean geometry, an angle or plane angle is the figure formed by two rays, called the sides of the angle, sharing a common endpoint, called the vertex of the angle.",
-      "type": "measure",
       "protection": "admin_protection",
       "refs": [
         {
@@ -1154,7 +1149,6 @@
     {
       "name": "velocity",
       "description": "Velocity is the speed in combination with the direction of motion of an object. It is a fundamental concept in kinematics, the branch of classical mechanics that describes the motion of bodies. ",
-      "type": "measure",
       "protection": "admin_protection",
       "refs": [
         {
@@ -1170,7 +1164,6 @@
     {
       "name": "drift",
       "description": "In electrical engineering, frequency drift is an unintended and generally arbitrary offset of an oscillator from its nominal frequency.",
-      "type": "measure",
       "protection": "admin_protection",
       "refs": [
         {
@@ -1407,7 +1400,6 @@
     {
       "name": "distance",
       "description": "Distance is a numerical or occasionally qualitative measurement of how far apart objects, points, people, or ideas are.",
-      "type": "measure",
       "protection": "admin_protection",
       "refs": [
         {
@@ -1445,7 +1437,6 @@
     {
       "name": "area",
       "description": "Area is the measure of a region's size on a surface.",
-      "type": "measure",
       "protection": "admin_protection",
       "refs": [
         {
@@ -1505,7 +1496,6 @@
     {
       "name": "volume",
       "description": "Volume is a measure of regions in three-dimensional space. It is often quantified numerically using SI derived units such as the cubic metre and litre, or by various imperial or US customary units.",
-      "type": "measure",
       "protection": "admin_protection",
       "refs": [
         {
@@ -1828,7 +1818,6 @@
       "from": "jerk",
       "verb": "can be part of",
       "to": "physics",
-      "type": "measure",
       "protection": "admin_protection",
       "refs": [
         {
@@ -2119,7 +2108,6 @@
       "from": "named derived unit",
       "verb": "can be part of",
       "to": "International System of Units (SI)",
-      "type": "measure",
       "protection": "admin_protection",
       "refs": [
         {
@@ -2137,7 +2125,6 @@
       "from": "kinematic derived unit",
       "verb": "can be part of",
       "to": "International System of Units (SI)",
-      "type": "measure",
       "protection": "admin_protection"
     },
     {
@@ -2145,7 +2132,6 @@
       "from": "mechanics derived unit",
       "verb": "can be part of",
       "to": "International System of Units (SI)",
-      "type": "measure",
       "protection": "admin_protection"
     },
     {
@@ -2450,7 +2436,6 @@
       "from": "velocity",
       "verb": "per",
       "to": "angle",
-      "type": "measure",
       "protection": "admin_protection",
       "refs": [
         {
@@ -2469,7 +2454,6 @@
       "from": "acceleration",
       "verb": "per",
       "to": "angle",
-      "type": "measure",
       "protection": "admin_protection",
       "refs": [
         {
@@ -2517,7 +2501,6 @@
       "from": "frequency",
       "verb": "must be one of",
       "to": "rate",
-      "type": "measure",
       "protection": "admin_protection",
       "refs": [
         {
@@ -2535,7 +2518,6 @@
       "from": "frequency (rate)",
       "verb": "can",
       "to": "drift",
-      "type": "measure",
       "protection": "admin_protection"
     },
     {
@@ -2569,7 +2551,6 @@
       "from": "rate",
       "verb": "of",
       "to": "flow",
-      "type": "measure",
       "protection": "admin_protection"
     },
     {
@@ -2578,7 +2559,6 @@
       "from": "volumetric",
       "verb": "of",
       "to": "flow rate",
-      "type": "measure",
       "protection": "admin_protection",
       "refs": [
         {

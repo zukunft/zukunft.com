@@ -7819,6 +7819,12 @@
                 "code_id": "factor",
                 "description": "a phrase that marks the number as a factor so that the number is shown with an x behind it e.g. 13.2 x",
                 "id": 29
+            },
+            {
+                "name": "measure non unit",
+                "code_id": "measure_non_unit",
+                "description": "what is measured e.g. GDP, which describes the number like a unit so that it heads no row or column of a value table, but is not the unit the number is stated in",
+                "id": 30
             }
         ],
         "ref_types": [
@@ -26850,7 +26856,7 @@
                     "id": 279,
                     "name": "GDP",
                     "description": "a monetary measure of the market value of all the final goods and services produced and rendered in a specific time period by a country.",
-                    "type_id": 3,
+                    "type_id": 30,
                     "plural": null,
                     "impact": null,
                     "class": "word"
@@ -27595,7 +27601,7 @@
                 "id": 279,
                 "name": "GDP",
                 "description": "a monetary measure of the market value of all the final goods and services produced and rendered in a specific time period by a country.",
-                "type_id": 3,
+                "type_id": 30,
                 "class": "word"
             },
             {
@@ -29786,7 +29792,7 @@
                 "class": "triple"
             },
             {
-                "id": 918,
+                "id": 919,
                 "name": "global warming is alias of climate change",
                 "from_id": -112,
                 "from_phrase": {
@@ -29810,9 +29816,9 @@
                     "impact": null,
                     "id": 18
                 },
-                "to_id": -912,
+                "to_id": -913,
                 "to_phrase": {
-                    "id": 912,
+                    "id": 913,
                     "name": "climate change",
                     "description": "the long-term shifts in temperatures and weather patterns, caused since the 1800s mainly by the burning of fossil fuels.",
                     "type_id": null,
@@ -30272,7 +30278,7 @@
                 "class": "triple"
             },
             {
-                "id": 912,
+                "id": 913,
                 "name": "climate change",
                 "description": "the long-term shifts in temperatures and weather patterns, caused since the 1800s mainly by the burning of fossil fuels.",
                 "class": "triple"

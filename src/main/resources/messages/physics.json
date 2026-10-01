@@ -40,7 +40,8 @@
       "name": "joule"
     },
     {
-      "name": "watt"
+      "name": "watt",
+      "type": "measure"
     },
     {
       "name": "newton"
@@ -57,7 +58,6 @@
     {
       "name": "force",
       "description": "In physics, a force is an influence that can change the motion of an object; it has both magnitude and direction and is measured in newton.",
-      "type": "measure",
       "protection": "admin_protection",
       "refs": [
         {
@@ -73,7 +73,6 @@
     {
       "name": "mass",
       "description": "Mass is the quantity of matter in a body and a measure of its resistance to acceleration (inertia) when a force is applied; the SI unit is the kilogram.",
-      "type": "measure",
       "protection": "admin_protection",
       "refs": [
         {
@@ -89,7 +88,6 @@
     {
       "name": "energy",
       "description": "Energy is the quantitative property that is transferred to a body or system to perform work or to heat it; the SI unit is the joule.",
-      "type": "measure",
       "protection": "admin_protection",
       "refs": [
         {
@@ -105,7 +103,6 @@
     {
       "name": "power",
       "description": "Power is the amount of energy transferred or converted per unit time; the SI unit is the watt.",
-      "type": "measure",
       "protection": "admin_protection",
       "refs": [
         {
@@ -121,7 +118,6 @@
     {
       "name": "pressure",
       "description": "Pressure is the force applied perpendicular to the surface of an object per unit area; the SI unit is the pascal.",
-      "type": "measure",
       "protection": "admin_protection",
       "refs": [
         {
@@ -140,7 +136,6 @@
     {
       "name": "voltage",
       "description": "Voltage, also called electric potential difference, is the difference in electric potential between two points; the SI unit is the volt.",
-      "type": "measure",
       "protection": "admin_protection",
       "refs": [
         {
@@ -155,7 +150,6 @@
     },
     {
       "name": "velocity",
-      "type": "measure",
       "refs": [
         {
           "name": "Velocity",
@@ -169,7 +163,6 @@
     },
     {
       "name": "acceleration",
-      "type": "measure",
       "refs": [
         {
           "name": "Acceleration",
@@ -183,7 +176,6 @@
     },
     {
       "name": "displacement",
-      "type": "measure",
       "refs": [
         {
           "name": "Displacement (geometry)",
@@ -198,7 +190,6 @@
     {
       "name": "momentum",
       "description": "In Newtonian mechanics, momentum is the product of the mass and velocity of an object; it is a vector quantity.",
-      "type": "measure",
       "refs": [
         {
           "name": "Momentum",
@@ -213,7 +204,6 @@
     {
       "name": "impulse",
       "description": "In classical mechanics, impulse is the change in momentum of an object; it equals the integral of force over the time interval for which it acts.",
-      "type": "measure",
       "refs": [
         {
           "name": "Impulse (physics)",
@@ -228,7 +218,6 @@
     {
       "name": "work",
       "description": "In physics, work is the energy transferred to or from an object via the application of force along a displacement.",
-      "type": "measure",
       "refs": [
         {
           "name": "Work (physics)",
@@ -243,7 +232,6 @@
     {
       "name": "torque",
       "description": "In physics and mechanics, torque is the rotational equivalent of linear force; it is also referred to as the moment of force.",
-      "type": "measure",
       "refs": [
         {
           "name": "Torque",
@@ -272,7 +260,6 @@
     {
       "name": "friction",
       "description": "Friction is the force resisting the relative motion of solid surfaces, fluid layers, and material elements sliding against each other.",
-      "type": "measure",
       "refs": [
         {
           "name": "Friction",
@@ -301,7 +288,6 @@
     {
       "name": "density",
       "description": "quantity per unit area or volume",
-      "type": "measure",
       "refs": [
         {
           "name": "Density",
@@ -316,7 +302,6 @@
     {
       "name": "temperature",
       "description": "Temperature is a physical quantity that expresses quantitatively the perceptions of hotness and coldness.",
-      "type": "measure",
       "refs": [
         {
           "name": "Temperature",
@@ -331,7 +316,6 @@
     {
       "name": "heat",
       "description": "In thermodynamics, heat is the thermal energy transferred between systems due to a temperature difference.",
-      "type": "measure",
       "refs": [
         {
           "name": "Heat",
@@ -346,7 +330,6 @@
     {
       "name": "entropy",
       "description": "Entropy is a scientific concept that is most commonly associated with a state of disorder, randomness, or uncertainty in a thermodynamic system.",
-      "type": "measure",
       "refs": [
         {
           "name": "Entropy",
@@ -361,7 +344,6 @@
     {
       "name": "enthalpy",
       "description": "Enthalpy is the sum of a thermodynamic system's internal energy and the product of its pressure and volume.",
-      "type": "measure",
       "refs": [
         {
           "name": "Enthalpy",
@@ -376,7 +358,6 @@
     {
       "name": "current",
       "description": "An electric current is a flow of charged particles, such as electrons or ions, moving through an electrical conductor or space.",
-      "type": "measure",
       "refs": [
         {
           "name": "Electric current",
@@ -391,7 +372,6 @@
     {
       "name": "resistance",
       "description": "The electrical resistance of an object is a measure of its opposition to the flow of electric current.",
-      "type": "measure",
       "refs": [
         {
           "name": "Electrical resistance and conductance",
@@ -406,7 +386,6 @@
     {
       "name": "capacitance",
       "description": "Capacitance is the capability of a material object or device to store electric charge.",
-      "type": "measure",
       "refs": [
         {
           "name": "Capacitance",
@@ -421,7 +400,6 @@
     {
       "name": "inductance",
       "description": "Inductance is the tendency of an electrical conductor to oppose a change in the electric current flowing through it.",
-      "type": "measure",
       "refs": [
         {
           "name": "Inductance",
@@ -464,7 +442,6 @@
     {
       "name": "wavelength",
       "description": "In physics and mathematics, wavelength is the spatial period of a periodic wave, the distance over which the wave's shape repeats.",
-      "type": "measure",
       "refs": [
         {
           "name": "Wavelength",
@@ -1212,7 +1189,8 @@
       "name": "P"
     },
     {
-      "name": "W"
+      "name": "W",
+      "type": "measure"
     },
     {
       "name": "Q"

@@ -998,6 +998,14 @@ class triple extends sandbox_code_id
         return $this->is_type(phrase_types::FACTOR, $msg);
     }
 
+    /**
+     * @return bool true if the triple names what is measured (e.g. "gross domestic product"), which is no unit
+     */
+    function is_measure_non_unit(user_message $msg): bool
+    {
+        return $this->is_type(phrase_types::MEASURE_NON_UNIT, $msg);
+    }
+
     function is_measure(user_message $msg): bool
     {
         return $this->is_type(phrase_types::MEASURE, $msg);

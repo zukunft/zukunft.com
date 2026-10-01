@@ -50,6 +50,7 @@ include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once test_paths::CONST . 'files.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
@@ -63,6 +64,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use ReflectionClass;
@@ -151,6 +153,15 @@ class json_validation
         words::ASSUMED,
         words::CONFIDENCE,
         triples::PROBABILITY_RANGE_FACTOR,
+    ];
+    const string CHK_NUMBER_TYPE = 'value with more than one measure, percent or factor phrase';
+    // the phrase types that say how a number is stated, so a value has only one phrase of them
+    const array NUMBER_TYPES = [phrase_types::MEASURE, phrase_types::PERCENT, phrase_types::FACTOR];
+    // the sections whose entries name a number by its "words"
+    const array NUMBER_SECTIONS = [
+        json_fields::VALUES,
+        json_fields::RESULTS,
+        json_fields::CALC_VALIDATION,
     ];
     const string CHK_VERB = 'verb not defined';
     const string CHK_FIELD = 'field not read by the import';
@@ -316,6 +327,14 @@ class json_validation
             . ' reads the data object of the file), so a source that the file does not define in'
             . ' its "sources" section is reported as missing on import; the list shows the values'
             . ' that still need their source');
+        $md_txt .= $this->section_md(self::CHK_NUMBER_TYPE, $find_lst,
+            'a phrase of the type "' . implode('", "', self::NUMBER_TYPES) . '" says how the number'
+            . ' is stated and is shown as the unit or the symbol behind it, so a value, a result'
+            . ' or a calc-validation entry has only one of them; if more than one is needed, the'
+            . ' combination is one triple that carries the one type e.g. "USD per tonne" (see'
+            . ' docs/llm/json_structure.md); the type of a phrase is taken from the file itself'
+            . ' or from the main data file that defines it; each line names the section, the'
+            . ' phrases of these types and the words of the entry');
         $md_txt .= $this->section_md(self::CHK_VERB, $find_lst,
             'the import resolves a verb by an exact name match and creates the verb when the name'
             . ' is unknown (see triple::import_mapper), so a typo silently grows the shared verb'
@@ -413,6 +432,7 @@ class json_validation
         $this->cross_file_hits($result);
         $this->cross_description_hits($result);
         $this->cross_source_hits($result);
+        $this->cross_number_type_hits($result);
         $this->component_phrase_hits($result);
         $this->section_check_hits($result);
         foreach ($result as $chk => $sec_lst) {
@@ -531,6 +551,105 @@ class json_validation
         foreach ($this->source_link_conflicts($json_by_file) as $hit) {
             $find_lst[self::CHK_CROSS_SOURCE][$sec][] = $hit;
         }
+    }
+
+    /**
+     * check that every value, result and calc-validation entry names only one phrase of the
+     * type measure, percent or factor
+     *
+     * the type of a phrase is defined once, in its home file, and every other file re-declares
+     * the phrase by its name only, so the types are collected over the main data; a file can
+     * define its own version of a phrase, e.g. a test file, so its own types come first
+     *
+     * @param array $find_lst (in/out) map of the check name and the folder to the findings
+     * @return void
+     */
+    private function cross_number_type_hits(array &$find_lst): void
+    {
+        $main_sec = array_key_first(self::SCAN_PATHS);
+        $main_types = $this->number_type_names($this->json_list(self::SCAN_PATHS[$main_sec]));
+        foreach (self::SCAN_PATHS as $sec => $path) {
+            foreach ($this->json_list($path) as $file_path => $json_array) {
+                $phr_types = $this->number_type_names([$json_array]) + $main_types;
+                // only the keys, because the key names the typed phrases and the words of the entry
+                foreach (array_keys($this->number_type_hits($json_array, $phr_types)) as $hit) {
+                    $find_lst[self::CHK_NUMBER_TYPE][$sec][] = basename($file_path) . ' - ' . $hit;
+                }
+            }
+        }
+    }
+
+    /**
+     * @param string $path the folder with the json files
+     * @return array map of the file path to the decoded json of every file that can be decoded
+     */
+    private function json_list(string $path): array
+    {
+        $result = [];
+        foreach ($this->json_file_list($path) as $file_path) {
+            $json_array = json_decode(file_get_contents($file_path), true);
+            if (is_array($json_array)) {
+                $result[$file_path] = $json_array;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the phrases of the given files that say how a number is stated
+     *
+     * @param array $json_lst the decoded json files
+     * @return array map of the word or triple name to its type for the types of NUMBER_TYPES
+     */
+    function number_type_names(array $json_lst): array
+    {
+        $result = [];
+        foreach ($json_lst as $json_array) {
+            foreach ([json_fields::WORDS, json_fields::TRIPLES] as $sec_name) {
+                foreach ($json_array[$sec_name] ?? [] as $phr) {
+                    $type = is_array($phr) ? ($phr[json_fields::TYPE_NAME] ?? '') : '';
+                    if (in_array($type, self::NUMBER_TYPES, true)) {
+                        // the name of a word is its given name like the name of a named triple
+                        $result[$this->triple_name($phr)] ??= $type;
+                    }
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the values, results and calc-validation entries of the given file that name more than
+     * one phrase of the type measure, percent or factor (docs/llm/json_structure.md)
+     *
+     * only the "words" of an entry, because the "context" of a calc-validation entry is the
+     * union of the words of several values
+     *
+     * @param array $json_array the decoded json file
+     * @param array $phr_types map of the phrase name to its type as created by number_type_names
+     * @return array map of the section, the phrases of these types and the words of the entry
+     *               to the entry
+     */
+    function number_type_hits(array $json_array, array $phr_types): array
+    {
+        $hits = [];
+        foreach (self::NUMBER_SECTIONS as $sec_name) {
+            foreach ($json_array[$sec_name] ?? [] as $entry) {
+                $phr_names = is_array($entry) ? ($entry[json_fields::WORDS] ?? []) : [];
+                if (!is_array($phr_names)) {
+                    $phr_names = [];
+                }
+                $typed = array_values(array_filter($phr_names,
+                    fn($name) => is_string($name) and array_key_exists($name, $phr_types)));
+                if (count($typed) > 1) {
+                    $key = $sec_name
+                        . ' ' . json_encode($typed, self::SAMPLE_ENCODING)
+                        . ' in ' . json_encode($phr_names, self::SAMPLE_ENCODING);
+                    $hits[$key] ??= $this->sample($entry);
+                }
+            }
+        }
+        return $hits;
     }
 
     /**

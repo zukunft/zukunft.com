@@ -861,6 +861,14 @@ class word extends sandbox_code_id
     }
 
     /**
+     * @return bool true if the word names what is measured (e.g. "GDP"), which is no unit
+     */
+    function is_measure_non_unit(user_message $msg): bool
+    {
+        return $this->is_type(phrase_types::MEASURE_NON_UNIT, $msg);
+    }
+
+    /**
      * @return bool true if the word is normally not shown to the user e.g. scaling of one is assumed
      */
     function is_hidden(user_message $msg): bool

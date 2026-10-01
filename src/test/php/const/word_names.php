@@ -323,6 +323,9 @@ class word_names
     const int PRIOR_ID = 185;
     const string EUR = 'EUR';
     const int EUR_ID = 277;
+    // what is measured, typed "measure non unit", so that it heads no row of a value table
+    const string GDP = 'GDP';
+    const int GDP_ID = 279;
     const string EURO = 'Euro';
     const int EURO_ID = 386;
     const string DOLLAR = '$';

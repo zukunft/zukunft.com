@@ -1350,6 +1350,18 @@ class test_words extends test_objects
         return $wrd;
     }
 
+    /**
+     * @return word "GDP", which names what is measured and not the unit, so it is typed
+     *              "measure non unit" to describe the number like a unit in a value table
+     */
+    function word_gdp(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::GDP_ID, word_names::GDP);
+        $wrd->set_type(phrase_types::MEASURE_NON_UNIT, new user_message($this->env->usr1));
+        return $wrd;
+    }
+
     function word_usd(): word
     {
         $wrd = new word($this->env->usr1);

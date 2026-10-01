@@ -902,7 +902,9 @@ class value_list extends ListBase
      *
      * the scaling, the measure, the percent format and the factor all belong to the value, e.g.
      * "35.2 billion htp", "10 percent" or "13.2 x", so such a phrase is shown once in the column
-     * header behind the phrase that names the column and never heads a column of its own
+     * header behind the phrase that names the column and never heads a column of its own; the
+     * same holds for what is measured e.g. the "GDP" of "0.3 percent GDP", which is no unit but
+     * describes the number as well (phrase type "measure non unit")
      *
      * @param phrase $phr the phrase to check
      * @return bool true if the phrase is a unit of the number
@@ -910,7 +912,7 @@ class value_list extends ListBase
     private function is_unit(phrase $phr, user_message $msg): bool
     {
         return ($phr->is_scaling($msg) or $phr->is_measure($msg) or $phr->is_percent($msg)
-            or $phr->is_factor($msg));
+            or $phr->is_factor($msg) or $phr->is_measure_non_unit($msg));
     }
 
     /**

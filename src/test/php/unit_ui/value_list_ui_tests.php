@@ -371,6 +371,22 @@ class value_list_ui_tests
         $test_name = '... and heads no column of its own';
         $t->assert($test_name, substr_count($hdr_unit_trp, triple_names::GRAM_PER_KWH), 1);
 
+        // a phrase typed "measure non unit" names what is measured e.g. "GDP" of a loss stated as
+        // a share of the GDP; it describes the number like a unit, so the header names it behind
+        // the unit and the table has no row or column for it, although it is no number type
+        $tbl_non_unit = $t_val->value_list_measure_non_unit_ui()->table_by_related_columns(
+            $msg_ui, new phrase_list_ui(), $loss_lst->column_names(), false, true, $loss_lst);
+        $hdr_non_unit = $lib->html_to_text($lib->str_left_of($tbl_non_unit, '</tr>'));
+        $test_name = 'what is measured is named behind the unit of the column header';
+        $t->assert_text_contains($test_name, $hdr_non_unit,
+            word_names::LOSS . $unit_sep . words::PCT . ' ' . word_names::GDP);
+        $test_name = '... and heads no column of its own';
+        $t->assert($test_name, substr_count($hdr_non_unit, word_names::GDP), 1);
+        // negative: the problems name the rows, so the table has the header row and one row
+        // per problem and no row for the GDP
+        $test_name = '... nor a row of its own';
+        $t->assert($test_name, substr_count($tbl_non_unit, '<' . html_base::TR . '>'), 3);
+
         // a defined column can be a triple that no value carries but whose two parts the values
         // carry, e.g. "potential loss" for the values with "potential" and "loss"; it takes those
         // values before the column of one of its parts, because it names more of their phrases

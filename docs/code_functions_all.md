@@ -8076,6 +8076,7 @@
     \-- is_type - section for function is_type is expected to be info in /word/triple.php
     \-- is_percent - section for function is_percent is expected to be info in /word/triple.php
     \-- is_factor - section for function is_factor is expected to be info in /word/triple.php
+    \-- is_measure_non_unit - section for function is_measure_non_unit is expected to be info in /word/triple.php
     \-- is_measure - section for function is_measure is expected to be info in /word/triple.php
     \-- is_scaling - section for function is_scaling is expected to be info in /word/triple.php
     \-- is_time - section for function is_time is expected to be info in /word/triple.php
@@ -8155,6 +8156,7 @@
     \-- is_scaling - section for function is_scaling is expected to be info in /word/word.php
     \-- is_percent - section for function is_percent is expected to be info in /word/word.php
     \-- is_factor - section for function is_factor is expected to be info in /word/word.php
+    \-- is_measure_non_unit - section for function is_measure_non_unit is expected to be info in /word/word.php
     \-- is_hidden - section for function is_hidden is expected to be info in /word/word.php
     \-- header - section for function header not yet defined that it should be views in /word/word.php
     \-- dsp_graph - section for function dsp_graph not yet defined that it should be to review in /word/word.php

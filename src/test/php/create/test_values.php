@@ -1094,6 +1094,35 @@ class test_values extends test_objects
     }
 
     /**
+     * the loss of two problems as a share of the GDP, where "GDP" names what is measured and
+     * not the unit (typed "measure non unit"), so that the table header is expected to name it
+     * behind the unit and no row or column is expected for it
+     *
+     * @return value_list the loss of global warming and of populism in percent of the GDP
+     */
+    function value_list_measure_non_unit(): value_list
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $loss = $t_wrd->word_loss()->phrase();
+        $pct = $t_wrd->word_percent()->phrase();
+        $gdp = $t_wrd->word_gdp()->phrase();
+        $lst = new value_list($this->env->usr1);
+        $lst->add($this->value_for_phrases([$t_trp->global_warming()->phrase(), $loss, $pct, $gdp], 0.32));
+        $lst->add($this->value_for_phrases([$t_wrd->word_populism()->phrase(), $loss, $pct, $gdp], 0.24));
+        return $lst;
+    }
+
+    /**
+     * @return value_list_ui the loss as a share of the GDP for frontend unit testing
+     */
+    function value_list_measure_non_unit_ui(): value_list_ui
+    {
+        $tl = new test_lib();
+        return $tl->list_to_ui($this->value_list_measure_non_unit(), [api_types::INCL_PHRASES]);
+    }
+
+    /**
      * the potential loss of the solution of global warming and the confidence of that loss, which
      * names the problem but not the solution, like the "initial effort" of solution_prio.json
      *

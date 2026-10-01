@@ -368,6 +368,15 @@ class phrase extends combine_named
     }
 
     /**
+     * @return bool true if this phrase names what is measured e.g. "GDP", which describes the
+     *              number like a unit (see value_list::is_unit) but is not the unit it is stated in
+     */
+    function is_measure_non_unit(user_message $msg): bool
+    {
+        return $this->obj()->is_measure_non_unit($msg);
+    }
+
+    /**
      * the symbol that is shown behind a number instead of naming this phrase with the other
      * phrases of the number, e.g. the "x" of a factor, as a link to this phrase with its
      * description as the tooltip, so that the reader can look up what the symbol means

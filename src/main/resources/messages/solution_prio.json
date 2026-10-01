@@ -514,12 +514,7 @@
     {
       "name": "GDP",
       "description": "a monetary measure of the market value of all the final goods and services produced and rendered in a specific time period by a country.",
-      "refs": [
-        {
-          "name": "Gross_domestic_product",
-          "type": "wikipedia"
-        }
-      ]
+      "type": "measure_non_unit"
     },
     {
       "name": "decline",
