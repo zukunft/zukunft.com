@@ -1690,7 +1690,7 @@ class triple extends sandbox_link_named
     }
 
     /**
-     * @return bool true if the word has the type "scaling_percent" (e.g. "percent")
+     * @return bool true if the triple has the type "percent" (e.g. "impact factor on HTP")
      */
     function is_percent(): bool
     {

@@ -137,7 +137,7 @@
     },
     {
       "name": "percent",
-      "type": "measure_unit",
+      "type": "percent",
       "description": "share expressed per hundred",
       "refs": [
         {

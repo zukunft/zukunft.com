@@ -1339,7 +1339,7 @@ class word extends sandbox_code_id
     }
 
     /**
-     * @returns bool true if the word has the type "scaling_percent" (e.g. "percent")
+     * @returns bool true if the word has the type "percent" (e.g. "percent")
      */
     function is_percent(): bool
     {

@@ -983,7 +983,7 @@ class triple extends sandbox_code_id
     }
 
     /**
-     * @return bool true if the word has the type "scaling_percent" (e.g. "percent")
+     * @return bool true if the triple has the type "percent" (e.g. "impact factor on HTP")
      */
     function is_percent(user_message $msg): bool
     {

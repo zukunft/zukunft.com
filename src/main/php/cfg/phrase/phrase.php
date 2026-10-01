@@ -1683,7 +1683,7 @@ class phrase extends combine_named
     }
 
     /**
-     * @returns true if the phrase type is set to "scaling_percent" (e.g. "percent")
+     * @returns true if the phrase type is set to "percent" (e.g. "percent")
      */
     function is_percent(user_message $msg): bool
     {

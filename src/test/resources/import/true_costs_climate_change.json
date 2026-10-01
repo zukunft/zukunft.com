@@ -31,7 +31,7 @@
     },
     {
       "name": "percent",
-      "type": "measure_unit",
+      "type": "percent",
       "description": "A ratio expressed as a fraction of 100."
     },
     {

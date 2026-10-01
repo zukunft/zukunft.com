@@ -413,7 +413,7 @@
     {
       "name": "percent",
       "description": "one hundredth, scaled by 100 in formulas.",
-      "type": "measure_unit"
+      "type": "percent"
     },
     {
       "name": "share of exposures",
