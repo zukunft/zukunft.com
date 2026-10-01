@@ -160,7 +160,7 @@
     },
     {
       "name": "euro",
-      "type": "measure",
+      "type": "measure_unit",
       "description": "the official currency of the eurozone.",
       "refs": [
         {

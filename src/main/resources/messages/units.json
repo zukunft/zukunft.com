@@ -315,14 +315,14 @@
     {
       "name": "s",
       "description": "The symbol for second is a unit of time derived from the division of the day first into 24 hours, then to 60 minutes and finally to 60 seconds each (24 × 60 × 60 = 86400).",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection"
     },
     {
       "name": "millisecond",
       "plural": "milliseconds",
       "description": "The 1/1000th part of a second.",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection",
       "refs": [
         {
@@ -338,7 +338,7 @@
     {
       "name": "metre",
       "description": "The metre (or meter in US spelling) has been defined as the length of the path travelled by light in vacuum during a time interval of ⁠1/299792458⁠ of a second, where the second is defined by a hyperfine transition frequency of caesium.",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection",
       "refs": [
         {
@@ -354,13 +354,13 @@
     {
       "name": "m",
       "description": "Is a symbol for the metre, the base unit of length in the International System of Units (SI).",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection"
     },
     {
       "name": "kilogram",
       "description": "The kilogram is the SI unit of mass. It is defined by taking the fixed numerical value of the Planck constant h to be 6.62607015×10−34 when expressed in the unit J⋅s, which is equal to kg⋅m2⋅s−1, where the metre and the second are defined in terms of c and ΔνCs.",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection",
       "refs": [
         {
@@ -376,13 +376,13 @@
     {
       "name": "kg",
       "description": "The symbol for the kilogram. The kilogram was originally defined in 1795 during the French Revolution as the mass of one litre of water.",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection"
     },
     {
       "name": "ampere",
       "description": "The ampere is the unit of electric current in the International System of Units (SI). One ampere is equal to 1 coulomb (C) moving past a point per second.",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection",
       "refs": [
         {
@@ -398,13 +398,13 @@
     {
       "name": "A",
       "description": "Is a symbol for ampere",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection"
     },
     {
       "name": "kelvin",
       "description": "The kelvin is the base unit for temperature in the International System of Units (SI). The Kelvin scale is an absolute temperature scale that starts at the lowest possible temperature (absolute zero), taken to be 0 K.",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection",
       "refs": [
         {
@@ -420,13 +420,13 @@
     {
       "name": "K",
       "description": "Is a symbol for kelvin",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection"
     },
     {
       "name": "mole",
       "description": "The mole (symbol mol) is a unit of measurement, the base unit in the International System of Units (SI) for amount of substance, an SI base quantity proportional to the number of elementary entities of a substance.",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection",
       "refs": [
         {
@@ -442,13 +442,13 @@
     {
       "name": "mol",
       "description": "Is a symbol for mole",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection"
     },
     {
       "name": "candela",
       "description": "The candela is the unit of luminous intensity in the International System of Units (SI). It measures luminous power per unit solid angle emitted by a light source in a particular direction.",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection",
       "refs": [
         {
@@ -464,7 +464,7 @@
     {
       "name": "cd",
       "description": "Is a symbol for candela",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection"
     },
     {
@@ -500,7 +500,7 @@
     {
       "name": "hertz",
       "description": "The hertz (symbol: Hz) is the unit of frequency in the International System of Units (SI), often described as being equivalent to one event (or cycle) per second",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection",
       "refs": [
         {
@@ -516,13 +516,13 @@
     {
       "name": "Hz",
       "description": "Is a symbol for hertz, which is the unit of frequency in the International System of Units (SI), often described as being equivalent to one event (or cycle) per second",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection"
     },
     {
       "name": "radian",
       "description": "The radian, denoted by the symbol rad, is the unit of angle in the International System of Units (SI) and is the standard unit of angular measure used in many areas of mathematics.",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection",
       "refs": [
         {
@@ -538,13 +538,13 @@
     {
       "name": "rad",
       "description": "Is a symbol for radian",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection"
     },
     {
       "name": "steradian",
       "description": "The steradian or square radian[1][2] is the unit of solid angle in the International System of Units (SI). It is used in three dimensional geometry, and is analogous to the radian, which quantifies planar angles.",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection",
       "refs": [
         {
@@ -560,13 +560,13 @@
     {
       "name": "sr",
       "description": "Is a symbol for steradian",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection"
     },
     {
       "name": "newton",
       "description": "The newton is the unit of force in the International System of Units (SI). Expressed in terms of SI base units, it is 1 kg⋅m/s2, the force that accelerates a mass of one kilogram at one metre per second squared.",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection",
       "refs": [
         {
@@ -582,13 +582,13 @@
     {
       "name": "N",
       "description": "Is a symbol for newton",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection"
     },
     {
       "name": "pascal",
       "description": "The pascal is the unit of pressure in the International System of Units (SI). It is also used to quantify internal pressure, stress, Young's modulus, and ultimate tensile strength.",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection",
       "refs": [
         {
@@ -604,13 +604,13 @@
     {
       "name": "Pa",
       "description": "Is a symbol for pascal",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection"
     },
     {
       "name": "joule",
       "description": "One joule is equal to the amount of work done when a force of one newton displaces a body through a distance of one metre in the direction of that force.",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection",
       "refs": [
         {
@@ -626,13 +626,13 @@
     {
       "name": "J",
       "description": "Is a symbol for joule",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection"
     },
     {
       "name": "watt",
       "description": "The watt is the unit of power or radiant flux in the International System of Units (SI), equal to 1 joule per second or 1 kg⋅m2⋅s−3",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection",
       "refs": [
         {
@@ -648,13 +648,13 @@
     {
       "name": "W",
       "description": "Is a symbol for watt",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection"
     },
     {
       "name": "coulomb",
       "description": "The SI defines the coulomb as \"the quantity of electricity carried in 1 second by a current of 1 ampere\". Then the value of the elementary charge e is defined to be 1.602176634×10−19 C.",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection",
       "refs": [
         {
@@ -670,13 +670,13 @@
     {
       "name": "C",
       "description": "Is a symbol for coulomb",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection"
     },
     {
       "name": "volt",
       "description": "One volt is defined as the electric potential between two points of a conducting wire when an electric current of one ampere dissipates one watt of power between those points.",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection",
       "refs": [
         {
@@ -692,13 +692,13 @@
     {
       "name": "V",
       "description": "Is a symbol for volt",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection"
     },
     {
       "name": "Weber",
       "description": "Is the unit of magnetic flux in the International System of Units (SI). The unit is derived (through Faraday's law of induction) from the relationship 1 Wb = 1 V⋅s (volt-second). A magnetic flux density of 1 Wb/m2 (one weber per square metre) is one tesla.",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection",
       "refs": [
         {
@@ -714,13 +714,13 @@
     {
       "name": "Wb",
       "description": "Is a symbol for Weber",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection"
     },
     {
       "name": "tesla",
       "description": "The tesla is the unit of magnetic flux density (also called magnetic B-field strength) in the International System of Units (SI).\n\nOne tesla is equal to one weber per square metre.",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection",
       "refs": [
         {
@@ -736,13 +736,13 @@
     {
       "name": "T",
       "description": "Is a symbol for tesla",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection"
     },
     {
       "name": "farad",
       "description": "The farad is the unit of electrical capacitance, the ability of a body to store an electrical charge, in the International System of Units (SI), equivalent to 1 coulomb per volt (C/V).",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection",
       "refs": [
         {
@@ -758,13 +758,13 @@
     {
       "name": "F",
       "description": "Is a symbol for farad",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection"
     },
     {
       "name": "ohm",
       "description": "The ohm is the unit of electrical resistance in the International System of Units (SI).",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection",
       "refs": [
         {
@@ -780,13 +780,13 @@
     {
       "name": "Ω",
       "description": "Is a symbol for ohm",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection"
     },
     {
       "name": "siemens",
       "description": "The siemens is the unit of electric conductance, electric susceptance, and electric admittance in the International System of Units (SI). Conductance, susceptance, and admittance are the reciprocals of resistance, reactance, and impedance respectively; hence one siemens is equal to the reciprocal of one ohm (Ω−1) and is also referred to as the mho.",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection",
       "refs": [
         {
@@ -802,13 +802,13 @@
     {
       "name": "S",
       "description": "Is a symbol for siemens",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection"
     },
     {
       "name": "henry",
       "description": "The henry is the unit of electrical inductance in the International System of Units (SI).[1] If a current of 1 ampere flowing through a coil produces flux linkage of 1 weber turn, that coil has a self-inductance of 1 henry.",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection",
       "refs": [
         {
@@ -824,13 +824,13 @@
     {
       "name": "H",
       "description": "Is a symbol for henry",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection"
     },
     {
       "name": "celsius",
       "description": "The degree Celsius is the unit of temperature on the Celsius temperature scale one of two temperature scales used in the International System of Units (SI), the other being the closely related Kelvin scale.",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection",
       "refs": [
         {
@@ -846,13 +846,13 @@
     {
       "name": "°C",
       "description": "Is a symbol for celsius",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection"
     },
     {
       "name": "lumen",
       "description": "The lumen is the unit of luminous flux, a measure of the perceived power of visible light emitted by a source, in the International System of Units (SI).",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection",
       "refs": [
         {
@@ -868,13 +868,13 @@
     {
       "name": "lm",
       "description": "Is a symbol for lumen",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection"
     },
     {
       "name": "lux",
       "description": "The lux is the unit of illuminance, or luminous flux per unit area, in the International System of Units (SI).",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection",
       "refs": [
         {
@@ -890,13 +890,13 @@
     {
       "name": "lx",
       "description": "Is a symbol for lux",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection"
     },
     {
       "name": "becquerel",
       "description": "The becquerel is the unit of radioactivity in the International System of Units (SI). One becquerel is defined as an activity of one decay per second, on average, for aperiodic decay events of a radionuclide.",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection",
       "refs": [
         {
@@ -912,13 +912,13 @@
     {
       "name": "Bq",
       "description": "Is a symbol for becquerel",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection"
     },
     {
       "name": "gray",
       "description": "The gray is the unit of ionizing radiation dose in the International System of Units (SI), defined as the absorption of one joule of radiation energy per kilogram of matter.",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection",
       "refs": [
         {
@@ -934,13 +934,13 @@
     {
       "name": "Gy",
       "description": "Is a symbol for gray",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection"
     },
     {
       "name": "sievert",
       "description": "The sievert is a derived unit in the International System of Units (SI) intended to represent the stochastic health risk of ionizing radiation, which is defined as the probability of causing radiation-induced cancer and genetic damage.",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection",
       "refs": [
         {
@@ -956,13 +956,13 @@
     {
       "name": "Sv",
       "description": "Is a symbol for sievert",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection"
     },
     {
       "name": "katal",
       "description": "The katal is a unit of the International System of Units (SI) used for quantifying the catalytic activity of enzymes (that is, measuring the enzymatic activity level in enzyme catalysis) and other catalysts.",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection",
       "refs": [
         {
@@ -978,7 +978,7 @@
     {
       "name": "kat",
       "description": "Is a symbol for katal",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection"
     },
     {
@@ -1415,7 +1415,7 @@
     {
       "name": "kilometre",
       "description": "A kilometre is a unit of length in the International System of Units (SI) equal to one thousand metres.",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection",
       "refs": [
         {
@@ -1431,7 +1431,7 @@
     {
       "name": "km",
       "description": "Is a symbol for kilometre",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection"
     },
     {
@@ -1452,7 +1452,7 @@
     {
       "name": "are",
       "description": "A unit of area equal to 100 square metres, defined by older forms of the metric system but now outside the modern International System of Units.",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection",
       "refs": [
         {
@@ -1468,13 +1468,13 @@
     {
       "name": "m2",
       "description": "Is a symbol for square metre",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection"
     },
     {
       "name": "hectare",
       "description": "A non-SI metric unit of area equal to a square with 100-metre sides, or 10,000 square metres, primarily used in land measurement.",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection",
       "refs": [
         {
@@ -1490,7 +1490,7 @@
     {
       "name": "ha",
       "description": "Is a symbol for hectare",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection"
     },
     {
@@ -1511,13 +1511,13 @@
     {
       "name": "m3",
       "description": "Is a symbol for cubic metre",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection"
     },
     {
       "name": "litre",
       "description": "The litre is a metric unit of volume equal to 1 cubic decimetre, or 1000 cubic centimetres. It is not an official SI unit, though the SI unit for volume is the cubic metre.",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection",
       "refs": [
         {
@@ -1533,13 +1533,13 @@
     {
       "name": "l",
       "description": "Is a symbol for litre",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection"
     },
     {
       "name": "kWh",
       "description": "A kilowatt-hour is a non-SI unit of energy equal to 3.6 megajoules in SI units, which is the energy delivered by one kilowatt of power for one hour.",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection",
       "refs": [
         {
@@ -1555,7 +1555,7 @@
     {
       "name": "gram",
       "description": "The gram is a unit of mass in the International System of Units (SI) equal to one thousandth of a kilogram.",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection",
       "refs": [
         {
@@ -1571,13 +1571,13 @@
     {
       "name": "g",
       "description": "Is a symbol for gram",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection"
     },
     {
       "name": "tonne",
       "description": "A metric unit of mass equal to 1,000 kilograms, also called a metric ton.",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection",
       "refs": [
         {
@@ -1593,7 +1593,7 @@
     {
       "name": "t",
       "description": "Is a symbol for tonne",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection"
     },
     {
@@ -1998,7 +1998,7 @@
       "from": "second",
       "verb": "must be one of",
       "to": "time unit",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection",
       "refs": [
         {
@@ -2140,7 +2140,7 @@
       "from": "metre",
       "verb": "per",
       "to": "second",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection",
       "refs": [
         {
@@ -2362,7 +2362,7 @@
       "from": "metre",
       "verb": "per",
       "to": "second squared",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection",
       "refs": [
         {
@@ -2379,7 +2379,7 @@
       "name": "m/s2",
       "verb": "is alias of",
       "to": "metre per second squared",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection"
     },
     {
@@ -2388,7 +2388,7 @@
       "from": "metre",
       "verb": "per",
       "to": "second cubed",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection",
       "refs": [
         {
@@ -2401,7 +2401,7 @@
       "name": "m/s3",
       "verb": "is alias of",
       "to": "metre per second cubed",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection"
     },
     {
@@ -2410,7 +2410,7 @@
       "from": "radian",
       "verb": "per",
       "to": "second",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection",
       "refs": [
         {
@@ -2427,7 +2427,7 @@
       "name": "rad/s",
       "verb": "is alias of",
       "to": "radian per second",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection"
     },
     {
@@ -2471,14 +2471,14 @@
       "from": "radian",
       "verb": "per",
       "to": "second squared",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection"
     },
     {
       "name": "rad/s2",
       "verb": "is alias of",
       "to": "radian per second squared",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection"
     },
     {
@@ -2492,7 +2492,7 @@
       "description": "The metre per second is the unit of both speed (a scalar quantity) and velocity (a vector quantity, which has direction and magnitude) in the International System of Units (SI), equal to the speed of a body covering a distance of one metre in a time of one second.",
       "verb": "is symbol for",
       "to": "metre per second",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection"
     },
     {
@@ -2525,14 +2525,14 @@
       "from": "hertz",
       "verb": "per",
       "to": "second",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection"
     },
     {
       "name": "Hz/s",
       "verb": "is alias of",
       "to": "hertz per second",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection"
     },
     {

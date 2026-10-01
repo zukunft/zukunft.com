@@ -58,9 +58,11 @@ class phrase_types
     // (see phrase::number_symbol and sandbox_value::number_symbols)
     const string FACTOR = "factor";
     const string FACTOR_NAME = "scaling factor";
-    const string MEASURE = "measure";
+    // the unit a number is stated in e.g. "metre" or "CHF", shown behind the number; the const
+    // keeps its name, because is_measure() and the measure lists are used all over the code
+    const string MEASURE = "measure_unit";
     const int MEASURE_ID = 3;
-    const string MEASURE_NAME = "measure type";
+    const string MEASURE_NAME = "measure unit";
     // what is measured e.g. "GDP": like a unit it describes the number and not the row of a
     // value table, so it heads no row or column of its own (see value_list::is_unit), but it is
     // not the unit the number is stated in, so a value carries it next to its measure e.g. "EUR"

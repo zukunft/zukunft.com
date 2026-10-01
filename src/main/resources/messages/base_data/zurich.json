@@ -184,7 +184,7 @@
           "type": "wikidata"
         }
       ],
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "km2",
@@ -198,7 +198,7 @@
           "type": "wikidata"
         }
       ],
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "CHF",
@@ -212,11 +212,11 @@
           "type": "wikidata"
         }
       ],
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "HTP",
-      "type": "measure",
+      "type": "measure_unit",
       "description": "Happy Time Point, the zukunft.com DALY-extended wellbeing unit"
     },
     {

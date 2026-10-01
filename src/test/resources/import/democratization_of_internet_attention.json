@@ -81,7 +81,7 @@
     {
       "name": "CHF",
       "description": "Swiss franc.",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "reader",
@@ -275,7 +275,7 @@
     {
       "name": "USD",
       "description": "US dollar.",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "2024",

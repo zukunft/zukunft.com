@@ -184,11 +184,11 @@
           "type": "wikidata"
         }
       ],
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "USD",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "percent",
@@ -360,7 +360,7 @@
       "from": "USD",
       "verb": "per",
       "to": "EUR",
-      "type": "measure",
+      "type": "measure_unit",
       "description": "the exchange rate as US dollars for one euro, e.g. to convert the GDP figures that a source states in US dollars"
     }
   ],

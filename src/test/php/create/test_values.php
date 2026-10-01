@@ -1067,8 +1067,8 @@ class test_values extends test_objects
     }
 
     /**
-     * the loss of two problems in a unit that is a triple typed "measure" (gram per kWh), so
-     * that the table header is expected to show the triple behind the "in" like a measure word
+     * the loss of two problems in a unit that is a triple typed "measure unit" (gram per kWh), so
+     * that the table header is expected to show the triple behind the "in" like a unit word
      *
      * @return value_list the loss of global warming and of populism in gram per kWh
      */

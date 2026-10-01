@@ -255,11 +255,11 @@
     },
     {
       "name": "millisecond",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "millimetre",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "mean"
@@ -1190,7 +1190,7 @@
       "verb": "must be one of",
       "to": "unit",
       "description": "unit of time, years",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "time unit",
@@ -1203,7 +1203,7 @@
       "from": "second",
       "verb": "must be one of",
       "to": "time unit",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "degree (angle)",
@@ -1211,7 +1211,7 @@
       "verb": "must be one of",
       "to": "angle",
       "description": "unit of plane angle",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "intraparietal sulcus",

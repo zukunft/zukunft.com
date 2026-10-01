@@ -263,7 +263,7 @@ A word is the atomic phrase:
 {
   "name": "Fermi",
   "description": "Italian-American physicist, after whom Fermi estimation is named",
-  "type": "measure",
+  "type": "measure_unit",
   "refs": [
     { "name": "Enrico_Fermi", "type": "wikipedia" },
     { "name": "Q8753",        "type": "wikidata" }
@@ -272,27 +272,27 @@ A word is the atomic phrase:
 ```
 
 - `name` is the unique key. Descriptions and `refs` are optional.
-- `type` is set only when the word says how the number is read: a measure (SI unit), or a
-  format like `percent` or `factor`. A format word is shown as its symbol behind the number,
+- `type` is set only when the word says how the number is read: a `measure_unit` (SI unit,
+  currency), or a format like `percent` or `factor`. A format word is shown as its symbol behind the number,
   and the symbol is data too: a triple like `x is symbol for factor` in the same file defines
   it (see `phrase_types` and `phrase::number_symbol`).
-- `measure` is only the **unit** of a numeric value (`EUR`, `metre`, `person`), never *what*
-  is measured. `GDP`, `population`, `force` or `temperature` name the quantity; they get no
-  type, and the unit the number is stated in is a separate phrase of the value
-  (`["Germany", "GDP", "EUR", "2023"]`). Typing the quantity as `measure` makes every value
-  with the quantity and its unit a value with two measures (see *A value or result has only
-  one phrase of the type measure, percent or factor*).
+- `measure_unit` is only the **unit** of a numeric value (`EUR`, `metre`, `person`), never
+  *what* is measured. `GDP`, `population`, `force` or `temperature` name the quantity; they get
+  no type, and the unit the number is stated in is a separate phrase of the value
+  (`["Germany", "GDP", "EUR", "2023"]`). Typing the quantity as `measure_unit` makes every
+  value with the quantity and its unit a value with two units (see *A value or result has only
+  one phrase of the type measure unit, percent or factor*).
 - A quantity that describes the number like a unit gets the type `measure_non_unit`
   (`{ "name": "GDP", "type": "measure_non_unit" }` in `solution_prio.json`): a value table
   then shows it in the column header behind the unit (`loss in percent GDP`) instead of
   opening a row or column for it (`value_list::is_unit`), while it stays no number type, so
   the value still carries its real unit (`["world", "GDP", "trillion", "EUR", "2024"]`).
-- The other way round, **every unit of a numeric value is of the type `measure`**: a word or
+- The other way round, **every unit of a numeric value is of the type `measure_unit`**: a word or
   triple that a value uses as its unit (`watt`, `W`, `kWh`, `USD per EUR`) carries
-  `"type": "measure"` in its home file (`units.json` for the SI units), because only a typed
+  `"type": "measure_unit"` in its home file (`units.json` for the SI units), because only a typed
   phrase is shown as the unit of the number and heads a value table column as such. A later
   file that re-declares the unit either repeats the type verbatim (`{ "name": "watt", "type":
-  "measure" }` in `physics.json`) or stays name-only; an untyped unit in a value is a smell
+  "unit" }` in `physics.json`) or stays name-only; an untyped unit in a value is a smell
   that the home definition is missing.
 - `refs` lists external citations (Wikipedia article slug, Wikidata Q-id).
 
@@ -1314,9 +1314,9 @@ operand (see *Calc-validation*), and two same-measure operands that share *one*
 context can only be told apart by distinct names (entity atoms or triples), never
 by a bare genus word alone.
 
-### A value or result has only one phrase of the type measure, percent or factor
+### A value or result has only one phrase of the type measure unit, percent or factor
 
-A phrase of the type `measure` (`EUR`, `km2`, `gram per kWh`), `percent`
+A phrase of the type `measure_unit` (`EUR`, `km2`, `gram per kWh`), `percent`
 (`percent`) or `factor` (`factor`) says **how the number is stated**: the
 frontend shows it as the unit or as the symbol behind the number (`%`, `x`) and
 heads a table column with it. A number is stated in one way only, so the `words`
@@ -1329,7 +1329,7 @@ combination is **one triple** that carries the one type, like the unit
 `gram per kWh` of `use_cases/pv_switzerland_co2.json`:
 
 ```json
-{ "from": "gram", "verb": "per", "to": "kWh", "type": "measure" }
+{ "from": "gram", "verb": "per", "to": "kWh", "type": "measure_unit" }
 ```
 
 **A percent is already a factor.** `start_page/problem_disinformation.json`
@@ -1362,7 +1362,7 @@ direction (see *The order carries meaning → triple*):
 - **Right** — the unit is the triple:
 
 ```json
-{ "from": "USD", "verb": "per", "to": "tonne", "type": "measure" }
+{ "from": "USD", "verb": "per", "to": "tonne", "type": "measure_unit" }
 
 { "words": ["carbon price", "USD per tonne"], "number": "19" }
 ```
@@ -1379,7 +1379,7 @@ direction (see *The order carries meaning → triple*):
 - **Right**:
 
 ```json
-{ "from": "CHF", "verb": "per", "to": "DALY", "type": "measure" }
+{ "from": "CHF", "verb": "per", "to": "DALY", "type": "measure_unit" }
 
 { "words": ["conversion ratio", "CHF per DALY", "assumed"], "number": "50000" }
 ```
@@ -1387,11 +1387,11 @@ direction (see *The order carries meaning → triple*):
 **What is measured is no measure.** A share of the GDP is stated as a
 percentage; `GDP` only says what the share refers to:
 
-- **Wrong** — the word `GDP` typed `measure` in `base_data/GDP.json`, so every
+- **Wrong** — the word `GDP` typed `measure_unit` in `base_data/GDP.json`, so every
   value with `percent` and `GDP` is a value with two number types:
 
 ```json
-{ "name": "GDP", "type": "measure" }
+{ "name": "GDP", "type": "measure_unit" }
 
 { "words": ["global warming", "potential loss", "percent", "GDP", "assumed"], "number": "-0.32" }
 ```

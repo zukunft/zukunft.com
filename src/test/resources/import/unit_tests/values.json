@@ -255,11 +255,11 @@
     },
     {
       "name": "CHF",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "USD",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "world"

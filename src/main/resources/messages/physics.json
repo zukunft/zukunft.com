@@ -41,7 +41,7 @@
     },
     {
       "name": "watt",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "newton"
@@ -1190,7 +1190,7 @@
     },
     {
       "name": "W",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "Q"

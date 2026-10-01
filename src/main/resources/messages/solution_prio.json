@@ -469,7 +469,7 @@
     },
     {
       "name": "htp",
-      "type": "measure",
+      "type": "measure_unit",
       "description": "the symbol used in formulas for happy time points"
     },
     {
@@ -500,7 +500,7 @@
     },
     {
       "name": "EUR",
-      "type": "measure",
+      "type": "measure_unit",
       "description": "ISO 4217 alphabetic code for the euro."
     },
     {
@@ -1520,7 +1520,7 @@
     {
       "name": "person year",
       "description": "the work of one person during one year, the unit of the initial effort",
-      "type": "measure",
+      "type": "measure_unit",
       "from": "person",
       "verb": "times",
       "to": "year"

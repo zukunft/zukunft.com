@@ -154,7 +154,7 @@ class json_validation
         words::CONFIDENCE,
         triples::PROBABILITY_RANGE_FACTOR,
     ];
-    const string CHK_NUMBER_TYPE = 'value with more than one measure, percent or factor phrase';
+    const string CHK_NUMBER_TYPE = 'value with more than one measure unit, percent or factor phrase';
     // the phrase types that say how a number is stated, so a value has only one phrase of them
     const array NUMBER_TYPES = [phrase_types::MEASURE, phrase_types::PERCENT, phrase_types::FACTOR];
     // the sections whose entries name a number by its "words"
@@ -555,7 +555,7 @@ class json_validation
 
     /**
      * check that every value, result and calc-validation entry names only one phrase of the
-     * type measure, percent or factor
+     * type measure unit, percent or factor
      *
      * the type of a phrase is defined once, in its home file, and every other file re-declares
      * the phrase by its name only, so the types are collected over the main data; a file can
@@ -620,7 +620,7 @@ class json_validation
 
     /**
      * the values, results and calc-validation entries of the given file that name more than
-     * one phrase of the type measure, percent or factor (docs/llm/json_structure.md)
+     * one phrase of the type measure unit, percent or factor (docs/llm/json_structure.md)
      *
      * only the "words" of an entry, because the "context" of a calc-validation entry is the
      * union of the words of several values

@@ -16,6 +16,8 @@ assign all values assigned to a symbol to the main word or triple but in the def
 
 if a value of a phrase is shown that has a symbol use the shortest symbol that is unique for the page. E.g. if values in Euro are shown use € instead of Euro
 
+the phrase type "measure type" (code id "measure") has been renamed to "measure unit" (code id "measure_unit") in phrase_types.csv and the code; a database created before the rename still carries the old code id in the phrase_types table, so the update process of the code link tables (see the TODO in cfg/phrase/phrase_types.php) must rename it before the next production upgrade
+
 ## use case
 
 PV in Switzerland

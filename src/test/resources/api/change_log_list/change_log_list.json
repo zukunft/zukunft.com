@@ -43,7 +43,7 @@
         "table_id": 27,
         "field_id": 115,
         "row_id": 1,
-        "old_value": "measure",
+        "old_value": "measure_unit",
         "old_id": 3,
         "new_value": "time",
         "new_id": 2,

@@ -151,19 +151,19 @@
     },
     {
       "name": "DALY",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "HTP",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "CHF",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "dB",
-      "type": "measure",
+      "type": "measure_unit",
       "description": "decibel, sound pressure level"
     },
     {

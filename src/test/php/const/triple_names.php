@@ -241,8 +241,8 @@ class triple_names
     const int COLUMN_POTENTIAL_LOSS_EXPLAINS_PROBLEM_ID = 218;
     const string COLUMN_POTENTIAL_GAIN_EXPLAINS_SOLUTION = 'column potential gain is explaining column for column solution (high prio)';
     const int COLUMN_POTENTIAL_GAIN_EXPLAINS_SOLUTION_ID = 222;
-    // a unit triple typed "measure", so that a table header puts it behind the "in" like a
-    // measure word (see pv_switzerland_co2.json)
+    // a unit triple typed "measure unit", so that a table header puts it behind the "in" like a
+    // unit word (see pv_switzerland_co2.json)
     const string GRAM_PER_KWH = 'gram per kWh';
     const int GRAM_PER_KWH_ID = 1552;
     // TODO use the name and not the id for the use cases

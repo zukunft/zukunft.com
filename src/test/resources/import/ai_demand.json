@@ -193,7 +193,7 @@
     },
     {
       "name": "mile",
-      "type": "measure",
+      "type": "measure_unit",
       "description": "a unit of length equal to 1.609344 kilometres.",
       "refs": [
         {
@@ -262,7 +262,7 @@
     },
     {
       "name": "power",
-      "type": "measure",
+      "type": "measure_unit",
       "description": "the rate of energy transfer; here the connected electrical load of data centres.",
       "refs": [
         {
@@ -273,7 +273,7 @@
     },
     {
       "name": "gigawatt",
-      "type": "measure",
+      "type": "measure_unit",
       "description": "one billion watts.",
       "refs": [
         {
@@ -284,7 +284,7 @@
     },
     {
       "name": "megawatt",
-      "type": "measure",
+      "type": "measure_unit",
       "description": "one million watts.",
       "refs": [
         {
@@ -298,11 +298,11 @@
     },
     {
       "name": "billion",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "trillion",
-      "type": "measure",
+      "type": "measure_unit",
       "description": "the natural number 10^12 in the short scale.",
       "refs": [
         {
@@ -313,7 +313,7 @@
     },
     {
       "name": "month",
-      "type": "measure",
+      "type": "measure_unit",
       "description": "a unit of time of about 30 days.",
       "refs": [
         {
@@ -324,7 +324,7 @@
     },
     {
       "name": "year",
-      "type": "measure",
+      "type": "measure_unit",
       "description": "the orbital period of Earth about the Sun.",
       "refs": [
         {
@@ -626,7 +626,7 @@
       "from": "dollar",
       "verb": "scaled by",
       "to": "billion",
-      "type": "measure",
+      "type": "measure_unit",
       "description": "billions of US dollars.",
       "refs": [
         {

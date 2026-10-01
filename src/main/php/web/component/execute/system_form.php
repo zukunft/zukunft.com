@@ -461,7 +461,7 @@ class system_form extends component
     }
 
     /**
-     * type subtitle for an object with a non-default type e.g. "measure" for a measure word
+     * type subtitle for an object with a non-default type e.g. "measure unit" for a unit word
      * the type name is a link to the type page that shows the other phrases of the same type
      * and the fixed code rules linked to this type
      *

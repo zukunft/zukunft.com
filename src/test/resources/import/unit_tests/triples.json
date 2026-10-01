@@ -13,7 +13,7 @@
     {
       "name": "hertz",
       "description": "The hertz (symbol: Hz) is the unit of frequency in the International System of Units (SI), often described as being equivalent to one event (or cycle) per second",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection",
       "refs": [
         {
@@ -137,14 +137,14 @@
       "from": "hertz",
       "verb": "per",
       "to": "second",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection"
     },
     {
       "name": "Hz/s",
       "verb": "is alias of",
       "to": "hertz per second",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection"
     },
     {

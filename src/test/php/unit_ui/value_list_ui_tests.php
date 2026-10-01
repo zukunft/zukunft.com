@@ -359,7 +359,7 @@ class value_list_ui_tests
         $test_name = '... and with the main columns every unit is shown';
         $t->assert($test_name, substr_count($hdr_unit_main, word_names::LOSS . $unit_sep), 2);
 
-        // a unit can be a triple, e.g. "gram per kWh", which the import types "measure" like
+        // a unit can be a triple, e.g. "gram per kWh", which the import types "measure unit" like
         // its words (see pv_switzerland_co2.json), so the header puts it behind the "in" too
         $tbl_unit_trp = $t_val->value_list_unit_triple_ui()->table_by_related_columns(
             $msg_ui, new phrase_list_ui(), $loss_lst->column_names(), false, true, $loss_lst);

@@ -11,7 +11,7 @@
       "name": "second",
       "description": "The second is defined by taking the fixed numerical value of the caesium frequency, ΔνCs, the unperturbed ground-state hyperfine transition frequency of the caesium 133 atom, to be 9192631770 when expressed in the unit Hz, which is equal to s−1.",
       "plural": "seconds",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection",
       "refs": [
         {
@@ -23,14 +23,14 @@
     {
       "name": "s",
       "description": "The symbol for second is a unit of time derived from the division of the day first into 24 hours, then to 60 minutes and finally to 60 seconds each (24 × 60 × 60 = 86400).",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection"
     },
     {
       "name": "millisecond",
       "plural": "milliseconds",
       "description": "The 1'000 part of a second.",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection",
       "refs": [
         {
@@ -42,7 +42,7 @@
     {
       "name": "metre",
       "description": "The metre (or meter in US spelling) has been defined as the length of the path travelled by light in vacuum during a time interval of \u20601/299792458\u2060 of a second, where the second is defined by a hyperfine transition frequency of caesium.",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection",
       "refs": [
         {
@@ -54,12 +54,12 @@
     {
       "name": "m",
       "description": "Is a symbol for the metre is the base unit of length in the International System of Units (SI).",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection"
     },
     {
       "name": "m/s",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection"
     }
   ],
@@ -69,7 +69,7 @@
       "from": "metre",
       "verb": "per",
       "to": "second",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection",
       "refs": [
         {
@@ -82,7 +82,7 @@
       "from": "m/s",
       "verb": "is alias of",
       "to": "metre per second",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection"
     }
   ]

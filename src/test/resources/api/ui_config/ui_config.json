@@ -7659,9 +7659,9 @@
                 "id": 2
             },
             {
-                "name": "measure type",
-                "code_id": "measure",
-                "description": "a measure word such as meter, kilogram, ...",
+                "name": "measure unit",
+                "code_id": "measure_unit",
+                "description": "a unit word such as metre, kilogram, ... in which a number is stated",
                 "id": 3
             },
             {

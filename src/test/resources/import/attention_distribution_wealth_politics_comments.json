@@ -26,7 +26,7 @@
     {
       "name": "amplification ratio",
       "description": "reach on ranked timelines divided by reach on chronological timelines minus one, in percent (Huszar 2022); 0% means equal reach.",
-      "type": "measure"
+      "type": "measure_non_unit"
     },
     {
       "name": "inauthentic amplification",
@@ -379,7 +379,7 @@
     {
       "name": "antisemitic comment share",
       "description": "share of comments with antisemitic content in the sampled comment sections.",
-      "type": "measure"
+      "type": "measure_non_unit"
     },
     {
       "name": "German news outlet Facebook pages",
@@ -408,172 +408,172 @@
     {
       "name": "count",
       "description": "number of items or persons.",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "percent",
       "description": "one hundredth, scaled by 100 in formulas.",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "share of exposures",
       "description": "fraction of all exposures accounted for by a group.",
-      "type": "measure"
+      "type": "measure_non_unit"
     },
     {
       "name": "share of population",
       "description": "fraction of all users or persons that a group represents.",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "share of recommended political content",
       "description": "fraction of algorithmically recommended political content in a test feed attributable to a group.",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "share of retweets",
       "description": "fraction of all retweets received.",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "share of news items",
       "description": "fraction of all news items.",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "share of diplomat accounts labelled",
       "description": "fraction of PRC diplomat accounts labelled as government affiliated by the platform.",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "exposure ratio",
       "description": "exposures of one group divided by exposures of another group.",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "accuracy",
       "description": "share of correct categorizations, in percent.",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "views",
       "description": "number of video views.",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "likes",
       "description": "number of likes.",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "retweets",
       "description": "number of retweets.",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "comments",
       "description": "number of comments.",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "tweets",
       "description": "number of tweets.",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "tweets per day",
       "description": "average number of tweets per day.",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "videos",
       "description": "number of videos.",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "videos per account per day",
       "description": "average number of videos published per account per day.",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "articles",
       "description": "number of press articles.",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "outlets",
       "description": "number of media outlets.",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "papers",
       "description": "number of research papers.",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "posts",
       "description": "number of user comments or posts.",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "participants",
       "description": "number of experimental subjects or accounts.",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "test accounts",
       "description": "number of sock puppet accounts.",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "countries",
       "description": "number of countries.",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "parties",
       "description": "number of political parties.",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "USD",
       "description": "US dollar.",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "start year",
       "description": "first calendar year of an observation period.",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "end year",
       "description": "last calendar year of an observation period.",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "years",
       "description": "duration in calendar years.",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "year",
       "description": "calendar year of a study or event.",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "minutes",
       "description": "duration in minutes.",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "milliseconds",
       "description": "duration in milliseconds.",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "stimulus onset asynchrony",
       "description": "time between gaze shift and target onset in the gaze cueing task.",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "minimum",

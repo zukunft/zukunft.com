@@ -1550,7 +1550,7 @@ class test_triples extends test_objects
     }
 
     /**
-     * @return triple "gram per kWh", a unit triple typed "measure" like its two words, so that
+     * @return triple "gram per kWh", a unit triple typed "measure unit" like its two words, so that
      *                a table header shows it behind the "in" (see pv_switzerland_co2.json)
      */
     function gram_per_kwh(): triple

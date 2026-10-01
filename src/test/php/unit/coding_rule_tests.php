@@ -390,7 +390,7 @@ class coding_rule_tests
 
     /**
      * verify that the number type check of json_validation lists a value, a result or a
-     * calc-validation entry with more than one phrase of the type measure, percent or factor,
+     * calc-validation entry with more than one phrase of the type measure unit, percent or factor,
      * but not an entry with one such phrase; the main data is only listed in
      * docs/json_findings.md and not asserted, because many values still wait for their triple
      * (see docs/llm/json_structure.md)
@@ -400,7 +400,7 @@ class coding_rule_tests
      */
     function json_value_number_type_tests(test_cleanup $t): void
     {
-        $test_name = 'the phrases of the type measure, percent or factor are collected over the files';
+        $test_name = 'the phrases of the type measure unit, percent or factor are collected over the files';
         $chk = new json_validation();
         $wrd_pct = [json_fields::NAME => words::PERCENT, json_fields::TYPE_NAME => phrase_types::PERCENT];
         $wrd_fac = [json_fields::NAME => words::FACTOR, json_fields::TYPE_NAME => phrase_types::FACTOR];
