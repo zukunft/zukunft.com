@@ -2538,7 +2538,8 @@ class user extends db_id_object_non_sandbox
 
         $result = '';
         if ($this->is_profile_valid()) {
-            $result = $sys->typ_lst->usr_pro->code_id($this->profile_id);
+            // the profile list may not yet be loaded e.g. on the program start, which must not end in a fatal
+            $result = $sys->typ_lst->usr_pro->code_id($this->profile_id) ?? '';
         }
         return $result;
     }

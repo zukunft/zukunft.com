@@ -403,8 +403,7 @@ class triple extends sandbox_link_named
                 $this->set_name_generated($db_row[triple_fields::FLD_NAME_AUTO]);
             }
             if (array_key_exists(fields::FLD_CODE_ID, $db_row)) {
-                // a local buffer for the permission check; on a db load the row user is trusted
-                $this->set_code_id($db_row[fields::FLD_CODE_ID], new user_message($this->get_user())); // not reported, see above
+                $this->set_code_id_db($db_row[fields::FLD_CODE_ID]);
             }
             if (array_key_exists(triple_fields::FLD_WIGHT, $db_row)) {
                 $this->weight = $db_row[triple_fields::FLD_WIGHT];
@@ -1563,6 +1562,15 @@ class triple extends sandbox_link_named
             ]);
         }
         return $result;
+    }
+
+    /**
+     * set the code id without check
+     * should only be called by the database mapper function
+     */
+    function set_code_id_db(?string $code_id): void
+    {
+        $this->code_id = $code_id;
     }
 
     /**
