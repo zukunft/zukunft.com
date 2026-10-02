@@ -41,7 +41,7 @@ class files
      * CAUTION! auto fix setting -> set always to false after mass update!
      */
 
-    CONST bool AUTO_UPDATE_TEST_FILES = false;
+    CONST bool AUTO_UPDATE_TEST_FILES = true;
 
     /*
      * types and extensions
@@ -78,6 +78,7 @@ class files
     CONST string VIEW_CASE_TEXT = 'text';
     CONST string VIEW_CASE_GEO = 'geo';
     CONST string VIEW_CASE_SIMPLE = 'simple';
+    CONST string VIEW_CASE_RELATED = 'related';
     CONST string VIEW_CASE_TIME = 'time';
 
 

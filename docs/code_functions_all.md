@@ -7461,6 +7461,8 @@
     \-- sort_by_number - section for function sort_by_number not yet defined that it should be sort in /result/result_li
             st.php
     \-- list - section for function list not yet defined that it should be sort in /result/result_list.php
+    \-- list_most_relevant - section for function list_most_relevant not yet defined that it should be sort in /result/r
+            esult_list.php
     \-- display - section for function display not yet defined that it should be display in /result/result_list.php
     \-- display_linked - section for function display_linked not yet defined that it should be display in /result/result
             _list.php
@@ -7685,6 +7687,8 @@
             hp
     \-- phrase_link_list - section for function phrase_link_list not yet defined that it should be display in /sandbox/s
             andbox_value.php
+    \-- time_phrase - section for function time_phrase not yet defined that it should be display in /sandbox/sandbox_val
+            ue.php
     \-- title_name - section for function title_name not yet defined that it should be display in /sandbox/sandbox_value
             .php
     \-- number_symbols - section for function number_symbols not yet defined that it should be display in /sandbox/sandb
@@ -7893,7 +7897,6 @@
             lue.php
     \-- warning_text - section for function warning_text not yet defined that it should be base in /value/value.php
     \-- name - section for function name is expected to be debug in /value/value.php
-    \-- time_phrase - section for function time_phrase not yet defined that it should be base in /value/value.php
     \-- get_description - section for function get_description is expected to be set and get in /value/value.php
     \-- name_tip - section for function name_tip not yet defined that it should be base in /value/value.php
     \-- name_link - section for function name_link not yet defined that it should be base in /value/value.php
@@ -8941,13 +8944,13 @@
     \-- values_similar
         \-- ui_list - the values of the same category as the given value grouped by their phrases like the
     \-- results_by_value
-        \-- ui_list - the results that use the given value as a table, used by the results column of the value
+        \-- ui_list - the results that use the given value grouped like the values of a phrase, used by the
     \-- values_used
         \-- ui_list - the values used to calculate the given result grouped by their phrases like the default word
     \-- formulas_used
         \-- ui_list - the formulas that have calculated the results used for the given result, used by the formulas
     \-- results_used
-        \-- ui_list - the results used to calculate the given result as a table, used by the results column of the
+        \-- ui_list - the results used to calculate the given result grouped like the used values, used by the
     \-- values_by_source
         \-- ui_list - the values that name the given source grouped by their phrases like the default word view,
     \-- results_by_word
@@ -8957,7 +8960,7 @@
     \-- results
         \-- ui_list - TODO move code from component_dsp_old
     \-- results_related
-        \-- ui_list - TODO Prio 0 fill with real code
+        \-- ui_list - show the results related to the given object grouped like the values of a phrase (see
     \-- phrases_related
         \-- ui_list - TODO Prio 0 fill with real code
     \-- list_sort
@@ -9936,6 +9939,8 @@
         \-- result_list - sort this result list in place so that the result with the highest number is first and the
     \-- list
         \-- result_list - the deterministically sorted list rendered by the generic ListBase::list(); overridden so the
+    \-- list_most_relevant
+        \-- result_list - the results grouped for a quick overview like the values of a phrase: a value list can hold
     \-- sort_by_relevance
         \-- sandbox_list - 
 \-- repeat backend

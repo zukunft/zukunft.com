@@ -1613,8 +1613,9 @@ class ui_list extends ui_base
     }
 
     /**
-     * the results that use the given value as a table, used by the results column of the value
-     * default page e.g. the increase that has been calculated from this value
+     * the results that use the given value grouped like the values of a phrase, used by the
+     * results column of the value default page e.g. the increase that has been calculated from
+     * this value
      *
      * @param value|db_object|null $dbo the value whose results should be listed
      * @param user_message $msg to report an unexpected selection object
@@ -1638,12 +1639,12 @@ class ui_list extends ui_base
             }
             if ($res_lst == null) {
                 log_err_msg_ui('the result cache is missing to select the results', $msg);
-            } elseif ($res_lst->is_empty()) {
-                // the list is asked, not the rendered html, because result_list::table returns
-                // the empty table tags for an empty list, which would tell the user nothing
-                $result = $mtr->txt(msg_id::INFO_NOT_USED_FOR_RESULTS);
             } else {
-                $result = $res_lst->table($dbo->grp->phr_lst());
+                // the value itself is the context of the column, so its phrases are left out
+                $result = $this->result_list_grouped($res_lst, $dbo->grp->phr_lst(), $msg);
+                if ($result == '') {
+                    $result = $mtr->txt(msg_id::INFO_NOT_USED_FOR_RESULTS);
+                }
             }
         } else {
             log_err_msg_ui($dbo::class . ' is not expected to have results', $msg);
@@ -1717,8 +1718,9 @@ class ui_list extends ui_base
     }
 
     /**
-     * the results used to calculate the given result as a table, used by the results column of the
-     * result default page e.g. the increase that a growth rate has been calculated from
+     * the results used to calculate the given result grouped like the used values, used by the
+     * results column of the result default page e.g. the increase that a growth rate has been
+     * calculated from
      *
      * @param result|db_object|null $dbo the result whose used results should be listed
      * @param user_message $msg to report a missing list or an unexpected selection object
@@ -1735,12 +1737,10 @@ class ui_list extends ui_base
             // like the used values only a page request loads the used results, so an url-built
             // result shows no column instead of a message about a list that is not known here
             if ($dbo->results_used != null) {
-                if ($dbo->results_used->is_empty()) {
-                    // the list is asked, not the rendered html, because result_list::table returns
-                    // the empty table tags for an empty list, which would tell the user nothing
+                // the result itself is the context of the column, so its phrases are left out
+                $result = $this->result_list_grouped($dbo->results_used, $dbo->grp->phr_lst(), $msg);
+                if ($result == '') {
                     $result = $mtr->txt(msg_id::INFO_NO_RESULTS_USED);
-                } else {
-                    $result = $dbo->results_used->table($dbo->grp->phr_lst());
                 }
             }
         } else {
@@ -1952,18 +1952,50 @@ class ui_list extends ui_base
     }
 
     /**
-     * TODO Prio 0 fill with real code
+     * show the results related to the given object grouped like the values of a phrase (see
+     * values_most_relevant): the newest time period first, then the phrases shared by several
+     * results, then the remaining results by impact, each with the unit symbols behind the number
+     *
      * @param db_object|combine_named|null $dbo the term whose related results should be listed
-     * @param data_object|null $cfg the context used to create the view
-     * @return string the html code listing all results related to $dbo
+     * @param user_message $msg to report a problem of reading the config or a symbol
+     * @param data_object|null $cfg the request cache with the preloaded results
+     * @return string the html code of the grouped results or '' if the cache has no result
      */
-    function results_related(db_object|combine_named|null $dbo = null, ?data_object $cfg = null): string
+    function results_related(
+        db_object|combine_named|null $dbo,
+        user_message                 $msg,
+        ?data_object                 $cfg = null
+    ): string
     {
-        // the results of e.g. a formula are loaded into the data object result list and shown
-        // as a table of the result phrases and their value
         $result = '';
         if ($cfg != null and !$cfg->res_lst->is_empty()) {
-            $result = $cfg->res_lst->table();
+            // the phrase of the page is assumed by the reader, so it is left out of the result lines
+            $phr_lst = new phrase_list();
+            if ($dbo::class == word::class or $dbo::class == triple::class) {
+                $phr_lst->add_phrase($dbo->phrase());
+            }
+            $result = $this->result_list_grouped($cfg->res_lst, $phr_lst, $msg);
+        }
+        return $result;
+    }
+
+    /**
+     * show a list of results grouped like the values of a phrase (see value_list): the newest time
+     * period first, then the phrases shared by several results, then the rest by impact, limited
+     * by the configured page size with the "... and n more" tail and the unit symbols behind the
+     * number; the shared renderer of the result columns of the phrase, value and result pages
+     *
+     * @param result_list $res_lst the results to show
+     * @param phrase_list $phr_lst the phrases assumed by the reader e.g. the phrases of the page
+     * @return string the html code of the grouped results, '' if the list is empty
+     */
+    private function result_list_grouped(result_list $res_lst, phrase_list $phr_lst, user_message $msg): string
+    {
+        $html = new html_base();
+        $result = $res_lst->list_most_relevant($msg, $phr_lst);
+        // the same block div as the value list, so that each result stays on one line
+        if ($result != '') {
+            $result = $html->div($result, view_styles::COL_SM_12);
         }
         return $result;
     }

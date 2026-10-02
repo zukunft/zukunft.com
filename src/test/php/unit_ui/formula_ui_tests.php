@@ -204,7 +204,7 @@ class formula_ui_tests
         $res_cfg->set_result_list(new result_list(
             $t_res->result_list()->api_json([api_types::TEST_MODE, api_types::INCL_PHRASES])));
         $test_page .= $html->text_h2('results of the formula increase');
-        $test_page .= $list->results_related($frm_increase, $res_cfg);
+        $test_page .= $list->results_related($frm_increase, $msg, $res_cfg);
 
         // the assigned-phrases component shows only the phrases the formula is assigned to (the
         // "year" carried by the increase formula), never the full phrase list; test_mode true so

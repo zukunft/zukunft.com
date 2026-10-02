@@ -39,6 +39,7 @@ class results
     // *_ID is the group id of the value
     // *_FORM is the default formatted value
     CONST int TV_INT = 123456;
+    CONST string TV_INT_FORM = "123'456";
     CONST float TV_FLOAT = 12.3456;
     CONST float TV_PCT = 0.01234;
     CONST string TV_INCREASE_LONG = '0.0074676683205838'; // the increase of the swiss inhabitants from 2019 to 2020

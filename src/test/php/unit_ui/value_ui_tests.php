@@ -787,10 +787,11 @@ class value_ui_tests
         $test_name = 'pi is not listed among its own similar values';
         $t->assert_text_not_contains($test_name, $sim_html, triple_names::PI_SYMBOL_NAME);
 
-        // the results column lists the results that use the value, each with its phrase and number
+        // the results column lists the results that use the value like a value list, each with
+        // its phrase and its formatted number
         $res_html = $lst_ui->results_by_value($val_rel, $msg_ui);
         $test_name = 'the results of a value are shown with their phrase and their number';
-        $t->assert_text_order($test_name, $res_html, word_names::MATH, (string)results::TV_INT);
+        $t->assert_text_order($test_name, $res_html, word_names::MATH, results::TV_INT_FORM);
 
         // a value that is not used for results says so instead of showing an empty table
         $val_no_res = $t_val->value_page_ui($msg);
@@ -834,7 +835,7 @@ class value_ui_tests
         $val_math = $tl->ui_value($t_val->value_for_phrases([$t_wrd->word()->phrase()]));
         $test_name = 'without the loaded list the results come from the page cache';
         $t->assert_text_contains($test_name,
-            $lst_ui->results_by_value($val_math, $msg_ui, $dto_res), (string)results::TV_INT);
+            $lst_ui->results_by_value($val_math, $msg_ui, $dto_res), results::TV_INT_FORM);
 
         // the cache holds the results of the whole page, so a value that no cached result is
         // based on shows the not used message and never another value's results

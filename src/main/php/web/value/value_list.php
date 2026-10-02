@@ -1911,12 +1911,12 @@ class value_list extends ListBase
      * render one value of the grouped value list as a list item: the phrase name(s) on the left and
      * the number on the right; the shared item renderer of group_block and impact_group
      *
-     * @param value $val the value to render
+     * @param sandbox_value $val the value or result to render
      * @param phrase_list $context_phr_lst the phrases assumed by the reader and left out of the name
      * @param array $url_arr the url vars of the calling page for the back link
      * @return string the html code of one value list item
      */
-    private function value_item(value $val, user_message $msg, phrase_list $context_phr_lst, array $url_arr): string
+    private function value_item(sandbox_value $val, user_message $msg, phrase_list $context_phr_lst, array $url_arr): string
     {
         $html = new html_base();
         $name = $html->span($val->phrase_link_list($msg, $context_phr_lst), styles::VALUE_NAME);

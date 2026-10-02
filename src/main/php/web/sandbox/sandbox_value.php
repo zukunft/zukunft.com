@@ -499,6 +499,23 @@ class sandbox_value extends sandbox
     }
 
     /**
+     * the time phrase (e.g. "2022 (year)") of this number used by the "most relevant" list to
+     * group and to sort the numbers with a time newest first; a number has at most one time phrase
+     *
+     * @return phrase|null the first time phrase of the group or null if the number has no time
+     */
+    function time_phrase(user_message $msg): ?phrase
+    {
+        $result = null;
+        foreach ($this->grp->phr_lst()->lst() as $phr) {
+            if ($result == null and $phr->is_time($msg)) {
+                $result = $phr;
+            }
+        }
+        return $result;
+    }
+
+    /**
      * the name of this number in the browser tab title: only the phrase that the page heading
      * names first (see phrase_link_list), because a tab title must stay short, while the heading
      * links all phrases

@@ -37,10 +37,14 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 include_once paths::SHARED_TYPES . 'api_types.php';
 
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\result\result_list;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\create\test_results;
+use Zukunft\ZukunftCom\test\php\create\test_triples;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class result_list_ui_tests
@@ -62,6 +66,23 @@ class result_list_ui_tests
         $test_page .= 'result list with tooltip: ' . $lst->display() . '<br>';
         $test_page .= 'result list with link: ' . $lst->display_linked() . '<br>';
         $t->html_page_test($test_page, 'result_list', 'result_list', $msg);
+
+        // the results of a phrase are listed like its values: grouped, limited by the configured
+        // page size and without a table border (see value_list::list_most_relevant)
+        $t->subheader($ts . 'most relevant');
+        $t_trp = new test_triples($t);
+        $mr_html = $t_res->result_list_solution_prio_first_row_ui()->list_most_relevant($msg);
+        $test_name = 'the results are grouped like the values of a phrase';
+        $t->assert_text_contains($test_name, $mr_html, styles::VALUE_LIST);
+        $test_name = '... without a table';
+        $t->assert_text_not_contains($test_name, $mr_html, '<' . html_base::TABLE);
+        $test_name = '... each result linked to its page';
+        $t->assert_text_contains($test_name, $mr_html, url_var::MASK . '=' . views::RESULT_ID);
+        $test_name = '... and named by the problem of the row';
+        $t->assert_text_contains($test_name, $mr_html, $t_trp->global_warming()->name());
+        // negative: a phrase without results shows nothing
+        $test_name = 'most relevant of an empty result list renders nothing';
+        $t->assert($test_name, new result_list()->list_most_relevant($msg), '');
     }
 
 }

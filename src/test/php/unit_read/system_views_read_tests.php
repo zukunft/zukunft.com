@@ -231,6 +231,10 @@ class system_views_read_tests
         // result::used_phrase_selection), so the page needs the database
         $t_res = new test_results($t);
         $t->assert_view_by_factory(views::RESULT, $t->usr1, $t_res->result_simple(), test_files::VIEW_CASE_SIMPLE, $cfg, result::class);
+        // the page of a result with used values, formulas and results, so that the three columns
+        // are part of a snapshot: the used results are grouped like the values with the unit
+        // symbols behind the number (see ui_list::results_used)
+        $t->assert_view_by_factory(views::RESULT, $t->usr1, $t_res->result_page_related(), test_files::VIEW_CASE_RELATED, $cfg, result::class);
         // the form that overwrites just the number of a result
         $t->assert_view_by_factory(views::RESULT_OVERWRITE, $t->usr1, $t_res->result_simple(), test_files::VIEW_CASE_SIMPLE, $cfg, result::class);
         // VIEW

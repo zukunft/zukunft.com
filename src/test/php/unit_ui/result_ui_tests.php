@@ -43,6 +43,7 @@ use Zukunft\ZukunftCom\main\php\web\component\execute\ui_base;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_list;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
 use Zukunft\ZukunftCom\main\php\web\result\result;
 use Zukunft\ZukunftCom\main\php\web\result\result_list;
@@ -125,11 +126,15 @@ class result_ui_tests
         $test_name = '... without the formula that has calculated the result';
         $t->assert_text_not_contains($test_name, $frm_html, formula_names::SCALE_TO_SEC);
 
-        // the table of the used results shows the phrase and the number of each used result,
-        // like the results column of the value page (see result_list::table)
+        // the used results are listed like the used values: grouped, limited and without a table
+        // border, each with its phrase and its number (see result_list::list_most_relevant)
         $test_name = 'the results used for the calculation are listed with their phrase and number';
         $res_html = $lst_ui->results_used($res_page, $msg);
-        $t->assert_text_order($test_name, $res_html, word_names::MATH, (string)results::TV_INT);
+        $t->assert_text_order($test_name, $res_html, word_names::MATH, results::TV_INT_FORM);
+        $test_name = '... grouped like the used values';
+        $t->assert_text_contains($test_name, $res_html, styles::VALUE_LIST);
+        $test_name = '... and without a table';
+        $t->assert_text_not_contains($test_name, $res_html, '<' . html_base::TABLE);
 
         // negative: an empty list says so instead of showing nothing or an empty table
         $res_none = $t_res->result_page_related_ui();
