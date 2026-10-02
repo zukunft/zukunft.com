@@ -1,8 +1,8 @@
 # pending - list of planned llm prompts with prio 1
 
-## value an result id url
- 
-for the group id url replace the + char with _ (95) if it is not yet used for the number coding and remove all chars from the url that are not needed e.g. the filler . or the empty fillers at the end
+## detail views
+
+add detail views for values, results, formulas, words and triples and clone for the moment the current default view. in a second step the default view should be reduced and a 'more' link should link to the detail view. 
 
 ## phrase types
 

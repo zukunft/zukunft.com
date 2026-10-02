@@ -41,6 +41,7 @@ include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'change_tables.php';
 include_once paths::SHARED_ENUM . 'change_fields.php';
+include_once paths::SHARED . 'group_id_url.php';
 include_once paths::SHARED . 'json_fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
@@ -51,6 +52,7 @@ use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\shared\api;
+use Zukunft\ZukunftCom\main\php\shared\group_id_url;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\figure\figure as figure_ui;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_named;
@@ -244,8 +246,9 @@ class value_write_tests
         // the phrase id 1 given as the back parameter becomes the phrase page as the back part
         $back_part = '&amp;' . url_var::BACK . url_var::MASK . '=' . views::PHRASE_ID
             . '&amp;' . url_var::BACK . url_var::ID . '=1';
-        // the group id of the value contains a '+', which the link encodes (see html_base::url_back)
-        $grp_id_url = rawurlencode((string)$mio_val_ui->id());
+        // the group id of the value contains a '+', so the link names it in its short url form
+        // without the '+' (see html_base::url_back and group_id_url)
+        $grp_id_url = rawurlencode(group_id_url::to_url($mio_val_ui->id()));
         $target = '<a href="/http/view.php?m=' . views::RESULT_EDIT_ID . '&amp;id=' . $grp_id_url . $back_part . '">1.55</a>';
         $t->assert(', value->figure->display_linked for word list ' . $phr_lst->dsp_id(), $result, $target);
 

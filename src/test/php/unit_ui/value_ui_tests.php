@@ -73,6 +73,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\languages;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\enum\value_types;
+use Zukunft\ZukunftCom\main\php\shared\group_id_url;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
@@ -202,7 +203,7 @@ class value_ui_tests
         $grp_field = new system_form()->form_field_group_or_phrases($val, '');
         $t->assert_text_contains($test_name, $grp_field, html_base::VALUE . '="' . groups::TN_READ . '"');
         $test_name = '... and links to the group of the value, which has the id of the value';
-        $grp_link_par = url_var::ID . url_var::EQ . rawurlencode((string)$val->id());
+        $grp_link_par = url_var::ID . url_var::EQ . rawurlencode(group_id_url::to_url($val->id()));
         $t->assert_text_contains($test_name, $val->grp->name_link(), $grp_link_par);
         $test_name = '... and without a name in the api json the group has no given name';
         $val = new value($t_val->value_pi_math()->api_json([api_types::INCL_PHRASES]));

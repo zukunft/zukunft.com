@@ -36,14 +36,18 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::MODEL_PHRASE . 'phrase.php';
 include_once html_paths::USER . 'user_message.php';
+include_once html_paths::SHARED_CONST . 'views.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
+include_once html_paths::SHARED . 'group_id_url.php';
 include_once html_paths::SHARED . 'library.php';
 include_once html_paths::SHARED . 'json_fields.php';
 include_once html_paths::SHARED . 'url_var.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\group_id_url;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
@@ -84,6 +88,17 @@ class url_mapper
         if ($id_var != url_var::ID and array_key_exists($id_var, $std_array)) {
             $std_array[url_var::ID] = $std_array[$id_var];
             unset($std_array[$id_var]);
+        }
+        // the group id of a value or result is written short in a url (also as a '9'-prefixed
+        // back target), but every object is loaded by the id as the database uses it; only the
+        // id of a mask with a group id is read this way, because a short name of another object
+        // could look like a short group id (see views::GROUP_ID_MASKS_IDS)
+        foreach ($std_array as $key => $value) {
+            [$prefix, $base_key] = url_var::split_prefix((string)$key);
+            $msk_id = (int)($std_array[$prefix . url_var::MASK] ?? 0);
+            if ($base_key == url_var::ID and is_string($value) and in_array($msk_id, views::GROUP_ID_MASKS_IDS)) {
+                $std_array[$key] = group_id_url::from_url($value);
+            }
         }
         return $std_array;
     }
@@ -221,6 +236,9 @@ class url_mapper
                     }
                     if ($base_key == url_var::MASK) {
                         $value = $this->map_std_mask_to($value);
+                    }
+                    if ($base_key == url_var::ID) {
+                        $value = group_id_url::to_url($value);
                     }
                     if (array_key_exists(2, $std)) {
                         if (array_key_exists(3, $std)) {

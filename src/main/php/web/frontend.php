@@ -54,6 +54,7 @@ include_once html_paths::SHARED . 'library.php';
 
 // get the api const that are shared between the backend and the html frontend
 include_once html_paths::SHARED . 'api.php';
+include_once html_paths::SHARED . 'group_id_url.php';
 include_once html_paths::SHARED . 'url_var.php';
 
 // get the pure html frontend objects
@@ -212,6 +213,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\language_codes;
 use Zukunft\ZukunftCom\main\php\shared\enum\languages;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
+use Zukunft\ZukunftCom\main\php\shared\group_id_url;
 use Zukunft\ZukunftCom\main\php\shared\helper\Message;
 use Zukunft\ZukunftCom\main\php\shared\helper\Translator;
 use Zukunft\ZukunftCom\main\php\shared\library;
@@ -1373,8 +1375,13 @@ class frontend
 
         $result = '';
         $mask_id = $url_array[url_var::MASK] ?? 0;
-        // e.g. the user page names its user by url_var::USER_TO_EDIT or by the id of an old link
+        // e.g. the user page names its user by url_var::USER_TO_EDIT or by the id of an old link;
+        // a group id is keyed as the database uses it, so its short and its long url form share
+        // one cached page
         $obj_id = url_var::object_id($url_array);
+        if (in_array((int)$mask_id, views::GROUP_ID_MASKS_IDS)) {
+            $obj_id = group_id_url::from_url($obj_id);
+        }
         $lan = $url_array[url_var::LANGUAGE] ?? '';
         // the list size and the list page are view-only states of the same page (the more and
         // the all version of a list, see docs/llm/frontend.md), so each version is cached on its own

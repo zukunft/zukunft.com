@@ -41,6 +41,7 @@ namespace Zukunft\ZukunftCom\test\php\unit_write;
 
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\group_id_url;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\web\element\element_group;
 use Zukunft\ZukunftCom\main\php\web\figure\figure as figure_ui;
@@ -165,8 +166,9 @@ class element_group_write_tests
 
                     $result = $fig_ui->display_linked($msg_ui);
                     //$target = '<a href="/http/value_edit.php?id=438&back=1" class="' . styles::STYLE_USER . '">35\'481</a>';
-                    // a group id can contain a '+', which the link encodes (see html_base::url_back)
-                    $target = '<a href="/http/view.php?m=' . views::RESULT_EDIT_ID . '&id=' . rawurlencode((string)$fig->id()) . '">8.67</a>';
+                    // a group id can contain a '+', so the link names it in its short url form
+                    // (see html_base::url_back and group_id_url)
+                    $target = '<a href="/http/view.php?m=' . views::RESULT_EDIT_ID . '&id=' . rawurlencode(group_id_url::to_url($fig->id())) . '">8.67</a>';
                     $t->assert('figure->display_linked', $result, $target);
                 }
             } else {
