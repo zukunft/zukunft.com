@@ -99,12 +99,12 @@
     },
     {
       "name": "g",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection"
     },
     {
       "name": "gram",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection"
     },
     {
@@ -122,12 +122,12 @@
     },
     {
       "name": "kg",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection"
     },
     {
       "name": "kilogram",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection",
       "refs": [
         {
@@ -138,22 +138,22 @@
     },
     {
       "name": "kilometre",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection"
     },
     {
       "name": "km",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection"
     },
     {
       "name": "kWh",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection"
     },
     {
       "name": "l",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection"
     },
     {
@@ -161,7 +161,7 @@
     },
     {
       "name": "litre",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection",
       "refs": [
         {
@@ -181,7 +181,7 @@
     },
     {
       "name": "metre",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection"
     },
     {
@@ -199,7 +199,7 @@
     },
     {
       "name": "t",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection"
     },
     {
@@ -214,7 +214,7 @@
     },
     {
       "name": "tonne",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection"
     },
     {

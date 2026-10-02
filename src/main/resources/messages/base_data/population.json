@@ -20,7 +20,7 @@
           "type": "wikipedia"
         }
       ],
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "disease"

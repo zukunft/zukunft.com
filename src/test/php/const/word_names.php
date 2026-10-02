@@ -298,6 +298,9 @@ class word_names
     const int SPEED_ID = 85;
     const string METRE = 'metre';
     const int METRE_ID = 25;
+    // the unit symbol of the metre, which scaling.json uses as a symbol of million too
+    const string M = 'm';
+    const int M_ID = 26;
     const string JOULE = 'joule';
     const int JOULE_ID = 49;
     const string JOULE_COM = 'One joule is equal to the amount of work done when a force of one newton displaces a body through a distance of one metre in the direction of that force.';
@@ -323,8 +326,12 @@ class word_names
     const int PRIOR_ID = 185;
     const string EUR = 'EUR';
     const int EUR_ID = 277;
+    // what is measured, typed "measure non unit", so that it heads no row of a value table
+    const string GDP = 'GDP';
+    const int GDP_ID = 279;
     const string EURO = 'Euro';
     const int EURO_ID = 386;
+    const string EURO_COM = 'The euro (symbol: €; currency code: EUR) is the official currency of 21 of the 27 member states of the European Union. This group of states is officially known as the euro area, more commonly named the eurozone. The euro is divided into 100 euro cents.';
     const string DOLLAR = '$';
     const int DOLLAR_ID = 400;
     const string EURO_SIGN = '€';

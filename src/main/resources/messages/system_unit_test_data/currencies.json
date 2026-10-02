@@ -210,7 +210,7 @@
     {
       "name": "USD",
       "description": "ISO 4217 alphabetic code for the United States dollar.",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "US$",

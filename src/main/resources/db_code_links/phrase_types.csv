@@ -1,7 +1,7 @@
 phrase_type_id, type_name, description, code_id, scaling_factor, symbol
 1, 'standard', 'for words that have need no special behaviour', 'default', NULL, ''
 2, 'time', 'A time word defines the time period for which a value is valid and values with a time can be used to display time series.', 'time', NULL, ''
-3, 'measure type', 'a measure word such as meter, kilogram, ...', 'measure', NULL, ''
+3, 'measure unit', 'a unit word such as metre, kilogram, ... in which a number is stated', 'measure_unit', NULL, ''
 4, 'time jump', 'these terms describes a change of a timestamp term', 'time_jump', NULL, ''
 5, 'calc', 'a calculated word in R; e.g. this year returns always a different term', NULL, NULL, ''
 6, 'format percent', 'terms that forces the result to be formatted in percent', 'percent', NULL, ''
@@ -28,3 +28,4 @@ phrase_type_id, type_name, description, code_id, scaling_factor, symbol
 27, 'ignore', 'words that indicate e.g. to set column names to be excluded from the import', 'ignore', NULL, ''
 28, 'time number', 'A numeric time word that defines the time period for which a value is valid and values with a time can be used to display time series and where the order can be defined automatically based on the numeric value e.g. year 2025 or month 6.', 'time_number', NULL, ''
 29, 'scaling factor', 'a phrase that marks the number as a factor so that the number is shown with an x behind it e.g. 13.2 x', 'factor', NULL, 'x'
+30, 'measure non unit', 'what is measured e.g. GDP, which describes the number like a unit so that it heads no row or column of a value table, but is not the unit the number is stated in', 'measure_non_unit', NULL, ''

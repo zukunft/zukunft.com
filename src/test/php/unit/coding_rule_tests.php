@@ -39,11 +39,13 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 include_once paths::MODEL_CONST . 'def.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED_CONST . 'files.php';
 include_once paths::SHARED_CONST . 'sources.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'words.php';
+include_once html_paths::HTML . 'html_base.php';
 include_once test_paths::UTILS . 'code_test_coverage.php';
 include_once test_paths::UTILS . 'code_user_message_exceptions.php';
 include_once test_paths::UTILS . 'json_validation.php';
@@ -57,7 +59,9 @@ use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\test\php\utils\code_test_coverage;
 use Zukunft\ZukunftCom\test\php\utils\code_user_message_exceptions;
 use Zukunft\ZukunftCom\test\php\utils\json_validation;
@@ -158,6 +162,7 @@ class coding_rule_tests
         // TODO Prio 3 maybe switch it on as a warning
         //$this->json_no_measured_value_tests($t);
         $this->json_value_source_tests($t);
+        $this->json_value_number_type_tests($t);
         $this->json_source_link_tests($t);
         $this->json_view_component_defined_tests($t);
         $this->json_section_covered_tests($t);
@@ -170,6 +175,53 @@ class coding_rule_tests
         $t->subheader($ts . 'path consts');
         $this->php_path_const_tests($t);
 
+        $t->subheader($ts . 'html snapshots');
+        $this->html_no_empty_link_tests($t);
+
+    }
+
+    /**
+     * check that no html snapshot contains a link without a visible text, because a reader
+     * cannot follow a link that shows nothing; the usual cause is a phrase without id or name,
+     * which the frontend mapper turns into an empty link (see docs/llm/testing.md)
+     *
+     * @param test_cleanup $t the test harness used for the assertion
+     */
+    function html_no_empty_link_tests(test_cleanup $t): void
+    {
+        $test_name = 'a link with only white space inside is found';
+        $t->assert($test_name, $this->empty_links('<a href="view.php?m=3">' . "\n  " . '</a>'),
+            ['<a href="view.php?m=3">' . "\n  " . '</a>']);
+        $test_name = 'a link with a text or an icon is no empty link';
+        $t->assert($test_name, $this->empty_links(
+            '<a href="view.php?m=3">loss</a><a href="view.php?m=27"><i class="fas fa-edit"></i></a>'), []);
+
+        $lib = new library();
+        $files_checked = 0;
+        foreach ($lib->dir_files(test_paths::WEB_RES) as $html_file) {
+            if (str_ends_with($html_file, test_files::HTML)) {
+                $files_checked++;
+                $links = $this->empty_links(file_get_contents($html_file));
+                if ($links != []) {
+                    $test_name = 'no link without text in ' . $html_file;
+                    $t->assert($test_name, implode("\n", $links), '');
+                }
+            }
+        }
+        // one summary assertion so that a clean tree also produces a visible pass
+        $test_name = 'links without text checked in ' . $files_checked . ' html files';
+        $t->assert_greater($test_name, 0, $files_checked);
+    }
+
+    /**
+     * @param string $html the html code of a page or a part of it
+     * @return array every link of the html with nothing but white space between its tags
+     */
+    function empty_links(string $html): array
+    {
+        $tag = html_base::A;
+        preg_match_all('/<' . $tag . '\b[^>]*>\s*<\/' . $tag . '>/', $html, $matches);
+        return $matches[0];
     }
 
     /**
@@ -334,6 +386,65 @@ class coding_rule_tests
         $src_key = json_validation::SOURCE_NOT_IN_FILE . ' "' . sources::WIKIDATA . '" - '
             . json_encode($phr_names, json_validation::SAMPLE_ENCODING);
         $t->assert($test_name, array_keys($hits), [$src_key]);
+    }
+
+    /**
+     * verify that the number type check of json_validation lists a value, a result or a
+     * calc-validation entry with more than one phrase of the type measure unit, percent or factor,
+     * but not an entry with one such phrase; the main data is only listed in
+     * docs/json_findings.md and not asserted, because many values still wait for their triple
+     * (see docs/llm/json_structure.md)
+     *
+     * @param test_cleanup $t the test environment
+     * @return void
+     */
+    function json_value_number_type_tests(test_cleanup $t): void
+    {
+        $test_name = 'the phrases of the type measure unit, percent or factor are collected over the files';
+        $chk = new json_validation();
+        $wrd_pct = [json_fields::NAME => words::PERCENT, json_fields::TYPE_NAME => phrase_types::PERCENT];
+        $wrd_fac = [json_fields::NAME => words::FACTOR, json_fields::TYPE_NAME => phrase_types::FACTOR];
+        $wrd_year = [json_fields::NAME => words::YEAR, json_fields::TYPE_NAME => phrase_types::TIME];
+        // a unit triple without a name is known by its generated name
+        $trp_unit = [json_fields::EX_FROM => words::PERCENT, json_fields::EX_VERB => verbs::PER,
+            json_fields::EX_TO => words::YEAR, json_fields::TYPE_NAME => phrase_types::MEASURE];
+        $unit_name = words::PERCENT . ' ' . verbs::PER . ' ' . words::YEAR;
+        $phr_types = $chk->number_type_names([
+            [json_fields::WORDS => [$wrd_pct, $wrd_year]],
+            [json_fields::WORDS => [$wrd_fac], json_fields::TRIPLES => [$trp_unit]],
+        ]);
+        $t->assert($test_name, $phr_types, [
+            words::PERCENT => phrase_types::PERCENT,
+            words::FACTOR => phrase_types::FACTOR,
+            $unit_name => phrase_types::MEASURE,
+        ]);
+
+        $test_name = 'a value with a percent and a factor phrase is listed';
+        $phr_names = [words::YEAR, words::PERCENT, words::FACTOR, words::ASSUMED];
+        $val = [json_fields::WORDS => $phr_names, json_fields::NUMBER => 1];
+        $hits = $chk->number_type_hits([json_fields::VALUES => [$val]], $phr_types);
+        $val_key = json_fields::VALUES
+            . ' ' . json_encode([words::PERCENT, words::FACTOR], json_validation::SAMPLE_ENCODING)
+            . ' in ' . json_encode($phr_names, json_validation::SAMPLE_ENCODING);
+        $t->assert($test_name, array_keys($hits), [$val_key]);
+
+        $test_name = 'a calc-validation result with two such phrases is listed, its context is not checked';
+        $calc = [json_fields::CONTEXT => $phr_names, json_fields::WORDS => [$unit_name, words::FACTOR]];
+        $hits = $chk->number_type_hits([json_fields::CALC_VALIDATION => [$calc]], $phr_types);
+        $calc_key = json_fields::CALC_VALIDATION
+            . ' ' . json_encode([$unit_name, words::FACTOR], json_validation::SAMPLE_ENCODING)
+            . ' in ' . json_encode([$unit_name, words::FACTOR], json_validation::SAMPLE_ENCODING);
+        $t->assert($test_name, array_keys($hits), [$calc_key]);
+
+        $test_name = 'a value with one such phrase is not listed';
+        $val[json_fields::WORDS] = [words::YEAR, words::PERCENT, words::ASSUMED];
+        $hits = $chk->number_type_hits([json_fields::VALUES => [$val]], $phr_types);
+        $t->assert($test_name, array_keys($hits), []);
+
+        $test_name = 'a value with a unit triple instead of its typed parts is not listed';
+        $val[json_fields::WORDS] = [$unit_name, words::ASSUMED];
+        $hits = $chk->number_type_hits([json_fields::VALUES => [$val]], $phr_types);
+        $t->assert($test_name, array_keys($hits), []);
     }
 
     /**

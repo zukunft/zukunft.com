@@ -1306,7 +1306,7 @@ class word extends sandbox_code_id
     }
 
     /**
-     * @returns bool true if the word has the type "measure" (e.g. "metre" or "CHF")
+     * @returns bool true if the word has the type "measure unit" (e.g. "metre" or "CHF")
      * in case of a division, these words are excluded from the result
      * in case of add, it is checked that the added value does not have a different measure
      */
@@ -1339,7 +1339,7 @@ class word extends sandbox_code_id
     }
 
     /**
-     * @returns bool true if the word has the type "scaling_percent" (e.g. "percent")
+     * @returns bool true if the word has the type "percent" (e.g. "percent")
      */
     function is_percent(): bool
     {

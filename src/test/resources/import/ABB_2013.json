@@ -15,8 +15,7 @@
       "name": "ABB"
     },
     {
-      "name": "sales",
-      "type": "measure"
+      "name": "sales"
     },
     {
       "name": "CHF"

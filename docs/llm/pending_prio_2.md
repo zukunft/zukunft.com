@@ -16,6 +16,8 @@ assign all values assigned to a symbol to the main word or triple but in the def
 
 if a value of a phrase is shown that has a symbol use the shortest symbol that is unique for the page. E.g. if values in Euro are shown use € instead of Euro
 
+the phrase type "measure type" (code id "measure") has been renamed to "measure unit" (code id "measure_unit") in phrase_types.csv and the code; a database created before the rename still carries the old code id in the phrase_types table, so the update process of the code link tables (see the TODO in cfg/phrase/phrase_types.php) must rename it before the next production upgrade
+
 ## use case
 
 PV in Switzerland
@@ -23,6 +25,17 @@ PV in Switzerland
 add a quick value change modal box to change just the value
 
 if the value if updated use the frontend cache to update the results within the frontend cache and report the result updates to the backend
+
+the html page cache (db_cache_page) is dropped only after a data change (frontend::drop_cached_pages), so after a code change of a renderer a page cached before the change is still served until a data change or `nc=1` bypasses it; add the program version (version.txt) to the cache key or drop all cached pages when the frontend starts with a new version, so that a deployment never shows a stale page
+
+the short url form of a group id (shared/group_id_url.php) has known limits:
+- the alpha_num char "/" (value 1) is still url encoded as "%2F" e.g. "..../x-" is "%2Fx-"; a free char like "~" could replace it the same way as "_" replaces the "+" of a word
+- an empty slot before a non-empty slot would be lost, because to_url leaves every empty slot out and from_url fills the empty slots at the end; the encoders of cfg/group/id.php and result_id.php fill only at the end, so no such key is created today, but a key format change must keep that or extend the url form
+- the short form of a "9"-prefixed back target is only read back if "9m" is a numeric mask of views::GROUP_ID_MASKS_IDS; a back target with a view code id keeps the id as it is
+- the decoding is limited to the masks of views::GROUP_ID_MASKS_IDS, so a user defined view that shows a value or result by a group id in the url is not covered until the mask list is derived from the view type instead of the fixed system mask lists
+- a raw "+" in a hand written old link arrives as a space (a url reads "+" as a space) and is not repaired; only the "%2B" form of an old link is accepted
+
+the used values and results of a result are selected by any phrase of the result when the result has no source group (result::used_phrase_selection), so a result that carries e.g. "high" lists every result with "high"; the fallback should be the phrases of the formula expression instead
 
 ## default views
 

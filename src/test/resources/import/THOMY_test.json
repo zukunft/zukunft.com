@@ -14,7 +14,7 @@
     },
     {
       "name": "gram",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "THOMY"

@@ -63,7 +63,7 @@
     },
     {
       "name": "metre",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "population",
@@ -163,7 +163,7 @@
     },
     {
       "name": "month",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "company"
@@ -224,7 +224,7 @@
     },
     {
       "name": "kilometre",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "school",
@@ -281,7 +281,7 @@
     },
     {
       "name": "tonne",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "electricity"
@@ -332,7 +332,7 @@
     },
     {
       "name": "GWh",
-      "type": "measure",
+      "type": "measure_unit",
       "description": "gigawatt hour, unit of energy"
     },
     {
@@ -550,7 +550,7 @@
       "from": "dioxide",
       "verb": "of",
       "to": "carbon",
-      "type": "measure",
+      "type": "measure_unit",
       "description": "CO₂, main greenhouse gas"
     },
     {
@@ -910,7 +910,7 @@
       "from": "metre",
       "verb": "can be",
       "to": "square",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "apartment price per m²",

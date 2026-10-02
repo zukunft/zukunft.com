@@ -508,11 +508,12 @@ class value extends sandbox_value
         $measure_lst = $phr_lst->measure_list($msg);
         $scale_lst = $phr_lst->scaling_list($msg);
         $info_lst = $phr_lst->info_list($msg);
-        // a phrase with a symbol e.g. the factor is shown as its symbol behind the number
-        $symbol_lst = $phr_lst->symbol_phrases($msg);
         $phr_lst = $phr_lst->ex_measure_list($msg);
         $phr_lst = $phr_lst->ex_scaling_list($msg);
         $phr_lst = $phr_lst->ex_info_list($msg);
+        // a phrase with a symbol e.g. the factor is shown as its symbol behind the number; the
+        // measure and the scaling are named here, because the given cache supplies their tooltip
+        $symbol_lst = $phr_lst->symbol_phrases($msg);
         $phr_lst = $phr_lst->remove($symbol_lst);
         if ($measure_lst->count() > 1) {
             log_warning($this->dsp_id() . ' is not expected to have more than one measure');
@@ -639,22 +640,6 @@ class value extends sandbox_value
     {
         // a value is shown by its phrases, the name given to its group only in the group name form field
         return $this->grp->phrase_names();
-    }
-
-    /**
-     * the time phrase (e.g. "2022 (year)") of this value used by the "most relevant" value list to
-     * group and to sort the values with a time newest first; a value has at most one time phrase
-     * @return phrase|null the first time phrase of the value's group or null if the value has no time
-     */
-    function time_phrase(user_message $msg): ?phrase
-    {
-        $result = null;
-        foreach ($this->grp->phr_lst()->lst() as $phr) {
-            if ($result == null and $phr->is_time($msg)) {
-                $result = $phr;
-            }
-        }
-        return $result;
     }
 
     /**

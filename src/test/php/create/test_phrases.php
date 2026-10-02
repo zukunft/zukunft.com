@@ -42,6 +42,7 @@ include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_TYPES . 'api_types.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
+include_once test_paths::CONST . 'word_names.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
@@ -50,6 +51,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message as backend_user_message;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class test_phrases
@@ -780,6 +782,42 @@ class test_phrases
         return $this->ui_list($this->list_factor_symbol_cache());
     }
 
+    /**
+     * the request cache that knows the symbols of the scaling "million" and of the unit "EUR",
+     * so that a number can be shown as e.g. "165'070'664 mio €": "m" and "mio" stand for million
+     * and "EUR" is itself a symbol of "Euro", which has the second symbol "€"
+     *
+     * @return phrase_list the symbol triples of million and Euro with their phrases
+     */
+    function list_unit_symbol_cache(): phrase_list
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        // the description of Euro is the tooltip of its symbol
+        $euro = $t_wrd->euro();
+        $euro->description = word_names::EURO_COM;
+        $lst = new phrase_list($this->env->usr1);
+        $lst->add($t_wrd->word_million()->phrase());
+        $lst->add($t_wrd->word_mio_symbol()->phrase());
+        $lst->add($t_wrd->word_m_symbol()->phrase());
+        $lst->add($t_trp->mio_symbol()->phrase());
+        $lst->add($t_trp->m_symbol()->phrase());
+        $lst->add($euro->phrase());
+        $lst->add($t_wrd->word_eur()->phrase());
+        $lst->add($t_wrd->word_euro_sign()->phrase());
+        $lst->add($t_trp->eur_symbol()->phrase());
+        $lst->add($t_trp->euro_sign_symbol()->phrase());
+        return $lst;
+    }
+
+    /**
+     * @return phrase_list_ui the frontend request cache that knows the symbols of million and Euro
+     */
+    function list_unit_symbol_cache_ui(): phrase_list_ui
+    {
+        return $this->ui_list($this->list_unit_symbol_cache());
+    }
+
     function phrase_list_zh_mio(): phrase_list
     {
         $t_wrd = new test_words($this->env);
@@ -1193,6 +1231,9 @@ class test_phrases
         $lst->add($t_trp->column_cost()->phrase());
         $lst->add($t_trp->column_gain()->phrase());
         $lst->add($t_trp->column_loss()->phrase());
+        // the values carry the triples "potential loss" and "potential gain" like in solution_prio.json
+        $lst->add($t_trp->column_potential_loss()->phrase());
+        $lst->add($t_trp->column_potential_gain()->phrase());
         // the main column chain and the explaining columns that put the columns in the order
         // problem, loss, cost, solution, gain; the cost column is ordered although no value of
         // this table carries the phrase "cost"
@@ -1200,6 +1241,8 @@ class test_phrases
         $lst->add($t_trp->column_loss_explains_problem()->phrase());
         $lst->add($t_trp->column_cost_explains_problem()->phrase());
         $lst->add($t_trp->column_gain_explains_solution()->phrase());
+        $lst->add($t_trp->column_potential_loss_explains_problem()->phrase());
+        $lst->add($t_trp->column_potential_gain_explains_solution()->phrase());
         // the solution column names the solution of the problem row instead of a value, so it
         // needs the column definition and the triples that link a solution to "solution"
         $lst->add($t_trp->column_solution()->phrase());

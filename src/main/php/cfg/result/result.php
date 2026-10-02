@@ -465,6 +465,8 @@ class result extends sandbox_value
             if (!$typ_lst->include_phrases() and !$typ_lst->phrase_names()) {
                 if (!$this->grp()->phrase_list()->loaded()) {
                     $this->grp()->load_phrase_names($msg);
+                    // with the from and to of its triples like the phrases of a value
+                    $this->grp()->phrase_list()->load_triple_sides($msg);
                 }
                 $vars[json_fields::PHRASES] = $this->grp()->phrase_list()->api_json_array($typ_lst, $msg);
             }

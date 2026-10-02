@@ -469,7 +469,7 @@
     },
     {
       "name": "htp",
-      "type": "measure",
+      "type": "measure_unit",
       "description": "the symbol used in formulas for happy time points"
     },
     {
@@ -500,7 +500,7 @@
     },
     {
       "name": "EUR",
-      "type": "measure",
+      "type": "measure_unit",
       "description": "ISO 4217 alphabetic code for the euro."
     },
     {
@@ -514,12 +514,7 @@
     {
       "name": "GDP",
       "description": "a monetary measure of the market value of all the final goods and services produced and rendered in a specific time period by a country.",
-      "refs": [
-        {
-          "name": "Gross_domestic_product",
-          "type": "wikipedia"
-        }
-      ]
+      "type": "measure_non_unit"
     },
     {
       "name": "decline",
@@ -1052,7 +1047,7 @@
     },
     {
       "name": "column loss",
-      "description": "the table column 'loss' that should be shown also on small screens; the values name the measure with the words 'potential' and 'loss', so the column of the potential loss is headed by 'loss'",
+      "description": "the table column 'loss' that should be shown also on small screens",
       "from": "loss",
       "verb": "can be",
       "to": "mayor column (system)"
@@ -1525,7 +1520,7 @@
     {
       "name": "person year",
       "description": "the work of one person during one year, the unit of the initial effort",
-      "type": "measure",
+      "type": "measure_unit",
       "from": "person",
       "verb": "times",
       "to": "year"
@@ -1722,8 +1717,7 @@
     {
       "words": [
         "health",
-        "potential",
-        "loss",
+        "potential loss",
         "confidence",
         "percent",
         "assumed"
@@ -1733,8 +1727,7 @@
     {
       "words": [
         "populism",
-        "potential",
-        "loss",
+        "potential loss",
         "confidence",
         "percent",
         "assumed"
@@ -1744,8 +1737,7 @@
     {
       "words": [
         "global warming",
-        "potential",
-        "loss",
+        "potential loss",
         "confidence",
         "percent",
         "assumed"
@@ -1755,8 +1747,7 @@
     {
       "words": [
         "poverty",
-        "potential",
-        "loss",
+        "potential loss",
         "confidence",
         "percent",
         "assumed"
@@ -1766,8 +1757,7 @@
     {
       "words": [
         "market power",
-        "potential",
-        "loss",
+        "potential loss",
         "confidence",
         "percent",
         "assumed"
@@ -1777,8 +1767,7 @@
     {
       "words": [
         "wealth concentration",
-        "potential",
-        "loss",
+        "potential loss",
         "confidence",
         "percent",
         "assumed"
@@ -1788,8 +1777,7 @@
     {
       "words": [
         "education",
-        "potential",
-        "loss",
+        "potential loss",
         "confidence",
         "percent",
         "assumed"
@@ -1799,8 +1787,7 @@
     {
       "words": [
         "biased information",
-        "potential",
-        "loss",
+        "potential loss",
         "confidence",
         "percent",
         "assumed"
@@ -1810,8 +1797,7 @@
     {
       "words": [
         "disinformation",
-        "potential",
-        "loss",
+        "potential loss",
         "confidence",
         "percent",
         "assumed"
@@ -1821,8 +1807,7 @@
     {
       "words": [
         "GDP mismeasurement",
-        "potential",
-        "loss",
+        "potential loss",
         "confidence",
         "percent",
         "assumed"
@@ -1832,8 +1817,7 @@
     {
       "words": [
         "black-box AI",
-        "potential",
-        "loss",
+        "potential loss",
         "confidence",
         "percent",
         "assumed"
@@ -1843,8 +1827,7 @@
     {
       "words": [
         "citizen participation",
-        "potential",
-        "loss",
+        "potential loss",
         "confidence",
         "percent",
         "assumed"
@@ -1854,8 +1837,7 @@
     {
       "words": [
         "proprietary software",
-        "potential",
-        "loss",
+        "potential loss",
         "confidence",
         "percent",
         "assumed"
@@ -2146,14 +2128,14 @@
     {
       "name": "avoided potential loss",
       "description": "the reward of a solution in trillion EUR, the potential loss of the problem multiplied by the share of the loss that the solution is expected to avoid",
-      "expression": "\"reward\",\"trillion\",\"EUR\" = \"potential\",\"loss\",\"trillion\",\"EUR\" * \"loss reduction\",\"percent\"",
+      "expression": "\"reward\",\"trillion\",\"EUR\" = \"potential loss\",\"trillion\",\"EUR\" * \"loss reduction\",\"percent\"",
       "latex": "R = L_{pot} \\cdot r",
       "assigned_word": "reward"
     },
     {
       "name": "reward ratio (formula)",
       "description": "the avoided loss per person year of effort, the potential loss multiplied by the expected loss reduction and divided by the effort needed, to rank the solutions by their leverage",
-      "expression": "\"reward ratio\",\"trillion\",\"EUR per person year\" = \"potential\",\"loss\",\"trillion\",\"EUR\" * \"loss reduction\",\"percent\" / \"initial effort\",\"person year\"",
+      "expression": "\"reward ratio\",\"trillion\",\"EUR per person year\" = \"potential loss\",\"trillion\",\"EUR\" * \"loss reduction\",\"percent\" / \"initial effort\",\"person year\"",
       "latex": "\\rho = \\frac{L_{pot} \\cdot r}{E_{init}}",
       "assigned_word": "reward ratio"
     }
@@ -2162,8 +2144,7 @@
     {
       "context": [
         "health",
-        "potential",
-        "loss",
+        "potential loss",
         "loss reduction",
         "initial effort"
       ],
@@ -2180,8 +2161,7 @@
     {
       "context": [
         "health",
-        "potential",
-        "loss",
+        "potential loss",
         "loss reduction",
         "initial effort",
         "low"
@@ -2200,8 +2180,7 @@
     {
       "context": [
         "health",
-        "potential",
-        "loss",
+        "potential loss",
         "loss reduction",
         "initial effort",
         "high"
@@ -2220,8 +2199,7 @@
     {
       "context": [
         "populism",
-        "potential",
-        "loss",
+        "potential loss",
         "loss reduction",
         "initial effort"
       ],
@@ -2238,8 +2216,7 @@
     {
       "context": [
         "populism",
-        "potential",
-        "loss",
+        "potential loss",
         "loss reduction",
         "initial effort",
         "low"
@@ -2258,8 +2235,7 @@
     {
       "context": [
         "populism",
-        "potential",
-        "loss",
+        "potential loss",
         "loss reduction",
         "initial effort",
         "high"
@@ -2278,8 +2254,7 @@
     {
       "context": [
         "poverty",
-        "potential",
-        "loss",
+        "potential loss",
         "loss reduction",
         "initial effort"
       ],
@@ -2296,8 +2271,7 @@
     {
       "context": [
         "poverty",
-        "potential",
-        "loss",
+        "potential loss",
         "loss reduction",
         "initial effort",
         "low"
@@ -2316,8 +2290,7 @@
     {
       "context": [
         "poverty",
-        "potential",
-        "loss",
+        "potential loss",
         "loss reduction",
         "initial effort",
         "high"
@@ -2336,8 +2309,7 @@
     {
       "context": [
         "market power",
-        "potential",
-        "loss",
+        "potential loss",
         "loss reduction",
         "initial effort"
       ],
@@ -2354,8 +2326,7 @@
     {
       "context": [
         "market power",
-        "potential",
-        "loss",
+        "potential loss",
         "loss reduction",
         "initial effort",
         "low"
@@ -2374,8 +2345,7 @@
     {
       "context": [
         "market power",
-        "potential",
-        "loss",
+        "potential loss",
         "loss reduction",
         "initial effort",
         "high"
@@ -2394,8 +2364,7 @@
     {
       "context": [
         "wealth concentration",
-        "potential",
-        "loss",
+        "potential loss",
         "loss reduction",
         "initial effort"
       ],
@@ -2412,8 +2381,7 @@
     {
       "context": [
         "wealth concentration",
-        "potential",
-        "loss",
+        "potential loss",
         "loss reduction",
         "initial effort",
         "low"
@@ -2432,8 +2400,7 @@
     {
       "context": [
         "wealth concentration",
-        "potential",
-        "loss",
+        "potential loss",
         "loss reduction",
         "initial effort",
         "high"
@@ -2452,8 +2419,7 @@
     {
       "context": [
         "education",
-        "potential",
-        "loss",
+        "potential loss",
         "loss reduction",
         "initial effort"
       ],
@@ -2470,8 +2436,7 @@
     {
       "context": [
         "education",
-        "potential",
-        "loss",
+        "potential loss",
         "loss reduction",
         "initial effort",
         "low"
@@ -2490,8 +2455,7 @@
     {
       "context": [
         "education",
-        "potential",
-        "loss",
+        "potential loss",
         "loss reduction",
         "initial effort",
         "high"
@@ -2510,8 +2474,7 @@
     {
       "context": [
         "biased information",
-        "potential",
-        "loss",
+        "potential loss",
         "loss reduction",
         "initial effort"
       ],
@@ -2528,8 +2491,7 @@
     {
       "context": [
         "biased information",
-        "potential",
-        "loss",
+        "potential loss",
         "loss reduction",
         "initial effort",
         "low"
@@ -2548,8 +2510,7 @@
     {
       "context": [
         "biased information",
-        "potential",
-        "loss",
+        "potential loss",
         "loss reduction",
         "initial effort",
         "high"
@@ -2568,8 +2529,7 @@
     {
       "context": [
         "disinformation",
-        "potential",
-        "loss",
+        "potential loss",
         "loss reduction",
         "initial effort"
       ],
@@ -2586,8 +2546,7 @@
     {
       "context": [
         "disinformation",
-        "potential",
-        "loss",
+        "potential loss",
         "loss reduction",
         "initial effort",
         "low"
@@ -2606,8 +2565,7 @@
     {
       "context": [
         "disinformation",
-        "potential",
-        "loss",
+        "potential loss",
         "loss reduction",
         "initial effort",
         "high"
@@ -2626,8 +2584,7 @@
     {
       "context": [
         "GDP mismeasurement",
-        "potential",
-        "loss",
+        "potential loss",
         "loss reduction",
         "initial effort"
       ],
@@ -2644,8 +2601,7 @@
     {
       "context": [
         "GDP mismeasurement",
-        "potential",
-        "loss",
+        "potential loss",
         "loss reduction",
         "initial effort",
         "low"
@@ -2664,8 +2620,7 @@
     {
       "context": [
         "GDP mismeasurement",
-        "potential",
-        "loss",
+        "potential loss",
         "loss reduction",
         "initial effort",
         "high"
@@ -2684,8 +2639,7 @@
     {
       "context": [
         "black-box AI",
-        "potential",
-        "loss",
+        "potential loss",
         "loss reduction",
         "initial effort"
       ],
@@ -2702,8 +2656,7 @@
     {
       "context": [
         "black-box AI",
-        "potential",
-        "loss",
+        "potential loss",
         "loss reduction",
         "initial effort",
         "low"
@@ -2722,8 +2675,7 @@
     {
       "context": [
         "black-box AI",
-        "potential",
-        "loss",
+        "potential loss",
         "loss reduction",
         "initial effort",
         "high"
@@ -2742,8 +2694,7 @@
     {
       "context": [
         "citizen participation",
-        "potential",
-        "loss",
+        "potential loss",
         "loss reduction",
         "initial effort"
       ],
@@ -2760,8 +2711,7 @@
     {
       "context": [
         "citizen participation",
-        "potential",
-        "loss",
+        "potential loss",
         "loss reduction",
         "initial effort",
         "low"
@@ -2780,8 +2730,7 @@
     {
       "context": [
         "citizen participation",
-        "potential",
-        "loss",
+        "potential loss",
         "loss reduction",
         "initial effort",
         "high"
@@ -2800,8 +2749,7 @@
     {
       "context": [
         "proprietary software",
-        "potential",
-        "loss",
+        "potential loss",
         "loss reduction",
         "initial effort"
       ],
@@ -2818,8 +2766,7 @@
     {
       "context": [
         "proprietary software",
-        "potential",
-        "loss",
+        "potential loss",
         "loss reduction",
         "initial effort",
         "low"
@@ -2838,8 +2785,7 @@
     {
       "context": [
         "proprietary software",
-        "potential",
-        "loss",
+        "potential loss",
         "loss reduction",
         "initial effort",
         "high"

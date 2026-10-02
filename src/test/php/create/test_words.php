@@ -944,6 +944,18 @@ class test_words extends test_objects
     }
 
     /**
+     * @return word "m", the unit symbol of the metre, which is a symbol of million as well, so
+     *              that the choice of the symbol shown behind a number can be tested
+     */
+    function word_m_symbol(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::M_ID, word_names::M);
+        $wrd->set_type(phrase_types::MEASURE, new user_message($this->env->usr1));
+        return $wrd;
+    }
+
+    /**
      * @return word "million" with the description used as the tooltip of its symbol "mio"
      */
     function word_million(): word
@@ -1347,6 +1359,18 @@ class test_words extends test_objects
         $wrd = new word($this->env->usr1);
         $wrd->set(word_names::EUR_ID, word_names::EUR);
         $wrd->set_type(phrase_types::MEASURE, new user_message($this->env->usr1));
+        return $wrd;
+    }
+
+    /**
+     * @return word "GDP", which names what is measured and not the unit, so it is typed
+     *              "measure non unit" to describe the number like a unit in a value table
+     */
+    function word_gdp(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::GDP_ID, word_names::GDP);
+        $wrd->set_type(phrase_types::MEASURE_NON_UNIT, new user_message($this->env->usr1));
         return $wrd;
     }
 

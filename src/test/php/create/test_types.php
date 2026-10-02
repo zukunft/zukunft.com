@@ -431,7 +431,7 @@ class test_types
     }
 
     /**
-     * @return phrase_type "measure" type for unit testing
+     * @return phrase_type "measure unit" type for unit testing
      */
     function phrase_type_measure(): phrase_type
     {

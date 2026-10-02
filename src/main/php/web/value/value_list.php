@@ -722,7 +722,7 @@ class value_list extends ListBase
 
             // a defined column that no value carries names a phrase of the row instead of a
             // number, e.g. the "solution" column shows the solution of the problem row
-            $phr_col = $this->phrase_columns($col_order, $col_phr, $rel_lst, $msg);
+            $phr_col = $this->phrase_columns($col_order, $col_phr, $rel_lst, $msg, $tbl_phr);
             // the names that belong into each phrase column, read once for the whole table
             $phr_col_names = [];
             foreach ($phr_col as $phr_col_id => $phr) {
@@ -831,7 +831,8 @@ class value_list extends ListBase
                 // a phrase column names a phrase of the row, so it has no unit
                 $unit_lst = $col_unit[$col_id] ?? new phrase_list();
                 $col_style[$col_id] = $this->column_style($phr->name(), $rel_lst);
-                $header .= $html->th($this->column_header($phr, $unit_lst), '', $col_style[$col_id]);
+                $head_phr = $this->column_head($phr, $tbl_phr);
+                $header .= $html->th($this->column_header($head_phr, $unit_lst), '', $col_style[$col_id]);
             }
             if ($rest_col) {
                 $header .= $html->th(msg_id::FORM_SUB_TITLE_VALUES->text());
@@ -901,7 +902,9 @@ class value_list extends ListBase
      *
      * the scaling, the measure, the percent format and the factor all belong to the value, e.g.
      * "35.2 billion htp", "10 percent" or "13.2 x", so such a phrase is shown once in the column
-     * header behind the phrase that names the column and never heads a column of its own
+     * header behind the phrase that names the column and never heads a column of its own; the
+     * same holds for what is measured e.g. the "GDP" of "0.3 percent GDP", which is no unit but
+     * describes the number as well (phrase type "measure non unit")
      *
      * @param phrase $phr the phrase to check
      * @return bool true if the phrase is a unit of the number
@@ -909,7 +912,7 @@ class value_list extends ListBase
     private function is_unit(phrase $phr, user_message $msg): bool
     {
         return ($phr->is_scaling($msg) or $phr->is_measure($msg) or $phr->is_percent($msg)
-            or $phr->is_factor($msg));
+            or $phr->is_factor($msg) or $phr->is_measure_non_unit($msg));
     }
 
     /**
@@ -963,6 +966,9 @@ class value_list extends ListBase
      * of every row repeating it; a single value shares all its phrases with itself, which would
      * leave its row without a name, so a list of one value has no shared phrase
      *
+     * a value carries a phrase also as a part of one of its triples, e.g. "potential" of the
+     * triples "potential loss" and "potential gain" (see docs/llm/json_structure.md)
+     *
      * @param array $col_order the defined column phrase names, the leftmost column first
      * @return phrase_list the phrases of the first value that every other value carries too
      */
@@ -970,11 +976,69 @@ class value_list extends ListBase
     {
         $result = new phrase_list();
         if (count($this->lst()) > 1) {
-            foreach ($this->phrases_of_all($this->lst())->lst() as $phr) {
+            $shared = $this->phrases_of_all($this->lst());
+            $candidates = clone $shared;
+            foreach ($this->triple_parts_of_all($shared)->lst() as $part) {
+                if (!$candidates->has_id($part->id())) {
+                    $candidates->add_phrase($part);
+                }
+            }
+            foreach ($candidates->lst() as $phr) {
                 // a defined column shows its phrase in the column header already, so the reader
                 // sees it there instead of in the table header
                 if (!in_array($phr->name(), $col_order)) {
                     $result->add_phrase($phr);
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the phrases that every value of this list carries as a part of one of its triples
+     *
+     * a triple that every value carries is named as a whole, so its parts are left out, else a
+     * table of the values of "Zurich (city)" would also name "Zurich" and "city" in the header
+     *
+     * @param phrase_list $shared the phrases that every value carries as they are
+     * @return phrase_list the parts of the triples of the first value that every other value carries too
+     */
+    private function triple_parts_of_all(phrase_list $shared): phrase_list
+    {
+        $result = new phrase_list();
+        $val_lst = $this->lst();
+        $first = array_shift($val_lst);
+        if ($first != null) {
+            foreach ($this->triple_parts($first, $shared)->lst() as $part) {
+                $is_shared = true;
+                foreach ($val_lst as $val) {
+                    if (!$this->triple_parts($val, $shared)->has_id($part->id())) {
+                        $is_shared = false;
+                    }
+                }
+                if ($is_shared) {
+                    $result->add_phrase($part);
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param sandbox_value $val the value or result whose triples are split into their parts
+     * @param phrase_list $shared the triples that every value carries and that are therefore not split
+     * @return phrase_list the from and to phrases of the other triples of the value
+     */
+    private function triple_parts(sandbox_value $val, phrase_list $shared): phrase_list
+    {
+        $result = new phrase_list();
+        foreach ($val->grp->phr_lst()->lst() as $phr) {
+            if ($phr->is_triple() and !$shared->has_id($phr->id())) {
+                foreach ([$phr->obj()->get_from(), $phr->obj()->get_to()] as $part) {
+                    // a triple sent with its name only has empty parts, which name nothing
+                    if ($this->is_known($part) and !$result->has_id($part->id())) {
+                        $result->add_phrase($part);
+                    }
                 }
             }
         }
@@ -1046,6 +1110,42 @@ class value_list extends ListBase
             $result[$col_id] = $unit_lst;
         }
         return $result;
+    }
+
+    /**
+     * the phrase that heads the column of the given phrase
+     *
+     * a triple whose part the table header names already is headed by its other part, e.g. the
+     * column of "potential loss" by "loss" if the header names "potential" for every value
+     *
+     * @param phrase $phr the phrase of the column
+     * @param phrase_list $tbl_phr the phrases that the table header names for every value
+     * @return phrase the phrase shown in the column header
+     */
+    private function column_head(phrase $phr, phrase_list $tbl_phr): phrase
+    {
+        $result = $phr;
+        if ($phr->is_triple()) {
+            $from = $phr->obj()->get_from();
+            $to = $phr->obj()->get_to();
+            if ($this->is_known($from) and $this->is_known($to)) {
+                if ($tbl_phr->has_id($to->id())) {
+                    $result = $from;
+                } elseif ($tbl_phr->has_id($from->id())) {
+                    $result = $to;
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param phrase|null $phr a part of a triple
+     * @return bool true if the part is a phrase with an id and a name, so that it can name a table or a column
+     */
+    private function is_known(?phrase $phr): bool
+    {
+        return $phr != null and $phr->id() != 0 and $phr->name() != '';
     }
 
     /**
@@ -1410,22 +1510,29 @@ class value_list extends ListBase
      * @param array $col_phr the columns that hold a value, keyed by phrase id
      * @param phrase_list|null $rel_lst the phrases related to the page phrase
      * @param user_message $msg to report a problem of reading the phrase type
+     * @param phrase_list $tbl_phr the phrases that the table header names for every value
      * @return array the phrase columns keyed by phrase id in the order of the definition
      */
     private function phrase_columns(
         array        $col_order,
         array        $col_phr,
         ?phrase_list $rel_lst,
-        user_message $msg
+        user_message $msg,
+        phrase_list  $tbl_phr
     ): array
     {
         $result = [];
+        // a phrase that heads a value column already, e.g. "loss" for the column of "potential loss"
+        $head_ids = [];
+        foreach ($col_phr as $val_col_phr) {
+            $head_ids[] = $this->column_head($val_col_phr, $tbl_phr)->id();
+        }
         foreach ($col_order as $name) {
             $phr = $rel_lst?->column_phrase($name);
             // a column that already holds the values of this phrase cannot name a phrase too,
             // and a unit describes the number, so it heads no column of its own either
             if ($phr != null and !array_key_exists($phr->id(), $col_phr)
-                and !$this->is_unit($phr, $msg)) {
+                and !in_array($phr->id(), $head_ids) and !$this->is_unit($phr, $msg)) {
                 if ($rel_lst->child_names($phr) != []) {
                     $result[$phr->id()] = $phr;
                 }
@@ -1553,8 +1660,8 @@ class value_list extends ListBase
      * the group phrase ids that a value must carry to belong to the column of the given phrase
      *
      * a column of a triple that no value carries stands for the values that carry both parts of
-     * the triple, e.g. the "potential loss" column for the values with "potential" and "loss",
-     * because the values name the measure with the two words (see solution_prio.json)
+     * the triple, e.g. the "potential loss" column for values that name the measure with the two
+     * words "potential" and "loss" instead of the triple (see docs/llm/json_structure.md)
      *
      * @param phrase $phr the phrase that heads the column
      * @param array $all every groupable phrase keyed by phrase id
@@ -1579,7 +1686,9 @@ class value_list extends ListBase
      * a column of a triple stands for the values that carry both parts of the triple (see
      * column_parts), so a part must stay groupable even if every value carries it; else the
      * "potential" of the "potential loss" column would describe the whole table and the column
-     * of the two phrases could not be told apart from the column of one of them
+     * of the two phrases could not be told apart from the column of one of them; if a value
+     * carries the triple itself, the column takes it as it is and the parts stay free to name
+     * the whole table (see column_head)
      *
      * @param array $col_order the defined column phrase names, the leftmost column first
      * @param phrase_list|null $rel_lst the phrases related to the page phrase with the definitions
@@ -1590,12 +1699,27 @@ class value_list extends ListBase
         $result = $col_order;
         foreach ($col_order as $name) {
             $phr = $rel_lst?->column_phrase($name);
-            if ($phr != null and $phr->is_triple()) {
+            if ($phr != null and $phr->is_triple() and !$this->is_carried($phr)) {
                 foreach ([$phr->obj()->get_from(), $phr->obj()->get_to()] as $part) {
                     if ($part != null and !in_array($part->name(), $result)) {
                         $result[] = $part->name();
                     }
                 }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param phrase $phr the phrase to find in the phrase groups of the values
+     * @return bool true if at least one value of this list carries the phrase itself
+     */
+    private function is_carried(phrase $phr): bool
+    {
+        $result = false;
+        foreach ($this->lst() as $val) {
+            if ($val->grp->phr_lst()->has_id($phr->id())) {
+                $result = true;
             }
         }
         return $result;
@@ -1787,12 +1911,12 @@ class value_list extends ListBase
      * render one value of the grouped value list as a list item: the phrase name(s) on the left and
      * the number on the right; the shared item renderer of group_block and impact_group
      *
-     * @param value $val the value to render
+     * @param sandbox_value $val the value or result to render
      * @param phrase_list $context_phr_lst the phrases assumed by the reader and left out of the name
      * @param array $url_arr the url vars of the calling page for the back link
      * @return string the html code of one value list item
      */
-    private function value_item(value $val, user_message $msg, phrase_list $context_phr_lst, array $url_arr): string
+    private function value_item(sandbox_value $val, user_message $msg, phrase_list $context_phr_lst, array $url_arr): string
     {
         $html = new html_base();
         $name = $html->span($val->phrase_link_list($msg, $context_phr_lst), styles::VALUE_NAME);

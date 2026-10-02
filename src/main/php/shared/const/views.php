@@ -732,6 +732,11 @@ class views
         self::RESULT_OVERWRITE_ID,
     ];
 
+    // system masks whose main object is selected by a group id, which a url names in its short
+    // form (see shared/group_id_url.php); the id of every other mask is left as it is, so that
+    // a short name like "A-" is never read as a group id
+    const array GROUP_ID_MASKS_IDS = [...self::VALUE_MASKS_IDS, ...self::GROUP_MASKS_IDS, ...self::RESULT_MASKS_IDS];
+
     // system masks that have a view as the main object
     const array VIEW_MASKS_IDS = [
         self::VIEW_ADD_ID,

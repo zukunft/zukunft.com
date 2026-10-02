@@ -112,12 +112,12 @@
     {
       "name": "2026-06-20",
       "description": "the date 20 June 2026.",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "2026-07-25",
       "description": "the date 25 July 2026.",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "insurance"

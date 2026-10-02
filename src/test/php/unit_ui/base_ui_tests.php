@@ -35,6 +35,7 @@ namespace Zukunft\ZukunftCom\test\php\unit_ui;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
+use Zukunft\ZukunftCom\main\php\shared\group_id_url;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\helper\Config;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
@@ -801,19 +802,23 @@ class base_ui_tests
         $test_name = 'an old style script url carries the calling page as the back part';
         $t->assert_text_contains($test_name, $html->url_old(rest_ctrl::VIEW, 5, $page_arr), '9m=3&9id=123');
         // the group id of a value with more than four phrases contains a '+', which a url reads as a
-        // space, so a link must encode it, because else the value page finds no value
+        // space, so a link writes the id in its short url form, which has a '_' instead of the '+'
+        // (see group_id_url), because else the value page finds no value
         $t_val = new test_values($t);
         $grp_id = $t_val->value_16()->id();
         $test_name = 'the group id of a non prime value contains a plus';
         $t->assert_text_contains($test_name, (string)$grp_id, '+');
-        $test_name = 'a view url encodes the plus of a value group id';
+        $test_name = 'a view url names a value group id in its short form without a plus';
         $val_url = $html->url_back(views::VALUE_DEFAULT_ID, $grp_id);
-        $t->assert_text_contains($test_name, $val_url, '%2B');
+        $t->assert_text_contains($test_name, $val_url,
+            url_var::ID . url_var::EQ . rawurlencode(group_id_url::to_url($grp_id)));
+        $t->assert_text_not_contains($test_name, $val_url, '+');
         $test_name = '... and does not contain the raw group id';
         $t->assert_text_not_contains($test_name, $val_url, url_var::ID . url_var::EQ . $grp_id);
-        $test_name = 'the static view url encodes the plus of a value group id';
+        $test_name = 'the static view url names a value group id in its short form too';
         $static_url = html_base::url(views::VALUE_DEFAULT_ID, $grp_id);
-        $t->assert_text_contains($test_name, $static_url, '%2B');
+        $t->assert_text_contains($test_name, $static_url,
+            url_var::ID . url_var::EQ . rawurlencode(group_id_url::to_url($grp_id)));
         $test_name = 'a view url keeps a numeric value id unchanged';
         $prime_url = $html->url_back(views::VALUE_DEFAULT_ID, values::PI_MATH_ID);
         $t->assert_text_contains($test_name, $prime_url, url_var::ID . url_var::EQ . values::PI_MATH_ID);
@@ -896,6 +901,54 @@ class base_ui_tests
         $url = 'http://localhost' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=2&zzz=x';
         $url_map->standard_url_to_human($lib->url_array($url), $err_msg);
         $t->assert_true($test_name, $err_msg->has_msg_id(msg_id::URL_MAP_MISSING));
+
+        // a value or result url names the group by its short form: without the zero chars and the
+        // empty slots of the database key and with "_" for the "+" of a word (see group_id_url)
+        $grp_key = $t_phr->phrase_list()->get_grp_id(false)->id();
+        $url_key = group_id_url::to_url($grp_key);
+        $test_name = 'a value url names the group in its short form';
+        $t->assert_text_contains($test_name, html_base::url(views::VALUE_DEFAULT_ID, $grp_key),
+            url_var::ID . url_var::EQ . rawurlencode($url_key));
+        $t->assert_text_not_contains($test_name, html_base::url(views::VALUE_DEFAULT_ID, $grp_key), '%2B');
+        $test_name = '... also as the back target of a page opened from the value page';
+        $t->assert_text_contains($test_name,
+            $html->url_back(views::VALUE_EDIT_ID, $grp_key, [url_var::MASK => views::VALUE_DEFAULT_ID, url_var::ID => $grp_key]),
+            url_var::BACK . url_var::ID . url_var::EQ . rawurlencode($url_key));
+        $test_name = '... and the human-readable url too';
+        $url_human = $url_map->standard_url_to_human([url_var::MASK => views::VALUE_DEFAULT_ID, url_var::ID => $grp_key], $msg);
+        $t->assert_text_contains($test_name, $url_human, urlencode($url_key));
+        $test_name = 'the short group id of a url is mapped to the database key';
+        // a back target names its page by the mask and the id, so the back id is a group id only
+        // if the back mask shows a value or a result (see views::GROUP_ID_MASKS_IDS)
+        $url = 'http://localhost' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::VALUE_EDIT_ID
+            . '&' . url_var::ID . '=' . rawurlencode($url_key)
+            . '&' . url_var::BACK . url_var::MASK . '=' . views::VALUE_DEFAULT_ID
+            . '&' . url_var::BACK . url_var::ID . '=' . rawurlencode($url_key);
+        $url_array = $url_map->url_to_standard($lib->url_array($url), $msg);
+        $t->assert($test_name, $url_array[url_var::ID], $grp_key);
+        $t->assert($test_name . ' (back target)', $url_array[url_var::BACK . url_var::ID], $grp_key);
+        // negative: the back id of a page that is not selected by a group id is left as it is
+        $test_name = '... but not the back id of a word page';
+        $url = 'http://localhost' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::VALUE_EDIT_ID
+            . '&' . url_var::ID . '=' . rawurlencode($url_key)
+            . '&' . url_var::BACK . url_var::MASK . '=' . views::WORD_ID
+            . '&' . url_var::BACK . url_var::ID . '=' . rawurlencode($url_key);
+        $url_array = $url_map->url_to_standard($lib->url_array($url), $msg);
+        $t->assert($test_name, $url_array[url_var::BACK . url_var::ID], $url_key);
+        // negative: the database key of an old link and an integer id are still accepted
+        $test_name = 'the database key of an old link is still accepted';
+        $url = 'http://localhost' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::VALUE_DEFAULT_ID
+            . '&' . url_var::ID . '=' . rawurlencode($grp_key);
+        $url_array = $url_map->url_to_standard($lib->url_array($url), $msg);
+        $t->assert($test_name, $url_array[url_var::ID], $grp_key);
+        $test_name = 'an integer id is not changed by the url mapping';
+        $url = 'http://localhost' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::WORD_ID . '&id=1';
+        $url_array = $url_map->url_to_standard($lib->url_array($url), $msg);
+        $t->assert($test_name, $url_array[url_var::ID], '1');
+        $test_name = 'a short name of a word that looks like a short group id is not changed';
+        $url = 'http://localhost' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::WORD_ID . '&id=A-';
+        $url_array = $url_map->url_to_standard($lib->url_array($url), $msg);
+        $t->assert($test_name, $url_array[url_var::ID], 'A-');
 
         // frontend::url_to_back_url returns the previous page from the '9'-prefixed back targets
         $test_name = 'url_to_back_url returns the back target view and id';

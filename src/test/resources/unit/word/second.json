@@ -3,8 +3,8 @@
   "protection": "admin_protection",
   "name": "second",
   "description": "The second (symbol: s, abbreviation: sec) is the base unit of time in the International System of Units",
-  "type_code_id": "measure",
-  "type": "measure type",
+  "type_code_id": "measure_unit",
+  "type": "measure unit",
   "plural": "seconds",
   "view": "measure",
   "refs": [

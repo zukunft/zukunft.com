@@ -1,5 +1,9 @@
 # pending - list of planned llm prompts with prio 1
 
+## detail views
+
+add detail views for values, results, formulas, words and triples and clone for the moment the current default view. in a second step the default view should be reduced and a 'more' link should link to the detail view. 
+
 ## phrase types
 
 add a phrase type 'value quality' and assign the type to the word 'assumed'. Add in the json which defines 'assumed' add alternative value quality type phrases e.g. 'peer reviewed by quality journal' 

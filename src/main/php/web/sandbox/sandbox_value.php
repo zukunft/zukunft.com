@@ -499,6 +499,49 @@ class sandbox_value extends sandbox
     }
 
     /**
+     * the time phrase (e.g. "2022 (year)") of this number used by the "most relevant" list to
+     * group and to sort the numbers with a time newest first; a number has at most one time phrase
+     *
+     * @return phrase|null the first time phrase of the group or null if the number has no time
+     */
+    function time_phrase(user_message $msg): ?phrase
+    {
+        $result = null;
+        foreach ($this->grp->phr_lst()->lst() as $phr) {
+            if ($result == null and $phr->is_time($msg)) {
+                $result = $phr;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the name of this number in the browser tab title: only the phrase that the page heading
+     * names first (see phrase_link_list), because a tab title must stay short, while the heading
+     * links all phrases
+     *
+     * @param user_message $msg to report a problem of reading the symbol of a phrase
+     * @return string the name of the most relevant phrase, or the name of the number if no phrase has a name
+     */
+    function title_name(user_message $msg): string
+    {
+        $result = '';
+        // a copy, because the sort must not change the phrase order of the number
+        $phr_lst = clone $this->grp->phr_lst();
+        $phr_lst->remove($phr_lst->symbol_phrases($msg));
+        $phr_lst->sort_by_impact();
+        foreach ($phr_lst->lst() as $phr) {
+            if ($result == '' and $phr->name() != '') {
+                $result = $phr->name();
+            }
+        }
+        if ($result == '') {
+            $result = $this->name() ?? '';
+        }
+        return $result;
+    }
+
+    /**
      * the symbol of every phrase of this number that is shown behind the number instead of being
      * named with the other phrases, e.g. the "x" of a factor (see phrase::number_symbol)
      *
@@ -573,7 +616,7 @@ class sandbox_value extends sandbox
      */
     function percent_symbol(user_message $msg): string
     {
-        return $this->grp->phr_lst()->percent_phrase($msg)?->symbol_name() ?? '';
+        return $this->grp->phr_lst()->percent_phrase($msg)?->symbol_name($msg) ?? '';
     }
 
     /**

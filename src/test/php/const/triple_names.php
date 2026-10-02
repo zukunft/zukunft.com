@@ -228,15 +228,23 @@ class triple_names
     const int COLUMN_GAIN_ID = 194;
     const string COLUMN_LOSS = 'column loss';
     const int COLUMN_LOSS_ID = 191;
-    // the measure that the values name with the words "potential" and "loss", and its column
+    // the measures of the start page values, their columns and the triples that order them
     const string POTENTIAL_LOSS = 'potential loss';
     const int POTENTIAL_LOSS_ID = 125;
+    const string POTENTIAL_GAIN = 'potential gain';
+    const int POTENTIAL_GAIN_ID = 126;
     const string COLUMN_POTENTIAL_LOSS = 'column potential loss';
     const int COLUMN_POTENTIAL_LOSS_ID = 190;
-    // a unit triple typed "measure", so that a table header puts it behind the "in" like a
-    // measure word (see pv_switzerland_co2.json)
+    const string COLUMN_POTENTIAL_GAIN = 'column potential gain';
+    const int COLUMN_POTENTIAL_GAIN_ID = 193;
+    const string COLUMN_POTENTIAL_LOSS_EXPLAINS_PROBLEM = 'column potential loss is explaining column for column problem (high prio)';
+    const int COLUMN_POTENTIAL_LOSS_EXPLAINS_PROBLEM_ID = 218;
+    const string COLUMN_POTENTIAL_GAIN_EXPLAINS_SOLUTION = 'column potential gain is explaining column for column solution (high prio)';
+    const int COLUMN_POTENTIAL_GAIN_EXPLAINS_SOLUTION_ID = 222;
+    // a unit triple typed "measure unit", so that a table header puts it behind the "in" like a
+    // unit word (see pv_switzerland_co2.json)
     const string GRAM_PER_KWH = 'gram per kWh';
-    const int GRAM_PER_KWH_ID = 1547;
+    const int GRAM_PER_KWH_ID = 1552;
     // TODO use the name and not the id for the use cases
     // the subject of the use case pv_switzerland_co2.json; a use case is user data, so its
     // objects are selected by the name only and never by a database id or a code id
@@ -276,6 +284,9 @@ class triple_names
     const int COMPANY_ZURICH_ID = 229;
     const string MIO_SYMBOL = 'mio is symbol for million';
     const int MIO_SYMBOL_ID = 117;
+    // the second symbol of million, which is not used behind a number, because "m" is a unit too
+    const string M_SYMBOL = 'm is symbol for million';
+    const int M_SYMBOL_ID = 100;
     // the triple of scaling.json that defines "x" as the symbol shown behind a factor number
     const string FACTOR_SYMBOL = 'x is symbol for factor';
     const int FACTOR_SYMBOL_ID = 102;
@@ -310,6 +321,8 @@ class triple_names
     const int IN_USD_ID = 354;
     const string EUR_SYMBOL = "EUR is symbol for Euro";
     const int EUR_SYMBOL_ID = 337;
+    const string EURO_SIGN_SYMBOL = "€ is symbol for Euro";
+    const int EURO_SIGN_SYMBOL_ID = 338;
     const string EURO_SIGN_ALIAS = "€ is alias of Euro";
     const int EURO_SIGN_ALIAS_ID = 348;
     const string IN_EUR = "in EUR";

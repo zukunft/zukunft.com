@@ -55,6 +55,7 @@ include_once html_paths::SANDBOX . 'sandbox_named.php';
 include_once html_paths::SANDBOX . 'sandbox_value.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::VALUE . 'value.php';
+include_once html_paths::VALUE . 'value_list.php';
 include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'word.php';
 include_once html_paths::SHARED_HELPER . 'CombineObject.php';
@@ -80,6 +81,7 @@ use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_named;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_value;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\value\value;
+use Zukunft\ZukunftCom\main\php\web\value\value_list;
 use Zukunft\ZukunftCom\main\php\web\word\triple;
 use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\shared\api;
@@ -295,6 +297,28 @@ class result_list extends sandbox_list_value
     {
         $this->sort_by_number();
         return parent::list($msg, $context_phr_lst, $url_arr, $style, $limit, $page);
+    }
+
+    /**
+     * the results grouped for a quick overview like the values of a phrase: a value list can hold
+     * results as well (see value_list::add_results), so the grouping, the page limit with the
+     * "... and n more" tail and the unit symbols behind the number are those of the value list
+     *
+     * @param phrase_list $context_phr_lst phrases assumed by the reader and left out of each result line
+     * @param array $url_arr the url vars of the calling page for the back link
+     * @param string $style to define e.g. the list width
+     * @return string the html code of the grouped results (see value_list::list_most_relevant)
+     */
+    function list_most_relevant(
+        user_message $msg,
+        phrase_list  $context_phr_lst = new phrase_list(),
+        array        $url_arr = [],
+        string       $style = ''
+    ): string
+    {
+        $val_lst = new value_list();
+        $val_lst->set_lst($this->lst());
+        return $val_lst->list_most_relevant($msg, $context_phr_lst, $url_arr, $style);
     }
 
 

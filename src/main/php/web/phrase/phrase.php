@@ -163,9 +163,11 @@ class phrase extends combine_named
             $trp = $this->obj();
             if ($trp != null) {
                 $vars[json_fields::OBJECT_CLASS] = json_fields::CLASS_TRIPLE;
-                $vars[json_fields::FROM] = $trp->get_from()->id();
-                $vars[json_fields::VERB] = $trp->get_verb()->id();
-                $vars[json_fields::TO] = $trp->get_to()->id();
+                // a triple known only by its id, e.g. a phrase of a value group named in the url,
+                // has no from, verb and to, which is normal and therefore sent without them
+                $vars[json_fields::FROM] = $trp->get_from()?->id();
+                $vars[json_fields::VERB] = $trp->verb?->id();
+                $vars[json_fields::TO] = $trp->get_to()?->id();
             }
         }
         $vars[json_fields::ID] = $this->obj_id();
@@ -207,6 +209,11 @@ class phrase extends combine_named
      */
     function set_id(int $id): void
     {
+        // a negative phrase id is always a triple, so a phrase that holds a word so far, e.g. a
+        // fresh phrase, becomes a triple, else the sign is lost and the id names a word
+        if ($id < 0 and !($this->obj() instanceof triple)) {
+            $this->set_obj(new triple());
+        }
         $this->set_obj_id(abs($id));
     }
 
@@ -361,9 +368,19 @@ class phrase extends combine_named
     }
 
     /**
+     * @return bool true if this phrase names what is measured e.g. "GDP", which describes the
+     *              number like a unit (see value_list::is_unit) but is not the unit it is stated in
+     */
+    function is_measure_non_unit(user_message $msg): bool
+    {
+        return $this->obj()->is_measure_non_unit($msg);
+    }
+
+    /**
      * the symbol that is shown behind a number instead of naming this phrase with the other
-     * phrases of the number, e.g. the "x" of a factor, as a link to this phrase with its
-     * description as the tooltip, so that the reader can look up what the symbol means
+     * phrases of the number, e.g. the "x" of a factor, the "mio" of million or the "€" of the
+     * unit EUR, as a link to the phrase with its description as the tooltip, so that the reader
+     * can look up what the symbol means
      *
      * the symbol is not coded but given by a triple e.g. "x is symbol for factor", so it is shown
      * only if the request cache knows that triple; without it the phrase is named like any other
@@ -374,12 +391,15 @@ class phrase extends combine_named
     function number_symbol(user_message $msg): string
     {
         $result = '';
-        if ($this->is_factor($msg)) {
-            $symbol = $this->symbol_name();
+        if ($this->is_factor($msg) or $this->is_scaling($msg) or $this->is_measure($msg)) {
+            // a unit can be a symbol itself e.g. "EUR" for "Euro", so the symbol, the link and the
+            // tooltip are those of the phrase it stands for e.g. "€" with the description of "Euro"
+            $main_phr = $this->stands_for() ?? $this;
+            $symbol = $main_phr->symbol_name($msg);
             if ($symbol != '') {
                 $html = new html_base();
-                $url = $html->url_back($this->view_id(), $this->id());
-                $result = $html->ref($url, $symbol, $this->get_description() ?? '');
+                $url = $html->url_back($main_phr->view_id(), $main_phr->id());
+                $result = $html->ref($url, $symbol, $main_phr->tooltip($msg));
             }
         }
         return $result;
@@ -395,18 +415,68 @@ class phrase extends combine_named
      *
      * @return string the symbol name, empty if the cache knows no symbol of this phrase
      */
-    function symbol_name(): string
+    function symbol_name(user_message $msg): string
+    {
+        $symbol = null;
+        foreach ($this->caches() as $cache) {
+            if ($symbol == null) {
+                $symbol = $cache->symbol_of($this, $msg);
+            }
+        }
+        return $symbol?->name() ?? '';
+    }
+
+    /**
+     * @return phrase|null the phrase this phrase is a symbol for e.g. "Euro" for "EUR", null if
+     *                     the request cache knows no such triple (see phrase_list::stands_for)
+     */
+    function stands_for(): ?phrase
+    {
+        $result = null;
+        foreach ($this->caches() as $cache) {
+            if ($result == null) {
+                $result = $cache->stands_for($this);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @return string the tooltip of this phrase as the request cache knows it (see
+     *                phrase_list::tooltip), or the own description if the cache has none
+     */
+    function tooltip(user_message $msg): string
+    {
+        $result = '';
+        foreach ($this->caches() as $cache) {
+            if ($result == '') {
+                $result = $cache->tooltip($this, $msg);
+            }
+        }
+        if ($result == '') {
+            $result = $this->get_description() ?? '';
+        }
+        return $result;
+    }
+
+    /**
+     * the symbol triples are part of the initial cache load, so they are known on every page;
+     * the phrases of the page are asked as well, because a page can carry a symbol triple that
+     * the preload does not have e.g. a triple of a verb that is not preloaded
+     *
+     * @return array the request caches that can know the symbol and the description of a phrase
+     */
+    private function caches(): array
     {
         global $ui_sys;
 
-        // the symbol triples are part of the initial cache load, so they are known on every page;
-        // the phrases of the page are asked as well, because a page can carry a symbol triple that
-        // the preload does not have e.g. a triple of a verb that is not preloaded
-        $symbol = $ui_sys?->typ_lst_cache?->phr_sys?->symbol_of($this);
-        if ($symbol == null) {
-            $symbol = $ui_sys?->phr_lst?->symbol_of($this);
+        $result = [];
+        foreach ([$ui_sys?->typ_lst_cache?->phr_sys, $ui_sys?->phr_lst] as $cache) {
+            if ($cache != null) {
+                $result[] = $cache;
+            }
         }
-        return $symbol?->name() ?? '';
+        return $result;
     }
 
     function is_measure(user_message $msg): bool

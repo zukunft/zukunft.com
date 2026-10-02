@@ -85,6 +85,8 @@ include_once paths::MODEL_LOG . 'change_action.php';
 //include_once paths::MODEL_LOG . 'change_table_list.php';
 //include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::MODEL_PHRASE . 'phrase_type.php';
+include_once paths::MODEL_PHRASE . 'phr_ids.php';
+include_once paths::MODEL_PHRASE . 'phrase_list.php';
 //include_once paths::MODEL_PHRASE . 'term.php';
 //include_once paths::MODEL_REF . 'ref.php';
 include_once paths::MODEL_REF . 'ref_list.php';
@@ -142,7 +144,9 @@ use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 use Zukunft\ZukunftCom\main\php\cfg\log\change;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_link;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_log_list;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phr_ids;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
@@ -699,6 +703,35 @@ class triple extends sandbox_link_named
      * @return array the filled array used to create the api json message to the frontend
      */
     /**
+     * load the names of the from and the to phrase if they carry only their id, e.g. after a load
+     * by id, so that the api message names them and a link to them is never shown without a text
+     *
+     * @param user_message $msg to report a load problem to the caller
+     * @return void
+     */
+    private function load_side_names(user_message $msg): void
+    {
+        $ids = [];
+        foreach ([$this->fob(), $this->tob()] as $side) {
+            if ($side instanceof phrase and $side->id() != 0 and $side->name() == '') {
+                $ids[] = $side->id();
+            }
+        }
+        if ($ids != []) {
+            $phr_lst = new phrase_list($this->get_user());
+            $phr_lst->load_names_by_ids(new phr_ids($ids), $msg);
+            $from = $phr_lst->get($this->from_id());
+            if ($from != null and $this->fob()?->name() == '') {
+                $this->set_fob($from);
+            }
+            $to = $phr_lst->get($this->to_id());
+            if ($to != null and $this->tob()?->name() == '') {
+                $this->set_tob($to);
+            }
+        }
+    }
+
+    /**
      * load the values where this triple is used into the in-memory values_related list
      * so that api_json_array() can emit them under the INCL_RELATED flag
      */
@@ -804,6 +837,9 @@ class triple extends sandbox_link_named
                 // or when the phrases are explicitly requested, so the frontend can show e.g.
                 // the triple page title "<from> <verb> <to>" with a link to each part
                 $with_names = ($typ_lst->include_phrases() or $typ_lst->incl_related());
+                if ($with_names and !$typ_lst->test_mode()) {
+                    $this->load_side_names($msg);
+                }
                 $from = $this->get_from()->obj();
                 if ($from != null) {
                     if ($from->id() <> 0 or $from->name() != '') {
@@ -1621,7 +1657,7 @@ class triple extends sandbox_link_named
     }
 
     /**
-     * @return bool true if the word has the type "measure" (e.g. "metre" or "CHF")
+     * @return bool true if the triple has the type "measure unit" (e.g. "gram per kWh")
      * in case of a division, these words are excluded from the result
      * in case of add, it is checked that the added value does not have a different measure
      */
@@ -1654,7 +1690,7 @@ class triple extends sandbox_link_named
     }
 
     /**
-     * @return bool true if the word has the type "scaling_percent" (e.g. "percent")
+     * @return bool true if the triple has the type "percent" (e.g. "impact factor on HTP")
      */
     function is_percent(): bool
     {

@@ -173,13 +173,15 @@ class test_results
     }
 
     /**
-     * @return result_ui the filled result as the api sends it for a page request, with the values,
-     *                   the formulas and the results that the calculation has used, so that the
-     *                   three columns of the result default page can be tested; the test mode
-     *                   skips the database, so the lists are set here like the backend loads them
-     *                   (see result::load_values_used)
+     * the filled result with the values, the formulas and the results that the calculation has
+     * used, so that the three columns of the result default page can be tested without the
+     * database; the lists are set here like the backend loads them (see result::load_values_used),
+     * and the used results carry a scaling and a unit, so that the symbols behind the number are
+     * part of the page
+     *
+     * @return result the filled result with the time of the last calculation and the used lists
      */
-    function result_page_related_ui(): result_ui
+    function result_page_related(): result
     {
         $t_val = new test_values($this->env);
         $t_frm = new test_formulas($this->env);
@@ -193,8 +195,19 @@ class test_results
         $res->formulas_used = $frm_used;
         $res_used = $this->result_list();
         $res_used->unset_by_id($res->id());
+        foreach ($this->result_list_solution_prio_first_row()->lst() as $res_row) {
+            $res_used->add($res_row);
+        }
         $res->results_used = $res_used;
-        return new result_ui($res->api_json([api_types::INCL_RELATED, api_types::TEST_MODE]));
+        return $res;
+    }
+
+    /**
+     * @return result_ui the filled result with the used lists as the api sends it for a page request
+     */
+    function result_page_related_ui(): result_ui
+    {
+        return new result_ui($this->result_page_related()->api_json([api_types::INCL_RELATED, api_types::TEST_MODE]));
     }
 
     /**
@@ -300,8 +313,7 @@ class test_results
         $lst = new result_list($this->env->usr1);
         $lst->add($this->result_for_phrases([
             $t_trp->global_warming()->phrase(),
-            $t_wrd->word_potential()->phrase(),
-            $t_wrd->word_loss()->phrase(),
+            $t_trp->potential_loss()->phrase(),
             $t_wrd->word_htp()->phrase()
         ], results::TV_PRIO_LOSS_HTP));
         return $lst;

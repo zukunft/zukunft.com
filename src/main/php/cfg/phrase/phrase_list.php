@@ -2717,6 +2717,44 @@ class phrase_list extends sandbox_list_named
     }
 
     /**
+     * load the from and to of the triples of this list that carry only their id and name
+     *
+     * a group loads its phrases with the id and the name only, so a triple of a value group has
+     * no from and to; the frontend needs them e.g. to head a table column by one part of the triple
+     * ("loss" of "potential loss"), so the sides of these triples are loaded with one read and
+     * added to the triples of this list
+     *
+     * @param user_message $msg to report a load problem to the caller
+     * @return void
+     */
+    function load_triple_sides(user_message $msg): void
+    {
+        $ids = [];
+        foreach ($this->lst() as $phr) {
+            if ($phr->is_triple() and $phr->obj()->get_from()?->name() == ''
+                and !in_array($phr->obj()->id(), $ids)) {
+                $ids[] = $phr->obj()->id();
+            }
+        }
+        if ($ids != []) {
+            $trp_lst = new triple_list($this->get_user());
+            $trp_lst->load_by_ids($ids, $msg);
+            foreach ($this->lst() as $phr) {
+                $trp = $phr->is_triple() ? $trp_lst->get($phr->obj()->id()) : null;
+                // only the sides are added, so that every other field of the phrase stays as it
+                // has been loaded, e.g. the impact that sorts the values of a page
+                if ($trp != null) {
+                    $phr->obj()->set_fob($trp->get_from());
+                    $phr->obj()->set_tob($trp->get_to());
+                    if ($phr->obj()->get_verb() == null and $trp->get_verb() != null) {
+                        $phr->obj()->set_verb($trp->get_verb());
+                    }
+                }
+            }
+        }
+    }
+
+    /**
      * @return array the from and to phrases of the links of this list that are a triple
      */
     private function linked_triple_sides(): array

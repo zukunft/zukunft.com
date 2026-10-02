@@ -813,7 +813,7 @@ class word extends sandbox_code_id
     }
 
     /**
-     * @return bool true if the word has the type "measure" (e.g. "metre" or "CHF")
+     * @return bool true if the word has the type "measure unit" (e.g. "metre" or "CHF")
      * in case of a division, these words are excluded from the result
      * in case of add, it is checked that the added value does not have a different measure
      */
@@ -845,7 +845,7 @@ class word extends sandbox_code_id
     }
 
     /**
-     * @return bool true if the word has the type "scaling_percent" (e.g. "percent")
+     * @return bool true if the word has the type "percent" (e.g. "percent")
      */
     function is_percent(user_message $msg): bool
     {
@@ -858,6 +858,14 @@ class word extends sandbox_code_id
     function is_factor(user_message $msg): bool
     {
         return $this->is_type(phrase_types::FACTOR, $msg);
+    }
+
+    /**
+     * @return bool true if the word names what is measured (e.g. "GDP"), which is no unit
+     */
+    function is_measure_non_unit(user_message $msg): bool
+    {
+        return $this->is_type(phrase_types::MEASURE_NON_UNIT, $msg);
     }
 
     /**

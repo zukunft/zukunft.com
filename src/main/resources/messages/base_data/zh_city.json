@@ -216,7 +216,7 @@
     },
     {
       "name": "tonne",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "budget",
@@ -294,7 +294,7 @@
     },
     {
       "name": "millimetre",
-      "type": "measure",
+      "type": "measure_unit",
       "description": "one thousandth of a metre"
     },
     {
@@ -437,11 +437,11 @@
     },
     {
       "name": "kilometre",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "hour",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "million"
@@ -626,7 +626,7 @@
       "from": "dioxide",
       "verb": "of",
       "to": "carbon",
-      "type": "measure",
+      "type": "measure_unit",
       "description": "CO₂, main greenhouse gas"
     },
     {
@@ -718,14 +718,14 @@
       "from": "metre",
       "verb": "can be",
       "to": "square",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "square kilometre",
       "from": "kilometre",
       "verb": "can be",
       "to": "square",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "bit per second",
@@ -733,7 +733,7 @@
       "verb": "per",
       "to": "second",
       "description": "unit of data rate",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "domestic product",

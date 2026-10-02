@@ -40,7 +40,7 @@
     {"name": "EUR", "description": "Is a symbol for euro"},
     {"name": "fraction"},
     {"name": "indirect"},
-    {"name": "mass", "description": "Mass of a product or material", "type": "measure"},
+    {"name": "mass", "description": "Mass of a product or material", "type": "measure_unit"},
     {"name": "material"},
     {"name": "price"},
     {"name": "product"},
@@ -54,7 +54,7 @@
     {
       "name": "t",
       "description": "Metric ton, unit of mass",
-      "type": "measure",
+      "type": "measure_unit",
       "refs": [{"name": "Tonne", "type": "wikipedia"}, {"name": "Q25317", "type": "wikidata"}]
     },
     {"name": "tCO2e", "description": "Is a symbol for tonnes of CO2 equivalent"},

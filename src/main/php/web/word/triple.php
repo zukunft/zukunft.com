@@ -549,7 +549,9 @@ class triple extends sandbox_code_id
         data_object|null $dto = null
     ): void
     {
-        $this->from = $this->set_phrase_by_id($id, $msg, $dto);
+        if (!$this->is_named($this->from, $id)) {
+            $this->from = $this->set_phrase_by_id($id, $msg, $dto);
+        }
     }
 
     function set_verb(verb $vrb): void
@@ -559,8 +561,16 @@ class triple extends sandbox_code_id
 
     function set_verb_by_id(int $id): void
     {
-        $vrb = new verb();
-        $vrb->set_id($id);
+        global $ui_sys;
+        // the name of the verb comes from the verb cache, because a link to a verb without its
+        // name would show no text; a copy, so that a change of this triple never changes the cache
+        $cac_vrb = $ui_sys?->typ_lst_cache?->vrb?->get($id);
+        if ($cac_vrb instanceof verb) {
+            $vrb = clone $cac_vrb;
+        } else {
+            $vrb = new verb();
+            $vrb->set_id($id);
+        }
         $this->verb = $vrb;
     }
 
@@ -575,7 +585,27 @@ class triple extends sandbox_code_id
         data_object|null $dto = null
     ): void
     {
-        $this->to = $this->set_phrase_by_id($id, $msg, $dto);
+        if (!$this->is_named($this->to, $id)) {
+            $this->to = $this->set_phrase_by_id($id, $msg, $dto);
+        }
+    }
+
+    /**
+     * true if the given phrase is already the one of the id and carries its name, e.g. the from
+     * phrase loaded with the page, which an id-only phrase of the url must not replace, else the
+     * link to it would show no text
+     *
+     * @param phrase|null $phr the phrase set so far
+     * @param int|string $id the phrase id or the phrase name that should be set
+     * @return bool true if the phrase can be kept
+     */
+    private function is_named(?phrase $phr, int|string $id): bool
+    {
+        $result = false;
+        if ($phr != null and $phr->name() != '') {
+            $result = ((string)$phr->id() === (string)$id or $phr->name() === (string)$id);
+        }
+        return $result;
     }
 
     /**
@@ -953,7 +983,7 @@ class triple extends sandbox_code_id
     }
 
     /**
-     * @return bool true if the word has the type "scaling_percent" (e.g. "percent")
+     * @return bool true if the triple has the type "percent" (e.g. "impact factor on HTP")
      */
     function is_percent(user_message $msg): bool
     {
@@ -966,6 +996,14 @@ class triple extends sandbox_code_id
     function is_factor(user_message $msg): bool
     {
         return $this->is_type(phrase_types::FACTOR, $msg);
+    }
+
+    /**
+     * @return bool true if the triple names what is measured (e.g. "gross domestic product"), which is no unit
+     */
+    function is_measure_non_unit(user_message $msg): bool
+    {
+        return $this->is_type(phrase_types::MEASURE_NON_UNIT, $msg);
     }
 
     function is_measure(user_message $msg): bool

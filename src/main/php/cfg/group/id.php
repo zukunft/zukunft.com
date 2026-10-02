@@ -34,9 +34,13 @@
 
 namespace Zukunft\ZukunftCom\main\php\cfg\group;
 
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+
 //include_once paths::MODEL_PHRASE . 'phrase_list.php';
+include_once paths::SHARED . 'group_id_url.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\shared\group_id_url;
 
 class id
 {
@@ -44,13 +48,14 @@ class id
     // the max number of int
     const int PRIME_PHRASES_STD = 4;
 
-    const string CHAR_FORMULA = '=';
-    const string CHAR_TRIPLE = '-';
-    const string CHAR_SOURCE_TRIPLE = '(';
-    const string CHAR_RESULT_TRIPLE = ')';
-    const string CHAR_WORD = '+';
-    const string CHAR_SOURCE_WORD = '<';
-    const string CHAR_RESULT_WORD = '>';
+    // the sign chars are shared with the url form of the key (see shared/group_id_url.php)
+    const string CHAR_FORMULA = group_id_url::CHAR_FORMULA;
+    const string CHAR_TRIPLE = group_id_url::CHAR_TRIPLE;
+    const string CHAR_SOURCE_TRIPLE = group_id_url::CHAR_SOURCE_TRIPLE;
+    const string CHAR_RESULT_TRIPLE = group_id_url::CHAR_RESULT_TRIPLE;
+    const string CHAR_WORD = group_id_url::CHAR_WORD;
+    const string CHAR_SOURCE_WORD = group_id_url::CHAR_SOURCE_WORD;
+    const string CHAR_RESULT_WORD = group_id_url::CHAR_RESULT_WORD;
 
     /**
      * create a 64-bit integer id based on four 16-bit integer ids

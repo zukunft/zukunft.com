@@ -434,6 +434,7 @@ class value_url_tests extends url_test_base
             $this->phrase_id(word_names::TEST_ADD_TO, word_names::TEST_ADD_TO_ID)
             => word_names::TEST_ADD_TO_ID,
         ];
+        $this->add_test_words_to_cache();
     }
 
     /**

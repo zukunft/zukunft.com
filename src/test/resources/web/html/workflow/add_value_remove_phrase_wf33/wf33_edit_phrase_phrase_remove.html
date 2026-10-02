@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>
-            Add value pure - zukunft.com
+            System Test Word - Add value pure - zukunft.com
         </title>
         <link rel="stylesheet" href="http://localhost/external_lib/bootstrap/css/bootstrap.css">
         <link rel="stylesheet" href="http://localhost/external_lib/fontawesome/css/all.css">
@@ -139,13 +139,24 @@
                 <input class="form-control" type="hidden" name="id" id="id" value="0">
                 <input type="hidden" name="9m" value="1">
                 <div class="row col-md-12">
-                    <input type="hidden" name="pl" value="">
+                    <div class="text-left col-md-12">
+                        <a href="http://localhost/http/view.php?m=3&amp;id=997">
+                            System Test Word To
+                        </a>
+                        <a href="http://localhost/http/view.php?m=value_add_phrases&amp;pl=997&amp;p-=997&amp;9m=19" title="remove this phrase" class="heading-icon-inline">
+                            <i class="fas fa-times-circle">
+                            </i>
+                        </a>
+                    </div>
+                    <input type="hidden" name="pl" value="997">
                     <div class="form-group col-md-5">
                         <label for="kp_form_field_phrase_pattern">
                             word or triple
                         </label>
                         <input type="text" list="kp_form_field_phrase_pattern_list" class="form-control" name="kp" form="value_add_phrases" id="kp_form_field_phrase_pattern" >
                         <datalist id="kp_form_field_phrase_pattern_list">
+                            <option value="System Test Word" data-value="999">
+                            </option>
                         </datalist>
                     </div>
                     <div class="col-1 d-flex align-items-end">
@@ -153,9 +164,36 @@
                             find and next
                         </button>
                     </div>
+                    <div class="form-group col-md-5">
+                        <label for="value">
+                            Value
+                        </label>
+                        <input class="form-control" type="text" name="n" id="value">
+                    </div>
+                    <div class="form-group col-md-1">
+                        <label for="vy_form_select_value_type">
+                            Value type
+                        </label>
+                        <select class="form-control" name="vy" form="value_add_phrases" id="vy_form_select_value_type" >
+                            <option value="number"  selected >
+                                number
+                            </option>
+                            <option value="text"  >
+                                text
+                            </option>
+                            <option value="time"  >
+                                time
+                            </option>
+                            <option value="geo"  >
+                                geolocation
+                            </option>
+                        </select>
+                    </div>
                 </div>
+                <input type="hidden" name="z" value="2">
+                <input type="hidden" name="9m" value="5">
                 <div class="text-left">
-                    <a href="http://localhost/http/view.php?m=29&amp;9m=19">
+                    <a href="http://localhost/http/view.php?m=29&amp;pl=997&amp;9m=19">
                         ... more details ...
                     </a>
                 </div>
@@ -164,6 +202,9 @@
                     <a href="http://localhost/http/view.php?m=1" class="btn btn-space col-1 btn-outline-secondary">
                         cancel
                     </a>
+                    <button class="btn btn-space col-1 btn-outline-success" type="submit" name="submit">
+                        add
+                    </button>
                 </div>
             </form>
         </main>

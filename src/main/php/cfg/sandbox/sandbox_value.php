@@ -1643,11 +1643,14 @@ class sandbox_value extends sandbox_multi
             $vars[json_fields::DESCRIPTION] = $this->get_description();
         }
 
-        if ($typ_lst->include_phrases() or $typ_lst->phrase_names()) {
+        // a page request (incl_related) needs them too, because the page title links the phrases
+        if ($typ_lst->include_phrases() or $typ_lst->phrase_names() or $typ_lst->incl_related()) {
             // prime and main values carry only the phrase ids, so load the names
             // from the group id before serializing them e.g. for the value page title
             if (!$this->grp()->phrase_list()->loaded()) {
                 $this->grp()->load_phrase_names($msg);
+                // with the from and to of its triples e.g. to head a column by one part
+                $this->grp()->phrase_list()->load_triple_sides($msg);
             }
             $phr_lst = $this->grp()->phrase_list();
             $vars[json_fields::PHRASES] = $phr_lst->api_json_array($typ_lst, $msg);

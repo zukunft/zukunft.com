@@ -45,7 +45,7 @@
     },
     {
       "name": "kWh",
-      "type": "measure",
+      "type": "measure_unit",
       "refs": [
         {
           "name": "Kilowatt-hour",
@@ -55,7 +55,7 @@
     },
     {
       "name": "joule",
-      "type": "measure",
+      "type": "measure_unit",
       "protection": "admin_protection",
       "refs": [
         {
@@ -104,7 +104,7 @@
       "from": "cent",
       "verb": "per",
       "to": "kWh",
-      "type": "measure"
+      "type": "measure_unit"
     }
   ],
   "value-time-series": [

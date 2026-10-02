@@ -6,8 +6,8 @@
   },
   {
     "name": "measure_word",
-    "type_code_id": "measure",
-    "type": "measure type"
+    "type_code_id": "measure_unit",
+    "type": "measure unit"
   },
   {
     "name": "scale_word",

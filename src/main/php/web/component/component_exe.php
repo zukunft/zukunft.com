@@ -479,7 +479,7 @@ class component_exe extends component
             component_types::SOURCE_URL_LINK => $form->show_source_url($dbo),
             component_types::REFERENCE_NAME => $base->reference_name($dbo),
             component_types::LANGUAGE_NAME => $base->language_name($dbo),
-            component_types::RESULTS_RELATED => $list->results_related($dbo, $cfg),
+            component_types::RESULTS_RELATED => $list->results_related($dbo, $msg, $cfg),
             component_types::PHRASES_RELATED => $list->phrases_related($msg, $dbo, $cfg),
             component_types::BUTTON_REQUEST => $form->button_request(),
             component_types::SYSTEM_CHANGE_LOG => $log->system_change_log($dbo, $log_lst, $msg, $url_arr, $test_mode),
@@ -518,7 +518,7 @@ class component_exe extends component
             component_types::FORM_LIST_FORMULAS => $list->formulas($dbo, $msg, $cfg, $test_mode, $url_arr),
             // the formula results type shows the results related to the given word or term
             // like the results_related type, so the same renderer is used for both
-            component_types::FORMULA_RESULTS => $list->results_related($dbo, $cfg),
+            component_types::FORMULA_RESULTS => $list->results_related($dbo, $msg, $cfg),
             component_types::WORDS_DOWN => $foaf->word_children($dbo),
             component_types::WORDS_UP => $foaf->word_parents($dbo),
 

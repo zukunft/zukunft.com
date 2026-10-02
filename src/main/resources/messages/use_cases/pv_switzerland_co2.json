@@ -169,7 +169,7 @@
       "from": "gram",
       "verb": "per",
       "to": "kWh",
-      "type": "measure",
+      "type": "measure_unit",
       "description": "the unit of the emission intensity of electricity"
     },
     {

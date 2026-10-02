@@ -42,6 +42,7 @@ include_once paths::MODEL_GROUP . 'group_list.php';
 include_once paths::MODEL_GROUP . 'result_id.php';
 include_once paths::SHARED_CONST . 'groups.php';
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED . 'group_id_url.php';
 include_once test_paths::CONST . 'triple_names.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
@@ -56,6 +57,7 @@ use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\shared\const\groups;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\group_id_url;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\create\test_groups;
@@ -210,6 +212,33 @@ class group_tests
         $test_name = 'a group without an id and without phrases has no phrase count for the table';
         $t->assert($test_name, $t_grp->group_without_key()->table_extension(),
             group_id::TBL_EXT_PHRASE_ID . '0');
+
+        // a url names a group shorter than the database: the leading zeros of a phrase id and the
+        // empty slots are left out and the "+" of a word is a "_", which a url needs no "%2B" for
+        $t->subheader($ts . 'url form');
+        $test_name = 'the url form of a group id leaves out the zero chars, the empty slots and the "+"';
+        $grp_id = new group_id();
+        $key = $grp_id->get_id($t_phr->phrase_list());
+        $url_id = group_id_url::to_url($key);
+        $t->assert($test_name, $url_id, '3-/-/_0_F_');
+        $test_name = '... and the database key is restored from the url form';
+        $t->assert($test_name, group_id_url::from_url($url_id), $key);
+        $test_name = 'a key of more than 16 phrases is restored without filling it to 16 slots';
+        $key_big = $grp_id->get_id($t_phr->phrase_list_17_plus());
+        $t->assert($test_name, group_id_url::from_url(group_id_url::to_url($key_big)), $key_big);
+        $test_name = 'a result key keeps the sign chars of the formula and the source phrases';
+        $res_key = '.....A=.....A(.....A<.....A).....A>' . str_repeat('......+', 11);
+        $t->assert($test_name, group_id_url::to_url($res_key), 'A=A(A<A)A>');
+        $t->assert($test_name, group_id_url::from_url('A=A(A<A)A>'), $res_key);
+        // negative: an integer id of a prime group, a database key and a name are left as they are
+        $test_name = 'the integer id of a prime group is the same in the url';
+        $t->assert($test_name, group_id_url::to_url(values::PI_ID), (string)values::PI_ID);
+        $t->assert($test_name, group_id_url::from_url((string)values::PI_ID), (string)values::PI_ID);
+        $test_name = 'a database key is accepted as a url id';
+        $t->assert($test_name, group_id_url::from_url($key), $key);
+        $test_name = 'a text that is no group key is not changed';
+        $t->assert($test_name, group_id_url::to_url(groups::TN_READ), groups::TN_READ);
+        $t->assert($test_name, group_id_url::from_url(groups::TN_READ), groups::TN_READ);
 
         $t->subheader($ts . 'given name');
         $test_name = 'a group named by a user reports the given name';

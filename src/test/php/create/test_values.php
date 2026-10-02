@@ -305,6 +305,21 @@ class test_values extends test_objects
     }
 
     /**
+     * @return value in million EUR, so that the number is expected to be shown as e.g.
+     *               "123.46 mio €" with the symbols of the scaling and of the unit behind it
+     */
+    function value_mio_eur(): value
+    {
+        $t_wrd = new test_words($this->env);
+        return $this->value_for_phrases([
+            $t_wrd->word()->phrase(),
+            $t_wrd->word_assumed()->phrase(),
+            $t_wrd->word_high()->phrase(),
+            $t_wrd->word_million()->phrase(),
+            $t_wrd->word_eur()->phrase()]);
+    }
+
+    /**
      * @param phrase[] $phrases the phrases that should build the group of the value
      * @param float $number the number assigned to the value (a sample number by default)
      * @return value with the given number assigned to the group of the given phrases
@@ -823,10 +838,10 @@ class test_values extends test_objects
     function solution_prio_loss_phrases(phrase $problem, bool $is_assumed): array
     {
         $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
         $phrases = [
             $problem,
-            $t_wrd->word_potential()->phrase(),
-            $t_wrd->word_loss()->phrase(),
+            $t_trp->potential_loss()->phrase(),
             $t_wrd->word_trillion()->phrase(),
             $t_wrd->word_eur()->phrase()
         ];
@@ -847,11 +862,11 @@ class test_values extends test_objects
     function solution_prio_gain_phrases(phrase $problem, phrase $solution, bool $is_assumed): array
     {
         $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
         $phrases = [
             $problem,
             $solution,
-            $t_wrd->word_potential()->phrase(),
-            $t_wrd->word_gain()->phrase(),
+            $t_trp->potential_gain()->phrase(),
             $t_wrd->word_billion()->phrase(),
             $t_wrd->word_htp()->phrase()
         ];
@@ -868,6 +883,31 @@ class test_values extends test_objects
     {
         $tl = new test_lib();
         return $tl->list_to_ui($this->value_list_solution_prio(), [api_types::INCL_PHRASES]);
+    }
+
+    /**
+     * the potential loss of every problem of the start page ranking without the gain, so that
+     * every value carries the triple "potential loss" as a whole
+     *
+     * @return value_list the loss values of the ranking
+     */
+    function value_list_solution_prio_losses(): value_list
+    {
+        $lst = new value_list($this->env->usr1);
+        foreach ($this->solution_prio_rows() as [$problem, $loss_nbr, , , $is_assumed]) {
+            $lst->add($this->value_for_phrases(
+                $this->solution_prio_loss_phrases($problem, $is_assumed), $loss_nbr));
+        }
+        return $lst;
+    }
+
+    /**
+     * @return value_list_ui the loss values of the ranking for frontend unit testing
+     */
+    function value_list_solution_prio_losses_ui(): value_list_ui
+    {
+        $tl = new test_lib();
+        return $tl->list_to_ui($this->value_list_solution_prio_losses(), [api_types::INCL_PHRASES]);
     }
 
     /**
@@ -1042,8 +1082,8 @@ class test_values extends test_objects
     }
 
     /**
-     * the loss of two problems in a unit that is a triple typed "measure" (gram per kWh), so
-     * that the table header is expected to show the triple behind the "in" like a measure word
+     * the loss of two problems in a unit that is a triple typed "measure unit" (gram per kWh), so
+     * that the table header is expected to show the triple behind the "in" like a unit word
      *
      * @return value_list the loss of global warming and of populism in gram per kWh
      */
@@ -1066,6 +1106,35 @@ class test_values extends test_objects
     {
         $tl = new test_lib();
         return $tl->list_to_ui($this->value_list_unit_triple(), [api_types::INCL_PHRASES]);
+    }
+
+    /**
+     * the loss of two problems as a share of the GDP, where "GDP" names what is measured and
+     * not the unit (typed "measure non unit"), so that the table header is expected to name it
+     * behind the unit and no row or column is expected for it
+     *
+     * @return value_list the loss of global warming and of populism in percent of the GDP
+     */
+    function value_list_measure_non_unit(): value_list
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $loss = $t_wrd->word_loss()->phrase();
+        $pct = $t_wrd->word_percent()->phrase();
+        $gdp = $t_wrd->word_gdp()->phrase();
+        $lst = new value_list($this->env->usr1);
+        $lst->add($this->value_for_phrases([$t_trp->global_warming()->phrase(), $loss, $pct, $gdp], 0.32));
+        $lst->add($this->value_for_phrases([$t_wrd->word_populism()->phrase(), $loss, $pct, $gdp], 0.24));
+        return $lst;
+    }
+
+    /**
+     * @return value_list_ui the loss as a share of the GDP for frontend unit testing
+     */
+    function value_list_measure_non_unit_ui(): value_list_ui
+    {
+        $tl = new test_lib();
+        return $tl->list_to_ui($this->value_list_measure_non_unit(), [api_types::INCL_PHRASES]);
     }
 
     /**

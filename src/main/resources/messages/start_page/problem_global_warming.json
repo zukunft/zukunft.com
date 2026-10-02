@@ -1180,6 +1180,40 @@
       "verb": "is part of",
       "to": "reduce climate gas emissions",
       "description": "the climate solutions are the parts of the solution that the start page ranking shows for the global warming problem (problem_global_warming.json)"
+    },
+    {
+      "name": "trillion EUR",
+      "from": "trillion",
+      "verb": "of",
+      "to": "EUR"
+    },
+    {
+      "from": "person year",
+      "verb": "per",
+      "to": "trillion EUR"
+    },
+    {
+      "name": "billion USD",
+      "from": "billion",
+      "verb": "of",
+      "to": "USD"
+    },
+    {
+      "from": "person year",
+      "verb": "per",
+      "to": "billion USD"
+    },
+    {
+      "name": "potential loss",
+      "from": "loss",
+      "verb": "kind of",
+      "to": "potential"
+    },
+    {
+      "name": "potential gain",
+      "from": "gain",
+      "verb": "kind of",
+      "to": "potential"
     }
   ],
   "formulas": [
@@ -1192,14 +1226,14 @@
     {
       "name": "avoided potential loss",
       "description": "the reward of a solution in trillion EUR, the potential loss of the problem multiplied by the share of the loss that the solution is expected to avoid",
-      "expression": "\"reward\",\"trillion\",\"EUR\" = \"potential\",\"loss\",\"trillion\",\"EUR\" * \"loss reduction\",\"percent\"",
+      "expression": "\"reward\",\"trillion\",\"EUR\" = \"potential loss\",\"trillion\",\"EUR\" * \"loss reduction\",\"percent\"",
       "latex": "R = L_{pot} \\cdot r",
       "assigned_word": "reward"
     },
     {
       "name": "reward ratio (formula)",
       "description": "the avoided loss per person year of effort, the potential loss multiplied by the expected loss reduction and divided by the effort needed, to rank the solutions by their leverage",
-      "expression": "\"reward ratio\",\"trillion\",\"EUR per person year\" = \"potential\",\"loss\",\"trillion\",\"EUR\" * \"loss reduction\",\"percent\" / \"initial effort\",\"person year\"",
+      "expression": "\"reward ratio\",\"trillion\",\"EUR per person year\" = \"potential loss\",\"trillion\",\"EUR\" * \"loss reduction\",\"percent\" / \"initial effort\",\"person year\"",
       "latex": "\\rho = \\frac{L_{pot} \\cdot r}{E_{init}}",
       "assigned_word": "reward ratio"
     },
@@ -1220,7 +1254,7 @@
     {
       "name": "annual damage in money",
       "description": "the loss that a problem causes each year in money, the world GDP multiplied by the share of it that the problem costs per year",
-      "expression": "\"potential\",\"loss\",\"trillion\",\"EUR\" = \"world\",\"GDP\",\"trillion\",\"EUR\" * \"percent\",\"GDP\",\"annual\"",
+      "expression": "\"potential loss\",\"trillion\",\"EUR\" = \"world\",\"GDP\",\"trillion\",\"EUR\" * \"percent\",\"GDP\",\"annual\"",
       "latex": "L_{pot} = GDP_{world} \\cdot d_{annual}",
       "assigned_word": "GDP"
     },
@@ -1234,28 +1268,28 @@
     {
       "name": "long run damage share of the GDP",
       "description": "the share of the world GDP that a problem costs at the end of its development, the share it costs today multiplied by the factor by which the damage still grows; the share is stated negative, because it is a loss",
-      "expression": "\"potential\",\"loss\",\"percent\",\"GDP\" = 0 - \"percent\",\"GDP\",\"annual\" * \"percent\",\"GDP\",\"factor\"",
+      "expression": "\"potential loss\",\"percent\",\"GDP\" = 0 - \"percent\",\"GDP\",\"annual\" * \"percent\",\"GDP\",\"factor\"",
       "latex": "d_{long} = -d_{annual} \\cdot g",
       "assigned_word": "annual"
     },
     {
       "name": "welfare damage share",
       "description": "the share of the global happy time points that a problem costs, the share of the GDP it costs multiplied by the factor by which the welfare damage exceeds the money damage, because htp counts the healthy life years that the GDP does not (concept paper introduction)",
-      "expression": "\"potential\",\"loss\",\"percent\",\"htp\" = \"potential\",\"loss\",\"percent\",\"GDP\" * \"htp\",\"GDP\",\"factor\"",
+      "expression": "\"potential loss\",\"percent\",\"htp\" = \"potential loss\",\"percent\",\"GDP\" * \"htp\",\"GDP\",\"factor\"",
       "latex": "d_{htp} = d_{GDP} \\cdot w",
       "assigned_word": "htp"
     },
     {
       "name": "initial effort of a solution",
       "description": "the person years needed to set up a solution, the annual damage of the problem in money multiplied by the effort needed per trillion EUR of damage",
-      "expression": "\"initial effort\",\"person year\" = \"potential\",\"loss\",\"trillion\",\"EUR\" * \"person year\",\"trillion\",\"EUR\",\"factor\"",
+      "expression": "\"initial effort\",\"person year\" = \"potential loss\",\"trillion\",\"EUR\" * \"person year per trillion EUR\",\"factor\"",
       "latex": "E_{init} = L_{pot} \\cdot e",
       "assigned_word": "person year"
     },
     {
       "name": "avoided welfare loss",
       "description": "the happy time points that a solution saves, the world happy time points multiplied by the share of them that the problem costs and by the share of that loss which the solution avoids; the result is stated positive, because it is a gain",
-      "expression": "\"potential\",\"gain\",\"billion\",\"htp\" = 0 - \"potential\",\"loss\",\"percent\",\"htp\" * \"world\",\"htp\",\"billion\" * \"loss reduction\",\"percent\"",
+      "expression": "\"potential gain\",\"billion\",\"htp\" = 0 - \"potential loss\",\"percent\",\"htp\" * \"world\",\"htp\",\"billion\" * \"loss reduction\",\"percent\"",
       "latex": "G = -d_{htp} \\cdot HTP_{world} \\cdot r",
       "assigned_word": "loss reduction"
     },
@@ -1296,7 +1330,7 @@
     },
     {
       "name": "person years per billion USD by the carbon border tariff",
-      "expression": "\"person year\",\"billion\",\"USD\",\"factor\" = \"initial effort\",\"person year\" / ( ( \"initial effort\",\"minimum\" + \"initial effort\",\"maximum\" ) / 2 )",
+      "expression": "\"person year per billion USD\",\"factor\" = \"initial effort\",\"person year\" / ( ( \"initial effort\",\"minimum\" + \"initial effort\",\"maximum\" ) / 2 )",
       "assigned": [
         "USD"
       ],
@@ -1304,7 +1338,7 @@
     },
     {
       "name": "initial effort of a climate solution",
-      "expression": "\"initial effort\",\"person year\" = ( \"initial effort\",\"minimum\" + \"initial effort\",\"maximum\" ) / 2 * \"person year\",\"billion\",\"USD\",\"factor\"",
+      "expression": "\"initial effort\",\"person year\" = ( \"initial effort\",\"minimum\" + \"initial effort\",\"maximum\" ) / 2 * \"person year per billion USD\",\"factor\"",
       "assigned": [
         "initial effort"
       ],
@@ -1312,7 +1346,7 @@
     },
     {
       "name": "initial effort of a climate solution low",
-      "expression": "\"initial effort\",\"person year\" = \"initial effort\",\"minimum\" * \"person year\",\"billion\",\"USD\",\"factor\"",
+      "expression": "\"initial effort\",\"person year\" = \"initial effort\",\"minimum\" * \"person year per billion USD\",\"factor\"",
       "assigned": [
         "initial effort"
       ],
@@ -1320,7 +1354,7 @@
     },
     {
       "name": "initial effort of a climate solution high",
-      "expression": "\"initial effort\",\"person year\" = \"initial effort\",\"maximum\" * \"person year\",\"billion\",\"USD\",\"factor\"",
+      "expression": "\"initial effort\",\"person year\" = \"initial effort\",\"maximum\" * \"person year per billion USD\",\"factor\"",
       "assigned": [
         "initial effort"
       ],
@@ -1609,9 +1643,7 @@
     {
       "words": [
         "global warming",
-        "person year",
-        "trillion",
-        "EUR",
+        "person year per trillion EUR",
         "factor",
         "assumed"
       ],
@@ -8907,16 +8939,14 @@
     {
       "context": [
         "global warming",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp"
       ],
       "formula": "global happy time points",
       "words": [
         "global warming",
-        "potential",
-        "loss",
+        "potential loss",
         "htp"
       ],
       "number": "31.5"
@@ -8924,8 +8954,7 @@
     {
       "context": [
         "global warming",
-        "potential",
-        "loss",
+        "potential loss",
         "loss reduction",
         "initial effort"
       ],
@@ -8942,8 +8971,7 @@
     {
       "context": [
         "global warming",
-        "potential",
-        "loss",
+        "potential loss",
         "loss reduction",
         "initial effort",
         "low"
@@ -8962,8 +8990,7 @@
     {
       "context": [
         "global warming",
-        "potential",
-        "loss",
+        "potential loss",
         "loss reduction",
         "initial effort",
         "high"
@@ -8996,8 +9023,7 @@
       "formula": "annual damage in money",
       "words": [
         "global warming",
-        "potential",
-        "loss",
+        "potential loss",
         "trillion",
         "EUR",
         "assumed"
@@ -9036,8 +9062,7 @@
       "formula": "long run damage share of the GDP",
       "words": [
         "global warming",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "GDP",
         "assumed"
@@ -9048,8 +9073,7 @@
     {
       "context": [
         "global warming",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "GDP",
         "htp",
@@ -9059,8 +9083,7 @@
       "formula": "welfare damage share",
       "words": [
         "global warming",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "assumed"
@@ -9071,11 +9094,10 @@
     {
       "context": [
         "global warming",
-        "potential",
-        "loss",
+        "potential loss",
         "trillion",
         "EUR",
-        "person year",
+        "person year per trillion EUR",
         "factor",
         "assumed"
       ],
@@ -9094,8 +9116,7 @@
       "context": [
         "global warming",
         "reduce climate gas emissions",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -9107,8 +9128,7 @@
       "words": [
         "global warming",
         "reduce climate gas emissions",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -9120,8 +9140,7 @@
       "context": [
         "global warming",
         "reduce climate gas emissions",
-        "potential",
-        "loss",
+        "potential loss",
         "trillion",
         "EUR",
         "loss reduction",
@@ -9144,8 +9163,7 @@
       "context": [
         "global warming",
         "reduce climate gas emissions",
-        "potential",
-        "loss",
+        "potential loss",
         "trillion",
         "EUR",
         "loss reduction",
@@ -9169,8 +9187,7 @@
     {
       "context": [
         "global warming",
-        "potential",
-        "loss",
+        "potential loss",
         "trillion",
         "EUR",
         "assumed",
@@ -9180,8 +9197,7 @@
       "formula": "probability range low",
       "words": [
         "global warming",
-        "potential",
-        "loss",
+        "potential loss",
         "trillion",
         "EUR",
         "assumed",
@@ -9193,8 +9209,7 @@
     {
       "context": [
         "global warming",
-        "potential",
-        "loss",
+        "potential loss",
         "trillion",
         "EUR",
         "assumed",
@@ -9204,8 +9219,7 @@
       "formula": "probability range high",
       "words": [
         "global warming",
-        "potential",
-        "loss",
+        "potential loss",
         "trillion",
         "EUR",
         "assumed",
@@ -9217,8 +9231,7 @@
     {
       "context": [
         "global warming",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "GDP",
         "assumed",
@@ -9228,8 +9241,7 @@
       "formula": "probability range low",
       "words": [
         "global warming",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "GDP",
         "assumed",
@@ -9241,8 +9253,7 @@
     {
       "context": [
         "global warming",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "GDP",
         "assumed",
@@ -9252,8 +9263,7 @@
       "formula": "probability range high",
       "words": [
         "global warming",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "GDP",
         "assumed",
@@ -9265,8 +9275,7 @@
     {
       "context": [
         "global warming",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "assumed",
@@ -9276,8 +9285,7 @@
       "formula": "probability range low",
       "words": [
         "global warming",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "assumed",
@@ -9289,8 +9297,7 @@
     {
       "context": [
         "global warming",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "assumed",
@@ -9300,8 +9307,7 @@
       "formula": "probability range high",
       "words": [
         "global warming",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "assumed",
@@ -9314,8 +9320,7 @@
       "context": [
         "global warming",
         "reduce climate gas emissions",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -9326,8 +9331,7 @@
       "words": [
         "global warming",
         "reduce climate gas emissions",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -9340,8 +9344,7 @@
       "context": [
         "global warming",
         "reduce climate gas emissions",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -9352,8 +9355,7 @@
       "words": [
         "global warming",
         "reduce climate gas emissions",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -9497,9 +9499,7 @@
         "maximum"
       ],
       "words": [
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -9583,8 +9583,7 @@
       "context": [
         "global warming",
         "coal phase-out",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -9594,8 +9593,7 @@
       ],
       "words": [
         "coal phase-out",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -9607,8 +9605,7 @@
       "formula": "probability range low",
       "context": [
         "coal phase-out",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -9617,8 +9614,7 @@
       ],
       "words": [
         "coal phase-out",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -9630,8 +9626,7 @@
       "formula": "probability range high",
       "context": [
         "coal phase-out",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -9640,8 +9635,7 @@
       ],
       "words": [
         "coal phase-out",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -9656,9 +9650,7 @@
         "initial effort",
         "minimum",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -9676,9 +9668,7 @@
         "coal phase-out",
         "initial effort",
         "minimum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -9697,9 +9687,7 @@
         "coal phase-out",
         "initial effort",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -9789,8 +9777,7 @@
       "context": [
         "global warming",
         "methane reduction",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -9800,8 +9787,7 @@
       ],
       "words": [
         "methane reduction",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -9812,8 +9798,7 @@
       "formula": "probability range low",
       "context": [
         "methane reduction",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -9822,8 +9807,7 @@
       ],
       "words": [
         "methane reduction",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -9835,8 +9819,7 @@
       "formula": "probability range high",
       "context": [
         "methane reduction",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -9845,8 +9828,7 @@
       ],
       "words": [
         "methane reduction",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -9861,9 +9843,7 @@
         "initial effort",
         "minimum",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -9881,9 +9861,7 @@
         "methane reduction",
         "initial effort",
         "minimum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -9902,9 +9880,7 @@
         "methane reduction",
         "initial effort",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -9994,8 +9970,7 @@
       "context": [
         "global warming",
         "energy efficiency",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -10005,8 +9980,7 @@
       ],
       "words": [
         "energy efficiency",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -10017,8 +9991,7 @@
       "formula": "probability range low",
       "context": [
         "energy efficiency",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -10027,8 +10000,7 @@
       ],
       "words": [
         "energy efficiency",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -10040,8 +10012,7 @@
       "formula": "probability range high",
       "context": [
         "energy efficiency",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -10050,8 +10021,7 @@
       ],
       "words": [
         "energy efficiency",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -10066,9 +10036,7 @@
         "initial effort",
         "minimum",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -10086,9 +10054,7 @@
         "energy efficiency",
         "initial effort",
         "minimum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -10107,9 +10073,7 @@
         "energy efficiency",
         "initial effort",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -10199,8 +10163,7 @@
       "context": [
         "global warming",
         "building renovation",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -10210,8 +10173,7 @@
       ],
       "words": [
         "building renovation",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -10222,8 +10184,7 @@
       "formula": "probability range low",
       "context": [
         "building renovation",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -10232,8 +10193,7 @@
       ],
       "words": [
         "building renovation",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -10245,8 +10205,7 @@
       "formula": "probability range high",
       "context": [
         "building renovation",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -10255,8 +10214,7 @@
       ],
       "words": [
         "building renovation",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -10271,9 +10229,7 @@
         "initial effort",
         "minimum",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -10291,9 +10247,7 @@
         "building renovation",
         "initial effort",
         "minimum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -10312,9 +10266,7 @@
         "building renovation",
         "initial effort",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -10404,8 +10356,7 @@
       "context": [
         "global warming",
         "heat pumps",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -10415,8 +10366,7 @@
       ],
       "words": [
         "heat pumps",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -10427,8 +10377,7 @@
       "formula": "probability range low",
       "context": [
         "heat pumps",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -10437,8 +10386,7 @@
       ],
       "words": [
         "heat pumps",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -10450,8 +10398,7 @@
       "formula": "probability range high",
       "context": [
         "heat pumps",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -10460,8 +10407,7 @@
       ],
       "words": [
         "heat pumps",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -10476,9 +10422,7 @@
         "initial effort",
         "minimum",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -10496,9 +10440,7 @@
         "heat pumps",
         "initial effort",
         "minimum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -10517,9 +10459,7 @@
         "heat pumps",
         "initial effort",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -10609,8 +10549,7 @@
       "context": [
         "global warming",
         "district heating",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -10620,8 +10559,7 @@
       ],
       "words": [
         "district heating",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -10632,8 +10570,7 @@
       "formula": "probability range low",
       "context": [
         "district heating",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -10642,8 +10579,7 @@
       ],
       "words": [
         "district heating",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -10655,8 +10591,7 @@
       "formula": "probability range high",
       "context": [
         "district heating",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -10665,8 +10600,7 @@
       ],
       "words": [
         "district heating",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -10681,9 +10615,7 @@
         "initial effort",
         "minimum",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -10701,9 +10633,7 @@
         "district heating",
         "initial effort",
         "minimum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -10722,9 +10652,7 @@
         "district heating",
         "initial effort",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -10814,8 +10742,7 @@
       "context": [
         "global warming",
         "solar energy",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -10825,8 +10752,7 @@
       ],
       "words": [
         "solar energy",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -10837,8 +10763,7 @@
       "formula": "probability range low",
       "context": [
         "solar energy",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -10847,8 +10772,7 @@
       ],
       "words": [
         "solar energy",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -10860,8 +10784,7 @@
       "formula": "probability range high",
       "context": [
         "solar energy",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -10870,8 +10793,7 @@
       ],
       "words": [
         "solar energy",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -10886,9 +10808,7 @@
         "initial effort",
         "minimum",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -10906,9 +10826,7 @@
         "solar energy",
         "initial effort",
         "minimum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -10927,9 +10845,7 @@
         "solar energy",
         "initial effort",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -11019,8 +10935,7 @@
       "context": [
         "global warming",
         "wind energy",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -11030,8 +10945,7 @@
       ],
       "words": [
         "wind energy",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -11042,8 +10956,7 @@
       "formula": "probability range low",
       "context": [
         "wind energy",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -11052,8 +10965,7 @@
       ],
       "words": [
         "wind energy",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -11065,8 +10977,7 @@
       "formula": "probability range high",
       "context": [
         "wind energy",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -11075,8 +10986,7 @@
       ],
       "words": [
         "wind energy",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -11091,9 +11001,7 @@
         "initial effort",
         "minimum",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -11111,9 +11019,7 @@
         "wind energy",
         "initial effort",
         "minimum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -11132,9 +11038,7 @@
         "wind energy",
         "initial effort",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -11224,8 +11128,7 @@
       "context": [
         "global warming",
         "hydropower",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -11235,8 +11138,7 @@
       ],
       "words": [
         "hydropower",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -11247,8 +11149,7 @@
       "formula": "probability range low",
       "context": [
         "hydropower",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -11257,8 +11158,7 @@
       ],
       "words": [
         "hydropower",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -11270,8 +11170,7 @@
       "formula": "probability range high",
       "context": [
         "hydropower",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -11280,8 +11179,7 @@
       ],
       "words": [
         "hydropower",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -11296,9 +11194,7 @@
         "initial effort",
         "minimum",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -11316,9 +11212,7 @@
         "hydropower",
         "initial effort",
         "minimum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -11337,9 +11231,7 @@
         "hydropower",
         "initial effort",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -11429,8 +11321,7 @@
       "context": [
         "global warming",
         "nuclear energy",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -11440,8 +11331,7 @@
       ],
       "words": [
         "nuclear energy",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -11452,8 +11342,7 @@
       "formula": "probability range low",
       "context": [
         "nuclear energy",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -11462,8 +11351,7 @@
       ],
       "words": [
         "nuclear energy",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -11475,8 +11363,7 @@
       "formula": "probability range high",
       "context": [
         "nuclear energy",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -11485,8 +11372,7 @@
       ],
       "words": [
         "nuclear energy",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -11501,9 +11387,7 @@
         "initial effort",
         "minimum",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -11521,9 +11405,7 @@
         "nuclear energy",
         "initial effort",
         "minimum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -11542,9 +11424,7 @@
         "nuclear energy",
         "initial effort",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -11634,8 +11514,7 @@
       "context": [
         "global warming",
         "geothermal energy",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -11645,8 +11524,7 @@
       ],
       "words": [
         "geothermal energy",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -11657,8 +11535,7 @@
       "formula": "probability range low",
       "context": [
         "geothermal energy",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -11667,8 +11544,7 @@
       ],
       "words": [
         "geothermal energy",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -11680,8 +11556,7 @@
       "formula": "probability range high",
       "context": [
         "geothermal energy",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -11690,8 +11565,7 @@
       ],
       "words": [
         "geothermal energy",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -11706,9 +11580,7 @@
         "initial effort",
         "minimum",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -11726,9 +11598,7 @@
         "geothermal energy",
         "initial effort",
         "minimum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -11747,9 +11617,7 @@
         "geothermal energy",
         "initial effort",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -11839,8 +11707,7 @@
       "context": [
         "global warming",
         "energy storage",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -11850,8 +11717,7 @@
       ],
       "words": [
         "energy storage",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -11862,8 +11728,7 @@
       "formula": "probability range low",
       "context": [
         "energy storage",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -11872,8 +11737,7 @@
       ],
       "words": [
         "energy storage",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -11885,8 +11749,7 @@
       "formula": "probability range high",
       "context": [
         "energy storage",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -11895,8 +11758,7 @@
       ],
       "words": [
         "energy storage",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -11911,9 +11773,7 @@
         "initial effort",
         "minimum",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -11931,9 +11791,7 @@
         "energy storage",
         "initial effort",
         "minimum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -11952,9 +11810,7 @@
         "energy storage",
         "initial effort",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -12044,8 +11900,7 @@
       "context": [
         "global warming",
         "grid expansion",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -12055,8 +11910,7 @@
       ],
       "words": [
         "grid expansion",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -12067,8 +11921,7 @@
       "formula": "probability range low",
       "context": [
         "grid expansion",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -12077,8 +11930,7 @@
       ],
       "words": [
         "grid expansion",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -12090,8 +11942,7 @@
       "formula": "probability range high",
       "context": [
         "grid expansion",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -12100,8 +11951,7 @@
       ],
       "words": [
         "grid expansion",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -12116,9 +11966,7 @@
         "initial effort",
         "minimum",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -12136,9 +11984,7 @@
         "grid expansion",
         "initial effort",
         "minimum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -12157,9 +12003,7 @@
         "grid expansion",
         "initial effort",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -12249,8 +12093,7 @@
       "context": [
         "global warming",
         "electrification",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -12260,8 +12103,7 @@
       ],
       "words": [
         "electrification",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -12272,8 +12114,7 @@
       "formula": "probability range low",
       "context": [
         "electrification",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -12282,8 +12123,7 @@
       ],
       "words": [
         "electrification",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -12295,8 +12135,7 @@
       "formula": "probability range high",
       "context": [
         "electrification",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -12305,8 +12144,7 @@
       ],
       "words": [
         "electrification",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -12321,9 +12159,7 @@
         "initial effort",
         "minimum",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -12341,9 +12177,7 @@
         "electrification",
         "initial effort",
         "minimum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -12362,9 +12196,7 @@
         "electrification",
         "initial effort",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -12454,8 +12286,7 @@
       "context": [
         "global warming",
         "public transport",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -12465,8 +12296,7 @@
       ],
       "words": [
         "public transport",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -12477,8 +12307,7 @@
       "formula": "probability range low",
       "context": [
         "public transport",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -12487,8 +12316,7 @@
       ],
       "words": [
         "public transport",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -12500,8 +12328,7 @@
       "formula": "probability range high",
       "context": [
         "public transport",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -12510,8 +12337,7 @@
       ],
       "words": [
         "public transport",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -12526,9 +12352,7 @@
         "initial effort",
         "minimum",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -12546,9 +12370,7 @@
         "public transport",
         "initial effort",
         "minimum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -12567,9 +12389,7 @@
         "public transport",
         "initial effort",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -12659,8 +12479,7 @@
       "context": [
         "global warming",
         "cycling",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -12670,8 +12489,7 @@
       ],
       "words": [
         "cycling",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -12682,8 +12500,7 @@
       "formula": "probability range low",
       "context": [
         "cycling",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -12692,8 +12509,7 @@
       ],
       "words": [
         "cycling",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -12705,8 +12521,7 @@
       "formula": "probability range high",
       "context": [
         "cycling",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -12715,8 +12530,7 @@
       ],
       "words": [
         "cycling",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -12731,9 +12545,7 @@
         "initial effort",
         "minimum",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -12751,9 +12563,7 @@
         "cycling",
         "initial effort",
         "minimum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -12772,9 +12582,7 @@
         "cycling",
         "initial effort",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -12864,8 +12672,7 @@
       "context": [
         "global warming",
         "speed limit",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -12875,8 +12682,7 @@
       ],
       "words": [
         "speed limit",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -12887,8 +12693,7 @@
       "formula": "probability range low",
       "context": [
         "speed limit",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -12897,8 +12702,7 @@
       ],
       "words": [
         "speed limit",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -12910,8 +12714,7 @@
       "formula": "probability range high",
       "context": [
         "speed limit",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -12920,8 +12723,7 @@
       ],
       "words": [
         "speed limit",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -12936,9 +12738,7 @@
         "initial effort",
         "minimum",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -12956,9 +12756,7 @@
         "speed limit",
         "initial effort",
         "minimum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -12977,9 +12775,7 @@
         "speed limit",
         "initial effort",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -13069,8 +12865,7 @@
       "context": [
         "global warming",
         "carbon price",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -13080,8 +12875,7 @@
       ],
       "words": [
         "carbon price",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -13092,8 +12886,7 @@
       "formula": "probability range low",
       "context": [
         "carbon price",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -13102,8 +12895,7 @@
       ],
       "words": [
         "carbon price",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -13115,8 +12907,7 @@
       "formula": "probability range high",
       "context": [
         "carbon price",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -13125,8 +12916,7 @@
       ],
       "words": [
         "carbon price",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -13141,9 +12931,7 @@
         "initial effort",
         "minimum",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -13161,9 +12949,7 @@
         "carbon price",
         "initial effort",
         "minimum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -13182,9 +12968,7 @@
         "carbon price",
         "initial effort",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -13274,8 +13058,7 @@
       "context": [
         "global warming",
         "climate dividend",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -13285,8 +13068,7 @@
       ],
       "words": [
         "climate dividend",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -13297,8 +13079,7 @@
       "formula": "probability range low",
       "context": [
         "climate dividend",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -13307,8 +13088,7 @@
       ],
       "words": [
         "climate dividend",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -13320,8 +13100,7 @@
       "formula": "probability range high",
       "context": [
         "climate dividend",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -13330,8 +13109,7 @@
       ],
       "words": [
         "climate dividend",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -13346,9 +13124,7 @@
         "initial effort",
         "minimum",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -13366,9 +13142,7 @@
         "climate dividend",
         "initial effort",
         "minimum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -13387,9 +13161,7 @@
         "climate dividend",
         "initial effort",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -13479,8 +13251,7 @@
       "context": [
         "global warming",
         "emissions trading",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -13490,8 +13261,7 @@
       ],
       "words": [
         "emissions trading",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -13502,8 +13272,7 @@
       "formula": "probability range low",
       "context": [
         "emissions trading",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -13512,8 +13281,7 @@
       ],
       "words": [
         "emissions trading",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -13525,8 +13293,7 @@
       "formula": "probability range high",
       "context": [
         "emissions trading",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -13535,8 +13302,7 @@
       ],
       "words": [
         "emissions trading",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -13551,9 +13317,7 @@
         "initial effort",
         "minimum",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -13571,9 +13335,7 @@
         "emissions trading",
         "initial effort",
         "minimum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -13592,9 +13354,7 @@
         "emissions trading",
         "initial effort",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -13684,8 +13444,7 @@
       "context": [
         "global warming",
         "electric mobility",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -13695,8 +13454,7 @@
       ],
       "words": [
         "electric mobility",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -13707,8 +13465,7 @@
       "formula": "probability range low",
       "context": [
         "electric mobility",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -13717,8 +13474,7 @@
       ],
       "words": [
         "electric mobility",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -13730,8 +13486,7 @@
       "formula": "probability range high",
       "context": [
         "electric mobility",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -13740,8 +13495,7 @@
       ],
       "words": [
         "electric mobility",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -13756,9 +13510,7 @@
         "initial effort",
         "minimum",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -13776,9 +13528,7 @@
         "electric mobility",
         "initial effort",
         "minimum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -13797,9 +13547,7 @@
         "electric mobility",
         "initial effort",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -13889,8 +13637,7 @@
       "context": [
         "global warming",
         "freight transport",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -13900,8 +13647,7 @@
       ],
       "words": [
         "freight transport",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -13912,8 +13658,7 @@
       "formula": "probability range low",
       "context": [
         "freight transport",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -13922,8 +13667,7 @@
       ],
       "words": [
         "freight transport",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -13935,8 +13679,7 @@
       "formula": "probability range high",
       "context": [
         "freight transport",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -13945,8 +13688,7 @@
       ],
       "words": [
         "freight transport",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -13961,9 +13703,7 @@
         "initial effort",
         "minimum",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -13981,9 +13721,7 @@
         "freight transport",
         "initial effort",
         "minimum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -14002,9 +13740,7 @@
         "freight transport",
         "initial effort",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -14094,8 +13830,7 @@
       "context": [
         "global warming",
         "circular economy",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -14105,8 +13840,7 @@
       ],
       "words": [
         "circular economy",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -14117,8 +13851,7 @@
       "formula": "probability range low",
       "context": [
         "circular economy",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -14127,8 +13860,7 @@
       ],
       "words": [
         "circular economy",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -14140,8 +13872,7 @@
       "formula": "probability range high",
       "context": [
         "circular economy",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -14150,8 +13881,7 @@
       ],
       "words": [
         "circular economy",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -14166,9 +13896,7 @@
         "initial effort",
         "minimum",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -14186,9 +13914,7 @@
         "circular economy",
         "initial effort",
         "minimum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -14207,9 +13933,7 @@
         "circular economy",
         "initial effort",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -14299,8 +14023,7 @@
       "context": [
         "global warming",
         "recycling",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -14310,8 +14033,7 @@
       ],
       "words": [
         "recycling",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -14322,8 +14044,7 @@
       "formula": "probability range low",
       "context": [
         "recycling",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -14332,8 +14053,7 @@
       ],
       "words": [
         "recycling",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -14345,8 +14065,7 @@
       "formula": "probability range high",
       "context": [
         "recycling",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -14355,8 +14074,7 @@
       ],
       "words": [
         "recycling",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -14371,9 +14089,7 @@
         "initial effort",
         "minimum",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -14391,9 +14107,7 @@
         "recycling",
         "initial effort",
         "minimum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -14412,9 +14126,7 @@
         "recycling",
         "initial effort",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -14504,8 +14216,7 @@
       "context": [
         "global warming",
         "material efficiency",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -14515,8 +14226,7 @@
       ],
       "words": [
         "material efficiency",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -14527,8 +14237,7 @@
       "formula": "probability range low",
       "context": [
         "material efficiency",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -14537,8 +14246,7 @@
       ],
       "words": [
         "material efficiency",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -14550,8 +14258,7 @@
       "formula": "probability range high",
       "context": [
         "material efficiency",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -14560,8 +14267,7 @@
       ],
       "words": [
         "material efficiency",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -14576,9 +14282,7 @@
         "initial effort",
         "minimum",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -14596,9 +14300,7 @@
         "material efficiency",
         "initial effort",
         "minimum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -14617,9 +14319,7 @@
         "material efficiency",
         "initial effort",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -14709,8 +14409,7 @@
       "context": [
         "global warming",
         "sufficiency",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -14720,8 +14419,7 @@
       ],
       "words": [
         "sufficiency",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -14732,8 +14430,7 @@
       "formula": "probability range low",
       "context": [
         "sufficiency",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -14742,8 +14439,7 @@
       ],
       "words": [
         "sufficiency",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -14755,8 +14451,7 @@
       "formula": "probability range high",
       "context": [
         "sufficiency",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -14765,8 +14460,7 @@
       ],
       "words": [
         "sufficiency",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -14781,9 +14475,7 @@
         "initial effort",
         "minimum",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -14801,9 +14493,7 @@
         "sufficiency",
         "initial effort",
         "minimum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -14822,9 +14512,7 @@
         "sufficiency",
         "initial effort",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -14914,8 +14602,7 @@
       "context": [
         "global warming",
         "afforestation",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -14925,8 +14612,7 @@
       ],
       "words": [
         "afforestation",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -14937,8 +14623,7 @@
       "formula": "probability range low",
       "context": [
         "afforestation",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -14947,8 +14632,7 @@
       ],
       "words": [
         "afforestation",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -14960,8 +14644,7 @@
       "formula": "probability range high",
       "context": [
         "afforestation",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -14970,8 +14653,7 @@
       ],
       "words": [
         "afforestation",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -14986,9 +14668,7 @@
         "initial effort",
         "minimum",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -15006,9 +14686,7 @@
         "afforestation",
         "initial effort",
         "minimum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -15027,9 +14705,7 @@
         "afforestation",
         "initial effort",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -15119,8 +14795,7 @@
       "context": [
         "global warming",
         "peatland rewetting",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -15130,8 +14805,7 @@
       ],
       "words": [
         "peatland rewetting",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -15142,8 +14816,7 @@
       "formula": "probability range low",
       "context": [
         "peatland rewetting",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -15152,8 +14825,7 @@
       ],
       "words": [
         "peatland rewetting",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -15165,8 +14837,7 @@
       "formula": "probability range high",
       "context": [
         "peatland rewetting",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -15175,8 +14846,7 @@
       ],
       "words": [
         "peatland rewetting",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -15191,9 +14861,7 @@
         "initial effort",
         "minimum",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -15211,9 +14879,7 @@
         "peatland rewetting",
         "initial effort",
         "minimum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -15232,9 +14898,7 @@
         "peatland rewetting",
         "initial effort",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -15324,8 +14988,7 @@
       "context": [
         "global warming",
         "soil carbon buildup",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -15335,8 +14998,7 @@
       ],
       "words": [
         "soil carbon buildup",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -15347,8 +15009,7 @@
       "formula": "probability range low",
       "context": [
         "soil carbon buildup",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -15357,8 +15018,7 @@
       ],
       "words": [
         "soil carbon buildup",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -15370,8 +15030,7 @@
       "formula": "probability range high",
       "context": [
         "soil carbon buildup",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -15380,8 +15039,7 @@
       ],
       "words": [
         "soil carbon buildup",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -15396,9 +15054,7 @@
         "initial effort",
         "minimum",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -15416,9 +15072,7 @@
         "soil carbon buildup",
         "initial effort",
         "minimum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -15437,9 +15091,7 @@
         "soil carbon buildup",
         "initial effort",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -15529,8 +15181,7 @@
       "context": [
         "global warming",
         "carbon capture and storage",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -15540,8 +15191,7 @@
       ],
       "words": [
         "carbon capture and storage",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -15552,8 +15202,7 @@
       "formula": "probability range low",
       "context": [
         "carbon capture and storage",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -15562,8 +15211,7 @@
       ],
       "words": [
         "carbon capture and storage",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -15575,8 +15223,7 @@
       "formula": "probability range high",
       "context": [
         "carbon capture and storage",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -15585,8 +15232,7 @@
       ],
       "words": [
         "carbon capture and storage",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -15601,9 +15247,7 @@
         "initial effort",
         "minimum",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -15621,9 +15265,7 @@
         "carbon capture and storage",
         "initial effort",
         "minimum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -15642,9 +15284,7 @@
         "carbon capture and storage",
         "initial effort",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -15734,8 +15374,7 @@
       "context": [
         "global warming",
         "carbon capture and utilization",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -15745,8 +15384,7 @@
       ],
       "words": [
         "carbon capture and utilization",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -15757,8 +15395,7 @@
       "formula": "probability range low",
       "context": [
         "carbon capture and utilization",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -15767,8 +15404,7 @@
       ],
       "words": [
         "carbon capture and utilization",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -15780,8 +15416,7 @@
       "formula": "probability range high",
       "context": [
         "carbon capture and utilization",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -15790,8 +15425,7 @@
       ],
       "words": [
         "carbon capture and utilization",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -15806,9 +15440,7 @@
         "initial effort",
         "minimum",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -15826,9 +15458,7 @@
         "carbon capture and utilization",
         "initial effort",
         "minimum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -15847,9 +15477,7 @@
         "carbon capture and utilization",
         "initial effort",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -15939,8 +15567,7 @@
       "context": [
         "global warming",
         "green hydrogen",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -15950,8 +15577,7 @@
       ],
       "words": [
         "green hydrogen",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -15962,8 +15588,7 @@
       "formula": "probability range low",
       "context": [
         "green hydrogen",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -15972,8 +15597,7 @@
       ],
       "words": [
         "green hydrogen",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -15985,8 +15609,7 @@
       "formula": "probability range high",
       "context": [
         "green hydrogen",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -15995,8 +15618,7 @@
       ],
       "words": [
         "green hydrogen",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -16011,9 +15633,7 @@
         "initial effort",
         "minimum",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -16031,9 +15651,7 @@
         "green hydrogen",
         "initial effort",
         "minimum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -16052,9 +15670,7 @@
         "green hydrogen",
         "initial effort",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -16144,8 +15760,7 @@
       "context": [
         "global warming",
         "sustainable agriculture",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -16155,8 +15770,7 @@
       ],
       "words": [
         "sustainable agriculture",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -16167,8 +15781,7 @@
       "formula": "probability range low",
       "context": [
         "sustainable agriculture",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -16177,8 +15790,7 @@
       ],
       "words": [
         "sustainable agriculture",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -16190,8 +15802,7 @@
       "formula": "probability range high",
       "context": [
         "sustainable agriculture",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -16200,8 +15811,7 @@
       ],
       "words": [
         "sustainable agriculture",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -16216,9 +15826,7 @@
         "initial effort",
         "minimum",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -16236,9 +15844,7 @@
         "sustainable agriculture",
         "initial effort",
         "minimum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -16257,9 +15863,7 @@
         "sustainable agriculture",
         "initial effort",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -16349,8 +15953,7 @@
       "context": [
         "global warming",
         "reduced meat consumption",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -16360,8 +15963,7 @@
       ],
       "words": [
         "reduced meat consumption",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -16372,8 +15974,7 @@
       "formula": "probability range low",
       "context": [
         "reduced meat consumption",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -16382,8 +15983,7 @@
       ],
       "words": [
         "reduced meat consumption",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -16395,8 +15995,7 @@
       "formula": "probability range high",
       "context": [
         "reduced meat consumption",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -16405,8 +16004,7 @@
       ],
       "words": [
         "reduced meat consumption",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -16421,9 +16019,7 @@
         "initial effort",
         "minimum",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -16441,9 +16037,7 @@
         "reduced meat consumption",
         "initial effort",
         "minimum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -16462,9 +16056,7 @@
         "reduced meat consumption",
         "initial effort",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -16554,8 +16146,7 @@
       "context": [
         "global warming",
         "food waste reduction",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -16565,8 +16156,7 @@
       ],
       "words": [
         "food waste reduction",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -16577,8 +16167,7 @@
       "formula": "probability range low",
       "context": [
         "food waste reduction",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -16587,8 +16176,7 @@
       ],
       "words": [
         "food waste reduction",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -16600,8 +16188,7 @@
       "formula": "probability range high",
       "context": [
         "food waste reduction",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -16610,8 +16197,7 @@
       ],
       "words": [
         "food waste reduction",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -16626,9 +16212,7 @@
         "initial effort",
         "minimum",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -16646,9 +16230,7 @@
         "food waste reduction",
         "initial effort",
         "minimum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -16667,9 +16249,7 @@
         "food waste reduction",
         "initial effort",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -16759,8 +16339,7 @@
       "context": [
         "global warming",
         "aviation emission reduction",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -16770,8 +16349,7 @@
       ],
       "words": [
         "aviation emission reduction",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -16782,8 +16360,7 @@
       "formula": "probability range low",
       "context": [
         "aviation emission reduction",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -16792,8 +16369,7 @@
       ],
       "words": [
         "aviation emission reduction",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -16805,8 +16381,7 @@
       "formula": "probability range high",
       "context": [
         "aviation emission reduction",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -16815,8 +16390,7 @@
       ],
       "words": [
         "aviation emission reduction",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -16831,9 +16405,7 @@
         "initial effort",
         "minimum",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -16851,9 +16423,7 @@
         "aviation emission reduction",
         "initial effort",
         "minimum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -16872,9 +16442,7 @@
         "aviation emission reduction",
         "initial effort",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -16964,8 +16532,7 @@
       "context": [
         "global warming",
         "emission standards",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -16975,8 +16542,7 @@
       ],
       "words": [
         "emission standards",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -16987,8 +16553,7 @@
       "formula": "probability range low",
       "context": [
         "emission standards",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -16997,8 +16562,7 @@
       ],
       "words": [
         "emission standards",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -17010,8 +16574,7 @@
       "formula": "probability range high",
       "context": [
         "emission standards",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -17020,8 +16583,7 @@
       ],
       "words": [
         "emission standards",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -17036,9 +16598,7 @@
         "initial effort",
         "minimum",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -17056,9 +16616,7 @@
         "emission standards",
         "initial effort",
         "minimum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -17077,9 +16635,7 @@
         "emission standards",
         "initial effort",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -17169,8 +16725,7 @@
       "context": [
         "global warming",
         "research (climate solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -17180,8 +16735,7 @@
       ],
       "words": [
         "research (climate solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -17192,8 +16746,7 @@
       "formula": "probability range low",
       "context": [
         "research (climate solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -17202,8 +16755,7 @@
       ],
       "words": [
         "research (climate solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -17215,8 +16767,7 @@
       "formula": "probability range high",
       "context": [
         "research (climate solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -17225,8 +16776,7 @@
       ],
       "words": [
         "research (climate solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -17241,9 +16791,7 @@
         "initial effort",
         "minimum",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -17261,9 +16809,7 @@
         "research (climate solution)",
         "initial effort",
         "minimum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -17282,9 +16828,7 @@
         "research (climate solution)",
         "initial effort",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -17374,8 +16918,7 @@
       "context": [
         "global warming",
         "innovation",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -17385,8 +16928,7 @@
       ],
       "words": [
         "innovation",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -17397,8 +16939,7 @@
       "formula": "probability range low",
       "context": [
         "innovation",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -17407,8 +16948,7 @@
       ],
       "words": [
         "innovation",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -17420,8 +16960,7 @@
       "formula": "probability range high",
       "context": [
         "innovation",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -17430,8 +16969,7 @@
       ],
       "words": [
         "innovation",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -17446,9 +16984,7 @@
         "initial effort",
         "minimum",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -17466,9 +17002,7 @@
         "innovation",
         "initial effort",
         "minimum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -17487,9 +17021,7 @@
         "innovation",
         "initial effort",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -17579,8 +17111,7 @@
       "context": [
         "global warming",
         "climate finance",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -17590,8 +17121,7 @@
       ],
       "words": [
         "climate finance",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -17602,8 +17132,7 @@
       "formula": "probability range low",
       "context": [
         "climate finance",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -17612,8 +17141,7 @@
       ],
       "words": [
         "climate finance",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -17625,8 +17153,7 @@
       "formula": "probability range high",
       "context": [
         "climate finance",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -17635,8 +17162,7 @@
       ],
       "words": [
         "climate finance",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -17651,9 +17177,7 @@
         "initial effort",
         "minimum",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -17671,9 +17195,7 @@
         "climate finance",
         "initial effort",
         "minimum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -17692,9 +17214,7 @@
         "climate finance",
         "initial effort",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -17784,8 +17304,7 @@
       "context": [
         "global warming",
         "supply chain laws",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -17795,8 +17314,7 @@
       ],
       "words": [
         "supply chain laws",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -17807,8 +17325,7 @@
       "formula": "probability range low",
       "context": [
         "supply chain laws",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -17817,8 +17334,7 @@
       ],
       "words": [
         "supply chain laws",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -17830,8 +17346,7 @@
       "formula": "probability range high",
       "context": [
         "supply chain laws",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -17840,8 +17355,7 @@
       ],
       "words": [
         "supply chain laws",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -17856,9 +17370,7 @@
         "initial effort",
         "minimum",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -17876,9 +17388,7 @@
         "supply chain laws",
         "initial effort",
         "minimum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -17897,9 +17407,7 @@
         "supply chain laws",
         "initial effort",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -17989,8 +17497,7 @@
       "context": [
         "global warming",
         "fossil subsidy removal",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -18000,8 +17507,7 @@
       ],
       "words": [
         "fossil subsidy removal",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -18012,8 +17518,7 @@
       "formula": "probability range low",
       "context": [
         "fossil subsidy removal",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -18022,8 +17527,7 @@
       ],
       "words": [
         "fossil subsidy removal",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -18035,8 +17539,7 @@
       "formula": "probability range high",
       "context": [
         "fossil subsidy removal",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -18045,8 +17548,7 @@
       ],
       "words": [
         "fossil subsidy removal",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -18061,9 +17563,7 @@
         "initial effort",
         "minimum",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -18081,9 +17581,7 @@
         "fossil subsidy removal",
         "initial effort",
         "minimum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -18102,9 +17600,7 @@
         "fossil subsidy removal",
         "initial effort",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -18194,8 +17690,7 @@
       "context": [
         "global warming",
         "education (climate solution)",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -18205,8 +17700,7 @@
       ],
       "words": [
         "education (climate solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -18217,8 +17711,7 @@
       "formula": "probability range low",
       "context": [
         "education (climate solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -18227,8 +17720,7 @@
       ],
       "words": [
         "education (climate solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -18240,8 +17732,7 @@
       "formula": "probability range high",
       "context": [
         "education (climate solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -18250,8 +17741,7 @@
       ],
       "words": [
         "education (climate solution)",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -18266,9 +17756,7 @@
         "initial effort",
         "minimum",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -18286,9 +17774,7 @@
         "education (climate solution)",
         "initial effort",
         "minimum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -18307,9 +17793,7 @@
         "education (climate solution)",
         "initial effort",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -18399,8 +17883,7 @@
       "context": [
         "global warming",
         "digitalization",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -18410,8 +17893,7 @@
       ],
       "words": [
         "digitalization",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -18422,8 +17904,7 @@
       "formula": "probability range low",
       "context": [
         "digitalization",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -18432,8 +17913,7 @@
       ],
       "words": [
         "digitalization",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -18445,8 +17925,7 @@
       "formula": "probability range high",
       "context": [
         "digitalization",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -18455,8 +17934,7 @@
       ],
       "words": [
         "digitalization",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -18471,9 +17949,7 @@
         "initial effort",
         "minimum",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -18491,9 +17967,7 @@
         "digitalization",
         "initial effort",
         "minimum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -18512,9 +17986,7 @@
         "digitalization",
         "initial effort",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -18604,8 +18076,7 @@
       "context": [
         "global warming",
         "international agreements",
-        "potential",
-        "loss",
+        "potential loss",
         "percent",
         "htp",
         "world",
@@ -18615,8 +18086,7 @@
       ],
       "words": [
         "international agreements",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed"
@@ -18627,8 +18097,7 @@
       "formula": "probability range low",
       "context": [
         "international agreements",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -18637,8 +18106,7 @@
       ],
       "words": [
         "international agreements",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -18650,8 +18118,7 @@
       "formula": "probability range high",
       "context": [
         "international agreements",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -18660,8 +18127,7 @@
       ],
       "words": [
         "international agreements",
-        "potential",
-        "gain",
+        "potential gain",
         "billion",
         "htp",
         "assumed",
@@ -18676,9 +18142,7 @@
         "initial effort",
         "minimum",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -18696,9 +18160,7 @@
         "international agreements",
         "initial effort",
         "minimum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],
@@ -18717,9 +18179,7 @@
         "international agreements",
         "initial effort",
         "maximum",
-        "person year",
-        "billion",
-        "USD",
+        "person year per billion USD",
         "factor",
         "assumed"
       ],

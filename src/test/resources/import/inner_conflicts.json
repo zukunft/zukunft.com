@@ -336,7 +336,7 @@
     {
       "name": "percent",
       "description": "one hundredth, scaled by 100 in formulas.",
-      "type": "measure"
+      "type": "percent"
     },
     {
       "name": "confidence",

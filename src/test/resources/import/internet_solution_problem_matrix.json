@@ -82,7 +82,7 @@
       "from": "valence",
       "verb": "kind of",
       "to": "social",
-      "type": "measure",
+      "type": "measure_unit",
       "scale": "-1 divisive to +1 connecting"
     },
     {
@@ -90,10 +90,10 @@
       "from": "orientation",
       "verb": "kind of",
       "to": "constructive",
-      "type": "measure",
+      "type": "measure_unit",
       "scale": "-1 (emphasize problem + assign blame) to +1 (propose solution + call to action)"
     },
-    {"name": "reply count", "from": "count", "verb": "of", "to": "reply", "type": "measure", "unit": "replies"},
+    {"name": "reply count", "from": "count", "verb": "of", "to": "reply", "type": "measure_unit", "unit": "replies"},
     {"from": "connecting", "verb": "kind of", "to": "social valence"},
     {"from": "divisive", "verb": "kind of", "to": "social valence"},
     {"from": "contempt", "verb": "is evidence for", "to": "divisive"},

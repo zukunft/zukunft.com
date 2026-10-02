@@ -73,7 +73,7 @@
     {
       "name": "bn",
       "description": "billion, a scaling word for 1e9.",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "bound"
@@ -88,7 +88,7 @@
     {
       "name": "CO2",
       "description": "carbon dioxide, the principal anthropogenic greenhouse gas.",
-      "type": "measure",
+      "type": "measure_unit",
       "refs": [
         {
           "name": "Carbon_dioxide",
@@ -99,7 +99,7 @@
     {
       "name": "CO2eq",
       "description": "carbon-dioxide equivalent, a measure of greenhouse-gas emission expressed as the equivalent mass of CO2.",
-      "type": "measure",
+      "type": "measure_unit",
       "refs": [
         {
           "name": "Global_warming_potential",
@@ -233,7 +233,7 @@
     {
       "name": "gram",
       "description": "a metric unit of mass.",
-      "type": "measure",
+      "type": "measure_unit",
       "refs": [
         {
           "name": "Gram",
@@ -268,7 +268,7 @@
     {
       "name": "kWh",
       "description": "kilowatt-hour, a unit of energy.",
-      "type": "measure",
+      "type": "measure_unit",
       "refs": [
         {
           "name": "Kilowatt-hour",
@@ -316,7 +316,7 @@
     {
       "name": "MWh",
       "description": "megawatt-hour, a unit of energy equal to one thousand kilowatt-hours.",
-      "type": "measure",
+      "type": "measure_unit",
       "refs": [
         {
           "name": "Kilowatt-hour",
@@ -339,7 +339,7 @@
     {
       "name": "percent",
       "description": "a proportion expressed as a fraction of 100.",
-      "type": "measure",
+      "type": "percent",
       "refs": [
         {
           "name": "Percentage",
@@ -398,7 +398,7 @@
     {
       "name": "Rappen",
       "description": "one hundredth of a Swiss franc.",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "renewable",
@@ -481,7 +481,7 @@
     {
       "name": "tonne",
       "description": "a metric unit of mass equal to 1000 kilograms.",
-      "type": "measure",
+      "type": "measure_unit",
       "refs": [
         {
           "name": "Tonne",
@@ -492,7 +492,7 @@
     {
       "name": "TWh",
       "description": "terawatt-hour, a unit of energy equal to one billion kilowatt-hours.",
-      "type": "measure",
+      "type": "measure_unit",
       "refs": [
         {
           "name": "Kilowatt-hour",

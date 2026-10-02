@@ -79,7 +79,7 @@
     {
       "name": "Eurocent",
       "description": "one hundredth of a euro.",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "factor",
@@ -104,7 +104,7 @@
     {
       "name": "kWh",
       "description": "kilowatt-hour, a unit of energy.",
-      "type": "measure",
+      "type": "measure_unit",
       "refs": [
         {
           "name": "Kilowatt-hour",
@@ -130,7 +130,7 @@
     {
       "name": "MWh",
       "description": "megawatt-hour, a unit of energy equal to one thousand kilowatt-hours.",
-      "type": "measure",
+      "type": "measure_unit",
       "refs": [
         {
           "name": "Kilowatt-hour",
@@ -153,7 +153,7 @@
     {
       "name": "percent",
       "description": "a proportion expressed as a fraction of 100.",
-      "type": "measure",
+      "type": "percent",
       "refs": [
         {
           "name": "Percentage",

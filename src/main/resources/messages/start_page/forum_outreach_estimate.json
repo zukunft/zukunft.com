@@ -99,7 +99,7 @@
     },
     {
       "name": "hour",
-      "type": "measure",
+      "type": "measure_unit",
       "refs": [
         {
           "name": "Hour",

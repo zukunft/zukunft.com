@@ -358,7 +358,7 @@ class type_list extends ListOfIdNamedCodeObjects
      * set the common part of the sql parameters to load all rows of one 'type of database type'
      *
      * a type is the link between one object and some predefined behaviour
-     * a.g. a word like 'meter' has the type 'measure' which implies that
+     * a.g. a word like 'meter' has the type 'measure unit' which implies that
      * the result of meter divided by meter is a relative value which is e.g. in per cent
      *
      * a 'database type' is a group of types used for the same objects
@@ -408,7 +408,7 @@ class type_list extends ListOfIdNamedCodeObjects
      * the sql parameters to load all rows of one 'type of database type'
      *
      * a type is the link between one object and some predefined behavior
-     * a.g. a word like 'meter' has the type 'measure' which implies that
+     * a.g. a word like 'meter' has the type 'measure unit' which implies that
      * the result of meter divided by meter is a relative value which is e.g. in percent
      *
      * a 'database type' is a group of type used for the same objects

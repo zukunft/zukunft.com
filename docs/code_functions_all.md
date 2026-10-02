@@ -2815,6 +2815,7 @@
     \-- load_by_phr - section for function load_by_phr is expected to be load in /phrase/phrase_list.php
     \-- load_by_phr_levels - section for function load_by_phr_levels is expected to be load in /phrase/phrase_list.php
     \-- load_linked_sides - section for function load_linked_sides is expected to be load in /phrase/phrase_list.php
+    \-- load_triple_sides - section for function load_triple_sides is expected to be load in /phrase/phrase_list.php
     \-- load_by_phr_vrb_and_type - section for function load_by_phr_vrb_and_type is expected to be load in /phrase/phras
             e_list.php
     \-- load_sql_linked_phrases - section for function load_sql_linked_phrases is expected to be load sql in /phrase/phr
@@ -7227,6 +7228,8 @@
     \-- is_triple - section for function is_triple is expected to be info in /phrase/phrase.php
     \-- number_symbol - section for function number_symbol not yet defined that it should be info in /phrase/phrase.php
     \-- symbol_name - section for function symbol_name not yet defined that it should be info in /phrase/phrase.php
+    \-- stands_for - section for function stands_for not yet defined that it should be info in /phrase/phrase.php
+    \-- tooltip - section for function tooltip not yet defined that it should be info in /phrase/phrase.php
     \-- impact - section for function impact not yet defined that it should be info in /phrase/phrase.php
     \-- parents - section for function parents is expected to be foaf in /phrase/phrase.php
     \-- children - section for function children is expected to be foaf in /phrase/phrase.php
@@ -7279,6 +7282,8 @@
     \-- cached_phrase - section for function cached_phrase not yet defined that it should be select in /phrase/phrase_li
             st.php
     \-- tooltip - section for function tooltip not yet defined that it should be select in /phrase/phrase_list.php
+    \-- stands_for - section for function stands_for not yet defined that it should be select in /phrase/phrase_list.php
+    \-- symbols_of - section for function symbols_of not yet defined that it should be select in /phrase/phrase_list.php
     \-- symbol_of - section for function symbol_of not yet defined that it should be select in /phrase/phrase_list.php
     \-- parents - section for function parents is expected to be foaf in /phrase/phrase_list.php
     \-- parent_triples - section for function parent_triples not yet defined that it should be select in /phrase/phrase_
@@ -7456,6 +7461,8 @@
     \-- sort_by_number - section for function sort_by_number not yet defined that it should be sort in /result/result_li
             st.php
     \-- list - section for function list not yet defined that it should be sort in /result/result_list.php
+    \-- list_most_relevant - section for function list_most_relevant not yet defined that it should be sort in /result/r
+            esult_list.php
     \-- display - section for function display not yet defined that it should be display in /result/result_list.php
     \-- display_linked - section for function display_linked not yet defined that it should be display in /result/result
             _list.php
@@ -7680,6 +7687,10 @@
             hp
     \-- phrase_link_list - section for function phrase_link_list not yet defined that it should be display in /sandbox/s
             andbox_value.php
+    \-- time_phrase - section for function time_phrase not yet defined that it should be display in /sandbox/sandbox_val
+            ue.php
+    \-- title_name - section for function title_name not yet defined that it should be display in /sandbox/sandbox_value
+            .php
     \-- number_symbols - section for function number_symbols not yet defined that it should be display in /sandbox/sandb
             ox_value.php
     \-- value_linked - section for function value_linked not yet defined that it should be display in /sandbox/sandbox_v
@@ -7886,7 +7897,6 @@
             lue.php
     \-- warning_text - section for function warning_text not yet defined that it should be base in /value/value.php
     \-- name - section for function name is expected to be debug in /value/value.php
-    \-- time_phrase - section for function time_phrase not yet defined that it should be base in /value/value.php
     \-- get_description - section for function get_description is expected to be set and get in /value/value.php
     \-- name_tip - section for function name_tip not yet defined that it should be base in /value/value.php
     \-- name_link - section for function name_link not yet defined that it should be base in /value/value.php
@@ -8073,6 +8083,7 @@
     \-- is_type - section for function is_type is expected to be info in /word/triple.php
     \-- is_percent - section for function is_percent is expected to be info in /word/triple.php
     \-- is_factor - section for function is_factor is expected to be info in /word/triple.php
+    \-- is_measure_non_unit - section for function is_measure_non_unit is expected to be info in /word/triple.php
     \-- is_measure - section for function is_measure is expected to be info in /word/triple.php
     \-- is_scaling - section for function is_scaling is expected to be info in /word/triple.php
     \-- is_time - section for function is_time is expected to be info in /word/triple.php
@@ -8152,6 +8163,7 @@
     \-- is_scaling - section for function is_scaling is expected to be info in /word/word.php
     \-- is_percent - section for function is_percent is expected to be info in /word/word.php
     \-- is_factor - section for function is_factor is expected to be info in /word/word.php
+    \-- is_measure_non_unit - section for function is_measure_non_unit is expected to be info in /word/word.php
     \-- is_hidden - section for function is_hidden is expected to be info in /word/word.php
     \-- header - section for function header not yet defined that it should be views in /word/word.php
     \-- dsp_graph - section for function dsp_graph not yet defined that it should be to review in /word/word.php
@@ -8269,8 +8281,12 @@
         \-- phrase_list - get the phrase of this cache that matches the given phrase, so that a phrase which
     \-- tooltip
         \-- phrase_list - get the tooltip text for the given phrase based on this cache:
+    \-- stands_for
+        \-- phrase_list - the phrase that the given symbol stands for, e.g. "Euro" for "EUR", taken from this list,
+    \-- symbols_of
+        \-- phrase_list - the phrases that "are symbol for" the given phrase, e.g. "m" and "mio" for million, taken
     \-- symbol_of
-        \-- phrase_list - the phrase that "is symbol for" the given phrase, e.g. "x" for the factor, taken from this
+        \-- phrase_list - the symbol that stands for the given phrase, e.g. "x" for the factor or "mio" for million
     \-- parents
         \-- phrase_list - get all phrases that are connected to the given phrase
     \-- parent_triples
@@ -8350,7 +8366,7 @@
     \-- symbol_phrases
         \-- phrase_list - the phrases that are shown as a symbol behind the number instead of being named with the
     \-- symbol_links
-        \-- phrase_list - the symbols of the phrases of this list, each linked to its phrase, e.g. the "x" of a factor
+        \-- phrase_list - the symbols of the phrases of this list, each linked to its phrase and separated from the
 \-- to be replaced
     \-- form_edit
         \-- component - HTML code to edit all component fields
@@ -8928,13 +8944,13 @@
     \-- values_similar
         \-- ui_list - the values of the same category as the given value grouped by their phrases like the
     \-- results_by_value
-        \-- ui_list - the results that use the given value as a table, used by the results column of the value
+        \-- ui_list - the results that use the given value grouped like the values of a phrase, used by the
     \-- values_used
         \-- ui_list - the values used to calculate the given result grouped by their phrases like the default word
     \-- formulas_used
         \-- ui_list - the formulas that have calculated the results used for the given result, used by the formulas
     \-- results_used
-        \-- ui_list - the results used to calculate the given result as a table, used by the results column of the
+        \-- ui_list - the results used to calculate the given result grouped like the used values, used by the
     \-- values_by_source
         \-- ui_list - the values that name the given source grouped by their phrases like the default word view,
     \-- results_by_word
@@ -8944,7 +8960,7 @@
     \-- results
         \-- ui_list - TODO move code from component_dsp_old
     \-- results_related
-        \-- ui_list - TODO Prio 0 fill with real code
+        \-- ui_list - show the results related to the given object grouped like the values of a phrase (see
     \-- phrases_related
         \-- ui_list - TODO Prio 0 fill with real code
     \-- list_sort
@@ -9923,6 +9939,8 @@
         \-- result_list - sort this result list in place so that the result with the highest number is first and the
     \-- list
         \-- result_list - the deterministically sorted list rendered by the generic ListBase::list(); overridden so the
+    \-- list_most_relevant
+        \-- result_list - the results grouped for a quick overview like the values of a phrase: a value list can hold
     \-- sort_by_relevance
         \-- sandbox_list - 
 \-- repeat backend

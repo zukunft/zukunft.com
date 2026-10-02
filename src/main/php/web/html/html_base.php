@@ -42,6 +42,7 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::TYPES . 'language_list.php';
 include_once html_paths::CONST . 'icons.php';
+include_once html_paths::SHARED . 'group_id_url.php';
 //include_once html_paths::USER . 'user_message.php';
 //include_once html_paths::SHARED_CONST . 'def.php';
 //include_once html_paths::SHARED_CONST . 'files.php';
@@ -67,6 +68,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\languages;
+use Zukunft\ZukunftCom\main\php\shared\group_id_url;
 use Zukunft\ZukunftCom\main\php\shared\helper\Message;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\position_types;
@@ -863,9 +865,9 @@ class html_base
         $url = self::base_url_clean($base_url);
         $url .= rest_ctrl::PATH_FIXED . rest_ctrl::URL_MAIN_SCRIPT . rest_ctrl::EXT . '?';
         $url .= url_var::MASK . '=' . $view;
-        // a string id e.g. the group id of a value can contain a '+', which a url reads as a space
+        // a string id e.g. the group id of a value is written in its short url form
         if (is_string($id)) {
-            $url .= '&id=' . rawurlencode($id);
+            $url .= '&id=' . rawurlencode(group_id_url::to_url($id));
         } elseif ($id <> 0) {
             $url .= '&id=' . $id;
         }
@@ -896,9 +898,9 @@ class html_base
         $url = self::base_url_clean($base_url);
         $url .= rest_ctrl::PATH_FIXED . rest_ctrl::URL_MAIN_SCRIPT . rest_ctrl::EXT . url_var::PAR;
         $url .= url_var::MASK . url_var::EQ . $view;
-        // a string id e.g. the group id of a value can contain a '+', which a url reads as a space
+        // a string id e.g. the group id of a value is written in its short url form
         if (is_string($id)) {
-            $url .= url_var::ADD . url_var::ID . url_var::EQ . rawurlencode($id);
+            $url .= url_var::ADD . url_var::ID . url_var::EQ . rawurlencode(group_id_url::to_url($id));
         } elseif ($id <> 0) {
             $url .= url_var::ADD . url_var::ID . url_var::EQ . $id;
         }
@@ -1100,6 +1102,10 @@ class html_base
     {
         $par = [];
         foreach ($url_array as $key => $val) {
+            // the group id of a value or result is written in its short url form
+            if ($key == url_var::ID) {
+                $val = group_id_url::to_url($val);
+            }
             $par[] = $prefix . $key . '=' . rawurlencode((string)$val);
         }
         return empty($par) ? '' : implode('&', $par);

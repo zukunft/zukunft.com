@@ -178,57 +178,57 @@
     {
       "name": "count",
       "description": "number of items or persons.",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "percent",
       "description": "one hundredth, scaled by 100 in formulas.",
-      "type": "measure"
+      "type": "percent"
     },
     {
       "name": "share of consumed URLs",
       "description": "fraction of all URLs read by ordinary users that originated from a group.",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "share of tweets",
       "description": "fraction of all tweets produced by a group.",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "share of views",
       "description": "fraction of all video views received by a group.",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "share of engagement",
       "description": "fraction of all audience engagement (likes, shares, comments) received by a group.",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "share of population",
       "description": "fraction of all users that a group represents.",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "tweets per month",
       "description": "average number of tweets per user per month.",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "retweet probability difference",
       "description": "relative difference in the probability of being retweeted, in percent.",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "time factor to reach 1500 people",
       "description": "ratio of the time true news needs to reach 1500 people versus false news.",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "cascade reach",
       "description": "number of people reached by a diffusion cascade.",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "top 1% cascades",
@@ -273,12 +273,12 @@
     {
       "name": "months",
       "description": "calendar months.",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "year",
       "description": "calendar year.",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "stories",

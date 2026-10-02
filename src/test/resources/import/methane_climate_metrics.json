@@ -21,9 +21,9 @@
       "name": "GWP100",
       "description": "Global Warming Potential (Treibhauspotenzial) über einen Zeithorizont von 100 Jahren."
     },
-    { "name": "percent", "type": "measure" },
-    { "name": "year", "type": "measure" },
-    { "name": "degree", "type": "measure" },
+    { "name": "percent", "type": "percent" },
+    { "name": "year", "type": "measure_unit" },
+    { "name": "degree", "type": "measure_unit" },
     { "name": "temperature" },
     { "name": "warming" },
     { "name": "global" },

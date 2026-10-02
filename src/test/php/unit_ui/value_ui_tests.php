@@ -73,6 +73,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\languages;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\enum\value_types;
+use Zukunft\ZukunftCom\main\php\shared\group_id_url;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
@@ -202,7 +203,7 @@ class value_ui_tests
         $grp_field = new system_form()->form_field_group_or_phrases($val, '');
         $t->assert_text_contains($test_name, $grp_field, html_base::VALUE . '="' . groups::TN_READ . '"');
         $test_name = '... and links to the group of the value, which has the id of the value';
-        $grp_link_par = url_var::ID . url_var::EQ . rawurlencode((string)$val->id());
+        $grp_link_par = url_var::ID . url_var::EQ . rawurlencode(group_id_url::to_url($val->id()));
         $t->assert_text_contains($test_name, $val->grp->name_link(), $grp_link_par);
         $test_name = '... and without a name in the api json the group has no given name';
         $val = new value($t_val->value_pi_math()->api_json([api_types::INCL_PHRASES]));
@@ -569,6 +570,20 @@ class value_ui_tests
         $t->assert_text_contains($test_name,
             $val_zh->links_and_measure($msg_ui, $url_arr), '</a>, <a ');
 
+        // the browser tab title names only the phrase that the page heading names first, because
+        // the names of all phrases of a value would fill the tab; the heading still links them all
+        $t->subheader($ts . 'tab title');
+        $test_name = 'the tab title names the first phrase of the heading';
+        $first_link = $lib->str_left_of($val_zh->phrase_link_list($msg_ui), '</a>');
+        $t->assert($test_name, $val_zh->title_name($msg_ui), $lib->html_to_text($first_link));
+        $test_name = '... which is a name and not an empty text';
+        $t->assert_not($test_name, $val_zh->title_name($msg_ui), '');
+        $test_name = '... and no list of the phrases like the name of the value';
+        $t->assert_not($test_name, $val_zh->title_name($msg_ui), $val_zh->name());
+        // negative: a value without a phrase has nothing to name it
+        $test_name = 'a value without phrases has an empty tab title name';
+        $t->assert($test_name, new value()->title_name($msg_ui), '');
+
         // a factor says that the number is a multiplier, so the phrase is not named with the other
         // phrases of the value but shown as its symbol behind the number; the symbol itself is
         // data: the triple "x is symbol for factor" of scaling.json defines it
@@ -599,6 +614,43 @@ class value_ui_tests
             url_var::ID . '=' . words::FACTOR_ID);
         $test_name = 'the other phrases of the value are still named';
         $t->assert_text_contains($test_name, $fact_html, word_names::MATH);
+
+        // a scaling and a unit are shown as their symbols behind the number as well, so that a
+        // number reads like a price tag e.g. "165'070'664 mio €"; the tooltip is the description
+        // of the phrase the symbol stands for, and a unit can be a symbol itself: "EUR" stands
+        // for "Euro", so the symbol of "Euro" is shown; "m" stands for million too, but it is
+        // the unit of the metre, so the symbol "mio" is used
+        $t->subheader($ts . 'scaling and unit symbol');
+        $val_unit = $tl->ui_value($t_val->value_mio_eur());
+        // negative: without the symbol triples the scaling and the unit are named as before
+        $test_name = 'without the symbol triples the scaling and the unit are named with the other phrases';
+        $ui_sys->phr_lst = new phrase_list_ui();
+        $unit_html = $val_unit->name_link($msg_ui);
+        $t->assert_text_contains($test_name, $unit_html, '>' . word_names::MIO . '</a>');
+        $t->assert_text_contains($test_name, $unit_html, '>' . word_names::EUR . '</a>');
+        $ui_sys->phr_lst = $t_phr->list_unit_symbol_cache_ui();
+        $unit_html = $val_unit->name_link($msg_ui);
+        $test_name = 'the scaling and the unit are not named with the other phrases';
+        $t->assert_text_not_contains($test_name, $unit_html, '>' . word_names::MIO . '</a>');
+        $t->assert_text_not_contains($test_name, $unit_html, '>' . word_names::EUR . '</a>');
+        $test_name = '... but the scaling symbol follows the number';
+        $t->assert_text_order($test_name, $unit_html,
+            $val_unit->val_formatted($msg_ui), '>' . word_names::MIO_SHORT . '</a>');
+        $test_name = '... and the unit symbol follows the scaling symbol';
+        $t->assert_text_order($test_name, $unit_html,
+            '>' . word_names::MIO_SHORT . '</a>', '>' . word_names::EURO_SIGN . '</a>');
+        $test_name = 'a symbol that is a unit of its own is not used for the scaling';
+        $t->assert_text_not_contains($test_name, $unit_html, '>' . word_names::M . '</a>');
+        $test_name = 'the description of million is the tooltip of its symbol';
+        $t->assert_text_contains($test_name, $unit_html,
+            html_base::TITLE_HTML . '="' . word_names::MIO_COM . '"');
+        $test_name = 'the description of Euro is the tooltip of the unit symbol';
+        $t->assert_text_contains($test_name, $unit_html,
+            html_base::TITLE_HTML . '="' . word_names::EURO_COM . '"');
+        $test_name = '... which links to Euro';
+        $t->assert_text_contains($test_name, $unit_html, url_var::ID . '=' . word_names::EURO_ID);
+        $test_name = 'the other phrases of the value are still named';
+        $t->assert_text_contains($test_name, $unit_html, word_names::ASSUMED);
         // the following tests use the caches of the test setup again
         $ui_sys->typ_lst_cache->phr_sys = $phr_sys_keep;
         $ui_sys->phr_lst = $phr_lst_keep;
@@ -736,10 +788,11 @@ class value_ui_tests
         $test_name = 'pi is not listed among its own similar values';
         $t->assert_text_not_contains($test_name, $sim_html, triple_names::PI_SYMBOL_NAME);
 
-        // the results column lists the results that use the value, each with its phrase and number
+        // the results column lists the results that use the value like a value list, each with
+        // its phrase and its formatted number
         $res_html = $lst_ui->results_by_value($val_rel, $msg_ui);
         $test_name = 'the results of a value are shown with their phrase and their number';
-        $t->assert_text_order($test_name, $res_html, word_names::MATH, (string)results::TV_INT);
+        $t->assert_text_order($test_name, $res_html, word_names::MATH, results::TV_INT_FORM);
 
         // a value that is not used for results says so instead of showing an empty table
         $val_no_res = $t_val->value_page_ui($msg);
@@ -783,7 +836,7 @@ class value_ui_tests
         $val_math = $tl->ui_value($t_val->value_for_phrases([$t_wrd->word()->phrase()]));
         $test_name = 'without the loaded list the results come from the page cache';
         $t->assert_text_contains($test_name,
-            $lst_ui->results_by_value($val_math, $msg_ui, $dto_res), (string)results::TV_INT);
+            $lst_ui->results_by_value($val_math, $msg_ui, $dto_res), results::TV_INT_FORM);
 
         // the cache holds the results of the whole page, so a value that no cached result is
         // based on shows the not used message and never another value's results

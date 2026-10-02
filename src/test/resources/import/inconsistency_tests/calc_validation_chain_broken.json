@@ -21,7 +21,7 @@
     },
     {
       "name": "CHF",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "percent",

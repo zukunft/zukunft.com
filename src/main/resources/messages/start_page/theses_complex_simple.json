@@ -263,7 +263,7 @@
     {
       "name": "HTP",
       "description": "Happy Time Point, the zukunft.com DALY-extended wellbeing unit",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "percent",

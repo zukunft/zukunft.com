@@ -382,22 +382,22 @@
     {
       "name": "year",
       "description": "unit of time (365.25 days).",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "hour",
       "description": "unit of time (60 minutes).",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "milligram",
       "description": "unit of mass (1/1000 gram).",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "percent",
       "description": "one hundredth, scaled by 100 in formulas.",
-      "type": "measure"
+      "type": "percent"
     },
     {
       "name": "minimum",

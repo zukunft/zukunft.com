@@ -622,9 +622,15 @@ class sandbox_value_list extends sandbox_list
     function load_phrases(user_message $msg): void
     {
         // loading via word group is the most used case, because to save database space and reading time the value is saved with the word group id
+        $all_phr = new phrase_list($this->get_user());
         foreach ($this->lst() as $val) {
             $val->load_phrases($msg);
+            foreach ($val->grp()->phrase_list()->lst() as $phr) {
+                $all_phr->add($phr, true);
+            }
         }
+        // the from and to of the triples of all values with one read, e.g. to head a column by one part
+        $all_phr->load_triple_sides($msg);
     }
 
 

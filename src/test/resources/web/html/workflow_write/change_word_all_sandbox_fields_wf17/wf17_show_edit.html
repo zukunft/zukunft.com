@@ -201,8 +201,11 @@
                             <option value="18"  >
                                 measure divisor
                             </option>
+                            <option value="30"  >
+                                measure non unit
+                            </option>
                             <option value="3"  >
-                                measure type
+                                measure unit
                             </option>
                             <option value="13"  >
                                 next
@@ -451,6 +454,31 @@
             <div class="row col-md-12 justify-content-end">
                 <div class="col-md-4">
                     <div class="css-tabs">
+                        <div class="css-tab" id="views">
+                            <a href="#views" class="css-tab-label">
+                                Views
+                            </a>
+                            <div class="css-tab-pane">
+                                <div class="container">
+                                    <div>
+                                        <div class="col-md-12">
+                                            view preview
+                                        </div>
+                                        <a href="http://localhost/http/view.php?m=3&amp;id=999" title="show &#039;System Test Word&#039; with the &#039;Word (default)&#039; view">
+                                            Word (default)
+                                        </a>
+                                        <a href="http://localhost/http/view.php?m=24&amp;id=999&amp;d=3" title="adjust &#039;System Test Word&#039; so that it is always shown with the &#039;Word (default)&#039; view">
+                                            <i class="fas fa-shuffle">
+                                            </i>
+                                        </a>
+                                        <a href="http://localhost/http/view.php?m=61&amp;id=3" title="change the &#039;Word (default)&#039; view">
+                                            <i class="fas fa-edit">
+                                            </i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <div class="css-tab" id="changes">
                             <a href="#changes" class="css-tab-label">
                                 Changes
@@ -468,6 +496,105 @@
                                             <th>
                                                 what
                                             </th>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                07-06-1997 16:01:00
+                                            </td>
+                                            <td>
+                                                <a href="http://localhost/http/view.php?m=99&amp;ue=6">
+                                                    zukunft.com system test no admin
+                                                </a>
+                                            </td>
+                                            <td>
+                                                changed user description to "a description overwrite of another user" from "test description added to the word via import"
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                07-06-1997 16:01:00
+                                            </td>
+                                            <td>
+                                                <a href="http://localhost/http/view.php?m=99&amp;ue=3">
+                                                    zukunft.com system test
+                                                </a>
+                                            </td>
+                                            <td>
+                                                added description "test description added to the word via import"
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                07-06-1997 16:01:00
+                                            </td>
+                                            <td>
+                                                <a href="http://localhost/http/view.php?m=99&amp;ue=3">
+                                                    zukunft.com system test
+                                                </a>
+                                            </td>
+                                            <td>
+                                                set owner to zukunft.com system test
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                07-06-1997 16:01:00
+                                            </td>
+                                            <td>
+                                                <a href="http://localhost/http/view.php?m=99&amp;ue=3">
+                                                    zukunft.com system test
+                                                </a>
+                                            </td>
+                                            <td>
+                                                added "System Test Word"
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="css-tab" id="others">
+                            <a href="#others" class="css-tab-label">
+                                Others
+                            </a>
+                            <div class="css-tab-pane">
+                                <div class="container">
+                                    <table class="table table-borderless grey">
+                                        <tr>
+                                            <th>
+                                                Field
+                                            </th>
+                                            <th>
+                                                user
+                                            </th>
+                                            <th>
+                                                value
+                                            </th>
+                                            <th>
+                                                instead
+                                            </th>
+                                            <th>
+                                            </th>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                Description
+                                            </td>
+                                            <td>
+                                                zukunft.com system test no admin
+                                            </td>
+                                            <td>
+                                                a description overwrite of another user
+                                            </td>
+                                            <td>
+                                                test description added to the word via import
+                                            </td>
+                                            <td>
+                                                <a href="http://localhost/http/view.php?id=999&amp;k=System+Test+Word&amp;8id=999&amp;8k=System+Test+Word&amp;9m=3&amp;9id=999&amp;m=24&amp;z=1&amp;o=a+description+overwrite+of+another+user&amp;8o=test+description+added+to+the+word+via+import" title="apply this overwrite to your values">
+                                                    <i class="fas fa-rotate-right">
+                                                    </i>
+                                                </a>
+                                            </td>
                                         </tr>
                                     </table>
                                 </div>
