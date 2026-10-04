@@ -41,6 +41,8 @@
     \-- load_by_id_with_related - section for function load_by_id_with_related is expected to be load in /formula/formul
             a.php
     \-- api_json_array - section for function api_json_array is expected to be api in /formula/formula.php
+    \-- api_latex_terms_array - section for function api_latex_terms_array not yet defined that it should be assign in /
+            formula/formula.php
     \-- assign_phr_glst - section for function assign_phr_glst not yet defined that it should be assign in /formula/form
             ula.php
     \-- assign_phr_lst - section for function assign_phr_lst not yet defined that it should be assign in /formula/formul
@@ -302,6 +304,9 @@
     \-- load_values_used - section for function load_values_used is expected to be load in /result/result.php
     \-- load_results_used - section for function load_results_used is expected to be load in /result/result.php
     \-- load_formulas_used - section for function load_formulas_used is expected to be load in /result/result.php
+    \-- load_expression_parts - section for function load_expression_parts is expected to be load in /result/result.php
+    \-- expression_parts - section for function expression_parts not yet defined that it should be phrase loading method
+            s in /result/result.php
     \-- val_formatted - section for function val_formatted not yet defined that it should be im- and export in /result/r
             esult.php
     \-- figure - section for function figure not yet defined that it should be im- and export in /result/result.php
@@ -993,6 +998,8 @@
         \-- formula - load the formula and, in the same call, the related view-models the default formula view
     \-- api_json_array
         \-- formula - extend the formula api message with the data that the default formula view needs;
+    \-- api_latex_terms_array
+        \-- formula - the terms of the latex for the "expression_latex_link" component, which the formula page
     \-- assign_phr_glst
         \-- formula - returns a list of all words that the formula is assigned to
     \-- assign_phr_lst
@@ -6265,6 +6272,8 @@
             password but without auto fill in /component/execute/system_form.php
     \-- show_result_formula - section for function show_result_formula not yet defined that it should be optional with s
             how password but without auto fill in /component/execute/system_form.php
+    \-- show_result_expression - section for function show_result_expression not yet defined that it should be optional 
+            with show password but without auto fill in /component/execute/system_form.php
     \-- show_all_values_needed - section for function show_all_values_needed not yet defined that it should be optional 
             with show password but without auto fill in /component/execute/system_form.php
     \-- show_impact - section for function show_impact not yet defined that it should be optional with show password but
@@ -7448,6 +7457,10 @@
     \-- get_description - section for function get_description is expected to be set and get in /result/result.php
     \-- display_linked - section for function display_linked not yet defined that it should be display in /result/result
             .php
+    \-- expression_figures_link - section for function expression_figures_link not yet defined that it should be display
+             in /result/result.php
+    \-- expression_latex_link - section for function expression_latex_link not yet defined that it should be display in 
+            /result/result.php
     \-- figure - section for function figure not yet defined that it should be cast in /result/result.php
     \-- api_array - section for function api_array not yet defined that it should be interface in /result/result.php
     \-- btn_add - section for function btn_add not yet defined that it should be buttons in /result/result.php
@@ -9151,6 +9164,8 @@
         \-- system_form - @param result|db_object $dbo the result whose value and phrase group is shown
     \-- show_result_formula
         \-- system_form - @param result|db_object $dbo the result whose creating formula is shown
+    \-- show_result_expression
+        \-- system_form - @param result|db_object $dbo the result whose formula is shown with the numbers used
     \-- show_all_values_needed
         \-- system_form - @param formula|db_object $dbo the formula whose all-values-needed flag is shown
     \-- show_impact

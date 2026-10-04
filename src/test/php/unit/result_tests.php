@@ -59,7 +59,9 @@ use Zukunft\ZukunftCom\main\php\web\result\result as result_ui;
 use Zukunft\ZukunftCom\main\php\web\result\result_list as result_list_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_const;
+use Zukunft\ZukunftCom\test\php\create\test_figures;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\create\test_groups;
 use Zukunft\ZukunftCom\test\php\create\test_results;
@@ -92,6 +94,7 @@ class result_tests
         $t_frm = new test_formulas($t);
         $t_grp = new test_groups($t);
         $t_wrd = new test_words($t);
+        $t_fig = new test_figures($t);
         $t->name = 'result->';
         $t->resource_path = 'db/result/';
 
@@ -300,6 +303,56 @@ class result_tests
         $t->assert_ex_and_import($t_res->result_main_filled(), $t->usr_system);
         $json_file = 'unit/result/result_import_part.json';
         $t->assert_json_file(new result($t->usr1), $json_file);
+
+
+        // the result page shows the formula with the numbers that the calculation has used, so the
+        // right side of the formula is split at each element group symbol into texts and figures
+        $t->subheader($ts . 'expression parts');
+        $test_name = 'the formula is split into the figure and the operator text';
+        $res = $t_res->result_main_max();
+        $fig = $t_fig->figure_value($msg);
+        $grp_parts = [formula_names::SCALE_TO_SEC_MINUTE_SYMBOL => [word_names::MINUTE, $fig]];
+        $parts = $res->expression_parts(formula_names::SCALE_TO_SEC_EXP_REF_R, $grp_parts);
+        $t->assert($test_name, count($parts), 2);
+        $test_name = '... starting with the figure of the element group';
+        $t->assert($test_name, $parts[0][1]->id(), $fig->id());
+        $test_name = '... followed by the operator text';
+        $t->assert($test_name, $parts[1][0], formula_names::SCALE_TO_SEC_EXP_REF_R_REST);
+        $test_name = '... which has no figure';
+        $t->assert_true($test_name, $parts[1][1] === null);
+        // negative: a text without the symbol of a group stays one text without a figure
+        $test_name = 'a formula without the group symbol stays one text';
+        $parts = $res->expression_parts(formula_names::SCALE_TO_SEC_EXP_REF_R_REST, $grp_parts);
+        $t->assert($test_name, $parts, [[formula_names::SCALE_TO_SEC_EXP_REF_R_REST, null]]);
+        $test_name = 'an empty formula has no part';
+        $t->assert($test_name, $res->expression_parts('', $grp_parts), []);
+        $test_name = 'the result page api message contains the formula with the numbers';
+        $res = $t_res->result_page_related();
+        $api_json = $res->api_json_array([api_types::INCL_RELATED, api_types::TEST_MODE], $msg);
+        $t->assert_true($test_name, array_key_exists(json_fields::EXPRESSION_PARTS, $api_json));
+        $test_name = '... with the figure as a value';
+        $t->assert($test_name, $api_json[json_fields::EXPRESSION_PARTS][0][json_fields::OBJECT_CLASS],
+            json_fields::CLASS_VALUE);
+        $test_name = '... and the operator as a text';
+        $t->assert($test_name, $api_json[json_fields::EXPRESSION_PARTS][1][json_fields::TEXT],
+            formula_names::SCALE_TO_SEC_EXP_REF_R_REST);
+        $test_name = '... and the formula with the terms to link its latex';
+        $t->assert_true($test_name, array_key_exists(json_fields::LATEX_TERMS, $api_json[json_fields::FORMULA]));
+        // negative: a formula without known terms sends no term list
+        $test_name = 'a result formula without latex terms sends no term list';
+        $api_json = $t_res->result_main_max()->api_json_array([api_types::INCL_RELATED, api_types::TEST_MODE], $msg);
+        $t->assert_false($test_name, array_key_exists(json_fields::LATEX_TERMS, $api_json[json_fields::FORMULA]));
+        // negative: only the page asks for the formula with the numbers
+        $test_name = 'a result api message without the page flag has no formula with numbers';
+        $api_json = $res->api_json_array([api_types::TEST_MODE], $msg);
+        $t->assert_false($test_name, array_key_exists(json_fields::EXPRESSION_PARTS, $api_json));
+        // negative: a number that the requester may not read is shown by its phrase names (idor)
+        $test_name = 'a figure that the user may not read is sent as the group name';
+        $res->expression_parts = $res->expression_parts(formula_names::SCALE_TO_SEC_EXP_REF_R,
+            [formula_names::SCALE_TO_SEC_MINUTE_SYMBOL => [word_names::MINUTE, $t_fig->figure_value_not_public($msg)]]);
+        $api_json = $res->api_json_array([api_types::INCL_RELATED, api_types::TEST_MODE], $msg, $t->usr2);
+        $t->assert($test_name, $api_json[json_fields::EXPRESSION_PARTS][0], [json_fields::TEXT => word_names::MINUTE]);
+        $msg->reset();
 
 
         $t->subheader($ts . 'html frontend');

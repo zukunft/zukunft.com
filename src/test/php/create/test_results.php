@@ -37,18 +37,23 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\result\result;
 use Zukunft\ZukunftCom\main\php\cfg\result\result_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\results;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\shared\types\share_types;
 use Zukunft\ZukunftCom\main\php\web\result\result as result_ui;
 use Zukunft\ZukunftCom\main\php\web\result\result_list as result_list_ui;
+use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
+use Zukunft\ZukunftCom\test\php\const\triple_names;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
 use DateTime;
 
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
+include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_RESULT . 'result.php';
 include_once paths::MODEL_RESULT . 'result_list.php';
 include_once paths::SHARED_CONST . 'results.php';
@@ -59,6 +64,11 @@ include_once paths::SHARED_TYPES . 'protection_types.php';
 include_once paths::SHARED_TYPES . 'share_types.php';
 include_once html_paths::RESULT . 'result.php';
 include_once html_paths::RESULT . 'result_list.php';
+include_once test_paths::CONST . 'formula_names.php';
+include_once test_paths::CONST . 'triple_names.php';
+include_once test_paths::CONST . 'word_names.php';
+include_once test_paths::CREATE . 'test_figures.php';
+include_once test_paths::CREATE . 'test_terms.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 include_once test_paths::UTILS . 'test_lib.php';
 
@@ -199,6 +209,29 @@ class test_results
             $res_used->add($res_row);
         }
         $res->results_used = $res_used;
+        // the formula line of the page: the minutes that the calculation has used for the seconds
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the figure reports into
+        $t_fig = new test_figures($this->env);
+        $grp_parts = [formula_names::SCALE_TO_SEC_MINUTE_SYMBOL => [word_names::MINUTE, $t_fig->figure_value($msg)]];
+        $res->expression_parts = $res->expression_parts(formula_names::SCALE_TO_SEC_EXP_REF_R, $grp_parts);
+        // the terms of the formula, so that its latex below the formula line has the term links
+        $res->frm->latex_terms = new test_terms($this->env)->term_list_time();
+        return $res;
+    }
+
+    /**
+     * the potential loss of populism in trillion EUR, which the formula "annual damage in money"
+     * calculates from the seeded start page data; selected by the phrase names, because the group
+     * id of a result follows the import, so only a database read test can use it
+     *
+     * @return result the calculated result loaded from the database, not set if not calculated
+     */
+    function result_populism_potential_loss(): result
+    {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the load reports into
+        $res = new result($this->env->usr1);
+        $names = [word_names::POPULISM, triple_names::POTENTIAL_LOSS, word_names::TRILLION, word_names::EUR];
+        $res->load_by_names($names, $msg);
         return $res;
     }
 

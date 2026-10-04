@@ -41,6 +41,11 @@ the used values and results of a result are selected by any phrase of the result
 
 the $wrd->name_link(), $trp->name_link() or $prh->name_link() function returns at the moment a link to the word or triple default view, but it should lead to the selected page of the word / triple. E.g. for 'PV in Switzerland' the 'calculator' view should be used instead of the triple default view  
 
+the formula line with the numbers of the result default view (result::load_expression_parts) selects the figures again on each page request, so it shows the numbers of today and not the numbers of the calculation if a value has changed since; the gaps that are visible instead of guessed:
+- an element group with more than one figure (the calculation creates one result per figure) is shown by its name without a number, because the result does not save which figure it has used; saving the used figure ids with the result would close this and the re-selection
+- a result without saved source phrases (src_grp too big, see result_list::drop_unsupported_src_grp) shows no formula line
+- a symbol in the operator text that is no element group (e.g. a verb) is shown in the reference format e.g. {v3}
+
 ## search empty result 
 
 see /docs/llm/coding.md and if the search e.g. http://localhost/http/view.php?m=67&pattern=Momo returns no result, additional to the simple add word button show an 'add word' button with a selection of the parent phrases last used by the user. For the phrase selection list use an list in the user section of the config.yaml that contains the x parent phrases last used by the user. x is the max number of phrases to show in the list that is itself a value in the config.yaml. A parent phrase is a phrase

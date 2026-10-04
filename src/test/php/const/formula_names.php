@@ -51,7 +51,12 @@ class formula_names
     const string SCALE_TO_SEC = 'scale minute to sec';
     const string SCALE_TO_SEC_EXP = '"second (time)" = "minute" * 60';
     const string SCALE_TO_SEC_EXP_REF = '{w24}={w104}*60';
+    // the right side of the formula split at the symbol of its only element group "minute"
+    const string SCALE_TO_SEC_EXP_REF_R = '{w104}*60';
+    const string SCALE_TO_SEC_MINUTE_SYMBOL = '{w104}';
+    const string SCALE_TO_SEC_EXP_REF_R_REST = '*60';
     const string SCALE_TO_SEC_LATEX = '\text{s} = 60 \cdot \text{min}';
+    const string SCALE_TO_SEC_LATEX_NUMBER = '60';
     const string SCALE_TO_SEC_EXP_REF_SHORT_SYMBOL = '{w24}={w}*60';
     const string SCALE_TO_SEC_EXP_REF_ID_NOT_A_NUMBER = '{w24}={wO}*60';
     const string SCALE_TO_SEC_EXP_REF_SYMBOL_NOT_VALID = '{w24}={d1}*60';

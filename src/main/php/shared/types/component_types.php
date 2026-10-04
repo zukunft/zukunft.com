@@ -664,6 +664,9 @@ class component_types
     const int SHOW_RESULT_VALUE_ID = 244;
     const string SHOW_RESULT_FORMULA = "system_show_result_formula";
     const int SHOW_RESULT_FORMULA_ID = 245;
+    // the formula of a result with the numbers used, each linked to its value or result
+    const string SHOW_RESULT_EXPRESSION = "system_show_result_expression";
+    const int SHOW_RESULT_EXPRESSION_ID = 263;
     const string SHOW_FIELD_USAGE = "system_show_field_usage";
     const int SHOW_FIELD_USAGE_ID = 128;
     const string SYSTEM_FIELD_PARENT_VIEW = "system_show_parent_view";
@@ -1151,6 +1154,7 @@ class component_types
         [self::SHOW_ALL_VALUES_NEEDED, self::SHOW_ALL_VALUES_NEEDED_ID],
         [self::SHOW_RESULT_VALUE, self::SHOW_RESULT_VALUE_ID],
         [self::SHOW_RESULT_FORMULA, self::SHOW_RESULT_FORMULA_ID],
+        [self::SHOW_RESULT_EXPRESSION, self::SHOW_RESULT_EXPRESSION_ID],
         [self::SHOW_FIELD_USAGE, self::SHOW_FIELD_USAGE_ID],
         [self::SYSTEM_FIELD_PARENT_VIEW, self::SYSTEM_FIELD_PARENT_VIEW_ID],
         [self::SYSTEM_FIELD_CHILD_VIEW, self::SYSTEM_FIELD_CHILD_VIEW_ID],

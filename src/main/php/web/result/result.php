@@ -105,6 +105,8 @@ class result extends sandbox_value
     public ?value_list $values_used = null;
     public ?formula_list $formulas_used = null;
     public ?result_list $results_used = null;
+    // the right side of the formula as operator texts and the figures used, only for the result page
+    public ?array $expression_parts = null;
 
 
     /*
@@ -157,6 +159,11 @@ class result extends sandbox_value
         } else {
             $this->results_used = null;
         }
+        if (is_array($json_array[json_fields::EXPRESSION_PARTS] ?? null)) {
+            $this->expression_parts = $this->expression_parts_mapper($json_array[json_fields::EXPRESSION_PARTS], $msg);
+        } else {
+            $this->expression_parts = null;
+        }
 
         /* TODO add all result fields that are not part of the sandbox value object
         if (array_key_exists(json_fields::USER_TEXT, $json_array)) {
@@ -166,6 +173,30 @@ class result extends sandbox_value
         }
         */
         return $msg->is_ok();
+    }
+
+    /**
+     * @param array $parts_json the api json of the formula parts: a text or a figure each
+     * @param user_message $msg to report a figure that cannot be mapped
+     * @return array the operator texts as string and the numbers used as figure in the formula order
+     */
+    private function expression_parts_mapper(array $parts_json, user_message $msg): array
+    {
+        $parts = [];
+        foreach ($parts_json as $part_json) {
+            if (array_key_exists(json_fields::OBJECT_CLASS, $part_json)) {
+                $fig = new figure();
+                $fig->api_mapper($part_json, $msg);
+                // a class other than value or result is reported by the figure mapper and left
+                // out here, because only a number can be shown and linked (no php fatal)
+                if ($fig->obj() instanceof sandbox_value) {
+                    $parts[] = $fig;
+                }
+            } else {
+                $parts[] = $part_json[json_fields::TEXT] ?? '';
+            }
+        }
+        return $parts;
     }
 
     function formula_id(): ?int
@@ -243,6 +274,37 @@ class result extends sandbox_value
     function display_linked(?phrase_list $phr_lst_header = null): string
     {
         return $this->grp->name_link_list($phr_lst_header);
+    }
+
+    /**
+     * the right side of the formula with each number used linked to its value or result page,
+     * e.g. "5*60" with the 5 linked to the minutes; empty if the numbers used are not known
+     *
+     * @param user_message $msg to report a problem while formatting a number
+     * @param array $url_arr the url vars of the calling page for the back link
+     * @return string the html code of the formula with the linked numbers
+     */
+    function expression_figures_link(user_message $msg, array $url_arr = []): string
+    {
+        $html = new html_base();
+        $result = '';
+        foreach ($this->expression_parts ?? [] as $part) {
+            if ($part instanceof figure) {
+                // value_edit() returns the safe html of the linked number
+                $result .= $part->obj()->value_edit($msg, $url_arr);
+            } else {
+                $result .= $html->esc($part);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @return string the latex of the formula that has calculated this result with a link per term
+     */
+    function expression_latex_link(): string
+    {
+        return $this->frm?->expression_latex_link() ?? '';
     }
 
     /**

@@ -105,6 +105,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\element\element_list;
 use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\formula\expression;
 use Zukunft\ZukunftCom\main\php\cfg\formula\figure;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;
@@ -205,6 +206,9 @@ class result extends sandbox_value
     public ?value_list $values_used = null;
     public ?formula_list $formulas_used = null;
     public ?result_list $results_used = null;
+    // the right side of the formula split into parts, each the shown text and the figure used or
+    // null for an operator text, filled only for the result page like the used lists above
+    public ?array $expression_parts = null;
 
 
     /*
@@ -476,8 +480,17 @@ class result extends sandbox_value
                     $this->frm->load_by_id($this->formula_id(), $msg);
                 }
                 if ($this->frm->name() != '') {
-                    $vars[json_fields::FORMULA] = $this->frm->api_json_array([], $msg, $usr);
+                    // with the terms of the latex, which the page shows with a link per term
+                    $vars[json_fields::FORMULA] = array_merge(
+                        $this->frm->api_json_array([], $msg, $usr),
+                        $this->frm->api_latex_terms_array($typ_lst, $msg, $usr));
                 }
+            }
+            if ($this->expression_parts === null and !$typ_lst->test_mode() and $this->id() != 0) {
+                $this->load_expression_parts($msg);
+            }
+            if (!empty($this->expression_parts)) {
+                $vars[json_fields::EXPRESSION_PARTS] = $this->expression_parts_json($msg, $usr);
             }
             if ($this->last_update() != null) {
                 $vars[json_fields::LAST_UPDATE] = $this->last_update()->format(DateTimeInterface::ATOM);
@@ -1145,6 +1158,156 @@ class result extends sandbox_value
             $frm_lst->load_by_ids($frm_ids, $msg);
         }
         $this->formulas_used = $frm_lst;
+    }
+
+    /**
+     * load the right side of the formula with the figures used into expression_parts, so that the
+     * result page can show e.g. 5 * 60 with the 5 linked to the minutes; each figure is selected by
+     * element_group::figures() like the calculation does, and only for the saved source phrases,
+     * because the fallback of used_phrase_selection names related numbers, not the numbers used
+     *
+     * @param user_message $msg to collect any problem while selecting the figures
+     * @return void
+     */
+    function load_expression_parts(user_message $msg): void
+    {
+        $parts = [];
+        [$src_phr_lst, $any_phrase] = $this->used_phrase_selection($msg);
+        if (!$any_phrase and $this->formula_id() != 0) {
+            $exp = $this->frm->expression($msg);
+            $grp_parts = $this->element_group_parts($exp, $src_phr_lst, $msg);
+            $parts = $this->expression_parts($exp->r_part($msg), $grp_parts);
+        }
+        $this->expression_parts = $parts;
+    }
+
+    /**
+     * split the right side of a formula at each element group symbol into the texts and figures
+     * e.g. "{w104}*60" with the figure of the minutes for "{w104}" into the figure and "*60"
+     * public because the split is the base of the formula line of the result page, so it is unit tested
+     *
+     * @param string $ref_text the right side of the formula in the database reference format
+     * @param array $grp_parts the part of each element group by its symbol: the name and the figure or null
+     * @return array the ordered parts, each the shown text and the figure or null for an operator text
+     */
+    function expression_parts(string $ref_text, array $grp_parts): array
+    {
+        $parts = [];
+        $rest = $ref_text;
+        $next = $this->next_group_symbol($rest, $grp_parts);
+        while ($next !== null) {
+            [$pos, $symbol] = $next;
+            if ($pos > 0) {
+                $parts[] = [substr($rest, 0, $pos), null];
+            }
+            $parts[] = $grp_parts[$symbol];
+            $rest = substr($rest, $pos + strlen($symbol));
+            $next = $this->next_group_symbol($rest, $grp_parts);
+        }
+        if ($rest != '') {
+            $parts[] = [$rest, null];
+        }
+        return $parts;
+    }
+
+    /**
+     * the part of each element group of the expression for the source phrases of this result:
+     * the group name and the figure, which is null if not exactly one figure is found, because
+     * the calculation then creates one result per figure and this result names none of them
+     *
+     * @param expression $exp the expression of the formula that has calculated this result
+     * @param phrase_list $src_phr_lst the source phrases that have selected the numbers
+     * @param user_message $msg to collect any problem while selecting the figures
+     * @return array the name and the figure or null by the element group symbol
+     */
+    private function element_group_parts(expression $exp, phrase_list $src_phr_lst, user_message $msg): array
+    {
+        $grp_parts = [];
+        foreach ($exp->element_grp_lst($msg)->lst() as $elm_grp) {
+            $elm_grp->phr_lst = clone $src_phr_lst;
+            $symbol = $elm_grp->build_symbol();
+            $fig_lst = $elm_grp->figures($msg);
+            $fig = null;
+            if (count($fig_lst->lst()) == 1) {
+                $fig = $fig_lst->lst()[0];
+                $this->load_figure_phrases($fig, $msg);
+            }
+            $grp_parts[$symbol] = [$elm_grp->name(), $fig];
+        }
+        return $grp_parts;
+    }
+
+    /**
+     * load the phrase names of a figure, which the page needs to format the number e.g. as percent
+     * @param figure $fig the figure selected for an element group
+     * @param user_message $msg to collect any problem while loading the phrases
+     * @return void
+     */
+    private function load_figure_phrases(figure $fig, user_message $msg): void
+    {
+        $grp = $fig->obj()->grp();
+        if (!$grp->phrase_list()->loaded()) {
+            $grp->load_phrase_names($msg);
+        }
+    }
+
+    /**
+     * the position and the symbol of the element group symbol that comes first in the text,
+     * the longest one if two start at the same position
+     *
+     * @param string $text the remaining text of the formula
+     * @param array $grp_parts the part of each element group by its symbol
+     * @return array|null the position and the symbol or null if no symbol is in the text
+     */
+    private function next_group_symbol(string $text, array $grp_parts): ?array
+    {
+        $next = null;
+        foreach (array_keys($grp_parts) as $symbol) {
+            // an empty symbol would be found at every position and never shorten the text
+            if ($symbol != '') {
+                $pos = strpos($text, $symbol);
+                if ($pos !== false and $this->is_before($pos, $symbol, $next)) {
+                    $next = [$pos, $symbol];
+                }
+            }
+        }
+        return $next;
+    }
+
+    /**
+     * @param int $pos the position of the symbol found
+     * @param string $symbol the symbol found
+     * @param array|null $next the position and the symbol found so far or null
+     * @return bool true if the symbol found starts before the one so far or is longer at the same position
+     */
+    private function is_before(int $pos, string $symbol, ?array $next): bool
+    {
+        $before = true;
+        if ($next !== null) {
+            $before = ($pos < $next[0] or ($pos == $next[0] and strlen($symbol) > strlen($next[1])));
+        }
+        return $before;
+    }
+
+    /**
+     * the expression parts as api json: an operator text as text and a figure with its phrases,
+     * but a figure the requester may not read only by the name of its element group (idor)
+     *
+     * @param user_message $msg to collect the mapping problems for the requesting user
+     * @param user|null $usr the user for whom the api message should be created
+     * @return array the json array of each part in the order of the formula
+     */
+    private function expression_parts_json(user_message $msg, ?user $usr): array
+    {
+        $parts_json = [];
+        foreach ($this->expression_parts as [$text, $fig]) {
+            if ($fig !== null and $fig->is_readable_by($usr)) {
+                $parts_json[] = $fig->api_json_array(new api_type_list([api_types::INCL_PHRASES]), $msg, $usr);
+            } else {
+                $parts_json[] = [json_fields::TEXT => $text];
+            }
+        }
+        return $parts_json;
     }
 
     /**

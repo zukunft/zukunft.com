@@ -2603,6 +2603,12 @@
       "description": "the results that the calculation of this result has used e.g. the increase used by a growth rate",
       "type": "results_used",
       "code_id": "results_used"
+    },
+    {
+      "name": "system show result expression",
+      "description": "the formula of a result with the numbers used, each linked to its value or result",
+      "type": "system_show_result_expression",
+      "code_id": "show_result_expression"
     }
   ],
   "views": [
@@ -3058,48 +3064,13 @@
         },
         {
           "position": "2",
-          "name": "system show field last update",
-          "style": "fields-in-line"
+          "name": "system show result expression",
+          "style": "text-left"
         },
         {
           "position": "3",
-          "name": "system show result formula",
-          "position_type": "same_line"
-        },
-        {
-          "position": "4",
-          "name": "system sub title values",
-          "position_type": "side_or_first_below"
-        },
-        {
-          "position": "5",
-          "name": "values used",
-          "position_type": "combine"
-        },
-        {
-          "position": "6",
-          "name": "system sub title formulas",
-          "position_type": "side_or_below"
-        },
-        {
-          "position": "7",
-          "name": "formulas used",
-          "position_type": "combine"
-        },
-        {
-          "position": "8",
-          "name": "system sub title results",
-          "position_type": "side_or_below"
-        },
-        {
-          "position": "9",
-          "name": "results used",
-          "position_type": "combine"
-        },
-        {
-          "position": "10",
-          "name": "value tab box",
-          "position_type": "side_or_last_below"
+          "name": "Expression with links",
+          "style": "text-left"
         }
       ]
     },

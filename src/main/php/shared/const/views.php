@@ -115,7 +115,7 @@ class views
     const string TRIPLE_ADD = 'triple_add_simple';
     const int TRIPLE_ADD_ID = 22;
 
-    // main objects with all details; the default views above are reduced for speed and link here
+    // main objects with all details; the default views above will be reduced for speed and will link here
     const string WORD_DEFAULT_DETAIL = 'word_default_detail';
     const int WORD_DEFAULT_DETAIL_ID = 23;
     const string TRIPLE_DEFAULT_DETAIL = 'triple_default_detail';
@@ -133,7 +133,7 @@ class views
     const string VERB_DEFAULT_DETAIL = 'verb_default_detail';
     const int VERB_DEFAULT_DETAIL_ID = 30;
 
-    // main objects for a range e.g. of time; each default and detail view gets a range variant
+    // main objects for a range; each default and detail view gets a range variant
     const string WORD_DEFAULT_RANGE = 'word_default_range';
     const int WORD_DEFAULT_RANGE_ID = 31;
     const string TRIPLE_DEFAULT_RANGE = 'triple_default_range';
@@ -552,7 +552,7 @@ class views
     const string TEST_FORM_NEW_NAME = 'Add word with details';
     const string TEST_FORM_COM = 'system form to add a word';
     const string TEST_FORM = 'word_add';
-    const int TEST_FORM_ID = 47;
+    const int TEST_FORM_ID = self::WORD_ADD_DETAIL_ID;
 
     // code if of views that should be checked before deployment if they are still fine with the base setup
     const string CURRENCY = 'currency'; // the default view for all currencies

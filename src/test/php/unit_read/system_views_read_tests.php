@@ -235,6 +235,12 @@ class system_views_read_tests
         // are part of a snapshot: the used results are grouped like the values with the unit
         // symbols behind the number (see ui_list::results_used)
         $t->assert_view_by_factory(views::RESULT, $t->usr1, $t_res->result_page_related(), test_files::VIEW_CASE_RELATED, $cfg, result::class);
+        // a result that the calculation of the seeded data has created, so that the formula line
+        // shows the numbers really used, e.g. the potential loss of populism in trillion EUR
+        $test_name = 'the potential loss of populism has been calculated';
+        $res_pop = $t_res->result_populism_potential_loss();
+        $t->assert_true($test_name, $res_pop->isset());
+        $t->assert_view_by_factory(views::RESULT, $t->usr1, $res_pop, test_files::VIEW_CASE_POPULISM_LOSS, $cfg, result::class);
         // the form that overwrites just the number of a result
         $t->assert_view_by_factory(views::RESULT_OVERWRITE, $t->usr1, $t_res->result_simple(), test_files::VIEW_CASE_SIMPLE, $cfg, result::class);
         // VIEW

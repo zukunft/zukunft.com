@@ -79,6 +79,7 @@ class files
     CONST string VIEW_CASE_GEO = 'geo';
     CONST string VIEW_CASE_SIMPLE = 'simple';
     CONST string VIEW_CASE_RELATED = 'related';
+    CONST string VIEW_CASE_POPULISM_LOSS = 'populism potential loss';
     CONST string VIEW_CASE_TIME = 'time';
 
 

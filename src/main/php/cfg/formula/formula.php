@@ -866,6 +866,27 @@ class formula extends formula_map
             $vars[json_fields::PHRASES_RELATED] = $this->phrases_related->api_json_array(
                 new api_type_list([api_types::INCL_PHRASES]), $msg, $usr);
         }
+        $vars = array_merge($vars, $this->api_latex_terms_array($typ_lst, $msg, $usr));
+        $vars = array_merge($vars, $this->api_changes_array($typ_lst, $msg, $usr));
+        if ($this->views_related == null and !$typ_lst->test_mode()) {
+            $this->load_views_related($msg);
+        }
+        $vars = array_merge($vars,
+            new sandbox_related()->views_array($this->views_related, $msg, $usr));
+        return array_merge($vars, $this->api_overwrites_array($typ_lst, $msg, $usr));
+    }
+
+    /**
+     * the terms of the latex for the "expression_latex_link" component, which the formula page
+     * and the result page show; public, because the result page sends only these of the related data
+     * @param api_type_list $typ_lst configuration for the api message
+     * @param user_message $msg to collect the mapping problems for the requesting user
+     * @param user|null $usr the user for whom the api message should be created
+     * @return array the latex terms entry of the api json array or an empty array if no term is known
+     */
+    function api_latex_terms_array(api_type_list $typ_lst, user_message $msg, ?user $usr): array
+    {
+        $vars = [];
         if ($this->latex_terms == null and !$typ_lst->test_mode()) {
             $this->load_latex_terms($msg);
         }
@@ -877,13 +898,7 @@ class formula extends formula_map
             $vars[json_fields::LATEX_TERMS] = $this->latex_terms->api_json_array(
                 new api_type_list([api_types::INCL_PHRASES]), $msg, $usr);
         }
-        $vars = array_merge($vars, $this->api_changes_array($typ_lst, $msg, $usr));
-        if ($this->views_related == null and !$typ_lst->test_mode()) {
-            $this->load_views_related($msg);
-        }
-        $vars = array_merge($vars,
-            new sandbox_related()->views_array($this->views_related, $msg, $usr));
-        return array_merge($vars, $this->api_overwrites_array($typ_lst, $msg, $usr));
+        return $vars;
     }
 
     /**

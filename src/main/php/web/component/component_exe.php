@@ -464,6 +464,7 @@ class component_exe extends component
             component_types::SHOW_ALL_VALUES_NEEDED => $form->show_all_values_needed($dbo),
             component_types::SHOW_RESULT_VALUE => $form->show_result_value($dbo),
             component_types::SHOW_RESULT_FORMULA => $form->show_result_formula($dbo),
+            component_types::SHOW_RESULT_EXPRESSION => $form->show_result_expression($dbo, $msg, $url_arr),
             component_types::SHOW_PHRASE_TYPE => $form->show_phrase_type($dbo, $msg),
             component_types::SHOW_FIELD_USAGE => $form->show_usage($dbo),
             component_types::WORD_RESULTS => $form->result($dbo),

@@ -261,3 +261,4 @@ component_type_id, type_name, description, code_id
 260, 'values used', 'show the values that the calculation of the shown result has used e.g. the inhabitants that an increase is based on', 'values_used'
 261, 'formulas used', 'show the formulas that have calculated the results used for the shown result', 'formulas_used'
 262, 'results used', 'show the results that the calculation of the shown result has used e.g. the increase used by a growth rate', 'results_used'
+263, 'show result expression', 'show the formula of the shown result with the numbers used, each linked to its value or result', 'system_show_result_expression'
