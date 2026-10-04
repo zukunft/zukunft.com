@@ -1070,6 +1070,8 @@ class frontend
                 $usr_id = $usr?->id() ?? 0;
                 if (in_array($view_code_id, views::VIEWS_WITHOUT_RELATED, true)) {
                     $dbo->load_by_id($id, $msg_ui, [], $usr_id);
+                } elseif (in_array($view_code_id, views::VIEWS_WITH_USED, true)) {
+                    $dbo->load_by_id($id, $msg_ui, self::page_api_par($view_code_id), $usr_id);
                 } else {
                     $dbo->load_by_id_with_related($id, $msg_ui, $usr_id);
                 }
@@ -1089,9 +1091,7 @@ class frontend
                     $api_par = $dbo->api_par_from_url($url_array);
                     // like the plain page load, so that e.g. the from, verb and to of a triple come
                     // with their names and a link to them is never shown without a text
-                    if (!in_array($view_code_id, views::VIEWS_WITHOUT_RELATED, true)) {
-                        $api_par[url_var::INCL_RELATED] = url_var::TRUE;
-                    }
+                    $api_par = self::page_api_par($view_code_id, $api_par);
                     $dbo->load_by_id($id, $msg_ui, $api_par, $usr_id);
                 }
                 $dbo->url_mapper($url_array, $msg_ui, $dto);
@@ -1354,6 +1354,25 @@ class frontend
             }
         }
         return $result;
+    }
+
+    /**
+     * the api parameters of a page request by its view: the related objects for every view that
+     * shows a main object, and the slow used lists only for the result views that show them
+     *
+     * @param string $view_code_id the code id of the view of the page
+     * @param array $api_par the api parameters that the url has already asked for
+     * @return array the api parameters with the flags of the view added
+     */
+    static function page_api_par(string $view_code_id, array $api_par = []): array
+    {
+        if (!in_array($view_code_id, views::VIEWS_WITHOUT_RELATED, true)) {
+            $api_par[url_var::INCL_RELATED] = url_var::TRUE;
+        }
+        if (in_array($view_code_id, views::VIEWS_WITH_USED, true)) {
+            $api_par[url_var::INCL_USED] = url_var::TRUE;
+        }
+        return $api_par;
     }
 
     /**

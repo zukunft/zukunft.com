@@ -42,6 +42,7 @@ use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_base;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_list;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_list;
+use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
@@ -132,6 +133,19 @@ class result_ui_tests
         // negative: a result without a formula has no latex to show
         $test_name = 'a result without a formula shows no latex';
         $t->assert($test_name, new ui_base()->expression_latex_link(new result()), '');
+
+        // the used lists are slow, so only the result views that show them ask the backend for them
+        $t->subheader($ts . 'page request');
+        $test_name = 'a result detail page asks for the used lists';
+        $api_par = frontend::page_api_par(views::RESULT_DEFAULT_DETAIL);
+        $t->assert_true($test_name, array_key_exists(url_var::INCL_USED, $api_par));
+        $test_name = 'the result default page does not wait for the used lists';
+        $api_par = frontend::page_api_par(views::RESULT);
+        $t->assert_false($test_name, array_key_exists(url_var::INCL_USED, $api_par));
+        $test_name = '... but asks for the related objects';
+        $t->assert_true($test_name, array_key_exists(url_var::INCL_RELATED, $api_par));
+        $test_name = 'a page without a main object asks for no related objects';
+        $t->assert_false($test_name, array_key_exists(url_var::INCL_RELATED, frontend::page_api_par(views::START)));
 
         // below the title the page shows in three columns what the number is based on
         $t->subheader($ts . 'used for the calculation');

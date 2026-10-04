@@ -7161,6 +7161,7 @@
 \-- rest_call
     \-- class_to_api_name - section for function class_to_api_name missing in /html/rest_call.php
     \-- api_call_id - section for function api_call_id missing in /html/rest_call.php
+    \-- id_data - section for function id_data missing in /html/rest_call.php
     \-- api_call_name - section for function api_call_name missing in /html/rest_call.php
     \-- api_get - section for function api_get missing in /html/rest_call.php
     \-- data_with_user - section for function data_with_user missing in /html/rest_call.php
@@ -9060,6 +9061,8 @@
         \-- rest_call - create the class name as used for the api
     \-- api_call_id
         \-- rest_call - create and execute an api call for a database object
+    \-- id_data
+        \-- rest_call - add the id to the api call parameters; a group id is named in its short form like in a page
     \-- api_call_name
         \-- rest_call - create and execute an api call for a database object
     \-- api_get

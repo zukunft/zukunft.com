@@ -666,6 +666,14 @@ class views
         self::UNDO,
     ];
 
+    // the result views that show the values, formulas and results used for the calculation;
+    // only these ask the backend for the lists (url_var::INCL_USED), because they are slow to build
+    const array VIEWS_WITH_USED = [
+        self::RESULT_DEFAULT_DETAIL,
+        self::RESULT_DEFAULT_RANGE,
+        self::RESULT_DEFAULT_DETAIL_RANGE,
+    ];
+
     // system masks that only admin user can see
     const array ADMIN_MASK_IDS = [
         self::USER_ADMIN_ADD_ID,

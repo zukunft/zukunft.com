@@ -35,6 +35,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_HELPER . 'server_guard.php';
 include_once paths::MODEL_RESULT . 'result.php';
+include_once paths::SHARED . 'group_id_url.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\application;
 use Zukunft\ZukunftCom\main\php\cfg\helper\server_guard;
@@ -42,6 +43,7 @@ use Zukunft\ZukunftCom\main\php\cfg\result\result;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\api\controller;
+use Zukunft\ZukunftCom\main\php\shared\group_id_url;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
@@ -61,7 +63,8 @@ if ($db_con->is_open()) {
     $result = ''; // reset the json message string
 
     // get the parameters
-    $res_id = $_GET[url_var::ID] ?? 0;
+    // the frontend names the group in its short form, the database key of an old call stays as it is
+    $res_id = group_id_url::from_url($_GET[url_var::ID] ?? 0);
     // e.g. ir=1 to include the phrase names and the formula that the result page shows
     $typ_lst = api_type_list::from_url_array($_GET);
 

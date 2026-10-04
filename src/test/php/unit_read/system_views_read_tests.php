@@ -237,9 +237,13 @@ class system_views_read_tests
         $t->assert_view_by_factory(views::RESULT, $t->usr1, $t_res->result_page_related(), test_files::VIEW_CASE_RELATED, $cfg, result::class);
         // a result that the calculation of the seeded data has created, so that the formula line
         // shows the numbers really used, e.g. the potential loss of populism in trillion EUR
+        // the number and the formula are checked, because a set group id alone does not prove that
+        // the calculated row has been loaded
         $test_name = 'the potential loss of populism has been calculated';
         $res_pop = $t_res->result_populism_potential_loss();
-        $t->assert_true($test_name, $res_pop->isset());
+        $t->assert_true($test_name, $res_pop->number() !== null);
+        $test_name = '... by a formula';
+        $t->assert_true($test_name, $res_pop->formula_id() != 0);
         $t->assert_view_by_factory(views::RESULT, $t->usr1, $res_pop, test_files::VIEW_CASE_POPULISM_LOSS, $cfg, result::class);
         // the form that overwrites just the number of a result
         $t->assert_view_by_factory(views::RESULT_OVERWRITE, $t->usr1, $t_res->result_simple(), test_files::VIEW_CASE_SIMPLE, $cfg, result::class);

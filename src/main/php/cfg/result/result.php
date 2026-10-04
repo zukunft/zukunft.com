@@ -495,43 +495,59 @@ class result extends sandbox_value
             if ($this->last_update() != null) {
                 $vars[json_fields::LAST_UPDATE] = $this->last_update()->format(DateTimeInterface::ATOM);
             }
-            // the page also shows what the number is based on: the values, the formulas and the
-            // results used for the calculation; a loaded list is emitted even if it is empty,
-            // because only the empty list tells the page that nothing has been used, whereas a
-            // missing list says that the result has not been asked for it and the page then shows
-            // no column instead of a wrong "nothing used" (see ui_list::values_used)
-            // each list is filtered by the read permission first, so that a list of only
-            // unreadable entries reads like an empty one (idor, see value::api_json_array)
-            if ($this->values_used == null and !$typ_lst->test_mode() and $this->id() != 0) {
-                $this->load_values_used($msg);
-            }
-            $this->values_used?->filter_readable_by($usr);
-            if ($this->values_used != null) {
-                // INCL_PHRASES so each value carries its group phrases, which the frontend
-                // needs for the value name
-                $vars[json_fields::VALUES] = $this->values_used->api_json_array(
-                    new api_type_list([api_types::INCL_PHRASES]), $msg, $usr);
-            }
-            if ($this->results_used == null and !$typ_lst->test_mode() and $this->id() != 0) {
-                $this->load_results_used($msg);
-            }
-            $this->results_used?->filter_readable_by($usr);
-            if ($this->results_used != null) {
-                $vars[json_fields::RESULTS] = $this->results_used->api_json_array(
-                    new api_type_list([api_types::INCL_PHRASES]), $msg, $usr);
-            }
-            if ($this->formulas_used == null and !$typ_lst->test_mode() and $this->id() != 0) {
-                $this->load_formulas_used($msg);
-            }
-            $this->formulas_used?->filter_readable_by($usr);
-            if ($this->formulas_used != null) {
-                $vars[json_fields::FORMULAS] = $this->formulas_used->api_json_array([], $msg, $usr);
+            // the used lists are slow to build, so only the result views that show them ask for them
+            if ($typ_lst->incl_used()) {
+                $vars = array_merge($vars, $this->api_used_array($typ_lst, $msg, $usr));
             }
             // the changes and the overwrites tabs of the result default page
             $vars = array_merge($vars, $this->api_changes_array($typ_lst, $msg, $usr));
             $vars = array_merge($vars, $this->api_overwrites_array($typ_lst, $msg, $usr));
         }
 
+        return $vars;
+    }
+
+    /**
+     * what the number is based on: the values, the formulas and the results used for the
+     * calculation; a loaded list is emitted even if it is empty, because only the empty list tells
+     * the page that nothing has been used, whereas a missing list says that the result has not
+     * been asked for it and the page then shows no column instead of a wrong "nothing used"
+     * (see ui_list::values_used); each list is filtered by the read permission first, so that a
+     * list of only unreadable entries reads like an empty one (idor, see value::api_json_array)
+     *
+     * @param api_type_list $typ_lst configuration for the api message
+     * @param user_message $msg to collect the mapping problems for the requesting user
+     * @param user|null $usr the user for whom the api message should be created
+     * @return array the used lists entries of the api json array
+     */
+    private function api_used_array(api_type_list $typ_lst, user_message $msg, ?user $usr): array
+    {
+        $vars = [];
+        if ($this->values_used == null and !$typ_lst->test_mode() and $this->id() != 0) {
+            $this->load_values_used($msg);
+        }
+        $this->values_used?->filter_readable_by($usr);
+        if ($this->values_used != null) {
+            // INCL_PHRASES so each value carries its group phrases, which the frontend
+            // needs for the value name
+            $vars[json_fields::VALUES] = $this->values_used->api_json_array(
+                new api_type_list([api_types::INCL_PHRASES]), $msg, $usr);
+        }
+        if ($this->results_used == null and !$typ_lst->test_mode() and $this->id() != 0) {
+            $this->load_results_used($msg);
+        }
+        $this->results_used?->filter_readable_by($usr);
+        if ($this->results_used != null) {
+            $vars[json_fields::RESULTS] = $this->results_used->api_json_array(
+                new api_type_list([api_types::INCL_PHRASES]), $msg, $usr);
+        }
+        if ($this->formulas_used == null and !$typ_lst->test_mode() and $this->id() != 0) {
+            $this->load_formulas_used($msg);
+        }
+        $this->formulas_used?->filter_readable_by($usr);
+        if ($this->formulas_used != null) {
+            $vars[json_fields::FORMULAS] = $this->formulas_used->api_json_array([], $msg, $usr);
+        }
         return $vars;
     }
 

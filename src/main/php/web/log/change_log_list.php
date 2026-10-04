@@ -200,9 +200,9 @@ class change_log_list extends ListBase
         $class = $lib->class_to_api_name($class);
         $data = [];
         $data[url_var::LOG_CLASS] = $class;
-        $data[url_var::ID] = $id;
         $data[url_var::LOG_FIELD] = $fld;
         $ctrl = new rest_call();
+        $data = $ctrl->id_data($id, $data);
         return $ctrl->api_call(rest_ctrl::GET, $url, $ctrl->data_with_user($data, $msg));
     }
 

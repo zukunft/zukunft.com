@@ -51,6 +51,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\results;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
@@ -238,7 +239,7 @@ class result_tests
         $res_none->formulas_used = new formula_list($t->usr1);
         $res_none->results_used = new result_list($t->usr1);
         $none_json = json_decode($res_none->api_json(
-            [api_types::TEST_MODE, api_types::INCL_RELATED], $msg), true);
+            [api_types::TEST_MODE, api_types::INCL_RELATED, api_types::INCL_USED], $msg), true);
         $t->assert_true($test_name, array_key_exists(json_fields::VALUES, $none_json));
         $test_name = '... and of used formulas and results';
         $t->assert_true($test_name, array_key_exists(json_fields::FORMULAS, $none_json)
@@ -249,7 +250,7 @@ class result_tests
         // so that the page shows no column instead of a wrong "nothing used"
         $test_name = 'a result without the used lists sends no used values';
         $plain_json = json_decode($t_res->result_main_max()->api_json(
-            [api_types::TEST_MODE, api_types::INCL_RELATED], $msg), true);
+            [api_types::TEST_MODE, api_types::INCL_RELATED, api_types::INCL_USED], $msg), true);
         $t->assert_false($test_name, array_key_exists(json_fields::VALUES, $plain_json));
         $msg->reset();
 
@@ -352,6 +353,22 @@ class result_tests
             [formula_names::SCALE_TO_SEC_MINUTE_SYMBOL => [word_names::MINUTE, $t_fig->figure_value_not_public($msg)]]);
         $api_json = $res->api_json_array([api_types::INCL_RELATED, api_types::TEST_MODE], $msg, $t->usr2);
         $t->assert($test_name, $api_json[json_fields::EXPRESSION_PARTS][0], [json_fields::TEXT => word_names::MINUTE]);
+        $msg->reset();
+
+        // the used lists are slow to build, so a page asks for them only if its view shows them
+        $t->subheader($ts . 'used lists');
+        $test_name = 'the api reads the used lists flag from the url';
+        $t->assert_true($test_name, api_type_list::from_url_array([url_var::INCL_USED => url_var::TRUE])->incl_used());
+        $test_name = '... and without it the flag is not set';
+        $t->assert_false($test_name, api_type_list::from_url_array([])->incl_used());
+        $test_name = 'a page with the used lists flag gets the values used';
+        $res = $t_res->result_page_related();
+        $typ_lst = [api_types::INCL_RELATED, api_types::INCL_USED, api_types::TEST_MODE];
+        $t->assert_true($test_name, array_key_exists(json_fields::VALUES, $res->api_json_array($typ_lst, $msg)));
+        // negative: the default page shows no used list, so it does not wait for them
+        $test_name = 'a page without the used lists flag gets no values used';
+        $typ_lst = [api_types::INCL_RELATED, api_types::TEST_MODE];
+        $t->assert_false($test_name, array_key_exists(json_fields::VALUES, $res->api_json_array($typ_lst, $msg)));
         $msg->reset();
 
 

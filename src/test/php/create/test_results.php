@@ -222,7 +222,8 @@ class test_results
     /**
      * the potential loss of populism in trillion EUR, which the formula "annual damage in money"
      * calculates from the seeded start page data; selected by the phrase names, because the group
-     * id of a result follows the import, so only a database read test can use it
+     * id of a result follows the import, so only a database read test can use it; the phrase
+     * "assumed" is part of the group, because the populism estimate is an assumed value
      *
      * @return result the calculated result loaded from the database, not set if not calculated
      */
@@ -230,7 +231,8 @@ class test_results
     {
         $msg = new user_message(); // a test builder is an entry point, so it creates the message the load reports into
         $res = new result($this->env->usr1);
-        $names = [word_names::POPULISM, triple_names::POTENTIAL_LOSS, word_names::TRILLION, word_names::EUR];
+        $names = [word_names::POPULISM, triple_names::POTENTIAL_LOSS, word_names::TRILLION, word_names::EUR,
+            word_names::ASSUMED];
         $res->load_by_names($names, $msg);
         return $res;
     }
@@ -240,7 +242,9 @@ class test_results
      */
     function result_page_related_ui(): result_ui
     {
-        return new result_ui($this->result_page_related()->api_json([api_types::INCL_RELATED, api_types::TEST_MODE]));
+        // with the used lists, which only the result views that show them ask for
+        $typ_lst = [api_types::INCL_RELATED, api_types::INCL_USED, api_types::TEST_MODE];
+        return new result_ui($this->result_page_related()->api_json($typ_lst));
     }
 
     /**

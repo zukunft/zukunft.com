@@ -36,6 +36,7 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\main\php\api\controller;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
+use Zukunft\ZukunftCom\main\php\shared\group_id_url;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
@@ -43,6 +44,7 @@ use Zukunft\ZukunftCom\main\php\web\user\user_message;
 //include_once html_paths::API_OBJECT . 'controller.php';
 include_once html_paths::SHARED_CONST . 'rest_ctrl.php';
 include_once html_paths::SHARED . 'api.php';
+include_once html_paths::SHARED . 'group_id_url.php';
 include_once html_paths::SHARED . 'url_var.php';
 include_once html_paths::SHARED . 'library.php';
 include_once html_paths::USER . 'user_message.php';
@@ -104,8 +106,21 @@ class rest_call
      */
     function api_call_id(string $class, int|string $id, user_message $msg, array $data = []): array
     {
-        $data[url_var::ID] = $id;
-        return $this->api_get($class, $data, $msg);
+        return $this->api_get($class, $this->id_data($id, $data), $msg);
+    }
+
+    /**
+     * add the id to the api call parameters; a group id is named in its short form like in a page
+     * url (see shared/group_id_url.php), which the api of value, result and group converts back
+     *
+     * @param int|string $id the database id of the object to load
+     * @param array $data the other parameters of the api call
+     * @return array the parameters with the id
+     */
+    function id_data(int|string $id, array $data = []): array
+    {
+        $data[url_var::ID] = group_id_url::to_url($id);
+        return $data;
     }
 
     /**
