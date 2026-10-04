@@ -27,4 +27,4 @@ SELECT view_delete_log
         3::smallint,
         699::smallint,
         'Historic'::text,
-        155::bigint);
+        179::bigint);

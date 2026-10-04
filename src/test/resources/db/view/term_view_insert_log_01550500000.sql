@@ -38,7 +38,7 @@ SELECT term_view_insert_log_01550500000
         ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10);
 
 SELECT term_view_insert_log_01550500000
-       (161::bigint,
+       (185::bigint,
         1::smallint,
         -1::bigint,
         3::bigint,

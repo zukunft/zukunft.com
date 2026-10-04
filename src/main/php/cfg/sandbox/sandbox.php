@@ -353,8 +353,10 @@ class sandbox extends db_object_seq_id_user
         // map the fields whenever the row has been mapped (id set), not based on $msg->is_ok(),
         // because an error left on $msg by an earlier operation must not lead to a half mapped object
         if ($this->id() != 0) {
-            if (!$load_std) {
-                $this->usr_cfg_id = $db_row[sql_db::TBL_USER_PREFIX . $id_fld];
+            // e.g. a row without user sandbox join does not include the user id field
+            $usr_id_fld = sql_db::TBL_USER_PREFIX . $id_fld;
+            if (!$load_std and array_key_exists($usr_id_fld, $db_row)) {
+                $this->usr_cfg_id = $db_row[$usr_id_fld];
             }
             if (array_key_exists(user_db::FLD_ID, $db_row)) {
                 $this->set_owner_id($db_row[user_db::FLD_ID]);

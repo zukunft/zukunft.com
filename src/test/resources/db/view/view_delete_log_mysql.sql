@@ -27,4 +27,4 @@ SELECT view_delete_log
         3,
         699,
         'Historic',
-        155);
+        179);

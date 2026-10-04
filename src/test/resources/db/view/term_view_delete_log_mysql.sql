@@ -34,7 +34,7 @@ SELECT term_view_delete_log
         'Mathematical constant',
         'main word',
         'mathematical constant',
-        161,
+        185,
         1,
         -1,
         1);

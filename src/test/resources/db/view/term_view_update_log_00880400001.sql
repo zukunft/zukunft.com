@@ -52,7 +52,7 @@ SELECT term_view_update_log_00880400001
         2::smallint,
         757::smallint,
         'Mathematical constant'::text,
-        161::bigint,
+        185::bigint,
         'Start view'::text,
         1::bigint,
         1::bigint,

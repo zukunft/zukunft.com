@@ -2,7 +2,7 @@
 
 ## detail views
 
-add detail views for values, results, formulas, words and triples and clone for the moment the current default view. in a second step the default view should be reduced and a 'more' link should link to the detail view. 
+add in the top right corner of the default views a '...' more link with a submenu similar to the table view with at least the two options 'detail' and 'detail + range'. 
 
 ## phrase types
 

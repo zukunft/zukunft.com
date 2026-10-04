@@ -95,7 +95,7 @@ SELECT word_update_log_0022224422200
         null,
         116,
         'Mathematical constant',
-        161,
+        185,
         null,
         null,
         113,

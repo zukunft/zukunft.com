@@ -3375,6 +3375,1515 @@
       ]
     },
     {
+      "name": "Word (detail)",
+      "description": "the detail view for words",
+      "code_id": "word_default_detail",
+      "type": "word",
+      "components": [
+        {
+          "position": "1",
+          "name": "Word title"
+        },
+        {
+          "position": "2",
+          "name": "system sub title description",
+          "style": "text-left"
+        },
+        {
+          "position": "3",
+          "name": "system show field description",
+          "position_type": "combine"
+        },
+        {
+          "position": "4",
+          "name": "system show field plural",
+          "position_type": "combine"
+        },
+        {
+          "position": "5",
+          "name": "phrase aliases",
+          "position_type": "combine"
+        },
+        {
+          "position": "6",
+          "name": "phrase symbols",
+          "position_type": "combine"
+        },
+        {
+          "position": "7",
+          "name": "children of word",
+          "position_type": "combine"
+        },
+        {
+          "position": "8",
+          "name": "related phrases without subtitles",
+          "position_type": "combine"
+        },
+        {
+          "position": "9",
+          "name": "system sub title references",
+          "position_type": "combine"
+        },
+        {
+          "position": "10",
+          "name": "ref list word",
+          "position_type": "combine"
+        },
+        {
+          "position": "11",
+          "name": "system sub title values",
+          "position_type": "side_or_first_below"
+        },
+        {
+          "position": "12",
+          "name": "value chart",
+          "position_type": "combine"
+        },
+        {
+          "position": "13",
+          "name": "related values",
+          "position_type": "combine"
+        },
+        {
+          "position": "14",
+          "name": "system sub title formulas",
+          "position_type": "side_or_below"
+        },
+        {
+          "position": "15",
+          "name": "formula list",
+          "position_type": "combine"
+        },
+        {
+          "position": "16",
+          "name": "formulas of parents",
+          "position_type": "combine"
+        },
+        {
+          "position": "17",
+          "name": "view tab box",
+          "position_type": "side_or_last_below"
+        }
+      ]
+    },
+    {
+      "name": "Triple (detail)",
+      "description": "the detail view for triples",
+      "code_id": "triple_default_detail",
+      "type": "triple",
+      "components": [
+        {
+          "position": "1",
+          "name": "Triple title"
+        },
+        {
+          "position": "2",
+          "name": "system sub title description",
+          "style": "text-left"
+        },
+        {
+          "position": "3",
+          "name": "system show field description",
+          "position_type": "combine"
+        },
+        {
+          "position": "4",
+          "name": "system show field weight",
+          "position_type": "combine"
+        },
+        {
+          "position": "5",
+          "name": "system show field condition formula",
+          "position_type": "combine"
+        },
+        {
+          "position": "6",
+          "name": "phrase aliases",
+          "position_type": "combine"
+        },
+        {
+          "position": "7",
+          "name": "phrase symbols",
+          "position_type": "combine"
+        },
+        {
+          "position": "8",
+          "name": "related phrases without subtitles",
+          "position_type": "combine"
+        },
+        {
+          "position": "9",
+          "name": "system sub title references",
+          "position_type": "combine"
+        },
+        {
+          "position": "10",
+          "name": "ref list word",
+          "position_type": "combine"
+        },
+        {
+          "position": "11",
+          "name": "system sub title values",
+          "position_type": "side_or_first_below"
+        },
+        {
+          "position": "12",
+          "name": "values by triple",
+          "position_type": "combine"
+        },
+        {
+          "position": "13",
+          "name": "system sub title formulas",
+          "position_type": "side_or_below"
+        },
+        {
+          "position": "14",
+          "name": "formula list",
+          "position_type": "combine"
+        },
+        {
+          "position": "15",
+          "name": "view tab box",
+          "position_type": "side_or_last_below"
+        }
+      ]
+    },
+    {
+      "name": "Value (detail)",
+      "description": "the detail view for values",
+      "code_id": "value_default_detail",
+      "type": "value",
+      "components": [
+        {
+          "position": "1",
+          "name": "Value title"
+        },
+        {
+          "position": "2",
+          "name": "system show field last update",
+          "style": "fields-in-line"
+        },
+        {
+          "position": "3",
+          "name": "system show field value source",
+          "position_type": "same_line"
+        },
+        {
+          "position": "4",
+          "name": "system sub title related values"
+        },
+        {
+          "position": "5",
+          "name": "similar values",
+          "position_type": "combine"
+        },
+        {
+          "position": "6",
+          "name": "system sub title results",
+          "position_type": "side_or_first_below"
+        },
+        {
+          "position": "7",
+          "name": "results of value",
+          "position_type": "combine"
+        },
+        {
+          "position": "8",
+          "name": "value tab box",
+          "position_type": "side_or_last_below"
+        }
+      ]
+    },
+    {
+      "name": "Source (detail)",
+      "description": "the detail view for sources",
+      "code_id": "source_default_detail",
+      "type": "source",
+      "components": [
+        {
+          "position": "1",
+          "name": "Source title"
+        },
+        {
+          "position": "2",
+          "name": "system sub title description",
+          "style": "text-left"
+        },
+        {
+          "position": "3",
+          "name": "system show field description",
+          "position_type": "combine"
+        },
+        {
+          "position": "4",
+          "name": "source url link",
+          "position_type": "combine"
+        },
+        {
+          "position": "5",
+          "name": "source doi link",
+          "position_type": "combine"
+        },
+        {
+          "position": "6",
+          "name": "system sub title usage number",
+          "position_type": "side_or_first_below"
+        },
+        {
+          "position": "7",
+          "name": "system sub title values",
+          "position_type": "combine"
+        },
+        {
+          "position": "8",
+          "name": "source values",
+          "position_type": "combine"
+        },
+        {
+          "position": "9",
+          "name": "source tab box",
+          "position_type": "side_or_last_below"
+        }
+      ]
+    },
+    {
+      "name": "Reference (detail)",
+      "description": "the detail view for references",
+      "code_id": "ref_default_detail",
+      "type": "ref",
+      "components": [
+        {
+          "position": "1",
+          "name": "Reference title"
+        },
+        {
+          "position": "2",
+          "name": "system sub title description",
+          "style": "text-left"
+        },
+        {
+          "position": "3",
+          "name": "system show field description",
+          "position_type": "combine"
+        },
+        {
+          "position": "4",
+          "name": "system show field reference phrase",
+          "position_type": "combine"
+        },
+        {
+          "position": "5",
+          "name": "system show field reference type",
+          "position_type": "combine"
+        },
+        {
+          "position": "6",
+          "name": "system show field external key",
+          "position_type": "combine"
+        },
+        {
+          "position": "7",
+          "name": "system show field url",
+          "position_type": "combine"
+        },
+        {
+          "position": "8",
+          "name": "system show field source",
+          "position_type": "combine"
+        },
+        {
+          "position": "9",
+          "name": "system show field last update",
+          "position_type": "combine"
+        },
+        {
+          "position": "10",
+          "name": "system sub title values",
+          "position_type": "side_or_first_below"
+        },
+        {
+          "position": "11",
+          "name": "related values",
+          "position_type": "combine"
+        },
+        {
+          "position": "12",
+          "name": "view tab box",
+          "position_type": "side_or_last_below"
+        }
+      ]
+    },
+    {
+      "name": "Formula (detail)",
+      "description": "Show a formula with all details and the related results and words",
+      "code_id": "formula_default_detail",
+      "type": "formula",
+      "components": [
+        {
+          "position": "1",
+          "name": "Formula title"
+        },
+        {
+          "position": "2",
+          "name": "Expression with links",
+          "style": "text-left"
+        },
+        {
+          "position": "3",
+          "name": "system sub title description",
+          "style": "text-left"
+        },
+        {
+          "position": "4",
+          "name": "system show field description",
+          "position_type": "combine"
+        },
+        {
+          "position": "5",
+          "name": "system sub title expression",
+          "position_type": "combine"
+        },
+        {
+          "position": "6",
+          "name": "Expression",
+          "position_type": "combine"
+        },
+        {
+          "position": "7",
+          "name": "system show field all values needed",
+          "position_type": "combine"
+        },
+        {
+          "position": "8",
+          "name": "system show field last update",
+          "position_type": "combine"
+        },
+        {
+          "position": "9",
+          "name": "system sub title values",
+          "position_type": "side_or_first_below"
+        },
+        {
+          "position": "10",
+          "name": "related values",
+          "position_type": "combine"
+        },
+        {
+          "position": "11",
+          "name": "related results",
+          "position_type": "side_or_below"
+        },
+        {
+          "position": "12",
+          "name": "view tab box",
+          "position_type": "side_or_last_below"
+        }
+      ]
+    },
+    {
+      "name": "Result (detail)",
+      "description": "the detail view for results",
+      "code_id": "result_default_detail",
+      "type": "result",
+      "components": [
+        {
+          "position": "1",
+          "name": "Value title"
+        },
+        {
+          "position": "2",
+          "name": "system show field last update",
+          "style": "fields-in-line"
+        },
+        {
+          "position": "3",
+          "name": "system show result formula",
+          "position_type": "same_line"
+        },
+        {
+          "position": "4",
+          "name": "system sub title values",
+          "position_type": "side_or_first_below"
+        },
+        {
+          "position": "5",
+          "name": "values used",
+          "position_type": "combine"
+        },
+        {
+          "position": "6",
+          "name": "system sub title formulas",
+          "position_type": "side_or_below"
+        },
+        {
+          "position": "7",
+          "name": "formulas used",
+          "position_type": "combine"
+        },
+        {
+          "position": "8",
+          "name": "system sub title results",
+          "position_type": "side_or_below"
+        },
+        {
+          "position": "9",
+          "name": "results used",
+          "position_type": "combine"
+        },
+        {
+          "position": "10",
+          "name": "value tab box",
+          "position_type": "side_or_last_below"
+        }
+      ]
+    },
+    {
+      "name": "Verb (detail)",
+      "description": "the detail view for verbs",
+      "code_id": "verb_default_detail",
+      "type": "verb",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title verb"
+        },
+        {
+          "position": "2",
+          "name": "system show field description"
+        },
+        {
+          "position": "3",
+          "name": "system show field reverse"
+        },
+        {
+          "position": "4",
+          "name": "system show field plural"
+        },
+        {
+          "position": "5",
+          "name": "system show field plural reverse"
+        },
+        {
+          "position": "6",
+          "name": "system show field name in formulas"
+        },
+        {
+          "position": "7",
+          "name": "system sub title triples"
+        },
+        {
+          "position": "8",
+          "name": "verb triples"
+        }
+      ]
+    },
+    {
+      "name": "Word (range)",
+      "description": "the default view for words with ranges",
+      "code_id": "word_default_range",
+      "type": "word",
+      "components": [
+        {
+          "position": "1",
+          "name": "Word title"
+        },
+        {
+          "position": "2",
+          "name": "system sub title description",
+          "style": "text-left"
+        },
+        {
+          "position": "3",
+          "name": "system show field description",
+          "position_type": "combine"
+        },
+        {
+          "position": "4",
+          "name": "system show field plural",
+          "position_type": "combine"
+        },
+        {
+          "position": "5",
+          "name": "phrase aliases",
+          "position_type": "combine"
+        },
+        {
+          "position": "6",
+          "name": "phrase symbols",
+          "position_type": "combine"
+        },
+        {
+          "position": "7",
+          "name": "children of word",
+          "position_type": "combine"
+        },
+        {
+          "position": "8",
+          "name": "related phrases without subtitles",
+          "position_type": "combine"
+        },
+        {
+          "position": "9",
+          "name": "system sub title references",
+          "position_type": "combine"
+        },
+        {
+          "position": "10",
+          "name": "ref list word",
+          "position_type": "combine"
+        },
+        {
+          "position": "11",
+          "name": "system sub title values",
+          "position_type": "side_or_first_below"
+        },
+        {
+          "position": "12",
+          "name": "value chart",
+          "position_type": "combine"
+        },
+        {
+          "position": "13",
+          "name": "related values",
+          "position_type": "combine"
+        },
+        {
+          "position": "14",
+          "name": "system sub title formulas",
+          "position_type": "side_or_below"
+        },
+        {
+          "position": "15",
+          "name": "formula list",
+          "position_type": "combine"
+        },
+        {
+          "position": "16",
+          "name": "formulas of parents",
+          "position_type": "combine"
+        },
+        {
+          "position": "17",
+          "name": "view tab box",
+          "position_type": "side_or_last_below"
+        }
+      ]
+    },
+    {
+      "name": "Triple (range)",
+      "description": "the default view for triples with value ranges",
+      "code_id": "triple_default_range",
+      "type": "triple",
+      "components": [
+        {
+          "position": "1",
+          "name": "Triple title"
+        },
+        {
+          "position": "2",
+          "name": "system sub title description",
+          "style": "text-left"
+        },
+        {
+          "position": "3",
+          "name": "system show field description",
+          "position_type": "combine"
+        },
+        {
+          "position": "4",
+          "name": "system show field weight",
+          "position_type": "combine"
+        },
+        {
+          "position": "5",
+          "name": "system show field condition formula",
+          "position_type": "combine"
+        },
+        {
+          "position": "6",
+          "name": "phrase aliases",
+          "position_type": "combine"
+        },
+        {
+          "position": "7",
+          "name": "phrase symbols",
+          "position_type": "combine"
+        },
+        {
+          "position": "8",
+          "name": "related phrases without subtitles",
+          "position_type": "combine"
+        },
+        {
+          "position": "9",
+          "name": "system sub title references",
+          "position_type": "combine"
+        },
+        {
+          "position": "10",
+          "name": "ref list word",
+          "position_type": "combine"
+        },
+        {
+          "position": "11",
+          "name": "system sub title values",
+          "position_type": "side_or_first_below"
+        },
+        {
+          "position": "12",
+          "name": "values by triple",
+          "position_type": "combine"
+        },
+        {
+          "position": "13",
+          "name": "system sub title formulas",
+          "position_type": "side_or_below"
+        },
+        {
+          "position": "14",
+          "name": "formula list",
+          "position_type": "combine"
+        },
+        {
+          "position": "15",
+          "name": "view tab box",
+          "position_type": "side_or_last_below"
+        }
+      ]
+    },
+    {
+      "name": "Value (range)",
+      "description": "the default view for values with value ranges",
+      "code_id": "value_default_range",
+      "type": "value",
+      "components": [
+        {
+          "position": "1",
+          "name": "Value title"
+        },
+        {
+          "position": "2",
+          "name": "system show field last update",
+          "style": "fields-in-line"
+        },
+        {
+          "position": "3",
+          "name": "system show field value source",
+          "position_type": "same_line"
+        },
+        {
+          "position": "4",
+          "name": "system sub title related values"
+        },
+        {
+          "position": "5",
+          "name": "similar values",
+          "position_type": "combine"
+        },
+        {
+          "position": "6",
+          "name": "system sub title results",
+          "position_type": "side_or_first_below"
+        },
+        {
+          "position": "7",
+          "name": "results of value",
+          "position_type": "combine"
+        },
+        {
+          "position": "8",
+          "name": "value tab box",
+          "position_type": "side_or_last_below"
+        }
+      ]
+    },
+    {
+      "name": "Source (range)",
+      "description": "the default view for sources with value ranges",
+      "code_id": "source_default_range",
+      "type": "source",
+      "components": [
+        {
+          "position": "1",
+          "name": "Source title"
+        },
+        {
+          "position": "2",
+          "name": "system sub title description",
+          "style": "text-left"
+        },
+        {
+          "position": "3",
+          "name": "system show field description",
+          "position_type": "combine"
+        },
+        {
+          "position": "4",
+          "name": "source url link",
+          "position_type": "combine"
+        },
+        {
+          "position": "5",
+          "name": "source doi link",
+          "position_type": "combine"
+        },
+        {
+          "position": "6",
+          "name": "system sub title usage number",
+          "position_type": "side_or_first_below"
+        },
+        {
+          "position": "7",
+          "name": "system sub title values",
+          "position_type": "combine"
+        },
+        {
+          "position": "8",
+          "name": "source values",
+          "position_type": "combine"
+        },
+        {
+          "position": "9",
+          "name": "source tab box",
+          "position_type": "side_or_last_below"
+        }
+      ]
+    },
+    {
+      "name": "Reference (range)",
+      "description": "the default view for references with value ranges",
+      "code_id": "ref_default_range",
+      "type": "ref",
+      "components": [
+        {
+          "position": "1",
+          "name": "Reference title"
+        },
+        {
+          "position": "2",
+          "name": "system sub title description",
+          "style": "text-left"
+        },
+        {
+          "position": "3",
+          "name": "system show field description",
+          "position_type": "combine"
+        },
+        {
+          "position": "4",
+          "name": "system show field reference phrase",
+          "position_type": "combine"
+        },
+        {
+          "position": "5",
+          "name": "system show field reference type",
+          "position_type": "combine"
+        },
+        {
+          "position": "6",
+          "name": "system show field external key",
+          "position_type": "combine"
+        },
+        {
+          "position": "7",
+          "name": "system show field url",
+          "position_type": "combine"
+        },
+        {
+          "position": "8",
+          "name": "system show field source",
+          "position_type": "combine"
+        },
+        {
+          "position": "9",
+          "name": "system show field last update",
+          "position_type": "combine"
+        },
+        {
+          "position": "10",
+          "name": "system sub title values",
+          "position_type": "side_or_first_below"
+        },
+        {
+          "position": "11",
+          "name": "related values",
+          "position_type": "combine"
+        },
+        {
+          "position": "12",
+          "name": "view tab box",
+          "position_type": "side_or_last_below"
+        }
+      ]
+    },
+    {
+      "name": "Formula (range)",
+      "description": "the default view for formulas with value ranges",
+      "code_id": "formula_default_range",
+      "type": "formula",
+      "components": [
+        {
+          "position": "1",
+          "name": "Formula title"
+        },
+        {
+          "position": "2",
+          "name": "Expression with links",
+          "style": "text-left"
+        },
+        {
+          "position": "3",
+          "name": "system sub title description",
+          "style": "text-left"
+        },
+        {
+          "position": "4",
+          "name": "system show field description",
+          "position_type": "combine"
+        },
+        {
+          "position": "5",
+          "name": "system sub title expression",
+          "position_type": "combine"
+        },
+        {
+          "position": "6",
+          "name": "Expression",
+          "position_type": "combine"
+        },
+        {
+          "position": "7",
+          "name": "system show field all values needed",
+          "position_type": "combine"
+        },
+        {
+          "position": "8",
+          "name": "system show field last update",
+          "position_type": "combine"
+        },
+        {
+          "position": "9",
+          "name": "system sub title values",
+          "position_type": "side_or_first_below"
+        },
+        {
+          "position": "10",
+          "name": "related values",
+          "position_type": "combine"
+        },
+        {
+          "position": "11",
+          "name": "related results",
+          "position_type": "side_or_below"
+        },
+        {
+          "position": "12",
+          "name": "view tab box",
+          "position_type": "side_or_last_below"
+        }
+      ]
+    },
+    {
+      "name": "Result (range)",
+      "description": "the default view for results with value ranges",
+      "code_id": "result_default_range",
+      "type": "result",
+      "components": [
+        {
+          "position": "1",
+          "name": "Value title"
+        },
+        {
+          "position": "2",
+          "name": "system show field last update",
+          "style": "fields-in-line"
+        },
+        {
+          "position": "3",
+          "name": "system show result formula",
+          "position_type": "same_line"
+        },
+        {
+          "position": "4",
+          "name": "system sub title values",
+          "position_type": "side_or_first_below"
+        },
+        {
+          "position": "5",
+          "name": "values used",
+          "position_type": "combine"
+        },
+        {
+          "position": "6",
+          "name": "system sub title formulas",
+          "position_type": "side_or_below"
+        },
+        {
+          "position": "7",
+          "name": "formulas used",
+          "position_type": "combine"
+        },
+        {
+          "position": "8",
+          "name": "system sub title results",
+          "position_type": "side_or_below"
+        },
+        {
+          "position": "9",
+          "name": "results used",
+          "position_type": "combine"
+        },
+        {
+          "position": "10",
+          "name": "value tab box",
+          "position_type": "side_or_last_below"
+        }
+      ]
+    },
+    {
+      "name": "Verb (range)",
+      "description": "the default view for verbs with value ranges",
+      "code_id": "verb_default_range",
+      "type": "verb",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title verb"
+        },
+        {
+          "position": "2",
+          "name": "system show field description"
+        },
+        {
+          "position": "3",
+          "name": "system show field reverse"
+        },
+        {
+          "position": "4",
+          "name": "system show field plural"
+        },
+        {
+          "position": "5",
+          "name": "system show field plural reverse"
+        },
+        {
+          "position": "6",
+          "name": "system show field name in formulas"
+        },
+        {
+          "position": "7",
+          "name": "system sub title triples"
+        },
+        {
+          "position": "8",
+          "name": "verb triples"
+        }
+      ]
+    },
+    {
+      "name": "Word (detail with range)",
+      "description": "the detail view with range for words",
+      "code_id": "word_default_detail_range",
+      "type": "word",
+      "components": [
+        {
+          "position": "1",
+          "name": "Word title"
+        },
+        {
+          "position": "2",
+          "name": "system sub title description",
+          "style": "text-left"
+        },
+        {
+          "position": "3",
+          "name": "system show field description",
+          "position_type": "combine"
+        },
+        {
+          "position": "4",
+          "name": "system show field plural",
+          "position_type": "combine"
+        },
+        {
+          "position": "5",
+          "name": "phrase aliases",
+          "position_type": "combine"
+        },
+        {
+          "position": "6",
+          "name": "phrase symbols",
+          "position_type": "combine"
+        },
+        {
+          "position": "7",
+          "name": "children of word",
+          "position_type": "combine"
+        },
+        {
+          "position": "8",
+          "name": "related phrases without subtitles",
+          "position_type": "combine"
+        },
+        {
+          "position": "9",
+          "name": "system sub title references",
+          "position_type": "combine"
+        },
+        {
+          "position": "10",
+          "name": "ref list word",
+          "position_type": "combine"
+        },
+        {
+          "position": "11",
+          "name": "system sub title values",
+          "position_type": "side_or_first_below"
+        },
+        {
+          "position": "12",
+          "name": "value chart",
+          "position_type": "combine"
+        },
+        {
+          "position": "13",
+          "name": "related values",
+          "position_type": "combine"
+        },
+        {
+          "position": "14",
+          "name": "system sub title formulas",
+          "position_type": "side_or_below"
+        },
+        {
+          "position": "15",
+          "name": "formula list",
+          "position_type": "combine"
+        },
+        {
+          "position": "16",
+          "name": "formulas of parents",
+          "position_type": "combine"
+        },
+        {
+          "position": "17",
+          "name": "view tab box",
+          "position_type": "side_or_last_below"
+        }
+      ]
+    },
+    {
+      "name": "Triple (detail with range)",
+      "description": "the detail view with range for triples",
+      "code_id": "triple_default_detail_range",
+      "type": "triple",
+      "components": [
+        {
+          "position": "1",
+          "name": "Triple title"
+        },
+        {
+          "position": "2",
+          "name": "system sub title description",
+          "style": "text-left"
+        },
+        {
+          "position": "3",
+          "name": "system show field description",
+          "position_type": "combine"
+        },
+        {
+          "position": "4",
+          "name": "system show field weight",
+          "position_type": "combine"
+        },
+        {
+          "position": "5",
+          "name": "system show field condition formula",
+          "position_type": "combine"
+        },
+        {
+          "position": "6",
+          "name": "phrase aliases",
+          "position_type": "combine"
+        },
+        {
+          "position": "7",
+          "name": "phrase symbols",
+          "position_type": "combine"
+        },
+        {
+          "position": "8",
+          "name": "related phrases without subtitles",
+          "position_type": "combine"
+        },
+        {
+          "position": "9",
+          "name": "system sub title references",
+          "position_type": "combine"
+        },
+        {
+          "position": "10",
+          "name": "ref list word",
+          "position_type": "combine"
+        },
+        {
+          "position": "11",
+          "name": "system sub title values",
+          "position_type": "side_or_first_below"
+        },
+        {
+          "position": "12",
+          "name": "values by triple",
+          "position_type": "combine"
+        },
+        {
+          "position": "13",
+          "name": "system sub title formulas",
+          "position_type": "side_or_below"
+        },
+        {
+          "position": "14",
+          "name": "formula list",
+          "position_type": "combine"
+        },
+        {
+          "position": "15",
+          "name": "view tab box",
+          "position_type": "side_or_last_below"
+        }
+      ]
+    },
+    {
+      "name": "Value (detail with range)",
+      "description": "the detail view with range for values",
+      "code_id": "value_default_detail_range",
+      "type": "value",
+      "components": [
+        {
+          "position": "1",
+          "name": "Value title"
+        },
+        {
+          "position": "2",
+          "name": "system show field last update",
+          "style": "fields-in-line"
+        },
+        {
+          "position": "3",
+          "name": "system show field value source",
+          "position_type": "same_line"
+        },
+        {
+          "position": "4",
+          "name": "system sub title related values"
+        },
+        {
+          "position": "5",
+          "name": "similar values",
+          "position_type": "combine"
+        },
+        {
+          "position": "6",
+          "name": "system sub title results",
+          "position_type": "side_or_first_below"
+        },
+        {
+          "position": "7",
+          "name": "results of value",
+          "position_type": "combine"
+        },
+        {
+          "position": "8",
+          "name": "value tab box",
+          "position_type": "side_or_last_below"
+        }
+      ]
+    },
+    {
+      "name": "Source (detail with range)",
+      "description": "the detail view with range for sources",
+      "code_id": "source_default_detail_range",
+      "type": "source",
+      "components": [
+        {
+          "position": "1",
+          "name": "Source title"
+        },
+        {
+          "position": "2",
+          "name": "system sub title description",
+          "style": "text-left"
+        },
+        {
+          "position": "3",
+          "name": "system show field description",
+          "position_type": "combine"
+        },
+        {
+          "position": "4",
+          "name": "source url link",
+          "position_type": "combine"
+        },
+        {
+          "position": "5",
+          "name": "source doi link",
+          "position_type": "combine"
+        },
+        {
+          "position": "6",
+          "name": "system sub title usage number",
+          "position_type": "side_or_first_below"
+        },
+        {
+          "position": "7",
+          "name": "system sub title values",
+          "position_type": "combine"
+        },
+        {
+          "position": "8",
+          "name": "source values",
+          "position_type": "combine"
+        },
+        {
+          "position": "9",
+          "name": "source tab box",
+          "position_type": "side_or_last_below"
+        }
+      ]
+    },
+    {
+      "name": "Reference (detail with range)",
+      "description": "the detail view with range for references",
+      "code_id": "ref_default_detail_range",
+      "type": "ref",
+      "components": [
+        {
+          "position": "1",
+          "name": "Reference title"
+        },
+        {
+          "position": "2",
+          "name": "system sub title description",
+          "style": "text-left"
+        },
+        {
+          "position": "3",
+          "name": "system show field description",
+          "position_type": "combine"
+        },
+        {
+          "position": "4",
+          "name": "system show field reference phrase",
+          "position_type": "combine"
+        },
+        {
+          "position": "5",
+          "name": "system show field reference type",
+          "position_type": "combine"
+        },
+        {
+          "position": "6",
+          "name": "system show field external key",
+          "position_type": "combine"
+        },
+        {
+          "position": "7",
+          "name": "system show field url",
+          "position_type": "combine"
+        },
+        {
+          "position": "8",
+          "name": "system show field source",
+          "position_type": "combine"
+        },
+        {
+          "position": "9",
+          "name": "system show field last update",
+          "position_type": "combine"
+        },
+        {
+          "position": "10",
+          "name": "system sub title values",
+          "position_type": "side_or_first_below"
+        },
+        {
+          "position": "11",
+          "name": "related values",
+          "position_type": "combine"
+        },
+        {
+          "position": "12",
+          "name": "view tab box",
+          "position_type": "side_or_last_below"
+        }
+      ]
+    },
+    {
+      "name": "Formula (detail with range)",
+      "description": "Show a formula with all details and the related results and words of a range",
+      "code_id": "formula_default_detail_range",
+      "type": "formula",
+      "components": [
+        {
+          "position": "1",
+          "name": "Formula title"
+        },
+        {
+          "position": "2",
+          "name": "Expression with links",
+          "style": "text-left"
+        },
+        {
+          "position": "3",
+          "name": "system sub title description",
+          "style": "text-left"
+        },
+        {
+          "position": "4",
+          "name": "system show field description",
+          "position_type": "combine"
+        },
+        {
+          "position": "5",
+          "name": "system sub title expression",
+          "position_type": "combine"
+        },
+        {
+          "position": "6",
+          "name": "Expression",
+          "position_type": "combine"
+        },
+        {
+          "position": "7",
+          "name": "system show field all values needed",
+          "position_type": "combine"
+        },
+        {
+          "position": "8",
+          "name": "system show field last update",
+          "position_type": "combine"
+        },
+        {
+          "position": "9",
+          "name": "system sub title values",
+          "position_type": "side_or_first_below"
+        },
+        {
+          "position": "10",
+          "name": "related values",
+          "position_type": "combine"
+        },
+        {
+          "position": "11",
+          "name": "related results",
+          "position_type": "side_or_below"
+        },
+        {
+          "position": "12",
+          "name": "view tab box",
+          "position_type": "side_or_last_below"
+        }
+      ]
+    },
+    {
+      "name": "Result (detail with range)",
+      "description": "the detail view with range for results",
+      "code_id": "result_default_detail_range",
+      "type": "result",
+      "components": [
+        {
+          "position": "1",
+          "name": "Value title"
+        },
+        {
+          "position": "2",
+          "name": "system show field last update",
+          "style": "fields-in-line"
+        },
+        {
+          "position": "3",
+          "name": "system show result formula",
+          "position_type": "same_line"
+        },
+        {
+          "position": "4",
+          "name": "system sub title values",
+          "position_type": "side_or_first_below"
+        },
+        {
+          "position": "5",
+          "name": "values used",
+          "position_type": "combine"
+        },
+        {
+          "position": "6",
+          "name": "system sub title formulas",
+          "position_type": "side_or_below"
+        },
+        {
+          "position": "7",
+          "name": "formulas used",
+          "position_type": "combine"
+        },
+        {
+          "position": "8",
+          "name": "system sub title results",
+          "position_type": "side_or_below"
+        },
+        {
+          "position": "9",
+          "name": "results used",
+          "position_type": "combine"
+        },
+        {
+          "position": "10",
+          "name": "value tab box",
+          "position_type": "side_or_last_below"
+        }
+      ]
+    },
+    {
+      "name": "Verb (detail with range)",
+      "description": "the detail view with range for verbs",
+      "code_id": "verb_default_detail_range",
+      "type": "verb",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title verb"
+        },
+        {
+          "position": "2",
+          "name": "system show field description"
+        },
+        {
+          "position": "3",
+          "name": "system show field reverse"
+        },
+        {
+          "position": "4",
+          "name": "system show field plural"
+        },
+        {
+          "position": "5",
+          "name": "system show field plural reverse"
+        },
+        {
+          "position": "6",
+          "name": "system show field name in formulas"
+        },
+        {
+          "position": "7",
+          "name": "system sub title triples"
+        },
+        {
+          "position": "8",
+          "name": "verb triples"
+        }
+      ]
+    },
+    {
       "name": "Add word with details",
       "description": "Create a new word with all parameters e.g. the phrase type",
       "code_id": "word_add",

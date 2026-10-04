@@ -34,7 +34,7 @@ SELECT view_relation_delete_log
         'word_edit',
         'add components',
         'word_usage',
-        24,
+        48,
         1,
-        92,
+        116,
         1);
