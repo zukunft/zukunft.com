@@ -249,6 +249,13 @@ enum messages: string
     case TABLE_COLUMNS_ALL = 'table_columns_all';
     // added to the entry above for the same columns with the probability range of each number
     case TABLE_COLUMNS_WITH_RANGE = 'table_columns_with_range';
+    // the tooltip and the entries of the "..." menu below the title of a default view, which
+    // shows the same object in one of the versions of views::DEFAULT_VIEW_VERSIONS
+    case VIEW_VERSION_TIP = 'view_version_tip';
+    case VIEW_VERSION_DEFAULT = 'view_version_default';
+    case VIEW_VERSION_DETAIL = 'view_version_detail';
+    case VIEW_VERSION_RANGE = 'view_version_range';
+    case VIEW_VERSION_DETAIL_RANGE = 'view_version_detail_range';
     case EXAMPLE_SHORT = 'e.g.';
     case NO_PRIVILEGES = 'cannot be changed';
 

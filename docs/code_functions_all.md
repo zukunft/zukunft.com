@@ -6517,6 +6517,7 @@
     \-- system_tile - section for function system_tile missing in /component/execute/system_page.php
     \-- title_with_object_name - section for function title_with_object_name missing in /component/execute/system_page.p
             hp
+    \-- related_view_selector - section for function related_view_selector missing in /component/execute/system_page.php
     \-- system_sub_tile - section for function system_sub_tile missing in /component/execute/system_page.php
     \-- system_sub_tile_var - section for function system_sub_tile_var missing in /component/execute/system_page.php
     \-- preview - section for function preview missing in /component/execute/system_page.php
@@ -8807,6 +8808,8 @@
     \-- title_with_object_name
         \-- system_page - HTML for a page title that names the object shown on the page e.g. User "zukunft.com system te
                 st"
+    \-- related_view_selector
+        \-- system_page - the "..." in the right corner below the title of a default, detail, range or detail with
     \-- system_sub_tile
         \-- system_page - HTML for a subtitle
     \-- system_sub_tile_var

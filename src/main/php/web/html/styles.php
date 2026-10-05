@@ -65,6 +65,10 @@ class styles
     // the popup menu of the "..." table header that selects the columns shown, styled like
     // the menus of the page header (see style_html.css)
     const string MENU_COLUMN = 'column-menu';
+    // the popup menu of the "..." below the title of a default view that selects the view
+    // version and the full width line that puts it in the right corner (see style_html.css)
+    const string MENU_VIEW_VERSION = 'view-version-menu';
+    const string VIEW_VERSION_CORNER = 'view-version-corner';
     // bootstrap css class to center a line e.g. the phrase above a value table
     const string TEXT_CENTER = 'text-center';
     // bootstrap css class to keep a short line like 'has aliases: $, U.S. dollar' unbroken

@@ -870,6 +870,7 @@ class test_mappers
             case component_types::SYSTEM_TITLE:
             case component_types::SYSTEM_SUB_TITLE:
             case component_types::SYSTEM_SUB_TITLE_VAR:
+            case component_types::RELATED_SYSTEM_VIEW_SELECTOR:
             case component_types::SYSTEM_BODY_ABOUT:
             case component_types::SYSTEM_BODY_SETUP:
             case component_types::SYSTEM_BODY_SEARCH:

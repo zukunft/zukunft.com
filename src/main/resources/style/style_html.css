@@ -56,11 +56,13 @@ body {
 }
 
 /* header popup menu */
-/* language and user dropdown menus in the header and the column menu of a value table */
+/* language and user dropdown menus in the header, the column menu of a value table */
+/* and the view version menu below the title of a default view */
 .view-menu,
 .lang-menu,
 .user-menu,
-.column-menu {
+.column-menu,
+.view-version-menu {
     position: relative; /* anchor for the floating menu */
     display: inline-block; /* sit beside other navbar items */
 }
@@ -68,7 +70,8 @@ body {
 .view-menu > summary,
 .lang-menu > summary,
 .user-menu > summary,
-.column-menu > summary {
+.column-menu > summary,
+.view-version-menu > summary {
     cursor: pointer; /* show a hand cursor over the icon */
     list-style: none; /* hide the default disclosure triangle */
 }
@@ -76,14 +79,16 @@ body {
 .view-menu > summary::-webkit-details-marker,
 .lang-menu > summary::-webkit-details-marker,
 .user-menu > summary::-webkit-details-marker,
-.column-menu > summary::-webkit-details-marker {
+.column-menu > summary::-webkit-details-marker,
+.view-version-menu > summary::-webkit-details-marker {
     display: none; /* hide the triangle in Safari */
 }
 
 .view-menu ul,
 .lang-menu ul,
 .user-menu ul,
-.column-menu ul {
+.column-menu ul,
+.view-version-menu ul {
     position: absolute; /* float over the page */
     top: 100%; /* directly below the icon */
     right: 0; /* align to right edge of icon */
@@ -101,7 +106,8 @@ body {
 .view-menu ul a,
 .lang-menu ul a,
 .user-menu ul a,
-.column-menu ul a {
+.column-menu ul a,
+.view-version-menu ul a {
     display: block; /* make the whole row clickable */
     padding: 0.4rem 1rem;
     white-space: nowrap; /* keep menu items on one line */
@@ -110,8 +116,15 @@ body {
 .view-menu ul a:hover,
 .lang-menu ul a:hover,
 .user-menu ul a:hover,
-.column-menu ul a:hover {
+.column-menu ul a:hover,
+.view-version-menu ul a:hover {
     background: #f0f0f0;
+}
+
+/* the full width line below the title that puts the view version menu in the right corner */
+.view-version-corner {
+    width: 100%;
+    text-align: right;
 }
 
 

@@ -2609,6 +2609,12 @@
       "description": "the formula of a result with the numbers used, each linked to its value or result",
       "type": "system_show_result_expression",
       "code_id": "show_result_expression"
+    },
+    {
+      "name": "related system view selector",
+      "description": "the \"...\" in the right corner below the title that opens the menu to show the same object in the default, detail, range or detail with range view",
+      "type": "related_system_view_selector",
+      "code_id": "related_system_view_selector"
     }
   ],
   "views": [
@@ -2658,81 +2664,85 @@
         },
         {
           "position": "2",
+          "name": "related system view selector"
+        },
+        {
+          "position": "3",
           "name": "system sub title description",
           "style": "text-left"
         },
         {
-          "position": "3",
+          "position": "4",
           "name": "system show field description",
           "position_type": "combine"
         },
         {
-          "position": "4",
+          "position": "5",
           "name": "system show field plural",
           "position_type": "combine"
         },
         {
-          "position": "5",
+          "position": "6",
           "name": "phrase aliases",
           "position_type": "combine"
         },
         {
-          "position": "6",
+          "position": "7",
           "name": "phrase symbols",
           "position_type": "combine"
         },
         {
-          "position": "7",
+          "position": "8",
           "name": "children of word",
           "position_type": "combine"
         },
         {
-          "position": "8",
+          "position": "9",
           "name": "related phrases without subtitles",
           "position_type": "combine"
         },
         {
-          "position": "9",
+          "position": "10",
           "name": "system sub title references",
           "position_type": "combine"
         },
         {
-          "position": "10",
+          "position": "11",
           "name": "ref list word",
           "position_type": "combine"
         },
         {
-          "position": "11",
+          "position": "12",
           "name": "system sub title values",
           "position_type": "side_or_first_below"
         },
         {
-          "position": "12",
+          "position": "13",
           "name": "value chart",
           "position_type": "combine"
         },
         {
-          "position": "13",
+          "position": "14",
           "name": "related values",
           "position_type": "combine"
         },
         {
-          "position": "14",
+          "position": "15",
           "name": "system sub title formulas",
           "position_type": "side_or_below"
         },
         {
-          "position": "15",
+          "position": "16",
           "name": "formula list",
           "position_type": "combine"
         },
         {
-          "position": "16",
+          "position": "17",
           "name": "formulas of parents",
           "position_type": "combine"
         },
         {
-          "position": "17",
+          "position": "18",
           "name": "view tab box",
           "position_type": "side_or_last_below"
         }
@@ -2750,71 +2760,75 @@
         },
         {
           "position": "2",
+          "name": "related system view selector"
+        },
+        {
+          "position": "3",
           "name": "system sub title description",
           "style": "text-left"
         },
         {
-          "position": "3",
+          "position": "4",
           "name": "system show field description",
           "position_type": "combine"
         },
         {
-          "position": "4",
+          "position": "5",
           "name": "system show field weight",
           "position_type": "combine"
         },
         {
-          "position": "5",
+          "position": "6",
           "name": "system show field condition formula",
           "position_type": "combine"
         },
         {
-          "position": "6",
+          "position": "7",
           "name": "phrase aliases",
           "position_type": "combine"
         },
         {
-          "position": "7",
+          "position": "8",
           "name": "phrase symbols",
           "position_type": "combine"
         },
         {
-          "position": "8",
+          "position": "9",
           "name": "related phrases without subtitles",
           "position_type": "combine"
         },
         {
-          "position": "9",
+          "position": "10",
           "name": "system sub title references",
           "position_type": "combine"
         },
         {
-          "position": "10",
+          "position": "11",
           "name": "ref list word",
           "position_type": "combine"
         },
         {
-          "position": "11",
+          "position": "12",
           "name": "system sub title values",
           "position_type": "side_or_first_below"
         },
         {
-          "position": "12",
+          "position": "13",
           "name": "values by triple",
           "position_type": "combine"
         },
         {
-          "position": "13",
+          "position": "14",
           "name": "system sub title formulas",
           "position_type": "side_or_below"
         },
         {
-          "position": "14",
+          "position": "15",
           "name": "formula list",
           "position_type": "combine"
         },
         {
-          "position": "15",
+          "position": "16",
           "name": "view tab box",
           "position_type": "side_or_last_below"
         }
@@ -2832,35 +2846,39 @@
         },
         {
           "position": "2",
+          "name": "related system view selector"
+        },
+        {
+          "position": "3",
           "name": "system show field last update",
           "style": "fields-in-line"
         },
         {
-          "position": "3",
+          "position": "4",
           "name": "system show field value source",
           "position_type": "same_line"
         },
         {
-          "position": "4",
+          "position": "5",
           "name": "system sub title related values"
         },
         {
-          "position": "5",
+          "position": "6",
           "name": "similar values",
           "position_type": "combine"
         },
         {
-          "position": "6",
+          "position": "7",
           "name": "system sub title results",
           "position_type": "side_or_first_below"
         },
         {
-          "position": "7",
+          "position": "8",
           "name": "results of value",
           "position_type": "combine"
         },
         {
-          "position": "8",
+          "position": "9",
           "name": "value tab box",
           "position_type": "side_or_last_below"
         }
@@ -2878,41 +2896,45 @@
         },
         {
           "position": "2",
+          "name": "related system view selector"
+        },
+        {
+          "position": "3",
           "name": "system sub title description",
           "style": "text-left"
         },
         {
-          "position": "3",
+          "position": "4",
           "name": "system show field description",
           "position_type": "combine"
         },
         {
-          "position": "4",
+          "position": "5",
           "name": "source url link",
           "position_type": "combine"
         },
         {
-          "position": "5",
+          "position": "6",
           "name": "source doi link",
           "position_type": "combine"
         },
         {
-          "position": "6",
+          "position": "7",
           "name": "system sub title usage number",
           "position_type": "side_or_first_below"
         },
         {
-          "position": "7",
+          "position": "8",
           "name": "system sub title values",
           "position_type": "combine"
         },
         {
-          "position": "8",
+          "position": "9",
           "name": "source values",
           "position_type": "combine"
         },
         {
-          "position": "9",
+          "position": "10",
           "name": "source tab box",
           "position_type": "side_or_last_below"
         }
@@ -2930,56 +2952,60 @@
         },
         {
           "position": "2",
+          "name": "related system view selector"
+        },
+        {
+          "position": "3",
           "name": "system sub title description",
           "style": "text-left"
         },
         {
-          "position": "3",
+          "position": "4",
           "name": "system show field description",
           "position_type": "combine"
         },
         {
-          "position": "4",
+          "position": "5",
           "name": "system show field reference phrase",
           "position_type": "combine"
         },
         {
-          "position": "5",
+          "position": "6",
           "name": "system show field reference type",
           "position_type": "combine"
         },
         {
-          "position": "6",
+          "position": "7",
           "name": "system show field external key",
           "position_type": "combine"
         },
         {
-          "position": "7",
+          "position": "8",
           "name": "system show field url",
           "position_type": "combine"
         },
         {
-          "position": "8",
+          "position": "9",
           "name": "system show field source",
           "position_type": "combine"
         },
         {
-          "position": "9",
+          "position": "10",
           "name": "system show field last update",
           "position_type": "combine"
         },
         {
-          "position": "10",
+          "position": "11",
           "name": "system sub title values",
           "position_type": "side_or_first_below"
         },
         {
-          "position": "11",
+          "position": "12",
           "name": "related values",
           "position_type": "combine"
         },
         {
-          "position": "12",
+          "position": "13",
           "name": "view tab box",
           "position_type": "side_or_last_below"
         }
@@ -2997,56 +3023,60 @@
         },
         {
           "position": "2",
+          "name": "related system view selector"
+        },
+        {
+          "position": "3",
           "name": "Expression with links",
           "style": "text-left"
         },
         {
-          "position": "3",
+          "position": "4",
           "name": "system sub title description",
           "style": "text-left"
         },
         {
-          "position": "4",
+          "position": "5",
           "name": "system show field description",
           "position_type": "combine"
         },
         {
-          "position": "5",
+          "position": "6",
           "name": "system sub title expression",
           "position_type": "combine"
         },
         {
-          "position": "6",
+          "position": "7",
           "name": "Expression",
           "position_type": "combine"
         },
         {
-          "position": "7",
+          "position": "8",
           "name": "system show field all values needed",
           "position_type": "combine"
         },
         {
-          "position": "8",
+          "position": "9",
           "name": "system show field last update",
           "position_type": "combine"
         },
         {
-          "position": "9",
+          "position": "10",
           "name": "system sub title values",
           "position_type": "side_or_first_below"
         },
         {
-          "position": "10",
+          "position": "11",
           "name": "related values",
           "position_type": "combine"
         },
         {
-          "position": "11",
+          "position": "12",
           "name": "related results",
           "position_type": "side_or_below"
         },
         {
-          "position": "12",
+          "position": "13",
           "name": "view tab box",
           "position_type": "side_or_last_below"
         }
@@ -3064,11 +3094,15 @@
         },
         {
           "position": "2",
+          "name": "related system view selector"
+        },
+        {
+          "position": "3",
           "name": "system show result expression",
           "style": "text-left"
         },
         {
-          "position": "3",
+          "position": "4",
           "name": "Expression with links",
           "style": "text-left"
         }
@@ -3086,30 +3120,34 @@
         },
         {
           "position": "2",
-          "name": "system show field description"
+          "name": "related system view selector"
         },
         {
           "position": "3",
-          "name": "system show field reverse"
+          "name": "system show field description"
         },
         {
           "position": "4",
-          "name": "system show field plural"
+          "name": "system show field reverse"
         },
         {
           "position": "5",
-          "name": "system show field plural reverse"
+          "name": "system show field plural"
         },
         {
           "position": "6",
-          "name": "system show field name in formulas"
+          "name": "system show field plural reverse"
         },
         {
           "position": "7",
-          "name": "system sub title triples"
+          "name": "system show field name in formulas"
         },
         {
           "position": "8",
+          "name": "system sub title triples"
+        },
+        {
+          "position": "9",
           "name": "verb triples"
         }
       ]
@@ -3357,81 +3395,85 @@
         },
         {
           "position": "2",
+          "name": "related system view selector"
+        },
+        {
+          "position": "3",
           "name": "system sub title description",
           "style": "text-left"
         },
         {
-          "position": "3",
+          "position": "4",
           "name": "system show field description",
           "position_type": "combine"
         },
         {
-          "position": "4",
+          "position": "5",
           "name": "system show field plural",
           "position_type": "combine"
         },
         {
-          "position": "5",
+          "position": "6",
           "name": "phrase aliases",
           "position_type": "combine"
         },
         {
-          "position": "6",
+          "position": "7",
           "name": "phrase symbols",
           "position_type": "combine"
         },
         {
-          "position": "7",
+          "position": "8",
           "name": "children of word",
           "position_type": "combine"
         },
         {
-          "position": "8",
+          "position": "9",
           "name": "related phrases without subtitles",
           "position_type": "combine"
         },
         {
-          "position": "9",
+          "position": "10",
           "name": "system sub title references",
           "position_type": "combine"
         },
         {
-          "position": "10",
+          "position": "11",
           "name": "ref list word",
           "position_type": "combine"
         },
         {
-          "position": "11",
+          "position": "12",
           "name": "system sub title values",
           "position_type": "side_or_first_below"
         },
         {
-          "position": "12",
+          "position": "13",
           "name": "value chart",
           "position_type": "combine"
         },
         {
-          "position": "13",
+          "position": "14",
           "name": "related values",
           "position_type": "combine"
         },
         {
-          "position": "14",
+          "position": "15",
           "name": "system sub title formulas",
           "position_type": "side_or_below"
         },
         {
-          "position": "15",
+          "position": "16",
           "name": "formula list",
           "position_type": "combine"
         },
         {
-          "position": "16",
+          "position": "17",
           "name": "formulas of parents",
           "position_type": "combine"
         },
         {
-          "position": "17",
+          "position": "18",
           "name": "view tab box",
           "position_type": "side_or_last_below"
         }
@@ -3449,71 +3491,75 @@
         },
         {
           "position": "2",
+          "name": "related system view selector"
+        },
+        {
+          "position": "3",
           "name": "system sub title description",
           "style": "text-left"
         },
         {
-          "position": "3",
+          "position": "4",
           "name": "system show field description",
           "position_type": "combine"
         },
         {
-          "position": "4",
+          "position": "5",
           "name": "system show field weight",
           "position_type": "combine"
         },
         {
-          "position": "5",
+          "position": "6",
           "name": "system show field condition formula",
           "position_type": "combine"
         },
         {
-          "position": "6",
+          "position": "7",
           "name": "phrase aliases",
           "position_type": "combine"
         },
         {
-          "position": "7",
+          "position": "8",
           "name": "phrase symbols",
           "position_type": "combine"
         },
         {
-          "position": "8",
+          "position": "9",
           "name": "related phrases without subtitles",
           "position_type": "combine"
         },
         {
-          "position": "9",
+          "position": "10",
           "name": "system sub title references",
           "position_type": "combine"
         },
         {
-          "position": "10",
+          "position": "11",
           "name": "ref list word",
           "position_type": "combine"
         },
         {
-          "position": "11",
+          "position": "12",
           "name": "system sub title values",
           "position_type": "side_or_first_below"
         },
         {
-          "position": "12",
+          "position": "13",
           "name": "values by triple",
           "position_type": "combine"
         },
         {
-          "position": "13",
+          "position": "14",
           "name": "system sub title formulas",
           "position_type": "side_or_below"
         },
         {
-          "position": "14",
+          "position": "15",
           "name": "formula list",
           "position_type": "combine"
         },
         {
-          "position": "15",
+          "position": "16",
           "name": "view tab box",
           "position_type": "side_or_last_below"
         }
@@ -3531,35 +3577,39 @@
         },
         {
           "position": "2",
+          "name": "related system view selector"
+        },
+        {
+          "position": "3",
           "name": "system show field last update",
           "style": "fields-in-line"
         },
         {
-          "position": "3",
+          "position": "4",
           "name": "system show field value source",
           "position_type": "same_line"
         },
         {
-          "position": "4",
+          "position": "5",
           "name": "system sub title related values"
         },
         {
-          "position": "5",
+          "position": "6",
           "name": "similar values",
           "position_type": "combine"
         },
         {
-          "position": "6",
+          "position": "7",
           "name": "system sub title results",
           "position_type": "side_or_first_below"
         },
         {
-          "position": "7",
+          "position": "8",
           "name": "results of value",
           "position_type": "combine"
         },
         {
-          "position": "8",
+          "position": "9",
           "name": "value tab box",
           "position_type": "side_or_last_below"
         }
@@ -3577,41 +3627,45 @@
         },
         {
           "position": "2",
+          "name": "related system view selector"
+        },
+        {
+          "position": "3",
           "name": "system sub title description",
           "style": "text-left"
         },
         {
-          "position": "3",
+          "position": "4",
           "name": "system show field description",
           "position_type": "combine"
         },
         {
-          "position": "4",
+          "position": "5",
           "name": "source url link",
           "position_type": "combine"
         },
         {
-          "position": "5",
+          "position": "6",
           "name": "source doi link",
           "position_type": "combine"
         },
         {
-          "position": "6",
+          "position": "7",
           "name": "system sub title usage number",
           "position_type": "side_or_first_below"
         },
         {
-          "position": "7",
+          "position": "8",
           "name": "system sub title values",
           "position_type": "combine"
         },
         {
-          "position": "8",
+          "position": "9",
           "name": "source values",
           "position_type": "combine"
         },
         {
-          "position": "9",
+          "position": "10",
           "name": "source tab box",
           "position_type": "side_or_last_below"
         }
@@ -3629,56 +3683,60 @@
         },
         {
           "position": "2",
+          "name": "related system view selector"
+        },
+        {
+          "position": "3",
           "name": "system sub title description",
           "style": "text-left"
         },
         {
-          "position": "3",
+          "position": "4",
           "name": "system show field description",
           "position_type": "combine"
         },
         {
-          "position": "4",
+          "position": "5",
           "name": "system show field reference phrase",
           "position_type": "combine"
         },
         {
-          "position": "5",
+          "position": "6",
           "name": "system show field reference type",
           "position_type": "combine"
         },
         {
-          "position": "6",
+          "position": "7",
           "name": "system show field external key",
           "position_type": "combine"
         },
         {
-          "position": "7",
+          "position": "8",
           "name": "system show field url",
           "position_type": "combine"
         },
         {
-          "position": "8",
+          "position": "9",
           "name": "system show field source",
           "position_type": "combine"
         },
         {
-          "position": "9",
+          "position": "10",
           "name": "system show field last update",
           "position_type": "combine"
         },
         {
-          "position": "10",
+          "position": "11",
           "name": "system sub title values",
           "position_type": "side_or_first_below"
         },
         {
-          "position": "11",
+          "position": "12",
           "name": "related values",
           "position_type": "combine"
         },
         {
-          "position": "12",
+          "position": "13",
           "name": "view tab box",
           "position_type": "side_or_last_below"
         }
@@ -3696,56 +3754,60 @@
         },
         {
           "position": "2",
+          "name": "related system view selector"
+        },
+        {
+          "position": "3",
           "name": "Expression with links",
           "style": "text-left"
         },
         {
-          "position": "3",
+          "position": "4",
           "name": "system sub title description",
           "style": "text-left"
         },
         {
-          "position": "4",
+          "position": "5",
           "name": "system show field description",
           "position_type": "combine"
         },
         {
-          "position": "5",
+          "position": "6",
           "name": "system sub title expression",
           "position_type": "combine"
         },
         {
-          "position": "6",
+          "position": "7",
           "name": "Expression",
           "position_type": "combine"
         },
         {
-          "position": "7",
+          "position": "8",
           "name": "system show field all values needed",
           "position_type": "combine"
         },
         {
-          "position": "8",
+          "position": "9",
           "name": "system show field last update",
           "position_type": "combine"
         },
         {
-          "position": "9",
+          "position": "10",
           "name": "system sub title values",
           "position_type": "side_or_first_below"
         },
         {
-          "position": "10",
+          "position": "11",
           "name": "related values",
           "position_type": "combine"
         },
         {
-          "position": "11",
+          "position": "12",
           "name": "related results",
           "position_type": "side_or_below"
         },
         {
-          "position": "12",
+          "position": "13",
           "name": "view tab box",
           "position_type": "side_or_last_below"
         }
@@ -3763,46 +3825,50 @@
         },
         {
           "position": "2",
+          "name": "related system view selector"
+        },
+        {
+          "position": "3",
           "name": "system show field last update",
           "style": "fields-in-line"
         },
         {
-          "position": "3",
+          "position": "4",
           "name": "system show result formula",
           "position_type": "same_line"
         },
         {
-          "position": "4",
+          "position": "5",
           "name": "system sub title values",
           "position_type": "side_or_first_below"
         },
         {
-          "position": "5",
+          "position": "6",
           "name": "values used",
           "position_type": "combine"
         },
         {
-          "position": "6",
+          "position": "7",
           "name": "system sub title formulas",
           "position_type": "side_or_below"
         },
         {
-          "position": "7",
+          "position": "8",
           "name": "formulas used",
           "position_type": "combine"
         },
         {
-          "position": "8",
+          "position": "9",
           "name": "system sub title results",
           "position_type": "side_or_below"
         },
         {
-          "position": "9",
+          "position": "10",
           "name": "results used",
           "position_type": "combine"
         },
         {
-          "position": "10",
+          "position": "11",
           "name": "value tab box",
           "position_type": "side_or_last_below"
         }
@@ -3820,30 +3886,34 @@
         },
         {
           "position": "2",
-          "name": "system show field description"
+          "name": "related system view selector"
         },
         {
           "position": "3",
-          "name": "system show field reverse"
+          "name": "system show field description"
         },
         {
           "position": "4",
-          "name": "system show field plural"
+          "name": "system show field reverse"
         },
         {
           "position": "5",
-          "name": "system show field plural reverse"
+          "name": "system show field plural"
         },
         {
           "position": "6",
-          "name": "system show field name in formulas"
+          "name": "system show field plural reverse"
         },
         {
           "position": "7",
-          "name": "system sub title triples"
+          "name": "system show field name in formulas"
         },
         {
           "position": "8",
+          "name": "system sub title triples"
+        },
+        {
+          "position": "9",
           "name": "verb triples"
         }
       ]
@@ -3860,81 +3930,85 @@
         },
         {
           "position": "2",
+          "name": "related system view selector"
+        },
+        {
+          "position": "3",
           "name": "system sub title description",
           "style": "text-left"
         },
         {
-          "position": "3",
+          "position": "4",
           "name": "system show field description",
           "position_type": "combine"
         },
         {
-          "position": "4",
+          "position": "5",
           "name": "system show field plural",
           "position_type": "combine"
         },
         {
-          "position": "5",
+          "position": "6",
           "name": "phrase aliases",
           "position_type": "combine"
         },
         {
-          "position": "6",
+          "position": "7",
           "name": "phrase symbols",
           "position_type": "combine"
         },
         {
-          "position": "7",
+          "position": "8",
           "name": "children of word",
           "position_type": "combine"
         },
         {
-          "position": "8",
+          "position": "9",
           "name": "related phrases without subtitles",
           "position_type": "combine"
         },
         {
-          "position": "9",
+          "position": "10",
           "name": "system sub title references",
           "position_type": "combine"
         },
         {
-          "position": "10",
+          "position": "11",
           "name": "ref list word",
           "position_type": "combine"
         },
         {
-          "position": "11",
+          "position": "12",
           "name": "system sub title values",
           "position_type": "side_or_first_below"
         },
         {
-          "position": "12",
+          "position": "13",
           "name": "value chart",
           "position_type": "combine"
         },
         {
-          "position": "13",
+          "position": "14",
           "name": "related values",
           "position_type": "combine"
         },
         {
-          "position": "14",
+          "position": "15",
           "name": "system sub title formulas",
           "position_type": "side_or_below"
         },
         {
-          "position": "15",
+          "position": "16",
           "name": "formula list",
           "position_type": "combine"
         },
         {
-          "position": "16",
+          "position": "17",
           "name": "formulas of parents",
           "position_type": "combine"
         },
         {
-          "position": "17",
+          "position": "18",
           "name": "view tab box",
           "position_type": "side_or_last_below"
         }
@@ -3952,71 +4026,75 @@
         },
         {
           "position": "2",
+          "name": "related system view selector"
+        },
+        {
+          "position": "3",
           "name": "system sub title description",
           "style": "text-left"
         },
         {
-          "position": "3",
+          "position": "4",
           "name": "system show field description",
           "position_type": "combine"
         },
         {
-          "position": "4",
+          "position": "5",
           "name": "system show field weight",
           "position_type": "combine"
         },
         {
-          "position": "5",
+          "position": "6",
           "name": "system show field condition formula",
           "position_type": "combine"
         },
         {
-          "position": "6",
+          "position": "7",
           "name": "phrase aliases",
           "position_type": "combine"
         },
         {
-          "position": "7",
+          "position": "8",
           "name": "phrase symbols",
           "position_type": "combine"
         },
         {
-          "position": "8",
+          "position": "9",
           "name": "related phrases without subtitles",
           "position_type": "combine"
         },
         {
-          "position": "9",
+          "position": "10",
           "name": "system sub title references",
           "position_type": "combine"
         },
         {
-          "position": "10",
+          "position": "11",
           "name": "ref list word",
           "position_type": "combine"
         },
         {
-          "position": "11",
+          "position": "12",
           "name": "system sub title values",
           "position_type": "side_or_first_below"
         },
         {
-          "position": "12",
+          "position": "13",
           "name": "values by triple",
           "position_type": "combine"
         },
         {
-          "position": "13",
+          "position": "14",
           "name": "system sub title formulas",
           "position_type": "side_or_below"
         },
         {
-          "position": "14",
+          "position": "15",
           "name": "formula list",
           "position_type": "combine"
         },
         {
-          "position": "15",
+          "position": "16",
           "name": "view tab box",
           "position_type": "side_or_last_below"
         }
@@ -4034,35 +4112,39 @@
         },
         {
           "position": "2",
+          "name": "related system view selector"
+        },
+        {
+          "position": "3",
           "name": "system show field last update",
           "style": "fields-in-line"
         },
         {
-          "position": "3",
+          "position": "4",
           "name": "system show field value source",
           "position_type": "same_line"
         },
         {
-          "position": "4",
+          "position": "5",
           "name": "system sub title related values"
         },
         {
-          "position": "5",
+          "position": "6",
           "name": "similar values",
           "position_type": "combine"
         },
         {
-          "position": "6",
+          "position": "7",
           "name": "system sub title results",
           "position_type": "side_or_first_below"
         },
         {
-          "position": "7",
+          "position": "8",
           "name": "results of value",
           "position_type": "combine"
         },
         {
-          "position": "8",
+          "position": "9",
           "name": "value tab box",
           "position_type": "side_or_last_below"
         }
@@ -4080,41 +4162,45 @@
         },
         {
           "position": "2",
+          "name": "related system view selector"
+        },
+        {
+          "position": "3",
           "name": "system sub title description",
           "style": "text-left"
         },
         {
-          "position": "3",
+          "position": "4",
           "name": "system show field description",
           "position_type": "combine"
         },
         {
-          "position": "4",
+          "position": "5",
           "name": "source url link",
           "position_type": "combine"
         },
         {
-          "position": "5",
+          "position": "6",
           "name": "source doi link",
           "position_type": "combine"
         },
         {
-          "position": "6",
+          "position": "7",
           "name": "system sub title usage number",
           "position_type": "side_or_first_below"
         },
         {
-          "position": "7",
+          "position": "8",
           "name": "system sub title values",
           "position_type": "combine"
         },
         {
-          "position": "8",
+          "position": "9",
           "name": "source values",
           "position_type": "combine"
         },
         {
-          "position": "9",
+          "position": "10",
           "name": "source tab box",
           "position_type": "side_or_last_below"
         }
@@ -4132,56 +4218,60 @@
         },
         {
           "position": "2",
+          "name": "related system view selector"
+        },
+        {
+          "position": "3",
           "name": "system sub title description",
           "style": "text-left"
         },
         {
-          "position": "3",
+          "position": "4",
           "name": "system show field description",
           "position_type": "combine"
         },
         {
-          "position": "4",
+          "position": "5",
           "name": "system show field reference phrase",
           "position_type": "combine"
         },
         {
-          "position": "5",
+          "position": "6",
           "name": "system show field reference type",
           "position_type": "combine"
         },
         {
-          "position": "6",
+          "position": "7",
           "name": "system show field external key",
           "position_type": "combine"
         },
         {
-          "position": "7",
+          "position": "8",
           "name": "system show field url",
           "position_type": "combine"
         },
         {
-          "position": "8",
+          "position": "9",
           "name": "system show field source",
           "position_type": "combine"
         },
         {
-          "position": "9",
+          "position": "10",
           "name": "system show field last update",
           "position_type": "combine"
         },
         {
-          "position": "10",
+          "position": "11",
           "name": "system sub title values",
           "position_type": "side_or_first_below"
         },
         {
-          "position": "11",
+          "position": "12",
           "name": "related values",
           "position_type": "combine"
         },
         {
-          "position": "12",
+          "position": "13",
           "name": "view tab box",
           "position_type": "side_or_last_below"
         }
@@ -4199,56 +4289,60 @@
         },
         {
           "position": "2",
+          "name": "related system view selector"
+        },
+        {
+          "position": "3",
           "name": "Expression with links",
           "style": "text-left"
         },
         {
-          "position": "3",
+          "position": "4",
           "name": "system sub title description",
           "style": "text-left"
         },
         {
-          "position": "4",
+          "position": "5",
           "name": "system show field description",
           "position_type": "combine"
         },
         {
-          "position": "5",
+          "position": "6",
           "name": "system sub title expression",
           "position_type": "combine"
         },
         {
-          "position": "6",
+          "position": "7",
           "name": "Expression",
           "position_type": "combine"
         },
         {
-          "position": "7",
+          "position": "8",
           "name": "system show field all values needed",
           "position_type": "combine"
         },
         {
-          "position": "8",
+          "position": "9",
           "name": "system show field last update",
           "position_type": "combine"
         },
         {
-          "position": "9",
+          "position": "10",
           "name": "system sub title values",
           "position_type": "side_or_first_below"
         },
         {
-          "position": "10",
+          "position": "11",
           "name": "related values",
           "position_type": "combine"
         },
         {
-          "position": "11",
+          "position": "12",
           "name": "related results",
           "position_type": "side_or_below"
         },
         {
-          "position": "12",
+          "position": "13",
           "name": "view tab box",
           "position_type": "side_or_last_below"
         }
@@ -4266,46 +4360,50 @@
         },
         {
           "position": "2",
+          "name": "related system view selector"
+        },
+        {
+          "position": "3",
           "name": "system show field last update",
           "style": "fields-in-line"
         },
         {
-          "position": "3",
+          "position": "4",
           "name": "system show result formula",
           "position_type": "same_line"
         },
         {
-          "position": "4",
+          "position": "5",
           "name": "system sub title values",
           "position_type": "side_or_first_below"
         },
         {
-          "position": "5",
+          "position": "6",
           "name": "values used",
           "position_type": "combine"
         },
         {
-          "position": "6",
+          "position": "7",
           "name": "system sub title formulas",
           "position_type": "side_or_below"
         },
         {
-          "position": "7",
+          "position": "8",
           "name": "formulas used",
           "position_type": "combine"
         },
         {
-          "position": "8",
+          "position": "9",
           "name": "system sub title results",
           "position_type": "side_or_below"
         },
         {
-          "position": "9",
+          "position": "10",
           "name": "results used",
           "position_type": "combine"
         },
         {
-          "position": "10",
+          "position": "11",
           "name": "value tab box",
           "position_type": "side_or_last_below"
         }
@@ -4323,30 +4421,34 @@
         },
         {
           "position": "2",
-          "name": "system show field description"
+          "name": "related system view selector"
         },
         {
           "position": "3",
-          "name": "system show field reverse"
+          "name": "system show field description"
         },
         {
           "position": "4",
-          "name": "system show field plural"
+          "name": "system show field reverse"
         },
         {
           "position": "5",
-          "name": "system show field plural reverse"
+          "name": "system show field plural"
         },
         {
           "position": "6",
-          "name": "system show field name in formulas"
+          "name": "system show field plural reverse"
         },
         {
           "position": "7",
-          "name": "system sub title triples"
+          "name": "system show field name in formulas"
         },
         {
           "position": "8",
+          "name": "system sub title triples"
+        },
+        {
+          "position": "9",
           "name": "verb triples"
         }
       ]
@@ -4363,81 +4465,85 @@
         },
         {
           "position": "2",
+          "name": "related system view selector"
+        },
+        {
+          "position": "3",
           "name": "system sub title description",
           "style": "text-left"
         },
         {
-          "position": "3",
+          "position": "4",
           "name": "system show field description",
           "position_type": "combine"
         },
         {
-          "position": "4",
+          "position": "5",
           "name": "system show field plural",
           "position_type": "combine"
         },
         {
-          "position": "5",
+          "position": "6",
           "name": "phrase aliases",
           "position_type": "combine"
         },
         {
-          "position": "6",
+          "position": "7",
           "name": "phrase symbols",
           "position_type": "combine"
         },
         {
-          "position": "7",
+          "position": "8",
           "name": "children of word",
           "position_type": "combine"
         },
         {
-          "position": "8",
+          "position": "9",
           "name": "related phrases without subtitles",
           "position_type": "combine"
         },
         {
-          "position": "9",
+          "position": "10",
           "name": "system sub title references",
           "position_type": "combine"
         },
         {
-          "position": "10",
+          "position": "11",
           "name": "ref list word",
           "position_type": "combine"
         },
         {
-          "position": "11",
+          "position": "12",
           "name": "system sub title values",
           "position_type": "side_or_first_below"
         },
         {
-          "position": "12",
+          "position": "13",
           "name": "value chart",
           "position_type": "combine"
         },
         {
-          "position": "13",
+          "position": "14",
           "name": "related values",
           "position_type": "combine"
         },
         {
-          "position": "14",
+          "position": "15",
           "name": "system sub title formulas",
           "position_type": "side_or_below"
         },
         {
-          "position": "15",
+          "position": "16",
           "name": "formula list",
           "position_type": "combine"
         },
         {
-          "position": "16",
+          "position": "17",
           "name": "formulas of parents",
           "position_type": "combine"
         },
         {
-          "position": "17",
+          "position": "18",
           "name": "view tab box",
           "position_type": "side_or_last_below"
         }
@@ -4455,71 +4561,75 @@
         },
         {
           "position": "2",
+          "name": "related system view selector"
+        },
+        {
+          "position": "3",
           "name": "system sub title description",
           "style": "text-left"
         },
         {
-          "position": "3",
+          "position": "4",
           "name": "system show field description",
           "position_type": "combine"
         },
         {
-          "position": "4",
+          "position": "5",
           "name": "system show field weight",
           "position_type": "combine"
         },
         {
-          "position": "5",
+          "position": "6",
           "name": "system show field condition formula",
           "position_type": "combine"
         },
         {
-          "position": "6",
+          "position": "7",
           "name": "phrase aliases",
           "position_type": "combine"
         },
         {
-          "position": "7",
+          "position": "8",
           "name": "phrase symbols",
           "position_type": "combine"
         },
         {
-          "position": "8",
+          "position": "9",
           "name": "related phrases without subtitles",
           "position_type": "combine"
         },
         {
-          "position": "9",
+          "position": "10",
           "name": "system sub title references",
           "position_type": "combine"
         },
         {
-          "position": "10",
+          "position": "11",
           "name": "ref list word",
           "position_type": "combine"
         },
         {
-          "position": "11",
+          "position": "12",
           "name": "system sub title values",
           "position_type": "side_or_first_below"
         },
         {
-          "position": "12",
+          "position": "13",
           "name": "values by triple",
           "position_type": "combine"
         },
         {
-          "position": "13",
+          "position": "14",
           "name": "system sub title formulas",
           "position_type": "side_or_below"
         },
         {
-          "position": "14",
+          "position": "15",
           "name": "formula list",
           "position_type": "combine"
         },
         {
-          "position": "15",
+          "position": "16",
           "name": "view tab box",
           "position_type": "side_or_last_below"
         }
@@ -4537,35 +4647,39 @@
         },
         {
           "position": "2",
+          "name": "related system view selector"
+        },
+        {
+          "position": "3",
           "name": "system show field last update",
           "style": "fields-in-line"
         },
         {
-          "position": "3",
+          "position": "4",
           "name": "system show field value source",
           "position_type": "same_line"
         },
         {
-          "position": "4",
+          "position": "5",
           "name": "system sub title related values"
         },
         {
-          "position": "5",
+          "position": "6",
           "name": "similar values",
           "position_type": "combine"
         },
         {
-          "position": "6",
+          "position": "7",
           "name": "system sub title results",
           "position_type": "side_or_first_below"
         },
         {
-          "position": "7",
+          "position": "8",
           "name": "results of value",
           "position_type": "combine"
         },
         {
-          "position": "8",
+          "position": "9",
           "name": "value tab box",
           "position_type": "side_or_last_below"
         }
@@ -4583,41 +4697,45 @@
         },
         {
           "position": "2",
+          "name": "related system view selector"
+        },
+        {
+          "position": "3",
           "name": "system sub title description",
           "style": "text-left"
         },
         {
-          "position": "3",
+          "position": "4",
           "name": "system show field description",
           "position_type": "combine"
         },
         {
-          "position": "4",
+          "position": "5",
           "name": "source url link",
           "position_type": "combine"
         },
         {
-          "position": "5",
+          "position": "6",
           "name": "source doi link",
           "position_type": "combine"
         },
         {
-          "position": "6",
+          "position": "7",
           "name": "system sub title usage number",
           "position_type": "side_or_first_below"
         },
         {
-          "position": "7",
+          "position": "8",
           "name": "system sub title values",
           "position_type": "combine"
         },
         {
-          "position": "8",
+          "position": "9",
           "name": "source values",
           "position_type": "combine"
         },
         {
-          "position": "9",
+          "position": "10",
           "name": "source tab box",
           "position_type": "side_or_last_below"
         }
@@ -4635,56 +4753,60 @@
         },
         {
           "position": "2",
+          "name": "related system view selector"
+        },
+        {
+          "position": "3",
           "name": "system sub title description",
           "style": "text-left"
         },
         {
-          "position": "3",
+          "position": "4",
           "name": "system show field description",
           "position_type": "combine"
         },
         {
-          "position": "4",
+          "position": "5",
           "name": "system show field reference phrase",
           "position_type": "combine"
         },
         {
-          "position": "5",
+          "position": "6",
           "name": "system show field reference type",
           "position_type": "combine"
         },
         {
-          "position": "6",
+          "position": "7",
           "name": "system show field external key",
           "position_type": "combine"
         },
         {
-          "position": "7",
+          "position": "8",
           "name": "system show field url",
           "position_type": "combine"
         },
         {
-          "position": "8",
+          "position": "9",
           "name": "system show field source",
           "position_type": "combine"
         },
         {
-          "position": "9",
+          "position": "10",
           "name": "system show field last update",
           "position_type": "combine"
         },
         {
-          "position": "10",
+          "position": "11",
           "name": "system sub title values",
           "position_type": "side_or_first_below"
         },
         {
-          "position": "11",
+          "position": "12",
           "name": "related values",
           "position_type": "combine"
         },
         {
-          "position": "12",
+          "position": "13",
           "name": "view tab box",
           "position_type": "side_or_last_below"
         }
@@ -4702,56 +4824,60 @@
         },
         {
           "position": "2",
+          "name": "related system view selector"
+        },
+        {
+          "position": "3",
           "name": "Expression with links",
           "style": "text-left"
         },
         {
-          "position": "3",
+          "position": "4",
           "name": "system sub title description",
           "style": "text-left"
         },
         {
-          "position": "4",
+          "position": "5",
           "name": "system show field description",
           "position_type": "combine"
         },
         {
-          "position": "5",
+          "position": "6",
           "name": "system sub title expression",
           "position_type": "combine"
         },
         {
-          "position": "6",
+          "position": "7",
           "name": "Expression",
           "position_type": "combine"
         },
         {
-          "position": "7",
+          "position": "8",
           "name": "system show field all values needed",
           "position_type": "combine"
         },
         {
-          "position": "8",
+          "position": "9",
           "name": "system show field last update",
           "position_type": "combine"
         },
         {
-          "position": "9",
+          "position": "10",
           "name": "system sub title values",
           "position_type": "side_or_first_below"
         },
         {
-          "position": "10",
+          "position": "11",
           "name": "related values",
           "position_type": "combine"
         },
         {
-          "position": "11",
+          "position": "12",
           "name": "related results",
           "position_type": "side_or_below"
         },
         {
-          "position": "12",
+          "position": "13",
           "name": "view tab box",
           "position_type": "side_or_last_below"
         }
@@ -4769,46 +4895,50 @@
         },
         {
           "position": "2",
+          "name": "related system view selector"
+        },
+        {
+          "position": "3",
           "name": "system show field last update",
           "style": "fields-in-line"
         },
         {
-          "position": "3",
+          "position": "4",
           "name": "system show result formula",
           "position_type": "same_line"
         },
         {
-          "position": "4",
+          "position": "5",
           "name": "system sub title values",
           "position_type": "side_or_first_below"
         },
         {
-          "position": "5",
+          "position": "6",
           "name": "values used",
           "position_type": "combine"
         },
         {
-          "position": "6",
+          "position": "7",
           "name": "system sub title formulas",
           "position_type": "side_or_below"
         },
         {
-          "position": "7",
+          "position": "8",
           "name": "formulas used",
           "position_type": "combine"
         },
         {
-          "position": "8",
+          "position": "9",
           "name": "system sub title results",
           "position_type": "side_or_below"
         },
         {
-          "position": "9",
+          "position": "10",
           "name": "results used",
           "position_type": "combine"
         },
         {
-          "position": "10",
+          "position": "11",
           "name": "value tab box",
           "position_type": "side_or_last_below"
         }
@@ -4826,30 +4956,34 @@
         },
         {
           "position": "2",
-          "name": "system show field description"
+          "name": "related system view selector"
         },
         {
           "position": "3",
-          "name": "system show field reverse"
+          "name": "system show field description"
         },
         {
           "position": "4",
-          "name": "system show field plural"
+          "name": "system show field reverse"
         },
         {
           "position": "5",
-          "name": "system show field plural reverse"
+          "name": "system show field plural"
         },
         {
           "position": "6",
-          "name": "system show field name in formulas"
+          "name": "system show field plural reverse"
         },
         {
           "position": "7",
-          "name": "system sub title triples"
+          "name": "system show field name in formulas"
         },
         {
           "position": "8",
+          "name": "system sub title triples"
+        },
+        {
+          "position": "9",
           "name": "verb triples"
         }
       ]

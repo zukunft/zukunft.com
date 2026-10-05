@@ -65,6 +65,7 @@ include_once paths::MODEL_VERB . 'verb.php';
 include_once paths::MODEL_WORD . 'triple.php';
 include_once paths::MODEL_WORD . 'word.php';
 include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED_HELPER . 'Config.php';
@@ -119,6 +120,7 @@ use Zukunft\ZukunftCom\main\php\shared\helper\MapObject;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\views as view_shared;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
@@ -198,6 +200,31 @@ class system_view_ui_tests
         $test_name = 'the body of a not yet implemented system view shows the hint';
         $page = new system_page();
         $t->assert_text_contains($test_name, $page->not_yet_available(), $mtr->txt(msg_id::INFO_VIEW_NOT_YET_AVAILABLE));
+
+        // the "..." below the title of a default view opens the menu with the other three versions
+        $t->subheader($ts . 'related view selector');
+        $test_name = 'the default word view links to the detail version';
+        $wrd_ui = new test_words($t)->chf_ui();
+        $sel_html = $page->related_view_selector(views::WORD_ID, $wrd_ui);
+        $t->assert_text_contains($test_name, $sel_html, url_var::MASK . '=' . views::WORD_DEFAULT_DETAIL_ID);
+        $test_name = '... to the range version';
+        $t->assert_text_contains($test_name, $sel_html, url_var::MASK . '=' . views::WORD_DEFAULT_RANGE_ID);
+        $test_name = '... to the detail with range version';
+        $t->assert_text_contains($test_name, $sel_html, url_var::MASK . '=' . views::WORD_DEFAULT_DETAIL_RANGE_ID);
+        $test_name = '... for the same word';
+        $t->assert_text_contains($test_name, $sel_html, url_var::ID . '=' . words::CHF_ID);
+        $test_name = '... and offers only the three other versions';
+        $t->assert($test_name, substr_count($sel_html, '<' . html_base::LI . '>'), 3);
+        $test_name = 'the detail with range version links back to the default version';
+        $sel_html = $page->related_view_selector(views::WORD_DEFAULT_DETAIL_RANGE_ID, $wrd_ui);
+        $t->assert_text_contains($test_name, $sel_html, '>' . msg_id::VIEW_VERSION_DEFAULT->text() . '<');
+        $test_name = '... but not to itself';
+        $t->assert_text_not_contains($test_name, $sel_html, '>' . msg_id::VIEW_VERSION_DETAIL_RANGE->text() . '<');
+        // negative: a view that is not a version of a default view e.g. an edit view has no menu
+        $test_name = 'the word edit view shows no view version menu';
+        $t->assert($test_name, $page->related_view_selector(views::WORD_EDIT_ID, $wrd_ui), '');
+        $test_name = 'without the object shown no view version menu is created';
+        $t->assert($test_name, $page->related_view_selector(views::WORD_ID, null), '');
         // switch usr1 to the system test profile user (needed for the ui cache imports)
         // and remember the normal usr1 so the end of this run can restore it - otherwise every
         // later test would see a system-tier usr1 instead of the normal email profile user

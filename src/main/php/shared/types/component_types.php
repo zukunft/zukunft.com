@@ -383,6 +383,10 @@ class component_types
     const int SYSTEM_SUB_TITLE_ID = 145;
     const string SYSTEM_SUB_TITLE_VAR = "system_sub_title_var";
     const int SYSTEM_SUB_TITLE_VAR_ID = 146;
+    // the "..." below the title of a default, detail, range or detail with range view that
+    // opens the menu to show the same object in one of the other three versions
+    const string RELATED_SYSTEM_VIEW_SELECTOR = "related_system_view_selector";
+    const int RELATED_SYSTEM_VIEW_SELECTOR_ID = 264;
     const string SYSTEM_BODY_ABOUT = "system_body_about";
     const int SYSTEM_BODY_ABOUT_ID = 64;
     const string SYSTEM_BODY_SETUP = "system_body_setup";
@@ -864,6 +868,7 @@ class component_types
         self::USED_IN_AS_TEXT,
         self::USED_IN_AS_TEXT_WITH_LINK,
         self::SYSTEM_TITLE,
+        self::RELATED_SYSTEM_VIEW_SELECTOR,
         self::FORM_PHRASE_STEPS,
         self::FORM_WORD_ADD_SIMPLE,
         self::FORM_TRIPLE_ADD_SIMPLE,
@@ -1063,6 +1068,7 @@ class component_types
         [self::SYSTEM_TITLE_WITH_OBJECT_NAME, self::SYSTEM_TITLE_WITH_OBJECT_NAME_ID],
         [self::SYSTEM_SUB_TITLE, self::SYSTEM_SUB_TITLE_ID],
         [self::SYSTEM_SUB_TITLE_VAR, self::SYSTEM_SUB_TITLE_VAR_ID],
+        [self::RELATED_SYSTEM_VIEW_SELECTOR, self::RELATED_SYSTEM_VIEW_SELECTOR_ID],
         [self::SYSTEM_BODY_ABOUT, self::SYSTEM_BODY_ABOUT_ID],
         [self::SYSTEM_BODY_SETUP, self::SYSTEM_BODY_SETUP_ID],
         [self::SYSTEM_BODY_SIGNUP, self::SYSTEM_BODY_SIGNUP_ID],

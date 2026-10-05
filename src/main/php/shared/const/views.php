@@ -674,6 +674,20 @@ class views
         self::RESULT_DEFAULT_DETAIL_RANGE,
     ];
 
+    // the four versions of the default view of each main object, always in the order default,
+    // detail, range and detail with range, so that the related system view selector of each
+    // version can link to the other three
+    const array DEFAULT_VIEW_VERSIONS = [
+        [self::WORD_ID, self::WORD_DEFAULT_DETAIL_ID, self::WORD_DEFAULT_RANGE_ID, self::WORD_DEFAULT_DETAIL_RANGE_ID],
+        [self::TRIPLE_ID, self::TRIPLE_DEFAULT_DETAIL_ID, self::TRIPLE_DEFAULT_RANGE_ID, self::TRIPLE_DEFAULT_DETAIL_RANGE_ID],
+        [self::VALUE_DEFAULT_ID, self::VALUE_DEFAULT_DETAIL_ID, self::VALUE_DEFAULT_RANGE_ID, self::VALUE_DEFAULT_DETAIL_RANGE_ID],
+        [self::SOURCE_ID, self::SOURCE_DEFAULT_DETAIL_ID, self::SOURCE_DEFAULT_RANGE_ID, self::SOURCE_DEFAULT_DETAIL_RANGE_ID],
+        [self::REF_ID, self::REF_DEFAULT_DETAIL_ID, self::REF_DEFAULT_RANGE_ID, self::REF_DEFAULT_DETAIL_RANGE_ID],
+        [self::FORMULA_ID, self::FORMULA_DEFAULT_DETAIL_ID, self::FORMULA_DEFAULT_RANGE_ID, self::FORMULA_DEFAULT_DETAIL_RANGE_ID],
+        [self::RESULT_ID, self::RESULT_DEFAULT_DETAIL_ID, self::RESULT_DEFAULT_RANGE_ID, self::RESULT_DEFAULT_DETAIL_RANGE_ID],
+        [self::VERB_ID, self::VERB_DEFAULT_DETAIL_ID, self::VERB_DEFAULT_RANGE_ID, self::VERB_DEFAULT_DETAIL_RANGE_ID],
+    ];
+
     // system masks that only admin user can see
     const array ADMIN_MASK_IDS = [
         self::USER_ADMIN_ADD_ID,
