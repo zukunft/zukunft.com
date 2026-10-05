@@ -417,10 +417,14 @@ class phrase extends combine_named
      */
     function symbol_name(user_message $msg): string
     {
+        global $ui_sys;
+
         $symbol = null;
+        // the page cache decides which meaning an ambiguous symbol has on this page
+        $page_lst = $ui_sys?->phr_lst;
         foreach ($this->caches() as $cache) {
             if ($symbol == null) {
-                $symbol = $cache->symbol_of($this, $msg);
+                $symbol = $cache->symbol_of($this, $msg, $page_lst);
             }
         }
         return $symbol?->name() ?? '';

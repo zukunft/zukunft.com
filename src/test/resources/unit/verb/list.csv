@@ -59,3 +59,4 @@ verb_id,verb_name,code_id,description,condition_type,formula_name,name_plural_re
 58,is single attempt in,single_attempt,to state that one try is one of the attempts an ensemble rate is computed from,,,have the single attempts,are single attempts in,has the single attempt,,
 59,expected from,expected_from,to name the expected value of an outcome e.g. the harm expected from a runaway,,,have the expected,expected from,has the expected,,
 60,weighted by,weighted,to state that a quantity is multiplied by a weight e.g. an expected harm weighted by the confidence,,,are weights of,weighted by,is weight of,,
+61,can be symbol for,can_be_symbol,"to link an ambiguous symbol to each of its meanings, each a symbol triple with a unique name e.g. tn can be symbol for tn (scaling) and for tn (weight)",,,have the ambiguous symbol,can be symbols for,has the ambiguous symbol,,

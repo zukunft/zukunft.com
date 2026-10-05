@@ -475,6 +475,29 @@ value's group) disambiguates. Do not force the symbol unique or rename one
 side; only flag a genuine unintended collision (e.g. a formula name equal to a
 triple name).
 
+### An ambiguous symbol: one named triple per meaning and `can be symbol for`
+
+A new ambiguous symbol is stated explicitly, so that every meaning has a unique
+name and a page can tell the meanings apart:
+
+- per meaning one `is symbol for` triple with a unique name, the meaning in
+  brackets e.g. `tn (scaling)` = `tn` is symbol for `trillion` and `tn (weight)` =
+  `tn` is symbol for `tonne`;
+- per meaning one `can be symbol for` triple from the ambiguous symbol to the named
+  triple e.g. `tn` can be symbol for `tn (scaling)` and `tn` can be symbol for
+  `tn (weight)` (see `solution_prio.json`).
+
+The frontend preloads both verbs on every page (`verbs::PRELOAD_VERBS`), so the
+meanings are known wherever a number is shown, and decides per page
+(`web\phrase_list::symbol_of` and `symbol_taken`):
+
+- a page that shows one meaning only uses the short symbol for it, e.g. `2.2 tn €`;
+- a page that shows several meanings gives the symbol to the meaning whose name it
+  shortens most and names the other meanings in full or by another symbol, e.g. one
+  trillion tonnes is `1 tn tonne` and not `1 trillion tn`;
+- one page always uses the same symbol for the same meaning and never mixes, so the
+  choice depends on the phrases of the page only and not on the single number.
+
 ### `is symbol for` (formula replacer) vs `is alias of` (one merged phrase)
 
 Both verbs link a short string to a phrase, but they mean different things — pick

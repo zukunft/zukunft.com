@@ -859,18 +859,59 @@ class phrase_list extends sandbox_list_named
      * a phrase can have several symbols, so the shortest one is taken that has no meaning of its
      * own: "m" stands for million, but it is the unit metre too, so "mio" is the symbol of million
      *
+     * an ambiguous symbol e.g. "tn" for trillion and for tonne is used on one page for one meaning
+     * only, so a symbol that the page gives to another meaning is never taken (see symbol_taken)
+     *
      * @param phrase $phr the phrase whose symbol is searched
+     * @param phrase_list|null $page_lst the phrases of the page that decide the meaning of an ambiguous symbol
      * @return phrase|null the symbol phrase or null if this list has no symbol of the given phrase
      */
-    function symbol_of(phrase $phr, user_message $msg): ?phrase
+    function symbol_of(phrase $phr, user_message $msg, ?phrase_list $page_lst = null): ?phrase
     {
         $result = null;
         foreach ($this->symbols_of($phr)->lst() as $symbol) {
-            if ($this->is_better_symbol($symbol, $result, $phr, $msg)) {
+            $usable = !$this->symbol_taken($symbol, $phr, $page_lst);
+            if ($usable and $this->is_better_symbol($symbol, $result, $phr, $msg)) {
                 $result = $symbol;
             }
         }
         return $result;
+    }
+
+    /**
+     * true if the page uses the ambiguous symbol for another meaning: of the meanings that the
+     * page shows, the symbol goes to the one whose name it shortens most, so that e.g. one
+     * trillion tonnes is shown as "1 tn tonne" and not as "1 trillion tn", and a symbol never
+     * stands for two things on one page (see docs/llm/json_structure.md)
+     *
+     * @param phrase $symbol a symbol of the phrase e.g. "tn"
+     * @param phrase $phr the phrase the symbol should stand for e.g. "tonne"
+     * @param phrase_list|null $page_lst the phrases of the page, null if no page decides
+     * @return bool true if the symbol stands for another phrase of the page
+     */
+    private function symbol_taken(phrase $symbol, phrase $phr, ?phrase_list $page_lst): bool
+    {
+        $result = false;
+        foreach ($this->symbol_triples() as $trp) {
+            $other = $trp->get_to();
+            $is_other = ($trp->get_from()?->id() == $symbol->id() and $other != null and $other->id() != $phr->id());
+            if ($is_other and $page_lst?->has_id((string)$other->id()) and $this->shortens_more($other, $phr)) {
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param phrase $other the other meaning of an ambiguous symbol
+     * @param phrase $phr the phrase the symbol should stand for
+     * @return bool true if the symbol saves more chars for the other meaning, the lower id if both save the same
+     */
+    private function shortens_more(phrase $other, phrase $phr): bool
+    {
+        $other_len = mb_strlen($other->name());
+        $phr_len = mb_strlen($phr->name());
+        return $other_len > $phr_len or ($other_len == $phr_len and $other->id() < $phr->id());
     }
 
     /**

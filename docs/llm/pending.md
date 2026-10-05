@@ -1,6 +1,6 @@
 # pending - list of planned llm prompts with prio 1
 
-## detail views
+## default, detail and range views
 
 add in the top right corner of the '... (default)' views, '... (detail)' view, '... (range)' and '... (details with range)' views add a '...' more link with a submenu similar to the table view with at least the three other options of 'default', 'detail', 'range' and 'detail + range'. 
 

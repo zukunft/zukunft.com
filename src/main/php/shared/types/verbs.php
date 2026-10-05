@@ -136,6 +136,9 @@ class verbs
     const string SYMBOL = "symbol";
     const string SYMBOL_NAME = "is symbol for";
     const int SYMBOL_ID = 29;
+    // links an ambiguous symbol to each of its meanings e.g. "tn" to "tn (scaling)" (docs/llm/json_structure.md)
+    const string CAN_BE_SYMBOL = "can_be_symbol";
+    const string CAN_BE_SYMBOL_NAME = "can be symbol for";
     const string AND = "and";
     const string AND_NAME = "and";
     const int AND_ID = 30;
@@ -380,10 +383,12 @@ class verbs
     // the verbs whose triples the frontend needs on every page, so that they are sent with the
     // initial cache load instead of with the phrases of a page (see api\ui_config::api_json):
     // a symbol or alias is shown behind the number of a value e.g. the "%" of a percent value,
-    // and the phrase it stands for is nowhere near the page that shows the number
+    // and the phrase it stands for is nowhere near the page that shows the number; the meanings of
+    // an ambiguous symbol are needed too, so that a page uses the symbol for one meaning only
     const array PRELOAD_VERBS = array(
         self::SYMBOL,
-        self::ALIAS
+        self::ALIAS,
+        self::CAN_BE_SYMBOL
     );
 
     // ordered list of verbs to create the subtitle phrase category description;

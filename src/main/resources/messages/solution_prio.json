@@ -499,6 +499,17 @@
       "description": "the symbol used in formulas for billion"
     },
     {
+      "name": "bn",
+      "description": "the symbol used in formulas for billion"
+    },
+    {
+      "name": "tn",
+      "description": "the ambiguous symbol for trillion and for tonne, which a page uses for one of them only"
+    },
+    {
+      "name": "tonne"
+    },
+    {
       "name": "EUR",
       "type": "measure_unit",
       "description": "ISO 4217 alphabetic code for the euro."
@@ -898,6 +909,35 @@
       "from": "b",
       "verb": "is symbol for",
       "to": "billion"
+    },
+    {
+      "from": "bn",
+      "verb": "is symbol for",
+      "to": "billion"
+    },
+    {
+      "name": "tn (scaling)",
+      "description": "tn as the symbol for trillion",
+      "from": "tn",
+      "verb": "is symbol for",
+      "to": "trillion"
+    },
+    {
+      "name": "tn (weight)",
+      "description": "tn as the symbol for tonne",
+      "from": "tn",
+      "verb": "is symbol for",
+      "to": "tonne"
+    },
+    {
+      "from": "tn",
+      "verb": "can be symbol for",
+      "to": "tn (scaling)"
+    },
+    {
+      "from": "tn",
+      "verb": "can be symbol for",
+      "to": "tn (weight)"
     },
     {
       "from": "global warming",

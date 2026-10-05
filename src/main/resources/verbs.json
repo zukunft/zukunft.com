@@ -480,6 +480,14 @@
       "name_plural_reverse": "are weights of",
       "name_plural": "weighted by",
       "name_reverse": "is weight of"
+    },
+    {
+      "name": "can be symbol for",
+      "code_id": "can_be_symbol",
+      "description": "to link an ambiguous symbol to each of its meanings, each a symbol triple with a unique name e.g. tn can be symbol for tn (scaling) and for tn (weight)",
+      "name_plural_reverse": "have the ambiguous symbol",
+      "name_plural": "can be symbols for",
+      "name_reverse": "has the ambiguous symbol"
     }
   ]
 }
