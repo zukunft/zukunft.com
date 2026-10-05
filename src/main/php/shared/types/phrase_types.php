@@ -68,6 +68,10 @@ class phrase_types
     // not the unit the number is stated in, so a value carries it next to its measure e.g. "EUR"
     const string MEASURE_NON_UNIT = "measure_non_unit";
     const string MEASURE_NON_UNIT_NAME = "measure non unit";
+    // how a number has been found e.g. "assumed" or "official statistics", so that a value
+    // tagged with it shows how far it can be trusted (see solution_prio.json)
+    const string VALUE_QUALITY = "value_quality";
+    const string VALUE_QUALITY_NAME = "value quality";
     const string MEASURE_DIVISOR = "measure_divisor";
     const string MEASURE_DIVISOR_NAME = "measure divisor";
     const string SCALING = "scaling";

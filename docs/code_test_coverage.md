@@ -1230,7 +1230,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- is_similar - 6 unit test calls shared by 11 classes
     \-- is_time - 0 unit test calls shared by 8 classes
     \-- is_triple - 1 unit test calls shared by 5 classes
-    \-- is_type - 2 unit test calls shared by 6 classes
+    \-- is_type - 5 unit test calls shared by 6 classes
     \-- is_valid - 0 unit test calls shared by 9 classes
     \-- is_word - 2 unit test calls shared by 5 classes
     \-- is_year - 0 unit test calls
@@ -2923,7 +2923,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- is_similar - 6 unit test calls shared by 11 classes
     \-- is_time - 0 unit test calls shared by 8 classes
     \-- is_time_jump - 0 unit test calls shared by 3 classes
-    \-- is_type - 2 unit test calls shared by 6 classes
+    \-- is_type - 5 unit test calls shared by 6 classes
     \-- link_key - 0 unit test calls
     \-- load_by_name_generated - 0 unit test calls
     \-- load_formulas_related - 0 unit test calls shared by 2 classes
@@ -3057,7 +3057,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- is_key_updated - 1 unit test calls shared by 7 classes
     \-- is_same - 6 unit test calls shared by 14 classes
     \-- is_similar - 6 unit test calls shared by 11 classes
-    \-- is_type - 2 unit test calls shared by 6 classes
+    \-- is_type - 5 unit test calls shared by 6 classes
     \-- is_used - 0 unit test calls shared by 2 classes
     \-- load_by_code_id - 1 unit test calls shared by 6 classes
     \-- load_sql_by_code_id - 0 unit test calls shared by 5 classes
@@ -3634,7 +3634,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- is_scaling - 5 unit test calls shared by 6 classes
     \-- is_time - 0 unit test calls shared by 8 classes
     \-- is_time_jump - 0 unit test calls shared by 3 classes
-    \-- is_type - 2 unit test calls shared by 6 classes
+    \-- is_type - 5 unit test calls shared by 6 classes
     \-- link_types - 0 unit test calls
     \-- load_by_formula_name - 0 unit test calls
     \-- load_by_id_with_related - 3 unit test calls shared by 17 classes
@@ -5145,7 +5145,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- is_percent - 0 unit test calls shared by 7 classes
     \-- is_scaling - 5 unit test calls shared by 6 classes
     \-- is_time - 0 unit test calls shared by 8 classes
-    \-- is_type - 2 unit test calls shared by 6 classes
+    \-- is_type - 5 unit test calls shared by 6 classes
     \-- load_by_id_with_related - 3 unit test calls shared by 17 classes
     \-- name_link - 8 unit test calls shared by 22 classes
     \-- name_link_plural - 0 unit test calls shared by 4 classes
@@ -5579,7 +5579,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- is_scaling - 5 unit test calls shared by 6 classes
     \-- is_time - 0 unit test calls shared by 8 classes
     \-- is_time_jump - 0 unit test calls shared by 3 classes
-    \-- is_type - 2 unit test calls shared by 6 classes
+    \-- is_type - 5 unit test calls shared by 6 classes
     \-- load_by_id_with_related - 3 unit test calls shared by 17 classes
     \-- log_view - 0 unit test calls
     \-- math - 0 unit test calls

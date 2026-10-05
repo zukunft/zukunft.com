@@ -29,3 +29,4 @@ phrase_type_id,type_name,code_id,description,scaling_factor,symbol
 28,time number,time_number,A numeric time word that defines the time period for which a value is valid and values with a time can be used to display time series and where the order can be defined automatically based on the numeric value e.g. year 2025 or month 6.,,
 29,scaling factor,factor,a phrase that marks the number as a factor so that the number is shown with an x behind it e.g. 13.2 x,,x
 30,measure non unit,measure_non_unit,"what is measured e.g. GDP, which describes the number like a unit so that it heads no row or column of a value table, but is not the unit the number is stated in",,
+31,value quality,value_quality,"how a number has been found e.g. assumed, official statistics or double-blind randomized controlled trial, so that a value tagged with it shows how far it can be trusted",,

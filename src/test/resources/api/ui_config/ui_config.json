@@ -7837,6 +7837,12 @@
                 "code_id": "measure_non_unit",
                 "description": "what is measured e.g. GDP, which describes the number like a unit so that it heads no row or column of a value table, but is not the unit the number is stated in",
                 "id": 30
+            },
+            {
+                "name": "value quality",
+                "code_id": "value_quality",
+                "description": "how a number has been found e.g. assumed, official statistics or double-blind randomized controlled trial, so that a value tagged with it shows how far it can be trusted",
+                "id": 31
             }
         ],
         "ref_types": [
@@ -28171,12 +28177,12 @@
         ],
         "system_phrases": [
             {
-                "id": 361,
+                "id": 397,
                 "name": "$ is symbol for US dollar",
                 "description": "The dollar sign $ is most commonly used as the symbol for the United States dollar, although it is also used for many other dollar-denominated currencies.",
-                "from_id": 402,
+                "from_id": 436,
                 "from_phrase": {
-                    "id": 402,
+                    "id": 436,
                     "name": "$",
                     "description": "The dollar sign, most commonly used as the symbol for the United States dollar, although it is also used for many other dollar-denominated currencies.",
                     "type_id": 1,
@@ -28196,9 +28202,9 @@
                     "impact": null,
                     "id": 29
                 },
-                "to_id": -292,
+                "to_id": -328,
                 "to_phrase": {
-                    "id": 292,
+                    "id": 328,
                     "name": "US dollar",
                     "description": "The United States dollar (symbol: $; currency code: USD) is the official currency of the United States and several other countries. It is the world's primary reserve currency and the most-traded currency on the foreign exchange market. The dollar is divided into 100 cents.",
                     "type_id": null,
@@ -28209,11 +28215,11 @@
                 "class": "triple"
             },
             {
-                "id": 556,
+                "id": 592,
                 "name": "\u00a3 is symbol for Pound (sterling)",
-                "from_id": 408,
+                "from_id": 442,
                 "from_phrase": {
-                    "id": 408,
+                    "id": 442,
                     "name": "\u00a3",
                     "description": "The pound sign (\u00a3), the currency symbol for pound sterling.",
                     "type_id": 1,
@@ -28233,9 +28239,9 @@
                     "impact": null,
                     "id": 29
                 },
-                "to_id": -329,
+                "to_id": -365,
                 "to_phrase": {
-                    "id": 329,
+                    "id": 365,
                     "name": "Pound (sterling)",
                     "description": "Pound sterling (symbol: \u00a3; currency code: GBP) is the official currency of the United Kingdom and several British overseas territories and Crown Dependencies. It is the oldest currency still in continuous use and the fourth most-traded currency on the foreign exchange market. One pound is divided into 100 pence.",
                     "type_id": null,
@@ -28246,11 +28252,11 @@
                 "class": "triple"
             },
             {
-                "id": 346,
+                "id": 382,
                 "name": "\u00a3 is symbol for Sterling",
-                "from_id": 408,
+                "from_id": 442,
                 "from_phrase": {
-                    "id": 408,
+                    "id": 442,
                     "name": "\u00a3",
                     "description": "The pound sign (\u00a3), the currency symbol for pound sterling.",
                     "type_id": 1,
@@ -28270,9 +28276,9 @@
                     "impact": null,
                     "id": 29
                 },
-                "to_id": 406,
+                "to_id": 440,
                 "to_phrase": {
-                    "id": 406,
+                    "id": 440,
                     "name": "Sterling",
                     "description": "Pound sterling (symbol: \u00a3; currency code: GBP) is the official currency of the United Kingdom and several British overseas territories and Crown Dependencies. It is the oldest currency still in continuous use and the fourth most-traded currency on the foreign exchange market. One pound is divided into 100 pence.",
                     "type_id": 1,
@@ -28283,12 +28289,12 @@
                 "class": "triple"
             },
             {
-                "id": 360,
+                "id": 396,
                 "name": "\u00a5 is symbol for Japanese yen",
                 "description": "The \u00a5 symbol is used to denote the Japanese yen, although the same glyph is also used for the Chinese yuan.",
-                "from_id": 399,
+                "from_id": 433,
                 "from_phrase": {
-                    "id": 399,
+                    "id": 433,
                     "name": "\u00a5",
                     "description": "The yen and yuan sign (\u00a5) is a currency symbol used both for the Japanese yen and the Chinese yuan (the primary unit of the renminbi). It consists of the Latin letter Y crossed by one or two horizontal strokes.",
                     "type_id": 1,
@@ -28308,9 +28314,9 @@
                     "impact": null,
                     "id": 29
                 },
-                "to_id": -301,
+                "to_id": -337,
                 "to_phrase": {
-                    "id": 301,
+                    "id": 337,
                     "name": "Japanese yen",
                     "description": "The Japanese yen (symbol: \u00a5; currency code: JPY) is the official currency of Japan, issued by the Bank of Japan. It is the third most-traded currency in the world after the US dollar and the euro, and serves as a major global reserve currency.",
                     "type_id": null,
@@ -28321,11 +28327,11 @@
                 "class": "triple"
             },
             {
-                "id": 379,
+                "id": 415,
                 "name": "\u00a5 \/ \u5143 is symbol for Renminbi",
-                "from_id": -331,
+                "from_id": -367,
                 "from_phrase": {
-                    "id": 331,
+                    "id": 367,
                     "name": "\u00a5 \/ \u5143",
                     "description": "The yuan sign (\u00a5) and the Chinese character \u5143, both used as symbols for the renminbi.",
                     "type_id": null,
@@ -28345,9 +28351,9 @@
                     "impact": null,
                     "id": 29
                 },
-                "to_id": 390,
+                "to_id": 424,
                 "to_phrase": {
-                    "id": 390,
+                    "id": 424,
                     "name": "Renminbi",
                     "description": "The renminbi (symbol: \u00a5; currency code: CNY; abbreviation: RMB) is the official currency of the People's Republic of China. Its primary unit is the yuan. Issued by the People's Bank of China, the renminbi is one of the world's most-traded currencies and is included in the IMF's Special Drawing Rights basket.",
                     "type_id": 1,
@@ -28358,11 +28364,11 @@
                 "class": "triple"
             },
             {
-                "id": 374,
+                "id": 410,
                 "name": "\u00a5 \/ \u5186 is symbol for Japanese yen",
-                "from_id": -330,
+                "from_id": -366,
                 "from_phrase": {
-                    "id": 330,
+                    "id": 366,
                     "name": "\u00a5 \/ \u5186",
                     "description": "The yen sign (\u00a5) and the Japanese kanji \u5186, both used as symbols for the Japanese yen.",
                     "type_id": null,
@@ -28382,9 +28388,9 @@
                     "impact": null,
                     "id": 29
                 },
-                "to_id": -301,
+                "to_id": -337,
                 "to_phrase": {
-                    "id": 301,
+                    "id": 337,
                     "name": "Japanese yen",
                     "description": "The Japanese yen (symbol: \u00a5; currency code: JPY) is the official currency of Japan, issued by the Bank of Japan. It is the third most-traded currency in the world after the US dollar and the euro, and serves as a major global reserve currency.",
                     "type_id": null,
@@ -28395,11 +28401,11 @@
                 "class": "triple"
             },
             {
-                "id": 458,
+                "id": 494,
                 "name": "\u0e3f is symbol for Thai baht",
-                "from_id": 439,
+                "from_id": 473,
                 "from_phrase": {
-                    "id": 439,
+                    "id": 473,
                     "name": "\u0e3f",
                     "description": "The baht sign (\u0e3f), the currency symbol for the Thai baht.",
                     "type_id": 1,
@@ -28419,9 +28425,9 @@
                     "impact": null,
                     "id": 29
                 },
-                "to_id": -315,
+                "to_id": -351,
                 "to_phrase": {
-                    "id": 315,
+                    "id": 351,
                     "name": "Thai baht",
                     "description": "The Thai baht (symbol: \u0e3f; currency code: THB) is the official currency of Thailand. It is divided into 100 satang and is issued by the Bank of Thailand. The baht traces its origins to a traditional unit of weight used for measuring silver.",
                     "type_id": null,
@@ -28432,11 +28438,11 @@
                 "class": "triple"
             },
             {
-                "id": 413,
+                "id": 449,
                 "name": "\u20a9 \/ \uc6d0 is symbol for South Korean won",
-                "from_id": -332,
+                "from_id": -368,
                 "from_phrase": {
-                    "id": 332,
+                    "id": 368,
                     "name": "\u20a9 \/ \uc6d0",
                     "description": "The won sign (\u20a9) and the Korean hangul \uc6d0, both used as symbols for the South Korean won.",
                     "type_id": null,
@@ -28456,9 +28462,9 @@
                     "impact": null,
                     "id": 29
                 },
-                "to_id": -305,
+                "to_id": -341,
                 "to_phrase": {
-                    "id": 305,
+                    "id": 341,
                     "name": "South Korean won",
                     "description": "The South Korean won (symbol: \u20a9; currency code: KRW) is the official currency of South Korea. It is issued by the Bank of Korea. Although a subunit called the jeon exists in theory (1\/100 of a won), it is not used in everyday transactions due to its negligible value.",
                     "type_id": null,
@@ -28469,11 +28475,11 @@
                 "class": "triple"
             },
             {
-                "id": 553,
+                "id": 589,
                 "name": "\u20aa is symbol for Israeli new shekel",
-                "from_id": 441,
+                "from_id": 475,
                 "from_phrase": {
-                    "id": 441,
+                    "id": 475,
                     "name": "\u20aa",
                     "description": "The new shekel sign (\u20aa), the currency symbol for the Israeli new shekel.",
                     "type_id": 1,
@@ -28493,9 +28499,9 @@
                     "impact": null,
                     "id": 29
                 },
-                "to_id": -355,
+                "to_id": -391,
                 "to_phrase": {
-                    "id": 355,
+                    "id": 391,
                     "name": "Israeli new shekel",
                     "description": "The Israeli new shekel (symbol: \u20aa; currency code: ILS) is the official currency of Israel and is also used in the Palestinian territories. It is divided into 100 agorot (singular: agora) and is issued by the Bank of Israel. It replaced the old shekel in 1985.",
                     "type_id": null,
@@ -28506,11 +28512,11 @@
                 "class": "triple"
             },
             {
-                "id": 343,
+                "id": 379,
                 "name": "\u20ac is symbol for Euro",
-                "from_id": 404,
+                "from_id": 438,
                 "from_phrase": {
-                    "id": 404,
+                    "id": 438,
                     "name": "\u20ac",
                     "description": "The euro sign (\u20ac), the currency symbol for the euro.",
                     "type_id": 1,
@@ -28530,9 +28536,9 @@
                     "impact": null,
                     "id": 29
                 },
-                "to_id": 388,
+                "to_id": 422,
                 "to_phrase": {
-                    "id": 388,
+                    "id": 422,
                     "name": "Euro",
                     "description": "The euro (symbol: \u20ac; currency code: EUR) is the official currency of 21 of the 27 member states of the European Union. This group of states is officially known as the euro area, more commonly named the eurozone. The euro is divided into 100 euro cents.",
                     "type_id": 1,
@@ -28543,11 +28549,11 @@
                 "class": "triple"
             },
             {
-                "id": 500,
+                "id": 536,
                 "name": "\u20b1 is symbol for Philippine peso",
-                "from_id": 457,
+                "from_id": 491,
                 "from_phrase": {
-                    "id": 457,
+                    "id": 491,
                     "name": "\u20b1",
                     "description": "The peso sign (\u20b1), the currency symbol for the Philippine peso.",
                     "type_id": 1,
@@ -28567,9 +28573,9 @@
                     "impact": null,
                     "id": 29
                 },
-                "to_id": -309,
+                "to_id": -345,
                 "to_phrase": {
-                    "id": 309,
+                    "id": 345,
                     "name": "Philippine peso",
                     "description": "The Philippine peso (symbol: \u20b1; currency code: PHP) is the official currency of the Philippines. It is divided into 100 sentimos (also called centavos) and is issued by the Bangko Sentral ng Pilipinas. The peso symbol \u20b1 was officially adopted in 1967.",
                     "type_id": null,
@@ -28580,11 +28586,11 @@
                 "class": "triple"
             },
             {
-                "id": 427,
+                "id": 463,
                 "name": "\u20b9 is symbol for Indian rupee",
-                "from_id": 426,
+                "from_id": 460,
                 "from_phrase": {
-                    "id": 426,
+                    "id": 460,
                     "name": "\u20b9",
                     "description": "The Indian rupee sign (\u20b9), officially adopted in 2010 as the currency symbol for the Indian rupee.",
                     "type_id": 1,
@@ -28604,9 +28610,9 @@
                     "impact": null,
                     "id": 29
                 },
-                "to_id": -306,
+                "to_id": -342,
                 "to_phrase": {
-                    "id": 306,
+                    "id": 342,
                     "name": "Indian rupee",
                     "description": "The Indian rupee (symbol: \u20b9; currency code: INR) is the official currency of India. It is divided into 100 paise (singular: paisa) and is issued by the Reserve Bank of India. The rupee symbol \u20b9 was officially adopted in 2010.",
                     "type_id": null,
@@ -28617,11 +28623,11 @@
                 "class": "triple"
             },
             {
-                "id": 480,
+                "id": 516,
                 "name": "\u20ba is symbol for Turkish lira",
-                "from_id": 449,
+                "from_id": 483,
                 "from_phrase": {
-                    "id": 449,
+                    "id": 483,
                     "name": "\u20ba",
                     "description": "The Turkish lira sign (\u20ba), introduced in 2012 as the currency symbol for the Turkish lira.",
                     "type_id": 1,
@@ -28641,9 +28647,9 @@
                     "impact": null,
                     "id": 29
                 },
-                "to_id": -318,
+                "to_id": -354,
                 "to_phrase": {
-                    "id": 318,
+                    "id": 354,
                     "name": "Turkish lira",
                     "description": "The Turkish lira (symbol: \u20ba; currency code: TRY) is the official currency of Turkey and Northern Cyprus. It is divided into 100 kuru\u015f and is issued by the Central Bank of the Republic of Turkey. The current lira replaced the old lira in 2005 at a ratio of 1,000,000 old lira to 1 new lira.",
                     "type_id": null,
@@ -28654,11 +28660,11 @@
                 "class": "triple"
             },
             {
-                "id": 515,
+                "id": 551,
                 "name": "\u20bd is symbol for Russian ruble",
-                "from_id": 463,
+                "from_id": 497,
                 "from_phrase": {
-                    "id": 463,
+                    "id": 497,
                     "name": "\u20bd",
                     "description": "The Russian ruble sign (\u20bd), officially adopted in 2013 as the currency symbol for the Russian ruble.",
                     "type_id": 1,
@@ -28678,9 +28684,9 @@
                     "impact": null,
                     "id": 29
                 },
-                "to_id": -322,
+                "to_id": -358,
                 "to_phrase": {
-                    "id": 322,
+                    "id": 358,
                     "name": "Russian ruble",
                     "description": "The Russian ruble (symbol: \u20bd; currency code: RUB) is the official currency of the Russian Federation. It is divided into 100 kopecks and is issued by the Central Bank of Russia. The ruble is one of the world's oldest national currencies, with origins traced to the 13th century.",
                     "type_id": null,
@@ -28691,11 +28697,11 @@
                 "class": "triple"
             },
             {
-                "id": 384,
+                "id": 420,
                 "name": "A$ is symbol for Australian dollar",
-                "from_id": 411,
+                "from_id": 445,
                 "from_phrase": {
-                    "id": 411,
+                    "id": 445,
                     "name": "A$",
                     "description": "Symbol or abbreviation for the Australian dollar, used to disambiguate from other dollar-denominated currencies.",
                     "type_id": 1,
@@ -28715,9 +28721,9 @@
                     "impact": null,
                     "id": 29
                 },
-                "to_id": -294,
+                "to_id": -330,
                 "to_phrase": {
-                    "id": 294,
+                    "id": 330,
                     "name": "Australian dollar",
                     "description": "The Australian dollar (symbol: $ or A$; currency code: AUD) is the official currency of the Commonwealth of Australia, including its external territories, as well as the independent Pacific states of Kiribati, Nauru, and Tuvalu. It is divided into 100 cents and was introduced in 1966, replacing the Australian pound.",
                     "type_id": null,
@@ -28728,11 +28734,11 @@
                 "class": "triple"
             },
             {
-                "id": 473,
+                "id": 509,
                 "name": "AED is symbol for UAE dirham",
-                "from_id": 446,
+                "from_id": 480,
                 "from_phrase": {
-                    "id": 446,
+                    "id": 480,
                     "name": "AED",
                     "description": "ISO 4217 alphabetic code for the United Arab Emirates dirham.",
                     "type_id": 1,
@@ -28752,9 +28758,9 @@
                     "impact": null,
                     "id": 29
                 },
-                "to_id": -327,
+                "to_id": -363,
                 "to_phrase": {
-                    "id": 327,
+                    "id": 363,
                     "name": "UAE dirham",
                     "description": "The United Arab Emirates dirham (symbol: \u062f.\u0625; currency code: AED) is the official currency of the United Arab Emirates. It is divided into 100 fils and is issued by the Central Bank of the United Arab Emirates. It has been pegged to the US dollar since 1997.",
                     "type_id": null,
@@ -28765,7 +28771,7 @@
                 "class": "triple"
             },
             {
-                "id": 163,
+                "id": 185,
                 "name": "AI is symbol for artificial intelligence",
                 "from_id": 291,
                 "from_phrase": {
@@ -28802,11 +28808,11 @@
                 "class": "triple"
             },
             {
-                "id": 539,
+                "id": 575,
                 "name": "ARG$ is symbol for Argentine peso",
-                "from_id": 472,
+                "from_id": 506,
                 "from_phrase": {
-                    "id": 472,
+                    "id": 506,
                     "name": "ARG$",
                     "description": "Symbol or abbreviation for the Argentine peso.",
                     "type_id": 1,
@@ -28826,9 +28832,9 @@
                     "impact": null,
                     "id": 29
                 },
-                "to_id": -311,
+                "to_id": -347,
                 "to_phrase": {
-                    "id": 311,
+                    "id": 347,
                     "name": "Argentine peso",
                     "description": "The Argentine peso (symbol: $ or ARG$; currency code: ARS) is the official currency of Argentina. It is divided into 100 centavos and is issued by the Central Bank of Argentina (Banco Central de la Rep\u00fablica Argentina). It is one of the most volatile major currencies, having been subject to repeated devaluations.",
                     "type_id": null,
@@ -28839,11 +28845,11 @@
                 "class": "triple"
             },
             {
-                "id": 537,
+                "id": 573,
                 "name": "ARS is symbol for Argentine peso",
-                "from_id": 471,
+                "from_id": 505,
                 "from_phrase": {
-                    "id": 471,
+                    "id": 505,
                     "name": "ARS",
                     "description": "ISO 4217 alphabetic code for the Argentine peso.",
                     "type_id": 1,
@@ -28863,9 +28869,9 @@
                     "impact": null,
                     "id": 29
                 },
-                "to_id": -311,
+                "to_id": -347,
                 "to_phrase": {
-                    "id": 311,
+                    "id": 347,
                     "name": "Argentine peso",
                     "description": "The Argentine peso (symbol: $ or ARG$; currency code: ARS) is the official currency of Argentina. It is divided into 100 centavos and is issued by the Central Bank of Argentina (Banco Central de la Rep\u00fablica Argentina). It is one of the most volatile major currencies, having been subject to repeated devaluations.",
                     "type_id": null,
@@ -28876,11 +28882,11 @@
                 "class": "triple"
             },
             {
-                "id": 382,
+                "id": 418,
                 "name": "AUD is symbol for Australian dollar",
-                "from_id": 410,
+                "from_id": 444,
                 "from_phrase": {
-                    "id": 410,
+                    "id": 444,
                     "name": "AUD",
                     "description": "ISO 4217 alphabetic code for the Australian dollar.",
                     "type_id": 1,
@@ -28900,9 +28906,9 @@
                     "impact": null,
                     "id": 29
                 },
-                "to_id": -294,
+                "to_id": -330,
                 "to_phrase": {
-                    "id": 294,
+                    "id": 330,
                     "name": "Australian dollar",
                     "description": "The Australian dollar (symbol: $ or A$; currency code: AUD) is the official currency of the Commonwealth of Australia, including its external territories, as well as the independent Pacific states of Kiribati, Nauru, and Tuvalu. It is divided into 100 cents and was introduced in 1966, replacing the Australian pound.",
                     "type_id": null,
@@ -28913,196 +28919,196 @@
                 "class": "triple"
             },
             {
-                "id": 402,
+                "id": 436,
                 "name": "$",
                 "description": "The dollar sign, most commonly used as the symbol for the United States dollar, although it is also used for many other dollar-denominated currencies.",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 292,
+                "id": 328,
                 "name": "US dollar",
                 "description": "The United States dollar (symbol: $; currency code: USD) is the official currency of the United States and several other countries. It is the world's primary reserve currency and the most-traded currency on the foreign exchange market. The dollar is divided into 100 cents.",
                 "class": "triple"
             },
             {
-                "id": 408,
+                "id": 442,
                 "name": "\u00a3",
                 "description": "The pound sign (\u00a3), the currency symbol for pound sterling.",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 329,
+                "id": 365,
                 "name": "Pound (sterling)",
                 "description": "Pound sterling (symbol: \u00a3; currency code: GBP) is the official currency of the United Kingdom and several British overseas territories and Crown Dependencies. It is the oldest currency still in continuous use and the fourth most-traded currency on the foreign exchange market. One pound is divided into 100 pence.",
                 "class": "triple"
             },
             {
-                "id": 406,
+                "id": 440,
                 "name": "Sterling",
                 "description": "Pound sterling (symbol: \u00a3; currency code: GBP) is the official currency of the United Kingdom and several British overseas territories and Crown Dependencies. It is the oldest currency still in continuous use and the fourth most-traded currency on the foreign exchange market. One pound is divided into 100 pence.",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 399,
+                "id": 433,
                 "name": "\u00a5",
                 "description": "The yen and yuan sign (\u00a5) is a currency symbol used both for the Japanese yen and the Chinese yuan (the primary unit of the renminbi). It consists of the Latin letter Y crossed by one or two horizontal strokes.",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 301,
+                "id": 337,
                 "name": "Japanese yen",
                 "description": "The Japanese yen (symbol: \u00a5; currency code: JPY) is the official currency of Japan, issued by the Bank of Japan. It is the third most-traded currency in the world after the US dollar and the euro, and serves as a major global reserve currency.",
                 "class": "triple"
             },
             {
-                "id": 331,
+                "id": 367,
                 "name": "\u00a5 \/ \u5143",
                 "description": "The yuan sign (\u00a5) and the Chinese character \u5143, both used as symbols for the renminbi.",
                 "class": "triple"
             },
             {
-                "id": 390,
+                "id": 424,
                 "name": "Renminbi",
                 "description": "The renminbi (symbol: \u00a5; currency code: CNY; abbreviation: RMB) is the official currency of the People's Republic of China. Its primary unit is the yuan. Issued by the People's Bank of China, the renminbi is one of the world's most-traded currencies and is included in the IMF's Special Drawing Rights basket.",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 330,
+                "id": 366,
                 "name": "\u00a5 \/ \u5186",
                 "description": "The yen sign (\u00a5) and the Japanese kanji \u5186, both used as symbols for the Japanese yen.",
                 "class": "triple"
             },
             {
-                "id": 439,
+                "id": 473,
                 "name": "\u0e3f",
                 "description": "The baht sign (\u0e3f), the currency symbol for the Thai baht.",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 315,
+                "id": 351,
                 "name": "Thai baht",
                 "description": "The Thai baht (symbol: \u0e3f; currency code: THB) is the official currency of Thailand. It is divided into 100 satang and is issued by the Bank of Thailand. The baht traces its origins to a traditional unit of weight used for measuring silver.",
                 "class": "triple"
             },
             {
-                "id": 332,
+                "id": 368,
                 "name": "\u20a9 \/ \uc6d0",
                 "description": "The won sign (\u20a9) and the Korean hangul \uc6d0, both used as symbols for the South Korean won.",
                 "class": "triple"
             },
             {
-                "id": 305,
+                "id": 341,
                 "name": "South Korean won",
                 "description": "The South Korean won (symbol: \u20a9; currency code: KRW) is the official currency of South Korea. It is issued by the Bank of Korea. Although a subunit called the jeon exists in theory (1\/100 of a won), it is not used in everyday transactions due to its negligible value.",
                 "class": "triple"
             },
             {
-                "id": 441,
+                "id": 475,
                 "name": "\u20aa",
                 "description": "The new shekel sign (\u20aa), the currency symbol for the Israeli new shekel.",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 355,
+                "id": 391,
                 "name": "Israeli new shekel",
                 "description": "The Israeli new shekel (symbol: \u20aa; currency code: ILS) is the official currency of Israel and is also used in the Palestinian territories. It is divided into 100 agorot (singular: agora) and is issued by the Bank of Israel. It replaced the old shekel in 1985.",
                 "class": "triple"
             },
             {
-                "id": 404,
+                "id": 438,
                 "name": "\u20ac",
                 "description": "The euro sign (\u20ac), the currency symbol for the euro.",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 388,
+                "id": 422,
                 "name": "Euro",
                 "description": "The euro (symbol: \u20ac; currency code: EUR) is the official currency of 21 of the 27 member states of the European Union. This group of states is officially known as the euro area, more commonly named the eurozone. The euro is divided into 100 euro cents.",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 457,
+                "id": 491,
                 "name": "\u20b1",
                 "description": "The peso sign (\u20b1), the currency symbol for the Philippine peso.",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 309,
+                "id": 345,
                 "name": "Philippine peso",
                 "description": "The Philippine peso (symbol: \u20b1; currency code: PHP) is the official currency of the Philippines. It is divided into 100 sentimos (also called centavos) and is issued by the Bangko Sentral ng Pilipinas. The peso symbol \u20b1 was officially adopted in 1967.",
                 "class": "triple"
             },
             {
-                "id": 426,
+                "id": 460,
                 "name": "\u20b9",
                 "description": "The Indian rupee sign (\u20b9), officially adopted in 2010 as the currency symbol for the Indian rupee.",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 306,
+                "id": 342,
                 "name": "Indian rupee",
                 "description": "The Indian rupee (symbol: \u20b9; currency code: INR) is the official currency of India. It is divided into 100 paise (singular: paisa) and is issued by the Reserve Bank of India. The rupee symbol \u20b9 was officially adopted in 2010.",
                 "class": "triple"
             },
             {
-                "id": 449,
+                "id": 483,
                 "name": "\u20ba",
                 "description": "The Turkish lira sign (\u20ba), introduced in 2012 as the currency symbol for the Turkish lira.",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 318,
+                "id": 354,
                 "name": "Turkish lira",
                 "description": "The Turkish lira (symbol: \u20ba; currency code: TRY) is the official currency of Turkey and Northern Cyprus. It is divided into 100 kuru\u015f and is issued by the Central Bank of the Republic of Turkey. The current lira replaced the old lira in 2005 at a ratio of 1,000,000 old lira to 1 new lira.",
                 "class": "triple"
             },
             {
-                "id": 463,
+                "id": 497,
                 "name": "\u20bd",
                 "description": "The Russian ruble sign (\u20bd), officially adopted in 2013 as the currency symbol for the Russian ruble.",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 322,
+                "id": 358,
                 "name": "Russian ruble",
                 "description": "The Russian ruble (symbol: \u20bd; currency code: RUB) is the official currency of the Russian Federation. It is divided into 100 kopecks and is issued by the Central Bank of Russia. The ruble is one of the world's oldest national currencies, with origins traced to the 13th century.",
                 "class": "triple"
             },
             {
-                "id": 411,
+                "id": 445,
                 "name": "A$",
                 "description": "Symbol or abbreviation for the Australian dollar, used to disambiguate from other dollar-denominated currencies.",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 294,
+                "id": 330,
                 "name": "Australian dollar",
                 "description": "The Australian dollar (symbol: $ or A$; currency code: AUD) is the official currency of the Commonwealth of Australia, including its external territories, as well as the independent Pacific states of Kiribati, Nauru, and Tuvalu. It is divided into 100 cents and was introduced in 1966, replacing the Australian pound.",
                 "class": "triple"
             },
             {
-                "id": 446,
+                "id": 480,
                 "name": "AED",
                 "description": "ISO 4217 alphabetic code for the United Arab Emirates dirham.",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 327,
+                "id": 363,
                 "name": "UAE dirham",
                 "description": "The United Arab Emirates dirham (symbol: \u062f.\u0625; currency code: AED) is the official currency of the United Arab Emirates. It is divided into 100 fils and is issued by the Central Bank of the United Arab Emirates. It has been pegged to the US dollar since 1997.",
                 "class": "triple"
@@ -29121,27 +29127,27 @@
                 "class": "triple"
             },
             {
-                "id": 472,
+                "id": 506,
                 "name": "ARG$",
                 "description": "Symbol or abbreviation for the Argentine peso.",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 311,
+                "id": 347,
                 "name": "Argentine peso",
                 "description": "The Argentine peso (symbol: $ or ARG$; currency code: ARS) is the official currency of Argentina. It is divided into 100 centavos and is issued by the Central Bank of Argentina (Banco Central de la Rep\u00fablica Argentina). It is one of the most volatile major currencies, having been subject to repeated devaluations.",
                 "class": "triple"
             },
             {
-                "id": 471,
+                "id": 505,
                 "name": "ARS",
                 "description": "ISO 4217 alphabetic code for the Argentine peso.",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 410,
+                "id": 444,
                 "name": "AUD",
                 "description": "ISO 4217 alphabetic code for the Australian dollar.",
                 "type_id": 1,
@@ -29187,11 +29193,11 @@
                 "class": "triple"
             },
             {
-                "id": 533,
+                "id": 569,
                 "name": "BGN is symbol for Bulgarian lev",
-                "from_id": 470,
+                "from_id": 504,
                 "from_phrase": {
-                    "id": 470,
+                    "id": 504,
                     "name": "BGN",
                     "description": "ISO 4217 alphabetic code for the Bulgarian lev, also widely used as the currency's typographic symbol.",
                     "type_id": 1,
@@ -29211,9 +29217,9 @@
                     "impact": null,
                     "id": 29
                 },
-                "to_id": -326,
+                "to_id": -362,
                 "to_phrase": {
-                    "id": 326,
+                    "id": 362,
                     "name": "Bulgarian lev",
                     "description": "The Bulgarian lev (currency code: BGN) is the official currency of Bulgaria. It is divided into 100 stotinki and is issued by the Bulgarian National Bank. The lev has been pegged to the euro since 1999 as part of a currency board arrangement.",
                     "type_id": null,
@@ -29224,11 +29230,11 @@
                 "class": "triple"
             },
             {
-                "id": 528,
+                "id": 564,
                 "name": "BHD is symbol for Bahraini dinar",
-                "from_id": 468,
+                "from_id": 502,
                 "from_phrase": {
-                    "id": 468,
+                    "id": 502,
                     "name": "BHD",
                     "description": "ISO 4217 alphabetic code for the Bahraini dinar.",
                     "type_id": 1,
@@ -29248,9 +29254,9 @@
                     "impact": null,
                     "id": 29
                 },
-                "to_id": -325,
+                "to_id": -361,
                 "to_phrase": {
-                    "id": 325,
+                    "id": 361,
                     "name": "Bahraini dinar",
                     "description": "The Bahraini dinar (symbol: .\u062f.\u0628; currency code: BHD) is the official currency of Bahrain. It is divided into 1,000 fils and is issued by the Central Bank of Bahrain. The dinar has been pegged to the US dollar since 2001 at a rate of approximately 0.376 BHD per USD.",
                     "type_id": null,
@@ -29337,11 +29343,11 @@
                 "class": "triple"
             },
             {
-                "id": 442,
+                "id": 478,
                 "name": "BRL is symbol for Brazilian real",
-                "from_id": 433,
+                "from_id": 467,
                 "from_phrase": {
-                    "id": 433,
+                    "id": 467,
                     "name": "BRL",
                     "description": "ISO 4217 alphabetic code for the Brazilian real.",
                     "type_id": 1,
@@ -29361,9 +29367,9 @@
                     "impact": null,
                     "id": 29
                 },
-                "to_id": -313,
+                "to_id": -349,
                 "to_phrase": {
-                    "id": 313,
+                    "id": 349,
                     "name": "Brazilian real",
                     "description": "The Brazilian real (symbol: R$; currency code: BRL) is the official currency of Brazil. It is divided into 100 centavos and is issued by the Banco Central do Brasil. The current real was introduced in 1994 as part of the Plano Real economic stabilisation program.",
                     "type_id": null,
@@ -29374,11 +29380,11 @@
                 "class": "triple"
             },
             {
-                "id": 389,
+                "id": 425,
                 "name": "C$ is symbol for Canadian dollar",
-                "from_id": 413,
+                "from_id": 447,
                 "from_phrase": {
-                    "id": 413,
+                    "id": 447,
                     "name": "C$",
                     "description": "Symbol or abbreviation for the Canadian dollar, used to disambiguate from other dollar-denominated currencies.",
                     "type_id": 1,
@@ -29398,9 +29404,9 @@
                     "impact": null,
                     "id": 29
                 },
-                "to_id": -295,
+                "to_id": -331,
                 "to_phrase": {
-                    "id": 295,
+                    "id": 331,
                     "name": "Canadian dollar",
                     "description": "The Canadian dollar (symbol: $ or C$; currency code: CAD) is the official currency of Canada. It is issued by the Bank of Canada and is one of the world's most-traded currencies. The Canadian dollar is divided into 100 cents and is often regarded as a commodity currency due to Canada's substantial natural-resource exports.",
                     "type_id": null,
@@ -29411,11 +29417,11 @@
                 "class": "triple"
             },
             {
-                "id": 387,
+                "id": 423,
                 "name": "CAD is symbol for Canadian dollar",
-                "from_id": 412,
+                "from_id": 446,
                 "from_phrase": {
-                    "id": 412,
+                    "id": 446,
                     "name": "CAD",
                     "description": "ISO 4217 alphabetic code for the Canadian dollar.",
                     "type_id": 1,
@@ -29435,9 +29441,9 @@
                     "impact": null,
                     "id": 29
                 },
-                "to_id": -295,
+                "to_id": -331,
                 "to_phrase": {
-                    "id": 295,
+                    "id": 331,
                     "name": "Canadian dollar",
                     "description": "The Canadian dollar (symbol: $ or C$; currency code: CAD) is the official currency of Canada. It is issued by the Bank of Canada and is one of the world's most-traded currencies. The Canadian dollar is divided into 100 cents and is often regarded as a commodity currency due to Canada's substantial natural-resource exports.",
                     "type_id": null,
@@ -29487,11 +29493,11 @@
                 "class": "triple"
             },
             {
-                "id": 392,
+                "id": 428,
                 "name": "CHF is symbol for Swiss franc",
-                "from_id": 414,
+                "from_id": 448,
                 "from_phrase": {
-                    "id": 414,
+                    "id": 448,
                     "name": "CHF",
                     "description": "ISO 4217 alphabetic code for the Swiss franc (Confoederatio Helvetica Franc), also widely used as the currency's typographic symbol.",
                     "type_id": 3,
@@ -29511,9 +29517,9 @@
                     "impact": null,
                     "id": 29
                 },
-                "to_id": -300,
+                "to_id": -336,
                 "to_phrase": {
-                    "id": 300,
+                    "id": 336,
                     "name": "Swiss franc",
                     "description": "The Swiss franc (symbol: Fr. or CHF; currency code: CHF) is the official currency and legal tender of Switzerland and Liechtenstein, and is also used in the Italian exclave of Campione d'Italia. Issued by the Swiss National Bank, it is widely regarded as a safe-haven currency due to Switzerland's political stability and low inflation.",
                     "type_id": null,
@@ -29524,11 +29530,11 @@
                 "class": "triple"
             },
             {
-                "id": 490,
+                "id": 526,
                 "name": "CLP$ is symbol for Chilean peso",
-                "from_id": 453,
+                "from_id": 487,
                 "from_phrase": {
-                    "id": 453,
+                    "id": 487,
                     "name": "CLP$",
                     "description": "Symbol or abbreviation for the Chilean peso.",
                     "type_id": 1,
@@ -29548,9 +29554,9 @@
                     "impact": null,
                     "id": 29
                 },
-                "to_id": -308,
+                "to_id": -344,
                 "to_phrase": {
-                    "id": 308,
+                    "id": 344,
                     "name": "Chilean peso",
                     "description": "The Chilean peso (symbol: $ or CLP$; currency code: CLP) is the official currency of Chile. It is issued by the Central Bank of Chile. The peso is divided in theory into 100 centavos, but centavos are no longer used due to their negligible value.",
                     "type_id": null,
@@ -29561,11 +29567,11 @@
                 "class": "triple"
             },
             {
-                "id": 488,
+                "id": 524,
                 "name": "CLP is symbol for Chilean peso",
-                "from_id": 452,
+                "from_id": 486,
                 "from_phrase": {
-                    "id": 452,
+                    "id": 486,
                     "name": "CLP",
                     "description": "ISO 4217 alphabetic code for the Chilean peso.",
                     "type_id": 1,
@@ -29585,9 +29591,9 @@
                     "impact": null,
                     "id": 29
                 },
-                "to_id": -308,
+                "to_id": -344,
                 "to_phrase": {
-                    "id": 308,
+                    "id": 344,
                     "name": "Chilean peso",
                     "description": "The Chilean peso (symbol: $ or CLP$; currency code: CLP) is the official currency of Chile. It is issued by the Central Bank of Chile. The peso is divided in theory into 100 centavos, but centavos are no longer used due to their negligible value.",
                     "type_id": null,
@@ -29598,11 +29604,11 @@
                 "class": "triple"
             },
             {
-                "id": 348,
+                "id": 384,
                 "name": "CNY is symbol for Renminbi",
-                "from_id": 409,
+                "from_id": 443,
                 "from_phrase": {
-                    "id": 409,
+                    "id": 443,
                     "name": "CNY",
                     "description": "ISO 4217 alphabetic code for the renminbi (Chinese Yuan).",
                     "type_id": 1,
@@ -29622,9 +29628,9 @@
                     "impact": null,
                     "id": 29
                 },
-                "to_id": 390,
+                "to_id": 424,
                 "to_phrase": {
-                    "id": 390,
+                    "id": 424,
                     "name": "Renminbi",
                     "description": "The renminbi (symbol: \u00a5; currency code: CNY; abbreviation: RMB) is the official currency of the People's Republic of China. Its primary unit is the yuan. Issued by the People's Bank of China, the renminbi is one of the world's most-traded currencies and is included in the IMF's Special Drawing Rights basket.",
                     "type_id": 1,
@@ -29635,11 +29641,11 @@
                 "class": "triple"
             },
             {
-                "id": 510,
+                "id": 546,
                 "name": "COL$ is symbol for Colombian peso",
-                "from_id": 461,
+                "from_id": 495,
                 "from_phrase": {
-                    "id": 461,
+                    "id": 495,
                     "name": "COL$",
                     "description": "Symbol or abbreviation for the Colombian peso.",
                     "type_id": 1,
@@ -29659,9 +29665,9 @@
                     "impact": null,
                     "id": 29
                 },
-                "to_id": -310,
+                "to_id": -346,
                 "to_phrase": {
-                    "id": 310,
+                    "id": 346,
                     "name": "Colombian peso",
                     "description": "The Colombian peso (symbol: $ or COL$; currency code: COP) is the official currency of Colombia. It is divided into 100 centavos and is issued by the Banco de la Rep\u00fablica. Centavos are no longer used in practice due to their negligible value.",
                     "type_id": null,
@@ -29672,11 +29678,11 @@
                 "class": "triple"
             },
             {
-                "id": 508,
+                "id": 544,
                 "name": "COP is symbol for Colombian peso",
-                "from_id": 460,
+                "from_id": 494,
                 "from_phrase": {
-                    "id": 460,
+                    "id": 494,
                     "name": "COP",
                     "description": "ISO 4217 alphabetic code for the Colombian peso.",
                     "type_id": 1,
@@ -29696,9 +29702,9 @@
                     "impact": null,
                     "id": 29
                 },
-                "to_id": -310,
+                "to_id": -346,
                 "to_phrase": {
-                    "id": 310,
+                    "id": 346,
                     "name": "Colombian peso",
                     "description": "The Colombian peso (symbol: $ or COL$; currency code: COP) is the official currency of Colombia. It is divided into 100 centavos and is issued by the Banco de la Rep\u00fablica. Centavos are no longer used in practice due to their negligible value.",
                     "type_id": null,
@@ -29709,11 +29715,11 @@
                 "class": "triple"
             },
             {
-                "id": 468,
+                "id": 504,
                 "name": "CZK is symbol for Czech koruna",
-                "from_id": 444,
+                "from_id": 478,
                 "from_phrase": {
-                    "id": 444,
+                    "id": 478,
                     "name": "CZK",
                     "description": "ISO 4217 alphabetic code for the Czech koruna.",
                     "type_id": 1,
@@ -29733,9 +29739,9 @@
                     "impact": null,
                     "id": 29
                 },
-                "to_id": -317,
+                "to_id": -353,
                 "to_phrase": {
-                    "id": 317,
+                    "id": 353,
                     "name": "Czech koruna",
                     "description": "The Czech koruna (symbol: K\u010d; currency code: CZK) is the official currency of the Czech Republic. It is divided into 100 hal\u00e9\u0159 (singular: hal\u00e9\u0159), although hellers are no longer in circulation. It is issued by the Czech National Bank. The word 'koruna' means 'crown'.",
                     "type_id": null,
@@ -29746,11 +29752,11 @@
                 "class": "triple"
             },
             {
-                "id": 447,
+                "id": 483,
                 "name": "DKK is symbol for Danish krone",
-                "from_id": 435,
+                "from_id": 469,
                 "from_phrase": {
-                    "id": 435,
+                    "id": 469,
                     "name": "DKK",
                     "description": "ISO 4217 alphabetic code for the Danish krone.",
                     "type_id": 1,
@@ -29770,9 +29776,9 @@
                     "impact": null,
                     "id": 29
                 },
-                "to_id": -303,
+                "to_id": -339,
                 "to_phrase": {
-                    "id": 303,
+                    "id": 339,
                     "name": "Danish krone",
                     "description": "The Danish krone (symbol: kr; currency code: DKK) is the official currency of Denmark, Greenland, and the Faroe Islands. It is divided into 100 \u00f8re and is issued by Danmarks Nationalbank. The krone is pegged to the euro through the European Exchange Rate Mechanism II.",
                     "type_id": null,
@@ -29824,7 +29830,7 @@
                 "class": "triple"
             },
             {
-                "id": 342,
+                "id": 378,
                 "name": "EUR is symbol for Euro",
                 "from_id": 279,
                 "from_phrase": {
@@ -29848,9 +29854,9 @@
                     "impact": null,
                     "id": 29
                 },
-                "to_id": 388,
+                "to_id": 422,
                 "to_phrase": {
-                    "id": 388,
+                    "id": 422,
                     "name": "Euro",
                     "description": "The euro (symbol: \u20ac; currency code: EUR) is the official currency of 21 of the 27 member states of the European Union. This group of states is officially known as the euro area, more commonly named the eurozone. The euro is divided into 100 euro cents.",
                     "type_id": 1,
@@ -29861,11 +29867,11 @@
                 "class": "triple"
             },
             {
-                "id": 485,
+                "id": 521,
                 "name": "Ft is symbol for Hungarian forint",
-                "from_id": 451,
+                "from_id": 485,
                 "from_phrase": {
-                    "id": 451,
+                    "id": 485,
                     "name": "Ft",
                     "description": "Symbol or abbreviation for the Hungarian forint.",
                     "type_id": 1,
@@ -29885,9 +29891,9 @@
                     "impact": null,
                     "id": 29
                 },
-                "to_id": -319,
+                "to_id": -355,
                 "to_phrase": {
-                    "id": 319,
+                    "id": 355,
                     "name": "Hungarian forint",
                     "description": "The Hungarian forint (symbol: Ft; currency code: HUF) is the official currency of Hungary. It was historically divided into 100 fill\u00e9r, although fill\u00e9r coins are no longer in use. It is issued by the Hungarian National Bank (Magyar Nemzeti Bank).",
                     "type_id": null,
@@ -29914,27 +29920,27 @@
                 "class": "word"
             },
             {
-                "id": 470,
+                "id": 504,
                 "name": "BGN",
                 "description": "ISO 4217 alphabetic code for the Bulgarian lev, also widely used as the currency's typographic symbol.",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 326,
+                "id": 362,
                 "name": "Bulgarian lev",
                 "description": "The Bulgarian lev (currency code: BGN) is the official currency of Bulgaria. It is divided into 100 stotinki and is issued by the Bulgarian National Bank. The lev has been pegged to the euro since 1999 as part of a currency board arrangement.",
                 "class": "triple"
             },
             {
-                "id": 468,
+                "id": 502,
                 "name": "BHD",
                 "description": "ISO 4217 alphabetic code for the Bahraini dinar.",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 325,
+                "id": 361,
                 "name": "Bahraini dinar",
                 "description": "The Bahraini dinar (symbol: .\u062f.\u0628; currency code: BHD) is the official currency of Bahrain. It is divided into 1,000 fils and is issued by the Central Bank of Bahrain. The dinar has been pegged to the US dollar since 2001 at a rate of approximately 0.376 BHD per USD.",
                 "class": "triple"
@@ -29962,33 +29968,33 @@
                 "class": "word"
             },
             {
-                "id": 433,
+                "id": 467,
                 "name": "BRL",
                 "description": "ISO 4217 alphabetic code for the Brazilian real.",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 313,
+                "id": 349,
                 "name": "Brazilian real",
                 "description": "The Brazilian real (symbol: R$; currency code: BRL) is the official currency of Brazil. It is divided into 100 centavos and is issued by the Banco Central do Brasil. The current real was introduced in 1994 as part of the Plano Real economic stabilisation program.",
                 "class": "triple"
             },
             {
-                "id": 413,
+                "id": 447,
                 "name": "C$",
                 "description": "Symbol or abbreviation for the Canadian dollar, used to disambiguate from other dollar-denominated currencies.",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 295,
+                "id": 331,
                 "name": "Canadian dollar",
                 "description": "The Canadian dollar (symbol: $ or C$; currency code: CAD) is the official currency of Canada. It is issued by the Bank of Canada and is one of the world's most-traded currencies. The Canadian dollar is divided into 100 cents and is often regarded as a commodity currency due to Canada's substantial natural-resource exports.",
                 "class": "triple"
             },
             {
-                "id": 412,
+                "id": 446,
                 "name": "CAD",
                 "description": "ISO 4217 alphabetic code for the Canadian dollar.",
                 "type_id": 1,
@@ -30011,87 +30017,87 @@
                 "class": "word"
             },
             {
-                "id": 414,
+                "id": 448,
                 "name": "CHF",
                 "description": "ISO 4217 alphabetic code for the Swiss franc (Confoederatio Helvetica Franc), also widely used as the currency's typographic symbol.",
                 "type_id": 3,
                 "class": "word"
             },
             {
-                "id": 300,
+                "id": 336,
                 "name": "Swiss franc",
                 "description": "The Swiss franc (symbol: Fr. or CHF; currency code: CHF) is the official currency and legal tender of Switzerland and Liechtenstein, and is also used in the Italian exclave of Campione d'Italia. Issued by the Swiss National Bank, it is widely regarded as a safe-haven currency due to Switzerland's political stability and low inflation.",
                 "class": "triple"
             },
             {
-                "id": 453,
+                "id": 487,
                 "name": "CLP$",
                 "description": "Symbol or abbreviation for the Chilean peso.",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 308,
+                "id": 344,
                 "name": "Chilean peso",
                 "description": "The Chilean peso (symbol: $ or CLP$; currency code: CLP) is the official currency of Chile. It is issued by the Central Bank of Chile. The peso is divided in theory into 100 centavos, but centavos are no longer used due to their negligible value.",
                 "class": "triple"
             },
             {
-                "id": 452,
+                "id": 486,
                 "name": "CLP",
                 "description": "ISO 4217 alphabetic code for the Chilean peso.",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 409,
+                "id": 443,
                 "name": "CNY",
                 "description": "ISO 4217 alphabetic code for the renminbi (Chinese Yuan).",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 461,
+                "id": 495,
                 "name": "COL$",
                 "description": "Symbol or abbreviation for the Colombian peso.",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 310,
+                "id": 346,
                 "name": "Colombian peso",
                 "description": "The Colombian peso (symbol: $ or COL$; currency code: COP) is the official currency of Colombia. It is divided into 100 centavos and is issued by the Banco de la Rep\u00fablica. Centavos are no longer used in practice due to their negligible value.",
                 "class": "triple"
             },
             {
-                "id": 460,
+                "id": 494,
                 "name": "COP",
                 "description": "ISO 4217 alphabetic code for the Colombian peso.",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 444,
+                "id": 478,
                 "name": "CZK",
                 "description": "ISO 4217 alphabetic code for the Czech koruna.",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 317,
+                "id": 353,
                 "name": "Czech koruna",
                 "description": "The Czech koruna (symbol: K\u010d; currency code: CZK) is the official currency of the Czech Republic. It is divided into 100 hal\u00e9\u0159 (singular: hal\u00e9\u0159), although hellers are no longer in circulation. It is issued by the Czech National Bank. The word 'koruna' means 'crown'.",
                 "class": "triple"
             },
             {
-                "id": 435,
+                "id": 469,
                 "name": "DKK",
                 "description": "ISO 4217 alphabetic code for the Danish krone.",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 303,
+                "id": 339,
                 "name": "Danish krone",
                 "description": "The Danish krone (symbol: kr; currency code: DKK) is the official currency of Denmark, Greenland, and the Faroe Islands. It is divided into 100 \u00f8re and is issued by Danmarks Nationalbank. The krone is pegged to the euro through the European Exchange Rate Mechanism II.",
                 "class": "triple"
@@ -30120,24 +30126,24 @@
                 "class": "word"
             },
             {
-                "id": 451,
+                "id": 485,
                 "name": "Ft",
                 "description": "Symbol or abbreviation for the Hungarian forint.",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 319,
+                "id": 355,
                 "name": "Hungarian forint",
                 "description": "The Hungarian forint (symbol: Ft; currency code: HUF) is the official currency of Hungary. It was historically divided into 100 fill\u00e9r, although fill\u00e9r coins are no longer in use. It is issued by the Hungarian National Bank (Magyar Nemzeti Bank).",
                 "class": "triple"
             },
             {
-                "id": 345,
+                "id": 381,
                 "name": "GBP is symbol for Sterling",
-                "from_id": 407,
+                "from_id": 441,
                 "from_phrase": {
-                    "id": 407,
+                    "id": 441,
                     "name": "GBP",
                     "description": "ISO 4217 alphabetic code for pound sterling (Great Britain Pound).",
                     "type_id": 1,
@@ -30157,9 +30163,9 @@
                     "impact": null,
                     "id": 29
                 },
-                "to_id": 406,
+                "to_id": 440,
                 "to_phrase": {
-                    "id": 406,
+                    "id": 440,
                     "name": "Sterling",
                     "description": "Pound sterling (symbol: \u00a3; currency code: GBP) is the official currency of the United Kingdom and several British overseas territories and Crown Dependencies. It is the oldest currency still in continuous use and the fourth most-traded currency on the foreign exchange market. One pound is divided into 100 pence.",
                     "type_id": 1,
@@ -30170,7 +30176,7 @@
                 "class": "triple"
             },
             {
-                "id": 840,
+                "id": 876,
                 "name": "GDP is symbol for gross domestic product",
                 "from_id": 281,
                 "from_phrase": {
@@ -30194,9 +30200,9 @@
                     "impact": null,
                     "id": 29
                 },
-                "to_id": -825,
+                "to_id": -861,
                 "to_phrase": {
-                    "id": 825,
+                    "id": 861,
                     "name": "gross domestic product",
                     "description": "total market value of goods and services produced",
                     "type_id": null,
@@ -30207,11 +30213,11 @@
                 "class": "triple"
             },
             {
-                "id": 398,
+                "id": 434,
                 "name": "HK$ is symbol for Hong Kong dollar",
-                "from_id": 416,
+                "from_id": 450,
                 "from_phrase": {
-                    "id": 416,
+                    "id": 450,
                     "name": "HK$",
                     "description": "Symbol or abbreviation for the Hong Kong dollar.",
                     "type_id": 1,
@@ -30231,9 +30237,9 @@
                     "impact": null,
                     "id": 29
                 },
-                "to_id": -296,
+                "to_id": -332,
                 "to_phrase": {
-                    "id": 296,
+                    "id": 332,
                     "name": "Hong Kong dollar",
                     "description": "The Hong Kong dollar (symbol: HK$; currency code: HKD) is the official currency of Hong Kong. It is divided into 100 cents and has been pegged to the United States dollar since 1983 at a rate of approximately 7.80 HKD per USD. It is issued by three commercial note-issuing banks under the authority of the Hong Kong Monetary Authority.",
                     "type_id": null,
@@ -30244,11 +30250,11 @@
                 "class": "triple"
             },
             {
-                "id": 396,
+                "id": 432,
                 "name": "HKD is symbol for Hong Kong dollar",
-                "from_id": 415,
+                "from_id": 449,
                 "from_phrase": {
-                    "id": 415,
+                    "id": 449,
                     "name": "HKD",
                     "description": "ISO 4217 alphabetic code for the Hong Kong dollar.",
                     "type_id": 1,
@@ -30268,9 +30274,9 @@
                     "impact": null,
                     "id": 29
                 },
-                "to_id": -296,
+                "to_id": -332,
                 "to_phrase": {
-                    "id": 296,
+                    "id": 332,
                     "name": "Hong Kong dollar",
                     "description": "The Hong Kong dollar (symbol: HK$; currency code: HKD) is the official currency of Hong Kong. It is divided into 100 cents and has been pegged to the United States dollar since 1983 at a rate of approximately 7.80 HKD per USD. It is issued by three commercial note-issuing banks under the authority of the Hong Kong Monetary Authority.",
                     "type_id": null,
@@ -30281,7 +30287,7 @@
                 "class": "triple"
             },
             {
-                "id": 182,
+                "id": 214,
                 "name": "htp is symbol for happy time points",
                 "from_id": 274,
                 "from_phrase": {
@@ -30305,9 +30311,9 @@
                     "impact": null,
                     "id": 29
                 },
-                "to_id": -156,
+                "to_id": -178,
                 "to_phrase": {
-                    "id": 156,
+                    "id": 178,
                     "name": "happy time points",
                     "description": "To measure the \"happy points\" ask the person how happy he feels let's say on a scale from 1 (least happy) to 10 (most happy). If you sum the number of happy points over a period, you get the \"happy time points\".",
                     "type_id": null,
@@ -30318,87 +30324,13 @@
                 "class": "triple"
             },
             {
-                "id": 483,
+                "id": 519,
                 "name": "HUF is symbol for Hungarian forint",
-                "from_id": 450,
+                "from_id": 484,
                 "from_phrase": {
-                    "id": 450,
+                    "id": 484,
                     "name": "HUF",
                     "description": "ISO 4217 alphabetic code for the Hungarian forint.",
-                    "type_id": 1,
-                    "plural": null,
-                    "impact": null,
-                    "class": "word"
-                },
-                "verb_id": {
-                    "name": "is symbol for",
-                    "code_id": "symbol",
-                    "description": "is used as a symbol for",
-                    "plural": "are symbols for",
-                    "reverse": "can have symbol",
-                    "rev_plural": "can have symbols",
-                    "name_in_formula": null,
-                    "usage": null,
-                    "impact": null,
-                    "id": 29
-                },
-                "to_id": -319,
-                "to_phrase": {
-                    "id": 319,
-                    "name": "Hungarian forint",
-                    "description": "The Hungarian forint (symbol: Ft; currency code: HUF) is the official currency of Hungary. It was historically divided into 100 fill\u00e9r, although fill\u00e9r coins are no longer in use. It is issued by the Hungarian National Bank (Magyar Nemzeti Bank).",
-                    "type_id": null,
-                    "usage": null,
-                    "impact": null,
-                    "class": "triple"
-                },
-                "class": "triple"
-            },
-            {
-                "id": 463,
-                "name": "IDR is symbol for Indonesian rupiah",
-                "from_id": 442,
-                "from_phrase": {
-                    "id": 442,
-                    "name": "IDR",
-                    "description": "ISO 4217 alphabetic code for the Indonesian rupiah.",
-                    "type_id": 1,
-                    "plural": null,
-                    "impact": null,
-                    "class": "word"
-                },
-                "verb_id": {
-                    "name": "is symbol for",
-                    "code_id": "symbol",
-                    "description": "is used as a symbol for",
-                    "plural": "are symbols for",
-                    "reverse": "can have symbol",
-                    "rev_plural": "can have symbols",
-                    "name_in_formula": null,
-                    "usage": null,
-                    "impact": null,
-                    "id": 29
-                },
-                "to_id": -316,
-                "to_phrase": {
-                    "id": 316,
-                    "name": "Indonesian rupiah",
-                    "description": "The Indonesian rupiah (symbol: Rp; currency code: IDR) is the official currency of Indonesia. It is issued by Bank Indonesia, the central bank. The rupiah is one of the most heavily denominated currencies in the world, with banknotes commonly ranging up to 100,000 rupiah.",
-                    "type_id": null,
-                    "usage": null,
-                    "impact": null,
-                    "class": "triple"
-                },
-                "class": "triple"
-            },
-            {
-                "id": 552,
-                "name": "ILS is symbol for Israeli new shekel",
-                "from_id": 440,
-                "from_phrase": {
-                    "id": 440,
-                    "name": "ILS",
-                    "description": "ISO 4217 alphabetic code for the Israeli new shekel.",
                     "type_id": 1,
                     "plural": null,
                     "impact": null,
@@ -30419,6 +30351,80 @@
                 "to_id": -355,
                 "to_phrase": {
                     "id": 355,
+                    "name": "Hungarian forint",
+                    "description": "The Hungarian forint (symbol: Ft; currency code: HUF) is the official currency of Hungary. It was historically divided into 100 fill\u00e9r, although fill\u00e9r coins are no longer in use. It is issued by the Hungarian National Bank (Magyar Nemzeti Bank).",
+                    "type_id": null,
+                    "usage": null,
+                    "impact": null,
+                    "class": "triple"
+                },
+                "class": "triple"
+            },
+            {
+                "id": 499,
+                "name": "IDR is symbol for Indonesian rupiah",
+                "from_id": 476,
+                "from_phrase": {
+                    "id": 476,
+                    "name": "IDR",
+                    "description": "ISO 4217 alphabetic code for the Indonesian rupiah.",
+                    "type_id": 1,
+                    "plural": null,
+                    "impact": null,
+                    "class": "word"
+                },
+                "verb_id": {
+                    "name": "is symbol for",
+                    "code_id": "symbol",
+                    "description": "is used as a symbol for",
+                    "plural": "are symbols for",
+                    "reverse": "can have symbol",
+                    "rev_plural": "can have symbols",
+                    "name_in_formula": null,
+                    "usage": null,
+                    "impact": null,
+                    "id": 29
+                },
+                "to_id": -352,
+                "to_phrase": {
+                    "id": 352,
+                    "name": "Indonesian rupiah",
+                    "description": "The Indonesian rupiah (symbol: Rp; currency code: IDR) is the official currency of Indonesia. It is issued by Bank Indonesia, the central bank. The rupiah is one of the most heavily denominated currencies in the world, with banknotes commonly ranging up to 100,000 rupiah.",
+                    "type_id": null,
+                    "usage": null,
+                    "impact": null,
+                    "class": "triple"
+                },
+                "class": "triple"
+            },
+            {
+                "id": 588,
+                "name": "ILS is symbol for Israeli new shekel",
+                "from_id": 474,
+                "from_phrase": {
+                    "id": 474,
+                    "name": "ILS",
+                    "description": "ISO 4217 alphabetic code for the Israeli new shekel.",
+                    "type_id": 1,
+                    "plural": null,
+                    "impact": null,
+                    "class": "word"
+                },
+                "verb_id": {
+                    "name": "is symbol for",
+                    "code_id": "symbol",
+                    "description": "is used as a symbol for",
+                    "plural": "are symbols for",
+                    "reverse": "can have symbol",
+                    "rev_plural": "can have symbols",
+                    "name_in_formula": null,
+                    "usage": null,
+                    "impact": null,
+                    "id": 29
+                },
+                "to_id": -391,
+                "to_phrase": {
+                    "id": 391,
                     "name": "Israeli new shekel",
                     "description": "The Israeli new shekel (symbol: \u20aa; currency code: ILS) is the official currency of Israel and is also used in the Palestinian territories. It is divided into 100 agorot (singular: agora) and is issued by the Bank of Israel. It replaced the old shekel in 1985.",
                     "type_id": null,
@@ -30429,11 +30435,11 @@
                 "class": "triple"
             },
             {
-                "id": 425,
+                "id": 461,
                 "name": "INR is symbol for Indian rupee",
-                "from_id": 425,
+                "from_id": 459,
                 "from_phrase": {
-                    "id": 425,
+                    "id": 459,
                     "name": "INR",
                     "description": "ISO 4217 alphabetic code for the Indian rupee.",
                     "type_id": 1,
@@ -30453,9 +30459,9 @@
                     "impact": null,
                     "id": 29
                 },
-                "to_id": -306,
+                "to_id": -342,
                 "to_phrase": {
-                    "id": 306,
+                    "id": 342,
                     "name": "Indian rupee",
                     "description": "The Indian rupee (symbol: \u20b9; currency code: INR) is the official currency of India. It is divided into 100 paise (singular: paisa) and is issued by the Reserve Bank of India. The rupee symbol \u20b9 was officially adopted in 2010.",
                     "type_id": null,
@@ -30504,11 +30510,11 @@
                 "class": "triple"
             },
             {
-                "id": 372,
+                "id": 408,
                 "name": "JPY is symbol for Japanese yen",
-                "from_id": 405,
+                "from_id": 439,
                 "from_phrase": {
-                    "id": 405,
+                    "id": 439,
                     "name": "JPY",
                     "description": "ISO 4217 alphabetic code for the Japanese yen.",
                     "type_id": 1,
@@ -30528,9 +30534,9 @@
                     "impact": null,
                     "id": 29
                 },
-                "to_id": -301,
+                "to_id": -337,
                 "to_phrase": {
-                    "id": 301,
+                    "id": 337,
                     "name": "Japanese yen",
                     "description": "The Japanese yen (symbol: \u00a5; currency code: JPY) is the official currency of Japan, issued by the Bank of Japan. It is the third most-traded currency in the world after the US dollar and the euro, and serves as a major global reserve currency.",
                     "type_id": null,
@@ -30541,11 +30547,11 @@
                 "class": "triple"
             },
             {
-                "id": 470,
+                "id": 506,
                 "name": "K\u010d is symbol for Czech koruna",
-                "from_id": 445,
+                "from_id": 479,
                 "from_phrase": {
-                    "id": 445,
+                    "id": 479,
                     "name": "K\u010d",
                     "description": "The 'K\u010d' abbreviation, the currency symbol for the Czech koruna.",
                     "type_id": 1,
@@ -30565,9 +30571,9 @@
                     "impact": null,
                     "id": 29
                 },
-                "to_id": -317,
+                "to_id": -353,
                 "to_phrase": {
-                    "id": 317,
+                    "id": 353,
                     "name": "Czech koruna",
                     "description": "The Czech koruna (symbol: K\u010d; currency code: CZK) is the official currency of the Czech Republic. It is divided into 100 hal\u00e9\u0159 (singular: hal\u00e9\u0159), although hellers are no longer in circulation. It is issued by the Czech National Bank. The word 'koruna' means 'crown'.",
                     "type_id": null,
@@ -30617,12 +30623,12 @@
                 "class": "triple"
             },
             {
-                "id": 250,
+                "id": 286,
                 "name": "k is symbol for thousand",
                 "type_id": 7,
-                "from_id": 342,
+                "from_id": 376,
                 "from_phrase": {
-                    "id": 342,
+                    "id": 376,
                     "name": "k",
                     "description": null,
                     "type_id": 1,
@@ -30656,11 +30662,11 @@
                 "class": "triple"
             },
             {
-                "id": 448,
+                "id": 484,
                 "name": "kr is symbol for Danish krone",
-                "from_id": 420,
+                "from_id": 454,
                 "from_phrase": {
-                    "id": 420,
+                    "id": 454,
                     "name": "kr",
                     "description": "Abbreviation shared by several Scandinavian krona\/krone currencies, including the Swedish krona, Norwegian krone, and Danish krone.",
                     "type_id": 1,
@@ -30680,9 +30686,9 @@
                     "impact": null,
                     "id": 29
                 },
-                "to_id": -303,
+                "to_id": -339,
                 "to_phrase": {
-                    "id": 303,
+                    "id": 339,
                     "name": "Danish krone",
                     "description": "The Danish krone (symbol: kr; currency code: DKK) is the official currency of Denmark, Greenland, and the Faroe Islands. It is divided into 100 \u00f8re and is issued by Danmarks Nationalbank. The krone is pegged to the euro through the European Exchange Rate Mechanism II.",
                     "type_id": null,
@@ -30693,11 +30699,11 @@
                 "class": "triple"
             },
             {
-                "id": 417,
+                "id": 453,
                 "name": "kr is symbol for Norwegian krone",
-                "from_id": 420,
+                "from_id": 454,
                 "from_phrase": {
-                    "id": 420,
+                    "id": 454,
                     "name": "kr",
                     "description": "Abbreviation shared by several Scandinavian krona\/krone currencies, including the Swedish krona, Norwegian krone, and Danish krone.",
                     "type_id": 1,
@@ -30717,9 +30723,9 @@
                     "impact": null,
                     "id": 29
                 },
-                "to_id": -304,
+                "to_id": -340,
                 "to_phrase": {
-                    "id": 304,
+                    "id": 340,
                     "name": "Norwegian krone",
                     "description": "The Norwegian krone (symbol: kr; currency code: NOK) is the official currency of Norway and its dependent territories. It is divided into 100 \u00f8re and is issued by Norges Bank, the central bank of Norway. The plural form in Norwegian is kroner.",
                     "type_id": null,
@@ -30730,11 +30736,11 @@
                 "class": "triple"
             },
             {
-                "id": 408,
+                "id": 444,
                 "name": "kr is symbol for Swedish krona",
-                "from_id": 420,
+                "from_id": 454,
                 "from_phrase": {
-                    "id": 420,
+                    "id": 454,
                     "name": "kr",
                     "description": "Abbreviation shared by several Scandinavian krona\/krone currencies, including the Swedish krona, Norwegian krone, and Danish krone.",
                     "type_id": 1,
@@ -30754,9 +30760,9 @@
                     "impact": null,
                     "id": 29
                 },
-                "to_id": -302,
+                "to_id": -338,
                 "to_phrase": {
-                    "id": 302,
+                    "id": 338,
                     "name": "Swedish krona",
                     "description": "The Swedish krona (symbol: kr; currency code: SEK) is the official currency of Sweden. It is divided into 100 \u00f6re and is issued by the Sveriges Riksbank, the central bank of Sweden. The plural form in Swedish is kronor.",
                     "type_id": null,
@@ -30767,11 +30773,11 @@
                 "class": "triple"
             },
             {
-                "id": 411,
+                "id": 447,
                 "name": "KRW is symbol for South Korean won",
-                "from_id": 421,
+                "from_id": 455,
                 "from_phrase": {
-                    "id": 421,
+                    "id": 455,
                     "name": "KRW",
                     "description": "ISO 4217 alphabetic code for the South Korean won.",
                     "type_id": 1,
@@ -30791,9 +30797,9 @@
                     "impact": null,
                     "id": 29
                 },
-                "to_id": -305,
+                "to_id": -341,
                 "to_phrase": {
-                    "id": 305,
+                    "id": 341,
                     "name": "South Korean won",
                     "description": "The South Korean won (symbol: \u20a9; currency code: KRW) is the official currency of South Korea. It is issued by the Bank of Korea. Although a subunit called the jeon exists in theory (1\/100 of a won), it is not used in everyday transactions due to its negligible value.",
                     "type_id": null,
@@ -30843,11 +30849,11 @@
                 "class": "triple"
             },
             {
-                "id": 520,
+                "id": 556,
                 "name": "L is symbol for Romanian leu",
-                "from_id": 465,
+                "from_id": 499,
                 "from_phrase": {
-                    "id": 465,
+                    "id": 499,
                     "name": "L",
                     "description": "Symbol or abbreviation for the Romanian leu (and also several other currencies, such as the Albanian lek).",
                     "type_id": 1,
@@ -30867,9 +30873,9 @@
                     "impact": null,
                     "id": 29
                 },
-                "to_id": -323,
+                "to_id": -359,
                 "to_phrase": {
-                    "id": 323,
+                    "id": 359,
                     "name": "Romanian leu",
                     "description": "The Romanian leu (symbol: L; currency code: RON) is the official currency of Romania. It is divided into 100 bani (singular: ban) and is issued by the National Bank of Romania. The word 'leu' is Romanian for 'lion'. The current leu was introduced in 2005 to replace the old leu at a ratio of 10,000 to 1.",
                     "type_id": null,
@@ -30880,7 +30886,7 @@
                 "class": "triple"
             },
             {
-                "id": 407,
+                "id": 441,
                 "name": "GBP",
                 "description": "ISO 4217 alphabetic code for pound sterling (Great Britain Pound).",
                 "type_id": 1,
@@ -30894,26 +30900,26 @@
                 "class": "word"
             },
             {
-                "id": 825,
+                "id": 861,
                 "name": "gross domestic product",
                 "description": "total market value of goods and services produced",
                 "class": "triple"
             },
             {
-                "id": 416,
+                "id": 450,
                 "name": "HK$",
                 "description": "Symbol or abbreviation for the Hong Kong dollar.",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 296,
+                "id": 332,
                 "name": "Hong Kong dollar",
                 "description": "The Hong Kong dollar (symbol: HK$; currency code: HKD) is the official currency of Hong Kong. It is divided into 100 cents and has been pegged to the United States dollar since 1983 at a rate of approximately 7.80 HKD per USD. It is issued by three commercial note-issuing banks under the authority of the Hong Kong Monetary Authority.",
                 "class": "triple"
             },
             {
-                "id": 415,
+                "id": 449,
                 "name": "HKD",
                 "description": "ISO 4217 alphabetic code for the Hong Kong dollar.",
                 "type_id": 1,
@@ -30927,40 +30933,40 @@
                 "class": "word"
             },
             {
-                "id": 156,
+                "id": 178,
                 "name": "happy time points",
                 "description": "To measure the \"happy points\" ask the person how happy he feels let's say on a scale from 1 (least happy) to 10 (most happy). If you sum the number of happy points over a period, you get the \"happy time points\".",
                 "class": "triple"
             },
             {
-                "id": 450,
+                "id": 484,
                 "name": "HUF",
                 "description": "ISO 4217 alphabetic code for the Hungarian forint.",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 442,
+                "id": 476,
                 "name": "IDR",
                 "description": "ISO 4217 alphabetic code for the Indonesian rupiah.",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 316,
+                "id": 352,
                 "name": "Indonesian rupiah",
                 "description": "The Indonesian rupiah (symbol: Rp; currency code: IDR) is the official currency of Indonesia. It is issued by Bank Indonesia, the central bank. The rupiah is one of the most heavily denominated currencies in the world, with banknotes commonly ranging up to 100,000 rupiah.",
                 "class": "triple"
             },
             {
-                "id": 440,
+                "id": 474,
                 "name": "ILS",
                 "description": "ISO 4217 alphabetic code for the Israeli new shekel.",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 425,
+                "id": 459,
                 "name": "INR",
                 "description": "ISO 4217 alphabetic code for the Indian rupee.",
                 "type_id": 1,
@@ -30982,14 +30988,14 @@
                 "class": "word"
             },
             {
-                "id": 405,
+                "id": 439,
                 "name": "JPY",
                 "description": "ISO 4217 alphabetic code for the Japanese yen.",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 445,
+                "id": 479,
                 "name": "K\u010d",
                 "description": "The 'K\u010d' abbreviation, the currency symbol for the Czech koruna.",
                 "type_id": 1,
@@ -31012,7 +31018,7 @@
                 "class": "word"
             },
             {
-                "id": 342,
+                "id": 376,
                 "name": "k",
                 "type_id": 1,
                 "class": "word"
@@ -31026,26 +31032,26 @@
                 "class": "word"
             },
             {
-                "id": 420,
+                "id": 454,
                 "name": "kr",
                 "description": "Abbreviation shared by several Scandinavian krona\/krone currencies, including the Swedish krona, Norwegian krone, and Danish krone.",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 304,
+                "id": 340,
                 "name": "Norwegian krone",
                 "description": "The Norwegian krone (symbol: kr; currency code: NOK) is the official currency of Norway and its dependent territories. It is divided into 100 \u00f8re and is issued by Norges Bank, the central bank of Norway. The plural form in Norwegian is kroner.",
                 "class": "triple"
             },
             {
-                "id": 302,
+                "id": 338,
                 "name": "Swedish krona",
                 "description": "The Swedish krona (symbol: kr; currency code: SEK) is the official currency of Sweden. It is divided into 100 \u00f6re and is issued by the Sveriges Riksbank, the central bank of Sweden. The plural form in Swedish is kronor.",
                 "class": "triple"
             },
             {
-                "id": 421,
+                "id": 455,
                 "name": "KRW",
                 "description": "ISO 4217 alphabetic code for the South Korean won.",
                 "type_id": 1,
@@ -31068,14 +31074,14 @@
                 "class": "word"
             },
             {
-                "id": 465,
+                "id": 499,
                 "name": "L",
                 "description": "Symbol or abbreviation for the Romanian leu (and also several other currencies, such as the Albanian lek).",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 323,
+                "id": 359,
                 "name": "Romanian leu",
                 "description": "The Romanian leu (symbol: L; currency code: RON) is the official currency of Romania. It is divided into 100 bani (singular: ban) and is issued by the National Bank of Romania. The word 'leu' is Romanian for 'lion'. The current leu was introduced in 2005 to replace the old leu at a ratio of 10,000 to 1.",
                 "class": "triple"
@@ -31267,11 +31273,11 @@
                 "class": "triple"
             },
             {
-                "id": 432,
+                "id": 468,
                 "name": "MX$ is symbol for Mexican peso",
-                "from_id": 428,
+                "from_id": 462,
                 "from_phrase": {
-                    "id": 428,
+                    "id": 462,
                     "name": "MX$",
                     "description": "Symbol or abbreviation for the Mexican peso.",
                     "type_id": 1,
@@ -31291,9 +31297,9 @@
                     "impact": null,
                     "id": 29
                 },
-                "to_id": -307,
+                "to_id": -343,
                 "to_phrase": {
-                    "id": 307,
+                    "id": 343,
                     "name": "Mexican peso",
                     "description": "The Mexican peso (symbol: $ or MX$; currency code: MXN) is the official currency of Mexico. It is divided into 100 centavos and is issued by the Banco de M\u00e9xico. The peso is one of the most-traded currencies in Latin America and serves as a common proxy for emerging-market sentiment.",
                     "type_id": null,
@@ -31304,11 +31310,11 @@
                 "class": "triple"
             },
             {
-                "id": 430,
+                "id": 466,
                 "name": "MXN is symbol for Mexican peso",
-                "from_id": 427,
+                "from_id": 461,
                 "from_phrase": {
-                    "id": 427,
+                    "id": 461,
                     "name": "MXN",
                     "description": "ISO 4217 alphabetic code for the Mexican peso.",
                     "type_id": 1,
@@ -31328,9 +31334,9 @@
                     "impact": null,
                     "id": 29
                 },
-                "to_id": -307,
+                "to_id": -343,
                 "to_phrase": {
-                    "id": 307,
+                    "id": 343,
                     "name": "Mexican peso",
                     "description": "The Mexican peso (symbol: $ or MX$; currency code: MXN) is the official currency of Mexico. It is divided into 100 centavos and is issued by the Banco de M\u00e9xico. The peso is one of the most-traded currencies in Latin America and serves as a common proxy for emerging-market sentiment.",
                     "type_id": null,
@@ -31341,11 +31347,11 @@
                 "class": "triple"
             },
             {
-                "id": 503,
+                "id": 539,
                 "name": "MYR is symbol for Malaysian ringgit",
-                "from_id": 458,
+                "from_id": 492,
                 "from_phrase": {
-                    "id": 458,
+                    "id": 492,
                     "name": "MYR",
                     "description": "ISO 4217 alphabetic code for the Malaysian ringgit.",
                     "type_id": 1,
@@ -31365,9 +31371,9 @@
                     "impact": null,
                     "id": 29
                 },
-                "to_id": -321,
+                "to_id": -357,
                 "to_phrase": {
-                    "id": 321,
+                    "id": 357,
                     "name": "Malaysian ringgit",
                     "description": "The Malaysian ringgit (symbol: RM; currency code: MYR) is the official currency of Malaysia. It is divided into 100 sen and is issued by Bank Negara Malaysia, the country's central bank. The word 'ringgit' originally meant 'jagged' in Malay, referring to the milled edges of Spanish silver dollars used in colonial-era trade.",
                     "type_id": null,
@@ -31378,11 +31384,11 @@
                 "class": "triple"
             },
             {
-                "id": 416,
+                "id": 452,
                 "name": "NOK is symbol for Norwegian krone",
-                "from_id": 422,
+                "from_id": 456,
                 "from_phrase": {
-                    "id": 422,
+                    "id": 456,
                     "name": "NOK",
                     "description": "ISO 4217 alphabetic code for the Norwegian krone.",
                     "type_id": 1,
@@ -31402,9 +31408,9 @@
                     "impact": null,
                     "id": 29
                 },
-                "to_id": -304,
+                "to_id": -340,
                 "to_phrase": {
-                    "id": 304,
+                    "id": 340,
                     "name": "Norwegian krone",
                     "description": "The Norwegian krone (symbol: kr; currency code: NOK) is the official currency of Norway and its dependent territories. It is divided into 100 \u00f8re and is issued by Norges Bank, the central bank of Norway. The plural form in Norwegian is kroner.",
                     "type_id": null,
@@ -31415,11 +31421,11 @@
                 "class": "triple"
             },
             {
-                "id": 550,
+                "id": 586,
                 "name": "NT$ is symbol for New Taiwan dollar",
-                "from_id": 430,
+                "from_id": 464,
                 "from_phrase": {
-                    "id": 430,
+                    "id": 464,
                     "name": "NT$",
                     "description": "Symbol or abbreviation for the New Taiwan dollar.",
                     "type_id": 1,
@@ -31439,9 +31445,9 @@
                     "impact": null,
                     "id": 29
                 },
-                "to_id": -354,
+                "to_id": -390,
                 "to_phrase": {
-                    "id": 354,
+                    "id": 390,
                     "name": "New Taiwan dollar",
                     "description": "The New Taiwan dollar (symbol: NT$; currency code: TWD) is the official currency of the Republic of China (Taiwan). It is divided into 100 cents and is issued by the Central Bank of the Republic of China. It replaced the old Taiwan dollar in 1949.",
                     "type_id": null,
@@ -31452,11 +31458,11 @@
                 "class": "triple"
             },
             {
-                "id": 422,
+                "id": 458,
                 "name": "NZ$ is symbol for New Zealand dollar",
-                "from_id": 424,
+                "from_id": 458,
                 "from_phrase": {
-                    "id": 424,
+                    "id": 458,
                     "name": "NZ$",
                     "description": "Symbol or abbreviation for the New Zealand dollar.",
                     "type_id": 1,
@@ -31476,9 +31482,9 @@
                     "impact": null,
                     "id": 29
                 },
-                "to_id": -298,
+                "to_id": -334,
                 "to_phrase": {
-                    "id": 298,
+                    "id": 334,
                     "name": "New Zealand dollar",
                     "description": "The New Zealand dollar (symbol: NZ$; currency code: NZD) is the official currency of New Zealand and several Pacific island states (Cook Islands, Niue, Tokelau, Pitcairn Islands). It is divided into 100 cents and is informally known as the 'Kiwi dollar'. It is issued by the Reserve Bank of New Zealand.",
                     "type_id": null,
@@ -31489,11 +31495,11 @@
                 "class": "triple"
             },
             {
-                "id": 420,
+                "id": 456,
                 "name": "NZD is symbol for New Zealand dollar",
-                "from_id": 423,
+                "from_id": 457,
                 "from_phrase": {
-                    "id": 423,
+                    "id": 457,
                     "name": "NZD",
                     "description": "ISO 4217 alphabetic code for the New Zealand dollar.",
                     "type_id": 1,
@@ -31513,9 +31519,9 @@
                     "impact": null,
                     "id": 29
                 },
-                "to_id": -298,
+                "to_id": -334,
                 "to_phrase": {
-                    "id": 298,
+                    "id": 334,
                     "name": "New Zealand dollar",
                     "description": "The New Zealand dollar (symbol: NZ$; currency code: NZD) is the official currency of New Zealand and several Pacific island states (Cook Islands, Niue, Tokelau, Pitcairn Islands). It is divided into 100 cents and is informally known as the 'Kiwi dollar'. It is issued by the Reserve Bank of New Zealand.",
                     "type_id": null,
@@ -31526,7 +31532,7 @@
                 "class": "triple"
             },
             {
-                "id": 183,
+                "id": 215,
                 "name": "OLS is symbol for ordinary least squares",
                 "from_id": 244,
                 "from_phrase": {
@@ -31550,9 +31556,9 @@
                     "impact": null,
                     "id": 29
                 },
-                "to_id": -160,
+                "to_id": -182,
                 "to_phrase": {
-                    "id": 160,
+                    "id": 182,
                     "name": "ordinary least squares",
                     "description": "Ordinary least squares is a type of linear least squares method for choosing the unknown parameters in a linear regression model.",
                     "type_id": null,
@@ -31563,11 +31569,11 @@
                 "class": "triple"
             },
             {
-                "id": 523,
+                "id": 559,
                 "name": "PEN is symbol for Peruvian sol",
-                "from_id": 466,
+                "from_id": 500,
                 "from_phrase": {
-                    "id": 466,
+                    "id": 500,
                     "name": "PEN",
                     "description": "ISO 4217 alphabetic code for the Peruvian sol.",
                     "type_id": 1,
@@ -31587,9 +31593,9 @@
                     "impact": null,
                     "id": 29
                 },
-                "to_id": -324,
+                "to_id": -360,
                 "to_phrase": {
-                    "id": 324,
+                    "id": 360,
                     "name": "Peruvian sol",
                     "description": "The Peruvian sol (symbol: S\/; currency code: PEN) is the official currency of Peru. It is divided into 100 c\u00e9ntimos and is issued by the Central Reserve Bank of Peru. The current sol replaced the nuevo sol in 2015, though it has the same value.",
                     "type_id": null,
@@ -31600,11 +31606,11 @@
                 "class": "triple"
             },
             {
-                "id": 498,
+                "id": 534,
                 "name": "PHP is symbol for Philippine peso",
-                "from_id": 456,
+                "from_id": 490,
                 "from_phrase": {
-                    "id": 456,
+                    "id": 490,
                     "name": "PHP",
                     "description": "ISO 4217 alphabetic code for the Philippine peso.",
                     "type_id": 1,
@@ -31624,9 +31630,9 @@
                     "impact": null,
                     "id": 29
                 },
-                "to_id": -309,
+                "to_id": -345,
                 "to_phrase": {
-                    "id": 309,
+                    "id": 345,
                     "name": "Philippine peso",
                     "description": "The Philippine peso (symbol: \u20b1; currency code: PHP) is the official currency of the Philippines. It is divided into 100 sentimos (also called centavos) and is issued by the Bangko Sentral ng Pilipinas. The peso symbol \u20b1 was officially adopted in 1967.",
                     "type_id": null,
@@ -31637,11 +31643,11 @@
                 "class": "triple"
             },
             {
-                "id": 557,
+                "id": 593,
                 "name": "p is symbol for pence",
-                "from_id": 552,
+                "from_id": 586,
                 "from_phrase": {
-                    "id": 552,
+                    "id": 586,
                     "name": "p",
                     "description": "probability of obtaining the observed result under the null hypothesis",
                     "type_id": 1,
@@ -31661,9 +31667,9 @@
                     "impact": null,
                     "id": 29
                 },
-                "to_id": 551,
+                "to_id": 585,
                 "to_phrase": {
-                    "id": 551,
+                    "id": 585,
                     "name": "pence",
                     "description": null,
                     "type_id": 1,
@@ -31674,11 +31680,11 @@
                 "class": "triple"
             },
             {
-                "id": 451,
+                "id": 487,
                 "name": "PLN is symbol for Polish z\u0142oty",
-                "from_id": 436,
+                "from_id": 470,
                 "from_phrase": {
-                    "id": 436,
+                    "id": 470,
                     "name": "PLN",
                     "description": "ISO 4217 alphabetic code for the Polish z\u0142oty.",
                     "type_id": 1,
@@ -31698,9 +31704,9 @@
                     "impact": null,
                     "id": 29
                 },
-                "to_id": -314,
+                "to_id": -350,
                 "to_phrase": {
-                    "id": 314,
+                    "id": 350,
                     "name": "Polish z\u0142oty",
                     "description": "The Polish z\u0142oty (symbol: z\u0142; currency code: PLN) is the official currency of Poland. It is divided into 100 groszy (singular: grosz) and is issued by the Narodowy Bank Polski. The word 'z\u0142oty' is the masculine form of the Polish adjective meaning 'golden'.",
                     "type_id": null,
@@ -31711,11 +31717,11 @@
                 "class": "triple"
             },
             {
-                "id": 444,
+                "id": 480,
                 "name": "R$ is symbol for Brazilian real",
-                "from_id": 434,
+                "from_id": 468,
                 "from_phrase": {
-                    "id": 434,
+                    "id": 468,
                     "name": "R$",
                     "description": "Symbol or abbreviation for the Brazilian real.",
                     "type_id": 1,
@@ -31735,9 +31741,9 @@
                     "impact": null,
                     "id": 29
                 },
-                "to_id": -313,
+                "to_id": -349,
                 "to_phrase": {
-                    "id": 313,
+                    "id": 349,
                     "name": "Brazilian real",
                     "description": "The Brazilian real (symbol: R$; currency code: BRL) is the official currency of Brazil. It is divided into 100 centavos and is issued by the Banco Central do Brasil. The current real was introduced in 1994 as part of the Plano Real economic stabilisation program.",
                     "type_id": null,
@@ -31748,11 +31754,11 @@
                 "class": "triple"
             },
             {
-                "id": 439,
+                "id": 475,
                 "name": "R is symbol for South African rand",
-                "from_id": 432,
+                "from_id": 466,
                 "from_phrase": {
-                    "id": 432,
+                    "id": 466,
                     "name": "R",
                     "description": "Symbol or abbreviation for the South African rand.",
                     "type_id": 1,
@@ -31772,9 +31778,9 @@
                     "impact": null,
                     "id": 29
                 },
-                "to_id": -312,
+                "to_id": -348,
                 "to_phrase": {
-                    "id": 312,
+                    "id": 348,
                     "name": "South African rand",
                     "description": "The South African rand (symbol: R; currency code: ZAR) is the official currency of South Africa and is also legal tender in the Common Monetary Area together with the currencies of Lesotho, Namibia, and Eswatini. It is divided into 100 cents and is issued by the South African Reserve Bank.",
                     "type_id": null,
@@ -31785,11 +31791,11 @@
                 "class": "triple"
             },
             {
-                "id": 505,
+                "id": 541,
                 "name": "RM is symbol for Malaysian ringgit",
-                "from_id": 459,
+                "from_id": 493,
                 "from_phrase": {
-                    "id": 459,
+                    "id": 493,
                     "name": "RM",
                     "description": "Symbol or abbreviation for the Malaysian ringgit, derived from 'Ringgit Malaysia'.",
                     "type_id": 1,
@@ -31809,9 +31815,9 @@
                     "impact": null,
                     "id": 29
                 },
-                "to_id": -321,
+                "to_id": -357,
                 "to_phrase": {
-                    "id": 321,
+                    "id": 357,
                     "name": "Malaysian ringgit",
                     "description": "The Malaysian ringgit (symbol: RM; currency code: MYR) is the official currency of Malaysia. It is divided into 100 sen and is issued by Bank Negara Malaysia, the country's central bank. The word 'ringgit' originally meant 'jagged' in Malay, referring to the milled edges of Spanish silver dollars used in colonial-era trade.",
                     "type_id": null,
@@ -31877,73 +31883,73 @@
                 "class": "word"
             },
             {
-                "id": 428,
+                "id": 462,
                 "name": "MX$",
                 "description": "Symbol or abbreviation for the Mexican peso.",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 307,
+                "id": 343,
                 "name": "Mexican peso",
                 "description": "The Mexican peso (symbol: $ or MX$; currency code: MXN) is the official currency of Mexico. It is divided into 100 centavos and is issued by the Banco de M\u00e9xico. The peso is one of the most-traded currencies in Latin America and serves as a common proxy for emerging-market sentiment.",
                 "class": "triple"
             },
             {
-                "id": 427,
+                "id": 461,
                 "name": "MXN",
                 "description": "ISO 4217 alphabetic code for the Mexican peso.",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 458,
+                "id": 492,
                 "name": "MYR",
                 "description": "ISO 4217 alphabetic code for the Malaysian ringgit.",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 321,
+                "id": 357,
                 "name": "Malaysian ringgit",
                 "description": "The Malaysian ringgit (symbol: RM; currency code: MYR) is the official currency of Malaysia. It is divided into 100 sen and is issued by Bank Negara Malaysia, the country's central bank. The word 'ringgit' originally meant 'jagged' in Malay, referring to the milled edges of Spanish silver dollars used in colonial-era trade.",
                 "class": "triple"
             },
             {
-                "id": 422,
+                "id": 456,
                 "name": "NOK",
                 "description": "ISO 4217 alphabetic code for the Norwegian krone.",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 430,
+                "id": 464,
                 "name": "NT$",
                 "description": "Symbol or abbreviation for the New Taiwan dollar.",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 354,
+                "id": 390,
                 "name": "New Taiwan dollar",
                 "description": "The New Taiwan dollar (symbol: NT$; currency code: TWD) is the official currency of the Republic of China (Taiwan). It is divided into 100 cents and is issued by the Central Bank of the Republic of China. It replaced the old Taiwan dollar in 1949.",
                 "class": "triple"
             },
             {
-                "id": 424,
+                "id": 458,
                 "name": "NZ$",
                 "description": "Symbol or abbreviation for the New Zealand dollar.",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 298,
+                "id": 334,
                 "name": "New Zealand dollar",
                 "description": "The New Zealand dollar (symbol: NZ$; currency code: NZD) is the official currency of New Zealand and several Pacific island states (Cook Islands, Niue, Tokelau, Pitcairn Islands). It is divided into 100 cents and is informally known as the 'Kiwi dollar'. It is issued by the Reserve Bank of New Zealand.",
                 "class": "triple"
             },
             {
-                "id": 423,
+                "id": 457,
                 "name": "NZD",
                 "description": "ISO 4217 alphabetic code for the New Zealand dollar.",
                 "type_id": 1,
@@ -31957,90 +31963,90 @@
                 "class": "word"
             },
             {
-                "id": 160,
+                "id": 182,
                 "name": "ordinary least squares",
                 "description": "Ordinary least squares is a type of linear least squares method for choosing the unknown parameters in a linear regression model.",
                 "class": "triple"
             },
             {
-                "id": 466,
+                "id": 500,
                 "name": "PEN",
                 "description": "ISO 4217 alphabetic code for the Peruvian sol.",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 324,
+                "id": 360,
                 "name": "Peruvian sol",
                 "description": "The Peruvian sol (symbol: S\/; currency code: PEN) is the official currency of Peru. It is divided into 100 c\u00e9ntimos and is issued by the Central Reserve Bank of Peru. The current sol replaced the nuevo sol in 2015, though it has the same value.",
                 "class": "triple"
             },
             {
-                "id": 456,
+                "id": 490,
                 "name": "PHP",
                 "description": "ISO 4217 alphabetic code for the Philippine peso.",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 552,
+                "id": 586,
                 "name": "p",
                 "description": "probability of obtaining the observed result under the null hypothesis",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 551,
+                "id": 585,
                 "name": "pence",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 436,
+                "id": 470,
                 "name": "PLN",
                 "description": "ISO 4217 alphabetic code for the Polish z\u0142oty.",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 314,
+                "id": 350,
                 "name": "Polish z\u0142oty",
                 "description": "The Polish z\u0142oty (symbol: z\u0142; currency code: PLN) is the official currency of Poland. It is divided into 100 groszy (singular: grosz) and is issued by the Narodowy Bank Polski. The word 'z\u0142oty' is the masculine form of the Polish adjective meaning 'golden'.",
                 "class": "triple"
             },
             {
-                "id": 434,
+                "id": 468,
                 "name": "R$",
                 "description": "Symbol or abbreviation for the Brazilian real.",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 432,
+                "id": 466,
                 "name": "R",
                 "description": "Symbol or abbreviation for the South African rand.",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 312,
+                "id": 348,
                 "name": "South African rand",
                 "description": "The South African rand (symbol: R; currency code: ZAR) is the official currency of South Africa and is also legal tender in the Common Monetary Area together with the currencies of Lesotho, Namibia, and Eswatini. It is divided into 100 cents and is issued by the South African Reserve Bank.",
                 "class": "triple"
             },
             {
-                "id": 459,
+                "id": 493,
                 "name": "RM",
                 "description": "Symbol or abbreviation for the Malaysian ringgit, derived from 'Ringgit Malaysia'.",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 518,
+                "id": 554,
                 "name": "RON is symbol for Romanian leu",
-                "from_id": 464,
+                "from_id": 498,
                 "from_phrase": {
-                    "id": 464,
+                    "id": 498,
                     "name": "RON",
                     "description": "ISO 4217 alphabetic code for the Romanian leu.",
                     "type_id": 1,
@@ -32060,9 +32066,9 @@
                     "impact": null,
                     "id": 29
                 },
-                "to_id": -323,
+                "to_id": -359,
                 "to_phrase": {
-                    "id": 323,
+                    "id": 359,
                     "name": "Romanian leu",
                     "description": "The Romanian leu (symbol: L; currency code: RON) is the official currency of Romania. It is divided into 100 bani (singular: ban) and is issued by the National Bank of Romania. The word 'leu' is Romanian for 'lion'. The current leu was introduced in 2005 to replace the old leu at a ratio of 10,000 to 1.",
                     "type_id": null,
@@ -32073,11 +32079,11 @@
                 "class": "triple"
             },
             {
-                "id": 465,
+                "id": 501,
                 "name": "Rp is symbol for Indonesian rupiah",
-                "from_id": 443,
+                "from_id": 477,
                 "from_phrase": {
-                    "id": 443,
+                    "id": 477,
                     "name": "Rp",
                     "description": "Symbol or abbreviation for the Indonesian rupiah.",
                     "type_id": 1,
@@ -32097,9 +32103,9 @@
                     "impact": null,
                     "id": 29
                 },
-                "to_id": -316,
+                "to_id": -352,
                 "to_phrase": {
-                    "id": 316,
+                    "id": 352,
                     "name": "Indonesian rupiah",
                     "description": "The Indonesian rupiah (symbol: Rp; currency code: IDR) is the official currency of Indonesia. It is issued by Bank Indonesia, the central bank. The rupiah is one of the most heavily denominated currencies in the world, with banknotes commonly ranging up to 100,000 rupiah.",
                     "type_id": null,
@@ -32110,11 +32116,11 @@
                 "class": "triple"
             },
             {
-                "id": 513,
+                "id": 549,
                 "name": "RUB is symbol for Russian ruble",
-                "from_id": 462,
+                "from_id": 496,
                 "from_phrase": {
-                    "id": 462,
+                    "id": 496,
                     "name": "RUB",
                     "description": "ISO 4217 alphabetic code for the Russian ruble.",
                     "type_id": 1,
@@ -32134,9 +32140,9 @@
                     "impact": null,
                     "id": 29
                 },
-                "to_id": -322,
+                "to_id": -358,
                 "to_phrase": {
-                    "id": 322,
+                    "id": 358,
                     "name": "Russian ruble",
                     "description": "The Russian ruble (symbol: \u20bd; currency code: RUB) is the official currency of the Russian Federation. It is divided into 100 kopecks and is issued by the Central Bank of Russia. The ruble is one of the world's oldest national currencies, with origins traced to the 13th century.",
                     "type_id": null,
@@ -32147,11 +32153,11 @@
                 "class": "triple"
             },
             {
-                "id": 403,
+                "id": 439,
                 "name": "S$ is symbol for Singapore dollar",
-                "from_id": 418,
+                "from_id": 452,
                 "from_phrase": {
-                    "id": 418,
+                    "id": 452,
                     "name": "S$",
                     "description": "Symbol or abbreviation for the Singapore dollar.",
                     "type_id": 1,
@@ -32171,9 +32177,9 @@
                     "impact": null,
                     "id": 29
                 },
-                "to_id": -297,
+                "to_id": -333,
                 "to_phrase": {
-                    "id": 297,
+                    "id": 333,
                     "name": "Singapore dollar",
                     "description": "The Singapore dollar (symbol: S$; currency code: SGD) is the official currency of Singapore. It is divided into 100 cents and is issued by the Monetary Authority of Singapore. It is interchangeable with the Brunei dollar at par under a Currency Interchangeability Agreement.",
                     "type_id": null,
@@ -32184,11 +32190,11 @@
                 "class": "triple"
             },
             {
-                "id": 493,
+                "id": 529,
                 "name": "SAR is symbol for Saudi riyal",
-                "from_id": 454,
+                "from_id": 488,
                 "from_phrase": {
-                    "id": 454,
+                    "id": 488,
                     "name": "SAR",
                     "description": "ISO 4217 alphabetic code for the Saudi riyal.",
                     "type_id": 1,
@@ -32208,9 +32214,9 @@
                     "impact": null,
                     "id": 29
                 },
-                "to_id": -320,
+                "to_id": -356,
                 "to_phrase": {
-                    "id": 320,
+                    "id": 356,
                     "name": "Saudi riyal",
                     "description": "The Saudi riyal (symbol: \ufdfc; currency code: SAR) is the official currency of Saudi Arabia. It is divided into 100 halalas and is issued by the Saudi Central Bank. The riyal has been pegged to the US dollar since 1986 at a rate of 3.75 SAR per USD.",
                     "type_id": null,
@@ -32221,11 +32227,11 @@
                 "class": "triple"
             },
             {
-                "id": 406,
+                "id": 442,
                 "name": "SEK is symbol for Swedish krona",
-                "from_id": 419,
+                "from_id": 453,
                 "from_phrase": {
-                    "id": 419,
+                    "id": 453,
                     "name": "SEK",
                     "description": "ISO 4217 alphabetic code for the Swedish krona.",
                     "type_id": 1,
@@ -32245,9 +32251,9 @@
                     "impact": null,
                     "id": 29
                 },
-                "to_id": -302,
+                "to_id": -338,
                 "to_phrase": {
-                    "id": 302,
+                    "id": 338,
                     "name": "Swedish krona",
                     "description": "The Swedish krona (symbol: kr; currency code: SEK) is the official currency of Sweden. It is divided into 100 \u00f6re and is issued by the Sveriges Riksbank, the central bank of Sweden. The plural form in Swedish is kronor.",
                     "type_id": null,
@@ -32258,11 +32264,11 @@
                 "class": "triple"
             },
             {
-                "id": 401,
+                "id": 437,
                 "name": "SGD is symbol for Singapore dollar",
-                "from_id": 417,
+                "from_id": 451,
                 "from_phrase": {
-                    "id": 417,
+                    "id": 451,
                     "name": "SGD",
                     "description": "ISO 4217 alphabetic code for the Singapore dollar.",
                     "type_id": 1,
@@ -32282,9 +32288,9 @@
                     "impact": null,
                     "id": 29
                 },
-                "to_id": -297,
+                "to_id": -333,
                 "to_phrase": {
-                    "id": 297,
+                    "id": 333,
                     "name": "Singapore dollar",
                     "description": "The Singapore dollar (symbol: S$; currency code: SGD) is the official currency of Singapore. It is divided into 100 cents and is issued by the Monetary Authority of Singapore. It is interchangeable with the Brunei dollar at par under a Currency Interchangeability Agreement.",
                     "type_id": null,
@@ -32295,11 +32301,11 @@
                 "class": "triple"
             },
             {
-                "id": 525,
+                "id": 561,
                 "name": "S\/ is symbol for Peruvian sol",
-                "from_id": 467,
+                "from_id": 501,
                 "from_phrase": {
-                    "id": 467,
+                    "id": 501,
                     "name": "S\/",
                     "description": "Symbol or abbreviation for the Peruvian sol.",
                     "type_id": 1,
@@ -32319,9 +32325,9 @@
                     "impact": null,
                     "id": 29
                 },
-                "to_id": -324,
+                "to_id": -360,
                 "to_phrase": {
-                    "id": 324,
+                    "id": 360,
                     "name": "Peruvian sol",
                     "description": "The Peruvian sol (symbol: S\/; currency code: PEN) is the official currency of Peru. It is divided into 100 c\u00e9ntimos and is issued by the Central Reserve Bank of Peru. The current sol replaced the nuevo sol in 2015, though it has the same value.",
                     "type_id": null,
@@ -32370,11 +32376,11 @@
                 "class": "triple"
             },
             {
-                "id": 456,
+                "id": 492,
                 "name": "THB is symbol for Thai baht",
-                "from_id": 438,
+                "from_id": 472,
                 "from_phrase": {
-                    "id": 438,
+                    "id": 472,
                     "name": "THB",
                     "description": "ISO 4217 alphabetic code for the Thai baht.",
                     "type_id": 1,
@@ -32394,9 +32400,9 @@
                     "impact": null,
                     "id": 29
                 },
-                "to_id": -315,
+                "to_id": -351,
                 "to_phrase": {
-                    "id": 315,
+                    "id": 351,
                     "name": "Thai baht",
                     "description": "The Thai baht (symbol: \u0e3f; currency code: THB) is the official currency of Thailand. It is divided into 100 satang and is issued by the Bank of Thailand. The baht traces its origins to a traditional unit of weight used for measuring silver.",
                     "type_id": null,
@@ -32484,11 +32490,11 @@
                 "class": "triple"
             },
             {
-                "id": 351,
+                "id": 387,
                 "name": "total is symbol for total",
-                "from_id": 341,
+                "from_id": 375,
                 "from_phrase": {
-                    "id": 341,
+                    "id": 375,
                     "name": "total",
                     "description": "the whole amount or count, e.g. the total number of possible outcomes",
                     "type_id": 1,
@@ -32508,9 +32514,9 @@
                     "impact": null,
                     "id": 29
                 },
-                "to_id": 341,
+                "to_id": 375,
                 "to_phrase": {
-                    "id": 341,
+                    "id": 375,
                     "name": "total",
                     "description": "the whole amount or count, e.g. the total number of possible outcomes",
                     "type_id": 1,
@@ -32521,50 +32527,13 @@
                 "class": "triple"
             },
             {
-                "id": 478,
+                "id": 514,
                 "name": "TRY is symbol for Turkish lira",
-                "from_id": 448,
+                "from_id": 482,
                 "from_phrase": {
-                    "id": 448,
+                    "id": 482,
                     "name": "TRY",
                     "description": "ISO 4217 alphabetic code for the Turkish lira.",
-                    "type_id": 1,
-                    "plural": null,
-                    "impact": null,
-                    "class": "word"
-                },
-                "verb_id": {
-                    "name": "is symbol for",
-                    "code_id": "symbol",
-                    "description": "is used as a symbol for",
-                    "plural": "are symbols for",
-                    "reverse": "can have symbol",
-                    "rev_plural": "can have symbols",
-                    "name_in_formula": null,
-                    "usage": null,
-                    "impact": null,
-                    "id": 29
-                },
-                "to_id": -318,
-                "to_phrase": {
-                    "id": 318,
-                    "name": "Turkish lira",
-                    "description": "The Turkish lira (symbol: \u20ba; currency code: TRY) is the official currency of Turkey and Northern Cyprus. It is divided into 100 kuru\u015f and is issued by the Central Bank of the Republic of Turkey. The current lira replaced the old lira in 2005 at a ratio of 1,000,000 old lira to 1 new lira.",
-                    "type_id": null,
-                    "usage": null,
-                    "impact": null,
-                    "class": "triple"
-                },
-                "class": "triple"
-            },
-            {
-                "id": 549,
-                "name": "TWD is symbol for New Taiwan dollar",
-                "from_id": 429,
-                "from_phrase": {
-                    "id": 429,
-                    "name": "TWD",
-                    "description": "ISO 4217 alphabetic code for the New Taiwan dollar.",
                     "type_id": 1,
                     "plural": null,
                     "impact": null,
@@ -32585,6 +32554,43 @@
                 "to_id": -354,
                 "to_phrase": {
                     "id": 354,
+                    "name": "Turkish lira",
+                    "description": "The Turkish lira (symbol: \u20ba; currency code: TRY) is the official currency of Turkey and Northern Cyprus. It is divided into 100 kuru\u015f and is issued by the Central Bank of the Republic of Turkey. The current lira replaced the old lira in 2005 at a ratio of 1,000,000 old lira to 1 new lira.",
+                    "type_id": null,
+                    "usage": null,
+                    "impact": null,
+                    "class": "triple"
+                },
+                "class": "triple"
+            },
+            {
+                "id": 585,
+                "name": "TWD is symbol for New Taiwan dollar",
+                "from_id": 463,
+                "from_phrase": {
+                    "id": 463,
+                    "name": "TWD",
+                    "description": "ISO 4217 alphabetic code for the New Taiwan dollar.",
+                    "type_id": 1,
+                    "plural": null,
+                    "impact": null,
+                    "class": "word"
+                },
+                "verb_id": {
+                    "name": "is symbol for",
+                    "code_id": "symbol",
+                    "description": "is used as a symbol for",
+                    "plural": "are symbols for",
+                    "reverse": "can have symbol",
+                    "rev_plural": "can have symbols",
+                    "name_in_formula": null,
+                    "usage": null,
+                    "impact": null,
+                    "id": 29
+                },
+                "to_id": -390,
+                "to_phrase": {
+                    "id": 390,
                     "name": "New Taiwan dollar",
                     "description": "The New Taiwan dollar (symbol: NT$; currency code: TWD) is the official currency of the Republic of China (Taiwan). It is divided into 100 cents and is issued by the Central Bank of the Republic of China. It replaced the old Taiwan dollar in 1949.",
                     "type_id": null,
@@ -32595,11 +32601,11 @@
                 "class": "triple"
             },
             {
-                "id": 367,
+                "id": 403,
                 "name": "US$ is symbol for US dollar",
-                "from_id": 401,
+                "from_id": 435,
                 "from_phrase": {
-                    "id": 401,
+                    "id": 435,
                     "name": "US$",
                     "description": "Symbol or abbreviation for the United States dollar, used to disambiguate from other dollar-denominated currencies.",
                     "type_id": 1,
@@ -32619,9 +32625,9 @@
                     "impact": null,
                     "id": 29
                 },
-                "to_id": -292,
+                "to_id": -328,
                 "to_phrase": {
-                    "id": 292,
+                    "id": 328,
                     "name": "US dollar",
                     "description": "The United States dollar (symbol: $; currency code: USD) is the official currency of the United States and several other countries. It is the world's primary reserve currency and the most-traded currency on the foreign exchange market. The dollar is divided into 100 cents.",
                     "type_id": null,
@@ -32632,11 +32638,11 @@
                 "class": "triple"
             },
             {
-                "id": 365,
+                "id": 401,
                 "name": "USD is symbol for US dollar",
-                "from_id": 400,
+                "from_id": 434,
                 "from_phrase": {
-                    "id": 400,
+                    "id": 434,
                     "name": "USD",
                     "description": "ISO 4217 alphabetic code for the United States dollar.",
                     "type_id": 3,
@@ -32656,9 +32662,9 @@
                     "impact": null,
                     "id": 29
                 },
-                "to_id": -292,
+                "to_id": -328,
                 "to_phrase": {
-                    "id": 292,
+                    "id": 328,
                     "name": "US dollar",
                     "description": "The United States dollar (symbol: $; currency code: USD) is the official currency of the United States and several other countries. It is the world's primary reserve currency and the most-traded currency on the foreign exchange market. The dollar is divided into 100 cents.",
                     "type_id": null,
@@ -32706,11 +32712,11 @@
                 "class": "triple"
             },
             {
-                "id": 437,
+                "id": 473,
                 "name": "ZAR is symbol for South African rand",
-                "from_id": 431,
+                "from_id": 465,
                 "from_phrase": {
-                    "id": 431,
+                    "id": 465,
                     "name": "ZAR",
                     "description": "ISO 4217 alphabetic code for the South African rand.",
                     "type_id": 1,
@@ -32730,9 +32736,9 @@
                     "impact": null,
                     "id": 29
                 },
-                "to_id": -312,
+                "to_id": -348,
                 "to_phrase": {
-                    "id": 312,
+                    "id": 348,
                     "name": "South African rand",
                     "description": "The South African rand (symbol: R; currency code: ZAR) is the official currency of South Africa and is also legal tender in the Common Monetary Area together with the currencies of Lesotho, Namibia, and Eswatini. It is divided into 100 cents and is issued by the South African Reserve Bank.",
                     "type_id": null,
@@ -32743,11 +32749,11 @@
                 "class": "triple"
             },
             {
-                "id": 453,
+                "id": 489,
                 "name": "z\u0142 is symbol for Polish z\u0142oty",
-                "from_id": 437,
+                "from_id": 471,
                 "from_phrase": {
-                    "id": 437,
+                    "id": 471,
                     "name": "z\u0142",
                     "description": "The 'z\u0142' abbreviation, the currency symbol for the Polish z\u0142oty.",
                     "type_id": 1,
@@ -32767,9 +32773,9 @@
                     "impact": null,
                     "id": 29
                 },
-                "to_id": -314,
+                "to_id": -350,
                 "to_phrase": {
-                    "id": 314,
+                    "id": 350,
                     "name": "Polish z\u0142oty",
                     "description": "The Polish z\u0142oty (symbol: z\u0142; currency code: PLN) is the official currency of Poland. It is divided into 100 groszy (singular: grosz) and is issued by the Narodowy Bank Polski. The word 'z\u0142oty' is the masculine form of the Polish adjective meaning 'golden'.",
                     "type_id": null,
@@ -32780,68 +32786,68 @@
                 "class": "triple"
             },
             {
-                "id": 464,
+                "id": 498,
                 "name": "RON",
                 "description": "ISO 4217 alphabetic code for the Romanian leu.",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 443,
+                "id": 477,
                 "name": "Rp",
                 "description": "Symbol or abbreviation for the Indonesian rupiah.",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 462,
+                "id": 496,
                 "name": "RUB",
                 "description": "ISO 4217 alphabetic code for the Russian ruble.",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 418,
+                "id": 452,
                 "name": "S$",
                 "description": "Symbol or abbreviation for the Singapore dollar.",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 297,
+                "id": 333,
                 "name": "Singapore dollar",
                 "description": "The Singapore dollar (symbol: S$; currency code: SGD) is the official currency of Singapore. It is divided into 100 cents and is issued by the Monetary Authority of Singapore. It is interchangeable with the Brunei dollar at par under a Currency Interchangeability Agreement.",
                 "class": "triple"
             },
             {
-                "id": 454,
+                "id": 488,
                 "name": "SAR",
                 "description": "ISO 4217 alphabetic code for the Saudi riyal.",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 320,
+                "id": 356,
                 "name": "Saudi riyal",
                 "description": "The Saudi riyal (symbol: \ufdfc; currency code: SAR) is the official currency of Saudi Arabia. It is divided into 100 halalas and is issued by the Saudi Central Bank. The riyal has been pegged to the US dollar since 1986 at a rate of 3.75 SAR per USD.",
                 "class": "triple"
             },
             {
-                "id": 419,
+                "id": 453,
                 "name": "SEK",
                 "description": "ISO 4217 alphabetic code for the Swedish krona.",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 417,
+                "id": 451,
                 "name": "SGD",
                 "description": "ISO 4217 alphabetic code for the Singapore dollar.",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 467,
+                "id": 501,
                 "name": "S\/",
                 "description": "Symbol or abbreviation for the Peruvian sol.",
                 "type_id": 1,
@@ -32863,7 +32869,7 @@
                 "class": "word"
             },
             {
-                "id": 438,
+                "id": 472,
                 "name": "THB",
                 "description": "ISO 4217 alphabetic code for the Thai baht.",
                 "type_id": 1,
@@ -32892,35 +32898,35 @@
                 "class": "word"
             },
             {
-                "id": 341,
+                "id": 375,
                 "name": "total",
                 "description": "the whole amount or count, e.g. the total number of possible outcomes",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 448,
+                "id": 482,
                 "name": "TRY",
                 "description": "ISO 4217 alphabetic code for the Turkish lira.",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 429,
+                "id": 463,
                 "name": "TWD",
                 "description": "ISO 4217 alphabetic code for the New Taiwan dollar.",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 401,
+                "id": 435,
                 "name": "US$",
                 "description": "Symbol or abbreviation for the United States dollar, used to disambiguate from other dollar-denominated currencies.",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 400,
+                "id": 434,
                 "name": "USD",
                 "description": "ISO 4217 alphabetic code for the United States dollar.",
                 "type_id": 3,
@@ -32941,14 +32947,14 @@
                 "class": "word"
             },
             {
-                "id": 431,
+                "id": 465,
                 "name": "ZAR",
                 "description": "ISO 4217 alphabetic code for the South African rand.",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 437,
+                "id": 471,
                 "name": "z\u0142",
                 "description": "The 'z\u0142' abbreviation, the currency symbol for the Polish z\u0142oty.",
                 "type_id": 1,
@@ -32995,11 +33001,11 @@
                 "class": "triple"
             },
             {
-                "id": 475,
+                "id": 511,
                 "name": "\u062f.\u0625 is symbol for UAE dirham",
-                "from_id": 447,
+                "from_id": 481,
                 "from_phrase": {
-                    "id": 447,
+                    "id": 481,
                     "name": "\u062f.\u0625",
                     "description": "The Arabic abbreviation \u062f.\u0625, the currency symbol for the UAE dirham.",
                     "type_id": 1,
@@ -33019,9 +33025,9 @@
                     "impact": null,
                     "id": 29
                 },
-                "to_id": -327,
+                "to_id": -363,
                 "to_phrase": {
-                    "id": 327,
+                    "id": 363,
                     "name": "UAE dirham",
                     "description": "The United Arab Emirates dirham (symbol: \u062f.\u0625; currency code: AED) is the official currency of the United Arab Emirates. It is divided into 100 fils and is issued by the Central Bank of the United Arab Emirates. It has been pegged to the US dollar since 1997.",
                     "type_id": null,
@@ -33032,11 +33038,11 @@
                 "class": "triple"
             },
             {
-                "id": 530,
+                "id": 566,
                 "name": ".\u062f.\u0628 is symbol for Bahraini dinar",
-                "from_id": 469,
+                "from_id": 503,
                 "from_phrase": {
-                    "id": 469,
+                    "id": 503,
                     "name": ".\u062f.\u0628",
                     "description": "The Arabic abbreviation .\u062f.\u0628, the currency symbol for the Bahraini dinar.",
                     "type_id": 1,
@@ -33056,9 +33062,9 @@
                     "impact": null,
                     "id": 29
                 },
-                "to_id": -325,
+                "to_id": -361,
                 "to_phrase": {
-                    "id": 325,
+                    "id": 361,
                     "name": "Bahraini dinar",
                     "description": "The Bahraini dinar (symbol: .\u062f.\u0628; currency code: BHD) is the official currency of Bahrain. It is divided into 1,000 fils and is issued by the Central Bank of Bahrain. The dinar has been pegged to the US dollar since 2001 at a rate of approximately 0.376 BHD per USD.",
                     "type_id": null,
@@ -33069,11 +33075,11 @@
                 "class": "triple"
             },
             {
-                "id": 495,
+                "id": 531,
                 "name": "\ufdfc is symbol for Saudi riyal",
-                "from_id": 455,
+                "from_id": 489,
                 "from_phrase": {
-                    "id": 455,
+                    "id": 489,
                     "name": "\ufdfc",
                     "description": "The Arabic ligature \ufdfc, used as the currency symbol for several riyal currencies including the Saudi riyal.",
                     "type_id": 1,
@@ -33093,9 +33099,9 @@
                     "impact": null,
                     "id": 29
                 },
-                "to_id": -320,
+                "to_id": -356,
                 "to_phrase": {
-                    "id": 320,
+                    "id": 356,
                     "name": "Saudi riyal",
                     "description": "The Saudi riyal (symbol: \ufdfc; currency code: SAR) is the official currency of Saudi Arabia. It is divided into 100 halalas and is issued by the Saudi Central Bank. The riyal has been pegged to the US dollar since 1986 at a rate of 3.75 SAR per USD.",
                     "type_id": null,
@@ -33122,33 +33128,33 @@
                 "class": "word"
             },
             {
-                "id": 447,
+                "id": 481,
                 "name": "\u062f.\u0625",
                 "description": "The Arabic abbreviation \u062f.\u0625, the currency symbol for the UAE dirham.",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 469,
+                "id": 503,
                 "name": ".\u062f.\u0628",
                 "description": "The Arabic abbreviation .\u062f.\u0628, the currency symbol for the Bahraini dinar.",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 455,
+                "id": 489,
                 "name": "\ufdfc",
                 "description": "The Arabic ligature \ufdfc, used as the currency symbol for several riyal currencies including the Saudi riyal.",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 545,
+                "id": 581,
                 "name": "$ is alias of US dollar",
                 "description": "The dollar sign is used in place of the currency name, so it names the same currency and not only a symbol pointing to it.",
-                "from_id": 402,
+                "from_id": 436,
                 "from_phrase": {
-                    "id": 402,
+                    "id": 436,
                     "name": "$",
                     "description": "The dollar sign, most commonly used as the symbol for the United States dollar, although it is also used for many other dollar-denominated currencies.",
                     "type_id": 1,
@@ -33168,9 +33174,9 @@
                     "impact": null,
                     "id": 18
                 },
-                "to_id": -292,
+                "to_id": -328,
                 "to_phrase": {
-                    "id": 292,
+                    "id": 328,
                     "name": "US dollar",
                     "description": "The United States dollar (symbol: $; currency code: USD) is the official currency of the United States and several other countries. It is the world's primary reserve currency and the most-traded currency on the foreign exchange market. The dollar is divided into 100 cents.",
                     "type_id": null,
@@ -33181,12 +33187,12 @@
                 "class": "triple"
             },
             {
-                "id": 353,
+                "id": 389,
                 "name": "\u20ac is alias of Euro",
                 "description": "The euro sign is used in place of the currency name, so it names the same currency and not only a symbol pointing to it.",
-                "from_id": 404,
+                "from_id": 438,
                 "from_phrase": {
-                    "id": 404,
+                    "id": 438,
                     "name": "\u20ac",
                     "description": "The euro sign (\u20ac), the currency symbol for the euro.",
                     "type_id": 1,
@@ -33206,9 +33212,9 @@
                     "impact": null,
                     "id": 18
                 },
-                "to_id": 388,
+                "to_id": 422,
                 "to_phrase": {
-                    "id": 388,
+                    "id": 422,
                     "name": "Euro",
                     "description": "The euro (symbol: \u20ac; currency code: EUR) is the official currency of 21 of the 27 member states of the European Union. This group of states is officially known as the euro area, more commonly named the eurozone. The euro is divided into 100 euro cents.",
                     "type_id": 1,
@@ -33219,7 +33225,7 @@
                 "class": "triple"
             },
             {
-                "id": 924,
+                "id": 960,
                 "name": "global warming is alias of climate change",
                 "from_id": -112,
                 "from_phrase": {
@@ -33243,9 +33249,9 @@
                     "impact": null,
                     "id": 18
                 },
-                "to_id": -918,
+                "to_id": -954,
                 "to_phrase": {
-                    "id": 918,
+                    "id": 954,
                     "name": "climate change",
                     "description": "the long-term shifts in temperatures and weather patterns, caused since the 1800s mainly by the burning of fossil fuels.",
                     "type_id": null,
@@ -33413,11 +33419,11 @@
                 "class": "triple"
             },
             {
-                "id": 602,
+                "id": 638,
                 "name": "Nestle is alias of Nestl\u00e9",
-                "from_id": 578,
+                "from_id": 612,
                 "from_phrase": {
-                    "id": 578,
+                    "id": 612,
                     "name": "Nestle",
                     "description": null,
                     "type_id": 1,
@@ -33437,9 +33443,9 @@
                     "impact": null,
                     "id": 18
                 },
-                "to_id": 565,
+                "to_id": 599,
                 "to_phrase": {
-                    "id": 565,
+                    "id": 599,
                     "name": "Nestl\u00e9",
                     "description": null,
                     "type_id": 1,
@@ -33510,12 +33516,12 @@
                 "class": "triple"
             },
             {
-                "id": 543,
+                "id": 579,
                 "name": "Sterling is alias of Pound (sterling)",
                 "description": "The new file uses 'Sterling' while the original enriched dataset uses 'Pound (sterling)'. Both names refer to the same currency (GBP).",
-                "from_id": 406,
+                "from_id": 440,
                 "from_phrase": {
-                    "id": 406,
+                    "id": 440,
                     "name": "Sterling",
                     "description": "Pound sterling (symbol: \u00a3; currency code: GBP) is the official currency of the United Kingdom and several British overseas territories and Crown Dependencies. It is the oldest currency still in continuous use and the fourth most-traded currency on the foreign exchange market. One pound is divided into 100 pence.",
                     "type_id": 1,
@@ -33535,9 +33541,9 @@
                     "impact": null,
                     "id": 18
                 },
-                "to_id": -329,
+                "to_id": -365,
                 "to_phrase": {
-                    "id": 329,
+                    "id": 365,
                     "name": "Pound (sterling)",
                     "description": "Pound sterling (symbol: \u00a3; currency code: GBP) is the official currency of the United Kingdom and several British overseas territories and Crown Dependencies. It is the oldest currency still in continuous use and the fourth most-traded currency on the foreign exchange market. One pound is divided into 100 pence.",
                     "type_id": null,
@@ -33586,11 +33592,11 @@
                 "class": "triple"
             },
             {
-                "id": 362,
+                "id": 398,
                 "name": "U.S. dollar is alias of US dollar",
-                "from_id": -293,
+                "from_id": -329,
                 "from_phrase": {
-                    "id": 293,
+                    "id": 329,
                     "name": "U.S. dollar",
                     "description": "The United States dollar (symbol: $; currency code: USD) is the official currency of the United States and several other countries. It is the world's primary reserve currency and the most-traded currency on the foreign exchange market. The dollar is divided into 100 cents.",
                     "type_id": null,
@@ -33610,9 +33616,9 @@
                     "impact": null,
                     "id": 18
                 },
-                "to_id": -292,
+                "to_id": -328,
                 "to_phrase": {
-                    "id": 292,
+                    "id": 328,
                     "name": "US dollar",
                     "description": "The United States dollar (symbol: $; currency code: USD) is the official currency of the United States and several other countries. It is the world's primary reserve currency and the most-traded currency on the foreign exchange market. The dollar is divided into 100 cents.",
                     "type_id": null,
@@ -33623,12 +33629,12 @@
                 "class": "triple"
             },
             {
-                "id": 542,
+                "id": 578,
                 "name": "US-Dollar is alias of US dollar",
                 "description": "The new file uses 'US-Dollar' while the original enriched dataset uses 'US dollar'. Both names refer to the same currency (USD).",
-                "from_id": 403,
+                "from_id": 437,
                 "from_phrase": {
-                    "id": 403,
+                    "id": 437,
                     "name": "US-Dollar",
                     "description": "Alternative (German) spelling of the United States dollar; an alias of 'US dollar'.",
                     "type_id": 1,
@@ -33648,9 +33654,9 @@
                     "impact": null,
                     "id": 18
                 },
-                "to_id": -292,
+                "to_id": -328,
                 "to_phrase": {
-                    "id": 292,
+                    "id": 328,
                     "name": "US dollar",
                     "description": "The United States dollar (symbol: $; currency code: USD) is the official currency of the United States and several other countries. It is the world's primary reserve currency and the most-traded currency on the foreign exchange market. The dollar is divided into 100 cents.",
                     "type_id": null,
@@ -33661,12 +33667,12 @@
                 "class": "triple"
             },
             {
-                "id": 544,
+                "id": 580,
                 "name": "Yen is alias of Japanese yen",
                 "description": "'Yen' (used in the original dataset) and 'Japanese yen' (used in the new file) refer to the same currency (JPY).",
-                "from_id": 389,
+                "from_id": 423,
                 "from_phrase": {
-                    "id": 389,
+                    "id": 423,
                     "name": "Yen",
                     "description": "The yen (symbol: \u00a5; currency code: JPY) is the official currency of Japan. It is the third most-traded currency in the foreign exchange market after the United States dollar and the euro, and is widely used as a reserve currency. The yen is divided into 100 sen, though sen are no longer used in everyday transactions.",
                     "type_id": 1,
@@ -33686,9 +33692,9 @@
                     "impact": null,
                     "id": 18
                 },
-                "to_id": -301,
+                "to_id": -337,
                 "to_phrase": {
-                    "id": 301,
+                    "id": 337,
                     "name": "Japanese yen",
                     "description": "The Japanese yen (symbol: \u00a5; currency code: JPY) is the official currency of Japan, issued by the Bank of Japan. It is the third most-traded currency in the world after the US dollar and the euro, and serves as a major global reserve currency.",
                     "type_id": null,
@@ -33705,7 +33711,7 @@
                 "class": "triple"
             },
             {
-                "id": 918,
+                "id": 954,
                 "name": "climate change",
                 "description": "the long-term shifts in temperatures and weather patterns, caused since the 1800s mainly by the burning of fossil fuels.",
                 "class": "triple"
@@ -33757,13 +33763,13 @@
                 "class": "triple"
             },
             {
-                "id": 578,
+                "id": 612,
                 "name": "Nestle",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 565,
+                "id": 599,
                 "name": "Nestl\u00e9",
                 "type_id": 1,
                 "class": "word"
@@ -33790,27 +33796,27 @@
                 "class": "word"
             },
             {
-                "id": 293,
+                "id": 329,
                 "name": "U.S. dollar",
                 "description": "The United States dollar (symbol: $; currency code: USD) is the official currency of the United States and several other countries. It is the world's primary reserve currency and the most-traded currency on the foreign exchange market. The dollar is divided into 100 cents.",
                 "class": "triple"
             },
             {
-                "id": 403,
+                "id": 437,
                 "name": "US-Dollar",
                 "description": "Alternative (German) spelling of the United States dollar; an alias of 'US dollar'.",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 389,
+                "id": 423,
                 "name": "Yen",
                 "description": "The yen (symbol: \u00a5; currency code: JPY) is the official currency of Japan. It is the third most-traded currency in the foreign exchange market after the United States dollar and the euro, and is widely used as a reserve currency. The yen is divided into 100 sen, though sen are no longer used in everyday transactions.",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 157,
+                "id": 179,
                 "name": "tn can be symbol for tn (scaling)",
                 "from_id": 278,
                 "from_phrase": {
@@ -33847,7 +33853,7 @@
                 "class": "triple"
             },
             {
-                "id": 158,
+                "id": 180,
                 "name": "tn can be symbol for tn (weight)",
                 "from_id": 278,
                 "from_phrase": {

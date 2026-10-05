@@ -1,36 +1,36 @@
 [
     {
-        "id": 333,
+        "id": 367,
         "name": "2013",
         "type_id": 2,
         "class": "word"
     },
     {
-        "id": 334,
+        "id": 368,
         "name": "2014",
         "type_id": 2,
         "class": "word"
     },
     {
-        "id": 335,
+        "id": 369,
         "name": "2015",
         "type_id": 2,
         "class": "word"
     },
     {
-        "id": 336,
+        "id": 370,
         "name": "2016",
         "type_id": 2,
         "class": "word"
     },
     {
-        "id": 337,
+        "id": 371,
         "name": "2017",
         "type_id": 2,
         "class": "word"
     },
     {
-        "id": 338,
+        "id": 372,
         "name": "2018",
         "type_id": 2,
         "class": "word"
@@ -49,7 +49,7 @@
         "class": "word"
     },
     {
-        "id": 555,
+        "id": 589,
         "name": "ABB",
         "description": "ABB (ASEA Brown Boveri) is a Swedish-Swiss multinational corporation headquartered in Zürich",
         "type_id": 1,
@@ -82,31 +82,31 @@
         "class": "word"
     },
     {
-        "id": 558,
+        "id": 592,
         "name": "cash",
         "type_id": 1,
         "class": "word"
     },
     {
-        "id": 558,
+        "id": 594,
         "name": "cash flow",
         "class": "triple"
     },
     {
-        "id": 561,
+        "id": 597,
         "name": "cash flow statement",
         "description": "financial statement that shows how changes in balance sheet accounts and income affect cash and cash equivalents, and breaks the analysis down to operating, investing and financing activities. see Wikipedia: Cash flow statement (Q460184)",
         "class": "triple"
     },
     {
-        "id": 414,
+        "id": 448,
         "name": "CHF",
         "description": "ISO 4217 alphabetic code for the Swiss franc (Confoederatio Helvetica Franc), also widely used as the currency's typographic symbol.",
         "type_id": 3,
         "class": "word"
     },
     {
-        "id": 392,
+        "id": 428,
         "name": "CHF is symbol for Swiss franc",
         "class": "triple"
     },
@@ -228,7 +228,7 @@
         "class": "triple"
     },
     {
-        "id": 159,
+        "id": 181,
         "name": "global warming (global problem)",
         "class": "triple"
     },
@@ -266,7 +266,7 @@
         "class": "word"
     },
     {
-        "id": 156,
+        "id": 178,
         "name": "happy time points",
         "description": "To measure the \"happy points\" ask the person how happy he feels let's say on a scale from 1 (least happy) to 10 (most happy). If you sum the number of happy points over a period, you get the \"happy time points\".",
         "class": "triple"
@@ -299,7 +299,7 @@
         "class": "word"
     },
     {
-        "id": 559,
+        "id": 595,
         "name": "income taxes",
         "class": "triple"
     },
@@ -377,7 +377,7 @@
         "class": "word"
     },
     {
-        "id": 561,
+        "id": 595,
         "name": "parts",
         "type_id": 1,
         "class": "word"
@@ -464,7 +464,7 @@
         "class": "word"
     },
     {
-        "id": 557,
+        "id": 591,
         "name": "sales",
         "type_id": 1,
         "class": "word"
@@ -484,7 +484,7 @@
         "class": "word"
     },
     {
-        "id": 559,
+        "id": 593,
         "name": "statement",
         "type_id": 1,
         "class": "word"
@@ -510,7 +510,7 @@
         "class": "triple"
     },
     {
-        "id": 341,
+        "id": 375,
         "name": "total",
         "description": "the whole amount or count, e.g. the total number of possible outcomes",
         "type_id": 1,
@@ -524,14 +524,14 @@
         "class": "word"
     },
     {
-        "id": 400,
+        "id": 434,
         "name": "USD",
         "description": "ISO 4217 alphabetic code for the United States dollar.",
         "type_id": 3,
         "class": "word"
     },
     {
-        "id": 556,
+        "id": 590,
         "name": "Vestas",
         "type_id": 1,
         "class": "word"
@@ -600,7 +600,7 @@
         "class": "triple"
     },
     {
-        "id": 234,
+        "id": 270,
         "name": "Zurich Insurance",
         "description": "Zurich Insurance Group, a global multi-line insurer headquartered in Zurich",
         "class": "triple"

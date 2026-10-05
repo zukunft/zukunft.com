@@ -74,8 +74,8 @@ class groups
     // (see group_write_tests::create_test_groups)
     // each phrase id is followed by its type char, so the key is a pinned phrase id like
     // word_names::*_ID and is re-baselined the same way after a seed change
-    // (docs/llm/testing.md): here the words 135, 158, 201, 210 and 331
-    const string CH_2019_MIO = '05+0S+17+1G+39+';
+    // (docs/llm/testing.md): here the words 135, 158, 201, 210 and 365
+    const string CH_2019_MIO = '05+0S+17+1G+3h+';
 
     const string TN_TIME_VALUE = 'zukunft.com beta launch date';
     const string TD_TIME_VALUE = 'the expected launch date of the first beta version of zukunft.com';

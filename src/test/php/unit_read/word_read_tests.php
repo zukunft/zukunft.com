@@ -86,6 +86,19 @@ class word_read_tests
 
         // TODO load plural, type and view
 
+        $t->subheader($ts . 'value quality');
+        $test_name = 'the word assumed is typed value quality';
+        $wrd_asm = new word($t->usr1);
+        $wrd_asm->load_by_name(word_names::ASSUMED, $msg);
+        $t->assert_true($test_name, $wrd_asm->is_type(phrase_type_shared::VALUE_QUALITY));
+        $test_name = 'a value quality triple is typed value quality too';
+        $trp_pr = new triple($t->usr1);
+        $trp_pr->load_by_name(triple_names::PEER_REVIEWED, $msg);
+        $t->assert_true($test_name, $trp_pr->is_type(phrase_type_shared::VALUE_QUALITY));
+        // negative: a word that does not say how a number has been found has another type
+        $test_name = 'the word mathematics is not typed value quality';
+        $t->assert_false($test_name, $wrd->is_type(phrase_type_shared::VALUE_QUALITY));
+
 
         $t->subheader($ts . 'load with a message that already carries an error');
         // regression test for sandbox_named::row_mapper_sandbox: a load must map the fields (here the
