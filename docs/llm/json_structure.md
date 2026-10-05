@@ -1471,10 +1471,10 @@ the global warming problem (see *Self-consistency* above).
 
 A checked entry is a result like any other, so it is **also stored** in the
 results table with its phrases, its number and the formula that calculated it.
-Its `context` is stored as the source group only if it has at most four phrases;
-a longer context does not fit the `source_group_id` column of `results_prime` and
-`results_main`, so the result is saved without it and the import logs a warning
-(`result_list::drop_unsupported_src_grp`).
+Its `context` is always stored as the source group: a context of more than four
+phrases does not fit the bigint `source_group_id` column of `results_prime` and
+`results_main`, so such a result is saved in `results` (up to 16 context phrases)
+or `results_big` with the text key of its phrases (see `result::table_type`).
 
 ```json
 {

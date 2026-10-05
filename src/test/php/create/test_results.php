@@ -138,6 +138,17 @@ class test_results
         return $res;
     }
 
+    /**
+     * @return result of one prime phrase with a source group of more than 16 phrases
+     */
+    function result_src_grp_17_plus(): result
+    {
+        $t_grp = new test_groups($this->env);
+        $res = $this->result_prime();
+        $res->set_src_grp($t_grp->group_17_plus());
+        return $res;
+    }
+
     function result_prime_max(): result
     {
         $t_grp = new test_groups($this->env);

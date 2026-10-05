@@ -258,9 +258,9 @@ class db_object_multi extends db_object_key
 
     /**
      * @return bool true if the database id is set
-     *              the id of a main or big table row is a text such as '....06+....0S+' that must
+     *              the id of a main or big table row is a text such as '/x-06+0S+' that must
      *              never be compared with a number, because php compares a non-numeric text with
-     *              0 as text and reports e.g. '....06+' <= 0 as true (see the group id format)
+     *              0 as text and reports e.g. '/x-' <= 0 as true (see docs/llm/group_id.md)
      */
     function is_id_set(): bool
     {

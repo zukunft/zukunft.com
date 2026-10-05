@@ -281,10 +281,30 @@
     \-- row_mapper_multi - section for function row_mapper_multi not yet defined that it should be construct and map in 
             /result/result.php
     \-- id - section for function id not yet defined that it should be set and get in /result/result.php
-    \-- source_group - section for function source_group not yet defined that it should be set and get in /result/result
+    \-- grp_key_id - section for function grp_key_id not yet defined that it should be set and get in /result/result.php
+    \-- src_grp_field_type - section for function src_grp_field_type not yet defined that it should be table selection i
+            n /result/result.php
+    \-- is_prime - section for function is_prime is expected to be info in /result/result.php
+    \-- is_main - section for function is_main is expected to be info in /result/result.php
+    \-- is_big - section for function is_big is expected to be info in /result/result.php
+    \-- moved_table_types - section for function moved_table_types not yet defined that it should be table selection in 
+            /result/result.php
+    \-- table_type - section for function table_type not yet defined that it should be table selection in /result/result
             .php
-    \-- src_grp_id - section for function src_grp_id not yet defined that it should be set and get in /result/result.php
-    \-- formula_id - section for function formula_id not yet defined that it should be set and get in /result/result.php
+    \-- table_extension - section for function table_extension not yet defined that it should be table selection in /res
+            ult/result.php
+    \-- set_value - section for function set_value is expected to be set and get in /result/result.php
+    \-- get_value - section for function get_value is expected to be set and get in /result/result.php
+    \-- set_src_grp - section for function set_src_grp is expected to be set and get in /result/result.php
+    \-- source_group - section for function source_group not yet defined that it should be table selection in /result/re
+            sult.php
+    \-- src_grp_id - section for function src_grp_id not yet defined that it should be table selection in /result/result
+            .php
+    \-- set_formula - section for function set_formula is expected to be set and get in /result/result.php
+    \-- formula_id - section for function formula_id not yet defined that it should be table selection in /result/result
+            .php
+    \-- set_symbol - section for function set_symbol is expected to be set and get in /result/result.php
+    \-- get_symbol - section for function get_symbol is expected to be set and get in /result/result.php
     \-- is_std - section for function is_std is expected to be info in /result/result.php
     \-- phr_lst - section for function phr_lst not yet defined that it should be reduce code line length in /result/resu
             lt.php
@@ -297,6 +317,10 @@
     \-- load_sql_by_frm_grp - section for function load_sql_by_frm_grp is expected to be load sql in /result/result.php
     \-- load_sql_by_frm_grp_lst - section for function load_sql_by_frm_grp_lst is expected to be load sql in /result/res
             ult.php
+    \-- load_sql_by_id_moved - section for function load_sql_by_id_moved is expected to be load sql in /result/result.ph
+            p
+    \-- load_sql_by_grp_moved - section for function load_sql_by_grp_moved is expected to be load sql in /result/result.
+            php
     \-- load_sql_where - section for function load_sql_where is expected to be load sql in /result/result.php
     \-- load_phrases - section for function load_phrases is expected to be load in /result/result.php
     \-- used_phrase_selection - section for function used_phrase_selection not yet defined that it should be phrase load
@@ -311,8 +335,6 @@
             esult.php
     \-- figure - section for function figure not yet defined that it should be im- and export in /result/result.php
     \-- phr_ids - section for function phr_ids not yet defined that it should be im- and export in /result/result.php
-    \-- src_grp_is_storable - section for function src_grp_is_storable not yet defined that it should be info in /result
-            /result.php
     \-- delta - section for function delta is expected to be del in /result/result.php
     \-- name - section for function name is expected to be debug in /result/result.php
     \-- name_linked - section for function name_linked not yet defined that it should be display in /result/result.php
@@ -321,6 +343,8 @@
     \-- update - section for function update not yet defined that it should be display in /result/result.php
     \-- save_if_updated - section for function save_if_updated is expected to be save in /result/result.php
     \-- save - section for function save is expected to be save in /result/result.php
+    \-- row_in_other_table - section for function row_in_other_table not yet defined that it should be @return bool true
+             if a value without time is already saved in /result/result.php
     \-- order error - order of section construct and map has difference at api_mapper should be before row_mapper_multi
 \-- user
     \-- clone_reset - section for function clone_reset not yet defined that it should be construct and map in /user/user
@@ -1264,6 +1288,8 @@
             l_creator.php
     \-- add_usr_grp_field - section for function add_usr_grp_field not yet defined that it should be statement in /db/sq
             l_creator.php
+    \-- key_match - section for function key_match not yet defined that it should be internal where in /db/sql_creator.p
+            hp
     \-- get_order - section for function get_order is expected to be set and get in /db/sql_creator.php
     \-- set_order - section for function set_order is expected to be set and get in /db/sql_creator.php
     \-- set_page - section for function set_page is expected to be set and get in /db/sql_creator.php
@@ -1935,6 +1961,7 @@
     \-- is_big - section for function is_big is expected to be info in /group/group_id.php
     \-- int_array - section for function int_array not yet defined that it should be database link in /group/group_id.ph
             p
+    \-- int2key - section for function int2key not yet defined that it should be database link in /group/group_id.php
 \-- group_link
     \-- __construct - section for function __construct is expected to be construct and map in /group/group_link.php
     \-- row_mapper - section for function row_mapper missing in /group/group_link.php
@@ -5223,6 +5250,9 @@
     \-- add_usr_grp_field
         \-- sql_creator - define the fields that should be returned in a select query
 \-- internal where
+    \-- key_match
+        \-- sql_creator - the case-sensitive match of the key of a phrase within a group id (see sql_par_type::LIKE_KEY)
+                :
     \-- get_order
         \-- sql_creator - get the order SQL statement
     \-- set_order
@@ -5740,6 +5770,8 @@
         \-- group_id - @param int|string $grp_id
     \-- int_array
         \-- group_id - @param int|string $grp_id
+    \-- int2key
+        \-- group_id - the 16 slot text key of a prime group, e.g. for a result that is saved in the standard result
     \-- row_mapper
         \-- change_link - map the database fields to one change log entry to this log object
     \-- load_dummy
@@ -8539,7 +8571,7 @@
         \-- job_list - set the vars of these list display objects bases on the api json array
         \-- triple_list - set the triples based on the given json
     \-- id
-        \-- figure - @return int the figure id based on the value or result id
+        \-- figure - the figure id based on the value or result id: the result id is negated, and a text key,
     \-- obj_id
         \-- figure - @return int|string|null the id of the value or result id (not unique!)
         \-- combine_named - @return int|string|null the id of the object

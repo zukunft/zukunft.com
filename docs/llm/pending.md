@@ -1,5 +1,13 @@
 # pending - list of planned llm prompts with prio 1
 
+## start page
+
+for the start page with the main columns e.g. http://localhost/http/view.php?m=1&dls=20&dlc=2&dlr=0 fix the columns to 'problem	potential loss in trillion EUR	potential loss in GDP percent	potential loss in htp percent	solution	potential gain in billion htp	initial effort in person year	loss reduction in percent' so that e.g. 'potential loss in htp' is not shown
+
+## page cache
+
+before checking the page cache remove the 'back' part from the url. E.g. if http://localhost/http/view.php?m=9&id=%2Fx-1h_2H_2J_2t_&9m=1&9dls=20&9dlc=2&9dlr=0 if called, try to get the page result for http://localhost/http/view.php?m=9&id=%2Fx-1h_2H_2J_2t_ from the cache and if no cache is found save the page html with the url http://localhost/http/view.php?m=9&id=%2Fx-1h_2H_2J_2t_ not http://localhost/http/view.php?m=9&id=%2Fx-1h_2H_2J_2t_&9m=1&9dls=20&9dlc=2&9dlr=0  
+
 ## detail views
 
 add in the top right corner of the default views a '...' more link with a submenu similar to the table view with at least the two options 'detail' and 'detail + range'. 

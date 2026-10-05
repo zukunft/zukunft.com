@@ -289,8 +289,8 @@ class value_list extends sandbox_value_list
     {
         global $db_con;
         // a main or big value is selected by the alpha_num key of the phrase within its group id,
-        // and the key of the phrase id zero is the filler of every group id (e.g. '......+'), so a
-        // phrase without an id would select all values e.g. for the deletion of the linked values
+        // so a phrase without an id would select values by the key '.+' of the phrase id zero,
+        // which no value has, e.g. for the deletion of the linked values
         if ($phr->id() == 0) {
             log_err('the values of ' . $phr->dsp_id()
                 . ' cannot be loaded, because the phrase has no id');

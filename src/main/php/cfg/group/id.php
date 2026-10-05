@@ -101,34 +101,37 @@ class id
     /**
      * create the database key for a phrase group
      * @param phrase_list $phr_lst list of words or triples
-     * @param bool $fill true if a 512-bit key should be created
-     * @return string the 512-bit db key of up to 16 32 bit phrase ids in alpha_num format
+     * @return string the compact db key of the phrase ids e.g. "0U+0X+3-" (see docs/llm/group_id.md)
      */
-    protected function alpha_num(phrase_list $phr_lst, bool $fill = true): string
+    protected function alpha_num(phrase_list $phr_lst): string
+    {
+        $id_lst = [];
+        foreach ($phr_lst->lst() as $phr) {
+            $id_lst[] = $phr->id();
+        }
+        return $this->ids_to_alpha_num($id_lst);
+    }
+
+    /**
+     * create the database key for a list of phrase ids
+     * @param array $id_lst the phrase ids in the order of the key
+     * @return string the compact db key of the phrase ids e.g. "0U+0X+3-" (see docs/llm/group_id.md)
+     */
+    protected function ids_to_alpha_num(array $id_lst): string
     {
         $db_key = '';
-        $i = 16;
-        foreach ($phr_lst->lst() as $phr) {
-            $db_key .= $this->int2alpha_num($phr->id());
-            $i--;
-        }
-        // fill the remaining key entries with zero keys to always have the same key size
-        if ($fill) {
-            while ($i > 0) {
-                $db_key .= $this->int2alpha_num(0);
-                $i--;
-            }
+        foreach ($id_lst as $id) {
+            $db_key .= $this->int2alpha_num($id);
         }
         return $db_key;
     }
 
     /**
      * @param int $id a phrase id
-     * @return string a 6 char db key of a 32 bit phrase id in alpha_num format e.g. "3'082'113" ist "...AkS/"
+     * @return string the significant alpha_num chars of the id and its sign char e.g. "9kS/+" for 3'082'113
      */
     function int2alpha_num(int $id, bool $is_src = false, bool $is_res = false, bool $is_frm = false): string
     {
-        $i = 6;
         $chars = [];
         if ($is_frm) {
             $chars[] = self::CHAR_FORMULA;
@@ -156,21 +159,11 @@ class id
                 }
             }
         }
-        while ($i > 0 and $id > 0) {
-            if ($id < 64) {
-                $chars[] = $this->int2char($id);
-                $id = 0;
-            } else {
-                $chars[] = $this->int2char((int)($id % 64));
-                $id = (int)($id / 64);
-            }
-            $i--;
-        }
-        // fill the remaining key chars with zero keys to always have the same key size
-        while ($i > 0) {
-            $chars[] = $this->int2char(0);
-            $i--;
-        }
+        // only the significant chars, so zero is the single char "."
+        do {
+            $chars[] = $this->int2char($id % 64);
+            $id = intdiv($id, 64);
+        } while ($id > 0);
         return implode('', array_reverse($chars));
     }
 

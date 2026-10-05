@@ -134,7 +134,6 @@ group_id: $grp, $grp_id, $grp_id_helper, $grp_id_obj
 group_link: $grp_lnk
 group_list: $grp_lst, $lst, $phr_grp_lst_val
 html_base: $head_html, $html, $html_base
-id: $grp_id
 import_file: $imf, $import
 import_wikidata: $imp
 ip_range: $ip, $ip_range

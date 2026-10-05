@@ -1400,7 +1400,9 @@ class sandbox_value extends sandbox_multi
                 log_err('the number if id fields and id values differ for ' . $this->dsp_id());
             } else {
                 foreach ($fld_lst as $key => $fld) {
-                    $id = null;
+                    // zero like the prime branch, because an unused phrase column of the row is 0
+                    // and "= null" would never select the row e.g. for the delete of the result
+                    $id = 0;
                     if (array_key_exists($key, $id_lst)) {
                         $id = $id_lst[$key];
                         $lst->add_field($fld, $id, sql_field_type::INT_SMALL);
@@ -1413,7 +1415,8 @@ class sandbox_value extends sandbox_multi
             // the group is the key of a value, so use the same id as the prime branch above and as
             // the table selection, never the object id, which can have lost the group id e.g. by a
             // row mapper that has written the text group id to the int object id (see group::id_or_phrase_list_id)
-            $grp_key = $this->grp()->id_or_phrase_list_id();
+            // and the text key of a result that its source group has moved to a bigger table
+            $grp_key = $this->grp_key_id();
             // a read without a key simply finds no row, but a write would add or change a row with
             // the key 0, which no user can ever select again, so report the missing key
             if (($grp_key === 0 or $grp_key === '')
@@ -1634,11 +1637,7 @@ class sandbox_value extends sandbox_multi
             $typ_lst = new api_type_list($typ_lst);
         }
 
-        if ($typ_lst->no_key_fill()) {
-            $vars[json_fields::ID] = $this->grp()->id(true);
-        } else {
-            $vars[json_fields::ID] = $this->grp()->id();
-        }
+        $vars[json_fields::ID] = $this->grp()->id();
         if ($this->get_description() != null) {
             $vars[json_fields::DESCRIPTION] = $this->get_description();
         }
@@ -2127,6 +2126,21 @@ class sandbox_value extends sandbox_multi
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list with the field names of the object and any child object
      */
+    /**
+     * the key fields of an insert as the group of this value or result gives them
+     * @param user_message $msg to collect the problems of the key creation
+     * @return sql_par_field_list the key fields of the insert statement
+     */
+    protected function id_fvt_insert(user_message $msg): sql_par_field_list
+    {
+        if ($this::class == result::class and $this->is_main()) {
+            $lst = $this->grp()->id_fvt_main($msg);
+        } else {
+            $lst = $this->grp()->id_fvt($msg);
+        }
+        return $lst;
+    }
+
     function db_fields_changed(
         sandbox_multi|sandbox_value $sbx,
         user_message                $msg,
@@ -2151,11 +2165,7 @@ class sandbox_value extends sandbox_multi
         $lst = new sql_par_field_list();
 
         if ($is_insert) {
-            if ($this::class == result::class and $this->is_main()) {
-                $lst = $this->grp()->id_fvt_main($msg);
-            } else {
-                $lst = $this->grp()->id_fvt($msg);
-            }
+            $lst = $this->id_fvt_insert($msg);
         }
         $lst->merge(parent::db_fields_changed($sbx, $msg, $sc_par_lst));
         if (!$sc_par_lst->is_standard()) {

@@ -352,6 +352,17 @@ class value_list_ui_tests
         $hdr_unit_mayor = $lib->html_to_text($lib->str_left_of($tbl_unit_mayor, '</tr>'));
         $test_name = 'the mayor columns show one unit per column';
         $t->assert($test_name, substr_count($hdr_unit_mayor, word_names::LOSS . $unit_sep), 1);
+        // the unit of most values leads, so the start page shows the potential loss in trillion
+        // EUR of every problem and not the one bigger potential loss in htp of a single problem
+        $tbl_unit_most = $t_val->value_list_unit_majority_ui()->table_by_related_columns(
+            $msg_ui, new phrase_list_ui(), $loss_lst->column_names(), false, true, $loss_lst,
+            null, [], false, value_list_ui::COLUMN_TIERS_EX_MAIN);
+        $hdr_unit_most = $lib->html_to_text($lib->str_left_of($tbl_unit_most, '</tr>'));
+        $test_name = 'the mayor column shows the unit of most values';
+        $t->assert_text_contains($test_name, $hdr_unit_most, word_names::EUR);
+        // negative: the unit of the single bigger number is left to the full table
+        $test_name = '... and not the unit of the single biggest number';
+        $t->assert_text_not_contains($test_name, $hdr_unit_most, word_names::HTP);
         $tbl_unit_main = $t_val->value_list_two_units_ui()->table_by_related_columns(
             $msg_ui, new phrase_list_ui(), $loss_lst->column_names(), false, true, $loss_lst,
             null, [], false, value_list_ui::COLUMN_TIERS_EX_MINOR);

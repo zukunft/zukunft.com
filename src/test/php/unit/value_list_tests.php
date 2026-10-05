@@ -38,6 +38,7 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::VALUE . 'value_list.php';
 include_once paths::MODEL_VALUE . 'value_list.php';
+include_once paths::SHARED . 'group_id_url.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
@@ -50,6 +51,7 @@ use Zukunft\ZukunftCom\main\php\web\value\value_list as value_list_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\enum\value_types;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\group_id_url;
 use Zukunft\ZukunftCom\main\php\shared\const\impacts;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_groups;
@@ -331,7 +333,7 @@ class value_list_tests
         $grp_id = new group_id();
         $expected = [
             word_names::MATH_ID,
-            '%' . $grp_id->int2alpha_num(word_names::MATH_ID) . '%',
+            group_id_url::phrase_pattern($grp_id->int2alpha_num(word_names::MATH_ID)),
             users::SYSTEM_ID
         ];
         $t->assert($test_name, array_values($qp->par), $expected);

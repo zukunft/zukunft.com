@@ -52,6 +52,7 @@ include_once paths::MODEL_VALUE . 'value.php';
 include_once paths::MODEL_VALUE . 'value_base.php';
 include_once paths::MODEL_FORMULA . 'formula.php';
 include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'group_id_url.php';
 
 use Zukunft\ZukunftCom\main\php\shared\const\fields\group_fields;
 use Zukunft\ZukunftCom\main\php\cfg\helper\combine_object;
@@ -62,6 +63,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_base;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\group_id_url;
 use DateTime;
 
 class figure extends combine_object
@@ -183,23 +185,26 @@ class figure extends combine_object
     }
 
     /**
-     * @return int the figure id based on the value or result id
+     * the figure id based on the value or result id: the result id is negated, and a text key,
+     * which cannot be negated, gets a leading "-", which never starts a group id (see docs/llm/group_id.md)
      * must have the same logic as the database view and the frontend
+     *
+     * @return int|string the unique id of the value or result within the figure list
      */
-    function id(): int
+    function id(): int|string
     {
+        $id = $this->obj_id();
         if ($this->is_result()) {
-            return $this->obj_id() * -1;
-        } else {
-            return $this->obj_id();
+            $id = is_string($id) ? group_id_url::FIGURE_RESULT_PREFIX . $id : $id * -1;
         }
+        return $id;
     }
 
     /**
-     * @return int the id of the value or result id (not unique!)
+     * @return int|string the id of the value or result id (not unique!) e.g. the compact text key of the group
      * must have the same logic as the database view and the frontend
      */
-    function obj_id(): int
+    function obj_id(): int|string
     {
         return $this->obj()->id();
     }

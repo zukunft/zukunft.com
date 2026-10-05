@@ -74,7 +74,7 @@ These nouns have precise, non-interchangeable meanings — use them exactly:
 - **source** — import-only data source
 - **ref** — im- and export to external systems
 - **value** — a number for calculation
-- **group** — a list of words or triples
+- **group** — a list of words or triples; its id is the key of a value or result (format: `docs/llm/group_id.md`)
 - **formula** — an expression for calculation
 - **result** — the numeric result of a formula
 - **view** — a named display mask

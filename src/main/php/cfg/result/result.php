@@ -170,6 +170,23 @@ class result extends sandbox_value
     const array FLD_ALL_OWNER = result_db::FLD_ALL_OWNER;
     const array FLD_ALL_CHANGER = result_db::FLD_ALL_CHANGER;
 
+    // the type of the source_group_id field by the result table: the bigint of the prime and main
+    // table, char(112) of the standard table and text of the big table; by the table and not by
+    // the source group, so that each prepared insert of a table has always the same field types
+    const array SRC_GRP_FIELD_TYPES = [
+        sql_type::PRIME->value => sql_field_type::INT,
+        sql_type::MAIN->value => sql_field_type::INT,
+        sql_type::MOST->value => sql_field_type::KEY_512,
+        sql_type::BIG->value => sql_field_type::TEXT,
+    ];
+
+    // the tables that a source group can move a result to, each with the tables of the own
+    // phrases that are smaller, in the order of the fallback load (see load_moved)
+    const array MOVED_FROM_TABLE_TYPES = [
+        sql_type::MOST->value => [sql_type::PRIME, sql_type::MAIN],
+        sql_type::BIG->value => [sql_type::PRIME, sql_type::MAIN, sql_type::MOST],
+    ];
+
 
     /*
      * object vars
@@ -209,6 +226,9 @@ class result extends sandbox_value
     // the right side of the formula split into parts, each the shown text and the figure used or
     // null for an operator text, filled only for the result page like the used lists above
     public ?array $expression_parts = null;
+    // the bigger table in which the fallback load looks for a result that its source group has
+    // moved there (see load_moved), null if the result is in the table of its source group
+    private ?sql_type $moved_table_type = null;
 
 
     /*
@@ -229,6 +249,7 @@ class result extends sandbox_value
         $this->set_grp(new group($this->get_user()));
         $this->src_grp = new group($this->get_user());
         $this->add_info = null;
+        $this->moved_table_type = null;
         $this->set_id(0);
     }
 
@@ -258,8 +279,7 @@ class result extends sandbox_value
             // (see api_json_array for the on demand load of the name)
             $this->frm = new formula($this->get_user());
             $this->frm->set((int)$db_row[formula_fields::FLD_ID]);
-            // a result imported without a source group has none in the database
-            // (see result_list::drop_unsupported_src_grp)
+            // a result imported without a context has no source group in the database
             $src_grp_id = $db_row[result_fields::FLD_SOURCE_GRP] ?? null;
             if ($src_grp_id !== null and $src_grp_id !== '') {
                 if (substr($ext, 0, 2) == group_id::TBL_EXT_PHRASE_ID) {
@@ -562,7 +582,166 @@ class result extends sandbox_value
      */
     function id(): int|string
     {
-        return $this->grp()->id();
+        return $this->text_key_if_moved($this->grp()->id());
+    }
+
+    /**
+     * the key of the result in the database, which is the text key also for a prime group if the
+     * source group has moved the result to the standard or the big table (see table_type)
+     * @return int|string the database key of the result
+     */
+    function grp_key_id(): int|string
+    {
+        return $this->text_key_if_moved(parent::grp_key_id());
+    }
+
+    /**
+     * @return int|string the group id that selects the row, the text key if the result has been moved
+     */
+    protected function grp_where_id(): int|string
+    {
+        return $this->text_key_if_moved(parent::grp_where_id());
+    }
+
+    /**
+     * @param int|string $key the key of the result phrases as the group uses it
+     * @return int|string the text key of a prime group if the result has been moved to a text table
+     */
+    private function text_key_if_moved(int|string $key): int|string
+    {
+        $result = $key;
+        if ($this->src_grp_moves_table() and is_int($key) and $key != 0) {
+            $result = new group_id()->int2key($key);
+        }
+        return $result;
+    }
+
+
+    /*
+     * table selection
+     */
+
+    /**
+     * the source group is written to the source_group_id column of the result table, which is a
+     * bigint in the prime and main table, char(112) in the standard table and text in the big table,
+     * so the result table must be big enough also for the source group, not only for the result
+     * @return bool true if the source group has moved the result to a bigger table
+     */
+    private function src_grp_moves_table(): bool
+    {
+        return $this->moved_to_table_type() != sql_type::PRIME;
+    }
+
+    /**
+     * @return sql_type the bigger table type that the source group or the fallback load has
+     *                  moved the result to, or PRIME if the table of the own phrases is used
+     */
+    private function moved_to_table_type(): sql_type
+    {
+        $typ = $this->src_table_type();
+        if ($this->moved_table_type == sql_type::BIG) {
+            $typ = sql_type::BIG;
+        } elseif ($this->moved_table_type == sql_type::MOST and $typ == sql_type::PRIME) {
+            $typ = sql_type::MOST;
+        }
+        return $typ;
+    }
+
+    /**
+     * @return sql_type the smallest result table type whose source_group_id column fits the source group
+     */
+    private function src_table_type(): sql_type
+    {
+        $typ = sql_type::PRIME;
+        if ($this->src_grp !== null and !$this->src_grp->is_prime()) {
+            $typ = sql_type::MOST;
+            if ($this->src_grp->is_big()) {
+                $typ = sql_type::BIG;
+            }
+        }
+        return $typ;
+    }
+
+    /**
+     * public because the field type decides how the source group is written, so it is unit tested
+     * @return sql_field_type the type of the source_group_id column of the result table
+     */
+    function src_grp_field_type(): sql_field_type
+    {
+        return self::SRC_GRP_FIELD_TYPES[$this->table_type()->value];
+    }
+
+    /**
+     * the key fields of the insert: the text key if the source group has moved the result to a
+     * text table, because the group itself would give the phrase id columns of the prime table
+     * @param user_message $msg to collect the problems of the key creation
+     * @return sql_par_field_list the key fields of the insert statement
+     */
+    protected function id_fvt_insert(user_message $msg): sql_par_field_list
+    {
+        if ($this->src_grp_moves_table()) {
+            $lst = new sql_par_field_list();
+            $key_typ = $this->is_big() ? sql_field_type::TEXT : sql_field_type::KEY_512;
+            $lst->add_field(group_fields::FLD_ID, $this->grp_key_id(), $key_typ);
+        } else {
+            $lst = parent::id_fvt_insert($msg);
+        }
+        return $lst;
+    }
+
+    function is_prime(): bool
+    {
+        return (!$this->src_grp_moves_table() and parent::is_prime());
+    }
+
+    function is_main(): bool
+    {
+        return (!$this->src_grp_moves_table() and parent::is_main());
+    }
+
+    function is_big(): bool
+    {
+        return ($this->moved_to_table_type() == sql_type::BIG or parent::is_big());
+    }
+
+    /**
+     * public because the fallback load depends on it, so it is unit tested
+     * @return array the bigger tables that a source group may have moved this result to, in the
+     *               order of the fallback load, empty for a result that is already in the big table
+     */
+    function moved_table_types(): array
+    {
+        $own_typ = $this->table_type();
+        $types = [];
+        foreach (self::MOVED_FROM_TABLE_TYPES as $typ => $from_types) {
+            if (in_array($own_typ, $from_types)) {
+                $types[] = sql_type::from($typ);
+            }
+        }
+        return $types;
+    }
+
+    function table_type(): sql_type
+    {
+        $typ = parent::table_type();
+        if ($this->src_grp_moves_table()) {
+            $typ = sql_type::MOST;
+            if ($this->is_big()) {
+                $typ = sql_type::BIG;
+            }
+        }
+        return $typ;
+    }
+
+    function table_extension(): string
+    {
+        $ext = parent::table_extension();
+        // like group_id::table_extension the standard and the big table have no extension,
+        // because the table type already adds e.g. "_big" to the query name
+        if ($this->src_grp_moves_table()) {
+            $ext = '';
+        }
+        return $ext;
     }
 
     function set_value(float|DateTime|string|null $val): void
@@ -817,8 +996,75 @@ class result extends sandbox_value
                 $result = $this->id();
             }
         }
+        // a result that its source group has moved to a bigger table has no row in its own table
+        if ($result === 0 and $id != 0) {
+            $load_sql = fn(sql_creator $sc, sql_type $typ) => $this->load_sql_by_id_moved($sc, $id, $typ);
+            if ($this->load_moved($load_sql, $msg)) {
+                $result = $this->id();
+            }
+        }
 
         return $result;
+    }
+
+    /**
+     * the query of the fallback load by id in a table that the source group may have moved the
+     * result to; public, because the query must match its fixture, so it is unit tested
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param int|string $id the id of the result as the table of its own phrases uses it
+     * @param sql_type $tbl_typ the bigger table to look in e.g. MOST for the standard result table
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
+     */
+    function load_sql_by_id_moved(sql_creator $sc, int|string $id, sql_type $tbl_typ): sql_par
+    {
+        $this->moved_table_type = $tbl_typ;
+        return $this->load_sql_by_id($sc, $id);
+    }
+
+    /**
+     * the query of the fallback load by group in a table that the source group may have moved the
+     * result to; public, because the query must match its fixture, so it is unit tested
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param group $grp the phrase group of the result
+     * @param sql_type $tbl_typ the bigger table to look in e.g. MOST for the standard result table
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
+     */
+    function load_sql_by_grp_moved(sql_creator $sc, group $grp, sql_type $tbl_typ): sql_par
+    {
+        $this->moved_table_type = $tbl_typ;
+        return $this->load_sql_by_grp($sc, $grp);
+    }
+
+    /**
+     * load the row from a bigger table that the source group may have moved the result to, if the
+     * table of its own phrases has no row (see table_type); the tables are tried in the order of
+     * MOVED_FROM_TABLE_TYPES, so the smaller table that fits is found first
+     *
+     * @param callable $load_sql creates the query for the given sql creator and table type
+     * @param user_message $msg to collect the problems of the load
+     * @return bool true if the result has been found in one of the bigger tables
+     */
+    private function load_moved(callable $load_sql, user_message $msg): bool
+    {
+        global $db_con;
+        $loaded = false;
+        foreach ($this->moved_table_types() as $tbl_typ) {
+            if (!$loaded) {
+                $qp = $load_sql($db_con->sql_creator(), $tbl_typ);
+                $db_row = $db_con->get1($qp, $msg);
+                if ($db_row !== false and $db_row !== null and $db_row !== []) {
+                    $this->row_mapper_multi($db_row, $msg, $qp->ext);
+                    $loaded = true;
+                }
+            }
+        }
+        // a result that is in none of the tables keeps the table of its own phrases
+        if (!$loaded) {
+            $this->moved_table_type = null;
+        }
+        return $loaded;
     }
 
     /**
@@ -845,6 +1091,11 @@ class result extends sandbox_value
                     $this->row_mapper_multi($db_row, $msg, $qp->ext);
                     $result = true;
                 }
+            }
+            // a result that its source group has moved to a bigger table has no row in its own table
+            if (!$result) {
+                $load_sql = fn(sql_creator $sc, sql_type $typ) => $this->load_sql_by_grp_moved($sc, $grp, $typ);
+                $result = $this->load_moved($load_sql, $msg);
             }
         }
 
@@ -1029,8 +1280,7 @@ class result extends sandbox_value
                 }
             }
         }
-        // a result imported without a source group has no source words to miss
-        // (see result_list::drop_unsupported_src_grp), so only a set group is checked
+        // a result imported without a context has no source words to miss, so only a set group is checked
         if ($this->src_grp->is_id_set()) {
             if ($this->src_grp->phrase_list() != null) {
                 if ($this->src_grp->phrase_list()->empty()) {
@@ -1076,7 +1326,8 @@ class result extends sandbox_value
      */
     function load_phrases(user_message $msg, bool $force_reload = false): void
     {
-        if ($this->id() > 0) {
+        // isset() and not "> 0", because the text key of a result e.g. "/x-" is no number
+        if ($this->isset()) {
             log_debug('for user ' . $this->get_user()->name);
             $this->load_phr_lst_src($msg, $force_reload);
             $this->load_phr_lst($msg, $force_reload);
@@ -1086,7 +1337,7 @@ class result extends sandbox_value
     /**
      * the phrases that name the numbers used to calculate this result: the source phrases that the
      * calculation has saved with the result, or the phrases of the result itself if the source group
-     * is not set, e.g. because the group was too big to be saved (see result_list::drop_unsupported_src_grp),
+     * is not set, e.g. because the result has been imported without a context,
      * so that the result page can always show what the number is based on; returned with the
      * selection type, because only the saved source phrases name the numbers exactly
      *
@@ -1555,21 +1806,6 @@ class result extends sandbox_value
      */
 
     /**
-     * true if save() can write the source group of this result
-     *
-     * the source group is stored as the bigint source_group_id of results_prime and
-     * results_main, so only a "prime" group (up to 4 phrases, encoded as a 64-bit int) fits;
-     * a group of more phrases encodes as an alpha-num string, which needs a group row that
-     * the import does not yet write (see result_list::drop_unsupported_src_grp)
-     *
-     * @return bool true if the source group is missing or small enough to be written
-     */
-    function src_grp_is_storable(): bool
-    {
-        return $this->src_grp === null or $this->src_grp->is_prime();
-    }
-
-    /**
      * Create an object where only the vars are set
      * where the var of this object differs from the var of the given object.
      *
@@ -1921,14 +2157,21 @@ class result extends sandbox_value
 
             // check if a database update is needed
             // or if a second results object with the database values
+            // the row may be in the table of the own phrases or in a bigger table that a source
+            // group has moved it to, so the load starts with the group id (see load_moved)
             $res_db = new result($this->get_user());
-            $res_db->load_by_id($this->id(), $msg);
-            $row_id = $res_db->id();
+            $row_id = $res_db->load_by_id($this->grp()->id(), $msg);
             $db_val = $res_db->number();
+            $row_found = ($row_id !== 0 and $row_id !== '');
+            // a row in another table than the one that fits the source group now is moved there
+            if ($row_found and $this->row_in_other_table($res_db)) {
+                $this->del_row_of_other_table($res_db, $msg);
+                $row_found = false;
+            }
 
             // if value exists, check it an update is needed
             // updates of results are not logged because they could be reproduced
-            if ($row_id > 0) {
+            if ($row_found) {
                 if ($db_con->sf($db_val) <> $db_con->sf($this->number())) {
                     $msg_txt = 'update result ' . sandbox_multi::FLD_VALUE . ' to ' . $this->number()
                         . ' from ' . $db_val . ' for ' . $this->dsp_id();
@@ -1959,6 +2202,32 @@ class result extends sandbox_value
         log_debug("id (" . $msg->get_row_id() . ")");
         return $msg->is_ok();
 
+    }
+
+    /**
+     * public because the save decides by it if the saved row must move, so it is unit tested
+     * @param result $res_db the result as it has been loaded from the database
+     * @return bool true if the saved row is in another table than the one that fits this result now
+     */
+    function row_in_other_table(result $res_db): bool
+    {
+        return $res_db->table_type() != $this->table_type();
+    }
+
+    /**
+     * remove the row of the table that does not fit the source group any more, so that the save
+     * inserts the result into the fitting table and no second row remains; without change log,
+     * because a result is derived data that the calculation recreates (def::MAIN_CLASSES_NO_CHANGE_LOG)
+     *
+     * @param result $res_db the result as it has been loaded from the other table
+     * @param user_message $msg to collect the problems of the delete
+     * @return void
+     */
+    private function del_row_of_other_table(result $res_db, user_message $msg): void
+    {
+        $res_lst = new result_list($this->get_user());
+        $res_lst->add($res_db);
+        $res_lst->db_delete_no_log($msg, null, result::class);
     }
 
 
@@ -2005,7 +2274,7 @@ class result extends sandbox_value
                 $lst->add_field(
                     result_fields::FLD_SOURCE . group_fields::FLD_ID,
                     $this->src_grp_id(),
-                    sql_field_type::INT
+                    $this->src_grp_field_type()
                 );
             }
             if ($sbx->formula_id() !== $this->formula_id()) {

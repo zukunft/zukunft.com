@@ -74,9 +74,6 @@ enum api_types: string
     // include object id and the impact of excluded objects for warning messages in the frontend
     case WITH_EXCLUDED_ID = 'with_excluded_id';
 
-    // do not fill up the group id to the full key length
-    case NO_KEY_FILL = 'no_key_fill';
-
     // internal parameter for unit testing to switch off the database loading of missing objects
     // and ignore the excluded flag so include all fields also for excluded
     case TEST_MODE = 'test_mode';

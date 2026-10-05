@@ -42,9 +42,9 @@ PREPARE value_list_by_phr_lst_p3 FROM
                0 AS change_user_id,
                0 AS share_type_id
           FROM values_standard
-         WHERE group_id LIKE BINARY ?
-           AND group_id LIKE BINARY ?
-           AND group_id LIKE BINARY ?
+         WHERE REGEXP_LIKE(group_id, ?, 'c')
+           AND REGEXP_LIKE(group_id, ?, 'c')
+           AND REGEXP_LIKE(group_id, ?, 'c')
 
   UNION SELECT s.group_id,
                u.group_id AS user_group_id,
@@ -63,9 +63,9 @@ PREPARE value_list_by_phr_lst_p3 FROM
           FROM `values` s
      LEFT JOIN user_values u ON s.group_id = u.group_id
                             AND u.user_id = ?
-         WHERE s.group_id LIKE BINARY ?
-           AND s.group_id LIKE BINARY ?
-           AND s.group_id LIKE BINARY ?
+         WHERE REGEXP_LIKE(s.group_id, ?, 'c')
+           AND REGEXP_LIKE(s.group_id, ?, 'c')
+           AND REGEXP_LIKE(s.group_id, ?, 'c')
 
   UNION SELECT NULL AS group_id,
                NULL AS user_group_id,
@@ -117,6 +117,6 @@ PREPARE value_list_by_phr_lst_p3 FROM
           FROM values_big s
      LEFT JOIN user_values_big u ON s.group_id = u.group_id
                                 AND u.user_id = ?
-         WHERE s.group_id LIKE BINARY ?
-           AND s.group_id LIKE BINARY ?
-           AND s.group_id LIKE BINARY ?';
+         WHERE REGEXP_LIKE(s.group_id, ?, 'c')
+           AND REGEXP_LIKE(s.group_id, ?, 'c')
+           AND REGEXP_LIKE(s.group_id, ?, 'c')';

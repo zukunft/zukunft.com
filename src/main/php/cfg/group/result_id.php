@@ -107,7 +107,6 @@ class result_id extends id
     const int MAIN_SOURCE_PHRASES = 1;
     const int MAIN_RESULT_PHRASES = 1;
     const int STANDARD_PHRASES = 15;
-    const int PHRASES = 15;
 
     /**
      * @param phrase_list $phr_lst the list of phrases that define the result
@@ -115,6 +114,7 @@ class result_id extends id
      * @param formula $frm the formula used to calculate the result
      * @return int|string the group id based on the given phrase list
      *                    as 64-bit integer, 512-bit key as 112 chars or list of more than 16 keys with 6 chars
+     *                    using the compact text key e.g. "J=A(A<" (see docs/llm/group_id.md)
      */
     function get_id(phrase_list $phr_lst, phrase_list $src_phr_lst, formula $frm, user_message $msg): int|string
     {
@@ -144,7 +144,7 @@ class result_id extends id
         } elseif ($phr_lst->count() <= self::STANDARD_PHRASES) {
             $db_key = $this->alpha_num_result($both_lst, $src_only, $res_only, $frm);
         } else {
-            $db_key = $this->alpha_num_big($phr_lst);
+            $db_key = $this->alpha_num($phr_lst);
         }
         return $db_key;
     }
@@ -224,24 +224,11 @@ class result_id extends id
 
     /**
      * create the database key for a phrase group
-     * @param phrase_list $phr_lst list of words or triples
-     * @return string the group id based on the given phrase list of more than 16 keys with 6 chars
-     */
-    private function alpha_num_big(phrase_list $phr_lst): string
-    {
-        $db_key = '';
-        foreach ($phr_lst->lst() as $phr) {
-            $db_key .= $this->int2alpha_num($phr->id());
-        }
-        return $db_key;
-    }
-
-    /**
-     * create the database key for a phrase group
      * @param phrase_list $both_lst list of words or triples that are used to select the source and result
      * @param phrase_list $src_lst list of words or triples that are specific for the source value
      * @param phrase_list $res_lst list of words or triples that are specific for the result
      * @return string the 512 bit db key of up to 16 32 bit phrase ids in alpha_num format
+     *                using the compact db key of the formula and phrase ids e.g. "J=A(A<" (see docs/llm/group_id.md)
      */
     protected function alpha_num_result(
         phrase_list $both_lst,
@@ -251,23 +238,14 @@ class result_id extends id
     ): string
     {
         $db_key = $this->int2alpha_num($frm->id(), false, false, true);
-        $i = self::PHRASES;
         foreach ($both_lst->lst() as $phr) {
             $db_key .= $this->int2alpha_num($phr->id());
-            $i--;
         }
         foreach ($src_lst->lst() as $phr) {
             $db_key .= $this->int2alpha_num($phr->id(), true);
-            $i--;
         }
         foreach ($res_lst->lst() as $phr) {
             $db_key .= $this->int2alpha_num($phr->id(), false, true);
-            $i--;
-        }
-        // fill the remaining key entries with zero keys to always have the same key size
-        while ($i > 0) {
-            $db_key .= $this->int2alpha_num(0);
-            $i--;
         }
         return $db_key;
     }

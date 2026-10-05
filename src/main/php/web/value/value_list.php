@@ -1374,7 +1374,10 @@ class value_list extends ListBase
     /**
      * split the values of one column phrase into the values of each unit, e.g. the potential
      * loss in trillion EUR and the potential loss in percent htp, because a column shows one
-     * measure; the values are ordered by impact, so the unit of the most relevant value leads
+     * measure; the unit with the most values leads, because the table with the mayor tier only
+     * shows the leading unit (see columns_of_tiers), e.g. the potential loss in trillion EUR of
+     * every problem and not the one potential loss in htp of a single problem, which has the
+     * bigger number; units with the same number of values keep the order of the impact
      *
      * a confidence value is a share whatever the unit of the value it qualifies, so it follows
      * the value with the same subject instead of its own unit (see cell)
@@ -1394,6 +1397,8 @@ class value_list extends ListBase
                 $result[$this->unit_key($val, $msg)][] = $val;
             }
         }
+        // a stable sort, so units with the same number of values keep the impact order
+        uasort($result, fn(array $a, array $b) => count($b) <=> count($a));
         foreach ($conf_lst as $conf_val) {
             $found = $this->unit_of_qualified($result, $conf_val, $msg);
             // a confidence value that qualifies no value of the column keeps its own unit, where

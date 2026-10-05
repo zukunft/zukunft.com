@@ -181,7 +181,7 @@
       "name": "annual damage in money",
       "description": "the loss that a problem causes each year in money, the world GDP multiplied by the share of it that the problem costs per year",
       "expression": "\"potential loss\",\"trillion\",\"EUR\" = \"world\",\"GDP\",\"trillion\",\"EUR\" * \"percent\",\"GDP\",\"annual\"",
-      "latex": "L_{pot} = GDP_{world} \\cdot d_{annual}",
+      "latex": "\\text{potential loss} = \\text{GDP}_{\\text{world}} \\cdot \\text{percent}_{\\text{annual}}",
       "assigned_word": "GDP"
     },
     {

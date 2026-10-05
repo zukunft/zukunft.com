@@ -35,11 +35,14 @@ namespace Zukunft\ZukunftCom\test\php\unit;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\group\group_id;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_list;
 use Zukunft\ZukunftCom\main\php\cfg\group\result_id;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\cfg\result\result;
@@ -81,6 +84,9 @@ include_once paths::SHARED_ENUM . 'messages.php';
 
 class result_tests
 {
+
+    // the fixture file extension of a statement for a result that its source group has moved
+    const string SQL_EXT_MOVED = '_moved';
 
     function run(test_cleanup $t): void
     {
@@ -200,15 +206,118 @@ class result_tests
         $res = $t_res->result_main_filled();
         $t->assert_reset($res);
 
-        // the source group is stored as the bigint source_group_id of results_prime and
-        // results_main, so only a group of up to 4 phrases fits; the import saves a result
-        // with a bigger source group without it instead of dropping the calculated number
-        // (see result_list::drop_unsupported_src_grp)
-        $test_name = 'a source group of one phrase can be stored';
-        $t->assert_true($test_name, $t_res->result_prime()->src_grp_is_storable());
-        $test_name = '... and a source group of 16 phrases cannot';
-        $t->assert_false($test_name, $t_res->result_src_grp_big()->src_grp_is_storable());
+        // the result table must always fit the source group, because the source_group_id column
+        // of the prime and main tables is a bigint, of the standard table char(112) and of the
+        // big table text, so a bigger source group moves the result to a bigger table
+        $t->subheader($ts . 'table selection by the source group');
+        $test_name = 'a source group of 16 phrases moves a prime result to the standard table';
+        $res_src_16 = $t_res->result_src_grp_big();
+        $t->assert($test_name, $res_src_16->table_type()->value, sql_type::MOST->value);
+        $test_name = '... which is not the prime table';
+        $t->assert_false($test_name, $res_src_16->is_prime());
+        $test_name = '... and has no table extension';
+        $t->assert($test_name, $res_src_16->table_extension(), '');
+        $test_name = '... where the result is selected by the text key of its phrases';
+        $grp_id = new group_id();
+        $t->assert($test_name, $res_src_16->id(), $grp_id->int2key($res_src_16->grp()->id()));
+        $test_name = '... and the source group is written as a text key';
+        $t->assert($test_name, $res_src_16->src_grp_field_type()->value, sql_field_type::KEY_512->value);
+        $test_name = 'a source group of more than 16 phrases moves a prime result to the big table';
+        $res_src_17 = $t_res->result_src_grp_17_plus();
+        $t->assert($test_name, $res_src_17->table_type()->value, sql_type::BIG->value);
+        $test_name = '... and the source group is written as text';
+        $t->assert($test_name, $res_src_17->src_grp_field_type()->value, sql_field_type::TEXT->value);
+        // negative: a prime source group keeps the result in the table of its own phrases
+        $test_name = 'a prime source group keeps a prime result in the prime table';
+        $res_src_prime = $t_res->result_prime();
+        $t->assert($test_name, $res_src_prime->table_type()->value, sql_type::PRIME->value);
+        $test_name = '... with its integer id';
+        $t->assert_true($test_name, is_int($res_src_prime->id()));
+        $test_name = '... and the source group is written as an integer';
+        $t->assert($test_name, $res_src_prime->src_grp_field_type()->value, sql_field_type::INT->value);
 
+        // a result moved by its source group is not found in the table of its own phrases, so the
+        // load looks in the standard and in the big table with the text key (see load_moved); the
+        // fallback is the same statement as the load of a result of that table, whose fixture is
+        // checked above, so it is compared with that statement and not registered a second time
+        $t->subheader($ts . 'load of a moved result');
+        $res_moved = $t_res->result_prime();
+        $prime_id = $res_moved->id();
+        $test_name = 'the fallback load by id reads the standard table';
+        $sc->reset(sql_db::POSTGRES);
+        $qp = $res_moved->load_sql_by_id_moved($sc, $prime_id, sql_type::MOST);
+        $sc->reset(sql_db::POSTGRES);
+        $res_most = $t_res->result();
+        $t->assert($test_name, $qp->sql, $res_most->load_sql_by_id($sc, $res_most->id())->sql);
+        $test_name = '... with the text key of the prime group';
+        // the parameters are keyed by name for Postgres, so the first and only one is taken
+        $t->assert($test_name, array_values($qp->par)[0] ?? null, $grp_id->int2key($prime_id));
+        $test_name = '... and then the big table';
+        $sc->reset(sql_db::POSTGRES);
+        $qp_big = $t_res->result_prime()->load_sql_by_id_moved($sc, $prime_id, sql_type::BIG);
+        $sc->reset(sql_db::POSTGRES);
+        $res_big_tbl = $t_res->result_big();
+        $t->assert($test_name, $qp_big->sql, $res_big_tbl->load_sql_by_id($sc, $res_big_tbl->id())->sql);
+        $test_name = 'the fallback load by group reads the standard table';
+        $sc->reset(sql_db::POSTGRES);
+        $res_grp = $t_res->result_prime();
+        $qp_grp = $res_grp->load_sql_by_grp_moved($sc, $res_grp->grp(), sql_type::MOST);
+        $sc->reset(sql_db::POSTGRES);
+        $res_most_grp = $t_res->result();
+        $t->assert($test_name, $qp_grp->sql, $res_most_grp->load_sql_by_grp($sc, $res_most_grp->grp())->sql);
+        // negative: without the fallback the load reads the table of the own phrases
+        $test_name = 'the normal load by id does not read the standard table';
+        $sc->reset(sql_db::POSTGRES);
+        $qp_prime = $t_res->result_prime()->load_sql_by_id($sc, $prime_id);
+        $t->assert_true($test_name, $qp_prime->name != $qp->name);
+        $test_name = 'a prime result can be moved to the standard and the big table';
+        $moved_types = array_map(fn($typ) => $typ->value, $t_res->result_prime()->moved_table_types());
+        $t->assert($test_name, $moved_types, [sql_type::MOST->value, sql_type::BIG->value]);
+        $test_name = '... but a big result cannot be moved';
+        $t->assert($test_name, $t_res->result_src_grp_17_plus()->moved_table_types(), []);
+
+        // a moved result is inserted with the text key of the table it has been moved to and
+        // without the phrase id columns of the prime table
+        $t->subheader($ts . 'insert of a moved result');
+        $this->assert_sql_insert_moved($t, $sc, $t_res->result_src_grp_big());
+        $this->assert_sql_insert_moved($t, $sc, $t_res->result_src_grp_17_plus());
+        $sc->reset(sql_db::POSTGRES);
+        $res_ins = $t_res->result_src_grp_big();
+        $qp_ins = $res_ins->sql_insert($sc, $msg);
+        $test_name = 'the insert of a moved result writes the text key';
+        // the group id is the first field of the insert and the parameters are keyed by name
+        $t->assert($test_name, array_values($qp_ins->par)[0] ?? null, $res_ins->id());
+        // negative: the moved result has no phrase id columns, so writing them would fail
+        $test_name = '... and no phrase id column';
+        $t->assert_text_not_contains($test_name, $qp_ins->sql, phrase::FLD_ID . '_1');
+        $test_name = 'the source group follows the table, so a prime source group of the standard table is text';
+        $t->assert($test_name, $t_res->result()->src_grp_field_type()->value, sql_field_type::KEY_512->value);
+        $msg->reset();
+
+        // a new source group can move a saved result to another table, so the save removes the
+        // row of the old table instead of leaving a second row for the same result
+        $t->subheader($ts . 'save of a moved result');
+        $test_name = 'a row in the prime table must move if the source group needs the standard table';
+        $t->assert_true($test_name, $t_res->result_src_grp_big()->row_in_other_table($t_res->result_prime()));
+        // negative: a row in the table that fits the source group stays where it is
+        $test_name = 'a row in the table that fits the source group is updated in place';
+        $t->assert_false($test_name, $t_res->result_prime()->row_in_other_table($t_res->result_prime()));
+
+        // the text key of a prime group names the same phrases in the order of the text keys
+        $t->subheader($ts . 'text key of a prime group');
+        $prime_id = $t_res->result_prime()->grp()->id();
+        $prime_phr_ids = $grp_id->get_array($prime_id);
+        sort($prime_phr_ids);
+        $test_name = 'the text key of a prime group of one phrase is the compact key of the phrase without padding';
+        $t->assert($test_name, $grp_id->int2key($prime_id), $grp_id->int2alpha_num($prime_phr_ids[0]));
+        $test_name = '... and names the same phrases';
+        $t->assert($test_name, $grp_id->get_array($grp_id->int2key($prime_id)), $prime_phr_ids);
+        // negative: a triple keeps its sign, so the text key never names a word instead
+        $test_name = 'the text key of a group with a triple keeps the triple';
+        $trp_id = $t_grp->group_e()->id();
+        $trp_phr_ids = $grp_id->get_array($trp_id);
+        sort($trp_phr_ids);
+        $t->assert($test_name, $grp_id->get_array($grp_id->int2key($trp_id)), $trp_phr_ids);
         // the result page shows the values, formulas and results used for the calculation; the
         // saved source phrases name these numbers exactly, so a number must carry all of them
         $test_name = 'the used numbers are selected by the source phrases of the calculation';
@@ -219,7 +328,7 @@ class result_tests
         $t->assert_false($test_name, $any_phrase);
         $msg->reset();
 
-        // negative: a result saved without the source group (see drop_unsupported_src_grp) falls
+        // negative: a result saved without the source group (e.g. imported without a context) falls
         // back to its own phrases, where any match makes a number related, so that the page of
         // such a result is not empty
         $test_name = 'without a source group the used numbers are selected by the result phrases';
@@ -516,6 +625,26 @@ class result_tests
             $db_con->db_type = sql_db::MYSQL;
             $qp = $res->load_sql_by_frm_grp_lst($db_con->sql_creator(), $frm, $lst);
             $t->assert_qp($qp, $db_con->db_type);
+        }
+    }
+
+    /**
+     * check the insert of a result that its source group has moved to a bigger table; the
+     * fixture has the extension "_moved", because the insert may share its name with the insert of
+     * a result of that table, which is checked by assert_sql_insert and must not be registered twice
+     *
+     * @param test_cleanup $t the testing object with the error counter
+     * @param sql_creator $sc the sql creator that does not need a real database
+     * @param result $res the result with a source group that moves it to a bigger table
+     */
+    private function assert_sql_insert_moved(test_cleanup $t, sql_creator $sc, result $res): void
+    {
+        $msg = new user_message($t->usr1);
+        $sc->reset(sql_db::POSTGRES);
+        $result = $t->assert_qp($res->sql_insert($sc, $msg), $sc->db_type, '', self::SQL_EXT_MOVED);
+        if ($result) {
+            $sc->reset(sql_db::MYSQL);
+            $t->assert_qp($res->sql_insert($sc, $msg), $sc->db_type, '', self::SQL_EXT_MOVED);
         }
     }
 

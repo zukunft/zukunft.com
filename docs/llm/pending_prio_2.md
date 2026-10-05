@@ -28,14 +28,23 @@ if the value if updated use the frontend cache to update the results within the 
 
 the html page cache (db_cache_page) is dropped only after a data change (frontend::drop_cached_pages), so after a code change of a renderer a page cached before the change is still served until a data change or `nc=1` bypasses it; add the program version (version.txt) to the cache key or drop all cached pages when the frontend starts with a new version, so that a deployment never shows a stale page
 
-the short url form of a group id (shared/group_id_url.php) has known limits:
-- the alpha_num char "/" (value 1) is still url encoded as "%2F" e.g. "..../x-" is "%2Fx-"; a free char like "~" could replace it the same way as "_" replaces the "+" of a word
-- an empty slot before a non-empty slot would be lost, because to_url leaves every empty slot out and from_url fills the empty slots at the end; the encoders of cfg/group/id.php and result_id.php fill only at the end, so no such key is created today, but a key format change must keep that or extend the url form
+the url form of a group id (shared/group_id_url.php) has known limits:
+- the alpha_num char "/" (value 1) is still url encoded as "%2F" e.g. "/x-" is "%2Fx-"; a free char like "~" could replace it the same way as "_" replaces the "+" of a word
 - the short form of a "9"-prefixed back target is only read back if "9m" is a numeric mask of views::GROUP_ID_MASKS_IDS; a back target with a view code id keeps the id as it is
 - the decoding is limited to the masks of views::GROUP_ID_MASKS_IDS, so a user defined view that shows a value or result by a group id in the url is not covered until the mask list is derived from the view type instead of the fixed system mask lists
 - a raw "+" in a hand written old link arrives as a space (a url reads "+" as a space) and is not repaired; only the "%2B" form of an old link is accepted
 
 the used values and results of a result are selected by any phrase of the result when the result has no source group (result::used_phrase_selection), so a result that carries e.g. "high" lists every result with "high"; the fallback should be the phrases of the formula expression instead
+
+## start page data
+
+### reasons by country
+
+at least for the climate change add a json for the reasons why climate change causes costs and create for each reason a file with the percent of gdp lost or absolut number by for some countries and an estimate for the rest
+
+## picture values
+
+add valie table for pictures that can be use to assign a picture ti a phrase group 
 
 ## default views
 
@@ -43,7 +52,8 @@ the $wrd->name_link(), $trp->name_link() or $prh->name_link() function returns a
 
 the formula line with the numbers of the result default view (result::load_expression_parts) selects the figures again on each page request, so it shows the numbers of today and not the numbers of the calculation if a value has changed since; the gaps that are visible instead of guessed:
 - an element group with more than one figure (the calculation creates one result per figure) is shown by its name without a number, because the result does not save which figure it has used; saving the used figure ids with the result would close this and the re-selection
-- a result without saved source phrases (src_grp too big, see result_list::drop_unsupported_src_grp) shows no formula line
+- a result without saved source phrases (e.g. imported without a context) shows no formula line
+- result::load_std_by_grp and result::load_by_formula_and_group read only the standard results table (load_sql() always uses sql_type::MOST), so they miss every result of the prime and main tables; load_std_by_grp also has an inverted guard (it logs an error if the group id IS set) and its prepared statement compares the char(112) group_id with a bigint parameter; fix both to follow the table of the group plus the fallback of load_moved, with new fixtures
 - a symbol in the operator text that is no element group (e.g. a verb) is shown in the reference format e.g. {v3}
 
 ## search empty result 

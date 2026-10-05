@@ -3395,6 +3395,28 @@ class sql_db
      * @param string $debug_txt a short description of this read shown at &debug=7 (DEBUG_LEVEL_DB_READ); empty means the read is not traced
      * @return array|false with one or all database records or false if something went wrong
      */
+    /**
+     * postgres returns a char(112) group id padded with spaces, but the compact group id has no
+     * fixed length (see docs/llm/group_id.md), so the padding is removed; a key never contains a
+     * space and mysql already removes the trailing spaces of a char field
+     *
+     * @param \PgSql\Result $exe_result the result of the query to get the field types
+     * @param array|false $sql_row one row of the result with the numeric and the named keys
+     * @return array|false the row without the padding of the char fields
+     */
+    private function pg_unpadded(\PgSql\Result $exe_result, array|false $sql_row): array|false
+    {
+        if ($sql_row !== false) {
+            for ($i = 0; $i < pg_num_fields($exe_result); $i++) {
+                if (pg_field_type($exe_result, $i) == sql::PG_TYPE_CHAR and $sql_row[$i] !== null) {
+                    $sql_row[$i] = rtrim($sql_row[$i]);
+                    $sql_row[pg_field_name($exe_result, $i)] = $sql_row[$i];
+                }
+            }
+        }
+        return $sql_row;
+    }
+
     private function fetch(
         string       $sql,
         user_message $usr_msg,
@@ -3422,13 +3444,13 @@ class sql_db
                         if ($fetch_all) {
                             if ($exe_result) {
                                 while ($sql_row = pg_fetch_array($exe_result)) {
-                                    $result[] = $sql_row;
+                                    $result[] = $this->pg_unpadded($exe_result, $sql_row);
                                 }
                             }
                         } else {
                             $sql_row = pg_fetch_array($exe_result);
                             if ($sql_row !== false) {
-                                $result = $sql_row;
+                                $result = $this->pg_unpadded($exe_result, $sql_row);
                             }
                         }
                     } catch (Exception $e) {
@@ -3981,11 +4003,7 @@ class sql_db
                             } elseif ($par_type == sql_par_type::LIKE_KEY
                                 or $par_type == sql_par_type::LIKE_KEY_OR) {
                                 // the alpha_num key of a phrase must match the case (see sql_par_type::LIKE_KEY)
-                                if ($this->db_type == sql_db::POSTGRES) {
-                                    $this->where .= $id_fields[$used_fields] . ' ' . sql::LIKE_LOWER_CASE . ' ' . $this->par_name($i + 1);
-                                } else {
-                                    $this->where .= $id_fields[$used_fields] . ' ' . sql::LIKE_BINARY . ' ' . $this->par_name($i + 1);
-                                }
+                                $this->where .= $this->sql_creator()->key_match($id_fields[$used_fields], $this->par_name($i + 1));
                             } else {
                                 if ($par_type == sql_par_type::CONST) {
                                     $this->where .= $this->par_value($i + 1);
@@ -4747,7 +4765,7 @@ class sql_db
                     $msg->add_message_text($err_msg);
                 } else {
                     if (!$usr_tbl) {
-                        $db_id = pg_fetch_array($sql_result)[0];
+                        $db_id = $this->pg_unpadded($sql_result, pg_fetch_array($sql_result))[0];
                     }
                 }
             } else {

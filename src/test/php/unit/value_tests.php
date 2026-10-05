@@ -254,7 +254,7 @@ class value_tests
         $t->subheader($ts . 'delete steps');
 
         // step 1: the delete is skipped if the value has no key, so the key check must never
-        // compare a text id with a number, because php reports '....06+' <= 0 as true
+        // compare a text id with a number, because php reports '/x-' <= 0 as true
         $test_name = 'the id of a value with the text group id of 16 phrases is set, '
             . 'so that its delete is not skipped';
         $t->assert_true($test_name, $t_val->value_16()->is_id_set());
