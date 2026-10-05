@@ -958,6 +958,17 @@ class url_var
     }
 
     /**
+     * the url without its back part e.g. to cache a page once for every page that links to it
+     *
+     * @param array $url_array the full url parameter array e.g. ['m' => 9, 'id' => 1, '9m' => 1]
+     * @return array the url without the entries prefixed with BACK e.g. ['m' => 9, 'id' => 1]
+     */
+    static function without_back(array $url_array): array
+    {
+        return array_diff_key($url_array, self::back_par($url_array));
+    }
+
+    /**
      * split a url key into its prefix char (see PREFIXES) and the normal url key behind it
      *
      * @param string $key the url key e.g. '9m'

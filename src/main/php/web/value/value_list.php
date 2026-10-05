@@ -785,7 +785,7 @@ class value_list extends ListBase
             // a simple table shows the first tiers only, and the table of the mayor tier alone
             // one unit per column; the columns left out are still reachable via the menu of
             // the "..." header
-            $col_ids = $this->columns_of_tiers($col_ids, $col_phr, $phr_col, $rel_lst, $col_tiers);
+            $col_ids = $this->columns_of_tiers($col_ids, $col_phr, $phr_col, $rel_lst, $col_tiers, $cells);
 
             // a row whose numbers are all in columns that this table does not show says nothing
             // to the reader, e.g. the reward ratio of a problem in a table of the mayor tiers,
@@ -1967,6 +1967,7 @@ class value_list extends ListBase
      * @param array $phr_col the phrase column phrases by column id
      * @param phrase_list|null $rel_lst the phrases related to the page phrase with the definitions
      * @param int $col_tiers the number of column tiers left out, self::COLUMN_TIERS_ALL for every column
+     * @param array $cells per row and column the values, to check if a further unit column is complete
      * @return array the ids of the columns to show
      */
     private function columns_of_tiers(
@@ -1974,7 +1975,8 @@ class value_list extends ListBase
         array        $col_phr,
         array        $phr_col,
         ?phrase_list $rel_lst,
-        int          $col_tiers
+        int          $col_tiers,
+        array        $cells
     ): array
     {
         $result = $col_ids;
@@ -1991,10 +1993,34 @@ class value_list extends ListBase
             foreach ($col_ids as $col_id) {
                 $phr = $col_phr[$col_id] ?? $phr_col[$col_id];
                 $is_first_unit = !str_contains((string)$col_id, self::UNIT_COLUMN_SEP);
-                $unit_shown = ($is_first_unit or !$one_unit_only);
+                $unit_shown = ($is_first_unit
+                    or (!$one_unit_only and $this->unit_column_complete((string)$col_id, $cells)));
                 if ($unit_shown and $this->tier_level($phr->name(), $rel_lst) <= $last_tier) {
                     $result[] = $col_id;
                 }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * a further unit column states the measure of its phrase a second way, which a reduced table
+     * shows only if it does so for every row, e.g. the potential loss in percent of the GDP of
+     * every problem, but not the potential loss in htp of a single problem, which is left to the
+     * full table
+     *
+     * @param string $col_id the id of the further unit column e.g. "125|1"
+     * @param array $cells per row and column the values of the table
+     * @return bool true if the column has a number in every row that has one in the first unit column
+     */
+    private function unit_column_complete(string $col_id, array $cells): bool
+    {
+        $lead_id = strstr($col_id, self::UNIT_COLUMN_SEP, true);
+        $result = true;
+        foreach ($cells as $row_cells) {
+            $in_lead = ($row_cells[$lead_id] ?? []) != [];
+            if ($in_lead and ($row_cells[$col_id] ?? []) == []) {
+                $result = false;
             }
         }
         return $result;

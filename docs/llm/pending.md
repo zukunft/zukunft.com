@@ -1,16 +1,8 @@
 # pending - list of planned llm prompts with prio 1
 
-## start page
-
-for the start page with the main columns e.g. http://localhost/http/view.php?m=1&dls=20&dlc=2&dlr=0 fix the columns to 'problem	potential loss in trillion EUR	potential loss in GDP percent	potential loss in htp percent	solution	potential gain in billion htp	initial effort in person year	loss reduction in percent' so that e.g. 'potential loss in htp' is not shown
-
-## page cache
-
-before checking the page cache remove the 'back' part from the url. E.g. if http://localhost/http/view.php?m=9&id=%2Fx-1h_2H_2J_2t_&9m=1&9dls=20&9dlc=2&9dlr=0 if called, try to get the page result for http://localhost/http/view.php?m=9&id=%2Fx-1h_2H_2J_2t_ from the cache and if no cache is found save the page html with the url http://localhost/http/view.php?m=9&id=%2Fx-1h_2H_2J_2t_ not http://localhost/http/view.php?m=9&id=%2Fx-1h_2H_2J_2t_&9m=1&9dls=20&9dlc=2&9dlr=0  
-
 ## detail views
 
-add in the top right corner of the default views a '...' more link with a submenu similar to the table view with at least the two options 'detail' and 'detail + range'. 
+add in the top right corner of the '... (default)' views, '... (detail)' view, '... (range)' and '... (details with range)' views add a '...' more link with a submenu similar to the table view with at least the three other options of 'default', 'detail', 'range' and 'detail + range'. 
 
 ## phrase types
 
@@ -56,6 +48,20 @@ proven value — mathematically derived, no empirical uncertaint
 add Status: disputed, retracted, superseded, outdated — a peer-reviewed value can still be retracted, so this shouldn't be a rung on the ladder.
 
 add a Confidence number and description to all value quality phrases: The quality type gives a sensible default (e.g. assumed value → 0.3, double blind RCT → 0.9) but should stay overridable, because a small double-blind trial can deserve less confidence than a large observational cohort.
+
+### todo from group id change
+
+Things to fix or check
+1. result_id.php docblocks are stale. get_id() and alpha_num_result() still say "512-bit key as 112 chars or list of more than 16 keys with 6 chars" and "the 512 bit db key …", next to the new compact-key line (your on-disk edit kept both). The old lines are now wrong.
+2. group_id.php header typo: the table list numbers values_big as "1." instead of "3.". It's in the comment I edited, but the typo was already there.
+3. The unit majority counts every number. split_by_unit counts low/high range numbers as well, so a unit stored with ranges counts up to three per row against one per row for another unit. That's fine for the start page today; counting distinct rows would be exact.
+4. The MySQL search needs MySQL 8. REGEXP_LIKE(…, 'c') doesn't exist in MariaDB, which docs/todo.md names as a possible target.
+5. pg_unpadded does a little per-row work. It checks the field types of every Postgres row. PHP caches the type names, so it's cheap, but the char columns could be found once per result instead.
+6. The group_id_url.php header says "see docs/llm/group_id.md", which is only correct once that new file is committed. It's already staged (AM), so this just means committing it together.
+7. Three pieces are new or unverified. pg_unpadded, the main-delete fix and the unit-majority rule are only lint-checked, and MySQL is untested throughout. A full test.php run after the DB reset and syncing /var/www/html is still needed.
+8. The start-page snapshot will still differ from the committed one. Expect trillion EUR in the header with the calculated results (2.2, 4, …), not the old values.
+9. The memory-recorded no-plain-delete rule is followed. result::del_row_of_other_table deletes without a change log, but results are derived data (MAIN_CLASSES_NO_CHANGE_LOG), which matches the documented exception.
+
 
 ## result and value default view
 

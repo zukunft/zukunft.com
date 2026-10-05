@@ -194,6 +194,21 @@ class base_ui_tests
             url_var::STEP => url_var::STEP_BASE, url_var::SESSION_TOKEN => 'abc'];
         $t->assert($test_name, $ui->url_cache_key($url_array), 'm=' . views::WORD_ID . '&id=2');
 
+        // the back part only names the page to return to, so a page is cached once for every page
+        // that links to it, e.g. the result page called from the start page with the main columns
+        $test_name = 'the back part is ignored for the cache key';
+        $url_array = [
+            url_var::MASK => views::WORD_ID, url_var::ID => 2,
+            url_var::BACK . url_var::MASK => views::START_ID,
+            url_var::BACK . url_var::DISPLAY_LIST_COLUMNS => 2];
+        $t->assert($test_name, $ui->url_cache_key($url_array), 'm=' . views::WORD_ID . '&id=2');
+        // negative: a back part does not make a change request cacheable
+        $test_name = '... but a change mask request with a back part is still not cached';
+        $url_array = [
+            url_var::MASK => views::WORD_ADD_DETAIL_ID, url_var::ID => 2,
+            url_var::BACK . url_var::MASK => views::START_ID];
+        $t->assert($test_name, $ui->url_cache_key($url_array), '');
+
         // a non-zero process step is an action step, so the request is rendered live and not cached
         $test_name = 'a non-zero step request is not cached';
         $url_array = [url_var::MASK => views::WORD_ID, url_var::ID => 2, url_var::STEP => url_var::STEP_CONFIRM];

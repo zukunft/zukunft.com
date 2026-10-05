@@ -669,6 +669,13 @@ so that the frontend loads every object by its id; the page cache key and the
 page vars of a back target read the user by `ue` too. An old url with `id`
 (e.g. an activation link of a mail sent before the change) still selects the user.
 
+The back part (`9`-prefixed params) only names the page to return to, so it is
+no part of the page cache key (`url_var::without_back`): a page called e.g. from
+the start page with the main columns (`…&9m=1&9dlc=2`) is cached once under its
+url without the back part, and a cacheable request is rendered without the back
+part too, so the cached html is the same for every page that links to it; only
+the login link then returns to the page itself instead of the calling page.
+
 Because the page of a user is named by `u`, it is also cached per user: the
 page cache key of a logged-in request ends with `&u=<id>`
 (`frontend::url_cache_key`), so the personal page - the user name in the navbar,

@@ -409,10 +409,12 @@ unit per column — the unit that most numbers of the column have, so that one
 bigger number in another unit cannot hide the unit of every other row
 (`value_list::split_by_unit`) — and each cell the number without its probability range; the
 full version shows every tier, every unit and the range behind each number. The
-versions between them show every unit of a shown column, e.g. the potential
-loss of a problem in trillion EUR, in percent of the GDP and in percent of the
-happy time points, because only the smallest screen needs one number per
-column. The start page opens with the simple version. The last header cell of every table,
+versions between them show every unit of a shown column that has a number in
+every row of its first unit, e.g. the potential loss of a problem in trillion
+EUR, in percent of the GDP and in percent of the happy time points, because only
+the smallest screen needs one number per column; a unit that only some rows
+have, e.g. the potential loss in htp of global warming alone, is left to the
+full version (`value_list::unit_column_complete`). The start page opens with the simple version. The last header cell of every table,
 the full one included, is the "…" menu (`value_list::columns_menu`, built with
 `html_base::popup_menu`), which lets the reader pick the version directly
 instead of stepping through them — and from the full table it is the only way

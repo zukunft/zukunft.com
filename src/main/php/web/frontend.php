@@ -1305,6 +1305,12 @@ class frontend
         if ($usr_id == 0 and self::shows_personal_page($msg_ui)) {
             $url_key = '';
         }
+        // a cached page is keyed without the back part (see url_cache_key), so it is also rendered
+        // without it, because the same html is served to every page that links to it; the back
+        // part only changes the return target of the login link, which then returns to this page
+        if ($url_key != '') {
+            $url_array = url_var::without_back($url_array);
+        }
         // get the last cached html page for the url and fill in the reading user's own anti-csrf
         // token so the shared page does not carry the token of whoever cached it (see request_token_valid)
         $cac_page = new db_cache_page();
@@ -1384,6 +1390,9 @@ class frontend
      * just like every link of that page does (see html_base::url_with_user), so the personal page
      * is reused for this user only and is never handed to somebody else
      *
+     * the back part of the url is no part of the key, so a page is cached once for every page
+     * that links to it (see url_to_html_cached, which renders such a page without the back part)
+     *
      * @param array $url_array the parsed url as an array
      * @param int $usr_id the id of the logged-in user of this request, 0 for a request without login
      * @return string the cache key or an empty string if the request must not be cached
@@ -1391,6 +1400,8 @@ class frontend
     function url_cache_key(array $url_array, int $usr_id = 0): string
     {
         global $cfg;
+
+        $url_array = url_var::without_back($url_array);
 
         $result = '';
         $mask_id = $url_array[url_var::MASK] ?? 0;
