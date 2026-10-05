@@ -1,36 +1,36 @@
 [
     {
-        "id": 331,
+        "id": 333,
         "name": "2013",
         "type_id": 2,
         "class": "word"
     },
     {
-        "id": 332,
+        "id": 334,
         "name": "2014",
         "type_id": 2,
         "class": "word"
     },
     {
-        "id": 333,
+        "id": 335,
         "name": "2015",
         "type_id": 2,
         "class": "word"
     },
     {
-        "id": 334,
+        "id": 336,
         "name": "2016",
         "type_id": 2,
         "class": "word"
     },
     {
-        "id": 335,
+        "id": 337,
         "name": "2017",
         "type_id": 2,
         "class": "word"
     },
     {
-        "id": 336,
+        "id": 338,
         "name": "2018",
         "type_id": 2,
         "class": "word"
@@ -49,7 +49,7 @@
         "class": "word"
     },
     {
-        "id": 553,
+        "id": 555,
         "name": "ABB",
         "description": "ABB (ASEA Brown Boveri) is a Swedish-Swiss multinational corporation headquartered in Zürich",
         "type_id": 1,
@@ -82,31 +82,31 @@
         "class": "word"
     },
     {
-        "id": 556,
+        "id": 558,
         "name": "cash",
         "type_id": 1,
         "class": "word"
     },
     {
-        "id": 553,
+        "id": 558,
         "name": "cash flow",
         "class": "triple"
     },
     {
-        "id": 556,
+        "id": 561,
         "name": "cash flow statement",
         "description": "financial statement that shows how changes in balance sheet accounts and income affect cash and cash equivalents, and breaks the analysis down to operating, investing and financing activities. see Wikipedia: Cash flow statement (Q460184)",
         "class": "triple"
     },
     {
-        "id": 412,
+        "id": 414,
         "name": "CHF",
         "description": "ISO 4217 alphabetic code for the Swiss franc (Confoederatio Helvetica Franc), also widely used as the currency's typographic symbol.",
         "type_id": 3,
         "class": "word"
     },
     {
-        "id": 387,
+        "id": 392,
         "name": "CHF is symbol for Swiss franc",
         "class": "triple"
     },
@@ -172,7 +172,7 @@
         "class": "word"
     },
     {
-        "id": 122,
+        "id": 125,
         "name": "education can be global problem",
         "class": "triple"
     },
@@ -228,7 +228,7 @@
         "class": "triple"
     },
     {
-        "id": 154,
+        "id": 159,
         "name": "global warming (global problem)",
         "class": "triple"
     },
@@ -266,7 +266,7 @@
         "class": "word"
     },
     {
-        "id": 153,
+        "id": 156,
         "name": "happy time points",
         "description": "To measure the \"happy points\" ask the person how happy he feels let's say on a scale from 1 (least happy) to 10 (most happy). If you sum the number of happy points over a period, you get the \"happy time points\".",
         "class": "triple"
@@ -279,7 +279,7 @@
         "class": "word"
     },
     {
-        "id": 119,
+        "id": 122,
         "name": "health can be a global problem",
         "description": "poor health of many people is one of the problems ranked on the start page",
         "class": "triple"
@@ -292,14 +292,14 @@
         "class": "word"
     },
     {
-        "id": 303,
+        "id": 305,
         "name": "income",
         "description": "Income is the consumption and saving opportunity gained by an entity within a specified time frame, which is generally expressed in monetary terms.",
         "type_id": 1,
         "class": "word"
     },
     {
-        "id": 554,
+        "id": 559,
         "name": "income taxes",
         "class": "triple"
     },
@@ -377,7 +377,7 @@
         "class": "word"
     },
     {
-        "id": 559,
+        "id": 561,
         "name": "parts",
         "type_id": 1,
         "class": "word"
@@ -433,7 +433,7 @@
         "class": "word"
     },
     {
-        "id": 118,
+        "id": 121,
         "name": "populism (global problem)",
         "class": "triple"
     },
@@ -452,7 +452,7 @@
         "class": "word"
     },
     {
-        "id": 121,
+        "id": 124,
         "name": "poverty (global problem)",
         "class": "triple"
     },
@@ -464,7 +464,7 @@
         "class": "word"
     },
     {
-        "id": 555,
+        "id": 557,
         "name": "sales",
         "type_id": 1,
         "class": "word"
@@ -484,7 +484,7 @@
         "class": "word"
     },
     {
-        "id": 557,
+        "id": 559,
         "name": "statement",
         "type_id": 1,
         "class": "word"
@@ -497,7 +497,7 @@
         "class": "word"
     },
     {
-        "id": 306,
+        "id": 308,
         "name": "tax",
         "description": "compulsory financial charge to public authority",
         "type_id": 1,
@@ -510,7 +510,7 @@
         "class": "triple"
     },
     {
-        "id": 339,
+        "id": 341,
         "name": "total",
         "description": "the whole amount or count, e.g. the total number of possible outcomes",
         "type_id": 1,
@@ -524,14 +524,14 @@
         "class": "word"
     },
     {
-        "id": 398,
+        "id": 400,
         "name": "USD",
         "description": "ISO 4217 alphabetic code for the United States dollar.",
         "type_id": 3,
         "class": "word"
     },
     {
-        "id": 554,
+        "id": 556,
         "name": "Vestas",
         "type_id": 1,
         "class": "word"
@@ -600,7 +600,7 @@
         "class": "triple"
     },
     {
-        "id": 229,
+        "id": 234,
         "name": "Zurich Insurance",
         "description": "Zurich Insurance Group, a global multi-line insurer headquartered in Zurich",
         "class": "triple"

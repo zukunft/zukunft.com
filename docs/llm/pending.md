@@ -1,9 +1,5 @@
 # pending - list of planned llm prompts with prio 1
 
-## default, detail and range views
-
-add in the top right corner of the '... (default)' views, '... (detail)' view, '... (range)' and '... (details with range)' views add a '...' more link with a submenu similar to the table view with at least the three other options of 'default', 'detail', 'range' and 'detail + range'. 
-
 ## phrase types
 
 add a phrase type 'value quality' and assign the type to the word 'assumed'. Add in the json which defines 'assumed' add alternative value quality type phrases e.g. 'peer reviewed by quality journal' 
@@ -48,6 +44,8 @@ proven value — mathematically derived, no empirical uncertaint
 add Status: disputed, retracted, superseded, outdated — a peer-reviewed value can still be retracted, so this shouldn't be a rung on the ladder.
 
 add a Confidence number and description to all value quality phrases: The quality type gives a sensible default (e.g. assumed value → 0.3, double blind RCT → 0.9) but should stay overridable, because a small double-blind trial can deserve less confidence than a large observational cohort.
+
+add a phrase type 'is unique key' e.g. for the ISIN or the ISBN or ...
 
 ### todo from group id change
 
