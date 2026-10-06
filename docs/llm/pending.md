@@ -2,9 +2,7 @@
 
 ## type and component order
 
-see /docs/llm/coding.md and sort the rows in src/test/resources/unit/phrase/list_types.csv so that it starts with the most often used typess and that the types are grouped by similarity. Only change the file src/test/resources/unit/phrase/list_types.csv and do not do any other changes. Only sort the rows and renumber them so that it starts again with 1. You can add or adjust the description, but do not change the name or code_id. use src/test/resources/unit/phrase/list_types_unsorted.csv and src/test/resources/unit/phrase/list_types_sorted.csv for an indication how to re-pin the phrase types.  
-
-sort the rows in src/main/resources/db_code_links/component_types.csv in the same order as src/test/resources/unit/component/list_types_sorted.csv and add missing fields in src/main/resources/db_code_links/component_types.csv or update descritions in src/main/resources/db_code_links/component_types.csv 
+sort the rows in src/main/resources/db_code_links/phrase_types.csv in the same order as src/test/resources/unit/phrase/list_types_sorted.csv and add missing fields in src/main/resources/db_code_links/phrase_types.csv or update e.g. the descritions in src/main/resources/db_code_links/phrase_types.csv 
 
 sort the initial component creation in src/main/resources/messages/system_views.json so that it starts with the first component used in this file by a view and so that the components are grouped by similarity, but more important, no dependencies are broken. in doughty use the order of the component types as an orientation.
 

@@ -150,7 +150,7 @@ SELECT component_insert_log_0111115511111111001111
         'form_title'::text,
         784::smallint,
         'text'::text,
-        3::smallint,
+        35::smallint,
         785::smallint,
         '1/3 width'::text,
         1::smallint,

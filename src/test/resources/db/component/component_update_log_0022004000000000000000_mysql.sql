@@ -46,6 +46,6 @@ SELECT component_update_log_0022004000000000000000
         null,
         784,
         'word name',
-        8,
+        32,
         null,
         null);

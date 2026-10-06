@@ -31,7 +31,7 @@
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
-  
+
 */
 
 namespace Zukunft\ZukunftCom\main\php\shared\types;
@@ -51,12 +51,12 @@ class component_types
 
     // the components used for the default start page
     const string PHRASE_NAME = "phrase_name";
-    const int PHRASE_NAME_ID = 8;
+    const int PHRASE_NAME_ID = 32;
     const string PHRASE_NAME_COM = "show the name of a phrase fixed when designing the view";
 
     const string CALC_SHEET = "calc_sheet";
     const string CALC_SHEET_NAME = "spreadsheet";
-    const int CALC_SHEET_ID = 35;
+    const int CALC_SHEET_ID = 68;
     const string CALC_SHEET_COM = "changeable spreadsheet with words, number and formulas that allow changes";
 
 
@@ -67,366 +67,366 @@ class component_types
     // internal fields used in system forms that should not be used for user views
     // general fields used in several views
     const string FORM_TITLE = "system_form_title";
-    const int FORM_TITLE_ID = 17;
+    const int FORM_TITLE_ID = 2;
     // like FORM_TITLE but for non-form display views: shows the object name as the page title
     // plus a fas fa-edit link to the object's edit view; the title text is the object name and
     // is rendered in the user's frontend language by loading the same object in that language
     // (will be done via the sandbox language field once it has been added to all sandbox objects)
     const string TITLE_NAMED_EDIT = "title_of_named_with_edit_link";
-    const int TITLE_NAMED_EDIT_ID = 192;
+    const int TITLE_NAMED_EDIT_ID = 6;
     const string TITLE_TRIPLE_EDIT = "title_of_triple_with_edit_link";
-    const int TITLE_TRIPLE_EDIT_ID = 200;
+    const int TITLE_TRIPLE_EDIT_ID = 8;
     const string TITLE_TRIPLE_EDIT_COM = "show the triple name as the page title and the from, verb and to with links in the subtitle, plus the edit link";
     const string TITLE_FORMULA_EDIT = "title_of_formula_with_edit_link";
-    const int TITLE_FORMULA_EDIT_ID = 201;
+    const int TITLE_FORMULA_EDIT_ID = 9;
     const string TITLE_FORMULA_EDIT_COM = "show the formula name as the page title and the assigned phrases with links in the subtitle, plus the edit link";
     const string TITLE_VALUE_EDIT = "title_of_value_with_edit_link";
-    const int TITLE_VALUE_EDIT_ID = 203;
+    const int TITLE_VALUE_EDIT_ID = 10;
     const string TITLE_VALUE_EDIT_COM = "show the related phrases of a value with links as the page title and the value itself, plus the edit link and the share and protection subtitle";
     const string TITLE_LINK_EDIT = "title_of_link_with_edit_link";
-    const int TITLE_LINK_EDIT_ID = 222;
+    const int TITLE_LINK_EDIT_ID = 11;
     const string TITLE_LINK_EDIT_COM = "show the generated name of a link object as the page title and the two linked objects with links in the subtitle, plus the edit link";
     // the page title of a phrase: the same title as TITLE_NAMED_EDIT for a word and the same
     // title as TITLE_TRIPLE_EDIT for a triple, each including its subheader, so that one view
     // can be used for a word and for a triple without a title component per phrase type
     const string PHRASE_TITLE = "phrase_title";
-    const int PHRASE_TITLE_ID = 213;
+    const int PHRASE_TITLE_ID = 7;
     const string PHRASE_TITLE_COM = "show the phrase name as the page title with the subheader of a word or of a triple, plus the edit link";
     const string FORM_FIELD_NAME = "system_form_field_name";
-    const int FORM_FIELD_NAME_ID = 21;
+    const int FORM_FIELD_NAME_ID = 121;
     const string FORM_FIELD_DESCRIPTION = "system_form_field_description";
-    const int FORM_FIELD_DESCRIPTION_ID = 22;
+    const int FORM_FIELD_DESCRIPTION_ID = 122;
     // the code id that links a database row to program code; the input field is only shown
     // to a user whose profile passes can_set_code_id e.g. on the source add and edit forms
     const string FORM_FIELD_CODE_ID = "system_form_field_code_id";
-    const int FORM_FIELD_CODE_ID_ID = 240;
+    const int FORM_FIELD_CODE_ID_ID = 128;
     // the user interface message links of a component; like the code id the input fields are
     // only shown to a user whose profile passes can_set_code_id on the component add and edit forms
     const string FORM_FIELD_UI_MSG = "system_form_field_ui_msg";
-    const int FORM_FIELD_UI_MSG_ID = 246;
+    const int FORM_FIELD_UI_MSG_ID = 129;
 
     // select object fields
     const string FORM_SELECT_PHRASE = "form_select_phrase";
-    const int FORM_SELECT_PHRASE_ID = 23;
+    const int FORM_SELECT_PHRASE_ID = 144;
     const string FORM_SELECT_PHRASES = "form_select_multi_phrases";
-    const int FORM_SELECT_PHRASES_ID = 75;
+    const int FORM_SELECT_PHRASES_ID = 145;
     const string FORM_SELECT_VERB = "form_select_verb";
-    const int FORM_SELECT_VERB_ID = 24;
+    const int FORM_SELECT_VERB_ID = 147;
     const string FORM_SELECT_VERBS = "form_select_multi_verbs";
-    const int FORM_SELECT_VERBS_ID = 76;
+    const int FORM_SELECT_VERBS_ID = 148;
     const string FORM_SELECT_SOURCE = "form_select_source";
-    const int FORM_SELECT_SOURCE_ID = 118;
+    const int FORM_SELECT_SOURCE_ID = 157;
     const string FORM_SELECT_SOURCES = "form_select_multi_sources";
-    const int FORM_SELECT_SOURCES_ID = 119;
+    const int FORM_SELECT_SOURCES_ID = 158;
     const string FORM_SELECT_REF = "form_select_ref";
-    const int FORM_SELECT_REF_ID = 120;
+    const int FORM_SELECT_REF_ID = 159;
     const string FORM_SELECT_REFS = "form_select_multi_refs";
-    const int FORM_SELECT_REFS_ID = 121;
+    const int FORM_SELECT_REFS_ID = 160;
     const string FORM_FIELD_VALUE = "system_form_field_value";
-    const int FORM_FIELD_VALUE_ID = 139;
+    const int FORM_FIELD_VALUE_ID = 133;
     const string FORM_SELECT_VALUE = "form_select_value";
-    const int FORM_SELECT_VALUE_ID = 81;
+    const int FORM_SELECT_VALUE_ID = 153;
     const string FORM_SELECT_VALUES = "form_select_multi_values";
-    const int FORM_SELECT_VALUES_ID = 82;
+    const int FORM_SELECT_VALUES_ID = 154;
     const string FORM_SELECT_FORMULA = "form_select_formula";
-    const int FORM_SELECT_FORMULA_ID = 77;
+    const int FORM_SELECT_FORMULA_ID = 151;
     const string FORM_SELECT_FORMULAS = "form_select_multi_formulas";
-    const int FORM_SELECT_FORMULAS_ID = 78;
+    const int FORM_SELECT_FORMULAS_ID = 152;
     const string FORM_SELECT_TERM = "form_select_term";
-    const int FORM_SELECT_TERM_ID = 79;
+    const int FORM_SELECT_TERM_ID = 149;
     const string FORM_SELECT_TERMS = "form_select_multi_terms";
-    const int FORM_SELECT_TERMS_ID = 80;
+    const int FORM_SELECT_TERMS_ID = 150;
     const string FORM_SELECT_RESULT = "form_select_result";
-    const int FORM_SELECT_RESULT_ID = 83;
+    const int FORM_SELECT_RESULT_ID = 155;
     const string FORM_SELECT_RESULTS = "form_select_multi_results";
-    const int FORM_SELECT_RESULTS_ID = 84;
+    const int FORM_SELECT_RESULTS_ID = 156;
     const string FORM_SELECT_VIEW = "form_select_view";
-    const int FORM_SELECT_VIEW_ID = 85;
+    const int FORM_SELECT_VIEW_ID = 161;
     const string FORM_SELECT_VIEWS = "form_select_multi_views";
-    const int FORM_SELECT_VIEWS_ID = 86;
+    const int FORM_SELECT_VIEWS_ID = 164;
     const string FORM_SELECT_PARENT_VIEW = "form_select_parent_view";
-    const int FORM_SELECT_PARENT_VIEW_ID = 171;
+    const int FORM_SELECT_PARENT_VIEW_ID = 167;
     const string FORM_SELECT_CHILD_VIEW = "form_select_child_view";
-    const int FORM_SELECT_CHILD_VIEW_ID = 172;
+    const int FORM_SELECT_CHILD_VIEW_ID = 168;
     const string FORM_SELECT_COMPONENT = "form_select_component";
-    const int FORM_SELECT_COMPONENT_ID = 87;
+    const int FORM_SELECT_COMPONENT_ID = 165;
     const string FORM_SELECT_COMPONENTS = "form_select_multi_components";
-    const int FORM_SELECT_COMPONENTS_ID = 88;
+    const int FORM_SELECT_COMPONENTS_ID = 166;
 
     // select access and protection
     const string FORM_SHARE_TYPE = "form_select_share";
-    const int FORM_SHARE_TYPE_ID = 26;
+    const int FORM_SHARE_TYPE_ID = 170;
     const string FORM_PROTECTION_TYPE = "form_select_protection";
-    const int FORM_PROTECTION_TYPE_ID = 27;
+    const int FORM_PROTECTION_TYPE_ID = 171;
 
     // select object types
     const string FORM_SELECT_PHRASE_TYPE = "form_select_phrase_type";
-    const int FORM_SELECT_PHRASE_TYPE_ID = 25;
+    const int FORM_SELECT_PHRASE_TYPE_ID = 169;
     const string LIST_VIEWS = "view_list";
-    const int LIST_VIEWS_ID = 122;
+    const int LIST_VIEWS_ID = 192;
     const string FORM_SELECT_SOURCE_TYPE = "form_select_source_type";
-    const int FORM_SELECT_SOURCE_TYPE_ID = 39;
+    const int FORM_SELECT_SOURCE_TYPE_ID = 173;
     const string FORM_SELECT_REF_TYPE = "form_select_ref_type";
-    const int FORM_SELECT_REF_TYPE_ID = 48;
+    const int FORM_SELECT_REF_TYPE_ID = 174;
     const string FORM_SELECT_VALUE_TYPE = "form_select_value_type";
-    const int FORM_SELECT_VALUE_TYPE_ID = 123;
+    const int FORM_SELECT_VALUE_TYPE_ID = 172;
     const string FORM_SELECT_FORMULA_TYPE = "form_select_formula_type";
-    const int FORM_SELECT_FORMULA_TYPE_ID = 49;
+    const int FORM_SELECT_FORMULA_TYPE_ID = 175;
     const string FORM_SELECT_VIEW_TYPE = "form_select_view_type";
-    const int FORM_SELECT_VIEW_TYPE_ID = 50;
+    const int FORM_SELECT_VIEW_TYPE_ID = 176;
     const string FORM_SELECT_VIEW_STYLE = "form_select_view_style";
-    const int FORM_SELECT_VIEW_STYLE_ID = 51;
+    const int FORM_SELECT_VIEW_STYLE_ID = 177;
     const string FORM_SELECT_COMPONENT_TYPE = "form_select_component_type";
-    const int FORM_SELECT_COMPONENT_TYPE_ID = 52;
+    const int FORM_SELECT_COMPONENT_TYPE_ID = 178;
     const string FORM_SELECT_COMPONENT_STYLE = "form_select_component_style";
-    const int FORM_SELECT_COMPONENT_STYLE_ID = 124;
+    const int FORM_SELECT_COMPONENT_STYLE_ID = 179;
     const string FORM_SELECT_VIEW_RELATION_TYPE = "form_select_view_relation_type";
-    const int FORM_SELECT_VIEW_RELATION_TYPE_ID = 173;
+    const int FORM_SELECT_VIEW_RELATION_TYPE_ID = 184;
     const string FORM_FIELD_VIEW_RELATION_START_POS = "system_form_field_view_relation_start_pos";
-    const int FORM_FIELD_VIEW_RELATION_START_POS_ID = 174;
+    const int FORM_FIELD_VIEW_RELATION_START_POS_ID = 188;
 
     // select link types and priority
     const string FORM_SELECT_FORMULA_LINK_TYPE = "form_select_formula_link_type";
-    const int FORM_SELECT_FORMULA_LINK_TYPE_ID = 100;
+    const int FORM_SELECT_FORMULA_LINK_TYPE_ID = 181;
     const string FORM_SELECT_FORMULA_LINK_PRIORITY = "form_select_formula_link_priority";
-    const int FORM_SELECT_FORMULA_LINK_PRIORITY_ID = 127;
+    const int FORM_SELECT_FORMULA_LINK_PRIORITY_ID = 187;
     const string FORM_SELECT_VIEW_LINK_TYPE = "form_select_view_link_type";
-    const int FORM_SELECT_VIEW_LINK_TYPE_ID = 101;
+    const int FORM_SELECT_VIEW_LINK_TYPE_ID = 182;
     const string FORM_SELECT_VIEW_LINK_PRIORITY = "form_select_view_link_priority";
-    const int FORM_SELECT_VIEW_LINK_PRIORITY_ID = 125;
+    const int FORM_SELECT_VIEW_LINK_PRIORITY_ID = 185;
     const string FORM_SELECT_COMPONENT_LINK_TYPE = "form_select_component_link_type";
-    const int FORM_SELECT_COMPONENT_LINK_TYPE_ID = 99;
+    const int FORM_SELECT_COMPONENT_LINK_TYPE_ID = 180;
     const string FORM_SELECT_COMPONENT_POS_TYPE = "form_select_component_position_type";
-    const int FORM_SELECT_COMPONENT_POS_TYPE_ID = 153;
+    const int FORM_SELECT_COMPONENT_POS_TYPE_ID = 183;
     const string FORM_FIELD_COMPONENT_LINK_ORDER_NUMBER = "form_select_component_link_order_number";
-    const int FORM_FIELD_COMPONENT_LINK_ORDER_NUMBER_ID = 126;
+    const int FORM_FIELD_COMPONENT_LINK_ORDER_NUMBER_ID = 186;
 
     // other select fields
     const string FORM_SELECT_VIEW_DEFAULT = "form_select_view_default";
-    const int FORM_SELECT_VIEW_DEFAULT_ID = 90;
+    const int FORM_SELECT_VIEW_DEFAULT_ID = 163;
     const string FORM_SELECT_FILE = "form_select_file";
-    const int FORM_SELECT_FILE_ID = 91;
+    const int FORM_SELECT_FILE_ID = 223;
     const string FORM_SELECT_FORMAT_EXPORT = "form_select_export_format";
-    const int FORM_SELECT_FORMAT_EXPORT_ID = 92;
+    const int FORM_SELECT_FORMAT_EXPORT_ID = 221;
 
     // verb only fields
     const string FORM_FIELD_PLURAL = "system_form_field_plural";
-    const int FORM_FIELD_PLURAL_ID = 54;
+    const int FORM_FIELD_PLURAL_ID = 123;
     const string FORM_FIELD_REVERSE = "system_form_field_reverse";
-    const int FORM_FIELD_REVERSE_ID = 135;
+    const int FORM_FIELD_REVERSE_ID = 124;
     const string FORM_FIELD_PLURAL_REVERSE = "system_form_field_plural_reverse";
-    const int FORM_FIELD_PLURAL_REVERSE_ID = 136;
+    const int FORM_FIELD_PLURAL_REVERSE_ID = 125;
     const string FORM_FIELD_NAME_IN_FORMULAS = "system_form_field_name_in_formulas";
-    const int FORM_FIELD_NAME_IN_FORMULAS_ID = 149;
+    const int FORM_FIELD_NAME_IN_FORMULAS_ID = 126;
 
     // verb only fields
     const string SYSTEM_SHOW_REF_TYPE = "system_show_field_ref_type";
-    const int FORM_FIELD_REF_TYPE_ID = 163;
+    const int FORM_FIELD_REF_TYPE_ID = 113;
     const string SYSTEM_SHOW_REF_KEY = "system_show_field_ref_key";
-    const int FORM_FIELD_REF_KEY_ID = 164;
+    const int FORM_FIELD_REF_KEY_ID = 114;
     const string SYSTEM_SHOW_REF_SOURCE = "system_show_field_ref_source";
-    const int FORM_FIELD_REF_SOURCE_ID = 165;
+    const int FORM_FIELD_REF_SOURCE_ID = 115;
     const string SYSTEM_SHOW_REF_URL = "system_show_field_ref_url";
-    const int FORM_FIELD_REF_URL_ID = 166;
+    const int FORM_FIELD_REF_URL_ID = 116;
     // the word or triple this reference belongs to with a link e.g. for the ref default page
     const string SHOW_REF_PHRASE = "system_show_field_ref_phrase";
-    const int SHOW_REF_PHRASE_ID = 242;
+    const int SHOW_REF_PHRASE_ID = 117;
     const string FORM_FIELD_EXTERNAL_KEY = "system_form_field_external_key";
-    const int FORM_FIELD_EXTERNAL_KEY_ID = 167;
+    const int FORM_FIELD_EXTERNAL_KEY_ID = 140;
 
     // triple only fields
     const string TRIPLE_NAME = "triple_name";
-    const int TRIPLE_NAME_ID = 57;
+    const int TRIPLE_NAME_ID = 37;
     const string FORM_FIELD_WEIGHT = "system_form_field_weight";
-    const int FORM_FIELD_WEIGHT_ID = 150;
+    const int FORM_FIELD_WEIGHT_ID = 127;
 
     // value only fields
     const string FORM_FIELD_GROUP = "system_form_field_group";
-    const int FORM_FIELD_GROUP_ID = 69;
+    const int FORM_FIELD_GROUP_ID = 134;
     const string FORM_FIELD_GROUP_OR_PHRASES = "system_form_field_group_or_phrase_list";
-    const int FORM_FIELD_GROUP_OR_PHRASES_ID = 70;
+    const int FORM_FIELD_GROUP_OR_PHRASES_ID = 135;
 
     // result only fields
     const string FORM_FIELD_SOURCE_GROUP = "system_form_field_source_group";
-    const int FORM_FIELD_SOURCE_GROUP_ID = 85;
+    const int FORM_FIELD_SOURCE_GROUP_ID = 136;
     const string FORM_FIELD_SOURCE_GROUP_OR_PHRASES = "system_form_field_source_group_or_phrase_list";
-    const int FORM_FIELD_SOURCE_GROUP_OR_PHRASES_ID = 117;
+    const int FORM_FIELD_SOURCE_GROUP_OR_PHRASES_ID = 137;
 
     // formulas only fields
     const string FORM_FIELD_FORMULA_EXPRESSION = "system_form_field_formula_expression";
-    const int FORM_FIELD_FORMULA_EXPRESSION_ID = 53;
+    const int FORM_FIELD_FORMULA_EXPRESSION_ID = 130;
     const string FORM_FIELD_FORMULA_LATEX = "system_form_field_formula_latex";
-    const int FORM_FIELD_FORMULA_LATEX_ID = 211;
+    const int FORM_FIELD_FORMULA_LATEX_ID = 131;
     const string EXPRESSION = "expression";
-    const int EXPRESSION_ID = 62;
+    const int EXPRESSION_ID = 85;
     const string EXPRESSION_LATEX_LINK = "expression_latex_link";
-    const int EXPRESSION_LATEX_LINK_ID = 202;
+    const int EXPRESSION_LATEX_LINK_ID = 87;
     const string EXPRESSION_LATEX_LINK_COM = "display the formula expression in the latex format with a tooltip and a link for each term";
     // the same latex, but in the column beside the latex field of the formula form
     const string EXPRESSION_LATEX_LINK_FORM = "expression_latex_link_form";
-    const int EXPRESSION_LATEX_LINK_FORM_ID = 235;
+    const int EXPRESSION_LATEX_LINK_FORM_ID = 88;
     // the user expression, not the latex, with the same tooltip and link for each term
     const string EXPRESSION_LINK = "expression_link";
-    const int EXPRESSION_LINK_ID = 234;
+    const int EXPRESSION_LINK_ID = 86;
     const string FORM_FIELD_FORMULA_ALL_VAR_NEEDED = "system_form_field_formula_all_vars";
-    const int FORM_FIELD_FORMULA_ALL_VAR_NEEDED_ID = 54;
+    const int FORM_FIELD_FORMULA_ALL_VAR_NEEDED_ID = 132;
     const string FORM_LIST_FORMULAS = "formula_list_changeable";
-    const int FORM_LIST_FORMULAS_ID = 98;
+    const int FORM_LIST_FORMULAS_ID = 82;
 
     // for export
     const string FORM_FIELD_SELECTION_NAME = "system_form_selection_name";
-    const int FORM_FIELD_SELECTION_NAME_ID = 72;
+    const int FORM_FIELD_SELECTION_NAME_ID = 141;
     const string FORM_FIELD_SELECTION_DESCRIPTION = "system_form_selection_description";
-    const int FORM_FIELD_SELECTION_DESCRIPTION_ID = 73;
+    const int FORM_FIELD_SELECTION_DESCRIPTION_ID = 142;
     const string FORM_FIELD_SELECTION_TEXT = "system_form_selection_text";
-    const int FORM_FIELD_SELECTION_TEXT_ID = 74;
+    const int FORM_FIELD_SELECTION_TEXT_ID = 143;
 
     // for external links
     const string FORM_FIELD_URL = "system_form_field_url";
-    const int FORM_FIELD_URL_ID = 71;
+    const int FORM_FIELD_URL_ID = 138;
     const string FORM_FIELD_DOI = "system_form_field_doi";
-    const int FORM_FIELD_DOI_ID = 217;
+    const int FORM_FIELD_DOI_ID = 139;
     const string SOURCE_DOI_LINK = "source_doi_link";
-    const int SOURCE_DOI_LINK_ID = 218;
+    const int SOURCE_DOI_LINK_ID = 119;
     const string SOURCE_URL_LINK = "source_url_link";
-    const int SOURCE_URL_LINK_ID = 221;
+    const int SOURCE_URL_LINK_ID = 118;
 
     // preview of the changes if confirmed
     const string FORM_PREVIEW = "system_form_preview";
-    const int FORM_PREVIEW_ID = 89;
+    const int FORM_PREVIEW_ID = 200;
 
     // hidden form fields
     const string FORM_HIDDEN_BACK = "system_form_back_stack";
-    const int FORM_HIDDEN_BACK_ID = 18;
+    const int FORM_HIDDEN_BACK_ID = 13;
     const string FORM_HIDDEN_STEP = "system_form_confirm_status";
-    const int FORM_HIDDEN_STEP_ID = 19;
+    const int FORM_HIDDEN_STEP_ID = 14;
 
     // admin user edit form fields
     const string ADMIN_FORM_FIELD_USER_NAME = "admin_form_field_username";
-    const int ADMIN_FORM_FIELD_USER_NAME_ID = 168;
+    const int ADMIN_FORM_FIELD_USER_NAME_ID = 255;
     const string ADMIN_FORM_FIELD_USER_EMAIL = "admin_form_field_user_email";
-    const int ADMIN_FORM_FIELD_USER_EMAIL_ID = 168;
+    const int ADMIN_FORM_FIELD_USER_EMAIL_ID = 256;
     const string ADMIN_FORM_FIELD_USER_PASSWORD = "admin_form_field_user_password";
-    const int ADMIN_FORM_FIELD_USER_PASSWORD_ID = 170;
+    const int ADMIN_FORM_FIELD_USER_PASSWORD_ID = 257;
     const string ADMIN_FORM_FIELD_USER_USES_SANDBOX = "admin_form_field_user_uses_sandbox";
-    const int ADMIN_FORM_FIELD_USER_USES_SANDBOX_ID = 209;
+    const int ADMIN_FORM_FIELD_USER_USES_SANDBOX_ID = 258;
     const string ADMIN_FORM_FIELD_LANGUAGE_SYMBOL = "admin_form_field_language_symbol";
-    const int ADMIN_FORM_FIELD_LANGUAGE_SYMBOL_ID = 179;
+    const int ADMIN_FORM_FIELD_LANGUAGE_SYMBOL_ID = 259;
     const string FIELD_LANGUAGE_SYMBOL = "field_language_symbol";
-    const int FIELD_LANGUAGE_SYMBOL_ID = 180;
+    const int FIELD_LANGUAGE_SYMBOL_ID = 120;
 
     // admin-only system status panels
     const string SYSTEM_ADMIN_URL_DELAY = "system_admin_url_delay";
-    const int SYSTEM_ADMIN_URL_DELAY_ID = 181;
+    const int SYSTEM_ADMIN_URL_DELAY_ID = 260;
     const string SYSTEM_ADMIN_LOGIN_FAILS = "system_admin_login_fails";
-    const int SYSTEM_ADMIN_LOGIN_FAILS_ID = 182;
+    const int SYSTEM_ADMIN_LOGIN_FAILS_ID = 261;
     const string SYSTEM_ADMIN_ERRORS_UNASSIGNED = "system_admin_errors_unassigned";
-    const int SYSTEM_ADMIN_ERRORS_UNASSIGNED_ID = 183;
+    const int SYSTEM_ADMIN_ERRORS_UNASSIGNED_ID = 262;
     const string SYSTEM_ADMIN_ERRORS_DELAYED_FIX = "system_admin_errors_delayed_fix";
-    const int SYSTEM_ADMIN_ERRORS_DELAYED_FIX_ID = 184;
+    const int SYSTEM_ADMIN_ERRORS_DELAYED_FIX_ID = 263;
     const string SYSTEM_ADMIN_JOBS_DELAYED = "system_admin_jobs_delayed";
-    const int SYSTEM_ADMIN_JOBS_DELAYED_ID = 185;
+    const int SYSTEM_ADMIN_JOBS_DELAYED_ID = 264;
 
     // generic list selector (e.g. languages)
     const string SELECT_LIST = "select_list";
-    const int SELECT_LIST_ID = 186;
+    const int SELECT_LIST_ID = 227;
 
     // buttons
     const string FORM_BUTTON_CANCEL = "system_button_cancel";
-    const int FORM_BUTTON_CANCEL_ID = 29;
+    const int FORM_BUTTON_CANCEL_ID = 16;
     const string FORM_BUTTON_SAVE = "system_button_save";
-    const int FORM_BUTTON_SAVE_ID = 30;
+    const int FORM_BUTTON_SAVE_ID = 15;
     const string FORM_BUTTON_CONFIRM = "system_button_confirm";
-    const int FORM_BUTTON_CONFIRM_ID = 204;
+    const int FORM_BUTTON_CONFIRM_ID = 17;
     const string FORM_BUTTON_DEL = "system_button_del";
-    const int FORM_BUTTON_DEL_ID = 31;
+    const int FORM_BUTTON_DEL_ID = 18;
     const string FORM_BUTTON_IMPORT = "system_button_import";
-    const int FORM_BUTTON_IMPORT_ID = 94;
+    const int FORM_BUTTON_IMPORT_ID = 224;
     const string FORM_BUTTON_EXPORT = "system_button_export";
-    const int FORM_BUTTON_EXPORT_ID = 95;
+    const int FORM_BUTTON_EXPORT_ID = 222;
 
     // simple close the form section
     const string FORM_END = "form_end";
-    const int FORM_END_ID = 32;
+    const int FORM_END_ID = 19;
 
     // show changes if confirmed
     const string SYSTEM_SHOW_RESULT_DIFF = "system_show_result_diff";
-    const int SYSTEM_SHOW_RESULT_DIFF_ID = 154;
+    const int SYSTEM_SHOW_RESULT_DIFF_ID = 80;
 
     // TODO Prio 0 group and move the lines below
     const string SYSTEM_PASTE_TABLE_CONTEXT = "system_paste_table_context";
-    const int SYSTEM_PASTE_TABLE_CONTEXT_ID = 155;
+    const int SYSTEM_PASTE_TABLE_CONTEXT_ID = 225;
     const string SYSTEM_PASTE_TABLE_BODY = "system_paste_table_body";
-    const int SYSTEM_PASTE_TABLE_BODY_ID = 156;
+    const int SYSTEM_PASTE_TABLE_BODY_ID = 226;
     const string SYSTEM_SELECTION_TEXT = "system_selection_text";
-    const int SYSTEM_SELECTION_TEXT_ID = 157;
+    const int SYSTEM_SELECTION_TEXT_ID = 228;
     const string SYSTEM_TITLE_OBJECT_NAMED = "system_title_named_object";
-    const int SYSTEM_TITLE_OBJECT_NAMED_ID = 158;
+    const int SYSTEM_TITLE_OBJECT_NAMED_ID = 204;
     const string FORM_CLASS = "form_class";
-    const int FORM_CLASS_ID = 159;
+    const int FORM_CLASS_ID = 205;
     const string FORM_CHANGES = "form_changes";
-    const int FORM_CHANGES_ID = 160;
+    const int FORM_CHANGES_ID = 206;
     const string FORM_IMPACT = "form_impact";
-    const int FORM_IMPACT_ID = 161;
+    const int FORM_IMPACT_ID = 207;
     const string SYSTEM_SHOW_VIEW_DIFF = "system_show_view_diff";
-    const int SYSTEM_SHOW_VIEW_DIFF_ID = 162;
+    const int SYSTEM_SHOW_VIEW_DIFF_ID = 203;
 
     /*
      * fixed system pages
      */
 
     const string SYSTEM_TITLE = "system_title";
-    const int SYSTEM_TITLE_ID = 63;
+    const int SYSTEM_TITLE_ID = 1;
     const string SYSTEM_TITLE_WITH_OBJECT_NAME = "system_title_with_object_name";
-    const int SYSTEM_TITLE_WITH_OBJECT_NAME_ID = 215;
+    const int SYSTEM_TITLE_WITH_OBJECT_NAME_ID = 5;
     const string SYSTEM_SUB_TITLE = "system_sub_title";
-    const int SYSTEM_SUB_TITLE_ID = 145;
+    const int SYSTEM_SUB_TITLE_ID = 3;
     const string SYSTEM_SUB_TITLE_VAR = "system_sub_title_var";
-    const int SYSTEM_SUB_TITLE_VAR_ID = 146;
+    const int SYSTEM_SUB_TITLE_VAR_ID = 4;
     // the "..." below the title of a default, detail, range or detail with range view that
     // opens the menu to show the same object in one of the other three versions
     const string RELATED_SYSTEM_VIEW_SELECTOR = "related_system_view_selector";
-    const int RELATED_SYSTEM_VIEW_SELECTOR_ID = 264;
+    const int RELATED_SYSTEM_VIEW_SELECTOR_ID = 12;
     const string SYSTEM_BODY_ABOUT = "system_body_about";
-    const int SYSTEM_BODY_ABOUT_ID = 64;
+    const int SYSTEM_BODY_ABOUT_ID = 231;
     const string SYSTEM_BODY_SETUP = "system_body_setup";
-    const int SYSTEM_BODY_SETUP_ID = 102;
+    const int SYSTEM_BODY_SETUP_ID = 232;
     const string SYSTEM_BODY_SIGNUP = "system_body_signup";
-    const int SYSTEM_BODY_SIGNUP_ID = 103;
+    const int SYSTEM_BODY_SIGNUP_ID = 233;
     const string SYSTEM_BODY_LOGIN = "system_body_login";
-    const int SYSTEM_BODY_LOGIN_ID = 104;
+    const int SYSTEM_BODY_LOGIN_ID = 234;
     const string SYSTEM_BODY_LOGIN_ACTIVATE = "system_body_login_activate";
-    const int SYSTEM_BODY_LOGIN_ACTIVATE_ID = 105;
+    const int SYSTEM_BODY_LOGIN_ACTIVATE_ID = 235;
     const string SYSTEM_BODY_LOGIN_RESET = "system_body_login_reset";
-    const int SYSTEM_BODY_LOGIN_RESET_ID = 106;
+    const int SYSTEM_BODY_LOGIN_RESET_ID = 236;
     const string SYSTEM_BODY_LOGOUT = "system_body_logout";
-    const int SYSTEM_BODY_LOGOUT_ID = 107;
+    const int SYSTEM_BODY_LOGOUT_ID = 237;
     const string SYSTEM_BODY_SEARCH = "system_body_search";
-    const int SYSTEM_BODY_SEARCH_ID = 108;
+    const int SYSTEM_BODY_SEARCH_ID = 239;
     const string SYSTEM_BODY_SEARCH_FULL = "system_body_search_full";
-    const int SYSTEM_BODY_SEARCH_FULL_ID = 109;
+    const int SYSTEM_BODY_SEARCH_FULL_ID = 240;
     const string SYSTEM_BODY_VALUE_DETAIL = "system_body_value_detail";
-    const int SYSTEM_BODY_VALUE_DETAIL_ID = 110;
+    const int SYSTEM_BODY_VALUE_DETAIL_ID = 241;
     const string SYSTEM_BODY_RESULT_EXPLAIN = "system_body_result_explain";
-    const int SYSTEM_BODY_RESULT_EXPLAIN_ID = 111;
+    const int SYSTEM_BODY_RESULT_EXPLAIN_ID = 242;
     const string SYSTEM_BODY_FORMULA_TEST = "system_body_formula_test";
-    const int SYSTEM_BODY_FORMULA_TEST_ID = 112;
+    const int SYSTEM_BODY_FORMULA_TEST_ID = 243;
     const string SYSTEM_BODY_SANDBOX = "system_body_sandbox";
-    const int SYSTEM_BODY_SANDBOX_ID = 113;
+    const int SYSTEM_BODY_SANDBOX_ID = 244;
     const string SYSTEM_BODY_UNDO = "system_body_undo";
-    const int SYSTEM_BODY_UNDO_ID = 114;
+    const int SYSTEM_BODY_UNDO_ID = 245;
     const string SYSTEM_BODY_USER_SETTINGS = "system_body_user_settings";
-    const int SYSTEM_BODY_USER_SETTINGS_ID = 115;
+    const int SYSTEM_BODY_USER_SETTINGS_ID = 238;
     const string SYSTEM_BODY_PROCESS = "system_body_process";
-    const int SYSTEM_BODY_PROCESS_ID = 116;
+    const int SYSTEM_BODY_PROCESS_ID = 248;
     const string SYSTEM_BODY_PROCESS_LIST = "system_body_process_list";
-    const int SYSTEM_BODY_PROCESS_LIST_ID = 68;
+    const int SYSTEM_BODY_PROCESS_LIST_ID = 250;
     const string SYSTEM_BODY_PROCESS_PROGRESS = "system_body_process_progress";
-    const int SYSTEM_BODY_PROCESS_PROGRESS_ID = 67;
+    const int SYSTEM_BODY_PROCESS_PROGRESS_ID = 249;
     const string SYSTEM_BODY_ERROR_LOG = "system_body_error_log";
-    const int SYSTEM_BODY_ERROR_LOG_ID = 65;
+    const int SYSTEM_BODY_ERROR_LOG_ID = 246;
     const string SYSTEM_BODY_ERROR_UPDATE = "system_body_error_update";
-    const int SYSTEM_BODY_ERROR_UPDATE_ID = 66;
+    const int SYSTEM_BODY_ERROR_UPDATE_ID = 247;
 
 
     /*
@@ -435,13 +435,13 @@ class component_types
 
     // internal components used for formatting
     const string ROW_START = "row_start";
-    const int ROW_START_ID = 33;
+    const int ROW_START_ID = 21;
     const string ROW_RIGHT = "row_right";
-    const int ROW_RIGHT_ID = 34;
+    const int ROW_RIGHT_ID = 23;
     const string ROW_CENTER = "row_center";
-    const int ROW_CENTER_ID = 205;
+    const int ROW_CENTER_ID = 22;
     const string ROW_END = "row_end";
-    const int ROW_END_ID = 35;
+    const int ROW_END_ID = 24;
 
 
     /*
@@ -450,100 +450,100 @@ class component_types
 
     // show the word or triple name and give the user the possibility to change the name
     const string SELECT_PHRASE = "select_phrase";
-    const int SELECT_PHRASE_ID = 1;
+    const int SELECT_PHRASE_ID = 146;
     // select a view
     const string SELECT_VIEW = "select_view";
-    const int SELECT_VIEW_ID = 2;
+    const int SELECT_VIEW_ID = 162;
 
     // show a list of related objects that cannot be changed (e.g. Zurich: is part of Switzerland or Zurich: is a city)
     const string LIST_PARENTS_OF_WORD = "list_parents_of_word";
-    const int LIST_PARENTS_OF_WORD_ID = 96;
+    const int LIST_PARENTS_OF_WORD_ID = 47;
     const string LIST_CHILDREN_OF_WORD = "list_children_of_word";
-    const int LIST_CHILDREN_OF_WORD_ID = 48;
+    const int LIST_CHILDREN_OF_WORD_ID = 46;
     const string PHRASE_ALIASES = "phrase_aliases";
-    const int PHRASE_ALIASES_ID = 194;
+    const int PHRASE_ALIASES_ID = 42;
     const string PHRASE_ALIASES_COM = "show the phrases that are an alias of the given phrase e.g. 'has aliases: $, U.S. dollar' for 'US dollar'";
     const string PHRASE_SYMBOLS = "phrase_symbols";
-    const int PHRASE_SYMBOLS_ID = 195;
+    const int PHRASE_SYMBOLS_ID = 43;
     const string PHRASE_SYMBOLS_COM = "show the symbols of the given phrase e.g. 'has symbol: USD' for 'US dollar'";
     const string LIST_PHRASES_RELATED_EX_SYMBOLS = "list_phrases_related_ex_symbols";
-    const int LIST_PHRASES_RELATED_EX_SYMBOLS_ID = 196;
+    const int LIST_PHRASES_RELATED_EX_SYMBOLS_ID = 48;
     const string LIST_PHRASES_RELATED_EX_SYMBOLS_COM = "list of phrases related to the given phrase excluding the alias and symbol entries";
     const string LIST_PHRASES_RELATED_EX_SUBTITLE = "list_phrases_related_ex_subtitle";
-    const int LIST_PHRASES_RELATED_EX_SUBTITLE_ID = 197;
+    const int LIST_PHRASES_RELATED_EX_SUBTITLE_ID = 49;
     const string LIST_PHRASES_RELATED_EX_SUBTITLE_COM = "list of phrases related to the given phrase excluding the alias, symbol and 'is a' entries that are already shown by the alias, symbol and subtitle components";
     const string VALUE_CHART = "value_chart";
-    const int VALUE_CHART_ID = 198;
+    const int VALUE_CHART_ID = 58;
     const string VALUE_CHART_COM = "show a chart of the most relevant values by impact on top of the value list";
     const string VIEW_TAB_BOX = "view_tab_box";
-    const int VIEW_TAB_BOX_ID = 199;
+    const int VIEW_TAB_BOX_ID = 25;
     const string VIEW_TAB_BOX_COM = "a tab box with the related views (preview plus open and switch buttons) and the change log of the word";
     const string LIST_TRIPLES_OF_VERB = "triples_by_verb";
-    const int LIST_TRIPLES_OF_VERB_ID = 137;
+    const int LIST_TRIPLES_OF_VERB_ID = 52;
     const string LIST_VALUES_BY_TRIPLE = "values_by_triple";
-    const int LIST_VALUES_BY_TRIPLE_ID = 151;
+    const int LIST_VALUES_BY_TRIPLE_ID = 62;
     const string LIST_VALUES_BY_SOURCE = "values_by_source";
-    const int LIST_VALUES_BY_SOURCE_ID = 152;
+    const int LIST_VALUES_BY_SOURCE_ID = 63;
     // the similar values and the results of the value default page
     const string LIST_VALUES_SIMILAR = "values_similar";
-    const int LIST_VALUES_SIMILAR_ID = 247;
+    const int LIST_VALUES_SIMILAR_ID = 64;
     const string LIST_RESULTS_BY_VALUE = "results_by_value";
-    const int LIST_RESULTS_BY_VALUE_ID = 248;
+    const int LIST_RESULTS_BY_VALUE_ID = 73;
     // the values, formulas and results used for the calculation shown on the result default page
     const string LIST_VALUES_USED = "values_used";
-    const int LIST_VALUES_USED_ID = 260;
+    const int LIST_VALUES_USED_ID = 74;
     const string LIST_FORMULAS_USED = "formulas_used";
-    const int LIST_FORMULAS_USED_ID = 261;
+    const int LIST_FORMULAS_USED_ID = 75;
     const string LIST_RESULTS_USED = "results_used";
-    const int LIST_RESULTS_USED_ID = 262;
+    const int LIST_RESULTS_USED_ID = 76;
     const string LIST_FORMULAS_OF_VERB = "formulas_by_verb";
-    const int LIST_FORMULAS_OF_VERB_ID = 148;
+    const int LIST_FORMULAS_OF_VERB_ID = 83;
     const string LIST_FORMULAS_OF_PARENTS = "formulas_of_parents";
-    const int LIST_FORMULAS_OF_PARENTS_ID = 206;
+    const int LIST_FORMULAS_OF_PARENTS_ID = 84;
     const string LIST_PHRASES_OF_FORMULA = "list_phrases_of_formula";
-    const int LIST_PHRASES_OF_FORMULA_ID = 48;
+    const int LIST_PHRASES_OF_FORMULA_ID = 53;
     const string LIST_REF = "ref_list";
-    const int LIST_REF_ID = 42;
+    const int LIST_REF_ID = 191;
     const string LIST_FORMULAS = "formula_list";
-    const int LIST_FORMULAS_ID = 12;
+    const int LIST_FORMULAS_ID = 81;
     const string LIST_RESULTS = "result_list";
-    const int LIST_RESULTS_ID = 97;
+    const int LIST_RESULTS_ID = 72;
     const string LINK_LIST_WORD = "link_list";
-    const int LINK_LIST_WORD_ID = 43;
+    const int LINK_LIST_WORD_ID = 190;
     const string RANK_PHRASE = "usage";
-    const int USAGE_WORD_ID = 44;
+    const int USAGE_WORD_ID = 28;
     const string RANKING_PARAMETERS = "ranking_parameters";
-    const int RANKING_PARAMETERS_ID = 45;
+    const int RANKING_PARAMETERS_ID = 230;
     const string RANKING_LIST = "ranking_list";
-    const int RANKING_LIST_ID = 46;
+    const int RANKING_LIST_ID = 229;
 
     // user components for value
     const string VALUE_NAME = "group_or_phrase_list";
-    const int VALUE_NAME_ID = 140;
+    const int VALUE_NAME_ID = 67;
     const string GROUP_NAME = "group_name";
-    const int GROUP_NAME_ID = 141;
+    const int GROUP_NAME_ID = 66;
     const string VALUE_NUMERIC = "value_numeric";
-    const int VALUE_NUMERIC_ID = 142;
+    const int VALUE_NUMERIC_ID = 65;
     const string MAIN_VALUE = "main_value";
-    const int MAIN_VALUE_ID = 38;
+    const int MAIN_VALUE_ID = 59;
 
     // show the user-specific name of a word or triple with the description on mouseover without allowing to change it
     const string PHRASE = "phrase";
-    const int PHRASE_ID = 4;
+    const int PHRASE_ID = 33;
     const string VERB_NAME = "verb_name";
-    const int VERB_NAME_ID = 37;
+    const int VERB_NAME_ID = 38;
     const string SOURCE_NAME = "source_name";
-    const int SOURCE_NAME_ID = 58;
+    const int SOURCE_NAME_ID = 39;
     const string REFERENCE_NAME = "reference_name";
-    const int REFERENCE_NAME_ID = 59;
+    const int REFERENCE_NAME_ID = 40;
     const string LANGUAGE_NAME = "language_name";
-    const int LANGUAGE_NAME_ID = 60;
+    const int LANGUAGE_NAME_ID = 41;
     const string RESULTS_RELATED = "results_related";
-    const int RESULTS_RELATED_ID = 61;
+    const int RESULTS_RELATED_ID = 69;
     const string BUTTON_REQUEST = "button_request";
-    const int BUTTON_REQUEST_ID = 187;
+    const int BUTTON_REQUEST_ID = 20;
     const string PHRASES_RELATED = "phrases_related";
-    const int PHRASES_RELATED_ID = 188;
+    const int PHRASES_RELATED_ID = 44;
 
     /*
      * related
@@ -551,165 +551,165 @@ class component_types
 
     // display a changeable list as a table (e.g. ABB as first word, Cash Flow Statement as second word)
     const string VALUES_RELATED = "values_related";
-    const int VALUES_RELATED_ID = 11;
+    const int VALUES_RELATED_ID = 54;
     // like values_related but grouped for a quick overview: newest time period first, then the phrases
     // used by several values, then the remaining values by impact
     const string VALUES_MOST_RELEVANT = "values_most_relevant";
-    const int VALUES_MOST_RELEVANT_ID = 207;
+    const int VALUES_MOST_RELEVANT_ID = 57;
     // the most relevant values of a phrase in up to four columns that wrap on narrow screens,
     // each column headed by one of the phrases used most often within these values
     const string VALUES_IN_COLUMNS = "values_in_columns";
-    const int VALUES_IN_COLUMNS_ID = 212;
+    const int VALUES_IN_COLUMNS_ID = 56;
     const string VALUES_IN_COLUMNS_COM = "show the values related to a phrase in up to four columns headed by the phrases used most often within the values";
     // the values related to a phrase as a table: one column per phrase used most often within the
     // values (e.g. inhabitants and area for a city) and one row per remaining phrase combination
     // (e.g. per year), so that the values of one row can be compared column by column
     const string TABLE_WITH_RELATED_COLUMNS = "table_with_related_columns";
-    const int TABLE_WITH_RELATED_COLUMNS_ID = 214;
+    const int TABLE_WITH_RELATED_COLUMNS_ID = 55;
     const string TABLE_WITH_RELATED_COLUMNS_COM = "show the values related to a phrase as a table with one column per phrase used most often within the values";
     const string FORM_TABLE_LINKED_VIEWS = "system_form_link_table";
-    const int FORM_TABLE_LINKED_VIEWS_ID = 93;
+    const int FORM_TABLE_LINKED_VIEWS_ID = 189;
 
     const string SHOW_NAME = "system_show_field_name";
-    const int SHOW_NAME_ID = 20;
+    const int SHOW_NAME_ID = 89;
     const string SHOW_NAME_BIG = "system_show_field_name_big";
-    const int SHOW_NAME_BIG_ID = 208;
+    const int SHOW_NAME_BIG_ID = 90;
     const string SHOW_DESCRIPTION = "system_show_field_description";
-    const int SHOW_DESCRIPTION_ID = 147;
+    const int SHOW_DESCRIPTION_ID = 91;
     const string SHOW_PLURAL = "system_show_field_plural";
-    const int SHOW_PLURAL_ID = 190;
+    const int SHOW_PLURAL_ID = 92;
     const string SHOW_PHRASE_TYPE = "system_show_field_phrase_type";
-    const int SHOW_PHRASE_TYPE_ID = 191;
+    const int SHOW_PHRASE_TYPE_ID = 96;
     const string SHOW_REVERSE = "system_show_field_reverse";
-    const int SHOW_REVERSE_ID = 219;
+    const int SHOW_REVERSE_ID = 93;
     const string SHOW_PLURAL_REVERSE = "system_show_field_plural_reverse";
-    const int SHOW_PLURAL_REVERSE_ID = 220;
+    const int SHOW_PLURAL_REVERSE_ID = 94;
     const string SHOW_STYLE = "system_show_field_style";
-    const int SHOW_STYLE_ID = 223;
+    const int SHOW_STYLE_ID = 97;
     const string SHOW_OWNER = "system_show_field_owner";
-    const int SHOW_OWNER_ID = 224;
+    const int SHOW_OWNER_ID = 98;
     // the components of the shown view sorted by their position e.g. for the view default page
     const string VIEW_COMPONENTS = "components_of_view";
-    const int VIEW_COMPONENTS_ID = 225;
+    const int VIEW_COMPONENTS_ID = 194;
     const string SHOW_FORMULA = "system_show_field_formula";
-    const int SHOW_FORMULA_ID = 226;
+    const int SHOW_FORMULA_ID = 108;
     // the read only twin of FORM_FIELD_NAME_IN_FORMULAS: the short name of a verb used in a
     // formula, where both sides of the triple are combined
     const string SHOW_NAME_IN_FORMULAS = "system_show_field_name_in_formulas";
-    const int SHOW_NAME_IN_FORMULAS_ID = 233;
+    const int SHOW_NAME_IN_FORMULAS_ID = 95;
     // the component that a component links to shown with the type of that link
     const string SHOW_LINKED_COMPONENT = "system_show_field_linked_component";
-    const int SHOW_LINKED_COMPONENT_ID = 250;
+    const int SHOW_LINKED_COMPONENT_ID = 107;
     // select the phrases of a new value one after the other (see ui_select::phrase_steps)
     const string FORM_PHRASE_STEPS = "system_form_phrase_steps";
-    const int FORM_PHRASE_STEPS_ID = 251;
+    const int FORM_PHRASE_STEPS_ID = 211;
     // add a word by its name without the confirm view (see system_form::form_word_add_simple)
     const string FORM_WORD_ADD_SIMPLE = "system_form_word_add_simple";
-    const int FORM_WORD_ADD_SIMPLE_ID = 252;
+    const int FORM_WORD_ADD_SIMPLE_ID = 208;
     // add a triple by its name without the confirm view (see system_form::form_triple_add_simple)
     const string FORM_TRIPLE_ADD_SIMPLE = "system_form_triple_add_simple";
-    const int FORM_TRIPLE_ADD_SIMPLE_ID = 258;
+    const int FORM_TRIPLE_ADD_SIMPLE_ID = 209;
     // add a value by its phrases and the number without the confirm view (see ui_select::value_add_simple)
     const string FORM_VALUE_ADD_SIMPLE = "system_form_value_add_simple";
-    const int FORM_VALUE_ADD_SIMPLE_ID = 253;
+    const int FORM_VALUE_ADD_SIMPLE_ID = 210;
     // the phrases, the value type and the value of a new value in one line of the detailed value add form
     // (see ui_select::phrase_value_line)
     const string FORM_PHRASE_VALUE_LINE = "system_form_phrase_value_line";
-    const int FORM_PHRASE_VALUE_LINE_ID = 259;
+    const int FORM_PHRASE_VALUE_LINE_ID = 212;
     // overwrite the number, text, time or geolocation of a value or the number of a result without the confirm view
     // (see system_form::form_value_overwrite)
     const string FORM_VALUE_OVERWRITE = "system_form_value_overwrite";
-    const int FORM_VALUE_OVERWRITE_ID = 254;
+    const int FORM_VALUE_OVERWRITE_ID = 213;
     // the body of a system view whose data and actions are not yet implemented (see system_page::not_yet_available)
     const string SYSTEM_BODY_NOT_YET_AVAILABLE = "system_body_not_yet_available";
-    const int SYSTEM_BODY_NOT_YET_AVAILABLE_ID = 255;
+    const int SYSTEM_BODY_NOT_YET_AVAILABLE_ID = 253;
     // the jobs of the requesting user with the pending jobs on top (see system_page::user_jobs)
     const string SYSTEM_BODY_USER_JOBS = "system_body_user_jobs";
-    const int SYSTEM_BODY_USER_JOBS_ID = 256;
+    const int SYSTEM_BODY_USER_JOBS_ID = 251;
     // the jobs of all users for an admin with the pending jobs on top (see system_page::all_jobs)
     const string SYSTEM_BODY_ALL_JOBS = "system_body_all_jobs";
-    const int SYSTEM_BODY_ALL_JOBS_ID = 257;
+    const int SYSTEM_BODY_ALL_JOBS_ID = 252;
     const string SHOW_PHRASE_ROW = "system_show_field_phrase_row";
-    const int SHOW_PHRASE_ROW_ID = 227;
+    const int SHOW_PHRASE_ROW_ID = 109;
     const string SHOW_PHRASE_COL = "system_show_field_phrase_col";
-    const int SHOW_PHRASE_COL_ID = 228;
+    const int SHOW_PHRASE_COL_ID = 110;
     const string SHOW_PHRASE_COL_SUB = "system_show_field_phrase_col_sub";
-    const int SHOW_PHRASE_COL_SUB_ID = 229;
+    const int SHOW_PHRASE_COL_SUB_ID = 111;
     // the views that use the shown component e.g. for the component default page
     const string COMPONENT_VIEWS = "views_of_component";
-    const int COMPONENT_VIEWS_ID = 230;
+    const int COMPONENT_VIEWS_ID = 195;
     // the terms that use the shown view e.g. for the used by column of the view add and edit pages
     const string VIEW_TERMS = "terms_of_view";
-    const int VIEW_TERMS_ID = 249;
+    const int VIEW_TERMS_ID = 193;
     // the type and the order number of a link e.g. for the formula link default page
     const string SHOW_LINK_TYPE = "system_show_field_link_type";
-    const int SHOW_LINK_TYPE_ID = 231;
+    const int SHOW_LINK_TYPE_ID = 105;
     const string SHOW_ORDER_NBR = "system_show_field_order_nbr";
-    const int SHOW_ORDER_NBR_ID = 232;
+    const int SHOW_ORDER_NBR_ID = 106;
     // the weight and the condition formula of a triple e.g. for the triple default page
     const string SHOW_WEIGHT = "system_show_field_weight";
-    const int SHOW_WEIGHT_ID = 236;
+    const int SHOW_WEIGHT_ID = 99;
     const string SHOW_CONDITION_FORMULA = "system_show_field_condition_formula";
-    const int SHOW_CONDITION_FORMULA_ID = 237;
+    const int SHOW_CONDITION_FORMULA_ID = 100;
     // the source and the time of the last update of a value e.g. for the value default page
     const string SHOW_SOURCE = "system_show_field_source";
-    const int SHOW_SOURCE_ID = 238;
+    const int SHOW_SOURCE_ID = 101;
     const string SHOW_LAST_UPDATE = "system_show_field_last_update";
-    const int SHOW_LAST_UPDATE_ID = 239;
+    const int SHOW_LAST_UPDATE_ID = 102;
     // the system calculated impact of a reference e.g. for the ref edit view
     const string SHOW_IMPACT = "system_show_field_impact";
-    const int SHOW_IMPACT_ID = 241;
+    const int SHOW_IMPACT_ID = 103;
     // the all-values-needed flag of a formula e.g. for the formula default page
     const string SHOW_ALL_VALUES_NEEDED = "system_show_field_formula_all_vars";
-    const int SHOW_ALL_VALUES_NEEDED_ID = 243;
+    const int SHOW_ALL_VALUES_NEEDED_ID = 112;
     // the calculated number with its phrase group and the creating formula
     // e.g. for the result default page
     const string SHOW_RESULT_VALUE = "system_show_result_value";
-    const int SHOW_RESULT_VALUE_ID = 244;
+    const int SHOW_RESULT_VALUE_ID = 77;
     const string SHOW_RESULT_FORMULA = "system_show_result_formula";
-    const int SHOW_RESULT_FORMULA_ID = 245;
+    const int SHOW_RESULT_FORMULA_ID = 78;
     // the formula of a result with the numbers used, each linked to its value or result
     const string SHOW_RESULT_EXPRESSION = "system_show_result_expression";
-    const int SHOW_RESULT_EXPRESSION_ID = 263;
+    const int SHOW_RESULT_EXPRESSION_ID = 79;
     const string SHOW_FIELD_USAGE = "system_show_field_usage";
-    const int SHOW_FIELD_USAGE_ID = 128;
+    const int SHOW_FIELD_USAGE_ID = 104;
     const string SYSTEM_FIELD_PARENT_VIEW = "system_show_parent_view";
-    const int SYSTEM_FIELD_PARENT_VIEW_ID = 175;
+    const int SYSTEM_FIELD_PARENT_VIEW_ID = 196;
     const string SYSTEM_FIELD_CHILD_VIEW = "system_show_child_view";
-    const int SYSTEM_FIELD_CHILD_VIEW_ID = 176;
+    const int SYSTEM_FIELD_CHILD_VIEW_ID = 197;
     const string SHOW_FIELD_RELATION_TYPE = "system_show_view_relation_type";
-    const int SHOW_FIELD_RELATION_TYPE_ID = 177;
+    const int SHOW_FIELD_RELATION_TYPE_ID = 198;
     const string SHOW_FIELD_START_POS = "system_show_view_start_pos";
-    const int SHOW_FIELD_START_POS_ID = 178;
+    const int SHOW_FIELD_START_POS_ID = 199;
     const string VIEW_AFTER_CHANGE = "system_show_after_change";
-    const int VIEW_AFTER_CHANGE_ID = 143;
+    const int VIEW_AFTER_CHANGE_ID = 202;
     const string VIEW_BEFORE_CHANGE = "system_show_before_change";
-    const int VIEW_BEFORE_CHANGE_ID = 144;
+    const int VIEW_BEFORE_CHANGE_ID = 201;
     const string WORD_RESULTS = "word_results";
-    const int WORD_RESULTS_ID = 85;
+    const int WORD_RESULTS_ID = 70;
     const string USED_IN_AS_TEXT = "used_in_as_text";
-    const int USED_IN_AS_TEXT_ID = 129;
+    const int USED_IN_AS_TEXT_ID = 29;
     const string USED_IN_AS_TEXT_WITH_LINK = "used_in_as_text_with_link";
-    const int USED_IN_AS_TEXT_WITH_LINK_ID = 130;
+    const int USED_IN_AS_TEXT_WITH_LINK_ID = 30;
 
     const string TEXT = "text";
-    const int TEXT_ID = 3;
+    const int TEXT_ID = 35;
     const string TEXT_COM = "simply to display a variable text";
 
     const string SYSTEM_CHANGE_LOG = "change_log";
-    const int SYSTEM_CHANGE_LOG_ID = 45;
+    const int SYSTEM_CHANGE_LOG_ID = 26;
 
     // a borderless change log table with the three columns when, who and what
     const string CHANGE_LOG_TABLE_PURE = "invisible_change_log_table";
-    const int CHANGE_LOG_TABLE_PURE_ID = 210;
+    const int CHANGE_LOG_TABLE_PURE_ID = 27;
     const string CHANGE_LOG_TABLE_PURE_COM = "a change log table without borders with the three columns when, who and what limited to a config char count";
 
     const string USER_SYSTEM_ERRORS = "user_system_errors";
-    const int USER_SYSTEM_ERRORS_ID = 193;
+    const int USER_SYSTEM_ERRORS_ID = 254;
     const string USER_SYSTEM_ERRORS_COM = "show the most relevant open system errors linked to the user";
 
     const string ALL_USER_OVERWRITES = "all_user_overwrites";
-    const int ALL_USER_OVERWRITES_ID = 216;
+    const int ALL_USER_OVERWRITES_ID = 31;
     const string ALL_USER_OVERWRITES_COM = "show all changes that the shown user has written to the user sandbox tables e.g. the word overwrites";
 
     // show all word that this words is based on
@@ -726,16 +726,16 @@ class component_types
     const string FORMULA_RESULTS = "formula_results";
     // offer to configure and create an JSON file
     const string JSON_EXPORT = "export_json";
-    const int JSON_EXPORT_ID = 132;
+    const int JSON_EXPORT_ID = 214;
     // offer to configure and create an XML file
     const string XML_EXPORT = "export_xml";
-    const int XML_EXPORT_ID = 133;
+    const int XML_EXPORT_ID = 215;
     // offer to configure and create an CSV file
     const string CSV_EXPORT = "export_csv";
-    const int CSV_EXPORT_ID = 134;
+    const int CSV_EXPORT_ID = 216;
     // offer to configure and create an CSV file
     const string ODS_EXPORT = "export_ods";
-    const int ODS_EXPORT_ID = 131;
+    const int ODS_EXPORT_ID = 217;
     // show a list of words and triples with a link type selector
     const string LINK = "link";
 

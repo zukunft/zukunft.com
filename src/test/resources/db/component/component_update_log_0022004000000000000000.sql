@@ -49,6 +49,6 @@ SELECT component_update_log_0022004000000000000000
         null::text,
         784::smallint,
         'word name'::text,
-        8::smallint,
+        32::smallint,
         null::text,
         null::smallint);

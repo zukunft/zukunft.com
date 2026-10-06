@@ -110,15 +110,15 @@ class word_read_tests
 
         $t->subheader($ts . 'unique key');
         $test_name = 'the word ISBN of the use case unique_keys.json is typed unique key';
-        $wrd_isbn = new word($t->usr1);
-        $wrd_isbn->load_by_name(word_names::ISBN, $msg);
-        $t->assert_true($test_name, $wrd_isbn->is_type(phrase_type_shared::UNIQUE_KEY));
+        $wrd = new word($t->usr1);
+        $wrd->load_by_name(word_names::ISBN, $msg);
+        $t->assert_true($test_name, $wrd->is_type(phrase_type_shared::UNIQUE_KEY));
         // negative: a sample entry is an instance of a unique key, not the key itself
         $test_name = 'the ISIN of the Mercedes-Benz Group share is not typed unique key';
-        $wrd_isin = new word($t->usr1);
-        $wrd_isin->load_by_name(word_names::ISIN_MERCEDES, $msg);
-        $t->assert_true($test_name, $wrd_isin->id() != 0);
-        $t->assert_false($test_name, $wrd_isin->is_type(phrase_type_shared::UNIQUE_KEY));
+        $wrd = new word($t->usr1);
+        $wrd->load_by_name(word_names::ISIN_MERCEDES, $msg);
+        $t->assert_true($test_name, $wrd->id() != 0);
+        $t->assert_false($test_name, $wrd->is_type(phrase_type_shared::UNIQUE_KEY));
 
 
         $t->subheader($ts . 'load with a message that already carries an error');

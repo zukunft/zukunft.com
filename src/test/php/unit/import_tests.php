@@ -414,12 +414,12 @@ class import_tests
         $dto = $imp->get_data_object(json_decode($json_str, true), $msg);
         $t->assert($test_name, $msg->all_message_text(), '');
         $test_name = '... and the ISBN is typed unique key';
-        $wrd_isbn = $dto->word_list()->get_by_name(word_names::ISBN, $msg);
-        $t->assert_true($test_name, $wrd_isbn?->is_type(phrase_type_shared::UNIQUE_KEY) ?? false);
+        $wrd = $dto->word_list()->get_by_name(word_names::ISBN, $msg);
+        $t->assert_true($test_name, $wrd?->is_type(phrase_type_shared::UNIQUE_KEY) ?? false);
         // negative: a sample entry is an instance of a unique key, not the key itself
         $test_name = '... but its sample entry is not';
-        $wrd_isin = $dto->word_list()->get_by_name(word_names::ISIN_MERCEDES, $msg);
-        $t->assert_false($test_name, $wrd_isin?->is_type(phrase_type_shared::UNIQUE_KEY) ?? true);
+        $wrd = $dto->word_list()->get_by_name(word_names::ISIN_MERCEDES, $msg);
+        $t->assert_false($test_name, $wrd?->is_type(phrase_type_shared::UNIQUE_KEY) ?? true);
 
         $test_name = 'JSON import warning creation';
         $msg = new user_message($t->usr1);

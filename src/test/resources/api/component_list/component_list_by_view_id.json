@@ -3,7 +3,7 @@
         "id": 3,
         "name": "system form title word add",
         "description": "show the language specific title for the system form to add a new word",
-        "type_id": 17,
+        "type_id": 2,
         "code_id": "form_title_word_add",
         "ui_msg_code_id": "form_title_word_add"
     },
@@ -11,21 +11,21 @@
         "id": 122,
         "name": "system form hidden back stack",
         "description": "field that contains the stack for the undo actions",
-        "type_id": 18,
+        "type_id": 13,
         "code_id": "form_back_stack"
     },
     {
         "id": 123,
         "name": "system form hidden confirm status",
         "description": "switch on that the form saving needs an extra confirm by the user",
-        "type_id": 19,
+        "type_id": 14,
         "code_id": "form_confirm_status"
     },
     {
         "id": 130,
         "name": "system form field name",
         "description": "the name field in a form",
-        "type_id": 21,
+        "type_id": 121,
         "code_id": "form_field_name",
         "ui_msg_code_id": "form_field_name"
     },
@@ -33,7 +33,7 @@
         "id": 165,
         "name": "system form select phrase type",
         "description": "selector for the phrase type",
-        "type_id": 25,
+        "type_id": 169,
         "code_id": "form_field_phrase_type",
         "ui_msg_code_id": "form_select_phrase_type"
     },
@@ -41,7 +41,7 @@
         "id": 131,
         "name": "system form field description",
         "description": "the description field in a form",
-        "type_id": 22,
+        "type_id": 122,
         "code_id": "form_field_description",
         "ui_msg_code_id": "form_field_description"
     },
@@ -49,7 +49,7 @@
         "id": 269,
         "name": "system form field plural",
         "description": "the plural language form field in a form (to be move to languages forms)",
-        "type_id": 55,
+        "type_id": 123,
         "code_id": "form_field_plural",
         "ui_msg_code_id": "form_field_plural"
     },
@@ -57,7 +57,7 @@
         "id": 159,
         "name": "system form select view",
         "description": "select one view",
-        "type_id": 40,
+        "type_id": 161,
         "code_id": "form_select_view",
         "ui_msg_code_id": "form_select_view"
     },
@@ -65,7 +65,7 @@
         "id": 187,
         "name": "system form select share type",
         "description": "selector for the share type",
-        "type_id": 26,
+        "type_id": 170,
         "code_id": "form_field_share_type",
         "ui_msg_code_id": "form_select_share"
     },
@@ -73,7 +73,7 @@
         "id": 188,
         "name": "system form select protection type",
         "description": "selector for the protection type",
-        "type_id": 27,
+        "type_id": 171,
         "code_id": "form_field_protection_type",
         "ui_msg_code_id": "form_select_protection"
     },
@@ -81,14 +81,14 @@
         "id": 227,
         "name": "system formatter row right",
         "description": "to start a new row and fill from right the following components in one row until the row end is triggered",
-        "type_id": 33,
+        "type_id": 23,
         "code_id": "row_right"
     },
     {
         "id": 214,
         "name": "system form button cancel",
         "description": "button to cancel the form action and go back to the previous view",
-        "type_id": 28,
+        "type_id": 16,
         "code_id": "form_cancel_button",
         "ui_msg_code_id": "form_button_cancel"
     },
@@ -96,7 +96,7 @@
         "id": 215,
         "name": "system form button save",
         "description": "button to save the form field into the database",
-        "type_id": 29,
+        "type_id": 15,
         "code_id": "form_button_save",
         "ui_msg_code_id": "form_button_save"
     },
@@ -104,13 +104,13 @@
         "id": 229,
         "name": "system formatter row end",
         "description": "to close the previous opened row and show the components collected since the start in one row",
-        "type_id": 34,
+        "type_id": 24,
         "code_id": "row_end"
     },
     {
         "id": 225,
         "name": "system form end",
-        "type_id": 31,
+        "type_id": 19,
         "code_id": "form_end"
     }
 ]
