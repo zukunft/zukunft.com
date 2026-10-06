@@ -1545,6 +1545,7 @@ class phrase_list extends sandbox_list_named
      * mark behind the number instead of being named with the other phrases of the number
      * (see sandbox_value::quality_mark)
      *
+     * @param user_message $msg to report a missing phrase type list
      * @return phrase_list the phrases of this list of the type value quality
      */
     function value_quality_phrases(user_message $msg): phrase_list

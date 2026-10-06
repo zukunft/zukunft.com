@@ -377,6 +377,7 @@ class phrase extends combine_named
     }
 
     /**
+     * @param user_message $msg to report a missing phrase type list
      * @return bool true if this phrase says how a number has been found e.g. "assumed", which is
      *              shown as a mark behind the number instead of being named before it
      *              (see sandbox_value::quality_mark)

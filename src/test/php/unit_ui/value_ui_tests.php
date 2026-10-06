@@ -650,7 +650,7 @@ class value_ui_tests
         $test_name = '... which links to Euro';
         $t->assert_text_contains($test_name, $unit_html, url_var::ID . '=' . word_names::EURO_ID);
         $test_name = 'the other phrases of the value are still named';
-        $t->assert_text_contains($test_name, $unit_html, word_names::ASSUMED);
+        $t->assert_text_contains($test_name, $unit_html, '>' . word_names::MATH . '</a>');
         // an assumed number is marked by a grey superscript behind the number with its tooltip
         $test_name = 'an assumed value is marked behind the number';
         $t->assert_text_order($test_name, $unit_html,

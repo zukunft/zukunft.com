@@ -96,9 +96,9 @@ class triples
     const string CHANGE_LOG = 'change log';
     const string PER_YEAR = 'per year';
     const string PHRASE_DISTRIBUTION = 'phrase distribution';
-    // the factor that turns the centre of an estimate into a bound of its probability range
     // the value quality of a number taken from a peer reviewed study, shown as "+" behind the number
     const string PEER_REVIEWED = 'peer reviewed by quality journal';
+    // the factor that turns the centre of an estimate into a bound of its probability range
     const string PROBABILITY_RANGE_FACTOR = 'probability range factor';
     const string RESPONSE_TIME = 'response time';
     const string ROW_LIMIT = 'row limit';

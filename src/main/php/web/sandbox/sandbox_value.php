@@ -489,17 +489,17 @@ class sandbox_value extends sandbox
      */
     function quality_mark(): string
     {
+        // TODO Prio 2 check by code_id (see docs/llm/pending_prio_2.md)
         $names = $this->grp->phr_lst()->names();
+        $result = '';
         if (in_array(words::ASSUMED, $names)) {
-            return $this->quality_sup(self::QUALITY_MARK_ASSUMED, msg_id::QUALITY_MARK_ASSUMED);
+            $result = $this->quality_sup(self::QUALITY_MARK_ASSUMED, msg_id::QUALITY_MARK_ASSUMED);
+        } elseif ($this->is_source_missing()) {
+            $result = $this->quality_sup(self::QUALITY_MARK_NO_SOURCE, msg_id::QUALITY_MARK_NO_SOURCE);
+        } elseif (in_array(triples::PEER_REVIEWED, $names)) {
+            $result = $this->quality_sup(self::QUALITY_MARK_PEER_REVIEWED, msg_id::QUALITY_MARK_PEER_REVIEWED);
         }
-        if ($this->is_source_missing()) {
-            return $this->quality_sup(self::QUALITY_MARK_NO_SOURCE, msg_id::QUALITY_MARK_NO_SOURCE);
-        }
-        if (in_array(triples::PEER_REVIEWED, $names)) {
-            return $this->quality_sup(self::QUALITY_MARK_PEER_REVIEWED, msg_id::QUALITY_MARK_PEER_REVIEWED);
-        }
-        return '';
+        return $result;
     }
 
     /**

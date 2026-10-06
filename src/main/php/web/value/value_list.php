@@ -1179,6 +1179,7 @@ class value_list extends ListBase
      * true if the phrase says how a number is stated instead of what it is about
      *
      * @param phrase $phr the phrase to check
+     * @param user_message $msg to report a missing phrase type list
      * @return bool true for a range bound tag, the confidence or a value quality, which is shown
      *              as a mark behind the number (see sandbox_value::quality_mark)
      */

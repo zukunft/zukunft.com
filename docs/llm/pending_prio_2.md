@@ -1606,3 +1606,11 @@ pure html value add view with one form (ui_select::value_add_fields):
   solution_prio.json (factor 1.5 on the centre) are stated values marked "assumed"; they could be
   replaced by range factor results like the bounds of the problem files, so that the factor is
   stated once and the bounds follow the centre
+- sandbox_value::quality_mark finds "assumed" and "peer reviewed by quality journal" by their name
+  (words::ASSUMED, triples::PEER_REVIEWED), so a user who renames the phrase loses the mark; give
+  both a code_id in solution_prio.json, make sure the api sends the code_id of the group phrases
+  and check by the code_id instead
+- test_words::word_assumed has no phrase type, while solution_prio.json gives "assumed" the type
+  value_quality, so in the unit tests sandbox_value::name_link still names "assumed" as a phrase
+  link next to its "a" mark; set phrase_types::VALUE_QUALITY there, add the negative test that
+  value_ui_tests no longer shows the ">assumed</a>" link and re-baseline the fixtures it changes

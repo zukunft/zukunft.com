@@ -282,9 +282,9 @@ class value_list_ui_tests
         // is the header row plus two rows
         $test_name = '... so the bounds and the qualifier name no row of their own';
         $t->assert($test_name, substr_count($tbl_range, '<' . html_base::TR . '>'), 3);
-        $test_name = '... and a value without bounds is shown without brackets';
-        // the gain names no source, so it is followed by the "-" mark
+        $test_name = '... and a value without a source is followed by the "-" mark';
         $t->assert_text_contains($test_name, $lib->html_to_text($tbl_range), '35.2' . sandbox_value_ui::QUALITY_MARK_NO_SOURCE);
+        $test_name = '... and a value without bounds is shown without brackets';
         $t->assert_text_not_contains($test_name, $lib->html_to_text($tbl_range),
             '35.2' . sandbox_value_ui::QUALITY_MARK_NO_SOURCE . ' (');
         // a simple table shows the numbers only and the "..." header links to the same page with

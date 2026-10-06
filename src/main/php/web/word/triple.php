@@ -1007,6 +1007,7 @@ class triple extends sandbox_code_id
     }
 
     /**
+     * @param user_message $msg to report a missing phrase type list
      * @return bool true if the triple says how a number has been found e.g. "peer reviewed by quality journal"
      */
     function is_value_quality(user_message $msg): bool
