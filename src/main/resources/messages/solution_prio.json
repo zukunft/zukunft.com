@@ -2528,6 +2528,225 @@
       "number": "-0.0087",
       "source": "Populist Leaders and the Economy (Kiel Working Paper)",
       "description": "80 percent probability range, factor 1.2 on the centre"
+    },
+    {
+      "words": [
+        "assumed",
+        "confidence",
+        "percent"
+      ],
+      "number": "0.3",
+      "description": "the default confidence of a plain guess without a source; overwrite it for a single value if the guess rests on more than the gut feeling"
+    },
+    {
+      "words": [
+        "expert estimate",
+        "confidence",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.4",
+      "description": "the default confidence of the judgement of a single named expert, a bit above a plain guess, because the expert can be asked for the reasoning"
+    },
+    {
+      "words": [
+        "Delphi consensus",
+        "confidence",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.5",
+      "description": "the default confidence of a Delphi round, above a single expert, because several experts have corrected each other"
+    },
+    {
+      "words": [
+        "extrapolated",
+        "confidence",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.4",
+      "description": "the default confidence of a projection beyond the observed range, which assumes that the past trend continues; lower it for a long horizon"
+    },
+    {
+      "words": [
+        "interpolated",
+        "confidence",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.6",
+      "description": "the default confidence of a number filled in between two known values, above an extrapolation, because both ends are observed"
+    },
+    {
+      "words": [
+        "modelled",
+        "confidence",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.4",
+      "description": "the default confidence of a model output, which is never above the confidence of its weakest input, because the model adds its own structural uncertainty"
+    },
+    {
+      "words": [
+        "self-reported",
+        "confidence",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.5",
+      "description": "the default confidence of a number stated by the party it is about, which may have an interest in the number"
+    },
+    {
+      "words": [
+        "single measurement",
+        "confidence",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.6",
+      "description": "the default confidence of one observation without a repetition, so a measurement error cannot be detected"
+    },
+    {
+      "words": [
+        "repeated measurement",
+        "confidence",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.7",
+      "description": "the default confidence of several observations of the same team with the same method, which reveals the random error but not a systematic one"
+    },
+    {
+      "words": [
+        "official statistics",
+        "confidence",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.8",
+      "description": "the default confidence of a number published by a statistical office, a central bank or a regulator with a documented method"
+    },
+    {
+      "words": [
+        "audited",
+        "confidence",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.85",
+      "description": "the default confidence of a number checked by an independent third party e.g. a financial audit or a certified lab"
+    },
+    {
+      "words": [
+        "preprint",
+        "confidence",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.5",
+      "description": "the default confidence of a published but not yet reviewed study, because the method is documented but not yet challenged"
+    },
+    {
+      "words": [
+        "observational study",
+        "confidence",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.6",
+      "description": "the default confidence of a cohort, case-control or cross-sectional study, which can show a correlation but rarely the cause; raise it for a large cohort"
+    },
+    {
+      "words": [
+        "peer reviewed by quality journal",
+        "confidence",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.7",
+      "description": "the default confidence of a study that has passed the review of a quality journal"
+    },
+    {
+      "words": [
+        "pre-registered study",
+        "confidence",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.75",
+      "description": "the default confidence of a study with the hypothesis and the method fixed before the data collection, so the result cannot be fished out of the data afterwards"
+    },
+    {
+      "words": [
+        "randomized controlled trial",
+        "confidence",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.8",
+      "description": "the default confidence of a controlled trial with the participants assigned by chance, which can show the cause; lower it for a small trial"
+    },
+    {
+      "words": [
+        "double-blind randomized controlled trial",
+        "confidence",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.9",
+      "description": "the default confidence of a randomized controlled trial where neither the participants nor the researchers know the groups; lower it for a small trial, which can deserve less confidence than a large observational cohort"
+    },
+    {
+      "words": [
+        "independently replicated",
+        "confidence",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.9",
+      "description": "the default confidence of a result that a different team has reproduced"
+    },
+    {
+      "words": [
+        "meta-analysis",
+        "confidence",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.92",
+      "description": "the default confidence of the combined estimate of many studies; lower it if the studies are small or of a low quality"
+    },
+    {
+      "words": [
+        "defined",
+        "confidence",
+        "percent",
+        "assumed"
+      ],
+      "number": "1",
+      "description": "a number exact by definition e.g. the speed of light in SI units cannot be wrong"
+    },
+    {
+      "words": [
+        "legal",
+        "confidence",
+        "percent",
+        "assumed"
+      ],
+      "number": "1",
+      "description": "a number set by law or contract is exact as long as the law is valid; a changed law is marked by the value status outdated, not by a lower confidence"
+    },
+    {
+      "words": [
+        "proven",
+        "confidence",
+        "percent",
+        "assumed"
+      ],
+      "number": "1",
+      "description": "a mathematically derived number has no empirical uncertainty"
     }
   ],
   "formulas": [

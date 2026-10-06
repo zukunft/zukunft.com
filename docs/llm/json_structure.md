@@ -1514,6 +1514,33 @@ A value without a status word is valid. A calculated value carries every status
 of its inputs, because one retracted input makes the result unusable whatever
 the quality of the other inputs is.
 
+### The confidence of a value quality is a default value, never a fixed number
+
+Each value quality has a default confidence, the probability from 0 to 1 that
+the number is right, stored as a normal value with a description of the reason
+(`solution_prio.json`):
+
+- `{"words": ["assumed", "confidence", "percent"], "number": "0.3", "description": "..."}`
+- `{"words": ["double-blind randomized controlled trial", "confidence", "percent", "assumed"], "number": "0.9", "description": "..."}`
+
+The defaults rise along the ladder (e.g. `assumed` 0.3, `official statistics`
+0.8, `double-blind randomized controlled trial` 0.9, `defined` 1). The number
+itself is a judgement, so it is marked `assumed` like every other number without
+a source; the `assumed` row needs no second `assumed`.
+
+A value and not a const in the code, because the default must stay overridable:
+
+- a **user** overwrites the default like any other value, e.g. to trust
+  `self-reported` company figures less;
+- a **single value** carries its own confidence, e.g.
+  `["<claim words>", "confidence", "percent"]`, which wins over the default of
+  its quality, because a small double-blind trial can deserve less confidence
+  than a large observational cohort.
+
+`calculated` has no default: a result takes the confidence of its weakest input,
+like its quality (see above). A value status never lowers the confidence; a
+`retracted` number is unusable whatever its confidence is.
+
 ## Calc-validation
 
 Optional. A list of *expected* formula results: each entry is **recomputed** from

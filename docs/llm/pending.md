@@ -2,9 +2,7 @@
 
 ## value quality
 
-add a confidence number and description to all value quality phrases: The quality type gives a sensible default (e.g. assumed value → 0.3, double blind RCT → 0.9) but should stay overridable, because a small double-blind trial can deserve less confidence than a large observational cohort.
-
-add value quality indications to values and results with a grey superscript char with a tooltip where 'a' stands for assumed, '-' if the source is missing and '+' if the number is taken from a peer reviewed study. remove the value quality phrase from the phrases shown before tha value to describe the value or result.
+add value quality indications to values and results with a grey superscript char after the numeric value with a tooltip where 'a' stands for assumed, '-' if the source is missing and '+' if the number is taken from a peer reviewed study. remove the value quality phrase from the phrases shown before tha value to describe the value or result.
 
 ## phrase types
 

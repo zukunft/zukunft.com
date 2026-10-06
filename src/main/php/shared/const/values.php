@@ -87,6 +87,8 @@ class values
     CONST int CITY_ZH_INHABITANTS_2019 = 415367;
     CONST float CH_INHABITANTS_2019_IN_MIO = 8.606033;
     CONST float CH_INHABITANTS_2020_IN_MIO = 8.6703;
+    // the default confidence of the value quality "assumed" (see solution_prio.json)
+    CONST float ASSUMED_CONFIDENCE = 0.3;
     CONST float SHARE_PRICE = 17.08;
     CONST float EARNINGS_PER_SHARE = 1.22;
     CONST string SALES_INCREASE_2017_FORM = '90.03 %';
