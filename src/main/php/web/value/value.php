@@ -266,6 +266,14 @@ class value extends sandbox_value
     }
 
     /**
+     * @return bool true if the value names no source, which is shown as "-" behind the number
+     */
+    protected function is_source_missing(): bool
+    {
+        return $this->source_id() == null;
+    }
+
+    /**
      * @param group $grp
      * @return float
      */
@@ -515,6 +523,8 @@ class value extends sandbox_value
         // measure and the scaling are named here, because the given cache supplies their tooltip
         $symbol_lst = $phr_lst->symbol_phrases($msg);
         $phr_lst = $phr_lst->remove($symbol_lst);
+        // a value quality e.g. "assumed" is shown as a mark behind the number (see quality_mark)
+        $phr_lst = $phr_lst->remove($phr_lst->value_quality_phrases($msg));
         if ($measure_lst->count() > 1) {
             log_warning($this->dsp_id() . ' is not expected to have more than one measure');
         }
@@ -529,7 +539,7 @@ class value extends sandbox_value
             $html->url_back(views::VALUE_DEFAULT_ID, $this->id()),
             $url_arr);
         // value() already returns escaped/safe html, so ref() must not escape it again
-        $val_txt = $html->ref($url, $this->value($msg), $info_lst->name_pur(), '', true);
+        $val_txt = $html->ref($url, $this->value($msg), $info_lst->name_pur(), '', true) . $this->quality_mark();
 
         // the scaling and the measure phrases follow the number like on a price tag;
         // a symbol like "mio" has no description of its own, so the cache supplies the
@@ -676,7 +686,7 @@ class value extends sandbox_value
     {
         $html = new html_base();
         $phr_links = $this->phrase_link_list($msg, $phr_lst_exclude);
-        $val_grey = $html->span($this->value($msg), styles::STYLE_GREY);
+        $val_grey = $html->span($this->value($msg), styles::STYLE_GREY) . $this->quality_mark();
         return $phr_links . $sep . $val_grey . $this->number_symbols($msg);
     }
 

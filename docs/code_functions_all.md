@@ -7370,6 +7370,8 @@
             st.php
     \-- symbol_phrases - section for function symbol_phrases not yet defined that it should be info in /phrase/phrase_li
             st.php
+    \-- value_quality_phrases - section for function value_quality_phrases not yet defined that it should be info in /ph
+            rase/phrase_list.php
     \-- symbol_links - section for function symbol_links not yet defined that it should be info in /phrase/phrase_list.p
             hp
     \-- intersect - section for function intersect not yet defined that it should be modify in /phrase/phrase_list.php
@@ -7730,6 +7732,10 @@
     \-- value - section for function value not yet defined that it should be display in /sandbox/sandbox_value.php
     \-- value_edit - section for function value_edit not yet defined that it should be display in /sandbox/sandbox_value
             .php
+    \-- value_edit_link - section for function value_edit_link not yet defined that it should be display in /sandbox/san
+            dbox_value.php
+    \-- quality_mark - section for function quality_mark not yet defined that it should be display in /sandbox/sandbox_v
+            alue.php
     \-- name_link - section for function name_link not yet defined that it should be display in /sandbox/sandbox_value.p
             hp
     \-- phrase_link_list - section for function phrase_link_list not yet defined that it should be display in /sandbox/s
@@ -8131,6 +8137,7 @@
     \-- is_percent - section for function is_percent is expected to be info in /word/triple.php
     \-- is_factor - section for function is_factor is expected to be info in /word/triple.php
     \-- is_measure_non_unit - section for function is_measure_non_unit is expected to be info in /word/triple.php
+    \-- is_value_quality - section for function is_value_quality is expected to be info in /word/triple.php
     \-- is_measure - section for function is_measure is expected to be info in /word/triple.php
     \-- is_scaling - section for function is_scaling is expected to be info in /word/triple.php
     \-- is_time - section for function is_time is expected to be info in /word/triple.php
@@ -8211,6 +8218,7 @@
     \-- is_percent - section for function is_percent is expected to be info in /word/word.php
     \-- is_factor - section for function is_factor is expected to be info in /word/word.php
     \-- is_measure_non_unit - section for function is_measure_non_unit is expected to be info in /word/word.php
+    \-- is_value_quality - section for function is_value_quality is expected to be info in /word/word.php
     \-- is_hidden - section for function is_hidden is expected to be info in /word/word.php
     \-- header - section for function header not yet defined that it should be views in /word/word.php
     \-- dsp_graph - section for function dsp_graph not yet defined that it should be to review in /word/word.php
@@ -8412,6 +8420,8 @@
         \-- phrase_list - the phrase of this list that forces the percent format, so that the caller can ask it for
     \-- symbol_phrases
         \-- phrase_list - the phrases that are shown as a symbol behind the number instead of being named with the
+    \-- value_quality_phrases
+        \-- phrase_list - the phrases that say how the number has been found e.g. "assumed", which are shown as a
     \-- symbol_links
         \-- phrase_list - the symbols of the phrases of this list, each linked to its phrase and separated from the
 \-- to be replaced

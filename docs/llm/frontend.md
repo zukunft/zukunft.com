@@ -449,3 +449,28 @@ rows. A phrase column names a phrase of the row and no number, so a row with
 only phrase cells is dropped as well. Every other table keeps such a row, so
 the option is a default of the component (`ui_list::start_list`) and not a rule
 of the table.
+
+## The value quality is a mark behind the number, never a phrase before it
+
+A value quality phrase (phrase type `value_quality`, e.g. `assumed`) says how a
+number has been found, not what it is about, so it is never named with the
+phrases before the number: `sandbox_value::phrase_link_list`,
+`value::links_and_measure` and the row names of `value_list` leave it out
+(`phrase_list::value_quality_phrases`, `value_list::is_marker`). Instead
+`sandbox_value::quality_mark` adds a grey superscript behind the number with a
+translated tooltip:
+
+| mark | when                                              | tooltip message                       |
+|------|---------------------------------------------------|---------------------------------------|
+| `a`  | the value carries `assumed`                       | `msg_id::QUALITY_MARK_ASSUMED`        |
+| `-`  | a value names no source (a result never)          | `msg_id::QUALITY_MARK_NO_SOURCE`      |
+| `+`  | the value carries `peer reviewed by quality journal` | `msg_id::QUALITY_MARK_PEER_REVIEWED` |
+
+One number shows one mark, checked in this order: an assumed number has no source
+on purpose, so its `a` says more than the `-`, and a missing source makes a peer
+review claim unverifiable, so the `-` wins over the `+`. A result is calculated by
+a formula and has no source to miss (`is_source_missing` is overwritten by the
+value only). Every place that shows a number with its phrases calls the mark
+right behind the number (`value_edit`, `name_link`, `links_and_measure`), so a
+new display of a number reuses one of these instead of formatting the number
+itself.

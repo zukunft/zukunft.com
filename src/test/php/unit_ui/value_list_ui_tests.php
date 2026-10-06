@@ -40,6 +40,7 @@ use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
 use Zukunft\ZukunftCom\main\php\web\value\value_list as value_list_ui;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_value as sandbox_value_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\def;
 use Zukunft\ZukunftCom\main\php\shared\const\files as files_shared;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
@@ -271,15 +272,21 @@ class value_list_ui_tests
         // own, and the qualifier "assumed" names no row either, so the problem keeps one row
         // (see the view-validation of solution_prio.json)
         $tbl_range = $t_val->value_list_range_ui()->table_by_related_columns($msg_ui);
+        // the values are assumed, so the centre value is followed by the "a" mark, which the
+        // bounds share with it and do not repeat (see sandbox_value::quality_mark)
+        $centre_txt = '2.2' . sandbox_value_ui::QUALITY_MARK_ASSUMED;
         $test_name = 'the range bounds are shown behind their centre value';
-        $t->assert_text_contains($test_name, $lib->html_to_text($tbl_range), '2.2 (0.88 – 5.5)');
+        $t->assert_text_contains($test_name, $lib->html_to_text($tbl_range), $centre_txt . ' (0.88 – 5.5)');
         // the four loss values (centre, both bounds and the confidence) share one row; the gain
         // is carried by one value only, so it heads no column and names a row of its own, which
         // is the header row plus two rows
         $test_name = '... so the bounds and the qualifier name no row of their own';
         $t->assert($test_name, substr_count($tbl_range, '<' . html_base::TR . '>'), 3);
         $test_name = '... and a value without bounds is shown without brackets';
-        $t->assert_text_not_contains($test_name, $lib->html_to_text($tbl_range), '35.2 (');
+        // the gain names no source, so it is followed by the "-" mark
+        $t->assert_text_contains($test_name, $lib->html_to_text($tbl_range), '35.2' . sandbox_value_ui::QUALITY_MARK_NO_SOURCE);
+        $t->assert_text_not_contains($test_name, $lib->html_to_text($tbl_range),
+            '35.2' . sandbox_value_ui::QUALITY_MARK_NO_SOURCE . ' (');
         // a simple table shows the numbers only and the "..." header links to the same page with
         // the ranges switched on, which wins over the default of the caller
         $tbl_plain = $t_val->value_list_range_ui()->table_by_related_columns(
@@ -287,14 +294,14 @@ class value_list_ui_tests
             [url_var::MASK => views::START_ID], false, value_list_ui::COLUMN_TIERS_ALL, false);
         $test_name = 'without the range the centre value is shown alone';
         $t->assert_text_contains($test_name, $lib->html_to_text($tbl_plain), '2.2');
-        $t->assert_text_not_contains($test_name, $lib->html_to_text($tbl_plain), '2.2 (');
+        $t->assert_text_not_contains($test_name, $lib->html_to_text($tbl_plain), $centre_txt . ' (');
         $test_name = '... and the "..." header links to the page with the ranges';
         $t->assert_text_contains($test_name, $tbl_plain, url_var::DISPLAY_LIST_RANGE . '=' . url_var::TRUE);
         $tbl_url = $t_val->value_list_range_ui()->table_by_related_columns(
             $msg_ui, new phrase_list_ui(), [], false, true, null, null,
             [url_var::DISPLAY_LIST_RANGE => url_var::TRUE], false, value_list_ui::COLUMN_TIERS_ALL, false);
         $test_name = 'the url switches the range on although the caller has switched it off';
-        $t->assert_text_contains($test_name, $lib->html_to_text($tbl_url), '2.2 (0.88 – 5.5)');
+        $t->assert_text_contains($test_name, $lib->html_to_text($tbl_url), $centre_txt . ' (0.88 – 5.5)');
         $test_name = 'the estimate qualifier of a value is the tooltip of its cell';
         $t->assert_text_contains($test_name, $tbl_range, 'title="' . word_names::ASSUMED . ', ');
         // a value tagged "confidence" says how sure the value with the same subject is, so it is

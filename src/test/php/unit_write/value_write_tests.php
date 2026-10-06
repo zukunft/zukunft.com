@@ -260,14 +260,17 @@ class value_write_tests
         // test the HTML code creation including the hyperlink
         $result = $mio_val_ui->value_edit($msg_ui, [url_var::MASK => views::PHRASE_ID, url_var::ID => 1]);
         //$target = '<a class="' . styles::STYLE_USER . '" href="/http/value_edit.php?id=2559&back=1">46\'000</a>';
-        $target = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::VALUE_DEFAULT_ID . '&amp;id=' . $grp_id_url . $back_part . '">1.55</a>';
+        // followed by the quality mark of the value e.g. the "-" of a missing source (see sandbox_value::quality_mark)
+        $target = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::VALUE_DEFAULT_ID . '&amp;id=' . $grp_id_url . $back_part . '">1.55</a>'
+            . $mio_val_ui->quality_mark();
         $t->assert(', value->display_linked', $result, $target);
 
         // change the number to force using the thousand separator
         $mio_val_ui->number = values::SAMPLE_INT;
         $result = $mio_val_ui->value_edit($msg_ui, [url_var::MASK => views::PHRASE_ID, url_var::ID => 1]);
         //$target = '<a class="' . styles::STYLE_USER . '" href="/http/value_edit.php?id=2559&back=1">46\'000</a>';
-        $target = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::VALUE_DEFAULT_ID . '&amp;id=' . $grp_id_url . $back_part . '">123\'456</a>';
+        $target = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::VALUE_DEFAULT_ID . '&amp;id=' . $grp_id_url . $back_part . '">123\'456</a>'
+            . $mio_val_ui->quality_mark();
         $t->assert(', value->display_linked', $result, $target);
 
         // convert the user input for the database

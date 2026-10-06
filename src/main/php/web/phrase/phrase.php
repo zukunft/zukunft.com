@@ -377,6 +377,16 @@ class phrase extends combine_named
     }
 
     /**
+     * @return bool true if this phrase says how a number has been found e.g. "assumed", which is
+     *              shown as a mark behind the number instead of being named before it
+     *              (see sandbox_value::quality_mark)
+     */
+    function is_value_quality(user_message $msg): bool
+    {
+        return $this->obj()->is_value_quality($msg);
+    }
+
+    /**
      * the symbol that is shown behind a number instead of naming this phrase with the other
      * phrases of the number, e.g. the "x" of a factor, the "mio" of million or the "€" of the
      * unit EUR, as a link to the phrase with its description as the tooltip, so that the reader

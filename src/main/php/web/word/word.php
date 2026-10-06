@@ -869,6 +869,14 @@ class word extends sandbox_code_id
     }
 
     /**
+     * @return bool true if the word says how a number has been found e.g. "assumed"
+     */
+    function is_value_quality(user_message $msg): bool
+    {
+        return $this->is_type(phrase_types::VALUE_QUALITY, $msg);
+    }
+
+    /**
      * @return bool true if the word is normally not shown to the user e.g. scaling of one is assumed
      */
     function is_hidden(user_message $msg): bool

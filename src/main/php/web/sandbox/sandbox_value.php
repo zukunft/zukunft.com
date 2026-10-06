@@ -51,7 +51,9 @@ include_once html_paths::SHARED . 'api.php';
 include_once html_paths::SHARED . 'url_var.php';
 include_once html_paths::SHARED . 'json_fields.php';
 include_once html_paths::SHARED . 'library.php';
+include_once html_paths::SHARED_CONST . 'triples.php';
 include_once html_paths::SHARED_CONST . 'views.php';
+include_once html_paths::SHARED_CONST . 'words.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::SHARED_ENUM . 'value_types.php';
 include_once html_paths::SHARED_TYPES . 'view_styles.php';
@@ -65,7 +67,9 @@ use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\enum\value_types;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
@@ -82,6 +86,11 @@ class sandbox_value extends sandbox
     const string TIME_FORMAT = DateTimeInterface::ATOM;
     // the key of the date text in the json of a DateTime object
     const string JSON_DATETIME_DATE = 'date';
+    // the grey superscript behind a number that shows how the number has been found
+    // TODO Prio 3 move the config.yaml
+    const string QUALITY_MARK_ASSUMED = 'a';
+    const string QUALITY_MARK_NO_SOURCE = '-';
+    const string QUALITY_MARK_PEER_REVIEWED = '+';
 
     /*
      * object vars
@@ -436,20 +445,82 @@ class sandbox_value extends sandbox
     }
 
     /**
-     * the number as a link to the page of the value or of the result, so that a table cell
-     * leads to the number itself and a result to the formula that has calculated it
+     * the number as a link to the page of the value or of the result followed by its quality
+     * mark, so that a table cell leads to the number itself and a result to the formula that
+     * has calculated it
+     *
+     * @param user_message $msg to report a problem while formatting the number
+     * @param array $url_arr with the url vars of the calling page for the back link
+     * @return string the html code of the linked number with its quality mark
+     */
+    function value_edit(user_message $msg, array $url_arr = []): string
+    {
+        return $this->value_edit_link($msg, $url_arr) . $this->quality_mark();
+    }
+
+    /**
+     * the number as a link without the quality mark, e.g. for a bound of a probability range,
+     * which has the quality of its centre value, so that the mark is shown only once behind
+     * the centre value (see value_list::cell); not named value_link, because value::value_link
+     * links the class name page and would overwrite it
      *
      * @param user_message $msg to report a problem while formatting the number
      * @param array $url_arr with the url vars of the calling page for the back link
      * @return string the html code of the linked number
      */
-    function value_edit(user_message $msg, array $url_arr = []): string
+    function value_edit_link(user_message $msg, array $url_arr = []): string
     {
         $html = new html_base();
         $url = $html->url_back($this->default_view_id(), $this->id(), $url_arr);
         $txt = $this->value($msg);
         // value() already returns escaped/safe html, so ref() must not escape it again
         return $html->ref($url, $txt, '', '', true);
+    }
+
+    /**
+     * the grey superscript behind the number that shows how the number has been found, with the
+     * explanation as the tooltip, so that the value quality phrase is not named before the number
+     * (see phrase_link_list): "a" for an assumed number, "-" for a number without its source and
+     * "+" for a number taken from a peer reviewed study; an assumed number has no source on
+     * purpose, so its "a" says more than the "-", and a missing source makes a peer review claim
+     * unverifiable, so the "-" wins over the "+"
+     *
+     * @return string the html code of the mark, empty if the number has none of the three marks
+     */
+    function quality_mark(): string
+    {
+        $names = $this->grp->phr_lst()->names();
+        if (in_array(words::ASSUMED, $names)) {
+            return $this->quality_sup(self::QUALITY_MARK_ASSUMED, msg_id::QUALITY_MARK_ASSUMED);
+        }
+        if ($this->is_source_missing()) {
+            return $this->quality_sup(self::QUALITY_MARK_NO_SOURCE, msg_id::QUALITY_MARK_NO_SOURCE);
+        }
+        if (in_array(triples::PEER_REVIEWED, $names)) {
+            return $this->quality_sup(self::QUALITY_MARK_PEER_REVIEWED, msg_id::QUALITY_MARK_PEER_REVIEWED);
+        }
+        return '';
+    }
+
+    /**
+     * @param string $mark the mark char e.g. "a" for assumed
+     * @param msg_id $tooltip the explanation of the mark shown as the tooltip
+     * @return string the html code of the mark as a grey superscript with the tooltip
+     */
+    private function quality_sup(string $mark, msg_id $tooltip): string
+    {
+        $html = new html_base();
+        return $html->sup($html->span($mark, styles::STYLE_GREY, $tooltip->text()));
+    }
+
+    /**
+     * a result is calculated by a formula, so it has no source to miss; the value overwrites it
+     *
+     * @return bool true if the number should name a source, but does not
+     */
+    protected function is_source_missing(): bool
+    {
+        return false;
     }
 
     /**
@@ -477,13 +548,14 @@ class sandbox_value extends sandbox
     function name_link(user_message $msg, ?phrase_list $phr_lst_exclude = null, string $sep = ' '): string
     {
         $html = new html_base();
-        $num_grey = $html->span($this->val_formatted($msg), styles::STYLE_GREY);
+        $num_grey = $html->span($this->val_formatted($msg), styles::STYLE_GREY) . $this->quality_mark();
         return $this->phrase_link_list($msg, $phr_lst_exclude) . $sep . $num_grey . $this->number_symbols($msg);
     }
 
     /**
-     * the phrases of this number as links, without the phrases already shown in the context and
-     * without the phrases that are shown as a symbol behind the number (see number_symbols)
+     * the phrases of this number as links, without the phrases already shown in the context,
+     * without the phrases that are shown as a symbol behind the number (see number_symbols) and
+     * without the value quality phrases, which are shown as a mark behind it (see quality_mark)
      *
      * @param phrase_list|null $phr_lst_exclude the phrases already shown in the context e.g. a table header
      * @return string the html code of the phrase links
@@ -495,6 +567,7 @@ class sandbox_value extends sandbox
             $exclude->merge($phr_lst_exclude, $msg);
         }
         $exclude->merge($this->grp->phr_lst()->symbol_phrases($msg), $msg);
+        $exclude->merge($this->grp->phr_lst()->value_quality_phrases($msg), $msg);
         return $this->grp->phrase_link_list($exclude);
     }
 

@@ -1006,6 +1006,14 @@ class triple extends sandbox_code_id
         return $this->is_type(phrase_types::MEASURE_NON_UNIT, $msg);
     }
 
+    /**
+     * @return bool true if the triple says how a number has been found e.g. "peer reviewed by quality journal"
+     */
+    function is_value_quality(user_message $msg): bool
+    {
+        return $this->is_type(phrase_types::VALUE_QUALITY, $msg);
+    }
+
     function is_measure(user_message $msg): bool
     {
         return $this->is_type(phrase_types::MEASURE, $msg);

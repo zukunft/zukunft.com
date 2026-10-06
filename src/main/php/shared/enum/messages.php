@@ -1792,6 +1792,10 @@ enum messages: string
     case THREE_POINTS = '...';
     // shown in the confirm-change preview when a type field (share, protection, ...) has no value yet
     case NOT_SET = 'not_set';
+    // the tooltips of the grey superscript behind a number that marks the value quality
+    case QUALITY_MARK_ASSUMED = 'quality_mark_assumed';
+    case QUALITY_MARK_NO_SOURCE = 'quality_mark_no_source';
+    case QUALITY_MARK_PEER_REVIEWED = 'quality_mark_peer_reviewed';
 
     // text to be shown in buttons
     case ADD = 'add';

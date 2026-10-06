@@ -651,6 +651,13 @@ class value_ui_tests
         $t->assert_text_contains($test_name, $unit_html, url_var::ID . '=' . word_names::EURO_ID);
         $test_name = 'the other phrases of the value are still named';
         $t->assert_text_contains($test_name, $unit_html, word_names::ASSUMED);
+        // an assumed number is marked by a grey superscript behind the number with its tooltip
+        $test_name = 'an assumed value is marked behind the number';
+        $t->assert_text_order($test_name, $unit_html,
+            $val_unit->val_formatted($msg_ui), msg_id::QUALITY_MARK_ASSUMED->text());
+        // negative: a value with a source and without a quality phrase has no mark
+        $test_name = '... and a value with a source and without a quality has no mark';
+        $t->assert($test_name, $t_val->value_page_ui($msg)->quality_mark(), '');
         // the following tests use the caches of the test setup again
         $ui_sys->typ_lst_cache->phr_sys = $phr_sys_keep;
         $ui_sys->phr_lst = $phr_lst_keep;

@@ -944,7 +944,7 @@ class value_list extends ListBase
             foreach ($val->grp->phr_lst()->lst() as $phr) {
                 // the same unit is used by many values, so a repeat is expected and no double
                 if (!$result->has_id($phr->id())) {
-                    if ($this->is_unit($phr, $msg) or $this->is_marker($phr)) {
+                    if ($this->is_unit($phr, $msg) or $this->is_marker($phr, $msg)) {
                         $result->add_phrase($phr);
                     }
                 }
@@ -1179,11 +1179,12 @@ class value_list extends ListBase
      * true if the phrase says how a number is stated instead of what it is about
      *
      * @param phrase $phr the phrase to check
-     * @return bool true for a range bound tag or the estimate qualifier
+     * @return bool true for a range bound tag, the confidence or a value quality, which is shown
+     *              as a mark behind the number (see sandbox_value::quality_mark)
      */
-    private function is_marker(phrase $phr): bool
+    private function is_marker(phrase $phr, user_message $msg): bool
     {
-        return in_array($phr->name(), words::VALUE_MARKERS);
+        return in_array($phr->name(), words::VALUE_MARKERS) or $phr->is_value_quality($msg);
     }
 
     /**
@@ -1230,8 +1231,9 @@ class value_list extends ListBase
                 // a range normally has both bounds, but a missing one leaves its place empty
                 $low = $bound[$key][words::LOW] ?? null;
                 $high = $bound[$key][words::HIGH] ?? null;
-                $low_txt = $low?->value_edit($msg, $url_arr) ?? '';
-                $high_txt = $high?->value_edit($msg, $url_arr) ?? '';
+                // a bound has the quality of its centre value, which shows the mark once
+                $low_txt = $low?->value_edit_link($msg, $url_arr) ?? '';
+                $high_txt = $high?->value_edit_link($msg, $url_arr) ?? '';
                 $txt .= self::RANGE_START . $low_txt . self::RANGE_SEP . $high_txt . self::RANGE_END;
                 unset($bound[$key]);
             }
@@ -1327,7 +1329,7 @@ class value_list extends ListBase
     {
         $names = [];
         foreach ($val->grp->phr_lst()->lst() as $phr) {
-            if (!$this->is_marker($phr) and !$this->is_unit($phr, $msg)) {
+            if (!$this->is_marker($phr, $msg) and !$this->is_unit($phr, $msg)) {
                 $names[] = $phr->name();
             }
         }

@@ -1,16 +1,8 @@
 # pending - list of planned llm prompts with prio 1
 
-## value quality
-
-add value quality indications to values and results with a grey superscript char after the numeric value with a tooltip where 'a' stands for assumed, '-' if the source is missing and '+' if the number is taken from a peer reviewed study. remove the value quality phrase from the phrases shown before tha value to describe the value or result.
-
 ## phrase types
 
-add a phrase type 'unique key' e.g. for unique keys like ISIN or the ISBN or ...
-
-## result and value default view
-
-in title of the value and result default view show the scaling and measure type phrases behind the value e.g. for http://localhost/http/view.php?m=9&id=....0R-....1S%2B....1V%2B....2D%2B....2F%2B....2p%2B......%2B......%2B......%2B......%2B......%2B......%2B......%2B......%2B......%2B......%2B&9m=1&9dls=20&9dlc=2&9dlr=1 'assumed, black-box AI, loss, potential 0.22 trillion EUR' instead of 'EUR, assumed, black-box AI, loss, potential, trillion 0.22'
+add a phrase type 'unique key' for unique keys like ISBN (https://en.wikipedia.org/wiki/ISBN), ISIN (https://en.wikipedia.org/wiki/International_Securities_Identification_Number), EAN, UPC, IAN or JAN and add these as samples for unique keys with some sample entries to the main json import files in src/main/resources/messages/use_cases  
 
 ## type and component order
 
@@ -24,16 +16,16 @@ review the initial order of the verbs
 
 ### source types
 
-Add columns group and wikipedia where the groups are:
+Add to the database table source_types the columns 'group' and 'wikipedia'. Fill the 'groups' column in the csv src/main/resources/db_code_links/source_types.csv with:
 
-Documents
+Documents for
 
 PDF
 MD
 TXT
 HTML
 
-Structured data formats
+Structured data formats for
 
 JSON
 YAML
@@ -54,23 +46,25 @@ Avro
 NetCDF
 HDF5
 
-Database / data exchange
+Database / data exchange for
 
 SQLite
 SQL Dump
 Arrow
 
-Data access/query mechanisms
+Data access/query mechanisms for
 
 API
 OData
 SPARQL
 
-Web/archival sources
+Web/archival sources for
 
 RSS
 Atom
 WARC
+
+and in the csv src/main/resources/db_code_links/source_types.csv fill the column 'wikipedia' with the explain link for the format e.g. for 'PDF': 'https://en.wikipedia.org/wiki/PDF' 
 
 ### todo from group id change
 

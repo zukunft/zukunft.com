@@ -8,7 +8,7 @@ in a test file of the src/test/php/unit* folders; the count is by function name
 and cannot tell the classes apart, so a name that several classes declare needs
 2 calls per class and is listed as shared otherwise
 
-622 of 5885 public functions have at least 2 unit test calls; the 5263 functions below do not
+622 of 5891 public functions have at least 2 unit test calls; the 5269 functions below do not
 
 ## main backend
 
@@ -4617,6 +4617,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- is_time - 0 unit test calls shared by 8 classes
     \-- is_triple - 1 unit test calls shared by 5 classes
     \-- is_type_phrase - 0 unit test calls
+    \-- is_value_quality - 0 unit test calls shared by 3 classes
     \-- is_word - 2 unit test calls shared by 5 classes
     \-- main_word - 0 unit test calls shared by 2 classes
     \-- name_link - 8 unit test calls shared by 22 classes
@@ -4690,6 +4691,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- tooltip - 0 unit test calls shared by 2 classes
     \-- triple_list - 8 unit test calls shared by 5 classes
     \-- url_mapper - 41 unit test calls shared by 27 classes
+    \-- value_quality_phrases - 0 unit test calls
     \-- view_selector - 1 unit test calls shared by 9 classes
     \-- wrd_lst_all - 2 unit test calls shared by 2 classes
 \-- phrase_type_list
@@ -4858,11 +4860,13 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- percent_symbol - 0 unit test calls
     \-- phr_lst - 7 unit test calls shared by 5 classes
     \-- phrase_link_list - 2 unit test calls shared by 2 classes
+    \-- quality_mark - 1 unit test calls
     \-- set_is_std - 0 unit test calls
     \-- set_phrases_by_is_list - 0 unit test calls
     \-- time_phrase - 0 unit test calls
     \-- time_value - 1 unit test calls
     \-- url_mapper - 41 unit test calls shared by 27 classes
+    \-- value_edit_link - 0 unit test calls
     \-- value_linked - 0 unit test calls
     \-- value_type_selector - 0 unit test calls shared by 2 classes
 \-- share
@@ -5146,6 +5150,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- is_scaling - 5 unit test calls shared by 6 classes
     \-- is_time - 0 unit test calls shared by 8 classes
     \-- is_type - 7 unit test calls shared by 6 classes
+    \-- is_value_quality - 0 unit test calls shared by 3 classes
     \-- load_by_id_with_related - 3 unit test calls shared by 17 classes
     \-- name_link - 8 unit test calls shared by 22 classes
     \-- name_link_plural - 0 unit test calls shared by 4 classes
@@ -5580,6 +5585,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- is_time - 0 unit test calls shared by 8 classes
     \-- is_time_jump - 0 unit test calls shared by 3 classes
     \-- is_type - 7 unit test calls shared by 6 classes
+    \-- is_value_quality - 0 unit test calls shared by 3 classes
     \-- load_by_id_with_related - 3 unit test calls shared by 17 classes
     \-- log_view - 0 unit test calls
     \-- math - 0 unit test calls

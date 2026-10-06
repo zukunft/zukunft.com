@@ -1541,6 +1541,24 @@ class phrase_list extends sandbox_list_named
     }
 
     /**
+     * the phrases that say how the number has been found e.g. "assumed", which are shown as a
+     * mark behind the number instead of being named with the other phrases of the number
+     * (see sandbox_value::quality_mark)
+     *
+     * @return phrase_list the phrases of this list of the type value quality
+     */
+    function value_quality_phrases(user_message $msg): phrase_list
+    {
+        $result = new phrase_list();
+        foreach ($this->lst() as $phr) {
+            if ($phr->is_value_quality($msg)) {
+                $result->add_phrase($phr);
+            }
+        }
+        return $result;
+    }
+
+    /**
      * @param phrase $phr a phrase that is shown as a symbol behind the number
      * @return int the position of the symbol behind the number: 0 for a scaling, 1 for a unit, 2 for the rest
      */
