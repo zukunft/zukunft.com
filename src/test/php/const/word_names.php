@@ -168,6 +168,10 @@ class word_names
     const int ASSUMED_ID = 315;
     // the status of a value that has been withdrawn, whatever its quality was
     const string RETRACTED = 'retracted';
+    // a unique key and one of its sample entries of the use case unique_keys.json, which is user
+    // data, so they are selected by the name only (docs/llm/json_structure.md "Use case files")
+    const string ISBN = 'ISBN';
+    const string ISIN_MERCEDES = 'DE0007100000';
     // the bounds of the probability range of a value
     const string LOW = 'low';
     const int LOW_ID = 323;

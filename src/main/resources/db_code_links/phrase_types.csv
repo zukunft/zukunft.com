@@ -31,3 +31,4 @@ phrase_type_id, type_name, description, code_id, scaling_factor, symbol
 30, 'measure non unit', 'what is measured e.g. GDP, which describes the number like a unit so that it heads no row or column of a value table, but is not the unit the number is stated in', 'measure_non_unit', NULL, ''
 31, 'value quality', 'how a number has been found e.g. assumed, official statistics or double-blind randomized controlled trial, so that a value tagged with it shows how far it can be trusted', 'value_quality', NULL, ''
 32, 'value status', 'what happened to a number after it has been found e.g. disputed, retracted, superseded or outdated, which is shown next to the value quality, because a value of any quality can lose its validity', 'value_status', NULL, ''
+33, 'unique key', 'a key that identifies exactly one item worldwide e.g. the ISBN of a book, the ISIN of a security or the EAN of a product, so that the item can be found in other systems by this key', 'unique_key', NULL, ''

@@ -76,6 +76,10 @@ class phrase_types
     // value quality ladder, because a value of any quality can e.g. still be retracted
     const string VALUE_STATUS = "value_status";
     const string VALUE_STATUS_NAME = "value status";
+    // a key that identifies exactly one item worldwide e.g. the ISBN of a book or the ISIN of a
+    // security, which differs from the KEY type, which only speeds up the search
+    const string UNIQUE_KEY = "unique_key";
+    const string UNIQUE_KEY_NAME = "unique key";
     const string MEASURE_DIVISOR = "measure_divisor";
     const string MEASURE_DIVISOR_NAME = "measure divisor";
     const string SCALING = "scaling";
