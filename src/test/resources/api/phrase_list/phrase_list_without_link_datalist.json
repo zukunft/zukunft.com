@@ -1,36 +1,36 @@
 [
     {
-        "id": 367,
+        "id": 371,
         "name": "2013",
         "type_id": 2,
         "class": "word"
     },
     {
-        "id": 368,
+        "id": 372,
         "name": "2014",
         "type_id": 2,
         "class": "word"
     },
     {
-        "id": 369,
+        "id": 373,
         "name": "2015",
         "type_id": 2,
         "class": "word"
     },
     {
-        "id": 370,
+        "id": 374,
         "name": "2016",
         "type_id": 2,
         "class": "word"
     },
     {
-        "id": 371,
+        "id": 375,
         "name": "2017",
         "type_id": 2,
         "class": "word"
     },
     {
-        "id": 372,
+        "id": 376,
         "name": "2018",
         "type_id": 2,
         "class": "word"
@@ -49,7 +49,7 @@
         "class": "word"
     },
     {
-        "id": 589,
+        "id": 593,
         "name": "ABB",
         "description": "ABB (ASEA Brown Boveri) is a Swedish-Swiss multinational corporation headquartered in Zürich",
         "type_id": 1,
@@ -82,7 +82,7 @@
         "class": "word"
     },
     {
-        "id": 592,
+        "id": 596,
         "name": "cash",
         "type_id": 1,
         "class": "word"
@@ -99,7 +99,7 @@
         "class": "triple"
     },
     {
-        "id": 448,
+        "id": 452,
         "name": "CHF",
         "description": "ISO 4217 alphabetic code for the Swiss franc (Confoederatio Helvetica Franc), also widely used as the currency's typographic symbol.",
         "type_id": 3,
@@ -377,7 +377,7 @@
         "class": "word"
     },
     {
-        "id": 595,
+        "id": 599,
         "name": "parts",
         "type_id": 1,
         "class": "word"
@@ -464,7 +464,7 @@
         "class": "word"
     },
     {
-        "id": 591,
+        "id": 595,
         "name": "sales",
         "type_id": 1,
         "class": "word"
@@ -484,7 +484,7 @@
         "class": "word"
     },
     {
-        "id": 593,
+        "id": 597,
         "name": "statement",
         "type_id": 1,
         "class": "word"
@@ -510,7 +510,7 @@
         "class": "triple"
     },
     {
-        "id": 375,
+        "id": 379,
         "name": "total",
         "description": "the whole amount or count, e.g. the total number of possible outcomes",
         "type_id": 1,
@@ -524,14 +524,14 @@
         "class": "word"
     },
     {
-        "id": 434,
+        "id": 438,
         "name": "USD",
         "description": "ISO 4217 alphabetic code for the United States dollar.",
         "type_id": 3,
         "class": "word"
     },
     {
-        "id": 590,
+        "id": 594,
         "name": "Vestas",
         "type_id": 1,
         "class": "word"

@@ -99,6 +99,15 @@ class word_read_tests
         $test_name = 'the word mathematics is not typed value quality';
         $t->assert_false($test_name, $wrd->is_type(phrase_type_shared::VALUE_QUALITY));
 
+        $t->subheader($ts . 'value status');
+        $test_name = 'the word retracted is typed value status';
+        $wrd_ret = new word($t->usr1);
+        $wrd_ret->load_by_name(word_names::RETRACTED, $msg);
+        $t->assert_true($test_name, $wrd_ret->is_type(phrase_type_shared::VALUE_STATUS));
+        // negative: a status is not a rung of the value quality ladder
+        $test_name = 'the word retracted is not typed value quality';
+        $t->assert_false($test_name, $wrd_ret->is_type(phrase_type_shared::VALUE_QUALITY));
+
 
         $t->subheader($ts . 'load with a message that already carries an error');
         // regression test for sandbox_named::row_mapper_sandbox: a load must map the fields (here the

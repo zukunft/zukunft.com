@@ -1,17 +1,12 @@
 # pending - list of planned llm prompts with prio 1
 
-## phrase types
-
-the value qualities of solution_prio.json are grouped by 'is a' into conjecture, report, science and convention;
-make the rule explicit that a calculated value inherits the lowest quality of its inputs
-
-### additional
-
-add status to some value qualities: disputed, retracted, superseded, outdated — a peer-reviewed value can still be retracted, so this shouldn't be a rung on the ladder.
+## value quality
 
 add a confidence number and description to all value quality phrases: The quality type gives a sensible default (e.g. assumed value → 0.3, double blind RCT → 0.9) but should stay overridable, because a small double-blind trial can deserve less confidence than a large observational cohort.
 
-add value quality indications to values and results with a grey superscript char with a tooltip where 'a' stands for assumed, '-' if the source is missing and '+' if the number is taken from a peer reviewed study
+add value quality indications to values and results with a grey superscript char with a tooltip where 'a' stands for assumed, '-' if the source is missing and '+' if the number is taken from a peer reviewed study. remove the value quality phrase from the phrases shown before tha value to describe the value or result.
+
+## phrase types
 
 add a phrase type 'unique key' e.g. for unique keys like ISIN or the ISBN or ...
 
@@ -115,7 +110,7 @@ add a list with the triples and a plus sign to add a new triple
 
 ## json import: word and triple names
 
-add to the jsom import check that word and triple names in english start always with a small letter with a few exceptions based on triples on the same json import file: if the name is a symbol or a country 
+add to the JSON import check that word and triple names in English start always with a small letter with a few exceptions based on triples on the same json import file: if the name is a symbol or a country 
 
 ## triple view
 

@@ -83,6 +83,7 @@ class phrase_types extends type_list
         phrase_type_shared::FACTOR_NAME => phrase_type_shared::FACTOR,
         phrase_type_shared::MEASURE_NON_UNIT_NAME => phrase_type_shared::MEASURE_NON_UNIT,
         phrase_type_shared::VALUE_QUALITY_NAME => phrase_type_shared::VALUE_QUALITY,
+        phrase_type_shared::VALUE_STATUS_NAME => phrase_type_shared::VALUE_STATUS,
     );
 
     /*

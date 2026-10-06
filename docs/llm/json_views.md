@@ -64,6 +64,46 @@ consequences for every **new** seed component (and equally for seed views):
    come from the seed use the out-of-band 900 range (`COL_FIRST_ID = 901`) so
    they cannot collide with seed ids.
 
+### The order of the component types: most used first, grouped by similarity
+
+`src/test/resources/unit/component/list_types_sorted.csv` is the target order of
+the component types (`db_code_links/component_types.csv`), so that a type
+selector shows the types an editor needs most often on top and similar types
+side by side. Only the rows and the ids differ from the code links: the
+`code_id` and the `type_name` stay unchanged, because the code selects a type by
+its `code_id` only.
+
+The groups follow how often the types are used by the components of the import
+json (e.g. `system_title` 66 times, `system_form_title` 52, `system_sub_title`
+16, `change_log` 13), from the top:
+
+1. **page titles** — the system titles and the `title_of_…_with_edit_link` types
+2. **form frame** — the hidden back stack and confirm status, the buttons, form end
+3. **layout rows** — row start, center, right, end
+4. **tabs and history** — view tab box, change log, usage, user overwrites
+5. **object names** — word, triple, verb, source, … names, aliases, symbols
+6. **related phrases** — children, parents, the lists up and down
+7. **values** — related values, table, columns, chart, values by triple or source
+8. **results and formulas** — including the expression displays
+9. **read only fields** — `system_show_field_*`
+10. **form fields** — `system_form_field_*`
+11. **object selectors** — each single selector followed by its multi selector
+12. **type selectors** — `form_select_*_type`, share, protection
+13. **link settings** — the priority and position of a link
+14. **views and components** — the view relations, preview and diff
+15. **confirm popup** — title, object, changes, impact
+16. **simple add forms** — add a word, triple or value without the confirm view
+17. **import and export**
+18. **selection and ranking**
+19. **system page bodies** — `system_body_*`
+20. **admin** — the admin form fields and the admin monitoring bodies
+
+Within a group the more general type comes first (e.g. the name before the
+description, the plural before the reverse). A new type is added to the group it
+is most similar to, and the usage counts decide only the order of the groups,
+never the id of an existing type in the code links (the id shift rules above
+apply to the types as well).
+
 ### `ui_msg_code_id` is globally unique — never reuse on a new component
 
 The `components` table has a unique key `components_ui_msg_code_id_uk` on

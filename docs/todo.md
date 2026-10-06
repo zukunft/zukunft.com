@@ -16,7 +16,6 @@ A proper issue ticket should be created for these TODOs notes:
 
     TODO add admin dashboard, user settings, jobs  and system settings
     TODO the user settings should have some (config.yaml) quick settings 
-    TODO add a min value quality level (including or excluding own overwrites)
     TODO the admin dashboard the x most changed user settings
     TODO add default ranking 
     TODO add default sort asc or desc for tables
@@ -37,6 +36,7 @@ A proper issue ticket should be created for these TODOs notes:
 
     TODO add to concept that people who have done someting bad should be be mentioned by name to reduce the copycat effect and reactance. 
     TODO create a list of people who have increased the htp or prevented a decrease in htp like Shuji Nakamura or Andreas Freud   
+    TODO add a 'min value quality level' filter for values and results (including or excluding own overwrites)
 
     TODO use only these global vars:
          - $sys to cache execution times, types and system configuration that change rarely

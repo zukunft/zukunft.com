@@ -1472,6 +1472,48 @@ or triple itself: a file must not define a `measured value` word, nor a
 A measured number without a `source` is a smell — either name the source or,
 if it really is an assumption, mark it `assumed`.
 
+### A calculated value inherits the lowest quality of its inputs
+
+The words of the phrase type `value_quality` (home file `solution_prio.json`)
+are grouped by an `is a` triple into four groups, from the weakest to the
+strongest evidence:
+
+| group        | e.g.                                                         |
+|--------------|--------------------------------------------------------------|
+| `conjecture` | `assumed`, `expert estimate`, `extrapolated`, `modelled`, `calculated` |
+| `report`     | `self-reported`, `single measurement`, `official statistics`, `audited` |
+| `science`    | `preprint`, `randomized controlled trial`, `meta-analysis`   |
+| `convention` | `defined`, `legal`, `proven`                                 |
+
+A formula cannot add evidence, so its result has the **lowest** quality of all
+its inputs:
+
+- `defined` × `audited` → the result is a `report` (`audited`)
+- `audited` × `assumed` → the result is a `conjecture` (`assumed`)
+- `defined` × `legal` → the result stays a `convention`
+
+`calculated` (and `modelled`) only says *how* the number came about; it is never
+ranked on its own, because that would turn every result into a conjecture even
+when all inputs are conventions. Never lift a result above its weakest input,
+e.g. by tagging a formula result `audited` because the main input was audited.
+
+### A value status is not a rung of the quality ladder
+
+The quality says how a number has been *found*; the status, a word of the
+phrase type `value_status`, says what *happened* to it afterwards:
+
+- `disputed` — challenged by a published objection that is not yet resolved
+- `retracted` — withdrawn by the authors or the publisher
+- `superseded` — replaced by a corrected or a newer number of the same source
+- `outdated` — right when it was found, but the measured thing has changed
+
+A peer-reviewed number can still be retracted, so a status never replaces or
+lowers the quality word: a value keeps both, e.g.
+`{"words": ["...", "peer reviewed by quality journal", "retracted", "percent"], ...}`.
+A value without a status word is valid. A calculated value carries every status
+of its inputs, because one retracted input makes the result unusable whatever
+the quality of the other inputs is.
+
 ## Calc-validation
 
 Optional. A list of *expected* formula results: each entry is **recomputed** from

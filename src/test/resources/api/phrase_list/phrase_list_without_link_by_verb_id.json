@@ -1,6 +1,6 @@
 [
     {
-        "id": 888,
+        "id": 892,
         "name": "agglomeration",
         "description": "urban core plus surrounding built\u2011up areas",
         "type_id": 1,
@@ -61,20 +61,20 @@
         "class": "word"
     },
     {
-        "id": 601,
+        "id": 605,
         "name": "Cooperative",
         "type_id": 1,
         "class": "word"
     },
     {
-        "id": 365,
+        "id": 369,
         "name": "country",
         "description": "a distinct part of the world, such as a state, nation, or other political entity.",
         "type_id": 1,
         "class": "word"
     },
     {
-        "id": 385,
+        "id": 389,
         "name": "currency",
         "description": "A currency is a system of money in common use within a specific environment over time, especially for people in a nation state. It is typically issued and controlled by a central bank or monetary authority and serves as a medium of exchange, unit of account, and store of value.",
         "type_id": 1,
@@ -145,7 +145,7 @@
         "class": "triple"
     },
     {
-        "id": 906,
+        "id": 910,
         "name": "region",
         "description": "an area of land larger than a city and its surroundings",
         "type_id": 1,
@@ -159,7 +159,7 @@
         "class": "word"
     },
     {
-        "id": 603,
+        "id": 607,
         "name": "scaling",
         "description": "the multiplication of a quantity by a constant factor",
         "type_id": 7,

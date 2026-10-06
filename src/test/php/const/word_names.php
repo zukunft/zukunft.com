@@ -166,6 +166,8 @@ class word_names
     // the qualifier of a value that is estimated instead of taken from a source
     const string ASSUMED = 'assumed';
     const int ASSUMED_ID = 315;
+    // the status of a value that has been withdrawn, whatever its quality was
+    const string RETRACTED = 'retracted';
     // the bounds of the probability range of a value
     const string LOW = 'low';
     const int LOW_ID = 323;
@@ -188,17 +190,17 @@ class word_names
     const string TRILLION = 'trillion';
     const int TRILLION_ID = 275;
     const string USD = 'USD';
-    const int USD_ID = 434;
+    const int USD_ID = 438;
 
     // words from import file company.json used for the start page in order of appearance
     const string SALES = 'sales';
-    const int SALES_ID = 591;
+    const int SALES_ID = 595;
     const string CASH = 'cash';
-    const int CASH_ID = 592;
+    const int CASH_ID = 596;
     const string STATEMENT = 'statement';
-    const int STATEMENT_ID = 593;
+    const int STATEMENT_ID = 597;
     const string PARTS = 'parts';
-    const int PARTS_ID = 595;
+    const int PARTS_ID = 599;
     const string INCOME = 'income';
     const int INCOME_ID = 305;
     const string TAX = 'tax';
@@ -220,26 +222,26 @@ class word_names
     // TODO add test to search for words in all language forms e.g. plural
     const string INHABITANTS = 'inhabitants';
     const string YEAR_2013 = '2013';
-    const int YEAR_2013_ID = 367;
+    const int YEAR_2013_ID = 371;
     const string YEAR_2014 = '2014';
-    const int YEAR_2014_ID = 368;
+    const int YEAR_2014_ID = 372;
     const string YEAR_2015 = '2015';
-    const int YEAR_2015_ID = 369;
+    const int YEAR_2015_ID = 373;
     const string YEAR_2016 = '2016';
-    const int YEAR_2016_ID = 370;
+    const int YEAR_2016_ID = 374;
     const string YEAR_2017 = '2017';
-    const int YEAR_2017_ID = 371;
+    const int YEAR_2017_ID = 375;
     const string YEAR_2018 = '2018';
-    const int YEAR_2018_ID = 372;
+    const int YEAR_2018_ID = 376;
 
     // words from import test file companies.json used for the start page in order of appearance
     const string COMPANY = 'company';
     const string COMPANY_COM = 'legal entity made up of an association of people for the purpose of carrying on a commercial or industrial enterprise';
     const int COMPANY_ID = 193;
     const string ABB = 'ABB';
-    const int ABB_ID = 589;
+    const int ABB_ID = 593;
     const string VESTAS = 'Vestas';
-    const int VESTAS_ID = 590;
+    const int VESTAS_ID = 594;
 
     const string TEXT = 'text';
     const string HTML = 'html';
@@ -273,25 +275,25 @@ class word_names
     const int HOUR_ID = 101;
     const string YEAR_2020_COM = 'the year 2020';
     const string YEAR_2021 = '2021';
-    const int YEAR_2021_ID = 657;
+    const int YEAR_2021_ID = 661;
     const string YEAR_2022 = '2022';
-    const int YEAR_2022_ID = 432;
+    const int YEAR_2022_ID = 436;
     const string YEAR_2023 = '2023';
-    const int YEAR_2023_ID = 656;
+    const int YEAR_2023_ID = 660;
     const string YEAR_2024 = '2024';
     const int YEAR_2024_ID = 283;
     const string YEAR_2025 = '2025';
-    const int YEAR_2025_ID = 655;
+    const int YEAR_2025_ID = 659;
     const string YEAR_2026 = '2026';
-    const int YEAR_2026_ID = 654;
+    const int YEAR_2026_ID = 658;
     const string YEAR_2027 = '2027';
-    const int YEAR_2027_ID = 653;
+    const int YEAR_2027_ID = 657;
     const string YEAR_2028 = '2028';
-    const int YEAR_2028_ID = 652;
+    const int YEAR_2028_ID = 656;
     const string YEAR_2029 = '2029';
-    const int YEAR_2029_ID = 651;
+    const int YEAR_2029_ID = 655;
     const string YEAR_2030 = '2030';
-    const int YEAR_2030_ID = 650;
+    const int YEAR_2030_ID = 654;
     const string LIGHT = 'light';
     const int LIGHT_ID = 84;
     const string SPEED = 'speed';
@@ -330,13 +332,13 @@ class word_names
     const string GDP = 'GDP';
     const int GDP_ID = 281;
     const string EURO = 'Euro';
-    const int EURO_ID = 422;
+    const int EURO_ID = 426;
     const string EURO_COM = 'The euro (symbol: €; currency code: EUR) is the official currency of 21 of the 27 member states of the European Union. This group of states is officially known as the euro area, more commonly named the eurozone. The euro is divided into 100 euro cents.';
     const string DOLLAR = '$';
-    const int DOLLAR_ID = 436;
+    const int DOLLAR_ID = 440;
     const string EURO_SIGN = '€';
-    const int EURO_SIGN_ID = 438;
-    const int CURRENCY_ID = 385;
+    const int EURO_SIGN_ID = 442;
+    const int CURRENCY_ID = 389;
     const string US = 'US';
 
 

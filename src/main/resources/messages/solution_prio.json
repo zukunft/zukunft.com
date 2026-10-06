@@ -939,6 +939,26 @@
       "name": "proven",
       "description": "value quality: mathematically derived, so without an empirical uncertainty",
       "type": "value_quality"
+    },
+    {
+      "name": "disputed",
+      "description": "value status: challenged by a published objection that is not yet resolved",
+      "type": "value_status"
+    },
+    {
+      "name": "retracted",
+      "description": "value status: withdrawn by the authors or the publisher, so the number must not be used any more",
+      "type": "value_status"
+    },
+    {
+      "name": "superseded",
+      "description": "value status: replaced by a corrected or a newer number of the same source e.g. a revised statistic",
+      "type": "value_status"
+    },
+    {
+      "name": "outdated",
+      "description": "value status: right when it was found, but no longer valid because the measured thing has changed",
+      "type": "value_status"
     }
   ],
   "triples": [

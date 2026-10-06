@@ -72,6 +72,10 @@ class phrase_types
     // tagged with it shows how far it can be trusted (see solution_prio.json)
     const string VALUE_QUALITY = "value_quality";
     const string VALUE_QUALITY_NAME = "value quality";
+    // what happened to a number after it has been found e.g. "retracted", which is not a rung of the
+    // value quality ladder, because a value of any quality can e.g. still be retracted
+    const string VALUE_STATUS = "value_status";
+    const string VALUE_STATUS_NAME = "value status";
     const string MEASURE_DIVISOR = "measure_divisor";
     const string MEASURE_DIVISOR_NAME = "measure divisor";
     const string SCALING = "scaling";
