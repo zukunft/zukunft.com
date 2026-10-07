@@ -191,6 +191,8 @@ system_form: $form, $overwrite_form, $sfm, $simple_form, $value_form
 system_page: $page
 system_time: $sys_exe
 system_time_type: $sys_exe_typ, $sys_script
+table_chart: $chart
+table_model: $model
 term_list: $cache, $col_lst, $del_lst, $empty_lst, $found_lst, $lst, $phr_lst, $remain_lst, $search_lst, $trm_lst, $trm_lst_start, $trm_lst_ui
 term_list_dsp: $trm_lst_ui
 term_view: $dbo, $dbo_ui, $lnk, $msk_lnk, $new_lnk, $obj, $trm_lnk_ui, $trm_msk, $trm_msk_db, $trm_msk_sel_ui, $trm_msk_url

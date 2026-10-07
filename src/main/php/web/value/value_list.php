@@ -54,6 +54,8 @@ include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::SANDBOX . 'sandbox_value.php';
 include_once html_paths::TYPES . 'type_object.php';
 include_once html_paths::USER . 'user_message.php';
+include_once html_paths::VALUE . 'table_chart.php';
+include_once html_paths::VALUE . 'table_model.php';
 //include_once html_paths::VALUE . 'value.php';
 include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'word.php';
@@ -68,6 +70,7 @@ include_once html_paths::SHARED . 'url_var.php';
 include_once html_paths::SHARED_HELPER . 'CombineObject.php';
 include_once html_paths::SHARED_HELPER . 'IdObject.php';
 include_once html_paths::SHARED_HELPER . 'TextIdObject.php';
+include_once html_paths::SHARED_ENUM . 'chart_types.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::SHARED_TYPES . 'position_types.php';
 include_once html_paths::SHARED . 'api.php';
@@ -97,6 +100,7 @@ use Zukunft\ZukunftCom\main\php\web\word\word_list;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\main\php\shared\enum\chart_types;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\helper\Config;
@@ -655,236 +659,28 @@ class value_list extends ListBase
     ): string
     {
         $result = '';
-        // the url of the page names the column tiers and whether the ranges are shown, e.g. after
-        // the "..." click on a simple table, and wins over the default of the caller
-        if (array_key_exists(url_var::DISPLAY_LIST_COLUMNS, $url_array)) {
-            $col_tiers = (int)$url_array[url_var::DISPLAY_LIST_COLUMNS];
-        }
+        // the url of the page says whether the ranges are shown, e.g. after the "..." click on a
+        // simple table, and wins over the default of the caller
         if (array_key_exists(url_var::DISPLAY_LIST_RANGE, $url_array)) {
             $with_range = ($url_array[url_var::DISPLAY_LIST_RANGE] == url_var::TRUE);
         }
         if (!$this->is_empty()) {
             $html = new html_base();
-            // the row order follows the impact, so it never depends on the api/db row order
-            $this->sort_by_impact();
-            // a phrase that every value carries describes the whole table, so the header names
-            // it once and no row repeats it
-            $tbl_phr = $this->phrases_of_every_value(
-                $this->column_names_with_parts($col_order, $rel_lst));
-            // the unit and the phrases of the whole table say nothing about a single row, so
-            // both are assumed like the phrase of the page
-            $grp_ctx = $this->context_with_units($context_phr_lst, $msg, $tbl_phr);
-            // a column phrase needs to be used by at least two values, else the column has one entry
-            [$phr_by_id, $val_phr_ids] = $this->phrase_ranking(
-                $this->lst(), $msg, $grp_ctx, config::MIN_PHRASE_GROUP - 1);
-            // a phrase that the system column tiers define as a column wins over the impact
-            // ranking and is used even if only one value carries it
-            $all_by_id = $phr_by_id;
-            if ($col_order != []) {
-                [$all_by_id, $val_phr_ids] = $this->phrase_ranking(
-                    $this->lst(), $msg, $grp_ctx, 0);
-                $phr_by_id = $this->columns_by_definition(
-                    $all_by_id, $phr_by_id, $col_order, $rel_lst);
-            }
-
-            // the column phrases, per column the phrases a value must carry to belong to it and
-            // per value the column it belongs to
-            $col_phr = [];
-            $col_parts = [];
-            $val_col = [];
-            $remaining = $this->lst();
-            foreach ($phr_by_id as $id => $phr) {
-                // a defined column is shown on the screens its tier says, so only the columns that
-                // the data suggests are limited to the number that fit on the widest screen; no
-                // break in the loop, so the free column count is checked per phrase
-                $defined = in_array($phr->name(), $col_order);
-                if ($defined or count($col_phr) < position_types::MAX_SIDE_COLUMNS) {
-                    $parts = $this->column_parts($phr, $all_by_id);
-                    [$members, $rest] = $this->split_by_parts($remaining, $parts, $val_phr_ids);
-                    // a column shows one measure, so a phrase with values in several units gets
-                    // one column per unit, the unit of the most relevant value first
-                    foreach ($this->split_by_unit($members, $msg) as $unit_members) {
-                        $col_id = $this->unit_column_id($id, $col_phr);
-                        $col_phr[$col_id] = $phr;
-                        $col_parts[$col_id] = $parts;
-                        foreach ($unit_members as $val) {
-                            $val_col[$val->id()] = $col_id;
-                        }
-                    }
-                    if ($members != []) {
-                        $remaining = $rest;
-                    }
-                }
-            }
-            // the values that share no column phrase get a last column of their own, so that no
-            // value of a shown row is silently dropped; whether that column is needed is decided
-            // once the rows are cut, because a value behind the limit is not shown either
-
-            // a defined column that no value carries names a phrase of the row instead of a
-            // number, e.g. the "solution" column shows the solution of the problem row
-            $phr_col = $this->phrase_columns($col_order, $col_phr, $rel_lst, $msg, $tbl_phr);
-            // the names that belong into each phrase column, read once for the whole table
-            $phr_col_names = [];
-            foreach ($phr_col as $phr_col_id => $phr) {
-                $phr_col_names[$phr_col_id] = $rel_lst->child_names($phr);
-            }
-
-            // a table that is a grid of its columns leaves out the values that fit no column, e.g.
-            // the measured figures of a problem that are no part of the ranking of the start page
-            $vals = $this->lst();
-            if ($col_values_only) {
-                $vals = array_filter($vals, fn($val) => array_key_exists($val->id(), $val_col));
-            }
-
-            // per row the label and per row and column the value html
-            $row_label = [];
-            $cells = [];
-            $phr_cells = [];
-            foreach ($vals as $val) {
-                $col_id = $val_col[$val->id()] ?? '';
-                $ctx = clone $grp_ctx;
-                if ($col_id !== '') {
-                    // the phrases that put the value into its column do not name the row, which
-                    // for a column of two phrases are both of them e.g. "potential" and "loss"
-                    foreach ($col_parts[$col_id] as $part_id) {
-                        $ctx->add_phrase($all_by_id[$part_id]);
-                    }
-                }
-                // a phrase shown in a column of its own does not name the row any more, so it is
-                // added to the context before the row key is built
-                $phr_cell = [];
-                foreach (array_keys($phr_col) as $phr_col_id) {
-                    $child = $this->phrase_of_column($val, $phr_col_names[$phr_col_id]);
-                    if ($child != null) {
-                        $ctx->add_phrase($child);
-                        $phr_cell[$phr_col_id] = $child->name_link();
-                    }
-                }
-                // the row is named by the phrases that are left after the context and the column
-                // phrase, e.g. the year if the columns are inhabitants and area
-                $row_key = $val->grp->phrase_names($ctx);
-                if (!key_exists($row_key, $row_label)) {
-                    $row_label[$row_key] = $val->grp->phrase_link_list($ctx);
-                    $cells[$row_key] = [];
-                }
-                // the phrase of a row is the same for every value of that row, so it is set
-                // instead of added, e.g. the solution is named once although the row has the
-                // potential loss and the potential gain of the problem
-                foreach ($phr_cell as $phr_col_id => $link) {
-                    $phr_cells[$row_key][$phr_col_id] = $link;
-                }
-                // two values with the same row and column are shown in the same cell instead of
-                // the second one replacing the first; the cell keeps the values, because a range
-                // bound is shown behind its centre value and not as a value of its own
-                $cells[$row_key][$col_id][] = $val;
-            }
-
-            // a phrase column is defined like a value column, so both kinds are shown in one
-            // order, e.g. the "solution" column between the "loss" and the "gain" column
-            $col_ids = $this->column_id_order($col_order, $col_phr, $phr_col);
-            // a simple table shows the first tiers only, and the table of the mayor tier alone
-            // one unit per column; the columns left out are still reachable via the menu of
-            // the "..." header
-            $col_ids = $this->columns_of_tiers($col_ids, $col_phr, $phr_col, $rel_lst, $col_tiers, $cells);
-
-            // a row whose numbers are all in columns that this table does not show says nothing
-            // to the reader, e.g. the reward ratio of a problem in a table of the mayor tiers,
-            // so such a row is dropped before the cut and uses up none of the shown rows
-            if ($value_rows_only) {
-                $row_label = array_filter($row_label,
-                    fn($row_key) => $this->row_has_number($cells[$row_key], $col_ids),
-                    ARRAY_FILTER_USE_KEY);
-            }
-
-            // a page must not fill the screen, because the user messages are shown below the
-            // view and would else be hidden below the fold, so the rows are cut to the number
-            // named by the url or else the configured number before the header is built; the
-            // url names the list page as well, so the cut starts at the first row of that page
-            $row_limit = $limit ?? $this->row_limit($url_array, $msg);
-            $shown_keys = array_keys($row_label);
-            $first_row = 0;
-            if ($row_limit != self::LIMIT_ALL) {
-                $first_row = $this->first_row($url_array, $row_limit);
-                $shown_keys = array_slice($shown_keys, $first_row, $row_limit);
-            }
-            // a defined column is shown even if it is empty, because the reader has asked for
-            // it, but the rest column only exists because of the data, so it is shown only if a
-            // row that the table shows really has a value without a column
-            $rest_col = false;
-            foreach ($shown_keys as $row_key) {
-                if (($cells[$row_key][''] ?? []) != []) {
-                    $rest_col = true;
-                }
-            }
-
-            // the row column is headed by the phrase that the page phrase is built from, e.g.
-            // "problem" for the page phrase "global problem", and stays empty if that phrase is
-            // no defined column, because the row phrases differ per row
-            $row_col = $this->row_column($context_phr_lst, $col_order);
-            $header = $html->th($row_col?->name_link() ?? '');
-            // the unit describes the number of a whole column, so its own header names it
-            $col_unit = $this->column_units($col_phr, $val_col, $msg);
-            // the tier of a defined column says on which screens it is shown
-            $col_style = [];
-            foreach ($col_ids as $col_id) {
-                $phr = $col_phr[$col_id] ?? $phr_col[$col_id];
-                // a phrase column names a phrase of the row, so it has no unit
-                $unit_lst = $col_unit[$col_id] ?? new phrase_list();
-                $col_style[$col_id] = $this->column_style($phr->name(), $rel_lst);
-                $head_phr = $this->column_head($phr, $tbl_phr);
-                $header .= $html->th($this->column_header($head_phr, $unit_lst), '', $col_style[$col_id]);
-            }
-            if ($rest_col) {
-                $header .= $html->th(msg_id::FORM_SUB_TITLE_VALUES->text());
-            }
-            // every table ends with the "..." header that opens the column menu, also the full
-            // table, so that the reader can narrow the columns again from every version
-            $header .= $html->th($this->columns_menu($url_array));
-            $rows = $html->tr($header);
-            foreach ($shown_keys as $row_key) {
-                $row = $html->td($row_label[$row_key]);
-                foreach ($col_ids as $col_id) {
-                    // a phrase column names a phrase of the row, a value column its values
-                    if (array_key_exists($col_id, $col_phr)) {
-                        $row .= $this->cell($cells[$row_key][$col_id] ?? [],
-                            $msg, $url_array, $col_style[$col_id], $with_range);
-                    } else {
-                        $row .= $html->td($phr_cells[$row_key][$col_id] ?? '', $col_style[$col_id]);
-                    }
-                }
-                if ($rest_col) {
-                    $row .= $this->cell($cells[$row_key][''] ?? [], $msg, $url_array, '', $with_range);
-                }
-                // the cell below the "..." header, which the menu of that header covers
-                $row .= $html->td('');
-                $rows .= $html->tr($row);
-            }
-            // the rows behind the shown ones, so a later page counts its own rest only
-            $diff = count($row_label) - $first_row - count($shown_keys);
-            if ($diff > 0) {
-                // the empty cells of the more row hide with their column like every other cell
-                $pad_styles = array_intersect_key($col_style, array_flip($col_ids));
-                $pad_styles = array_values($pad_styles);
-                if ($rest_col) {
-                    $pad_styles[] = '';
-                }
-                // the column of the "..." header
-                $pad_styles[] = '';
-                $more_url = $this->more_url($url_array, $row_limit, $msg);
-                $rows .= $this->tr_more($diff, $context_phr_lst, $pad_styles, $more_url);
-            }
-            $result = $html->tbl($rows, $with_border ? html_base::SIZE_FULL : styles::TABLE_PUR);
+            $model = $this->table_model($msg, $context_phr_lst, $col_order, $rel_lst, $limit,
+                $url_array, $col_values_only, $col_tiers, $value_rows_only);
+            $result = $this->table_html($model, $msg, $context_phr_lst, $col_order, $rel_lst,
+                $url_array, $with_range, $with_border);
             // the header names the phrase that the reader has selected centred above the table,
             // so that a table taken out of its page still says what it is about; more than one
             // row means more than one item of the phrase, so the header names it in the plural
             if ($with_header) {
                 // a phrase of every value stays singular, because it describes the values of the
                 // table and not its items, e.g. "global problems, potential"
-                $tbl_name = $tbl_phr->name_link_list();
+                $tbl_name = $model->tbl_phr->name_link_list();
                 if ($tbl_name != '') {
                     $tbl_name = ', ' . $tbl_name;
                 }
-                if (count($row_label) > 1) {
+                if (count($model->row_label) > 1) {
                     // a table of several items is a list of its own, so its header is a headline
                     $header_html = $html->text_h2($context_phr_lst->plural() . $tbl_name);
                 } else {
@@ -895,6 +691,390 @@ class value_list extends ListBase
             }
         }
         return $result;
+    }
+
+    /**
+     * the table of table_by_related_columns drawn as a chart (see table_chart)
+     *
+     * the chart shows the same rows as the table and names the numbers of every column of the
+     * table in the tooltip of a row, so the parameters are the ones of the table; the range
+     * bars plot one value column, the scatter plot two of them
+     *
+     * @param chart_types $type how the rows are drawn
+     * @param user_message $msg to report a chart column that the table does not have
+     * @param phrase_list $context_phr_lst the phrases of the page e.g. "global problem", which name the chart
+     * @param array $col_order the defined column phrase names, the most important column first
+     * @param phrase_list|null $rel_lst the phrases related to the page phrase with the definitions
+     * @param int|null $limit the max number of rows to show, null for the size named by the url
+     *                        or else the configured limit, and self::LIMIT_ALL for every row
+     * @param array $url_array the url parameters of the page that shows the chart
+     * @param bool $col_values_only true to leave out the values that share no column phrase
+     * @param bool $value_rows_only true to leave out the rows without a number in a shown column
+     * @param array $chart_cols the names of the value columns to plot, the y axis first, e.g.
+     *                          ["gain", "cost"] for the gain against the cost; empty to plot the
+     *                          first value columns of the table
+     * @return string the svg code of the chart or '' if the table has nothing to plot
+     */
+    function table_to_svg(
+        chart_types  $type,
+        user_message $msg,
+        phrase_list  $context_phr_lst = new phrase_list(),
+        array        $col_order = [],
+        ?phrase_list $rel_lst = null,
+        ?int         $limit = null,
+        array        $url_array = [],
+        bool         $col_values_only = false,
+        bool         $value_rows_only = false,
+        array        $chart_cols = []
+    ): string
+    {
+        $result = '';
+        if (!$this->is_empty()) {
+            // the tooltip of a row names every column of the table, so no tier is left out
+            $model = $this->table_model($msg, $context_phr_lst, $col_order, $rel_lst, $limit,
+                $url_array, $col_values_only, self::COLUMN_TIERS_ALL, $value_rows_only);
+            $chart = new table_chart();
+            $result = $chart->svg($model, $type, $msg, $context_phr_lst, $chart_cols);
+        }
+        return $result;
+    }
+
+    /**
+     * the rows and columns of the table of table_by_related_columns before they are rendered,
+     * shared by the html table and the svg chart (the parameters are the ones of the table)
+     *
+     * @return table_model the rows, columns, units and ranges of the table
+     */
+    private function table_model(
+        user_message $msg,
+        phrase_list  $context_phr_lst,
+        array        $col_order,
+        ?phrase_list $rel_lst,
+        ?int         $limit,
+        array        $url_array,
+        bool         $col_values_only,
+        int          $col_tiers,
+        bool         $value_rows_only
+    ): table_model
+    {
+        $model = new table_model();
+        // the url of the page names the column tiers, e.g. after the "..." click on a simple
+        // table, and wins over the default of the caller
+        if (array_key_exists(url_var::DISPLAY_LIST_COLUMNS, $url_array)) {
+            $col_tiers = (int)$url_array[url_var::DISPLAY_LIST_COLUMNS];
+        }
+        // the row order follows the impact, so it never depends on the api/db row order
+        $this->sort_by_impact();
+        // a phrase that every value carries describes the whole table, so the header names
+        // it once and no row repeats it
+        $tbl_phr = $this->phrases_of_every_value(
+            $this->column_names_with_parts($col_order, $rel_lst));
+        // the unit and the phrases of the whole table say nothing about a single row, so
+        // both are assumed like the phrase of the page
+        $grp_ctx = $this->context_with_units($context_phr_lst, $msg, $tbl_phr);
+        // a column phrase needs to be used by at least two values, else the column has one entry
+        [$phr_by_id, $val_phr_ids] = $this->phrase_ranking(
+            $this->lst(), $msg, $grp_ctx, config::MIN_PHRASE_GROUP - 1);
+        // a phrase that the system column tiers define as a column wins over the impact
+        // ranking and is used even if only one value carries it
+        $all_by_id = $phr_by_id;
+        if ($col_order != []) {
+            [$all_by_id, $val_phr_ids] = $this->phrase_ranking(
+                $this->lst(), $msg, $grp_ctx, 0);
+            $phr_by_id = $this->columns_by_definition(
+                $all_by_id, $phr_by_id, $col_order, $rel_lst);
+        }
+        [$col_phr, $col_parts, $val_col] = $this->value_columns(
+            $phr_by_id, $all_by_id, $val_phr_ids, $col_order, $msg);
+        // a defined column that no value carries names a phrase of the row instead of a
+        // number, e.g. the "solution" column shows the solution of the problem row
+        $phr_col = $this->phrase_columns($col_order, $col_phr, $rel_lst, $msg, $tbl_phr);
+        // a table that is a grid of its columns leaves out the values that fit no column, e.g.
+        // the measured figures of a problem that are no part of the ranking of the start page
+        $vals = $this->lst();
+        if ($col_values_only) {
+            $vals = array_filter($vals, fn($val) => array_key_exists($val->id(), $val_col));
+        }
+        [$row_label, $cells, $phr_cells] = $this->table_cells(
+            $vals, $val_col, $col_parts, $all_by_id, $phr_col, $rel_lst, $grp_ctx);
+        // a phrase column is defined like a value column, so both kinds are shown in one
+        // order, e.g. the "solution" column between the "loss" and the "gain" column
+        $col_ids = $this->column_id_order($col_order, $col_phr, $phr_col);
+        // a simple table shows the first tiers only, and the table of the mayor tier alone
+        // one unit per column; the columns left out are still reachable via the menu of
+        // the "..." header
+        $col_ids = $this->columns_of_tiers($col_ids, $col_phr, $phr_col, $rel_lst, $col_tiers, $cells);
+        // a row whose numbers are all in columns that this table does not show says nothing
+        // to the reader, e.g. the reward ratio of a problem in a table of the mayor tiers,
+        // so such a row is dropped before the cut and uses up none of the shown rows
+        if ($value_rows_only) {
+            $row_label = array_filter($row_label,
+                fn($row_key) => $this->row_has_number($cells[$row_key], $col_ids),
+                ARRAY_FILTER_USE_KEY);
+        }
+        // a page must not fill the screen, because the user messages are shown below the
+        // view and would else be hidden below the fold, so the rows are cut to the number
+        // named by the url or else the configured number before the header is built; the
+        // url names the list page as well, so the cut starts at the first row of that page
+        $model->row_limit = $limit ?? $this->row_limit($url_array, $msg);
+        $model->shown_keys = array_keys($row_label);
+        if ($model->row_limit != self::LIMIT_ALL) {
+            $model->first_row = $this->first_row($url_array, $model->row_limit);
+            $model->shown_keys = array_slice($model->shown_keys, $model->first_row, $model->row_limit);
+        }
+        // the rows behind the shown ones, so a later page counts its own rest only
+        $model->rows_behind = count($row_label) - $model->first_row - count($model->shown_keys);
+        $model->tbl_phr = $tbl_phr;
+        $model->row_label = $row_label;
+        $model->cells = $cells;
+        $model->phr_cells = $phr_cells;
+        $model->col_ids = $col_ids;
+        $model->col_phr = $col_phr;
+        $model->phr_col = $phr_col;
+        foreach ($col_phr as $col_id => $phr) {
+            $model->col_head[$col_id] = $this->column_head($phr, $tbl_phr);
+        }
+        // the unit describes the number of a whole column, so its own header names it
+        $model->col_unit = $this->column_units($col_phr, $val_col, $msg);
+        $model->col_names = $this->column_names_of($col_phr, $model->col_head, $col_parts, $all_by_id);
+        return $model;
+    }
+
+    /**
+     * the columns that hold a value
+     *
+     * @param array $phr_by_id the column phrases keyed by phrase id in the order they should be shown
+     * @param array $all_by_id every groupable phrase keyed by phrase id
+     * @param array $val_phr_ids per value id the ids of its groupable phrases
+     * @param array $col_order the defined column phrase names, the most important column first
+     * @param user_message $msg to report a problem of reading a phrase type
+     * @return array per column id the phrase, per column id the phrase ids a value must carry
+     *               to belong to it and per value id the id of its column
+     */
+    private function value_columns(
+        array        $phr_by_id,
+        array        $all_by_id,
+        array        $val_phr_ids,
+        array        $col_order,
+        user_message $msg
+    ): array
+    {
+        $col_phr = [];
+        $col_parts = [];
+        $val_col = [];
+        $remaining = $this->lst();
+        foreach ($phr_by_id as $id => $phr) {
+            // a defined column is shown on the screens its tier says, so only the columns that
+            // the data suggests are limited to the number that fit on the widest screen; no
+            // break in the loop, so the free column count is checked per phrase
+            $defined = in_array($phr->name(), $col_order);
+            if ($defined or count($col_phr) < position_types::MAX_SIDE_COLUMNS) {
+                $parts = $this->column_parts($phr, $all_by_id);
+                [$members, $rest] = $this->split_by_parts($remaining, $parts, $val_phr_ids);
+                // a column shows one measure, so a phrase with values in several units gets
+                // one column per unit, the unit of the most relevant value first
+                foreach ($this->split_by_unit($members, $msg) as $unit_members) {
+                    $col_id = $this->unit_column_id($id, $col_phr);
+                    $col_phr[$col_id] = $phr;
+                    $col_parts[$col_id] = $parts;
+                    foreach ($unit_members as $val) {
+                        $val_col[$val->id()] = $col_id;
+                    }
+                }
+                if ($members != []) {
+                    $remaining = $rest;
+                }
+            }
+        }
+        // the values that share no column phrase get a last column of their own, so that no
+        // value of a shown row is silently dropped; whether that column is needed is decided
+        // once the rows are cut, because a value behind the limit is not shown either
+        return [$col_phr, $col_parts, $val_col];
+    }
+
+    /**
+     * the rows of the table with the values of each cell
+     *
+     * @param array $vals the values shown by the table
+     * @param array $val_col per value id the id of its column
+     * @param array $col_parts per column id the phrase ids a value must carry to belong to it
+     * @param array $all_by_id every groupable phrase keyed by phrase id
+     * @param array $phr_col the columns that name a phrase of the row, keyed by column id
+     * @param phrase_list|null $rel_lst the phrases related to the page phrase with the definitions
+     * @param phrase_list $grp_ctx the phrases assumed by the reader, which name no row
+     * @return array per row key the html link list of the row, per row key and column id the
+     *               values of the cell and per row key and phrase column id the phrase shown
+     */
+    private function table_cells(
+        array        $vals,
+        array        $val_col,
+        array        $col_parts,
+        array        $all_by_id,
+        array        $phr_col,
+        ?phrase_list $rel_lst,
+        phrase_list  $grp_ctx
+    ): array
+    {
+        // the names that belong into each phrase column, read once for the whole table
+        $phr_col_names = [];
+        foreach ($phr_col as $phr_col_id => $phr) {
+            $phr_col_names[$phr_col_id] = $rel_lst->child_names($phr);
+        }
+        $row_label = [];
+        $cells = [];
+        $phr_cells = [];
+        foreach ($vals as $val) {
+            $col_id = $val_col[$val->id()] ?? '';
+            $ctx = clone $grp_ctx;
+            if ($col_id !== '') {
+                // the phrases that put the value into its column do not name the row, which
+                // for a column of two phrases are both of them e.g. "potential" and "loss"
+                foreach ($col_parts[$col_id] as $part_id) {
+                    $ctx->add_phrase($all_by_id[$part_id]);
+                }
+            }
+            // a phrase shown in a column of its own does not name the row any more, so it is
+            // added to the context before the row key is built
+            $phr_cell = [];
+            foreach (array_keys($phr_col) as $phr_col_id) {
+                $child = $this->phrase_of_column($val, $phr_col_names[$phr_col_id]);
+                if ($child != null) {
+                    $ctx->add_phrase($child);
+                    $phr_cell[$phr_col_id] = $child;
+                }
+            }
+            // the row is named by the phrases that are left after the context and the column
+            // phrase, e.g. the year if the columns are inhabitants and area
+            $row_key = $val->grp->phrase_names($ctx);
+            if (!key_exists($row_key, $row_label)) {
+                $row_label[$row_key] = $val->grp->phrase_link_list($ctx);
+                $cells[$row_key] = [];
+            }
+            // the phrase of a row is the same for every value of that row, so it is set
+            // instead of added, e.g. the solution is named once although the row has the
+            // potential loss and the potential gain of the problem
+            foreach ($phr_cell as $phr_col_id => $phr) {
+                $phr_cells[$row_key][$phr_col_id] = $phr;
+            }
+            // two values with the same row and column are shown in the same cell instead of
+            // the second one replacing the first; the cell keeps the values, because a range
+            // bound is shown behind its centre value and not as a value of its own
+            $cells[$row_key][$col_id][] = $val;
+        }
+        return [$row_label, $cells, $phr_cells];
+    }
+
+    /**
+     * per value column the names that select it for a chart: the phrase of the column, the
+     * phrase shown in its header and the parts of a triple column, e.g. "potential loss",
+     * "loss" and "potential"
+     *
+     * @param array $col_phr the columns that hold a value, keyed by column id
+     * @param array $col_head per column id the phrase shown in the header of the column
+     * @param array $col_parts per column id the phrase ids a value must carry to belong to it
+     * @param array $all_by_id every groupable phrase keyed by phrase id
+     * @return array per column id the names of the column
+     */
+    private function column_names_of(array $col_phr, array $col_head, array $col_parts, array $all_by_id): array
+    {
+        $result = [];
+        foreach ($col_phr as $col_id => $phr) {
+            $names = [$phr->name(), $col_head[$col_id]->name()];
+            foreach ($col_parts[$col_id] as $part_id) {
+                $names[] = $all_by_id[$part_id]->name();
+            }
+            $result[$col_id] = array_values(array_unique($names));
+        }
+        return $result;
+    }
+
+    /**
+     * the html table of the rows and columns of table_model
+     *
+     * @param table_model $model the rows and columns of the table
+     * @param user_message $msg to report a problem of the value display
+     * @param phrase_list $context_phr_lst the phrases assumed by the reader e.g. the phrase of the page
+     * @param array $col_order the defined column phrase names, the most important column first
+     * @param phrase_list|null $rel_lst the phrases related to the page phrase with the definitions
+     * @param array $url_array the url parameters of the page that shows the table
+     * @param bool $with_range true to show the probability range behind each number
+     * @param bool $with_border false for the borderless table
+     * @return string the html code of the table
+     */
+    private function table_html(
+        table_model  $model,
+        user_message $msg,
+        phrase_list  $context_phr_lst,
+        array        $col_order,
+        ?phrase_list $rel_lst,
+        array        $url_array,
+        bool         $with_range,
+        bool         $with_border
+    ): string
+    {
+        $html = new html_base();
+        // a defined column is shown even if it is empty, because the reader has asked for
+        // it, but the rest column only exists because of the data, so it is shown only if a
+        // row that the table shows really has a value without a column
+        $rest_col = false;
+        foreach ($model->shown_keys as $row_key) {
+            if (($model->cells[$row_key][''] ?? []) != []) {
+                $rest_col = true;
+            }
+        }
+        // the row column is headed by the phrase that the page phrase is built from, e.g.
+        // "problem" for the page phrase "global problem", and stays empty if that phrase is
+        // no defined column, because the row phrases differ per row
+        $row_col = $this->row_column($context_phr_lst, $col_order);
+        $header = $html->th($row_col?->name_link() ?? '');
+        // the tier of a defined column says on which screens it is shown
+        $col_style = [];
+        foreach ($model->col_ids as $col_id) {
+            $phr = $model->col_phr[$col_id] ?? $model->phr_col[$col_id];
+            // a phrase column names a phrase of the row, so it has no unit
+            $unit_lst = $model->col_unit[$col_id] ?? new phrase_list();
+            $col_style[$col_id] = $this->column_style($phr->name(), $rel_lst);
+            $head_phr = $this->column_head($phr, $model->tbl_phr);
+            $header .= $html->th($this->column_header($head_phr, $unit_lst), '', $col_style[$col_id]);
+        }
+        if ($rest_col) {
+            $header .= $html->th(msg_id::FORM_SUB_TITLE_VALUES->text());
+        }
+        // every table ends with the "..." header that opens the column menu, also the full
+        // table, so that the reader can narrow the columns again from every version
+        $header .= $html->th($this->columns_menu($url_array));
+        $rows = $html->tr($header);
+        foreach ($model->shown_keys as $row_key) {
+            $row = $html->td($model->row_label[$row_key]);
+            foreach ($model->col_ids as $col_id) {
+                // a phrase column names a phrase of the row, a value column its values
+                if (array_key_exists($col_id, $model->col_phr)) {
+                    $row .= $this->cell($model->cells[$row_key][$col_id] ?? [],
+                        $msg, $url_array, $col_style[$col_id], $with_range);
+                } else {
+                    $phr = $model->phr_cells[$row_key][$col_id] ?? null;
+                    $row .= $html->td($phr?->name_link() ?? '', $col_style[$col_id]);
+                }
+            }
+            if ($rest_col) {
+                $row .= $this->cell($model->cells[$row_key][''] ?? [], $msg, $url_array, '', $with_range);
+            }
+            // the cell below the "..." header, which the menu of that header covers
+            $row .= $html->td('');
+            $rows .= $html->tr($row);
+        }
+        if ($model->rows_behind > 0) {
+            // the empty cells of the more row hide with their column like every other cell
+            $pad_styles = array_values(array_intersect_key($col_style, array_flip($model->col_ids)));
+            if ($rest_col) {
+                $pad_styles[] = '';
+            }
+            // the column of the "..." header
+            $pad_styles[] = '';
+            $more_url = $this->more_url($url_array, $model->row_limit, $msg);
+            $rows .= $this->tr_more($model->rows_behind, $context_phr_lst, $pad_styles, $more_url);
+        }
+        return $html->tbl($rows, $with_border ? html_base::SIZE_FULL : styles::TABLE_PUR);
     }
 
     /**

@@ -170,6 +170,22 @@ class triple_names
     const int TAXES_SOLUTION_ID = 141;
     const string SPENDING_SOLUTION = 'spending (solution)';
     const int SPENDING_SOLUTION_ID = 142;
+    const string BASIC_INCOME_SOLUTION = 'basic income (solution)';
+    const int BASIC_INCOME_SOLUTION_ID = 199;
+    const string PLATFORM_REGULATION_SOLUTION = 'platform regulation (solution)';
+    const int PLATFORM_REGULATION_SOLUTION_ID = 200;
+    const string MARKET_SHARE_TAX_SOLUTION = 'market share tax (solution)';
+    const int MARKET_SHARE_TAX_SOLUTION_ID = 223;
+    const string DELPHI_METHOD_SOLUTION = 'Delphi method (solution)';
+    const int DELPHI_METHOD_SOLUTION_ID = 201;
+    const string PUBLIC_AI_SOLUTION = 'public AI (solution)';
+    const int PUBLIC_AI_SOLUTION_ID = 224;
+    const string FLUID_DEMOCRACY_SOLUTION = 'fluid democracy (solution)';
+    const int FLUID_DEMOCRACY_SOLUTION_ID = 202;
+    const string GROSS_DOMESTIC_USAGE_SOLUTION = 'gross domestic usage (solution)';
+    const int GROSS_DOMESTIC_USAGE_SOLUTION_ID = 225;
+    const string FREE_SOFTWARE_SOLUTION = 'free software (solution)';
+    const int FREE_SOFTWARE_SOLUTION_ID = 203;
     // the problems of solution_prio.json that are a triple, ordered like the start page ranking
     const string WEALTH_CONCENTRATION = 'wealth concentration';
     const int WEALTH_CONCENTRATION_ID = 132;

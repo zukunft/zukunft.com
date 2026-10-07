@@ -450,6 +450,32 @@ only phrase cells is dropped as well. Every other table keeps such a row, so
 the option is a default of the component (`ui_list::start_list`) and not a rule
 of the table.
 
+## A table as a chart is another rendering of the same rows
+
+`value_list::table_to_svg` draws the table of `table_by_related_columns` as an
+inline svg. Both build the same `table_model` (`value_list::table_model`: the
+rows, columns, units and ranges before anything is rendered), so a chart never
+shows a row or a number that the table does not have, and the parameters of the
+chart are the ones of the table. `chart_types` says only how the rows are drawn
+(`web/value/table_chart.php`):
+
+- `RANGE_BARS` — one row per table row, the biggest number on top, with a dot
+  for the number and a bar for its probability range; a log scale is used when
+  the numbers differ by more than `table_chart::LOG_RATIO`, so the small
+  problems stay visible beside the big ones.
+- `SCATTER` — one numbered point per table row placed by two numbers of the
+  row, explained by a legend of the phrase column (e.g. the solution) and the
+  row phrase.
+
+The plotted columns are named by `$chart_cols` with the names that also select
+a table column (the column phrase, its header name or a part of a triple
+column, `table_model::col_names`), the y axis first; without names the first
+value columns are plotted. A name that selects no column is reported via
+`msg_id::CHART_COLUMN_NOT_FOUND` and nothing is drawn, never a chart of another
+column. Every row carries the numbers of every value column as its tooltip in
+the format of the table cell (`5.5a trillion EUR (2.2 – 13.75)`), so the chart
+tells the reader the same as the full table.
+
 ## The value quality is a mark behind the number, never a phrase before it
 
 A value quality phrase (phrase type `value_quality`, e.g. `assumed`) says how a

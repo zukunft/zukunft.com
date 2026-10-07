@@ -48,6 +48,7 @@ use Zukunft\ZukunftCom\main\php\shared\helper\Config as shared_config;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\enum\chart_types;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
@@ -124,6 +125,17 @@ class value_list_ui_tests
         $header_html = $phr_lst_context_ui->headline();
         $table_html = $lst_zh_ui->table($msg_ui, $phr_lst_context_ui);
         $test_page .= 'as table with context: ' . $header_html . $table_html . '<br>';
+        // the ranking of the start page as the two charts of value_list::table_to_svg
+        $rank_lst = $t_phr->list_global_problems_ui();
+        $rank_ctx = $t_phr->list_global_problem_context_ui();
+        $svg_bars = $t_val->value_list_solution_prio_ui()->table_to_svg(
+            chart_types::RANGE_BARS, $msg_ui, $rank_ctx, $rank_lst->column_names(), $rank_lst,
+            value_list_ui::LIMIT_ALL);
+        $test_page .= 'as range bars: ' . $html->lf() . $svg_bars . '<br>';
+        $svg_points = $t_val->value_list_solution_prio_ui()->table_to_svg(
+            chart_types::SCATTER, $msg_ui, $rank_ctx, $rank_lst->column_names(), $rank_lst,
+            value_list_ui::LIMIT_ALL, [], false, false, [word_names::GAIN, word_names::LOSS]);
+        $test_page .= 'as scatter plot: ' . $html->lf() . $svg_points . '<br>';
         $t->html_page_test($test_page, 'value_list', 'value_list', $msg_ui);
 
         $t->subheader($ts . 'user config');
@@ -544,6 +556,43 @@ class value_list_ui_tests
         $full_html = $lst_all_ui->list($msg_ui, $phr_lst_context_ui, [], '', $lst_all_ui->count());
         $test_name = 'a list that shows every value has no more tail';
         $t->assert_text_not_contains($test_name, $full_html, msg_id::MORE->text());
+
+        $t->subheader($ts . 'table to svg');
+        // the chart shows the rows of the table, so the column definitions of the page phrase
+        // select the plotted column like a table column ($svg_bars and $svg_points see above)
+        $test_name = 'the ranking is drawn as range bars';
+        $t->assert_text_contains($test_name, $svg_bars, '<svg');
+        $test_name = '... with one row per problem';
+        $t->assert($test_name, substr_count($svg_bars, 'class="row"'), count($t_val->solution_prio_rows()));
+        $test_name = '... the biggest loss on top';
+        $t->assert_text_order($test_name, $svg_bars, triple_names::GLOBAL_WARMING, word_names::POPULISM);
+        $test_name = '... and the solution of the problem in the tooltip';
+        $t->assert_text_contains($test_name, $svg_bars, triple_names::REDUCE_EMISSIONS);
+        // the range of a number is the bar behind the dot and the bounds are named in the
+        // tooltip like in the table cell, with the assumed mark behind the centre number
+        $svg_range = $t_val->value_list_range_ui()->table_to_svg(chart_types::RANGE_BARS, $msg_ui);
+        $test_name = 'the range bounds are named in the tooltip like in the table';
+        $t->assert_text_contains($test_name, $svg_range, $centre_txt . ' ' . word_names::TRILLION . ' '
+            . word_names::EUR . value_list_ui::RANGE_START . '0.88' . value_list_ui::RANGE_SEP . '5.5' . value_list_ui::RANGE_END);
+        $test_name = '... and drawn as the bar of the row';
+        $t->assert($test_name, substr_count($svg_range, 'class="rng"'), 1);
+        $test_name = 'the ranking is drawn as a scatter plot of the gain against the loss';
+        $t->assert($test_name, substr_count($svg_points, 'class="pt"'), count($t_val->solution_prio_rows()));
+        $test_name = '... with the solutions numbered in the legend';
+        $t->assert_text_contains($test_name, $svg_points, '<tspan class="n">1</tspan>  ' . triple_names::REDUCE_EMISSIONS);
+        $test_name = '... and the axes named by the plotted columns';
+        $t->assert_text_contains($test_name, $svg_points,
+            word_names::GAIN . ' ' . msg_id::CHART_VERSUS->text() . ' ' . word_names::LOSS);
+        // negative: a column that the table does not have is reported instead of plotting another
+        $svg_none = $t_val->value_list_range_ui()->table_to_svg(
+            chart_types::RANGE_BARS, $msg_ui, chart_cols: [word_names::PI]);
+        $test_name = 'a column that the table does not have draws no chart';
+        $t->assert($test_name, $svg_none, '');
+        $test_name = '... and is reported to the user';
+        $t->assert_true($test_name, $msg_ui->has_msg_id(msg_id::CHART_COLUMN_NOT_FOUND));
+        $msg_ui->reset();
+        $test_name = 'an empty value list draws no chart';
+        $t->assert($test_name, new value_list_ui()->table_to_svg(chart_types::RANGE_BARS, $msg_ui), '');
 
         // TODO add a test that if a view contains beside the "2023 (year)"
         //      no other phrase that contains the word "2023"

@@ -1251,6 +1251,15 @@ class test_phrases
         $lst->add($t_trp->research_solution()->phrase());
         $lst->add($t_trp->taxes_solution()->phrase());
         $lst->add($t_trp->spending_solution()->phrase());
+        // the solutions of the assumed rows, so that every row of the ranking names its solution
+        $lst->add($t_trp->basic_income_solution()->phrase());
+        $lst->add($t_trp->platform_regulation_solution()->phrase());
+        $lst->add($t_trp->market_share_tax_solution()->phrase());
+        $lst->add($t_trp->delphi_method_solution()->phrase());
+        $lst->add($t_trp->public_ai_solution()->phrase());
+        $lst->add($t_trp->fluid_democracy_solution()->phrase());
+        $lst->add($t_trp->gross_domestic_usage_solution()->phrase());
+        $lst->add($t_trp->free_software_solution()->phrase());
         return $lst;
     }
 

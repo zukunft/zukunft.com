@@ -7937,6 +7937,14 @@
     \-- get_all_var_messages - section for function get_all_var_messages is expected to be set and get in /user/user_mes
             sage.php
     \-- order error - order of section api has difference at api_mapper should be before api_array
+\-- table_chart
+    \-- svg - section for function svg not yet defined that it should be chart in /value/table_chart.php
+\-- table_model
+    \-- __construct - section for function __construct is expected to be construct and map in /value/table_model.php
+    \-- value_col_ids - section for function value_col_ids missing in /value/table_model.php
+    \-- phrase_col_ids - section for function phrase_col_ids missing in /value/table_model.php
+    \-- col_id_by_name - section for function col_id_by_name missing in /value/table_model.php
+    \-- cell_numbers - section for function cell_numbers missing in /value/table_model.php
 \-- value
     \-- url_mapper - section for function url_mapper not yet defined that it should be construct and map in /value/value
             .php
@@ -7998,6 +8006,8 @@
             alue_list.php
     \-- table_by_related_columns - section for function table_by_related_columns not yet defined that it should be displ
             ay in /value/value_list.php
+    \-- table_to_svg - section for function table_to_svg not yet defined that it should be display in /value/value_list.
+            php
     \-- list_unit - section for function list_unit not yet defined that it should be display in /value/value_list.php
     \-- table - section for function table not yet defined that it should be display in /value/value_list.php
     \-- common_phrases - section for function common_phrases not yet defined that it should be info in /value/value_list
@@ -9135,6 +9145,7 @@
         \-- table - 
         \-- user_log_display - for a user log it is always needed to know who wants to seen the log
         \-- sandbox_list_value - 
+        \-- table_model - 
     \-- reset
         \-- table - 
     \-- add_column
@@ -9172,6 +9183,14 @@
         \-- user_type_list - create the HTML code to select a user type
     \-- default_id
         \-- view_style_list - @return int|null null because the default is to use no additional style definition
+    \-- value_col_ids
+        \-- table_model - @return array the ids of the shown columns that hold a value, the leftmost first
+    \-- phrase_col_ids
+        \-- table_model - @return array the ids of the shown columns that name a phrase of the row, the leftmost first
+    \-- col_id_by_name
+        \-- table_model - @param string $name a name that selects a value column e.g. "loss" or "potential loss"
+    \-- cell_numbers
+        \-- table_model - the numbers of one cell sorted by their role, like value_list::cell shows them
 \-- optional with show password but without auto fill
     \-- admin_form_user_uses_sandbox
         \-- system_form - @return string the html code so that an admin user can switch if the pages
@@ -10023,5 +10042,8 @@
         \-- sandbox_list - to show the list name to the user in the most simple form (without any ids)
     \-- names
         \-- sandbox_list - @param ?int $limit the max number of ids to show
+\-- chart
+    \-- svg
+        \-- table_chart - the table as a chart of the given type
 ```
 

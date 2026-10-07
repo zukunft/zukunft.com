@@ -1753,6 +1753,90 @@ class test_triples extends test_objects
         return $trp;
     }
 
+    /**
+     * @return triple that "basic income" "is a" "solution"
+     */
+    function basic_income_solution(): triple
+    {
+        return $this->solution_link($this->basic_income(), triple_names::BASIC_INCOME_SOLUTION_ID);
+    }
+
+    /**
+     * @return triple that "platform regulation" "is a" "solution"
+     */
+    function platform_regulation_solution(): triple
+    {
+        return $this->solution_link($this->platform_regulation(), triple_names::PLATFORM_REGULATION_SOLUTION_ID);
+    }
+
+    /**
+     * @return triple that "market share tax" "is a" "solution"
+     */
+    function market_share_tax_solution(): triple
+    {
+        return $this->solution_link($this->market_share_tax(), triple_names::MARKET_SHARE_TAX_SOLUTION_ID);
+    }
+
+    /**
+     * @return triple that "Delphi method" "is a" "solution"
+     */
+    function delphi_method_solution(): triple
+    {
+        return $this->solution_link($this->delphi_method(), triple_names::DELPHI_METHOD_SOLUTION_ID);
+    }
+
+    /**
+     * @return triple that "public AI" "is a" "solution"
+     */
+    function public_ai_solution(): triple
+    {
+        return $this->solution_link($this->public_ai(), triple_names::PUBLIC_AI_SOLUTION_ID);
+    }
+
+    /**
+     * @return triple that "fluid democracy" "is a" "solution"
+     */
+    function fluid_democracy_solution(): triple
+    {
+        return $this->solution_link($this->fluid_democracy(), triple_names::FLUID_DEMOCRACY_SOLUTION_ID);
+    }
+
+    /**
+     * @return triple that "gross domestic usage" "is a" "solution"
+     */
+    function gross_domestic_usage_solution(): triple
+    {
+        return $this->solution_link($this->gross_domestic_usage(), triple_names::GROSS_DOMESTIC_USAGE_SOLUTION_ID);
+    }
+
+    /**
+     * @return triple that "free software" "is a" "solution"
+     */
+    function free_software_solution(): triple
+    {
+        return $this->solution_link($this->free_software(), triple_names::FREE_SOFTWARE_SOLUTION_ID);
+    }
+
+    /**
+     * the triple that links a solution of the start page ranking to "solution", so that the
+     * table can name it in the solution column of the problem row
+     *
+     * @param triple $solution the solution of a problem e.g. "basic income"
+     * @param int $id the fixed database id of the link triple
+     * @return triple that the solution "is a" "solution"
+     */
+    private function solution_link(triple $solution, int $id): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set($id);
+        $trp->set_from($solution->phrase());
+        $trp->set_verb($t_vrb->verb_is());
+        $trp->set_to($t_wrd->solution()->phrase());
+        return $trp;
+    }
+
     /*
      * the problems of solution_prio.json that are a triple and the solution of each; the phrases
      * are named by id and name only, because the start page table uses them as the phrase of a

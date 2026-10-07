@@ -454,7 +454,9 @@ the object structure is:
 │   ├── user_type_listUi - $usr_typ_lst - the display extension of the user-specific api type list object
 │   └── verb_listUi - al list of verb objects
 ├── type_listsUi - parent object for all preloaded types used in the html frontend
-└── type_objectUi
-    ├── languageUi - $lan - the extension of the language API objects to create language base html code
-    └── ref_typeUi - the child class for reference types which has additional the url
+├── type_objectUi
+│   ├── languageUi - $lan - the extension of the language API objects to create language base html code
+│   └── ref_typeUi - the child class for reference types which has additional the url
+├── table_chartUi - a value table drawn as an svg chart
+└── table_modelUi - the rows and columns of a value table before they are rendered
 ```
