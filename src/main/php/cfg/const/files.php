@@ -168,6 +168,8 @@ class files
     const string PROBLEM_CITIZEN_PARTICIPATION_FILE = self::DATA_START_PAGE_PATH . 'problem_citizen_participation' . self::JSON;
     const string PROBLEM_GDP_MISMEASUREMENT_FILE = self::DATA_START_PAGE_PATH . 'problem_gdp_mismeasurement' . self::JSON;
     const string PROBLEM_PROPRIETARY_SOFTWARE_FILE = self::DATA_START_PAGE_PATH . 'problem_proprietary_software' . self::JSON;
+    // the reasons that cause costs due to global warming with the study numbers per country
+    const string PROBLEM_GLOBAL_WARMING_REASONS_FILE = self::DATA_START_PAGE_PATH . 'problem_global_warming_reasons' . self::JSON;
 
     // the Fermi estimates and thesis chains of the start page, loaded by the full load
     const string FERMI_INTERNET_PRO_CONTRA_FILE = self::DATA_START_PAGE_PATH . 'fermi_internet_pro_contra' . self::JSON;
@@ -342,6 +344,8 @@ class files
         self::PROBLEM_CITIZEN_PARTICIPATION_FILE,
         self::PROBLEM_GDP_MISMEASUREMENT_FILE,
         self::PROBLEM_PROPRIETARY_SOFTWARE_FILE,
+        // appended last, so that the ids of the files above stay stable
+        self::PROBLEM_GLOBAL_WARMING_REASONS_FILE,
     ];
 
 }
