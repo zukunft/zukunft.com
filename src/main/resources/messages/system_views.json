@@ -18,6 +18,454 @@
       "type": "calc_sheet"
     },
     {
+      "name": "system title about",
+      "description": "show the language specific title for the about page",
+      "type": "system_title",
+      "code_id": "system_title_about",
+      "ui_msg_code_id": "system_title_about"
+    },
+    {
+      "name": "system title setup",
+      "description": "show the language specific title for the setup page",
+      "type": "system_title",
+      "code_id": "system_title_setup",
+      "ui_msg_code_id": "system_title_setup"
+    },
+    {
+      "name": "system title signup",
+      "description": "show the language specific title for the signup page",
+      "type": "system_title",
+      "code_id": "system_title_signup",
+      "ui_msg_code_id": "system_title_signup"
+    },
+    {
+      "name": "system title login",
+      "description": "show the language specific title for the login page",
+      "type": "system_title",
+      "code_id": "system_title_login",
+      "ui_msg_code_id": "system_title_login"
+    },
+    {
+      "name": "system title login activate",
+      "description": "show the language specific title for the login activate page",
+      "type": "system_title",
+      "code_id": "system_title_login_activate",
+      "ui_msg_code_id": "system_title_login_activate"
+    },
+    {
+      "name": "system title login reset",
+      "description": "show the language specific title for the login reset page",
+      "type": "system_title",
+      "code_id": "system_title_login_reset",
+      "ui_msg_code_id": "system_title_login_reset"
+    },
+    {
+      "name": "system title logout",
+      "description": "show the language specific title for the logout page",
+      "type": "system_title",
+      "code_id": "system_title_logout",
+      "ui_msg_code_id": "system_title_logout"
+    },
+    {
+      "name": "system title error log",
+      "description": "show the language specific title for the error log page",
+      "type": "system_title",
+      "code_id": "system_title_error_log",
+      "ui_msg_code_id": "system_title_error_log"
+    },
+    {
+      "name": "system title error update",
+      "description": "show the language specific title for the error update page",
+      "type": "system_title",
+      "code_id": "system_title_error_update",
+      "ui_msg_code_id": "system_title_error_update"
+    },
+    {
+      "name": "system title search",
+      "description": "show the language specific title for the search page",
+      "type": "system_title",
+      "code_id": "system_title_search",
+      "ui_msg_code_id": "system_title_search"
+    },
+    {
+      "name": "system title search full",
+      "description": "show the language specific title for the search full page",
+      "type": "system_title",
+      "code_id": "system_title_search_full",
+      "ui_msg_code_id": "system_title_search_full"
+    },
+    {
+      "name": "system title value detail",
+      "description": "show the language specific title for the system value detail page",
+      "type": "system_title",
+      "code_id": "system_title_value_detail",
+      "ui_msg_code_id": "system_title_value_detail"
+    },
+    {
+      "name": "system title result explain",
+      "description": "show the language specific title for the system result explain page",
+      "type": "system_title",
+      "code_id": "system_title_result_explain",
+      "ui_msg_code_id": "system_title_result_explain"
+    },
+    {
+      "name": "system title formula test",
+      "description": "show the language specific title for the system formula test page",
+      "type": "system_title",
+      "code_id": "system_title_formula_test",
+      "ui_msg_code_id": "system_title_formula_test"
+    },
+    {
+      "name": "system title sandbox",
+      "description": "show the language specific title for the sandbox page",
+      "type": "system_title",
+      "code_id": "system_title_sandbox",
+      "ui_msg_code_id": "system_title_sandbox"
+    },
+    {
+      "name": "system title undo",
+      "description": "show the language specific title for the undo page",
+      "type": "system_title",
+      "code_id": "system_title_undo",
+      "ui_msg_code_id": "system_title_undo"
+    },
+    {
+      "name": "system title user settings",
+      "description": "show the language specific title for the system user settings page",
+      "type": "system_title",
+      "code_id": "system_title_user_settings",
+      "ui_msg_code_id": "system_title_user_settings"
+    },
+    {
+      "name": "system form title paste table",
+      "description": "show the language specific title for the drop table to db page",
+      "type": "system_title",
+      "code_id": "system_paste_table",
+      "ui_msg_code_id": "system_paste_table"
+    },
+    {
+      "name": "system title import",
+      "description": "show the language specific title for the import page",
+      "type": "system_title",
+      "code_id": "system_title_import",
+      "ui_msg_code_id": "system_title_import"
+    },
+    {
+      "name": "system title export",
+      "description": "show the language specific title for the export page",
+      "type": "system_title",
+      "code_id": "system_title_export",
+      "ui_msg_code_id": "system_title_export"
+    },
+    {
+      "name": "system title export json",
+      "description": "show the language specific title for the export json page",
+      "type": "system_title",
+      "code_id": "system_title_export_json",
+      "ui_msg_code_id": "system_title_export_json"
+    },
+    {
+      "name": "system title export xml",
+      "description": "show the language specific title for the export xml page",
+      "type": "system_title",
+      "code_id": "system_title_export_xml",
+      "ui_msg_code_id": "system_title_export_xml"
+    },
+    {
+      "name": "system title export csv",
+      "description": "show the language specific title for the export csv page",
+      "type": "system_title",
+      "code_id": "system_title_export_csv",
+      "ui_msg_code_id": "system_title_export_csv"
+    },
+    {
+      "name": "system title export ods",
+      "description": "show the language specific title for the export ods page",
+      "type": "system_title",
+      "code_id": "system_title_export_ods",
+      "ui_msg_code_id": "system_title_export_ods"
+    },
+    {
+      "name": "system title process async",
+      "description": "show the language specific title for the progress of one process",
+      "type": "system_title",
+      "code_id": "system_title_process_async",
+      "ui_msg_code_id": "system_title_process_async"
+    },
+    {
+      "name": "system title process list",
+      "description": "show the language specific title for the control of all processes",
+      "type": "system_title",
+      "code_id": "system_title_process_list",
+      "ui_msg_code_id": "system_title_process_list"
+    },
+    {
+      "name": "system title process",
+      "description": "show the language specific title for the job dashboard",
+      "type": "system_title",
+      "code_id": "system_title_process",
+      "ui_msg_code_id": "system_title_process"
+    },
+    {
+      "name": "system title admin",
+      "description": "show the language specific title for the administrator dashboard",
+      "type": "system_title",
+      "code_id": "system_title_admin",
+      "ui_msg_code_id": "system_title_admin"
+    },
+    {
+      "name": "title language select",
+      "description": "show the page title to select a language",
+      "type": "system_title",
+      "code_id": "title_language_select",
+      "ui_msg_code_id": "title_language_select"
+    },
+    {
+      "name": "system title user config",
+      "description": "show the language specific title for the standard user configuration and the overwrites of the user",
+      "type": "system_title",
+      "code_id": "system_title_user_config",
+      "ui_msg_code_id": "system_title_user_config"
+    },
+    {
+      "name": "system title system config",
+      "description": "show the language specific title for the read only system configuration",
+      "type": "system_title",
+      "code_id": "system_title_system_config",
+      "ui_msg_code_id": "system_title_system_config"
+    },
+    {
+      "name": "system title admin config",
+      "description": "show the language specific title for the admin view to adjust the full system configuration",
+      "type": "system_title",
+      "code_id": "system_title_admin_config",
+      "ui_msg_code_id": "system_title_admin_config"
+    },
+    {
+      "name": "system title user quarantine",
+      "description": "show the language specific title for the data of the user that has been moved to the quarantine",
+      "type": "system_title",
+      "code_id": "system_title_user_quarantine",
+      "ui_msg_code_id": "system_title_user_quarantine"
+    },
+    {
+      "name": "system title all quarantine",
+      "description": "show the language specific title for the admin list of all data in quarantine",
+      "type": "system_title",
+      "code_id": "system_title_all_quarantine",
+      "ui_msg_code_id": "system_title_all_quarantine"
+    },
+    {
+      "name": "system title user jobs",
+      "description": "show the language specific title for the jobs caused by the user",
+      "type": "system_title",
+      "code_id": "system_title_user_jobs",
+      "ui_msg_code_id": "system_title_user_jobs"
+    },
+    {
+      "name": "system title all jobs",
+      "description": "show the language specific title for the admin list of all jobs",
+      "type": "system_title",
+      "code_id": "system_title_all_jobs",
+      "ui_msg_code_id": "system_title_all_jobs"
+    },
+    {
+      "name": "system title phrase translations",
+      "description": "show the language specific title for the names of a word or triple in all languages",
+      "type": "system_title",
+      "code_id": "system_title_phrase_translations",
+      "ui_msg_code_id": "system_title_phrase_translations"
+    },
+    {
+      "name": "system title language forms",
+      "description": "show the language specific title for the language forms of a language",
+      "type": "system_title",
+      "code_id": "system_title_language_forms",
+      "ui_msg_code_id": "system_title_language_forms"
+    },
+    {
+      "name": "system title translations missing",
+      "description": "show the language specific title for the words and triples without a name in the language of the user",
+      "type": "system_title",
+      "code_id": "system_title_translations_missing",
+      "ui_msg_code_id": "system_title_translations_missing"
+    },
+    {
+      "name": "system title list languages",
+      "description": "show the language specific title for the list of all languages",
+      "type": "system_title",
+      "code_id": "system_title_list_languages",
+      "ui_msg_code_id": "system_title_list_languages"
+    },
+    {
+      "name": "system title sys log detail",
+      "description": "show the language specific title for the detail of one system error",
+      "type": "system_title",
+      "code_id": "system_title_sys_log_detail",
+      "ui_msg_code_id": "system_title_sys_log_detail"
+    },
+    {
+      "name": "system title change log user",
+      "description": "show the language specific title for the changes of the user",
+      "type": "system_title",
+      "code_id": "system_title_change_log_user",
+      "ui_msg_code_id": "system_title_change_log_user"
+    },
+    {
+      "name": "system title change log recent",
+      "description": "show the language specific title for the latest changes of all users",
+      "type": "system_title",
+      "code_id": "system_title_change_log_recent",
+      "ui_msg_code_id": "system_title_change_log_recent"
+    },
+    {
+      "name": "system title object history",
+      "description": "show the language specific title for all changes of one object",
+      "type": "system_title",
+      "code_id": "system_title_object_history",
+      "ui_msg_code_id": "system_title_object_history"
+    },
+    {
+      "name": "system title change detail",
+      "description": "show the language specific title for the detail of one change",
+      "type": "system_title",
+      "code_id": "system_title_change_detail",
+      "ui_msg_code_id": "system_title_change_detail"
+    },
+    {
+      "name": "system title import preview",
+      "description": "show the language specific title for the preview of an import",
+      "type": "system_title",
+      "code_id": "system_title_import_preview",
+      "ui_msg_code_id": "system_title_import_preview"
+    },
+    {
+      "name": "system title import result",
+      "description": "show the language specific title for the result of an import",
+      "type": "system_title",
+      "code_id": "system_title_import_result",
+      "ui_msg_code_id": "system_title_import_result"
+    },
+    {
+      "name": "system title import url",
+      "description": "show the language specific title for the import of a file given by an url",
+      "type": "system_title",
+      "code_id": "system_title_import_url",
+      "ui_msg_code_id": "system_title_import_url"
+    },
+    {
+      "name": "system title import wikidata",
+      "description": "show the language specific title for the import by a Wikidata id",
+      "type": "system_title",
+      "code_id": "system_title_import_wikidata",
+      "ui_msg_code_id": "system_title_import_wikidata"
+    },
+    {
+      "name": "system title export selections",
+      "description": "show the language specific title for the saved export selections of the user",
+      "type": "system_title",
+      "code_id": "system_title_export_selections",
+      "ui_msg_code_id": "system_title_export_selections"
+    },
+    {
+      "name": "system title export object",
+      "description": "show the language specific title for the export of one object",
+      "type": "system_title",
+      "code_id": "system_title_export_object",
+      "ui_msg_code_id": "system_title_export_object"
+    },
+    {
+      "name": "system title export ready",
+      "description": "show the language specific title for the download of an export created by a job",
+      "type": "system_title",
+      "code_id": "system_title_export_ready",
+      "ui_msg_code_id": "system_title_export_ready"
+    },
+    {
+      "name": "system title job detail",
+      "description": "show the language specific title for the detail of one job",
+      "type": "system_title",
+      "code_id": "system_title_job_detail",
+      "ui_msg_code_id": "system_title_job_detail"
+    },
+    {
+      "name": "system title calc status",
+      "description": "show the language specific title for the status of the formula calculation",
+      "type": "system_title",
+      "code_id": "system_title_calc_status",
+      "ui_msg_code_id": "system_title_calc_status"
+    },
+    {
+      "name": "system title value find",
+      "description": "show the language specific title for the search of values by phrases",
+      "type": "system_title",
+      "code_id": "system_title_value_find",
+      "ui_msg_code_id": "system_title_value_find"
+    },
+    {
+      "name": "system title ref find",
+      "description": "show the language specific title for the search of an object by an external reference",
+      "type": "system_title",
+      "code_id": "system_title_ref_find",
+      "ui_msg_code_id": "system_title_ref_find"
+    },
+    {
+      "name": "system title find duplicates",
+      "description": "show the language specific title for the admin list of terms with the same or a similar name",
+      "type": "system_title",
+      "code_id": "system_title_find_duplicates",
+      "ui_msg_code_id": "system_title_find_duplicates"
+    },
+    {
+      "name": "system title list words",
+      "description": "show the language specific title for the list of words",
+      "type": "system_title",
+      "code_id": "system_title_list_words",
+      "ui_msg_code_id": "system_title_list_words"
+    },
+    {
+      "name": "system title list triples",
+      "description": "show the language specific title for the list of triples",
+      "type": "system_title",
+      "code_id": "system_title_list_triples",
+      "ui_msg_code_id": "system_title_list_triples"
+    },
+    {
+      "name": "system title list sources",
+      "description": "show the language specific title for the list of sources",
+      "type": "system_title",
+      "code_id": "system_title_list_sources",
+      "ui_msg_code_id": "system_title_list_sources"
+    },
+    {
+      "name": "system title list refs",
+      "description": "show the language specific title for the list of references",
+      "type": "system_title",
+      "code_id": "system_title_list_refs",
+      "ui_msg_code_id": "system_title_list_refs"
+    },
+    {
+      "name": "system title list formulas",
+      "description": "show the language specific title for the list of formulas",
+      "type": "system_title",
+      "code_id": "system_title_list_formulas",
+      "ui_msg_code_id": "system_title_list_formulas"
+    },
+    {
+      "name": "system title list views",
+      "description": "show the language specific title for the list of views",
+      "type": "system_title",
+      "code_id": "system_title_list_views",
+      "ui_msg_code_id": "system_title_list_views"
+    },
+    {
+      "name": "system title list components",
+      "description": "show the language specific title for the list of view components",
+      "type": "system_title",
+      "code_id": "system_title_list_components",
+      "ui_msg_code_id": "system_title_list_components"
+    },
+    {
       "name": "system form title word add",
       "description": "show the language specific title for the system form to add a new word",
       "type": "system_form_title",
@@ -375,25 +823,11 @@
       "ui_msg_code_id": "form_title_admin_del_language"
     },
     {
-      "name": "system form title confirm add",
-      "description": "show the title for the system form to confirm adding a new entry combining the action, the class and the name of the new object",
-      "type": "system_title_named_object",
-      "code_id": "form_title_confirm_add",
-      "ui_msg_code_id": "form_title_confirm_add"
-    },
-    {
-      "name": "system form title confirm edit",
-      "description": "show the language specific title for the system form to confirm the change of an object including the object name",
-      "type": "system_title_named_object",
-      "code_id": "form_title_confirm_edit",
-      "ui_msg_code_id": "form_title_confirm_edit"
-    },
-    {
-      "name": "system form title confirm del",
-      "description": "show the language specific title for the system form to confirm the deletion or exclusion of an object including the object name",
-      "type": "system_title_named_object",
-      "code_id": "form_title_confirm_del",
-      "ui_msg_code_id": "form_title_confirm_del"
+      "name": "system form title value add phrases",
+      "description": "show the language specific title for the system form to add a new value by selecting its words and triples step by step",
+      "type": "system_form_title",
+      "code_id": "form_title_value_add_phrases",
+      "ui_msg_code_id": "form_title_value_add_phrases"
     },
     {
       "name": "system sub title usage",
@@ -401,15 +835,6 @@
       "type": "system_sub_title",
       "code_id": "system_sub_title_usage",
       "ui_msg_code_id": "system_sub_title_usage"
-    },
-    {
-      "name": "system sub title usage number",
-      "description": "show the language specific sub title and the number how many times the object has been used",
-      "type": "system_sub_title_var",
-      "code_id": "system_sub_title_value_usage",
-      "ui_msg_code_id_vars": "system_sub_title_var_usage",
-      "ui_msg_code_id_exception": "system_sub_title_no_usage",
-      "ui_msg_value_exception": 0
     },
     {
       "name": "system sub title triples",
@@ -454,378 +879,137 @@
       "ui_msg_code_id": "system_sub_title_log"
     },
     {
-      "name": "system title about",
-      "description": "show the language specific title for the about page",
-      "type": "system_title",
-      "code_id": "system_title_about",
-      "ui_msg_code_id": "system_title_about"
+      "name": "system sub title terms",
+      "description": "show the language specific sub title for the terms that use the shown view",
+      "type": "system_sub_title",
+      "code_id": "system_sub_title_terms",
+      "ui_msg_code_id": "system_sub_title_terms"
     },
     {
-      "name": "system body about",
-      "description": "show the body of the about page",
-      "type": "system_body_about",
-      "code_id": "system_body_about"
+      "name": "system sub title components",
+      "description": "show the language specific sub title for a component list",
+      "type": "system_sub_title",
+      "code_id": "system_sub_title_components",
+      "ui_msg_code_id": "system_sub_title_components"
     },
     {
-      "name": "system title setup",
-      "description": "show the language specific title for the setup page",
-      "type": "system_title",
-      "code_id": "system_title_setup",
-      "ui_msg_code_id": "system_title_setup"
+      "name": "system sub title description",
+      "description": "show the language specific sub title for the description column",
+      "type": "system_sub_title",
+      "code_id": "system_sub_title_description",
+      "ui_msg_code_id": "system_sub_title_description"
     },
     {
-      "name": "system body setup",
-      "description": "show the body of the setup page",
-      "type": "system_body_setup",
-      "code_id": "system_body_setup"
+      "name": "system sub title views",
+      "description": "show the language specific sub title for the related views",
+      "type": "system_sub_title",
+      "code_id": "system_sub_title_views",
+      "ui_msg_code_id": "system_sub_title_views"
     },
     {
-      "name": "system title signup",
-      "description": "show the language specific title for the signup page",
-      "type": "system_title",
-      "code_id": "system_title_signup",
-      "ui_msg_code_id": "system_title_signup"
+      "name": "system sub title related values",
+      "description": "show the language specific sub title for the values related to the shown value",
+      "type": "system_sub_title",
+      "code_id": "system_sub_title_related_values",
+      "ui_msg_code_id": "system_sub_title_related_values"
     },
     {
-      "name": "system body signup",
-      "description": "show the body of the signup page",
-      "type": "system_body_signup",
-      "code_id": "system_body_signup"
+      "name": "system sub title expression",
+      "description": "show the language specific sub title for the expression of a formula",
+      "type": "system_sub_title",
+      "code_id": "system_sub_title_expression",
+      "ui_msg_code_id": "system_sub_title_expression"
     },
     {
-      "name": "system title login",
-      "description": "show the language specific title for the login page",
-      "type": "system_title",
-      "code_id": "system_title_login",
-      "ui_msg_code_id": "system_title_login"
+      "name": "system sub title usage number",
+      "description": "show the language specific sub title and the number how many times the object has been used",
+      "type": "system_sub_title_var",
+      "code_id": "system_sub_title_value_usage",
+      "ui_msg_code_id_vars": "system_sub_title_var_usage",
+      "ui_msg_code_id_exception": "system_sub_title_no_usage",
+      "ui_msg_value_exception": 0
     },
     {
-      "name": "system body login",
-      "description": "show the body of the login page",
-      "type": "system_body_login",
-      "code_id": "system_body_login"
+      "name": "system title user",
+      "description": "show the language specific word user and the name of the shown user as the page title",
+      "type": "system_title_with_object_name",
+      "code_id": "system_title_user",
+      "ui_msg_code_id": "system_title_user"
     },
     {
-      "name": "system title login activate",
-      "description": "show the language specific title for the login activate page",
-      "type": "system_title",
-      "code_id": "system_title_login_activate",
-      "ui_msg_code_id": "system_title_login_activate"
+      "name": "system title verb",
+      "description": "show the language specific word verb and the name of the shown verb as the page title",
+      "type": "system_title_with_object_name",
+      "code_id": "system_title_verb",
+      "ui_msg_code_id": "system_title_verb"
     },
     {
-      "name": "system body login activate",
-      "description": "show the body of the login activate page",
-      "type": "system_body_login_activate",
-      "code_id": "system_body_login_activate"
+      "name": "Word title",
+      "description": "show the word name as a page title",
+      "type": "title_of_named_with_edit_link",
+      "code_id": "title_of_named_with_edit_link_word"
     },
     {
-      "name": "system title login reset",
-      "description": "show the language specific title for the login reset page",
-      "type": "system_title",
-      "code_id": "system_title_login_reset",
-      "ui_msg_code_id": "system_title_login_reset"
+      "name": "Source title",
+      "description": "show the source name as the page title and the type, the share and the protection in the subtitle",
+      "type": "title_of_named_with_edit_link",
+      "code_id": "title_of_named_with_edit_link_source"
     },
     {
-      "name": "system body login reset",
-      "description": "show the body of the login reset page",
-      "type": "system_body_login_reset",
-      "code_id": "system_body_login_reset"
+      "name": "Reference title",
+      "description": "show the reference name as the page title and the predicate, the share and the protection in the subtitle",
+      "type": "title_of_named_with_edit_link",
+      "code_id": "title_of_named_with_edit_link_ref"
     },
     {
-      "name": "system title logout",
-      "description": "show the language specific title for the logout page",
-      "type": "system_title",
-      "code_id": "system_title_logout",
-      "ui_msg_code_id": "system_title_logout"
+      "name": "View title",
+      "description": "show the translated word view and the view name as the page title and the type, the share and the protection in the subtitle",
+      "type": "title_of_named_with_edit_link",
+      "code_id": "title_of_named_with_edit_link_view",
+      "ui_msg_code_id": "system_title_view"
     },
     {
-      "name": "system body logout",
-      "description": "show the body of the logout page",
-      "type": "system_body_logout",
-      "code_id": "system_body_logout"
+      "name": "Component title",
+      "description": "show the translated word component and the component name as the page title and the type, the share and the protection in the subtitle",
+      "type": "title_of_named_with_edit_link",
+      "code_id": "title_of_named_with_edit_link_component",
+      "ui_msg_code_id": "system_title_component"
     },
     {
-      "name": "system title error log",
-      "description": "show the language specific title for the error log page",
-      "type": "system_title",
-      "code_id": "system_title_error_log",
-      "ui_msg_code_id": "system_title_error_log"
+      "name": "phrase title",
+      "description": "show the phrase name as the page title with the subheader of a word (the related phrases) or of a triple (the from, verb and to with links)",
+      "type": "phrase_title",
+      "code_id": "phrase_title_phrase"
     },
     {
-      "name": "system body error log",
-      "description": "show the body of the error log page",
-      "type": "system_body_error_log",
-      "code_id": "system_body_error_log"
+      "name": "Triple title",
+      "description": "show the triple name as the page title and the from, verb and to with links in the subtitle",
+      "type": "title_of_triple_with_edit_link",
+      "code_id": "title_of_triple_with_edit_link_triple"
     },
     {
-      "name": "system title error update",
-      "description": "show the language specific title for the error update page",
-      "type": "system_title",
-      "code_id": "system_title_error_update",
-      "ui_msg_code_id": "system_title_error_update"
+      "name": "Formula title",
+      "description": "show the formula name as the page title and the assigned phrases with links in the subtitle",
+      "type": "title_of_formula_with_edit_link",
+      "code_id": "title_of_formula_with_edit_link_formula"
     },
     {
-      "name": "system body error update",
-      "description": "show the body of the error update page",
-      "type": "system_body_error_update",
-      "code_id": "system_body_error_update"
+      "name": "Value title",
+      "description": "show the related phrases of a value with links as the page title and the value itself, plus the edit link and the share and protection subtitle",
+      "type": "title_of_value_with_edit_link",
+      "code_id": "title_of_value_with_edit_link_value"
     },
     {
-      "name": "system title search",
-      "description": "show the language specific title for the search page",
-      "type": "system_title",
-      "code_id": "system_title_search",
-      "ui_msg_code_id": "system_title_search"
+      "name": "Link title",
+      "description": "show the generated name of a link object as the page title and the two linked objects with links in the subtitle",
+      "type": "title_of_link_with_edit_link",
+      "code_id": "title_of_link_with_edit_link"
     },
     {
-      "name": "system body search",
-      "description": "show the body of the search page",
-      "type": "system_body_search",
-      "code_id": "system_body_search"
-    },
-    {
-      "name": "system title search full",
-      "description": "show the language specific title for the search full page",
-      "type": "system_title",
-      "code_id": "system_title_search_full",
-      "ui_msg_code_id": "system_title_search_full"
-    },
-    {
-      "name": "system body search full",
-      "description": "show the body of the search full page",
-      "type": "system_body_search_full",
-      "code_id": "system_body_search_full"
-    },
-    {
-      "name": "system title value detail",
-      "description": "show the language specific title for the system value detail page",
-      "type": "system_title",
-      "code_id": "system_title_value_detail",
-      "ui_msg_code_id": "system_title_value_detail"
-    },
-    {
-      "name": "system body value detail",
-      "description": "show the body of the value detail page",
-      "type": "system_body_value_detail",
-      "code_id": "system_body_value_detail"
-    },
-    {
-      "name": "system title result explain",
-      "description": "show the language specific title for the system result explain page",
-      "type": "system_title",
-      "code_id": "system_title_result_explain",
-      "ui_msg_code_id": "system_title_result_explain"
-    },
-    {
-      "name": "system body result explain",
-      "description": "show the body of the result explain page",
-      "type": "system_body_result_explain",
-      "code_id": "system_body_result_explain"
-    },
-    {
-      "name": "system title formula test",
-      "description": "show the language specific title for the system formula test page",
-      "type": "system_title",
-      "code_id": "system_title_formula_test",
-      "ui_msg_code_id": "system_title_formula_test"
-    },
-    {
-      "name": "system body formula test",
-      "description": "show the body of the formula test page",
-      "type": "system_body_formula_test",
-      "code_id": "system_body_formula_test"
-    },
-    {
-      "name": "system title sandbox",
-      "description": "show the language specific title for the sandbox page",
-      "type": "system_title",
-      "code_id": "system_title_sandbox",
-      "ui_msg_code_id": "system_title_sandbox"
-    },
-    {
-      "name": "system body sandbox",
-      "description": "show the body of the sandbox page",
-      "type": "system_body_sandbox",
-      "code_id": "system_body_sandbox"
-    },
-    {
-      "name": "system title undo",
-      "description": "show the language specific title for the undo page",
-      "type": "system_title",
-      "code_id": "system_title_undo",
-      "ui_msg_code_id": "system_title_undo"
-    },
-    {
-      "name": "system body undo",
-      "description": "show the body of the undo page",
-      "type": "system_body_undo",
-      "code_id": "system_body_undo"
-    },
-    {
-      "name": "system title user settings",
-      "description": "show the language specific title for the system user settings page",
-      "type": "system_title",
-      "code_id": "system_title_user_settings",
-      "ui_msg_code_id": "system_title_user_settings"
-    },
-    {
-      "name": "system body user settings",
-      "description": "show the body of the user settings page",
-      "type": "system_body_user_settings",
-      "code_id": "system_body_user_settings"
-    },
-    {
-      "name": "user system errors",
-      "description": "show the most relevant open system errors linked to the user",
-      "type": "user_system_errors",
-      "code_id": "user_system_errors",
-      "ui_msg_code_id": "user_system_errors"
-    },
-    {
-      "name": "system form title paste table",
-      "description": "show the language specific title for the drop table to db page",
-      "type": "system_title",
-      "code_id": "system_paste_table",
-      "ui_msg_code_id": "system_paste_table"
-    },
-    {
-      "name": "system form field context",
-      "description": "show the context used to import a data table",
-      "type": "system_paste_table_context",
-      "code_id": "system_paste_table_context",
-      "ui_msg_code_id": "system_paste_table_context"
-    },
-    {
-      "name": "system form body paste table",
-      "description": "show the drop fields to import a data table",
-      "type": "system_paste_table_body",
-      "code_id": "system_paste_table_body",
-      "ui_msg_code_id": "system_paste_table_body"
-    },
-    {
-      "name": "system form field selection text",
-      "description": "show the description of a named selection",
-      "type": "system_selection_text",
-      "code_id": "system_selection_text",
-      "ui_msg_code_id": "system_selection_text"
-    },
-    {
-      "name": "system title import",
-      "description": "show the language specific title for the import page",
-      "type": "system_title",
-      "code_id": "system_title_import",
-      "ui_msg_code_id": "system_title_import"
-    },
-    {
-      "name": "system title export",
-      "description": "show the language specific title for the export page",
-      "type": "system_title",
-      "code_id": "system_title_export",
-      "ui_msg_code_id": "system_title_export"
-    },
-    {
-      "name": "system title export json",
-      "description": "show the language specific title for the export json page",
-      "type": "system_title",
-      "code_id": "system_title_export_json",
-      "ui_msg_code_id": "system_title_export_json"
-    },
-    {
-      "name": "system title export xml",
-      "description": "show the language specific title for the export xml page",
-      "type": "system_title",
-      "code_id": "system_title_export_xml",
-      "ui_msg_code_id": "system_title_export_xml"
-    },
-    {
-      "name": "system title export csv",
-      "description": "show the language specific title for the export csv page",
-      "type": "system_title",
-      "code_id": "system_title_export_csv",
-      "ui_msg_code_id": "system_title_export_csv"
-    },
-    {
-      "name": "system title export ods",
-      "description": "show the language specific title for the export ods page",
-      "type": "system_title",
-      "code_id": "system_title_export_ods",
-      "ui_msg_code_id": "system_title_export_ods"
-    },
-    {
-      "name": "system title process async",
-      "description": "show the language specific title for the progress of one process",
-      "type": "system_title",
-      "code_id": "system_title_process_async",
-      "ui_msg_code_id": "system_title_process_async"
-    },
-    {
-      "name": "system body process async",
-      "description": "show the progress of one process",
-      "type": "system_body_process_progress",
-      "code_id": "system_body_process_progress"
-    },
-    {
-      "name": "system title process list",
-      "description": "show the language specific title for the control of all processes",
-      "type": "system_title",
-      "code_id": "system_title_process_list",
-      "ui_msg_code_id": "system_title_process_list"
-    },
-    {
-      "name": "system body process list",
-      "description": "show all progress of one progress",
-      "type": "system_body_process_list",
-      "code_id": "system_body_process_list"
-    },
-    {
-      "name": "system title process",
-      "description": "show the language specific title for the job dashboard",
-      "type": "system_title",
-      "code_id": "system_title_process",
-      "ui_msg_code_id": "system_title_process"
-    },
-    {
-      "name": "system body process",
-      "description": "show all progress of job dashboard",
-      "type": "system_body_process",
-      "code_id": "system_body_process"
-    },
-    {
-      "name": "system title admin",
-      "description": "show the language specific title for the administrator dashboard",
-      "type": "system_title",
-      "code_id": "system_title_admin",
-      "ui_msg_code_id": "system_title_admin"
-    },
-    {
-      "name": "system admin response times",
-      "description": "show the most relevant delays in response to user request",
-      "type": "system_admin_url_delay",
-      "code_id": "system_admin_url_delay"
-    },
-    {
-      "name": "system admin failed logins",
-      "description": "show last and most critical failed login trails to be able to detect hacking attempts",
-      "type": "system_admin_login_fails",
-      "code_id": "system_admin_login_fails"
-    },
-    {
-      "name": "system admin unassigned errors",
-      "description": "show new detected internal errors that do not yet have a human check priority and that are not yet assigned to a developer",
-      "type": "system_admin_errors_unassigned",
-      "code_id": "system_admin_errors_unassigned"
-    },
-    {
-      "name": "system admin pending error fixes",
-      "description": "show a list of errors where the fix has been expected but that are not yet fixed",
-      "type": "system_admin_errors_delayed_fix",
-      "code_id": "system_admin_errors_delayed_fix"
-    },
-    {
-      "name": "system admin delayed jobs",
-      "description": "list of critical jobs that are delayed with the possibility to de-prioritise blocking jobs",
-      "type": "system_admin_jobs_delayed",
-      "code_id": "system_admin_jobs_delayed"
+      "name": "related system view selector",
+      "description": "the \"...\" in the right corner below the title that opens the menu to show the same object in the default, detail, range or detail with range view",
+      "type": "related_system_view_selector",
+      "code_id": "related_system_view_selector"
     },
     {
       "name": "system form hidden back stack",
@@ -840,615 +1024,11 @@
       "code_id": "form_confirm_status"
     },
     {
-      "name": "admin form field username",
-      "description": "the username field in a form",
-      "type": "admin_form_field_username",
-      "code_id": "form_field_username",
-      "ui_msg_code_id": "form_field_username"
-    },
-    {
-      "name": "admin form field user email",
-      "description": "the user email field in a form",
-      "type": "admin_form_field_user_email",
-      "code_id": "form_field_user_email",
-      "ui_msg_code_id": "form_field_user_email"
-    },
-    {
-      "name": "admin form field user password",
-      "description": "the user password field in a form",
-      "type": "admin_form_field_user_password",
-      "code_id": "form_field_user_password",
-      "ui_msg_code_id": "form_field_user_password"
-    },
-    {
-      "name": "admin form field user uses sandbox",
-      "description": "checkbox so that an admin can switch if the pages for the user must be created from the user sandbox",
-      "type": "admin_form_field_user_uses_sandbox",
-      "code_id": "form_field_user_uses_sandbox",
-      "ui_msg_code_id": "form_field_user_uses_sandbox"
-    },
-    {
-      "name": "admin form field language symbol",
-      "description": "form field for admin users only to add or change the language name",
-      "type": "admin_form_field_language_symbol",
-      "code_id": "form_field_language_symbol",
-      "ui_msg_code_id": "form_field_language_symbol"
-    },
-    {
-      "name": "show field language symbol",
-      "description": "show language name",
-      "type": "field_language_symbol",
-      "code_id": "field_language_symbol",
-      "ui_msg_code_id": "field_language_symbol"
-    },
-    {
-      "name": "system form field name",
-      "description": "the name field in a form",
-      "type": "system_form_field_name",
-      "code_id": "form_field_name",
-      "ui_msg_code_id": "form_field_name"
-    },
-    {
-      "name": "system form field description",
-      "description": "the description field in a form",
-      "type": "system_form_field_description",
-      "code_id": "form_field_description",
-      "ui_msg_code_id": "form_field_description"
-    },
-    {
-      "name": "system form select reference phrase",
-      "description": "selector for the phrase of a reference",
-      "type": "form_select_phrase",
-      "code_id": "form_field_ref_phrase",
-      "ui_msg_code_id": "form_select_phrase_ref"
-    },
-    {
-      "name": "system form triple phrase from",
-      "description": "selector for the from phrase of a triple",
-      "type": "form_select_phrase",
-      "code_id": "form_select_phrase_from",
-      "ui_msg_code_id": "form_select_phrase_from"
-    },
-    {
-      "name": "system form triple phrase to",
-      "description": "selector for the to phrase of a triple",
-      "type": "form_select_phrase",
-      "code_id": "form_select_phrase_to",
-      "ui_msg_code_id": "form_select_phrase_to"
-    },
-    {
-      "name": "system form field group",
-      "description": "the group name field in a form",
-      "type": "system_form_field_group",
-      "code_id": "form_field_group",
-      "ui_msg_code_id": "form_field_group"
-    },
-    {
-      "name": "system form field group or phrase list",
-      "description": "a form field for the group name or a list of prase names",
-      "type": "system_form_field_group_or_phrase_list",
-      "code_id": "form_field_group_or_phrase_list",
-      "ui_msg_code_id": "form_field_group_or_phrase_list"
-    },
-    {
-      "name": "system form field source group or phrase list",
-      "description": "a form field for the source group name or a list of prase names",
-      "type": "system_form_field_source_group_or_phrase_list",
-      "code_id": "form_field_source_group_or_phrase_list",
-      "ui_msg_code_id": "form_field_source_group_or_phrase_list"
-    },
-    {
-      "name": "system form field value",
-      "description": "the numeric value field in a form",
-      "type": "system_form_field_value",
-      "code_id": "form_field_value",
-      "ui_msg_code_id": "form_field_value"
-    },
-    {
-      "name": "system form field url",
-      "description": "the url field in a form",
-      "type": "system_form_field_url",
-      "code_id": "form_field_url",
-      "ui_msg_code_id": "form_field_url"
-    },
-    {
-      "name": "system form field selection name",
-      "description": "the unique name of a selection",
-      "type": "system_form_selection_name",
-      "code_id": "system_form_selection_name",
-      "ui_msg_code_id": "system_form_selection_name"
-    },
-    {
-      "name": "system form field selection description",
-      "description": "text that explains this selection",
-      "type": "system_form_selection_description",
-      "code_id": "system_form_selection_description",
-      "ui_msg_code_id": "system_form_selection_description"
-    },
-    {
-      "name": "system form select text",
-      "description": "free text field to define a selection",
-      "type": "system_form_selection_text",
-      "code_id": "system_form_selection_text",
-      "ui_msg_code_id": "system_form_selection_text"
-    },
-    {
-      "name": "system form select phrase",
-      "description": "select one word or triple",
-      "type": "form_select_phrase",
-      "code_id": "form_select_phrase",
-      "ui_msg_code_id": "form_select_phrase"
-    },
-    {
-      "name": "system form select multi phrases",
-      "description": "select one or many words and triples",
-      "type": "form_select_multi_phrases",
-      "code_id": "form_select_multi_phrases",
-      "ui_msg_code_id": "form_select_multi_phrases"
-    },
-    {
-      "name": "system form select verb",
-      "description": "select one verb",
-      "type": "form_select_verb",
-      "code_id": "form_select_verb",
-      "ui_msg_code_id": "form_select_verb"
-    },
-    {
-      "name": "system form select multi verbs",
-      "description": "select one or many verbs",
-      "type": "form_select_multi_verbs",
-      "code_id": "form_select_multi_verbs",
-      "ui_msg_code_id": "form_select_multi_verbs"
-    },
-    {
-      "name": "system form select source",
-      "description": "select one source",
-      "type": "form_select_source",
-      "code_id": "form_select_source",
-      "ui_msg_code_id": "form_select_source"
-    },
-    {
-      "name": "system form select multi sources",
-      "description": "select one or many sources",
-      "type": "form_select_multi_sources",
-      "code_id": "form_select_multi_sources",
-      "ui_msg_code_id": "form_select_multi_sources"
-    },
-    {
-      "name": "system form select ref",
-      "description": "select one ref",
-      "type": "form_select_ref",
-      "code_id": "form_select_ref",
-      "ui_msg_code_id": "form_select_ref"
-    },
-    {
-      "name": "system form select multi refs",
-      "description": "select one or many refs",
-      "type": "form_select_multi_refs",
-      "code_id": "form_select_multi_refs",
-      "ui_msg_code_id": "form_select_multi_refs"
-    },
-    {
-      "name": "system form select formula",
-      "description": "select one formula",
-      "type": "form_select_formula",
-      "code_id": "form_select_formula",
-      "ui_msg_code_id": "form_select_formula"
-    },
-    {
-      "name": "system form select multi formulas",
-      "description": "select one or many formulas",
-      "type": "form_select_multi_formulas",
-      "code_id": "form_select_multi_formulas",
-      "ui_msg_code_id": "form_select_multi_formulas"
-    },
-    {
-      "name": "system form select term",
-      "description": "select one term",
-      "type": "form_select_term",
-      "code_id": "form_select_term",
-      "ui_msg_code_id": "form_select_term"
-    },
-    {
-      "name": "system form select multi terms",
-      "description": "select one or many words, verbs, triples and formulas",
-      "type": "form_select_multi_terms",
-      "code_id": "form_select_multi_terms",
-      "ui_msg_code_id": "form_select_multi_terms"
-    },
-    {
-      "name": "system form select value",
-      "description": "select one value",
-      "type": "form_select_value",
-      "code_id": "form_select_value",
-      "ui_msg_code_id": "form_select_value"
-    },
-    {
-      "name": "system form select multi values",
-      "description": "select one or many values",
-      "type": "form_select_multi_values",
-      "code_id": "form_select_multi_values",
-      "ui_msg_code_id": "form_select_multi_values"
-    },
-    {
-      "name": "system form select result",
-      "description": "select one result",
-      "type": "form_select_result",
-      "code_id": "form_select_result",
-      "ui_msg_code_id": "form_select_result"
-    },
-    {
-      "name": "system form select multi results",
-      "description": "select one or many results",
-      "type": "form_select_multi_results",
-      "code_id": "form_select_multi_results",
-      "ui_msg_code_id": "form_select_multi_results"
-    },
-    {
-      "name": "system form select view",
-      "description": "select one view",
-      "type": "form_select_view",
-      "code_id": "form_select_view",
-      "ui_msg_code_id": "form_select_view"
-    },
-    {
-      "name": "system form select multi views",
-      "description": "select one or many views",
-      "type": "form_select_multi_views",
-      "code_id": "form_select_multi_views",
-      "ui_msg_code_id": "form_select_multi_views"
-    },
-    {
-      "name": "system form select parent view",
-      "description": "select the parent view of a view relation",
-      "type": "form_select_view",
-      "code_id": "form_select_parent_view",
-      "ui_msg_code_id": "form_select_parent_view"
-    },
-    {
-      "name": "system form select child view",
-      "description": "select the child view of a view relation",
-      "type": "form_select_view",
-      "code_id": "form_select_child_view",
-      "ui_msg_code_id": "form_select_child_view"
-    },
-    {
-      "name": "system form select component",
-      "description": "select one component",
-      "type": "form_select_component",
-      "code_id": "form_select_component",
-      "ui_msg_code_id": "form_select_component"
-    },
-    {
-      "name": "system form select multi components",
-      "description": "select one or many components",
-      "type": "form_select_multi_components",
-      "code_id": "form_select_multi_components",
-      "ui_msg_code_id": "form_select_multi_components"
-    },
-    {
-      "name": "system form select phrase type",
-      "description": "selector for the phrase type",
-      "type": "form_select_phrase_type",
-      "code_id": "form_field_phrase_type",
-      "ui_msg_code_id": "form_select_phrase_type"
-    },
-    {
-      "name": "system form select source type",
-      "description": "selector for the source type",
-      "type": "form_select_source_type",
-      "code_id": "form_field_source_type",
-      "ui_msg_code_id": "form_select_source_type"
-    },
-    {
-      "name": "system form select reference type",
-      "description": "selector for the reference type",
-      "type": "form_select_ref_type",
-      "code_id": "form_field_ref_type",
-      "ui_msg_code_id": "form_select_ref_type"
-    },
-    {
-      "name": "system form select value type",
-      "description": "selector for the value type",
-      "type": "form_select_value_type",
-      "code_id": "form_field_value_type",
-      "ui_msg_code_id": "form_select_value_type"
-    },
-    {
-      "name": "system form select formula type",
-      "description": "selector for the formula type",
-      "type": "form_select_formula_type",
-      "code_id": "form_field_formula_type",
-      "ui_msg_code_id": "form_select_formula_type"
-    },
-    {
-      "name": "system form select view type",
-      "description": "selector for the view type",
-      "type": "form_select_view_type",
-      "code_id": "form_field_view_type",
-      "ui_msg_code_id": "form_select_view_type"
-    },
-    {
-      "name": "system form select component type",
-      "description": "selector for the component type",
-      "type": "form_select_component_type",
-      "code_id": "form_field_component_type",
-      "ui_msg_code_id": "form_select_component_type"
-    },
-    {
-      "name": "system form select view relation type",
-      "description": "selector for the view relation type",
-      "type": "form_select_view_relation_type",
-      "code_id": "form_field_view_relation_type",
-      "ui_msg_code_id": "form_select_view_relation_type"
-    },
-    {
-      "name": "system form select row phrase",
-      "description": "selector phrase that should be used to select the primary row names of a table",
-      "type": "form_select_phrase",
-      "code_id": "form_field_select_phrase_row",
-      "ui_msg_code_id": "form_select_phrase_row"
-    },
-    {
-      "name": "system form select column phrase",
-      "description": "selector phrase that should be used to select the primary column names of a table",
-      "type": "form_select_phrase",
-      "code_id": "form_field_select_phrase_col",
-      "ui_msg_code_id": "form_select_phrase_col"
-    },
-    {
-      "name": "system form select secondary column phrase",
-      "description": "selector phrase that should be used to select the secondary column names of a table",
-      "type": "form_select_phrase",
-      "code_id": "form_field_select_phrase_col_sub",
-      "ui_msg_code_id": "form_select_phrase_col_sub"
-    },
-    {
-      "name": "system form preview change component",
-      "description": "preview if view component is changed based on a selectable sample object",
-      "type": "system_form_preview",
-      "code_id": "system_form_preview_change_component",
-      "ui_msg_code_id": "system_form_preview_change_component"
-    },
-    {
-      "name": "system form select view style",
-      "description": "selector for the style used in views and components e.g. to define the width",
-      "type": "form_select_view_style",
-      "code_id": "form_field_view_style",
-      "ui_msg_code_id": "form_select_view_style"
-    },
-    {
-      "name": "system form select component style",
-      "description": "selector for the style used in views and components e.g. to define the width",
-      "type": "form_select_component_style",
-      "code_id": "form_field_component_style",
-      "ui_msg_code_id": "form_select_component_style"
-    },
-    {
-      "name": "system form select view link type",
-      "description": "selector for the link type of a view to a term",
-      "type": "form_select_view_link_type",
-      "code_id": "form_field_view_link_type",
-      "ui_msg_code_id": "form_select_view_link_type"
-    },
-    {
-      "name": "system form view link priority",
-      "description": "priority number for this link to a term",
-      "type": "form_select_view_link_priority",
-      "code_id": "form_field_view_link_priority",
-      "ui_msg_code_id": "form_select_view_link_priority"
-    },
-    {
-      "name": "system form select component link type",
-      "description": "selector for the link type of a component to a view",
-      "type": "form_select_component_link_type",
-      "code_id": "form_field_component_link_type",
-      "ui_msg_code_id": "form_select_component_link_type"
-    },
-    {
-      "name": "system form select component position type",
-      "description": "selector for the position type of a component to a view",
-      "type": "form_select_component_position_type",
-      "code_id": "form_field_component_position_type",
-      "ui_msg_code_id": "form_select_component_pos_type"
-    },
-    {
-      "name": "system form component link order number",
-      "description": "position of the linked component in the view",
-      "type": "form_select_component_link_order_number",
-      "code_id": "form_field_component_link_order_number",
-      "ui_msg_code_id": "form_select_component_link_order_number"
-    },
-    {
-      "name": "system form field view relation start position",
-      "description": "start position for the modification of the child view in the parent view",
-      "type": "system_form_field_view_relation_start_pos",
-      "code_id": "form_field_view_relation_start_pos",
-      "ui_msg_code_id": "form_field_view_relation_start_pos"
-    },
-    {
-      "name": "system form select formula link type",
-      "description": "selector for the link type of a formula to a term",
-      "type": "form_select_formula_link_type",
-      "code_id": "form_field_formula_link_type",
-      "ui_msg_code_id": "form_select_formula_link_type"
-    },
-    {
-      "name": "system form formula link priority",
-      "description": "priority number for this link to a term",
-      "type": "form_select_formula_link_priority",
-      "code_id": "form_field_formula_link_priority",
-      "ui_msg_code_id": "form_select_formula_link_priority"
-    },
-    {
-      "name": "system form select share type",
-      "description": "selector for the share type",
-      "type": "form_select_share",
-      "code_id": "form_field_share_type",
-      "ui_msg_code_id": "form_select_share"
-    },
-    {
-      "name": "system form select protection type",
-      "description": "selector for the protection type",
-      "type": "form_select_protection",
-      "code_id": "form_field_protection_type",
-      "ui_msg_code_id": "form_select_protection"
-    },
-    {
-      "name": "system form select file",
-      "description": "selector for a file to import",
-      "type": "form_select_file",
-      "code_id": "form_select_file",
-      "ui_msg_code_id": "form_select_file"
-    },
-    {
-      "name": "system form select export format",
-      "description": "selector for the export format e.g. json",
-      "type": "form_select_export_format",
-      "code_id": "form_select_export_format",
-      "ui_msg_code_id": "form_select_export_format"
-    },
-    {
-      "name": "system form linked views",
-      "description": "show the linked views as a table with the possibility to add or remove a view",
-      "type": "system_form_link_table",
-      "code_id": "system_form_link_table_of_views",
-      "ui_msg_code_id": "form_link_table_view"
-    },
-    {
-      "name": "system form field formula text",
-      "description": "the formula expression",
-      "type": "system_form_field_formula_expression",
-      "code_id": "form_field_formula_expression",
-      "ui_msg_code_id": "form_field_formula_expression"
-    },
-    {
-      "name": "system form field latex",
-      "description": "the formula in the latex format",
-      "type": "system_form_field_formula_latex",
-      "code_id": "form_field_formula_latex",
-      "ui_msg_code_id": "form_field_formula_latex"
-    },
-    {
-      "name": "system expression with links",
-      "description": "show the formula expression beside the expression field with a tooltip and a link for each term, so that the user can check which term a name selects",
-      "type": "expression_link",
-      "code_id": "expression_link"
-    },
-    {
-      "name": "system expression latex with links",
-      "description": "show the formula latex beside the latex field with a tooltip and a link for each term, so that the user can check which term a name selects",
-      "type": "expression_latex_link_form",
-      "code_id": "expression_latex_link_form"
-    },
-    {
-      "name": "system form field flag need all vars",
-      "description": "the formula needs all variables to be set for a valid result",
-      "type": "system_form_field_formula_all_vars",
-      "code_id": "form_field_formula_all_vars",
-      "ui_msg_code_id": "form_field_formula_all_vars"
-    },
-    {
-      "name": "system show field name",
-      "description": "the object name as read only",
-      "type": "system_show_field_name",
-      "code_id": "show_field_name"
-    },
-    {
-      "name": "system show field name big",
-      "description": "the object name huge in the center as read only e.g. for the delete confirm page",
-      "type": "system_show_field_name_big",
-      "code_id": "show_field_name_big"
-    },
-    {
-      "name": "system show field description",
-      "description": "the object description as read only",
-      "type": "system_show_field_description",
-      "code_id": "show_field_description"
-    },
-    {
-      "name": "system show field formula name",
-      "description": "the formula name as read only",
-      "type": "system_show_field_name",
-      "code_id": "show_field_formula_name"
-    },
-    {
-      "name": "system show field phrase name",
-      "description": "the phrase name as read only",
-      "type": "system_show_field_name",
-      "code_id": "show_field_phrase_name"
-    },
-    {
-      "name": "system show field reference type",
-      "description": "the reference type as read only",
-      "type": "system_show_field_ref_type",
-      "code_id": "show_field_ref_type"
-    },
-    {
-      "name": "system show field external key",
-      "description": "the external key of a reference as read only",
-      "type": "system_show_field_ref_key",
-      "code_id": "show_field_ref_key"
-    },
-    {
-      "name": "system show field source",
-      "description": "the source name of a reference as read only",
-      "type": "system_show_field_ref_source",
-      "code_id": "show_field_ref_source"
-    },
-    {
-      "name": "system show field url",
-      "description": "the url of a reference as read only",
-      "type": "system_show_field_ref_url",
-      "code_id": "show_field_ref_url"
-    },
-    {
-      "name": "system show value usage",
-      "description": "the value usage as read only",
-      "type": "system_show_field_usage",
-      "code_id": "show_field_value_usage"
-    },
-    {
-      "name": "system show result diff list",
-      "description": "list of results that changes if the user confirms the change",
-      "type": "system_show_result_diff",
-      "code_id": "system_show_result_diff"
-    },
-    {
-      "name": "system show view new",
-      "description": "show to the user how it would look like if the change is confirmed",
-      "type": "system_show_after_change",
-      "code_id": "system_show_after_change"
-    },
-    {
-      "name": "system show view old",
-      "description": "show to the user how it looks without the change",
-      "type": "system_show_before_change",
-      "code_id": "system_show_before_change"
-    },
-    {
-      "name": "system show parent view",
-      "description": "show to the view name that should be modified by this view relation",
-      "type": "system_show_parent_view",
-      "code_id": "system_show_parent_view"
-    },
-    {
-      "name": "system show child view",
-      "description": "show to the view name that should be modified by this view relation",
-      "type": "system_show_child_view",
-      "code_id": "system_show_child_view"
-    },
-    {
-      "name": "system show view relation type",
-      "description": "show to the modification type of this view relation",
-      "type": "system_show_view_relation_type",
-      "code_id": "system_show_view_relation_type"
-    },
-    {
-      "name": "system show view relation start position",
-      "description": "show to position where the modification should start of this view relation",
-      "type": "system_show_view_start_pos",
-      "code_id": "system_show_view_start_pos"
+      "name": "system form button save",
+      "description": "button to save the form field into the database",
+      "type": "system_button_save",
+      "code_id": "form_button_save",
+      "ui_msg_code_id": "form_button_save"
     },
     {
       "name": "system form button cancel",
@@ -1456,13 +1036,6 @@
       "type": "system_button_cancel",
       "code_id": "form_cancel_button",
       "ui_msg_code_id": "form_button_cancel"
-    },
-    {
-      "name": "system form button save",
-      "description": "button to save the form field into the database",
-      "type": "system_button_save",
-      "code_id": "form_button_save",
-      "ui_msg_code_id": "form_button_save"
     },
     {
       "name": "system form button confirm",
@@ -1479,50 +1052,16 @@
       "ui_msg_code_id": "form_button_del"
     },
     {
-      "name": "system form button import",
-      "description": "button to start the import",
-      "type": "system_button_import",
-      "code_id": "system_button_import",
-      "ui_msg_code_id": "system_button_import"
-    },
-    {
-      "name": "system form button export",
-      "description": "button to start the export",
-      "type": "system_button_export",
-      "code_id": "system_button_export",
-      "ui_msg_code_id": "system_button_export"
-    },
-    {
-      "name": "system form title confirm update",
-      "description": "for the universal confirmation popup show title of the action e.g. update",
-      "type": "system_title_named_object",
-      "ui_msg_code_id": "system_title_named_object_update"
-    },
-    {
-      "name": "system form title confirm delete",
-      "description": "for the universal confirmation popup show title of the action e.g. delete",
-      "type": "system_title_named_object",
-      "ui_msg_code_id": "system_title_named_object_delete"
-    },
-    {
-      "name": "system form class",
-      "description": "for the universal confirmation popup show e.g. word, value, formula depending on the object that is changed",
-      "type": "form_class"
-    },
-    {
-      "name": "system form changes",
-      "description": "for the universal confirmation popup show the changes",
-      "type": "form_changes"
-    },
-    {
-      "name": "system form impact",
-      "description": "for the universal confirmation popup show the impact of the changes",
-      "type": "form_impact"
-    },
-    {
       "name": "system form end",
       "type": "form_end",
       "code_id": "form_end"
+    },
+    {
+      "name": "request additional language",
+      "description": "a button to request an additional language",
+      "type": "button_request",
+      "code_id": "button_add_languages",
+      "ui_msg_code_id": "button_add_languages"
     },
     {
       "name": "system formatter row start",
@@ -1531,16 +1070,16 @@
       "code_id": "row_start"
     },
     {
-      "name": "system formatter row right",
-      "description": "to start a new row and fill from right the following components in one row until the row end is triggered",
-      "type": "row_right",
-      "code_id": "row_right"
-    },
-    {
       "name": "system formatter row center",
       "description": "to start a new row and center the following components in one row until the row end is triggered",
       "type": "row_center",
       "code_id": "row_center"
+    },
+    {
+      "name": "system formatter row right",
+      "description": "to start a new row and fill from right the following components in one row until the row end is triggered",
+      "type": "row_right",
+      "code_id": "row_right"
     },
     {
       "name": "system formatter row end",
@@ -1549,166 +1088,46 @@
       "code_id": "row_end"
     },
     {
-      "name": "select default view",
-      "description": "form field to select the default view for this object",
-      "type": "select_view",
-      "code_id": "form_select_view_default",
-      "ui_msg_code_id": "form_select_view_default"
+      "name": "system form tab box",
+      "description": "tab box with the views that can show the changed object, its change log and the user overwrites, shown beside the lists of a system edit form; an own component, because a system view can only use a component of system_views.json and view tab box is defined in base_views.json",
+      "type": "view_tab_box",
+      "code_id": "view_tab_box_form"
     },
     {
-      "name": "system show view diff list",
-      "description": "highlight the differences due to a change to the user",
-      "type": "system_show_view_diff"
+      "name": "view tab box",
+      "description": "tab box with the related views (preview plus open and switch buttons) and the change log of the shown object",
+      "type": "view_tab_box",
+      "code_id": "view_tab_box_word"
     },
     {
-      "name": "link list word",
-      "description": "changeable list of links of this word",
-      "type": "link_list",
-      "code_id": "link_list_word"
+      "name": "link tab box",
+      "description": "tab box with the change log and the user overwrites of this link",
+      "type": "view_tab_box",
+      "code_id": "view_tab_box_link"
     },
     {
-      "name": "parents of word",
-      "description": "list of words or triples that lead to this word",
-      "type": "list_parents_of_word",
-      "code_id": "list_parents_of_word"
+      "name": "value tab box",
+      "description": "tab box with the views that can show this value, the change log and the user overwrites of this value",
+      "type": "view_tab_box",
+      "code_id": "view_tab_box_value"
     },
     {
-      "name": "children of word",
-      "description": "list of words or triples where this word leading to",
-      "type": "list_children_of_word",
-      "code_id": "list_children_of_word"
+      "name": "component tab box",
+      "description": "tab box with the change log and the user overwrites of this component",
+      "type": "view_tab_box",
+      "code_id": "view_tab_box_component"
     },
     {
-      "name": "value list of word",
-      "description": "list of values related to this word",
-      "type": "values_related",
-      "code_id": "value_list_word"
+      "name": "view page tab box",
+      "description": "tab box with the change log and the user overwrites of this view; named view page tab box, because view tab box is the name of the tab box of the word, triple and formula page",
+      "type": "view_tab_box",
+      "code_id": "view_tab_box_view"
     },
     {
-      "name": "most relevant value list of word",
-      "description": "grouped list of the most relevant values related to this word: newest time period first, then the phrases used by several values, then the remaining values by impact",
-      "type": "values_most_relevant",
-      "code_id": "value_list_most_relevant_word"
-    },
-    {
-      "name": "value list of triple",
-      "description": "list of values related to this triple",
-      "type": "values_by_triple",
-      "code_id": "values_by_triple"
-    },
-    {
-      "name": "value list of source",
-      "description": "list of values related to this source",
-      "type": "values_by_source",
-      "code_id": "values_by_source"
-    },
-    {
-      "name": "ref list word",
-      "description": "changeable list of reference of this word",
-      "type": "ref_list",
-      "code_id": "ref_list_word"
-    },
-    {
-      "name": "formulas list word",
-      "description": "changeable list of formulas related to this word",
-      "type": "formula_list",
-      "code_id": "formula_list_word"
-    },
-    {
-      "name": "triples that use a verb",
-      "description": "list of triples which use a given verb",
-      "type": "triples_by_verb",
-      "code_id": "triples_by_verb"
-    },
-    {
-      "name": "formulas that use a verb",
-      "description": "list of formulas which use a given verb",
-      "type": "formulas_by_verb",
-      "code_id": "formulas_by_verb"
-    },
-    {
-      "name": "assigned phrases of this formula",
-      "description": "changeable list of phrases assigned to this formula",
-      "type": "list_phrases_of_formula",
-      "code_id": "list_phrases_of_formula"
-    },
-    {
-      "name": "value name",
-      "description": "show the group name of a value or a list of phrases",
-      "type": "group_or_phrase_list",
-      "code_id": "group_or_phrase_list"
-    },
-    {
-      "name": "group name",
-      "description": "show the group name",
-      "type": "group_name",
-      "code_id": "group_name"
-    },
-    {
-      "name": "number value",
-      "description": "show the numeric value",
-      "type": "value_numeric",
-      "code_id": "value_numeric"
-    },
-    {
-      "name": "result list of formula",
-      "description": "list of results calculated by this formula",
-      "type": "result_list",
-      "code_id": "result_list_formula"
-    },
-    {
-      "name": "formula list of formula",
-      "description": "list of formulas that use by this formula",
-      "type": "formula_list",
-      "code_id": "formula_list_formula"
-    },
-    {
-      "name": "result list word",
-      "description": "list of result related to this word",
-      "type": "word_results",
-      "code_id": "word_results"
-    },
-    {
-      "name": "used in views without link",
-      "description": "text of the views where e.g. this component is used with the tooltip",
-      "type": "used_in_as_text",
-      "code_id": "used_in_as_text_of_views"
-    },
-    {
-      "name": "used in views with link",
-      "description": "text of the views where e.g. this component is used with the link to the view",
-      "type": "used_in_as_text_with_link",
-      "code_id": "used_in_as_text_with_link_of_views"
-    },
-    {
-      "name": "Export JSON",
-      "description": "export this word and the related value in the JSON format",
-      "type": "export_json",
-      "code_id": "export_json"
-    },
-    {
-      "name": "Export XML",
-      "description": "export this word and the related value in the XML format",
-      "type": "export_xml",
-      "code_id": "export_xml"
-    },
-    {
-      "name": "Export CSV",
-      "description": "get data from zukunft.com in the csv format",
-      "type": "export_csv",
-      "code_id": "export_csv"
-    },
-    {
-      "name": "Export ODS",
-      "description": "get data from zukunft.com in the ods format",
-      "type": "export_ods",
-      "code_id": "export_ods"
-    },
-    {
-      "name": "usage word",
-      "description": "show where this word has been used e.g. how many values are related",
-      "type": "usage",
-      "code_id": "usage_word"
+      "name": "source tab box",
+      "description": "tab box with the views that can show this source, the change log and the user overwrites of this source",
+      "type": "view_tab_box",
+      "code_id": "view_tab_box_source"
     },
     {
       "name": "change log word",
@@ -1783,6 +1202,475 @@
       "code_id": "change_log_component"
     },
     {
+      "name": "usage word",
+      "description": "show where this word has been used e.g. how many values are related",
+      "type": "usage",
+      "code_id": "usage_word"
+    },
+    {
+      "name": "used in views without link",
+      "description": "text of the views where e.g. this component is used with the tooltip",
+      "type": "used_in_as_text",
+      "code_id": "used_in_as_text_of_views"
+    },
+    {
+      "name": "used in views with link",
+      "description": "text of the views where e.g. this component is used with the link to the view",
+      "type": "used_in_as_text_with_link",
+      "code_id": "used_in_as_text_with_link_of_views"
+    },
+    {
+      "name": "all user overwrites",
+      "description": "show all changes that the shown user has written to the user sandbox tables e.g. the word overwrites",
+      "type": "all_user_overwrites",
+      "code_id": "all_user_overwrites",
+      "ui_msg_code_id": "all_user_overwrites"
+    },
+    {
+      "name": "language name",
+      "description": "simply show the name of a language",
+      "type": "language_name"
+    },
+    {
+      "name": "phrase aliases",
+      "description": "show the phrases that are an alias of this phrase",
+      "type": "phrase_aliases",
+      "code_id": "phrase_aliases"
+    },
+    {
+      "name": "phrase symbols",
+      "description": "show the symbols of this phrase",
+      "type": "phrase_symbols",
+      "code_id": "phrase_symbols"
+    },
+    {
+      "name": "children of word",
+      "description": "list of words or triples where this word leading to",
+      "type": "list_children_of_word",
+      "code_id": "list_children_of_word"
+    },
+    {
+      "name": "parents of word",
+      "description": "list of words or triples that lead to this word",
+      "type": "list_parents_of_word",
+      "code_id": "list_parents_of_word"
+    },
+    {
+      "name": "related phrases without subtitles",
+      "description": "list of phrases related to this phrase excluding the alias, symbol and 'is a' entries that are already shown by the alias, symbol and subtitle components",
+      "type": "list_phrases_related_ex_subtitle",
+      "code_id": "list_phrases_related_ex_subtitle"
+    },
+    {
+      "name": "triples that use a verb",
+      "description": "list of triples which use a given verb",
+      "type": "triples_by_verb",
+      "code_id": "triples_by_verb"
+    },
+    {
+      "name": "verb triples",
+      "description": "the triples that use this verb with a link to each triple",
+      "type": "triples_by_verb",
+      "code_id": "verb_triples"
+    },
+    {
+      "name": "assigned phrases of this formula",
+      "description": "changeable list of phrases assigned to this formula",
+      "type": "list_phrases_of_formula",
+      "code_id": "list_phrases_of_formula"
+    },
+    {
+      "name": "value list of word",
+      "description": "list of values related to this word",
+      "type": "values_related",
+      "code_id": "value_list_word"
+    },
+    {
+      "name": "related values",
+      "description": "show the most relevant and related values",
+      "type": "values_related"
+    },
+    {
+      "name": "table with related columns",
+      "description": "all values related to this word or triple as a table with one column per phrase used most often within the values and one row per remaining phrase combination",
+      "type": "table_with_related_columns",
+      "code_id": "table_with_related_columns_phrase"
+    },
+    {
+      "name": "values in columns",
+      "description": "all values related to this word or triple in up to four columns that wrap on narrow screens, each column headed by one of the phrases used most often within these values",
+      "type": "values_in_columns",
+      "code_id": "values_in_columns_phrase"
+    },
+    {
+      "name": "most relevant value list of word",
+      "description": "grouped list of the most relevant values related to this word: newest time period first, then the phrases used by several values, then the remaining values by impact",
+      "type": "values_most_relevant",
+      "code_id": "value_list_most_relevant_word"
+    },
+    {
+      "name": "value chart",
+      "description": "show a chart of the most relevant values by impact on top of the value list",
+      "type": "value_chart"
+    },
+    {
+      "name": "value list of triple",
+      "description": "list of values related to this triple",
+      "type": "values_by_triple",
+      "code_id": "values_by_triple"
+    },
+    {
+      "name": "values by triple",
+      "description": "show the most relevant values where this triple is used",
+      "type": "values_by_triple"
+    },
+    {
+      "name": "value list of source",
+      "description": "list of values related to this source",
+      "type": "values_by_source",
+      "code_id": "values_by_source"
+    },
+    {
+      "name": "source values",
+      "description": "the values that name this source grouped by their phrases like the default word view",
+      "type": "values_by_source",
+      "code_id": "source_values"
+    },
+    {
+      "name": "similar values",
+      "description": "the values that share a phrase with this value sorted by impact e.g. the other mathematical constants of pi",
+      "type": "values_similar",
+      "code_id": "values_similar"
+    },
+    {
+      "name": "number value",
+      "description": "show the numeric value",
+      "type": "value_numeric",
+      "code_id": "value_numeric"
+    },
+    {
+      "name": "group name",
+      "description": "show the group name",
+      "type": "group_name",
+      "code_id": "group_name"
+    },
+    {
+      "name": "value name",
+      "description": "show the group name of a value or a list of phrases",
+      "type": "group_or_phrase_list",
+      "code_id": "group_or_phrase_list"
+    },
+    {
+      "name": "related results",
+      "description": "show the most relevant and related results",
+      "type": "results_related"
+    },
+    {
+      "name": "result list word",
+      "description": "list of result related to this word",
+      "type": "word_results",
+      "code_id": "word_results"
+    },
+    {
+      "name": "result list of formula",
+      "description": "list of results calculated by this formula",
+      "type": "result_list",
+      "code_id": "result_list_formula"
+    },
+    {
+      "name": "results of value",
+      "description": "the results that use this value e.g. the increase calculated from it",
+      "type": "results_by_value",
+      "code_id": "results_by_value"
+    },
+    {
+      "name": "values used",
+      "description": "the values that the calculation of this result has used e.g. the inhabitants that an increase is based on",
+      "type": "values_used",
+      "code_id": "values_used"
+    },
+    {
+      "name": "formulas used",
+      "description": "the formulas that have calculated the results used for this result",
+      "type": "formulas_used",
+      "code_id": "formulas_used"
+    },
+    {
+      "name": "results used",
+      "description": "the results that the calculation of this result has used e.g. the increase used by a growth rate",
+      "type": "results_used",
+      "code_id": "results_used"
+    },
+    {
+      "name": "system show result value",
+      "description": "the calculated number of a result behind its phrase group with links",
+      "type": "system_show_result_value",
+      "code_id": "show_result_value"
+    },
+    {
+      "name": "system show result formula",
+      "description": "the formula that calculated a result, with a link to the formula",
+      "type": "system_show_result_formula",
+      "code_id": "show_result_formula"
+    },
+    {
+      "name": "system show result expression",
+      "description": "the formula of a result with the numbers used, each linked to its value or result",
+      "type": "system_show_result_expression",
+      "code_id": "show_result_expression"
+    },
+    {
+      "name": "system show result diff list",
+      "description": "list of results that changes if the user confirms the change",
+      "type": "system_show_result_diff",
+      "code_id": "system_show_result_diff"
+    },
+    {
+      "name": "formulas list word",
+      "description": "changeable list of formulas related to this word",
+      "type": "formula_list",
+      "code_id": "formula_list_word"
+    },
+    {
+      "name": "formula list of formula",
+      "description": "list of formulas that use by this formula",
+      "type": "formula_list",
+      "code_id": "formula_list_formula"
+    },
+    {
+      "name": "formula list",
+      "description": "list of formulas",
+      "type": "formula_list"
+    },
+    {
+      "name": "formulas that use a verb",
+      "description": "list of formulas which use a given verb",
+      "type": "formulas_by_verb",
+      "code_id": "formulas_by_verb"
+    },
+    {
+      "name": "formulas of parents",
+      "description": "list of formulas assigned to the ancestor phrases of this word, grouped per ancestor",
+      "type": "formulas_of_parents"
+    },
+    {
+      "name": "Expression",
+      "description": "show the formula expression with a link for each term and without the quotes around the term names",
+      "type": "expression"
+    },
+    {
+      "name": "system expression with links",
+      "description": "show the formula expression beside the expression field with a tooltip and a link for each term, so that the user can check which term a name selects",
+      "type": "expression_link",
+      "code_id": "expression_link"
+    },
+    {
+      "name": "Expression with links",
+      "description": "show the formula expression in the latex format with a tooltip and a link for each term",
+      "type": "expression_latex_link"
+    },
+    {
+      "name": "system expression latex with links",
+      "description": "show the formula latex beside the latex field with a tooltip and a link for each term, so that the user can check which term a name selects",
+      "type": "expression_latex_link_form",
+      "code_id": "expression_latex_link_form"
+    },
+    {
+      "name": "system show field name",
+      "description": "the object name as read only",
+      "type": "system_show_field_name",
+      "code_id": "show_field_name"
+    },
+    {
+      "name": "system show field formula name",
+      "description": "the formula name as read only",
+      "type": "system_show_field_name",
+      "code_id": "show_field_formula_name"
+    },
+    {
+      "name": "system show field phrase name",
+      "description": "the phrase name as read only",
+      "type": "system_show_field_name",
+      "code_id": "show_field_phrase_name"
+    },
+    {
+      "name": "system show field name big",
+      "description": "the object name huge in the center as read only e.g. for the delete confirm page",
+      "type": "system_show_field_name_big",
+      "code_id": "show_field_name_big"
+    },
+    {
+      "name": "system show field description",
+      "description": "the object description as read only",
+      "type": "system_show_field_description",
+      "code_id": "show_field_description"
+    },
+    {
+      "name": "system show field plural",
+      "description": "show the plural form of a word as read only text",
+      "type": "system_show_field_plural",
+      "code_id": "show_field_plural"
+    },
+    {
+      "name": "system show field reverse",
+      "description": "the reverse name of a verb as read only",
+      "type": "system_show_field_reverse",
+      "code_id": "show_field_reverse"
+    },
+    {
+      "name": "system show field plural reverse",
+      "description": "the plural of the reverse name of a verb as read only",
+      "type": "system_show_field_plural_reverse",
+      "code_id": "show_field_plural_reverse"
+    },
+    {
+      "name": "system show field name in formulas",
+      "description": "the verb name used in formulas as read only",
+      "type": "system_show_field_name_in_formulas",
+      "code_id": "show_field_name_in_formulas"
+    },
+    {
+      "name": "system show field style",
+      "description": "the name of the display style of a view or component as read only",
+      "type": "system_show_field_style",
+      "code_id": "show_field_style"
+    },
+    {
+      "name": "system show field owner",
+      "description": "the name of the user who owns the object as read only",
+      "type": "system_show_field_owner",
+      "code_id": "show_field_owner"
+    },
+    {
+      "name": "system show field weight",
+      "description": "the weight of a triple compared to others as read only",
+      "type": "system_show_field_weight",
+      "code_id": "show_field_weight"
+    },
+    {
+      "name": "system show field condition formula",
+      "description": "the formula that decides if a triple is used, with a link to the formula",
+      "type": "system_show_field_condition_formula",
+      "code_id": "show_field_condition_formula"
+    },
+    {
+      "name": "system show field value source",
+      "description": "the source of a value with a link to the source; named value source, because system show field source is the source name shown on the reference pages",
+      "type": "system_show_field_source",
+      "code_id": "show_field_value_source"
+    },
+    {
+      "name": "system show field last update",
+      "description": "the time when an object e.g. a value, a reference or a formula has been updated by the user or a calculation job",
+      "type": "system_show_field_last_update",
+      "code_id": "show_field_last_update"
+    },
+    {
+      "name": "system show field impact",
+      "description": "the system calculated impact of a reference as read only, because the user can never change it",
+      "type": "system_show_field_impact",
+      "code_id": "show_field_impact"
+    },
+    {
+      "name": "system show value usage",
+      "description": "the value usage as read only",
+      "type": "system_show_field_usage",
+      "code_id": "show_field_value_usage"
+    },
+    {
+      "name": "system show field link type",
+      "description": "the name of the link type of a link as read only",
+      "type": "system_show_field_link_type",
+      "code_id": "show_field_link_type"
+    },
+    {
+      "name": "system show field order number",
+      "description": "the order number of a link as read only",
+      "type": "system_show_field_order_nbr",
+      "code_id": "show_field_order_nbr"
+    },
+    {
+      "name": "system show field linked component",
+      "description": "the name of the component that the shown component links to with the type of that link and a link to the linked component",
+      "type": "system_show_field_linked_component",
+      "code_id": "show_field_linked_component"
+    },
+    {
+      "name": "system show field formula",
+      "description": "the name of the calculation formula of a component with a link to the formula",
+      "type": "system_show_field_formula",
+      "code_id": "show_field_formula"
+    },
+    {
+      "name": "system show field all values needed",
+      "description": "show if a formula only calculates when all used values exist",
+      "type": "system_show_field_formula_all_vars",
+      "code_id": "show_field_all_values_needed"
+    },
+    {
+      "name": "system show field reference type",
+      "description": "the reference type as read only",
+      "type": "system_show_field_ref_type",
+      "code_id": "show_field_ref_type"
+    },
+    {
+      "name": "system show field external key",
+      "description": "the external key of a reference as read only",
+      "type": "system_show_field_ref_key",
+      "code_id": "show_field_ref_key"
+    },
+    {
+      "name": "system show field source",
+      "description": "the source name of a reference as read only",
+      "type": "system_show_field_ref_source",
+      "code_id": "show_field_ref_source"
+    },
+    {
+      "name": "system show field url",
+      "description": "the url of a reference as read only",
+      "type": "system_show_field_ref_url",
+      "code_id": "show_field_ref_url"
+    },
+    {
+      "name": "system show field reference phrase",
+      "description": "the word or triple a reference belongs to, with a link to the phrase",
+      "type": "system_show_field_ref_phrase",
+      "code_id": "show_field_ref_phrase"
+    },
+    {
+      "name": "source url link",
+      "description": "show the url of a source behind its label as a link to the source",
+      "type": "source_url_link",
+      "code_id": "source_url_link"
+    },
+    {
+      "name": "source doi link",
+      "description": "show the doi of a source behind its label as a link to doi.org",
+      "type": "source_doi_link",
+      "code_id": "source_doi_link"
+    },
+    {
+      "name": "show field language symbol",
+      "description": "show language name",
+      "type": "field_language_symbol",
+      "code_id": "field_language_symbol",
+      "ui_msg_code_id": "field_language_symbol"
+    },
+    {
+      "name": "system form field name",
+      "description": "the name field in a form",
+      "type": "system_form_field_name",
+      "code_id": "form_field_name",
+      "ui_msg_code_id": "form_field_name"
+    },
+    {
+      "name": "system form field description",
+      "description": "the description field in a form",
+      "type": "system_form_field_description",
+      "code_id": "form_field_description",
+      "ui_msg_code_id": "form_field_description"
+    },
+    {
       "name": "system form field plural",
       "description": "the plural language form field in a form (to be move to languages forms)",
       "type": "system_form_field_plural",
@@ -1804,13 +1692,6 @@
       "ui_msg_code_id": "form_field_plural_reverse"
     },
     {
-      "name": "system form field external key",
-      "description": "the reference external key form field in a form",
-      "type": "system_form_field_external_key",
-      "code_id": "form_field_external_key",
-      "ui_msg_code_id": "form_field_external_key"
-    },
-    {
       "name": "system form field name in formulas",
       "description": "a form field for the verb name used in formulas",
       "type": "system_form_field_name_in_formulas",
@@ -1823,53 +1704,6 @@
       "type": "system_form_field_weight",
       "code_id": "form_field_weight",
       "ui_msg_code_id": "form_field_weight"
-    },
-    {
-      "name": "title language select",
-      "description": "show the page title to select a language",
-      "type": "system_title",
-      "code_id": "title_language_select",
-      "ui_msg_code_id": "title_language_select"
-    },
-    {
-      "name": "list of all languages",
-      "description": "show as many languages on on page as useful and allow the user to select one to change the frontend language and if there are more than can be displayed at once it needs be to pages allow to switch the pages",
-      "type": "select_list",
-      "code_id": "list_select_languages"
-    },
-    {
-      "name": "request additional language",
-      "description": "a button to request an additional language",
-      "type": "button_request",
-      "code_id": "button_add_languages",
-      "ui_msg_code_id": "button_add_languages"
-    },
-    {
-      "name": "system title user",
-      "description": "show the language specific word user and the name of the shown user as the page title",
-      "type": "system_title_with_object_name",
-      "code_id": "system_title_user",
-      "ui_msg_code_id": "system_title_user"
-    },
-    {
-      "name": "all user overwrites",
-      "description": "show all changes that the shown user has written to the user sandbox tables e.g. the word overwrites",
-      "type": "all_user_overwrites",
-      "code_id": "all_user_overwrites",
-      "ui_msg_code_id": "all_user_overwrites"
-    },
-    {
-      "name": "system form field doi",
-      "description": "the doi field in a form",
-      "type": "system_form_field_doi",
-      "code_id": "form_field_doi",
-      "ui_msg_code_id": "form_field_doi"
-    },
-    {
-      "name": "system form tab box",
-      "description": "tab box with the views that can show the changed object, its change log and the user overwrites, shown beside the lists of a system edit form; an own component, because a system view can only use a component of system_views.json and view tab box is defined in base_views.json",
-      "type": "view_tab_box",
-      "code_id": "view_tab_box_form"
     },
     {
       "name": "system form field code id",
@@ -1885,23 +1719,457 @@
       "code_id": "form_field_ui_msg"
     },
     {
-      "name": "system show field last update",
-      "description": "the time when an object e.g. a value, a reference or a formula has been updated by the user or a calculation job",
-      "type": "system_show_field_last_update",
-      "code_id": "show_field_last_update"
+      "name": "system form field formula text",
+      "description": "the formula expression",
+      "type": "system_form_field_formula_expression",
+      "code_id": "form_field_formula_expression",
+      "ui_msg_code_id": "form_field_formula_expression"
     },
     {
-      "name": "system show field impact",
-      "description": "the system calculated impact of a reference as read only, because the user can never change it",
-      "type": "system_show_field_impact",
-      "code_id": "show_field_impact"
+      "name": "system form field latex",
+      "description": "the formula in the latex format",
+      "type": "system_form_field_formula_latex",
+      "code_id": "form_field_formula_latex",
+      "ui_msg_code_id": "form_field_formula_latex"
     },
     {
-      "name": "system sub title terms",
-      "description": "show the language specific sub title for the terms that use the shown view",
-      "type": "system_sub_title",
-      "code_id": "system_sub_title_terms",
-      "ui_msg_code_id": "system_sub_title_terms"
+      "name": "system form field flag need all vars",
+      "description": "the formula needs all variables to be set for a valid result",
+      "type": "system_form_field_formula_all_vars",
+      "code_id": "form_field_formula_all_vars",
+      "ui_msg_code_id": "form_field_formula_all_vars"
+    },
+    {
+      "name": "system form field value",
+      "description": "the numeric value field in a form",
+      "type": "system_form_field_value",
+      "code_id": "form_field_value",
+      "ui_msg_code_id": "form_field_value"
+    },
+    {
+      "name": "system form field group",
+      "description": "the group name field in a form",
+      "type": "system_form_field_group",
+      "code_id": "form_field_group",
+      "ui_msg_code_id": "form_field_group"
+    },
+    {
+      "name": "system form field group or phrase list",
+      "description": "a form field for the group name or a list of prase names",
+      "type": "system_form_field_group_or_phrase_list",
+      "code_id": "form_field_group_or_phrase_list",
+      "ui_msg_code_id": "form_field_group_or_phrase_list"
+    },
+    {
+      "name": "system form field source group or phrase list",
+      "description": "a form field for the source group name or a list of prase names",
+      "type": "system_form_field_source_group_or_phrase_list",
+      "code_id": "form_field_source_group_or_phrase_list",
+      "ui_msg_code_id": "form_field_source_group_or_phrase_list"
+    },
+    {
+      "name": "system form field url",
+      "description": "the url field in a form",
+      "type": "system_form_field_url",
+      "code_id": "form_field_url",
+      "ui_msg_code_id": "form_field_url"
+    },
+    {
+      "name": "system form field doi",
+      "description": "the doi field in a form",
+      "type": "system_form_field_doi",
+      "code_id": "form_field_doi",
+      "ui_msg_code_id": "form_field_doi"
+    },
+    {
+      "name": "system form field external key",
+      "description": "the reference external key form field in a form",
+      "type": "system_form_field_external_key",
+      "code_id": "form_field_external_key",
+      "ui_msg_code_id": "form_field_external_key"
+    },
+    {
+      "name": "system form field selection name",
+      "description": "the unique name of a selection",
+      "type": "system_form_selection_name",
+      "code_id": "system_form_selection_name",
+      "ui_msg_code_id": "system_form_selection_name"
+    },
+    {
+      "name": "system form field selection description",
+      "description": "text that explains this selection",
+      "type": "system_form_selection_description",
+      "code_id": "system_form_selection_description",
+      "ui_msg_code_id": "system_form_selection_description"
+    },
+    {
+      "name": "system form select text",
+      "description": "free text field to define a selection",
+      "type": "system_form_selection_text",
+      "code_id": "system_form_selection_text",
+      "ui_msg_code_id": "system_form_selection_text"
+    },
+    {
+      "name": "system form select reference phrase",
+      "description": "selector for the phrase of a reference",
+      "type": "form_select_phrase",
+      "code_id": "form_field_ref_phrase",
+      "ui_msg_code_id": "form_select_phrase_ref"
+    },
+    {
+      "name": "system form triple phrase from",
+      "description": "selector for the from phrase of a triple",
+      "type": "form_select_phrase",
+      "code_id": "form_select_phrase_from",
+      "ui_msg_code_id": "form_select_phrase_from"
+    },
+    {
+      "name": "system form triple phrase to",
+      "description": "selector for the to phrase of a triple",
+      "type": "form_select_phrase",
+      "code_id": "form_select_phrase_to",
+      "ui_msg_code_id": "form_select_phrase_to"
+    },
+    {
+      "name": "system form select phrase",
+      "description": "select one word or triple",
+      "type": "form_select_phrase",
+      "code_id": "form_select_phrase",
+      "ui_msg_code_id": "form_select_phrase"
+    },
+    {
+      "name": "system form select row phrase",
+      "description": "selector phrase that should be used to select the primary row names of a table",
+      "type": "form_select_phrase",
+      "code_id": "form_field_select_phrase_row",
+      "ui_msg_code_id": "form_select_phrase_row"
+    },
+    {
+      "name": "system form select column phrase",
+      "description": "selector phrase that should be used to select the primary column names of a table",
+      "type": "form_select_phrase",
+      "code_id": "form_field_select_phrase_col",
+      "ui_msg_code_id": "form_select_phrase_col"
+    },
+    {
+      "name": "system form select secondary column phrase",
+      "description": "selector phrase that should be used to select the secondary column names of a table",
+      "type": "form_select_phrase",
+      "code_id": "form_field_select_phrase_col_sub",
+      "ui_msg_code_id": "form_select_phrase_col_sub"
+    },
+    {
+      "name": "system form select multi phrases",
+      "description": "select one or many words and triples",
+      "type": "form_select_multi_phrases",
+      "code_id": "form_select_multi_phrases",
+      "ui_msg_code_id": "form_select_multi_phrases"
+    },
+    {
+      "name": "system form select verb",
+      "description": "select one verb",
+      "type": "form_select_verb",
+      "code_id": "form_select_verb",
+      "ui_msg_code_id": "form_select_verb"
+    },
+    {
+      "name": "system form select multi verbs",
+      "description": "select one or many verbs",
+      "type": "form_select_multi_verbs",
+      "code_id": "form_select_multi_verbs",
+      "ui_msg_code_id": "form_select_multi_verbs"
+    },
+    {
+      "name": "system form select term",
+      "description": "select one term",
+      "type": "form_select_term",
+      "code_id": "form_select_term",
+      "ui_msg_code_id": "form_select_term"
+    },
+    {
+      "name": "system form select multi terms",
+      "description": "select one or many words, verbs, triples and formulas",
+      "type": "form_select_multi_terms",
+      "code_id": "form_select_multi_terms",
+      "ui_msg_code_id": "form_select_multi_terms"
+    },
+    {
+      "name": "system form select formula",
+      "description": "select one formula",
+      "type": "form_select_formula",
+      "code_id": "form_select_formula",
+      "ui_msg_code_id": "form_select_formula"
+    },
+    {
+      "name": "system form select multi formulas",
+      "description": "select one or many formulas",
+      "type": "form_select_multi_formulas",
+      "code_id": "form_select_multi_formulas",
+      "ui_msg_code_id": "form_select_multi_formulas"
+    },
+    {
+      "name": "system form select value",
+      "description": "select one value",
+      "type": "form_select_value",
+      "code_id": "form_select_value",
+      "ui_msg_code_id": "form_select_value"
+    },
+    {
+      "name": "system form select multi values",
+      "description": "select one or many values",
+      "type": "form_select_multi_values",
+      "code_id": "form_select_multi_values",
+      "ui_msg_code_id": "form_select_multi_values"
+    },
+    {
+      "name": "system form select result",
+      "description": "select one result",
+      "type": "form_select_result",
+      "code_id": "form_select_result",
+      "ui_msg_code_id": "form_select_result"
+    },
+    {
+      "name": "system form select multi results",
+      "description": "select one or many results",
+      "type": "form_select_multi_results",
+      "code_id": "form_select_multi_results",
+      "ui_msg_code_id": "form_select_multi_results"
+    },
+    {
+      "name": "system form select source",
+      "description": "select one source",
+      "type": "form_select_source",
+      "code_id": "form_select_source",
+      "ui_msg_code_id": "form_select_source"
+    },
+    {
+      "name": "system form select multi sources",
+      "description": "select one or many sources",
+      "type": "form_select_multi_sources",
+      "code_id": "form_select_multi_sources",
+      "ui_msg_code_id": "form_select_multi_sources"
+    },
+    {
+      "name": "system form select ref",
+      "description": "select one ref",
+      "type": "form_select_ref",
+      "code_id": "form_select_ref",
+      "ui_msg_code_id": "form_select_ref"
+    },
+    {
+      "name": "system form select multi refs",
+      "description": "select one or many refs",
+      "type": "form_select_multi_refs",
+      "code_id": "form_select_multi_refs",
+      "ui_msg_code_id": "form_select_multi_refs"
+    },
+    {
+      "name": "system form select view",
+      "description": "select one view",
+      "type": "form_select_view",
+      "code_id": "form_select_view",
+      "ui_msg_code_id": "form_select_view"
+    },
+    {
+      "name": "system form select parent view",
+      "description": "select the parent view of a view relation",
+      "type": "form_select_view",
+      "code_id": "form_select_parent_view",
+      "ui_msg_code_id": "form_select_parent_view"
+    },
+    {
+      "name": "system form select child view",
+      "description": "select the child view of a view relation",
+      "type": "form_select_view",
+      "code_id": "form_select_child_view",
+      "ui_msg_code_id": "form_select_child_view"
+    },
+    {
+      "name": "select default view",
+      "description": "form field to select the default view for this object",
+      "type": "select_view",
+      "code_id": "form_select_view_default",
+      "ui_msg_code_id": "form_select_view_default"
+    },
+    {
+      "name": "system form select multi views",
+      "description": "select one or many views",
+      "type": "form_select_multi_views",
+      "code_id": "form_select_multi_views",
+      "ui_msg_code_id": "form_select_multi_views"
+    },
+    {
+      "name": "system form select component",
+      "description": "select one component",
+      "type": "form_select_component",
+      "code_id": "form_select_component",
+      "ui_msg_code_id": "form_select_component"
+    },
+    {
+      "name": "system form select multi components",
+      "description": "select one or many components",
+      "type": "form_select_multi_components",
+      "code_id": "form_select_multi_components",
+      "ui_msg_code_id": "form_select_multi_components"
+    },
+    {
+      "name": "system form select phrase type",
+      "description": "selector for the phrase type",
+      "type": "form_select_phrase_type",
+      "code_id": "form_field_phrase_type",
+      "ui_msg_code_id": "form_select_phrase_type"
+    },
+    {
+      "name": "system form select share type",
+      "description": "selector for the share type",
+      "type": "form_select_share",
+      "code_id": "form_field_share_type",
+      "ui_msg_code_id": "form_select_share"
+    },
+    {
+      "name": "system form select protection type",
+      "description": "selector for the protection type",
+      "type": "form_select_protection",
+      "code_id": "form_field_protection_type",
+      "ui_msg_code_id": "form_select_protection"
+    },
+    {
+      "name": "system form select value type",
+      "description": "selector for the value type",
+      "type": "form_select_value_type",
+      "code_id": "form_field_value_type",
+      "ui_msg_code_id": "form_select_value_type"
+    },
+    {
+      "name": "system form select source type",
+      "description": "selector for the source type",
+      "type": "form_select_source_type",
+      "code_id": "form_field_source_type",
+      "ui_msg_code_id": "form_select_source_type"
+    },
+    {
+      "name": "system form select reference type",
+      "description": "selector for the reference type",
+      "type": "form_select_ref_type",
+      "code_id": "form_field_ref_type",
+      "ui_msg_code_id": "form_select_ref_type"
+    },
+    {
+      "name": "system form select formula type",
+      "description": "selector for the formula type",
+      "type": "form_select_formula_type",
+      "code_id": "form_field_formula_type",
+      "ui_msg_code_id": "form_select_formula_type"
+    },
+    {
+      "name": "system form select view type",
+      "description": "selector for the view type",
+      "type": "form_select_view_type",
+      "code_id": "form_field_view_type",
+      "ui_msg_code_id": "form_select_view_type"
+    },
+    {
+      "name": "system form select view style",
+      "description": "selector for the style used in views and components e.g. to define the width",
+      "type": "form_select_view_style",
+      "code_id": "form_field_view_style",
+      "ui_msg_code_id": "form_select_view_style"
+    },
+    {
+      "name": "system form select component type",
+      "description": "selector for the component type",
+      "type": "form_select_component_type",
+      "code_id": "form_field_component_type",
+      "ui_msg_code_id": "form_select_component_type"
+    },
+    {
+      "name": "system form select component style",
+      "description": "selector for the style used in views and components e.g. to define the width",
+      "type": "form_select_component_style",
+      "code_id": "form_field_component_style",
+      "ui_msg_code_id": "form_select_component_style"
+    },
+    {
+      "name": "system form select component link type",
+      "description": "selector for the link type of a component to a view",
+      "type": "form_select_component_link_type",
+      "code_id": "form_field_component_link_type",
+      "ui_msg_code_id": "form_select_component_link_type"
+    },
+    {
+      "name": "system form select formula link type",
+      "description": "selector for the link type of a formula to a term",
+      "type": "form_select_formula_link_type",
+      "code_id": "form_field_formula_link_type",
+      "ui_msg_code_id": "form_select_formula_link_type"
+    },
+    {
+      "name": "system form select view link type",
+      "description": "selector for the link type of a view to a term",
+      "type": "form_select_view_link_type",
+      "code_id": "form_field_view_link_type",
+      "ui_msg_code_id": "form_select_view_link_type"
+    },
+    {
+      "name": "system form select component position type",
+      "description": "selector for the position type of a component to a view",
+      "type": "form_select_component_position_type",
+      "code_id": "form_field_component_position_type",
+      "ui_msg_code_id": "form_select_component_pos_type"
+    },
+    {
+      "name": "system form select view relation type",
+      "description": "selector for the view relation type",
+      "type": "form_select_view_relation_type",
+      "code_id": "form_field_view_relation_type",
+      "ui_msg_code_id": "form_select_view_relation_type"
+    },
+    {
+      "name": "system form view link priority",
+      "description": "priority number for this link to a term",
+      "type": "form_select_view_link_priority",
+      "code_id": "form_field_view_link_priority",
+      "ui_msg_code_id": "form_select_view_link_priority"
+    },
+    {
+      "name": "system form component link order number",
+      "description": "position of the linked component in the view",
+      "type": "form_select_component_link_order_number",
+      "code_id": "form_field_component_link_order_number",
+      "ui_msg_code_id": "form_select_component_link_order_number"
+    },
+    {
+      "name": "system form formula link priority",
+      "description": "priority number for this link to a term",
+      "type": "form_select_formula_link_priority",
+      "code_id": "form_field_formula_link_priority",
+      "ui_msg_code_id": "form_select_formula_link_priority"
+    },
+    {
+      "name": "system form field view relation start position",
+      "description": "start position for the modification of the child view in the parent view",
+      "type": "system_form_field_view_relation_start_pos",
+      "code_id": "form_field_view_relation_start_pos",
+      "ui_msg_code_id": "form_field_view_relation_start_pos"
+    },
+    {
+      "name": "system form linked views",
+      "description": "show the linked views as a table with the possibility to add or remove a view",
+      "type": "system_form_link_table",
+      "code_id": "system_form_link_table_of_views",
+      "ui_msg_code_id": "form_link_table_view"
+    },
+    {
+      "name": "link list word",
+      "description": "changeable list of links of this word",
+      "type": "link_list",
+      "code_id": "link_list_word"
+    },
+    {
+      "name": "ref list word",
+      "description": "changeable list of reference of this word",
+      "type": "ref_list",
+      "code_id": "ref_list_word"
     },
     {
       "name": "view terms",
@@ -1910,36 +2178,118 @@
       "code_id": "view_terms"
     },
     {
-      "name": "system sub title components",
-      "description": "show the language specific sub title for a component list",
-      "type": "system_sub_title",
-      "code_id": "system_sub_title_components",
-      "ui_msg_code_id": "system_sub_title_components"
-    },
-    {
       "name": "view components",
       "description": "the components of the shown view sorted by their position with a link to each component",
       "type": "components_of_view",
       "code_id": "view_components"
     },
     {
-      "name": "system form title value add phrases",
-      "description": "show the language specific title for the system form to add a new value by selecting its words and triples step by step",
-      "type": "system_form_title",
-      "code_id": "form_title_value_add_phrases",
-      "ui_msg_code_id": "form_title_value_add_phrases"
+      "name": "component views",
+      "description": "the views that use the shown component with a link to each view",
+      "type": "views_of_component",
+      "code_id": "component_views"
     },
     {
-      "name": "system form phrase steps",
-      "description": "select the phrases of a new value one after the other: a typed name is checked and added, the phrases that start with a few typed chars are offered to select and next opens the value add form with the selected phrases",
-      "type": "system_form_phrase_steps",
-      "code_id": "form_phrase_steps"
+      "name": "system show parent view",
+      "description": "show to the view name that should be modified by this view relation",
+      "type": "system_show_parent_view",
+      "code_id": "system_show_parent_view"
     },
     {
-      "name": "system form phrase value line",
-      "description": "select the phrases, the type and the value of a new value in one line like the pure value add form, but as part of the detailed value add form",
-      "type": "system_form_phrase_value_line",
-      "code_id": "form_phrase_value_line"
+      "name": "system show child view",
+      "description": "show to the view name that should be modified by this view relation",
+      "type": "system_show_child_view",
+      "code_id": "system_show_child_view"
+    },
+    {
+      "name": "system show view relation type",
+      "description": "show to the modification type of this view relation",
+      "type": "system_show_view_relation_type",
+      "code_id": "system_show_view_relation_type"
+    },
+    {
+      "name": "system show view relation start position",
+      "description": "show to position where the modification should start of this view relation",
+      "type": "system_show_view_start_pos",
+      "code_id": "system_show_view_start_pos"
+    },
+    {
+      "name": "system show field start position",
+      "description": "the position in the parent view where the child view of a view relation starts as read only",
+      "type": "system_show_view_start_pos",
+      "code_id": "show_field_start_pos"
+    },
+    {
+      "name": "system form preview change component",
+      "description": "preview if view component is changed based on a selectable sample object",
+      "type": "system_form_preview",
+      "code_id": "system_form_preview_change_component",
+      "ui_msg_code_id": "system_form_preview_change_component"
+    },
+    {
+      "name": "system show view old",
+      "description": "show to the user how it looks without the change",
+      "type": "system_show_before_change",
+      "code_id": "system_show_before_change"
+    },
+    {
+      "name": "system show view new",
+      "description": "show to the user how it would look like if the change is confirmed",
+      "type": "system_show_after_change",
+      "code_id": "system_show_after_change"
+    },
+    {
+      "name": "system show view diff list",
+      "description": "highlight the differences due to a change to the user",
+      "type": "system_show_view_diff"
+    },
+    {
+      "name": "system form title confirm add",
+      "description": "show the title for the system form to confirm adding a new entry combining the action, the class and the name of the new object",
+      "type": "system_title_named_object",
+      "code_id": "form_title_confirm_add",
+      "ui_msg_code_id": "form_title_confirm_add"
+    },
+    {
+      "name": "system form title confirm edit",
+      "description": "show the language specific title for the system form to confirm the change of an object including the object name",
+      "type": "system_title_named_object",
+      "code_id": "form_title_confirm_edit",
+      "ui_msg_code_id": "form_title_confirm_edit"
+    },
+    {
+      "name": "system form title confirm del",
+      "description": "show the language specific title for the system form to confirm the deletion or exclusion of an object including the object name",
+      "type": "system_title_named_object",
+      "code_id": "form_title_confirm_del",
+      "ui_msg_code_id": "form_title_confirm_del"
+    },
+    {
+      "name": "system form title confirm update",
+      "description": "for the universal confirmation popup show title of the action e.g. update",
+      "type": "system_title_named_object",
+      "ui_msg_code_id": "system_title_named_object_update"
+    },
+    {
+      "name": "system form title confirm delete",
+      "description": "for the universal confirmation popup show title of the action e.g. delete",
+      "type": "system_title_named_object",
+      "ui_msg_code_id": "system_title_named_object_delete"
+    },
+    {
+      "name": "system form class",
+      "description": "for the universal confirmation popup show e.g. word, value, formula depending on the object that is changed",
+      "type": "form_class"
+    },
+    {
+      "name": "system form changes",
+      "description": "for the universal confirmation popup show the changes",
+      "type": "form_changes"
+    },
+    {
+      "name": "system form impact",
+      "description": "for the universal confirmation popup show the impact of the changes",
+      "type": "form_impact"
     },
     {
       "name": "system form word add simple",
@@ -1960,16 +2310,221 @@
       "code_id": "form_value_add_simple"
     },
     {
+      "name": "system form phrase steps",
+      "description": "select the phrases of a new value one after the other: a typed name is checked and added, the phrases that start with a few typed chars are offered to select and next opens the value add form with the selected phrases",
+      "type": "system_form_phrase_steps",
+      "code_id": "form_phrase_steps"
+    },
+    {
+      "name": "system form phrase value line",
+      "description": "select the phrases, the type and the value of a new value in one line like the pure value add form, but as part of the detailed value add form",
+      "type": "system_form_phrase_value_line",
+      "code_id": "form_phrase_value_line"
+    },
+    {
       "name": "system form value overwrite",
       "description": "one field with the number, text, time or geolocation of the shown value or the number of the shown result and a save button that writes the change directly as the user overwrite",
       "type": "system_form_value_overwrite",
       "code_id": "form_value_overwrite"
     },
     {
-      "name": "system body not yet available",
-      "description": "the hint that the data and actions of the shown system view are not yet available",
-      "type": "system_body_not_yet_available",
-      "code_id": "system_body_not_yet_available"
+      "name": "Export JSON",
+      "description": "export this word and the related value in the JSON format",
+      "type": "export_json",
+      "code_id": "export_json"
+    },
+    {
+      "name": "Export XML",
+      "description": "export this word and the related value in the XML format",
+      "type": "export_xml",
+      "code_id": "export_xml"
+    },
+    {
+      "name": "Export CSV",
+      "description": "get data from zukunft.com in the csv format",
+      "type": "export_csv",
+      "code_id": "export_csv"
+    },
+    {
+      "name": "Export ODS",
+      "description": "get data from zukunft.com in the ods format",
+      "type": "export_ods",
+      "code_id": "export_ods"
+    },
+    {
+      "name": "system form select export format",
+      "description": "selector for the export format e.g. json",
+      "type": "form_select_export_format",
+      "code_id": "form_select_export_format",
+      "ui_msg_code_id": "form_select_export_format"
+    },
+    {
+      "name": "system form button export",
+      "description": "button to start the export",
+      "type": "system_button_export",
+      "code_id": "system_button_export",
+      "ui_msg_code_id": "system_button_export"
+    },
+    {
+      "name": "system form select file",
+      "description": "selector for a file to import",
+      "type": "form_select_file",
+      "code_id": "form_select_file",
+      "ui_msg_code_id": "form_select_file"
+    },
+    {
+      "name": "system form button import",
+      "description": "button to start the import",
+      "type": "system_button_import",
+      "code_id": "system_button_import",
+      "ui_msg_code_id": "system_button_import"
+    },
+    {
+      "name": "system form field context",
+      "description": "show the context used to import a data table",
+      "type": "system_paste_table_context",
+      "code_id": "system_paste_table_context",
+      "ui_msg_code_id": "system_paste_table_context"
+    },
+    {
+      "name": "system form body paste table",
+      "description": "show the drop fields to import a data table",
+      "type": "system_paste_table_body",
+      "code_id": "system_paste_table_body",
+      "ui_msg_code_id": "system_paste_table_body"
+    },
+    {
+      "name": "list of all languages",
+      "description": "show as many languages on on page as useful and allow the user to select one to change the frontend language and if there are more than can be displayed at once it needs be to pages allow to switch the pages",
+      "type": "select_list",
+      "code_id": "list_select_languages"
+    },
+    {
+      "name": "system form field selection text",
+      "description": "show the description of a named selection",
+      "type": "system_selection_text",
+      "code_id": "system_selection_text",
+      "ui_msg_code_id": "system_selection_text"
+    },
+    {
+      "name": "system body about",
+      "description": "show the body of the about page",
+      "type": "system_body_about",
+      "code_id": "system_body_about"
+    },
+    {
+      "name": "system body setup",
+      "description": "show the body of the setup page",
+      "type": "system_body_setup",
+      "code_id": "system_body_setup"
+    },
+    {
+      "name": "system body signup",
+      "description": "show the body of the signup page",
+      "type": "system_body_signup",
+      "code_id": "system_body_signup"
+    },
+    {
+      "name": "system body login",
+      "description": "show the body of the login page",
+      "type": "system_body_login",
+      "code_id": "system_body_login"
+    },
+    {
+      "name": "system body login activate",
+      "description": "show the body of the login activate page",
+      "type": "system_body_login_activate",
+      "code_id": "system_body_login_activate"
+    },
+    {
+      "name": "system body login reset",
+      "description": "show the body of the login reset page",
+      "type": "system_body_login_reset",
+      "code_id": "system_body_login_reset"
+    },
+    {
+      "name": "system body logout",
+      "description": "show the body of the logout page",
+      "type": "system_body_logout",
+      "code_id": "system_body_logout"
+    },
+    {
+      "name": "system body user settings",
+      "description": "show the body of the user settings page",
+      "type": "system_body_user_settings",
+      "code_id": "system_body_user_settings"
+    },
+    {
+      "name": "system body search",
+      "description": "show the body of the search page",
+      "type": "system_body_search",
+      "code_id": "system_body_search"
+    },
+    {
+      "name": "system body search full",
+      "description": "show the body of the search full page",
+      "type": "system_body_search_full",
+      "code_id": "system_body_search_full"
+    },
+    {
+      "name": "system body value detail",
+      "description": "show the body of the value detail page",
+      "type": "system_body_value_detail",
+      "code_id": "system_body_value_detail"
+    },
+    {
+      "name": "system body result explain",
+      "description": "show the body of the result explain page",
+      "type": "system_body_result_explain",
+      "code_id": "system_body_result_explain"
+    },
+    {
+      "name": "system body formula test",
+      "description": "show the body of the formula test page",
+      "type": "system_body_formula_test",
+      "code_id": "system_body_formula_test"
+    },
+    {
+      "name": "system body sandbox",
+      "description": "show the body of the sandbox page",
+      "type": "system_body_sandbox",
+      "code_id": "system_body_sandbox"
+    },
+    {
+      "name": "system body undo",
+      "description": "show the body of the undo page",
+      "type": "system_body_undo",
+      "code_id": "system_body_undo"
+    },
+    {
+      "name": "system body error log",
+      "description": "show the body of the error log page",
+      "type": "system_body_error_log",
+      "code_id": "system_body_error_log"
+    },
+    {
+      "name": "system body error update",
+      "description": "show the body of the error update page",
+      "type": "system_body_error_update",
+      "code_id": "system_body_error_update"
+    },
+    {
+      "name": "system body process",
+      "description": "show all progress of job dashboard",
+      "type": "system_body_process",
+      "code_id": "system_body_process"
+    },
+    {
+      "name": "system body process async",
+      "description": "show the progress of one process",
+      "type": "system_body_process_progress",
+      "code_id": "system_body_process_progress"
+    },
+    {
+      "name": "system body process list",
+      "description": "show all progress of one progress",
+      "type": "system_body_process_list",
+      "code_id": "system_body_process_list"
     },
     {
       "name": "system body user jobs",
@@ -1984,637 +2539,82 @@
       "code_id": "system_body_all_jobs"
     },
     {
-      "name": "system title user config",
-      "description": "show the language specific title for the standard user configuration and the overwrites of the user",
-      "type": "system_title",
-      "code_id": "system_title_user_config",
-      "ui_msg_code_id": "system_title_user_config"
+      "name": "system body not yet available",
+      "description": "the hint that the data and actions of the shown system view are not yet available",
+      "type": "system_body_not_yet_available",
+      "code_id": "system_body_not_yet_available"
     },
     {
-      "name": "system title system config",
-      "description": "show the language specific title for the read only system configuration",
-      "type": "system_title",
-      "code_id": "system_title_system_config",
-      "ui_msg_code_id": "system_title_system_config"
+      "name": "user system errors",
+      "description": "show the most relevant open system errors linked to the user",
+      "type": "user_system_errors",
+      "code_id": "user_system_errors",
+      "ui_msg_code_id": "user_system_errors"
     },
     {
-      "name": "system title admin config",
-      "description": "show the language specific title for the admin view to adjust the full system configuration",
-      "type": "system_title",
-      "code_id": "system_title_admin_config",
-      "ui_msg_code_id": "system_title_admin_config"
+      "name": "admin form field username",
+      "description": "the username field in a form",
+      "type": "admin_form_field_username",
+      "code_id": "form_field_username",
+      "ui_msg_code_id": "form_field_username"
     },
     {
-      "name": "system title user quarantine",
-      "description": "show the language specific title for the data of the user that has been moved to the quarantine",
-      "type": "system_title",
-      "code_id": "system_title_user_quarantine",
-      "ui_msg_code_id": "system_title_user_quarantine"
+      "name": "admin form field user email",
+      "description": "the user email field in a form",
+      "type": "admin_form_field_user_email",
+      "code_id": "form_field_user_email",
+      "ui_msg_code_id": "form_field_user_email"
     },
     {
-      "name": "system title all quarantine",
-      "description": "show the language specific title for the admin list of all data in quarantine",
-      "type": "system_title",
-      "code_id": "system_title_all_quarantine",
-      "ui_msg_code_id": "system_title_all_quarantine"
+      "name": "admin form field user password",
+      "description": "the user password field in a form",
+      "type": "admin_form_field_user_password",
+      "code_id": "form_field_user_password",
+      "ui_msg_code_id": "form_field_user_password"
     },
     {
-      "name": "system title user jobs",
-      "description": "show the language specific title for the jobs caused by the user",
-      "type": "system_title",
-      "code_id": "system_title_user_jobs",
-      "ui_msg_code_id": "system_title_user_jobs"
+      "name": "admin form field user uses sandbox",
+      "description": "checkbox so that an admin can switch if the pages for the user must be created from the user sandbox",
+      "type": "admin_form_field_user_uses_sandbox",
+      "code_id": "form_field_user_uses_sandbox",
+      "ui_msg_code_id": "form_field_user_uses_sandbox"
     },
     {
-      "name": "system title all jobs",
-      "description": "show the language specific title for the admin list of all jobs",
-      "type": "system_title",
-      "code_id": "system_title_all_jobs",
-      "ui_msg_code_id": "system_title_all_jobs"
+      "name": "admin form field language symbol",
+      "description": "form field for admin users only to add or change the language name",
+      "type": "admin_form_field_language_symbol",
+      "code_id": "form_field_language_symbol",
+      "ui_msg_code_id": "form_field_language_symbol"
     },
     {
-      "name": "system title phrase translations",
-      "description": "show the language specific title for the names of a word or triple in all languages",
-      "type": "system_title",
-      "code_id": "system_title_phrase_translations",
-      "ui_msg_code_id": "system_title_phrase_translations"
+      "name": "system admin response times",
+      "description": "show the most relevant delays in response to user request",
+      "type": "system_admin_url_delay",
+      "code_id": "system_admin_url_delay"
     },
     {
-      "name": "system title language forms",
-      "description": "show the language specific title for the language forms of a language",
-      "type": "system_title",
-      "code_id": "system_title_language_forms",
-      "ui_msg_code_id": "system_title_language_forms"
+      "name": "system admin failed logins",
+      "description": "show last and most critical failed login trails to be able to detect hacking attempts",
+      "type": "system_admin_login_fails",
+      "code_id": "system_admin_login_fails"
     },
     {
-      "name": "system title translations missing",
-      "description": "show the language specific title for the words and triples without a name in the language of the user",
-      "type": "system_title",
-      "code_id": "system_title_translations_missing",
-      "ui_msg_code_id": "system_title_translations_missing"
+      "name": "system admin unassigned errors",
+      "description": "show new detected internal errors that do not yet have a human check priority and that are not yet assigned to a developer",
+      "type": "system_admin_errors_unassigned",
+      "code_id": "system_admin_errors_unassigned"
     },
     {
-      "name": "system title list languages",
-      "description": "show the language specific title for the list of all languages",
-      "type": "system_title",
-      "code_id": "system_title_list_languages",
-      "ui_msg_code_id": "system_title_list_languages"
+      "name": "system admin pending error fixes",
+      "description": "show a list of errors where the fix has been expected but that are not yet fixed",
+      "type": "system_admin_errors_delayed_fix",
+      "code_id": "system_admin_errors_delayed_fix"
     },
     {
-      "name": "system title sys log detail",
-      "description": "show the language specific title for the detail of one system error",
-      "type": "system_title",
-      "code_id": "system_title_sys_log_detail",
-      "ui_msg_code_id": "system_title_sys_log_detail"
-    },
-    {
-      "name": "system title change log user",
-      "description": "show the language specific title for the changes of the user",
-      "type": "system_title",
-      "code_id": "system_title_change_log_user",
-      "ui_msg_code_id": "system_title_change_log_user"
-    },
-    {
-      "name": "system title change log recent",
-      "description": "show the language specific title for the latest changes of all users",
-      "type": "system_title",
-      "code_id": "system_title_change_log_recent",
-      "ui_msg_code_id": "system_title_change_log_recent"
-    },
-    {
-      "name": "system title object history",
-      "description": "show the language specific title for all changes of one object",
-      "type": "system_title",
-      "code_id": "system_title_object_history",
-      "ui_msg_code_id": "system_title_object_history"
-    },
-    {
-      "name": "system title change detail",
-      "description": "show the language specific title for the detail of one change",
-      "type": "system_title",
-      "code_id": "system_title_change_detail",
-      "ui_msg_code_id": "system_title_change_detail"
-    },
-    {
-      "name": "system title import preview",
-      "description": "show the language specific title for the preview of an import",
-      "type": "system_title",
-      "code_id": "system_title_import_preview",
-      "ui_msg_code_id": "system_title_import_preview"
-    },
-    {
-      "name": "system title import result",
-      "description": "show the language specific title for the result of an import",
-      "type": "system_title",
-      "code_id": "system_title_import_result",
-      "ui_msg_code_id": "system_title_import_result"
-    },
-    {
-      "name": "system title import url",
-      "description": "show the language specific title for the import of a file given by an url",
-      "type": "system_title",
-      "code_id": "system_title_import_url",
-      "ui_msg_code_id": "system_title_import_url"
-    },
-    {
-      "name": "system title import wikidata",
-      "description": "show the language specific title for the import by a Wikidata id",
-      "type": "system_title",
-      "code_id": "system_title_import_wikidata",
-      "ui_msg_code_id": "system_title_import_wikidata"
-    },
-    {
-      "name": "system title export selections",
-      "description": "show the language specific title for the saved export selections of the user",
-      "type": "system_title",
-      "code_id": "system_title_export_selections",
-      "ui_msg_code_id": "system_title_export_selections"
-    },
-    {
-      "name": "system title export object",
-      "description": "show the language specific title for the export of one object",
-      "type": "system_title",
-      "code_id": "system_title_export_object",
-      "ui_msg_code_id": "system_title_export_object"
-    },
-    {
-      "name": "system title export ready",
-      "description": "show the language specific title for the download of an export created by a job",
-      "type": "system_title",
-      "code_id": "system_title_export_ready",
-      "ui_msg_code_id": "system_title_export_ready"
-    },
-    {
-      "name": "system title job detail",
-      "description": "show the language specific title for the detail of one job",
-      "type": "system_title",
-      "code_id": "system_title_job_detail",
-      "ui_msg_code_id": "system_title_job_detail"
-    },
-    {
-      "name": "system title calc status",
-      "description": "show the language specific title for the status of the formula calculation",
-      "type": "system_title",
-      "code_id": "system_title_calc_status",
-      "ui_msg_code_id": "system_title_calc_status"
-    },
-    {
-      "name": "system title value find",
-      "description": "show the language specific title for the search of values by phrases",
-      "type": "system_title",
-      "code_id": "system_title_value_find",
-      "ui_msg_code_id": "system_title_value_find"
-    },
-    {
-      "name": "system title ref find",
-      "description": "show the language specific title for the search of an object by an external reference",
-      "type": "system_title",
-      "code_id": "system_title_ref_find",
-      "ui_msg_code_id": "system_title_ref_find"
-    },
-    {
-      "name": "system title find duplicates",
-      "description": "show the language specific title for the admin list of terms with the same or a similar name",
-      "type": "system_title",
-      "code_id": "system_title_find_duplicates",
-      "ui_msg_code_id": "system_title_find_duplicates"
-    },
-    {
-      "name": "system title list words",
-      "description": "show the language specific title for the list of words",
-      "type": "system_title",
-      "code_id": "system_title_list_words",
-      "ui_msg_code_id": "system_title_list_words"
-    },
-    {
-      "name": "system title list triples",
-      "description": "show the language specific title for the list of triples",
-      "type": "system_title",
-      "code_id": "system_title_list_triples",
-      "ui_msg_code_id": "system_title_list_triples"
-    },
-    {
-      "name": "system title list sources",
-      "description": "show the language specific title for the list of sources",
-      "type": "system_title",
-      "code_id": "system_title_list_sources",
-      "ui_msg_code_id": "system_title_list_sources"
-    },
-    {
-      "name": "system title list refs",
-      "description": "show the language specific title for the list of references",
-      "type": "system_title",
-      "code_id": "system_title_list_refs",
-      "ui_msg_code_id": "system_title_list_refs"
-    },
-    {
-      "name": "system title list formulas",
-      "description": "show the language specific title for the list of formulas",
-      "type": "system_title",
-      "code_id": "system_title_list_formulas",
-      "ui_msg_code_id": "system_title_list_formulas"
-    },
-    {
-      "name": "system title list views",
-      "description": "show the language specific title for the list of views",
-      "type": "system_title",
-      "code_id": "system_title_list_views",
-      "ui_msg_code_id": "system_title_list_views"
-    },
-    {
-      "name": "system title list components",
-      "description": "show the language specific title for the list of view components",
-      "type": "system_title",
-      "code_id": "system_title_list_components",
-      "ui_msg_code_id": "system_title_list_components"
-    },
-    {
-      "name": "Word title",
-      "description": "show the word name as a page title",
-      "type": "title_of_named_with_edit_link",
-      "code_id": "title_of_named_with_edit_link_word"
-    },
-    {
-      "name": "Triple title",
-      "description": "show the triple name as the page title and the from, verb and to with links in the subtitle",
-      "type": "title_of_triple_with_edit_link",
-      "code_id": "title_of_triple_with_edit_link_triple"
-    },
-    {
-      "name": "Value title",
-      "description": "show the related phrases of a value with links as the page title and the value itself, plus the edit link and the share and protection subtitle",
-      "type": "title_of_value_with_edit_link",
-      "code_id": "title_of_value_with_edit_link_value"
-    },
-    {
-      "name": "language name",
-      "description": "simply show the name of a language",
-      "type": "language_name"
-    },
-    {
-      "name": "related values",
-      "description": "show the most relevant and related values",
-      "type": "values_related"
-    },
-    {
-      "name": "values by triple",
-      "description": "show the most relevant values where this triple is used",
-      "type": "values_by_triple"
-    },
-    {
-      "name": "value chart",
-      "description": "show a chart of the most relevant values by impact on top of the value list",
-      "type": "value_chart"
-    },
-    {
-      "name": "related results",
-      "description": "show the most relevant and related results",
-      "type": "results_related"
-    },
-    {
-      "name": "system show field plural",
-      "description": "show the plural form of a word as read only text",
-      "type": "system_show_field_plural",
-      "code_id": "show_field_plural"
-    },
-    {
-      "name": "phrase aliases",
-      "description": "show the phrases that are an alias of this phrase",
-      "type": "phrase_aliases",
-      "code_id": "phrase_aliases"
-    },
-    {
-      "name": "phrase symbols",
-      "description": "show the symbols of this phrase",
-      "type": "phrase_symbols",
-      "code_id": "phrase_symbols"
-    },
-    {
-      "name": "related phrases without subtitles",
-      "description": "list of phrases related to this phrase excluding the alias, symbol and 'is a' entries that are already shown by the alias, symbol and subtitle components",
-      "type": "list_phrases_related_ex_subtitle",
-      "code_id": "list_phrases_related_ex_subtitle"
-    },
-    {
-      "name": "system sub title description",
-      "description": "show the language specific sub title for the description column",
-      "type": "system_sub_title",
-      "code_id": "system_sub_title_description",
-      "ui_msg_code_id": "system_sub_title_description"
-    },
-    {
-      "name": "formula list",
-      "description": "list of formulas",
-      "type": "formula_list"
-    },
-    {
-      "name": "formulas of parents",
-      "description": "list of formulas assigned to the ancestor phrases of this word, grouped per ancestor",
-      "type": "formulas_of_parents"
-    },
-    {
-      "name": "system sub title views",
-      "description": "show the language specific sub title for the related views",
-      "type": "system_sub_title",
-      "code_id": "system_sub_title_views",
-      "ui_msg_code_id": "system_sub_title_views"
-    },
-    {
-      "name": "view tab box",
-      "description": "tab box with the related views (preview plus open and switch buttons) and the change log of the shown object",
-      "type": "view_tab_box",
-      "code_id": "view_tab_box_word"
-    },
-    {
-      "name": "values in columns",
-      "description": "all values related to this word or triple in up to four columns that wrap on narrow screens, each column headed by one of the phrases used most often within these values",
-      "type": "values_in_columns",
-      "code_id": "values_in_columns_phrase"
-    },
-    {
-      "name": "phrase title",
-      "description": "show the phrase name as the page title with the subheader of a word (the related phrases) or of a triple (the from, verb and to with links)",
-      "type": "phrase_title",
-      "code_id": "phrase_title_phrase"
-    },
-    {
-      "name": "table with related columns",
-      "description": "all values related to this word or triple as a table with one column per phrase used most often within the values and one row per remaining phrase combination",
-      "type": "table_with_related_columns",
-      "code_id": "table_with_related_columns_phrase"
-    },
-    {
-      "name": "system title verb",
-      "description": "show the language specific word verb and the name of the shown verb as the page title",
-      "type": "system_title_with_object_name",
-      "code_id": "system_title_verb",
-      "ui_msg_code_id": "system_title_verb"
-    },
-    {
-      "name": "source doi link",
-      "description": "show the doi of a source behind its label as a link to doi.org",
-      "type": "source_doi_link",
-      "code_id": "source_doi_link"
-    },
-    {
-      "name": "system show field reverse",
-      "description": "the reverse name of a verb as read only",
-      "type": "system_show_field_reverse",
-      "code_id": "show_field_reverse"
-    },
-    {
-      "name": "system show field plural reverse",
-      "description": "the plural of the reverse name of a verb as read only",
-      "type": "system_show_field_plural_reverse",
-      "code_id": "show_field_plural_reverse"
-    },
-    {
-      "name": "verb triples",
-      "description": "the triples that use this verb with a link to each triple",
-      "type": "triples_by_verb",
-      "code_id": "verb_triples"
-    },
-    {
-      "name": "Source title",
-      "description": "show the source name as the page title and the type, the share and the protection in the subtitle",
-      "type": "title_of_named_with_edit_link",
-      "code_id": "title_of_named_with_edit_link_source"
-    },
-    {
-      "name": "Reference title",
-      "description": "show the reference name as the page title and the predicate, the share and the protection in the subtitle",
-      "type": "title_of_named_with_edit_link",
-      "code_id": "title_of_named_with_edit_link_ref"
-    },
-    {
-      "name": "source url link",
-      "description": "show the url of a source behind its label as a link to the source",
-      "type": "source_url_link",
-      "code_id": "source_url_link"
-    },
-    {
-      "name": "source values",
-      "description": "the values that name this source grouped by their phrases like the default word view",
-      "type": "values_by_source",
-      "code_id": "source_values"
-    },
-    {
-      "name": "View title",
-      "description": "show the translated word view and the view name as the page title and the type, the share and the protection in the subtitle",
-      "type": "title_of_named_with_edit_link",
-      "code_id": "title_of_named_with_edit_link_view",
-      "ui_msg_code_id": "system_title_view"
-    },
-    {
-      "name": "Component title",
-      "description": "show the translated word component and the component name as the page title and the type, the share and the protection in the subtitle",
-      "type": "title_of_named_with_edit_link",
-      "code_id": "title_of_named_with_edit_link_component",
-      "ui_msg_code_id": "system_title_component"
-    },
-    {
-      "name": "Link title",
-      "description": "show the generated name of a link object as the page title and the two linked objects with links in the subtitle",
-      "type": "title_of_link_with_edit_link",
-      "code_id": "title_of_link_with_edit_link"
-    },
-    {
-      "name": "system show field style",
-      "description": "the name of the display style of a view or component as read only",
-      "type": "system_show_field_style",
-      "code_id": "show_field_style"
-    },
-    {
-      "name": "system show field owner",
-      "description": "the name of the user who owns the object as read only",
-      "type": "system_show_field_owner",
-      "code_id": "show_field_owner"
-    },
-    {
-      "name": "system show field formula",
-      "description": "the name of the calculation formula of a component with a link to the formula",
-      "type": "system_show_field_formula",
-      "code_id": "show_field_formula"
-    },
-    {
-      "name": "component views",
-      "description": "the views that use the shown component with a link to each view",
-      "type": "views_of_component",
-      "code_id": "component_views"
-    },
-    {
-      "name": "system show field link type",
-      "description": "the name of the link type of a link as read only",
-      "type": "system_show_field_link_type",
-      "code_id": "show_field_link_type"
-    },
-    {
-      "name": "system show field order number",
-      "description": "the order number of a link as read only",
-      "type": "system_show_field_order_nbr",
-      "code_id": "show_field_order_nbr"
-    },
-    {
-      "name": "link tab box",
-      "description": "tab box with the change log and the user overwrites of this link",
-      "type": "view_tab_box",
-      "code_id": "view_tab_box_link"
-    },
-    {
-      "name": "value tab box",
-      "description": "tab box with the views that can show this value, the change log and the user overwrites of this value",
-      "type": "view_tab_box",
-      "code_id": "view_tab_box_value"
-    },
-    {
-      "name": "component tab box",
-      "description": "tab box with the change log and the user overwrites of this component",
-      "type": "view_tab_box",
-      "code_id": "view_tab_box_component"
-    },
-    {
-      "name": "view page tab box",
-      "description": "tab box with the change log and the user overwrites of this view; named view page tab box, because view tab box is the name of the tab box of the word, triple and formula page",
-      "type": "view_tab_box",
-      "code_id": "view_tab_box_view"
-    },
-    {
-      "name": "source tab box",
-      "description": "tab box with the views that can show this source, the change log and the user overwrites of this source",
-      "type": "view_tab_box",
-      "code_id": "view_tab_box_source"
-    },
-    {
-      "name": "system show field start position",
-      "description": "the position in the parent view where the child view of a view relation starts as read only",
-      "type": "system_show_view_start_pos",
-      "code_id": "show_field_start_pos"
-    },
-    {
-      "name": "system show field name in formulas",
-      "description": "the verb name used in formulas as read only",
-      "type": "system_show_field_name_in_formulas",
-      "code_id": "show_field_name_in_formulas"
-    },
-    {
-      "name": "system show field weight",
-      "description": "the weight of a triple compared to others as read only",
-      "type": "system_show_field_weight",
-      "code_id": "show_field_weight"
-    },
-    {
-      "name": "system show field condition formula",
-      "description": "the formula that decides if a triple is used, with a link to the formula",
-      "type": "system_show_field_condition_formula",
-      "code_id": "show_field_condition_formula"
-    },
-    {
-      "name": "system show field value source",
-      "description": "the source of a value with a link to the source; named value source, because system show field source is the source name shown on the reference pages",
-      "type": "system_show_field_source",
-      "code_id": "show_field_value_source"
-    },
-    {
-      "name": "system show result value",
-      "description": "the calculated number of a result behind its phrase group with links",
-      "type": "system_show_result_value",
-      "code_id": "show_result_value"
-    },
-    {
-      "name": "system show result formula",
-      "description": "the formula that calculated a result, with a link to the formula",
-      "type": "system_show_result_formula",
-      "code_id": "show_result_formula"
-    },
-    {
-      "name": "system show field reference phrase",
-      "description": "the word or triple a reference belongs to, with a link to the phrase",
-      "type": "system_show_field_ref_phrase",
-      "code_id": "show_field_ref_phrase"
-    },
-    {
-      "name": "similar values",
-      "description": "the values that share a phrase with this value sorted by impact e.g. the other mathematical constants of pi",
-      "type": "values_similar",
-      "code_id": "values_similar"
-    },
-    {
-      "name": "results of value",
-      "description": "the results that use this value e.g. the increase calculated from it",
-      "type": "results_by_value",
-      "code_id": "results_by_value"
-    },
-    {
-      "name": "system sub title related values",
-      "description": "show the language specific sub title for the values related to the shown value",
-      "type": "system_sub_title",
-      "code_id": "system_sub_title_related_values",
-      "ui_msg_code_id": "system_sub_title_related_values"
-    },
-    {
-      "name": "system show field linked component",
-      "description": "the name of the component that the shown component links to with the type of that link and a link to the linked component",
-      "type": "system_show_field_linked_component",
-      "code_id": "show_field_linked_component"
-    },
-    {
-      "name": "Formula title",
-      "description": "show the formula name as the page title and the assigned phrases with links in the subtitle",
-      "type": "title_of_formula_with_edit_link",
-      "code_id": "title_of_formula_with_edit_link_formula"
-    },
-    {
-      "name": "Expression with links",
-      "description": "show the formula expression in the latex format with a tooltip and a link for each term",
-      "type": "expression_latex_link"
-    },
-    {
-      "name": "Expression",
-      "description": "show the formula expression with a link for each term and without the quotes around the term names",
-      "type": "expression"
-    },
-    {
-      "name": "system show field all values needed",
-      "description": "show if a formula only calculates when all used values exist",
-      "type": "system_show_field_formula_all_vars",
-      "code_id": "show_field_all_values_needed"
-    },
-    {
-      "name": "system sub title expression",
-      "description": "show the language specific sub title for the expression of a formula",
-      "type": "system_sub_title",
-      "code_id": "system_sub_title_expression",
-      "ui_msg_code_id": "system_sub_title_expression"
-    },
-    {
-      "name": "values used",
-      "description": "the values that the calculation of this result has used e.g. the inhabitants that an increase is based on",
-      "type": "values_used",
-      "code_id": "values_used"
-    },
-    {
-      "name": "formulas used",
-      "description": "the formulas that have calculated the results used for this result",
-      "type": "formulas_used",
-      "code_id": "formulas_used"
-    },
-    {
-      "name": "results used",
-      "description": "the results that the calculation of this result has used e.g. the increase used by a growth rate",
-      "type": "results_used",
-      "code_id": "results_used"
-    },
-    {
-      "name": "system show result expression",
-      "description": "the formula of a result with the numbers used, each linked to its value or result",
-      "type": "system_show_result_expression",
-      "code_id": "show_result_expression"
-    },
-    {
-      "name": "related system view selector",
-      "description": "the \"...\" in the right corner below the title that opens the menu to show the same object in the default, detail, range or detail with range view",
-      "type": "related_system_view_selector",
-      "code_id": "related_system_view_selector"
+      "name": "system admin delayed jobs",
+      "description": "list of critical jobs that are delayed with the possibility to de-prioritise blocking jobs",
+      "type": "system_admin_jobs_delayed",
+      "code_id": "system_admin_jobs_delayed"
     }
   ],
   "views": [

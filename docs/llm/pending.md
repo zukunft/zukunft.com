@@ -2,19 +2,15 @@
 
 ## type and component order
 
-review the initial order of the components
-
-sort the initial component creation in src/main/resources/messages/system_views.json so that it starts with the first component used in this file by a view and so that the components are grouped by similarity, but more important, no dependencies are broken. in doughty use the order of the component types as an orientation.
-
-sort the initial component creation components in src/main/resources/messages/base_views.json so that it starts with the first component used in this file by a view and so that the components are grouped by similarity, but more important, no dependencies are broken. in doughty use the order of the component types as an orientation.
-
 review the initial order of the verbs
 
 sort the verbs in src/main/resources/verbs.json so that the resulting src/test/resources/unit/verb/list.csv matches the src/test/resources/unit/verb/list_sorted.csv. use src/test/resources/unit/verb/list_unsorted.csv to re-pin the verbs  
 
 ### source types
 
-Add to the database table source_types the columns 'group' and 'wikipedia'. 
+add to the database table source_types the columns 'group' and 'wikipedia', where 
+wikipedia is a text url field with the link to the format explain in English (translations could be taken live from wikipedia)
+and the group is a user_message_id linking to translatable text from e.g. src/main/resources/translations/en.yaml
 
 Fill the 'groups' column in the csv src/main/resources/db_code_links/source_types.csv with:
 

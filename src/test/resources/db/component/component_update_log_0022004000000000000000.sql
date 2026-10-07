@@ -43,7 +43,7 @@ SELECT component_update_log_0022004000000000000000
         782::smallint,
         'system form field name'::text,
         'System Test View Component Renamed'::text,
-        130::bigint,
+        254::bigint,
         783::smallint,
         'the name field in a form'::text,
         null::text,

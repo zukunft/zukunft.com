@@ -40,7 +40,7 @@ SELECT component_update_log_0022004000000000000000
         782,
         'system form field name',
         'System Test View Component Renamed',
-        130,
+        254,
         783,
         'the name field in a form',
         null,
