@@ -1,60 +1,20 @@
 # pending - list of planned llm prompts with prio 1
 
-## source types
+## table with column component
 
-add to the database table source_types the columns 'group' and 'wikipedia', where 
-wikipedia is a text url field with the link to the format explain in English (translations could be taken live from wikipedia)
-and the group is a user_message_id linking to translatable text from e.g. src/main/resources/translations/en.yaml
+to be able to define which column values should be used to sort a table add an url_var (with a human version) to define the prime order and another url_var for the sub and sub_sub order. The id for the var should be the phrase id of the column with a condition that can be e.g. asc, desc in combination with numeric or alpha or alpha incl. parent phrase name 
 
-Fill the 'groups' column in the csv src/main/resources/db_code_links/source_types.csv with:
+add up / down sort icons to each column which sorts the start page rows by this column
 
-Documents for
+if there is more than one solution add ', ...' with a link to the solution list
 
-PDF
-MD
-TXT
-HTML
+the table component used for the start page has in the top right corner '...'
+which is used to show a 'select the columns to show' menu.
+change the tooltip to something like 'select the columns and form to show' and
+add a subheader 'columns and values' not in bold above 'mayor', 'mayor + range', ...
+and add another subheader 'as' with the entries 'table' (linke until now), 'chart' and 'table + chart'
 
-Structured data formats for
 
-JSON
-YAML
-TOML
-XML
-CSV
-TSV
-XLSX
-ODS
-JSON-LD
-RDF/Turtle
-GeoJSON
-JSON-stat
-XBRL
-SDMX
-Parquet
-Avro
-NetCDF
-HDF5
-
-Database / data exchange for
-
-SQLite
-SQL Dump
-Arrow
-
-Data access/query mechanisms for
-
-API
-OData
-SPARQL
-
-Web/archival sources for
-
-RSS
-Atom
-WARC
-
-and in the csv src/main/resources/db_code_links/source_types.csv fill the column 'wikipedia' with the explain link for the format e.g. for 'PDF': 'https://en.wikipedia.org/wiki/PDF' 
 
 ## todo from group id change
 
@@ -99,10 +59,6 @@ add to the JSON import check that word and triple names in English start always 
 add values icon and add formula icon
 
 ## start page
-
-add up / down sort icons to each column which sorts the start page rows by this column
-
-if there is more than one solution add ', ...' with a link to the solution list
 
 each number of the start page should be a result of a calculation not a value
 

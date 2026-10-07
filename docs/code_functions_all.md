@@ -2980,6 +2980,9 @@
     \-- load_sql_like - section for function load_sql_like is expected to be load sql in /ref/source_list.php
     \-- load_sql_by_names - section for function load_sql_by_names is expected to be load sql in /ref/source_list.php
     \-- order error - order of section load has difference at load_by_ids should be before load_sql_like
+\-- source_type
+    \-- row_mapper_typ_obj - section for function row_mapper_typ_obj not yet defined that it should be construct and map
+             in /ref/source_type.php
 \-- source_type_list
     \-- load_dummy - section for function load_dummy is expected to be load in /ref/source_type_list.php
     \-- default_id - section for function default_id not yet defined that it should be database link in /ref/source_type
@@ -4912,6 +4915,7 @@
         \-- db_cache_page - clear all cache page object values e.g. to detect the changed fields
         \-- change_field - set the vars of this change field object to the default values
         \-- ref_type - set the vars of this reference type object to the default values
+        \-- source_type - set the vars of this source type object to the default values
         \-- sandbox_predicated_link - reset the type of the link object
         \-- ip_range - 
         \-- value_time_series - set the user sandbox type for a value time series object and set the user,
@@ -4941,6 +4945,8 @@
     \-- row_mapper_typ_obj
         \-- change_field - fill the change field object vars based on an array of fields from the database
         \-- ref_type - fill the reference type object vars based on an array of fields from the database
+        \-- source_type - fill the source type object vars based on an array of fields from the database or the code lin
+                k csv
     \-- load_dummy
         \-- phrase_types - fill the list for the unit tests from db_code_links/phrase_types.csv,
     \-- default_id
@@ -5628,6 +5634,7 @@
         \-- db_cache_page - get a list of all database fields that might be changed
         \-- change_field - get a list of all database fields that might be changed
         \-- ref_type - get a list of all database fields that might be changed
+        \-- source_type - get a list of all database fields that might be changed
         \-- ip_range - get a list of all database fields that might be changed
     \-- db_fields_changed
         \-- element - get a list of database field names, values and types that have been updated
@@ -5635,6 +5642,7 @@
         \-- db_cache_page - get a list of database field names, values and types that have been updated
         \-- change_field - get a list of database field names, values and types that have been updated
         \-- ref_type - get a list of database field names, values and types that have been updated
+        \-- source_type - get a list of database field names, values and types that have been updated
         \-- ip_range - get a list of database field names, values and types that have been updated
     \-- db_field_values_types
         \-- change - get a list of all database fields

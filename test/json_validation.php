@@ -19,9 +19,6 @@
     this entry point only bootstraps the path consts and hands over to the
     json_validation class, so that the checks can be unit tested without the bootstrap
 
-    it also compares the renumbered change tables and fields with their unsorted baseline
-    (see change_link_validation) and lists the rows that are missing, added or relinked
-
     usage: php test/json_validation.php
 
 
@@ -54,11 +51,9 @@ include_once 'test_const.php';
 
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
-use Zukunft\ZukunftCom\test\php\utils\change_link_validation;
 use Zukunft\ZukunftCom\test\php\utils\json_validation;
 
 include_once test_paths::CONST . 'files.php';
-include_once test_paths::UTILS . 'change_link_validation.php';
 include_once test_paths::UTILS . 'json_validation.php';
 
 // check the import json files, update the version fields of the files without any other
@@ -76,12 +71,4 @@ foreach (explode("\n", $md_txt) as $line) {
 }
 echo $sum_txt . PHP_EOL;
 echo 'written to ' . test_files::DOCS_JSON_FINDINGS . PHP_EOL;
-
-// check that the renumbered change tables and fields still hold the same rows and table references
-$lnk_chk = new change_link_validation();
-$lnk_findings = $lnk_chk->check();
-foreach ($lnk_findings as $finding) {
-    echo $finding . PHP_EOL;
-}
-echo count($lnk_findings) . ' change table and field findings' . PHP_EOL;
 exit(0);

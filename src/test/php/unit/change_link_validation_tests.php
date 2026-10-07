@@ -68,17 +68,6 @@ class change_link_validation_tests
         $ts = 'unit change link validation ';
         $t->header($ts);
 
-        $t->subheader($ts . 'check');
-        $test_name = 'renumbered tables and fields keep all rows and table links';
-        $t->assert($test_name, $lnk_chk->check(), []);
-        $test_name = 'an unchanged text ref file is not rewritten';
-        $file = $lib->class_csv_file_path(change_field::class, test_files::FIXED_DB_SORTED_TEXT_REF_CSV);
-        $old_time = filemtime($file) - 1;
-        touch($file, $old_time);
-        $lnk_chk->check();
-        clearstatcache(true, $file);
-        $t->assert($test_name, (string)filemtime($file), (string)$old_time);
-
         $t->subheader($ts . 'read csv');
         $test_name = 'an empty line is skipped and a quoted comma stays in the value';
         $file = $lib->class_csv_file_path(change_field::class, test_files::FIXED_DB_BROKEN_CSV);

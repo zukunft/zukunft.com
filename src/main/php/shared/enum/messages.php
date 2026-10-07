@@ -2221,6 +2221,12 @@ enum messages: string
     case FORM_SELECT_SOURCE = 'form_select_source';
     case FORM_SELECT_MULTI_SOURCES = 'form_select_multi_sources';
     case FORM_SELECT_SOURCE_TYPE = 'form_select_source_type';
+    // the groups of the source types (see group_msg_code_id in source_types.csv)
+    case SOURCE_TYPE_GROUP_DOCUMENTS = 'source_type_group_documents';
+    case SOURCE_TYPE_GROUP_STRUCTURED = 'source_type_group_structured';
+    case SOURCE_TYPE_GROUP_DATABASE = 'source_type_group_database';
+    case SOURCE_TYPE_GROUP_ACCESS = 'source_type_group_access';
+    case SOURCE_TYPE_GROUP_WEB = 'source_type_group_web';
     case FORM_SELECT_REF = 'form_select_ref';
     case FORM_SELECT_MULTI_REFS = 'form_select_multi_refs';
     case FORM_SELECT_REF_TYPE = 'form_select_ref_type';
@@ -2649,6 +2655,7 @@ enum messages: string
     case SYSTEM_DB_FIELD_GEO_TRIPLE_ID = 'system_db_field_geo_triple_id';
     case SYSTEM_DB_FIELD_GEO_VALUE = 'system_db_field_geo_value';
     case SYSTEM_DB_FIELD_GROUP_ID = 'system_db_field_group_id';
+    case SYSTEM_DB_FIELD_GROUP_MSG_CODE_ID = 'system_db_field_group_msg_code_id';
     case SYSTEM_DB_FIELD_GROUP_NAME = 'system_db_field_group_name';
     case SYSTEM_DB_FIELD_IMPACT = 'system_db_field_impact';
     case SYSTEM_DB_FIELD_INACTIVE = 'system_db_field_inactive';
@@ -2800,6 +2807,7 @@ enum messages: string
     case SYSTEM_DB_FIELD_VIEW_TYPE_ID = 'system_db_field_view_type_id';
     case SYSTEM_DB_FIELD_WEIGHT = 'system_db_field_weight';
     case SYSTEM_DB_FIELD_WIKIMEDIA_CODE = 'system_db_field_wikimedia_code';
+    case SYSTEM_DB_FIELD_WIKIPEDIA = 'system_db_field_wikipedia';
     case SYSTEM_DB_FIELD_WORD_ID = 'system_db_field_word_id';
     case SYSTEM_DB_FIELD_WORD_ID_COL = 'system_db_field_word_id_col';
     case SYSTEM_DB_FIELD_WORD_ID_COL2 = 'system_db_field_word_id_col2';
