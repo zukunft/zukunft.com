@@ -33,6 +33,7 @@
 namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::SHARED . 'api.php';
@@ -42,12 +43,17 @@ include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_ENUM . 'language_codes.php';
+include_once paths::SHARED_HELPER . 'Config.php';
+include_once html_paths::VALUE . 'value_list.php';
 include_once test_paths::CREATE . 'test_users.php';
+include_once test_paths::UNIT_UI . 'system_view_ui_tests.php';
 include_once test_paths::UTILS . 'test_base.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\helper\Config;
+use Zukunft\ZukunftCom\main\php\web\value\value_list;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\main\php\shared\enum\language_codes;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -107,6 +113,21 @@ class localhost_ui_tests
         $sys->times->switch(system_time_type::DEFAULT);
         // TODO Prio 0 activate
         //$t->assert_text_contains($test_name, $page, $mtr->txt(msg_id::FORM_VERB_ADD_TITLE), test_base::TIMEOUT_LOCALHOST);
+
+        // the start page with the main columns and the ranges of its table shows the real
+        // ranking data imported before this test, which the unit fixtures of the start page do
+        // not carry, so this snapshot is the only one of views_by_id that is fetched from the pod
+        $test_name = 'start page with the main columns and ranges by url matches the snapshot';
+        $url = api::URL_DEV . views::START_ID
+            . url_var::ADD . url_var::DISPLAY_LIST_SIZE . url_var::EQ . Config::LIMIT_MORE_LIST
+            . url_var::ADD . url_var::DISPLAY_LIST_COLUMNS . url_var::EQ . value_list::COLUMN_TIERS_EX_MINOR
+            . url_var::ADD . url_var::DISPLAY_LIST_RANGE . url_var::EQ . url_var::TRUE;
+        $sys->times->switch(system_time_type::LOCALHOST_VIEWS);
+        $page = (string)file_get_contents($url);
+        $sys->times->switch(system_time_type::DEFAULT);
+        // the pod links root relative, so link to the pod like the other views_by_id snapshots
+        $t->assert_html_page($test_name, $t->link_to_pod($page, THIS_URL),
+            system_view_ui_tests::START_PAGE_DETAILS_FILE, test_base::TIMEOUT_LIMIT_IMPORT);
     }
 
 }

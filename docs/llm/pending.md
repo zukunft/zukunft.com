@@ -2,6 +2,15 @@
 
 ## table with column component
 
+create 'table_to_svg' functions that creates a svg charts like  src/test/resources/web/html/chart/global-problems-loss.svg and src/test/resources/web/html/chart/global-problems-solutions.svg based on the data for src/test/resources/web/html/views_by_id/start_page/1_start_page_details.html. depending on the chart type parameters the function should be able to create different types of charts based on the data.
+
+similar to 'mayor column (system)', 'main column (system)' and 'minor column (system)' 
+create a 'default chart type (system)' and a 'alternative chart type (system)' triples 
+in src/main/resources/messages/solution_prio.json 
+and define two for 'default chart type (system)' so that showing the table as a chart 
+would show src/test/resources/web/html/chart/global-problems-loss.svg 
+and src/test/resources/web/html/chart/global-problems-loss.svg beside each other 
+
 to be able to define which column values should be used to sort a table add an url_var (with a human version) to define the prime order and another url_var for the sub and sub_sub order. The id for the var should be the phrase id of the column with a condition that can be e.g. asc, desc in combination with numeric or alpha or alpha incl. parent phrase name 
 
 add up / down sort icons to each column which sorts the start page rows by this column
