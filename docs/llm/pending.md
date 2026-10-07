@@ -2,13 +2,6 @@
 
 ## table with column component
 
-similar to 'mayor column (system)', 'main column (system)' and 'minor column (system)' 
-create a 'default chart type (system)' and a 'alternative chart type (system)' triples 
-in src/main/resources/messages/solution_prio.json 
-and define two for 'default chart type (system)' so that showing the table as a chart 
-would show src/test/resources/web/html/chart/global-problems-loss.svg 
-and src/test/resources/web/html/chart/global-problems-loss.svg beside each other 
-
 the table component used for the start page has in the top right corner '...'
 which is used to show a 'select the columns to show' menu.
 change the tooltip to something like 'select the columns and form to show' and

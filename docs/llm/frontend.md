@@ -476,6 +476,18 @@ column. Every row carries the numbers of every value column as its tooltip in
 the format of the table cell (`5.5a trillion EUR (2.2 – 13.75)`), so the chart
 tells the reader the same as the full table.
 
+Which charts a table offers is data, defined in `solution_prio.json` like the
+column tiers: a chart type word carries the `chart_types` value as its
+`code_id` (`range bars` → `range_bars`, `scatter plot` → `scatter`), a chart is
+the triple `<chart type> of <column>` (`range bars of potential loss`) or, for
+two columns, `<chart type> of <column> and <column>` with the y column first
+(`scatter plot of potential gain and initial effort`), and the chart is
+assigned to a chart type tier with `<chart> can be <tier>`: the charts of
+`triples::SYSTEM_CHART_TYPE_DEFAULT` are shown beside each other when the
+reader asks to see the table as a chart, the charts of
+`SYSTEM_CHART_TYPE_ALTERNATIVE` can be selected instead. Reading these
+definitions into `table_to_svg` calls is not wired yet.
+
 ## The value quality is a mark behind the number, never a phrase before it
 
 A value quality phrase (phrase type `value_quality`, e.g. `assumed`) says how a

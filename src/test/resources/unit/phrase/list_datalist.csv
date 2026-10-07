@@ -1,9 +1,9 @@
 phrase_id,phrase_name
--597,cash flow statement
--595,income taxes
--594,cash flow
--428,CHF is symbol for Swiss franc
--270,Zurich Insurance
+-605,cash flow statement
+-603,income taxes
+-602,cash flow
+-436,CHF is symbol for Swiss franc
+-278,Zurich Insurance
 -181,global warming (global problem)
 -178,happy time points
 -125,education can be global problem
@@ -77,18 +77,18 @@ phrase_id,phrase_name
 275,trillion
 305,income
 308,tax
-371,2013
-372,2014
-373,2015
-374,2016
-375,2017
-376,2018
-379,total
-438,USD
-452,CHF
-593,ABB
-594,Vestas
-595,sales
-596,cash
-597,statement
-599,parts
+376,2013
+377,2014
+378,2015
+379,2016
+380,2017
+381,2018
+384,total
+443,USD
+457,CHF
+598,ABB
+599,Vestas
+600,sales
+601,cash
+602,statement
+604,parts

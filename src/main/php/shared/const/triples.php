@@ -130,6 +130,17 @@ class triples
         self::SYSTEM_COLUMN_MINOR,
         self::SYSTEM_COLUMN_MARGINAL,
     ];
+    // the charts of a table, defined in solution_prio.json like the column tiers: a chart is a
+    // triple "<chart type> of <column>" e.g. "range bars of potential loss", or for two columns
+    // "<chart type> of <column> and <column>", and is assigned to a chart type with "<chart> can
+    // be <chart type>"; the default charts are shown beside each other if the reader asks to
+    // see the table as a chart, the alternative charts can be selected instead
+    const string SYSTEM_CHART_TYPE = 'chart type (system)';
+    const string SYSTEM_CHART_TYPE_CODE_ID = 'system_chart_type';
+    const string SYSTEM_CHART_TYPE_DEFAULT = 'default chart type (system)';
+    const string SYSTEM_CHART_TYPE_DEFAULT_CODE_ID = 'system_chart_type_default';
+    const string SYSTEM_CHART_TYPE_ALTERNATIVE = 'alternative chart type (system)';
+    const string SYSTEM_CHART_TYPE_ALTERNATIVE_CODE_ID = 'system_chart_type_alternative';
     const string SYSTEM_ERRORS = 'system errors';
     const string TABLE_NAME = 'table name';
     const string TIME_PERCENT = 'time percent';
