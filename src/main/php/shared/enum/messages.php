@@ -249,6 +249,12 @@ enum messages: string
     case TABLE_COLUMNS_ALL = 'table_columns_all';
     // added to the entry above for the same columns with the probability range of each number
     case TABLE_COLUMNS_WITH_RANGE = 'table_columns_with_range';
+    // the sub headers of the "..." menu and the entries that select the form of the table (table_forms)
+    case TABLE_MENU_COLUMNS = 'table_menu_columns';
+    case TABLE_MENU_AS = 'table_menu_as';
+    case TABLE_AS_TABLE = 'table_as_table';
+    case TABLE_AS_CHART = 'table_as_chart';
+    case TABLE_AS_TABLE_CHART = 'table_as_table_chart';
     // the subtitle and the axis texts of a value table shown as a chart (see table_chart)
     case CHART_RANGE_BARS_TIP = 'chart_range_bars_tip';
     case CHART_SCATTER_TIP = 'chart_scatter_tip';
@@ -1121,6 +1127,9 @@ enum messages: string
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '" to plot';
     case CHART_COLUMNS_MISSING = 'the table has not enough value columns for the chart';
+    case CHART_TYPE_UNKNOWN = 'the chart type "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" has no code id of a known chart type, so the chart is not shown';
     case TABLE_COLUMNS_NOT_IMPLEMENTED = 'the table with related columns is not yet implemented for '
         . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END;
     case VALUE_UNIT_NOT_UNIQUE = 'the value has more than one unit: "'

@@ -65,6 +65,10 @@ class styles
     // the popup menu of the "..." table header that selects the columns shown, styled like
     // the menus of the page header (see style_html.css)
     const string MENU_COLUMN = 'column-menu';
+    // a sub header inside a popup menu e.g. "columns and values" above the column entries
+    const string MENU_HEADER = 'menu-header';
+    // the charts of a table beside each other, wrapping on a narrow screen (see style_html.css)
+    const string CHART_ROW = 'chart-row';
     // the popup menu of the "..." below the title of a default view that selects the view
     // version and the full width line that puts it in the right corner (see style_html.css)
     const string MENU_VIEW_VERSION = 'view-version-menu';

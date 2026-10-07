@@ -72,6 +72,7 @@ include_once html_paths::SHARED_HELPER . 'IdObject.php';
 include_once html_paths::SHARED_HELPER . 'TextIdObject.php';
 include_once html_paths::SHARED_ENUM . 'chart_types.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
+include_once html_paths::SHARED_ENUM . 'table_forms.php';
 include_once html_paths::SHARED_TYPES . 'position_types.php';
 include_once html_paths::SHARED . 'api.php';
 include_once html_paths::SHARED . 'url_var.php';
@@ -102,6 +103,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\enum\chart_types;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\enum\table_forms;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\helper\Config;
 use Zukunft\ZukunftCom\main\php\shared\types\position_types;
@@ -730,7 +732,9 @@ class value_list extends ListBase
     {
         $result = '';
         if (!$this->is_empty()) {
-            // the tooltip of a row names every column of the table, so no tier is left out
+            // the tooltip of a row names every column of the table, so no tier is left out, not
+            // even by the column selection of the page that shows the table beside the chart
+            unset($url_array[url_var::DISPLAY_LIST_COLUMNS]);
             $model = $this->table_model($msg, $context_phr_lst, $col_order, $rel_lst, $limit,
                 $url_array, $col_values_only, self::COLUMN_TIERS_ALL, $value_rows_only);
             $chart = new table_chart();
@@ -2234,20 +2238,44 @@ class value_list extends ListBase
      * @param array $url_array the url parameters of the page that shows the table
      * @return string the html code of the header cell
      */
-    private function columns_menu(array $url_array): string
+    function columns_menu(array $url_array): string
     {
         $html = new html_base();
         $result = msg_id::THREE_POINTS->text();
         if ($url_array != []) {
-            $items = '';
+            // the columns and the form of the table are two selections of the same menu, each
+            // below its own sub header
+            $items = $html->list_item(msg_id::TABLE_MENU_COLUMNS->text(), styles::MENU_HEADER);
             foreach (self::COLUMN_TIER_NAMES as $tiers => $tier_msg) {
                 $items .= $this->columns_menu_item($url_array, $tiers, $tier_msg, false);
                 $items .= $this->columns_menu_item($url_array, $tiers, $tier_msg, true);
+            }
+            $items .= $html->list_item(msg_id::TABLE_MENU_AS->text(), styles::MENU_HEADER);
+            foreach (table_forms::cases() as $form) {
+                $items .= $this->form_menu_item($url_array, $form);
             }
             $result = $html->popup_menu(
                 $result, $items, styles::MENU_COLUMN, msg_id::TABLE_COLUMNS_TIP->text());
         }
         return $result;
+    }
+
+    /**
+     * one "as" entry of the column menu, which shows the same page with the table in the given form
+     *
+     * @param array $url_array the url parameters of the page that shows the table
+     * @param table_forms $form the form of this entry e.g. the table with its charts
+     * @return string the html code of the menu entry
+     */
+    private function form_menu_item(array $url_array, table_forms $form): string
+    {
+        $html = new html_base();
+        $url_pars = html_base::page_url_array($url_array);
+        // the var is removed first, so that every page creates the same url for the same form
+        unset($url_pars[url_var::DISPLAY_LIST_AS]);
+        $url_pars[url_var::DISPLAY_LIST_AS] = $form->value;
+        $url = api::MAIN_SCRIPT . url_var::PAR . http_build_query($url_pars);
+        return $html->list_item($html->ref($url, $form->msg_id()->text()));
     }
 
     /**

@@ -1260,6 +1260,18 @@ class test_phrases
         $lst->add($t_trp->fluid_democracy_solution()->phrase());
         $lst->add($t_trp->gross_domestic_usage_solution()->phrase());
         $lst->add($t_trp->free_software_solution()->phrase());
+        // the default charts of the ranking like phrase_list::load_chart_definitions loads them:
+        // the chart type words with the code id that selects the chart type, the tiers, the
+        // chart triples with the plotted columns and their assignment to the default tier
+        $lst->add($t_wrd->word_range_bars()->phrase());
+        $lst->add($t_wrd->word_scatter_plot()->phrase());
+        $lst->add($t_trp->chart_type_default()->phrase());
+        $lst->add($t_trp->chart_type_alternative()->phrase());
+        $lst->add($t_trp->range_bars_of_loss()->phrase());
+        $lst->add($t_trp->gain_and_effort()->phrase());
+        $lst->add($t_trp->scatter_of_gain_and_effort()->phrase());
+        $lst->add($t_trp->chart_range_bars_of_loss()->phrase());
+        $lst->add($t_trp->chart_scatter_of_gain_and_effort()->phrase());
         return $lst;
     }
 

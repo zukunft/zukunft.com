@@ -8,7 +8,7 @@ in a test file of the src/test/php/unit* folders; the count is by function name
 and cannot tell the classes apart, so a name that several classes declare needs
 2 calls per class and is listed as shared otherwise
 
-623 of 5902 public functions have at least 2 unit test calls; the 5279 functions below do not
+624 of 5908 public functions have at least 2 unit test calls; the 5284 functions below do not
 
 ## main backend
 
@@ -3963,6 +3963,10 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- unquote - 0 unit test calls
 \-- messages
     \-- get - 9 unit test calls shared by 14 classes
+\-- table_forms
+    \-- msg_id - 1 unit test calls shared by 2 classes
+    \-- with_chart - 0 unit test calls
+    \-- with_table - 0 unit test calls
 \-- url_var
     \-- back_par - 0 unit test calls
     \-- prefixed_vars - 0 unit test calls
@@ -3972,7 +3976,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
 \-- users
     \-- mail_header - 0 unit test calls
 \-- value_types
-    \-- msg_id - 0 unit test calls
+    \-- msg_id - 1 unit test calls shared by 2 classes
     \-- query_extension - 0 unit test calls shared by 2 classes
     \-- selector_list - 0 unit test calls shared by 2 classes
     \-- sql_type - 0 unit test calls shared by 4 classes
@@ -4668,6 +4672,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- load_by_formula - 0 unit test calls shared by 3 classes
     \-- load_by_ids - 6 unit test calls shared by 19 classes
     \-- load_by_verb - 1 unit test calls shared by 3 classes
+    \-- load_chart_definitions - 0 unit test calls
     \-- load_column_definitions - 0 unit test calls
     \-- load_fallback - 0 unit test calls shared by 3 classes
     \-- load_related - 0 unit test calls shared by 2 classes
@@ -5459,6 +5464,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- add_results - 0 unit test calls
     \-- api_mapper - 25 unit test calls shared by 100 classes
     \-- columns_by_phrase - 1 unit test calls
+    \-- columns_menu - 0 unit test calls
     \-- common_phrases - 0 unit test calls shared by 4 classes
     \-- dsp_table - 0 unit test calls
     \-- filter - 3 unit test calls shared by 4 classes

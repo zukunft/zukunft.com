@@ -7309,6 +7309,8 @@
     \-- api_mapper - section for function api_mapper is expected to be construct and map in /phrase/phrase_list.php
     \-- filter_by_name_start - section for function filter_by_name_start not yet defined that it should be load in /phra
             se/phrase_list.php
+    \-- chart_definitions - section for function chart_definitions not yet defined that it should be load in /phrase/phr
+            ase_list.php
     \-- result_phrases_most_relevant - section for function result_phrases_most_relevant not yet defined that it should 
             be related in /phrase/phrase_list.php
     \-- child_names - section for function child_names not yet defined that it should be related in /phrase/phrase_list.
@@ -8007,6 +8009,8 @@
     \-- table_by_related_columns - section for function table_by_related_columns not yet defined that it should be displ
             ay in /value/value_list.php
     \-- table_to_svg - section for function table_to_svg not yet defined that it should be display in /value/value_list.
+            php
+    \-- columns_menu - section for function columns_menu not yet defined that it should be display in /value/value_list.
             php
     \-- list_unit - section for function list_unit not yet defined that it should be display in /value/value_list.php
     \-- table - section for function table not yet defined that it should be display in /value/value_list.php
@@ -8778,7 +8782,7 @@
         \-- sys_log_list - request the system log entries related to the session user from the backend
     \-- load_api_by_object_field
         \-- change_log_list - get the json of a list of changes from the api
-    \-- 8
+    \-- 10
         \-- phrase_list - add the phrases related to the given formula to the list
     \-- load_fallback
         \-- change_log_list - if the change log list is empty fill it with the last changes

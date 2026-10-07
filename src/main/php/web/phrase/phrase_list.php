@@ -59,6 +59,7 @@ include_once html_paths::WORD . 'word_list.php';
 include_once html_paths::SHARED_CONST . 'triples.php';
 include_once html_paths::SHARED_CONST . 'views.php';
 include_once html_paths::SHARED_CONST . 'words.php';
+include_once html_paths::SHARED_ENUM . 'chart_types.php';
 include_once html_paths::SHARED_ENUM . 'foaf_direction.php';
 include_once html_paths::SHARED_ENUM . 'languages.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
@@ -86,6 +87,7 @@ use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\web\word\word_list;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\enum\chart_types;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
 use Zukunft\ZukunftCom\main\php\shared\enum\languages;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -100,6 +102,9 @@ class phrase_list extends sandbox_list_named
     // the link levels from "column (system)": the column tiers, their column definitions and
     // the order triples that chain the definitions
     const int COLUMN_LEVELS = 3;
+    // the relation levels from "chart type (system)" to the plotted columns of a chart: the
+    // tier, the assignment of the chart, the chart triple and its chart type word and columns
+    const int CHART_LEVELS = 4;
 
     /*
      * set and get
@@ -314,6 +319,111 @@ class phrase_list extends sandbox_list_named
     {
         return $this->load_related_by_name(
             triples::SYSTEM_COLUMN, foaf_direction::BOTH, $msg, self::COLUMN_LEVELS);
+    }
+
+    /**
+     * load the chart definitions of a table: the chart type tiers, the charts assigned to them,
+     * the chart triples with the plotted columns and the chart type words (see chart_definitions)
+     *
+     * @param user_message $msg to report a problem of the api call
+     * @return bool true if the definitions have been loaded
+     */
+    function load_chart_definitions(user_message $msg): bool
+    {
+        return $this->load_related_by_name(
+            triples::SYSTEM_CHART_TYPE, foaf_direction::BOTH, $msg, self::CHART_LEVELS);
+    }
+
+    /**
+     * the default charts of a table defined in this list (docs/llm/frontend.md "A table as a
+     * chart"): a chart is the triple "<chart type> of <column>" or "<chart type> of <column>
+     * and <column>" assigned to the default chart type tier, e.g. "range bars of potential
+     * loss" and "scatter plot of potential gain and initial effort" for the start page ranking
+     *
+     * @param user_message $msg to report a chart type word without the code id of a chart type
+     * @return array per chart the chart type and the names of the plotted columns, the y axis first
+     */
+    function chart_definitions(user_message $msg): array
+    {
+        $result = [];
+        foreach ($this->tier_members(triples::SYSTEM_CHART_TYPE_DEFAULT, $msg) as $chart) {
+            // the chart type word carries the chart type as its code id, which only the word of
+            // this list has, because a triple names its parts without the code id
+            $type_name = $chart->get_from()?->name() ?? '';
+            $type_wrd = $this->get_by_name($type_name, $msg);
+            $type = chart_types::tryFrom($type_wrd?->obj()->code_id ?? '');
+            if ($type == null) {
+                $msg->add_warning_with_vars(msg_id::CHART_TYPE_UNKNOWN, [msg_id::VAR_NAME => $type_name]);
+            } else {
+                $result[] = [$type, $this->chart_columns($chart->get_to(), $msg)];
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the chart triples assigned to a chart type tier with "<chart> can be <tier>"
+     *
+     * @param string $tier the name of a chart type tier e.g. "default chart type (system)"
+     * @param user_message $msg to report a problem of reading a phrase of the list
+     * @return array the chart triples as the list has them, in the order of the list
+     */
+    private function tier_members(string $tier, user_message $msg): array
+    {
+        $result = [];
+        foreach ($this->lst() as $phr) {
+            if ($phr->is_triple() and $phr->obj()->get_to()?->name() == $tier) {
+                $chart = $this->list_triple($phr->obj()->get_from(), $msg);
+                if ($chart != null) {
+                    $result[] = $chart;
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param phrase|null $phr the "to" side of a chart triple: the plotted column or the pair
+     *                         "<column> and <column>" with the y axis column first
+     * @param user_message $msg to report a problem of reading a phrase of the list
+     * @return array the names of the plotted columns
+     */
+    private function chart_columns(?phrase $phr, user_message $msg): array
+    {
+        $result = [];
+        if ($phr != null) {
+            $pair = $this->list_triple($phr, $msg);
+            if ($pair != null and $pair->get_verb()->get_code_id() == verbs::AND) {
+                $result = [$pair->get_from()?->name(), $pair->get_to()?->name()];
+            } else {
+                $result = [$phr->name()];
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the triple that a nested phrase of a triple names, with its verb, from and to
+     *
+     * a "from" or "to" phrase of a triple may come from the api json with its id and name only,
+     * so the triple is taken from the list entry of the same name, which the definition load
+     * delivers; if the list has no such entry the nested triple is used as it is
+     *
+     * @param phrase|null $phr a phrase that may name a triple
+     * @param user_message $msg to report a problem of reading a phrase of the list
+     * @return triple|null the triple or null if the phrase is no triple
+     */
+    private function list_triple(?phrase $phr, user_message $msg): ?triple
+    {
+        $result = null;
+        if ($phr != null and $phr->is_triple()) {
+            $result = $phr->obj();
+            $lst_phr = $this->get_by_name($phr->name(), $msg);
+            if ($lst_phr != null and $lst_phr->is_triple()) {
+                $result = $lst_phr->obj();
+            }
+        }
+        return $result;
     }
 
     /**

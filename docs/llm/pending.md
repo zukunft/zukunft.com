@@ -2,17 +2,15 @@
 
 ## table with column component
 
-the table component used for the start page has in the top right corner '...'
-which is used to show a 'select the columns to show' menu.
-change the tooltip to something like 'select the columns and form to show' and
-add a subheader 'columns and values' not in bold above 'mayor', 'mayor + range', ...
-and add another subheader 'as' with the entries 'table' (linke until now), 'chart' and 'table + chart'
-
 to be able to define which column values should be used to sort a table add an url_var (with a human version) to define the prime order and another url_var for the sub and sub_sub order. The id for the var should be the phrase id of the column with a condition that can be e.g. asc, desc in combination with numeric or alpha or alpha incl. parent phrase name 
 
 add up / down sort icons to each column which sorts the start page rows by this column
 
 if there is more than one solution add ', ...' with a link to the solution list
+
+
+## PV calculator
+
 
 
 

@@ -3200,9 +3200,13 @@ class html_base
      * @param string $txt the html code that should be a list item
      * @return string the html code of a list item
      */
-    function list_item(string $txt): string
+    function list_item(string $txt, string $style = ''): string
     {
-        return '<' . self::LI . '>' . $txt . '</' . self::LI . '>';
+        $attr = '';
+        if ($style != '') {
+            $attr .= ' ' . self::CLASS_HTML . '="' . $style . '"';
+        }
+        return '<' . self::LI . $attr . '>' . $txt . '</' . self::LI . '>';
     }
 
     /**

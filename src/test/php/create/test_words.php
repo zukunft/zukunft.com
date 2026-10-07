@@ -43,6 +43,7 @@ include_once paths::MODEL_WORD . 'word.php';
 include_once paths::MODEL_WORD . 'word_list.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_CONST . 'words.php';
+include_once paths::SHARED_ENUM . 'chart_types.php';
 include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_TYPES . 'protection_types.php';
@@ -65,6 +66,7 @@ use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
+use Zukunft\ZukunftCom\main\php\shared\enum\chart_types;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\shared\types\share_types;
@@ -1133,6 +1135,58 @@ class test_words extends test_objects
     {
         $wrd = new word($this->env->usr1);
         $wrd->set(word_names::POTENTIAL_ID, word_names::POTENTIAL);
+        return $wrd;
+    }
+
+    /**
+     * @return word "chart type" that the chart type tiers of solution_prio.json are built from
+     */
+    function word_chart_type(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::CHART_TYPE_ID, word_names::CHART_TYPE);
+        return $wrd;
+    }
+
+    /**
+     * @return word "default" that names the chart type tier shown first
+     */
+    function word_default(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::DEFAULT_ID, word_names::DEFAULT);
+        return $wrd;
+    }
+
+    /**
+     * @return word "alternative" that names the chart type tier the reader can select instead
+     */
+    function word_alternative(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::ALTERNATIVE_ID, word_names::ALTERNATIVE);
+        return $wrd;
+    }
+
+    /**
+     * @return word "range bars" with the code id that selects the chart type (see chart_types)
+     */
+    function word_range_bars(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::RANGE_BARS_ID, word_names::RANGE_BARS);
+        $wrd->set_code_id_db(chart_types::RANGE_BARS->value);
+        return $wrd;
+    }
+
+    /**
+     * @return word "scatter plot" with the code id that selects the chart type (see chart_types)
+     */
+    function word_scatter_plot(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::SCATTER_PLOT_ID, word_names::SCATTER_PLOT);
+        $wrd->set_code_id_db(chart_types::SCATTER->value);
         return $wrd;
     }
 

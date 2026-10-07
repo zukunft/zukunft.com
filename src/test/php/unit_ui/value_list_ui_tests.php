@@ -50,6 +50,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\chart_types;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\enum\table_forms;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
@@ -517,6 +518,32 @@ class value_list_ui_tests
         $test_name = '... and names the entry with the range';
         $t->assert_text_contains($test_name, $lib->html_to_text($tbl_menu),
             msg_id::TABLE_COLUMNS_ALL->text() . ' ' . msg_id::TABLE_COLUMNS_WITH_RANGE->text());
+        // the menu selects the columns and the form of the table, each below its own sub header
+        $test_name = 'the menu tooltip names the columns and the form';
+        $t->assert_text_contains($test_name, $tbl_menu, 'title="' . msg_id::TABLE_COLUMNS_TIP->text() . '"');
+        $test_name = 'the column entries are below the sub header columns and values';
+        $t->assert_text_order($test_name, $tbl_menu,
+            'class="' . styles::MENU_HEADER . '">' . msg_id::TABLE_MENU_COLUMNS->text(),
+            msg_id::TABLE_COLUMNS_MAYOR->text());
+        $test_name = 'the form entries are below the sub header as';
+        $t->assert_text_order($test_name, $tbl_menu,
+            'class="' . styles::MENU_HEADER . '">' . msg_id::TABLE_MENU_AS->text(),
+            msg_id::TABLE_AS_TABLE_CHART->text());
+        foreach (table_forms::cases() as $form) {
+            $test_name = 'the menu offers the table ' . $form->value;
+            $t->assert_text_contains($test_name, $tbl_menu,
+                url_var::DISPLAY_LIST_AS . '=' . $form->value . '">' . $form->msg_id()->text());
+        }
+        // the charts of a table are data: the chart triples assigned to the default chart type;
+        // compared by the chart type values, so that a difference can be printed
+        $test_name = 'the ranking defines the range bars of the loss and the scatter plot of the gain against the effort';
+        $charts = $t_phr->list_global_problems_ui()->chart_definitions($msg_ui);
+        $t->assert($test_name, array_map(fn(array $chart) => [$chart[0]->value, $chart[1]], $charts), [
+            [chart_types::RANGE_BARS->value, [triple_names::POTENTIAL_LOSS]],
+            [chart_types::SCATTER->value, [triple_names::POTENTIAL_GAIN, triple_names::INITIAL_EFFORT]],
+        ]);
+        $test_name = 'a list without chart definitions defines no chart';
+        $t->assert($test_name, $rel_lst->chart_definitions($msg_ui), []);
 
         $test_name = 'the table of an empty value list renders nothing';
         $t->assert($test_name, new value_list_ui()->table_by_related_columns($msg_ui), '');

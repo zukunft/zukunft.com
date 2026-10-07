@@ -195,6 +195,17 @@ class word_names
     const int TRILLION_ID = 275;
     const string USD = 'USD';
     const int USD_ID = 443;
+    // the chart types of solution_prio.json and the tiers they are assigned to (see triples::SYSTEM_CHART_TYPE)
+    const string CHART_TYPE = 'chart type';
+    const int CHART_TYPE_ID = 365;
+    const string DEFAULT = 'default';
+    const int DEFAULT_ID = 366;
+    const string ALTERNATIVE = 'alternative';
+    const int ALTERNATIVE_ID = 367;
+    const string RANGE_BARS = 'range bars';
+    const int RANGE_BARS_ID = 368;
+    const string SCATTER_PLOT = 'scatter plot';
+    const int SCATTER_PLOT_ID = 369;
 
     // words from import file company.json used for the start page in order of appearance
     const string SALES = 'sales';

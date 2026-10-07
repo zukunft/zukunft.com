@@ -121,6 +121,27 @@ body {
     background: #f0f0f0;
 }
 
+/* a sub header inside a popup menu e.g. "columns and values" and "as" of the column menu */
+.column-menu ul .menu-header {
+    padding: 0.4rem 1rem 0.1rem;
+    color: #777;
+    font-size: 0.85em;
+    white-space: nowrap;
+}
+
+/* the charts of a table beside each other, each at least a readable width, wrapping if the screen is narrower */
+.chart-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: flex-start;
+}
+
+.chart-row > svg {
+    max-width: 100%;
+    height: auto;
+}
+
 /* the full width line below the title that puts the view version menu in the right corner */
 .view-version-corner {
     width: 100%;

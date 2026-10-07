@@ -222,6 +222,26 @@ class triple_names
     const int SYSTEM_COLUMN_MAYOR_ID = 219;
     const string SYSTEM_COLUMN_MAIN = 'main column (system)';
     const int SYSTEM_COLUMN_MAIN_ID = 220;
+    // the chart type tiers of solution_prio.json and the two charts of the start page ranking
+    // (see triples::SYSTEM_CHART_TYPE and docs/llm/frontend.md "A table as a chart")
+    const string SYSTEM_CHART_TYPE = shared_triples::SYSTEM_CHART_TYPE;
+    const int SYSTEM_CHART_TYPE_ID = 214;
+    const string SYSTEM_CHART_TYPE_DEFAULT = shared_triples::SYSTEM_CHART_TYPE_DEFAULT;
+    const int SYSTEM_CHART_TYPE_DEFAULT_ID = 232;
+    const string SYSTEM_CHART_TYPE_ALTERNATIVE = shared_triples::SYSTEM_CHART_TYPE_ALTERNATIVE;
+    const int SYSTEM_CHART_TYPE_ALTERNATIVE_ID = 233;
+    const string INITIAL_EFFORT = 'initial effort';
+    const int INITIAL_EFFORT_ID = 151;
+    const string RANGE_BARS_OF_LOSS = 'range bars of potential loss';
+    const int RANGE_BARS_OF_LOSS_ID = 215;
+    const string GAIN_AND_EFFORT = 'potential gain and initial effort';
+    const int GAIN_AND_EFFORT_ID = 216;
+    const string SCATTER_OF_GAIN_AND_EFFORT = 'scatter plot of potential gain and initial effort';
+    const int SCATTER_OF_GAIN_AND_EFFORT_ID = 234;
+    const string CHART_RANGE_BARS_OF_LOSS = 'chart range bars of potential loss';
+    const int CHART_RANGE_BARS_OF_LOSS_ID = 257;
+    const string CHART_SCATTER_OF_GAIN_AND_EFFORT = 'chart scatter plot of potential gain and initial effort';
+    const int CHART_SCATTER_OF_GAIN_AND_EFFORT_ID = 258;
     const string COLUMN_PROBLEM = 'column problem (high prio)';
     const int COLUMN_PROBLEM_ID = 235;
     const string COLUMN_SOLUTION = 'column solution (high prio)';
