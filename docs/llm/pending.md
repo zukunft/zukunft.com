@@ -2,25 +2,21 @@
 
 ## type and component order
 
-sort the rows in src/main/resources/db_code_links/phrase_types.csv in the same order as src/test/resources/unit/phrase/list_types_sorted.csv and add missing fields in src/main/resources/db_code_links/phrase_types.csv or update e.g. the descritions in src/main/resources/db_code_links/phrase_types.csv 
+review the initial order of the components
 
 sort the initial component creation in src/main/resources/messages/system_views.json so that it starts with the first component used in this file by a view and so that the components are grouped by similarity, but more important, no dependencies are broken. in doughty use the order of the component types as an orientation.
 
 sort the initial component creation components in src/main/resources/messages/base_views.json so that it starts with the first component used in this file by a view and so that the components are grouped by similarity, but more important, no dependencies are broken. in doughty use the order of the component types as an orientation.
 
-sort the verbs in src/main/resources/verbs.json so that the resulting src/test/resources/unit/verb/list.csv matches the src/test/resources/unit/verb/list_sorted.csv. use src/test/resources/unit/verb/list_unsorted.csv to re-pin the verbs  
-
-review the initial order of the types e.g.
-
-- component types
-- phrase types
-
-review the initial order of the components
 review the initial order of the verbs
+
+sort the verbs in src/main/resources/verbs.json so that the resulting src/test/resources/unit/verb/list.csv matches the src/test/resources/unit/verb/list_sorted.csv. use src/test/resources/unit/verb/list_unsorted.csv to re-pin the verbs  
 
 ### source types
 
-Add to the database table source_types the columns 'group' and 'wikipedia'. Fill the 'groups' column in the csv src/main/resources/db_code_links/source_types.csv with:
+Add to the database table source_types the columns 'group' and 'wikipedia'. 
+
+Fill the 'groups' column in the csv src/main/resources/db_code_links/source_types.csv with:
 
 Documents for
 

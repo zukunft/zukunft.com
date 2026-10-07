@@ -44,9 +44,9 @@
         "field_id": 115,
         "row_id": 1,
         "old_value": "measure_unit",
-        "old_id": 3,
+        "old_id": 2,
         "new_value": "time",
-        "new_id": 2,
+        "new_id": 11,
         "std_value": null,
         "std_id": null
     },

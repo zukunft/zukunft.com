@@ -1,11 +1,11 @@
 triple_id,from_phrase_id,verb_id,to_phrase_id,user_id,triple_name,name_given,name_generated,description,weight,triple_condition_id,phrase_type_id,view_id,usage,impact,inactive,code_id,excluded,share_type_id,protect_id
-1,2,3,1,1,mathematical constant,,,A mathematical constant that never changes e.g. Pi,0.5,,17,,,9999999999,,,,,3
-2,139,37,137,1,Euler's number,,,The number e is a mathematical constant approximately equal to 2.71828 that is the base of the natural logarithm and exponential function.,,,17,,,,,,,,3
-3,139,37,2,1,Euler's constant,,,"Euler's constant (sometimes called the Euler–Mascheroni constant) is a mathematical constant, usually denoted by the lowercase Greek letter gamma (γ), defined as the limiting difference between the harmonic series and the natural logarithm, denoted here by log",,,17,,,,,,,,3
+1,2,3,1,1,mathematical constant,,,A mathematical constant that never changes e.g. Pi,0.5,,20,,,9999999999,,,,,3
+2,139,37,137,1,Euler's number,,,The number e is a mathematical constant approximately equal to 2.71828 that is the base of the natural logarithm and exponential function.,,,20,,,,,,,,3
+3,139,37,2,1,Euler's constant,,,"Euler's constant (sometimes called the Euler–Mascheroni constant) is a mathematical constant, usually denoted by the lowercase Greek letter gamma (γ), defined as the limiting difference between the harmonic series and the natural logarithm, denoted here by log",,,20,,,,,,,,3
 4,140,4,7,1,jerk (physics),,,Jerk (also known as Jolt) is the rate of change of an object's acceleration over time.,,,,,,,,,,,3
-5,5,29,17,1,π (unit symbol),,,,,,22,,,,,,,,
+5,5,29,17,1,π (unit symbol),,,,,,28,,,,,,,,
 6,9,3,8,1,natural science,,,"Natural science is understanding and prediction of natural phenomena, based on empirical evidence",,,,,,,,,,,
-7,2,3,7,1,Physical constant,,,A physical constant is a physical quantity that is generally believed to be both universal in nature and have constant value in time,,,17,,,,,,,,3
+7,2,3,7,1,Physical constant,,,A physical constant is a physical quantity that is generally believed to be both universal in nature and have constant value in time,,,20,,,,,,,,3
 8,19,20,18,1,base unit,,,,,,,,,,,,,,3
 9,19,20,37,1,derived unit,,,,,,,,,,,,,,3
 10,20,20,21,1,international system,,,,,,,,,,,,,,3
@@ -18,10 +18,10 @@ triple_id,from_phrase_id,verb_id,to_phrase_id,user_id,triple_name,name_given,nam
 17,32,29,31,1,K (unit symbol),,,,,,,,,,,,,,
 18,34,18,33,1,mol (unit symbol),,,,,,,,,,,,,,
 19,36,29,35,1,cd (unit symbol),,,,,,,,,,,,,,
-20,25,26,22,1,metre per second,,,"The metre per second is the SI unit of both speed and velocity, representing the distance of one metre covered in one second.",,,3,,,,,,,,3
+20,25,26,22,1,metre per second,,,"The metre per second is the SI unit of both speed and velocity, representing the distance of one metre covered in one second.",,,2,,,,,,,,3
 21,22,20,87,1,second squared,,,,,,,,,,,,,,3
 22,22,20,88,1,second cubed,,,,,,,,,,,,,,3
-23,25,20,87,1,square metre,,,The square metre is the unit of area in the International System of Units (SI). It is the area of a square with sides measuring one metre in length.,,,3,,,,,,,,3
+23,25,20,87,1,square metre,,,The square metre is the unit of area in the International System of Units (SI). It is the area of a square with sides measuring one metre in length.,,,2,,,,,,,,3
 24,25,20,88,1,cubic metre,,,The cubic metre is the unit of volume in the International System of Units (SI). It is the volume of a cube with edges measuring one metre in length.,,,,,,,,,,,3
 25,89,23,90,1,elementary charge,,,"The elementary charge, usually denoted by e, is a fundamental physical constant, defined as the electric charge carried by a single proton (+1 e) or, equivalently, the magnitude of the negative electric charge carried by a single electron, which has charge −1 e.",,,,,,,,,,,3
 26,2,5,106,1,Planck constant,,,"The Planck constant is a fundamental physical constant[1] of foundational importance in quantum mechanics: a photon's energy is equal to its frequency multiplied by the Planck constant, and the wavelength of a matter wave equals the Planck constant divided by the associated particle momentum.",,,,,,,,,,,3
@@ -33,19 +33,19 @@ triple_id,from_phrase_id,verb_id,to_phrase_id,user_id,triple_name,name_given,nam
 32,33,26,4,1,mol−1,,,is the unit of the Avogadro constant.,,,,,,,,,,,3
 33,91,20,92,1,luminous efficacy,,,"Luminous efficacy is a measure of how well a light source produces visible light. It is the ratio of luminous flux to power, measured in lumens per watt in the International System of Units (SI). ",,,,,,,,,,,3
 34,71,26,51,1,lm/W,,,is the unit of the luminous efficacy,,,,,,,,,,,3
-35,41,26,22,1,radian per second,,,The radian per second is the unit of angular velocity in the International System of Units (SI).,,,3,,,,,,,,3
+35,41,26,22,1,radian per second,,,The radian per second is the unit of angular velocity in the International System of Units (SI).,,,2,,,,,,,,3
 36,94,26,93,1,angular velocity,,,"In kinematics, angular velocity is a vector that identifies the plane, direction and angular speed of rotation of a body; its magnitude is the rate at which the object rotates.",,,,,,,,,,,3
 37,86,26,93,1,angular acceleration,,,"In kinematics, angular acceleration is the rate of change of angular velocity over time, expressed in the SI unit radian per second squared.",,,,,,,,,,,3
 38,121,29,120,1,l (unit symbol),,,,,,,,,,,,,,
 39,129,39,98,1,frequency (rate),,,"the number of occurrences of a repeating event per unit of time, most often measured in hertz; the rate reading of the ambiguous word 'frequency', displayed as 'frequency' with 'rate' shown only in the tooltip",,,,,,,,,,,3
-40,39,26,22,1,hertz per second,,,,,,3,,,,,,,,3
+40,39,26,22,1,hertz per second,,,,,,2,,,,,,,,3
 41,98,5,97,1,flow rate,,,the volume of fluid that passes per unit time,,,,,,,,,,,3
-42,782,1,102,1,per day,,,,,,18,,,,,,,,3
-43,0,26,112,1,per km,,,,,,18,,,,,,,,3
-44,0,26,122,1,per kWh,,,,,,18,,,,,,,,3
-45,0,26,126,1,per t,,,,,,18,,,,,,,,3
-46,0,26,120,1,per l,,,,,,18,,,,,,,,3
-47,782,1,105,1,per year,,,,,,18,,,,,,,,3
+42,782,1,102,1,per day,,,,,,4,,,,,,,,3
+43,0,26,112,1,per km,,,,,,4,,,,,,,,3
+44,0,26,122,1,per kWh,,,,,,4,,,,,,,,3
+45,0,26,126,1,per t,,,,,,4,,,,,,,,3
+46,0,26,120,1,per l,,,,,,4,,,,,,,,3
+47,782,1,105,1,per year,,,,,,4,,,,,,,,3
 48,128,20,127,1,hyperfine transition,,,,,,,,,,,,,,3
 49,130,36,142,1,Caesium-133,,,"Caesium-133 is the only stable isotope of caesium. The SI base unit of time, the second, is defined by the unperturbed ground-state hyperfine transition frequency of this atom, set at 9192631770 Hz.",,,,,,,,,,,3
 50,132,2,105,1,1967 (year),,,,,,,,,,,,,,
@@ -54,39 +54,39 @@ triple_id,from_phrase_id,verb_id,to_phrase_id,user_id,triple_name,name_given,nam
 53,135,2,105,1,2019 (year),,,,,,,,,,,,,,
 54,105,5,131,1,year of definition,,,,,,,,,,,,,,
 55,141,27,112,1,100 km,,,,,,,,,,,,,,
-56,17,2,-1,1,Pi (math),,,ratio of the circumference of a circle to its diameter,,,22,,,,,,,,
-57,-2,2,-1,1,𝑒 (math),,,Is the limit of (1 + 1/n)^n as n approaches infinity,,,22,,,,,,,,
-58,6,29,-2,1,𝑒 (unit symbol),,,Is the limit of (1 + 1/n)^n as n approaches infinity,,,22,,,,,,,,
+56,17,2,-1,1,Pi (math),,,ratio of the circumference of a circle to its diameter,,,28,,,,,,,,
+57,-2,2,-1,1,𝑒 (math),,,Is the limit of (1 + 1/n)^n as n approaches infinity,,,28,,,,,,,,
+58,6,29,-2,1,𝑒 (unit symbol),,,Is the limit of (1 + 1/n)^n as n approaches infinity,,,28,,,,,,,,
 59,7,2,-6,1,physics (natural science),,,,,,,,,,,,,,
 60,-9,20,38,1,named derived unit,,,,,,,,,,,,,,3
 61,-9,20,83,1,kinematic derived unit,,,,,,,,,,,,,,3
 62,-9,20,109,1,mechanics derived unit,,,,,,,,,,,,,,3
 63,-10,5,-8,1,International System of Units (SI),,,"The International System of Units, internationally known by the abbreviation SI (from French Système international d'unités), is the modern form of the metric system and the world's most widely used system of measurement.",,,,,,,,,,,3
-64,22,39,-11,1,second (time),,,"The second is defined by taking the fixed numerical value of the caesium frequency, ΔνCs, the unperturbed ground-state hyperfine transition frequency of the caesium 133 atom, to be 9192631770 when expressed in the unit Hz, which is equal to s−1.",,,3,,,,,,,,3
+64,22,39,-11,1,second (time),,,"The second is defined by taking the fixed numerical value of the caesium frequency, ΔνCs, the unperturbed ground-state hyperfine transition frequency of the caesium 133 atom, to be 9192631770 when expressed in the unit Hz, which is equal to s−1.",,,2,,,,,,,,3
 65,22,39,-12,1,second (ranking),,,the ranking-number reading of the ambiguous word 'second'; displayed as 'second' with 'ranking number' shown only in the tooltip,,,,,,,,,,,
 66,-24,26,22,1,cubic metre per second,,,"The cubic metre per second is the unit of volumetric flow rate in the International System of Units, measuring the movement of the volume of a one-metre cube each second.",,,,,,,,,,,3
-67,25,26,-21,1,metre per second squared,,,"The metre per second squared is the SI unit of acceleration, composed from the base units of metre and second.",,,3,,,,,,,,3
-68,25,26,-22,1,metre per second cubed,,,"The metre per second cubed is the SI unit of jerk, the rate of change of acceleration over time.",,,3,,,,,,,,3
-69,0,18,-35,1,rad/s,,,,,,3,,,,,,,,3
-70,41,26,-21,1,radian per second squared,,,,,,3,,,,,,,,3
-71,0,29,-20,1,m/s,,,"The metre per second is the unit of both speed (a scalar quantity) and velocity (a vector quantity, which has direction and magnitude) in the International System of Units (SI), equal to the speed of a body covering a distance of one metre in a time of one second.",,,3,,,,,,,,3
+67,25,26,-21,1,metre per second squared,,,"The metre per second squared is the SI unit of acceleration, composed from the base units of metre and second.",,,2,,,,,,,,3
+68,25,26,-22,1,metre per second cubed,,,"The metre per second cubed is the SI unit of jerk, the rate of change of acceleration over time.",,,2,,,,,,,,3
+69,0,18,-35,1,rad/s,,,,,,2,,,,,,,,3
+70,41,26,-21,1,radian per second squared,,,,,,2,,,,,,,,3
+71,0,29,-20,1,m/s,,,"The metre per second is the unit of both speed (a scalar quantity) and velocity (a vector quantity, which has direction and magnitude) in the International System of Units (SI), equal to the speed of a body covering a distance of one metre in a time of one second.",,,2,,,,,,,,3
 72,-39,19,95,1,frequency drift,,,,,,,,,,,,,,3
-73,0,18,-40,1,Hz/s,,,,,,3,,,,,,,,3
+73,0,18,-40,1,Hz/s,,,,,,2,,,,,,,,3
 74,96,5,-41,1,volumetric flow rate,,,"In physics and engineering, the volumetric flow rate is the volume of fluid which passes per unit time, typically denoted Q and measured in cubic metres per second.",,,,,,,,,,,3
 75,-48,7,129,1,hyperfine transition frequency,,,,,,,,,,,,,,3
-76,132,2,-54,1,1967 (year of definition),,,,,,21,,,,,,,,
-77,133,2,-54,1,1979 (year of definition),,,,,,21,,,,,,,,
-78,134,2,-54,1,1983 (year of definition),,,,,,21,,,,,,,,
-79,135,2,-54,1,2019 (year of definition),,,,,,21,,,,,,,,
-80,0,26,-55,1,per 100 km,,,,,,18,,,,,,,,3
+76,132,2,-54,1,1967 (year of definition),,,,,,25,,,,,,,,
+77,133,2,-54,1,1979 (year of definition),,,,,,25,,,,,,,,
+78,134,2,-54,1,1983 (year of definition),,,,,,25,,,,,,,,
+79,135,2,-54,1,2019 (year of definition),,,,,,25,,,,,,,,
+80,0,26,-55,1,per 100 km,,,,,,4,,,,,,,,3
 81,-8,3,-63,1,SI base unit,,,The SI base units are the standard units of measurement defined by the International System of Units (SI) for the seven base quantities of what is now known as the International System of Quantities: they are notably a basic set from which all other SI units can be derived.,,,,,,,,,,,3
 82,-60,4,-63,1,named SI derived unit,,,"SI derived units are derived from the seven SI base units of the International System of Units; 22 of the coherent derived units are assigned special names, such as hertz for frequency and joule for energy.",,,,,,,,,,,3
 83,-61,4,-63,1,kinematic SI derived unit,,,,,,,,,,,,,,3
 84,-62,4,-63,1,mechanics SI derived unit,,,,,,,,,,,,,,3
 85,0,18,-66,1,m3/s,,,,,,,,,,,,,,
-86,0,18,-67,1,m/s2,,,,,,3,,,,,,,,3
-87,0,18,-68,1,m/s3,,,,,,3,,,,,,,,3
-88,0,18,-70,1,rad/s2,,,,,,3,,,,,,,,3
+86,0,18,-67,1,m/s2,,,,,,2,,,,,,,,3
+87,0,18,-68,1,m/s3,,,,,,2,,,,,,,,3
+88,0,18,-70,1,rad/s2,,,,,,2,,,,,,,,3
 89,-75,5,-49,1,hyperfine transition frequency of Cs,,,The caesium standard is a primary frequency standard in which the photon absorption by transitions between the two hyperfine ground states of caesium-133 atoms is used to control the output frequency; it is the basis for defining the second in the SI.,,,,,,,,,,,3
 90,-81,2,-7,1,SI base unit (Physical constant),,,,,,,,,,,,,,3
 91,-64,2,-81,1,second (unit),,,,,,,,,,,,,,
@@ -103,7 +103,7 @@ triple_id,from_phrase_id,verb_id,to_phrase_id,user_id,triple_name,name_given,nam
 102,164,29,163,1,x is symbol for factor,,,,,,,,,,,,,,
 103,165,29,160,1,% is symbol for percent,,,,,,,,,,,,,,
 104,209,20,198,1,global problem,,,here more a personal issue (wikipedia does not really match),,,,,,,,,,,
-105,20,1,191,1,system configuration,,,,,,23,,,,,,,1,3
+105,20,1,191,1,system configuration,,,,,,29,,,,,,,1,3
 106,217,2,192,1,Zurich (city),,,"Zurich is the largest city in Switzerland and the capital of the canton of Zurich. It is in north-central Switzerland, at the northwestern tip of Lake Zurich.",,,,,,71152,,,,,3
 107,217,2,190,1,Zurich (canton),,,"The canton of Zurich is an administrative unit (canton) of Switzerland, situated in the northeastern part of the country.",,,,,,32400,,,,,3
 108,189,2,192,1,Bern (city),,,,,,,,,,,,,,
@@ -151,19 +151,19 @@ triple_id,from_phrase_id,verb_id,to_phrase_id,user_id,triple_name,name_given,nam
 150,298,5,229,1,loss reduction,,,the share of the potential loss of a problem that a solution can avoid,,,,,,,,,,,
 151,228,36,319,1,initial effort,,,"the work needed to implement a solution the first time, without the recurring operation",,,,,,,,,,,
 152,321,5,320,1,reward ratio,,,"the avoided potential loss per unit of initial effort, used to sort the solutions by efficiency instead of by problem size",,,,,,,,,,,
-153,205,27,105,1,person year,,,"the work of one person during one year, the unit of the initial effort",,,3,,,,,,,,
+153,205,27,105,1,person year,,,"the work of one person during one year, the unit of the initial effort",,,2,,,,,,,,
 154,326,5,220,1,probability range,,,"the interval that contains the true value with a probability of 80 percent; the width is derived from the confidence of the value, so it is itself an assumption and not a measured dispersion",,,,,,,,,,,
 155,284,2,-104,1,disinformation (global problem),,,,,,,,,,,,,,
-156,328,36,329,1,expert estimate,,,"value quality: the judgement of a single expert, named but unverified",,,31,,,,,,,,
-157,330,36,302,1,Delphi consensus,,,value quality: the aggregated estimate of a Delphi or Real-Time-Delphi round,,,31,,,,,,,,
-158,337,36,338,1,single measurement,,,value quality: one observation without a repetition,,,31,,,,,,,,
-159,337,36,339,1,repeated measurement,,,value quality: several observations of the same team with the same method,,,31,,,,,,,,
-160,340,36,341,1,official statistics,,,"value quality: published by a statistical office, a central bank or a regulator",,,31,,,,,,,,
-161,344,36,345,1,observational study,,,"value quality: a cohort, case-control or cross-sectional study",,,31,,,,,,,,
+156,328,36,329,1,expert estimate,,,"value quality: the judgement of a single expert, named but unverified",,,18,,,,,,,,
+157,330,36,302,1,Delphi consensus,,,value quality: the aggregated estimate of a Delphi or Real-Time-Delphi round,,,18,,,,,,,,
+158,337,36,338,1,single measurement,,,value quality: one observation without a repetition,,,18,,,,,,,,
+159,337,36,339,1,repeated measurement,,,value quality: several observations of the same team with the same method,,,18,,,,,,,,
+160,340,36,341,1,official statistics,,,"value quality: published by a statistical office, a central bank or a regulator",,,18,,,,,,,,
+161,344,36,345,1,observational study,,,"value quality: a cohort, case-control or cross-sectional study",,,18,,,,,,,,
 162,347,36,348,1,quality journal,,,a journal that publishes only articles that have passed a review by independent experts,,,,,,,,,,,
-163,344,36,349,1,pre-registered study,,,value quality: a study with the hypothesis and the method fixed before the data collection,,,31,,,,,,,,
+163,344,36,349,1,pre-registered study,,,value quality: a study with the hypothesis and the method fixed before the data collection,,,18,,,,,,,,
 164,350,36,351,1,controlled trial,,,a trial that compares the treated group with a control group,,,,,,,,,,,
-165,354,36,355,1,independently replicated,,,value quality: reproduced by a different team,,,31,,,,,,,,
+165,354,36,355,1,independently replicated,,,value quality: reproduced by a different team,,,18,,,,,,,,
 166,315,2,327,1,assumed (conjecture),,,,,,,,,,,,,,
 167,331,2,327,1,extrapolated (conjecture),,,,,,,,,,,,,,
 168,332,2,327,1,interpolated (conjecture),,,,,,,,,,,,,,
@@ -202,8 +202,8 @@ triple_id,from_phrase_id,verb_id,to_phrase_id,user_id,triple_name,name_given,nam
 201,-144,2,218,1,Delphi method (solution),,,,,,,,,,,,,,
 202,-148,2,218,1,fluid democracy (solution),,,,,,,,,,,,,,
 203,-147,2,218,1,free software (solution),,,,,,,,,,,,,,
-204,346,32,-162,1,peer reviewed by quality journal,,,value quality: published after passing the review of a quality journal,,,31,,,,,,,,
-205,-164,36,352,1,randomized controlled trial,,,value quality: a controlled trial with the participants assigned to the groups by chance,,,31,,,,,,,,
+204,346,32,-162,1,peer reviewed by quality journal,,,value quality: published after passing the review of a quality journal,,,18,,,,,,,,
+205,-164,36,352,1,randomized controlled trial,,,value quality: a controlled trial with the participants assigned to the groups by chance,,,18,,,,,,,,
 206,-156,2,327,1,expert estimate (conjecture),,,,,,,,,,,,,,
 207,-157,2,327,1,Delphi consensus (conjecture),,,,,,,,,,,,,,
 208,-158,2,335,1,single measurement (report),,,,,,,,,,,,,,
@@ -224,7 +224,7 @@ triple_id,from_phrase_id,verb_id,to_phrase_id,user_id,triple_name,name_given,nam
 223,-190,2,218,1,market share tax (solution),,,,,,,,,,,,,,
 224,-189,2,218,1,public AI (solution),,,,,,,,,,,,,,
 225,-191,2,218,1,gross domestic usage (solution),,,,,,,,,,,,,,
-226,-205,36,353,1,double-blind randomized controlled trial,,,value quality: a randomized controlled trial where neither the participants nor the researchers know who is in which group,,,31,,,,,,,,
+226,-205,36,353,1,double-blind randomized controlled trial,,,value quality: a randomized controlled trial where neither the participants nor the researchers know who is in which group,,,18,,,,,,,,
 227,-204,2,8,1,peer reviewed by quality journal (science),,,,,,,,,,,,,,
 228,-205,2,8,1,randomized controlled trial (science),,,,,,,,,,,,,,
 229,209,20,-216,1,column problem (high prio),,,the table column 'problem' that should be shown also on small screens,,,,,,,,,,,
@@ -284,7 +284,7 @@ triple_id,from_phrase_id,verb_id,to_phrase_id,user_id,triple_name,name_given,nam
 283,376,11,375,1,2018 is follower of 2017,,,,,,,,,,,,,,
 284,135,11,376,1,2019 is follower of 2018,,,,,,,,,,,,,,
 285,136,11,135,1,2020 is follower of 2019,,,,,,,,,,,,,,
-286,380,29,157,1,k is symbol for thousand,,,,,,7,,,,,,,,
+286,380,29,157,1,k is symbol for thousand,,,,,,6,,,,,,,,
 287,288,36,387,1,purchasing power,,,the amount of goods and services that one unit of a currency can buy,,,,,,,,,,,
 288,388,5,-287,1,purchasing power parity,,,the exchange rate at which one unit of a currency buys the same basket of goods in two countries,,,,,,,,,,,
 289,98,5,398,1,exchange rate,,,An exchange rate is the rate at which one currency will be exchanged for another. It is also regarded as the value of one country's currency in relation to another currency.,,,,,,,,,,,
@@ -768,7 +768,7 @@ triple_id,from_phrase_id,verb_id,to_phrase_id,user_id,triple_name,name_given,nam
 767,-761,5,190,1,canton GDP per capita,,,,,,,,,,,,,,
 768,843,5,-765,1,foreign count,,,number of foreign nationals,,,,,,,,,,,
 769,307,5,-765,1,foreign share,,,,,,,,,,,,,,
-770,884,5,883,1,carbon dioxide,,,"CO₂, main greenhouse gas",,,3,,,,,,,,
+770,884,5,883,1,carbon dioxide,,,"CO₂, main greenhouse gas",,,2,,,,,,,,
 771,934,5,208,1,point scale,,,,,,,,,,,,,,
 772,113,5,-106,1,area of Zurich (city),,,,,,,,,,,,,,
 773,852,5,-106,1,elevation of Zurich (city),,,,,,,,,,,,,,
@@ -777,8 +777,8 @@ triple_id,from_phrase_id,verb_id,to_phrase_id,user_id,triple_name,name_given,nam
 776,835,5,273,1,population density,,,measurement of population per unit area or unit volume,,,,,,,,,,,
 777,273,36,424,1,foreign population share,,,,,,,,,,,,,,
 778,854,5,855,1,median age,,,,,,,,,,,,,,
-779,111,20,87,1,square kilometre,,,,,,3,,,,,,,,
-780,935,26,22,1,bit per second,,,unit of data rate,,,3,,,,,,,,
+779,111,20,87,1,square kilometre,,,,,,2,,,,,,,,
+780,935,26,22,1,bit per second,,,unit of data rate,,,2,,,,,,,,
 781,936,36,313,1,domestic product,,,,,,,,,,,,,,
 782,325,36,937,1,financial centre,,,location with concentration of financial institutions,,,,,,,,,,,
 783,938,36,22,1,second home,,,dwelling used other than as principal residence,,,,,,,,,,,
@@ -949,7 +949,7 @@ triple_id,from_phrase_id,verb_id,to_phrase_id,user_id,triple_name,name_given,nam
 948,281,36,983,1,nominal GDP,,,"gross domestic product measured at current market prices, not adjusted for inflation.",,,,,,,,,,,
 949,281,36,543,1,real GDP,,,gross domestic product adjusted for inflation and expressed in constant base-year prices.,,,,,,,,,,,
 950,586,5,281,1,GDP growth,,,the increase in a country's gross domestic product from one period to the next.,,,,,,,,,,,
-951,438,26,279,1,USD per EUR,,,"the exchange rate as US dollars for one euro, e.g. to convert the GDP figures that a source states in US dollars",,,3,,,,,,,,
+951,438,26,279,1,USD per EUR,,,"the exchange rate as US dollars for one euro, e.g. to convert the GDP figures that a source states in US dollars",,,2,,,,,,,,
 952,986,5,988,1,pre-industrial CO2,,,"the atmospheric CO2 concentration before the Industrial Revolution, about 280 parts per million",,,,,,,,,,,
 953,986,36,989,1,excess CO2,,,the atmospheric CO2 concentration above the pre-industrial baseline,,,,,,,,,,,
 954,404,5,230,1,climate change,,,"the long-term shifts in temperatures and weather patterns, caused since the 1800s mainly by the burning of fossil fuels.",,,,,,,,,,,
@@ -1591,7 +1591,7 @@ triple_id,from_phrase_id,verb_id,to_phrase_id,user_id,triple_name,name_given,nam
 1590,1460,5,1462,1,displacement mix,,,"the FfE concept 'EU-Verdrängungsmix': a simplified marginal approach that takes the generation an additional kWh displaces in the coupled European market, mostly fossil plants, as the reference for the environmental effect of a new source instead of the average mix",,,,,,,,,,,
 1591,987,20,1463,1,avoided emission,,,"the emission of the reference mix minus the emission of the new source, so the climate benefit of one kWh of the new source",,,,,,,,,,,
 1592,1465,5,12,1,life cycle,,,"the whole life of a product from the raw materials over the use to the disposal, the scope of a life cycle assessment",,,,,,,,,,,
-1593,123,26,122,1,gram per kWh,,,the unit of the emission intensity of electricity,,,3,,,,,,,,
+1593,123,26,122,1,gram per kWh,,,the unit of the emission intensity of electricity,,,2,,,,,,,,
 1594,-1588,20,-216,1,column consumption mix,,,"the table column 'consumption mix' with the figures of the comparison without the displacement concept, shown on every screen",,,,,,,,,,,
 1595,-1590,20,-216,1,column displacement mix,,,"the table column 'displacement mix' with the figures of the comparison with the displacement concept, shown on every screen",,,,,,,,,,,
 1596,-1595,44,-1594,1,column displacement mix is next main column after column consumption mix,,,,,,,,,,,,,,

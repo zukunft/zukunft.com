@@ -90,7 +90,7 @@ SELECT word_update_log_0022224422200
         null,
         115,
         'scaling',
-        7,
+        6,
         null,
         null,
         116,

@@ -470,7 +470,7 @@ class type_list extends ListOfIdNamedCodeObjects
             formula_type::class => new formula_type(),
             formula_link_type::class => new formula_link_type(),
             element_type::class => new element_type(),
-            phrase_types::class => new phrase_type(''),
+            phrase_type::class, phrase_types::class => new phrase_type(''),
             view_type::class => new view_type(),
             view_style::class => new view_style(),
             view_link_type::class => new view_link_type(),

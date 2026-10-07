@@ -7,4 +7,7 @@ PREPARE word_names_like (bigint, text, bigint, bigint) AS
      LEFT JOIN user_words u ON s.word_id = u.word_id
                            AND u.user_id = $1
          WHERE s.word_name ilike $2
-           AND s.phrase_type_id <> 10 ORDER BY s.word_name LIMIT $3 OFFSET $4;
+           AND s.phrase_type_id <> 21
+      ORDER BY s.word_name
+         LIMIT $3
+        OFFSET $4;

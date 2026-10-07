@@ -1,10 +1,10 @@
 GET
-http://localhost/http/view.php?k=&py=2&8py=1&8k=System+Test+Word&id=999&8id=999&9m=3&9id=999&m=48&z=1&submit=
-/http/view.php?k=&py=2&8py=1&8k=System+Test+Word&id=999&8id=999&9m=3&9id=999&m=48&z=1&submit=
-/http/view.php?phrase_type=2&8phrase_type=1&8name=System+Test+Word&id=999&8id=999&9mask_id=word_default&9id=999&mask_id=word_edit&step=confirm&
+http://localhost/http/view.php?k=&py=11&8py=1&8k=System+Test+Word&id=999&8id=999&9m=3&9id=999&m=48&z=1&submit=
+/http/view.php?k=&py=11&8py=1&8k=System+Test+Word&id=999&8id=999&9m=3&9id=999&m=48&z=1&submit=
+/http/view.php?phrase_type=11&8phrase_type=1&8name=System+Test+Word&id=999&8id=999&9mask_id=word_default&9id=999&mask_id=word_edit&step=confirm&
 {
     "name": "",
-    "phrase_type": "2",
+    "phrase_type": "11",
     "id": "999",
     "mask_id": "word_edit",
     "step": "confirm",

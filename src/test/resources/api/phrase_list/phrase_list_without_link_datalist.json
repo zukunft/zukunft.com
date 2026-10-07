@@ -2,50 +2,50 @@
     {
         "id": 371,
         "name": "2013",
-        "type_id": 2,
+        "type_id": 11,
         "class": "word"
     },
     {
         "id": 372,
         "name": "2014",
-        "type_id": 2,
+        "type_id": 11,
         "class": "word"
     },
     {
         "id": 373,
         "name": "2015",
-        "type_id": 2,
+        "type_id": 11,
         "class": "word"
     },
     {
         "id": 374,
         "name": "2016",
-        "type_id": 2,
+        "type_id": 11,
         "class": "word"
     },
     {
         "id": 375,
         "name": "2017",
-        "type_id": 2,
+        "type_id": 11,
         "class": "word"
     },
     {
         "id": 376,
         "name": "2018",
-        "type_id": 2,
+        "type_id": 11,
         "class": "word"
     },
     {
         "id": 135,
         "name": "2019",
         "description": "Calendar year 2019, reference year for the emission baseline.",
-        "type_id": 2,
+        "type_id": 11,
         "class": "word"
     },
     {
         "id": 136,
         "name": "2020",
-        "type_id": 2,
+        "type_id": 11,
         "class": "word"
     },
     {
@@ -71,7 +71,7 @@
         "protection": 3,
         "name": "billion",
         "description": "to specify numbers in billions - 10⁹",
-        "type_id": 7,
+        "type_id": 6,
         "class": "word"
     },
     {
@@ -102,7 +102,7 @@
         "id": 452,
         "name": "CHF",
         "description": "ISO 4217 alphabetic code for the Swiss franc (Confoederatio Helvetica Franc), also widely used as the currency's typographic symbol.",
-        "type_id": 3,
+        "type_id": 2,
         "class": "word"
     },
     {
@@ -145,7 +145,7 @@
         "protection": 3,
         "name": "day",
         "description": "A day is a unit of time equal to 24 hours, approximately the period of one rotation of the Earth about its own axis.",
-        "type_id": 2,
+        "type_id": 11,
         "class": "word"
     },
     {
@@ -161,7 +161,7 @@
         "protection": 3,
         "name": "𝑒",
         "description": "Symbol for the Euler's number, which is a mathematical constant approximately equal to 2.71828 that is the base of the natural logarithm and exponential function.",
-        "type_id": 17,
+        "type_id": 20,
         "class": "word"
     },
     {
@@ -180,7 +180,7 @@
         "id": 58,
         "name": "𝑒 (unit symbol)",
         "description": "Is the limit of (1 + 1/n)^n as n approaches infinity",
-        "type_id": 22,
+        "type_id": 28,
         "class": "triple"
     },
     {
@@ -288,7 +288,7 @@
         "id": 274,
         "name": "htp",
         "description": "the symbol used in formulas for happy time points",
-        "type_id": 3,
+        "type_id": 2,
         "class": "word"
     },
     {
@@ -328,7 +328,7 @@
         "protection": 3,
         "name": "mathematical constant",
         "description": "A mathematical constant that never changes e.g. Pi",
-        "type_id": 17,
+        "type_id": 20,
         "class": "triple"
     },
     {
@@ -344,7 +344,7 @@
         "protection": 3,
         "name": "million",
         "description": "to specify numbers in millions",
-        "type_id": 7,
+        "type_id": 6,
         "class": "word"
     },
     {
@@ -352,7 +352,7 @@
         "protection": 3,
         "name": "minute",
         "description": "A minute is a unit of time equal to 60 seconds, or one sixtieth of an hour.",
-        "type_id": 2,
+        "type_id": 11,
         "class": "word"
     },
     {
@@ -367,7 +367,7 @@
         "protection": 3,
         "name": "one",
         "description": "1 (one, unit, unity) is a number, numeral, and glyph. It is the first and smallest positive integer of the infinite sequence of natural numbers. Used to force the scaling to one unit",
-        "type_id": 8,
+        "type_id": 7,
         "class": "word"
     },
     {
@@ -387,14 +387,14 @@
         "protection": 3,
         "name": "percent",
         "description": "A percentage is a number or ratio expressed as a fraction of 100; the percent measure auto-scales, so a formula that produces a ratio is shown to the user as a percent without multiplying by 100.",
-        "type_id": 6,
+        "type_id": 9,
         "class": "word"
     },
     {
         "id": 205,
         "name": "person",
         "description": "an individual human being",
-        "type_id": 3,
+        "type_id": 2,
         "class": "word"
     },
     {
@@ -402,14 +402,14 @@
         "protection": 3,
         "name": "Pi",
         "description": "ratio of the circumference of a circle to its diameter",
-        "type_id": 17,
+        "type_id": 20,
         "class": "word"
     },
     {
         "id": 56,
         "name": "Pi (math)",
         "description": "ratio of the circumference of a circle to its diameter",
-        "type_id": 22,
+        "type_id": 28,
         "class": "triple"
     },
     {
@@ -520,14 +520,14 @@
         "id": 275,
         "name": "trillion",
         "description": "the scaling factor of 10^12",
-        "type_id": 7,
+        "type_id": 6,
         "class": "word"
     },
     {
         "id": 438,
         "name": "USD",
         "description": "ISO 4217 alphabetic code for the United States dollar.",
-        "type_id": 3,
+        "type_id": 2,
         "class": "word"
     },
     {
@@ -554,7 +554,7 @@
         "protection": 3,
         "name": "week",
         "description": "A week is a unit of time equal to 7 days.",
-        "type_id": 2,
+        "type_id": 11,
         "class": "word"
     },
     {
@@ -610,13 +610,13 @@
         "protection": 3,
         "name": "π",
         "description": "Symbol for the ratio of the circumference of a circle to its diameter",
-        "type_id": 17,
+        "type_id": 20,
         "class": "word"
     },
     {
         "id": 5,
         "name": "π (unit symbol)",
-        "type_id": 22,
+        "type_id": 28,
         "class": "triple"
     }
 ]

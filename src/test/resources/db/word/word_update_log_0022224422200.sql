@@ -93,7 +93,7 @@ SELECT word_update_log_0022224422200
         null::text,
         115::smallint,
         'scaling'::text,
-        7::smallint,
+        6::smallint,
         null::text,
         null::smallint,
         116::smallint,

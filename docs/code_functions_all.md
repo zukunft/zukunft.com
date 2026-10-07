@@ -2868,10 +2868,6 @@
              in /phrase/phrase_type.php
     \-- order error - order of section construct and map has difference at api_mapper should be before row_mapper_typ_ob
             j
-\-- phrase_types
-    \-- load_dummy - section for function load_dummy is expected to be load in /phrase/phrase_types.php
-    \-- default_id - section for function default_id not yet defined that it should be construct and map in /phrase/phra
-            se_types.php
 \-- term
     \-- row_mapper - section for function row_mapper not yet defined that it should be construct and map in /phrase/term
             .php
@@ -4946,7 +4942,7 @@
         \-- change_field - fill the change field object vars based on an array of fields from the database
         \-- ref_type - fill the reference type object vars based on an array of fields from the database
     \-- load_dummy
-        \-- phrase_types - adding the word types used for unit tests to the dummy list
+        \-- phrase_types - fill the list for the unit tests from db_code_links/phrase_types.csv,
     \-- default_id
         \-- phrase_types - @return int the database id of the default word type
     \-- import_mapper

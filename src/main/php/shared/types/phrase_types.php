@@ -42,7 +42,7 @@ class phrase_types
     const string MATH_CONST = "constant"; // TODO add usage sample
     const string MATH_CONST_NAME = "math constant";
     const string TIME = "time";
-    const int TIME_ID = 2;
+    const int TIME_ID = 11;
     const string TIME_NAME = "time";
     const string TIME_NUMBER = "time_number";
     const string TIME_NUMBER_NAME = "time number";
@@ -61,7 +61,7 @@ class phrase_types
     // the unit a number is stated in e.g. "metre" or "CHF", shown behind the number; the const
     // keeps its name, because is_measure() and the measure lists are used all over the code
     const string MEASURE = "measure_unit";
-    const int MEASURE_ID = 3;
+    const int MEASURE_ID = 2;
     const string MEASURE_NAME = "measure unit";
     // what is measured e.g. "GDP": like a unit it describes the number and not the row of a
     // value table, so it heads no row or column of its own (see value_list::is_unit), but it is
@@ -83,7 +83,7 @@ class phrase_types
     const string MEASURE_DIVISOR = "measure_divisor";
     const string MEASURE_DIVISOR_NAME = "measure divisor";
     const string SCALING = "scaling";
-    const int SCALING_ID = 7;
+    const int SCALING_ID = 6;
     const string SCALING_NAME = "scaling";
     const string SCALING_HIDDEN = "scaling_hidden";
     const string SCALING_HIDDEN_NAME = "hidden scaling";
@@ -98,7 +98,7 @@ class phrase_types
     const string SCALED_MEASURE_NAME = "scaled measure";
     const string FORMULA_LINK = "formula_link"; // special phrase type for functional words that are used to link values to formulas
     const string FORMULA_LINK_NAME = "formula link";
-    const int FORMULA_LINK_ID = 10;
+    const int FORMULA_LINK_ID = 21;
     const string CALC = "calc"; // TODO add usage sample
     const string CALC_NAME = "calc";
     const string LAYER = "view"; // TODO add usage sample

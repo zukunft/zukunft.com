@@ -47,6 +47,6 @@ SELECT triple_update_log_0022400000000000_user
         null,
         181,
         'math constant',
-        17,
+        20,
         null,
         null);

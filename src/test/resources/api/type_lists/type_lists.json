@@ -7661,199 +7661,199 @@
             {
                 "name": "standard",
                 "code_id": "default",
-                "description": "for words that have need no special behaviour",
+                "description": "for words that need no special behaviour",
                 "id": 1
-            },
-            {
-                "name": "time",
-                "code_id": "time",
-                "description": "A time word defines the time period for which a value is valid and values with a time can be used to display time series.",
-                "id": 2
             },
             {
                 "name": "measure unit",
                 "code_id": "measure_unit",
                 "description": "a unit word such as metre, kilogram, ... in which a number is stated",
-                "id": 3
-            },
-            {
-                "name": "time jump",
-                "code_id": "time_jump",
-                "description": "these terms describes a change of a timestamp term",
-                "id": 4
-            },
-            {
-                "name": "calc",
-                "code_id": "NULL",
-                "description": "a calculated word in R; e.g. this year returns always a different term",
-                "id": 5
-            },
-            {
-                "name": "format percent",
-                "code_id": "percent",
-                "description": "terms that forces the result to be formatted in percent",
-                "id": 6
-            },
-            {
-                "name": "scaling",
-                "code_id": "scaling",
-                "description": "a scaling word such as millions, one, ...",
-                "id": 7
-            },
-            {
-                "name": "hidden scaling",
-                "code_id": "scaling_hidden",
-                "description": "\"one\" is needed as a scaling word for correct calculations, but it is not useful to display it",
-                "id": 8
-            },
-            {
-                "name": "view \/ layer",
-                "code_id": "view",
-                "description": "word to separate the number layers and to change the view.\\r\\nE.g. -as reported- are exactly the numbers as they come from the external source\\r\\n-detailed- are the most granular splitting of the -as reported- numbers\\r\\n-projection- show the changes and includes the estimates to make a forecast\\r\\n",
-                "id": 9
-            },
-            {
-                "name": "formula link",
-                "code_id": "formula_link",
-                "description": "A term with the same name as a formula, because some values can be calculated and can nevertheless be overwritten",
-                "id": 10
-            },
-            {
-                "name": "differentiator filler",
-                "code_id": "type_other",
-                "description": "these terms are used to fill up a differentiator list, so most likely the term linked will be named \"other\"",
-                "id": 11
-            },
-            {
-                "name": "this",
-                "code_id": "this",
-                "description": "not sure, why this is needed",
-                "id": 12
-            },
-            {
-                "name": "next",
-                "code_id": "next",
-                "description": "not sure, why this is needed",
-                "id": 13
-            },
-            {
-                "name": "prior",
-                "code_id": "previous",
-                "description": "not sure, why this is needed",
-                "id": 14
-            },
-            {
-                "name": "scaling word percent",
-                "code_id": "scaling_percent",
-                "description": "all words that represent percent",
-                "id": 15
-            },
-            {
-                "name": "scaled measure",
-                "code_id": "scaled_measure",
-                "description": "a combination of scaling and measure e.g. 100ml",
-                "id": 16
-            },
-            {
-                "name": "math constant",
-                "code_id": "constant",
-                "description": "A mathematical constant is a key number whose value is fixed by an unambiguous definition",
-                "id": 17
-            },
-            {
-                "name": "measure divisor",
-                "code_id": "measure_divisor",
-                "description": "a measure divisor like per year, per kg, ...",
-                "id": 18
-            },
-            {
-                "name": "latest",
-                "code_id": "latest",
-                "description": "to select the latest value by a time jump type e.g. latest year",
-                "id": 19
-            },
-            {
-                "name": "key",
-                "code_id": "key",
-                "description": "force faster search and if two keys are connected with the verb is all child values are expected to be equal",
-                "id": 20
-            },
-            {
-                "name": "information",
-                "code_id": "information",
-                "description": "this phrase is used mainly for information purpose and for the selection the program tries to another search without this phrase",
-                "id": 21
-            },
-            {
-                "name": "hidden triple",
-                "code_id": "hidden_triple",
-                "description": "this triple should not be included in selection list because the triple is identical with the from word and is only added to assign behavior to the word",
-                "id": 22
-            },
-            {
-                "name": "hidden system",
-                "code_id": "hidden_system",
-                "description": "these words and triple are used e.g. for the system configuration and should not be included in standard selection list because the values are only internal and are shown in separate predefined views",
-                "id": 23
-            },
-            {
-                "name": "group and select",
-                "code_id": "group",
-                "description": "words used to group and select other words to shorten the selection",
-                "id": 24
-            },
-            {
-                "name": "symbol",
-                "code_id": "symbol",
-                "description": "words that indicate e.g. that a table column contains a symbol",
-                "id": 25
-            },
-            {
-                "name": "rank",
-                "code_id": "rank",
-                "description": "words that indicate e.g. that a table column contains a ranking number",
-                "id": 26
-            },
-            {
-                "name": "ignore",
-                "code_id": "ignore",
-                "description": "words that indicate e.g. to set column names to be excluded from the import",
-                "id": 27
-            },
-            {
-                "name": "time number",
-                "code_id": "time_number",
-                "description": "A numeric time word that defines the time period for which a value is valid and values with a time can be used to display time series and where the order can be defined automatically based on the numeric value e.g. year 2025 or month 6.",
-                "id": 28
-            },
-            {
-                "name": "scaling factor",
-                "code_id": "factor",
-                "description": "a phrase that marks the number as a factor so that the number is shown with an x behind it e.g. 13.2 x",
-                "id": 29
+                "id": 2
             },
             {
                 "name": "measure non unit",
                 "code_id": "measure_non_unit",
                 "description": "what is measured e.g. GDP, which describes the number like a unit so that it heads no row or column of a value table, but is not the unit the number is stated in",
-                "id": 30
+                "id": 3
+            },
+            {
+                "name": "measure divisor",
+                "code_id": "measure_divisor",
+                "description": "a measure divisor like per year, per kg, ...",
+                "id": 4
+            },
+            {
+                "name": "scaled measure",
+                "code_id": "scaled_measure",
+                "description": "a combination of scaling and measure e.g. 100ml",
+                "id": 5
+            },
+            {
+                "name": "scaling",
+                "code_id": "scaling",
+                "description": "a scaling word such as millions, one, ...",
+                "id": 6
+            },
+            {
+                "name": "hidden scaling",
+                "code_id": "scaling_hidden",
+                "description": "\"one\" is needed as a scaling word for correct calculations, but it is not useful to display it",
+                "id": 7
+            },
+            {
+                "name": "scaling factor",
+                "code_id": "factor",
+                "description": "a phrase that marks the number as a factor so that the number is shown with an x behind it e.g. 13.2 x",
+                "id": 8
+            },
+            {
+                "name": "format percent",
+                "code_id": "percent",
+                "description": "terms that force the result to be formatted in percent",
+                "id": 9
+            },
+            {
+                "name": "scaling word percent",
+                "code_id": "scaling_percent",
+                "description": "all words that represent percent",
+                "id": 10
+            },
+            {
+                "name": "time",
+                "code_id": "time",
+                "description": "A time word defines the time period for which a value is valid and values with a time can be used to display time series.",
+                "id": 11
+            },
+            {
+                "name": "time number",
+                "code_id": "time_number",
+                "description": "A numeric time word that defines the time period for which a value is valid and values with a time can be used to display time series and where the order can be defined automatically based on the numeric value e.g. year 2025 or month 6.",
+                "id": 12
+            },
+            {
+                "name": "time jump",
+                "code_id": "time_jump",
+                "description": "these terms describe a change of a timestamp term",
+                "id": 13
+            },
+            {
+                "name": "latest",
+                "code_id": "latest",
+                "description": "to select the latest value by a time jump type e.g. latest year",
+                "id": 14
+            },
+            {
+                "name": "this",
+                "code_id": "this",
+                "description": "not sure, why this is needed",
+                "id": 15
+            },
+            {
+                "name": "next",
+                "code_id": "next",
+                "description": "not sure, why this is needed",
+                "id": 16
+            },
+            {
+                "name": "prior",
+                "code_id": "previous",
+                "description": "not sure, why this is needed",
+                "id": 17
             },
             {
                 "name": "value quality",
                 "code_id": "value_quality",
                 "description": "how a number has been found e.g. assumed, official statistics or double-blind randomized controlled trial, so that a value tagged with it shows how far it can be trusted",
-                "id": 31
+                "id": 18
             },
             {
                 "name": "value status",
                 "code_id": "value_status",
                 "description": "what happened to a number after it has been found e.g. disputed, retracted, superseded or outdated, which is shown next to the value quality, because a value of any quality can lose its validity",
-                "id": 32
+                "id": 19
+            },
+            {
+                "name": "math constant",
+                "code_id": "constant",
+                "description": "A mathematical constant is a key number whose value is fixed by an unambiguous definition",
+                "id": 20
+            },
+            {
+                "name": "formula link",
+                "code_id": "formula_link",
+                "description": "A term with the same name as a formula, because some values can be calculated and can nevertheless be overwritten",
+                "id": 21
+            },
+            {
+                "name": "calc",
+                "code_id": "NULL",
+                "description": "a calculated word in R; e.g. this year returns always a different term",
+                "id": 22
             },
             {
                 "name": "unique key",
                 "code_id": "unique_key",
                 "description": "a key that identifies exactly one item worldwide e.g. the ISBN of a book, the ISIN of a security or the EAN of a product, so that the item can be found in other systems by this key",
+                "id": 23
+            },
+            {
+                "name": "key",
+                "code_id": "key",
+                "description": "force faster search and if two keys are connected with the verb is all child values are expected to be equal",
+                "id": 24
+            },
+            {
+                "name": "information",
+                "code_id": "information",
+                "description": "this phrase is used mainly for information purpose and for the selection the program tries to another search without this phrase",
+                "id": 25
+            },
+            {
+                "name": "group and select",
+                "code_id": "group",
+                "description": "words used to group and select other words to shorten the selection",
+                "id": 26
+            },
+            {
+                "name": "differentiator filler",
+                "code_id": "type_other",
+                "description": "these terms are used to fill up a differentiator list, so most likely the term linked will be named \"other\"",
+                "id": 27
+            },
+            {
+                "name": "hidden triple",
+                "code_id": "hidden_triple",
+                "description": "this triple should not be included in selection list because the triple is identical with the from word and is only added to assign behavior to the word",
+                "id": 28
+            },
+            {
+                "name": "hidden system",
+                "code_id": "hidden_system",
+                "description": "these words and triple are used e.g. for the system configuration and should not be included in standard selection list because the values are only internal and are shown in separate predefined views",
+                "id": 29
+            },
+            {
+                "name": "view \/ layer",
+                "code_id": "view",
+                "description": "word to separate the number layers and to change the view.\\r\\nE.g. -as reported- are exactly the numbers as they come from the external source\\r\\n-detailed- are the most granular splitting of the -as reported- numbers\\r\\n-projection- show the changes and includes the estimates to make a forecast\\r\\n",
+                "id": 30
+            },
+            {
+                "name": "symbol",
+                "code_id": "symbol",
+                "description": "words that indicate e.g. that a table column contains a symbol",
+                "id": 31
+            },
+            {
+                "name": "rank",
+                "code_id": "rank",
+                "description": "words that indicate e.g. that a table column contains a ranking number",
+                "id": 32
+            },
+            {
+                "name": "ignore",
+                "code_id": "ignore",
+                "description": "words that indicate e.g. to set column names to be excluded from the import",
                 "id": 33
             }
         ],
@@ -29327,7 +29327,7 @@
                     "protection": 3,
                     "name": "A",
                     "description": "Is a symbol for ampere",
-                    "type_id": 3,
+                    "type_id": 2,
                     "plural": null,
                     "impact": null,
                     "class": "word"
@@ -29350,7 +29350,7 @@
                     "protection": 3,
                     "name": "ampere",
                     "description": "The ampere is the unit of electric current in the International System of Units (SI). One ampere is equal to 1 coulomb (C) moving past a point per second.",
-                    "type_id": 3,
+                    "type_id": 2,
                     "plural": null,
                     "impact": null,
                     "class": "word"
@@ -29462,7 +29462,7 @@
                     "protection": 3,
                     "name": "billion",
                     "description": "to specify numbers in billions - 10\u2079",
-                    "type_id": 7,
+                    "type_id": 6,
                     "plural": null,
                     "impact": null,
                     "class": "word"
@@ -29500,7 +29500,7 @@
                     "protection": 3,
                     "name": "billion",
                     "description": "to specify numbers in billions - 10\u2079",
-                    "type_id": 7,
+                    "type_id": 6,
                     "plural": null,
                     "impact": null,
                     "class": "word"
@@ -29627,7 +29627,7 @@
                     "protection": 3,
                     "name": "cd",
                     "description": "Is a symbol for candela",
-                    "type_id": 3,
+                    "type_id": 2,
                     "plural": null,
                     "impact": null,
                     "class": "word"
@@ -29650,7 +29650,7 @@
                     "protection": 3,
                     "name": "candela",
                     "description": "The candela is the unit of luminous intensity in the International System of Units (SI). It measures luminous power per unit solid angle emitted by a light source in a particular direction.",
-                    "type_id": 3,
+                    "type_id": 2,
                     "plural": null,
                     "impact": null,
                     "class": "word"
@@ -29702,7 +29702,7 @@
                     "id": 452,
                     "name": "CHF",
                     "description": "ISO 4217 alphabetic code for the Swiss franc (Confoederatio Helvetica Franc), also widely used as the currency's typographic symbol.",
-                    "type_id": 3,
+                    "type_id": 2,
                     "plural": null,
                     "impact": null,
                     "class": "word"
@@ -29961,7 +29961,7 @@
                 "protection": 3,
                 "name": "A",
                 "description": "Is a symbol for ampere",
-                "type_id": 3,
+                "type_id": 2,
                 "class": "word"
             },
             {
@@ -29969,7 +29969,7 @@
                 "protection": 3,
                 "name": "ampere",
                 "description": "The ampere is the unit of electric current in the International System of Units (SI). One ampere is equal to 1 coulomb (C) moving past a point per second.",
-                "type_id": 3,
+                "type_id": 2,
                 "class": "word"
             },
             {
@@ -30010,7 +30010,7 @@
                 "protection": 3,
                 "name": "billion",
                 "description": "to specify numbers in billions - 10\u2079",
-                "type_id": 7,
+                "type_id": 6,
                 "class": "word"
             },
             {
@@ -30058,7 +30058,7 @@
                 "protection": 3,
                 "name": "cd",
                 "description": "Is a symbol for candela",
-                "type_id": 3,
+                "type_id": 2,
                 "class": "word"
             },
             {
@@ -30066,7 +30066,7 @@
                 "protection": 3,
                 "name": "candela",
                 "description": "The candela is the unit of luminous intensity in the International System of Units (SI). It measures luminous power per unit solid angle emitted by a light source in a particular direction.",
-                "type_id": 3,
+                "type_id": 2,
                 "class": "word"
             },
             {
@@ -30086,7 +30086,7 @@
                 "id": 452,
                 "name": "CHF",
                 "description": "ISO 4217 alphabetic code for the Swiss franc (Confoederatio Helvetica Franc), also widely used as the currency's typographic symbol.",
-                "type_id": 3,
+                "type_id": 2,
                 "class": "word"
             },
             {
@@ -30257,14 +30257,14 @@
                 "id": 58,
                 "name": "\ud835\udc52 (unit symbol)",
                 "description": "Is the limit of (1 + 1\/n)^n as n approaches infinity",
-                "type_id": 22,
+                "type_id": 28,
                 "from_id": 6,
                 "from_phrase": {
                     "id": 6,
                     "protection": 3,
                     "name": "\ud835\udc52",
                     "description": "Symbol for the Euler's number, which is a mathematical constant approximately equal to 2.71828 that is the base of the natural logarithm and exponential function.",
-                    "type_id": 17,
+                    "type_id": 20,
                     "plural": null,
                     "impact": null,
                     "class": "word"
@@ -30287,7 +30287,7 @@
                     "protection": 3,
                     "name": "Euler's number",
                     "description": "The number e is a mathematical constant approximately equal to 2.71828 that is the base of the natural logarithm and exponential function.",
-                    "type_id": 17,
+                    "type_id": 20,
                     "usage": null,
                     "impact": null,
                     "class": "triple"
@@ -30302,7 +30302,7 @@
                     "id": 279,
                     "name": "EUR",
                     "description": "ISO 4217 alphabetic code for the euro.",
-                    "type_id": 3,
+                    "type_id": 2,
                     "plural": null,
                     "impact": null,
                     "class": "word"
@@ -30413,7 +30413,7 @@
                     "id": 281,
                     "name": "GDP",
                     "description": "a monetary measure of the market value of all the final goods and services produced and rendered in a specific time period by a country.",
-                    "type_id": 30,
+                    "type_id": 3,
                     "plural": null,
                     "impact": null,
                     "class": "word"
@@ -30524,7 +30524,7 @@
                     "id": 274,
                     "name": "htp",
                     "description": "the symbol used in formulas for happy time points",
-                    "type_id": 3,
+                    "type_id": 2,
                     "plural": null,
                     "impact": null,
                     "class": "word"
@@ -30732,7 +30732,7 @@
                     "protection": 3,
                     "name": "percent",
                     "description": "A percentage is a number or ratio expressed as a fraction of 100; the percent measure auto-scales, so a formula that produces a ratio is shown to the user as a percent without multiplying by 100.",
-                    "type_id": 6,
+                    "type_id": 9,
                     "plural": null,
                     "impact": null,
                     "class": "word"
@@ -30822,7 +30822,7 @@
                     "protection": 3,
                     "name": "kg",
                     "description": "The symbol for the kilogram. The kilogram was originally defined in 1795 during the French Revolution as the mass of one litre of water.",
-                    "type_id": 3,
+                    "type_id": 2,
                     "plural": null,
                     "impact": null,
                     "class": "word"
@@ -30845,7 +30845,7 @@
                     "protection": 3,
                     "name": "kilogram",
                     "description": "The kilogram is the SI unit of mass. It is defined by taking the fixed numerical value of the Planck constant h to be 6.62607015\u00d710\u221234 when expressed in the unit J\u22c5s, which is equal to kg\u22c5m2\u22c5s\u22121, where the metre and the second are defined in terms of c and \u0394\u03bdCs.",
-                    "type_id": 3,
+                    "type_id": 2,
                     "plural": null,
                     "impact": null,
                     "class": "word"
@@ -30855,7 +30855,7 @@
             {
                 "id": 286,
                 "name": "k is symbol for thousand",
-                "type_id": 7,
+                "type_id": 6,
                 "from_id": 380,
                 "from_phrase": {
                     "id": 380,
@@ -30884,7 +30884,7 @@
                     "protection": 3,
                     "name": "thousand",
                     "description": "to specify numbers in thousand",
-                    "type_id": 7,
+                    "type_id": 6,
                     "plural": null,
                     "impact": null,
                     "class": "word"
@@ -30935,7 +30935,7 @@
                 "protection": 3,
                 "name": "\ud835\udc52",
                 "description": "Symbol for the Euler's number, which is a mathematical constant approximately equal to 2.71828 that is the base of the natural logarithm and exponential function.",
-                "type_id": 17,
+                "type_id": 20,
                 "class": "word"
             },
             {
@@ -30943,14 +30943,14 @@
                 "protection": 3,
                 "name": "Euler's number",
                 "description": "The number e is a mathematical constant approximately equal to 2.71828 that is the base of the natural logarithm and exponential function.",
-                "type_id": 17,
+                "type_id": 20,
                 "class": "triple"
             },
             {
                 "id": 279,
                 "name": "EUR",
                 "description": "ISO 4217 alphabetic code for the euro.",
-                "type_id": 3,
+                "type_id": 2,
                 "class": "word"
             },
             {
@@ -30977,7 +30977,7 @@
                 "id": 281,
                 "name": "GDP",
                 "description": "a monetary measure of the market value of all the final goods and services produced and rendered in a specific time period by a country.",
-                "type_id": 30,
+                "type_id": 3,
                 "class": "word"
             },
             {
@@ -31010,7 +31010,7 @@
                 "id": 274,
                 "name": "htp",
                 "description": "the symbol used in formulas for happy time points",
-                "type_id": 3,
+                "type_id": 2,
                 "class": "word"
             },
             {
@@ -31065,7 +31065,7 @@
                 "protection": 3,
                 "name": "percent",
                 "description": "A percentage is a number or ratio expressed as a fraction of 100; the percent measure auto-scales, so a formula that produces a ratio is shown to the user as a percent without multiplying by 100.",
-                "type_id": 6,
+                "type_id": 9,
                 "class": "word"
             },
             {
@@ -31087,7 +31087,7 @@
                 "protection": 3,
                 "name": "kg",
                 "description": "The symbol for the kilogram. The kilogram was originally defined in 1795 during the French Revolution as the mass of one litre of water.",
-                "type_id": 3,
+                "type_id": 2,
                 "class": "word"
             },
             {
@@ -31095,7 +31095,7 @@
                 "protection": 3,
                 "name": "kilogram",
                 "description": "The kilogram is the SI unit of mass. It is defined by taking the fixed numerical value of the Planck constant h to be 6.62607015\u00d710\u221234 when expressed in the unit J\u22c5s, which is equal to kg\u22c5m2\u22c5s\u22121, where the metre and the second are defined in terms of c and \u0394\u03bdCs.",
-                "type_id": 3,
+                "type_id": 2,
                 "class": "word"
             },
             {
@@ -31109,7 +31109,7 @@
                 "protection": 3,
                 "name": "thousand",
                 "description": "to specify numbers in thousand",
-                "type_id": 7,
+                "type_id": 6,
                 "class": "word"
             },
             {
@@ -31269,7 +31269,7 @@
                     "protection": 3,
                     "name": "K",
                     "description": "Is a symbol for kelvin",
-                    "type_id": 3,
+                    "type_id": 2,
                     "plural": null,
                     "impact": null,
                     "class": "word"
@@ -31292,7 +31292,7 @@
                     "protection": 3,
                     "name": "kelvin",
                     "description": "The kelvin is the base unit for temperature in the International System of Units (SI). The Kelvin scale is an absolute temperature scale that starts at the lowest possible temperature (absolute zero), taken to be 0 K.",
-                    "type_id": 3,
+                    "type_id": 2,
                     "plural": null,
                     "impact": null,
                     "class": "word"
@@ -31345,7 +31345,7 @@
                     "protection": 3,
                     "name": "l",
                     "description": "Is a symbol for litre",
-                    "type_id": 3,
+                    "type_id": 2,
                     "plural": null,
                     "impact": null,
                     "class": "word"
@@ -31368,7 +31368,7 @@
                     "protection": 3,
                     "name": "litre",
                     "description": "The litre is a metric unit of volume equal to 1 cubic decimetre, or 1000 cubic centimetres. It is not an official SI unit, though the SI unit for volume is the cubic metre.",
-                    "type_id": 3,
+                    "type_id": 2,
                     "plural": null,
                     "impact": null,
                     "class": "word"
@@ -31383,7 +31383,7 @@
                     "id": 276,
                     "name": "mio",
                     "description": "the symbol used in formulas for million",
-                    "type_id": 7,
+                    "type_id": 6,
                     "plural": null,
                     "impact": null,
                     "class": "word"
@@ -31406,7 +31406,7 @@
                     "protection": 3,
                     "name": "million",
                     "description": "to specify numbers in millions",
-                    "type_id": 7,
+                    "type_id": 6,
                     "plural": null,
                     "impact": null,
                     "class": "word"
@@ -31422,7 +31422,7 @@
                     "protection": 3,
                     "name": "m",
                     "description": "Is a symbol for the metre, the base unit of length in the International System of Units (SI).",
-                    "type_id": 3,
+                    "type_id": 2,
                     "plural": null,
                     "impact": null,
                     "class": "word"
@@ -31445,7 +31445,7 @@
                     "protection": 3,
                     "name": "million",
                     "description": "to specify numbers in millions",
-                    "type_id": 7,
+                    "type_id": 6,
                     "plural": null,
                     "impact": null,
                     "class": "word"
@@ -31457,7 +31457,7 @@
                 "protection": 3,
                 "name": "m\/s",
                 "description": "The metre per second is the unit of both speed (a scalar quantity) and velocity (a vector quantity, which has direction and magnitude) in the International System of Units (SI), equal to the speed of a body covering a distance of one metre in a time of one second.",
-                "type_id": 3,
+                "type_id": 2,
                 "verb_id": {
                     "name": "is symbol for",
                     "code_id": "symbol",
@@ -31476,7 +31476,7 @@
                     "protection": 3,
                     "name": "metre per second",
                     "description": "The metre per second is the SI unit of both speed and velocity, representing the distance of one metre covered in one second.",
-                    "type_id": 3,
+                    "type_id": 2,
                     "usage": null,
                     "impact": null,
                     "class": "triple"
@@ -31492,7 +31492,7 @@
                     "protection": 3,
                     "name": "m",
                     "description": "Is a symbol for the metre, the base unit of length in the International System of Units (SI).",
-                    "type_id": 3,
+                    "type_id": 2,
                     "plural": null,
                     "impact": null,
                     "class": "word"
@@ -31515,7 +31515,7 @@
                     "protection": 3,
                     "name": "metre",
                     "description": "The metre (or meter in US spelling) has been defined as the length of the path travelled by light in vacuum during a time interval of \u20601\/299792458\u2060 of a second, where the second is defined by a hyperfine transition frequency of caesium.",
-                    "type_id": 3,
+                    "type_id": 2,
                     "plural": null,
                     "impact": null,
                     "class": "word"
@@ -31886,7 +31886,7 @@
                 "protection": 3,
                 "name": "K",
                 "description": "Is a symbol for kelvin",
-                "type_id": 3,
+                "type_id": 2,
                 "class": "word"
             },
             {
@@ -31894,7 +31894,7 @@
                 "protection": 3,
                 "name": "kelvin",
                 "description": "The kelvin is the base unit for temperature in the International System of Units (SI). The Kelvin scale is an absolute temperature scale that starts at the lowest possible temperature (absolute zero), taken to be 0 K.",
-                "type_id": 3,
+                "type_id": 2,
                 "class": "word"
             },
             {
@@ -31915,7 +31915,7 @@
                 "protection": 3,
                 "name": "l",
                 "description": "Is a symbol for litre",
-                "type_id": 3,
+                "type_id": 2,
                 "class": "word"
             },
             {
@@ -31923,14 +31923,14 @@
                 "protection": 3,
                 "name": "litre",
                 "description": "The litre is a metric unit of volume equal to 1 cubic decimetre, or 1000 cubic centimetres. It is not an official SI unit, though the SI unit for volume is the cubic metre.",
-                "type_id": 3,
+                "type_id": 2,
                 "class": "word"
             },
             {
                 "id": 276,
                 "name": "mio",
                 "description": "the symbol used in formulas for million",
-                "type_id": 7,
+                "type_id": 6,
                 "class": "word"
             },
             {
@@ -31938,7 +31938,7 @@
                 "protection": 3,
                 "name": "million",
                 "description": "to specify numbers in millions",
-                "type_id": 7,
+                "type_id": 6,
                 "class": "word"
             },
             {
@@ -31946,7 +31946,7 @@
                 "protection": 3,
                 "name": "m",
                 "description": "Is a symbol for the metre, the base unit of length in the International System of Units (SI).",
-                "type_id": 3,
+                "type_id": 2,
                 "class": "word"
             },
             {
@@ -31954,7 +31954,7 @@
                 "protection": 3,
                 "name": "metre per second",
                 "description": "The metre per second is the SI unit of both speed and velocity, representing the distance of one metre covered in one second.",
-                "type_id": 3,
+                "type_id": 2,
                 "class": "triple"
             },
             {
@@ -31962,7 +31962,7 @@
                 "protection": 3,
                 "name": "metre",
                 "description": "The metre (or meter in US spelling) has been defined as the length of the path travelled by light in vacuum during a time interval of \u20601\/299792458\u2060 of a second, where the second is defined by a hyperfine transition frequency of caesium.",
-                "type_id": 3,
+                "type_id": 2,
                 "class": "word"
             },
             {
@@ -32591,7 +32591,7 @@
                     "protection": 3,
                     "name": "s",
                     "description": "The symbol for second is a unit of time derived from the division of the day first into 24 hours, then to 60 minutes and finally to 60 seconds each (24 \u00d7 60 \u00d7 60 = 86400).",
-                    "type_id": 3,
+                    "type_id": 2,
                     "plural": null,
                     "impact": null,
                     "class": "word"
@@ -32688,7 +32688,7 @@
                     "id": 275,
                     "name": "trillion",
                     "description": "the scaling factor of 10^12",
-                    "type_id": 7,
+                    "type_id": 6,
                     "plural": null,
                     "impact": null,
                     "class": "word"
@@ -32727,7 +32727,7 @@
                     "protection": 3,
                     "name": "tonne",
                     "description": "A metric unit of mass equal to 1,000 kilograms, also called a metric ton.",
-                    "type_id": 3,
+                    "type_id": 2,
                     "plural": null,
                     "impact": null,
                     "class": "word"
@@ -32941,7 +32941,7 @@
                 "protection": 3,
                 "name": "s",
                 "description": "The symbol for second is a unit of time derived from the division of the day first into 24 hours, then to 60 minutes and finally to 60 seconds each (24 \u00d7 60 \u00d7 60 = 86400).",
-                "type_id": 3,
+                "type_id": 2,
                 "class": "word"
             },
             {
@@ -32969,7 +32969,7 @@
                 "id": 275,
                 "name": "trillion",
                 "description": "the scaling factor of 10^12",
-                "type_id": 7,
+                "type_id": 6,
                 "class": "word"
             },
             {
@@ -32977,7 +32977,7 @@
                 "protection": 3,
                 "name": "tonne",
                 "description": "A metric unit of mass equal to 1,000 kilograms, also called a metric ton.",
-                "type_id": 3,
+                "type_id": 2,
                 "class": "word"
             },
             {
@@ -33076,7 +33076,7 @@
                     "id": 438,
                     "name": "USD",
                     "description": "ISO 4217 alphabetic code for the United States dollar.",
-                    "type_id": 3,
+                    "type_id": 2,
                     "plural": null,
                     "impact": null,
                     "class": "word"
@@ -33135,7 +33135,7 @@
                     "id": 163,
                     "name": "factor",
                     "description": "how many times bigger one number is than the number it is compared with",
-                    "type_id": 29,
+                    "type_id": 8,
                     "plural": null,
                     "impact": null,
                     "class": "word"
@@ -33219,14 +33219,14 @@
             {
                 "id": 5,
                 "name": "\u03c0 (unit symbol)",
-                "type_id": 22,
+                "type_id": 28,
                 "from_id": 5,
                 "from_phrase": {
                     "id": 5,
                     "protection": 3,
                     "name": "\u03c0",
                     "description": "Symbol for the ratio of the circumference of a circle to its diameter",
-                    "type_id": 17,
+                    "type_id": 20,
                     "plural": null,
                     "impact": null,
                     "class": "word"
@@ -33249,7 +33249,7 @@
                     "protection": 3,
                     "name": "Pi",
                     "description": "ratio of the circumference of a circle to its diameter",
-                    "type_id": 17,
+                    "type_id": 20,
                     "plural": null,
                     "impact": null,
                     "class": "word"
@@ -33385,7 +33385,7 @@
                 "id": 438,
                 "name": "USD",
                 "description": "ISO 4217 alphabetic code for the United States dollar.",
-                "type_id": 3,
+                "type_id": 2,
                 "class": "word"
             },
             {
@@ -33399,7 +33399,7 @@
                 "id": 163,
                 "name": "factor",
                 "description": "how many times bigger one number is than the number it is compared with",
-                "type_id": 29,
+                "type_id": 8,
                 "class": "word"
             },
             {
@@ -33421,7 +33421,7 @@
                 "protection": 3,
                 "name": "\u03c0",
                 "description": "Symbol for the ratio of the circumference of a circle to its diameter",
-                "type_id": 17,
+                "type_id": 20,
                 "class": "word"
             },
             {
@@ -33429,7 +33429,7 @@
                 "protection": 3,
                 "name": "Pi",
                 "description": "ratio of the circumference of a circle to its diameter",
-                "type_id": 17,
+                "type_id": 20,
                 "class": "word"
             },
             {
@@ -33570,7 +33570,7 @@
                 "id": 73,
                 "protection": 3,
                 "name": "Hz\/s",
-                "type_id": 3,
+                "type_id": 2,
                 "verb_id": {
                     "name": "is alias of",
                     "code_id": "alias",
@@ -33589,7 +33589,7 @@
                     "protection": 3,
                     "name": "hertz per second",
                     "description": null,
-                    "type_id": 3,
+                    "type_id": 2,
                     "usage": null,
                     "impact": null,
                     "class": "triple"
@@ -33633,7 +33633,7 @@
                     "protection": 3,
                     "name": "mol",
                     "description": "Is a symbol for mole",
-                    "type_id": 3,
+                    "type_id": 2,
                     "plural": null,
                     "impact": null,
                     "class": "word"
@@ -33656,7 +33656,7 @@
                     "protection": 3,
                     "name": "mole",
                     "description": "The mole (symbol mol) is a unit of measurement, the base unit in the International System of Units (SI) for amount of substance, an SI base quantity proportional to the number of elementary entities of a substance.",
-                    "type_id": 3,
+                    "type_id": 2,
                     "plural": null,
                     "impact": null,
                     "class": "word"
@@ -33667,7 +33667,7 @@
                 "id": 86,
                 "protection": 3,
                 "name": "m\/s2",
-                "type_id": 3,
+                "type_id": 2,
                 "verb_id": {
                     "name": "is alias of",
                     "code_id": "alias",
@@ -33686,7 +33686,7 @@
                     "protection": 3,
                     "name": "metre per second squared",
                     "description": "The metre per second squared is the SI unit of acceleration, composed from the base units of metre and second.",
-                    "type_id": 3,
+                    "type_id": 2,
                     "usage": null,
                     "impact": null,
                     "class": "triple"
@@ -33697,7 +33697,7 @@
                 "id": 87,
                 "protection": 3,
                 "name": "m\/s3",
-                "type_id": 3,
+                "type_id": 2,
                 "verb_id": {
                     "name": "is alias of",
                     "code_id": "alias",
@@ -33716,7 +33716,7 @@
                     "protection": 3,
                     "name": "metre per second cubed",
                     "description": "The metre per second cubed is the SI unit of jerk, the rate of change of acceleration over time.",
-                    "type_id": 3,
+                    "type_id": 2,
                     "usage": null,
                     "impact": null,
                     "class": "triple"
@@ -33764,7 +33764,7 @@
                 "id": 69,
                 "protection": 3,
                 "name": "rad\/s",
-                "type_id": 3,
+                "type_id": 2,
                 "verb_id": {
                     "name": "is alias of",
                     "code_id": "alias",
@@ -33783,7 +33783,7 @@
                     "protection": 3,
                     "name": "radian per second",
                     "description": "The radian per second is the unit of angular velocity in the International System of Units (SI).",
-                    "type_id": 3,
+                    "type_id": 2,
                     "usage": null,
                     "impact": null,
                     "class": "triple"
@@ -33794,7 +33794,7 @@
                 "id": 88,
                 "protection": 3,
                 "name": "rad\/s2",
-                "type_id": 3,
+                "type_id": 2,
                 "verb_id": {
                     "name": "is alias of",
                     "code_id": "alias",
@@ -33813,7 +33813,7 @@
                     "protection": 3,
                     "name": "radian per second squared",
                     "description": null,
-                    "type_id": 3,
+                    "type_id": 2,
                     "usage": null,
                     "impact": null,
                     "class": "triple"
@@ -33866,7 +33866,7 @@
                     "id": 161,
                     "name": "tsd.",
                     "description": null,
-                    "type_id": 7,
+                    "type_id": 6,
                     "plural": null,
                     "impact": null,
                     "class": "word"
@@ -33889,7 +33889,7 @@
                     "protection": 3,
                     "name": "thousand",
                     "description": "to specify numbers in thousand",
-                    "type_id": 7,
+                    "type_id": 6,
                     "plural": null,
                     "impact": null,
                     "class": "word"
@@ -34025,7 +34025,7 @@
                 "id": 40,
                 "protection": 3,
                 "name": "hertz per second",
-                "type_id": 3,
+                "type_id": 2,
                 "class": "triple"
             },
             {
@@ -34040,7 +34040,7 @@
                 "protection": 3,
                 "name": "mol",
                 "description": "Is a symbol for mole",
-                "type_id": 3,
+                "type_id": 2,
                 "class": "word"
             },
             {
@@ -34048,7 +34048,7 @@
                 "protection": 3,
                 "name": "mole",
                 "description": "The mole (symbol mol) is a unit of measurement, the base unit in the International System of Units (SI) for amount of substance, an SI base quantity proportional to the number of elementary entities of a substance.",
-                "type_id": 3,
+                "type_id": 2,
                 "class": "word"
             },
             {
@@ -34056,7 +34056,7 @@
                 "protection": 3,
                 "name": "metre per second squared",
                 "description": "The metre per second squared is the SI unit of acceleration, composed from the base units of metre and second.",
-                "type_id": 3,
+                "type_id": 2,
                 "class": "triple"
             },
             {
@@ -34064,7 +34064,7 @@
                 "protection": 3,
                 "name": "metre per second cubed",
                 "description": "The metre per second cubed is the SI unit of jerk, the rate of change of acceleration over time.",
-                "type_id": 3,
+                "type_id": 2,
                 "class": "triple"
             },
             {
@@ -34084,20 +34084,20 @@
                 "protection": 3,
                 "name": "radian per second",
                 "description": "The radian per second is the unit of angular velocity in the International System of Units (SI).",
-                "type_id": 3,
+                "type_id": 2,
                 "class": "triple"
             },
             {
                 "id": 70,
                 "protection": 3,
                 "name": "radian per second squared",
-                "type_id": 3,
+                "type_id": 2,
                 "class": "triple"
             },
             {
                 "id": 161,
                 "name": "tsd.",
-                "type_id": 7,
+                "type_id": 6,
                 "class": "word"
             },
             {

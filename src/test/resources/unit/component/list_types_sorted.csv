@@ -51,7 +51,7 @@ component_type_id,type_name,code_id,description
 50,word list up,word_list_up,"Show a list of words related with a specified verb e.g. for the triple <canton of Zurich> show the word <canton>, because they are linked with verb <is a>"
 51,word list down,word_list_down,"Show a list of words related with a specified verb e.g. for word <canton> list <canton of Zurich> and others, because they are linked with verb <is a>"
 52,verb usage,triples_by_verb,display the triples where a verb is used
-53,words or triples liked to formula,list_phrases_of_formula,words or triples that are linked to this formula
+53,words or triples linked to formula,list_phrases_of_formula,words or triples that are linked to this formula
 54,values related to,values_related,display all values that are related to a defined term
 55,table with related columns,table_with_related_columns,show the values related to a phrase as a table with one column per phrase used most often within the values and one row per remaining phrase combination
 56,values in columns,values_in_columns,"show the values related to a phrase in up to four columns that wrap on narrow screens, each column headed by one of the phrases used most often within these values"
@@ -130,7 +130,7 @@ component_type_id,type_name,code_id,description
 129,ui message fields,system_form_field_ui_msg,"the user interface message link fields in a form, only shown to a user whose profile may change the code id"
 130,system form field formula text,system_form_field_formula_expression,the form field for the formula expression
 131,system form field latex,system_form_field_formula_latex,the form field for the formula in the latex format
-132,form field name,system_form_field_formula_all_vars,the form flag to set the formula to need all variables for a valid result
+132,form field name formula all,system_form_field_formula_all_vars,the form flag to set the formula to need all variables for a valid result
 133,system form field value,system_form_field_value,the numeric value field in a form
 134,system form field group,system_form_field_group,the group name field in a form
 135,system form field group or phrase list,system_form_field_group_or_phrase_list,a form field for the group name or a list of phrase names

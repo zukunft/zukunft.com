@@ -43,6 +43,6 @@ SELECT triple_insert_log_1111500000000001_user
         'A mathematical constant that never changes e.g. Pi'::text,
         181::smallint,
         'math constant'::text,
-        17::smallint,
+        20::smallint,
         187::smallint,
         3::smallint);

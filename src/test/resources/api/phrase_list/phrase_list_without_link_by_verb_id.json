@@ -84,7 +84,7 @@
         "id": 1470,
         "name": "EAN",
         "description": "European Article Number: the 13 digit barcode number of a retail product, today named International Article Number (IAN)",
-        "type_id": 33,
+        "type_id": 23,
         "class": "word"
     },
     {
@@ -103,14 +103,14 @@
         "id": 1468,
         "name": "ISBN",
         "description": "International Standard Book Number: identifies one edition of a book; since 2007 it has 13 digits and equals the EAN of the book with the prefix 978 or 979",
-        "type_id": 33,
+        "type_id": 23,
         "class": "word"
     },
     {
         "id": 1469,
         "name": "ISIN",
         "description": "International Securities Identification Number (ISO 6166): identifies one security with 12 characters, the country code, the nine character national number and a check digit",
-        "type_id": 33,
+        "type_id": 23,
         "class": "word"
     },
     {
@@ -124,7 +124,7 @@
         "protection": 3,
         "name": "mathematical constant",
         "description": "A mathematical constant that never changes e.g. Pi",
-        "type_id": 17,
+        "type_id": 20,
         "class": "triple"
     },
     {
@@ -150,7 +150,7 @@
         "protection": 3,
         "name": "Physical constant",
         "description": "A physical constant is a physical quantity that is generally believed to be both universal in nature and have constant value in time",
-        "type_id": 17,
+        "type_id": 20,
         "class": "triple"
     },
     {
@@ -183,7 +183,7 @@
         "id": 607,
         "name": "scaling",
         "description": "the multiplication of a quantity by a constant factor",
-        "type_id": 7,
+        "type_id": 6,
         "class": "word"
     },
     {
@@ -240,7 +240,7 @@
         "protection": 3,
         "name": "year",
         "description": "A year is the time taken for astronomical objects to complete one orbit. For example, a year on Earth is the time taken for Earth to revolve around the Sun.",
-        "type_id": 2,
+        "type_id": 11,
         "class": "word"
     },
     {

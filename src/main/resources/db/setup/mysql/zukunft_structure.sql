@@ -4347,7 +4347,7 @@ CREATE OR REPLACE VIEW prime_terms AS
            ''                AS resolved_text,
            ''                AS latex
       FROM words AS w
-     WHERE (w.phrase_type_id <> 10 OR w.phrase_type_id IS NULL)
+     WHERE (w.phrase_type_id <> 21 OR w.phrase_type_id IS NULL)
        AND w.word_id < 32767
 UNION
     SELECT t.triple_id * -2 + 1 AS term_id,
@@ -4421,7 +4421,7 @@ CREATE OR REPLACE VIEW terms AS
            ''                AS resolved_text,
            ''                AS latex
       FROM words AS w
-     WHERE (w.phrase_type_id <> 10 OR w.phrase_type_id IS NULL)
+     WHERE (w.phrase_type_id <> 21 OR w.phrase_type_id IS NULL)
 UNION
     SELECT t.triple_id * -2 + 1 AS term_id,
            t.user_id,
@@ -4491,7 +4491,7 @@ CREATE OR REPLACE VIEW user_prime_terms AS
            ''                AS resolved_text,
            ''                AS latex
       FROM user_words AS w
-     WHERE (w.phrase_type_id <> 10 OR w.phrase_type_id IS NULL)
+     WHERE (w.phrase_type_id <> 21 OR w.phrase_type_id IS NULL)
        AND w.word_id < 32767
 UNION
     SELECT t.triple_id * -2 + 1 AS term_id,
@@ -4565,7 +4565,7 @@ CREATE OR REPLACE VIEW user_terms AS
            ''                AS resolved_text,
            ''                AS latex
       FROM user_words AS w
-     WHERE (w.phrase_type_id <> 10 OR w.phrase_type_id IS NULL)
+     WHERE (w.phrase_type_id <> 21 OR w.phrase_type_id IS NULL)
 UNION
     SELECT t.triple_id * -2 + 1 AS term_id,
            t.user_id,

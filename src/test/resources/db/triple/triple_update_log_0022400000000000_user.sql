@@ -50,6 +50,6 @@ SELECT triple_update_log_0022400000000000_user
         null::text,
         181::smallint,
         'math constant'::text,
-        17::smallint,
+        20::smallint,
         null::text,
         null::smallint);
