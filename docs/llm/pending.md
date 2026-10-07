@@ -1,12 +1,6 @@
 # pending - list of planned llm prompts with prio 1
 
-## type and component order
-
-review the initial order of the verbs
-
-sort the verbs in src/main/resources/verbs.json so that the resulting src/test/resources/unit/verb/list.csv matches the src/test/resources/unit/verb/list_sorted.csv. use src/test/resources/unit/verb/list_unsorted.csv to re-pin the verbs  
-
-### source types
+## source types
 
 add to the database table source_types the columns 'group' and 'wikipedia', where 
 wikipedia is a text url field with the link to the format explain in English (translations could be taken live from wikipedia)
@@ -62,7 +56,7 @@ WARC
 
 and in the csv src/main/resources/db_code_links/source_types.csv fill the column 'wikipedia' with the explain link for the format e.g. for 'PDF': 'https://en.wikipedia.org/wiki/PDF' 
 
-### todo from group id change
+## todo from group id change
 
 Things to fix or check
 1. result_id.php docblocks are stale. get_id() and alpha_num_result() still say "512-bit key as 112 chars or list of more than 16 keys with 6 chars" and "the 512 bit db key …", next to the new compact-key line (your on-disk edit kept both). The old lines are now wrong.

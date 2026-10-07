@@ -6951,398 +6951,14 @@
             {
                 "name": "is part of",
                 "code_id": "contains",
-                "description": "if several similar term create different views to the same sum; E.g. Cash Flow Paper, Balance Sheet and Income statement are Financial Statements. Or sectors and Regions are different splittings",
-                "plural": "is part of",
+                "description": "if several similar terms create different views to the same sum e.g. the cash flow statement, the balance sheet and the income statement are parts of the financial statements; or sectors and regions are different splittings",
+                "plural": "are part of",
                 "reverse": "contains",
-                "rev_plural": "contains",
+                "rev_plural": "contain",
                 "name_in_formula": null,
                 "usage": null,
                 "impact": null,
                 "id": 3
-            },
-            {
-                "name": "can be part of",
-                "code_id": "can_be_part_of",
-                "description": "if the assigment is optional in both directions e.g. a base unit can be a SI unit but not all SI units are base units",
-                "plural": "can be part of",
-                "reverse": "contains",
-                "rev_plural": "contains",
-                "name_in_formula": null,
-                "usage": null,
-                "impact": null,
-                "id": 4
-            },
-            {
-                "name": "of",
-                "code_id": "of",
-                "description": "to narrow a selection e.g. the world population is usually the population of all humans",
-                "plural": "of",
-                "reverse": "of",
-                "rev_plural": "of",
-                "name_in_formula": null,
-                "usage": null,
-                "impact": null,
-                "id": 5
-            },
-            {
-                "name": "with",
-                "code_id": "with",
-                "description": "similar to 'is part of' but where the left phrase is expected to be several times the right phrase e.g. for comparing same by same: 1 hour with full load is the same as 2 hours with half load",
-                "plural": "with",
-                "reverse": "",
-                "rev_plural": "",
-                "name_in_formula": null,
-                "usage": null,
-                "impact": null,
-                "id": 6
-            },
-            {
-                "name": "has a",
-                "code_id": "has",
-                "description": "to assign potential properties e.g. a country has a Human Development Index",
-                "plural": "has",
-                "reverse": "is used for",
-                "rev_plural": "is used for",
-                "name_in_formula": null,
-                "usage": null,
-                "impact": null,
-                "id": 7
-            },
-            {
-                "name": "is time jump for",
-                "code_id": "time_jump",
-                "description": "the default time jump e.g year is the default time period for annual reports",
-                "plural": "are the time jump for",
-                "reverse": "has the default time jump",
-                "rev_plural": "have the default time jump",
-                "name_in_formula": "time jump",
-                "usage": null,
-                "impact": null,
-                "id": 8
-            },
-            {
-                "name": "is term jump for",
-                "code_id": "term_jump",
-                "description": "the default term jump e.g. state of aggregation is used for a physical substance",
-                "plural": null,
-                "reverse": null,
-                "rev_plural": null,
-                "name_in_formula": null,
-                "usage": null,
-                "impact": null,
-                "id": 9
-            },
-            {
-                "name": "term type needed",
-                "code_id": "term_needed",
-                "description": "the formula needs the linked term type",
-                "plural": null,
-                "reverse": null,
-                "rev_plural": null,
-                "name_in_formula": null,
-                "usage": null,
-                "impact": null,
-                "id": 10
-            },
-            {
-                "name": "is follower of",
-                "code_id": "follow",
-                "description": "the time order of two phrases e.g. 2025 is follower of 2024; for the table column order use 'is next main column after' or 'is explaining column for'",
-                "plural": "is follower of",
-                "reverse": "is followed by",
-                "rev_plural": "is followed by",
-                "name_in_formula": "follower",
-                "usage": null,
-                "impact": null,
-                "id": 11
-            },
-            {
-                "name": "uses",
-                "code_id": "uses",
-                "description": "real use e.g. wind energy is used by a wind turbine",
-                "plural": "uses",
-                "reverse": "is used by",
-                "rev_plural": "are used by",
-                "name_in_formula": null,
-                "usage": null,
-                "impact": null,
-                "id": 12
-            },
-            {
-                "name": "issue",
-                "code_id": "issue",
-                "description": "e.g. a company issues an annual report",
-                "plural": "issues",
-                "reverse": "is issued by",
-                "rev_plural": "are issued by",
-                "name_in_formula": null,
-                "usage": null,
-                "impact": null,
-                "id": 13
-            },
-            {
-                "name": "is measure type for",
-                "code_id": "measure_type",
-                "description": "is the default measure type for",
-                "plural": "are measure type for",
-                "reverse": "has the measure type",
-                "rev_plural": "have the measure type",
-                "name_in_formula": "measure type",
-                "usage": null,
-                "impact": null,
-                "id": 14
-            },
-            {
-                "name": "is an acronym for",
-                "code_id": "acronym",
-                "description": "is an acronym for",
-                "plural": "are an acronyms for",
-                "reverse": "has acronym",
-                "rev_plural": "has acronyms",
-                "name_in_formula": null,
-                "usage": null,
-                "impact": null,
-                "id": 15
-            },
-            {
-                "name": "can be used as a differentiator for",
-                "code_id": "can_contain",
-                "description": "similar to contains, but in a table view the row will not be shown if there is no corresponding value",
-                "plural": "can be used as a differentiator for",
-                "reverse": "can be differentiated by",
-                "rev_plural": "can be differentiated by",
-                "name_in_formula": "differentiator",
-                "usage": null,
-                "impact": null,
-                "id": 16
-            },
-            {
-                "name": "influences",
-                "code_id": "influence",
-                "description": "",
-                "plural": "influences",
-                "reverse": "is influenced by",
-                "rev_plural": "is influenced by",
-                "name_in_formula": null,
-                "usage": null,
-                "impact": null,
-                "id": 17
-            },
-            {
-                "name": "is alias of",
-                "code_id": "alias",
-                "description": "",
-                "plural": "is alias of",
-                "reverse": "is alias of",
-                "rev_plural": "is alias of",
-                "name_in_formula": null,
-                "usage": null,
-                "impact": null,
-                "id": 18
-            },
-            {
-                "name": "can",
-                "code_id": "can",
-                "description": "to assign a behavior e.g. GDP can decline",
-                "plural": "can",
-                "reverse": null,
-                "rev_plural": null,
-                "name_in_formula": null,
-                "usage": null,
-                "impact": null,
-                "id": 19
-            },
-            {
-                "name": "can be",
-                "code_id": "can_be",
-                "description": "",
-                "plural": "can be",
-                "reverse": "can be",
-                "rev_plural": "can be",
-                "name_in_formula": null,
-                "usage": null,
-                "impact": null,
-                "id": 20
-            },
-            {
-                "name": "can get",
-                "code_id": "can_get",
-                "description": "",
-                "plural": "can get",
-                "reverse": null,
-                "rev_plural": null,
-                "name_in_formula": null,
-                "usage": null,
-                "impact": null,
-                "id": 21
-            },
-            {
-                "name": "can cause",
-                "code_id": "can_cause",
-                "description": "there is a causal relation with a factor",
-                "plural": "can cause",
-                "reverse": "can be caused by",
-                "rev_plural": "can be caused by",
-                "name_in_formula": null,
-                "usage": null,
-                "impact": null,
-                "id": 22
-            },
-            {
-                "name": "can have",
-                "code_id": "can_have",
-                "description": "",
-                "plural": "can have",
-                "reverse": null,
-                "rev_plural": null,
-                "name_in_formula": null,
-                "usage": null,
-                "impact": null,
-                "id": 23
-            },
-            {
-                "name": "can use",
-                "code_id": "can_use",
-                "description": "use indicates that a new result is created e.g. a turbine can use water or wind or any type of liquid or gas to convert energy",
-                "plural": "can use",
-                "reverse": "can be used by",
-                "rev_plural": "can be used by",
-                "name_in_formula": null,
-                "usage": null,
-                "impact": null,
-                "id": 24
-            },
-            {
-                "name": "scaled by",
-                "code_id": "scaled",
-                "description": "to define the usual scaling e.g. for watt hours usually the scaling kilo (kWh) is used",
-                "plural": "scaled by",
-                "reverse": "is scaling for",
-                "rev_plural": "are scaling for",
-                "name_in_formula": null,
-                "usage": null,
-                "impact": null,
-                "id": 25
-            },
-            {
-                "name": "per",
-                "code_id": "per",
-                "description": "to define the usual quotient e.g. meter per second is normally used not seconds per meter, that why the reverse name is empty",
-                "plural": "per",
-                "reverse": "",
-                "rev_plural": "",
-                "name_in_formula": null,
-                "usage": null,
-                "impact": null,
-                "id": 26
-            },
-            {
-                "name": "times",
-                "code_id": "times",
-                "description": "to multiply the two given phrases to one unit e.g. Joule times second (J\u22c5s) for the Plank constant",
-                "plural": "times",
-                "reverse": "times",
-                "rev_plural": "times",
-                "name_in_formula": null,
-                "usage": null,
-                "impact": null,
-                "id": 27
-            },
-            {
-                "name": "is selector for",
-                "code_id": "selector",
-                "description": "used to group a selection list to make it shorter",
-                "plural": "are selectors for",
-                "reverse": "is grouped by",
-                "rev_plural": "are grouped by",
-                "name_in_formula": null,
-                "usage": null,
-                "impact": null,
-                "id": 28
-            },
-            {
-                "name": "is symbol for",
-                "code_id": "symbol",
-                "description": "is used as a symbol for",
-                "plural": "are symbols for",
-                "reverse": "can have symbol",
-                "rev_plural": "can have symbols",
-                "name_in_formula": null,
-                "usage": null,
-                "impact": null,
-                "id": 29
-            },
-            {
-                "name": "and",
-                "code_id": "and",
-                "description": "combine two phrases a a new phrase",
-                "plural": "and",
-                "reverse": "and",
-                "rev_plural": "and",
-                "name_in_formula": null,
-                "usage": null,
-                "impact": null,
-                "id": 30
-            },
-            {
-                "name": "on",
-                "code_id": "on",
-                "description": "to specify a subgroup e.g. taxes on income",
-                "plural": "on",
-                "reverse": "distribute to",
-                "rev_plural": "distribute to",
-                "name_in_formula": null,
-                "usage": null,
-                "impact": null,
-                "id": 31
-            },
-            {
-                "name": "in",
-                "code_id": "in",
-                "description": "to specify the measure unit",
-                "plural": "in",
-                "reverse": "",
-                "rev_plural": "",
-                "name_in_formula": null,
-                "usage": null,
-                "impact": null,
-                "id": 32
-            },
-            {
-                "name": "to",
-                "code_id": "to",
-                "description": "to define a time period e.g. \"12:00 to 13:00\" or \"1. March 2024 to 3. March 2024 or to specify the assignment type e.g. net to net for currency turnover",
-                "plural": "to",
-                "reverse": "",
-                "rev_plural": "",
-                "name_in_formula": null,
-                "usage": null,
-                "impact": null,
-                "id": 33
-            },
-            {
-                "name": "is ranked by",
-                "code_id": "rank",
-                "description": "to define which values should be used to sort related objects e.g. the first math const are the once that have been discovered first because they are probably the most relevant and useful",
-                "plural": "are ranked by",
-                "reverse": "is sort phrases for",
-                "rev_plural": "are sort phrases for",
-                "name_in_formula": null,
-                "usage": null,
-                "impact": null,
-                "id": 34
-            },
-            {
-                "name": "between",
-                "code_id": "between",
-                "description": "to define a range e.g. a value between a lower and an upper bound",
-                "plural": "between",
-                "reverse": "",
-                "rev_plural": "",
-                "name_in_formula": null,
-                "usage": null,
-                "impact": null,
-                "id": 35
             },
             {
                 "name": "kind of",
@@ -7354,7 +6970,7 @@
                 "name_in_formula": null,
                 "usage": null,
                 "impact": null,
-                "id": 36
+                "id": 4
             },
             {
                 "name": "name of",
@@ -7366,19 +6982,7 @@
                 "name_in_formula": null,
                 "usage": null,
                 "impact": null,
-                "id": 37
-            },
-            {
-                "name": "by parts",
-                "code_id": "by_parts",
-                "description": "to describe a method that operates on the parts of an expression e.g. integration by parts",
-                "plural": "by parts",
-                "reverse": "",
-                "rev_plural": "",
-                "name_in_formula": null,
-                "usage": null,
-                "impact": null,
-                "id": 38
+                "id": 5
             },
             {
                 "name": "must be one of",
@@ -7390,247 +6994,295 @@
                 "name_in_formula": null,
                 "usage": null,
                 "impact": null,
-                "id": 39
+                "id": 6
             },
             {
-                "name": "is used by",
-                "code_id": "used_by",
-                "description": "passive form of 'uses' when the dependent phrase is the subject e.g. cent is used by Euro",
-                "plural": "are used by",
-                "reverse": "uses",
-                "rev_plural": "use",
+                "name": "can be part of",
+                "code_id": "can_be_part_of",
+                "description": "if the assignment is optional in both directions e.g. a base unit can be a SI unit but not all SI units are base units",
+                "plural": "can be part of",
+                "reverse": "contains",
+                "rev_plural": "can contain",
                 "name_in_formula": null,
                 "usage": null,
                 "impact": null,
-                "id": 40
+                "id": 7
             },
             {
-                "name": "can be made of",
-                "code_id": "can_be_made_of",
-                "description": "to specify possible materials or composition options e.g. a porringer can be made of plastic",
-                "plural": "can be made of",
-                "reverse": "can make",
-                "rev_plural": "can make",
+                "name": "can be used as a differentiator for",
+                "code_id": "can_contain",
+                "description": "similar to contains, but in a table view the row will not be shown if there is no corresponding value",
+                "plural": "can be used as differentiators for",
+                "reverse": "can be differentiated by",
+                "rev_plural": "can be differentiated by",
+                "name_in_formula": "differentiator",
+                "usage": null,
+                "impact": null,
+                "id": 8
+            },
+            {
+                "name": "is selector for",
+                "code_id": "selector",
+                "description": "used to group a selection list to make it shorter",
+                "plural": "are selectors for",
+                "reverse": "is grouped by",
+                "rev_plural": "are grouped by",
                 "name_in_formula": null,
                 "usage": null,
                 "impact": null,
-                "id": 41
+                "id": 9
             },
             {
-                "name": "can be packed in",
-                "code_id": "can_be_packed_in",
-                "description": "to specify possible packaging options e.g. a blueberry can be packed in a plastic porringer",
-                "plural": "can be packed in",
-                "reverse": "can pack",
-                "rev_plural": "can pack",
+                "name": "of",
+                "code_id": "of",
+                "description": "to narrow a selection e.g. the world population is usually the population of all humans",
+                "plural": "of",
+                "reverse": "of",
+                "rev_plural": "of",
                 "name_in_formula": null,
                 "usage": null,
                 "impact": null,
-                "id": 42
+                "id": 10
             },
             {
-                "name": "used for",
-                "code_id": "used_for",
-                "description": "to specify the intended purpose of a phrase e.g. fuel used for a jet (jet fuel)",
-                "plural": "are used for",
-                "reverse": "uses",
-                "rev_plural": "uses",
+                "name": "in",
+                "code_id": "in",
+                "description": "to specify the measure unit or the frame of a phrase e.g. temperature in celsius",
+                "plural": "in",
+                "reverse": "",
+                "rev_plural": "",
                 "name_in_formula": null,
                 "usage": null,
                 "impact": null,
-                "id": 43
+                "id": 11
             },
             {
-                "name": "is next main column after",
-                "code_id": "before",
-                "description": "to chain the main table columns e.g. the solution column is the next main column after the problem column and all columns explaining the problem; for a time order use 'is follower of'",
-                "plural": "are next main columns after",
-                "reverse": "is main column before",
-                "rev_plural": "are main columns before",
+                "name": "and",
+                "code_id": "and",
+                "description": "to combine two phrases to a new phrase e.g. interest and taxes",
+                "plural": "and",
+                "reverse": "and",
+                "rev_plural": "and",
                 "name_in_formula": null,
                 "usage": null,
                 "impact": null,
-                "id": 44
+                "id": 12
             },
             {
-                "name": "is explaining column for",
-                "code_id": "after",
-                "description": "to attach a column that explains a main table column e.g. the loss column gives the size of the problem column; an explaining column is shown between its main column and the next main column",
-                "plural": "are explaining columns for",
-                "reverse": "is explained by column",
-                "rev_plural": "are explained by columns",
+                "name": "to",
+                "code_id": "to",
+                "description": "to define a time period e.g. \"12:00 to 13:00\" or \"1. March 2024 to 3. March 2024 or to specify the assignment type e.g. net to net for currency turnover",
+                "plural": "to",
+                "reverse": "",
+                "rev_plural": "",
                 "name_in_formula": null,
                 "usage": null,
                 "impact": null,
-                "id": 45
+                "id": 13
             },
             {
-                "name": "supports",
-                "code_id": "supports",
-                "description": "to state that one argument or finding backs a claim e.g. a premise supports a conclusion",
-                "plural": "support",
-                "reverse": "is supported by",
-                "rev_plural": "are supported by",
+                "name": "on",
+                "code_id": "on",
+                "description": "to specify a subgroup e.g. taxes on income",
+                "plural": "on",
+                "reverse": "distribute to",
+                "rev_plural": "distribute to",
                 "name_in_formula": null,
                 "usage": null,
                 "impact": null,
-                "id": 46
+                "id": 14
             },
             {
-                "name": "explains",
-                "code_id": "explains",
-                "description": "to state that one phrase gives the reason for another e.g. a mechanism explains an observation",
-                "plural": "explain",
-                "reverse": "is explained by",
-                "rev_plural": "are explained by",
+                "name": "with",
+                "code_id": "with",
+                "description": "similar to 'is part of' but where the left phrase is expected to be several times the right phrase e.g. for comparing same by same: 1 hour with full load is the same as 2 hours with half load",
+                "plural": "with",
+                "reverse": "",
+                "rev_plural": "",
                 "name_in_formula": null,
                 "usage": null,
                 "impact": null,
-                "id": 47
+                "id": 15
             },
             {
-                "name": "refines",
-                "code_id": "refines",
-                "description": "to state that one phrase makes another more precise without replacing it e.g. a strategy refines a claim",
-                "plural": "refine",
-                "reverse": "is refined by",
-                "rev_plural": "are refined by",
+                "name": "between",
+                "code_id": "between",
+                "description": "to define a range e.g. a value between a lower and an upper bound",
+                "plural": "between",
+                "reverse": "",
+                "rev_plural": "",
                 "name_in_formula": null,
                 "usage": null,
                 "impact": null,
-                "id": 48
+                "id": 16
             },
             {
-                "name": "is evidence for",
-                "code_id": "evidence",
-                "description": "to state that an observation is empirical evidence for a claim e.g. a historical failure is evidence for a premise",
-                "plural": "are evidence for",
-                "reverse": "is evidenced by",
-                "rev_plural": "are evidenced by",
+                "name": "by parts",
+                "code_id": "by_parts",
+                "description": "to describe a method that operates on the parts of an expression e.g. integration by parts",
+                "plural": "by parts",
+                "reverse": "",
+                "rev_plural": "",
                 "name_in_formula": null,
                 "usage": null,
                 "impact": null,
-                "id": 49
+                "id": 17
             },
             {
-                "name": "is analogous to",
-                "code_id": "analogous",
-                "description": "to state that two phrases share the same structure without one causing the other e.g. one dilemma is analogous to another",
-                "plural": "are analogous to",
-                "reverse": "is analogous to",
-                "rev_plural": "are analogous to",
+                "name": "is symbol for",
+                "code_id": "symbol",
+                "description": "is used as a symbol for",
+                "plural": "are symbols for",
+                "reverse": "can have symbol",
+                "rev_plural": "can have symbols",
                 "name_in_formula": null,
                 "usage": null,
                 "impact": null,
-                "id": 50
+                "id": 18
             },
             {
-                "name": "limits",
-                "code_id": "limits",
-                "description": "to state that one phrase bounds how far another can go e.g. a risk limits a reduction claim",
-                "plural": "limit",
-                "reverse": "is limited by",
-                "rev_plural": "are limited by",
+                "name": "is alias of",
+                "code_id": "alias",
+                "description": "to merge two names of the same thing into one phrase e.g. mol is alias of mole",
+                "plural": "are aliases of",
+                "reverse": "is alias of",
+                "rev_plural": "are aliases of",
                 "name_in_formula": null,
                 "usage": null,
                 "impact": null,
-                "id": 51
+                "id": 19
             },
             {
-                "name": "enables",
-                "code_id": "enables",
-                "description": "to state that one phrase makes another possible without causing it e.g. a border adjustment enables a climate club",
-                "plural": "enable",
-                "reverse": "is enabled by",
-                "rev_plural": "are enabled by",
+                "name": "is an acronym for",
+                "code_id": "acronym",
+                "description": "to link a short form to the phrase it stands for e.g. PV is an acronym for photovoltaic",
+                "plural": "are acronyms for",
+                "reverse": "has acronym",
+                "rev_plural": "have acronyms",
                 "name_in_formula": null,
                 "usage": null,
                 "impact": null,
-                "id": 52
+                "id": 20
             },
             {
-                "name": "reduces",
-                "code_id": "reduces",
-                "description": "to state that one phrase lowers the size of another e.g. a border adjustment reduces carbon leakage",
-                "plural": "reduce",
-                "reverse": "is reduced by",
-                "rev_plural": "are reduced by",
+                "name": "can be symbol for",
+                "code_id": "can_be_symbol",
+                "description": "to link an ambiguous symbol to each of its meanings, each a symbol triple with a unique name e.g. tn can be symbol for tn (scaling) and for tn (weight)",
+                "plural": "can be symbols for",
+                "reverse": "has the ambiguous symbol",
+                "rev_plural": "have the ambiguous symbol",
                 "name_in_formula": null,
                 "usage": null,
                 "impact": null,
-                "id": 53
+                "id": 21
             },
             {
-                "name": "adds to",
-                "code_id": "adds_to",
-                "description": "to state that one amount is added to another to form the total e.g. a regional premium adds to the base price",
-                "plural": "add to",
-                "reverse": "is increased by",
-                "rev_plural": "are increased by",
+                "name": "can be",
+                "code_id": "can_be",
+                "description": "to assign an optional category or role e.g. a problem can be global",
+                "plural": "can be",
+                "reverse": "can be",
+                "rev_plural": "can be",
                 "name_in_formula": null,
                 "usage": null,
                 "impact": null,
-                "id": 54
+                "id": 22
             },
             {
-                "name": "competes with",
-                "code_id": "competes",
-                "description": "to state that two options exclude or weaken each other e.g. throttling competes with implementing",
-                "plural": "compete with",
-                "reverse": "competes with",
-                "rev_plural": "compete with",
+                "name": "has a",
+                "code_id": "has",
+                "description": "to assign potential properties e.g. a country has a Human Development Index",
+                "plural": "have",
+                "reverse": "is used for",
+                "rev_plural": "are used for",
                 "name_in_formula": null,
                 "usage": null,
                 "impact": null,
-                "id": 55
+                "id": 23
             },
             {
-                "name": "aims to trigger",
-                "code_id": "aims_to_trigger",
-                "description": "to state the intended effect of an action e.g. an annoyance test aims to trigger a one-click hide",
-                "plural": "aim to trigger",
-                "reverse": "is aimed to be triggered by",
-                "rev_plural": "are aimed to be triggered by",
+                "name": "can",
+                "code_id": "can",
+                "description": "to assign a behavior e.g. GDP can decline",
+                "plural": "can",
+                "reverse": null,
+                "rev_plural": null,
                 "name_in_formula": null,
                 "usage": null,
                 "impact": null,
-                "id": 56
+                "id": 24
             },
             {
-                "name": "lowers barrier for",
-                "code_id": "lowers_barrier",
-                "description": "to state that one phrase makes another easier to reach e.g. a low implementation cost lowers the barrier for building it",
-                "plural": "lower barrier for",
-                "reverse": "has a barrier lowered by",
-                "rev_plural": "have a barrier lowered by",
+                "name": "can have",
+                "code_id": "can_have",
+                "description": "to assign an optional property e.g. an exchange rate can have a change",
+                "plural": "can have",
+                "reverse": null,
+                "rev_plural": null,
                 "name_in_formula": null,
                 "usage": null,
                 "impact": null,
-                "id": 57
+                "id": 25
             },
             {
-                "name": "is single attempt in",
-                "code_id": "single_attempt",
-                "description": "to state that one try is one of the attempts an ensemble rate is computed from",
-                "plural": "are single attempts in",
-                "reverse": "has the single attempt",
-                "rev_plural": "have the single attempts",
+                "name": "can get",
+                "code_id": "can_get",
+                "description": "to assign a possible change of state e.g. the climate can get warmer",
+                "plural": "can get",
+                "reverse": null,
+                "rev_plural": null,
                 "name_in_formula": null,
                 "usage": null,
                 "impact": null,
-                "id": 58
+                "id": 26
             },
             {
-                "name": "expected from",
-                "code_id": "expected_from",
-                "description": "to name the expected value of an outcome e.g. the harm expected from a runaway",
-                "plural": "expected from",
-                "reverse": "has the expected",
-                "rev_plural": "have the expected",
+                "name": "per",
+                "code_id": "per",
+                "description": "to define the usual quotient e.g. meter per second is normally used not seconds per meter, that why the reverse name is empty",
+                "plural": "per",
+                "reverse": "",
+                "rev_plural": "",
                 "name_in_formula": null,
                 "usage": null,
                 "impact": null,
-                "id": 59
+                "id": 27
+            },
+            {
+                "name": "times",
+                "code_id": "times",
+                "description": "to multiply the two given phrases to one unit e.g. Joule times second (J\u22c5s) for the Plank constant",
+                "plural": "times",
+                "reverse": "times",
+                "rev_plural": "times",
+                "name_in_formula": null,
+                "usage": null,
+                "impact": null,
+                "id": 28
+            },
+            {
+                "name": "is measure type for",
+                "code_id": "measure_type",
+                "description": "is the default measure type for",
+                "plural": "are measure type for",
+                "reverse": "has the measure type",
+                "rev_plural": "have the measure type",
+                "name_in_formula": "measure type",
+                "usage": null,
+                "impact": null,
+                "id": 29
+            },
+            {
+                "name": "scaled by",
+                "code_id": "scaled",
+                "description": "to define the usual scaling e.g. for watt hours usually the scaling kilo (kWh) is used",
+                "plural": "scaled by",
+                "reverse": "is scaling for",
+                "rev_plural": "are scaling for",
+                "name_in_formula": null,
+                "usage": null,
+                "impact": null,
+                "id": 30
             },
             {
                 "name": "weighted by",
@@ -7642,15 +7294,363 @@
                 "name_in_formula": null,
                 "usage": null,
                 "impact": null,
+                "id": 31
+            },
+            {
+                "name": "expected from",
+                "code_id": "expected_from",
+                "description": "to name the expected value of an outcome e.g. the harm expected from a runaway",
+                "plural": "expected from",
+                "reverse": "has the expected",
+                "rev_plural": "have the expected",
+                "name_in_formula": null,
+                "usage": null,
+                "impact": null,
+                "id": 32
+            },
+            {
+                "name": "is follower of",
+                "code_id": "follow",
+                "description": "the time order of two phrases e.g. 2025 is follower of 2024; for the table column order use 'is next main column after' or 'is explaining column for'",
+                "plural": "are followers of",
+                "reverse": "is followed by",
+                "rev_plural": "are followed by",
+                "name_in_formula": "follower",
+                "usage": null,
+                "impact": null,
+                "id": 33
+            },
+            {
+                "name": "is explaining column for",
+                "code_id": "after",
+                "description": "to attach a column that explains a main table column e.g. the loss column gives the size of the problem column; an explaining column is shown between its main column and the next main column",
+                "plural": "are explaining columns for",
+                "reverse": "is explained by column",
+                "rev_plural": "are explained by columns",
+                "name_in_formula": null,
+                "usage": null,
+                "impact": null,
+                "id": 34
+            },
+            {
+                "name": "is next main column after",
+                "code_id": "before",
+                "description": "to chain the main table columns e.g. the solution column is the next main column after the problem column and all columns explaining the problem; for a time order use 'is follower of'",
+                "plural": "are next main columns after",
+                "reverse": "is main column before",
+                "rev_plural": "are main columns before",
+                "name_in_formula": null,
+                "usage": null,
+                "impact": null,
+                "id": 35
+            },
+            {
+                "name": "is ranked by",
+                "code_id": "rank",
+                "description": "to define which values should be used to sort related objects e.g. the first math const are the once that have been discovered first because they are probably the most relevant and useful",
+                "plural": "are ranked by",
+                "reverse": "is sort phrases for",
+                "rev_plural": "are sort phrases for",
+                "name_in_formula": null,
+                "usage": null,
+                "impact": null,
+                "id": 36
+            },
+            {
+                "name": "is time jump for",
+                "code_id": "time_jump",
+                "description": "the default time jump e.g. year is the default time period for annual reports",
+                "plural": "are the time jump for",
+                "reverse": "has the default time jump",
+                "rev_plural": "have the default time jump",
+                "name_in_formula": "time jump",
+                "usage": null,
+                "impact": null,
+                "id": 37
+            },
+            {
+                "name": "is term jump for",
+                "code_id": "term_jump",
+                "description": "the default term jump e.g. state of aggregation is used for a physical substance",
+                "plural": null,
+                "reverse": null,
+                "rev_plural": null,
+                "name_in_formula": null,
+                "usage": null,
+                "impact": null,
+                "id": 38
+            },
+            {
+                "name": "can cause",
+                "code_id": "can_cause",
+                "description": "there is a causal relation with a factor",
+                "plural": "can cause",
+                "reverse": "can be caused by",
+                "rev_plural": "can be caused by",
+                "name_in_formula": null,
+                "usage": null,
+                "impact": null,
+                "id": 39
+            },
+            {
+                "name": "influences",
+                "code_id": "influence",
+                "description": "to state that one phrase changes another without being its only cause e.g. inequality influences poverty",
+                "plural": "influence",
+                "reverse": "is influenced by",
+                "rev_plural": "are influenced by",
+                "name_in_formula": null,
+                "usage": null,
+                "impact": null,
+                "id": 40
+            },
+            {
+                "name": "reduces",
+                "code_id": "reduces",
+                "description": "to state that one phrase lowers the size of another e.g. a border adjustment reduces carbon leakage",
+                "plural": "reduce",
+                "reverse": "is reduced by",
+                "rev_plural": "are reduced by",
+                "name_in_formula": null,
+                "usage": null,
+                "impact": null,
+                "id": 41
+            },
+            {
+                "name": "limits",
+                "code_id": "limits",
+                "description": "to state that one phrase bounds how far another can go e.g. a risk limits a reduction claim",
+                "plural": "limit",
+                "reverse": "is limited by",
+                "rev_plural": "are limited by",
+                "name_in_formula": null,
+                "usage": null,
+                "impact": null,
+                "id": 42
+            },
+            {
+                "name": "enables",
+                "code_id": "enables",
+                "description": "to state that one phrase makes another possible without causing it e.g. a border adjustment enables a climate club",
+                "plural": "enable",
+                "reverse": "is enabled by",
+                "rev_plural": "are enabled by",
+                "name_in_formula": null,
+                "usage": null,
+                "impact": null,
+                "id": 43
+            },
+            {
+                "name": "adds to",
+                "code_id": "adds_to",
+                "description": "to state that one amount is added to another to form the total e.g. a regional premium adds to the base price",
+                "plural": "add to",
+                "reverse": "is increased by",
+                "rev_plural": "are increased by",
+                "name_in_formula": null,
+                "usage": null,
+                "impact": null,
+                "id": 44
+            },
+            {
+                "name": "competes with",
+                "code_id": "competes",
+                "description": "to state that two options exclude or weaken each other e.g. throttling competes with implementing",
+                "plural": "compete with",
+                "reverse": "competes with",
+                "rev_plural": "compete with",
+                "name_in_formula": null,
+                "usage": null,
+                "impact": null,
+                "id": 45
+            },
+            {
+                "name": "aims to trigger",
+                "code_id": "aims_to_trigger",
+                "description": "to state the intended effect of an action e.g. an annoyance test aims to trigger a one-click hide",
+                "plural": "aim to trigger",
+                "reverse": "is aimed to be triggered by",
+                "rev_plural": "are aimed to be triggered by",
+                "name_in_formula": null,
+                "usage": null,
+                "impact": null,
+                "id": 46
+            },
+            {
+                "name": "lowers barrier for",
+                "code_id": "lowers_barrier",
+                "description": "to state that one phrase makes another easier to reach e.g. a low implementation cost lowers the barrier for building it",
+                "plural": "lower barrier for",
+                "reverse": "has a barrier lowered by",
+                "rev_plural": "have a barrier lowered by",
+                "name_in_formula": null,
+                "usage": null,
+                "impact": null,
+                "id": 47
+            },
+            {
+                "name": "can use",
+                "code_id": "can_use",
+                "description": "use indicates that a new result is created e.g. a turbine can use water or wind or any type of liquid or gas to convert energy",
+                "plural": "can use",
+                "reverse": "can be used by",
+                "rev_plural": "can be used by",
+                "name_in_formula": null,
+                "usage": null,
+                "impact": null,
+                "id": 48
+            },
+            {
+                "name": "uses",
+                "code_id": "uses",
+                "description": "real use e.g. wind energy is used by a wind turbine",
+                "plural": "use",
+                "reverse": "is used by",
+                "rev_plural": "are used by",
+                "name_in_formula": null,
+                "usage": null,
+                "impact": null,
+                "id": 49
+            },
+            {
+                "name": "is used by",
+                "code_id": "used_by",
+                "description": "passive form of 'uses' when the dependent phrase is the subject e.g. cent is used by Euro",
+                "plural": "are used by",
+                "reverse": "uses",
+                "rev_plural": "use",
+                "name_in_formula": null,
+                "usage": null,
+                "impact": null,
+                "id": 50
+            },
+            {
+                "name": "used for",
+                "code_id": "used_for",
+                "description": "to specify the intended purpose of a phrase e.g. fuel used for a jet (jet fuel)",
+                "plural": "are used for",
+                "reverse": "uses",
+                "rev_plural": "use",
+                "name_in_formula": null,
+                "usage": null,
+                "impact": null,
+                "id": 51
+            },
+            {
+                "name": "issue",
+                "code_id": "issue",
+                "description": "e.g. a company issues an annual report",
+                "plural": "issue",
+                "reverse": "is issued by",
+                "rev_plural": "are issued by",
+                "name_in_formula": null,
+                "usage": null,
+                "impact": null,
+                "id": 52
+            },
+            {
+                "name": "can be made of",
+                "code_id": "can_be_made_of",
+                "description": "to specify possible materials or composition options e.g. a porringer can be made of plastic",
+                "plural": "can be made of",
+                "reverse": "can make",
+                "rev_plural": "can make",
+                "name_in_formula": null,
+                "usage": null,
+                "impact": null,
+                "id": 53
+            },
+            {
+                "name": "can be packed in",
+                "code_id": "can_be_packed_in",
+                "description": "to specify possible packaging options e.g. a blueberry can be packed in a plastic porringer",
+                "plural": "can be packed in",
+                "reverse": "can pack",
+                "rev_plural": "can pack",
+                "name_in_formula": null,
+                "usage": null,
+                "impact": null,
+                "id": 54
+            },
+            {
+                "name": "supports",
+                "code_id": "supports",
+                "description": "to state that one argument or finding backs a claim e.g. a premise supports a conclusion",
+                "plural": "support",
+                "reverse": "is supported by",
+                "rev_plural": "are supported by",
+                "name_in_formula": null,
+                "usage": null,
+                "impact": null,
+                "id": 55
+            },
+            {
+                "name": "explains",
+                "code_id": "explains",
+                "description": "to state that one phrase gives the reason for another e.g. a mechanism explains an observation",
+                "plural": "explain",
+                "reverse": "is explained by",
+                "rev_plural": "are explained by",
+                "name_in_formula": null,
+                "usage": null,
+                "impact": null,
+                "id": 56
+            },
+            {
+                "name": "refines",
+                "code_id": "refines",
+                "description": "to state that one phrase makes another more precise without replacing it e.g. a strategy refines a claim",
+                "plural": "refine",
+                "reverse": "is refined by",
+                "rev_plural": "are refined by",
+                "name_in_formula": null,
+                "usage": null,
+                "impact": null,
+                "id": 57
+            },
+            {
+                "name": "is evidence for",
+                "code_id": "evidence",
+                "description": "to state that an observation is empirical evidence for a claim e.g. a historical failure is evidence for a premise",
+                "plural": "are evidence for",
+                "reverse": "is evidenced by",
+                "rev_plural": "are evidenced by",
+                "name_in_formula": null,
+                "usage": null,
+                "impact": null,
+                "id": 58
+            },
+            {
+                "name": "is analogous to",
+                "code_id": "analogous",
+                "description": "to state that two phrases share the same structure without one causing the other e.g. one dilemma is analogous to another",
+                "plural": "are analogous to",
+                "reverse": "is analogous to",
+                "rev_plural": "are analogous to",
+                "name_in_formula": null,
+                "usage": null,
+                "impact": null,
+                "id": 59
+            },
+            {
+                "name": "is single attempt in",
+                "code_id": "single_attempt",
+                "description": "to state that one try is one of the attempts an ensemble rate is computed from",
+                "plural": "are single attempts in",
+                "reverse": "has the single attempt",
+                "rev_plural": "have the single attempts",
+                "name_in_formula": null,
+                "usage": null,
+                "impact": null,
                 "id": 60
             },
             {
-                "name": "can be symbol for",
-                "code_id": "can_be_symbol",
-                "description": "to link an ambiguous symbol to each of its meanings, each a symbol triple with a unique name e.g. tn can be symbol for tn (scaling) and for tn (weight)",
-                "plural": "can be symbols for",
-                "reverse": "has the ambiguous symbol",
-                "rev_plural": "have the ambiguous symbol",
+                "name": "term type needed",
+                "code_id": "term_needed",
+                "description": "the formula needs the linked term type",
+                "plural": null,
+                "reverse": null,
+                "rev_plural": null,
                 "name_in_formula": null,
                 "usage": null,
                 "impact": null,
@@ -28212,7 +28212,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": -328,
                 "to_phrase": {
@@ -28249,7 +28249,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": -365,
                 "to_phrase": {
@@ -28286,7 +28286,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": 444,
                 "to_phrase": {
@@ -28324,7 +28324,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": -337,
                 "to_phrase": {
@@ -28361,7 +28361,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": 428,
                 "to_phrase": {
@@ -28398,7 +28398,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": -337,
                 "to_phrase": {
@@ -28435,7 +28435,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": -351,
                 "to_phrase": {
@@ -28472,7 +28472,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": -341,
                 "to_phrase": {
@@ -28509,7 +28509,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": -391,
                 "to_phrase": {
@@ -28546,7 +28546,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": 426,
                 "to_phrase": {
@@ -28583,7 +28583,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": -345,
                 "to_phrase": {
@@ -28620,7 +28620,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": -342,
                 "to_phrase": {
@@ -28657,7 +28657,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": -354,
                 "to_phrase": {
@@ -28694,7 +28694,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": -358,
                 "to_phrase": {
@@ -28731,7 +28731,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": 1482,
                 "to_phrase": {
@@ -28768,7 +28768,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": 1482,
                 "to_phrase": {
@@ -28805,7 +28805,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": 1480,
                 "to_phrase": {
@@ -28842,7 +28842,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": 1481,
                 "to_phrase": {
@@ -28879,7 +28879,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": -330,
                 "to_phrase": {
@@ -28916,7 +28916,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": -363,
                 "to_phrase": {
@@ -29193,7 +29193,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": -135,
                 "to_phrase": {
@@ -29230,7 +29230,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": -347,
                 "to_phrase": {
@@ -29267,7 +29267,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": -347,
                 "to_phrase": {
@@ -29304,7 +29304,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": -330,
                 "to_phrase": {
@@ -29342,7 +29342,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": 29,
                 "to_phrase": {
@@ -29380,7 +29380,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": -362,
                 "to_phrase": {
@@ -29417,7 +29417,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": -361,
                 "to_phrase": {
@@ -29454,7 +29454,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": 159,
                 "to_phrase": {
@@ -29492,7 +29492,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": 159,
                 "to_phrase": {
@@ -29530,7 +29530,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": -349,
                 "to_phrase": {
@@ -29567,7 +29567,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": -331,
                 "to_phrase": {
@@ -29604,7 +29604,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": -331,
                 "to_phrase": {
@@ -29642,7 +29642,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": 35,
                 "to_phrase": {
@@ -29680,7 +29680,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": 1484,
                 "to_phrase": {
@@ -29717,7 +29717,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": -336,
                 "to_phrase": {
@@ -29754,7 +29754,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": -344,
                 "to_phrase": {
@@ -29791,7 +29791,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": -344,
                 "to_phrase": {
@@ -29828,7 +29828,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": 428,
                 "to_phrase": {
@@ -29865,7 +29865,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": -346,
                 "to_phrase": {
@@ -29902,7 +29902,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": -346,
                 "to_phrase": {
@@ -30165,7 +30165,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": -353,
                 "to_phrase": {
@@ -30202,7 +30202,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": 1483,
                 "to_phrase": {
@@ -30239,7 +30239,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": -339,
                 "to_phrase": {
@@ -30279,7 +30279,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": -2,
                 "to_phrase": {
@@ -30317,7 +30317,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": 426,
                 "to_phrase": {
@@ -30354,7 +30354,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": -355,
                 "to_phrase": {
@@ -30391,7 +30391,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": 444,
                 "to_phrase": {
@@ -30428,7 +30428,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": -861,
                 "to_phrase": {
@@ -30465,7 +30465,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": -332,
                 "to_phrase": {
@@ -30502,7 +30502,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": -332,
                 "to_phrase": {
@@ -30539,7 +30539,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": -178,
                 "to_phrase": {
@@ -30576,7 +30576,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": -355,
                 "to_phrase": {
@@ -30613,7 +30613,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": -352,
                 "to_phrase": {
@@ -30650,7 +30650,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": -391,
                 "to_phrase": {
@@ -30687,7 +30687,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": -342,
                 "to_phrase": {
@@ -30724,7 +30724,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": 160,
                 "to_phrase": {
@@ -30762,7 +30762,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": -337,
                 "to_phrase": {
@@ -30799,7 +30799,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": -353,
                 "to_phrase": {
@@ -30837,7 +30837,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": 27,
                 "to_phrase": {
@@ -30876,7 +30876,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": 157,
                 "to_phrase": {
@@ -31135,7 +31135,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": -339,
                 "to_phrase": {
@@ -31172,7 +31172,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": -340,
                 "to_phrase": {
@@ -31209,7 +31209,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": -338,
                 "to_phrase": {
@@ -31246,7 +31246,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": -341,
                 "to_phrase": {
@@ -31284,7 +31284,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": 31,
                 "to_phrase": {
@@ -31322,7 +31322,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": -359,
                 "to_phrase": {
@@ -31360,7 +31360,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": 120,
                 "to_phrase": {
@@ -31398,7 +31398,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": 158,
                 "to_phrase": {
@@ -31437,7 +31437,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": 158,
                 "to_phrase": {
@@ -31468,7 +31468,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": -20,
                 "to_phrase": {
@@ -31507,7 +31507,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": 25,
                 "to_phrase": {
@@ -31545,7 +31545,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": -343,
                 "to_phrase": {
@@ -31582,7 +31582,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": -343,
                 "to_phrase": {
@@ -31619,7 +31619,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": -357,
                 "to_phrase": {
@@ -31656,7 +31656,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": -340,
                 "to_phrase": {
@@ -31693,7 +31693,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": -390,
                 "to_phrase": {
@@ -31730,7 +31730,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": -334,
                 "to_phrase": {
@@ -31767,7 +31767,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": -334,
                 "to_phrase": {
@@ -31804,7 +31804,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": -182,
                 "to_phrase": {
@@ -31841,7 +31841,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": -360,
                 "to_phrase": {
@@ -32087,7 +32087,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": -345,
                 "to_phrase": {
@@ -32124,7 +32124,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": 589,
                 "to_phrase": {
@@ -32161,7 +32161,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": -350,
                 "to_phrase": {
@@ -32198,7 +32198,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": -349,
                 "to_phrase": {
@@ -32235,7 +32235,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": -348,
                 "to_phrase": {
@@ -32272,7 +32272,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": -357,
                 "to_phrase": {
@@ -32309,7 +32309,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": -359,
                 "to_phrase": {
@@ -32346,7 +32346,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": -352,
                 "to_phrase": {
@@ -32383,7 +32383,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": -358,
                 "to_phrase": {
@@ -32420,7 +32420,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": -333,
                 "to_phrase": {
@@ -32457,7 +32457,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": -356,
                 "to_phrase": {
@@ -32494,7 +32494,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": -338,
                 "to_phrase": {
@@ -32531,7 +32531,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": -333,
                 "to_phrase": {
@@ -32568,7 +32568,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": -360,
                 "to_phrase": {
@@ -32606,7 +32606,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": 22,
                 "to_phrase": {
@@ -32643,7 +32643,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": -351,
                 "to_phrase": {
@@ -32681,7 +32681,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": 275,
                 "to_phrase": {
@@ -32719,7 +32719,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": 125,
                 "to_phrase": {
@@ -32757,7 +32757,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": 379,
                 "to_phrase": {
@@ -32794,7 +32794,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": -354,
                 "to_phrase": {
@@ -33017,7 +33017,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": -390,
                 "to_phrase": {
@@ -33054,7 +33054,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": -328,
                 "to_phrase": {
@@ -33091,7 +33091,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": -328,
                 "to_phrase": {
@@ -33128,7 +33128,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": 163,
                 "to_phrase": {
@@ -33165,7 +33165,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": -348,
                 "to_phrase": {
@@ -33202,7 +33202,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": -350,
                 "to_phrase": {
@@ -33241,7 +33241,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": 17,
                 "to_phrase": {
@@ -33279,7 +33279,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": -363,
                 "to_phrase": {
@@ -33316,7 +33316,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": -361,
                 "to_phrase": {
@@ -33353,7 +33353,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 29
+                    "id": 18
                 },
                 "to_id": -356,
                 "to_phrase": {
@@ -33470,14 +33470,14 @@
                 "verb_id": {
                     "name": "is alias of",
                     "code_id": "alias",
-                    "description": "",
-                    "plural": "is alias of",
+                    "description": "to merge two names of the same thing into one phrase e.g. mol is alias of mole",
+                    "plural": "are aliases of",
                     "reverse": "is alias of",
-                    "rev_plural": "is alias of",
+                    "rev_plural": "are aliases of",
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 18
+                    "id": 19
                 },
                 "to_id": -328,
                 "to_phrase": {
@@ -33508,14 +33508,14 @@
                 "verb_id": {
                     "name": "is alias of",
                     "code_id": "alias",
-                    "description": "",
-                    "plural": "is alias of",
+                    "description": "to merge two names of the same thing into one phrase e.g. mol is alias of mole",
+                    "plural": "are aliases of",
                     "reverse": "is alias of",
-                    "rev_plural": "is alias of",
+                    "rev_plural": "are aliases of",
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 18
+                    "id": 19
                 },
                 "to_id": 426,
                 "to_phrase": {
@@ -33545,14 +33545,14 @@
                 "verb_id": {
                     "name": "is alias of",
                     "code_id": "alias",
-                    "description": "",
-                    "plural": "is alias of",
+                    "description": "to merge two names of the same thing into one phrase e.g. mol is alias of mole",
+                    "plural": "are aliases of",
                     "reverse": "is alias of",
-                    "rev_plural": "is alias of",
+                    "rev_plural": "are aliases of",
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 18
+                    "id": 19
                 },
                 "to_id": -954,
                 "to_phrase": {
@@ -33574,14 +33574,14 @@
                 "verb_id": {
                     "name": "is alias of",
                     "code_id": "alias",
-                    "description": "",
-                    "plural": "is alias of",
+                    "description": "to merge two names of the same thing into one phrase e.g. mol is alias of mole",
+                    "plural": "are aliases of",
                     "reverse": "is alias of",
-                    "rev_plural": "is alias of",
+                    "rev_plural": "are aliases of",
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 18
+                    "id": 19
                 },
                 "to_id": -40,
                 "to_phrase": {
@@ -33602,14 +33602,14 @@
                 "verb_id": {
                     "name": "is alias of",
                     "code_id": "alias",
-                    "description": "",
-                    "plural": "is alias of",
+                    "description": "to merge two names of the same thing into one phrase e.g. mol is alias of mole",
+                    "plural": "are aliases of",
                     "reverse": "is alias of",
-                    "rev_plural": "is alias of",
+                    "rev_plural": "are aliases of",
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 18
+                    "id": 19
                 },
                 "to_id": -66,
                 "to_phrase": {
@@ -33641,14 +33641,14 @@
                 "verb_id": {
                     "name": "is alias of",
                     "code_id": "alias",
-                    "description": "",
-                    "plural": "is alias of",
+                    "description": "to merge two names of the same thing into one phrase e.g. mol is alias of mole",
+                    "plural": "are aliases of",
                     "reverse": "is alias of",
-                    "rev_plural": "is alias of",
+                    "rev_plural": "are aliases of",
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 18
+                    "id": 19
                 },
                 "to_id": 33,
                 "to_phrase": {
@@ -33671,14 +33671,14 @@
                 "verb_id": {
                     "name": "is alias of",
                     "code_id": "alias",
-                    "description": "",
-                    "plural": "is alias of",
+                    "description": "to merge two names of the same thing into one phrase e.g. mol is alias of mole",
+                    "plural": "are aliases of",
                     "reverse": "is alias of",
-                    "rev_plural": "is alias of",
+                    "rev_plural": "are aliases of",
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 18
+                    "id": 19
                 },
                 "to_id": -67,
                 "to_phrase": {
@@ -33701,14 +33701,14 @@
                 "verb_id": {
                     "name": "is alias of",
                     "code_id": "alias",
-                    "description": "",
-                    "plural": "is alias of",
+                    "description": "to merge two names of the same thing into one phrase e.g. mol is alias of mole",
+                    "plural": "are aliases of",
                     "reverse": "is alias of",
-                    "rev_plural": "is alias of",
+                    "rev_plural": "are aliases of",
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 18
+                    "id": 19
                 },
                 "to_id": -68,
                 "to_phrase": {
@@ -33739,14 +33739,14 @@
                 "verb_id": {
                     "name": "is alias of",
                     "code_id": "alias",
-                    "description": "",
-                    "plural": "is alias of",
+                    "description": "to merge two names of the same thing into one phrase e.g. mol is alias of mole",
+                    "plural": "are aliases of",
                     "reverse": "is alias of",
-                    "rev_plural": "is alias of",
+                    "rev_plural": "are aliases of",
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 18
+                    "id": 19
                 },
                 "to_id": 603,
                 "to_phrase": {
@@ -33768,14 +33768,14 @@
                 "verb_id": {
                     "name": "is alias of",
                     "code_id": "alias",
-                    "description": "",
-                    "plural": "is alias of",
+                    "description": "to merge two names of the same thing into one phrase e.g. mol is alias of mole",
+                    "plural": "are aliases of",
                     "reverse": "is alias of",
-                    "rev_plural": "is alias of",
+                    "rev_plural": "are aliases of",
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 18
+                    "id": 19
                 },
                 "to_id": -35,
                 "to_phrase": {
@@ -33798,14 +33798,14 @@
                 "verb_id": {
                     "name": "is alias of",
                     "code_id": "alias",
-                    "description": "",
-                    "plural": "is alias of",
+                    "description": "to merge two names of the same thing into one phrase e.g. mol is alias of mole",
+                    "plural": "are aliases of",
                     "reverse": "is alias of",
-                    "rev_plural": "is alias of",
+                    "rev_plural": "are aliases of",
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 18
+                    "id": 19
                 },
                 "to_id": -70,
                 "to_phrase": {
@@ -33837,14 +33837,14 @@
                 "verb_id": {
                     "name": "is alias of",
                     "code_id": "alias",
-                    "description": "",
-                    "plural": "is alias of",
+                    "description": "to merge two names of the same thing into one phrase e.g. mol is alias of mole",
+                    "plural": "are aliases of",
                     "reverse": "is alias of",
-                    "rev_plural": "is alias of",
+                    "rev_plural": "are aliases of",
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 18
+                    "id": 19
                 },
                 "to_id": -365,
                 "to_phrase": {
@@ -33874,14 +33874,14 @@
                 "verb_id": {
                     "name": "is alias of",
                     "code_id": "alias",
-                    "description": "",
-                    "plural": "is alias of",
+                    "description": "to merge two names of the same thing into one phrase e.g. mol is alias of mole",
+                    "plural": "are aliases of",
                     "reverse": "is alias of",
-                    "rev_plural": "is alias of",
+                    "rev_plural": "are aliases of",
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 18
+                    "id": 19
                 },
                 "to_id": 157,
                 "to_phrase": {
@@ -33912,14 +33912,14 @@
                 "verb_id": {
                     "name": "is alias of",
                     "code_id": "alias",
-                    "description": "",
-                    "plural": "is alias of",
+                    "description": "to merge two names of the same thing into one phrase e.g. mol is alias of mole",
+                    "plural": "are aliases of",
                     "reverse": "is alias of",
-                    "rev_plural": "is alias of",
+                    "rev_plural": "are aliases of",
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 18
+                    "id": 19
                 },
                 "to_id": -328,
                 "to_phrase": {
@@ -33950,14 +33950,14 @@
                 "verb_id": {
                     "name": "is alias of",
                     "code_id": "alias",
-                    "description": "",
-                    "plural": "is alias of",
+                    "description": "to merge two names of the same thing into one phrase e.g. mol is alias of mole",
+                    "plural": "are aliases of",
                     "reverse": "is alias of",
-                    "rev_plural": "is alias of",
+                    "rev_plural": "are aliases of",
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 18
+                    "id": 19
                 },
                 "to_id": -328,
                 "to_phrase": {
@@ -33988,14 +33988,14 @@
                 "verb_id": {
                     "name": "is alias of",
                     "code_id": "alias",
-                    "description": "",
-                    "plural": "is alias of",
+                    "description": "to merge two names of the same thing into one phrase e.g. mol is alias of mole",
+                    "plural": "are aliases of",
                     "reverse": "is alias of",
-                    "rev_plural": "is alias of",
+                    "rev_plural": "are aliases of",
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 18
+                    "id": 19
                 },
                 "to_id": -337,
                 "to_phrase": {
@@ -34143,7 +34143,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 61
+                    "id": 21
                 },
                 "to_id": -119,
                 "to_phrase": {
@@ -34180,7 +34180,7 @@
                     "name_in_formula": null,
                     "usage": null,
                     "impact": null,
-                    "id": 61
+                    "id": 21
                 },
                 "to_id": -120,
                 "to_phrase": {

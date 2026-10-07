@@ -24,262 +24,10 @@
     {
       "name": "is part of",
       "code_id": "contains",
-      "description": "if several similar term create different views to the same sum; E.g. Cash Flow Paper, Balance Sheet and Income statement are Financial Statements. Or sectors and Regions are different splittings",
-      "name_plural_reverse": "contains",
-      "name_plural": "is part of",
+      "description": "if several similar terms create different views to the same sum e.g. the cash flow statement, the balance sheet and the income statement are parts of the financial statements; or sectors and regions are different splittings",
+      "name_plural_reverse": "contain",
+      "name_plural": "are part of",
       "name_reverse": "contains"
-    },
-    {
-      "name": "can be part of",
-      "code_id": "can_be_part_of",
-      "description": "if the assigment is optional in both directions e.g. a base unit can be a SI unit but not all SI units are base units",
-      "name_plural_reverse": "contains",
-      "name_plural": "can be part of",
-      "name_reverse": "contains"
-    },
-    {
-      "name": "of",
-      "code_id": "of",
-      "description": "to narrow a selection e.g. the world population is usually the population of all humans",
-      "name_plural_reverse": "of",
-      "name_plural": "of",
-      "name_reverse": "of"
-    },
-    {
-      "name": "with",
-      "code_id": "with",
-      "description": "similar to 'is part of' but where the left phrase is expected to be several times the right phrase e.g. for comparing same by same: 1 hour with full load is the same as 2 hours with half load",
-      "name_plural": "with",
-      "name_plural_reverse": "",
-      "name_reverse": ""
-    },
-    {
-      "name": "has a",
-      "code_id": "has",
-      "description": "to assign potential properties e.g. a country has a Human Development Index",
-      "name_plural_reverse": "is used for",
-      "name_plural": "has",
-      "name_reverse": "is used for"
-    },
-    {
-      "name": "is time jump for",
-      "code_id": "time_jump",
-      "description": "the default time jump e.g year is the default time period for annual reports",
-      "formula_name": "time jump",
-      "name_plural_reverse": "have the default time jump",
-      "name_plural": "are the time jump for",
-      "name_reverse": "has the default time jump"
-    },
-    {
-      "name": "is term jump for",
-      "code_id": "term_jump",
-      "description": "the default term jump e.g. state of aggregation is used for a physical substance"
-    },
-    {
-      "name": "term type needed",
-      "code_id": "term_needed",
-      "description": "the formula needs the linked term type"
-    },
-    {
-      "name": "is follower of",
-      "code_id": "follow",
-      "description": "the time order of two phrases e.g. 2025 is follower of 2024; for the table column order use 'is next main column after' or 'is explaining column for'",
-      "formula_name": "follower",
-      "name_plural_reverse": "is followed by",
-      "name_plural": "is follower of",
-      "name_reverse": "is followed by"
-    },
-    {
-      "name": "uses",
-      "code_id": "uses",
-      "description": "real use e.g. wind energy is used by a wind turbine",
-      "name_plural_reverse": "are used by",
-      "name_plural": "uses",
-      "name_reverse": "is used by"
-    },
-    {
-      "name": "issue",
-      "code_id": "issue",
-      "description": "e.g. a company issues an annual report",
-      "name_plural_reverse": "are issued by",
-      "name_plural": "issues",
-      "name_reverse": "is issued by"
-    },
-    {
-      "name": "is measure type for",
-      "code_id": "measure_type",
-      "description": "is the default measure type for",
-      "formula_name": "measure type",
-      "name_plural_reverse": "have the measure type",
-      "name_plural": "are measure type for",
-      "name_reverse": "has the measure type"
-    },
-    {
-      "name": "is an acronym for",
-      "code_id": "acronym",
-      "description": "is an acronym for",
-      "name_plural_reverse": "has acronyms",
-      "name_plural": "are an acronyms for",
-      "name_reverse": "has acronym"
-    },
-    {
-      "name": "can be used as a differentiator for",
-      "code_id": "can_contain",
-      "description": "similar to contains, but in a table view the row will not be shown if there is no corresponding value",
-      "formula_name": "differentiator",
-      "name_plural_reverse": "can be differentiated by",
-      "name_plural": "can be used as a differentiator for",
-      "name_reverse": "can be differentiated by"
-    },
-    {
-      "name": "influences",
-      "code_id": "influence",
-      "name_plural_reverse": "is influenced by",
-      "name_plural": "influences",
-      "name_reverse": "is influenced by"
-    },
-    {
-      "name": "is alias of",
-      "code_id": "alias",
-      "name_plural_reverse": "is alias of",
-      "name_plural": "is alias of",
-      "name_reverse": "is alias of"
-    },
-    {
-      "name": "can",
-      "code_id": "can",
-      "description": "to assign a behavior e.g. GDP can decline",
-      "name_plural": "can"
-    },
-    {
-      "name": "can be",
-      "code_id": "can_be",
-      "description": "",
-      "name_plural_reverse": "can be",
-      "name_plural": "can be",
-      "name_reverse": "can be"
-    },
-    {
-      "name": "can get",
-      "code_id": "can_get",
-      "description": "",
-      "name_plural": "can get"
-    },
-    {
-      "name": "can cause",
-      "code_id": "can_cause",
-      "description": "",
-      "name_plural": "can cause"
-    },
-    {
-      "name": "can have",
-      "code_id": "can_have",
-      "description": "",
-      "name_plural": "can have"
-    },
-    {
-      "name": "can use",
-      "code_id": "can_use",
-      "description": "use indicates that a new result is created e.g. a turbine can use water or wind or any type of liquid or gas to convert energy",
-      "name_plural": "can use",
-      "name_plural_reverse": "can be used by",
-      "name_reverse": "can be used by"
-    },
-    {
-      "name": "scaled by",
-      "code_id": "scaled",
-      "description": "to define the usual scaling e.g. for watt hours usually the scaling kilo (kWh) is used",
-      "name_plural": "scaled by",
-      "name_plural_reverse": "are scaling for",
-      "name_reverse": "is scaling for"
-    },
-    {
-      "name": "per",
-      "code_id": "per",
-      "description": "to define the usual quotient e.g. meter per second is normally used not seconds per meter, that why the reverse name is empty",
-      "name_plural": "per",
-      "name_plural_reverse": "",
-      "name_reverse": ""
-    },
-    {
-      "name": "times",
-      "code_id": "times",
-      "description": "to multiply the two given phrases to one unit e.g. Joule times second (J⋅s) for the Plank constant",
-      "name_plural": "times",
-      "name_plural_reverse": "times",
-      "name_reverse": "times"
-    },
-    {
-      "name": "is selector for",
-      "code_id": "selector",
-      "description": "used to group a selection list to make it shorter",
-      "name_plural": "are selectors for",
-      "name_plural_reverse": "are grouped by",
-      "name_reverse": "is grouped by"
-    },
-    {
-      "name": "is symbol for",
-      "code_id": "symbol",
-      "description": "is used as a symbol for",
-      "name_plural_reverse": "can have symbols",
-      "name_plural": "are symbols for",
-      "name_reverse": "can have symbol"
-    },
-    {
-      "name": "can cause",
-      "code_id": "can_cause",
-      "description": "there is a causal relation with a factor",
-      "name_plural": "can cause",
-      "name_plural_reverse": "can be caused by",
-      "name_reverse": "can be caused by"
-    },
-    {
-      "name": "and",
-      "code_id": "and",
-      "description": "combine two phrases a a new phrase",
-      "name_plural": "and",
-      "name_plural_reverse": "and",
-      "name_reverse": "and"
-    },
-    {
-      "name": "on",
-      "code_id": "on",
-      "description": "to specify a subgroup e.g. taxes on income",
-      "name_plural_reverse": "distribute to",
-      "name_plural": "on",
-      "name_reverse": "distribute to"
-    },
-    {
-      "name": "in",
-      "code_id": "in",
-      "description": "to specify the measure unit",
-      "name_plural_reverse": "",
-      "name_plural": "in",
-      "name_reverse": ""
-    },
-    {
-      "name": "to",
-      "code_id": "to",
-      "description": "to define a time period e.g. \"12:00 to 13:00\" or \"1. March 2024 to 3. March 2024 or to specify the assignment type e.g. net to net for currency turnover",
-      "name_plural_reverse": "",
-      "name_plural": "to",
-      "name_reverse": ""
-    },
-    {
-      "name": "is ranked by",
-      "code_id": "rank",
-      "description": "to define which values should be used to sort related objects e.g. the first math const are the once that have been discovered first because they are probably the most relevant and useful",
-      "name_plural_reverse": "are sort phrases for",
-      "name_plural": "are ranked by",
-      "name_reverse": "is sort phrases for"
-    },
-    {
-      "name": "between",
-      "code_id": "between",
-      "description": "to define a range e.g. a value between a lower and an upper bound",
-      "name_plural_reverse": "",
-      "name_plural": "between",
-      "name_reverse": ""
     },
     {
       "name": "kind of",
@@ -298,14 +46,6 @@
       "name_reverse": "is named"
     },
     {
-      "name": "by parts",
-      "code_id": "by_parts",
-      "description": "to describe a method that operates on the parts of an expression e.g. integration by parts",
-      "name_plural_reverse": "",
-      "name_plural": "by parts",
-      "name_reverse": ""
-    },
-    {
       "name": "must be one of",
       "code_id": "must_be_one_of",
       "description": "to disambiguate a word that has several meanings by pinning each meaning to its own triple e.g. the word 'second' must be one of 'time unit' or 'ranking number'; the qualifier triple is referenced instead of the ambiguous word and only the original word is shown on a page while the qualifier appears in the tooltip",
@@ -314,12 +54,367 @@
       "name_reverse": ""
     },
     {
+      "name": "can be part of",
+      "code_id": "can_be_part_of",
+      "description": "if the assignment is optional in both directions e.g. a base unit can be a SI unit but not all SI units are base units",
+      "name_plural_reverse": "can contain",
+      "name_plural": "can be part of",
+      "name_reverse": "contains"
+    },
+    {
+      "name": "can be used as a differentiator for",
+      "code_id": "can_contain",
+      "description": "similar to contains, but in a table view the row will not be shown if there is no corresponding value",
+      "formula_name": "differentiator",
+      "name_plural_reverse": "can be differentiated by",
+      "name_plural": "can be used as differentiators for",
+      "name_reverse": "can be differentiated by"
+    },
+    {
+      "name": "is selector for",
+      "code_id": "selector",
+      "description": "used to group a selection list to make it shorter",
+      "name_plural": "are selectors for",
+      "name_plural_reverse": "are grouped by",
+      "name_reverse": "is grouped by"
+    },
+    {
+      "name": "of",
+      "code_id": "of",
+      "description": "to narrow a selection e.g. the world population is usually the population of all humans",
+      "name_plural_reverse": "of",
+      "name_plural": "of",
+      "name_reverse": "of"
+    },
+    {
+      "name": "in",
+      "code_id": "in",
+      "description": "to specify the measure unit or the frame of a phrase e.g. temperature in celsius",
+      "name_plural_reverse": "",
+      "name_plural": "in",
+      "name_reverse": ""
+    },
+    {
+      "name": "and",
+      "code_id": "and",
+      "description": "to combine two phrases to a new phrase e.g. interest and taxes",
+      "name_plural": "and",
+      "name_plural_reverse": "and",
+      "name_reverse": "and"
+    },
+    {
+      "name": "to",
+      "code_id": "to",
+      "description": "to define a time period e.g. \"12:00 to 13:00\" or \"1. March 2024 to 3. March 2024 or to specify the assignment type e.g. net to net for currency turnover",
+      "name_plural_reverse": "",
+      "name_plural": "to",
+      "name_reverse": ""
+    },
+    {
+      "name": "on",
+      "code_id": "on",
+      "description": "to specify a subgroup e.g. taxes on income",
+      "name_plural_reverse": "distribute to",
+      "name_plural": "on",
+      "name_reverse": "distribute to"
+    },
+    {
+      "name": "with",
+      "code_id": "with",
+      "description": "similar to 'is part of' but where the left phrase is expected to be several times the right phrase e.g. for comparing same by same: 1 hour with full load is the same as 2 hours with half load",
+      "name_plural": "with",
+      "name_plural_reverse": "",
+      "name_reverse": ""
+    },
+    {
+      "name": "between",
+      "code_id": "between",
+      "description": "to define a range e.g. a value between a lower and an upper bound",
+      "name_plural_reverse": "",
+      "name_plural": "between",
+      "name_reverse": ""
+    },
+    {
+      "name": "by parts",
+      "code_id": "by_parts",
+      "description": "to describe a method that operates on the parts of an expression e.g. integration by parts",
+      "name_plural_reverse": "",
+      "name_plural": "by parts",
+      "name_reverse": ""
+    },
+    {
+      "name": "is symbol for",
+      "code_id": "symbol",
+      "description": "is used as a symbol for",
+      "name_plural_reverse": "can have symbols",
+      "name_plural": "are symbols for",
+      "name_reverse": "can have symbol"
+    },
+    {
+      "name": "is alias of",
+      "code_id": "alias",
+      "description": "to merge two names of the same thing into one phrase e.g. mol is alias of mole",
+      "name_plural_reverse": "are aliases of",
+      "name_plural": "are aliases of",
+      "name_reverse": "is alias of"
+    },
+    {
+      "name": "is an acronym for",
+      "code_id": "acronym",
+      "description": "to link a short form to the phrase it stands for e.g. PV is an acronym for photovoltaic",
+      "name_plural_reverse": "have acronyms",
+      "name_plural": "are acronyms for",
+      "name_reverse": "has acronym"
+    },
+    {
+      "name": "can be symbol for",
+      "code_id": "can_be_symbol",
+      "description": "to link an ambiguous symbol to each of its meanings, each a symbol triple with a unique name e.g. tn can be symbol for tn (scaling) and for tn (weight)",
+      "name_plural_reverse": "have the ambiguous symbol",
+      "name_plural": "can be symbols for",
+      "name_reverse": "has the ambiguous symbol"
+    },
+    {
+      "name": "can be",
+      "code_id": "can_be",
+      "description": "to assign an optional category or role e.g. a problem can be global",
+      "name_plural_reverse": "can be",
+      "name_plural": "can be",
+      "name_reverse": "can be"
+    },
+    {
+      "name": "has a",
+      "code_id": "has",
+      "description": "to assign potential properties e.g. a country has a Human Development Index",
+      "name_plural_reverse": "are used for",
+      "name_plural": "have",
+      "name_reverse": "is used for"
+    },
+    {
+      "name": "can",
+      "code_id": "can",
+      "description": "to assign a behavior e.g. GDP can decline",
+      "name_plural": "can"
+    },
+    {
+      "name": "can have",
+      "code_id": "can_have",
+      "description": "to assign an optional property e.g. an exchange rate can have a change",
+      "name_plural": "can have"
+    },
+    {
+      "name": "can get",
+      "code_id": "can_get",
+      "description": "to assign a possible change of state e.g. the climate can get warmer",
+      "name_plural": "can get"
+    },
+    {
+      "name": "per",
+      "code_id": "per",
+      "description": "to define the usual quotient e.g. meter per second is normally used not seconds per meter, that why the reverse name is empty",
+      "name_plural": "per",
+      "name_plural_reverse": "",
+      "name_reverse": ""
+    },
+    {
+      "name": "times",
+      "code_id": "times",
+      "description": "to multiply the two given phrases to one unit e.g. Joule times second (J⋅s) for the Plank constant",
+      "name_plural": "times",
+      "name_plural_reverse": "times",
+      "name_reverse": "times"
+    },
+    {
+      "name": "is measure type for",
+      "code_id": "measure_type",
+      "description": "is the default measure type for",
+      "formula_name": "measure type",
+      "name_plural_reverse": "have the measure type",
+      "name_plural": "are measure type for",
+      "name_reverse": "has the measure type"
+    },
+    {
+      "name": "scaled by",
+      "code_id": "scaled",
+      "description": "to define the usual scaling e.g. for watt hours usually the scaling kilo (kWh) is used",
+      "name_plural": "scaled by",
+      "name_plural_reverse": "are scaling for",
+      "name_reverse": "is scaling for"
+    },
+    {
+      "name": "weighted by",
+      "code_id": "weighted",
+      "description": "to state that a quantity is multiplied by a weight e.g. an expected harm weighted by the confidence",
+      "name_plural_reverse": "are weights of",
+      "name_plural": "weighted by",
+      "name_reverse": "is weight of"
+    },
+    {
+      "name": "expected from",
+      "code_id": "expected_from",
+      "description": "to name the expected value of an outcome e.g. the harm expected from a runaway",
+      "name_plural_reverse": "have the expected",
+      "name_plural": "expected from",
+      "name_reverse": "has the expected"
+    },
+    {
+      "name": "is follower of",
+      "code_id": "follow",
+      "description": "the time order of two phrases e.g. 2025 is follower of 2024; for the table column order use 'is next main column after' or 'is explaining column for'",
+      "formula_name": "follower",
+      "name_plural_reverse": "are followed by",
+      "name_plural": "are followers of",
+      "name_reverse": "is followed by"
+    },
+    {
+      "name": "is explaining column for",
+      "code_id": "after",
+      "description": "to attach a column that explains a main table column e.g. the loss column gives the size of the problem column; an explaining column is shown between its main column and the next main column",
+      "name_plural_reverse": "are explained by columns",
+      "name_plural": "are explaining columns for",
+      "name_reverse": "is explained by column"
+    },
+    {
+      "name": "is next main column after",
+      "code_id": "before",
+      "description": "to chain the main table columns e.g. the solution column is the next main column after the problem column and all columns explaining the problem; for a time order use 'is follower of'",
+      "name_plural_reverse": "are main columns before",
+      "name_plural": "are next main columns after",
+      "name_reverse": "is main column before"
+    },
+    {
+      "name": "is ranked by",
+      "code_id": "rank",
+      "description": "to define which values should be used to sort related objects e.g. the first math const are the once that have been discovered first because they are probably the most relevant and useful",
+      "name_plural_reverse": "are sort phrases for",
+      "name_plural": "are ranked by",
+      "name_reverse": "is sort phrases for"
+    },
+    {
+      "name": "is time jump for",
+      "code_id": "time_jump",
+      "description": "the default time jump e.g. year is the default time period for annual reports",
+      "formula_name": "time jump",
+      "name_plural_reverse": "have the default time jump",
+      "name_plural": "are the time jump for",
+      "name_reverse": "has the default time jump"
+    },
+    {
+      "name": "is term jump for",
+      "code_id": "term_jump",
+      "description": "the default term jump e.g. state of aggregation is used for a physical substance"
+    },
+    {
+      "name": "can cause",
+      "code_id": "can_cause",
+      "description": "there is a causal relation with a factor",
+      "name_plural": "can cause",
+      "name_plural_reverse": "can be caused by",
+      "name_reverse": "can be caused by"
+    },
+    {
+      "name": "influences",
+      "code_id": "influence",
+      "description": "to state that one phrase changes another without being its only cause e.g. inequality influences poverty",
+      "name_plural_reverse": "are influenced by",
+      "name_plural": "influence",
+      "name_reverse": "is influenced by"
+    },
+    {
+      "name": "reduces",
+      "code_id": "reduces",
+      "description": "to state that one phrase lowers the size of another e.g. a border adjustment reduces carbon leakage",
+      "name_plural_reverse": "are reduced by",
+      "name_plural": "reduce",
+      "name_reverse": "is reduced by"
+    },
+    {
+      "name": "limits",
+      "code_id": "limits",
+      "description": "to state that one phrase bounds how far another can go e.g. a risk limits a reduction claim",
+      "name_plural_reverse": "are limited by",
+      "name_plural": "limit",
+      "name_reverse": "is limited by"
+    },
+    {
+      "name": "enables",
+      "code_id": "enables",
+      "description": "to state that one phrase makes another possible without causing it e.g. a border adjustment enables a climate club",
+      "name_plural_reverse": "are enabled by",
+      "name_plural": "enable",
+      "name_reverse": "is enabled by"
+    },
+    {
+      "name": "adds to",
+      "code_id": "adds_to",
+      "description": "to state that one amount is added to another to form the total e.g. a regional premium adds to the base price",
+      "name_plural_reverse": "are increased by",
+      "name_plural": "add to",
+      "name_reverse": "is increased by"
+    },
+    {
+      "name": "competes with",
+      "code_id": "competes",
+      "description": "to state that two options exclude or weaken each other e.g. throttling competes with implementing",
+      "name_plural_reverse": "compete with",
+      "name_plural": "compete with",
+      "name_reverse": "competes with"
+    },
+    {
+      "name": "aims to trigger",
+      "code_id": "aims_to_trigger",
+      "description": "to state the intended effect of an action e.g. an annoyance test aims to trigger a one-click hide",
+      "name_plural_reverse": "are aimed to be triggered by",
+      "name_plural": "aim to trigger",
+      "name_reverse": "is aimed to be triggered by"
+    },
+    {
+      "name": "lowers barrier for",
+      "code_id": "lowers_barrier",
+      "description": "to state that one phrase makes another easier to reach e.g. a low implementation cost lowers the barrier for building it",
+      "name_plural_reverse": "have a barrier lowered by",
+      "name_plural": "lower barrier for",
+      "name_reverse": "has a barrier lowered by"
+    },
+    {
+      "name": "can use",
+      "code_id": "can_use",
+      "description": "use indicates that a new result is created e.g. a turbine can use water or wind or any type of liquid or gas to convert energy",
+      "name_plural": "can use",
+      "name_plural_reverse": "can be used by",
+      "name_reverse": "can be used by"
+    },
+    {
+      "name": "uses",
+      "code_id": "uses",
+      "description": "real use e.g. wind energy is used by a wind turbine",
+      "name_plural_reverse": "are used by",
+      "name_plural": "use",
+      "name_reverse": "is used by"
+    },
+    {
       "name": "is used by",
       "code_id": "used_by",
       "description": "passive form of 'uses' when the dependent phrase is the subject e.g. cent is used by Euro",
       "name_plural_reverse": "use",
       "name_plural": "are used by",
       "name_reverse": "uses"
+    },
+    {
+      "name": "used for",
+      "code_id": "used_for",
+      "description": "to specify the intended purpose of a phrase e.g. fuel used for a jet (jet fuel)",
+      "name_plural_reverse": "use",
+      "name_plural": "are used for",
+      "name_reverse": "uses"
+    },
+    {
+      "name": "issue",
+      "code_id": "issue",
+      "description": "e.g. a company issues an annual report",
+      "name_plural_reverse": "are issued by",
+      "name_plural": "issue",
+      "name_reverse": "is issued by"
     },
     {
       "name": "can be made of",
@@ -336,30 +431,6 @@
       "name_plural_reverse": "can pack",
       "name_plural": "can be packed in",
       "name_reverse": "can pack"
-    },
-    {
-      "name": "used for",
-      "code_id": "used_for",
-      "description": "to specify the intended purpose of a phrase e.g. fuel used for a jet (jet fuel)",
-      "name_plural_reverse": "uses",
-      "name_plural": "are used for",
-      "name_reverse": "uses"
-    },
-    {
-      "name": "is next main column after",
-      "code_id": "before",
-      "description": "to chain the main table columns e.g. the solution column is the next main column after the problem column and all columns explaining the problem; for a time order use 'is follower of'",
-      "name_plural_reverse": "are main columns before",
-      "name_plural": "are next main columns after",
-      "name_reverse": "is main column before"
-    },
-    {
-      "name": "is explaining column for",
-      "code_id": "after",
-      "description": "to attach a column that explains a main table column e.g. the loss column gives the size of the problem column; an explaining column is shown between its main column and the next main column",
-      "name_plural_reverse": "are explained by columns",
-      "name_plural": "are explaining columns for",
-      "name_reverse": "is explained by column"
     },
     {
       "name": "supports",
@@ -402,62 +473,6 @@
       "name_reverse": "is analogous to"
     },
     {
-      "name": "limits",
-      "code_id": "limits",
-      "description": "to state that one phrase bounds how far another can go e.g. a risk limits a reduction claim",
-      "name_plural_reverse": "are limited by",
-      "name_plural": "limit",
-      "name_reverse": "is limited by"
-    },
-    {
-      "name": "enables",
-      "code_id": "enables",
-      "description": "to state that one phrase makes another possible without causing it e.g. a border adjustment enables a climate club",
-      "name_plural_reverse": "are enabled by",
-      "name_plural": "enable",
-      "name_reverse": "is enabled by"
-    },
-    {
-      "name": "reduces",
-      "code_id": "reduces",
-      "description": "to state that one phrase lowers the size of another e.g. a border adjustment reduces carbon leakage",
-      "name_plural_reverse": "are reduced by",
-      "name_plural": "reduce",
-      "name_reverse": "is reduced by"
-    },
-    {
-      "name": "adds to",
-      "code_id": "adds_to",
-      "description": "to state that one amount is added to another to form the total e.g. a regional premium adds to the base price",
-      "name_plural_reverse": "are increased by",
-      "name_plural": "add to",
-      "name_reverse": "is increased by"
-    },
-    {
-      "name": "competes with",
-      "code_id": "competes",
-      "description": "to state that two options exclude or weaken each other e.g. throttling competes with implementing",
-      "name_plural_reverse": "compete with",
-      "name_plural": "compete with",
-      "name_reverse": "competes with"
-    },
-    {
-      "name": "aims to trigger",
-      "code_id": "aims_to_trigger",
-      "description": "to state the intended effect of an action e.g. an annoyance test aims to trigger a one-click hide",
-      "name_plural_reverse": "are aimed to be triggered by",
-      "name_plural": "aim to trigger",
-      "name_reverse": "is aimed to be triggered by"
-    },
-    {
-      "name": "lowers barrier for",
-      "code_id": "lowers_barrier",
-      "description": "to state that one phrase makes another easier to reach e.g. a low implementation cost lowers the barrier for building it",
-      "name_plural_reverse": "have a barrier lowered by",
-      "name_plural": "lower barrier for",
-      "name_reverse": "has a barrier lowered by"
-    },
-    {
       "name": "is single attempt in",
       "code_id": "single_attempt",
       "description": "to state that one try is one of the attempts an ensemble rate is computed from",
@@ -466,28 +481,9 @@
       "name_reverse": "has the single attempt"
     },
     {
-      "name": "expected from",
-      "code_id": "expected_from",
-      "description": "to name the expected value of an outcome e.g. the harm expected from a runaway",
-      "name_plural_reverse": "have the expected",
-      "name_plural": "expected from",
-      "name_reverse": "has the expected"
-    },
-    {
-      "name": "weighted by",
-      "code_id": "weighted",
-      "description": "to state that a quantity is multiplied by a weight e.g. an expected harm weighted by the confidence",
-      "name_plural_reverse": "are weights of",
-      "name_plural": "weighted by",
-      "name_reverse": "is weight of"
-    },
-    {
-      "name": "can be symbol for",
-      "code_id": "can_be_symbol",
-      "description": "to link an ambiguous symbol to each of its meanings, each a symbol triple with a unique name e.g. tn can be symbol for tn (scaling) and for tn (weight)",
-      "name_plural_reverse": "have the ambiguous symbol",
-      "name_plural": "can be symbols for",
-      "name_reverse": "has the ambiguous symbol"
+      "name": "term type needed",
+      "code_id": "term_needed",
+      "description": "the formula needs the linked term type"
     }
   ]
 }
