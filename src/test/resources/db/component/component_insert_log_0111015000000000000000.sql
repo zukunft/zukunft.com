@@ -63,4 +63,4 @@ SELECT component_insert_log_0111015000000000000000
         'form_title'::text,
         784::smallint,
         'system form title'::text,
-        17::smallint);
+        2::smallint);

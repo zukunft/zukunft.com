@@ -1,119 +1,34 @@
 # pending - list of planned llm prompts with prio 1
 
-## detail views
+## table with column component
 
-add detail views for values, results, formulas, words and triples and clone for the moment the current default view. in a second step the default view should be reduced and a 'more' link should link to the detail view. 
+to be able to define which column values should be used to sort a table add an url_var (with a human version) to define the prime order and another url_var for the sub and sub_sub order. The id for the var should be the phrase id of the column with a condition that can be e.g. asc, desc in combination with numeric or alpha or alpha incl. parent phrase name 
 
-## phrase types
+add up / down sort icons to each column which sorts the start page rows by this column
 
-add a phrase type 'value quality' and assign the type to the word 'assumed'. Add in the json which defines 'assumed' add alternative value quality type phrases e.g. 'peer reviewed by quality journal' 
+if there is more than one solution add ', ...' with a link to the solution list
 
-add and group the 'value qualities' at least like:
+the table component used for the start page has in the top right corner '...'
+which is used to show a 'select the columns to show' menu.
+change the tooltip to something like 'select the columns and form to show' and
+add a subheader 'columns and values' not in bold above 'mayor', 'mayor + range', ...
+and add another subheader 'as' with the entries 'table' (linke until now), 'chart' and 'table + chart'
 
-Conjecture (no direct observation)
 
-assumed value — plain guess, no source; the base case
-expert estimate — single expert's judgment, named but unverified
-delphi consensus — aggregated estimate from a Delphi/Real-Time-Delphi round (fits your existing method)
-extrapolated value — projection from past data beyond the observed range
-interpolated value — filled in between two known values
-model result — output of a simulation/model; quality is bounded by its inputs
-calculated value — formula result inside zukunft.com; inherits the lowest quality of its inputs (worth making this inheritance rule explicit)
 
-Reported (observed, but by an interested or single party)
+## todo from group id change
 
-self reported — survey answer, company disclosure, questionnaire
-single measurement — one observation, no repetition
-repeated measurement — same method, several observations, same team
-official statistic — statistical office, central bank, regulator
-audited value — checked by an independent third party (financial audit, certified lab)
+Things to fix or check
+1. result_id.php docblocks are stale. get_id() and alpha_num_result() still say "512-bit key as 112 chars or list of more than 16 keys with 6 chars" and "the 512 bit db key …", next to the new compact-key line (your on-disk edit kept both). The old lines are now wrong.
+2. group_id.php header typo: the table list numbers values_big as "1." instead of "3.". It's in the comment I edited, but the typo was already there.
+3. The unit majority counts every number. split_by_unit counts low/high range numbers as well, so a unit stored with ranges counts up to three per row against one per row for another unit. That's fine for the start page today; counting distinct rows would be exact.
+4. The MySQL search needs MySQL 8. REGEXP_LIKE(…, 'c') doesn't exist in MariaDB, which docs/todo.md names as a possible target.
+5. pg_unpadded does a little per-row work. It checks the field types of every Postgres row. PHP caches the type names, so it's cheap, but the char columns could be found once per result instead.
+6. The group_id_url.php header says "see docs/llm/group_id.md", which is only correct once that new file is committed. It's already staged (AM), so this just means committing it together.
+7. Three pieces are new or unverified. pg_unpadded, the main-delete fix and the unit-majority rule are only lint-checked, and MySQL is untested throughout. A full test.php run after the DB reset and syncing /var/www/html is still needed.
+8. The start-page snapshot will still differ from the committed one. Expect trillion EUR in the header with the calculated results (2.2, 4, …), not the old values.
+9. The memory-recorded no-plain-delete rule is followed. result::del_row_of_other_table deletes without a change log, but results are derived data (MAIN_CLASSES_NO_CHANGE_LOG), which matches the documented exception.
 
-Scientific (method documented, exposed to challenge)
-
-preprint — published, not yet reviewed
-observational study — cohort / case-control / cross-sectional
-peer reviewed — passed journal review
-pre-registered study — hypothesis and method fixed before data collection
-randomized controlled trial
-double blind randomized controlled trial
-independently replicated — reproduced by a different team
-meta-analysis / systematic review — pooled across studies
-
-Fixed by convention (not measured at all)
-
-defined value — exact by definition, e.g. the speed of light in SI
-legal value — set by law or contract, e.g. a tax rate or CBAM benchmark
-proven value — mathematically derived, no empirical uncertaint
-
-add Status: disputed, retracted, superseded, outdated — a peer-reviewed value can still be retracted, so this shouldn't be a rung on the ladder.
-
-add a Confidence number and description to all value quality phrases: The quality type gives a sensible default (e.g. assumed value → 0.3, double blind RCT → 0.9) but should stay overridable, because a small double-blind trial can deserve less confidence than a large observational cohort.
-
-## result and value default view
-
-in title of the value and result default view show the scaling and measure type phrases behind the value e.g. for http://localhost/http/view.php?m=9&id=....0R-....1S%2B....1V%2B....2D%2B....2F%2B....2p%2B......%2B......%2B......%2B......%2B......%2B......%2B......%2B......%2B......%2B......%2B&9m=1&9dls=20&9dlc=2&9dlr=1 'assumed, black-box AI, loss, potential 0.22 trillion EUR' instead of 'EUR, assumed, black-box AI, loss, potential, trillion 0.22'
-
-add a phrase type 'value quality'
-
-## type and component order
-
-review the initial order of the types e.g.
-
-- component types
-- phrase types
-
-review the initial order of the components
-review the initial order of the verbs
-
-### source types
-
-Add columns group and wikipedia where the groups are:
-
-Documents
-
-PDF
-MD
-TXT
-HTML
-
-Structured data formats
-
-JSON
-YAML
-TOML
-XML
-CSV
-TSV
-XLSX
-ODS
-JSON-LD
-RDF/Turtle
-GeoJSON
-JSON-stat
-XBRL
-SDMX
-Parquet
-Avro
-NetCDF
-HDF5
-
-Database / data exchange
-
-SQLite
-SQL Dump
-Arrow
-
-Data access/query mechanisms
-
-API
-OData
-SPARQL
-
-Web/archival sources
-
-RSS
-Atom
-WARC
 
 ## email accounts
 
@@ -137,17 +52,13 @@ add a list with the triples and a plus sign to add a new triple
 
 ## json import: word and triple names
 
-add to the jsom import check that word and triple names in english start always with a small letter with a few exceptions based on triples on the same json import file: if the name is a symbol or a country 
+add to the JSON import check that word and triple names in English start always with a small letter with a few exceptions based on triples on the same json import file: if the name is a symbol or a country 
 
 ## triple view
 
 add values icon and add formula icon
 
 ## start page
-
-add up / down sort icons to each column which sorts the start page rows by this column
-
-if there is more than one solution add ', ...' with a link to the solution list
 
 each number of the start page should be a result of a calculation not a value
 

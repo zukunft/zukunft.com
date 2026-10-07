@@ -46,7 +46,7 @@ SELECT word_update_log_0202008010000_user
         'standard',
         1,
         'time',
-        2,
+        11,
         128,
         null,
         'System Test Word Renamed');

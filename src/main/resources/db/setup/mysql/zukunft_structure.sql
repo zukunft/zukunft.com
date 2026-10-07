@@ -1655,6 +1655,8 @@ CREATE TABLE IF NOT EXISTS source_types
     type_name     varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
     code_id       varchar(255) DEFAULT NULL COMMENT 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration',
     description   text         DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry',
+    group_msg_code_id varchar(255) DEFAULT NULL COMMENT 'the message id of the translatable name of the group e.g. structured data formats used to group the source types in a selector',
+    wikipedia     text         DEFAULT NULL COMMENT 'the url of the english wikipedia page that explains the format',
     PRIMARY KEY (source_type_id)
 )
     ENGINE = InnoDB
@@ -4347,7 +4349,7 @@ CREATE OR REPLACE VIEW prime_terms AS
            ''                AS resolved_text,
            ''                AS latex
       FROM words AS w
-     WHERE (w.phrase_type_id <> 10 OR w.phrase_type_id IS NULL)
+     WHERE (w.phrase_type_id <> 21 OR w.phrase_type_id IS NULL)
        AND w.word_id < 32767
 UNION
     SELECT t.triple_id * -2 + 1 AS term_id,
@@ -4421,7 +4423,7 @@ CREATE OR REPLACE VIEW terms AS
            ''                AS resolved_text,
            ''                AS latex
       FROM words AS w
-     WHERE (w.phrase_type_id <> 10 OR w.phrase_type_id IS NULL)
+     WHERE (w.phrase_type_id <> 21 OR w.phrase_type_id IS NULL)
 UNION
     SELECT t.triple_id * -2 + 1 AS term_id,
            t.user_id,
@@ -4491,7 +4493,7 @@ CREATE OR REPLACE VIEW user_prime_terms AS
            ''                AS resolved_text,
            ''                AS latex
       FROM user_words AS w
-     WHERE (w.phrase_type_id <> 10 OR w.phrase_type_id IS NULL)
+     WHERE (w.phrase_type_id <> 21 OR w.phrase_type_id IS NULL)
        AND w.word_id < 32767
 UNION
     SELECT t.triple_id * -2 + 1 AS term_id,
@@ -4565,7 +4567,7 @@ CREATE OR REPLACE VIEW user_terms AS
            ''                AS resolved_text,
            ''                AS latex
       FROM user_words AS w
-     WHERE (w.phrase_type_id <> 10 OR w.phrase_type_id IS NULL)
+     WHERE (w.phrase_type_id <> 21 OR w.phrase_type_id IS NULL)
 UNION
     SELECT t.triple_id * -2 + 1 AS term_id,
            t.user_id,

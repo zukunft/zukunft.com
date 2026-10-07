@@ -445,19 +445,19 @@ class test_phrases
 
     /**
      * @return phrase_list with 16 entries to test the normal group id creation
-     * 1    ...../+
-     * 11    .....9-
-     * 12    .....A+
-     * 37    .....Z-
-     * 38    .....a+
-     * 64    ..../.-
-     * 376    ....3s+
-     * 2367    ....Yz-
-     * 13108    ...1Ao+
-     * 82124    ...I1A-
-     * 505294    ../vLC+
-     * 2815273    ..8jId-
-     * 17192845    .//ZSB+
+     * 1    /+
+     * 11    9-
+     * 12    A+
+     * 37    Z-
+     * 38    a+
+     * 64    /.-
+     * 376    3s+
+     * 2367    Yz-
+     * 13108    1Ao+
+     * 82124    I1A-
+     * 505294    /vLC+
+     * 2815273    8jId-
+     * 17192845    //ZSB+
      */
     function phrase_list_13(): phrase_list
     {
@@ -521,20 +521,20 @@ class test_phrases
 
     /**
      * @return phrase_list with 16 entries to test the normal group id creation
-     * 1    ...../+
-     * 11    .....9-
-     * 12    .....A+
-     * 37    .....Z-
-     * 38    .....a+
-     * 64    ..../.-
-     * 376    ....3s+
-     * 2367    ....Yz-
-     * 13108    ...1Ao+
-     * 82124    ...I1A-
-     * 505294    ../vLC+
-     * 2815273    ..8jId-
-     * 17192845    .//ZSB+
-     * 106841477    .4LYK3-
+     * 1    /+
+     * 11    9-
+     * 12    A+
+     * 37    Z-
+     * 38    a+
+     * 64    /.-
+     * 376    3s+
+     * 2367    Yz-
+     * 13108    1Ao+
+     * 82124    I1A-
+     * 505294    /vLC+
+     * 2815273    8jId-
+     * 17192845    //ZSB+
+     * 106841477    4LYK3-
      */
     function phrase_list_14(): phrase_list
     {
@@ -549,20 +549,20 @@ class test_phrases
 
     /**
      * @return phrase_list with 16 entries to test the normal group id creation
-     * 1    ...../+
-     * 11    .....9-
-     * 12    .....A+
-     * 37    .....Z-
-     * 38    .....a+
-     * 64    ..../.-
-     * 376    ....3s+
-     * 2367    ....Yz-
-     * 13108    ...1Ao+
-     * 82124    ...I1A-
-     * 505294    ../vLC+
-     * 2815273    ..8jId-
-     * 17192845    .//ZSB+
-     * 106841477    .4LYK3-
+     * 1    /+
+     * 11    9-
+     * 12    A+
+     * 37    Z-
+     * 38    a+
+     * 64    /.-
+     * 376    3s+
+     * 2367    Yz-
+     * 13108    1Ao+
+     * 82124    I1A-
+     * 505294    /vLC+
+     * 2815273    8jId-
+     * 17192845    //ZSB+
+     * 106841477    4LYK3-
      */
     function phrase_list_14b(): phrase_list
     {
@@ -577,21 +577,21 @@ class test_phrases
 
     /**
      * @return phrase_list with 16 entries to test the normal group id creation
-     * 1    ...../+
-     * 11    .....9-
-     * 12    .....A+
-     * 37    .....Z-
-     * 38    .....a+
-     * 64    ..../.-
-     * 376    ....3s+
-     * 2367    ....Yz-
-     * 13108    ...1Ao+
-     * 82124    ...I1A-
-     * 505294    ../vLC+
-     * 2815273    ..8jId-
-     * 17192845    .//ZSB+
-     * 106841477    .4LYK3-
-     * 628779863    .ZSahL+
+     * 1    /+
+     * 11    9-
+     * 12    A+
+     * 37    Z-
+     * 38    a+
+     * 64    /.-
+     * 376    3s+
+     * 2367    Yz-
+     * 13108    1Ao+
+     * 82124    I1A-
+     * 505294    /vLC+
+     * 2815273    8jId-
+     * 17192845    //ZSB+
+     * 106841477    4LYK3-
+     * 628779863    ZSahL+
      * 3516593476    1FajJ2-
      */
     function phrase_list_16(): phrase_list

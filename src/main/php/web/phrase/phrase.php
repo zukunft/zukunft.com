@@ -377,6 +377,17 @@ class phrase extends combine_named
     }
 
     /**
+     * @param user_message $msg to report a missing phrase type list
+     * @return bool true if this phrase says how a number has been found e.g. "assumed", which is
+     *              shown as a mark behind the number instead of being named before it
+     *              (see sandbox_value::quality_mark)
+     */
+    function is_value_quality(user_message $msg): bool
+    {
+        return $this->obj()->is_value_quality($msg);
+    }
+
+    /**
      * the symbol that is shown behind a number instead of naming this phrase with the other
      * phrases of the number, e.g. the "x" of a factor, the "mio" of million or the "€" of the
      * unit EUR, as a link to the phrase with its description as the tooltip, so that the reader
@@ -417,10 +428,14 @@ class phrase extends combine_named
      */
     function symbol_name(user_message $msg): string
     {
+        global $ui_sys;
+
         $symbol = null;
+        // the page cache decides which meaning an ambiguous symbol has on this page
+        $page_lst = $ui_sys?->phr_lst;
         foreach ($this->caches() as $cache) {
             if ($symbol == null) {
-                $symbol = $cache->symbol_of($this, $msg);
+                $symbol = $cache->symbol_of($this, $msg, $page_lst);
             }
         }
         return $symbol?->name() ?? '';

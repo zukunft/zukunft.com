@@ -168,7 +168,7 @@ class term extends combine_named
     // using one array of sql table types per view
     const string TBL_PRIME_COM = 'terms with an id less than 2^16 so that 4 term id fit in a 64 bit db key';
     const string TBL_PRIME_WHERE = '< 32767'; // 2^16 / 2 - 1
-    const array TBL_WORD_WHERE = ['<> 10', sql::IS_NULL]; // to exclude the formula words from the term view
+    const array TBL_WORD_WHERE = ['<> ' . phrase_type_shared::FORMULA_LINK_ID, sql::IS_NULL]; // to exclude the formula words from the term view
     const string TBL_COM = 'terms with an id that is not prime';
     const string FLD_WORD_ID_TO_TERM_ID = '* 2 - 1'; // to convert a word id to a term id
     const string FLD_TRIPLE_ID_TO_TERM_ID = '* -2 + 1'; // to convert a triple id to a term id

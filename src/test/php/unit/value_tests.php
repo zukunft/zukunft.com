@@ -254,7 +254,7 @@ class value_tests
         $t->subheader($ts . 'delete steps');
 
         // step 1: the delete is skipped if the value has no key, so the key check must never
-        // compare a text id with a number, because php reports '....06+' <= 0 as true
+        // compare a text id with a number, because php reports '/x-' <= 0 as true
         $test_name = 'the id of a value with the text group id of 16 phrases is set, '
             . 'so that its delete is not skipped';
         $t->assert_true($test_name, $t_val->value_16()->is_id_set());
@@ -724,7 +724,9 @@ class value_tests
 
         // TODO move to ui tests
         $val_ui = new value_ui($val->api_json([api_types::INCL_PHRASES]));
-        $t->assert('value edit link', $val_ui->value_edit($msg_ui), '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::VALUE_DEFAULT_ID . '&amp;id=5">3.14</a>');
+        // the value has no source, so the link is followed by the grey "-" mark (see sandbox_value::quality_mark)
+        $t->assert('value edit link', $val_ui->value_edit($msg_ui), '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::VALUE_DEFAULT_ID . '&amp;id=5">3.14</a>' . $val_ui->quality_mark());
+        $t->assert_text_contains('... with the mark of the missing source', $val_ui->quality_mark(), msg_id::QUALITY_MARK_NO_SOURCE->text());
 
         $t->subheader($ts . 'convert and api');
 

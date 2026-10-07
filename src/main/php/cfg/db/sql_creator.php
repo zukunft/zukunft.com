@@ -106,6 +106,7 @@ include_once paths::MODEL_CONST . 'def.php';
 //include_once paths::MODEL_VIEW . 'view_relation.php';
 include_once paths::SHARED_CONST . 'users.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED . 'group_id_url.php';
 include_once paths::SHARED_CONST_FIELDS . 'fields.php';
 include_once paths::SHARED_CONST_FIELDS . 'group_fields.php';
 
@@ -171,6 +172,7 @@ use Zukunft\ZukunftCom\main\php\cfg\value\value_time_series;
 use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\group_id_url;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\group_fields;
 use DateTime;
@@ -1202,10 +1204,11 @@ class sql_creator
             } elseif ($spt == sql_par_type::LIKE_L) {
                 $this->add_par($spt, '%' . $fld_val, $name);
             } elseif ($spt == sql_par_type::LIKE
-                or $spt == sql_par_type::LIKE_OR
-                or $spt == sql_par_type::LIKE_KEY
-                or $spt == sql_par_type::LIKE_KEY_OR) {
+                or $spt == sql_par_type::LIKE_OR) {
                 $this->add_par($spt, '%' . $fld_val . '%', $name);
+            } elseif ($spt == sql_par_type::LIKE_KEY
+                or $spt == sql_par_type::LIKE_KEY_OR) {
+                $this->add_par($spt, group_id_url::phrase_pattern($fld_val), $name);
             } else {
                 log_err('SQL parameter type ' . $spt->value . ' not expected');
             }
@@ -3898,7 +3901,7 @@ class sql_creator
                 $sql_where .= $tbl . $fld . ' ' . $this->like_keyword() . ' ' . $par->name;
             } elseif ($typ == sql_par_type::LIKE_KEY
                 or $typ == sql_par_type::LIKE_KEY_OR) {
-                $sql_where .= $tbl . $fld . ' ' . $this->like_key_keyword() . ' ' . $par->name;
+                $sql_where .= $this->key_match($tbl . $fld, $par->name);
             } elseif ($typ == sql_par_type::CONST) {
                 // $par_offset--;
                 $sql_where .= $tbl . $fld . ' = ' . $par->value;
@@ -4002,16 +4005,19 @@ class sql_creator
     }
 
     /**
-     * @return string the pattern match that respects the upper and lower case e.g. for the alpha_num
-     *                key of a phrase within a group id (see sql_par_type::LIKE_KEY): the postgres LIKE
-     *                is case-sensitive, while mysql needs LIKE BINARY because the default collation
-     *                ignores the case
+     * the case-sensitive match of the key of a phrase within a group id (see sql_par_type::LIKE_KEY):
+     * a regular expression (see group_id_url::phrase_pattern), because e.g. "0U+" must not match the
+     * end of "10U+"; mysql needs the match type "c", because the default collation ignores the case
+     *
+     * @param string $fld the group id field incl. the table alias
+     * @param string $par the placeholder of the pattern
+     * @return string the sql condition
      */
-    private function like_key_keyword(): string
+    function key_match(string $fld, string $par): string
     {
-        $result = sql::LIKE_BINARY;
+        $result = sql::REGEXP_LIKE . '(' . $fld . ', ' . $par . ", 'c')";
         if ($this->db_type == sql_db::POSTGRES) {
-            $result = sql::LIKE_LOWER_CASE;
+            $result = $fld . ' ' . sql::REGEXP_PG . ' ' . $par;
         }
         return $result;
     }
@@ -4118,22 +4124,18 @@ class sql_creator
                             or $typ == sql_par_type::LIKE_OR
                             or $typ == sql_par_type::LIKE_KEY
                             or $typ == sql_par_type::LIKE_KEY_OR) {
-                            if ($typ == sql_par_type::LIKE_KEY or $typ == sql_par_type::LIKE_KEY_OR) {
-                                $like = $this->like_key_keyword();
+                            if ($this->par_named[$i] and $this->par_name[$i] != '' and $this->db_type() != sql_db::MYSQL) {
+                                // if the same parameter is used more than once use the same placeholder again
+                                // e.g. if phrase_1 = $1 or phrase_2 = $1
+                                $par = $this->par_name[$i];
                             } else {
-                                $like = $this->like_keyword();
+                                $par = $this->par_name($par_pos);
                             }
-                            $result .= $tbl_id . $this->par_lst->name($i) . ' ' . $like . ' ';
-                            if ($this->par_named[$i]) {
-                                if ($this->par_name[$i] != '' and $this->db_type() != sql_db::MYSQL) {
-                                    // if the same parameter is used more than once use the same placeholder again
-                                    // e.g. if phrase_1 = $1 or phrase_2 = $1
-                                    $result .= $this->par_name[$i];
-                                } else {
-                                    $result .= $this->par_name($par_pos);
-                                }
+                            $fld = $tbl_id . $this->par_lst->name($i);
+                            if ($typ == sql_par_type::LIKE_KEY or $typ == sql_par_type::LIKE_KEY_OR) {
+                                $result .= $this->key_match($fld, $par);
                             } else {
-                                $result .= $this->par_name($par_pos);
+                                $result .= $fld . ' ' . $this->like_keyword() . ' ' . $par;
                             }
                         } elseif ($typ == sql_par_type::CONST) {
                             $par_offset--;

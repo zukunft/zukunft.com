@@ -55,4 +55,4 @@ SELECT component_insert_log_0111005000000000000000
         'the name field in a form'::text,
         784::smallint,
         'word name'::text,
-        8::smallint);
+        32::smallint);

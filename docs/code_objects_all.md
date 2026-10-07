@@ -111,7 +111,7 @@ the object structure is:
 ├── valuesShared - values used by the system for testing
 ├── viewsShared - system views with name and id
 ├── wordsShared - predefined words used in the backend and frontend as code id
-├── group_id_urlShared - the short form of a group id in a url
+├── group_id_urlShared - the sign chars of a group id and its form in a url
 ├── CombineObjectShared
 │   ├── combine_object
 │   │   ├── figure - $fig - combine object for value and result

@@ -249,6 +249,13 @@ enum messages: string
     case TABLE_COLUMNS_ALL = 'table_columns_all';
     // added to the entry above for the same columns with the probability range of each number
     case TABLE_COLUMNS_WITH_RANGE = 'table_columns_with_range';
+    // the tooltip and the entries of the "..." menu below the title of a default view, which
+    // shows the same object in one of the versions of views::DEFAULT_VIEW_VERSIONS
+    case VIEW_VERSION_TIP = 'view_version_tip';
+    case VIEW_VERSION_DEFAULT = 'view_version_default';
+    case VIEW_VERSION_DETAIL = 'view_version_detail';
+    case VIEW_VERSION_RANGE = 'view_version_range';
+    case VIEW_VERSION_DETAIL_RANGE = 'view_version_detail_range';
     case EXAMPLE_SHORT = 'e.g.';
     case NO_PRIVILEGES = 'cannot be changed';
 
@@ -1785,6 +1792,10 @@ enum messages: string
     case THREE_POINTS = '...';
     // shown in the confirm-change preview when a type field (share, protection, ...) has no value yet
     case NOT_SET = 'not_set';
+    // the tooltips of the grey superscript behind a number that marks the value quality
+    case QUALITY_MARK_ASSUMED = 'quality_mark_assumed';
+    case QUALITY_MARK_NO_SOURCE = 'quality_mark_no_source';
+    case QUALITY_MARK_PEER_REVIEWED = 'quality_mark_peer_reviewed';
 
     // text to be shown in buttons
     case ADD = 'add';
@@ -2210,6 +2221,12 @@ enum messages: string
     case FORM_SELECT_SOURCE = 'form_select_source';
     case FORM_SELECT_MULTI_SOURCES = 'form_select_multi_sources';
     case FORM_SELECT_SOURCE_TYPE = 'form_select_source_type';
+    // the groups of the source types (see group_msg_code_id in source_types.csv)
+    case SOURCE_TYPE_GROUP_DOCUMENTS = 'source_type_group_documents';
+    case SOURCE_TYPE_GROUP_STRUCTURED = 'source_type_group_structured';
+    case SOURCE_TYPE_GROUP_DATABASE = 'source_type_group_database';
+    case SOURCE_TYPE_GROUP_ACCESS = 'source_type_group_access';
+    case SOURCE_TYPE_GROUP_WEB = 'source_type_group_web';
     case FORM_SELECT_REF = 'form_select_ref';
     case FORM_SELECT_MULTI_REFS = 'form_select_multi_refs';
     case FORM_SELECT_REF_TYPE = 'form_select_ref_type';
@@ -2638,6 +2655,7 @@ enum messages: string
     case SYSTEM_DB_FIELD_GEO_TRIPLE_ID = 'system_db_field_geo_triple_id';
     case SYSTEM_DB_FIELD_GEO_VALUE = 'system_db_field_geo_value';
     case SYSTEM_DB_FIELD_GROUP_ID = 'system_db_field_group_id';
+    case SYSTEM_DB_FIELD_GROUP_MSG_CODE_ID = 'system_db_field_group_msg_code_id';
     case SYSTEM_DB_FIELD_GROUP_NAME = 'system_db_field_group_name';
     case SYSTEM_DB_FIELD_IMPACT = 'system_db_field_impact';
     case SYSTEM_DB_FIELD_INACTIVE = 'system_db_field_inactive';
@@ -2789,6 +2807,7 @@ enum messages: string
     case SYSTEM_DB_FIELD_VIEW_TYPE_ID = 'system_db_field_view_type_id';
     case SYSTEM_DB_FIELD_WEIGHT = 'system_db_field_weight';
     case SYSTEM_DB_FIELD_WIKIMEDIA_CODE = 'system_db_field_wikimedia_code';
+    case SYSTEM_DB_FIELD_WIKIPEDIA = 'system_db_field_wikipedia';
     case SYSTEM_DB_FIELD_WORD_ID = 'system_db_field_word_id';
     case SYSTEM_DB_FIELD_WORD_ID_COL = 'system_db_field_word_id_col';
     case SYSTEM_DB_FIELD_WORD_ID_COL2 = 'system_db_field_word_id_col2';

@@ -1082,6 +1082,38 @@ class test_values extends test_objects
     }
 
     /**
+     * the potential loss like on the start page: in trillion EUR for two problems and in htp only
+     * for global warming but with the biggest number, so that the unit of most values must lead
+     *
+     * @return value_list the potential loss in trillion EUR of two problems and in htp of one
+     */
+    function value_list_unit_majority(): value_list
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $potential = $t_wrd->word_potential()->phrase();
+        $loss = $t_wrd->word_loss()->phrase();
+        $trillion = $t_wrd->word_trillion()->phrase();
+        $eur = $t_wrd->word_eur()->phrase();
+        $gw = $t_trp->global_warming()->phrase();
+        $populism = $t_wrd->word_populism()->phrase();
+        $lst = new value_list($this->env->usr1);
+        $lst->add($this->value_for_phrases([$gw, $potential, $loss, $t_wrd->word_htp()->phrase()], 31.5));
+        $lst->add($this->value_for_phrases([$gw, $potential, $loss, $trillion, $eur], 2.2));
+        $lst->add($this->value_for_phrases([$populism, $potential, $loss, $trillion, $eur], 4));
+        return $lst;
+    }
+
+    /**
+     * @return value_list_ui the potential loss mostly in trillion EUR for frontend unit testing
+     */
+    function value_list_unit_majority_ui(): value_list_ui
+    {
+        $tl = new test_lib();
+        return $tl->list_to_ui($this->value_list_unit_majority(), [api_types::INCL_PHRASES]);
+    }
+
+    /**
      * the loss of two problems in a unit that is a triple typed "measure unit" (gram per kWh), so
      * that the table header is expected to show the triple behind the "in" like a unit word
      *

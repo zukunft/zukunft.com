@@ -499,6 +499,17 @@
       "description": "the symbol used in formulas for billion"
     },
     {
+      "name": "bn",
+      "description": "the symbol used in formulas for billion"
+    },
+    {
+      "name": "tn",
+      "description": "the ambiguous symbol for trillion and for tonne, which a page uses for one of them only"
+    },
+    {
+      "name": "tonne"
+    },
+    {
       "name": "EUR",
       "type": "measure_unit",
       "description": "ISO 4217 alphabetic code for the euro."
@@ -720,7 +731,8 @@
     },
     {
       "name": "assumed",
-      "description": "qualifier: value is an explicit modelling assumption"
+      "description": "qualifier: value is an explicit modelling assumption",
+      "type": "value_quality"
     },
     {
       "name": "cost",
@@ -777,6 +789,176 @@
     {
       "name": "range",
       "description": "the interval between a lower and an upper bound"
+    },
+    {
+      "name": "conjecture",
+      "description": "an opinion or a number formed without a direct observation"
+    },
+    {
+      "name": "estimate",
+      "description": "an approximate judgement of a number"
+    },
+    {
+      "name": "expert",
+      "description": "a person with a comprehensive and authoritative knowledge of a particular field"
+    },
+    {
+      "name": "consensus",
+      "description": "the general agreement of a group"
+    },
+    {
+      "name": "extrapolated",
+      "description": "value quality: projected from past data beyond the observed range",
+      "type": "value_quality"
+    },
+    {
+      "name": "interpolated",
+      "description": "value quality: filled in between two known values",
+      "type": "value_quality"
+    },
+    {
+      "name": "modelled",
+      "description": "value quality: the output of a simulation or model, so the quality is bounded by its inputs",
+      "type": "value_quality"
+    },
+    {
+      "name": "calculated",
+      "description": "value quality: the result of a formula inside zukunft.com, which inherits the lowest quality of its inputs",
+      "type": "value_quality"
+    },
+    {
+      "name": "report",
+      "description": "an account of an observation given by an interested or a single party"
+    },
+    {
+      "name": "self-reported",
+      "description": "value quality: stated by the party it is about e.g. a survey answer, a company disclosure or a questionnaire",
+      "type": "value_quality"
+    },
+    {
+      "name": "measurement",
+      "description": "the act of finding the size of a quantity by comparing it with a unit"
+    },
+    {
+      "name": "single",
+      "description": "only one"
+    },
+    {
+      "name": "repeated",
+      "description": "done several times with the same method by the same team"
+    },
+    {
+      "name": "statistics",
+      "description": "Statistics is the discipline that concerns the collection, organization, analysis, interpretation, and presentation of data."
+    },
+    {
+      "name": "official",
+      "description": "issued by a public authority e.g. a statistical office, a central bank or a regulator"
+    },
+    {
+      "name": "audited",
+      "description": "value quality: checked by an independent third party e.g. a financial audit or a certified lab",
+      "type": "value_quality"
+    },
+    {
+      "name": "science"
+    },
+    {
+      "name": "preprint",
+      "description": "value quality: published, but not yet peer reviewed",
+      "type": "value_quality"
+    },
+    {
+      "name": "study",
+      "description": "systematic investigation undertaken to discover facts or reach new conclusions"
+    },
+    {
+      "name": "observational",
+      "description": "based on observing a cohort, a case-control group or a cross-section without assigning a treatment"
+    },
+    {
+      "name": "peer-reviewed",
+      "description": "checked by independent experts of the same field before the publication"
+    },
+    {
+      "name": "journal",
+      "description": "a periodical that publishes scientific articles"
+    },
+    {
+      "name": "quality",
+      "description": "the degree to which something is good"
+    },
+    {
+      "name": "pre-registered",
+      "description": "with the hypothesis and the method fixed before the data is collected"
+    },
+    {
+      "name": "trial",
+      "description": "a test of the performance or the effect of something e.g. of a medical treatment"
+    },
+    {
+      "name": "controlled",
+      "description": "compared with a control group that does not get the treatment"
+    },
+    {
+      "name": "randomized",
+      "description": "with the participants assigned to the groups by chance"
+    },
+    {
+      "name": "double-blind",
+      "description": "neither the participants nor the researchers know who is in which group"
+    },
+    {
+      "name": "replicated",
+      "description": "reproduced with the same result"
+    },
+    {
+      "name": "independently",
+      "description": "by a different team without the influence of the first one"
+    },
+    {
+      "name": "meta-analysis",
+      "description": "combining the numbers of many studies into one estimate with its uncertainty",
+      "type": "value_quality"
+    },
+    {
+      "name": "convention",
+      "description": "a rule fixed by agreement, law or definition instead of a measurement"
+    },
+    {
+      "name": "defined",
+      "description": "value quality: exact by definition e.g. the speed of light in SI units",
+      "type": "value_quality"
+    },
+    {
+      "name": "legal",
+      "description": "value quality: set by law or contract e.g. a tax rate or a CBAM benchmark",
+      "type": "value_quality"
+    },
+    {
+      "name": "proven",
+      "description": "value quality: mathematically derived, so without an empirical uncertainty",
+      "type": "value_quality"
+    },
+    {
+      "name": "disputed",
+      "description": "value status: challenged by a published objection that is not yet resolved",
+      "type": "value_status"
+    },
+    {
+      "name": "retracted",
+      "description": "value status: withdrawn by the authors or the publisher, so the number must not be used any more",
+      "type": "value_status"
+    },
+    {
+      "name": "superseded",
+      "description": "value status: replaced by a corrected or a newer number of the same source e.g. a revised statistic",
+      "type": "value_status"
+    },
+    {
+      "name": "outdated",
+      "description": "value status: right when it was found, but no longer valid because the measured thing has changed",
+      "type": "value_status"
     }
   ],
   "triples": [
@@ -898,6 +1080,35 @@
       "from": "b",
       "verb": "is symbol for",
       "to": "billion"
+    },
+    {
+      "from": "bn",
+      "verb": "is symbol for",
+      "to": "billion"
+    },
+    {
+      "name": "tn (scaling)",
+      "description": "tn as the symbol for trillion",
+      "from": "tn",
+      "verb": "is symbol for",
+      "to": "trillion"
+    },
+    {
+      "name": "tn (weight)",
+      "description": "tn as the symbol for tonne",
+      "from": "tn",
+      "verb": "is symbol for",
+      "to": "tonne"
+    },
+    {
+      "from": "tn",
+      "verb": "can be symbol for",
+      "to": "tn (scaling)"
+    },
+    {
+      "from": "tn",
+      "verb": "can be symbol for",
+      "to": "tn (weight)"
     },
     {
       "from": "global warming",
@@ -1642,6 +1853,223 @@
       "from": "free software",
       "verb": "is a",
       "to": "solution"
+    },
+    {
+      "name": "expert estimate",
+      "description": "value quality: the judgement of a single expert, named but unverified",
+      "from": "estimate",
+      "verb": "kind of",
+      "to": "expert",
+      "type": "value_quality"
+    },
+    {
+      "name": "Delphi consensus",
+      "description": "value quality: the aggregated estimate of a Delphi or Real-Time-Delphi round",
+      "from": "consensus",
+      "verb": "kind of",
+      "to": "Delphi",
+      "type": "value_quality"
+    },
+    {
+      "name": "single measurement",
+      "description": "value quality: one observation without a repetition",
+      "from": "measurement",
+      "verb": "kind of",
+      "to": "single",
+      "type": "value_quality"
+    },
+    {
+      "name": "repeated measurement",
+      "description": "value quality: several observations of the same team with the same method",
+      "from": "measurement",
+      "verb": "kind of",
+      "to": "repeated",
+      "type": "value_quality"
+    },
+    {
+      "name": "official statistics",
+      "description": "value quality: published by a statistical office, a central bank or a regulator",
+      "from": "statistics",
+      "verb": "kind of",
+      "to": "official",
+      "type": "value_quality"
+    },
+    {
+      "name": "observational study",
+      "description": "value quality: a cohort, case-control or cross-sectional study",
+      "from": "study",
+      "verb": "kind of",
+      "to": "observational",
+      "type": "value_quality"
+    },
+    {
+      "name": "quality journal",
+      "description": "a journal that publishes only articles that have passed a review by independent experts",
+      "from": "journal",
+      "verb": "kind of",
+      "to": "quality"
+    },
+    {
+      "name": "peer reviewed by quality journal",
+      "description": "value quality: published after passing the review of a quality journal",
+      "from": "peer-reviewed",
+      "verb": "in",
+      "to": "quality journal",
+      "type": "value_quality"
+    },
+    {
+      "name": "pre-registered study",
+      "description": "value quality: a study with the hypothesis and the method fixed before the data collection",
+      "from": "study",
+      "verb": "kind of",
+      "to": "pre-registered",
+      "type": "value_quality"
+    },
+    {
+      "name": "controlled trial",
+      "description": "a trial that compares the treated group with a control group",
+      "from": "trial",
+      "verb": "kind of",
+      "to": "controlled"
+    },
+    {
+      "name": "randomized controlled trial",
+      "description": "value quality: a controlled trial with the participants assigned to the groups by chance",
+      "from": "controlled trial",
+      "verb": "kind of",
+      "to": "randomized",
+      "type": "value_quality"
+    },
+    {
+      "name": "double-blind randomized controlled trial",
+      "description": "value quality: a randomized controlled trial where neither the participants nor the researchers know who is in which group",
+      "from": "randomized controlled trial",
+      "verb": "kind of",
+      "to": "double-blind",
+      "type": "value_quality"
+    },
+    {
+      "name": "independently replicated",
+      "description": "value quality: reproduced by a different team",
+      "from": "replicated",
+      "verb": "kind of",
+      "to": "independently",
+      "type": "value_quality"
+    },
+    {
+      "from": "assumed",
+      "verb": "is a",
+      "to": "conjecture"
+    },
+    {
+      "from": "expert estimate",
+      "verb": "is a",
+      "to": "conjecture"
+    },
+    {
+      "from": "Delphi consensus",
+      "verb": "is a",
+      "to": "conjecture"
+    },
+    {
+      "from": "extrapolated",
+      "verb": "is a",
+      "to": "conjecture"
+    },
+    {
+      "from": "interpolated",
+      "verb": "is a",
+      "to": "conjecture"
+    },
+    {
+      "from": "modelled",
+      "verb": "is a",
+      "to": "conjecture"
+    },
+    {
+      "from": "calculated",
+      "verb": "is a",
+      "to": "conjecture"
+    },
+    {
+      "from": "self-reported",
+      "verb": "is a",
+      "to": "report"
+    },
+    {
+      "from": "single measurement",
+      "verb": "is a",
+      "to": "report"
+    },
+    {
+      "from": "repeated measurement",
+      "verb": "is a",
+      "to": "report"
+    },
+    {
+      "from": "official statistics",
+      "verb": "is a",
+      "to": "report"
+    },
+    {
+      "from": "audited",
+      "verb": "is a",
+      "to": "report"
+    },
+    {
+      "from": "preprint",
+      "verb": "is a",
+      "to": "science"
+    },
+    {
+      "from": "observational study",
+      "verb": "is a",
+      "to": "science"
+    },
+    {
+      "from": "peer reviewed by quality journal",
+      "verb": "is a",
+      "to": "science"
+    },
+    {
+      "from": "pre-registered study",
+      "verb": "is a",
+      "to": "science"
+    },
+    {
+      "from": "randomized controlled trial",
+      "verb": "is a",
+      "to": "science"
+    },
+    {
+      "from": "double-blind randomized controlled trial",
+      "verb": "is a",
+      "to": "science"
+    },
+    {
+      "from": "independently replicated",
+      "verb": "is a",
+      "to": "science"
+    },
+    {
+      "from": "meta-analysis",
+      "verb": "is a",
+      "to": "science"
+    },
+    {
+      "from": "defined",
+      "verb": "is a",
+      "to": "convention"
+    },
+    {
+      "from": "legal",
+      "verb": "is a",
+      "to": "convention"
+    },
+    {
+      "from": "proven",
+      "verb": "is a",
+      "to": "convention"
     }
   ],
   "sources": [
@@ -2100,6 +2528,225 @@
       "number": "-0.0087",
       "source": "Populist Leaders and the Economy (Kiel Working Paper)",
       "description": "80 percent probability range, factor 1.2 on the centre"
+    },
+    {
+      "words": [
+        "assumed",
+        "confidence",
+        "percent"
+      ],
+      "number": "0.3",
+      "description": "the default confidence of a plain guess without a source; overwrite it for a single value if the guess rests on more than the gut feeling"
+    },
+    {
+      "words": [
+        "expert estimate",
+        "confidence",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.4",
+      "description": "the default confidence of the judgement of a single named expert, a bit above a plain guess, because the expert can be asked for the reasoning"
+    },
+    {
+      "words": [
+        "Delphi consensus",
+        "confidence",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.5",
+      "description": "the default confidence of a Delphi round, above a single expert, because several experts have corrected each other"
+    },
+    {
+      "words": [
+        "extrapolated",
+        "confidence",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.4",
+      "description": "the default confidence of a projection beyond the observed range, which assumes that the past trend continues; lower it for a long horizon"
+    },
+    {
+      "words": [
+        "interpolated",
+        "confidence",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.6",
+      "description": "the default confidence of a number filled in between two known values, above an extrapolation, because both ends are observed"
+    },
+    {
+      "words": [
+        "modelled",
+        "confidence",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.4",
+      "description": "the default confidence of a model output, which is never above the confidence of its weakest input, because the model adds its own structural uncertainty"
+    },
+    {
+      "words": [
+        "self-reported",
+        "confidence",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.5",
+      "description": "the default confidence of a number stated by the party it is about, which may have an interest in the number"
+    },
+    {
+      "words": [
+        "single measurement",
+        "confidence",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.6",
+      "description": "the default confidence of one observation without a repetition, so a measurement error cannot be detected"
+    },
+    {
+      "words": [
+        "repeated measurement",
+        "confidence",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.7",
+      "description": "the default confidence of several observations of the same team with the same method, which reveals the random error but not a systematic one"
+    },
+    {
+      "words": [
+        "official statistics",
+        "confidence",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.8",
+      "description": "the default confidence of a number published by a statistical office, a central bank or a regulator with a documented method"
+    },
+    {
+      "words": [
+        "audited",
+        "confidence",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.85",
+      "description": "the default confidence of a number checked by an independent third party e.g. a financial audit or a certified lab"
+    },
+    {
+      "words": [
+        "preprint",
+        "confidence",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.5",
+      "description": "the default confidence of a published but not yet reviewed study, because the method is documented but not yet challenged"
+    },
+    {
+      "words": [
+        "observational study",
+        "confidence",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.6",
+      "description": "the default confidence of a cohort, case-control or cross-sectional study, which can show a correlation but rarely the cause; raise it for a large cohort"
+    },
+    {
+      "words": [
+        "peer reviewed by quality journal",
+        "confidence",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.7",
+      "description": "the default confidence of a study that has passed the review of a quality journal"
+    },
+    {
+      "words": [
+        "pre-registered study",
+        "confidence",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.75",
+      "description": "the default confidence of a study with the hypothesis and the method fixed before the data collection, so the result cannot be fished out of the data afterwards"
+    },
+    {
+      "words": [
+        "randomized controlled trial",
+        "confidence",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.8",
+      "description": "the default confidence of a controlled trial with the participants assigned by chance, which can show the cause; lower it for a small trial"
+    },
+    {
+      "words": [
+        "double-blind randomized controlled trial",
+        "confidence",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.9",
+      "description": "the default confidence of a randomized controlled trial where neither the participants nor the researchers know the groups; lower it for a small trial, which can deserve less confidence than a large observational cohort"
+    },
+    {
+      "words": [
+        "independently replicated",
+        "confidence",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.9",
+      "description": "the default confidence of a result that a different team has reproduced"
+    },
+    {
+      "words": [
+        "meta-analysis",
+        "confidence",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.92",
+      "description": "the default confidence of the combined estimate of many studies; lower it if the studies are small or of a low quality"
+    },
+    {
+      "words": [
+        "defined",
+        "confidence",
+        "percent",
+        "assumed"
+      ],
+      "number": "1",
+      "description": "a number exact by definition e.g. the speed of light in SI units cannot be wrong"
+    },
+    {
+      "words": [
+        "legal",
+        "confidence",
+        "percent",
+        "assumed"
+      ],
+      "number": "1",
+      "description": "a number set by law or contract is exact as long as the law is valid; a changed law is marked by the value status outdated, not by a lower confidence"
+    },
+    {
+      "words": [
+        "proven",
+        "confidence",
+        "percent",
+        "assumed"
+      ],
+      "number": "1",
+      "description": "a mathematically derived number has no empirical uncertainty"
     }
   ],
   "formulas": [

@@ -2,17 +2,16 @@
 
 /*
 
-    shared/group_id_url.php - the short form of a group id in a url
+    shared/group_id_url.php - the sign chars of a group id and its form in a url
     -----------------------
 
-    a group id of up to 16 phrases is a 112 char database key of 16 slots with 6 alpha_num chars
-    for the phrase id and one sign char, e.g. "....0U+....0X+......+" (see cfg/group/id.php);
-    a url names the same group shorter: the leading "." (zero) chars of a phrase id are left
-    out, an empty slot is left out and the "+" of a word is written as "_", which no other part
-    of the key uses, so that the url needs no "%2B" for it, e.g. "0U_0X_"
+    a group id of more than four prime phrases is a compact text key: each phrase id is written
+    with only its significant alpha_num chars and ended by a sign char, e.g. "0U+0X+3-"
+    (see docs/llm/group_id.md and cfg/group/id.php)
 
-    the sign char ends each phrase id, so the short form is unambiguous and a database key
-    is also accepted as a url id
+    a url uses the same key, only the "+" of a word is written as "_", which no other part of
+    the key uses, so that the url needs no "%2B" for it, e.g. "0U_0X_3-"; both chars are read
+    as the sign of a word
 
 
     This file is part of zukunft.com - calc with words
@@ -52,28 +51,30 @@ class group_id_url
     const string CHAR_WORD = '+';
     const string CHAR_SOURCE_WORD = '<';
     const string CHAR_RESULT_WORD = '>';
-    const array CHAR_SIGNS = [
-        self::CHAR_FORMULA,
-        self::CHAR_TRIPLE,
-        self::CHAR_SOURCE_TRIPLE,
-        self::CHAR_RESULT_TRIPLE,
-        self::CHAR_WORD,
-        self::CHAR_SOURCE_WORD,
-        self::CHAR_RESULT_WORD,
-    ];
     // the "+" of a word in a url, because a url reads a "+" as a space
     const string CHAR_WORD_URL = '_';
-    // the alpha_num char of zero, which fills a phrase id to its length and an empty slot
-    const string CHAR_ZERO = '.';
-    // the number of alpha_num chars of one phrase id and the number of slots of a key
+    // the regular expression of one sign char, the same for php, postgres and mysql;
+    // the triple sign first, so that the "-" is no range in the char class
+    const string SIGN_PATTERN = '['
+    . self::CHAR_TRIPLE
+    . self::CHAR_FORMULA
+    . self::CHAR_SOURCE_TRIPLE
+    . self::CHAR_RESULT_TRIPLE
+    . self::CHAR_WORD
+    . self::CHAR_SOURCE_WORD
+    . self::CHAR_RESULT_WORD
+    . self::CHAR_WORD_URL . ']';
+    // the max number of alpha_num chars of a 32-bit phrase id
     const int ID_CHARS = 6;
-    const int KEY_SLOTS = 16;
     // the alpha_num chars of a phrase id: "." and "/", the digits and the letters
     const string ID_CHAR_PATTERN = '[./0-9A-Za-z]';
+    // marks the text key of a result in a figure list like the minus of an integer result id,
+    // because a sign char only ends a phrase id and never starts a group id
+    const string FIGURE_RESULT_PREFIX = '-';
 
     /**
-     * the short form of a group id for a url, e.g. "0U_0X_" for "....0U+....0X+......+...";
-     * an id that is no alpha_num key e.g. the integer id of a prime group stays as it is
+     * the group id for a url, e.g. "0U_0X_" for "0U+0X+";
+     * an id that is no text key e.g. the integer id of a prime group stays as it is
      *
      * @param int|string $id the group id as the database uses it
      * @return string the id as it is written in a url
@@ -82,22 +83,14 @@ class group_id_url
     {
         $result = (string)$id;
         if (self::is_key($result)) {
-            $url_id = '';
-            foreach (str_split($result, self::ID_CHARS + 1) as $slot) {
-                $phr_id = ltrim(substr($slot, 0, self::ID_CHARS), self::CHAR_ZERO);
-                // an empty slot is left out, because the sign char ends every phrase id
-                if ($phr_id != '') {
-                    $url_id .= $phr_id . self::sign_to_url(substr($slot, self::ID_CHARS, 1));
-                }
-            }
-            $result = $url_id;
+            $result = str_replace(self::CHAR_WORD, self::CHAR_WORD_URL, $result);
         }
         return $result;
     }
 
     /**
-     * the group id as the database uses it from the short form of a url, e.g.
-     * "....0U+....0X+......+..." for "0U_0X_"; a database key and an integer id stay as they are
+     * the group id as the database uses it from a url, e.g. "0U+0X+" for "0U_0X_";
+     * a database key and an integer id stay as they are
      *
      * @param int|string $id the id as it is written in a url
      * @return int|string the group id as the database uses it
@@ -105,63 +98,41 @@ class group_id_url
     static function from_url(int|string $id): int|string
     {
         $result = $id;
-        if (is_string($id) and self::is_url_key($id)) {
-            $slots = [];
-            $phr_id = '';
-            foreach (str_split($id) as $char) {
-                if (in_array($char, self::CHAR_SIGNS) or $char == self::CHAR_WORD_URL) {
-                    $slots[] = str_pad($phr_id, self::ID_CHARS, self::CHAR_ZERO, STR_PAD_LEFT)
-                        . self::sign_from_url($char);
-                    $phr_id = '';
-                } else {
-                    $phr_id .= $char;
-                }
-            }
-            // a group of up to 16 phrases is filled with empty slots to the fixed key length
-            while (count($slots) < self::KEY_SLOTS) {
-                $slots[] = str_repeat(self::CHAR_ZERO, self::ID_CHARS) . self::CHAR_WORD;
-            }
-            $result = implode('', $slots);
+        if (is_string($id) and self::is_key($id)) {
+            $result = str_replace(self::CHAR_WORD_URL, self::CHAR_WORD, $id);
         }
         return $result;
     }
 
     /**
+     * @param string $id a text group id
+     * @return int the number of phrase ids (incl. a formula id) of the key, because each ends with a sign char
+     */
+    static function phrase_count(string $id): int
+    {
+        return preg_match_all('~' . self::SIGN_PATTERN . '~', $id);
+    }
+
+    /**
+     * the regular expression that finds a phrase within a text group id: the phrase key must
+     * start the group id or follow a sign char, because e.g. "0U+" is also the end of "10U+"
+     *
+     * @param string $phr_key the key of one phrase id incl. its sign char e.g. "0U+"
+     * @return string the pattern for php, postgres and mysql e.g. "(^|[-=()+<>_])0U\+"
+     */
+    static function phrase_pattern(string $phr_key): string
+    {
+        return '(^|' . self::SIGN_PATTERN . ')' . preg_replace('~[.+()]~', '\\\\$0', $phr_key);
+    }
+
+    /**
      * @param string $id a group id
-     * @return bool true if the id is a database key of phrase ids with the fixed length and a sign char
+     * @return bool true if the id is a list of phrase ids each ended by a sign char
      */
     private static function is_key(string $id): bool
     {
-        $slot = self::ID_CHAR_PATTERN . '{' . self::ID_CHARS . '}[' . preg_quote(implode('', self::CHAR_SIGNS), '~') . ']';
+        $slot = self::ID_CHAR_PATTERN . '{1,' . self::ID_CHARS . '}' . self::SIGN_PATTERN;
         return preg_match('~^(' . $slot . ')+$~', $id) == 1;
-    }
-
-    /**
-     * @param string $id a group id of a url
-     * @return bool true if the id is a list of phrase ids each ended by a sign char, in the short or the database form
-     */
-    private static function is_url_key(string $id): bool
-    {
-        $signs = preg_quote(implode('', self::CHAR_SIGNS) . self::CHAR_WORD_URL, '~');
-        return preg_match('~^(' . self::ID_CHAR_PATTERN . '{1,' . self::ID_CHARS . '}[' . $signs . '])+$~', $id) == 1;
-    }
-
-    /**
-     * @param string $sign the sign char of a key slot
-     * @return string the sign char as it is written in a url
-     */
-    private static function sign_to_url(string $sign): string
-    {
-        return $sign == self::CHAR_WORD ? self::CHAR_WORD_URL : $sign;
-    }
-
-    /**
-     * @param string $sign the sign char of a url slot
-     * @return string the sign char as the database key uses it
-     */
-    private static function sign_from_url(string $sign): string
-    {
-        return $sign == self::CHAR_WORD_URL ? self::CHAR_WORD : $sign;
     }
 
 }

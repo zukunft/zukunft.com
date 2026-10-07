@@ -905,3 +905,5 @@ change_field_id,change_field_name,table_id,description
 904,url,124,
 905,html_page,124,
 906,last_update,124,
+907,group_msg_code_id,32,
+908,wikipedia,32,

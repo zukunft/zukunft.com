@@ -1068,36 +1068,38 @@ class sandbox_list_named extends sandbox_list
             $imp->step_start(msg_id::PREPARE, $class, $ins_calls->count());
 
             // get the functions that are already in the database
-            $db_func_lst = $db_con->get_functions();
+            $db_func_lst = $this->db_functions($msg, $imp, $class);
+            if ($db_func_lst !== null) {
 
-            // get the sql functions that have not yet been created
-            $func_to_create = $ins_calls->sql_functions_missing($db_func_lst);
+                // get the sql functions that have not yet been created
+                $func_to_create = $ins_calls->sql_functions_missing($db_func_lst);
 
-            // get the first object that have requested the missing function
-            $func_create_obj = clone $this;
-            $func_create_obj_names = $func_to_create->object_names();
-            $func_create_obj = $func_create_obj->select_by_name($func_create_obj_names, $msg);
+                // get the first object that have requested the missing function
+                $func_create_obj = clone $this;
+                $func_create_obj_names = $func_to_create->object_names();
+                $func_create_obj = $func_create_obj->select_by_name($func_create_obj_names, $msg);
 
-            // create the missing sql functions and add the first missing word
-            // the sql_message returned by exe carries the name to database id map of the inserted objects
-            $func_to_create = $func_create_obj->sql_insert($sc);
-            $sql_msg = $func_to_create->exe($msg, $class);
-            $imp->step_end($func_to_create->count());
+                // create the missing sql functions and add the first missing word
+                // the sql_message returned by exe carries the name to database id map of the inserted objects
+                $func_to_create = $func_create_obj->sql_insert($sc);
+                $sql_msg = $func_to_create->exe($msg, $class);
+                $imp->step_end($func_to_create->count());
 
-            // add the remaining missing words or triples
-            $step_time = $this->count() / $save_per_sec;
-            $imp->step_start(msg_id::ADD, $class, $add_lst->count(), $step_time);
-            $add_lst = $add_lst->filter_by_name($func_create_obj_names);
-            $ins_calls = $add_lst->sql_insert_call_with_par($sc, $msg);
-            // collect the database ids of the remaining inserted objects from the sql_message
-            $sql_msg->merge($ins_calls->exe($msg, $class));
+                // add the remaining missing words or triples
+                $step_time = $this->count() / $save_per_sec;
+                $imp->step_start(msg_id::ADD, $class, $add_lst->count(), $step_time);
+                $add_lst = $add_lst->filter_by_name($func_create_obj_names);
+                $ins_calls = $add_lst->sql_insert_call_with_par($sc, $msg);
+                // collect the database ids of the remaining inserted objects from the sql_message
+                $sql_msg->merge($ins_calls->exe($msg, $class));
 
-            // TODO Prio 1 create a loop to add depending triples
-            // set the just added database id in this list by the object name
-            // and report if an inserted object could not be matched back to the list
-            $msg->merge($this->add_id_by_name($sql_msg->db_row_id_lst(), $class));
+                // TODO Prio 1 create a loop to add depending triples
+                // set the just added database id in this list by the object name
+                // and report if an inserted object could not be matched back to the list
+                $msg->merge($this->add_id_by_name($sql_msg->db_row_id_lst(), $class));
 
-            $imp->step_end($add_lst->count(), $save_per_sec);
+                $imp->step_end($add_lst->count(), $save_per_sec);
+            }
 
         }
 
@@ -1171,28 +1173,30 @@ class sandbox_list_named extends sandbox_list
             $imp->step_start(msg_id::PREPARE, $class, $upd_calls->count());
 
             // get the functions that are already in the database
-            $db_func_lst = $db_con->get_functions();
+            $db_func_lst = $this->db_functions($msg, $imp, $class);
+            if ($db_func_lst !== null) {
 
-            // get the sql functions that have not yet been created
-            $func_to_create = $upd_calls->sql_functions_missing($db_func_lst);
+                // get the sql functions that have not yet been created
+                $func_to_create = $upd_calls->sql_functions_missing($db_func_lst);
 
-            // get the first object that have requested the missing function
-            $func_create_obj = clone $upd_lst;
-            $func_create_obj_names = $func_to_create->object_names();
-            $func_create_obj = $func_create_obj->select_by_name($func_create_obj_names, $msg);
+                // get the first object that have requested the missing function
+                $func_create_obj = clone $upd_lst;
+                $func_create_obj_names = $func_to_create->object_names();
+                $func_create_obj = $func_create_obj->select_by_name($func_create_obj_names, $msg);
 
-            // create the missing sql functions and add the first missing object
-            $func_to_create = $func_create_obj->sql_update($sc, $db_lst, $msg);
-            $func_to_create->exe_update($msg, $class);
-            $imp->step_end($func_to_create->count());
+                // create the missing sql functions and add the first missing object
+                $func_to_create = $func_create_obj->sql_update($sc, $db_lst, $msg);
+                $func_to_create->exe_update($msg, $class);
+                $imp->step_end($func_to_create->count());
 
-            // add the remaining missing words or triples
-            $step_time = $db_lst->count() / $upd_per_sec;
-            $imp->step_start(msg_id::SAVE, $class, $db_lst->count(), $step_time);
-            $upd_calls = $upd_lst->sql_update_call_with_par($sc, $db_lst, $imp->usr);
-            $upd_calls->exe_update($msg, $class);
+                // add the remaining missing words or triples
+                $step_time = $db_lst->count() / $upd_per_sec;
+                $imp->step_start(msg_id::SAVE, $class, $db_lst->count(), $step_time);
+                $upd_calls = $upd_lst->sql_update_call_with_par($sc, $db_lst, $imp->usr);
+                $upd_calls->exe_update($msg, $class);
 
-            $imp->step_end($db_lst->count(), $upd_per_sec);
+                $imp->step_end($db_lst->count(), $upd_per_sec);
+            }
         }
 
         return $msg->is_ok();
@@ -1237,34 +1241,64 @@ class sandbox_list_named extends sandbox_list
             $imp->step_start(msg_id::PREPARE, $class, $del_calls->count());
 
             // get the functions that are already in the database
-            $db_func_lst = $db_con->get_functions();
+            $db_func_lst = $this->db_functions($msg, $imp, $class);
+            if ($db_func_lst !== null) {
 
-            // get the sql functions that have not yet been created
-            $func_to_create = $del_calls->sql_functions_missing($db_func_lst);
+                // get the sql functions that have not yet been created
+                $func_to_create = $del_calls->sql_functions_missing($db_func_lst);
 
-            // get the first object that have requested the missing function
-            $func_create_obj = clone $del_lst;
-            $func_create_obj_names = $func_to_create->object_names();
-            $func_create_obj = $func_create_obj->select_by_name($func_create_obj_names, $msg);
+                // get the first object that have requested the missing function
+                $func_create_obj = clone $del_lst;
+                $func_create_obj_names = $func_to_create->object_names();
+                $func_create_obj = $func_create_obj->select_by_name($func_create_obj_names, $msg);
 
-            // create the missing sql functions and add the first missing object
-            $func_to_create = $func_create_obj->sql_delete($sc, $db_lst, $msg);
-            $func_to_create->exe_delete($msg, $class);
-            $imp->step_end($func_to_create->count());
+                // create the missing sql functions and add the first missing object
+                $func_to_create = $func_create_obj->sql_delete($sc, $db_lst, $msg);
+                $func_to_create->exe_delete($msg, $class);
+                $imp->step_end($func_to_create->count());
 
-            // delete upfront depending database entries like the formula elements
-            $this->delete_depending($msg);
+                // delete upfront depending database entries like the formula elements
+                $this->delete_depending($msg);
 
-            // add the remaining missing words, triples or ...
-            $step_time = $db_lst->count() / $del_per_sec;
-            $imp->step_start(msg_id::DEL, $class, $db_lst->count(), $step_time);
-            $del_calls = $del_lst->sql_delete_call_with_par($sc, $msg, $db_lst);
-            $del_calls->exe_delete($msg, $class);
+                // add the remaining missing words, triples or ...
+                $step_time = $db_lst->count() / $del_per_sec;
+                $imp->step_start(msg_id::DEL, $class, $db_lst->count(), $step_time);
+                $del_calls = $del_lst->sql_delete_call_with_par($sc, $msg, $db_lst);
+                $del_calls->exe_delete($msg, $class);
 
-            $imp->step_end($db_lst->count(), $del_per_sec);
+                $imp->step_end($db_lst->count(), $del_per_sec);
+            }
         }
 
         return $msg->is_ok();
+    }
+
+    /**
+     * read the sql functions that are already in the database
+     * and if the read fails, close the prepare step and say that the steps of the caller are skipped,
+     * because without the list each function create and each statement would fail as a follow-up error
+     *
+     * @param user_message $msg gets the error of the read and the notice of the skipped steps
+     * @param import|null $imp the import object with the prepare step that is closed on a failure
+     * @param string $class the object class whose save steps are skipped on a failure
+     * @return array|null the function names or null if the read has failed
+     */
+    private function db_functions(user_message $msg, ?import $imp, string $class): ?array
+    {
+        global $db_con;
+
+        $func_msg = new user_message(); // scoped, so that only a failed read skips the steps of the caller; merged below
+        $db_func_lst = $db_con->get_functions($func_msg);
+        $msg->merge($func_msg);
+        if ($func_msg->is_ok()) {
+            return $db_func_lst;
+        }
+        $imp?->step_end();
+        $lib = new library();
+        $msg->add(msg_id::IMPORT_STEP_SKIPPED, [
+            msg_id::VAR_NAME => $lib->class_to_word($class)
+        ], true); // ok = true: inform, but do not suppress the steps after this one
+        return null;
     }
 
     /**

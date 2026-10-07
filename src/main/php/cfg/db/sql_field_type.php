@@ -74,6 +74,7 @@ enum sql_field_type: string
         return match($this) {
             self::KEY_INT => 'BIGSERIAL',
             self::KEY_INT_SMALL => 'SERIAL',
+            // postgres returns the compact group id padded with spaces, which sql_db::pg_unpadded removes
             self::KEY_512, self::KEY_PART_512, self::REF_512 => 'char(112)',
             self::NAME, self::NAME_UNIQUE, self::NAME_UNIQUE_PART => 'varchar(255)',
             self::CRONTAB => 'varchar(20)',

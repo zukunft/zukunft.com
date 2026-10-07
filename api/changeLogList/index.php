@@ -35,6 +35,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_LOG . 'change_log_list.php';
 include_once paths::MODEL_WORD . 'word.php';
+include_once paths::SHARED . 'group_id_url.php';
 include_once paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\application;
@@ -43,6 +44,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\api\controller;
+use Zukunft\ZukunftCom\main\php\shared\group_id_url;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\library;
 
@@ -62,7 +64,8 @@ if ($db_con->is_open()) {
 
     // get the parameters
     $class = $_GET[url_var::LOG_CLASS] ?? '';
-    $id = $_GET[url_var::ID] ?? 0;
+    // the frontend names the group of a value or result in its short form
+    $id = group_id_url::from_url($_GET[url_var::ID] ?? 0);
     $fld = $_GET[url_var::LOG_FIELD] ?? '';
     // the user whose changes should be listed e.g. for the user page
     $chg_usr_id = $_GET[url_var::USER] ?? 0;

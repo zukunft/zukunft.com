@@ -42,9 +42,9 @@ PREPARE value_list_by_phr_lst_p3 (bigint, bigint, bigint, text, text, text, bigi
                0 AS change_user_id,
                0 AS share_type_id
           FROM values_standard
-         WHERE group_id like $4
-           AND group_id like $5
-           AND group_id like $6
+         WHERE group_id ~ $4
+           AND group_id ~ $5
+           AND group_id ~ $6
 
   UNION SELECT s.group_id,
                u.group_id AS user_group_id,
@@ -63,9 +63,9 @@ PREPARE value_list_by_phr_lst_p3 (bigint, bigint, bigint, text, text, text, bigi
           FROM values s
      LEFT JOIN user_values u ON s.group_id = u.group_id
                             AND u.user_id = $7
-         WHERE s.group_id like $4
-           AND s.group_id like $5
-           AND s.group_id like $6
+         WHERE s.group_id ~ $4
+           AND s.group_id ~ $5
+           AND s.group_id ~ $6
 
   UNION SELECT '' AS group_id,
                '' AS user_group_id,
@@ -117,6 +117,6 @@ PREPARE value_list_by_phr_lst_p3 (bigint, bigint, bigint, text, text, text, bigi
           FROM values_big s
      LEFT JOIN user_values_big u ON s.group_id = u.group_id
                                 AND u.user_id = $7
-         WHERE s.group_id like $4
-           AND s.group_id like $5
-           AND s.group_id like $6;
+         WHERE s.group_id ~ $4
+           AND s.group_id ~ $5
+           AND s.group_id ~ $6;

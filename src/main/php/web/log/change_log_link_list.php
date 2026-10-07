@@ -110,8 +110,8 @@ class change_log_link_list extends ListBase
         $url = THIS_URL . url_var::API_PATH . $lib->camelize_ex_1($log_class);
         $data = [];
         $data[url_var::LOG_CLASS] = $lib->class_to_api_name($class);
-        $data[url_var::ID] = $id;
         $ctrl = new rest_call();
+        $data = $ctrl->id_data($id, $data);
         return $ctrl->api_call(rest_ctrl::GET, $url, $ctrl->data_with_user($data, $msg));
     }
 

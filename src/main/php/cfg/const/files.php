@@ -148,6 +148,8 @@ class files
     // climate benefit of photovoltaic electricity in Switzerland with and without the
     // displacement mix concept (docs/llm/pending_prio_2.md "use case")
     const string PV_SWITZERLAND_CO2_FILE = self::USE_CASE_PATH . 'pv_switzerland_co2' . self::JSON;
+    // the unique keys like ISBN or ISIN with some sample entries
+    const string UNIQUE_KEYS_FILE = self::USE_CASE_PATH . 'unique_keys' . self::JSON;
 
     // one file per problem of the start page ranking with the most relevant number of the problem
     // and the potential solutions, each value with the source it is taken from;
@@ -306,6 +308,7 @@ class files
     // (docs/llm/json_structure.md "use case files")
     const array USE_CASE_FILES = [
         self::PV_SWITZERLAND_CO2_FILE,
+        self::UNIQUE_KEYS_FILE,
     ];
 
     // sample data for the view unit tests, imported in the db setup right after the system config

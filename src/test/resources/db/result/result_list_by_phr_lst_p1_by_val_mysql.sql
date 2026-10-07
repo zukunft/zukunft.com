@@ -71,7 +71,7 @@ PREPARE result_list_by_phr_lst_p1 FROM
                0 AS change_user_id,
                0 AS share_type_id
           FROM results_standard
-         WHERE group_id LIKE BINARY ?
+         WHERE REGEXP_LIKE(group_id, ?, 'c')
 
   UNION SELECT s.group_id,
                u.group_id AS user_group_id,
@@ -95,7 +95,7 @@ PREPARE result_list_by_phr_lst_p1 FROM
           FROM results s
      LEFT JOIN user_results u ON s.group_id = u.group_id
                              AND u.user_id = ?
-         WHERE s.group_id LIKE BINARY ?
+         WHERE REGEXP_LIKE(s.group_id, ?, 'c')
 
   UNION SELECT NULL AS group_id,
                NULL AS user_group_id,
@@ -187,4 +187,4 @@ PREPARE result_list_by_phr_lst_p1 FROM
           FROM results_big s
      LEFT JOIN user_results_big u ON s.group_id = u.group_id
                                  AND u.user_id = ?
-         WHERE s.group_id LIKE BINARY ?';
+         WHERE REGEXP_LIKE(s.group_id, ?, 'c')';

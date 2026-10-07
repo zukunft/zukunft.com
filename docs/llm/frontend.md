@@ -405,12 +405,16 @@ first, then wire the tail to it.
 
 A value table has a simple and a full version, like a list has a short and a
 more version. The simple version shows the columns of the mayor tier only, one
-unit per column, and each cell the number without its probability range; the
+unit per column — the unit that most numbers of the column have, so that one
+bigger number in another unit cannot hide the unit of every other row
+(`value_list::split_by_unit`) — and each cell the number without its probability range; the
 full version shows every tier, every unit and the range behind each number. The
-versions between them show every unit of a shown column, e.g. the potential
-loss of a problem in trillion EUR, in percent of the GDP and in percent of the
-happy time points, because only the smallest screen needs one number per
-column. The start page opens with the simple version. The last header cell of every table,
+versions between them show every unit of a shown column that has a number in
+every row of its first unit, e.g. the potential loss of a problem in trillion
+EUR, in percent of the GDP and in percent of the happy time points, because only
+the smallest screen needs one number per column; a unit that only some rows
+have, e.g. the potential loss in htp of global warming alone, is left to the
+full version (`value_list::unit_column_complete`). The start page opens with the simple version. The last header cell of every table,
 the full one included, is the "…" menu (`value_list::columns_menu`, built with
 `html_base::popup_menu`), which lets the reader pick the version directly
 instead of stepping through them — and from the full table it is the only way
@@ -445,3 +449,28 @@ rows. A phrase column names a phrase of the row and no number, so a row with
 only phrase cells is dropped as well. Every other table keeps such a row, so
 the option is a default of the component (`ui_list::start_list`) and not a rule
 of the table.
+
+## The value quality is a mark behind the number, never a phrase before it
+
+A value quality phrase (phrase type `value_quality`, e.g. `assumed`) says how a
+number has been found, not what it is about, so it is never named with the
+phrases before the number: `sandbox_value::phrase_link_list`,
+`value::links_and_measure` and the row names of `value_list` leave it out
+(`phrase_list::value_quality_phrases`, `value_list::is_marker`). Instead
+`sandbox_value::quality_mark` adds a grey superscript behind the number with a
+translated tooltip:
+
+| mark | when                                              | tooltip message                       |
+|------|---------------------------------------------------|---------------------------------------|
+| `a`  | the value carries `assumed`                       | `msg_id::QUALITY_MARK_ASSUMED`        |
+| `-`  | a value names no source (a result never)          | `msg_id::QUALITY_MARK_NO_SOURCE`      |
+| `+`  | the value carries `peer reviewed by quality journal` | `msg_id::QUALITY_MARK_PEER_REVIEWED` |
+
+One number shows one mark, checked in this order: an assumed number has no source
+on purpose, so its `a` says more than the `-`, and a missing source makes a peer
+review claim unverifiable, so the `-` wins over the `+`. A result is calculated by
+a formula and has no source to miss (`is_source_missing` is overwritten by the
+value only). Every place that shows a number with its phrases calls the mark
+right behind the number (`value_edit`, `name_link`, `links_and_measure`), so a
+new display of a number reuses one of these instead of formatting the number
+itself.

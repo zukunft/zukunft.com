@@ -1,7 +1,22 @@
 [
     {
+        "id": 5,
+        "phrases": [
+            {
+                "id": 5,
+                "protection": 3,
+                "name": "π",
+                "description": "Symbol for the ratio of the circumference of a circle to its diameter",
+                "type_id": 20,
+                "class": "word"
+            }
+        ],
+        "name": "π (unit symbol)",
+        "number": 3.1415926535898,
+        "class": "value"
+    },
+    {
         "id": 1,
-        "number": 123456,
         "phrases": [
             {
                 "id": 1,
@@ -13,22 +28,7 @@
             }
         ],
         "context": [],
+        "number": 123456,
         "class": "result"
-    },
-    {
-        "id": 5,
-        "phrases": [
-            {
-                "id": 5,
-                "protection": 3,
-                "name": "\u03c0",
-                "description": "Symbol for the ratio of the circumference of a circle to its diameter",
-                "type_id": 17,
-                "class": "word"
-            }
-        ],
-        "name": "\u03c0 (unit symbol)",
-        "number": 3.1415926535898,
-        "class": "value"
     }
 ]

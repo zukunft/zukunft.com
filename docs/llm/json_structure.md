@@ -475,6 +475,29 @@ value's group) disambiguates. Do not force the symbol unique or rename one
 side; only flag a genuine unintended collision (e.g. a formula name equal to a
 triple name).
 
+### An ambiguous symbol: one named triple per meaning and `can be symbol for`
+
+A new ambiguous symbol is stated explicitly, so that every meaning has a unique
+name and a page can tell the meanings apart:
+
+- per meaning one `is symbol for` triple with a unique name, the meaning in
+  brackets e.g. `tn (scaling)` = `tn` is symbol for `trillion` and `tn (weight)` =
+  `tn` is symbol for `tonne`;
+- per meaning one `can be symbol for` triple from the ambiguous symbol to the named
+  triple e.g. `tn` can be symbol for `tn (scaling)` and `tn` can be symbol for
+  `tn (weight)` (see `solution_prio.json`).
+
+The frontend preloads both verbs on every page (`verbs::PRELOAD_VERBS`), so the
+meanings are known wherever a number is shown, and decides per page
+(`web\phrase_list::symbol_of` and `symbol_taken`):
+
+- a page that shows one meaning only uses the short symbol for it, e.g. `2.2 tn €`;
+- a page that shows several meanings gives the symbol to the meaning whose name it
+  shortens most and names the other meanings in full or by another symbol, e.g. one
+  trillion tonnes is `1 tn tonne` and not `1 trillion tn`;
+- one page always uses the same symbol for the same meaning and never mixes, so the
+  choice depends on the phrases of the page only and not on the single number.
+
 ### `is symbol for` (formula replacer) vs `is alias of` (one merged phrase)
 
 Both verbs link a short string to a phrase, but they mean different things — pick
@@ -1449,6 +1472,75 @@ or triple itself: a file must not define a `measured value` word, nor a
 A measured number without a `source` is a smell — either name the source or,
 if it really is an assumption, mark it `assumed`.
 
+### A calculated value inherits the lowest quality of its inputs
+
+The words of the phrase type `value_quality` (home file `solution_prio.json`)
+are grouped by an `is a` triple into four groups, from the weakest to the
+strongest evidence:
+
+| group        | e.g.                                                         |
+|--------------|--------------------------------------------------------------|
+| `conjecture` | `assumed`, `expert estimate`, `extrapolated`, `modelled`, `calculated` |
+| `report`     | `self-reported`, `single measurement`, `official statistics`, `audited` |
+| `science`    | `preprint`, `randomized controlled trial`, `meta-analysis`   |
+| `convention` | `defined`, `legal`, `proven`                                 |
+
+A formula cannot add evidence, so its result has the **lowest** quality of all
+its inputs:
+
+- `defined` × `audited` → the result is a `report` (`audited`)
+- `audited` × `assumed` → the result is a `conjecture` (`assumed`)
+- `defined` × `legal` → the result stays a `convention`
+
+`calculated` (and `modelled`) only says *how* the number came about; it is never
+ranked on its own, because that would turn every result into a conjecture even
+when all inputs are conventions. Never lift a result above its weakest input,
+e.g. by tagging a formula result `audited` because the main input was audited.
+
+### A value status is not a rung of the quality ladder
+
+The quality says how a number has been *found*; the status, a word of the
+phrase type `value_status`, says what *happened* to it afterwards:
+
+- `disputed` — challenged by a published objection that is not yet resolved
+- `retracted` — withdrawn by the authors or the publisher
+- `superseded` — replaced by a corrected or a newer number of the same source
+- `outdated` — right when it was found, but the measured thing has changed
+
+A peer-reviewed number can still be retracted, so a status never replaces or
+lowers the quality word: a value keeps both, e.g.
+`{"words": ["...", "peer reviewed by quality journal", "retracted", "percent"], ...}`.
+A value without a status word is valid. A calculated value carries every status
+of its inputs, because one retracted input makes the result unusable whatever
+the quality of the other inputs is.
+
+### The confidence of a value quality is a default value, never a fixed number
+
+Each value quality has a default confidence, the probability from 0 to 1 that
+the number is right, stored as a normal value with a description of the reason
+(`solution_prio.json`):
+
+- `{"words": ["assumed", "confidence", "percent"], "number": "0.3", "description": "..."}`
+- `{"words": ["double-blind randomized controlled trial", "confidence", "percent", "assumed"], "number": "0.9", "description": "..."}`
+
+The defaults rise along the ladder (e.g. `assumed` 0.3, `official statistics`
+0.8, `double-blind randomized controlled trial` 0.9, `defined` 1). The number
+itself is a judgement, so it is marked `assumed` like every other number without
+a source; the `assumed` row needs no second `assumed`.
+
+A value and not a const in the code, because the default must stay overridable:
+
+- a **user** overwrites the default like any other value, e.g. to trust
+  `self-reported` company figures less;
+- a **single value** carries its own confidence, e.g.
+  `["<claim words>", "confidence", "percent"]`, which wins over the default of
+  its quality, because a small double-blind trial can deserve less confidence
+  than a large observational cohort.
+
+`calculated` has no default: a result takes the confidence of its weakest input,
+like its quality (see above). A value status never lowers the confidence; a
+`retracted` number is unusable whatever its confidence is.
+
 ## Calc-validation
 
 Optional. A list of *expected* formula results: each entry is **recomputed** from
@@ -1471,10 +1563,10 @@ the global warming problem (see *Self-consistency* above).
 
 A checked entry is a result like any other, so it is **also stored** in the
 results table with its phrases, its number and the formula that calculated it.
-Its `context` is stored as the source group only if it has at most four phrases;
-a longer context does not fit the `source_group_id` column of `results_prime` and
-`results_main`, so the result is saved without it and the import logs a warning
-(`result_list::drop_unsupported_src_grp`).
+Its `context` is always stored as the source group: a context of more than four
+phrases does not fit the bigint `source_group_id` column of `results_prime` and
+`results_main`, so such a result is saved in `results` (up to 16 context phrases)
+or `results_big` with the text key of its phrases (see `result::table_type`).
 
 ```json
 {

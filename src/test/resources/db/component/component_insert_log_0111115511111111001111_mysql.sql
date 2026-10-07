@@ -145,7 +145,7 @@ SELECT component_insert_log_0111115511111111001111
         'form_title',
         784,
         'text',
-        3,
+        35,
         785,
         '1/3 width',
         1,

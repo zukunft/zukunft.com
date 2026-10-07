@@ -35,7 +35,7 @@ SELECT view_update_log_00220000000
         699::smallint,
         'Historic'::text,
         'System Test View Renamed'::text,
-        155::bigint,
+        179::bigint,
         700::smallint,
         'show mainly related words that are relevant in sciences'::text,
         null::text);

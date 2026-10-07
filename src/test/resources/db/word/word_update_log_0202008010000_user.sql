@@ -49,7 +49,7 @@ SELECT word_update_log_0202008010000_user
         'standard'::text,
         1::smallint,
         'time'::text,
-        2::smallint,
+        11::smallint,
         128::smallint,
         null::text,
         'System Test Word Renamed'::text);

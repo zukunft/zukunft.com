@@ -124,7 +124,8 @@ class phrase_tests
         $t->subheader($ts . 'type api');
         global $sys;
         $phr_typ = $sys->typ_lst->phr_typ->get_by_code_id(phrase_type_shared::PERCENT);
-        $t->assert_api($phr_typ, 'phrase_type');
+        // an own file, because phrase_type.json is the default type of the api get test
+        $t->assert_api($phr_typ, 'phrase_type_percent');
 
 
         $t->subheader($ts . 'combined objects like phrases should not be used for im- or export, so not tests is needed. Instead the single objects like word or triple should be im- and exported');

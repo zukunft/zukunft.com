@@ -63,9 +63,10 @@ enum sql_par_type: string
     case LIKE_L = 'like_end_with'; // add a wildcard to the left to find the values that end with the given text
     case LIKE = 'like';
     case LIKE_OR = 'like_or'; // connect with the previous condition with OR and like
-    // the case-sensitive pattern match for the alpha_num key of a phrase within a group id, because
-    // the key uses upper and lower case letters for different ids e.g. '....FW+' and '....Fw+'
-    // (see id::int2char), so the case-insensitive match of a name would find the wrong values
+    // the case-sensitive match of the alpha_num key of a phrase within a group id, because the key
+    // uses upper and lower case letters for different ids e.g. 'FW+' and 'Fw+' (see id::int2char),
+    // and only at the start or after a sign char, because e.g. '0U+' is also the end of '10U+'
+    // (see sql_creator::key_match and group_id_url::phrase_pattern)
     case LIKE_KEY = 'like_key';
     case LIKE_KEY_OR = 'like_key_or'; // connect with the previous condition with OR and the key like
     case CONST = 'const';

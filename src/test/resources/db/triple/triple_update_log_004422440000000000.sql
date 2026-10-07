@@ -83,7 +83,7 @@ SELECT triple_update_log_004422440000000000
         null::text,
         162::smallint,
         'math constant'::text,
-        17::smallint,
+        20::smallint,
         null::text,
         null::smallint,
         153::smallint,

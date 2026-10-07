@@ -42,6 +42,7 @@ use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_base;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_list;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_list;
+use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
@@ -109,6 +110,42 @@ class result_ui_tests
         $t->assert_text_contains($test_name, $ttl_html, $res_page->val_formatted($msg));
         $test_name = '... with the link to change the result';
         $t->assert_text_contains($test_name, $ttl_html, url_var::MASK . '=' . views::RESULT_EDIT_ID);
+
+        // below the title the page shows the formula with the numbers used and then in latex
+        $t->subheader($ts . 'formula with numbers');
+        $form = new system_form();
+        $test_name = 'the formula line links the number used to its value';
+        $exp_html = $form->show_result_expression($res_page, $msg);
+        $t->assert_text_contains($test_name, $exp_html, url_var::MASK . '=' . views::VALUE_DEFAULT_ID);
+        $test_name = '... followed by the operator';
+        $t->assert_text_contains($test_name, $exp_html, formula_names::SCALE_TO_SEC_EXP_REF_R_REST);
+        $test_name = '... without the internal symbol of the term';
+        $t->assert_text_not_contains($test_name, $exp_html, formula_names::SCALE_TO_SEC_MINUTE_SYMBOL);
+        // negative: without the numbers, e.g. because the source phrases are not known, the
+        // line is left out instead of guessing the numbers
+        $test_name = 'a result without the numbers used shows no formula line';
+        $t->assert($test_name, $form->show_result_expression($t_res->result_page_ui(), $msg), '');
+        $test_name = 'the result page shows the formula of the result in latex';
+        $ltx_html = new ui_base()->expression_latex_link($res_page);
+        $t->assert($test_name, $ltx_html, $res_page->frm->expression_latex_link());
+        $test_name = '... which is not empty';
+        $t->assert_text_contains($test_name, $ltx_html, formula_names::SCALE_TO_SEC_LATEX_NUMBER);
+        // negative: a result without a formula has no latex to show
+        $test_name = 'a result without a formula shows no latex';
+        $t->assert($test_name, new ui_base()->expression_latex_link(new result()), '');
+
+        // the used lists are slow, so only the result views that show them ask the backend for them
+        $t->subheader($ts . 'page request');
+        $test_name = 'a result detail page asks for the used lists';
+        $api_par = frontend::page_api_par(views::RESULT_DEFAULT_DETAIL);
+        $t->assert_true($test_name, array_key_exists(url_var::INCL_USED, $api_par));
+        $test_name = 'the result default page does not wait for the used lists';
+        $api_par = frontend::page_api_par(views::RESULT);
+        $t->assert_false($test_name, array_key_exists(url_var::INCL_USED, $api_par));
+        $test_name = '... but asks for the related objects';
+        $t->assert_true($test_name, array_key_exists(url_var::INCL_RELATED, $api_par));
+        $test_name = 'a page without a main object asks for no related objects';
+        $t->assert_false($test_name, array_key_exists(url_var::INCL_RELATED, frontend::page_api_par(views::START)));
 
         // below the title the page shows in three columns what the number is based on
         $t->subheader($ts . 'used for the calculation');

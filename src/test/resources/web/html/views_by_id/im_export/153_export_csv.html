@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>
+            "" - Export CSV - zukunft.com
+        </title>
+        <link rel="stylesheet" href="http://localhost/external_lib/bootstrap/css/bootstrap.css">
+        <link rel="stylesheet" href="http://localhost/external_lib/fontawesome/css/all.css">
+        <link rel="stylesheet" href="http://localhost/src/main/resources/style/style_html.css">
+    </head>
+    <body>
+        <nav  class="navbar site-header fixed-top">
+            <a href="http://localhost/http/view.php" title="zukunft.com" class="navbar-brand">
+                <img src="http://localhost/src/main/resources/images/ZUKUNFT_logo.svg" alt="zukunft.com" class="logo-nav">
+            </a>
+            <form action="http://localhost/http/view.php" class="d-flex align-items-center my-2 my-lg-0 flex-grow-1 mx-3">
+                <input type="hidden" name="m" value="107">
+                <label for="kp" class="visually-hidden">
+                    Search
+                </label>
+                <input class="form-control me-2" type="search" name="pattern" id="kp" placeholder="word or formula" style="min-width: 40vw; max-width: 800px;">
+                <button class="btn btn-outline-primary" type="submit">
+                    Get numbers
+                </button>
+            </form>
+            <div class="col-md-2">
+                <ul class="nav navbar-nav">
+                    <li class="active">
+                        <details class="view-menu">
+                            <summary>
+                                <i class="fas fa-edit">
+                                </i>
+                            </summary>
+                            <ul>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=view_change&amp;id=2">
+                                        alternative
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="?view=more">
+                                        ... more
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=85&amp;id=153&amp;9m=153">
+                                        change view
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=84&amp;9m=153">
+                                        add view
+                                    </a>
+                                </li>
+                            </ul>
+                        </details>
+                        <details class="lang-menu">
+                            <summary>
+                                <i class="fas fa-globe">
+                                </i>
+                            </summary>
+                            <ul>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=153&amp;q=en">
+                                        English
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=153&amp;q=en_us">
+                                        US English
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=153&amp;q=de" title="German">
+                                        Deutsch
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=153&amp;q=fr" title="French">
+                                        Français
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=153&amp;q=es" title="Spanish">
+                                        Español
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=153&amp;q=zh" title="Chinese">
+                                        漢語
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=153&amp;q=ar" title="Arabic">
+                                        العربية
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=language_select">
+                                        ... more
+                                    </a>
+                                </li>
+                            </ul>
+                        </details>
+                        <details class="user-menu">
+                            <summary>
+                                <i class="fas fa-user-circle">
+                                </i>
+                            </summary>
+                            <ul>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=11&amp;9m=153">
+                                        Log in
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=13&amp;9m=153">
+                                        Signup
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/settings?9m=153">
+                                        Settings
+                                    </a>
+                                </li>
+                            </ul>
+                        </details>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <main class="main-container">
+            <div class="row col-md-12">
+                <h4>
+                    Export csv
+                </h4>
+            </div>
+            <div class="row col-md-12">
+                <div class="form-group col-md-8">
+                    <label for="name">
+                        Name
+                    </label>
+                    <input class="form-control" type="text" name="k" id="name">
+                </div>
+            </div>
+            <div class="row col-md-12">
+                <div class="form-group col-md-8">
+                    <label for="group">
+                        group
+                    </label>
+                    <input class="form-control" type="text" name="gn" id="group">
+                </div>
+            </div>
+            <div class="row col-md-12">
+                placeholder for the selection text
+            </div>
+            <div class="row col-md-12">
+                <div class="form-group col-md-4">
+                    <label for="p_form_select_phrase">
+                        word or triple
+                    </label>
+                    <input type="text" list="p_form_select_phrase_list" class="form-control" name="p" form="export_csv" id="p_form_select_phrase" >
+                    <datalist id="p_form_select_phrase_list">
+                        <option value="2019" data-value="135">
+                        </option>
+                        <option value="2019 (year)" data-value="-53">
+                        </option>
+                        <option value="2019 (year of definition)" data-value="-79">
+                        </option>
+                        <option value="2019 is follower of 2018" data-value="-284">
+                        </option>
+                        <option value="2019 to 2022" data-value="-375">
+                        </option>
+                        <option value="2020" data-value="136">
+                        </option>
+                        <option value="ABB" data-value="593">
+                        </option>
+                        <option value="Bern" data-value="189">
+                        </option>
+                        <option value="Bern (city)" data-value="-108">
+                        </option>
+                        <option value="CHF" data-value="452">
+                        </option>
+                        <option value="EUR" data-value="279">
+                        </option>
+                        <option value="EUR (ISO 4217 code)" data-value="-404">
+                        </option>
+                        <option value="EUR (currency)" data-value="-606">
+                        </option>
+                        <option value="EUR is symbol for Euro" data-value="-378">
+                        </option>
+                        <option value="EUR per person year" data-value="-192">
+                        </option>
+                        <option value="GDP decline" data-value="-123">
+                        </option>
+                        <option value="GDP is symbol for gross domestic product" data-value="-876">
+                        </option>
+                        <option value="GDP per capita" data-value="-761">
+                        </option>
+                        <option value="Geneva" data-value="196">
+                        </option>
+                        <option value="Geneva (city)" data-value="-109">
+                        </option>
+                        <option value="Pi" data-value="17">
+                        </option>
+                        <option value="Pi (math)" data-value="-56">
+                        </option>
+                        <option value="Switzerland" data-value="210">
+                        </option>
+                        <option value="Switzerland (country)" data-value="-266">
+                        </option>
+                        <option value="USD" data-value="438">
+                        </option>
+                        <option value="Zurich" data-value="217">
+                        </option>
+                        <option value="Zurich Insurance" data-value="-270">
+                        </option>
+                        <option value="Zurich agglomeration" data-value="-841">
+                        </option>
+                        <option value="Zurich region" data-value="-834">
+                        </option>
+                        <option value="absolute poverty" data-value="-993">
+                        </option>
+                        <option value="alignment research" data-value="-1512">
+                        </option>
+                        <option value="assumed (conjecture)" data-value="-166">
+                        </option>
+                        <option value="avoid wrong decisions (solution)" data-value="-221">
+                        </option>
+                        <option value="billion" data-value="159">
+                        </option>
+                        <option value="billion (scaling)" data-value="-608">
+                        </option>
+                        <option value="billion USD" data-value="-1094">
+                        </option>
+                        <option value="canton" data-value="190">
+                        </option>
+                        <option value="canton GDP" data-value="-760">
+                        </option>
+                        <option value="canton Zurich" data-value="-107">
+                        </option>
+                        <option value="circumference" data-value="15">
+                        </option>
+                        <option value="city" data-value="192">
+                        </option>
+                        <option value="city of Zurich" data-value="-106">
+                        </option>
+                        <option value="civic education" data-value="-1160">
+                        </option>
+                        <option value="climate" data-value="230">
+                        </option>
+                        <option value="column confidence" data-value="-244">
+                        </option>
+                        <option value="column consumption mix" data-value="-1594">
+                        </option>
+                        <option value="column cost" data-value="-236">
+                        </option>
+                        <option value="column cost is explaining column for column problem (high prio)" data-value="-258">
+                        </option>
+                        <option value="column displacement mix" data-value="-1595">
+                        </option>
+                        <option value="column displacement mix is next main column after column consumption mix" data-value="-1596">
+                        </option>
+                        <option value="column effort" data-value="-241">
+                        </option>
+                        <option value="column effort is explaining column for column solution (high prio)" data-value="-262">
+                        </option>
+                        <option value="column expected return" data-value="-240">
+                        </option>
+                        <option value="column expected return is explaining column for column solution (high prio)" data-value="-264">
+                        </option>
+                        <option value="column gain" data-value="-234">
+                        </option>
+                        <option value="column gain is explaining column for column solution (high prio)" data-value="-261">
+                        </option>
+                        <option value="column initial effort" data-value="-247">
+                        </option>
+                        <option value="column loss" data-value="-231">
+                        </option>
+                        <option value="column loss is explaining column for column problem (high prio)" data-value="-257">
+                        </option>
+                        <option value="column loss reduction" data-value="-246">
+                        </option>
+                        <option value="column percent" data-value="-242">
+                        </option>
+                        <option value="column percent is explaining column for column problem (high prio)" data-value="-260">
+                        </option>
+                        <option value="column potential gain" data-value="-233">
+                        </option>
+                        <option value="column potential gain is explaining column for column solution (high prio)" data-value="-263">
+                        </option>
+                        <option value="column potential loss" data-value="-230">
+                        </option>
+                        <option value="column potential loss is explaining column for column problem (high prio)" data-value="-259">
+                        </option>
+                        <option value="column priority" data-value="-237">
+                        </option>
+                        <option value="column probability" data-value="-238">
+                        </option>
+                        <option value="column probability is explaining column for column priority" data-value="-253">
+                        </option>
+                        <option value="column probability range" data-value="-249">
+                        </option>
+                        <option value="column problem (high prio)" data-value="-229">
+                        </option>
+                        <option value="column problem (high prio) is next main column after column priority" data-value="-251">
+                        </option>
+                        <option value="column ranking" data-value="-235">
+                        </option>
+                        <option value="column ranking is explaining column for column priority" data-value="-255">
+                        </option>
+                        <option value="column reward ratio" data-value="-248">
+                        </option>
+                        <option value="column solution (high prio)" data-value="-232">
+                        </option>
+                        <option value="column solution (high prio) is next main column after column problem (high prio)" data-value="-252">
+                        </option>
+                        <option value="column source" data-value="-243">
+                        </option>
+                        <option value="column source is explaining column for column priority" data-value="-256">
+                        </option>
+                        <option value="column standard deviation" data-value="-239">
+                        </option>
+                        <option value="column standard deviation is explaining column for column priority" data-value="-254">
+                        </option>
+                        <option value="company" data-value="193">
+                        </option>
+                        <option value="constant" data-value="2">
+                        </option>
+                        <option value="critical thinking education" data-value="-1235">
+                        </option>
+                        <option value="diameter" data-value="16">
+                        </option>
+                        <option value="education" data-value="257">
+                        </option>
+                        <option value="education (climate solution)" data-value="-1143">
+                        </option>
+                        <option value="education can be global problem" data-value="-125">
+                        </option>
+                        <option value="education spending" data-value="-1336">
+                        </option>
+                        <option value="extreme poverty" data-value="-995">
+                        </option>
+                        <option value="global" data-value="198">
+                        </option>
+                        <option value="global problem" data-value="-104">
+                        </option>
+                        <option value="global warming" data-value="-112">
+                        </option>
+                        <option value="global warming potential" data-value="-113">
+                        </option>
+                        <option value="government spending" data-value="-946">
+                        </option>
+                        <option value="happy" data-value="269">
+                        </option>
+                        <option value="happy time points" data-value="-178">
+                        </option>
+                        <option value="health" data-value="253">
+                        </option>
+                        <option value="health can be global problem" data-value="-122">
+                        </option>
+                        <option value="health taxes" data-value="-1334">
+                        </option>
+                        <option value="htp" data-value="274">
+                        </option>
+                        <option value="htp is symbol for happy time points" data-value="-214">
+                        </option>
+                        <option value="in EUR" data-value="-388">
+                        </option>
+                        <option value="inhabitants" data-value="201">
+                        </option>
+                        <option value="learning poverty" data-value="-1335">
+                        </option>
+                        <option value="licence spending" data-value="-1585">
+                        </option>
+                        <option value="main column (system)" data-value="-217">
+                        </option>
+                        <option value="marginal column (system)" data-value="-219">
+                        </option>
+                        <option value="maternal and child health" data-value="-1297">
+                        </option>
+                        <option value="mathematical constant" data-value="-1">
+                        </option>
+                        <option value="mathematics" data-value="1">
+                        </option>
+                        <option value="mayor column (system)" data-value="-216">
+                        </option>
+                        <option value="million (scaling)" data-value="-609">
+                        </option>
+                        <option value="minor column (system)" data-value="-218">
+                        </option>
+                        <option value="minute" data-value="100">
+                        </option>
+                        <option value="mio" data-value="158">
+                        </option>
+                        <option value="multidimensional poverty" data-value="-997">
+                        </option>
+                        <option value="nominal GDP" data-value="-948">
+                        </option>
+                        <option value="one" data-value="4">
+                        </option>
+                        <option value="parts" data-value="599">
+                        </option>
+                        <option value="percent" data-value="160">
+                        </option>
+                        <option value="percent decimal" data-value="-741">
+                        </option>
+                        <option value="person year per billion USD" data-value="-1148">
+                        </option>
+                        <option value="person year per trillion EUR" data-value="-1147">
+                        </option>
+                        <option value="points" data-value="271">
+                        </option>
+                        <option value="populism" data-value="237">
+                        </option>
+                        <option value="populism (global problem)" data-value="-121">
+                        </option>
+                        <option value="populism can cause GDP decline" data-value="-183">
+                        </option>
+                        <option value="potential" data-value="226">
+                        </option>
+                        <option value="poverty" data-value="255">
+                        </option>
+                        <option value="poverty (global problem)" data-value="-124">
+                        </option>
+                        <option value="poverty research" data-value="-1261">
+                        </option>
+                        <option value="primary education" data-value="-1266">
+                        </option>
+                        <option value="problem" data-value="209">
+                        </option>
+                        <option value="public education" data-value="-1354">
+                        </option>
+                        <option value="real GDP" data-value="-949">
+                        </option>
+                        <option value="relative poverty" data-value="-994">
+                        </option>
+                        <option value="research (climate solution)" data-value="-1140">
+                        </option>
+                        <option value="research (solution)" data-value="-140">
+                        </option>
+                        <option value="research expenditure share" data-value="-914">
+                        </option>
+                        <option value="second" data-value="22">
+                        </option>
+                        <option value="spending (solution)" data-value="-142">
+                        </option>
+                        <option value="subjective poverty" data-value="-996">
+                        </option>
+                        <option value="taxes (solution)" data-value="-141">
+                        </option>
+                        <option value="time" data-value="99">
+                        </option>
+                        <option value="time points" data-value="-116">
+                        </option>
+                        <option value="total" data-value="379">
+                        </option>
+                        <option value="trillion" data-value="275">
+                        </option>
+                        <option value="trillion EUR" data-value="-1093">
+                        </option>
+                        <option value="warmer" data-value="233">
+                        </option>
+                        <option value="windfall taxes" data-value="-1363">
+                        </option>
+                        <option value="year" data-value="105">
+                        </option>
+                        <option value="π (unit symbol)" data-value="-5">
+                        </option>
+                        <option value="𝑒" data-value="6">
+                        </option>
+                        <option value="𝑒 (unit symbol)" data-value="-58">
+                        </option>
+                    </datalist>
+                </div>
+            </div>
+            <br>
+            <div class="row col-md-12 justify-content-end">
+                <button class="btn btn-space col-1 btn-outline-success" type="submit" name="submit">
+                    save
+                </button>
+                <a href="http://localhost/http/view.php?m=0" class="btn btn-space col-1 btn-outline-secondary">
+                    cancel
+                </a>
+                <button class="btn btn-space col-1 btn-outline-secondary" type="submit">
+                    Export
+                </button>
+            </div>
+        </form>
+    </main>
+    <!--usr_msg-->
+    <footer class="site-footer">
+        <p>
+            <a href="http://localhost/http/about.php">
+                About
+            </a>
+            &middot;
+            <a href="http://localhost/http/privacy_policy.html">
+                Privacy Policy
+            </a>
+            &middot; 
+All structured data is available under the
+            <a href="https://creativecommons.org/publicdomain/zero/1.0/" title="CC0 License">
+                Creative Commons CC0
+            </a>
+            Licence unless otherwise stated and the
+            <a href="https://github.com/zukunft/zukunft.com">
+                program code
+            </a>
+            of this version 0.0.3
+under the
+            <a href="https://www.gnu.org/licenses/agpl.html">
+                AGPL3
+            </a>
+            Licence.
+        </p>
+    </footer>
+</body>
+</html>

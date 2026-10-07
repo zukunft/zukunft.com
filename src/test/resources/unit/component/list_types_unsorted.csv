@@ -261,3 +261,5 @@ component_type_id,type_name,code_id,description
 260,values used,values_used,show the values that the calculation of the shown result has used e.g. the inhabitants that an increase is based on
 261,formulas used,formulas_used,show the formulas that have calculated the results used for the shown result
 262,results used,results_used,show the results that the calculation of the shown result has used e.g. the increase used by a growth rate
+263,show result expression,system_show_result_expression,"show the formula of the shown result with the numbers used, each linked to its value or result"
+264,related system view selector,related_system_view_selector,"the ""..."" below the title that opens the menu to show the same object in the default, detail, range or detail with range view"

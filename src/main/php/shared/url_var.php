@@ -174,6 +174,7 @@ class url_var
     const string IP = 'ip'; // for ip ranges (for admin only)
     const string WITH_PHRASES = 'iw'; // include the phrases in the values or result messages
     const string INCL_RELATED = 'ir'; // include the related phrases (api_types::INCL_RELATED) in a word/triple api response
+    const string INCL_USED = 'iu'; // include the values, formulas and results used (api_types::INCL_USED) in a result api response
     const string JOB = 'j'; // for system batch jobs
     const string JOB_PARAMETER = 'ja'; // pArameter passed to a job e.g. the id of the phrase set
     const string JOB_START_TIME = 'jb'; // Begin time of the job execution
@@ -585,6 +586,7 @@ class url_var
     const string FIGURE_HUMAN = 'figure_id';
     const string WITH_PHRASES_HUMAN = 'incl_phrases';
     const string INCL_RELATED_HUMAN = 'incl_related';
+    const string INCL_USED_HUMAN = 'incl_used';
 
     // view
     const string VIEW_HUMAN = 'view_id';
@@ -824,6 +826,7 @@ class url_var
         [self::FIGURE_HUMAN, self::FIGURE],
         [self::WITH_PHRASES_HUMAN, self::WITH_PHRASES],
         [self::INCL_RELATED_HUMAN, self::INCL_RELATED],
+        [self::INCL_USED_HUMAN, self::INCL_USED],
 
         // view
         [self::VIEW_HUMAN, self::VIEW],
@@ -952,6 +955,17 @@ class url_var
     static function back_par(array $url_array): array
     {
         return array_filter($url_array, fn($k) => str_starts_with($k, self::BACK), ARRAY_FILTER_USE_KEY);
+    }
+
+    /**
+     * the url without its back part e.g. to cache a page once for every page that links to it
+     *
+     * @param array $url_array the full url parameter array e.g. ['m' => 9, 'id' => 1, '9m' => 1]
+     * @return array the url without the entries prefixed with BACK e.g. ['m' => 9, 'id' => 1]
+     */
+    static function without_back(array $url_array): array
+    {
+        return array_diff_key($url_array, self::back_par($url_array));
     }
 
     /**

@@ -299,7 +299,7 @@ class group extends sandbox_multi
      * set the phrase list of this group
      * and return the unique database id of this group
      * @param phrase_list $phr_lst sorted list of phrases for this group
-     * @return int|string $id either a 62-bit int, a 512-bit id with 16 phrase ids or a text with more than 16 +/- separated 6 char alpha_num coded phrase ids
+     * @return int|string $id either a 62-bit int, a 512-bit id with 16 phrase ids or a text with more than 16 +/- separated 6 char alpha_num coded phrase ids using the compact text key e.g. "0U+0X+3-" (see docs/llm/group_id.md)
      */
     function set_phrase_list(phrase_list $phr_lst): int|string
     {
@@ -387,26 +387,15 @@ class group extends sandbox_multi
 
 
     /**
-     * @param bool $no_fill if true the id is not filled up to the complete key size e.g. for the api messages
-     * @return int|string either a 62-bit int, a 512-bit id with 16 phrase ids or a text with more than 16 +/- separated 6 char alpha_num coded phrase ids
+     * @return int|string either a 62-bit int or the compact text key e.g. "0U+0X+3-" (see docs/llm/group_id.md)
      * the internal null value is used to detect if database saving has been tried
      */
-    function id(bool $no_fill = false): int|string
+    function id(): int|string
     {
         if (is_numeric($this->id)) {
             return (int)$this->id;
         } else {
-            if ($no_fill) {
-                $id = $this->id;
-                $grp_id = new id();
-                $zero_id = $grp_id->int2alpha_num(0);
-                while (str_ends_with($id, $zero_id)) {
-                    $id = str_replace($zero_id, '', $id);
-                }
-                return $id;
-            } else {
-                return $this->id;
-            }
+            return $this->id;
         }
     }
 
@@ -529,7 +518,7 @@ class group extends sandbox_multi
     /**
      * set the unique database id of this group
      * @param phrase_list $phr_lst sorted list of phrases for this group
-     * @return int|string $id either a 62-bit int, a 512-bit id with 16 phrase ids or a text with more than 16 +/- separated 6 char alpha_num coded phrase ids
+     * @return int|string $id either a 62-bit int, a 512-bit id with 16 phrase ids or a text with more than 16 +/- separated 6 char alpha_num coded phrase ids using the compact text key e.g. "0U+0X+3-" (see docs/llm/group_id.md)
      */
     function set_id_from_phrase_list(phrase_list $phr_lst): int|string
     {

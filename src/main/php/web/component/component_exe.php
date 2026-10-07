@@ -363,6 +363,7 @@ class component_exe extends component
             // fixed system pages - usage only allowed for fixed internal system pages
             component_types::SYSTEM_TITLE => $page->system_tile($this->ui_msg_code_id, $url_arr),
             component_types::SYSTEM_TITLE_WITH_OBJECT_NAME => $page->title_with_object_name($this->ui_msg_code_id, $dbo),
+            component_types::RELATED_SYSTEM_VIEW_SELECTOR => $page->related_view_selector($msk_id, $dbo),
             component_types::SYSTEM_BODY_ABOUT => $page->about_body(),
             component_types::SYSTEM_BODY_SETUP => $page->setup_body(),
             component_types::SYSTEM_BODY_SIGNUP => $page->signup_body($url_arr),
@@ -464,6 +465,7 @@ class component_exe extends component
             component_types::SHOW_ALL_VALUES_NEEDED => $form->show_all_values_needed($dbo),
             component_types::SHOW_RESULT_VALUE => $form->show_result_value($dbo),
             component_types::SHOW_RESULT_FORMULA => $form->show_result_formula($dbo),
+            component_types::SHOW_RESULT_EXPRESSION => $form->show_result_expression($dbo, $msg, $url_arr),
             component_types::SHOW_PHRASE_TYPE => $form->show_phrase_type($dbo, $msg),
             component_types::SHOW_FIELD_USAGE => $form->show_usage($dbo),
             component_types::WORD_RESULTS => $form->result($dbo),

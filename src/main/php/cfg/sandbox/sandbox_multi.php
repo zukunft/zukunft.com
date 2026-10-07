@@ -1148,9 +1148,19 @@ class sandbox_multi extends db_object_multi_user
                 $pos++;
             }
         } else {
-            $sc->add_where(group_fields::FLD_ID, $this->grp()->id);
+            $sc->add_where(group_fields::FLD_ID, $this->grp_where_id());
         }
         return $qp;
+    }
+
+    /**
+     * the group key used to select the row of a table keyed by the group id; overwritten by the
+     * result, whose source group may have moved it to a table keyed by the text key
+     * @return int|string the group id as the table of this object uses it
+     */
+    protected function grp_where_id(): int|string
+    {
+        return $this->grp()->id;
     }
 
     /**
@@ -3449,7 +3459,7 @@ class sandbox_multi extends db_object_multi_user
             log_debug('reloaded ' . $this->dsp_id());
             // check if the object is still valid
             // never compare the id with a number, because the text id of a main or big table
-            // row such as '....06+' is less than 0 for php, which has skipped the delete of
+            // row such as '/x-' is less than 0 for php, which has skipped the delete of
             // every value with more than four phrases (see db_object_multi::is_id_set)
             if (!$this->is_id_set()) {
                 log_warning('Delete failed', $this::class . '->del', 'Delete failed, because it seems that the ' . $class_name . ' ' . $this->dsp_id() . ' has been deleted in the meantime.', (new Exception)->getTraceAsString(), $this->get_user());

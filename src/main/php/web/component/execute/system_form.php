@@ -1075,6 +1075,26 @@ class system_form extends component
     }
 
     /**
+     * @param result|db_object $dbo the result whose formula is shown with the numbers used
+     * @param user_message $msg to report a component that is assigned to another object than a result
+     * @param array $url_arr the url vars of the calling page for the back link of the numbers
+     * @return string the right side of the formula with each number linked to its value or result,
+     *                empty if the numbers used are not known
+     */
+    function show_result_expression(result|db_object $dbo, user_message $msg, array $url_arr = []): string
+    {
+        $result = '';
+        // guarded by class, because only a result has the numbers used for its calculation and a
+        // mis-assigned seed component must not stop the page with a fatal
+        if ($dbo instanceof result) {
+            $result = $dbo->expression_figures_link($msg, $url_arr);
+        } else {
+            log_err_msg_ui($dbo::class . ' is not expected to be calculated by a formula', $msg);
+        }
+        return $result;
+    }
+
+    /**
      * @param formula|db_object $dbo the formula whose all-values-needed flag is shown
      * @return string the translated flag label, because the label alone says all for a boolean
      *                (empty if the formula calculates also with missing values, the default)

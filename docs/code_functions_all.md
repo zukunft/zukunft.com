@@ -41,6 +41,8 @@
     \-- load_by_id_with_related - section for function load_by_id_with_related is expected to be load in /formula/formul
             a.php
     \-- api_json_array - section for function api_json_array is expected to be api in /formula/formula.php
+    \-- api_latex_terms_array - section for function api_latex_terms_array not yet defined that it should be assign in /
+            formula/formula.php
     \-- assign_phr_glst - section for function assign_phr_glst not yet defined that it should be assign in /formula/form
             ula.php
     \-- assign_phr_lst - section for function assign_phr_lst not yet defined that it should be assign in /formula/formul
@@ -279,10 +281,30 @@
     \-- row_mapper_multi - section for function row_mapper_multi not yet defined that it should be construct and map in 
             /result/result.php
     \-- id - section for function id not yet defined that it should be set and get in /result/result.php
-    \-- source_group - section for function source_group not yet defined that it should be set and get in /result/result
+    \-- grp_key_id - section for function grp_key_id not yet defined that it should be set and get in /result/result.php
+    \-- src_grp_field_type - section for function src_grp_field_type not yet defined that it should be table selection i
+            n /result/result.php
+    \-- is_prime - section for function is_prime is expected to be info in /result/result.php
+    \-- is_main - section for function is_main is expected to be info in /result/result.php
+    \-- is_big - section for function is_big is expected to be info in /result/result.php
+    \-- moved_table_types - section for function moved_table_types not yet defined that it should be table selection in 
+            /result/result.php
+    \-- table_type - section for function table_type not yet defined that it should be table selection in /result/result
             .php
-    \-- src_grp_id - section for function src_grp_id not yet defined that it should be set and get in /result/result.php
-    \-- formula_id - section for function formula_id not yet defined that it should be set and get in /result/result.php
+    \-- table_extension - section for function table_extension not yet defined that it should be table selection in /res
+            ult/result.php
+    \-- set_value - section for function set_value is expected to be set and get in /result/result.php
+    \-- get_value - section for function get_value is expected to be set and get in /result/result.php
+    \-- set_src_grp - section for function set_src_grp is expected to be set and get in /result/result.php
+    \-- source_group - section for function source_group not yet defined that it should be table selection in /result/re
+            sult.php
+    \-- src_grp_id - section for function src_grp_id not yet defined that it should be table selection in /result/result
+            .php
+    \-- set_formula - section for function set_formula is expected to be set and get in /result/result.php
+    \-- formula_id - section for function formula_id not yet defined that it should be table selection in /result/result
+            .php
+    \-- set_symbol - section for function set_symbol is expected to be set and get in /result/result.php
+    \-- get_symbol - section for function get_symbol is expected to be set and get in /result/result.php
     \-- is_std - section for function is_std is expected to be info in /result/result.php
     \-- phr_lst - section for function phr_lst not yet defined that it should be reduce code line length in /result/resu
             lt.php
@@ -295,6 +317,10 @@
     \-- load_sql_by_frm_grp - section for function load_sql_by_frm_grp is expected to be load sql in /result/result.php
     \-- load_sql_by_frm_grp_lst - section for function load_sql_by_frm_grp_lst is expected to be load sql in /result/res
             ult.php
+    \-- load_sql_by_id_moved - section for function load_sql_by_id_moved is expected to be load sql in /result/result.ph
+            p
+    \-- load_sql_by_grp_moved - section for function load_sql_by_grp_moved is expected to be load sql in /result/result.
+            php
     \-- load_sql_where - section for function load_sql_where is expected to be load sql in /result/result.php
     \-- load_phrases - section for function load_phrases is expected to be load in /result/result.php
     \-- used_phrase_selection - section for function used_phrase_selection not yet defined that it should be phrase load
@@ -302,12 +328,13 @@
     \-- load_values_used - section for function load_values_used is expected to be load in /result/result.php
     \-- load_results_used - section for function load_results_used is expected to be load in /result/result.php
     \-- load_formulas_used - section for function load_formulas_used is expected to be load in /result/result.php
+    \-- load_expression_parts - section for function load_expression_parts is expected to be load in /result/result.php
+    \-- expression_parts - section for function expression_parts not yet defined that it should be phrase loading method
+            s in /result/result.php
     \-- val_formatted - section for function val_formatted not yet defined that it should be im- and export in /result/r
             esult.php
     \-- figure - section for function figure not yet defined that it should be im- and export in /result/result.php
     \-- phr_ids - section for function phr_ids not yet defined that it should be im- and export in /result/result.php
-    \-- src_grp_is_storable - section for function src_grp_is_storable not yet defined that it should be info in /result
-            /result.php
     \-- delta - section for function delta is expected to be del in /result/result.php
     \-- name - section for function name is expected to be debug in /result/result.php
     \-- name_linked - section for function name_linked not yet defined that it should be display in /result/result.php
@@ -316,6 +343,8 @@
     \-- update - section for function update not yet defined that it should be display in /result/result.php
     \-- save_if_updated - section for function save_if_updated is expected to be save in /result/result.php
     \-- save - section for function save is expected to be save in /result/result.php
+    \-- row_in_other_table - section for function row_in_other_table not yet defined that it should be @return bool true
+             if a value without time is already saved in /result/result.php
     \-- order error - order of section construct and map has difference at api_mapper should be before row_mapper_multi
 \-- user
     \-- clone_reset - section for function clone_reset not yet defined that it should be construct and map in /user/user
@@ -993,6 +1022,8 @@
         \-- formula - load the formula and, in the same call, the related view-models the default formula view
     \-- api_json_array
         \-- formula - extend the formula api message with the data that the default formula view needs;
+    \-- api_latex_terms_array
+        \-- formula - the terms of the latex for the "expression_latex_link" component, which the formula page
     \-- assign_phr_glst
         \-- formula - returns a list of all words that the formula is assigned to
     \-- assign_phr_lst
@@ -1257,6 +1288,8 @@
             l_creator.php
     \-- add_usr_grp_field - section for function add_usr_grp_field not yet defined that it should be statement in /db/sq
             l_creator.php
+    \-- key_match - section for function key_match not yet defined that it should be internal where in /db/sql_creator.p
+            hp
     \-- get_order - section for function get_order is expected to be set and get in /db/sql_creator.php
     \-- set_order - section for function set_order is expected to be set and get in /db/sql_creator.php
     \-- set_page - section for function set_page is expected to be set and get in /db/sql_creator.php
@@ -1928,6 +1961,7 @@
     \-- is_big - section for function is_big is expected to be info in /group/group_id.php
     \-- int_array - section for function int_array not yet defined that it should be database link in /group/group_id.ph
             p
+    \-- int2key - section for function int2key not yet defined that it should be database link in /group/group_id.php
 \-- group_link
     \-- __construct - section for function __construct is expected to be construct and map in /group/group_link.php
     \-- row_mapper - section for function row_mapper missing in /group/group_link.php
@@ -2834,10 +2868,6 @@
              in /phrase/phrase_type.php
     \-- order error - order of section construct and map has difference at api_mapper should be before row_mapper_typ_ob
             j
-\-- phrase_types
-    \-- load_dummy - section for function load_dummy is expected to be load in /phrase/phrase_types.php
-    \-- default_id - section for function default_id not yet defined that it should be construct and map in /phrase/phra
-            se_types.php
 \-- term
     \-- row_mapper - section for function row_mapper not yet defined that it should be construct and map in /phrase/term
             .php
@@ -2950,6 +2980,9 @@
     \-- load_sql_like - section for function load_sql_like is expected to be load sql in /ref/source_list.php
     \-- load_sql_by_names - section for function load_sql_by_names is expected to be load sql in /ref/source_list.php
     \-- order error - order of section load has difference at load_by_ids should be before load_sql_like
+\-- source_type
+    \-- row_mapper_typ_obj - section for function row_mapper_typ_obj not yet defined that it should be construct and map
+             in /ref/source_type.php
 \-- source_type_list
     \-- load_dummy - section for function load_dummy is expected to be load in /ref/source_type_list.php
     \-- default_id - section for function default_id not yet defined that it should be database link in /ref/source_type
@@ -4882,6 +4915,7 @@
         \-- db_cache_page - clear all cache page object values e.g. to detect the changed fields
         \-- change_field - set the vars of this change field object to the default values
         \-- ref_type - set the vars of this reference type object to the default values
+        \-- source_type - set the vars of this source type object to the default values
         \-- sandbox_predicated_link - reset the type of the link object
         \-- ip_range - 
         \-- value_time_series - set the user sandbox type for a value time series object and set the user,
@@ -4911,8 +4945,10 @@
     \-- row_mapper_typ_obj
         \-- change_field - fill the change field object vars based on an array of fields from the database
         \-- ref_type - fill the reference type object vars based on an array of fields from the database
+        \-- source_type - fill the source type object vars based on an array of fields from the database or the code lin
+                k csv
     \-- load_dummy
-        \-- phrase_types - adding the word types used for unit tests to the dummy list
+        \-- phrase_types - fill the list for the unit tests from db_code_links/phrase_types.csv,
     \-- default_id
         \-- phrase_types - @return int the database id of the default word type
     \-- import_mapper
@@ -5216,6 +5252,9 @@
     \-- add_usr_grp_field
         \-- sql_creator - define the fields that should be returned in a select query
 \-- internal where
+    \-- key_match
+        \-- sql_creator - the case-sensitive match of the key of a phrase within a group id (see sql_par_type::LIKE_KEY)
+                :
     \-- get_order
         \-- sql_creator - get the order SQL statement
     \-- set_order
@@ -5595,6 +5634,7 @@
         \-- db_cache_page - get a list of all database fields that might be changed
         \-- change_field - get a list of all database fields that might be changed
         \-- ref_type - get a list of all database fields that might be changed
+        \-- source_type - get a list of all database fields that might be changed
         \-- ip_range - get a list of all database fields that might be changed
     \-- db_fields_changed
         \-- element - get a list of database field names, values and types that have been updated
@@ -5602,6 +5642,7 @@
         \-- db_cache_page - get a list of database field names, values and types that have been updated
         \-- change_field - get a list of database field names, values and types that have been updated
         \-- ref_type - get a list of database field names, values and types that have been updated
+        \-- source_type - get a list of database field names, values and types that have been updated
         \-- ip_range - get a list of database field names, values and types that have been updated
     \-- db_field_values_types
         \-- change - get a list of all database fields
@@ -5733,6 +5774,8 @@
         \-- group_id - @param int|string $grp_id
     \-- int_array
         \-- group_id - @param int|string $grp_id
+    \-- int2key
+        \-- group_id - the 16 slot text key of a prime group, e.g. for a result that is saved in the standard result
     \-- row_mapper
         \-- change_link - map the database fields to one change log entry to this log object
     \-- load_dummy
@@ -6265,6 +6308,8 @@
             password but without auto fill in /component/execute/system_form.php
     \-- show_result_formula - section for function show_result_formula not yet defined that it should be optional with s
             how password but without auto fill in /component/execute/system_form.php
+    \-- show_result_expression - section for function show_result_expression not yet defined that it should be optional 
+            with show password but without auto fill in /component/execute/system_form.php
     \-- show_all_values_needed - section for function show_all_values_needed not yet defined that it should be optional 
             with show password but without auto fill in /component/execute/system_form.php
     \-- show_impact - section for function show_impact not yet defined that it should be optional with show password but
@@ -6476,6 +6521,7 @@
     \-- system_tile - section for function system_tile missing in /component/execute/system_page.php
     \-- title_with_object_name - section for function title_with_object_name missing in /component/execute/system_page.p
             hp
+    \-- related_view_selector - section for function related_view_selector missing in /component/execute/system_page.php
     \-- system_sub_tile - section for function system_sub_tile missing in /component/execute/system_page.php
     \-- system_sub_tile_var - section for function system_sub_tile_var missing in /component/execute/system_page.php
     \-- preview - section for function preview missing in /component/execute/system_page.php
@@ -7152,6 +7198,7 @@
 \-- rest_call
     \-- class_to_api_name - section for function class_to_api_name missing in /html/rest_call.php
     \-- api_call_id - section for function api_call_id missing in /html/rest_call.php
+    \-- id_data - section for function id_data missing in /html/rest_call.php
     \-- api_call_name - section for function api_call_name missing in /html/rest_call.php
     \-- api_get - section for function api_get missing in /html/rest_call.php
     \-- data_with_user - section for function data_with_user missing in /html/rest_call.php
@@ -7327,6 +7374,8 @@
             st.php
     \-- symbol_phrases - section for function symbol_phrases not yet defined that it should be info in /phrase/phrase_li
             st.php
+    \-- value_quality_phrases - section for function value_quality_phrases not yet defined that it should be info in /ph
+            rase/phrase_list.php
     \-- symbol_links - section for function symbol_links not yet defined that it should be info in /phrase/phrase_list.p
             hp
     \-- intersect - section for function intersect not yet defined that it should be modify in /phrase/phrase_list.php
@@ -7448,6 +7497,10 @@
     \-- get_description - section for function get_description is expected to be set and get in /result/result.php
     \-- display_linked - section for function display_linked not yet defined that it should be display in /result/result
             .php
+    \-- expression_figures_link - section for function expression_figures_link not yet defined that it should be display
+             in /result/result.php
+    \-- expression_latex_link - section for function expression_latex_link not yet defined that it should be display in 
+            /result/result.php
     \-- figure - section for function figure not yet defined that it should be cast in /result/result.php
     \-- api_array - section for function api_array not yet defined that it should be interface in /result/result.php
     \-- btn_add - section for function btn_add not yet defined that it should be buttons in /result/result.php
@@ -7683,6 +7736,10 @@
     \-- value - section for function value not yet defined that it should be display in /sandbox/sandbox_value.php
     \-- value_edit - section for function value_edit not yet defined that it should be display in /sandbox/sandbox_value
             .php
+    \-- value_edit_link - section for function value_edit_link not yet defined that it should be display in /sandbox/san
+            dbox_value.php
+    \-- quality_mark - section for function quality_mark not yet defined that it should be display in /sandbox/sandbox_v
+            alue.php
     \-- name_link - section for function name_link not yet defined that it should be display in /sandbox/sandbox_value.p
             hp
     \-- phrase_link_list - section for function phrase_link_list not yet defined that it should be display in /sandbox/s
@@ -8084,6 +8141,7 @@
     \-- is_percent - section for function is_percent is expected to be info in /word/triple.php
     \-- is_factor - section for function is_factor is expected to be info in /word/triple.php
     \-- is_measure_non_unit - section for function is_measure_non_unit is expected to be info in /word/triple.php
+    \-- is_value_quality - section for function is_value_quality is expected to be info in /word/triple.php
     \-- is_measure - section for function is_measure is expected to be info in /word/triple.php
     \-- is_scaling - section for function is_scaling is expected to be info in /word/triple.php
     \-- is_time - section for function is_time is expected to be info in /word/triple.php
@@ -8164,6 +8222,7 @@
     \-- is_percent - section for function is_percent is expected to be info in /word/word.php
     \-- is_factor - section for function is_factor is expected to be info in /word/word.php
     \-- is_measure_non_unit - section for function is_measure_non_unit is expected to be info in /word/word.php
+    \-- is_value_quality - section for function is_value_quality is expected to be info in /word/word.php
     \-- is_hidden - section for function is_hidden is expected to be info in /word/word.php
     \-- header - section for function header not yet defined that it should be views in /word/word.php
     \-- dsp_graph - section for function dsp_graph not yet defined that it should be to review in /word/word.php
@@ -8365,6 +8424,8 @@
         \-- phrase_list - the phrase of this list that forces the percent format, so that the caller can ask it for
     \-- symbol_phrases
         \-- phrase_list - the phrases that are shown as a symbol behind the number instead of being named with the
+    \-- value_quality_phrases
+        \-- phrase_list - the phrases that say how the number has been found e.g. "assumed", which are shown as a
     \-- symbol_links
         \-- phrase_list - the symbols of the phrases of this list, each linked to its phrase and separated from the
 \-- to be replaced
@@ -8525,7 +8586,7 @@
         \-- job_list - set the vars of these list display objects bases on the api json array
         \-- triple_list - set the triples based on the given json
     \-- id
-        \-- figure - @return int the figure id based on the value or result id
+        \-- figure - the figure id based on the value or result id: the result id is negated, and a text key,
     \-- obj_id
         \-- figure - @return int|string|null the id of the value or result id (not unique!)
         \-- combine_named - @return int|string|null the id of the object
@@ -8761,6 +8822,8 @@
     \-- title_with_object_name
         \-- system_page - HTML for a page title that names the object shown on the page e.g. User "zukunft.com system te
                 st"
+    \-- related_view_selector
+        \-- system_page - the "..." in the right corner below the title of a default, detail, range or detail with
     \-- system_sub_tile
         \-- system_page - HTML for a subtitle
     \-- system_sub_tile_var
@@ -9047,6 +9110,8 @@
         \-- rest_call - create the class name as used for the api
     \-- api_call_id
         \-- rest_call - create and execute an api call for a database object
+    \-- id_data
+        \-- rest_call - add the id to the api call parameters; a group id is named in its short form like in a page
     \-- api_call_name
         \-- rest_call - create and execute an api call for a database object
     \-- api_get
@@ -9151,6 +9216,8 @@
         \-- system_form - @param result|db_object $dbo the result whose value and phrase group is shown
     \-- show_result_formula
         \-- system_form - @param result|db_object $dbo the result whose creating formula is shown
+    \-- show_result_expression
+        \-- system_form - @param result|db_object $dbo the result whose formula is shown with the numbers used
     \-- show_all_values_needed
         \-- system_form - @param formula|db_object $dbo the formula whose all-values-needed flag is shown
     \-- show_impact

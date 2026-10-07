@@ -1070,6 +1070,8 @@ class frontend
                 $usr_id = $usr?->id() ?? 0;
                 if (in_array($view_code_id, views::VIEWS_WITHOUT_RELATED, true)) {
                     $dbo->load_by_id($id, $msg_ui, [], $usr_id);
+                } elseif (in_array($view_code_id, views::VIEWS_WITH_USED, true)) {
+                    $dbo->load_by_id($id, $msg_ui, self::page_api_par($view_code_id), $usr_id);
                 } else {
                     $dbo->load_by_id_with_related($id, $msg_ui, $usr_id);
                 }
@@ -1089,9 +1091,7 @@ class frontend
                     $api_par = $dbo->api_par_from_url($url_array);
                     // like the plain page load, so that e.g. the from, verb and to of a triple come
                     // with their names and a link to them is never shown without a text
-                    if (!in_array($view_code_id, views::VIEWS_WITHOUT_RELATED, true)) {
-                        $api_par[url_var::INCL_RELATED] = url_var::TRUE;
-                    }
+                    $api_par = self::page_api_par($view_code_id, $api_par);
                     $dbo->load_by_id($id, $msg_ui, $api_par, $usr_id);
                 }
                 $dbo->url_mapper($url_array, $msg_ui, $dto);
@@ -1305,6 +1305,12 @@ class frontend
         if ($usr_id == 0 and self::shows_personal_page($msg_ui)) {
             $url_key = '';
         }
+        // a cached page is keyed without the back part (see url_cache_key), so it is also rendered
+        // without it, because the same html is served to every page that links to it; the back
+        // part only changes the return target of the login link, which then returns to this page
+        if ($url_key != '') {
+            $url_array = url_var::without_back($url_array);
+        }
         // get the last cached html page for the url and fill in the reading user's own anti-csrf
         // token so the shared page does not carry the token of whoever cached it (see request_token_valid)
         $cac_page = new db_cache_page();
@@ -1357,6 +1363,25 @@ class frontend
     }
 
     /**
+     * the api parameters of a page request by its view: the related objects for every view that
+     * shows a main object, and the slow used lists only for the result views that show them
+     *
+     * @param string $view_code_id the code id of the view of the page
+     * @param array $api_par the api parameters that the url has already asked for
+     * @return array the api parameters with the flags of the view added
+     */
+    static function page_api_par(string $view_code_id, array $api_par = []): array
+    {
+        if (!in_array($view_code_id, views::VIEWS_WITHOUT_RELATED, true)) {
+            $api_par[url_var::INCL_RELATED] = url_var::TRUE;
+        }
+        if (in_array($view_code_id, views::VIEWS_WITH_USED, true)) {
+            $api_par[url_var::INCL_USED] = url_var::TRUE;
+        }
+        return $api_par;
+    }
+
+    /**
      * the canonical cache key of a view-only page request
      * e.g. 'm=1&id=2' for the word view of the word zurich
      *
@@ -1365,6 +1390,9 @@ class frontend
      * just like every link of that page does (see html_base::url_with_user), so the personal page
      * is reused for this user only and is never handed to somebody else
      *
+     * the back part of the url is no part of the key, so a page is cached once for every page
+     * that links to it (see url_to_html_cached, which renders such a page without the back part)
+     *
      * @param array $url_array the parsed url as an array
      * @param int $usr_id the id of the logged-in user of this request, 0 for a request without login
      * @return string the cache key or an empty string if the request must not be cached
@@ -1372,6 +1400,8 @@ class frontend
     function url_cache_key(array $url_array, int $usr_id = 0): string
     {
         global $cfg;
+
+        $url_array = url_var::without_back($url_array);
 
         $result = '';
         $mask_id = $url_array[url_var::MASK] ?? 0;

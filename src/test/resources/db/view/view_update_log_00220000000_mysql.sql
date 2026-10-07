@@ -32,7 +32,7 @@ SELECT view_update_log_00220000000
         699,
         'Historic',
         'System Test View Renamed',
-        155,
+        179,
         700,
         'show mainly related words that are relevant in sciences',
         null);

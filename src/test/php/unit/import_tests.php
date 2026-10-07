@@ -44,6 +44,7 @@ include_once paths::MODEL_WORD . 'triple.php';
 include_once paths::SHARED . 'library.php';
 include_once paths::SHARED_CONST . 'refs.php';
 include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once test_paths::CONST . 'files.php';
 include_once test_paths::CONST . 'triple_names.php';
 include_once test_paths::CONST . 'word_names.php';
@@ -63,6 +64,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\component_types;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
@@ -404,6 +406,20 @@ class import_tests
         }
         $imp->get_data_object($json_array, $msg);
         $t->assert_text_contains($test_name, $msg->all_message_text(), 'does not match');
+
+        // the unique keys use case is user data as well, so a normal user must import it
+        $test_name = 'the import of the unique keys use case reports no problem';
+        $msg = new user_message($t->usr1);
+        $json_str = file_get_contents(cfg_files::UNIQUE_KEYS_FILE);
+        $dto = $imp->get_data_object(json_decode($json_str, true), $msg);
+        $t->assert($test_name, $msg->all_message_text(), '');
+        $test_name = '... and the ISBN is typed unique key';
+        $wrd = $dto->word_list()->get_by_name(word_names::ISBN, $msg);
+        $t->assert_true($test_name, $wrd?->is_type(phrase_type_shared::UNIQUE_KEY) ?? false);
+        // negative: a sample entry is an instance of a unique key, not the key itself
+        $test_name = '... but its sample entry is not';
+        $wrd = $dto->word_list()->get_by_name(word_names::ISIN_MERCEDES, $msg);
+        $t->assert_false($test_name, $wrd?->is_type(phrase_type_shared::UNIQUE_KEY) ?? true);
 
         $test_name = 'JSON import warning creation';
         $msg = new user_message($t->usr1);

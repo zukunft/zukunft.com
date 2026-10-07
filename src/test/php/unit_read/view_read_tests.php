@@ -174,7 +174,7 @@ class view_read_tests
 
         // ... and check if at least the most critical is loaded
         $result = $sys->typ_lst->cmp_typ->id(comp_type_shared::TEXT);
-        $t->assert('check type' . comp_type_shared::TEXT, $result, 3);
+        $t->assert('check type' . comp_type_shared::TEXT, $result, comp_type_shared::TEXT_ID);
     }
 
 }

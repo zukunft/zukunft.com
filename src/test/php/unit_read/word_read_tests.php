@@ -86,6 +86,40 @@ class word_read_tests
 
         // TODO load plural, type and view
 
+        $t->subheader($ts . 'value quality');
+        $test_name = 'the word assumed is typed value quality';
+        $wrd_asm = new word($t->usr1);
+        $wrd_asm->load_by_name(word_names::ASSUMED, $msg);
+        $t->assert_true($test_name, $wrd_asm->is_type(phrase_type_shared::VALUE_QUALITY));
+        $test_name = 'a value quality triple is typed value quality too';
+        $trp_pr = new triple($t->usr1);
+        $trp_pr->load_by_name(triple_names::PEER_REVIEWED, $msg);
+        $t->assert_true($test_name, $trp_pr->is_type(phrase_type_shared::VALUE_QUALITY));
+        // negative: a word that does not say how a number has been found has another type
+        $test_name = 'the word mathematics is not typed value quality';
+        $t->assert_false($test_name, $wrd->is_type(phrase_type_shared::VALUE_QUALITY));
+
+        $t->subheader($ts . 'value status');
+        $test_name = 'the word retracted is typed value status';
+        $wrd_ret = new word($t->usr1);
+        $wrd_ret->load_by_name(word_names::RETRACTED, $msg);
+        $t->assert_true($test_name, $wrd_ret->is_type(phrase_type_shared::VALUE_STATUS));
+        // negative: a status is not a rung of the value quality ladder
+        $test_name = 'the word retracted is not typed value quality';
+        $t->assert_false($test_name, $wrd_ret->is_type(phrase_type_shared::VALUE_QUALITY));
+
+        $t->subheader($ts . 'unique key');
+        $test_name = 'the word ISBN of the use case unique_keys.json is typed unique key';
+        $wrd = new word($t->usr1);
+        $wrd->load_by_name(word_names::ISBN, $msg);
+        $t->assert_true($test_name, $wrd->is_type(phrase_type_shared::UNIQUE_KEY));
+        // negative: a sample entry is an instance of a unique key, not the key itself
+        $test_name = 'the ISIN of the Mercedes-Benz Group share is not typed unique key';
+        $wrd = new word($t->usr1);
+        $wrd->load_by_name(word_names::ISIN_MERCEDES, $msg);
+        $t->assert_true($test_name, $wrd->id() != 0);
+        $t->assert_false($test_name, $wrd->is_type(phrase_type_shared::UNIQUE_KEY));
+
 
         $t->subheader($ts . 'load with a message that already carries an error');
         // regression test for sandbox_named::row_mapper_sandbox: a load must map the fields (here the

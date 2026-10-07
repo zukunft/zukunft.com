@@ -3395,6 +3395,28 @@ class sql_db
      * @param string $debug_txt a short description of this read shown at &debug=7 (DEBUG_LEVEL_DB_READ); empty means the read is not traced
      * @return array|false with one or all database records or false if something went wrong
      */
+    /**
+     * postgres returns a char(112) group id padded with spaces, but the compact group id has no
+     * fixed length (see docs/llm/group_id.md), so the padding is removed; a key never contains a
+     * space and mysql already removes the trailing spaces of a char field
+     *
+     * @param \PgSql\Result $exe_result the result of the query to get the field types
+     * @param array|false $sql_row one row of the result with the numeric and the named keys
+     * @return array|false the row without the padding of the char fields
+     */
+    private function pg_unpadded(\PgSql\Result $exe_result, array|false $sql_row): array|false
+    {
+        if ($sql_row !== false) {
+            for ($i = 0; $i < pg_num_fields($exe_result); $i++) {
+                if (pg_field_type($exe_result, $i) == sql::PG_TYPE_CHAR and $sql_row[$i] !== null) {
+                    $sql_row[$i] = rtrim($sql_row[$i]);
+                    $sql_row[pg_field_name($exe_result, $i)] = $sql_row[$i];
+                }
+            }
+        }
+        return $sql_row;
+    }
+
     private function fetch(
         string       $sql,
         user_message $usr_msg,
@@ -3422,13 +3444,13 @@ class sql_db
                         if ($fetch_all) {
                             if ($exe_result) {
                                 while ($sql_row = pg_fetch_array($exe_result)) {
-                                    $result[] = $sql_row;
+                                    $result[] = $this->pg_unpadded($exe_result, $sql_row);
                                 }
                             }
                         } else {
                             $sql_row = pg_fetch_array($exe_result);
                             if ($sql_row !== false) {
-                                $result = $sql_row;
+                                $result = $this->pg_unpadded($exe_result, $sql_row);
                             }
                         }
                     } catch (Exception $e) {
@@ -3541,12 +3563,12 @@ class sql_db
      * without using prepared for internal use only
      *
      * @param string $sql the sql statement to get the db rows
-     * @return array the database row or null
+     * @param user_message $msg gets the error if the read fails e.g. because the connection is broken
+     * @return array the database rows or an empty array if the read has failed
      */
-    function get_internal(string $sql): array
+    function get_internal(string $sql, user_message $msg): array
     {
-        $msg = new user_message(); // not reported: an internal db structure read, so a failure only goes to the log
-        return $this->fetch_all($sql, $msg);
+        return $this->fetch_all($sql, $msg) ?: [];
     }
 
     /**
@@ -3981,11 +4003,7 @@ class sql_db
                             } elseif ($par_type == sql_par_type::LIKE_KEY
                                 or $par_type == sql_par_type::LIKE_KEY_OR) {
                                 // the alpha_num key of a phrase must match the case (see sql_par_type::LIKE_KEY)
-                                if ($this->db_type == sql_db::POSTGRES) {
-                                    $this->where .= $id_fields[$used_fields] . ' ' . sql::LIKE_LOWER_CASE . ' ' . $this->par_name($i + 1);
-                                } else {
-                                    $this->where .= $id_fields[$used_fields] . ' ' . sql::LIKE_BINARY . ' ' . $this->par_name($i + 1);
-                                }
+                                $this->where .= $this->sql_creator()->key_match($id_fields[$used_fields], $this->par_name($i + 1));
                             } else {
                                 if ($par_type == sql_par_type::CONST) {
                                     $this->where .= $this->par_value($i + 1);
@@ -4747,7 +4765,7 @@ class sql_db
                     $msg->add_message_text($err_msg);
                 } else {
                     if (!$usr_tbl) {
-                        $db_id = pg_fetch_array($sql_result)[0];
+                        $db_id = $this->pg_unpadded($sql_result, pg_fetch_array($sql_result))[0];
                     }
                 }
             } else {
@@ -5113,7 +5131,7 @@ class sql_db
      * for testing only
      * @return array with the table names actually created in the database
      */
-    function get_tables(): array
+    function get_tables(user_message $msg): array
     {
         $result = [];
         if ($this->db_type == sql_db::POSTGRES) {
@@ -5121,7 +5139,7 @@ class sql_db
         } else {
             $sql = 'SELECT TABLE_NAME FROM INFORMATION_SCHEMA.COLUMNS;';
         }
-        $sql_result = $this->get_internal($sql);
+        $sql_result = $this->get_internal($sql, $msg);
         foreach ($sql_result as $row) {
             $result[] = $row[0];
         }
@@ -5132,7 +5150,7 @@ class sql_db
      * for testing only
      * @return array with the field names of one table actually used in the database
      */
-    function get_fields(string $tbl_name): array
+    function get_fields(string $tbl_name, user_message $msg): array
     {
         $result = [];
         if ($this->db_type == sql_db::POSTGRES) {
@@ -5142,7 +5160,7 @@ class sql_db
         } else {
             $sql = "SELECT TRUE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = '" . SQL_DB_NAME_MYSQL . "' AND TABLE_NAME = '" . $tbl_name . "';";
         }
-        $sql_result = $this->get_internal($sql);
+        $sql_result = $this->get_internal($sql, $msg);
         foreach ($sql_result as $row) {
             $result[] = $row[0];
         }
@@ -5158,16 +5176,21 @@ class sql_db
     function add_missing_prepared(sql_par_list $lst, Message $msg): bool
     {
         // get the SQL statements that are already prepared
-        $db_lst = $this->get_prepared();
+        $db_msg = new user_message(); // scoped, so that only a failed read skips the prepare; merged below
+        $db_lst = $this->get_prepared($db_msg);
+        $msg->merge($db_msg);
 
-        // get the SQL statements that have not yet been prepared
-        $lst_to_prepare = $lst->sql_functions_missing($db_lst);
-
-        if (!$lst_to_prepare->is_empty()) {
-            // create the missing sql functions
+        // without the list each prepare would fail as a follow-up error
+        if ($db_msg->is_ok()) {
+            // get the SQL statements that have not yet been prepared
+            $lst_to_prepare = $lst->sql_functions_missing($db_lst);
             foreach ($lst_to_prepare->lst as $qp) {
                 $this->exe_prepare($qp, $msg);
             }
+        } else {
+            $msg->add(msg_id::IMPORT_STEP_SKIPPED, [
+                msg_id::VAR_NAME => msg_id::PREPARE->value
+            ], true); // ok = true: inform, but do not suppress the steps after this one
         }
         return $msg->is_ok();
     }
@@ -5175,7 +5198,7 @@ class sql_db
     /**
      * @return array with the prepared SQL statements that are actually in the database
      */
-    function get_prepared(): array
+    function get_prepared(user_message $msg): array
     {
         $names = [];
         if ($this->db_type == sql_db::POSTGRES) {
@@ -5183,7 +5206,7 @@ class sql_db
         } else {
             $sql = $this->resource_file('db/select/mysql/prepared.sql');
         }
-        $db_lst = $this->get_internal($sql);
+        $db_lst = $this->get_internal($sql, $msg);
         foreach ($db_lst as $row) {
             $names[] = $row[0];
         }
@@ -5194,7 +5217,7 @@ class sql_db
     /**
      * @return array with the functions that are actually in the database
      */
-    function get_functions(): array
+    function get_functions(user_message $msg): array
     {
         $names = [];
         // TODO move db selection to the top e.g. db/postgres/setup instead of db/setup/postgres this way the number of if can be reduced
@@ -5203,7 +5226,7 @@ class sql_db
         } else {
             $sql = $this->resource_file('db/select/mysql/routines.sql');
         }
-        $db_lst = $this->get_internal($sql);
+        $db_lst = $this->get_internal($sql, $msg);
         foreach ($db_lst as $row) {
             $names[] = $row[0];
         }

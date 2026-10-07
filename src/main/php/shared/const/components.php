@@ -54,7 +54,7 @@ class components
     // component default page, because it has a description and a type and is used by a view;
     // the id is the import position, so re-baseline it from unit/component/list.csv after a reset
     const string SOLUTION_PRIO_TITLE_NAME = 'Title solution priority';
-    const int SOLUTION_PRIO_TITLE_ID = 422;
+    const int SOLUTION_PRIO_TITLE_ID = 424;
 
     // text components to test the side or below position types
     // with ids that are far above the component ids used in the database
@@ -80,7 +80,7 @@ class components
     const string FORM_NAME = 'form_field_name';
     const string FORM_NAME_NAME = 'system form field name';
     const string FORM_NAME_COM = 'the name field in a form';
-    const int FORM_NAME_ID = 130;
+    const int FORM_NAME_ID = 254;
     const string FORM_DESCRIPTION = 'form_field_description';
     const string FORM_DESCRIPTION_NAME = 'system form field description';
     const string FORM_DESCRIPTION_COM = 'the description field in a form';
@@ -96,7 +96,7 @@ class components
     const string FORM_PLURAL = 'form_field_plural';
     const string FORM_PLURAL_NAME = 'system form field plural';
     const string FORM_PLURAL_COM = 'the plural language form field in a form (to be move to languages forms)';
-    const int FORM_PLURAL_ID = 269;
+    const int FORM_PLURAL_ID = 256;
 
     // triple only fields
     const string FORM_WEIGHT = 'form_field_weight';

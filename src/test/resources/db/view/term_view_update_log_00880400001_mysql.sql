@@ -49,7 +49,7 @@ SELECT term_view_update_log_00880400001
         2,
         757,
         'Mathematical constant',
-        161,
+        185,
         'Start view',
         1,
         1,

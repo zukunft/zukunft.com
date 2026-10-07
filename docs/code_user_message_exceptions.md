@@ -9,7 +9,7 @@ that needs a comment behind the creation on the same line explaining why a local
 message is needed - typically a buffer that is merged back or a message of
 a different user; only a block of sibling buffers shares one comment above it
 
-219 creations below the entry points: 197 explained, 20 parameter defaults and 2 still unexplained
+220 creations below the entry points: 198 explained, 20 parameter defaults and 2 still unexplained
 and 0 nullable message parameters and 4 messages that never reach the caller
 
 ## parameter defaults
@@ -45,8 +45,8 @@ a message that is filled and then goes out of scope loses every error it collect
 
 ```
 frontend: /component/execute/system_form.php:1042 - $msg = new user_message();
-frontend: /value/value.php:570 - $msg = new user_message(); // a local buffer, the tooltip lookup has no user relevant message
-frontend: /value/value.php:627 - $warning = new user_message();
+frontend: /value/value.php:580 - $msg = new user_message(); // a local buffer, the tooltip lookup has no user relevant message
+frontend: /value/value.php:637 - $warning = new user_message();
 main backend: /formula/expression.php:1139 - $msg = new user_message();
 ```
 

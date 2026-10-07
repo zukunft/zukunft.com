@@ -1362,7 +1362,6 @@ class result_list extends sandbox_value_list
                 if ($res->grp()->id() == 0) {
                     $res->set_grp($res->grp()->phrase_list()->get_grp_id(false));
                 }
-                $this->drop_unsupported_src_grp($res);
                 $res->save($msg);
                 $i++;
                 $imp->display_progress($i, $est_per_sec, $res->dsp_id());
@@ -1370,36 +1369,6 @@ class result_list extends sandbox_value_list
             $imp->step_end($i);
         }
         return $msg->is_ok();
-    }
-
-    /**
-     * replace a source group that result::save cannot write by an empty group
-     *
-     * result::save writes source_group_id as a bigint column on results_prime and
-     * results_main; that only works when the source group is "prime" (≤4 phrases, encoded
-     * as a 64-bit int). A 5+ phrase source group encodes as an alpha-num string and would
-     * need a separate group-save step (insert a row in groups, then use its bigint id) —
-     * that step does not yet exist in the import path.
-     *
-     * the number, its phrases and the formula that has calculated it are what the import
-     * states, so they are saved without the source group; dropping the complete result
-     * instead would silently lose the number that the import file is about
-     *
-     * TODO Prio 0 save non-prime source groups via a group save, then keep the source group
-     *
-     * @param result $res the imported result whose source group may not be writable
-     * @return void
-     */
-    private function drop_unsupported_src_grp(result $res): void
-    {
-        if (!$res->src_grp_is_storable()) {
-            log_warning(
-                'the source group of result ' . $res->dsp_id()
-                . ' is not saved because it has more than 4 phrases'
-                . ' and saving non-prime source groups is not yet supported'
-            );
-            $res->set_src_grp(new group($res->get_user()));
-        }
     }
 
     /**

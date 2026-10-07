@@ -54,7 +54,7 @@ SELECT triple_update_log_000022400000000100
         '',
         162,
         'math constant',
-        17,
+        20,
         null,
         null,
         168,

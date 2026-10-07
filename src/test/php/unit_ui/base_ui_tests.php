@@ -77,6 +77,7 @@ use Zukunft\ZukunftCom\main\php\web\component\execute\system_page;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_base;
 use Zukunft\ZukunftCom\main\php\web\const\icons;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\html\rest_call;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
 use Zukunft\ZukunftCom\main\php\web\result\result as result_ui;
@@ -192,6 +193,21 @@ class base_ui_tests
             url_var::MASK => views::WORD_ID, url_var::ID => 2,
             url_var::STEP => url_var::STEP_BASE, url_var::SESSION_TOKEN => 'abc'];
         $t->assert($test_name, $ui->url_cache_key($url_array), 'm=' . views::WORD_ID . '&id=2');
+
+        // the back part only names the page to return to, so a page is cached once for every page
+        // that links to it, e.g. the result page called from the start page with the main columns
+        $test_name = 'the back part is ignored for the cache key';
+        $url_array = [
+            url_var::MASK => views::WORD_ID, url_var::ID => 2,
+            url_var::BACK . url_var::MASK => views::START_ID,
+            url_var::BACK . url_var::DISPLAY_LIST_COLUMNS => 2];
+        $t->assert($test_name, $ui->url_cache_key($url_array), 'm=' . views::WORD_ID . '&id=2');
+        // negative: a back part does not make a change request cacheable
+        $test_name = '... but a change mask request with a back part is still not cached';
+        $url_array = [
+            url_var::MASK => views::WORD_ADD_DETAIL_ID, url_var::ID => 2,
+            url_var::BACK . url_var::MASK => views::START_ID];
+        $t->assert($test_name, $ui->url_cache_key($url_array), '');
 
         // a non-zero process step is an action step, so the request is rendered live and not cached
         $test_name = 'a non-zero step request is not cached';
@@ -935,6 +951,14 @@ class base_ui_tests
             . '&' . url_var::BACK . url_var::ID . '=' . rawurlencode($url_key);
         $url_array = $url_map->url_to_standard($lib->url_array($url), $msg);
         $t->assert($test_name, $url_array[url_var::BACK . url_var::ID], $url_key);
+        // the internal api call names a group by its short form too, so that the api url of a
+        // value or result page is the same short id as the page url (see rest_call::id_data)
+        $test_name = 'an api call names the group in its short form';
+        $t->assert($test_name, new rest_call()->id_data($grp_key)[url_var::ID], $url_key);
+        // negative: an integer id e.g. of a word or of a prime group is not changed
+        $test_name = '... but leaves an integer id as it is';
+        $t->assert($test_name, (string)new rest_call()->id_data(word_names::MATH_ID)[url_var::ID],
+            (string)word_names::MATH_ID);
         // negative: the database key of an old link and an integer id are still accepted
         $test_name = 'the database key of an old link is still accepted';
         $url = 'http://localhost' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::VALUE_DEFAULT_ID

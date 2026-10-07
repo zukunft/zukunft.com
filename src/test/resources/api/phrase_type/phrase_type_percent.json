@@ -1,0 +1,6 @@
+{
+    "id": 9,
+    "name": "format percent",
+    "code_id": "percent",
+    "description": "terms that force the result to be formatted in percent"
+}

@@ -42,7 +42,7 @@ SELECT value_insert_log_115111
         1::smallint,
         283::smallint,
         3.1415926535898::numeric,
-        '1FajJ2-.4LYK3-..8jId-...I1A-....Yz-..../.-.....Z-.....9-...../+.....A+.....a+....3s+...1Ao+../vLC+.//ZSB+.ZSahL+'::text,
+        '1FajJ2-4LYK3-8jId-I1A-Yz-/.-Z-9-/+A+a+3s+1Ao+/vLC+//ZSB+ZSahL+'::text,
         284::smallint,
         'The International System of Units'::text,
         1::bigint,

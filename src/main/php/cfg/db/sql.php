@@ -124,8 +124,11 @@ class sql
     // lower case like the pattern search of the existing queries
     const string LIKE_LOWER_CASE = 'like';
     const string LIKE_NO_UP_CASE = 'ilike';
-    // the case-sensitive pattern search of mysql, because the default collation ignores the case
-    const string LIKE_BINARY = 'LIKE BINARY';
+    // the postgres name of the fixed length char type, which postgres returns padded with spaces
+    const string PG_TYPE_CHAR = 'bpchar';
+    // the case-sensitive regular expression match of postgres and mysql (see sql_creator::key_match)
+    const string REGEXP_PG = '~';
+    const string REGEXP_LIKE = 'REGEXP_LIKE';
     const string COALESCE = 'COALESCE';
 
     // to separate one SQL statement from the next

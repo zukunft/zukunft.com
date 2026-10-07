@@ -25,5 +25,5 @@ SELECT value_big_delete_log_user
         3::smallint,
         295::smallint,
         3.1415926535898::numeric,
-        '1FajJ2-.4LYK3-..8jId-...I1A-....Yz-..../.-.....Z-.....9-...../+.....A+.....a+....3s+...1Ao+../vLC+.//ZSB+.ZSahL+.uraWl+'::text,
+        '1FajJ2-4LYK3-8jId-I1A-Yz-/.-Z-9-/+A+a+3s+1Ao+/vLC+//ZSB+ZSahL+uraWl+'::text,
         null::bigint);
