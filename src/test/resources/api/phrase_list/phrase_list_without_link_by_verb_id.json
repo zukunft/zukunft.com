@@ -7,13 +7,13 @@
         "class": "word"
     },
     {
-        "id": 1440,
+        "id": 1450,
         "name": "biased information solution",
         "description": "a measure that reduces the loss of decisions based on biased information, ranked here by its share of the avoided loss",
         "class": "triple"
     },
     {
-        "id": 1513,
+        "id": 1523,
         "name": "black-box AI solution",
         "description": "a measure that reduces the loss of decisions based on black-box AI, ranked here by its share of the avoided loss",
         "class": "triple"
@@ -74,6 +74,12 @@
         "class": "word"
     },
     {
+        "id": 1953,
+        "name": "country code",
+        "description": "the two-letter ISO 3166-1 alpha-2 code of a country, used as the prefix of its postal codes",
+        "class": "triple"
+    },
+    {
         "id": 396,
         "name": "currency",
         "description": "A currency is a system of money in common use within a specific environment over time, especially for people in a nation state. It is typically issued and controlled by a central bank or monetary authority and serves as a medium of exchange, unit of account, and store of value.",
@@ -81,7 +87,7 @@
         "class": "word"
     },
     {
-        "id": 1476,
+        "id": 1733,
         "name": "EAN",
         "description": "European Article Number: the 13 digit barcode number of a retail product, today named International Article Number (IAN)",
         "type_id": 23,
@@ -100,14 +106,14 @@
         "class": "triple"
     },
     {
-        "id": 1474,
+        "id": 1731,
         "name": "ISBN",
         "description": "International Standard Book Number: identifies one edition of a book; since 2007 it has 13 digits and equals the EAN of the book with the prefix 978 or 979",
         "type_id": 23,
         "class": "word"
     },
     {
-        "id": 1475,
+        "id": 1732,
         "name": "ISIN",
         "description": "International Securities Identification Number (ISO 6166): identifies one security with 12 characters, the country code, the nine character national number and a check digit",
         "type_id": 23,
@@ -154,13 +160,19 @@
         "class": "triple"
     },
     {
-        "id": 1170,
+        "id": 1180,
         "name": "populism solution",
         "description": "a measure that reduces the GDP decline of populism, ranked here by its share of the avoided loss",
         "class": "triple"
     },
     {
-        "id": 1274,
+        "id": 1952,
+        "name": "postal code",
+        "description": "the number of a post office area that is part of a postal address; the number is qualified as postal code, e.g. 1950 (postal code), because the same number can also be a year, and each postal code is the triple of the qualified number in its country, named with the country code as prefix, e.g. CH-1950",
+        "class": "triple"
+    },
+    {
+        "id": 1284,
         "name": "poverty solution",
         "description": "a measure that reduces the loss of poverty, ranked here by its share of the avoided loss",
         "class": "triple"
@@ -230,7 +242,7 @@
         "class": "word"
     },
     {
-        "id": 1351,
+        "id": 1361,
         "name": "wealth concentration solution",
         "description": "a measure that reduces the loss of wealth concentration, ranked here by its share of the avoided loss",
         "class": "triple"

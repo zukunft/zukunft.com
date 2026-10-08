@@ -148,6 +148,21 @@ class signup_url_tests extends url_test_base
     }
 
     /**
+     * the fill step of a write run signs up the new user, whose id the database assigns only now,
+     * so the snapshot of this step must already replace this id with the fixed test signup id
+     *
+     * @param string $step the user reaction action const of the step e.g. workflows::FILL
+     */
+    protected function after_action(string $step): void
+    {
+        if ($this->req->do_it and $step == workflows::FILL) {
+            $new_usr = new user();
+            $new_usr->load_by_name(users::TEST_SIGNUP_NAME, new user_message());
+            $this->wf_id = $new_usr->id();
+        }
+    }
+
+    /**
      * check that the signup has written the new user with the reserved name profile and the key of the
      * signup mail, and replace the random key of the mail with the known test key for the next steps
      *

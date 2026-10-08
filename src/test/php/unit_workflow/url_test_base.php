@@ -264,6 +264,7 @@ class url_test_base
                 $this->req->usr_backend, $this->req->msg,
                 $this->req->dto, $this->req->do_it);
         }
+        $this->after_action($step);
         $sys->times->switch(system_time_type::URL_TO_HTML);
         // render in test mode so that the snapshot is reproducible without backend calls;
         // the start view, which every back step reaches, is the exception: it shows the global
@@ -275,6 +276,17 @@ class url_test_base
         $sys->times->switch(system_time_type::DEFAULT);
         $this->assert_html($this->step_path, $result, $next_url);
         return $result;
+    }
+
+    /**
+     * called after the action of a step and before its html is rendered and snapshot, so that a
+     * workflow can learn the id of an object that the action has just added (e.g. the user of a
+     * signup) and normalize it already in the snapshot of this step
+     *
+     * @param string $step the user reaction action const of the step e.g. workflows::FILL
+     */
+    protected function after_action(string $step): void
+    {
     }
 
     /**
@@ -427,10 +439,13 @@ class url_test_base
             // both ids must be known: without a db id there is nothing to replace and without
             // a fixed id a replacement would erase a real id with a zero
             if ($db_id > 0 and $fixed_id > 0 and $db_id != $fixed_id) {
-                $content = str_replace(
-                    [url_var::EQ . $db_id, '"' . $db_id . '"'],
-                    [url_var::EQ . $fixed_id, '"' . $fixed_id . '"'],
+                // the url form only up to a word boundary, so that e.g. the id 15 does not
+                // corrupt the unrelated id=159 of another link on the same page
+                $content = preg_replace(
+                    '/' . url_var::EQ . $db_id . '\b/',
+                    url_var::EQ . $fixed_id,
                     $content);
+                $content = str_replace('"' . $db_id . '"', '"' . $fixed_id . '"', $content);
                 // ... and the id in the plain text of a user message e.g. 'the triple with id 809
                 // cannot be found' (msg_id::OBJECT_NOT_FOUND); the word boundary prevents that
                 // e.g. the id 809 corrupts an unrelated 8091 on the page
