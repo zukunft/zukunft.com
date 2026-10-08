@@ -28727,11 +28727,11 @@
                 "class": "triple"
             },
             {
-                "id": 1654,
+                "id": 1935,
                 "name": "9 780674 000780 is symbol for A Theory of Justice, revised edition",
-                "from_id": 1515,
+                "from_id": 1734,
                 "from_phrase": {
-                    "id": 1515,
+                    "id": 1734,
                     "name": "9 780674 000780",
                     "description": null,
                     "type_id": 1,
@@ -28751,9 +28751,9 @@
                     "impact": null,
                     "id": 18
                 },
-                "to_id": 1520,
+                "to_id": 1739,
                 "to_phrase": {
-                    "id": 1520,
+                    "id": 1739,
                     "name": "A Theory of Justice, revised edition",
                     "description": "the revised edition of 1999 of the book by John Rawls, first published by the Belknap Press of Harvard University Press in 1971",
                     "type_id": 1,
@@ -28764,11 +28764,11 @@
                 "class": "triple"
             },
             {
-                "id": 1652,
+                "id": 1933,
                 "name": "978-0-674-00078-0 is symbol for A Theory of Justice, revised edition",
-                "from_id": 1514,
+                "from_id": 1733,
                 "from_phrase": {
-                    "id": 1514,
+                    "id": 1733,
                     "name": "978-0-674-00078-0",
                     "description": null,
                     "type_id": 1,
@@ -28788,9 +28788,9 @@
                     "impact": null,
                     "id": 18
                 },
-                "to_id": 1520,
+                "to_id": 1739,
                 "to_phrase": {
-                    "id": 1520,
+                    "id": 1739,
                     "name": "A Theory of Justice, revised edition",
                     "description": "the revised edition of 1999 of the book by John Rawls, first published by the Belknap Press of Harvard University Press in 1971",
                     "type_id": 1,
@@ -28801,11 +28801,11 @@
                 "class": "triple"
             },
             {
-                "id": 1648,
+                "id": 1929,
                 "name": "978-0-679-73373-7 is symbol for The Myth of Sisyphus",
-                "from_id": 1512,
+                "from_id": 1731,
                 "from_phrase": {
-                    "id": 1512,
+                    "id": 1731,
                     "name": "978-0-679-73373-7",
                     "description": null,
                     "type_id": 1,
@@ -28825,9 +28825,9 @@
                     "impact": null,
                     "id": 18
                 },
-                "to_id": 1518,
+                "to_id": 1737,
                 "to_phrase": {
-                    "id": 1518,
+                    "id": 1737,
                     "name": "The Myth of Sisyphus",
                     "description": "the essay by Albert Camus, first published in French in 1942, here in its English translation",
                     "type_id": 1,
@@ -28838,11 +28838,11 @@
                 "class": "triple"
             },
             {
-                "id": 1650,
+                "id": 1931,
                 "name": "978-0-8021-3098-3 is symbol for Rhinoceros and Other Plays",
-                "from_id": 1513,
+                "from_id": 1732,
                 "from_phrase": {
-                    "id": 1513,
+                    "id": 1732,
                     "name": "978-0-8021-3098-3",
                     "description": null,
                     "type_id": 1,
@@ -28862,9 +28862,9 @@
                     "impact": null,
                     "id": 18
                 },
-                "to_id": 1519,
+                "to_id": 1738,
                 "to_phrase": {
-                    "id": 1519,
+                    "id": 1738,
                     "name": "Rhinoceros and Other Plays",
                     "description": "the book of Grove Press with the play Rhinoceros by Eug\u00e8ne Ionesco in the English translation of Derek Prouse",
                     "type_id": 1,
@@ -29118,45 +29118,45 @@
                 "class": "triple"
             },
             {
-                "id": 1515,
+                "id": 1734,
                 "name": "9 780674 000780",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 1520,
+                "id": 1739,
                 "name": "A Theory of Justice, revised edition",
                 "description": "the revised edition of 1999 of the book by John Rawls, first published by the Belknap Press of Harvard University Press in 1971",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 1514,
+                "id": 1733,
                 "name": "978-0-674-00078-0",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 1512,
+                "id": 1731,
                 "name": "978-0-679-73373-7",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 1518,
+                "id": 1737,
                 "name": "The Myth of Sisyphus",
                 "description": "the essay by Albert Camus, first published in French in 1942, here in its English translation",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 1513,
+                "id": 1732,
                 "name": "978-0-8021-3098-3",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 1519,
+                "id": 1738,
                 "name": "Rhinoceros and Other Plays",
                 "description": "the book of Grove Press with the play Rhinoceros by Eug\u00e8ne Ionesco in the English translation of Derek Prouse",
                 "type_id": 1,
@@ -29676,11 +29676,11 @@
                 "class": "triple"
             },
             {
-                "id": 1658,
+                "id": 1939,
                 "name": "CH0038863350 is symbol for Nestl\u00e9 registered share",
-                "from_id": 1517,
+                "from_id": 1736,
                 "from_phrase": {
-                    "id": 1517,
+                    "id": 1736,
                     "name": "CH0038863350",
                     "description": null,
                     "type_id": 1,
@@ -29700,9 +29700,9 @@
                     "impact": null,
                     "id": 18
                 },
-                "to_id": 1522,
+                "to_id": 1741,
                 "to_phrase": {
-                    "id": 1522,
+                    "id": 1741,
                     "name": "Nestl\u00e9 registered share",
                     "description": "the registered share of Nestl\u00e9 S.A.",
                     "type_id": 1,
@@ -30088,13 +30088,13 @@
                 "class": "word"
             },
             {
-                "id": 1517,
+                "id": 1736,
                 "name": "CH0038863350",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 1522,
+                "id": 1741,
                 "name": "Nestl\u00e9 registered share",
                 "description": "the registered share of Nestl\u00e9 S.A.",
                 "type_id": 1,
@@ -30198,11 +30198,11 @@
                 "class": "triple"
             },
             {
-                "id": 1656,
+                "id": 1937,
                 "name": "DE0007100000 is symbol for Mercedes-Benz Group share",
-                "from_id": 1516,
+                "from_id": 1735,
                 "from_phrase": {
-                    "id": 1516,
+                    "id": 1735,
                     "name": "DE0007100000",
                     "description": null,
                     "type_id": 1,
@@ -30222,9 +30222,9 @@
                     "impact": null,
                     "id": 18
                 },
-                "to_id": 1521,
+                "to_id": 1740,
                 "to_phrase": {
-                    "id": 1521,
+                    "id": 1740,
                     "name": "Mercedes-Benz Group share",
                     "description": "the registered share of Mercedes-Benz Group AG",
                     "type_id": 1,
@@ -30923,13 +30923,13 @@
                 "class": "triple"
             },
             {
-                "id": 1516,
+                "id": 1735,
                 "name": "DE0007100000",
                 "type_id": 1,
                 "class": "word"
             },
             {
-                "id": 1521,
+                "id": 1740,
                 "name": "Mercedes-Benz Group share",
                 "description": "the registered share of Mercedes-Benz Group AG",
                 "type_id": 1,

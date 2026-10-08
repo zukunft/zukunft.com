@@ -1,0 +1,460 @@
+{
+  "version": "0.0.3",
+  "data_version": "0.0.1",
+  "time": "2026-10-08 12:00:00",
+  "user": "timon",
+  "selection": [
+    "disinformation reasons that cause costs"
+  ],
+  "description": "The most relevant reasons why disinformation causes costs, each linked to disinformation with 'can cause' and quantified by the studies that report it for the world and per country: the vaccine hesitancy with the drop of the COVID-19 vaccination intent in a randomised trial (Loomba et al. 2021), the people in Canada and the United States who did not get vaccinated because of misinformation (Council of Canadian Academies 2023, Johns Hopkins Center for Health Security 2021) and the fall of the MMR vaccination coverage in the United Kingdom after the retracted Wakefield paper (Leask, Booy & McIntyre 2010); the COVID-19 deaths, hospitalizations and ICU patients in Canada (Council of Canadian Academies 2023); the social cost of the COVID-19 vaccine misinformation in the United States (Bruns et al. 2021) and of the fake news worldwide (CHEQ & Cavazos 2019); the stock market loss, e.g. of the false AP tweet of 2013 (Reuters); the election interference with the concentrated exposure to the Russian influence campaign and to untrustworthy websites in the US election of 2016 (Eady et al. 2023, Guess, Nyhan & Reifler 2020); and the virality of false news (Vosoughi, Roy & Aral 2018). The share of the public discourse, the annual GDP loss of disinformation and its solution are stated in problem_disinformation.json instead, because they are the row of the global problem ranking of the start page. Most studies measure misinformation, i.e. false information whatever the intent, and do not separate the deliberate disinformation; their numbers are linked to disinformation because it is the problem phrase of the ranking, and the source description says what was measured. The global fake news cost of CHEQ & Cavazos is a report commissioned by a commercial ad-security vendor, not peer reviewed and summed from heterogeneous items, so it is a weak upper indication only. The measles outbreaks in England and Wales and in Samoa are added as the consequence of a low vaccination coverage; these values are not attributed to disinformation by their sources, because the coverage also depends on access and trust, so they do not carry a '<reason> due to disinformation' triple. Every number is taken from the named source as reported; a country that a study does not report is left out and never estimated. A share is stored as the decimal ratio, a loss as a positive number and a change with its sign. Each study has its own sample and metric, so numbers of different studies are not comparable without reading the source description. Every amount of money is stated in euro: the US dollar figure of the source is converted with the ECB 2023 annual average of 1.0813 USD per EUR (the value of GDP.json) whatever the price base year of the source, and the source figure is kept in the description of the value; the Canadian dollar hospital cost of the Council of Canadian Academies is kept in the description only, because the source states no share it could be stored as. A value of a reason carries the triple '<reason> due to disinformation' and not the word 'disinformation' itself, because a value that names a global problem directly is a row of the global problem ranking of the start page, where only the potential loss and the solution of a problem belong.",
+  "words": [
+    {
+      "name": "disinformation"
+    },
+    {
+      "name": "vaccination"
+    },
+    {
+      "name": "hesitancy",
+      "description": "the delay in acceptance or the refusal of something although it is available, e.g. of a vaccination"
+    },
+    {
+      "name": "intent"
+    },
+    {
+      "name": "change"
+    },
+    {
+      "name": "share"
+    },
+    {
+      "name": "coverage"
+    },
+    {
+      "name": "measles",
+      "description": "a highly contagious viral disease that can cause pneumonia, brain swelling and death, mainly of young children; it is prevented by the measles, mumps and rubella (MMR) vaccine"
+    },
+    {
+      "name": "case",
+      "description": "a person diagnosed with a disease"
+    },
+    {
+      "name": "COVID-19"
+    },
+    {
+      "name": "deaths"
+    },
+    {
+      "name": "hospitalization",
+      "description": "the admission of a patient to a hospital"
+    },
+    {
+      "name": "patient"
+    },
+    {
+      "name": "ICU",
+      "description": "intensive care unit: the department of a hospital for the patients who need constant care and life support"
+    },
+    {
+      "name": "cost"
+    },
+    {
+      "name": "social"
+    },
+    {
+      "name": "health"
+    },
+    {
+      "name": "stock"
+    },
+    {
+      "name": "market"
+    },
+    {
+      "name": "loss"
+    },
+    {
+      "name": "S&P 500",
+      "description": "the Standard & Poor's 500 stock market index of 500 of the largest companies listed in the United States"
+    },
+    {
+      "name": "interference"
+    },
+    {
+      "name": "election"
+    },
+    {
+      "name": "exposure"
+    },
+    {
+      "name": "news"
+    },
+    {
+      "name": "false"
+    },
+    {
+      "name": "retweet",
+      "description": "the repost of a message of another user on Twitter, now X, to the own followers"
+    },
+    {
+      "name": "probability"
+    },
+    {
+      "name": "speed"
+    },
+    {
+      "name": "factor"
+    },
+    {
+      "name": "virality"
+    },
+    {
+      "name": "person"
+    },
+    {
+      "name": "EUR"
+    },
+    {
+      "name": "percent"
+    },
+    {
+      "name": "million"
+    },
+    {
+      "name": "billion"
+    },
+    {
+      "name": "annual"
+    },
+    {
+      "name": "day"
+    },
+    {
+      "name": "low"
+    },
+    {
+      "name": "high"
+    },
+    {
+      "name": "world"
+    },
+    {
+      "name": "United States"
+    },
+    {
+      "name": "United Kingdom"
+    },
+    {
+      "name": "Canada"
+    },
+    {
+      "name": "Samoa"
+    },
+    {
+      "name": "England",
+      "description": "the largest country of the United Kingdom",
+      "refs": [
+        {
+          "name": "England",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q21",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Wales",
+      "description": "a country of the United Kingdom west of England",
+      "refs": [
+        {
+          "name": "Wales",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q25",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "1997",
+      "type": "time"
+    },
+    {
+      "name": "1998",
+      "type": "time"
+    },
+    {
+      "name": "2003",
+      "type": "time"
+    },
+    {
+      "name": "2004",
+      "type": "time"
+    },
+    {
+      "name": "2009",
+      "type": "time"
+    },
+    {
+      "name": "2013"
+    },
+    {
+      "name": "2016"
+    },
+    {
+      "name": "2019"
+    },
+    {
+      "name": "2020"
+    },
+    {
+      "name": "2021"
+    }
+  ],
+  "triples": [
+    {
+      "name": "vaccine hesitancy",
+      "from": "hesitancy",
+      "verb": "of",
+      "to": "vaccination",
+      "description": "the delay in acceptance or the refusal of a vaccination although it is available"
+    },
+    {
+      "name": "vaccination intent",
+      "from": "intent",
+      "verb": "of",
+      "to": "vaccination"
+    },
+    {
+      "name": "vaccination intent change",
+      "from": "change",
+      "verb": "of",
+      "to": "vaccination intent"
+    },
+    {
+      "name": "measles vaccination",
+      "from": "vaccination",
+      "verb": "kind of",
+      "to": "measles"
+    },
+    {
+      "name": "measles vaccination coverage",
+      "from": "coverage",
+      "verb": "of",
+      "to": "measles vaccination",
+      "description": "the share of the children who got the measles vaccine, e.g. the MMR vaccine against measles, mumps and rubella"
+    },
+    {
+      "name": "measles case",
+      "from": "case",
+      "verb": "of",
+      "to": "measles"
+    },
+    {
+      "name": "COVID-19 deaths",
+      "from": "deaths",
+      "verb": "of",
+      "to": "COVID-19"
+    },
+    {
+      "name": "ICU patient",
+      "from": "patient",
+      "verb": "of",
+      "to": "ICU"
+    },
+    {
+      "name": "social cost",
+      "from": "cost",
+      "verb": "kind of",
+      "to": "social"
+    },
+    {
+      "name": "health cost",
+      "from": "cost",
+      "verb": "of",
+      "to": "health"
+    },
+    {
+      "name": "stock market",
+      "from": "market",
+      "verb": "of",
+      "to": "stock"
+    },
+    {
+      "name": "stock market loss",
+      "from": "loss",
+      "verb": "of",
+      "to": "stock market",
+      "description": "the drop of the market value of the listed companies"
+    },
+    {
+      "name": "election interference",
+      "from": "interference",
+      "verb": "in",
+      "to": "election",
+      "description": "the attempt of a foreign or domestic actor to influence the voters of an election with false or misleading content"
+    },
+    {
+      "name": "false news",
+      "from": "news",
+      "verb": "kind of",
+      "to": "false"
+    },
+    {
+      "from": "England",
+      "verb": "and",
+      "to": "Wales"
+    },
+    {
+      "name": "1997-1998",
+      "from": "1997",
+      "verb": "to",
+      "to": "1998"
+    },
+    {
+      "name": "2003-2004",
+      "from": "2003",
+      "verb": "to",
+      "to": "2004"
+    },
+    {
+      "name": "2019-2020",
+      "from": "2019",
+      "verb": "to",
+      "to": "2020"
+    },
+    {
+      "name": "vaccine hesitancy due to disinformation",
+      "from": "disinformation",
+      "verb": "can cause",
+      "to": "vaccine hesitancy",
+      "description": "false claims about the safety and the need of a vaccine lower the share of the people who get vaccinated"
+    },
+    {
+      "name": "COVID-19 deaths due to disinformation",
+      "from": "disinformation",
+      "verb": "can cause",
+      "to": "COVID-19 deaths"
+    },
+    {
+      "name": "health cost due to disinformation",
+      "from": "disinformation",
+      "verb": "can cause",
+      "to": "health cost"
+    },
+    {
+      "name": "social cost due to disinformation",
+      "from": "disinformation",
+      "verb": "can cause",
+      "to": "social cost",
+      "description": "the cost of disinformation for the whole society, the summary of the cost reasons that a study adds up"
+    },
+    {
+      "name": "stock market loss due to disinformation",
+      "from": "disinformation",
+      "verb": "can cause",
+      "to": "stock market loss"
+    },
+    {
+      "name": "election interference due to disinformation",
+      "from": "disinformation",
+      "verb": "can cause",
+      "to": "election interference"
+    },
+    {
+      "name": "virality due to disinformation",
+      "from": "disinformation",
+      "verb": "can cause",
+      "to": "virality",
+      "description": "false news is more novel than the truth and is therefore shared more often and faster, so a correction rarely reaches all people who saw the falsehood"
+    }
+  ],
+  "sources": [
+    {
+      "name": "Loomba et al. (2021)",
+      "description": "Loomba, S., de Figueiredo, A., Piatek, S. J., de Graaf, K., Larson, H. J. (2021): Measuring the impact of COVID-19 vaccine misinformation on vaccination intent in the UK and USA. Nature Human Behaviour 5, 337-348. Randomised controlled trial of September 2020: relative to factual information, recent online misinformation induced a decline of the intent to vaccinate of 6.2 percentage points (95th percentile interval 3.9 to 8.5) in the UK and 6.4 percentage points (4.0 to 8.8) in the USA among those who stated that they would definitely accept a vaccine.",
+      "doi": "10.1038/s41562-021-01056-1"
+    },
+    {
+      "name": "Bruns et al. (2021) COVID-19 vaccine misinformation cost",
+      "description": "Bruns, R., Hosangadi, D., Trotochaud, M., Sell, T. K. (2021): COVID-19 Vaccine Misinformation and Disinformation Costs an Estimated $50 to $300 Million Each Day. Johns Hopkins Center for Health Security, October 2021. The total voluntary nonvaccination has caused at least USD 1 billion of harm each day in the United States since May 2021 (hospitalizations and the valuation of lives lost and long-term morbidity after the HHS regulatory impact method); misinformation and disinformation cause an assumed 5 to 30 percent of the voluntary nonvaccination, so between 2 and 12 million of the 43 million unvaccinated US adults and between USD 50 and 300 million of harm each day; a conservative preliminary estimate, not peer reviewed.",
+      "url": "https://centerforhealthsecurity.org/sites/default/files/2023-02/20211020-misinformation-disinformation-cost.pdf",
+      "type": "pdf"
+    },
+    {
+      "name": "CCA (2023) Fault Lines",
+      "description": "Council of Canadian Academies, Expert Panel on the Socioeconomic Impacts of Science and Health Misinformation (2023): Fault Lines. Original modelling: between March and November 2021 misinformation contributed to the vaccine hesitancy of an estimated 2.35 million people in Canada; if those who believed COVID-19 to be a hoax or exaggerated had not delayed or refused the vaccination, there could have been 198'000 fewer cases, 13'000 fewer hospitalizations, 3'500 fewer ICU patients, 2'800 fewer deaths and CAD 299 million saved in hospital costs by the end of November 2021; conservative estimates without physician fees, outpatient treatment, long COVID and lost wages.",
+      "url": "https://www.cca-reports.ca/wp-content/uploads/2023/01/OnePager-Fault-Lines-EN.pdf",
+      "type": "pdf"
+    },
+    {
+      "name": "Leask, Booy & McIntyre (2010)",
+      "description": "Leask, J., Booy, R., McIntyre, P. B. (2010): MMR, Wakefield and The Lancet: what can we learn? Medical Journal of Australia 193(1), 5-7. The theory of the retracted Wakefield et al. 1998 paper had a significant impact on the MMR vaccination rates in the UK: the rate fell from 91 percent in 1997-98 to 80 percent in 2003-04 while the other childhood vaccines held steady, and recovered to 85 percent by 2008-09; measles cases rose from 2002, with 1144 laboratory-confirmed cases in England and Wales in 2009.",
+      "doi": "10.5694/j.1326-5377.2010.tb03730.x"
+    },
+    {
+      "name": "Samoa Ministry of Health measles update January 2020",
+      "description": "Government of Samoa, Ministry of Health, Health Emergency Operation Centre update of 20 January 2020 on the measles outbreak declared in October 2019: a cumulative total of 5707 measles cases, 1868 hospital admissions and 83 measles related deaths.",
+      "url": "https://reliefweb.int/report/samoa/health-emergency-operation-centre-update-measles-outbreak-january-20-2020"
+    },
+    {
+      "name": "CHEQ & Cavazos (2019) The economic cost of fake news",
+      "description": "CHEQ, Cavazos, R. (University of Baltimore) (2019): The Economic Cost of Bad Actors on the Internet: Fake News. A report commissioned by the ad-security company CHEQ, not peer reviewed: the global cost of fake news is USD 78 billion per year, the sum of USD 39 billion stock market losses (up to 0.05 percent of the stock market value at risk, from past cases), USD 17 billion financial misinformation in the US retirement savings, USD 9.54 billion reputation management (the projected size of a whole market segment), USD 9 billion public health misinformation in the US (the cost of all vaccine-preventable diseases of adults), USD 3 billion platform safety, USD 400 million political spend and USD 250 million brand safety; several items are not costs caused by fake news, so the total is a weak indication only.",
+      "url": "https://info.cheq.ai/hubfs/Research/THE_ECONOMIC_COST_Fake_News_final.pdf",
+      "type": "pdf"
+    },
+    {
+      "name": "Reuters (2013) false AP tweet",
+      "description": "Reuters, 23 April 2013: hackers took control of the Twitter account of the Associated Press and posted a false report of two explosions in the White House that injured Barack Obama; Reuters data showed that the tweet briefly wiped out USD 136.5 billion of the value of the S&P 500 index before the markets recovered within minutes; the Dow Jones Industrial Average temporarily dropped 143.5 points or 0.98 percent.",
+      "url": "https://www.ft.lk/Front-Page/hackers-send-fake-market-moving-ap-tweet-on-white-house-explosions/44-147687"
+    },
+    {
+      "name": "Eady et al. (2023)",
+      "description": "Eady, G., Paskhalis, T., Zilinsky, J., Bonneau, R., Nagler, J., Tucker, J. A. (2023): Exposure to the Russian Internet Research Agency foreign influence campaign on Twitter in the 2016 US election and its relationship to attitudes and voting behavior. Nature Communications 14, 62. Longitudinal survey data of US respondents linked to their Twitter feeds: only 1 percent of the users accounted for 70 percent of the exposures to the Russian disinformation accounts, mainly strong Republicans; no evidence of a meaningful relationship between the exposure and changes of attitudes, polarization or voting behaviour.",
+      "doi": "10.1038/s41467-022-35576-9"
+    },
+    {
+      "name": "Guess, Nyhan & Reifler (2020)",
+      "description": "Guess, A. M., Nyhan, B., Reifler, J. (2020): Exposure to untrustworthy websites in the 2016 US election. Nature Human Behaviour 4, 472-480. Survey of 2525 Americans and web traffic data of October and November 2016: the untrustworthy websites made up a small share of the information diets on average and were largely consumed by a subset of Americans; as stated by the press release of the University of Exeter of March 2020, less than half of all Americans visited an untrustworthy website and these websites were only six percent of all Americans' news diets on average.",
+      "doi": "10.1038/s41562-020-0833-x"
+    },
+    {
+      "name": "Vosoughi, Roy & Aral (2018)",
+      "description": "Vosoughi, S., Roy, D., Aral, S. (2018): The spread of true and false news online. Science 359(6380), 1146-1151. All about 126'000 fact-checked news cascades on Twitter from 2006 to 2017, tweeted by about 3 million people more than 4.5 million times: falsehood diffused significantly farther, faster, deeper and more broadly than the truth in all categories; false news was 70 percent more likely to be retweeted than the truth, and the truth took about six times as long as falsehood to reach 1500 people (figures as stated by the MIT research brief of the authors).",
+      "doi": "10.1126/science.aap9559"
+    }
+  ],
+  "values": [
+    {"words": ["vaccine hesitancy due to disinformation", "vaccination intent change", "COVID-19", "United Kingdom", "2020", "percent"], "number": "-0.062", "source": "Loomba et al. (2021)", "description": "drop of the intent to definitely take a COVID-19 vaccine after seeing recent online misinformation, relative to factual information, September 2020"},
+    {"words": ["vaccine hesitancy due to disinformation", "vaccination intent change", "COVID-19", "United Kingdom", "2020", "percent", "low"], "number": "-0.085", "source": "Loomba et al. (2021)", "description": "the bigger drop of the 95th percentile interval of 3.9 to 8.5 percentage points"},
+    {"words": ["vaccine hesitancy due to disinformation", "vaccination intent change", "COVID-19", "United Kingdom", "2020", "percent", "high"], "number": "-0.039", "source": "Loomba et al. (2021)", "description": "the smaller drop of the 95th percentile interval of 3.9 to 8.5 percentage points"},
+    {"words": ["vaccine hesitancy due to disinformation", "vaccination intent change", "COVID-19", "United States", "2020", "percent"], "number": "-0.064", "source": "Loomba et al. (2021)", "description": "drop of the intent to definitely take a COVID-19 vaccine after seeing recent online misinformation, relative to factual information, September 2020"},
+    {"words": ["vaccine hesitancy due to disinformation", "vaccination intent change", "COVID-19", "United States", "2020", "percent", "low"], "number": "-0.088", "source": "Loomba et al. (2021)", "description": "the bigger drop of the 95th percentile interval of 4.0 to 8.8 percentage points"},
+    {"words": ["vaccine hesitancy due to disinformation", "vaccination intent change", "COVID-19", "United States", "2020", "percent", "high"], "number": "-0.04", "source": "Loomba et al. (2021)", "description": "the smaller drop of the 95th percentile interval of 4.0 to 8.8 percentage points"},
+    {"words": ["vaccine hesitancy due to disinformation", "COVID-19", "Canada", "2021", "million", "person"], "number": "2.35", "source": "CCA (2023) Fault Lines", "description": "people in Canada whose vaccine hesitancy misinformation contributed to between March and November 2021"},
+    {"words": ["vaccine hesitancy due to disinformation", "COVID-19", "United States", "2021", "million", "person", "low"], "number": "2", "source": "Bruns et al. (2021) COVID-19 vaccine misinformation cost", "description": "US adults unvaccinated because of misinformation or disinformation in October 2021, if it causes 5 percent of the voluntary nonvaccination"},
+    {"words": ["vaccine hesitancy due to disinformation", "COVID-19", "United States", "2021", "million", "person", "high"], "number": "12", "source": "Bruns et al. (2021) COVID-19 vaccine misinformation cost", "description": "US adults unvaccinated because of misinformation or disinformation in October 2021, if it causes 30 percent of the voluntary nonvaccination"},
+    {"words": ["vaccine hesitancy due to disinformation", "COVID-19", "United States", "2021", "share", "percent", "low"], "number": "0.05", "source": "Bruns et al. (2021) COVID-19 vaccine misinformation cost", "description": "the assumed lower share of the voluntary nonvaccination caused by misinformation and disinformation, based on the 6 percentage point drop of the vaccination intent of Loomba et al. and the flu shot comparison"},
+    {"words": ["vaccine hesitancy due to disinformation", "COVID-19", "United States", "2021", "share", "percent", "high"], "number": "0.3", "source": "Bruns et al. (2021) COVID-19 vaccine misinformation cost", "description": "the assumed upper share of the voluntary nonvaccination caused by misinformation and disinformation"},
+    {"words": ["vaccine hesitancy due to disinformation", "measles vaccination coverage", "United Kingdom", "1997-1998", "percent"], "number": "0.91", "source": "Leask, Booy & McIntyre (2010)", "description": "the MMR vaccination rate in the UK in 1997-98, at the time of the Wakefield et al. paper that was later retracted"},
+    {"words": ["vaccine hesitancy due to disinformation", "measles vaccination coverage", "United Kingdom", "2003-2004", "percent"], "number": "0.8", "source": "Leask, Booy & McIntyre (2010)", "description": "the MMR vaccination rate in the UK in 2003-04 after the MMR scare, while the other childhood vaccines held steady"},
+    {"words": ["COVID-19 deaths due to disinformation", "Canada", "2021", "person"], "number": "2800", "source": "CCA (2023) Fault Lines", "description": "fewer COVID-19 deaths by the end of November 2021 if the people who believed COVID-19 to be a hoax or exaggerated had not delayed or refused the vaccination; a conservative model estimate for March to November 2021"},
+    {"words": ["health cost due to disinformation", "hospitalization", "COVID-19", "Canada", "2021", "person"], "number": "13000", "source": "CCA (2023) Fault Lines", "description": "fewer COVID-19 hospitalizations March to November 2021 without the misinformation driven vaccine hesitancy; together with the ICU patients CAD 299 million of hospital costs"},
+    {"words": ["health cost due to disinformation", "ICU patient", "COVID-19", "Canada", "2021", "person"], "number": "3500", "source": "CCA (2023) Fault Lines", "description": "fewer COVID-19 ICU patients March to November 2021 without the misinformation driven vaccine hesitancy"},
+    {"words": ["social cost due to disinformation", "COVID-19", "United States", "2021", "day", "million", "EUR", "low"], "number": "46.24", "source": "Bruns et al. (2021) COVID-19 vaccine misinformation cost", "description": "harm per day since May 2021 by the COVID-19 vaccine misinformation and disinformation, mainly the value of the lives lost; 50 million USD at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["social cost due to disinformation", "COVID-19", "United States", "2021", "day", "million", "EUR", "high"], "number": "277.44", "source": "Bruns et al. (2021) COVID-19 vaccine misinformation cost", "description": "harm per day since May 2021 by the COVID-19 vaccine misinformation and disinformation, mainly the value of the lives lost; 300 million USD at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["social cost due to disinformation", "world", "annual", "billion", "EUR"], "number": "72.14", "source": "CHEQ & Cavazos (2019) The economic cost of fake news", "description": "a vendor-commissioned, not peer reviewed sum of heterogeneous items, several of which are not caused by fake news; 78 billion USD at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["stock market loss due to disinformation", "world", "annual", "billion", "EUR"], "number": "36.07", "source": "CHEQ & Cavazos (2019) The economic cost of fake news", "description": "up to 0.05 percent of the stock market value at risk per year, simulated from past fake news cases; not peer reviewed; 39 billion USD at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["stock market loss due to disinformation", "S&P 500", "United States", "2013", "billion", "EUR"], "number": "126.24", "source": "Reuters (2013) false AP tweet", "description": "market value of the S&P 500 briefly wiped out by the false tweet of the hacked AP account on 23 April 2013 before the markets recovered within minutes; 136.5 billion USD at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["election interference due to disinformation", "exposure", "share", "United States", "2016", "percent"], "number": "0.7", "source": "Eady et al. (2023)", "description": "the share of the exposures to the Russian Internet Research Agency accounts on Twitter that went to only 1 percent of the users; the study finds no meaningful relationship with changes of attitudes, polarization or voting"},
+    {"words": ["election interference due to disinformation", "news", "share", "United States", "2016", "percent"], "number": "0.06", "source": "Guess, Nyhan & Reifler (2020)", "description": "the average share of the untrustworthy websites in the news diet of the Americans before the 2016 election, as stated by the press release of the University of Exeter"},
+    {"words": ["virality due to disinformation", "false news", "retweet", "probability", "percent"], "number": "0.7", "source": "Vosoughi, Roy & Aral (2018)", "description": "false news was 70 percent more likely to be retweeted than the truth on Twitter 2006-2017"},
+    {"words": ["virality due to disinformation", "false news", "speed", "factor"], "number": "6", "source": "Vosoughi, Roy & Aral (2018)", "description": "the truth took about six times as long as falsehood to reach 1500 people on Twitter"},
+    {"words": ["measles case", "England and Wales", "2009", "person"], "number": "1144", "source": "Leask, Booy & McIntyre (2010)", "description": "laboratory-confirmed measles cases after the fall of the MMR vaccination rate; not attributed to disinformation by the source, so without a due to disinformation triple"},
+    {"words": ["measles case", "Samoa", "2019-2020", "person"], "number": "5707", "source": "Samoa Ministry of Health measles update January 2020", "description": "cumulative measles cases of the outbreak declared in October 2019 up to 20 January 2020; not attributed to disinformation by the source, so without a due to disinformation triple"},
+    {"words": ["measles", "deaths", "Samoa", "2019-2020", "person"], "number": "83", "source": "Samoa Ministry of Health measles update January 2020", "description": "measles related deaths of the outbreak up to 20 January 2020, mostly young children; not attributed to disinformation by the source, so without a due to disinformation triple"}
+  ]
+}

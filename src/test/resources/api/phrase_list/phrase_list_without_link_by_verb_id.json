@@ -2,7 +2,7 @@
     {
         "id": 892,
         "name": "agglomeration",
-        "description": "urban core plus surrounding built\u2011up areas",
+        "description": "urban core plus surrounding built‑up areas",
         "type_id": 1,
         "class": "word"
     },
@@ -81,7 +81,7 @@
         "class": "word"
     },
     {
-        "id": 1508,
+        "id": 1727,
         "name": "EAN",
         "description": "European Article Number: the 13 digit barcode number of a retail product, today named International Article Number (IAN)",
         "type_id": 23,
@@ -100,14 +100,14 @@
         "class": "triple"
     },
     {
-        "id": 1506,
+        "id": 1725,
         "name": "ISBN",
         "description": "International Standard Book Number: identifies one edition of a book; since 2007 it has 13 digits and equals the EAN of the book with the prefix 978 or 979",
         "type_id": 23,
         "class": "word"
     },
     {
-        "id": 1507,
+        "id": 1726,
         "name": "ISIN",
         "description": "International Securities Identification Number (ISO 6166): identifies one security with 12 characters, the country code, the nine character national number and a check digit",
         "type_id": 23,
@@ -211,7 +211,7 @@
     {
         "id": 370,
         "name": "Symbol or abbreviation",
-        "description": "A symbol or abbreviation used to represent a currency in writing, such as $ for the US dollar, \u20ac for the euro, or \u00a3 for pound sterling. Currency symbols are typographic shorthand and are not standardised internationally (unlike ISO 4217 codes).",
+        "description": "A symbol or abbreviation used to represent a currency in writing, such as $ for the US dollar, € for the euro, or £ for pound sterling. Currency symbols are typographic shorthand and are not standardised internationally (unlike ISO 4217 codes).",
         "class": "triple"
     },
     {

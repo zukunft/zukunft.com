@@ -1,0 +1,441 @@
+{
+  "version": "0.0.3",
+  "data_version": "0.0.1",
+  "time": "2026-10-08 12:00:00",
+  "user": "timon",
+  "selection": [
+    "proprietary software reasons that cause costs"
+  ],
+  "description": "The most relevant reasons why proprietary software causes costs, each linked to proprietary software with 'can cause' and quantified by the studies and official statements that report it for the world and per country: the licence cost, with the Microsoft licences of the German federal government (answer of the federal government to Rebecca Lenhard, reported by the Stuttgarter Zeitung 2026) and the licence cost avoided by the open-source migrations of Munich (LiMux cost comparison 2012) and Schleswig-Holstein (state government 2025); the licence price change, with the Microsoft 365 price increase of July 2026 (Microsoft 2025); the hardware upgrade forced by a new proprietary operating system, avoided by Munich; and the vendor lock-in, with the one-time switching cost of Schleswig-Holstein. The benefit of open-source software is stated as what it is, the cost that proprietary software would add or the value it would not create, and not as a cost of proprietary software: the economic impact of open-source software on the EU economy (Blind et al. 2021), the demand-side value of open-source software for the firms of the world (Hoffmann, Nagle & Zhou 2024), the value of Apache that the US statistics do not measure (Greenstein & Nagle 2014) and the productivity gain of free open-source software (Nagle 2019). The security failures of closed code are shown by the Storm-0558 intrusion into Microsoft Exchange Online (CSRB 2024) and the CrowdStrike outage of 2024 (Parametrix 2024); these values are not attributed to proprietary software by their sources, because the sources name the security culture of the vendor and a faulty update as the cause, so they do not carry a '<reason> due to proprietary software' triple. The assumed public licence spending, the annual loss and the solution are stated in problem_proprietary_software.json instead, because they are the row of the global problem ranking of the start page. Every number is taken from the named source as reported; a country that a source does not report is left out and never estimated. A share is stored as the decimal ratio, a loss as a positive number and a change with its sign. Each study has its own scope and metric, so numbers of different studies are not comparable without reading the source description; e.g. the demand-side value of Hoffmann et al. is the cost of a hypothetical world in which every firm rebuilds the open-source software it uses, not a measured loss. Every amount of money is stated in euro: the US dollar figure of the source is converted with the ECB 2023 annual average of 1.0813 USD per EUR (the value of GDP.json) whatever the price base year of the source, and the source figure is kept in the description of the value. A value of a reason carries the triple '<reason> due to proprietary software' and not the phrase 'proprietary software' itself, because a value that names a global problem directly is a row of the global problem ranking of the start page, where only the potential loss and the solution of a problem belong.",
+  "words": [
+    {
+      "name": "software"
+    },
+    {
+      "name": "proprietary"
+    },
+    {
+      "name": "open-source"
+    },
+    {
+      "name": "licence"
+    },
+    {
+      "name": "cost"
+    },
+    {
+      "name": "price"
+    },
+    {
+      "name": "change"
+    },
+    {
+      "name": "hardware",
+      "description": "the physical parts of a computer system e.g. the processor, the memory and the storage of a desktop computer"
+    },
+    {
+      "name": "upgrade",
+      "description": "the replacement of a part of a system by a newer or more powerful one"
+    },
+    {
+      "name": "vendor",
+      "description": "the company that sells and controls a software product"
+    },
+    {
+      "name": "lock-in",
+      "description": "the dependency of a customer on a product that cannot be left without high switching costs, e.g. because of proprietary file formats, interfaces or licence terms"
+    },
+    {
+      "name": "switching",
+      "description": "the change from one product or supplier to another"
+    },
+    {
+      "name": "avoidable"
+    },
+    {
+      "name": "value"
+    },
+    {
+      "name": "demand"
+    },
+    {
+      "name": "spending"
+    },
+    {
+      "name": "investment"
+    },
+    {
+      "name": "contribution"
+    },
+    {
+      "name": "productivity"
+    },
+    {
+      "name": "GDP"
+    },
+    {
+      "name": "factor"
+    },
+    {
+      "name": "share"
+    },
+    {
+      "name": "security"
+    },
+    {
+      "name": "incident"
+    },
+    {
+      "name": "IT",
+      "description": "information technology"
+    },
+    {
+      "name": "outage",
+      "description": "a period in which a system or service does not work"
+    },
+    {
+      "name": "email"
+    },
+    {
+      "name": "organization"
+    },
+    {
+      "name": "government"
+    },
+    {
+      "name": "federal"
+    },
+    {
+      "name": "public"
+    },
+    {
+      "name": "sector"
+    },
+    {
+      "name": "Microsoft",
+      "description": "the US software company that sells e.g. Windows and Microsoft 365"
+    },
+    {
+      "name": "Microsoft 365 E3",
+      "description": "the Microsoft 365 enterprise suite with Office apps, Windows, Teams and security functions, licensed per user and month"
+    },
+    {
+      "name": "Microsoft 365 E5",
+      "description": "the Microsoft 365 enterprise suite of E3 plus advanced security, compliance and analytics functions, licensed per user and month"
+    },
+    {
+      "name": "Microsoft 365 F3",
+      "description": "the Microsoft 365 frontline suite for workers who share devices or mainly use mobile devices, licensed per user and month"
+    },
+    {
+      "name": "Apache",
+      "description": "the Apache HTTP Server, a free open-source web server"
+    },
+    {
+      "name": "CrowdStrike",
+      "description": "the US cyber security company whose faulty update of its endpoint protection software caused a global outage of Windows computers on 19 July 2024"
+    },
+    {
+      "name": "Fortune 500",
+      "description": "the 500 largest US companies by revenue, as ranked by the magazine Fortune"
+    },
+    {
+      "name": "Munich",
+      "description": "the capital of the German state of Bavaria",
+      "refs": [
+        {
+          "name": "Munich",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1726",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Schleswig-Holstein",
+      "description": "the northernmost state of Germany",
+      "refs": [
+        {
+          "name": "Schleswig-Holstein",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1194",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Germany"
+    },
+    {
+      "name": "United States"
+    },
+    {
+      "name": "European Union"
+    },
+    {
+      "name": "world"
+    },
+    {
+      "name": "EUR"
+    },
+    {
+      "name": "percent"
+    },
+    {
+      "name": "million"
+    },
+    {
+      "name": "billion"
+    },
+    {
+      "name": "trillion"
+    },
+    {
+      "name": "annual"
+    },
+    {
+      "name": "low"
+    },
+    {
+      "name": "high"
+    },
+    {
+      "name": "2012",
+      "type": "time"
+    },
+    {
+      "name": "2018"
+    },
+    {
+      "name": "2023"
+    },
+    {
+      "name": "2024"
+    },
+    {
+      "name": "2025"
+    },
+    {
+      "name": "2026"
+    }
+  ],
+  "triples": [
+    {
+      "name": "proprietary software",
+      "from": "software",
+      "verb": "can be",
+      "to": "proprietary"
+    },
+    {
+      "name": "open-source software",
+      "from": "software",
+      "verb": "can be",
+      "to": "open-source",
+      "description": "software whose source code is published under a licence that allows everybody to use, study, change and share it"
+    },
+    {
+      "name": "public sector",
+      "from": "sector",
+      "verb": "can be",
+      "to": "public"
+    },
+    {
+      "name": "federal government",
+      "from": "government",
+      "verb": "kind of",
+      "to": "federal"
+    },
+    {
+      "name": "licence cost",
+      "from": "cost",
+      "verb": "of",
+      "to": "licence"
+    },
+    {
+      "name": "licence price",
+      "from": "price",
+      "verb": "of",
+      "to": "licence"
+    },
+    {
+      "name": "licence price change",
+      "from": "change",
+      "verb": "of",
+      "to": "licence price"
+    },
+    {
+      "name": "hardware upgrade",
+      "from": "upgrade",
+      "verb": "of",
+      "to": "hardware"
+    },
+    {
+      "name": "vendor lock-in",
+      "from": "lock-in",
+      "verb": "kind of",
+      "to": "vendor",
+      "description": "the dependence on one supplier, because changing to another product needs a costly migration of the data, the formats and the trained staff"
+    },
+    {
+      "name": "switching cost",
+      "from": "cost",
+      "verb": "of",
+      "to": "switching"
+    },
+    {
+      "name": "open-source software value",
+      "from": "value",
+      "verb": "of",
+      "to": "open-source software"
+    },
+    {
+      "name": "software spending",
+      "from": "spending",
+      "verb": "of",
+      "to": "software"
+    },
+    {
+      "name": "software investment",
+      "from": "investment",
+      "verb": "of",
+      "to": "software"
+    },
+    {
+      "name": "GDP change",
+      "from": "change",
+      "verb": "of",
+      "to": "GDP"
+    },
+    {
+      "name": "productivity change",
+      "from": "change",
+      "verb": "of",
+      "to": "productivity"
+    },
+    {
+      "name": "security incident",
+      "from": "incident",
+      "verb": "kind of",
+      "to": "security"
+    },
+    {
+      "name": "IT outage",
+      "from": "outage",
+      "verb": "kind of",
+      "to": "IT"
+    },
+    {
+      "name": "licence cost due to proprietary software",
+      "from": "proprietary software",
+      "verb": "can cause",
+      "to": "licence cost",
+      "description": "the fee paid to the vendor for the right to use proprietary software, which an open-source alternative does not charge"
+    },
+    {
+      "name": "licence price change due to proprietary software",
+      "from": "proprietary software",
+      "verb": "can cause",
+      "to": "licence price change",
+      "description": "the vendor of proprietary software can raise the licence price, because the customers cannot easily switch"
+    },
+    {
+      "name": "hardware upgrade due to proprietary software",
+      "from": "proprietary software",
+      "verb": "can cause",
+      "to": "hardware upgrade",
+      "description": "a new version of a proprietary operating system or office suite can require new hardware, although the existing hardware still works"
+    },
+    {
+      "name": "vendor lock-in due to proprietary software",
+      "from": "proprietary software",
+      "verb": "can cause",
+      "to": "vendor lock-in",
+      "description": "proprietary file formats, interfaces and licence terms make it costly to leave the vendor"
+    }
+  ],
+  "sources": [
+    {
+      "name": "Stuttgarter Zeitung (2026) Bund gibt 2025 über 481 Millionen Euro für Microsoft-Lizenzen aus",
+      "description": "Brauer, M., AFP (2026): Geld spielt offenbar keine Rolle: Bund gibt 2025 über 481 Millionen Euro für Microsoft-Lizenzen aus. Stuttgarter Zeitung, 9 February 2026. Reports the answer of the German federal government to a written question of the Green member of the Bundestag Rebecca Lenhard: Microsoft products worth 274.1 million EUR were called up in 2023, 347.7 million EUR in 2024 and 481.4 million EUR for licences in 2025; the comparability with earlier answers is limited, because the group of entitled users extends beyond the ministries and their subordinate agencies.",
+      "url": "https://www.stuttgarter-zeitung.de/wissen/geld-spielt-offenbar-keine-rolle-bund-gibt-2025-ueber-481-millionen-euro-fuer-microsoft-lizenzen-78971883.html"
+    },
+    {
+      "name": "Microsoft (2025) Microsoft 365 packaging and pricing updates 2026",
+      "description": "Microsoft (2025): Microsoft 365 packaging and pricing updates, announced 4 December 2025, effective 1 July 2026, commercial list prices in USD per user and month: Microsoft 365 E3 from 36.00 to 39.00 (8 percent), Microsoft 365 E5 from 57.00 to 60.00 (5 percent), Microsoft 365 F3 from 8.00 to 10.00 (25 percent); existing customers keep the current price until renewal.",
+      "url": "https://www.microsoft.com/en-us/licensing/news/2026-M365-Packaging-Pricing-Updates"
+    },
+    {
+      "name": "Le Monde Informatique (2012) Munich LiMux cost comparison",
+      "description": "Elyan, J., IDG NS (2012): Munich économise 11 millions d'euros en passant à Linux. Le Monde Informatique, 27 November 2012. Reports the cost comparison published by the city of Munich for the migration of about 11'000 users: the migration to LiMux and OpenOffice cost 22.8 million EUR, a migration to Windows 7 and Office 2010 would have cost a little over 34 million EUR and one to Windows 7 and OpenOffice 29.9 million EUR; LiMux saved 6.8 million EUR of software licences compared to Microsoft Office on Windows 7 and 4.7 million EUR of hardware upgrades, because LiMux runs on the existing hardware. A study of HP for Microsoft disputed the savings but was never published.",
+      "url": "https://www.lemondeinformatique.fr/actualites/lire-munich-economise-11-millions-d-euros-en-passant-a-linux-51432.html"
+    },
+    {
+      "name": "Schleswig-Holstein (2025) Digitale Souveränität ist möglich und wirtschaftlich",
+      "description": "State government of Schleswig-Holstein, Ministry of Digitalisation (2025): Digitale Souveränität ist möglich und wirtschaftlich, 4 December 2025. The switch to open-source software saves more than 15 million EUR of licence costs, against nine million EUR of one-time investments planned for 2026 for the migration and the development of the open-source solutions; nearly 80 percent of all workplaces outside the tax administration use LibreOffice. heise online (7 December 2025) reports the 15 million EUR as the saving of 2026 alone, with similar amounts in the following years.",
+      "url": "https://www.schleswig-holstein.de/DE/landesregierung/ministerien-behoerden/I/_startseite/Artikel2025/IV/251204_cds_digitale_souveraenitaet"
+    },
+    {
+      "name": "Blind et al. (2021) The impact of Open Source Software and Hardware on the EU economy",
+      "description": "Blind, K., Böhm, M., Grzegorzewska, P., Katz, A., Muto, S., Pätsch, S., Schubert, T. (2021): The impact of Open Source Software and Hardware on technological independence, competitiveness and innovation in the EU economy. Final study report for the European Commission, DG CONNECT. Companies located in the EU invested around 1 billion EUR in open-source software in 2018, which resulted in an impact on the European economy of between 65 and 95 billion EUR; the cost-benefit ratio is above 1:4; an increase of 10 percent of the open-source contributions would annually generate an additional 0.4 to 0.6 percent GDP and more than 600 additional ICT start-ups; by procuring open-source instead of proprietary software the public sector could reduce the total cost of ownership and avoid vendor lock-in.",
+      "doi": "10.2759/526721",
+      "url": "https://digital-strategy.ec.europa.eu/en/library/study-about-impact-open-source-software-and-hardware-technological-independence-competitiveness-and"
+    },
+    {
+      "name": "Hoffmann, Nagle & Zhou (2024) The Value of Open Source Software",
+      "description": "Hoffmann, M., Nagle, F., Zhou, Y. (2024): The Value of Open Source Software. Harvard Business School Strategy Unit Working Paper 24-038, not peer reviewed. Based on the Census II of free and open source software and BuiltWith: the supply-side value, the cost to recreate the most widely used open-source software once, is 4.15 billion USD, while the demand-side value, the cost if every firm had to rebuild the open-source software it uses, is 8.8 trillion USD; firms would need to spend 3.5 times more on software than they currently do if open-source software did not exist.",
+      "url": "https://papers.ssrn.com/abstract=4693148"
+    },
+    {
+      "name": "Greenstein & Nagle (2014)",
+      "description": "Greenstein, S., Nagle, F. (2014): Digital dark matter and the economic contribution of Apache. Research Policy 43(4), 623-631. Based on a 1 percent sample of all outward-facing web servers in the United States, the use of Apache potentially accounts for a mismeasurement of somewhere between 2 and 12 billion USD, between 1.3 and 8.7 percent of the stock of prepackaged software in the private fixed investment of the United States.",
+      "doi": "10.1016/j.respol.2014.01.003"
+    },
+    {
+      "name": "Nagle (2019) Open Source Software and Firm Productivity",
+      "description": "Nagle, F. (2019): Open Source Software and Firm Productivity. Management Science 65(3), 1191-1215. Free open-source software has a positive and significant value-added return for firms with an ecosystem of complementary capabilities and none for firms without it; for these firms a 1 percent increase in the use of free open-source software leads to an increase of the value-added productivity of between 0.002 and 0.008 percent; the effect is smaller for larger firms.",
+      "doi": "10.1287/mnsc.2017.2977"
+    },
+    {
+      "name": "CSRB (2024) Review of the Summer 2023 Microsoft Exchange Online Intrusion",
+      "description": "Cyber Safety Review Board (2024): Review of the Summer 2023 Microsoft Exchange Online Intrusion, 20 March 2024. The threat actor Storm-0558 compromised the Microsoft Exchange Online mailboxes of 22 enterprise organizations and 503 related personal accounts worldwide and downloaded approximately 60'000 emails from the US State Department alone; the intrusion was preventable and succeeded because of a cascade of security failures at Microsoft, whose security culture was inadequate and requires an overhaul.",
+      "url": "https://www.cisa.gov/sites/default/files/2025-03/CSRBReviewOfTheSummer2023MEOIntrusion508.pdf"
+    },
+    {
+      "name": "Parametrix (2024) CrowdStrike's impact on the Fortune 500",
+      "description": "Parametrix (2024): CrowdStrike's impact on the Fortune 500. The total direct financial loss facing the US Fortune 500 companies, excluding Microsoft, from the CrowdStrike outage of 19 July 2024 is 5.4 billion USD.",
+      "url": "https://parametrixinsurance.com/reports-white-papers/crowdstrikes-impact-on-the-fortune-500"
+    }
+  ],
+  "values": [
+    {"words": ["licence cost due to proprietary software", "Microsoft", "federal government", "Germany", "2023", "million", "EUR"], "number": "274.1", "source": "Stuttgarter Zeitung (2026) Bund gibt 2025 über 481 Millionen Euro für Microsoft-Lizenzen aus", "description": "Microsoft products called up by the federal administration, as stated in the answer of the federal government and reported by the newspaper"},
+    {"words": ["licence cost due to proprietary software", "Microsoft", "federal government", "Germany", "2024", "million", "EUR"], "number": "347.7", "source": "Stuttgarter Zeitung (2026) Bund gibt 2025 über 481 Millionen Euro für Microsoft-Lizenzen aus", "description": "as stated in the answer of the federal government and reported by the newspaper"},
+    {"words": ["licence cost due to proprietary software", "Microsoft", "federal government", "Germany", "2025", "million", "EUR"], "number": "481.4", "source": "Stuttgarter Zeitung (2026) Bund gibt 2025 über 481 Millionen Euro für Microsoft-Lizenzen aus", "description": "Microsoft licences, as stated in the answer of the federal government and reported by the newspaper"},
+    {"words": ["licence cost due to proprietary software", "avoidable", "public sector", "Munich", "2012", "million", "EUR"], "number": "6.8", "source": "Le Monde Informatique (2012) Munich LiMux cost comparison", "description": "the software licences that the migration to LiMux saved until 2012 compared to a migration to Microsoft Office on Windows 7, according to the cost comparison of the city"},
+    {"words": ["licence cost due to proprietary software", "avoidable", "public sector", "Schleswig-Holstein", "2026", "million", "EUR"], "number": "15", "source": "Schleswig-Holstein (2025) Digitale Souveränität ist möglich und wirtschaftlich", "description": "more than 15 million EUR of licence costs saved by the switch to open-source software; heise online dates the saving to 2026 alone"},
+    {"words": ["licence price change due to proprietary software", "Microsoft 365 E3", "2026", "percent"], "number": "0.08", "source": "Microsoft (2025) Microsoft 365 packaging and pricing updates 2026", "description": "from 36.00 to 39.00 USD per user and month from 1 July 2026"},
+    {"words": ["licence price change due to proprietary software", "Microsoft 365 E5", "2026", "percent"], "number": "0.05", "source": "Microsoft (2025) Microsoft 365 packaging and pricing updates 2026", "description": "from 57.00 to 60.00 USD per user and month from 1 July 2026"},
+    {"words": ["licence price change due to proprietary software", "Microsoft 365 F3", "2026", "percent"], "number": "0.25", "source": "Microsoft (2025) Microsoft 365 packaging and pricing updates 2026", "description": "from 8.00 to 10.00 USD per user and month from 1 July 2026"},
+    {"words": ["hardware upgrade due to proprietary software", "avoidable", "public sector", "Munich", "2012", "million", "EUR"], "number": "4.7", "source": "Le Monde Informatique (2012) Munich LiMux cost comparison", "description": "the hardware upgrades that a migration to Windows 7 would have needed and that LiMux avoided, because it runs on the existing hardware"},
+    {"words": ["vendor lock-in due to proprietary software", "switching cost", "public sector", "Schleswig-Holstein", "2026", "million", "EUR"], "number": "9", "source": "Schleswig-Holstein (2025) Digitale Souveränität ist möglich und wirtschaftlich", "description": "the one-time investment planned for 2026 for the migration of the workplaces and the development of the open-source solutions"},
+    {"words": ["open-source software value", "European Union", "2018", "billion", "EUR", "low"], "number": "65", "source": "Blind et al. (2021) The impact of Open Source Software and Hardware on the EU economy", "description": "the impact of open-source software on the economy of all EU member states; a benefit of open-source software, i.e. a value that proprietary software would not create, not a cost of proprietary software"},
+    {"words": ["open-source software value", "European Union", "2018", "billion", "EUR", "high"], "number": "95", "source": "Blind et al. (2021) The impact of Open Source Software and Hardware on the EU economy", "description": "the impact of open-source software on the economy of all EU member states; a benefit of open-source software, not a cost of proprietary software"},
+    {"words": ["open-source software", "software investment", "European Union", "2018", "billion", "EUR"], "number": "1", "source": "Blind et al. (2021) The impact of Open Source Software and Hardware on the EU economy", "description": "around 1 billion EUR invested in open-source software by the companies located in the EU, the input that created the impact of 65 to 95 billion EUR"},
+    {"words": ["open-source software", "contribution", "GDP change", "European Union", "annual", "percent", "low"], "number": "0.004", "source": "Blind et al. (2021) The impact of Open Source Software and Hardware on the EU economy", "description": "the additional GDP per year if the open-source contributions increase by 10 percent; a benefit of open-source software, not a cost of proprietary software"},
+    {"words": ["open-source software", "contribution", "GDP change", "European Union", "annual", "percent", "high"], "number": "0.006", "source": "Blind et al. (2021) The impact of Open Source Software and Hardware on the EU economy", "description": "the additional GDP per year if the open-source contributions increase by 10 percent; a benefit of open-source software, not a cost of proprietary software"},
+    {"words": ["open-source software value", "demand", "world", "trillion", "EUR"], "number": "8.138", "source": "Hoffmann, Nagle & Zhou (2024) The Value of Open Source Software", "description": "the avoidable cost: what the firms would have to spend if each had to rebuild the open-source software it uses, a hypothetical replacement cost and not a measured loss; 8.8 trillion USD at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["open-source software", "software spending", "world", "factor"], "number": "3.5", "source": "Hoffmann, Nagle & Zhou (2024) The Value of Open Source Software", "description": "firms would need to spend 3.5 times more on software than they currently do if open-source software did not exist; an avoidable cost, not a cost of proprietary software"},
+    {"words": ["open-source software value", "Apache", "United States", "billion", "EUR", "low"], "number": "1.85", "source": "Greenstein & Nagle (2014)", "description": "the value of Apache that the US statistics of the software investment do not measure; 2 billion USD at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["open-source software value", "Apache", "United States", "billion", "EUR", "high"], "number": "11.1", "source": "Greenstein & Nagle (2014)", "description": "the value of Apache that the US statistics of the software investment do not measure; 12 billion USD at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["open-source software value", "Apache", "software investment", "United States", "percent", "low"], "number": "0.013", "source": "Greenstein & Nagle (2014)", "description": "the unmeasured value of Apache as share of the stock of prepackaged software in the US private fixed investment"},
+    {"words": ["open-source software value", "Apache", "software investment", "United States", "percent", "high"], "number": "0.087", "source": "Greenstein & Nagle (2014)", "description": "the unmeasured value of Apache as share of the stock of prepackaged software in the US private fixed investment"},
+    {"words": ["open-source software", "productivity change", "percent", "low"], "number": "0.00002", "source": "Nagle (2019) Open Source Software and Firm Productivity", "description": "the increase of the value-added productivity per 1 percent more use of free open-source software, for firms with an ecosystem of complementary capabilities; a benefit of open-source software, not a cost of proprietary software"},
+    {"words": ["open-source software", "productivity change", "percent", "high"], "number": "0.00008", "source": "Nagle (2019) Open Source Software and Firm Productivity", "description": "the increase of the value-added productivity per 1 percent more use of free open-source software, for firms with an ecosystem of complementary capabilities; a benefit of open-source software, not a cost of proprietary software"},
+    {"words": ["security incident", "Microsoft", "organization", "world", "2023"], "number": "22", "source": "CSRB (2024) Review of the Summer 2023 Microsoft Exchange Online Intrusion", "description": "the enterprise organizations whose Exchange Online mailboxes Storm-0558 compromised in May and June 2023, plus 503 related personal accounts; not attributed to proprietary software by the source, which names the cascade of security failures at Microsoft as the cause"},
+    {"words": ["security incident", "Microsoft", "email", "United States", "2023"], "number": "60000", "source": "CSRB (2024) Review of the Summer 2023 Microsoft Exchange Online Intrusion", "description": "approximately 60'000 emails downloaded from the US State Department alone; not attributed to proprietary software by the source"},
+    {"words": ["IT outage", "CrowdStrike", "Fortune 500", "cost", "United States", "2024", "billion", "EUR"], "number": "4.994", "source": "Parametrix (2024) CrowdStrike's impact on the Fortune 500", "description": "the direct financial loss of the US Fortune 500 companies excluding Microsoft; 5.4 billion USD at the ECB 2023 average of 1.0813 USD per EUR; not attributed to proprietary software by the source, which names the faulty CrowdStrike update as the cause"}
+  ]
+}

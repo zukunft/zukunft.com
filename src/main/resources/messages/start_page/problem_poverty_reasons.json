@@ -1,0 +1,393 @@
+{
+  "version": "0.0.3",
+  "data_version": "0.0.1",
+  "time": "2026-10-08 12:00:00",
+  "user": "timon",
+  "selection": [
+    "poverty reasons that cause costs"
+  ],
+  "description": "The most relevant reasons why poverty causes costs, each linked to poverty with 'can cause' and quantified by the studies that report it for the world and per country: the social cost of the child poverty in the United States (McLaughlin & Rank 2018, National Academies 2019) and the public cost of poverty in the United Kingdom (Joseph Rowntree Foundation 2016) as the summary of all reasons, split into crime, health costs and lost income; the gap of the life expectancy between the rich and the poor (Chetty et al. 2016); the childhood stunting and the income it costs (UNICEF/WHO/World Bank 2023, Galasso & Wagstaff 2019); the hunger (SOFI 2024); and the deaths caused by the household air pollution of cooking with polluting fuels (WHO) and by unsafe drinking water, sanitation and hygiene (WHO 2023). The extreme poverty line and the solution are stated in problem_poverty.json instead, because they are the row of the global problem ranking of the start page. Every number is taken from the named source as reported; a country that a study does not report is left out and never estimated. A share is stored as the decimal ratio, a loss as a positive number and a change with its sign. Each study has its own definition of poverty and its own metric, so numbers of different studies are not comparable without reading the source description; a count of the world e.g. of the stunted children or of the hungry people is the total reported by the source, of which poverty is the main but not the only cause. Every amount of money is stated in euro: the US dollar figure of the source is converted with the ECB 2023 annual average of 1.0813 USD per EUR (the value of GDP.json) whatever the price base year of the source, and the British pound figure with the ECB 2023 annual average of 0.86979 GBP per EUR, and the source figure is kept in the description of the value. A value of a reason carries the triple '<reason> due to poverty' and not the word 'poverty' itself, because a value that names a global problem directly is a row of the global problem ranking of the start page, where only the potential loss and the solution of a problem belong.",
+  "words": [
+    {
+      "name": "poverty"
+    },
+    {
+      "name": "child"
+    },
+    {
+      "name": "cost"
+    },
+    {
+      "name": "social"
+    },
+    {
+      "name": "public"
+    },
+    {
+      "name": "crime"
+    },
+    {
+      "name": "health"
+    },
+    {
+      "name": "spending"
+    },
+    {
+      "name": "income"
+    },
+    {
+      "name": "loss"
+    },
+    {
+      "name": "change"
+    },
+    {
+      "name": "GDP"
+    },
+    {
+      "name": "inhabitant"
+    },
+    {
+      "name": "life"
+    },
+    {
+      "name": "expectancy"
+    },
+    {
+      "name": "gap"
+    },
+    {
+      "name": "man"
+    },
+    {
+      "name": "woman"
+    },
+    {
+      "name": "year"
+    },
+    {
+      "name": "unit"
+    },
+    {
+      "name": "stunting",
+      "description": "the impaired growth of a child shown by a height that is more than two standard deviations below the median of the WHO child growth standards for the age, caused by chronic undernutrition and repeated infections",
+      "refs": [
+        {
+          "name": "Stunted_growth",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "hunger",
+      "description": "the chronic undernourishment: a habitual food intake that is too low to provide the dietary energy for a normal, active and healthy life"
+    },
+    {
+      "name": "air"
+    },
+    {
+      "name": "pollution",
+      "description": "the introduction of harmful substances into the environment e.g. smoke into the air"
+    },
+    {
+      "name": "household"
+    },
+    {
+      "name": "cooking",
+      "description": "the preparation of food with heat, which is a source of household air pollution if open fires or inefficient stoves burn wood, coal, dung, crop waste or kerosene"
+    },
+    {
+      "name": "WASH",
+      "description": "drinking water, sanitation and hygiene"
+    },
+    {
+      "name": "unsafe"
+    },
+    {
+      "name": "deaths"
+    },
+    {
+      "name": "person"
+    },
+    {
+      "name": "EUR"
+    },
+    {
+      "name": "percent"
+    },
+    {
+      "name": "million"
+    },
+    {
+      "name": "billion"
+    },
+    {
+      "name": "annual"
+    },
+    {
+      "name": "low"
+    },
+    {
+      "name": "high"
+    },
+    {
+      "name": "world"
+    },
+    {
+      "name": "United States"
+    },
+    {
+      "name": "United Kingdom"
+    },
+    {
+      "name": "2001",
+      "type": "time"
+    },
+    {
+      "name": "2014"
+    },
+    {
+      "name": "2015",
+      "type": "time"
+    },
+    {
+      "name": "2016",
+      "type": "time"
+    },
+    {
+      "name": "2019"
+    },
+    {
+      "name": "2021"
+    },
+    {
+      "name": "2022"
+    },
+    {
+      "name": "2023"
+    }
+  ],
+  "triples": [
+    {
+      "name": "child poverty",
+      "from": "poverty",
+      "verb": "kind of",
+      "to": "child",
+      "description": "the poverty of the children e.g. in the United States the children in a family with an income below the official poverty threshold"
+    },
+    {
+      "name": "social cost",
+      "from": "cost",
+      "verb": "kind of",
+      "to": "social"
+    },
+    {
+      "name": "health cost",
+      "from": "cost",
+      "verb": "of",
+      "to": "health"
+    },
+    {
+      "name": "health spending",
+      "from": "spending",
+      "verb": "of",
+      "to": "health"
+    },
+    {
+      "name": "income loss",
+      "from": "loss",
+      "verb": "of",
+      "to": "income"
+    },
+    {
+      "name": "GDP per capita",
+      "from": "GDP",
+      "verb": "per",
+      "to": "inhabitant"
+    },
+    {
+      "name": "GDP per capita change",
+      "from": "change",
+      "verb": "of",
+      "to": "GDP per capita"
+    },
+    {
+      "name": "life expectancy",
+      "from": "expectancy",
+      "verb": "of",
+      "to": "life"
+    },
+    {
+      "name": "life expectancy gap",
+      "from": "gap",
+      "verb": "of",
+      "to": "life expectancy",
+      "description": "the difference of the life expectancy between the richest and the poorest people of a country"
+    },
+    {
+      "name": "air pollution",
+      "from": "pollution",
+      "verb": "of",
+      "to": "air"
+    },
+    {
+      "name": "household air pollution",
+      "from": "air pollution",
+      "verb": "kind of",
+      "to": "household",
+      "description": "the air pollution in and around the home caused by cooking, heating and lighting with polluting fuels and technologies"
+    },
+    {
+      "name": "unsafe WASH",
+      "from": "WASH",
+      "verb": "kind of",
+      "to": "unsafe",
+      "description": "the lack of safe drinking water, of safe sanitation and of hand hygiene"
+    },
+    {
+      "name": "year (unit)",
+      "from": "year",
+      "verb": "must be one of",
+      "to": "unit",
+      "type": "measure_unit"
+    },
+    {
+      "name": "2001-2014",
+      "from": "2001",
+      "verb": "to",
+      "to": "2014"
+    },
+    {
+      "name": "social cost due to poverty",
+      "from": "poverty",
+      "verb": "can cause",
+      "to": "social cost",
+      "description": "the cost of poverty for the whole society, the summary of all cost reasons of poverty"
+    },
+    {
+      "name": "crime due to poverty",
+      "from": "poverty",
+      "verb": "can cause",
+      "to": "crime"
+    },
+    {
+      "name": "health cost due to poverty",
+      "from": "poverty",
+      "verb": "can cause",
+      "to": "health cost"
+    },
+    {
+      "name": "income loss due to poverty",
+      "from": "poverty",
+      "verb": "can cause",
+      "to": "income loss",
+      "description": "a child who grows up poor earns less as adult, e.g. because of less schooling and worse health"
+    },
+    {
+      "name": "life expectancy gap due to poverty",
+      "from": "poverty",
+      "verb": "can cause",
+      "to": "life expectancy gap"
+    },
+    {
+      "name": "stunting due to poverty",
+      "from": "poverty",
+      "verb": "can cause",
+      "to": "stunting"
+    },
+    {
+      "name": "hunger due to poverty",
+      "from": "poverty",
+      "verb": "can cause",
+      "to": "hunger"
+    },
+    {
+      "name": "household air pollution due to poverty",
+      "from": "poverty",
+      "verb": "can cause",
+      "to": "household air pollution",
+      "description": "a poor household cannot afford clean fuels like gas or electricity and cooks on open fires or inefficient stoves"
+    },
+    {
+      "name": "unsafe WASH due to poverty",
+      "from": "poverty",
+      "verb": "can cause",
+      "to": "unsafe WASH"
+    }
+  ],
+  "sources": [
+    {
+      "name": "McLaughlin & Rank (2018)",
+      "description": "McLaughlin, M., Rank, M. R. (2018): Estimating the Economic Cost of Childhood Poverty in the United States. Social Work Research 42(2), 73-83. The annual aggregate cost of the child poverty in the United States in 2015 is USD 1.0298 trillion or 5.4 percent of the GDP; crime and incarceration are 39 percent of the cost, the reduced lifetime earnings 29 percent (USD 294.0 billion) and the ill health 19 percent; every dollar spent on reducing child poverty saves at least seven dollars.",
+      "url": "https://openscholarship.wustl.edu/csd_research/836"
+    },
+    {
+      "name": "National Academies (2019) A Roadmap to Reducing Child Poverty",
+      "description": "National Academies of Sciences, Engineering, and Medicine (2019): A Roadmap to Reducing Child Poverty. Studies estimate that the child poverty costs the United States between USD 800 billion and 1.1 trillion annually in lost adult productivity, increased costs of crime and increased health expenditures; two policy packages would halve the child poverty within ten years for USD 90 to 110 billion per year.",
+      "doi": "10.17226/25246",
+      "url": "https://nap.nationalacademies.org/child-poverty/highlights.html"
+    },
+    {
+      "name": "Joseph Rowntree Foundation (2016) Counting the cost of UK poverty",
+      "description": "Bramley, G., Hirsch, D. et al. (2016): Counting the cost of UK poverty. Joseph Rowntree Foundation, by Loughborough University and Heriot-Watt University. Poverty costs the public purse about GBP 78 billion per year or 4 percent of the GDP: GBP 69 billion of public service spending, of which GBP 29 billion for health (25 percent of all health spending), GBP 10 billion for schools and GBP 9 billion for police and criminal justice, plus GBP 9 billion of lost tax revenue and additional benefits.",
+      "url": "https://lboro.ac.uk/news-events/news/2016/august/uk-poverty-cost.html"
+    },
+    {
+      "name": "Chetty et al. (2016)",
+      "description": "Chetty, R., Stepner, M., Abraham, S. et al. (2016): The Association Between Income and Life Expectancy in the United States, 2001-2014. JAMA 315(16), 1750-1766. The gap of the life expectancy at age 40 between the richest 1 percent and the poorest 1 percent of the income distribution is 14.6 years (95 percent confidence interval 14.4 to 14.8) for men and 10.1 years (9.9 to 10.3) for women.",
+      "doi": "10.1001/jama.2016.4226"
+    },
+    {
+      "name": "UNICEF WHO World Bank (2023) Joint Child Malnutrition Estimates",
+      "description": "UNICEF, WHO, World Bank (2023): Levels and trends in child malnutrition, Joint Child Malnutrition Estimates 2023 edition. 148.1 million children under 5 or 22.3 percent were stunted in 2022; more than half of them lived in Asia and two out of five in Africa.",
+      "url": "https://www.who.int/publications/i/item/9789240073791"
+    },
+    {
+      "name": "Galasso & Wagstaff (2019)",
+      "description": "Galasso, E., Wagstaff, A. (2019): The aggregate income losses from childhood stunting and the returns to a nutrition intervention aimed at reducing stunting. Economics and Human Biology 34, 225-238. Development accounting over the channels schooling (-1.6 years), adult height (-6 cm) and cognitive skills (-0.6 standard deviations): on average the income per person is about 7 percent lower because some of the workers were stunted as children.",
+      "doi": "10.1016/j.ehb.2019.01.010"
+    },
+    {
+      "name": "FAO et al. (2024) SOFI 2024",
+      "description": "FAO, IFAD, UNICEF, WFP, WHO (2024): The State of Food Security and Nutrition in the World 2024. Between 713 and 757 million people were undernourished in 2023, 733 million at the mid-range, about one in eleven people and 152 million more than in 2019.",
+      "url": "https://data.unicef.org/resources/sofi-2024/"
+    },
+    {
+      "name": "WHO Household air pollution fact sheet",
+      "description": "World Health Organization fact sheet Household air pollution: around 2.1 billion people cook on open fires or inefficient stoves fuelled by kerosene, biomass or coal; the household air pollution caused 2.9 million deaths in 2021, including over 309'000 deaths of children under the age of 5; an earlier version of the fact sheet stated 3.2 million deaths in 2020.",
+      "url": "https://www.who.int/news-room/fact-sheets/detail/household-air-pollution-and-health"
+    },
+    {
+      "name": "WHO (2023) Burden of disease attributable to unsafe WASH",
+      "description": "World Health Organization (2023): Burden of disease attributable to unsafe drinking-water, sanitation and hygiene: 2019 update. At least 1.4 million deaths and 74 million DALYs in 2019 could have been prevented by safe WASH, including 395'000 deaths of children under 5; 89 percent of the attributable deaths were in low and lower-middle income countries; only four health outcomes are counted, so the true burden is likely higher.",
+      "url": "https://www.who.int/data/gho/data/themes/topics/water-sanitation-and-hygiene-burden-of-disease"
+    }
+  ],
+  "values": [
+    {"words": ["social cost due to poverty", "child poverty", "United States", "2015", "billion", "EUR"], "number": "952.4", "source": "McLaughlin & Rank (2018)", "description": "1029.8 billion USD at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["social cost due to poverty", "child poverty", "United States", "2015", "percent", "GDP"], "number": "0.054", "source": "McLaughlin & Rank (2018)"},
+    {"words": ["social cost due to poverty", "child poverty", "United States", "annual", "billion", "EUR", "low"], "number": "739.8", "source": "National Academies (2019) A Roadmap to Reducing Child Poverty", "description": "800 billion USD at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["social cost due to poverty", "child poverty", "United States", "annual", "billion", "EUR", "high"], "number": "1017.3", "source": "National Academies (2019) A Roadmap to Reducing Child Poverty", "description": "1100 billion USD at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["social cost due to poverty", "public", "United Kingdom", "2016", "billion", "EUR"], "number": "89.68", "source": "Joseph Rowntree Foundation (2016) Counting the cost of UK poverty", "description": "78 billion GBP per year of public spending and lost tax revenue at the ECB 2023 average of 0.86979 GBP per EUR"},
+    {"words": ["social cost due to poverty", "public", "United Kingdom", "2016", "percent", "GDP"], "number": "0.04", "source": "Joseph Rowntree Foundation (2016) Counting the cost of UK poverty", "description": "78 billion GBP per year of public spending and lost tax revenue"},
+    {"words": ["crime due to poverty", "social cost", "child poverty", "United States", "2015", "percent"], "number": "0.39", "source": "McLaughlin & Rank (2018)", "description": "the share of crime and incarceration in the cost of the child poverty"},
+    {"words": ["crime due to poverty", "public", "United Kingdom", "2016", "billion", "EUR"], "number": "10.35", "source": "Joseph Rowntree Foundation (2016) Counting the cost of UK poverty", "description": "9 billion GBP per year for the police and the criminal justice system at the ECB 2023 average of 0.86979 GBP per EUR"},
+    {"words": ["health cost due to poverty", "social cost", "child poverty", "United States", "2015", "percent"], "number": "0.19", "source": "McLaughlin & Rank (2018)", "description": "the share of the ill health in the cost of the child poverty"},
+    {"words": ["health cost due to poverty", "public", "United Kingdom", "2016", "billion", "EUR"], "number": "33.34", "source": "Joseph Rowntree Foundation (2016) Counting the cost of UK poverty", "description": "29 billion GBP per year for treating the health conditions associated with poverty at the ECB 2023 average of 0.86979 GBP per EUR"},
+    {"words": ["health cost due to poverty", "health spending", "United Kingdom", "2016", "percent"], "number": "0.25", "source": "Joseph Rowntree Foundation (2016) Counting the cost of UK poverty", "description": "29 billion GBP per year for treating the health conditions associated with poverty"},
+    {"words": ["income loss due to poverty", "social cost", "child poverty", "United States", "2015", "percent"], "number": "0.29", "source": "McLaughlin & Rank (2018)", "description": "the share of the reduced lifetime earnings in the cost of the child poverty"},
+    {"words": ["income loss due to poverty", "child poverty", "United States", "2015", "billion", "EUR"], "number": "271.9", "source": "McLaughlin & Rank (2018)", "description": "294.0 billion USD of reduced lifetime earnings at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["life expectancy gap due to poverty", "man", "United States", "2001-2014", "year (unit)"], "number": "14.6", "source": "Chetty et al. (2016)", "description": "richest 1 percent compared to the poorest 1 percent of the income distribution"},
+    {"words": ["life expectancy gap due to poverty", "woman", "United States", "2001-2014", "year (unit)"], "number": "10.1", "source": "Chetty et al. (2016)", "description": "richest 1 percent compared to the poorest 1 percent of the income distribution"},
+    {"words": ["stunting due to poverty", "child", "world", "2022", "million", "person"], "number": "148.1", "source": "UNICEF WHO World Bank (2023) Joint Child Malnutrition Estimates", "description": "children under 5"},
+    {"words": ["stunting due to poverty", "child", "world", "2022", "percent"], "number": "0.223", "source": "UNICEF WHO World Bank (2023) Joint Child Malnutrition Estimates", "description": "share of the children under 5"},
+    {"words": ["stunting due to poverty", "GDP per capita change", "world", "percent"], "number": "-0.07", "source": "Galasso & Wagstaff (2019)", "description": "the average income loss per person caused by the workers who were stunted as children"},
+    {"words": ["hunger due to poverty", "world", "2023", "million", "person"], "number": "733", "source": "FAO et al. (2024) SOFI 2024"},
+    {"words": ["hunger due to poverty", "world", "2023", "million", "person", "low"], "number": "713", "source": "FAO et al. (2024) SOFI 2024"},
+    {"words": ["hunger due to poverty", "world", "2023", "million", "person", "high"], "number": "757", "source": "FAO et al. (2024) SOFI 2024"},
+    {"words": ["household air pollution due to poverty", "cooking", "world", "billion", "person"], "number": "2.1", "source": "WHO Household air pollution fact sheet", "description": "people cooking on open fires or inefficient stoves"},
+    {"words": ["household air pollution due to poverty", "deaths", "world", "2021", "million", "person"], "number": "2.9", "source": "WHO Household air pollution fact sheet"},
+    {"words": ["unsafe WASH due to poverty", "deaths", "world", "2019", "million", "person"], "number": "1.4", "source": "WHO (2023) Burden of disease attributable to unsafe WASH"},
+    {"words": ["unsafe WASH due to poverty", "deaths", "child", "world", "2019", "million", "person"], "number": "0.395", "source": "WHO (2023) Burden of disease attributable to unsafe WASH", "description": "children under 5"}
+  ]
+}

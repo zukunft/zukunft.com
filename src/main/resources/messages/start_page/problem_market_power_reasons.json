@@ -1,0 +1,398 @@
+{
+  "version": "0.0.3",
+  "data_version": "0.0.1",
+  "time": "2026-10-08 12:00:00",
+  "user": "timon",
+  "selection": [
+    "market power reasons that cause costs"
+  ],
+  "description": "The most relevant reasons why market power causes costs, each linked to market power with 'can cause' and quantified by the studies that report it for the world and per country: the rising markups of the firms above their marginal cost in the United States (De Loecker, Eeckhout & Unger 2020) and per country of the world (De Loecker & Eeckhout 2020), the deadweight loss of the markups as loss of the total factor productivity (Baqaee & Farhi 2020) and of the consumption (Edmond, Midrigan & Xu 2018), the fall of the labour share and the rise of the excess profits (Barkai 2020, De Loecker, Eeckhout & Unger 2020), the wage markdown of the employers with monopsony power (Yeh, Macaluso & Hershbein 2022), the overcharge of the cartels (Connor 2014) and the lower investment (Gutiérrez & Philippon 2017). The cartel fines of the European Commission are added as the scale of the cartels that were detected; they are not a cost estimate and not attributed to market power by their source, so they do not carry a '<reason> due to market power' triple. The annual damage of market power and the market share tax as its solution are stated in problem_market_power.json instead, because they are the row of the global problem ranking of the start page. Every number is taken from the named source as reported; a country that a study does not report is left out and never estimated. A share is stored as the decimal ratio, a loss as a positive number and a change with its sign; a markup or a markdown that the source states as a ratio, e.g. 1.6 for a price 60 percent above the marginal cost, is stored as that ratio without the word percent. Each study has its own sample and metric, e.g. the listed firms of one country or the manufacturing plants, so numbers of different studies are not comparable without reading the source description. Every amount of money is stated in euro: the US dollar figure of the source is converted with the ECB 2023 annual average of 1.0813 USD per EUR (the value of GDP.json) whatever the price base year of the source, and the source figure is kept in the description of the value. A value of a reason carries the triple '<reason> due to market power' and not the triple 'market power' itself, because a value that names a global problem directly is a row of the global problem ranking of the start page, where only the potential loss and the solution of a problem belong.",
+  "words": [
+    {
+      "name": "power"
+    },
+    {
+      "name": "market"
+    },
+    {
+      "name": "markup"
+    },
+    {
+      "name": "deadweight"
+    },
+    {
+      "name": "loss"
+    },
+    {
+      "name": "TFP",
+      "description": "the total factor productivity, the part of the output that is not explained by the amount of labour and capital used, i.e. how efficiently the inputs are used"
+    },
+    {
+      "name": "consumption"
+    },
+    {
+      "name": "investment"
+    },
+    {
+      "name": "labour"
+    },
+    {
+      "name": "share"
+    },
+    {
+      "name": "change"
+    },
+    {
+      "name": "profit"
+    },
+    {
+      "name": "excess"
+    },
+    {
+      "name": "rate"
+    },
+    {
+      "name": "employee"
+    },
+    {
+      "name": "wage"
+    },
+    {
+      "name": "markdown",
+      "description": "the ratio of the marginal revenue product of a worker to the wage; a markdown above 1 means that the worker gets less than the value of the last unit of work, because the employer has market power on the labour market (monopsony)"
+    },
+    {
+      "name": "manufacturing"
+    },
+    {
+      "name": "cartel",
+      "description": "an agreement of competing firms to fix the prices, to share the markets or to limit the output instead of competing"
+    },
+    {
+      "name": "overcharge",
+      "description": "the share by which a price is above the price that would have been paid without the cartel"
+    },
+    {
+      "name": "fine",
+      "description": "a sum of money that an authority imposes as a penalty for an infringement of the law"
+    },
+    {
+      "name": "median"
+    },
+    {
+      "name": "EUR"
+    },
+    {
+      "name": "percent"
+    },
+    {
+      "name": "factor"
+    },
+    {
+      "name": "thousand"
+    },
+    {
+      "name": "billion"
+    },
+    {
+      "name": "low"
+    },
+    {
+      "name": "high"
+    },
+    {
+      "name": "world"
+    },
+    {
+      "name": "European Union"
+    },
+    {
+      "name": "United States"
+    },
+    {
+      "name": "Germany"
+    },
+    {
+      "name": "France"
+    },
+    {
+      "name": "United Kingdom"
+    },
+    {
+      "name": "Switzerland"
+    },
+    {
+      "name": "Japan"
+    },
+    {
+      "name": "China"
+    },
+    {
+      "name": "1976",
+      "type": "time"
+    },
+    {
+      "name": "1980",
+      "type": "time"
+    },
+    {
+      "name": "1984",
+      "type": "time"
+    },
+    {
+      "name": "2014"
+    },
+    {
+      "name": "2015"
+    },
+    {
+      "name": "2016"
+    },
+    {
+      "name": "2019"
+    }
+  ],
+  "triples": [
+    {
+      "name": "market power",
+      "from": "power",
+      "verb": "of",
+      "to": "market"
+    },
+    {
+      "name": "deadweight loss",
+      "from": "loss",
+      "verb": "kind of",
+      "to": "deadweight"
+    },
+    {
+      "name": "TFP loss",
+      "from": "loss",
+      "verb": "of",
+      "to": "TFP",
+      "description": "the share by which the total factor productivity is lower than without the cause"
+    },
+    {
+      "name": "consumption loss",
+      "from": "loss",
+      "verb": "of",
+      "to": "consumption",
+      "description": "the share of the consumption that the households lose compared to a counterfactual without the cause, as consumption equivalent of the welfare loss"
+    },
+    {
+      "name": "investment loss",
+      "from": "loss",
+      "verb": "of",
+      "to": "investment",
+      "description": "the share by which the investment and the capital stock are lower than without the cause"
+    },
+    {
+      "name": "labour share",
+      "from": "share",
+      "verb": "of",
+      "to": "labour",
+      "description": "the compensation of the employees as share of the value added"
+    },
+    {
+      "name": "labour share change",
+      "from": "change",
+      "verb": "of",
+      "to": "labour share",
+      "description": "the change of the labour share over a period; a fall is negative"
+    },
+    {
+      "name": "profit share",
+      "from": "share",
+      "verb": "of",
+      "to": "profit",
+      "description": "the profits as share of the value added"
+    },
+    {
+      "name": "profit share change",
+      "from": "change",
+      "verb": "of",
+      "to": "profit share",
+      "description": "the change of the profit share over a period in percentage points; a rise is positive"
+    },
+    {
+      "name": "profit rate",
+      "from": "rate",
+      "verb": "of",
+      "to": "profit",
+      "description": "the sales minus all costs including the overhead and the capital costs as share of the sales"
+    },
+    {
+      "name": "excess profit",
+      "from": "profit",
+      "verb": "kind of",
+      "to": "excess",
+      "description": "the profit above the normal return on the capital, which a firm can only keep if the competition does not erode it"
+    },
+    {
+      "from": "profit",
+      "verb": "per",
+      "to": "employee"
+    },
+    {
+      "name": "wage markdown",
+      "from": "markdown",
+      "verb": "of",
+      "to": "wage",
+      "description": "the ratio of the marginal revenue product of a worker to the wage, which an employer with market power on the labour market can keep above 1"
+    },
+    {
+      "name": "cartel overcharge",
+      "from": "overcharge",
+      "verb": "of",
+      "to": "cartel",
+      "description": "the price that a cartel charges above the price without the cartel, as share of the price without the cartel"
+    },
+    {
+      "name": "cartel fine",
+      "from": "fine",
+      "verb": "of",
+      "to": "cartel"
+    },
+    {
+      "name": "1976-2014",
+      "from": "1976",
+      "verb": "to",
+      "to": "2014"
+    },
+    {
+      "name": "1984-2014",
+      "from": "1984",
+      "verb": "to",
+      "to": "2014"
+    },
+    {
+      "name": "2015-2019",
+      "from": "2015",
+      "verb": "to",
+      "to": "2019"
+    },
+    {
+      "name": "markup due to market power",
+      "from": "market power",
+      "verb": "can cause",
+      "to": "markup",
+      "description": "a firm with market power can set its price above the marginal cost, so the consumers pay more than in a competitive market"
+    },
+    {
+      "name": "deadweight loss due to market power",
+      "from": "market power",
+      "verb": "can cause",
+      "to": "deadweight loss",
+      "description": "the higher prices lower the output below the efficient level and the dispersed markups misallocate labour and capital to the wrong firms"
+    },
+    {
+      "name": "labour share change due to market power",
+      "from": "market power",
+      "verb": "can cause",
+      "to": "labour share change",
+      "description": "the dominant firms with high markups have a low labour share, so the reallocation of sales to them lowers the labour share of the economy"
+    },
+    {
+      "name": "excess profit due to market power",
+      "from": "market power",
+      "verb": "can cause",
+      "to": "excess profit"
+    },
+    {
+      "name": "wage markdown due to market power",
+      "from": "market power",
+      "verb": "can cause",
+      "to": "wage markdown",
+      "description": "an employer with market power on the labour market pays a wage below the value that the worker creates"
+    },
+    {
+      "name": "cartel overcharge due to market power",
+      "from": "market power",
+      "verb": "can cause",
+      "to": "cartel overcharge"
+    },
+    {
+      "name": "investment loss due to market power",
+      "from": "market power",
+      "verb": "can cause",
+      "to": "investment loss",
+      "description": "a dominant firm earns high profits without investing, because it does not need to defend its market share against competitors"
+    }
+  ],
+  "sources": [
+    {
+      "name": "De Loecker, Eeckhout & Unger (2020)",
+      "description": "De Loecker, J., Eeckhout, J., Unger, G. (2020): The Rise of Market Power and the Macroeconomic Implications. Quarterly Journal of Economics 135(2), 561-644. Firm-level data of the US economy since 1955: the aggregate (sales-weighted) markup rises from 21 percent above the marginal cost in 1980 to 61 percent above the marginal cost in 2016, driven by the upper tail while the median markup is unchanged; the average profit rate rises from close to 1 percent in 1980 to around 8 percent in 2016.",
+      "doi": "10.1093/qje/qjz041"
+    },
+    {
+      "name": "De Loecker & Eeckhout (2020) Global Market Power",
+      "description": "De Loecker, J., Eeckhout, J. (2020): Global Market Power. Working paper of 13 May 2020 (first circulated as NBER Working Paper 24768, June 2018), not peer reviewed. Financial statements of over 70'000 firms in 134 countries: the aggregate global markup rises from close to 1.15 in 1980 to around 1.6 in 2016; Table 1 states the markup of 2016 of the global aggregate 1.61, the United States 1.84, Germany 1.35, France 1.51, the United Kingdom 1.68, Switzerland 2.72, Japan 1.33 and China 1.40.",
+      "url": "https://crei.cat/wp-content/uploads/2020/10/GLOBAL.pdf",
+      "type": "pdf"
+    },
+    {
+      "name": "Baqaee & Farhi (2020)",
+      "description": "Baqaee, D. R., Farhi, E. (2020): Productivity and Misallocation in General Equilibrium. Quarterly Journal of Economics 135(1), 105-163. Abstract: eliminating the misallocation resulting from the large and dispersed markups estimated in the US data would raise the aggregate TFP by about 15 percent, two orders of magnitude more than the 0.1 percent estimate of Harberger (1954); the authors state that these numbers should be interpreted with care since the data is imperfect and requires substantial imputation. Figure taken from the abstract of the NBER Working Paper 24007, revised October 2020.",
+      "doi": "10.1093/qje/qjz030"
+    },
+    {
+      "name": "Edmond, Midrigan & Xu (2018)",
+      "description": "Edmond, C., Midrigan, V., Xu, D. Y. (2018): How Costly Are Markups? NBER Working Paper 24800, July 2018; published in the Journal of Political Economy 131(7), 1619-1675 (2023), whose figures may differ. Model calibrated to the US data: in the benchmark with an aggregate markup of 1.15 the representative consumer would gain 7.5 percent in consumption-equivalent terms from the removal of all markup distortions; with the cost-weighted Compustat markup of 1.25 the gain is 18.6 percent, which the authors see as an upper bound.",
+      "doi": "10.3386/w24800"
+    },
+    {
+      "name": "Barkai (2020)",
+      "description": "Barkai, S. (2020): Declining Labor and Capital Shares. Journal of Finance 75(5), 2421-2463. US non-financial corporate sector over the past 30 years: the labour share declines by 10 percent and the capital share by 30 percent, while the profit share increases by more than 12 percentage points, worth over 1.1 trillion USD in 2014 or 14 thousand USD per employee; a decline of the competition is needed to explain the fall of both shares.",
+      "doi": "10.1111/jofi.12909"
+    },
+    {
+      "name": "Yeh, Macaluso & Hershbein (2022)",
+      "description": "Yeh, C., Macaluso, C., Hershbein, B. (2022): Monopsony in the US Labor Market. American Economic Review 112(7), 2099-2138. Plant-level data of the US manufacturing (Annual Survey and Census of Manufactures 1976-2014): most plants operate in a monopsonistic environment with an average markdown of 1.53, i.e. a worker earns only 65 cents on the marginal dollar generated; the aggregate markdown fell from the late 1970s to the early 2000s and has been sharply increasing since.",
+      "doi": "10.1257/aer.20200025"
+    },
+    {
+      "name": "Connor (2014) Price-Fixing Overcharges",
+      "description": "Connor, J. M. (2014): Price-Fixing Overcharges: Revised 3rd Edition. SSRN working paper, Purdue University and American Antitrust Institute. Survey of more than 700 published economic studies and judicial decisions with 2'041 quantitative estimates of the overcharges of hard-core cartels: the median average long-run overcharge for all types of cartels over all time periods is 23.0 percent; the mean is at least 49 percent.",
+      "url": "https://www.competitionpolicyinternational.com/price-fixing-overcharges-revised-3rd-edition/"
+    },
+    {
+      "name": "European Commission (2021) Cartel statistics",
+      "description": "European Commission, DG Competition: Cartel statistics, last change 20 April 2021, copy of the Swedish Competition Authority. Fines imposed for cartel infringements under Article 101 TFEU, not adjusted for court judgments: EUR 8'307'828'000 in 2015-2019 and EUR 30'206'348'824 in 1990 to April 2021.",
+      "url": "https://www.konkurrensverket.se/contentassets/39c14b07e9144364b56925d16dfb4619/statistics.pdf",
+      "type": "pdf"
+    },
+    {
+      "name": "Gutiérrez & Philippon (2017)",
+      "description": "Gutiérrez, G., Philippon, T. (2017): Investmentless Growth: An Empirical Investigation. Brookings Papers on Economic Activity, Fall 2017, from page 89, with the general discussion on page 190.The US business investment is weak relative to Tobin's Q since the early 2000s; the rise of the intangibles explains about one third of the drop in investment, while the concentration and the corporate governance explain the rest. In the general discussion of the paper Philippon states that, if the level of the markups is held fixed relative to some point in the past, capital and investment would be between 4 and 8 percent higher than the current levels.",
+      "url": "https://www.brookings.edu/wp-content/uploads/2018/02/gutierreztextfa17bpea.pdf",
+      "type": "pdf"
+    }
+  ],
+  "values": [
+    {"words": ["markup due to market power", "United States", "1980", "percent"], "number": "0.21", "source": "De Loecker, Eeckhout & Unger (2020)", "description": "the aggregate markup above the marginal cost of the US listed firms when it started to rise"},
+    {"words": ["markup due to market power", "United States", "2016", "percent"], "number": "0.61", "source": "De Loecker, Eeckhout & Unger (2020)", "description": "the aggregate markup above the marginal cost of the US listed firms"},
+    {"words": ["markup due to market power", "world", "2016", "factor"], "number": "1.61", "source": "De Loecker & Eeckhout (2020) Global Market Power", "description": "the aggregate global markup as ratio of the price to the marginal cost, up from close to 1.15 in 1980"},
+    {"words": ["markup due to market power", "United States", "2016", "factor"], "number": "1.84", "source": "De Loecker & Eeckhout (2020) Global Market Power", "description": "ratio of the price to the marginal cost; a different firm sample than De Loecker, Eeckhout & Unger (2020)"},
+    {"words": ["markup due to market power", "Germany", "2016", "factor"], "number": "1.35", "source": "De Loecker & Eeckhout (2020) Global Market Power", "description": "ratio of the price to the marginal cost"},
+    {"words": ["markup due to market power", "France", "2016", "factor"], "number": "1.51", "source": "De Loecker & Eeckhout (2020) Global Market Power", "description": "ratio of the price to the marginal cost"},
+    {"words": ["markup due to market power", "United Kingdom", "2016", "factor"], "number": "1.68", "source": "De Loecker & Eeckhout (2020) Global Market Power", "description": "ratio of the price to the marginal cost"},
+    {"words": ["markup due to market power", "Switzerland", "2016", "factor"], "number": "2.72", "source": "De Loecker & Eeckhout (2020) Global Market Power", "description": "ratio of the price to the marginal cost"},
+    {"words": ["markup due to market power", "Japan", "2016", "factor"], "number": "1.33", "source": "De Loecker & Eeckhout (2020) Global Market Power", "description": "ratio of the price to the marginal cost"},
+    {"words": ["markup due to market power", "China", "2016", "factor"], "number": "1.4", "source": "De Loecker & Eeckhout (2020) Global Market Power", "description": "ratio of the price to the marginal cost"},
+    {"words": ["deadweight loss due to market power", "TFP loss", "United States", "percent"], "number": "0.15", "source": "Baqaee & Farhi (2020)", "description": "the aggregate TFP would be about 15 percent higher without the misallocation caused by the markups"},
+    {"words": ["deadweight loss due to market power", "consumption loss", "United States", "percent"], "number": "0.075", "source": "Edmond, Midrigan & Xu (2018)", "description": "the consumption-equivalent welfare gain from removing all markup distortions in the benchmark calibration"},
+    {"words": ["deadweight loss due to market power", "consumption loss", "United States", "percent", "high"], "number": "0.186", "source": "Edmond, Midrigan & Xu (2018)", "description": "the calibration to the cost-weighted Compustat markup of 1.25, an upper bound according to the authors"},
+    {"words": ["labour share change due to market power", "United States", "1984-2014", "percent"], "number": "-0.1", "source": "Barkai (2020)", "description": "the decline of the labour share of the US non-financial corporate sector over the past 30 years in percent of its level, not in percentage points"},
+    {"words": ["excess profit due to market power", "profit share change", "United States", "1984-2014", "percent"], "number": "0.12", "source": "Barkai (2020)", "description": "the increase of the profit share by more than 12 percentage points of the gross value added"},
+    {"words": ["excess profit due to market power", "United States", "2014", "billion", "EUR"], "number": "1017.29", "source": "Barkai (2020)", "description": "the value of the increase of the profit share, over 1.1 trillion USD at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["excess profit due to market power", "profit per employee", "United States", "2014", "thousand", "EUR"], "number": "12.95", "source": "Barkai (2020)", "description": "14 thousand USD per employee at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["excess profit due to market power", "profit rate", "United States", "1980", "percent"], "number": "0.01", "source": "De Loecker, Eeckhout & Unger (2020)", "description": "close to 1 percent of the sales"},
+    {"words": ["excess profit due to market power", "profit rate", "United States", "2016", "percent"], "number": "0.08", "source": "De Loecker, Eeckhout & Unger (2020)", "description": "around 8 percent of the sales"},
+    {"words": ["wage markdown due to market power", "manufacturing", "United States", "1976-2014", "factor"], "number": "1.53", "source": "Yeh, Macaluso & Hershbein (2022)", "description": "the average markdown of the US manufacturing plants, i.e. a worker earns only 65 cents on the marginal dollar generated"},
+    {"words": ["cartel overcharge due to market power", "median", "world", "percent"], "number": "0.23", "source": "Connor (2014) Price-Fixing Overcharges", "description": "the median average long-run overcharge of 2'041 estimates for all types of cartels over all time periods"},
+    {"words": ["cartel fine", "European Union", "2015-2019", "billion", "EUR"], "number": "8.307828", "source": "European Commission (2021) Cartel statistics", "description": "the fines imposed by the European Commission for cartels, not adjusted for court judgments; the scale of the detected cartels, not a cost estimate and not attributed to market power by the source"},
+    {"words": ["investment loss due to market power", "United States", "percent", "low"], "number": "0.04", "source": "Gutiérrez & Philippon (2017)", "description": "capital and investment would be 4 to 8 percent higher if the markups were held at their level of the past; a statement of the author in the general discussion of the paper"},
+    {"words": ["investment loss due to market power", "United States", "percent", "high"], "number": "0.08", "source": "Gutiérrez & Philippon (2017)", "description": "capital and investment would be 4 to 8 percent higher if the markups were held at their level of the past; a statement of the author in the general discussion of the paper"}
+  ]
+}

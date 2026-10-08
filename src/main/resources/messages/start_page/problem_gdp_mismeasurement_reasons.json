@@ -1,0 +1,583 @@
+{
+  "version": "0.0.3",
+  "data_version": "0.0.1",
+  "time": "2026-10-08 12:00:00",
+  "user": "timon",
+  "selection": [
+    "GDP mismeasurement reasons that cause costs"
+  ],
+  "description": "The most relevant reasons why measuring the welfare by the GDP causes costs, i.e. what the GDP leaves out or measures wrongly so that the policy steers wrongly, each linked to the GDP mismeasurement with 'can cause' and quantified by the studies and official statistics that report it for the world and per country: the unpaid household and care work that is not counted (household production satellite accounts of the US BEA (Kanal & Kornegay 2019) and of the ONS 2018, ILO 2018); the informal economy that the official GDP captures only in part (Medina & Schneider 2018); the statistical revisions of the GDP level by a rebasing (Nigeria 2014, Ghana 2010); the depletion of the natural capital that is not deducted (World Bank adjusted savings, The Changing Wealth of Nations 2021); the air pollution damage that is not deducted from the value added (Muller, Mendelsohn & Nordhaus 2011); the consumer surplus of free digital goods (Brynjolfsson, Collis & Eggers 2019); and the gap between the welfare and the GDP measured by the genuine progress indicator (Kubiszewski et al. 2013). The framing follows the Stiglitz-Sen-Fitoussi Commission of 2009, which recommended to look at the income, the consumption and the wealth of the households, to broaden the income measures to the non-market activities and to measure the sustainability separately. The understatement of the growth by one single free service (Brynjolfsson et al. 2019, GDP-B) and the solution are stated in problem_gdp_mismeasurement.json instead, because they are the row of the global problem ranking of the start page. Every number is taken from the named source as reported; a country that a study does not report is left out and never estimated. A share is stored as the decimal ratio, a loss as a positive number and a change with its sign. Each study has its own definition and its own metric, e.g. the household production is valued with the wages of the replacement work and the informal economy with a macro model, so numbers of different studies are not comparable without reading the source description. The physical decline of the marine fish stocks and of the forests is not attributed to the GDP mismeasurement by its source, so these values do not carry a '<reason> due to GDP mismeasurement' triple. Every amount of money is stated in euro: the US dollar figure of the source is converted with the ECB 2023 annual average of 1.0813 USD per EUR (the value of GDP.json) whatever the price base year of the source, and the British pound figure with the ECB 2023 annual average of 0.86979 GBP per EUR, and the source figure is kept in the description of the value; for any other currency only the share is stored. A value of a reason carries the triple '<reason> due to GDP mismeasurement' and not the phrase 'GDP mismeasurement' itself, because a value that names a global problem directly is a row of the global problem ranking of the start page, where only the potential loss and the solution of a problem belong.",
+  "words": [
+    {
+      "name": "mismeasurement"
+    },
+    {
+      "name": "GDP"
+    },
+    {
+      "name": "work"
+    },
+    {
+      "name": "unpaid",
+      "description": "done without a wage or a price, e.g. the work of a household for itself"
+    },
+    {
+      "name": "care"
+    },
+    {
+      "name": "production"
+    },
+    {
+      "name": "household"
+    },
+    {
+      "name": "woman"
+    },
+    {
+      "name": "economy"
+    },
+    {
+      "name": "informal",
+      "description": "hidden from the public authorities, e.g. to avoid taxes, social security contributions or regulations"
+    },
+    {
+      "name": "revision",
+      "description": "the change of a published statistical number by the statistical office, e.g. after new data sources, a new base year or new methods"
+    },
+    {
+      "name": "capital"
+    },
+    {
+      "name": "natural"
+    },
+    {
+      "name": "depletion",
+      "description": "the using up of a stock of a resource faster than it renews, e.g. the extraction of oil, coal, gas and minerals and the net cutting of forests"
+    },
+    {
+      "name": "GNI",
+      "description": "gross national income: the GDP plus the net income received from abroad"
+    },
+    {
+      "name": "fish"
+    },
+    {
+      "name": "stock"
+    },
+    {
+      "name": "marine"
+    },
+    {
+      "name": "forest"
+    },
+    {
+      "name": "wealth"
+    },
+    {
+      "name": "change"
+    },
+    {
+      "name": "inhabitant"
+    },
+    {
+      "name": "country"
+    },
+    {
+      "name": "low-income",
+      "description": "classified by the World Bank as a low income economy by its GNI per capita"
+    },
+    {
+      "name": "middle-income",
+      "description": "classified by the World Bank as a lower-middle or upper-middle income economy by its GNI per capita"
+    },
+    {
+      "name": "damage",
+      "description": "the loss of value caused by a harmful event or substance"
+    },
+    {
+      "name": "pollution"
+    },
+    {
+      "name": "air"
+    },
+    {
+      "name": "value"
+    },
+    {
+      "name": "added"
+    },
+    {
+      "name": "plant"
+    },
+    {
+      "name": "power"
+    },
+    {
+      "name": "coal-fired",
+      "description": "burning coal as the fuel"
+    },
+    {
+      "name": "agriculture"
+    },
+    {
+      "name": "consumer"
+    },
+    {
+      "name": "surplus"
+    },
+    {
+      "name": "willingness"
+    },
+    {
+      "name": "acceptance"
+    },
+    {
+      "name": "engine"
+    },
+    {
+      "name": "search"
+    },
+    {
+      "name": "email",
+      "description": "the electronic mail service"
+    },
+    {
+      "name": "map"
+    },
+    {
+      "name": "digital"
+    },
+    {
+      "name": "welfare"
+    },
+    {
+      "name": "gap"
+    },
+    {
+      "name": "GPI",
+      "description": "genuine progress indicator: the personal consumption adjusted for the income inequality, plus the value of the household and volunteer work, minus the costs of crime, pollution, resource depletion and other defensive expenditures",
+      "refs": [
+        {
+          "name": "Genuine_progress_indicator",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "threshold"
+    },
+    {
+      "name": "EUR"
+    },
+    {
+      "name": "percent"
+    },
+    {
+      "name": "billion"
+    },
+    {
+      "name": "trillion"
+    },
+    {
+      "name": "annual"
+    },
+    {
+      "name": "low"
+    },
+    {
+      "name": "high"
+    },
+    {
+      "name": "world"
+    },
+    {
+      "name": "United States"
+    },
+    {
+      "name": "United Kingdom"
+    },
+    {
+      "name": "Nigeria"
+    },
+    {
+      "name": "Ghana"
+    },
+    {
+      "name": "Bolivia"
+    },
+    {
+      "name": "Zimbabwe"
+    },
+    {
+      "name": "Switzerland"
+    },
+    {
+      "name": "Austria"
+    },
+    {
+      "name": "DR Congo"
+    },
+    {
+      "name": "1965",
+      "type": "time"
+    },
+    {
+      "name": "1991",
+      "type": "time"
+    },
+    {
+      "name": "1995",
+      "type": "time"
+    },
+    {
+      "name": "2006",
+      "type": "time"
+    },
+    {
+      "name": "2013"
+    },
+    {
+      "name": "2015"
+    },
+    {
+      "name": "2016"
+    },
+    {
+      "name": "2017",
+      "type": "time"
+    },
+    {
+      "name": "2018"
+    },
+    {
+      "name": "2021"
+    }
+  ],
+  "triples": [
+    {
+      "name": "GDP mismeasurement",
+      "from": "mismeasurement",
+      "verb": "of",
+      "to": "GDP"
+    },
+    {
+      "name": "low- and middle-income",
+      "from": "low-income",
+      "verb": "and",
+      "to": "middle-income"
+    },
+    {
+      "name": "low- and middle-income country",
+      "from": "country",
+      "verb": "kind of",
+      "to": "low- and middle-income",
+      "description": "a country classified by the World Bank as low income, lower-middle income or upper-middle income by its GNI per capita"
+    },
+    {
+      "name": "value added",
+      "from": "value",
+      "verb": "kind of",
+      "to": "added",
+      "description": "the output of an industry minus its intermediate inputs; the sum of the value added of all industries is the GDP"
+    },
+    {
+      "name": "power plant",
+      "from": "plant",
+      "verb": "kind of",
+      "to": "power"
+    },
+    {
+      "name": "coal-fired power plant",
+      "from": "power plant",
+      "verb": "kind of",
+      "to": "coal-fired",
+      "description": "a power plant that generates electricity by burning coal"
+    },
+    {
+      "name": "unpaid work",
+      "from": "work",
+      "verb": "kind of",
+      "to": "unpaid"
+    },
+    {
+      "name": "care work",
+      "from": "work",
+      "verb": "kind of",
+      "to": "care",
+      "description": "the direct care of children, of the elderly and of the sick, and the indirect care work such as cooking and cleaning"
+    },
+    {
+      "name": "household production",
+      "from": "production",
+      "verb": "kind of",
+      "to": "household",
+      "description": "the goods and services that the households produce for their own use with unpaid work, e.g. cooking, cleaning, laundry, childcare and adult care"
+    },
+    {
+      "name": "informal economy",
+      "from": "economy",
+      "verb": "kind of",
+      "to": "informal",
+      "description": "the legal market production that is hidden from the public authorities, which the official GDP captures only in part; the shadow economy of Medina & Schneider (2018)"
+    },
+    {
+      "name": "GDP revision",
+      "from": "revision",
+      "verb": "of",
+      "to": "GDP",
+      "description": "the change of the measured GDP level when the statistical office rebases the national accounts; an increase is positive"
+    },
+    {
+      "name": "natural capital",
+      "from": "capital",
+      "verb": "kind of",
+      "to": "natural",
+      "description": "the stocks of nature that yield goods and services, e.g. forests, fish stocks, farmland, fossil fuels and minerals"
+    },
+    {
+      "name": "natural capital depletion",
+      "from": "depletion",
+      "verb": "of",
+      "to": "natural capital",
+      "description": "the value of the natural capital used up in a year, which the GDP and the GNI do not deduct"
+    },
+    {
+      "name": "fish stock",
+      "from": "stock",
+      "verb": "of",
+      "to": "fish"
+    },
+    {
+      "name": "marine fish stock",
+      "from": "fish stock",
+      "verb": "kind of",
+      "to": "marine"
+    },
+    {
+      "name": "wealth change",
+      "from": "change",
+      "verb": "of",
+      "to": "wealth",
+      "description": "the change of the value of an asset in the wealth accounts over a period; a decline is negative"
+    },
+    {
+      "name": "wealth per capita",
+      "from": "wealth",
+      "verb": "per",
+      "to": "inhabitant"
+    },
+    {
+      "name": "wealth per capita change",
+      "from": "change",
+      "verb": "of",
+      "to": "wealth per capita",
+      "description": "the change of the wealth per inhabitant over a period; a decline is negative"
+    },
+    {
+      "name": "air pollution",
+      "from": "pollution",
+      "verb": "of",
+      "to": "air"
+    },
+    {
+      "name": "air pollution damage",
+      "from": "damage",
+      "verb": "of",
+      "to": "air pollution",
+      "description": "the gross external damage of the air pollution emissions, mainly to the health, which the market price and so the value added of the polluting industry does not include"
+    },
+    {
+      "name": "consumer surplus",
+      "from": "surplus",
+      "verb": "kind of",
+      "to": "consumer",
+      "description": "the benefit of a good to its user above the price paid; for a free good it is the whole benefit, which the GDP counts as zero"
+    },
+    {
+      "name": "willingness to accept",
+      "description": "the compensation a person demands to give up a free good, measured with incentive compatible choice experiments",
+      "from": "willingness",
+      "verb": "of",
+      "to": "acceptance"
+    },
+    {
+      "name": "search engine",
+      "from": "engine",
+      "verb": "of",
+      "to": "search"
+    },
+    {
+      "name": "digital map",
+      "from": "map",
+      "verb": "kind of",
+      "to": "digital"
+    },
+    {
+      "name": "welfare gap",
+      "from": "gap",
+      "verb": "of",
+      "to": "welfare",
+      "description": "the difference between the development of the economic welfare and of the GDP"
+    },
+    {
+      "name": "GDP per capita",
+      "from": "GDP",
+      "verb": "per",
+      "to": "inhabitant"
+    },
+    {
+      "name": "GPI per capita",
+      "from": "GPI",
+      "verb": "per",
+      "to": "inhabitant"
+    },
+    {
+      "name": "1991-2015",
+      "from": "1991",
+      "verb": "to",
+      "to": "2015"
+    },
+    {
+      "name": "1995-2018",
+      "from": "1995",
+      "verb": "to",
+      "to": "2018"
+    },
+    {
+      "name": "unpaid work due to GDP mismeasurement",
+      "from": "GDP mismeasurement",
+      "verb": "can cause",
+      "to": "unpaid work",
+      "description": "the unpaid household and care work is not counted in the GDP, so a shift between unpaid and paid work changes the GDP without changing the output, and the policy undervalues the care"
+    },
+    {
+      "name": "informal economy due to GDP mismeasurement",
+      "from": "GDP mismeasurement",
+      "verb": "can cause",
+      "to": "informal economy"
+    },
+    {
+      "name": "GDP revision due to GDP mismeasurement",
+      "from": "GDP mismeasurement",
+      "verb": "can cause",
+      "to": "GDP revision",
+      "description": "an outdated base year and missing data sources understate the GDP, so the debt, tax and aid ratios that are based on it are wrong until the revision"
+    },
+    {
+      "name": "natural capital depletion due to GDP mismeasurement",
+      "from": "GDP mismeasurement",
+      "verb": "can cause",
+      "to": "natural capital depletion",
+      "description": "the GDP counts the extraction of natural resources as income without deducting the loss of the asset, so a growth that depletes the wealth looks like progress"
+    },
+    {
+      "name": "air pollution damage due to GDP mismeasurement",
+      "from": "GDP mismeasurement",
+      "verb": "can cause",
+      "to": "air pollution damage"
+    },
+    {
+      "name": "consumer surplus due to GDP mismeasurement",
+      "from": "GDP mismeasurement",
+      "verb": "can cause",
+      "to": "consumer surplus",
+      "description": "the benefit of free digital goods is not counted in the GDP, because they enter the national accounts at a price of zero"
+    },
+    {
+      "name": "welfare gap due to GDP mismeasurement",
+      "from": "GDP mismeasurement",
+      "verb": "can cause",
+      "to": "welfare gap"
+    }
+  ],
+  "sources": [
+    {
+      "name": "Kanal & Kornegay (2019) BEA household production",
+      "description": "Kanal, D., Kornegay, J. T. (2019): Accounting for Household Production in the National Accounts: An Update, 1965-2017. Survey of Current Business 99(6), Bureau of Economic Analysis. Including the household production raises the nominal US GDP from USD 742.3 billion to 1019.7 billion in 1965 and from USD 19485.4 billion to 24001.5 billion in 2017, i.e. by 37 percent in 1965 and by 23 percent in 2017 (table 2); the average annual nominal growth 1965-2017 drops from 6.5 to 6.3 percent.",
+      "url": "https://apps.bea.gov/scb/2019/06-june/0619-household-production.htm"
+    },
+    {
+      "name": "ONS (2018) Household satellite account 2015 and 2016",
+      "description": "Office for National Statistics (2018): Household satellite account, UK: 2015 and 2016, released 2 October 2018. In 2016 the value of the unpaid household service work of the United Kingdom was estimated at GBP 1.24 trillion, equivalent to 63.1 percent of the GDP; the extended GDP (GDP plus unpaid household service work) grew by 3.3 percent in 2016 compared with 3.9 percent for the GDP.",
+      "url": "https://www.ons.gov.uk/economy/nationalaccounts/satelliteaccounts/articles/householdsatelliteaccounts/latest"
+    },
+    {
+      "name": "ILO (2018) Care work and care jobs",
+      "description": "Addati, L., Cattaneo, U., Esquivel, V., Valarino, I. (2018): Care work and care jobs for the future of decent work. International Labour Office, Geneva; press release of 28 June 2018. Data of 64 countries with two thirds of the working age population: 16.4 billion hours per day are spent in unpaid care work; valued at an hourly minimum wage it would amount to 9 percent of the global GDP or USD 11 trillion (purchasing power parity of 2011); women perform 76.2 percent of the total hours of unpaid care work.",
+      "url": "https://www.ilo.org/resource/news/ilo-calls-urgent-action-prevent-looming-global-care-crisis"
+    },
+    {
+      "name": "Medina & Schneider (2018)",
+      "description": "Medina, L., Schneider, F. (2018): Shadow Economies Around the World: What Did We Learn Over the Last 20 Years? IMF Working Paper WP/18/17. The average size of the shadow economy of 158 countries over 1991 to 2015 is 31.9 percent of the GDP; the largest are Bolivia with 62.3 percent and Zimbabwe with 60.6 percent, the lowest Switzerland with 7.2 percent and Austria with 8.9 percent.",
+      "doi": "10.5089/9781484338636.001"
+    },
+    {
+      "name": "NBS (2014) Rebasing of Nigeria's GDP",
+      "description": "Kale, Y. (2014): Measuring Better: Rebasing / Re-benchmarking of Nigeria's Gross Domestic Product. Presentation of the National Bureau of Statistics, Abuja, 6 April 2014. The base year moves from 1990 to 2010; the nominal GDP of 2013 (forecast) rises from 42'396'765.71 to 80'222'128.32 million naira, a change of 89.22 percent between the old and the new series; table 1 of the presentation lists the rebasing of other countries, e.g. Ghana 1993 to 2006 with 62.8 percent.",
+      "url": "https://nigerianstat.gov.ng/download/201"
+    },
+    {
+      "name": "World Bank (2012) How do we manage revisions to GDP",
+      "description": "Lee, S. S. (2012): How do we manage revisions to GDP? World Bank Data Blog, 24 May 2012. After the improvement of the national accounts by the Ghana Statistical Service in November 2010 the estimated level of the GDP of 2006 was revised upwards by some 60 percent.",
+      "url": "https://blogs.worldbank.org/en/opendata/how-do-we-manage-revisions-to-gdp"
+    },
+    {
+      "name": "World Bank WDI Adjusted savings natural resources depletion",
+      "description": "World Bank, World Development Indicators, indicator NY.ADJ.DRES.GN.ZS Adjusted savings: natural resources depletion (percent of GNI), the sum of the net forest depletion, the energy depletion and the mineral depletion, based on The Changing Wealth of Nations; retrieved via the API on 2026-10-08 (last updated 2026-07-13): 2021 world 1.52257977127271, United States 0.81519312438195, Nigeria 2.74097887116957, DR Congo 33.0940322255891 percent of GNI.",
+      "url": "https://data.worldbank.org/indicator/NY.ADJ.DRES.GN.ZS"
+    },
+    {
+      "name": "World Bank (2021) The Changing Wealth of Nations 2021",
+      "description": "World Bank (2021): The Changing Wealth of Nations 2021: Managing Assets for the Future, wealth accounts of 146 countries 1995-2018; press release of 27 October 2021: the low- and middle-income countries saw their forest wealth per capita decline 8 percent from 1995 to 2018, and the value of the global marine fish stocks collapsed by 83 percent due to poor management and overfishing; over one third of the low-income countries saw a declining wealth per capita.",
+      "doi": "10.1596/978-1-4648-1590-4",
+      "url": "https://www.worldbank.org/en/news/press-release/2021/10/27/global-wealth-has-grown-but-at-the-expense-of-future-prosperity-world-bank"
+    },
+    {
+      "name": "Muller, Mendelsohn & Nordhaus (2011)",
+      "description": "Muller, N. Z., Mendelsohn, R., Nordhaus, W. (2011): Environmental Accounting for Pollution in the United States Economy. American Economic Review 101(5), 1649-1675. The gross external damages of the air pollution exceed the value added for solid waste combustion, sewage treatment, stone quarrying, marinas and oil and coal-fired power plants; the damages of the coal-fired electric generation range from 0.8 to 5.6 times its value added; executive summary of the authors: the agriculture has a ratio of the gross external damages to the value added of 38 percent and is responsible for USD 32 billion of damages.",
+      "doi": "10.1257/aer.101.5.1649"
+    },
+    {
+      "name": "Brynjolfsson, Collis & Eggers (2019)",
+      "description": "Brynjolfsson, E., Collis, A., Eggers, F. (2019): Using massive online choice experiments to measure changes in well-being. PNAS 116, 7250-7255. About 80'000 online choices; as stated in the MIT Sloan press release of 26 March 2019 the median user would require USD 17'530 to forgo search engines for a year, USD 8'414 to lose access to email and USD 3'648 to go without digital maps for a year.",
+      "doi": "10.1073/pnas.1815663116",
+      "url": "https://mitsloan.mit.edu/press/calculating-economic-well-being-information-age-a-new-study-researchers-mit-sloan-measures-value-digital-goods-and-services-create"
+    },
+    {
+      "name": "Kubiszewski et al. (2013)",
+      "description": "Kubiszewski, I., Costanza, R., Franco, C., Lawn, P., Talberth, J., Jackson, T., Aylmer, C. (2013): Beyond GDP: Measuring and achieving global genuine progress. Ecological Economics 93, 57-68. GPI estimates 1950-2003 for 17 countries with 53 percent of the global population and 59 percent of the global GDP: while the global GDP increased more than three-fold since 1950, the global GPI per capita peaked in 1978 and has decreased since; the GPI per capita does not increase beyond a GDP per capita of around USD 7000.",
+      "doi": "10.1016/j.ecolecon.2013.04.019"
+    }
+  ],
+  "values": [
+    {"words": ["unpaid work due to GDP mismeasurement", "household production", "United States", "2017", "billion", "EUR"], "number": "4176.5", "source": "Kanal & Kornegay (2019) BEA household production", "description": "4516.1 billion USD, the difference of the GDP with and without the household production, at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["unpaid work due to GDP mismeasurement", "household production", "United States", "2017", "percent", "GDP"], "number": "0.23", "source": "Kanal & Kornegay (2019) BEA household production", "description": "the increase of the nominal GDP if the household production is included"},
+    {"words": ["unpaid work due to GDP mismeasurement", "household production", "United States", "1965", "percent", "GDP"], "number": "0.37", "source": "Kanal & Kornegay (2019) BEA household production", "description": "the increase of the nominal GDP if the household production is included"},
+    {"words": ["unpaid work due to GDP mismeasurement", "household production", "United Kingdom", "2016", "billion", "EUR"], "number": "1425.6", "source": "ONS (2018) Household satellite account 2015 and 2016", "description": "1.24 trillion GBP of unpaid household service work at the ECB 2023 average of 0.86979 GBP per EUR"},
+    {"words": ["unpaid work due to GDP mismeasurement", "household production", "United Kingdom", "2016", "percent", "GDP"], "number": "0.631", "source": "ONS (2018) Household satellite account 2015 and 2016", "description": "the value of the unpaid household service work"},
+    {"words": ["unpaid work due to GDP mismeasurement", "care work", "world", "percent", "GDP"], "number": "0.09", "source": "ILO (2018) Care work and care jobs", "description": "the unpaid care work valued at an hourly minimum wage"},
+    {"words": ["unpaid work due to GDP mismeasurement", "care work", "world", "trillion", "EUR"], "number": "10.17", "source": "ILO (2018) Care work and care jobs", "description": "11 trillion USD at the purchasing power parity of 2011, at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["unpaid work due to GDP mismeasurement", "care work", "woman", "world", "percent"], "number": "0.762", "source": "ILO (2018) Care work and care jobs", "description": "the share of the women in the total hours of the unpaid care work"},
+    {"words": ["informal economy due to GDP mismeasurement", "world", "1991-2015", "percent", "GDP"], "number": "0.319", "source": "Medina & Schneider (2018)", "description": "the average size of the shadow economy of 158 countries"},
+    {"words": ["informal economy due to GDP mismeasurement", "Bolivia", "1991-2015", "percent", "GDP"], "number": "0.623", "source": "Medina & Schneider (2018)", "description": "the largest shadow economy of the 158 countries"},
+    {"words": ["informal economy due to GDP mismeasurement", "Zimbabwe", "1991-2015", "percent", "GDP"], "number": "0.606", "source": "Medina & Schneider (2018)"},
+    {"words": ["informal economy due to GDP mismeasurement", "Austria", "1991-2015", "percent", "GDP"], "number": "0.089", "source": "Medina & Schneider (2018)"},
+    {"words": ["informal economy due to GDP mismeasurement", "Switzerland", "1991-2015", "percent", "GDP"], "number": "0.072", "source": "Medina & Schneider (2018)", "description": "the smallest shadow economy of the 158 countries"},
+    {"words": ["GDP revision due to GDP mismeasurement", "Nigeria", "2013", "percent", "GDP"], "number": "0.8922", "source": "NBS (2014) Rebasing of Nigeria's GDP", "description": "the nominal GDP of 2013 (forecast) rises from 42.4 to 80.2 trillion naira by the rebasing from 1990 to 2010"},
+    {"words": ["GDP revision due to GDP mismeasurement", "Ghana", "2006", "percent", "GDP"], "number": "0.6", "source": "World Bank (2012) How do we manage revisions to GDP", "description": "some 60 percent by the rebasing of November 2010; the NBS presentation of Nigeria lists 62.8 percent for Ghana"},
+    {"words": ["natural capital depletion due to GDP mismeasurement", "world", "2021", "percent", "GNI"], "number": "0.0152257977127271", "source": "World Bank WDI Adjusted savings natural resources depletion"},
+    {"words": ["natural capital depletion due to GDP mismeasurement", "United States", "2021", "percent", "GNI"], "number": "0.0081519312438195", "source": "World Bank WDI Adjusted savings natural resources depletion"},
+    {"words": ["natural capital depletion due to GDP mismeasurement", "Nigeria", "2021", "percent", "GNI"], "number": "0.0274097887116957", "source": "World Bank WDI Adjusted savings natural resources depletion"},
+    {"words": ["natural capital depletion due to GDP mismeasurement", "DR Congo", "2021", "percent", "GNI"], "number": "0.330940322255891", "source": "World Bank WDI Adjusted savings natural resources depletion"},
+    {"words": ["marine fish stock", "wealth change", "world", "1995-2018", "percent"], "number": "-0.83", "source": "World Bank (2021) The Changing Wealth of Nations 2021", "description": "the change of the value of the global marine fish stocks; attributed by the source to the poor management and the overfishing, not to the GDP mismeasurement"},
+    {"words": ["forest", "wealth per capita change", "low- and middle-income country", "1995-2018", "percent"], "number": "-0.08", "source": "World Bank (2021) The Changing Wealth of Nations 2021", "description": "the change of the forest wealth per capita of the low- and middle-income countries; attributed by the source to the deforestation, not to the GDP mismeasurement"},
+    {"words": ["air pollution damage due to GDP mismeasurement", "coal-fired power plant", "United States", "percent", "value added", "low"], "number": "0.8", "source": "Muller, Mendelsohn & Nordhaus (2011)", "description": "the gross external damages are 0.8 times the value added under the low assumptions of the social cost of carbon and the health impacts"},
+    {"words": ["air pollution damage due to GDP mismeasurement", "coal-fired power plant", "United States", "percent", "value added", "high"], "number": "5.6", "source": "Muller, Mendelsohn & Nordhaus (2011)", "description": "the gross external damages are 5.6 times the value added under the high assumptions of the social cost of carbon and the health impacts"},
+    {"words": ["air pollution damage due to GDP mismeasurement", "agriculture", "United States", "percent", "value added"], "number": "0.38", "source": "Muller, Mendelsohn & Nordhaus (2011)", "description": "the ratio of the gross external damages to the value added"},
+    {"words": ["air pollution damage due to GDP mismeasurement", "agriculture", "United States", "billion", "EUR"], "number": "29.59", "source": "Muller, Mendelsohn & Nordhaus (2011)", "description": "32 billion USD of gross external damages at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["consumer surplus due to GDP mismeasurement", "willingness to accept", "search engine", "annual", "EUR"], "number": "16212", "source": "Brynjolfsson, Collis & Eggers (2019)", "description": "the median compensation of 17'530 USD to forgo search engines for a year, at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["consumer surplus due to GDP mismeasurement", "willingness to accept", "email", "annual", "EUR"], "number": "7781", "source": "Brynjolfsson, Collis & Eggers (2019)", "description": "the median compensation of 8'414 USD to lose access to email for a year, at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["consumer surplus due to GDP mismeasurement", "willingness to accept", "digital map", "annual", "EUR"], "number": "3374", "source": "Brynjolfsson, Collis & Eggers (2019)", "description": "the median compensation of 3'648 USD to go without digital maps for a year, at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["welfare gap due to GDP mismeasurement", "GPI per capita", "threshold", "GDP per capita", "world", "EUR"], "number": "6474", "source": "Kubiszewski et al. (2013)", "description": "the GDP per capita of around 7000 USD beyond which the GPI per capita does not increase, at the ECB 2023 average of 1.0813 USD per EUR; the global GPI per capita peaked in 1978"}
+  ]
+}
