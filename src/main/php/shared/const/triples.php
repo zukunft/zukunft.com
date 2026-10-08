@@ -141,6 +141,15 @@ class triples
     const string SYSTEM_CHART_TYPE_DEFAULT_CODE_ID = 'system_chart_type_default';
     const string SYSTEM_CHART_TYPE_ALTERNATIVE = 'alternative chart type (system)';
     const string SYSTEM_CHART_TYPE_ALTERNATIVE_CODE_ID = 'system_chart_type_alternative';
+    // the default sort orders of a table, defined in solution_prio.json like the charts: an
+    // order is a triple "<condition> of <column>" e.g. "numeric descending of potential loss",
+    // where the condition word carries the table_orders value as its code id, and is assigned
+    // to the default tier with "<order> can be <tier>"; the first default order is the prime
+    // order of the rows if the url of the page names none, the next ones are the sub orders
+    const string SYSTEM_SORT_ORDER = 'sort order (system)';
+    const string SYSTEM_SORT_ORDER_CODE_ID = 'system_sort_order';
+    const string SYSTEM_SORT_ORDER_DEFAULT = 'default sort order (system)';
+    const string SYSTEM_SORT_ORDER_DEFAULT_CODE_ID = 'system_sort_order_default';
     const string SYSTEM_ERRORS = 'system errors';
     const string TABLE_NAME = 'table name';
     const string TIME_PERCENT = 'time percent';

@@ -1284,6 +1284,19 @@ class test_phrases
     }
 
     /**
+     * @return phrase_list_ui the global problems with "global warming potential", which gives
+     *         "global warming" the parent "potential" beside "global problem", so that a sort
+     *         by the names including the parents can be told apart from a sort by the names
+     */
+    function list_global_problems_second_parent_ui(): phrase_list_ui
+    {
+        $t_trp = new test_triples($this->env);
+        $lst = $this->list_global_problems();
+        $lst->add($t_trp->global_warming_potential()->phrase());
+        return $this->ui_list($lst);
+    }
+
+    /**
      * @return phrase_list_ui the page phrase of the global issues table, which is the context
      *         that every row of that table is assumed to be about
      */
@@ -1292,6 +1305,40 @@ class test_phrases
         $t_trp = new test_triples($this->env);
         $lst = new phrase_list($this->env->usr1);
         $lst->add($t_trp->global_problem()->phrase());
+        return $this->ui_list($lst);
+    }
+
+    /**
+     * @return phrase_list_ui the global problems with the default sort order of solution_prio.json
+     *         like phrase_list::load_sort_definitions loads it: the condition word with the code
+     *         id, the tiers, the order triple and its assignment to the default tier
+     */
+    function list_global_problems_sorted_ui(): phrase_list_ui
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $lst = $this->list_global_problems();
+        $lst->add($t_wrd->word_numeric_descending()->phrase());
+        $lst->add($t_trp->sort_order_default()->phrase());
+        $lst->add($t_trp->numeric_desc_of_loss()->phrase());
+        $lst->add($t_trp->sort_numeric_desc_of_loss()->phrase());
+        return $this->ui_list($lst);
+    }
+
+    /**
+     * @return phrase_list_ui the order of the loss assigned to the default tier, but with a
+     *         condition word without the code id, so that no condition can be selected
+     */
+    function list_sort_without_condition_ui(): phrase_list_ui
+    {
+        $t_trp = new test_triples($this->env);
+        $trp = $t_trp->numeric_desc_of_loss();
+        $cond_wrd = $trp->get_from()->obj();
+        $cond_wrd->set_code_id_db(null);
+        $order = $t_trp->sort_numeric_desc_of_loss();
+        $order->set_from($trp->phrase());
+        $lst = new phrase_list($this->env->usr1);
+        $lst->add($order->phrase());
         return $this->ui_list($lst);
     }
 

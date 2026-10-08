@@ -309,6 +309,23 @@ class phrase_list_tests
         $t->assert($test_name, $phr_lst_ui->child_phrases($phr)->names(), []);
 
 
+        $t->subheader($ts . 'parent names');
+
+        // the mirror of child_names: the names of the phrases that the given phrase links to,
+        // e.g. "global problem" for "global warming" because of "global warming (global problem)"
+        $test_name = 'the names of the phrases that the given phrase links to are returned';
+        $phr_lst_ui = $t_phr->list_global_problems_ui();
+        $phr = $t_trp->global_warming_ui()->phrase();
+        $t->assert($test_name, $phr_lst_ui->parent_names($phr), [triple_names::GLOBAL_PROBLEM]);
+        $test_name = '... each parent once, so a second link adds its parent behind the first';
+        $phr_lst_ui = $t_phr->list_global_problems_second_parent_ui();
+        $t->assert($test_name, $phr_lst_ui->parent_names($phr), [triple_names::GLOBAL_PROBLEM, word_names::POTENTIAL]);
+        // negative: a phrase that links to nothing in the list has no parent, although the
+        // list links other phrases to it
+        $test_name = 'a phrase that links to no phrase of the list has no parent';
+        $t->assert($test_name, $phr_lst_ui->parent_names($t_trp->global_problem_ui()->phrase()), []);
+
+
 
         $t->subheader($ts . 'import names');
 

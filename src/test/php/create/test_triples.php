@@ -963,6 +963,14 @@ class test_triples extends test_objects
     }
 
     /**
+     * @return triple_ui the "global warming" row phrase of the global issues table
+     */
+    function global_warming_ui(): triple_ui
+    {
+        return $this->page_ui($this->global_warming());
+    }
+
+    /**
      * @return triple_ui the "city of Zurich" page phrase of the related values table
      */
     function zh_city_ui(): triple_ui
@@ -1517,6 +1525,60 @@ class test_triples extends test_objects
         $trp->set_from($this->scatter_of_gain_and_effort()->phrase());
         $trp->set_verb($t_vrb->verb_can_be());
         $trp->set_to($this->chart_type_default()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "sort order (system)" - the keyword of the sort order tiers
+     */
+    function sort_order(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::SYSTEM_SORT_ORDER_ID, triple_names::SYSTEM_SORT_ORDER);
+        return $trp;
+    }
+
+    /**
+     * @return triple "default sort order (system)" - the tier of the orders used if the url names none
+     */
+    function sort_order_default(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::SYSTEM_SORT_ORDER_DEFAULT_ID, triple_names::SYSTEM_SORT_ORDER_DEFAULT);
+        $trp->set_from($this->sort_order()->phrase());
+        $trp->set_verb($t_vrb->verb_can_be());
+        $trp->set_to($t_wrd->word_default()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "numeric descending of potential loss" - the rows by the loss, the biggest on top
+     */
+    function numeric_desc_of_loss(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::NUMERIC_DESC_OF_LOSS_ID, triple_names::NUMERIC_DESC_OF_LOSS);
+        $trp->set_from($t_wrd->word_numeric_descending()->phrase());
+        $trp->set_verb($t_vrb->verb_of());
+        $trp->set_to($this->potential_loss()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple that the biggest loss on top is the default order of the ranking
+     */
+    function sort_numeric_desc_of_loss(): triple
+    {
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::SORT_NUMERIC_DESC_OF_LOSS_ID, triple_names::SORT_NUMERIC_DESC_OF_LOSS);
+        $trp->set_from($this->numeric_desc_of_loss()->phrase());
+        $trp->set_verb($t_vrb->verb_can_be());
+        $trp->set_to($this->sort_order_default()->phrase());
         return $trp;
     }
 

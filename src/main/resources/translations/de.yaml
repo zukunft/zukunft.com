@@ -786,6 +786,8 @@ messages:
   table_as_table: "Tabelle"
   table_as_chart: "Diagramm"
   table_as_table_chart: "Tabelle + Diagramm"
+  table_sort_up_tip: "nach dieser Spalte sortieren, die kleinste Zahl oder der erste Name zuoberst"
+  table_sort_down_tip: "nach dieser Spalte sortieren, die grösste Zahl oder der letzte Name zuoberst"
   chart_range_bars_tip: "Punkt = Schätzung, Balken = Bereich · Details beim Überfahren"
   chart_scatter_tip: "Bereiche beim Überfahren eines Punkts"
   chart_log_scale: "logarithmische Skala"

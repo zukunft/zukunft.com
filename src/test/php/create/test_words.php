@@ -44,6 +44,7 @@ include_once paths::MODEL_WORD . 'word_list.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'chart_types.php';
+include_once paths::SHARED_ENUM . 'table_orders.php';
 include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_TYPES . 'protection_types.php';
@@ -67,6 +68,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\enum\chart_types;
+use Zukunft\ZukunftCom\main\php\shared\enum\table_orders;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\shared\types\share_types;
@@ -1187,6 +1189,27 @@ class test_words extends test_objects
         $wrd = new word($this->env->usr1);
         $wrd->set(word_names::SCATTER_PLOT_ID, word_names::SCATTER_PLOT);
         $wrd->set_code_id_db(chart_types::SCATTER->value);
+        return $wrd;
+    }
+
+    /**
+     * @return word "sort order" that the sort order keyword triple is built from
+     */
+    function word_sort_order(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::SORT_ORDER_ID, word_names::SORT_ORDER);
+        return $wrd;
+    }
+
+    /**
+     * @return word "numeric descending" with the code id that selects the sort condition (see table_orders)
+     */
+    function word_numeric_descending(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::NUMERIC_DESCENDING_ID, word_names::NUMERIC_DESCENDING);
+        $wrd->set_code_id_db(table_orders::NUMERIC_DESC->value);
         return $wrd;
     }
 

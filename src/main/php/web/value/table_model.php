@@ -38,13 +38,17 @@ namespace Zukunft\ZukunftCom\main\php\web\value;
 
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
+include_once html_paths::PHRASE . 'phrase.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::SANDBOX . 'sandbox_value.php';
 include_once html_paths::SHARED_CONST . 'words.php';
+include_once html_paths::SHARED_ENUM . 'table_orders.php';
 
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_value;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\enum\table_orders;
 
 class table_model
 {
@@ -53,6 +57,10 @@ class table_model
     public phrase_list $tbl_phr;
     // per row key the html link list of the phrases that name the row
     public array $row_label = [];
+    // per row key the phrases that name the row
+    public array $row_phr = [];
+    // the phrase that heads the column with the row names, null if the page phrase names none
+    public ?phrase $row_col = null;
     // per row key and column id the values of the cell
     public array $cells = [];
     // per row key and phrase column id the phrase of the row shown in that column
@@ -70,8 +78,11 @@ class table_model
     public array $col_unit = [];
     // per value column id the names that select the column e.g. "potential loss" and "loss"
     public array $col_names = [];
-    // the keys of the rows shown, in the order of the impact
+    // the keys of the rows shown, in the order of the impact or of the orders below
     public array $shown_keys = [];
+    // the orders of the rows: per order the phrase id of the column and the condition
+    // (table_orders), the prime order first; empty for the impact order
+    public array $orders = [];
     // the number of rows behind the shown rows
     public int $rows_behind = 0;
     // the position of the first shown row and the number of rows shown per page
@@ -143,6 +154,116 @@ class table_model
             }
         }
         return [$centre, $low, $high, $conf];
+    }
+
+    /**
+     * @param int $phr_id the phrase id of a column
+     * @return bool true if the table has a column of that phrase, the row column included
+     */
+    function has_column(int $phr_id): bool
+    {
+        $result = (array_key_exists($phr_id, $this->col_phr)
+            or array_key_exists($phr_id, $this->phr_col)
+            or $phr_id === $this->row_col?->id());
+        return $result;
+    }
+
+    /**
+     * @param string $name the name of a column phrase e.g. "potential loss"
+     * @return int|null the phrase id of the column, the row column included, null if the table
+     *                  has no column of that name
+     */
+    function col_id_of_name(string $name): ?int
+    {
+        $result = $this->col_id_by_name($name);
+        foreach ($this->phr_col as $phr_col_id => $phr) {
+            if ($phr->name() == $name) {
+                $result = $phr_col_id;
+            }
+        }
+        if ($this->row_col?->name() == $name) {
+            $result = $this->row_col->id();
+        }
+        // a further column of the same phrase in another unit cannot be named
+        return is_int($result) ? $result : null;
+    }
+
+    /**
+     * sort the shown rows by the orders of this model; the rows that every order leaves equal
+     * keep their order, which is the impact order
+     *
+     * @param phrase_list|null $rel_lst the phrases related to the page phrase, which link the phrases to their parents
+     */
+    function sort_rows(?phrase_list $rel_lst): void
+    {
+        usort($this->shown_keys, fn($a, $b) => $this->compare_rows((string)$a, (string)$b, $this->orders, $rel_lst));
+    }
+
+    /**
+     * @param string $row_key the key of the first row
+     * @param string $other_key the key of the second row
+     * @param array $orders per order the phrase id of the column and the condition, the prime order first
+     * @param phrase_list|null $rel_lst the phrases related to the page phrase, which link the phrases to their parents
+     * @return int negative if the first row comes first, positive if the second, 0 if every order leaves them equal
+     */
+    private function compare_rows(string $row_key, string $other_key, array $orders, ?phrase_list $rel_lst): int
+    {
+        $result = 0;
+        foreach ($orders as [$phr_id, $cond]) {
+            if ($result == 0) {
+                $result = $cond->compare(
+                    $this->sort_key($row_key, $phr_id, $cond, $rel_lst),
+                    $this->sort_key($other_key, $phr_id, $cond, $rel_lst));
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the key by which a row is sorted in a column
+     *
+     * @param string $row_key the key of the row
+     * @param int $phr_id the phrase id of the column, which is the id of the row column phrase for the row names
+     * @param table_orders $cond the condition of the order
+     * @param phrase_list|null $rel_lst the phrases related to the page phrase, which link the phrases to their parents
+     * @return float|string|null the number of the cell for a numeric condition and else its text,
+     *                           null if the cell has none
+     */
+    private function sort_key(string $row_key, int $phr_id, table_orders $cond, ?phrase_list $rel_lst): float|string|null
+    {
+        $result = null;
+        if (array_key_exists($phr_id, $this->col_phr)) {
+            $val = $this->cell_numbers($row_key, $phr_id)[0];
+            $result = $cond->is_numeric() ? $val?->number() : $val?->text_value();
+        } elseif (!$cond->is_numeric()) {
+            // a phrase column names one phrase of the row and the row column the other phrases
+            $phr_lst = $this->row_phr[$row_key] ?? [];
+            if (array_key_exists($phr_id, $this->phr_col)) {
+                $phr_lst = array_filter([$this->phr_cells[$row_key][$phr_id] ?? null]);
+            }
+            $result = $this->names_key($phr_lst, $cond->with_parent(), $rel_lst);
+        }
+        return $result;
+    }
+
+    /**
+     * @param array $phr_lst the phrases of a cell
+     * @param bool $with_parent true to put the names of the parent phrases before each name
+     * @param phrase_list|null $rel_lst the phrases related to the page phrase, which link the phrases to their parents
+     * @return string|null the names in one text, null if the cell has no phrase
+     */
+    private function names_key(array $phr_lst, bool $with_parent, ?phrase_list $rel_lst): ?string
+    {
+        $names = [];
+        foreach ($phr_lst as $phr) {
+            if ($with_parent) {
+                $names = array_merge($names, $rel_lst?->parent_names($phr) ?? []);
+            }
+            $names[] = $phr->name();
+        }
+        // a phrase that carries only its id adds no name, like in group::phrase_names
+        $names = array_filter($names, fn($name) => $name != '');
+        return $names == [] ? null : implode(' ', $names);
     }
 
 }

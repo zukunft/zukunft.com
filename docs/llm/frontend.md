@@ -496,6 +496,42 @@ type word and the column pair nested in it; the api (`load_linked_sides`) loads
 the sides of a nested triple completely, a nested triple with its own sides and
 a nested word with its code id, because the triple read names a word without it.
 
+The rows of a table follow the impact unless the url asks for another order:
+`url_var::DISPLAY_LIST_ORDER` (`dlo`, human `display_list_order`) names the
+phrase id of a column and the condition (`table_orders`), e.g.
+`dlo=-128.numeric_desc` for the biggest potential loss first;
+`DISPLAY_LIST_ORDER_SUB` (`dlo2`) sorts the rows that the prime order leaves
+equal and `DISPLAY_LIST_ORDER_SUB_SUB` (`dlo3`) the rows that both leave equal;
+the rows that every order leaves equal keep the impact order. A condition is
+`numeric` (the number of the cell), `alpha` (the name of the phrase or the text
+of a text value) or `alpha_parent` (the names of the parents within the related
+phrases before the name, so the rows are grouped by their parent), each as
+`_asc` or `_desc`; a row without a key in the column is last for both
+directions. The row column is named by its head phrase, a phrase column by its
+phrase and a value column by its phrase. `value_list::row_orders` reads the
+url, `table_model::sort_rows` sorts before the rows are cut, so the charts draw
+the same order, the three vars are page vars and part of the page cache key, and
+an order that names no column of the table or an unknown condition is reported
+as `TABLE_ORDER_UNKNOWN`. Each column header ends with the `icons::SORT_UP` and
+`SORT_DOWN` links (`styles::SORT_ICON`, the shown order `SORT_ACTIVE`) that
+`value_list::sort_icons` builds: numeric for a value column, alpha for the row
+and a phrase column, and `order_url` moves the orders shown one step down,
+so a click on another column keeps the shown order as the sub order.
+
+The default order of a table is data too, defined in `solution_prio.json` like
+the charts: a condition word carries the `table_orders` value as its `code_id`
+(`numeric descending` → `numeric_desc`), an order is the triple
+`<condition> of <column>` (`numeric descending of potential loss`) and is
+assigned to the default tier with `<order> can be <tier>`
+(`triples::SYSTEM_SORT_ORDER_DEFAULT`); the first default order is the prime
+order, the next ones the sub orders. `phrase_list::sort_definitions` reads them
+out of the cached definitions (`load_sort_definitions`, `SORT_LEVELS`, added to
+the request cache by `ui_list::add_sort_definitions` with the column
+definitions) and `value_list::row_orders` uses them only if the url names no
+order, so `view.php?m=1` shows the biggest potential loss on top and a url with
+an order wins. The orders shown are kept in `table_model::orders`, which marks
+the active sort icon and seeds the links of the other icons.
+
 The "…" menu of the table has two sub headers (`styles::MENU_HEADER`, not
 bold): "columns and values" above the column tier entries and "as" above the
 entries `table`, `chart` and `table + chart` (`table_forms`), which set

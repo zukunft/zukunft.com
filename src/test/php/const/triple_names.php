@@ -96,27 +96,27 @@ class triple_names
     const string YEAR_2019 = '2019 (year)';
     const int YEAR_2019_ID = 53;
     const string YEAR_2020 = '2020 (year)';
-    const int YEAR_2020_ID = 286;
+    const int YEAR_2020_ID = 290;
     const string YEAR_2021 = '2021 (year)';
-    const int YEAR_2021_ID = 628;
+    const int YEAR_2021_ID = 632;
     const string YEAR_2022 = '2022 (year)';
-    const int YEAR_2022_ID = 627;
+    const int YEAR_2022_ID = 631;
     const string YEAR_2023 = '2023 (year)';
-    const int YEAR_2023_ID = 626;
+    const int YEAR_2023_ID = 630;
     const string YEAR_2024 = '2024 (year)';
-    const int YEAR_2024_ID = 625;
+    const int YEAR_2024_ID = 629;
     const string YEAR_2025 = '2025 (year)';
-    const int YEAR_2025_ID = 624;
+    const int YEAR_2025_ID = 628;
     const string YEAR_2026 = '2026 (year)';
-    const int YEAR_2026_ID = 623;
+    const int YEAR_2026_ID = 627;
     const string YEAR_2027 = '2027 (year)';
-    const int YEAR_2027_ID = 622;
+    const int YEAR_2027_ID = 626;
     const string YEAR_2028 = '2028 (year)';
-    const int YEAR_2028_ID = 621;
+    const int YEAR_2028_ID = 625;
     const string YEAR_2029 = '2029 (year)';
-    const int YEAR_2029_ID = 620;
+    const int YEAR_2029_ID = 624;
     const string YEAR_2030 = '2030 (year)';
-    const int YEAR_2030_ID = 619;
+    const int YEAR_2030_ID = 623;
 
     const string SYSTEM_TEST_ADD = 'System Test Triple';
     const int SYSTEM_TEST_ADD_ID = 998; // fixed snapshot id of the add/del workflow triple (like word_names::TEST_ADD_ID)
@@ -155,15 +155,15 @@ class triple_names
     const int POTENTIAL_EDUCATION_PROBLEM_ID = 125;
     // the solution triples and the table column definitions of solution_prio.json
     const string REDUCE_EMISSIONS = 'reduce climate gas emissions';
-    const int REDUCE_EMISSIONS_ID = 223;
+    const int REDUCE_EMISSIONS_ID = 225;
     const string AVOID_WRONG_DECISIONS = 'avoid wrong decisions';
     const int AVOID_WRONG_DECISIONS_ID = 188;
     // the triples that link a solution to "solution", so that the table can name the solution
     // of a problem row in a column of its own (like the problem links for the rows)
     const string REDUCE_EMISSIONS_SOLUTION = 'reduce climate gas emissions (solution)';
-    const int REDUCE_EMISSIONS_SOLUTION_ID = 251;
+    const int REDUCE_EMISSIONS_SOLUTION_ID = 254;
     const string AVOID_WRONG_DECISIONS_SOLUTION = 'avoid wrong decisions (solution)';
-    const int AVOID_WRONG_DECISIONS_SOLUTION_ID = 224;
+    const int AVOID_WRONG_DECISIONS_SOLUTION_ID = 226;
     const string RESEARCH_SOLUTION = 'research (solution)';
     const int RESEARCH_SOLUTION_ID = 140;
     const string TAXES_SOLUTION = 'taxes (solution)';
@@ -175,15 +175,15 @@ class triple_names
     const string PLATFORM_REGULATION_SOLUTION = 'platform regulation (solution)';
     const int PLATFORM_REGULATION_SOLUTION_ID = 200;
     const string MARKET_SHARE_TAX_SOLUTION = 'market share tax (solution)';
-    const int MARKET_SHARE_TAX_SOLUTION_ID = 226;
+    const int MARKET_SHARE_TAX_SOLUTION_ID = 228;
     const string DELPHI_METHOD_SOLUTION = 'Delphi method (solution)';
     const int DELPHI_METHOD_SOLUTION_ID = 201;
     const string PUBLIC_AI_SOLUTION = 'public AI (solution)';
-    const int PUBLIC_AI_SOLUTION_ID = 227;
+    const int PUBLIC_AI_SOLUTION_ID = 229;
     const string FLUID_DEMOCRACY_SOLUTION = 'fluid democracy (solution)';
     const int FLUID_DEMOCRACY_SOLUTION_ID = 202;
     const string GROSS_DOMESTIC_USAGE_SOLUTION = 'gross domestic usage (solution)';
-    const int GROSS_DOMESTIC_USAGE_SOLUTION_ID = 228;
+    const int GROSS_DOMESTIC_USAGE_SOLUTION_ID = 230;
     const string FREE_SOFTWARE_SOLUTION = 'free software (solution)';
     const int FREE_SOFTWARE_SOLUTION_ID = 203;
     // the problems of solution_prio.json that are a triple, ordered like the start page ranking
@@ -219,17 +219,17 @@ class triple_names
     const string FREE_SOFTWARE = 'free software';
     const int FREE_SOFTWARE_ID = 147;
     const string SYSTEM_COLUMN_MAYOR = 'mayor column (system)';
-    const int SYSTEM_COLUMN_MAYOR_ID = 219;
+    const int SYSTEM_COLUMN_MAYOR_ID = 221;
     const string SYSTEM_COLUMN_MAIN = 'main column (system)';
-    const int SYSTEM_COLUMN_MAIN_ID = 220;
+    const int SYSTEM_COLUMN_MAIN_ID = 222;
     // the chart type tiers of solution_prio.json and the two charts of the start page ranking
     // (see triples::SYSTEM_CHART_TYPE and docs/llm/frontend.md "A table as a chart")
     const string SYSTEM_CHART_TYPE = shared_triples::SYSTEM_CHART_TYPE;
     const int SYSTEM_CHART_TYPE_ID = 214;
     const string SYSTEM_CHART_TYPE_DEFAULT = shared_triples::SYSTEM_CHART_TYPE_DEFAULT;
-    const int SYSTEM_CHART_TYPE_DEFAULT_ID = 232;
+    const int SYSTEM_CHART_TYPE_DEFAULT_ID = 234;
     const string SYSTEM_CHART_TYPE_ALTERNATIVE = shared_triples::SYSTEM_CHART_TYPE_ALTERNATIVE;
-    const int SYSTEM_CHART_TYPE_ALTERNATIVE_ID = 233;
+    const int SYSTEM_CHART_TYPE_ALTERNATIVE_ID = 235;
     const string INITIAL_EFFORT = 'initial effort';
     const int INITIAL_EFFORT_ID = 151;
     const string RANGE_BARS_OF_LOSS = 'range bars of potential loss';
@@ -237,63 +237,72 @@ class triple_names
     const string GAIN_AND_EFFORT = 'potential gain and initial effort';
     const int GAIN_AND_EFFORT_ID = 216;
     const string SCATTER_OF_GAIN_AND_EFFORT = 'scatter plot of potential gain and initial effort';
-    const int SCATTER_OF_GAIN_AND_EFFORT_ID = 234;
+    const int SCATTER_OF_GAIN_AND_EFFORT_ID = 236;
     const string CHART_RANGE_BARS_OF_LOSS = 'chart range bars of potential loss';
-    const int CHART_RANGE_BARS_OF_LOSS_ID = 257;
+    const int CHART_RANGE_BARS_OF_LOSS_ID = 260;
     const string CHART_SCATTER_OF_GAIN_AND_EFFORT = 'chart scatter plot of potential gain and initial effort';
-    const int CHART_SCATTER_OF_GAIN_AND_EFFORT_ID = 258;
+    const int CHART_SCATTER_OF_GAIN_AND_EFFORT_ID = 261;
+    // the default sort order of the start page ranking (see triples::SYSTEM_SORT_ORDER)
+    const string SYSTEM_SORT_ORDER = shared_triples::SYSTEM_SORT_ORDER;
+    const int SYSTEM_SORT_ORDER_ID = 217;
+    const string SYSTEM_SORT_ORDER_DEFAULT = shared_triples::SYSTEM_SORT_ORDER_DEFAULT;
+    const int SYSTEM_SORT_ORDER_DEFAULT_ID = 237;
+    const string NUMERIC_DESC_OF_LOSS = 'numeric descending of potential loss';
+    const int NUMERIC_DESC_OF_LOSS_ID = 218;
+    const string SORT_NUMERIC_DESC_OF_LOSS = 'sort numeric descending of potential loss';
+    const int SORT_NUMERIC_DESC_OF_LOSS_ID = 262;
     const string COLUMN_PROBLEM = 'column problem (high prio)';
-    const int COLUMN_PROBLEM_ID = 235;
+    const int COLUMN_PROBLEM_ID = 238;
     const string COLUMN_SOLUTION = 'column solution (high prio)';
-    const int COLUMN_SOLUTION_ID = 238;
+    const int COLUMN_SOLUTION_ID = 241;
     // the main column chain and the explaining columns of solution_prio.json that order a table
     const string COLUMN_SOLUTION_AFTER_PROBLEM = 'column solution (high prio) is next main column after column problem (high prio)';
-    const int COLUMN_SOLUTION_AFTER_PROBLEM_ID = 260;
+    const int COLUMN_SOLUTION_AFTER_PROBLEM_ID = 264;
     const string COLUMN_LOSS_EXPLAINS_PROBLEM = 'column loss is explaining column for column problem (high prio)';
-    const int COLUMN_LOSS_EXPLAINS_PROBLEM_ID = 265;
+    const int COLUMN_LOSS_EXPLAINS_PROBLEM_ID = 269;
     const string COLUMN_COST_EXPLAINS_PROBLEM = 'column cost is explaining column for column problem (high prio)';
-    const int COLUMN_COST_EXPLAINS_PROBLEM_ID = 266;
+    const int COLUMN_COST_EXPLAINS_PROBLEM_ID = 270;
     const string COLUMN_GAIN_EXPLAINS_SOLUTION = 'column gain is explaining column for column solution (high prio)';
-    const int COLUMN_GAIN_EXPLAINS_SOLUTION_ID = 269;
+    const int COLUMN_GAIN_EXPLAINS_SOLUTION_ID = 273;
     // a circular main column chain that no import file contains, so that the fallback can be tested
     const string COLUMN_PROBLEM_AFTER_SOLUTION = 'column problem (high prio) is next main column after column solution (high prio)';
     const int COLUMN_PROBLEM_AFTER_SOLUTION_ID = 997;
     const string COLUMN_COST = 'column cost';
-    const int COLUMN_COST_ID = 242;
+    const int COLUMN_COST_ID = 245;
     const string COLUMN_GAIN = 'column gain';
-    const int COLUMN_GAIN_ID = 240;
+    const int COLUMN_GAIN_ID = 243;
     const string COLUMN_LOSS = 'column loss';
-    const int COLUMN_LOSS_ID = 237;
+    const int COLUMN_LOSS_ID = 240;
     // the measures of the start page values, their columns and the triples that order them
     const string POTENTIAL_LOSS = 'potential loss';
     const int POTENTIAL_LOSS_ID = 128;
     const string POTENTIAL_GAIN = 'potential gain';
     const int POTENTIAL_GAIN_ID = 129;
     const string COLUMN_POTENTIAL_LOSS = 'column potential loss';
-    const int COLUMN_POTENTIAL_LOSS_ID = 236;
+    const int COLUMN_POTENTIAL_LOSS_ID = 239;
     const string COLUMN_POTENTIAL_GAIN = 'column potential gain';
-    const int COLUMN_POTENTIAL_GAIN_ID = 239;
+    const int COLUMN_POTENTIAL_GAIN_ID = 242;
     const string COLUMN_POTENTIAL_LOSS_EXPLAINS_PROBLEM = 'column potential loss is explaining column for column problem (high prio)';
-    const int COLUMN_POTENTIAL_LOSS_EXPLAINS_PROBLEM_ID = 267;
+    const int COLUMN_POTENTIAL_LOSS_EXPLAINS_PROBLEM_ID = 271;
     const string COLUMN_POTENTIAL_GAIN_EXPLAINS_SOLUTION = 'column potential gain is explaining column for column solution (high prio)';
-    const int COLUMN_POTENTIAL_GAIN_EXPLAINS_SOLUTION_ID = 271;
+    const int COLUMN_POTENTIAL_GAIN_EXPLAINS_SOLUTION_ID = 275;
     // a value quality of solution_prio.json that is a triple, so it is typed "value quality" like the word "assumed"
     const string PEER_REVIEWED = 'peer reviewed by quality journal';
     // a unit triple typed "measure unit", so that a table header puts it behind the "in" like a
     // unit word (see pv_switzerland_co2.json)
     const string GRAM_PER_KWH = 'gram per kWh';
-    const int GRAM_PER_KWH_ID = 1601;
+    const int GRAM_PER_KWH_ID = 1605;
     // TODO use the name and not the id for the use cases
     // the subject of the use case pv_switzerland_co2.json; a use case is user data, so its
     // objects are selected by the name only and never by a database id or a code id
     // (docs/llm/json_structure.md "Use case files"), which is why no id const exists
     const string PV_IN_SWITZERLAND = 'PV in Switzerland';
     const string CASH_FLOW = 'cash flow';
-    const int CASH_FLOW_ID = 602;
+    const int CASH_FLOW_ID = 606;
     const string CASH_FLOW_STATEMENT = 'cash flow statement';
-    const int CASH_FLOW_STATEMENT_ID = 605;
+    const int CASH_FLOW_STATEMENT_ID = 609;
     const string INCOME_TAX = 'income taxes';
-    const int INCOME_TAX_ID = 603;
+    const int INCOME_TAX_ID = 607;
     // income statement concepts that the base setup defines as a triple (re-declared on XBRL import)
     const string GROSS_PROFIT = 'gross profit';
     const string COST_OF_REVENUE = 'cost of revenue';
@@ -319,7 +328,7 @@ class triple_names
     const string CANTON_ZURICH_NAME = 'canton Zurich';
     const string CANTON_ZURICH_COM = 'The canton of Zurich is an administrative unit (canton) of Switzerland, situated in the northeastern part of the country.';
     const string COMPANY_ZURICH = "Zurich Insurance";
-    const int COMPANY_ZURICH_ID = 278;
+    const int COMPANY_ZURICH_ID = 282;
     const string MIO_SYMBOL = 'mio is symbol for million';
     const int MIO_SYMBOL_ID = 117;
     // the second symbol of million, which is not used behind a number, because "m" is a unit too
@@ -332,43 +341,43 @@ class triple_names
     const string PERCENT_SYMBOL = '% is symbol for percent';
     const int PERCENT_SYMBOL_ID = 103;
     const string CHF_SYMBOL = "CHF is symbol for Swiss franc";
-    const int CHF_SYMBOL_ID = 436;
+    const int CHF_SYMBOL_ID = 440;
     // the currency names are built in currencies.json from the genus word and the issuing
     // country (e.g. franc 'kind of' Swiss), so they are triple phrases and no longer words
     const string SWISS_FRANC = 'Swiss franc';
-    const int SWISS_FRANC_ID = 344;
+    const int SWISS_FRANC_ID = 348;
     const string SWISS_FRANC_COM = 'The Swiss franc (symbol: Fr. or CHF; currency code: CHF) is the official currency and legal tender of Switzerland and Liechtenstein, and is also used in the Italian exclave of Campione d\'Italia. Issued by the Swiss National Bank, it is widely regarded as a safe-haven currency due to Switzerland\'s political stability and low inflation.';
     const string SWISS_FRANC_CURRENCY = 'Swiss franc (currency)';
-    const int SWISS_FRANC_CURRENCY_ID = 434;
+    const int SWISS_FRANC_CURRENCY_ID = 438;
     const string US_DOLLAR_NAME = 'US dollar';
     const string U_S_DOLLAR_NAME = 'U.S. dollar';
-    const int U_S_DOLLAR_ID = 337;
-    const int US_DOLLAR_ID = 336;
+    const int U_S_DOLLAR_ID = 341;
+    const int US_DOLLAR_ID = 340;
     const string US_DOLLAR_COM = 'The United States dollar (symbol: $; currency code: USD) is the official currency of the United States and several other countries. It is the world\'s primary reserve currency and the most-traded currency on the foreign exchange market. The dollar is divided into 100 cents.';
     const string US_DOLLAR_CURRENCY = 'US dollar (currency)';
-    const int US_DOLLAR_CURRENCY_ID = 407;
+    const int US_DOLLAR_CURRENCY_ID = 411;
     const string EURO_CURRENCY = 'Euro (currency)';
-    const int EURO_CURRENCY_ID = 385;
+    const int EURO_CURRENCY_ID = 389;
     const string USD_SYMBOL = "USD is symbol for US dollar";
-    const int USD_SYMBOL_ID = 409;
+    const int USD_SYMBOL_ID = 413;
     const string DOLLAR_ALIAS = "$ is alias of US dollar";
-    const int DOLLAR_ALIAS_ID = 589;
+    const int DOLLAR_ALIAS_ID = 593;
     const string U_S_DOLLAR_ALIAS = "U.S. dollar is alias of US dollar";
-    const int U_S_DOLLAR_ALIAS_ID = 406;
+    const int U_S_DOLLAR_ALIAS_ID = 410;
     const string IN_USD = "in USD";
-    const int IN_USD_ID = 403;
+    const int IN_USD_ID = 407;
     const string EUR_SYMBOL = "EUR is symbol for Euro";
-    const int EUR_SYMBOL_ID = 386;
+    const int EUR_SYMBOL_ID = 390;
     const string EURO_SIGN_SYMBOL = "€ is symbol for Euro";
-    const int EURO_SIGN_SYMBOL_ID = 387;
+    const int EURO_SIGN_SYMBOL_ID = 391;
     const string EURO_SIGN_ALIAS = "€ is alias of Euro";
-    const int EURO_SIGN_ALIAS_ID = 397;
+    const int EURO_SIGN_ALIAS_ID = 401;
     const string IN_EUR = "in EUR";
-    const int IN_EUR_ID = 396;
+    const int IN_EUR_ID = 400;
     const string COMPANY_VESTAS = "Vestas SA";
-    const int COMPANY_VESTAS_ID = 611;
+    const int COMPANY_VESTAS_ID = 615;
     const string COMPANY_ABB = "ABB (company)";
-    const int COMPANY_ABB_ID = 608;
+    const int COMPANY_ABB_ID = 612;
     const string YEAR_2013_FOLLOW = "2014 is follower of 2013";
     const string TAXES_OF_CF = "income taxes is part of cash flow statement";
 

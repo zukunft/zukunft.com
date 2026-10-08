@@ -67,6 +67,10 @@ class styles
     const string MENU_COLUMN = 'column-menu';
     // a sub header inside a popup menu e.g. "columns and values" above the column entries
     const string MENU_HEADER = 'menu-header';
+    // the up / down icons behind a column header that sort the rows by the column, and the
+    // icon of the order that the page shows (see style_html.css)
+    const string SORT_ICON = 'sort-icon';
+    const string SORT_ACTIVE = 'sort-active';
     // the charts of a table beside each other, wrapping on a narrow screen (see style_html.css)
     const string CHART_ROW = 'chart-row';
     // the line above the charts of a table shown without the table: the header of the table

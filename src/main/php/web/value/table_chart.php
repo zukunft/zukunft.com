@@ -237,7 +237,7 @@ class table_chart
 
     /**
      * one row per table row with a dot for the number of the plotted column and a bar for its
-     * range, the biggest number on top
+     * range, in the order of the table or else the biggest number on top (see bar_rows)
      *
      * @param table_model $model the rows and columns of the table
      * @param int|string $col_id the id of the plotted value column
@@ -288,8 +288,8 @@ class table_chart
     }
 
     /**
-     * the rows of the range bars: every shown row with a number in the plotted column, the
-     * biggest number first
+     * the rows of the range bars: every shown row with a number in the plotted column, in the
+     * order of the table if the url or the definition has sorted it, else the biggest number first
      *
      * @param table_model $model the rows and columns of the table
      * @param int|string $col_id the id of the plotted value column
@@ -304,7 +304,9 @@ class table_chart
                 $result[] = [$row_key, $centre, $low, $high];
             }
         }
-        usort($result, fn($a, $b) => $b[1]->number() <=> $a[1]->number());
+        if ($model->orders == []) {
+            usort($result, fn($a, $b) => $b[1]->number() <=> $a[1]->number());
+        }
         return $result;
     }
 

@@ -51,14 +51,17 @@ use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\chart_types;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\enum\table_forms;
+use Zukunft\ZukunftCom\main\php\shared\enum\table_orders;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\position_types;
+use Zukunft\ZukunftCom\main\php\web\const\icons;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
+use Zukunft\ZukunftCom\test\php\create\test_triples;
 use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -72,6 +75,7 @@ class value_list_ui_tests
         $html = new html_base();
         $tl = new test_lib();
         $t_wrd = new test_words($t);
+        $t_trp = new test_triples($t);
         $t_val = new test_values($t);
         $t_phr = new test_phrases($t);
         $lib = new library();
@@ -583,6 +587,196 @@ class value_list_ui_tests
             ->table_by_related_columns($msg_ui, $phr_lst_context_ui, [], true);
         $t->assert_text_contains($test_name,
             $lib->str_left_of($tbl_header, '<table'), '>' . word_names::INHABITANTS . '</a>');
+
+        $t->subheader($ts . 'row order');
+        // the url can ask for another order of the rows than the impact: the phrase id of a
+        // column and the condition, e.g. the smallest potential loss first; the rows are
+        // sorted before they are cut, so the short list shows the first rows of that order
+        $loss_id = $t_trp->potential_loss()->phrase()->id();
+        $gain_id = $t_trp->potential_gain()->phrase()->id();
+        $problem_id = $t_wrd->word_problem()->phrase()->id();
+        $solution_id = $t_wrd->solution()->phrase()->id();
+        $rank_url = [url_var::MASK => views::START_ID];
+        $asc_url = $rank_url + [url_var::DISPLAY_LIST_ORDER => table_orders::NUMERIC_ASC->url_value($loss_id)];
+        $tbl_asc = $t_val->value_list_solution_prio_ui()->table_by_related_columns(
+            $msg_ui, $rank_ctx, $rank_lst->column_names(), false, true, $rank_lst, null, $asc_url);
+        $test_name = 'the smallest number of the column is first if the url asks for it';
+        $t->assert_text_order($test_name, $tbl_asc, triple_names::PROPRIETARY_SOFTWARE, triple_names::GDP_MISMEASUREMENT);
+        $test_name = '... and the biggest is cut away, because the rows are sorted before the cut';
+        $t->assert_text_not_contains($test_name, $tbl_asc, '>' . triple_names::GLOBAL_WARMING . '</a>');
+        $test_name = '... and the links of the "..." menu keep the order of the page';
+        $t->assert_text_contains($test_name, $tbl_asc,
+            url_var::DISPLAY_LIST_ORDER . '=' . table_orders::NUMERIC_ASC->url_value($loss_id));
+        // the biggest number of another column first changes the impact order, e.g. the gain
+        // of the disinformation solution is bigger than the gain of the health solution
+        // although the loss of the health problem is bigger
+        $desc_url = $rank_url + [url_var::DISPLAY_LIST_ORDER => table_orders::NUMERIC_DESC->url_value($gain_id)];
+        $tbl_desc = $t_val->value_list_solution_prio_ui()->table_by_related_columns(
+            $msg_ui, $rank_ctx, $rank_lst->column_names(), false, true, $rank_lst, value_list_ui::LIMIT_ALL, $desc_url);
+        $test_name = 'the biggest number of another column first changes the impact order';
+        $t->assert_text_order($test_name, $tbl_desc, word_names::DISINFORMATION, word_names::HEALTH);
+        $tbl_impact = $t_val->value_list_solution_prio_ui()->table_by_related_columns(
+            $msg_ui, $rank_ctx, $rank_lst->column_names(), false, true, $rank_lst, value_list_ui::LIMIT_ALL, $rank_url);
+        $test_name = '... which the table without an order keeps';
+        $t->assert_text_order($test_name, $tbl_impact, word_names::HEALTH, word_names::DISINFORMATION);
+        // the populism and the poverty solution have the same gain, so the sub order decides
+        // between them and the sub sub order if the sub order leaves them equal as well
+        $sub_url = $desc_url + [url_var::DISPLAY_LIST_ORDER_SUB => table_orders::ALPHA_DESC->url_value($problem_id)];
+        $tbl_sub = $t_val->value_list_solution_prio_ui()->table_by_related_columns(
+            $msg_ui, $rank_ctx, $rank_lst->column_names(), false, true, $rank_lst, value_list_ui::LIMIT_ALL, $sub_url);
+        $test_name = 'the sub order sorts the rows that the prime order leaves equal';
+        $t->assert_text_order($test_name, $tbl_sub, word_names::POVERTY, word_names::POPULISM);
+        $test_name = '... which keep the impact order without the sub order';
+        $t->assert_text_order($test_name, $tbl_desc, word_names::POPULISM, word_names::POVERTY);
+        $sub_sub_url = $desc_url + [
+                url_var::DISPLAY_LIST_ORDER_SUB => table_orders::NUMERIC_ASC->url_value($gain_id),
+                url_var::DISPLAY_LIST_ORDER_SUB_SUB => table_orders::ALPHA_DESC->url_value($problem_id)];
+        $tbl_sub_sub = $t_val->value_list_solution_prio_ui()->table_by_related_columns(
+            $msg_ui, $rank_ctx, $rank_lst->column_names(), false, true, $rank_lst, value_list_ui::LIMIT_ALL, $sub_sub_url);
+        $test_name = 'the sub sub order sorts the rows that the prime and the sub order leave equal';
+        $t->assert_text_order($test_name, $tbl_sub_sub, word_names::POVERTY, word_names::POPULISM);
+        // the row column is sorted by the names of the row phrases without regard to the case
+        $alpha_url = $rank_url + [url_var::DISPLAY_LIST_ORDER => table_orders::ALPHA_ASC->url_value($problem_id)];
+        $tbl_alpha = $t_val->value_list_solution_prio_ui()->table_by_related_columns(
+            $msg_ui, $rank_ctx, $rank_lst->column_names(), false, true, $rank_lst, value_list_ui::LIMIT_ALL, $alpha_url);
+        $test_name = 'the rows are sorted by their name if the url names the row column';
+        $t->assert_text_order($test_name, $tbl_alpha, word_names::EDUCATION, triple_names::GDP_MISMEASUREMENT);
+        $t->assert_text_order($test_name, $tbl_alpha, triple_names::GDP_MISMEASUREMENT, triple_names::GLOBAL_WARMING);
+        // a phrase column is sorted by the name of the phrase shown in the row
+        $sol_url = $rank_url + [url_var::DISPLAY_LIST_ORDER => table_orders::ALPHA_DESC->url_value($solution_id)];
+        $tbl_sol = $t_val->value_list_solution_prio_ui()->table_by_related_columns(
+            $msg_ui, $rank_ctx, $rank_lst->column_names(), false, true, $rank_lst, value_list_ui::LIMIT_ALL, $sol_url);
+        $test_name = 'the rows are sorted by the phrase of a phrase column';
+        $t->assert_text_order($test_name, $tbl_sol, word_names::TAXES, triple_names::REDUCE_EMISSIONS);
+        // with the parents the names of the parent phrases within the related phrases come
+        // before the name, so "GDP mismeasurement" without a parent is before "global problem
+        // education" and the second parent "potential" moves "global warming" behind "populism"
+        $parent_lst = $t_phr->list_global_problems_second_parent_ui();
+        $parent_url = $rank_url + [url_var::DISPLAY_LIST_ORDER => table_orders::ALPHA_PARENT_ASC->url_value($problem_id)];
+        $tbl_parent = $t_val->value_list_solution_prio_ui()->table_by_related_columns(
+            $msg_ui, $rank_ctx, $parent_lst->column_names(), false, true, $parent_lst, value_list_ui::LIMIT_ALL, $parent_url);
+        $test_name = 'the names of the parents come before the name of the row phrase';
+        $t->assert_text_order($test_name, $tbl_parent, triple_names::GDP_MISMEASUREMENT, word_names::EDUCATION);
+        $test_name = '... so a second parent moves the row';
+        $t->assert_text_order($test_name, $tbl_parent, word_names::POPULISM, triple_names::GLOBAL_WARMING);
+        $t->assert_text_order($test_name, $tbl_parent, triple_names::GLOBAL_WARMING, word_names::POVERTY);
+        // each column header ends with an up and a down icon, which link to the same page with
+        // the rows sorted by the column: the numbers of a value column, the names of the row
+        // column and of a phrase column
+        $test_name = 'a value column header has the up icon that sorts the smallest number on top';
+        $t->assert_text_contains($test_name, $tbl_impact, '<i class="' . icons::SORT_UP . '">');
+        $t->assert_text_contains($test_name, $tbl_impact,
+            url_var::DISPLAY_LIST_ORDER . '=' . table_orders::NUMERIC_ASC->url_value($loss_id) . '"');
+        $test_name = '... and the down icon that sorts the biggest on top';
+        $t->assert_text_contains($test_name, $tbl_impact, '<i class="' . icons::SORT_DOWN . '">');
+        $t->assert_text_contains($test_name, $tbl_impact,
+            url_var::DISPLAY_LIST_ORDER . '=' . table_orders::NUMERIC_DESC->url_value($loss_id) . '"');
+        $test_name = 'the row column and a phrase column sort by the names';
+        $t->assert_text_contains($test_name, $tbl_impact,
+            url_var::DISPLAY_LIST_ORDER . '=' . table_orders::ALPHA_ASC->url_value($problem_id) . '"');
+        $t->assert_text_contains($test_name, $tbl_impact,
+            url_var::DISPLAY_LIST_ORDER . '=' . table_orders::ALPHA_DESC->url_value($solution_id) . '"');
+        $test_name = '... with the tooltip that says what the icon does';
+        $t->assert_text_contains($test_name, $tbl_impact, 'title="' . msg_id::TABLE_SORT_UP_TIP->text() . '"');
+        // a click on another column keeps the previous order as the sub order, so that the
+        // sub orders can be reached without typing the url; the same column sorted again
+        // replaces its previous order instead of repeating it as the sub order
+        $test_name = 'the icon of another column moves the shown order to the sub order';
+        $t->assert_text_contains($test_name, $tbl_asc,
+            url_var::DISPLAY_LIST_ORDER . '=' . table_orders::NUMERIC_DESC->url_value($gain_id) . '&amp;'
+            . url_var::DISPLAY_LIST_ORDER_SUB . '=' . table_orders::NUMERIC_ASC->url_value($loss_id) . '"');
+        $test_name = '... and the icon of the sorted column replaces the shown order';
+        $t->assert_text_contains($test_name, $tbl_asc,
+            url_var::DISPLAY_LIST_ORDER . '=' . table_orders::NUMERIC_DESC->url_value($loss_id) . '"');
+        $test_name = '... which is marked as the order shown';
+        $t->assert_text_contains($test_name, $tbl_asc, 'class="' . styles::SORT_ICON . ' ' . styles::SORT_ACTIVE . '"');
+        $t->assert_text_not_contains($test_name, $tbl_impact, styles::SORT_ACTIVE);
+        // negative: a table that does not know its page has no icon, because it cannot link
+        $test_name = 'a table without the page url shows no sort icon';
+        $t->assert_text_not_contains($test_name, $tbl_html, icons::SORT_UP);
+        // the default order of a table is data: the order triple "<condition> of <column>"
+        // assigned to the default sort order tier, read like the chart definitions
+        $test_name = 'the ranking defines the biggest potential loss on top as its default order';
+        $sorted_lst = $t_phr->list_global_problems_sorted_ui();
+        $t->assert($test_name, array_map(fn(array $order) => [$order[0]->value, $order[1]],
+            $sorted_lst->sort_definitions($msg_ui)), [[table_orders::NUMERIC_DESC->value, triple_names::POTENTIAL_LOSS]]);
+        $test_name = 'a list without sort definitions defines no order';
+        $t->assert($test_name, $rank_lst->sort_definitions($msg_ui), []);
+        $test_name = 'a condition word without code id is reported and its order left out';
+        $t->assert($test_name, $t_phr->list_sort_without_condition_ui()->sort_definitions($msg_ui), []);
+        $t->assert_text_contains($test_name, $msg_ui->get_last_message_translated(), word_names::NUMERIC_DESCENDING);
+        $msg_ui->reset();
+        // without an order in the url the rows follow the default order, which puts the health
+        // problem with the bigger loss before the wealth concentration with the bigger gain
+        $tbl_default = $t_val->value_list_solution_prio_ui()->table_by_related_columns(
+            $msg_ui, $rank_ctx, $sorted_lst->column_names(), false, true, $sorted_lst, value_list_ui::LIMIT_ALL, $rank_url);
+        $test_name = 'without an order in the url the rows follow the default order of the definition';
+        $t->assert_text_order($test_name, $tbl_default, word_names::HEALTH, triple_names::WEALTH_CONCENTRATION);
+        $test_name = '... which differs from the impact order of a table without a definition';
+        $t->assert_text_order($test_name, $tbl_impact, triple_names::WEALTH_CONCENTRATION, word_names::HEALTH);
+        $test_name = '... and the down icon of the loss column is marked as the order shown';
+        $t->assert_text_contains($test_name, $tbl_default, 'class="' . styles::SORT_ICON . ' ' . styles::SORT_ACTIVE . '"');
+        $test_name = '... which the icon of another column keeps as the sub order';
+        $t->assert_text_contains($test_name, $tbl_default,
+            url_var::DISPLAY_LIST_ORDER . '=' . table_orders::NUMERIC_DESC->url_value($gain_id) . '&amp;'
+            . url_var::DISPLAY_LIST_ORDER_SUB . '=' . table_orders::NUMERIC_DESC->url_value($loss_id) . '"');
+        $tbl_url_wins = $t_val->value_list_solution_prio_ui()->table_by_related_columns(
+            $msg_ui, $rank_ctx, $sorted_lst->column_names(), false, true, $sorted_lst, value_list_ui::LIMIT_ALL, $alpha_url);
+        $test_name = 'an order in the url wins over the default order';
+        $t->assert_text_order($test_name, $tbl_url_wins, word_names::EDUCATION, triple_names::GLOBAL_WARMING);
+        // negative: a default order of a column that the table does not have is reported
+        $t_val->value_list_most_relevant_ui()->table_by_related_columns(
+            $msg_ui, new phrase_list_ui(), [], false, true, $sorted_lst, null, $rank_url);
+        $test_name = 'a default order of a column that the table does not have is reported';
+        $t->assert_true($test_name, $msg_ui->has_msg_id(msg_id::TABLE_ORDER_UNKNOWN));
+        $t->assert_text_contains($test_name, $msg_ui->get_last_message_translated(), triple_names::POTENTIAL_LOSS);
+        $msg_ui->reset();
+        // the chart shows the same rows as the table, so it draws them in the order of the url
+        $svg_asc = $t_val->value_list_solution_prio_ui()->table_to_svg(
+            chart_types::RANGE_BARS, $msg_ui, $rank_ctx, $rank_lst->column_names(), $rank_lst,
+            value_list_ui::LIMIT_ALL, $asc_url);
+        $test_name = 'the chart draws the rows in the order of the url like the table';
+        $t->assert_text_order($test_name, $svg_asc, triple_names::PROPRIETARY_SOFTWARE, triple_names::GLOBAL_WARMING);
+        // negative: an order that names no column of the table or an unknown condition is
+        // reported and the rows keep the impact order
+        $bad_url = $rank_url + [url_var::DISPLAY_LIST_ORDER => table_orders::NUMERIC_ASC->url_value(999999)];
+        $tbl_bad = $t_val->value_list_solution_prio_ui()->table_by_related_columns(
+            $msg_ui, $rank_ctx, $rank_lst->column_names(), false, true, $rank_lst, null, $bad_url);
+        $test_name = 'an order that names no column of the table is reported';
+        $t->assert_true($test_name, $msg_ui->has_msg_id(msg_id::TABLE_ORDER_UNKNOWN));
+        $t->assert_text_contains($test_name, $msg_ui->get_last_message_translated(), '999999');
+        $msg_ui->reset();
+        $test_name = '... and the rows keep the impact order';
+        $t->assert_text_order($test_name, $tbl_bad, triple_names::GLOBAL_WARMING, word_names::POPULISM);
+        $cond_url = $rank_url + [url_var::DISPLAY_LIST_ORDER => $loss_id . table_orders::ID_SEP . 'biggest'];
+        $t_val->value_list_solution_prio_ui()->table_by_related_columns(
+            $msg_ui, $rank_ctx, $rank_lst->column_names(), false, true, $rank_lst, null, $cond_url);
+        $test_name = 'an unknown condition is reported';
+        $t->assert_true($test_name, $msg_ui->has_msg_id(msg_id::TABLE_ORDER_UNKNOWN));
+        $msg_ui->reset();
+        $test_name = 'a table without an order in the url reports nothing';
+        $t->assert_false($test_name, $msg_ui->has_msg_id(msg_id::TABLE_ORDER_UNKNOWN));
+        // the url value names the phrase id of the column and the condition
+        $test_name = 'an order url value is read back to the phrase id and the condition';
+        [$phr_id, $cond] = table_orders::parse(table_orders::ALPHA_DESC->url_value(-45));
+        $t->assert($test_name, $phr_id, -45);
+        $t->assert($test_name, $cond?->value ?? '', table_orders::ALPHA_DESC->value);
+        // the id and the condition are read on their own, so the caller can say which part is wrong
+        $test_name = 'a value without a phrase id names no column but still the condition';
+        [$phr_id, $cond] = table_orders::parse('x' . table_orders::ID_SEP . table_orders::ALPHA_DESC->value);
+        $t->assert($test_name, $phr_id, 0);
+        $t->assert($test_name, $cond?->value ?? '', table_orders::ALPHA_DESC->value);
+        $test_name = 'a value with an unknown condition names the column but no condition';
+        [$phr_id, $cond] = table_orders::parse('12' . table_orders::ID_SEP . 'biggest');
+        $t->assert($test_name, $phr_id, 12);
+        $t->assert($test_name, $cond?->value ?? '', '');
+        $test_name = 'a row without a key is behind the rows with a key for both directions';
+        $t->assert($test_name, table_orders::NUMERIC_DESC->compare(null, 1.0), 1);
+        $t->assert($test_name, table_orders::NUMERIC_ASC->compare(1.0, null), -1);
+        $t->assert($test_name, table_orders::ALPHA_ASC->compare(null, null), 0);
+        $test_name = 'the names are compared without regard to the case';
+        $t->assert_true($test_name, table_orders::ALPHA_ASC->compare(word_names::EDUCATION, triple_names::GDP_MISMEASUREMENT) < 0);
+        $t->assert_true($test_name, table_orders::ALPHA_DESC->compare(word_names::EDUCATION, triple_names::GDP_MISMEASUREMENT) > 0);
 
         $t->subheader($ts . 'more tail');
         $tail_html = $t_val->list_all_ui($msg)->list($msg_ui, $phr_lst_context_ui, [], '', 1);

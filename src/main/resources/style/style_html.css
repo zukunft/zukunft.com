@@ -126,6 +126,18 @@ body {
     font-weight: normal;
 }
 
+/* the up / down icons behind a column header that sort the rows by the column: grey and
+   never bold, and the icon of the order that the page shows in the text colour */
+.sort-icon {
+    font-weight: normal;
+    color: #aaa;
+    margin-left: 0.15em;
+}
+
+.sort-icon.sort-active {
+    color: inherit;
+}
+
 /* a sub header inside a popup menu e.g. "columns and values" and "as" of the column menu */
 .column-menu ul .menu-header {
     padding: 0.4rem 1rem 0.1rem;

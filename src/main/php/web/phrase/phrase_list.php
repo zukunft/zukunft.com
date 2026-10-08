@@ -60,6 +60,7 @@ include_once html_paths::SHARED_CONST . 'triples.php';
 include_once html_paths::SHARED_CONST . 'views.php';
 include_once html_paths::SHARED_CONST . 'words.php';
 include_once html_paths::SHARED_ENUM . 'chart_types.php';
+include_once html_paths::SHARED_ENUM . 'table_orders.php';
 include_once html_paths::SHARED_ENUM . 'foaf_direction.php';
 include_once html_paths::SHARED_ENUM . 'languages.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
@@ -88,6 +89,7 @@ use Zukunft\ZukunftCom\main\php\web\word\word_list;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\chart_types;
+use Zukunft\ZukunftCom\main\php\shared\enum\table_orders;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
 use Zukunft\ZukunftCom\main\php\shared\enum\languages;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -106,6 +108,9 @@ class phrase_list extends sandbox_list_named
     // assignment of the chart; the chart triple with its chart type word and the plotted
     // columns is the from side of the assignment, which the api delivers with the assignment
     const int CHART_LEVELS = 2;
+    // the relation levels from "sort order (system)" to the default orders of a table, which
+    // are defined like the charts: the tier and the assignment of the order
+    const int SORT_LEVELS = 2;
 
     /*
      * set and get
@@ -363,6 +368,44 @@ class phrase_list extends sandbox_list_named
     }
 
     /**
+     * load the default sort orders of a table: the sort order tiers, the orders assigned to
+     * them and the order triples with the condition word and the column (see sort_definitions)
+     *
+     * @param user_message $msg to report a problem of the api call
+     * @return bool true if the definitions have been loaded
+     */
+    function load_sort_definitions(user_message $msg): bool
+    {
+        return $this->load_related_by_name(
+            triples::SYSTEM_SORT_ORDER, foaf_direction::BOTH, $msg, self::SORT_LEVELS);
+    }
+
+    /**
+     * the default sort orders of a table defined in this list, which sort the rows if the url
+     * of the page names no order: an order is the triple "<condition> of <column>" assigned to
+     * the default sort order tier, e.g. "numeric descending of potential loss" for the start
+     * page ranking; the first order is the prime order and the next ones the sub orders
+     *
+     * @param user_message $msg to report a condition word without the code id of a condition
+     * @return array per order the condition (table_orders) and the name of the column
+     */
+    function sort_definitions(user_message $msg): array
+    {
+        $result = [];
+        foreach ($this->tier_members(triples::SYSTEM_SORT_ORDER_DEFAULT, $msg) as $order) {
+            // the condition word nested in the order triple carries the condition as its code id
+            $cond_wrd = $order->get_from();
+            $cond = table_orders::tryFrom($cond_wrd?->obj()?->code_id ?? '');
+            if ($cond == null) {
+                $msg->add_warning_with_vars(msg_id::SORT_CONDITION_UNKNOWN, [msg_id::VAR_NAME => $cond_wrd?->name() ?? '']);
+            } else {
+                $result[] = [$cond, $order->get_to()?->name() ?? ''];
+            }
+        }
+        return $result;
+    }
+
+    /**
      * the chart triples assigned to a chart type tier with "<chart> can be <tier>"
      *
      * @param string $tier the name of a chart type tier e.g. "default chart type (system)"
@@ -507,12 +550,40 @@ class phrase_list extends sandbox_list_named
      */
     function child_names(phrase $phr): array
     {
+        return $this->linked_names($phr, foaf_direction::DOWN);
+    }
+
+    /**
+     * get the names of the phrases that this list links the given phrase to by a triple, the
+     * mirror of child_names: e.g. for "global warming" the name "global problem", because the
+     * list contains the triple "global warming (global problem)"
+     *
+     * @param phrase $phr the phrase whose parents should be returned
+     * @return array the names of the phrases that the given phrase links to
+     */
+    function parent_names(phrase $phr): array
+    {
+        return $this->linked_names($phr, foaf_direction::UP);
+    }
+
+    /**
+     * @param phrase $phr the phrase whose linked phrases should be returned
+     * @param foaf_direction $direction UP for the phrases the given phrase links to, DOWN for the phrases that link to it
+     * @return array the names of the linked phrases, each once
+     */
+    private function linked_names(phrase $phr, foaf_direction $direction): array
+    {
         $result = [];
         foreach ($this->lst() as $lst_phr) {
             if ($lst_phr->is_triple()) {
                 $trp = $lst_phr->obj();
-                if ($trp->get_to()?->name() == $phr->name()) {
-                    $name = $trp->get_from()?->name();
+                // the parents are on the "to" side of the triples that start with the phrase
+                [$own, $linked] = [$trp->get_from(), $trp->get_to()];
+                if ($direction == foaf_direction::DOWN) {
+                    [$own, $linked] = [$trp->get_to(), $trp->get_from()];
+                }
+                if ($own?->name() == $phr->name()) {
+                    $name = $linked?->name();
                     if ($name != null and !in_array($name, $result)) {
                         $result[] = $name;
                     }

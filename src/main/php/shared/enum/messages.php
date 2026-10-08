@@ -255,6 +255,9 @@ enum messages: string
     case TABLE_AS_TABLE = 'table_as_table';
     case TABLE_AS_CHART = 'table_as_chart';
     case TABLE_AS_TABLE_CHART = 'table_as_table_chart';
+    // the tooltips of the up / down icons behind a column header that sort the rows (table_orders)
+    case TABLE_SORT_UP_TIP = 'table_sort_up_tip';
+    case TABLE_SORT_DOWN_TIP = 'table_sort_down_tip';
     // the subtitle and the axis texts of a value table shown as a chart (see table_chart)
     case CHART_RANGE_BARS_TIP = 'chart_range_bars_tip';
     case CHART_SCATTER_TIP = 'chart_scatter_tip';
@@ -1132,6 +1135,12 @@ enum messages: string
         . '" has no code id of a known chart type, so the chart is not shown';
     case TABLE_COLUMNS_NOT_IMPLEMENTED = 'the table with related columns is not yet implemented for '
         . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END;
+    case SORT_CONDITION_UNKNOWN = 'the sort condition "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" has no code id of a known condition, so the default order is not used';
+    case TABLE_ORDER_UNKNOWN = 'the rows cannot be sorted by "'
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END
+        . '", because the table has no column with that phrase id or the condition is unknown, so the rows keep the impact order';
     case VALUE_UNIT_NOT_UNIQUE = 'the value has more than one unit: "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '"';

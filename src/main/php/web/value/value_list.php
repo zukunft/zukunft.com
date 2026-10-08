@@ -41,6 +41,7 @@ include_once html_paths::FORMULA . 'formula.php';
 include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::HTML . 'button.php';
 // TODO move phr_ids to shared objects
+include_once html_paths::CONST . 'icons.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'rest_call.php';
 include_once html_paths::HTML . 'styles.php';
@@ -73,6 +74,7 @@ include_once html_paths::SHARED_HELPER . 'TextIdObject.php';
 include_once html_paths::SHARED_ENUM . 'chart_types.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::SHARED_ENUM . 'table_forms.php';
+include_once html_paths::SHARED_ENUM . 'table_orders.php';
 include_once html_paths::SHARED_TYPES . 'position_types.php';
 include_once html_paths::SHARED . 'api.php';
 include_once html_paths::SHARED . 'url_var.php';
@@ -92,6 +94,7 @@ use Zukunft\ZukunftCom\main\php\web\result\result_list;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\sandbox\ListBase;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_value;
+use Zukunft\ZukunftCom\main\php\web\const\icons;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\types\type_object;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
@@ -104,6 +107,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\enum\chart_types;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\enum\table_forms;
+use Zukunft\ZukunftCom\main\php\shared\enum\table_orders;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\helper\Config;
 use Zukunft\ZukunftCom\main\php\shared\types\position_types;
@@ -670,7 +674,7 @@ class value_list extends ListBase
             $html = new html_base();
             $model = $this->table_model($msg, $context_phr_lst, $col_order, $rel_lst, $limit,
                 $url_array, $col_values_only, $col_tiers, $value_rows_only);
-            $result = $this->table_html($model, $msg, $context_phr_lst, $col_order, $rel_lst,
+            $result = $this->table_html($model, $msg, $context_phr_lst, $rel_lst,
                 $url_array, $with_range, $with_border);
             if ($with_header) {
                 $result = $this->table_header($model, $context_phr_lst) . $result;
@@ -837,7 +841,7 @@ class value_list extends ListBase
         if ($col_values_only) {
             $vals = array_filter($vals, fn($val) => array_key_exists($val->id(), $val_col));
         }
-        [$row_label, $cells, $phr_cells] = $this->table_cells(
+        [$row_label, $row_phr, $cells, $phr_cells] = $this->table_cells(
             $vals, $val_col, $col_parts, $all_by_id, $phr_col, $rel_lst, $grp_ctx);
         // a phrase column is defined like a value column, so both kinds are shown in one
         // order, e.g. the "solution" column between the "loss" and the "gain" column
@@ -854,20 +858,10 @@ class value_list extends ListBase
                 fn($row_key) => $this->row_has_number($cells[$row_key], $col_ids),
                 ARRAY_FILTER_USE_KEY);
         }
-        // a page must not fill the screen, because the user messages are shown below the
-        // view and would else be hidden below the fold, so the rows are cut to the number
-        // named by the url or else the configured number before the header is built; the
-        // url names the list page as well, so the cut starts at the first row of that page
-        $model->row_limit = $limit ?? $this->row_limit($url_array, $msg);
-        $model->shown_keys = array_keys($row_label);
-        if ($model->row_limit != self::LIMIT_ALL) {
-            $model->first_row = $this->first_row($url_array, $model->row_limit);
-            $model->shown_keys = array_slice($model->shown_keys, $model->first_row, $model->row_limit);
-        }
-        // the rows behind the shown ones, so a later page counts its own rest only
-        $model->rows_behind = count($row_label) - $model->first_row - count($model->shown_keys);
         $model->tbl_phr = $tbl_phr;
         $model->row_label = $row_label;
+        $model->row_phr = $row_phr;
+        $model->row_col = $this->row_column($context_phr_lst, $col_order);
         $model->cells = $cells;
         $model->phr_cells = $phr_cells;
         $model->col_ids = $col_ids;
@@ -878,8 +872,63 @@ class value_list extends ListBase
         }
         // the unit describes the number of a whole column, so its own header names it
         $model->col_unit = $this->column_units($col_phr, $val_col, $msg);
+        // the names are set before the orders, because a defined order names its column
         $model->col_names = $this->column_names_of($col_phr, $model->col_head, $col_parts, $all_by_id);
+        // a page must not fill the screen, because the user messages are shown below the
+        // view and would else be hidden below the fold, so the rows are cut to the number
+        // named by the url or else the configured number before the header is built; the
+        // url names the list page as well, so the cut starts at the first row of that page
+        $model->row_limit = $limit ?? $this->row_limit($url_array, $msg);
+        $model->shown_keys = array_keys($row_label);
+        // the url or the definition can ask for another order than the impact, e.g. the rows by
+        // the name of their solution, which is applied before the cut, so that the first page
+        // shows the first rows of that order
+        $model->orders = $this->row_orders($url_array, $model, $rel_lst, $msg);
+        $model->sort_rows($rel_lst);
+        if ($model->row_limit != self::LIMIT_ALL) {
+            $model->first_row = $this->first_row($url_array, $model->row_limit);
+            $model->shown_keys = array_slice($model->shown_keys, $model->first_row, $model->row_limit);
+        }
+        // the rows behind the shown ones, so a later page counts its own rest only
+        $model->rows_behind = count($row_label) - $model->first_row - count($model->shown_keys);
         return $model;
+    }
+
+    /**
+     * the orders of the rows, the prime order first: the orders that the url asks for, or else
+     * the default orders of the table definition (phrase_list::sort_definitions)
+     *
+     * @param array $url_array the url parameters of the page that shows the table
+     * @param table_model $model the rows and columns of the table
+     * @param phrase_list|null $rel_lst the phrases related to the page phrase with the definitions
+     * @param user_message $msg to report an order that names no column of the table or an unknown condition
+     * @return array per order the phrase id of the column and the condition (table_orders)
+     */
+    private function row_orders(array $url_array, table_model $model, ?phrase_list $rel_lst, user_message $msg): array
+    {
+        $result = [];
+        $orders = [];
+        foreach (table_orders::URL_VARS as $var) {
+            if (array_key_exists($var, $url_array)) {
+                // user input, which may also be an array e.g. from dlo[]=1
+                $value = is_scalar($url_array[$var]) ? (string)$url_array[$var] : '';
+                $orders[] = [$value, ...table_orders::parse($value)];
+            }
+        }
+        // a url without any order shows the defined order, a url with a wrong order the impact order
+        if ($orders == []) {
+            foreach ($rel_lst?->sort_definitions($msg) ?? [] as [$cond, $name]) {
+                $orders[] = [$name, $model->col_id_of_name($name) ?? 0, $cond];
+            }
+        }
+        foreach ($orders as [$value, $phr_id, $cond]) {
+            if ($cond != null and $model->has_column($phr_id)) {
+                $result[] = [$phr_id, $cond];
+            } else {
+                $msg->add(msg_id::TABLE_ORDER_UNKNOWN, [msg_id::VAR_VALUE => $value]);
+            }
+        }
+        return $result;
     }
 
     /**
@@ -944,8 +993,9 @@ class value_list extends ListBase
      * @param array $phr_col the columns that name a phrase of the row, keyed by column id
      * @param phrase_list|null $rel_lst the phrases related to the page phrase with the definitions
      * @param phrase_list $grp_ctx the phrases assumed by the reader, which name no row
-     * @return array per row key the html link list of the row, per row key and column id the
-     *               values of the cell and per row key and phrase column id the phrase shown
+     * @return array per row key the html link list of the row, per row key its phrases, per row
+     *               key and column id the values of the cell and per row key and phrase column
+     *               id the phrase shown
      */
     private function table_cells(
         array        $vals,
@@ -963,6 +1013,7 @@ class value_list extends ListBase
             $phr_col_names[$phr_col_id] = $rel_lst->child_names($phr);
         }
         $row_label = [];
+        $row_phr = [];
         $cells = [];
         $phr_cells = [];
         foreach ($vals as $val) {
@@ -990,6 +1041,7 @@ class value_list extends ListBase
             $row_key = $val->grp->phrase_names($ctx);
             if (!key_exists($row_key, $row_label)) {
                 $row_label[$row_key] = $val->grp->phrase_link_list($ctx);
+                $row_phr[$row_key] = $val->grp->phr_lst()->remove($ctx)->lst();
                 $cells[$row_key] = [];
             }
             // the phrase of a row is the same for every value of that row, so it is set
@@ -1003,7 +1055,7 @@ class value_list extends ListBase
             // bound is shown behind its centre value and not as a value of its own
             $cells[$row_key][$col_id][] = $val;
         }
-        return [$row_label, $cells, $phr_cells];
+        return [$row_label, $row_phr, $cells, $phr_cells];
     }
 
     /**
@@ -1036,7 +1088,6 @@ class value_list extends ListBase
      * @param table_model $model the rows and columns of the table
      * @param user_message $msg to report a problem of the value display
      * @param phrase_list $context_phr_lst the phrases assumed by the reader e.g. the phrase of the page
-     * @param array $col_order the defined column phrase names, the most important column first
      * @param phrase_list|null $rel_lst the phrases related to the page phrase with the definitions
      * @param array $url_array the url parameters of the page that shows the table
      * @param bool $with_range true to show the probability range behind each number
@@ -1047,7 +1098,6 @@ class value_list extends ListBase
         table_model  $model,
         user_message $msg,
         phrase_list  $context_phr_lst,
-        array        $col_order,
         ?phrase_list $rel_lst,
         array        $url_array,
         bool         $with_range,
@@ -1067,8 +1117,11 @@ class value_list extends ListBase
         // the row column is headed by the phrase that the page phrase is built from, e.g.
         // "problem" for the page phrase "global problem", and stays empty if that phrase is
         // no defined column, because the row phrases differ per row
-        $row_col = $this->row_column($context_phr_lst, $col_order);
-        $header = $html->th($row_col?->name_link() ?? '');
+        $row_head = '';
+        if ($model->row_col != null) {
+            $row_head = $model->row_col->name_link() . $this->sort_icons($url_array, $model, $model->row_col->id(), false);
+        }
+        $header = $html->th($row_head);
         // the tier of a defined column says on which screens it is shown
         $col_style = [];
         foreach ($model->col_ids as $col_id) {
@@ -1077,7 +1130,13 @@ class value_list extends ListBase
             $unit_lst = $model->col_unit[$col_id] ?? new phrase_list();
             $col_style[$col_id] = $this->column_style($phr->name(), $rel_lst);
             $head_phr = $this->column_head($phr, $model->tbl_phr);
-            $header .= $html->th($this->column_header($head_phr, $unit_lst), '', $col_style[$col_id]);
+            $col_head = $this->column_header($head_phr, $unit_lst);
+            // a further column of the same phrase in another unit has no icons, because the
+            // url names a column by its phrase, which is the column of the first unit
+            if (is_int($col_id)) {
+                $col_head .= $this->sort_icons($url_array, $model, $col_id, array_key_exists($col_id, $model->col_phr));
+            }
+            $header .= $html->th($col_head, '', $col_style[$col_id]);
         }
         if ($rest_col) {
             $header .= $html->th(msg_id::FORM_SUB_TITLE_VALUES->text());
@@ -2299,6 +2358,62 @@ class value_list extends ListBase
                 $result, $items, styles::MENU_COLUMN, msg_id::TABLE_COLUMNS_TIP->text());
         }
         return $result;
+    }
+
+    /**
+     * the up and the down icon behind a column header, which show the same page with the rows
+     * sorted by the column; the order shown is marked and nothing is shown if the page is not known
+     *
+     * @param array $url_array the url parameters of the page that shows the table
+     * @param table_model $model the rows and columns of the table with the orders shown
+     * @param int $phr_id the phrase id of the column
+     * @param bool $numeric true to sort by the numbers of a value column, false by the names of a phrase column
+     * @return string the html code of the two icon links or '' if the page is not known
+     */
+    private function sort_icons(array $url_array, table_model $model, int $phr_id, bool $numeric): string
+    {
+        $result = '';
+        if ($url_array != []) {
+            $html = new html_base();
+            $up = $numeric ? table_orders::NUMERIC_ASC : table_orders::ALPHA_ASC;
+            $down = $numeric ? table_orders::NUMERIC_DESC : table_orders::ALPHA_DESC;
+            $icons = [[$up, icons::SORT_UP, msg_id::TABLE_SORT_UP_TIP], [$down, icons::SORT_DOWN, msg_id::TABLE_SORT_DOWN_TIP]];
+            foreach ($icons as [$cond, $icon, $tip]) {
+                $style = styles::SORT_ICON;
+                if (($model->orders[0] ?? []) == [$phr_id, $cond]) {
+                    $style .= ' ' . styles::SORT_ACTIVE;
+                }
+                $url = $this->order_url($url_array, $model, $cond, $phr_id);
+                $result .= $html->ref($url, $html->icon($icon), $tip->text(), $style, true);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the url of the same page with the rows sorted by the given column: the orders shown move
+     * one step down, so that the previous prime order becomes the sub order and the previous
+     * sub order the sub sub order, unless the same column is sorted again
+     *
+     * @param array $url_array the url parameters of the page that shows the table
+     * @param table_model $model the rows and columns of the table with the orders shown
+     * @param table_orders $cond the condition of the new prime order
+     * @param int $phr_id the phrase id of the column of the new prime order
+     * @return string the url of the same page with the new orders
+     */
+    private function order_url(array $url_array, table_model $model, table_orders $cond, int $phr_id): string
+    {
+        $url_pars = array_diff_key(html_base::page_url_array($url_array), array_flip(table_orders::URL_VARS));
+        $orders = [$cond->url_value($phr_id)];
+        foreach ($model->orders as [$shown_id, $shown_cond]) {
+            if ($shown_id != $phr_id) {
+                $orders[] = $shown_cond->url_value($shown_id);
+            }
+        }
+        foreach (array_slice($orders, 0, count(table_orders::URL_VARS)) as $i => $value) {
+            $url_pars[table_orders::URL_VARS[$i]] = $value;
+        }
+        return api::MAIN_SCRIPT . url_var::PAR . http_build_query($url_pars);
     }
 
     /**

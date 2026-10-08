@@ -378,6 +378,8 @@ messages:
   table_as_table: "table"
   table_as_chart: "chart"
   table_as_table_chart: "table + chart"
+  table_sort_up_tip: "sort by this column, the smallest number or the first name on top"
+  table_sort_down_tip: "sort by this column, the biggest number or the last name on top"
   chart_range_bars_tip: "dot = estimate, bar = range · hover for details"
   chart_scatter_tip: "hover a point for the ranges"
   chart_log_scale: "log scale"

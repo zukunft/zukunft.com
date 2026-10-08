@@ -2,11 +2,9 @@
 
 ## table with column component
 
-to be able to define which column values should be used to sort a table add an url_var (with a human version) to define the prime order and another url_var for the sub and sub_sub order. The id for the var should be the phrase id of the column with a condition that can be e.g. asc, desc in combination with numeric or alpha or alpha incl. parent phrase name 
+add to the start page table (http://localhost/http/view.php?m=1) the column with 'reason' and 'potential loss in trillion EUR' for the reason and define these columns as 'main column'. Change all existing 'main columns' of the start page tables to 'minor columns'. If needed, add at least one reason to the json data files. 
 
-add up / down sort icons to each column which sorts the start page rows by this column
-
-if there is more than one solution add ', ...' with a link to the solution list
+if in the start page table there is more than one solution add a ', ...' with a link to the solution list after the solution name
 
 ## PV calculator
 
@@ -43,7 +41,7 @@ Things to fix or check
 
 add to .env (.env.example) a system@zukunft.com email account that is used to email admin@zukunft.com any time a system error has accused but max 5 (config.yaml parameter) emails per day.
 
-add to  .env (.env.example) a noreply@zukunft.com email account that is used to send non signup messages to the user e.g. if they have reached a top ranking in the user trust list 
+add to .env (.env.example) a noreply@zukunft.com email account that is used to send non signup messages to the user e.g. if they have reached a top ranking in the user trust list 
 
 ## add value
 

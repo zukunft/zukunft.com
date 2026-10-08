@@ -981,6 +981,15 @@
       "name": "scatter plot",
       "description": "chart with one numbered point per table row placed by two numbers of the row, the first number up and the second to the right",
       "code_id": "scatter"
+    },
+    {
+      "name": "sort order",
+      "description": "how the rows of a table are sorted e.g. by the biggest number of a column first"
+    },
+    {
+      "name": "numeric descending",
+      "description": "sort condition: by the number of the column, the biggest number on top",
+      "code_id": "numeric_desc"
     }
   ],
   "triples": [
@@ -2151,6 +2160,36 @@
       "from": "scatter plot of potential gain and initial effort",
       "verb": "can be",
       "to": "default chart type (system)"
+    },
+    {
+      "name": "sort order (system)",
+      "description": "keyword for the sort orders used by the system components to sort the rows of a table",
+      "from": "sort order",
+      "verb": "can be",
+      "to": "zukunft.com system",
+      "code_id": "system_sort_order"
+    },
+    {
+      "name": "default sort order (system)",
+      "description": "keyword for the orders that sort the rows of a table if the url of the page names none; the first order is the prime order and the next ones sort the rows that the orders before leave equal",
+      "from": "sort order (system)",
+      "verb": "can be",
+      "to": "default",
+      "code_id": "system_sort_order_default"
+    },
+    {
+      "name": "numeric descending of potential loss",
+      "description": "the rows by the potential loss, the biggest loss on top",
+      "from": "numeric descending",
+      "verb": "of",
+      "to": "potential loss"
+    },
+    {
+      "name": "sort numeric descending of potential loss",
+      "description": "the biggest potential loss on top is the default order of the global problems table",
+      "from": "numeric descending of potential loss",
+      "verb": "can be",
+      "to": "default sort order (system)"
     }
   ],
   "sources": [

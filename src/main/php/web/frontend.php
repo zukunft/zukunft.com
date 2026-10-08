@@ -125,6 +125,7 @@ include_once html_paths::SHARED_CONST . 'users.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::SHARED_ENUM . 'languages.php';
 include_once html_paths::SHARED_ENUM . 'language_codes.php';
+include_once html_paths::SHARED_ENUM . 'table_orders.php';
 include_once html_paths::SHARED_ENUM . 'user_profiles.php';
 include_once html_paths::SHARED_HELPER . 'Message.php';
 include_once html_paths::SHARED_HELPER . 'Translator.php';
@@ -212,6 +213,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\language_codes;
 use Zukunft\ZukunftCom\main\php\shared\enum\languages;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\enum\table_orders;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
 use Zukunft\ZukunftCom\main\php\shared\group_id_url;
 use Zukunft\ZukunftCom\main\php\shared\helper\Message;
@@ -1436,6 +1438,7 @@ class frontend
             $is_key_param = in_array($url_key, [url_var::MASK, url_var::ID, url_var::USER_TO_EDIT, url_var::LANGUAGE,
                 url_var::DISPLAY_LIST_SIZE, url_var::DISPLAY_LIST_PAGE,
                 url_var::DISPLAY_LIST_COLUMNS, url_var::DISPLAY_LIST_RANGE, url_var::DISPLAY_LIST_AS,
+                ...table_orders::URL_VARS,
                 url_var::SESSION_TOKEN, url_var::DEBUG, url_var::NO_CACHE, url_var::USER]);
             $is_show_step = ($url_key == url_var::STEP and $url_val == url_var::STEP_BASE);
             if (!$is_key_param and !$is_show_step) {
@@ -1486,6 +1489,12 @@ class frontend
             }
             if ($list_as != '') {
                 $result .= url_var::ADD . url_var::DISPLAY_LIST_AS . url_var::EQ . $list_as;
+            }
+            // the order of the rows is a view-only state of the same page like the list size
+            foreach (table_orders::URL_VARS as $order_var) {
+                if (($url_array[$order_var] ?? '') != '') {
+                    $result .= url_var::ADD . $order_var . url_var::EQ . $url_array[$order_var];
+                }
             }
             // the logged-in user is the last part of the key, so that the personal page of a user
             // and the standard page of a request without login are two cached pages of the same url

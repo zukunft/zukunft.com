@@ -1473,6 +1473,7 @@ class ui_list extends ui_base
                 // an empty list falls back to the impact ranking of the values themselves
                 if ($dto != null) {
                     $this->add_column_definitions($dto, $msg);
+                    $this->add_sort_definitions($dto, $msg);
                 }
                 $col_order = $dto?->phr_lst?->column_names() ?? [];
                 // the "as" entry of the "..." menu says whether the rows are shown as a table,
@@ -1558,6 +1559,24 @@ class ui_list extends ui_base
             $chart_lst = new phrase_list();
             if ($chart_lst->load_chart_definitions($msg)) {
                 $dto->add_phrases($chart_lst, $msg);
+            }
+        }
+    }
+
+    /**
+     * add the default sort orders of the tables to the request cache if they are not yet cached
+     * (like add_chart_definitions)
+     *
+     * @param data_object $dto the request cache that gets the definitions
+     * @param user_message $msg to report a problem of the api call
+     * @return void
+     */
+    private function add_sort_definitions(data_object $dto, user_message $msg): void
+    {
+        if ($dto->online and $dto->phr_lst->get_by_name(triples::SYSTEM_SORT_ORDER_DEFAULT, $msg) == null) {
+            $sort_lst = new phrase_list();
+            if ($sort_lst->load_sort_definitions($msg)) {
+                $dto->add_phrases($sort_lst, $msg);
             }
         }
     }
