@@ -2,7 +2,7 @@
     {
         "id": 892,
         "name": "agglomeration",
-        "description": "urban core plus surrounding built‑up areas",
+        "description": "urban core plus surrounding built\u2011up areas",
         "type_id": 1,
         "class": "word"
     },
@@ -72,6 +72,12 @@
         "description": "a distinct part of the world, such as a state, nation, or other political entity.",
         "type_id": 1,
         "class": "word"
+    },
+    {
+        "id": 1941,
+        "name": "country code",
+        "description": "the two-letter ISO 3166-1 alpha-2 code of a country, used as the prefix of its postal codes",
+        "class": "triple"
     },
     {
         "id": 389,
@@ -160,6 +166,12 @@
         "class": "triple"
     },
     {
+        "id": 1940,
+        "name": "postal code",
+        "description": "the number of a post office area that is part of a postal address; the number is qualified as postal code, e.g. 1950 (postal code), because the same number can also be a year, and each postal code is the triple of the qualified number in its country, named with the country code as prefix, e.g. CH-1950",
+        "class": "triple"
+    },
+    {
         "id": 1272,
         "name": "poverty solution",
         "description": "a measure that reduces the loss of poverty, ranked here by its share of the avoided loss",
@@ -211,7 +223,7 @@
     {
         "id": 370,
         "name": "Symbol or abbreviation",
-        "description": "A symbol or abbreviation used to represent a currency in writing, such as $ for the US dollar, € for the euro, or £ for pound sterling. Currency symbols are typographic shorthand and are not standardised internationally (unlike ISO 4217 codes).",
+        "description": "A symbol or abbreviation used to represent a currency in writing, such as $ for the US dollar, \u20ac for the euro, or \u00a3 for pound sterling. Currency symbols are typographic shorthand and are not standardised internationally (unlike ISO 4217 codes).",
         "class": "triple"
     },
     {

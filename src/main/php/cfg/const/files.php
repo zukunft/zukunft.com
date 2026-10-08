@@ -150,6 +150,12 @@ class files
     const string PV_SWITZERLAND_CO2_FILE = self::USE_CASE_PATH . 'pv_switzerland_co2' . self::JSON;
     // the unique keys like ISBN or ISIN with some sample entries
     const string UNIQUE_KEYS_FILE = self::USE_CASE_PATH . 'unique_keys' . self::JSON;
+    // the general phrases and formulas of the photovoltaic return, imported before the country files
+    const string PV_YIELD_FILE = self::USE_CASE_PATH . 'pv_yield' . self::JSON;
+    // the sun intensity, the photovoltaic yield per kWp and the electricity prices of Switzerland per municipality
+    const string PV_YIELD_SWITZERLAND_FILE = self::USE_CASE_PATH . 'pv_yield_switzerland' . self::JSON;
+    // the sun intensity, the photovoltaic yield per kWp and the national electricity prices of the other countries
+    const string PV_YIELD_BY_COUNTRY_FILE = self::USE_CASE_PATH . 'pv_yield_by_country' . self::JSON;
 
     // one file per problem of the start page ranking with the most relevant number of the problem
     // and the potential solutions, each value with the source it is taken from;
@@ -326,6 +332,9 @@ class files
     const array USE_CASE_FILES = [
         self::PV_SWITZERLAND_CO2_FILE,
         self::UNIQUE_KEYS_FILE,
+        self::PV_YIELD_FILE,
+        self::PV_YIELD_SWITZERLAND_FILE,
+        self::PV_YIELD_BY_COUNTRY_FILE,
     ];
 
     // sample data for the view unit tests, imported in the db setup right after the system config
