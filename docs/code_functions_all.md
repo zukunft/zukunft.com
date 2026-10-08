@@ -8008,6 +8008,8 @@
             alue_list.php
     \-- table_by_related_columns - section for function table_by_related_columns not yet defined that it should be displ
             ay in /value/value_list.php
+    \-- table_header_by_related_columns - section for function table_header_by_related_columns not yet defined that it s
+            hould be display in /value/value_list.php
     \-- table_to_svg - section for function table_to_svg not yet defined that it should be display in /value/value_list.
             php
     \-- columns_menu - section for function columns_menu not yet defined that it should be display in /value/value_list.

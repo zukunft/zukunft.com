@@ -102,9 +102,10 @@ class phrase_list extends sandbox_list_named
     // the link levels from "column (system)": the column tiers, their column definitions and
     // the order triples that chain the definitions
     const int COLUMN_LEVELS = 3;
-    // the relation levels from "chart type (system)" to the plotted columns of a chart: the
-    // tier, the assignment of the chart, the chart triple and its chart type word and columns
-    const int CHART_LEVELS = 4;
+    // the relation levels from "chart type (system)" to the charts of a table: the tier and the
+    // assignment of the chart; the chart triple with its chart type word and the plotted
+    // columns is the from side of the assignment, which the api delivers with the assignment
+    const int CHART_LEVELS = 2;
 
     /*
      * set and get
@@ -347,11 +348,11 @@ class phrase_list extends sandbox_list_named
     {
         $result = [];
         foreach ($this->tier_members(triples::SYSTEM_CHART_TYPE_DEFAULT, $msg) as $chart) {
-            // the chart type word carries the chart type as its code id, which only the word of
-            // this list has, because a triple names its parts without the code id
-            $type_name = $chart->get_from()?->name() ?? '';
-            $type_wrd = $this->get_by_name($type_name, $msg);
-            $type = chart_types::tryFrom($type_wrd?->obj()->code_id ?? '');
+            // the chart type word nested in the chart triple carries the chart type as its code
+            // id, because the api loads the sides of a nested triple completely
+            $type_wrd = $chart->get_from();
+            $type_name = $type_wrd?->name() ?? '';
+            $type = chart_types::tryFrom($type_wrd?->obj()?->code_id ?? '');
             if ($type == null) {
                 $msg->add_warning_with_vars(msg_id::CHART_TYPE_UNKNOWN, [msg_id::VAR_NAME => $type_name]);
             } else {

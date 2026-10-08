@@ -35,6 +35,12 @@
 
 namespace Zukunft\ZukunftCom\main\php\shared\enum;
 
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+
+include_once paths::SHARED . 'url_var.php';
+
+use Zukunft\ZukunftCom\main\php\shared\url_var;
+
 enum table_forms: string
 {
     // the rows and columns as a html table, the default
@@ -43,6 +49,15 @@ enum table_forms: string
     case CHART = 'chart';
     // the table followed by its default charts
     case TABLE_AND_CHART = 'table_chart';
+
+    /**
+     * @param array $url_array the url parameters of the page that shows the table
+     * @return table_forms the form the url asks for, the table if it names none or an unknown one
+     */
+    static function by_url(array $url_array): table_forms
+    {
+        return self::tryFrom($url_array[url_var::DISPLAY_LIST_AS] ?? '') ?? self::TABLE;
+    }
 
     /**
      * @return messages the message id of the name shown in the "as" entries of the table menu

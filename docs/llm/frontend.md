@@ -488,16 +488,22 @@ reader asks to see the table as a chart, the charts of
 `SYSTEM_CHART_TYPE_ALTERNATIVE` can be selected instead (not wired yet).
 `phrase_list::chart_definitions` reads the default charts out of the cached
 definitions (`load_chart_definitions`, `CHART_LEVELS` relation levels from the
-tier keyword) and `ui_list::table_with_related_columns` draws them with
-`table_to_svg` in a `styles::CHART_ROW` below or instead of the table.
+tier keyword: the tiers and the chart assignments) and
+`ui_list::table_with_related_columns` draws them with `table_to_svg` in a
+`styles::CHART_ROW` below or instead of the table. The chart triple is the from
+side of its assignment and not a list entry, so the frontend reads the chart
+type word and the column pair nested in it; the api (`load_linked_sides`) loads
+the sides of a nested triple completely, a nested triple with its own sides and
+a nested word with its code id, because the triple read names a word without it.
 
 The "…" menu of the table has two sub headers (`styles::MENU_HEADER`, not
 bold): "columns and values" above the column tier entries and "as" above the
 entries `table`, `chart` and `table + chart` (`table_forms`), which set
 `url_var::DISPLAY_LIST_AS` (`dla`, human `display_list_as`), a page var and part
 of the page cache key like the other list vars. Shown as a chart only, the
-table is replaced by its charts and the "…" menu alone stays in the right
-corner, because it is the only way back to the table.
+table is replaced by its charts below a `styles::CHART_HEAD` line that keeps
+the header of the table centred and puts the "…" menu in the top right corner
+(`styles::CHART_CORNER`), because the menu is the only way back to the table.
 
 ## The value quality is a mark behind the number, never a phrase before it
 

@@ -1296,6 +1296,37 @@ class test_phrases
     }
 
     /**
+     * @return phrase_list_ui the chart assignments of the ranking as the api delivers them: only
+     *         the assignments, with the chart triple, its chart type word and the plotted
+     *         columns nested in each
+     */
+    function list_chart_assignments_ui(): phrase_list_ui
+    {
+        $t_trp = new test_triples($this->env);
+        $lst = new phrase_list($this->env->usr1);
+        $lst->add($t_trp->chart_range_bars_of_loss()->phrase());
+        $lst->add($t_trp->chart_scatter_of_gain_and_effort()->phrase());
+        return $this->ui_list($lst);
+    }
+
+    /**
+     * @return phrase_list_ui the range bars chart assigned to the default tier, but with a chart
+     *         type word without the code id, so that no chart type can be selected
+     */
+    function list_chart_without_type_ui(): phrase_list_ui
+    {
+        $t_trp = new test_triples($this->env);
+        $trp = $t_trp->range_bars_of_loss();
+        $type_wrd = $trp->get_from()->obj();
+        $type_wrd->set_code_id_db(null);
+        $chart = $t_trp->chart_range_bars_of_loss();
+        $chart->set_from($trp->phrase());
+        $lst = new phrase_list($this->env->usr1);
+        $lst->add($chart->phrase());
+        return $this->ui_list($lst);
+    }
+
+    /**
      * the table column definitions of solution_prio.json without any order triple, so that a
      * test can add exactly the main column and explaining column triples it wants to check
      *

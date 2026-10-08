@@ -121,6 +121,11 @@ body {
     background: #f0f0f0;
 }
 
+/* the "..." of a table and its menu are never bold, not even in the bold table header cell */
+.column-menu {
+    font-weight: normal;
+}
+
 /* a sub header inside a popup menu e.g. "columns and values" and "as" of the column menu */
 .column-menu ul .menu-header {
     padding: 0.4rem 1rem 0.1rem;
@@ -140,6 +145,24 @@ body {
 .chart-row > svg {
     max-width: 100%;
     height: auto;
+}
+
+/* the line above the charts of a table shown without the table: the header of the table stays
+   centred in the middle column and the "..." menu of the table sits in the top right corner */
+.chart-head {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    width: 100%;
+}
+
+.chart-head > :not(.chart-corner) {
+    grid-column: 2;
+}
+
+.chart-head > .chart-corner {
+    grid-column: 3;
+    text-align: right;
 }
 
 /* the full width line below the title that puts the view version menu in the right corner */

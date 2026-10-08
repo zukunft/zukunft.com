@@ -529,19 +529,43 @@ class value_list_ui_tests
         $t->assert_text_order($test_name, $tbl_menu,
             'class="' . styles::MENU_HEADER . '">' . msg_id::TABLE_MENU_AS->text(),
             msg_id::TABLE_AS_TABLE_CHART->text());
+        // the form shown is not offered again: the table page offers the chart and the table
+        // with the chart, the chart page the table and the table with the chart
+        $chart_url = [url_var::MASK => views::START_ID, url_var::DISPLAY_LIST_AS => table_forms::CHART->value];
+        $chart_menu = $t_val->value_list_defined_columns_ui()->columns_menu($chart_url);
         foreach (table_forms::cases() as $form) {
-            $test_name = 'the menu offers the table ' . $form->value;
-            $t->assert_text_contains($test_name, $tbl_menu,
-                url_var::DISPLAY_LIST_AS . '=' . $form->value . '">' . $form->msg_id()->text());
+            $form_entry = url_var::DISPLAY_LIST_AS . '=' . $form->value . '">' . $form->msg_id()->text();
+            $test_name = 'the table menu offers the table ' . $form->value;
+            if ($form == table_forms::TABLE) {
+                $t->assert_text_not_contains($test_name, $tbl_menu, $form_entry);
+            } else {
+                $t->assert_text_contains($test_name, $tbl_menu, $form_entry);
+            }
+            $test_name = 'the chart menu offers the table ' . $form->value;
+            if ($form == table_forms::CHART) {
+                $t->assert_text_not_contains($test_name, $chart_menu, $form_entry);
+            } else {
+                $t->assert_text_contains($test_name, $chart_menu, $form_entry);
+            }
         }
         // the charts of a table are data: the chart triples assigned to the default chart type;
         // compared by the chart type values, so that a difference can be printed
         $test_name = 'the ranking defines the range bars of the loss and the scatter plot of the gain against the effort';
-        $charts = $t_phr->list_global_problems_ui()->chart_definitions($msg_ui);
-        $t->assert($test_name, array_map(fn(array $chart) => [$chart[0]->value, $chart[1]], $charts), [
+        $ranking_charts = [
             [chart_types::RANGE_BARS->value, [triple_names::POTENTIAL_LOSS]],
             [chart_types::SCATTER->value, [triple_names::POTENTIAL_GAIN, triple_names::INITIAL_EFFORT]],
-        ]);
+        ];
+        $charts = $t_phr->list_global_problems_ui()->chart_definitions($msg_ui);
+        $t->assert($test_name, array_map(fn(array $chart) => [$chart[0]->value, $chart[1]], $charts), $ranking_charts);
+        // the api delivers the chart type word and the column pair nested in the chart triple of
+        // the assignment, so the charts are found without a list entry for the word or the pair
+        $test_name = 'the chart type and the columns are read from the phrases nested in the assignment';
+        $charts = $t_phr->list_chart_assignments_ui()->chart_definitions($msg_ui);
+        $t->assert($test_name, array_map(fn(array $chart) => [$chart[0]->value, $chart[1]], $charts), $ranking_charts);
+        $test_name = 'a chart type word without code id is reported and its chart left out';
+        $t->assert($test_name, $t_phr->list_chart_without_type_ui()->chart_definitions($msg_ui), []);
+        $t->assert_text_contains($test_name, $msg_ui->get_last_message_translated(), word_names::RANGE_BARS);
+        $msg_ui->reset();
         $test_name = 'a list without chart definitions defines no chart';
         $t->assert($test_name, $rel_lst->chart_definitions($msg_ui), []);
 
@@ -590,7 +614,9 @@ class value_list_ui_tests
         $test_name = 'the ranking is drawn as range bars';
         $t->assert_text_contains($test_name, $svg_bars, '<svg');
         $test_name = '... with one row per problem';
-        $t->assert($test_name, substr_count($svg_bars, 'class="row"'), count($t_val->solution_prio_rows()));
+        $t->assert($test_name, substr_count($svg_bars, 'class="bar"'), count($t_val->solution_prio_rows()));
+        $test_name = '... never named like the bootstrap row class, which would stretch the bars';
+        $t->assert_text_not_contains($test_name, $svg_bars, 'class="row"');
         $test_name = '... the biggest loss on top';
         $t->assert_text_order($test_name, $svg_bars, triple_names::GLOBAL_WARMING, word_names::POPULISM);
         $test_name = '... and the solution of the problem in the tooltip';

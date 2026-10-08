@@ -152,7 +152,7 @@ class table_chart
         .rng { fill: var(--range); }
         .mid { fill: var(--accent); }
         .hit { fill: transparent; }
-        .row:hover .hit { fill: var(--hover); }';
+        .bar:hover .hit { fill: var(--hover); }';
     const string STYLE_SCATTER = '
         .pt circle { fill: var(--accent2); }
         .pt text { fill: ' . self::COLOR_POINT_TEXT . '; font-size: ' . self::POINT_TEXT_SIZE . 'px; font-weight: 600; text-anchor: middle; }
@@ -355,7 +355,9 @@ class table_chart
         // a number without a range gets a bar of the width of the dot
         $x_low = ($low?->number() !== null) ? $this->pos($scale, $low->number()) : $x - self::DOT_RADIUS;
         $x_high = ($high?->number() !== null) ? $this->pos($scale, $high->number()) : $x + self::DOT_RADIUS;
-        $result = '<g class="row">' . self::NEWLINE;
+        // not "row" like the reference svg, because the page css of bootstrap gives every child
+        // of a .row the full width, which would stretch the range bar to the right edge
+        $result = '<g class="bar">' . self::NEWLINE;
         $result .= '<title>' . $this->tooltip($model, $row_key, $msg) . '</title>' . self::NEWLINE;
         $result .= '<rect class="hit" x="0" y="' . $y . '" width="' . self::BAR_WIDTH
             . '" height="' . self::BAR_ROW_HEIGHT . '"/>' . self::NEWLINE;

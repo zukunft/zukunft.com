@@ -672,27 +672,65 @@ class value_list extends ListBase
                 $url_array, $col_values_only, $col_tiers, $value_rows_only);
             $result = $this->table_html($model, $msg, $context_phr_lst, $col_order, $rel_lst,
                 $url_array, $with_range, $with_border);
-            // the header names the phrase that the reader has selected centred above the table,
-            // so that a table taken out of its page still says what it is about; more than one
-            // row means more than one item of the phrase, so the header names it in the plural
             if ($with_header) {
-                // a phrase of every value stays singular, because it describes the values of the
-                // table and not its items, e.g. "global problems, potential"
-                $tbl_name = $model->tbl_phr->name_link_list();
-                if ($tbl_name != '') {
-                    $tbl_name = ', ' . $tbl_name;
-                }
-                if (count($model->row_label) > 1) {
-                    // a table of several items is a list of its own, so its header is a headline
-                    $header_html = $html->text_h2($context_phr_lst->plural() . $tbl_name);
-                } else {
-                    // a table of one item only labels that item, so the header stays small
-                    $header_html = $html->text_h3($context_phr_lst->name_link_list() . $tbl_name);
-                }
-                $result = $html->div_center($header_html) . $result;
+                $result = $this->table_header($model, $context_phr_lst) . $result;
             }
         }
         return $result;
+    }
+
+    /**
+     * the header of the table of table_by_related_columns alone, e.g. above the charts of a
+     * table that is shown as a chart only (the parameters are the ones of the table)
+     *
+     * @return string the html code of the header or '' if this list is empty
+     */
+    function table_header_by_related_columns(
+        user_message $msg,
+        phrase_list  $context_phr_lst = new phrase_list(),
+        array        $col_order = [],
+        ?phrase_list $rel_lst = null,
+        ?int         $limit = null,
+        array        $url_array = [],
+        bool         $col_values_only = false,
+        bool         $value_rows_only = false
+    ): string
+    {
+        $result = '';
+        if (!$this->is_empty()) {
+            $model = $this->table_model($msg, $context_phr_lst, $col_order, $rel_lst, $limit,
+                $url_array, $col_values_only, self::COLUMN_TIERS_ALL, $value_rows_only);
+            $result = $this->table_header($model, $context_phr_lst);
+        }
+        return $result;
+    }
+
+    /**
+     * the header names the phrase that the reader has selected centred above the table, so that
+     * a table taken out of its page still says what it is about; more than one row means more
+     * than one item of the phrase, so the header names it in the plural
+     *
+     * @param table_model $model the rows and columns of the table
+     * @param phrase_list $context_phr_lst the phrases of the page e.g. "global problem"
+     * @return string the html code of the centred header
+     */
+    private function table_header(table_model $model, phrase_list $context_phr_lst): string
+    {
+        $html = new html_base();
+        // a phrase of every value stays singular, because it describes the values of the
+        // table and not its items, e.g. "global problems, potential"
+        $tbl_name = $model->tbl_phr->name_link_list();
+        if ($tbl_name != '') {
+            $tbl_name = ', ' . $tbl_name;
+        }
+        if (count($model->row_label) > 1) {
+            // a table of several items is a list of its own, so its header is a headline
+            $header_html = $html->text_h2($context_phr_lst->plural() . $tbl_name);
+        } else {
+            // a table of one item only labels that item, so the header stays small
+            $header_html = $html->text_h3($context_phr_lst->name_link_list() . $tbl_name);
+        }
+        return $html->div_center($header_html);
     }
 
     /**
@@ -2250,9 +2288,12 @@ class value_list extends ListBase
                 $items .= $this->columns_menu_item($url_array, $tiers, $tier_msg, false);
                 $items .= $this->columns_menu_item($url_array, $tiers, $tier_msg, true);
             }
+            // the form shown is not offered again, so the menu names only the ways to change
             $items .= $html->list_item(msg_id::TABLE_MENU_AS->text(), styles::MENU_HEADER);
             foreach (table_forms::cases() as $form) {
-                $items .= $this->form_menu_item($url_array, $form);
+                if ($form != table_forms::by_url($url_array)) {
+                    $items .= $this->form_menu_item($url_array, $form);
+                }
             }
             $result = $html->popup_menu(
                 $result, $items, styles::MENU_COLUMN, msg_id::TABLE_COLUMNS_TIP->text());

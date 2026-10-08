@@ -1477,7 +1477,7 @@ class ui_list extends ui_base
                 $col_order = $dto?->phr_lst?->column_names() ?? [];
                 // the "as" entry of the "..." menu says whether the rows are shown as a table,
                 // as the default charts of the table or as both
-                $form = table_forms::tryFrom($url_array[url_var::DISPLAY_LIST_AS] ?? '') ?? table_forms::TABLE;
+                $form = table_forms::by_url($url_array);
                 if ($form->with_table()) {
                     // the url of the page is handed over, so that the "... more" tail can call the
                     // same page with the next list size
@@ -1486,10 +1486,17 @@ class ui_list extends ui_base
                         null, $url_array, $col_values_only, $col_tiers, $with_range,
                         $value_rows_only);
                 } else {
-                    // without the table its "..." menu is the only way back to the table, so the
-                    // menu alone is shown in the right corner above the charts
+                    // without the table its header says what the charts are about and its "..."
+                    // menu is the only way back to the table, so the header is centred above the
+                    // charts with the menu in the top right corner
                     $html = new html_base();
-                    $result = $html->div($tbl_lst->columns_menu($url_array), styles::TEXT_RIGHT);
+                    $head = '';
+                    if ($with_header) {
+                        $head = $tbl_lst->table_header_by_related_columns($msg, $phr_lst, $col_order,
+                            $dto?->phr_lst, null, $url_array, $col_values_only, $value_rows_only);
+                    }
+                    $head .= $html->div($tbl_lst->columns_menu($url_array), styles::CHART_CORNER);
+                    $result = $html->div($head, styles::CHART_HEAD);
                 }
                 if ($form->with_chart()) {
                     if ($dto != null) {

@@ -8,8 +8,19 @@ add up / down sort icons to each column which sorts the start page rows by this 
 
 if there is more than one solution add ', ...' with a link to the solution list
 
-
 ## PV calculator
+
+create a component type 'geolocator by place name / post code' with the parameters: 'label' (which is a translatable 'place name / post code') and the value phrases (which are 'place of user')
+
+place / sun intensity
+
+Area
+
+Horizontal angle
+
+Vertical angle
+
+Eigenverbrauch
 
 
 

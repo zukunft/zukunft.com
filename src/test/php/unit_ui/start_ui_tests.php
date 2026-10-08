@@ -141,6 +141,10 @@ class start_ui_tests
         $t->assert_text_not_contains($test_name, $chart_html, '<' . html_base::TABLE);
         $test_name = '... but with the "..." menu to get the table back';
         $t->assert_text_contains($test_name, $chart_html, 'class="' . styles::MENU_COLUMN . '"');
+        $test_name = '... and with the header of the table above the charts';
+        $t->assert_text_order($test_name, $chart_html, '<' . html_base::H4 . '>', '<svg');
+        $test_name = '... with the menu in the top right corner of the header line';
+        $t->assert_text_order($test_name, $chart_html, '<' . html_base::H4 . '>', 'class="' . styles::CHART_CORNER . '"');
         $both_url = [url_var::MASK => views::START_ID, url_var::DISPLAY_LIST_AS => table_forms::TABLE_AND_CHART->value];
         $both_html = $list->start_list($dto_ui, $msg, $both_url);
         $test_name = 'shown as table and chart the table comes first and the charts follow';
