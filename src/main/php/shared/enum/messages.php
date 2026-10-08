@@ -1140,7 +1140,7 @@ enum messages: string
         . '" has no code id of a known condition, so the default order is not used';
     case TABLE_ORDER_UNKNOWN = 'the rows cannot be sorted by "'
         . self::VAR_START . self::VAR_VALUE . self::VAR_END
-        . '", because the table has no column with that phrase id or the condition is unknown, so the rows keep the impact order';
+        . '", because the table has no such column or the condition is unknown, so the rows keep the impact order';
     case VALUE_UNIT_NOT_UNIQUE = 'the value has more than one unit: "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '"';

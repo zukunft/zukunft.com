@@ -512,7 +512,8 @@ phrase and a value column by its phrase. `value_list::row_orders` reads the
 url, `table_model::sort_rows` sorts before the rows are cut, so the charts draw
 the same order, the three vars are page vars and part of the page cache key, and
 an order that names no column of the table or an unknown condition is reported
-as `TABLE_ORDER_UNKNOWN`. Each column header ends with the `icons::SORT_UP` and
+as the warning `TABLE_ORDER_UNKNOWN`, because the table is still shown with the
+impact order. Each column header ends with the `icons::SORT_UP` and
 `SORT_DOWN` links (`styles::SORT_ICON`, the shown order `SORT_ACTIVE`) that
 `value_list::sort_icons` builds: numeric for a value column, alpha for the row
 and a phrase column, and `order_url` moves the orders shown one step down,

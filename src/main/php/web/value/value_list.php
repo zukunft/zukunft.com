@@ -901,7 +901,8 @@ class value_list extends ListBase
      * @param array $url_array the url parameters of the page that shows the table
      * @param table_model $model the rows and columns of the table
      * @param phrase_list|null $rel_lst the phrases related to the page phrase with the definitions
-     * @param user_message $msg to report an order that names no column of the table or an unknown condition
+     * @param user_message $msg to warn of an order that names no column of the table or an unknown
+     *                          condition, which keeps the table with the impact order
      * @return array per order the phrase id of the column and the condition (table_orders)
      */
     private function row_orders(array $url_array, table_model $model, ?phrase_list $rel_lst, user_message $msg): array
@@ -925,7 +926,7 @@ class value_list extends ListBase
             if ($cond != null and $model->has_column($phr_id)) {
                 $result[] = [$phr_id, $cond];
             } else {
-                $msg->add(msg_id::TABLE_ORDER_UNKNOWN, [msg_id::VAR_VALUE => $value]);
+                $msg->add_warning_with_vars(msg_id::TABLE_ORDER_UNKNOWN, [msg_id::VAR_VALUE => $value]);
             }
         }
         return $result;
