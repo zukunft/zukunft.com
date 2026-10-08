@@ -7309,10 +7309,16 @@
     \-- api_mapper - section for function api_mapper is expected to be construct and map in /phrase/phrase_list.php
     \-- filter_by_name_start - section for function filter_by_name_start not yet defined that it should be load in /phra
             se/phrase_list.php
+    \-- chart_definitions - section for function chart_definitions not yet defined that it should be load in /phrase/phr
+            ase_list.php
+    \-- sort_definitions - section for function sort_definitions not yet defined that it should be load in /phrase/phras
+            e_list.php
     \-- result_phrases_most_relevant - section for function result_phrases_most_relevant not yet defined that it should 
             be related in /phrase/phrase_list.php
     \-- child_names - section for function child_names not yet defined that it should be related in /phrase/phrase_list.
             php
+    \-- parent_names - section for function parent_names not yet defined that it should be related in /phrase/phrase_lis
+            t.php
     \-- child_phrases - section for function child_phrases not yet defined that it should be related in /phrase/phrase_l
             ist.php
     \-- column_names - section for function column_names not yet defined that it should be related in /phrase/phrase_lis
@@ -7937,6 +7943,17 @@
     \-- get_all_var_messages - section for function get_all_var_messages is expected to be set and get in /user/user_mes
             sage.php
     \-- order error - order of section api has difference at api_mapper should be before api_array
+\-- table_chart
+    \-- svg - section for function svg not yet defined that it should be chart in /value/table_chart.php
+\-- table_model
+    \-- __construct - section for function __construct is expected to be construct and map in /value/table_model.php
+    \-- value_col_ids - section for function value_col_ids missing in /value/table_model.php
+    \-- phrase_col_ids - section for function phrase_col_ids missing in /value/table_model.php
+    \-- col_id_by_name - section for function col_id_by_name missing in /value/table_model.php
+    \-- cell_numbers - section for function cell_numbers missing in /value/table_model.php
+    \-- has_column - section for function has_column missing in /value/table_model.php
+    \-- col_id_of_name - section for function col_id_of_name missing in /value/table_model.php
+    \-- sort_rows - section for function sort_rows missing in /value/table_model.php
 \-- value
     \-- url_mapper - section for function url_mapper not yet defined that it should be construct and map in /value/value
             .php
@@ -7998,6 +8015,12 @@
             alue_list.php
     \-- table_by_related_columns - section for function table_by_related_columns not yet defined that it should be displ
             ay in /value/value_list.php
+    \-- table_header_by_related_columns - section for function table_header_by_related_columns not yet defined that it s
+            hould be display in /value/value_list.php
+    \-- table_to_svg - section for function table_to_svg not yet defined that it should be display in /value/value_list.
+            php
+    \-- columns_menu - section for function columns_menu not yet defined that it should be display in /value/value_list.
+            php
     \-- list_unit - section for function list_unit not yet defined that it should be display in /value/value_list.php
     \-- table - section for function table not yet defined that it should be display in /value/value_list.php
     \-- common_phrases - section for function common_phrases not yet defined that it should be info in /value/value_list
@@ -8768,7 +8791,7 @@
         \-- sys_log_list - request the system log entries related to the session user from the backend
     \-- load_api_by_object_field
         \-- change_log_list - get the json of a list of changes from the api
-    \-- 8
+    \-- 12
         \-- phrase_list - add the phrases related to the given formula to the list
     \-- load_fallback
         \-- change_log_list - if the change log list is empty fill it with the last changes
@@ -9135,6 +9158,7 @@
         \-- table - 
         \-- user_log_display - for a user log it is always needed to know who wants to seen the log
         \-- sandbox_list_value - 
+        \-- table_model - 
     \-- reset
         \-- table - 
     \-- add_column
@@ -9172,6 +9196,20 @@
         \-- user_type_list - create the HTML code to select a user type
     \-- default_id
         \-- view_style_list - @return int|null null because the default is to use no additional style definition
+    \-- value_col_ids
+        \-- table_model - @return array the ids of the shown columns that hold a value, the leftmost first
+    \-- phrase_col_ids
+        \-- table_model - @return array the ids of the shown columns that name a phrase of the row, the leftmost first
+    \-- col_id_by_name
+        \-- table_model - @param string $name a name that selects a value column e.g. "loss" or "potential loss"
+    \-- cell_numbers
+        \-- table_model - the numbers of one cell sorted by their role, like value_list::cell shows them
+    \-- has_column
+        \-- table_model - @param int $phr_id the phrase id of a column
+    \-- col_id_of_name
+        \-- table_model - @param string $name the name of a column phrase e.g. "potential loss"
+    \-- sort_rows
+        \-- table_model - sort the shown rows by the orders of this model; the rows that every order leaves equal
 \-- optional with show password but without auto fill
     \-- admin_form_user_uses_sandbox
         \-- system_form - @return string the html code so that an admin user can switch if the pages
@@ -9528,6 +9566,8 @@
         \-- phrase_list - get the phrase of the most relevant result
     \-- child_names
         \-- phrase_list - get the names of the phrases that this list links to the given phrase by a triple
+    \-- parent_names
+        \-- phrase_list - get the names of the phrases that this list links the given phrase to by a triple, the
     \-- child_phrases
         \-- phrase_list - the phrases that this list links to the given phrase by a triple
     \-- column_names
@@ -10023,5 +10063,8 @@
         \-- sandbox_list - to show the list name to the user in the most simple form (without any ids)
     \-- names
         \-- sandbox_list - @param ?int $limit the max number of ids to show
+\-- chart
+    \-- svg
+        \-- table_chart - the table as a chart of the given type
 ```
 

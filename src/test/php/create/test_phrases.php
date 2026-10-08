@@ -1251,6 +1251,27 @@ class test_phrases
         $lst->add($t_trp->research_solution()->phrase());
         $lst->add($t_trp->taxes_solution()->phrase());
         $lst->add($t_trp->spending_solution()->phrase());
+        // the solutions of the assumed rows, so that every row of the ranking names its solution
+        $lst->add($t_trp->basic_income_solution()->phrase());
+        $lst->add($t_trp->platform_regulation_solution()->phrase());
+        $lst->add($t_trp->market_share_tax_solution()->phrase());
+        $lst->add($t_trp->delphi_method_solution()->phrase());
+        $lst->add($t_trp->public_ai_solution()->phrase());
+        $lst->add($t_trp->fluid_democracy_solution()->phrase());
+        $lst->add($t_trp->gross_domestic_usage_solution()->phrase());
+        $lst->add($t_trp->free_software_solution()->phrase());
+        // the default charts of the ranking like phrase_list::load_chart_definitions loads them:
+        // the chart type words with the code id that selects the chart type, the tiers, the
+        // chart triples with the plotted columns and their assignment to the default tier
+        $lst->add($t_wrd->word_range_bars()->phrase());
+        $lst->add($t_wrd->word_scatter_plot()->phrase());
+        $lst->add($t_trp->chart_type_default()->phrase());
+        $lst->add($t_trp->chart_type_alternative()->phrase());
+        $lst->add($t_trp->range_bars_of_loss()->phrase());
+        $lst->add($t_trp->gain_and_effort()->phrase());
+        $lst->add($t_trp->scatter_of_gain_and_effort()->phrase());
+        $lst->add($t_trp->chart_range_bars_of_loss()->phrase());
+        $lst->add($t_trp->chart_scatter_of_gain_and_effort()->phrase());
         return $lst;
     }
 
@@ -1263,6 +1284,19 @@ class test_phrases
     }
 
     /**
+     * @return phrase_list_ui the global problems with "global warming potential", which gives
+     *         "global warming" the parent "potential" beside "global problem", so that a sort
+     *         by the names including the parents can be told apart from a sort by the names
+     */
+    function list_global_problems_second_parent_ui(): phrase_list_ui
+    {
+        $t_trp = new test_triples($this->env);
+        $lst = $this->list_global_problems();
+        $lst->add($t_trp->global_warming_potential()->phrase());
+        return $this->ui_list($lst);
+    }
+
+    /**
      * @return phrase_list_ui the page phrase of the global issues table, which is the context
      *         that every row of that table is assumed to be about
      */
@@ -1271,6 +1305,71 @@ class test_phrases
         $t_trp = new test_triples($this->env);
         $lst = new phrase_list($this->env->usr1);
         $lst->add($t_trp->global_problem()->phrase());
+        return $this->ui_list($lst);
+    }
+
+    /**
+     * @return phrase_list_ui the global problems with the default sort order of solution_prio.json
+     *         like phrase_list::load_sort_definitions loads it: the condition word with the code
+     *         id, the tiers, the order triple and its assignment to the default tier
+     */
+    function list_global_problems_sorted_ui(): phrase_list_ui
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $lst = $this->list_global_problems();
+        $lst->add($t_wrd->word_numeric_descending()->phrase());
+        $lst->add($t_trp->sort_order_default()->phrase());
+        $lst->add($t_trp->numeric_desc_of_loss()->phrase());
+        $lst->add($t_trp->sort_numeric_desc_of_loss()->phrase());
+        return $this->ui_list($lst);
+    }
+
+    /**
+     * @return phrase_list_ui the order of the loss assigned to the default tier, but with a
+     *         condition word without the code id, so that no condition can be selected
+     */
+    function list_sort_without_condition_ui(): phrase_list_ui
+    {
+        $t_trp = new test_triples($this->env);
+        $trp = $t_trp->numeric_desc_of_loss();
+        $cond_wrd = $trp->get_from()->obj();
+        $cond_wrd->set_code_id_db(null);
+        $order = $t_trp->sort_numeric_desc_of_loss();
+        $order->set_from($trp->phrase());
+        $lst = new phrase_list($this->env->usr1);
+        $lst->add($order->phrase());
+        return $this->ui_list($lst);
+    }
+
+    /**
+     * @return phrase_list_ui the chart assignments of the ranking as the api delivers them: only
+     *         the assignments, with the chart triple, its chart type word and the plotted
+     *         columns nested in each
+     */
+    function list_chart_assignments_ui(): phrase_list_ui
+    {
+        $t_trp = new test_triples($this->env);
+        $lst = new phrase_list($this->env->usr1);
+        $lst->add($t_trp->chart_range_bars_of_loss()->phrase());
+        $lst->add($t_trp->chart_scatter_of_gain_and_effort()->phrase());
+        return $this->ui_list($lst);
+    }
+
+    /**
+     * @return phrase_list_ui the range bars chart assigned to the default tier, but with a chart
+     *         type word without the code id, so that no chart type can be selected
+     */
+    function list_chart_without_type_ui(): phrase_list_ui
+    {
+        $t_trp = new test_triples($this->env);
+        $trp = $t_trp->range_bars_of_loss();
+        $type_wrd = $trp->get_from()->obj();
+        $type_wrd->set_code_id_db(null);
+        $chart = $t_trp->chart_range_bars_of_loss();
+        $chart->set_from($trp->phrase());
+        $lst = new phrase_list($this->env->usr1);
+        $lst->add($chart->phrase());
         return $this->ui_list($lst);
     }
 

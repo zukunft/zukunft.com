@@ -1,36 +1,36 @@
 [
     {
-        "id": 371,
+        "id": 378,
         "name": "2013",
         "type_id": 11,
         "class": "word"
     },
     {
-        "id": 372,
+        "id": 379,
         "name": "2014",
         "type_id": 11,
         "class": "word"
     },
     {
-        "id": 373,
+        "id": 380,
         "name": "2015",
         "type_id": 11,
         "class": "word"
     },
     {
-        "id": 374,
+        "id": 381,
         "name": "2016",
         "type_id": 11,
         "class": "word"
     },
     {
-        "id": 375,
+        "id": 382,
         "name": "2017",
         "type_id": 11,
         "class": "word"
     },
     {
-        "id": 376,
+        "id": 383,
         "name": "2018",
         "type_id": 11,
         "class": "word"
@@ -49,7 +49,7 @@
         "class": "word"
     },
     {
-        "id": 593,
+        "id": 600,
         "name": "ABB",
         "description": "ABB (ASEA Brown Boveri) is a Swedish-Swiss multinational corporation headquartered in Zürich",
         "type_id": 1,
@@ -82,31 +82,31 @@
         "class": "word"
     },
     {
-        "id": 596,
+        "id": 603,
         "name": "cash",
         "type_id": 1,
         "class": "word"
     },
     {
-        "id": 594,
+        "id": 606,
         "name": "cash flow",
         "class": "triple"
     },
     {
-        "id": 597,
+        "id": 609,
         "name": "cash flow statement",
         "description": "financial statement that shows how changes in balance sheet accounts and income affect cash and cash equivalents, and breaks the analysis down to operating, investing and financing activities. see Wikipedia: Cash flow statement (Q460184)",
         "class": "triple"
     },
     {
-        "id": 452,
+        "id": 459,
         "name": "CHF",
         "description": "ISO 4217 alphabetic code for the Swiss franc (Confoederatio Helvetica Franc), also widely used as the currency's typographic symbol.",
         "type_id": 2,
         "class": "word"
     },
     {
-        "id": 428,
+        "id": 440,
         "name": "CHF is symbol for Swiss franc",
         "class": "triple"
     },
@@ -299,7 +299,7 @@
         "class": "word"
     },
     {
-        "id": 595,
+        "id": 607,
         "name": "income taxes",
         "class": "triple"
     },
@@ -377,7 +377,7 @@
         "class": "word"
     },
     {
-        "id": 599,
+        "id": 606,
         "name": "parts",
         "type_id": 1,
         "class": "word"
@@ -464,7 +464,7 @@
         "class": "word"
     },
     {
-        "id": 595,
+        "id": 602,
         "name": "sales",
         "type_id": 1,
         "class": "word"
@@ -484,7 +484,7 @@
         "class": "word"
     },
     {
-        "id": 597,
+        "id": 604,
         "name": "statement",
         "type_id": 1,
         "class": "word"
@@ -510,7 +510,7 @@
         "class": "triple"
     },
     {
-        "id": 379,
+        "id": 386,
         "name": "total",
         "description": "the whole amount or count, e.g. the total number of possible outcomes",
         "type_id": 1,
@@ -524,14 +524,14 @@
         "class": "word"
     },
     {
-        "id": 438,
+        "id": 445,
         "name": "USD",
         "description": "ISO 4217 alphabetic code for the United States dollar.",
         "type_id": 2,
         "class": "word"
     },
     {
-        "id": 594,
+        "id": 601,
         "name": "Vestas",
         "type_id": 1,
         "class": "word"
@@ -600,7 +600,7 @@
         "class": "triple"
     },
     {
-        "id": 270,
+        "id": 282,
         "name": "Zurich Insurance",
         "description": "Zurich Insurance Group, a global multi-line insurer headquartered in Zurich",
         "class": "triple"

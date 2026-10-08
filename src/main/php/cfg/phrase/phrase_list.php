@@ -2690,30 +2690,51 @@ class phrase_list extends sandbox_list_named
      * nested in a link carries no from and to of its own; the frontend needs them e.g. to head a
      * table by the phrase that the page phrase is built from ("problem" of "global problem") or
      * to match the parts of a column phrase ("potential" and "loss" of "potential loss"), so the
-     * nested triples are loaded with one read and put back into their links
+     * nested triples are loaded with one read per nesting level and put back into their links,
+     * because a side of a loaded triple can be a triple again, e.g. the pair "potential gain and
+     * initial effort" of the chart "scatter plot of potential gain and initial effort"; a nested
+     * word is loaded too, because the triple read names it without the code id, which the
+     * frontend reads e.g. to select the chart type "range bars"
      *
      * @param user_message $msg to report a load problem to the caller
      * @return void
      */
     function load_linked_sides(user_message $msg): void
     {
-        $sides = $this->linked_triple_sides();
-        $ids = [];
+        // a nested triple that a read has not delivered (e.g. excluded) is not asked again
+        $done = [];
+        $sides = $this->linked_sides(triple::class, $done);
+        while ($sides != []) {
+            $ids = $this->load_sides($sides, new triple_list($this->get_user()), $msg);
+            $done = array_merge($done, $ids);
+            $sides = $this->linked_sides(triple::class, $done);
+        }
+        $sides = $this->linked_sides(word::class);
+        if ($sides != []) {
+            $this->load_sides($sides, new word_list($this->get_user()), $msg);
+        }
+    }
+
+    /**
+     * load the objects of nested sides with one read and put them back into their links
+     *
+     * @param array $sides the nested phrases of one class
+     * @param triple_list|word_list $lst an empty list of the class of the sides that the read fills
+     * @param user_message $msg to report a load problem to the caller
+     * @return array the ids asked for
+     */
+    private function load_sides(array $sides, triple_list|word_list $lst, user_message $msg): array
+    {
+        $ids = array_map(fn($side) => $side->obj()->id(), $sides);
+        $ids = array_values(array_unique($ids));
+        $lst->load_by_ids($ids, $msg);
         foreach ($sides as $side) {
-            if (!in_array($side->obj()->id(), $ids)) {
-                $ids[] = $side->obj()->id();
+            $obj = $lst->get($side->obj()->id());
+            if ($obj != null) {
+                $side->set_obj($obj);
             }
         }
-        if ($ids != []) {
-            $trp_lst = new triple_list($this->get_user());
-            $trp_lst->load_by_ids($ids, $msg);
-            foreach ($sides as $side) {
-                $trp = $trp_lst->get($side->obj()->id());
-                if ($trp != null) {
-                    $side->set_obj($trp);
-                }
-            }
-        }
+        return $ids;
     }
 
     /**
@@ -2755,16 +2776,27 @@ class phrase_list extends sandbox_list_named
     }
 
     /**
-     * @return array the from and to phrases of the links of this list that are a triple
+     * the from and to phrases of one class nested in the links of this list at any depth
+     *
+     * @param string $class triple::class or word::class
+     * @param array $done the ids of the nested objects already loaded, which are left out
+     * @param array|null $phr_lst the triples to look into, the links of this list if not set
+     * @return array the nested phrases, a deeper one after the triple that carries it
      */
-    private function linked_triple_sides(): array
+    private function linked_sides(string $class, array $done = [], ?array $phr_lst = null): array
     {
         $result = [];
-        foreach ($this->lst() as $phr) {
+        foreach ($phr_lst ?? $this->lst() as $phr) {
             if ($phr->is_triple()) {
                 foreach ([$phr->obj()->get_from(), $phr->obj()->get_to()] as $side) {
-                    if ($side != null and $side->is_triple()) {
-                        $result[] = $side;
+                    // a side that only a triple name has created carries no object
+                    if ($side?->obj() != null) {
+                        if ($side->obj()::class == $class and !in_array($side->obj()->id(), $done)) {
+                            $result[] = $side;
+                        }
+                        if ($side->is_triple()) {
+                            $result = array_merge($result, $this->linked_sides($class, $done, [$side]));
+                        }
                     }
                 }
             }

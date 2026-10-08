@@ -127,6 +127,10 @@ class url_var
     const string DISPLAY_LIST_SIZE = 'dls'; // the number of rows of a list shown on a page, which a "... more" link raises to the next level (docs/llm/frontend.md "Short, more and all")
     const string DISPLAY_LIST_COLUMNS = 'dlc'; // the number of column tiers of a table left out, which the "..." header lowers step by step from the mayor columns (3, ex main) over ex minor (2) and ex marginal (1) to every column (0)
     const string DISPLAY_LIST_RANGE = 'dlr'; // 1 to show the probability range behind each number of a table, 0 for the numbers only
+    const string DISPLAY_LIST_AS = 'dla'; // how a value table is shown: as a table, as its default charts or both (table_forms), selected by the "as" entries of the "..." header
+    const string DISPLAY_LIST_ORDER = 'dlo'; // the prime order of the rows of a table: the phrase id of a column and the condition (table_orders) e.g. 123.numeric_desc; without it the rows follow the impact
+    const string DISPLAY_LIST_ORDER_SUB = 'dlo2'; // the sub order, which sorts the rows that the prime order leaves equal
+    const string DISPLAY_LIST_ORDER_SUB_SUB = 'dlo3'; // the sub sub order, which sorts the rows that the prime and the sub order leave equal
     const string VIEW_CHILD = 'dm'; // the display view that modifies the parent view
     const string DOI = 'do'; // the digital object identifier of a source used to create the url to doi.org
     const string VIEW_TERM_LINK_PRIO = 'dp'; // to define the order of the view components
@@ -361,6 +365,10 @@ class url_var
         self::DISPLAY_LIST_PAGE,
         self::DISPLAY_LIST_COLUMNS,
         self::DISPLAY_LIST_RANGE,
+        self::DISPLAY_LIST_AS,
+        self::DISPLAY_LIST_ORDER,
+        self::DISPLAY_LIST_ORDER_SUB,
+        self::DISPLAY_LIST_ORDER_SUB_SUB,
     ];
 
     // the page vars where a zero is a value and not the "not set" default, so that
@@ -426,6 +434,10 @@ class url_var
         self::DISPLAY_LIST_PAGE,
         self::DISPLAY_LIST_COLUMNS,
         self::DISPLAY_LIST_RANGE,
+        self::DISPLAY_LIST_AS,
+        self::DISPLAY_LIST_ORDER,
+        self::DISPLAY_LIST_ORDER_SUB,
+        self::DISPLAY_LIST_ORDER_SUB_SUB,
     ];
 
 
@@ -527,6 +539,10 @@ class url_var
     const string DISPLAY_LIST_PAGE_HUMAN = 'display_list_page'; // the page of a list longer than the size
     const string DISPLAY_LIST_COLUMNS_HUMAN = 'display_list_columns'; // the number of column tiers of a table shown
     const string DISPLAY_LIST_RANGE_HUMAN = 'display_list_range'; // 1 to show the probability ranges of a table
+    const string DISPLAY_LIST_AS_HUMAN = 'display_list_as'; // the form of a table: table, chart or table_chart
+    const string DISPLAY_LIST_ORDER_HUMAN = 'display_list_order'; // the prime order of the rows of a table
+    const string DISPLAY_LIST_ORDER_SUB_HUMAN = 'display_list_order_sub'; // the sub order of the rows of a table
+    const string DISPLAY_LIST_ORDER_SUB_SUB_HUMAN = 'display_list_order_sub_sub'; // the sub sub order of the rows of a table
 
     // graph
     const string DIRECTION_HUMAN = 'dir'; // 'up' to get the parents and 'down' for the children
@@ -774,6 +790,10 @@ class url_var
         [self::DISPLAY_LIST_PAGE_HUMAN, self::DISPLAY_LIST_PAGE],
         [self::DISPLAY_LIST_COLUMNS_HUMAN, self::DISPLAY_LIST_COLUMNS],
         [self::DISPLAY_LIST_RANGE_HUMAN, self::DISPLAY_LIST_RANGE],
+        [self::DISPLAY_LIST_AS_HUMAN, self::DISPLAY_LIST_AS],
+        [self::DISPLAY_LIST_ORDER_HUMAN, self::DISPLAY_LIST_ORDER],
+        [self::DISPLAY_LIST_ORDER_SUB_HUMAN, self::DISPLAY_LIST_ORDER_SUB],
+        [self::DISPLAY_LIST_ORDER_SUB_SUB_HUMAN, self::DISPLAY_LIST_ORDER_SUB_SUB],
 
         // graph
         [self::DIRECTION_HUMAN, self::DIRECTION],

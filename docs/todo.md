@@ -37,6 +37,7 @@ A proper issue ticket should be created for these TODOs notes:
     TODO add to concept that people who have done someting bad should be be mentioned by name to reduce the copycat effect and reactance. 
     TODO create a list of people who have increased the htp or prevented a decrease in htp like Shuji Nakamura or Andreas Freud   
     TODO add a 'min value quality level' filter for values and results (including or excluding own overwrites)
+    TODO make 200 years the standard future outlook period because 100 years is usually used by science for forcasts and it is assumend that wrong decisions can potentially be undone within the double period
 
     TODO use only these global vars:
          - $sys to cache execution times, types and system configuration that change rarely

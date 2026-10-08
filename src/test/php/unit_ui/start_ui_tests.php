@@ -39,6 +39,7 @@ include_once paths::MODEL_CONST . 'files.php';
 include_once paths::SHARED_CONST . 'results.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_ENUM . 'table_forms.php';
 include_once paths::SHARED . 'url_var.php';
 include_once html_paths::RESULT . 'result_list.php';
 include_once html_paths::TYPES . 'type_lists.php';
@@ -46,6 +47,7 @@ include_once html_paths::VALUE . 'value_list.php';
 
 use Zukunft\ZukunftCom\main\php\shared\const\results;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\enum\table_forms;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_list;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
@@ -126,6 +128,29 @@ class start_ui_tests
         $test_name = '... but the full table shows that row';
         $t->assert_text_contains($test_name, $list->start_list($dto_ui, $msg, $col_url),
             '>' . word_names::YEAR_2024 . '</a>');
+
+        // the "as" entry of the "..." menu shows the ranking as its default charts: the range
+        // bars of the loss and the scatter plot of the gain against the effort beside each other
+        $dto_ui->val_lst = $t_val->value_list_solution_prio_ui();
+        $chart_url = [url_var::MASK => views::START_ID, url_var::DISPLAY_LIST_AS => table_forms::CHART->value];
+        $chart_html = $list->start_list($dto_ui, $msg, $chart_url);
+        $test_name = 'the start page shown as a chart draws the two default charts beside each other';
+        $t->assert($test_name, substr_count($chart_html, '<svg'), 2);
+        $t->assert_text_contains($test_name, $chart_html, 'class="' . styles::CHART_ROW . '"');
+        $test_name = '... without the table';
+        $t->assert_text_not_contains($test_name, $chart_html, '<' . html_base::TABLE);
+        $test_name = '... but with the "..." menu to get the table back';
+        $t->assert_text_contains($test_name, $chart_html, 'class="' . styles::MENU_COLUMN . '"');
+        $test_name = '... and with the header of the table above the charts';
+        $t->assert_text_order($test_name, $chart_html, '<' . html_base::H4 . '>', '<svg');
+        $test_name = '... with the menu in the top right corner of the header line';
+        $t->assert_text_order($test_name, $chart_html, '<' . html_base::H4 . '>', 'class="' . styles::CHART_CORNER . '"');
+        $both_url = [url_var::MASK => views::START_ID, url_var::DISPLAY_LIST_AS => table_forms::TABLE_AND_CHART->value];
+        $both_html = $list->start_list($dto_ui, $msg, $both_url);
+        $test_name = 'shown as table and chart the table comes first and the charts follow';
+        $t->assert_text_order($test_name, $both_html, '<' . html_base::TABLE, '<svg');
+        $test_name = 'by default the ranking is a table without a chart';
+        $t->assert_text_not_contains($test_name, $list->start_list($dto_ui, $msg, [url_var::MASK => views::START_ID]), '<svg');
 
         // a number of the ranking can be calculated instead of measured, e.g. the happy time
         // points that the loss of a problem costs, and such a result is shown in the same table;

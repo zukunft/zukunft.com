@@ -39,6 +39,7 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 include_once paths::MODEL_CONST . 'def.php';
 include_once paths::SHARED . 'library.php';
 include_once paths::SHARED_CONST . 'formulas.php';
+include_once paths::SHARED_ENUM . 'chart_types.php';
 include_once paths::SHARED_ENUM . 'foaf_direction.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'words.php';
@@ -53,6 +54,7 @@ use Zukunft\ZukunftCom\test\php\create\test_verbs;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phr_ids;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\shared\enum\chart_types;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
@@ -236,6 +238,26 @@ class phrase_list_read_tests
         $col_phr = $lst->get_by_name(triple_names::COLUMN_POTENTIAL_LOSS, $msg);
         $t->assert($test_name,
             $col_phr?->obj()?->get_from()?->obj()?->get_from()?->name(), word_names::LOSS);
+        // the sides of a nested triple are loaded completely: the chart assignments of the
+        // default chart type tier nest the chart triples, whose from is the chart type word with
+        // the code id that selects the chart type and whose to can be a pair triple again
+        $lst = new phrase_list($t->usr1);
+        $tier = new phrase($t->usr1);
+        $tier->set_obj_from_id(triple_names::SYSTEM_CHART_TYPE_DEFAULT_ID * -1);
+        $lst->load_by_phr($tier, $msg, null, foaf_direction::DOWN);
+        $chart_phr = $lst->get_by_name(triple_names::CHART_SCATTER_OF_GAIN_AND_EFFORT, $msg);
+        $chart = $chart_phr?->obj()?->get_from()?->obj();
+        // a nested triple names its sides with an empty string before the sides are loaded (see
+        // above), so the chart type word with the code id is not there yet
+        $test_name = 'the chart type word nested in a chart is not named before the sides are loaded';
+        $t->assert($test_name, $chart?->get_from()?->name() ?? '', '');
+        $lst->load_linked_sides($msg);
+        $chart_phr = $lst->get_by_name(triple_names::CHART_SCATTER_OF_GAIN_AND_EFFORT, $msg);
+        $chart = $chart_phr?->obj()?->get_from()?->obj();
+        $test_name = '... but the code id of the chart type after load_linked_sides';
+        $t->assert($test_name, $chart?->get_from()?->obj()?->get_code_id(), chart_types::SCATTER->value);
+        $test_name = '... and the pair nested in the chart has its from';
+        $t->assert($test_name, $chart?->get_to()?->obj()?->get_from()?->name(), triple_names::POTENTIAL_GAIN);
 
         $t->subheader($ts . 'triple sides');
         // a value group loads its phrases with the id and the name only, so a triple of the group

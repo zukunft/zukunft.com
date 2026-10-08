@@ -54,6 +54,7 @@ include_once html_paths::HTML . 'button.php';
 include_once html_paths::RESULT . 'result_list.php';
 include_once html_paths::VERB . 'verb_list.php';
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_ENUM . 'table_orders.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
@@ -91,6 +92,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\enum\table_orders;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\component_types as comp_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\formula_types;
@@ -307,6 +309,16 @@ class base_ui_tests
         $t->assert($test_name, $ui->url_cache_key($url_array), 'm=' . views::START_ID . '&id=0&'
             . url_var::DISPLAY_LIST_COLUMNS . '=' . value_list_ui::COLUMN_TIERS_ALL . '&'
             . url_var::DISPLAY_LIST_RANGE . '=' . url_var::TRUE);
+        // the order of the rows is a view-only state as well, so each order is cached on its own
+        $test_name = 'the sorted table of the start page is cached under its own key';
+        $prime_order = table_orders::NUMERIC_ASC->url_value(12);
+        $sub_order = table_orders::ALPHA_DESC->url_value(-13);
+        $url_array = [url_var::MASK => views::START_ID,
+            url_var::DISPLAY_LIST_ORDER => $prime_order,
+            url_var::DISPLAY_LIST_ORDER_SUB => $sub_order];
+        $t->assert($test_name, $ui->url_cache_key($url_array), 'm=' . views::START_ID . '&id=0&'
+            . url_var::DISPLAY_LIST_ORDER . '=' . $prime_order . '&'
+            . url_var::DISPLAY_LIST_ORDER_SUB . '=' . $sub_order);
 
         // how much of a list is shown is a render mode, so it is a control var: else the "... more"
         // link of a page without an object (e.g. view.php?m=1&dls=20) would look like a form submit
@@ -317,6 +329,9 @@ class base_ui_tests
         $t->assert_true($test_name, in_array(url_var::DISPLAY_LIST_PAGE, url_var::CONTROL_VARS)
             and in_array(url_var::DISPLAY_LIST_COLUMNS, url_var::CONTROL_VARS)
             and in_array(url_var::DISPLAY_LIST_RANGE, url_var::CONTROL_VARS));
+        $test_name = '... and the three row orders, which the page links repeat as page vars';
+        $t->assert($test_name, array_diff(table_orders::URL_VARS, url_var::CONTROL_VARS), []);
+        $t->assert($test_name, array_diff(table_orders::URL_VARS, url_var::PAGE_VARS), []);
         $test_name = 'a field of the object is never a control var';
         $t->assert_false($test_name, in_array(url_var::NAME, url_var::CONTROL_VARS));
 
@@ -893,6 +908,29 @@ class base_ui_tests
         $url_array = $lib->url_array($url_human);
         $t->assert($test_name, $url_array[url_var::DISPLAY_LIST_SIZE_HUMAN] ?? '', '20');
         $t->assert($test_name . ' (page)', $url_array[url_var::DISPLAY_LIST_PAGE_HUMAN] ?? '', '1');
+        // the three row orders are url state like the list size, so they map the same way
+        $test_name = 'the human-readable row orders map to the short url vars';
+        $prime_order = table_orders::NUMERIC_ASC->url_value(12);
+        $sub_order = table_orders::ALPHA_DESC->url_value(-13);
+        $sub_sub_order = table_orders::ALPHA_PARENT_ASC->url_value(14);
+        $url = 'http://localhost' . api::MAIN_SCRIPT . '?mask_id=' . views::START_CODE
+            . '&' . url_var::DISPLAY_LIST_ORDER_HUMAN . '=' . $prime_order
+            . '&' . url_var::DISPLAY_LIST_ORDER_SUB_HUMAN . '=' . $sub_order
+            . '&' . url_var::DISPLAY_LIST_ORDER_SUB_SUB_HUMAN . '=' . $sub_sub_order;
+        $url_array = $url_map->url_to_standard($lib->url_array($url), $msg);
+        $t->assert($test_name, $url_array[url_var::DISPLAY_LIST_ORDER] ?? '', $prime_order);
+        $t->assert($test_name . ' (sub)', $url_array[url_var::DISPLAY_LIST_ORDER_SUB] ?? '', $sub_order);
+        $t->assert($test_name . ' (sub sub)', $url_array[url_var::DISPLAY_LIST_ORDER_SUB_SUB] ?? '', $sub_sub_order);
+        $test_name = '... and the short url vars map back to the human-readable names';
+        $url = 'http://localhost' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=2&'
+            . url_var::DISPLAY_LIST_ORDER . '=' . $prime_order . '&'
+            . url_var::DISPLAY_LIST_ORDER_SUB . '=' . $sub_order . '&'
+            . url_var::DISPLAY_LIST_ORDER_SUB_SUB . '=' . $sub_sub_order;
+        $url_human = $url_test->test_url($url_map->standard_url_to_human($lib->url_array_with($url), $msg));
+        $url_array = $lib->url_array($url_human);
+        $t->assert($test_name, $url_array[url_var::DISPLAY_LIST_ORDER_HUMAN] ?? '', $prime_order);
+        $t->assert($test_name . ' (sub)', $url_array[url_var::DISPLAY_LIST_ORDER_SUB_HUMAN] ?? '', $sub_order);
+        $t->assert($test_name . ' (sub sub)', $url_array[url_var::DISPLAY_LIST_ORDER_SUB_SUB_HUMAN] ?? '', $sub_sub_order);
 
         // TODO Prio 1 review
         // url_mapper::to_row_format: the flat standard url array (as produced by url_to_standard) is

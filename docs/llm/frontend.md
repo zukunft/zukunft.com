@@ -450,6 +450,97 @@ only phrase cells is dropped as well. Every other table keeps such a row, so
 the option is a default of the component (`ui_list::start_list`) and not a rule
 of the table.
 
+## A table as a chart is another rendering of the same rows
+
+`value_list::table_to_svg` draws the table of `table_by_related_columns` as an
+inline svg. Both build the same `table_model` (`value_list::table_model`: the
+rows, columns, units and ranges before anything is rendered), so a chart never
+shows a row or a number that the table does not have, and the parameters of the
+chart are the ones of the table. `chart_types` says only how the rows are drawn
+(`web/value/table_chart.php`):
+
+- `RANGE_BARS` — one row per table row, the biggest number on top, with a dot
+  for the number and a bar for its probability range; a log scale is used when
+  the numbers differ by more than `table_chart::LOG_RATIO`, so the small
+  problems stay visible beside the big ones.
+- `SCATTER` — one numbered point per table row placed by two numbers of the
+  row, explained by a legend of the phrase column (e.g. the solution) and the
+  row phrase.
+
+The plotted columns are named by `$chart_cols` with the names that also select
+a table column (the column phrase, its header name or a part of a triple
+column, `table_model::col_names`), the y axis first; without names the first
+value columns are plotted. A name that selects no column is reported via
+`msg_id::CHART_COLUMN_NOT_FOUND` and nothing is drawn, never a chart of another
+column. Every row carries the numbers of every value column as its tooltip in
+the format of the table cell (`5.5a trillion EUR (2.2 – 13.75)`), so the chart
+tells the reader the same as the full table.
+
+Which charts a table offers is data, defined in `solution_prio.json` like the
+column tiers: a chart type word carries the `chart_types` value as its
+`code_id` (`range bars` → `range_bars`, `scatter plot` → `scatter`), a chart is
+the triple `<chart type> of <column>` (`range bars of potential loss`) or, for
+two columns, `<chart type> of <column> and <column>` with the y column first
+(`scatter plot of potential gain and initial effort`), and the chart is
+assigned to a chart type tier with `<chart> can be <tier>`: the charts of
+`triples::SYSTEM_CHART_TYPE_DEFAULT` are shown beside each other when the
+reader asks to see the table as a chart, the charts of
+`SYSTEM_CHART_TYPE_ALTERNATIVE` can be selected instead (not wired yet).
+`phrase_list::chart_definitions` reads the default charts out of the cached
+definitions (`load_chart_definitions`, `CHART_LEVELS` relation levels from the
+tier keyword: the tiers and the chart assignments) and
+`ui_list::table_with_related_columns` draws them with `table_to_svg` in a
+`styles::CHART_ROW` below or instead of the table. The chart triple is the from
+side of its assignment and not a list entry, so the frontend reads the chart
+type word and the column pair nested in it; the api (`load_linked_sides`) loads
+the sides of a nested triple completely, a nested triple with its own sides and
+a nested word with its code id, because the triple read names a word without it.
+
+The rows of a table follow the impact unless the url asks for another order:
+`url_var::DISPLAY_LIST_ORDER` (`dlo`, human `display_list_order`) names the
+phrase id of a column and the condition (`table_orders`), e.g.
+`dlo=-128.numeric_desc` for the biggest potential loss first;
+`DISPLAY_LIST_ORDER_SUB` (`dlo2`) sorts the rows that the prime order leaves
+equal and `DISPLAY_LIST_ORDER_SUB_SUB` (`dlo3`) the rows that both leave equal;
+the rows that every order leaves equal keep the impact order. A condition is
+`numeric` (the number of the cell), `alpha` (the name of the phrase or the text
+of a text value) or `alpha_parent` (the names of the parents within the related
+phrases before the name, so the rows are grouped by their parent), each as
+`_asc` or `_desc`; a row without a key in the column is last for both
+directions. The row column is named by its head phrase, a phrase column by its
+phrase and a value column by its phrase. `value_list::row_orders` reads the
+url, `table_model::sort_rows` sorts before the rows are cut, so the charts draw
+the same order, the three vars are page vars and part of the page cache key, and
+an order that names no column of the table or an unknown condition is reported
+as `TABLE_ORDER_UNKNOWN`. Each column header ends with the `icons::SORT_UP` and
+`SORT_DOWN` links (`styles::SORT_ICON`, the shown order `SORT_ACTIVE`) that
+`value_list::sort_icons` builds: numeric for a value column, alpha for the row
+and a phrase column, and `order_url` moves the orders shown one step down,
+so a click on another column keeps the shown order as the sub order.
+
+The default order of a table is data too, defined in `solution_prio.json` like
+the charts: a condition word carries the `table_orders` value as its `code_id`
+(`numeric descending` → `numeric_desc`), an order is the triple
+`<condition> of <column>` (`numeric descending of potential loss`) and is
+assigned to the default tier with `<order> can be <tier>`
+(`triples::SYSTEM_SORT_ORDER_DEFAULT`); the first default order is the prime
+order, the next ones the sub orders. `phrase_list::sort_definitions` reads them
+out of the cached definitions (`load_sort_definitions`, `SORT_LEVELS`, added to
+the request cache by `ui_list::add_sort_definitions` with the column
+definitions) and `value_list::row_orders` uses them only if the url names no
+order, so `view.php?m=1` shows the biggest potential loss on top and a url with
+an order wins. The orders shown are kept in `table_model::orders`, which marks
+the active sort icon and seeds the links of the other icons.
+
+The "…" menu of the table has two sub headers (`styles::MENU_HEADER`, not
+bold): "columns and values" above the column tier entries and "as" above the
+entries `table`, `chart` and `table + chart` (`table_forms`), which set
+`url_var::DISPLAY_LIST_AS` (`dla`, human `display_list_as`), a page var and part
+of the page cache key like the other list vars. Shown as a chart only, the
+table is replaced by its charts below a `styles::CHART_HEAD` line that keeps
+the header of the table centred and puts the "…" menu in the top right corner
+(`styles::CHART_CORNER`), because the menu is the only way back to the table.
+
 ## The value quality is a mark behind the number, never a phrase before it
 
 A value quality phrase (phrase type `value_quality`, e.g. `assumed`) says how a

@@ -78,6 +78,7 @@ include_once html_paths::SHARED . 'library.php';
 include_once html_paths::SHARED . 'url_var.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::SHARED_ENUM . 'foaf_direction.php';
+include_once html_paths::SHARED_ENUM . 'table_forms.php';
 
 use Zukunft\ZukunftCom\main\php\web\component\component;
 use Zukunft\ZukunftCom\main\php\web\const\icons;
@@ -115,6 +116,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
+use Zukunft\ZukunftCom\main\php\shared\enum\table_forms;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 
@@ -1471,17 +1473,112 @@ class ui_list extends ui_base
                 // an empty list falls back to the impact ranking of the values themselves
                 if ($dto != null) {
                     $this->add_column_definitions($dto, $msg);
+                    $this->add_sort_definitions($dto, $msg);
                 }
                 $col_order = $dto?->phr_lst?->column_names() ?? [];
-                // the url of the page is handed over, so that the "... more" tail can call the
-                // same page with the next list size
-                $result = $tbl_lst->table_by_related_columns(
-                    $msg, $phr_lst, $col_order, $with_header, $with_border, $dto?->phr_lst,
-                    null, $url_array, $col_values_only, $col_tiers, $with_range,
-                    $value_rows_only);
+                // the "as" entry of the "..." menu says whether the rows are shown as a table,
+                // as the default charts of the table or as both
+                $form = table_forms::by_url($url_array);
+                if ($form->with_table()) {
+                    // the url of the page is handed over, so that the "... more" tail can call the
+                    // same page with the next list size
+                    $result = $tbl_lst->table_by_related_columns(
+                        $msg, $phr_lst, $col_order, $with_header, $with_border, $dto?->phr_lst,
+                        null, $url_array, $col_values_only, $col_tiers, $with_range,
+                        $value_rows_only);
+                } else {
+                    // without the table its header says what the charts are about and its "..."
+                    // menu is the only way back to the table, so the header is centred above the
+                    // charts with the menu in the top right corner
+                    $html = new html_base();
+                    $head = '';
+                    if ($with_header) {
+                        $head = $tbl_lst->table_header_by_related_columns($msg, $phr_lst, $col_order,
+                            $dto?->phr_lst, null, $url_array, $col_values_only, $value_rows_only);
+                    }
+                    $head .= $html->div($tbl_lst->columns_menu($url_array), styles::CHART_CORNER);
+                    $result = $html->div($head, styles::CHART_HEAD);
+                }
+                if ($form->with_chart()) {
+                    if ($dto != null) {
+                        $this->add_chart_definitions($dto, $msg);
+                    }
+                    $result .= $this->table_charts($tbl_lst, $msg, $phr_lst, $col_order,
+                        $dto?->phr_lst, $url_array, $col_values_only, $value_rows_only);
+                }
             }
         }
         return $result;
+    }
+
+    /**
+     * the default charts of a value table beside each other, e.g. the range bars of the loss
+     * and the scatter plot of the gain against the effort of the start page ranking
+     *
+     * @param value_list $tbl_lst the values of the table
+     * @param user_message $msg to report a chart that the table cannot draw
+     * @param phrase_list $phr_lst the phrases of the page e.g. "global problem"
+     * @param array $col_order the defined column phrase names, the most important column first
+     * @param phrase_list|null $rel_lst the phrases related to the page phrase with the definitions
+     * @param array $url_array the url parameters of the page that shows the charts
+     * @param bool $col_values_only true to leave out the values that share no column phrase
+     * @param bool $value_rows_only true to leave out the rows without a number in a shown column
+     * @return string the html code of the charts or '' if the table defines no chart
+     */
+    private function table_charts(
+        value_list   $tbl_lst,
+        user_message $msg,
+        phrase_list  $phr_lst,
+        array        $col_order,
+        ?phrase_list $rel_lst,
+        array        $url_array,
+        bool         $col_values_only,
+        bool         $value_rows_only
+    ): string
+    {
+        $html = new html_base();
+        $charts = '';
+        foreach ($rel_lst?->chart_definitions($msg) ?? [] as [$type, $chart_cols]) {
+            $charts .= $tbl_lst->table_to_svg($type, $msg, $phr_lst, $col_order, $rel_lst, null,
+                $url_array, $col_values_only, $value_rows_only, $chart_cols);
+        }
+        return ($charts == '') ? '' : $html->div($charts, styles::CHART_ROW);
+    }
+
+    /**
+     * add the chart definitions of the tables to the request cache if they are not yet cached
+     * (like add_column_definitions)
+     *
+     * @param data_object $dto the request cache that gets the definitions
+     * @param user_message $msg to report a problem of the api call
+     * @return void
+     */
+    private function add_chart_definitions(data_object $dto, user_message $msg): void
+    {
+        if ($dto->online and $dto->phr_lst->get_by_name(triples::SYSTEM_CHART_TYPE_DEFAULT, $msg) == null) {
+            $chart_lst = new phrase_list();
+            if ($chart_lst->load_chart_definitions($msg)) {
+                $dto->add_phrases($chart_lst, $msg);
+            }
+        }
+    }
+
+    /**
+     * add the default sort orders of the tables to the request cache if they are not yet cached
+     * (like add_chart_definitions)
+     *
+     * @param data_object $dto the request cache that gets the definitions
+     * @param user_message $msg to report a problem of the api call
+     * @return void
+     */
+    private function add_sort_definitions(data_object $dto, user_message $msg): void
+    {
+        if ($dto->online and $dto->phr_lst->get_by_name(triples::SYSTEM_SORT_ORDER_DEFAULT, $msg) == null) {
+            $sort_lst = new phrase_list();
+            if ($sort_lst->load_sort_definitions($msg)) {
+                $dto->add_phrases($sort_lst, $msg);
+            }
+        }
     }
 
     /**

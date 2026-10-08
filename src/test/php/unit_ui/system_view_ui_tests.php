@@ -138,8 +138,17 @@ use Zukunft\ZukunftCom\test\php\utils\test_lib;
 class system_view_ui_tests
 {
 
+    // the snapshot folder and name of the start page
+    const string START_PAGE_FILE_NAME = 'start_page';
     // added to the snapshot name of a view rendered with the more version of its list
     const string MORE_LIST_FILE_POSTFIX = '_more';
+    // added to the snapshot name of the start page with the main columns and the ranges of its table
+    const string DETAILS_LIST_FILE_POSTFIX = '_details';
+    // the start page details list shows the real ranking data of the pod, which the unit fixtures
+    // do not carry, so localhost_ui_tests fetches its snapshot from the pod after the db recreate
+    // and the cleanup of the snapshots below keeps it
+    const string START_PAGE_DETAILS_FILE = test_paths::VIEWS_BY_ID . self::START_PAGE_FILE_NAME . DIRECTORY_SEPARATOR
+        . views::START_ID . '_' . self::START_PAGE_FILE_NAME . self::DETAILS_LIST_FILE_POSTFIX;
 
     function run(test_cleanup $t): void
     {
@@ -769,7 +778,8 @@ class system_view_ui_tests
         $t->assert_false($test_name, $msg->is_ok());
         $msg->reset();
 
-        // remove test files not used any more
+        // remove test files not used any more, except the details list fetched from the pod
+        $updated_files[] = test_paths::RESOURCE . self::START_PAGE_DETAILS_FILE . test_files::HTML;
         foreach ($lib->dir_files(test_paths::RESOURCE . test_paths::VIEWS_BY_ID) as $path) {
             if (str_ends_with($path, test_files::HTML) && !in_array($path, $updated_files)) {
                 $t->delete_path_file($path);
@@ -842,7 +852,8 @@ class system_view_ui_tests
     {
         $result = ['other' . DIRECTORY_SEPARATOR, $prefix . 'other', 'other view'];
         if ($id == views::START_ID) {
-            $result = ['start_page' . DIRECTORY_SEPARATOR, $prefix . 'start_page', 'start_page view'];
+            $result = [self::START_PAGE_FILE_NAME . DIRECTORY_SEPARATOR,
+                $prefix . self::START_PAGE_FILE_NAME, self::START_PAGE_FILE_NAME . ' view'];
         } elseif (in_array($id, views::CONFIRM_MASKS_IDS)) {
             $result = $this->confirm_file_info($id, $action, $prefix);
         } elseif (in_array($id, views::STATIC_VIEW_IDS)) {

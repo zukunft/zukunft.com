@@ -963,6 +963,14 @@ class test_triples extends test_objects
     }
 
     /**
+     * @return triple_ui the "global warming" row phrase of the global issues table
+     */
+    function global_warming_ui(): triple_ui
+    {
+        return $this->page_ui($this->global_warming());
+    }
+
+    /**
      * @return triple_ui the "city of Zurich" page phrase of the related values table
      */
     function zh_city_ui(): triple_ui
@@ -1399,6 +1407,182 @@ class test_triples extends test_objects
     }
 
     /**
+     * @return triple "chart type (system)" - the keyword the chart type tiers are built from
+     */
+    function chart_type(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::SYSTEM_CHART_TYPE_ID, triple_names::SYSTEM_CHART_TYPE);
+        return $trp;
+    }
+
+    /**
+     * @return triple "default chart type (system)" - the tier of the charts shown if the table is shown as a chart
+     */
+    function chart_type_default(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::SYSTEM_CHART_TYPE_DEFAULT_ID, triple_names::SYSTEM_CHART_TYPE_DEFAULT);
+        $trp->set_from($this->chart_type()->phrase());
+        $trp->set_verb($t_vrb->verb_can_be());
+        $trp->set_to($t_wrd->word_default()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "alternative chart type (system)" - the tier of the charts the reader can select instead
+     */
+    function chart_type_alternative(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::SYSTEM_CHART_TYPE_ALTERNATIVE_ID, triple_names::SYSTEM_CHART_TYPE_ALTERNATIVE);
+        $trp->set_from($this->chart_type()->phrase());
+        $trp->set_verb($t_vrb->verb_can_be());
+        $trp->set_to($t_wrd->word_alternative()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "initial effort" - the work to implement a solution the first time, an x axis of the ranking charts
+     */
+    function initial_effort(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::INITIAL_EFFORT_ID, triple_names::INITIAL_EFFORT);
+        return $trp;
+    }
+
+    /**
+     * @return triple "range bars of potential loss" - the chart of the loss of each problem
+     */
+    function range_bars_of_loss(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::RANGE_BARS_OF_LOSS_ID, triple_names::RANGE_BARS_OF_LOSS);
+        $trp->set_from($t_wrd->word_range_bars()->phrase());
+        $trp->set_verb($t_vrb->verb_of());
+        $trp->set_to($this->potential_loss()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "potential gain and initial effort" - the two columns a chart plots against each other
+     */
+    function gain_and_effort(): triple
+    {
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::GAIN_AND_EFFORT_ID, triple_names::GAIN_AND_EFFORT);
+        $trp->set_from($this->potential_gain()->phrase());
+        $trp->set_verb($t_vrb->verb_and());
+        $trp->set_to($this->initial_effort()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "scatter plot of potential gain and initial effort" - the chart of the solutions
+     */
+    function scatter_of_gain_and_effort(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::SCATTER_OF_GAIN_AND_EFFORT_ID, triple_names::SCATTER_OF_GAIN_AND_EFFORT);
+        $trp->set_from($t_wrd->word_scatter_plot()->phrase());
+        $trp->set_verb($t_vrb->verb_of());
+        $trp->set_to($this->gain_and_effort()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple that the range bars of the loss are a default chart of the ranking
+     */
+    function chart_range_bars_of_loss(): triple
+    {
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::CHART_RANGE_BARS_OF_LOSS_ID, triple_names::CHART_RANGE_BARS_OF_LOSS);
+        $trp->set_from($this->range_bars_of_loss()->phrase());
+        $trp->set_verb($t_vrb->verb_can_be());
+        $trp->set_to($this->chart_type_default()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple that the scatter plot of the gain against the effort is a default chart of the ranking
+     */
+    function chart_scatter_of_gain_and_effort(): triple
+    {
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::CHART_SCATTER_OF_GAIN_AND_EFFORT_ID, triple_names::CHART_SCATTER_OF_GAIN_AND_EFFORT);
+        $trp->set_from($this->scatter_of_gain_and_effort()->phrase());
+        $trp->set_verb($t_vrb->verb_can_be());
+        $trp->set_to($this->chart_type_default()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "sort order (system)" - the keyword of the sort order tiers
+     */
+    function sort_order(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::SYSTEM_SORT_ORDER_ID, triple_names::SYSTEM_SORT_ORDER);
+        return $trp;
+    }
+
+    /**
+     * @return triple "default sort order (system)" - the tier of the orders used if the url names none
+     */
+    function sort_order_default(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::SYSTEM_SORT_ORDER_DEFAULT_ID, triple_names::SYSTEM_SORT_ORDER_DEFAULT);
+        $trp->set_from($this->sort_order()->phrase());
+        $trp->set_verb($t_vrb->verb_can_be());
+        $trp->set_to($t_wrd->word_default()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "numeric descending of potential loss" - the rows by the loss, the biggest on top
+     */
+    function numeric_desc_of_loss(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::NUMERIC_DESC_OF_LOSS_ID, triple_names::NUMERIC_DESC_OF_LOSS);
+        $trp->set_from($t_wrd->word_numeric_descending()->phrase());
+        $trp->set_verb($t_vrb->verb_of());
+        $trp->set_to($this->potential_loss()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple that the biggest loss on top is the default order of the ranking
+     */
+    function sort_numeric_desc_of_loss(): triple
+    {
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::SORT_NUMERIC_DESC_OF_LOSS_ID, triple_names::SORT_NUMERIC_DESC_OF_LOSS);
+        $trp->set_from($this->numeric_desc_of_loss()->phrase());
+        $trp->set_verb($t_vrb->verb_can_be());
+        $trp->set_to($this->sort_order_default()->phrase());
+        return $trp;
+    }
+
+    /**
      * @return triple "column problem (high prio)" that defines "problem" as a mayor table column
      */
     function column_problem(): triple
@@ -1748,6 +1932,90 @@ class test_triples extends test_objects
         $trp = new triple($this->env->usr1);
         $trp->set(triple_names::SPENDING_SOLUTION_ID);
         $trp->set_from($t_wrd->word_spending()->phrase());
+        $trp->set_verb($t_vrb->verb_is());
+        $trp->set_to($t_wrd->solution()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple that "basic income" "is a" "solution"
+     */
+    function basic_income_solution(): triple
+    {
+        return $this->solution_link($this->basic_income(), triple_names::BASIC_INCOME_SOLUTION_ID);
+    }
+
+    /**
+     * @return triple that "platform regulation" "is a" "solution"
+     */
+    function platform_regulation_solution(): triple
+    {
+        return $this->solution_link($this->platform_regulation(), triple_names::PLATFORM_REGULATION_SOLUTION_ID);
+    }
+
+    /**
+     * @return triple that "market share tax" "is a" "solution"
+     */
+    function market_share_tax_solution(): triple
+    {
+        return $this->solution_link($this->market_share_tax(), triple_names::MARKET_SHARE_TAX_SOLUTION_ID);
+    }
+
+    /**
+     * @return triple that "Delphi method" "is a" "solution"
+     */
+    function delphi_method_solution(): triple
+    {
+        return $this->solution_link($this->delphi_method(), triple_names::DELPHI_METHOD_SOLUTION_ID);
+    }
+
+    /**
+     * @return triple that "public AI" "is a" "solution"
+     */
+    function public_ai_solution(): triple
+    {
+        return $this->solution_link($this->public_ai(), triple_names::PUBLIC_AI_SOLUTION_ID);
+    }
+
+    /**
+     * @return triple that "fluid democracy" "is a" "solution"
+     */
+    function fluid_democracy_solution(): triple
+    {
+        return $this->solution_link($this->fluid_democracy(), triple_names::FLUID_DEMOCRACY_SOLUTION_ID);
+    }
+
+    /**
+     * @return triple that "gross domestic usage" "is a" "solution"
+     */
+    function gross_domestic_usage_solution(): triple
+    {
+        return $this->solution_link($this->gross_domestic_usage(), triple_names::GROSS_DOMESTIC_USAGE_SOLUTION_ID);
+    }
+
+    /**
+     * @return triple that "free software" "is a" "solution"
+     */
+    function free_software_solution(): triple
+    {
+        return $this->solution_link($this->free_software(), triple_names::FREE_SOFTWARE_SOLUTION_ID);
+    }
+
+    /**
+     * the triple that links a solution of the start page ranking to "solution", so that the
+     * table can name it in the solution column of the problem row
+     *
+     * @param triple $solution the solution of a problem e.g. "basic income"
+     * @param int $id the fixed database id of the link triple
+     * @return triple that the solution "is a" "solution"
+     */
+    private function solution_link(triple $solution, int $id): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set($id);
+        $trp->set_from($solution->phrase());
         $trp->set_verb($t_vrb->verb_is());
         $trp->set_to($t_wrd->solution()->phrase());
         return $trp;

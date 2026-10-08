@@ -65,6 +65,18 @@ class styles
     // the popup menu of the "..." table header that selects the columns shown, styled like
     // the menus of the page header (see style_html.css)
     const string MENU_COLUMN = 'column-menu';
+    // a sub header inside a popup menu e.g. "columns and values" above the column entries
+    const string MENU_HEADER = 'menu-header';
+    // the up / down icons behind a column header that sort the rows by the column, and the
+    // icon of the order that the page shows (see style_html.css)
+    const string SORT_ICON = 'sort-icon';
+    const string SORT_ACTIVE = 'sort-active';
+    // the charts of a table beside each other, wrapping on a narrow screen (see style_html.css)
+    const string CHART_ROW = 'chart-row';
+    // the line above the charts of a table shown without the table: the header of the table
+    // centred and the "..." menu of the table in the top right corner (see style_html.css)
+    const string CHART_HEAD = 'chart-head';
+    const string CHART_CORNER = 'chart-corner';
     // the popup menu of the "..." below the title of a default view that selects the view
     // version and the full width line that puts it in the right corner (see style_html.css)
     const string MENU_VIEW_VERSION = 'view-version-menu';

@@ -959,6 +959,37 @@
       "name": "outdated",
       "description": "value status: right when it was found, but no longer valid because the measured thing has changed",
       "type": "value_status"
+    },
+    {
+      "name": "chart type",
+      "description": "how the rows of a table are drawn as a chart e.g. as range bars or as a scatter plot"
+    },
+    {
+      "name": "default",
+      "description": "the one used if nothing else is selected"
+    },
+    {
+      "name": "alternative",
+      "description": "the one offered beside the default"
+    },
+    {
+      "name": "range bars",
+      "description": "chart with one row per table row with a dot for the number and a bar for its range, the biggest number on top",
+      "code_id": "range_bars"
+    },
+    {
+      "name": "scatter plot",
+      "description": "chart with one numbered point per table row placed by two numbers of the row, the first number up and the second to the right",
+      "code_id": "scatter"
+    },
+    {
+      "name": "sort order",
+      "description": "how the rows of a table are sorted e.g. by the biggest number of a column first"
+    },
+    {
+      "name": "numeric descending",
+      "description": "sort condition: by the number of the column, the biggest number on top",
+      "code_id": "numeric_desc"
     }
   ],
   "triples": [
@@ -2070,6 +2101,95 @@
       "from": "proven",
       "verb": "is a",
       "to": "convention"
+    },
+    {
+      "name": "chart type (system)",
+      "description": "keyword for the chart types used by the system components to draw a table as a chart",
+      "from": "chart type",
+      "verb": "can be",
+      "to": "zukunft.com system",
+      "code_id": "system_chart_type"
+    },
+    {
+      "name": "default chart type (system)",
+      "description": "keyword for the charts that are shown if the reader asks to see a table as a chart; several charts are shown beside each other",
+      "from": "chart type (system)",
+      "verb": "can be",
+      "to": "default",
+      "code_id": "system_chart_type_default"
+    },
+    {
+      "name": "alternative chart type (system)",
+      "description": "keyword for the charts that the reader can select instead of the default charts of a table",
+      "from": "chart type (system)",
+      "verb": "can be",
+      "to": "alternative",
+      "code_id": "system_chart_type_alternative"
+    },
+    {
+      "name": "range bars of potential loss",
+      "description": "the potential loss of each problem as a range bar with the estimate as the dot, like global-problems-loss.svg",
+      "from": "range bars",
+      "verb": "of",
+      "to": "potential loss"
+    },
+    {
+      "name": "potential gain and initial effort",
+      "description": "the two numbers of a solution that a chart plots against each other, the gain up and the effort to the right",
+      "from": "potential gain",
+      "verb": "and",
+      "to": "initial effort"
+    },
+    {
+      "name": "scatter plot of potential gain and initial effort",
+      "description": "each solution as a numbered point by its potential gain and its initial effort, like global-problems-solutions.svg",
+      "from": "scatter plot",
+      "verb": "of",
+      "to": "potential gain and initial effort"
+    },
+    {
+      "name": "chart range bars of potential loss",
+      "description": "the range bars of the potential loss are a default chart of the global problems table",
+      "from": "range bars of potential loss",
+      "verb": "can be",
+      "to": "default chart type (system)"
+    },
+    {
+      "name": "chart scatter plot of potential gain and initial effort",
+      "description": "the scatter plot of the gain against the effort is a default chart of the global problems table, shown beside the range bars",
+      "from": "scatter plot of potential gain and initial effort",
+      "verb": "can be",
+      "to": "default chart type (system)"
+    },
+    {
+      "name": "sort order (system)",
+      "description": "keyword for the sort orders used by the system components to sort the rows of a table",
+      "from": "sort order",
+      "verb": "can be",
+      "to": "zukunft.com system",
+      "code_id": "system_sort_order"
+    },
+    {
+      "name": "default sort order (system)",
+      "description": "keyword for the orders that sort the rows of a table if the url of the page names none; the first order is the prime order and the next ones sort the rows that the orders before leave equal",
+      "from": "sort order (system)",
+      "verb": "can be",
+      "to": "default",
+      "code_id": "system_sort_order_default"
+    },
+    {
+      "name": "numeric descending of potential loss",
+      "description": "the rows by the potential loss, the biggest loss on top",
+      "from": "numeric descending",
+      "verb": "of",
+      "to": "potential loss"
+    },
+    {
+      "name": "sort numeric descending of potential loss",
+      "description": "the biggest potential loss on top is the default order of the global problems table",
+      "from": "numeric descending of potential loss",
+      "verb": "can be",
+      "to": "default sort order (system)"
     }
   ],
   "sources": [
