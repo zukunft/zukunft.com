@@ -1,0 +1,533 @@
+{
+  "version": "0.0.3",
+  "data_version": "0.0.1",
+  "time": "2026-10-08 12:00:00",
+  "user": "timon",
+  "selection": [
+    "biased information reasons that cause costs"
+  ],
+  "description": "The most relevant reasons why biased information causes costs, each linked to biased information with 'can cause' and quantified by the studies that report it for the world and per country: the overstated efficacy of drugs caused by the selective publication of the antidepressant trials (Turner et al. 2008) and by the industry sponsorship of the drug and device studies (Lundh et al. 2017); the research waste caused by the trials that are never published (Turner et al. 2008, Glasziou & Chalmers); the cost overrun of the transport infrastructure projects caused by the strategic misrepresentation of the cost estimates (Flyvbjerg, Holm & Buhl 2002); the change of the vote share caused by the slanted news of Fox News (DellaVigna & Kaplan 2007, Martin & Yurukoglu 2017); the decline of the COVID-19 vaccination intent caused by misinformation (Loomba et al. 2021); the traffic deaths caused by the misjudged risk of flying after 11 September 2001 (Gigerenzer 2006); and the return loss of the retirement savers caused by conflicted investment advice (Council of Economic Advisers 2015). The assumed share of the decisions taken on biased information and its solution, the Delphi method, are stated in problem_biased_information.json instead, because they are the row of the global problem ranking of the start page. The total research waste and the cost of the Tamiflu stockpile of the United Kingdom are added as context; these values are not attributed to biased information by their sources, because the research waste also includes the design flaws and the stockpile was bought while the full trial data were not available but without a statement that the money was lost, so they do not carry a '<reason> due to biased information' triple. Every number is taken from the named source as reported; a country that a study does not report is left out and never estimated. A share is stored as the decimal ratio, a loss as a positive number and a change with its sign. Each study has its own sample and metric, so numbers of different studies are not comparable without reading the source description. Every amount of money is stated in euro: the US dollar figure of the source is converted with the ECB 2023 annual average of 1.0813 USD per EUR (the value of GDP.json) whatever the price base year of the source, and the British pound figure with the ECB 2023 annual average of 0.86979 GBP per EUR, and the source figure is kept in the description of the value. A value of a reason carries the triple '<reason> due to biased information' and not the phrase 'biased information' itself, because a value that names a global problem directly is a row of the global problem ranking of the start page, where only the potential loss and the solution of a problem belong.",
+  "words": [
+    {
+      "name": "information"
+    },
+    {
+      "name": "biased"
+    },
+    {
+      "name": "efficacy"
+    },
+    {
+      "name": "overstated",
+      "description": "shown as larger or better than it is e.g. the efficacy of a drug in the published literature compared to all trial results"
+    },
+    {
+      "name": "research"
+    },
+    {
+      "name": "waste"
+    },
+    {
+      "name": "cost"
+    },
+    {
+      "name": "overrun",
+      "description": "the amount by which the actual value exceeds the planned or estimated value"
+    },
+    {
+      "name": "vote",
+      "description": "the choice of a voter for a candidate or party in an election"
+    },
+    {
+      "name": "share"
+    },
+    {
+      "name": "change"
+    },
+    {
+      "name": "intent",
+      "description": "the stated plan of a person to do something e.g. to take a vaccine"
+    },
+    {
+      "name": "vaccination"
+    },
+    {
+      "name": "risk"
+    },
+    {
+      "name": "misjudged",
+      "description": "estimated wrongly e.g. a risk that is feared more or less than its actual probability and damage justify"
+    },
+    {
+      "name": "advice",
+      "description": "a recommendation of an expert e.g. of a broker or financial adviser on how to invest savings"
+    },
+    {
+      "name": "conflicted",
+      "description": "influenced by a conflict of interest e.g. an adviser who is paid more for recommending one product than another"
+    },
+    {
+      "name": "antidepressant",
+      "description": "a drug used to treat depression"
+    },
+    {
+      "name": "trial"
+    },
+    {
+      "name": "positive"
+    },
+    {
+      "name": "published",
+      "description": "made public e.g. a trial result in a journal article"
+    },
+    {
+      "name": "unpublished",
+      "description": "not made public e.g. a completed trial whose results were never published in a journal"
+    },
+    {
+      "name": "FDA",
+      "description": "the Food and Drug Administration of the United States, the agency that approves drugs and holds the results of all trials submitted for an approval"
+    },
+    {
+      "name": "effect"
+    },
+    {
+      "name": "size"
+    },
+    {
+      "name": "increase"
+    },
+    {
+      "name": "industry"
+    },
+    {
+      "name": "sponsorship",
+      "description": "the funding of a study e.g. by the company that makes the tested drug or device"
+    },
+    {
+      "name": "favorable"
+    },
+    {
+      "name": "result",
+      "description": "the outcome of a study as measured"
+    },
+    {
+      "name": "conclusion",
+      "description": "the interpretation of the result of a study by its authors"
+    },
+    {
+      "name": "ratio"
+    },
+    {
+      "name": "transport"
+    },
+    {
+      "name": "infrastructure"
+    },
+    {
+      "name": "rail",
+      "description": "the railway as kind of transport infrastructure e.g. high-speed, urban and conventional inter-city rail"
+    },
+    {
+      "name": "road"
+    },
+    {
+      "name": "link",
+      "description": "a connection e.g. a bridge or tunnel that connects two places"
+    },
+    {
+      "name": "fixed"
+    },
+    {
+      "name": "Fox News",
+      "description": "the Fox News Channel, a conservative 24-hour cable news channel of the United States launched in October 1996",
+      "refs": [
+        {
+          "name": "Fox_News",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Republican",
+      "description": "the candidate or voter of the Republican Party of the United States"
+    },
+    {
+      "name": "persuasion"
+    },
+    {
+      "name": "rate"
+    },
+    {
+      "name": "deaths"
+    },
+    {
+      "name": "traffic"
+    },
+    {
+      "name": "return"
+    },
+    {
+      "name": "loss"
+    },
+    {
+      "name": "Tamiflu",
+      "description": "the brand name of oseltamivir, an antiviral drug against influenza made by Roche and stockpiled by many governments for an influenza pandemic"
+    },
+    {
+      "name": "stockpile",
+      "description": "a reserve of goods bought in advance for an emergency e.g. antiviral drugs for an influenza pandemic"
+    },
+    {
+      "name": "COVID-19"
+    },
+    {
+      "name": "United States"
+    },
+    {
+      "name": "United Kingdom"
+    },
+    {
+      "name": "world"
+    },
+    {
+      "name": "percent"
+    },
+    {
+      "name": "factor"
+    },
+    {
+      "name": "probability"
+    },
+    {
+      "name": "million"
+    },
+    {
+      "name": "billion"
+    },
+    {
+      "name": "EUR"
+    },
+    {
+      "name": "annual"
+    },
+    {
+      "name": "person"
+    },
+    {
+      "name": "low"
+    },
+    {
+      "name": "high"
+    },
+    {
+      "name": "1996",
+      "type": "time"
+    },
+    {
+      "name": "2000"
+    },
+    {
+      "name": "2001"
+    },
+    {
+      "name": "2004",
+      "type": "time"
+    },
+    {
+      "name": "2006",
+      "type": "time"
+    },
+    {
+      "name": "2008",
+      "type": "time"
+    },
+    {
+      "name": "2013"
+    },
+    {
+      "name": "2015"
+    },
+    {
+      "name": "2020"
+    }
+  ],
+  "triples": [
+    {
+      "name": "biased information",
+      "from": "information",
+      "verb": "can be",
+      "to": "biased"
+    },
+    {
+      "name": "overstated efficacy",
+      "from": "efficacy",
+      "verb": "kind of",
+      "to": "overstated",
+      "description": "the efficacy of a treatment as it appears from the available information compared to the efficacy shown by all studies"
+    },
+    {
+      "name": "research waste",
+      "from": "waste",
+      "verb": "of",
+      "to": "research",
+      "description": "the research investment that does not lead to usable results e.g. because the study is never published, badly reported or has avoidable design flaws"
+    },
+    {
+      "name": "cost overrun",
+      "from": "overrun",
+      "verb": "of",
+      "to": "cost",
+      "description": "the actual cost above the estimated cost as share of the estimated cost"
+    },
+    {
+      "name": "vote share",
+      "from": "share",
+      "verb": "of",
+      "to": "vote"
+    },
+    {
+      "name": "vote share change",
+      "from": "change",
+      "verb": "of",
+      "to": "vote share",
+      "description": "the change of the vote share of a party compared to a counterfactual without the cause; an increase is positive"
+    },
+    {
+      "name": "vaccination intent",
+      "from": "intent",
+      "verb": "of",
+      "to": "vaccination"
+    },
+    {
+      "name": "vaccination intent change",
+      "from": "change",
+      "verb": "of",
+      "to": "vaccination intent",
+      "description": "the change of the share of people who would take a vaccine compared to a control group; a decline is negative"
+    },
+    {
+      "name": "misjudged risk",
+      "from": "risk",
+      "verb": "kind of",
+      "to": "misjudged",
+      "description": "a risk that is judged much higher or lower than it is, e.g. because rare but vivid events dominate the reports, so that people switch to a riskier alternative"
+    },
+    {
+      "name": "conflicted advice",
+      "from": "advice",
+      "verb": "kind of",
+      "to": "conflicted",
+      "description": "advice from an adviser who is paid more for recommending one product than another, e.g. by commissions, so that the advice is biased towards the better paid product"
+    },
+    {
+      "name": "effect size",
+      "from": "size",
+      "verb": "of",
+      "to": "effect"
+    },
+    {
+      "name": "industry sponsorship",
+      "from": "sponsorship",
+      "verb": "of",
+      "to": "industry",
+      "description": "the funding of a study by the company that makes the tested drug or medical device"
+    },
+    {
+      "name": "favorable result",
+      "from": "result",
+      "verb": "kind of",
+      "to": "favorable"
+    },
+    {
+      "name": "favorable conclusion",
+      "from": "conclusion",
+      "verb": "kind of",
+      "to": "favorable"
+    },
+    {
+      "name": "risk ratio",
+      "from": "ratio",
+      "verb": "of",
+      "to": "risk",
+      "description": "the probability of an outcome in one group divided by the probability in a comparison group; 1 means no difference"
+    },
+    {
+      "name": "transport infrastructure",
+      "from": "infrastructure",
+      "verb": "kind of",
+      "to": "transport"
+    },
+    {
+      "name": "fixed link",
+      "from": "link",
+      "verb": "kind of",
+      "to": "fixed",
+      "description": "a bridge or tunnel"
+    },
+    {
+      "name": "persuasion rate",
+      "from": "rate",
+      "verb": "of",
+      "to": "persuasion",
+      "description": "the share of the audience not yet holding a view that changes its behaviour e.g. its vote because of a message"
+    },
+    {
+      "name": "traffic deaths",
+      "from": "deaths",
+      "verb": "of",
+      "to": "traffic"
+    },
+    {
+      "name": "return loss",
+      "from": "loss",
+      "verb": "of",
+      "to": "return",
+      "description": "the lower return of an investment compared to the return of a comparable investment chosen without the bias"
+    },
+    {
+      "name": "1996-2000",
+      "from": "1996",
+      "verb": "to",
+      "to": "2000"
+    },
+    {
+      "name": "2006-2013",
+      "from": "2006",
+      "verb": "to",
+      "to": "2013"
+    },
+    {
+      "name": "overstated efficacy due to biased information",
+      "from": "biased information",
+      "verb": "can cause",
+      "to": "overstated efficacy",
+      "description": "the selective publication and the industry sponsorship of trials make drugs look more effective than they are, so that doctors and patients choose treatments that help less than expected"
+    },
+    {
+      "name": "research waste due to biased information",
+      "from": "biased information",
+      "verb": "can cause",
+      "to": "research waste",
+      "description": "a trial that is not published because of its result is lost for the evidence and biases the published evidence"
+    },
+    {
+      "name": "cost overrun due to biased information",
+      "from": "biased information",
+      "verb": "can cause",
+      "to": "cost overrun",
+      "description": "the promoters of a project underestimate its cost to get it approved, so that projects are built whose benefit does not justify their actual cost"
+    },
+    {
+      "name": "vote share change due to biased information",
+      "from": "biased information",
+      "verb": "can cause",
+      "to": "vote share change",
+      "description": "slanted news persuades viewers to vote for the party it favours"
+    },
+    {
+      "name": "vaccination intent change due to biased information",
+      "from": "biased information",
+      "verb": "can cause",
+      "to": "vaccination intent change"
+    },
+    {
+      "name": "misjudged risk due to biased information",
+      "from": "biased information",
+      "verb": "can cause",
+      "to": "misjudged risk",
+      "description": "a vivid but one-sided picture of a rare catastrophic event makes people avoid it by choosing a more dangerous alternative"
+    },
+    {
+      "name": "conflicted advice due to biased information",
+      "from": "biased information",
+      "verb": "can cause",
+      "to": "conflicted advice",
+      "description": "an adviser who is paid by the product provider recommends the products with higher fees and lower returns"
+    }
+  ],
+  "sources": [
+    {
+      "name": "Turner et al. (2008)",
+      "description": "Turner, E. H., Matthews, A. M., Linardatos, E., Tell, R. A., Rosenthal, R. (2008): Selective Publication of Antidepressant Trials and Its Influence on Apparent Efficacy. New England Journal of Medicine 358(3), 252-260. FDA reviews of 74 registered studies of 12 antidepressants with 12'564 patients: 31 percent of the studies, with 3'449 participants, were not published; according to the published literature 94 percent of the trials were positive, according to the FDA analysis 51 percent; the effect size of the published literature was 32 percent higher overall than the one of the full FDA data, 11 to 69 percent for the individual drugs.",
+      "doi": "10.1056/NEJMsa065779"
+    },
+    {
+      "name": "Lundh et al. (2017) Industry sponsorship and research outcome",
+      "description": "Lundh, A., Lexchin, J., Mintzes, B., Schroll, J. B., Bero, L. (2017): Industry sponsorship and research outcome. Cochrane Database of Systematic Reviews 2017, MR000033. 75 papers: industry sponsored drug and device studies more often had favorable efficacy results, risk ratio 1.27 (95 percent CI 1.17 to 1.37, 25 papers, moderate quality evidence), and more often favorable conclusions, risk ratio 1.34 (95 percent CI 1.19 to 1.51, 29 papers, low quality evidence), than non-industry sponsored studies; an industry bias that cannot be explained by the standard risk of bias assessments.",
+      "doi": "10.1002/14651858.MR000033.pub3"
+    },
+    {
+      "name": "Glasziou & Chalmers (2016) Is 85% of health research really wasted",
+      "description": "Glasziou, P., Chalmers, I. (2016): Is 85% of health research really 'wasted'? The BMJ Opinion blog, 14 January 2016, explaining the estimate of their 2009 Lancet paper 'Avoidable waste in the production and reporting of research evidence': about 50 percent of the registered clinical trials are never published in full; half of the studies are published, half of those are reported well enough to use and half of those have no avoidable design flaws, so 87.5 out of 100 are wasted, rounded down to 85 percent; with USD 200 billion per year spent globally on health and medical research this implies an annual waste of USD 170 billion.",
+      "url": "https://blogs.bmj.com/bmj/2016/01/14/paul-glasziou-and-iain-chalmers-is-85-of-health-research-really-wasted/"
+    },
+    {
+      "name": "Flyvbjerg, Holm & Buhl (2002)",
+      "description": "Flyvbjerg, B., Holm, M. S., Buhl, S. (2002): Underestimating Costs in Public Works Projects: Error or Lie? Journal of the American Planning Association 68(3), 279-295. 258 transport infrastructure projects worth USD 90 billion in Europe, North America and other geographical areas (10 developing nations plus Japan): the costs are underestimated in almost 9 out of 10 projects, the likelihood of actual costs larger than estimated is 86 percent; actual costs are on average 28 percent higher than estimated (sd 39), 44.7 percent for rail, 33.8 percent for fixed links (bridges and tunnels) and 20.4 percent for roads; the underestimation cannot be explained by error and is best explained by strategic misrepresentation, that is, lying.",
+      "doi": "10.1080/01944360208976273"
+    },
+    {
+      "name": "DellaVigna & Kaplan (2007) The Fox News Effect",
+      "description": "DellaVigna, S., Kaplan, E. (2007): The Fox News Effect: Media Bias and Voting. Quarterly Journal of Economics 122(3), 1187-1234. 9'256 towns of the United States, of which 20 percent got Fox News in their cable programming between October 1996 and November 2000: the Republicans gained 0.4 to 0.7 percentage points of the vote share in the presidential elections in the towns that broadcast Fox News; Fox News convinced 3 to 28 percent of its viewers to vote Republican, depending on the audience measure.",
+      "doi": "10.1162/qjec.122.3.1187"
+    },
+    {
+      "name": "Martin & Yurukoglu (2017) Bias in Cable News",
+      "description": "Martin, G. J., Yurukoglu, A. (2017): Bias in Cable News: Persuasion and Polarization. American Economic Review 107(9), 2565-2599. Using the cable channel positions as exogenous shifters of the viewership: removing Fox News from the cable television would have reduced the Republican presidential vote share by 0.46 percentage points in 2000, 3.59 percentage points in 2004 and 6.34 percentage points in 2008, driven by the increasing viewership and the increasingly conservative slant; figures as stated in the author version of 5 April 2017.",
+      "doi": "10.1257/aer.20160812"
+    },
+    {
+      "name": "Loomba et al. (2021) COVID-19 vaccine misinformation",
+      "description": "Loomba, S., de Figueiredo, A., Piatek, S. J., de Graaf, K., Larson, H. J. (2021): Measuring the impact of COVID-19 vaccine misinformation on vaccination intent in the UK and USA. Nature Human Behaviour 5, 337-348. Randomized controlled trial of September 2020: relative to factual information, recent misinformation induced a decline in the vaccination intent of 6.2 percentage points (95th percentile interval 3.9 to 8.5) in the UK and 6.4 percentage points (4.0 to 8.8) in the USA among those who stated that they would definitely accept a vaccine.",
+      "doi": "10.1038/s41562-021-01056-1"
+    },
+    {
+      "name": "Gigerenzer (2006) Out of the frying pan into the fire",
+      "description": "Gigerenzer, G. (2006): Out of the frying pan into the fire: behavioral reactions to terrorist attacks. Risk Analysis 26(2), 347-351. After the attacks of 11 September 2001 the Americans reduced their air travel and drove instead; in the following year the fatal highway crashes exceeded the baseline of the previous years in each month; an estimated 1'500 Americans died on the road in the attempt to avoid the fate of the passengers of the four fatal flights, attributed to the fear of the dread risk.",
+      "doi": "10.1111/j.1539-6924.2006.00753.x"
+    },
+    {
+      "name": "CEA (2015) The Effects of Conflicted Investment Advice on Retirement Savings",
+      "description": "Council of Economic Advisers, Furman, J., Stevenson, B. (2015): The Effects of Conflicted Investment Advice on Retirement Savings, February 2015. Savers receiving conflicted advice earn returns roughly 1 percentage point lower each year; an estimated USD 1.7 trillion of the IRA assets are invested in products that generate conflicts of interest, so the aggregate annual cost of the conflicted advice is about USD 17 billion each year.",
+      "url": "https://obamawhitehouse.archives.gov/realitycheck/blog/2015/02/23/effects-conflicted-investment-advice-retirement-savings"
+    },
+    {
+      "name": "NAO (2013) Access to clinical trial information and the stockpiling of Tamiflu",
+      "description": "National Audit Office (2013): Access to clinical trial information and the stockpiling of Tamiflu. Memorandum for the Committee of Public Accounts, HC 125, Session 2013-14, 21 May 2013. Between 2006-07 and 2012-13 the Department of Health purchased nearly 40 million units of Tamiflu at a cost of GBP 424 million at 2011-12 prices; a key concern was that without full clinical trial information public money could be spent on ineffective medicines; 6.5 million units were written off at a cost of GBP 74 million because of poor record keeping.",
+      "url": "https://www.nao.org.uk/wp-content/uploads/2013/05/10155-001_Access-to-clinical-trial-info-and-the-stockpiling-ofTamiflu-Executive-Summary.pdf",
+      "type": "pdf"
+    }
+  ],
+  "values": [
+    {"words": ["overstated efficacy due to biased information", "antidepressant", "effect size", "increase", "United States", "percent"], "number": "0.32", "source": "Turner et al. (2008)", "description": "the effect size of the published trials compared to all trials submitted to the FDA, overall for 12 antidepressants"},
+    {"words": ["overstated efficacy due to biased information", "antidepressant", "effect size", "increase", "United States", "percent", "low"], "number": "0.11", "source": "Turner et al. (2008)", "description": "the lowest increase of the effect size of the 12 antidepressants"},
+    {"words": ["overstated efficacy due to biased information", "antidepressant", "effect size", "increase", "United States", "percent", "high"], "number": "0.69", "source": "Turner et al. (2008)", "description": "the highest increase of the effect size of the 12 antidepressants"},
+    {"words": ["overstated efficacy due to biased information", "antidepressant", "trial", "positive", "published", "United States", "percent"], "number": "0.94", "source": "Turner et al. (2008)", "description": "the share of the trials that appear positive according to the published literature"},
+    {"words": ["antidepressant", "trial", "positive", "FDA", "United States", "percent"], "number": "0.51", "source": "Turner et al. (2008)", "description": "the share of the same trials that are positive according to the FDA analysis; the comparison for the published literature"},
+    {"words": ["research waste due to biased information", "antidepressant", "trial", "unpublished", "United States", "percent"], "number": "0.31", "source": "Turner et al. (2008)", "description": "23 of the 74 FDA-registered studies with 3'449 participants were not published, mainly those with a negative or questionable result"},
+    {"words": ["overstated efficacy due to biased information", "industry sponsorship", "favorable result", "risk ratio", "world", "factor"], "number": "1.27", "source": "Lundh et al. (2017) Industry sponsorship and research outcome", "description": "industry sponsored studies compared to non-industry sponsored studies; 95 percent CI 1.17 to 1.37"},
+    {"words": ["overstated efficacy due to biased information", "industry sponsorship", "favorable conclusion", "risk ratio", "world", "factor"], "number": "1.34", "source": "Lundh et al. (2017) Industry sponsorship and research outcome", "description": "industry sponsored studies compared to non-industry sponsored studies; 95 percent CI 1.19 to 1.51"},
+    {"words": ["research waste due to biased information", "trial", "unpublished", "world", "percent"], "number": "0.5", "source": "Glasziou & Chalmers (2016) Is 85% of health research really wasted", "description": "about half of the registered clinical trials are never published in full"},
+    {"words": ["research waste", "world", "percent"], "number": "0.85", "source": "Glasziou & Chalmers (2016) Is 85% of health research really wasted", "description": "the avoidably wasted share of the health research investment by non-publication, unusable reporting and avoidable design flaws; not attributed to biased information alone by the source"},
+    {"words": ["research waste", "world", "annual", "billion", "EUR"], "number": "157.2", "source": "Glasziou & Chalmers (2016) Is 85% of health research really wasted", "description": "170 billion USD at the ECB 2023 average of 1.0813 USD per EUR; includes the waste by avoidable design flaws, so not attributed to biased information alone by the source"},
+    {"words": ["cost overrun due to biased information", "transport infrastructure", "world", "percent"], "number": "0.28", "source": "Flyvbjerg, Holm & Buhl (2002)", "description": "average of 258 projects, standard deviation 39 percent"},
+    {"words": ["cost overrun due to biased information", "transport infrastructure", "world", "probability", "percent"], "number": "0.86", "source": "Flyvbjerg, Holm & Buhl (2002)", "description": "the likelihood that the actual costs of a project are larger than the estimated costs"},
+    {"words": ["cost overrun due to biased information", "rail", "world", "percent"], "number": "0.447", "source": "Flyvbjerg, Holm & Buhl (2002)"},
+    {"words": ["cost overrun due to biased information", "fixed link", "world", "percent"], "number": "0.338", "source": "Flyvbjerg, Holm & Buhl (2002)", "description": "bridges and tunnels"},
+    {"words": ["cost overrun due to biased information", "road", "world", "percent"], "number": "0.204", "source": "Flyvbjerg, Holm & Buhl (2002)"},
+    {"words": ["vote share change due to biased information", "Fox News", "Republican", "United States", "1996-2000", "percent", "low"], "number": "0.004", "source": "DellaVigna & Kaplan (2007) The Fox News Effect", "description": "the gain of the Republican vote share in the presidential elections in the towns that broadcast Fox News"},
+    {"words": ["vote share change due to biased information", "Fox News", "Republican", "United States", "1996-2000", "percent", "high"], "number": "0.007", "source": "DellaVigna & Kaplan (2007) The Fox News Effect", "description": "the gain of the Republican vote share in the presidential elections in the towns that broadcast Fox News"},
+    {"words": ["vote share change due to biased information", "persuasion rate", "Fox News", "United States", "2000", "percent", "low"], "number": "0.03", "source": "DellaVigna & Kaplan (2007) The Fox News Effect", "description": "the share of the viewers convinced to vote Republican, depending on the audience measure"},
+    {"words": ["vote share change due to biased information", "persuasion rate", "Fox News", "United States", "2000", "percent", "high"], "number": "0.28", "source": "DellaVigna & Kaplan (2007) The Fox News Effect", "description": "the share of the viewers convinced to vote Republican, depending on the audience measure"},
+    {"words": ["vote share change due to biased information", "Fox News", "Republican", "United States", "2000", "percent"], "number": "0.0046", "source": "Martin & Yurukoglu (2017) Bias in Cable News", "description": "the Republican presidential vote share with Fox News compared to a counterfactual without Fox News"},
+    {"words": ["vote share change due to biased information", "Fox News", "Republican", "United States", "2004", "percent"], "number": "0.0359", "source": "Martin & Yurukoglu (2017) Bias in Cable News", "description": "the Republican presidential vote share with Fox News compared to a counterfactual without Fox News"},
+    {"words": ["vote share change due to biased information", "Fox News", "Republican", "United States", "2008", "percent"], "number": "0.0634", "source": "Martin & Yurukoglu (2017) Bias in Cable News", "description": "the Republican presidential vote share with Fox News compared to a counterfactual without Fox News"},
+    {"words": ["vaccination intent change due to biased information", "COVID-19", "United Kingdom", "2020", "percent"], "number": "-0.062", "source": "Loomba et al. (2021) COVID-19 vaccine misinformation", "description": "decline of 6.2 percentage points (95th percentile interval 3.9 to 8.5) among those who would definitely accept a vaccine, after exposure to misinformation compared to factual information"},
+    {"words": ["vaccination intent change due to biased information", "COVID-19", "United States", "2020", "percent"], "number": "-0.064", "source": "Loomba et al. (2021) COVID-19 vaccine misinformation", "description": "decline of 6.4 percentage points (95th percentile interval 4.0 to 8.8) among those who would definitely accept a vaccine, after exposure to misinformation compared to factual information"},
+    {"words": ["misjudged risk due to biased information", "traffic deaths", "United States", "2001", "person"], "number": "1500", "source": "Gigerenzer (2006) Out of the frying pan into the fire", "description": "the additional road deaths in the twelve months after 11 September 2001 of Americans who drove instead of flying; the source attributes them to the fear of the dread risk"},
+    {"words": ["conflicted advice due to biased information", "return loss", "United States", "annual", "percent"], "number": "0.01", "source": "CEA (2015) The Effects of Conflicted Investment Advice on Retirement Savings", "description": "the lower annual return of the savers who receive conflicted advice"},
+    {"words": ["conflicted advice due to biased information", "cost", "United States", "2015", "annual", "billion", "EUR"], "number": "15.72", "source": "CEA (2015) The Effects of Conflicted Investment Advice on Retirement Savings", "description": "17 billion USD per year for the IRA retirement savings at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["Tamiflu", "stockpile", "cost", "United Kingdom", "2006-2013", "million", "EUR"], "number": "487.5", "source": "NAO (2013) Access to clinical trial information and the stockpiling of Tamiflu", "description": "424 million GBP at 2011-12 prices for nearly 40 million units bought between 2006-07 and 2012-13 at the ECB 2023 average of 0.86979 GBP per EUR; bought while the full trial data were not available, but not attributed to biased information by the source"}
+  ]
+}

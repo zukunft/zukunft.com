@@ -1,0 +1,448 @@
+{
+  "version": "0.0.3",
+  "data_version": "0.0.1",
+  "time": "2026-10-08 12:00:00",
+  "user": "timon",
+  "selection": [
+    "citizen participation reasons that cause costs"
+  ],
+  "description": "The most relevant reasons why too little or too coarse citizen participation causes costs, each linked to citizen participation with 'can cause' and quantified by the studies that report it for the world and per country: the lower trust in the national government of the people who feel that they have no say in what the government does (OECD Trust Survey 2024), the public overspending without a mandatory fiscal referendum (Feld & Matsusaka 2003), the budget misallocation away from health and sanitation and the higher infant mortality without participatory budgeting in Brazil (Gonçalves 2014), the lower life satisfaction with weaker direct democratic rights in the Swiss cantons (Frey & Stutzer 2000) and the higher tax evasion in the Swiss cantons with less direct democracy (Frey, as reported by the Times Higher Education 1997). The share of the people who feel that they have a say, the trust in the national government, the decline of the voter turnout and the share of the elections whose result is rejected by a loser (International IDEA 2024) are added as the context of the problem; these values are not attributed to the lack of citizen participation by their sources, so they do not carry a '<reason> due to citizen participation' triple. The binary referendum position count, the loss of the problem and its solution are stated in problem_citizen_participation.json instead, because they are the row of the global problem ranking of the start page. Every number is taken from the named source as reported; a country that a study does not report is left out and never estimated. A share is stored as the decimal ratio, a percentage point difference also as the decimal ratio, a loss as a positive number and a change with its sign. Each study has its own sample, period and metric, and most of them compare more participation with less participation in one country, so numbers of different studies are not comparable without reading the source description. Every amount of money is stated in euro; an amount in Swiss francs is not converted, but the value is stored as the share that the source reports and the franc amount is kept in the description. A value of a reason carries the triple '<reason> due to citizen participation' and not the phrase 'citizen participation' itself, because a value that names a global problem directly is a row of the global problem ranking of the start page, where only the potential loss and the solution of a problem belong.",
+  "words": [
+    {
+      "name": "citizen"
+    },
+    {
+      "name": "participation"
+    },
+    {
+      "name": "trust"
+    },
+    {
+      "name": "government"
+    },
+    {
+      "name": "gap"
+    },
+    {
+      "name": "political"
+    },
+    {
+      "name": "voice"
+    },
+    {
+      "name": "OECD",
+      "description": "the member countries of the Organisation for Economic Co-operation and Development taken together, e.g. as the average of the countries of a survey"
+    },
+    {
+      "name": "voter"
+    },
+    {
+      "name": "turnout",
+      "description": "the share of the people entitled to vote who cast a ballot in an election"
+    },
+    {
+      "name": "election"
+    },
+    {
+      "name": "result"
+    },
+    {
+      "name": "rejection"
+    },
+    {
+      "name": "public"
+    },
+    {
+      "name": "overspending",
+      "description": "the spending of a government above the level that the voters prefer"
+    },
+    {
+      "name": "fiscal"
+    },
+    {
+      "name": "referendum"
+    },
+    {
+      "name": "mandatory"
+    },
+    {
+      "name": "canton"
+    },
+    {
+      "name": "budget"
+    },
+    {
+      "name": "budgeting"
+    },
+    {
+      "name": "participatory"
+    },
+    {
+      "name": "misallocation",
+      "description": "the spending of public money on other things than the ones the citizens need and prefer"
+    },
+    {
+      "name": "share"
+    },
+    {
+      "name": "health"
+    },
+    {
+      "name": "sanitation"
+    },
+    {
+      "name": "infant"
+    },
+    {
+      "name": "mortality"
+    },
+    {
+      "name": "birth"
+    },
+    {
+      "name": "life"
+    },
+    {
+      "name": "satisfaction"
+    },
+    {
+      "name": "loss"
+    },
+    {
+      "name": "democracy"
+    },
+    {
+      "name": "direct"
+    },
+    {
+      "name": "index"
+    },
+    {
+      "name": "point"
+    },
+    {
+      "name": "percentage",
+      "description": "a number stated as a fraction of 100"
+    },
+    {
+      "name": "tax"
+    },
+    {
+      "name": "evasion",
+      "description": "the illegal non-payment or underpayment of a tax, e.g. by not declaring the income"
+    },
+    {
+      "name": "percent"
+    },
+    {
+      "name": "low"
+    },
+    {
+      "name": "high"
+    },
+    {
+      "name": "world"
+    },
+    {
+      "name": "Italy"
+    },
+    {
+      "name": "Switzerland"
+    },
+    {
+      "name": "Geneva"
+    },
+    {
+      "name": "Basel-Landschaft",
+      "description": "a canton in the north-west of Switzerland, with the strongest direct democratic rights of the cantons in 1992 according to Frey & Stutzer"
+    },
+    {
+      "name": "Brazil"
+    },
+    {
+      "name": "1980",
+      "type": "time"
+    },
+    {
+      "name": "1990",
+      "type": "time"
+    },
+    {
+      "name": "1992",
+      "type": "time"
+    },
+    {
+      "name": "1998",
+      "type": "time"
+    },
+    {
+      "name": "2004"
+    },
+    {
+      "name": "2008"
+    },
+    {
+      "name": "2023"
+    },
+    {
+      "name": "2020-2024"
+    }
+  ],
+  "triples": [
+    {
+      "name": "citizen participation",
+      "from": "participation",
+      "verb": "of",
+      "to": "citizen"
+    },
+    {
+      "from": "trust",
+      "verb": "in",
+      "to": "government"
+    },
+    {
+      "name": "trust gap",
+      "from": "gap",
+      "verb": "of",
+      "to": "trust in government",
+      "description": "the difference of the share with high or moderately high trust in the national government between the people who feel that the political system lets people like them have a say and the people who feel that it does not"
+    },
+    {
+      "name": "political voice",
+      "from": "voice",
+      "verb": "kind of",
+      "to": "political",
+      "description": "the feeling that the political system lets people like oneself have a say in what the government does"
+    },
+    {
+      "name": "voter turnout",
+      "from": "turnout",
+      "verb": "of",
+      "to": "voter"
+    },
+    {
+      "name": "election result",
+      "from": "result",
+      "verb": "of",
+      "to": "election"
+    },
+    {
+      "name": "election result rejection",
+      "from": "rejection",
+      "verb": "of",
+      "to": "election result",
+      "description": "the refusal of at least one losing candidate or party to accept the result of an election"
+    },
+    {
+      "name": "public overspending",
+      "from": "overspending",
+      "verb": "kind of",
+      "to": "public",
+      "description": "the public spending above the level that the voters would approve if they could decide on it"
+    },
+    {
+      "name": "fiscal referendum",
+      "from": "referendum",
+      "verb": "kind of",
+      "to": "fiscal"
+    },
+    {
+      "name": "mandatory fiscal referendum",
+      "from": "fiscal referendum",
+      "verb": "kind of",
+      "to": "mandatory",
+      "description": "a referendum that is held automatically before a new public spending above a threshold can be made"
+    },
+    {
+      "name": "Swiss canton",
+      "from": "canton",
+      "verb": "of",
+      "to": "Switzerland"
+    },
+    {
+      "name": "participatory budgeting",
+      "from": "budgeting",
+      "verb": "kind of",
+      "to": "participatory"
+    },
+    {
+      "name": "budget misallocation",
+      "from": "misallocation",
+      "verb": "of",
+      "to": "budget",
+      "description": "a public budget that is spent on other purposes than the citizens would choose, e.g. less on health and sanitation"
+    },
+    {
+      "name": "budget share",
+      "from": "share",
+      "verb": "of",
+      "to": "budget"
+    },
+    {
+      "name": "infant mortality",
+      "from": "mortality",
+      "verb": "of",
+      "to": "infant"
+    },
+    {
+      "name": "infant mortality per 1000 live births",
+      "from": "mortality",
+      "verb": "per",
+      "to": "birth"
+    },
+    {
+      "name": "life satisfaction",
+      "from": "satisfaction",
+      "verb": "of",
+      "to": "life"
+    },
+    {
+      "name": "life satisfaction loss",
+      "from": "loss",
+      "verb": "of",
+      "to": "life satisfaction"
+    },
+    {
+      "name": "direct democracy",
+      "from": "democracy",
+      "verb": "kind of",
+      "to": "direct"
+    },
+    {
+      "name": "index point",
+      "from": "point",
+      "verb": "of",
+      "to": "index",
+      "type": "measure_unit"
+    },
+    {
+      "name": "percentage point",
+      "from": "point",
+      "verb": "kind of",
+      "to": "percentage",
+      "description": "the arithmetic difference of two percentages, e.g. from 10 percent to 12 percent is 2 percentage points"
+    },
+    {
+      "name": "percentage point per index point",
+      "from": "percentage point",
+      "verb": "per",
+      "to": "index point",
+      "type": "measure_unit"
+    },
+    {
+      "name": "tax evasion",
+      "from": "evasion",
+      "verb": "of",
+      "to": "tax"
+    },
+    {
+      "name": "1980-1998",
+      "from": "1980",
+      "verb": "to",
+      "to": "1998"
+    },
+    {
+      "name": "1990-2004",
+      "from": "1990",
+      "verb": "to",
+      "to": "2004"
+    },
+    {
+      "name": "trust gap due to citizen participation",
+      "from": "citizen participation",
+      "verb": "can cause",
+      "to": "trust gap",
+      "description": "the people who feel that they have no say in what the government does trust the national government much less"
+    },
+    {
+      "name": "public overspending due to citizen participation",
+      "from": "citizen participation",
+      "verb": "can cause",
+      "to": "public overspending",
+      "description": "without a referendum on new spending the legislators spend more than the median voter prefers"
+    },
+    {
+      "name": "budget misallocation due to citizen participation",
+      "from": "citizen participation",
+      "verb": "can cause",
+      "to": "budget misallocation",
+      "description": "without a direct say of the service users in the budget less money goes to the basic services they need, such as health and sanitation"
+    },
+    {
+      "name": "infant mortality due to citizen participation",
+      "from": "citizen participation",
+      "verb": "can cause",
+      "to": "infant mortality",
+      "description": "without participatory budgeting less money goes to sanitation and health, so more infants die of waterborne diseases"
+    },
+    {
+      "name": "life satisfaction loss due to citizen participation",
+      "from": "citizen participation",
+      "verb": "can cause",
+      "to": "life satisfaction loss",
+      "description": "weaker direct democratic rights lead to political outcomes further from the preferences of the voters and remove the satisfaction of taking part in the decision"
+    },
+    {
+      "name": "tax evasion due to citizen participation",
+      "from": "citizen participation",
+      "verb": "can cause",
+      "to": "tax evasion",
+      "description": "citizens who have less say in how the tax money is spent feel less bound to pay the tax"
+    }
+  ],
+  "sources": [
+    {
+      "name": "OECD (2024) Drivers of Trust in Public Institutions",
+      "description": "OECD (2024): OECD Survey on Drivers of Trust in Public Institutions - 2024 Results. Survey in 30 OECD countries in October and November 2023, representative of the adult population; 'high or moderately high' trust are the answers 6 to 10 on a scale from 0 to 10. Country note Italy: 36 percent of the Italians report high or moderately high trust in the national government, the OECD average is 39 percent; 22 percent of the Italians believe that the political system allows people like them to have a say in what the government does, 8 percentage points below the OECD average of 30 percent; the Italians who feel that the political system does not let people like them have a say trust the national government 45 percentage points less than those who feel they have political voice, the average gap across the OECD countries is 47 percentage points.",
+      "doi": "10.1787/9a20554b-en"
+    },
+    {
+      "name": "International IDEA (2024) The Global State of Democracy 2024",
+      "description": "International IDEA (2024): The Global State of Democracy 2024. The global average voter turnout, the percentage of the voting age population who vote, fell from 65.2 percent in 2008 to 55.5 percent in 2023 (International IDEA Voter Turnout Database, accessed 8 July 2024); in roughly one in five elections between 2020 and 2024 at least one losing candidate or party rejected the result.",
+      "url": "https://idea.int/news/credibility-elections-under-threat-worldwide"
+    },
+    {
+      "name": "Feld & Matsusaka (2003)",
+      "description": "Feld, L. P., Matsusaka, J. G. (2003): Budget referendums and government spending: evidence from Swiss cantons. Journal of Public Economics 87(12), 2703-2724. Panel of the 26 Swiss cantons 1980-1998: a mandatory referendum on new spending with the median threshold of 2.5 million Swiss francs reduced the government spending of the median canton by 19 percent, controlling for demographics and other determinants of spending; the figures are checked in the working paper version of May 2002, which also states 1314 Swiss francs per capita less spending in a simpler specification, 18 percent of the average of 7232 Swiss francs per capita.",
+      "doi": "10.1016/S0047-2727(02)00140-8"
+    },
+    {
+      "name": "Gonçalves (2014)",
+      "description": "Gonçalves, S. (2014): The Effects of Participatory Budgeting on Municipal Expenditures and Infant Mortality in Brazil. World Development 53, 94-110. Panel of Brazilian municipalities 1990-2004: participatory budgeting increases the share of the public budget spent on health and sanitation by 2 to 3 percentage points, which is 20 to 30 percent of the sample mean of this budget share in 1990, and the municipalities that adopted it registered a drop of the infant mortality of 1 to 2 infants for every 1000, about 5 to 10 percent of the infant mortality rate in 1990.",
+      "doi": "10.1016/j.worlddev.2013.01.009"
+    },
+    {
+      "name": "Frey & Stutzer (2000)",
+      "description": "Frey, B. S., Stutzer, A. (2000): Happiness, Economy and Institutions. The Economic Journal 110(466), 918-938. Survey of more than 6000 residents of Switzerland in 1992 and an index of the direct democratic rights of the cantons from 1 to 6: one index point more raises the share of the persons with a very high satisfaction with life by 2.8 percentage points; the residents of Basel-Landschaft (index 5.69) have an 11 percentage points higher probability to be completely satisfied than the residents of Geneva (index 1.75). The figures are checked in the working paper version (IEW Working Paper 15, University of Zurich, November 1999).",
+      "doi": "10.1111/1468-0297.00570",
+      "url": "https://webspace.qmul.ac.uk/fcornaglia/institutions.pdf",
+      "type": "pdf"
+    },
+    {
+      "name": "Times Higher Education (1997) More say, less evasion",
+      "description": "Times Higher Education (29 August 1997): More say, less evasion. Report on the research of Bruno Frey (University of Zurich) for the Economic and Social Research Council: the tax cheating in the Swiss cantons with direct democracy is 8 percent lower than in the cantons with a more traditional representative democracy. A secondary report; the peer-reviewed Feld, L. P., Frey, B. S. (2002): Trust breeds trust: How taxpayers are treated, Economics of Governance 3, 87-99 (doi 10.1007/s101010100032) states the same finding in money: based on 25 Swiss cantons in 1965, 1970 and 1978 (Pommerehne & Weck-Hannemann 1996, Frey 1997) the tax evasion is 1500 Swiss francs per taxpayer lower in the direct democratic cantons than in the others.",
+      "url": "https://www.timeshighereducation.com/node/13433"
+    }
+  ],
+  "values": [
+    {"words": ["trust gap due to citizen participation", "political voice", "OECD", "2023", "percent"], "number": "0.47", "source": "OECD (2024) Drivers of Trust in Public Institutions", "description": "the people who feel that they have no say trust the national government 47 percentage points less than those who feel they have political voice, average of 30 OECD countries"},
+    {"words": ["trust gap due to citizen participation", "political voice", "Italy", "2023", "percent"], "number": "0.45", "source": "OECD (2024) Drivers of Trust in Public Institutions", "description": "45 percentage points"},
+    {"words": ["political voice", "OECD", "2023", "percent"], "number": "0.3", "source": "OECD (2024) Drivers of Trust in Public Institutions", "description": "the share of the people who believe that the political system allows people like them to have a say in what the government does, average of 30 OECD countries; not attributed to the lack of citizen participation by the source"},
+    {"words": ["political voice", "Italy", "2023", "percent"], "number": "0.22", "source": "OECD (2024) Drivers of Trust in Public Institutions", "description": "the share of the Italians who believe that the political system allows people like them to have a say in what the government does; not attributed to the lack of citizen participation by the source"},
+    {"words": ["trust in government", "OECD", "2023", "percent"], "number": "0.39", "source": "OECD (2024) Drivers of Trust in Public Institutions", "description": "the share with high or moderately high trust in the national government, average of 30 OECD countries; not attributed to the lack of citizen participation by the source"},
+    {"words": ["trust in government", "Italy", "2023", "percent"], "number": "0.36", "source": "OECD (2024) Drivers of Trust in Public Institutions", "description": "the share with high or moderately high trust in the national government; not attributed to the lack of citizen participation by the source"},
+    {"words": ["voter turnout", "world", "2008", "percent"], "number": "0.652", "source": "International IDEA (2024) The Global State of Democracy 2024", "description": "the global average percentage of the voting age population who vote; not attributed to the lack of citizen participation by the source"},
+    {"words": ["voter turnout", "world", "2023", "percent"], "number": "0.555", "source": "International IDEA (2024) The Global State of Democracy 2024", "description": "the global average percentage of the voting age population who vote, 10 percentage points less than in 2008; not attributed to the lack of citizen participation by the source"},
+    {"words": ["election result rejection", "world", "2020-2024", "percent"], "number": "0.2", "source": "International IDEA (2024) The Global State of Democracy 2024", "description": "roughly one in five elections in which at least one losing candidate or party rejected the result; not attributed to the lack of citizen participation by the source"},
+    {"words": ["public overspending due to citizen participation", "mandatory fiscal referendum", "Swiss canton", "1980-1998", "percent"], "number": "0.19", "source": "Feld & Matsusaka (2003)", "description": "the median canton with a mandatory referendum on new spending above 2.5 million Swiss francs spends 19 percent less than a canton without it"},
+    {"words": ["budget misallocation due to citizen participation", "participatory budgeting", "health", "sanitation", "budget share", "Brazil", "1990-2004", "percent", "low"], "number": "0.02", "source": "Gonçalves (2014)", "description": "participatory budgeting raises the share of the municipal budget spent on health and sanitation by 2 to 3 percentage points, i.e. this share is lower without it"},
+    {"words": ["budget misallocation due to citizen participation", "participatory budgeting", "health", "sanitation", "budget share", "Brazil", "1990-2004", "percent", "high"], "number": "0.03", "source": "Gonçalves (2014)", "description": "3 percentage points, 20 to 30 percent of the sample mean of this budget share in 1990"},
+    {"words": ["infant mortality due to citizen participation", "participatory budgeting", "infant mortality per 1000 live births", "Brazil", "1990-2004", "low"], "number": "1", "source": "Gonçalves (2014)", "description": "the municipalities that adopted participatory budgeting registered a drop of 1 to 2 infant deaths for every 1000 infants"},
+    {"words": ["infant mortality due to citizen participation", "participatory budgeting", "infant mortality per 1000 live births", "Brazil", "1990-2004", "high"], "number": "2", "source": "Gonçalves (2014)", "description": "the municipalities that adopted participatory budgeting registered a drop of 1 to 2 infant deaths for every 1000 infants"},
+    {"words": ["infant mortality due to citizen participation", "participatory budgeting", "Brazil", "1990-2004", "percent", "low"], "number": "0.05", "source": "Gonçalves (2014)", "description": "the drop of the infant mortality with participatory budgeting is about 5 to 10 percent of the infant mortality rate in 1990"},
+    {"words": ["infant mortality due to citizen participation", "participatory budgeting", "Brazil", "1990-2004", "percent", "high"], "number": "0.1", "source": "Gonçalves (2014)", "description": "the drop of the infant mortality with participatory budgeting is about 5 to 10 percent of the infant mortality rate in 1990"},
+    {"words": ["life satisfaction loss due to citizen participation", "direct democracy", "Switzerland", "1992", "percentage point per index point"], "number": "2.8", "source": "Frey & Stutzer (2000)", "description": "one point less on the index of the direct democratic rights of a canton (1 to 6) lowers the share of the persons with a very high satisfaction with life by 2.8 percentage points"},
+    {"words": ["life satisfaction loss due to citizen participation", "direct democracy", "Geneva", "Basel-Landschaft", "1992", "percent"], "number": "0.11", "source": "Frey & Stutzer (2000)", "description": "the residents of Geneva (index 1.75) have an 11 percentage points lower probability to be completely satisfied with their life than the residents of Basel-Landschaft (index 5.69)"},
+    {"words": ["tax evasion due to citizen participation", "direct democracy", "Swiss canton", "percent"], "number": "0.08", "source": "Times Higher Education (1997) More say, less evasion", "description": "the tax cheating in the Swiss cantons with direct democracy is 8 percent lower than in the cantons with a more traditional representative democracy; a secondary report, the peer-reviewed Feld & Frey (2002) state 1500 Swiss francs per taxpayer less tax evasion in the direct democratic cantons"}
+  ]
+}

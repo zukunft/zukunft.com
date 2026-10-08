@@ -1,0 +1,490 @@
+{
+  "version": "0.0.3",
+  "data_version": "0.0.1",
+  "time": "2026-10-08 12:00:00",
+  "user": "timon",
+  "selection": [
+    "black-box AI reasons that cause costs"
+  ],
+  "description": "The most relevant reasons why black-box AI, an AI system whose training data, workings and decisions cannot be explained or audited, causes costs, each linked to black-box AI with 'can cause' and quantified by the studies, audits and official statistics that report it for the world and per country: the algorithmic discrimination of a commercial health care algorithm (Obermeyer et al. 2019), of the proprietary COMPAS recidivism score (ProPublica 2016) and of the risk classification model of the Dutch tax authorities (Autoriteit Persoonsgegevens 2021), the hallucination of large language models when they cite scientific references (Chelli et al. 2024) or answer legal queries (Dahl et al. 2024), the missed diagnosis and the alert fatigue of the proprietary Epic Sepsis Model (Wong et al. 2021), the reported AI incidents (Stanford AI Index 2026 based on the AI Incident Database), the mistakes of employees who rely on AI output (University of Melbourne and KPMG 2025) and the compliance and verification cost of the high-risk AI under the EU AI Act (European Commission impact assessment 2021). The annual GDP loss of black-box AI and its solution are stated in problem_black_box_ai.json instead, because they are the row of the global problem ranking of the start page. The Dutch childcare benefits scandal (toeslagenaffaire), in which a self-learning black box risk classification model selected the parents for the fraud investigations according to Amnesty International (2021), is added as the extreme case of wrongful decisions with the number of the recognised victims, their average compensation and the budget of the recovery operation; these values are not attributed to black-box AI by their source, because the harsh fraud policy of the tax authorities is also a cause, so they do not carry a '<reason> due to black-box AI' triple. Every number is taken from the named source as reported; a country that a study does not report is left out and never estimated. A share is stored as the decimal ratio, a loss as a positive number and a change with its sign. Each study has its own sample and metric, so numbers of different studies are not comparable without reading the source description. Every amount of money is stated in euro: the US dollar figure of a source would be converted with the ECB 2023 annual average of 1.0813 USD per EUR (the value of GDP.json) whatever the price base year of the source, and the source figure is kept in the description of the value; all amounts used here are already reported in euro. A value of a reason carries the triple '<reason> due to black-box AI' and not the phrase 'black-box AI' itself, because a value that names a global problem directly is a row of the global problem ranking of the start page, where only the potential loss and the solution of a problem belong.",
+  "words": [
+    {
+      "name": "artificial"
+    },
+    {
+      "name": "intelligence"
+    },
+    {
+      "name": "black-box"
+    },
+    {
+      "name": "AI"
+    },
+    {
+      "name": "discrimination"
+    },
+    {
+      "name": "algorithmic",
+      "description": "made by an algorithm, e.g. a decision of a statistical model or a machine learning system without a human judgement of the single case"
+    },
+    {
+      "name": "hallucination",
+      "description": "an output of an AI model that is presented as a fact but is not consistent with the facts or the source, e.g. an invented scientific reference or court case"
+    },
+    {
+      "name": "diagnosis"
+    },
+    {
+      "name": "missed"
+    },
+    {
+      "name": "fatigue"
+    },
+    {
+      "name": "alert",
+      "description": "a warning that a decision support system shows to a clinician or another user"
+    },
+    {
+      "name": "incident"
+    },
+    {
+      "name": "mistake"
+    },
+    {
+      "name": "cost"
+    },
+    {
+      "name": "compliance",
+      "description": "the fulfilment of the requirements of a law, e.g. the documentation, traceability, transparency and human oversight that the EU AI Act demands for a high-risk AI system"
+    },
+    {
+      "name": "verification"
+    },
+    {
+      "name": "high-risk",
+      "description": "classified as a high risk for the health, safety or fundamental rights of persons, e.g. under the EU AI Act"
+    },
+    {
+      "name": "investment"
+    },
+    {
+      "name": "positive"
+    },
+    {
+      "name": "false"
+    },
+    {
+      "name": "rate"
+    },
+    {
+      "name": "care"
+    },
+    {
+      "name": "program"
+    },
+    {
+      "name": "patient"
+    },
+    {
+      "name": "Black",
+      "description": "the self-identified race of a person as Black or African American, as used by the US health care and criminal justice data"
+    },
+    {
+      "name": "White",
+      "description": "the self-identified race of a person as White, as used by the US health care and criminal justice data"
+    },
+    {
+      "name": "unbiased",
+      "description": "the value that a model would give without its bias, e.g. if it ranked the patients by their health need instead of their predicted cost"
+    },
+    {
+      "name": "defendant"
+    },
+    {
+      "name": "COMPAS",
+      "description": "Correctional Offender Management Profiling for Alternative Sanctions: a proprietary risk assessment tool that predicts the recidivism of defendants and is used by US courts, whose calculation is not disclosed"
+    },
+    {
+      "name": "fine"
+    },
+    {
+      "name": "reference"
+    },
+    {
+      "name": "law"
+    },
+    {
+      "name": "GPT-3.5",
+      "description": "a large language model of OpenAI used in ChatGPT"
+    },
+    {
+      "name": "GPT-4",
+      "description": "a large language model of OpenAI used in ChatGPT"
+    },
+    {
+      "name": "Bard",
+      "description": "a large language model chatbot of Google, renamed to Gemini in 2024"
+    },
+    {
+      "name": "Llama 2",
+      "description": "a large language model of Meta with published weights"
+    },
+    {
+      "name": "sepsis",
+      "description": "a life-threatening organ dysfunction caused by a dysregulated response of the body to an infection"
+    },
+    {
+      "name": "Epic Sepsis Model",
+      "description": "a proprietary sepsis prediction model of the electronic health record vendor Epic Systems that is implemented at hundreds of US hospitals"
+    },
+    {
+      "name": "hospitalization",
+      "description": "the admission of a patient to a hospital"
+    },
+    {
+      "name": "work"
+    },
+    {
+      "name": "employee"
+    },
+    {
+      "name": "childcare"
+    },
+    {
+      "name": "benefits"
+    },
+    {
+      "name": "scandal"
+    },
+    {
+      "name": "victim"
+    },
+    {
+      "name": "parent"
+    },
+    {
+      "name": "compensation"
+    },
+    {
+      "name": "average"
+    },
+    {
+      "name": "budget"
+    },
+    {
+      "name": "percent"
+    },
+    {
+      "name": "person"
+    },
+    {
+      "name": "million"
+    },
+    {
+      "name": "billion"
+    },
+    {
+      "name": "EUR"
+    },
+    {
+      "name": "low"
+    },
+    {
+      "name": "high"
+    },
+    {
+      "name": "world"
+    },
+    {
+      "name": "United States"
+    },
+    {
+      "name": "European Union"
+    },
+    {
+      "name": "Netherlands",
+      "description": "a country in north-western Europe on the North Sea",
+      "refs": [
+        {
+          "name": "Netherlands",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q55",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "2013"
+    },
+    {
+      "name": "2014"
+    },
+    {
+      "name": "2018"
+    },
+    {
+      "name": "2019"
+    },
+    {
+      "name": "2020"
+    },
+    {
+      "name": "2021"
+    },
+    {
+      "name": "2024"
+    },
+    {
+      "name": "2025"
+    },
+    {
+      "name": "2028",
+      "type": "time"
+    }
+  ],
+  "triples": [
+    {
+      "name": "artificial intelligence",
+      "from": "intelligence",
+      "verb": "can be",
+      "to": "artificial"
+    },
+    {
+      "name": "black-box AI",
+      "from": "artificial intelligence",
+      "verb": "can be",
+      "to": "black-box"
+    },
+    {
+      "name": "high-risk AI",
+      "from": "artificial intelligence",
+      "verb": "can be",
+      "to": "high-risk",
+      "description": "an AI system that the EU AI Act classifies as a high risk for the health, safety or fundamental rights of persons, e.g. in employment, credit scoring, education, law enforcement or access to public benefits"
+    },
+    {
+      "name": "algorithmic discrimination",
+      "from": "discrimination",
+      "verb": "kind of",
+      "to": "algorithmic",
+      "description": "the unequal treatment of a group of persons by the decision of an algorithm, e.g. because the model uses a proxy that differs between the groups"
+    },
+    {
+      "name": "missed diagnosis",
+      "from": "diagnosis",
+      "verb": "kind of",
+      "to": "missed",
+      "description": "a disease that a decision support system or a clinician does not detect although the patient has it"
+    },
+    {
+      "name": "alert fatigue",
+      "from": "fatigue",
+      "verb": "of",
+      "to": "alert",
+      "description": "the desensitisation of clinicians to warnings because a decision support system shows too many false alerts, so that also the true alerts are ignored"
+    },
+    {
+      "name": "AI incident",
+      "from": "incident",
+      "verb": "of",
+      "to": "AI",
+      "description": "a harm or near harm realised in the real world by the deployment of an AI system"
+    },
+    {
+      "name": "compliance cost",
+      "from": "cost",
+      "verb": "of",
+      "to": "compliance"
+    },
+    {
+      "name": "verification cost",
+      "from": "cost",
+      "verb": "of",
+      "to": "verification"
+    },
+    {
+      "name": "false positive",
+      "from": "positive",
+      "verb": "kind of",
+      "to": "false"
+    },
+    {
+      "name": "false positive rate",
+      "from": "rate",
+      "verb": "of",
+      "to": "false positive",
+      "description": "the share of the persons without the predicted outcome that a model wrongly classifies as having it, e.g. the defendants who did not reoffend but were labelled as higher risk"
+    },
+    {
+      "name": "care program",
+      "from": "program",
+      "verb": "of",
+      "to": "care",
+      "description": "a high-risk care management program of a US health system that gives patients with complex health needs additional resources, e.g. dedicated nurses and more primary care appointments"
+    },
+    {
+      "name": "childcare benefits",
+      "from": "benefits",
+      "verb": "of",
+      "to": "childcare"
+    },
+    {
+      "name": "childcare benefits scandal",
+      "from": "scandal",
+      "verb": "of",
+      "to": "childcare benefits",
+      "description": "the Dutch toeslagenaffaire: the tax authorities wrongly accused tens of thousands of parents of fraud with the childcare benefits; from 2013 a self-learning black box risk classification model that used the nationality as a risk factor selected the applications for the investigations"
+    },
+    {
+      "name": "2013-2014",
+      "from": "2013",
+      "verb": "to",
+      "to": "2014"
+    },
+    {
+      "name": "2018-2019",
+      "from": "2018",
+      "verb": "to",
+      "to": "2019"
+    },
+    {
+      "name": "2020-2028",
+      "from": "2020",
+      "verb": "to",
+      "to": "2028"
+    },
+    {
+      "name": "algorithmic discrimination due to black-box AI",
+      "from": "black-box AI",
+      "verb": "can cause",
+      "to": "algorithmic discrimination",
+      "description": "a model whose inputs and workings are hidden can use a biased proxy or a protected attribute without anyone noticing it"
+    },
+    {
+      "name": "hallucination due to black-box AI",
+      "from": "black-box AI",
+      "verb": "can cause",
+      "to": "hallucination",
+      "description": "an answer that cannot be traced to its source cannot be checked by the user"
+    },
+    {
+      "name": "missed diagnosis due to black-box AI",
+      "from": "black-box AI",
+      "verb": "can cause",
+      "to": "missed diagnosis",
+      "description": "a proprietary clinical model is used without an independent validation of its accuracy"
+    },
+    {
+      "name": "alert fatigue due to black-box AI",
+      "from": "black-box AI",
+      "verb": "can cause",
+      "to": "alert fatigue"
+    },
+    {
+      "name": "AI incident due to black-box AI",
+      "from": "black-box AI",
+      "verb": "can cause",
+      "to": "AI incident"
+    },
+    {
+      "name": "mistake due to black-box AI",
+      "from": "black-box AI",
+      "verb": "can cause",
+      "to": "mistake",
+      "description": "a person who relies on an AI output without being able to check it takes over its errors"
+    },
+    {
+      "name": "compliance cost due to black-box AI",
+      "from": "black-box AI",
+      "verb": "can cause",
+      "to": "compliance cost",
+      "description": "the cost of making an opaque high-risk AI system documented, traceable, transparent and supervised by humans as the EU AI Act requires"
+    }
+  ],
+  "sources": [
+    {
+      "name": "Obermeyer et al. (2019)",
+      "description": "Obermeyer, Z., Powers, B., Vogeli, C., Mullainathan, S. (2019): Dissecting racial bias in an algorithm used to manage the health of populations. Science 366(6464), 447-453. A widely used commercial algorithm that selects patients for high-risk care management programs in the United States predicts the health care costs instead of the illness; at a given risk score Black patients are considerably sicker than White patients, and remedying this disparity would increase the percentage of Black patients receiving additional help from 17.7 to 46.5 percent.",
+      "doi": "10.1126/science.aax2342",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/31649194/"
+    },
+    {
+      "name": "ProPublica (2016) How We Analyzed the COMPAS Recidivism Algorithm",
+      "description": "Larson, J., Mattu, S., Kirchner, L., Angwin, J. (2016): How We Analyzed the COMPAS Recidivism Algorithm. ProPublica, 23 May 2016. Analysis of the COMPAS scores of pretrial defendants in Broward County, Florida, scored in 2013 and 2014 (7214 defendants in the error rate tables); with medium or high scores counted as higher risk, the false positive rate of the general recidivism is 44.85 percent for Black and 23.45 percent for White defendants, the false negative rate 27.99 and 47.72 percent; the score predicts the general recidivism correctly in about 61 percent of the cases.",
+      "url": "https://www.propublica.org/article/how-we-analyzed-the-compas-recidivism-algorithm"
+    },
+    {
+      "name": "Autoriteit Persoonsgegevens (2021) fine for the Belastingdienst",
+      "description": "The Dutch Data Protection Authority (Autoriteit Persoonsgegevens) fined the Dutch tax administration (Belastingdienst) 2.75 million EUR in December 2021 for the unlawful, discriminatory and therefore improper processing of the (dual) nationality of the applicants for childcare benefits, which was also used as an indicator in the risk classification model that selected the applications for the fraud investigations; as reported by Taxlive on 8 December 2021.",
+      "url": "https://www.taxlive.nl/nl/documenten/nieuws/2-75-miljoen-euro-boete-voor-belastingdienst-om-toeslagenaffaire/"
+    },
+    {
+      "name": "Chelli et al. (2024)",
+      "description": "Chelli, M., Descamps, J., Lavoué, V., Trojani, C., Azar, M., Deckert, M., Raynier, J.-L., Clowez, G., Boileau, P., Ruetsch-Chelli, C. (2024): Hallucination Rates and Reference Accuracy of ChatGPT and Bard for Systematic Reviews: Comparative Analysis. Journal of Medical Internet Research 26, e53164. In 11 systematic reviews on shoulder rotator cuff pathology, a reference counts as hallucinated if two of title, first author and year are wrong; the hallucination rate is 39.6 percent (55/139) for GPT-3.5, 28.6 percent (34/119) for GPT-4 and 91.4 percent (95/104) for Bard.",
+      "doi": "10.2196/53164",
+      "url": "https://www.jmir.org/2024/1/e53164/"
+    },
+    {
+      "name": "Dahl et al. (2024) Large Legal Fictions",
+      "description": "Dahl, M., Magesh, V., Suzgun, M., Ho, D. E. (2024): Large Legal Fictions: Profiling Legal Hallucinations in Large Language Models. Journal of Legal Analysis 16(1), 64-93. On legal queries about US court cases, the public-facing large language models hallucinate between 58 percent of the time with ChatGPT 4 and 88 percent with Llama 2.",
+      "doi": "10.1093/jla/laae003",
+      "url": "https://arxiv.org/abs/2401.01301"
+    },
+    {
+      "name": "Wong et al. (2021) Epic Sepsis Model",
+      "description": "Wong, A., Otles, E., Donnelly, J. P., Krumm, A., McCullough, J., DeTroyer-Cooley, O., Pestrue, J., Phillips, M., Konye, J., Penoza, C., Ghous, M., Singh, K. (2021): External Validation of a Widely Implemented Proprietary Sepsis Prediction Model in Hospitalized Patients. JAMA Internal Medicine 181(8), 1065-1070. At Michigan Medicine with 38455 hospitalizations of 27697 patients from 6 December 2018 to 20 October 2019, sepsis occurred in 2552 patients; the Epic Sepsis Model has an area under the curve of 0.63, did not identify 1709 patients with sepsis (67 percent) and generated alerts for 6971 of all 38455 hospitalized patients (18 percent).",
+      "doi": "10.1001/jamainternmed.2021.2626",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/34152373/"
+    },
+    {
+      "name": "Stanford AI Index 2026 Responsible AI",
+      "description": "Stanford Institute for Human-Centered Artificial Intelligence (2026): The AI Index 2026 Annual Report, chapter 3 Responsible AI. Based on the AI Incident Database (AIID), the number of reported AI incidents rose to 362 in 2025 from 233 in 2024, while it stayed under 100 per year until 2022; the database relies on human editors and its coverage is skewed toward English-language media and high-visibility incidents.",
+      "url": "https://hai.stanford.edu/assets/files/ai_index_report_2026_chapter_3_responsible_ai.pdf"
+    },
+    {
+      "name": "Gillespie et al. (2025) Trust, attitudes and use of AI",
+      "description": "Gillespie, N., Lockey, S., Ward, T., Macdade, A., Hassed, G. (2025): Trust, attitudes and use of artificial intelligence: A global study 2025. The University of Melbourne and KPMG. Survey of 48340 people in 47 countries from November 2024 to mid-January 2025; 56 percent of the employees report that they have made mistakes in their work due to AI, 66 percent have relied on AI output without evaluating the information it provides.",
+      "doi": "10.26188/28822919",
+      "url": "https://figshare.unimelb.edu.au/articles/report/Trust_attitudes_and_use_of_artificial_intelligence_A_global_study_2025/28822919"
+    },
+    {
+      "name": "European Commission (2021) AI Act impact assessment SWD(2021) 85",
+      "description": "European Commission (2021): Executive summary of the impact assessment report accompanying the proposal for a regulation laying down harmonised rules on artificial intelligence (Artificial Intelligence Act), SWD(2021) 85 final. The total aggregate cost of compliance is estimated between 100 million EUR and 500 million EUR by 2025, corresponding to up to 4-5 percent of the investment in high-risk AI (estimated at 5 to 15 percent of all AI applications); the verification costs could amount to another 2-5 percent of the investment in high-risk AI.",
+      "url": "https://data.consilium.europa.eu/doc/document/ST-8115-2021-ADD-4/en/pdf"
+    },
+    {
+      "name": "UHT (2026) 22e Voortgangsrapportage Hersteloperatie Toeslagen",
+      "description": "Dutch Ministry of Finance (2026): Voortgangsrapportage hersteloperatie toeslagen september-december 2025 (22e VGR), 11 February 2026. Until 31 December 2025, 43753 parents were recognised as victims of the childcare benefits scandal by the Uitvoeringsorganisatie Herstel Toeslagen (UHT), out of 69577 registrations; a recognised parent received at least 30000 EUR and on average about 40400 EUR; the budget processed and reserved for the recovery operation from 2020 to 2028 is 11287 million EUR after the second supplementary budget 2025.",
+      "url": "https://zoek.officielebekendmakingen.nl/blg-1236688.pdf"
+    }
+  ],
+  "values": [
+    {"words": ["algorithmic discrimination due to black-box AI", "care program", "patient", "Black", "United States", "2019", "percent"], "number": "0.177", "source": "Obermeyer et al. (2019)", "description": "the share of Black patients among the patients that the algorithm selects for additional help"},
+    {"words": ["algorithmic discrimination due to black-box AI", "care program", "patient", "Black", "unbiased", "United States", "2019", "percent"], "number": "0.465", "source": "Obermeyer et al. (2019)", "description": "the share of Black patients that would receive additional help if the disparity of the algorithm were remedied"},
+    {"words": ["algorithmic discrimination due to black-box AI", "false positive rate", "COMPAS", "defendant", "Black", "United States", "2013-2014", "percent"], "number": "0.4485", "source": "ProPublica (2016) How We Analyzed the COMPAS Recidivism Algorithm", "description": "Black defendants in Broward County, Florida, who did not reoffend but were labelled as medium or high risk of general recidivism"},
+    {"words": ["algorithmic discrimination due to black-box AI", "false positive rate", "COMPAS", "defendant", "White", "United States", "2013-2014", "percent"], "number": "0.2345", "source": "ProPublica (2016) How We Analyzed the COMPAS Recidivism Algorithm", "description": "White defendants in Broward County, Florida, who did not reoffend but were labelled as medium or high risk of general recidivism"},
+    {"words": ["algorithmic discrimination due to black-box AI", "fine", "Netherlands", "2021", "million", "EUR"], "number": "2.75", "source": "Autoriteit Persoonsgegevens (2021) fine for the Belastingdienst", "description": "the fine for the discriminatory processing of the nationality of the applicants for childcare benefits, also in the risk classification model"},
+    {"words": ["hallucination due to black-box AI", "reference", "GPT-3.5", "2024", "percent"], "number": "0.396", "source": "Chelli et al. (2024)", "description": "55 of 139 references for systematic reviews hallucinated"},
+    {"words": ["hallucination due to black-box AI", "reference", "GPT-4", "2024", "percent"], "number": "0.286", "source": "Chelli et al. (2024)", "description": "34 of 119 references for systematic reviews hallucinated"},
+    {"words": ["hallucination due to black-box AI", "reference", "Bard", "2024", "percent"], "number": "0.914", "source": "Chelli et al. (2024)", "description": "95 of 104 references for systematic reviews hallucinated"},
+    {"words": ["hallucination due to black-box AI", "law", "GPT-4", "United States", "2024", "percent"], "number": "0.58", "source": "Dahl et al. (2024) Large Legal Fictions", "description": "the share of hallucinated answers of ChatGPT 4 to legal queries about US court cases"},
+    {"words": ["hallucination due to black-box AI", "law", "Llama 2", "United States", "2024", "percent"], "number": "0.88", "source": "Dahl et al. (2024) Large Legal Fictions", "description": "the share of hallucinated answers of Llama 2 to legal queries about US court cases"},
+    {"words": ["missed diagnosis due to black-box AI", "sepsis", "patient", "Epic Sepsis Model", "United States", "2018-2019", "percent"], "number": "0.67", "source": "Wong et al. (2021) Epic Sepsis Model", "description": "the share of the 2552 sepsis patients at Michigan Medicine that the model did not identify"},
+    {"words": ["missed diagnosis due to black-box AI", "sepsis", "patient", "Epic Sepsis Model", "United States", "2018-2019", "person"], "number": "1709", "source": "Wong et al. (2021) Epic Sepsis Model", "description": "the sepsis patients at Michigan Medicine that the model did not identify"},
+    {"words": ["alert fatigue due to black-box AI", "Epic Sepsis Model", "hospitalization", "United States", "2018-2019", "percent"], "number": "0.18", "source": "Wong et al. (2021) Epic Sepsis Model", "description": "6971 of all 38455 hospitalized patients at Michigan Medicine with an alert of the model, although sepsis occurred in only 7 percent"},
+    {"words": ["AI incident due to black-box AI", "world", "2024"], "number": "233", "source": "Stanford AI Index 2026 Responsible AI", "description": "the AI incidents reported to the AI Incident Database; all reported incidents of deployed AI systems, not only of black box systems"},
+    {"words": ["AI incident due to black-box AI", "world", "2025"], "number": "362", "source": "Stanford AI Index 2026 Responsible AI", "description": "the AI incidents reported to the AI Incident Database; all reported incidents of deployed AI systems, not only of black box systems"},
+    {"words": ["mistake due to black-box AI", "work", "employee", "world", "2025", "percent"], "number": "0.56", "source": "Gillespie et al. (2025) Trust, attitudes and use of AI", "description": "the share of the employees in 47 countries who report that they have made mistakes in their work due to AI"},
+    {"words": ["compliance cost due to black-box AI", "high-risk AI", "European Union", "2025", "million", "EUR", "low"], "number": "100", "source": "European Commission (2021) AI Act impact assessment SWD(2021) 85", "description": "the total aggregate cost of compliance by 2025; the source states no centre value"},
+    {"words": ["compliance cost due to black-box AI", "high-risk AI", "European Union", "2025", "million", "EUR", "high"], "number": "500", "source": "European Commission (2021) AI Act impact assessment SWD(2021) 85", "description": "the total aggregate cost of compliance by 2025; the source states no centre value"},
+    {"words": ["compliance cost due to black-box AI", "high-risk AI", "investment", "European Union", "percent", "low"], "number": "0.04", "source": "European Commission (2021) AI Act impact assessment SWD(2021) 85", "description": "the compliance cost amounts to up to 4-5 percent of the investment in high-risk AI"},
+    {"words": ["compliance cost due to black-box AI", "high-risk AI", "investment", "European Union", "percent", "high"], "number": "0.05", "source": "European Commission (2021) AI Act impact assessment SWD(2021) 85", "description": "the compliance cost amounts to up to 4-5 percent of the investment in high-risk AI"},
+    {"words": ["compliance cost due to black-box AI", "verification cost", "high-risk AI", "investment", "European Union", "percent", "low"], "number": "0.02", "source": "European Commission (2021) AI Act impact assessment SWD(2021) 85", "description": "the verification costs could amount to another 2-5 percent of the investment in high-risk AI"},
+    {"words": ["compliance cost due to black-box AI", "verification cost", "high-risk AI", "investment", "European Union", "percent", "high"], "number": "0.05", "source": "European Commission (2021) AI Act impact assessment SWD(2021) 85", "description": "the verification costs could amount to another 2-5 percent of the investment in high-risk AI"},
+    {"words": ["childcare benefits scandal", "victim", "parent", "Netherlands", "2025", "person"], "number": "43753", "source": "UHT (2026) 22e Voortgangsrapportage Hersteloperatie Toeslagen", "description": "the parents recognised as victims until 31 December 2025; not attributed to black-box AI by the source"},
+    {"words": ["childcare benefits scandal", "compensation", "average", "parent", "Netherlands", "2025", "EUR"], "number": "40400", "source": "UHT (2026) 22e Voortgangsrapportage Hersteloperatie Toeslagen", "description": "the average compensation granted to a recognised parent until 31 December 2025, at least 30000 EUR; not attributed to black-box AI by the source"},
+    {"words": ["childcare benefits scandal", "budget", "Netherlands", "2020-2028", "billion", "EUR"], "number": "11.287", "source": "UHT (2026) 22e Voortgangsrapportage Hersteloperatie Toeslagen", "description": "the budget processed and reserved for the recovery operation from 2020 to 2028, 11287 million EUR after the second supplementary budget 2025; not attributed to black-box AI by the source"}
+  ]
+}

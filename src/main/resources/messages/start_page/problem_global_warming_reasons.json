@@ -1,0 +1,904 @@
+{
+  "version": "0.0.3",
+  "data_version": "0.0.1",
+  "time": "2026-08-13 12:00:00",
+  "user": "timon",
+  "selection": [
+    "global warming reasons that cause costs in the next 200 years"
+  ],
+  "description": "The most relevant reasons that cause costs in the next 200 years due to global warming, each linked to global warming with 'can cause' and quantified by the studies that report it for the world and per country: the loss of GDP (Swiss Re 2050, Burke et al. 2099, Bilal & Känzig 2100), temperature and heat mortality (Carleton et al. 2100, Lancet Countdown 2023), the loss of labour productivity (Lancet Countdown 2023, ILO 2030), sea level rise and coastal floods (Kulp & Strauss 2100, Hinkel et al. 2100), extreme weather (Oxera for ICC 2014-2023, Newman & Noy 2000-2019), crop yields and agricultural productivity (Hultgren et al. 2098, Ortiz-Bobea et al. 1961-2020), climate migration (World Bank Groundswell 2050), ecosystem collapse (World Bank Economic Case for Nature 2030), fishery revenue (Lam et al. 2050), tipping points (Dietz et al.), health costs (WHO 2030) and the social cost of carbon as the summary of all reasons (Rennert et al., Ricke et al. per country). The world values of the reasons that are an observed annual cost today (lost labour income and value of the heat deaths 2023 of the Lancet Countdown, extreme weather attributed to the warming of Newman & Noy) are stated in problem_global_warming.json instead, because their sum divided by the world GDP is the annual damage share of the start page, and a calculation needs its inputs in its own file; no country has all three of them, so the sum exists for the world only. Every number is taken from the named source as reported; a country that a study does not report is left out and never estimated. A share is stored as the decimal ratio, a loss as a positive number and a change with its sign. Each study has its own scenario and metric, so numbers of different studies are not comparable without reading the source description. Left out on purpose: Kotz, Levermann & Wenz (2024, Nature) was retracted in December 2025; Rode et al. (2021) find a net saving of energy expenditure (0.05 to 0.69 percent of world GDP by 2100), i.e. no cost; the conflict meta-analysis of Burke, Hsiang & Miguel (2015) gives a rate per standard deviation of temperature and no cost; the US EPA social cost of carbon (2023) page has been withdrawn, so Rennert et al. (2022), on which it builds, is used. Every amount of money is stated in euro: the US dollar figure of the source is converted with the ECB 2023 annual average of 1.0813 USD per EUR (the value of GDP.json), the reference year of the annual damage share, whatever the price base year of the source, and the source figure is kept in the description of the value. A value of a reason carries the triple '<reason> due to global warming' and not the word 'global warming' itself, because a value that names a global problem directly is a row of the global problem ranking of the start page, where only the potential loss and the solution of a problem belong.",
+  "words": [
+    {
+      "name": "climate"
+    },
+    {
+      "name": "warmer"
+    },
+    {
+      "name": "GDP"
+    },
+    {
+      "name": "loss"
+    },
+    {
+      "name": "change"
+    },
+    {
+      "name": "inhabitant"
+    },
+    {
+      "name": "heat"
+    },
+    {
+      "name": "temperature"
+    },
+    {
+      "name": "mortality"
+    },
+    {
+      "name": "cost"
+    },
+    {
+      "name": "labour"
+    },
+    {
+      "name": "productivity"
+    },
+    {
+      "name": "income"
+    },
+    {
+      "name": "potential"
+    },
+    {
+      "name": "working"
+    },
+    {
+      "name": "hour"
+    },
+    {
+      "name": "sea",
+      "description": "the connected body of salt water that covers most of the Earth"
+    },
+    {
+      "name": "level"
+    },
+    {
+      "name": "rise",
+      "description": "an upward movement e.g. of the sea level"
+    },
+    {
+      "name": "flood",
+      "description": "an overflow of water that submerges land that is usually dry"
+    },
+    {
+      "name": "coastal",
+      "description": "on or near the coast"
+    },
+    {
+      "name": "person"
+    },
+    {
+      "name": "weather"
+    },
+    {
+      "name": "extreme"
+    },
+    {
+      "name": "crop",
+      "description": "a plant grown and harvested for food or other use e.g. maize, wheat or rice"
+    },
+    {
+      "name": "yield"
+    },
+    {
+      "name": "agricultural"
+    },
+    {
+      "name": "migrant",
+      "description": "a person who moves away from the place of usual residence"
+    },
+    {
+      "name": "ecosystem"
+    },
+    {
+      "name": "collapse",
+      "description": "a sudden breakdown of a system e.g. of the services an ecosystem provides"
+    },
+    {
+      "name": "fishery",
+      "description": "the catching of fish and other seafood for food or sale"
+    },
+    {
+      "name": "revenue"
+    },
+    {
+      "name": "tipping",
+      "description": "the passing of a threshold after which a system changes to another state by itself"
+    },
+    {
+      "name": "point"
+    },
+    {
+      "name": "social"
+    },
+    {
+      "name": "carbon"
+    },
+    {
+      "name": "increase"
+    },
+    {
+      "name": "health"
+    },
+    {
+      "name": "tonne"
+    },
+    {
+      "name": "CO2"
+    },
+    {
+      "name": "EUR"
+    },
+    {
+      "name": "percent"
+    },
+    {
+      "name": "million"
+    },
+    {
+      "name": "billion"
+    },
+    {
+      "name": "trillion"
+    },
+    {
+      "name": "annual"
+    },
+    {
+      "name": "low"
+    },
+    {
+      "name": "high"
+    },
+    {
+      "name": "world"
+    },
+    {
+      "name": "country"
+    },
+    {
+      "name": "United States"
+    },
+    {
+      "name": "China"
+    },
+    {
+      "name": "India"
+    },
+    {
+      "name": "Germany"
+    },
+    {
+      "name": "Switzerland"
+    },
+    {
+      "name": "Japan"
+    },
+    {
+      "name": "Brazil"
+    },
+    {
+      "name": "Indonesia"
+    },
+    {
+      "name": "Nigeria"
+    },
+    {
+      "name": "Bangladesh"
+    },
+    {
+      "name": "Pakistan"
+    },
+    {
+      "name": "Australia"
+    },
+    {
+      "name": "Egypt"
+    },
+    {
+      "name": "Vietnam",
+      "description": "a country in Southeast Asia on the eastern edge of the Indochinese Peninsula",
+      "refs": [
+        {
+          "name": "Vietnam",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q881",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "RCP8.5",
+      "description": "the representative concentration pathway with a radiative forcing of 8.5 W/m2 in 2100, a high emission scenario with about 4 to 5 °C of warming by 2100"
+    },
+    {
+      "name": "RCP6.0",
+      "description": "the representative concentration pathway with a radiative forcing of 6.0 W/m2 in 2100, an intermediate emission scenario"
+    },
+    {
+      "name": "RCP2.6",
+      "description": "the representative concentration pathway with a radiative forcing of 2.6 W/m2 in 2100, a low emission scenario that keeps warming below about 2 °C"
+    },
+    {
+      "name": "2.6°C",
+      "description": "the scenario of a global warming of 2.6 °C above the pre-industrial level, the likely warming if the pledged mitigation is met (Swiss Re Institute 2021)"
+    },
+    {
+      "name": "3.2°C",
+      "description": "the severe scenario of a global warming of 3.2 °C above the pre-industrial level (Swiss Re Institute 2021)"
+    },
+    {
+      "name": "3°C",
+      "description": "the business as usual scenario of a global warming of 3 °C above the pre-industrial level by 2100 (Bilal & Känzig)"
+    },
+    {
+      "name": "1961",
+      "type": "time"
+    },
+    {
+      "name": "2000"
+    },
+    {
+      "name": "2014"
+    },
+    {
+      "name": "2019"
+    },
+    {
+      "name": "2020"
+    },
+    {
+      "name": "2023"
+    },
+    {
+      "name": "2030"
+    },
+    {
+      "name": "2050",
+      "type": "time"
+    },
+    {
+      "name": "2098",
+      "type": "time"
+    },
+    {
+      "name": "2099",
+      "type": "time"
+    },
+    {
+      "name": "2100",
+      "type": "time"
+    }
+  ],
+  "triples": [
+    {
+      "name": "global warming",
+      "from": "climate",
+      "verb": "can get",
+      "to": "warmer"
+    },
+    {
+      "name": "GDP per capita",
+      "from": "GDP",
+      "verb": "per",
+      "to": "inhabitant"
+    },
+    {
+      "name": "GDP loss",
+      "from": "loss",
+      "verb": "of",
+      "to": "GDP",
+      "description": "the gross domestic product that is lost compared to a world without the cause e.g. without global warming; stored as a positive number"
+    },
+    {
+      "name": "GDP per capita change",
+      "from": "change",
+      "verb": "of",
+      "to": "GDP per capita",
+      "description": "the change of the GDP per person compared to a world without the cause e.g. without global warming; a loss is negative"
+    },
+    {
+      "name": "heat mortality",
+      "from": "heat",
+      "verb": "can cause",
+      "to": "mortality"
+    },
+    {
+      "name": "temperature mortality",
+      "from": "temperature",
+      "verb": "can cause",
+      "to": "mortality",
+      "description": "the deaths caused by a changed temperature, by heat and by cold together"
+    },
+    {
+      "name": "labour productivity",
+      "from": "productivity",
+      "verb": "of",
+      "to": "labour"
+    },
+    {
+      "name": "labour productivity loss",
+      "from": "loss",
+      "verb": "of",
+      "to": "labour productivity"
+    },
+    {
+      "name": "income loss",
+      "from": "loss",
+      "verb": "of",
+      "to": "income"
+    },
+    {
+      "name": "potential income loss",
+      "from": "income loss",
+      "verb": "kind of",
+      "to": "potential"
+    },
+    {
+      "name": "working hour",
+      "from": "hour",
+      "verb": "kind of",
+      "to": "working"
+    },
+    {
+      "name": "working hour loss",
+      "from": "loss",
+      "verb": "of",
+      "to": "working hour",
+      "description": "the share of the working hours that is lost to heat stress (ILO 2019)"
+    },
+    {
+      "name": "sea level",
+      "from": "level",
+      "verb": "of",
+      "to": "sea"
+    },
+    {
+      "name": "sea level rise",
+      "from": "rise",
+      "verb": "of",
+      "to": "sea level"
+    },
+    {
+      "name": "coastal flood",
+      "from": "flood",
+      "verb": "kind of",
+      "to": "coastal"
+    },
+    {
+      "name": "coastal flood due to sea level rise",
+      "from": "sea level rise",
+      "verb": "can cause",
+      "to": "coastal flood"
+    },
+    {
+      "name": "person exposed to coastal flood",
+      "from": "person",
+      "verb": "in",
+      "to": "coastal flood",
+      "description": "the people living on land below the projected annual coastal flood level, i.e. the high tide line plus the flood that happens once a year, counted with the 2010 population and without coastal defences (Kulp & Strauss 2019)"
+    },
+    {
+      "name": "extreme weather",
+      "from": "weather",
+      "verb": "kind of",
+      "to": "extreme"
+    },
+    {
+      "name": "crop yield",
+      "from": "yield",
+      "verb": "of",
+      "to": "crop",
+      "description": "the harvested amount of a crop per area of land"
+    },
+    {
+      "name": "crop yield change",
+      "from": "change",
+      "verb": "of",
+      "to": "crop yield",
+      "description": "the change of the calorie weighted yield of the staple crops compared to a world without global warming; a loss is negative"
+    },
+    {
+      "name": "agricultural productivity",
+      "from": "productivity",
+      "verb": "kind of",
+      "to": "agricultural",
+      "description": "the total factor productivity of agriculture, the output per unit of all inputs"
+    },
+    {
+      "name": "agricultural productivity change",
+      "from": "change",
+      "verb": "of",
+      "to": "agricultural productivity",
+      "description": "the cumulative change of the agricultural total factor productivity caused by the human made climate change; a loss is negative"
+    },
+    {
+      "name": "climate migrant",
+      "from": "migrant",
+      "verb": "kind of",
+      "to": "climate",
+      "description": "a person who moves within the own country because of slow-onset climate impacts like water scarcity, lower crop productivity and sea level rise (World Bank Groundswell)"
+    },
+    {
+      "name": "ecosystem collapse",
+      "from": "collapse",
+      "verb": "of",
+      "to": "ecosystem",
+      "description": "the partial collapse of ecosystem services: wild pollination, marine fisheries and timber from native forests"
+    },
+    {
+      "name": "fishery revenue",
+      "from": "revenue",
+      "verb": "of",
+      "to": "fishery"
+    },
+    {
+      "name": "fishery revenue change",
+      "from": "change",
+      "verb": "of",
+      "to": "fishery revenue",
+      "description": "the change of the maximum revenue potential of the marine fisheries at constant prices; a loss is negative"
+    },
+    {
+      "name": "tipping point",
+      "from": "point",
+      "verb": "kind of",
+      "to": "tipping",
+      "description": "a threshold of the climate system e.g. the thawing permafrost or the melting ice sheets, after which the change goes on by itself"
+    },
+    {
+      "name": "health cost",
+      "from": "cost",
+      "verb": "of",
+      "to": "health",
+      "description": "the direct damage costs to health, without the costs in health-determining sectors such as agriculture, water and sanitation"
+    },
+    {
+      "name": "social cost",
+      "from": "cost",
+      "verb": "kind of",
+      "to": "social"
+    },
+    {
+      "from": "social cost",
+      "verb": "of",
+      "to": "carbon",
+      "description": "the present value of all future damages caused by emitting one additional tonne of CO2, the summary of all cost reasons of global warming",
+      "refs": [
+        {
+          "name": "Social_cost_of_carbon",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "social cost of carbon increase",
+      "from": "increase",
+      "verb": "of",
+      "to": "social cost of carbon"
+    },
+    {
+      "name": "country social cost of carbon",
+      "from": "social cost of carbon",
+      "verb": "kind of",
+      "to": "country",
+      "description": "the part of the social cost of carbon that falls on one country; summed over all countries it is the global social cost of carbon (Ricke et al. 2018)"
+    },
+    {
+      "name": "tonne CO2",
+      "from": "tonne",
+      "verb": "of",
+      "to": "CO2"
+    },
+    {
+      "from": "EUR",
+      "verb": "per",
+      "to": "tonne CO2",
+      "type": "measure_unit"
+    },
+    {
+      "name": "1961-2020",
+      "from": "1961",
+      "verb": "to",
+      "to": "2020"
+    },
+    {
+      "name": "2000-2019",
+      "from": "2000",
+      "verb": "to",
+      "to": "2019"
+    },
+    {
+      "name": "2014-2023",
+      "from": "2014",
+      "verb": "to",
+      "to": "2023"
+    },
+    {
+      "name": "GDP loss due to global warming",
+      "from": "global warming",
+      "verb": "can cause",
+      "to": "GDP loss"
+    },
+    {
+      "name": "GDP per capita change due to global warming",
+      "from": "global warming",
+      "verb": "can cause",
+      "to": "GDP per capita change"
+    },
+    {
+      "name": "temperature mortality due to global warming",
+      "from": "global warming",
+      "verb": "can cause",
+      "to": "temperature mortality"
+    },
+    {
+      "name": "heat mortality due to global warming",
+      "from": "global warming",
+      "verb": "can cause",
+      "to": "heat mortality"
+    },
+    {
+      "name": "labour productivity loss due to global warming",
+      "from": "global warming",
+      "verb": "can cause",
+      "to": "labour productivity loss"
+    },
+    {
+      "name": "working hour loss due to global warming",
+      "from": "global warming",
+      "verb": "can cause",
+      "to": "working hour loss"
+    },
+    {
+      "name": "sea level rise due to global warming",
+      "from": "global warming",
+      "verb": "can cause",
+      "to": "sea level rise"
+    },
+    {
+      "name": "extreme weather due to global warming",
+      "from": "global warming",
+      "verb": "can cause",
+      "to": "extreme weather"
+    },
+    {
+      "name": "crop yield change due to global warming",
+      "from": "global warming",
+      "verb": "can cause",
+      "to": "crop yield change"
+    },
+    {
+      "name": "agricultural productivity change due to global warming",
+      "from": "global warming",
+      "verb": "can cause",
+      "to": "agricultural productivity change"
+    },
+    {
+      "name": "climate migrant due to global warming",
+      "from": "global warming",
+      "verb": "can cause",
+      "to": "climate migrant"
+    },
+    {
+      "name": "ecosystem collapse due to global warming",
+      "from": "global warming",
+      "verb": "can cause",
+      "to": "ecosystem collapse",
+      "description": "global warming is one of the causes of an ecosystem collapse beside land use change, pollution and overfishing"
+    },
+    {
+      "name": "fishery revenue change due to global warming",
+      "from": "global warming",
+      "verb": "can cause",
+      "to": "fishery revenue change"
+    },
+    {
+      "name": "tipping point due to global warming",
+      "from": "global warming",
+      "verb": "can cause",
+      "to": "tipping point"
+    },
+    {
+      "name": "health cost due to global warming",
+      "from": "global warming",
+      "verb": "can cause",
+      "to": "health cost"
+    }
+  ],
+  "sources": [
+    {
+      "name": "Swiss Re Institute (2021) The economics of climate change",
+      "description": "Guo, J., Kubli, D., Saner, P. (2021): The economics of climate change: no action not an option. Swiss Re Institute. Table 2: GDP impact by mid-century relative to a world without climate change, with the omitted channels and the severity factor of the headline column; based on a model with multipliers for unknown risks, not peer reviewed.",
+      "url": "https://www.swissre.com/dam/jcr:e73ee7c3-7f83-4c17-a2b8-8ef23a8d3312/swiss-re-institute-expertise-publication-economics-of-climate-change.pdf",
+      "type": "pdf"
+    },
+    {
+      "name": "Burke, Hsiang & Miguel (2015)",
+      "description": "Burke, M., Hsiang, S. M., Miguel, E. (2015): Global non-linear effect of temperature on economic production. Nature 527, 235-239. The world value is the roughly 23 percent of the main text; the country values are derived from the authors' data release (GDPcap_ClimateChange_RCP85_SSP5.csv divided by GDPcap_NOClimateChange_RCP85_SSP5.csv minus 1, column 2099, benchmark pooled short-run model, point estimate).",
+      "doi": "10.1038/nature15643",
+      "url": "https://web.stanford.edu/~mburke/climate/data.html"
+    },
+    {
+      "name": "Bilal & Känzig (2026) NBER WP 32450",
+      "description": "Bilal, A., Känzig, D. R.: The Macroeconomic Impact of Climate Change: Global vs. Local Temperature. NBER Working Paper 32450, revised January 2026, section VI.B: GDP per capita compared to no warming with a global warming of 3 °C above the pre-industrial level by 2100 (95 percent confidence interval 29 to 77 percent); the May 2024 version stated a 12 percent peak loss per 1 °C.",
+      "url": "https://www.nber.org/papers/w32450"
+    },
+    {
+      "name": "Carleton et al. (2022)",
+      "description": "Carleton, T. et al. (2022): Valuing the global mortality consequences of climate change accounting for adaptation costs and benefits. Quarterly Journal of Economics 137(4), 2037-2105. Table 2: full mortality risk (deaths plus adaptation costs) in 2100 under RCP8.5 and SSP3 as share of the GDP, mean of the Monte Carlo runs, heat and cold together; the world interquartile range is -5.4 to 9.1 percent.",
+      "doi": "10.1093/qje/qjac020"
+    },
+    {
+      "name": "Lancet Countdown (2024) country data sheets",
+      "description": "The 2024 country data sheets of the Lancet Countdown, indicator 4.1.3: potential income loss from the heat-related loss of labour capacity in 2023 per country; the file name of a sheet is Lancet-Countdown-2024_<COUNTRY>.pdf.",
+      "url": "https://lancetcountdown.org/wp-content/uploads/2024/10/"
+    },
+    {
+      "name": "Lancet Countdown China (2025) report",
+      "description": "Cai, W. et al. (2025): The 2025 China report of the Lancet Countdown on health and climate change: empowering cities for synergistic action. The Lancet Public Health 10. Indicator 4.1.2: economic cost of the heat-related labour productivity loss in 2020 USD, direct and indirect costs, so not the same metric as the potential income loss of the global report.",
+      "url": "https://publications.pik-potsdam.de/pubman/item/item_33838_1/component/file_33839/1-s2.0-S2468266725002300-main.pdf",
+      "type": "pdf"
+    },
+    {
+      "name": "ILO (2019) Working on a warmer planet",
+      "description": "International Labour Organization (2019): Working on a warmer planet: The impact of heat stress on labour productivity and decent work. Share of the total working hours lost to heat stress in 2030 under RCP2.6 with the agricultural and construction work done in the shade, a conservative estimate (country tables of chapters 3 to 6).",
+      "url": "https://www.ilo.org/wcmsp5/groups/public/---dgreports/---dcomm/---publ/documents/publication/wcms_711919.pdf",
+      "type": "pdf"
+    },
+    {
+      "name": "WHO (2023) Climate change fact sheet",
+      "description": "World Health Organization fact sheet Climate change, 12 October 2023: the direct damage costs to health are estimated to be between USD 2 and 4 billion per year by 2030; the fact sheet names no underlying study.",
+      "url": "https://www.who.int/news-room/fact-sheets/detail/climate-change-and-health"
+    },
+    {
+      "name": "Kulp & Strauss (2019)",
+      "description": "Kulp, S. A., Strauss, B. H. (2019): New elevation data triple estimates of global vulnerability to sea-level rise and coastal flooding. Nature Communications 10, 4844. Supplementary Data 1: population (2010) on land below the annual flood level in 2100 under RCP8.5 with the K14 sea level model and CoastalDEM, median with the 5th to 95th percentile; no coastal defences, which overstates e.g. the Netherlands.",
+      "doi": "10.1038/s41467-019-12808-z"
+    },
+    {
+      "name": "Hinkel et al. (2014)",
+      "description": "Hinkel, J. et al. (2014): Coastal flood damage and adaptation costs under 21st century sea-level rise. PNAS 111(9), 3292-3297. Expected annual flood losses in 2100 under RCP8.5 without adaptation as share of the global GDP, range over the socio-economic and land ice scenarios; dike raising lowers the losses by two to three orders of magnitude.",
+      "doi": "10.1073/pnas.1222469111"
+    },
+    {
+      "name": "Hultgren et al. (2025)",
+      "description": "Hultgren, A. et al. (2025): Impacts of climate change on global agriculture accounting for adaptation. Nature. Table 1: change of the calorie weighted yield of six staple crops in 2098 under RCP8.5 with adaptation, without CO2 fertilisation (without adaptation -36.6 percent).",
+      "doi": "10.1038/s41586-025-09085-w"
+    },
+    {
+      "name": "Ortiz-Bobea et al. (2021)",
+      "description": "Ortiz-Bobea, A. et al. (2021): Anthropogenic climate change has slowed global agricultural productivity growth. Nature Climate Change 11, 306-312. Supplementary Table 3: cumulative change of the agricultural total factor productivity 1961-2020 caused by the human made climate change, mean with the 5 to 95 percent range of the regional specification; the headline of the global specification is about -21 percent.",
+      "doi": "10.1038/s41558-021-01000-1"
+    },
+    {
+      "name": "Oxera for ICC (2024) The economic cost of extreme weather events",
+      "description": "Oxera for the International Chamber of Commerce (2024): The economic cost of extreme weather events. Table 4.1: economic cost of about 4'000 climate-related extreme weather events 2014-2023 (physical assets and human capital lost by early deaths) in 2023 USD, based on EM-DAT and therefore a lower bound; the costs are not attributed to global warming.",
+      "url": "https://iccwbo.org/wp-content/uploads/sites/3/2024/11/2024-ICC-Oxera-The-economic-cost-of-extreme-weather-events.pdf",
+      "type": "pdf"
+    },
+    {
+      "name": "World Bank (2021) Groundswell Part 2",
+      "description": "Clement, V., Rigaud, K. K. et al. (2021): Groundswell Part 2: Acting on Internal Climate Migration. World Bank. Overview: as many as 216 million internal climate migrants by 2050 in the pessimistic reference scenario (RCP8.5, SSP4) in six World Bank regions, i.e. without the high income countries; up to 19.9 million in Bangladesh citing the 2018 report.",
+      "url": "https://documents1.worldbank.org/curated/en/540941631203608570/pdf/Overview.pdf",
+      "type": "pdf"
+    },
+    {
+      "name": "World Bank (2021) Groundswell Africa West Africa",
+      "description": "Rigaud, K. K. et al. (2021): Groundswell Africa: Internal Climate Migration in West African Countries. World Bank. Executive summary: internal climate migrants by 2050 in the pessimistic scenario per country, mean and high end.",
+      "url": "https://documents1.worldbank.org/curated/en/453241634531082194/pdf/Groundswell-Africa-Internal-Climate-Migration-in-West-African-Countries.pdf",
+      "type": "pdf"
+    },
+    {
+      "name": "World Bank (2021) The Economic Case for Nature",
+      "description": "Johnson, J. A. et al. (2021): The Economic Case for Nature: A global Earth-economy model to assess development policy pathways. World Bank. Change of the real GDP in 2030 compared to a baseline without tipping points in the scenario of a partial ecosystem collapse (wild pollination -90 percent, marine fisheries under the RCP8.5 worst case, timber from native forests -90 percent); global warming is one of several causes.",
+      "url": "https://documents1.worldbank.org/curated/en/445311625065610639/pdf/A-Global-Earth-Economy-Model-to-Assess-Development-Policy-Pathways.pdf",
+      "type": "pdf"
+    },
+    {
+      "name": "Lam et al. (2016)",
+      "description": "Lam, V. W. Y., Cheung, W. W. L., Reygondeau, G., Sumaila, U. R. (2016): Projected change in global fisheries revenues under climate change. Scientific Reports 6, 32607. Change of the maximum revenue potential of the marine fisheries in the 2050s (2041-2060) compared to the 2000s under RCP8.5 at constant prices, plus or minus 4.2 percent; 89 percent of the fishing countries lose revenue.",
+      "doi": "10.1038/srep32607"
+    },
+    {
+      "name": "Dietz et al. (2021)",
+      "description": "Dietz, S., Rising, J., Stoerk, T., Wagner, G. (2021): Economic impacts of tipping points in the climate system. PNAS 118(34), e2103081118. Table 2: the expected social cost of carbon rises from USD 52.03 to 64.80 per tonne CO2 (2020 USD) with all eight tipping points under RCP4.5 and SSP2; across all uncertainty the increase is 42.8 percent and the probability of a doubling about 10 percent.",
+      "doi": "10.1073/pnas.2103081118"
+    },
+    {
+      "name": "Rennert et al. (2022)",
+      "description": "Rennert, K. et al. (2022): Comprehensive evidence implies a higher social cost of CO2. Nature 610, 687-692. Mean social cost of carbon for an emission in 2020 with a near-term discount rate of 2 percent in 2020 USD per tonne CO2, 5 to 95 percent range; the basis of the US EPA estimate of USD 190 (2023).",
+      "doi": "10.1038/s41586-022-05224-9"
+    },
+    {
+      "name": "Ricke et al. (2018)",
+      "description": "Ricke, K., Drouet, L., Caldeira, K., Tavoni, M. (2018): Country-level social cost of carbon. Nature Climate Change 8, 895-900. Median country-level social cost of carbon for an emission in 2020 in the reference case (SSP2, RCP6.0, Burke short-run pooled damage function, pure rate of time preference 2 percent, elasticity 1.5) with the 66 percent range; the world, India, the United States, Brazil and China from the paper, the other countries from the authors' database cscc_full_v1.csv.",
+      "doi": "10.1038/s41558-018-0282-y",
+      "url": "https://github.com/country-level-scc/cscc-database-2018"
+    }
+  ],
+  "values": [
+    {"words": ["GDP loss due to global warming", "world", "2050", "2.6°C", "percent"], "number": "0.139", "source": "Swiss Re Institute (2021) The economics of climate change"},
+    {"words": ["GDP loss due to global warming", "United States", "2050", "2.6°C", "percent"], "number": "0.072", "source": "Swiss Re Institute (2021) The economics of climate change"},
+    {"words": ["GDP loss due to global warming", "China", "2050", "2.6°C", "percent"], "number": "0.181", "source": "Swiss Re Institute (2021) The economics of climate change"},
+    {"words": ["GDP loss due to global warming", "India", "2050", "2.6°C", "percent"], "number": "0.27", "source": "Swiss Re Institute (2021) The economics of climate change"},
+    {"words": ["GDP loss due to global warming", "Germany", "2050", "2.6°C", "percent"], "number": "0.083", "source": "Swiss Re Institute (2021) The economics of climate change"},
+    {"words": ["GDP loss due to global warming", "Switzerland", "2050", "2.6°C", "percent"], "number": "0.044", "source": "Swiss Re Institute (2021) The economics of climate change"},
+    {"words": ["GDP loss due to global warming", "Japan", "2050", "2.6°C", "percent"], "number": "0.091", "source": "Swiss Re Institute (2021) The economics of climate change"},
+    {"words": ["GDP loss due to global warming", "Brazil", "2050", "2.6°C", "percent"], "number": "0.128", "source": "Swiss Re Institute (2021) The economics of climate change"},
+    {"words": ["GDP loss due to global warming", "Indonesia", "2050", "2.6°C", "percent"], "number": "0.302", "source": "Swiss Re Institute (2021) The economics of climate change"},
+    {"words": ["GDP loss due to global warming", "world", "2050", "3.2°C", "percent"], "number": "0.181", "source": "Swiss Re Institute (2021) The economics of climate change"},
+    {"words": ["GDP loss due to global warming", "United States", "2050", "3.2°C", "percent"], "number": "0.092", "source": "Swiss Re Institute (2021) The economics of climate change"},
+    {"words": ["GDP loss due to global warming", "China", "2050", "3.2°C", "percent"], "number": "0.235", "source": "Swiss Re Institute (2021) The economics of climate change"},
+    {"words": ["GDP loss due to global warming", "India", "2050", "3.2°C", "percent"], "number": "0.351", "source": "Swiss Re Institute (2021) The economics of climate change"},
+    {"words": ["GDP loss due to global warming", "Germany", "2050", "3.2°C", "percent"], "number": "0.111", "source": "Swiss Re Institute (2021) The economics of climate change"},
+    {"words": ["GDP loss due to global warming", "Switzerland", "2050", "3.2°C", "percent"], "number": "0.061", "source": "Swiss Re Institute (2021) The economics of climate change"},
+    {"words": ["GDP loss due to global warming", "Japan", "2050", "3.2°C", "percent"], "number": "0.12", "source": "Swiss Re Institute (2021) The economics of climate change"},
+    {"words": ["GDP loss due to global warming", "Brazil", "2050", "3.2°C", "percent"], "number": "0.168", "source": "Swiss Re Institute (2021) The economics of climate change"},
+    {"words": ["GDP loss due to global warming", "Indonesia", "2050", "3.2°C", "percent"], "number": "0.395", "source": "Swiss Re Institute (2021) The economics of climate change"},
+    {"words": ["GDP per capita change due to global warming", "world", "2100", "RCP8.5", "percent"], "number": "-0.23", "source": "Burke, Hsiang & Miguel (2015)"},
+    {"words": ["GDP per capita change due to global warming", "United States", "2099", "RCP8.5", "percent"], "number": "-0.363", "source": "Burke, Hsiang & Miguel (2015)"},
+    {"words": ["GDP per capita change due to global warming", "China", "2099", "RCP8.5", "percent"], "number": "-0.421", "source": "Burke, Hsiang & Miguel (2015)"},
+    {"words": ["GDP per capita change due to global warming", "India", "2099", "RCP8.5", "percent"], "number": "-0.918", "source": "Burke, Hsiang & Miguel (2015)"},
+    {"words": ["GDP per capita change due to global warming", "Germany", "2099", "RCP8.5", "percent"], "number": "0.627", "source": "Burke, Hsiang & Miguel (2015)"},
+    {"words": ["GDP per capita change due to global warming", "Switzerland", "2099", "RCP8.5", "percent"], "number": "1.209", "source": "Burke, Hsiang & Miguel (2015)"},
+    {"words": ["GDP per capita change due to global warming", "Japan", "2099", "RCP8.5", "percent"], "number": "-0.352", "source": "Burke, Hsiang & Miguel (2015)"},
+    {"words": ["GDP per capita change due to global warming", "Brazil", "2099", "RCP8.5", "percent"], "number": "-0.828", "source": "Burke, Hsiang & Miguel (2015)"},
+    {"words": ["GDP per capita change due to global warming", "Indonesia", "2099", "RCP8.5", "percent"], "number": "-0.851", "source": "Burke, Hsiang & Miguel (2015)"},
+    {"words": ["GDP per capita change due to global warming", "Nigeria", "2099", "RCP8.5", "percent"], "number": "-0.915", "source": "Burke, Hsiang & Miguel (2015)"},
+    {"words": ["GDP per capita change due to global warming", "Bangladesh", "2099", "RCP8.5", "percent"], "number": "-0.898", "source": "Burke, Hsiang & Miguel (2015)"},
+    {"words": ["GDP per capita change due to global warming", "Pakistan", "2099", "RCP8.5", "percent"], "number": "-0.925", "source": "Burke, Hsiang & Miguel (2015)"},
+    {"words": ["GDP per capita change due to global warming", "world", "2100", "3°C", "percent"], "number": "-0.53", "source": "Bilal & Känzig (2026) NBER WP 32450"},
+    {"words": ["GDP per capita change due to global warming", "world", "2100", "3°C", "percent", "low"], "number": "-0.77", "source": "Bilal & Känzig (2026) NBER WP 32450"},
+    {"words": ["GDP per capita change due to global warming", "world", "2100", "3°C", "percent", "high"], "number": "-0.29", "source": "Bilal & Känzig (2026) NBER WP 32450"},
+    {"words": ["temperature mortality due to global warming", "cost", "world", "2100", "RCP8.5", "percent", "GDP"], "number": "0.032", "source": "Carleton et al. (2022)"},
+    {"words": ["temperature mortality due to global warming", "cost", "world", "2100", "RCP8.5", "percent", "GDP", "low"], "number": "-0.054", "source": "Carleton et al. (2022)"},
+    {"words": ["temperature mortality due to global warming", "cost", "world", "2100", "RCP8.5", "percent", "GDP", "high"], "number": "0.091", "source": "Carleton et al. (2022)"},
+    {"words": ["temperature mortality due to global warming", "cost", "China", "2100", "RCP8.5", "percent", "GDP"], "number": "0.019", "source": "Carleton et al. (2022)"},
+    {"words": ["temperature mortality due to global warming", "cost", "United States", "2100", "RCP8.5", "percent", "GDP"], "number": "0.01", "source": "Carleton et al. (2022)"},
+    {"words": ["temperature mortality due to global warming", "cost", "India", "2100", "RCP8.5", "percent", "GDP"], "number": "0.06", "source": "Carleton et al. (2022)"},
+    {"words": ["temperature mortality due to global warming", "cost", "Pakistan", "2100", "RCP8.5", "percent", "GDP"], "number": "0.275", "source": "Carleton et al. (2022)"},
+    {"words": ["temperature mortality due to global warming", "cost", "Bangladesh", "2100", "RCP8.5", "percent", "GDP"], "number": "0.185", "source": "Carleton et al. (2022)"},
+    {"words": ["labour productivity loss due to global warming", "potential income loss", "United States", "2023", "billion", "EUR"], "number": "95.3", "source": "Lancet Countdown (2024) country data sheets", "description": "103 billion USD at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["labour productivity loss due to global warming", "potential income loss", "India", "2023", "billion", "EUR"], "number": "130.4", "source": "Lancet Countdown (2024) country data sheets", "description": "141 billion USD at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["labour productivity loss due to global warming", "potential income loss", "Germany", "2023", "million", "EUR"], "number": "911.4", "source": "Lancet Countdown (2024) country data sheets", "description": "985.5 million USD at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["labour productivity loss due to global warming", "potential income loss", "Japan", "2023", "billion", "EUR"], "number": "34.7", "source": "Lancet Countdown (2024) country data sheets", "description": "37.5 billion USD at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["labour productivity loss due to global warming", "potential income loss", "Indonesia", "2023", "billion", "EUR"], "number": "20.1", "source": "Lancet Countdown (2024) country data sheets", "description": "21.7 billion USD at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["labour productivity loss due to global warming", "potential income loss", "Nigeria", "2023", "billion", "EUR"], "number": "13.9", "source": "Lancet Countdown (2024) country data sheets", "description": "15 billion USD at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["labour productivity loss due to global warming", "potential income loss", "Bangladesh", "2023", "billion", "EUR"], "number": "19.4", "source": "Lancet Countdown (2024) country data sheets", "description": "21 billion USD at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["labour productivity loss due to global warming", "potential income loss", "Pakistan", "2023", "billion", "EUR"], "number": "15.8", "source": "Lancet Countdown (2024) country data sheets", "description": "17.1 billion USD at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["labour productivity loss due to global warming", "cost", "China", "2023", "billion", "EUR"], "number": "212.5", "source": "Lancet Countdown China (2025) report", "description": "1.45 percent of the GDP of China, in 2020 USD; 229.8 billion USD at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["working hour loss due to global warming", "world", "2030", "RCP2.6", "percent"], "number": "0.022", "source": "ILO (2019) Working on a warmer planet", "description": "equivalent to 80 million full-time jobs and USD 2'400 billion (PPP) of GDP"},
+    {"words": ["working hour loss due to global warming", "United States", "2030", "RCP2.6", "percent"], "number": "0.0021", "source": "ILO (2019) Working on a warmer planet"},
+    {"words": ["working hour loss due to global warming", "China", "2030", "RCP2.6", "percent"], "number": "0.0078", "source": "ILO (2019) Working on a warmer planet"},
+    {"words": ["working hour loss due to global warming", "India", "2030", "RCP2.6", "percent"], "number": "0.058", "source": "ILO (2019) Working on a warmer planet"},
+    {"words": ["working hour loss due to global warming", "Japan", "2030", "RCP2.6", "percent"], "number": "0.0021", "source": "ILO (2019) Working on a warmer planet"},
+    {"words": ["working hour loss due to global warming", "Brazil", "2030", "RCP2.6", "percent"], "number": "0.0084", "source": "ILO (2019) Working on a warmer planet"},
+    {"words": ["working hour loss due to global warming", "Indonesia", "2030", "RCP2.6", "percent"], "number": "0.0297", "source": "ILO (2019) Working on a warmer planet"},
+    {"words": ["working hour loss due to global warming", "Nigeria", "2030", "RCP2.6", "percent"], "number": "0.0389", "source": "ILO (2019) Working on a warmer planet"},
+    {"words": ["working hour loss due to global warming", "Bangladesh", "2030", "RCP2.6", "percent"], "number": "0.0484", "source": "ILO (2019) Working on a warmer planet"},
+    {"words": ["working hour loss due to global warming", "Pakistan", "2030", "RCP2.6", "percent"], "number": "0.0554", "source": "ILO (2019) Working on a warmer planet"},
+    {"words": ["sea level rise due to global warming", "person exposed to coastal flood", "world", "2100", "RCP8.5", "million", "person"], "number": "390", "source": "Kulp & Strauss (2019)"},
+    {"words": ["sea level rise due to global warming", "person exposed to coastal flood", "world", "2100", "RCP8.5", "million", "person", "low"], "number": "330", "source": "Kulp & Strauss (2019)"},
+    {"words": ["sea level rise due to global warming", "person exposed to coastal flood", "world", "2100", "RCP8.5", "million", "person", "high"], "number": "460", "source": "Kulp & Strauss (2019)"},
+    {"words": ["sea level rise due to global warming", "person exposed to coastal flood", "China", "2100", "RCP8.5", "million", "person"], "number": "120", "source": "Kulp & Strauss (2019)"},
+    {"words": ["sea level rise due to global warming", "person exposed to coastal flood", "China", "2100", "RCP8.5", "million", "person", "low"], "number": "98", "source": "Kulp & Strauss (2019)"},
+    {"words": ["sea level rise due to global warming", "person exposed to coastal flood", "China", "2100", "RCP8.5", "million", "person", "high"], "number": "140", "source": "Kulp & Strauss (2019)"},
+    {"words": ["sea level rise due to global warming", "person exposed to coastal flood", "Bangladesh", "2100", "RCP8.5", "million", "person"], "number": "60", "source": "Kulp & Strauss (2019)"},
+    {"words": ["sea level rise due to global warming", "person exposed to coastal flood", "Bangladesh", "2100", "RCP8.5", "million", "person", "low"], "number": "54", "source": "Kulp & Strauss (2019)"},
+    {"words": ["sea level rise due to global warming", "person exposed to coastal flood", "Bangladesh", "2100", "RCP8.5", "million", "person", "high"], "number": "68", "source": "Kulp & Strauss (2019)"},
+    {"words": ["sea level rise due to global warming", "person exposed to coastal flood", "India", "2100", "RCP8.5", "million", "person"], "number": "44", "source": "Kulp & Strauss (2019)"},
+    {"words": ["sea level rise due to global warming", "person exposed to coastal flood", "India", "2100", "RCP8.5", "million", "person", "low"], "number": "40", "source": "Kulp & Strauss (2019)"},
+    {"words": ["sea level rise due to global warming", "person exposed to coastal flood", "India", "2100", "RCP8.5", "million", "person", "high"], "number": "49", "source": "Kulp & Strauss (2019)"},
+    {"words": ["sea level rise due to global warming", "person exposed to coastal flood", "Vietnam", "2100", "RCP8.5", "million", "person"], "number": "36", "source": "Kulp & Strauss (2019)"},
+    {"words": ["sea level rise due to global warming", "person exposed to coastal flood", "Vietnam", "2100", "RCP8.5", "million", "person", "low"], "number": "32", "source": "Kulp & Strauss (2019)"},
+    {"words": ["sea level rise due to global warming", "person exposed to coastal flood", "Vietnam", "2100", "RCP8.5", "million", "person", "high"], "number": "40", "source": "Kulp & Strauss (2019)"},
+    {"words": ["sea level rise due to global warming", "person exposed to coastal flood", "Indonesia", "2100", "RCP8.5", "million", "person"], "number": "31", "source": "Kulp & Strauss (2019)"},
+    {"words": ["sea level rise due to global warming", "person exposed to coastal flood", "Indonesia", "2100", "RCP8.5", "million", "person", "low"], "number": "26", "source": "Kulp & Strauss (2019)"},
+    {"words": ["sea level rise due to global warming", "person exposed to coastal flood", "Indonesia", "2100", "RCP8.5", "million", "person", "high"], "number": "37", "source": "Kulp & Strauss (2019)"},
+    {"words": ["sea level rise due to global warming", "person exposed to coastal flood", "Japan", "2100", "RCP8.5", "million", "person"], "number": "8.5", "source": "Kulp & Strauss (2019)"},
+    {"words": ["sea level rise due to global warming", "person exposed to coastal flood", "Japan", "2100", "RCP8.5", "million", "person", "low"], "number": "6.1", "source": "Kulp & Strauss (2019)"},
+    {"words": ["sea level rise due to global warming", "person exposed to coastal flood", "Japan", "2100", "RCP8.5", "million", "person", "high"], "number": "13", "source": "Kulp & Strauss (2019)"},
+    {"words": ["sea level rise due to global warming", "person exposed to coastal flood", "Egypt", "2100", "RCP8.5", "million", "person"], "number": "4.9", "source": "Kulp & Strauss (2019)"},
+    {"words": ["sea level rise due to global warming", "person exposed to coastal flood", "Egypt", "2100", "RCP8.5", "million", "person", "low"], "number": "4.3", "source": "Kulp & Strauss (2019)"},
+    {"words": ["sea level rise due to global warming", "person exposed to coastal flood", "Egypt", "2100", "RCP8.5", "million", "person", "high"], "number": "5.2", "source": "Kulp & Strauss (2019)"},
+    {"words": ["sea level rise due to global warming", "person exposed to coastal flood", "United States", "2100", "RCP8.5", "million", "person"], "number": "3.4", "source": "Kulp & Strauss (2019)"},
+    {"words": ["sea level rise due to global warming", "person exposed to coastal flood", "United States", "2100", "RCP8.5", "million", "person", "low"], "number": "2.3", "source": "Kulp & Strauss (2019)"},
+    {"words": ["sea level rise due to global warming", "person exposed to coastal flood", "United States", "2100", "RCP8.5", "million", "person", "high"], "number": "5.1", "source": "Kulp & Strauss (2019)"},
+    {"words": ["sea level rise due to global warming", "person exposed to coastal flood", "Brazil", "2100", "RCP8.5", "million", "person"], "number": "2", "source": "Kulp & Strauss (2019)"},
+    {"words": ["sea level rise due to global warming", "person exposed to coastal flood", "Brazil", "2100", "RCP8.5", "million", "person", "low"], "number": "1.6", "source": "Kulp & Strauss (2019)"},
+    {"words": ["sea level rise due to global warming", "person exposed to coastal flood", "Brazil", "2100", "RCP8.5", "million", "person", "high"], "number": "2.9", "source": "Kulp & Strauss (2019)"},
+    {"words": ["sea level rise due to global warming", "person exposed to coastal flood", "Germany", "2100", "RCP8.5", "million", "person"], "number": "1.8", "source": "Kulp & Strauss (2019)"},
+    {"words": ["sea level rise due to global warming", "person exposed to coastal flood", "Germany", "2100", "RCP8.5", "million", "person", "low"], "number": "1.6", "source": "Kulp & Strauss (2019)"},
+    {"words": ["sea level rise due to global warming", "person exposed to coastal flood", "Germany", "2100", "RCP8.5", "million", "person", "high"], "number": "1.9", "source": "Kulp & Strauss (2019)"},
+    {"words": ["sea level rise due to global warming", "person exposed to coastal flood", "Nigeria", "2100", "RCP8.5", "million", "person"], "number": "1.6", "source": "Kulp & Strauss (2019)"},
+    {"words": ["sea level rise due to global warming", "person exposed to coastal flood", "Nigeria", "2100", "RCP8.5", "million", "person", "low"], "number": "1.4", "source": "Kulp & Strauss (2019)"},
+    {"words": ["sea level rise due to global warming", "person exposed to coastal flood", "Nigeria", "2100", "RCP8.5", "million", "person", "high"], "number": "2.1", "source": "Kulp & Strauss (2019)"},
+    {"words": ["sea level rise due to global warming", "person exposed to coastal flood", "Pakistan", "2100", "RCP8.5", "million", "person"], "number": "1.2", "source": "Kulp & Strauss (2019)"},
+    {"words": ["sea level rise due to global warming", "person exposed to coastal flood", "Pakistan", "2100", "RCP8.5", "million", "person", "low"], "number": "0.85", "source": "Kulp & Strauss (2019)"},
+    {"words": ["sea level rise due to global warming", "person exposed to coastal flood", "Pakistan", "2100", "RCP8.5", "million", "person", "high"], "number": "1.7", "source": "Kulp & Strauss (2019)"},
+    {"words": ["sea level rise due to global warming", "coastal flood", "GDP loss", "world", "2100", "RCP8.5", "annual", "percent", "low"], "number": "0.012", "source": "Hinkel et al. (2014)"},
+    {"words": ["sea level rise due to global warming", "coastal flood", "GDP loss", "world", "2100", "RCP8.5", "annual", "percent", "high"], "number": "0.093", "source": "Hinkel et al. (2014)"},
+    {"words": ["extreme weather", "cost", "world", "2014-2023", "billion", "EUR"], "number": "1849.6", "source": "Oxera for ICC (2024) The economic cost of extreme weather events", "description": "2000 billion USD at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["extreme weather", "cost", "United States", "2014-2023", "billion", "EUR"], "number": "864.4", "source": "Oxera for ICC (2024) The economic cost of extreme weather events", "description": "934.7 billion USD at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["extreme weather", "cost", "China", "2014-2023", "billion", "EUR"], "number": "247.8", "source": "Oxera for ICC (2024) The economic cost of extreme weather events", "description": "267.9 billion USD at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["extreme weather", "cost", "India", "2014-2023", "billion", "EUR"], "number": "103.8", "source": "Oxera for ICC (2024) The economic cost of extreme weather events", "description": "112.2 billion USD at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["extreme weather", "cost", "Japan", "2014-2023", "billion", "EUR"], "number": "84", "source": "Oxera for ICC (2024) The economic cost of extreme weather events", "description": "90.8 billion USD at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["extreme weather", "cost", "Germany", "2014-2023", "billion", "EUR"], "number": "60.5", "source": "Oxera for ICC (2024) The economic cost of extreme weather events", "description": "65.4 billion USD at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["extreme weather", "cost", "Australia", "2014-2023", "billion", "EUR"], "number": "31.2", "source": "Oxera for ICC (2024) The economic cost of extreme weather events", "description": "33.7 billion USD at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["extreme weather", "cost", "Brazil", "2014-2023", "billion", "EUR"], "number": "22.9", "source": "Oxera for ICC (2024) The economic cost of extreme weather events", "description": "24.8 billion USD at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["crop yield change due to global warming", "world", "2098", "RCP8.5", "percent"], "number": "-0.24", "source": "Hultgren et al. (2025)"},
+    {"words": ["agricultural productivity change due to global warming", "world", "1961-2020", "percent"], "number": "-0.173", "source": "Ortiz-Bobea et al. (2021)"},
+    {"words": ["agricultural productivity change due to global warming", "world", "1961-2020", "percent", "low"], "number": "-0.411", "source": "Ortiz-Bobea et al. (2021)"},
+    {"words": ["agricultural productivity change due to global warming", "world", "1961-2020", "percent", "high"], "number": "-0.014", "source": "Ortiz-Bobea et al. (2021)"},
+    {"words": ["climate migrant due to global warming", "world", "2050", "RCP8.5", "million", "person", "high"], "number": "216", "source": "World Bank (2021) Groundswell Part 2", "description": "six World Bank regions without the high income countries"},
+    {"words": ["climate migrant due to global warming", "Bangladesh", "2050", "RCP8.5", "million", "person", "high"], "number": "19.9", "source": "World Bank (2021) Groundswell Part 2"},
+    {"words": ["climate migrant due to global warming", "Nigeria", "2050", "RCP8.5", "million", "person"], "number": "8.3", "source": "World Bank (2021) Groundswell Africa West Africa"},
+    {"words": ["climate migrant due to global warming", "Nigeria", "2050", "RCP8.5", "million", "person", "high"], "number": "9.4", "source": "World Bank (2021) Groundswell Africa West Africa"},
+    {"words": ["ecosystem collapse", "GDP loss", "world", "2030", "trillion", "EUR"], "number": "2.5", "source": "World Bank (2021) The Economic Case for Nature", "description": "2.3 percent of the world GDP; 2.7 trillion USD at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["ecosystem collapse", "GDP loss", "China", "2030", "billion", "EUR"], "number": "872.1", "source": "World Bank (2021) The Economic Case for Nature", "description": "943 billion USD at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["ecosystem collapse", "GDP loss", "India", "2030", "billion", "EUR"], "number": "178.5", "source": "World Bank (2021) The Economic Case for Nature", "description": "193 billion USD at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["ecosystem collapse", "GDP loss", "Brazil", "2030", "billion", "EUR"], "number": "138.7", "source": "World Bank (2021) The Economic Case for Nature", "description": "150 billion USD at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["ecosystem collapse", "GDP loss", "Indonesia", "2030", "billion", "EUR"], "number": "133.2", "source": "World Bank (2021) The Economic Case for Nature", "description": "144 billion USD at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["ecosystem collapse", "GDP loss", "Nigeria", "2030", "billion", "EUR"], "number": "128.5", "source": "World Bank (2021) The Economic Case for Nature", "description": "139 billion USD at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["ecosystem collapse", "GDP loss", "Indonesia", "2030", "percent"], "number": "0.11", "source": "World Bank (2021) The Economic Case for Nature"},
+    {"words": ["ecosystem collapse", "GDP loss", "Bangladesh", "2030", "percent"], "number": "0.204", "source": "World Bank (2021) The Economic Case for Nature"},
+    {"words": ["ecosystem collapse", "GDP loss", "Pakistan", "2030", "percent"], "number": "0.15", "source": "World Bank (2021) The Economic Case for Nature"},
+    {"words": ["fishery revenue change due to global warming", "world", "2050", "RCP8.5", "percent"], "number": "-0.104", "source": "Lam et al. (2016)"},
+    {"words": ["tipping point due to global warming", "social cost of carbon increase", "world", "percent"], "number": "0.245", "source": "Dietz et al. (2021)"},
+    {"words": ["health cost due to global warming", "world", "2030", "annual", "billion", "EUR", "low"], "number": "1.85", "source": "WHO (2023) Climate change fact sheet", "description": "2 billion USD at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["health cost due to global warming", "world", "2030", "annual", "billion", "EUR", "high"], "number": "3.7", "source": "WHO (2023) Climate change fact sheet", "description": "4 billion USD at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["social cost of carbon", "world", "2020", "EUR per tonne CO2"], "number": "171.1", "source": "Rennert et al. (2022)", "description": "185 USD per tonne CO2 at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["social cost of carbon", "world", "2020", "EUR per tonne CO2", "low"], "number": "40.7", "source": "Rennert et al. (2022)", "description": "44 USD per tonne CO2 at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["social cost of carbon", "world", "2020", "EUR per tonne CO2", "high"], "number": "381.9", "source": "Rennert et al. (2022)", "description": "413 USD per tonne CO2 at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["country social cost of carbon", "world", "2020", "RCP6.0", "EUR per tonne CO2"], "number": "385.6", "source": "Ricke et al. (2018)", "description": "417 USD per tonne CO2 at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["country social cost of carbon", "world", "2020", "RCP6.0", "EUR per tonne CO2", "low"], "number": "163.7", "source": "Ricke et al. (2018)", "description": "177 USD per tonne CO2 at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["country social cost of carbon", "world", "2020", "RCP6.0", "EUR per tonne CO2", "high"], "number": "744.5", "source": "Ricke et al. (2018)", "description": "805 USD per tonne CO2 at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["country social cost of carbon", "India", "2020", "RCP6.0", "EUR per tonne CO2"], "number": "79.5", "source": "Ricke et al. (2018)", "description": "86 USD per tonne CO2 at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["country social cost of carbon", "India", "2020", "RCP6.0", "EUR per tonne CO2", "low"], "number": "45.3", "source": "Ricke et al. (2018)", "description": "49 USD per tonne CO2 at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["country social cost of carbon", "India", "2020", "RCP6.0", "EUR per tonne CO2", "high"], "number": "145.2", "source": "Ricke et al. (2018)", "description": "157 USD per tonne CO2 at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["country social cost of carbon", "United States", "2020", "RCP6.0", "EUR per tonne CO2"], "number": "44.4", "source": "Ricke et al. (2018)", "description": "48 USD per tonne CO2 at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["country social cost of carbon", "United States", "2020", "RCP6.0", "EUR per tonne CO2", "low"], "number": "0.92", "source": "Ricke et al. (2018)", "description": "1 USD per tonne CO2 at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["country social cost of carbon", "United States", "2020", "RCP6.0", "EUR per tonne CO2", "high"], "number": "109.1", "source": "Ricke et al. (2018)", "description": "118 USD per tonne CO2 at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["country social cost of carbon", "Brazil", "2020", "RCP6.0", "EUR per tonne CO2"], "number": "22.2", "source": "Ricke et al. (2018)", "description": "24 USD per tonne CO2 at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["country social cost of carbon", "Brazil", "2020", "RCP6.0", "EUR per tonne CO2", "low"], "number": "12.9", "source": "Ricke et al. (2018)", "description": "14 USD per tonne CO2 at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["country social cost of carbon", "Brazil", "2020", "RCP6.0", "EUR per tonne CO2", "high"], "number": "37.9", "source": "Ricke et al. (2018)", "description": "41 USD per tonne CO2 at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["country social cost of carbon", "China", "2020", "RCP6.0", "EUR per tonne CO2"], "number": "22.2", "source": "Ricke et al. (2018)", "description": "24 USD per tonne CO2 at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["country social cost of carbon", "China", "2020", "RCP6.0", "EUR per tonne CO2", "low"], "number": "3.7", "source": "Ricke et al. (2018)", "description": "4 USD per tonne CO2 at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["country social cost of carbon", "China", "2020", "RCP6.0", "EUR per tonne CO2", "high"], "number": "46.2", "source": "Ricke et al. (2018)", "description": "50 USD per tonne CO2 at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["country social cost of carbon", "Nigeria", "2020", "RCP6.0", "EUR per tonne CO2"], "number": "12.2", "source": "Ricke et al. (2018)", "description": "13.2 USD per tonne CO2 at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["country social cost of carbon", "Nigeria", "2020", "RCP6.0", "EUR per tonne CO2", "low"], "number": "7.12", "source": "Ricke et al. (2018)", "description": "7.7 USD per tonne CO2 at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["country social cost of carbon", "Nigeria", "2020", "RCP6.0", "EUR per tonne CO2", "high"], "number": "22.7", "source": "Ricke et al. (2018)", "description": "24.5 USD per tonne CO2 at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["country social cost of carbon", "Indonesia", "2020", "RCP6.0", "EUR per tonne CO2"], "number": "10.1", "source": "Ricke et al. (2018)", "description": "10.9 USD per tonne CO2 at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["country social cost of carbon", "Indonesia", "2020", "RCP6.0", "EUR per tonne CO2", "low"], "number": "6.29", "source": "Ricke et al. (2018)", "description": "6.8 USD per tonne CO2 at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["country social cost of carbon", "Indonesia", "2020", "RCP6.0", "EUR per tonne CO2", "high"], "number": "16.5", "source": "Ricke et al. (2018)", "description": "17.8 USD per tonne CO2 at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["country social cost of carbon", "Pakistan", "2020", "RCP6.0", "EUR per tonne CO2"], "number": "8.32", "source": "Ricke et al. (2018)", "description": "9 USD per tonne CO2 at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["country social cost of carbon", "Pakistan", "2020", "RCP6.0", "EUR per tonne CO2", "low"], "number": "4.81", "source": "Ricke et al. (2018)", "description": "5.2 USD per tonne CO2 at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["country social cost of carbon", "Pakistan", "2020", "RCP6.0", "EUR per tonne CO2", "high"], "number": "15.8", "source": "Ricke et al. (2018)", "description": "17.1 USD per tonne CO2 at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["country social cost of carbon", "Japan", "2020", "RCP6.0", "EUR per tonne CO2"], "number": "5.09", "source": "Ricke et al. (2018)", "description": "5.5 USD per tonne CO2 at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["country social cost of carbon", "Japan", "2020", "RCP6.0", "EUR per tonne CO2", "low"], "number": "0.28", "source": "Ricke et al. (2018)", "description": "0.3 USD per tonne CO2 at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["country social cost of carbon", "Japan", "2020", "RCP6.0", "EUR per tonne CO2", "high"], "number": "11.6", "source": "Ricke et al. (2018)", "description": "12.5 USD per tonne CO2 at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["country social cost of carbon", "Bangladesh", "2020", "RCP6.0", "EUR per tonne CO2"], "number": "1.76", "source": "Ricke et al. (2018)", "description": "1.9 USD per tonne CO2 at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["country social cost of carbon", "Bangladesh", "2020", "RCP6.0", "EUR per tonne CO2", "low"], "number": "1.11", "source": "Ricke et al. (2018)", "description": "1.2 USD per tonne CO2 at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["country social cost of carbon", "Bangladesh", "2020", "RCP6.0", "EUR per tonne CO2", "high"], "number": "2.87", "source": "Ricke et al. (2018)", "description": "3.1 USD per tonne CO2 at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["country social cost of carbon", "Switzerland", "2020", "RCP6.0", "EUR per tonne CO2"], "number": "-0.92", "source": "Ricke et al. (2018)", "description": "a cool country gains from moderate warming in the short-run reference case; with the long-run damage function the cost is positive; -1 USD per tonne CO2 at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["country social cost of carbon", "Switzerland", "2020", "RCP6.0", "EUR per tonne CO2", "low"], "number": "-1.39", "source": "Ricke et al. (2018)", "description": "-1.5 USD per tonne CO2 at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["country social cost of carbon", "Switzerland", "2020", "RCP6.0", "EUR per tonne CO2", "high"], "number": "-0.55", "source": "Ricke et al. (2018)", "description": "-0.6 USD per tonne CO2 at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["country social cost of carbon", "Germany", "2020", "RCP6.0", "EUR per tonne CO2"], "number": "-4.62", "source": "Ricke et al. (2018)", "description": "a cool country gains from moderate warming in the short-run reference case; with the long-run damage function the cost is positive; -5 USD per tonne CO2 at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["country social cost of carbon", "Germany", "2020", "RCP6.0", "EUR per tonne CO2", "low"], "number": "-7.86", "source": "Ricke et al. (2018)", "description": "-8.5 USD per tonne CO2 at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["country social cost of carbon", "Germany", "2020", "RCP6.0", "EUR per tonne CO2", "high"], "number": "-1.48", "source": "Ricke et al. (2018)", "description": "-1.6 USD per tonne CO2 at the ECB 2023 average of 1.0813 USD per EUR"}
+  ]
+}

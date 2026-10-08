@@ -381,6 +381,35 @@
     },
     {
       "name": "wind"
+    },
+    {
+      "name": "mortality"
+    },
+    {
+      "name": "cost"
+    },
+    {
+      "name": "labour"
+    },
+    {
+      "name": "productivity",
+      "description": "the output per unit of input e.g. per hour worked"
+    },
+    {
+      "name": "income"
+    },
+    {
+      "name": "weather"
+    },
+    {
+      "name": "extreme"
+    },
+    {
+      "name": "2000",
+      "type": "time"
+    },
+    {
+      "name": "2023"
     }
   ],
   "triples": [
@@ -1214,6 +1243,70 @@
       "from": "gain",
       "verb": "kind of",
       "to": "potential"
+    },
+    {
+      "name": "heat mortality",
+      "from": "heat",
+      "verb": "can cause",
+      "to": "mortality",
+      "description": "the deaths caused by heat"
+    },
+    {
+      "name": "labour productivity",
+      "from": "productivity",
+      "verb": "of",
+      "to": "labour"
+    },
+    {
+      "name": "labour productivity loss",
+      "from": "loss",
+      "verb": "of",
+      "to": "labour productivity",
+      "description": "the work that cannot be done or is done slower because of heat stress"
+    },
+    {
+      "name": "income loss",
+      "from": "loss",
+      "verb": "of",
+      "to": "income"
+    },
+    {
+      "name": "potential income loss",
+      "from": "income loss",
+      "verb": "kind of",
+      "to": "potential",
+      "description": "the income that the lost working hours could have earned, as the Lancet Countdown defines it"
+    },
+    {
+      "name": "extreme weather",
+      "from": "weather",
+      "verb": "kind of",
+      "to": "extreme",
+      "description": "storms, floods, droughts, heatwaves and wildfires"
+    },
+    {
+      "name": "2000-2019",
+      "from": "2000",
+      "verb": "to",
+      "to": "2019"
+    },
+    {
+      "name": "heat mortality due to global warming",
+      "from": "global warming",
+      "verb": "can cause",
+      "to": "heat mortality"
+    },
+    {
+      "name": "labour productivity loss due to global warming",
+      "from": "global warming",
+      "verb": "can cause",
+      "to": "labour productivity loss"
+    },
+    {
+      "name": "extreme weather due to global warming",
+      "from": "global warming",
+      "verb": "can cause",
+      "to": "extreme weather"
     }
   ],
   "formulas": [
@@ -1359,6 +1452,12 @@
         "initial effort"
       ],
       "description": "the upper bound of the initial effort of a climate solution, the maximum initial effort in billion USD times the person years per billion USD"
+    },
+    {
+      "name": "annual damage share from the reasons",
+      "description": "the share of the world GDP that global warming costs per year today, the sum of the observed annual costs of its reasons (lost labour income, value of the heat deaths and the extreme weather attributed to the warming) divided by the world GDP and by the share of the annual damage that these reasons cover; all inputs in billion EUR, converted from the US dollars of the sources with the ECB 2023 average of 1.0813 USD per EUR, see problem_global_warming_reasons.json for the reasons per country",
+      "expression": "\"percent\",\"GDP\",\"annual\" = ( \"heat mortality due to global warming\",\"cost\",\"billion\",\"EUR\" + \"labour productivity loss due to global warming\",\"potential income loss\",\"billion\",\"EUR\" + \"extreme weather due to global warming\",\"cost\",\"annual\",\"billion\",\"EUR\" ) / \"world\",\"GDP\",\"billion\",\"EUR\" / \"coverage\",\"annual\",\"percent\"",
+      "assigned_word": "GDP"
     }
   ],
   "sources": [
@@ -1404,6 +1503,16 @@
     },
     {
       "name": "IMF World Economic Outlook 2024"
+    },
+    {
+      "name": "Lancet Countdown (2024) report",
+      "description": "Romanello, M. et al. (2024): The 2024 report of the Lancet Countdown on health and climate change: facing record-breaking threats from delayed action. The Lancet. Indicator 4.1.2: monetised value of the heat-related deaths of people over 65; indicator 4.1.3: potential income loss from the heat-related loss of labour capacity.",
+      "doi": "10.1016/S0140-6736(24)01822-1"
+    },
+    {
+      "name": "Newman & Noy (2023)",
+      "description": "Newman, R., Noy, I. (2023): The global costs of extreme weather that are attributable to climate change. Nature Communications 14, 6103. Annual cost of extreme weather attributable to climate change 2000-2019 (statistical loss of life and direct damages), range of plus and minus one standard deviation of the fraction of attributable risk.",
+      "doi": "10.1038/s41467-023-41888-1"
     }
   ],
   "values": [
@@ -1467,14 +1576,98 @@
     },
     {
       "words": [
-        "global warming",
-        "percent",
+        "world",
         "GDP",
+        "billion",
+        "EUR",
+        "2024"
+      ],
+      "number": "110047.109",
+      "source": "IMF World Economic Outlook 2024",
+      "description": "the world GDP of solution_prio.json in billion EUR (see the value in trillion EUR above), the divisor of the annual damage share from the reasons of global warming, which are stated in billion EUR too"
+    },
+    {
+      "words": [
+        "heat mortality due to global warming",
+        "cost",
+        "world",
+        "2023",
+        "billion",
+        "EUR"
+      ],
+      "number": "222",
+      "source": "Lancet Countdown (2024) report",
+      "description": "the monetised value of the heat-related deaths of people over 65 in 2023; 240 billion USD at the ECB 2023 average of 1.0813 USD per EUR"
+    },
+    {
+      "words": [
+        "labour productivity loss due to global warming",
+        "potential income loss",
+        "world",
+        "2023",
+        "billion",
+        "EUR"
+      ],
+      "number": "772.2",
+      "source": "Lancet Countdown (2024) report",
+      "description": "0.82 percent of the gross world product; 835 billion USD at the ECB 2023 average of 1.0813 USD per EUR"
+    },
+    {
+      "words": [
+        "extreme weather due to global warming",
+        "cost",
+        "world",
+        "2000-2019",
         "annual",
+        "billion",
+        "EUR"
+      ],
+      "number": "132.2",
+      "source": "Newman & Noy (2023)",
+      "description": "143 billion USD at the ECB 2023 average of 1.0813 USD per EUR"
+    },
+    {
+      "words": [
+        "extreme weather due to global warming",
+        "cost",
+        "world",
+        "2000-2019",
+        "annual",
+        "billion",
+        "EUR",
+        "low"
+      ],
+      "number": "53.6",
+      "source": "Newman & Noy (2023)",
+      "description": "58 billion USD at the ECB 2023 average of 1.0813 USD per EUR"
+    },
+    {
+      "words": [
+        "extreme weather due to global warming",
+        "cost",
+        "world",
+        "2000-2019",
+        "annual",
+        "billion",
+        "EUR",
+        "high"
+      ],
+      "number": "210.9",
+      "source": "Newman & Noy (2023)",
+      "description": "228 billion USD at the ECB 2023 average of 1.0813 USD per EUR"
+    },
+    {
+      "words": [
+        "heat mortality due to global warming",
+        "labour productivity loss due to global warming",
+        "extreme weather due to global warming",
+        "coverage",
+        "annual",
+        "percent",
         "assumed"
       ],
-      "number": "0.02",
-      "description": "the share of the world GDP that the warming costs per year today; the long run share of the potential loss column is far higher, because it states the loss at the end of the warming and not the loss already realised per year"
+      "number": "0.5",
+      "description": "the share of the annual damage of global warming that the observed annual costs of these three reasons (lost labour income, heat deaths and extreme weather) cover; the other half are the reasons that are projections and no annual cost of today yet (sea level rise, crop yields, ecosystems, migration, tipping points), see problem_global_warming_reasons.json; with 50 percent the observed costs of 1.126 trillion EUR imply an annual damage of 2 percent of the world GDP"
     },
     {
       "words": [
@@ -9008,6 +9201,37 @@
     }
   ],
   "calc-validation": [
+    {
+      "context": [
+        "global warming",
+        "heat mortality due to global warming",
+        "labour productivity loss due to global warming",
+        "potential income loss",
+        "extreme weather due to global warming",
+        "cost",
+        "world",
+        "GDP",
+        "2023",
+        "2000-2019",
+        "2024",
+        "annual",
+        "billion",
+        "EUR",
+        "coverage",
+        "percent",
+        "assumed"
+      ],
+      "formula": "annual damage share from the reasons",
+      "words": [
+        "global warming",
+        "percent",
+        "GDP",
+        "annual",
+        "assumed"
+      ],
+      "number": "0.02",
+      "note": "( 222 + 772.2 + 132.2 ) billion EUR / 110047.109 billion EUR / 50 percent coverage = 0.020471, stated as 0.02 so that the start page ranking keeps the round 2 percent; the share of the world GDP that the warming costs per year today; the long run share of the potential loss column is far higher, because it states the loss at the end of the warming and not the loss already realised per year"
+    },
     {
       "context": [
         "global warming",
