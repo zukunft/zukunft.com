@@ -8,7 +8,7 @@ in a test file of the src/test/php/unit* folders; the count is by function name
 and cannot tell the classes apart, so a name that several classes declare needs
 2 calls per class and is listed as shared otherwise
 
-631 of 5923 public functions have at least 2 unit test calls; the 5292 functions below do not
+629 of 5924 public functions have at least 2 unit test calls; the 5295 functions below do not
 
 ## main backend
 
@@ -288,6 +288,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- set_view - 0 unit test calls shared by 4 classes
     \-- to_field - 0 unit test calls shared by 7 classes
     \-- type_field - 0 unit test calls shared by 7 classes
+    \-- view_id - 4 unit test calls shared by 3 classes
 \-- component_link_list
     \-- add_by_key - 2 unit test calls shared by 5 classes
     \-- cmp_ids - 0 unit test calls
@@ -4650,6 +4651,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- symbol_name - 0 unit test calls
     \-- tooltip - 0 unit test calls shared by 2 classes
     \-- url_mapper - 41 unit test calls shared by 27 classes
+    \-- view_id - 4 unit test calls shared by 3 classes
     \-- wrd_lst - 0 unit test calls shared by 6 classes
 \-- phrase_list
     \-- api_mapper - 25 unit test calls shared by 100 classes
@@ -4813,6 +4815,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- share_type_selector - 0 unit test calls shared by 2 classes
     \-- to_url_array - 24 unit test calls shared by 13 classes
     \-- url_mapper - 41 unit test calls shared by 27 classes
+    \-- view_id - 4 unit test calls shared by 3 classes
     \-- view_selector - 1 unit test calls shared by 9 classes
 \-- sandbox_code_id
     \-- api_array - 10 unit test calls shared by 37 classes

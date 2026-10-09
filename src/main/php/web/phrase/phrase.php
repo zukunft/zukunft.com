@@ -682,7 +682,7 @@ class phrase extends combine_named
     /**
      * @return int the view id that name_link uses for this phrase class
      */
-    private function view_id(): int
+    function view_id(): int
     {
         if ($this->is_triple()) {
             return views::TRIPLE_ID;

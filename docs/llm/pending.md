@@ -1,8 +1,8 @@
 # pending - list of planned llm prompts with prio 1
 
-## table with column component
+## start page table
 
-if in the start page table there is more than one reason or solution add a ', ...' with a link to the solution list after the solution name
+the file src/main/resources/messages/start_page/problem_global_warming_reasons.json should contain the number for more than one reason for the global warming. The numbers of this file are probably imported into the database, so all reasons should be taken into account for the column 'reason' in the row 'global warming' in the table of http://localhost/http/view.php?m=1&dlc=2&dlr=0. The reason with the highest impact should be shown in the cell 'global warming' / 'reason' and because there are more reasons, additional ', ...' should be shown that links to a view that shows a table for 'global warming reasons' where the rows are the reasons and the columns are e.g. 'potential loss in trillion EUR', 'solution' and 'potential gain in billion htp' defined by triples similar to the global warming start page table 
 
 ## system settings
 

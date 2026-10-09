@@ -462,6 +462,12 @@ follows the reason, so both reason columns stand between the loss and the
 solution of the problem. The main tier holds only these two columns; every
 other defined column below the mayor tier of the start page is minor or marginal.
 
+A phrase cell names one phrase: if the values of a row name more than one
+phrase for the column, e.g. two solutions of one problem, the cell shows the
+phrase of the most relevant value, the first after the impact sort, followed
+by `, ...`, which links to the page of the row phrase, because that page lists
+all solutions and reasons of the problem (`value_list::phrase_cell`).
+
 A row of the simple table whose numbers are all in a column of the full version
 would be empty, e.g. the reward ratio row of a problem, so the ranking of the
 start page is built with the `value_rows_only` option of

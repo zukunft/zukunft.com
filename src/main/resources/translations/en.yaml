@@ -380,6 +380,7 @@ messages:
   table_as_table_chart: "table + chart"
   table_sort_up_tip: "sort by this column, the smallest number or the first name on top"
   table_sort_down_tip: "sort by this column, the biggest number or the last name on top"
+  table_more_phrases_tip: "there are more, all are shown on the page of this row"
   chart_range_bars_tip: "dot = estimate, bar = range · hover for details"
   chart_scatter_tip: "hover a point for the ranges"
   chart_log_scale: "log scale"

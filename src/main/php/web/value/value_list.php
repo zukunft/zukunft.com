@@ -841,7 +841,7 @@ class value_list extends ListBase
         if ($col_values_only) {
             $vals = array_filter($vals, fn($val) => array_key_exists($val->id(), $val_col));
         }
-        [$row_label, $row_phr, $cells, $phr_cells] = $this->table_cells(
+        [$row_label, $row_phr, $cells, $phr_cells, $phr_more] = $this->table_cells(
             $vals, $val_col, $col_parts, $all_by_id, $phr_col, $rel_lst, $grp_ctx);
         // a phrase column is defined like a value column, so both kinds are shown in one
         // order, e.g. the "solution" column between the "loss" and the "gain" column
@@ -864,6 +864,7 @@ class value_list extends ListBase
         $model->row_col = $this->row_column($context_phr_lst, $col_order);
         $model->cells = $cells;
         $model->phr_cells = $phr_cells;
+        $model->phr_cells_more = $phr_more;
         $model->col_ids = $col_ids;
         $model->col_phr = $col_phr;
         $model->phr_col = $phr_col;
@@ -995,8 +996,9 @@ class value_list extends ListBase
      * @param phrase_list|null $rel_lst the phrases related to the page phrase with the definitions
      * @param phrase_list $grp_ctx the phrases assumed by the reader, which name no row
      * @return array per row key the html link list of the row, per row key its phrases, per row
-     *               key and column id the values of the cell and per row key and phrase column
-     *               id the phrase shown
+     *               key and column id the values of the cell, per row key and phrase column
+     *               id the phrase shown and per row key and phrase column id true if the row
+     *               names more than one phrase for that column
      */
     private function table_cells(
         array        $vals,
@@ -1017,6 +1019,7 @@ class value_list extends ListBase
         $row_phr = [];
         $cells = [];
         $phr_cells = [];
+        $phr_more = [];
         foreach ($vals as $val) {
             $col_id = $val_col[$val->id()] ?? '';
             $ctx = clone $grp_ctx;
@@ -1045,18 +1048,24 @@ class value_list extends ListBase
                 $row_phr[$row_key] = $val->grp->phr_lst()->remove($ctx)->lst();
                 $cells[$row_key] = [];
             }
-            // the phrase of a row is the same for every value of that row, so it is set
-            // instead of added, e.g. the solution is named once although the row has the
-            // potential loss and the potential gain of the problem
+            // a phrase cell names one phrase, e.g. the solution once although the row has the
+            // loss and the gain of the problem; the values are sorted by their impact, so the
+            // first one names the most relevant phrase and a different phrase of a later value,
+            // e.g. a second solution of the problem, is only marked for the ", ..." of the cell
             foreach ($phr_cell as $phr_col_id => $phr) {
-                $phr_cells[$row_key][$phr_col_id] = $phr;
+                $shown = $phr_cells[$row_key][$phr_col_id] ?? null;
+                if ($shown == null) {
+                    $phr_cells[$row_key][$phr_col_id] = $phr;
+                } elseif ($shown->id() != $phr->id()) {
+                    $phr_more[$row_key][$phr_col_id] = true;
+                }
             }
             // two values with the same row and column are shown in the same cell instead of
             // the second one replacing the first; the cell keeps the values, because a range
             // bound is shown behind its centre value and not as a value of its own
             $cells[$row_key][$col_id][] = $val;
         }
-        return [$row_label, $row_phr, $cells, $phr_cells];
+        return [$row_label, $row_phr, $cells, $phr_cells, $phr_more];
     }
 
     /**
@@ -1154,8 +1163,7 @@ class value_list extends ListBase
                     $row .= $this->cell($model->cells[$row_key][$col_id] ?? [],
                         $msg, $url_array, $col_style[$col_id], $with_range);
                 } else {
-                    $phr = $model->phr_cells[$row_key][$col_id] ?? null;
-                    $row .= $html->td($phr?->name_link() ?? '', $col_style[$col_id]);
+                    $row .= $html->td($this->phrase_cell($model, $row_key, $col_id, $url_array), $col_style[$col_id]);
                 }
             }
             if ($rest_col) {
@@ -1177,6 +1185,30 @@ class value_list extends ListBase
             $rows .= $this->tr_more($model->rows_behind, $context_phr_lst, $pad_styles, $more_url);
         }
         return $html->tbl($rows, $with_border ? html_base::SIZE_FULL : styles::TABLE_PUR);
+    }
+
+    /**
+     * the content of a phrase cell: the most relevant phrase of the row for the column, e.g. the
+     * solution of the problem, and ", ..." if the row names more of them, which links to the page
+     * of the row, because that page shows all solutions and reasons of the problem
+     *
+     * @param table_model $model the rows and columns of the table
+     * @param string $row_key the key of the row
+     * @param int|string $col_id the id of the phrase column
+     * @param array $url_array the url parameters of the page that shows the table, for the back link
+     * @return string the html code of the cell content, '' if the row names no phrase for the column
+     */
+    private function phrase_cell(table_model $model, string $row_key, int|string $col_id, array $url_array): string
+    {
+        $result = ($model->phr_cells[$row_key][$col_id] ?? null)?->name_link() ?? '';
+        $row_phr = array_values($model->row_phr[$row_key] ?? [])[0] ?? null;
+        if (($model->phr_cells_more[$row_key][$col_id] ?? false) and $row_phr != null) {
+            $html = new html_base();
+            // the page of a word or a triple is called with the id of the word or the triple
+            $url = $html->url_back($row_phr->view_id(), $row_phr->obj_id(), $url_array);
+            $result .= ', ' . $html->ref($url, msg_id::THREE_POINTS->text(), msg_id::TABLE_MORE_PHRASES_TIP->text());
+        }
+        return $result;
     }
 
     /**

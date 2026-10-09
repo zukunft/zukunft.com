@@ -258,6 +258,8 @@ enum messages: string
     // the tooltips of the up / down icons behind a column header that sort the rows (table_orders)
     case TABLE_SORT_UP_TIP = 'table_sort_up_tip';
     case TABLE_SORT_DOWN_TIP = 'table_sort_down_tip';
+    // the tooltip of the ", ..." behind the phrase of a cell that stands for more phrases of the row
+    case TABLE_MORE_PHRASES_TIP = 'table_more_phrases_tip';
     // the subtitle and the axis texts of a value table shown as a chart (see table_chart)
     case CHART_RANGE_BARS_TIP = 'chart_range_bars_tip';
     case CHART_SCATTER_TIP = 'chart_scatter_tip';

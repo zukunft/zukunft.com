@@ -552,6 +552,27 @@ class value_list_ui_tests
         $test_name = '... but the defined reason column is shown';
         $t->assert_text_contains($test_name, $hdr_no_reason, word_names::REASON);
 
+        // a problem with two solutions shows the solution of its biggest gain, followed by
+        // ", ..." that links to the page of the problem, where all its solutions are listed
+        $start_url = [url_var::MASK => views::START_ID];
+        $tbl_two = $t_val->value_list_solution_prio_two_solutions_ui()->table_by_related_columns(
+            $msg_ui, $rank_ctx, $rank_lst->column_names(), false, true, $rank_lst,
+            value_list_ui::LIMIT_ALL, $start_url);
+        $more_tip = msg_id::TABLE_MORE_PHRASES_TIP->text();
+        $test_name = 'a problem with two solutions shows the first solution with ", ..."';
+        $t->assert_text_contains($test_name, $tbl_two, '>' . triple_names::REDUCE_EMISSIONS . '</a>, <a ');
+        $test_name = '... once, because only global warming has two solutions';
+        $t->assert($test_name, substr_count($tbl_two, $more_tip), 1);
+        $test_name = '... which links to the page of the problem';
+        $t->assert_text_contains($test_name, $tbl_two,
+            url_var::MASK . '=' . views::TRIPLE_ID . '&amp;' . url_var::ID . '=' . triple_names::GLOBAL_WARMING_ID);
+        // negative: with one solution per problem no cell has ", ..."
+        $test_name = 'a problem with one solution shows no ", ..."';
+        $tbl_one_each = $t_val->value_list_solution_prio_ui()->table_by_related_columns(
+            $msg_ui, $rank_ctx, $rank_lst->column_names(), false, true, $rank_lst,
+            value_list_ui::LIMIT_ALL, $start_url);
+        $t->assert_text_not_contains($test_name, $tbl_one_each, $more_tip);
+
         // the "..." header opens the menu that selects the columns, so it offers every column
         // tier and each of them once with and once without the ranges
         $page_url = [url_var::MASK => views::START_ID];
