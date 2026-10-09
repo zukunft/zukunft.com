@@ -1,5 +1,9 @@
 # pending prio 2
 
+## start page global problem
+
+add a subtitle with the country, region and an 'yours' option for the problem and solution list where the region and country are based on the ip if the user is not logged in and 'yours' is grey with the tooltip 'signup or login to create your personal list'
+
 ## tests
 
 add to the json_validation test a check for which words, triples, verb, formula or type objects a description is missing

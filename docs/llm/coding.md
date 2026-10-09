@@ -249,6 +249,7 @@ Detail and worked examples: `docs/llm/testing.md`.
 - Keep `$test_name` short but unique; don't repeat context the enclosing `$t->subheader(...)` (or `$t->name`) already shows.
 - Pass only `$test_name` to `$t->assert*()`; let the helper prepend `$t->name` — don't concatenate it.
 - Use the specific `assert_*` variant (`assert_text_contains`, ...), not a generic `assert_true(str_contains(...))`.
+- Every error message explains itself: a failing test shows the values it compared (the loaded id and name, the names found, the message of the call), never a bare "expected true, got false", so the reader sees the cause without a debugger; the same holds for a user message, which names the object, the problem and the solution. → `docs/llm/testing.md`
 - To read a `user_message` result, prefer `$msg->text()` (the single most-useful/last message) over `all_message_text()`; asserting the concatenation of every accumulated message is brittle — an unrelated message added on another code path breaks the assert and couples the test to code it does not exercise. → `docs/llm/testing.md`
 - `$t->subheader(...)` labels are as short as possible while staying unique.
 - Data-file-dependent tests recreate the artifact from a shared const (one point of change), e.g. import-JSON names from a reserved test word.

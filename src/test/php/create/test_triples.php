@@ -1596,6 +1596,74 @@ class test_triples extends test_objects
     }
 
     /**
+     * @return triple "loss reduction" - the share of the loss of a problem that its solution avoids
+     */
+    function loss_reduction(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::LOSS_REDUCTION_ID, triple_names::LOSS_REDUCTION);
+        return $trp;
+    }
+
+    /**
+     * @return triple "reward ratio" - the avoided loss per person year of initial effort
+     */
+    function reward_ratio(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::REWARD_RATIO_ID, triple_names::REWARD_RATIO);
+        return $trp;
+    }
+
+    /**
+     * @return triple "person year" - the measure unit of the initial effort
+     */
+    function person_year(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::PERSON_YEAR_ID, triple_names::PERSON_YEAR);
+        $trp->set_type(phrase_types::MEASURE, new user_message($this->env->usr1));
+        return $trp;
+    }
+
+    /**
+     * @return triple "marginal column (system)" - the tier of the columns shown by the full table only
+     */
+    function column_marginal(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::SYSTEM_COLUMN_MARGINAL_ID, triple_names::SYSTEM_COLUMN_MARGINAL);
+        return $trp;
+    }
+
+    /**
+     * the definitions of the minor and the marginal columns of the start page ranking, as
+     * solution_prio.json defines them: the loss reduction and the initial effort are minor
+     * columns and the reward ratio a marginal column
+     *
+     * @return array the triples "column <phrase>" that link each phrase to its tier
+     */
+    function column_minor_and_marginal_definitions(): array
+    {
+        $t_vrb = new test_verbs($this->env);
+        $definitions = [
+            [triple_names::COLUMN_LOSS_REDUCTION_ID, triple_names::COLUMN_LOSS_REDUCTION, $this->loss_reduction(), $this->column_minor()],
+            [triple_names::COLUMN_INITIAL_EFFORT_ID, triple_names::COLUMN_INITIAL_EFFORT, $this->initial_effort(), $this->column_minor()],
+            [triple_names::COLUMN_REWARD_RATIO_ID, triple_names::COLUMN_REWARD_RATIO, $this->reward_ratio(), $this->column_marginal()],
+        ];
+        $result = [];
+        foreach ($definitions as [$id, $name, $column, $tier]) {
+            $trp = new triple($this->env->usr1);
+            $trp->set($id, $name);
+            $trp->set_from($column->phrase());
+            $trp->set_verb($t_vrb->verb_can_be());
+            $trp->set_to($tier->phrase());
+            $result[] = $trp;
+        }
+        return $result;
+    }
+
+    /**
      * @return triple "range bars of potential loss" - the chart of the loss of each problem
      */
     function range_bars_of_loss(): triple

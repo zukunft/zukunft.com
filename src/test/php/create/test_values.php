@@ -918,11 +918,13 @@ class test_values extends test_objects
     }
 
     /**
-     * the ranking values with the loss of the reason and the range of the loss of the first
-     * problem, so that every selection of the start page sub menus shows something: the main
-     * tier the reason columns and the range selection the bounds behind the number
+     * the ranking values with the loss of the reason, the range of the loss of the first problem
+     * and per problem a number in each minor and marginal column, so that every selection of the
+     * start page sub menus shows its own columns: the main tier the reason columns, the minor
+     * tier the loss in percent of the GDP and of the htp, the initial effort and the loss
+     * reduction, the full table the reward ratio, and the range selection the bounds
      *
-     * @return value_list the ranking values plus the loss of the reason and the range bounds
+     * @return value_list the ranking values plus the numbers of every column tier and the range bounds
      */
     function value_list_start_page(): value_list
     {
@@ -932,6 +934,28 @@ class test_values extends test_objects
         $loss_phr = $this->solution_prio_loss_phrases($t_trp->global_warming()->phrase(), false);
         $lst->add($this->value_for_phrases(array_merge($loss_phr, [$t_wrd->word_low()->phrase()]), 25));
         $lst->add($this->value_for_phrases(array_merge($loss_phr, [$t_wrd->word_high()->phrase()]), 40));
+        $pct = $t_wrd->word_percent()->phrase();
+        $loss = $t_trp->potential_loss()->phrase();
+        foreach ($this->solution_prio_rows() as [$problem, $loss_nbr, , $gain_nbr, $is_assumed]) {
+            // test numbers derived from the row, so that each column has a distinct number per
+            // problem; a share is stored as the decimal ratio (docs/llm/json_structure.md)
+            $reduction = round($gain_nbr / 100, 3);
+            $effort = round($gain_nbr * 10);
+            $rows = [
+                [[$problem, $loss, $pct, $t_wrd->word_gdp()->phrase()], round($loss_nbr / 105, 3)],
+                [[$problem, $loss, $pct, $t_wrd->word_htp()->phrase()], round($loss_nbr / 210, 3)],
+                [[$problem, $t_trp->loss_reduction()->phrase(), $pct], $reduction],
+                [[$problem, $t_trp->initial_effort()->phrase(), $t_trp->person_year()->phrase()], $effort],
+                [[$problem, $t_trp->reward_ratio()->phrase(), $t_wrd->word_trillion()->phrase(),
+                    $t_wrd->word_eur()->phrase()], round($loss_nbr * $reduction / $effort, 4)],
+            ];
+            foreach ($rows as [$phrases, $number]) {
+                if ($is_assumed) {
+                    $phrases[] = $t_wrd->word_assumed()->phrase();
+                }
+                $lst->add($this->value_for_phrases($phrases, $number));
+            }
+        }
         return $lst;
     }
 

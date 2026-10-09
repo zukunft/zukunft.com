@@ -241,6 +241,21 @@ class triple_names
     const int SYSTEM_CHART_TYPE_ALTERNATIVE_ID = 236;
     const string INITIAL_EFFORT = 'initial effort';
     const int INITIAL_EFFORT_ID = 151;
+    // the minor and marginal columns of the ranking and the unit of the initial effort
+    const string LOSS_REDUCTION = 'loss reduction';
+    const int LOSS_REDUCTION_ID = 150;
+    const string REWARD_RATIO = 'reward ratio';
+    const int REWARD_RATIO_ID = 152;
+    const string PERSON_YEAR = 'person year';
+    const int PERSON_YEAR_ID = 153;
+    const string SYSTEM_COLUMN_MARGINAL = shared_triples::SYSTEM_COLUMN_MARGINAL;
+    const int SYSTEM_COLUMN_MARGINAL_ID = 225;
+    const string COLUMN_LOSS_REDUCTION = 'column loss reduction';
+    const int COLUMN_LOSS_REDUCTION_ID = 257;
+    const string COLUMN_INITIAL_EFFORT = 'column initial effort';
+    const int COLUMN_INITIAL_EFFORT_ID = 258;
+    const string COLUMN_REWARD_RATIO = 'column reward ratio';
+    const int COLUMN_REWARD_RATIO_ID = 259;
     const string RANGE_BARS_OF_LOSS = 'range bars of potential loss';
     const int RANGE_BARS_OF_LOSS_ID = 215;
     const string GAIN_AND_EFFORT = 'potential gain and initial effort';

@@ -602,6 +602,29 @@ Two follow-ons:
   acceptable. Reach for it last. (Still feed it named consts:
   `strpos($html, icons::EDIT)`, not `'fas fa-edit'`.)
 
+### Every error message explains itself
+
+A failing test is read by someone who did not write it, often from a pasted
+line without the code. So the failure output must say what went wrong: compare
+the values the check is about, not a boolean built from them. When no specific
+`assert_*` variant fits, build the actual and the expected side as short texts
+and compare those, e.g. the loaded id and name, the sorted names a page shows,
+or a result with the `$msg->text()` of the call appended when the message is not
+ok. The comment above the assert names the most likely cause of a failure.
+
+- **Wrong**: `$t->assert_true($test_name, $loaded_id > 0 and $wrd->name() == words::CHF);`
+  fails with "actual: false, expected: true", which does not tell whether the
+  load failed or selected another word.
+- **Right**: `$t->assert($test_name, $loaded_id . ' ' . $wrd->name(), words::CHF_ID . ' ' . words::CHF);`
+  fails with e.g. "actual: 460 S$, expected: 460 CHF", which shows at once that
+  the pinned id selects another word and needs a re-baseline.
+- **Right**: the start page selection test compares the sorted problem names
+  that a page shows with all problems and appends the message of the rendering,
+  so a failure tells whether rows are missing or the table was not drawn.
+
+The same holds for a user message: it names the object, the problem and the
+solution (`docs/llm/state-and-messages.md`).
+
 ### Read a `user_message` result with `$msg->text()`, not `all_message_text()`
 
 A `user_message` is append-only and threaded across a whole request, so by the

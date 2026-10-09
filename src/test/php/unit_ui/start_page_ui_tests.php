@@ -55,6 +55,7 @@ include_once html_paths::USER . 'user_message.php';
 include_once html_paths::VALUE . 'value_list.php';
 include_once test_paths::CONST . 'paths.php';
 include_once test_paths::CONST . 'triple_names.php';
+include_once test_paths::CONST . 'word_names.php';
 include_once test_paths::CREATE . 'test_phrases.php';
 include_once test_paths::CREATE . 'test_values.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
@@ -72,6 +73,7 @@ use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\value\value_list as value_list_ui;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
 use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -226,6 +228,24 @@ class start_page_ui_tests
             $test_name = $file_name . ' shows the main columns only if selected';
             $t->assert($test_name, str_contains($page_html, styles::COL_MAIN),
                 $tiers !== null and $tiers <= value_list_ui::COLUMN_TIERS_EX_MINOR);
+            // each tier adds its own columns: the main tier the reason, the minor tier the loss in
+            // percent of the GDP, the initial effort and the loss reduction and only the full table
+            // the marginal reward ratio; the names in the header are compared, so a failure says
+            // which column is missing or too much
+            $test_name = $file_name . ' shows the columns of its tiers';
+            $lib = new library();
+            $header = $lib->html_to_text($lib->str_left_of($page_html, '</tr>'));
+            $last_tier = count(value_list_ui::COLUMN_TIER_NAMES) - ($tiers ?? value_list_ui::COLUMN_TIERS_EX_MAIN);
+            $tier_columns = [
+                word_names::REASON => 2,
+                word_names::GDP => 3,
+                triple_names::INITIAL_EFFORT => 3,
+                triple_names::LOSS_REDUCTION => 3,
+                triple_names::REWARD_RATIO => 4,
+            ];
+            $shown = array_keys(array_filter($tier_columns, fn($name) => str_contains($header, $name), ARRAY_FILTER_USE_KEY));
+            $expected = array_keys(array_filter($tier_columns, fn($level) => $level <= $last_tier));
+            $t->assert($test_name, implode(', ', $shown), implode(', ', $expected));
         }
     }
 
