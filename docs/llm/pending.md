@@ -6,7 +6,9 @@ if in the start page table there is more than one reason or solution add a ', ..
 
 ## system settings
 
-also if the user is only an ip user that is not logged in and the user clicks on the 'settings' link in the user popup menu of the navbar show at least an page with the translateable title "settings". this empty view page is filled in the next step with a tree view for config.yaml.
+also if the user is only an ip user that is not logged in and the user clicks on the 'settings' link 
+in the user popup menu of the navbar show at least an page with the translateable title "settings". 
+this empty view page is filled in the next step with a tree view for config.yaml.
 
 ## admin dashboard
 
@@ -58,6 +60,13 @@ for each field these triples should be created:
 - '... field limit down'
 - '... field limit steps'
 - '... field limit suggestion'
+- '... button next tooltip' with the text for the tooltip (the text in the button is a msg_id defined by the component not a triple)
+- '... button next view' with the view id for the step 
+- '... button refresh tooltip' with the view id for the
+- '... button refresh label' with the view id for the
+- '... button refresh view' with the view id for the step
+- '... button back tooltip' with the view id for the
+- '... button back view' with the view id for the step
 
 For each phrase e.g. "PV Calculator" each field tripel a phrase or a list of phrases can be assigned via triples
 

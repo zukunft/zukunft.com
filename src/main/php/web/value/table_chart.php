@@ -426,7 +426,8 @@ class table_chart
         $height = self::LEGEND_START + $legend_lines * self::LEGEND_LINE + self::BOTTOM_GAP;
         $y_text = $this->column_text($model, $y_col_id);
         $x_text = $this->column_text($model, $x_col_id);
-        $title = $this->chart_title($this->legend_phrases($model, $context_phr_lst),
+        $point_col_id = $this->point_column($model, $y_col_id);
+        $title = $this->chart_title($this->legend_phrases($model, $context_phr_lst, $point_col_id),
             $y_text . ' ' . msg_id::CHART_VERSUS->text() . ' ' . $x_text);
         $result = $this->svg_start(self::SCATTER_WIDTH, $height, self::STYLE_SCATTER, $title);
         $result .= $this->heading($html->esc($title), $html->esc(msg_id::CHART_SCATTER_TIP->text()));
@@ -436,7 +437,7 @@ class table_chart
             $result .= $this->point($model, $row_key, $nbr, $this->pos($x_scale, $x_nbr), $this->pos($y_scale, $y_nbr), $msg);
             $nbr++;
         }
-        return $result . $this->legend($model, $points, $legend_lines) . '</svg>';
+        return $result . $this->legend($model, $points, $legend_lines, $point_col_id) . '</svg>';
     }
 
     /**
@@ -524,9 +525,10 @@ class table_chart
      * @param table_model $model the rows and columns of the table
      * @param array $points the points of scatter_points
      * @param int $lines the number of legend lines per column
+     * @param int|string|null $point_col_id the phrase column that names the points (see point_column) or null to name them by the row
      * @return string the svg code of the legend
      */
-    private function legend(table_model $model, array $points, int $lines): string
+    private function legend(table_model $model, array $points, int $lines, int|string|null $point_col_id): string
     {
         $html = new html_base();
         $result = '<g class="lg">' . self::NEWLINE;
@@ -534,7 +536,8 @@ class table_chart
             $column = $lines > 0 ? intdiv($pos, $lines) : 0;
             $x = self::LEGEND_COLUMN_X[$column] ?? self::LEGEND_COLUMN_X[0];
             $y = self::LEGEND_START + ($pos % max($lines, 1)) * self::LEGEND_LINE;
-            $name = $html->esc($this->phrase_cell_text($model, $row_key));
+            $point_phr = ($point_col_id === null) ? null : ($model->phr_cells[$row_key][$point_col_id] ?? null);
+            $name = $html->esc($point_phr?->name() ?? '');
             $row_txt = $html->esc($row_key);
             if ($name == '') {
                 $name = $row_txt;
@@ -581,8 +584,8 @@ class table_chart
         $y_scale = $this->scale(array_merge([0], array_column($points, 2)), self::SCATTER_PLOT_BOTTOM, self::SCATTER_PLOT_TOP);
         $y_text = $this->column_text($model, $y_col_id);
         $x_text = $this->column_text($model, $x_col_id);
-        $title = $this->chart_title($this->legend_phrases($model, $context_phr_lst),
-            $y_text . ' ' . msg_id::CHART_VERSUS->text() . ' ' . $x_text);
+        // each point is named by its row, e.g. the problem, so the phrases of the page name the chart
+        $title = $this->chart_title($context_phr_lst, $y_text . ' ' . msg_id::CHART_VERSUS->text() . ' ' . $x_text);
         $result = $this->svg_start(self::SCATTER_WIDTH, self::LEVERAGE_HEIGHT, self::STYLE_LEVERAGE, $title);
         $result .= $this->heading($html->esc($title), $html->esc(msg_id::CHART_LEVERAGE_TIP->text()));
         $result .= $this->scatter_axes($x_scale, $y_scale, $html->esc($x_text), $html->esc($y_text));
@@ -947,37 +950,45 @@ class table_chart
     }
 
     /**
-     * the phrases that name the points of the scatter plot: the first phrase column of the table
-     * that shows a phrase for a plotted row, e.g. "solution" for the solutions of the problems
-     * and not the empty "reason" column before it, else the phrases of the page
+     * the phrases that name the points of the scatter plot: the phrase column of the numbers
+     * plotted up (see point_column), e.g. "solution" for the gain of the solutions and not the
+     * "reason" column before it, else the phrases of the page
      *
      * @param table_model $model the rows and columns of the table
      * @param phrase_list $context_phr_lst the phrases of the page
+     * @param int|string|null $point_col_id the id of the phrase column that names the points or null if none
      * @return phrase_list the phrases that name the chart
      */
-    private function legend_phrases(table_model $model, phrase_list $context_phr_lst): phrase_list
+    private function legend_phrases(table_model $model, phrase_list $context_phr_lst, int|string|null $point_col_id): phrase_list
     {
         $result = $context_phr_lst;
-        foreach ($model->phrase_col_ids() as $col_id) {
-            if ($result === $context_phr_lst and $this->phrase_column_filled($model, $col_id)) {
-                $result = new phrase_list();
-                $result->add_phrase($model->phr_col[$col_id]);
-            }
+        if ($point_col_id !== null) {
+            $result = new phrase_list();
+            $result->add_phrase($model->phr_col[$point_col_id]);
         }
         return $result;
     }
 
     /**
+     * the phrase column whose phrase the numbers of a value column carry, e.g. the "solution"
+     * column for the potential gain, because a gain value names the solution, while no gain
+     * value names the reason of the problem
+     *
      * @param table_model $model the rows and columns of the table
-     * @param int|string $col_id the id of a phrase column
-     * @return bool true if at least one shown row has a phrase in the column
+     * @param int|string $col_id the id of the plotted value column
+     * @return int|string|null the id of the first such phrase column or null if the numbers carry none
      */
-    private function phrase_column_filled(table_model $model, int|string $col_id): bool
+    private function point_column(table_model $model, int|string $col_id): int|string|null
     {
-        $result = false;
-        foreach ($model->shown_keys as $row_key) {
-            if (($model->phr_cells[$row_key][$col_id] ?? null) != null) {
-                $result = true;
+        $result = null;
+        foreach ($model->phrase_col_ids() as $phr_col_id) {
+            foreach ($model->shown_keys as $row_key) {
+                $phr = $model->phr_cells[$row_key][$phr_col_id] ?? null;
+                [$centre, , ,] = $model->cell_numbers($row_key, $col_id);
+                if ($result === null and $phr != null
+                    and in_array($phr->name(), $centre?->grp->phr_lst()->names() ?? [])) {
+                    $result = $phr_col_id;
+                }
             }
         }
         return $result;

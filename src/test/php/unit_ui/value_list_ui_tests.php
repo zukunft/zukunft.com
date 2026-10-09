@@ -661,6 +661,23 @@ class value_list_ui_tests
         // negative: the numbered legend of the scatter plot is not needed, because each point is named
         $test_name = '... without the numbered legend of the scatter plot';
         $t->assert_text_not_contains($test_name, $svg_leverage, 'class="lg"');
+        // each point is named by its problem, so the page phrase names the chart
+        $test_name = '... named by the page phrase, because each point is named by its problem';
+        $t->assert_text_contains($test_name, $svg_leverage, 'aria-label="' . triple_names::GLOBAL_PROBLEM);
+
+        // with a reason in the reason column, which stands before the solution column, the
+        // scatter plot of the gain is still named by the solution, because a gain value names
+        // the solution and no gain value names the reason
+        $svg_reason = $t_val->value_list_solution_prio_reason_ui()->table_to_svg(
+            chart_types::SCATTER, $msg_ui, $rank_ctx, $rank_lst->column_names(), $rank_lst,
+            value_list_ui::LIMIT_ALL, [], false, false, [word_names::GAIN, word_names::LOSS]);
+        $test_name = 'a filled reason column does not name the scatter plot of the gain';
+        $t->assert_text_contains($test_name, $svg_reason, 'aria-label="' . word_names::SOLUTION);
+        $test_name = '... nor its legend';
+        $t->assert_text_contains($test_name, $svg_reason, '<tspan class="n">1</tspan>  ' . triple_names::REDUCE_EMISSIONS . ' <tspan');
+        // negative: the reason is no name of a point
+        $test_name = '... so the reason is no name of a point';
+        $t->assert_text_not_contains($test_name, $svg_reason, '  ' . triple_names::CLIMATE_GAS_EMISSIONS);
 
         $test_name = 'the table of an empty value list renders nothing';
         $t->assert($test_name, new value_list_ui()->table_by_related_columns($msg_ui), '');
