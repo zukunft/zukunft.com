@@ -1,0 +1,428 @@
+{
+  "pod": "zukunft.com dataset",
+  "dataset": "fermi_ostracism_modern_revival",
+  "version": "0.0.3",
+  "time": "2026-10-10",
+  "description": "Ostracism revived in a modern democracy: historical parameters of the Athenian institution, the state of modern research, a Fermi estimation of why the deterrence hypothesis (banishment risk reduces the supply of prominence-seekers) is a research gap, and a Fermi estimation of the gross and net behavioral effects of a modern ostracism with a communication ban.",
+  "based_on_dialogue": "Claude chat 2026-10-09/10, Timon <-> Claude (Fable 5)",
+
+  "words": [
+    {
+      "name": "ostracism (institution)",
+      "description": "The Athenian political procedure (ostrakophoria): annual popular vote that could expel one citizen for ten years without accusation, trial or loss of property. Distinct from 'ostracism (social psychology)'.",
+      "parent": "political institution"
+    },
+    {
+      "name": "ostracism (social psychology)",
+      "description": "Interpersonal or workplace exclusion as studied in social psychology (Williams tradition). Dominates the modern research literature under the keyword 'ostracism'; a different construct from the political institution.",
+      "parent": "psychological construct"
+    },
+    {
+      "name": "neo-ostracism",
+      "description": "Malkopoulou's proposal: a revived, modernized ostracism as a participatory mechanism of democratic self-defence (temporary exclusion by public vote instead of judicial party bans).",
+      "parent": "ostracism (institution)"
+    },
+    {
+      "name": "communication-ban variant",
+      "description": "Design variant from this dialogue: instead of physical exile, the ostracized person is barred from public communication and office for the exclusion period, so that internet reach does not neutralize the measure.",
+      "parent": "neo-ostracism"
+    },
+    {
+      "name": "quorum 6000 (participation reading)",
+      "description": "Reading A of the Athenian 6000 threshold: at least 6000 ballots had to be cast in total for the ostracism to be valid.",
+      "parent": "ostracism (institution)"
+    },
+    {
+      "name": "quorum 6000 (against-one-person reading)",
+      "description": "Reading B of the Athenian 6000 threshold: at least 6000 votes had to name the same person. The sources (Plutarch vs. Philochoros) support different readings; both are kept as separate words instead of a free-text note.",
+      "parent": "ostracism (institution)"
+    },
+    {
+      "name": "prominence seeker",
+      "description": "A person actively investing in national-level public visibility (politics, media, platforms). Unit of the deterrence Fermi estimation.",
+      "parent": "population segment"
+    },
+    {
+      "name": "top-tier exposure group",
+      "description": "The subset of prominence seekers with realistic annual risk of being named in an ostracism vote (most visible / most polarizing).",
+      "parent": "prominence seeker"
+    },
+    {
+      "name": "idle candidate",
+      "description": "In the Galasso/Nannicini/Nunnari experiments: the candidate who neither attacks nor is attacked; beneficiary of the attention-redistribution (spillover) effect.",
+      "parent": "political candidate"
+    },
+    {
+      "name": "attention substitution",
+      "description": "Mechanism: visibility vacated by a removed or deterred figure is largely captured by replacement figures instead of disappearing. Limits the net effect of ostracism on total prominence-seeking.",
+      "parent": "mechanism"
+    },
+    {
+      "name": "Switzerland",
+      "description": "Reference polity for the effect estimation (population about 9 million, direct-democratic instruments, cantonal recall rights).",
+      "parent": "country"
+    }
+  ],
+
+  "values": [
+    {
+      "name": "athens first attested ostracism year",
+      "value": -487,
+      "unit": "year",
+      "description": "Hipparchos son of Charmos, 487 BC.",
+      "source_ref": "historical consensus"
+    },
+    {
+      "name": "athens last ostracism year",
+      "value": -417,
+      "min": -417,
+      "max": -415,
+      "unit": "year",
+      "description": "Hyperbolos; dating disputed between 417 and 415 BC.",
+      "source_ref": "historical consensus"
+    },
+    {
+      "name": "athens exclusion duration",
+      "value": 10,
+      "unit": "year",
+      "description": "Property and citizenship retained; no formal accusation required.",
+      "source_ref": "historical consensus"
+    },
+    {
+      "name": "athens vote threshold",
+      "value": 6000,
+      "unit": "votes",
+      "description": "See words 'quorum 6000 (participation reading)' and 'quorum 6000 (against-one-person reading)' for the two source traditions.",
+      "source_ref": "historical consensus"
+    },
+    {
+      "name": "athens attested ostracized individuals",
+      "value": 13,
+      "min": 11,
+      "max": 15,
+      "unit": "persons",
+      "description": "Securely to plausibly attested ostracisms over the roughly 70-year practice period; scholarly counts vary.",
+      "source_ref": "historical consensus"
+    },
+    {
+      "name": "modern implementations of political ostracism",
+      "value": 0,
+      "unit": "jurisdictions",
+      "description": "No contemporary democracy operates an ostracism-type institution (temporary exclusion of one named person by general popular vote without accusation). Recall elections and impeachment are related but distinct (they target office-holders for cause or performance).",
+      "source_ref": "src_cordis"
+    },
+    {
+      "name": "idle-candidate vote share gain, field experiment",
+      "value": 3.7,
+      "unit": "percentage points",
+      "description": "Increase in the idle candidate's vote share when the incumbent was attacked by the other challenger; Italian mayoral race, randomized canvassing.",
+      "source_ref": "src_galasso2021"
+    },
+    {
+      "name": "idle-candidate relative gain, field experiment",
+      "value": 13,
+      "unit": "percent",
+      "description": "The 3.7 pp gain relative to the idle candidate's average vote share.",
+      "source_ref": "src_galasso2021"
+    },
+    {
+      "name": "idle-candidate share, survey experiment, positive campaign",
+      "value": 35.9,
+      "unit": "percent",
+      "source_ref": "src_galasso2021"
+    },
+    {
+      "name": "idle-candidate share, survey experiment, negative neutral campaign",
+      "value": 53,
+      "unit": "percent",
+      "source_ref": "src_galasso2021"
+    },
+    {
+      "name": "idle-candidate share, survey experiment, negative aggressive campaign",
+      "value": 54.4,
+      "unit": "percent",
+      "source_ref": "src_galasso2021"
+    },
+    {
+      "name": "empirical studies per implemented removal institution",
+      "value": 20,
+      "min": 5,
+      "max": 100,
+      "unit": "studies",
+      "type": "assumed",
+      "confidence": 0.4,
+      "description": "Order-of-magnitude rate at which an actually implemented negative-selection institution (e.g. US recall elections) accumulates empirical studies. Anchored on the recall literature size."
+    },
+    {
+      "name": "prominence seekers, national level, Switzerland",
+      "value": 5000,
+      "min": 2000,
+      "max": 15000,
+      "unit": "persons",
+      "type": "assumed",
+      "confidence": 0.3,
+      "description": "National and cantonal politicians plus media figures and platform creators actively investing in national visibility."
+    },
+    {
+      "name": "top-tier exposure group size",
+      "value": 50,
+      "min": 20,
+      "max": 200,
+      "unit": "persons",
+      "type": "assumed",
+      "confidence": 0.4,
+      "description": "Persons with realistic annual risk of being named; the risk is heavily concentrated at the top of the visibility distribution."
+    },
+    {
+      "name": "ostracisms per year",
+      "value": 1,
+      "unit": "persons per year",
+      "description": "Design parameter from the dialogue: exactly one person per year, as in Athens.",
+      "type": "assumed",
+      "confidence": 0.9
+    },
+    {
+      "name": "exposed career length",
+      "value": 10,
+      "min": 5,
+      "max": 20,
+      "unit": "years",
+      "type": "assumed",
+      "confidence": 0.5,
+      "description": "Years a top-tier figure typically stays in the exposure group."
+    },
+    {
+      "name": "risk aversion multiplier",
+      "value": 2,
+      "min": 1,
+      "max": 4,
+      "unit": "dimensionless",
+      "type": "assumed",
+      "confidence": 0.3,
+      "description": "Behavioral weight: a 10-year communication ban is a catastrophic, non-insurable career loss, so decision weight exceeds the raw probability (loss aversion)."
+    },
+    {
+      "name": "attention substitution fraction",
+      "value": 0.8,
+      "min": 0.5,
+      "max": 0.95,
+      "unit": "fraction",
+      "type": "assumed",
+      "confidence": 0.3,
+      "description": "Share of vacated attention captured by replacement figures. Anchored qualitatively on the strong idle-candidate spillover in src_galasso2021 and on the attention-concentration findings in the attention_scarcity dataset: audience demand for focal figures persists even when a specific figure is removed."
+    }
+  ],
+
+  "formulas": [
+    {
+      "name": "expected empirical ostracism studies",
+      "expression": "modern implementations of political ostracism * empirical studies per implemented removal institution",
+      "result": 0,
+      "unit": "studies",
+      "description": "0 implementations x 20 studies per institution = 0 expected empirical studies. Core of the research-gap explanation: the empirical literature tracks implemented institutions, and ostracism has none."
+    },
+    {
+      "name": "annual naming risk, top tier",
+      "expression": "ostracisms per year / top-tier exposure group size",
+      "result": 0.02,
+      "min": 0.005,
+      "max": 0.05,
+      "unit": "probability per year"
+    },
+    {
+      "name": "career naming risk, top tier",
+      "expression": "annual naming risk, top tier * exposed career length",
+      "result": 0.2,
+      "min": 0.05,
+      "max": 0.5,
+      "unit": "probability",
+      "description": "Linear approximation of cumulative risk over the exposed career; acceptable for small annual probabilities."
+    },
+    {
+      "name": "gross deterrence fraction, top tier",
+      "expression": "career naming risk, top tier * risk aversion multiplier",
+      "result": 0.4,
+      "min": 0.1,
+      "max": 0.7,
+      "unit": "fraction",
+      "description": "Fraction of top-tier aspirants expected to abandon or substantially moderate prominence-seeking when a credible ostracism with communication ban exists. Supports the dialogue hypothesis at the top tier."
+    },
+    {
+      "name": "attention retained after substitution",
+      "expression": "1 - attention substitution fraction",
+      "result": 0.2,
+      "min": 0.05,
+      "max": 0.5,
+      "unit": "fraction"
+    },
+    {
+      "name": "net reduction in prominence-seeking supply",
+      "expression": "gross deterrence fraction, top tier * attention retained after substitution",
+      "result": 0.08,
+      "min": 0.01,
+      "max": 0.35,
+      "unit": "fraction",
+      "description": "Net system-level effect after replacement figures fill vacated attention. The gross effect on individuals is large; the net effect on total prominence is roughly 5 to 10 times smaller because of attention substitution."
+    }
+  ],
+
+  "claims": [
+    {
+      "name": "research gap exists",
+      "statement": "No empirical study tests whether a banishment-type risk reduces the number of people seeking political or media prominence.",
+      "type": "assumed",
+      "confidence": 0.8,
+      "basis": "Targeted searches 2026-10-10 found political theory on ostracism revival (src_malkopoulou2017, src_salamanca2023, src_cordis, src_johnson2010) and adjacent empirics (negative campaigning, public-goods experiments), but no study of the deterrence-of-prominence hypothesis."
+    },
+    {
+      "name": "gap reason 1: no implementation, no data",
+      "statement": "Empirical political science follows implemented institutions; with 0 modern implementations there is no observational or quasi-experimental data on political ostracism.",
+      "type": "assumed",
+      "confidence": 0.9
+    },
+    {
+      "name": "gap reason 2: keyword occupied",
+      "statement": "The keyword 'ostracism' is dominated by social-psychology research on interpersonal exclusion, which lowers the visibility of the institutional question in literature searches and citation networks.",
+      "type": "assumed",
+      "confidence": 0.7
+    },
+    {
+      "name": "gap reason 3: disciplinary split",
+      "statement": "The hypothesis requires linking normative institutional design (political theory) with the psychology and economics of fame-seeking (behavioral science); these communities rarely co-author.",
+      "type": "assumed",
+      "confidence": 0.6
+    },
+    {
+      "name": "dialogue hypothesis: strong deterrence",
+      "statement": "A credible ostracism with a temporary communication ban would strongly reduce the number of people who want to become prominent (Timon's hypothesis).",
+      "type": "assumed",
+      "confidence": 0.5,
+      "basis": "Supported at the individual top-tier level by the gross deterrence estimate (0.4); weakened at the system level by attention substitution (net 0.08)."
+    },
+    {
+      "name": "dialogue hypothesis: redistribution is the goal",
+      "statement": "Strategic coordination of ostracism votes redistributes attention more evenly, which is the intended effect rather than a failure mode (Timon's reframing of the Hyperbolos objection).",
+      "type": "assumed",
+      "confidence": 0.6,
+      "basis": "Consistent with the idle-candidate spillover evidence in src_galasso2021: removing or damaging focal figures measurably shifts support to less polarizing third parties."
+    },
+    {
+      "name": "dialogue hypothesis: silence prevents martyrdom",
+      "statement": "A ten-year communication ban prevents the martyr effect because the narrative cannot be sustained without the person's own presence (Timon).",
+      "type": "assumed",
+      "confidence": 0.6,
+      "basis": "Plausible; residual risk is narrative carriage by successors."
+    },
+    {
+      "name": "counterpoint: enforcement cost",
+      "statement": "Enforcing a genuine communication ban in the internet era requires surveillance of the person and their network (ghostwriters, proxies, quotation by third parties); this enforcement infrastructure is itself a power concentration (Claude).",
+      "type": "assumed",
+      "confidence": 0.7
+    },
+    {
+      "name": "counterpoint: selection shift",
+      "statement": "A career-ending tail risk shifts the composition of prominence seekers toward the risk-tolerant and those with little to lose, not necessarily toward the moderate (Claude).",
+      "type": "assumed",
+      "confidence": 0.5
+    },
+    {
+      "name": "legal constraint",
+      "statement": "Physical exile of own nationals conflicts with ICCPR Art. 12(4); a communication ban additionally engages freedom of expression (Swiss Const. Art. 16, ECHR Art. 10, ICCPR Art. 19). The ICCPR provides no denunciation clause per the Human Rights Committee, so a constitutional carve-out would mean an open treaty breach.",
+      "type": "assumed",
+      "confidence": 0.7
+    }
+  ],
+
+  "sources": [
+    {
+      "id": "src_galasso2021",
+      "author": "Galasso, Vincenzo; Nannicini, Tommaso; Nunnari, Salvatore",
+      "title": "Positive Spillovers from Negative Campaigning",
+      "journal": "American Journal of Political Science",
+      "year": 2021,
+      "doi": "10.1111/ajps.12610",
+      "doi_verified": true,
+      "reliability": "high",
+      "note": "Field experiment (Italian mayoral race) plus survey experiment; source of the spillover values."
+    },
+    {
+      "id": "src_malkopoulou2017",
+      "author": "Malkopoulou, Anthoula",
+      "title": "Ostracism and Democratic Self-Defense in Athens",
+      "journal": "Constellations",
+      "volume": "24(4)",
+      "pages": "623-636",
+      "year": 2017,
+      "doi": null,
+      "doi_verified": false,
+      "reliability": "high",
+      "note": "Volume/issue/pages taken from a citing article; DOI not directly verified. Core theoretical case for neo-ostracism as democratic self-defence."
+    },
+    {
+      "id": "src_salamanca2023",
+      "author": "Salamanca, E.",
+      "title": "Pruning of the People: Ostracism and the Transformation of the Political Community",
+      "journal": "Philosophies",
+      "volume": "8",
+      "article": "81",
+      "year": 2023,
+      "doi": null,
+      "doi_verified": false,
+      "reliability": "high",
+      "note": "Journal and article number verified via Princeton OAR copy; argues ostracism-adjacent modern measures (bans, impeachment) lack the shared civic element of the original."
+    },
+    {
+      "id": "src_cordis",
+      "author": "Malkopoulou, Anthoula (project PI)",
+      "title": "Negative representation: ostracism, recall elections, negative voting (Marie Curie project 625351)",
+      "url": "https://cordis.europa.eu/project/id/625351",
+      "year": 2014,
+      "doi": null,
+      "doi_verified": false,
+      "reliability": "medium",
+      "note": "EU project comparing the three negative-representation institutions; documents that only recall is implemented today."
+    },
+    {
+      "id": "src_jebo_ostracism",
+      "author": null,
+      "title": "Ostracism and the provision of a public good: experimental evidence",
+      "journal": "Journal of Economic Behavior and Organization",
+      "volume": "73(3)",
+      "pages": "387-395",
+      "year": 2010,
+      "doi": null,
+      "doi_verified": false,
+      "reliability": "medium",
+      "note": "Authors not verified (citation found secondhand). Closest experimental analogue: exclusion threat raises cooperation in public-goods games, i.e. ostracism risk changes behavior ex ante - but in small groups, not for prominence-seeking."
+    },
+    {
+      "id": "src_johnson2010",
+      "author": "Johnson, Paul",
+      "title": "For true democracy, bring back ostracism",
+      "journal": "The Spectator",
+      "year": 2010,
+      "doi": null,
+      "doi_verified": false,
+      "reliability": "low",
+      "note": "Opinion piece; documents the safety-valve argument and the idea of annulment by subsequent popular vote."
+    },
+    {
+      "id": "src_wtw2025",
+      "author": "WTW (Willis Towers Watson)",
+      "title": "Political Risk Index H1 2025: Mapping political polarization around the world",
+      "url": "https://willistowerswatson.turtl.co/story/political-risk-index-h1-2025-gated/page/4/5",
+      "year": 2025,
+      "doi": null,
+      "doi_verified": false,
+      "reliability": "medium",
+      "note": "Gated; only the title could be verified on 2026-10-10, content not checked. Referenced by Timon as evidence that reduced polarization is urgently needed."
+    }
+  ],
+
+  "open_questions": [
+    "Empirical test design: recall-election jurisdictions as natural experiment - does candidate entry or incumbent rhetoric differ where recall exists? Nearest feasible proxy for the deterrence hypothesis.",
+    "Does the gross deterrence effect (0.4) select against the cautious and in favor of the reckless (counterpoint: selection shift)?",
+    "Measured value needed: actual size of the recall-election empirical literature, to replace the assumed 20 studies per institution.",
+    "Authors of src_jebo_ostracism to be verified before any reuse."
+  ]
+}

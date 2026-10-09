@@ -1459,6 +1459,11 @@ class ui_list extends ui_base
                 return $result;
             }
             $val_lst = $this->value_related_list($dbo, $msg, $dto, $dto?->phr_lst);
+            // a phrase whose rows are the phrases linked to it, e.g. "global warming reason", has
+            // no value of its own, so the values of the linked phrases are loaded like on the start page
+            if (($val_lst == null or $val_lst->is_empty()) and $dto != null and $dto->online) {
+                $val_lst = $this->child_values($dbo->phrase(), $dto, $msg) ?? $val_lst;
+            }
             // a phrase without any value shows no table at all instead of an empty header row
             if ($val_lst != null) {
                 // a calculated number of a row is a result and not a value, e.g. the reward ratio
@@ -1608,6 +1613,33 @@ class ui_list extends ui_base
             $val_lst = $dbo->val_lst;
         }
         return $val_lst;
+    }
+
+    /**
+     * load the phrases linked to the given phrase into the request cache and their values
+     *
+     * @param phrase $phr the phrase of the page e.g. "global warming reason"
+     * @param data_object $dto the request cache that gets the links
+     * @param user_message $msg to report a problem of an api call
+     * @return value_list|null the values of the linked phrases or null if the phrase has no linked phrase
+     */
+    private function child_values(phrase $phr, data_object $dto, user_message $msg): ?value_list
+    {
+        $result = null;
+        if ($dto->phr_lst->child_phrases($phr)->is_empty()) {
+            $child_lst = new phrase_list();
+            if ($child_lst->load_related_by_name($phr->name(), foaf_direction::DOWN, $msg)) {
+                $dto->add_phrases($child_lst, $msg);
+            }
+        }
+        $children = $dto->phr_lst->child_phrases($phr);
+        if (!$children->is_empty()) {
+            $val_lst = new value_list();
+            if ($val_lst->load_by_phr_lst($children, $msg)) {
+                $result = $val_lst;
+            }
+        }
+        return $result;
     }
 
     /**

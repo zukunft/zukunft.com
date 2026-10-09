@@ -933,6 +933,30 @@ class test_values extends test_objects
     }
 
     /**
+     * the ranking values with a second solution of global warming whose gain is bigger than the
+     * gain of the first solution, so that the cell shows the second solution
+     *
+     * @return value_list the ranking values plus a bigger gain of a second solution of global warming
+     */
+    function value_list_solution_prio_bigger_second_solution(): value_list
+    {
+        $t_trp = new test_triples($this->env);
+        $lst = $this->value_list_solution_prio();
+        $lst->add($this->value_for_phrases($this->solution_prio_gain_phrases(
+            $t_trp->global_warming()->phrase(), $t_trp->basic_income()->phrase(), false), 50));
+        return $lst;
+    }
+
+    /**
+     * @return value_list_ui the frontend ranking values with a bigger second solution of global warming for unit testing
+     */
+    function value_list_solution_prio_bigger_second_solution_ui(): value_list_ui
+    {
+        $tl = new test_lib();
+        return $tl->list_to_ui($this->value_list_solution_prio_bigger_second_solution(), [api_types::INCL_PHRASES]);
+    }
+
+    /**
      * @return value_list_ui the frontend ranking values with two solutions of global warming for unit testing
      */
     function value_list_solution_prio_two_solutions_ui(): value_list_ui

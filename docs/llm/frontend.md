@@ -463,10 +463,21 @@ solution of the problem. The main tier holds only these two columns; every
 other defined column below the mayor tier of the start page is minor or marginal.
 
 A phrase cell names one phrase: if the values of a row name more than one
-phrase for the column, e.g. two solutions of one problem, the cell shows the
-phrase of the most relevant value, the first after the impact sort, followed
-by `, ...`, which links to the page of the row phrase, because that page lists
-all solutions and reasons of the problem (`value_list::phrase_cell`).
+phrase for the column, e.g. several reasons of global warming, the cell shows
+the phrase of the value with the biggest number (`value_list::shown_phrases`),
+followed by `, ...`. The `, ...` links to the calculator page of the triple
+`<column phrase> of <row phrase>` if the definitions name one, e.g. `global
+warming reason` with `<reason> is a global warming reason` for each reason,
+else to the page of the row phrase (`value_list::phrase_cell`). The value cells
+of the row show only the numbers of the phrase shown, e.g. the gain of the
+solution shown and not also the gain of another one, so that no number of a
+hidden phrase stands beside the phrase shown.
+
+The table of such a triple has rows named by the linked phrases, e.g. the
+reasons: its phrase has no value of its own, so the table component loads the
+values of the linked phrases like the start page (`ui_list::child_values`), and
+the phrase that names the rows, e.g. `reason`, heads the row column and is no
+phrase column of that table.
 
 A row of the simple table whose numbers are all in a column of the full version
 would be empty, e.g. the reward ratio row of a problem, so the ranking of the

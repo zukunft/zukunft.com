@@ -7291,7 +7291,6 @@
             e.php
     \-- name_link_with_tip - section for function name_link_with_tip not yet defined that it should be base in /phrase/p
             hrase.php
-    \-- view_id - section for function view_id not yet defined that it should be base in /phrase/phrase.php
     \-- dsp_tbl_cell - section for function dsp_tbl_cell not yet defined that it should be base in /phrase/phrase.php
     \-- is_or_can_be - section for function is_or_can_be is expected to be info in /phrase/phrase.php
     \-- dsp_graph - section for function dsp_graph not yet defined that it should be to review in /phrase/phrase.php

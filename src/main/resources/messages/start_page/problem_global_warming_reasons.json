@@ -6,7 +6,7 @@
   "selection": [
     "global warming reasons that cause costs in the next 200 years"
   ],
-  "description": "The most relevant reasons that cause costs in the next 200 years due to global warming, each linked to global warming with 'can cause' and quantified by the studies that report it for the world and per country: the loss of GDP (Swiss Re 2050, Burke et al. 2099, Bilal & Känzig 2100), temperature and heat mortality (Carleton et al. 2100, Lancet Countdown 2023), the loss of labour productivity (Lancet Countdown 2023, ILO 2030), sea level rise and coastal floods (Kulp & Strauss 2100, Hinkel et al. 2100), extreme weather (Oxera for ICC 2014-2023, Newman & Noy 2000-2019), crop yields and agricultural productivity (Hultgren et al. 2098, Ortiz-Bobea et al. 1961-2020), climate migration (World Bank Groundswell 2050), ecosystem collapse (World Bank Economic Case for Nature 2030), fishery revenue (Lam et al. 2050), tipping points (Dietz et al.), health costs (WHO 2030) and the social cost of carbon as the summary of all reasons (Rennert et al., Ricke et al. per country). The world values of the reasons that are an observed annual cost today (lost labour income and value of the heat deaths 2023 of the Lancet Countdown, extreme weather attributed to the warming of Newman & Noy) are stated in problem_global_warming.json instead, because their sum divided by the world GDP is the annual damage share of the start page, and a calculation needs its inputs in its own file; no country has all three of them, so the sum exists for the world only. Every number is taken from the named source as reported; a country that a study does not report is left out and never estimated. A share is stored as the decimal ratio, a loss as a positive number and a change with its sign. Each study has its own scenario and metric, so numbers of different studies are not comparable without reading the source description. Left out on purpose: Kotz, Levermann & Wenz (2024, Nature) was retracted in December 2025; Rode et al. (2021) find a net saving of energy expenditure (0.05 to 0.69 percent of world GDP by 2100), i.e. no cost; the conflict meta-analysis of Burke, Hsiang & Miguel (2015) gives a rate per standard deviation of temperature and no cost; the US EPA social cost of carbon (2023) page has been withdrawn, so Rennert et al. (2022), on which it builds, is used. Every amount of money is stated in euro: the US dollar figure of the source is converted with the ECB 2023 annual average of 1.0813 USD per EUR (the value of GDP.json), the reference year of the annual damage share, whatever the price base year of the source, and the source figure is kept in the description of the value. A value of a reason carries the triple '<reason> due to global warming' and not the word 'global warming' itself, because a value that names a global problem directly is a row of the global problem ranking of the start page, where only the potential loss and the solution of a problem belong.",
+  "description": "The most relevant reasons that cause costs in the next 200 years due to global warming, each linked to global warming with 'can cause' and quantified by the studies that report it for the world and per country: the loss of GDP (Swiss Re 2050, Burke et al. 2099, Bilal & Känzig 2100), temperature and heat mortality (Carleton et al. 2100, Lancet Countdown 2023), the loss of labour productivity (Lancet Countdown 2023, ILO 2030), sea level rise and coastal floods (Kulp & Strauss 2100, Hinkel et al. 2100), extreme weather (Oxera for ICC 2014-2023, Newman & Noy 2000-2019), crop yields and agricultural productivity (Hultgren et al. 2098, Ortiz-Bobea et al. 1961-2020), climate migration (World Bank Groundswell 2050), ecosystem collapse (World Bank Economic Case for Nature 2030), fishery revenue (Lam et al. 2050), tipping points (Dietz et al.), health costs (WHO 2030) and the social cost of carbon as the summary of all reasons (Rennert et al., Ricke et al. per country). The world values of the reasons that are an observed annual cost today (lost labour income and value of the heat deaths 2023 of the Lancet Countdown, extreme weather attributed to the warming of Newman & Noy) are stated in problem_global_warming.json instead, because their sum divided by the world GDP is the annual damage share of the start page, and a calculation needs its inputs in its own file; no country has all three of them, so the sum exists for the world only. Every number is taken from the named source as reported; a country that a study does not report is left out and never estimated. A share is stored as the decimal ratio, a loss as a positive number and a change with its sign. Each study has its own scenario and metric, so numbers of different studies are not comparable without reading the source description. Left out on purpose: Kotz, Levermann & Wenz (2024, Nature) was retracted in December 2025; Rode et al. (2021) find a net saving of energy expenditure (0.05 to 0.69 percent of world GDP by 2100), i.e. no cost; the conflict meta-analysis of Burke, Hsiang & Miguel (2015) gives a rate per standard deviation of temperature and no cost; the US EPA social cost of carbon (2023) page has been withdrawn, so Rennert et al. (2022), on which it builds, is used. Every amount of money is stated in euro: the US dollar figure of the source is converted with the ECB 2023 annual average of 1.0813 USD per EUR (the value of GDP.json), the reference year of the annual damage share, whatever the price base year of the source, and the source figure is kept in the description of the value. A value of a reason carries the triple '<reason> due to global warming' and not the word 'global warming' itself, because a value that names a global problem directly is a row of the global problem ranking of the start page, where only the potential loss and the solution of a problem belong. The exception are the potential losses of the three reasons with an observed annual world cost (labour productivity loss, heat mortality and extreme weather): they carry 'global warming', 'reason', the reason and 'potential loss', so that the start page shows them in the reason column of global warming and not as a row, and each reason is linked to 'global warming reason', whose table lists the reasons of global warming; the loss is the world cost of problem_global_warming.json in trillion EUR, which together cover the half of the annual damage that the coverage value states, so the losses add up to the covered half and not to the whole potential loss of global warming.",
   "words": [
     {
       "name": "climate"
@@ -281,6 +281,18 @@
     {
       "name": "2100",
       "type": "time"
+    },
+    {
+      "name": "reason"
+    },
+    {
+      "name": "emissions"
+    },
+    {
+      "name": "gas"
+    },
+    {
+      "name": "warming"
     }
   ],
   "triples": [
@@ -617,6 +629,73 @@
       "from": "global warming",
       "verb": "can cause",
       "to": "health cost"
+    },
+    {
+      "name": "climate gas",
+      "from": "gas",
+      "verb": "can cause",
+      "to": "warming"
+    },
+    {
+      "name": "climate gas emissions",
+      "from": "emissions",
+      "verb": "of",
+      "to": "climate gas"
+    },
+    {
+      "name": "potential loss",
+      "from": "loss",
+      "verb": "kind of",
+      "to": "potential"
+    },
+    {
+      "name": "global warming reason",
+      "description": "a reason of the potential loss of global warming; the page of this phrase shows the table of the reasons with the loss that each causes",
+      "from": "reason",
+      "verb": "of",
+      "to": "global warming"
+    },
+    {
+      "name": "labour productivity loss (reason)",
+      "from": "labour productivity loss",
+      "verb": "is a",
+      "to": "reason"
+    },
+    {
+      "name": "heat mortality (reason)",
+      "from": "heat mortality",
+      "verb": "is a",
+      "to": "reason"
+    },
+    {
+      "name": "extreme weather (reason)",
+      "from": "extreme weather",
+      "verb": "is a",
+      "to": "reason"
+    },
+    {
+      "name": "climate gas emissions (global warming reason)",
+      "from": "climate gas emissions",
+      "verb": "is a",
+      "to": "global warming reason"
+    },
+    {
+      "name": "labour productivity loss (global warming reason)",
+      "from": "labour productivity loss",
+      "verb": "is a",
+      "to": "global warming reason"
+    },
+    {
+      "name": "heat mortality (global warming reason)",
+      "from": "heat mortality",
+      "verb": "is a",
+      "to": "global warming reason"
+    },
+    {
+      "name": "extreme weather (global warming reason)",
+      "from": "extreme weather",
+      "verb": "is a",
+      "to": "global warming reason"
     }
   ],
   "sources": [
@@ -728,6 +807,16 @@
       "description": "Ricke, K., Drouet, L., Caldeira, K., Tavoni, M. (2018): Country-level social cost of carbon. Nature Climate Change 8, 895-900. Median country-level social cost of carbon for an emission in 2020 in the reference case (SSP2, RCP6.0, Burke short-run pooled damage function, pure rate of time preference 2 percent, elasticity 1.5) with the 66 percent range; the world, India, the United States, Brazil and China from the paper, the other countries from the authors' database cscc_full_v1.csv.",
       "doi": "10.1038/s41558-018-0282-y",
       "url": "https://github.com/country-level-scc/cscc-database-2018"
+    },
+    {
+      "name": "Lancet Countdown (2024) report",
+      "description": "Romanello, M. et al. (2024): The 2024 report of the Lancet Countdown on health and climate change: facing record-breaking threats from delayed action. The Lancet. Indicator 4.1.2: monetised value of the heat-related deaths of people over 65; indicator 4.1.3: potential income loss from the heat-related loss of labour capacity.",
+      "doi": "10.1016/S0140-6736(24)01822-1"
+    },
+    {
+      "name": "Newman & Noy (2023)",
+      "description": "Newman, R., Noy, I. (2023): The global costs of extreme weather that are attributable to climate change. Nature Communications 14, 6103. Annual cost of extreme weather attributable to climate change 2000-2019 (statistical loss of life and direct damages), range of plus and minus one standard deviation of the fraction of attributable risk.",
+      "doi": "10.1038/s41467-023-41888-1"
     }
   ],
   "values": [
@@ -899,6 +988,9 @@
     {"words": ["country social cost of carbon", "Switzerland", "2020", "RCP6.0", "EUR per tonne CO2", "high"], "number": "-0.55", "source": "Ricke et al. (2018)", "description": "-0.6 USD per tonne CO2 at the ECB 2023 average of 1.0813 USD per EUR"},
     {"words": ["country social cost of carbon", "Germany", "2020", "RCP6.0", "EUR per tonne CO2"], "number": "-4.62", "source": "Ricke et al. (2018)", "description": "a cool country gains from moderate warming in the short-run reference case; with the long-run damage function the cost is positive; -5 USD per tonne CO2 at the ECB 2023 average of 1.0813 USD per EUR"},
     {"words": ["country social cost of carbon", "Germany", "2020", "RCP6.0", "EUR per tonne CO2", "low"], "number": "-7.86", "source": "Ricke et al. (2018)", "description": "-8.5 USD per tonne CO2 at the ECB 2023 average of 1.0813 USD per EUR"},
-    {"words": ["country social cost of carbon", "Germany", "2020", "RCP6.0", "EUR per tonne CO2", "high"], "number": "-1.48", "source": "Ricke et al. (2018)", "description": "-1.6 USD per tonne CO2 at the ECB 2023 average of 1.0813 USD per EUR"}
+    {"words": ["country social cost of carbon", "Germany", "2020", "RCP6.0", "EUR per tonne CO2", "high"], "number": "-1.48", "source": "Ricke et al. (2018)", "description": "-1.6 USD per tonne CO2 at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["global warming", "reason", "labour productivity loss", "potential loss", "trillion", "EUR"], "number": "0.7722", "source": "Lancet Countdown (2024) report", "description": "the potential income loss of 2023 from the heat-related loss of labour capacity in the world, the 772.2 billion EUR of problem_global_warming.json in trillion EUR; 835 billion USD at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["global warming", "reason", "heat mortality", "potential loss", "trillion", "EUR"], "number": "0.222", "source": "Lancet Countdown (2024) report", "description": "the monetised value of the heat-related deaths of people over 65 in 2023 in the world, the 222 billion EUR of problem_global_warming.json in trillion EUR; 240 billion USD at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["global warming", "reason", "extreme weather", "potential loss", "trillion", "EUR"], "number": "0.1322", "source": "Newman & Noy (2023)", "description": "the annual cost 2000-2019 of the extreme weather attributable to climate change in the world, the 132.2 billion EUR of problem_global_warming.json in trillion EUR; 143 billion USD at the ECB 2023 average of 1.0813 USD per EUR"}
   ]
 }

@@ -348,6 +348,9 @@ class phrase_ui_tests
 
         $test_name = 'without the problem links no value matches the page phrase';
         $dto_no_links = new data_object();
+        // offline, because an online cache loads the values of the linked phrases from the pod
+        // (ui_list::child_values), which the links missing in the cache are meant to rule out
+        $dto_no_links->online = false;
         $dto_no_links->val_lst = $t_val->value_list_solution_prio_ui();
         $t->assert($test_name, $list->table_with_related_columns($trp_problem, $msg, $dto_no_links), '');
 

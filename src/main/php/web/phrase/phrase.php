@@ -680,9 +680,20 @@ class phrase extends combine_named
     }
 
     /**
+     * @param array $url_arr the url parameters of the calling page for the back link
+     * @return string the url of the page of this phrase, the page that name_link links to
+     */
+    function phrase_page_url(array $url_arr = []): string
+    {
+        $html = new html_base();
+        // the page of a word or a triple is called with the id of the word or the triple
+        return $html->url_back($this->view_id(), $this->obj_id(), $url_arr);
+    }
+
+    /**
      * @return int the view id that name_link uses for this phrase class
      */
-    function view_id(): int
+    private function view_id(): int
     {
         if ($this->is_triple()) {
             return views::TRIPLE_ID;

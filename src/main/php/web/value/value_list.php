@@ -65,6 +65,7 @@ include_once html_paths::MODEL_PHRASE . 'phr_ids.php';
 include_once html_paths::SHARED_CONST . 'views.php';
 include_once html_paths::SHARED_CONST . 'triples.php';
 include_once html_paths::SHARED_CONST . 'words.php';
+include_once html_paths::SHARED_TYPES . 'verbs.php';
 include_once html_paths::SHARED_CONST . 'rest_ctrl.php';
 include_once html_paths::SHARED_HELPER . 'Config.php';
 include_once html_paths::SHARED . 'url_var.php';
@@ -111,6 +112,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\table_orders;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\helper\Config;
 use Zukunft\ZukunftCom\main\php\shared\types\position_types;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
 use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
@@ -834,7 +836,8 @@ class value_list extends ListBase
             $phr_by_id, $all_by_id, $val_phr_ids, $col_order, $msg);
         // a defined column that no value carries names a phrase of the row instead of a
         // number, e.g. the "solution" column shows the solution of the problem row
-        $phr_col = $this->phrase_columns($col_order, $col_phr, $rel_lst, $msg, $tbl_phr);
+        $row_col = $this->row_column($context_phr_lst, $col_order);
+        $phr_col = $this->phrase_columns($col_order, $col_phr, $rel_lst, $msg, $tbl_phr, $row_col);
         // a table that is a grid of its columns leaves out the values that fit no column, e.g.
         // the measured figures of a problem that are no part of the ranking of the start page
         $vals = $this->lst();
@@ -861,7 +864,7 @@ class value_list extends ListBase
         $model->tbl_phr = $tbl_phr;
         $model->row_label = $row_label;
         $model->row_phr = $row_phr;
-        $model->row_col = $this->row_column($context_phr_lst, $col_order);
+        $model->row_col = $row_col;
         $model->cells = $cells;
         $model->phr_cells = $phr_cells;
         $model->phr_cells_more = $phr_more;
@@ -1018,8 +1021,7 @@ class value_list extends ListBase
         $row_label = [];
         $row_phr = [];
         $cells = [];
-        $phr_cells = [];
-        $phr_more = [];
+        $entries = [];
         foreach ($vals as $val) {
             $col_id = $val_col[$val->id()] ?? '';
             $ctx = clone $grp_ctx;
@@ -1042,30 +1044,63 @@ class value_list extends ListBase
             }
             // the row is named by the phrases that are left after the context and the column
             // phrase, e.g. the year if the columns are inhabitants and area
-            $row_key = $val->grp->phrase_names($ctx);
+            $entries[] = [$val, $col_id, $ctx, $phr_cell, $val->grp->phrase_names($ctx)];
+        }
+        [$phr_cells, $phr_more] = $this->shown_phrases($entries);
+        foreach ($entries as [$val, $col_id, $ctx, $phr_cell, $row_key]) {
             if (!key_exists($row_key, $row_label)) {
                 $row_label[$row_key] = $val->grp->phrase_link_list($ctx);
                 $row_phr[$row_key] = $val->grp->phr_lst()->remove($ctx)->lst();
                 $cells[$row_key] = [];
             }
-            // a phrase cell names one phrase, e.g. the solution once although the row has the
-            // loss and the gain of the problem; the values are sorted by their impact, so the
-            // first one names the most relevant phrase and a different phrase of a later value,
-            // e.g. a second solution of the problem, is only marked for the ", ..." of the cell
+            // a value of a phrase that the row does not show, e.g. the gain of the second
+            // solution, is left to the page of the row, so that a reader cannot take its number
+            // for a number of the phrase shown; two values with the same row and column and the
+            // same phrases are shown in the same cell instead of the second one replacing the
+            // first, because a range bound is shown behind its centre value
+            $other_phrase = false;
             foreach ($phr_cell as $phr_col_id => $phr) {
-                $shown = $phr_cells[$row_key][$phr_col_id] ?? null;
-                if ($shown == null) {
-                    $phr_cells[$row_key][$phr_col_id] = $phr;
-                } elseif ($shown->id() != $phr->id()) {
-                    $phr_more[$row_key][$phr_col_id] = true;
+                if ($phr_cells[$row_key][$phr_col_id]->id() != $phr->id()) {
+                    $other_phrase = true;
                 }
             }
-            // two values with the same row and column are shown in the same cell instead of
-            // the second one replacing the first; the cell keeps the values, because a range
-            // bound is shown behind its centre value and not as a value of its own
-            $cells[$row_key][$col_id][] = $val;
+            if (!$other_phrase) {
+                $cells[$row_key][$col_id][] = $val;
+            }
         }
         return [$row_label, $row_phr, $cells, $phr_cells, $phr_more];
+    }
+
+    /**
+     * the phrase that each phrase cell shows: a cell names one phrase, e.g. the solution once
+     * although the row has the loss and the gain of the problem; if the values of a row name
+     * several, e.g. several reasons of global warming, the phrase of the value with the biggest
+     * number is shown, the first one if two numbers are equal, and the cell is marked for ", ..."
+     *
+     * @param array $entries per value the value, its column, its context, its phrase per phrase column and its row key
+     * @return array per row key and phrase column id the phrase shown and per row key and phrase
+     *               column id true if the row names more than one phrase for that column
+     */
+    private function shown_phrases(array $entries): array
+    {
+        $shown = [];
+        $biggest = [];
+        $more = [];
+        foreach ($entries as [$val, , , $phr_cell, $row_key]) {
+            // a text value has no number, so any number of another phrase is bigger
+            $nbr = $val->number() ?? -INF;
+            foreach ($phr_cell as $phr_col_id => $phr) {
+                $current = $shown[$row_key][$phr_col_id] ?? null;
+                if ($current != null and $current->id() != $phr->id()) {
+                    $more[$row_key][$phr_col_id] = true;
+                }
+                if ($current == null or $nbr > $biggest[$row_key][$phr_col_id]) {
+                    $shown[$row_key][$phr_col_id] = $phr;
+                    $biggest[$row_key][$phr_col_id] = $nbr;
+                }
+            }
+        }
+        return [$shown, $more];
     }
 
     /**
@@ -1163,7 +1198,7 @@ class value_list extends ListBase
                     $row .= $this->cell($model->cells[$row_key][$col_id] ?? [],
                         $msg, $url_array, $col_style[$col_id], $with_range);
                 } else {
-                    $row .= $html->td($this->phrase_cell($model, $row_key, $col_id, $url_array), $col_style[$col_id]);
+                    $row .= $html->td($this->phrase_cell($model, $row_key, $col_id, $url_array, $rel_lst), $col_style[$col_id]);
                 }
             }
             if ($rest_col) {
@@ -1188,25 +1223,67 @@ class value_list extends ListBase
     }
 
     /**
-     * the content of a phrase cell: the most relevant phrase of the row for the column, e.g. the
-     * solution of the problem, and ", ..." if the row names more of them, which links to the page
-     * of the row, because that page shows all solutions and reasons of the problem
+     * the content of a phrase cell: the phrase of the row for the column with the biggest number,
+     * e.g. the reason of global warming that causes the biggest loss, and ", ..." if the row
+     * names more of them, which links to the table of them if the definitions name one, e.g.
+     * the calculator page of "global warming reason", else to the page of the row
      *
      * @param table_model $model the rows and columns of the table
      * @param string $row_key the key of the row
      * @param int|string $col_id the id of the phrase column
      * @param array $url_array the url parameters of the page that shows the table, for the back link
+     * @param phrase_list|null $rel_lst the phrases related to the page phrase with the definitions
      * @return string the html code of the cell content, '' if the row names no phrase for the column
      */
-    private function phrase_cell(table_model $model, string $row_key, int|string $col_id, array $url_array): string
+    private function phrase_cell(
+        table_model  $model,
+        string       $row_key,
+        int|string   $col_id,
+        array        $url_array,
+        ?phrase_list $rel_lst
+    ): string
     {
         $result = ($model->phr_cells[$row_key][$col_id] ?? null)?->name_link() ?? '';
         $row_phr = array_values($model->row_phr[$row_key] ?? [])[0] ?? null;
         if (($model->phr_cells_more[$row_key][$col_id] ?? false) and $row_phr != null) {
             $html = new html_base();
-            // the page of a word or a triple is called with the id of the word or the triple
-            $url = $html->url_back($row_phr->view_id(), $row_phr->obj_id(), $url_array);
+            $url = $row_phr->phrase_page_url($url_array);
+            $lst_phr = $this->column_list_phrase($rel_lst, $model->phr_col[$col_id], $row_phr);
+            if ($lst_phr != null) {
+                $url = $html->url_back(views::CALCULATOR_ID, $lst_phr->obj_id(), $url_array);
+            }
             $result .= ', ' . $html->ref($url, msg_id::THREE_POINTS->text(), msg_id::TABLE_MORE_PHRASES_TIP->text());
+        }
+        return $result;
+    }
+
+    /**
+     * the triple that names the phrases of a column for one row, e.g. "global warming reason" for
+     * the reasons of global warming, whose calculator page shows the table of them
+     *
+     * @param phrase_list|null $rel_lst the phrases related to the page phrase with the definitions
+     * @param phrase $col_phr the phrase of the column e.g. "reason"
+     * @param phrase $row_phr the phrase of the row e.g. "global warming"
+     * @return phrase|null the triple "<column phrase> of <row phrase>" or null if the list has none
+     */
+    private function column_list_phrase(?phrase_list $rel_lst, phrase $col_phr, phrase $row_phr): ?phrase
+    {
+        $result = null;
+        foreach ($rel_lst?->lst() ?? [] as $phr) {
+            // the triple is often only the side of a link e.g. "heat mortality is a global warming reason"
+            $candidates = [$phr];
+            if ($phr->is_triple()) {
+                $candidates[] = $phr->obj()->get_from();
+                $candidates[] = $phr->obj()->get_to();
+            }
+            foreach ($candidates as $candidate) {
+                if ($result == null and $candidate != null and $candidate->is_triple()
+                    and $candidate->obj()->get_verb()?->name() == verbs::OF_NAME
+                    and $candidate->obj()->get_from()?->name() == $col_phr->name()
+                    and $candidate->obj()->get_to()?->name() == $row_phr->name()) {
+                    $result = $candidate;
+                }
+            }
         }
         return $result;
     }
@@ -1833,6 +1910,8 @@ class value_list extends ListBase
      * @param phrase_list|null $rel_lst the phrases related to the page phrase
      * @param user_message $msg to report a problem of reading the phrase type
      * @param phrase_list $tbl_phr the phrases that the table header names for every value
+     * @param phrase|null $row_col the phrase that heads the row names, which is no phrase column
+     *                             e.g. "reason" on the page of the reasons of global warming
      * @return array the phrase columns keyed by phrase id in the order of the definition
      */
     private function phrase_columns(
@@ -1840,7 +1919,8 @@ class value_list extends ListBase
         array        $col_phr,
         ?phrase_list $rel_lst,
         user_message $msg,
-        phrase_list  $tbl_phr
+        phrase_list  $tbl_phr,
+        ?phrase      $row_col
     ): array
     {
         $result = [];
@@ -1853,7 +1933,9 @@ class value_list extends ListBase
             $phr = $rel_lst?->column_phrase($name);
             // a column that already holds the values of this phrase cannot name a phrase too,
             // and a unit describes the number, so it heads no column of its own either
-            if ($phr != null and !array_key_exists($phr->id(), $col_phr)
+            // and the phrases that name the rows are shown in the row column, not in a column of their own
+            $is_row_col = ($phr != null and $phr->name() == $row_col?->name());
+            if ($phr != null and !array_key_exists($phr->id(), $col_phr) and !$is_row_col
                 and !in_array($phr->id(), $head_ids) and !$this->is_unit($phr, $msg)) {
                 if ($rel_lst->child_names($phr) != []) {
                     $result[$phr->id()] = $phr;

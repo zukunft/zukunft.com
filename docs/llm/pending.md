@@ -1,8 +1,12 @@
 # pending - list of planned llm prompts with prio 1
 
-## start page table
+## Start page
 
-the file src/main/resources/messages/start_page/problem_global_warming_reasons.json should contain the number for more than one reason for the global warming. The numbers of this file are probably imported into the database, so all reasons should be taken into account for the column 'reason' in the row 'global warming' in the table of http://localhost/http/view.php?m=1&dlc=2&dlr=0. The reason with the highest impact should be shown in the cell 'global warming' / 'reason' and because there are more reasons, additional ', ...' should be shown that links to a view that shows a table for 'global warming reasons' where the rows are the reasons and the columns are e.g. 'potential loss in trillion EUR', 'solution' and 'potential gain in billion htp' defined by triples similar to the global warming start page table 
+1. Reasons page tests missing. The ids are known now: "global warming reason" is 1631, and its links are 1650 to 1653. The page itself, the row column on that page and the link from the reason cell have no unit test and no snapshot yet. I recommend adding them before the commit.
+2. Reasons page not seen. Nobody has rendered the calculator page of id 1631 yet, on the live site or in a snapshot. It should show the reasons as rows with the column "potential loss of reason". Solution and gain columns stay empty, because the reasons have no such values.
+3. Climate gas emissions leads the cell. Its value of 2.2 is still the biggest, while the three cost channels add up to about 1.1. The reasons page will list both kinds side by side. It is a data decision for you, as noted before.
+4. Unit test reads the pod. The ranking table test in src/test/php/unit_ui/phrase_ui_tests.php still uses an online cache. It does not fail, but it could read from the pod if its values ever stop matching the page phrase.
+5. Unrelated files. docs/llm/pending.md and the two new test import files are your own additions. They are unrelated to the reasons feature, so a separate commit would keep the history clean.
 
 ## system settings
 

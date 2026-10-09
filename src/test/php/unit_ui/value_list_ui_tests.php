@@ -563,6 +563,27 @@ class value_list_ui_tests
         $t->assert_text_contains($test_name, $tbl_two, '>' . triple_names::REDUCE_EMISSIONS . '</a>, <a ');
         $test_name = '... once, because only global warming has two solutions';
         $t->assert($test_name, substr_count($tbl_two, $more_tip), 1);
+        // the gain cell shows the gain of the solution shown, not also the gain of the second
+        // solution, which a reader would take for a gain of the solution shown
+        $test_name = '... and the gain of the solution shown';
+        $txt_two = $lib->html_to_text($tbl_two);
+        $t->assert_text_contains($test_name, $txt_two, '35.2' . sandbox_value_ui::QUALITY_MARK_NO_SOURCE);
+        // negative: the gain of the second solution is left to the page of the problem
+        $test_name = '... without the gain of the second solution in the same cell';
+        $t->assert_text_not_contains($test_name, $txt_two, '35.2' . sandbox_value_ui::QUALITY_MARK_NO_SOURCE . ', ');
+        // the solution with the biggest gain is shown, whatever the order of the values, e.g. a
+        // second solution of global warming with a gain of 50 instead of 35.2
+        $tbl_big = $t_val->value_list_solution_prio_bigger_second_solution_ui()->table_by_related_columns(
+            $msg_ui, $rank_ctx, $rank_lst->column_names(), false, true, $rank_lst,
+            value_list_ui::LIMIT_ALL, $start_url);
+        $test_name = 'the solution with the biggest gain is shown with ", ..."';
+        $t->assert_text_contains($test_name, $tbl_big, '>' . triple_names::BASIC_INCOME . '</a>, <a ');
+        $txt_big = $lib->html_to_text($tbl_big);
+        $test_name = '... with its gain';
+        $t->assert_text_contains($test_name, $txt_big, '50' . sandbox_value_ui::QUALITY_MARK_NO_SOURCE);
+        // negative: the smaller gain of the other solution is no number of the row any more
+        $test_name = '... and not the smaller gain of the other solution';
+        $t->assert_text_not_contains($test_name, $txt_big, '35.2' . sandbox_value_ui::QUALITY_MARK_NO_SOURCE);
         $test_name = '... which links to the page of the problem';
         $t->assert_text_contains($test_name, $tbl_two,
             url_var::MASK . '=' . views::TRIPLE_ID . '&amp;' . url_var::ID . '=' . triple_names::GLOBAL_WARMING_ID);

@@ -243,13 +243,13 @@ class triple_names
     // db setup imports last, so the ids follow the highest triple id of the seed data in the
     // order of the import levels; check them in the triple list.csv
     const string SYSTEM_CHART_TYPE_MAYOR = shared_triples::SYSTEM_CHART_TYPE_MAYOR;
-    const int SYSTEM_CHART_TYPE_MAYOR_ID = 2306;
+    const int SYSTEM_CHART_TYPE_MAYOR_ID = 2314;
     const string GAIN_AND_LOSS = 'potential gain and potential loss';
-    const int GAIN_AND_LOSS_ID = 2307;
+    const int GAIN_AND_LOSS_ID = 2315;
     const string LEVERAGE_OF_GAIN_AND_LOSS = 'leverage plot of potential gain and potential loss';
-    const int LEVERAGE_OF_GAIN_AND_LOSS_ID = 2308;
+    const int LEVERAGE_OF_GAIN_AND_LOSS_ID = 2316;
     const string CHART_LEVERAGE_OF_GAIN_AND_LOSS = 'chart leverage plot of potential gain and potential loss';
-    const int CHART_LEVERAGE_OF_GAIN_AND_LOSS_ID = 2309;
+    const int CHART_LEVERAGE_OF_GAIN_AND_LOSS_ID = 2317;
     const string INITIAL_EFFORT = 'initial effort';
     const int INITIAL_EFFORT_ID = 151;
     // the minor and marginal columns of the ranking and the unit of the initial effort
@@ -346,7 +346,7 @@ class triple_names
     // a unit triple typed "measure unit", so that a table header puts it behind the "in" like a
     // unit word (see pv_switzerland_co2.json)
     const string GRAM_PER_KWH = 'gram per kWh';
-    const int GRAM_PER_KWH_ID = 1942;
+    const int GRAM_PER_KWH_ID = 1950;
     // TODO use the name and not the id for the use cases
     // the subject of the use case pv_switzerland_co2.json; a use case is user data, so its
     // objects are selected by the name only and never by a database id or a code id

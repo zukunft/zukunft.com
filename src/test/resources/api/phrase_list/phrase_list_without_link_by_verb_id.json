@@ -74,7 +74,7 @@
         "class": "word"
     },
     {
-        "id": 1959,
+        "id": 1967,
         "name": "country code",
         "description": "the two-letter ISO 3166-1 alpha-2 code of a country, used as the prefix of its postal codes",
         "class": "triple"
@@ -97,6 +97,12 @@
         "id": 104,
         "name": "global problem",
         "description": "here more a personal issue (wikipedia does not really match)",
+        "class": "triple"
+    },
+    {
+        "id": 1631,
+        "name": "global warming reason",
+        "description": "a reason of the potential loss of global warming; the page of this phrase shows the table of the reasons with the loss that each causes",
         "class": "triple"
     },
     {
@@ -166,7 +172,7 @@
         "class": "triple"
     },
     {
-        "id": 1958,
+        "id": 1966,
         "name": "postal code",
         "description": "the number of a post office area that is part of a postal address; the number is qualified as postal code, e.g. 1950 (postal code), because the same number can also be a year, and each postal code is the triple of the qualified number in its country, named with the country code as prefix, e.g. CH-1950",
         "class": "triple"
