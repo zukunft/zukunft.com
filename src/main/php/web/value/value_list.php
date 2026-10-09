@@ -849,7 +849,7 @@ class value_list extends ListBase
         // a simple table shows the first tiers only, and the table of the mayor tier alone
         // one unit per column; the columns left out are still reachable via the menu of
         // the "..." header
-        $col_ids = $this->columns_of_tiers($col_ids, $col_phr, $phr_col, $rel_lst, $col_tiers, $cells);
+        $col_ids = $this->columns_of_tiers($col_ids, $col_phr, $phr_col, $rel_lst, $col_tiers, $cells, $msg);
         // a row whose numbers are all in columns that this table does not show says nothing
         // to the reader, e.g. the reward ratio of a problem in a table of the mayor tiers,
         // so such a row is dropped before the cut and uses up none of the shown rows
@@ -1129,7 +1129,7 @@ class value_list extends ListBase
             $phr = $model->col_phr[$col_id] ?? $model->phr_col[$col_id];
             // a phrase column names a phrase of the row, so it has no unit
             $unit_lst = $model->col_unit[$col_id] ?? new phrase_list();
-            $col_style[$col_id] = $this->column_style($phr->name(), $rel_lst);
+            $col_style[$col_id] = $this->column_style($this->column_tier($col_id, $phr->name(), $rel_lst));
             $head_phr = $this->column_head($phr, $model->tbl_phr);
             $col_head = $this->column_header($head_phr, $unit_lst);
             // a further column of the same phrase in another unit has no icons, because the
@@ -2244,8 +2244,9 @@ class value_list extends ListBase
     }
 
     /**
-     * the columns of the first tiers: a column of a later tier and a further unit column of a
-     * phrase are left to the full table, which the "..." header links to (docs/llm/frontend.md)
+     * the columns of the first tiers, at most the configured number of columns: the other
+     * columns are left to the full table, which the "..."
+     * header links to (docs/llm/frontend.md)
      *
      * @param array $col_ids the ids of every column in the order they are shown
      * @param array $col_phr the value column phrases by column id
@@ -2253,6 +2254,7 @@ class value_list extends ListBase
      * @param phrase_list|null $rel_lst the phrases related to the page phrase with the definitions
      * @param int $col_tiers the number of column tiers left out, self::COLUMN_TIERS_ALL for every column
      * @param array $cells per row and column the values, to check if a further unit column is complete
+     * @param user_message $msg to report a problem of reading the configured number of columns
      * @return array the ids of the columns to show
      */
     private function columns_of_tiers(
@@ -2261,7 +2263,8 @@ class value_list extends ListBase
         array        $phr_col,
         ?phrase_list $rel_lst,
         int          $col_tiers,
-        array        $cells
+        array        $cells,
+        user_message $msg
     ): array
     {
         $result = $col_ids;
@@ -2269,21 +2272,41 @@ class value_list extends ListBase
             // the tiers are left out from the bottom, so e.g. a table that leaves out the
             // marginal tier shows every column up to the tier above it
             $last_tier = count(triples::SYSTEM_COLUMN_TIERS) - $col_tiers;
-            // a further unit of a column states the same measure a second way, e.g. the
-            // potential loss in percent of the GDP besides the loss in trillion EUR, so it is
-            // left to the tier below the mayor columns: only the table that shows the mayor
-            // tier alone keeps one number per column
-            $one_unit_only = ($last_tier <= 1);
-            $result = [];
+            $level_of_shown = [];
             foreach ($col_ids as $col_id) {
                 $phr = $col_phr[$col_id] ?? $phr_col[$col_id];
                 $is_first_unit = !str_contains((string)$col_id, self::UNIT_COLUMN_SEP);
-                $unit_shown = ($is_first_unit
-                    or (!$one_unit_only and $this->unit_column_complete((string)$col_id, $cells)));
-                if ($unit_shown and $this->tier_level($phr->name(), $rel_lst) <= $last_tier) {
-                    $result[] = $col_id;
+                $unit_shown = ($is_first_unit or $this->unit_column_complete((string)$col_id, $cells));
+                $level = $this->tier_level($this->column_tier($col_id, $phr->name(), $rel_lst));
+                if ($unit_shown and $level <= $last_tier) {
+                    $level_of_shown[$col_id] = $level;
                 }
             }
+            // a reduced table never shows more than the configured number of columns, so if the
+            // definitions put too many columns in the shown tiers, the last columns of the lowest
+            // tier are left to the full table; the row name column counts as one
+            asort($level_of_shown);
+            $shown = array_slice(array_keys($level_of_shown), 0, max($this->configured_column_limit($msg) - 1, 0));
+            $result = array_values(array_filter($col_ids, fn($col_id) => in_array($col_id, $shown)));
+        }
+        return $result;
+    }
+
+    /**
+     * the configured maximal number of columns of a reduced table including the column that
+     * names the rows (config.yaml "select > columns > entries", falling back to
+     * Config::LIMIT_TABLE_COLUMNS if the config is not loaded)
+     *
+     * @param user_message $msg to report a problem of reading the config
+     * @return int the maximal number of columns of a reduced table
+     */
+    private function configured_column_limit(user_message $msg): int
+    {
+        global $ui_sys;
+        $result = Config::LIMIT_TABLE_COLUMNS;
+        if ($ui_sys?->cfg !== null) {
+            $result = (int)$ui_sys->cfg->get_by(
+                [words::ENTRIES, words::COLUMNS, words::SELECT], $msg, Config::LIMIT_TABLE_COLUMNS);
         }
         return $result;
     }
@@ -2312,14 +2335,32 @@ class value_list extends ListBase
     }
 
     /**
+     * the tier of a table column: the tier of its definition, but a further unit column states
+     * the measure of its phrase a second way, e.g. the potential loss in percent of the GDP
+     * besides the loss in trillion EUR, so it is a minor column at most
+     *
+     * @param int|string $col_id the id of the column, which names a further unit e.g. "125|1"
      * @param string $name the name of the column phrase e.g. "loss"
      * @param phrase_list|null $rel_lst the phrases related to the page phrase with the definitions
+     * @return string the tier name e.g. "minor column (system)" or '' if the column is not defined
+     */
+    private function column_tier(int|string $col_id, string $name, ?phrase_list $rel_lst): string
+    {
+        $result = $rel_lst?->column_tier($name) ?? '';
+        if (str_contains((string)$col_id, self::UNIT_COLUMN_SEP)
+            and $this->tier_level($result) < $this->tier_level(triples::SYSTEM_COLUMN_MINOR)) {
+            $result = triples::SYSTEM_COLUMN_MINOR;
+        }
+        return $result;
+    }
+
+    /**
+     * @param string $tier the tier name of a column e.g. "mayor column (system)" or '' if not defined
      * @return int the tier level of the column, 1 for a mayor column; a column that the data
      *             suggests has no definition and counts as a main column
      */
-    private function tier_level(string $name, ?phrase_list $rel_lst): int
+    private function tier_level(string $tier): int
     {
-        $tier = $rel_lst?->column_tier($name) ?? '';
         $pos = array_search($tier, triples::SYSTEM_COLUMN_TIERS);
         if ($pos === false) {
             $pos = array_search(triples::SYSTEM_COLUMN_MAIN, triples::SYSTEM_COLUMN_TIERS);
@@ -2467,16 +2508,14 @@ class value_list extends ListBase
     }
 
     /**
-     * the css class of a table column, which follows the tier of its definition
+     * the css class of a table column, which follows its tier
      *
-     * @param string $name the name of the column phrase e.g. "loss"
-     * @param phrase_list|null $rel_lst the phrases related to the page phrase with the definitions
+     * @param string $tier the tier name of the column (see column_tier)
      * @return string the css class that hides the column on the screens its tier excludes, or ''
      */
-    private function column_style(string $name, ?phrase_list $rel_lst): string
+    private function column_style(string $tier): string
     {
         $result = '';
-        $tier = $rel_lst?->column_tier($name) ?? '';
         if ($tier == triples::SYSTEM_COLUMN_MAIN) {
             $result = styles::COL_MAIN;
         } elseif ($tier == triples::SYSTEM_COLUMN_MINOR) {

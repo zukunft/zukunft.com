@@ -153,6 +153,15 @@ class triple_names
     const int POVERTY_PROBLEM_ID = 124;
     const string POTENTIAL_EDUCATION_PROBLEM = 'education can be global problem';
     const int POTENTIAL_EDUCATION_PROBLEM_ID = 125;
+    // the links of the other problems of solution_prio.json to "global problem"
+    const int DISINFORMATION_PROBLEM_ID = 155;
+    const int WEALTH_CONCENTRATION_PROBLEM_ID = 193;
+    const int MARKET_POWER_PROBLEM_ID = 194;
+    const int BIASED_INFORMATION_PROBLEM_ID = 195;
+    const int CITIZEN_PARTICIPATION_PROBLEM_ID = 196;
+    const int GDP_MISMEASUREMENT_PROBLEM_ID = 197;
+    const int PROPRIETARY_SOFTWARE_PROBLEM_ID = 198;
+    const int BLACK_BOX_AI_PROBLEM_ID = 228;
     // the solution triples and the table column definitions of solution_prio.json
     const string REDUCE_EMISSIONS = 'reduce climate gas emissions';
     const int REDUCE_EMISSIONS_ID = 226;

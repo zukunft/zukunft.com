@@ -1789,7 +1789,7 @@
       "name": "column reward ratio",
       "from": "reward ratio",
       "verb": "can be",
-      "to": "minor column (system)"
+      "to": "marginal column (system)"
     },
     {
       "name": "probability range",

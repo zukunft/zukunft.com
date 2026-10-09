@@ -2,11 +2,23 @@
 
 ## table with column component
 
-until now only a few sample start pages like src/test/resources/web/html/views_by_id/start_page/1_start_page.html are tested. Add more tests so that all combinations selectable by the start page sub menus e.g. with more rows and with more or less column and as chart or combination are tested and have there own test file for a fast check based on fixed html code. 
+in the start page with the reasons e.g. http://localhost/http/view.php?m=1&dlc=2&dlr=0 only for 'global warming' the reason 'climate gas emissions' is shown. Change the json data so that for all rows the most relevant (impact) reason is shown. 
 
 if in the start page table there is more than one solution add a ', ...' with a link to the solution list after the solution name
 
-## PV calculator
+## start page global problem
+
+add a subtitle with the country, region and an 'yours' option for the problem and solution list where the region and country are based on the ip if the user is not logged in and 'yours' is grey with the tooltip 'signup or login to create your personal list'
+
+## phrase default view
+
+add e.g. a pie chart to the default phrase page with the top impact on the phrase e.g. for the 'global warming' default page show the 'co2-eq emissions by sector' 
+
+## use cases
+
+add CBAM calculation, portfolio split and company sheet use cases and pin them on the start page
+
+### PV calculator
 
 Catch process forms
 
@@ -25,11 +37,34 @@ for complex answers offer a limited number of pre-selection options.
 The next button leads to the 'process catch detail page'.
 
 create a 'process catch detail page' view that has the components 
-'title', 'explain text', 'detail input fields by tab' and 'next button'. The 'catch form start page' has one easy to answer question with a next button that leads the the ''.
+'title process catch detail', 'text explain process catch detail', 
+'process catch detail tab one', 'process catch detail tab two', 
+'process catch detail tab three', 'process catch detail tab four' and 'process catch detail tab five'
+and 'process catch detail tab one fields', (and '... two, three, ... five)
+with a next button that leads to the 'process catch result page'.
 
-create a 'process catch result page' view that has the components 'title', 'explain text', 'initial input' and 'next button'. The 'catch form start page' has one easy to answer question with a next button that leads the the ''.
+create a 'process catch result page' view that has the components 
+'title process catch result', 'text explain process catch result',
+'process catch result tab one', 'process catch result tab two',
+'process catch result tab three', 'process catch result tab four' and 'process catch result tab five'
+and 'process catch result tab one fields', (and '... two, three, ... five)
+with a back button that leads to the 'process catch detail page'.
 
-the view contains the title, that field and the next button
+for each field these triples should be created:
+
+- '... field label phrase' e.g. 'place of the PV installation' for the place / sun intensity
+- '... field value phrases' e.g. 'PV installation location' to store the field input value in the database
+- '... field type' e.g. location selector
+- '... field unit' e.g. kWh
+- '... field limit up' 
+- '... field limit down'
+- '... field limit steps'
+- '... field limit suggestion'
+
+For each phrase e.g. "PV Calculator" each field tripel a phrase or a list of phrases can be assigned via triples
+
+
+Unsorted notes:
 
 based on the start phrase the title text, the label and type of the input field and the phrases for the input field are assigned to the start phrase via triples
 
@@ -55,18 +90,85 @@ main values phrases (system) e.g. PV installation size
 
 create a component type 'geolocator by place name / post code' with the parameters: 'label' (which is a translatable 'place name / post code') and the value phrases (which are 'place of user')
 
-place / sun intensity
-
-Field size / area with parameters 'label', 'phrases', 'unit', 'upper/lower limit', 'steps'
-
 Horizontal angle
 
 Vertical angle
 
 Eigenverbrauch
 
+### LLM KI prompt suggestion
 
+the goal is a guided calculation for a question phrase like "PV calculator": four process catch
+views (start, main, detail, result) whose fields are not coded but defined as data, so that any
+question phrase gets its own calculator by a json import. the views and the component types are
+system data (system_views.json, code_id, docs/llm/json_views.md), the fields of a question are use
+case data without a code_id (docs/llm/json_structure.md "Use case files never carry a code_id")
+and the numbers are calculated by the formulas of pv_yield.json. the entered numbers are saved as
+values of the user with the existing value save, so the result page is the calculator view of the
+question phrase and every page is url state without javascript (docs/llm/frontend.md). run the
+steps one at a time, each as its own commit with the tests written first, and ask for the test run
+after each step (an llm never runs test/*, docs/llm/coding.md).
 
+1. the system phrases of a field definition: add to the system word and triple data the phrase
+   'process catch field (system)' and the properties of a field as triples with a code_id in
+   shared/const/triples.php (like triples::SYSTEM_COLUMN_MAIN): 'field label', 'field value
+   phrases', 'field type', 'field unit', 'field limit up', 'field limit down', 'field step' and
+   'field suggestion', plus the field types 'location selector', 'number with limits' and
+   'pre-selection' linked with "can be" to 'field type' like the column tiers. use only the
+   verbs of docs/llm/json_structure.md "Allowed verbs"; a property that fits no verb gets one by
+   "Adding a new verb", never a free text. add the triple_names const and the test factory of
+   each phrase, a unit test that the import creates them with the code id and re-baseline the
+   pinned ids from list.csv (docs/llm/testing.md). document the pattern in json_structure.md.
+
+2. the field model of the frontend: a class web/component/catch_field.php that is built from
+   the request cache only (docs/llm/frontend.md "The frontend never accesses the database"): for
+   a question phrase and a step (start, main, detail tab n, result tab n) it returns the fields
+   assigned to that step by the triples of step 1, each with its label, value phrases, type,
+   unit, limits, step and suggestion. the fields of a step keep the order of their phrase ids.
+   unit tests with a test_phrases factory list for every property, a missing property and a
+   field assigned to two steps (shown on both).
+
+3. the component types: add to shared/types/component_types.php and the system component data
+   'process catch fields' (the fields of the step named by the component code id as form
+   inputs: a text input with the postal codes of the cache as datalist for the location
+   selector, a number input with min, max and step for the number with limits and a select of
+   the option phrases for the pre-selection, the suggestion as the preset value), 'process catch
+   tabs' (the tab names of the detail and the result step as links that carry the selected tab
+   as a new url var with its human twin and the url_mapper branches, docs/llm/state-and-
+   messages.md) and 'process catch results' (the results of the question phrase as the table
+   with related columns of the calculator view). every renderer gets its object_pages snapshot
+   (docs/llm/testing.md "Every HTML-returning function ... contributes to an object_pages
+   snapshot"); a label is the phrase name, so it is translated like every phrase.
+
+4. the four views in system_views.json with the code ids process_catch_start, process_catch_main,
+   process_catch_detail and process_catch_result (views.php consts and views::TEST_VIEW_IDS, so
+   the views_by_id snapshots cover them): title, explain text, the fields component of the step,
+   the tabs where the step has tabs and the next button, the result page with a back button. the
+   next button submits the form: the frontend saves each entered number as a value with the
+   value phrases of the field plus the question phrase for the logged in user (the existing
+   value save api, docs/llm/frontend.md "Form field name is the url var"), reports a rejected
+   number on the $msg of the request and redirects to the next view with the question phrase
+   as id. an anonymous user gets the ip user rules like every other change.
+
+5. the PV calculator use case: a new use_cases/pv_calculator.json appended to
+   files::USE_CASE_FILES with the question word 'PV calculator' and its fields: start 'place of
+   the PV installation' (location selector, value phrase postal code, which selects the
+   irradiation of pv_yield_by_country.json); main 'PV installation size' (number with limits in
+   m2, suggestion 10), 'panel type' (pre-selection) and 'electricity consumption per year'
+   (number in kWh, suggestion 4500); detail tabs 'orientation' (horizontal and vertical angle of
+   the panels), 'self-consumption' (self-consumption share), 'prices' (household electricity
+   price and feed-in remuneration preset from the country data); result 'PV return' in EUR per
+   year by the formula 'PV return by self-consumption share' of pv_yield.json. the file imports
+   for a normal user and names no code_id and no id. tests: assert_view_by_name for every step
+   with the use case data and a workflow test under src/test/php/unit_workflow (next free
+   workflow id in test/php/const/workflows.php) that walks start, main, detail and result and
+   snapshots every page (docs/llm/testing.md "Unit workflow tests snapshot every step"), plus
+   the write workflow that checks the saved values of the user.
+
+6. docs: json_views.md gets the component types and the four views, json_structure.md the field
+   triples with the pv_calculator.json example and frontend.md the catch process rule: one easy
+   question on the start page, at most three fields on the main page, the fine tuning in tabs
+   on the detail page and the money on the result page; pending.md loses this section.
 
 ## todo from group id change
 

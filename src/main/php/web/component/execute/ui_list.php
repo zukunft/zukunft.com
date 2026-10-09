@@ -2209,7 +2209,9 @@ class ui_list extends ui_base
      * add the phrases and the values that the table of the start view needs to the request cache
      *
      * each step is skipped if the cache already has that data, so a unit test that fills the
-     * cache upfront needs no api call at all
+     * cache upfront needs no api call at all; an offline cache is never filled from the api,
+     * like add_column_definitions, so the empty result list of a unit test is not filled with
+     * the results of the pod, which would repeat the groups of the test values
      *
      * @param data_object $dto the request cache to fill
      * @param phrase $phr the page phrase of the start view, which is "global problem"
@@ -2218,6 +2220,9 @@ class ui_list extends ui_base
      */
     private function add_start_page_cache(data_object $dto, phrase $phr, user_message $msg): void
     {
+        if (!$dto->online) {
+            return;
+        }
         // "global problem" itself is in no value group, so the rows are the phrases that a
         // triple links to it; without those triples the table finds no value at all
         if ($dto->phr_lst->child_phrases($phr)->is_empty()) {

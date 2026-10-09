@@ -1292,6 +1292,20 @@ class test_phrases
     }
 
     /**
+     * @return phrase_list_ui the start page definitions with every problem of solution_prio.json
+     *         linked to "global problem", so that a longer list of the ranking shows more rows
+     */
+    function list_global_problems_all_ui(): phrase_list_ui
+    {
+        $t_trp = new test_triples($this->env);
+        $lst = $this->list_global_problems();
+        foreach ($t_trp->other_problem_links() as $trp) {
+            $lst->add($trp->phrase());
+        }
+        return $this->ui_list($lst);
+    }
+
+    /**
      * @return phrase_list_ui the global problems with "global warming potential", which gives
      *         "global warming" the parent "potential" beside "global problem", so that a sort
      *         by the names including the parents can be told apart from a sort by the names

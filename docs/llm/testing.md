@@ -1041,6 +1041,22 @@ runs the action of the view (opening the activation link must not confirm the
 email yet). A typed password never reaches a snapshot, because `assert_url`
 masks the `url_var::SECRET_VARS`.
 
+## The start page is snapshotted for every selection of its sub menus
+
+`unit_ui/start_page_ui_tests.php` renders the ranking of the start page from the
+unit fixtures (`test_values::value_list_start_page`) for every combination that
+the sub menus offer: the rows of the "… more" tail (`dls`), the column tiers with
+and without the ranges of the "…" header (`dlc`, `dlr`) and the form of the
+ranking (`dla`: table, chart or both). Each page is compared with
+`src/test/resources/web/html/start_page/start_page<_var_value…>.html`, named by
+the url vars of the selection, so the file of a page is found from its url
+(`start_page_dls_20_dlc_0_dlr_1_dla_chart.html`); the default of a sub menu has
+no var. The test needs no database, so it is the fast check of a ranking change;
+the `views_by_id/start_page/` snapshots keep the few full pages with the frame,
+and the details page there is the only one fetched from the pod. A snapshot of a
+selection that the menus no longer offer is reported as orphaned like the
+`views_by_id` ones.
+
 ## Every machine-checkable coding rule has a coded test
 
 A coding rule in `docs/llm/` is only enforced when there is an automated test

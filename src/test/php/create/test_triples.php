@@ -1387,6 +1387,38 @@ class test_triples extends test_objects
     }
 
     /**
+     * the links of the problems beside the first five to "global problem", so that the start
+     * page can show every problem of solution_prio.json
+     *
+     * @return array the triples that "<problem>" "is a" "global problem"
+     */
+    function other_problem_links(): array
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $links = [
+            [triple_names::DISINFORMATION_PROBLEM_ID, $t_wrd->word_disinformation()->phrase()],
+            [triple_names::WEALTH_CONCENTRATION_PROBLEM_ID, $this->wealth_concentration()->phrase()],
+            [triple_names::MARKET_POWER_PROBLEM_ID, $this->market_power()->phrase()],
+            [triple_names::BIASED_INFORMATION_PROBLEM_ID, $this->biased_information()->phrase()],
+            [triple_names::CITIZEN_PARTICIPATION_PROBLEM_ID, $this->citizen_participation()->phrase()],
+            [triple_names::GDP_MISMEASUREMENT_PROBLEM_ID, $this->gdp_mismeasurement()->phrase()],
+            [triple_names::PROPRIETARY_SOFTWARE_PROBLEM_ID, $this->proprietary_software()->phrase()],
+            [triple_names::BLACK_BOX_AI_PROBLEM_ID, $this->black_box_ai()->phrase()],
+        ];
+        $result = [];
+        foreach ($links as [$id, $problem]) {
+            $trp = new triple($this->env->usr1);
+            $trp->set($id);
+            $trp->set_from($problem);
+            $trp->set_verb($t_vrb->verb_is());
+            $trp->set_to($this->global_problem()->phrase());
+            $result[] = $trp;
+        }
+        return $result;
+    }
+
+    /**
      * @return triple "mayor column (system)" - the tier of the columns shown on every screen
      */
     function column_mayor(): triple

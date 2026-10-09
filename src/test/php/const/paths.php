@@ -125,6 +125,8 @@ class paths
     const string VIEW_FUNCTIONS = 'object_pages' . DIRECTORY_SEPARATOR;
     // to test if each object has all curl views including one or many read only view
     const string VIEWS = 'views_by_object' . DIRECTORY_SEPARATOR;
+    // to test every selection of the start page sub menus: the rows, the columns and the form of the ranking
+    const string START_PAGE = 'start_page' . DIRECTORY_SEPARATOR;
     // to test if all system view based on the id are fine including more static views like the about page
     const string VIEWS_BY_ID = self::HTML . 'views_by_id' . DIRECTORY_SEPARATOR;
     const string WEB = 'web' . DIRECTORY_SEPARATOR;

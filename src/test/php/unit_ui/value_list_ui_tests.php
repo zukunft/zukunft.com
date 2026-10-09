@@ -387,13 +387,13 @@ class value_list_ui_tests
         // negative: the unit of the single bigger number is left to the full table
         $test_name = '... and not the unit of the single biggest number';
         $t->assert_text_not_contains($test_name, $hdr_unit_most, word_names::HTP);
-        // with the main columns a further unit is shown only if it has a number in every row,
+        // with the minor columns a further unit is shown only if it has a number in every row,
         // so the potential loss in htp of global warming alone is left to the full table
         $tbl_unit_part = $t_val->value_list_unit_majority_ui()->table_by_related_columns(
             $msg_ui, new phrase_list_ui(), $loss_lst->column_names(), false, true, $loss_lst,
-            null, [], false, value_list_ui::COLUMN_TIERS_EX_MINOR);
+            null, [], false, value_list_ui::COLUMN_TIERS_EX_MARGINAL);
         $hdr_unit_part = $lib->html_to_text($lib->str_left_of($tbl_unit_part, '</tr>'));
-        $test_name = 'the main columns leave out a unit that only some rows have';
+        $test_name = 'the minor columns leave out a unit that only some rows have';
         $t->assert_text_not_contains($test_name, $hdr_unit_part, word_names::HTP);
         // negative: the full table shows every unit
         $tbl_unit_all = $t_val->value_list_unit_majority_ui()->table_by_related_columns(
@@ -401,12 +401,23 @@ class value_list_ui_tests
         $hdr_unit_all = $lib->html_to_text($lib->str_left_of($tbl_unit_all, '</tr>'));
         $test_name = '... but the full table shows it';
         $t->assert_text_contains($test_name, $hdr_unit_all, word_names::HTP);
+        $tbl_unit_minor = $t_val->value_list_two_units_ui()->table_by_related_columns(
+            $msg_ui, new phrase_list_ui(), $loss_lst->column_names(), false, true, $loss_lst,
+            null, [], false, value_list_ui::COLUMN_TIERS_EX_MARGINAL);
+        $hdr_unit_minor = $lib->html_to_text($lib->str_left_of($tbl_unit_minor, '</tr>'));
+        $test_name = '... and with the minor columns every unit is shown';
+        $t->assert($test_name, substr_count($hdr_unit_minor, word_names::LOSS . $unit_sep), 2);
+        $test_name = '... as a minor column, which is hidden below a wide screen';
+        $t->assert_text_contains($test_name, $tbl_unit_minor, '<th class="' . styles::COL_MINOR . '">');
+        // negative: a further unit is a minor column and a table shows only the columns of its
+        // tiers, so the main columns keep one unit per column, e.g. the start page with the
+        // reason columns shows the loss in trillion EUR only and not also in percent
         $tbl_unit_main = $t_val->value_list_two_units_ui()->table_by_related_columns(
             $msg_ui, new phrase_list_ui(), $loss_lst->column_names(), false, true, $loss_lst,
             null, [], false, value_list_ui::COLUMN_TIERS_EX_MINOR);
         $hdr_unit_main = $lib->html_to_text($lib->str_left_of($tbl_unit_main, '</tr>'));
-        $test_name = '... and with the main columns every unit is shown';
-        $t->assert($test_name, substr_count($hdr_unit_main, word_names::LOSS . $unit_sep), 2);
+        $test_name = 'the main columns show no minor column';
+        $t->assert($test_name, substr_count($hdr_unit_main, word_names::LOSS . $unit_sep), 1);
 
         // a unit can be a triple, e.g. "gram per kWh", which the import types "measure unit" like
         // its words (see pv_switzerland_co2.json), so the header puts it behind the "in" too

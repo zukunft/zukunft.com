@@ -257,7 +257,7 @@ triple_id,from_phrase_id,verb_id,to_phrase_id,user_id,triple_name,name_given,nam
 256,-226,2,218,1,reduce climate gas emissions (solution),,,,,,,,,,,,,,
 257,-150,22,-224,1,column loss reduction,,,,,,,,,,,,,,
 258,-151,22,-224,1,column initial effort,,,,,,,,,,,,,,
-259,-152,22,-224,1,column reward ratio,,,,,,,,,,,,,,
+259,-152,22,-225,1,column reward ratio,,,,,,,,,,,,,,
 260,-154,22,-224,1,column probability range,,,,,,,,,,,,,,
 261,-232,2,8,1,double-blind randomized controlled trial (science),,,,,,,,,,,,,,
 262,-215,22,-235,1,chart range bars of potential loss,,,the range bars of the potential loss are a default chart of the global problems table,,,,,,,,,,,

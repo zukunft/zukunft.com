@@ -918,6 +918,33 @@ class test_values extends test_objects
     }
 
     /**
+     * the ranking values with the loss of the reason and the range of the loss of the first
+     * problem, so that every selection of the start page sub menus shows something: the main
+     * tier the reason columns and the range selection the bounds behind the number
+     *
+     * @return value_list the ranking values plus the loss of the reason and the range bounds
+     */
+    function value_list_start_page(): value_list
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $lst = $this->value_list_solution_prio_reason();
+        $loss_phr = $this->solution_prio_loss_phrases($t_trp->global_warming()->phrase(), false);
+        $lst->add($this->value_for_phrases(array_merge($loss_phr, [$t_wrd->word_low()->phrase()]), 25));
+        $lst->add($this->value_for_phrases(array_merge($loss_phr, [$t_wrd->word_high()->phrase()]), 40));
+        return $lst;
+    }
+
+    /**
+     * @return value_list_ui the frontend ranking values of the start page selections for unit testing
+     */
+    function value_list_start_page_ui(): value_list_ui
+    {
+        $tl = new test_lib();
+        return $tl->list_to_ui($this->value_list_start_page(), [api_types::INCL_PHRASES]);
+    }
+
+    /**
      * the potential loss of every problem of the start page ranking without the gain, so that
      * every value carries the triple "potential loss" as a whole
      *

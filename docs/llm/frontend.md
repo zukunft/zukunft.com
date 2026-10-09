@@ -408,13 +408,23 @@ more version. The simple version shows the columns of the mayor tier only, one
 unit per column — the unit that most numbers of the column have, so that one
 bigger number in another unit cannot hide the unit of every other row
 (`value_list::split_by_unit`) — and each cell the number without its probability range; the
-full version shows every tier, every unit and the range behind each number. The
-versions between them show every unit of a shown column that has a number in
-every row of its first unit, e.g. the potential loss of a problem in trillion
-EUR, in percent of the GDP and in percent of the happy time points, because only
-the smallest screen needs one number per column; a unit that only some rows
-have, e.g. the potential loss in htp of global warming alone, is left to the
-full version (`value_list::unit_column_complete`). The start page opens with the simple version. The last header cell of every table,
+full version shows every tier, every unit and the range behind each number. A
+further unit of a column states the same measure a second way, so it is a minor
+column at most (`value_list::column_tier`), and it is shown only if it has a
+number in every row of its first unit, e.g. the potential loss of a problem in
+trillion EUR, in percent of the GDP and in percent of the happy time points; a
+unit that only some rows have, e.g. the potential loss in htp of global warming
+alone, is left to the full version (`value_list::unit_column_complete`).
+
+A version that leaves out a tier shows exactly the columns of its tiers, never a
+column of a lower tier, and at most the configured number of columns
+(`select: columns: entries` in `config.yaml`, counting the row name column); if
+the definitions put more columns into the shown tiers, the last columns of the
+lowest tier are left to the full version. So which version shows a column is
+decided by its tier in the definitions: e.g. on the start page the main version
+shows the reason and its loss, the minor version adds the loss in percent, the
+initial effort and the loss reduction, and the reward ratio, a marginal column,
+is shown by the full version only. The start page opens with the simple version. The last header cell of every table,
 the full one included, is the "…" menu (`value_list::columns_menu`, built with
 `html_base::popup_menu`), which lets the reader pick the version directly
 instead of stepping through them — and from the full table it is the only way

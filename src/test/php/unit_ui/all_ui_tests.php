@@ -71,6 +71,7 @@ include_once test_paths::UNIT_UI . 'job_ui_tests.php';
 include_once test_paths::UNIT_UI . 'localhost_ui_tests.php';
 include_once test_paths::UNIT_UI . 'spacial_cases_ui_tests.php';
 include_once test_paths::UNIT_UI . 'start_ui_tests.php';
+include_once test_paths::UNIT_UI . 'start_page_ui_tests.php';
 
 use Zukunft\ZukunftCom\test\php\create\unit_env;
 use Zukunft\ZukunftCom\test\php\unit\all_unit_tests;
@@ -119,6 +120,7 @@ class all_ui_tests extends all_unit_tests
         new group_ui_tests()->run($t);
         new value_ui_tests()->run($t);
         new value_list_ui_tests()->run($t);
+        new start_page_ui_tests()->run($t);
         new formula_ui_tests()->run($t);
         new formula_list_ui_tests()->run($t);
         new result_ui_tests()->run($t);
