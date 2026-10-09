@@ -2914,10 +2914,11 @@
         "climate gas emissions",
         "potential loss",
         "trillion",
-        "EUR"
+        "EUR",
+        "assumed"
       ],
-      "number": "31.5",
-      "description": "the climate gas emissions cause the whole potential loss of global warming, so the loss of this reason is the loss of the problem"
+      "number": "2.2",
+      "description": "the climate gas emissions cause the whole potential loss of global warming, so the loss of this reason is the calculated loss of the problem: the annual damage share of the reasons in problem_global_warming.json times the world GDP of 110.047 trillion EUR; assumed, because the coverage of that share is assumed"
     }
   ],
   "formulas": [

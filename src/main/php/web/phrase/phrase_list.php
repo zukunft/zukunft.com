@@ -346,13 +346,24 @@ class phrase_list extends sandbox_list_named
      * and <column>" assigned to the default chart type tier, e.g. "range bars of potential
      * loss" and "scatter plot of potential gain and initial effort" for the start page ranking
      *
+     * a table that shows the mayor columns only, e.g. the initial start page, shows the charts
+     * of the mayor chart type tier instead, e.g. the leverage plot of the gain against the loss,
+     * because a default chart may plot a column that this table does not show; without a mayor
+     * chart the default charts are shown
+     *
      * @param user_message $msg to report a chart type word without the code id of a chart type
+     * @param bool $mayor_only true if the table shows the mayor columns only
      * @return array per chart the chart type and the names of the plotted columns, the y axis first
      */
-    function chart_definitions(user_message $msg): array
+    function chart_definitions(user_message $msg, bool $mayor_only = false): array
     {
         $result = [];
-        foreach ($this->tier_members(triples::SYSTEM_CHART_TYPE_DEFAULT, $msg) as $chart) {
+        $charts = $this->tier_members(triples::SYSTEM_CHART_TYPE_DEFAULT, $msg);
+        $mayor_charts = $mayor_only ? $this->tier_members(triples::SYSTEM_CHART_TYPE_MAYOR, $msg) : [];
+        if ($mayor_charts != []) {
+            $charts = $mayor_charts;
+        }
+        foreach ($charts as $chart) {
             // the chart type word nested in the chart triple carries the chart type as its code
             // id, because the api loads the sides of a nested triple completely
             $type_wrd = $chart->get_from();

@@ -220,6 +220,15 @@ class start_page_ui_tests
             $test_name = $file_name . ' shows the short list only';
             $t->assert_false($test_name, str_contains($page_html, triple_names::PROPRIETARY_SOFTWARE));
         }
+        // the chart of the mayor columns only is the leverage plot of the gain against the loss,
+        // every other column selection keeps the default charts; the chart found and the chart
+        // expected are compared as text, so that a failure names both
+        if ($form != null) {
+            $test_name = $file_name . ' shows the leverage plot only with the mayor columns';
+            $mayor_only = (($tiers ?? value_list_ui::COLUMN_TIERS_EX_MAIN) == value_list_ui::COLUMN_TIERS_EX_MAIN);
+            $found = str_contains($page_html, 'class="ratio"') ? 'leverage plot' : 'default charts';
+            $t->assert($test_name, $found, $mayor_only ? 'leverage plot' : 'default charts');
+        }
         // the ranges are shown in the table only, the range bars of a chart show them always
         if ($form == null) {
             $test_name = $file_name . ' shows the range only if selected';

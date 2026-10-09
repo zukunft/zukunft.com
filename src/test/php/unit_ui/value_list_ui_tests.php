@@ -40,6 +40,7 @@ use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
 use Zukunft\ZukunftCom\main\php\web\value\value_list as value_list_ui;
+use Zukunft\ZukunftCom\main\php\web\value\table_chart;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_value as sandbox_value_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\def;
 use Zukunft\ZukunftCom\main\php\shared\const\files as files_shared;
@@ -625,6 +626,41 @@ class value_list_ui_tests
         $msg_ui->reset();
         $test_name = 'a list without chart definitions defines no chart';
         $t->assert($test_name, $rel_lst->chart_definitions($msg_ui), []);
+        // a table with the mayor columns only shows the charts of the mayor tier instead, e.g. the
+        // leverage plot of the gain against the loss of the initial start page
+        $test_name = 'the table with the mayor columns only shows the leverage plot of the gain against the loss';
+        $all_lst = $t_phr->list_global_problems_all_ui();
+        $charts = $all_lst->chart_definitions($msg_ui, true);
+        $t->assert($test_name, array_map(fn(array $chart) => [$chart[0]->value, $chart[1]], $charts),
+            [[chart_types::LEVERAGE->value, [triple_names::POTENTIAL_GAIN, triple_names::POTENTIAL_LOSS]]]);
+        // negative: a table with more columns keeps the default charts
+        $test_name = '... and a table with more columns the default charts';
+        $charts = $all_lst->chart_definitions($msg_ui);
+        $t->assert($test_name, array_map(fn(array $chart) => [$chart[0]->value, $chart[1]], $charts), $ranking_charts);
+        // negative: without a mayor chart the mayor columns keep the default charts
+        $test_name = '... and without a mayor chart the mayor columns keep the default charts';
+        $charts = $t_phr->list_global_problems_ui()->chart_definitions($msg_ui, true);
+        $t->assert($test_name, array_map(fn(array $chart) => [$chart[0]->value, $chart[1]], $charts), $ranking_charts);
+
+        // the leverage plot names each point by its row and shows the lines of an equal gain per
+        // loss, like global-problems-top4_scatter.svg
+        $svg_leverage = $t_val->value_list_solution_prio_ui()->table_to_svg(
+            chart_types::LEVERAGE, $msg_ui, $rank_ctx, $rank_lst->column_names(), $rank_lst,
+            value_list_ui::LIMIT_ALL, [], false, false, [word_names::GAIN, word_names::LOSS]);
+        $test_name = 'the leverage plot draws one point per problem';
+        $t->assert($test_name, substr_count($svg_leverage, 'class="pt"'), count($t_val->solution_prio_rows()));
+        $test_name = '... named by the problem beside the point';
+        $t->assert_text_contains($test_name, $svg_leverage, '>' . triple_names::GLOBAL_WARMING . '</text>');
+        $test_name = '... with the dashed lines of an equal gain per loss';
+        $t->assert_text_contains($test_name, $svg_leverage, 'class="ratio"');
+        $test_name = '... the quarter of a big loss and a big gain named';
+        $t->assert_text_contains($test_name, $svg_leverage, msg_id::CHART_QUADRANT_HIGH->text() . ' ' . word_names::LOSS);
+        $test_name = '... and the gain per loss of each point in its tooltip';
+        $t->assert_text_contains($test_name, $svg_leverage,
+            word_names::GAIN . ' ' . msg_id::CHART_PER->text() . ' ' . word_names::LOSS . table_chart::LABEL_SEP);
+        // negative: the numbered legend of the scatter plot is not needed, because each point is named
+        $test_name = '... without the numbered legend of the scatter plot';
+        $t->assert_text_not_contains($test_name, $svg_leverage, 'class="lg"');
 
         $test_name = 'the table of an empty value list renders nothing';
         $t->assert($test_name, new value_list_ui()->table_by_related_columns($msg_ui), '');

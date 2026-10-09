@@ -1915,3 +1915,4 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 1914,1,Malmö,,a city in the south of Sweden,1,,,,,,,,
 1915,1,11120,,,1,,,,,,,,
 1916,1,21120,,,1,,,,,,,,
+1917,1,leverage plot,,"chart with one labelled point per table row placed by two numbers of the row, the first number up and the second to the right, with the dashed lines of an equal ratio of the two numbers",1,,,,,leverage_plot,,,

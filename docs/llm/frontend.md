@@ -508,6 +508,16 @@ assigned to a chart type tier with `<chart> can be <tier>`: the charts of
 `triples::SYSTEM_CHART_TYPE_DEFAULT` are shown beside each other when the
 reader asks to see the table as a chart, the charts of
 `SYSTEM_CHART_TYPE_ALTERNATIVE` can be selected instead (not wired yet).
+A table that shows the mayor columns only, e.g. the initial start page, shows
+the charts of `SYSTEM_CHART_TYPE_MAYOR` instead of the default ones, because a
+default chart may plot a column that this table does not show: the start page
+shows the leverage plot (`leverage plot` → `leverage_plot`) of the potential
+gain against the potential loss, one labelled point per problem with the
+quadrants of the big and small numbers and the dashed lines of an equal gain
+per loss, like `global-problems-top4_scatter.svg`; without a mayor chart the
+default charts are shown. These definitions are in `start_page_charts.json`,
+which `files::SYSTEM_DATA_APPENDED_FILES` imports as the last step of the db
+setup, so that no pinned database id moves.
 `phrase_list::chart_definitions` reads the default charts out of the cached
 definitions (`load_chart_definitions`, `CHART_LEVELS` relation levels from the
 tier keyword: the tiers and the chart assignments) and

@@ -239,6 +239,17 @@ class triple_names
     const int SYSTEM_CHART_TYPE_DEFAULT_ID = 235;
     const string SYSTEM_CHART_TYPE_ALTERNATIVE = shared_triples::SYSTEM_CHART_TYPE_ALTERNATIVE;
     const int SYSTEM_CHART_TYPE_ALTERNATIVE_ID = 236;
+    // the chart of the table with the mayor columns only from start_page_charts.json, which the
+    // db setup imports last, so the ids follow the highest triple id of the seed data in the
+    // order of the import levels; check them in the triple list.csv
+    const string SYSTEM_CHART_TYPE_MAYOR = shared_triples::SYSTEM_CHART_TYPE_MAYOR;
+    const int SYSTEM_CHART_TYPE_MAYOR_ID = 2306;
+    const string GAIN_AND_LOSS = 'potential gain and potential loss';
+    const int GAIN_AND_LOSS_ID = 2307;
+    const string LEVERAGE_OF_GAIN_AND_LOSS = 'leverage plot of potential gain and potential loss';
+    const int LEVERAGE_OF_GAIN_AND_LOSS_ID = 2308;
+    const string CHART_LEVERAGE_OF_GAIN_AND_LOSS = 'chart leverage plot of potential gain and potential loss';
+    const int CHART_LEVERAGE_OF_GAIN_AND_LOSS_ID = 2309;
     const string INITIAL_EFFORT = 'initial effort';
     const int INITIAL_EFFORT_ID = 151;
     // the minor and marginal columns of the ranking and the unit of the initial effort

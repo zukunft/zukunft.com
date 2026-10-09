@@ -2304,3 +2304,7 @@ triple_id,from_phrase_id,verb_id,to_phrase_id,user_id,triple_name,name_given,nam
 2303,-1754,2,372,1,budget misallocation (reason),,,,,,,,,,,,,,
 2304,-1821,2,372,1,GDP revision (reason),,,,,,,,,,,,,,
 2305,-1887,2,372,1,licence cost (reason),,,,,,,,,,,,,,
+2306,-214,22,262,1,mayor chart type (system),,,keyword for the charts that are shown instead of the default charts if a table shows the mayor columns only,,,,,,,,,,,
+2307,-129,12,-128,1,potential gain and potential loss,,,"the two numbers of a problem row that the leverage plot plots against each other, the gain of the solution up and the loss of the problem to the right",,,,,,,,,,,
+2308,1917,10,-2307,1,leverage plot of potential gain and potential loss,,,"each problem as a labelled point by the potential gain of its solution and its potential loss, like global-problems-top4_scatter.svg",,,,,,,,,,,
+2309,-2308,22,-2306,1,chart leverage plot of potential gain and potential loss,,,the leverage plot is the chart of the global problems table that shows the mayor columns only,,,,,,,,,,,

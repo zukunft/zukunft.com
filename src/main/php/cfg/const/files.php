@@ -193,6 +193,9 @@ class files
     const string PROBLEM_WEALTH_CONCENTRATION_REASONS_FILE = self::DATA_START_PAGE_PATH . 'problem_wealth_concentration_reasons' . self::JSON;
     // the main reason of each problem with the loss it causes for the reason column of the ranking
     const string PROBLEM_MAIN_REASONS_FILE = self::DATA_START_PAGE_PATH . 'problem_main_reasons' . self::JSON;
+    // the chart types and the charts of the start page added after solution_prio.json, e.g. the
+    // leverage plot of the table with the mayor columns only
+    const string START_PAGE_CHARTS_FILE = self::MESSAGE_PATH . 'start_page_charts' . self::JSON;
 
     // the Fermi estimates and thesis chains of the start page, loaded by the full load
     const string FERMI_INTERNET_PRO_CONTRA_FILE = self::DATA_START_PAGE_PATH . 'fermi_internet_pro_contra' . self::JSON;
@@ -340,6 +343,13 @@ class files
         // start page data and no use case, but appended as the last file of the db setup, so
         // that it shifts the database id of no phrase that a test pins
         self::PROBLEM_MAIN_REASONS_FILE,
+    ];
+
+    // system data with code ids added after the database ids of the tested phrases have been
+    // pinned, imported as the very last step of the db setup (import_file::import_system_data_appended)
+    // so that no pinned id moves; a file moves to SYSTEM_DATA_FILES with the next re-baseline
+    const array SYSTEM_DATA_APPENDED_FILES = [
+        self::START_PAGE_CHARTS_FILE,
     ];
 
     // sample data for the view unit tests, imported in the db setup right after the system config

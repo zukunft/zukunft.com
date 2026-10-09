@@ -1504,7 +1504,7 @@ class ui_list extends ui_base
                         $this->add_chart_definitions($dto, $msg);
                     }
                     $result .= $this->table_charts($tbl_lst, $msg, $phr_lst, $col_order,
-                        $dto?->phr_lst, $url_array, $col_values_only, $value_rows_only);
+                        $dto?->phr_lst, $url_array, $col_values_only, $value_rows_only, $col_tiers);
                 }
             }
         }
@@ -1513,7 +1513,9 @@ class ui_list extends ui_base
 
     /**
      * the default charts of a value table beside each other, e.g. the range bars of the loss
-     * and the scatter plot of the gain against the effort of the start page ranking
+     * and the scatter plot of the gain against the effort of the start page ranking, or the
+     * mayor charts if the table shows the mayor columns only, e.g. the leverage plot of the
+     * gain against the loss of the initial start page (phrase_list::chart_definitions)
      *
      * @param value_list $tbl_lst the values of the table
      * @param user_message $msg to report a chart that the table cannot draw
@@ -1523,6 +1525,7 @@ class ui_list extends ui_base
      * @param array $url_array the url parameters of the page that shows the charts
      * @param bool $col_values_only true to leave out the values that share no column phrase
      * @param bool $value_rows_only true to leave out the rows without a number in a shown column
+     * @param int $col_tiers the column tiers left out by default, which the url of the page overrides
      * @return string the html code of the charts or '' if the table defines no chart
      */
     private function table_charts(
@@ -1533,12 +1536,15 @@ class ui_list extends ui_base
         ?phrase_list $rel_lst,
         array        $url_array,
         bool         $col_values_only,
-        bool         $value_rows_only
+        bool         $value_rows_only,
+        int          $col_tiers
     ): string
     {
         $html = new html_base();
         $charts = '';
-        foreach ($rel_lst?->chart_definitions($msg) ?? [] as [$type, $chart_cols]) {
+        // the url names the column tiers like for the table (see value_list::table_model)
+        $mayor_only = ((int)($url_array[url_var::DISPLAY_LIST_COLUMNS] ?? $col_tiers) == value_list::COLUMN_TIERS_EX_MAIN);
+        foreach ($rel_lst?->chart_definitions($msg, $mayor_only) ?? [] as [$type, $chart_cols]) {
             $charts .= $tbl_lst->table_to_svg($type, $msg, $phr_lst, $col_order, $rel_lst, null,
                 $url_array, $col_values_only, $value_rows_only, $chart_cols);
         }

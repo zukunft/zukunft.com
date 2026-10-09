@@ -2468,6 +2468,8 @@
              get in /import/import_file.php
     \-- import_use_case_data - section for function import_use_case_data not yet defined that it should be set and get i
             n /import/import_file.php
+    \-- import_system_data_appended - section for function import_system_data_appended not yet defined that it should be
+             set and get in /import/import_file.php
     \-- echo - section for function echo not yet defined that it should be set and get in /import/import_file.php
 \-- import_wikidata
     \-- get_entity_json - section for function get_entity_json is expected to be set and get in /import/import_wikidata.
@@ -5104,6 +5106,8 @@
         \-- import_file - import the sample data for the view unit tests
     \-- import_use_case_data
         \-- import_file - import the use case data, which shows how a question is answered with the data
+    \-- import_system_data_appended
+        \-- import_file - import the system data that has been added after the database ids of the tested phrases
     \-- echo
         \-- import_file - display a message immediately to the user
     \-- set_action

@@ -1295,16 +1295,23 @@ class test_phrases
      * @return phrase_list_ui the start page definitions with every problem of solution_prio.json
      *         linked to "global problem", so that a longer list of the ranking shows more rows,
      *         and with the minor and the marginal columns, so that each column selection shows
-     *         its own columns
+     *         its own columns, and with the leverage plot, the chart of the mayor columns only
      */
     function list_global_problems_all_ui(): phrase_list_ui
     {
+        $t_wrd = new test_words($this->env);
         $t_trp = new test_triples($this->env);
         $lst = $this->list_global_problems();
         $links = array_merge($t_trp->other_problem_links(), $t_trp->column_minor_and_marginal_definitions());
         foreach ($links as $trp) {
             $lst->add($trp->phrase());
         }
+        // the mayor chart like phrase_list::load_chart_definitions loads it
+        $lst->add($t_wrd->word_leverage_plot()->phrase());
+        $lst->add($t_trp->chart_type_mayor()->phrase());
+        $lst->add($t_trp->gain_and_loss()->phrase());
+        $lst->add($t_trp->leverage_of_gain_and_loss()->phrase());
+        $lst->add($t_trp->chart_leverage_of_gain_and_loss()->phrase());
         return $this->ui_list($lst);
     }
 

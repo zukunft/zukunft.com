@@ -43,6 +43,10 @@ enum chart_types: string
     // one point per table row placed by two numbers of the row, e.g. the potential gain of a
     // solution against its initial effort
     case SCATTER = 'scatter';
+    // one labelled point per table row placed by two numbers of the row with the lines of an
+    // equal ratio of the two numbers, e.g. the potential gain of a solution against the
+    // potential loss of its problem, so that the reader sees which problem has a big lever
+    case LEVERAGE = 'leverage_plot';
 
     /**
      * @return int the number of value columns that the chart type plots
@@ -51,7 +55,7 @@ enum chart_types: string
     {
         return match ($this) {
             chart_types::RANGE_BARS => 1,
-            chart_types::SCATTER => 2,
+            chart_types::SCATTER, chart_types::LEVERAGE => 2,
         };
     }
 

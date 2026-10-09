@@ -2,13 +2,11 @@
 
 ## table with column component
 
-the chart for the initial and pure start page e.g. http://localhost/http/view.php?m=1&dlc=2&dlr=0 should be a scatter chart like src/test/resources/web/html/chart/global-problems-top4_scatter.svg, so add a chart type and adjust the chart creatin code so that scatter charts could be created and link it to the start page with only the mayor columns   
-
-if in the start page table there is more than one solution add a ', ...' with a link to the solution list after the solution name
+if in the start page table there is more than one reason or solution add a ', ...' with a link to the solution list after the solution name
 
 ## system settings
 
-also if the user is only a ip user that is not logged in and the user clicks on the 'settings' link in the user popup menu of the navbar show at least an page with the translateable title "settings". this empty view page is filled in the next step with a tree view for config.yaml.
+also if the user is only an ip user that is not logged in and the user clicks on the 'settings' link in the user popup menu of the navbar show at least an page with the translateable title "settings". this empty view page is filled in the next step with a tree view for config.yaml.
 
 ## admin dashboard
 
@@ -16,11 +14,7 @@ if an admin user is logged in add to the top right used menu a 'dashboard' entry
 
 ## phrase default view
 
-add e.g. a pie chart to the default phrase page with the top impact on the phrase e.g. for the 'global warming' default page show the 'co2-eq emissions by sector' 
-
-## use cases
-
-add CBAM calculation, portfolio split and company sheet use cases and pin them on the start page
+add e.g. a pie chart to the default phrase page with the top impact on the phrase e.g. for the 'global warming' default page show the 'co2-eq emissions by sector'
 
 ### PV calculator
 
@@ -70,7 +64,8 @@ For each phrase e.g. "PV Calculator" each field tripel a phrase or a list of phr
 
 Unsorted notes:
 
-based on the start phrase the title text, the label and type of the input field and the phrases for the input field are assigned to the start phrase via triples
+based on the start phrase the title text, the label and type of the input field and the phrases for the input field 
+are assigned to the start phrase via triples
 
 e.g. if the catch phrase is called with the phrase "PV Calculator" the Place / PO Box selector is shown
 
@@ -173,6 +168,10 @@ after each step (an llm never runs test/*, docs/llm/coding.md).
    triples with the pv_calculator.json example and frontend.md the catch process rule: one easy
    question on the start page, at most three fields on the main page, the fine tuning in tabs
    on the detail page and the money on the result page; pending.md loses this section.
+
+## use cases
+
+add CBAM calculation, portfolio split and company sheet use cases and pin them on the start page
 
 ## todo from group id change
 

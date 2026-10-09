@@ -141,6 +141,10 @@ class triples
     const string SYSTEM_CHART_TYPE_DEFAULT_CODE_ID = 'system_chart_type_default';
     const string SYSTEM_CHART_TYPE_ALTERNATIVE = 'alternative chart type (system)';
     const string SYSTEM_CHART_TYPE_ALTERNATIVE_CODE_ID = 'system_chart_type_alternative';
+    // the charts of a table that shows the mayor columns only, e.g. the initial start page,
+    // which are shown instead of the default charts
+    const string SYSTEM_CHART_TYPE_MAYOR = 'mayor chart type (system)';
+    const string SYSTEM_CHART_TYPE_MAYOR_CODE_ID = 'system_chart_type_mayor';
     // the default sort orders of a table, defined in solution_prio.json like the charts: an
     // order is a triple "<condition> of <column>" e.g. "numeric descending of potential loss",
     // where the condition word carries the table_orders value as its code id, and is assigned

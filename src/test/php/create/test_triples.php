@@ -1736,6 +1736,64 @@ class test_triples extends test_objects
     }
 
     /**
+     * @return triple "mayor chart type (system)" - the tier of the charts of a table with the mayor columns only
+     */
+    function chart_type_mayor(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::SYSTEM_CHART_TYPE_MAYOR_ID, triple_names::SYSTEM_CHART_TYPE_MAYOR);
+        $trp->set_from($this->chart_type()->phrase());
+        $trp->set_verb($t_vrb->verb_can_be());
+        $trp->set_to($t_wrd->word_mayor()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "potential gain and potential loss" - the two numbers of the leverage plot, the gain up
+     */
+    function gain_and_loss(): triple
+    {
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::GAIN_AND_LOSS_ID, triple_names::GAIN_AND_LOSS);
+        $trp->set_from($this->potential_gain()->phrase());
+        $trp->set_verb($t_vrb->verb_and());
+        $trp->set_to($this->potential_loss()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "leverage plot of potential gain and potential loss" - the chart of the problems
+     */
+    function leverage_of_gain_and_loss(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::LEVERAGE_OF_GAIN_AND_LOSS_ID, triple_names::LEVERAGE_OF_GAIN_AND_LOSS);
+        $trp->set_from($t_wrd->word_leverage_plot()->phrase());
+        $trp->set_verb($t_vrb->verb_of());
+        $trp->set_to($this->gain_and_loss()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple that the leverage plot is the chart of the ranking with the mayor columns only
+     */
+    function chart_leverage_of_gain_and_loss(): triple
+    {
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::CHART_LEVERAGE_OF_GAIN_AND_LOSS_ID, triple_names::CHART_LEVERAGE_OF_GAIN_AND_LOSS);
+        $trp->set_from($this->leverage_of_gain_and_loss()->phrase());
+        $trp->set_verb($t_vrb->verb_can_be());
+        $trp->set_to($this->chart_type_mayor()->phrase());
+        return $trp;
+    }
+
+    /**
      * @return triple "sort order (system)" - the keyword of the sort order tiers
      */
     function sort_order(): triple

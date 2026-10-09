@@ -106,6 +106,16 @@ class table_chart
     const float LEGEND_START = self::SIZE * 109;
     const float LEGEND_LINE = self::SIZE * 5;
     const array LEGEND_COLUMN_X = [self::SIZE * 10, self::SIZE * 85];
+    // the leverage plot uses the plot area of the scatter plot without the legend below it
+    const float LEVERAGE_HEIGHT = self::SCATTER_PLOT_BOTTOM + self::AXIS_TITLE_GAP + self::BOTTOM_GAP;
+    const float LEVERAGE_POINT_RADIUS = self::SIZE * 2;
+    const float LEVERAGE_LABEL_GAP = self::SIZE * 3;
+    const float QUADRANT_TEXT_GAP = self::SIZE * 2;
+    // at most this number of lines of an equal ratio, so that the plot stays readable
+    const int RATIO_LINES = 3;
+    // the factor that turns a 1, 2 or 5 times a power of ten into the next one (see ratios)
+    const float NEXT_NICE_FACTOR = 1.5;
+    const string RATIO_PREFIX = '×';
     // the axis of a linear scale has about this many ticks and leaves room above the biggest number
     const int TICKS = 4;
     const float HEADROOM = 1.1;
@@ -160,6 +170,14 @@ class table_chart
         .lg { fill: var(--fg); font-size: ' . self::TEXT_SIZE . 'px; }
         .lg tspan.p { fill: var(--muted); }
         .lg tspan.n { font-weight: 600; fill: var(--accent2); }';
+    const string STYLE_LEVERAGE = '
+        .pt circle { fill: var(--accent2); }
+        .pt:hover circle { fill: var(--accent); }
+        .pt .lbl { fill: var(--fg); font-size: ' . self::LABEL_SIZE . 'px; dominant-baseline: central; }
+        .q-high { fill: var(--accent2); opacity: 0.07; }
+        .q-low { fill: var(--accent); opacity: 0.07; }
+        .ratio { stroke: var(--muted); stroke-dasharray: 4 4; opacity: 0.6; }
+        .ratio-txt { fill: var(--muted); font-size: ' . self::POINT_TEXT_SIZE . 'px; }';
 
 
     /*
@@ -194,6 +212,7 @@ class table_chart
             $result = match ($type) {
                 chart_types::RANGE_BARS => $this->range_bars($model, $col_ids[0], $msg, $context_phr_lst),
                 chart_types::SCATTER => $this->scatter($model, $col_ids[0], $col_ids[1], $msg, $context_phr_lst),
+                chart_types::LEVERAGE => $this->leverage($model, $col_ids[0], $col_ids[1], $msg, $context_phr_lst),
             };
         }
         return $result;
@@ -527,6 +546,198 @@ class table_chart
                 . $name . $row_txt . '</text>' . self::NEWLINE;
         }
         return $result . '</g>' . self::NEWLINE;
+    }
+
+
+    /*
+     * leverage plot
+     */
+
+    /**
+     * one labelled point per table row placed by two numbers of the row, with the quadrants of
+     * the big and the small numbers and the lines of an equal ratio of the two numbers, like
+     * global-problems-top4_scatter.svg: e.g. the gain of the solution up against the loss of
+     * the problem to the right, so that a point above a steep line is a problem with a big lever
+     *
+     * @param table_model $model the rows and columns of the table
+     * @param int|string $y_col_id the id of the value column shown on the vertical axis
+     * @param int|string $x_col_id the id of the value column shown on the horizontal axis
+     * @param user_message $msg to report a problem while formatting a number
+     * @param phrase_list $context_phr_lst the phrases of the page, which name the chart if the
+     *                                     table has no phrase column
+     * @return string the svg code of the chart
+     */
+    private function leverage(
+        table_model  $model,
+        int|string   $y_col_id,
+        int|string   $x_col_id,
+        user_message $msg,
+        phrase_list  $context_phr_lst
+    ): string
+    {
+        $html = new html_base();
+        $points = $this->scatter_points($model, $y_col_id, $x_col_id);
+        $x_scale = $this->scale(array_merge([0], array_column($points, 3)), self::SCATTER_PLOT_LEFT, self::SCATTER_PLOT_RIGHT);
+        $y_scale = $this->scale(array_merge([0], array_column($points, 2)), self::SCATTER_PLOT_BOTTOM, self::SCATTER_PLOT_TOP);
+        $y_text = $this->column_text($model, $y_col_id);
+        $x_text = $this->column_text($model, $x_col_id);
+        $title = $this->chart_title($this->legend_phrases($model, $context_phr_lst),
+            $y_text . ' ' . msg_id::CHART_VERSUS->text() . ' ' . $x_text);
+        $result = $this->svg_start(self::SCATTER_WIDTH, self::LEVERAGE_HEIGHT, self::STYLE_LEVERAGE, $title);
+        $result .= $this->heading($html->esc($title), $html->esc(msg_id::CHART_LEVERAGE_TIP->text()));
+        $result .= $this->scatter_axes($x_scale, $y_scale, $html->esc($x_text), $html->esc($y_text));
+        $result .= $this->quadrants($html->esc($x_text), $html->esc($y_text));
+        $result .= $this->ratio_lines($x_scale, $y_scale, $this->ratios($points));
+        $ratio_text = $y_text . ' ' . msg_id::CHART_PER->text() . ' ' . $x_text;
+        foreach ($points as [$row_key, , $y_nbr, $x_nbr]) {
+            $result .= $this->labelled_point($model, $row_key, $this->pos($x_scale, $x_nbr),
+                $this->pos($y_scale, $y_nbr), $this->ratio_line_text($ratio_text, $y_nbr, $x_nbr), $msg);
+        }
+        return $result . '</svg>';
+    }
+
+    /**
+     * the right half of the plot shaded, the upper quarter for a big number on both axes and the
+     * lower one for a big horizontal and a small vertical number, with the four quarters named
+     *
+     * @param string $x_text the escaped name of the horizontal axis e.g. "loss"
+     * @param string $y_text the escaped name of the vertical axis e.g. "gain"
+     * @return string the svg code of the quarters
+     */
+    private function quadrants(string $x_text, string $y_text): string
+    {
+        $mid_x = (self::SCATTER_PLOT_LEFT + self::SCATTER_PLOT_RIGHT) / 2;
+        $mid_y = (self::SCATTER_PLOT_TOP + self::SCATTER_PLOT_BOTTOM) / 2;
+        $width = self::SCATTER_PLOT_RIGHT - $mid_x;
+        $result = '<rect class="q-high" x="' . $mid_x . '" y="' . self::SCATTER_PLOT_TOP . '" width="' . $width
+            . '" height="' . ($mid_y - self::SCATTER_PLOT_TOP) . '"/>' . self::NEWLINE;
+        $result .= '<rect class="q-low" x="' . $mid_x . '" y="' . $mid_y . '" width="' . $width
+            . '" height="' . (self::SCATTER_PLOT_BOTTOM - $mid_y) . '"/>' . self::NEWLINE;
+        $high = msg_id::CHART_QUADRANT_HIGH->text();
+        $low = msg_id::CHART_QUADRANT_LOW->text();
+        $top = self::SCATTER_PLOT_TOP + self::QUADRANT_TEXT_GAP + self::TEXT_SIZE;
+        $bottom = self::SCATTER_PLOT_BOTTOM - self::QUADRANT_TEXT_GAP;
+        $right = self::SCATTER_PLOT_RIGHT - self::QUADRANT_TEXT_GAP;
+        $left = self::SCATTER_PLOT_LEFT + self::QUADRANT_TEXT_GAP;
+        $result .= '<g class="ax">' . self::NEWLINE;
+        foreach ([[$right, $top, $high, $high, 'end'], [$right, $bottom, $high, $low, 'end'],
+                     [$left, $top, $low, $high, 'start'], [$left, $bottom, $low, $low, 'start']] as [$x, $y, $x_size, $y_size, $anchor]) {
+            $result .= $this->text($x, $y, $x_size . ' ' . $x_text . self::LEGEND_SEP . $y_size . ' ' . $y_text,
+                'text-anchor="' . $anchor . '"');
+        }
+        return $result . '</g>' . self::NEWLINE;
+    }
+
+    /**
+     * the ratios of an equal leverage that the points of the plot span, e.g. 2, 5 and 20 if the
+     * gain per loss of the points is between 1.6 and 17
+     *
+     * @param array $points the points of scatter_points
+     * @return array at most RATIO_LINES round ratios of the vertical to the horizontal number
+     */
+    private function ratios(array $points): array
+    {
+        $ratios = [];
+        foreach ($points as [, , $y_nbr, $x_nbr]) {
+            if ($x_nbr > 0 and $y_nbr > 0) {
+                $ratios[] = $y_nbr / $x_nbr;
+            }
+        }
+        $result = [];
+        if ($ratios != []) {
+            $max = max($ratios);
+            // the round numbers 1, 2, 5, 10, ... from the smallest to the biggest ratio
+            for ($ratio = $this->nice_ceil(min($ratios)); $ratio <= $max; $ratio = $this->nice_ceil($ratio * self::NEXT_NICE_FACTOR)) {
+                $result[] = $ratio;
+            }
+            if ($result == []) {
+                $result = [$this->nice_floor($max)];
+            }
+            $count = count($result);
+            if ($count > self::RATIO_LINES) {
+                $result = [$result[0], $result[intdiv($count, 2)], $result[$count - 1]];
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the dashed lines through the origin on which the ratio of the two numbers is the same
+     *
+     * @param array $x_scale the scale of the horizontal axis (see scale)
+     * @param array $y_scale the scale of the vertical axis
+     * @param array $ratios the ratios of the lines (see ratios)
+     * @return string the svg code of the lines with their ratio, '' if an axis does not start at zero
+     */
+    private function ratio_lines(array $x_scale, array $y_scale, array $ratios): string
+    {
+        $result = '';
+        // a line of an equal ratio starts at the origin, so it is drawn only on two linear axes from zero
+        $from_zero = (!$x_scale[self::SCALE_LOG] and !$y_scale[self::SCALE_LOG]
+            and $x_scale[self::SCALE_LOW] == 0 and $y_scale[self::SCALE_LOW] == 0);
+        if ($from_zero) {
+            foreach ($ratios as $ratio) {
+                $x_end = min($x_scale[self::SCALE_HIGH], $y_scale[self::SCALE_HIGH] / $ratio);
+                $x = $this->pos($x_scale, $x_end);
+                $y = $this->pos($y_scale, $ratio * $x_end);
+                $result .= '<line class="ratio" x1="' . $this->pos($x_scale, 0) . '" y1="' . $this->pos($y_scale, 0)
+                    . '" x2="' . $x . '" y2="' . $y . '"/>' . self::NEWLINE;
+                $result .= $this->text($x + self::BASELINE_SHIFT, $y - self::BASELINE_SHIFT,
+                    self::RATIO_PREFIX . $this->tick_text($ratio), 'class="ratio-txt"');
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param string $ratio_text the name of the ratio e.g. "gain per loss"
+     * @param float $y_nbr the number of the vertical axis
+     * @param float $x_nbr the number of the horizontal axis
+     * @return string the tooltip line of the ratio e.g. "gain per loss: 16" or '' if the horizontal number is zero
+     */
+    private function ratio_line_text(string $ratio_text, float $y_nbr, float $x_nbr): string
+    {
+        $result = '';
+        if ($x_nbr != 0) {
+            $result = $ratio_text . self::LABEL_SEP . $this->tick_text(round($y_nbr / $x_nbr, 1));
+        }
+        return $result;
+    }
+
+    /**
+     * one point of the leverage plot named by its row, the name left of a point in the right
+     * half, so that it stays inside the plot, with the tooltip of the whole row and its ratio
+     *
+     * @param table_model $model the rows and columns of the table
+     * @param string $row_key the key of the row, which names the point
+     * @param float $x the horizontal position of the point in pixel
+     * @param float $y the vertical position of the point in pixel
+     * @param string $ratio_line the tooltip line of the ratio of the point (see ratio_line_text)
+     * @param user_message $msg to report a problem while formatting a number
+     * @return string the svg code of the point
+     */
+    private function labelled_point(
+        table_model  $model,
+        string       $row_key,
+        float        $x,
+        float        $y,
+        string       $ratio_line,
+        user_message $msg
+    ): string
+    {
+        $html = new html_base();
+        $tooltip = $this->tooltip($model, $row_key, $msg);
+        if ($ratio_line != '') {
+            $tooltip .= self::NEWLINE . $html->esc($ratio_line);
+        }
+        $in_right_half = ($x > (self::SCATTER_PLOT_LEFT + self::SCATTER_PLOT_RIGHT) / 2);
+        $label_x = $in_right_half ? $x - self::LEVERAGE_LABEL_GAP : $x + self::LEVERAGE_LABEL_GAP;
+        $anchor = $in_right_half ? 'end' : 'start';
+        $result = '<g class="pt"><title>' . $tooltip . '</title>';
+        $result .= '<circle cx="' . $x . '" cy="' . $y . '" r="' . self::LEVERAGE_POINT_RADIUS . '"/>';
+        $result .= '<text class="lbl" x="' . $label_x . '" y="' . $y . '" text-anchor="' . $anchor . '">'
+            . $html->esc($row_key) . '</text></g>' . self::NEWLINE;
+        return $result;
     }
 
 
