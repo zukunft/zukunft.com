@@ -543,7 +543,9 @@ class phrase_list extends sandbox_list_named
      * get the names of the phrases that this list links to the given phrase by a triple
      * e.g. for "global problem" the names "global warming" and "populism", because the list
      * contains the triples "global warming (global problem)" and "populism (global problem)"
-     * the verb does not matter, because e.g. "is a" and "can be" both classify the from side
+     * the verb does not matter, because e.g. "is a" and "can be" both classify the from side,
+     * except "of", which attributes the from side to the to side instead of classifying it:
+     * "potential loss of reason" makes "potential loss" no reason
      *
      * @param phrase $phr the phrase whose children should be returned
      * @return array the names of the phrases that link to the given phrase
@@ -575,7 +577,7 @@ class phrase_list extends sandbox_list_named
     {
         $result = [];
         foreach ($this->lst() as $lst_phr) {
-            if ($lst_phr->is_triple()) {
+            if ($lst_phr->is_triple() and $lst_phr->obj()->get_verb()?->name() != verbs::OF_NAME) {
                 $trp = $lst_phr->obj();
                 // the parents are on the "to" side of the triples that start with the phrase
                 [$own, $linked] = [$trp->get_from(), $trp->get_to()];

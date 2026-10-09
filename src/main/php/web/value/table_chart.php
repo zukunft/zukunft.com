@@ -736,8 +736,9 @@ class table_chart
     }
 
     /**
-     * the phrases that name the points of the scatter plot: the phrase column of the table if it
-     * has one, e.g. "solution" for the solutions of the problems, else the phrases of the page
+     * the phrases that name the points of the scatter plot: the first phrase column of the table
+     * that shows a phrase for a plotted row, e.g. "solution" for the solutions of the problems
+     * and not the empty "reason" column before it, else the phrases of the page
      *
      * @param table_model $model the rows and columns of the table
      * @param phrase_list $context_phr_lst the phrases of the page
@@ -746,10 +747,27 @@ class table_chart
     private function legend_phrases(table_model $model, phrase_list $context_phr_lst): phrase_list
     {
         $result = $context_phr_lst;
-        $phr_col_ids = $model->phrase_col_ids();
-        if ($phr_col_ids != []) {
-            $result = new phrase_list();
-            $result->add_phrase($model->phr_col[$phr_col_ids[0]]);
+        foreach ($model->phrase_col_ids() as $col_id) {
+            if ($result === $context_phr_lst and $this->phrase_column_filled($model, $col_id)) {
+                $result = new phrase_list();
+                $result->add_phrase($model->phr_col[$col_id]);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param table_model $model the rows and columns of the table
+     * @param int|string $col_id the id of a phrase column
+     * @return bool true if at least one shown row has a phrase in the column
+     */
+    private function phrase_column_filled(table_model $model, int|string $col_id): bool
+    {
+        $result = false;
+        foreach ($model->shown_keys as $row_key) {
+            if (($model->phr_cells[$row_key][$col_id] ?? null) != null) {
+                $result = true;
+            }
         }
         return $result;
     }

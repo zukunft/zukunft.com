@@ -1235,14 +1235,22 @@ class test_phrases
         $lst->add($t_trp->column_potential_loss()->phrase());
         $lst->add($t_trp->column_potential_gain()->phrase());
         // the main column chain and the explaining columns that put the columns in the order
-        // problem, loss, cost, solution, gain; the cost column is ordered although no value of
-        // this table carries the phrase "cost"
-        $lst->add($t_trp->column_solution_after_problem()->phrase());
+        // problem, loss, cost, reason, loss of the reason, solution, gain; the cost column is
+        // ordered although no value of this table carries the phrase "cost"
+        $lst->add($t_trp->column_reason_after_problem()->phrase());
+        $lst->add($t_trp->column_solution_after_reason()->phrase());
         $lst->add($t_trp->column_loss_explains_problem()->phrase());
         $lst->add($t_trp->column_cost_explains_problem()->phrase());
         $lst->add($t_trp->column_gain_explains_solution()->phrase());
         $lst->add($t_trp->column_potential_loss_explains_problem()->phrase());
         $lst->add($t_trp->column_potential_gain_explains_solution()->phrase());
+        // the reason column and the column with the loss of the reason, the two main columns
+        // between the problem group and the solution, with the triple that links a reason to "reason"
+        $lst->add($t_trp->column_reason()->phrase());
+        $lst->add($t_trp->potential_loss_of_reason()->phrase());
+        $lst->add($t_trp->column_potential_loss_of_reason()->phrase());
+        $lst->add($t_trp->column_loss_of_reason_explains_reason()->phrase());
+        $lst->add($t_trp->climate_gas_emissions_reason()->phrase());
         // the solution column names the solution of the problem row instead of a value, so it
         // needs the column definition and the triples that link a solution to "solution"
         $lst->add($t_trp->column_solution()->phrase());

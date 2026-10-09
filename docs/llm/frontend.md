@@ -440,6 +440,18 @@ A tier also says on which screen a column is shown: the css class of
 (`styles::COL_MAIN`), a minor column below a wide screen (`COL_MINOR`) and a
 marginal column below the widest one (`COL_MARGINAL`).
 
+The reason of a problem is a phrase column like the solution: `column reason`
+puts the word `reason` into the main tier and `<reason> is a reason` links a
+reason to it, e.g. `climate gas emissions` for global warming. The loss that a
+reason causes is a value column of its own, the triple `potential loss of
+reason` in the main tier: its values carry the problem, the word `reason`, the
+reason and `potential loss`, so `value_list::column_parts` takes them before the
+`potential loss` column of the problem instead of merging both numbers into one
+cell. The reason is the next main column after the problem and the solution
+follows the reason, so both reason columns stand between the loss and the
+solution of the problem. The main tier holds only these two columns; every
+other defined column below the mayor tier of the start page is minor or marginal.
+
 A row of the simple table whose numbers are all in a column of the full version
 would be empty, e.g. the reward ratio row of a problem, so the ranking of the
 start page is built with the `value_rows_only` option of

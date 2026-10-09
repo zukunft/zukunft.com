@@ -312,9 +312,11 @@ class phrase_ui_tests
         // a phrase column is defined by the same column tiers as a value column, so it stands
         // where the definition puts it: the solution column between the loss and the gain column
         // instead of behind every column that holds a value; the cost column is defined too, but
-        // no value carries it and no phrase is linked to it, so the table shows four columns
-        // each headed by its own unit behind a translatable "in", except the solution column,
-        // which holds no number and therefore no unit
+        // no value carries it and no phrase is linked to it, so it is not shown, while the
+        // reason column has a linked reason and is shown empty between the loss and the solution
+        // column; the loss of the reason has no column, because no value of this table carries a
+        // reason; so the table shows five columns, the value columns each headed by their unit
+        // behind a translatable "in", the reason and the solution column without a unit
         // the last header cell opens the menu that selects the columns, which without a page
         // url is the plain "..." text
         $test_name = 'the header shows the columns in the defined order with their unit';
@@ -322,6 +324,7 @@ class phrase_ui_tests
         $t->assert($test_name, $lib->html_to_text($tbl_header_row),
             word_names::PROBLEM
             . ' ' . word_names::LOSS . $unit_sep . word_names::TRILLION . ' ' . word_names::EUR
+            . ' ' . word_names::REASON
             . ' ' . word_names::SOLUTION
             . ' ' . word_names::GAIN . $unit_sep . word_names::BILLION . ' ' . word_names::HTP
             . ' ' . msg_id::THREE_POINTS->text());

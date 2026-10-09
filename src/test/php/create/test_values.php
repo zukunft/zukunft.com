@@ -886,6 +886,38 @@ class test_values extends test_objects
     }
 
     /**
+     * the ranking values plus the loss that the reason of the first problem causes, with the
+     * phrases of solution_prio.json: the problem, the word "reason", the reason and the
+     * potential loss, so that the column of the loss of the reason can be tested
+     *
+     * @return value_list the ranking values plus the potential loss of the climate gas emissions
+     */
+    function value_list_solution_prio_reason(): value_list
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $lst = $this->value_list_solution_prio();
+        $lst->add($this->value_for_phrases([
+            $t_trp->global_warming()->phrase(),
+            $t_wrd->word_reason()->phrase(),
+            $t_trp->climate_gas_emissions()->phrase(),
+            $t_trp->potential_loss()->phrase(),
+            $t_wrd->word_trillion()->phrase(),
+            $t_wrd->word_eur()->phrase()
+        ], 31.5));
+        return $lst;
+    }
+
+    /**
+     * @return value_list_ui the frontend ranking values plus the loss of the reason for unit testing
+     */
+    function value_list_solution_prio_reason_ui(): value_list_ui
+    {
+        $tl = new test_lib();
+        return $tl->list_to_ui($this->value_list_solution_prio_reason(), [api_types::INCL_PHRASES]);
+    }
+
+    /**
      * the potential loss of every problem of the start page ranking without the gain, so that
      * every value carries the triple "potential loss" as a whole
      *

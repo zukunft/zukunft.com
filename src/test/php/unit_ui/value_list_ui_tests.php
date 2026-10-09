@@ -468,25 +468,25 @@ class value_list_ui_tests
         $test_name = 'every defined column is shown even above the number that fit on the widest screen';
         $t->assert($test_name, substr_count($tbl_def, '<th'), count($rel_lst->column_names()) + 2);
 
-        // the tier of a defined column says on which screens it is shown: a main column carries
-        // the class that hides it on a small screen, a mayor column has no class and is shown on
-        // every screen; "cost" is a main and "loss" a mayor column
-        $test_name = 'a main column is hidden on a small screen';
-        $t->assert_text_contains($test_name, $tbl_def, '<th class="' . styles::COL_MAIN . '">');
+        // the tier of a defined column says on which screens it is shown: a minor column carries
+        // the class that hides it below a wide screen, a mayor column has no class and is shown
+        // on every screen; "cost" is a minor and "loss" a mayor column
+        $test_name = 'a minor column is hidden below a wide screen';
+        $t->assert_text_contains($test_name, $tbl_def, '<th class="' . styles::COL_MINOR . '">');
         $test_name = 'a mayor column is shown on every screen';
-        $t->assert_text_not_contains($test_name, $tbl_one, styles::COL_MAIN);
+        $t->assert_text_not_contains($test_name, $tbl_one, styles::COL_MINOR);
         // negative: a column that the data suggests has no tier and therefore no class
         $test_name = 'a column without a definition is shown on every screen';
-        $t->assert_text_not_contains($test_name, $tbl_html, styles::COL_MAIN);
+        $t->assert_text_not_contains($test_name, $tbl_html, styles::COL_MINOR);
 
-        // a simple table shows the mayor columns only, so the main column "cost" is left to the
+        // a simple table shows the mayor columns only, so the minor column "cost" is left to the
         // full table and the "..." header says that more columns exist
         $tbl_mayor = $t_val->value_list_defined_columns_ui()->table_by_related_columns(
             $msg_ui, new phrase_list_ui(), $rel_lst->column_names(), false, true, $rel_lst,
             null, [], false, value_list_ui::COLUMN_TIERS_EX_MAIN);
         $hdr_mayor = $lib->html_to_text($lib->str_left_of($tbl_mayor, '</tr>'));
         $hdr_def = $lib->html_to_text($lib->str_left_of($tbl_def, '</tr>'));
-        $test_name = 'a simple table leaves out the main column';
+        $test_name = 'a simple table leaves out the minor column';
         $t->assert_text_not_contains($test_name, $hdr_mayor, word_names::COST);
         $test_name = '... but keeps the mayor columns';
         $t->assert_text_contains($test_name, $hdr_mayor, word_names::LOSS);
@@ -494,9 +494,51 @@ class value_list_ui_tests
         $t->assert_text_contains($test_name, $hdr_mayor, msg_id::THREE_POINTS->text());
         // the full table shows every column and still ends with the "..." header, because its
         // menu is the only way back to the fewer columns
-        $test_name = 'the full table shows the main column and the "..." header';
+        $test_name = 'the full table shows the minor column and the "..." header';
         $t->assert_text_contains($test_name, $hdr_def, word_names::COST);
         $t->assert_text_contains($test_name, $hdr_def, msg_id::THREE_POINTS->text());
+
+        // the reason of a problem is a phrase column like the solution and the loss that the
+        // reason causes a value column of its own: its value carries the problem, the word
+        // "reason", the reason and the potential loss, so the defined column "potential loss of
+        // reason" takes it before the "potential loss" column of the problem (see
+        // value_list::column_parts); both are main columns, so the table with the main tier
+        // shows them and the simple table of the mayor columns leaves them out
+        // every value carries "potential", so the table header names it once and the column
+        // of the problem is headed "loss" like in the ranking without a reason (see column_head)
+        $tbl_reason = $t_val->value_list_solution_prio_reason_ui()->table_by_related_columns(
+            $msg_ui, $rank_ctx, $rank_lst->column_names(), false, true, $rank_lst,
+            value_list_ui::LIMIT_ALL, [], false, value_list_ui::COLUMN_TIERS_EX_MINOR);
+        $hdr_reason = $lib->html_to_text($lib->str_left_of($tbl_reason, '</tr>'));
+        $test_name = 'the reason column names the reason of the problem';
+        $t->assert_text_contains($test_name, $tbl_reason, '>' . triple_names::CLIMATE_GAS_EMISSIONS . '</a>');
+        $test_name = 'the loss of the reason has a column of its own behind the reason column';
+        $t->assert_text_order($test_name, $hdr_reason, word_names::REASON, triple_names::POTENTIAL_LOSS_OF_REASON . $unit_sep);
+        $test_name = '... and both stand left of the solution column';
+        $t->assert_text_order($test_name, $hdr_reason, triple_names::POTENTIAL_LOSS_OF_REASON . $unit_sep, word_names::SOLUTION);
+        $test_name = '... and the loss of the problem keeps its column';
+        $t->assert($test_name, substr_count($hdr_reason, word_names::LOSS . $unit_sep), 1);
+        $test_name = '... so the cell of the problem shows its loss alone';
+        $t->assert_text_not_contains($test_name, $lib->html_to_text($tbl_reason),
+            '31.5' . sandbox_value_ui::QUALITY_MARK_NO_SOURCE . ', ');
+        $test_name = 'a main column is hidden on a small screen';
+        $t->assert_text_contains($test_name, $tbl_reason, '<th class="' . styles::COL_MAIN . '">');
+        $tbl_reason_mayor = $t_val->value_list_solution_prio_reason_ui()->table_by_related_columns(
+            $msg_ui, $rank_ctx, $rank_lst->column_names(), false, true, $rank_lst,
+            value_list_ui::LIMIT_ALL, [], false, value_list_ui::COLUMN_TIERS_EX_MAIN);
+        $test_name = 'the simple table leaves out the reason and its loss';
+        $t->assert_text_not_contains($test_name,
+            $lib->html_to_text($lib->str_left_of($tbl_reason_mayor, '</tr>')), word_names::REASON);
+        // negative: without a value that names a reason the loss of the reason has no column,
+        // while the reason column is defined and therefore shown although it is empty
+        $tbl_no_reason = $t_val->value_list_solution_prio_ui()->table_by_related_columns(
+            $msg_ui, $rank_ctx, $rank_lst->column_names(), false, true, $rank_lst,
+            value_list_ui::LIMIT_ALL, [], false, value_list_ui::COLUMN_TIERS_EX_MINOR);
+        $hdr_no_reason = $lib->html_to_text($lib->str_left_of($tbl_no_reason, '</tr>'));
+        $test_name = 'without a reason value the loss of the reason has no column';
+        $t->assert_text_not_contains($test_name, $hdr_no_reason, triple_names::POTENTIAL_LOSS_OF_REASON);
+        $test_name = '... but the defined reason column is shown';
+        $t->assert_text_contains($test_name, $hdr_no_reason, word_names::REASON);
 
         // the "..." header opens the menu that selects the columns, so it offers every column
         // tier and each of them once with and once without the ranges
@@ -827,6 +869,11 @@ class value_list_ui_tests
         $t->assert($test_name, substr_count($svg_points, 'class="pt"'), count($t_val->solution_prio_rows()));
         $test_name = '... with the solutions numbered in the legend';
         $t->assert_text_contains($test_name, $svg_points, '<tspan class="n">1</tspan>  ' . triple_names::REDUCE_EMISSIONS);
+        // the reason column stands before the solution column but no value of the ranking
+        // names a reason, so the empty column neither names the points nor the chart
+        $test_name = '... named by the solution column and not by the empty reason column before it';
+        $t->assert_text_contains($test_name, $svg_points, 'aria-label="' . word_names::SOLUTION);
+        $t->assert_text_not_contains($test_name, $svg_points, word_names::REASON);
         $test_name = '... and the axes named by the plotted columns';
         $t->assert_text_contains($test_name, $svg_points,
             word_names::GAIN . ' ' . msg_id::CHART_VERSUS->text() . ' ' . word_names::LOSS);

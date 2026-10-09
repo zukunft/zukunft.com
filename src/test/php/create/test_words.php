@@ -1203,6 +1203,24 @@ class test_words extends test_objects
     }
 
     /**
+     * @return word "reason" that heads the column with the cause of a problem row
+     */
+    function word_reason(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::REASON_ID, word_names::REASON);
+        return $wrd;
+    }
+
+    /**
+     * @return word_ui the word "reason" as the frontend receives it
+     */
+    function word_reason_ui(): word_ui
+    {
+        return new word_ui($this->word_reason()->api_json());
+    }
+
+    /**
      * @return word "numeric descending" with the code id that selects the sort condition (see table_orders)
      */
     function word_numeric_descending(): word

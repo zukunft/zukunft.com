@@ -273,7 +273,8 @@ class phrase_list_tests
 
         // the tier of a column says on which screens it is shown, so the table can hide a column
         // per screen size instead of dropping it; the "loss" and the "potential loss" column are
-        // defined as mayor columns and the "cost" column as a main column
+        // defined as mayor columns, the "reason" column as a main and the "cost" column as a
+        // minor column
         $phr_lst_ui = $t_phr->list_columns_potential_loss_ui();
         $test_name = 'the tier of a mayor column is returned';
         $t->assert($test_name, $phr_lst_ui->column_tier(word_names::LOSS),
@@ -282,8 +283,11 @@ class phrase_list_tests
         $t->assert($test_name, $phr_lst_ui->column_tier(triple_names::POTENTIAL_LOSS),
             triple_names::SYSTEM_COLUMN_MAYOR);
         $test_name = 'the tier of a main column is returned';
-        $t->assert($test_name, $t_phr->list_columns_ordered_ui()->column_tier(word_names::COST),
+        $t->assert($test_name, $t_phr->list_global_problems_ui()->column_tier(word_names::REASON),
             triple_names::SYSTEM_COLUMN_MAIN);
+        $test_name = 'the tier of a minor column is returned';
+        $t->assert($test_name, $t_phr->list_columns_ordered_ui()->column_tier(word_names::COST),
+            triple_names::SYSTEM_COLUMN_MINOR);
         // negative: a phrase that no triple of the list links to a tier is no column, so it has
         // no tier and the caller shows it on every screen
         $test_name = 'a phrase that is no column has no tier';
@@ -303,6 +307,12 @@ class phrase_list_tests
         $test_name = '... and the phrase itself is not one of them';
         $t->assert_text_not_contains($test_name,
             implode(', ', $phr_lst_ui->child_phrases($phr)->names()), triple_names::GLOBAL_PROBLEM);
+        // "of" attributes the from side to the to side instead of classifying it, so "potential
+        // loss of reason" makes "potential loss" no reason, while "climate gas emissions (reason)"
+        // links a reason to "reason" (see value_list::phrase_of_column)
+        $test_name = 'a triple with the verb "of" names no child';
+        $t->assert($test_name, $phr_lst_ui->child_names($t_wrd->word_reason_ui()->phrase()),
+            [triple_names::CLIMATE_GAS_EMISSIONS]);
         // negative: a list without a triple that links to the given phrase has no child of it
         $test_name = 'a list with no link to the given phrase returns no child';
         $phr_lst_ui = $t_phr->list_columns_loss_ui();

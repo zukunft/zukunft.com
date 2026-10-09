@@ -2,17 +2,62 @@
 
 ## table with column component
 
-add to the start page table (http://localhost/http/view.php?m=1) the column with 'reason' and 'potential loss in trillion EUR' for the reason and define these columns as 'main column'. Change all existing 'main columns' of the start page tables to 'minor columns'. If needed, add at least one reason to the json data files. 
+until now only a few sample start pages like src/test/resources/web/html/views_by_id/start_page/1_start_page.html are tested. Add more tests so that all combinations selectable by the start page sub menus e.g. with more rows and with more or less column and as chart or combination are tested and have there own test file for a fast check based on fixed html code. 
 
 if in the start page table there is more than one solution add a ', ...' with a link to the solution list after the solution name
 
 ## PV calculator
 
+Catch process forms
+
+create a 'process catch start page' view that has the components 
+'title process catch start', 'text explain process catch start', 
+'process catch initial input fields' and 'button next process catch start'. 
+The 'process catch start page' has one easy to answer question 
+with a next button that leads to the 'process catch main page'.
+
+create a 'process catch main page' view that has the components 
+'title process catch main', 'text explain process catch main', 
+'process catch main input fields' and 'button next process catch main'. 
+The 'process catch main page' has around three input fields that
+are most relevant for the result calculation and 
+for complex answers offer a limited number of pre-selection options.  
+The next button leads to the 'process catch detail page'.
+
+create a 'process catch detail page' view that has the components 
+'title', 'explain text', 'detail input fields by tab' and 'next button'. The 'catch form start page' has one easy to answer question with a next button that leads the the ''.
+
+create a 'process catch result page' view that has the components 'title', 'explain text', 'initial input' and 'next button'. The 'catch form start page' has one easy to answer question with a next button that leads the the ''.
+
+the view contains the title, that field and the next button
+
+based on the start phrase the title text, the label and type of the input field and the phrases for the input field are assigned to the start phrase via triples
+
+e.g. if the catch phrase is called with the phrase "PV Calculator" the Place / PO Box selector is shown
+
+the next page contains the up to 3 fields with a preselection that are most relevant for the calculation and a next button
+
+e.g. for the phrase "PV Calculator" it is the type or size of the panels and the electricity consumption per year
+
+depending on the selection e.g. 10 qm sub-fields are shown e.g. the vertikal and horizontal orientation
+
+the third page shows some calculated values with tabs to fine tune the assumptions but not yet the final report and a button 'calculate'
+
+the fourth page shows the earnings in EUR 
+
+This means that these system phrases with a code_id are needed:
+
+'process catch field label phrase (system)' e.g. place of the PV installation 
+catch values phrases (system) e.g. PV installation location  
+catch fields type (system) e.g. locator
+main values phrases (system) e.g. PV installation size
+
+
 create a component type 'geolocator by place name / post code' with the parameters: 'label' (which is a translatable 'place name / post code') and the value phrases (which are 'place of user')
 
 place / sun intensity
 
-Area
+Field size / area with parameters 'label', 'phrases', 'unit', 'upper/lower limit', 'steps'
 
 Horizontal angle
 

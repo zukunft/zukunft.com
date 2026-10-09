@@ -4657,7 +4657,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- btn_add_value - 0 unit test calls shared by 2 classes
     \-- cached_phrase - 0 unit test calls
     \-- category_subtitle - 0 unit test calls
-    \-- child_names - 0 unit test calls
+    \-- child_names - 1 unit test calls
     \-- children - 0 unit test calls shared by 6 classes
     \-- column_phrase - 0 unit test calls
     \-- common - 0 unit test calls shared by 2 classes
