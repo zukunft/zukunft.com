@@ -1161,6 +1161,27 @@ class test_words extends test_objects
     }
 
     /**
+     * @return word "mayor" that names the column tier and the chart type tier of the mayor columns
+     */
+    function word_mayor(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::MAYOR_ID, word_names::MAYOR);
+        return $wrd;
+    }
+
+    /**
+     * @return word "leverage plot" with the code id that selects the chart type (see chart_types)
+     */
+    function word_leverage_plot(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::LEVERAGE_PLOT_ID, word_names::LEVERAGE_PLOT);
+        $wrd->set_code_id_db(chart_types::LEVERAGE->value);
+        return $wrd;
+    }
+
+    /**
      * @return word "alternative" that names the chart type tier the reader can select instead
      */
     function word_alternative(): word
@@ -1200,6 +1221,24 @@ class test_words extends test_objects
         $wrd = new word($this->env->usr1);
         $wrd->set(word_names::SORT_ORDER_ID, word_names::SORT_ORDER);
         return $wrd;
+    }
+
+    /**
+     * @return word "reason" that heads the column with the cause of a problem row
+     */
+    function word_reason(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::REASON_ID, word_names::REASON);
+        return $wrd;
+    }
+
+    /**
+     * @return word_ui the word "reason" as the frontend receives it
+     */
+    function word_reason_ui(): word_ui
+    {
+        return new word_ui($this->word_reason()->api_json());
     }
 
     /**

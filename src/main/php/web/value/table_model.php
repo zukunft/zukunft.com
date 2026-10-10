@@ -63,8 +63,12 @@ class table_model
     public ?phrase $row_col = null;
     // per row key and column id the values of the cell
     public array $cells = [];
-    // per row key and phrase column id the phrase of the row shown in that column
+    // per row key and phrase column id the phrase of the row shown in that column, the one of
+    // the most relevant value if the values of the row name several
     public array $phr_cells = [];
+    // per row key and phrase column id true if the values of the row name more than one phrase
+    // for that column, e.g. two solutions of one problem, which the cell shows with ", ..."
+    public array $phr_cells_more = [];
     // the ids of the columns to show, the leftmost column first
     public array $col_ids = [];
     // the columns that hold a value, keyed by column id

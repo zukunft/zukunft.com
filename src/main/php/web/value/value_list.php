@@ -65,6 +65,7 @@ include_once html_paths::MODEL_PHRASE . 'phr_ids.php';
 include_once html_paths::SHARED_CONST . 'views.php';
 include_once html_paths::SHARED_CONST . 'triples.php';
 include_once html_paths::SHARED_CONST . 'words.php';
+include_once html_paths::SHARED_TYPES . 'verbs.php';
 include_once html_paths::SHARED_CONST . 'rest_ctrl.php';
 include_once html_paths::SHARED_HELPER . 'Config.php';
 include_once html_paths::SHARED . 'url_var.php';
@@ -111,6 +112,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\table_orders;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\helper\Config;
 use Zukunft\ZukunftCom\main\php\shared\types\position_types;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
 use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
@@ -803,6 +805,20 @@ class value_list extends ListBase
         bool         $value_rows_only
     ): table_model
     {
+        // the phrase that names the rows, e.g. "reason" on the reasons page, heads the row column,
+        // so it is no column of the values and a column of it with another phrase, e.g. "potential
+        // loss of reason", is the column of the other phrase, e.g. the mayor column "potential loss"
+        $row_col = $this->row_column($context_phr_lst, $col_order);
+        $tbl_cols = $this->without_row_column($col_order, $row_col, $rel_lst);
+        // a value that names the phrases of two phrase columns, e.g. the gain of the solution of a
+        // reason, is about the first phrase and not about the row, so it is left to the table of
+        // that phrase, e.g. the reasons page, before it can make a value column of a phrase column
+        $own_lst = $this->without_values_of_two_phrase_columns($tbl_cols, $rel_lst, $msg);
+        if (count($own_lst->lst()) < count($this->lst())) {
+            return $own_lst->table_model($msg, $context_phr_lst, $col_order, $rel_lst, $limit,
+                $url_array, $col_values_only, $col_tiers, $value_rows_only);
+        }
+        $col_order = $tbl_cols;
         $model = new table_model();
         // the url of the page names the column tiers, e.g. after the "..." click on a simple
         // table, and wins over the default of the caller
@@ -841,7 +857,7 @@ class value_list extends ListBase
         if ($col_values_only) {
             $vals = array_filter($vals, fn($val) => array_key_exists($val->id(), $val_col));
         }
-        [$row_label, $row_phr, $cells, $phr_cells] = $this->table_cells(
+        [$row_label, $row_phr, $cells, $phr_cells, $phr_more] = $this->table_cells(
             $vals, $val_col, $col_parts, $all_by_id, $phr_col, $rel_lst, $grp_ctx);
         // a phrase column is defined like a value column, so both kinds are shown in one
         // order, e.g. the "solution" column between the "loss" and the "gain" column
@@ -849,7 +865,7 @@ class value_list extends ListBase
         // a simple table shows the first tiers only, and the table of the mayor tier alone
         // one unit per column; the columns left out are still reachable via the menu of
         // the "..." header
-        $col_ids = $this->columns_of_tiers($col_ids, $col_phr, $phr_col, $rel_lst, $col_tiers, $cells);
+        $col_ids = $this->columns_of_tiers($col_ids, $col_phr, $phr_col, $rel_lst, $col_tiers, $cells, $msg);
         // a row whose numbers are all in columns that this table does not show says nothing
         // to the reader, e.g. the reward ratio of a problem in a table of the mayor tiers,
         // so such a row is dropped before the cut and uses up none of the shown rows
@@ -861,9 +877,10 @@ class value_list extends ListBase
         $model->tbl_phr = $tbl_phr;
         $model->row_label = $row_label;
         $model->row_phr = $row_phr;
-        $model->row_col = $this->row_column($context_phr_lst, $col_order);
+        $model->row_col = $row_col;
         $model->cells = $cells;
         $model->phr_cells = $phr_cells;
+        $model->phr_cells_more = $phr_more;
         $model->col_ids = $col_ids;
         $model->col_phr = $col_phr;
         $model->phr_col = $phr_col;
@@ -995,8 +1012,9 @@ class value_list extends ListBase
      * @param phrase_list|null $rel_lst the phrases related to the page phrase with the definitions
      * @param phrase_list $grp_ctx the phrases assumed by the reader, which name no row
      * @return array per row key the html link list of the row, per row key its phrases, per row
-     *               key and column id the values of the cell and per row key and phrase column
-     *               id the phrase shown
+     *               key and column id the values of the cell, per row key and phrase column
+     *               id the phrase shown and per row key and phrase column id true if the row
+     *               names more than one phrase for that column
      */
     private function table_cells(
         array        $vals,
@@ -1016,7 +1034,7 @@ class value_list extends ListBase
         $row_label = [];
         $row_phr = [];
         $cells = [];
-        $phr_cells = [];
+        $entries = [];
         foreach ($vals as $val) {
             $col_id = $val_col[$val->id()] ?? '';
             $ctx = clone $grp_ctx;
@@ -1039,24 +1057,63 @@ class value_list extends ListBase
             }
             // the row is named by the phrases that are left after the context and the column
             // phrase, e.g. the year if the columns are inhabitants and area
-            $row_key = $val->grp->phrase_names($ctx);
+            $entries[] = [$val, $col_id, $ctx, $phr_cell, $val->grp->phrase_names($ctx)];
+        }
+        [$phr_cells, $phr_more] = $this->shown_phrases($entries);
+        foreach ($entries as [$val, $col_id, $ctx, $phr_cell, $row_key]) {
             if (!key_exists($row_key, $row_label)) {
                 $row_label[$row_key] = $val->grp->phrase_link_list($ctx);
                 $row_phr[$row_key] = $val->grp->phr_lst()->remove($ctx)->lst();
                 $cells[$row_key] = [];
             }
-            // the phrase of a row is the same for every value of that row, so it is set
-            // instead of added, e.g. the solution is named once although the row has the
-            // potential loss and the potential gain of the problem
+            // a value of a phrase that the row does not show, e.g. the gain of the second
+            // solution, is left to the page of the row, so that a reader cannot take its number
+            // for a number of the phrase shown; two values with the same row and column and the
+            // same phrases are shown in the same cell instead of the second one replacing the
+            // first, because a range bound is shown behind its centre value
+            $other_phrase = false;
             foreach ($phr_cell as $phr_col_id => $phr) {
-                $phr_cells[$row_key][$phr_col_id] = $phr;
+                if ($phr_cells[$row_key][$phr_col_id]->id() != $phr->id()) {
+                    $other_phrase = true;
+                }
             }
-            // two values with the same row and column are shown in the same cell instead of
-            // the second one replacing the first; the cell keeps the values, because a range
-            // bound is shown behind its centre value and not as a value of its own
-            $cells[$row_key][$col_id][] = $val;
+            if (!$other_phrase) {
+                $cells[$row_key][$col_id][] = $val;
+            }
         }
-        return [$row_label, $row_phr, $cells, $phr_cells];
+        return [$row_label, $row_phr, $cells, $phr_cells, $phr_more];
+    }
+
+    /**
+     * the phrase that each phrase cell shows: a cell names one phrase, e.g. the solution once
+     * although the row has the loss and the gain of the problem; if the values of a row name
+     * several, e.g. several reasons of global warming, the phrase of the value with the biggest
+     * number is shown, the first one if two numbers are equal, and the cell is marked for ", ..."
+     *
+     * @param array $entries per value the value, its column, its context, its phrase per phrase column and its row key
+     * @return array per row key and phrase column id the phrase shown and per row key and phrase
+     *               column id true if the row names more than one phrase for that column
+     */
+    private function shown_phrases(array $entries): array
+    {
+        $shown = [];
+        $biggest = [];
+        $more = [];
+        foreach ($entries as [$val, , , $phr_cell, $row_key]) {
+            // a text value has no number, so any number of another phrase is bigger
+            $nbr = $val->number() ?? -INF;
+            foreach ($phr_cell as $phr_col_id => $phr) {
+                $current = $shown[$row_key][$phr_col_id] ?? null;
+                if ($current != null and $current->id() != $phr->id()) {
+                    $more[$row_key][$phr_col_id] = true;
+                }
+                if ($current == null or $nbr > $biggest[$row_key][$phr_col_id]) {
+                    $shown[$row_key][$phr_col_id] = $phr;
+                    $biggest[$row_key][$phr_col_id] = $nbr;
+                }
+            }
+        }
+        return [$shown, $more];
     }
 
     /**
@@ -1129,7 +1186,7 @@ class value_list extends ListBase
             $phr = $model->col_phr[$col_id] ?? $model->phr_col[$col_id];
             // a phrase column names a phrase of the row, so it has no unit
             $unit_lst = $model->col_unit[$col_id] ?? new phrase_list();
-            $col_style[$col_id] = $this->column_style($phr->name(), $rel_lst);
+            $col_style[$col_id] = $this->column_style($this->column_tier($col_id, $phr->name(), $rel_lst));
             $head_phr = $this->column_head($phr, $model->tbl_phr);
             $col_head = $this->column_header($head_phr, $unit_lst);
             // a further column of the same phrase in another unit has no icons, because the
@@ -1154,8 +1211,7 @@ class value_list extends ListBase
                     $row .= $this->cell($model->cells[$row_key][$col_id] ?? [],
                         $msg, $url_array, $col_style[$col_id], $with_range);
                 } else {
-                    $phr = $model->phr_cells[$row_key][$col_id] ?? null;
-                    $row .= $html->td($phr?->name_link() ?? '', $col_style[$col_id]);
+                    $row .= $html->td($this->phrase_cell($model, $row_key, $col_id, $url_array, $rel_lst), $col_style[$col_id]);
                 }
             }
             if ($rest_col) {
@@ -1177,6 +1233,83 @@ class value_list extends ListBase
             $rows .= $this->tr_more($model->rows_behind, $context_phr_lst, $pad_styles, $more_url);
         }
         return $html->tbl($rows, $with_border ? html_base::SIZE_FULL : styles::TABLE_PUR);
+    }
+
+    /**
+     * the content of a phrase cell: the phrase of the row for the column with the biggest number,
+     * e.g. the reason of global warming that causes the biggest loss, and ", ..." if the row
+     * or the triple that lists them, e.g. "global warming solution", names more of them, which
+     * links to the table of them if the definitions name one, e.g. the table page of "global
+     * warming reason", else to the page of the row
+     *
+     * @param table_model $model the rows and columns of the table
+     * @param string $row_key the key of the row
+     * @param int|string $col_id the id of the phrase column
+     * @param array $url_array the url parameters of the page that shows the table, for the back link
+     * @param phrase_list|null $rel_lst the phrases related to the page phrase with the definitions
+     * @return string the html code of the cell content, '' if the row names no phrase for the column
+     */
+    private function phrase_cell(
+        table_model  $model,
+        string       $row_key,
+        int|string   $col_id,
+        array        $url_array,
+        ?phrase_list $rel_lst
+    ): string
+    {
+        $result = ($model->phr_cells[$row_key][$col_id] ?? null)?->name_link() ?? '';
+        $row_phr = array_values($model->row_phr[$row_key] ?? [])[0] ?? null;
+        $lst_phr = null;
+        if ($result != '' and $row_phr != null) {
+            $lst_phr = $this->column_list_phrase($rel_lst, $model->phr_col[$col_id], $row_phr);
+        }
+        // the list triple can name more phrases than the values of the row, e.g. a solution of
+        // global warming whose gain belongs to a reason and is therefore no number of the row
+        $more = ($model->phr_cells_more[$row_key][$col_id] ?? false);
+        if ($lst_phr != null and count($rel_lst->child_names($lst_phr)) > 1) {
+            $more = true;
+        }
+        if ($more and $row_phr != null) {
+            $html = new html_base();
+            $url = $row_phr->phrase_page_url($url_array);
+            if ($lst_phr != null) {
+                // the table is a phrase page, so it is called with the phrase id, which is negative for a triple
+                $url = $html->url_back(views::TABLE_ID, $lst_phr->id(), $url_array);
+            }
+            $result .= ', ' . $html->ref($url, msg_id::THREE_POINTS->text(), msg_id::TABLE_MORE_PHRASES_TIP->text());
+        }
+        return $result;
+    }
+
+    /**
+     * the triple that names the phrases of a column for one row, e.g. "global warming reason" for
+     * the reasons of global warming, whose table page shows them
+     *
+     * @param phrase_list|null $rel_lst the phrases related to the page phrase with the definitions
+     * @param phrase $col_phr the phrase of the column e.g. "reason"
+     * @param phrase $row_phr the phrase of the row e.g. "global warming"
+     * @return phrase|null the triple "<column phrase> of <row phrase>" or null if the list has none
+     */
+    private function column_list_phrase(?phrase_list $rel_lst, phrase $col_phr, phrase $row_phr): ?phrase
+    {
+        $result = null;
+        foreach ($rel_lst?->lst() ?? [] as $phr) {
+            // the triple is often only the side of a link e.g. "heat mortality is a global warming reason"
+            $candidates = [$phr];
+            if ($phr->is_triple()) {
+                $candidates[] = $phr->obj()->get_from();
+                $candidates[] = $phr->obj()->get_to();
+            }
+            foreach ($candidates as $candidate) {
+                if ($result == null and $candidate != null and $candidate->is_triple()
+                    and $candidate->obj()->get_verb()?->name() == verbs::OF_NAME
+                    and $candidate->obj()->get_from()?->name() == $col_phr->name()
+                    and $candidate->obj()->get_to()?->name() == $row_phr->name()) {
+                    $result = $candidate;
+                }
+            }
+        }
+        return $result;
     }
 
     /**
@@ -1791,6 +1924,76 @@ class value_list extends ListBase
     }
 
     /**
+     * the defined columns without the phrase that names the rows and without the triples built
+     * from it, e.g. without "reason" and "potential loss of reason" on the reasons page, so that
+     * the loss of a reason is in the column "potential loss"
+     *
+     * @param array $col_order the defined column phrase names, the most important column first
+     * @param phrase|null $row_col the phrase that heads the row column or null to keep every column
+     * @param phrase_list|null $rel_lst the phrases related to the page phrase with the definitions
+     * @return array the defined column names that can head a column of the table
+     */
+    private function without_row_column(array $col_order, ?phrase $row_col, ?phrase_list $rel_lst): array
+    {
+        $result = [];
+        foreach ($col_order as $name) {
+            $phr = $rel_lst?->column_phrase($name);
+            $parts = [$name];
+            if ($phr != null and $phr->is_triple()) {
+                $parts[] = $phr->obj()->get_from()?->name();
+                $parts[] = $phr->obj()->get_to()?->name();
+            }
+            if ($row_col == null or !in_array($row_col->name(), $parts)) {
+                $result[] = $name;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * this list without the values that name a linked phrase of two defined columns, e.g. without
+     * the gain of the solution of a reason, which names a reason and a solution
+     *
+     * @param array $col_order the defined column phrase names without the row column
+     * @param phrase_list|null $rel_lst the phrases related to the page phrase with the definitions
+     * @param user_message $msg to report a problem of copying an entry
+     * @return value_list the values and results that belong to a row of this table
+     */
+    private function without_values_of_two_phrase_columns(
+        array        $col_order,
+        ?phrase_list $rel_lst,
+        user_message $msg
+    ): value_list
+    {
+        // the linked phrases of each defined column that has any, e.g. the reasons and the solutions;
+        // a linked phrase that is a defined column itself names a column and not a row phrase, e.g.
+        // "potential gain" of the chart triple "potential gain and potential loss"
+        $col_children = [];
+        foreach ($col_order as $name) {
+            $phr = $rel_lst?->column_phrase($name);
+            $children = ($phr == null) ? [] : array_diff($rel_lst->child_names($phr), $col_order);
+            if ($children != []) {
+                $col_children[] = $children;
+            }
+        }
+        $result = new value_list();
+        foreach ($this->lst() as $val) {
+            // a phrase linked to two columns, e.g. a reason that is also a kind of loss, is named once
+            $named = [];
+            foreach ($col_children as $children) {
+                $child = $this->phrase_of_column($val, $children);
+                if ($child != null) {
+                    $named[$child->name()] = true;
+                }
+            }
+            if (count($named) < 2) {
+                $result->add_obj($val, true, $msg);
+            }
+        }
+        return $result;
+    }
+
+    /**
      * the defined columns that name a phrase of the row instead of a value
      *
      * e.g. the "solution" column of solution_prio.json: no value carries the phrase "solution",
@@ -2244,8 +2447,9 @@ class value_list extends ListBase
     }
 
     /**
-     * the columns of the first tiers: a column of a later tier and a further unit column of a
-     * phrase are left to the full table, which the "..." header links to (docs/llm/frontend.md)
+     * the columns of the first tiers, at most the configured number of columns: the other
+     * columns are left to the full table, which the "..."
+     * header links to (docs/llm/frontend.md)
      *
      * @param array $col_ids the ids of every column in the order they are shown
      * @param array $col_phr the value column phrases by column id
@@ -2253,6 +2457,7 @@ class value_list extends ListBase
      * @param phrase_list|null $rel_lst the phrases related to the page phrase with the definitions
      * @param int $col_tiers the number of column tiers left out, self::COLUMN_TIERS_ALL for every column
      * @param array $cells per row and column the values, to check if a further unit column is complete
+     * @param user_message $msg to report a problem of reading the configured number of columns
      * @return array the ids of the columns to show
      */
     private function columns_of_tiers(
@@ -2261,7 +2466,8 @@ class value_list extends ListBase
         array        $phr_col,
         ?phrase_list $rel_lst,
         int          $col_tiers,
-        array        $cells
+        array        $cells,
+        user_message $msg
     ): array
     {
         $result = $col_ids;
@@ -2269,21 +2475,41 @@ class value_list extends ListBase
             // the tiers are left out from the bottom, so e.g. a table that leaves out the
             // marginal tier shows every column up to the tier above it
             $last_tier = count(triples::SYSTEM_COLUMN_TIERS) - $col_tiers;
-            // a further unit of a column states the same measure a second way, e.g. the
-            // potential loss in percent of the GDP besides the loss in trillion EUR, so it is
-            // left to the tier below the mayor columns: only the table that shows the mayor
-            // tier alone keeps one number per column
-            $one_unit_only = ($last_tier <= 1);
-            $result = [];
+            $level_of_shown = [];
             foreach ($col_ids as $col_id) {
                 $phr = $col_phr[$col_id] ?? $phr_col[$col_id];
                 $is_first_unit = !str_contains((string)$col_id, self::UNIT_COLUMN_SEP);
-                $unit_shown = ($is_first_unit
-                    or (!$one_unit_only and $this->unit_column_complete((string)$col_id, $cells)));
-                if ($unit_shown and $this->tier_level($phr->name(), $rel_lst) <= $last_tier) {
-                    $result[] = $col_id;
+                $unit_shown = ($is_first_unit or $this->unit_column_complete((string)$col_id, $cells));
+                $level = $this->tier_level($this->column_tier($col_id, $phr->name(), $rel_lst));
+                if ($unit_shown and $level <= $last_tier) {
+                    $level_of_shown[$col_id] = $level;
                 }
             }
+            // a reduced table never shows more than the configured number of columns, so if the
+            // definitions put too many columns in the shown tiers, the last columns of the lowest
+            // tier are left to the full table; the row name column counts as one
+            asort($level_of_shown);
+            $shown = array_slice(array_keys($level_of_shown), 0, max($this->configured_column_limit($msg) - 1, 0));
+            $result = array_values(array_filter($col_ids, fn($col_id) => in_array($col_id, $shown)));
+        }
+        return $result;
+    }
+
+    /**
+     * the configured maximal number of columns of a reduced table including the column that
+     * names the rows (config.yaml "select > columns > entries", falling back to
+     * Config::LIMIT_TABLE_COLUMNS if the config is not loaded)
+     *
+     * @param user_message $msg to report a problem of reading the config
+     * @return int the maximal number of columns of a reduced table
+     */
+    private function configured_column_limit(user_message $msg): int
+    {
+        global $ui_sys;
+        $result = Config::LIMIT_TABLE_COLUMNS;
+        if ($ui_sys?->cfg !== null) {
+            $result = (int)$ui_sys->cfg->get_by(
+                [words::ENTRIES, words::COLUMNS, words::SELECT], $msg, Config::LIMIT_TABLE_COLUMNS);
         }
         return $result;
     }
@@ -2312,14 +2538,32 @@ class value_list extends ListBase
     }
 
     /**
+     * the tier of a table column: the tier of its definition, but a further unit column states
+     * the measure of its phrase a second way, e.g. the potential loss in percent of the GDP
+     * besides the loss in trillion EUR, so it is a minor column at most
+     *
+     * @param int|string $col_id the id of the column, which names a further unit e.g. "125|1"
      * @param string $name the name of the column phrase e.g. "loss"
      * @param phrase_list|null $rel_lst the phrases related to the page phrase with the definitions
+     * @return string the tier name e.g. "minor column (system)" or '' if the column is not defined
+     */
+    private function column_tier(int|string $col_id, string $name, ?phrase_list $rel_lst): string
+    {
+        $result = $rel_lst?->column_tier($name) ?? '';
+        if (str_contains((string)$col_id, self::UNIT_COLUMN_SEP)
+            and $this->tier_level($result) < $this->tier_level(triples::SYSTEM_COLUMN_MINOR)) {
+            $result = triples::SYSTEM_COLUMN_MINOR;
+        }
+        return $result;
+    }
+
+    /**
+     * @param string $tier the tier name of a column e.g. "mayor column (system)" or '' if not defined
      * @return int the tier level of the column, 1 for a mayor column; a column that the data
      *             suggests has no definition and counts as a main column
      */
-    private function tier_level(string $name, ?phrase_list $rel_lst): int
+    private function tier_level(string $tier): int
     {
-        $tier = $rel_lst?->column_tier($name) ?? '';
         $pos = array_search($tier, triples::SYSTEM_COLUMN_TIERS);
         if ($pos === false) {
             $pos = array_search(triples::SYSTEM_COLUMN_MAIN, triples::SYSTEM_COLUMN_TIERS);
@@ -2467,16 +2711,14 @@ class value_list extends ListBase
     }
 
     /**
-     * the css class of a table column, which follows the tier of its definition
+     * the css class of a table column, which follows its tier
      *
-     * @param string $name the name of the column phrase e.g. "loss"
-     * @param phrase_list|null $rel_lst the phrases related to the page phrase with the definitions
+     * @param string $tier the tier name of the column (see column_tier)
      * @return string the css class that hides the column on the screens its tier excludes, or ''
      */
-    private function column_style(string $name, ?phrase_list $rel_lst): string
+    private function column_style(string $tier): string
     {
         $result = '';
-        $tier = $rel_lst?->column_tier($name) ?? '';
         if ($tier == triples::SYSTEM_COLUMN_MAIN) {
             $result = styles::COL_MAIN;
         } elseif ($tier == triples::SYSTEM_COLUMN_MINOR) {

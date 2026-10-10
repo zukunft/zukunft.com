@@ -1459,6 +1459,11 @@ class ui_list extends ui_base
                 return $result;
             }
             $val_lst = $this->value_related_list($dbo, $msg, $dto, $dto?->phr_lst);
+            // a phrase whose rows are the phrases linked to it, e.g. "global warming reason", has
+            // no value of its own, so the values of the linked phrases are loaded like on the start page
+            if (($val_lst == null or $val_lst->is_empty()) and $dto != null and $dto->online) {
+                $val_lst = $this->child_values($dbo->phrase(), $dto, $msg) ?? $val_lst;
+            }
             // a phrase without any value shows no table at all instead of an empty header row
             if ($val_lst != null) {
                 // a calculated number of a row is a result and not a value, e.g. the reward ratio
@@ -1504,7 +1509,7 @@ class ui_list extends ui_base
                         $this->add_chart_definitions($dto, $msg);
                     }
                     $result .= $this->table_charts($tbl_lst, $msg, $phr_lst, $col_order,
-                        $dto?->phr_lst, $url_array, $col_values_only, $value_rows_only);
+                        $dto?->phr_lst, $url_array, $col_values_only, $value_rows_only, $col_tiers);
                 }
             }
         }
@@ -1513,7 +1518,9 @@ class ui_list extends ui_base
 
     /**
      * the default charts of a value table beside each other, e.g. the range bars of the loss
-     * and the scatter plot of the gain against the effort of the start page ranking
+     * and the scatter plot of the gain against the effort of the start page ranking, or the
+     * mayor charts if the table shows the mayor columns only, e.g. the leverage plot of the
+     * gain against the loss of the initial start page (phrase_list::chart_definitions)
      *
      * @param value_list $tbl_lst the values of the table
      * @param user_message $msg to report a chart that the table cannot draw
@@ -1523,6 +1530,7 @@ class ui_list extends ui_base
      * @param array $url_array the url parameters of the page that shows the charts
      * @param bool $col_values_only true to leave out the values that share no column phrase
      * @param bool $value_rows_only true to leave out the rows without a number in a shown column
+     * @param int $col_tiers the column tiers left out by default, which the url of the page overrides
      * @return string the html code of the charts or '' if the table defines no chart
      */
     private function table_charts(
@@ -1533,12 +1541,15 @@ class ui_list extends ui_base
         ?phrase_list $rel_lst,
         array        $url_array,
         bool         $col_values_only,
-        bool         $value_rows_only
+        bool         $value_rows_only,
+        int          $col_tiers
     ): string
     {
         $html = new html_base();
         $charts = '';
-        foreach ($rel_lst?->chart_definitions($msg) ?? [] as [$type, $chart_cols]) {
+        // the url names the column tiers like for the table (see value_list::table_model)
+        $mayor_only = ((int)($url_array[url_var::DISPLAY_LIST_COLUMNS] ?? $col_tiers) == value_list::COLUMN_TIERS_EX_MAIN);
+        foreach ($rel_lst?->chart_definitions($msg, $mayor_only) ?? [] as [$type, $chart_cols]) {
             $charts .= $tbl_lst->table_to_svg($type, $msg, $phr_lst, $col_order, $rel_lst, null,
                 $url_array, $col_values_only, $value_rows_only, $chart_cols);
         }
@@ -1602,6 +1613,33 @@ class ui_list extends ui_base
             $val_lst = $dbo->val_lst;
         }
         return $val_lst;
+    }
+
+    /**
+     * load the phrases linked to the given phrase into the request cache and their values
+     *
+     * @param phrase $phr the phrase of the page e.g. "global warming reason"
+     * @param data_object $dto the request cache that gets the links
+     * @param user_message $msg to report a problem of an api call
+     * @return value_list|null the values of the linked phrases or null if the phrase has no linked phrase
+     */
+    private function child_values(phrase $phr, data_object $dto, user_message $msg): ?value_list
+    {
+        $result = null;
+        if ($dto->phr_lst->child_phrases($phr)->is_empty()) {
+            $child_lst = new phrase_list();
+            if ($child_lst->load_related_by_name($phr->name(), foaf_direction::DOWN, $msg)) {
+                $dto->add_phrases($child_lst, $msg);
+            }
+        }
+        $children = $dto->phr_lst->child_phrases($phr);
+        if (!$children->is_empty()) {
+            $val_lst = new value_list();
+            if ($val_lst->load_by_phr_lst($children, $msg)) {
+                $result = $val_lst;
+            }
+        }
+        return $result;
     }
 
     /**
@@ -2209,7 +2247,9 @@ class ui_list extends ui_base
      * add the phrases and the values that the table of the start view needs to the request cache
      *
      * each step is skipped if the cache already has that data, so a unit test that fills the
-     * cache upfront needs no api call at all
+     * cache upfront needs no api call at all; an offline cache is never filled from the api,
+     * like add_column_definitions, so the empty result list of a unit test is not filled with
+     * the results of the pod, which would repeat the groups of the test values
      *
      * @param data_object $dto the request cache to fill
      * @param phrase $phr the page phrase of the start view, which is "global problem"
@@ -2218,6 +2258,9 @@ class ui_list extends ui_base
      */
     private function add_start_page_cache(data_object $dto, phrase $phr, user_message $msg): void
     {
+        if (!$dto->online) {
+            return;
+        }
         // "global problem" itself is in no value group, so the rows are the phrases that a
         // triple links to it; without those triples the table finds no value at all
         if ($dto->phr_lst->child_phrases($phr)->is_empty()) {

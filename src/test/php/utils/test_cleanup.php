@@ -711,6 +711,17 @@ class test_cleanup extends test_api
     }
 
     /**
+     * @param string $body the start page ranking rendered for one selection of its sub menus
+     * @param string $filename the snapshot name e.g. "start_page_dls_20_dla_chart"
+     * @param user_message_ui $msg the messages of the rendering, shown in the snapshot
+     * @return bool true if the page matches the snapshot in the start_page resource folder
+     */
+    function html_start_page_test(string $body, string $filename, user_message_ui $msg): bool
+    {
+        return $this->html_test($body, 'start page', test_paths::START_PAGE . $filename, $msg);
+    }
+
+    /**
      * check if a generated html page matches the fixed html page saved in the resource path
      * @param string $body the generated html page body
      * @param string $title the page title name

@@ -1,5 +1,15 @@
 # pending prio 2
 
+## start page global problem
+
+add a subtitle with the country, region and an 'yours' option for the problem and solution list where the region and country are based on the ip if the user is not logged in and 'yours' is grey with the tooltip 'signup or login to create your personal list'
+
+### leftovers
+
+1. Climate gas emissions leads the cell. Its value of 2.2 is still the biggest,
+while the three cost channels add up to about 1.1. The reasons page lists both kinds side by side.
+It is a data decision for you, as noted before.
+
 ## tests
 
 add to the json_validation test a check for which words, triples, verb, formula or type objects a description is missing

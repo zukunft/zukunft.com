@@ -458,6 +458,9 @@ zukunft.com:
       more:
         entries: 20
         tooltip-comment: "if the selection list contains more than the initial entries, the number of alphabetic sorted entries show initially and added with each click on more"
+      columns:
+        entries: 10
+        tooltip-comment: "the maximal number of columns of a table that leaves out a column tier, including the column that names the rows; if the shown tiers have more columns, the last columns of the lowest tier are left to the table with all columns"
       value:
         symbol:
           include:

@@ -99,8 +99,10 @@ class phrase_ui_tests
         // the create factories - the cost and gain values of the problems, the triples that
         // link each problem to "global problem" and the table column definitions
         $dto_prio = new data_object();
+        // offline with the sort definitions in the cache, because else the table loads them from the pod
+        $dto_prio->online = false;
         $dto_prio->val_lst = $t_val->value_list_solution_prio_ui();
-        $dto_prio->phr_lst = $t_phr->list_global_problems_ui();
+        $dto_prio->phr_lst = $t_phr->list_global_problems_sorted_ui();
         $trp_problem = $t_trp->global_problem_ui();
         $test_page .= $html->text_h2($trp_problem->name() . ' as a table');
         $test_page .= 'as table: ' . $list->table_with_related_columns(
@@ -312,9 +314,11 @@ class phrase_ui_tests
         // a phrase column is defined by the same column tiers as a value column, so it stands
         // where the definition puts it: the solution column between the loss and the gain column
         // instead of behind every column that holds a value; the cost column is defined too, but
-        // no value carries it and no phrase is linked to it, so the table shows four columns
-        // each headed by its own unit behind a translatable "in", except the solution column,
-        // which holds no number and therefore no unit
+        // no value carries it and no phrase is linked to it, so it is not shown, while the
+        // reason column has a linked reason and is shown empty between the loss and the solution
+        // column; the loss of the reason has no column, because no value of this table carries a
+        // reason; so the table shows five columns, the value columns each headed by their unit
+        // behind a translatable "in", the reason and the solution column without a unit
         // the last header cell opens the menu that selects the columns, which without a page
         // url is the plain "..." text
         $test_name = 'the header shows the columns in the defined order with their unit';
@@ -322,6 +326,7 @@ class phrase_ui_tests
         $t->assert($test_name, $lib->html_to_text($tbl_header_row),
             word_names::PROBLEM
             . ' ' . word_names::LOSS . $unit_sep . word_names::TRILLION . ' ' . word_names::EUR
+            . ' ' . word_names::REASON
             . ' ' . word_names::SOLUTION
             . ' ' . word_names::GAIN . $unit_sep . word_names::BILLION . ' ' . word_names::HTP
             . ' ' . msg_id::THREE_POINTS->text());
@@ -345,8 +350,58 @@ class phrase_ui_tests
 
         $test_name = 'without the problem links no value matches the page phrase';
         $dto_no_links = new data_object();
+        // offline, because an online cache loads the values of the linked phrases from the pod
+        // (ui_list::child_values), which the links missing in the cache are meant to rule out
+        $dto_no_links->online = false;
         $dto_no_links->val_lst = $t_val->value_list_solution_prio_ui();
         $t->assert($test_name, $list->table_with_related_columns($trp_problem, $msg, $dto_no_links), '');
+
+        // the table page of "global warming reason": the phrase has no value of its own, so
+        // the table shows the values of the reasons linked to it, one row per reason; offline,
+        // because the cache carries the links and the values like the start page cache
+        $test_name = 'the reasons page shows the reason with the biggest loss';
+        $dto_reasons = new data_object();
+        $dto_reasons->online = false;
+        $dto_reasons->val_lst = $t_val->value_list_solution_prio_reasons_ui();
+        $dto_reasons->phr_lst = $t_phr->list_global_warming_reasons_ui();
+        $tbl_reasons = $list->table_with_related_columns($t_trp->global_warming_reason_ui(), $msg, $dto_reasons);
+        $t->assert_text_contains($test_name, $tbl_reasons, '>' . triple_names::CLIMATE_GAS_EMISSIONS . '</a>');
+        $test_name = '... and the reason with the smaller loss in a row of its own';
+        $t->assert_text_contains($test_name, $tbl_reasons, '>' . triple_names::HEAT_MORTALITY . '</a>');
+        // the page phrase is built from "reason", so that word heads the row column
+        $test_name = '... with the row column headed by the reason';
+        $hdr_reasons = $lib->str_left_of($tbl_reasons, '</tr>');
+        $t->assert($test_name, $lib->str_left_of($lib->html_to_text($hdr_reasons), ' '), word_names::REASON);
+        // negative: on the start page the reason is a phrase column, here it names the rows only
+        $test_name = '... and not by a reason column too';
+        $t->assert($test_name, substr_count($hdr_reasons, '>' . word_names::REASON . '</a>'), 1);
+        // the row column names the reason, so the loss of a reason is the potential loss of the row,
+        // which is a mayor column, and the simple table shows it
+        $test_name = 'the simple reasons table shows the loss of the reason';
+        $mayor_url = [url_var::DISPLAY_LIST_COLUMNS => value_list_ui::COLUMN_TIERS_EX_MAIN];
+        $tbl_mayor = $list->table_with_related_columns(
+            $t_trp->global_warming_reason_ui(), $msg, $dto_reasons, false, true, $mayor_url);
+        $t->assert_text_contains($test_name, $lib->html_to_text($tbl_mayor), '31.5');
+        // negative: the main column of the loss of a reason is left to the start page
+        $test_name = '... in the potential loss column and not in the column of the loss of a reason';
+        $t->assert_text_not_contains($test_name, $lib->str_left_of($tbl_mayor, '</tr>'), triple_names::POTENTIAL_LOSS_OF_REASON);
+        // the gain of the solution of a reason, which the start page leaves out, is shown here
+        $test_name = 'the reasons page shows the solution of a reason';
+        $dto_rsn_sol = new data_object();
+        $dto_rsn_sol->online = false;
+        $dto_rsn_sol->val_lst = $t_val->value_list_solution_prio_reason_solution_ui();
+        $dto_rsn_sol->phr_lst = $t_phr->list_global_warming_reasons_ui();
+        $tbl_rsn_sol = $list->table_with_related_columns($t_trp->global_warming_reason_ui(), $msg, $dto_rsn_sol);
+        $t->assert_text_contains($test_name, $tbl_rsn_sol, '>' . word_names::RESEARCH . '</a>');
+        $test_name = '... in the solution column';
+        $t->assert_text_contains($test_name, $lib->str_left_of($tbl_rsn_sol, '</tr>'), '>' . word_names::SOLUTION . '</a>');
+        // negative: without the links to "global warming reason" the page finds no reason
+        $test_name = 'without the reason links the reasons page shows no table';
+        $dto_no_reasons = new data_object();
+        $dto_no_reasons->online = false;
+        $dto_no_reasons->val_lst = $t_val->value_list_solution_prio_reasons_ui();
+        $dto_no_reasons->phr_lst = $t_phr->list_global_problems_two_reasons_ui();
+        $t->assert($test_name, $list->table_with_related_columns($t_trp->global_warming_reason_ui(), $msg, $dto_no_reasons), '');
 
         // negative: the component type can be assigned to any object by a view, so a class
         // that is not a phrase must say so instead of silently showing nothing

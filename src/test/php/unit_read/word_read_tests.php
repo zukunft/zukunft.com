@@ -138,7 +138,10 @@ class word_read_tests
         $test_name = 'load_by_id_with_related populates the word';
         $wrd_chf = new word($t->usr1);
         $loaded_id = $wrd_chf->load_by_id_with_related(words::CHF_ID, $msg);
-        $t->assert_true($test_name, $loaded_id > 0 and $wrd_chf->name() == words::CHF);
+        // the loaded id and name are compared instead of a true / false, so that a failure says
+        // which word the pinned id selects, e.g. another word if a seed change has shifted the
+        // ids and words::CHF_ID needs a re-baseline from the word list.csv (docs/llm/testing.md)
+        $t->assert($test_name, $loaded_id . ' ' . $wrd_chf->name(), words::CHF_ID . ' ' . words::CHF);
 
         $test_name = 'load_by_id_with_related fills phrases_related from triples';
         $t->assert_true($test_name,

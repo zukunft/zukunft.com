@@ -258,11 +258,17 @@ enum messages: string
     // the tooltips of the up / down icons behind a column header that sort the rows (table_orders)
     case TABLE_SORT_UP_TIP = 'table_sort_up_tip';
     case TABLE_SORT_DOWN_TIP = 'table_sort_down_tip';
+    // the tooltip of the ", ..." behind the phrase of a cell that stands for more phrases of the row
+    case TABLE_MORE_PHRASES_TIP = 'table_more_phrases_tip';
     // the subtitle and the axis texts of a value table shown as a chart (see table_chart)
     case CHART_RANGE_BARS_TIP = 'chart_range_bars_tip';
     case CHART_SCATTER_TIP = 'chart_scatter_tip';
     case CHART_LOG_SCALE = 'chart_log_scale';
     case CHART_VERSUS = 'chart_versus';
+    case CHART_LEVERAGE_TIP = 'chart_leverage_tip';
+    case CHART_QUADRANT_HIGH = 'chart_quadrant_high';
+    case CHART_QUADRANT_LOW = 'chart_quadrant_low';
+    case CHART_PER = 'chart_per';
     // the tooltip and the entries of the "..." menu below the title of a default view, which
     // shows the same object in one of the versions of views::DEFAULT_VIEW_VERSIONS
     case VIEW_VERSION_TIP = 'view_version_tip';

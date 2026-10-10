@@ -1235,14 +1235,22 @@ class test_phrases
         $lst->add($t_trp->column_potential_loss()->phrase());
         $lst->add($t_trp->column_potential_gain()->phrase());
         // the main column chain and the explaining columns that put the columns in the order
-        // problem, loss, cost, solution, gain; the cost column is ordered although no value of
-        // this table carries the phrase "cost"
-        $lst->add($t_trp->column_solution_after_problem()->phrase());
+        // problem, loss, cost, reason, loss of the reason, solution, gain; the cost column is
+        // ordered although no value of this table carries the phrase "cost"
+        $lst->add($t_trp->column_reason_after_problem()->phrase());
+        $lst->add($t_trp->column_solution_after_reason()->phrase());
         $lst->add($t_trp->column_loss_explains_problem()->phrase());
         $lst->add($t_trp->column_cost_explains_problem()->phrase());
         $lst->add($t_trp->column_gain_explains_solution()->phrase());
         $lst->add($t_trp->column_potential_loss_explains_problem()->phrase());
         $lst->add($t_trp->column_potential_gain_explains_solution()->phrase());
+        // the reason column and the column with the loss of the reason, the two main columns
+        // between the problem group and the solution, with the triple that links a reason to "reason"
+        $lst->add($t_trp->column_reason()->phrase());
+        $lst->add($t_trp->potential_loss_of_reason()->phrase());
+        $lst->add($t_trp->column_potential_loss_of_reason()->phrase());
+        $lst->add($t_trp->column_loss_of_reason_explains_reason()->phrase());
+        $lst->add($t_trp->climate_gas_emissions_reason()->phrase());
         // the solution column names the solution of the problem row instead of a value, so it
         // needs the column definition and the triples that link a solution to "solution"
         $lst->add($t_trp->column_solution()->phrase());
@@ -1281,6 +1289,99 @@ class test_phrases
     function list_global_problems_ui(): phrase_list_ui
     {
         return $this->ui_list($this->list_global_problems());
+    }
+
+    /**
+     * @return phrase_list_ui the start page definitions with every problem of solution_prio.json
+     *         linked to "global problem", so that a longer list of the ranking shows more rows,
+     *         and with the minor and the marginal columns, so that each column selection shows
+     *         its own columns, and with the leverage plot, the chart of the mayor columns only
+     */
+    function list_global_problems_all_ui(): phrase_list_ui
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $lst = $this->list_global_problems();
+        $links = array_merge($t_trp->other_problem_links(), $t_trp->column_minor_and_marginal_definitions());
+        foreach ($links as $trp) {
+            $lst->add($trp->phrase());
+        }
+        // the mayor chart like phrase_list::load_chart_definitions loads it
+        $lst->add($t_wrd->word_leverage_plot()->phrase());
+        $lst->add($t_trp->chart_type_mayor()->phrase());
+        $lst->add($t_trp->gain_and_loss()->phrase());
+        $lst->add($t_trp->leverage_of_gain_and_loss()->phrase());
+        $lst->add($t_trp->chart_leverage_of_gain_and_loss()->phrase());
+        return $this->ui_list($lst);
+    }
+
+    /**
+     * @return phrase_list_ui the global problems with a second reason of global warming, but
+     *         without the triple "global warming reason", so that no table of the reasons is known
+     */
+    function list_global_problems_two_reasons_ui(): phrase_list_ui
+    {
+        return $this->ui_list($this->list_global_problems_two_reasons());
+    }
+
+    /**
+     * @return phrase_list_ui the global problems with two reasons of global warming, each linked to
+     *         "global warming reason" like problem_global_warming_reasons.json, whose table page lists them
+     */
+    function list_global_warming_reasons_ui(): phrase_list_ui
+    {
+        $t_trp = new test_triples($this->env);
+        $lst = $this->list_global_problems_two_reasons();
+        $lst->add($t_trp->global_warming_reason()->phrase());
+        $lst->add($t_trp->climate_gas_emissions_global_warming_reason()->phrase());
+        $lst->add($t_trp->heat_mortality_global_warming_reason()->phrase());
+        return $this->ui_list($lst);
+    }
+
+    /**
+     * @return phrase_list_ui the global problems with two solutions of global warming linked to
+     *         "global warming solution" like problem_global_warming_reasons.json, although only one
+     *         of them has a value in the row of global warming
+     */
+    function list_global_warming_solutions_ui(): phrase_list_ui
+    {
+        $t_trp = new test_triples($this->env);
+        $lst = $this->list_global_warming_one_solution();
+        $lst->add($t_trp->climate_adaptation_solution()->phrase());
+        $lst->add($t_trp->climate_adaptation_global_warming_solution()->phrase());
+        return $this->ui_list($lst);
+    }
+
+    /**
+     * @return phrase_list_ui the global problems with "global warming solution" linked only to the
+     *         solution that the row of global warming shows already
+     */
+    function list_global_warming_one_solution_ui(): phrase_list_ui
+    {
+        return $this->ui_list($this->list_global_warming_one_solution());
+    }
+
+    /**
+     * @return phrase_list the global problems with the reduction of the emissions as the only global warming solution
+     */
+    private function list_global_warming_one_solution(): phrase_list
+    {
+        $t_trp = new test_triples($this->env);
+        $lst = $this->list_global_problems();
+        $lst->add($t_trp->global_warming_solution()->phrase());
+        $lst->add($t_trp->reduce_emissions_global_warming_solution()->phrase());
+        return $lst;
+    }
+
+    /**
+     * @return phrase_list the global problems with the heat mortality as a second reason
+     */
+    private function list_global_problems_two_reasons(): phrase_list
+    {
+        $t_trp = new test_triples($this->env);
+        $lst = $this->list_global_problems();
+        $lst->add($t_trp->heat_mortality_reason()->phrase());
+        return $lst;
     }
 
     /**

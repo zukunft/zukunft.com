@@ -3376,6 +3376,8 @@ class library
             => 'link',
             'calc_usage', 'calc_view_id', 'view_sql'
             => 'ui support',
+            'phrase_page_url'
+            => 'base',
             'has_cfg', 'not_used', 'not_used_sql', 'can_change', 'not_changed', 'not_changed_sql'
             => 'sandbox',
             'can_be_ready', 'db_ready', 'check_order', 'is_valid'

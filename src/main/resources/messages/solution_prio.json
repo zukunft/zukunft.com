@@ -990,6 +990,10 @@
       "name": "numeric descending",
       "description": "sort condition: by the number of the column, the biggest number on top",
       "code_id": "numeric_desc"
+    },
+    {
+      "name": "reason",
+      "description": "the cause of a problem, e.g. the climate gas emissions of global warming, linked with '<reason> is a reason'; the loss that a reason causes carries the problem, the word reason and the reason"
     }
   ],
   "triples": [
@@ -1320,28 +1324,28 @@
       "description": "the table column 'ranking' that should not be shown on small screens",
       "from": "ranking",
       "verb": "can be",
-      "to": "main column (system)"
+      "to": "minor column (system)"
     },
     {
       "name": "column cost",
-      "description": "the table column 'cost' with the cost of the problem in a currency, which explains the loss column and is therefore shown only if the screen is not small",
+      "description": "the table column 'cost' with the cost of the problem in a currency, which explains the loss column and is therefore shown on a wide screen only",
       "from": "cost",
       "verb": "can be",
-      "to": "main column (system)"
+      "to": "minor column (system)"
     },
     {
       "name": "column priority",
       "description": "the table column 'priority' that should not be shown on small screens",
       "from": "priority",
       "verb": "can be",
-      "to": "main column (system)"
+      "to": "minor column (system)"
     },
     {
       "name": "column probability",
       "description": "the table column 'probability' that should not be shown on small screens",
       "from": "probability",
       "verb": "can be",
-      "to": "main column (system)"
+      "to": "minor column (system)"
     },
     {
       "name": "standard deviation",
@@ -1373,28 +1377,28 @@
       "description": "the table column 'standard deviation' that should not be shown on small screens",
       "from": "standard deviation",
       "verb": "can be",
-      "to": "main column (system)"
+      "to": "minor column (system)"
     },
     {
       "name": "column expected return",
       "description": "the table column 'expected return' that should not be shown on small screens",
       "from": "expected return",
       "verb": "can be",
-      "to": "main column (system)"
+      "to": "minor column (system)"
     },
     {
       "name": "column effort",
       "description": "the table column 'effort' with the effort needed to implement the solution, the counterpart of the gain column",
       "from": "effort",
       "verb": "can be",
-      "to": "main column (system)"
+      "to": "minor column (system)"
     },
     {
       "name": "column percent",
       "description": "the table column 'percent' with the loss as a share of the world GDP or of the global happy time points, the relative counterpart of the absolute cost column",
       "from": "percent",
       "verb": "can be",
-      "to": "main column (system)"
+      "to": "minor column (system)"
     },
     {
       "name": "column source",
@@ -1674,11 +1678,6 @@
       "to": "column priority"
     },
     {
-      "from": "column solution (high prio)",
-      "verb": "is next main column after",
-      "to": "column problem (high prio)"
-    },
-    {
       "from": "column probability",
       "verb": "is explaining column for",
       "to": "column priority"
@@ -1778,19 +1777,19 @@
       "name": "column loss reduction",
       "from": "loss reduction",
       "verb": "can be",
-      "to": "main column (system)"
+      "to": "minor column (system)"
     },
     {
       "name": "column initial effort",
       "from": "initial effort",
       "verb": "can be",
-      "to": "main column (system)"
+      "to": "minor column (system)"
     },
     {
       "name": "column reward ratio",
       "from": "reward ratio",
       "verb": "can be",
-      "to": "minor column (system)"
+      "to": "marginal column (system)"
     },
     {
       "name": "probability range",
@@ -2190,6 +2189,46 @@
       "from": "numeric descending of potential loss",
       "verb": "can be",
       "to": "default sort order (system)"
+    },
+    {
+      "from": "climate gas emissions",
+      "verb": "is a",
+      "to": "reason"
+    },
+    {
+      "name": "column reason",
+      "description": "the table column 'reason' with the cause of the problem row, hidden on a small screen",
+      "from": "reason",
+      "verb": "can be",
+      "to": "main column (system)"
+    },
+    {
+      "description": "the part of the potential loss of a problem that one reason causes; a value of it carries the problem, the word reason, the reason and the potential loss, so the table shows it in this column and not in the potential loss column of the problem",
+      "from": "potential loss",
+      "verb": "of",
+      "to": "reason"
+    },
+    {
+      "name": "column potential loss of reason",
+      "description": "the table column with the potential loss that the reason causes, shown beside the reason column and hidden on a small screen",
+      "from": "potential loss of reason",
+      "verb": "can be",
+      "to": "main column (system)"
+    },
+    {
+      "from": "column reason",
+      "verb": "is next main column after",
+      "to": "column problem (high prio)"
+    },
+    {
+      "from": "column potential loss of reason",
+      "verb": "is explaining column for",
+      "to": "column reason"
+    },
+    {
+      "from": "column solution (high prio)",
+      "verb": "is next main column after",
+      "to": "column reason"
     }
   ],
   "sources": [
@@ -2867,6 +2906,19 @@
       ],
       "number": "1",
       "description": "a mathematically derived number has no empirical uncertainty"
+    },
+    {
+      "words": [
+        "global warming",
+        "reason",
+        "climate gas emissions",
+        "potential loss",
+        "trillion",
+        "EUR",
+        "assumed"
+      ],
+      "number": "2.2",
+      "description": "the climate gas emissions cause the whole potential loss of global warming, so the loss of this reason is the calculated loss of the problem: the annual damage share of the reasons in problem_global_warming.json times the world GDP of 110.047 trillion EUR; assumed, because the coverage of that share is assumed"
     }
   ],
   "formulas": [

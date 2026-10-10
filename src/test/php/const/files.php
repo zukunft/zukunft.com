@@ -248,6 +248,8 @@ class files
     CONST string IMPORT_LEFT_RIGHT_DATA = test_paths::IMPORT_PROTECTED_TOLERANCE . 'left_right_data' . self::JSON;
     CONST string IMPORT_REPUBLIK_TEST_INIT_DE = test_paths::IMPORT_PROTECTED_TOLERANCE . 'republik_test_init_de' . self::JSON;
     CONST string IMPORT_REPUBLIK_TEST_INIT_EN = test_paths::IMPORT_PROTECTED_TOLERANCE . 'republik_test_init_en' . self::JSON;
+    CONST string IMPORT_MODERATION_LATENCY_VS_SPREAD = test_paths::IMPORT_PROTECTED_TOLERANCE . 'moderation_latency_vs_spread' . self::JSON;
+    CONST string IMPORT_OSTRACISM = test_paths::IMPORT_PROTECTED_TOLERANCE . 'ostracism' . self::JSON;
     CONST string IMPORT_V_DEM_SAMPLE = test_paths::IMPORT_V_DEM . 'v_dem_sample' . self::JSON;
     CONST string IMPORT_WTW_SAMPLE = test_paths::IMPORT_V_DEM . 'wtw_sample' . self::JSON;
     CONST string IMPORT_CURRENCY_WIKIPEDIA = test_paths::IMPORT_WIKIPEDIA . 'currency' . self::JSON;
@@ -408,6 +410,8 @@ class files
         self::IMPORT_WHY_ASK_WHY,
         self::IMPORT_ATTENTION_DISTRIBUTION_WEALTH_POLITICS_COMMENTS,
         self::IMPORT_ATTENTION_SCARCITY_VS_FREEDOM_OF_EXPRESSION,
+        self::IMPORT_MODERATION_LATENCY_VS_SPREAD,
+        self::IMPORT_OSTRACISM,
     ];
 
 

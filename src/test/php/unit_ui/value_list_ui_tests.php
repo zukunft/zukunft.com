@@ -40,6 +40,7 @@ use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
 use Zukunft\ZukunftCom\main\php\web\value\value_list as value_list_ui;
+use Zukunft\ZukunftCom\main\php\web\value\table_chart;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_value as sandbox_value_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\def;
 use Zukunft\ZukunftCom\main\php\shared\const\files as files_shared;
@@ -387,13 +388,13 @@ class value_list_ui_tests
         // negative: the unit of the single bigger number is left to the full table
         $test_name = '... and not the unit of the single biggest number';
         $t->assert_text_not_contains($test_name, $hdr_unit_most, word_names::HTP);
-        // with the main columns a further unit is shown only if it has a number in every row,
+        // with the minor columns a further unit is shown only if it has a number in every row,
         // so the potential loss in htp of global warming alone is left to the full table
         $tbl_unit_part = $t_val->value_list_unit_majority_ui()->table_by_related_columns(
             $msg_ui, new phrase_list_ui(), $loss_lst->column_names(), false, true, $loss_lst,
-            null, [], false, value_list_ui::COLUMN_TIERS_EX_MINOR);
+            null, [], false, value_list_ui::COLUMN_TIERS_EX_MARGINAL);
         $hdr_unit_part = $lib->html_to_text($lib->str_left_of($tbl_unit_part, '</tr>'));
-        $test_name = 'the main columns leave out a unit that only some rows have';
+        $test_name = 'the minor columns leave out a unit that only some rows have';
         $t->assert_text_not_contains($test_name, $hdr_unit_part, word_names::HTP);
         // negative: the full table shows every unit
         $tbl_unit_all = $t_val->value_list_unit_majority_ui()->table_by_related_columns(
@@ -401,12 +402,23 @@ class value_list_ui_tests
         $hdr_unit_all = $lib->html_to_text($lib->str_left_of($tbl_unit_all, '</tr>'));
         $test_name = '... but the full table shows it';
         $t->assert_text_contains($test_name, $hdr_unit_all, word_names::HTP);
+        $tbl_unit_minor = $t_val->value_list_two_units_ui()->table_by_related_columns(
+            $msg_ui, new phrase_list_ui(), $loss_lst->column_names(), false, true, $loss_lst,
+            null, [], false, value_list_ui::COLUMN_TIERS_EX_MARGINAL);
+        $hdr_unit_minor = $lib->html_to_text($lib->str_left_of($tbl_unit_minor, '</tr>'));
+        $test_name = '... and with the minor columns every unit is shown';
+        $t->assert($test_name, substr_count($hdr_unit_minor, word_names::LOSS . $unit_sep), 2);
+        $test_name = '... as a minor column, which is hidden below a wide screen';
+        $t->assert_text_contains($test_name, $tbl_unit_minor, '<th class="' . styles::COL_MINOR . '">');
+        // negative: a further unit is a minor column and a table shows only the columns of its
+        // tiers, so the main columns keep one unit per column, e.g. the start page with the
+        // reason columns shows the loss in trillion EUR only and not also in percent
         $tbl_unit_main = $t_val->value_list_two_units_ui()->table_by_related_columns(
             $msg_ui, new phrase_list_ui(), $loss_lst->column_names(), false, true, $loss_lst,
             null, [], false, value_list_ui::COLUMN_TIERS_EX_MINOR);
         $hdr_unit_main = $lib->html_to_text($lib->str_left_of($tbl_unit_main, '</tr>'));
-        $test_name = '... and with the main columns every unit is shown';
-        $t->assert($test_name, substr_count($hdr_unit_main, word_names::LOSS . $unit_sep), 2);
+        $test_name = 'the main columns show no minor column';
+        $t->assert($test_name, substr_count($hdr_unit_main, word_names::LOSS . $unit_sep), 1);
 
         // a unit can be a triple, e.g. "gram per kWh", which the import types "measure unit" like
         // its words (see pv_switzerland_co2.json), so the header puts it behind the "in" too
@@ -468,25 +480,25 @@ class value_list_ui_tests
         $test_name = 'every defined column is shown even above the number that fit on the widest screen';
         $t->assert($test_name, substr_count($tbl_def, '<th'), count($rel_lst->column_names()) + 2);
 
-        // the tier of a defined column says on which screens it is shown: a main column carries
-        // the class that hides it on a small screen, a mayor column has no class and is shown on
-        // every screen; "cost" is a main and "loss" a mayor column
-        $test_name = 'a main column is hidden on a small screen';
-        $t->assert_text_contains($test_name, $tbl_def, '<th class="' . styles::COL_MAIN . '">');
+        // the tier of a defined column says on which screens it is shown: a minor column carries
+        // the class that hides it below a wide screen, a mayor column has no class and is shown
+        // on every screen; "cost" is a minor and "loss" a mayor column
+        $test_name = 'a minor column is hidden below a wide screen';
+        $t->assert_text_contains($test_name, $tbl_def, '<th class="' . styles::COL_MINOR . '">');
         $test_name = 'a mayor column is shown on every screen';
-        $t->assert_text_not_contains($test_name, $tbl_one, styles::COL_MAIN);
+        $t->assert_text_not_contains($test_name, $tbl_one, styles::COL_MINOR);
         // negative: a column that the data suggests has no tier and therefore no class
         $test_name = 'a column without a definition is shown on every screen';
-        $t->assert_text_not_contains($test_name, $tbl_html, styles::COL_MAIN);
+        $t->assert_text_not_contains($test_name, $tbl_html, styles::COL_MINOR);
 
-        // a simple table shows the mayor columns only, so the main column "cost" is left to the
+        // a simple table shows the mayor columns only, so the minor column "cost" is left to the
         // full table and the "..." header says that more columns exist
         $tbl_mayor = $t_val->value_list_defined_columns_ui()->table_by_related_columns(
             $msg_ui, new phrase_list_ui(), $rel_lst->column_names(), false, true, $rel_lst,
             null, [], false, value_list_ui::COLUMN_TIERS_EX_MAIN);
         $hdr_mayor = $lib->html_to_text($lib->str_left_of($tbl_mayor, '</tr>'));
         $hdr_def = $lib->html_to_text($lib->str_left_of($tbl_def, '</tr>'));
-        $test_name = 'a simple table leaves out the main column';
+        $test_name = 'a simple table leaves out the minor column';
         $t->assert_text_not_contains($test_name, $hdr_mayor, word_names::COST);
         $test_name = '... but keeps the mayor columns';
         $t->assert_text_contains($test_name, $hdr_mayor, word_names::LOSS);
@@ -494,9 +506,150 @@ class value_list_ui_tests
         $t->assert_text_contains($test_name, $hdr_mayor, msg_id::THREE_POINTS->text());
         // the full table shows every column and still ends with the "..." header, because its
         // menu is the only way back to the fewer columns
-        $test_name = 'the full table shows the main column and the "..." header';
+        $test_name = 'the full table shows the minor column and the "..." header';
         $t->assert_text_contains($test_name, $hdr_def, word_names::COST);
         $t->assert_text_contains($test_name, $hdr_def, msg_id::THREE_POINTS->text());
+
+        // the reason of a problem is a phrase column like the solution and the loss that the
+        // reason causes a value column of its own: its value carries the problem, the word
+        // "reason", the reason and the potential loss, so the defined column "potential loss of
+        // reason" takes it before the "potential loss" column of the problem (see
+        // value_list::column_parts); both are main columns, so the table with the main tier
+        // shows them and the simple table of the mayor columns leaves them out
+        // every value carries "potential", so the table header names it once and the column
+        // of the problem is headed "loss" like in the ranking without a reason (see column_head)
+        $tbl_reason = $t_val->value_list_solution_prio_reason_ui()->table_by_related_columns(
+            $msg_ui, $rank_ctx, $rank_lst->column_names(), false, true, $rank_lst,
+            value_list_ui::LIMIT_ALL, [], false, value_list_ui::COLUMN_TIERS_EX_MINOR);
+        $hdr_reason = $lib->html_to_text($lib->str_left_of($tbl_reason, '</tr>'));
+        $test_name = 'the reason column names the reason of the problem';
+        $t->assert_text_contains($test_name, $tbl_reason, '>' . triple_names::CLIMATE_GAS_EMISSIONS . '</a>');
+        $test_name = 'the loss of the reason has a column of its own behind the reason column';
+        $t->assert_text_order($test_name, $hdr_reason, word_names::REASON, triple_names::POTENTIAL_LOSS_OF_REASON . $unit_sep);
+        $test_name = '... and both stand left of the solution column';
+        $t->assert_text_order($test_name, $hdr_reason, triple_names::POTENTIAL_LOSS_OF_REASON . $unit_sep, word_names::SOLUTION);
+        $test_name = '... and the loss of the problem keeps its column';
+        $t->assert($test_name, substr_count($hdr_reason, word_names::LOSS . $unit_sep), 1);
+        $test_name = '... so the cell of the problem shows its loss alone';
+        $t->assert_text_not_contains($test_name, $lib->html_to_text($tbl_reason),
+            '31.5' . sandbox_value_ui::QUALITY_MARK_NO_SOURCE . ', ');
+        $test_name = 'a main column is hidden on a small screen';
+        $t->assert_text_contains($test_name, $tbl_reason, '<th class="' . styles::COL_MAIN . '">');
+        $tbl_reason_mayor = $t_val->value_list_solution_prio_reason_ui()->table_by_related_columns(
+            $msg_ui, $rank_ctx, $rank_lst->column_names(), false, true, $rank_lst,
+            value_list_ui::LIMIT_ALL, [], false, value_list_ui::COLUMN_TIERS_EX_MAIN);
+        $test_name = 'the simple table leaves out the reason and its loss';
+        $t->assert_text_not_contains($test_name,
+            $lib->html_to_text($lib->str_left_of($tbl_reason_mayor, '</tr>')), word_names::REASON);
+        // negative: without a value that names a reason the loss of the reason has no column,
+        // while the reason column is defined and therefore shown although it is empty
+        $tbl_no_reason = $t_val->value_list_solution_prio_ui()->table_by_related_columns(
+            $msg_ui, $rank_ctx, $rank_lst->column_names(), false, true, $rank_lst,
+            value_list_ui::LIMIT_ALL, [], false, value_list_ui::COLUMN_TIERS_EX_MINOR);
+        $hdr_no_reason = $lib->html_to_text($lib->str_left_of($tbl_no_reason, '</tr>'));
+        $test_name = 'without a reason value the loss of the reason has no column';
+        $t->assert_text_not_contains($test_name, $hdr_no_reason, triple_names::POTENTIAL_LOSS_OF_REASON);
+        $test_name = '... but the defined reason column is shown';
+        $t->assert_text_contains($test_name, $hdr_no_reason, word_names::REASON);
+
+        // a problem with two solutions shows the solution of its biggest gain, followed by
+        // ", ..." that links to the page of the problem, where all its solutions are listed
+        $start_url = [url_var::MASK => views::START_ID];
+        $tbl_two = $t_val->value_list_solution_prio_two_solutions_ui()->table_by_related_columns(
+            $msg_ui, $rank_ctx, $rank_lst->column_names(), false, true, $rank_lst,
+            value_list_ui::LIMIT_ALL, $start_url);
+        $more_tip = msg_id::TABLE_MORE_PHRASES_TIP->text();
+        $test_name = 'a problem with two solutions shows the first solution with ", ..."';
+        $t->assert_text_contains($test_name, $tbl_two, '>' . triple_names::REDUCE_EMISSIONS . '</a>, <a ');
+        $test_name = '... once, because only global warming has two solutions';
+        $t->assert($test_name, substr_count($tbl_two, $more_tip), 1);
+        // the gain cell shows the gain of the solution shown, not also the gain of the second
+        // solution, which a reader would take for a gain of the solution shown
+        $test_name = '... and the gain of the solution shown';
+        $txt_two = $lib->html_to_text($tbl_two);
+        $t->assert_text_contains($test_name, $txt_two, '35.2' . sandbox_value_ui::QUALITY_MARK_NO_SOURCE);
+        // negative: the gain of the second solution is left to the page of the problem
+        $test_name = '... without the gain of the second solution in the same cell';
+        $t->assert_text_not_contains($test_name, $txt_two, '35.2' . sandbox_value_ui::QUALITY_MARK_NO_SOURCE . ', ');
+        // the solution with the biggest gain is shown, whatever the order of the values, e.g. a
+        // second solution of global warming with a gain of 50 instead of 35.2
+        $tbl_big = $t_val->value_list_solution_prio_bigger_second_solution_ui()->table_by_related_columns(
+            $msg_ui, $rank_ctx, $rank_lst->column_names(), false, true, $rank_lst,
+            value_list_ui::LIMIT_ALL, $start_url);
+        $test_name = 'the solution with the biggest gain is shown with ", ..."';
+        $t->assert_text_contains($test_name, $tbl_big, '>' . triple_names::BASIC_INCOME . '</a>, <a ');
+        $txt_big = $lib->html_to_text($tbl_big);
+        $test_name = '... with its gain';
+        $t->assert_text_contains($test_name, $txt_big, '50' . sandbox_value_ui::QUALITY_MARK_NO_SOURCE);
+        // negative: the smaller gain of the other solution is no number of the row any more
+        $test_name = '... and not the smaller gain of the other solution';
+        $t->assert_text_not_contains($test_name, $txt_big, '35.2' . sandbox_value_ui::QUALITY_MARK_NO_SOURCE);
+        $test_name = '... which links to the page of the problem';
+        $t->assert_text_contains($test_name, $tbl_two,
+            url_var::MASK . '=' . views::TRIPLE_ID . '&amp;' . url_var::ID . '=' . triple_names::GLOBAL_WARMING_ID);
+        // negative: with one solution per problem no cell has ", ..."
+        $test_name = 'a problem with one solution shows no ", ..."';
+        $tbl_one_each = $t_val->value_list_solution_prio_ui()->table_by_related_columns(
+            $msg_ui, $rank_ctx, $rank_lst->column_names(), false, true, $rank_lst,
+            value_list_ui::LIMIT_ALL, $start_url);
+        $t->assert_text_not_contains($test_name, $tbl_one_each, $more_tip);
+
+        // a problem with two reasons shows the reason with the biggest loss, and if the triple
+        // "global warming reason" names the table of the reasons, ", ..." links to its table page
+        $test_name = 'a problem with two reasons shows the reason with the biggest loss with ", ..."';
+        $gw_reasons = $t_phr->list_global_warming_reasons_ui();
+        $tbl_reasons = $t_val->value_list_solution_prio_reasons_ui()->table_by_related_columns(
+            $msg_ui, $rank_ctx, $gw_reasons->column_names(), false, true, $gw_reasons,
+            value_list_ui::LIMIT_ALL, $start_url);
+        $t->assert_text_contains($test_name, $tbl_reasons, '>' . triple_names::CLIMATE_GAS_EMISSIONS . '</a>, <a ');
+        $test_name = '... which links to the table page of the triple "global warming reason"';
+        $t->assert_text_contains($test_name, $tbl_reasons,
+            url_var::MASK . '=' . views::TABLE_ID . '&amp;' . url_var::ID . '=-' . triple_names::GLOBAL_WARMING_REASON_ID);
+        // negative: the table is a phrase page, so the id of the triple would open the word with that id
+        $test_name = '... by the phrase id and not by the triple id';
+        $t->assert_text_not_contains($test_name, $tbl_reasons,
+            url_var::ID . '=' . triple_names::GLOBAL_WARMING_REASON_ID);
+        // negative: without the triple that names the table of the reasons ", ..." links to the
+        // page of the problem like for two solutions
+        $test_name = 'without "global warming reason" the ", ..." of the reason links to the page of the problem';
+        $two_reasons = $t_phr->list_global_problems_two_reasons_ui();
+        $tbl_no_lst = $t_val->value_list_solution_prio_reasons_ui()->table_by_related_columns(
+            $msg_ui, $rank_ctx, $two_reasons->column_names(), false, true, $two_reasons,
+            value_list_ui::LIMIT_ALL, $start_url);
+        $t->assert_text_contains($test_name, $tbl_no_lst,
+            url_var::MASK . '=' . views::TRIPLE_ID . '&amp;' . url_var::ID . '=' . triple_names::GLOBAL_WARMING_ID);
+        $test_name = '... and not to a table page';
+        $t->assert_text_not_contains($test_name, $tbl_no_lst, url_var::MASK . '=' . views::TABLE_ID . '&amp;');
+        // "global warming solution" links a second solution, whose gain is no number of the row,
+        // so the solution cell shows ", ..." with the link to the table page of the solutions
+        $test_name = 'a problem with a second linked solution shows ", ..." behind its solution';
+        $gw_solutions = $t_phr->list_global_warming_solutions_ui();
+        $tbl_sol = $t_val->value_list_solution_prio_ui()->table_by_related_columns(
+            $msg_ui, $rank_ctx, $gw_solutions->column_names(), false, true, $gw_solutions,
+            value_list_ui::LIMIT_ALL, $start_url);
+        $t->assert_text_contains($test_name, $tbl_sol, '>' . triple_names::REDUCE_EMISSIONS . '</a>, <a ');
+        $test_name = '... which links to the table page of the triple "global warming solution"';
+        $t->assert_text_contains($test_name, $tbl_sol,
+            url_var::MASK . '=' . views::TABLE_ID . '&amp;' . url_var::ID . '=-' . triple_names::GLOBAL_WARMING_SOLUTION_ID);
+        // negative: if the triple links only the solution shown, the table names no other one
+        $test_name = 'a list triple with only the solution shown adds no ", ..."';
+        $gw_one_sol = $t_phr->list_global_warming_one_solution_ui();
+        $tbl_one_sol = $t_val->value_list_solution_prio_ui()->table_by_related_columns(
+            $msg_ui, $rank_ctx, $gw_one_sol->column_names(), false, true, $gw_one_sol,
+            value_list_ui::LIMIT_ALL, $start_url);
+        $t->assert_text_not_contains($test_name, $tbl_one_sol, $more_tip);
+        // a value that names a reason and a solution is the gain of the solution of the reason,
+        // which the reasons page shows, so the row keeps the solution of the problem although
+        // the gain of the solution of the reason is bigger
+        $test_name = 'the solution of a reason adds no ", ..." to the solution of the problem';
+        $tbl_rsn_sol = $t_val->value_list_solution_prio_reason_solution_ui()->table_by_related_columns(
+            $msg_ui, $rank_ctx, $gw_reasons->column_names(), false, true, $gw_reasons,
+            value_list_ui::LIMIT_ALL, $start_url);
+        $t->assert($test_name, substr_count($tbl_rsn_sol, $more_tip), 1);
+        // negative: the gain of the solution of the reason is no number of the problem row
+        $test_name = '... and its gain is not shown on the start page';
+        $t->assert_text_not_contains($test_name, $lib->html_to_text($tbl_rsn_sol),
+            '50' . sandbox_value_ui::QUALITY_MARK_NO_SOURCE);
 
         // the "..." header opens the menu that selects the columns, so it offers every column
         // tier and each of them once with and once without the ranges
@@ -572,6 +725,64 @@ class value_list_ui_tests
         $msg_ui->reset();
         $test_name = 'a list without chart definitions defines no chart';
         $t->assert($test_name, $rel_lst->chart_definitions($msg_ui), []);
+        // a table with the mayor columns only shows the charts of the mayor tier instead, e.g. the
+        // leverage plot of the gain against the loss of the initial start page
+        $test_name = 'the table with the mayor columns only shows the leverage plot of the gain against the loss';
+        $all_lst = $t_phr->list_global_problems_all_ui();
+        $charts = $all_lst->chart_definitions($msg_ui, true);
+        $t->assert($test_name, array_map(fn(array $chart) => [$chart[0]->value, $chart[1]], $charts),
+            [[chart_types::LEVERAGE->value, [triple_names::POTENTIAL_GAIN, triple_names::POTENTIAL_LOSS]]]);
+        // negative: a table with more columns keeps the default charts
+        $test_name = '... and a table with more columns the default charts';
+        $charts = $all_lst->chart_definitions($msg_ui);
+        $t->assert($test_name, array_map(fn(array $chart) => [$chart[0]->value, $chart[1]], $charts), $ranking_charts);
+        // negative: without a mayor chart the mayor columns keep the default charts
+        $test_name = '... and without a mayor chart the mayor columns keep the default charts';
+        $charts = $t_phr->list_global_problems_ui()->chart_definitions($msg_ui, true);
+        $t->assert($test_name, array_map(fn(array $chart) => [$chart[0]->value, $chart[1]], $charts), $ranking_charts);
+        // the chart triple "potential gain and potential loss" links the gain to the loss column,
+        // but a defined column names no row phrase, so the gain of a solution stays in its row
+        $test_name = 'with the mayor chart definitions the table keeps the gain of the solution';
+        $tbl_all = $t_val->value_list_solution_prio_ui()->table_by_related_columns(
+            $msg_ui, $rank_ctx, $all_lst->column_names(), false, true, $all_lst, value_list_ui::LIMIT_ALL);
+        $t->assert_text_contains($test_name, $lib->html_to_text($tbl_all), '35.2' . sandbox_value_ui::QUALITY_MARK_NO_SOURCE);
+
+        // the leverage plot names each point by its row and shows the lines of an equal gain per
+        // loss, like global-problems-top4_scatter.svg
+        $svg_leverage = $t_val->value_list_solution_prio_ui()->table_to_svg(
+            chart_types::LEVERAGE, $msg_ui, $rank_ctx, $rank_lst->column_names(), $rank_lst,
+            value_list_ui::LIMIT_ALL, [], false, false, [word_names::GAIN, word_names::LOSS]);
+        $test_name = 'the leverage plot draws one point per problem';
+        $t->assert($test_name, substr_count($svg_leverage, 'class="pt"'), count($t_val->solution_prio_rows()));
+        $test_name = '... named by the problem beside the point';
+        $t->assert_text_contains($test_name, $svg_leverage, '>' . triple_names::GLOBAL_WARMING . '</text>');
+        $test_name = '... with the dashed lines of an equal gain per loss';
+        $t->assert_text_contains($test_name, $svg_leverage, 'class="ratio"');
+        $test_name = '... the quarter of a big loss and a big gain named';
+        $t->assert_text_contains($test_name, $svg_leverage, msg_id::CHART_QUADRANT_HIGH->text() . ' ' . word_names::LOSS);
+        $test_name = '... and the gain per loss of each point in its tooltip';
+        $t->assert_text_contains($test_name, $svg_leverage,
+            word_names::GAIN . ' ' . msg_id::CHART_PER->text() . ' ' . word_names::LOSS . table_chart::LABEL_SEP);
+        // negative: the numbered legend of the scatter plot is not needed, because each point is named
+        $test_name = '... without the numbered legend of the scatter plot';
+        $t->assert_text_not_contains($test_name, $svg_leverage, 'class="lg"');
+        // each point is named by its problem, so the page phrase names the chart
+        $test_name = '... named by the page phrase, because each point is named by its problem';
+        $t->assert_text_contains($test_name, $svg_leverage, 'aria-label="' . triple_names::GLOBAL_PROBLEM);
+
+        // with a reason in the reason column, which stands before the solution column, the
+        // scatter plot of the gain is still named by the solution, because a gain value names
+        // the solution and no gain value names the reason
+        $svg_reason = $t_val->value_list_solution_prio_reason_ui()->table_to_svg(
+            chart_types::SCATTER, $msg_ui, $rank_ctx, $rank_lst->column_names(), $rank_lst,
+            value_list_ui::LIMIT_ALL, [], false, false, [word_names::GAIN, word_names::LOSS]);
+        $test_name = 'a filled reason column does not name the scatter plot of the gain';
+        $t->assert_text_contains($test_name, $svg_reason, 'aria-label="' . word_names::SOLUTION);
+        $test_name = '... nor its legend';
+        $t->assert_text_contains($test_name, $svg_reason, '<tspan class="n">1</tspan>  ' . triple_names::REDUCE_EMISSIONS . ' <tspan');
+        // negative: the reason is no name of a point
+        $test_name = '... so the reason is no name of a point';
+        $t->assert_text_not_contains($test_name, $svg_reason, '  ' . triple_names::CLIMATE_GAS_EMISSIONS);
 
         $test_name = 'the table of an empty value list renders nothing';
         $t->assert($test_name, new value_list_ui()->table_by_related_columns($msg_ui), '');
@@ -827,6 +1038,11 @@ class value_list_ui_tests
         $t->assert($test_name, substr_count($svg_points, 'class="pt"'), count($t_val->solution_prio_rows()));
         $test_name = '... with the solutions numbered in the legend';
         $t->assert_text_contains($test_name, $svg_points, '<tspan class="n">1</tspan>  ' . triple_names::REDUCE_EMISSIONS);
+        // the reason column stands before the solution column but no value of the ranking
+        // names a reason, so the empty column neither names the points nor the chart
+        $test_name = '... named by the solution column and not by the empty reason column before it';
+        $t->assert_text_contains($test_name, $svg_points, 'aria-label="' . word_names::SOLUTION);
+        $t->assert_text_not_contains($test_name, $svg_points, word_names::REASON);
         $test_name = '... and the axes named by the plotted columns';
         $t->assert_text_contains($test_name, $svg_points,
             word_names::GAIN . ' ' . msg_id::CHART_VERSUS->text() . ' ' . word_names::LOSS);

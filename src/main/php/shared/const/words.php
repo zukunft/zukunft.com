@@ -126,7 +126,7 @@ class words
     const string CHANGES = 'changes';
     const string CHECK = 'check';
     const string CHF = 'CHF';
-    const int CHF_ID = 459;
+    const int CHF_ID = 460;
     const string COLUMNS = 'columns';
     const string COMBINATION = 'combination';
     const string COMPONENT = 'component';
@@ -278,7 +278,7 @@ class words
     const string TOLERANCE = 'tolerance';
     const string TOP = 'top';
     const string TOTAL_PRE = 'total';
-    const int TOTAL_ID = 386;
+    const int TOTAL_ID = 387;
     const string TRIPLES = 'triples';
     const string TRUSTED = 'trusted';
     const string TYPE = 'type';
@@ -290,7 +290,7 @@ class words
     const string VALUE = 'value';
     const string VALUES = 'values';
     const string VERBS = 'verbs';
-    const int VERBS_ID = 830;
+    const int VERBS_ID = 831;
     const string VERSION = 'version';
     const string VIEW = 'view';
     const string VIEWS = 'views';

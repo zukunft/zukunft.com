@@ -408,13 +408,23 @@ more version. The simple version shows the columns of the mayor tier only, one
 unit per column — the unit that most numbers of the column have, so that one
 bigger number in another unit cannot hide the unit of every other row
 (`value_list::split_by_unit`) — and each cell the number without its probability range; the
-full version shows every tier, every unit and the range behind each number. The
-versions between them show every unit of a shown column that has a number in
-every row of its first unit, e.g. the potential loss of a problem in trillion
-EUR, in percent of the GDP and in percent of the happy time points, because only
-the smallest screen needs one number per column; a unit that only some rows
-have, e.g. the potential loss in htp of global warming alone, is left to the
-full version (`value_list::unit_column_complete`). The start page opens with the simple version. The last header cell of every table,
+full version shows every tier, every unit and the range behind each number. A
+further unit of a column states the same measure a second way, so it is a minor
+column at most (`value_list::column_tier`), and it is shown only if it has a
+number in every row of its first unit, e.g. the potential loss of a problem in
+trillion EUR, in percent of the GDP and in percent of the happy time points; a
+unit that only some rows have, e.g. the potential loss in htp of global warming
+alone, is left to the full version (`value_list::unit_column_complete`).
+
+A version that leaves out a tier shows exactly the columns of its tiers, never a
+column of a lower tier, and at most the configured number of columns
+(`select: columns: entries` in `config.yaml`, counting the row name column); if
+the definitions put more columns into the shown tiers, the last columns of the
+lowest tier are left to the full version. So which version shows a column is
+decided by its tier in the definitions: e.g. on the start page the main version
+shows the reason and its loss, the minor version adds the loss in percent, the
+initial effort and the loss reduction, and the reward ratio, a marginal column,
+is shown by the full version only. The start page opens with the simple version. The last header cell of every table,
 the full one included, is the "…" menu (`value_list::columns_menu`, built with
 `html_base::popup_menu`), which lets the reader pick the version directly
 instead of stepping through them — and from the full table it is the only way
@@ -439,6 +449,49 @@ A tier also says on which screen a column is shown: the css class of
 `value_list::column_style` hides a main column on a small screen
 (`styles::COL_MAIN`), a minor column below a wide screen (`COL_MINOR`) and a
 marginal column below the widest one (`COL_MARGINAL`).
+
+The reason of a problem is a phrase column like the solution: `column reason`
+puts the word `reason` into the main tier and `<reason> is a reason` links a
+reason to it, e.g. `climate gas emissions` for global warming. The loss that a
+reason causes is a value column of its own, the triple `potential loss of
+reason` in the main tier: its values carry the problem, the word `reason`, the
+reason and `potential loss`, so `value_list::column_parts` takes them before the
+`potential loss` column of the problem instead of merging both numbers into one
+cell. The reason is the next main column after the problem and the solution
+follows the reason, so both reason columns stand between the loss and the
+solution of the problem. The main tier holds only these two columns; every
+other defined column below the mayor tier of the start page is minor or marginal.
+
+A phrase cell names one phrase: if the values of a row name more than one
+phrase for the column, e.g. several reasons of global warming, the cell shows
+the phrase of the value with the biggest number (`value_list::shown_phrases`),
+followed by `, ...`. The `, ...` links to the table page (`views::TABLE_ID`) of the triple
+`<column phrase> of <row phrase>` if the definitions name one, e.g. `global
+warming reason` with `<reason> is a global warming reason` for each reason,
+else to the page of the row phrase (`value_list::phrase_cell`). The `, ...` is
+shown too if that triple links more phrases than the one shown, e.g. `global
+warming solution` with a second solution whose gain belongs to a reason and is
+therefore no number of the row. The value cells
+of the row show only the numbers of the phrase shown, e.g. the gain of the
+solution shown and not also the gain of another one, so that no number of a
+hidden phrase stands beside the phrase shown. A value that names the phrases
+of two phrase columns, e.g. the gain of the solution of a reason, is about the
+first phrase and not about the row, so the row leaves it to the table of that
+phrase, e.g. the reasons page, and it changes no column of the table
+(`value_list::without_values_of_two_phrase_columns`). A linked phrase that is a
+defined column itself, e.g. `potential gain` of the chart triple `potential
+gain and potential loss`, names a column and not a row phrase, so it does not count.
+
+The table of such a triple has rows named by the linked phrases, e.g. the
+reasons: its phrase has no value of its own, so the table component loads the
+values of the linked phrases like the start page (`ui_list::child_values`), and
+the phrase that names the rows, e.g. `reason`, heads the row column and is no
+phrase column of that table. A defined column built from it, e.g. `potential
+loss of reason`, is the column of its other part there, e.g. the mayor column
+`potential loss`, because the row already names the reason
+(`value_list::without_row_column`). The table page is a phrase page like the
+calculator (`views::PHRASE_MASKS_IDS`), so it is called with the phrase id,
+e.g. `-1631` for the triple `global warming reason`.
 
 A row of the simple table whose numbers are all in a column of the full version
 would be empty, e.g. the reward ratio row of a problem, so the ranking of the
@@ -486,6 +539,16 @@ assigned to a chart type tier with `<chart> can be <tier>`: the charts of
 `triples::SYSTEM_CHART_TYPE_DEFAULT` are shown beside each other when the
 reader asks to see the table as a chart, the charts of
 `SYSTEM_CHART_TYPE_ALTERNATIVE` can be selected instead (not wired yet).
+A table that shows the mayor columns only, e.g. the initial start page, shows
+the charts of `SYSTEM_CHART_TYPE_MAYOR` instead of the default ones, because a
+default chart may plot a column that this table does not show: the start page
+shows the leverage plot (`leverage plot` → `leverage_plot`) of the potential
+gain against the potential loss, one labelled point per problem with the
+quadrants of the big and small numbers and the dashed lines of an equal gain
+per loss, like `global-problems-top4_scatter.svg`; without a mayor chart the
+default charts are shown. These definitions are in `start_page_charts.json`,
+which `files::SYSTEM_DATA_APPENDED_FILES` imports as the last step of the db
+setup, so that no pinned database id moves.
 `phrase_list::chart_definitions` reads the default charts out of the cached
 definitions (`load_chart_definitions`, `CHART_LEVELS` relation levels from the
 tier keyword: the tiers and the chart assignments) and

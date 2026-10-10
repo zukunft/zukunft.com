@@ -74,6 +74,7 @@ include_once test_paths::CONST . 'word_names.php';
 include_once test_paths::CREATE . 'test_mappers.php';
 include_once test_paths::CREATE . 'test_mappers.php';
 include_once test_paths::CREATE . 'test_results.php';
+include_once test_paths::CREATE . 'test_triples.php';
 include_once test_paths::CREATE . 'test_words.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 include_once test_paths::UTILS . 'test_lib.php';
@@ -131,6 +132,7 @@ use Zukunft\ZukunftCom\test\php\create\test_phrases;
 use Zukunft\ZukunftCom\test\php\create\test_results;
 use Zukunft\ZukunftCom\test\php\create\test_users;
 use Zukunft\ZukunftCom\test\php\create\test_values;
+use Zukunft\ZukunftCom\test\php\create\test_triples;
 use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
@@ -729,10 +731,10 @@ class system_view_ui_tests
                 } else {
                     $msg->usr = null;
                 }
-                // the start page and the calculator show the values of the global problems, so
-                // both render with the start page cache that carries them
+                // the start page, the table and the calculator show the values of the global
+                // problems, so they render with the start page cache that carries them
                 $dto = $ui->dto;
-                if ($id == views::START_ID or $id == views::CALCULATOR_ID) {
+                if (in_array($id, [views::START_ID, views::TABLE_ID, views::CALCULATOR_ID])) {
                     $dto = $dto_start;
                 } elseif ($dbo instanceof value or $dbo instanceof result) {
                     $dto = $dto_smp;
@@ -768,6 +770,35 @@ class system_view_ui_tests
         $file_path = test_paths::VIEWS_BY_ID . $folder . $dbo_name . self::MORE_LIST_FILE_POSTFIX;
         $updated_files[] = test_paths::RESOURCE . $file_path . test_files::HTML;
         $t->assert_html_page($test_name, $t->link_to_pod($more_html, THIS_URL), $file_path);
+        $msg->reset();
+
+        // the ", ..." of the reason cell of the start page links to the table page of
+        // "global warming reason", which shows the reasons of global warming as rows with the
+        // loss of each reason and the gain of its solution; the url names the triple by its phrase
+        // id, so a triple mapped with that id would name another phrase and find none of the values
+        $test_name = 'the table page of the global warming reasons shows the table';
+        $dto_reasons = clone $dto_start;
+        $dto_reasons->phr_lst = clone $dto_start->phr_lst;
+        $dto_reasons->add_phrases($t_phr->list_global_warming_reasons_ui(), $msg);
+        // like for the calculator, the from of "global warming reason" is named from the cache, and
+        // the table heads its row column by it
+        $rsn_parts = new phrase_list($t->usr1);
+        $rsn_parts->add($t_wrd->word_reason()->phrase());
+        $dto_reasons->add_phrases(new phrase_list_ui($rsn_parts->api_json()), $msg);
+        $dto_reasons->val_lst = $t_val->value_list_solution_prio_reason_solution_ui();
+        // the url carries the fields of the phrase, because the page is rendered without a backend call
+        $t_trp = new test_triples($t);
+        $url = $t_map->phrase_page_url(views::TABLE_ID, $t_trp->global_warming_reason()->phrase(), $msg);
+        parse_str(parse_url($url)['query'], $reasons_url);
+        $reasons_html = $ui->url_to_html($reasons_url, $msg, $dto_reasons, true);
+        $t->assert_text_contains($test_name, $reasons_html, '<' . html_base::TABLE);
+        $test_name = 'the table page of the global warming reasons matches the snapshot';
+        $tbl_dbo = $this->view_id_to_dbo(views::TABLE_ID, $t->usr1);
+        [$folder, $dbo_name,] = $this->view_id_to_file_info(views::TABLE_ID, $tbl_dbo::class,
+            $this->view_id_to_url_action(views::TABLE_ID), $reasons_url, $lib);
+        $file_path = test_paths::VIEWS_BY_ID . $folder . $dbo_name;
+        $updated_files[] = test_paths::RESOURCE . $file_path . test_files::HTML;
+        $t->assert_html_page($test_name, $t->link_to_pod($reasons_html, THIS_URL), $file_path);
         $msg->reset();
 
         // negative: a field of the object is not a render mode, so a page without an object

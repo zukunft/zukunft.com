@@ -1,0 +1,388 @@
+{
+  "version": "0.0.3",
+  "data_version": "0.0.1",
+  "time": "2026-10-09 18:00:00",
+  "user": "timon",
+  "selection": [
+    "the main reason of each global problem"
+  ],
+  "description": "The most relevant reason of each global problem of the start page ranking with the potential loss that it causes, shown in the reason column of the ranking beside the climate gas emissions of global warming (solution_prio.json). The most relevant reason is the reason whose mechanism the annual potential loss of the problem measures, as the description of the annual GDP share in the problem file states, so this reason causes the whole loss of the row: its loss is the annual GDP share of the problem times the world GDP of 110.047 trillion EUR, the same calculation as the potential loss of the row. Each reason is the phrase of the reasons file of the problem, repeated here with the same definition. A value names the problem itself, because the start page takes it into the reason column of the problem row; it carries 'assumed', because the annual GDP share it is calculated from is assumed. This file is imported last, so that the database ids of every other phrase stay unchanged.",
+  "words": [
+    {
+      "name": "reason"
+    },
+    {
+      "name": "loss"
+    },
+    {
+      "name": "potential"
+    },
+    {
+      "name": "GDP"
+    },
+    {
+      "name": "income"
+    },
+    {
+      "name": "cost"
+    },
+    {
+      "name": "trillion"
+    },
+    {
+      "name": "EUR"
+    },
+    {
+      "name": "assumed"
+    },
+    {
+      "name": "populism"
+    },
+    {
+      "name": "poverty"
+    },
+    {
+      "name": "health"
+    },
+    {
+      "name": "education"
+    },
+    {
+      "name": "disinformation"
+    },
+    {
+      "name": "wealth"
+    },
+    {
+      "name": "concentration"
+    },
+    {
+      "name": "market"
+    },
+    {
+      "name": "power"
+    },
+    {
+      "name": "information"
+    },
+    {
+      "name": "biased"
+    },
+    {
+      "name": "intelligence"
+    },
+    {
+      "name": "artificial"
+    },
+    {
+      "name": "black-box"
+    },
+    {
+      "name": "citizen"
+    },
+    {
+      "name": "participation"
+    },
+    {
+      "name": "mismeasurement"
+    },
+    {
+      "name": "software"
+    },
+    {
+      "name": "proprietary"
+    },
+    {
+      "name": "change"
+    },
+    {
+      "name": "inhabitant"
+    },
+    {
+      "name": "growth"
+    },
+    {
+      "name": "deadweight"
+    },
+    {
+      "name": "overrun",
+      "description": "the amount by which the actual value exceeds the planned or estimated value"
+    },
+    {
+      "name": "mistake"
+    },
+    {
+      "name": "misallocation",
+      "description": "the spending of public money on other things than the ones the citizens need and prefer"
+    },
+    {
+      "name": "budget"
+    },
+    {
+      "name": "revision",
+      "description": "the change of a published statistical number by the statistical office, e.g. after new data sources, a new base year or new methods"
+    },
+    {
+      "name": "licence"
+    },
+    {
+      "name": "hunger",
+      "description": "the chronic undernourishment: a habitual food intake that is too low to provide the dietary energy for a normal, active and healthy life"
+    },
+    {
+      "name": "election"
+    },
+    {
+      "name": "interference"
+    }
+  ],
+  "triples": [
+    {
+      "name": "potential loss",
+      "from": "loss",
+      "verb": "kind of",
+      "to": "potential"
+    },
+    {
+      "name": "wealth concentration",
+      "from": "concentration",
+      "verb": "of",
+      "to": "wealth"
+    },
+    {
+      "name": "market power",
+      "from": "power",
+      "verb": "of",
+      "to": "market"
+    },
+    {
+      "name": "biased information",
+      "from": "information",
+      "verb": "can be",
+      "to": "biased"
+    },
+    {
+      "name": "artificial intelligence",
+      "from": "intelligence",
+      "verb": "can be",
+      "to": "artificial"
+    },
+    {
+      "name": "black-box AI",
+      "from": "artificial intelligence",
+      "verb": "can be",
+      "to": "black-box"
+    },
+    {
+      "name": "citizen participation",
+      "from": "participation",
+      "verb": "of",
+      "to": "citizen"
+    },
+    {
+      "name": "GDP mismeasurement",
+      "from": "mismeasurement",
+      "verb": "of",
+      "to": "GDP"
+    },
+    {
+      "name": "proprietary software",
+      "from": "software",
+      "verb": "can be",
+      "to": "proprietary"
+    },
+    {
+      "name": "GDP per capita",
+      "from": "GDP",
+      "verb": "per",
+      "to": "inhabitant"
+    },
+    {
+      "name": "GDP per capita change",
+      "from": "change",
+      "verb": "of",
+      "to": "GDP per capita"
+    },
+    {
+      "name": "GDP loss",
+      "from": "loss",
+      "verb": "of",
+      "to": "GDP"
+    },
+    {
+      "name": "income loss",
+      "from": "loss",
+      "verb": "of",
+      "to": "income"
+    },
+    {
+      "name": "growth loss",
+      "description": "the growth of the GDP per capita that is lost compared to a counterfactual without the cause",
+      "from": "loss",
+      "verb": "of",
+      "to": "growth"
+    },
+    {
+      "name": "election interference",
+      "description": "the attempt of a foreign or domestic actor to influence the voters of an election with false or misleading content",
+      "from": "interference",
+      "verb": "in",
+      "to": "election"
+    },
+    {
+      "name": "deadweight loss",
+      "from": "loss",
+      "verb": "kind of",
+      "to": "deadweight"
+    },
+    {
+      "name": "cost overrun",
+      "description": "the actual cost above the estimated cost as share of the estimated cost",
+      "from": "overrun",
+      "verb": "of",
+      "to": "cost"
+    },
+    {
+      "name": "budget misallocation",
+      "description": "a public budget that is spent on other purposes than the citizens would choose, e.g. less on health and sanitation",
+      "from": "misallocation",
+      "verb": "of",
+      "to": "budget"
+    },
+    {
+      "name": "GDP revision",
+      "description": "the change of the measured GDP level when the statistical office rebases the national accounts; an increase is positive",
+      "from": "revision",
+      "verb": "of",
+      "to": "GDP"
+    },
+    {
+      "name": "licence cost",
+      "from": "cost",
+      "verb": "of",
+      "to": "licence"
+    },
+    {
+      "from": "GDP per capita change",
+      "verb": "is a",
+      "to": "reason"
+    },
+    {
+      "from": "hunger",
+      "verb": "is a",
+      "to": "reason"
+    },
+    {
+      "from": "GDP loss",
+      "verb": "is a",
+      "to": "reason"
+    },
+    {
+      "from": "income loss",
+      "verb": "is a",
+      "to": "reason"
+    },
+    {
+      "from": "growth loss",
+      "verb": "is a",
+      "to": "reason"
+    },
+    {
+      "from": "election interference",
+      "verb": "is a",
+      "to": "reason"
+    },
+    {
+      "from": "deadweight loss",
+      "verb": "is a",
+      "to": "reason"
+    },
+    {
+      "from": "cost overrun",
+      "verb": "is a",
+      "to": "reason"
+    },
+    {
+      "from": "mistake",
+      "verb": "is a",
+      "to": "reason"
+    },
+    {
+      "from": "budget misallocation",
+      "verb": "is a",
+      "to": "reason"
+    },
+    {
+      "from": "GDP revision",
+      "verb": "is a",
+      "to": "reason"
+    },
+    {
+      "from": "licence cost",
+      "verb": "is a",
+      "to": "reason"
+    }
+  ],
+  "values": [
+    {
+      "words": ["populism", "reason", "GDP per capita change", "potential loss", "trillion", "EUR", "assumed"],
+      "number": "4",
+      "description": "the potential loss of populism is the measured decline of the GDP per capita under populist leaders (problem_populism.json), so this reason causes the whole loss: 3.6348 percent of the world GDP of 110.047 trillion EUR"
+    },
+    {
+      "words": ["poverty", "reason", "hunger", "potential loss", "trillion", "EUR", "assumed"],
+      "number": "2",
+      "description": "the potential loss of poverty is the gap to the level at which the basic needs are met, food first (problem_poverty.json), so this reason causes the whole loss: 1.8174 percent of the world GDP of 110.047 trillion EUR"
+    },
+    {
+      "words": ["health", "reason", "GDP loss", "potential loss", "trillion", "EUR", "assumed"],
+      "number": "5.5",
+      "description": "the potential loss of ill health is the lost labour input and the avoidable treatment cost, the output that the economy loses (problem_health.json), so this reason causes the whole loss: 4.998 percent of the world GDP of 110.047 trillion EUR"
+    },
+    {
+      "words": ["education", "reason", "income loss", "potential loss", "trillion", "EUR", "assumed"],
+      "number": "0.55",
+      "description": "the potential loss of the lack of education is the lifetime earnings lost by the learning poor (problem_education.json), so this reason causes the whole loss: 0.4998 percent of the world GDP of 110.047 trillion EUR"
+    },
+    {
+      "words": ["wealth concentration", "reason", "growth loss", "potential loss", "trillion", "EUR", "assumed"],
+      "number": "1.4",
+      "description": "the potential loss of the wealth concentration is the capital misallocation and the lost demand, the growth that is lost (problem_wealth_concentration.json), so this reason causes the whole loss: 1.2722 percent of the world GDP of 110.047 trillion EUR"
+    },
+    {
+      "words": ["disinformation", "reason", "election interference", "potential loss", "trillion", "EUR", "assumed"],
+      "number": "0.35",
+      "description": "the potential loss of disinformation is its effect on the quality of the political decisions (problem_disinformation.json), so this reason causes the whole loss: 0.318 percent of the world GDP of 110.047 trillion EUR"
+    },
+    {
+      "words": ["market power", "reason", "deadweight loss", "potential loss", "trillion", "EUR", "assumed"],
+      "number": "1.6",
+      "description": "the potential loss of the market power is the deadweight loss from the markups (problem_market_power.json), so this reason causes the whole loss: 1.4539 percent of the world GDP of 110.047 trillion EUR"
+    },
+    {
+      "words": ["biased information", "reason", "cost overrun", "potential loss", "trillion", "EUR", "assumed"],
+      "number": "0.45",
+      "description": "the potential loss of the biased information is the value destroyed by public decisions taken on incomplete information, e.g. projects approved on underestimated costs (problem_biased_information.json), so this reason causes the whole loss: 0.4089 percent of the world GDP of 110.047 trillion EUR"
+    },
+    {
+      "words": ["black-box AI", "reason", "mistake", "potential loss", "trillion", "EUR", "assumed"],
+      "number": "0.22",
+      "description": "the potential loss of the black-box AI is the cost of the wrong decisions taken on an AI output that cannot be checked (problem_black_box_ai.json), so this reason causes the whole loss: 0.1999 percent of the world GDP of 110.047 trillion EUR"
+    },
+    {
+      "words": ["citizen participation", "reason", "budget misallocation", "potential loss", "trillion", "EUR", "assumed"],
+      "number": "0.18",
+      "description": "the potential loss of the missing citizen participation is the public money spent against the preferences of the citizens (problem_citizen_participation.json), so this reason causes the whole loss: 0.16357 percent of the world GDP of 110.047 trillion EUR"
+    },
+    {
+      "words": ["GDP mismeasurement", "reason", "GDP revision", "potential loss", "trillion", "EUR", "assumed"],
+      "number": "0.25",
+      "description": "the potential loss of the GDP mismeasurement is the steering error of the understated GDP that a revision of the national accounts corrects (problem_gdp_mismeasurement.json), so this reason causes the whole loss: 0.22718 percent of the world GDP of 110.047 trillion EUR"
+    },
+    {
+      "words": ["proprietary software", "reason", "licence cost", "potential loss", "trillion", "EUR", "assumed"],
+      "number": "0.1",
+      "description": "the potential loss of the proprietary software is the licence spending extended to the lock-in cost (problem_proprietary_software.json), so this reason causes the whole loss: 0.09087 percent of the world GDP of 110.047 trillion EUR"
+    }
+  ]
+}

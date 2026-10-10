@@ -1259,6 +1259,8 @@ class sql_db
             $import->import_pod_config($usr);
             // the use cases come last, because they build on the phrases of the start page
             $import->import_use_case_data($usr);
+            // followed only by the system data added after the test ids have been pinned
+            $import->import_system_data_appended($usr);
 
             // add the admin users if defined in the env file
             $this->add_admin_users_from_env($sys_msg, $usr);

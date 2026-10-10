@@ -1124,10 +1124,10 @@ class test_mappers
                 $url_array = array_merge($url_array, $obj_array);
                 break;
             case phrase::class:
-                // the calculator shows the values of a phrase as a table, so its sample is the
-                // triple "global warming", which has the values of the start page fixture,
-                // instead of the filled test phrase that has none
-                if ($msk_id == views::CALCULATOR_ID) {
+                // the table and the calculator show the values of a phrase as a table, so their
+                // sample is the triple "global warming", which has the values of the start page
+                // fixture, instead of the filled test phrase that has none
+                if (in_array($msk_id, [views::TABLE_ID, views::CALCULATOR_ID])) {
                     $obj = $t_trp->global_warming()->phrase();
                 } else {
                     $obj = $t_phr->phrase_filled();
@@ -1217,6 +1217,23 @@ class test_mappers
         $url_array[] = [url_var::ID, $obj->id()];
         $url_array[] = [url_var::ACTION, url_var::CRUD_READ, true];
         return $this->array_to_url_type($url_array, $type, $msg_ui);
+    }
+
+    /**
+     * the show url of a phrase page with the fields of the phrase like class_to_url_show, because
+     * a snapshot test renders the page from the url without a backend call
+     * @param int $msk_id the id of the phrase view e.g. the table of "global warming reason"
+     * @param phrase $phr the phrase that the page shows
+     * @param user_message_ui $msg_ui to enhance with messages to the user
+     * @return string the complete url for the test server
+     */
+    function phrase_page_url(int $msk_id, phrase $phr, user_message_ui $msg_ui): string
+    {
+        $url_array[] = [url_var::MASK, $msk_id];
+        $url_array = array_merge($url_array, $this->phrase_url($phr, url_var::MASK_HUMAN));
+        $url_array[] = [url_var::ID, $phr->id()];
+        $url_array[] = [url_var::ACTION, url_var::CRUD_READ, true];
+        return $this->test_url($this->array_to_url_type($url_array, url_var::MASK_HUMAN, $msg_ui));
     }
 
     /**

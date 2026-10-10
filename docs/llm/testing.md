@@ -602,6 +602,29 @@ Two follow-ons:
   acceptable. Reach for it last. (Still feed it named consts:
   `strpos($html, icons::EDIT)`, not `'fas fa-edit'`.)
 
+### Every error message explains itself
+
+A failing test is read by someone who did not write it, often from a pasted
+line without the code. So the failure output must say what went wrong: compare
+the values the check is about, not a boolean built from them. When no specific
+`assert_*` variant fits, build the actual and the expected side as short texts
+and compare those, e.g. the loaded id and name, the sorted names a page shows,
+or a result with the `$msg->text()` of the call appended when the message is not
+ok. The comment above the assert names the most likely cause of a failure.
+
+- **Wrong**: `$t->assert_true($test_name, $loaded_id > 0 and $wrd->name() == words::CHF);`
+  fails with "actual: false, expected: true", which does not tell whether the
+  load failed or selected another word.
+- **Right**: `$t->assert($test_name, $loaded_id . ' ' . $wrd->name(), words::CHF_ID . ' ' . words::CHF);`
+  fails with e.g. "actual: 460 S$, expected: 460 CHF", which shows at once that
+  the pinned id selects another word and needs a re-baseline.
+- **Right**: the start page selection test compares the sorted problem names
+  that a page shows with all problems and appends the message of the rendering,
+  so a failure tells whether rows are missing or the table was not drawn.
+
+The same holds for a user message: it names the object, the problem and the
+solution (`docs/llm/state-and-messages.md`).
+
 ### Read a `user_message` result with `$msg->text()`, not `all_message_text()`
 
 A `user_message` is append-only and threaded across a whole request, so by the
@@ -1040,6 +1063,22 @@ the php session of the streamed test run nor send a mail, and it passes
 runs the action of the view (opening the activation link must not confirm the
 email yet). A typed password never reaches a snapshot, because `assert_url`
 masks the `url_var::SECRET_VARS`.
+
+## The start page is snapshotted for every selection of its sub menus
+
+`unit_ui/start_page_ui_tests.php` renders the ranking of the start page from the
+unit fixtures (`test_values::value_list_start_page`) for every combination that
+the sub menus offer: the rows of the "… more" tail (`dls`), the column tiers with
+and without the ranges of the "…" header (`dlc`, `dlr`) and the form of the
+ranking (`dla`: table, chart or both). Each page is compared with
+`src/test/resources/web/html/start_page/start_page<_var_value…>.html`, named by
+the url vars of the selection, so the file of a page is found from its url
+(`start_page_dls_20_dlc_0_dlr_1_dla_chart.html`); the default of a sub menu has
+no var. The test needs no database, so it is the fast check of a ranking change;
+the `views_by_id/start_page/` snapshots keep the few full pages with the frame,
+and the details page there is the only one fetched from the pod. A snapshot of a
+selection that the menus no longer offer is reported as orphaned like the
+`views_by_id` ones.
 
 ## Every machine-checkable coding rule has a coded test
 

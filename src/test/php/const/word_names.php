@@ -194,12 +194,18 @@ class word_names
     const string TRILLION = 'trillion';
     const int TRILLION_ID = 275;
     const string USD = 'USD';
-    const int USD_ID = 445;
+    const int USD_ID = 446;
     // the chart types of solution_prio.json and the tiers they are assigned to (see triples::SYSTEM_CHART_TYPE)
     const string CHART_TYPE = 'chart type';
     const int CHART_TYPE_ID = 365;
     const string DEFAULT = 'default';
     const int DEFAULT_ID = 366;
+    const string MAYOR = 'mayor';
+    const int MAYOR_ID = 262;
+    // the chart type of start_page_charts.json, which the db setup imports last, so the id
+    // follows the highest word id of the seed data; check it in the word list.csv
+    const string LEVERAGE_PLOT = 'leverage plot';
+    const int LEVERAGE_PLOT_ID = 1918;
     const string ALTERNATIVE = 'alternative';
     const int ALTERNATIVE_ID = 367;
     const string RANGE_BARS = 'range bars';
@@ -211,16 +217,19 @@ class word_names
     const int SORT_ORDER_ID = 370;
     const string NUMERIC_DESCENDING = 'numeric descending';
     const int NUMERIC_DESCENDING_ID = 371;
+    // the reason column of the start page ranking (see triple_names::COLUMN_REASON)
+    const string REASON = 'reason';
+    const int REASON_ID = 372;
 
     // words from import file company.json used for the start page in order of appearance
     const string SALES = 'sales';
-    const int SALES_ID = 602;
+    const int SALES_ID = 603;
     const string CASH = 'cash';
-    const int CASH_ID = 603;
+    const int CASH_ID = 604;
     const string STATEMENT = 'statement';
-    const int STATEMENT_ID = 604;
+    const int STATEMENT_ID = 605;
     const string PARTS = 'parts';
-    const int PARTS_ID = 606;
+    const int PARTS_ID = 607;
     const string INCOME = 'income';
     const int INCOME_ID = 305;
     const string TAX = 'tax';
@@ -242,26 +251,26 @@ class word_names
     // TODO add test to search for words in all language forms e.g. plural
     const string INHABITANTS = 'inhabitants';
     const string YEAR_2013 = '2013';
-    const int YEAR_2013_ID = 378;
+    const int YEAR_2013_ID = 379;
     const string YEAR_2014 = '2014';
-    const int YEAR_2014_ID = 379;
+    const int YEAR_2014_ID = 380;
     const string YEAR_2015 = '2015';
-    const int YEAR_2015_ID = 380;
+    const int YEAR_2015_ID = 381;
     const string YEAR_2016 = '2016';
-    const int YEAR_2016_ID = 381;
+    const int YEAR_2016_ID = 382;
     const string YEAR_2017 = '2017';
-    const int YEAR_2017_ID = 382;
+    const int YEAR_2017_ID = 383;
     const string YEAR_2018 = '2018';
-    const int YEAR_2018_ID = 383;
+    const int YEAR_2018_ID = 384;
 
     // words from import test file companies.json used for the start page in order of appearance
     const string COMPANY = 'company';
     const string COMPANY_COM = 'legal entity made up of an association of people for the purpose of carrying on a commercial or industrial enterprise';
     const int COMPANY_ID = 193;
     const string ABB = 'ABB';
-    const int ABB_ID = 600;
+    const int ABB_ID = 601;
     const string VESTAS = 'Vestas';
-    const int VESTAS_ID = 601;
+    const int VESTAS_ID = 602;
 
     const string TEXT = 'text';
     const string HTML = 'html';
@@ -295,25 +304,25 @@ class word_names
     const int HOUR_ID = 101;
     const string YEAR_2020_COM = 'the year 2020';
     const string YEAR_2021 = '2021';
-    const int YEAR_2021_ID = 668;
+    const int YEAR_2021_ID = 669;
     const string YEAR_2022 = '2022';
-    const int YEAR_2022_ID = 443;
+    const int YEAR_2022_ID = 444;
     const string YEAR_2023 = '2023';
-    const int YEAR_2023_ID = 667;
+    const int YEAR_2023_ID = 668;
     const string YEAR_2024 = '2024';
     const int YEAR_2024_ID = 283;
     const string YEAR_2025 = '2025';
-    const int YEAR_2025_ID = 666;
+    const int YEAR_2025_ID = 667;
     const string YEAR_2026 = '2026';
-    const int YEAR_2026_ID = 665;
+    const int YEAR_2026_ID = 666;
     const string YEAR_2027 = '2027';
-    const int YEAR_2027_ID = 664;
+    const int YEAR_2027_ID = 665;
     const string YEAR_2028 = '2028';
-    const int YEAR_2028_ID = 663;
+    const int YEAR_2028_ID = 664;
     const string YEAR_2029 = '2029';
-    const int YEAR_2029_ID = 662;
+    const int YEAR_2029_ID = 663;
     const string YEAR_2030 = '2030';
-    const int YEAR_2030_ID = 661;
+    const int YEAR_2030_ID = 662;
     const string LIGHT = 'light';
     const int LIGHT_ID = 84;
     const string SPEED = 'speed';
@@ -352,13 +361,13 @@ class word_names
     const string GDP = 'GDP';
     const int GDP_ID = 281;
     const string EURO = 'Euro';
-    const int EURO_ID = 433;
+    const int EURO_ID = 434;
     const string EURO_COM = 'The euro (symbol: €; currency code: EUR) is the official currency of 21 of the 27 member states of the European Union. This group of states is officially known as the euro area, more commonly named the eurozone. The euro is divided into 100 euro cents.';
     const string DOLLAR = '$';
-    const int DOLLAR_ID = 447;
+    const int DOLLAR_ID = 448;
     const string EURO_SIGN = '€';
-    const int EURO_SIGN_ID = 449;
-    const int CURRENCY_ID = 396;
+    const int EURO_SIGN_ID = 450;
+    const int CURRENCY_ID = 397;
     const string US = 'US';
 
 
