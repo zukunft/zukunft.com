@@ -1431,6 +1431,8 @@ class ui_list extends ui_base
      * @param int $col_tiers the number of column tiers left out by default (see value_list)
      * @param bool $with_range true to show the probability ranges by default (see value_list)
      * @param bool $value_rows_only true to leave out the rows without a number (see value_list)
+     * @param phrase_list|null $add_lst phrases that only the cells need, e.g. the list children
+     *                                  that ", ..." counts; null if the cached phrases are enough
      * @return string the html code of the value table or '' if the phrase has no values
      */
     function table_with_related_columns(
@@ -1443,7 +1445,8 @@ class ui_list extends ui_base
         bool                                  $col_values_only = false,
         int                                   $col_tiers = value_list::COLUMN_TIERS_ALL,
         bool                                  $with_range = true,
-        bool                                  $value_rows_only = false
+        bool                                  $value_rows_only = false,
+        ?phrase_list                          $add_lst = null
     ): string
     {
         $result = '';
@@ -1485,10 +1488,17 @@ class ui_list extends ui_base
                 // as the default charts of the table or as both
                 $form = table_forms::by_url($url_array);
                 if ($form->with_table()) {
+                    // the phrases for the cells only go into a copy taken after the definitions
+                    // are loaded, so that the cache feeds no later page with them
+                    $rel_lst = $dto?->phr_lst;
+                    if ($add_lst != null and $rel_lst != null) {
+                        $rel_lst = clone $rel_lst;
+                        $rel_lst->merge($add_lst, $msg);
+                    }
                     // the url of the page is handed over, so that the "... more" tail can call the
                     // same page with the next list size
                     $result = $tbl_lst->table_by_related_columns(
-                        $msg, $phr_lst, $col_order, $with_header, $with_border, $dto?->phr_lst,
+                        $msg, $phr_lst, $col_order, $with_header, $with_border, $rel_lst,
                         null, $url_array, $col_values_only, $col_tiers, $with_range,
                         $value_rows_only);
                 } else {
@@ -2186,6 +2196,7 @@ class ui_list extends ui_base
     {
         $phr = $this->start_page_phrase($dto, $msg);
         $this->add_start_page_cache($dto, $phr, $msg);
+        $child_lst = $this->start_page_children($dto, $msg);
         // the page already says what the table is about, so it is shown without the border; the
         // ranking is a grid of the defined columns, so a measured figure of a problem that fits
         // no column stays on the page of the problem instead of adding a row here; by default
@@ -2194,7 +2205,7 @@ class ui_list extends ui_base
         // all in a column left out is no part of the ranking either, e.g. the reward ratio row
         // of a problem, so the ranking shows the rows with a number only
         return $this->table_with_related_columns($phr->obj(), $msg, $dto, true, false, $url_array,
-            true, value_list::COLUMN_TIERS_EX_MAIN, false, true);
+            true, value_list::COLUMN_TIERS_EX_MAIN, false, true, $child_lst);
     }
 
     /**
@@ -2302,15 +2313,27 @@ class ui_list extends ui_base
             if ($lnk_lst->load_related_by_ids($num_phr_lst, foaf_direction::UP, $msg)) {
                 $dto->add_phrases($lnk_lst, $msg);
             }
-            // a list triple e.g. "populism reason" names more phrases than the numbers of its row
-            // carry, and the ", ..." behind a cell counts all of them, so its children are loaded too
-            $col_lst_lst = $dto->phr_lst->column_list_phrases($dto->phr_lst->column_names());
-            $chl_lst = new phrase_list();
-            if (!$col_lst_lst->is_empty()
-                and $chl_lst->load_related_by_ids($col_lst_lst, foaf_direction::DOWN, $msg)) {
-                $dto->add_phrases($chl_lst, $msg);
-            }
         }
+    }
+
+    /**
+     * the children of the list triples of the start view, e.g. every reason that "populism
+     * reason" links, which names more phrases than the numbers of its row carry, so that the
+     * ", ..." behind a cell counts all of them; they are kept out of the request cache, because
+     * the cache also fills e.g. the phrase selectors of later pages
+     *
+     * @param data_object $dto the request cache with the links of the numbers of the table
+     * @param user_message $msg to report a problem of an api message to the user
+     * @return phrase_list the children of the list triples, empty offline
+     */
+    private function start_page_children(data_object $dto, user_message $msg): phrase_list
+    {
+        $result = new phrase_list();
+        $lst_phr_lst = $dto->phr_lst->column_list_phrases($dto->phr_lst->column_names());
+        if ($dto->online and !$lst_phr_lst->is_empty()) {
+            $result->load_related_by_ids($lst_phr_lst, foaf_direction::DOWN, $msg);
+        }
+        return $result;
     }
 
     /**

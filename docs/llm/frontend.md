@@ -473,7 +473,9 @@ shown too if that triple links more phrases than the one shown, e.g. `global
 warming solution` with a second solution whose gain belongs to a reason and is
 therefore no number of the row; to count every linked phrase, the start page
 loads the children of all these list triples with one api call
-(`phrase_list::column_list_phrases`, `ui_list::add_start_page_cache`). Every start page problem except proprietary
+(`ui_list::start_page_children`) and adds them only to a copy of the request
+cache taken after the column and sort definitions are loaded, because the cache
+also fills the phrase selectors of later pages. Every start page problem except proprietary
 software has such a `<problem> reason` and `<problem> solution` triple
 (`problem_main_reasons.json`), each of which is a `global problem reason` or a
 `global problem solution`; proprietary software is the sample row with one
