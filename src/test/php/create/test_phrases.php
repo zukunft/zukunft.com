@@ -1339,6 +1339,20 @@ class test_phrases
     }
 
     /**
+     * @return phrase_list_ui the global problems with "global warming reason" linked only to the
+     *         reason that the row of global warming shows already, like proprietary software in
+     *         problem_main_reasons.json, which has one reason and no list of its reasons
+     */
+    function list_global_warming_one_reason_ui(): phrase_list_ui
+    {
+        $t_trp = new test_triples($this->env);
+        $lst = $this->list_global_problems();
+        $lst->add($t_trp->global_warming_reason()->phrase());
+        $lst->add($t_trp->climate_gas_emissions_global_warming_reason()->phrase());
+        return $this->ui_list($lst);
+    }
+
+    /**
      * @return phrase_list_ui the global problems with two solutions of global warming linked to
      *         "global warming solution" like problem_global_warming_reasons.json, although only one
      *         of them has a value in the row of global warming

@@ -471,7 +471,11 @@ warming reason` with `<reason> is a global warming reason` for each reason,
 else to the page of the row phrase (`value_list::phrase_cell`). The `, ...` is
 shown too if that triple links more phrases than the one shown, e.g. `global
 warming solution` with a second solution whose gain belongs to a reason and is
-therefore no number of the row. The value cells
+therefore no number of the row. Every start page problem except proprietary
+software has such a `<problem> reason` and `<problem> solution` triple
+(`problem_main_reasons.json`), each of which is a `global problem reason` or a
+`global problem solution`; proprietary software is the sample row with one
+reason and one solution and without any `, ...`. The value cells
 of the row show only the numbers of the phrase shown, e.g. the gain of the
 solution shown and not also the gain of another one, so that no number of a
 hidden phrase stands beside the phrase shown. A cell keeps only its most

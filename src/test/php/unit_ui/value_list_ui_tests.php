@@ -638,6 +638,22 @@ class value_list_ui_tests
             $msg_ui, $rank_ctx, $gw_one_sol->column_names(), false, true, $gw_one_sol,
             value_list_ui::LIMIT_ALL, $start_url);
         $t->assert_text_not_contains($test_name, $tbl_one_sol, $more_tip);
+        // like the problems of problem_main_reasons.json, a row with the loss of its main reason
+        // only shows ", ..." if the triple "<problem> reason" links more reasons, which the table
+        // page lists once they have a loss
+        $test_name = 'a problem with one reason value but more linked reasons shows ", ..." behind its reason';
+        $tbl_one_rsn = $t_val->value_list_solution_prio_reason_ui()->table_by_related_columns(
+            $msg_ui, $rank_ctx, $gw_reasons->column_names(), false, true, $gw_reasons,
+            value_list_ui::LIMIT_ALL, $start_url);
+        $t->assert_text_contains($test_name, $tbl_one_rsn, '>' . triple_names::CLIMATE_GAS_EMISSIONS . '</a>, <a ');
+        // negative: if the triple links only the reason shown, e.g. like proprietary software
+        // without a list of its reasons, the reason cell has no ", ..."
+        $test_name = 'a list triple with only the reason shown adds no ", ..."';
+        $gw_one_rsn = $t_phr->list_global_warming_one_reason_ui();
+        $tbl_one_lst = $t_val->value_list_solution_prio_reason_ui()->table_by_related_columns(
+            $msg_ui, $rank_ctx, $gw_one_rsn->column_names(), false, true, $gw_one_rsn,
+            value_list_ui::LIMIT_ALL, $start_url);
+        $t->assert_text_not_contains($test_name, $tbl_one_lst, $more_tip);
         // a value that names a reason and a solution is the gain of the solution of the reason,
         // which the reasons page shows, so the row keeps the solution of the problem although
         // the gain of the solution of the reason is bigger
