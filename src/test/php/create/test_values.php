@@ -973,6 +973,45 @@ class test_values extends test_objects
     }
 
     /**
+     * the ranking values with two reasons of global warming plus the gain of a solution of each
+     * reason, so that the reduction of the emissions has a gain for the whole problem and a
+     * smaller one for the climate gas emissions, which the solutions page must not show side by side
+     *
+     * @return value_list the ranking values plus the losses of two reasons and the gain of the solution of each
+     */
+    function value_list_global_warming_solutions(): value_list
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $lst = $this->value_list_solution_prio_reasons();
+        $reason_solutions = [
+            [$t_trp->climate_gas_emissions(), $t_trp->reduce_emissions(), 30],
+            [$t_trp->heat_mortality(), $t_trp->climate_adaptation(), 13.31]
+        ];
+        foreach ($reason_solutions as [$reason, $solution, $gain]) {
+            $lst->add($this->value_for_phrases([
+                $t_trp->global_warming()->phrase(),
+                $t_wrd->word_reason()->phrase(),
+                $reason->phrase(),
+                $solution->phrase(),
+                $t_trp->potential_gain()->phrase(),
+                $t_wrd->word_billion()->phrase(),
+                $t_wrd->word_htp()->phrase()
+            ], $gain));
+        }
+        return $lst;
+    }
+
+    /**
+     * @return value_list_ui the frontend values of the solutions of global warming for unit testing
+     */
+    function value_list_global_warming_solutions_ui(): value_list_ui
+    {
+        $tl = new test_lib();
+        return $tl->list_to_ui($this->value_list_global_warming_solutions(), [api_types::INCL_PHRASES]);
+    }
+
+    /**
      * @return value_list_ui the frontend ranking values plus the losses of two reasons for unit testing
      */
     function value_list_solution_prio_reasons_ui(): value_list_ui

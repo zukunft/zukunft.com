@@ -1345,11 +1345,31 @@ class test_phrases
      */
     function list_global_warming_solutions_ui(): phrase_list_ui
     {
+        return $this->ui_list($this->list_global_warming_solutions());
+    }
+
+    /**
+     * @return phrase_list_ui the two solutions of global warming with the heat mortality as a second
+     *         reason, so that the solutions page can name the reason of each solution
+     */
+    function list_global_warming_solutions_with_reasons_ui(): phrase_list_ui
+    {
+        $t_trp = new test_triples($this->env);
+        $lst = $this->list_global_warming_solutions();
+        $lst->add($t_trp->heat_mortality_reason()->phrase());
+        return $this->ui_list($lst);
+    }
+
+    /**
+     * @return phrase_list the global problems with two solutions linked to "global warming solution"
+     */
+    private function list_global_warming_solutions(): phrase_list
+    {
         $t_trp = new test_triples($this->env);
         $lst = $this->list_global_warming_one_solution();
         $lst->add($t_trp->climate_adaptation_solution()->phrase());
         $lst->add($t_trp->climate_adaptation_global_warming_solution()->phrase());
-        return $this->ui_list($lst);
+        return $lst;
     }
 
     /**
@@ -1416,14 +1436,36 @@ class test_phrases
      */
     function list_global_problems_sorted_ui(): phrase_list_ui
     {
+        $lst = $this->list_global_problems();
+        $this->add_sort_definitions($lst);
+        return $this->ui_list($lst);
+    }
+
+    /**
+     * @return phrase_list_ui the default sort order of solution_prio.json alone, e.g. for the cache
+     *         of a page whose other phrases come from another fixture
+     */
+    function list_sort_definitions_ui(): phrase_list_ui
+    {
+        $lst = new phrase_list($this->env->usr1);
+        $this->add_sort_definitions($lst);
+        return $this->ui_list($lst);
+    }
+
+    /**
+     * add the default sort order of solution_prio.json like phrase_list::load_sort_definitions loads it
+     *
+     * @param phrase_list $lst the list that gets the condition word, the tier, the order and its assignment
+     * @return void
+     */
+    private function add_sort_definitions(phrase_list $lst): void
+    {
         $t_wrd = new test_words($this->env);
         $t_trp = new test_triples($this->env);
-        $lst = $this->list_global_problems();
         $lst->add($t_wrd->word_numeric_descending()->phrase());
         $lst->add($t_trp->sort_order_default()->phrase());
         $lst->add($t_trp->numeric_desc_of_loss()->phrase());
         $lst->add($t_trp->sort_numeric_desc_of_loss()->phrase());
-        return $this->ui_list($lst);
     }
 
     /**

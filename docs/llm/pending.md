@@ -1,5 +1,9 @@
 # pending - list of planned llm prompts with prio 1
 
+## start page
+
+similar to 'global warming reason' and 'global warming solution' create triples for the other rows of the 'global problems' page but leave out 'proprietary software' to have a sample case for only one reason and solution and the case thet the '...' are not shown. Additional create a unit test the leave out the '...' if not yet done. Create triples to assign the reasons and solutions to the 'global problems'.  
+
 ## system settings
 
 also if the user is only an ip user that is not logged in and the user clicks on the 'settings' link 

@@ -814,11 +814,38 @@ class value_list extends ListBase
         // reason, is about the first phrase and not about the row, so it is left to the table of
         // that phrase, e.g. the reasons page, before it can make a value column of a phrase column
         $own_lst = $this->without_values_of_two_phrase_columns($tbl_cols, $rel_lst, $msg);
-        if (count($own_lst->lst()) < count($this->lst())) {
-            return $own_lst->table_model($msg, $context_phr_lst, $col_order, $rel_lst, $limit,
-                $url_array, $col_values_only, $col_tiers, $value_rows_only);
-        }
-        $col_order = $tbl_cols;
+        return $own_lst->table_model_of_columns($msg, $context_phr_lst, $row_col, $tbl_cols, $rel_lst,
+            $limit, $url_array, $col_values_only, $col_tiers, $value_rows_only);
+    }
+
+    /**
+     * the table model of table_model for the values that belong to a row of the table
+     *
+     * @param user_message $msg to report a problem of the table
+     * @param phrase_list $context_phr_lst the phrases assumed by the reader e.g. the phrase of the page
+     * @param phrase|null $row_col the phrase that heads the row column e.g. "reason" on the reasons page
+     * @param array $col_order the defined column phrase names without the row column
+     * @param phrase_list|null $rel_lst the phrases related to the page phrase with the definitions
+     * @param int|null $limit the number of rows shown, null for the list size that the url names
+     * @param array $url_array the url parameters of the page that shows the table
+     * @param bool $col_values_only true to leave out the values that fit no column
+     * @param int $col_tiers the number of column tiers left out from the bottom
+     * @param bool $value_rows_only true to drop a row without a number in a shown column
+     * @return table_model the rows, columns, units and ranges of the table
+     */
+    private function table_model_of_columns(
+        user_message $msg,
+        phrase_list  $context_phr_lst,
+        ?phrase      $row_col,
+        array        $col_order,
+        ?phrase_list $rel_lst,
+        ?int         $limit,
+        array        $url_array,
+        bool         $col_values_only,
+        int          $col_tiers,
+        bool         $value_rows_only
+    ): table_model
+    {
         $model = new table_model();
         // the url of the page names the column tiers, e.g. after the "..." click on a simple
         // table, and wins over the default of the caller
@@ -847,7 +874,7 @@ class value_list extends ListBase
                 $all_by_id, $phr_by_id, $col_order, $rel_lst);
         }
         [$col_phr, $col_parts, $val_col] = $this->value_columns(
-            $phr_by_id, $all_by_id, $val_phr_ids, $col_order, $msg);
+            $phr_by_id, $all_by_id, $val_phr_ids, $col_order, $rel_lst, $msg);
         // a defined column that no value carries names a phrase of the row instead of a
         // number, e.g. the "solution" column shows the solution of the problem row
         $phr_col = $this->phrase_columns($col_order, $col_phr, $rel_lst, $msg, $tbl_phr);
@@ -956,6 +983,7 @@ class value_list extends ListBase
      * @param array $all_by_id every groupable phrase keyed by phrase id
      * @param array $val_phr_ids per value id the ids of its groupable phrases
      * @param array $col_order the defined column phrase names, the most important column first
+     * @param phrase_list|null $rel_lst the phrases related to the page phrase with the definitions
      * @param user_message $msg to report a problem of reading a phrase type
      * @return array per column id the phrase, per column id the phrase ids a value must carry
      *               to belong to it and per value id the id of its column
@@ -965,6 +993,7 @@ class value_list extends ListBase
         array        $all_by_id,
         array        $val_phr_ids,
         array        $col_order,
+        ?phrase_list $rel_lst,
         user_message $msg
     ): array
     {
@@ -980,6 +1009,12 @@ class value_list extends ListBase
             if ($defined or count($col_phr) < position_types::MAX_SIDE_COLUMNS) {
                 $parts = $this->column_parts($phr, $all_by_id);
                 [$members, $rest] = $this->split_by_parts($remaining, $parts, $val_phr_ids);
+                // a value that names a phrase linked to the column phrase, e.g. the gain of the
+                // solution of the climate gas emissions, which is a reason, is about that phrase,
+                // so it is left to the phrase column, where the column phrase says only what kind
+                // of phrase it names; a linked phrase that is a defined column names no row phrase
+                [$members, $rest] = $this->without_values_of_children(
+                    $members, $rest, array_diff($rel_lst?->child_names($phr) ?? [], $col_order));
                 // a column shows one measure, so a phrase with values in several units gets
                 // one column per unit, the unit of the most relevant value first
                 foreach ($this->split_by_unit($members, $msg) as $unit_members) {
@@ -1046,12 +1081,14 @@ class value_list extends ListBase
                 }
             }
             // a phrase shown in a column of its own does not name the row any more, so it is
-            // added to the context before the row key is built
+            // added to the context before the row key is built, and so is the column phrase,
+            // which says only what kind of phrase it is, e.g. "reason" for the climate gas emissions
             $phr_cell = [];
-            foreach (array_keys($phr_col) as $phr_col_id) {
+            foreach ($phr_col as $phr_col_id => $col_phr) {
                 $child = $this->phrase_of_column($val, $phr_col_names[$phr_col_id]);
                 if ($child != null) {
                     $ctx->add_phrase($child);
+                    $ctx->add_phrase($col_phr);
                     $phr_cell[$phr_col_id] = $child;
                 }
             }
@@ -1060,6 +1097,16 @@ class value_list extends ListBase
             $entries[] = [$val, $col_id, $ctx, $phr_cell, $val->grp->phrase_names($ctx)];
         }
         [$phr_cells, $phr_more] = $this->shown_phrases($entries);
+        // per cell the most phrases shown that a value of the cell names, e.g. one for the gain of
+        // a solution for the reason shown and none for the gain of the solution for the whole problem;
+        // a confidence value qualifies a value and is no number of the cell, so it is not counted
+        $specific = [];
+        foreach ($entries as [$val, $col_id, , $phr_cell, $row_key]) {
+            if (!$this->is_confidence($val)
+                and !$this->names_other_phrase($phr_cell, $phr_cells[$row_key] ?? [])) {
+                $specific[$row_key][$col_id] = max($specific[$row_key][$col_id] ?? 0, count($phr_cell));
+            }
+        }
         foreach ($entries as [$val, $col_id, $ctx, $phr_cell, $row_key]) {
             if (!key_exists($row_key, $row_label)) {
                 $row_label[$row_key] = $val->grp->phrase_link_list($ctx);
@@ -1068,20 +1115,37 @@ class value_list extends ListBase
             }
             // a value of a phrase that the row does not show, e.g. the gain of the second
             // solution, is left to the page of the row, so that a reader cannot take its number
-            // for a number of the phrase shown; two values with the same row and column and the
-            // same phrases are shown in the same cell instead of the second one replacing the
-            // first, because a range bound is shown behind its centre value
-            $other_phrase = false;
-            foreach ($phr_cell as $phr_col_id => $phr) {
-                if ($phr_cells[$row_key][$phr_col_id]->id() != $phr->id()) {
-                    $other_phrase = true;
-                }
-            }
-            if (!$other_phrase) {
+            // for a number of the phrase shown, and a value of a wider scope than another value of
+            // the cell, e.g. the gain of the solution for the whole problem beside the gain for
+            // the reason shown, is left out, so that a cell never shows two numbers of one thing;
+            // two values with the same row, column and phrases are shown in the same cell instead
+            // of the second one replacing the first, because a range bound is shown behind its centre;
+            // a confidence value often names less than the value it qualifies, e.g. no solution,
+            // so it stays in the cell to be the tooltip of that value (see qualifies)
+            $other_phrase = $this->names_other_phrase($phr_cell, $phr_cells[$row_key] ?? []);
+            $specific_enough = ($this->is_confidence($val)
+                or count($phr_cell) == ($specific[$row_key][$col_id] ?? 0));
+            if (!$other_phrase and $specific_enough) {
                 $cells[$row_key][$col_id][] = $val;
             }
         }
         return [$row_label, $row_phr, $cells, $phr_cells, $phr_more];
+    }
+
+    /**
+     * @param array $phr_cell per phrase column id the phrase that a value names
+     * @param array $shown per phrase column id the phrase that the row shows
+     * @return bool true if the value names a phrase that the row does not show, e.g. the second solution
+     */
+    private function names_other_phrase(array $phr_cell, array $shown): bool
+    {
+        $result = false;
+        foreach ($phr_cell as $phr_col_id => $phr) {
+            if ($shown[$phr_col_id]->id() != $phr->id()) {
+                $result = true;
+            }
+        }
+        return $result;
     }
 
     /**
@@ -2280,6 +2344,27 @@ class value_list extends ListBase
     private function split_by_phrase(array $remaining, int|string $phr_id, array $val_phr_ids): array
     {
         return $this->split_by_parts($remaining, [$phr_id], $val_phr_ids);
+    }
+
+    /**
+     * move the values that name one of the given linked phrases from the members to the rest
+     *
+     * @param array $members the values that carry the phrases of a column
+     * @param array $rest the values still to be placed
+     * @param array $child_names the names of the phrases linked to the column phrase
+     * @return array [array the members that name no linked phrase, array the values still to be placed]
+     */
+    private function without_values_of_children(array $members, array $rest, array $child_names): array
+    {
+        $own = [];
+        foreach ($members as $val) {
+            if ($this->phrase_of_column($val, $child_names) == null) {
+                $own[] = $val;
+            } else {
+                $rest[] = $val;
+            }
+        }
+        return [$own, $rest];
     }
 
     /**

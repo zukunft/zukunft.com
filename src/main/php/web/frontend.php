@@ -1046,11 +1046,10 @@ class frontend
 
         // select the main object to display (object-type-aware also for a confirm view, see dbo_for_url)
         $dbo = $this->dbo_for_url($view_id, $url_array);
-        // a phrase view is called with the phrase id, which is negative for a triple, but the
-        // triple is loaded by its own id (see phrase_id_to_dbo_ui)
         // TODO Prio 2 check and review: maybe not needed any more
-        // the url values are mapped with the own id too, else the url mapper would give the triple
-        // the phrase id, which as a triple id names another phrase; the url keeps the phrase id for the back links
+        // a phrase view is called with the phrase id, negative for a triple, but the triple is loaded
+        // and url mapped by its own id, else it names another phrase (see phrase_id_to_dbo_ui);
+        // the url keeps the phrase id for the back links
         $obj_url_array = $url_array;
         if ($dbo instanceof triple_ui and $id < 0) {
             $id = $dbo->id();

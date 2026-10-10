@@ -474,13 +474,24 @@ warming solution` with a second solution whose gain belongs to a reason and is
 therefore no number of the row. The value cells
 of the row show only the numbers of the phrase shown, e.g. the gain of the
 solution shown and not also the gain of another one, so that no number of a
-hidden phrase stands beside the phrase shown. A value that names the phrases
-of two phrase columns, e.g. the gain of the solution of a reason, is about the
+hidden phrase stands beside the phrase shown. A cell keeps only its most
+specific values, the ones that name the most phrases shown: on the solutions
+page the row of a solution shows its gain for the reason shown and not also its
+gain for the whole problem, so a cell never shows two numbers of one thing.
+A confidence value is no number of the cell, so it is exempt: it often names
+less than the value it qualifies, e.g. no solution, and stays its tooltip. A
+value that names the phrases of two phrase columns, e.g. the gain of the solution of a reason, is about the
 first phrase and not about the row, so the row leaves it to the table of that
 phrase, e.g. the reasons page, and it changes no column of the table
 (`value_list::without_values_of_two_phrase_columns`). A linked phrase that is a
 defined column itself, e.g. `potential gain` of the chart triple `potential
 gain and potential loss`, names a column and not a row phrase, so it does not count.
+A value that names a phrase linked to a column phrase, e.g. the gain of the
+solution of the climate gas emissions, which carries `reason` as well, is no
+value of the column of `reason` but a value of its own column, e.g. `potential
+gain`, with the climate gas emissions in the phrase column `reason`; the column
+phrase only says what kind of phrase that is, so it names no row either
+(`value_list::without_values_of_children`, `value_list::table_cells`).
 
 The table of such a triple has rows named by the linked phrases, e.g. the
 reasons: its phrase has no value of its own, so the table component loads the
