@@ -7325,6 +7325,8 @@
             t.php
     \-- child_phrases - section for function child_phrases not yet defined that it should be related in /phrase/phrase_l
             ist.php
+    \-- column_list_phrases - section for function column_list_phrases not yet defined that it should be related in /phr
+            ase/phrase_list.php
     \-- column_names - section for function column_names not yet defined that it should be related in /phrase/phrase_lis
             t.php
     \-- column_tier - section for function column_tier not yet defined that it should be related in /phrase/phrase_list.
@@ -9574,6 +9576,8 @@
         \-- phrase_list - get the names of the phrases that this list links the given phrase to by a triple, the
     \-- child_phrases
         \-- phrase_list - the phrases that this list links to the given phrase by a triple
+    \-- column_list_phrases
+        \-- phrase_list - the list triples of this list that collect the phrases of a table column for one row, e.g.
     \-- column_names
         \-- phrase_list - the names of the phrases that this list defines as table columns, in the order that the
     \-- column_tier

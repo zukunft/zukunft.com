@@ -634,6 +634,37 @@ class phrase_list extends sandbox_list_named
     }
 
     /**
+     * the list triples of this list that collect the phrases of a table column for one row, e.g.
+     * "populism reason" (reason of populism), which lists every reason of populism
+     *
+     * a list triple is often only loaded as the side of a link, e.g. as the "to" side of
+     * "GDP per capita change (populism reason)", so the sides of each triple are checked too
+     *
+     * @param array $col_names the names of the column phrases e.g. ["reason", "solution"]
+     * @return phrase_list the list triples, each once, whose "from" side is one of the columns
+     */
+    function column_list_phrases(array $col_names): phrase_list
+    {
+        $result = new phrase_list();
+        foreach ($this->lst() as $phr) {
+            $candidates = [$phr];
+            if ($phr->is_triple()) {
+                $candidates[] = $phr->obj()->get_from();
+                $candidates[] = $phr->obj()->get_to();
+            }
+            foreach ($candidates as $candidate) {
+                if ($candidate != null and $candidate->is_triple()
+                    and $candidate->obj()->get_verb()?->name() == verbs::OF_NAME
+                    and in_array($candidate->obj()->get_from()?->name(), $col_names)
+                    and !$result->has_id($candidate->id())) {
+                    $result->add_phrase($candidate);
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
      * the names of the phrases that this list defines as table columns, in the order that the
      * column order triples of solution_prio.json give: the "is next main column after" triples
      * chain the main columns and the "is explaining column for" triples place a column behind

@@ -471,7 +471,9 @@ warming reason` with `<reason> is a global warming reason` for each reason,
 else to the page of the row phrase (`value_list::phrase_cell`). The `, ...` is
 shown too if that triple links more phrases than the one shown, e.g. `global
 warming solution` with a second solution whose gain belongs to a reason and is
-therefore no number of the row. Every start page problem except proprietary
+therefore no number of the row; to count every linked phrase, the start page
+loads the children of all these list triples with one api call
+(`phrase_list::column_list_phrases`, `ui_list::add_start_page_cache`). Every start page problem except proprietary
 software has such a `<problem> reason` and `<problem> solution` triple
 (`problem_main_reasons.json`), each of which is a `global problem reason` or a
 `global problem solution`; proprietary software is the sample row with one

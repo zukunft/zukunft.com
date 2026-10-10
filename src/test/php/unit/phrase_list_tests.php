@@ -319,6 +319,19 @@ class phrase_list_tests
         $t->assert($test_name, $phr_lst_ui->child_phrases($phr)->names(), []);
 
 
+        $t->subheader($ts . 'column list phrases');
+
+        // the start page loads the children of these list triples, so that the ", ..." behind a
+        // cell counts every phrase of the list and not only those that carry a number of the row
+        $test_name = 'the list triple of a column is returned once';
+        $phr_lst_ui = $t_phr->list_global_warming_one_reason_ui();
+        $t->assert($test_name, $phr_lst_ui->column_list_phrases([word_names::REASON])->names(),
+            [triple_names::GLOBAL_WARMING_REASON]);
+        // negative: "global warming reason" collects reasons, so it is no list of the solutions
+        $test_name = 'a list triple of another column is not returned';
+        $t->assert($test_name, $phr_lst_ui->column_list_phrases([word_names::SOLUTION])->names(), []);
+
+
         $t->subheader($ts . 'parent names');
 
         // the mirror of child_names: the names of the phrases that the given phrase links to,

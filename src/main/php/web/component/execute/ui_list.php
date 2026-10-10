@@ -2302,6 +2302,14 @@ class ui_list extends ui_base
             if ($lnk_lst->load_related_by_ids($num_phr_lst, foaf_direction::UP, $msg)) {
                 $dto->add_phrases($lnk_lst, $msg);
             }
+            // a list triple e.g. "populism reason" names more phrases than the numbers of its row
+            // carry, and the ", ..." behind a cell counts all of them, so its children are loaded too
+            $col_lst_lst = $dto->phr_lst->column_list_phrases($dto->phr_lst->column_names());
+            $chl_lst = new phrase_list();
+            if (!$col_lst_lst->is_empty()
+                and $chl_lst->load_related_by_ids($col_lst_lst, foaf_direction::DOWN, $msg)) {
+                $dto->add_phrases($chl_lst, $msg);
+            }
         }
     }
 

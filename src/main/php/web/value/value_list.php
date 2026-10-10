@@ -112,7 +112,6 @@ use Zukunft\ZukunftCom\main\php\shared\enum\table_orders;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\helper\Config;
 use Zukunft\ZukunftCom\main\php\shared\types\position_types;
-use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
 use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
@@ -1357,20 +1356,9 @@ class value_list extends ListBase
     private function column_list_phrase(?phrase_list $rel_lst, phrase $col_phr, phrase $row_phr): ?phrase
     {
         $result = null;
-        foreach ($rel_lst?->lst() ?? [] as $phr) {
-            // the triple is often only the side of a link e.g. "heat mortality is a global warming reason"
-            $candidates = [$phr];
-            if ($phr->is_triple()) {
-                $candidates[] = $phr->obj()->get_from();
-                $candidates[] = $phr->obj()->get_to();
-            }
-            foreach ($candidates as $candidate) {
-                if ($result == null and $candidate != null and $candidate->is_triple()
-                    and $candidate->obj()->get_verb()?->name() == verbs::OF_NAME
-                    and $candidate->obj()->get_from()?->name() == $col_phr->name()
-                    and $candidate->obj()->get_to()?->name() == $row_phr->name()) {
-                    $result = $candidate;
-                }
+        foreach ($rel_lst?->column_list_phrases([$col_phr->name()])->lst() ?? [] as $lst_phr) {
+            if ($result == null and $lst_phr->obj()->get_to()?->name() == $row_phr->name()) {
+                $result = $lst_phr;
             }
         }
         return $result;
