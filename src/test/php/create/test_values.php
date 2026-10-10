@@ -918,6 +918,70 @@ class test_values extends test_objects
     }
 
     /**
+     * the ranking values plus the losses of two reasons of global warming, so that the reason
+     * cell names more than one reason and the reasons page has more than one row
+     *
+     * @return value_list the ranking values plus the loss of the climate gas emissions and of the heat mortality
+     */
+    function value_list_solution_prio_reasons(): value_list
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $lst = $this->value_list_solution_prio_reason();
+        $lst->add($this->value_for_phrases([
+            $t_trp->global_warming()->phrase(),
+            $t_wrd->word_reason()->phrase(),
+            $t_trp->heat_mortality()->phrase(),
+            $t_trp->potential_loss()->phrase(),
+            $t_wrd->word_trillion()->phrase(),
+            $t_wrd->word_eur()->phrase()
+        ], 0.222));
+        return $lst;
+    }
+
+    /**
+     * the ranking values with two reasons of global warming plus the gain of a solution of the
+     * heat mortality, which is bigger than the gain of the solution of global warming, so that a
+     * start page that took it into the row would show this solution instead
+     *
+     * @return value_list the ranking values plus the losses of two reasons and the gain of the solution of one
+     */
+    function value_list_solution_prio_reason_solution(): value_list
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $lst = $this->value_list_solution_prio_reasons();
+        $lst->add($this->value_for_phrases([
+            $t_trp->global_warming()->phrase(),
+            $t_wrd->word_reason()->phrase(),
+            $t_trp->heat_mortality()->phrase(),
+            $t_wrd->word_research()->phrase(),
+            $t_trp->potential_gain()->phrase(),
+            $t_wrd->word_billion()->phrase(),
+            $t_wrd->word_htp()->phrase()
+        ], 50));
+        return $lst;
+    }
+
+    /**
+     * @return value_list_ui the frontend ranking values plus the gain of the solution of a reason for unit testing
+     */
+    function value_list_solution_prio_reason_solution_ui(): value_list_ui
+    {
+        $tl = new test_lib();
+        return $tl->list_to_ui($this->value_list_solution_prio_reason_solution(), [api_types::INCL_PHRASES]);
+    }
+
+    /**
+     * @return value_list_ui the frontend ranking values plus the losses of two reasons for unit testing
+     */
+    function value_list_solution_prio_reasons_ui(): value_list_ui
+    {
+        $tl = new test_lib();
+        return $tl->list_to_ui($this->value_list_solution_prio_reasons(), [api_types::INCL_PHRASES]);
+    }
+
+    /**
      * the ranking values with a second solution of global warming, whose gain is smaller than the
      * gain of the first solution, so that the solution cell of that row names more than one
      *

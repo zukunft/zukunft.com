@@ -971,6 +971,15 @@ class test_triples extends test_objects
     }
 
     /**
+     * @return triple_ui the "global warming reason" page phrase of the reasons table, whose
+     *         from side "reason" heads the row column of that table
+     */
+    function global_warming_reason_ui(): triple_ui
+    {
+        return $this->page_ui($this->global_warming_reason());
+    }
+
+    /**
      * @return triple_ui the "city of Zurich" page phrase of the related values table
      */
     function zh_city_ui(): triple_ui
@@ -1470,6 +1479,146 @@ class test_triples extends test_objects
         $trp->set_from($this->climate_gas_emissions()->phrase());
         $trp->set_verb($t_vrb->verb_is());
         $trp->set_to($t_wrd->word_reason()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "global warming reason" - the reason of global warming, whose table page lists the reasons
+     */
+    function global_warming_reason(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::GLOBAL_WARMING_REASON_ID, triple_names::GLOBAL_WARMING_REASON);
+        $trp->set_from($t_wrd->word_reason()->phrase());
+        $trp->set_verb($t_vrb->verb_of());
+        $trp->set_to($this->global_warming()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple that "climate gas emissions" "is a" "global warming reason", which lists it on the reasons page
+     */
+    function climate_gas_emissions_global_warming_reason(): triple
+    {
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::CLIMATE_GAS_EMISSIONS_GLOBAL_WARMING_REASON_ID,
+            triple_names::CLIMATE_GAS_EMISSIONS_GLOBAL_WARMING_REASON);
+        $trp->set_from($this->climate_gas_emissions()->phrase());
+        $trp->set_verb($t_vrb->verb_is());
+        $trp->set_to($this->global_warming_reason()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "heat mortality" - a reason of global warming with a smaller loss than the climate gas emissions
+     */
+    function heat_mortality(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::HEAT_MORTALITY_ID, triple_names::HEAT_MORTALITY);
+        return $trp;
+    }
+
+    /**
+     * @return triple that "heat mortality" "is a" "reason", which puts it into the reason column
+     */
+    function heat_mortality_reason(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::HEAT_MORTALITY_REASON_ID, triple_names::HEAT_MORTALITY_REASON);
+        $trp->set_from($this->heat_mortality()->phrase());
+        $trp->set_verb($t_vrb->verb_is());
+        $trp->set_to($t_wrd->word_reason()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple that "heat mortality" "is a" "global warming reason", which lists it on the reasons page
+     */
+    function heat_mortality_global_warming_reason(): triple
+    {
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::HEAT_MORTALITY_GLOBAL_WARMING_REASON_ID,
+            triple_names::HEAT_MORTALITY_GLOBAL_WARMING_REASON);
+        $trp->set_from($this->heat_mortality()->phrase());
+        $trp->set_verb($t_vrb->verb_is());
+        $trp->set_to($this->global_warming_reason()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "climate adaptation" - a solution of global warming beside the reduction of the emissions
+     */
+    function climate_adaptation(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::CLIMATE_ADAPTATION_ID, triple_names::CLIMATE_ADAPTATION);
+        return $trp;
+    }
+
+    /**
+     * @return triple that "climate adaptation" "is a" "solution", which puts it into the solution column
+     */
+    function climate_adaptation_solution(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::CLIMATE_ADAPTATION_SOLUTION_ID, triple_names::CLIMATE_ADAPTATION_SOLUTION);
+        $trp->set_from($this->climate_adaptation()->phrase());
+        $trp->set_verb($t_vrb->verb_is());
+        $trp->set_to($t_wrd->solution()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "global warming solution" - the solution of global warming, whose table page lists the solutions
+     */
+    function global_warming_solution(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::GLOBAL_WARMING_SOLUTION_ID, triple_names::GLOBAL_WARMING_SOLUTION);
+        $trp->set_from($t_wrd->solution()->phrase());
+        $trp->set_verb($t_vrb->verb_of());
+        $trp->set_to($this->global_warming()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple that "reduce climate gas emissions" "is a" "global warming solution"
+     */
+    function reduce_emissions_global_warming_solution(): triple
+    {
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::REDUCE_EMISSIONS_GLOBAL_WARMING_SOLUTION_ID,
+            triple_names::REDUCE_EMISSIONS_GLOBAL_WARMING_SOLUTION);
+        $trp->set_from($this->reduce_emissions()->phrase());
+        $trp->set_verb($t_vrb->verb_is());
+        $trp->set_to($this->global_warming_solution()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple that "climate adaptation" "is a" "global warming solution"
+     */
+    function climate_adaptation_global_warming_solution(): triple
+    {
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::CLIMATE_ADAPTATION_GLOBAL_WARMING_SOLUTION_ID,
+            triple_names::CLIMATE_ADAPTATION_GLOBAL_WARMING_SOLUTION);
+        $trp->set_from($this->climate_adaptation()->phrase());
+        $trp->set_verb($t_vrb->verb_is());
+        $trp->set_to($this->global_warming_solution()->phrase());
         return $trp;
     }
 

@@ -74,7 +74,7 @@
         "class": "word"
     },
     {
-        "id": 1967,
+        "id": 1972,
         "name": "country code",
         "description": "the two-letter ISO 3166-1 alpha-2 code of a country, used as the prefix of its postal codes",
         "class": "triple"
@@ -87,7 +87,7 @@
         "class": "word"
     },
     {
-        "id": 1734,
+        "id": 1735,
         "name": "EAN",
         "description": "European Article Number: the 13 digit barcode number of a retail product, today named International Article Number (IAN)",
         "type_id": 23,
@@ -106,20 +106,26 @@
         "class": "triple"
     },
     {
+        "id": 1636,
+        "name": "global warming solution",
+        "description": "a solution of global warming; the page of this phrase shows the table of the solutions with the gain that each reaches",
+        "class": "triple"
+    },
+    {
         "id": 973,
         "name": "greenhouse gas",
         "description": "a gas that absorbs and emits infrared radiation, trapping heat in the atmosphere and warming the surface.",
         "class": "triple"
     },
     {
-        "id": 1732,
+        "id": 1733,
         "name": "ISBN",
         "description": "International Standard Book Number: identifies one edition of a book; since 2007 it has 13 digits and equals the EAN of the book with the prefix 978 or 979",
         "type_id": 23,
         "class": "word"
     },
     {
-        "id": 1733,
+        "id": 1734,
         "name": "ISIN",
         "description": "International Securities Identification Number (ISO 6166): identifies one security with 12 characters, the country code, the nine character national number and a check digit",
         "type_id": 23,
@@ -172,7 +178,7 @@
         "class": "triple"
     },
     {
-        "id": 1966,
+        "id": 1971,
         "name": "postal code",
         "description": "the number of a post office area that is part of a postal address; the number is qualified as postal code, e.g. 1950 (postal code), because the same number can also be a year, and each postal code is the triple of the qualified number in its country, named with the country code as prefix, e.g. CH-1950",
         "class": "triple"

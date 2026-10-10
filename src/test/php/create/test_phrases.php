@@ -1316,6 +1316,75 @@ class test_phrases
     }
 
     /**
+     * @return phrase_list_ui the global problems with a second reason of global warming, but
+     *         without the triple "global warming reason", so that no table of the reasons is known
+     */
+    function list_global_problems_two_reasons_ui(): phrase_list_ui
+    {
+        return $this->ui_list($this->list_global_problems_two_reasons());
+    }
+
+    /**
+     * @return phrase_list_ui the global problems with two reasons of global warming, each linked to
+     *         "global warming reason" like problem_global_warming_reasons.json, whose table page lists them
+     */
+    function list_global_warming_reasons_ui(): phrase_list_ui
+    {
+        $t_trp = new test_triples($this->env);
+        $lst = $this->list_global_problems_two_reasons();
+        $lst->add($t_trp->global_warming_reason()->phrase());
+        $lst->add($t_trp->climate_gas_emissions_global_warming_reason()->phrase());
+        $lst->add($t_trp->heat_mortality_global_warming_reason()->phrase());
+        return $this->ui_list($lst);
+    }
+
+    /**
+     * @return phrase_list_ui the global problems with two solutions of global warming linked to
+     *         "global warming solution" like problem_global_warming_reasons.json, although only one
+     *         of them has a value in the row of global warming
+     */
+    function list_global_warming_solutions_ui(): phrase_list_ui
+    {
+        $t_trp = new test_triples($this->env);
+        $lst = $this->list_global_warming_one_solution();
+        $lst->add($t_trp->climate_adaptation_solution()->phrase());
+        $lst->add($t_trp->climate_adaptation_global_warming_solution()->phrase());
+        return $this->ui_list($lst);
+    }
+
+    /**
+     * @return phrase_list_ui the global problems with "global warming solution" linked only to the
+     *         solution that the row of global warming shows already
+     */
+    function list_global_warming_one_solution_ui(): phrase_list_ui
+    {
+        return $this->ui_list($this->list_global_warming_one_solution());
+    }
+
+    /**
+     * @return phrase_list the global problems with the reduction of the emissions as the only global warming solution
+     */
+    private function list_global_warming_one_solution(): phrase_list
+    {
+        $t_trp = new test_triples($this->env);
+        $lst = $this->list_global_problems();
+        $lst->add($t_trp->global_warming_solution()->phrase());
+        $lst->add($t_trp->reduce_emissions_global_warming_solution()->phrase());
+        return $lst;
+    }
+
+    /**
+     * @return phrase_list the global problems with the heat mortality as a second reason
+     */
+    private function list_global_problems_two_reasons(): phrase_list
+    {
+        $t_trp = new test_triples($this->env);
+        $lst = $this->list_global_problems();
+        $lst->add($t_trp->heat_mortality_reason()->phrase());
+        return $lst;
+    }
+
+    /**
      * @return phrase_list_ui the global problems with "global warming potential", which gives
      *         "global warming" the parent "potential" beside "global problem", so that a sort
      *         by the names including the parents can be told apart from a sort by the names

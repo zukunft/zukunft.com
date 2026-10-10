@@ -805,6 +805,20 @@ class value_list extends ListBase
         bool         $value_rows_only
     ): table_model
     {
+        // the phrase that names the rows, e.g. "reason" on the reasons page, heads the row column,
+        // so it is no column of the values and a column of it with another phrase, e.g. "potential
+        // loss of reason", is the column of the other phrase, e.g. the mayor column "potential loss"
+        $row_col = $this->row_column($context_phr_lst, $col_order);
+        $tbl_cols = $this->without_row_column($col_order, $row_col, $rel_lst);
+        // a value that names the phrases of two phrase columns, e.g. the gain of the solution of a
+        // reason, is about the first phrase and not about the row, so it is left to the table of
+        // that phrase, e.g. the reasons page, before it can make a value column of a phrase column
+        $own_lst = $this->without_values_of_two_phrase_columns($tbl_cols, $rel_lst, $msg);
+        if (count($own_lst->lst()) < count($this->lst())) {
+            return $own_lst->table_model($msg, $context_phr_lst, $col_order, $rel_lst, $limit,
+                $url_array, $col_values_only, $col_tiers, $value_rows_only);
+        }
+        $col_order = $tbl_cols;
         $model = new table_model();
         // the url of the page names the column tiers, e.g. after the "..." click on a simple
         // table, and wins over the default of the caller
@@ -836,8 +850,7 @@ class value_list extends ListBase
             $phr_by_id, $all_by_id, $val_phr_ids, $col_order, $msg);
         // a defined column that no value carries names a phrase of the row instead of a
         // number, e.g. the "solution" column shows the solution of the problem row
-        $row_col = $this->row_column($context_phr_lst, $col_order);
-        $phr_col = $this->phrase_columns($col_order, $col_phr, $rel_lst, $msg, $tbl_phr, $row_col);
+        $phr_col = $this->phrase_columns($col_order, $col_phr, $rel_lst, $msg, $tbl_phr);
         // a table that is a grid of its columns leaves out the values that fit no column, e.g.
         // the measured figures of a problem that are no part of the ranking of the start page
         $vals = $this->lst();
@@ -1225,8 +1238,9 @@ class value_list extends ListBase
     /**
      * the content of a phrase cell: the phrase of the row for the column with the biggest number,
      * e.g. the reason of global warming that causes the biggest loss, and ", ..." if the row
-     * names more of them, which links to the table of them if the definitions name one, e.g.
-     * the calculator page of "global warming reason", else to the page of the row
+     * or the triple that lists them, e.g. "global warming solution", names more of them, which
+     * links to the table of them if the definitions name one, e.g. the table page of "global
+     * warming reason", else to the page of the row
      *
      * @param table_model $model the rows and columns of the table
      * @param string $row_key the key of the row
@@ -1245,12 +1259,22 @@ class value_list extends ListBase
     {
         $result = ($model->phr_cells[$row_key][$col_id] ?? null)?->name_link() ?? '';
         $row_phr = array_values($model->row_phr[$row_key] ?? [])[0] ?? null;
-        if (($model->phr_cells_more[$row_key][$col_id] ?? false) and $row_phr != null) {
+        $lst_phr = null;
+        if ($result != '' and $row_phr != null) {
+            $lst_phr = $this->column_list_phrase($rel_lst, $model->phr_col[$col_id], $row_phr);
+        }
+        // the list triple can name more phrases than the values of the row, e.g. a solution of
+        // global warming whose gain belongs to a reason and is therefore no number of the row
+        $more = ($model->phr_cells_more[$row_key][$col_id] ?? false);
+        if ($lst_phr != null and count($rel_lst->child_names($lst_phr)) > 1) {
+            $more = true;
+        }
+        if ($more and $row_phr != null) {
             $html = new html_base();
             $url = $row_phr->phrase_page_url($url_array);
-            $lst_phr = $this->column_list_phrase($rel_lst, $model->phr_col[$col_id], $row_phr);
             if ($lst_phr != null) {
-                $url = $html->url_back(views::CALCULATOR_ID, $lst_phr->obj_id(), $url_array);
+                // the table is a phrase page, so it is called with the phrase id, which is negative for a triple
+                $url = $html->url_back(views::TABLE_ID, $lst_phr->id(), $url_array);
             }
             $result .= ', ' . $html->ref($url, msg_id::THREE_POINTS->text(), msg_id::TABLE_MORE_PHRASES_TIP->text());
         }
@@ -1259,7 +1283,7 @@ class value_list extends ListBase
 
     /**
      * the triple that names the phrases of a column for one row, e.g. "global warming reason" for
-     * the reasons of global warming, whose calculator page shows the table of them
+     * the reasons of global warming, whose table page shows them
      *
      * @param phrase_list|null $rel_lst the phrases related to the page phrase with the definitions
      * @param phrase $col_phr the phrase of the column e.g. "reason"
@@ -1900,6 +1924,76 @@ class value_list extends ListBase
     }
 
     /**
+     * the defined columns without the phrase that names the rows and without the triples built
+     * from it, e.g. without "reason" and "potential loss of reason" on the reasons page, so that
+     * the loss of a reason is in the column "potential loss"
+     *
+     * @param array $col_order the defined column phrase names, the most important column first
+     * @param phrase|null $row_col the phrase that heads the row column or null to keep every column
+     * @param phrase_list|null $rel_lst the phrases related to the page phrase with the definitions
+     * @return array the defined column names that can head a column of the table
+     */
+    private function without_row_column(array $col_order, ?phrase $row_col, ?phrase_list $rel_lst): array
+    {
+        $result = [];
+        foreach ($col_order as $name) {
+            $phr = $rel_lst?->column_phrase($name);
+            $parts = [$name];
+            if ($phr != null and $phr->is_triple()) {
+                $parts[] = $phr->obj()->get_from()?->name();
+                $parts[] = $phr->obj()->get_to()?->name();
+            }
+            if ($row_col == null or !in_array($row_col->name(), $parts)) {
+                $result[] = $name;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * this list without the values that name a linked phrase of two defined columns, e.g. without
+     * the gain of the solution of a reason, which names a reason and a solution
+     *
+     * @param array $col_order the defined column phrase names without the row column
+     * @param phrase_list|null $rel_lst the phrases related to the page phrase with the definitions
+     * @param user_message $msg to report a problem of copying an entry
+     * @return value_list the values and results that belong to a row of this table
+     */
+    private function without_values_of_two_phrase_columns(
+        array        $col_order,
+        ?phrase_list $rel_lst,
+        user_message $msg
+    ): value_list
+    {
+        // the linked phrases of each defined column that has any, e.g. the reasons and the solutions;
+        // a linked phrase that is a defined column itself names a column and not a row phrase, e.g.
+        // "potential gain" of the chart triple "potential gain and potential loss"
+        $col_children = [];
+        foreach ($col_order as $name) {
+            $phr = $rel_lst?->column_phrase($name);
+            $children = ($phr == null) ? [] : array_diff($rel_lst->child_names($phr), $col_order);
+            if ($children != []) {
+                $col_children[] = $children;
+            }
+        }
+        $result = new value_list();
+        foreach ($this->lst() as $val) {
+            // a phrase linked to two columns, e.g. a reason that is also a kind of loss, is named once
+            $named = [];
+            foreach ($col_children as $children) {
+                $child = $this->phrase_of_column($val, $children);
+                if ($child != null) {
+                    $named[$child->name()] = true;
+                }
+            }
+            if (count($named) < 2) {
+                $result->add_obj($val, true, $msg);
+            }
+        }
+        return $result;
+    }
+
+    /**
      * the defined columns that name a phrase of the row instead of a value
      *
      * e.g. the "solution" column of solution_prio.json: no value carries the phrase "solution",
@@ -1910,8 +2004,6 @@ class value_list extends ListBase
      * @param phrase_list|null $rel_lst the phrases related to the page phrase
      * @param user_message $msg to report a problem of reading the phrase type
      * @param phrase_list $tbl_phr the phrases that the table header names for every value
-     * @param phrase|null $row_col the phrase that heads the row names, which is no phrase column
-     *                             e.g. "reason" on the page of the reasons of global warming
      * @return array the phrase columns keyed by phrase id in the order of the definition
      */
     private function phrase_columns(
@@ -1919,8 +2011,7 @@ class value_list extends ListBase
         array        $col_phr,
         ?phrase_list $rel_lst,
         user_message $msg,
-        phrase_list  $tbl_phr,
-        ?phrase      $row_col
+        phrase_list  $tbl_phr
     ): array
     {
         $result = [];
@@ -1933,9 +2024,7 @@ class value_list extends ListBase
             $phr = $rel_lst?->column_phrase($name);
             // a column that already holds the values of this phrase cannot name a phrase too,
             // and a unit describes the number, so it heads no column of its own either
-            // and the phrases that name the rows are shown in the row column, not in a column of their own
-            $is_row_col = ($phr != null and $phr->name() == $row_col?->name());
-            if ($phr != null and !array_key_exists($phr->id(), $col_phr) and !$is_row_col
+            if ($phr != null and !array_key_exists($phr->id(), $col_phr)
                 and !in_array($phr->id(), $head_ids) and !$this->is_unit($phr, $msg)) {
                 if ($rel_lst->child_names($phr) != []) {
                     $result[$phr->id()] = $phr;

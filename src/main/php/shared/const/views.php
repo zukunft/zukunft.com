@@ -713,7 +713,6 @@ class views
         self::WORD_LOG_ID,
         self::WORD_RELATED_ID,
         self::PHRASE_VALUES_ID,
-        self::TABLE_ID,
         self::WORD_ADD_ID,
         self::CURRENCY_ID,
         self::LIST_WORDS_ID,
@@ -758,9 +757,11 @@ class views
     ];
 
     // default view for a phrase and the views that show a word or a triple the same way
+    // e.g. the table of the reasons of global warming, which is the triple "global warming reason"
     const array PHRASE_MASKS_IDS = [
         self::PHRASE_ID,
         self::TERM_ID,
+        self::TABLE_ID,
         self::CALCULATOR_ID,
     ];
 

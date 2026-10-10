@@ -1046,6 +1046,16 @@ class frontend
 
         // select the main object to display (object-type-aware also for a confirm view, see dbo_for_url)
         $dbo = $this->dbo_for_url($view_id, $url_array);
+        // a phrase view is called with the phrase id, which is negative for a triple, but the
+        // triple is loaded by its own id (see phrase_id_to_dbo_ui)
+        // TODO Prio 2 check and review: maybe not needed any more
+        // the url values are mapped with the own id too, else the url mapper would give the triple
+        // the phrase id, which as a triple id names another phrase; the url keeps the phrase id for the back links
+        $obj_url_array = $url_array;
+        if ($dbo instanceof triple_ui and $id < 0) {
+            $id = $dbo->id();
+            $obj_url_array[url_var::ID] = $id;
+        }
 
         // an unconfirmed create, update or delete request that the user has submitted (marked by the
         // named submit button, see url_var::POST_SUBMIT) is first shown in the matching confirm view,
@@ -1096,7 +1106,7 @@ class frontend
                     $api_par = self::page_api_par($view_code_id, $api_par);
                     $dbo->load_by_id($id, $msg_ui, $api_par, $usr_id);
                 }
-                $dbo->url_mapper($url_array, $msg_ui, $dto);
+                $dbo->url_mapper($obj_url_array, $msg_ui, $dto);
             }
         } else {
             // an object without an id is not yet in the database (e.g. the page shown after the

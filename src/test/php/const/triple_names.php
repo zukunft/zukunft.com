@@ -243,13 +243,13 @@ class triple_names
     // db setup imports last, so the ids follow the highest triple id of the seed data in the
     // order of the import levels; check them in the triple list.csv
     const string SYSTEM_CHART_TYPE_MAYOR = shared_triples::SYSTEM_CHART_TYPE_MAYOR;
-    const int SYSTEM_CHART_TYPE_MAYOR_ID = 2314;
+    const int SYSTEM_CHART_TYPE_MAYOR_ID = 2319;
     const string GAIN_AND_LOSS = 'potential gain and potential loss';
-    const int GAIN_AND_LOSS_ID = 2315;
+    const int GAIN_AND_LOSS_ID = 2320;
     const string LEVERAGE_OF_GAIN_AND_LOSS = 'leverage plot of potential gain and potential loss';
-    const int LEVERAGE_OF_GAIN_AND_LOSS_ID = 2316;
+    const int LEVERAGE_OF_GAIN_AND_LOSS_ID = 2321;
     const string CHART_LEVERAGE_OF_GAIN_AND_LOSS = 'chart leverage plot of potential gain and potential loss';
-    const int CHART_LEVERAGE_OF_GAIN_AND_LOSS_ID = 2317;
+    const int CHART_LEVERAGE_OF_GAIN_AND_LOSS_ID = 2322;
     const string INITIAL_EFFORT = 'initial effort';
     const int INITIAL_EFFORT_ID = 151;
     // the minor and marginal columns of the ranking and the unit of the initial effort
@@ -337,6 +337,28 @@ class triple_names
     const int COLUMN_REASON_AFTER_PROBLEM_ID = 280;
     const string COLUMN_LOSS_OF_REASON_EXPLAINS_REASON = 'column potential loss of reason is explaining column for column reason';
     const int COLUMN_LOSS_OF_REASON_EXPLAINS_REASON_ID = 281;
+    // the reasons of global warming of problem_global_warming_reasons.json, whose table page lists them
+    const string GLOBAL_WARMING_REASON = 'global warming reason';
+    const int GLOBAL_WARMING_REASON_ID = 1631;
+    const string HEAT_MORTALITY = 'heat mortality';
+    const int HEAT_MORTALITY_ID = 1113;
+    const string HEAT_MORTALITY_REASON = 'heat mortality (reason)';
+    const int HEAT_MORTALITY_REASON_ID = 1633;
+    const string CLIMATE_GAS_EMISSIONS_GLOBAL_WARMING_REASON = 'climate gas emissions (global warming reason)';
+    const int CLIMATE_GAS_EMISSIONS_GLOBAL_WARMING_REASON_ID = 1652;
+    const string HEAT_MORTALITY_GLOBAL_WARMING_REASON = 'heat mortality (global warming reason)';
+    const int HEAT_MORTALITY_GLOBAL_WARMING_REASON_ID = 1654;
+    // the solutions of global warming of problem_global_warming_reasons.json, whose table page lists them
+    const string CLIMATE_ADAPTATION = 'climate adaptation';
+    const int CLIMATE_ADAPTATION_ID = 1635;
+    const string CLIMATE_ADAPTATION_SOLUTION = 'climate adaptation (solution)';
+    const int CLIMATE_ADAPTATION_SOLUTION_ID = 1656;
+    const string GLOBAL_WARMING_SOLUTION = 'global warming solution';
+    const int GLOBAL_WARMING_SOLUTION_ID = 1636;
+    const string REDUCE_EMISSIONS_GLOBAL_WARMING_SOLUTION = 'reduce climate gas emissions (global warming solution)';
+    const int REDUCE_EMISSIONS_GLOBAL_WARMING_SOLUTION_ID = 1657;
+    const string CLIMATE_ADAPTATION_GLOBAL_WARMING_SOLUTION = 'climate adaptation (global warming solution)';
+    const int CLIMATE_ADAPTATION_GLOBAL_WARMING_SOLUTION_ID = 1658;
     const string COLUMN_POTENTIAL_LOSS_EXPLAINS_PROBLEM = 'column potential loss is explaining column for column problem (high prio)';
     const int COLUMN_POTENTIAL_LOSS_EXPLAINS_PROBLEM_ID = 274;
     const string COLUMN_POTENTIAL_GAIN_EXPLAINS_SOLUTION = 'column potential gain is explaining column for column solution (high prio)';
@@ -346,7 +368,7 @@ class triple_names
     // a unit triple typed "measure unit", so that a table header puts it behind the "in" like a
     // unit word (see pv_switzerland_co2.json)
     const string GRAM_PER_KWH = 'gram per kWh';
-    const int GRAM_PER_KWH_ID = 1950;
+    const int GRAM_PER_KWH_ID = 1955;
     // TODO use the name and not the id for the use cases
     // the subject of the use case pv_switzerland_co2.json; a use case is user data, so its
     // objects are selected by the name only and never by a database id or a code id

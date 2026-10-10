@@ -205,7 +205,7 @@ class word_names
     // the chart type of start_page_charts.json, which the db setup imports last, so the id
     // follows the highest word id of the seed data; check it in the word list.csv
     const string LEVERAGE_PLOT = 'leverage plot';
-    const int LEVERAGE_PLOT_ID = 1917;
+    const int LEVERAGE_PLOT_ID = 1918;
     const string ALTERNATIVE = 'alternative';
     const int ALTERNATIVE_ID = 367;
     const string RANGE_BARS = 'range bars';

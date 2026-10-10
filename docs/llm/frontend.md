@@ -465,19 +465,33 @@ other defined column below the mayor tier of the start page is minor or marginal
 A phrase cell names one phrase: if the values of a row name more than one
 phrase for the column, e.g. several reasons of global warming, the cell shows
 the phrase of the value with the biggest number (`value_list::shown_phrases`),
-followed by `, ...`. The `, ...` links to the calculator page of the triple
+followed by `, ...`. The `, ...` links to the table page (`views::TABLE_ID`) of the triple
 `<column phrase> of <row phrase>` if the definitions name one, e.g. `global
 warming reason` with `<reason> is a global warming reason` for each reason,
-else to the page of the row phrase (`value_list::phrase_cell`). The value cells
+else to the page of the row phrase (`value_list::phrase_cell`). The `, ...` is
+shown too if that triple links more phrases than the one shown, e.g. `global
+warming solution` with a second solution whose gain belongs to a reason and is
+therefore no number of the row. The value cells
 of the row show only the numbers of the phrase shown, e.g. the gain of the
 solution shown and not also the gain of another one, so that no number of a
-hidden phrase stands beside the phrase shown.
+hidden phrase stands beside the phrase shown. A value that names the phrases
+of two phrase columns, e.g. the gain of the solution of a reason, is about the
+first phrase and not about the row, so the row leaves it to the table of that
+phrase, e.g. the reasons page, and it changes no column of the table
+(`value_list::without_values_of_two_phrase_columns`). A linked phrase that is a
+defined column itself, e.g. `potential gain` of the chart triple `potential
+gain and potential loss`, names a column and not a row phrase, so it does not count.
 
 The table of such a triple has rows named by the linked phrases, e.g. the
 reasons: its phrase has no value of its own, so the table component loads the
 values of the linked phrases like the start page (`ui_list::child_values`), and
 the phrase that names the rows, e.g. `reason`, heads the row column and is no
-phrase column of that table.
+phrase column of that table. A defined column built from it, e.g. `potential
+loss of reason`, is the column of its other part there, e.g. the mayor column
+`potential loss`, because the row already names the reason
+(`value_list::without_row_column`). The table page is a phrase page like the
+calculator (`views::PHRASE_MASKS_IDS`), so it is called with the phrase id,
+e.g. `-1631` for the triple `global warming reason`.
 
 A row of the simple table whose numbers are all in a column of the full version
 would be empty, e.g. the reward ratio row of a problem, so the ranking of the

@@ -594,6 +594,63 @@ class value_list_ui_tests
             value_list_ui::LIMIT_ALL, $start_url);
         $t->assert_text_not_contains($test_name, $tbl_one_each, $more_tip);
 
+        // a problem with two reasons shows the reason with the biggest loss, and if the triple
+        // "global warming reason" names the table of the reasons, ", ..." links to its table page
+        $test_name = 'a problem with two reasons shows the reason with the biggest loss with ", ..."';
+        $gw_reasons = $t_phr->list_global_warming_reasons_ui();
+        $tbl_reasons = $t_val->value_list_solution_prio_reasons_ui()->table_by_related_columns(
+            $msg_ui, $rank_ctx, $gw_reasons->column_names(), false, true, $gw_reasons,
+            value_list_ui::LIMIT_ALL, $start_url);
+        $t->assert_text_contains($test_name, $tbl_reasons, '>' . triple_names::CLIMATE_GAS_EMISSIONS . '</a>, <a ');
+        $test_name = '... which links to the table page of the triple "global warming reason"';
+        $t->assert_text_contains($test_name, $tbl_reasons,
+            url_var::MASK . '=' . views::TABLE_ID . '&amp;' . url_var::ID . '=-' . triple_names::GLOBAL_WARMING_REASON_ID);
+        // negative: the table is a phrase page, so the id of the triple would open the word with that id
+        $test_name = '... by the phrase id and not by the triple id';
+        $t->assert_text_not_contains($test_name, $tbl_reasons,
+            url_var::ID . '=' . triple_names::GLOBAL_WARMING_REASON_ID);
+        // negative: without the triple that names the table of the reasons ", ..." links to the
+        // page of the problem like for two solutions
+        $test_name = 'without "global warming reason" the ", ..." of the reason links to the page of the problem';
+        $two_reasons = $t_phr->list_global_problems_two_reasons_ui();
+        $tbl_no_lst = $t_val->value_list_solution_prio_reasons_ui()->table_by_related_columns(
+            $msg_ui, $rank_ctx, $two_reasons->column_names(), false, true, $two_reasons,
+            value_list_ui::LIMIT_ALL, $start_url);
+        $t->assert_text_contains($test_name, $tbl_no_lst,
+            url_var::MASK . '=' . views::TRIPLE_ID . '&amp;' . url_var::ID . '=' . triple_names::GLOBAL_WARMING_ID);
+        $test_name = '... and not to a table page';
+        $t->assert_text_not_contains($test_name, $tbl_no_lst, url_var::MASK . '=' . views::TABLE_ID . '&amp;');
+        // "global warming solution" links a second solution, whose gain is no number of the row,
+        // so the solution cell shows ", ..." with the link to the table page of the solutions
+        $test_name = 'a problem with a second linked solution shows ", ..." behind its solution';
+        $gw_solutions = $t_phr->list_global_warming_solutions_ui();
+        $tbl_sol = $t_val->value_list_solution_prio_ui()->table_by_related_columns(
+            $msg_ui, $rank_ctx, $gw_solutions->column_names(), false, true, $gw_solutions,
+            value_list_ui::LIMIT_ALL, $start_url);
+        $t->assert_text_contains($test_name, $tbl_sol, '>' . triple_names::REDUCE_EMISSIONS . '</a>, <a ');
+        $test_name = '... which links to the table page of the triple "global warming solution"';
+        $t->assert_text_contains($test_name, $tbl_sol,
+            url_var::MASK . '=' . views::TABLE_ID . '&amp;' . url_var::ID . '=-' . triple_names::GLOBAL_WARMING_SOLUTION_ID);
+        // negative: if the triple links only the solution shown, the table names no other one
+        $test_name = 'a list triple with only the solution shown adds no ", ..."';
+        $gw_one_sol = $t_phr->list_global_warming_one_solution_ui();
+        $tbl_one_sol = $t_val->value_list_solution_prio_ui()->table_by_related_columns(
+            $msg_ui, $rank_ctx, $gw_one_sol->column_names(), false, true, $gw_one_sol,
+            value_list_ui::LIMIT_ALL, $start_url);
+        $t->assert_text_not_contains($test_name, $tbl_one_sol, $more_tip);
+        // a value that names a reason and a solution is the gain of the solution of the reason,
+        // which the reasons page shows, so the row keeps the solution of the problem although
+        // the gain of the solution of the reason is bigger
+        $test_name = 'the solution of a reason adds no ", ..." to the solution of the problem';
+        $tbl_rsn_sol = $t_val->value_list_solution_prio_reason_solution_ui()->table_by_related_columns(
+            $msg_ui, $rank_ctx, $gw_reasons->column_names(), false, true, $gw_reasons,
+            value_list_ui::LIMIT_ALL, $start_url);
+        $t->assert($test_name, substr_count($tbl_rsn_sol, $more_tip), 1);
+        // negative: the gain of the solution of the reason is no number of the problem row
+        $test_name = '... and its gain is not shown on the start page';
+        $t->assert_text_not_contains($test_name, $lib->html_to_text($tbl_rsn_sol),
+            '50' . sandbox_value_ui::QUALITY_MARK_NO_SOURCE);
+
         // the "..." header opens the menu that selects the columns, so it offers every column
         // tier and each of them once with and once without the ranges
         $page_url = [url_var::MASK => views::START_ID];
@@ -683,6 +740,12 @@ class value_list_ui_tests
         $test_name = '... and without a mayor chart the mayor columns keep the default charts';
         $charts = $t_phr->list_global_problems_ui()->chart_definitions($msg_ui, true);
         $t->assert($test_name, array_map(fn(array $chart) => [$chart[0]->value, $chart[1]], $charts), $ranking_charts);
+        // the chart triple "potential gain and potential loss" links the gain to the loss column,
+        // but a defined column names no row phrase, so the gain of a solution stays in its row
+        $test_name = 'with the mayor chart definitions the table keeps the gain of the solution';
+        $tbl_all = $t_val->value_list_solution_prio_ui()->table_by_related_columns(
+            $msg_ui, $rank_ctx, $all_lst->column_names(), false, true, $all_lst, value_list_ui::LIMIT_ALL);
+        $t->assert_text_contains($test_name, $lib->html_to_text($tbl_all), '35.2' . sandbox_value_ui::QUALITY_MARK_NO_SOURCE);
 
         // the leverage plot names each point by its row and shows the lines of an equal gain per
         // loss, like global-problems-top4_scatter.svg
