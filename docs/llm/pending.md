@@ -27,8 +27,6 @@ adjust the numbers in the json data files so that the problem / solution are in 
 
 ## system settings
 
-if a non ip user is logged in allow to change the user settings. A double click on the number should show an input field and a small save icon. if the value is changed and the save icon is pressed that number should be save as a user overwrite.
-
 if an admin user is logged in allow to change all settings the same way as the user settings 
 
 ## import times

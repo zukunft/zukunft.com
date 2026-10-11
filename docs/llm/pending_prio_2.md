@@ -14,6 +14,10 @@ It is a data decision for you, as noted before.
 
 the 'tree' config api (cfg/helper/config_tree::api_json) parses config.yaml on each request; the settings page cache hides this for now, but the parsed tree could be cached like the config values and dropped when config.yaml changes
 
+a change of a user drops the own cached config values (frontend::drop_cached_pages), but a change of the standard data by a system user leaves the cached config values of all other users until CACHE_MAX_AGE, because db_cache has no del_all with its sql fixture yet; with CACHE_LOCATION file the config cache file is never dropped by a value change, only by a newer config.yaml (config_numbers::is_file_cache_valid)
+
+a boolean setting is shown as true or false and therefore not yet editable on the settings page (web/helper/config_tree::is_editable); it needs a true / false selector that saves 1 or 0. A text setting e.g. the language needs a text input. After a save the page shows the whole tree, so the search and the scope of the page could be kept as '9'-prefixed back vars
+
 ## frontend rules
 
 html_base::span() adds data-toggle="tooltip" to each span with a title, which no script reads and which docs/llm/frontend.md forbids for a web renderer; html_base::with_title() is the span without it, used so far only by the settings tree. Removing the attribute from span() changes about 188 snapshots, so it needs one run with AUTO_UPDATE_TEST_FILES and the review of the rewritten files

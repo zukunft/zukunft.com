@@ -154,6 +154,9 @@ class styles
     const string CONFIG_COLUMN = 'config-column';
     const string CONFIG_UNIT = 'config-unit';
     const string CONFIG_FILE_VALUE = 'config-file-value';
+    // the value that a click opens to change it and its small save button
+    const string CONFIG_EDIT = 'config-edit';
+    const string CONFIG_SAVE = 'config-save';
 
 
 }

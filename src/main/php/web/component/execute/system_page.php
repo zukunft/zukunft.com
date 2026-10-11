@@ -54,6 +54,7 @@ include_once html_paths::SYSTEM . 'sys_log_list.php';
 include_once html_paths::TYPES . 'type_object.php';
 include_once html_paths::USER . 'user.php';
 include_once html_paths::USER . 'user_message.php';
+include_once html_paths::WEB . 'frontend.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::SHARED . 'api.php';
 include_once html_paths::SHARED . 'library.php';
@@ -62,6 +63,7 @@ include_once html_paths::SHARED_CONST . 'views.php';
 include_once html_paths::SHARED_HELPER . 'Translator.php';
 
 use Zukunft\ZukunftCom\main\php\web\component\component;
+use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\helper\config_tree;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
@@ -678,8 +680,8 @@ class system_page extends component
     }
 
     /**
-     * the read only tree of the system configuration with the search and the scope of the url,
-     * which also an ip user without login can see
+     * the tree of the system configuration with the search and the scope of the url,
+     * which also an ip user without login can see, but only a logged-in user can change
      *
      * @param user_message $msg to report a problem of the tree or config load
      * @param array $url_arr the url vars of the page with the search (url_var::PATTERN) and the scope (url_var::CONFIG_PART)
@@ -694,6 +696,8 @@ class system_page extends component
         }
         $pattern = (string)($url_arr[url_var::PATTERN] ?? '');
         $scope = (string)($url_arr[url_var::CONFIG_PART] ?? '');
+        // the same predicate as for the own page, because a change is saved as the overwrite of the user
+        $cft->can_edit = frontend::shows_personal_page($msg);
         return $cft->html($pattern, $scope);
     }
 

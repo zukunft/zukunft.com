@@ -88,7 +88,7 @@ class config_numbers extends value_list
 
     // fast lookup rows from the cached config json to read config values without
     // building all value and phrase objects on every request (see set_cache_json);
-    // each row contains the flipped phrase names, the raw value and the text flag
+    // each row contains the flipped phrase names, the raw value, the text flag and the value id
     private array $lookup_rows = [];
     // the cached config json to build the complete value objects only on demand
     private ?array $cache_json = null;
@@ -297,7 +297,7 @@ class config_numbers extends value_list
                         }
                     }
                     if ($match) {
-                        $result = $this->lookup_value($lookup_row[1], $lookup_row[2]);
+                        $result = $this->lookup_value($lookup_row[1], $lookup_row[2], $lookup_row[3]);
                     }
                 }
             }
@@ -320,8 +320,8 @@ class config_numbers extends value_list
                 $result[self::names_key($val->grp()->phrase_list()->names())] ??= $val;
             }
         } else {
-            foreach ($this->lookup_rows as [$row_names, $raw_value, $is_text]) {
-                $result[self::names_key(array_keys($row_names))] ??= $this->lookup_value($raw_value, $is_text);
+            foreach ($this->lookup_rows as [$row_names, $raw_value, $is_text, $id]) {
+                $result[self::names_key(array_keys($row_names))] ??= $this->lookup_value($raw_value, $is_text, $id);
             }
         }
         return $result;
@@ -361,8 +361,10 @@ class config_numbers extends value_list
             }
             $is_text = array_key_exists(json_fields::TEXT_VALUE, $api_row);
             $raw_value = $api_row[json_fields::NUMBER] ?? $api_row[json_fields::TEXT_VALUE] ?? null;
+            // kept, so that e.g. the config tree can name the value that a user overwrites
+            $id = $api_row[json_fields::ID] ?? 0;
             if ($names != [] and $raw_value !== null) {
-                $this->lookup_rows[] = [$names, $raw_value, $is_text];
+                $this->lookup_rows[] = [$names, $raw_value, $is_text, $id];
             }
         }
         return $this->lookup_rows != [];
@@ -371,9 +373,10 @@ class config_numbers extends value_list
     /**
      * @param float|string $raw_value the config value from the cached json
      * @param bool $is_text true if the cached json contains a text value
-     * @return value_base a config value object with just the value set for the get_by callers
+     * @param int|string $id the id of the value from the cached json, 0 if the json has none
+     * @return value_base a config value object with just the value and its id set for the get_by callers
      */
-    private function lookup_value(float|string $raw_value, bool $is_text): value_base
+    private function lookup_value(float|string $raw_value, bool $is_text, int|string $id): value_base
     {
         if ($is_text) {
             $val = new value_text($this->get_user());
@@ -381,6 +384,7 @@ class config_numbers extends value_list
         } else {
             $val = new value($this->get_user(), (float)$raw_value);
         }
+        $val->set_id($id);
         return $val;
     }
 

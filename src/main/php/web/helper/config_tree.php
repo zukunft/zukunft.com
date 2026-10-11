@@ -2,11 +2,12 @@
 
 /*
 
-    web/helper/config_tree.php - the read only tree of the system configuration in config.yaml
+    web/helper/config_tree.php - the tree of the system configuration in config.yaml
     --------------------------
 
     shown on the system configuration view with a search on the names and tooltips (url_var::PATTERN)
-    and a scope that shows one top level branch only (url_var::CONFIG_PART), all without javascript
+    and a scope that shows one top level branch only (url_var::CONFIG_PART), all without javascript;
+    a logged-in user can change a number as the own overwrite (see can_edit)
 
     $cft is the suggested var name
 
@@ -39,6 +40,7 @@ namespace Zukunft\ZukunftCom\main\php\web\helper;
 
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
+include_once html_paths::CONST . 'icons.php';
 include_once html_paths::HELPER . 'config.php';
 include_once html_paths::HELPER . 'config_node.php';
 include_once html_paths::HTML . 'html_base.php';
@@ -51,9 +53,11 @@ include_once html_paths::SHARED_CONST . 'triples.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::SHARED_HELPER . 'Config.php';
 include_once html_paths::SHARED . 'api.php';
+include_once html_paths::SHARED . 'group_id_url.php';
 include_once html_paths::SHARED . 'json_fields.php';
 include_once html_paths::SHARED . 'url_var.php';
 
+use Zukunft\ZukunftCom\main\php\web\const\icons;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\rest_call;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
@@ -62,6 +66,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\api;
+use Zukunft\ZukunftCom\main\php\shared\group_id_url;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
@@ -76,6 +81,8 @@ class config_tree
     const string PATH_SEPARATOR = ' › ';
     // between the keys of the html id of a node e.g. "cfg-database/cache"
     const string ID_SEPARATOR = '/';
+    // between the keys of the name of a setting in the confirmation of its change e.g. "select initial entries"
+    const string NAME_SEPARATOR = ' ';
     const string NODE_ID_PREFIX = 'cfg-';
     // the html id of the key names that the search suggests
     const string KEY_LIST_ID = 'config-keys';
@@ -98,6 +105,8 @@ class config_tree
 
     // the top level keys of the system configuration in the order of config.yaml
     public array $nodes = [];
+    // true for a logged-in user, who can change a number as the own overwrite; an ip user only reads the tree
+    public bool $can_edit = false;
 
 
     /*
@@ -274,7 +283,7 @@ class config_tree
         foreach ($this->columns($nodes) as $col_nodes) {
             $items = '';
             foreach ($col_nodes as $cfn) {
-                $items .= $html->list_item($this->node_html($cfn, ''));
+                $items .= $html->list_item($this->node_html($cfn, []));
             }
             if ($items != '') {
                 $cols .= $html->div($html->list_unsorted($items, styles::CONFIG_TREE), styles::CONFIG_COLUMN);
@@ -311,11 +320,11 @@ class config_tree
      * the nodes of one level as a list with all entries, because the whole config always fits on one page
      *
      * @param array $nodes the nodes of the level
-     * @param string $path the path of the parent key used for the html ids
+     * @param array $path the names of the parent keys used for the html ids and the name of a changed setting
      * @param string $parent_tip the tooltip of the parent key if the level is its only key, '' otherwise
      * @return string the html code of the level
      */
-    private function tree_html(array $nodes, string $path, string $parent_tip): string
+    private function tree_html(array $nodes, array $path, string $parent_tip): string
     {
         $html = new html_base();
         $items = '';
@@ -327,22 +336,22 @@ class config_tree
 
     /**
      * @param config_node $cfn the key to show
-     * @param string $path the path of the parent key
+     * @param array $path the names of the parent keys
      * @param string $parent_tip the tooltip of the parent key if this is its only key, '' otherwise
      * @return string a row with the value of a setting or the closed part with the keys below a group
      */
-    private function node_html(config_node $cfn, string $path, string $parent_tip = ''): string
+    private function node_html(config_node $cfn, array $path, string $parent_tip = ''): string
     {
         $html = new html_base();
-        $cfn_path = $this->child_path($path, $cfn->name);
+        $cfn_path = array_merge($path, [$cfn->name]);
         // the only key below a key e.g. "entries" of "initial" is described by the tooltip of its parent
         $tip = ($cfn->tooltip != '') ? $cfn->tooltip : $parent_tip;
         if ($cfn->is_leaf()) {
-            $result = $this->leaf_row($cfn, $parent_tip);
+            $result = $this->leaf_row($cfn, $cfn_path, $parent_tip);
         } else {
             $only_child_tip = (count($cfn->children) == 1) ? $tip : '';
             $body = $this->tree_html($cfn->children, $cfn_path, $only_child_tip);
-            $id = self::NODE_ID_PREFIX . $cfn_path;
+            $id = self::NODE_ID_PREFIX . $this->html_id($cfn_path);
             $result = $html->details($html->esc($cfn->name), $body, styles::CONFIG_NODE, $id, $tip);
         }
         return $result;
@@ -350,10 +359,11 @@ class config_tree
 
     /**
      * @param config_node $cfn the setting to show
+     * @param array $names the yaml keys of the setting e.g. select, initial and entries
      * @param string $parent_tip the tooltip of the parent key if this is its only setting, '' otherwise
      * @return string the html code of the row with the name and the value with its unit e.g. "1 sec"
      */
-    private function leaf_row(config_node $cfn, string $parent_tip): string
+    private function leaf_row(config_node $cfn, array $names, string $parent_tip): string
     {
         $html = new html_base();
         $name = $html->esc($cfn->name);
@@ -361,21 +371,26 @@ class config_tree
         if ($cfn->tooltip == '' and $parent_tip != '') {
             $name = $html->with_title($name, $parent_tip);
         }
-        return $html->definition($name, $this->value_html($cfn), $cfn->tooltip);
+        return $html->definition($name, $this->value_html($cfn, $names), $cfn->tooltip);
     }
 
     /**
      * @param config_node $cfn the setting to show
-     * @return string the html code of the current value e.g. "2 sec" and the config.yaml value
-     *                behind it if the database differs or has no value e.g. "in config.yaml 1 sec"
+     * @param array $names the yaml keys of the setting, which name it in the confirmation of a change
+     * @return string the html code of the current value e.g. "2 sec", which a click opens to change it if is_editable,
+     *                and the config.yaml value behind it if the database differs or has no value e.g. "default 1 sec"
      */
-    private function value_html(config_node $cfn): string
+    private function value_html(config_node $cfn, array $names): string
     {
         global $mtr;
         $html = new html_base();
         $result = '';
         if ($cfn->value != '') {
             $result = $this->with_unit($cfn->value, $cfn->unit);
+        }
+        // a click and not a double click opens the input, because only a click works without javascript
+        if ($this->is_editable($cfn)) {
+            $result = $html->details($result, $this->edit_form($cfn, $names), styles::CONFIG_EDIT);
         }
         if ($cfn->file_value != '') {
             $label = $mtr->txt(msg_id::CONFIG_TREE_FILE_VALUE);
@@ -401,6 +416,40 @@ class config_tree
     }
 
     /**
+     * @param config_node $cfn the setting to show
+     * @return bool true if the user can change the setting, which needs a database value to overwrite;
+     *              only a number, because a boolean is shown as true or false and a text has no number input
+     */
+    private function is_editable(config_node $cfn): bool
+    {
+        return ($this->can_edit and $cfn->id != 0 and is_numeric($cfn->value));
+    }
+
+    /**
+     * the input of the number with a small save button, which saves the number as the overwrite of the user
+     * through the value edit mask without the confirm view and then shows the settings page again
+     *
+     * @param config_node $cfn the setting with a database value
+     * @param array $names the yaml keys of the setting, which name it in the confirmation of the change
+     * @return string the html code of the post form
+     */
+    private function edit_form(config_node $cfn, array $names): string
+    {
+        $html = new html_base();
+        $txt = $html->form_session_token();
+        $txt .= $html->form_input(html_base::INPUT_NUMBER, url_var::NUMERIC_VALUE, $cfn->value);
+        // the shown value and the name, so that the confirmation can say what has changed from what
+        $txt .= $html->form_hidden(url_var::PRE . url_var::NUMERIC_VALUE, $cfn->value);
+        $txt .= $html->form_hidden(url_var::CONFIG_KEY, implode(self::NAME_SEPARATOR, $names));
+        $txt .= $html->form_hidden(url_var::MASK, (string)views::VALUE_EDIT_ID);
+        $txt .= $html->form_hidden(url_var::ID, group_id_url::to_url($cfn->id));
+        $txt .= $html->form_hidden(url_var::STEP, url_var::STEP_CONFIRMED);
+        $txt .= $html->form_hidden(url_var::BACK . url_var::MASK, (string)views::SYSTEM_CONFIG_ID);
+        $txt .= $html->button_bs($html->icon(icons::SAVE), styles::CONFIG_SAVE, '', url_var::POST_SUBMIT);
+        return $html->form_simple(api::MAIN_SCRIPT, html_base::METHOD_POST, $txt);
+    }
+
+    /**
      * the number of hits with the link to remove the search and one block per parent key
      * with its path and the matching keys, in which the search is highlighted
      *
@@ -416,7 +465,7 @@ class config_tree
         $blocks = [];
         foreach ($hits as [$path, $cfn]) {
             $key = implode(self::PATH_SEPARATOR, $path);
-            $blocks[$key] = ($blocks[$key] ?? '') . $this->hit_row($cfn, $pattern);
+            $blocks[$key] = ($blocks[$key] ?? '') . $this->hit_row($cfn, $path, $pattern);
         }
         $clear = $html->ref($this->url('', ''), $mtr->txt(msg_id::REMOVE_FILTER));
         $count = $html->span(count($hits) . ' ' . $mtr->txt(msg_id::CONFIG_TREE_MATCHES));
@@ -433,13 +482,14 @@ class config_tree
 
     /**
      * @param config_node $cfn a key that matches the search
+     * @param array $path the names of the parent keys
      * @param string $pattern the search of the user
      * @return string the row of the key with the highlighted search in its name and tooltip
      */
-    private function hit_row(config_node $cfn, string $pattern): string
+    private function hit_row(config_node $cfn, array $path, string $pattern): string
     {
         $html = new html_base();
-        $definition = $this->value_html($cfn);
+        $definition = $this->value_html($cfn, array_merge($path, [$cfn->name]));
         if (mb_stripos($cfn->tooltip, $pattern) !== false) {
             $definition .= ' ' . $html->span($this->marked($cfn->tooltip, $pattern));
         }
@@ -564,17 +614,12 @@ class config_tree
     }
 
     /**
-     * @param string $path the path of the parent key, '' for a top level key
-     * @param string $name the name of the key
+     * @param array $names the names of the key and its parent keys
      * @return string the path of the key e.g. "database/cache" without blanks, so it can be an html id
      */
-    private function child_path(string $path, string $name): string
+    private function html_id(array $names): string
     {
-        $result = str_replace(' ', '_', $name);
-        if ($path != '') {
-            $result = $path . self::ID_SEPARATOR . $result;
-        }
-        return $result;
+        return str_replace(' ', '_', implode(self::ID_SEPARATOR, $names));
     }
 
 }

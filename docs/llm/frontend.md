@@ -386,7 +386,15 @@ columns (`config_tree::COLUMN_KEYS`: select, user, then test with the other
 keys and pod last); the snapshot `config_page/system_config_read_only.html`
 shows the layout. Its search (`url_var::PATTERN`) and scope
 (`url_var::CONFIG_PART`) are no part of the page cache key, so a page with
-either is rendered for each request.
+either is rendered for each request. For a logged-in user a click on a number
+with a database value opens an input with a small save icon (a `<details>`,
+because a double click needs javascript); the post form uses the value edit
+mask with the confirmed step, so the number is saved as the user's own overwrite
+without the confirm view, and the user's cached pages and config values are
+dropped (`frontend::drop_cached_pages`). The page after the save confirms in
+green which setting has changed from what to what
+(`frontend::setting_saved_text`, from `url_var::CONFIG_KEY` and the `'8'`
+value of the form).
 
 ## "… more" is always a link that shows more
 

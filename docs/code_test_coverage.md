@@ -8,7 +8,7 @@ in a test file of the src/test/php/unit* folders; the count is by function name
 and cannot tell the classes apart, so a name that several classes declare needs
 2 calls per class and is listed as shared otherwise
 
-643 of 5951 public functions have at least 2 unit test calls; the 5308 functions below do not
+646 of 5952 public functions have at least 2 unit test calls; the 5306 functions below do not
 
 ## main backend
 
@@ -1277,7 +1277,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- vrb_lst - 0 unit test calls
     \-- wrd_lst - 0 unit test calls shared by 6 classes
 \-- phrase_list
-    \-- add_id - 1 unit test calls shared by 4 classes
+    \-- add_id - 2 unit test calls shared by 4 classes
     \-- add_name - 0 unit test calls shared by 2 classes
     \-- add_trp_lst - 0 unit test calls
     \-- add_wrd_lst - 0 unit test calls
@@ -3686,7 +3686,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- verb_list_up - 0 unit test calls
     \-- view_sql - 0 unit test calls
 \-- word_list
-    \-- add_id - 1 unit test calls shared by 4 classes
+    \-- add_id - 2 unit test calls shared by 4 classes
     \-- add_name - 0 unit test calls shared by 2 classes
     \-- are - 2 unit test calls shared by 3 classes
     \-- are_and_contains - 0 unit test calls shared by 3 classes
@@ -3805,7 +3805,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
 \-- Message
     \-- add - 30 unit test calls shared by 44 classes
     \-- add_err - 0 unit test calls
-    \-- add_id - 1 unit test calls shared by 4 classes
+    \-- add_id - 2 unit test calls shared by 4 classes
     \-- add_info_id - 0 unit test calls
     \-- get_message_translated - 0 unit test calls
     \-- merge - 4 unit test calls shared by 12 classes
@@ -4387,7 +4387,6 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- start - 0 unit test calls shared by 2 classes
     \-- start_ui - 0 unit test calls
     \-- url_to_html_cached - 0 unit test calls
-    \-- user_msg_html - 0 unit test calls
 \-- group
     \-- add - 30 unit test calls shared by 44 classes
     \-- api_array - 10 unit test calls shared by 37 classes
@@ -4452,7 +4451,6 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- dsp_go_back - 0 unit test calls
     \-- dsp_line_small - 0 unit test calls
     \-- dsp_link_hist_box - 0 unit test calls
-    \-- dsp_notification - 0 unit test calls
     \-- dsp_notification_html - 0 unit test calls
     \-- dsp_tbl_end - 0 unit test calls
     \-- dsp_tbl_start - 0 unit test calls
@@ -5430,8 +5428,8 @@ and cannot tell the classes apart, so a name that several classes declare needs
 \-- user_message
     \-- add_err_with_vars - 0 unit test calls
     \-- add_error_text - 0 unit test calls
-    \-- add_id - 1 unit test calls shared by 4 classes
-    \-- add_info - 0 unit test calls
+    \-- add_id - 2 unit test calls shared by 4 classes
+    \-- add_info - 1 unit test calls
     \-- add_message - 3 unit test calls shared by 2 classes
     \-- add_message_text - 2 unit test calls shared by 3 classes
     \-- add_warning - 0 unit test calls

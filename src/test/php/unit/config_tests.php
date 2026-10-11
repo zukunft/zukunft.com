@@ -283,6 +283,12 @@ class config_tests
         $t->assert($test_name, $types_node[json_fields::TEXT_VALUE] ?? '', 'false');
         $test_name = '... with the config.yaml value behind it';
         $t->assert($test_name, $types_node[json_fields::CONFIG_FILE_VALUE] ?? '', 'true');
+        $test_name = 'a setting names the id of its database value, which a user overwrite needs';
+        $max_node = $t_cft->node_by_name($nodes, test_config_trees::MAX_DELAY);
+        $t->assert($test_name, $max_node[json_fields::ID] ?? 0, test_config_trees::MAX_DELAY_ID);
+        // negative: without a database value there is nothing to overwrite
+        $test_name = '... but a setting without a database value has no id';
+        $t->assert_false($test_name, array_key_exists(json_fields::ID, $default_node));
         // the loaded value objects of a fresh database load, which has no lookup rows of the cached json
         $names = config_numbers::CACHE_PAGES_ALLOWED_NAMES;
         $obj_lookup = $t_val->config_cache_switch($names, true)->exact_lookup();

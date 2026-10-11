@@ -35,6 +35,7 @@ namespace Zukunft\ZukunftCom\test\php\unit_ui;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
+include_once html_paths::CONST . 'icons.php';
 include_once html_paths::EXECUTE . 'system_page.php';
 include_once html_paths::HELPER . 'config_node.php';
 include_once html_paths::HELPER . 'config_tree.php';
@@ -48,6 +49,7 @@ include_once html_paths::SHARED . 'url_var.php';
 include_once test_paths::CREATE . 'test_config_trees.php';
 
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_page;
+use Zukunft\ZukunftCom\main\php\web\const\icons;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\helper\config_node;
 use Zukunft\ZukunftCom\main\php\web\helper\config_tree;
@@ -184,13 +186,49 @@ class config_tree_ui_tests
         $test_name = 'the search is a get form, so it never changes data';
         $t->assert_text_contains($test_name, $page, html_base::METHOD . '="' . html_base::METHOD_GET . '"');
         // negative: no submit field of a write form, the submit button of the search is fine
+        $submit_field = html_base::NAME . '="' . url_var::POST_SUBMIT . '"';
         $test_name = '... without the submit field of a write form';
-        $t->assert_text_not_contains($test_name, $page, html_base::NAME . '="' . url_var::POST_SUBMIT . '"');
+        $t->assert_text_not_contains($test_name, $page, $submit_field);
+
+        $t->subheader($ts . 'edit');
+
+        $cft->can_edit = true;
+        $page_edit = $cft->html('', '');
+        $test_name = 'a logged-in user can save a number as the own overwrite';
+        $id_field = html_base::NAME . '="' . url_var::ID . '" ' . html_base::VALUE . '="' . test_config_trees::MAX_DELAY_ID . '"';
+        $t->assert_text_contains($test_name, $page_edit, $id_field);
+        $test_name = '... with a post form and the small save icon';
+        $t->assert_text_contains($test_name, $page_edit, html_base::METHOD . '="' . html_base::METHOD_POST . '"');
+        $t->assert_text_contains($test_name, $page_edit, icons::SAVE);
+        // negative: a boolean is shown as true or false, so it has no number input, and a setting without an id has nothing to overwrite
+        $test_name = '... but only for a number with a database value';
+        $t->assert($test_name, substr_count($page_edit, $submit_field), 1);
+        $cft->can_edit = false;
+        $test_name = '... with the shown number and the name of the setting for the confirmation';
+        $max_key = implode(config_tree::NAME_SEPARATOR, [test_config_trees::DATABASE, test_config_trees::RETRY, test_config_trees::MAX_DELAY]);
+        $key_field = html_base::NAME . '="' . url_var::CONFIG_KEY . '" ' . html_base::VALUE . '="' . $max_key . '"';
+        $t->assert_text_contains($test_name, $page_edit, $key_field);
+        $pre_var = url_var::PRE . url_var::NUMERIC_VALUE;
+        $pre_field = html_base::NAME . '="' . $pre_var . '" ' . html_base::VALUE . '="' . test_config_trees::MAX_DELAY_VALUE . '"';
+        $t->assert_text_contains($test_name, $page_edit, $pre_field);
+        $ui = new frontend();
+        $test_name = 'the confirmation names the setting, the new and the old number';
+        $saved_url = [
+            url_var::NUMERIC_VALUE => (string)test_config_trees::MAX_DELAY_NEW,
+            $pre_var => (string)test_config_trees::MAX_DELAY_VALUE,
+            url_var::CONFIG_KEY => $max_key,
+        ];
+        $saved_txt = 'the setting for ' . $max_key . ' has been updated to ' . test_config_trees::MAX_DELAY_NEW
+            . ' (from ' . test_config_trees::MAX_DELAY_VALUE . ')';
+        $t->assert($test_name, $ui->setting_saved_text($saved_url), $saved_txt);
+        // negative: an unchanged number has not been updated
+        $test_name = '... but nothing is confirmed if the number is unchanged';
+        $saved_url[url_var::NUMERIC_VALUE] = (string)test_config_trees::MAX_DELAY_VALUE;
+        $t->assert($test_name, $ui->setting_saved_text($saved_url), '');
 
         $t->subheader($ts . 'page cache');
 
         // the search and the scope are not part of the cache key, so such a page is rendered for each request
-        $ui = new frontend();
         $test_name = 'the configuration page without search is cached';
         $url_array = [url_var::MASK => views::SYSTEM_CONFIG_ID];
         $t->assert($test_name, $ui->url_cache_key($url_array), 'm=' . views::SYSTEM_CONFIG_ID . '&id=0');

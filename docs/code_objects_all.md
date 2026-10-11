@@ -410,7 +410,7 @@ the object structure is:
 ├── pathsUi - set the path const for the frontend php scripts
 ├── frontendUi - $ui - the main html frontend application
 ├── config_nodeUi - $cfn - one key of the read only tree of the system configuration
-├── config_treeUi - $cft - the read only tree of the system configuration in config.yaml
+├── config_treeUi - $cft - the tree of the system configuration in config.yaml
 ├── data_objectUi - frontend cache object
 ├── mail_senderUi - send the mails of the pod e.g. the signup confirmation
 ├── url_mapperUi - create human-readable or pod exchangeable urls

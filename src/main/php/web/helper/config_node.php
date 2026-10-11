@@ -53,6 +53,8 @@ class config_node
     public string $name = '';
     // the current database value of a setting as text, '' for a group or a setting without a database value
     public string $value = '';
+    // the id of the database value, which a user overwrite names, 0 if there is no database value
+    public int|string $id = 0;
     // the value of config.yaml, '' if the database value is the same
     public string $file_value = '';
     // the unit of the value e.g. "sec", '' if the value has none
@@ -76,13 +78,16 @@ class config_node
     }
 
     /**
-     * @param array $json the node of the api message with name, value, config.yaml value, unit, tooltip and children
+     * @param array $json the node of the api message with name, value, value id, config.yaml value, unit, tooltip and children
      * @return void
      */
     function api_mapper(array $json): void
     {
         $this->name = (string)($json[json_fields::NAME] ?? '');
         $this->value = (string)($json[json_fields::TEXT_VALUE] ?? '');
+        $id = $json[json_fields::ID] ?? 0;
+        // a malformed id names no value to overwrite, so like a malformed child it never stops the page
+        $this->id = (is_int($id) or is_string($id)) ? $id : 0;
         $this->file_value = (string)($json[json_fields::CONFIG_FILE_VALUE] ?? '');
         $this->unit = (string)($json[json_fields::CONFIG_UNIT] ?? '');
         $this->tooltip = (string)($json[json_fields::DESCRIPTION] ?? '');

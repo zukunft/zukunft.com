@@ -139,6 +139,7 @@ include_once html_paths::MODEL_HELPER . 'config_numbers.php';
 include_once html_paths::MODEL_HELPER . 'data_object.php';
 // server admin whitelist, tls and session hardening (file based IP / user whitelist)
 include_once html_paths::MODEL_HELPER . 'server_guard.php';
+include_once html_paths::MODEL_HELPER . 'db_cache.php';
 include_once html_paths::MODEL_HELPER . 'db_cache_page.php';
 include_once html_paths::SHARED_TYPES . 'db_cache_types.php';
 include_once html_paths::MODEL_IMPORT . 'import.php';
@@ -156,6 +157,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\helper\config_numbers;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object as data_object_backend;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache_page;
 use Zukunft\ZukunftCom\main\php\shared\types\db_cache_types;
 use Zukunft\ZukunftCom\main\php\cfg\helper\server_guard;
@@ -1531,8 +1533,11 @@ class frontend
             if ($msg_txt === '') {
                 $msg_txt = $msg_ui->get_last_message();
             }
+            // an info of a request without an issue confirms a done action e.g. a saved setting
+            $is_success = false;
             if ($msg_txt === '') {
                 $msg_txt = $msg_ui->get_last_info();
+                $is_success = $msg_ui->is_ok();
             }
             if ($msg_txt !== '') {
                 if ($msg_ui->has_msg_id(msg_id::PASSWORD_WRONG)) {
@@ -1544,7 +1549,7 @@ class frontend
                     $notification_html = htmlspecialchars(msg_id::LOGIN_FAILED->value . '. ') . $reset_link;
                     $result = $html->dsp_notification_html($notification_html);
                 } else {
-                    $result = $html->dsp_notification($msg_txt);
+                    $result = $html->dsp_notification($msg_txt, $is_success);
                 }
             }
         }
@@ -1587,8 +1592,8 @@ class frontend
      * remove the cached html pages that a write has just made outdated, so that the next request
      * shows the change instead of the page as it has been rendered before (see db_cache_page)
      *
-     * a user that sees the user sandbox changes only the own data, so only the own pages are
-     * outdated; a user that sees the standard data (an ip user or a system user, see
+     * a user that sees the user sandbox changes only the own data, so only the own pages and the own
+     * cached config values are outdated; a user that sees the standard data (an ip user or a system user, see
      * user::uses_standard_data) changes the data that every page of every user can show, so then
      * the complete cache is dropped. this is on purpose not selected by the changed object: a
      * change can be shown by any page, e.g. a renamed word in a value list of another page
@@ -1608,6 +1613,9 @@ class frontend
         $usr_id = self::session_user_id();
         if ($usr_id > 0 and $usr != null and !$usr->uses_standard_data()) {
             $cac_page->del_by_user($usr_id, $del_msg);
+            // the cached config values of the user include the own overwrites e.g. of the settings page
+            $cac_cfg = new db_cache(user_backend::system());
+            $cac_cfg->del_by_user($usr_id, $del_msg);
         } else {
             $cac_page->del_all($del_msg);
         }
@@ -2380,6 +2388,11 @@ class frontend
             // every page that shows the written data is now outdated, so the cached pages are
             // removed and rendered again on the next request
             $this->drop_cached_pages($msg_ui);
+            // the settings page shows many numbers, so it confirms which one has changed and how
+            $back_mask = (int)($url_array[url_var::BACK . url_var::MASK] ?? 0);
+            if ($crud == url_var::CRUD_UPDATE and $back_mask == views::SYSTEM_CONFIG_ID) {
+                $msg_ui->add_info($this->setting_saved_text($url_array));
+            }
         }
 
         // on success go back to the calling page: the confirm view set the object's own default view +
@@ -2412,6 +2425,30 @@ class frontend
             $back_url = array_merge($this->url_object_values($url_array), $back_url);
         }
         return $back_url;
+    }
+
+    /**
+     * @param array $url_array the url of the save with the new number, the shown number and the yaml keys of the setting
+     * @return string the translated confirmation e.g. "the setting for select initial entries has been updated to 4 (from 5)",
+     *                '' if the number is unchanged or no number, because then nothing has been updated
+     */
+    function setting_saved_text(array $url_array): string
+    {
+        global $mtr;
+        $lib = new library();
+        $new_val = (string)($url_array[url_var::NUMERIC_VALUE] ?? '');
+        $old_val = (string)($url_array[url_var::PRE . url_var::NUMERIC_VALUE] ?? '');
+        $vars = [
+            msg_id::VAR_NAME => (string)($url_array[url_var::CONFIG_KEY] ?? ''),
+            msg_id::VAR_VALUE => $new_val,
+            msg_id::VAR_VALUE_CHK => $old_val,
+        ];
+        $result = '';
+        // a text is not saved as a number (see sandbox_value::url_mapper), so it is not confirmed either
+        if (is_numeric($new_val) and $new_val != $old_val) {
+            $result = $lib->msg_var_text([[msg_id::CONFIG_TREE_VALUE_SAVED, $vars]], $mtr);
+        }
+        return $result;
     }
 
     /**

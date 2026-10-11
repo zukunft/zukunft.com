@@ -75,5 +75,7 @@ class icons
     // smallest number or the first name on top (up) or the biggest or the last (down)
     const string SORT_UP = 'fas fa-sort-up';
     const string SORT_DOWN = 'fas fa-sort-down';
+    // the small save button of a value that is changed in place e.g. a setting of the settings page
+    const string SAVE = 'fas fa-floppy-disk';
 
 }

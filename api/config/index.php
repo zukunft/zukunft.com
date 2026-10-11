@@ -51,6 +51,7 @@ include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_HELPER . 'config_numbers.php';
 include_once paths::MODEL_HELPER . 'config_tree.php';
+include_once paths::MODEL_HELPER . 'server_guard.php';
 include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::SHARED_TYPES . 'system_time_type.php';
 include_once paths::SHARED_CONST . 'users.php';
@@ -58,6 +59,7 @@ include_once paths::SHARED_CONST . 'users.php';
 use Zukunft\ZukunftCom\main\php\cfg\application;
 use Zukunft\ZukunftCom\main\php\cfg\helper\config_numbers;
 use Zukunft\ZukunftCom\main\php\cfg\helper\config_tree;
+use Zukunft\ZukunftCom\main\php\cfg\helper\server_guard;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\api\controller;
@@ -87,26 +89,29 @@ if ($db_con->is_open()) {
     // so every function below reads the requesting user from $msg->usr
     // (docs/llm/state-and-messages.md)
     $msg->usr = $usr;
+    // the frontend calls this api server-to-server, so the logged-in user whose overwrites are
+    // shown is the data user in url_var::USER and not the session user of the call (see api/value)
+    $load_usr = $usr->data_user($_GET[url_var::USER] ?? 0, $msg, server_guard::from_own_pod());
 
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
     if ($usr->id > 0 and $part == api::CONFIG_TREE) {
         // the read only tree of config.yaml with the current values of the all part, also for an ip user
-        $cfg_lst = new config_numbers($usr);
+        $cfg_lst = new config_numbers($load_usr);
         // without the values the tree would show every setting as missing in the database, so the user gets the reason instead
-        if ($cfg_lst->load_cfg($msg, null, $usr)) {
+        if ($cfg_lst->load_cfg($msg, null, $load_usr)) {
             $cft = new config_tree();
             $result = $cft->api_json($cfg_lst, $msg);
         } else {
             $msg->add_id(msg_id::CONFIG_NOT_LOADED);
         }
     } elseif ($usr->id > 0) {
-        $cfg_lst = new config_numbers($usr);
+        $cfg_lst = new config_numbers($load_usr);
         if ($part == api::CONFIG_ALL or $part == '') {
-            $cfg_lst->load_cfg($msg, null, $usr);
+            $cfg_lst->load_cfg($msg, null, $load_usr);
         } elseif ($part == api::CONFIG_FRONTEND) {
-            $cfg_lst->load_frontend_cfg($usr, $msg);
+            $cfg_lst->load_frontend_cfg($load_usr, $msg);
         } elseif ($part == api::CONFIG_USER) {
-            $cfg_lst->load_usr_cfg($usr, $msg);
+            $cfg_lst->load_usr_cfg($load_usr, $msg);
         } else {
             $msg->add(msg_id::CONFIG_PART, [msg_id::VAR_PART => $part]);
         }

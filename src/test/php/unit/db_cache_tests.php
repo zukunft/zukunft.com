@@ -236,6 +236,10 @@ class db_cache_tests
         $page_with_msg = '<main>content</main>' . $msg_html . api::USER_MSG_PLACEHOLDER . '<footer></footer>';
         $test_name = 'the user message is removed from the page on save';
         $t->assert($test_name, db_cache_page::strip_user_msg($page_with_msg), $clean_page);
+        $test_name = '... also the green confirmation of a done action';
+        $success_html = $html->dsp_notification('the setting has been updated', true);
+        $page_with_success = '<main>content</main>' . $success_html . api::USER_MSG_PLACEHOLDER . '<footer></footer>';
+        $t->assert($test_name, db_cache_page::strip_user_msg($page_with_success), $clean_page);
         $test_name = 'a page without a message is not changed on save';
         $t->assert($test_name, db_cache_page::strip_user_msg($clean_page), $clean_page);
         // an alert that is part of the page content is not the user message of the request

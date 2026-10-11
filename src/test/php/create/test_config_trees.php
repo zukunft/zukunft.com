@@ -64,6 +64,12 @@ class test_config_trees
     const int START_DELAY_DB = 2;
     const string MAX_DELAY = 'max delay';
     const int MAX_DELAY_VALUE = 3600;
+    // the number a user saves instead, to check the confirmation of the change
+    const int MAX_DELAY_NEW = 1800;
+    // the id of the database value, which only the max delay and the types setting have, so a tree with
+    // an editing user shows the input for max delay only, because a boolean is not yet editable
+    const int MAX_DELAY_ID = 12;
+    const int TYPES_ID = 13;
     const string SEC = words::SEC;
     // a key with one setting that is no unit and that has no database value
     const string ROW_LIMIT = 'row limit';
@@ -176,10 +182,10 @@ class test_config_trees
     {
         $rows = [
             $this->cfg_row([self::DATABASE, self::RETRY, self::START_DELAY, self::SEC], self::START_DELAY_DB),
-            $this->cfg_row([self::DATABASE, self::RETRY, self::MAX_DELAY, self::SEC], self::MAX_DELAY_VALUE),
+            $this->cfg_row([self::DATABASE, self::RETRY, self::MAX_DELAY, self::SEC], self::MAX_DELAY_VALUE, self::MAX_DELAY_ID),
             $this->cfg_row([self::DATABASE, self::ROW_LIMIT, self::ROW_LIMIT_SETTING, self::EXTRA], self::ROW_LIMIT_VALUE),
             $this->cfg_row([self::DATABASE, self::CACHE, self::PAGE], self::PAGE_DB),
-            $this->cfg_row([self::DATABASE, self::CACHE, self::TYPES], self::TYPES_DB),
+            $this->cfg_row([self::DATABASE, self::CACHE, self::TYPES], self::TYPES_DB, self::TYPES_ID),
             [json_fields::PHRASES => $this->phrase_rows([self::USER, self::LANGUAGE]),
                 json_fields::TEXT_VALUE => self::LANGUAGE_VALUE],
             $this->cfg_row([self::USER, self::SCRIPT_KEY], self::SCRIPT_KEY_VALUE),
@@ -207,11 +213,16 @@ class test_config_trees
     /**
      * @param array $keys the yaml keys of a setting below "system configuration"
      * @param int $number the database value of the setting
+     * @param int $id the id of the value, 0 for a row without one
      * @return array the cached json row of the number value of the setting
      */
-    private function cfg_row(array $keys, int $number): array
+    private function cfg_row(array $keys, int $number, int $id = 0): array
     {
-        return [json_fields::PHRASES => $this->phrase_rows($keys), json_fields::NUMBER => $number];
+        $row = [json_fields::PHRASES => $this->phrase_rows($keys), json_fields::NUMBER => $number];
+        if ($id != 0) {
+            $row[json_fields::ID] = $id;
+        }
+        return $row;
     }
 
     /**

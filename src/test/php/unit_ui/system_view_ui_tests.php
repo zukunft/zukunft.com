@@ -428,6 +428,15 @@ class system_view_ui_tests
             $html_base->dsp_notification('Forgot password?'),
             '<div class="alert alert-warning notification-bar">Forgot password?</div>'
         );
+        $saved_txt = $mtr->txt(msg_id::CONFIG_TREE_VALUE_SAVED);
+        $test_name = 'a done action without an issue is confirmed in green';
+        $saved_msg = new user_message();
+        $saved_msg->add_info($saved_txt);
+        $t->assert_text_contains($test_name, $ui->user_msg_html($saved_msg), html_base::CLASS_NOTIFICATION_SUCCESS);
+        // negative: an issue of the same request is never shown as a success
+        $test_name = '... but in orange if the request has an issue';
+        $saved_msg->add_id(msg_id::CONFIG_NOT_LOADED);
+        $t->assert_text_contains($test_name, $ui->user_msg_html($saved_msg), html_base::CLASS_NOTIFICATION . '"');
 
         // test that a failed login renders the notification in the full page
         $_SESSION[url_var::SESSION_TOKEN] = test_const::DUMMY_SESSION_TOKEN;

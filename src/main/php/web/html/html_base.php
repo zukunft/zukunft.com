@@ -215,6 +215,8 @@ class html_base
     const string CLASS_MAIN = 'main-container';
     const string CLASS_FOOTER = 'site-footer';
     const string CLASS_NOTIFICATION = 'alert alert-warning ' . api::USER_MSG_CLASS;
+    // green, so that the user sees at once that e.g. a save has worked
+    const string CLASS_NOTIFICATION_SUCCESS = 'alert alert-success ' . api::USER_MSG_CLASS;
     const string CLASS_INPUT_SECTION = 'search-section';
     const string CLASS_INPUT = 'standard-input';
     // css-only show-password toggle classes (see the .password / .show-password rules in style_html.css)
@@ -510,11 +512,12 @@ class html_base
      * uses Bootstrap alert-warning styling to display in orange
      *
      * @param string $msg_txt the human-readable message to display; must already be translated
+     * @param bool $is_success true to confirm a done action in green instead of the orange of an issue
      * @return string the html code for the notification bar
      */
-    function dsp_notification(string $msg_txt): string
+    function dsp_notification(string $msg_txt, bool $is_success = false): string
     {
-        return $this->dsp_notification_html(htmlspecialchars($msg_txt));
+        return $this->dsp_notification_html(htmlspecialchars($msg_txt), $is_success);
     }
 
     /**
@@ -522,11 +525,13 @@ class html_base
      * the caller is responsible for escaping any user-supplied content inside $html
      *
      * @param string $html pre-rendered safe HTML content for the notification bar
+     * @param bool $is_success true to confirm a done action in green instead of the orange of an issue
      * @return string the html code for the notification bar
      */
-    function dsp_notification_html(string $html): string
+    function dsp_notification_html(string $html, bool $is_success = false): string
     {
-        return '<' . self::DIV . ' ' . self::CLASS_HTML . '="' . self::CLASS_NOTIFICATION . '">'
+        $class = $is_success ? self::CLASS_NOTIFICATION_SUCCESS : self::CLASS_NOTIFICATION;
+        return '<' . self::DIV . ' ' . self::CLASS_HTML . '="' . $class . '">'
             . $html
             . '</' . self::DIV . '>' . "\n";
     }

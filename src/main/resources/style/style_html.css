@@ -792,6 +792,24 @@ a:hover {
     font-size: 0.8rem;
     margin-left: 0.5rem;
 }
+/* inline, so that the config.yaml value stays behind the value that can be changed */
+.config-edit {
+    display: inline-block;
+}
+.config-edit > summary {
+    cursor: pointer;
+    list-style: none;
+}
+.config-edit > summary::-webkit-details-marker {
+    display: none;
+}
+.config-edit form {
+    display: flex;
+    gap: 0.25rem;
+}
+.config-save {
+    padding: 0 0.375rem;
+}
 .config-hit-head {
     display: flex;
     justify-content: space-between;

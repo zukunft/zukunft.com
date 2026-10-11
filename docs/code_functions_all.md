@@ -6829,6 +6829,7 @@
     \-- execute_and_next - section for function execute_and_next not yet defined that it should be cached page in /front
             end.php
     \-- show_view - section for function show_view not yet defined that it should be cached page in /frontend.php
+    \-- setting_saved_text - section for function setting_saved_text is expected to be set and get in /frontend.php
     \-- url_to_back_url - section for function url_to_back_url not yet defined that it should be execute in /frontend.ph
             p
     \-- api_get - section for function api_get not yet defined that it should be api in /frontend.php
@@ -8936,7 +8937,7 @@
         \-- system_page - the body of a system view that is already part of the system views,
                  but whose data and actions are not yet
     \-- config_tree
-        \-- system_page - the read only tree of the system configuration with the search and the scope of the url,
+        \-- system_page - the tree of the system configuration with the search and the scope of the url,
     \-- user_jobs
         \-- system_page - the jobs of the requesting user with the pending jobs on top and the buttons to downgrade or c
                 ancel a job
@@ -9649,6 +9650,9 @@
 \-- execute
     \-- url_to_action
         \-- frontend - execute the user request e.g. a database update and create the url for the next page
+    \-- setting_saved_text
+        \-- frontend - @param array $url_array the url of the save with the new number,
+                 the shown number and the yaml keys of the setting
     \-- url_to_back_url
         \-- frontend - the previous page of a url built from its '9'-prefixed back targets, ready to be used directly as
     \-- show

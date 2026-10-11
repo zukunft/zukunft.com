@@ -197,11 +197,16 @@ class config_tree
      * @param mixed $file_value the value of the setting in config.yaml e.g. true
      * @param array $names the yaml keys of the setting, which are exactly the phrases of its value
      * @param array $values the config values by their phrase set
-     * @return array the json node with the database value and the config.yaml value if it differs or no database value exists
+     * @return array the json node with the database value and its id and the config.yaml value if it differs or no database value exists
      */
     private function with_value(array $node, mixed $file_value, array $names, array $values): array
     {
-        $db_value = ($values[config_numbers::names_key($names)] ?? null)?->number();
+        $val = $values[config_numbers::names_key($names)] ?? null;
+        $db_value = $val?->number();
+        // the id names the value that the user overwrites on the settings page
+        if ($db_value !== null) {
+            $node[json_fields::ID] = $val->id();
+        }
         $is_same = ($db_value !== null and $this->is_same($file_value, $db_value));
         if ($is_same) {
             // the text of config.yaml, so that e.g. a boolean is shown as true and not as 1
