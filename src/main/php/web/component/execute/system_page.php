@@ -41,6 +41,7 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::COMPONENT . 'component.php';
 include_once html_paths::EXECUTE . 'ui_list.php';
+include_once html_paths::HELPER . 'config_tree.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'styles.php';
 include_once html_paths::PHRASE . 'term_list.php';
@@ -61,6 +62,7 @@ include_once html_paths::SHARED_CONST . 'views.php';
 include_once html_paths::SHARED_HELPER . 'Translator.php';
 
 use Zukunft\ZukunftCom\main\php\web\component\component;
+use Zukunft\ZukunftCom\main\php\web\helper\config_tree;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named;
@@ -673,6 +675,26 @@ class system_page extends component
         global $mtr;
         $html = new html_base();
         return $html->text_h3($mtr->txt(msg_id::INFO_VIEW_NOT_YET_AVAILABLE));
+    }
+
+    /**
+     * the read only tree of the system configuration with the search and the scope of the url,
+     * which also an ip user without login can see
+     *
+     * @param user_message $msg to report a problem of the tree or config load
+     * @param array $url_arr the url vars of the page with the search (url_var::PATTERN) and the scope (url_var::CONFIG_PART)
+     * @param bool $test_mode true to show the given tree without a backend call
+     * @param config_tree $cft the tree to show in the test mode
+     * @return string the html code of the configuration tree
+     */
+    function config_tree(user_message $msg, array $url_arr, bool $test_mode, config_tree $cft = new config_tree()): string
+    {
+        if (!$test_mode) {
+            $cft->load($msg);
+        }
+        $pattern = (string)($url_arr[url_var::PATTERN] ?? '');
+        $scope = (string)($url_arr[url_var::CONFIG_PART] ?? '');
+        return $cft->html($pattern, $scope);
     }
 
     /**

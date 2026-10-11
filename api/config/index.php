@@ -50,12 +50,14 @@ include_once paths::API_OBJECT . 'api_message.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_HELPER . 'config_numbers.php';
+include_once paths::MODEL_HELPER . 'config_tree.php';
 include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::SHARED_TYPES . 'system_time_type.php';
 include_once paths::SHARED_CONST . 'users.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\application;
 use Zukunft\ZukunftCom\main\php\cfg\helper\config_numbers;
+use Zukunft\ZukunftCom\main\php\cfg\helper\config_tree;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\api\controller;
@@ -87,7 +89,11 @@ if ($db_con->is_open()) {
     $msg->usr = $usr;
 
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-    if ($usr->id > 0) {
+    if ($usr->id > 0 and $part == api::CONFIG_TREE) {
+        // the read only tree of config.yaml is the same for every user, also for an ip user
+        $cft = new config_tree();
+        $result = $cft->api_json($msg);
+    } elseif ($usr->id > 0) {
         $cfg_lst = new config_numbers($usr);
         if ($part == api::CONFIG_ALL or $part == '') {
             $cfg_lst->load_cfg($msg, null, $usr);
@@ -112,7 +118,7 @@ if ($db_con->is_open()) {
         if ($with_phr == url_var::TRUE) {
             $result = $cfg_lst->api_json([api_types::INCL_PHRASES], $msg);
         } else {
-            $result = $cfg_lst->api_json([api_types::NO_KEY_FILL], $msg);
+            $result = $cfg_lst->api_json([], $msg);
         }
     }
 

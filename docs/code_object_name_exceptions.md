@@ -188,7 +188,7 @@ sys_log_list: $err_lst, $err_lst_ui, $log_lst, $log_lst_ui, $lst_ui, $sys_lst
 sys_log_status: $log_sta
 sys_log_status_list: $lst, $sys_log_status
 system_form: $form, $overwrite_form, $sfm, $simple_form, $value_form
-system_page: $page
+system_page: $page, $sys_page
 system_time: $sys_exe
 system_time_type: $sys_exe_typ, $sys_script
 table_chart: $chart
@@ -199,6 +199,7 @@ term_view: $dbo, $dbo_ui, $lnk, $msk_lnk, $new_lnk, $obj, $trm_lnk_ui, $trm_msk,
 term_view_list: $lnk_lst, $lst
 test_api: $t_api
 test_components: $t_cmp
+test_config_trees: $t_cft
 test_db_caches: $t_db_cache
 test_db_load: $t_db
 test_figures: $t_fig

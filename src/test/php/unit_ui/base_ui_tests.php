@@ -360,6 +360,22 @@ class base_ui_tests
         $navbar_anon = $html->navbar(0, []);
         $t->assert_text_not_contains($test_name, $navbar_anon, styles::USER_LOGGED);
 
+        // the settings are the read only system configuration, which an ip user without login can see too
+        $test_name = 'the settings link of a request without login is the short settings path';
+        $t->assert_text_contains($test_name, $navbar_anon, api::SETTINGS_REL . '"');
+        $test_name = '... whose forward page opens the system configuration';
+        $t->assert($test_name, api::FORWARD_VIEWS[api::SETTINGS_REL], views::SYSTEM_CONFIG_ID);
+        // negative: the link does not name the view id, which changes if the views are re-pinned
+        $test_name = '... without the view id in the navbar';
+        $t->assert_text_not_contains($test_name, $navbar_anon, url_var::MASK . '=' . views::SYSTEM_CONFIG_ID . '"');
+
+        // the static forward pages in the docroot open the view of api::FORWARD_VIEWS, so a changed
+        // view id is written to the page by the next run with AUTO_UPDATE_TEST_FILES
+        foreach (api::FORWARD_VIEWS as $forward => $msk_id) {
+            $test_name = 'the forward page ' . $forward . ' opens the view ' . $msk_id . ' with the url vars of the request';
+            $t->assert_file($test_name, $html->forward_page($msk_id), ROOT_PATH . ltrim($forward, DIRECTORY_SEPARATOR));
+        }
+
         // the login link forwards a '9'-prefixed back target of the current page (the logout
         // page carries the original page as back target, see frontend::action_logout), so after
         // the login the original page is shown again and not the logout page

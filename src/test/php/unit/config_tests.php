@@ -38,6 +38,7 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_CONST . 'def.php';
 include_once paths::MODEL_HELPER . 'config_numbers.php';
+include_once paths::MODEL_HELPER . 'config_tree.php';
 include_once paths::DB . 'sql.php';
 include_once paths::DB . 'sql_creator.php';
 include_once paths::DB . 'sql_type.php';
@@ -49,6 +50,7 @@ include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED_TYPES . 'db_cache_types.php';
+include_once test_paths::CREATE . 'test_config_trees.php';
 include_once test_paths::CREATE . 'test_values.php';
 include_once test_paths::CREATE . 'test_words.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
@@ -60,6 +62,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\cfg\helper\config_numbers;
+use Zukunft\ZukunftCom\main\php\cfg\helper\config_tree;
 use Zukunft\ZukunftCom\main\php\service\config;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\language_codes;
@@ -67,6 +70,7 @@ use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\db_cache_types;
+use Zukunft\ZukunftCom\test\php\create\test_config_trees;
 use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -222,6 +226,42 @@ class config_tests
         $phr_chf = $t_wrd->word_chf()->phrase();
         $t->assert($test_name, $phr_chf->value_selection($msg)->names(), [words::CHF]);
         $cfg = $cfg_pod;
+
+
+        $t->subheader($ts . 'tree');
+
+        // the tree of config.yaml keeps the key order and the tooltips for the frontend
+        $test_name = 'the tooltip-comment is the tooltip of its key';
+        $t_cft = new test_config_trees($t);
+        $cft = new config_tree();
+        $nodes = $cft->nodes($t_cft->yaml());
+        $db_node = $t_cft->node_by_name($nodes, test_config_trees::DATABASE);
+        $t->assert($test_name, $db_node[json_fields::DESCRIPTION] ?? '', test_config_trees::DATABASE_TIP);
+        $test_name = '... and never a key of its own';
+        $t->assert($test_name, $t_cft->node_by_name($nodes, words::TOOLTIP_COMMENT), []);
+        $test_name = 'the sys-conf-value is the value of its key';
+        $lan_node = $t_cft->node_by_name($nodes, test_config_trees::LANGUAGE);
+        $t->assert($test_name, $lan_node[json_fields::TEXT_VALUE] ?? '', test_config_trees::LANGUAGE_VALUE);
+        $test_name = '... and never a key of its own';
+        $t->assert($test_name, $t_cft->node_by_name($nodes, words::SYS_CONF_VALUE), []);
+        $test_name = 'the only setting of a key is its value with the setting key as unit';
+        $delay_node = $t_cft->node_by_name($nodes, test_config_trees::START_DELAY);
+        $t->assert($test_name, $delay_node[json_fields::TEXT_VALUE] ?? '', '1');
+        $t->assert($test_name, $delay_node[json_fields::CONFIG_UNIT] ?? '', test_config_trees::SEC);
+        // negative: a key with two settings is a group without a value or a unit
+        $test_name = 'a key with two settings has no value and no unit';
+        $retry_node = $t_cft->node_by_name($nodes, test_config_trees::RETRY);
+        $t->assert($test_name, ($retry_node[json_fields::TEXT_VALUE] ?? '') . ($retry_node[json_fields::CONFIG_UNIT] ?? ''), '');
+        $test_name = 'a key with one setting that is no unit keeps the setting as its own key';
+        $limit_node = $t_cft->node_by_name($nodes, test_config_trees::ROW_LIMIT);
+        $limit_names = array_column($limit_node[json_fields::CONFIG_CHILDREN] ?? [], json_fields::NAME);
+        $t->assert($test_name, $limit_names, [test_config_trees::ROW_LIMIT_SETTING]);
+        $test_name = '... but its settings in the order of config.yaml';
+        $retry_names = array_column($retry_node[json_fields::CONFIG_CHILDREN] ?? [], json_fields::NAME);
+        $t->assert($test_name, $retry_names, [test_config_trees::START_DELAY, test_config_trees::MAX_DELAY]);
+        $test_name = 'a boolean setting is shown as true';
+        $page_node = $t_cft->node_by_name($nodes, test_config_trees::PAGE);
+        $t->assert($test_name, $page_node[json_fields::TEXT_VALUE] ?? '', 'true');
 
     }
 

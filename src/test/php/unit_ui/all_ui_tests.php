@@ -68,6 +68,7 @@ include_once test_paths::UNIT_UI . 'language_ui_tests.php';
 include_once test_paths::UNIT_UI . 'change_log_ui_tests.php';
 include_once test_paths::UNIT_UI . 'sys_log_ui_tests.php';
 include_once test_paths::UNIT_UI . 'job_ui_tests.php';
+include_once test_paths::UNIT_UI . 'config_tree_ui_tests.php';
 include_once test_paths::UNIT_UI . 'localhost_ui_tests.php';
 include_once test_paths::UNIT_UI . 'spacial_cases_ui_tests.php';
 include_once test_paths::UNIT_UI . 'start_ui_tests.php';
@@ -137,6 +138,7 @@ class all_ui_tests extends all_unit_tests
         new change_log_ui_tests()->run($t);
         new sys_log_ui_tests()->run($t);
         new job_ui_tests()->run($t);
+        new config_tree_ui_tests()->run($t);
 
         new localhost_ui_tests()->run($t);
 

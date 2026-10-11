@@ -619,3 +619,186 @@ a:hover {
 .password-field:has(.show-password:checked) .password-icon-hide {
     display: inline-block;
 }
+
+/* the read only tree of the system configuration (web/helper/config_tree): a toolbar with the
+   search and the scope chips above the top level keys as cards in up to three columns; a node
+   opens and closes without javascript, so the marker shows + if closed and - if open; the
+   colors are the zukunft.com grey (#9ea09e) and blues (#385eb7 links, #274b8f dark, #b9c6d6 lines) */
+.config-toolbar {
+    display: grid;
+    gap: 0.75rem;
+    background: #f9fafb;
+    border: 1px solid #b9c6d6;
+    border-radius: 8px;
+    padding: 0.875rem;
+    margin-bottom: 1.25rem;
+}
+/* the full width of the main container, which otherwise shrinks each part to its content,
+   so that the columns have room and all search hits have the same width */
+.config-toolbar,
+.config-columns,
+.config-hit-head,
+.config-hit {
+    align-self: stretch;
+}
+.config-search {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+.config-search input {
+    flex: 1 1 14rem;
+    min-width: 0;
+    font: inherit;
+    padding: 0.4rem 0.6rem;
+    border: 1px solid #b9c6d6;
+    border-radius: 6px;
+    background: #fff;
+    color: #274b8f;
+}
+.config-search input:focus-visible,
+.config-node > summary:focus-visible {
+    outline: 2px solid #385eb7;
+    outline-offset: 2px;
+}
+.config-scope {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.375rem;
+    list-style: none;
+    padding-left: 0;
+    margin: 0.75rem 0 0;
+}
+.config-scope li {
+    padding: 0.15rem 0.75rem;
+    border: 1px solid #dee2e6;
+    border-radius: 999px;
+    background: #fff;
+    font-size: 0.85rem;
+}
+.config-scope li a {
+    text-decoration: none;
+}
+.config-scope li.config-scope-shown {
+    border-color: #385eb7;
+    background: #f8f9fa;
+    color: #274b8f;
+    font-weight: 500;
+}
+.config-columns {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+    gap: 1rem;
+    align-items: start;
+    text-align: left; /* the keys read as a list, not as the body's centred text */
+}
+.config-tree {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+    list-style: none;
+    padding-left: 0;
+    margin: 0.375rem 0 0;
+}
+.config-column > .config-tree > li > .config-node {
+    background: #fff;
+    border: 1px solid #b9c6d6;
+    border-radius: 6px;
+    padding: 0.5rem 0.875rem;
+}
+/* each level below a key starts one step to the right, marked by a thin line */
+.config-node > .config-tree {
+    padding-left: 1rem;
+    margin-left: 0.3rem;
+    border-left: 1px solid #dee2e6;
+}
+/* a setting row starts behind the +/- marker of the keys of the same level,
+   so a value is always indented compared to the next key with entries below it */
+.config-tree > li > dl {
+    margin-left: 1.1em;
+}
+.config-node > summary {
+    list-style: none;
+    cursor: pointer;
+    font-weight: 500;
+    color: #274b8f;
+}
+.config-node > summary::-webkit-details-marker {
+    display: none;
+}
+/* a fixed width marker, so the key names of one level and the setting rows line up */
+.config-node > summary::before {
+    content: "+";
+    display: inline-block;
+    width: 1.1em;
+    color: #9ea09e;
+}
+.config-node[open] > summary::before {
+    content: "\2212";
+}
+.config-tree dl,
+.config-hit dl {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    margin: 0;
+}
+.config-tree dt,
+.config-tree dd,
+.config-hit dt,
+.config-hit dd {
+    padding: 0.25rem 0;
+    border-bottom: 1px dashed #dee2e6;
+    margin: 0;
+}
+.config-tree dt[title] {
+    text-decoration: underline dotted #9ea09e;
+    text-underline-offset: 3px;
+    cursor: help;
+}
+.config-tree dd,
+.config-hit dd {
+    font-family: ui-monospace, monospace;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+    padding-left: 1rem;
+    color: #274b8f;
+}
+.config-unit {
+    color: #9ea09e;
+    font-size: 0.8rem;
+    margin-left: 0.25rem;
+}
+.config-hit-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.625rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.625rem;
+}
+.config-hit {
+    background: #fff;
+    border: 1px solid #b9c6d6;
+    border-radius: 6px;
+    padding: 0.5rem 0.875rem;
+    margin-bottom: 0.625rem;
+    text-align: left;
+}
+/* a hit shows the tooltip next to the value, so the long text wraps instead of the name */
+.config-hit dl {
+    grid-template-columns: max-content minmax(0, 1fr);
+}
+.config-hit dd {
+    text-align: left;
+}
+.config-path {
+    font-family: ui-monospace, monospace;
+    font-size: 0.78rem;
+    color: #9ea09e;
+}
+.config-hit mark {
+    background: #dbe4f5;
+    color: inherit;
+    border-radius: 2px;
+    padding: 0 1px;
+}

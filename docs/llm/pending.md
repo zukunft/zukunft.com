@@ -2,13 +2,66 @@
 
 ## system settings
 
-also if the user is only an ip user that is not logged in and the user clicks on the 'settings' link 
-in the user popup menu of the navbar show at least an page with the translateable title "settings". 
-this empty view page is filled in the next step with a tree view for config.yaml.
+create for the settings view the 'tree' api that returns all setting values with all information from the config.yaml including the tree structure and the tooltips and use this for the setting page
 
 ## admin dashboard
 
-if an admin user is logged in add to the top right used menu a 'dashboard' entry that links to a admin dashboard view page. Leave the admin dashboard page for the moment almost enpty and just display the title.  
+if an admin user is logged in add to the top right used menu a 'dashboard' entry that links to a admin dashboard view page. Leave the admin dashboard page for the moment almost enpty and just display the title.
+
+## start page
+
+review the data so that 'one-click-hide' if the number one solution for populism' and 'public CBAM calculation' is the number one solution for 'global warming'
+
+adjust the numbers in the json data files so that the gain of the solution is always smaller than the potential loss and add a formula that checks that this is always the case
+
+adjust the numbers in the json data files so that the problem / solution are in this order
+
+1. Establish and enforce rules against disinformation
+2. Enable effective climate protection through a public carbon border tax
+3. Use a neutral knowledge base for decision-making
+4. Cap wealth on ethical grounds and use it to fund a basic income
+5. Don’t use AI for complex problems or for interpersonal communication
+6. Prevent monopolies with a market-share tax
+7. Accept that health matters and finance it in a socially fair way
+8. Achieve digital sovereignty through free software
+9. Use smartvote for initiatives and build a liquid democracy
+10. Measure the economy’s actual benefit instead of relying on GDP
+
+## debug 
+
+if the url parameter e.g. &debug=9 is set, the page output may start with
+
+## import times
+
+The import may create log entries like 
+
+890.8708 import system_views.json 0% 0.506s / 146450.885s  save single 120 components (239.7 components per sec)
+891.3716 import system_views.json 0% 1.006s / 146451.388s  save single 249 components (248.6 components per sec)
+891.8754 import system_views.json 0% 1.51s / 146451.894s  save single 374 components (248.5 components per sec)
+892.4037 import system_views.json 0% 2.039s / 146452.424s  save single 7 views (16.4 views per sec)
+892.9703 import system_views.json 0% 2.605s / 146452.993s  save single 23 views (23.2 views per sec)
+893.5451 import system_views.json 0% 3.18s / 146453.57s  save single 31 views (19.8 views per sec)
+894.0548 import system_views.json 0% 3.69s / 146454.082s  save single 38 views (18.3 views per sec)
+894.5667 import system_views.json 0% 4.202s / 146454.596s  save single 45 views (17.4 views per sec)
+895.1550 import system_views.json 0% 4.79s / 146455.186s  save single 50 views (15.7 views per sec)
+895.7393 import system_views.json 0% 5.374s / 146455.773s  save single 54 views (14.4 views per sec)
+896.2505 import system_views.json 0% 5.885s / 146456.286s  save single 59 views (13.8 views per sec)
+896.8586 import system_views.json 0% 6.493s / 146456.897s  save single 66 views (13.5 views per sec)
+897.3627 import system_views.json 0% 6.998s / 146457.403s  save single 71 views (13.2 views per sec)
+897.8832 import system_views.json 0% 7.518s / 146457.925s  save single 79 views (13.4 views per sec)
+898.4431 import system_views.json 0% 8.078s / 146458.487s  save single 85 views (13.1 views per sec)
+899.0160 import system_views.json 0% 8.651s / 146459.062s  save single 92 views (13.1 views per sec)
+899.5332 import system_views.json 0% 9.168s / 146459.582s  save single 98 views (13 views per sec)
+900.0464 import system_views.json 0% 9.681s / 146460.097s  save single 117 views (14.5 views per sec)
+900.5603 import system_views.json 0% 10.194s / 146460.612s  save single 137 views (16 views per sec)
+901.0896 import system_views.json 0% 10.723s / 146461.143s  save single 153 views (16.8 views per sec)
+901.5975 import system_views.json 0% 11.232s / 146461.654s  save single 174 views (18.1 views per sec)
+
+try to adjust the calculation and calculation parameter so that the estimated to time is a better predictor of the real time. Maybe create some test cases to validate the real times to have a base for adjusting the parameters and the calculation
+
+## review the setting mainly for jobs
+
+
 
 ## phrase default view
 

@@ -629,6 +629,9 @@ class component_types
     // the jobs of all users for an admin with the pending jobs on top (see system_page::all_jobs)
     const string SYSTEM_BODY_ALL_JOBS = "system_body_all_jobs";
     const int SYSTEM_BODY_ALL_JOBS_ID = 252;
+    // the read only tree of the system configuration with search and scope (see system_page::config_tree)
+    const string SYSTEM_BODY_CONFIG_TREE = "system_body_config_tree";
+    const int SYSTEM_BODY_CONFIG_TREE_ID = 265;
     const string SHOW_PHRASE_ROW = "system_show_field_phrase_row";
     const int SHOW_PHRASE_ROW_ID = 109;
     const string SHOW_PHRASE_COL = "system_show_field_phrase_col";
@@ -877,7 +880,8 @@ class component_types
         self::FORM_VALUE_OVERWRITE,
         self::SYSTEM_BODY_NOT_YET_AVAILABLE,
         self::SYSTEM_BODY_USER_JOBS,
-        self::SYSTEM_BODY_ALL_JOBS
+        self::SYSTEM_BODY_ALL_JOBS,
+        self::SYSTEM_BODY_CONFIG_TREE
     );
 
     // list of component types that are a button
@@ -1197,7 +1201,8 @@ class component_types
         [self::FORM_VALUE_OVERWRITE, self::FORM_VALUE_OVERWRITE_ID],
         [self::SYSTEM_BODY_NOT_YET_AVAILABLE, self::SYSTEM_BODY_NOT_YET_AVAILABLE_ID],
         [self::SYSTEM_BODY_USER_JOBS, self::SYSTEM_BODY_USER_JOBS_ID],
-        [self::SYSTEM_BODY_ALL_JOBS, self::SYSTEM_BODY_ALL_JOBS_ID]
+        [self::SYSTEM_BODY_ALL_JOBS, self::SYSTEM_BODY_ALL_JOBS_ID],
+        [self::SYSTEM_BODY_CONFIG_TREE, self::SYSTEM_BODY_CONFIG_TREE_ID]
     );
 
 }

@@ -373,6 +373,18 @@ on how often the user has asked for more:
 today; the *max frontend list size* key for the 2'000 bound is still missing and
 has to be added together with the paged version.
 
+The settings tree of the system configuration (`views::SYSTEM_CONFIG_ID`, the
+navbar "settings" link, `web/helper/config_tree`) is the one exception: it is
+the read only `config.yaml` itself, which the backend sends in its key order
+(`api/config?1=tree`, `cfg/helper/config_tree`), and every level shows all its
+entries without "more" steps, because the whole config is assumed to always fit
+on one page. The top level keys are cards in up to
+three columns (`config_tree::COLUMN_KEYS`: select, user, then test with the other
+keys and pod last); the snapshot `config_page/system_config_read_only.html`
+shows the layout. Its search (`url_var::PATTERN`) and scope
+(`url_var::CONFIG_PART`) are no part of the page cache key, so a page with
+either is rendered for each request.
+
 ## "… more" is always a link that shows more
 
 When a list is truncated to its configured limit, the "… and n more" tail is a

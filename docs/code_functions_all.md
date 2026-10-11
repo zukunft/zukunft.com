@@ -2034,6 +2034,9 @@
             ned in /helper/config_numbers.php
     \-- ip_user_can_change - section for function ip_user_can_change not yet defined that it should be predefined in /he
             lper/config_numbers.php
+\-- config_tree
+    \-- api_json - section for function api_json not yet defined that it should be api in /helper/config_tree.php
+    \-- nodes - section for function nodes not yet defined that it should be convert in /helper/config_tree.php
 \-- data_object
     \-- api_json - section for function api_json not yet defined that it should be api in /helper/data_object.php
     \-- api_array - section for function api_array not yet defined that it should be api in /helper/data_object.php
@@ -5363,6 +5366,7 @@
     \-- api_json
         \-- sql_message - @return string the json message to the backend as a string
         \-- combine_object - create the api json message string of this combine object for the frontend
+        \-- config_tree - the tree of the system configuration below "zukunft.com > system configuration" as the
         \-- db_object_multi - create the api json message string of this database object based on more than one table fo
                 r the frontend
         \-- type_list - create the api json message string for this list
@@ -5824,6 +5828,18 @@
         \-- config_numbers - the pod setting that decides if the formulas assigned to the aliases of a phrase are shown
     \-- ip_user_can_change
         \-- config_numbers - the pod permission that decides if a user without login can change data in the database
+\-- convert
+    \-- nodes
+        \-- config_tree - the nodes of the given part of config.yaml in the order of the file, without the keys
+    \-- convert
+        \-- import_wikidata - create a zukunft.com import json array from a wikidata entity json and a wikidata property
+                 json
+    \-- convert_to_file
+        \-- import_wikidata - convert the given wikidata entity and property json to a zukunft.com import json and write
+                 it to the cache folder
+    \-- cleanup_file
+        \-- import_wikidata - remove a cache file created by convert_to_file,
+                 e.g. as an optional cleanup after the import
 \-- settings
     \-- is_value_obj
         \-- db_id_object_non_sandbox - @return bool true if this sandbox object is a value or result
@@ -5975,16 +5991,6 @@
         \-- import - @param string $key the yaml key with the words of the triple e.g. "system configuration"
     \-- seq_id
         \-- import - @return int the next dummy id for unit testing
-\-- convert
-    \-- convert
-        \-- import_wikidata - create a zukunft.com import json array from a wikidata entity json and a wikidata property
-                 json
-    \-- convert_to_file
-        \-- import_wikidata - convert the given wikidata entity and property json to a zukunft.com import json and write
-                 it to the cache folder
-    \-- cleanup_file
-        \-- import_wikidata - remove a cache file created by convert_to_file,
-                 e.g. as an optional cleanup after the import
 \-- format
     \-- dsp
         \-- change - @return string the current change as a human-readable text
@@ -6548,6 +6554,7 @@
     \-- error_log - section for function error_log missing in /component/execute/system_page.php
     \-- error_update - section for function error_update missing in /component/execute/system_page.php
     \-- not_yet_available - section for function not_yet_available missing in /component/execute/system_page.php
+    \-- config_tree - section for function config_tree missing in /component/execute/system_page.php
     \-- user_jobs - section for function user_jobs missing in /component/execute/system_page.php
     \-- all_jobs - section for function all_jobs missing in /component/execute/system_page.php
     \-- process_progress - section for function process_progress missing in /component/execute/system_page.php
@@ -6859,6 +6866,23 @@
             config.php
     \-- load - section for function load not yet defined that it should be load in /helper/config.php
     \-- get_by - section for function get_by is expected to be set and get in /helper/config.php
+\-- config_node
+    \-- matches - section for function matches not yet defined that it should be info in /helper/config_node.php
+    \-- order error - order of section construct and map has difference at api_mapper should be before __construct
+\-- config_tree
+    \-- load - section for function load not yet defined that it should be load in /helper/config_tree.php
+    \-- branch - section for function branch not yet defined that it should be select in /helper/config_tree.php
+    \-- columns - section for function columns not yet defined that it should be select in /helper/config_tree.php
+    \-- hits - section for function hits not yet defined that it should be select in /helper/config_tree.php
+    \-- key_names - section for function key_names not yet defined that it should be select in /helper/config_tree.php
+    \-- html - section for function html not yet defined that it should be html in /helper/config_tree.php
+    \-- columns_html - section for function columns_html not yet defined that it should be html in /helper/config_tree.p
+            hp
+    \-- search_form - section for function search_form not yet defined that it should be html in /helper/config_tree.php
+    \-- tree_html - section for function tree_html not yet defined that it should be html in /helper/config_tree.php
+    \-- hit_list - section for function hit_list not yet defined that it should be html in /helper/config_tree.php
+    \-- marked - section for function marked not yet defined that it should be html in /helper/config_tree.php
+    \-- order error - order of section construct and map has difference at api_mapper should be before __construct
 \-- data_object
     \-- refresh_words_via_api - section for function refresh_words_via_api not yet defined that it should be set and get
              in /helper/data_object.php
@@ -6955,6 +6979,7 @@
     \-- display - section for function display missing in /html/display_list.php
 \-- html_base
     \-- page_html - section for function page_html not yet defined that it should be page in /html/html_base.php
+    \-- forward_page - section for function forward_page not yet defined that it should be page in /html/html_base.php
     \-- header_html - section for function header_html not yet defined that it should be header & footer in /html/html_b
             ase.php
     \-- main_body - section for function main_body not yet defined that it should be header & footer in /html/html_base.
@@ -7194,6 +7219,12 @@
     \-- button_bs - section for function button_bs not yet defined that it should be internal in /html/html_base.php
     \-- list_item - section for function list_item not yet defined that it should be internal in /html/html_base.php
     \-- popup_menu - section for function popup_menu not yet defined that it should be internal in /html/html_base.php
+    \-- details - section for function details not yet defined that it should be internal in /html/html_base.php
+    \-- definition - section for function definition not yet defined that it should be internal in /html/html_base.php
+    \-- mark - section for function mark not yet defined that it should be internal in /html/html_base.php
+    \-- search_input - section for function search_input not yet defined that it should be internal in /html/html_base.p
+            hp
+    \-- popover - section for function popover not yet defined that it should be internal in /html/html_base.php
     \-- list_unsorted - section for function list_unsorted not yet defined that it should be internal in /html/html_base
             .php
 \-- html_selector
@@ -8899,6 +8930,8 @@
     \-- not_yet_available
         \-- system_page - the body of a system view that is already part of the system views,
                  but whose data and actions are not yet
+    \-- config_tree
+        \-- system_page - the read only tree of the system configuration with the search and the scope of the url,
     \-- user_jobs
         \-- system_page - the jobs of the requesting user with the pending jobs on top and the buttons to downgrade or c
                 ancel a job
@@ -9702,6 +9735,8 @@
 \-- page
     \-- page_html
         \-- html_base - create a simple html page based on header, body and footer html code
+    \-- forward_page
+        \-- html_base - @param int $msk_id the id of the view that the forward page opens e.g. views::SYSTEM_CONFIG_ID
 \-- header & footer
     \-- header_html
         \-- html_base - the page header for simple html pages like the login page
@@ -9973,6 +10008,16 @@
         \-- html_base - html list item entry
     \-- popup_menu
         \-- html_base - a popup menu that opens on a click without any javascript, because the html details
+    \-- details
+        \-- html_base - a part that the user can open and close without javascript, e.g. a node of a tree
+    \-- definition
+        \-- html_base - one row of a description list, e.g. a setting and its value
+    \-- mark
+        \-- html_base - @param string $txt the already escaped text that matches a search
+    \-- search_input
+        \-- html_base - a search input with the given suggestions, which the browser shows without javascript
+    \-- popover
+        \-- html_base - a button that shows a long text above the page without javascript (html popover)
     \-- list_unsorted
         \-- html_base - html unsorted list
 \-- table

@@ -192,6 +192,16 @@ class html_base
     const string SCOPE = 'scope';
     const string DETAILS = 'details';
     const string SUMMARY = 'summary';
+    const string DL = 'dl';
+    const string DT = 'dt';
+    const string DD = 'dd';
+    const string MARK = 'mark';
+    const string DATALIST = 'datalist';
+    const string OPTION = 'option';
+    const string LIST = 'list';
+    const string POPOVER = 'popover';
+    const string POPOVER_TARGET = 'popovertarget';
+    const string METHOD_GET = 'get';
     const string I = 'i';
     const string B = 'b';
     const string H1 = 'h1';
@@ -228,6 +238,15 @@ class html_base
     const string CLASS_TAB = 'css-tab';
     const string CLASS_TAB_LABEL = 'css-tab-label';
     const string CLASS_TAB_PANE = 'css-tab-pane';
+    // the static forward page of e.g. /settings with 1 the main script incl. '?', 2 the view url var
+    // and 3 the view id: the script keeps every url var of the request e.g. '9m' or the key of an
+    // activation link and sets the view last, so a view var of the request never replaces the target;
+    // without javascript the view opens without the url vars of the request
+    const string FORWARD_PAGE = "<!DOCTYPE html>\n"
+        . "<script>const p = new URLSearchParams(location.search); p.set('%2\$s', '%3\$s');"
+        . " location.replace('%1\$s' + p);</script>\n"
+        . "<noscript><meta http-equiv=\"refresh\" content=\"0; url=%1\$s%2\$s=%3\$s\"></noscript>\n"
+        . "</html>\n";
 
 
     /*
@@ -245,6 +264,15 @@ class html_base
     function page_html(string $lan, string $head, string $body, string $foot): string
     {
         return self::DOC_HTML . $this->page_lan($head . $body . $foot, $lan);
+    }
+
+    /**
+     * @param int $msk_id the id of the view that the forward page opens e.g. views::SYSTEM_CONFIG_ID
+     * @return string the html code of the static forward page in the docroot e.g. of /settings
+     */
+    function forward_page(int $msk_id): string
+    {
+        return sprintf(self::FORWARD_PAGE, api::MAIN_SCRIPT . url_var::PAR, url_var::MASK, $msk_id);
     }
 
 
@@ -469,6 +497,8 @@ class html_base
             $url_signup = $this->url_with_back(api::SIGNUP_SCRIPT, $url_array);
             $result .= $this->list_item($this->ref($url_signup, $mtr->txt(msg_id::NAVBAR_SIGNUP))) . "\n";
         }
+        // also an ip user without login sees the settings, so the link opens the read only system configuration
+        // by its forward page, which keeps the back target (see api::FORWARD_VIEWS)
         $url_settings = $this->url_with_back(api::SETTINGS_REL, $url_array);
         $result .= $this->list_item($this->ref($url_settings, $mtr->txt(msg_id::NAVBAR_SETTINGS))) . "\n";
         return $this->list_unsorted($result);
@@ -3230,6 +3260,103 @@ class html_base
         $result .= '<' . self::SUMMARY . $title_attr . '>' . $label . '</' . self::SUMMARY . '>';
         $result .= $this->list_unsorted($items);
         return $result . '</' . self::DETAILS . '>';
+    }
+
+    /**
+     * a part that the user can open and close without javascript, e.g. a node of a tree
+     *
+     * @param string $summary the html code of the always shown line
+     * @param string $body the html code shown if the part is open
+     * @param string $style the css class of the part
+     * @param string $id the html id e.g. the anchor of a tree node
+     * @param string $title the mouseover text of the summary line
+     * @return string the html code of the details element
+     */
+    function details(string $summary, string $body, string $style = '', string $id = '', string $title = ''): string
+    {
+        $attr = '';
+        if ($style != '') {
+            $attr .= ' ' . self::CLASS_HTML . '="' . $style . '"';
+        }
+        if ($id != '') {
+            $attr .= ' ' . self::ID . '="' . htmlspecialchars($id, ENT_QUOTES) . '"';
+        }
+        $title_attr = '';
+        if ($title != '') {
+            $title_attr = ' ' . self::TITLE_HTML . '="' . htmlspecialchars($title, ENT_QUOTES) . '"';
+        }
+        $result = '<' . self::DETAILS . $attr . '>';
+        $result .= '<' . self::SUMMARY . $title_attr . '>' . $summary . '</' . self::SUMMARY . '>';
+        return $result . $body . '</' . self::DETAILS . '>';
+    }
+
+    /**
+     * one row of a description list, e.g. a setting and its value
+     *
+     * @param string $term the html code of the term e.g. the setting name
+     * @param string $definition the html code of the definition e.g. the value with its unit
+     * @param string $title the mouseover text of the term
+     * @return string the html code of the description list with the one row
+     */
+    function definition(string $term, string $definition, string $title = ''): string
+    {
+        $title_attr = '';
+        if ($title != '') {
+            $title_attr = ' ' . self::TITLE_HTML . '="' . htmlspecialchars($title, ENT_QUOTES) . '"';
+        }
+        $result = '<' . self::DL . '>';
+        $result .= '<' . self::DT . $title_attr . '>' . $term . '</' . self::DT . '>';
+        $result .= '<' . self::DD . '>' . $definition . '</' . self::DD . '>';
+        return $result . '</' . self::DL . '>';
+    }
+
+    /**
+     * @param string $txt the already escaped text that matches a search
+     * @return string the html code of the highlighted text
+     */
+    function mark(string $txt): string
+    {
+        return '<' . self::MARK . '>' . $txt . '</' . self::MARK . '>';
+    }
+
+    /**
+     * a search input with the given suggestions, which the browser shows without javascript
+     *
+     * @param string $name the url var of the search e.g. url_var::PATTERN
+     * @param string $value the search of the request to show it again
+     * @param string $list_id the html id of the suggestions
+     * @param array $suggestions the texts the browser suggests e.g. the names of all settings
+     * @return string the html code of the search input and its suggestions
+     */
+    function search_input(string $name, string $value, string $list_id, array $suggestions): string
+    {
+        $result = '<' . self::INPUT . ' ' . self::TYPE . '="' . self::INPUT_SEARCH . '"';
+        $result .= ' ' . self::NAME . '="' . $name . '"';
+        $result .= ' ' . self::LIST . '="' . $list_id . '"';
+        $result .= ' ' . self::VALUE . '="' . htmlspecialchars($value, ENT_QUOTES) . '">';
+        $result .= '<' . self::DATALIST . ' ' . self::ID . '="' . $list_id . '">';
+        foreach ($suggestions as $suggestion) {
+            $result .= '<' . self::OPTION . ' ' . self::VALUE . '="' . htmlspecialchars($suggestion, ENT_QUOTES) . '">';
+            $result .= '</' . self::OPTION . '>';
+        }
+        return $result . '</' . self::DATALIST . '>';
+    }
+
+    /**
+     * a button that shows a long text above the page without javascript (html popover)
+     *
+     * @param string $id the html id of the text, unique on the page
+     * @param string $label the html code of the button
+     * @param string $txt the already escaped long text
+     * @return string the html code of the button and the text it opens
+     */
+    function popover(string $id, string $label, string $txt): string
+    {
+        $safe_id = htmlspecialchars($id, ENT_QUOTES);
+        $result = '<' . self::BUTTON . ' ' . self::TYPE . '="' . self::BUTTON . '"';
+        $result .= ' ' . self::POPOVER_TARGET . '="' . $safe_id . '">' . $label . '</' . self::BUTTON . '>';
+        $result .= '<' . self::DIV . ' ' . self::ID . '="' . $safe_id . '" ' . self::POPOVER . '>';
+        return $result . $txt . '</' . self::DIV . '>';
     }
 
     /**

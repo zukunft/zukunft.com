@@ -883,6 +883,7 @@ class test_mappers
             case component_types::SYSTEM_BODY_NOT_YET_AVAILABLE:
             case component_types::SYSTEM_BODY_USER_JOBS:
             case component_types::SYSTEM_BODY_ALL_JOBS:
+            case component_types::SYSTEM_BODY_CONFIG_TREE:
             case component_types::SYSTEM_BODY_ERROR_LOG:
             case component_types::SYSTEM_BODY_ERROR_UPDATE:
             case component_types::LIST_PARENTS_OF_WORD:

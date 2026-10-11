@@ -39,6 +39,7 @@ the object structure is:
 ├── id
 │   ├── group_id - e.g. to create a group_id based on a phrase list
 │   └── result_id - e.g. to create a id based on a mix of source, result or both phrases and the formula id
+├── config_tree - $cft - the read only tree of the system configuration in config.yaml
 ├── data_object - a header object for all data objects e.g. phrase_list, values, formulas
 ├── db_cache_db - the database const for the database cache tables
 ├── db_object_no_id
@@ -408,6 +409,8 @@ the object structure is:
 ├── iconsUi - the css class strings of the icons used in the frontend
 ├── pathsUi - set the path const for the frontend php scripts
 ├── frontendUi - $ui - the main html frontend application
+├── config_nodeUi - $cfn - one key of the read only tree of the system configuration
+├── config_treeUi - $cft - the read only tree of the system configuration in config.yaml
 ├── data_objectUi - frontend cache object
 ├── mail_senderUi - send the mails of the pod e.g. the signup confirmation
 ├── url_mapperUi - create human-readable or pod exchangeable urls

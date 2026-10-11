@@ -219,6 +219,11 @@ class json_fields
     // the child object with detail fields used e.g. for the child view of view relations
     const string CHILD = 'child';
 
+    // a node of the system configuration tree (api config part "tree"): the unit of its value
+    // e.g. "sec" for "start delay: {sec: 1}" and the keys below it in the order of config.yaml
+    const string CONFIG_UNIT = 'unit';
+    const string CONFIG_CHILDREN = 'children';
+
     // the child id used e.g. for the child view of view relations
     const string CHILD_ID = 'child_id';
 
