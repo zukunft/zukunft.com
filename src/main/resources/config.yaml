@@ -4,257 +4,385 @@ zukunft.com:
     tooltip-comment: "keyword to separate the internal system configuration"
     source-name: "config.yaml"
     source-description: "internal system configuration yaml file"
-    database:
-      tooltip-comment: "the database settings of the master pod; the database version is in the config table, the program version in version.txt"
-      retry:
-        start delay:
-          sec: 1
-          tooltip-comment: "initial delay in seconds for the first connection retry"
-        max delay:
-          sec: 3600
-          tooltip-comment: "the give up time for database connection retries"
-      block size:
-        tooltip-comment: "group the database statements for faster execution"
-        insert: 200
-        update: 100
-        delete: 500
-      row limit:
-        tooltip-comment: "initial number of page rows"
-        default: 20
-      access:
-        log:
+    system:
+      tooltip-comment: "the settings of the pod, which only an admin can change"
+      database:
+        tooltip-comment: "the database settings of the master pod; the database version is in the config table, the program version in version.txt"
+        retry:
+          start delay:
+            sec: 1
+            tooltip-comment: "initial delay in seconds for the first connection retry"
+          max delay:
+            sec: 3600
+            tooltip-comment: "the give up time for database connection retries"
+        block size:
+          tooltip-comment: "group the database statements for faster execution"
+          insert: 200
+          update: 100
+          delete: 500
+        row limit:
+          tooltip-comment: "initial number of page rows"
+          default: 20
+        access:
+          log:
+            type:
+              sys-conf-value: "round robin"
+              tooltip-comment: "the type of the log size limitation: if round robin the storage size or time can be limited and older entries are simply deleted or in case of full a warning is created if the log reaches the limit"
+            limit:
+              storage size:
+                MB: 500
+                tooltip-comment: "if this storage size limit is reached a warning message to the admin user is created to remove the old log"
+              time:
+                days: 100
+                tooltip-comment: "if the log type is round robin older log entries are automatically deleted"
+        cache:
+          tooltip-comment: "the database caches to reduce the response time; each cache can be switched off e.g. to debug with always fresh data; a pod without a switch uses the cache"
+          config:
+            system:
+              allowed:
+                sys-conf-value: true
+                tooltip-comment: "if false the json of the system configuration is not cached in the database (db_cache type system_config)"
+            user:
+              allowed:
+                sys-conf-value: true
+                tooltip-comment: "if false the json of the user overwrites of the system configuration is not cached in the database (db_cache type user_config)"
+            frontend:
+              allowed:
+                sys-conf-value: true
+                tooltip-comment: "if false the frontend part of the system configuration is not cached in the database (db_cache type ui_config)"
+            user frontend:
+              allowed:
+                sys-conf-value: true
+                tooltip-comment: "if false the frontend part of the user configuration is not cached in the database (db_cache type user_ui_config)"
+            limit:
+              days: 150
+              tooltip-comment: "if the cache is older than e.g. 150 days it will be recreated prevent issues due to potential refresh bugs"
+            validate:
+              type: "names"
+              tooltip-comment: "if 'names' the phrase names are included in the cache for better readability. if 'full' all phrase parameters are included or 'none' if only the group id of the value is used"
           type:
-            sys-conf-value: "round robin"
-            tooltip-comment: "the type of the log size limitation: if round robin the storage size or time can be limited and older entries are simply deleted or in case of full a warning is created if the log reaches the limit"
+            allowed:
+              sys-conf-value: true
+              tooltip-comment: "if false the json message with the system types and views is not cached in the database (db_cache type types)"
+          preload:
+            allowed:
+              sys-conf-value: true
+              tooltip-comment: "if false the most often used data objects of a user are not cached in the database (db_cache type ui_cache)"
+          page:
+            tooltip-comment: "the cache of the rendered html pages of view-only requests stored in the db_cache_pages table"
+            html:
+              allowed:
+                sys-conf-value: true
+                tooltip-comment: "if false the rendered html pages of view-only requests are not cached (db_cache_pages table)"
+            data:
+              allowed:
+                sys-conf-value: true
+                tooltip-comment: "if false the data objects used for one page are not cached in the database (db_cache type page_cache)"
+            limit:
+              time:
+                days: 30
+                tooltip-comment: "a cached html page older than this is recreated on the next request to prevent stale pages"
+              storage size:
+                MB: 500
+                tooltip-comment: "if the total size of the cached html pages reaches this limit the oldest pages are removed"
+        import:
           limit:
-            storage size:
-              MB: 500
-              tooltip-comment: "if this storage size limit is reached a warning message to the admin user is created to remove the old log"
-            time:
-              days: 100
-              tooltip-comment: "if the log type is round robin older log entries are automatically deleted"
-      cache:
-        tooltip-comment: "the database caches to reduce the response time; each cache can be switched off e.g. to debug with always fresh data; a pod without a switch uses the cache"
-        config:
-          system:
-            allowed:
-              sys-conf-value: true
-              tooltip-comment: "if false the json of the system configuration is not cached in the database (db_cache type system_config)"
-          user:
-            allowed:
-              sys-conf-value: true
-              tooltip-comment: "if false the json of the user overwrites of the system configuration is not cached in the database (db_cache type user_config)"
-          frontend:
-            allowed:
-              sys-conf-value: true
-              tooltip-comment: "if false the frontend part of the system configuration is not cached in the database (db_cache type ui_config)"
-          user frontend:
-            allowed:
-              sys-conf-value: true
-              tooltip-comment: "if false the frontend part of the user configuration is not cached in the database (db_cache type user_ui_config)"
-          limit:
-            days: 150
-            tooltip-comment: "if the cache is older than e.g. 150 days it will be recreated prevent issues due to potential refresh bugs"
-          validate:
-            type: "names"
-            tooltip-comment: "if 'names' the phrase names are included in the cache for better readability. if 'full' all phrase parameters are included or 'none' if only the group id of the value is used"
-        type:
-          allowed:
-            sys-conf-value: true
-            tooltip-comment: "if false the json message with the system types and views is not cached in the database (db_cache type types)"
-        preload:
-          allowed:
-            sys-conf-value: true
-            tooltip-comment: "if false the most often used data objects of a user are not cached in the database (db_cache type ui_cache)"
-        page:
-          tooltip-comment: "the cache of the rendered html pages of view-only requests stored in the db_cache_pages table"
-          html:
-            allowed:
-              sys-conf-value: true
-              tooltip-comment: "if false the rendered html pages of view-only requests are not cached (db_cache_pages table)"
-          data:
-            allowed:
-              sys-conf-value: true
-              tooltip-comment: "if false the data objects used for one page are not cached in the database (db_cache type page_cache)"
-          limit:
-            time:
-              days: 30
-              tooltip-comment: "a cached html page older than this is recreated on the next request to prevent stale pages"
-            storage size:
-              MB: 500
-              tooltip-comment: "if the total size of the cached html pages reaches this limit the oldest pages are removed"
-      import:
-        limit:
-          tooltip-comment: "the maximal file size for each import files; bigger files are expected the be split into several parts"
-          file size:
-            MB: 10
-        time percent:
-          tooltip-comment: "the expected execution time for the database import in percent of the total process; values in percent, must sum to 100 and file read and decode file read and decode together account for only ~1% in total"
-          file read: 0.4
-          decode: 0.6
-          object creation: 24
-          object storing: 75
-        expected time:
-          tooltip-comment: "the expected times for the database import"
-          bytes second:
-            file read:
-              sys-conf-value: 300
-              tooltip-comment: "the estimated MB per second for pure reading the import file"
-            decode:
-              sys-conf-value: 40
-              tooltip-comment: "the estimated MB per second for decoding the import json file"
-            object creation:
-              sys-conf-value: 5
-              tooltip-comment: "the estimated MB per second for the object creation"
-            object storing:
-              sys-conf-value: 5
-              tooltip-comment: "the estimated MB per second for storing the objects in the database"
-            total:
-              sys-conf-value: 2.1
-              tooltip-comment: "the estimated MB per second that can be processed when importing a json"
-          objects second:
-            load:
-              words:
-                sys-conf-value: 800
-                tooltip-comment: "the estimated number of words that can be loaded per second"
-              triples:
-                sys-conf-value: 790
-                tooltip-comment: "the estimated number of triples that can be loaded per second"
-              references:
-                sys-conf-value: 780
-                tooltip-comment: "the estimated number of references that can be loaded per second"
-              sources:
-                sys-conf-value: 780
-                tooltip-comment: "the estimated number of sources that can be loaded per second"
-              values:
-                sys-conf-value: 770
-                tooltip-comment: "the estimated number of values that can be loaded per second"
-              formulas:
-                sys-conf-value: 760
-                tooltip-comment: "the estimated number of formulas that can be loaded per second"
-              results:
-                sys-conf-value: 755
-                tooltip-comment: "the estimated number of pre-calculated results that can be loaded per second"
-              views:
-                sys-conf-value: 750
-                tooltip-comment: "the estimated number of views that can be loaded per second"
-              components:
-                sys-conf-value: 740
-                tooltip-comment: "the estimated number of components that can be loaded per second"
-              ip-ranges:
-                sys-conf-value: 730
-                tooltip-comment: "the estimated number of ip-ranges that can be loaded per second"
-            create:
-              words:
-                sys-conf-value: 700
-                tooltip-comment: "the estimated number of words that can be created per second"
-              triples:
-                sys-conf-value: 420
-                tooltip-comment: "the estimated number of triples that can be created per second"
-              sources:
-                sys-conf-value: 600
-                tooltip-comment: "the estimated number of sources that can be created per second"
-              references:
-                sys-conf-value: 610
-                tooltip-comment: "the estimated number of references that can be created per second"
-              values:
-                sys-conf-value: 250
-                tooltip-comment: "the estimated number of values that can be created per second"
-              formulas:
-                sys-conf-value: 150
-                tooltip-comment: "the estimated number of formulas that can be created per second"
-              results:
-                sys-conf-value: 140
-                tooltip-comment: "the estimated number of pre-calculated results that can be created per second"
-              views:
-                sys-conf-value: 250
-                tooltip-comment: "the estimated number of views that can be created per second"
-              components:
-                sys-conf-value: 280
-                tooltip-comment: "the estimated number of components that can be created per second"
-              ip-ranges:
-                sys-conf-value: 270
-                tooltip-comment: "the estimated number of ip-ranges that can be created per second"
-            update:
-              words:
-                sys-conf-value: 590
-                tooltip-comment: "the estimated number of words that can be updated per second"
-              triples:
-                sys-conf-value: 580
-                tooltip-comment: "the estimated number of triples that can be updated per second"
-              sources:
-                sys-conf-value: 570
-                tooltip-comment: "the estimated number of sources that can be updated per second"
-              references:
-                sys-conf-value: 560
-                tooltip-comment: "the estimated number of references that can be updated per second"
-              values:
-                sys-conf-value: 550
-                tooltip-comment: "the estimated number of values that can be updated per second"
-              formulas:
-                sys-conf-value: 540
-                tooltip-comment: "the estimated number of formulas that can be updated per second"
-              results:
-                sys-conf-value: 535
-                tooltip-comment: "the estimated number of pre-calculated results that can be updated per second"
-              views:
-                sys-conf-value: 530
-                tooltip-comment: "the estimated number of views that can be updated per second"
-              components:
-                sys-conf-value: 520
-                tooltip-comment: "the estimated number of components that can be updated per second"
-              ip-ranges:
-                sys-conf-value: 520
-                tooltip-comment: "the estimated number of ip-ranges that can be updated per second"
-            store:
-              words:
-                sys-conf-value: 800
-                tooltip-comment: "the estimated number of words that can be added or updated in the database per second"
-              triples:
-                sys-conf-value: 450
-                tooltip-comment: "the estimated number of triples that can be added or updated in the database per second"
-              sources:
+            tooltip-comment: "the maximal file size for each import files; bigger files are expected the be split into several parts"
+            file size:
+              MB: 10
+          time percent:
+            tooltip-comment: "the expected execution time for the database import in percent of the total process; values in percent, must sum to 100 and file read and decode file read and decode together account for only ~1% in total"
+            file read: 0.4
+            decode: 0.6
+            object creation: 24
+            object storing: 75
+          expected time:
+            tooltip-comment: "the expected times for the database import"
+            bytes second:
+              file read:
                 sys-conf-value: 300
-                tooltip-comment: "the estimated number of sources that can be added or updated in the database per second"
-              references:
-                sys-conf-value: 250
-                tooltip-comment: "the estimated number of references that can be added or updated in the database per second"
-              values:
-                sys-conf-value: 95
-                tooltip-comment: "the estimated number of values that can be added or updated in the database per second"
+                tooltip-comment: "the estimated MB per second for pure reading the import file"
+              decode:
+                sys-conf-value: 40
+                tooltip-comment: "the estimated MB per second for decoding the import json file"
+              object creation:
+                sys-conf-value: 5
+                tooltip-comment: "the estimated MB per second for the object creation"
+              object storing:
+                sys-conf-value: 5
+                tooltip-comment: "the estimated MB per second for storing the objects in the database"
+              total:
+                sys-conf-value: 2.1
+                tooltip-comment: "the estimated MB per second that can be processed when importing a json"
+            objects second:
+              load:
+                words:
+                  sys-conf-value: 800
+                  tooltip-comment: "the estimated number of words that can be loaded per second"
+                triples:
+                  sys-conf-value: 790
+                  tooltip-comment: "the estimated number of triples that can be loaded per second"
+                references:
+                  sys-conf-value: 780
+                  tooltip-comment: "the estimated number of references that can be loaded per second"
+                sources:
+                  sys-conf-value: 780
+                  tooltip-comment: "the estimated number of sources that can be loaded per second"
+                values:
+                  sys-conf-value: 770
+                  tooltip-comment: "the estimated number of values that can be loaded per second"
+                formulas:
+                  sys-conf-value: 760
+                  tooltip-comment: "the estimated number of formulas that can be loaded per second"
+                results:
+                  sys-conf-value: 755
+                  tooltip-comment: "the estimated number of pre-calculated results that can be loaded per second"
+                views:
+                  sys-conf-value: 750
+                  tooltip-comment: "the estimated number of views that can be loaded per second"
+                components:
+                  sys-conf-value: 740
+                  tooltip-comment: "the estimated number of components that can be loaded per second"
+                ip-ranges:
+                  sys-conf-value: 730
+                  tooltip-comment: "the estimated number of ip-ranges that can be loaded per second"
+              create:
+                words:
+                  sys-conf-value: 700
+                  tooltip-comment: "the estimated number of words that can be created per second"
+                triples:
+                  sys-conf-value: 420
+                  tooltip-comment: "the estimated number of triples that can be created per second"
+                sources:
+                  sys-conf-value: 600
+                  tooltip-comment: "the estimated number of sources that can be created per second"
+                references:
+                  sys-conf-value: 610
+                  tooltip-comment: "the estimated number of references that can be created per second"
+                values:
+                  sys-conf-value: 250
+                  tooltip-comment: "the estimated number of values that can be created per second"
+                formulas:
+                  sys-conf-value: 150
+                  tooltip-comment: "the estimated number of formulas that can be created per second"
+                results:
+                  sys-conf-value: 140
+                  tooltip-comment: "the estimated number of pre-calculated results that can be created per second"
+                views:
+                  sys-conf-value: 250
+                  tooltip-comment: "the estimated number of views that can be created per second"
+                components:
+                  sys-conf-value: 280
+                  tooltip-comment: "the estimated number of components that can be created per second"
+                ip-ranges:
+                  sys-conf-value: 270
+                  tooltip-comment: "the estimated number of ip-ranges that can be created per second"
+              update:
+                words:
+                  sys-conf-value: 590
+                  tooltip-comment: "the estimated number of words that can be updated per second"
+                triples:
+                  sys-conf-value: 580
+                  tooltip-comment: "the estimated number of triples that can be updated per second"
+                sources:
+                  sys-conf-value: 570
+                  tooltip-comment: "the estimated number of sources that can be updated per second"
+                references:
+                  sys-conf-value: 560
+                  tooltip-comment: "the estimated number of references that can be updated per second"
+                values:
+                  sys-conf-value: 550
+                  tooltip-comment: "the estimated number of values that can be updated per second"
+                formulas:
+                  sys-conf-value: 540
+                  tooltip-comment: "the estimated number of formulas that can be updated per second"
+                results:
+                  sys-conf-value: 535
+                  tooltip-comment: "the estimated number of pre-calculated results that can be updated per second"
+                views:
+                  sys-conf-value: 530
+                  tooltip-comment: "the estimated number of views that can be updated per second"
+                components:
+                  sys-conf-value: 520
+                  tooltip-comment: "the estimated number of components that can be updated per second"
+                ip-ranges:
+                  sys-conf-value: 520
+                  tooltip-comment: "the estimated number of ip-ranges that can be updated per second"
+              store:
+                words:
+                  sys-conf-value: 800
+                  tooltip-comment: "the estimated number of words that can be added or updated in the database per second"
+                triples:
+                  sys-conf-value: 450
+                  tooltip-comment: "the estimated number of triples that can be added or updated in the database per second"
+                sources:
+                  sys-conf-value: 300
+                  tooltip-comment: "the estimated number of sources that can be added or updated in the database per second"
+                references:
+                  sys-conf-value: 250
+                  tooltip-comment: "the estimated number of references that can be added or updated in the database per second"
+                values:
+                  sys-conf-value: 95
+                  tooltip-comment: "the estimated number of values that can be added or updated in the database per second"
+                formulas:
+                  sys-conf-value: 50
+                  tooltip-comment: "the estimated number of formulas that can be added or updated in the database per second"
+                results:
+                  sys-conf-value: 45
+                  tooltip-comment: "the estimated number of pre-calculated results that can be added or updated in the database per second"
+                views:
+                  sys-conf-value: 75
+                  tooltip-comment: "the estimated number of views that can be added or updated in the database per second"
+                components:
+                  sys-conf-value: 85
+                  tooltip-comment: "the estimated number of components that can be added or updated in the database per second"
+                ip-ranges:
+                  sys-conf-value: 95
+                  tooltip-comment: "the estimated number of ip-ranges that can be added or updated in the database per second"
+              remove:
+                elements:
+                  sys-conf-value: 800
+                  tooltip-comment: "the estimated number of elements that can be removed from the database per second using the list of predefined SQL statements"
+        value table:
+          table name:
+            max phrase: 3
+            tooltip-comment: "maximal number of phrases that can be included in the table name for a separate value table e.g. if the system detects that a separate table for the inhabitants at the end of the year of a city will increase speed and reduce time the table name can be inhabitants-city-year and each row has the city name and the columns have the year names"
+          source table:
+            min values:
+              sys-conf-value: 1000
+              tooltip-comment: "the minimal number of values before considering a separate table where the table name includes the source id so that the table can be a pure key value tables"
+            max tables:
+              sys-conf-value: 200
+              tooltip-comment: "the maximal number of value source tables with one database"
+        triples:
+          max levels: 99
+          tooltip-comment: "the maximal number of levels that are allowed for a triple e.g. if math and const are combined this is level 1, if pi is a math const this is level 2 and so on"
+      calculation:
+        block size:
+          average delay:
+            millisecond: 1000
+            tooltip-comment: "the average time in milliseconds to update the results of one formula use to estimate how many formulas can be combined on one calculation block"
+      year:
+        automatic create: 10
+        tooltip-comment: "the number of futures years automatically created by the system"
+      view:
+        freeze: 20
+        tooltip-comment: "the number of views by one user to automatically lock/freeze the view for the user, so that changes from other user does not change the view any more"
+      component:
+        list:
+          entries:
+            top:
+              sys-conf-value: 20
+              tooltip-comment: "the number of phrases shown in a list by default"
+            bottom:
+              sys-conf-value: 4
+              tooltip-comment: "the number of phrases shown in a ranked list with the lowest ranking for an indication of the range"
+      job:
+        tooltip-comment: "keyword to separate the internal system job configuration"
+      test:
+        tooltip-comment: "to configure the internal system test"
+        output format:
+          sys-conf-value: 0
+          tooltip-comment: "the general formatting style of the test results e.g. 0 for pure text or 1 for html code"
+        level:
+          sys-conf-value: 3
+          tooltip-comment: "to define what should be shown: 4: all, 3: timeouts, 2: warnings or 1: only errors"
+      pod:
+        url: "zukunft.com"
+        tooltip-comment: "the url name of this pod"
+        phrase distribution:
+          top level:
+            pods: 16380
+            tooltip-comment: "for a fast selection of the prime responding pod the number of pods should start low but mainly the number of levels should be low"
+        api:
+          message:
+            format: "json"
+            tooltip-comment: "json for human friendly api message, yaml for as short as possible messages without compression and compressed to activate additional the compression on yaml messages; to sync the api message format between front end backend an upfront handshake message should be used; fallback is json"
+        permissions:
+          email server:
+            not trusted: "hw-i.ru"
+          country:
+            trusted: "Switzerland"
+          database change:
+            ip user:
+              allowed:
+                sys-conf-value: false
+                tooltip-comment: "if false a user without login (an ip user) cannot change any data in the database; if true an ip user can change data up to the max change daily limit of the ip user"
+        launch: 2026-06-07
+        point:
+          sys-conf-value: "50.478517691532666, 12.33581966347697"
+          tooltip-comment: "the geo location of the main pod to estimate the time delays"
+        limits:
+          tooltip-comment: "limits per pod that, like all other pod settings, can only be changed by an admin user and that are used as a second line of defence to prevent unwanted behavior"
+          max login:
+            per day:
+              by ip-address:
+                sys-conf-value: 5
+                tooltip-comment: "the max number of login creation from one ip per day"
+              by location:
+                sys-conf-value: 10
+                tooltip-comment: "the max number of login creation from one location per day"
+          max changes:
+            per day:
+              tooltip-comment: "the max number of insert or update changes that a normal user can do per days to prevent vandalism"
+              words:
+                sys-conf-value: 1000
+              verbs:
+                sys-conf-value: 10
+              triples:
+                sys-conf-value: 1000
               formulas:
-                sys-conf-value: 50
-                tooltip-comment: "the estimated number of formulas that can be added or updated in the database per second"
-              results:
-                sys-conf-value: 45
-                tooltip-comment: "the estimated number of pre-calculated results that can be added or updated in the database per second"
-              views:
-                sys-conf-value: 75
-                tooltip-comment: "the estimated number of views that can be added or updated in the database per second"
-              components:
-                sys-conf-value: 85
-                tooltip-comment: "the estimated number of components that can be added or updated in the database per second"
-              ip-ranges:
-                sys-conf-value: 95
-                tooltip-comment: "the estimated number of ip-ranges that can be added or updated in the database per second"
-            remove:
-              elements:
-                sys-conf-value: 800
-                tooltip-comment: "the estimated number of elements that can be removed from the database per second using the list of predefined SQL statements"
-      value table:
-        table name:
-          max phrase: 3
-          tooltip-comment: "maximal number of phrases that can be included in the table name for a separate value table e.g. if the system detects that a separate table for the inhabitants at the end of the year of a city will increase speed and reduce time the table name can be inhabitants-city-year and each row has the city name and the columns have the year names"
-        source table:
-          min values:
-            sys-conf-value: 1000
-            tooltip-comment: "the minimal number of values before considering a separate table where the table name includes the source id so that the table can be a pure key value tables"
-          max tables:
-            sys-conf-value: 200
-            tooltip-comment: "the maximal number of value source tables with one database"
-      triples:
-        max levels: 99
-        tooltip-comment: "the maximal number of levels that are allowed for a triple e.g. if math and const are combined this is level 1, if pi is a math const this is level 2 and so on"
+                sys-conf-value: 100
+              values:
+                sys-conf-value: 10000
+            per week:
+              tooltip-comment: "like the max changes per days but per week"
+              words:
+                sys-conf-value: 5000
+            per month:
+              tooltip-comment: "like the max changes per days but per month"
+              words:
+                sys-conf-value: 20000
+            per year:
+              tooltip-comment: "like the max changes per days but per year"
+              words:
+                sys-conf-value: 1000000
+          max lifetime:
+            user:
+              sys-conf-value: 120
+              tooltip-comment: "the max number of years that a personal user account is expected to be active"
+          api user:
+            check period:
+              month:
+                sys-conf-value: 6
+                tooltip-comment: "the number of month after that an api user should to be confirmed by an admin user"
+            tolerance:
+              month:
+                sys-conf-value: 3
+                tooltip-comment: "the number of month that the admin user has time to confirm an api account"
+        hardware:
+          usage:
+            CPU:
+              target: "50%"
+              info: "70%"
+              warning: "90%"
+            network:
+              target: "30%"
+              info: "50%"
+              warning: "70%"
+            memory:
+              target: "40%"
+              info: "60%"
+              warning: "80%"
+            storage:
+              target: "50%"
+              info: "70%"
+              warning: "80%"
+            response time:
+              millisecond:
+                target: 100
+                info: 500
+                warning: 2000
     user:
       tooltip-comment: "settings that each user can set individually"
       default:
@@ -443,11 +571,6 @@ zukunft.com:
               percent decimal:
                 sys-conf-value: 2
                 tooltip-comment: "the default number of decimal places of a percent value"
-    calculation:
-      block size:
-        average delay:
-          millisecond: 1000
-          tooltip-comment: "the average time in milliseconds to update the results of one formula use to estimate how many formulas can be combined on one calculation block"
     select:
       initial:
         entries: 5
@@ -486,124 +609,3 @@ zukunft.com:
         same:
           threshold: "80%"
           tooltip-comment: "if the triple weight is above this threshold for the 'is a' or 'is symbol for' verbs the two phrases are handled as if they are the same e.g. for 'CHF' 'EUR', 'USD' are listed for 'similar to' even if the connection is 'two step' via 'Swiss frank' which is a currency"
-    year:
-      automatic create: 10
-      tooltip-comment: "the number of futures years automatically created by the system"
-    view:
-      freeze: 20
-      tooltip-comment: "the number of views by one user to automatically lock/freeze the view for the user, so that changes from other user does not change the view any more"
-    component:
-      list:
-        entries:
-          top:
-            sys-conf-value: 20
-            tooltip-comment: "the number of phrases shown in a list by default"
-          bottom:
-            sys-conf-value: 4
-            tooltip-comment: "the number of phrases shown in a ranked list with the lowest ranking for an indication of the range"
-    job:
-      tooltip-comment: "keyword to separate the internal system job configuration"
-    test:
-      tooltip-comment: "to configure the internal system test"
-      output format:
-        sys-conf-value: 0
-        tooltip-comment: "the general formatting style of the test results e.g. 0 for pure text or 1 for html code"
-      level:
-        sys-conf-value: 3
-        tooltip-comment: "to define what should be shown: 4: all, 3: timeouts, 2: warnings or 1: only errors"
-    pod:
-      url: "zukunft.com"
-      tooltip-comment: "the url name of this pod"
-      phrase distribution:
-        top level:
-          pods: 16380
-          tooltip-comment: "for a fast selection of the prime responding pod the number of pods should start low but mainly the number of levels should be low"
-      api:
-        message:
-          format: "json"
-          tooltip-comment: "json for human friendly api message, yaml for as short as possible messages without compression and compressed to activate additional the compression on yaml messages; to sync the api message format between front end backend an upfront handshake message should be used; fallback is json"
-      permissions:
-        email server:
-          not trusted: "hw-i.ru"
-        country:
-          trusted: "Switzerland"
-        database change:
-          ip user:
-            allowed:
-              sys-conf-value: false
-              tooltip-comment: "if false a user without login (an ip user) cannot change any data in the database; if true an ip user can change data up to the max change daily limit of the ip user"
-      launch: 2026-06-07
-      point:
-        sys-conf-value: "50.478517691532666, 12.33581966347697"
-        tooltip-comment: "the geo location of the main pod to estimate the time delays"
-      limits:
-        tooltip-comment: "limits per pod that, like all other pod settings, can only be changed by an admin user and that are used as a second line of defence to prevent unwanted behavior"
-        max login:
-          per day:
-            by ip-address:
-              sys-conf-value: 5
-              tooltip-comment: "the max number of login creation from one ip per day"
-            by location:
-              sys-conf-value: 10
-              tooltip-comment: "the max number of login creation from one location per day"
-        max changes:
-          per day:
-            tooltip-comment: "the max number of insert or update changes that a normal user can do per days to prevent vandalism"
-            words:
-              sys-conf-value: 1000
-            verbs:
-              sys-conf-value: 10
-            triples:
-              sys-conf-value: 1000
-            formulas:
-              sys-conf-value: 100
-            values:
-              sys-conf-value: 10000
-          per week:
-            tooltip-comment: "like the max changes per days but per week"
-            words:
-              sys-conf-value: 5000
-          per month:
-            tooltip-comment: "like the max changes per days but per month"
-            words:
-              sys-conf-value: 20000
-          per year:
-            tooltip-comment: "like the max changes per days but per year"
-            words:
-              sys-conf-value: 1000000
-        max lifetime:
-          user:
-            sys-conf-value: 120
-            tooltip-comment: "the max number of years that a personal user account is expected to be active"
-        api user:
-          check period:
-            month:
-              sys-conf-value: 6
-              tooltip-comment: "the number of month after that an api user should to be confirmed by an admin user"
-          tolerance:
-            month:
-              sys-conf-value: 3
-              tooltip-comment: "the number of month that the admin user has time to confirm an api account"
-      hardware:
-        usage:
-          CPU:
-            target: "50%"
-            info: "70%"
-            warning: "90%"
-          network:
-            target: "30%"
-            info: "50%"
-            warning: "70%"
-          memory:
-            target: "40%"
-            info: "60%"
-            warning: "80%"
-          storage:
-            target: "50%"
-            info: "70%"
-            warning: "80%"
-          response time:
-            millisecond:
-              target: 100
-              info: 500
-              warning: 2000

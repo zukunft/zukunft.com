@@ -145,6 +145,7 @@ include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_WORD . 'word_list.php';
 include_once paths::SERVICE_MATH . 'calc_internal.php';
 include_once paths::SHARED_CONST . 'chars.php';
+include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_ENUM . 'change_actions.php';
 include_once paths::SHARED_ENUM . 'change_tables.php';
 include_once paths::SHARED_ENUM . 'change_fields.php';
@@ -191,6 +192,7 @@ use Zukunft\ZukunftCom\main\php\cfg\system\log;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\service\math\calc_internal;
 use Zukunft\ZukunftCom\main\php\shared\const\chars;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_fields;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_tables;
@@ -266,6 +268,7 @@ class value_base extends sandbox_value
 
     // field for user interaction
     public ?string $usr_value = null;     // the raw value as the user has entered it including formatting chars such as the thousand separator
+    public bool $set_default = false;     // true if an admin saves the value as the default of all users (see save_as_default)
 
 
     /*
@@ -313,6 +316,7 @@ class value_base extends sandbox_value
         $this->set_protection_id(null);
 
         $this->usr_value = '';
+        $this->set_default = false;
     }
 
     /**
@@ -391,6 +395,8 @@ class value_base extends sandbox_value
         if (array_key_exists(json_fields::ID, $api_json)) {
             $this->set_id($api_json[json_fields::ID]);
         }
+        // only the request, the save checks if the user is an admin
+        $this->set_default = (($api_json[json_fields::SET_DEFAULT] ?? false) === true);
         // the phrases define the value, so their group id wins over the id 0 sent for a new value;
         // an empty list (the api to the frontend omits the phrases by default) keeps the given id
         if (array_key_exists(json_fields::PHRASES, $api_json)) {
@@ -2213,13 +2219,56 @@ class value_base extends sandbox_value
     {
         log_debug($this->dsp_id());
 
-        global $db_con;
-        global $mtr;
-
         // a value is user data, so a user without login may only change it if this pod permits it
         if ($this->change_blocked($msg)) {
             return false;
         }
+        if ($this->is_pod_setting_denied($msg)) {
+            $msg->add_id(msg_id::CONFIG_SYSTEM_ADMIN_ONLY);
+        } elseif ($this->set_default) {
+            // an admin changes the value for all users without an own overwrite and not the own overwrite
+            $this->save_as_default($msg);
+        } else {
+            $this->save_for_user($msg);
+        }
+        return $msg->is_ok();
+    }
+
+    /**
+     * a setting of the pod below "system configuration > system" in config.yaml can only be changed by an
+     * admin or the system user e.g. when importing config.yaml; the settings below "user" and "select"
+     * can be changed by each logged-in user as the own overwrite
+     *
+     * @param user_message $msg to report why the phrases of the value could not be loaded
+     * @return bool true if the user of this value is not allowed to change it, because it is a pod setting
+     */
+    function is_pod_setting_denied(user_message $msg): bool
+    {
+        $usr = $this->get_user();
+        $result = false;
+        if (!$usr->is_admin() and !$usr->is_system()) {
+            $names = $this->phr_names();
+            // e.g. a value of the settings page names only its id, so its phrases are loaded to check them
+            if ($names == []) {
+                $chk = $this->clone_all();
+                $chk->load_phrases($msg, true);
+                $names = $chk->phr_names();
+            }
+            $result = (array_diff(triples::CONFIG_SYSTEM_PATH, $names) == []);
+        }
+        return $result;
+    }
+
+    /**
+     * insert the value or update it as the standard value of the owner or as the overwrite of the user
+     *
+     * @param user_message $msg in case of a problem, the message that should be shown to the user
+     * @return bool true if everything has been fine
+     */
+    private function save_for_user(user_message $msg): bool
+    {
+        global $db_con;
+        global $mtr;
 
         // init
         $msg_reload = $mtr->txt(msg_id::RELOAD);
@@ -2307,6 +2356,55 @@ class value_base extends sandbox_value
         }
 
         return $msg->is_ok();
+    }
+
+    /**
+     * save the number as the standard value that every user without an own overwrite gets, e.g. the setting
+     * of an admin for the whole pod; the owner of the standard row stays, so that e.g. a later import of
+     * config.yaml by the system user still changes the standard row, and the own overwrite of the admin is
+     * removed, so that the admin sees the new standard value
+     *
+     * @param user_message $msg to report that the user is no admin or why the save has failed
+     * @return bool true if the standard value has been saved
+     */
+    function save_as_default(user_message $msg): bool
+    {
+        global $db_con;
+        if (!$this->get_user()->is_admin()) {
+            // without a name, because the dsp_id is technical and the user knows which value has been saved
+            $msg->add_id(msg_id::VALUE_SET_DEFAULT_DENIED);
+        } else {
+            $std_rec = $this->clone_all();
+            $std_rec->reset();
+            $std_rec->set_user($this->get_user());
+            $std_rec->load_standard($this->id(), $msg);
+            // only the number of the standard row changes, so that no other field of the request overwrites it
+            $new_std = $std_rec->clone_all();
+            $new_std->set_value($this->get_value());
+            $qp = $new_std->sql_update($db_con->sql_creator(), $std_rec, $msg, new sql_type_list([sql_type::LOG]));
+            if ($msg->is_ok() and $qp != null) {
+                $db_con->update($qp, 'update and log the default of ' . $this->dsp_id(), $msg);
+            }
+            $this->del_own_overwrite($msg);
+        }
+        return $msg->is_ok();
+    }
+
+    /**
+     * @param user_message $msg to report why the own overwrite could not be removed
+     * @return void the own overwrite of the user of this value is removed with its change log, if there is one
+     */
+    private function del_own_overwrite(user_message $msg): void
+    {
+        if ($msg->is_ok()) {
+            $db_rec = $this->clone_all();
+            $db_rec->reset();
+            $db_rec->set_user($this->get_user());
+            $db_rec->load_by_id($this->id(), $msg);
+            if ($db_rec->has_usr_cfg()) {
+                $db_rec->del_usr_cfg($msg);
+            }
+        }
     }
 
     /**

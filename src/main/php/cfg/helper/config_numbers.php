@@ -88,7 +88,7 @@ class config_numbers extends value_list
 
     // fast lookup rows from the cached config json to read config values without
     // building all value and phrase objects on every request (see set_cache_json);
-    // each row contains the flipped phrase names, the raw value and the text flag
+    // each row contains the flipped phrase names, the raw value, the text flag and the value id
     private array $lookup_rows = [];
     // the cached config json to build the complete value objects only on demand
     private ?array $cache_json = null;
@@ -100,28 +100,43 @@ class config_numbers extends value_list
         db_cache_types::USER_CONFIG,
     ];
 
-    // the phrase names that select the pod switch for each database cache
-    // (db_cache_types code id => phrase names; see config.yaml "database > cache")
+    // the keys of config.yaml above the database cache switches
+    const array CACHE_PATH = [...triples::CONFIG_SYSTEM_PATH, words::DATABASE, words::CACHE];
+
+    // the complete phrase set of the pod switch for each database cache (db_cache_types code id => phrase names),
+    // because e.g. the system config switch has all phrases of the user config switch, as "system" is also the key above
     const array CACHE_ALLOWED_NAMES = [
-        db_cache_types::SYSTEM_CONFIG => [words::ALLOWED, words::SYSTEM, words::CONFIG, words::CACHE],
-        db_cache_types::TYPES => [words::ALLOWED, words::TYPE, words::CACHE],
-        db_cache_types::USER_CONFIG => [words::ALLOWED, words::USER, words::CONFIG, words::CACHE],
-        db_cache_types::FRONTEND_CONFIG => [words::ALLOWED, words::FRONTEND, words::CONFIG, words::CACHE],
-        db_cache_types::USER_FRONTEND_CONFIG => [words::ALLOWED, triples::USER_FRONTEND, words::CONFIG, words::CACHE],
-        db_cache_types::PAGE_CACHE => [words::ALLOWED, words::DATA, words::PAGE, words::CACHE],
-        db_cache_types::UI_CACHE => [words::ALLOWED, words::PRELOAD, words::CACHE],
+        db_cache_types::SYSTEM_CONFIG => [...config_numbers::CACHE_PATH, words::CONFIG, words::SYSTEM, words::ALLOWED],
+        db_cache_types::TYPES => [...config_numbers::CACHE_PATH, words::TYPE, words::ALLOWED],
+        db_cache_types::USER_CONFIG => [...config_numbers::CACHE_PATH, words::CONFIG, words::USER, words::ALLOWED],
+        db_cache_types::FRONTEND_CONFIG => [...config_numbers::CACHE_PATH, words::CONFIG, words::FRONTEND, words::ALLOWED],
+        db_cache_types::USER_FRONTEND_CONFIG => [...config_numbers::CACHE_PATH, words::CONFIG, triples::USER_FRONTEND, words::ALLOWED],
+        db_cache_types::PAGE_CACHE => [...config_numbers::CACHE_PATH, words::PAGE, words::DATA, words::ALLOWED],
+        db_cache_types::UI_CACHE => [...config_numbers::CACHE_PATH, words::PRELOAD, words::ALLOWED],
     ];
 
-    // the phrase names that select the pod switch for the html page cache (db_cache_pages table)
-    const array CACHE_PAGES_ALLOWED_NAMES = [words::ALLOWED, words::HTML, words::PAGE, words::CACHE];
+    // the complete phrase set of the pod switch for the html page cache (db_cache_pages table)
+    const array CACHE_PAGES_ALLOWED_NAMES = [...config_numbers::CACHE_PATH, words::PAGE, words::HTML, words::ALLOWED];
 
-    // the phrase names that select the pod switches to show the values and the formulas of the
+    // the complete phrase sets of the pod switches to show the values and the formulas of the
     // symbols and of the aliases of a phrase with the phrase's own
     // (config.yaml select > value|formula > symbol|alias > include)
-    const array SYMBOL_VALUES_INCLUDE_NAMES = [words::INCLUDE, words::SYMBOL, words::VALUE, words::SELECT];
-    const array ALIAS_VALUES_INCLUDE_NAMES = [words::INCLUDE, words::ALIAS, words::VALUE, words::SELECT];
-    const array SYMBOL_FORMULAS_INCLUDE_NAMES = [words::INCLUDE, words::SYMBOL, words::FORMULA, words::SELECT];
-    const array ALIAS_FORMULAS_INCLUDE_NAMES = [words::INCLUDE, words::ALIAS, words::FORMULA, words::SELECT];
+    const array SELECT_PATH = [...triples::CONFIG_ROOT, words::SELECT];
+    const array SYMBOL_VALUES_INCLUDE_NAMES = [...config_numbers::SELECT_PATH, words::VALUE, words::SYMBOL, words::INCLUDE];
+    const array ALIAS_VALUES_INCLUDE_NAMES = [...config_numbers::SELECT_PATH, words::VALUE, words::ALIAS, words::INCLUDE];
+    const array SYMBOL_FORMULAS_INCLUDE_NAMES = [...config_numbers::SELECT_PATH, words::FORMULA, words::SYMBOL, words::INCLUDE];
+    const array ALIAS_FORMULAS_INCLUDE_NAMES = [...config_numbers::SELECT_PATH, words::FORMULA, words::ALIAS, words::INCLUDE];
+
+    // the complete phrase set of the pod permission for the changes of a user without login
+    // (config.yaml system > pod > permissions > database change > ip user > allowed)
+    const array IP_USER_CHANGE_NAMES = [
+        ...triples::CONFIG_SYSTEM_PATH,
+        words::POD,
+        words::PERMISSIONS,
+        triples::DATABASE_CHANGE,
+        triples::IP_USER,
+        words::ALLOWED,
+    ];
 
     // list of word that should be hidden be default for normal selections
     // TODO check on pod start that these words exists and are of hidden type
@@ -297,12 +312,47 @@ class config_numbers extends value_list
                         }
                     }
                     if ($match) {
-                        $result = $this->lookup_value($lookup_row[1], $lookup_row[2]);
+                        $result = $this->lookup_value($lookup_row[1], $lookup_row[2], $lookup_row[3]);
                     }
                 }
             }
         }
         return $result;
+    }
+
+    /**
+     * the config values by their complete phrase set, e.g. for the config tree that finds the value
+     * of each setting by the keys of its yaml path; unlike get_by_names a value with more phrases
+     * e.g. of a setting below the given one never matches, and the list is built once for all settings
+     *
+     * @return array the first config value of each phrase set with the names_key as the key
+     */
+    function exact_lookup(): array
+    {
+        $result = [];
+        if ($this->lookup_rows == []) {
+            foreach ($this->lst() as $val) {
+                $result[self::names_key($val->grp()->phrase_list()->names())] ??= $val;
+            }
+        } else {
+            foreach ($this->lookup_rows as [$row_names, $raw_value, $is_text, $id]) {
+                $result[self::names_key(array_keys($row_names))] ??= $this->lookup_value($raw_value, $is_text, $id);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param array $names the phrase names of a config value in any order
+     * @return string the key of the complete phrase set, the same for each order and never cut
+     */
+    static function names_key(array $names): string
+    {
+        // as text, because array_keys returns a numeric name such as "2000" as an int
+        $name_set = array_values(array_unique(array_map('strval', $names)));
+        sort($name_set, SORT_STRING);
+        // serialize never fails, unlike json_encode on a name that is no valid utf-8
+        return serialize($name_set);
     }
 
     /**
@@ -326,8 +376,10 @@ class config_numbers extends value_list
             }
             $is_text = array_key_exists(json_fields::TEXT_VALUE, $api_row);
             $raw_value = $api_row[json_fields::NUMBER] ?? $api_row[json_fields::TEXT_VALUE] ?? null;
+            // kept, so that e.g. the config tree can name the value that a user overwrites
+            $id = $api_row[json_fields::ID] ?? 0;
             if ($names != [] and $raw_value !== null) {
-                $this->lookup_rows[] = [$names, $raw_value, $is_text];
+                $this->lookup_rows[] = [$names, $raw_value, $is_text, $id];
             }
         }
         return $this->lookup_rows != [];
@@ -336,9 +388,10 @@ class config_numbers extends value_list
     /**
      * @param float|string $raw_value the config value from the cached json
      * @param bool $is_text true if the cached json contains a text value
-     * @return value_base a config value object with just the value set for the get_by callers
+     * @param int|string $id the id of the value from the cached json, 0 if the json has none
+     * @return value_base a config value object with just the value and its id set for the get_by callers
      */
-    private function lookup_value(float|string $raw_value, bool $is_text): value_base
+    private function lookup_value(float|string $raw_value, bool $is_text, int|string $id): value_base
     {
         if ($is_text) {
             $val = new value_text($this->get_user());
@@ -346,6 +399,7 @@ class config_numbers extends value_list
         } else {
             $val = new value($this->get_user(), (float)$raw_value);
         }
+        $val->set_id($id);
         return $val;
     }
 
@@ -722,7 +776,6 @@ class config_numbers extends value_list
      * the pod setting that decides if the given database cache is used
      * a pod without the switch uses the cache, so only an explicit false in config.yaml
      * switches a cache off e.g. to debug with always fresh data
-     * no fallback is given to get_by, because get_by would replace the false of the config value with it
      * @param string $type_code_id the code id of the db_cache type e.g. "types"
      * @return bool false if this database cache should not be used
      */
@@ -736,10 +789,7 @@ class config_numbers extends value_list
             log_warning('unknown database cache switch ' . $type_code_id);
             $result = false;
         } else {
-            $val = $this->get_by_names($names);
-            if ($val !== null) {
-                $result = $val->number() != 0;
-            }
+            $result = $this->pod_switch($names);
         }
         return $result;
     }
@@ -801,13 +851,13 @@ class config_numbers extends value_list
     /**
      * a pod switch that is on unless config.yaml sets it to false, so a pod without the switch
      * behaves like the default of config.yaml
-     * @param array $names the phrase names that select the switch, leaf first
+     * @param array $names the complete phrase set of the switch, because a part of it can also select another switch
      * @return bool false only if the switch is set to false
      */
     private function pod_switch(array $names): bool
     {
         $result = true;
-        $val = $this->get_by_names($names);
+        $val = $this->exact_lookup()[self::names_key($names)] ?? null;
         if ($val !== null) {
             $result = $val->number() != 0;
         }
@@ -816,19 +866,14 @@ class config_numbers extends value_list
 
     /**
      * the pod permission that decides if a user without login can change data in the database
-     * no fallback is given to get_by, because get_by would replace the false of the config value with it
      * the yaml false is imported as the number zero, and a missing permission is as restrictive as the
      * default of config.yaml, so only an explicit true permits the changes of an ip user
      * @return bool false if a user without login is not permitted to change any data of this pod
      */
     function ip_user_can_change(): bool
     {
-        $permitted = $this->get_by([
-                words::ALLOWED,
-                triples::IP_USER,
-                triples::DATABASE_CHANGE]
-        );
-        return $permitted != 0;
+        $val = $this->exact_lookup()[self::names_key(self::IP_USER_CHANGE_NAMES)] ?? null;
+        return ($val?->number() ?? 0) != 0;
     }
 
 }

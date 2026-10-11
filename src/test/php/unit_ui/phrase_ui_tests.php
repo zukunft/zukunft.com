@@ -395,6 +395,42 @@ class phrase_ui_tests
         $t->assert_text_contains($test_name, $tbl_rsn_sol, '>' . word_names::RESEARCH . '</a>');
         $test_name = '... in the solution column';
         $t->assert_text_contains($test_name, $lib->str_left_of($tbl_rsn_sol, '</tr>'), '>' . word_names::SOLUTION . '</a>');
+        // the gain of 50 of the solution of the heat mortality puts that reason first by impact,
+        // but the default sort order of the live page sorts the reasons by the loss they cause
+        $test_name = 'the reasons page sorts the reasons by their loss';
+        $dto_rsn_sol->add_phrases($t_phr->list_sort_definitions_ui(), $msg);
+        $tbl_sorted = $list->table_with_related_columns($t_trp->global_warming_reason_ui(), $msg, $dto_rsn_sol);
+        $t->assert_text_order($test_name, $tbl_sorted,
+            '>' . triple_names::CLIMATE_GAS_EMISSIONS . '</a>', '>' . triple_names::HEAT_MORTALITY . '</a>');
+        // negative: without the default sort order the rows keep the impact order
+        $test_name = '... and without the sort order by their impact';
+        $t->assert_text_order($test_name, $tbl_rsn_sol,
+            '>' . triple_names::HEAT_MORTALITY . '</a>', '>' . triple_names::CLIMATE_GAS_EMISSIONS . '</a>');
+        // the table page of "global warming solution" shows a row per solution with the reason it
+        // solves and its gain for that reason
+        $test_name = 'the solutions page shows a row per solution';
+        $dto_sol = new data_object();
+        $dto_sol->online = false;
+        $dto_sol->val_lst = $t_val->value_list_global_warming_solutions_ui();
+        $dto_sol->phr_lst = $t_phr->list_global_warming_solutions_with_reasons_ui();
+        $tbl_sol = $list->table_with_related_columns($t_trp->global_warming_solution_ui(), $msg, $dto_sol);
+        $t->assert_text_contains($test_name, $tbl_sol, '>' . triple_names::CLIMATE_ADAPTATION . '</a>');
+        $test_name = '... with the row column headed by the solution';
+        $t->assert($test_name, $lib->str_left_of($lib->html_to_text($lib->str_left_of($tbl_sol, '</tr>')), ' '),
+            word_names::SOLUTION);
+        // the reduction of the emissions has a gain for the climate gas emissions shown in its row
+        // and a gain for the whole problem, which is a number of a wider scope
+        $test_name = '... and the gain of the solution for the reason shown';
+        $row_rce = $lib->html_to_text($lib->str_left_of(
+            $lib->str_right_of($tbl_sol, '>' . triple_names::REDUCE_EMISSIONS . '</a>'), '</tr>'));
+        $t->assert_text_contains($test_name, $row_rce, '30');
+        // negative: a cell never shows two numbers of one thing
+        $test_name = '... without the gain for the whole problem in the same cell';
+        $t->assert_text_not_contains($test_name, $row_rce, '35.2');
+        // negative: the gain of the solution for a reason is no row of its own beside the solution,
+        // because "reason" is the phrase column of the climate gas emissions and no value column
+        $test_name = '... and the solution in one row only';
+        $t->assert($test_name, substr_count($tbl_sol, '>' . triple_names::REDUCE_EMISSIONS . '</a>'), 1);
         // negative: without the links to "global warming reason" the page finds no reason
         $test_name = 'without the reason links the reasons page shows no table';
         $dto_no_reasons = new data_object();

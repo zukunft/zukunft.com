@@ -71,6 +71,7 @@ include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED_HELPER . 'Config.php';
 include_once test_paths::CONST . 'files.php';
 include_once test_paths::CONST . 'word_names.php';
+include_once test_paths::CREATE . 'test_config_trees.php';
 include_once test_paths::CREATE . 'test_mappers.php';
 include_once test_paths::CREATE . 'test_mappers.php';
 include_once test_paths::CREATE . 'test_results.php';
@@ -126,6 +127,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\test\php\const\word_names;
+use Zukunft\ZukunftCom\test\php\create\test_config_trees;
 use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\create\test_mappers;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
@@ -428,6 +430,28 @@ class system_view_ui_tests
             $html_base->dsp_notification('Forgot password?'),
             '<div class="alert alert-warning notification-bar">Forgot password?</div>'
         );
+        $saved_txt = $ui->setting_saved_text([
+            url_var::NUMERIC_VALUE => (string)test_config_trees::MAX_DELAY_NEW,
+            url_var::PRE . url_var::NUMERIC_VALUE => (string)test_config_trees::MAX_DELAY_VALUE,
+            url_var::CONFIG_KEY => test_config_trees::MAX_DELAY,
+        ]);
+        $test_name = 'a done action without an issue is confirmed in green';
+        $saved_msg = new user_message();
+        $saved_msg->add_info($saved_txt);
+        $t->assert_text_contains($test_name, $ui->user_msg_html($saved_msg), html_base::CLASS_NOTIFICATION_SUCCESS);
+        // negative: an issue of the same request is never shown as a success
+        $test_name = '... but in orange if the request has an issue';
+        $saved_msg->add_id(msg_id::CONFIG_NOT_LOADED);
+        $t->assert_text_contains($test_name, $ui->user_msg_html($saved_msg), html_base::CLASS_NOTIFICATION . '"');
+        // e.g. the refused save of a setting of the pod, which the backend reports without vars
+        $test_name = 'a message without vars of a write is kept when merged into the message of the request';
+        $refused_msg = new user_message();
+        $refused_msg->add_id(msg_id::CONFIG_SYSTEM_ADMIN_ONLY);
+        $request_msg = new user_message();
+        $request_msg->merge($refused_msg);
+        // escaped like dsp_notification, because the text quotes the key 'system'
+        $refused_html = htmlspecialchars($mtr->txt(msg_id::CONFIG_SYSTEM_ADMIN_ONLY));
+        $t->assert_text_contains($test_name, $ui->user_msg_html($request_msg), $refused_html);
 
         // test that a failed login renders the notification in the full page
         $_SESSION[url_var::SESSION_TOKEN] = test_const::DUMMY_SESSION_TOKEN;
@@ -772,34 +796,46 @@ class system_view_ui_tests
         $t->assert_html_page($test_name, $t->link_to_pod($more_html, THIS_URL), $file_path);
         $msg->reset();
 
-        // the ", ..." of the reason cell of the start page links to the table page of
-        // "global warming reason", which shows the reasons of global warming as rows with the
-        // loss of each reason and the gain of its solution; the url names the triple by its phrase
-        // id, so a triple mapped with that id would name another phrase and find none of the values
-        $test_name = 'the table page of the global warming reasons shows the table';
-        $dto_reasons = clone $dto_start;
-        $dto_reasons->phr_lst = clone $dto_start->phr_lst;
-        $dto_reasons->add_phrases($t_phr->list_global_warming_reasons_ui(), $msg);
-        // like for the calculator, the from of "global warming reason" is named from the cache, and
-        // the table heads its row column by it
-        $rsn_parts = new phrase_list($t->usr1);
-        $rsn_parts->add($t_wrd->word_reason()->phrase());
-        $dto_reasons->add_phrases(new phrase_list_ui($rsn_parts->api_json()), $msg);
-        $dto_reasons->val_lst = $t_val->value_list_solution_prio_reason_solution_ui();
-        // the url carries the fields of the phrase, because the page is rendered without a backend call
+        // the ", ..." of the reason and the solution cell of the start page link to the table page
+        // of "global warming reason" and "global warming solution", which show the reasons or the
+        // solutions of global warming as rows; per page the name, the page phrase, the phrase that
+        // names its rows, the related phrases and the values
         $t_trp = new test_triples($t);
-        $url = $t_map->phrase_page_url(views::TABLE_ID, $t_trp->global_warming_reason()->phrase(), $msg);
-        parse_str(parse_url($url)['query'], $reasons_url);
-        $reasons_html = $ui->url_to_html($reasons_url, $msg, $dto_reasons, true);
-        $t->assert_text_contains($test_name, $reasons_html, '<' . html_base::TABLE);
-        $test_name = 'the table page of the global warming reasons matches the snapshot';
-        $tbl_dbo = $this->view_id_to_dbo(views::TABLE_ID, $t->usr1);
-        [$folder, $dbo_name,] = $this->view_id_to_file_info(views::TABLE_ID, $tbl_dbo::class,
-            $this->view_id_to_url_action(views::TABLE_ID), $reasons_url, $lib);
-        $file_path = test_paths::VIEWS_BY_ID . $folder . $dbo_name;
-        $updated_files[] = test_paths::RESOURCE . $file_path . test_files::HTML;
-        $t->assert_html_page($test_name, $t->link_to_pod($reasons_html, THIS_URL), $file_path);
-        $msg->reset();
+        $list_pages = [
+            ['reasons', $t_trp->global_warming_reason(), $t_wrd->word_reason(),
+                $t_phr->list_global_warming_reasons_ui(), $t_val->value_list_solution_prio_reason_solution_ui()],
+            ['solutions', $t_trp->global_warming_solution(), $t_wrd->solution(),
+                $t_phr->list_global_warming_solutions_with_reasons_ui(), $t_val->value_list_global_warming_solutions_ui()],
+        ];
+        foreach ($list_pages as [$page_name, $page_trp, $row_wrd, $rel_lst, $val_lst]) {
+            // the url names the triple by its phrase id, so a triple mapped with that id would name
+            // another phrase and find none of the values
+            $test_name = 'the table page of the global warming ' . $page_name . ' shows the table';
+            $dto_page = clone $dto_start;
+            $dto_page->phr_lst = clone $dto_start->phr_lst;
+            $dto_page->add_phrases($rel_lst, $msg);
+            // like for the calculator, the from of the page triple is named from the cache, and
+            // the table heads its row column by it
+            $row_parts = new phrase_list($t->usr1);
+            $row_parts->add($row_wrd->phrase());
+            $dto_page->add_phrases(new phrase_list_ui($row_parts->api_json()), $msg);
+            // the live page loads the default sort order, so the rows are sorted by the loss
+            $dto_page->add_phrases($t_phr->list_sort_definitions_ui(), $msg);
+            $dto_page->val_lst = $val_lst;
+            // the url carries the fields of the phrase, because the page is rendered without a backend call
+            $url = $t_map->phrase_page_url(views::TABLE_ID, $page_trp->phrase(), $msg);
+            parse_str(parse_url($url)['query'], $page_url);
+            $page_html = $ui->url_to_html($page_url, $msg, $dto_page, true);
+            $t->assert_text_contains($test_name, $page_html, '<' . html_base::TABLE);
+            $test_name = 'the table page of the global warming ' . $page_name . ' matches the snapshot';
+            $tbl_dbo = $this->view_id_to_dbo(views::TABLE_ID, $t->usr1);
+            [$folder, $dbo_name,] = $this->view_id_to_file_info(views::TABLE_ID, $tbl_dbo::class,
+                $this->view_id_to_url_action(views::TABLE_ID), $page_url, $lib);
+            $file_path = test_paths::VIEWS_BY_ID . $folder . $dbo_name;
+            $updated_files[] = test_paths::RESOURCE . $file_path . test_files::HTML;
+            $t->assert_html_page($test_name, $t->link_to_pod($page_html, THIS_URL), $file_path);
+            $msg->reset();
+        }
 
         // negative: a field of the object is not a render mode, so a page without an object
         // still reports that the id of the object to change is missing

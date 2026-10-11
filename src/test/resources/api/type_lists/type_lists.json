@@ -9976,6 +9976,12 @@
                 "code_id": "system_admin_jobs_delayed",
                 "description": "list of critical jobs that are delayed with the possibility to de-prioritise blocking jobs",
                 "id": 264
+            },
+            {
+                "name": "system body config tree",
+                "code_id": "system_body_config_tree",
+                "description": "the read only tree of the system configuration of config.yaml with a search and a scope to show one branch",
+                "id": 265
             }
         ],
         "component_link_types": [
@@ -25267,11 +25273,11 @@
                     },
                     {
                         "link_id": 1338,
-                        "id": 388,
-                        "name": "system body not yet available",
-                        "description": "the hint that the data and actions of the shown system view are not yet available",
-                        "type_id": 253,
-                        "code_id": "system_body_not_yet_available",
+                        "id": 400,
+                        "name": "system body config tree",
+                        "description": "the read only tree of the system configuration of config.yaml with a search and a scope to show one branch",
+                        "type_id": 265,
+                        "code_id": "system_body_config_tree",
                         "position": 2,
                         "position_type": 1
                     }
@@ -27963,7 +27969,7 @@
                 "components": [
                     {
                         "link_id": 1549,
-                        "id": 400,
+                        "id": 401,
                         "name": "phrase",
                         "description": "simply show the name of a word or triple",
                         "type_id": 32,
@@ -27972,7 +27978,7 @@
                     },
                     {
                         "link_id": 1550,
-                        "id": 401,
+                        "id": 402,
                         "name": "ranking parameters",
                         "description": "the parameters used to calculate a ranking",
                         "type_id": 230,
@@ -27981,7 +27987,7 @@
                     },
                     {
                         "link_id": 1551,
-                        "id": 402,
+                        "id": 403,
                         "name": "ranking list",
                         "description": "list sorted by the calculated ranking",
                         "type_id": 229,
@@ -28064,7 +28070,7 @@
                     },
                     {
                         "link_id": 1553,
-                        "id": 416,
+                        "id": 417,
                         "name": "related words",
                         "description": "show the most relevant and related words or triples",
                         "type_id": 51,
@@ -28073,7 +28079,7 @@
                     },
                     {
                         "link_id": 1554,
-                        "id": 418,
+                        "id": 419,
                         "name": "formulas",
                         "description": "simply show all related formulas",
                         "type_id": 81,
@@ -28100,7 +28106,7 @@
                     },
                     {
                         "link_id": 1556,
-                        "id": 409,
+                        "id": 410,
                         "name": "problem definition",
                         "description": "show the most relevant definitions related to a problem",
                         "type_id": 44,
@@ -28109,7 +28115,7 @@
                     },
                     {
                         "link_id": 1557,
-                        "id": 410,
+                        "id": 411,
                         "name": "problem size",
                         "description": "show the estimations of the size of a problem",
                         "type_id": 44,
@@ -28118,7 +28124,7 @@
                     },
                     {
                         "link_id": 1558,
-                        "id": 411,
+                        "id": 412,
                         "name": "problem solutions",
                         "description": "show the most fastest or most sustainable or most efficient solutions to the problem",
                         "type_id": 44,
@@ -28145,7 +28151,7 @@
                     },
                     {
                         "link_id": 1560,
-                        "id": 412,
+                        "id": 413,
                         "name": "exchange rates",
                         "description": "show the most relevant exchange rates",
                         "type_id": 44,
@@ -28163,7 +28169,7 @@
                     },
                     {
                         "link_id": 1562,
-                        "id": 413,
+                        "id": 414,
                         "name": "currency formulas",
                         "description": "show the formulas related to a currency",
                         "type_id": 44,
@@ -28181,7 +28187,7 @@
                 "components": [
                     {
                         "link_id": 1563,
-                        "id": 424,
+                        "id": 425,
                         "protection": 3,
                         "name": "Title solution priority",
                         "description": "page title: the global problems ranked by their potential loss",
@@ -28193,7 +28199,7 @@
                     },
                     {
                         "link_id": 1564,
-                        "id": 425,
+                        "id": 426,
                         "name": "table problem ranking by potential loss",
                         "description": "one row per global problem, sorted by the potential loss in trillion EUR per year, descending; shows the solution keyword, the share of the loss the solution can avoid, the initial effort and the resulting reward ratio. The rows are health, populism, global warming, poverty, market power, wealth concentration, education, biased information, disinformation, GDP mismeasurement, black-box AI, citizen participation and proprietary software; only the first five of them are linked to \"global problem\", so the rows cannot yet be named by a single row phrase. The columns are ranking, problem, potential loss, solution, loss reduction, initial effort, reward ratio and probability range; they are no phrases of this file, so they cannot be named by a column phrase either.",
                         "type_id": 55,

@@ -263,3 +263,4 @@ component_type_id,type_name,code_id,description
 262,system admin unassigned errors,system_admin_errors_unassigned,show new detected internal errors that do not yet have a human check priority and that are not yet assigned to a developer
 263,system admin pending error fixes,system_admin_errors_delayed_fix,show a list of errors where the fix has been expected but that are not yet fixed
 264,system admin delayed jobs,system_admin_jobs_delayed,list of critical jobs that are delayed with the possibility to de-prioritise blocking jobs
+265,system body config tree,system_body_config_tree,the read only tree of the system configuration of config.yaml with a search and a scope to show one branch

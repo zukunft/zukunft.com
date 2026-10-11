@@ -722,6 +722,17 @@ class test_cleanup extends test_api
     }
 
     /**
+     * @param string $body the settings page rendered with the test part of config.yaml
+     * @param string $filename the snapshot name e.g. "system_config_read_only"
+     * @param user_message_ui $msg the messages of the rendering, shown in the snapshot
+     * @return bool true if the page matches the snapshot in the config_page resource folder
+     */
+    function html_config_page_test(string $body, string $filename, user_message_ui $msg): bool
+    {
+        return $this->html_test($body, 'settings', test_paths::CONFIG_PAGE . $filename, $msg);
+    }
+
+    /**
      * check if a generated html page matches the fixed html page saved in the resource path
      * @param string $body the generated html page body
      * @param string $title the page title name

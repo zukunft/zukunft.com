@@ -2615,6 +2615,12 @@
       "description": "list of critical jobs that are delayed with the possibility to de-prioritise blocking jobs",
       "type": "system_admin_jobs_delayed",
       "code_id": "system_admin_jobs_delayed"
+    },
+    {
+      "name": "system body config tree",
+      "description": "the read only tree of the system configuration of config.yaml with a search and a scope to show one branch",
+      "type": "system_body_config_tree",
+      "code_id": "system_body_config_tree"
     }
   ],
   "views": [
@@ -9650,7 +9656,7 @@
         },
         {
           "position": "2",
-          "name": "system body not yet available"
+          "name": "system body config tree"
         }
       ]
     },

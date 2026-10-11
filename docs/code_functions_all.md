@@ -2014,6 +2014,8 @@
     \-- id_field - section for function id_field not yet defined that it should be info in /helper/combine_object.php
     \-- db_ready - section for function db_ready is expected to be check in /helper/combine_object.php
 \-- config_numbers
+    \-- exact_lookup - section for function exact_lookup not yet defined that it should be set and get in /helper/config
+            _numbers.php
     \-- fill_from_cache_json - section for function fill_from_cache_json not yet defined that it should be load in /help
             er/config_numbers.php
     \-- default_json - section for function default_json not yet defined that it should be default in /helper/config_num
@@ -2034,6 +2036,9 @@
             ned in /helper/config_numbers.php
     \-- ip_user_can_change - section for function ip_user_can_change not yet defined that it should be predefined in /he
             lper/config_numbers.php
+\-- config_tree
+    \-- api_json - section for function api_json not yet defined that it should be api in /helper/config_tree.php
+    \-- nodes - section for function nodes not yet defined that it should be convert in /helper/config_tree.php
 \-- data_object
     \-- api_json - section for function api_json not yet defined that it should be api in /helper/data_object.php
     \-- api_array - section for function api_array not yet defined that it should be api in /helper/data_object.php
@@ -2153,6 +2158,8 @@
     \-- load_sql - section for function load_sql is expected to be load sql in /helper/db_cache.php
     \-- del - section for function del is expected to be del in /helper/db_cache.php
     \-- del_by_user - section for function del_by_user is expected to be del in /helper/db_cache.php
+    \-- del_by_types - section for function del_by_types is expected to be del in /helper/db_cache.php
+    \-- del_sql_by_type_ids - section for function del_sql_by_type_ids is expected to be del in /helper/db_cache.php
     \-- del_sql_by_user - section for function del_sql_by_user is expected to be del in /helper/db_cache.php
 \-- db_cache_page
     \-- row_mapper - section for function row_mapper not yet defined that it should be construct and map in /helper/db_c
@@ -2608,6 +2615,7 @@
     \-- echo_lines - section for function echo_lines not yet defined that it should be display in /log_text/text_log.php
     \-- time_stamp_lines - section for function time_stamp_lines not yet defined that it should be display in /log_text/
             text_log.php
+    \-- since_last - section for function since_last not yet defined that it should be display in /log_text/text_log.php
 \-- phr_ids
     \-- __construct - section for function __construct is expected to be construct and map in /phrase/phr_ids.php
     \-- count - section for function count missing in /phrase/phr_ids.php
@@ -3833,8 +3841,6 @@
 \-- system_time_list
     \-- switch - section for function switch not yet defined that it should be interface in /system/system_time_list.php
     \-- report - section for function report not yet defined that it should be interface in /system/system_time_list.php
-    \-- show_total - section for function show_total not yet defined that it should be interface in /system/system_time_
-            list.php
     \-- section_report - section for function section_report not yet defined that it should be interface in /system/syst
             em_time_list.php
     \-- reset_section - section for function reset_section not yet defined that it should be interface in /system/system
@@ -3978,6 +3984,9 @@
     \-- add - section for function add not yet defined that it should be @param user_message $msg to enrich with problem
             s and suggested solutions in /value/value_base.php
     \-- save - section for function save is expected to be save in /value/value_base.php
+    \-- is_pod_setting_denied - section for function is_pod_setting_denied is expected to be info in /value/value_base.p
+            hp
+    \-- save_as_default - section for function save_as_default is expected to be save in /value/value_base.php
     \-- del - section for function del is expected to be del in /value/value_base.php
     \-- order error - order of section construct and map has difference at api_mapper should be before row_mapper_sandbo
             x_multi
@@ -4736,6 +4745,11 @@
         \-- view_relation_list - delete all loaded view relations e.g. to delete all the links assigned to a view
     \-- del_by_user
         \-- db_cache - remove the cache entries of one user, because they reference the user row and are derived
+    \-- del_by_types
+        \-- db_cache - remove the cache entries of the given types of all users,
+                 because e.g. a default changed by an admin is
+    \-- del_sql_by_type_ids
+        \-- db_cache - create the sql statement to delete the cache entries of the given types of all users
     \-- del_sql_by_user
         \-- db_cache - create the sql statement to delete the cache entries of one user
     \-- fill
@@ -5061,6 +5075,9 @@
         \-- config_numbers - get a frontend config value selected by the phrase names
     \-- get_by_names
         \-- config_numbers - get the first config value that is assigned to all given phrase names
+    \-- exact_lookup
+        \-- config_numbers - the config values by their complete phrase set,
+                 e.g. for the config tree that finds the value
     \-- set_cache_json
         \-- config_numbers - use the cached config json for the value lookups of this request (see get_by_names),
     \-- unique_value
@@ -5363,6 +5380,7 @@
     \-- api_json
         \-- sql_message - @return string the json message to the backend as a string
         \-- combine_object - create the api json message string of this combine object for the frontend
+        \-- config_tree - the tree of the system configuration below "zukunft.com > system configuration" as the
         \-- db_object_multi - create the api json message string of this database object based on more than one table fo
                 r the frontend
         \-- type_list - create the api json message string for this list
@@ -5685,6 +5703,8 @@
         \-- text_log - the single place that writes text to the standard io with the runtime timestamp
     \-- time_stamp_lines
         \-- text_log - put the runtime timestamp in front of every physical line of the given text
+    \-- since_last
+        \-- text_log - @return string the seconds since the last timestamped line e.g. "0.3540 sec", so that a debug
 \-- filter
     \-- diff
         \-- element_list - get all objects that are not in the given list
@@ -5824,6 +5844,18 @@
         \-- config_numbers - the pod setting that decides if the formulas assigned to the aliases of a phrase are shown
     \-- ip_user_can_change
         \-- config_numbers - the pod permission that decides if a user without login can change data in the database
+\-- convert
+    \-- nodes
+        \-- config_tree - the nodes of the given part of config.yaml in the order of the file, without the keys
+    \-- convert
+        \-- import_wikidata - create a zukunft.com import json array from a wikidata entity json and a wikidata property
+                 json
+    \-- convert_to_file
+        \-- import_wikidata - convert the given wikidata entity and property json to a zukunft.com import json and write
+                 it to the cache folder
+    \-- cleanup_file
+        \-- import_wikidata - remove a cache file created by convert_to_file,
+                 e.g. as an optional cleanup after the import
 \-- settings
     \-- is_value_obj
         \-- db_id_object_non_sandbox - @return bool true if this sandbox object is a value or result
@@ -5910,8 +5942,6 @@
         \-- system_time_list - start the timing of set the user of the error log
     \-- report
         \-- system_time_list - @return string description of the execution times by category
-    \-- show_total
-        \-- system_time_list - @return string description of the execution times by category
     \-- section_report
         \-- system_time_list - @return string description of the execution times by category of the last section
     \-- reset_section
@@ -5975,16 +6005,6 @@
         \-- import - @param string $key the yaml key with the words of the triple e.g. "system configuration"
     \-- seq_id
         \-- import - @return int the next dummy id for unit testing
-\-- convert
-    \-- convert
-        \-- import_wikidata - create a zukunft.com import json array from a wikidata entity json and a wikidata property
-                 json
-    \-- convert_to_file
-        \-- import_wikidata - convert the given wikidata entity and property json to a zukunft.com import json and write
-                 it to the cache folder
-    \-- cleanup_file
-        \-- import_wikidata - remove a cache file created by convert_to_file,
-                 e.g. as an optional cleanup after the import
 \-- format
     \-- dsp
         \-- change - @return string the current change as a human-readable text
@@ -6548,6 +6568,7 @@
     \-- error_log - section for function error_log missing in /component/execute/system_page.php
     \-- error_update - section for function error_update missing in /component/execute/system_page.php
     \-- not_yet_available - section for function not_yet_available missing in /component/execute/system_page.php
+    \-- config_tree - section for function config_tree missing in /component/execute/system_page.php
     \-- user_jobs - section for function user_jobs missing in /component/execute/system_page.php
     \-- all_jobs - section for function all_jobs missing in /component/execute/system_page.php
     \-- process_progress - section for function process_progress missing in /component/execute/system_page.php
@@ -6814,6 +6835,7 @@
             p
     \-- user_msg_html - section for function user_msg_html not yet defined that it should be cached page in /frontend.ph
             p
+    \-- setting_saved_text - section for function setting_saved_text is expected to be set and get in /frontend.php
     \-- save_html_page - section for function save_html_page is expected to be save in /frontend.php
     \-- execute_and_next - section for function execute_and_next not yet defined that it should be cached page in /front
             end.php
@@ -6859,6 +6881,22 @@
             config.php
     \-- load - section for function load not yet defined that it should be load in /helper/config.php
     \-- get_by - section for function get_by is expected to be set and get in /helper/config.php
+\-- config_node
+    \-- matches - section for function matches not yet defined that it should be info in /helper/config_node.php
+    \-- order error - order of section construct and map has difference at api_mapper should be before __construct
+\-- config_tree
+    \-- load - section for function load not yet defined that it should be load in /helper/config_tree.php
+    \-- branch - section for function branch not yet defined that it should be select in /helper/config_tree.php
+    \-- columns - section for function columns not yet defined that it should be select in /helper/config_tree.php
+    \-- hits - section for function hits not yet defined that it should be select in /helper/config_tree.php
+    \-- key_names - section for function key_names not yet defined that it should be select in /helper/config_tree.php
+    \-- html - section for function html not yet defined that it should be html in /helper/config_tree.php
+    \-- columns_html - section for function columns_html not yet defined that it should be html in /helper/config_tree.p
+            hp
+    \-- search_form - section for function search_form not yet defined that it should be html in /helper/config_tree.php
+    \-- hit_list - section for function hit_list not yet defined that it should be html in /helper/config_tree.php
+    \-- marked - section for function marked not yet defined that it should be html in /helper/config_tree.php
+    \-- order error - order of section construct and map has difference at api_mapper should be before __construct
 \-- data_object
     \-- refresh_words_via_api - section for function refresh_words_via_api not yet defined that it should be set and get
              in /helper/data_object.php
@@ -6955,6 +6993,7 @@
     \-- display - section for function display missing in /html/display_list.php
 \-- html_base
     \-- page_html - section for function page_html not yet defined that it should be page in /html/html_base.php
+    \-- forward_page - section for function forward_page not yet defined that it should be page in /html/html_base.php
     \-- header_html - section for function header_html not yet defined that it should be header & footer in /html/html_b
             ase.php
     \-- main_body - section for function main_body not yet defined that it should be header & footer in /html/html_base.
@@ -6978,6 +7017,8 @@
             ml/html_base.php
     \-- span - section for function span not yet defined that it should be wrapper for the basic html elements used in /
             html/html_base.php
+    \-- with_title - section for function with_title not yet defined that it should be wrapper for the basic html elemen
+            ts used in /html/html_base.php
     \-- icon - section for function icon not yet defined that it should be wrapper for the basic html elements used in /
             html/html_base.php
     \-- icon_link - section for function icon_link not yet defined that it should be wrapper for the basic html elements
@@ -7194,6 +7235,12 @@
     \-- button_bs - section for function button_bs not yet defined that it should be internal in /html/html_base.php
     \-- list_item - section for function list_item not yet defined that it should be internal in /html/html_base.php
     \-- popup_menu - section for function popup_menu not yet defined that it should be internal in /html/html_base.php
+    \-- details - section for function details not yet defined that it should be internal in /html/html_base.php
+    \-- definition - section for function definition not yet defined that it should be internal in /html/html_base.php
+    \-- mark - section for function mark not yet defined that it should be internal in /html/html_base.php
+    \-- search_input - section for function search_input not yet defined that it should be internal in /html/html_base.p
+            hp
+    \-- popover - section for function popover not yet defined that it should be internal in /html/html_base.php
     \-- list_unsorted - section for function list_unsorted not yet defined that it should be internal in /html/html_base
             .php
 \-- html_selector
@@ -7325,6 +7372,8 @@
             t.php
     \-- child_phrases - section for function child_phrases not yet defined that it should be related in /phrase/phrase_l
             ist.php
+    \-- column_list_phrases - section for function column_list_phrases not yet defined that it should be related in /phr
+            ase/phrase_list.php
     \-- column_names - section for function column_names not yet defined that it should be related in /phrase/phrase_lis
             t.php
     \-- column_tier - section for function column_tier not yet defined that it should be related in /phrase/phrase_list.
@@ -8897,6 +8946,8 @@
     \-- not_yet_available
         \-- system_page - the body of a system view that is already part of the system views,
                  but whose data and actions are not yet
+    \-- config_tree
+        \-- system_page - the tree of the system configuration with the search and the scope of the url,
     \-- user_jobs
         \-- system_page - the jobs of the requesting user with the pending jobs on top and the buttons to downgrade or c
                 ancel a job
@@ -9574,6 +9625,8 @@
         \-- phrase_list - get the names of the phrases that this list links the given phrase to by a triple, the
     \-- child_phrases
         \-- phrase_list - the phrases that this list links to the given phrase by a triple
+    \-- column_list_phrases
+        \-- phrase_list - the list triples of this list that collect the phrases of a table column for one row, e.g.
     \-- column_names
         \-- phrase_list - the names of the phrases that this list defines as table columns, in the order that the
     \-- column_tier
@@ -9623,6 +9676,9 @@
         \-- frontend - the canonical cache key of a view-only page request
     \-- user_msg_html
         \-- frontend - create the html notification for the user messages of the current request
+    \-- setting_saved_text
+        \-- frontend - @param array $url_array the url of the save with the new number,
+                 the shown number and the yaml keys of the setting
     \-- save_html_page
         \-- frontend - remember the rendered html page for the next request of the same url
     \-- execute_and_next
@@ -9698,6 +9754,8 @@
 \-- page
     \-- page_html
         \-- html_base - create a simple html page based on header, body and footer html code
+    \-- forward_page
+        \-- html_base - @param int $msk_id the id of the view that the forward page opens e.g. views::SYSTEM_CONFIG_ID
 \-- header & footer
     \-- header_html
         \-- html_base - the page header for simple html pages like the login page
@@ -9726,6 +9784,8 @@
         \-- html_base - escape user settable text so it is shown literally and cannot inject html
     \-- span
         \-- html_base - @param string $text the text that should be formatted
+    \-- with_title
+        \-- html_base - a text with a mouseover text but without the data-toggle of span(), which only a js plugin
     \-- icon
         \-- html_base - the html code of a font icon (e.g. Font Awesome) as an empty paired <i> tag
     \-- icon_link
@@ -9964,11 +10024,21 @@
     \-- div_bs
         \-- html_base - wrap the div tag around html code using the bootstrap default class if no style is given
     \-- button_bs
-        \-- html_base - wrap the button tag around html code
+        \-- html_base - @param string $text the html code shown on the button e.g. a translated text or an icon
     \-- list_item
         \-- html_base - html list item entry
     \-- popup_menu
         \-- html_base - a popup menu that opens on a click without any javascript, because the html details
+    \-- details
+        \-- html_base - a part that the user can open and close without javascript, e.g. a node of a tree
+    \-- definition
+        \-- html_base - one row of a description list, e.g. a setting and its value
+    \-- mark
+        \-- html_base - @param string $txt the already escaped text that matches a search
+    \-- search_input
+        \-- html_base - a search input with the given suggestions, which the browser shows without javascript
+    \-- popover
+        \-- html_base - a button that shows a long text above the page without javascript (html popover)
     \-- list_unsorted
         \-- html_base - html unsorted list
 \-- table

@@ -121,6 +121,14 @@ class db_cache_tests
         $qp = $cac->del_sql_by_user($sc, $t->usr1->id());
         $t->assert_qp($qp, $sc->db_type);
 
+        // sql to remove the cached config of all users e.g. after an admin has changed a default setting
+        $sc->reset(sql_db::POSTGRES);
+        $qp = $cac->del_sql_by_type_ids($sc, [db_cache_types::SYSTEM_CONFIG_ID]);
+        $t->assert_qp($qp, $sc->db_type);
+        $sc->reset(sql_db::MYSQL);
+        $qp = $cac->del_sql_by_type_ids($sc, [db_cache_types::SYSTEM_CONFIG_ID]);
+        $t->assert_qp($qp, $sc->db_type);
+
         // sql to load a list of open batch db_caches
         $t_usr = new test_users($t);
         $sys_usr = $t_usr->system_user();
@@ -236,6 +244,10 @@ class db_cache_tests
         $page_with_msg = '<main>content</main>' . $msg_html . api::USER_MSG_PLACEHOLDER . '<footer></footer>';
         $test_name = 'the user message is removed from the page on save';
         $t->assert($test_name, db_cache_page::strip_user_msg($page_with_msg), $clean_page);
+        $test_name = '... also the green confirmation of a done action';
+        $success_html = $html->dsp_notification('the setting has been updated', true);
+        $page_with_success = '<main>content</main>' . $success_html . api::USER_MSG_PLACEHOLDER . '<footer></footer>';
+        $t->assert($test_name, db_cache_page::strip_user_msg($page_with_success), $clean_page);
         $test_name = 'a page without a message is not changed on save';
         $t->assert($test_name, db_cache_page::strip_user_msg($clean_page), $clean_page);
         // an alert that is part of the page content is not the user message of the request

@@ -123,8 +123,10 @@ config phrases (`config_numbers`, the global `$cfg`); beside it the low-level
 program `config` table (database version, site name) works even when the rest
 of the database is broken. Configuration values are sandbox values, so **a
 normal user can change configuration values too** — the change creates the
-user's own overlay like any other value change, and only the pod-level keys
-(the admin keywords and triples in `config_numbers`) are admin protected.
+user's own overlay like any other value change, and only the settings of the
+pod below `system configuration > system` in `config.yaml` can be changed by
+an admin only (`value_base::is_pod_setting_denied`); the `user` and `select`
+settings can be changed by each logged-in user.
 A function that writes a configuration value therefore never assumes who is
 asking (e.g. never hard-wires the system user); it takes the requesting user
 from the caller — via the `user_message` or a `user` parameter — and lets the

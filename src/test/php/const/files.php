@@ -32,6 +32,7 @@
 
 namespace Zukunft\ZukunftCom\test\php\const;
 
+use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 class files
@@ -63,6 +64,17 @@ class files
      */
 
     CONST string IP_BLACKLIST = test_paths::SYSTEM . 'ip_blacklist' . self::JSON;
+
+    // the static forward pages in the docroot by their url path, which the test run rewrites
+    // from the view of api::FORWARD_VIEWS (see base_ui_tests)
+    CONST array FORWARD_PAGES = [
+        api::LOGIN_FORWARD => test_paths::DOCROOT . api::LOGIN_FORWARD,
+        api::SIGNUP_FORWARD => test_paths::DOCROOT . api::SIGNUP_FORWARD,
+        api::LOGIN_ACTIVATE_FORWARD => test_paths::DOCROOT . api::LOGIN_ACTIVATE_FORWARD,
+        api::LOGOUT_FORWARD => test_paths::DOCROOT . api::LOGOUT_FORWARD,
+        api::FIND_FORWARD => test_paths::DOCROOT . api::FIND_FORWARD,
+        api::SETTINGS_REL => test_paths::DOCROOT . api::SETTINGS_REL,
+    ];
 
     // the snapshots that no test of a run writes, but that must never be removed by the
     // cleanup of the unused test files e.g. the initial test page created before the

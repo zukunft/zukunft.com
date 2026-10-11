@@ -2604,7 +2604,7 @@ class user extends db_id_object_non_sandbox
         $result = false;
 
         // a user without login can change data only if the pod admin permits it
-        // (config.yaml: system configuration > pod > permissions > database change > ip user > allowed)
+        // (config.yaml: system configuration > system > pod > permissions > database change > ip user > allowed)
         // during the initial setup the config is not yet loaded, so no user is blocked
         if ($cfg != null and $this->is_ip_user()) {
             $result = !$cfg->ip_user_can_change();

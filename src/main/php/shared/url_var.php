@@ -191,6 +191,7 @@ class url_var
     const string JOB_STATUS = 'js'; // the Status of the batch job e.g. new, running, done
     const string JOB_TYPE = 'jt'; // the job type
     const string NAME = 'k'; // the name of a word, verb, triple, ... of a form field (Kennung)
+    const string CONFIG_KEY = 'kc'; // the yaml keys of a setting e.g. "select initial entries" to confirm its change by name
     const string NAME_GIVEN = 'kg'; // the overwrite name of a triple, group
     const string CODE_ID = 'ki'; // the code id
     // the user interface message links of a component, only changeable like the code id
@@ -226,6 +227,7 @@ class url_var
     const string LANGUAGE_SYMBOL = 'qs';
     const string RESULT = 'r';
     const string SHARE = 's'; // the share id of the sandbox object
+    const string SET_DEFAULT = 'sd'; // TRUE if an admin saves the value as the default of all users and not as the own overwrite
     const string SOURCE = 'so';
     const string PROTECTION = 'sp'; // the protection id of the sandbox object
     const string SOURCE_TYPE = 'st';
@@ -334,6 +336,7 @@ class url_var
 
     // init
     const string CONFIG_PART_HUMAN = 'part';
+    const string CONFIG_KEY_HUMAN = 'setting';
     const string DEBUG = 'debug'; // to force the output of debug messages
     const string NO_CACHE_HUMAN = 'nocache'; // the long form of self::NO_CACHE to bypass the html page cache
     const string NO_CACHE_ON = '1'; // the value that switches the html page cache off e.g. view.php?m=1&nc=1
@@ -438,6 +441,10 @@ class url_var
         self::DISPLAY_LIST_ORDER,
         self::DISPLAY_LIST_ORDER_SUB,
         self::DISPLAY_LIST_ORDER_SUB_SUB,
+        // the search and the scope select what a page shows e.g. one top level key of the settings,
+        // so they never turn the url into a form submit of an object without an id
+        self::PATTERN,
+        self::CONFIG_PART,
     ];
 
 
@@ -549,6 +556,7 @@ class url_var
     const string LEVELS_HUMAN = 'levels'; // the number of search levels'
 
     // source
+    const string SET_DEFAULT_HUMAN = 'set_default';
     const string SOURCE_HUMAN = 'source_id';
     const string SOURCE_TYPE_HUMAN = 'source_type';
     const string URL_HUMAN = 'url';
@@ -712,6 +720,7 @@ class url_var
     const array HUMAN_TO_STD = [
         // init
         [self::CONFIG_PART_HUMAN, self::CONFIG_PART],
+        [self::CONFIG_KEY_HUMAN, self::CONFIG_KEY],
 
         // control
         [self::MASK_HUMAN, self::MASK, views::START_ID, true],
@@ -800,6 +809,7 @@ class url_var
         [self::LEVELS_HUMAN, self::LEVELS],
 
         // source
+        [self::SET_DEFAULT_HUMAN, self::SET_DEFAULT],
         [self::SOURCE_HUMAN, self::SOURCE],
         [self::SOURCE_TYPE_HUMAN, self::SOURCE_TYPE],
         [self::URL_HUMAN, self::URL],

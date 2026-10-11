@@ -513,7 +513,7 @@ class user extends db_object
 
     /**
      * the frontend twin of the backend user::is_blocked, which rejects every change of an ip user
-     * unless the pod admin permits it (config.yaml: pod > permissions > database change > ip user);
+     * unless the pod admin permits it (config.yaml: system > pod > permissions > database change > ip user);
      * used to grey out an action that the backend would only reject, e.g. the formula link icon
      *
      * unlike is_ip_only a user whose profile is not (yet) known is not blocked, because hiding an

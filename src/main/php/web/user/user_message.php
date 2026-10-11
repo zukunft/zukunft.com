@@ -333,6 +333,10 @@ class user_message extends Message
         foreach ($msg_to_add->get_all_var_messages() as $msg_var) {
             $this->add($msg_var[0], $msg_var[1], $msg_to_add->is_ok());
         }
+        // e.g. the refused save of a setting of the pod, which the backend reports without vars
+        foreach ($msg_to_add->get_all_id_messages() as $msg_id) {
+            $this->add_id($msg_id);
+        }
         $this->combine_status($msg_to_add);
     }
 

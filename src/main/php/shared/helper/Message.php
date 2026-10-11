@@ -306,6 +306,14 @@ class Message
     }
 
     /**
+     * @return array with all the translatable messages without vars
+     */
+    protected function get_all_id_messages(): array
+    {
+        return $this->msg_id_lst;
+    }
+
+    /**
      * @return string with the latest added message translated to the user language
      *         or an empty string if this message has nothing to say
      */

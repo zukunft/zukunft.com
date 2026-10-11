@@ -139,6 +139,7 @@ include_once html_paths::MODEL_HELPER . 'config_numbers.php';
 include_once html_paths::MODEL_HELPER . 'data_object.php';
 // server admin whitelist, tls and session hardening (file based IP / user whitelist)
 include_once html_paths::MODEL_HELPER . 'server_guard.php';
+include_once html_paths::MODEL_HELPER . 'db_cache.php';
 include_once html_paths::MODEL_HELPER . 'db_cache_page.php';
 include_once html_paths::SHARED_TYPES . 'db_cache_types.php';
 include_once html_paths::MODEL_IMPORT . 'import.php';
@@ -156,6 +157,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\helper\config_numbers;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object as data_object_backend;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache_page;
 use Zukunft\ZukunftCom\main\php\shared\types\db_cache_types;
 use Zukunft\ZukunftCom\main\php\cfg\helper\server_guard;
@@ -1046,11 +1048,10 @@ class frontend
 
         // select the main object to display (object-type-aware also for a confirm view, see dbo_for_url)
         $dbo = $this->dbo_for_url($view_id, $url_array);
-        // a phrase view is called with the phrase id, which is negative for a triple, but the
-        // triple is loaded by its own id (see phrase_id_to_dbo_ui)
         // TODO Prio 2 check and review: maybe not needed any more
-        // the url values are mapped with the own id too, else the url mapper would give the triple
-        // the phrase id, which as a triple id names another phrase; the url keeps the phrase id for the back links
+        // a phrase view is called with the phrase id, negative for a triple, but the triple is loaded
+        // and url mapped by its own id, else it names another phrase (see phrase_id_to_dbo_ui);
+        // the url keeps the phrase id for the back links
         $obj_url_array = $url_array;
         if ($dbo instanceof triple_ui and $id < 0) {
             $id = $dbo->id();
@@ -1532,8 +1533,11 @@ class frontend
             if ($msg_txt === '') {
                 $msg_txt = $msg_ui->get_last_message();
             }
+            // an info of a request without an issue confirms a done action e.g. a saved setting
+            $is_success = false;
             if ($msg_txt === '') {
                 $msg_txt = $msg_ui->get_last_info();
+                $is_success = $msg_ui->is_ok();
             }
             if ($msg_txt !== '') {
                 if ($msg_ui->has_msg_id(msg_id::PASSWORD_WRONG)) {
@@ -1545,9 +1549,38 @@ class frontend
                     $notification_html = htmlspecialchars(msg_id::LOGIN_FAILED->value . '. ') . $reset_link;
                     $result = $html->dsp_notification_html($notification_html);
                 } else {
-                    $result = $html->dsp_notification($msg_txt);
+                    $result = $html->dsp_notification($msg_txt, $is_success);
                 }
             }
+        }
+        return $result;
+    }
+
+    /**
+     * @param array $url_array the url of the save with the new number, the shown number and the yaml keys of the setting
+     * @return string the translated confirmation e.g. "the setting for select initial entries has been updated to 4 (from 5)",
+     *                '' if a number is missing or unchanged, because then nothing has been updated
+     */
+    function setting_saved_text(array $url_array): string
+    {
+        global $mtr;
+        $lib = new library();
+        $new_val = (string)($url_array[url_var::NUMERIC_VALUE] ?? '');
+        $old_val = (string)($url_array[url_var::PRE . url_var::NUMERIC_VALUE] ?? '');
+        $is_default = (($url_array[url_var::SET_DEFAULT] ?? '') == url_var::TRUE);
+        $msg_id = $is_default ? msg_id::CONFIG_TREE_DEFAULT_SAVED : msg_id::CONFIG_TREE_VALUE_SAVED;
+        // the name is the only free text and therefore filled in last, so it never fills a placeholder itself
+        $vars = [
+            msg_id::VAR_VALUE => $new_val,
+            msg_id::VAR_VALUE_CHK => $old_val,
+            msg_id::VAR_NAME => (string)($url_array[url_var::CONFIG_KEY] ?? ''),
+        ];
+        $result = '';
+        // a text is not saved as a number (see sandbox_value::url_mapper), so it is not confirmed either
+        $is_number = (is_numeric($new_val) and is_numeric($old_val));
+        // the shown number of an admin can be the own overwrite, so the same number can still be a new default
+        if ($is_number and ($new_val != $old_val or $is_default)) {
+            $result = $lib->msg_var_text([[$msg_id, $vars]], $mtr);
         }
         return $result;
     }
@@ -1588,29 +1621,34 @@ class frontend
      * remove the cached html pages that a write has just made outdated, so that the next request
      * shows the change instead of the page as it has been rendered before (see db_cache_page)
      *
-     * a user that sees the user sandbox changes only the own data, so only the own pages are
-     * outdated; a user that sees the standard data (an ip user or a system user, see
-     * user::uses_standard_data) changes the data that every page of every user can show, so then
-     * the complete cache is dropped. this is on purpose not selected by the changed object: a
-     * change can be shown by any page, e.g. a renamed word in a value list of another page
+     * a user that sees the user sandbox changes only the own data, so only the own pages and the own
+     * cached config values are outdated; a user that sees the standard data (an ip user or a system user, see
+     * user::uses_standard_data) or an admin that sets a default changes the data that every page of
+     * every user can show, so then the complete cache is dropped. this is on purpose not selected by
+     * the changed object: a change can be shown by any page, e.g. a renamed word in a value list of another page
      *
      * like filling the cache this is a system action, so it is done as the system user and a
      * failure is only logged: the user has the change in the database, and a page that is cleared
      * too late is a stale page, not a lost change
      *
      * @param user_message_ui $msg_ui with the user that has done the change
+     * @param bool $is_default true if an admin has changed the default of all users e.g. of a setting
      * @return void
      */
-    private function drop_cached_pages(user_message_ui $msg_ui): void
+    private function drop_cached_pages(user_message_ui $msg_ui, bool $is_default): void
     {
         $cac_page = new db_cache_page();
+        // the cached config values include the overwrites of the user e.g. of the settings page
+        $cac_cfg = new db_cache(user_backend::system());
         $del_msg = new backend_user_message(user_backend::system()); // not reported, see above
         $usr = $msg_ui->usr;
         $usr_id = self::session_user_id();
-        if ($usr_id > 0 and $usr != null and !$usr->uses_standard_data()) {
+        if ($usr_id > 0 and $usr != null and !$usr->uses_standard_data() and !$is_default) {
             $cac_page->del_by_user($usr_id, $del_msg);
+            $cac_cfg->del_by_user($usr_id, $del_msg);
         } else {
             $cac_page->del_all($del_msg);
+            $cac_cfg->del_by_types(config_numbers::CACHE_TYPES, $del_msg);
         }
         if (!$del_msg->is_ok()) {
             log_warning('removing the cached pages after a change of user ' . $usr_id
@@ -2371,6 +2409,10 @@ class frontend
             };
             if (!$result_msg->is_ok()) {
                 $msg_ui->merge($result_msg);
+                // the settings page changes a value in place, so it is the current view with the error
+                if ($this->is_setting_save($url_array, $crud)) {
+                    return $this->url_to_back_url($url_array);
+                }
                 // stay on the current view so the user can fix errors
                 return $url_array;
             }
@@ -2380,7 +2422,12 @@ class frontend
             }
             // every page that shows the written data is now outdated, so the cached pages are
             // removed and rendered again on the next request
-            $this->drop_cached_pages($msg_ui);
+            $is_default = ($dbo instanceof value_ui and $dbo->set_default);
+            $this->drop_cached_pages($msg_ui, $is_default);
+            // the settings page shows many numbers, so it confirms which one has changed and how
+            if ($this->is_setting_save($url_array, $crud)) {
+                $msg_ui->add_info($this->setting_saved_text($url_array));
+            }
         }
 
         // on success go back to the calling page: the confirm view set the object's own default view +
@@ -2413,6 +2460,17 @@ class frontend
             $back_url = array_merge($this->url_object_values($url_array), $back_url);
         }
         return $back_url;
+    }
+
+    /**
+     * @param array $url_array the url of the write
+     * @param string $crud the write e.g. url_var::CRUD_UPDATE
+     * @return bool true if a number of the settings page is saved, which is changed in place on that page
+     */
+    private function is_setting_save(array $url_array, string $crud): bool
+    {
+        $back_mask = (int)($url_array[url_var::BACK . url_var::MASK] ?? 0);
+        return ($crud == url_var::CRUD_UPDATE and $back_mask == views::SYSTEM_CONFIG_ID);
     }
 
     /**

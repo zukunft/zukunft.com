@@ -2110,6 +2110,16 @@ enum messages: string
     case SYSTEM_TITLE_LIST_VIEWS = 'system_title_list_views';
     case SYSTEM_TITLE_LIST_COMPONENTS = 'system_title_list_components';
     case INFO_VIEW_NOT_YET_AVAILABLE = 'info_view_not_yet_available';
+    // the read only tree of the system configuration (see web/helper/config_tree)
+    case CONFIG_TREE_ALL = 'config_tree_all';
+    case CONFIG_TREE_MATCHES = 'config_tree_matches';
+    case CONFIG_TREE_NO_MATCH = 'config_tree_no_match';
+    case CONFIG_TREE_SCOPE_UNKNOWN = 'config_tree_scope_unknown';
+    case CONFIG_TREE_FILE_VALUE = 'config_tree_file_value';
+    case CONFIG_TREE_VALUE_SAVED = 'config_tree_value_saved';
+    case CONFIG_TREE_DEFAULT_SAVED = 'config_tree_default_saved';
+    case VALUE_SET_DEFAULT_DENIED = 'value_set_default_denied';
+    case CONFIG_SYSTEM_ADMIN_ONLY = 'config_system_admin_only';
     case SYSTEM_TITLE_USER = 'system_title_user';
     case SYSTEM_TITLE_VERB = 'system_title_verb';
     // the class word in front of the object name of a page title e.g. view "Word"

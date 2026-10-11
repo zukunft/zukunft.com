@@ -372,14 +372,23 @@ class test_values extends test_objects
      */
     function config_cache_switch(array $names, bool $allowed): config_numbers
     {
-        $t_phr = new test_phrases($this->env);
-        $grp = $t_phr->list_cache_switch($names)->get_grp_id(false);
-        $val = new value($this->env->usr1, (float)$allowed, $grp);
         $cfg = new config_numbers($this->env->usr1);
         // the config phrases have no database id, so the group id of the value is empty
         // and add() would skip the value, because it adds only objects with an id
-        $cfg->set_lst([$val]);
+        $cfg->set_lst([$this->config_switch_value($names, $allowed)]);
         return $cfg;
+    }
+
+    /**
+     * @param array $names the complete phrase set of the config switch e.g. a config_numbers::CACHE_ALLOWED_NAMES row
+     * @param bool $allowed true if the switch is on
+     * @return value the config value of the switch with its phrases e.g. to check who can change it
+     */
+    function config_switch_value(array $names, bool $allowed): value
+    {
+        $t_phr = new test_phrases($this->env);
+        $grp = $t_phr->list_cache_switch($names)->get_grp_id(false);
+        return new value($this->env->usr1, (float)$allowed, $grp);
     }
 
     /**
@@ -970,6 +979,45 @@ class test_values extends test_objects
     {
         $tl = new test_lib();
         return $tl->list_to_ui($this->value_list_solution_prio_reason_solution(), [api_types::INCL_PHRASES]);
+    }
+
+    /**
+     * the ranking values with two reasons of global warming plus the gain of a solution of each
+     * reason, so that the reduction of the emissions has a gain for the whole problem and a
+     * smaller one for the climate gas emissions, which the solutions page must not show side by side
+     *
+     * @return value_list the ranking values plus the losses of two reasons and the gain of the solution of each
+     */
+    function value_list_global_warming_solutions(): value_list
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $lst = $this->value_list_solution_prio_reasons();
+        $reason_solutions = [
+            [$t_trp->climate_gas_emissions(), $t_trp->reduce_emissions(), 30],
+            [$t_trp->heat_mortality(), $t_trp->climate_adaptation(), 13.31]
+        ];
+        foreach ($reason_solutions as [$reason, $solution, $gain]) {
+            $lst->add($this->value_for_phrases([
+                $t_trp->global_warming()->phrase(),
+                $t_wrd->word_reason()->phrase(),
+                $reason->phrase(),
+                $solution->phrase(),
+                $t_trp->potential_gain()->phrase(),
+                $t_wrd->word_billion()->phrase(),
+                $t_wrd->word_htp()->phrase()
+            ], $gain));
+        }
+        return $lst;
+    }
+
+    /**
+     * @return value_list_ui the frontend values of the solutions of global warming for unit testing
+     */
+    function value_list_global_warming_solutions_ui(): value_list_ui
+    {
+        $tl = new test_lib();
+        return $tl->list_to_ui($this->value_list_global_warming_solutions(), [api_types::INCL_PHRASES]);
     }
 
     /**

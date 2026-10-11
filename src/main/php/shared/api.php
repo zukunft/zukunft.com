@@ -47,6 +47,9 @@ class api
     const string CONFIG_ALL = 'all';
     const string CONFIG_FRONTEND = 'frontend';
     const string CONFIG_USER = 'user';
+    // the read only tree of config.yaml with its key order and tooltips (see cfg/helper/config_tree),
+    // because the value list of all has neither the yaml order nor the nesting
+    const string CONFIG_TREE = 'tree';
 
     // the url name of the main script that is used in combination with the host url
     const string SCRIPT_PATH_NAME = 'http' . DIRECTORY_SEPARATOR;
@@ -73,6 +76,17 @@ class api
     const string LOGIN_ACTIVATE_FORWARD = DIRECTORY_SEPARATOR . 'login_activate';
     const string RESET_FORWARD = DIRECTORY_SEPARATOR . 'reset';
     const string LOGOUT_FORWARD = DIRECTORY_SEPARATOR . 'logout';
+    const string FIND_FORWARD = DIRECTORY_SEPARATOR . 'find';
+    // the view that each static forward page in the docroot opens; the test run rewrites a page
+    // if its view id has changed (see html_base::forward_page and base_ui_tests)
+    const array FORWARD_VIEWS = [
+        self::LOGIN_FORWARD => views::LOGIN_ID,
+        self::SIGNUP_FORWARD => views::SIGNUP_ID,
+        self::LOGIN_ACTIVATE_FORWARD => views::LOGIN_ACTIVATE_ID,
+        self::LOGOUT_FORWARD => views::LOGOUT_ID,
+        self::FIND_FORWARD => views::WORD_FIND_ID,
+        self::SETTINGS_REL => views::SYSTEM_CONFIG_ID,
+    ];
     const string URL_DEV = THIS_URL . api::MAIN_SCRIPT_EXT . url_var::PAR . url_var::MASK . url_var::EQ;
 
     // flag added at the end of a cached html page to tell the frontend

@@ -4,9 +4,10 @@
   "time": "2026-10-09 18:00:00",
   "user": "timon",
   "selection": [
-    "the main reason of each global problem"
+    "the main reason of each global problem",
+    "the reasons and the solutions of each global problem"
   ],
-  "description": "The most relevant reason of each global problem of the start page ranking with the potential loss that it causes, shown in the reason column of the ranking beside the climate gas emissions of global warming (solution_prio.json). The most relevant reason is the reason whose mechanism the annual potential loss of the problem measures, as the description of the annual GDP share in the problem file states, so this reason causes the whole loss of the row: its loss is the annual GDP share of the problem times the world GDP of 110.047 trillion EUR, the same calculation as the potential loss of the row. Each reason is the phrase of the reasons file of the problem, repeated here with the same definition. A value names the problem itself, because the start page takes it into the reason column of the problem row; it carries 'assumed', because the annual GDP share it is calculated from is assumed. This file is imported last, so that the database ids of every other phrase stay unchanged.",
+  "description": "The most relevant reason of each global problem of the start page ranking with the potential loss that it causes, shown in the reason column of the ranking beside the climate gas emissions of global warming (solution_prio.json). The most relevant reason is the reason whose mechanism the annual potential loss of the problem measures, as the description of the annual GDP share in the problem file states, so this reason causes the whole loss of the row: its loss is the annual GDP share of the problem times the world GDP of 110.047 trillion EUR, the same calculation as the potential loss of the row. Each reason is the phrase of the reasons file of the problem, repeated here with the same definition. A value names the problem itself, because the start page takes it into the reason column of the problem row; it carries 'assumed', because the annual GDP share it is calculated from is assumed. The reasons of each problem except proprietary software are linked to '<problem> reason' (reason of the problem) like the reasons of global warming to 'global warming reason': the main reason and every '<problem> can cause <reason>' target of the reasons file of the problem, so that the reason cell of the start page row shows ', ...' with a link to the table of the reasons; only the main reason has a potential loss here, so the table lists the other reasons once they get a loss. The start page solution of each problem is linked to '<problem> solution' (solution of the problem) like the solutions of global warming, which is re-declared verbatim where the problem file has the list already; citizen participation also links the solidarity compass, the second solution of its problem file, while the other problems without a list have only the start page solution, so their solution cell shows no ', ...'. Proprietary software is left out on purpose as the sample row with only one reason and one solution and without any ', ...'. Each '<problem> reason' is a 'global problem reason' and each '<problem> solution' is a 'global problem solution', which assigns the reasons and the solutions to the global problems. This file is imported last, so that the database ids of every other phrase stay unchanged.",
   "words": [
     {
       "name": "reason"
@@ -134,6 +135,330 @@
     },
     {
       "name": "interference"
+    },
+    {
+      "name": "problem"
+    },
+    {
+      "name": "global"
+    },
+    {
+      "name": "solution"
+    },
+    {
+      "name": "climate"
+    },
+    {
+      "name": "warmer"
+    },
+    {
+      "name": "consumption"
+    },
+    {
+      "name": "debt"
+    },
+    {
+      "name": "globalization"
+    },
+    {
+      "name": "financial"
+    },
+    {
+      "name": "nationalism"
+    },
+    {
+      "name": "economic"
+    },
+    {
+      "name": "erosion"
+    },
+    {
+      "name": "institutional"
+    },
+    {
+      "name": "mortality"
+    },
+    {
+      "name": "excess"
+    },
+    {
+      "name": "avoidance"
+    },
+    {
+      "name": "decisions"
+    },
+    {
+      "name": "wrong"
+    },
+    {
+      "name": "social"
+    },
+    {
+      "name": "crime"
+    },
+    {
+      "name": "gap"
+    },
+    {
+      "name": "expectancy"
+    },
+    {
+      "name": "life"
+    },
+    {
+      "name": "stunting"
+    },
+    {
+      "name": "pollution"
+    },
+    {
+      "name": "air"
+    },
+    {
+      "name": "household"
+    },
+    {
+      "name": "WASH"
+    },
+    {
+      "name": "unsafe"
+    },
+    {
+      "name": "research"
+    },
+    {
+      "name": "spending"
+    },
+    {
+      "name": "absence"
+    },
+    {
+      "name": "sickness"
+    },
+    {
+      "name": "productivity"
+    },
+    {
+      "name": "labour"
+    },
+    {
+      "name": "hardship"
+    },
+    {
+      "name": "DALY"
+    },
+    {
+      "name": "taxes"
+    },
+    {
+      "name": "child"
+    },
+    {
+      "name": "unemployment"
+    },
+    {
+      "name": "evasion"
+    },
+    {
+      "name": "tax"
+    },
+    {
+      "name": "capture"
+    },
+    {
+      "name": "political"
+    },
+    {
+      "name": "mobility"
+    },
+    {
+      "name": "low"
+    },
+    {
+      "name": "basic"
+    },
+    {
+      "name": "hesitancy"
+    },
+    {
+      "name": "vaccination"
+    },
+    {
+      "name": "deaths"
+    },
+    {
+      "name": "COVID-19"
+    },
+    {
+      "name": "stock"
+    },
+    {
+      "name": "virality"
+    },
+    {
+      "name": "regulation"
+    },
+    {
+      "name": "platform"
+    },
+    {
+      "name": "markup"
+    },
+    {
+      "name": "share"
+    },
+    {
+      "name": "profit"
+    },
+    {
+      "name": "markdown"
+    },
+    {
+      "name": "wage"
+    },
+    {
+      "name": "overcharge"
+    },
+    {
+      "name": "cartel"
+    },
+    {
+      "name": "investment"
+    },
+    {
+      "name": "efficacy"
+    },
+    {
+      "name": "overstated"
+    },
+    {
+      "name": "waste"
+    },
+    {
+      "name": "vote"
+    },
+    {
+      "name": "intent"
+    },
+    {
+      "name": "risk"
+    },
+    {
+      "name": "misjudged"
+    },
+    {
+      "name": "advice"
+    },
+    {
+      "name": "conflicted"
+    },
+    {
+      "name": "method"
+    },
+    {
+      "name": "Delphi"
+    },
+    {
+      "name": "discrimination"
+    },
+    {
+      "name": "algorithmic"
+    },
+    {
+      "name": "hallucination"
+    },
+    {
+      "name": "diagnosis"
+    },
+    {
+      "name": "missed"
+    },
+    {
+      "name": "fatigue"
+    },
+    {
+      "name": "alert"
+    },
+    {
+      "name": "incident"
+    },
+    {
+      "name": "AI"
+    },
+    {
+      "name": "compliance"
+    },
+    {
+      "name": "public"
+    },
+    {
+      "name": "trust"
+    },
+    {
+      "name": "government"
+    },
+    {
+      "name": "overspending"
+    },
+    {
+      "name": "infant"
+    },
+    {
+      "name": "satisfaction"
+    },
+    {
+      "name": "democracy"
+    },
+    {
+      "name": "fluid"
+    },
+    {
+      "name": "compass"
+    },
+    {
+      "name": "solidarity"
+    },
+    {
+      "name": "work"
+    },
+    {
+      "name": "unpaid"
+    },
+    {
+      "name": "economy"
+    },
+    {
+      "name": "informal"
+    },
+    {
+      "name": "depletion"
+    },
+    {
+      "name": "capital"
+    },
+    {
+      "name": "natural"
+    },
+    {
+      "name": "damage"
+    },
+    {
+      "name": "surplus"
+    },
+    {
+      "name": "consumer"
+    },
+    {
+      "name": "welfare"
+    },
+    {
+      "name": "usage"
+    },
+    {
+      "name": "domestic"
+    },
+    {
+      "name": "gross"
     }
   ],
   "triples": [
@@ -321,6 +646,1314 @@
       "from": "licence cost",
       "verb": "is a",
       "to": "reason"
+    },
+    {
+      "name": "global problem",
+      "from": "problem",
+      "verb": "can be",
+      "to": "global"
+    },
+    {
+      "name": "global problem reason",
+      "description": "a reason of the potential loss of a global problem; each list of the reasons of one problem, e.g. populism reason, is a global problem reason",
+      "from": "reason",
+      "verb": "of",
+      "to": "global problem"
+    },
+    {
+      "name": "global problem solution",
+      "description": "a solution of a global problem; each list of the solutions of one problem, e.g. populism solution, is a global problem solution",
+      "from": "solution",
+      "verb": "of",
+      "to": "global problem"
+    },
+    {
+      "name": "global warming",
+      "from": "climate",
+      "verb": "can get",
+      "to": "warmer"
+    },
+    {
+      "name": "global warming reason",
+      "from": "reason",
+      "verb": "of",
+      "to": "global warming"
+    },
+    {
+      "name": "global warming reason (global problem reason)",
+      "from": "global warming reason",
+      "verb": "is a",
+      "to": "global problem reason"
+    },
+    {
+      "name": "global warming solution",
+      "from": "solution",
+      "verb": "of",
+      "to": "global warming"
+    },
+    {
+      "name": "global warming solution (global problem solution)",
+      "from": "global warming solution",
+      "verb": "is a",
+      "to": "global problem solution"
+    },
+    {
+      "name": "populism reason",
+      "description": "a reason of the potential loss of populism; the page of this phrase shows the table of the reasons with the loss that each causes",
+      "from": "reason",
+      "verb": "of",
+      "to": "populism"
+    },
+    {
+      "name": "GDP per capita change (populism reason)",
+      "from": "GDP per capita change",
+      "verb": "is a",
+      "to": "populism reason"
+    },
+    {
+      "name": "consumption change",
+      "from": "change",
+      "verb": "of",
+      "to": "consumption"
+    },
+    {
+      "name": "consumption change (populism reason)",
+      "from": "consumption change",
+      "verb": "is a",
+      "to": "populism reason"
+    },
+    {
+      "name": "debt to GDP ratio",
+      "from": "debt",
+      "verb": "per",
+      "to": "GDP"
+    },
+    {
+      "name": "debt to GDP ratio change",
+      "from": "change",
+      "verb": "of",
+      "to": "debt to GDP ratio"
+    },
+    {
+      "name": "debt to GDP ratio change (populism reason)",
+      "from": "debt to GDP ratio change",
+      "verb": "is a",
+      "to": "populism reason"
+    },
+    {
+      "name": "financial globalization",
+      "from": "globalization",
+      "verb": "kind of",
+      "to": "financial"
+    },
+    {
+      "name": "financial globalization change",
+      "from": "change",
+      "verb": "of",
+      "to": "financial globalization"
+    },
+    {
+      "name": "financial globalization change (populism reason)",
+      "from": "financial globalization change",
+      "verb": "is a",
+      "to": "populism reason"
+    },
+    {
+      "name": "economic nationalism",
+      "from": "nationalism",
+      "verb": "kind of",
+      "to": "economic"
+    },
+    {
+      "name": "economic nationalism (populism reason)",
+      "from": "economic nationalism",
+      "verb": "is a",
+      "to": "populism reason"
+    },
+    {
+      "name": "institutional erosion",
+      "from": "erosion",
+      "verb": "kind of",
+      "to": "institutional"
+    },
+    {
+      "name": "institutional erosion (populism reason)",
+      "from": "institutional erosion",
+      "verb": "is a",
+      "to": "populism reason"
+    },
+    {
+      "name": "excess mortality",
+      "from": "mortality",
+      "verb": "kind of",
+      "to": "excess"
+    },
+    {
+      "name": "excess mortality (populism reason)",
+      "from": "excess mortality",
+      "verb": "is a",
+      "to": "populism reason"
+    },
+    {
+      "name": "populism solution",
+      "from": "solution",
+      "verb": "of",
+      "to": "populism"
+    },
+    {
+      "name": "wrong decisions",
+      "from": "decisions",
+      "verb": "can be",
+      "to": "wrong"
+    },
+    {
+      "name": "avoid wrong decisions",
+      "from": "avoidance",
+      "verb": "of",
+      "to": "wrong decisions"
+    },
+    {
+      "name": "avoid wrong decisions (populism solution)",
+      "from": "avoid wrong decisions",
+      "verb": "is a",
+      "to": "populism solution"
+    },
+    {
+      "name": "populism reason (global problem reason)",
+      "from": "populism reason",
+      "verb": "is a",
+      "to": "global problem reason"
+    },
+    {
+      "name": "populism solution (global problem solution)",
+      "from": "populism solution",
+      "verb": "is a",
+      "to": "global problem solution"
+    },
+    {
+      "name": "poverty reason",
+      "description": "a reason of the potential loss of poverty; the page of this phrase shows the table of the reasons with the loss that each causes",
+      "from": "reason",
+      "verb": "of",
+      "to": "poverty"
+    },
+    {
+      "name": "hunger (poverty reason)",
+      "from": "hunger",
+      "verb": "is a",
+      "to": "poverty reason"
+    },
+    {
+      "name": "social cost",
+      "from": "cost",
+      "verb": "kind of",
+      "to": "social"
+    },
+    {
+      "name": "social cost (poverty reason)",
+      "from": "social cost",
+      "verb": "is a",
+      "to": "poverty reason"
+    },
+    {
+      "name": "crime (poverty reason)",
+      "from": "crime",
+      "verb": "is a",
+      "to": "poverty reason"
+    },
+    {
+      "name": "health cost",
+      "from": "cost",
+      "verb": "of",
+      "to": "health"
+    },
+    {
+      "name": "health cost (poverty reason)",
+      "from": "health cost",
+      "verb": "is a",
+      "to": "poverty reason"
+    },
+    {
+      "name": "income loss (poverty reason)",
+      "from": "income loss",
+      "verb": "is a",
+      "to": "poverty reason"
+    },
+    {
+      "name": "life expectancy",
+      "from": "expectancy",
+      "verb": "of",
+      "to": "life"
+    },
+    {
+      "name": "life expectancy gap",
+      "from": "gap",
+      "verb": "of",
+      "to": "life expectancy"
+    },
+    {
+      "name": "life expectancy gap (poverty reason)",
+      "from": "life expectancy gap",
+      "verb": "is a",
+      "to": "poverty reason"
+    },
+    {
+      "name": "stunting (poverty reason)",
+      "from": "stunting",
+      "verb": "is a",
+      "to": "poverty reason"
+    },
+    {
+      "name": "air pollution",
+      "from": "pollution",
+      "verb": "of",
+      "to": "air"
+    },
+    {
+      "name": "household air pollution",
+      "from": "air pollution",
+      "verb": "kind of",
+      "to": "household"
+    },
+    {
+      "name": "household air pollution (poverty reason)",
+      "from": "household air pollution",
+      "verb": "is a",
+      "to": "poverty reason"
+    },
+    {
+      "name": "unsafe WASH",
+      "from": "WASH",
+      "verb": "kind of",
+      "to": "unsafe"
+    },
+    {
+      "name": "unsafe WASH (poverty reason)",
+      "from": "unsafe WASH",
+      "verb": "is a",
+      "to": "poverty reason"
+    },
+    {
+      "name": "poverty solution",
+      "from": "solution",
+      "verb": "of",
+      "to": "poverty"
+    },
+    {
+      "name": "research (poverty solution)",
+      "from": "research",
+      "verb": "is a",
+      "to": "poverty solution"
+    },
+    {
+      "name": "poverty reason (global problem reason)",
+      "from": "poverty reason",
+      "verb": "is a",
+      "to": "global problem reason"
+    },
+    {
+      "name": "poverty solution (global problem solution)",
+      "from": "poverty solution",
+      "verb": "is a",
+      "to": "global problem solution"
+    },
+    {
+      "name": "health reason",
+      "description": "a reason of the potential loss of health; the page of this phrase shows the table of the reasons with the loss that each causes",
+      "from": "reason",
+      "verb": "of",
+      "to": "health"
+    },
+    {
+      "name": "GDP loss (health reason)",
+      "from": "GDP loss",
+      "verb": "is a",
+      "to": "health reason"
+    },
+    {
+      "name": "health spending",
+      "from": "spending",
+      "verb": "of",
+      "to": "health"
+    },
+    {
+      "name": "health spending (health reason)",
+      "from": "health spending",
+      "verb": "is a",
+      "to": "health reason"
+    },
+    {
+      "name": "social cost (health reason)",
+      "from": "social cost",
+      "verb": "is a",
+      "to": "health reason"
+    },
+    {
+      "name": "sickness absence",
+      "from": "absence",
+      "verb": "kind of",
+      "to": "sickness"
+    },
+    {
+      "name": "sickness absence (health reason)",
+      "from": "sickness absence",
+      "verb": "is a",
+      "to": "health reason"
+    },
+    {
+      "name": "labour productivity",
+      "from": "productivity",
+      "verb": "of",
+      "to": "labour"
+    },
+    {
+      "name": "labour productivity loss",
+      "from": "loss",
+      "verb": "of",
+      "to": "labour productivity"
+    },
+    {
+      "name": "labour productivity loss (health reason)",
+      "from": "labour productivity loss",
+      "verb": "is a",
+      "to": "health reason"
+    },
+    {
+      "name": "financial hardship",
+      "from": "hardship",
+      "verb": "kind of",
+      "to": "financial"
+    },
+    {
+      "name": "financial hardship (health reason)",
+      "from": "financial hardship",
+      "verb": "is a",
+      "to": "health reason"
+    },
+    {
+      "name": "DALY (health reason)",
+      "from": "DALY",
+      "verb": "is a",
+      "to": "health reason"
+    },
+    {
+      "name": "health solution",
+      "description": "a solution of health; the page of this phrase shows the table of the solutions with the gain that each reaches",
+      "from": "solution",
+      "verb": "of",
+      "to": "health"
+    },
+    {
+      "name": "taxes (health solution)",
+      "from": "taxes",
+      "verb": "is a",
+      "to": "health solution"
+    },
+    {
+      "name": "health reason (global problem reason)",
+      "from": "health reason",
+      "verb": "is a",
+      "to": "global problem reason"
+    },
+    {
+      "name": "health solution (global problem solution)",
+      "from": "health solution",
+      "verb": "is a",
+      "to": "global problem solution"
+    },
+    {
+      "name": "education reason",
+      "description": "a reason of the potential loss of education; the page of this phrase shows the table of the reasons with the loss that each causes",
+      "from": "reason",
+      "verb": "of",
+      "to": "education"
+    },
+    {
+      "name": "income loss (education reason)",
+      "from": "income loss",
+      "verb": "is a",
+      "to": "education reason"
+    },
+    {
+      "name": "GDP loss (education reason)",
+      "from": "GDP loss",
+      "verb": "is a",
+      "to": "education reason"
+    },
+    {
+      "name": "crime (education reason)",
+      "from": "crime",
+      "verb": "is a",
+      "to": "education reason"
+    },
+    {
+      "name": "mortality (education reason)",
+      "from": "mortality",
+      "verb": "is a",
+      "to": "education reason"
+    },
+    {
+      "name": "child mortality",
+      "from": "mortality",
+      "verb": "of",
+      "to": "child"
+    },
+    {
+      "name": "child mortality (education reason)",
+      "from": "child mortality",
+      "verb": "is a",
+      "to": "education reason"
+    },
+    {
+      "name": "unemployment (education reason)",
+      "from": "unemployment",
+      "verb": "is a",
+      "to": "education reason"
+    },
+    {
+      "name": "education solution",
+      "description": "a solution of education; the page of this phrase shows the table of the solutions with the gain that each reaches",
+      "from": "solution",
+      "verb": "of",
+      "to": "education"
+    },
+    {
+      "name": "spending (education solution)",
+      "from": "spending",
+      "verb": "is a",
+      "to": "education solution"
+    },
+    {
+      "name": "education reason (global problem reason)",
+      "from": "education reason",
+      "verb": "is a",
+      "to": "global problem reason"
+    },
+    {
+      "name": "education solution (global problem solution)",
+      "from": "education solution",
+      "verb": "is a",
+      "to": "global problem solution"
+    },
+    {
+      "name": "wealth concentration reason",
+      "description": "a reason of the potential loss of wealth concentration; the page of this phrase shows the table of the reasons with the loss that each causes",
+      "from": "reason",
+      "verb": "of",
+      "to": "wealth concentration"
+    },
+    {
+      "name": "growth loss (wealth concentration reason)",
+      "from": "growth loss",
+      "verb": "is a",
+      "to": "wealth concentration reason"
+    },
+    {
+      "name": "tax evasion",
+      "from": "evasion",
+      "verb": "of",
+      "to": "tax"
+    },
+    {
+      "name": "tax evasion (wealth concentration reason)",
+      "from": "tax evasion",
+      "verb": "is a",
+      "to": "wealth concentration reason"
+    },
+    {
+      "name": "tax avoidance",
+      "from": "avoidance",
+      "verb": "of",
+      "to": "tax"
+    },
+    {
+      "name": "tax avoidance (wealth concentration reason)",
+      "from": "tax avoidance",
+      "verb": "is a",
+      "to": "wealth concentration reason"
+    },
+    {
+      "name": "political capture",
+      "from": "capture",
+      "verb": "kind of",
+      "to": "political"
+    },
+    {
+      "name": "political capture (wealth concentration reason)",
+      "from": "political capture",
+      "verb": "is a",
+      "to": "wealth concentration reason"
+    },
+    {
+      "name": "economic mobility",
+      "from": "mobility",
+      "verb": "kind of",
+      "to": "economic"
+    },
+    {
+      "name": "low economic mobility",
+      "from": "economic mobility",
+      "verb": "kind of",
+      "to": "low"
+    },
+    {
+      "name": "low economic mobility (wealth concentration reason)",
+      "from": "low economic mobility",
+      "verb": "is a",
+      "to": "wealth concentration reason"
+    },
+    {
+      "name": "excess mortality (wealth concentration reason)",
+      "from": "excess mortality",
+      "verb": "is a",
+      "to": "wealth concentration reason"
+    },
+    {
+      "name": "wealth concentration solution",
+      "from": "solution",
+      "verb": "of",
+      "to": "wealth concentration"
+    },
+    {
+      "name": "basic income",
+      "from": "income",
+      "verb": "can be",
+      "to": "basic"
+    },
+    {
+      "name": "basic income (wealth concentration solution)",
+      "from": "basic income",
+      "verb": "is a",
+      "to": "wealth concentration solution"
+    },
+    {
+      "name": "wealth concentration reason (global problem reason)",
+      "from": "wealth concentration reason",
+      "verb": "is a",
+      "to": "global problem reason"
+    },
+    {
+      "name": "wealth concentration solution (global problem solution)",
+      "from": "wealth concentration solution",
+      "verb": "is a",
+      "to": "global problem solution"
+    },
+    {
+      "name": "disinformation reason",
+      "description": "a reason of the potential loss of disinformation; the page of this phrase shows the table of the reasons with the loss that each causes",
+      "from": "reason",
+      "verb": "of",
+      "to": "disinformation"
+    },
+    {
+      "name": "election interference (disinformation reason)",
+      "from": "election interference",
+      "verb": "is a",
+      "to": "disinformation reason"
+    },
+    {
+      "name": "vaccine hesitancy",
+      "from": "hesitancy",
+      "verb": "of",
+      "to": "vaccination"
+    },
+    {
+      "name": "vaccine hesitancy (disinformation reason)",
+      "from": "vaccine hesitancy",
+      "verb": "is a",
+      "to": "disinformation reason"
+    },
+    {
+      "name": "COVID-19 deaths",
+      "from": "deaths",
+      "verb": "of",
+      "to": "COVID-19"
+    },
+    {
+      "name": "COVID-19 deaths (disinformation reason)",
+      "from": "COVID-19 deaths",
+      "verb": "is a",
+      "to": "disinformation reason"
+    },
+    {
+      "name": "health cost (disinformation reason)",
+      "from": "health cost",
+      "verb": "is a",
+      "to": "disinformation reason"
+    },
+    {
+      "name": "social cost (disinformation reason)",
+      "from": "social cost",
+      "verb": "is a",
+      "to": "disinformation reason"
+    },
+    {
+      "name": "stock market",
+      "from": "market",
+      "verb": "of",
+      "to": "stock"
+    },
+    {
+      "name": "stock market loss",
+      "from": "loss",
+      "verb": "of",
+      "to": "stock market"
+    },
+    {
+      "name": "stock market loss (disinformation reason)",
+      "from": "stock market loss",
+      "verb": "is a",
+      "to": "disinformation reason"
+    },
+    {
+      "name": "virality (disinformation reason)",
+      "from": "virality",
+      "verb": "is a",
+      "to": "disinformation reason"
+    },
+    {
+      "name": "disinformation solution",
+      "description": "a solution of disinformation; the page of this phrase shows the table of the solutions with the gain that each reaches",
+      "from": "solution",
+      "verb": "of",
+      "to": "disinformation"
+    },
+    {
+      "name": "platform regulation",
+      "from": "regulation",
+      "verb": "of",
+      "to": "platform"
+    },
+    {
+      "name": "platform regulation (disinformation solution)",
+      "from": "platform regulation",
+      "verb": "is a",
+      "to": "disinformation solution"
+    },
+    {
+      "name": "disinformation reason (global problem reason)",
+      "from": "disinformation reason",
+      "verb": "is a",
+      "to": "global problem reason"
+    },
+    {
+      "name": "disinformation solution (global problem solution)",
+      "from": "disinformation solution",
+      "verb": "is a",
+      "to": "global problem solution"
+    },
+    {
+      "name": "market power reason",
+      "description": "a reason of the potential loss of market power; the page of this phrase shows the table of the reasons with the loss that each causes",
+      "from": "reason",
+      "verb": "of",
+      "to": "market power"
+    },
+    {
+      "name": "deadweight loss (market power reason)",
+      "from": "deadweight loss",
+      "verb": "is a",
+      "to": "market power reason"
+    },
+    {
+      "name": "markup (market power reason)",
+      "from": "markup",
+      "verb": "is a",
+      "to": "market power reason"
+    },
+    {
+      "name": "labour share",
+      "from": "share",
+      "verb": "of",
+      "to": "labour"
+    },
+    {
+      "name": "labour share change",
+      "from": "change",
+      "verb": "of",
+      "to": "labour share"
+    },
+    {
+      "name": "labour share change (market power reason)",
+      "from": "labour share change",
+      "verb": "is a",
+      "to": "market power reason"
+    },
+    {
+      "name": "excess profit",
+      "from": "profit",
+      "verb": "kind of",
+      "to": "excess"
+    },
+    {
+      "name": "excess profit (market power reason)",
+      "from": "excess profit",
+      "verb": "is a",
+      "to": "market power reason"
+    },
+    {
+      "name": "wage markdown",
+      "from": "markdown",
+      "verb": "of",
+      "to": "wage"
+    },
+    {
+      "name": "wage markdown (market power reason)",
+      "from": "wage markdown",
+      "verb": "is a",
+      "to": "market power reason"
+    },
+    {
+      "name": "cartel overcharge",
+      "from": "overcharge",
+      "verb": "of",
+      "to": "cartel"
+    },
+    {
+      "name": "cartel overcharge (market power reason)",
+      "from": "cartel overcharge",
+      "verb": "is a",
+      "to": "market power reason"
+    },
+    {
+      "name": "investment loss",
+      "from": "loss",
+      "verb": "of",
+      "to": "investment"
+    },
+    {
+      "name": "investment loss (market power reason)",
+      "from": "investment loss",
+      "verb": "is a",
+      "to": "market power reason"
+    },
+    {
+      "name": "market power solution",
+      "description": "a solution of market power; the page of this phrase shows the table of the solutions with the gain that each reaches",
+      "from": "solution",
+      "verb": "of",
+      "to": "market power"
+    },
+    {
+      "name": "market share",
+      "from": "share",
+      "verb": "of",
+      "to": "market"
+    },
+    {
+      "name": "market share tax",
+      "from": "tax",
+      "verb": "of",
+      "to": "market share"
+    },
+    {
+      "name": "market share tax (market power solution)",
+      "from": "market share tax",
+      "verb": "is a",
+      "to": "market power solution"
+    },
+    {
+      "name": "market power reason (global problem reason)",
+      "from": "market power reason",
+      "verb": "is a",
+      "to": "global problem reason"
+    },
+    {
+      "name": "market power solution (global problem solution)",
+      "from": "market power solution",
+      "verb": "is a",
+      "to": "global problem solution"
+    },
+    {
+      "name": "biased information reason",
+      "description": "a reason of the potential loss of biased information; the page of this phrase shows the table of the reasons with the loss that each causes",
+      "from": "reason",
+      "verb": "of",
+      "to": "biased information"
+    },
+    {
+      "name": "cost overrun (biased information reason)",
+      "from": "cost overrun",
+      "verb": "is a",
+      "to": "biased information reason"
+    },
+    {
+      "name": "overstated efficacy",
+      "from": "efficacy",
+      "verb": "kind of",
+      "to": "overstated"
+    },
+    {
+      "name": "overstated efficacy (biased information reason)",
+      "from": "overstated efficacy",
+      "verb": "is a",
+      "to": "biased information reason"
+    },
+    {
+      "name": "research waste",
+      "from": "waste",
+      "verb": "of",
+      "to": "research"
+    },
+    {
+      "name": "research waste (biased information reason)",
+      "from": "research waste",
+      "verb": "is a",
+      "to": "biased information reason"
+    },
+    {
+      "name": "vote share",
+      "from": "share",
+      "verb": "of",
+      "to": "vote"
+    },
+    {
+      "name": "vote share change",
+      "from": "change",
+      "verb": "of",
+      "to": "vote share"
+    },
+    {
+      "name": "vote share change (biased information reason)",
+      "from": "vote share change",
+      "verb": "is a",
+      "to": "biased information reason"
+    },
+    {
+      "name": "vaccination intent",
+      "from": "intent",
+      "verb": "of",
+      "to": "vaccination"
+    },
+    {
+      "name": "vaccination intent change",
+      "from": "change",
+      "verb": "of",
+      "to": "vaccination intent"
+    },
+    {
+      "name": "vaccination intent change (biased information reason)",
+      "from": "vaccination intent change",
+      "verb": "is a",
+      "to": "biased information reason"
+    },
+    {
+      "name": "misjudged risk",
+      "from": "risk",
+      "verb": "kind of",
+      "to": "misjudged"
+    },
+    {
+      "name": "misjudged risk (biased information reason)",
+      "from": "misjudged risk",
+      "verb": "is a",
+      "to": "biased information reason"
+    },
+    {
+      "name": "conflicted advice",
+      "from": "advice",
+      "verb": "kind of",
+      "to": "conflicted"
+    },
+    {
+      "name": "conflicted advice (biased information reason)",
+      "from": "conflicted advice",
+      "verb": "is a",
+      "to": "biased information reason"
+    },
+    {
+      "name": "biased information solution",
+      "from": "solution",
+      "verb": "of",
+      "to": "biased information"
+    },
+    {
+      "name": "Delphi method",
+      "from": "method",
+      "verb": "of",
+      "to": "Delphi"
+    },
+    {
+      "name": "Delphi method (biased information solution)",
+      "from": "Delphi method",
+      "verb": "is a",
+      "to": "biased information solution"
+    },
+    {
+      "name": "biased information reason (global problem reason)",
+      "from": "biased information reason",
+      "verb": "is a",
+      "to": "global problem reason"
+    },
+    {
+      "name": "biased information solution (global problem solution)",
+      "from": "biased information solution",
+      "verb": "is a",
+      "to": "global problem solution"
+    },
+    {
+      "name": "black-box AI reason",
+      "description": "a reason of the potential loss of black-box AI; the page of this phrase shows the table of the reasons with the loss that each causes",
+      "from": "reason",
+      "verb": "of",
+      "to": "black-box AI"
+    },
+    {
+      "name": "mistake (black-box AI reason)",
+      "from": "mistake",
+      "verb": "is a",
+      "to": "black-box AI reason"
+    },
+    {
+      "name": "algorithmic discrimination",
+      "from": "discrimination",
+      "verb": "kind of",
+      "to": "algorithmic"
+    },
+    {
+      "name": "algorithmic discrimination (black-box AI reason)",
+      "from": "algorithmic discrimination",
+      "verb": "is a",
+      "to": "black-box AI reason"
+    },
+    {
+      "name": "hallucination (black-box AI reason)",
+      "from": "hallucination",
+      "verb": "is a",
+      "to": "black-box AI reason"
+    },
+    {
+      "name": "missed diagnosis",
+      "from": "diagnosis",
+      "verb": "kind of",
+      "to": "missed"
+    },
+    {
+      "name": "missed diagnosis (black-box AI reason)",
+      "from": "missed diagnosis",
+      "verb": "is a",
+      "to": "black-box AI reason"
+    },
+    {
+      "name": "alert fatigue",
+      "from": "fatigue",
+      "verb": "of",
+      "to": "alert"
+    },
+    {
+      "name": "alert fatigue (black-box AI reason)",
+      "from": "alert fatigue",
+      "verb": "is a",
+      "to": "black-box AI reason"
+    },
+    {
+      "name": "AI incident",
+      "from": "incident",
+      "verb": "of",
+      "to": "AI"
+    },
+    {
+      "name": "AI incident (black-box AI reason)",
+      "from": "AI incident",
+      "verb": "is a",
+      "to": "black-box AI reason"
+    },
+    {
+      "name": "compliance cost",
+      "from": "cost",
+      "verb": "of",
+      "to": "compliance"
+    },
+    {
+      "name": "compliance cost (black-box AI reason)",
+      "from": "compliance cost",
+      "verb": "is a",
+      "to": "black-box AI reason"
+    },
+    {
+      "name": "black-box AI solution",
+      "from": "solution",
+      "verb": "of",
+      "to": "black-box AI"
+    },
+    {
+      "name": "public AI",
+      "from": "artificial intelligence",
+      "verb": "can be",
+      "to": "public"
+    },
+    {
+      "name": "public AI (black-box AI solution)",
+      "from": "public AI",
+      "verb": "is a",
+      "to": "black-box AI solution"
+    },
+    {
+      "name": "black-box AI reason (global problem reason)",
+      "from": "black-box AI reason",
+      "verb": "is a",
+      "to": "global problem reason"
+    },
+    {
+      "name": "black-box AI solution (global problem solution)",
+      "from": "black-box AI solution",
+      "verb": "is a",
+      "to": "global problem solution"
+    },
+    {
+      "name": "citizen participation reason",
+      "description": "a reason of the potential loss of citizen participation; the page of this phrase shows the table of the reasons with the loss that each causes",
+      "from": "reason",
+      "verb": "of",
+      "to": "citizen participation"
+    },
+    {
+      "name": "budget misallocation (citizen participation reason)",
+      "from": "budget misallocation",
+      "verb": "is a",
+      "to": "citizen participation reason"
+    },
+    {
+      "name": "trust in government",
+      "from": "trust",
+      "verb": "in",
+      "to": "government"
+    },
+    {
+      "name": "trust gap",
+      "from": "gap",
+      "verb": "of",
+      "to": "trust in government"
+    },
+    {
+      "name": "trust gap (citizen participation reason)",
+      "from": "trust gap",
+      "verb": "is a",
+      "to": "citizen participation reason"
+    },
+    {
+      "name": "public overspending",
+      "from": "overspending",
+      "verb": "kind of",
+      "to": "public"
+    },
+    {
+      "name": "public overspending (citizen participation reason)",
+      "from": "public overspending",
+      "verb": "is a",
+      "to": "citizen participation reason"
+    },
+    {
+      "name": "infant mortality",
+      "from": "mortality",
+      "verb": "of",
+      "to": "infant"
+    },
+    {
+      "name": "infant mortality (citizen participation reason)",
+      "from": "infant mortality",
+      "verb": "is a",
+      "to": "citizen participation reason"
+    },
+    {
+      "name": "life satisfaction",
+      "from": "satisfaction",
+      "verb": "of",
+      "to": "life"
+    },
+    {
+      "name": "life satisfaction loss",
+      "from": "loss",
+      "verb": "of",
+      "to": "life satisfaction"
+    },
+    {
+      "name": "life satisfaction loss (citizen participation reason)",
+      "from": "life satisfaction loss",
+      "verb": "is a",
+      "to": "citizen participation reason"
+    },
+    {
+      "name": "tax evasion (citizen participation reason)",
+      "from": "tax evasion",
+      "verb": "is a",
+      "to": "citizen participation reason"
+    },
+    {
+      "name": "citizen participation solution",
+      "description": "a solution of citizen participation; the page of this phrase shows the table of the solutions with the gain that each reaches",
+      "from": "solution",
+      "verb": "of",
+      "to": "citizen participation"
+    },
+    {
+      "name": "fluid democracy",
+      "from": "democracy",
+      "verb": "can be",
+      "to": "fluid"
+    },
+    {
+      "name": "fluid democracy (citizen participation solution)",
+      "from": "fluid democracy",
+      "verb": "is a",
+      "to": "citizen participation solution"
+    },
+    {
+      "name": "solidarity compass",
+      "from": "compass",
+      "verb": "of",
+      "to": "solidarity"
+    },
+    {
+      "from": "solidarity compass",
+      "verb": "is a",
+      "to": "solution"
+    },
+    {
+      "name": "solidarity compass (citizen participation solution)",
+      "from": "solidarity compass",
+      "verb": "is a",
+      "to": "citizen participation solution"
+    },
+    {
+      "name": "citizen participation reason (global problem reason)",
+      "from": "citizen participation reason",
+      "verb": "is a",
+      "to": "global problem reason"
+    },
+    {
+      "name": "citizen participation solution (global problem solution)",
+      "from": "citizen participation solution",
+      "verb": "is a",
+      "to": "global problem solution"
+    },
+    {
+      "name": "GDP mismeasurement reason",
+      "description": "a reason of the potential loss of GDP mismeasurement; the page of this phrase shows the table of the reasons with the loss that each causes",
+      "from": "reason",
+      "verb": "of",
+      "to": "GDP mismeasurement"
+    },
+    {
+      "name": "GDP revision (GDP mismeasurement reason)",
+      "from": "GDP revision",
+      "verb": "is a",
+      "to": "GDP mismeasurement reason"
+    },
+    {
+      "name": "unpaid work",
+      "from": "work",
+      "verb": "kind of",
+      "to": "unpaid"
+    },
+    {
+      "name": "unpaid work (GDP mismeasurement reason)",
+      "from": "unpaid work",
+      "verb": "is a",
+      "to": "GDP mismeasurement reason"
+    },
+    {
+      "name": "informal economy",
+      "from": "economy",
+      "verb": "kind of",
+      "to": "informal"
+    },
+    {
+      "name": "informal economy (GDP mismeasurement reason)",
+      "from": "informal economy",
+      "verb": "is a",
+      "to": "GDP mismeasurement reason"
+    },
+    {
+      "name": "natural capital",
+      "from": "capital",
+      "verb": "kind of",
+      "to": "natural"
+    },
+    {
+      "name": "natural capital depletion",
+      "from": "depletion",
+      "verb": "of",
+      "to": "natural capital"
+    },
+    {
+      "name": "natural capital depletion (GDP mismeasurement reason)",
+      "from": "natural capital depletion",
+      "verb": "is a",
+      "to": "GDP mismeasurement reason"
+    },
+    {
+      "name": "air pollution damage",
+      "from": "damage",
+      "verb": "of",
+      "to": "air pollution"
+    },
+    {
+      "name": "air pollution damage (GDP mismeasurement reason)",
+      "from": "air pollution damage",
+      "verb": "is a",
+      "to": "GDP mismeasurement reason"
+    },
+    {
+      "name": "consumer surplus",
+      "from": "surplus",
+      "verb": "kind of",
+      "to": "consumer"
+    },
+    {
+      "name": "consumer surplus (GDP mismeasurement reason)",
+      "from": "consumer surplus",
+      "verb": "is a",
+      "to": "GDP mismeasurement reason"
+    },
+    {
+      "name": "welfare gap",
+      "from": "gap",
+      "verb": "of",
+      "to": "welfare"
+    },
+    {
+      "name": "welfare gap (GDP mismeasurement reason)",
+      "from": "welfare gap",
+      "verb": "is a",
+      "to": "GDP mismeasurement reason"
+    },
+    {
+      "name": "GDP mismeasurement solution",
+      "description": "a solution of GDP mismeasurement; the page of this phrase shows the table of the solutions with the gain that each reaches",
+      "from": "solution",
+      "verb": "of",
+      "to": "GDP mismeasurement"
+    },
+    {
+      "name": "domestic usage",
+      "from": "usage",
+      "verb": "can be",
+      "to": "domestic"
+    },
+    {
+      "name": "gross domestic usage",
+      "from": "domestic usage",
+      "verb": "can be",
+      "to": "gross"
+    },
+    {
+      "name": "gross domestic usage (GDP mismeasurement solution)",
+      "from": "gross domestic usage",
+      "verb": "is a",
+      "to": "GDP mismeasurement solution"
+    },
+    {
+      "name": "GDP mismeasurement reason (global problem reason)",
+      "from": "GDP mismeasurement reason",
+      "verb": "is a",
+      "to": "global problem reason"
+    },
+    {
+      "name": "GDP mismeasurement solution (global problem solution)",
+      "from": "GDP mismeasurement solution",
+      "verb": "is a",
+      "to": "global problem solution"
     }
   ],
   "values": [

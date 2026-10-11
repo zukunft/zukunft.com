@@ -980,6 +980,15 @@ class test_triples extends test_objects
     }
 
     /**
+     * @return triple_ui the "global warming solution" page phrase of the solutions table, whose
+     *         from side "solution" heads the row column of that table
+     */
+    function global_warming_solution_ui(): triple_ui
+    {
+        return $this->page_ui($this->global_warming_solution());
+    }
+
+    /**
      * @return triple_ui the "city of Zurich" page phrase of the related values table
      */
     function zh_city_ui(): triple_ui

@@ -59,6 +59,9 @@ class paths
     const string UNIT_INT = TEST_PHP_PATH . 'integration' . DIRECTORY_SEPARATOR;   // for integration tests
     const string DEV = TEST_PHP_PATH . 'dev' . DIRECTORY_SEPARATOR;                // for test still in development
     const string DOCS = ROOT_PATH . 'docs' . DIRECTORY_SEPARATOR;                  // to check the doc consistency
+    // the docroot as the current folder of the root path, so the url path of a forward page
+    // e.g. api::SETTINGS_REL, which starts with a separator, can be added to name its file
+    const string DOCROOT = ROOT_PATH . '.';
 
 
     // main path for the test resources
@@ -127,6 +130,9 @@ class paths
     const string VIEWS = 'views_by_object' . DIRECTORY_SEPARATOR;
     // to test every selection of the start page sub menus: the rows, the columns and the form of the ranking
     const string START_PAGE = 'start_page' . DIRECTORY_SEPARATOR;
+    // to test the read only settings page with the tree of the system configuration; not below
+    // views_by_id, because the system view test removes every snapshot there that it has not written
+    const string CONFIG_PAGE = 'config_page' . DIRECTORY_SEPARATOR;
     // to test if all system view based on the id are fine including more static views like the about page
     const string VIEWS_BY_ID = self::HTML . 'views_by_id' . DIRECTORY_SEPARATOR;
     const string WEB = 'web' . DIRECTORY_SEPARATOR;

@@ -137,9 +137,26 @@
                     System configuration
                 </h4>
             </div>
-            <h5>
-                this page is not yet available
-            </h5>
+            <div class="config-toolbar">
+                <form action="http://localhost/http/view.php" method="get">
+                    <input type="hidden" name="m" value="126">
+                    <div class="config-search">
+                        <input type="search" name="kp" list="config-keys" value="">
+                        <datalist id="config-keys">
+                        </datalist>
+                        <button type="submit" class="btn">
+                            Find
+                        </button>
+                    </div>
+                    <ul class="config-scope">
+                        <li class="config-scope-shown">
+                            all
+                        </li>
+                    </ul>
+                </form>
+            </div>
+            <div class="config-columns">
+            </div>
         </main>
         <!--usr_msg-->
         <footer class="site-footer">

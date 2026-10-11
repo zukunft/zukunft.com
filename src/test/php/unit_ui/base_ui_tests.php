@@ -97,6 +97,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\component_types as comp_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\formula_types;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
@@ -332,6 +333,10 @@ class base_ui_tests
         $test_name = '... and the three row orders, which the page links repeat as page vars';
         $t->assert($test_name, array_diff(table_orders::URL_VARS, url_var::CONTROL_VARS), []);
         $t->assert($test_name, array_diff(table_orders::URL_VARS, url_var::PAGE_VARS), []);
+        // e.g. view.php?m=126&1=calculation shows one top level key of the settings and no object
+        $test_name = 'the search and the scope of a page are control vars';
+        $t->assert_true($test_name, in_array(url_var::PATTERN, url_var::CONTROL_VARS)
+            and in_array(url_var::CONFIG_PART, url_var::CONTROL_VARS));
         $test_name = 'a field of the object is never a control var';
         $t->assert_false($test_name, in_array(url_var::NAME, url_var::CONTROL_VARS));
 
@@ -359,6 +364,25 @@ class base_ui_tests
         $test_name = 'without a logged in user the person icon keeps the default color';
         $navbar_anon = $html->navbar(0, []);
         $t->assert_text_not_contains($test_name, $navbar_anon, styles::USER_LOGGED);
+
+        // the settings are the read only system configuration, which an ip user without login can see too
+        $test_name = 'the settings link of a request without login is the short settings path';
+        $t->assert_text_contains($test_name, $navbar_anon, api::SETTINGS_REL . '"');
+        $test_name = '... whose forward page opens the system configuration';
+        $t->assert($test_name, api::FORWARD_VIEWS[api::SETTINGS_REL], views::SYSTEM_CONFIG_ID);
+        // negative: the link does not name the view id, which changes if the views are re-pinned
+        $test_name = '... without the view id in the navbar';
+        $t->assert_text_not_contains($test_name, $navbar_anon, url_var::MASK . '=' . views::SYSTEM_CONFIG_ID . '"');
+
+        // the static forward pages in the docroot open the view of api::FORWARD_VIEWS, so a changed
+        // view id is written to the page by the next run with AUTO_UPDATE_TEST_FILES
+        $test_name = 'each forward page with a view is listed as a file';
+        $t->assert($test_name, array_keys(test_files::FORWARD_PAGES), array_keys(api::FORWARD_VIEWS));
+        foreach (test_files::FORWARD_PAGES as $forward => $file) {
+            $msk_id = api::FORWARD_VIEWS[$forward] ?? 0;
+            $test_name = 'the forward page ' . $forward . ' opens the view ' . $msk_id . ' with the url vars of the request';
+            $t->assert_file($test_name, $html->forward_page($msk_id), $file);
+        }
 
         // the login link forwards a '9'-prefixed back target of the current page (the logout
         // page carries the original page as back target, see frontend::action_logout), so after

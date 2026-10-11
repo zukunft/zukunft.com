@@ -373,6 +373,35 @@ on how often the user has asked for more:
 today; the *max frontend list size* key for the 2'000 bound is still missing and
 has to be added together with the paged version.
 
+The settings tree of the system configuration (`views::SYSTEM_CONFIG_ID`, the
+navbar "settings" link, `web/helper/config_tree`) is the one exception: it is
+the read only `config.yaml` itself, which the backend sends in its key order
+(`api/config?1=tree`, `cfg/helper/config_tree`) with the current database value
+of each setting from the config part "all"; a value is found by exactly the keys
+of its yaml path (`config_numbers::exact_lookup`), and the `config.yaml`
+value is shown behind it only if the database differs or has no value. Every
+level shows all its entries without "more" steps, because the whole config is
+assumed to always fit on one page. The top level keys are cards in up to three
+columns (`config_tree::COLUMN_KEYS`: select, user and system); the settings of
+the pod below `system` can only be changed by an admin
+(`value_base::is_pod_setting_denied`, `config_tree::ADMIN_KEY`), the `user` and
+`select` settings by each logged-in user; the snapshot `config_page/system_config_read_only.html`
+shows the layout. Its search (`url_var::PATTERN`) and scope
+(`url_var::CONFIG_PART`) are no part of the page cache key, so a page with
+either is rendered for each request. For a logged-in user a click on a number
+with a database value opens an input with a small save icon (a `<details>`,
+because a double click needs javascript); the post form uses the value edit
+mask with the confirmed step, so the number is saved as the user's own overwrite
+without the confirm view, and the user's cached pages and config values are
+dropped (`frontend::drop_cached_pages`). The page after the save confirms in
+green which setting has changed from what to what
+(`frontend::setting_saved_text`, from `url_var::CONFIG_KEY` and the `'8'`
+value of the form). An admin's form also sends `url_var::SET_DEFAULT`, so the
+number becomes the default of all users without an own overwrite
+(`value_base::save_as_default`: the standard row with its change log, the owner
+stays, the admin's own overwrite is removed) and the cached pages and config
+values of all users are dropped.
+
 ## "… more" is always a link that shows more
 
 When a list is truncated to its configured limit, the "… and n more" tail is a
@@ -471,16 +500,35 @@ warming reason` with `<reason> is a global warming reason` for each reason,
 else to the page of the row phrase (`value_list::phrase_cell`). The `, ...` is
 shown too if that triple links more phrases than the one shown, e.g. `global
 warming solution` with a second solution whose gain belongs to a reason and is
-therefore no number of the row. The value cells
+therefore no number of the row; to count every linked phrase, the start page
+loads the children of all these list triples with one api call
+(`ui_list::start_page_children`) and adds them only to a copy of the request
+cache taken after the column and sort definitions are loaded, because the cache
+also fills the phrase selectors of later pages. Every start page problem except proprietary
+software has such a `<problem> reason` and `<problem> solution` triple
+(`problem_main_reasons.json`), each of which is a `global problem reason` or a
+`global problem solution`; proprietary software is the sample row with one
+reason and one solution and without any `, ...`. The value cells
 of the row show only the numbers of the phrase shown, e.g. the gain of the
 solution shown and not also the gain of another one, so that no number of a
-hidden phrase stands beside the phrase shown. A value that names the phrases
-of two phrase columns, e.g. the gain of the solution of a reason, is about the
+hidden phrase stands beside the phrase shown. A cell keeps only its most
+specific values, the ones that name the most phrases shown: on the solutions
+page the row of a solution shows its gain for the reason shown and not also its
+gain for the whole problem, so a cell never shows two numbers of one thing.
+A confidence value is no number of the cell, so it is exempt: it often names
+less than the value it qualifies, e.g. no solution, and stays its tooltip. A
+value that names the phrases of two phrase columns, e.g. the gain of the solution of a reason, is about the
 first phrase and not about the row, so the row leaves it to the table of that
 phrase, e.g. the reasons page, and it changes no column of the table
 (`value_list::without_values_of_two_phrase_columns`). A linked phrase that is a
 defined column itself, e.g. `potential gain` of the chart triple `potential
 gain and potential loss`, names a column and not a row phrase, so it does not count.
+A value that names a phrase linked to a column phrase, e.g. the gain of the
+solution of the climate gas emissions, which carries `reason` as well, is no
+value of the column of `reason` but a value of its own column, e.g. `potential
+gain`, with the climate gas emissions in the phrase column `reason`; the column
+phrase only says what kind of phrase that is, so it names no row either
+(`value_list::without_values_of_children`, `value_list::table_cells`).
 
 The table of such a triple has rows named by the linked phrases, e.g. the
 reasons: its phrase has no value of its own, so the table component loads the

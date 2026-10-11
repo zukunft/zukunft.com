@@ -38,6 +38,7 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_CONST . 'def.php';
 include_once paths::MODEL_HELPER . 'config_numbers.php';
+include_once paths::MODEL_HELPER . 'config_tree.php';
 include_once paths::DB . 'sql.php';
 include_once paths::DB . 'sql_creator.php';
 include_once paths::DB . 'sql_type.php';
@@ -49,6 +50,7 @@ include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED_TYPES . 'db_cache_types.php';
+include_once test_paths::CREATE . 'test_config_trees.php';
 include_once test_paths::CREATE . 'test_values.php';
 include_once test_paths::CREATE . 'test_words.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
@@ -60,6 +62,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\cfg\helper\config_numbers;
+use Zukunft\ZukunftCom\main\php\cfg\helper\config_tree;
 use Zukunft\ZukunftCom\main\php\service\config;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\language_codes;
@@ -67,6 +70,7 @@ use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\db_cache_types;
+use Zukunft\ZukunftCom\test\php\create\test_config_trees;
 use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -140,6 +144,10 @@ class config_tests
         $test_name = 'the system config switch does not change the types cache';
         $names = config_numbers::CACHE_ALLOWED_NAMES[db_cache_types::SYSTEM_CONFIG];
         $t->assert_true($test_name, $t_val->config_cache_switch($names, false)->cache_allowed(db_cache_types::TYPES));
+        // negative: the user config switch has all phrases of the system config switch, because "system" is also the key above
+        $test_name = 'the user config switch does not change the system config cache';
+        $names = config_numbers::CACHE_ALLOWED_NAMES[db_cache_types::USER_CONFIG];
+        $t->assert_true($test_name, $t_val->config_cache_switch($names, false)->cache_allowed(db_cache_types::SYSTEM_CONFIG));
         $test_name = 'an unknown cache switch is reported and the cache is not used';
         $t->assert_false($test_name, $t_val->config_empty()->cache_allowed('unexpected_cache_type'));
 
@@ -222,6 +230,82 @@ class config_tests
         $phr_chf = $t_wrd->word_chf()->phrase();
         $t->assert($test_name, $phr_chf->value_selection($msg)->names(), [words::CHF]);
         $cfg = $cfg_pod;
+
+
+        $t->subheader($ts . 'tree');
+
+        // the tree of config.yaml keeps the key order and the tooltips for the frontend
+        $test_name = 'the tooltip-comment is the tooltip of its key';
+        $t_cft = new test_config_trees($t);
+        $cft = new config_tree();
+        $nodes = $cft->nodes($t_cft->yaml(), $t_cft->cfg());
+        $db_node = $t_cft->node_by_name($nodes, test_config_trees::DATABASE);
+        $t->assert($test_name, $db_node[json_fields::DESCRIPTION] ?? '', test_config_trees::DATABASE_TIP);
+        $test_name = '... and never a key of its own';
+        $t->assert($test_name, $t_cft->node_by_name($nodes, words::TOOLTIP_COMMENT), []);
+        $test_name = 'the sys-conf-value is the value of its key';
+        $lan_node = $t_cft->node_by_name($nodes, test_config_trees::LANGUAGE);
+        $t->assert($test_name, $lan_node[json_fields::TEXT_VALUE] ?? '', test_config_trees::LANGUAGE_VALUE);
+        $test_name = '... and never a key of its own';
+        $t->assert($test_name, $t_cft->node_by_name($nodes, words::SYS_CONF_VALUE), []);
+        // negative: the same value in the database needs no config.yaml value
+        $test_name = '... without the config.yaml value if the database has the same value';
+        $t->assert($test_name, $lan_node[json_fields::CONFIG_FILE_VALUE] ?? '', '');
+        $test_name = 'the only setting of a key is its database value with the setting key as unit';
+        $delay_node = $t_cft->node_by_name($nodes, test_config_trees::START_DELAY);
+        $t->assert($test_name, $delay_node[json_fields::TEXT_VALUE] ?? '', (string)test_config_trees::START_DELAY_DB);
+        $t->assert($test_name, $delay_node[json_fields::CONFIG_UNIT] ?? '', test_config_trees::SEC);
+        $test_name = '... with the config.yaml value if the database value differs';
+        $t->assert($test_name, $delay_node[json_fields::CONFIG_FILE_VALUE] ?? '', (string)test_config_trees::START_DELAY_VALUE);
+        // negative: a value with one more phrase belongs to another setting, so the row limit has no database value
+        $test_name = 'a setting without a database value has only the config.yaml value';
+        $default_node = $t_cft->node_by_name($nodes, test_config_trees::ROW_LIMIT_SETTING);
+        $t->assert($test_name, $default_node[json_fields::TEXT_VALUE] ?? '', '');
+        $t->assert($test_name, $default_node[json_fields::CONFIG_FILE_VALUE] ?? '', (string)test_config_trees::ROW_LIMIT_VALUE);
+        $test_name = 'the config value of exactly the given phrases ignores a value with more phrases';
+        $default_names = array_merge(config_tree::ROOT_KEYS,
+            [test_config_trees::SYSTEM, test_config_trees::DATABASE, test_config_trees::ROW_LIMIT, test_config_trees::ROW_LIMIT_SETTING]);
+        $default_key = config_numbers::names_key($default_names);
+        $t->assert_false($test_name, array_key_exists($default_key, $t_cft->cfg()->exact_lookup()));
+        // negative: a key with two settings is a group without a value or a unit
+        $test_name = 'a key with two settings has no value and no unit';
+        $retry_node = $t_cft->node_by_name($nodes, test_config_trees::RETRY);
+        $t->assert($test_name, ($retry_node[json_fields::TEXT_VALUE] ?? '') . ($retry_node[json_fields::CONFIG_UNIT] ?? ''), '');
+        $test_name = 'a key with one setting that is no unit keeps the setting as its own key';
+        $limit_node = $t_cft->node_by_name($nodes, test_config_trees::ROW_LIMIT);
+        $limit_names = array_column($limit_node[json_fields::CONFIG_CHILDREN] ?? [], json_fields::NAME);
+        $t->assert($test_name, $limit_names, [test_config_trees::ROW_LIMIT_SETTING]);
+        $test_name = '... but its settings in the order of config.yaml';
+        $retry_names = array_column($retry_node[json_fields::CONFIG_CHILDREN] ?? [], json_fields::NAME);
+        $t->assert($test_name, $retry_names, [test_config_trees::START_DELAY, test_config_trees::MAX_DELAY]);
+        $test_name = 'a boolean setting saved as 1 is shown as true';
+        $page_node = $t_cft->node_by_name($nodes, test_config_trees::PAGE);
+        $t->assert($test_name, $page_node[json_fields::TEXT_VALUE] ?? '', 'true');
+        // negative: a boolean switched off in the database is not shown as 0
+        $test_name = 'a boolean setting saved as 0 is shown as false';
+        $types_node = $t_cft->node_by_name($nodes, test_config_trees::TYPES);
+        $t->assert($test_name, $types_node[json_fields::TEXT_VALUE] ?? '', 'false');
+        $test_name = '... with the config.yaml value behind it';
+        $t->assert($test_name, $types_node[json_fields::CONFIG_FILE_VALUE] ?? '', 'true');
+        $test_name = 'a setting names the id of its database value, which a user overwrite needs';
+        $max_node = $t_cft->node_by_name($nodes, test_config_trees::MAX_DELAY);
+        $t->assert($test_name, $max_node[json_fields::ID] ?? 0, test_config_trees::MAX_DELAY_ID);
+        // negative: without a database value there is nothing to overwrite
+        $test_name = '... but a setting without a database value has no id';
+        $t->assert_false($test_name, array_key_exists(json_fields::ID, $default_node));
+        // the loaded value objects of a fresh database load, which has no lookup rows of the cached json
+        $names = config_numbers::CACHE_PAGES_ALLOWED_NAMES;
+        $obj_lookup = $t_val->config_cache_switch($names, true)->exact_lookup();
+        $test_name = 'the config value of exactly the given phrases is also found in the loaded value objects';
+        $t->assert($test_name, ($obj_lookup[config_numbers::names_key($names)] ?? null)?->number(), (float)true);
+        $test_name = '... in any order of the names';
+        $t->assert($test_name, config_numbers::names_key(array_reverse($names)), config_numbers::names_key($names));
+        // negative: a value with more phrases belongs to a setting below the given one
+        $test_name = '... but not by a part of its phrases';
+        $t->assert_false($test_name, array_key_exists(config_numbers::names_key(array_slice($names, 1)), $obj_lookup));
+        // a numeric name is an int key of the cached lookup rows, but the same phrase as its text
+        $test_name = 'a numeric name is the same phrase as its text';
+        $t->assert($test_name, config_numbers::names_key([2000]), config_numbers::names_key(['2000']));
 
     }
 

@@ -36,6 +36,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
+include_once paths::MODEL_HELPER . 'config_numbers.php';
 include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
 include_once paths::MODEL_USER . 'user_message.php';
@@ -45,6 +46,7 @@ include_once html_paths::PHRASE . 'phrase_list.php';
 include_once test_paths::CONST . 'word_names.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\helper\config_numbers;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message as backend_user_message;
@@ -1010,14 +1012,8 @@ class test_phrases
      */
     function phrase_list_ip_user_change(): phrase_list
     {
-        $t_wrd = new test_words($this->env);
-        $t_trp = new test_triples($this->env);
-        $lst = new phrase_list($this->env->usr1);
-        $msg = new backend_user_message(); // a test builder is an entry point; the fixed names cannot double
-        $lst->add_by_name_direct($t_trp->triple_database_change()->phrase(), $msg);
-        $lst->add_by_name_direct($t_trp->triple_ip_user()->phrase(), $msg);
-        $lst->add_by_name_direct($t_wrd->word_allowed()->phrase(), $msg);
-        return $lst;
+        // the complete phrase set, because the permission is read by its exact path
+        return $this->list_cache_switch(config_numbers::IP_USER_CHANGE_NAMES);
     }
 
     /**
@@ -1339,17 +1335,51 @@ class test_phrases
     }
 
     /**
+     * @return phrase_list_ui the global problems with "global warming reason" linked only to the
+     *         reason that the row of global warming shows already, like proprietary software in
+     *         problem_main_reasons.json, which has one reason and no list of its reasons
+     */
+    function list_global_warming_one_reason_ui(): phrase_list_ui
+    {
+        $t_trp = new test_triples($this->env);
+        $lst = $this->list_global_problems();
+        $lst->add($t_trp->global_warming_reason()->phrase());
+        $lst->add($t_trp->climate_gas_emissions_global_warming_reason()->phrase());
+        return $this->ui_list($lst);
+    }
+
+    /**
      * @return phrase_list_ui the global problems with two solutions of global warming linked to
      *         "global warming solution" like problem_global_warming_reasons.json, although only one
      *         of them has a value in the row of global warming
      */
     function list_global_warming_solutions_ui(): phrase_list_ui
     {
+        return $this->ui_list($this->list_global_warming_solutions());
+    }
+
+    /**
+     * @return phrase_list_ui the two solutions of global warming with the heat mortality as a second
+     *         reason, so that the solutions page can name the reason of each solution
+     */
+    function list_global_warming_solutions_with_reasons_ui(): phrase_list_ui
+    {
+        $t_trp = new test_triples($this->env);
+        $lst = $this->list_global_warming_solutions();
+        $lst->add($t_trp->heat_mortality_reason()->phrase());
+        return $this->ui_list($lst);
+    }
+
+    /**
+     * @return phrase_list the global problems with two solutions linked to "global warming solution"
+     */
+    private function list_global_warming_solutions(): phrase_list
+    {
         $t_trp = new test_triples($this->env);
         $lst = $this->list_global_warming_one_solution();
         $lst->add($t_trp->climate_adaptation_solution()->phrase());
         $lst->add($t_trp->climate_adaptation_global_warming_solution()->phrase());
-        return $this->ui_list($lst);
+        return $lst;
     }
 
     /**
@@ -1416,14 +1446,36 @@ class test_phrases
      */
     function list_global_problems_sorted_ui(): phrase_list_ui
     {
+        $lst = $this->list_global_problems();
+        $this->add_sort_definitions($lst);
+        return $this->ui_list($lst);
+    }
+
+    /**
+     * @return phrase_list_ui the default sort order of solution_prio.json alone, e.g. for the cache
+     *         of a page whose other phrases come from another fixture
+     */
+    function list_sort_definitions_ui(): phrase_list_ui
+    {
+        $lst = new phrase_list($this->env->usr1);
+        $this->add_sort_definitions($lst);
+        return $this->ui_list($lst);
+    }
+
+    /**
+     * add the default sort order of solution_prio.json like phrase_list::load_sort_definitions loads it
+     *
+     * @param phrase_list $lst the list that gets the condition word, the tier, the order and its assignment
+     * @return void
+     */
+    private function add_sort_definitions(phrase_list $lst): void
+    {
         $t_wrd = new test_words($this->env);
         $t_trp = new test_triples($this->env);
-        $lst = $this->list_global_problems();
         $lst->add($t_wrd->word_numeric_descending()->phrase());
         $lst->add($t_trp->sort_order_default()->phrase());
         $lst->add($t_trp->numeric_desc_of_loss()->phrase());
         $lst->add($t_trp->sort_numeric_desc_of_loss()->phrase());
-        return $this->ui_list($lst);
     }
 
     /**

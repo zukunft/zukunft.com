@@ -137,5 +137,26 @@ class styles
     const string VALUE_ROW = 'value-row';
     const string VALUE_UNIT = 'value-unit';
 
+    // css classes of the read only tree of the system configuration (web/helper/config_tree):
+    // the nested list of the keys, a node that has keys below it and the block of one search hit with its path
+    const string CONFIG_TREE = 'config-tree';
+    const string CONFIG_NODE = 'config-node';
+    const string CONFIG_HIT = 'config-hit';
+    const string CONFIG_HIT_HEAD = 'config-hit-head';
+    const string CONFIG_PATH = 'config-path';
+    const string CONFIG_SCOPE = 'config-scope';
+    const string CONFIG_SCOPE_SHOWN = 'config-scope-shown';
+    // the toolbar with the search and the scope above the tree
+    const string CONFIG_TOOLBAR = 'config-toolbar';
+    const string CONFIG_SEARCH = 'config-search';
+    // the columns of the top level keys and the unit behind a value
+    const string CONFIG_COLUMNS = 'config-columns';
+    const string CONFIG_COLUMN = 'config-column';
+    const string CONFIG_UNIT = 'config-unit';
+    const string CONFIG_FILE_VALUE = 'config-file-value';
+    // the value that a click opens to change it and its small save button
+    const string CONFIG_EDIT = 'config-edit';
+    const string CONFIG_SAVE = 'config-save';
+
 
 }
