@@ -109,6 +109,7 @@ detail file. Order is by how often they fire, not importance.
 - No magic literals: every value with a named constant is referenced by it (IDs, URL params, field names, icons). → `docs/llm/constants.md`
 - SQL keywords in hand-built queries use the `sql::*` consts (`sql::SELECT`, `sql::FROM`, `sql::GROUP_BY`, `sql::FUNCTION_COUNT`, …), never inline `'SELECT'` / `'GROUP BY'` strings, so a `sql::CONST` search instantly finds every generator using a feature (scoping a change or test); add the const to `cfg/db/sql.php` if one is missing. → `docs/llm/constants.md`
 - Definitional data (the set/list/map that defines a behaviour — allowed profiles, required fields, field order) lives as a `const` on the owning const/enum class; functions keep only the logic and reference the const, never inline the literal array. → `docs/llm/constants.md`
+- A const array that spreads another const names its class (`...views::EDIT_MASKS_IDS`), never `...self::`, so a search for the const finds every use. → `docs/llm/constants.md`
 - A class name passed as a parameter or map key uses the `::class` constant (e.g. `$dbo::class`), never a bare name string, so a rename is one edit. → `docs/llm/constants.md`
 - Link code to DB rows by the `code_id` const only; `*_NAME` / `*_ID` siblings are test-only. → `docs/llm/constants.md`
 - Boolean db fields are `sql_field_type::BOOL` with `sql_field_default::NULL` (null reads as false, like `excluded`); never `ZERO` or `NOT_NULL`. → `docs/llm/constants.md`

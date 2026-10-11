@@ -33,7 +33,9 @@
 
 namespace Zukunft\ZukunftCom\main\php\shared\const;
 
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
+include_once paths::SHARED_CONST . 'words.php';
 
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 
@@ -108,6 +110,10 @@ class triples
     const string STORAGE_SIZE = 'storage size';
     const string SYSTEM_CONFIG = 'system configuration';
     const int SYSTEM_CONFIG_ID = 105;
+    // the keys of config.yaml above all settings, which are also phrases of each config value
+    const array CONFIG_ROOT = [words::THIS_SYSTEM, self::SYSTEM_CONFIG];
+    // the settings of the pod below this path can only be changed by an admin (see value_base::is_pod_setting_denied)
+    const array CONFIG_SYSTEM_PATH = [...triples::CONFIG_ROOT, words::SYSTEM];
     // the column priority of a table, defined in solution_prio.json: a mayor column is shown
     // on every screen, a main column only if the screen is not small, a minor column only if
     // it is wide and a marginal column only on the widest screen; a phrase is assigned to a

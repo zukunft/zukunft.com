@@ -1,1 +1,0 @@
-PREPARE db_cache_delete_all AS DELETE FROM db_caches;

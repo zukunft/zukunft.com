@@ -840,7 +840,7 @@ class views
     // system masks whose main object is selected by a group id, which a url names in its short
     // form (see shared/group_id_url.php); the id of every other mask is left as it is, so that
     // a short name like "A-" is never read as a group id
-    const array GROUP_ID_MASKS_IDS = [...self::VALUE_MASKS_IDS, ...self::GROUP_MASKS_IDS, ...self::RESULT_MASKS_IDS];
+    const array GROUP_ID_MASKS_IDS = [...views::VALUE_MASKS_IDS, ...views::GROUP_MASKS_IDS, ...views::RESULT_MASKS_IDS];
 
     // system masks that have a view as the main object
     const array VIEW_MASKS_IDS = [
@@ -1194,9 +1194,9 @@ class views
     // system masks that add, change or delete data incl. the confirm steps
     // used to block a user without login from any data change (see https://wiki.php.net/rfc/spread_operator_for_array )
     const array CHANGE_MASKS_IDS = [
-        ...self::ADD_MASKS_IDS,
-        ...self::EDIT_MASKS_IDS,
-        ...self::DEL_MASKS_IDS,
+        ...views::ADD_MASKS_IDS,
+        ...views::EDIT_MASKS_IDS,
+        ...views::DEL_MASKS_IDS,
     ];
 
     // system masks that should not have the standard zukunft header
@@ -1212,8 +1212,8 @@ class views
 
     // system masks that change or delete a sandbox object (see https://wiki.php.net/rfc/spread_operator_for_array )
     const array EDIT_DEL_MASKS_IDS = [
-        ...self::EDIT_MASKS_IDS,
-        ...self::DEL_MASKS_IDS,
+        ...views::EDIT_MASKS_IDS,
+        ...views::DEL_MASKS_IDS,
     ];
 
     // system masks that change data and are therefore blocked for a user without login
@@ -1221,7 +1221,7 @@ class views
     // beside the add, edit and del masks also the process masks that change data,
     // but never the login, signup and export masks that an ip user must be able to use
     const array IP_BLOCKED_MASKS_IDS = [
-        ...self::CHANGE_MASKS_IDS,
+        ...views::CHANGE_MASKS_IDS,
         self::FORMULA_TEST_ID,
         self::UNDO_ID,
         self::PASTE_TABLE_ID,

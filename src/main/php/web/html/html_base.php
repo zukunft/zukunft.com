@@ -3215,9 +3215,13 @@ class html_base
         // tell a data-changing submit apart from a plain navigation and run url_to_action
         $name = $name == '' ? '' : ' ' . self::NAME . '="' . $name . '"';
         // a screen reader has no text to read on an icon, so the label names the action
-        $label_txt = htmlspecialchars($label, ENT_QUOTES);
-        $label = $label == '' ? '' : ' ' . self::ARIA_LABEL . '="' . $label_txt . '" ' . self::TITLE_HTML . '="' . $label_txt . '"';
-        return '<' . self::BUTTON . $class . $type . $name . $label . '>' . $text . '</' . self::BUTTON . '>';
+        $label_attr = '';
+        if ($label != '') {
+            $label_txt = htmlspecialchars($label, ENT_QUOTES);
+            $label_attr = ' ' . self::ARIA_LABEL . '="' . $label_txt . '"';
+            $label_attr .= ' ' . self::TITLE_HTML . '="' . $label_txt . '"';
+        }
+        return '<' . self::BUTTON . $class . $type . $name . $label_attr . '>' . $text . '</' . self::BUTTON . '>';
     }
 
     /**

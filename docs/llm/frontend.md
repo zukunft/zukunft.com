@@ -382,8 +382,10 @@ of its yaml path (`config_numbers::exact_lookup`), and the `config.yaml`
 value is shown behind it only if the database differs or has no value. Every
 level shows all its entries without "more" steps, because the whole config is
 assumed to always fit on one page. The top level keys are cards in up to three
-columns (`config_tree::COLUMN_KEYS`: select, user, then test with the other
-keys and pod last); the snapshot `config_page/system_config_read_only.html`
+columns (`config_tree::COLUMN_KEYS`: select, user and system); the settings of
+the pod below `system` can only be changed by an admin
+(`value_base::is_pod_setting_denied`, `config_tree::ADMIN_KEY`), the `user` and
+`select` settings by each logged-in user; the snapshot `config_page/system_config_read_only.html`
 shows the layout. Its search (`url_var::PATTERN`) and scope
 (`url_var::CONFIG_PART`) are no part of the page cache key, so a page with
 either is rendered for each request. For a logged-in user a click on a number

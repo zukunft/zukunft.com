@@ -380,18 +380,34 @@ class db_cache extends db_object_seq_id_user
     }
 
     /**
-     * remove the cache entries of all users, because e.g. a default changed by an admin is part of the
-     * cached config of every user; derived data that the next request creates again (see del_by_user)
+     * remove the cache entries of the given types of all users, because e.g. a default changed by an admin is
+     * part of the cached config of every user, but not of the other caches e.g. of the types;
+     * derived data that the next request creates again (see del_by_user)
      *
+     * @param array $code_ids the code ids of the cache types e.g. config_numbers::CACHE_TYPES
      * @param user_message $msg to report a problem of the delete
      * @return bool true if the cache entries have been removed
      */
-    function del_all(user_message $msg): bool
+    function del_by_types(array $code_ids, user_message $msg): bool
     {
         global $db_con;
+        global $sys;
 
-        $qp = $db_con->sql_creator()->del_sql_all(self::class);
-        return $db_con->delete($qp, 'all cache entries', $msg);
+        $ids = array_map(fn(string $code_id) => $sys->typ_lst->cac_typ->id($code_id), $code_ids);
+        $qp = $this->del_sql_by_type_ids($db_con->sql_creator(), $ids);
+        return $db_con->delete($qp, 'cache entries of the types ' . implode(',', $code_ids), $msg);
+    }
+
+    /**
+     * create the sql statement to delete the cache entries of the given types of all users
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param array $type_ids the database ids of the cache types
+     * @return sql_par the sql statement to delete the cache entries of the types
+     */
+    function del_sql_by_type_ids(sql_creator $sc, array $type_ids): sql_par
+    {
+        return $sc->del_sql_list_without_log(self::class, db_cache_db::FLD_TYPE, $type_ids);
     }
 
     /**

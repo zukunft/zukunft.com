@@ -145,6 +145,7 @@ include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_WORD . 'word_list.php';
 include_once paths::SERVICE_MATH . 'calc_internal.php';
 include_once paths::SHARED_CONST . 'chars.php';
+include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_ENUM . 'change_actions.php';
 include_once paths::SHARED_ENUM . 'change_tables.php';
 include_once paths::SHARED_ENUM . 'change_fields.php';
@@ -191,6 +192,7 @@ use Zukunft\ZukunftCom\main\php\cfg\system\log;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\service\math\calc_internal;
 use Zukunft\ZukunftCom\main\php\shared\const\chars;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_fields;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_tables;
@@ -2217,17 +2219,56 @@ class value_base extends sandbox_value
     {
         log_debug($this->dsp_id());
 
-        global $db_con;
-        global $mtr;
-
         // a value is user data, so a user without login may only change it if this pod permits it
         if ($this->change_blocked($msg)) {
             return false;
         }
-        // an admin changes the value for all users without an own overwrite and not the own overwrite
-        if ($this->set_default) {
-            return $this->save_as_default($msg);
+        if ($this->is_pod_setting_denied($msg)) {
+            $msg->add_id(msg_id::CONFIG_SYSTEM_ADMIN_ONLY);
+        } elseif ($this->set_default) {
+            // an admin changes the value for all users without an own overwrite and not the own overwrite
+            $this->save_as_default($msg);
+        } else {
+            $this->save_for_user($msg);
         }
+        return $msg->is_ok();
+    }
+
+    /**
+     * a setting of the pod below "system configuration > system" in config.yaml can only be changed by an
+     * admin or the system user e.g. when importing config.yaml; the settings below "user" and "select"
+     * can be changed by each logged-in user as the own overwrite
+     *
+     * @param user_message $msg to report why the phrases of the value could not be loaded
+     * @return bool true if the user of this value is not allowed to change it, because it is a pod setting
+     */
+    function is_pod_setting_denied(user_message $msg): bool
+    {
+        $usr = $this->get_user();
+        $result = false;
+        if (!$usr->is_admin() and !$usr->is_system()) {
+            $names = $this->phr_names();
+            // e.g. a value of the settings page names only its id, so its phrases are loaded to check them
+            if ($names == []) {
+                $chk = $this->clone_all();
+                $chk->load_phrases($msg, true);
+                $names = $chk->phr_names();
+            }
+            $result = (array_diff(triples::CONFIG_SYSTEM_PATH, $names) == []);
+        }
+        return $result;
+    }
+
+    /**
+     * insert the value or update it as the standard value of the owner or as the overwrite of the user
+     *
+     * @param user_message $msg in case of a problem, the message that should be shown to the user
+     * @return bool true if everything has been fine
+     */
+    private function save_for_user(user_message $msg): bool
+    {
+        global $db_con;
+        global $mtr;
 
         // init
         $msg_reload = $mtr->txt(msg_id::RELOAD);
@@ -2330,7 +2371,8 @@ class value_base extends sandbox_value
     {
         global $db_con;
         if (!$this->get_user()->is_admin()) {
-            $msg->add(msg_id::VALUE_SET_DEFAULT_DENIED, [msg_id::VAR_VALUE => $this->dsp_id()]);
+            // without a name, because the dsp_id is technical and the user knows which value has been saved
+            $msg->add_id(msg_id::VALUE_SET_DEFAULT_DENIED);
         } else {
             $std_rec = $this->clone_all();
             $std_rec->reset();

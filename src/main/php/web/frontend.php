@@ -1648,7 +1648,7 @@ class frontend
             $cac_cfg->del_by_user($usr_id, $del_msg);
         } else {
             $cac_page->del_all($del_msg);
-            $cac_cfg->del_all($del_msg);
+            $cac_cfg->del_by_types(config_numbers::CACHE_TYPES, $del_msg);
         }
         if (!$del_msg->is_ok()) {
             log_warning('removing the cached pages after a change of user ' . $usr_id

@@ -144,6 +144,10 @@ class config_tests
         $test_name = 'the system config switch does not change the types cache';
         $names = config_numbers::CACHE_ALLOWED_NAMES[db_cache_types::SYSTEM_CONFIG];
         $t->assert_true($test_name, $t_val->config_cache_switch($names, false)->cache_allowed(db_cache_types::TYPES));
+        // negative: the user config switch has all phrases of the system config switch, because "system" is also the key above
+        $test_name = 'the user config switch does not change the system config cache';
+        $names = config_numbers::CACHE_ALLOWED_NAMES[db_cache_types::USER_CONFIG];
+        $t->assert_true($test_name, $t_val->config_cache_switch($names, false)->cache_allowed(db_cache_types::SYSTEM_CONFIG));
         $test_name = 'an unknown cache switch is reported and the cache is not used';
         $t->assert_false($test_name, $t_val->config_empty()->cache_allowed('unexpected_cache_type'));
 
@@ -260,7 +264,7 @@ class config_tests
         $t->assert($test_name, $default_node[json_fields::CONFIG_FILE_VALUE] ?? '', (string)test_config_trees::ROW_LIMIT_VALUE);
         $test_name = 'the config value of exactly the given phrases ignores a value with more phrases';
         $default_names = array_merge(config_tree::ROOT_KEYS,
-            [test_config_trees::DATABASE, test_config_trees::ROW_LIMIT, test_config_trees::ROW_LIMIT_SETTING]);
+            [test_config_trees::SYSTEM, test_config_trees::DATABASE, test_config_trees::ROW_LIMIT, test_config_trees::ROW_LIMIT_SETTING]);
         $default_key = config_numbers::names_key($default_names);
         $t->assert_false($test_name, array_key_exists($default_key, $t_cft->cfg()->exact_lookup()));
         // negative: a key with two settings is a group without a value or a unit

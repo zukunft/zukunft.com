@@ -373,7 +373,7 @@ class system_views_read_tests
             $mtr->txt(msg_id::CHANGE_BLOCKED_FOR_IP_USER),
             ', frontend view.php?m=error_update without a token contains at least', $is_connected);
         // an add view changes data, so a user without login is blocked before the view is created
-        // (config.yaml: system configuration > pod > permissions > database change > ip user > allowed)
+        // (config.yaml: system configuration > system > pod > permissions > database change > ip user > allowed)
         $is_connected = $t->dsp_web_test(
             api::SCRIPT_PATH_NAME . 'view.php?' . url_var::MASK . url_var::EQ . views::WORD_ADD_DETAIL_ID,
             $mtr->txt(msg_id::CHANGE_BLOCKED_FOR_IP_USER),

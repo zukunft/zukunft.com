@@ -100,16 +100,19 @@ class config_numbers extends value_list
         db_cache_types::USER_CONFIG,
     ];
 
-    // the phrase names that select the pod switch for each database cache
-    // (db_cache_types code id => phrase names; see config.yaml "database > cache")
+    // the keys of config.yaml above the database cache switches
+    const array CACHE_PATH = [...triples::CONFIG_SYSTEM_PATH, words::DATABASE, words::CACHE];
+
+    // the complete phrase set of the pod switch for each database cache (db_cache_types code id => phrase names),
+    // because e.g. the system config switch has all phrases of the user config switch, as "system" is also the key above
     const array CACHE_ALLOWED_NAMES = [
-        db_cache_types::SYSTEM_CONFIG => [words::ALLOWED, words::SYSTEM, words::CONFIG, words::CACHE],
-        db_cache_types::TYPES => [words::ALLOWED, words::TYPE, words::CACHE],
-        db_cache_types::USER_CONFIG => [words::ALLOWED, words::USER, words::CONFIG, words::CACHE],
-        db_cache_types::FRONTEND_CONFIG => [words::ALLOWED, words::FRONTEND, words::CONFIG, words::CACHE],
-        db_cache_types::USER_FRONTEND_CONFIG => [words::ALLOWED, triples::USER_FRONTEND, words::CONFIG, words::CACHE],
-        db_cache_types::PAGE_CACHE => [words::ALLOWED, words::DATA, words::PAGE, words::CACHE],
-        db_cache_types::UI_CACHE => [words::ALLOWED, words::PRELOAD, words::CACHE],
+        db_cache_types::SYSTEM_CONFIG => [...config_numbers::CACHE_PATH, words::CONFIG, words::SYSTEM, words::ALLOWED],
+        db_cache_types::TYPES => [...config_numbers::CACHE_PATH, words::TYPE, words::ALLOWED],
+        db_cache_types::USER_CONFIG => [...config_numbers::CACHE_PATH, words::CONFIG, words::USER, words::ALLOWED],
+        db_cache_types::FRONTEND_CONFIG => [...config_numbers::CACHE_PATH, words::CONFIG, words::FRONTEND, words::ALLOWED],
+        db_cache_types::USER_FRONTEND_CONFIG => [...config_numbers::CACHE_PATH, words::CONFIG, triples::USER_FRONTEND, words::ALLOWED],
+        db_cache_types::PAGE_CACHE => [...config_numbers::CACHE_PATH, words::PAGE, words::DATA, words::ALLOWED],
+        db_cache_types::UI_CACHE => [...config_numbers::CACHE_PATH, words::PRELOAD, words::ALLOWED],
     ];
 
     // the phrase names that select the pod switch for the html page cache (db_cache_pages table)
@@ -775,7 +778,7 @@ class config_numbers extends value_list
             log_warning('unknown database cache switch ' . $type_code_id);
             $result = false;
         } else {
-            $val = $this->get_by_names($names);
+            $val = $this->exact_lookup()[self::names_key($names)] ?? null;
             if ($val !== null) {
                 $result = $val->number() != 0;
             }

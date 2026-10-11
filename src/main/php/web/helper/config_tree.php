@@ -89,14 +89,14 @@ class config_tree
     // the url var and the value of the scope that shows the whole tree
     const string SCOPE_ALL = api::CONFIG_ALL;
     // the top level keys of each column of the tree from left to right; a top level key that is
-    // not listed goes to the last column in the order of config.yaml, but before LAST_KEY
+    // not listed goes to the last column in the order of config.yaml
     const array COLUMN_KEYS = [
         [words::SELECT],
         [words::USER],
-        [words::TEST],
+        [words::SYSTEM],
     ];
-    // the top level key shown at the end of the last column
-    const string LAST_KEY = words::POD;
+    // the top level key of the settings of the pod, which only an admin can change (see value_base::is_pod_setting_denied)
+    const string ADMIN_KEY = words::SYSTEM;
 
 
     /*
@@ -180,8 +180,8 @@ class config_tree
     }
 
     /**
-     * the top level nodes split into the columns of COLUMN_KEYS, e.g. select, user and test with
-     * the other keys and pod last; a column without a node of the given ones is empty
+     * the top level nodes split into the columns of COLUMN_KEYS, e.g. select, user and system with
+     * the other keys; a column without a node of the given ones is empty
      *
      * @param array $nodes the top level nodes e.g. of one scope
      * @return array per column the nodes from top to bottom
@@ -202,7 +202,6 @@ class config_tree
                 $result[$last_col][] = $cfn;
             }
         }
-        $result[$last_col] = array_merge($result[$last_col], $this->named($nodes, self::LAST_KEY));
         return $result;
     }
 
@@ -391,7 +390,7 @@ class config_tree
             $result = $this->with_unit($cfn->value, $cfn->unit);
         }
         // a click and not a double click opens the input, because only a click works without javascript
-        if ($this->is_editable($cfn)) {
+        if ($this->is_editable($cfn, $names)) {
             $result = $html->details($result, $this->edit_form($cfn, $names), styles::CONFIG_EDIT);
         }
         if ($cfn->file_value != '') {
@@ -419,12 +418,15 @@ class config_tree
 
     /**
      * @param config_node $cfn the setting to show
+     * @param array $names the yaml keys of the setting, whose first key decides if only an admin can change it
      * @return bool true if the user can change the setting, which needs a database value to overwrite;
      *              only a number, because a boolean is shown as true or false and a text has no number input
      */
-    private function is_editable(config_node $cfn): bool
+    private function is_editable(config_node $cfn, array $names): bool
     {
-        return ($this->can_edit and $cfn->id != 0 and is_numeric($cfn->value));
+        // set_default is true only for an admin, the one user who can change the settings of the pod
+        $is_allowed = (($names[0] ?? '') != self::ADMIN_KEY or $this->set_default);
+        return ($this->can_edit and $is_allowed and $cfn->id != 0 and is_numeric($cfn->value));
     }
 
     /**
@@ -608,11 +610,11 @@ class config_tree
 
     /**
      * @param string $name the name of a top level key
-     * @return bool true if COLUMN_KEYS or LAST_KEY place the key
+     * @return bool true if COLUMN_KEYS place the key
      */
     private function is_placed(string $name): bool
     {
-        $result = ($name == self::LAST_KEY);
+        $result = false;
         foreach (self::COLUMN_KEYS as $keys) {
             if (in_array($name, $keys)) {
                 $result = true;

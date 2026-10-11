@@ -27,9 +27,11 @@ adjust the numbers in the json data files so that the problem / solution are in 
 
 ## system settings
 
-in the config.yaml in the level below 'system configuration' there should be three entries: 'user', 'select' and 'system'. The entries 'database', 'calculation', 'year', 'view', 'component', 'job', 'test' and 'pod' should be move below 'system' without that any functionality changes. 'select' and 'user' should be changable by normal / non ip users and all entries below 'system' only by admin users
-
 in the system settings remove the underlying from the chars of all value description e.g. 'top' (below 'entries', 'list', 'component') as done before for 'entries' (below 'initial', 'select')  
+
+if save is pressed in the settings but the user is not allowed to save a value, an error message should be shown
+
+if the calculation button is pressed in th settings page and http://localhost/http/view.php?m=126&1=calculation&u=11 called the error message 'Mandatory field id missing in form url array {"m":"126","1":"calculation","u":"11","z":0}' is shown, which seems to be not correct, because the page shown looks mainly fine
 
 ## import times
 

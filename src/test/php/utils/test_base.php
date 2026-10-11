@@ -5713,7 +5713,7 @@ class test_base
      * request a page of this pod with a login
      * needed to test the add, edit and del views, because these views change data
      * and a user without login is blocked if the pod does not permit the changes of an ip user
-     * (config.yaml: system configuration > pod > permissions > database change > ip user > allowed)
+     * (config.yaml: system configuration > system > pod > permissions > database change > ip user > allowed)
      *
      * the admin user of the env file is used, because on a fresh setup
      * this is the only user with a password (see sql_db->add_admin_users_from_env)

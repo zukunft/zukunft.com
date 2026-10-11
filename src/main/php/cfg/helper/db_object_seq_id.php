@@ -1594,7 +1594,7 @@ class db_object_seq_id extends db_object
      * true if the requesting user is permitted to change any data of this pod
      * the base check for adding, changing and deleting an object
      * a user without login (an ip user) is blocked if this pod does not permit the changes of an ip user
-     * (config.yaml: system configuration > pod > permissions > database change > ip user > allowed)
+     * (config.yaml: system configuration > system > pod > permissions > database change > ip user > allowed)
      *
      * @param user_message $msg the user who has requested the change and the object to collect the potential reject messages
      * @param string $action the requested change used for the log message e.g. 'adding'

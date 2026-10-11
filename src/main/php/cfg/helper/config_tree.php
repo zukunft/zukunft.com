@@ -79,10 +79,7 @@ class config_tree
     ];
 
     // the keys of config.yaml above the shown tree, which are also phrases of each config value
-    const array ROOT_KEYS = [
-        words::THIS_SYSTEM,
-        triples::SYSTEM_CONFIG,
-    ];
+    const array ROOT_KEYS = triples::CONFIG_ROOT;
 
 
     /*

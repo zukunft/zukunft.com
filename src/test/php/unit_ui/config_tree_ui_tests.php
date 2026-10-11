@@ -97,7 +97,7 @@ class config_tree_ui_tests
         $hit_names = array_map(fn(array $hit) => $hit[1]->name, $hits);
         $t->assert($test_name, $hit_names, [test_config_trees::START_DELAY]);
         $test_name = '... each with the path of its parent keys';
-        $t->assert($test_name, $hits[0][0] ?? [], [test_config_trees::DATABASE, test_config_trees::RETRY]);
+        $t->assert($test_name, $hits[0][0] ?? [], [test_config_trees::SYSTEM, test_config_trees::DATABASE, test_config_trees::RETRY]);
         // negative: a search that no name and no tooltip contains has no hit
         $test_name = 'a search without a match has no hit';
         $t->assert($test_name, $cft->hits($cft->nodes, 'no-such-setting'), []);
@@ -111,7 +111,8 @@ class config_tree_ui_tests
         $test_name = 'the hit list names the path of each hit';
         $page_hit = $cft->html('delay', '');
         $t->assert_text_contains($test_name, $page_hit,
-            test_config_trees::DATABASE . config_tree::PATH_SEPARATOR . test_config_trees::RETRY);
+            test_config_trees::SYSTEM . config_tree::PATH_SEPARATOR . test_config_trees::DATABASE
+            . config_tree::PATH_SEPARATOR . test_config_trees::RETRY);
 
         $t->subheader($ts . 'scope');
 
@@ -120,8 +121,7 @@ class config_tree_ui_tests
         $t->assert($test_name, $branch_names, [test_config_trees::USER]);
         $test_name = '... and all shows the whole tree';
         $branch_names = array_map(fn($cfn) => $cfn->name, $cft->branch(config_tree::SCOPE_ALL));
-        $t->assert($test_name, $branch_names, [test_config_trees::DATABASE, test_config_trees::USER,
-            test_config_trees::SELECT, test_config_trees::TEST, test_config_trees::POD]);
+        $t->assert($test_name, $branch_names, [test_config_trees::SYSTEM, test_config_trees::USER, test_config_trees::SELECT]);
         // negative: a scope that is no top level key shows no branch but the hint
         $test_name = 'an unknown scope shows no branch';
         $t->assert($test_name, $cft->branch(test_config_trees::RETRY), []);
@@ -131,10 +131,9 @@ class config_tree_ui_tests
 
         $t->subheader($ts . 'columns');
 
-        $test_name = 'the columns start with select, user and test and end with pod';
+        $test_name = 'the columns are select, user and system';
         $col_names = array_map(fn(array $col) => array_map(fn($cfn) => $cfn->name, $col), $cft->columns($cft->nodes));
-        $t->assert($test_name, $col_names, [[test_config_trees::SELECT], [test_config_trees::USER],
-            [test_config_trees::TEST, test_config_trees::DATABASE, test_config_trees::POD]]);
+        $t->assert($test_name, $col_names, [[test_config_trees::SELECT], [test_config_trees::USER], [test_config_trees::SYSTEM]]);
         $test_name = '... and the page shows the three columns';
         $col_class = html_base::CLASS_HTML . '="' . styles::CONFIG_COLUMN . '"';
         $t->assert($test_name, substr_count($cft->html('', ''), $col_class), 3);
@@ -194,9 +193,13 @@ class config_tree_ui_tests
 
         $cft->can_edit = true;
         $page_edit = $cft->html('', '');
-        $test_name = 'a logged-in user can save a number as the own overwrite';
-        $id_field = html_base::NAME . '="' . url_var::ID . '" ' . html_base::VALUE . '="' . test_config_trees::MAX_DELAY_ID . '"';
-        $t->assert_text_contains($test_name, $page_edit, $id_field);
+        $id_name = html_base::NAME . '="' . url_var::ID . '" ' . html_base::VALUE . '="';
+        $test_name = 'a logged-in user can save a number of the user or select settings as the own overwrite';
+        $t->assert_text_contains($test_name, $page_edit, $id_name . test_config_trees::SELECT_INITIAL_ID . '"');
+        // negative: a setting below system is a setting of the pod, which only an admin can change
+        $test_name = '... but not a setting of the pod';
+        $max_id_field = $id_name . test_config_trees::MAX_DELAY_ID . '"';
+        $t->assert_text_not_contains($test_name, $page_edit, $max_id_field);
         $test_name = '... with a post form and the small save icon';
         $t->assert_text_contains($test_name, $page_edit, html_base::METHOD . '="' . html_base::METHOD_POST . '"');
         $t->assert_text_contains($test_name, $page_edit, icons::SAVE);
@@ -212,25 +215,29 @@ class config_tree_ui_tests
         $t->assert_text_not_contains($test_name, $page_edit, $default_field);
         $test_name = 'an admin saves the number as the default of all users';
         $cft->set_default = true;
-        $t->assert_text_contains($test_name, $cft->html('', ''), $default_field);
+        $page_admin = $cft->html('', '');
+        $t->assert_text_contains($test_name, $page_admin, $default_field);
+        $test_name = '... also of a setting of the pod';
+        $t->assert_text_contains($test_name, $page_admin, $max_id_field);
         $cft->set_default = false;
         $cft->can_edit = false;
         $test_name = '... with the shown number and the name of the setting for the confirmation';
-        $max_key = implode(config_tree::NAME_SEPARATOR, [test_config_trees::DATABASE, test_config_trees::RETRY, test_config_trees::MAX_DELAY]);
-        $key_field = html_base::NAME . '="' . url_var::CONFIG_KEY . '" ' . html_base::VALUE . '="' . $max_key . '"';
+        $old_val = test_config_trees::SELECT_ENTRIES[test_config_trees::SELECT_INITIAL];
+        $setting_key = implode(config_tree::NAME_SEPARATOR, [test_config_trees::SELECT, test_config_trees::SELECT_INITIAL]);
+        $key_field = html_base::NAME . '="' . url_var::CONFIG_KEY . '" ' . html_base::VALUE . '="' . $setting_key . '"';
         $t->assert_text_contains($test_name, $page_edit, $key_field);
         $pre_var = url_var::PRE . url_var::NUMERIC_VALUE;
-        $pre_field = html_base::NAME . '="' . $pre_var . '" ' . html_base::VALUE . '="' . test_config_trees::MAX_DELAY_VALUE . '"';
+        $pre_field = html_base::NAME . '="' . $pre_var . '" ' . html_base::VALUE . '="' . $old_val . '"';
         $t->assert_text_contains($test_name, $page_edit, $pre_field);
         $ui = new frontend();
         $test_name = 'the confirmation names the setting, the new and the old number';
         $saved_url = [
-            url_var::NUMERIC_VALUE => (string)test_config_trees::MAX_DELAY_NEW,
-            $pre_var => (string)test_config_trees::MAX_DELAY_VALUE,
-            url_var::CONFIG_KEY => $max_key,
+            url_var::NUMERIC_VALUE => (string)test_config_trees::SELECT_INITIAL_NEW,
+            $pre_var => (string)$old_val,
+            url_var::CONFIG_KEY => $setting_key,
         ];
-        $saved_txt = 'the setting for ' . $max_key . ' has been updated to ' . test_config_trees::MAX_DELAY_NEW
-            . ' (from ' . test_config_trees::MAX_DELAY_VALUE . ')';
+        $saved_txt = 'the setting for ' . $setting_key . ' has been updated to ' . test_config_trees::SELECT_INITIAL_NEW
+            . ' (from ' . $old_val . ')';
         $t->assert($test_name, $ui->setting_saved_text($saved_url), $saved_txt);
         // negative: the name is free text of the form, so a placeholder in it is never filled
         $test_name = '... and keeps a placeholder in the name as text';
@@ -239,17 +246,17 @@ class config_tree_ui_tests
         $t->assert_text_contains($test_name, $ui->setting_saved_text($marker_url), $marker_key);
         $test_name = 'the confirmation of an admin names the default of all users';
         $default_url = array_merge($saved_url, [url_var::SET_DEFAULT => url_var::TRUE]);
-        $default_txt = 'the default setting for ' . $max_key . ' has been updated for all users to '
-            . test_config_trees::MAX_DELAY_NEW . ' (from ' . test_config_trees::MAX_DELAY_VALUE . ')';
+        $default_txt = 'the default setting for ' . $setting_key . ' has been updated for all users to '
+            . test_config_trees::SELECT_INITIAL_NEW . ' (from ' . $old_val . ')';
         $t->assert($test_name, $ui->setting_saved_text($default_url), $default_txt);
         // negative: an unchanged number has not been updated
         $test_name = '... but nothing is confirmed if the number is unchanged';
-        $saved_url[url_var::NUMERIC_VALUE] = (string)test_config_trees::MAX_DELAY_VALUE;
+        $saved_url[url_var::NUMERIC_VALUE] = (string)$old_val;
         $t->assert($test_name, $ui->setting_saved_text($saved_url), '');
         // the shown number of an admin can be the own overwrite, so the same number can still be a new default
         $test_name = '... unless an admin has set it as the default';
-        $default_url[url_var::NUMERIC_VALUE] = (string)test_config_trees::MAX_DELAY_VALUE;
-        $t->assert_text_contains($test_name, $ui->setting_saved_text($default_url), $max_key);
+        $default_url[url_var::NUMERIC_VALUE] = (string)$old_val;
+        $t->assert_text_contains($test_name, $ui->setting_saved_text($default_url), $setting_key);
 
         $t->subheader($ts . 'page cache');
 
@@ -261,7 +268,7 @@ class config_tree_ui_tests
         $url_array = [url_var::MASK => views::SYSTEM_CONFIG_ID, url_var::PATTERN => 'cache'];
         $t->assert($test_name, $ui->url_cache_key($url_array), '');
         $test_name = '... and not with a scope';
-        $url_array = [url_var::MASK => views::SYSTEM_CONFIG_ID, url_var::CONFIG_PART => test_config_trees::DATABASE];
+        $url_array = [url_var::MASK => views::SYSTEM_CONFIG_ID, url_var::CONFIG_PART => test_config_trees::SYSTEM];
         $t->assert($test_name, $ui->url_cache_key($url_array), '');
 
         // the component renderer with the test tree, also as the snapshot of the page

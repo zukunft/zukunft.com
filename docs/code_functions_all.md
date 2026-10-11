@@ -2158,7 +2158,8 @@
     \-- load_sql - section for function load_sql is expected to be load sql in /helper/db_cache.php
     \-- del - section for function del is expected to be del in /helper/db_cache.php
     \-- del_by_user - section for function del_by_user is expected to be del in /helper/db_cache.php
-    \-- del_all - section for function del_all is expected to be del in /helper/db_cache.php
+    \-- del_by_types - section for function del_by_types is expected to be del in /helper/db_cache.php
+    \-- del_sql_by_type_ids - section for function del_sql_by_type_ids is expected to be del in /helper/db_cache.php
     \-- del_sql_by_user - section for function del_sql_by_user is expected to be del in /helper/db_cache.php
 \-- db_cache_page
     \-- row_mapper - section for function row_mapper not yet defined that it should be construct and map in /helper/db_c
@@ -3983,6 +3984,8 @@
     \-- add - section for function add not yet defined that it should be @param user_message $msg to enrich with problem
             s and suggested solutions in /value/value_base.php
     \-- save - section for function save is expected to be save in /value/value_base.php
+    \-- is_pod_setting_denied - section for function is_pod_setting_denied is expected to be info in /value/value_base.p
+            hp
     \-- save_as_default - section for function save_as_default is expected to be save in /value/value_base.php
     \-- del - section for function del is expected to be del in /value/value_base.php
     \-- order error - order of section construct and map has difference at api_mapper should be before row_mapper_sandbo
@@ -4742,8 +4745,11 @@
         \-- view_relation_list - delete all loaded view relations e.g. to delete all the links assigned to a view
     \-- del_by_user
         \-- db_cache - remove the cache entries of one user, because they reference the user row and are derived
-    \-- del_all
-        \-- db_cache - remove the cache entries of all users, because e.g. a default changed by an admin is part of the
+    \-- del_by_types
+        \-- db_cache - remove the cache entries of the given types of all users,
+                 because e.g. a default changed by an admin is
+    \-- del_sql_by_type_ids
+        \-- db_cache - create the sql statement to delete the cache entries of the given types of all users
     \-- del_sql_by_user
         \-- db_cache - create the sql statement to delete the cache entries of one user
     \-- fill

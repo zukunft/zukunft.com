@@ -54,6 +54,9 @@ class test_config_trees
 {
 
     // the keys of the test part of config.yaml, so that the tests name what they check
+    // the settings of the pod, which only an admin can change
+    const string SYSTEM = words::SYSTEM;
+    const string SYSTEM_TIP = 'the settings of the pod, which only an admin can change';
     const string DATABASE = 'database';
     const string DATABASE_TIP = 'the database settings of the master pod';
     const string RETRY = 'retry';
@@ -66,10 +69,15 @@ class test_config_trees
     const int MAX_DELAY_VALUE = 3600;
     // the number a user saves instead, to check the confirmation of the change
     const int MAX_DELAY_NEW = 1800;
-    // the id of the database value, which only the max delay and the types setting have, so a tree with
-    // an editing user shows the input for max delay only, because a boolean is not yet editable
+    // the id of the database value, which only the max delay, the types and the initial select setting have, so a
+    // tree with an editing user shows the input for the initial select entries only, because max delay is a setting
+    // of the pod for an admin and a boolean is not yet editable
     const int MAX_DELAY_ID = 12;
     const int TYPES_ID = 13;
+    const string SELECT_INITIAL = 'initial';
+    const int SELECT_INITIAL_ID = 14;
+    // the number a user saves instead, to check the confirmation of the change
+    const int SELECT_INITIAL_NEW = 4;
     const string SEC = words::SEC;
     // a key with one setting that is no unit and that has no database value
     const string ROW_LIMIT = 'row limit';
@@ -96,7 +104,7 @@ class test_config_trees
     // the top level keys of the three columns and a long list that is shown at once
     const string SELECT = words::SELECT;
     const string SELECT_TIP = 'the default number of entries of a selection list';
-    const array SELECT_ENTRIES = ['initial' => 5, 'suggested' => 3, 'more' => 20, 'columns' => 10, 'max' => 2000];
+    const array SELECT_ENTRIES = [self::SELECT_INITIAL => 5, 'suggested' => 3, 'more' => 20, 'columns' => 10, 'max' => 2000];
     const string TEST = words::TEST;
     const string TIMEOUT = 'timeout';
     const int TIMEOUT_VALUE = 30;
@@ -134,25 +142,34 @@ class test_config_trees
     function yaml(): array
     {
         return [
-            self::DATABASE => [
-                words::TOOLTIP_COMMENT => self::DATABASE_TIP,
-                self::RETRY => [
-                    self::START_DELAY => [
-                        self::SEC => self::START_DELAY_VALUE,
-                        words::TOOLTIP_COMMENT => self::START_DELAY_TIP,
+            self::SYSTEM => [
+                words::TOOLTIP_COMMENT => self::SYSTEM_TIP,
+                self::DATABASE => [
+                    words::TOOLTIP_COMMENT => self::DATABASE_TIP,
+                    self::RETRY => [
+                        self::START_DELAY => [
+                            self::SEC => self::START_DELAY_VALUE,
+                            words::TOOLTIP_COMMENT => self::START_DELAY_TIP,
+                        ],
+                        self::MAX_DELAY => [self::SEC => self::MAX_DELAY_VALUE],
                     ],
-                    self::MAX_DELAY => [self::SEC => self::MAX_DELAY_VALUE],
-                ],
-                self::ROW_LIMIT => [
-                    self::ROW_LIMIT_SETTING => self::ROW_LIMIT_VALUE,
-                    words::TOOLTIP_COMMENT => self::ROW_LIMIT_TIP,
-                ],
-                self::CACHE => [
-                    self::PAGE => [
-                        words::SYS_CONF_VALUE => true,
-                        words::TOOLTIP_COMMENT => self::PAGE_TIP,
+                    self::ROW_LIMIT => [
+                        self::ROW_LIMIT_SETTING => self::ROW_LIMIT_VALUE,
+                        words::TOOLTIP_COMMENT => self::ROW_LIMIT_TIP,
                     ],
-                    self::TYPES => [words::SYS_CONF_VALUE => true],
+                    self::CACHE => [
+                        self::PAGE => [
+                            words::SYS_CONF_VALUE => true,
+                            words::TOOLTIP_COMMENT => self::PAGE_TIP,
+                        ],
+                        self::TYPES => [words::SYS_CONF_VALUE => true],
+                    ],
+                ],
+                self::TEST => [
+                    self::TIMEOUT => [self::SEC => self::TIMEOUT_VALUE],
+                ],
+                self::POD => [
+                    self::POD_NAME => self::POD_NAME_VALUE,
                 ],
             ],
             self::USER => [
@@ -163,12 +180,6 @@ class test_config_trees
                 self::SCRIPT_KEY => self::SCRIPT_KEY_VALUE,
             ],
             self::SELECT => array_merge([words::TOOLTIP_COMMENT => self::SELECT_TIP], self::SELECT_ENTRIES),
-            self::TEST => [
-                self::TIMEOUT => [self::SEC => self::TIMEOUT_VALUE],
-            ],
-            self::POD => [
-                self::POD_NAME => self::POD_NAME_VALUE,
-            ],
         ];
     }
 
@@ -181,20 +192,21 @@ class test_config_trees
     function cfg(): config_numbers
     {
         $rows = [
-            $this->cfg_row([self::DATABASE, self::RETRY, self::START_DELAY, self::SEC], self::START_DELAY_DB),
-            $this->cfg_row([self::DATABASE, self::RETRY, self::MAX_DELAY, self::SEC], self::MAX_DELAY_VALUE, self::MAX_DELAY_ID),
-            $this->cfg_row([self::DATABASE, self::ROW_LIMIT, self::ROW_LIMIT_SETTING, self::EXTRA], self::ROW_LIMIT_VALUE),
-            $this->cfg_row([self::DATABASE, self::CACHE, self::PAGE], self::PAGE_DB),
-            $this->cfg_row([self::DATABASE, self::CACHE, self::TYPES], self::TYPES_DB, self::TYPES_ID),
+            $this->cfg_row([self::SYSTEM, self::DATABASE, self::RETRY, self::START_DELAY, self::SEC], self::START_DELAY_DB),
+            $this->cfg_row([self::SYSTEM, self::DATABASE, self::RETRY, self::MAX_DELAY, self::SEC], self::MAX_DELAY_VALUE, self::MAX_DELAY_ID),
+            $this->cfg_row([self::SYSTEM, self::DATABASE, self::ROW_LIMIT, self::ROW_LIMIT_SETTING, self::EXTRA], self::ROW_LIMIT_VALUE),
+            $this->cfg_row([self::SYSTEM, self::DATABASE, self::CACHE, self::PAGE], self::PAGE_DB),
+            $this->cfg_row([self::SYSTEM, self::DATABASE, self::CACHE, self::TYPES], self::TYPES_DB, self::TYPES_ID),
             [json_fields::PHRASES => $this->phrase_rows([self::USER, self::LANGUAGE]),
                 json_fields::TEXT_VALUE => self::LANGUAGE_VALUE],
             $this->cfg_row([self::USER, self::SCRIPT_KEY], self::SCRIPT_KEY_VALUE),
-            $this->cfg_row([self::TEST, self::TIMEOUT, self::SEC], self::TIMEOUT_VALUE),
-            [json_fields::PHRASES => $this->phrase_rows([self::POD, self::POD_NAME]),
+            $this->cfg_row([self::SYSTEM, self::TEST, self::TIMEOUT, self::SEC], self::TIMEOUT_VALUE),
+            [json_fields::PHRASES => $this->phrase_rows([self::SYSTEM, self::POD, self::POD_NAME]),
                 json_fields::TEXT_VALUE => self::POD_NAME_VALUE],
         ];
         foreach (self::SELECT_ENTRIES as $key => $number) {
-            $rows[] = $this->cfg_row([self::SELECT, $key], $number);
+            $id = ($key == self::SELECT_INITIAL) ? self::SELECT_INITIAL_ID : 0;
+            $rows[] = $this->cfg_row([self::SELECT, $key], $number, $id);
         }
         $cfg = new config_numbers($this->env->usr1);
         $cfg->set_cache_json($rows);
