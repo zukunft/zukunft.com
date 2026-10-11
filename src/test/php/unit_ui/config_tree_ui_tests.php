@@ -36,22 +36,26 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once html_paths::EXECUTE . 'system_page.php';
+include_once html_paths::HELPER . 'config_node.php';
 include_once html_paths::HELPER . 'config_tree.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'styles.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::SHARED_CONST . 'views.php';
+include_once html_paths::SHARED . 'json_fields.php';
 include_once html_paths::SHARED . 'url_var.php';
 include_once test_paths::CREATE . 'test_config_trees.php';
 
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_page;
 use Zukunft\ZukunftCom\main\php\web\frontend;
+use Zukunft\ZukunftCom\main\php\web\helper\config_node;
 use Zukunft\ZukunftCom\main\php\web\helper\config_tree;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\create\test_config_trees;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -68,6 +72,14 @@ class config_tree_ui_tests
         // start the test section (ts)
         $ts = 'unit ui html config tree ';
         $t->header($ts);
+
+        $t->subheader($ts . 'api mapper');
+
+        // negative: a malformed child of the api message is skipped instead of stopping the page
+        $test_name = 'a child that is no node is skipped';
+        $cfn = new config_node([json_fields::NAME => test_config_trees::RETRY,
+            json_fields::CONFIG_CHILDREN => [test_config_trees::SEC, [json_fields::NAME => test_config_trees::MAX_DELAY]]]);
+        $t->assert($test_name, array_map(fn(config_node $child) => $child->name, $cfn->children), [test_config_trees::MAX_DELAY]);
 
         $t->subheader($ts . 'search');
 
@@ -142,9 +154,13 @@ class config_tree_ui_tests
         $test_name = 'a key with html is shown as text';
         $t->assert_text_not_contains($test_name, $page, test_config_trees::SCRIPT_KEY);
         $t->assert_text_contains($test_name, $page, test_config_trees::SCRIPT_KEY_ESCAPED);
+        $sec_html = $html->span(test_config_trees::SEC, styles::CONFIG_UNIT);
         $test_name = 'a setting shows its value with the unit';
-        $t->assert_text_contains($test_name, $page,
-            '<dd>1' . $html->span(test_config_trees::SEC, styles::CONFIG_UNIT) . '</dd>');
+        $t->assert_text_contains($test_name, $page, '<dd>' . test_config_trees::MAX_DELAY_VALUE . $sec_html . '</dd>');
+        $test_name = '... and the config.yaml value behind a database value that differs';
+        $file_txt = $mtr->txt(msg_id::CONFIG_TREE_FILE_VALUE) . ' ' . test_config_trees::START_DELAY_VALUE . $sec_html;
+        $file_html = $html->span($file_txt, styles::CONFIG_FILE_VALUE);
+        $t->assert_text_contains($test_name, $page, '<dd>' . test_config_trees::START_DELAY_DB . $sec_html . $file_html . '</dd>');
         $test_name = 'a long tooltip gets a button with the full text';
         $t->assert_text_contains($test_name, $page, html_base::POPOVER_TARGET . '="' . config_tree::TIP_ID_PREFIX);
         // negative: a short tooltip is only the mouseover text

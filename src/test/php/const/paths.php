@@ -59,6 +59,9 @@ class paths
     const string UNIT_INT = TEST_PHP_PATH . 'integration' . DIRECTORY_SEPARATOR;   // for integration tests
     const string DEV = TEST_PHP_PATH . 'dev' . DIRECTORY_SEPARATOR;                // for test still in development
     const string DOCS = ROOT_PATH . 'docs' . DIRECTORY_SEPARATOR;                  // to check the doc consistency
+    // the docroot as the current folder of the root path, so the url path of a forward page
+    // e.g. api::SETTINGS_REL, which starts with a separator, can be added to name its file
+    const string DOCROOT = ROOT_PATH . '.';
 
 
     // main path for the test resources

@@ -306,6 +306,36 @@ class config_numbers extends value_list
     }
 
     /**
+     * get the config value whose phrases are exactly the given names, e.g. the value of one
+     * setting of the config tree by the keys of its yaml path; unlike get_by_names a value with
+     * more phrases e.g. of a setting below the given one never matches
+     *
+     * @param array $names the phrase names of the value e.g. the keys of the yaml path of a setting
+     * @return value_base|null the config value with exactly these phrases or null if there is none
+     */
+    function get_by_names_exact(array $names): ?value_base
+    {
+        $result = null;
+        $name_set = array_unique($names);
+        if ($this->lookup_rows == []) {
+            foreach ($this->lst() as $val) {
+                if ($result == null and $val->match_all($name_set) and $val->matches_context($name_set)) {
+                    $result = $val;
+                }
+            }
+        } else {
+            foreach ($this->lookup_rows as [$row_names, $raw_value, $is_text]) {
+                $same_count = (count($row_names) == count($name_set));
+                $is_exact = ($same_count and array_diff($name_set, array_keys($row_names)) == []);
+                if ($result == null and $is_exact) {
+                    $result = $this->lookup_value($raw_value, $is_text);
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
      * use the cached config json for the value lookups of this request (see get_by_names),
      * which is much faster than building all value and phrase objects upfront;
      * the complete objects are only built on demand (see fill_from_cache_json)

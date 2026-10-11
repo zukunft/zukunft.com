@@ -622,6 +622,7 @@ messages:
   config_tree_matches: "Treffer"
   config_tree_no_match: "keine Einstellung passt zur Suche"
   config_tree_scope_unknown: "diesen Teil der Konfiguration gibt es nicht"
+  config_tree_file_value: "in config.yaml"
   system_paste_table: "Tabelle ablegen"
   system_title_import: "Import"
   system_title_export: "Export"

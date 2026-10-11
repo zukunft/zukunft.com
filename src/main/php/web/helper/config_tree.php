@@ -362,14 +362,36 @@ class config_tree
 
     /**
      * @param config_node $cfn the setting to show
-     * @return string the html code of the value with the unit in its own lighter style e.g. "1 sec"
+     * @return string the html code of the current value e.g. "2 sec" and the config.yaml value
+     *                behind it if the database differs or has no value e.g. "in config.yaml 1 sec"
      */
     private function value_html(config_node $cfn): string
     {
+        global $mtr;
         $html = new html_base();
-        $result = $html->esc($cfn->value);
-        if ($cfn->unit != '') {
-            $result .= $html->span($html->esc($cfn->unit), styles::CONFIG_UNIT);
+        $result = '';
+        if ($cfn->value != '') {
+            $result = $this->with_unit($cfn->value, $cfn->unit);
+        }
+        if ($cfn->file_value != '') {
+            $label = $mtr->txt(msg_id::CONFIG_TREE_FILE_VALUE);
+            $file_txt = $label . ' ' . $this->with_unit($cfn->file_value, $cfn->unit);
+            $result .= $html->span($file_txt, styles::CONFIG_FILE_VALUE);
+        }
+        return $result;
+    }
+
+    /**
+     * @param string $value the value of a setting as text
+     * @param string $unit the unit of the setting e.g. "sec" or ''
+     * @return string the html code of the value with the unit in its own lighter style e.g. "1 sec"
+     */
+    private function with_unit(string $value, string $unit): string
+    {
+        $html = new html_base();
+        $result = $html->esc($value);
+        if ($unit != '') {
+            $result .= $html->span($html->esc($unit), styles::CONFIG_UNIT);
         }
         return $result;
     }

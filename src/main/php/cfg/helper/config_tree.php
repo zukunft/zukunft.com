@@ -6,7 +6,8 @@
     ----------------------------
 
     the tree keeps the key order and the tooltips of config.yaml, which the values of the
-    configuration in the database lose, so that the frontend can show the configuration as a tree
+    configuration in the database lose, and adds the current database value of each setting,
+    so that the frontend can show the configuration as a tree
 
     $cft is the suggested var name
 
@@ -40,6 +41,7 @@ namespace Zukunft\ZukunftCom\main\php\cfg\helper;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_CONST . 'files.php';
+include_once paths::MODEL_HELPER . 'config_numbers.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED_CONST . 'triples.php';
@@ -76,6 +78,12 @@ class config_tree
         words::DAYS,
     ];
 
+    // the keys of config.yaml above the shown tree, which are also phrases of each config value
+    const array ROOT_KEYS = [
+        words::THIS_SYSTEM,
+        triples::SYSTEM_CONFIG,
+    ];
+
 
     /*
      * api
@@ -83,18 +91,26 @@ class config_tree
 
     /**
      * the tree of the system configuration below "zukunft.com > system configuration" as the
-     * api message for the frontend; the same for every user, because it shows config.yaml only
+     * api message for the frontend with the structure, the order and the tooltips of config.yaml
+     * and the current database value of each setting
      *
-     * @param user_message $msg to report that config.yaml cannot be read
-     * @return string the json of the top level nodes or '' if config.yaml cannot be read
+     * @param config_numbers $cfg the loaded config values of the requesting user (api part "all")
+     * @param user_message $msg to report that config.yaml cannot be read or converted to json
+     * @return string the json of the top level nodes or '' if config.yaml cannot be read or converted
      */
-    function api_json(user_message $msg): string
+    function api_json(config_numbers $cfg, user_message $msg): string
     {
         $result = '';
         $yaml = yaml_parse_file(files::SYSTEM_CONFIG);
         if (is_array($yaml)) {
             $sys_cfg = $yaml[words::THIS_SYSTEM][triples::SYSTEM_CONFIG] ?? [];
-            $result = json_encode($this->nodes($sys_cfg));
+            $json = json_encode($this->nodes($sys_cfg, $cfg));
+            // e.g. a text of config.yaml that is no valid utf-8, which the user cannot fix
+            if ($json === false) {
+                log_err_msg('config tree cannot be converted to json: ' . json_last_error_msg(), $msg);
+            } else {
+                $result = $json;
+            }
         } else {
             $msg->add_id(msg_id::CONFIG_NOT_LOADED);
         }
@@ -111,14 +127,16 @@ class config_tree
      * that only describe the parent key e.g. its tooltip-comment
      *
      * @param array $yaml the parsed yaml below one key e.g. below "system configuration"
+     * @param config_numbers $cfg the loaded config values whose phrases are the keys of the yaml path
+     * @param array $path the yaml keys above the given part, which are also phrases of its values
      * @return array the json array of the nodes, each with name and optional value, unit, tooltip and children
      */
-    function nodes(array $yaml): array
+    function nodes(array $yaml, config_numbers $cfg, array $path = self::ROOT_KEYS): array
     {
         $result = [];
         foreach ($yaml as $key => $entry) {
             if (!in_array($key, self::META_KEYS, true)) {
-                $result[] = $this->node((string)$key, $entry);
+                $result[] = $this->node((string)$key, $entry, $cfg, $path);
             }
         }
         return $result;
@@ -132,11 +150,14 @@ class config_tree
      *
      * @param string $name the yaml key e.g. "start delay"
      * @param mixed $entry the yaml content of the key, a number or text for a plain setting
+     * @param config_numbers $cfg the loaded config values
+     * @param array $path the yaml keys above this key
      * @return array the json node of the key
      */
-    private function node(string $name, mixed $entry): array
+    private function node(string $name, mixed $entry, config_numbers $cfg, array $path): array
     {
         $result = [json_fields::NAME => $name];
+        $node_path = array_merge($path, [$name]);
         if (is_array($entry)) {
             $settings = array_diff_key($entry, array_flip(self::META_KEYS));
             $unit = $this->unit_key($entry, $settings);
@@ -144,16 +165,57 @@ class config_tree
                 $result[json_fields::DESCRIPTION] = $this->text($entry[words::TOOLTIP_COMMENT]);
             }
             if (array_key_exists(words::SYS_CONF_VALUE, $entry)) {
-                $result[json_fields::TEXT_VALUE] = $this->text($entry[words::SYS_CONF_VALUE]);
+                $result = $this->with_value($result, $entry[words::SYS_CONF_VALUE], $node_path, $cfg);
             }
             if ($unit != '') {
-                $result[json_fields::TEXT_VALUE] = $this->text($settings[$unit]);
+                $result = $this->with_value($result, $settings[$unit], array_merge($node_path, [$unit]), $cfg);
                 $result[json_fields::CONFIG_UNIT] = $unit;
             } elseif ($settings != []) {
-                $result[json_fields::CONFIG_CHILDREN] = $this->nodes($settings);
+                $result[json_fields::CONFIG_CHILDREN] = $this->nodes($settings, $cfg, $node_path);
             }
         } else {
-            $result[json_fields::TEXT_VALUE] = $this->text($entry);
+            $result = $this->with_value($result, $entry, $node_path, $cfg);
+        }
+        return $result;
+    }
+
+    /**
+     * add the current database value of a setting and its config.yaml value if they differ
+     *
+     * @param array $node the json node of the setting
+     * @param mixed $file_value the value of the setting in config.yaml e.g. true
+     * @param array $names the yaml keys of the setting, which are exactly the phrases of its value
+     * @param config_numbers $cfg the loaded config values
+     * @return array the json node with the database value and the config.yaml value if it differs or no database value exists
+     */
+    private function with_value(array $node, mixed $file_value, array $names, config_numbers $cfg): array
+    {
+        $db_value = $cfg->get_by_names_exact($names)?->number();
+        $is_same = ($db_value !== null and $this->is_same($file_value, $db_value));
+        if ($is_same) {
+            // the text of config.yaml, so that e.g. a boolean is shown as true and not as 1
+            $node[json_fields::TEXT_VALUE] = $this->text($file_value);
+        } else {
+            if ($db_value !== null) {
+                $node[json_fields::TEXT_VALUE] = (string)$db_value;
+            }
+            $node[json_fields::CONFIG_FILE_VALUE] = $this->text($file_value);
+        }
+        return $node;
+    }
+
+    /**
+     * @param mixed $file_value the value of config.yaml, which the import saves as a text or as a number
+     * @param float|string $db_value the current database value of the same setting
+     * @return bool true if the database value is the config.yaml value e.g. 1 for true
+     */
+    private function is_same(mixed $file_value, float|string $db_value): bool
+    {
+        $result = false;
+        if (is_string($file_value)) {
+            $result = ((string)$db_value === $file_value);
+        } elseif (is_numeric($db_value)) {
+            $result = ((float)$db_value == (float)$file_value);
         }
         return $result;
     }

@@ -234,7 +234,7 @@ class config_tests
         $test_name = 'the tooltip-comment is the tooltip of its key';
         $t_cft = new test_config_trees($t);
         $cft = new config_tree();
-        $nodes = $cft->nodes($t_cft->yaml());
+        $nodes = $cft->nodes($t_cft->yaml(), $t_cft->cfg());
         $db_node = $t_cft->node_by_name($nodes, test_config_trees::DATABASE);
         $t->assert($test_name, $db_node[json_fields::DESCRIPTION] ?? '', test_config_trees::DATABASE_TIP);
         $test_name = '... and never a key of its own';
@@ -244,10 +244,24 @@ class config_tests
         $t->assert($test_name, $lan_node[json_fields::TEXT_VALUE] ?? '', test_config_trees::LANGUAGE_VALUE);
         $test_name = '... and never a key of its own';
         $t->assert($test_name, $t_cft->node_by_name($nodes, words::SYS_CONF_VALUE), []);
-        $test_name = 'the only setting of a key is its value with the setting key as unit';
+        // negative: the same value in the database needs no config.yaml value
+        $test_name = '... without the config.yaml value if the database has the same value';
+        $t->assert($test_name, $lan_node[json_fields::CONFIG_FILE_VALUE] ?? '', '');
+        $test_name = 'the only setting of a key is its database value with the setting key as unit';
         $delay_node = $t_cft->node_by_name($nodes, test_config_trees::START_DELAY);
-        $t->assert($test_name, $delay_node[json_fields::TEXT_VALUE] ?? '', '1');
+        $t->assert($test_name, $delay_node[json_fields::TEXT_VALUE] ?? '', (string)test_config_trees::START_DELAY_DB);
         $t->assert($test_name, $delay_node[json_fields::CONFIG_UNIT] ?? '', test_config_trees::SEC);
+        $test_name = '... with the config.yaml value if the database value differs';
+        $t->assert($test_name, $delay_node[json_fields::CONFIG_FILE_VALUE] ?? '', (string)test_config_trees::START_DELAY_VALUE);
+        // negative: a value with one more phrase belongs to another setting, so the row limit has no database value
+        $test_name = 'a setting without a database value has only the config.yaml value';
+        $default_node = $t_cft->node_by_name($nodes, test_config_trees::ROW_LIMIT_SETTING);
+        $t->assert($test_name, $default_node[json_fields::TEXT_VALUE] ?? '', '');
+        $t->assert($test_name, $default_node[json_fields::CONFIG_FILE_VALUE] ?? '', (string)test_config_trees::ROW_LIMIT_VALUE);
+        $test_name = 'the config value of exactly the given phrases ignores a value with more phrases';
+        $default_names = array_merge(config_tree::ROOT_KEYS,
+            [test_config_trees::DATABASE, test_config_trees::ROW_LIMIT, test_config_trees::ROW_LIMIT_SETTING]);
+        $t->assert_true($test_name, $t_cft->cfg()->get_by_names_exact($default_names) === null);
         // negative: a key with two settings is a group without a value or a unit
         $test_name = 'a key with two settings has no value and no unit';
         $retry_node = $t_cft->node_by_name($nodes, test_config_trees::RETRY);
@@ -259,7 +273,7 @@ class config_tests
         $test_name = '... but its settings in the order of config.yaml';
         $retry_names = array_column($retry_node[json_fields::CONFIG_CHILDREN] ?? [], json_fields::NAME);
         $t->assert($test_name, $retry_names, [test_config_trees::START_DELAY, test_config_trees::MAX_DELAY]);
-        $test_name = 'a boolean setting is shown as true';
+        $test_name = 'a boolean setting saved as 1 is shown as true';
         $page_node = $t_cft->node_by_name($nodes, test_config_trees::PAGE);
         $t->assert($test_name, $page_node[json_fields::TEXT_VALUE] ?? '', 'true');
 

@@ -700,11 +700,28 @@ a:hover {
     padding-left: 0;
     margin: 0.375rem 0 0;
 }
-.config-column > .config-tree > li > .config-node {
+.config-column > .config-tree > li > .config-node,
+.config-column > .config-tree > li > dl {
     background: #fff;
     border: 1px solid #b9c6d6;
     border-radius: 6px;
     padding: 0.5rem 0.875rem;
+}
+/* a top level key without keys below it e.g. "job" with only its tooltip is a card like the
+   others, with its name behind the place of the +/- marker and without the row line */
+.config-column > .config-tree > li > dl {
+    margin-left: 0;
+    padding-left: calc(0.875rem + 1.1em);
+}
+.config-column > .config-tree > li > dl > dt {
+    font-weight: 500;
+    color: #274b8f;
+}
+.config-column > .config-tree > li > dl > dt,
+.config-column > .config-tree > li > dl > dd {
+    border-bottom: none;
+    padding-top: 0;
+    padding-bottom: 0;
 }
 /* each level below a key starts one step to the right, marked by a thin line */
 .config-node > .config-tree {
@@ -767,6 +784,12 @@ a:hover {
     color: #9ea09e;
     font-size: 0.8rem;
     margin-left: 0.25rem;
+}
+/* the config.yaml value behind a database value that differs from it */
+.config-file-value {
+    color: #9ea09e;
+    font-size: 0.8rem;
+    margin-left: 0.5rem;
 }
 .config-hit-head {
     display: flex;

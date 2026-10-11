@@ -90,9 +90,11 @@ if ($db_con->is_open()) {
 
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
     if ($usr->id > 0 and $part == api::CONFIG_TREE) {
-        // the read only tree of config.yaml is the same for every user, also for an ip user
+        // the read only tree of config.yaml with the current values of the all part, also for an ip user
+        $cfg_lst = new config_numbers($usr);
+        $cfg_lst->load_cfg($msg, null, $usr);
         $cft = new config_tree();
-        $result = $cft->api_json($msg);
+        $result = $cft->api_json($cfg_lst, $msg);
     } elseif ($usr->id > 0) {
         $cfg_lst = new config_numbers($usr);
         if ($part == api::CONFIG_ALL or $part == '') {

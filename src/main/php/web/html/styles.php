@@ -153,6 +153,7 @@ class styles
     const string CONFIG_COLUMNS = 'config-columns';
     const string CONFIG_COLUMN = 'config-column';
     const string CONFIG_UNIT = 'config-unit';
+    const string CONFIG_FILE_VALUE = 'config-file-value';
 
 
 }

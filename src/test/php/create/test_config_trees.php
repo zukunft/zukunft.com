@@ -36,12 +36,14 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
+include_once paths::MODEL_HELPER . 'config_numbers.php';
 include_once paths::MODEL_HELPER . 'config_tree.php';
 include_once html_paths::HELPER . 'config_tree.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\helper\config_numbers;
 use Zukunft\ZukunftCom\main\php\cfg\helper\config_tree;
 use Zukunft\ZukunftCom\main\php\web\helper\config_tree as config_tree_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
@@ -57,11 +59,18 @@ class test_config_trees
     const string RETRY = 'retry';
     const string START_DELAY = 'start delay';
     const string START_DELAY_TIP = 'initial delay in seconds for the first connection retry';
+    const int START_DELAY_VALUE = 1;
+    // the database value that differs from config.yaml, so the tree shows both
+    const int START_DELAY_DB = 2;
     const string MAX_DELAY = 'max delay';
+    const int MAX_DELAY_VALUE = 3600;
     const string SEC = words::SEC;
-    // a key with one setting that is no unit
+    // a key with one setting that is no unit and that has no database value
     const string ROW_LIMIT = 'row limit';
     const string ROW_LIMIT_SETTING = words::DEFAULT;
+    const int ROW_LIMIT_VALUE = 1000;
+    // a phrase of a database value, which makes it a value with more phrases than the row limit setting
+    const string EXTRA = 'extra';
     const string CACHE = 'cache';
     const string PAGE = 'page';
     // longer than config_tree_ui::TOOLTIP_MAX, so that the full text is shown by a button
@@ -114,12 +123,12 @@ class test_config_trees
                 words::TOOLTIP_COMMENT => self::DATABASE_TIP,
                 self::RETRY => [
                     self::START_DELAY => [
-                        self::SEC => 1,
+                        self::SEC => self::START_DELAY_VALUE,
                         words::TOOLTIP_COMMENT => self::START_DELAY_TIP,
                     ],
-                    self::MAX_DELAY => [self::SEC => 3600],
+                    self::MAX_DELAY => [self::SEC => self::MAX_DELAY_VALUE],
                 ],
-                self::ROW_LIMIT => [self::ROW_LIMIT_SETTING => 1000],
+                self::ROW_LIMIT => [self::ROW_LIMIT_SETTING => self::ROW_LIMIT_VALUE],
                 self::CACHE => [
                     self::PAGE => [
                         words::SYS_CONF_VALUE => true,
@@ -145,12 +154,51 @@ class test_config_trees
     }
 
     /**
+     * @return config_numbers the database values of the test part of config.yaml as the cached json
+     *                        rows of the api part "all": one differs from config.yaml, two are the same
+     *                        and the row limit setting has only a value with one more phrase
+     */
+    function cfg(): config_numbers
+    {
+        $cfg = new config_numbers($this->env->usr1);
+        $cfg->set_cache_json([
+            $this->cfg_row([self::DATABASE, self::RETRY, self::START_DELAY, self::SEC], self::START_DELAY_DB),
+            $this->cfg_row([self::DATABASE, self::RETRY, self::MAX_DELAY, self::SEC], self::MAX_DELAY_VALUE),
+            $this->cfg_row([self::DATABASE, self::ROW_LIMIT, self::ROW_LIMIT_SETTING, self::EXTRA], self::ROW_LIMIT_VALUE),
+            $this->cfg_row([self::DATABASE, self::CACHE, self::PAGE], 1),
+            [json_fields::PHRASES => $this->phrase_rows([self::USER, self::LANGUAGE]),
+                json_fields::TEXT_VALUE => self::LANGUAGE_VALUE],
+        ]);
+        return $cfg;
+    }
+
+    /**
      * @return config_tree_ui the frontend tree of the test part of config.yaml as the backend sends it
      */
     function tree_ui(): config_tree_ui
     {
         $cft = new config_tree();
-        return new config_tree_ui($cft->nodes($this->yaml()));
+        return new config_tree_ui($cft->nodes($this->yaml(), $this->cfg()));
+    }
+
+    /**
+     * @param array $keys the yaml keys of a setting below "system configuration"
+     * @param int $number the database value of the setting
+     * @return array the cached json row of the number value of the setting
+     */
+    private function cfg_row(array $keys, int $number): array
+    {
+        return [json_fields::PHRASES => $this->phrase_rows($keys), json_fields::NUMBER => $number];
+    }
+
+    /**
+     * @param array $keys the yaml keys of a setting below "system configuration"
+     * @return array the json phrases of the value, which are the keys of the whole yaml path
+     */
+    private function phrase_rows(array $keys): array
+    {
+        $names = array_merge(config_tree::ROOT_KEYS, $keys);
+        return array_map(fn(string $name) => [json_fields::NAME => $name], $names);
     }
 
     /**

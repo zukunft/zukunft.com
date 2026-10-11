@@ -94,6 +94,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\enum\table_orders;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
+use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\main\php\shared\types\component_types as comp_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\formula_types;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
@@ -371,9 +372,12 @@ class base_ui_tests
 
         // the static forward pages in the docroot open the view of api::FORWARD_VIEWS, so a changed
         // view id is written to the page by the next run with AUTO_UPDATE_TEST_FILES
-        foreach (api::FORWARD_VIEWS as $forward => $msk_id) {
+        $test_name = 'each forward page with a view is listed as a file';
+        $t->assert($test_name, array_keys(test_files::FORWARD_PAGES), array_keys(api::FORWARD_VIEWS));
+        foreach (test_files::FORWARD_PAGES as $forward => $file) {
+            $msk_id = api::FORWARD_VIEWS[$forward] ?? 0;
             $test_name = 'the forward page ' . $forward . ' opens the view ' . $msk_id . ' with the url vars of the request';
-            $t->assert_file($test_name, $html->forward_page($msk_id), ROOT_PATH . ltrim($forward, DIRECTORY_SEPARATOR));
+            $t->assert_file($test_name, $html->forward_page($msk_id), $file);
         }
 
         // the login link forwards a '9'-prefixed back target of the current page (the logout

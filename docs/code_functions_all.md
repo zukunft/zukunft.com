@@ -5064,6 +5064,8 @@
         \-- config_numbers - get a frontend config value selected by the phrase names
     \-- get_by_names
         \-- config_numbers - get the first config value that is assigned to all given phrase names
+    \-- get_by_names_exact
+        \-- config_numbers - get the config value whose phrases are exactly the given names, e.g. the value of one
     \-- set_cache_json
         \-- config_numbers - use the cached config json for the value lookups of this request (see get_by_names),
     \-- unique_value

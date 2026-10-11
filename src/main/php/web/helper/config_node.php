@@ -51,8 +51,10 @@ class config_node
      */
 
     public string $name = '';
-    // the value of a setting as text, '' for a group
+    // the current database value of a setting as text, '' for a group or a setting without a database value
     public string $value = '';
+    // the value of config.yaml, '' if the database value is the same
+    public string $file_value = '';
     // the unit of the value e.g. "sec", '' if the value has none
     public string $unit = '';
     // the tooltip-comment of the key in config.yaml
@@ -74,18 +76,22 @@ class config_node
     }
 
     /**
-     * @param array $json the node of the api message with name, value, unit, tooltip and children
+     * @param array $json the node of the api message with name, value, config.yaml value, unit, tooltip and children
      * @return void
      */
     function api_mapper(array $json): void
     {
         $this->name = (string)($json[json_fields::NAME] ?? '');
         $this->value = (string)($json[json_fields::TEXT_VALUE] ?? '');
+        $this->file_value = (string)($json[json_fields::CONFIG_FILE_VALUE] ?? '');
         $this->unit = (string)($json[json_fields::CONFIG_UNIT] ?? '');
         $this->tooltip = (string)($json[json_fields::DESCRIPTION] ?? '');
         $this->children = [];
         foreach ($json[json_fields::CONFIG_CHILDREN] ?? [] as $child_json) {
-            $this->children[] = new config_node($child_json);
+            // skipped like a malformed top level node (see config_tree::api_mapper), so a broken api message never stops the page
+            if (is_array($child_json)) {
+                $this->children[] = new config_node($child_json);
+            }
         }
     }
 

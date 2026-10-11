@@ -223,6 +223,8 @@ class json_fields
     // e.g. "sec" for "start delay: {sec: 1}" and the keys below it in the order of config.yaml
     const string CONFIG_UNIT = 'unit';
     const string CONFIG_CHILDREN = 'children';
+    // the value of a setting in config.yaml, sent only if the database value differs or is missing
+    const string CONFIG_FILE_VALUE = 'file_value';
 
     // the child id used e.g. for the child view of view relations
     const string CHILD_ID = 'child_id';

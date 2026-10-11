@@ -201,6 +201,7 @@ messages:
   config_tree_matches: "matches"
   config_tree_no_match: "no setting matches the search"
   config_tree_scope_unknown: "this part of the configuration does not exist"
+  config_tree_file_value: "in config.yaml"
   system_title_user: "User"
   system_title_verb: "Verb"
   system_title_view: "view"

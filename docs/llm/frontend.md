@@ -376,7 +376,10 @@ has to be added together with the paged version.
 The settings tree of the system configuration (`views::SYSTEM_CONFIG_ID`, the
 navbar "settings" link, `web/helper/config_tree`) is the one exception: it is
 the read only `config.yaml` itself, which the backend sends in its key order
-(`api/config?1=tree`, `cfg/helper/config_tree`), and every level shows all its
+(`api/config?1=tree`, `cfg/helper/config_tree`) with the current database value
+of each setting from the config part "all"; a value is found by exactly the keys
+of its yaml path (`config_numbers::get_by_names_exact`), and the `config.yaml`
+value is shown behind it only if the database differs or has no value. Every level shows all its
 entries without "more" steps, because the whole config is assumed to always fit
 on one page. The top level keys are cards in up to
 three columns (`config_tree::COLUMN_KEYS`: select, user, then test with the other
