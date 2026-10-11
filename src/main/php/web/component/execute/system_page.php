@@ -681,7 +681,8 @@ class system_page extends component
 
     /**
      * the tree of the system configuration with the search and the scope of the url,
-     * which also an ip user without login can see, but only a logged-in user can change
+     * which also an ip user without login can see, but only a logged-in user can change for the own
+     * and an admin for all users
      *
      * @param user_message $msg to report a problem of the tree or config load
      * @param array $url_arr the url vars of the page with the search (url_var::PATTERN) and the scope (url_var::CONFIG_PART)
@@ -698,6 +699,7 @@ class system_page extends component
         $scope = (string)($url_arr[url_var::CONFIG_PART] ?? '');
         // the same predicate as for the own page, because a change is saved as the overwrite of the user
         $cft->can_edit = frontend::shows_personal_page($msg);
+        $cft->set_default = $this->is_admin($msg);
         return $cft->html($pattern, $scope);
     }
 

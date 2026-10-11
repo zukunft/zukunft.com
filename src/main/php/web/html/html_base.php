@@ -3193,7 +3193,15 @@ class html_base
         return '<' . self::BUTTON . ' ' . self::TYPE . '="' . $typ . '" ' . self::CLASS_HTML . '="' . $class . '">' . $txt . '</' . self::BUTTON . '>';
     }
 
-    function button_bs(string $text, string $style = '', string $type = '', string $name = ''): string
+    /**
+     * @param string $text the html code shown on the button e.g. a translated text or an icon
+     * @param string $style the bootstrap button style, '' for the outlined success style
+     * @param string $type the button type, '' for a submit button
+     * @param string $name the url key that the button posts, '' for none
+     * @param string $label the accessible name and mouseover text of a button that shows only an icon, '' for none
+     * @return string the html code of the button
+     */
+    function button_bs(string $text, string $style = '', string $type = '', string $name = '', string $label = ''): string
     {
         if ($style == '') {
             $style = self::BS_BTN_SUCCESS;
@@ -3206,7 +3214,10 @@ class html_base
         // a named submit button posts its name as a url key (e.g. POST_SUBMIT) so the entry point can
         // tell a data-changing submit apart from a plain navigation and run url_to_action
         $name = $name == '' ? '' : ' ' . self::NAME . '="' . $name . '"';
-        return '<' . self::BUTTON . $class . $type . $name . '>' . $text . '</' . self::BUTTON . '>';
+        // a screen reader has no text to read on an icon, so the label names the action
+        $label_txt = htmlspecialchars($label, ENT_QUOTES);
+        $label = $label == '' ? '' : ' ' . self::ARIA_LABEL . '="' . $label_txt . '" ' . self::TITLE_HTML . '="' . $label_txt . '"';
+        return '<' . self::BUTTON . $class . $type . $name . $label . '>' . $text . '</' . self::BUTTON . '>';
     }
 
     /**

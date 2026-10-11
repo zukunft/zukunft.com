@@ -266,6 +266,7 @@ class value_base extends sandbox_value
 
     // field for user interaction
     public ?string $usr_value = null;     // the raw value as the user has entered it including formatting chars such as the thousand separator
+    public bool $set_default = false;     // true if an admin saves the value as the default of all users (see save_as_default)
 
 
     /*
@@ -313,6 +314,7 @@ class value_base extends sandbox_value
         $this->set_protection_id(null);
 
         $this->usr_value = '';
+        $this->set_default = false;
     }
 
     /**
@@ -391,6 +393,8 @@ class value_base extends sandbox_value
         if (array_key_exists(json_fields::ID, $api_json)) {
             $this->set_id($api_json[json_fields::ID]);
         }
+        // only the request, the save checks if the user is an admin
+        $this->set_default = (($api_json[json_fields::SET_DEFAULT] ?? false) === true);
         // the phrases define the value, so their group id wins over the id 0 sent for a new value;
         // an empty list (the api to the frontend omits the phrases by default) keeps the given id
         if (array_key_exists(json_fields::PHRASES, $api_json)) {
@@ -2220,6 +2224,10 @@ class value_base extends sandbox_value
         if ($this->change_blocked($msg)) {
             return false;
         }
+        // an admin changes the value for all users without an own overwrite and not the own overwrite
+        if ($this->set_default) {
+            return $this->save_as_default($msg);
+        }
 
         // init
         $msg_reload = $mtr->txt(msg_id::RELOAD);
@@ -2307,6 +2315,54 @@ class value_base extends sandbox_value
         }
 
         return $msg->is_ok();
+    }
+
+    /**
+     * save the number as the standard value that every user without an own overwrite gets, e.g. the setting
+     * of an admin for the whole pod; the owner of the standard row stays, so that e.g. a later import of
+     * config.yaml by the system user still changes the standard row, and the own overwrite of the admin is
+     * removed, so that the admin sees the new standard value
+     *
+     * @param user_message $msg to report that the user is no admin or why the save has failed
+     * @return bool true if the standard value has been saved
+     */
+    function save_as_default(user_message $msg): bool
+    {
+        global $db_con;
+        if (!$this->get_user()->is_admin()) {
+            $msg->add(msg_id::VALUE_SET_DEFAULT_DENIED, [msg_id::VAR_VALUE => $this->dsp_id()]);
+        } else {
+            $std_rec = $this->clone_all();
+            $std_rec->reset();
+            $std_rec->set_user($this->get_user());
+            $std_rec->load_standard($this->id(), $msg);
+            // only the number of the standard row changes, so that no other field of the request overwrites it
+            $new_std = $std_rec->clone_all();
+            $new_std->set_value($this->get_value());
+            $qp = $new_std->sql_update($db_con->sql_creator(), $std_rec, $msg, new sql_type_list([sql_type::LOG]));
+            if ($msg->is_ok() and $qp != null) {
+                $db_con->update($qp, 'update and log the default of ' . $this->dsp_id(), $msg);
+            }
+            $this->del_own_overwrite($msg);
+        }
+        return $msg->is_ok();
+    }
+
+    /**
+     * @param user_message $msg to report why the own overwrite could not be removed
+     * @return void the own overwrite of the user of this value is removed with its change log, if there is one
+     */
+    private function del_own_overwrite(user_message $msg): void
+    {
+        if ($msg->is_ok()) {
+            $db_rec = $this->clone_all();
+            $db_rec->reset();
+            $db_rec->set_user($this->get_user());
+            $db_rec->load_by_id($this->id(), $msg);
+            if ($db_rec->has_usr_cfg()) {
+                $db_rec->del_usr_cfg($msg);
+            }
+        }
     }
 
     /**

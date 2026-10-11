@@ -380,6 +380,21 @@ class db_cache extends db_object_seq_id_user
     }
 
     /**
+     * remove the cache entries of all users, because e.g. a default changed by an admin is part of the
+     * cached config of every user; derived data that the next request creates again (see del_by_user)
+     *
+     * @param user_message $msg to report a problem of the delete
+     * @return bool true if the cache entries have been removed
+     */
+    function del_all(user_message $msg): bool
+    {
+        global $db_con;
+
+        $qp = $db_con->sql_creator()->del_sql_all(self::class);
+        return $db_con->delete($qp, 'all cache entries', $msg);
+    }
+
+    /**
      * create the sql statement to delete the cache entries of one user
      *
      * @param sql_creator $sc with the target db_type set

@@ -613,6 +613,29 @@ class value_tests
         $test_name = 'the admin protection of the new value is not reported';
         $t->assert($test_name, $msg->all_message_text(), '');
 
+        $t->subheader($ts . 'set default');
+        // the default of all users is the decision of an admin, so the request of a normal user is refused before any database access
+        $test_name = 'a normal user cannot set the default of a value for all users';
+        $msg = new user_message($t->usr_normal);
+        $val_def = $t_val->value($msg);
+        $val_def->set_user($t->usr_normal);
+        $t->assert_false($test_name, $val_def->save_as_default($msg));
+        $test_name = '... and is told why';
+        $t->assert_false($test_name, $msg->is_ok());
+        $test_name = 'the request to set the default comes with the api message';
+        $msg = new user_message($t->usr_admin);
+        $val_api = new value($t->usr_admin);
+        $val_api->api_mapper([json_fields::ID => $val_def->id(), json_fields::SET_DEFAULT => true], $msg);
+        $t->assert_true($test_name, $val_api->set_default);
+        // negative: without the request the value is saved as the own overwrite
+        $test_name = '... and without it the own overwrite is saved';
+        $val_api->api_mapper([json_fields::ID => $val_def->id()], $msg);
+        $t->assert_false($test_name, $val_api->set_default);
+        $test_name = 'the frontend sends the request of the settings page to the backend';
+        $val_ui = new value_ui();
+        $val_ui->url_mapper([url_var::ID => $val_def->id(), url_var::SET_DEFAULT => url_var::TRUE], $msg_ui);
+        $t->assert_true($test_name, $val_ui->api_array([], $msg_ui)[json_fields::SET_DEFAULT] ?? false);
+
         $t->subheader($ts . 'read access (share)');
         // a non-public value must not be disclosed to another user loaded by id (idor);
         // see value::is_readable_by and value_list::filter_readable_by

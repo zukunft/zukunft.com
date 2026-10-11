@@ -394,7 +394,11 @@ without the confirm view, and the user's cached pages and config values are
 dropped (`frontend::drop_cached_pages`). The page after the save confirms in
 green which setting has changed from what to what
 (`frontend::setting_saved_text`, from `url_var::CONFIG_KEY` and the `'8'`
-value of the form).
+value of the form). An admin's form also sends `url_var::SET_DEFAULT`, so the
+number becomes the default of all users without an own overwrite
+(`value_base::save_as_default`: the standard row with its change log, the owner
+stays, the admin's own overwrite is removed) and the cached pages and config
+values of all users are dropped.
 
 ## "… more" is always a link that shows more
 

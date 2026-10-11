@@ -14,7 +14,9 @@ It is a data decision for you, as noted before.
 
 the 'tree' config api (cfg/helper/config_tree::api_json) parses config.yaml on each request; the settings page cache hides this for now, but the parsed tree could be cached like the config values and dropped when config.yaml changes
 
-a change of a user drops the own cached config values (frontend::drop_cached_pages), but a change of the standard data by a system user leaves the cached config values of all other users until CACHE_MAX_AGE, because db_cache has no del_all with its sql fixture yet; with CACHE_LOCATION file the config cache file is never dropped by a value change, only by a newer config.yaml (config_numbers::is_file_cache_valid)
+with CACHE_LOCATION file the config cache file is never dropped by a value change, only by a newer config.yaml (config_numbers::is_file_cache_valid), unlike the database cache (frontend::drop_cached_pages)
+
+the settings tree shows the config.yaml value as "default" behind a value that differs, but after an admin has changed the default in the database the default is the database standard value; the api could send the standard value besides the value of the user, so the tree shows the real default. The confirmation of an admin names the number that the admin has seen, which can be the own overwrite and not the previous default
 
 a boolean setting is shown as true or false and therefore not yet editable on the settings page (web/helper/config_tree::is_editable); it needs a true / false selector that saves 1 or 0. A text setting e.g. the language needs a text input. After a save the page shows the whole tree, so the search and the scope of the page could be kept as '9'-prefixed back vars
 

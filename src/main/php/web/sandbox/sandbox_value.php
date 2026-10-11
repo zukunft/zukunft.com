@@ -131,6 +131,8 @@ class sandbox_value extends sandbox
 
     // true if the user has done no personal overwrites which is the default case
     private bool $is_std = true;
+    // true if an admin saves the value as the default of all users and not as the own overwrite
+    public bool $set_default = false;
 
 
     /*
@@ -199,6 +201,8 @@ class sandbox_value extends sandbox
             if (array_key_exists(url_var::VALUE_GEO, $url_array)) {
                 $this->geo_value = $url_array[url_var::VALUE_GEO];
             }
+            // only the request, the backend save checks if the user is an admin
+            $this->set_default = (($url_array[url_var::SET_DEFAULT] ?? '') == url_var::TRUE);
         }
         return $msg;
     }

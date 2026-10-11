@@ -71,6 +71,7 @@ include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED_HELPER . 'Config.php';
 include_once test_paths::CONST . 'files.php';
 include_once test_paths::CONST . 'word_names.php';
+include_once test_paths::CREATE . 'test_config_trees.php';
 include_once test_paths::CREATE . 'test_mappers.php';
 include_once test_paths::CREATE . 'test_mappers.php';
 include_once test_paths::CREATE . 'test_results.php';
@@ -126,6 +127,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\test\php\const\word_names;
+use Zukunft\ZukunftCom\test\php\create\test_config_trees;
 use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\create\test_mappers;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
@@ -428,7 +430,11 @@ class system_view_ui_tests
             $html_base->dsp_notification('Forgot password?'),
             '<div class="alert alert-warning notification-bar">Forgot password?</div>'
         );
-        $saved_txt = $mtr->txt(msg_id::CONFIG_TREE_VALUE_SAVED);
+        $saved_txt = $ui->setting_saved_text([
+            url_var::NUMERIC_VALUE => (string)test_config_trees::MAX_DELAY_NEW,
+            url_var::PRE . url_var::NUMERIC_VALUE => (string)test_config_trees::MAX_DELAY_VALUE,
+            url_var::CONFIG_KEY => test_config_trees::MAX_DELAY,
+        ]);
         $test_name = 'a done action without an issue is confirmed in green';
         $saved_msg = new user_message();
         $saved_msg->add_info($saved_txt);

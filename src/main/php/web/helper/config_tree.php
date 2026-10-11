@@ -107,6 +107,8 @@ class config_tree
     public array $nodes = [];
     // true for a logged-in user, who can change a number as the own overwrite; an ip user only reads the tree
     public bool $can_edit = false;
+    // true for an admin, whose change sets the default of all users instead of the own overwrite
+    public bool $set_default = false;
 
 
     /*
@@ -427,6 +429,7 @@ class config_tree
 
     /**
      * the input of the number with a small save button, which saves the number as the overwrite of the user
+     * or of an admin as the default of all users (see set_default)
      * through the value edit mask without the confirm view and then shows the settings page again
      *
      * @param config_node $cfn the setting with a database value
@@ -435,17 +438,22 @@ class config_tree
      */
     private function edit_form(config_node $cfn, array $names): string
     {
+        global $mtr;
         $html = new html_base();
         $txt = $html->form_session_token();
         $txt .= $html->form_input(html_base::INPUT_NUMBER, url_var::NUMERIC_VALUE, $cfn->value);
         // the shown value and the name, so that the confirmation can say what has changed from what
         $txt .= $html->form_hidden(url_var::PRE . url_var::NUMERIC_VALUE, $cfn->value);
         $txt .= $html->form_hidden(url_var::CONFIG_KEY, implode(self::NAME_SEPARATOR, $names));
+        if ($this->set_default) {
+            $txt .= $html->form_hidden(url_var::SET_DEFAULT, url_var::TRUE);
+        }
         $txt .= $html->form_hidden(url_var::MASK, (string)views::VALUE_EDIT_ID);
         $txt .= $html->form_hidden(url_var::ID, group_id_url::to_url($cfn->id));
         $txt .= $html->form_hidden(url_var::STEP, url_var::STEP_CONFIRMED);
         $txt .= $html->form_hidden(url_var::BACK . url_var::MASK, (string)views::SYSTEM_CONFIG_ID);
-        $txt .= $html->button_bs($html->icon(icons::SAVE), styles::CONFIG_SAVE, '', url_var::POST_SUBMIT);
+        $save_txt = $mtr->txt(msg_id::FORM_BUTTON_SAVE);
+        $txt .= $html->button_bs($html->icon(icons::SAVE), styles::CONFIG_SAVE, '', url_var::POST_SUBMIT, $save_txt);
         return $html->form_simple(api::MAIN_SCRIPT, html_base::METHOD_POST, $txt);
     }
 

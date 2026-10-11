@@ -240,6 +240,7 @@ class json_fields
 
     // object specific fields
     const string IS_STD = 'is_std'; // flag if a value or result is user-specific or the default value for all users
+    const string SET_DEFAULT = 'set_default'; // true if an admin saves a value as the default of all users and not as the own overwrite
     const string USER_TEXT = 'user_text'; // the formula expression in a human-readable format
     const string REF_TEXT = 'ref_text'; // the formula expression in a database reference format
     const string LATEX = 'latex'; // the formula in latex format

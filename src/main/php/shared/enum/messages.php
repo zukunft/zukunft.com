@@ -2117,6 +2117,8 @@ enum messages: string
     case CONFIG_TREE_SCOPE_UNKNOWN = 'config_tree_scope_unknown';
     case CONFIG_TREE_FILE_VALUE = 'config_tree_file_value';
     case CONFIG_TREE_VALUE_SAVED = 'config_tree_value_saved';
+    case CONFIG_TREE_DEFAULT_SAVED = 'config_tree_default_saved';
+    case VALUE_SET_DEFAULT_DENIED = 'value_set_default_denied';
     case SYSTEM_TITLE_USER = 'system_title_user';
     case SYSTEM_TITLE_VERB = 'system_title_verb';
     // the class word in front of the object name of a page title e.g. view "Word"

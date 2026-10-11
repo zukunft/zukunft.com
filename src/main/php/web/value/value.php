@@ -351,6 +351,9 @@ class value extends sandbox_value
         if ($this->src != null) {
             $vars[json_fields::SOURCE_ID] = $this->source_id();
         }
+        if ($this->set_default) {
+            $vars[json_fields::SET_DEFAULT] = true;
+        }
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 

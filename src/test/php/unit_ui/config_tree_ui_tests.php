@@ -200,9 +200,20 @@ class config_tree_ui_tests
         $test_name = '... with a post form and the small save icon';
         $t->assert_text_contains($test_name, $page_edit, html_base::METHOD . '="' . html_base::METHOD_POST . '"');
         $t->assert_text_contains($test_name, $page_edit, icons::SAVE);
+        $test_name = '... which a screen reader names';
+        $save_label = html_base::ARIA_LABEL . '="' . $mtr->txt(msg_id::FORM_BUTTON_SAVE) . '"';
+        $t->assert_text_contains($test_name, $page_edit, $save_label);
         // negative: a boolean is shown as true or false, so it has no number input, and a setting without an id has nothing to overwrite
         $test_name = '... but only for a number with a database value';
         $t->assert($test_name, substr_count($page_edit, $submit_field), 1);
+        $default_field = html_base::NAME . '="' . url_var::SET_DEFAULT . '" ' . html_base::VALUE . '="' . url_var::TRUE . '"';
+        // negative: a normal user saves the own overwrite and never the default of all users
+        $test_name = '... as the own overwrite';
+        $t->assert_text_not_contains($test_name, $page_edit, $default_field);
+        $test_name = 'an admin saves the number as the default of all users';
+        $cft->set_default = true;
+        $t->assert_text_contains($test_name, $cft->html('', ''), $default_field);
+        $cft->set_default = false;
         $cft->can_edit = false;
         $test_name = '... with the shown number and the name of the setting for the confirmation';
         $max_key = implode(config_tree::NAME_SEPARATOR, [test_config_trees::DATABASE, test_config_trees::RETRY, test_config_trees::MAX_DELAY]);
@@ -221,10 +232,24 @@ class config_tree_ui_tests
         $saved_txt = 'the setting for ' . $max_key . ' has been updated to ' . test_config_trees::MAX_DELAY_NEW
             . ' (from ' . test_config_trees::MAX_DELAY_VALUE . ')';
         $t->assert($test_name, $ui->setting_saved_text($saved_url), $saved_txt);
+        // negative: the name is free text of the form, so a placeholder in it is never filled
+        $test_name = '... and keeps a placeholder in the name as text';
+        $marker_key = msg_id::VAR_START . msg_id::VAR_VALUE . msg_id::VAR_END;
+        $marker_url = array_merge($saved_url, [url_var::CONFIG_KEY => $marker_key]);
+        $t->assert_text_contains($test_name, $ui->setting_saved_text($marker_url), $marker_key);
+        $test_name = 'the confirmation of an admin names the default of all users';
+        $default_url = array_merge($saved_url, [url_var::SET_DEFAULT => url_var::TRUE]);
+        $default_txt = 'the default setting for ' . $max_key . ' has been updated for all users to '
+            . test_config_trees::MAX_DELAY_NEW . ' (from ' . test_config_trees::MAX_DELAY_VALUE . ')';
+        $t->assert($test_name, $ui->setting_saved_text($default_url), $default_txt);
         // negative: an unchanged number has not been updated
         $test_name = '... but nothing is confirmed if the number is unchanged';
         $saved_url[url_var::NUMERIC_VALUE] = (string)test_config_trees::MAX_DELAY_VALUE;
         $t->assert($test_name, $ui->setting_saved_text($saved_url), '');
+        // the shown number of an admin can be the own overwrite, so the same number can still be a new default
+        $test_name = '... unless an admin has set it as the default';
+        $default_url[url_var::NUMERIC_VALUE] = (string)test_config_trees::MAX_DELAY_VALUE;
+        $t->assert_text_contains($test_name, $ui->setting_saved_text($default_url), $max_key);
 
         $t->subheader($ts . 'page cache');
 

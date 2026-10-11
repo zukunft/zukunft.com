@@ -1557,6 +1557,35 @@ class frontend
     }
 
     /**
+     * @param array $url_array the url of the save with the new number, the shown number and the yaml keys of the setting
+     * @return string the translated confirmation e.g. "the setting for select initial entries has been updated to 4 (from 5)",
+     *                '' if a number is missing or unchanged, because then nothing has been updated
+     */
+    function setting_saved_text(array $url_array): string
+    {
+        global $mtr;
+        $lib = new library();
+        $new_val = (string)($url_array[url_var::NUMERIC_VALUE] ?? '');
+        $old_val = (string)($url_array[url_var::PRE . url_var::NUMERIC_VALUE] ?? '');
+        $is_default = (($url_array[url_var::SET_DEFAULT] ?? '') == url_var::TRUE);
+        $msg_id = $is_default ? msg_id::CONFIG_TREE_DEFAULT_SAVED : msg_id::CONFIG_TREE_VALUE_SAVED;
+        // the name is the only free text and therefore filled in last, so it never fills a placeholder itself
+        $vars = [
+            msg_id::VAR_VALUE => $new_val,
+            msg_id::VAR_VALUE_CHK => $old_val,
+            msg_id::VAR_NAME => (string)($url_array[url_var::CONFIG_KEY] ?? ''),
+        ];
+        $result = '';
+        // a text is not saved as a number (see sandbox_value::url_mapper), so it is not confirmed either
+        $is_number = (is_numeric($new_val) and is_numeric($old_val));
+        // the shown number of an admin can be the own overwrite, so the same number can still be a new default
+        if ($is_number and ($new_val != $old_val or $is_default)) {
+            $result = $lib->msg_var_text([[$msg_id, $vars]], $mtr);
+        }
+        return $result;
+    }
+
+    /**
      * remember the rendered html page for the next request of the same url
      * the cache row is written as the system user because filling the cache is
      * a system action that must also work for an ip user who cannot change data
@@ -1594,30 +1623,32 @@ class frontend
      *
      * a user that sees the user sandbox changes only the own data, so only the own pages and the own
      * cached config values are outdated; a user that sees the standard data (an ip user or a system user, see
-     * user::uses_standard_data) changes the data that every page of every user can show, so then
-     * the complete cache is dropped. this is on purpose not selected by the changed object: a
-     * change can be shown by any page, e.g. a renamed word in a value list of another page
+     * user::uses_standard_data) or an admin that sets a default changes the data that every page of
+     * every user can show, so then the complete cache is dropped. this is on purpose not selected by
+     * the changed object: a change can be shown by any page, e.g. a renamed word in a value list of another page
      *
      * like filling the cache this is a system action, so it is done as the system user and a
      * failure is only logged: the user has the change in the database, and a page that is cleared
      * too late is a stale page, not a lost change
      *
      * @param user_message_ui $msg_ui with the user that has done the change
+     * @param bool $is_default true if an admin has changed the default of all users e.g. of a setting
      * @return void
      */
-    private function drop_cached_pages(user_message_ui $msg_ui): void
+    private function drop_cached_pages(user_message_ui $msg_ui, bool $is_default): void
     {
         $cac_page = new db_cache_page();
+        // the cached config values include the overwrites of the user e.g. of the settings page
+        $cac_cfg = new db_cache(user_backend::system());
         $del_msg = new backend_user_message(user_backend::system()); // not reported, see above
         $usr = $msg_ui->usr;
         $usr_id = self::session_user_id();
-        if ($usr_id > 0 and $usr != null and !$usr->uses_standard_data()) {
+        if ($usr_id > 0 and $usr != null and !$usr->uses_standard_data() and !$is_default) {
             $cac_page->del_by_user($usr_id, $del_msg);
-            // the cached config values of the user include the own overwrites e.g. of the settings page
-            $cac_cfg = new db_cache(user_backend::system());
             $cac_cfg->del_by_user($usr_id, $del_msg);
         } else {
             $cac_page->del_all($del_msg);
+            $cac_cfg->del_all($del_msg);
         }
         if (!$del_msg->is_ok()) {
             log_warning('removing the cached pages after a change of user ' . $usr_id
@@ -2387,7 +2418,8 @@ class frontend
             }
             // every page that shows the written data is now outdated, so the cached pages are
             // removed and rendered again on the next request
-            $this->drop_cached_pages($msg_ui);
+            $is_default = ($dbo instanceof value_ui and $dbo->set_default);
+            $this->drop_cached_pages($msg_ui, $is_default);
             // the settings page shows many numbers, so it confirms which one has changed and how
             $back_mask = (int)($url_array[url_var::BACK . url_var::MASK] ?? 0);
             if ($crud == url_var::CRUD_UPDATE and $back_mask == views::SYSTEM_CONFIG_ID) {
@@ -2425,30 +2457,6 @@ class frontend
             $back_url = array_merge($this->url_object_values($url_array), $back_url);
         }
         return $back_url;
-    }
-
-    /**
-     * @param array $url_array the url of the save with the new number, the shown number and the yaml keys of the setting
-     * @return string the translated confirmation e.g. "the setting for select initial entries has been updated to 4 (from 5)",
-     *                '' if the number is unchanged or no number, because then nothing has been updated
-     */
-    function setting_saved_text(array $url_array): string
-    {
-        global $mtr;
-        $lib = new library();
-        $new_val = (string)($url_array[url_var::NUMERIC_VALUE] ?? '');
-        $old_val = (string)($url_array[url_var::PRE . url_var::NUMERIC_VALUE] ?? '');
-        $vars = [
-            msg_id::VAR_NAME => (string)($url_array[url_var::CONFIG_KEY] ?? ''),
-            msg_id::VAR_VALUE => $new_val,
-            msg_id::VAR_VALUE_CHK => $old_val,
-        ];
-        $result = '';
-        // a text is not saved as a number (see sandbox_value::url_mapper), so it is not confirmed either
-        if (is_numeric($new_val) and $new_val != $old_val) {
-            $result = $lib->msg_var_text([[msg_id::CONFIG_TREE_VALUE_SAVED, $vars]], $mtr);
-        }
-        return $result;
     }
 
     /**

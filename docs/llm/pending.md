@@ -27,7 +27,9 @@ adjust the numbers in the json data files so that the problem / solution are in 
 
 ## system settings
 
-if an admin user is logged in allow to change all settings the same way as the user settings 
+in the config.yaml in the level below 'system configuration' there should be three entries: 'user', 'select' and 'system'. The entries 'database', 'calculation', 'year', 'view', 'component', 'job', 'test' and 'pod' should be move below 'system' without that any functionality changes. 'select' and 'user' should be changable by normal / non ip users and all entries below 'system' only by admin users
+
+in the system settings remove the underlying from the chars of all value description e.g. 'top' (below 'entries', 'list', 'component') as done before for 'entries' (below 'initial', 'select')  
 
 ## import times
 

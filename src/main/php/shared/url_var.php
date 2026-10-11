@@ -227,6 +227,7 @@ class url_var
     const string LANGUAGE_SYMBOL = 'qs';
     const string RESULT = 'r';
     const string SHARE = 's'; // the share id of the sandbox object
+    const string SET_DEFAULT = 'sd'; // TRUE if an admin saves the value as the default of all users and not as the own overwrite
     const string SOURCE = 'so';
     const string PROTECTION = 'sp'; // the protection id of the sandbox object
     const string SOURCE_TYPE = 'st';
@@ -551,6 +552,7 @@ class url_var
     const string LEVELS_HUMAN = 'levels'; // the number of search levels'
 
     // source
+    const string SET_DEFAULT_HUMAN = 'set_default';
     const string SOURCE_HUMAN = 'source_id';
     const string SOURCE_TYPE_HUMAN = 'source_type';
     const string URL_HUMAN = 'url';
@@ -803,6 +805,7 @@ class url_var
         [self::LEVELS_HUMAN, self::LEVELS],
 
         // source
+        [self::SET_DEFAULT_HUMAN, self::SET_DEFAULT],
         [self::SOURCE_HUMAN, self::SOURCE],
         [self::SOURCE_TYPE_HUMAN, self::SOURCE_TYPE],
         [self::URL_HUMAN, self::URL],

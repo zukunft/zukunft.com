@@ -2158,6 +2158,7 @@
     \-- load_sql - section for function load_sql is expected to be load sql in /helper/db_cache.php
     \-- del - section for function del is expected to be del in /helper/db_cache.php
     \-- del_by_user - section for function del_by_user is expected to be del in /helper/db_cache.php
+    \-- del_all - section for function del_all is expected to be del in /helper/db_cache.php
     \-- del_sql_by_user - section for function del_sql_by_user is expected to be del in /helper/db_cache.php
 \-- db_cache_page
     \-- row_mapper - section for function row_mapper not yet defined that it should be construct and map in /helper/db_c
@@ -3982,6 +3983,7 @@
     \-- add - section for function add not yet defined that it should be @param user_message $msg to enrich with problem
             s and suggested solutions in /value/value_base.php
     \-- save - section for function save is expected to be save in /value/value_base.php
+    \-- save_as_default - section for function save_as_default is expected to be save in /value/value_base.php
     \-- del - section for function del is expected to be del in /value/value_base.php
     \-- order error - order of section construct and map has difference at api_mapper should be before row_mapper_sandbo
             x_multi
@@ -4740,6 +4742,8 @@
         \-- view_relation_list - delete all loaded view relations e.g. to delete all the links assigned to a view
     \-- del_by_user
         \-- db_cache - remove the cache entries of one user, because they reference the user row and are derived
+    \-- del_all
+        \-- db_cache - remove the cache entries of all users, because e.g. a default changed by an admin is part of the
     \-- del_sql_by_user
         \-- db_cache - create the sql statement to delete the cache entries of one user
     \-- fill
@@ -6825,11 +6829,11 @@
             p
     \-- user_msg_html - section for function user_msg_html not yet defined that it should be cached page in /frontend.ph
             p
+    \-- setting_saved_text - section for function setting_saved_text is expected to be set and get in /frontend.php
     \-- save_html_page - section for function save_html_page is expected to be save in /frontend.php
     \-- execute_and_next - section for function execute_and_next not yet defined that it should be cached page in /front
             end.php
     \-- show_view - section for function show_view not yet defined that it should be cached page in /frontend.php
-    \-- setting_saved_text - section for function setting_saved_text is expected to be set and get in /frontend.php
     \-- url_to_back_url - section for function url_to_back_url not yet defined that it should be execute in /frontend.ph
             p
     \-- api_get - section for function api_get not yet defined that it should be api in /frontend.php
@@ -9650,9 +9654,6 @@
 \-- execute
     \-- url_to_action
         \-- frontend - execute the user request e.g. a database update and create the url for the next page
-    \-- setting_saved_text
-        \-- frontend - @param array $url_array the url of the save with the new number,
-                 the shown number and the yaml keys of the setting
     \-- url_to_back_url
         \-- frontend - the previous page of a url built from its '9'-prefixed back targets, ready to be used directly as
     \-- show
@@ -9669,6 +9670,9 @@
         \-- frontend - the canonical cache key of a view-only page request
     \-- user_msg_html
         \-- frontend - create the html notification for the user messages of the current request
+    \-- setting_saved_text
+        \-- frontend - @param array $url_array the url of the save with the new number,
+                 the shown number and the yaml keys of the setting
     \-- save_html_page
         \-- frontend - remember the rendered html page for the next request of the same url
     \-- execute_and_next
@@ -10014,7 +10018,7 @@
     \-- div_bs
         \-- html_base - wrap the div tag around html code using the bootstrap default class if no style is given
     \-- button_bs
-        \-- html_base - wrap the button tag around html code
+        \-- html_base - @param string $text the html code shown on the button e.g. a translated text or an icon
     \-- list_item
         \-- html_base - html list item entry
     \-- popup_menu
