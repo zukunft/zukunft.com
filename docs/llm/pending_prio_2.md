@@ -14,6 +14,10 @@ It is a data decision for you, as noted before.
 
 the 'tree' config api (cfg/helper/config_tree::api_json) parses config.yaml on each request; the settings page cache hides this for now, but the parsed tree could be cached like the config values and dropped when config.yaml changes
 
+## frontend rules
+
+html_base::span() adds data-toggle="tooltip" to each span with a title, which no script reads and which docs/llm/frontend.md forbids for a web renderer; html_base::with_title() is the span without it, used so far only by the settings tree. Removing the attribute from span() changes about 188 snapshots, so it needs one run with AUTO_UPDATE_TEST_FILES and the review of the rewritten files
+
 ## tests
 
 add to the json_validation test a check for which words, triples, verb, formula or type objects a description is missing

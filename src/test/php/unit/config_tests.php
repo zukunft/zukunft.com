@@ -261,7 +261,8 @@ class config_tests
         $test_name = 'the config value of exactly the given phrases ignores a value with more phrases';
         $default_names = array_merge(config_tree::ROOT_KEYS,
             [test_config_trees::DATABASE, test_config_trees::ROW_LIMIT, test_config_trees::ROW_LIMIT_SETTING]);
-        $t->assert_true($test_name, $t_cft->cfg()->get_by_names_exact($default_names) === null);
+        $default_key = config_numbers::names_key($default_names);
+        $t->assert_false($test_name, array_key_exists($default_key, $t_cft->cfg()->exact_lookup()));
         // negative: a key with two settings is a group without a value or a unit
         $test_name = 'a key with two settings has no value and no unit';
         $retry_node = $t_cft->node_by_name($nodes, test_config_trees::RETRY);
@@ -284,14 +285,17 @@ class config_tests
         $t->assert($test_name, $types_node[json_fields::CONFIG_FILE_VALUE] ?? '', 'true');
         // the loaded value objects of a fresh database load, which has no lookup rows of the cached json
         $names = config_numbers::CACHE_PAGES_ALLOWED_NAMES;
-        $cfg_objects = $t_val->config_cache_switch($names, true);
+        $obj_lookup = $t_val->config_cache_switch($names, true)->exact_lookup();
         $test_name = 'the config value of exactly the given phrases is also found in the loaded value objects';
-        $t->assert($test_name, $cfg_objects->get_by_names_exact($names)?->number(), (float)true);
+        $t->assert($test_name, ($obj_lookup[config_numbers::names_key($names)] ?? null)?->number(), (float)true);
         $test_name = '... in any order of the names';
-        $t->assert($test_name, $cfg_objects->get_by_names_exact(array_reverse($names))?->number(), (float)true);
+        $t->assert($test_name, config_numbers::names_key(array_reverse($names)), config_numbers::names_key($names));
         // negative: a value with more phrases belongs to a setting below the given one
         $test_name = '... but not by a part of its phrases';
-        $t->assert_true($test_name, $cfg_objects->get_by_names_exact(array_slice($names, 1)) === null);
+        $t->assert_false($test_name, array_key_exists(config_numbers::names_key(array_slice($names, 1)), $obj_lookup));
+        // a numeric name is an int key of the cached lookup rows, but the same phrase as its text
+        $test_name = 'a numeric name is the same phrase as its text';
+        $t->assert($test_name, config_numbers::names_key([2000]), config_numbers::names_key(['2000']));
 
     }
 

@@ -217,7 +217,7 @@ function log_debug(string $msg_text = '', ?int $debug_overwrite = null): string
 
     if ($debug >= $min_level) {
         // escape the (possibly request-derived) message before echoing it into the html response (xss)
-        $out_text = htmlspecialchars($msg_text, ENT_QUOTES) . ' ' . $sys->times->show_total() . '<br>';
+        $out_text = htmlspecialchars($msg_text, ENT_QUOTES) . ' ' . $sys->log_txt->since_last() . '<br>';
         // route the debug output through the timestamped log writer so every line starts with a timestamp
         echo_timestamped($out_text);
         //ob_flush();

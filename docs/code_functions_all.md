@@ -2613,6 +2613,7 @@
     \-- echo_lines - section for function echo_lines not yet defined that it should be display in /log_text/text_log.php
     \-- time_stamp_lines - section for function time_stamp_lines not yet defined that it should be display in /log_text/
             text_log.php
+    \-- since_last - section for function since_last not yet defined that it should be display in /log_text/text_log.php
 \-- phr_ids
     \-- __construct - section for function __construct is expected to be construct and map in /phrase/phr_ids.php
     \-- count - section for function count missing in /phrase/phr_ids.php
@@ -3838,8 +3839,6 @@
 \-- system_time_list
     \-- switch - section for function switch not yet defined that it should be interface in /system/system_time_list.php
     \-- report - section for function report not yet defined that it should be interface in /system/system_time_list.php
-    \-- show_total - section for function show_total not yet defined that it should be interface in /system/system_time_
-            list.php
     \-- section_report - section for function section_report not yet defined that it should be interface in /system/syst
             em_time_list.php
     \-- reset_section - section for function reset_section not yet defined that it should be interface in /system/system
@@ -5066,10 +5065,9 @@
         \-- config_numbers - get a frontend config value selected by the phrase names
     \-- get_by_names
         \-- config_numbers - get the first config value that is assigned to all given phrase names
-    \-- get_by_names_exact
-        \-- config_numbers - get the config value whose phrases are exactly the given names, e.g. the value of one
     \-- exact_lookup
-        \-- config_numbers - the config values by their complete phrase set, so that a caller with many exact lookups
+        \-- config_numbers - the config values by their complete phrase set,
+                 e.g. for the config tree that finds the value
     \-- set_cache_json
         \-- config_numbers - use the cached config json for the value lookups of this request (see get_by_names),
     \-- unique_value
@@ -5695,6 +5693,8 @@
         \-- text_log - the single place that writes text to the standard io with the runtime timestamp
     \-- time_stamp_lines
         \-- text_log - put the runtime timestamp in front of every physical line of the given text
+    \-- since_last
+        \-- text_log - @return string the seconds since the last timestamped line e.g. "0.3540 sec", so that a debug
 \-- filter
     \-- diff
         \-- element_list - get all objects that are not in the given list
@@ -5931,8 +5931,6 @@
     \-- switch
         \-- system_time_list - start the timing of set the user of the error log
     \-- report
-        \-- system_time_list - @return string description of the execution times by category
-    \-- show_total
         \-- system_time_list - @return string description of the execution times by category
     \-- section_report
         \-- system_time_list - @return string description of the execution times by category of the last section
@@ -6885,7 +6883,6 @@
     \-- columns_html - section for function columns_html not yet defined that it should be html in /helper/config_tree.p
             hp
     \-- search_form - section for function search_form not yet defined that it should be html in /helper/config_tree.php
-    \-- tree_html - section for function tree_html not yet defined that it should be html in /helper/config_tree.php
     \-- hit_list - section for function hit_list not yet defined that it should be html in /helper/config_tree.php
     \-- marked - section for function marked not yet defined that it should be html in /helper/config_tree.php
     \-- order error - order of section construct and map has difference at api_mapper should be before __construct
@@ -7009,6 +7006,8 @@
             ml/html_base.php
     \-- span - section for function span not yet defined that it should be wrapper for the basic html elements used in /
             html/html_base.php
+    \-- with_title - section for function with_title not yet defined that it should be wrapper for the basic html elemen
+            ts used in /html/html_base.php
     \-- icon - section for function icon not yet defined that it should be wrapper for the basic html elements used in /
             html/html_base.php
     \-- icon_link - section for function icon_link not yet defined that it should be wrapper for the basic html elements
@@ -9771,6 +9770,8 @@
         \-- html_base - escape user settable text so it is shown literally and cannot inject html
     \-- span
         \-- html_base - @param string $text the text that should be formatted
+    \-- with_title
+        \-- html_base - a text with a mouseover text but without the data-toggle of span(), which only a js plugin
     \-- icon
         \-- html_base - the html code of a font icon (e.g. Font Awesome) as an empty paired <i> tag
     \-- icon_link

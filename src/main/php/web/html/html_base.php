@@ -696,6 +696,20 @@ class html_base
     }
 
     /**
+     * a text with a mouseover text but without the data-toggle of span(), which only a js plugin
+     * would read and which a web renderer never emits (docs/llm/frontend.md)
+     *
+     * @param string $text the html code of the text e.g. an escaped name
+     * @param string $title the mouseover text, which is escaped here
+     * @return string the html code of the text with its mouseover text
+     */
+    function with_title(string $text, string $title): string
+    {
+        $title_attr = ' ' . self::TITLE_HTML . '="' . htmlspecialchars($title, ENT_QUOTES) . '"';
+        return '<' . html_names::SPAN . $title_attr . '>' . $text . '</' . html_names::SPAN . '>';
+    }
+
+    /**
      * the html code of a font icon (e.g. Font Awesome) as an empty paired <i> tag
      * @param string $icon_class the css class string of the icon, always an icons::* const
      * @return string the html code e.g. '<i class="fas fa-chevron-right"></i>'

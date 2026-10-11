@@ -1,14 +1,10 @@
 # pending - list of planned llm prompts with prio 1
 
-## system settings
-
-if a non ip user is logged in allow to change the user settings. A double click on the number should show an input field and a small save icon. if the value is changed and the save icon is pressed that number should be save as a user overwrite.
-
-if an admin user is logged in allow to change all settings the same way as the user settings 
-
 ## admin dashboard
 
-if an admin user is logged in add to the top right used menu a 'dashboard' entry that links to a admin dashboard view page. Leave the admin dashboard page for the moment almost enpty and just display the title.
+if an admin user is logged in add to the top right user menu a 'dashboard' entry that links to a admin dashboard view page. Leave the admin dashboard page for the moment almost empty and just display the title.
+
+show in the admin dashboard the last and most relevant system errors e.g. if there is an fatal error not yet solved show it on the top of the list and below not yet solved errors followed by warnings
 
 ## start page
 
@@ -29,37 +25,11 @@ adjust the numbers in the json data files so that the problem / solution are in 
 9. Use smartvote for initiatives and build a liquid democracy
 10. Measure the economy’s actual benefit instead of relying on GDP
 
-## debug 
+## system settings
 
-if the url parameter e.g. &debug=9 is set, the page output may start with
+if a non ip user is logged in allow to change the user settings. A double click on the number should show an input field and a small save icon. if the value is changed and the save icon is pressed that number should be save as a user overwrite.
 
-000.0027 start script view 0 sec
-079.2736 open database zukunft 79.2708 sec
-079.2854 check if db has table config 79.2826 sec
-079.2920 check pod name in config 79.2892 sec
-079.2929 get database version 79.2901 sec
-079.2932 get last consistency check 79.2904 sec
-079.3317 ip range list 79.3288 sec
-079.3343 get pod name 79.3314 sec
-079.3352 read page from cache 79.3317 sec
-079.3364 verb list 79.3336 sec
-079.3397 system view list 79.3368 sec
-080.7198 GET http://localhost/api/typeLists?ids= 80.7131 sec
-081.5683 GET http://localhost/api/config/?1=frontend&iw=1 81.5616 sec
-081.9292 read page from cache 81.9223 sec
-081.9454 GET http://localhost/api/phraseList/?k=global+problem&pd=down&px=1 81.9233 sec
-082.0628 GET http://localhost/api/phraseList/?k=column+%28system%29&pd=both&px=3 81.9233 sec
-082.4798 GET http://localhost/api/valueList/?phrase_ids=-134%2C-186%2C-136%2C284%2C-137%2C-112%2C-133%2C237%2C255%2C-138%2C-132%2C372%2C218%2C257%2C253 81.9233 sec
-086.3557 GET http://localhost/api/resultList/?phrase_ids=-134%2C-186%2C-136%2C284%2C-137%2C-112%2C-133%2C237%2C255%2C-138%2C-132%2C372%2C218%2C257%2C253 81.9233 sec
-092.8196 GET http://localhost/api/phraseList/?il=315%2C159%2C-1635%2C-1116%2C-112%2C274%2C-129%2C372%2C-145%2C324%2C-1072%2C-132%2C323%2C-133%2C160%2C281%2C-137%2C-134%2C-144%2C253%2C163%2C-1170%2C237%2C318%2C-151%2C279%2C275%2C-1172%2C-128%2C-190%2C-136%2C-148%2C-147%2C-138%2C250%2C-153%2C256%2C257%2C258%2C-1171%2C255%2C280%2C-1900%2C-1767%2C247%2C245%2C282%2C244%2C-1615%2C-186%2C-188%2C254%2C284%2C-1113%2C-1774%2C1484%2C-1781%2C-1768%2C-1205%2C1296%2C-1118%2C-189%2C-191%2C-143%2C246%2C-226%2C-1360%2C1361%2C-1874%2C-1613%2C-1612%2C-1450%2C-187%2C1460%2C668%2C-975%2C997%2C1521%2C-1713%2C-1792%2C283%2C1324%2C-1115%2C-1834%2C-1606%2C1564%2C-1614%2C-1608%2C-1920%2C-192%2C-152%2C-150%2C320&pd=up 81.9233 sec
-093.5591 GET http://localhost/api/phraseList/?il=-2319%2C-2320%2C-219%2C-1186%2C-1367%2C-2339%2C-1636%2C-1631%2C-2335%2C-2333%2C-1456%2C-1073%2C-2331%2C-2340%2C-1614%2C-2327%2C-2325%2C-2321%2C-2342%2C-2343%2C-1920%2C-2329%2C-2323%2C-1115%2C-1172%2C-1900%2C-2334%2C-2337%2C-2332%2C-1529%2C-1290%2C-2328%2C-2326%2C-1743%2C-1626%2C-1877%2C-1778%2C-1801%2C-1637&pd=down 81.9233 sec
-095.0145 GET http://localhost/api/phraseList/?k=sort+order+%28system%29&pd=both&px=2 81.9233 sec
-097.3482 GET http://localhost/api/phraseList/?k=chart+type+%28system%29&pd=both&px=2 81.9233 sec
-100.6208 insert db_cache_page m=1&id=0&dls=20&dlc=1&dlr=1&dla=table_chart (db_cache_page_id 0) 100.6142 sec
-100.6240 database closed 100.6214 sec
-100.6240 end script view 100.6214 sec
-
-The  81.9223 sec at the end should not be the to sec until then. instead it should be the time diff since the last log entry e.g. 0.354 sec  
+if an admin user is logged in allow to change all settings the same way as the user settings 
 
 ## import times
 

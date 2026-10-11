@@ -66,6 +66,9 @@ class sys_log_tests
     CONST string T2_LOG_TRACE = 'the technical trace 2 back description for debugging';
     CONST string T2_FUNC_NAME = 'name 2 of the function that has caused the exception';
     CONST string THROTTLE_FILE_PREFIX = 'zukunft_test_sys_log_throttle_';
+    // a pause much longer than two following statements, so the step time test never depends on the machine speed
+    CONST int STEP_PAUSE_USEC = 100000;
+    CONST float STEP_PAUSE_SEC = 0.1;
     CONST string T2_SOLVE_ID = 'code id 2 of the suggested solver of the problem';
 
     function run(test_cleanup $t): void
@@ -98,6 +101,18 @@ class sys_log_tests
         // it stays in the sys_log for the admin, so the user-facing html has no 'by <function>' part
         $test_name = 'the critical error html does not disclose an internal function or file name';
         $t->assert_text_not_contains($test_name, $err_html, ' by ');
+
+        $t->subheader($ts . 'debug step time');
+
+        // a debug line shows the duration of its step, because its timestamp shows the runtime already
+        $log_txt = new text_log();
+        usleep(self::STEP_PAUSE_USEC);
+        $test_name = 'the step time includes the pause since the last line';
+        $t->assert_true($test_name, (float)$log_txt->since_last() >= self::STEP_PAUSE_SEC);
+        $log_txt->time_stamp_lines(self::TV_LOG_TEXT);
+        // negative: after a new line the step time starts again and is not the runtime
+        $test_name = '... and starts again with the next line';
+        $t->assert_true($test_name, (float)$log_txt->since_last() < self::STEP_PAUSE_SEC);
 
         $t->subheader($ts . 'sys_log insert throttle');
 

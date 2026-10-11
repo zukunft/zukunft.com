@@ -69,6 +69,7 @@ class text_log
      */
 
     private float $start_time; // time when all script have been started
+    private float $last_time; // time of the last timestamped line to show the duration of each step
     public text_log_format $format = text_log_format::TEXT;
     public text_log_level $level = text_log_level::TIMEOUT;
 
@@ -81,6 +82,7 @@ class text_log
     {
         // init the times to be able to detect potential timeouts
         $this->start_time = microtime(true);
+        $this->last_time = $this->start_time;
     }
 
 
@@ -162,9 +164,19 @@ class text_log
         return $result;
     }
 
+    /**
+     * @return string the seconds since the last timestamped line e.g. "0.3540 sec", so that a debug
+     *                line shows how long its step took and not the runtime that its timestamp shows already
+     */
+    function since_last(): string
+    {
+        return sprintf('%.4f', microtime(true) - $this->last_time) . ' sec';
+    }
+
     protected function time_stamp(): string
     {
-        return sprintf('%08.4f', microtime(true) - $this->start_time) . ' ';
+        $this->last_time = microtime(true);
+        return sprintf('%08.4f', $this->last_time - $this->start_time) . ' ';
     }
 
 

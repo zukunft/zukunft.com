@@ -119,6 +119,8 @@ Steps:
    PGSQL_PASSWORD=your_secure_password
    PGSQL_ADMIN_USERNAME=postgres
    PGSQL_ADMIN_PASSWORD=admin_password
+   # without it ssl is off for a database on the same host and "prefer" for any other host
+   # PGSQL_SSLMODE=require
    ```
 
 3. Start the application:

@@ -315,7 +315,7 @@ class config_tree
      * @param string $parent_tip the tooltip of the parent key if the level is its only key, '' otherwise
      * @return string the html code of the level
      */
-    function tree_html(array $nodes, string $path, string $parent_tip): string
+    private function tree_html(array $nodes, string $path, string $parent_tip): string
     {
         $html = new html_base();
         $items = '';
@@ -359,7 +359,7 @@ class config_tree
         $name = $html->esc($cfn->name);
         // the tooltip of the parent on the name and not on the row, so the row has no underline of an own tooltip
         if ($cfn->tooltip == '' and $parent_tip != '') {
-            $name = $html->span($name, '', $parent_tip);
+            $name = $html->with_title($name, $parent_tip);
         }
         return $html->definition($name, $this->value_html($cfn), $cfn->tooltip);
     }

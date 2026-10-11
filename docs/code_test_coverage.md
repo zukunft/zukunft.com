@@ -8,7 +8,7 @@ in a test file of the src/test/php/unit* folders; the count is by function name
 and cannot tell the classes apart, so a name that several classes declare needs
 2 calls per class and is listed as shared otherwise
 
-641 of 5952 public functions have at least 2 unit test calls; the 5311 functions below do not
+643 of 5951 public functions have at least 2 unit test calls; the 5308 functions below do not
 
 ## main backend
 
@@ -323,14 +323,12 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- load_dummy - 0 unit test calls shared by 36 classes
 \-- config_numbers
     \-- default_json - 0 unit test calls
-    \-- exact_lookup - 0 unit test calls
     \-- fill_from_cache_json - 0 unit test calls
     \-- get_by_names - 4 unit test calls shared by 3 classes
     \-- language - 1 unit test calls
     \-- load_cfg - 0 unit test calls
     \-- load_frontend_cfg - 0 unit test calls
     \-- load_usr_cfg - 0 unit test calls
-    \-- names_key - 0 unit test calls
 \-- config_tree
     \-- nodes - 1 unit test calls
 \-- convert_wikipedia_table
@@ -2735,7 +2733,6 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- report - 0 unit test calls
     \-- reset_section - 0 unit test calls
     \-- section_report - 0 unit test calls
-    \-- show_total - 0 unit test calls
 \-- term
     \-- can_be_ready - 2 unit test calls shared by 8 classes
     \-- clone_reset - 9 unit test calls shared by 11 classes
@@ -2862,7 +2859,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- echo_log - 0 unit test calls
     \-- echo_text_log - 0 unit test calls
     \-- start_time - 0 unit test calls shared by 2 classes
-    \-- time_stamp_lines - 0 unit test calls
+    \-- time_stamp_lines - 1 unit test calls
 \-- text_log_functions
     \-- critical_error_html - 0 unit test calls
     \-- echo_timestamped - 0 unit test calls
@@ -4171,7 +4168,6 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- key_names - 0 unit test calls
     \-- load - 4 unit test calls shared by 13 classes
     \-- search_form - 0 unit test calls
-    \-- tree_html - 0 unit test calls
 \-- data_object
     \-- add_changes - 0 unit test calls
     \-- add_components_to_views - 0 unit test calls
@@ -4554,6 +4550,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- url_old - 1 unit test calls
     \-- url_set_par - 0 unit test calls
     \-- url_with_token - 0 unit test calls
+    \-- with_title - 0 unit test calls
 \-- html_selector
     \-- display - 3 unit test calls shared by 20 classes
     \-- end_selector - 0 unit test calls

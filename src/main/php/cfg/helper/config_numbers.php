@@ -306,21 +306,9 @@ class config_numbers extends value_list
     }
 
     /**
-     * get the config value whose phrases are exactly the given names, e.g. the value of one
-     * setting of the config tree by the keys of its yaml path; unlike get_by_names a value with
-     * more phrases e.g. of a setting below the given one never matches
-     *
-     * @param array $names the phrase names of the value e.g. the keys of the yaml path of a setting
-     * @return value_base|null the config value with exactly these phrases or null if there is none
-     */
-    function get_by_names_exact(array $names): ?value_base
-    {
-        return $this->exact_lookup()[self::names_key($names)] ?? null;
-    }
-
-    /**
-     * the config values by their complete phrase set, so that a caller with many exact lookups
-     * e.g. the config tree builds this once instead of scanning all values for each setting
+     * the config values by their complete phrase set, e.g. for the config tree that finds the value
+     * of each setting by the keys of its yaml path; unlike get_by_names a value with more phrases
+     * e.g. of a setting below the given one never matches, and the list is built once for all settings
      *
      * @return array the first config value of each phrase set with the names_key as the key
      */
