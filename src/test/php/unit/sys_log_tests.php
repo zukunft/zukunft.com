@@ -66,10 +66,13 @@ class sys_log_tests
     CONST string T2_LOG_TRACE = 'the technical trace 2 back description for debugging';
     CONST string T2_FUNC_NAME = 'name 2 of the function that has caused the exception';
     CONST string THROTTLE_FILE_PREFIX = 'zukunft_test_sys_log_throttle_';
-    // a pause much longer than two following statements, so the step time test never depends on the machine speed
-    CONST int STEP_PAUSE_USEC = 100000;
-    CONST float STEP_PAUSE_SEC = 0.1;
     CONST string T2_SOLVE_ID = 'code id 2 of the suggested solver of the problem';
+    // a pause much longer than two following statements, so the step time test never depends on the machine speed
+    // in micro seconds, because usleep() takes them
+    CONST int STEP_PAUSE_USEC = 100000;
+    CONST int USEC_PER_SEC = 1000000;
+    // derived, so the compared pause never differs from the slept one
+    CONST float STEP_PAUSE_SEC = self::STEP_PAUSE_USEC / self::USEC_PER_SEC;
 
     function run(test_cleanup $t): void
     {

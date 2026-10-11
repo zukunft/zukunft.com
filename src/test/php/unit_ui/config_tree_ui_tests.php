@@ -39,6 +39,7 @@ include_once html_paths::EXECUTE . 'system_page.php';
 include_once html_paths::HELPER . 'config_node.php';
 include_once html_paths::HELPER . 'config_tree.php';
 include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::HTML . 'html_names.php';
 include_once html_paths::HTML . 'styles.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::SHARED_CONST . 'views.php';
@@ -51,6 +52,7 @@ use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\helper\config_node;
 use Zukunft\ZukunftCom\main\php\web\helper\config_tree;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\html\html_names;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
@@ -168,10 +170,10 @@ class config_tree_ui_tests
         $t->assert_text_not_contains($test_name, $page, html_base::POPOVER_TARGET);
         $test_name = 'the only setting of a key shows the tooltip of the key';
         $row_limit_title = html_base::TITLE_HTML . '="' . test_config_trees::ROW_LIMIT_TIP . '"';
-        $t->assert_text_contains($test_name, $page, '<span ' . $row_limit_title . '>' . test_config_trees::ROW_LIMIT_SETTING);
+        $t->assert_text_contains($test_name, $page, '<' . html_names::SPAN . ' ' . $row_limit_title . '>' . test_config_trees::ROW_LIMIT_SETTING);
         // negative: the tooltip of the parent describes the parent, so the setting has no underline of an own tooltip
         $test_name = '... without the underline of an own tooltip';
-        $t->assert_text_not_contains($test_name, $page, '<dt ' . $row_limit_title);
+        $t->assert_text_not_contains($test_name, $page, '<' . html_base::DT . ' ' . $row_limit_title);
         // negative: the tree uses no js plugin, so no mouseover text carries the data-toggle of one
         $test_name = '... and without the attribute of a js plugin';
         $t->assert_text_not_contains($test_name, $page, html_base::TOGGLE_TOOLTIP);
