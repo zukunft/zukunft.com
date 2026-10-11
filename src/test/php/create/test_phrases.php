@@ -36,6 +36,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
+include_once paths::MODEL_HELPER . 'config_numbers.php';
 include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
 include_once paths::MODEL_USER . 'user_message.php';
@@ -45,6 +46,7 @@ include_once html_paths::PHRASE . 'phrase_list.php';
 include_once test_paths::CONST . 'word_names.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\helper\config_numbers;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message as backend_user_message;
@@ -1010,14 +1012,8 @@ class test_phrases
      */
     function phrase_list_ip_user_change(): phrase_list
     {
-        $t_wrd = new test_words($this->env);
-        $t_trp = new test_triples($this->env);
-        $lst = new phrase_list($this->env->usr1);
-        $msg = new backend_user_message(); // a test builder is an entry point; the fixed names cannot double
-        $lst->add_by_name_direct($t_trp->triple_database_change()->phrase(), $msg);
-        $lst->add_by_name_direct($t_trp->triple_ip_user()->phrase(), $msg);
-        $lst->add_by_name_direct($t_wrd->word_allowed()->phrase(), $msg);
-        return $lst;
+        // the complete phrase set, because the permission is read by its exact path
+        return $this->list_cache_switch(config_numbers::IP_USER_CHANGE_NAMES);
     }
 
     /**

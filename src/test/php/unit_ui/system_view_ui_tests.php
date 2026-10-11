@@ -443,6 +443,15 @@ class system_view_ui_tests
         $test_name = '... but in orange if the request has an issue';
         $saved_msg->add_id(msg_id::CONFIG_NOT_LOADED);
         $t->assert_text_contains($test_name, $ui->user_msg_html($saved_msg), html_base::CLASS_NOTIFICATION . '"');
+        // e.g. the refused save of a setting of the pod, which the backend reports without vars
+        $test_name = 'a message without vars of a write is kept when merged into the message of the request';
+        $refused_msg = new user_message();
+        $refused_msg->add_id(msg_id::CONFIG_SYSTEM_ADMIN_ONLY);
+        $request_msg = new user_message();
+        $request_msg->merge($refused_msg);
+        // escaped like dsp_notification, because the text quotes the key 'system'
+        $refused_html = htmlspecialchars($mtr->txt(msg_id::CONFIG_SYSTEM_ADMIN_ONLY));
+        $t->assert_text_contains($test_name, $ui->user_msg_html($request_msg), $refused_html);
 
         // test that a failed login renders the notification in the full page
         $_SESSION[url_var::SESSION_TOKEN] = test_const::DUMMY_SESSION_TOKEN;

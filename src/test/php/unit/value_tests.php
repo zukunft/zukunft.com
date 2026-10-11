@@ -645,7 +645,7 @@ class value_tests
         $pod_names = config_numbers::CACHE_ALLOWED_NAMES[db_cache_types::TYPES];
         $test_name = 'a normal user cannot change a setting of the pod';
         $msg = new user_message($t->usr_normal);
-        $val_pod = $t_val->config_cache_switch($pod_names, false)->lst()[0];
+        $val_pod = $t_val->config_switch_value($pod_names, false);
         $val_pod->set_user($t->usr_normal);
         $t->assert_true($test_name, $val_pod->is_pod_setting_denied($msg));
         $test_name = '... and the save is refused before any database access';
@@ -656,7 +656,7 @@ class value_tests
         // negative: a user setting is not below system, so each logged-in user can overwrite it
         $test_name = 'a normal user can change a user setting';
         $usr_names = array_diff($pod_names, [shared_words::SYSTEM]);
-        $val_usr = $t_val->config_cache_switch($usr_names, false)->lst()[0];
+        $val_usr = $t_val->config_switch_value($usr_names, false);
         $val_usr->set_user($t->usr_normal);
         $t->assert_false($test_name, $val_usr->is_pod_setting_denied($msg));
 

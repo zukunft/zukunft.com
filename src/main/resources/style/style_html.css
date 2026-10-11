@@ -767,9 +767,8 @@ a:hover {
     border-bottom: 1px dashed #dee2e6;
     margin: 0;
 }
+/* no underline, so that the names of the settings read like the names of the keys; the cursor hints the tooltip */
 .config-tree dt[title] {
-    text-decoration: underline dotted #9ea09e;
-    text-underline-offset: 3px;
     cursor: help;
 }
 .config-tree dd,

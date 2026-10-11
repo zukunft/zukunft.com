@@ -25,14 +25,6 @@ adjust the numbers in the json data files so that the problem / solution are in 
 9. Use smartvote for initiatives and build a liquid democracy
 10. Measure the economy’s actual benefit instead of relying on GDP
 
-## system settings
-
-in the system settings remove the underlying from the chars of all value description e.g. 'top' (below 'entries', 'list', 'component') as done before for 'entries' (below 'initial', 'select')  
-
-if save is pressed in the settings but the user is not allowed to save a value, an error message should be shown
-
-if the calculation button is pressed in th settings page and http://localhost/http/view.php?m=126&1=calculation&u=11 called the error message 'Mandatory field id missing in form url array {"m":"126","1":"calculation","u":"11","z":0}' is shown, which seems to be not correct, because the page shown looks mainly fine
-
 ## import times
 
 The import may create log entries like 

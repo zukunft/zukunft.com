@@ -635,15 +635,6 @@ class user_message extends Message
 
     /**
      * TODO Prio 2 make it protected
-     * @return array with all the translatable messages
-     */
-    protected function get_all_id_messages(): array
-    {
-        return $this->msg_id_lst;
-    }
-
-    /**
-     * TODO Prio 2 make it protected
      * @return array with all the text messages
      */
     protected function get_all_type_messages(): array

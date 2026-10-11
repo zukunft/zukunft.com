@@ -2409,6 +2409,10 @@ class frontend
             };
             if (!$result_msg->is_ok()) {
                 $msg_ui->merge($result_msg);
+                // the settings page changes a value in place, so it is the current view with the error
+                if ($this->is_setting_save($url_array, $crud)) {
+                    return $this->url_to_back_url($url_array);
+                }
                 // stay on the current view so the user can fix errors
                 return $url_array;
             }
@@ -2421,8 +2425,7 @@ class frontend
             $is_default = ($dbo instanceof value_ui and $dbo->set_default);
             $this->drop_cached_pages($msg_ui, $is_default);
             // the settings page shows many numbers, so it confirms which one has changed and how
-            $back_mask = (int)($url_array[url_var::BACK . url_var::MASK] ?? 0);
-            if ($crud == url_var::CRUD_UPDATE and $back_mask == views::SYSTEM_CONFIG_ID) {
+            if ($this->is_setting_save($url_array, $crud)) {
                 $msg_ui->add_info($this->setting_saved_text($url_array));
             }
         }
@@ -2457,6 +2460,17 @@ class frontend
             $back_url = array_merge($this->url_object_values($url_array), $back_url);
         }
         return $back_url;
+    }
+
+    /**
+     * @param array $url_array the url of the write
+     * @param string $crud the write e.g. url_var::CRUD_UPDATE
+     * @return bool true if a number of the settings page is saved, which is changed in place on that page
+     */
+    private function is_setting_save(array $url_array, string $crud): bool
+    {
+        $back_mask = (int)($url_array[url_var::BACK . url_var::MASK] ?? 0);
+        return ($crud == url_var::CRUD_UPDATE and $back_mask == views::SYSTEM_CONFIG_ID);
     }
 
     /**

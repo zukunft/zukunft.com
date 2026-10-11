@@ -172,8 +172,8 @@ class config_tree_ui_tests
         $test_name = 'the only setting of a key shows the tooltip of the key';
         $row_limit_title = html_base::TITLE_HTML . '="' . test_config_trees::ROW_LIMIT_TIP . '"';
         $t->assert_text_contains($test_name, $page, '<' . html_names::SPAN . ' ' . $row_limit_title . '>' . test_config_trees::ROW_LIMIT_SETTING);
-        // negative: the tooltip of the parent describes the parent, so the setting has no underline of an own tooltip
-        $test_name = '... without the underline of an own tooltip';
+        // negative: the tooltip of the parent describes the parent, so the row of the setting does not carry it as an own tooltip
+        $test_name = '... but not as the tooltip of the row';
         $t->assert_text_not_contains($test_name, $page, '<' . html_base::DT . ' ' . $row_limit_title);
         // negative: the tree uses no js plugin, so no mouseover text carries the data-toggle of one
         $test_name = '... and without the attribute of a js plugin';
@@ -214,12 +214,12 @@ class config_tree_ui_tests
         $test_name = '... as the own overwrite';
         $t->assert_text_not_contains($test_name, $page_edit, $default_field);
         $test_name = 'an admin saves the number as the default of all users';
-        $cft->set_default = true;
+        $cft->is_admin = true;
         $page_admin = $cft->html('', '');
         $t->assert_text_contains($test_name, $page_admin, $default_field);
         $test_name = '... also of a setting of the pod';
         $t->assert_text_contains($test_name, $page_admin, $max_id_field);
-        $cft->set_default = false;
+        $cft->is_admin = false;
         $cft->can_edit = false;
         $test_name = '... with the shown number and the name of the setting for the confirmation';
         $old_val = test_config_trees::SELECT_ENTRIES[test_config_trees::SELECT_INITIAL];

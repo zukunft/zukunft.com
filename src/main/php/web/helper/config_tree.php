@@ -107,8 +107,8 @@ class config_tree
     public array $nodes = [];
     // true for a logged-in user, who can change a number as the own overwrite; an ip user only reads the tree
     public bool $can_edit = false;
-    // true for an admin, whose change sets the default of all users instead of the own overwrite
-    public bool $set_default = false;
+    // true for an admin, who can change the settings of the pod too and whose change sets the default of all users
+    public bool $is_admin = false;
 
 
     /*
@@ -368,7 +368,7 @@ class config_tree
     {
         $html = new html_base();
         $name = $html->esc($cfn->name);
-        // the tooltip of the parent on the name and not on the row, so the row has no underline of an own tooltip
+        // the tooltip of the parent on the name and not on the row, so the row carries only an own tooltip
         if ($cfn->tooltip == '' and $parent_tip != '') {
             $name = $html->with_title($name, $parent_tip);
         }
@@ -424,14 +424,13 @@ class config_tree
      */
     private function is_editable(config_node $cfn, array $names): bool
     {
-        // set_default is true only for an admin, the one user who can change the settings of the pod
-        $is_allowed = (($names[0] ?? '') != self::ADMIN_KEY or $this->set_default);
+        $is_allowed = (($names[0] ?? '') != self::ADMIN_KEY or $this->is_admin);
         return ($this->can_edit and $is_allowed and $cfn->id != 0 and is_numeric($cfn->value));
     }
 
     /**
      * the input of the number with a small save button, which saves the number as the overwrite of the user
-     * or of an admin as the default of all users (see set_default)
+     * or of an admin as the default of all users (see is_admin)
      * through the value edit mask without the confirm view and then shows the settings page again
      *
      * @param config_node $cfn the setting with a database value
@@ -447,7 +446,7 @@ class config_tree
         // the shown value and the name, so that the confirmation can say what has changed from what
         $txt .= $html->form_hidden(url_var::PRE . url_var::NUMERIC_VALUE, $cfn->value);
         $txt .= $html->form_hidden(url_var::CONFIG_KEY, implode(self::NAME_SEPARATOR, $names));
-        if ($this->set_default) {
+        if ($this->is_admin) {
             $txt .= $html->form_hidden(url_var::SET_DEFAULT, url_var::TRUE);
         }
         $txt .= $html->form_hidden(url_var::MASK, (string)views::VALUE_EDIT_ID);

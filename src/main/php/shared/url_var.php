@@ -441,6 +441,10 @@ class url_var
         self::DISPLAY_LIST_ORDER,
         self::DISPLAY_LIST_ORDER_SUB,
         self::DISPLAY_LIST_ORDER_SUB_SUB,
+        // the search and the scope select what a page shows e.g. one top level key of the settings,
+        // so they never turn the url into a form submit of an object without an id
+        self::PATTERN,
+        self::CONFIG_PART,
     ];
 
 

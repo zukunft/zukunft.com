@@ -699,7 +699,7 @@ class system_page extends component
         $scope = (string)($url_arr[url_var::CONFIG_PART] ?? '');
         // the same predicate as for the own page, because a change is saved as the overwrite of the user
         $cft->can_edit = frontend::shows_personal_page($msg);
-        $cft->set_default = $this->is_admin($msg);
+        $cft->is_admin = $this->is_admin($msg);
         return $cft->html($pattern, $scope);
     }
 

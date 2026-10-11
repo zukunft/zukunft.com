@@ -1,10 +1,6 @@
 TODO notes
 ----------
 
-next 
-
-show the related phrases sorted by impact on the default word page, restrict protection level reduction to admin users and format the expected sql test resources with the new sql_format function as part of fix #247
-
 A proper issue ticket should be created for these TODOs notes:
 
     but first this needs to be prioritized:
@@ -14,13 +10,10 @@ A proper issue ticket should be created for these TODOs notes:
 
     TODO use case PV calculator
 
-    TODO add admin dashboard, user settings, jobs and system settings
-    TODO the user settings should have some (config.yaml) quick settings 
+    TODO add admin dashboard and jobs 
     TODO the admin dashboard the x most changed user settings
     TODO add default ranking 
-    TODO add default sort asc or desc for tables
     TODO limit the prime phrase id by the int number that can be processed in JavaScript
-    TODO remove the dots from the value and result id
 
     ->  launch
 
@@ -33,7 +26,9 @@ A proper issue ticket should be created for these TODOs notes:
          use the functions move_to_archive and move_to_caratane to move data
          keep the carantane user in the original database to avoid dublicate creation and for blacklisting
     TODO check if the 'no change' parameter is used correctly to the json import that prevents the import from overwriting any data already set. Only null fields can be filled and new db rows can be inserted. Use this parameter for the initial import and report if any import data differs from the db data.
+    TODO show the related phrases sorted by impact on the default word page, restrict protection level reduction to admin users and format the expected sql test resources with the new sql_format function as part of fix #247
 
+    TODO the user settings should have some (config.yaml) quick settings 
     TODO add to concept that people who have done someting bad should be be mentioned by name to reduce the copycat effect and reactance. 
     TODO create a list of people who have increased the htp or prevented a decrease in htp like Shuji Nakamura or Andreas Freud   
     TODO add a 'min value quality level' filter for values and results (including or excluding own overwrites)

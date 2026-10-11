@@ -333,6 +333,10 @@ class base_ui_tests
         $test_name = '... and the three row orders, which the page links repeat as page vars';
         $t->assert($test_name, array_diff(table_orders::URL_VARS, url_var::CONTROL_VARS), []);
         $t->assert($test_name, array_diff(table_orders::URL_VARS, url_var::PAGE_VARS), []);
+        // e.g. view.php?m=126&1=calculation shows one top level key of the settings and no object
+        $test_name = 'the search and the scope of a page are control vars';
+        $t->assert_true($test_name, in_array(url_var::PATTERN, url_var::CONTROL_VARS)
+            and in_array(url_var::CONFIG_PART, url_var::CONTROL_VARS));
         $test_name = 'a field of the object is never a control var';
         $t->assert_false($test_name, in_array(url_var::NAME, url_var::CONTROL_VARS));
 

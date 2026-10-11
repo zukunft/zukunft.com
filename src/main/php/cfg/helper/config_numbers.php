@@ -115,16 +115,28 @@ class config_numbers extends value_list
         db_cache_types::UI_CACHE => [...config_numbers::CACHE_PATH, words::PRELOAD, words::ALLOWED],
     ];
 
-    // the phrase names that select the pod switch for the html page cache (db_cache_pages table)
-    const array CACHE_PAGES_ALLOWED_NAMES = [words::ALLOWED, words::HTML, words::PAGE, words::CACHE];
+    // the complete phrase set of the pod switch for the html page cache (db_cache_pages table)
+    const array CACHE_PAGES_ALLOWED_NAMES = [...config_numbers::CACHE_PATH, words::PAGE, words::HTML, words::ALLOWED];
 
-    // the phrase names that select the pod switches to show the values and the formulas of the
+    // the complete phrase sets of the pod switches to show the values and the formulas of the
     // symbols and of the aliases of a phrase with the phrase's own
     // (config.yaml select > value|formula > symbol|alias > include)
-    const array SYMBOL_VALUES_INCLUDE_NAMES = [words::INCLUDE, words::SYMBOL, words::VALUE, words::SELECT];
-    const array ALIAS_VALUES_INCLUDE_NAMES = [words::INCLUDE, words::ALIAS, words::VALUE, words::SELECT];
-    const array SYMBOL_FORMULAS_INCLUDE_NAMES = [words::INCLUDE, words::SYMBOL, words::FORMULA, words::SELECT];
-    const array ALIAS_FORMULAS_INCLUDE_NAMES = [words::INCLUDE, words::ALIAS, words::FORMULA, words::SELECT];
+    const array SELECT_PATH = [...triples::CONFIG_ROOT, words::SELECT];
+    const array SYMBOL_VALUES_INCLUDE_NAMES = [...config_numbers::SELECT_PATH, words::VALUE, words::SYMBOL, words::INCLUDE];
+    const array ALIAS_VALUES_INCLUDE_NAMES = [...config_numbers::SELECT_PATH, words::VALUE, words::ALIAS, words::INCLUDE];
+    const array SYMBOL_FORMULAS_INCLUDE_NAMES = [...config_numbers::SELECT_PATH, words::FORMULA, words::SYMBOL, words::INCLUDE];
+    const array ALIAS_FORMULAS_INCLUDE_NAMES = [...config_numbers::SELECT_PATH, words::FORMULA, words::ALIAS, words::INCLUDE];
+
+    // the complete phrase set of the pod permission for the changes of a user without login
+    // (config.yaml system > pod > permissions > database change > ip user > allowed)
+    const array IP_USER_CHANGE_NAMES = [
+        ...triples::CONFIG_SYSTEM_PATH,
+        words::POD,
+        words::PERMISSIONS,
+        triples::DATABASE_CHANGE,
+        triples::IP_USER,
+        words::ALLOWED,
+    ];
 
     // list of word that should be hidden be default for normal selections
     // TODO check on pod start that these words exists and are of hidden type
@@ -764,7 +776,6 @@ class config_numbers extends value_list
      * the pod setting that decides if the given database cache is used
      * a pod without the switch uses the cache, so only an explicit false in config.yaml
      * switches a cache off e.g. to debug with always fresh data
-     * no fallback is given to get_by, because get_by would replace the false of the config value with it
      * @param string $type_code_id the code id of the db_cache type e.g. "types"
      * @return bool false if this database cache should not be used
      */
@@ -778,10 +789,7 @@ class config_numbers extends value_list
             log_warning('unknown database cache switch ' . $type_code_id);
             $result = false;
         } else {
-            $val = $this->exact_lookup()[self::names_key($names)] ?? null;
-            if ($val !== null) {
-                $result = $val->number() != 0;
-            }
+            $result = $this->pod_switch($names);
         }
         return $result;
     }
@@ -843,13 +851,13 @@ class config_numbers extends value_list
     /**
      * a pod switch that is on unless config.yaml sets it to false, so a pod without the switch
      * behaves like the default of config.yaml
-     * @param array $names the phrase names that select the switch, leaf first
+     * @param array $names the complete phrase set of the switch, because a part of it can also select another switch
      * @return bool false only if the switch is set to false
      */
     private function pod_switch(array $names): bool
     {
         $result = true;
-        $val = $this->get_by_names($names);
+        $val = $this->exact_lookup()[self::names_key($names)] ?? null;
         if ($val !== null) {
             $result = $val->number() != 0;
         }
@@ -858,19 +866,14 @@ class config_numbers extends value_list
 
     /**
      * the pod permission that decides if a user without login can change data in the database
-     * no fallback is given to get_by, because get_by would replace the false of the config value with it
      * the yaml false is imported as the number zero, and a missing permission is as restrictive as the
      * default of config.yaml, so only an explicit true permits the changes of an ip user
      * @return bool false if a user without login is not permitted to change any data of this pod
      */
     function ip_user_can_change(): bool
     {
-        $permitted = $this->get_by([
-                words::ALLOWED,
-                triples::IP_USER,
-                triples::DATABASE_CHANGE]
-        );
-        return $permitted != 0;
+        $val = $this->exact_lookup()[self::names_key(self::IP_USER_CHANGE_NAMES)] ?? null;
+        return ($val?->number() ?? 0) != 0;
     }
 
 }

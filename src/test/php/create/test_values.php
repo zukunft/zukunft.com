@@ -372,14 +372,23 @@ class test_values extends test_objects
      */
     function config_cache_switch(array $names, bool $allowed): config_numbers
     {
-        $t_phr = new test_phrases($this->env);
-        $grp = $t_phr->list_cache_switch($names)->get_grp_id(false);
-        $val = new value($this->env->usr1, (float)$allowed, $grp);
         $cfg = new config_numbers($this->env->usr1);
         // the config phrases have no database id, so the group id of the value is empty
         // and add() would skip the value, because it adds only objects with an id
-        $cfg->set_lst([$val]);
+        $cfg->set_lst([$this->config_switch_value($names, $allowed)]);
         return $cfg;
+    }
+
+    /**
+     * @param array $names the complete phrase set of the config switch e.g. a config_numbers::CACHE_ALLOWED_NAMES row
+     * @param bool $allowed true if the switch is on
+     * @return value the config value of the switch with its phrases e.g. to check who can change it
+     */
+    function config_switch_value(array $names, bool $allowed): value
+    {
+        $t_phr = new test_phrases($this->env);
+        $grp = $t_phr->list_cache_switch($names)->get_grp_id(false);
+        return new value($this->env->usr1, (float)$allowed, $grp);
     }
 
     /**
