@@ -89,14 +89,6 @@ The import may create log entries like
 
 try to adjust the calculation and calculation parameter so that the estimated to time is a better predictor of the real time. Maybe create some test cases to validate the real times to have a base for adjusting the parameters and the calculation
 
-## review the setting mainly for jobs
-
-
-
-## phrase default view
-
-add e.g. a pie chart to the default phrase page with the top impact on the phrase e.g. for the 'global warming' default page show the 'co2-eq emissions by sector'
-
 ### PV calculator
 
 Catch process forms
@@ -260,6 +252,14 @@ after each step (an llm never runs test/*, docs/llm/coding.md).
 ## use cases
 
 add CBAM calculation, portfolio split and company sheet use cases and pin them on the start page
+
+## job list
+
+add to the user submenu of the navbar an entry 'jobs' that links to a view that shows an overview of the jobs of an user
+
+## phrase default view
+
+add e.g. a pie chart to the default phrase page with the top impact on the phrase e.g. for the 'global warming' default page show the 'co2-eq emissions by sector'
 
 ## todo from group id change
 

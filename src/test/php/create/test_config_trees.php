@@ -67,13 +67,20 @@ class test_config_trees
     const string SEC = words::SEC;
     // a key with one setting that is no unit and that has no database value
     const string ROW_LIMIT = 'row limit';
+    // the tooltip of the key, which also describes its only setting
+    const string ROW_LIMIT_TIP = 'the number of rows loaded at once';
     const string ROW_LIMIT_SETTING = words::DEFAULT;
     const int ROW_LIMIT_VALUE = 1000;
     // a phrase of a database value, which makes it a value with more phrases than the row limit setting
     const string EXTRA = 'extra';
     const string CACHE = 'cache';
     const string PAGE = 'page';
-    // longer than config_tree_ui::TOOLTIP_MAX, so that the full text is shown by a button
+    // true as the import saves a boolean of config.yaml in the database
+    const int PAGE_DB = 1;
+    // a boolean that is true in config.yaml but switched off in the database
+    const string TYPES = 'types';
+    const int TYPES_DB = 0;
+    // a long tooltip, which is still shown completely as the mouseover text and never cut
     const string PAGE_TIP = 'true to save the html code of a page that shows only data and no form, so that '
         . 'the next request of the same page by any user is served from the cache without a backend call';
     const string USER = 'user';
@@ -86,10 +93,12 @@ class test_config_trees
     const array SELECT_ENTRIES = ['initial' => 5, 'suggested' => 3, 'more' => 20, 'columns' => 10, 'max' => 2000];
     const string TEST = words::TEST;
     const string TIMEOUT = 'timeout';
+    const int TIMEOUT_VALUE = 30;
     const string POD = words::POD;
     const string POD_NAME = 'name';
     const string POD_NAME_VALUE = 'zukunft.com';
     const string SCRIPT_KEY = '<script>alert(1)</script>';
+    const int SCRIPT_KEY_VALUE = 5;
     // the start of the escaped script key, which a browser shows as text
     const string SCRIPT_KEY_ESCAPED = '&lt;script&gt;';
 
@@ -128,12 +137,16 @@ class test_config_trees
                     ],
                     self::MAX_DELAY => [self::SEC => self::MAX_DELAY_VALUE],
                 ],
-                self::ROW_LIMIT => [self::ROW_LIMIT_SETTING => self::ROW_LIMIT_VALUE],
+                self::ROW_LIMIT => [
+                    self::ROW_LIMIT_SETTING => self::ROW_LIMIT_VALUE,
+                    words::TOOLTIP_COMMENT => self::ROW_LIMIT_TIP,
+                ],
                 self::CACHE => [
                     self::PAGE => [
                         words::SYS_CONF_VALUE => true,
                         words::TOOLTIP_COMMENT => self::PAGE_TIP,
                     ],
+                    self::TYPES => [words::SYS_CONF_VALUE => true],
                 ],
             ],
             self::USER => [
@@ -141,11 +154,11 @@ class test_config_trees
                     words::SYS_CONF_VALUE => self::LANGUAGE_VALUE,
                     words::TOOLTIP_COMMENT => self::LANGUAGE_TIP,
                 ],
-                self::SCRIPT_KEY => 5,
+                self::SCRIPT_KEY => self::SCRIPT_KEY_VALUE,
             ],
             self::SELECT => array_merge([words::TOOLTIP_COMMENT => self::SELECT_TIP], self::SELECT_ENTRIES),
             self::TEST => [
-                self::TIMEOUT => [self::SEC => 30],
+                self::TIMEOUT => [self::SEC => self::TIMEOUT_VALUE],
             ],
             self::POD => [
                 self::POD_NAME => self::POD_NAME_VALUE,
@@ -155,20 +168,30 @@ class test_config_trees
 
     /**
      * @return config_numbers the database values of the test part of config.yaml as the cached json
-     *                        rows of the api part "all": one differs from config.yaml, two are the same
-     *                        and the row limit setting has only a value with one more phrase
+     *                        rows of the api part "all", which are the same as in config.yaml like on a
+     *                        fresh pod except the start delay and the types cache that differ and the row
+     *                        limit setting that has only a value with one more phrase
      */
     function cfg(): config_numbers
     {
-        $cfg = new config_numbers($this->env->usr1);
-        $cfg->set_cache_json([
+        $rows = [
             $this->cfg_row([self::DATABASE, self::RETRY, self::START_DELAY, self::SEC], self::START_DELAY_DB),
             $this->cfg_row([self::DATABASE, self::RETRY, self::MAX_DELAY, self::SEC], self::MAX_DELAY_VALUE),
             $this->cfg_row([self::DATABASE, self::ROW_LIMIT, self::ROW_LIMIT_SETTING, self::EXTRA], self::ROW_LIMIT_VALUE),
-            $this->cfg_row([self::DATABASE, self::CACHE, self::PAGE], 1),
+            $this->cfg_row([self::DATABASE, self::CACHE, self::PAGE], self::PAGE_DB),
+            $this->cfg_row([self::DATABASE, self::CACHE, self::TYPES], self::TYPES_DB),
             [json_fields::PHRASES => $this->phrase_rows([self::USER, self::LANGUAGE]),
                 json_fields::TEXT_VALUE => self::LANGUAGE_VALUE],
-        ]);
+            $this->cfg_row([self::USER, self::SCRIPT_KEY], self::SCRIPT_KEY_VALUE),
+            $this->cfg_row([self::TEST, self::TIMEOUT, self::SEC], self::TIMEOUT_VALUE),
+            [json_fields::PHRASES => $this->phrase_rows([self::POD, self::POD_NAME]),
+                json_fields::TEXT_VALUE => self::POD_NAME_VALUE],
+        ];
+        foreach (self::SELECT_ENTRIES as $key => $number) {
+            $rows[] = $this->cfg_row([self::SELECT, $key], $number);
+        }
+        $cfg = new config_numbers($this->env->usr1);
+        $cfg->set_cache_json($rows);
         return $cfg;
     }
 

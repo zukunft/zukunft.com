@@ -126,17 +126,28 @@ class config_tree
      * the nodes of the given part of config.yaml in the order of the file, without the keys
      * that only describe the parent key e.g. its tooltip-comment
      *
-     * @param array $yaml the parsed yaml below one key e.g. below "system configuration"
+     * @param array $yaml the parsed yaml below "system configuration"
      * @param config_numbers $cfg the loaded config values whose phrases are the keys of the yaml path
-     * @param array $path the yaml keys above the given part, which are also phrases of its values
      * @return array the json array of the nodes, each with name and optional value, unit, tooltip and children
      */
-    function nodes(array $yaml, config_numbers $cfg, array $path = self::ROOT_KEYS): array
+    function nodes(array $yaml, config_numbers $cfg): array
+    {
+        // built once, so that each setting finds its value without scanning all config values
+        return $this->level($yaml, $cfg->exact_lookup(), self::ROOT_KEYS);
+    }
+
+    /**
+     * @param array $yaml the parsed yaml below one key e.g. below "system configuration"
+     * @param array $values the config values by their phrase set (see config_numbers::exact_lookup)
+     * @param array $path the yaml keys above the given part, which are also phrases of its values
+     * @return array the json array of the nodes of this level
+     */
+    private function level(array $yaml, array $values, array $path): array
     {
         $result = [];
         foreach ($yaml as $key => $entry) {
             if (!in_array($key, self::META_KEYS, true)) {
-                $result[] = $this->node((string)$key, $entry, $cfg, $path);
+                $result[] = $this->node((string)$key, $entry, $values, $path);
             }
         }
         return $result;
@@ -150,11 +161,11 @@ class config_tree
      *
      * @param string $name the yaml key e.g. "start delay"
      * @param mixed $entry the yaml content of the key, a number or text for a plain setting
-     * @param config_numbers $cfg the loaded config values
+     * @param array $values the config values by their phrase set
      * @param array $path the yaml keys above this key
      * @return array the json node of the key
      */
-    private function node(string $name, mixed $entry, config_numbers $cfg, array $path): array
+    private function node(string $name, mixed $entry, array $values, array $path): array
     {
         $result = [json_fields::NAME => $name];
         $node_path = array_merge($path, [$name]);
@@ -165,16 +176,16 @@ class config_tree
                 $result[json_fields::DESCRIPTION] = $this->text($entry[words::TOOLTIP_COMMENT]);
             }
             if (array_key_exists(words::SYS_CONF_VALUE, $entry)) {
-                $result = $this->with_value($result, $entry[words::SYS_CONF_VALUE], $node_path, $cfg);
+                $result = $this->with_value($result, $entry[words::SYS_CONF_VALUE], $node_path, $values);
             }
             if ($unit != '') {
-                $result = $this->with_value($result, $settings[$unit], array_merge($node_path, [$unit]), $cfg);
+                $result = $this->with_value($result, $settings[$unit], array_merge($node_path, [$unit]), $values);
                 $result[json_fields::CONFIG_UNIT] = $unit;
             } elseif ($settings != []) {
-                $result[json_fields::CONFIG_CHILDREN] = $this->nodes($settings, $cfg, $node_path);
+                $result[json_fields::CONFIG_CHILDREN] = $this->level($settings, $values, $node_path);
             }
         } else {
-            $result = $this->with_value($result, $entry, $node_path, $cfg);
+            $result = $this->with_value($result, $entry, $node_path, $values);
         }
         return $result;
     }
@@ -185,19 +196,21 @@ class config_tree
      * @param array $node the json node of the setting
      * @param mixed $file_value the value of the setting in config.yaml e.g. true
      * @param array $names the yaml keys of the setting, which are exactly the phrases of its value
-     * @param config_numbers $cfg the loaded config values
+     * @param array $values the config values by their phrase set
      * @return array the json node with the database value and the config.yaml value if it differs or no database value exists
      */
-    private function with_value(array $node, mixed $file_value, array $names, config_numbers $cfg): array
+    private function with_value(array $node, mixed $file_value, array $names, array $values): array
     {
-        $db_value = $cfg->get_by_names_exact($names)?->number();
+        $db_value = ($values[config_numbers::names_key($names)] ?? null)?->number();
         $is_same = ($db_value !== null and $this->is_same($file_value, $db_value));
         if ($is_same) {
             // the text of config.yaml, so that e.g. a boolean is shown as true and not as 1
             $node[json_fields::TEXT_VALUE] = $this->text($file_value);
         } else {
             if ($db_value !== null) {
-                $node[json_fields::TEXT_VALUE] = (string)$db_value;
+                // in the type of config.yaml, so that e.g. a switched off boolean is shown as false and not as 0
+                $is_bool = (is_bool($file_value) and is_numeric($db_value));
+                $node[json_fields::TEXT_VALUE] = $this->text($is_bool ? ((float)$db_value != 0) : $db_value);
             }
             $node[json_fields::CONFIG_FILE_VALUE] = $this->text($file_value);
         }

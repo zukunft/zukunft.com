@@ -161,13 +161,21 @@ class config_tree_ui_tests
         $file_txt = $mtr->txt(msg_id::CONFIG_TREE_FILE_VALUE) . ' ' . test_config_trees::START_DELAY_VALUE . $sec_html;
         $file_html = $html->span($file_txt, styles::CONFIG_FILE_VALUE);
         $t->assert_text_contains($test_name, $page, '<dd>' . test_config_trees::START_DELAY_DB . $sec_html . $file_html . '</dd>');
-        $test_name = 'a long tooltip gets a button with the full text';
-        $t->assert_text_contains($test_name, $page, html_base::POPOVER_TARGET . '="' . config_tree::TIP_ID_PREFIX);
-        // negative: a short tooltip is only the mouseover text
-        $test_name = 'a short tooltip gets no button';
-        $lan_tip_id = config_tree::TIP_ID_PREFIX . test_config_trees::USER
-            . config_tree::ID_SEPARATOR . test_config_trees::LANGUAGE;
-        $t->assert_text_not_contains($test_name, $page, $lan_tip_id);
+        $test_name = 'a long tooltip is the full mouseover text';
+        $t->assert_text_contains($test_name, $page, html_base::TITLE_HTML . '="' . test_config_trees::PAGE_TIP . '"');
+        // negative: the tree shows all at once, so no tooltip hides its text behind a "..." button
+        $test_name = '... without a button for more text';
+        $t->assert_text_not_contains($test_name, $page, html_base::POPOVER_TARGET);
+        $test_name = 'the only setting of a key shows the tooltip of the key';
+        $row_limit_title = html_base::TITLE_HTML . '="' . test_config_trees::ROW_LIMIT_TIP . '"';
+        $t->assert_text_contains($test_name, $page, $row_limit_title . ' ' . html_base::TOGGLE_TOOLTIP . '>' . test_config_trees::ROW_LIMIT_SETTING);
+        // negative: the tooltip of the parent describes the parent, so the setting has no underline of an own tooltip
+        $test_name = '... without the underline of an own tooltip';
+        $t->assert_text_not_contains($test_name, $page, '<dt ' . $row_limit_title);
+        // negative: a key with several keys below it describes only itself, e.g. database not its key retry
+        $test_name = '... but not one of several keys';
+        $db_title = html_base::TITLE_HTML . '="' . test_config_trees::DATABASE_TIP . '"';
+        $t->assert($test_name, substr_count($page, $db_title), 1);
         $test_name = 'the search is a get form, so it never changes data';
         $t->assert_text_contains($test_name, $page, html_base::METHOD . '="' . html_base::METHOD_GET . '"');
         // negative: no submit field of a write form, the submit button of the search is fine

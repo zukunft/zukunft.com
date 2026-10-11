@@ -276,6 +276,22 @@ class config_tests
         $test_name = 'a boolean setting saved as 1 is shown as true';
         $page_node = $t_cft->node_by_name($nodes, test_config_trees::PAGE);
         $t->assert($test_name, $page_node[json_fields::TEXT_VALUE] ?? '', 'true');
+        // negative: a boolean switched off in the database is not shown as 0
+        $test_name = 'a boolean setting saved as 0 is shown as false';
+        $types_node = $t_cft->node_by_name($nodes, test_config_trees::TYPES);
+        $t->assert($test_name, $types_node[json_fields::TEXT_VALUE] ?? '', 'false');
+        $test_name = '... with the config.yaml value behind it';
+        $t->assert($test_name, $types_node[json_fields::CONFIG_FILE_VALUE] ?? '', 'true');
+        // the loaded value objects of a fresh database load, which has no lookup rows of the cached json
+        $names = config_numbers::CACHE_PAGES_ALLOWED_NAMES;
+        $cfg_objects = $t_val->config_cache_switch($names, true);
+        $test_name = 'the config value of exactly the given phrases is also found in the loaded value objects';
+        $t->assert($test_name, $cfg_objects->get_by_names_exact($names)?->number(), (float)true);
+        $test_name = '... in any order of the names';
+        $t->assert($test_name, $cfg_objects->get_by_names_exact(array_reverse($names))?->number(), (float)true);
+        // negative: a value with more phrases belongs to a setting below the given one
+        $test_name = '... but not by a part of its phrases';
+        $t->assert_true($test_name, $cfg_objects->get_by_names_exact(array_slice($names, 1)) === null);
 
     }
 

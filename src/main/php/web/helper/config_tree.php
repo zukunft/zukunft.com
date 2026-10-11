@@ -72,15 +72,11 @@ class config_tree
      * const
      */
 
-    // TODO Prio 2 Review and move to the backend?
-    // a tooltip longer than this gets an additional button that shows the full text
-    const int TOOLTIP_MAX = 120;
     // between the keys of the path of a search hit e.g. "database › cache › page"
     const string PATH_SEPARATOR = ' › ';
     // between the keys of the html id of a node e.g. "cfg-database/cache"
     const string ID_SEPARATOR = '/';
     const string NODE_ID_PREFIX = 'cfg-';
-    const string TIP_ID_PREFIX = 'cfg-tip-';
     // the html id of the key names that the search suggests
     const string KEY_LIST_ID = 'config-keys';
     // the url var and the value of the scope that shows the whole tree
@@ -136,9 +132,9 @@ class config_tree
      */
 
     /**
-     * get the tree from the backend, which is the same for every user
+     * get the tree from the backend with the current config values of the requesting user
      *
-     * @param user_message $msg to report that the backend has not sent the tree
+     * @param user_message $msg to report that the backend has not sent the tree e.g. because the values cannot be loaded
      * @return bool true if the tree has at least one key
      */
     function load(user_message $msg): bool
@@ -316,14 +312,15 @@ class config_tree
      *
      * @param array $nodes the nodes of the level
      * @param string $path the path of the parent key used for the html ids
+     * @param string $parent_tip the tooltip of the parent key if the level is its only key, '' otherwise
      * @return string the html code of the level
      */
-    function tree_html(array $nodes, string $path): string
+    function tree_html(array $nodes, string $path, string $parent_tip): string
     {
         $html = new html_base();
         $items = '';
         foreach ($nodes as $cfn) {
-            $items .= $html->list_item($this->node_html($cfn, $path));
+            $items .= $html->list_item($this->node_html($cfn, $path, $parent_tip));
         }
         return $html->list_unsorted($items, styles::CONFIG_TREE);
     }
@@ -331,33 +328,40 @@ class config_tree
     /**
      * @param config_node $cfn the key to show
      * @param string $path the path of the parent key
+     * @param string $parent_tip the tooltip of the parent key if this is its only key, '' otherwise
      * @return string a row with the value of a setting or the closed part with the keys below a group
      */
-    private function node_html(config_node $cfn, string $path): string
+    private function node_html(config_node $cfn, string $path, string $parent_tip = ''): string
     {
         $html = new html_base();
         $cfn_path = $this->child_path($path, $cfn->name);
+        // the only key below a key e.g. "entries" of "initial" is described by the tooltip of its parent
+        $tip = ($cfn->tooltip != '') ? $cfn->tooltip : $parent_tip;
         if ($cfn->is_leaf()) {
-            $result = $this->leaf_row($cfn, $cfn_path);
+            $result = $this->leaf_row($cfn, $parent_tip);
         } else {
-            $body = $this->tooltip_more($cfn, $cfn_path);
-            $body .= $this->tree_html($cfn->children, $cfn_path);
+            $only_child_tip = (count($cfn->children) == 1) ? $tip : '';
+            $body = $this->tree_html($cfn->children, $cfn_path, $only_child_tip);
             $id = self::NODE_ID_PREFIX . $cfn_path;
-            $result = $html->details($html->esc($cfn->name), $body, styles::CONFIG_NODE, $id, $cfn->tooltip);
+            $result = $html->details($html->esc($cfn->name), $body, styles::CONFIG_NODE, $id, $tip);
         }
         return $result;
     }
 
     /**
      * @param config_node $cfn the setting to show
-     * @param string $cfn_path the path of the setting used for the html id of a long tooltip
+     * @param string $parent_tip the tooltip of the parent key if this is its only setting, '' otherwise
      * @return string the html code of the row with the name and the value with its unit e.g. "1 sec"
      */
-    private function leaf_row(config_node $cfn, string $cfn_path): string
+    private function leaf_row(config_node $cfn, string $parent_tip): string
     {
         $html = new html_base();
-        $term = $html->esc($cfn->name) . $this->tooltip_more($cfn, $cfn_path);
-        return $html->definition($term, $this->value_html($cfn), $cfn->tooltip);
+        $name = $html->esc($cfn->name);
+        // the tooltip of the parent on the name and not on the row, so the row has no underline of an own tooltip
+        if ($cfn->tooltip == '' and $parent_tip != '') {
+            $name = $html->span($name, '', $parent_tip);
+        }
+        return $html->definition($name, $this->value_html($cfn), $cfn->tooltip);
     }
 
     /**
@@ -392,25 +396,6 @@ class config_tree
         $result = $html->esc($value);
         if ($unit != '') {
             $result .= $html->span($html->esc($unit), styles::CONFIG_UNIT);
-        }
-        return $result;
-    }
-
-    /**
-     * the mouseover shows a long tooltip cut on most screens, so a button shows the full text
-     *
-     * @param config_node $cfn the key with the tooltip
-     * @param string $cfn_path the path of the key used for the html id
-     * @return string the html code of the button with the full tooltip or '' for a short tooltip
-     */
-    private function tooltip_more(config_node $cfn, string $cfn_path): string
-    {
-        global $mtr;
-        $html = new html_base();
-        $result = '';
-        if (mb_strlen($cfn->tooltip) > self::TOOLTIP_MAX) {
-            $id = self::TIP_ID_PREFIX . $cfn_path;
-            $result = $html->popover($id, $mtr->txt(msg_id::THREE_POINTS), $html->esc($cfn->tooltip));
         }
         return $result;
     }

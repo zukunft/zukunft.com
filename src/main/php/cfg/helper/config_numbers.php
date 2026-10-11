@@ -315,24 +315,41 @@ class config_numbers extends value_list
      */
     function get_by_names_exact(array $names): ?value_base
     {
-        $result = null;
-        $name_set = array_unique($names);
+        return $this->exact_lookup()[self::names_key($names)] ?? null;
+    }
+
+    /**
+     * the config values by their complete phrase set, so that a caller with many exact lookups
+     * e.g. the config tree builds this once instead of scanning all values for each setting
+     *
+     * @return array the first config value of each phrase set with the names_key as the key
+     */
+    function exact_lookup(): array
+    {
+        $result = [];
         if ($this->lookup_rows == []) {
             foreach ($this->lst() as $val) {
-                if ($result == null and $val->match_all($name_set) and $val->matches_context($name_set)) {
-                    $result = $val;
-                }
+                $result[self::names_key($val->grp()->phrase_list()->names())] ??= $val;
             }
         } else {
             foreach ($this->lookup_rows as [$row_names, $raw_value, $is_text]) {
-                $same_count = (count($row_names) == count($name_set));
-                $is_exact = ($same_count and array_diff($name_set, array_keys($row_names)) == []);
-                if ($result == null and $is_exact) {
-                    $result = $this->lookup_value($raw_value, $is_text);
-                }
+                $result[self::names_key(array_keys($row_names))] ??= $this->lookup_value($raw_value, $is_text);
             }
         }
         return $result;
+    }
+
+    /**
+     * @param array $names the phrase names of a config value in any order
+     * @return string the key of the complete phrase set, the same for each order and never cut
+     */
+    static function names_key(array $names): string
+    {
+        // as text, because array_keys returns a numeric name such as "2000" as an int
+        $name_set = array_values(array_unique(array_map('strval', $names)));
+        sort($name_set, SORT_STRING);
+        // serialize never fails, unlike json_encode on a name that is no valid utf-8
+        return serialize($name_set);
     }
 
     /**

@@ -952,7 +952,8 @@ class sql_db
             'host=' . SQL_DB_HOST .
             ' dbname=' . $db_name .
             ' user=' . SQL_DB_USER .
-            ' password=' . SQL_DB_PASSWD;
+            ' password=' . SQL_DB_PASSWD .
+            ' sslmode=' . SQL_DB_SSLMODE;
     }
 
     /**
@@ -1016,7 +1017,8 @@ class sql_db
             'host=' . SQL_DB_HOST .
             ' dbname=' . SQL_DB_ADMIN_DB .
             ' user=' . SQL_DB_ADMIN_USER .
-            ' password=' . SQL_DB_ADMIN_PASSWD;
+            ' password=' . SQL_DB_ADMIN_PASSWD .
+            ' sslmode=' . SQL_DB_SSLMODE;
     }
 
     /**

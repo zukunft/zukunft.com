@@ -54,6 +54,8 @@ const ENV_PGSQL_ADMIN_USERNAME = 'PGSQL_ADMIN_USERNAME';
 const ENV_PGSQL_ADMIN_PASSWORD = 'PGSQL_ADMIN_PASSWORD';
 const ENV_PGSQL_HOST = 'PGSQL_HOST';
 const ENV_PGSQL_PORT = 'PGSQL_PORT';
+// the libpq sslmode e.g. "require" for a database on another server (see SQL_DB_SSLMODE)
+const ENV_PGSQL_SSLMODE = 'PGSQL_SSLMODE';
 const ENV_MYSQL_DATABASE = 'MYSQL_DATABASE';
 const ENV_MYSQL_USERNAME = 'MYSQL_USERNAME';
 const ENV_MYSQL_PASSWORD = 'MYSQL_PASSWORD';
@@ -140,6 +142,7 @@ const ENV_VARS = [
     ENV_PGSQL_ADMIN_PASSWORD,
     ENV_PGSQL_HOST,
     ENV_PGSQL_PORT,
+    ENV_PGSQL_SSLMODE,
     ENV_MYSQL_DATABASE,
     ENV_MYSQL_USERNAME,
     ENV_MYSQL_PASSWORD,
@@ -233,6 +236,12 @@ const SQL_DB_NAME_DEFAULT = 'zukunft';
 const SQL_DB_HOST_DEFAULT = '127.0.0.1';
 const SQL_DB_USER_DEFAULT = 'zukunft';
 const SQL_DB_PASSWD_FALLBACK = 'change_me';
+// a database on the same host is reached without ssl, because ssl protects nothing on the loopback
+// and libpq and curl sharing openssl in one php process can break the ssl stream with
+// "SSL error: decryption failed or bad record mac"; any other host keeps the libpq default
+const SQL_DB_LOCAL_HOSTS = ['localhost', '127.0.0.1', '::1'];
+const SQL_DB_SSLMODE_LOCAL = 'disable';
+const SQL_DB_SSLMODE_DEFAULT = 'prefer';
 const SYSTEM_ADMIN_IP_FALLBACK = 'localhost';
 
 // read the environment file: prefer a copy one level above the web root so the secrets are not
@@ -352,6 +361,8 @@ define('SOURCE_REPO_URL', getenv(ENV_SOURCE_REPO_URL) ?: SOURCE_REPO_URL_FALLBAC
 define('SQL_DB_TYPE', getenv(ENV_DB) ?: POSTGRES);
 define('SQL_DB_NAME', getenv(ENV_PGSQL_DATABASE) ?: SQL_DB_NAME_DEFAULT);
 define('SQL_DB_HOST', getenv(ENV_PGSQL_HOST) ?: SQL_DB_HOST_DEFAULT);
+$sql_db_is_local = in_array(SQL_DB_HOST, SQL_DB_LOCAL_HOSTS, true);
+define('SQL_DB_SSLMODE', getenv(ENV_PGSQL_SSLMODE) ?: ($sql_db_is_local ? SQL_DB_SSLMODE_LOCAL : SQL_DB_SSLMODE_DEFAULT));
 // the technical postgres user that is owner of the zukunft database
 define('SQL_DB_USER', getenv(ENV_PGSQL_USERNAME) ?: SQL_DB_USER_DEFAULT);
 define('SQL_DB_PASSWD', getenv(ENV_PGSQL_PASSWORD) ?: SQL_DB_PASSWD_FALLBACK);

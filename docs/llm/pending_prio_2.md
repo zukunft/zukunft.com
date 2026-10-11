@@ -10,6 +10,10 @@ add a subtitle with the country, region and an 'yours' option for the problem an
 while the three cost channels add up to about 1.1. The reasons page lists both kinds side by side.
 It is a data decision for you, as noted before.
 
+## settings page
+
+the 'tree' config api (cfg/helper/config_tree::api_json) parses config.yaml on each request; the settings page cache hides this for now, but the parsed tree could be cached like the config values and dropped when config.yaml changes
+
 ## tests
 
 add to the json_validation test a check for which words, triples, verb, formula or type objects a description is missing

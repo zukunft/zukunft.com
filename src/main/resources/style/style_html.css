@@ -785,9 +785,10 @@ a:hover {
     font-size: 0.8rem;
     margin-left: 0.25rem;
 }
-/* the config.yaml value behind a database value that differs from it */
+/* the config.yaml value behind a database value that differs from it; a darker shade of the
+   zukunft.com grey, because unlike the unit this small text is the only hint that the value differs */
 .config-file-value {
-    color: #9ea09e;
+    color: #6e706e;
     font-size: 0.8rem;
     margin-left: 0.5rem;
 }

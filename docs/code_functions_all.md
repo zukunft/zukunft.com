@@ -2014,6 +2014,8 @@
     \-- id_field - section for function id_field not yet defined that it should be info in /helper/combine_object.php
     \-- db_ready - section for function db_ready is expected to be check in /helper/combine_object.php
 \-- config_numbers
+    \-- exact_lookup - section for function exact_lookup not yet defined that it should be set and get in /helper/config
+            _numbers.php
     \-- fill_from_cache_json - section for function fill_from_cache_json not yet defined that it should be load in /help
             er/config_numbers.php
     \-- default_json - section for function default_json not yet defined that it should be default in /helper/config_num
@@ -5066,6 +5068,8 @@
         \-- config_numbers - get the first config value that is assigned to all given phrase names
     \-- get_by_names_exact
         \-- config_numbers - get the config value whose phrases are exactly the given names, e.g. the value of one
+    \-- exact_lookup
+        \-- config_numbers - the config values by their complete phrase set, so that a caller with many exact lookups
     \-- set_cache_json
         \-- config_numbers - use the cached config json for the value lookups of this request (see get_by_names),
     \-- unique_value

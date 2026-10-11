@@ -14,7 +14,7 @@ A proper issue ticket should be created for these TODOs notes:
 
     TODO use case PV calculator
 
-    TODO add admin dashboard, user settings, jobs  and system settings
+    TODO add admin dashboard, user settings, jobs and system settings
     TODO the user settings should have some (config.yaml) quick settings 
     TODO the admin dashboard the x most changed user settings
     TODO add default ranking 
