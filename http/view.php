@@ -123,6 +123,7 @@ if ($db_con->is_open()) {
         $usr_ui = new user_ui();
         $usr_ui->set_from_json($usr->api_json([], $msg), $msg_ui);
         $msg_ui->usr = $usr_ui;
+        frontend::url_user_matches($url_array, $msg_ui);
 
         $ui = new frontend('view');
 
@@ -162,8 +163,10 @@ if ($db_con->is_open()) {
                 $url_array = $back_url;
             } else {
                 $show_url = [url_var::MASK => new views()->change_to_show_id($mask_id)];
-                if (isset($url_array[url_var::ID])) {
-                    $show_url[url_var::ID] = $url_array[url_var::ID];
+                // e.g. the admin user edit names its user by url_var::USER_TO_EDIT or by the id of an old link
+                $obj_id = url_var::object_id($url_array);
+                if ($obj_id != 0) {
+                    $show_url[url_var::ID] = $obj_id;
                 }
                 $url_array = $show_url;
             }
@@ -210,7 +213,7 @@ if ($db_con->is_open()) {
                     $url_array = $ui->url_to_action($url_array, $usr, $msg_ui, $ui->dto);
                     // a page text collected so far or an already sent header would be lost by a redirect
                     if ($web_txt == '' and !headers_sent()) {
-                        $redirect_url = frontend::redirect_url($url_array);
+                        $redirect_url = frontend::redirect_url($url_array, $msg_ui);
                     }
                 }
             }

@@ -41,6 +41,7 @@ class html_names
     // html base elements
     const string SPAN = 'span';
     const string SUP = 'sup';
+    const string SUB = 'sub';
     const string HTML_CLASS = 'class';
     const string TITLE = 'title';
     const string INPUT = 'input';

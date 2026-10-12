@@ -36,10 +36,18 @@ namespace Zukunft\ZukunftCom\test\php\unit_workflow;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
+include_once paths::MODEL_PHRASE . 'phrase_list.php';
+include_once html_paths::PHRASE . 'phrase_list.php';
 include_once test_paths::CONST . 'workflows.php';
+include_once test_paths::CREATE . 'test_words.php';
 include_once paths::SHARED_TYPES . 'system_time_type.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
+use Zukunft\ZukunftCom\test\php\create\test_words;
 
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
@@ -74,6 +82,19 @@ class url_test_base
         'admin',
     ];
 
+    // the url vars that name a database row, so that a fixed test id in them is replaced by the
+    // real id of this run before the request leaves the test (see url_with_real_ids)
+    const array ID_VARS = [
+        url_var::ID,
+        url_var::PHRASE,
+        url_var::PHRASE_FROM,
+        url_var::PHRASE_TO,
+        url_var::FORMULA,
+        url_var::SOURCE,
+        url_var::VIEW,
+        url_var::USER_TO_EDIT,
+    ];
+
     // the run state shared by all workflow steps so the step calls stay short (see docs/llm/testing.md)
     protected test_cleanup $t;         // the test environment
     protected string $ts;              // the test section prefix used in the headers
@@ -102,7 +123,13 @@ class url_test_base
         $this->ts = $ts;
         $this->msg = new user_message();
         $this->ui = new frontend('view');
-        $this->ui->load_cache($this->msg);
+        // the workflow steps read the type lists from the frontend cache, so a cache that the api
+        // could not deliver is reported here with the api problem instead of failing later with
+        // a null type list inside a workflow step
+        if (!$this->ui->load_cache($this->msg)) {
+            log_err('the frontend cache for the workflow tests could not be loaded via the api: '
+                . $this->msg->get_last_message());
+        }
         // the html renderers read the type cache from the global $ui_sys; point it at the just loaded
         // frontend cache so the render does not depend on a stale cache left by another test
         global $ui_sys;
@@ -169,6 +196,32 @@ class url_test_base
     }
 
     /**
+     * the reserved test words of the workflow objects in the request cache, because a read run
+     * renders without backend calls, so a page would else link these words without a name
+     *
+     * the url of a step names a word by its database id if the word exists (see
+     * test_words::word_id_or_fixed), so the cached word gets that id from the norm ids of the
+     * workflow, which map the database id to the fixed id of the snapshot
+     */
+    protected function add_test_words_to_cache(): void
+    {
+        $lst = new phrase_list($this->t->usr1);
+        foreach ([test_words::word_add(), test_words::word_add_to()] as $wrd) {
+            $db_id = array_search($wrd->id(), $this->wf_norm_ids);
+            if ($db_id !== false) {
+                $wrd->id = $db_id;
+            }
+            if ($this->req->dto->phr_lst->get($wrd->id()) == null) {
+                $lst->add($wrd->phrase());
+            }
+        }
+        if (!$lst->is_empty()) {
+            $cac_msg = new user_message(); // a test setup without a user action, so nothing to report
+            $this->req->dto->add_phrases(new phrase_list_ui($lst->api_json()), $cac_msg);
+        }
+    }
+
+    /**
      * run one workflow step and snapshot the resulting html:
      * build the step url from the step view, the object id and any extra url parameters (the pending
      * change for save and confirm), render the user reaction and compare the html against the
@@ -179,9 +232,11 @@ class url_test_base
      * @param string $step the user reaction action const e.g. url_var::ACTION_SHOW
      * @param array $url_arr the extra url parameters of this step e.g. the fields of a pending change
      * @param int $msk_id the view shown by this step e.g. views::WORD_EDIT_ID
+     * @param bool $submit_acts true to run the action of the view only for a form submit like http/view.php,
+     *                          e.g. because opening the activation link must not confirm the email yet
      * @return string the rendered html so the caller can check the button urls against the next step
      */
-    protected function assert_step(string $step, array $url_arr, int $msk_id = 0): string
+    protected function assert_step(string $step, array $url_arr, int $msk_id = 0, bool $submit_acts = false): string
     {
         // remember the step for the next steps
         $this->step_path .= workflows::NAME_SEP . $step;
@@ -195,14 +250,21 @@ class url_test_base
         $url_arr[url_var::STEP] = workflows::url_step($step);
         // compare the url with the fixed url test files
         $this->assert_url($this->step_path, $step, $url_arr, rest_ctrl::GET);
+        // the snapshot above keeps the fixed test ids, but the frontend and the backend get the
+        // real ids of this run, because a test id names another row in the database
+        $url_arr = $this->url_with_real_ids($url_arr);
         // measure the action and the rendering separately, so a slow step shows which of the two
         // is slow; an interleaved db read or write still counts as db_read / db_write because its
         // own switch() restores this section
         global $sys;
         $sys->times->switch(system_time_type::URL_TO_ACTION);
-        $next_url = $this->ui->url_to_action($url_arr,
-            $this->req->usr_backend, $this->req->msg,
-            $this->req->dto, $this->req->do_it);
+        $next_url = $url_arr;
+        if (!$submit_acts or workflows::is_form_submit($step)) {
+            $next_url = $this->ui->url_to_action($url_arr,
+                $this->req->usr_backend, $this->req->msg,
+                $this->req->dto, $this->req->do_it);
+        }
+        $this->after_action($step);
         $sys->times->switch(system_time_type::URL_TO_HTML);
         // render in test mode so that the snapshot is reproducible without backend calls;
         // the start view, which every back step reaches, is the exception: it shows the global
@@ -214,6 +276,17 @@ class url_test_base
         $sys->times->switch(system_time_type::DEFAULT);
         $this->assert_html($this->step_path, $result, $next_url);
         return $result;
+    }
+
+    /**
+     * called after the action of a step and before its html is rendered and snapshot, so that a
+     * workflow can learn the id of an object that the action has just added (e.g. the user of a
+     * signup) and normalize it already in the snapshot of this step
+     *
+     * @param string $step the user reaction action const of the step e.g. workflows::FILL
+     */
+    protected function after_action(string $step): void
+    {
     }
 
     /**
@@ -243,6 +316,9 @@ class url_test_base
         $method = workflows::is_form_submit($step) ? $this->http_method : rest_ctrl::GET;
         // snapshot the url that this step's button press calls together with that http method
         $this->assert_wf_url($test_name, $step, $url_arr, $method);
+        // the snapshot above keeps the fixed test ids, but the frontend and the backend get the
+        // real ids of this run, because a test id names another row in the database
+        $url_arr = $this->url_with_real_ids($url_arr);
         $result = $this->ui->execute_and_next($url_arr, $this->req);
         // remember the method of the form on the rendered page so the next save / confirm uses it
         $this->http_method = $this->form_method($result);
@@ -282,6 +358,8 @@ class url_test_base
      */
     protected function assert_url(string $test_name, string $step, array $url_arr, string $method): void
     {
+        // a typed password (e.g. of the signup form) never goes into a committed snapshot file
+        $url_arr = url_var::without_secrets($url_arr);
         // the user reaction adds the process step (e.g. save -> to confirm) to the request url
         $script = api::HOST_SAME . api::MAIN_SCRIPT_EXT . url_var::PAR;
         $url_map = new url_mapper();
@@ -309,6 +387,40 @@ class url_test_base
     }
 
     /**
+     * the way back of normalize_ids: replace the fixed test ids of a step url by the real database
+     * ids of this run, so that no test id leaves the test section
+     *
+     * a fixed test id keeps the snapshot files stable, but it names a completely different row in
+     * the database - the test triple id 998 for example is the seeded triple 'sigma of x' - so a
+     * request with it would show or, in a write run, even change the wrong object
+     *
+     * @param array $url_arr the url of the step as the test has built it
+     * @return array the same url with the real database id in every url var that names a row
+     */
+    private function url_with_real_ids(array $url_arr): array
+    {
+        // the fixed id of the prime object and of the related objects, each mapped to the real id
+        $real_ids = [];
+        $fixed_to_real = [$this->wf_fixed_id => $this->wf_id] + array_flip($this->wf_norm_ids);
+        foreach ($fixed_to_real as $fixed_id => $real_id) {
+            // without a real id there is nothing to replace and a replacement by zero would
+            // remove the object from the url, so both ids must be known
+            if ($fixed_id > 0 and $real_id > 0 and $fixed_id != $real_id) {
+                $real_ids[$fixed_id] = $real_id;
+            }
+        }
+        foreach ($url_arr as $key => $val) {
+            // a '8'-prefixed opening value and a '9'-prefixed back target name the same rows
+            [, $base_key] = url_var::split_prefix((string)$key);
+            if (in_array($base_key, self::ID_VARS)
+                and array_key_exists((int)$val, $real_ids)) {
+                $url_arr[$key] = $real_ids[(int)$val];
+            }
+        }
+        return $url_arr;
+    }
+
+    /**
      * replace the volatile db ids with the fixed test ids so the snapshot file is stable: the prime
      * object id of the workflow and the additional ids of the related objects (e.g. the from and to
      * words of the test triple), each both in the url form ('=999') and in the json form ('"999"')
@@ -327,10 +439,13 @@ class url_test_base
             // both ids must be known: without a db id there is nothing to replace and without
             // a fixed id a replacement would erase a real id with a zero
             if ($db_id > 0 and $fixed_id > 0 and $db_id != $fixed_id) {
-                $content = str_replace(
-                    [url_var::EQ . $db_id, '"' . $db_id . '"'],
-                    [url_var::EQ . $fixed_id, '"' . $fixed_id . '"'],
+                // the url form only up to a word boundary, so that e.g. the id 15 does not
+                // corrupt the unrelated id=159 of another link on the same page
+                $content = preg_replace(
+                    '/' . url_var::EQ . $db_id . '\b/',
+                    url_var::EQ . $fixed_id,
                     $content);
+                $content = str_replace('"' . $db_id . '"', '"' . $fixed_id . '"', $content);
                 // ... and the id in the plain text of a user message e.g. 'the triple with id 809
                 // cannot be found' (msg_id::OBJECT_NOT_FOUND); the word boundary prevents that
                 // e.g. the id 809 corrupts an unrelated 8091 on the page
@@ -455,31 +570,26 @@ class url_test_base
     }
 
     /**
-     * replace each change log time in the rendered html with a dummy time so the snapshot does not
-     * vary with the real change time; instead of one repeated placeholder the times form a readable
-     * sequence: the change log is shown newest first, so the last (oldest) entry gets the fixed dummy
-     * start time (workflows::WF_CHANGE_LOG_START) and every entry above it one second more, giving an
-     * ascending time from the bottom to the top of the list based on the real change time order
+     * replace every change log time in the rendered html with the same dummy time
+     * (workflows::WF_CHANGE_LOG_START), so that the snapshot does not vary with the real change time
+     *
+     * the times used to form a second by second sequence counted from the oldest entry, which reads
+     * nicely but is derived from the number of entries: one change log row more or less - e.g.
+     * because the object of the workflow was created by another test before - then moved every other
+     * time and turned a one row difference into a diff of the whole page; the row order already shows
+     * the sequence, so one repeated placeholder keeps the snapshot stable and says the same
      *
      * the whole time expression (the date time plus any trailing text up to the next tag) is replaced,
      * which covers both the change log table (a 'when' cell) and the edit view (a bare change line)
      *
      * @param string $html the rendered html of the workflow step
-     * @return string the html with the change log times replaced by the dummy time sequence
+     * @return string the html with the change log times replaced by the dummy time
      */
     private function normalize_change_log_time(string $html): string
     {
         $pattern = '#\d{2}-\d{2}-\d{4} \d{2}:\d{2}[^<\n]*#';
-        $matches = [];
-        $count = preg_match_all($pattern, $html, $matches);
-        $i = 0;
-        $result = preg_replace_callback($pattern, function () use (&$i, $count) {
-            $time = new DateTime(workflows::WF_CHANGE_LOG_START);
-            $time->modify('+' . ($count - 1 - $i) . ' second');
-            $i++;
-            return $time->format('d-m-Y H:i:s');
-        }, $html);
-        return $result;
+        $time = new DateTime(workflows::WF_CHANGE_LOG_START);
+        return preg_replace($pattern, $time->format('d-m-Y H:i:s'), $html);
     }
 
     /**

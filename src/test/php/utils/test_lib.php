@@ -71,10 +71,14 @@ use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref_list;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
 use Zukunft\ZukunftCom\main\php\cfg\result\result;
+use Zukunft\ZukunftCom\main\php\cfg\result\result_list;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_list;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
 use Zukunft\ZukunftCom\main\php\cfg\system\list_db_read;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_geo;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_text;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_time;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_list;
@@ -104,6 +108,7 @@ use Zukunft\ZukunftCom\main\php\web\ref\ref_list as ref_list_ui;
 use Zukunft\ZukunftCom\main\php\web\ref\source as source_ui;
 use Zukunft\ZukunftCom\main\php\web\ref\source_list as source_list_ui;
 use Zukunft\ZukunftCom\main\php\web\result\result as result_ui;
+use Zukunft\ZukunftCom\main\php\web\result\result_list as result_list_ui;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object as db_object_ui;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
@@ -131,6 +136,7 @@ use Zukunft\ZukunftCom\test\php\create\test_log;
 use Zukunft\ZukunftCom\test\php\create\test_refs;
 use Zukunft\ZukunftCom\test\php\create\test_sources;
 use Zukunft\ZukunftCom\test\php\create\test_triples;
+use Zukunft\ZukunftCom\test\php\create\test_users;
 use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\create\test_words;
 
@@ -150,7 +156,7 @@ class test_lib
         return $usr_ui;
     }
 
-    function ui_value(value $val): value_ui
+    function ui_value(value|value_text|value_time|value_geo $val): value_ui
     {
         $api_msg = $val->api_json([api_types::INCL_PHRASES]);
         return new value_ui($api_msg);
@@ -181,7 +187,7 @@ class test_lib
     /**
      * create the frontend cache and fill it with all entries for the unit tests
      * TODO use it for the global ui_cac var
-     * @param user $usr the user for which the sample cache should be created
+     * @param user $usr the user that imports the views of the cache
      *                  for unit tests a user that is allowed to import code-ids should be used
      * @param test_cleanup $t the test environment e.g. the collect the errors
      * @param user_message $msg to collect the problems of the cache creation, which are asserted
@@ -193,7 +199,10 @@ class test_lib
         global $ui_sys;
 
         $dto_ui = new data_object_ui();
-        $dto_ui->usr = $this->cast_user($usr);
+        // the pages are rendered for the system test user, which sees the standard data, so the links
+        // of the test pages carry no user id; a test that needs e.g. the admin-only fields of the
+        // developer sets its session user itself (see the my tab tests)
+        $dto_ui->usr = $this->cast_user(test_users::user_sys_test());
         $dto_base_ui = new data_object_ui();
         $dto_base_ui->usr = $this->cast_user($usr);
 
@@ -288,7 +297,7 @@ class test_lib
     function list_to_ui(
         sandbox_list|type_list|change_log_list $lst,
         api_type_list|array                    $typ_lst = []
-    ): word_list_ui|triple_list_ui|source_list_ui|ref_list_ui|value_list_ui|formula_list_ui|formula_link_list_ui|change_log_list_ui|list_ui
+    ): word_list_ui|triple_list_ui|source_list_ui|ref_list_ui|value_list_ui|result_list_ui|formula_list_ui|formula_link_list_ui|change_log_list_ui|list_ui
     {
         $tl = new test_lib();
         $lst_ui = $tl->obj_to_ui_obj($lst);
@@ -319,6 +328,10 @@ class test_lib
             source::class => new source_ui(),
             ref::class => new ref_ui(),
             value::class => new value_ui(),
+            // the frontend shows a text, time and geo value on the same value object as a number
+            value_text::class => new value_ui(),
+            value_time::class => new value_ui(),
+            value_geo::class => new value_ui(),
             group::class => new group_ui(),
             formula::class => new formula_ui(),
             formula_link::class => new formula_link_ui(),
@@ -333,6 +346,7 @@ class test_lib
             ref_list::class => new ref_list_ui(),
             source_list::class => new source_list_ui(),
             value_list::class => new value_list_ui(),
+            result_list::class => new result_list_ui(),
             formula_list::class => new formula_list_ui(),
             formula_link_list::class => new formula_link_list_ui(),
             change_log_list::class => new change_log_list_ui(),

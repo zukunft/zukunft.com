@@ -1,0 +1,1 @@
+PREPARE db_cache_delete_by_ids FROM 'DELETE FROM db_caches WHERE type_id IN (?)';

@@ -73,6 +73,7 @@ include_once paths::SHARED_CONST . 'refs.php';
 include_once paths::SHARED_CONST . 'sources.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'users.php';
+include_once paths::SHARED_CONST . 'results.php';
 include_once paths::SHARED_CONST . 'values.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_CONST . 'words.php';
@@ -133,6 +134,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\components;
 use Zukunft\ZukunftCom\main\php\shared\const\refs;
 use Zukunft\ZukunftCom\main\php\shared\const\sources;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\const\results;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
@@ -752,6 +754,27 @@ class test_log
         $chg->set_field(change_fields::FLD_NUMERIC_VALUE, $msg);
         $chg->new_value = values::PI_SHORT;
         $chg->row_id = values::PI_ID;
+        $log_lst = new change_log_list();
+        $log_lst->add($chg);
+        return $log_lst;
+    }
+
+    /**
+     * the changes of a result like the changes of a value, so that the changes tab of the result
+     * page can be tested; the row id is the id of the result that the page shows, because the
+     * changes tab shows only the changes of the shown object (see change_log_list::filter)
+     *
+     * @return change_log_list the changes of the test result shown by the changes tab
+     */
+    function log_list_result(): change_log_list
+    {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
+        $t_res = new test_results($this->env);
+        $chg = $this->log_entry_add();
+        $chg->set_table(change_tables::RESULT, $msg);
+        $chg->set_field(change_fields::FLD_NUMERIC_VALUE, $msg);
+        $chg->new_value = results::TV_INT;
+        $chg->row_id = $t_res->result_main_max()->id();
         $log_lst = new change_log_list();
         $log_lst->add($chg);
         return $log_lst;

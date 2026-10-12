@@ -85,7 +85,10 @@ class ref_write_tests
             $t->assert('ref->load_object type', $result, $target, $t::TIMEOUT_LIMIT_PAGE_LONG);
         }
 
-        // cleanup of ref specific tests
+        // cleanup of ref specific tests: the ref first, because the word delete keeps the ref
+        if ($ref->id() > 0) {
+            $t->assert_true('ref->del of the test ref', $ref->del($msg));
+        }
         $t->write_named_cleanup($wrd, word_names::TEST_ADD);
     }
 

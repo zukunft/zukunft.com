@@ -643,6 +643,50 @@ name clash is `STEP_HUMAN = 'step'` / `STEP_POD = 'step'`, which is the same
 field in the long and in the pod url format. Renaming any of them changes the
 url contract and needs its own change (see `docs/llm/pending_prio_2.md`).
 
+## The logged-in user in the url
+
+Every page url and api url of a logged-in user carries the user id as `u`
+(`url_var::USER`), e.g. `/http/view.php?m=3&id=272&u=12`, so the address bar
+shows for whom the page is created. `html_base::ref` adds it to each link of
+this pod, `html_base::form_user` adds it as a hidden field to each form (a get
+form drops the parameters of its action), `frontend::redirect_url` sets it for
+the page after an action and `rest_call::data_with_user` for the api calls; the
+id comes from `user::id_for_url`, which is 0 for the profiles of
+`user_profiles::STANDARD_DATA`: an ip user is not unique, so it must not use the
+user sandbox, and the system users (system, system test, system log) see the
+standard data without user overwrites, so e.g. the test pages carry no `u`. The url never
+decides who the user is: the session does, and a url with another `u` only gets
+the `URL_USER_NOT_SESSION_USER` notice (`frontend::url_user_matches`). A user
+that is shown or changed is therefore never named by `u`, but by `ue`
+(`url_var::USER_TO_EDIT`, human `user_to_edit`). The views of
+`views::USER_TO_EDIT_MASKS_IDS` (the user page, the admin user add, edit
+and delete and the activation page of the mail link) select their user by `ue`; the other views of a user (config, jobs,
+quarantine, own changes) show the logged-in user and select no user
+(`url_var::id_var`). The url builders keep writing `url_var::ID`,
+`html_base::url_with_id_var` renames it in each link and redirect, `form_back`
+posts it as `ue`, and `url_mapper::url_to_standard` moves `ue` back to the id,
+so that the frontend loads every object by its id; the page cache key and the
+page vars of a back target read the user by `ue` too. An old url with `id`
+(e.g. an activation link of a mail sent before the change) still selects the user.
+
+The back part (`9`-prefixed params) only names the page to return to, so it is
+no part of the page cache key (`url_var::without_back`): a page called e.g. from
+the start page with the main columns (`…&9m=1&9dlc=2`) is cached once under its
+url without the back part, and a cacheable request is rendered without the back
+part too, so the cached html is the same for every page that links to it; only
+the login link then returns to the page itself instead of the calling page.
+
+Because the page of a user is named by `u`, it is also cached per user: the
+page cache key of a logged-in request ends with `&u=<id>`
+(`frontend::url_cache_key`), so the personal page - the user name in the navbar,
+the black add and edit icons, the user values and the my tab - is reused for
+that user only, while a request without login gets the standard page of the same
+url. The id of the key comes from the session (`frontend::session_user_id`) and
+never from the url, like everywhere else. A render without a php session (a
+workflow test or a page refresh job) has no key of its own, so a page that shows
+a user is rendered live there instead of becoming the standard page of everybody
+(`frontend::shows_personal_page`).
+
 ## Back-navigation parameter convention
 
 Back navigation (where to redirect after an action) is encoded as

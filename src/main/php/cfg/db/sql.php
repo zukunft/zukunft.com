@@ -107,6 +107,9 @@ class sql
     const string THEN = 'THEN';
     const string THEN_MYSQL = ',';
     const string IS_NULL = 'IS NULL';
+    // "= NULL" never matches, so a key part that may be null is compared with these
+    const string NULL_SAFE_EQUAL = 'IS NOT DISTINCT FROM';
+    const string NULL_SAFE_EQUAL_MYSQL = '<=>';
     const string NULL = 'NULL';
     const string NOT_TRUE = 'IS NOT TRUE';
     const string ELSE = 'ELSE';
@@ -118,6 +121,14 @@ class sql
     const string IN = 'IN';
     const string ANY = '= ANY';
     const string LIKE = 'LIKE';
+    // lower case like the pattern search of the existing queries
+    const string LIKE_LOWER_CASE = 'like';
+    const string LIKE_NO_UP_CASE = 'ilike';
+    // the postgres name of the fixed length char type, which postgres returns padded with spaces
+    const string PG_TYPE_CHAR = 'bpchar';
+    // the case-sensitive regular expression match of postgres and mysql (see sql_creator::key_match)
+    const string REGEXP_PG = '~';
+    const string REGEXP_LIKE = 'REGEXP_LIKE';
     const string COALESCE = 'COALESCE';
 
     // to separate one SQL statement from the next

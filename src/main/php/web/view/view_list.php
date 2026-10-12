@@ -123,7 +123,7 @@ class view_list extends ListBase
 
         $data = array(url_var::PATTERN => $pattern);
         $rest = new rest_call();
-        $json_body = $rest->api_get(view_list::class, $data);
+        $json_body = $rest->api_get(view_list::class, $data, $msg);
         $this->api_mapper($json_body);
         if (!$this->is_empty()) {
             $result = true;
@@ -143,7 +143,7 @@ class view_list extends ListBase
 
         $data = array(url_var::COMPONENT => $id);
         $rest = new rest_call();
-        $json_body = $rest->api_get(view_base::class, $data);
+        $json_body = $rest->api_get(view_base::class, $data, $msg);
         $this->api_mapper($json_body);
         if (!$this->is_empty()) {
             $result = true;

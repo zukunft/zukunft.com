@@ -53,6 +53,7 @@ include_once paths::DB . 'sql_type.php';
 //include_once paths::MODEL_SANDBOX . 'sandbox_multi.php';
 //include_once paths::MODEL_REF . 'ref.php';
 //include_once paths::MODEL_REF . 'source.php';
+//include_once paths::MODEL_RESULT . 'result.php';
 //include_once paths::MODEL_USER . 'user.php';
 //include_once paths::MODEL_USER . 'user_db.php';
 //include_once paths::MODEL_USER . 'user_message.php';
@@ -122,6 +123,7 @@ use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref_list;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source_list;
+use Zukunft\ZukunftCom\main\php\cfg\result\result;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_list;
@@ -560,17 +562,19 @@ class change_log_list extends list_db_read
      * load a list of sandbox object changes
      * e.g. the change of a value
      * @param string $class the name of the class
-     * @param int|string|null $id the unique database id of the sandbox object to filter the changes
-     * @param user|null $usr if set load only the changes of the given user
+     * @param user_message $msg to collect a problem of the database read
+     * @param int|string $id the unique database id of the sandbox object to filter the changes
+     * @param user $usr the user who views the changes
      * @param string|null $field_name the field that has been change e.g. 'view_id'
      *                                if not set, all changes are returned
      * @return bool true if at least one change found
      */
     function load_by_obj_fld(
-        string          $class,
-        user_message $msg, int|string|null $id = null,
-        user|null       $usr = null,
-        string|null     $field_name = ''
+        string       $class,
+        user_message $msg,
+        int|string   $id,
+        user         $usr,
+        string|null  $field_name = ''
     ): bool
     {
         global $db_con;
@@ -834,7 +838,9 @@ class change_log_list extends list_db_read
         $sc->set_fields(change::FLD_NAMES);
         $sc->set_join_fields(array(user_db::FLD_NAME), user::class);
         $sc->set_join_fields(array(change_fields::FLD_TABLE), change_field::class);
-        $sc->set_order(change_log::FLD_TIME, sql::ORDER_DESC);
+        // the change id decides the order of the changes of one save, which all have the same
+        // change time (see change::load_sql)
+        $sc->set_order(change_log::FLD_TIME, sql::ORDER_DESC, '', change_log::FLD_ID);
 
         return $qp;
     }
@@ -874,6 +880,15 @@ class change_log_list extends list_db_read
         } elseif ($class == value::class) {
             $result = $field_name . '_of_val';
             log_info('field name ' . $field_name . ' not expected for table ' . $class);
+        } elseif ($class == result::class) {
+            // the changes tab of the result page asks for the changes of the result without a
+            // field name, because a result has only the number that a user can overwrite
+            if ($field_name != '') {
+                $result = $field_name . '_of_res';
+                log_info('field name ' . $field_name . ' not expected for table ' . $class);
+            } else {
+                $result = 'res';
+            }
         } elseif ($class == formula::class) {
             $result = $field_name . '_of_frm';
             log_info('field name ' . $field_name . ' not expected for table ' . $class);
@@ -892,6 +907,13 @@ class change_log_list extends list_db_read
                 log_info('field name ' . $field_name . ' not expected for table ' . $class);
             } else {
                 $result = 'ref';
+            }
+        } elseif ($class == user::class) {
+            // e.g. the changes of a test user that the test cleanup removes (see test_base::cleanup_test_user)
+            if ($field_name != '') {
+                $result = $field_name . '_of_usr';
+            } else {
+                $result = 'usr';
             }
         } elseif (is_subclass_of($class, type_object::class)) {
             // a type row e.g. a sys log function logs to the changes table like the named objects
@@ -1013,7 +1035,10 @@ class change_log_list extends list_db_read
         // prepare sql to get the view changes of a user sandbox object e.g. word
         $log_named = new change($usr);
         $query_ext = $this->table_field_to_query_name($class, '');
-        if ($class == value::class) {
+        // a result change is written to the same change tables as a value change and with the
+        // group id instead of the row id (see sandbox_multi::log_prime), so both are read the same
+        $by_group_id = ($class == value::class or $class == result::class);
+        if ($by_group_id) {
             $grp_id = new group_id();
             $typ = $grp_id->table_type($id);
             if ($typ == sql_type::PRIME) {
@@ -1046,7 +1071,7 @@ class change_log_list extends list_db_read
         // the database reject the second bind
         $query_ext .= sql::NAME_SEP . 'last';
         $qp = $log_named->load_sql($sc, $query_ext);
-        if ($class == value::class) {
+        if ($by_group_id) {
             $sc->add_where(group_fields::FLD_ID, $id);
         } else {
             // a row id is unique only within a table, so without the table filter the changes of

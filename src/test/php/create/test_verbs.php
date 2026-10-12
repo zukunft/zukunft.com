@@ -232,6 +232,16 @@ class test_verbs extends test_objects
     }
 
     /**
+     * @return verb to combine two phrases to a new phrase e.g. the two columns of a chart
+     */
+    function verb_and(): verb
+    {
+        $vrb = new verb(verbs::AND_ID, verbs::AND, verbs::AND);
+        $vrb->set_user($this->env->usr1);
+        return $vrb;
+    }
+
+    /**
      * @return verb e.g. for meter per second
      */
     function verb_per(): verb

@@ -41,8 +41,10 @@ include_once html_paths::API_OBJECT . 'api_message.php';
 //include_once html_paths::FORMULA . 'formula_list.php';
 //include_once html_paths::TYPES . 'type_lists.php';
 //include_once html_paths::REF . 'source_list.php';
+//include_once html_paths::REF . 'ref_list.php';
 //include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::CONST . 'icons.php';
+include_once html_paths::TYPES . 'type_list.php';
 include_once html_paths::HTML . 'button.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'rest_call.php';
@@ -79,7 +81,9 @@ use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\phrase\term as term_ui;
 use Zukunft\ZukunftCom\main\php\web\html\rest_call;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
+use Zukunft\ZukunftCom\main\php\web\ref\ref_list;
 use Zukunft\ZukunftCom\main\php\web\ref\source_list;
+use Zukunft\ZukunftCom\main\php\web\types\type_list;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\result\result_list;
@@ -108,10 +112,10 @@ class db_object extends TextIdObject
     // the fallback crud views that are expected to be overwritten by the child objects;
     // the *_ID variants are the numeric view ids used in URLs (m=<id>) so links
     // resolve through the view-by-id router instead of the slower code-id lookup
-    const string VIEW_ADD = views::WORD_ADD;
+    const string VIEW_ADD = views::WORD_ADD_DETAIL;
     const string VIEW_EDIT = views::WORD_EDIT;
     const string VIEW_DEL = views::WORD_DEL;
-    const int VIEW_ADD_ID = views::WORD_ADD_ID;
+    const int VIEW_ADD_ID = views::WORD_ADD_DETAIL_ID;
     const int VIEW_EDIT_ID = views::WORD_EDIT_ID;
     const int VIEW_DEL_ID = views::WORD_DEL_ID;
 
@@ -211,13 +215,21 @@ class db_object extends TextIdObject
         return true;
     }
 
+    /**
+     * @param array $url_array the url of the request
+     * @return bool true if the url creates a new object, which therefore has no id yet: the create action
+     *              or an add view e.g. the add value view that the add icon of a page opens without the action
+     */
     function url_is_add_action(array $url_array): bool
     {
-        $is_add = false;
-        if (array_key_exists(url_var::ACTION, $url_array)) {
-            if ($url_array[url_var::ACTION] == url_var::CRUD_CREATE) {
-                $is_add = true;
-            }
+        // an explicit crud action overrules the mask, because e.g. the delete of a just added object
+        // is posted with the add mask of the object (see frontend::action_crud); a user reaction
+        // like save names no operation, so there the add mask decides
+        $action = $url_array[url_var::ACTION] ?? '';
+        if (in_array($action, url_var::CRUD_ACTIONS)) {
+            $is_add = ($action == url_var::CRUD_CREATE);
+        } else {
+            $is_add = in_array($url_array[url_var::MASK] ?? 0, views::ADD_MASKS_IDS);
         }
         return $is_add;
     }
@@ -423,7 +435,7 @@ class db_object extends TextIdObject
         $result = false;
 
         $api = new rest_call();
-        $json_array = $api->api_call_id($this->api_class(), $id, $data);
+        $json_array = $api->api_call_id($this->api_class(), $id, $msg, $data);
         if ($json_array) {
             $api_msg = new api_message();
             $body = $api_msg->validate($json_array);
@@ -433,10 +445,19 @@ class db_object extends TextIdObject
             // leak the internal mandatory-field messages to the page
             if (array_key_exists(json_fields::MSG, $body)
                 or ($body[json_fields::ID] ?? 0) == 0) {
-                $msg->add_warning_with_vars(msg_id::OBJECT_NOT_FOUND, [
-                    msg_id::VAR_CLASS_NAME => library::class_to_name_translated($this::class),
-                    msg_id::VAR_ID => $id,
-                ]);
+                if (array_key_exists(url_var::REFRESH, $data)) {
+                    // the backend has been asked to read the values that the user has entered but
+                    // not yet saved (the validate button of the formula form), so its answer is
+                    // about the entry and the user needs the reason to correct it
+                    $msg->add_warning_with_vars(msg_id::INPUT_VALIDATION_FAILED, [
+                        msg_id::VAR_JSON_TEXT => $body[json_fields::MSG] ?? '',
+                    ]);
+                } else {
+                    $msg->add_warning_with_vars(msg_id::OBJECT_NOT_FOUND, [
+                        msg_id::VAR_CLASS_NAME => library::class_to_name_translated($this::class),
+                        msg_id::VAR_ID => $id,
+                    ]);
+                }
             } else {
                 $excluded = false;
                 if (array_key_exists(json_fields::EXCLUDED, $body)) {
@@ -578,8 +599,7 @@ class db_object extends TextIdObject
             $html->url_back($this::VIEW_EDIT_ID, $this->id()),
             $url_array
         );
-        $icon = '<' . html_base::I . ' ' . html_base::CLASS_HTML . '="' . icons::EDIT . '"></' . html_base::I . '>';
-        return $html->ref($url, $icon, $mtr->txt($this::MSG_EDIT), styles::HEADING_ICON_INLINE, true);
+        return $html->change_icon($url, icons::EDIT, $mtr->txt($this::MSG_EDIT));
     }
 
     /**
@@ -705,6 +725,41 @@ class db_object extends TextIdObject
     function obj_url(int|string $view, array $url_arr = []): string
     {
         return new html_base()->url_back($view, $this->id(), $url_arr);
+    }
+
+    /**
+     * add the opening db value of a form field to a rendered selector as the '8'-prefixed hidden field,
+     * so that the confirm view can show the value before the change and the save writes only the fields
+     * that the user has really changed (see url_var::PRE); on a re-render after a save error the opening
+     * value of the url is kept, so that the baseline stays the db snapshot of the form start
+     *
+     * @param string $selector the html code of the rendered selector
+     * @param string $url_key the url var of the selected field e.g. url_var::SOURCE
+     * @param string $used_value the value preselected by the selector, used if the url has no pre value
+     * @return string the selector followed by the hidden field with the opening value
+     */
+    public function add_pre_value(string $selector, string $url_key, string $used_value): string
+    {
+        $html = new html_base();
+        $pre_value = $this->pre_value($url_key) ?? $used_value;
+        return $selector . $html->form_hidden(url_var::PRE . $url_key, $pre_value);
+    }
+
+    /**
+     * the complete form field of a type: the selector of the given type list with the opening db
+     * value as the '8'-prefixed hidden field; the url var of both comes from the type list, so the
+     * field name and the name of its pre value can never disagree (see type_list::NAME)
+     *
+     * @param type_list $typ_lst the types to select from e.g. the share types
+     * @param string $form the name of the html form
+     * @param int|null $used_id the type of this object or null to preselect the default of the list
+     * @return string the type selector with the hidden field of the value before the change
+     */
+    public function type_selector_with_pre(type_list $typ_lst, string $form, ?int $used_id): string
+    {
+        $sel_id = $used_id ?? $typ_lst->default_id();
+        $sel_html = $typ_lst->selector($form, $sel_id);
+        return $this->add_pre_value($sel_html, $typ_lst::NAME, (string)$sel_id);
     }
 
 
@@ -1309,6 +1364,7 @@ class db_object extends TextIdObject
             . ' ' . html_base::ACTION . '="' . $action . '"'
             . ' ' . html_base::METHOD . '="' . html_base::METHOD_POST . '"'
             . ' ' . html_base::ENCTYPE . '="multipart/form-data">'
+            . $html->form_user()
             . $frm_str
             . '</' . html_base::FORM . '>';
         return $result;
@@ -1317,6 +1373,7 @@ class db_object extends TextIdObject
     /**
      * create the HTML code to select a component
      * @param string $form the name of the html form
+     * @param user_message $msg with the requesting user for whom the components are selected
      * @param string $pattern the pattern used to filter the components by the name
      * @param int $id the id of the component selected until now
      * @param component_list $cmp_lst with the suggested components
@@ -1324,6 +1381,7 @@ class db_object extends TextIdObject
      */
     public function component_selector(
         string         $form,
+        user_message   $msg,
         string         $pattern,
         int            $id,
         component_list $cmp_lst
@@ -1346,11 +1404,13 @@ class db_object extends TextIdObject
     /**
      * create the html code to select a source
      * @param string $form the name of the html form
+     * @param user_message $msg with the requesting user for whom the sources are selected
      * @param string $pattern
      * @param source_list|null $src_lst the frontend cache with the configuration, the preloaded source and the cached objects
+     * @param bool $test_mode true to offer only the cached sources, because a snapshot is created without a backend call
      * @return string the html code to select a source
      */
-    public function source_selector(string $form, string $pattern, ?source_list $src_lst): string
+    public function source_selector(string $form, user_message $msg, string $pattern, ?source_list $src_lst, bool $test_mode = false): string
     {
         return $this->selector_not_defined('source_selector');
     }
@@ -1358,10 +1418,12 @@ class db_object extends TextIdObject
     /**
      * create the html code to select a reference
      * @param string $form the name of the html form
+     * @param user_message $msg with the requesting user for whom the references are selected
      * @param string $pattern
+     * @param ref_list|null $ref_lst the references of the frontend cache to select from
      * @return string the html code to select a reference
      */
-    public function ref_selector(string $form, string $pattern): string
+    public function ref_selector(string $form, user_message $msg, string $pattern, ?ref_list $ref_lst): string
     {
         return $this->selector_not_defined('ref_selector');
     }

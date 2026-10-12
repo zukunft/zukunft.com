@@ -252,7 +252,7 @@ class figure_list extends sandbox_list
     /*
      * TODO review
      */
-    function get_first_id(user_message $msg): int
+    function get_first_id(user_message $msg): int|string
     {
         $result = 0;
         if ($this != null) {

@@ -54,6 +54,8 @@ include_once paths::DB . 'sql_db.php';
 include_once paths::DB . 'sql_field_type.php';
 include_once paths::DB . 'sql_par.php';
 include_once paths::DB . 'sql_par_field_list.php';
+include_once paths::DB . 'sql_par_type.php';
+include_once paths::DB . 'sql_type.php';
 include_once paths::DB . 'sql_type_list.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_db.php';
@@ -72,6 +74,8 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
@@ -357,6 +361,73 @@ class db_cache extends db_object_seq_id_user
             $result = $msg->is_ok();
         }
         return $result;
+    }
+
+    /**
+     * remove the cache entries of one user, because they reference the user row and are derived
+     * data that the next request creates again, so they must not block the delete of the user
+     *
+     * @param int $usr_id the id of the user whose cache entries are removed
+     * @param user_message $msg to report a problem of the delete
+     * @return bool true if the cache entries of the user have been removed
+     */
+    function del_by_user(int $usr_id, user_message $msg): bool
+    {
+        global $db_con;
+
+        $qp = $this->del_sql_by_user($db_con->sql_creator(), $usr_id);
+        return $db_con->delete($qp, 'cache entries of user ' . $usr_id, $msg);
+    }
+
+    /**
+     * remove the cache entries of the given types of all users, because e.g. a default changed by an admin is
+     * part of the cached config of every user, but not of the other caches e.g. of the types;
+     * derived data that the next request creates again (see del_by_user)
+     *
+     * @param array $code_ids the code ids of the cache types e.g. config_numbers::CACHE_TYPES
+     * @param user_message $msg to report a problem of the delete
+     * @return bool true if the cache entries have been removed
+     */
+    function del_by_types(array $code_ids, user_message $msg): bool
+    {
+        global $db_con;
+        global $sys;
+
+        $ids = array_map(fn(string $code_id) => $sys->typ_lst->cac_typ->id($code_id), $code_ids);
+        $qp = $this->del_sql_by_type_ids($db_con->sql_creator(), $ids);
+        return $db_con->delete($qp, 'cache entries of the types ' . implode(',', $code_ids), $msg);
+    }
+
+    /**
+     * create the sql statement to delete the cache entries of the given types of all users
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param array $type_ids the database ids of the cache types
+     * @return sql_par the sql statement to delete the cache entries of the types
+     */
+    function del_sql_by_type_ids(sql_creator $sc, array $type_ids): sql_par
+    {
+        return $sc->del_sql_list_without_log(self::class, db_cache_db::FLD_TYPE, $type_ids);
+    }
+
+    /**
+     * create the sql statement to delete the cache entries of one user
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param int $usr_id the id of the user whose cache entries are removed
+     * @return sql_par the sql statement to delete the cache entries of the user
+     */
+    function del_sql_by_user(sql_creator $sc, int $usr_id): sql_par
+    {
+        $qp = new sql_par(self::class, new sql_type_list([sql_type::DELETE]));
+        $sc->set_class(self::class);
+        $sc->add_where(user_db::FLD_ID, $usr_id);
+        $sql = sql::DELETE . ' ' . $sc->name_sql_esc($sc->get_table()) . ' ';
+        $sql .= sql::WHERE . ' ' . user_db::FLD_ID . ' = ' . $sc->par_name(1);
+        $qp->name .= '_by_user';
+        $qp->sql = $sc->prepare_sql($sql, $qp->name, [sql_par_type::INT]);
+        $qp->par = $sc->get_par();
+        return $qp;
     }
 
 

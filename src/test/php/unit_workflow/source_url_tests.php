@@ -107,7 +107,7 @@ class source_url_tests extends url_test_base
         $this->wf_start($wf_nbr, workflows::WF_ADD_SOURCE, $this->t->usr1, sources::SYSTEM_TEST_ADD_ID, $do_it);
 
         // initial url with an empty source
-        $url_arr = test_sources::source_new_url($this->msg);
+        $url_arr = test_sources::source_new_url();
 
         $this->wf_id = 0;
         $this->wf_fixed_id = sources::SYSTEM_TEST_ADD_ID;
@@ -181,7 +181,7 @@ class source_url_tests extends url_test_base
         // rendered buttons and the confirmed write target the real row (the snapshot files normalize
         // the id back to the fixed test id)
         $t_src = new test_sources($this->t);
-        $url_arr = $t_src->source_add_url($this->msg);
+        $url_arr = test_sources::source_add_url();
         $url_arr[url_var::ID] = $this->wf_id;
         // fix the values before the changes in the url TODO Prio 2 should be done by the process automatic
         $url_pre = html_base::pre_url_array($url_arr);
@@ -277,8 +277,7 @@ class source_url_tests extends url_test_base
         // initial url with the added source; the url carries the current db id of the source so the
         // confirmed delete targets the real row (the snapshot files normalize the id back to the
         // fixed test id)
-        $t_src = new test_sources($this->t);
-        $url_arr = $t_src->source_add_url($this->msg);
+        $url_arr = test_sources::source_add_url();
         $url_arr[url_var::ID] = $this->wf_id;
         // fix the values before the changes in the url TODO Prio 2 should be done by the process automatic
         $url_pre = html_base::pre_url_array($url_arr);

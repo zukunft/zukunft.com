@@ -44,10 +44,10 @@ SELECT formula_link_insert_log_015510000
         100,
         3,
         1,
-        12,
+        92,
         'scale minute to sec',
         'time period based',
         'minute',
-        699,
-        700,
+        669,
+        671,
         2);

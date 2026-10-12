@@ -208,12 +208,19 @@ class triple_list extends sandbox_list_named
      * @param verb $vrb if set to filter the selection
      * @param bool $load_all force to include also the excluded triples e.g. for admins
      * @param int $limit the max number of triples to read, zero for the database default
+     * @param int $page the page to read, so that a caller can read all triples of a much used verb
      * @return bool true if at least one triple found
      */
-    function load_by_verb(verb $vrb, user_message $msg, bool $load_all = false, int $limit = 0): bool
+    function load_by_verb(
+        verb         $vrb,
+        user_message $msg,
+        bool         $load_all = false,
+        int          $limit = 0,
+        int          $page = 0
+    ): bool
     {
         global $db_con;
-        $qp = $this->load_sql_by_verb($db_con->sql_creator(), $vrb, $limit);
+        $qp = $this->load_sql_by_verb($db_con->sql_creator(), $vrb, $limit, $page);
         return $this->load($qp, $msg, $load_all);
     }
 
@@ -397,12 +404,14 @@ class triple_list extends sandbox_list_named
      * @param sql_creator $sc with the target db_type set
      * @param verb $vrb if set to filter the selection
      * @param int $limit the max number of triples to read, zero for the database default
+     * @param int $page the page to read, so that a caller can read all triples of a much used verb
      * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_verb(
         sql_creator $sc,
         verb        $vrb,
-        int         $limit = 0
+        int         $limit = 0,
+        int         $page = 0
     ): sql_par
     {
         $qp = $this->load_sql($sc);
@@ -411,8 +420,9 @@ class triple_list extends sandbox_list_named
             $sc->add_where(verb_db::FLD_ID, $vrb->id());
             $sc->set_name($qp->name);
             // a much used verb has thousands of triples, so the read is limited to the number
-            // that the verb page can show (see cfg/verb/verb::load_triples_related)
-            $sc->set_page($limit);
+            // that the verb page can show (see cfg/verb/verb::load_triples_related) and a caller
+            // that needs all of them reads page by page (see data_object::load_system_phrases)
+            $sc->set_page($limit, $page);
             $qp->sql = $sc->sql();
         } else {
             $qp->name = '';

@@ -42,6 +42,7 @@ include_once paths::SHARED_TYPES . 'db_cache_statuum.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once paths::SHARED . 'api.php';
 include_once paths::SHARED_TYPES . 'db_cache_types.php';
+include_once paths::SHARED_CONST . 'views.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
@@ -50,6 +51,7 @@ use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache_db;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache_page;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\api;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\types\db_cache_types;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\test\php\create\test_db_caches;
@@ -109,6 +111,22 @@ class db_cache_tests
         $t->assert_qp($qp, $sc->db_type);
         $sc->reset(sql_db::MYSQL);
         $qp = $cac->load_sql_by_type_id($sc, db_cache_types::SYSTEM_CONFIG_ID, $t->usr1->id());
+        $t->assert_qp($qp, $sc->db_type);
+
+        // sql to remove the cache entries of one user e.g. before the user is deleted
+        $sc->reset(sql_db::POSTGRES);
+        $qp = $cac->del_sql_by_user($sc, $t->usr1->id());
+        $t->assert_qp($qp, $sc->db_type);
+        $sc->reset(sql_db::MYSQL);
+        $qp = $cac->del_sql_by_user($sc, $t->usr1->id());
+        $t->assert_qp($qp, $sc->db_type);
+
+        // sql to remove the cached config of all users e.g. after an admin has changed a default setting
+        $sc->reset(sql_db::POSTGRES);
+        $qp = $cac->del_sql_by_type_ids($sc, [db_cache_types::SYSTEM_CONFIG_ID]);
+        $t->assert_qp($qp, $sc->db_type);
+        $sc->reset(sql_db::MYSQL);
+        $qp = $cac->del_sql_by_type_ids($sc, [db_cache_types::SYSTEM_CONFIG_ID]);
         $t->assert_qp($qp, $sc->db_type);
 
         // sql to load a list of open batch db_caches
@@ -193,7 +211,7 @@ class db_cache_tests
         // in - covering both the crud form hidden field and the logout / error_update link href
         $token = 'aaaa1111';
         $page =
-            '<a href="view.php?m=64&token=' . $token . '">logout</a>'
+            '<a href="view.php?m=' . views::LOGOUT_ID . '&token=' . $token . '">logout</a>'
             . '<input name="token" value="' . $token . '">';
         $stored = db_cache_page::strip_session_token($page, $token);
         $test_name = 'the session token is removed from the stored page';
@@ -205,7 +223,7 @@ class db_cache_tests
         $served = db_cache_page::restore_session_token($stored, $other);
         $test_name = 'the reading session token is filled in on read';
         $t->assert($test_name, $served,
-            '<a href="view.php?m=64&token=' . $other . '">logout</a>'
+            '<a href="view.php?m=' . views::LOGOUT_ID . '&token=' . $other . '">logout</a>'
             . '<input name="token" value="' . $other . '">');
         $test_name = 'the rendering session token is not served to another session';
         $t->assert_false($test_name, str_contains($served, $token));
@@ -226,6 +244,10 @@ class db_cache_tests
         $page_with_msg = '<main>content</main>' . $msg_html . api::USER_MSG_PLACEHOLDER . '<footer></footer>';
         $test_name = 'the user message is removed from the page on save';
         $t->assert($test_name, db_cache_page::strip_user_msg($page_with_msg), $clean_page);
+        $test_name = '... also the green confirmation of a done action';
+        $success_html = $html->dsp_notification('the setting has been updated', true);
+        $page_with_success = '<main>content</main>' . $success_html . api::USER_MSG_PLACEHOLDER . '<footer></footer>';
+        $t->assert($test_name, db_cache_page::strip_user_msg($page_with_success), $clean_page);
         $test_name = 'a page without a message is not changed on save';
         $t->assert($test_name, db_cache_page::strip_user_msg($clean_page), $clean_page);
         // an alert that is part of the page content is not the user message of the request
@@ -233,6 +255,14 @@ class db_cache_tests
             . api::USER_MSG_PLACEHOLDER . '<footer></footer>';
         $test_name = 'an alert of the page content is not removed on save';
         $t->assert($test_name, db_cache_page::strip_user_msg($content_alert_page), $content_alert_page);
+        // ... also if the request has a message: only the message before the placeholder is removed and
+        // never the page content between a content alert and the message (e.g. the rest of a word page)
+        $content_alert_main = '<main><div class="' . html_base::CLASS_NOTIFICATION . '">content alert</div>'
+            . '<div>more content</div></main>';
+        $content_alert_with_msg = $content_alert_main . $msg_html . api::USER_MSG_PLACEHOLDER . '<footer></footer>';
+        $test_name = 'the page content between a content alert and the message is kept on save';
+        $t->assert($test_name, db_cache_page::strip_user_msg($content_alert_with_msg),
+            $content_alert_main . api::USER_MSG_PLACEHOLDER . '<footer></footer>');
 
         $test_name = 'the message of the current request is added to a page loaded from cache';
         $t->assert($test_name, db_cache_page::add_user_msg($clean_page, $msg_html), $page_with_msg);

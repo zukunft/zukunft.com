@@ -38,10 +38,12 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 include_once html_paths::TYPES . 'type_list.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::SHARED_TYPES . 'view_link_types.php';
+include_once html_paths::SHARED_TYPES . 'view_styles.php';
 include_once html_paths::SHARED . 'url_var.php';
 
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\view_link_types;
+use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class view_link_type_list extends type_list
@@ -67,10 +69,11 @@ class view_link_type_list extends type_list
     function selector(
         string   $form = '',
         int|null $selected = null,
-        string   $name = self::NAME
+        string   $name = self::NAME,
+        string   $style = view_styles::COL_SM_4
     ): string
     {
-        return parent::type_selector($form, $selected, $name, msg_id::FORM_SELECT_VIEW_LINK_TYPE);
+        return parent::type_selector($form, $selected, $name, msg_id::FORM_SELECT_VIEW_LINK_TYPE, $style);
     }
 
 }

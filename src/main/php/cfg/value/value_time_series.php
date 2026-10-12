@@ -97,10 +97,13 @@ class value_time_series extends sandbox_value
     const string FLD_ID_COM = 'a 64 bit integer value because the number of time series is not expected to be too high';
     const string FLD_ID = 'value_time_series_id';
 
-    // all database field names excluding the id and excluding the user-specific fields
+    // all database field names excluding the id and excluding the user-specific fields;
+    // the group is the primary key of the time series tables, so it is not named here but by
+    // id_field, which gives the group id of the norm table or the phrase ids of the prime table,
+    // whereas the time series id is a normal field that links the header to its data rows
     const array FLD_NAMES = array(
-        user_db::FLD_ID,
-        group_fields::FLD_ID
+        self::FLD_ID,
+        user_db::FLD_ID
     );
 
     // list of the user-specific numeric database field names
@@ -130,6 +133,9 @@ class value_time_series extends sandbox_value
 
     // related objects used also for database mapping
     public ?source $source;    // the source object
+    // the id that links the header to its data rows (see value_ts_data); the id of this object
+    // is the group id like for a value, because the group is the key of the time series tables
+    public ?int $ts_id = null;
 
     /*
      * construct and map
@@ -163,23 +169,40 @@ class value_time_series extends sandbox_value
     /**
      * map the database fields to the object fields
      *
+     * the loader calls this function and not row_mapper_sandbox (see sandbox_multi::load), so
+     * the time series fields are mapped here like the number of a value (see value_base)
+     *
      * @param array|null $db_row with the data directly from the database
+     * @param string $ext the table extension of the row e.g. "_p1" for a prime row
      * @param bool $load_std true if only the standard user sandbox object is loaded
      * @param bool $allow_usr_protect false for using the standard protection settings for the default object used for all users
      * @param string $id_fld the name of the id field as defined in this child and given to the parent
+     * @param bool $one_id_fld false if the row is named by more than one id field
      * @return bool true if the value time series is loaded and valid
      */
-    function row_mapper_sandbox(
+    function row_mapper_sandbox_multi(
         ?array       $db_row,
         user_message $msg,
+        string       $ext,
         bool         $load_std = false,
         bool         $allow_usr_protect = true,
-        string       $id_fld = self::FLD_ID): bool
+        string       $id_fld = group_fields::FLD_ID,
+        bool         $one_id_fld = true
+    ): bool
     {
         $lib = new library();
-        $result = parent::row_mapper_multi($db_row, $msg, '', self::FLD_ID);
+        // the group id of the norm table names the group, else the phrase id fields of a prime
+        // table row do, and the mapper gets the field that the row really has (see set_grp_by_row)
+        $phr_id_flds = $this->id_field();
+        $one_id_fld = $this->set_grp_by_row(
+            $db_row, $msg, $id_fld, is_array($phr_id_flds) ? $phr_id_flds : []);
+        if (!$one_id_fld and is_array($phr_id_flds)) {
+            $id_fld = $phr_id_flds[0];
+        }
+        $result = parent::row_mapper_sandbox_multi(
+            $db_row, $msg, $ext, $load_std, $allow_usr_protect, $id_fld, $one_id_fld);
         if ($result) {
-            $this->grp()->set_id($db_row[group_fields::FLD_ID]);
+            $this->ts_id = $db_row[self::FLD_ID] ?? null;
             if ($db_row[source_fields::FLD_ID] > 0) {
                 $this->source = new source($this->get_user());
                 $this->source->id = $db_row[source_fields::FLD_ID];
@@ -253,7 +276,7 @@ class value_time_series extends sandbox_value
         $qp = parent::load_sql_multi($sc, $query_name, $class, $sc_par_lst, $ext, $id_ext);
 
         // overwrite the standard id field name (value_id) with the main database id field for values "group_id"
-        $sc->set_id_field($this->id_field());
+        $sc->set_id_field($this->id_field($sc_par_lst));
         $sc->set_name($qp->name);
         $sc->set_fields(self::FLD_NAMES);
         $sc->set_usr($this->get_user()->id);
@@ -266,19 +289,18 @@ class value_time_series extends sandbox_value
     /**
      * create an SQL statement to retrieve a time series by the phrase group from the database
      *
+     * the time series has the same three tables as a value (see sandbox_value::sql_one_type), so
+     * the table and the key fields are taken from the group like for a value: the phrase ids for
+     * a prime group and the group id for the other groups; selecting always by the group id would
+     * compare a prime group id, which is a 64 bit integer, with the char group id field
+     *
      * @param sql_creator $sc with the target db_type set
      * @param group $grp the phrase group to which the time series should be loaded
-     * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
-    function load_sql_by_grp(sql_creator $sc, group $grp, string $class = self::class): sql_par
+    function load_sql_by_grp(sql_creator $sc, group $grp): sql_par
     {
-        $qp = $this->load_sql($sc, group_fields::FLD_ID);
-        $sc->add_where(group_fields::FLD_ID, $grp->id());
-        $qp->sql = $sc->sql();
-        $qp->par = $sc->get_par();
-
-        return $qp;
+        return parent::load_sql_by_grp($sc, $grp);
     }
 
     /**
@@ -343,19 +365,6 @@ class value_time_series extends sandbox_value
     /*
      * info
      */
-
-    /**
-     * temp overwrite of the id_field function of sandbox_value class until this class is reviewed
-     *
-     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
-     * @return string|array the field name(s) of the prime database index of the object
-     */
-    function id_field(sql_type_list $sc_par_lst = new sql_type_list()): string|array
-    {
-        $lib = new library();
-        return $lib->class_to_name($this::class) . sql_db::FLD_EXT_ID;
-    }
-
 
     /*
      * write

@@ -383,15 +383,15 @@ class ListOfIdObjects extends ListOf
      * but has a name
      * or in second priority linked objects
      *
-     * @param db_object_seq_id|null $to_add the object that should be added
+     * @param db_object_seq_id|TextIdObject|null $to_add the object that should be added
      * @param bool $allow_duplicates true if the list can contain the same entry twice e.g. for the components
      * @param Message $msg to report which entry is double
      * @returns bool true if the object has been added
      */
     function add_by_key(
-        db_object_seq_id|null $to_add,
-        bool                  $allow_duplicates = false,
-        Message               $msg = new Message()
+        db_object_seq_id|TextIdObject|null $to_add,
+        bool                               $allow_duplicates = false,
+        Message                            $msg = new Message()
     ): bool
     {
         $msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [

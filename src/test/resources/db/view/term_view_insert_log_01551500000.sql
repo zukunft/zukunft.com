@@ -49,10 +49,10 @@ SELECT term_view_insert_log_01551500000
         1::bigint,
         3::bigint,
         1::smallint,
-        89::smallint,
+        103::smallint,
         'Start view'::text,
         'main word'::text,
         'mathematics'::text,
-        725::smallint,
-        727::smallint,
+        759::smallint,
+        762::smallint,
         'System Test description for a view term link'::text);

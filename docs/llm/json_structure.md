@@ -46,6 +46,12 @@ component, formula or source shifts the id of every later object of that class**
 wave of failing tests that can only be repaired by a full reset and a
 re-baseline run (`docs/llm/testing.md`).
 
+A **formula shifts two id sequences at once**: the import also creates a word of
+the same name with the phrase type `formula link`, so an added formula moves
+every later *word* id as well, not only the formula ids. The formula-link words
+sit directly after the words of their own file, e.g. `scale by factor` is the
+word right behind `increase` of `time_definition.json`.
+
 Therefore, when the task is to fix one entry:
 
 - change that entry and nothing else — no reformatting, no re-indenting, no
@@ -73,6 +79,13 @@ When a file *references* a base word it doesn't own (e.g. `chemistry`
 `{"name": "science"}` / `{"name": "law"}`. On import the name-only entry merges
 with the canonical definition in its home file — no data duplicated.
 
+A long json file is not a problem. The json files are data, not code, so the
+"reduce to the max" rule of the code does not apply to them: more data is
+better, and a file with thousands of values or calc-validation entries is as
+welcome as a short one, as long as each entry follows the rules of this
+document. Never shorten a file to make it easier to read; split it by topic if
+a reader needs a smaller unit (see *Split a large domain* below).
+
 ### The home file is the one imported **first**, not the one that sounds canonical
 
 Which file owns a phrase is decided by the **import order**, because the first
@@ -83,10 +96,26 @@ out of `cfg/const/files.php`:
 1. `SYSTEM_DATA_FILES` — `system_views`, `sources`, `units`, `scaling`,
    `time_definition`, `base_phrases`, `base_views`, **`solution_prio`**,
    `country`, `currency`, `company`, …
-2. `BASE_DATA_FILES` — `math`, `physics`, `chemistry`, `economics`, … which the
+2. `SAMPLE_VIEW_DATA_FILES` — the demo files that every database setup needs to
+   render the seed views, e.g. `zurich`, `global_warming` and the `problem_*`
+   file of each start page ranking row
+3. `USE_CASE_FILES` — the last step of the database setup
+4. `BASE_DATA_FILES` — `math`, `physics`, `chemistry`, `economics`, … which the
    const block itself labels *"loaded at the end not to change the id of objects
    used by the system tests"*
-3. `BASE_DATA_PATH_FILES` — the per-topic demo files
+5. `BASE_DATA_PATH_FILES` — the per-topic demo files
+
+Only the first three are imported by every setup; the rest is added by
+`test/test_full_load.php`.
+
+Importing more data on every setup is not a cost to avoid: it keeps the
+pressure high to speed up the import, which is a kind of feature, so a file
+that every pod should have goes into the setup lists even if it is large. The
+id shift that such a file causes for everything imported after it is planned
+and accepted: that is why the phrases the tests use most often sit at the top
+of the import order, so that a shift touches few pinned ids, and why an id is
+re-baselined from the regenerated `list.csv` and never treated as stable (see
+*Phrase id consts are re-baselined …* in `docs/llm/testing.md`).
 
 So `solution_prio.json` is the home of `probability`, `score`, `deviation`,
 `return`, `market`, `tax`, … even though `math.json` and `economics.json` look
@@ -234,7 +263,7 @@ A word is the atomic phrase:
 {
   "name": "Fermi",
   "description": "Italian-American physicist, after whom Fermi estimation is named",
-  "type": "measure",
+  "type": "measure_unit",
   "refs": [
     { "name": "Enrico_Fermi", "type": "wikipedia" },
     { "name": "Q8753",        "type": "wikidata" }
@@ -243,7 +272,34 @@ A word is the atomic phrase:
 ```
 
 - `name` is the unique key. Descriptions and `refs` are optional.
-- `type` is set only when the word is a measure (SI unit, `percent`, etc.).
+- `type` is set only when the word says how the number is read: a `measure_unit` (SI unit,
+  currency), or a format like `percent` or `factor`. A format word is shown as its symbol behind the number,
+  and the symbol is data too: a triple like `x is symbol for factor` in the same file defines
+  it (see `phrase_types` and `phrase::number_symbol`). A scaling and a unit are shown as their
+  symbol as well, so a value reads like a price tag (`165'070'664 mio €` instead of naming
+  `million` and `EUR`): the symbol links to the phrase it stands for with its description as the
+  tooltip, a unit that is itself a symbol (`EUR is symbol for Euro`) shows the symbol of that
+  phrase (`€`), and of several symbols the shortest one without a meaning of its own is taken
+  (`m` stands for million too, but it is the unit of the metre, so `mio` is shown; see
+  `phrase_list::symbol_of`).
+- `measure_unit` is only the **unit** of a numeric value (`EUR`, `metre`, `person`), never
+  *what* is measured. `GDP`, `population`, `force` or `temperature` name the quantity; they get
+  no type, and the unit the number is stated in is a separate phrase of the value
+  (`["Germany", "GDP", "EUR", "2023"]`). Typing the quantity as `measure_unit` makes every
+  value with the quantity and its unit a value with two units (see *A value or result has only
+  one phrase of the type measure unit, percent or factor*).
+- A quantity that describes the number like a unit gets the type `measure_non_unit`
+  (`{ "name": "GDP", "type": "measure_non_unit" }` in `solution_prio.json`): a value table
+  then shows it in the column header behind the unit (`loss in percent GDP`) instead of
+  opening a row or column for it (`value_list::is_unit`), while it stays no number type, so
+  the value still carries its real unit (`["world", "GDP", "trillion", "EUR", "2024"]`).
+- The other way round, **every unit of a numeric value is of the type `measure_unit`**: a word or
+  triple that a value uses as its unit (`watt`, `W`, `kWh`, `USD per EUR`) carries
+  `"type": "measure_unit"` in its home file (`units.json` for the SI units), because only a typed
+  phrase is shown as the unit of the number and heads a value table column as such. A later
+  file that re-declares the unit either repeats the type verbatim (`{ "name": "watt", "type":
+  "unit" }` in `physics.json`) or stays name-only; an untyped unit in a value is a smell
+  that the home definition is missing.
 - `refs` lists external citations (Wikipedia article slug, Wikidata Q-id).
 
 ### Prefer a Wikipedia link over a free-text description
@@ -419,6 +475,29 @@ value's group) disambiguates. Do not force the symbol unique or rename one
 side; only flag a genuine unintended collision (e.g. a formula name equal to a
 triple name).
 
+### An ambiguous symbol: one named triple per meaning and `can be symbol for`
+
+A new ambiguous symbol is stated explicitly, so that every meaning has a unique
+name and a page can tell the meanings apart:
+
+- per meaning one `is symbol for` triple with a unique name, the meaning in
+  brackets e.g. `tn (scaling)` = `tn` is symbol for `trillion` and `tn (weight)` =
+  `tn` is symbol for `tonne`;
+- per meaning one `can be symbol for` triple from the ambiguous symbol to the named
+  triple e.g. `tn` can be symbol for `tn (scaling)` and `tn` can be symbol for
+  `tn (weight)` (see `solution_prio.json`).
+
+The frontend preloads both verbs on every page (`verbs::PRELOAD_VERBS`), so the
+meanings are known wherever a number is shown, and decides per page
+(`web\phrase_list::symbol_of` and `symbol_taken`):
+
+- a page that shows one meaning only uses the short symbol for it, e.g. `2.2 tn €`;
+- a page that shows several meanings gives the symbol to the meaning whose name it
+  shortens most and names the other meanings in full or by another symbol, e.g. one
+  trillion tonnes is `1 tn tonne` and not `1 trillion tn`;
+- one page always uses the same symbol for the same meaning and never mixes, so the
+  choice depends on the phrases of the page only and not on the single number.
+
 ### `is symbol for` (formula replacer) vs `is alias of` (one merged phrase)
 
 Both verbs link a short string to a phrase, but they mean different things — pick
@@ -443,6 +522,17 @@ Rule of thumb: a one- or two-character typographic symbol (`s`, `m`, `kg`, `J`,
 **Direction** — `is symbol for` always points **from the symbol to the phrase**
 (`from` = the symbol, `to` = the full phrase), so the replacer can find the symbol
 by the verb. Flip a triple that has the symbol on the `to` side.
+
+**Hand-written `latex`** — a `latex` field in a seed wraps every term in
+`\text{<name>}`, where the name is the term name of the expression or its symbol
+word, because only a `\text{}` token is resolved to a term and shown as a link on
+the formula page (`formula::load_latex_terms`, `web formula::expression_latex_link`).
+A bare `\sigma_f` is neither linked nor rendered. The page has no latex engine, so
+use only the markup the renderer knows (`web formula::latex_to_html`): `\frac`,
+`\sqrt`, `\cdot`, `\approx`, `\sum`, `\partial`, `\left`/`\right`, `^`, `_` and
+the function names `\ln`, `\log`, `\exp`, `\sin`, `\cos`, `\tan`, `\sec`; any other
+command is shown as raw text. Example: `\text{sigma of f} \approx \left|
+\frac{\text{f} \cdot \text{b} \cdot \text{sigma of x}}{\text{x}} \right|`.
 
 ### Disambiguate an ambiguous *word* with qualifier triples
 
@@ -848,6 +938,24 @@ an import *adds* its parent phrase to the formula's existing assignments and
 never replaces assignments made by other files, unless the import states
 otherwise.
 
+### Declare the assigned phrase in the same file
+
+Cumulative does **not** mean the phrase may be named from anywhere: the import
+resolves `assigned_word` / `assigned` only against the phrases of the file
+being imported (`formula_map::link_assigned_phrase` looks in the file's own
+`data_object`). A name that the file does not declare adds
+`IMPORT_FORMULA_ASSIGN_PHRASE_MISSING` to the **shared** import message, and
+because `data_object::save()` gates every step on `$msg->is_ok()`, the whole
+file is then skipped — no words, no triples, no formulas, and the ids of every
+later object shift. The symptom is silent: the import reports the error, but a
+later file that re-declares part of the same data hides the gap.
+
+So re-declare the phrase by name in the file that holds the formula, which
+costs nothing because an existing word is matched by name and keeps its id.
+`time_definition.json` does exactly this with `{"name": "percent"}` for
+`increase` and `{"name": "factor"}` for `scale by factor`, both owned by
+`scaling.json`.
+
 ### The `percent` measure auto-scales
 
 A formula whose result is assigned to `percent` and that computes a ratio
@@ -855,6 +963,18 @@ A formula whose result is assigned to `percent` and that computes a ratio
 explicit `* 100`. Do not "fix" such formulas by adding `* 100` — the missing
 factor is intentional; scaling happens via the `percent` measure, not the
 expression.
+
+The ×100 is coded, the sign is not: the triple `% is symbol for percent` of
+`scaling.json` defines what is shown behind the number, exactly like
+`x is symbol for factor`, so the frontend reads it from the cache and never from
+a literal (see `phrase::symbol_name`).
+
+A symbol is needed on pages that have nothing to do with the phrase it stands
+for, so the triples of `verbs::PRELOAD_VERBS` (`is symbol for`, `is alias of`)
+and the phrases they link travel with the **initial cache load**, next to the
+types and the system views (`data_object::load_system_phrases` fills them,
+`api\ui_config` sends them as `system_phrases`). A new symbol triple therefore
+needs no display code and no api change, only the seed entry.
 
 ### A `percent` value is stored as the decimal ratio, never as the ×100 number
 
@@ -906,6 +1026,22 @@ predecessor. The result goes to `percent`, so there is **no `* 100`** (above).
 so it **cannot be reproduced by `calc-validation`** (which does literal value
 lookup — see below). That is why no base file calc-validates `increase`: leave
 the period-over-period result out of your `calc-validation` block.
+
+### Scaling by a factor: reuse the system `scale by factor` formula
+
+A value that says how many times bigger one number is than the number it is
+compared with carries the phrase `factor` (phrase type `scaling factor`, shown
+as its symbol `x` behind the number). `time_definition.json` ships the general
+formula next to `increase`:
+
+```json
+{ "name": "scale by factor", "expression": "\"one\" = \"prior\" * \"factor\"", "assigned_word": "factor" }
+```
+
+So do **not** write the multiplication out per case. It is assigned to `factor`,
+so it applies wherever a value has a factor and a predecessor, and like
+`increase` it resolves `prior` only at calc time, which keeps it out of
+`calc-validation`.
 
 ### Formula name uniqueness across types
 
@@ -978,6 +1114,21 @@ source name.
   "source": "..."
 }
 ```
+
+An optional `"name"` is the name that a user has given to the phrase group of the value. It is
+exported only if a user has set one and never repeats the name generated from the `words`.
+
+### Different numbers for the same value in different files are a feature, not a problem
+
+Two files may state a different number for the same phrase group, e.g. one estimate of the
+world htp in `problem_global_warming.json` and another in a later file, **if the files belong
+to different users**: the target of zukunft.com is to show transparently which options and
+results are possible, so each user's number is kept as that user's value and the reader sees
+where the estimates differ and why. Do not "correct" a number in one file to match another
+file, and do not remove a file's number because another file has one; state the reasoning in
+the `description` instead. Only within one user is a phrase group one value, so two files of
+the **same** user that state the same group are the duplication that the *home file* rule
+avoids: the later import overwrites the earlier number silently.
 
 ### Qualify a value as specifically as the data allows — build from single words
 
@@ -1078,6 +1229,58 @@ two different numbers. The same holds for any ratio (`revenue per cost`), any
 directed flow (exports *from* Switzerland *to* Germany) and any signed change
 over a period (*from* 2023 *to* 2024 flips sign if the years swap).
 
+**A scale or unit of the divisor → triple.** A flat scaling word (`million`,
+`billion`, `trillion`) and a flat unit (`EUR`, `USD`) describe the **number
+itself**, and the calculation scales the whole value by the scaling word. So a
+ratio whose divisor carries the scale or the unit must build the divisor as its
+own triple and the quotient with `per` on top of it. The effort factor of
+`start_page/problem_black_box_ai.json` is *"the person years needed to set up a
+solution per trillion EUR of annual damage"*:
+
+- **Wrong** — reads as a number of person years **in trillion EUR**:
+
+```json
+{ "words": ["black-box AI", "person year", "trillion", "EUR", "factor", "assumed"], "number": "90.909091" }
+```
+
+- **Right** — the scale and the currency stay with the divisor:
+
+```json
+{ "name": "trillion EUR", "from": "trillion", "verb": "of", "to": "EUR" },
+{ "from": "person year", "verb": "per", "to": "trillion EUR" }
+
+{ "words": ["black-box AI", "person year per trillion EUR", "factor", "assumed"], "number": "90.909091" }
+```
+
+A formula names the operand the same way (`"person year per trillion EUR","factor"`)
+and a calc-validation `context` lists the triple instead of `person year`. A
+scale of the **whole** ratio stays a flat word: `"trillion","EUR per person year"`
+is the reward ratio in trillion EUR per person year.
+
+**A qualifier of one phrase of the group → triple.** The flat words of a value
+qualify the whole number and none of them says which other word it belongs to.
+So `["potential", "loss", "trillion", "EUR"]` does not tell that the loss is the
+potential one: `potential` could as well qualify `EUR` or the whole group. The
+triple `potential loss` (`loss` `kind of` `potential`, defined in
+`solution_prio.json`) links the qualifier to the phrase it qualifies, so use it:
+
+- **Wrong** — `potential` floats in the group:
+
+```json
+{ "words": ["citizen participation", "potential", "loss", "trillion", "EUR", "assumed"] }
+```
+
+- **Right** — the loss is the potential one:
+
+```json
+{ "words": ["citizen participation", "potential loss", "trillion", "EUR", "assumed"] }
+```
+
+The formula names the operand the same way (`"potential loss","trillion","EUR"`),
+and so does a calc-validation `context`. A file that uses the triple repeats its
+`from`/`verb`/`to` from the home file (see *Self-consistency*). The same holds for
+`potential gain`.
+
 **The verb carries meaning → triple.** Two phrases can be linked by more than one
 relation, and then the verb alone decides which number is meant. `zh_city.json`
 uses the same `from` and the same `to` twice and only changes the verb:
@@ -1140,6 +1343,104 @@ operand (see *Calc-validation*), and two same-measure operands that share *one*
 context can only be told apart by distinct names (entity atoms or triples), never
 by a bare genus word alone.
 
+### A value or result has only one phrase of the type measure unit, percent or factor
+
+A phrase of the type `measure_unit` (`EUR`, `km2`, `gram per kWh`), `percent`
+(`percent`) or `factor` (`factor`) says **how the number is stated**: the
+frontend shows it as the unit or as the symbol behind the number (`%`, `x`) and
+heads a table column with it. A number is stated in one way only, so the `words`
+of a value, of a `results` and of a `calc-validation` entry carry **at most one**
+phrase of these three types. A scaling word (`million`, `billion`) is no such
+type, so `["trillion", "EUR"]` stays as it is.
+
+If more than one of these types is needed to describe the number, the
+combination is **one triple** that carries the one type, like the unit
+`gram per kWh` of `use_cases/pv_switzerland_co2.json`:
+
+```json
+{ "from": "gram", "verb": "per", "to": "kWh", "type": "measure_unit" }
+```
+
+**A percent is already a factor.** `start_page/problem_disinformation.json`
+states *"how many times bigger the long run loss is than the loss per year"*:
+
+- **Wrong** — `percent` and `factor`, so the page shows the number with two
+  symbols (`%` and `x`):
+
+```json
+{ "words": ["disinformation", "percent", "GDP", "factor", "assumed"], "number": "15.7233" }
+```
+
+- **Right** — `percent` alone says that the number is a ratio (15.7233 is shown
+  as 1'572.33 %, see *A `percent` value is stored as the decimal ratio*); what
+  the ratio is about is named by phrases without one of the three types:
+
+```json
+{ "words": ["disinformation", "loss", "long run growth", "percent", "assumed"], "number": "15.7233" }
+```
+
+**A ratio of two measures is one unit.** Two flat measures also hide the
+direction (see *The order carries meaning → triple*):
+
+- **Wrong** — `tonne` and `USD` are both a measure:
+
+```json
+{ "words": ["carbon price", "tonne", "USD"], "number": "19" }
+```
+
+- **Right** — the unit is the triple:
+
+```json
+{ "from": "USD", "verb": "per", "to": "tonne", "type": "measure_unit" }
+
+{ "words": ["carbon price", "USD per tonne"], "number": "19" }
+```
+
+**A number with a unit is no factor.** The conversion ratio of
+`start_page/fermi_internet_pro_contra.json` is an amount of money per DALY:
+
+- **Wrong** — two measures and `factor`:
+
+```json
+{ "words": ["conversion ratio", "factor", "CHF", "DALY", "assumed"], "number": "50000" }
+```
+
+- **Right**:
+
+```json
+{ "from": "CHF", "verb": "per", "to": "DALY", "type": "measure_unit" }
+
+{ "words": ["conversion ratio", "CHF per DALY", "assumed"], "number": "50000" }
+```
+
+**What is measured is no measure.** A share of the GDP is stated as a
+percentage; `GDP` only says what the share refers to:
+
+- **Wrong** — the word `GDP` typed `measure_unit` in `base_data/GDP.json`, so every
+  value with `percent` and `GDP` is a value with two number types:
+
+```json
+{ "name": "GDP", "type": "measure_unit" }
+
+{ "words": ["global warming", "potential loss", "percent", "GDP", "assumed"], "number": "-0.32" }
+```
+
+- **Right** — `GDP` is a quantity, so it is no number type (see *Words*); the
+  value stays as it is, `percent` is its one number type and a GDP amount carries
+  its unit as a phrase of its own (`["world", "GDP", "trillion", "EUR", "2024"]`).
+  Because `GDP` describes the number and not the row of a value table, it is
+  typed `measure_non_unit`, which heads no row or column but is named in the
+  column header behind the unit (`loss in percent GDP`):
+
+```json
+{ "name": "GDP", "type": "measure_non_unit" }
+
+{ "words": ["global warming", "potential loss", "percent", "GDP", "assumed"], "number": "-0.32" }
+```
+
+A formula names the operand and the result the same way, and the `context` of a
+`calc-validation` entry lists a unit triple instead of its parts.
+
 ### `"share": "public"` is the default and must be omitted
 
 Only add `share` when it differs from `public`.
@@ -1171,13 +1472,101 @@ or triple itself: a file must not define a `measured value` word, nor a
 A measured number without a `source` is a smell — either name the source or,
 if it really is an assumption, mark it `assumed`.
 
+### A calculated value inherits the lowest quality of its inputs
+
+The words of the phrase type `value_quality` (home file `solution_prio.json`)
+are grouped by an `is a` triple into four groups, from the weakest to the
+strongest evidence:
+
+| group        | e.g.                                                         |
+|--------------|--------------------------------------------------------------|
+| `conjecture` | `assumed`, `expert estimate`, `extrapolated`, `modelled`, `calculated` |
+| `report`     | `self-reported`, `single measurement`, `official statistics`, `audited` |
+| `science`    | `preprint`, `randomized controlled trial`, `meta-analysis`   |
+| `convention` | `defined`, `legal`, `proven`                                 |
+
+A formula cannot add evidence, so its result has the **lowest** quality of all
+its inputs:
+
+- `defined` × `audited` → the result is a `report` (`audited`)
+- `audited` × `assumed` → the result is a `conjecture` (`assumed`)
+- `defined` × `legal` → the result stays a `convention`
+
+`calculated` (and `modelled`) only says *how* the number came about; it is never
+ranked on its own, because that would turn every result into a conjecture even
+when all inputs are conventions. Never lift a result above its weakest input,
+e.g. by tagging a formula result `audited` because the main input was audited.
+
+### A value status is not a rung of the quality ladder
+
+The quality says how a number has been *found*; the status, a word of the
+phrase type `value_status`, says what *happened* to it afterwards:
+
+- `disputed` — challenged by a published objection that is not yet resolved
+- `retracted` — withdrawn by the authors or the publisher
+- `superseded` — replaced by a corrected or a newer number of the same source
+- `outdated` — right when it was found, but the measured thing has changed
+
+A peer-reviewed number can still be retracted, so a status never replaces or
+lowers the quality word: a value keeps both, e.g.
+`{"words": ["...", "peer reviewed by quality journal", "retracted", "percent"], ...}`.
+A value without a status word is valid. A calculated value carries every status
+of its inputs, because one retracted input makes the result unusable whatever
+the quality of the other inputs is.
+
+### The confidence of a value quality is a default value, never a fixed number
+
+Each value quality has a default confidence, the probability from 0 to 1 that
+the number is right, stored as a normal value with a description of the reason
+(`solution_prio.json`):
+
+- `{"words": ["assumed", "confidence", "percent"], "number": "0.3", "description": "..."}`
+- `{"words": ["double-blind randomized controlled trial", "confidence", "percent", "assumed"], "number": "0.9", "description": "..."}`
+
+The defaults rise along the ladder (e.g. `assumed` 0.3, `official statistics`
+0.8, `double-blind randomized controlled trial` 0.9, `defined` 1). The number
+itself is a judgement, so it is marked `assumed` like every other number without
+a source; the `assumed` row needs no second `assumed`.
+
+A value and not a const in the code, because the default must stay overridable:
+
+- a **user** overwrites the default like any other value, e.g. to trust
+  `self-reported` company figures less;
+- a **single value** carries its own confidence, e.g.
+  `["<claim words>", "confidence", "percent"]`, which wins over the default of
+  its quality, because a small double-blind trial can deserve less confidence
+  than a large observational cohort.
+
+`calculated` has no default: a result takes the confidence of its weakest input,
+like its quality (see above). A value status never lowers the confidence; a
+`retracted` number is unusable whatever its confidence is.
+
 ## Calc-validation
 
-Optional. A list of *expected* formula results: instead of being stored, each
-entry is **recomputed** from the file's own values and formulas and compared, so
-a broken formula or a mistyped input is caught at import time. Same shape as a
-stored `result`, but routed through `validate_results` — a mismatch is reported
-as a failed validation, never saved as a value.
+Optional. A list of *expected* formula results: each entry is **recomputed** from
+the file's own values and formulas and compared, so a broken formula or a
+mistyped input is caught at import time. Same shape as a stored `result`, and
+additionally routed through `validate_results` — a mismatch is reported as a
+failed validation and stops the import, never saved as a value.
+
+An operand is looked up in the `values` of the file first and, if the file states
+no value for it, in the entries of `calc-validation` that have **already been
+reproduced**. Entries are checked in file order, so a file can calculate a target
+value first and its probability range from that target afterwards. A result that
+did not reproduce is never an operand, else a wrong number would confirm the next
+one instead of being reported.
+
+The database is never asked for an operand, so a chain that needs the numbers of
+another file belongs into that file: the climate solutions are calculated in
+`problem_global_warming.json`, because their gain uses the welfare loss share of
+the global warming problem (see *Self-consistency* above).
+
+A checked entry is a result like any other, so it is **also stored** in the
+results table with its phrases, its number and the formula that calculated it.
+Its `context` is always stored as the source group: a context of more than four
+phrases does not fit the bigint `source_group_id` column of `results_prime` and
+`results_main`, so such a result is saved in `results` (up to 16 context phrases)
+or `results_big` with the text key of its phrases (see `result::table_type`).
 
 ```json
 {

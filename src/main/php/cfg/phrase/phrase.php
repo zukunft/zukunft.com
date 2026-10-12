@@ -1659,7 +1659,7 @@ class phrase extends combine_named
     }
 
     /**
-     * @return bool true if the word has the type "measure" (e.g. "metre" or "CHF")
+     * @return bool true if the word has the type "measure unit" (e.g. "metre" or "CHF")
      * in case of a division, these words are excluded from the result
      * in case of add, it is checked that the added value does not have a different measure
      */
@@ -1683,7 +1683,7 @@ class phrase extends combine_named
     }
 
     /**
-     * @returns true if the phrase type is set to "scaling_percent" (e.g. "percent")
+     * @returns true if the phrase type is set to "percent" (e.g. "percent")
      */
     function is_percent(user_message $msg): bool
     {
@@ -1877,6 +1877,64 @@ class phrase extends combine_named
     {
         //$result = $this->name();
         return '"' . $this->name() . '"';
+    }
+
+    /**
+     * the phrases that select the values of this phrase: this phrase and, as far as the pod
+     * includes them (config.yaml select > value > symbol|alias > include), its symbols and its
+     * aliases and the phrase a symbol or alias stands for, e.g. "EUR" and "€" for "Euro" and
+     * "Euro" for "EUR"
+     *
+     * @param user_message $msg to collect the problems while loading the linked phrases
+     * @return phrase_list the phrases whose values belong to the page of this phrase
+     */
+    function value_selection(user_message $msg): phrase_list
+    {
+        global $cfg;
+        return $this->selection($msg,
+            $cfg?->symbol_values_included() ?? true, $cfg?->alias_values_included() ?? true);
+    }
+
+    /**
+     * the phrases that select the formulas of this phrase: this phrase and, as far as the pod
+     * includes them (config.yaml select > formula > symbol|alias > include), its symbols and its
+     * aliases and the phrase a symbol or alias stands for
+     *
+     * @param user_message $msg to collect the problems while loading the linked phrases
+     * @return phrase_list the phrases whose formulas belong to the page of this phrase
+     */
+    function formula_selection(user_message $msg): phrase_list
+    {
+        global $cfg;
+        return $this->selection($msg,
+            $cfg?->symbol_formulas_included() ?? true, $cfg?->alias_formulas_included() ?? true);
+    }
+
+    /**
+     * @param user_message $msg to collect the problems while loading the linked phrases
+     * @param bool $with_symbols true to add the symbols of this phrase and, for a symbol, the phrase it stands for
+     * @param bool $with_aliases true to add the aliases of this phrase and, for an alias, the phrase it stands for
+     * @return phrase_list this phrase with the included symbols and aliases
+     */
+    private function selection(user_message $msg, bool $with_symbols, bool $with_aliases): phrase_list
+    {
+        global $sys;
+        $result = $this->lst();
+        $vrb_lst = new verb_list($this->get_user());
+        if ($with_symbols) {
+            $vrb_lst->add($sys->verb(verbs::SYMBOL));
+        }
+        if ($with_aliases) {
+            $vrb_lst->add($sys->verb(verbs::ALIAS));
+        }
+        // the phrases at the other end of the links are needed, not the linking triples,
+        // and a symbol or alias links up to the phrase it stands for, so both directions are read
+        $self = $this->lst();
+        foreach ($vrb_lst->lst() as $vrb) {
+            $result->merge($self->load_linked_phrases($vrb, foaf_direction::UP, $msg));
+            $result->merge($self->load_linked_phrases($vrb, foaf_direction::DOWN, $msg));
+        }
+        return $result;
     }
 
     /**

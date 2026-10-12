@@ -24,7 +24,7 @@ PREPARE term_view_update_log_000010000_user_call FROM
 SELECT term_view_update_log_000010000_user
        (3,
         2,
-        900,
+        770,
         null,
         1,
         0);

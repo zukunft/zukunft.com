@@ -175,6 +175,8 @@ class data_object
         }
     }
     public formula_list $frm_lst;
+    // the phrases used as the to side of the "is a" triples, i.e. the categories a word can be defined as
+    public phrase_list $ctg_lst;
     public formula_link_list $frm_lnk_lst;
     public result_list $res_lst {
         set(result_list $value) {
@@ -243,6 +245,7 @@ class data_object
         $this->ref_lst = new ref_list();
         $this->val_lst = new value_list();
         $this->frm_lst = new formula_list();
+        $this->ctg_lst = new phrase_list();
         $this->frm_lnk_lst = new formula_link_list();
         $this->res_lst = new result_list();
         $this->msk_lst = new view_list();

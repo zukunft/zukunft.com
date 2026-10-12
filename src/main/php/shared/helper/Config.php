@@ -42,6 +42,12 @@ class Config
     const string DEFAULT_THOUSAND_SEP = "'";
     const string DEFAULT_DATE_TIME_FORMAT = 'd-m-Y H:i';
 
+    // the frontend types of config.yaml "user > frontend > type" (see web config::value_add_view)
+    const string FRONTEND_PURE_HTML = 'pure HTML';
+    const string FRONTEND_HTML_JS_PHRASE = 'HTML with js phrase selection';
+    const string FRONTEND_FULL_JS = 'full js';
+    const string DEFAULT_FRONTEND_TYPE = self::FRONTEND_PURE_HTML;
+
     // number of entries initial to show in a named list
     const int LIMIT_NAME_LIST = 4;
 
@@ -64,5 +70,12 @@ class Config
     // number of entries shown in the more version of a list (config.yaml select: more: entries)
     // TODO Prio 0 use this only as the fallback value for the changeable value from config.yaml
     const int LIMIT_MORE_LIST = 20;
+
+    // number of columns of a table including the row name column (config.yaml select: columns: entries)
+    const int LIMIT_TABLE_COLUMNS = 10;
+
+    // number of the most often used phrases offered in a phrase selector before the user has typed
+    // anything (config.yaml "user > frontend > lists > preload > phrase list")
+    const int LIMIT_PHRASE_PRELOAD = 400;
 
 }

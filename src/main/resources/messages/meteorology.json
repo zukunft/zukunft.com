@@ -1939,6 +1939,7 @@
   "formulas": [
     {
       "name": "definition of relative humidity",
+      "description": "how much water vapour the air holds compared to the maximum it can hold at its temperature, in percent; at 100 percent dew or fog forms",
       "expression": "\"relative humidity\" = \"vapor pressure\" / \"saturation vapor pressure\" * 100",
       "latex": "RH = \\frac{e}{e_s} \\cdot 100",
       "assigned": [
@@ -1948,6 +1949,7 @@
     },
     {
       "name": "definition of mixing ratio",
+      "description": "the mass of water vapour per mass of dry air, a humidity measure that does not change when the air is heated or cooled without condensation",
       "expression": "\"mixing ratio\" = \"mass of water vapor\" / \"mass of dry air\"",
       "latex": "w = \\frac{m_v}{m_d}",
       "assigned": [
@@ -1957,6 +1959,7 @@
     },
     {
       "name": "definition of specific humidity",
+      "description": "the mass of water vapour per mass of moist air including the vapour, nearly the same as the mixing ratio for the usual small vapour amounts",
       "expression": "\"specific humidity\" = \"mass of water vapor\" / \"mass of moist air\"",
       "latex": "q = \\frac{m_v}{m}",
       "assigned": [
@@ -1966,6 +1969,7 @@
     },
     {
       "name": "definition of Coriolis parameter",
+      "description": "the strength of the Coriolis effect at a given latitude, which deflects winds and currents to the right on the northern hemisphere; zero at the equator and largest at the poles",
       "expression": "\"Coriolis parameter\" = 2 * \"angular velocity of Earth\" * sin(\"latitude\")",
       "latex": "f = 2 \\Omega \\sin\\phi",
       "assigned": [
@@ -1975,6 +1979,7 @@
     },
     {
       "name": "definition of albedo",
+      "description": "the share of the incoming sunlight that a surface reflects, e.g. about 0.9 for fresh snow and 0.1 for the open ocean, a key factor of the climate",
       "expression": "\"albedo\" = \"reflected radiation\" / \"incoming radiation\"",
       "latex": "\\alpha = \\frac{R_{\\uparrow}}{R_{\\downarrow}}",
       "assigned": [
@@ -1984,6 +1989,7 @@
     },
     {
       "name": "definition of saturation vapor pressure",
+      "description": "the maximum water vapour pressure the air can hold at a temperature, which roughly doubles every 10 degrees Celsius, by the Magnus approximation",
       "expression": "\"saturation vapor pressure\" = 6.112 * exp(17.67 * \"temperature in celsius\" / ( \"temperature in celsius\" + 243.5 ))",
       "latex": "e_s = 6.112\\,e^{\\frac{17.67\\,T}{T + 243.5}}",
       "assigned": [
@@ -1992,6 +1998,7 @@
     },
     {
       "name": "barometric height formula",
+      "description": "how the air pressure falls with the altitude, approximately by half every 5.5 kilometres, for an atmosphere of constant temperature",
       "expression": "\"atmospheric pressure\" = \"standard atmospheric pressure\" * exp(- \"altitude\" / 8000)",
       "latex": "p = p_0\\,e^{-z/H}",
       "assigned": [
@@ -2000,6 +2007,7 @@
     },
     {
       "name": "definition of environmental lapse rate",
+      "description": "how fast the air temperature falls with the height in the actual atmosphere, on average about 6.5 degrees Celsius per kilometre",
       "expression": "\"environmental lapse rate\" = \"temperature difference\" / \"height difference\"",
       "latex": "\\Gamma = \\frac{\\Delta T}{\\Delta z}",
       "assigned": [

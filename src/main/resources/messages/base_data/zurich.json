@@ -103,8 +103,7 @@
           "name": "Q12796",
           "type": "wikidata"
         }
-      ],
-      "type": "measure"
+      ]
     },
     {
       "name": "Now"
@@ -185,7 +184,7 @@
           "type": "wikidata"
         }
       ],
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "km2",
@@ -199,7 +198,7 @@
           "type": "wikidata"
         }
       ],
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "CHF",
@@ -213,11 +212,11 @@
           "type": "wikidata"
         }
       ],
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "HTP",
-      "type": "measure",
+      "type": "measure_unit",
       "description": "Happy Time Point, the zukunft.com DALY-extended wellbeing unit"
     },
     {
@@ -585,80 +584,12 @@
       ],
       "number": "0.6",
       "source": "zukunft.com Fermi assumption"
-    },
-    {
-      "words": [
-        "Zurich (city)",
-        "density",
-        "person",
-        "km2"
-      ],
-      "number": "4924.042228994341"
-    },
-    {
-      "words": [
-        "Zurich (canton)",
-        "density",
-        "person",
-        "km2"
-      ],
-      "number": "941.6315789473684"
-    },
-    {
-      "words": [
-        "Zurich (city) share of Zurich (canton)",
-        "percent"
-      ],
-      "number": "0.277886051123992"
-    },
-    {
-      "words": [
-        "Zurich (city)",
-        "natural balance",
-        "2025",
-        "person"
-      ],
-      "number": "1492"
-    },
-    {
-      "words": [
-        "Zurich (canton)",
-        "GDP per capita",
-        "CHF"
-      ],
-      "number": "98152.36465507552"
-    },
-    {
-      "words": [
-        "Zurich (city)",
-        "foreign count",
-        "2025",
-        "person"
-      ],
-      "number": "153370.71899999998"
-    },
-    {
-      "words": [
-        "Zurich (canton)",
-        "foreign count",
-        "2025",
-        "person"
-      ],
-      "number": "472143.49"
-    },
-    {
-      "words": [
-        "Zurich (canton)",
-        "welfare",
-        "HTP",
-        "year"
-      ],
-      "number": "976848.6"
     }
   ],
   "formulas": [
     {
       "name": "density (formula)",
+      "description": "the number of inhabitants per unit of area, e.g. per square kilometre, to compare how densely the city and the canton of Zurich are populated",
       "expression": "\"density\" = \"population\" / \"area\"",
       "assigned": [
         "Zurich (city)",
@@ -667,6 +598,7 @@
     },
     {
       "name": "share of canton (formula)",
+      "description": "the part of the canton of Zurich that the city of Zurich accounts for, e.g. of the population or of the area, as a ratio between 0 and 1",
       "expression": "\"Zurich (city) share of Zurich (canton)\" = \"Zurich (city)\" / \"Zurich (canton)\"",
       "assigned": [
         "Zurich (city)",
@@ -704,6 +636,7 @@
     },
     {
       "name": "natural balance (formula)",
+      "description": "the change of the population by births and deaths alone, without migration; negative if more people die than are born",
       "expression": "\"natural balance\" = \"birth count\" - \"death count\"",
       "assigned": [
         "Zurich (city)"
@@ -718,6 +651,7 @@
     },
     {
       "name": "foreign count (formula)",
+      "description": "the number of inhabitants without Swiss citizenship, the population multiplied by the foreign share given as a ratio",
       "expression": "\"foreign count\" = \"population\" * \"foreign share\"",
       "assigned": [
         "Zurich (city)",
@@ -726,6 +660,7 @@
     },
     {
       "name": "welfare (formula)",
+      "description": "the welfare of a population in happy time points, the number of people multiplied by the fraction of their waking time that they experience as good",
       "expression": "\"welfare\" = \"population\" * \"waking welfare fraction\"",
       "assigned": [
         "Zurich (canton)"

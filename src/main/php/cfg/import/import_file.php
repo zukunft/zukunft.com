@@ -435,6 +435,24 @@ class import_file
     }
 
     /**
+     * import the system data that has been added after the database ids of the tested phrases
+     * have been pinned, e.g. a new chart type; imported as the last step of the db setup like the
+     * system data, which only fills up empty fields, so that no pinned database id moves
+     * @param user $usr the owner of the system data
+     * @param bool $direct true if the data_object based loading cannot yet be used (to be dismissed)
+     * @return string any error or warning message during import
+     */
+    function import_system_data_appended(user $usr, bool $direct = false): string
+    {
+        $result = '';
+        // the file names already carry the full path, so no message path is prepended
+        foreach (files::SYSTEM_DATA_APPENDED_FILES as $filename) {
+            $result .= $this->json_file($filename, $usr, $direct, false, true)->get_last_message();
+        }
+        return $result;
+    }
+
+    /**
      * display a message immediately to the user
      * @param string $txt the text that should be should to the user
      */

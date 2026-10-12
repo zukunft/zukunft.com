@@ -74,6 +74,17 @@ foreach (user_profiles::CAN_CHANGE as $prf) { … }
 If no const class owns the data yet, add the const to the most relevant
 const / enum class first, then reference it.
 
+## A const array spreads another const by its class name, never by `self::`
+
+When a const array is built from another const array with the spread operator,
+the spread names the class (`...views::EDIT_MASKS_IDS`), not `...self::`. A search
+for `views::EDIT_MASKS_IDS` then finds every place that depends on the list, also
+the ones inside the owning class, so a change of the list shows all its users at
+once; a `...self::` spread is invisible to that search.
+
+- **Wrong**: `const array CONFIG_SYSTEM_PATH = [...self::CONFIG_ROOT, words::SYSTEM];`
+- **Right**: `const array CONFIG_SYSTEM_PATH = [...triples::CONFIG_ROOT, words::SYSTEM];`
+
 ## Pass a class name as `::class`, never as a string literal
 
 When a value identifies a class — a parameter, a `match`/`switch` key, a lookup

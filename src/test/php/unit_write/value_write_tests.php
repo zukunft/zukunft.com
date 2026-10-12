@@ -35,11 +35,16 @@ namespace Zukunft\ZukunftCom\test\php\unit_write;
 use DateTime;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
+include_once paths::MODEL_GROUP . 'group.php';
+include_once paths::SHARED_CONST . 'groups.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'change_tables.php';
 include_once paths::SHARED_ENUM . 'change_fields.php';
+include_once paths::SHARED . 'group_id_url.php';
+include_once paths::SHARED . 'json_fields.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\group\group;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_big;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_norm;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_prime;
@@ -47,6 +52,7 @@ use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\shared\api;
+use Zukunft\ZukunftCom\main\php\shared\group_id_url;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\figure\figure as figure_ui;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_named;
@@ -56,7 +62,9 @@ use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_fields;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\Config as shared_config;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\const\groups;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
@@ -64,6 +72,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
+use Zukunft\ZukunftCom\test\php\create\test_phrases;
 use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -80,11 +89,13 @@ class value_write_tests
 
     function run(test_cleanup $t): void
     {
+        global $ui_sys;
 
         // init
         $t->name = 'value->';
         $t_val = new test_values($t);
         $t_wrd = new test_words($t);
+        $t_phr = new test_phrases($t);
         $t_db = new test_db_load($t);
         $tl = new test_lib();
         $lib = new library();
@@ -200,8 +211,14 @@ class value_write_tests
             word_names::YEAR_2020));
         $api_msg = $pct_val->api_json([api_types::INCL_PHRASES]);
         $val_ui = new value_ui($api_msg);
+        // the percent sign is not coded but given by the triple "% is symbol for percent" of
+        // scaling.json, which normally reaches the page with the initial cache load; it is set here
+        // as a phrase of the page, so that this test does not depend on the cache of the test setup
+        $phr_lst_keep = $ui_sys->phr_lst;
+        $ui_sys->phr_lst = $t_phr->list_percent_symbol_cache_ui();
         $result = $val_ui->value($msg_ui);
-        $target = number_format(round(values::SAMPLE_PCT * 100, 2), 2) . '%';
+        $ui_sys->phr_lst = $phr_lst_keep;
+        $target = number_format(round(values::SAMPLE_PCT * 100, 2), 2) . word_names::PERCENT_SYMBOL;
         $t->assert(', value->val_formatted for ' . $pct_val->dsp_id(), $result, $target);
 
         // test the scaling of a value
@@ -229,7 +246,10 @@ class value_write_tests
         // the phrase id 1 given as the back parameter becomes the phrase page as the back part
         $back_part = '&amp;' . url_var::BACK . url_var::MASK . '=' . views::PHRASE_ID
             . '&amp;' . url_var::BACK . url_var::ID . '=1';
-        $target = '<a href="/http/view.php?m=' . views::RESULT_EDIT_ID . '&amp;id=' . $mio_val_ui->id() . $back_part . '">1.55</a>';
+        // the group id of the value contains a '+', so the link names it in its short url form
+        // without the '+' (see html_base::url_back and group_id_url)
+        $grp_id_url = rawurlencode(group_id_url::to_url($mio_val_ui->id()));
+        $target = '<a href="/http/view.php?m=' . views::RESULT_EDIT_ID . '&amp;id=' . $grp_id_url . $back_part . '">1.55</a>';
         $t->assert(', value->figure->display_linked for word list ' . $phr_lst->dsp_id(), $result, $target);
 
         // test the HTML code creation
@@ -240,14 +260,17 @@ class value_write_tests
         // test the HTML code creation including the hyperlink
         $result = $mio_val_ui->value_edit($msg_ui, [url_var::MASK => views::PHRASE_ID, url_var::ID => 1]);
         //$target = '<a class="' . styles::STYLE_USER . '" href="/http/value_edit.php?id=2559&back=1">46\'000</a>';
-        $target = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::VALUE_DEFAULT_ID . '&amp;id=' . $mio_val_ui->id() . $back_part . '">1.55</a>';
+        // followed by the quality mark of the value e.g. the "-" of a missing source (see sandbox_value::quality_mark)
+        $target = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::VALUE_DEFAULT_ID . '&amp;id=' . $grp_id_url . $back_part . '">1.55</a>'
+            . $mio_val_ui->quality_mark();
         $t->assert(', value->display_linked', $result, $target);
 
         // change the number to force using the thousand separator
         $mio_val_ui->number = values::SAMPLE_INT;
         $result = $mio_val_ui->value_edit($msg_ui, [url_var::MASK => views::PHRASE_ID, url_var::ID => 1]);
         //$target = '<a class="' . styles::STYLE_USER . '" href="/http/value_edit.php?id=2559&back=1">46\'000</a>';
-        $target = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::VALUE_DEFAULT_ID . '&amp;id=' . $mio_val_ui->id() . $back_part . '">123\'456</a>';
+        $target = '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::VALUE_DEFAULT_ID . '&amp;id=' . $grp_id_url . $back_part . '">123\'456</a>'
+            . $mio_val_ui->quality_mark();
         $t->assert(', value->display_linked', $result, $target);
 
         // convert the user input for the database
@@ -262,6 +285,11 @@ class value_write_tests
         $target = values::SAMPLE_INT;
         $t->assert(', value->convert user input', $result, $target);
 
+        // the word tests delete the renamed test word again, so it is created here like the
+        // triple tests do (see triple_write_tests), because a group that misses one of its
+        // phrases names the value of the remaining seed phrases (see load_phrase_group)
+        $t_db->test_word($msg, word_names::TEST_RENAMED);
+
         // test adding a value in the database
         // as it is call from value_add.php with all phrases in an id list including the time phrase,
         // so the time phrase must be excluded
@@ -269,7 +297,10 @@ class value_write_tests
         $add_val = new value($t->usr1);
         $add_val->set_grp($phr_grp);
         $add_val->set_number(values::SAMPLE_BIG);
-        $add_val->save($msg);
+        // the save depends on the group, which is empty if a phrase name is missing (see load_phrase_group)
+        if (!$phr_grp->phrase_list()->is_empty()) {
+            $add_val->save($msg);
+        }
         $result = $msg->get_last_message();
         $target = '';
         $t->assert(', value->save ' . $add_val->number() . ' for ' . $phr_grp->dsp_id() . ' by user "' . $t->usr1->name . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
@@ -305,7 +336,9 @@ class value_write_tests
         $add_val2 = new value($t->usr1);
         $add_val2->set_grp($phr_grp2);
         $add_val2->set_number(values::SAMPLE_BIGGER);
-        $add_val2->save($msg);
+        if (!$phr_grp2->phrase_list()->is_empty()) {
+            $add_val2->save($msg);
+        }
         $result = $msg->get_last_message();
         $target = '';
         $t->assert(', value->save ' . $add_val2->number() . ' for ' . $phr_grp2->name() . ' by user "' . $t->usr1->name . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
@@ -478,6 +511,75 @@ class value_write_tests
         $val_usr2->load_by_grp($phr_grp);
         $val_usr2->del($usr_msg);
         */
+
+        // the word tests rename the added test word away, so it is created here like the ref
+        // tests do (see ref_write_tests), because a group that misses one of its phrases names
+        // the value of the remaining seed phrases (see load_phrase_group)
+        $t_db->test_word($msg, word_names::TEST_ADD);
+
+        // the group name that the user types in the detailed value add form is written with the new value
+        $t->subheader($ts . 'given group name');
+        // the asserts above do not reset the message and the save is skipped if the message is not ok
+        $msg->reset();
+        $test_name = 'a new value with a given group name is saved';
+        $named_phr_names = [word_names::TEST_ADD, word_names::INHABITANTS];
+        $named_grp = $t_db->load_phrase_group($named_phr_names);
+        $named_grp->set_name(groups::TN_VALUE_ADD);
+        $named_val = new value($t->usr1);
+        $named_val->set_grp($named_grp);
+        $named_val->set_number(values::SAMPLE_INT);
+        $named_val->save($msg);
+        $t->test_val_ids[] = $named_val->id();
+        $t->assert_msg($test_name, $msg);
+        $msg->reset();
+        $test_name = '... and the group row has the given name';
+        $db_grp = new group($t->usr1);
+        $db_grp->load_by_id($named_grp->id(), $msg);
+        $t->assert($test_name, $db_grp->name_given(), groups::TN_VALUE_ADD);
+        $msg->reset();
+        $test_name = '... which is loaded with the value, so that the change value view can show it';
+        $db_val = new value($t->usr1);
+        $db_val->load_by_id($named_val->id(), $msg);
+        $db_val->load_objects($msg);
+        $named_json = $db_val->api_json_array([api_types::INCL_PHRASES], $msg);
+        $t->assert($test_name, $named_json[json_fields::NAME] ?? '', groups::TN_VALUE_ADD);
+        $msg->reset();
+        $test_name = 'a new value without a given group name writes no group row';
+        $unnamed_grp = new group($t->usr1);
+        $unnamed_grp->load_by_id($phr_grp2->id(), $msg);
+        $t->assert_false($test_name, $unnamed_grp->is_saved());
+        $msg->reset();
+        $test_name = 'the description of a value without a given group name is saved without an internal error';
+        $added_val2->set_description(groups::TN_READ_COM);
+        $added_val2->save($msg);
+        $t->assert_msg($test_name, $msg);
+        $msg->reset();
+        $test_name = '... in a group row without a name';
+        $unnamed_grp = new group($t->usr1);
+        $unnamed_grp->load_by_id($phr_grp2->id(), $msg);
+        $t->assert($test_name, $unnamed_grp->get_description(), groups::TN_READ_COM);
+        $t->assert($test_name, $unnamed_grp->name_given(), '');
+        $msg->reset();
+        // the group row of the description is not deleted by the value cleanup
+        $unnamed_phr_names = [word_names::TEST_RENAMED, word_names::INHABITANTS, word_names::MIO, word_names::YEAR_2019];
+        $t->cleanup_change_log_group($unnamed_grp, ['', $unnamed_phr_names]);
+        $unnamed_grp->del($msg);
+        $msg->reset();
+        $test_name = 'the description changed in the change value view is written to the group row';
+        $named_val->set_description(groups::TN_READ_COM);
+        $named_val->save($msg);
+        $t->assert_msg($test_name, $msg);
+        $msg->reset();
+        $test_name = '... and keeps the given group name';
+        $db_grp = new group($t->usr1);
+        $db_grp->load_by_id($named_grp->id(), $msg);
+        $t->assert($test_name, $db_grp->get_description(), groups::TN_READ_COM);
+        $t->assert($test_name, $db_grp->name_given(), groups::TN_VALUE_ADD);
+        $msg->reset();
+        // the value cleanup deletes the value but not its named group and a change log entry
+        // must never point to a deleted group row
+        $t->cleanup_change_log_group($db_grp, [groups::TN_VALUE_ADD, $named_phr_names]);
+        $db_grp->del($msg);
 
         // cleanup - fallback delete
         $t_val->cleanup($ts);

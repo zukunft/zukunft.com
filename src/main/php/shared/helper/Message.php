@@ -90,7 +90,9 @@ class Message
      */
     function set_not_ok(): void
     {
-        if ($this->msg_status < msg_id::NOK) {
+        // a lower status is worse (e.g. msg_id::ERROR < msg_id::NOK < msg_id::OK),
+        // so only a better status is replaced and an already worse one is kept
+        if ($this->msg_status > msg_id::NOK) {
             $this->msg_status = msg_id::NOK;
         }
     }
@@ -101,7 +103,7 @@ class Message
      */
     function set_error(): void
     {
-        if ($this->msg_status < msg_id::ERROR) {
+        if ($this->msg_status > msg_id::ERROR) {
             $this->msg_status = msg_id::ERROR;
         }
     }
@@ -112,7 +114,7 @@ class Message
      */
     function set_warning(): void
     {
-        if ($this->msg_status < msg_id::WARNING) {
+        if ($this->msg_status > msg_id::WARNING) {
             $this->msg_status = msg_id::WARNING;
         }
     }
@@ -223,6 +225,19 @@ class Message
      */
 
     /**
+     * combine the status of two messages and assume the worst: an added message that is not ok makes this
+     * message at least not ok, an error of either message is kept (a lower status is worse)
+     * @param Message $msg_to_add the message whose status is combined with the status of this message
+     * @return void
+     */
+    function combine_status(Message $msg_to_add): void
+    {
+        if (!$msg_to_add->is_ok()) {
+            $this->msg_status = min($this->msg_status, $msg_to_add->msg_status, msg_id::NOK);
+        }
+    }
+
+    /**
      * combine the given message with this message
      *
      * @param Message $msg_to_add a message of which all parameters should be added to this message
@@ -253,6 +268,18 @@ class Message
     }
 
     /**
+     * a not ok message can be a problem of the user input (e.g. an expression that names no term),
+     * which the user can fix and which the answer to the user already names, whereas an error is
+     * a problem that only the admin can fix, so only an error belongs into the system log
+     *
+     * @return bool true if this message reports a problem that the user cannot solve
+     */
+    function is_error(): bool
+    {
+        return $this->msg_status <= msg_id::ERROR;
+    }
+
+    /**
      * the most useful message for the user
      * translated to the frontend language
      *
@@ -276,6 +303,14 @@ class Message
     protected function get_all_var_messages(): array
     {
         return $this->msg_var_lst;
+    }
+
+    /**
+     * @return array with all the translatable messages without vars
+     */
+    protected function get_all_id_messages(): array
+    {
+        return $this->msg_id_lst;
     }
 
     /**

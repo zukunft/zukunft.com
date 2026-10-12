@@ -132,7 +132,7 @@ class sys_log_list
         $data[url_var::LOG_SIZE] = $size;
         $data[url_var::LOG_PAGE] = $page;
         $rest = new rest_call();
-        $json_body = $rest->api_get($this::class, $data);
+        $json_body = $rest->api_get($this::class, $data, $msg);
         return $this->set_from_json_array($json_body, $msg);
     }
 

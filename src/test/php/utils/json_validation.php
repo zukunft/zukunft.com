@@ -46,8 +46,11 @@ include_once paths::MODEL_CONST . 'def.php';
 include_once paths::MODEL_CONST . 'files.php';
 include_once paths::SHARED_CONST . 'def.php';
 include_once paths::SHARED_CONST . 'files.php';
+include_once paths::SHARED_CONST . 'triples.php';
+include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once test_paths::CONST . 'files.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
@@ -57,8 +60,11 @@ use Zukunft\ZukunftCom\main\php\cfg\import\import;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\main\php\shared\const\def as shared_def;
 use Zukunft\ZukunftCom\main\php\shared\const\files;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use ReflectionClass;
@@ -114,6 +120,7 @@ class json_validation
         'files::BASE_DATA_PATH_FILES' => cfg_files::BASE_DATA_PATH_FILES,
         'files::FULL_LOAD_FILES' => cfg_files::FULL_LOAD_FILES,
         'files::USE_CASE_FILES' => cfg_files::USE_CASE_FILES,
+        'files::SYSTEM_DATA_APPENDED_FILES' => cfg_files::SYSTEM_DATA_APPENDED_FILES,
         'test_files::TEST_DATA_FILES' => test_files::TEST_DATA_FILES,
         'test_files::TEST_DATA_FILES_DIRECT' => test_files::TEST_DATA_FILES_DIRECT,
         'test_files::TEST_DATA_FILES_NOT_REVIEWED' => test_files::TEST_DATA_FILES_NOT_REVIEWED,
@@ -136,6 +143,27 @@ class json_validation
     // the check names used as the section names of the report
     const string CHK_SYNTAX = 'not a valid json';
     const string CHK_MEASURED = 'measured value qualifier';
+    const string CHK_SOURCE = 'value without a valid source';
+    // the reasons of a value source finding, the first part of the finding key
+    const string SOURCE_MISSING = 'no source';
+    const string SOURCE_NOT_IN_FILE = 'source not defined in the file';
+    // a value with one of these phrases states the uncertainty of another value and is an own
+    // assessment and not data, so it needs no source; a range factor cannot carry "assumed",
+    // because the range formula selects its target by that word
+    const array SOURCE_EXEMPT_PHRASES = [
+        words::ASSUMED,
+        words::CONFIDENCE,
+        triples::PROBABILITY_RANGE_FACTOR,
+    ];
+    const string CHK_NUMBER_TYPE = 'value with more than one measure unit, percent or factor phrase';
+    // the phrase types that say how a number is stated, so a value has only one phrase of them
+    const array NUMBER_TYPES = [phrase_types::MEASURE, phrase_types::PERCENT, phrase_types::FACTOR];
+    // the sections whose entries name a number by its "words"
+    const array NUMBER_SECTIONS = [
+        json_fields::VALUES,
+        json_fields::RESULTS,
+        json_fields::CALC_VALIDATION,
+    ];
     const string CHK_VERB = 'verb not defined';
     const string CHK_FIELD = 'field not read by the import';
     const string CHK_WORD_SPACE = 'word with a space';
@@ -145,6 +173,9 @@ class json_validation
     const string CHK_CROSS_NAME = 'triple name with different keys across the main data';
     const string CHK_CROSS_KEY = 'triple key with different names across the main data';
     const string CHK_CROSS_DESC = 'description differs across the main data';
+    const string CHK_CROSS_SOURCE = 'source with different links across the main data';
+    // the fields of a source that link to the publication and must be the same in every file
+    const array SOURCE_LINK_FIELDS = [json_fields::URL, json_fields::DOI];
     const string CHK_CMP_PHRASE = 'component uses a phrase that no main data file defines';
     const string CHK_NOT_LOADED = 'json file that neither an import nor a test reads';
     const string CHK_SECTION = 'import section not covered by this check';
@@ -289,6 +320,22 @@ class json_validation
             'every value is assumed to be measured, so the qualifier only repeats the default'
             . ' while it lengthens the phrase group and needs a word or triple in every file'
             . ' that borrows it; only the deviation, the word "assumed", is worth recording');
+        $md_txt .= $this->section_md(self::CHK_SOURCE, $find_lst,
+            'a measured value names the source it is taken from, so that a reader can check it;'
+            . ' a value with one of the phrases "' . implode('", "', self::SOURCE_EXEMPT_PHRASES) . '"'
+            . ' is an own estimate or assesses the uncertainty of another value and needs none;'
+            . ' the import resolves the source by its name within the file only (import_mapper'
+            . ' reads the data object of the file), so a source that the file does not define in'
+            . ' its "sources" section is reported as missing on import; the list shows the values'
+            . ' that still need their source');
+        $md_txt .= $this->section_md(self::CHK_NUMBER_TYPE, $find_lst,
+            'a phrase of the type "' . implode('", "', self::NUMBER_TYPES) . '" says how the number'
+            . ' is stated and is shown as the unit or the symbol behind it, so a value, a result'
+            . ' or a calc-validation entry has only one of them; if more than one is needed, the'
+            . ' combination is one triple that carries the one type e.g. "USD per tonne" (see'
+            . ' docs/llm/json_structure.md); the type of a phrase is taken from the file itself'
+            . ' or from the main data file that defines it; each line names the section, the'
+            . ' phrases of these types and the words of the entry');
         $md_txt .= $this->section_md(self::CHK_VERB, $find_lst,
             'the import resolves a verb by an exact name match and creates the verb when the name'
             . ' is unknown (see triple::import_mapper), so a typo silently grows the shared verb'
@@ -338,6 +385,11 @@ class json_validation
             . ' descriptions and stops the whole file with "description is ... instead of ...";'
             . ' the description belongs in the home file (the one imported first, see'
             . ' docs/llm/json_structure.md) and every other file repeats the name without it');
+        $md_txt .= $this->section_md(self::CHK_CROSS_SOURCE, $find_lst,
+            'the import merges a source by its name, so a second url or doi for the same name'
+            . ' is either rejected by the system import (no_upd) or silently replaces the first'
+            . ' link, and the values of the first file then point to a publication they are not'
+            . ' taken from; give the second publication its own source name or use the same link');
         $md_txt .= $this->section_md(self::CHK_CMP_PHRASE, $find_lst,
             'a component selects its rows and columns by the phrase name, so a name that no file'
             . ' of the pod defines can never be resolved and the component stays empty; define'
@@ -380,6 +432,8 @@ class json_validation
         }
         $this->cross_file_hits($result);
         $this->cross_description_hits($result);
+        $this->cross_source_hits($result);
+        $this->cross_number_type_hits($result);
         $this->component_phrase_hits($result);
         $this->section_check_hits($result);
         foreach ($result as $chk => $sec_lst) {
@@ -475,6 +529,168 @@ class json_validation
                 }
             }
         }
+    }
+
+    /**
+     * check that the main data files agree on the url and the doi of a source name
+     *
+     * only the main data, because these files are all imported into the same pod
+     *
+     * @param array $find_lst (in/out) map of the check name and the folder to the findings
+     * @return void
+     */
+    private function cross_source_hits(array &$find_lst): void
+    {
+        $sec = array_key_first(self::SCAN_PATHS);
+        $json_by_file = [];
+        foreach ($this->json_file_list(self::SCAN_PATHS[$sec]) as $file_path) {
+            $json_array = json_decode(file_get_contents($file_path), true);
+            if (is_array($json_array)) {
+                $json_by_file[basename($file_path)] = $json_array;
+            }
+        }
+        foreach ($this->source_link_conflicts($json_by_file) as $hit) {
+            $find_lst[self::CHK_CROSS_SOURCE][$sec][] = $hit;
+        }
+    }
+
+    /**
+     * check that every value, result and calc-validation entry names only one phrase of the
+     * type measure unit, percent or factor
+     *
+     * the type of a phrase is defined once, in its home file, and every other file re-declares
+     * the phrase by its name only, so the types are collected over the main data; a file can
+     * define its own version of a phrase, e.g. a test file, so its own types come first
+     *
+     * @param array $find_lst (in/out) map of the check name and the folder to the findings
+     * @return void
+     */
+    private function cross_number_type_hits(array &$find_lst): void
+    {
+        $main_sec = array_key_first(self::SCAN_PATHS);
+        $main_types = $this->number_type_names($this->json_list(self::SCAN_PATHS[$main_sec]));
+        foreach (self::SCAN_PATHS as $sec => $path) {
+            foreach ($this->json_list($path) as $file_path => $json_array) {
+                $phr_types = $this->number_type_names([$json_array]) + $main_types;
+                // only the keys, because the key names the typed phrases and the words of the entry
+                foreach (array_keys($this->number_type_hits($json_array, $phr_types)) as $hit) {
+                    $find_lst[self::CHK_NUMBER_TYPE][$sec][] = basename($file_path) . ' - ' . $hit;
+                }
+            }
+        }
+    }
+
+    /**
+     * @param string $path the folder with the json files
+     * @return array map of the file path to the decoded json of every file that can be decoded
+     */
+    private function json_list(string $path): array
+    {
+        $result = [];
+        foreach ($this->json_file_list($path) as $file_path) {
+            $json_array = json_decode(file_get_contents($file_path), true);
+            if (is_array($json_array)) {
+                $result[$file_path] = $json_array;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the phrases of the given files that say how a number is stated
+     *
+     * @param array $json_lst the decoded json files
+     * @return array map of the word or triple name to its type for the types of NUMBER_TYPES
+     */
+    function number_type_names(array $json_lst): array
+    {
+        $result = [];
+        foreach ($json_lst as $json_array) {
+            foreach ([json_fields::WORDS, json_fields::TRIPLES] as $sec_name) {
+                foreach ($json_array[$sec_name] ?? [] as $phr) {
+                    $type = is_array($phr) ? ($phr[json_fields::TYPE_NAME] ?? '') : '';
+                    if (in_array($type, self::NUMBER_TYPES, true)) {
+                        // the name of a word is its given name like the name of a named triple
+                        $result[$this->triple_name($phr)] ??= $type;
+                    }
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the values, results and calc-validation entries of the given file that name more than
+     * one phrase of the type measure unit, percent or factor (docs/llm/json_structure.md)
+     *
+     * only the "words" of an entry, because the "context" of a calc-validation entry is the
+     * union of the words of several values
+     *
+     * @param array $json_array the decoded json file
+     * @param array $phr_types map of the phrase name to its type as created by number_type_names
+     * @return array map of the section, the phrases of these types and the words of the entry
+     *               to the entry
+     */
+    function number_type_hits(array $json_array, array $phr_types): array
+    {
+        $hits = [];
+        foreach (self::NUMBER_SECTIONS as $sec_name) {
+            foreach ($json_array[$sec_name] ?? [] as $entry) {
+                $phr_names = is_array($entry) ? ($entry[json_fields::WORDS] ?? []) : [];
+                if (!is_array($phr_names)) {
+                    $phr_names = [];
+                }
+                $typed = array_values(array_filter($phr_names,
+                    fn($name) => is_string($name) and array_key_exists($name, $phr_types)));
+                if (count($typed) > 1) {
+                    $key = $sec_name
+                        . ' ' . json_encode($typed, self::SAMPLE_ENCODING)
+                        . ' in ' . json_encode($phr_names, self::SAMPLE_ENCODING);
+                    $hits[$key] ??= $this->sample($entry);
+                }
+            }
+        }
+        return $hits;
+    }
+
+    /**
+     * the source names that the given files link to more than one url or doi
+     *
+     * a source without a link is the correct re-declaration of a borrowed source, so only a filled
+     * link is a claim and only two filled ones can disagree
+     *
+     * @param array $json_by_file map of the file name to the decoded json file
+     * @return array one finding per source name and link field with more than one link
+     */
+    function source_link_conflicts(array $json_by_file): array
+    {
+        $links = [];
+        foreach ($json_by_file as $file_name => $json_array) {
+            foreach ($json_array[json_fields::SOURCES] ?? [] as $src) {
+                if (is_array($src)) {
+                    $name = $src[json_fields::NAME] ?? '';
+                    foreach (self::SOURCE_LINK_FIELDS as $fld) {
+                        $link = $src[$fld] ?? '';
+                        if (is_string($link) and trim($link) != '' and $name != '') {
+                            $links[$name][$fld][trim($link)] ??= $file_name;
+                        }
+                    }
+                }
+            }
+        }
+        $result = [];
+        foreach ($links as $name => $fld_lst) {
+            foreach ($fld_lst as $fld => $link_lst) {
+                if (count($link_lst) > 1) {
+                    $dsp = [];
+                    foreach ($link_lst as $link => $file) {
+                        $dsp[] = '"' . $link . '" (' . $file . ')';
+                    }
+                    $result[] = 'source "' . $name . '" - ' . $fld . ' ' . implode(' vs ', $dsp);
+                }
+            }
+        }
+        return $result;
     }
 
     /**
@@ -576,14 +792,9 @@ class json_validation
     private function check_file(string $sec, string $file_path, array &$find_lst, bool $update): void
     {
         $name = basename($file_path);
-        if (!in_array($file_path, $this->loaded_file_list())) {
-            $const_name = $this->file_const_name($file_path);
-            if ($const_name == '') {
-                $find_lst[self::CHK_NOT_LOADED][$sec][] = $name . ' - named by no const';
-            } elseif (!$this->const_used_in_code($const_name)) {
-                $find_lst[self::CHK_NOT_LOADED][$sec][] = $name . ' - ' . $const_name
-                    . ' is in no import list and used by no test';
-            }
+        $not_loaded = $this->not_loaded_reason($file_path);
+        if ($not_loaded != '') {
+            $find_lst[self::CHK_NOT_LOADED][$sec][] = $name . ' - ' . $not_loaded;
         }
         $json_array = json_decode(file_get_contents($file_path), true);
         if (!is_array($json_array)) {
@@ -593,6 +804,11 @@ class json_validation
             foreach ($this->measured_value_hits($json_array) as $sec_name => $sample) {
                 $find_lst[self::CHK_MEASURED][$sec][] = $name . ' (' . $sec_name . ') - ' . $sample;
                 $clean = false;
+            }
+            // a missing source is missing data and not an outdated format, so it does not
+            // block the version update of the file
+            foreach ($this->value_source_hits($json_array) as $val_name => $sample) {
+                $find_lst[self::CHK_SOURCE][$sec][] = $name . ' - ' . $val_name . ' - ' . $sample;
             }
             foreach ($this->verb_undefined_hits($json_array) as $verb_name => $sample) {
                 $find_lst[self::CHK_VERB][$sec][] = $name . ' - "' . $verb_name . '" in ' . $sample;
@@ -666,6 +882,49 @@ class json_validation
             foreach ([json_fields::NAME, json_fields::EX_FROM, json_fields::EX_TO] as $fld) {
                 if (($trp[$fld] ?? '') == self::MEASURED_VALUE) {
                     $hits['triple'] ??= $this->sample($trp);
+                }
+            }
+        }
+        return $hits;
+    }
+
+    /**
+     * the values of the given file that name no source or a source that the file does not define
+     *
+     * a measured value needs its source, while an own estimate or assessment needs none (see
+     * SOURCE_EXEMPT_PHRASES)
+     * (docs/llm/json_structure.md); the import resolves the source name within the file only
+     *
+     * @param array $json_array the decoded json file
+     * @return array map of the reason and the phrase names of the value to the value entry
+     */
+    function value_source_hits(array $json_array): array
+    {
+        $src_names = [];
+        foreach ($json_array[json_fields::SOURCES] ?? [] as $src) {
+            if (is_array($src)) {
+                $src_names[] = $src[json_fields::NAME] ?? '';
+            }
+        }
+        $hits = [];
+        foreach ($json_array[json_fields::VALUES] ?? [] as $val) {
+            if (is_array($val)) {
+                $phr_names = $val[json_fields::WORDS] ?? [];
+                if (!is_array($phr_names)) {
+                    $phr_names = [];
+                }
+                $src_name = $val[json_fields::SOURCE_NAME] ?? '';
+                $reason = '';
+                if (!is_string($src_name) or $src_name == '') {
+                    if (empty(array_intersect(self::SOURCE_EXEMPT_PHRASES, $phr_names))) {
+                        $reason = self::SOURCE_MISSING;
+                    }
+                } elseif (!in_array($src_name, $src_names, true)) {
+                    $reason = self::SOURCE_NOT_IN_FILE . ' "' . $src_name . '"';
+                }
+                if ($reason != '') {
+                    $hits[$reason . ' - ' . json_encode($phr_names, self::SAMPLE_ENCODING)]
+                        ??= $this->sample($val);
                 }
             }
         }
@@ -1469,6 +1728,30 @@ class json_validation
         foreach ($find_lst as $sec_lst) {
             foreach ($sec_lst as $hits) {
                 $result += count($hits);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the reason why nothing reads the given json file, which is either that no const names it
+     * at all or that the const of the file is in no import list and used by no test
+     *
+     * shared with coding_rule_tests, which lets the test run fail on a file of the main data
+     * that nothing reads, while the report lists the files of the test imports too
+     *
+     * @param string $file_path the path of a json file as the folder scan has returned it
+     * @return string the reason or an empty string if an import or a test reads the file
+     */
+    function not_loaded_reason(string $file_path): string
+    {
+        $result = '';
+        if (!in_array($file_path, $this->loaded_file_list())) {
+            $const_name = $this->file_const_name($file_path);
+            if ($const_name == '') {
+                $result = 'named by no const';
+            } elseif (!$this->const_used_in_code($const_name)) {
+                $result = $const_name . ' is in no import list and used by no test';
             }
         }
         return $result;

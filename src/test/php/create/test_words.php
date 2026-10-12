@@ -43,6 +43,8 @@ include_once paths::MODEL_WORD . 'word.php';
 include_once paths::MODEL_WORD . 'word_list.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_CONST . 'words.php';
+include_once paths::SHARED_ENUM . 'chart_types.php';
+include_once paths::SHARED_ENUM . 'table_orders.php';
 include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_TYPES . 'protection_types.php';
@@ -65,6 +67,8 @@ use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
+use Zukunft\ZukunftCom\main\php\shared\enum\chart_types;
+use Zukunft\ZukunftCom\main\php\shared\enum\table_orders;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\shared\types\share_types;
@@ -280,16 +284,37 @@ class test_words extends test_objects
         return new word_ui($wrd->api_json());
     }
 
-    static function word_new_url(user_message_ui $msg): array
+    /**
+     * @return array the page url of the math word (see word()) in the order the page sends the fields
+     */
+    static function math_url(): array
     {
-        $wrd_ui = new word_ui();
-        return $wrd_ui->to_url_array($msg);
+        return [
+            url_var::ID => word_names::MATH_ID,
+            url_var::PROTECTION => protection_types::ADMIN_ID,
+            url_var::NAME => word_names::MATH,
+            url_var::DESCRIPTION => word_names::MATH_COM,
+            url_var::TYPE => phrase_types::NORMAL_ID,
+        ];
     }
 
-    static function word_add_url(user_message_ui $msg): array
+    /**
+     * @return array the url of the empty add word form, which has no id yet
+     */
+    static function word_new_url(): array
     {
-        $wrd_ui = self::word_add_ui();
-        return $wrd_ui->to_url_array($msg);
+        return [url_var::ID => 0];
+    }
+
+    /**
+     * @return array the url of the added test word with its fixed snapshot id
+     */
+    static function word_add_url(): array
+    {
+        return [
+            url_var::ID => word_names::TEST_ADD_ID,
+            url_var::NAME => word_names::TEST_ADD,
+        ];
     }
 
 
@@ -328,15 +353,20 @@ class test_words extends test_objects
      *
      * @return array the edit form url parameters with every field filled
      */
-    function fill_url_array(user_message_ui $msg): array
+    static function fill_url_array(): array
     {
-        // word_filled_add is filled() carrying the reserved 'System Test Word' name, so it gives the new
-        // value of every editable url field without renaming the word the change_word workflow runs on
-        $wrd = new word_ui($this->word_filled_add()->api_json());
-        $url_arr = $wrd->to_url_array($msg);
-        // the workflow step adds the current db id of the test word, so drop the factory id
-        unset($url_arr[url_var::ID]);
-        return $url_arr;
+        // the fields of the all-fields-filled word (word_filled_add) with the reserved 'System Test Word'
+        // name, so every editable field gets a new value without renaming the word of the workflow;
+        // no id, because the workflow step adds the current db id of the test word
+        return [
+            url_var::NAME => word_names::TEST_ADD,
+            url_var::DESCRIPTION => word_names::TEST_CHANGE_COM,
+            url_var::USAGE => test_const::DUMMY_USAGE_WORD,
+            url_var::TYPE => phrase_types::SCALING_ID,
+            url_var::PLURAL => word_names::TEST_ADD_PLURAL,
+            url_var::VIEW => views::WORD_ID,
+            url_var::IMPACT => test_const::DUMMY_IMPACT,
+        ];
     }
 
     /**
@@ -750,6 +780,41 @@ class test_words extends test_objects
     }
 
     /**
+     * @return word factor to test that a number with a factor is shown as e.g. "13.2 x"
+     *              with the description of the word as the tooltip of the symbol
+     */
+    function word_factor(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(words::FACTOR_ID, words::FACTOR);
+        $wrd->set_description(words::FACTOR_COM);
+        $wrd->set_type(phrase_types::FACTOR, new user_message($this->env->usr1));
+        return $wrd;
+    }
+
+    /**
+     * @return word "x", the symbol word of the factor, which the triple of scaling.json links to
+     *              the word factor (see test_triples::factor_symbol)
+     */
+    function word_factor_symbol(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::FACTOR_SYMBOL_ID, word_names::FACTOR_SYMBOL);
+        return $wrd;
+    }
+
+    /**
+     * @return word "%", the symbol word of percent, which the triple of scaling.json links to
+     *              the word percent (see test_triples::percent_symbol)
+     */
+    function word_percent_symbol(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::PERCENT_SYMBOL_ID, word_names::PERCENT_SYMBOL);
+        return $wrd;
+    }
+
+    /**
      * @return word of the master pod name
      */
     function word_zukunft_com(): word
@@ -879,6 +944,18 @@ class test_words extends test_objects
     {
         $wrd = new word($this->env->usr1);
         $wrd->set(word_names::MATH_ID, word_names::MATH);
+        return $wrd;
+    }
+
+    /**
+     * @return word "m", the unit symbol of the metre, which is a symbol of million as well, so
+     *              that the choice of the symbol shown behind a number can be tested
+     */
+    function word_m_symbol(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::M_ID, word_names::M);
+        $wrd->set_type(phrase_types::MEASURE, new user_message($this->env->usr1));
         return $wrd;
     }
 
@@ -1060,6 +1137,118 @@ class test_words extends test_objects
     {
         $wrd = new word($this->env->usr1);
         $wrd->set(word_names::POTENTIAL_ID, word_names::POTENTIAL);
+        return $wrd;
+    }
+
+    /**
+     * @return word "chart type" that the chart type tiers of solution_prio.json are built from
+     */
+    function word_chart_type(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::CHART_TYPE_ID, word_names::CHART_TYPE);
+        return $wrd;
+    }
+
+    /**
+     * @return word "default" that names the chart type tier shown first
+     */
+    function word_default(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::DEFAULT_ID, word_names::DEFAULT);
+        return $wrd;
+    }
+
+    /**
+     * @return word "mayor" that names the column tier and the chart type tier of the mayor columns
+     */
+    function word_mayor(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::MAYOR_ID, word_names::MAYOR);
+        return $wrd;
+    }
+
+    /**
+     * @return word "leverage plot" with the code id that selects the chart type (see chart_types)
+     */
+    function word_leverage_plot(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::LEVERAGE_PLOT_ID, word_names::LEVERAGE_PLOT);
+        $wrd->set_code_id_db(chart_types::LEVERAGE->value);
+        return $wrd;
+    }
+
+    /**
+     * @return word "alternative" that names the chart type tier the reader can select instead
+     */
+    function word_alternative(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::ALTERNATIVE_ID, word_names::ALTERNATIVE);
+        return $wrd;
+    }
+
+    /**
+     * @return word "range bars" with the code id that selects the chart type (see chart_types)
+     */
+    function word_range_bars(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::RANGE_BARS_ID, word_names::RANGE_BARS);
+        $wrd->set_code_id_db(chart_types::RANGE_BARS->value);
+        return $wrd;
+    }
+
+    /**
+     * @return word "scatter plot" with the code id that selects the chart type (see chart_types)
+     */
+    function word_scatter_plot(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::SCATTER_PLOT_ID, word_names::SCATTER_PLOT);
+        $wrd->set_code_id_db(chart_types::SCATTER->value);
+        return $wrd;
+    }
+
+    /**
+     * @return word "sort order" that the sort order keyword triple is built from
+     */
+    function word_sort_order(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::SORT_ORDER_ID, word_names::SORT_ORDER);
+        return $wrd;
+    }
+
+    /**
+     * @return word "reason" that heads the column with the cause of a problem row
+     */
+    function word_reason(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::REASON_ID, word_names::REASON);
+        return $wrd;
+    }
+
+    /**
+     * @return word_ui the word "reason" as the frontend receives it
+     */
+    function word_reason_ui(): word_ui
+    {
+        return new word_ui($this->word_reason()->api_json());
+    }
+
+    /**
+     * @return word "numeric descending" with the code id that selects the sort condition (see table_orders)
+     */
+    function word_numeric_descending(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::NUMERIC_DESCENDING_ID, word_names::NUMERIC_DESCENDING);
+        $wrd->set_code_id_db(table_orders::NUMERIC_DESC->value);
         return $wrd;
     }
 
@@ -1286,6 +1475,18 @@ class test_words extends test_objects
         $wrd = new word($this->env->usr1);
         $wrd->set(word_names::EUR_ID, word_names::EUR);
         $wrd->set_type(phrase_types::MEASURE, new user_message($this->env->usr1));
+        return $wrd;
+    }
+
+    /**
+     * @return word "GDP", which names what is measured and not the unit, so it is typed
+     *              "measure non unit" to describe the number like a unit in a value table
+     */
+    function word_gdp(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::GDP_ID, word_names::GDP);
+        $wrd->set_type(phrase_types::MEASURE_NON_UNIT, new user_message($this->env->usr1));
         return $wrd;
     }
 

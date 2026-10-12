@@ -40,27 +40,45 @@ include_once test_paths::CREATE . 'test_words.php';
 include_once test_paths::CREATE . 'test_phrases.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\value\value as value_db_class;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_geo;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_text;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_time;
+use Zukunft\ZukunftCom\main\php\shared\helper\MapObject;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_list;
+use Zukunft\ZukunftCom\main\php\web\component\execute\ui_preview;
+use Zukunft\ZukunftCom\main\php\web\component\execute\ui_select;
 use Zukunft\ZukunftCom\main\php\web\const\icons;
+use Zukunft\ZukunftCom\main\php\web\helper\config;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
+use Zukunft\ZukunftCom\main\php\shared\helper\Config as shared_config;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
+use Zukunft\ZukunftCom\main\php\web\ref\source_list as source_list_ui;
 use Zukunft\ZukunftCom\main\php\web\result\result_list;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\web\value\value;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\source_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\value_fields;
+use Zukunft\ZukunftCom\main\php\shared\const\groups;
 use Zukunft\ZukunftCom\main\php\shared\const\sources;
+use Zukunft\ZukunftCom\main\php\shared\const\refs;
 use Zukunft\ZukunftCom\main\php\shared\const\results;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\languages;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\enum\value_types;
+use Zukunft\ZukunftCom\main\php\shared\group_id_url;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
+use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_log;
@@ -69,6 +87,7 @@ use Zukunft\ZukunftCom\test\php\create\test_views;
 use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
 use Zukunft\ZukunftCom\test\php\create\test_results;
+use Zukunft\ZukunftCom\test\php\create\test_refs;
 use Zukunft\ZukunftCom\test\php\create\test_sources;
 use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -132,6 +151,390 @@ class value_ui_tests
         $test_page .= $t->dsp_title_value($val_protected, $msg_ui);
         $t->html_page_test($test_page, 'value html components', 'value', $msg_ui, $base_url, $lan);
 
+        // the add value view presets the phrases that the url names as the phrase list, e.g. the word of
+        // the page whose values subtitle has opened the view (see ui_list::value_add_link)
+        $t->subheader($ts . 'phrase preset');
+        $test_name = 'the phrase list of the url presets the phrase of a new value';
+        // like the url of the add icon, which opens the add view without an id and without the create action
+        $val = $t_val->value_add_ui();
+        $val->url_mapper([
+            url_var::MASK => views::VALUE_ADD_DETAIL_ID,
+            url_var::PHRASE_LIST => (string)word_names::ZH_ID
+        ], $msg_ui);
+        $t->assert($test_name, implode(',', $val->phr_lst()->ids()), (string)word_names::ZH_ID);
+        $msg_ui->reset();
+        $test_name = '... but the edit view of a value without an id reports it and presets nothing';
+        $val = $t_val->value_add_ui();
+        $val->url_mapper([
+            url_var::MASK => views::VALUE_EDIT_ID,
+            url_var::PHRASE_LIST => (string)word_names::ZH_ID
+        ], $msg_ui);
+        $t->assert($test_name, $val->phr_lst()->count(), 0);
+        $msg_ui->reset();
+        $test_name = 'a url without a phrase list presets no phrase';
+        $val = $t_val->value_add_ui();
+        $val->url_mapper([url_var::MASK => views::VALUE_ADD_DETAIL_ID], $msg_ui);
+        $t->assert($test_name, $val->phr_lst()->count(), 0);
+        $test_name = 'the phrases of the url get their names from the request cache, so the title can show them';
+        $cache_dto = new data_object();
+        $cache_dto->phr_lst = $t_phr->list_zh_ui();
+        $val = $t_val->value_add_ui();
+        // the urls of the add value form carry the add view, which has no id yet (see db_object::url_is_add_action)
+        $add_url = [url_var::MASK => views::VALUE_ADD_DETAIL_ID, url_var::PHRASE_LIST => (string)word_names::ZH_ID];
+        $val->url_mapper($add_url, $msg_ui, $cache_dto);
+        $t->assert_true($test_name, $val->has_named_phrases());
+        $test_name = '... and stay unnamed without the cache';
+        $val = $t_val->value_add_ui();
+        $val->url_mapper($add_url, $msg_ui);
+        $t->assert_false($test_name, $val->has_named_phrases());
+        $test_name = '... but are still preset without the cache';
+        $t->assert($test_name, implode(',', $val->phr_lst()->ids()), (string)word_names::ZH_ID);
+        $test_name = 'the group name of the url is the name given to the group of the value';
+        $val = $t_val->value_add_ui();
+        $val->url_mapper([url_var::MASK => views::VALUE_ADD_DETAIL_ID, url_var::GROUP_NAME => groups::TN_VALUE_WORKFLOW], $msg_ui);
+        $t->assert($test_name, $val->grp->name, groups::TN_VALUE_WORKFLOW);
+        $test_name = '... which the group field of the form shows';
+        $grp_field = new system_form()->form_field_group_or_phrases($val, '');
+        $t->assert_text_contains($test_name, $grp_field, html_base::VALUE . '="' . groups::TN_VALUE_WORKFLOW . '"');
+        $test_name = 'the name of the api json is the given group name, so a saved name is shown again';
+        $val = new value($t_val->value($msg)->api_json([api_types::INCL_PHRASES]));
+        $t->assert($test_name, $val->grp->name, groups::TN_READ);
+        $test_name = '... in the group field of the change value view';
+        $grp_field = new system_form()->form_field_group_or_phrases($val, '');
+        $t->assert_text_contains($test_name, $grp_field, html_base::VALUE . '="' . groups::TN_READ . '"');
+        $test_name = '... and links to the group of the value, which has the id of the value';
+        $grp_link_par = url_var::ID . url_var::EQ . rawurlencode(group_id_url::to_url($val->id()));
+        $t->assert_text_contains($test_name, $val->grp->name_link(), $grp_link_par);
+        $test_name = '... and without a name in the api json the group has no given name';
+        $val = new value($t_val->value_pi_math()->api_json([api_types::INCL_PHRASES]));
+        $t->assert($test_name, $val->grp->name ?? '', '');
+        $test_name = 'without a given group name the group field is empty and never shows the phrases';
+        $val = $t_val->value_add_ui();
+        $val->url_mapper($add_url, $msg_ui, $cache_dto);
+        $grp_field = new system_form()->form_field_group_or_phrases($val, '');
+        $t->assert_text_not_contains($test_name, $grp_field, html_base::VALUE . '="');
+        $test_name = 'the description of the url is the description of the group of the value';
+        $val = $t_val->value_add_ui();
+        $val->url_mapper([url_var::MASK => views::VALUE_ADD_DETAIL_ID, url_var::DESCRIPTION => groups::TN_READ_COM], $msg_ui);
+        $t->assert($test_name, $val->get_description(), groups::TN_READ_COM);
+        $test_name = '... which is sent to the backend';
+        $t->assert($test_name, $val->api_array([], $msg_ui)[json_fields::DESCRIPTION] ?? '', groups::TN_READ_COM);
+        $test_name = '... and shown as a change in the confirm view';
+        $t->assert($test_name, $val->db_fld_to_url()[fields::FLD_DESCRIPTION] ?? '', url_var::DESCRIPTION);
+        $test_name = 'the description of the api json is shown again in the change value view';
+        $desc_json = $t_val->value_pi_math()->api_json_array([api_types::INCL_PHRASES], $msg);
+        $desc_json[json_fields::DESCRIPTION] = groups::TN_READ_COM;
+        $val = new value(json_encode($desc_json));
+        $t->assert($test_name, $val->get_description(), groups::TN_READ_COM);
+        $test_name = 'the title of the confirm view repeats the phrases of the value as links like the value page';
+        $val = new value($t_val->value_pi_math()->api_json([api_types::INCL_PHRASES]));
+        $cfm_title = new ui_preview()->popup_title(views::CONFIRM_EDIT, msg_id::SYSTEM_TITLE_OBJECT_NAMED_UPDATE,
+            $val, [], $msg_ui, true);
+        $t->assert_text_contains($test_name, $cfm_title, $val->grp->phrase_link_list());
+
+        // the frontend type of the user decides which view adds a value
+        $t->subheader($ts . 'add value view');
+        $test_name = 'a pure html frontend adds a value by selecting its phrases step by step';
+        $pure_view = config::value_add_view(shared_config::FRONTEND_PURE_HTML);
+        $t->assert($test_name, $pure_view, views::VALUE_ADD_NO_JS_ID);
+        $test_name = 'a frontend with js phrase selection adds a value in the add value form';
+        $js_phr_view = config::value_add_view(shared_config::FRONTEND_HTML_JS_PHRASE);
+        $t->assert($test_name, $js_phr_view, views::VALUE_ADD_DETAIL_ID);
+        $test_name = 'a full js frontend adds a value in the add value form';
+        $full_js_view = config::value_add_view(shared_config::FRONTEND_FULL_JS);
+        $t->assert($test_name, $full_js_view, views::VALUE_ADD_DETAIL_ID);
+
+        // the form that selects the phrases of a new value step by step, in the test mode with the phrases of
+        // the request cache instead of the backend
+        $t->subheader($ts . 'phrase steps');
+        $lib = new library();
+        $select = new ui_select();
+        $steps_dto = new data_object();
+        $steps_dto->phr_lst = $t_phr->list_zh_ui();
+        $phr_city = $t_wrd->word_city()->phrase();
+        $phr_canton = $t_wrd->word_canton()->phrase();
+        $steps_form = views::VALUE_ADD_NO_JS;
+        $cancel = new system_form()->button_cancel(views::VALUE_ADD_NO_JS_ID);
+        $next_par = url_var::MASK . url_var::EQ . views::VALUE_ADD_DETAIL_ID;
+        $test_name = 'the exact name of a phrase is checked and added to the phrases of the new value';
+        $city_url = [url_var::PATTERN => $phr_city->name()];
+        $city_html = $select->phrase_steps($steps_form, $city_url, $cancel, $msg_ui, $steps_dto, true);
+        $city_field = $html->form_hidden(url_var::PHRASE_LIST, (string)$phr_city->id());
+        $t->assert_text_contains($test_name, $city_html, $city_field);
+        $test_name = '... and the more details link opens the value add form with the phrase';
+        $t->assert_text_contains($test_name, $city_html, $next_par);
+        $test_name = '... named as the link to the detailed form';
+        $t->assert_text_contains($test_name, $city_html, $mtr->txt(msg_id::SYSTEM_BUTTON_MORE_DETAILS));
+        $test_name = 'the find and next button only updates the phrase selection';
+        $find_btn = $html->button_refresh_text($mtr->txt(msg_id::SYSTEM_BUTTON_FIND_AND_NEXT), url_var::REFRESH_PHRASES);
+        $t->assert_text_contains($test_name, $city_html, $find_btn);
+        $test_name = '... in a column of its own that the button fills, so the margin stays inside the column';
+        $find_col = '<div class="' . html_base::BS_BTN_FIELD_COL . '"><button class="' . html_base::BS_BTN_FIELD . '"';
+        $t->assert_text_contains($test_name, $city_html, $find_col);
+        $t->assert_text_not_contains($test_name, $city_html, html_base::BS_BTN . ' ' . html_base::BS_ALIGN_BOTTOM);
+        $test_name = '... and the number of the value can be entered directly';
+        $t->assert_text_contains($test_name, $city_html, 'name="' . url_var::NUMERIC_VALUE . '"');
+        $test_name = '... in the one form of the view, so a find and next posts the typed value';
+        // the selectors name the form of the view, so only a form attribute of another form is a second form
+        $view_form_attr = ' ' . html_base::FORM . '="' . $steps_form . '"';
+        $other_forms_html = str_replace($view_form_attr, '', $city_html);
+        $t->assert_text_not_contains($test_name, $other_forms_html, ' ' . html_base::FORM . '="');
+        $t->assert_text_not_contains($test_name, $city_html, $html->form_end());
+        $test_name = '... which the refreshed form shows again';
+        $typed_steps_url = $city_url + [url_var::NUMERIC_VALUE => (string)values::SAMPLE_INT];
+        $typed_steps_html = $select->phrase_steps($steps_form, $typed_steps_url, $cancel, $msg_ui, $steps_dto, true);
+        $t->assert_text_contains($test_name, $typed_steps_html, 'value="' . values::SAMPLE_INT . '"');
+        $test_name = '... and the more details link takes to the detailed form';
+        $typed_par = url_var::NUMERIC_VALUE . url_var::EQ . values::SAMPLE_INT;
+        $t->assert_text_contains($test_name, $typed_steps_html, htmlspecialchars(url_var::ADD . $typed_par));
+        $test_name = '... without the default value type, but with a selected one and its url encoded value';
+        $t->assert_text_not_contains($test_name, $typed_steps_html, url_var::VALUE_TYPE . url_var::EQ);
+        $typed_text_url = $city_url + [url_var::VALUE_TYPE => value_types::TEXT->value, url_var::VALUE_TEXT => values::DB_TEXT];
+        $typed_text_html = $select->phrase_steps($steps_form, $typed_text_url, $cancel, $msg_ui, $steps_dto, true);
+        $typed_text_par = url_var::VALUE_TEXT . url_var::EQ . rawurlencode(values::DB_TEXT)
+            . url_var::ADD . url_var::VALUE_TYPE . url_var::EQ . value_types::TEXT->value;
+        $t->assert_text_contains($test_name, $typed_text_html, htmlspecialchars($typed_text_par));
+        $test_name = '... and without a typed value the link names no value';
+        $no_value_par = url_var::ADD . url_var::NUMERIC_VALUE . url_var::EQ;
+        $t->assert_text_not_contains($test_name, $city_html, htmlspecialchars($no_value_par));
+        $test_name = '... beside the selector of the value type with the width of a button';
+        $type_sel = '<div class="form-group ' . view_styles::COL_SM_1 . '">';
+        $t->assert_text_contains($test_name, $city_html, $type_sel);
+        $t->assert_text_contains($test_name, $city_html, 'name="' . url_var::VALUE_TYPE . '"');
+        $test_name = '... with the translated name of each value type';
+        $geo_option = '<option value="' . value_types::GEO->value . '"  >' . $mtr->txt(msg_id::VALUE_TYPE_GEO);
+        $t->assert_text_contains($test_name, $city_html, $geo_option);
+        $test_name = 'the selected text type shows the text field instead of the number field';
+        $text_url = $city_url + [url_var::VALUE_TYPE => value_types::TEXT->value];
+        $text_html = $select->phrase_steps($steps_form, $text_url, $cancel, $msg_ui, $steps_dto, true);
+        $t->assert_text_contains($test_name, $text_html, 'name="' . url_var::VALUE_TEXT . '"');
+        $t->assert_text_not_contains($test_name, $text_html, 'name="' . url_var::NUMERIC_VALUE . '"');
+        $test_name = '... and the type selector is posted with the value, so it is not repeated as a hidden field';
+        $t->assert_text_not_contains($test_name, $text_html, $html->form_hidden(url_var::VALUE_TYPE, value_types::TEXT->value));
+        $test_name = 'an unknown value type falls back to the number field';
+        $bad_type_url = $city_url + [url_var::VALUE_TYPE => 'no type'];
+        $bad_type_html = $select->phrase_steps($steps_form, $bad_type_url, $cancel, $msg_ui, $steps_dto, true);
+        $t->assert_text_contains($test_name, $bad_type_html, 'name="' . url_var::NUMERIC_VALUE . '"');
+        $test_name = 'the chosen phrases are shown in one left aligned line';
+        $t->assert_text_contains($test_name, $city_html, 'class="' . view_styles::TEXT_LEFT . ' ' . view_styles::COL_SM_12 . '"');
+        $test_name = 'cancel and add are in one right aligned row';
+        $add_btn = $html->button_bs($mtr->txt(msg_id::SYSTEM_BUTTON_ADD), '', '', url_var::POST_SUBMIT);
+        $t->assert_text_contains($test_name, $city_html, $html->row_right() . $cancel . $add_btn . $html->row_end());
+        $test_name = 'the phrases used most often are preloaded in the one phrase field';
+        $pre_html = $select->phrase_steps($steps_form, [], $cancel, $msg_ui, $steps_dto, true);
+        $city_option = html_base::VALUE . '="' . $phr_city->name() . '"';
+        $t->assert_text_contains($test_name, $pre_html, $city_option);
+        $test_name = '... and there is no second field to select a phrase';
+        $t->assert_text_not_contains($test_name, $pre_html, 'name="' . url_var::PHRASE . '"');
+        $test_name = 'the first chars of several phrases offer the matching phrases to select';
+        $few_url = [url_var::PATTERN => mb_substr($phr_city->name(), 0, 1)];
+        $few_html = $select->phrase_steps($steps_form, $few_url, $cancel, $msg_ui, $steps_dto, true);
+        $t->assert_text_contains($test_name, $few_html, $city_option);
+        $test_name = 'a selected phrase is added to the phrases of the new value';
+        $sel_url = [url_var::PHRASE_LIST => (string)$phr_city->id(), url_var::PHRASE => (string)$phr_canton->id()];
+        $sel_html = $select->phrase_steps($steps_form, $sel_url, $cancel, $msg_ui, $steps_dto, true);
+        $both_field = $html->form_hidden(url_var::PHRASE_LIST, $phr_city->id() . ',' . $phr_canton->id());
+        $t->assert_text_contains($test_name, $sel_html, $both_field);
+        $test_name = 'chars that no phrase starts with are reported';
+        $none_pattern = 'zzz no phrase';
+        $none_html = $select->phrase_steps($steps_form, [url_var::PATTERN => $none_pattern], $cancel, $msg_ui, $steps_dto, true);
+        $no_match_txt = $mtr->txt(msg_id::INFO_NO_PHRASE_FOR_PATTERN);
+        $no_match = $lib->msg_var_replace($no_match_txt, msg_id::VAR_PATTERN, $none_pattern);
+        $t->assert_text_contains($test_name, $none_html, $no_match);
+        $test_name = 'an id of the url that names no phrase is dropped';
+        $bad_url = [url_var::PHRASE_LIST => (string)word_names::MATH_ID];
+        $bad_html = $select->phrase_steps($steps_form, $bad_url, $cancel, $msg_ui, $steps_dto, true);
+        $t->assert_text_contains($test_name, $bad_html, $html->form_hidden(url_var::PHRASE_LIST, ''));
+        $test_name = '... and without a chosen phrase the detailed form can still be opened';
+        $t->assert_text_contains($test_name, $bad_html, $next_par);
+        $test_name = '... but without a phrase list';
+        $t->assert_text_not_contains($test_name, $bad_html, url_var::PHRASE_LIST . url_var::EQ);
+        $test_name = 'each chosen phrase offers a remove icon';
+        $remove_par = url_var::UNLINK_PHRASE . url_var::EQ . $phr_city->id();
+        $t->assert_text_contains($test_name, $city_html, $remove_par);
+        $test_name = 'the remove icon drops the phrase from the phrases of the new value';
+        $rem_url = [
+            url_var::PHRASE_LIST => $phr_city->id() . ',' . $phr_canton->id(),
+            url_var::UNLINK_PHRASE => (string)$phr_canton->id()
+        ];
+        $rem_html = $select->phrase_steps($steps_form, $rem_url, $cancel, $msg_ui, $steps_dto, true);
+        $city_only = $html->form_hidden(url_var::PHRASE_LIST, (string)$phr_city->id());
+        $t->assert_text_contains($test_name, $rem_html, $city_only);
+        $test_name = 'removing a phrase that is not chosen keeps the phrases unchanged';
+        $keep_url = [
+            url_var::PHRASE_LIST => (string)$phr_city->id(),
+            url_var::UNLINK_PHRASE => (string)$phr_canton->id()
+        ];
+        $keep_html = $select->phrase_steps($steps_form, $keep_url, $cancel, $msg_ui, $steps_dto, true);
+        $t->assert_text_contains($test_name, $keep_html, $city_only);
+        $test_name = '... and no number field';
+        $t->assert_text_not_contains($test_name, $bad_html, 'name="' . url_var::NUMERIC_VALUE . '"');
+        $test_name = 'without a chosen phrase the cancel button is still shown';
+        $t->assert_text_contains($test_name, $bad_html, $cancel);
+        $test_name = '... but no add button';
+        $t->assert_text_not_contains($test_name, $bad_html, 'name="' . url_var::POST_SUBMIT . '"');
+
+        // the simple add form writes the value with the chosen phrases without the confirm view
+        $t->subheader($ts . 'simple add');
+        $simple_form = views::VALUE_ADD;
+        $test_name = 'the simple add form checks and adds the phrases like the phrase steps';
+        $simple_html = $select->value_add_simple($simple_form, $city_url, $cancel, $msg_ui, $steps_dto, true);
+        $t->assert_text_contains($test_name, $simple_html, $city_field);
+        $test_name = '... has the number field';
+        $t->assert_text_contains($test_name, $simple_html, 'name="' . url_var::NUMERIC_VALUE . '"');
+        $test_name = '... writes via its own add mask, because a second mask would change the view of a refresh';
+        $t->assert_text_not_contains($test_name, $simple_html, $html->form_hidden(url_var::MASK, (string)views::VALUE_ADD_DETAIL_ID));
+        $test_name = '... without the confirm view';
+        $confirmed = $html->form_hidden(url_var::STEP, url_var::STEP_CONFIRMED);
+        $t->assert_text_contains($test_name, $simple_html, $confirmed);
+        $test_name = '... shows the new value with its default view';
+        $back_mask = $html->form_hidden(url_var::BACK . url_var::MASK, (string)views::VALUE_DEFAULT_ID);
+        $t->assert_text_contains($test_name, $simple_html, $back_mask);
+        $test_name = '... and the add button is a save submit';
+        $t->assert_text_contains($test_name, $simple_html, 'name="' . url_var::POST_SUBMIT . '"');
+        $test_name = 'the simple add form has no next button to the value add form';
+        $t->assert_text_not_contains($test_name, $simple_html, $next_par);
+        $test_name = 'without a chosen phrase the simple add form has no number field';
+        $empty_html = $select->value_add_simple($simple_form, $bad_url, $cancel, $msg_ui, $steps_dto, true);
+        $t->assert_text_not_contains($test_name, $empty_html, 'name="' . url_var::NUMERIC_VALUE . '"');
+        $test_name = '... and no add button';
+        $t->assert_text_not_contains($test_name, $empty_html, 'name="' . url_var::POST_SUBMIT . '"');
+
+        // the detailed add form starts with the line of the pure add form, but as part of its own single form
+        $t->subheader($ts . 'phrase value line');
+        $detail_form = views::VALUE_ADD_DETAIL;
+        $test_name = 'the detailed add form checks and adds the phrases like the phrase steps';
+        $line_html = $select->phrase_value_line($detail_form, $city_url, $msg_ui, $steps_dto, true);
+        $t->assert_text_contains($test_name, $line_html, $city_field);
+        $test_name = '... with the find and next button, the value type and the value in the same line';
+        $t->assert_text_contains($test_name, $line_html, $find_btn);
+        $t->assert_text_contains($test_name, $line_html, 'name="' . url_var::VALUE_TYPE . '"');
+        $t->assert_text_contains($test_name, $line_html, 'name="' . url_var::NUMERIC_VALUE . '"');
+        $test_name = '... posted with the detailed form itself without the write vars of the pure form';
+        $t->assert_text_not_contains($test_name, $line_html, $html->form_hidden(url_var::STEP, url_var::STEP_CONFIRMED));
+        $test_name = '... and without the buttons of the pure form';
+        $t->assert_text_not_contains($test_name, $line_html, $html->form_end());
+        $t->assert_text_not_contains($test_name, $line_html, 'name="' . url_var::POST_SUBMIT . '"');
+        $test_name = 'the detailed add form shows the value field also before a phrase is chosen';
+        $line_empty_html = $select->phrase_value_line($detail_form, [], $msg_ui, $steps_dto, true);
+        $t->assert_text_contains($test_name, $line_empty_html, 'name="' . url_var::NUMERIC_VALUE . '"');
+        $test_name = 'the typed value is kept when the find and next button refreshes the detailed form';
+        $typed_url = $city_url + [url_var::NUMERIC_VALUE => (string)values::SAMPLE_INT];
+        $typed_html = $select->phrase_value_line($detail_form, $typed_url, $msg_ui, $steps_dto, true);
+        $t->assert_text_contains($test_name, $typed_html, 'value="' . values::SAMPLE_INT . '"');
+
+        // the value field of the change value form posts the value with the url var that url_mapper
+        // reads and the opening value as the pre value, so the confirm view shows only a changed value
+        $t->subheader($ts . 'value field');
+        $value_form = new system_form();
+        $test_name = 'the value field of the change form posts the number and its opening value';
+        $val_ls = $tl->ui_value($t_val->light_speed());
+        $ls_field = $value_form->form_num_value($val_ls, '', $msg_ui);
+        $t->assert_text_contains($test_name, $ls_field, 'name="' . url_var::NUMERIC_VALUE . '"');
+        $t->assert_text_contains($test_name, $ls_field,
+            $html->form_hidden(url_var::PRE . url_var::NUMERIC_VALUE, (string)$val_ls->number()));
+        $test_name = '... and never the value url var that url_mapper does not read';
+        $t->assert_text_not_contains($test_name, $ls_field, 'name="' . url_var::VALUE . '"');
+        $test_name = 'a re-render after a save error keeps the opening value of the url as the pre value';
+        $val_ls->url_mapper([url_var::ID => $val_ls->id(),
+            url_var::PRE . url_var::NUMERIC_VALUE => (string)values::SAMPLE_INT], $msg_ui);
+        $ls_re_field = $value_form->form_num_value($val_ls, '', $msg_ui);
+        $t->assert_text_contains($test_name, $ls_re_field,
+            $html->form_hidden(url_var::PRE . url_var::NUMERIC_VALUE, (string)values::SAMPLE_INT));
+        $test_name = 'the value field of a text value is the text field with its opening text';
+        $val_txt = $tl->ui_value($t_val->text_value());
+        $txt_field = $value_form->form_num_value($val_txt, '', $msg_ui);
+        $t->assert_text_contains($test_name, $txt_field, 'name="' . url_var::VALUE_TEXT . '"');
+        $t->assert_text_contains($test_name, $txt_field, $html->form_hidden(url_var::PRE . url_var::VALUE_TEXT, values::TEXT));
+        $t->assert_text_not_contains($test_name, $txt_field, 'name="' . url_var::NUMERIC_VALUE . '"');
+
+        // the confirm view lists only the changed fields and names the source instead of showing its id
+        $t->subheader($ts . 'confirm change preview');
+        $preview = new ui_preview();
+        $val_chg = $t_val->value_form_ui($msg);
+        $chg_url = [
+            url_var::NUMERIC_VALUE => (string)values::SAMPLE_INT,
+            url_var::PRE . url_var::NUMERIC_VALUE => (string)$val_chg->number(),
+            url_var::SOURCE => '0',
+            url_var::PRE . url_var::SOURCE => (string)sources::BFS_ID,
+        ];
+        $chg_html = $preview->popup_changes($msg_ui, $chg_url, $val_chg, true);
+        $test_name = 'the confirm view shows the changed number';
+        $t->assert_text_contains($test_name, $chg_html, (string)values::SAMPLE_INT);
+        $test_name = '... and the removed source by its name, not by its id';
+        $t->assert_text_contains($test_name, $chg_html, sources::BFS);
+        $t->assert_text_contains($test_name, $chg_html, $mtr->txt(msg_id::NOT_SET));
+        $test_name = 'an unchanged source is not listed as a change';
+        $same_url = $chg_url;
+        $same_url[url_var::SOURCE] = (string)sources::BFS_ID;
+        $same_html = $preview->popup_changes($msg_ui, $same_url, $val_chg, true);
+        $t->assert_text_not_contains($test_name, $same_html, $mtr->text_db_field(source_fields::FLD_ID));
+
+        // the overwrite form writes the changed number of the value without the confirm view
+        $t->subheader($ts . 'value overwrite');
+        $overwrite_form = new system_form();
+        $number_field = 'name="' . url_var::NUMERIC_VALUE . '"';
+        $test_name = 'the overwrite form shows the number field';
+        $val_ls = $tl->ui_value($t_val->light_speed());
+        $ls_html = $overwrite_form->form_value_overwrite($val_ls);
+        $t->assert_text_contains($test_name, $ls_html, $number_field);
+        $test_name = '... writes via the value edit mask';
+        $t->assert_text_contains($test_name, $ls_html, $html->form_hidden(url_var::MASK, (string)views::VALUE_EDIT_ID));
+        $test_name = '... for the shown value';
+        $ls_id = (string)$val_ls->id();
+        $t->assert_text_contains($test_name, $ls_html, $html->form_hidden(url_var::ID, $ls_id));
+        $test_name = '... without the confirm view';
+        $t->assert_text_contains($test_name, $ls_html, $html->form_hidden(url_var::STEP, url_var::STEP_CONFIRMED));
+        $test_name = '... shows the value with its default view';
+        $ls_back = $html->form_hidden(url_var::BACK . url_var::MASK, (string)views::VALUE_DEFAULT_ID);
+        $t->assert_text_contains($test_name, $ls_html, $ls_back);
+        $test_name = '... and the save button is a save submit';
+        $t->assert_text_contains($test_name, $ls_html, 'name="' . url_var::POST_SUBMIT . '"');
+        // the text, time and geo values show the field of their type instead of the number field
+        $test_name = 'the overwrite form of a text value shows the text field';
+        $val_txt = $tl->ui_value($t_val->text_value());
+        $txt_html = $overwrite_form->form_value_overwrite($val_txt);
+        $t->assert_text_contains($test_name, $txt_html, 'name="' . url_var::VALUE_TEXT . '"');
+        $test_name = '... with the text';
+        $t->assert_text_contains($test_name, $txt_html, values::TEXT);
+        $test_name = '... and no number field';
+        $t->assert_text_not_contains($test_name, $txt_html, $number_field);
+        $test_name = 'the overwrite form of a time value shows the time field';
+        $val_time = $tl->ui_value($t_val->time_value());
+        $time_html = $overwrite_form->form_value_overwrite($val_time);
+        $t->assert_text_contains($test_name, $time_html, 'name="' . url_var::VALUE_TIME . '"');
+        $test_name = '... and no number field';
+        $t->assert_text_not_contains($test_name, $time_html, $number_field);
+        $test_name = 'the overwrite form of a geo value shows the geolocation field';
+        $val_geo = $tl->ui_value($t_val->geo_value());
+        $geo_html = $overwrite_form->form_value_overwrite($val_geo);
+        $t->assert_text_contains($test_name, $geo_html, 'name="' . url_var::VALUE_GEO . '"');
+        $test_name = '... with the geolocation';
+        $t->assert_text_contains($test_name, $geo_html, values::GEO);
+        $test_name = '... and no number field';
+        $t->assert_text_not_contains($test_name, $geo_html, $number_field);
+        // the changed text, time or geolocation of the url is sent to the backend and saved with the typed value class
+        $test_name = 'a changed text of the url is sent to the backend as text value';
+        $map = new MapObject();
+        // a change of an existing value, so the url carries its id like the change value form
+        $val_txt->url_mapper([url_var::ID => $val_txt->id(), url_var::VALUE_TEXT => word_names::TEXT], $msg_ui);
+        $t->assert($test_name, $val_txt->api_array([], $msg_ui)[json_fields::TEXT_VALUE], word_names::TEXT);
+        $test_name = '... and saved as a text value';
+        $t->assert($test_name, $map->dbObject($val_txt, $t->usr1)::class, value_text::class);
+        $test_name = 'a changed time of the url is sent to the backend as time value';
+        $val_time->url_mapper([url_var::ID => $val_time->id(), url_var::VALUE_TIME => values::TIME], $msg_ui);
+        $time_json = $val_time->api_array([], $msg_ui)[json_fields::TIME_VALUE];
+        $t->assert($test_name, strtotime($time_json), strtotime(values::TIME));
+        $test_name = '... and saved as a time value';
+        $t->assert($test_name, $map->dbObject($val_time, $t->usr1)::class, value_time::class);
+        $test_name = 'a changed geolocation of the url is sent to the backend as geo value';
+        $val_geo->url_mapper([url_var::ID => $val_geo->id(), url_var::VALUE_GEO => values::GEO], $msg_ui);
+        $t->assert($test_name, $val_geo->api_array([], $msg_ui)[json_fields::GEO_VALUE], values::GEO);
+        $test_name = '... and saved as a geo value';
+        $t->assert($test_name, $map->dbObject($val_geo, $t->usr1)::class, value_geo::class);
+        $test_name = 'a number value is still saved as a numeric value';
+        $t->assert($test_name, $map->dbObject($val_ls, $t->usr1)::class, value_db_class::class);
+
         $t->subheader($ts . 'links and measure');
         // the speed of light value: "speed of light" names the value, "m/s" is the measure
         // shown behind the number and "1983 (year of definition)" explains it as the tooltip
@@ -167,6 +570,98 @@ class value_ui_tests
         $t->assert_text_contains($test_name,
             $val_zh->links_and_measure($msg_ui, $url_arr), '</a>, <a ');
 
+        // the browser tab title names only the phrase that the page heading names first, because
+        // the names of all phrases of a value would fill the tab; the heading still links them all
+        $t->subheader($ts . 'tab title');
+        $test_name = 'the tab title names the first phrase of the heading';
+        $first_link = $lib->str_left_of($val_zh->phrase_link_list($msg_ui), '</a>');
+        $t->assert($test_name, $val_zh->title_name($msg_ui), $lib->html_to_text($first_link));
+        $test_name = '... which is a name and not an empty text';
+        $t->assert_not($test_name, $val_zh->title_name($msg_ui), '');
+        $test_name = '... and no list of the phrases like the name of the value';
+        $t->assert_not($test_name, $val_zh->title_name($msg_ui), $val_zh->name());
+        // negative: a value without a phrase has nothing to name it
+        $test_name = 'a value without phrases has an empty tab title name';
+        $t->assert($test_name, new value()->title_name($msg_ui), '');
+
+        // a factor says that the number is a multiplier, so the phrase is not named with the other
+        // phrases of the value but shown as its symbol behind the number; the symbol itself is
+        // data: the triple "x is symbol for factor" of scaling.json defines it
+        $t->subheader($ts . 'factor');
+        $val_fact = $tl->ui_value($t_val->value_factor());
+        // negative: with the symbol triple in neither the preloaded nor the page phrases no symbol
+        // is known, so the factor is named like any other phrase of the value and nothing is lost
+        $test_name = 'without the symbol triple the factor is named with the other phrases';
+        $phr_sys_keep = $ui_sys->typ_lst_cache->phr_sys;
+        $phr_lst_keep = $ui_sys->phr_lst;
+        $ui_sys->typ_lst_cache->phr_sys = new phrase_list_ui();
+        $ui_sys->phr_lst = new phrase_list_ui();
+        $t->assert_text_contains($test_name, $val_fact->name_link($msg_ui),
+            '>' . words::FACTOR . '</a>');
+        // the request cache of the page supplies the symbol triple
+        $ui_sys->phr_lst = $t_phr->list_factor_symbol_cache_ui();
+        $fact_html = $val_fact->name_link($msg_ui);
+        $test_name = 'the factor phrase is not named with the other phrases of the value';
+        $t->assert_text_not_contains($test_name, $fact_html, '>' . words::FACTOR . '</a>');
+        $test_name = '... but shown as the symbol of the triple behind the number';
+        $t->assert_text_order($test_name, $fact_html,
+            $val_fact->val_formatted($msg_ui), '>' . word_names::FACTOR_SYMBOL . '</a>');
+        $test_name = '... with the description of the factor as the tooltip of the symbol';
+        $t->assert_text_contains($test_name, $fact_html,
+            html_base::TITLE_HTML . '="' . words::FACTOR_COM . '"');
+        $test_name = '... and with the link to the word factor';
+        $t->assert_text_contains($test_name, $fact_html,
+            url_var::ID . '=' . words::FACTOR_ID);
+        $test_name = 'the other phrases of the value are still named';
+        $t->assert_text_contains($test_name, $fact_html, word_names::MATH);
+
+        // a scaling and a unit are shown as their symbols behind the number as well, so that a
+        // number reads like a price tag e.g. "165'070'664 mio €"; the tooltip is the description
+        // of the phrase the symbol stands for, and a unit can be a symbol itself: "EUR" stands
+        // for "Euro", so the symbol of "Euro" is shown; "m" stands for million too, but it is
+        // the unit of the metre, so the symbol "mio" is used
+        $t->subheader($ts . 'scaling and unit symbol');
+        $val_unit = $tl->ui_value($t_val->value_mio_eur());
+        // negative: without the symbol triples the scaling and the unit are named as before
+        $test_name = 'without the symbol triples the scaling and the unit are named with the other phrases';
+        $ui_sys->phr_lst = new phrase_list_ui();
+        $unit_html = $val_unit->name_link($msg_ui);
+        $t->assert_text_contains($test_name, $unit_html, '>' . word_names::MIO . '</a>');
+        $t->assert_text_contains($test_name, $unit_html, '>' . word_names::EUR . '</a>');
+        $ui_sys->phr_lst = $t_phr->list_unit_symbol_cache_ui();
+        $unit_html = $val_unit->name_link($msg_ui);
+        $test_name = 'the scaling and the unit are not named with the other phrases';
+        $t->assert_text_not_contains($test_name, $unit_html, '>' . word_names::MIO . '</a>');
+        $t->assert_text_not_contains($test_name, $unit_html, '>' . word_names::EUR . '</a>');
+        $test_name = '... but the scaling symbol follows the number';
+        $t->assert_text_order($test_name, $unit_html,
+            $val_unit->val_formatted($msg_ui), '>' . word_names::MIO_SHORT . '</a>');
+        $test_name = '... and the unit symbol follows the scaling symbol';
+        $t->assert_text_order($test_name, $unit_html,
+            '>' . word_names::MIO_SHORT . '</a>', '>' . word_names::EURO_SIGN . '</a>');
+        $test_name = 'a symbol that is a unit of its own is not used for the scaling';
+        $t->assert_text_not_contains($test_name, $unit_html, '>' . word_names::M . '</a>');
+        $test_name = 'the description of million is the tooltip of its symbol';
+        $t->assert_text_contains($test_name, $unit_html,
+            html_base::TITLE_HTML . '="' . word_names::MIO_COM . '"');
+        $test_name = 'the description of Euro is the tooltip of the unit symbol';
+        $t->assert_text_contains($test_name, $unit_html,
+            html_base::TITLE_HTML . '="' . word_names::EURO_COM . '"');
+        $test_name = '... which links to Euro';
+        $t->assert_text_contains($test_name, $unit_html, url_var::ID . '=' . word_names::EURO_ID);
+        $test_name = 'the other phrases of the value are still named';
+        $t->assert_text_contains($test_name, $unit_html, '>' . word_names::MATH . '</a>');
+        // an assumed number is marked by a grey superscript behind the number with its tooltip
+        $test_name = 'an assumed value is marked behind the number';
+        $t->assert_text_order($test_name, $unit_html,
+            $val_unit->val_formatted($msg_ui), msg_id::QUALITY_MARK_ASSUMED->text());
+        // negative: a value with a source and without a quality phrase has no mark
+        $test_name = '... and a value with a source and without a quality has no mark';
+        $t->assert($test_name, $t_val->value_page_ui($msg)->quality_mark(), '');
+        // the following tests use the caches of the test setup again
+        $ui_sys->typ_lst_cache->phr_sys = $phr_sys_keep;
+        $ui_sys->phr_lst = $phr_lst_keep;
+
         $t->subheader($ts . 'tooltips from the data object');
         // the scaling symbol "mio" has no description, so without the cache it has no tooltip
         $test_name = 'without the data object the symbol has no tooltip';
@@ -185,17 +680,30 @@ class value_ui_tests
 
         // the source field of the value add and edit form offers to add a new source and, if a
         // source is selected, to change it, so the user can create a missing source without
-        // leaving the value form (see value::source_crud_links and system_views.json value_edit)
+        // leaving the value form (see value::crud_icons and system_views.json value_edit)
         // the form value carries the source that the frontend source list offers, so the selector
         // can preselect it; the page value uses the reserved source, which is not in that list
         $t_src = new test_sources($t);
         $val_src = $t_val->value_form_ui($msg);
-        $sel_html = $val_src->source_selector(views::VALUE_EDIT, '', $t_src->source_list_ui());
+        $sel_html = $val_src->source_selector(views::VALUE_EDIT, $msg_ui, '', $t_src->source_list_ui());
+
+        // without typed chars the selector offers the cached sources or else all sources of the database
+        $test_name = 'the source selector keeps the sources of the request cache';
+        $src_lst = $t_src->source_list_ui();
+        $src_lst->load_for_selector('', $msg_ui, true);
+        $t->assert($test_name, $src_lst->count(), $t_src->source_list_ui()->count());
+        $test_name = '... and an empty cache stays empty in a test, because a snapshot never calls the backend';
+        $src_lst = new source_list_ui();
+        $src_lst->load_for_selector('', $msg_ui, true);
+        $t->assert_true($test_name, $src_lst->is_empty());
 
         $test_name = 'the source selector links to the add source view';
         $t->assert_text_contains($test_name, $sel_html, url_var::MASK . '=' . views::SOURCE_ADD_ID);
         $test_name = '... with the add icon';
         $t->assert_text_contains($test_name, $sel_html, icons::ADD);
+        $test_name = '... in the same line as the selector, which uses 11/12 of the width';
+        $t->assert_text_contains($test_name, $sel_html, '<div class="form-group ' . view_styles::COL_SM_11 . '">');
+        $t->assert_text_contains($test_name, $sel_html, 'class="' . view_styles::COL_SM_1 . ' ' . html_base::BS_ALIGN_BOTTOM . '"');
 
         // the change icon targets the selected source, not the value itself
         $test_name = 'the source selector links to the edit view of the selected source';
@@ -204,15 +712,44 @@ class value_ui_tests
         $test_name = '... and preselects the source of the value';
         $t->assert_text_contains($test_name, $sel_html,
             '<option value="' . sources::BFS_ID . '"  selected >');
+        $test_name = '... and sends the opening source as the pre value, so the confirm view shows only a changed source';
+        $t->assert_text_contains($test_name, $sel_html,
+            $html->form_hidden(url_var::PRE . url_var::SOURCE, (string)sources::BFS_ID));
 
         // a value without a source has nothing to change, so only the add icon is shown
         $val_no_src = new value($t_val->value($msg)->api_json([api_types::INCL_PHRASES]));
-        $sel_no_src = $val_no_src->source_selector(views::VALUE_EDIT, '', $t_src->source_list_ui());
+        $sel_no_src = $val_no_src->source_selector(views::VALUE_EDIT, $msg_ui, '', $t_src->source_list_ui());
         $test_name = 'a value without a source shows no edit source link';
         $t->assert_text_not_contains($test_name, $sel_no_src,
             url_var::MASK . '=' . views::SOURCE_EDIT_ID);
         $test_name = '... but still offers to add a source';
         $t->assert_text_contains($test_name, $sel_no_src, url_var::MASK . '=' . views::SOURCE_ADD_ID);
+        $test_name = '... and sends no source as the pre value';
+        $t->assert_text_contains($test_name, $sel_no_src, $html->form_hidden(url_var::PRE . url_var::SOURCE, '0'));
+
+        // the reference selector has the same layout as the source selector and offers the references of
+        // the frontend cache instead of an always empty list
+        $t_ref = new test_refs($t);
+        $ref_lst = $t_ref->ref_list_math_ui();
+        $val_city = new value($t_val->value_for_phrases([$t_wrd->word_city()->phrase()])->api_json([api_types::INCL_PHRASES]));
+        $ref_html = $val_city->ref_selector(views::VALUE_EDIT, $msg_ui, '', $ref_lst);
+        $test_name = 'the reference selector offers the references of the frontend cache';
+        $t->assert_text_contains($test_name, $ref_html, '<option value="' . array_values($ref_lst->lst())[0]->id() . '"');
+        $test_name = '... with 11/12 of the width like the source selector';
+        $t->assert_text_contains($test_name, $ref_html, '<div class="form-group ' . view_styles::COL_SM_11 . '">');
+        $test_name = '... and the icon to add a reference with the size of the field label';
+        $t->assert_text_contains($test_name, $ref_html, url_var::MASK . '=' . views::REF_ADD_ID);
+        $t->assert_text_contains($test_name, $ref_html, 'class="' . styles::FORM_ICON_INLINE . '"');
+        $test_name = '... but no change icon, because no phrase of the value has a reference';
+        $t->assert_text_not_contains($test_name, $ref_html, url_var::MASK . '=' . views::REF_EDIT_ID);
+        // a value has no reference of its own, so the reference of one of its phrases is preselected
+        $val_pi = new value($t_val->value_for_phrases([$t_wrd->word_pi()->phrase()])->api_json([api_types::INCL_PHRASES]));
+        $ref_pi_html = $val_pi->ref_selector(views::VALUE_EDIT, $msg_ui, '', $ref_lst);
+        $test_name = 'the reference of a phrase of the value is preselected';
+        $t->assert_text_contains($test_name, $ref_pi_html, '<option value="' . refs::PI_ID . '"  selected >');
+        $test_name = '... and can be changed with the change icon';
+        $t->assert_text_contains($test_name, $ref_pi_html,
+            url_var::MASK . '=' . views::REF_EDIT_ID . '&amp;id=' . refs::PI_ID);
 
 
         $t->subheader($ts . 'show source');
@@ -258,10 +795,11 @@ class value_ui_tests
         $test_name = 'pi is not listed among its own similar values';
         $t->assert_text_not_contains($test_name, $sim_html, triple_names::PI_SYMBOL_NAME);
 
-        // the results column lists the results that use the value, each with its phrase and number
+        // the results column lists the results that use the value like a value list, each with
+        // its phrase and its formatted number
         $res_html = $lst_ui->results_by_value($val_rel, $msg_ui);
         $test_name = 'the results of a value are shown with their phrase and their number';
-        $t->assert_text_order($test_name, $res_html, word_names::MATH, (string)results::TV_INT);
+        $t->assert_text_order($test_name, $res_html, word_names::MATH, results::TV_INT_FORM);
 
         // a value that is not used for results says so instead of showing an empty table
         $val_no_res = $t_val->value_page_ui($msg);
@@ -305,7 +843,7 @@ class value_ui_tests
         $val_math = $tl->ui_value($t_val->value_for_phrases([$t_wrd->word()->phrase()]));
         $test_name = 'without the loaded list the results come from the page cache';
         $t->assert_text_contains($test_name,
-            $lst_ui->results_by_value($val_math, $msg_ui, $dto_res), (string)results::TV_INT);
+            $lst_ui->results_by_value($val_math, $msg_ui, $dto_res), results::TV_INT_FORM);
 
         // the cache holds the results of the whole page, so a value that no cached result is
         // based on shows the not used message and never another value's results

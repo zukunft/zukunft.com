@@ -538,14 +538,23 @@ class test_views extends test_objects
         return $trm_msk;
     }
 
+    /**
+     * the math const triple linked to the math const view, which is the view that shows a
+     * mathematical constant with its related words and formulas, so the link says what it means
+     *
+     * both are seed rows with a pinned id, so the fixture carries the database ids, the link is
+     * db_ready and a row written from it names the rows that the database really has
+     *
+     * @return term_view the standard test link of a term to a view
+     */
     function term_view(): term_view
     {
         $trm_msk = new term_view($this->env->usr1);
-        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
         $trm_msk->id = 1;
-        $trm_msk->set_term($t_wrd->word()->term());
+        $trm_msk->set_term($t_trp->triple()->term());
         $trm_msk->set_predicate(view_link_types::DEFAULT);
-        $trm_msk->set_view($this->view());
+        $trm_msk->set_view($this->view_math());
         return $trm_msk;
     }
 
@@ -598,10 +607,9 @@ class test_views extends test_objects
      *
      * @return array the url parameters of a view that is not yet created
      */
-    static function view_new_url(user_message_ui $msg): array
+    static function view_new_url(): array
     {
-        $msk_ui = new view_ui();
-        return $msk_ui->to_url_array($msg);
+        return [url_var::ID => 0];
     }
 
     /**
@@ -610,10 +618,9 @@ class test_views extends test_objects
      *
      * @return array the view url parameters of the added test view
      */
-    function view_add_url(user_message_ui $msg): array
+    static function view_add_url(): array
     {
-        $msk_ui = new view_ui($this->view_add()->api_json());
-        return $msk_ui->to_url_array($msg);
+        return [url_var::ID => 0, url_var::NAME => views::TEST_ADD_NAME];
     }
 
     /**
@@ -648,8 +655,7 @@ class test_views extends test_objects
      */
     function fill_url_array(int $id): array
     {
-        $msg = new user_message_ui();
-        $url_arr = $this->view_add_url($msg);
+        $url_arr = self::view_add_url();
         // the workflow step adds the current db id of the test view, so drop the factory id
         unset($url_arr[url_var::ID]);
         $url_arr[url_var::STYLE] = view_styles::COL_SM_8_ID;

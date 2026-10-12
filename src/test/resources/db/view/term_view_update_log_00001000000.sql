@@ -26,7 +26,7 @@ SELECT term_view_update_log_00001000000
 SELECT term_view_update_log_00001000000
        (3::bigint,
         2::smallint,
-        727::smallint,
+        762::smallint,
         null::text,
         'System Test description for a view term link'::text,
         0::bigint);

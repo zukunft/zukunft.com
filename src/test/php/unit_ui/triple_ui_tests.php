@@ -35,6 +35,8 @@ namespace Zukunft\ZukunftCom\test\php\unit_ui;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_CONST . 'words.php';
+include_once paths::SHARED_TYPES . 'api_types.php';
+include_once paths::SHARED_TYPES . 'verbs.php';
 
 use Zukunft\ZukunftCom\main\php\shared\enum\languages;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
@@ -49,6 +51,8 @@ use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
@@ -74,7 +78,8 @@ class triple_ui_tests
         $ts = 'unit ui html triple ';
         $t->header($ts);
 
-        $trp = new triple($t_trp->triple()->api_json());
+        // with the phrases, so that the title shows the names of from, verb and to like the page request
+        $trp = new triple($t_trp->triple()->api_json([api_types::INCL_PHRASES]));
         $phr_lst = new phrase_list($t_phr->phrase_list()->api_json());
         $test_page = $html->text_h1('Triple display test');
         $test_page .= $html->text_h2('names');
@@ -116,8 +121,10 @@ class triple_ui_tests
         $sub_html = $list->phrases_related_ex_subtitle($trp_problem, $msg);
         $test_name = 'the "can be" related phrase is shown grouped under its verb';
         $t->assert_text_contains($test_name, $sub_html, word_names::HEALTH);
+        // the link text and not the bare name, because the "define as" selector of the same
+        // html lists categories like "poverty solution"
         $test_name = 'the is-a parents are excluded from the related phrases without subtitles';
-        $t->assert_text_not_contains($test_name, $sub_html, word_names::POVERTY);
+        $t->assert_text_not_contains($test_name, $sub_html, '>' . word_names::POVERTY . '</a>');
 
         $t->subheader($ts . 'phrase title');
         $test_name = 'the phrase title of a triple is the triple title';
@@ -125,11 +132,15 @@ class triple_ui_tests
         $ttl_html = $form->title_phrase($trp, $msg);
         $test_name = 'the phrase title names the triple';
         $t->assert_text_contains($test_name, $ttl_html, $trp->name());
-        // the subheader of a triple names the from phrase, the verb and the to phrase
+        // the subheader of a triple names the from phrase, the verb and the to phrase as link texts;
+        // the expected names are the consts and not the names of the mapped triple, because an
+        // id-only stub has an empty name, which every html contains
         $test_name = 'the phrase title subheader names the from phrase of the triple';
-        $t->assert_text_contains($test_name, $ttl_html, $trp->get_from()->name());
+        $t->assert_text_contains($test_name, $ttl_html, '>' . word_names::CONST_NAME . '</a>');
+        $test_name = 'the phrase title subheader names the verb of the triple';
+        $t->assert_text_contains($test_name, $ttl_html, '>' . verbs::PART_NAME . '</a>');
         $test_name = 'the phrase title subheader names the to phrase of the triple';
-        $t->assert_text_contains($test_name, $ttl_html, $trp->get_to()->name());
+        $t->assert_text_contains($test_name, $ttl_html, '>' . word_names::MATH . '</a>');
 
         $t->subheader($ts . 'view tab box');
 

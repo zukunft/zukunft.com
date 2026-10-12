@@ -2742,6 +2742,7 @@
   "formulas": [
     {
       "name": "definition of porosity",
+      "description": "the share of a rock or soil volume that is empty space, which decides how much water, oil or gas it can hold",
       "expression": "\"porosity\" = \"void volume\" / \"total volume\"",
       "latex": "\\phi = \\frac{V_v}{V_t}",
       "assigned": [
@@ -2751,6 +2752,7 @@
     },
     {
       "name": "definition of specific gravity",
+      "description": "the density of a mineral or rock relative to the density of water, a dimensionless number used to identify minerals",
       "expression": "\"specific gravity\" = \"density of substance\" / \"density of water\"",
       "latex": "SG = \\frac{\\rho_s}{\\rho_w}",
       "assigned": [
@@ -2760,6 +2762,7 @@
     },
     {
       "name": "definition of geothermal gradient",
+      "description": "how fast the temperature rises with depth in the earth's crust, about 25 to 30 degrees Celsius per kilometre on average",
       "expression": "\"geothermal gradient\" = \"temperature change\" / \"depth interval\"",
       "latex": "\\frac{dT}{dz} = \\frac{\\Delta T}{\\Delta z}",
       "assigned": [
@@ -2769,6 +2772,7 @@
     },
     {
       "name": "Darcy's law",
+      "description": "the flow of groundwater through a porous medium is proportional to the permeability of the medium, the cross-section and the slope of the water pressure",
       "expression": "\"discharge\" = \"hydraulic conductivity\" * \"cross-sectional area\" * \"hydraulic gradient\"",
       "latex": "Q = K \\cdot A \\cdot i",
       "assigned": [
@@ -2779,6 +2783,7 @@
     },
     {
       "name": "definition of moment magnitude",
+      "description": "the size of an earthquake on the logarithmic moment magnitude scale, derived from the seismic moment, the energy released by the slip on the fault",
       "expression": "\"moment magnitude\" = ( 2 / 3 ) * log(\"seismic moment\") - 10.7",
       "latex": "M_w = \\frac{2}{3}\\log_{10} M_0 - 10.7",
       "assigned": [
@@ -2787,6 +2792,7 @@
     },
     {
       "name": "definition of P wave velocity",
+      "description": "the speed of the primary seismic wave, the fastest earthquake wave that compresses the rock in the direction of travel, from the elastic moduli and the density of the rock",
       "expression": "\"P wave velocity\" = sqrt(( \"bulk modulus\" + ( 4 / 3 ) * \"shear modulus\" ) / \"rock density\")",
       "latex": "v_p = \\sqrt{\\frac{K + \\frac{4}{3}\\mu}{\\rho}}",
       "assigned": [
@@ -2797,6 +2803,7 @@
     },
     {
       "name": "definition of S wave velocity",
+      "description": "the speed of the secondary seismic wave, which shakes the rock sideways and cannot travel through liquids, from the shear modulus and the density of the rock",
       "expression": "\"S wave velocity\" = sqrt(\"shear modulus\" / \"rock density\")",
       "latex": "v_s = \\sqrt{\\frac{\\mu}{\\rho}}",
       "assigned": [
@@ -2806,6 +2813,7 @@
     },
     {
       "name": "definition of void ratio",
+      "description": "the volume of the empty space in a soil relative to the volume of the solid grains, used in soil mechanics instead of the porosity",
       "expression": "\"void ratio\" = \"void volume\" / \"solid volume\"",
       "latex": "e = \\frac{V_v}{V_s}",
       "assigned": [
@@ -2815,6 +2823,7 @@
     },
     {
       "name": "definition of hydraulic gradient",
+      "description": "the slope of the groundwater pressure, the drop of the water head over the distance of the flow, which drives the flow in Darcy's law",
       "expression": "\"hydraulic gradient\" = \"head difference\" / \"flow length\"",
       "latex": "i = \\frac{\\Delta h}{L}",
       "assigned": [

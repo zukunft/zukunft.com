@@ -52,6 +52,7 @@ use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\triple_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
@@ -129,6 +130,21 @@ class phrase_list_tests
         $phr_lst->add($wrd->phrase());
         $vrb = $sys->verb(verbs::PART_NAME);
         $this->assert_sql_linked_phrases($db_con->sql_creator(), $t, $phr_lst, $vrb, foaf_direction::UP);
+
+        // sql to load the phrases on one side of the triples of a verb, each once, e.g. the categories
+        // a word can be defined as are the to side of the "is a" triples
+        $phr_lst = new phrase_list($t->usr1);
+        $vrb = $sys->verb(verbs::IS_NAME);
+        $this->assert_sql_by_verb($sc, $t, $phr_lst, $vrb, foaf_direction::UP);
+        $this->assert_sql_by_verb($sc, $t, $phr_lst, $vrb, foaf_direction::DOWN);
+        $test_name = 'the parents of a verb are the to side of its triples';
+        $up_sql = $phr_lst->load_sql_by_verb($sc, $vrb, foaf_direction::UP)->sql;
+        $t->assert_text_contains($test_name, $up_sql, triple_fields::FLD_TO);
+        $test_name = 'the parents of a verb are not the from side of its triples';
+        $t->assert_text_not_contains($test_name, $up_sql, triple_fields::FLD_FROM);
+        $test_name = 'the children of a verb are the from side of its triples';
+        $down_sql = $phr_lst->load_sql_by_verb($sc, $vrb, foaf_direction::DOWN)->sql;
+        $t->assert_text_contains($test_name, $down_sql, triple_fields::FLD_FROM);
         // TODO Prio 1 activate
         //$this->assert_sql_by_phr_lst($db_con, $t, $phr_lst, $vrb, foaf_direction::UP);
 
@@ -257,7 +273,8 @@ class phrase_list_tests
 
         // the tier of a column says on which screens it is shown, so the table can hide a column
         // per screen size instead of dropping it; the "loss" and the "potential loss" column are
-        // defined as mayor columns and the "cost" column as a main column
+        // defined as mayor columns, the "reason" column as a main and the "cost" column as a
+        // minor column
         $phr_lst_ui = $t_phr->list_columns_potential_loss_ui();
         $test_name = 'the tier of a mayor column is returned';
         $t->assert($test_name, $phr_lst_ui->column_tier(word_names::LOSS),
@@ -266,8 +283,11 @@ class phrase_list_tests
         $t->assert($test_name, $phr_lst_ui->column_tier(triple_names::POTENTIAL_LOSS),
             triple_names::SYSTEM_COLUMN_MAYOR);
         $test_name = 'the tier of a main column is returned';
-        $t->assert($test_name, $t_phr->list_columns_ordered_ui()->column_tier(word_names::COST),
+        $t->assert($test_name, $t_phr->list_global_problems_ui()->column_tier(word_names::REASON),
             triple_names::SYSTEM_COLUMN_MAIN);
+        $test_name = 'the tier of a minor column is returned';
+        $t->assert($test_name, $t_phr->list_columns_ordered_ui()->column_tier(word_names::COST),
+            triple_names::SYSTEM_COLUMN_MINOR);
         // negative: a phrase that no triple of the list links to a tier is no column, so it has
         // no tier and the caller shows it on every screen
         $test_name = 'a phrase that is no column has no tier';
@@ -287,10 +307,46 @@ class phrase_list_tests
         $test_name = '... and the phrase itself is not one of them';
         $t->assert_text_not_contains($test_name,
             implode(', ', $phr_lst_ui->child_phrases($phr)->names()), triple_names::GLOBAL_PROBLEM);
+        // "of" attributes the from side to the to side instead of classifying it, so "potential
+        // loss of reason" makes "potential loss" no reason, while "climate gas emissions (reason)"
+        // links a reason to "reason" (see value_list::phrase_of_column)
+        $test_name = 'a triple with the verb "of" names no child';
+        $t->assert($test_name, $phr_lst_ui->child_names($t_wrd->word_reason_ui()->phrase()),
+            [triple_names::CLIMATE_GAS_EMISSIONS]);
         // negative: a list without a triple that links to the given phrase has no child of it
         $test_name = 'a list with no link to the given phrase returns no child';
         $phr_lst_ui = $t_phr->list_columns_loss_ui();
         $t->assert($test_name, $phr_lst_ui->child_phrases($phr)->names(), []);
+
+
+        $t->subheader($ts . 'column list phrases');
+
+        // the start page loads the children of these list triples, so that the ", ..." behind a
+        // cell counts every phrase of the list and not only those that carry a number of the row
+        $test_name = 'the list triple of a column is returned once';
+        $phr_lst_ui = $t_phr->list_global_warming_one_reason_ui();
+        $t->assert($test_name, $phr_lst_ui->column_list_phrases([word_names::REASON])->names(),
+            [triple_names::GLOBAL_WARMING_REASON]);
+        // negative: "global warming reason" collects reasons, so it is no list of the solutions
+        $test_name = 'a list triple of another column is not returned';
+        $t->assert($test_name, $phr_lst_ui->column_list_phrases([word_names::SOLUTION])->names(), []);
+
+
+        $t->subheader($ts . 'parent names');
+
+        // the mirror of child_names: the names of the phrases that the given phrase links to,
+        // e.g. "global problem" for "global warming" because of "global warming (global problem)"
+        $test_name = 'the names of the phrases that the given phrase links to are returned';
+        $phr_lst_ui = $t_phr->list_global_problems_ui();
+        $phr = $t_trp->global_warming_ui()->phrase();
+        $t->assert($test_name, $phr_lst_ui->parent_names($phr), [triple_names::GLOBAL_PROBLEM]);
+        $test_name = '... each parent once, so a second link adds its parent behind the first';
+        $phr_lst_ui = $t_phr->list_global_problems_second_parent_ui();
+        $t->assert($test_name, $phr_lst_ui->parent_names($phr), [triple_names::GLOBAL_PROBLEM, word_names::POTENTIAL]);
+        // negative: a phrase that links to nothing in the list has no parent, although the
+        // list links other phrases to it
+        $test_name = 'a phrase that links to no phrase of the list has no parent';
+        $t->assert($test_name, $phr_lst_ui->parent_names($t_trp->global_problem_ui()->phrase()), []);
 
 
 
@@ -400,6 +456,35 @@ class phrase_list_tests
             $db_con->db_type = sql_db::MYSQL;
             $qp = $lst->load_names_sql_by_ids($db_con->sql_creator(), $ids);
             $t->assert_qp($qp, $db_con->db_type);
+        }
+    }
+
+    /**
+     * test the SQL statement creation to get the phrases on one side of the triples of a verb
+     *
+     * @param sql_creator $sc does not need to be connected to a real database
+     * @param test_cleanup $t the testing object with the error counting of this test run
+     * @param phrase_list $lst the phrase list that creates the sql statement
+     * @param verb $vrb the verb of the triples
+     * @param foaf_direction $direction up for the to side, down for the from side
+     */
+    private function assert_sql_by_verb(
+        sql_creator    $sc,
+        test_cleanup   $t,
+        phrase_list    $lst,
+        verb           $vrb,
+        foaf_direction $direction): void
+    {
+        // check the Postgres query syntax
+        $sc->set_db_type(sql_db::POSTGRES);
+        $qp = $lst->load_sql_by_verb($sc, $vrb, $direction);
+        $result = $t->assert_qp($qp, $sc->db_type());
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $sc->set_db_type(sql_db::MYSQL);
+            $qp = $lst->load_sql_by_verb($sc, $vrb, $direction);
+            $t->assert_qp($qp, $sc->db_type());
         }
     }
 

@@ -44,7 +44,7 @@ enum change_fields: string
     // name instead of the raw user id (see web/log/change_log_named::what_text)
     const string FLD_USER_ID = 'user_id';
     const string FLD_WORD_NAME = 'word_name';
-    const int FLD_WORD_NAME_ID = 10;
+    const int FLD_WORD_NAME_ID = 112;
     const string FLD_WORD_NAME_COM = '';
     const string FLD_WORD_NAME_DSP = 'name';
     const string FLD_WORD_VIEW = 'view_id';

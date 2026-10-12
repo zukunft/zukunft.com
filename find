@@ -1,3 +1,4 @@
 <!DOCTYPE html>
-<meta http-equiv="refresh" content="0; url=/http/view.php?m=67" />
+<script>const p = new URLSearchParams(location.search); p.set('m', '107'); location.replace('/http/view.php?' + p);</script>
+<noscript><meta http-equiv="refresh" content="0; url=/http/view.php?m=107"></noscript>
 </html>

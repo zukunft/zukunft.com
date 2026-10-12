@@ -109,7 +109,6 @@ use Zukunft\ZukunftCom\main\php\cfg\group\group_db;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_id;
 use Zukunft\ZukunftCom\main\php\cfg\group\result_id;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_multi;
-use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 use Zukunft\ZukunftCom\main\php\cfg\log\change;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_action;
@@ -329,6 +328,43 @@ class sandbox_value extends sandbox_multi
      * @param bool $one_id_fld false if the unique database id is based on more than one field and due to that the database id should not be used for the object id
      * @return bool true if the user sandbox object is loaded and valid
      */
+    /**
+     * set the phrase group of a value or result from a database row
+     *
+     * a row of the group keyed tables carries the text group key, which encodes the phrase
+     * ids, whereas a row of a prime or main table carries one column per phrase id, so there
+     * the group is built from those columns; a row of a union of both kinds shows an empty
+     * key for the prime and main rows, which is why the key decides and not the table
+     *
+     * @param array $db_row the database row
+     * @param user_message $msg to report a key that cannot be decoded
+     * @param string $id_fld the name of the text group key field
+     * @param array $phr_id_flds the names of the phrase id fields of the prime and main tables
+     * @return bool true if the row carries the text group key
+     */
+    function set_grp_by_row(array $db_row, user_message $msg, string $id_fld, array $phr_id_flds): bool
+    {
+        $key = $db_row[$id_fld] ?? null;
+        $has_key = ($key !== null and $key !== '' and $key !== 'null');
+        $grp = new group($this->get_user());
+        if ($has_key) {
+            $grp->set_phrase_list_by_id($key, $msg);
+            $grp->set_id($key);
+        } else {
+            $phr_lst = new phrase_list($this->get_user());
+            foreach ($phr_id_flds as $fld_name) {
+                $id = $db_row[$fld_name] ?? 0;
+                if ($id != 0) {
+                    $phr_lst->add(new phrase($this->get_user(), $id));
+                }
+            }
+            $grp->set_id(new group_id()->get_id($phr_lst));
+            $grp->set_phrase_list($phr_lst);
+        }
+        $this->set_grp($grp);
+        return $has_key;
+    }
+
     function row_mapper_multi(?array $db_row, user_message $msg, string $ext, string $id_fld = '', bool $one_id_fld = true): bool
     {
         $this->set_last_update(null);
@@ -585,11 +621,25 @@ class sandbox_value extends sandbox_multi
         } else {
             if ($this->is_main()) {
                 $grp_id = new group_id();
-                return group_id::TBL_EXT_PHRASE_ID . $grp_id->count($this->grp_id());
+                return group_id::TBL_EXT_PHRASE_ID . $grp_id->count($this->grp_key_id());
             } else {
                 return $this->grp()->table_extension();
             }
         }
+    }
+
+    /**
+     * the group id that selects the table of this value or result: the database id if it is set,
+     * else the id created from the phrase list, so that the table name, its key fields and the
+     * matching change log table are always derived from the same id (see group::id_or_phrase_list_id)
+     * e.g. a result with a phrase list but without a group id is not a prime result with zero
+     * phrases, because the table of its group is selected by the phrase list
+     *
+     * @return int|string the group id used to select the table and the key fields
+     */
+    function grp_key_id(): int|string
+    {
+        return $this->grp()->id_or_phrase_list_id();
     }
 
     /**
@@ -612,7 +662,7 @@ class sandbox_value extends sandbox_multi
             return $this->grp()->is_prime();
         } else {
             $grp_id = new group_id();
-            $nbr_of_ids = $grp_id->count($this->grp_id());
+            $nbr_of_ids = $grp_id->count($this->grp_key_id());
             if ($nbr_of_ids <= result_id::PRIME_PHRASES_STD) {
                 return true;
             } else {
@@ -627,7 +677,7 @@ class sandbox_value extends sandbox_multi
             return false;
         } else {
             $grp_id = new group_id();
-            $nbr_of_ids = $grp_id->count($this->grp_id());
+            $nbr_of_ids = $grp_id->count($this->grp_key_id());
             if ($nbr_of_ids > result_id::PRIME_PHRASES_STD
                 and $nbr_of_ids <= group_id::MAIN_PHRASES_STD) {
                 return true;
@@ -1093,6 +1143,11 @@ class sandbox_value extends sandbox_multi
         $sc_par_lst->add($this->value_type());
         $id_ext = $this->table_extension();
         $qp = $this->load_sql_multi($sc, $query_name, $this::class, $sc_par_lst, '', $id_ext);
+        // the overlay row to load is the one of the user of this value, so set the user after
+        // load_sql_multi, because set_class takes the requesting user of the database connection,
+        // which would join the overlay row of another user and hide an existing user row
+        // (e.g. the exclude of a value would add a second user row, see save_fields_func)
+        $sc->set_usr($this->get_user()->id());
         return $this->load_sql_set_where($qp, $sc, $id_ext);
     }
 
@@ -1154,6 +1209,39 @@ class sandbox_value extends sandbox_multi
 
 
     /*
+     * select
+     */
+
+    /**
+     * to select the value or result if it matches all given phrase names
+     * @param array $names the phrase names for the selection
+     * @return bool true if this value is related to all phrase names
+     */
+    function match_all(array $names): bool
+    {
+        $result = true;
+        $phr_names = $this->grp()->phrase_list()->names();
+        foreach ($names as $name) {
+            if ($result) {
+                if (!in_array($name, $phr_names)) {
+                    $result = false;
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param array $names list of phrase names e.g. the context phrases of a result validation
+     * @return bool true if all phrases of this value are part of the given phrase names
+     */
+    function matches_context(array $names): bool
+    {
+        return empty(array_diff($this->grp()->phrase_list()->names(), $names));
+    }
+
+
+    /*
      * info
      */
 
@@ -1195,6 +1283,11 @@ class sandbox_value extends sandbox_multi
         if ($this->grp() === null and $obj->grp() != null) {
             $this->set_grp($obj->grp());
         }
+        // the group is never null after a reset, so the name given to the group is filled by the group;
+        // skipped after a conflict, because the id of the group is the id of the value reported above
+        if ($msg->is_ok()) {
+            $msg->merge($this->grp()->fill($obj->grp(), $usr_req));
+        }
         if ($this->last_update() === null and $obj->last_update() != null) {
             $this->set_last_update($obj->last_update());
         }
@@ -1229,8 +1322,8 @@ class sandbox_value extends sandbox_multi
         $msg = parent::diff_msg($obj, $ex_def);
         if ($this->grp_id() != $obj->grp_id()) {
             $msg->add(msg_id::DIFF_GROUP, [
-                msg_id::VAR_VALUE => $obj->grp()->dsp_id(),
-                msg_id::VAR_VALUE_CHK => $this->grp()->dsp_id(),
+                msg_id::VAR_GROUP => $obj->grp()->dsp_id(),
+                msg_id::VAR_GROUP_CHK => $this->grp()->dsp_id(),
                 msg_id::VAR_VAL_ID => $this->dsp_id(),
             ]);
         }
@@ -1307,7 +1400,9 @@ class sandbox_value extends sandbox_multi
                 log_err('the number if id fields and id values differ for ' . $this->dsp_id());
             } else {
                 foreach ($fld_lst as $key => $fld) {
-                    $id = null;
+                    // zero like the prime branch, because an unused phrase column of the row is 0
+                    // and "= null" would never select the row e.g. for the delete of the result
+                    $id = 0;
                     if (array_key_exists($key, $id_lst)) {
                         $id = $id_lst[$key];
                         $lst->add_field($fld, $id, sql_field_type::INT_SMALL);
@@ -1317,16 +1412,27 @@ class sandbox_value extends sandbox_multi
                 }
             }
         } else {
+            // the group is the key of a value, so use the same id as the prime branch above and as
+            // the table selection, never the object id, which can have lost the group id e.g. by a
+            // row mapper that has written the text group id to the int object id (see group::id_or_phrase_list_id)
+            // and the text key of a result that its source group has moved to a bigger table
+            $grp_key = $this->grp_key_id();
+            // a read without a key simply finds no row, but a write would add or change a row with
+            // the key 0, which no user can ever select again, so report the missing key
+            if (($grp_key === 0 or $grp_key === '')
+                and ($sc_par_lst->is_insert() or $sc_par_lst->is_update() or $sc_par_lst->is_delete())) {
+                log_err('the group id of ' . $this->dsp_id() . ' is missing, so the row cannot be written');
+            }
             if ($this->is_big()) {
                 $lst->add_field(
                     $this->id_field_group(),
-                    $this->id(),
+                    $grp_key,
                     sql_field_type::TEXT
                 );
             } else {
                 $lst->add_field(
                     $this->id_field_group(),
-                    $this->id(),
+                    $grp_key,
                     sql_field_type::KEY_512
                 );
             }
@@ -1346,10 +1452,11 @@ class sandbox_value extends sandbox_multi
                     or $this::class == value_time::class
                     or $this::class == value_text::class
                     or $this::class == value_geo::class)) {
+                // a user value without source has a null source id, which must still match its row
                 $lst->add_field(
                     source_fields::FLD_ID,
                     $this->get_source()?->id(),
-                    db_object_seq_id::FLD_ID_SQL_TYP
+                    sql_par_type::INT_NULL_SAFE
                 );
             }
         }
@@ -1530,20 +1637,19 @@ class sandbox_value extends sandbox_multi
             $typ_lst = new api_type_list($typ_lst);
         }
 
-        if ($typ_lst->no_key_fill()) {
-            $vars[json_fields::ID] = $this->grp()->id(true);
-        } else {
-            $vars[json_fields::ID] = $this->grp()->id();
-        }
+        $vars[json_fields::ID] = $this->grp()->id();
         if ($this->get_description() != null) {
             $vars[json_fields::DESCRIPTION] = $this->get_description();
         }
 
-        if ($typ_lst->include_phrases() or $typ_lst->phrase_names()) {
+        // a page request (incl_related) needs them too, because the page title links the phrases
+        if ($typ_lst->include_phrases() or $typ_lst->phrase_names() or $typ_lst->incl_related()) {
             // prime and main values carry only the phrase ids, so load the names
             // from the group id before serializing them e.g. for the value page title
             if (!$this->grp()->phrase_list()->loaded()) {
                 $this->grp()->load_phrase_names($msg);
+                // with the from and to of its triples e.g. to head a column by one part
+                $this->grp()->phrase_list()->load_triple_sides($msg);
             }
             $phr_lst = $this->grp()->phrase_list();
             $vars[json_fields::PHRASES] = $phr_lst->api_json_array($typ_lst, $msg);
@@ -1611,7 +1717,8 @@ class sandbox_value extends sandbox_multi
         log_debug($this->dsp_id());
         $log->set_action(change_actions::ADD, $msg);
         $log->set_field(change_fields::FLD_NUMERIC_VALUE, $msg);
-        $log->group_id = $this->grp_id();
+        // the log names the row by the same group id as the write (see grp_key_id)
+        $log->group_id = $this->grp_key_id();
         $log->old_value = null;
         $log->new_value = $this->get_value();
 
@@ -1628,30 +1735,6 @@ class sandbox_value extends sandbox_multi
     function log_add_value(): change
     {
         return new change($this->get_user());
-    }
-
-    /**
-     * set the log entry parameter to delete an object
-     * @param user_message $msg to report a failed change log write to the requesting user
-     * @returns change_link with the object presets e.g. th object name
-     */
-    function log_del(user_message $msg): change
-    {
-        log_debug($this->dsp_id());
-        $lib = new library();
-
-        $log = new change($this->get_user());
-        $log->set_action(change_actions::DELETE, $msg);
-        $class = $lib->class_to_name($this::class);
-        $log->set_table($class . sql_db::TABLE_EXTENSION, $msg);
-        $log->set_field(change_fields::FLD_NUMERIC_VALUE, $msg);
-        $log->old_value = $this->get_value();
-        $log->new_value = null;
-
-        $log->row_id = $this->id();
-        $log->add($msg);
-
-        return $log;
     }
 
     /**
@@ -1905,6 +1988,8 @@ class sandbox_value extends sandbox_multi
 
         // get the fields for the value log entry
         $fvt_lst_log->add_field(group_fields::FLD_ID, $this->grp()->id);
+        // the removed value is logged as the old value
+        $fvt_lst_log->add_field($this::FLD_VALUE, $this->get_value(), $this->sql_field_type());
 
         // for standard prime values add the user only for the log
         if ($sc_par_lst->is_standard() and $sc_par_lst->is_prime()) {
@@ -2041,6 +2126,21 @@ class sandbox_value extends sandbox_multi
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list with the field names of the object and any child object
      */
+    /**
+     * the key fields of an insert as the group of this value or result gives them
+     * @param user_message $msg to collect the problems of the key creation
+     * @return sql_par_field_list the key fields of the insert statement
+     */
+    protected function id_fvt_insert(user_message $msg): sql_par_field_list
+    {
+        if ($this::class == result::class and $this->is_main()) {
+            $lst = $this->grp()->id_fvt_main($msg);
+        } else {
+            $lst = $this->grp()->id_fvt($msg);
+        }
+        return $lst;
+    }
+
     function db_fields_changed(
         sandbox_multi|sandbox_value $sbx,
         user_message                $msg,
@@ -2065,11 +2165,7 @@ class sandbox_value extends sandbox_multi
         $lst = new sql_par_field_list();
 
         if ($is_insert) {
-            if ($this::class == result::class and $this->is_main()) {
-                $lst = $this->grp()->id_fvt_main($msg);
-            } else {
-                $lst = $this->grp()->id_fvt($msg);
-            }
+            $lst = $this->id_fvt_insert($msg);
         }
         $lst->merge(parent::db_fields_changed($sbx, $msg, $sc_par_lst));
         if (!$sc_par_lst->is_standard()) {

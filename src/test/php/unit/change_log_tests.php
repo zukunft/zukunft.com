@@ -36,6 +36,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
+include_once paths::DB . 'sql.php';
 include_once paths::DB . 'sql_type.php';
 include_once paths::DB . 'sql_type_list.php';
 include_once paths::MODEL_GROUP . 'group_db.php';
@@ -49,14 +50,18 @@ include_once paths::MODEL_LOG . 'change_values_prime.php';
 include_once paths::MODEL_LOG . 'change_values_time_norm.php';
 include_once paths::MODEL_LOG . 'change_values_text_big.php';
 include_once paths::MODEL_LOG . 'change_values_geo_prime.php';
+include_once paths::MODEL_RESULT . 'result.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_function.php';
+include_once paths::MODEL_USER . 'user.php';
 include_once paths::SHARED_CONST . 'triples.php';
+include_once paths::SHARED_CONST . 'users.php';
 include_once paths::MODEL_WORD . 'triple_db.php';
 include_once html_paths::LOG . 'user_log_display.php';
 include_once paths::SHARED_CONST_FIELDS . 'word_fields.php';
 include_once paths::SHARED_CONST_FIELDS . 'triple_fields.php';
 include_once paths::SHARED_CONST_FIELDS . 'group_fields.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
@@ -78,13 +83,16 @@ use Zukunft\ZukunftCom\main\php\cfg\log\change_values_norm;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_prime;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_text_big;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_time_norm;
+use Zukunft\ZukunftCom\main\php\cfg\result\result;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_function;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple_db;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_db;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
@@ -260,6 +268,18 @@ class change_log_tests
         // the last-change query must use its own prepared name (change_by_wrd_last), because the
         // all-changes query of a word (change_by_wrd) selects with one more parameter
         $this->assert_sql_list_last(word::class, 1, $log_lst, $db_con, $t);
+        // a result change is logged like a value change, so the changes tab of the result page
+        // reads the value change tables by the group id (see change_log_list::load_sql_obj_last)
+        $this->assert_sql_list_last(result::class, 1, $log_lst, $db_con, $t);
+        // every change of one save has the same change time, because the time is the transaction
+        // time of the database, so without a second order field the row limit of the query would
+        // return a different set of changes each time (see change::load_sql)
+        $test_name = 'the changes of one save are ordered by the change id';
+        $sc->reset(sql_db::POSTGRES);
+        $qp_order = $log_lst->load_sql_obj_last($sc, word::class, 1, $t->usr1);
+        $t->assert_text_contains($test_name, $qp_order->sql,
+            change_log::FLD_TIME . ' ' . sql::ORDER_DESC
+            . ', ' . sql_db::STD_TBL . '.' . change_log::FLD_ID);
         $test_name = 'get the latest changes of an user';
         $test_name = 'get the latest 5 changes of an user';
         $test_name = 'get the second last change of an user';
@@ -278,6 +298,9 @@ class change_log_tests
         // a type row e.g. a sys log function logs to the changes table like the named objects,
         // so the test cleanup can remove the change log of a type test row via the same list load
         $this->assert_sql_list_by_field(sys_log_function::class, '', 1, $log_lst, $db_con, $t);
+        // the changes of a user row e.g. of a signed up test user, which the test cleanup removes
+        $test_name = 'get the changes of a user';
+        $this->assert_sql_list_by_field(user::class, '', users::SYSTEM_TEST_ID, $log_lst, $db_con, $t, $test_name);
 
         // sql to load the link change history of an object (used by the default word/formula/view page)
         $t->subheader($ts . 'link change list by object');

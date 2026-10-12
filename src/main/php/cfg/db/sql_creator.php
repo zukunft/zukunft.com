@@ -106,6 +106,7 @@ include_once paths::MODEL_CONST . 'def.php';
 //include_once paths::MODEL_VIEW . 'view_relation.php';
 include_once paths::SHARED_CONST . 'users.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED . 'group_id_url.php';
 include_once paths::SHARED_CONST_FIELDS . 'fields.php';
 include_once paths::SHARED_CONST_FIELDS . 'group_fields.php';
 
@@ -171,6 +172,7 @@ use Zukunft\ZukunftCom\main\php\cfg\value\value_time_series;
 use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\group_id_url;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\group_fields;
 use DateTime;
@@ -1151,6 +1153,9 @@ class sql_creator
         if ($fld_val === null) {
             if ($spt === null) {
                 log_err('value and type missing in add_where');
+            } elseif ($spt == sql_par_type::INT_NULL_SAFE) {
+                // the null itself is compared, so it must not become 0
+                $this->add_par($spt, null, $name);
             } else {
                 $this->add_par($spt, 0, $name);
             }
@@ -1169,6 +1174,7 @@ class sql_creator
                 or $spt == sql_par_type::INT_OR
                 or $spt == sql_par_type::INT_NOT
                 or $spt == sql_par_type::INT_NOT_OR_NULL
+                or $spt == sql_par_type::INT_NULL_SAFE
                 or $spt == sql_par_type::INT_USR
                 or $spt == sql_par_type::LIMIT
                 or $spt == sql_par_type::OFFSET) {
@@ -1195,16 +1201,21 @@ class sql_creator
                 $this->add_par($spt, '', $name);
             } elseif ($spt == sql_par_type::LIKE_R) {
                 $this->add_par($spt, $fld_val . '%', $name);
+            } elseif ($spt == sql_par_type::LIKE_L) {
+                $this->add_par($spt, '%' . $fld_val, $name);
             } elseif ($spt == sql_par_type::LIKE
                 or $spt == sql_par_type::LIKE_OR) {
                 $this->add_par($spt, '%' . $fld_val . '%', $name);
+            } elseif ($spt == sql_par_type::LIKE_KEY
+                or $spt == sql_par_type::LIKE_KEY_OR) {
+                $this->add_par($spt, group_id_url::phrase_pattern($fld_val), $name);
             } else {
                 log_err('SQL parameter type ' . $spt->value . ' not expected');
             }
         }
     }
 
-    function add_where_no_par(?string $tbl, string $fld, sql_par_type $spt, int $pos): void
+    function add_where_no_par(?string $tbl, string $fld, sql_par_type $spt, int $pos): sql_where
     {
         // add the parameter to the where list
         $pwh = new sql_where();
@@ -1213,6 +1224,35 @@ class sql_creator
         $pwh->typ = $spt;
         $pwh->pos = $pos;
         $this->par_where->add($pwh);
+        return $pwh;
+    }
+
+    /**
+     * add a where condition that selects the rows whose field value is used in a field of the not
+     * excluded rows of another table, e.g. the phrases used as the to side of the triples of one verb:
+     * phrase_id IN (SELECT to_phrase_id FROM triples WHERE verb_id = $1 AND ...);
+     * a sub-select and not a join, because a join would repeat the row for every matching row
+     *
+     * @param string $fld the field of this table that must be in the sub-select e.g. phrase_id
+     * @param string $sub_class the class of the table of the sub-select e.g. triple::class
+     * @param string $sub_fld the field that the sub-select returns e.g. to_phrase_id
+     * @param string $sub_where_fld the field that filters the sub-select e.g. verb_id
+     * @param int $sub_id the value of the filter field e.g. the id of the verb "is a"
+     * @return void
+     */
+    function add_where_in_sub(
+        string $fld,
+        string $sub_class,
+        string $sub_fld,
+        string $sub_where_fld,
+        int    $sub_id
+    ): void
+    {
+        $this->add_par(sql_par_type::INT_SUB_IN, $sub_id, $this->par_name());
+        $pwh = $this->add_where_no_par(null, $fld, sql_par_type::INT_SUB_IN, $this->get_par_pos());
+        $pwh->sub_tbl = $this->get_table_name($sub_class);
+        $pwh->sub_fld = $sub_fld;
+        $pwh->sub_where_fld = $sub_where_fld;
     }
 
 
@@ -1837,8 +1877,14 @@ class sql_creator
             if ($this->is_value_class($class)) {
                 if (in_array($fld, def::NAMED_ID_FIELDS)) {
                     $log = $val->log_named_id_object();
-                } else {
+                } elseif ($class == group::class) {
                     $log = $val->log_object($msg);
+                } else {
+                    // select the log table with the same parameters as the data table (see
+                    // sql_func_log_value), because the change log class of a value already
+                    // contains the table type and set_table adds the type of the parameter
+                    // list to a class that does not match, e.g. change_values_norm_prime
+                    $log = $this->log_value_object($val, $usr, $sc_par_lst);
                 }
             } else {
                 $log = new change($usr);
@@ -2312,11 +2358,18 @@ class sql_creator
 
         $log->group_id = $fvt_lst->get_value(group_fields::FLD_ID);
         $val_old = null;
-        if ($sc_par_lst->is_update()) {
-            $val_old = $fvt_lst->get_old($num_fld);
-            $log->old_value = $val_old;
+        $val_new = null;
+        // the value parameter of the function: the new value or for a delete the removed value
+        $val_par = $fvt_lst->get_value($num_fld);
+        if ($sc_par_lst->is_delete()) {
+            $val_old = $val_par;
+        } else {
+            $val_new = $val_par;
+            if ($sc_par_lst->is_update()) {
+                $val_old = $fvt_lst->get_old($num_fld);
+            }
         }
-        $val_new = $fvt_lst->get_value($num_fld);
+        $log->old_value = $val_old;
         $log->new_value = $val_new;
 
         // set the parameters for the log sql statement creation
@@ -2354,10 +2407,12 @@ class sql_creator
                 $num_fld_typ
             );
         }
-        if (!$sc_par_lst->is_delete()) {
+        // a delete part names the old value without the old extension (see create_sql_insert),
+        // so the value parameter is shared; a delete of a null value has no old value to log
+        if ($val_par !== null or !$sc_par_lst->is_delete()) {
             $par_lst_out->add_field(
                 $num_fld,
-                $val_new,
+                $val_par,
                 $num_fld_typ
             );
         }
@@ -2755,10 +2810,11 @@ class sql_creator
                 } else {
                     $sql_where .= ' ' . sql::WHERE . ' ';
                 }
+                $equal = $this->equal_operator(($this->par_lst->lst[$pos] ?? null)?->type);
                 if ($is_named) {
-                    $sql_where .= $id_fld . ' = ' . $id[$key];
+                    $sql_where .= $id_fld . $equal . $id[$key];
                 } else {
-                    $sql_where .= $id_fld . ' = ' . $this->par_lst->name($pos);
+                    $sql_where .= $id_fld . $equal . $this->par_lst->name($pos);
                 }
                 $pos++;
             }
@@ -2790,10 +2846,11 @@ class sql_creator
             } else {
                 $sql_where .= ' ' . sql::WHERE . ' ';
             }
+            $equal = $this->equal_operator($fvt->type);
             if ($sc_par_lst->use_named_par()) {
-                $sql_where .= $fvt->name . ' = ' . $fvt->par_name;
+                $sql_where .= $fvt->name . $equal . $fvt->par_name;
             } else {
-                $sql_where .= $fvt->name . ' = ' . $this->par_name($pos);
+                $sql_where .= $fvt->name . $equal . $this->par_name($pos);
             }
             $pos++;
         }
@@ -2902,12 +2959,12 @@ class sql_creator
     /**
      * add a parameter for a prepared query
      * @param sql_par_type $par_type the SQL parameter type used e.g. for Postgres as int or text
-     * @param string $value the int, float value or text value that is used for the concrete execution of the query
+     * @param string|null $value the int, float value or text value that is used for the concrete execution of the query or null for a null-safe compare
      * @param string $name the field name as used for the where condition including the table name if needed
      */
     private function add_par(
         sql_par_type $par_type,
-        string       $value,
+        ?string      $value,
         string       $name = ''
     ): void
     {
@@ -3829,8 +3886,7 @@ class sql_creator
                 //$par_offset--;
                 $sql_where .= ''; // because added with the page statement
             } elseif ($typ == sql_par_type::INT_SUB_IN) {
-                // $sql_where .= $tbl . $fld . ' IN (' . $this->par_value($i + 1) . ')';
-                $sql_where .= $tbl . $fld . ' IN (' . $par->name . ')';
+                $sql_where .= $tbl . $fld . ' ' . sql::IN . ' (' . $this->sub_select($whp, $par) . ')';
             } elseif ($typ == sql_par_type::MIN
                 or $typ == sql_par_type::MAX
                 or $typ == sql_par_type::COUNT
@@ -3839,9 +3895,13 @@ class sql_creator
                 // $par_offset--;
                 $sql_where .= ''; // because added with the page statement
             } elseif ($typ == sql_par_type::LIKE_R
+                or $typ == sql_par_type::LIKE_L
                 or $typ == sql_par_type::LIKE
                 or $typ == sql_par_type::LIKE_OR) {
-                $sql_where .= $tbl . $fld . ' like ' . $par->name;
+                $sql_where .= $tbl . $fld . ' ' . $this->like_keyword() . ' ' . $par->name;
+            } elseif ($typ == sql_par_type::LIKE_KEY
+                or $typ == sql_par_type::LIKE_KEY_OR) {
+                $sql_where .= $this->key_match($tbl . $fld, $par->name);
             } elseif ($typ == sql_par_type::CONST) {
                 // $par_offset--;
                 $sql_where .= $tbl . $fld . ' = ' . $par->value;
@@ -3867,6 +3927,8 @@ class sql_creator
             } elseif ($typ == sql_par_type::INT_NOT_OR_NULL) {
                 $sql_where .= '( ' . $tbl . $fld . ' <> ' . $par->name
                     . ' OR ' . $tbl . $fld . ' IS NULL )';
+            } elseif ($typ == sql_par_type::INT_NULL_SAFE) {
+                $sql_where .= $tbl . $fld . $this->equal_operator($typ) . $par->name;
             } elseif ($typ == sql_par_type::INT_HIGHER) {
                 $sql_where .= $tbl . $fld . ' >= ' . $par->name;
             } elseif ($typ == sql_par_type::INT_LOWER) {
@@ -3894,6 +3956,70 @@ class sql_creator
         }
 
         return $sql_where;
+    }
+
+    /**
+     * the sub-select of an INT_SUB_IN where condition (see add_where_in_sub), which leaves out the
+     * excluded rows, because an excluded row e.g. a deleted triple must not select anything
+     *
+     * @param sql_where $whp the where condition with the table and the fields of the sub-select
+     * @param sql_field $par the parameter with the value of the filter field
+     * @return string the sub-select e.g. SELECT to_phrase_id FROM triples WHERE verb_id = $1 AND ...
+     */
+    private function sub_select(sql_where $whp, sql_field $par): string
+    {
+        $from = sql::SELECT . ' ' . $whp->sub_fld . ' ' . sql::FROM . ' ' . $whp->sub_tbl;
+        $filter = $whp->sub_where_fld . ' = ' . $par->name;
+        $not_excluded = sql::COALESCE . '(' . fields::FLD_EXCLUDED . ', ' . sql::FALSE . ') = ' . sql::FALSE;
+        return $from . ' ' . sql::WHERE . ' ' . $filter . ' ' . sql::AND . ' ' . $not_excluded;
+    }
+
+    /**
+     * @param sql_par_type|string|null $typ the parameter type of the compared field
+     * @return string the compare operator with spaces: null-safe for a key part that may be null
+     *                e.g. the source of a user value, because "= NULL" never matches
+     */
+    private function equal_operator(sql_par_type|string|null $typ): string
+    {
+        $result = '=';
+        if ($typ == sql_par_type::INT_NULL_SAFE) {
+            $result = sql::NULL_SAFE_EQUAL;
+            if ($this->db_type == sql_db::MYSQL) {
+                $result = sql::NULL_SAFE_EQUAL_MYSQL;
+            }
+        }
+        return ' ' . $result . ' ';
+    }
+
+    /**
+     * @return string the pattern match that ignores the upper and lower case: postgres needs ILIKE, while the
+     *                mysql LIKE of the default utf8 collation already ignores the case
+     */
+    private function like_keyword(): string
+    {
+        $result = sql::LIKE_LOWER_CASE;
+        if ($this->db_type == sql_db::POSTGRES) {
+            $result = sql::LIKE_NO_UP_CASE;
+        }
+        return $result;
+    }
+
+    /**
+     * the case-sensitive match of the key of a phrase within a group id (see sql_par_type::LIKE_KEY):
+     * a regular expression (see group_id_url::phrase_pattern), because e.g. "0U+" must not match the
+     * end of "10U+"; mysql needs the match type "c", because the default collation ignores the case
+     *
+     * @param string $fld the group id field incl. the table alias
+     * @param string $par the placeholder of the pattern
+     * @return string the sql condition
+     */
+    function key_match(string $fld, string $par): string
+    {
+        $result = sql::REGEXP_LIKE . '(' . $fld . ', ' . $par . ", 'c')";
+        if ($this->db_type == sql_db::POSTGRES) {
+            $result = $fld . ' ' . sql::REGEXP_PG . ' ' . $par;
+        }
+        return $result;
     }
 
     /**
@@ -3993,19 +4119,23 @@ class sql_creator
                             $par_offset--;
                             $result .= ''; // because added with the page statement
                         } elseif ($typ == sql_par_type::LIKE_R
+                            or $typ == sql_par_type::LIKE_L
                             or $typ == sql_par_type::LIKE
-                            or $typ == sql_par_type::LIKE_OR) {
-                            $result .= $tbl_id . $this->par_lst->name($i) . ' like ';
-                            if ($this->par_named[$i]) {
-                                if ($this->par_name[$i] != '' and $this->db_type() != sql_db::MYSQL) {
-                                    // if the same parameter is used more than once use the same placeholder again
-                                    // e.g. if phrase_1 = $1 or phrase_2 = $1
-                                    $result .= $this->par_name[$i];
-                                } else {
-                                    $result .= $this->par_name($par_pos);
-                                }
+                            or $typ == sql_par_type::LIKE_OR
+                            or $typ == sql_par_type::LIKE_KEY
+                            or $typ == sql_par_type::LIKE_KEY_OR) {
+                            if ($this->par_named[$i] and $this->par_name[$i] != '' and $this->db_type() != sql_db::MYSQL) {
+                                // if the same parameter is used more than once use the same placeholder again
+                                // e.g. if phrase_1 = $1 or phrase_2 = $1
+                                $par = $this->par_name[$i];
                             } else {
-                                $result .= $this->par_name($par_pos);
+                                $par = $this->par_name($par_pos);
+                            }
+                            $fld = $tbl_id . $this->par_lst->name($i);
+                            if ($typ == sql_par_type::LIKE_KEY or $typ == sql_par_type::LIKE_KEY_OR) {
+                                $result .= $this->key_match($fld, $par);
+                            } else {
+                                $result .= $fld . ' ' . $this->like_keyword() . ' ' . $par;
                             }
                         } elseif ($typ == sql_par_type::CONST) {
                             $par_offset--;
@@ -4111,8 +4241,17 @@ class sql_creator
      * @param string $order_field the name of the order field
      * @param string $direction the SQL direction name (ASC or DESC)
      * @param string $table_prefix
+     * @param string $tie_field a second order field with the same direction that decides the order
+     *                          of the rows with the same value in the order field, so that a query
+     *                          with a row limit always returns the same rows (e.g. the change id of
+     *                          the changes written in one transaction, which share the change time)
      */
-    function set_order(string $order_field, string $direction = '', string $table_prefix = ''): void
+    function set_order(
+        string $order_field,
+        string $direction = '',
+        string $table_prefix = '',
+        string $tie_field = ''
+    ): void
     {
         if ($direction <> sql::ORDER_DESC) {
             $direction = '';
@@ -4128,7 +4267,11 @@ class sql_creator
             $table_prefix .= '.';
         }
 
-        $this->set_order_text(trim($table_prefix . $order_field . ' ' . $direction));
+        $order_txt = trim($table_prefix . $order_field . ' ' . $direction);
+        if ($tie_field != '') {
+            $order_txt .= ', ' . trim($table_prefix . $tie_field . ' ' . $direction);
+        }
+        $this->set_order_text($order_txt);
         if ($this->all_query) {
             $this->order .= ', ' . $table_prefix . user_db::FLD_ID;
         }
@@ -4864,8 +5007,7 @@ class sql_creator
                 and $par_fld->type != sql_par_type::NOT_NULL
                 and $par_fld->type != sql_par_type::MIN
                 and $par_fld->type != sql_par_type::MAX
-                and $par_fld->type != sql_par_type::COUNT
-                and $par_fld->type != sql_par_type::INT_SUB_IN) {
+                and $par_fld->type != sql_par_type::COUNT) {
                 if ($par_fld->name != '' and $this->db_type() != sql_db::MYSQL) {
                     $used_par_values[$par_fld->name] = $par_fld->value;
                 } else {
@@ -5495,6 +5637,7 @@ class sql_creator
             case sql_par_type::INT_LOWER:
             case sql_par_type::INT_NOT:
             case sql_par_type::INT_NOT_OR_NULL:
+            case sql_par_type::INT_NULL_SAFE:
             case sql_par_type::INT_SUB:
             case sql_par_type::INT_SUB_IN:
             case sql_par_type::LIMIT:
@@ -5509,8 +5652,11 @@ class sql_creator
                 break;
             case sql_field_type::NAME:
             case sql_par_type::LIKE_R:
+            case sql_par_type::LIKE_L:
             case sql_par_type::LIKE:
             case sql_par_type::LIKE_OR:
+            case sql_par_type::LIKE_KEY:
+            case sql_par_type::LIKE_KEY_OR:
             case sql_par_type::TEXT_OR:
             case sql_par_type::TEXT_USR:
             case sql_par_type::KEY_512:
@@ -5692,6 +5838,53 @@ class sql_creator
         $qp->name .= '_by_ids';
         $qp->sql = $this->prepare_sql($sql, $qp->name, [sql_par_type::INT_LIST]);
         $qp->par = ['{' . implode(',', $id_lst) . '}'];
+        return $qp;
+    }
+
+    /**
+     * create a sql statement to delete all rows where a text field matches the given text,
+     * e.g. to remove the cached html pages of one user (see db_cache_page::del_by_user)
+     *
+     * @param string $class the class name e.g. db_cache_page not db_cache_page_list
+     * @param string $fld the name of the text field that is checked
+     * @param string $txt the text that the field of the rows to delete matches
+     * @param sql_par_type $spt how the text is matched: the field ends with the text
+     *                          (sql_par_type::LIKE_L), starts with it (LIKE_R) or contains it (LIKE)
+     * @return sql_par the sql statement to delete the rows selected by the text
+     */
+    function del_sql_list_by_text(
+        string       $class,
+        string       $fld,
+        string       $txt,
+        sql_par_type $spt = sql_par_type::LIKE
+    ): sql_par
+    {
+        $qp = new sql_par($class, new sql_type_list([sql_type::DELETE]));
+        $this->set_class($class, new sql_type_list());
+        $this->add_where($fld, $txt, $spt);
+        $sql = sql::DELETE . ' ' . $this->name_sql_esc($this->table) . ' ';
+        $sql .= sql::WHERE . ' ' . $fld . ' ' . $this->like_keyword() . ' ' . $this->par_name(1);
+        $qp->name .= '_by_text';
+        $qp->sql = $this->prepare_sql($sql, $qp->name, [$spt]);
+        $qp->par = $this->get_par();
+        return $qp;
+    }
+
+    /**
+     * create a sql statement to delete every row of a table, used for a table that only caches
+     * data which can be created again e.g. the cached html pages (see db_cache_page::del_all)
+     *
+     * @param string $class the class name of the table to empty e.g. db_cache_page
+     * @return sql_par the sql statement to delete all rows of the table
+     */
+    function del_sql_all(string $class): sql_par
+    {
+        $qp = new sql_par($class, new sql_type_list([sql_type::DELETE]));
+        $this->set_class($class, new sql_type_list());
+        $sql = sql::DELETE . ' ' . $this->name_sql_esc($this->table);
+        $qp->name .= '_all';
+        $qp->sql = $this->prepare_sql($sql, $qp->name, []);
+        $qp->par = [];
         return $qp;
     }
 

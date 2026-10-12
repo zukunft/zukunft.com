@@ -32,6 +32,7 @@
 namespace Zukunft\ZukunftCom\test\php\unit;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
@@ -189,17 +190,30 @@ class system_tests
         $t->assert_dsp_id($t_wrd->word_list(), '"mathematics","constant","π","𝑒" (word_id 1,2,5,6) for user 3 (zukunft.com system test)');
         $t->assert_dsp_id($t_vrb->verb(), 'not set/not_set (verb_id 1) for user 3 (zukunft.com system test)');
         $t->assert_dsp_id($t_trp->triple(), '"constant" "is part of" "mathematics" (2,3,1 -> triple_id 1) for user 3 (zukunft.com system test)');
-        $t->assert_dsp_id($t_trp->triple_list_short(), '"π (unit symbol)","global warming potential" (triple_id 1,5,111) for user 3 (zukunft.com system test)');
+        $t->assert_dsp_id($t_trp->triple_list_short(), '"π (unit symbol)","global warming potential" (triple_id '
+            . triple_names::MATH_CONST_ID . ',' . triple_names::PI_SYMBOL_ID . ',' . triple_names::GWP_ID
+            . ') for user 3 (zukunft.com system test)');
         $t->assert_dsp_id($t_trp->triple()->phrase(), '"constant" "is part of" "mathematics" (2,3,1 -> triple_id 1) for user 3 (zukunft.com system test) as phrase');
         $t->assert_dsp_id($t_phr->phrase_list_prime(), '"mathematics","constant","mathematical constant","π (unit symbol)" (phrase_id 1,2,-1,-5) for user 3 (zukunft.com system test)');
-        $t->assert_dsp_id($t_phr->phrase_list_long(), '"mathematics","constant","π" ... total 13 (phrase_id 1,2,5,-2,135,4,158,160,-1,-5,-105,-106,-107) for user 3 (zukunft.com system test)');
+        // a triple phrase is the negative triple id, so the phrase ids of the list mix both id
+        // sequences and every one of them is pinned (see docs/llm/testing.md)
+        $t->assert_dsp_id($t_phr->phrase_list_long(), '"mathematics","constant","π" ... total 13 (phrase_id '
+            . word_names::MATH_ID . ',' . word_names::CONST_ID . ',' . word_names::PI_SYMBOL_ID
+            . ',-' . triple_names::EULER_NUMBER_ID
+            . ',' . word_names::YEAR_2019_ID . ',' . word_names::ONE_ID . ',' . word_names::MIO_ID
+            . ',' . words::PCT_ID
+            . ',-' . triple_names::MATH_CONST_ID . ',-' . triple_names::PI_SYMBOL_ID
+            . ',-' . triple_names::CANTON_ZURICH_ID . ',-' . triple_names::CITY_BE_ID
+            . ',-' . triple_names::CITY_GE_ID
+            . ') for user 3 (zukunft.com system test)');
         $t->assert_dsp_id($t_grp->group(), '"π (unit symbol)" (group_id 5) as "π (unit symbol)" for user 3 (zukunft.com system test)');
         $t->assert_dsp_id($t_grp->group_list(), 'π (unit symbol)');
         $t->assert_dsp_id($t_grp->group_list_long(), 'π (unit symbol) / Zurich city inhabitants (2019) / Zurich city inhabitants (2019) in million / System Test Word Increase in Switzerland\'s inhabitants from 2019 to 2020 in percent ... total 6');
         $t->assert_dsp_id($t_trm->term(), '"mathematics" (word_id 1) for user 3 (zukunft.com system test) as term');
         $t->assert_dsp_id($t_trm->term_list_short(), '"mathematical constant","mathematics","not set","scale minute to sec" (-2,-1,1,2)');
         $t->assert_dsp_id($t_val->value($msg), 'π (unit symbol): 3.1415926535898 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = 5,,,) for user 3 (zukunft.com system test)');
-        $t->assert_dsp_id($t_val->value_list_short($msg), 'π (unit symbol): 3.1415926535898 / Zurich city inhabitants (2019): 415367 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = 5,,, / 213,197,135,) for user 3 (zukunft.com system test)');
+        $t->assert_dsp_id($t_val->value_list_short($msg), 'π (unit symbol): 3.1415926535898 / Zurich city inhabitants (2019): 415367 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = 5,,, / '
+            . word_names::ZH_ID . ',' . word_names::INHABITANT_ID . ',' . word_names::YEAR_2019_ID . ',) for user 3 (zukunft.com system test)');
         $t->assert_dsp_id($t_src->source_reserved(), '"The International System of Units" (source_id 1) for user 3 (zukunft.com system test)');
         $t->assert_dsp_id($t_ref->reference(), 'ref of "Pi" to "wikidata" (' . refs::PI_ID . ')');
         $t->assert_dsp_id($t_frm->formula(), '"scale minute to sec" (formula_id 1) for user 3 (zukunft.com system test)');
@@ -213,7 +227,7 @@ class system_tests
         $t->assert_dsp_id($t_fig->figure_value($msg), 'value figure π (unit symbol): 3.1415926535898 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = 5,,,) for user 3 (zukunft.com system test) 2022-12-26 18:23:45');
         $t->assert_dsp_id($t_fig->figure_list($msg), ' 3.1415926535898 π (unit symbol)  123456 "mathematics"  (5,-1)');
         $t->assert_dsp_id($t_msk->view(), '"Start view" (view_id 1) for user 3 (zukunft.com system test)');
-        $t->assert_dsp_id($t_msk->view_list(), '"Start view","Add word" (view_id 1,2) for user 3 (zukunft.com system test)');
+        $t->assert_dsp_id($t_msk->view_list(), '"Start view","Add word" (view_id 1,' . views::TEST_FORM_ID . ') for user 3 (zukunft.com system test)');
         $t->assert_dsp_id($t_cmp->component(), '"Word" (component_id 1) for user 3 (zukunft.com system test)');
         $t->assert_dsp_id($t_cmp->component_list(), '"Word","form field share type" (component_id 1,7) for user 3 (zukunft.com system test)');
         $t->assert_dsp_id($t_cmp->component_link(), 'from "Start view" (view_id 1) to "Word" (component_id 1) as (component_link_id 1) at pos 1');
@@ -223,9 +237,10 @@ class system_tests
         $t->assert_dsp_id($t_log->log_norm(), 'log add words,word_name mathematics (id ) in row 1 at 2022-12-26T18:23:45+01:00');
         $t->assert_dsp_id($t_log->log_big(), 'log add words,word_name mathematics (id ) in row 1 at 2022-12-26T18:23:45+01:00');
         $t->assert_dsp_id($t_log->log_list_short(), 'log add words,word_name mathematics (id ) in row 1 at 2022-12-26T18:23:45+01:00 / log add verbs,verb_name is (id ) in row 2 at 2022-12-26T18:23:45+01:00 / log add triples,triple_name mathematical constant (id ) in row 1 at 2022-12-26T18:23:45+01:00');
-        $t->assert_dsp_id($t_log->log_link(), 'user_log_link for user zukunft.com system test (3) action add (1) table triples (7)');
+        $t->assert_dsp_id($t_log->log_link(), 'user_log_link for user zukunft.com system test (3) action add (1) table ' . change_tables::TRIPLE . ' (' . change_tables::TRIPLE_ID . ')');
         $t->assert_dsp_id($t_log->log_value(), 'log add values,numeric_value (5,,,) 3.1415927');
-        $t->assert_dsp_id($t_log->log_value_prime(), 'log add values,numeric_value (213,197,135,) 3.1415927');
+        $t->assert_dsp_id($t_log->log_value_prime(), 'log add values,numeric_value ('
+            . word_names::ZH_ID . ',' . word_names::INHABITANT_ID . ',' . word_names::YEAR_2019_ID . ',) 3.1415927');
         // the id of a big group packs the phrase ids into a text, so the group of the log entry
         // is compared with the same group loaded by id, which is what change_value::name() does
         $grp_big = new group($t->usr1, $t_grp->group_17_plus()->id());

@@ -93,6 +93,10 @@ class ui_config
 
         $vars = $sys->typ_lst->api_json_array($typ_lst, $msg);
         $vars[json_fields::LIST_SYSTEM_VIEWS] = $cac->sys_msk->api_json_array($typ_lst, $msg);
+        // the phrases of the initial cache load carry their linked phrases, because a symbol
+        // triple is useless without the phrase it stands for (see data_object::load_system_phrases)
+        $vars[json_fields::LIST_SYSTEM_PHRASES] = $cac->sys_phr->api_json_array(
+            new api_type_list([api_types::INCL_PHRASES]), $msg);
         $api_msg = new api_message();
         $pod_name = $api_msg->api_site_name($db_con);
         return $api_msg->api_json($pod_name, $this::class, $vars, $typ_lst, $msg->usr);
@@ -115,6 +119,8 @@ class ui_config
             $cac = new data_object($msg->usr);
         }
         $cac->load_system_views($db_con, $msg);
+        // the verbs are needed to select the phrases, so this load is after the type lists
+        $cac->load_system_phrases($msg);
     }
 
     /**

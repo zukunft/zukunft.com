@@ -51,7 +51,7 @@ class view_link_write_tests
         $ts = 'db write view link ';
         $t->header($ts);
 
-        $t->subheader($ts . 'sandbox for ' . views::TEST_ADD_NAME);
+        $t->subheader($ts . 'sandbox for ' . views::MATH_CONST_NAME);
         $msk_lnk = $t_msk->term_view();
         $msk_lnk->save($msg);
         // TODO Prio 2 activate (set object id instead of id)
@@ -73,6 +73,8 @@ class view_link_write_tests
         $t_msk = new test_views($t);
         $msg = new user_message($t->usr1);
 
+        // the math const triple and the math const view are seed rows, so the link of the fixture
+        // names rows that the database has from the import on (see test_views::term_view)
         $msk_lnk = $t_msk->term_view_filled_add();
         $msk_lnk->save($msg);
     }

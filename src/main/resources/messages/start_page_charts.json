@@ -1,0 +1,93 @@
+{
+  "version": "0.0.3",
+  "data_version": "0.0.1",
+  "time": "2026-10-09 20:00:00",
+  "user": "timon",
+  "selection": [
+    "the charts of the start page ranking added after solution_prio.json"
+  ],
+  "description": "The leverage plot as a chart type and as the chart of the start page ranking that shows the mayor columns only: one labelled point per problem with the potential gain of its solution up and its potential loss to the right, the quadrants of the big and the small numbers and the dashed lines of an equal gain per loss, like global-problems-top4_scatter.svg. A chart of the mayor chart type tier is shown instead of the default charts if the table shows the mayor columns only, because a default chart may plot a column that the table does not show. The borrowed system phrases are repeated without their code id; this file is imported as the last step of the db setup, so that no database id of a tested phrase moves.",
+  "words": [
+    {
+      "name": "chart type"
+    },
+    {
+      "name": "zukunft.com"
+    },
+    {
+      "name": "system"
+    },
+    {
+      "name": "mayor"
+    },
+    {
+      "name": "potential"
+    },
+    {
+      "name": "gain"
+    },
+    {
+      "name": "loss"
+    },
+    {
+      "name": "leverage plot",
+      "description": "chart with one labelled point per table row placed by two numbers of the row, the first number up and the second to the right, with the dashed lines of an equal ratio of the two numbers",
+      "code_id": "leverage_plot"
+    }
+  ],
+  "triples": [
+    {
+      "name": "zukunft.com system",
+      "from": "zukunft.com",
+      "verb": "is a",
+      "to": "system"
+    },
+    {
+      "name": "chart type (system)",
+      "from": "chart type",
+      "verb": "can be",
+      "to": "zukunft.com system"
+    },
+    {
+      "name": "mayor chart type (system)",
+      "description": "keyword for the charts that are shown instead of the default charts if a table shows the mayor columns only",
+      "from": "chart type (system)",
+      "verb": "can be",
+      "to": "mayor",
+      "code_id": "system_chart_type_mayor"
+    },
+    {
+      "name": "potential gain",
+      "from": "gain",
+      "verb": "kind of",
+      "to": "potential"
+    },
+    {
+      "name": "potential loss",
+      "from": "loss",
+      "verb": "kind of",
+      "to": "potential"
+    },
+    {
+      "name": "potential gain and potential loss",
+      "description": "the two numbers of a problem row that the leverage plot plots against each other, the gain of the solution up and the loss of the problem to the right",
+      "from": "potential gain",
+      "verb": "and",
+      "to": "potential loss"
+    },
+    {
+      "name": "leverage plot of potential gain and potential loss",
+      "description": "each problem as a labelled point by the potential gain of its solution and its potential loss, like global-problems-top4_scatter.svg",
+      "from": "leverage plot",
+      "verb": "of",
+      "to": "potential gain and potential loss"
+    },
+    {
+      "name": "chart leverage plot of potential gain and potential loss",
+      "description": "the leverage plot is the chart of the global problems table that shows the mayor columns only",
+      "from": "leverage plot of potential gain and potential loss",
+      "verb": "can be",
+      "to": "mayor chart type (system)"
+    }
+  ]
+}

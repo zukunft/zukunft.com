@@ -9,14 +9,13 @@
 
     1. for up to four prime phrases with a 16 bit integer id a 64 bit bigint key is used
        this allows fast and efficient saving for many number
-    2. for up the 16 phrases with a 32 bit integer id a 512 bit db key is used,
-       which is shown using the chars . for 0, / for 1 and 0 to 9, A to Z and a to z
-    3. if the phrase list contains an id with 64 bit or more than 16 phrases are used
-       a alpha_num text is used for the db key
+    2. for up the 16 phrases a compact alpha_num text key of up to 112 chars is used,
+       e.g. "0U+0X+3-" (see docs/llm/group_id.md)
+    3. for more than 16 phrases or a longer key the same compact text key is used without limit
 
     base on the three db key types three value tables are used:
     1. values_prime with the 64 bit bigint key
-    2. values with the 512 bit db key
+    2. values with the text key of up to 112 chars
     1. values_big with the text key for many phrases
 
     the group id can include the order of the phrases
@@ -60,10 +59,12 @@ include_once paths::MODEL_GROUP . 'id.php';
 include_once paths::DB . 'sql_type.php';
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
 include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::SHARED . 'group_id_url.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\group_id_url;
 
 class group_id extends id
 {
@@ -79,14 +80,15 @@ class group_id extends id
     const int PRIME_PHRASES_STD = 4;
     const int MAIN_PHRASES_STD = 7;
     const int STANDARD_PHRASES = 16;
+    // the max length of the text key in the standard table: 16 phrase ids of 6 chars and a sign char
+    const int STANDARD_KEY_CHARS = 112;
 
     /**
      * @param phrase_list $phr_lst the list of phrases that define the value
-     * @param bool $fill true if a 512-bit key should be created
-     * @return int|string the group id based on the given phrase list as s
-     *                    64-bit integer, 512-bit key as 112 chars or list of more than 16 keys with 6 chars
+     * @return int|string the group id based on the given phrase list as
+     *                    64-bit integer or the compact text key e.g. "0U+0X+3-"
      */
-    function get_id(phrase_list $phr_lst, bool $fill = true): int|string
+    function get_id(phrase_list $phr_lst): int|string
     {
         // a local message, because a group id is computed from positions this list owns:
         // a missing key while sorting is an internal inconsistency and not a user decision,
@@ -98,19 +100,17 @@ class group_id extends id
         ) {
             $phr_lst = $phr_lst->sort_rev_by_id($sort_msg);
             $db_key = $this->int_group_id($phr_lst);
-        } elseif ($phr_lst->count() <= self::STANDARD_PHRASES) {
-            $phr_lst = $phr_lst->sort_by_id($sort_msg);
-            $db_key = $this->alpha_num($phr_lst, $fill);
         } else {
+            // the standard and the big table use the same key, which is_big() selects by its size
             $phr_lst = $phr_lst->sort_by_id($sort_msg);
-            $db_key = $this->alpha_num_big($phr_lst);
+            $db_key = $this->alpha_num($phr_lst);
         }
         return $db_key;
     }
 
     /**
      * get the max number if phrases for type of the given id
-     * @param int|string $id either a 64-bit integer group id, a 512-bit alpha_num group id or a text of more than 16 +/- separated 6 alpha_num char phrase ids
+     * @param int|string $id either a 64-bit integer group id or the compact text key e.g. "0U+0X+3-"
      * @return int the
      */
     function max_number_of_phrase(int|string $id): int
@@ -119,8 +119,7 @@ class group_id extends id
         if ($tbl_typ == sql_type::PRIME) {
             return self::PRIME_PHRASES_STD;
         } elseif ($tbl_typ == sql_type::BIG) {
-            $id_keys = preg_split("/[+-]/", $id);
-            return count($id_keys);
+            return group_id_url::phrase_count($id);
         } elseif ($tbl_typ == sql_type::MOST) {
             return self::STANDARD_PHRASES;
         } else {
@@ -132,7 +131,7 @@ class group_id extends id
     /**
      * get the sorted array of phrase ids from the given group id
      *
-     * @param int|string $grp_id either a 64-bit integer group id, a 512-bit alpha_num group id or a text of more than 16 +/- separated 6 alpha_num char phrase ids
+     * @param int|string $grp_id either a 64-bit integer group id or the compact text key e.g. "0U+0X+3-"
      * @param bool $filled if true the missing ids are filled with a null value
      * @return array a sorted list of phrase ids
      */
@@ -142,17 +141,13 @@ class group_id extends id
             $result = $this->int_array($grp_id);
         } else {
             $result = [];
-            $signs = array_values(array_filter(str_split($grp_id), fn($value) => $value == '+' || $value == '-'));
-            $id_keys = preg_split("/[+-]/", $grp_id);
-            foreach ($id_keys as $key => $id_key) {
+            // each phrase id is ended by its sign char e.g. "-" for a triple and "+" or "_" for a word
+            $slot = '~(' . group_id_url::ID_CHAR_PATTERN . '+)(' . group_id_url::SIGN_PATTERN . ')~';
+            preg_match_all($slot, $grp_id, $parts, PREG_SET_ORDER);
+            foreach ($parts as [, $id_key, $sign]) {
                 $id = $this->alpha_num2int($id_key);
-                if ($id != 0) {
-                    if ($signs[$key] == '-') {
-                        $result[] = $id * -1;
-                    } else {
-                        $result[] = $id;
-                    }
-                }
+                $is_triple = in_array($sign, [self::CHAR_TRIPLE, self::CHAR_SOURCE_TRIPLE, self::CHAR_RESULT_TRIPLE]);
+                $result[] = $is_triple ? $id * -1 : $id;
             }
         }
         $is = count($result);
@@ -260,15 +255,14 @@ class group_id extends id
 
     /**
      * @param int|string $grp_id
-     * @return bool true if the $grp_id represents more then 16 phrase ids
+     * @return bool true if the $grp_id represents more then 16 phrase ids or does not fit the standard key column
      */
     function is_big(int|string $grp_id): bool
     {
-        if (strlen($grp_id) > 112) {
-            return true;
-        } else {
-            return false;
-        }
+        // the compact key has no fixed length, so the phrases are counted
+        $key = (string)$grp_id;
+        return strlen($key) > self::STANDARD_KEY_CHARS
+            or group_id_url::phrase_count($key) > self::STANDARD_PHRASES;
     }
 
     function int_array(int $grp_id): array
@@ -293,6 +287,20 @@ class group_id extends id
     }
 
     /**
+     * the 16 slot text key of a prime group, e.g. for a result that is saved in the standard result
+     * table, because its source group does not fit the bigint column of the prime table
+     *
+     * @param int $grp_id the 64-bit integer id of a prime group
+     * @return string the text key with the phrase ids sorted like get_id() sorts a non-prime group
+     */
+    function int2key(int $grp_id): string
+    {
+        $id_lst = $this->int_array($grp_id);
+        sort($id_lst);
+        return $this->ids_to_alpha_num($id_lst);
+    }
+
+    /**
      * create a 64-bit integer id based on four prime phrase ids
      *
      * @param phrase_list $phr_lst list of words or triples that are used to select the value
@@ -305,20 +313,6 @@ class group_id extends id
             $id_lst[] = $phr->id();
         }
         return $this->id_lst_to_int($id_lst);
-    }
-
-    /**
-     * create the database key for a phrase group
-     * @param phrase_list $phr_lst list of words or triples
-     * @return string the group id based on the given phrase list of more than 16 keys with 6 chars
-     */
-    private function alpha_num_big(phrase_list $phr_lst): string
-    {
-        $db_key = '';
-        foreach ($phr_lst->lst() as $phr) {
-            $db_key .= $this->int2alpha_num($phr->id());
-        }
-        return $db_key;
     }
 
     private function alpha_num2int(string $key): int

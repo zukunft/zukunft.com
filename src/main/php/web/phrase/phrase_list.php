@@ -59,6 +59,8 @@ include_once html_paths::WORD . 'word_list.php';
 include_once html_paths::SHARED_CONST . 'triples.php';
 include_once html_paths::SHARED_CONST . 'views.php';
 include_once html_paths::SHARED_CONST . 'words.php';
+include_once html_paths::SHARED_ENUM . 'chart_types.php';
+include_once html_paths::SHARED_ENUM . 'table_orders.php';
 include_once html_paths::SHARED_ENUM . 'foaf_direction.php';
 include_once html_paths::SHARED_ENUM . 'languages.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
@@ -86,7 +88,8 @@ use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\web\word\word_list;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
-use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\enum\chart_types;
+use Zukunft\ZukunftCom\main\php\shared\enum\table_orders;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
 use Zukunft\ZukunftCom\main\php\shared\enum\languages;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -101,6 +104,13 @@ class phrase_list extends sandbox_list_named
     // the link levels from "column (system)": the column tiers, their column definitions and
     // the order triples that chain the definitions
     const int COLUMN_LEVELS = 3;
+    // the relation levels from "chart type (system)" to the charts of a table: the tier and the
+    // assignment of the chart; the chart triple with its chart type word and the plotted
+    // columns is the from side of the assignment, which the api delivers with the assignment
+    const int CHART_LEVELS = 2;
+    // the relation levels from "sort order (system)" to the default orders of a table, which
+    // are defined like the charts: the tier and the assignment of the order
+    const int SORT_LEVELS = 2;
 
     /*
      * set and get
@@ -156,10 +166,11 @@ class phrase_list extends sandbox_list_named
      * add the phrases related to the given phrase to the list
      * @param phrase $phr
      * @param foaf_direction $direction
+     * @param user_message $msg with the requesting user for whom the related phrases are selected
      * @param verb_list|null $link_types
      * @return bool
      */
-    function load_related(phrase $phr, foaf_direction $direction, ?verb_list $link_types = null): bool
+    function load_related(phrase $phr, foaf_direction $direction, user_message $msg, ?verb_list $link_types = null): bool
     {
         $result = false;
 
@@ -169,7 +180,7 @@ class phrase_list extends sandbox_list_named
         $data[url_var::PHRASE] = $phr->id();
         $data[url_var::DIRECTION] = $direction->value;
         $data[url_var::LEVELS] = 1;
-        $json_body = $api->api_get(self::class, $data);
+        $json_body = $api->api_get(self::class, $data, $msg);
         $this->api_mapper($json_body);
         if (!$this->is_empty()) {
             $result = true;
@@ -196,15 +207,11 @@ class phrase_list extends sandbox_list_named
         int            $levels = 1
     ): bool
     {
-        $count = $this->count();
-        $api = new rest_call();
         $data = array();
         $data[url_var::NAME] = $name;
         $data[url_var::DIRECTION] = $direction->value;
         $data[url_var::LEVELS] = $levels;
-        $json_body = $api->api_get(self::class, $data);
-        $msg->merge($this->api_mapper($json_body));
-        return $this->count() > $count;
+        return $this->add_by_api($data, $msg);
     }
 
     /**
@@ -224,12 +231,75 @@ class phrase_list extends sandbox_list_named
         user_message   $msg
     ): bool
     {
-        $count = $this->count();
-        $api = new rest_call();
         $data = array();
         $data[url_var::ID_LST] = implode(',', $phr_lst->ids());
         $data[url_var::DIRECTION] = $direction->value;
-        $json_body = $api->api_get(self::class, $data);
+        return $this->add_by_api($data, $msg);
+    }
+
+    /**
+     * add the phrases on one side of the triples of a verb to this list, each phrase once, e.g. the
+     * parents of the verb "is a" as the categories that a word can be defined as
+     *
+     * @param verb $vrb the verb of the triples e.g. "is a"
+     * @param foaf_direction $direction up for the to side (the parents), down for the from side (the children)
+     * @param user_message $msg to report a problem of the api message to the user
+     * @return bool true if at least one phrase has been added to this list
+     */
+    function load_by_verb(verb $vrb, foaf_direction $direction, user_message $msg): bool
+    {
+        $data = array();
+        $data[url_var::VERB] = $vrb->id();
+        $data[url_var::DIRECTION] = $direction->value;
+        return $this->add_by_api($data, $msg);
+    }
+
+    /**
+     * add the phrases with the given ids to this list, e.g. to name the phrases that a url has selected
+     *
+     * @param array $ids the phrase ids, positive for a word and negative for a triple
+     * @param user_message $msg to report a problem of the api message to the user
+     * @return bool true if at least one phrase has been added to this list
+     */
+    function load_by_ids(array $ids, user_message $msg): bool
+    {
+        $data = array();
+        $data[url_var::ID_LST] = implode(',', $ids);
+        return $this->add_by_api($data, $msg);
+    }
+
+    /**
+     * the phrases of this list whose name starts with the given chars ignoring the case, like the backend
+     * search by the start of a name, e.g. to offer the phrases that match a few typed chars
+     *
+     * @param string $pattern the first chars of the phrase names e.g. "ci" for "city"
+     * @param user_message $msg to report a problem of the list
+     * @return phrase_list the matching phrases of this list
+     */
+    function filter_by_name_start(string $pattern, user_message $msg): phrase_list
+    {
+        $result = new phrase_list();
+        $start = mb_strtolower($pattern);
+        foreach ($this->lst() as $phr) {
+            if (str_starts_with(mb_strtolower($phr->name()), $start)) {
+                $result->add($phr, $msg);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * add the phrases that the phrase list api returns for the given request to this list
+     *
+     * @param array $data the url vars of the api request e.g. the verb and the direction
+     * @param user_message $msg to report a problem of the api message to the user
+     * @return bool true if at least one phrase has been added to this list
+     */
+    private function add_by_api(array $data, user_message $msg): bool
+    {
+        $count = $this->count();
+        $api = new rest_call();
+        $json_body = $api->api_get(self::class, $data, $msg);
         $msg->merge($this->api_mapper($json_body));
         return $this->count() > $count;
     }
@@ -258,6 +328,160 @@ class phrase_list extends sandbox_list_named
     }
 
     /**
+     * load the chart definitions of a table: the chart type tiers, the charts assigned to them,
+     * the chart triples with the plotted columns and the chart type words (see chart_definitions)
+     *
+     * @param user_message $msg to report a problem of the api call
+     * @return bool true if the definitions have been loaded
+     */
+    function load_chart_definitions(user_message $msg): bool
+    {
+        return $this->load_related_by_name(
+            triples::SYSTEM_CHART_TYPE, foaf_direction::BOTH, $msg, self::CHART_LEVELS);
+    }
+
+    /**
+     * the default charts of a table defined in this list (docs/llm/frontend.md "A table as a
+     * chart"): a chart is the triple "<chart type> of <column>" or "<chart type> of <column>
+     * and <column>" assigned to the default chart type tier, e.g. "range bars of potential
+     * loss" and "scatter plot of potential gain and initial effort" for the start page ranking
+     *
+     * a table that shows the mayor columns only, e.g. the initial start page, shows the charts
+     * of the mayor chart type tier instead, e.g. the leverage plot of the gain against the loss,
+     * because a default chart may plot a column that this table does not show; without a mayor
+     * chart the default charts are shown
+     *
+     * @param user_message $msg to report a chart type word without the code id of a chart type
+     * @param bool $mayor_only true if the table shows the mayor columns only
+     * @return array per chart the chart type and the names of the plotted columns, the y axis first
+     */
+    function chart_definitions(user_message $msg, bool $mayor_only = false): array
+    {
+        $result = [];
+        $charts = $this->tier_members(triples::SYSTEM_CHART_TYPE_DEFAULT, $msg);
+        $mayor_charts = $mayor_only ? $this->tier_members(triples::SYSTEM_CHART_TYPE_MAYOR, $msg) : [];
+        if ($mayor_charts != []) {
+            $charts = $mayor_charts;
+        }
+        foreach ($charts as $chart) {
+            // the chart type word nested in the chart triple carries the chart type as its code
+            // id, because the api loads the sides of a nested triple completely
+            $type_wrd = $chart->get_from();
+            $type_name = $type_wrd?->name() ?? '';
+            $type = chart_types::tryFrom($type_wrd?->obj()?->code_id ?? '');
+            if ($type == null) {
+                $msg->add_warning_with_vars(msg_id::CHART_TYPE_UNKNOWN, [msg_id::VAR_NAME => $type_name]);
+            } else {
+                $result[] = [$type, $this->chart_columns($chart->get_to(), $msg)];
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * load the default sort orders of a table: the sort order tiers, the orders assigned to
+     * them and the order triples with the condition word and the column (see sort_definitions)
+     *
+     * @param user_message $msg to report a problem of the api call
+     * @return bool true if the definitions have been loaded
+     */
+    function load_sort_definitions(user_message $msg): bool
+    {
+        return $this->load_related_by_name(
+            triples::SYSTEM_SORT_ORDER, foaf_direction::BOTH, $msg, self::SORT_LEVELS);
+    }
+
+    /**
+     * the default sort orders of a table defined in this list, which sort the rows if the url
+     * of the page names no order: an order is the triple "<condition> of <column>" assigned to
+     * the default sort order tier, e.g. "numeric descending of potential loss" for the start
+     * page ranking; the first order is the prime order and the next ones the sub orders
+     *
+     * @param user_message $msg to report a condition word without the code id of a condition
+     * @return array per order the condition (table_orders) and the name of the column
+     */
+    function sort_definitions(user_message $msg): array
+    {
+        $result = [];
+        foreach ($this->tier_members(triples::SYSTEM_SORT_ORDER_DEFAULT, $msg) as $order) {
+            // the condition word nested in the order triple carries the condition as its code id
+            $cond_wrd = $order->get_from();
+            $cond = table_orders::tryFrom($cond_wrd?->obj()?->code_id ?? '');
+            if ($cond == null) {
+                $msg->add_warning_with_vars(msg_id::SORT_CONDITION_UNKNOWN, [msg_id::VAR_NAME => $cond_wrd?->name() ?? '']);
+            } else {
+                $result[] = [$cond, $order->get_to()?->name() ?? ''];
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the chart triples assigned to a chart type tier with "<chart> can be <tier>"
+     *
+     * @param string $tier the name of a chart type tier e.g. "default chart type (system)"
+     * @param user_message $msg to report a problem of reading a phrase of the list
+     * @return array the chart triples as the list has them, in the order of the list
+     */
+    private function tier_members(string $tier, user_message $msg): array
+    {
+        $result = [];
+        foreach ($this->lst() as $phr) {
+            if ($phr->is_triple() and $phr->obj()->get_to()?->name() == $tier) {
+                $chart = $this->list_triple($phr->obj()->get_from(), $msg);
+                if ($chart != null) {
+                    $result[] = $chart;
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param phrase|null $phr the "to" side of a chart triple: the plotted column or the pair
+     *                         "<column> and <column>" with the y axis column first
+     * @param user_message $msg to report a problem of reading a phrase of the list
+     * @return array the names of the plotted columns
+     */
+    private function chart_columns(?phrase $phr, user_message $msg): array
+    {
+        $result = [];
+        if ($phr != null) {
+            $pair = $this->list_triple($phr, $msg);
+            if ($pair != null and $pair->get_verb()->get_code_id() == verbs::AND) {
+                $result = [$pair->get_from()?->name(), $pair->get_to()?->name()];
+            } else {
+                $result = [$phr->name()];
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the triple that a nested phrase of a triple names, with its verb, from and to
+     *
+     * a "from" or "to" phrase of a triple may come from the api json with its id and name only,
+     * so the triple is taken from the list entry of the same name, which the definition load
+     * delivers; if the list has no such entry the nested triple is used as it is
+     *
+     * @param phrase|null $phr a phrase that may name a triple
+     * @param user_message $msg to report a problem of reading a phrase of the list
+     * @return triple|null the triple or null if the phrase is no triple
+     */
+    private function list_triple(?phrase $phr, user_message $msg): ?triple
+    {
+        $result = null;
+        if ($phr != null and $phr->is_triple()) {
+            $result = $phr->obj();
+            $lst_phr = $this->get_by_name($phr->name(), $msg);
+            if ($lst_phr != null and $lst_phr->is_triple()) {
+                $result = $lst_phr->obj();
+            }
+        }
+        return $result;
+    }
+
+    /**
      * add the phrases related to the given formula to the list
      * @param formula $frm
      * @return bool
@@ -270,7 +494,7 @@ class phrase_list extends sandbox_list_named
         $api = new rest_call();
         $data = array();
         $data[url_var::FORMULAS] = $frm->id();
-        $json_body = $api->api_get(self::class, $data);
+        $json_body = $api->api_get(self::class, $data, $msg);
         $this->api_mapper($json_body);
         if (!$this->is_empty()) {
             $result = true;
@@ -287,7 +511,6 @@ class phrase_list extends sandbox_list_named
     {
         $result = false;
         if ($this->is_empty()) {
-            // TODO Prio 3 replace with an frequently generated preloaded list
             $this->set_lst($this->phrases_often_used($msg)->lst());
             $result = true;
         }
@@ -295,23 +518,17 @@ class phrase_list extends sandbox_list_named
     }
 
     /**
+     * the phrases that the system uses most often are part of the initial cache load, so they are
+     * known even if the backend connection is temporary lost (see api\ui_config::api_json)
+     *
      * @return phrase_list with the most often used phrases as a frontend fallback list
      */
     private function phrases_often_used(user_message $msg): phrase_list
     {
+        global $ui_sys;
+
         $lst = new phrase_list();
-        foreach (words::BASE_WORDS as $wrd_array) {
-            $wrd = new word();
-            $wrd->set_name($wrd_array[0]);
-            $wrd->set_id($wrd_array[1]);
-            $lst->add($wrd->phrase(), $msg);
-        }
-        foreach (triples::BASE_TRIPLES as $trp_array) {
-            $trp = new triple();
-            $trp->set_name($trp_array[0]);
-            $trp->set_id($trp_array[1]);
-            $lst->add($trp->phrase(), $msg);
-        }
+        $lst->merge($ui_sys?->typ_lst_cache?->phr_sys ?? new phrase_list(), $msg);
         return $lst;
     }
 
@@ -337,19 +554,49 @@ class phrase_list extends sandbox_list_named
      * get the names of the phrases that this list links to the given phrase by a triple
      * e.g. for "global problem" the names "global warming" and "populism", because the list
      * contains the triples "global warming (global problem)" and "populism (global problem)"
-     * the verb does not matter, because e.g. "is a" and "can be" both classify the from side
+     * the verb does not matter, because e.g. "is a" and "can be" both classify the from side,
+     * except "of", which attributes the from side to the to side instead of classifying it:
+     * "potential loss of reason" makes "potential loss" no reason
      *
      * @param phrase $phr the phrase whose children should be returned
      * @return array the names of the phrases that link to the given phrase
      */
     function child_names(phrase $phr): array
     {
+        return $this->linked_names($phr, foaf_direction::DOWN);
+    }
+
+    /**
+     * get the names of the phrases that this list links the given phrase to by a triple, the
+     * mirror of child_names: e.g. for "global warming" the name "global problem", because the
+     * list contains the triple "global warming (global problem)"
+     *
+     * @param phrase $phr the phrase whose parents should be returned
+     * @return array the names of the phrases that the given phrase links to
+     */
+    function parent_names(phrase $phr): array
+    {
+        return $this->linked_names($phr, foaf_direction::UP);
+    }
+
+    /**
+     * @param phrase $phr the phrase whose linked phrases should be returned
+     * @param foaf_direction $direction UP for the phrases the given phrase links to, DOWN for the phrases that link to it
+     * @return array the names of the linked phrases, each once
+     */
+    private function linked_names(phrase $phr, foaf_direction $direction): array
+    {
         $result = [];
         foreach ($this->lst() as $lst_phr) {
-            if ($lst_phr->is_triple()) {
+            if ($lst_phr->is_triple() and $lst_phr->obj()->get_verb()?->name() != verbs::OF_NAME) {
                 $trp = $lst_phr->obj();
-                if ($trp->get_to()?->name() == $phr->name()) {
-                    $name = $trp->get_from()?->name();
+                // the parents are on the "to" side of the triples that start with the phrase
+                [$own, $linked] = [$trp->get_from(), $trp->get_to()];
+                if ($direction == foaf_direction::DOWN) {
+                    [$own, $linked] = [$trp->get_to(), $trp->get_from()];
+                }
+                if ($own?->name() == $phr->name()) {
+                    $name = $linked?->name();
                     if ($name != null and !in_array($name, $result)) {
                         $result[] = $name;
                     }
@@ -380,6 +627,37 @@ class phrase_list extends sandbox_list_named
                     if ($from != null and !$result->has_id($from->id())) {
                         $result->add_phrase($from);
                     }
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the list triples of this list that collect the phrases of a table column for one row, e.g.
+     * "populism reason" (reason of populism), which lists every reason of populism
+     *
+     * a list triple is often only loaded as the side of a link, e.g. as the "to" side of
+     * "GDP per capita change (populism reason)", so the sides of each triple are checked too
+     *
+     * @param array $col_names the names of the column phrases e.g. ["reason", "solution"]
+     * @return phrase_list the list triples, each once, whose "from" side is one of the columns
+     */
+    function column_list_phrases(array $col_names): phrase_list
+    {
+        $result = new phrase_list();
+        foreach ($this->lst() as $phr) {
+            $candidates = [$phr];
+            if ($phr->is_triple()) {
+                $candidates[] = $phr->obj()->get_from();
+                $candidates[] = $phr->obj()->get_to();
+            }
+            foreach ($candidates as $candidate) {
+                if ($candidate != null and $candidate->is_triple()
+                    and $candidate->obj()->get_verb()?->name() == verbs::OF_NAME
+                    and in_array($candidate->obj()->get_from()?->name(), $col_names)
+                    and !$result->has_id($candidate->id())) {
+                    $result->add_phrase($candidate);
                 }
             }
         }
@@ -752,21 +1030,173 @@ class phrase_list extends sandbox_list_named
      */
     function tooltip(phrase $phr, user_message $msg): string
     {
-        global $ui_sys;
-
         $result = $this->cached_phrase($phr)->get_description() ?? '';
         if ($result == '') {
-            $vrb = $ui_sys?->typ_lst_cache?->vrb?->get_by_code_id(verbs::SYMBOL);
-            if ($vrb != null) {
-                // the symbol is the from side, so the described phrase is the to side
-                foreach ($this->lst() as $cac_phr) {
-                    if ($cac_phr->is_triple() and $result == '') {
-                        $trp = $cac_phr->obj();
-                        if ($trp->get_verb()?->id() == $vrb->id()
-                            and $trp->get_from()?->id() == $phr->id()) {
-                            $result = $this->cached_phrase($trp->get_to())->get_description() ?? '';
-                        }
-                    }
+            $main_phr = $this->stands_for($phr);
+            if ($main_phr != null) {
+                $result = $this->cached_phrase($main_phr)->get_description() ?? '';
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the phrase that the given symbol stands for, e.g. "Euro" for "EUR", taken from this list,
+     * which is usually the request cache with the related phrases (the mirror of symbols_of)
+     *
+     * @param phrase $symbol the phrase that may be a symbol
+     * @return phrase|null the phrase the symbol stands for or null if this list has no such triple
+     */
+    function stands_for(phrase $symbol): ?phrase
+    {
+        $result = null;
+        foreach ($this->symbol_triples() as $trp) {
+            // the symbol is the from side, so the phrase it stands for is the to side
+            if ($result == null and $trp->get_from()?->id() == $symbol->id()) {
+                $result = $trp->get_to();
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the phrases that "are symbol for" the given phrase, e.g. "m" and "mio" for million, taken
+     * from this list, which is usually the request cache with the related phrases
+     *
+     * @param phrase $phr the phrase whose symbols are searched
+     * @return phrase_list the symbol phrases, empty if this list has no symbol of the given phrase
+     */
+    function symbols_of(phrase $phr): phrase_list
+    {
+        $result = new phrase_list();
+        foreach ($this->symbol_triples() as $trp) {
+            $symbol = $trp->get_from();
+            if ($symbol != null and $trp->get_to()?->id() == $phr->id()) {
+                // the cached phrase, because the side of a triple may carry no type
+                $result->add_phrase($this->cached_phrase($symbol));
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the symbol that stands for the given phrase, e.g. "x" for the factor or "mio" for million
+     *
+     * a phrase can have several symbols, so the shortest one is taken that has no meaning of its
+     * own: "m" stands for million, but it is the unit metre too, so "mio" is the symbol of million
+     *
+     * an ambiguous symbol e.g. "tn" for trillion and for tonne is used on one page for one meaning
+     * only, so a symbol that the page gives to another meaning is never taken (see symbol_taken)
+     *
+     * @param phrase $phr the phrase whose symbol is searched
+     * @param phrase_list|null $page_lst the phrases of the page that decide the meaning of an ambiguous symbol
+     * @return phrase|null the symbol phrase or null if this list has no symbol of the given phrase
+     */
+    function symbol_of(phrase $phr, user_message $msg, ?phrase_list $page_lst = null): ?phrase
+    {
+        $result = null;
+        foreach ($this->symbols_of($phr)->lst() as $symbol) {
+            $usable = !$this->symbol_taken($symbol, $phr, $page_lst);
+            if ($usable and $this->is_better_symbol($symbol, $result, $phr, $msg)) {
+                $result = $symbol;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * true if the page uses the ambiguous symbol for another meaning: of the meanings that the
+     * page shows, the symbol goes to the one whose name it shortens most, so that e.g. one
+     * trillion tonnes is shown as "1 tn tonne" and not as "1 trillion tn", and a symbol never
+     * stands for two things on one page (see docs/llm/json_structure.md)
+     *
+     * @param phrase $symbol a symbol of the phrase e.g. "tn"
+     * @param phrase $phr the phrase the symbol should stand for e.g. "tonne"
+     * @param phrase_list|null $page_lst the phrases of the page, null if no page decides
+     * @return bool true if the symbol stands for another phrase of the page
+     */
+    private function symbol_taken(phrase $symbol, phrase $phr, ?phrase_list $page_lst): bool
+    {
+        $result = false;
+        foreach ($this->symbol_triples() as $trp) {
+            $other = $trp->get_to();
+            $is_other = ($trp->get_from()?->id() == $symbol->id() and $other != null and $other->id() != $phr->id());
+            if ($is_other and $page_lst?->has_id((string)$other->id()) and $this->shortens_more($other, $phr)) {
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param phrase $other the other meaning of an ambiguous symbol
+     * @param phrase $phr the phrase the symbol should stand for
+     * @return bool true if the symbol saves more chars for the other meaning, the lower id if both save the same
+     */
+    private function shortens_more(phrase $other, phrase $phr): bool
+    {
+        $other_len = mb_strlen($other->name());
+        $phr_len = mb_strlen($phr->name());
+        return $other_len > $phr_len or ($other_len == $phr_len and $other->id() < $phr->id());
+    }
+
+    /**
+     * @param phrase $symbol a symbol of the phrase
+     * @param phrase|null $best the best symbol found so far, null if none has been found yet
+     * @param phrase $phr the phrase the symbols stand for
+     * @return bool true if the symbol should be used instead of the best symbol found so far
+     */
+    private function is_better_symbol(phrase $symbol, ?phrase $best, phrase $phr, user_message $msg): bool
+    {
+        $result = ($best == null);
+        if (!$result) {
+            $own = $this->has_own_meaning($symbol, $phr, $msg);
+            $best_own = $this->has_own_meaning($best, $phr, $msg);
+            if ($own == $best_own) {
+                $result = (mb_strlen($symbol->name()) < mb_strlen($best->name()));
+            } else {
+                $result = !$own;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * true if the symbol is more than a symbol of the given phrase: it is typed in another way
+     * than the phrase (the unit "m" is a symbol of million) or it stands for a second phrase too
+     *
+     * @param phrase $symbol a symbol of the phrase
+     * @param phrase $phr the phrase the symbol stands for
+     * @return bool true if the symbol has a meaning of its own, so another symbol is preferred
+     */
+    private function has_own_meaning(phrase $symbol, phrase $phr, user_message $msg): bool
+    {
+        global $ui_sys;
+
+        $default_id = $ui_sys?->typ_lst_cache?->phr_typ?->default_id();
+        $typ_id = $symbol->type_id($msg);
+        $result = ($typ_id != null and $typ_id != $default_id and $typ_id != $phr->type_id($msg));
+        foreach ($this->symbol_triples() as $trp) {
+            if ($trp->get_from()?->id() == $symbol->id() and $trp->get_to()?->id() != $phr->id()) {
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @return array the triples of this list with the verb "is symbol for"
+     */
+    private function symbol_triples(): array
+    {
+        global $ui_sys;
+
+        $result = [];
+        $vrb = $ui_sys?->typ_lst_cache?->vrb?->get_by_code_id(verbs::SYMBOL);
+        if ($vrb != null) {
+            foreach ($this->lst() as $cac_phr) {
+                if ($cac_phr->is_triple() and $cac_phr->obj()->get_verb()?->id() == $vrb->id()) {
+                    $result[] = $cac_phr->obj();
                 }
             }
         }
@@ -1289,11 +1719,98 @@ class phrase_list extends sandbox_list_named
      */
     function has_percent(user_message $msg): bool
     {
-        $result = false;
+        return $this->percent_phrase($msg) != null;
+    }
+
+    /**
+     * the phrase of this list that forces the percent format, so that the caller can ask it for
+     * its symbol (see phrase::symbol_name)
+     *
+     * @return phrase|null the percent phrase or null if no phrase of this list forces the format
+     */
+    function percent_phrase(user_message $msg): ?phrase
+    {
+        $result = null;
         foreach ($this->lst() as $phr) {
-            if ($phr->is_percent($msg)) {
-                $result = true;
+            if ($phr->is_percent($msg) and $result == null) {
+                $result = $phr;
             }
+        }
+        return $result;
+    }
+
+    /**
+     * the phrases that are shown as a symbol behind the number instead of being named with the
+     * other phrases of the number, e.g. the factor of "13.2 x" (see phrase::number_symbol)
+     *
+     * the scaling comes first and the unit second, so the symbols read like the number e.g.
+     * "2.5 mio €"; a symbol of another kind e.g. the "x" of a factor follows
+     *
+     * @return phrase_list the phrases of this list that have a symbol, in the display order
+     */
+    function symbol_phrases(user_message $msg): phrase_list
+    {
+        $result = new phrase_list();
+        $ranked = [];
+        foreach ($this->lst() as $phr) {
+            if ($phr->number_symbol($msg) != '') {
+                $ranked[$this->symbol_rank($phr, $msg)][] = $phr;
+            }
+        }
+        ksort($ranked);
+        foreach ($ranked as $phr_lst) {
+            foreach ($phr_lst as $phr) {
+                $result->add_phrase($phr);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the phrases that say how the number has been found e.g. "assumed", which are shown as a
+     * mark behind the number instead of being named with the other phrases of the number
+     * (see sandbox_value::quality_mark)
+     *
+     * @param user_message $msg to report a missing phrase type list
+     * @return phrase_list the phrases of this list of the type value quality
+     */
+    function value_quality_phrases(user_message $msg): phrase_list
+    {
+        $result = new phrase_list();
+        foreach ($this->lst() as $phr) {
+            if ($phr->is_value_quality($msg)) {
+                $result->add_phrase($phr);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param phrase $phr a phrase that is shown as a symbol behind the number
+     * @return int the position of the symbol behind the number: 0 for a scaling, 1 for a unit, 2 for the rest
+     */
+    private function symbol_rank(phrase $phr, user_message $msg): int
+    {
+        $result = 2;
+        if ($phr->is_scaling($msg)) {
+            $result = 0;
+        } elseif ($phr->is_measure($msg)) {
+            $result = 1;
+        }
+        return $result;
+    }
+
+    /**
+     * the symbols of the phrases of this list, each linked to its phrase and separated from the
+     * number and from each other by a space, e.g. " mio €" or " x" (see symbol_phrases)
+     *
+     * @return string the html code of the symbols, empty if no phrase of this list has one
+     */
+    function symbol_links(user_message $msg): string
+    {
+        $result = '';
+        foreach ($this->symbol_phrases($msg)->lst() as $phr) {
+            $result .= ' ' . $phr->number_symbol($msg);
         }
         return $result;
     }

@@ -43,6 +43,7 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 include_once test_paths::UNIT_WORKFLOW . 'formula_url_tests.php';
 include_once paths::MODEL_FORMULA . 'formula.php';
 include_once paths::MODEL_WORD . 'word.php';
+include_once paths::SHARED . 'url_var.php';
 include_once test_paths::CONST . 'formula_names.php';
 include_once test_paths::CONST . 'word_names.php';
 include_once test_paths::CONST . 'workflows.php';
@@ -50,6 +51,7 @@ include_once test_paths::CREATE . 'test_db_load.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\const\workflows;
@@ -78,6 +80,23 @@ class formula_write_url_tests extends formula_url_tests
         // so each confirmed step is persisted and check if the database is actually updated
         $this->add_formula_workflow(workflows::WF_ADD_FORMULA_NBR, true);
         $this->change_formula_workflow(workflows::WF_CHANGE_FORMULA_NBR, true);
+
+        // the validate button of the formula form is answered by the backend, so the four validate
+        // workflows run only here and not in the read tests, which render without a backend call;
+        // they are placed before the delete workflow, because they use the test formula
+        $this->validate_formula_workflow(workflows::WF_VALIDATE_EXPRESSION_ERR_NBR,
+            workflows::WF_VALIDATE_EXPRESSION_ERR, url_var::USER_EXPRESSION,
+            formula_names::SYSTEM_TEST_INVALID_EXP, url_var::REFRESH_LATEX);
+        $this->validate_formula_workflow(workflows::WF_VALIDATE_EXPRESSION_NBR,
+            workflows::WF_VALIDATE_EXPRESSION, url_var::USER_EXPRESSION,
+            formula_names::INCREASE_EXP, url_var::REFRESH_LATEX);
+        $this->validate_formula_workflow(workflows::WF_VALIDATE_LATEX_ERR_NBR,
+            workflows::WF_VALIDATE_LATEX_ERR, url_var::LATEX,
+            formula_names::SYSTEM_TEST_INVALID_LATEX, url_var::REFRESH_EXPRESSION);
+        $this->validate_formula_workflow(workflows::WF_VALIDATE_LATEX_NBR,
+            workflows::WF_VALIDATE_LATEX, url_var::LATEX,
+            formula_names::INCREASE_LATEX, url_var::REFRESH_EXPRESSION);
+
         $this->del_formula_workflow(workflows::WF_DEL_FORMULA_NBR, true);
 
         $t->subheader($this->ts . 'cleanup');
@@ -96,12 +115,18 @@ class formula_write_url_tests extends formula_url_tests
     private function cleanup_test_formulas(test_cleanup $t): void
     {
         $frm = new formula($t->usr1);
+        // remove the change log entries of the test formulas before the rows themselves, because a
+        // change log entry must never point to a deleted test row (see docs/llm/testing.md) and
+        // because the change log is shown on the formula page: without this the entries of a
+        // previous run stay in the database and the workflow page snapshots change with every run
+        $t->cleanup_change_log($frm, formula_names::TEST_FORMULAS);
         foreach (formula_names::TEST_FORMULAS as $frm_name) {
             // write_named_cleanup removes the usr1 / usr2 sandbox rows
             $t->write_named_cleanup($frm, $frm_name);
             $t->write_named_cleanup_one($frm, $t->usr_system, $frm_name);
         }
         $wrd = new word($t->usr1);
+        $t->cleanup_change_log($wrd, word_names::TEST_WORDS);
         foreach (word_names::TEST_WORDS as $wrd_name) {
             $t->write_named_cleanup($wrd, $wrd_name);
             $t->write_named_cleanup_one($wrd, $t->usr_system, $wrd_name);

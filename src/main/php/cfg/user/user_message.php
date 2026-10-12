@@ -167,32 +167,12 @@ class user_message extends Message
      */
 
     /**
-     * set the status to not OK
-     * @return void
-     */
-    function set_not_ok(): void
-    {
-        $this->msg_status = msg_id::NOK;
-
-    }
-
-    /**
-     * set the status to OK
+     * set the status to OK; the setters of a worse status only make the status worse (see Message)
      * @return void
      */
     function set_ok(): void
     {
         $this->msg_status = msg_id::OK;
-
-    }
-
-    /**
-     * set the status to warning
-     * @return void
-     */
-    function set_warning(): void
-    {
-        $this->msg_status = msg_id::WARNING;
 
     }
 
@@ -655,33 +635,11 @@ class user_message extends Message
 
     /**
      * TODO Prio 2 make it protected
-     * @return array with all the translatable messages
-     */
-    protected function get_all_id_messages(): array
-    {
-        return $this->msg_id_lst;
-    }
-
-    /**
-     * TODO Prio 2 make it protected
      * @return array with all the text messages
      */
     protected function get_all_type_messages(): array
     {
         return $this->typ_lst;
-    }
-
-    /**
-     * combine the status of two user messages and assume the worst
-     * TODO Prio 2 make it private
-     * @param user_message|Message $msg_to_add the user messages that should be combined with this user message
-     * @return void
-     */
-    function combine_status(user_message|Message $msg_to_add): void
-    {
-        if (!$msg_to_add->is_ok()) {
-            $this->msg_status = msg_id::NOK;
-        }
     }
 
 }

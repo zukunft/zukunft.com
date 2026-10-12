@@ -26,29 +26,29 @@ BEGIN
          SELECT                     _user_id,_change_action_id,_field_id_share_type_id,_share_type_id,_group_id ;
     INSERT INTO change_values_norm ( user_id, change_action_id, change_field_id,        new_value,     group_id)
          SELECT                     _user_id,_change_action_id,_field_id_protect_id,   _protect_id,   _group_id ;
-    INSERT INTO values ( group_id, user_id, numeric_value, source_id, share_type_id, protect_id,last_update)
-         SELECT         _group_id,_user_id,_numeric_value,_source_id,_share_type_id,_protect_id,Now() ;
+    INSERT INTO values ( group_id, user_id, numeric_value, source_id, excluded, share_type_id, protect_id,last_update)
+         SELECT         _group_id,_user_id,_numeric_value,_source_id,_excluded,_share_type_id,_protect_id,Now() ;
 
 END
 $$ LANGUAGE plpgsql;
 
 PREPARE value_insert_log_115111_call
         (bigint, smallint, smallint, numeric, text, smallint, text, bigint, smallint, smallint, smallint, smallint, smallint, smallint) AS
-    SELECT value_insert_log_115111
-        ($1,$2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14);
+SELECT value_insert_log_115111
+        ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14);
 
 SELECT value_insert_log_115111
        (3::bigint,
         1::smallint,
-        1::smallint,
+        283::smallint,
         3.1415926535898::numeric,
-        '1FajJ2-.4LYK3-..8jId-...I1A-....Yz-..../.-.....Z-.....9-...../+.....A+.....a+....3s+...1Ao+../vLC+.//ZSB+.ZSahL+'::text,
-        2::smallint,
+        '1FajJ2-4LYK3-8jId-I1A-Yz-/.-Z-9-/+A+a+3s+1Ao+/vLC+//ZSB+ZSahL+'::text,
+        284::smallint,
         'The International System of Units'::text,
         1::bigint,
-        5::smallint,
+        287::smallint,
         1::smallint,
+        288::smallint,
         3::smallint,
-        3::smallint,
-        4::smallint,
+        289::smallint,
         2::smallint);

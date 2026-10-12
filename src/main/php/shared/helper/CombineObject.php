@@ -100,10 +100,11 @@ class CombineObject
     }
 
     /**
-     * @return int the database id which is not 0 if the object has been saved
+     * @return int|string the database id which is not 0 if the object has been saved
+     *                    e.g. the compact text key of a value or result (see docs/llm/group_id.md)
      * the internal null value is used to detect if database saving has been tried
      */
-    function id(): int
+    function id(): int|string
     {
         return $this->obj()->id();
     }

@@ -2205,6 +2205,7 @@
   "formulas": [
     {
       "name": "definition of intelligence quotient",
+      "description": "the original ratio IQ of Stern: the mental age reached in a test divided by the actual age of a child, multiplied by 100; modern tests use a deviation score instead",
       "expression": "\"intelligence quotient\" = \"mental age\" / \"chronological age\" * 100",
       "latex": "IQ = \\frac{MA}{CA} \\cdot 100",
       "assigned": [
@@ -2214,6 +2215,7 @@
     },
     {
       "name": "Weber's law",
+      "description": "the smallest change of a stimulus that a person can notice is a constant fraction of the stimulus intensity, e.g. a heavier weight needs a bigger added weight to feel different",
       "expression": "\"just-noticeable difference\" = \"Weber fraction\" * \"stimulus intensity\"",
       "latex": "\\Delta I = k \\cdot I",
       "assigned": [
@@ -2223,6 +2225,7 @@
     },
     {
       "name": "Fechner's law",
+      "description": "the perceived intensity of a stimulus grows with the logarithm of its physical intensity, so equal ratios of intensity feel like equal steps, e.g. the decibel scale of loudness",
       "expression": "\"perceived intensity\" = \"scaling constant\" * log(\"stimulus intensity\" / \"absolute threshold\")",
       "latex": "S = k \\ln\\frac{I}{I_0}",
       "assigned": [
@@ -2231,6 +2234,7 @@
     },
     {
       "name": "Stevens' power law",
+      "description": "the perceived intensity of a stimulus is a power of its physical intensity with an exponent that depends on the sense, e.g. below 1 for brightness and above 1 for electric shock",
       "expression": "\"perceived intensity\" = \"scaling constant\" * \"stimulus intensity\" ^ \"Stevens exponent\"",
       "latex": "\\psi = k\\,I^{a}",
       "assigned": [
@@ -2240,6 +2244,7 @@
     },
     {
       "name": "definition of standard score",
+      "description": "a test result expressed as the number of standard deviations above or below the mean of the reference group, so that results of different tests can be compared",
       "expression": "\"standard score\" = ( \"raw score\" - \"mean\" ) / \"standard deviation\"",
       "latex": "z = \\frac{x - \\mu}{\\sigma}",
       "assigned": [

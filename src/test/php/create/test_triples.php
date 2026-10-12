@@ -368,17 +368,26 @@ class test_triples extends test_objects
         return new triple_ui($trp->api_json());
     }
 
-    static function triple_new_url(user_message_ui $msg): array
+    /**
+     * @return array the url of the empty add triple form with the 'not set' verb preselected
+     */
+    static function triple_new_url(): array
     {
-        $trp_ui = new triple_ui();
-        $trp_ui->set_verb(test_verbs::verb_ui());
-        return $trp_ui->to_url_array($msg);
+        return [url_var::ID => 0, url_var::VERB => verbs::NOT_SET_ID];
     }
 
-    static function triple_add_url(user_message_ui $msg): array
+    /**
+     * @return array the url of the added test triple, which links the two reserved test words
+     */
+    static function triple_add_url(): array
     {
-        $trp_ui = self::triple_add_ui();
-        return $trp_ui->to_url_array($msg);
+        return [
+            url_var::ID => 0,
+            url_var::NAME => triple_names::SYSTEM_TEST_ADD,
+            url_var::PHRASE_FROM => word_names::TEST_ADD_ID,
+            url_var::VERB => verbs::PART_ID,
+            url_var::PHRASE_TO => word_names::TEST_ADD_TO_ID,
+        ];
     }
 
     /**
@@ -388,10 +397,10 @@ class test_triples extends test_objects
      *
      * @return array the triple url parameters with the resolved from and to phrase ids
      */
-    function triple_add_url_resolved(user_message_ui $msg): array
+    function triple_add_url_resolved(): array
     {
         $t_wrd = new test_words($this->env);
-        $url_arr = self::triple_add_url($msg);
+        $url_arr = self::triple_add_url();
         $url_arr[url_var::PHRASE_FROM]
             = $t_wrd->word_id_or_fixed(word_names::TEST_ADD, word_names::TEST_ADD_ID);
         $url_arr[url_var::PHRASE_TO]
@@ -954,6 +963,32 @@ class test_triples extends test_objects
     }
 
     /**
+     * @return triple_ui the "global warming" row phrase of the global issues table
+     */
+    function global_warming_ui(): triple_ui
+    {
+        return $this->page_ui($this->global_warming());
+    }
+
+    /**
+     * @return triple_ui the "global warming reason" page phrase of the reasons table, whose
+     *         from side "reason" heads the row column of that table
+     */
+    function global_warming_reason_ui(): triple_ui
+    {
+        return $this->page_ui($this->global_warming_reason());
+    }
+
+    /**
+     * @return triple_ui the "global warming solution" page phrase of the solutions table, whose
+     *         from side "solution" heads the row column of that table
+     */
+    function global_warming_solution_ui(): triple_ui
+    {
+        return $this->page_ui($this->global_warming_solution());
+    }
+
+    /**
      * @return triple_ui the "city of Zurich" page phrase of the related values table
      */
     function zh_city_ui(): triple_ui
@@ -995,6 +1030,38 @@ class test_triples extends test_objects
     }
 
     /**
+     * @return triple "x is symbol for factor" of scaling.json, which defines the symbol that is
+     *                shown behind a number with a factor phrase (see phrase::number_symbol)
+     */
+    function factor_symbol(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::FACTOR_SYMBOL_ID, triple_names::FACTOR_SYMBOL);
+        $trp->set_from($t_wrd->word_factor_symbol()->phrase());
+        $trp->set_verb($t_vrb->verb_is_symbol());
+        $trp->set_to($t_wrd->word_factor()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "% is symbol for percent" of scaling.json, which defines the symbol that is
+     *                shown behind a percent number (see sandbox_value::percent_symbol)
+     */
+    function percent_symbol(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::PERCENT_SYMBOL_ID, triple_names::PERCENT_SYMBOL);
+        $trp->set_from($t_wrd->word_percent_symbol()->phrase());
+        $trp->set_verb($t_vrb->verb_is_symbol());
+        $trp->set_to($t_wrd->word_percent()->phrase());
+        return $trp;
+    }
+
+    /**
      * @return triple "mio is symbol for million" used to test that a symbol shows the
      *         description of the word it stands for as its tooltip
      */
@@ -1007,6 +1074,36 @@ class test_triples extends test_objects
         $trp->set_from($t_wrd->word_mio_symbol()->phrase());
         $trp->set_verb($t_vrb->verb_is_symbol());
         $trp->set_to($t_wrd->word_million()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "m is symbol for million", the second symbol of million next to "mio"
+     */
+    function m_symbol(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::M_SYMBOL_ID, triple_names::M_SYMBOL);
+        $trp->set_from($t_wrd->word_m_symbol()->phrase());
+        $trp->set_verb($t_vrb->verb_is_symbol());
+        $trp->set_to($t_wrd->word_million()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "€ is symbol for Euro", the symbol shown behind a number in euro
+     */
+    function euro_sign_symbol(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::EURO_SIGN_SYMBOL_ID, triple_names::EURO_SIGN_SYMBOL);
+        $trp->set_from($t_wrd->word_euro_sign()->phrase());
+        $trp->set_verb($t_vrb->verb_is_symbol());
+        $trp->set_to($t_wrd->euro()->phrase());
         return $trp;
     }
 
@@ -1308,6 +1405,38 @@ class test_triples extends test_objects
     }
 
     /**
+     * the links of the problems beside the first five to "global problem", so that the start
+     * page can show every problem of solution_prio.json
+     *
+     * @return array the triples that "<problem>" "is a" "global problem"
+     */
+    function other_problem_links(): array
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $links = [
+            [triple_names::DISINFORMATION_PROBLEM_ID, $t_wrd->word_disinformation()->phrase()],
+            [triple_names::WEALTH_CONCENTRATION_PROBLEM_ID, $this->wealth_concentration()->phrase()],
+            [triple_names::MARKET_POWER_PROBLEM_ID, $this->market_power()->phrase()],
+            [triple_names::BIASED_INFORMATION_PROBLEM_ID, $this->biased_information()->phrase()],
+            [triple_names::CITIZEN_PARTICIPATION_PROBLEM_ID, $this->citizen_participation()->phrase()],
+            [triple_names::GDP_MISMEASUREMENT_PROBLEM_ID, $this->gdp_mismeasurement()->phrase()],
+            [triple_names::PROPRIETARY_SOFTWARE_PROBLEM_ID, $this->proprietary_software()->phrase()],
+            [triple_names::BLACK_BOX_AI_PROBLEM_ID, $this->black_box_ai()->phrase()],
+        ];
+        $result = [];
+        foreach ($links as [$id, $problem]) {
+            $trp = new triple($this->env->usr1);
+            $trp->set($id);
+            $trp->set_from($problem);
+            $trp->set_verb($t_vrb->verb_is());
+            $trp->set_to($this->global_problem()->phrase());
+            $result[] = $trp;
+        }
+        return $result;
+    }
+
+    /**
      * @return triple "mayor column (system)" - the tier of the columns shown on every screen
      */
     function column_mayor(): triple
@@ -1328,6 +1457,555 @@ class test_triples extends test_objects
     }
 
     /**
+     * @return triple "minor column (system)" - the tier of the columns shown on a wide screen only
+     */
+    function column_minor(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::SYSTEM_COLUMN_MINOR_ID, triple_names::SYSTEM_COLUMN_MINOR);
+        return $trp;
+    }
+
+    /**
+     * @return triple "climate gas emissions" - the reason of global warming
+     */
+    function climate_gas_emissions(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::CLIMATE_GAS_EMISSIONS_ID, triple_names::CLIMATE_GAS_EMISSIONS);
+        return $trp;
+    }
+
+    /**
+     * @return triple that "climate gas emissions" "is a" "reason", which puts it into the reason column
+     */
+    function climate_gas_emissions_reason(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::CLIMATE_GAS_EMISSIONS_REASON_ID);
+        $trp->set_from($this->climate_gas_emissions()->phrase());
+        $trp->set_verb($t_vrb->verb_is());
+        $trp->set_to($t_wrd->word_reason()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "global warming reason" - the reason of global warming, whose table page lists the reasons
+     */
+    function global_warming_reason(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::GLOBAL_WARMING_REASON_ID, triple_names::GLOBAL_WARMING_REASON);
+        $trp->set_from($t_wrd->word_reason()->phrase());
+        $trp->set_verb($t_vrb->verb_of());
+        $trp->set_to($this->global_warming()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple that "climate gas emissions" "is a" "global warming reason", which lists it on the reasons page
+     */
+    function climate_gas_emissions_global_warming_reason(): triple
+    {
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::CLIMATE_GAS_EMISSIONS_GLOBAL_WARMING_REASON_ID,
+            triple_names::CLIMATE_GAS_EMISSIONS_GLOBAL_WARMING_REASON);
+        $trp->set_from($this->climate_gas_emissions()->phrase());
+        $trp->set_verb($t_vrb->verb_is());
+        $trp->set_to($this->global_warming_reason()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "heat mortality" - a reason of global warming with a smaller loss than the climate gas emissions
+     */
+    function heat_mortality(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::HEAT_MORTALITY_ID, triple_names::HEAT_MORTALITY);
+        return $trp;
+    }
+
+    /**
+     * @return triple that "heat mortality" "is a" "reason", which puts it into the reason column
+     */
+    function heat_mortality_reason(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::HEAT_MORTALITY_REASON_ID, triple_names::HEAT_MORTALITY_REASON);
+        $trp->set_from($this->heat_mortality()->phrase());
+        $trp->set_verb($t_vrb->verb_is());
+        $trp->set_to($t_wrd->word_reason()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple that "heat mortality" "is a" "global warming reason", which lists it on the reasons page
+     */
+    function heat_mortality_global_warming_reason(): triple
+    {
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::HEAT_MORTALITY_GLOBAL_WARMING_REASON_ID,
+            triple_names::HEAT_MORTALITY_GLOBAL_WARMING_REASON);
+        $trp->set_from($this->heat_mortality()->phrase());
+        $trp->set_verb($t_vrb->verb_is());
+        $trp->set_to($this->global_warming_reason()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "climate adaptation" - a solution of global warming beside the reduction of the emissions
+     */
+    function climate_adaptation(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::CLIMATE_ADAPTATION_ID, triple_names::CLIMATE_ADAPTATION);
+        return $trp;
+    }
+
+    /**
+     * @return triple that "climate adaptation" "is a" "solution", which puts it into the solution column
+     */
+    function climate_adaptation_solution(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::CLIMATE_ADAPTATION_SOLUTION_ID, triple_names::CLIMATE_ADAPTATION_SOLUTION);
+        $trp->set_from($this->climate_adaptation()->phrase());
+        $trp->set_verb($t_vrb->verb_is());
+        $trp->set_to($t_wrd->solution()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "global warming solution" - the solution of global warming, whose table page lists the solutions
+     */
+    function global_warming_solution(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::GLOBAL_WARMING_SOLUTION_ID, triple_names::GLOBAL_WARMING_SOLUTION);
+        $trp->set_from($t_wrd->solution()->phrase());
+        $trp->set_verb($t_vrb->verb_of());
+        $trp->set_to($this->global_warming()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple that "reduce climate gas emissions" "is a" "global warming solution"
+     */
+    function reduce_emissions_global_warming_solution(): triple
+    {
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::REDUCE_EMISSIONS_GLOBAL_WARMING_SOLUTION_ID,
+            triple_names::REDUCE_EMISSIONS_GLOBAL_WARMING_SOLUTION);
+        $trp->set_from($this->reduce_emissions()->phrase());
+        $trp->set_verb($t_vrb->verb_is());
+        $trp->set_to($this->global_warming_solution()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple that "climate adaptation" "is a" "global warming solution"
+     */
+    function climate_adaptation_global_warming_solution(): triple
+    {
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::CLIMATE_ADAPTATION_GLOBAL_WARMING_SOLUTION_ID,
+            triple_names::CLIMATE_ADAPTATION_GLOBAL_WARMING_SOLUTION);
+        $trp->set_from($this->climate_adaptation()->phrase());
+        $trp->set_verb($t_vrb->verb_is());
+        $trp->set_to($this->global_warming_solution()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "column reason" that defines "reason" as a main table column
+     */
+    function column_reason(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::COLUMN_REASON_ID, triple_names::COLUMN_REASON);
+        $trp->set_from($t_wrd->word_reason()->phrase());
+        $trp->set_verb($t_vrb->verb_can_be());
+        $trp->set_to($this->column_main()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "potential loss of reason" - the loss that a reason of a problem causes
+     */
+    function potential_loss_of_reason(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::POTENTIAL_LOSS_OF_REASON_ID, triple_names::POTENTIAL_LOSS_OF_REASON);
+        $trp->set_from($this->potential_loss()->phrase());
+        $trp->set_verb($t_vrb->verb_of());
+        $trp->set_to($t_wrd->word_reason()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "column potential loss of reason" that defines the loss of the reason as a main table column
+     */
+    function column_potential_loss_of_reason(): triple
+    {
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::COLUMN_POTENTIAL_LOSS_OF_REASON_ID, triple_names::COLUMN_POTENTIAL_LOSS_OF_REASON);
+        $trp->set_from($this->potential_loss_of_reason()->phrase());
+        $trp->set_verb($t_vrb->verb_can_be());
+        $trp->set_to($this->column_main()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple that puts the reason column behind the problem column and its explaining columns
+     */
+    function column_reason_after_problem(): triple
+    {
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::COLUMN_REASON_AFTER_PROBLEM_ID);
+        $trp->set_from($this->column_reason()->phrase());
+        $trp->set_verb($t_vrb->verb_before());
+        $trp->set_to($this->column_problem()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple that puts the loss of the reason directly behind the reason column
+     */
+    function column_loss_of_reason_explains_reason(): triple
+    {
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::COLUMN_LOSS_OF_REASON_EXPLAINS_REASON_ID);
+        $trp->set_from($this->column_potential_loss_of_reason()->phrase());
+        $trp->set_verb($t_vrb->verb_after());
+        $trp->set_to($this->column_reason()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "chart type (system)" - the keyword the chart type tiers are built from
+     */
+    function chart_type(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::SYSTEM_CHART_TYPE_ID, triple_names::SYSTEM_CHART_TYPE);
+        return $trp;
+    }
+
+    /**
+     * @return triple "default chart type (system)" - the tier of the charts shown if the table is shown as a chart
+     */
+    function chart_type_default(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::SYSTEM_CHART_TYPE_DEFAULT_ID, triple_names::SYSTEM_CHART_TYPE_DEFAULT);
+        $trp->set_from($this->chart_type()->phrase());
+        $trp->set_verb($t_vrb->verb_can_be());
+        $trp->set_to($t_wrd->word_default()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "alternative chart type (system)" - the tier of the charts the reader can select instead
+     */
+    function chart_type_alternative(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::SYSTEM_CHART_TYPE_ALTERNATIVE_ID, triple_names::SYSTEM_CHART_TYPE_ALTERNATIVE);
+        $trp->set_from($this->chart_type()->phrase());
+        $trp->set_verb($t_vrb->verb_can_be());
+        $trp->set_to($t_wrd->word_alternative()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "initial effort" - the work to implement a solution the first time, an x axis of the ranking charts
+     */
+    function initial_effort(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::INITIAL_EFFORT_ID, triple_names::INITIAL_EFFORT);
+        return $trp;
+    }
+
+    /**
+     * @return triple "loss reduction" - the share of the loss of a problem that its solution avoids
+     */
+    function loss_reduction(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::LOSS_REDUCTION_ID, triple_names::LOSS_REDUCTION);
+        return $trp;
+    }
+
+    /**
+     * @return triple "reward ratio" - the avoided loss per person year of initial effort
+     */
+    function reward_ratio(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::REWARD_RATIO_ID, triple_names::REWARD_RATIO);
+        return $trp;
+    }
+
+    /**
+     * @return triple "person year" - the measure unit of the initial effort
+     */
+    function person_year(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::PERSON_YEAR_ID, triple_names::PERSON_YEAR);
+        $trp->set_type(phrase_types::MEASURE, new user_message($this->env->usr1));
+        return $trp;
+    }
+
+    /**
+     * @return triple "marginal column (system)" - the tier of the columns shown by the full table only
+     */
+    function column_marginal(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::SYSTEM_COLUMN_MARGINAL_ID, triple_names::SYSTEM_COLUMN_MARGINAL);
+        return $trp;
+    }
+
+    /**
+     * the definitions of the minor and the marginal columns of the start page ranking, as
+     * solution_prio.json defines them: the loss reduction and the initial effort are minor
+     * columns and the reward ratio a marginal column
+     *
+     * @return array the triples "column <phrase>" that link each phrase to its tier
+     */
+    function column_minor_and_marginal_definitions(): array
+    {
+        $t_vrb = new test_verbs($this->env);
+        $definitions = [
+            [triple_names::COLUMN_LOSS_REDUCTION_ID, triple_names::COLUMN_LOSS_REDUCTION, $this->loss_reduction(), $this->column_minor()],
+            [triple_names::COLUMN_INITIAL_EFFORT_ID, triple_names::COLUMN_INITIAL_EFFORT, $this->initial_effort(), $this->column_minor()],
+            [triple_names::COLUMN_REWARD_RATIO_ID, triple_names::COLUMN_REWARD_RATIO, $this->reward_ratio(), $this->column_marginal()],
+        ];
+        $result = [];
+        foreach ($definitions as [$id, $name, $column, $tier]) {
+            $trp = new triple($this->env->usr1);
+            $trp->set($id, $name);
+            $trp->set_from($column->phrase());
+            $trp->set_verb($t_vrb->verb_can_be());
+            $trp->set_to($tier->phrase());
+            $result[] = $trp;
+        }
+        return $result;
+    }
+
+    /**
+     * @return triple "range bars of potential loss" - the chart of the loss of each problem
+     */
+    function range_bars_of_loss(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::RANGE_BARS_OF_LOSS_ID, triple_names::RANGE_BARS_OF_LOSS);
+        $trp->set_from($t_wrd->word_range_bars()->phrase());
+        $trp->set_verb($t_vrb->verb_of());
+        $trp->set_to($this->potential_loss()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "potential gain and initial effort" - the two columns a chart plots against each other
+     */
+    function gain_and_effort(): triple
+    {
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::GAIN_AND_EFFORT_ID, triple_names::GAIN_AND_EFFORT);
+        $trp->set_from($this->potential_gain()->phrase());
+        $trp->set_verb($t_vrb->verb_and());
+        $trp->set_to($this->initial_effort()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "scatter plot of potential gain and initial effort" - the chart of the solutions
+     */
+    function scatter_of_gain_and_effort(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::SCATTER_OF_GAIN_AND_EFFORT_ID, triple_names::SCATTER_OF_GAIN_AND_EFFORT);
+        $trp->set_from($t_wrd->word_scatter_plot()->phrase());
+        $trp->set_verb($t_vrb->verb_of());
+        $trp->set_to($this->gain_and_effort()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple that the range bars of the loss are a default chart of the ranking
+     */
+    function chart_range_bars_of_loss(): triple
+    {
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::CHART_RANGE_BARS_OF_LOSS_ID, triple_names::CHART_RANGE_BARS_OF_LOSS);
+        $trp->set_from($this->range_bars_of_loss()->phrase());
+        $trp->set_verb($t_vrb->verb_can_be());
+        $trp->set_to($this->chart_type_default()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple that the scatter plot of the gain against the effort is a default chart of the ranking
+     */
+    function chart_scatter_of_gain_and_effort(): triple
+    {
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::CHART_SCATTER_OF_GAIN_AND_EFFORT_ID, triple_names::CHART_SCATTER_OF_GAIN_AND_EFFORT);
+        $trp->set_from($this->scatter_of_gain_and_effort()->phrase());
+        $trp->set_verb($t_vrb->verb_can_be());
+        $trp->set_to($this->chart_type_default()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "mayor chart type (system)" - the tier of the charts of a table with the mayor columns only
+     */
+    function chart_type_mayor(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::SYSTEM_CHART_TYPE_MAYOR_ID, triple_names::SYSTEM_CHART_TYPE_MAYOR);
+        $trp->set_from($this->chart_type()->phrase());
+        $trp->set_verb($t_vrb->verb_can_be());
+        $trp->set_to($t_wrd->word_mayor()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "potential gain and potential loss" - the two numbers of the leverage plot, the gain up
+     */
+    function gain_and_loss(): triple
+    {
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::GAIN_AND_LOSS_ID, triple_names::GAIN_AND_LOSS);
+        $trp->set_from($this->potential_gain()->phrase());
+        $trp->set_verb($t_vrb->verb_and());
+        $trp->set_to($this->potential_loss()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "leverage plot of potential gain and potential loss" - the chart of the problems
+     */
+    function leverage_of_gain_and_loss(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::LEVERAGE_OF_GAIN_AND_LOSS_ID, triple_names::LEVERAGE_OF_GAIN_AND_LOSS);
+        $trp->set_from($t_wrd->word_leverage_plot()->phrase());
+        $trp->set_verb($t_vrb->verb_of());
+        $trp->set_to($this->gain_and_loss()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple that the leverage plot is the chart of the ranking with the mayor columns only
+     */
+    function chart_leverage_of_gain_and_loss(): triple
+    {
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::CHART_LEVERAGE_OF_GAIN_AND_LOSS_ID, triple_names::CHART_LEVERAGE_OF_GAIN_AND_LOSS);
+        $trp->set_from($this->leverage_of_gain_and_loss()->phrase());
+        $trp->set_verb($t_vrb->verb_can_be());
+        $trp->set_to($this->chart_type_mayor()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "sort order (system)" - the keyword of the sort order tiers
+     */
+    function sort_order(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::SYSTEM_SORT_ORDER_ID, triple_names::SYSTEM_SORT_ORDER);
+        return $trp;
+    }
+
+    /**
+     * @return triple "default sort order (system)" - the tier of the orders used if the url names none
+     */
+    function sort_order_default(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::SYSTEM_SORT_ORDER_DEFAULT_ID, triple_names::SYSTEM_SORT_ORDER_DEFAULT);
+        $trp->set_from($this->sort_order()->phrase());
+        $trp->set_verb($t_vrb->verb_can_be());
+        $trp->set_to($t_wrd->word_default()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "numeric descending of potential loss" - the rows by the loss, the biggest on top
+     */
+    function numeric_desc_of_loss(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::NUMERIC_DESC_OF_LOSS_ID, triple_names::NUMERIC_DESC_OF_LOSS);
+        $trp->set_from($t_wrd->word_numeric_descending()->phrase());
+        $trp->set_verb($t_vrb->verb_of());
+        $trp->set_to($this->potential_loss()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple that the biggest loss on top is the default order of the ranking
+     */
+    function sort_numeric_desc_of_loss(): triple
+    {
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::SORT_NUMERIC_DESC_OF_LOSS_ID, triple_names::SORT_NUMERIC_DESC_OF_LOSS);
+        $trp->set_from($this->numeric_desc_of_loss()->phrase());
+        $trp->set_verb($t_vrb->verb_can_be());
+        $trp->set_to($this->sort_order_default()->phrase());
+        return $trp;
+    }
+
+    /**
      * @return triple "column problem (high prio)" that defines "problem" as a mayor table column
      */
     function column_problem(): triple
@@ -1343,6 +2021,22 @@ class test_triples extends test_objects
     }
 
     /**
+     * @return triple "column solution (high prio) is next main column after column reason"
+     */
+    function column_solution_after_reason(): triple
+    {
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::COLUMN_SOLUTION_AFTER_REASON_ID);
+        $trp->set_from($this->column_solution()->phrase());
+        $trp->set_verb($t_vrb->verb_before());
+        $trp->set_to($this->column_reason()->phrase());
+        return $trp;
+    }
+
+    /**
+     * the chain of a table without the reason column, which no import file contains
+     *
      * @return triple "column solution (high prio) is next main column after column problem (high prio)"
      */
     function column_solution_after_problem(): triple
@@ -1432,7 +2126,7 @@ class test_triples extends test_objects
     /**
      * the cost column explains the loss column, so it is one tier below the columns it explains
      *
-     * @return triple "column cost" that defines "cost" as a main table column
+     * @return triple "column cost" that defines "cost" as a minor table column
      */
     function column_cost(): triple
     {
@@ -1442,7 +2136,7 @@ class test_triples extends test_objects
         $trp->set(triple_names::COLUMN_COST_ID, triple_names::COLUMN_COST);
         $trp->set_from($t_wrd->word_cost()->phrase());
         $trp->set_verb($t_vrb->verb_can_be());
-        $trp->set_to($this->column_main()->phrase());
+        $trp->set_to($this->column_minor()->phrase());
         return $trp;
     }
 
@@ -1477,8 +2171,8 @@ class test_triples extends test_objects
     }
 
     /**
-     * @return triple "potential loss" - the loss that a problem can cause, which the values name
-     *         with the two words "potential" and "loss"
+     * @return triple "potential loss" - the loss that a problem can cause, the measure of the
+     *         loss values of the start page (see solution_prio.json)
      */
     function potential_loss(): triple
     {
@@ -1493,7 +2187,23 @@ class test_triples extends test_objects
     }
 
     /**
-     * @return triple "gram per kWh", a unit triple typed "measure" like its two words, so that
+     * @return triple "potential gain" - the gain that a solution can reach, the measure of the
+     *         gain values of the start page (see solution_prio.json)
+     */
+    function potential_gain(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::POTENTIAL_GAIN_ID, triple_names::POTENTIAL_GAIN);
+        $trp->set_from($t_wrd->word_gain()->phrase());
+        $trp->set_verb($t_vrb->verb_kind_of());
+        $trp->set_to($t_wrd->word_potential()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "gram per kWh", a unit triple typed "measure unit" like its two words, so that
      *                a table header shows it behind the "in" (see pv_switzerland_co2.json)
      */
     function gram_per_kwh(): triple
@@ -1521,6 +2231,48 @@ class test_triples extends test_objects
         $trp->set_from($this->potential_loss()->phrase());
         $trp->set_verb($t_vrb->verb_can_be());
         $trp->set_to($this->column_mayor()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "column potential gain" that defines "potential gain" as a mayor table column
+     */
+    function column_potential_gain(): triple
+    {
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::COLUMN_POTENTIAL_GAIN_ID, triple_names::COLUMN_POTENTIAL_GAIN);
+        $trp->set_from($this->potential_gain()->phrase());
+        $trp->set_verb($t_vrb->verb_can_be());
+        $trp->set_to($this->column_mayor()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "column potential loss is explaining column for column problem (high prio)"
+     */
+    function column_potential_loss_explains_problem(): triple
+    {
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::COLUMN_POTENTIAL_LOSS_EXPLAINS_PROBLEM_ID);
+        $trp->set_from($this->column_potential_loss()->phrase());
+        $trp->set_verb($t_vrb->verb_after());
+        $trp->set_to($this->column_problem()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "column potential gain is explaining column for column solution (high prio)"
+     */
+    function column_potential_gain_explains_solution(): triple
+    {
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::COLUMN_POTENTIAL_GAIN_EXPLAINS_SOLUTION_ID);
+        $trp->set_from($this->column_potential_gain()->phrase());
+        $trp->set_verb($t_vrb->verb_after());
+        $trp->set_to($this->column_solution()->phrase());
         return $trp;
     }
 
@@ -1619,6 +2371,90 @@ class test_triples extends test_objects
         $trp = new triple($this->env->usr1);
         $trp->set(triple_names::SPENDING_SOLUTION_ID);
         $trp->set_from($t_wrd->word_spending()->phrase());
+        $trp->set_verb($t_vrb->verb_is());
+        $trp->set_to($t_wrd->solution()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple that "basic income" "is a" "solution"
+     */
+    function basic_income_solution(): triple
+    {
+        return $this->solution_link($this->basic_income(), triple_names::BASIC_INCOME_SOLUTION_ID);
+    }
+
+    /**
+     * @return triple that "platform regulation" "is a" "solution"
+     */
+    function platform_regulation_solution(): triple
+    {
+        return $this->solution_link($this->platform_regulation(), triple_names::PLATFORM_REGULATION_SOLUTION_ID);
+    }
+
+    /**
+     * @return triple that "market share tax" "is a" "solution"
+     */
+    function market_share_tax_solution(): triple
+    {
+        return $this->solution_link($this->market_share_tax(), triple_names::MARKET_SHARE_TAX_SOLUTION_ID);
+    }
+
+    /**
+     * @return triple that "Delphi method" "is a" "solution"
+     */
+    function delphi_method_solution(): triple
+    {
+        return $this->solution_link($this->delphi_method(), triple_names::DELPHI_METHOD_SOLUTION_ID);
+    }
+
+    /**
+     * @return triple that "public AI" "is a" "solution"
+     */
+    function public_ai_solution(): triple
+    {
+        return $this->solution_link($this->public_ai(), triple_names::PUBLIC_AI_SOLUTION_ID);
+    }
+
+    /**
+     * @return triple that "fluid democracy" "is a" "solution"
+     */
+    function fluid_democracy_solution(): triple
+    {
+        return $this->solution_link($this->fluid_democracy(), triple_names::FLUID_DEMOCRACY_SOLUTION_ID);
+    }
+
+    /**
+     * @return triple that "gross domestic usage" "is a" "solution"
+     */
+    function gross_domestic_usage_solution(): triple
+    {
+        return $this->solution_link($this->gross_domestic_usage(), triple_names::GROSS_DOMESTIC_USAGE_SOLUTION_ID);
+    }
+
+    /**
+     * @return triple that "free software" "is a" "solution"
+     */
+    function free_software_solution(): triple
+    {
+        return $this->solution_link($this->free_software(), triple_names::FREE_SOFTWARE_SOLUTION_ID);
+    }
+
+    /**
+     * the triple that links a solution of the start page ranking to "solution", so that the
+     * table can name it in the solution column of the problem row
+     *
+     * @param triple $solution the solution of a problem e.g. "basic income"
+     * @param int $id the fixed database id of the link triple
+     * @return triple that the solution "is a" "solution"
+     */
+    private function solution_link(triple $solution, int $id): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set($id);
+        $trp->set_from($solution->phrase());
         $trp->set_verb($t_vrb->verb_is());
         $trp->set_to($t_wrd->solution()->phrase());
         return $trp;

@@ -250,15 +250,15 @@ class sandbox_list_named extends sandbox_list
 
     /**
      * add a named object to the list that does not yet have an id but has a name
-     * @param sandbox_named|triple|phrase|term|IdObject|null $to_add the named user sandbox object that should be added
+     * @param sandbox_named|triple|phrase|term|IdObject|TextIdObject|null $to_add the named user sandbox object that should be added
      * @param bool $allow_duplicates true if the list can contain the same entry twice e.g. for the components
      * @param Message $msg to report which entry is double
      * @returns bool true if the object has been added
      */
     function add_by_key(
-        sandbox_named|triple|phrase|term|IdObject|null $to_add,
-        bool                                           $allow_duplicates = false,
-        Message                                        $msg = new Message()
+        sandbox_named|triple|phrase|term|IdObject|TextIdObject|null $to_add,
+        bool                                                        $allow_duplicates = false,
+        Message                                                     $msg = new Message()
     ): bool
     {
         if (!in_array($to_add->name(), array_keys($this->name_pos_lst())) or $allow_duplicates) {
@@ -391,16 +391,17 @@ class sandbox_list_named extends sandbox_list
      * from the backend via the api and add them to this list
      * the frontend (api based) counterpart of the backend load_by_pattern / load_like
      *
+     * @param user_message $msg with the requesting user for whom the named objects are selected
      * @param string $pattern the text part used to select the named objects e.g. "sec" to find "second"
      * @return bool true if at least one matching object has been received from the backend
      */
-    function get_by_pattern(string $pattern = '%'): bool
+    function get_by_pattern(user_message $msg, string $pattern = '%'): bool
     {
         $result = false;
 
         $data = array(url_var::PATTERN => $pattern);
         $rest = new rest_call();
-        $json_body = $rest->api_get($this::class, $data);
+        $json_body = $rest->api_get($this::class, $data, $msg);
         $this->api_mapper($json_body);
         if (!$this->is_empty()) {
             $result = true;

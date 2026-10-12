@@ -30,6 +30,7 @@ BEGIN
 
     UPDATE values
        SET source_id     = _source_id,
+           excluded      = _excluded,
            share_type_id = _share_type_id,
            protect_id    = _protect_id,
            last_update   = Now()
@@ -46,18 +47,18 @@ SELECT value_update_log_0014222
 SELECT value_update_log_0014222
        (3::bigint,
         1::smallint,
-        2::smallint,
+        284::smallint,
         'The International System of Units'::text,
         1::bigint,
         null::text,
         0::bigint,
-        5::smallint,
+        287::smallint,
         1::smallint,
         null::smallint,
-        3::smallint,
+        288::smallint,
         3::smallint,
         null::smallint,
-        4::smallint,
+        289::smallint,
         2::smallint,
         null::smallint,
-        '1FajJ2-.4LYK3-..8jId-...I1A-....Yz-..../.-.....Z-.....9-...../+.....A+.....a+....3s+...1Ao+../vLC+.//ZSB+.ZSahL+'::text);
+        '1FajJ2-4LYK3-8jId-I1A-Yz-/.-Z-9-/+A+a+3s+1Ao+/vLC+//ZSB+ZSahL+'::text);

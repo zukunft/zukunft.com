@@ -84,6 +84,11 @@ class view_write_url_tests extends view_url_tests
         $msk = new view($t->usr1);
         // only the view added by this workflow, because the other test views of views::TEST_VIEWS
         // are created and removed by the view write tests
+        // the change log entries go first, because an entry must never point to a deleted test row
+        // (see docs/llm/testing.md) and because the change log is shown on the view page: without
+        // this the entries of a previous run stay in the database and the workflow page snapshots
+        // change with every run
+        $t->cleanup_change_log($msk, [views::TEST_ADD_NAME]);
         $t->write_named_cleanup($msk, views::TEST_ADD_NAME);
         $t->write_named_cleanup_one($msk, $t->usr_system, views::TEST_ADD_NAME);
     }

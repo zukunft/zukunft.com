@@ -44,8 +44,12 @@ include_once html_paths::SHARED_TYPES . 'api_type_list.php';
 include_once html_paths::SHARED . 'api.php';
 include_once html_paths::SHARED . 'url_var.php';
 include_once html_paths::SHARED . 'json_fields.php';
+include_once html_paths::SHARED_ENUM . 'messages.php';
+include_once html_paths::HTML . 'rest_call.php';
 
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\html\rest_call;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
@@ -59,6 +63,9 @@ use Exception;
 class job extends db_object
 {
 
+    // the start of the html form name of a job change button
+    const string ACTION_FORM_PREFIX = 'job_';
+
     /*
      * object vars
      */
@@ -67,6 +74,7 @@ class job extends db_object
     private ?DateTime $start_time;
     private ?DateTime $end_time;
     private int $user_id;
+    public string $user_name = '';
     public string $type;
     private string $status;
     private int $priority;
@@ -101,7 +109,7 @@ class job extends db_object
         $start_time = null;
         if (array_key_exists(json_fields::TIME_START, $json_array)) {
             try {
-                $request_timestamp = new DateTime($json_array[json_fields::TIME_START]);
+                $start_time = new DateTime($json_array[json_fields::TIME_START]);
             } catch (Exception $e) {
                 $msg->add_error_text('Error converting system log timestamp ' . $json_array[json_fields::TIME_START]
                     . ' because ' . $e->getMessage());
@@ -111,7 +119,7 @@ class job extends db_object
         $end_time = null;
         if (array_key_exists(json_fields::TIME_END, $json_array)) {
             try {
-                $request_timestamp = new DateTime($json_array[json_fields::TIME_END]);
+                $end_time = new DateTime($json_array[json_fields::TIME_END]);
             } catch (Exception $e) {
                 $msg->add_error_text('Error converting system log timestamp ' . $json_array[json_fields::TIME_END]
                     . ' because ' . $e->getMessage());
@@ -137,6 +145,9 @@ class job extends db_object
             $this->set_priority($json_array[json_fields::PRIORITY]);
         } else {
             $this->set_priority(0);
+        }
+        if (array_key_exists(json_fields::USER_NAME, $json_array)) {
+            $this->user_name = $json_array[json_fields::USER_NAME];
         }
         return $msg->is_ok();
     }
@@ -211,6 +222,54 @@ class job extends db_object
         return $this->priority;
     }
 
+    function user_name(): string
+    {
+        return $this->user_name;
+    }
+
+    /**
+     * @return bool true if the job is not yet completed, so its priority can be changed and it can be cancelled;
+     *              a completed, failed or cancelled job always has an end time (see job_runner::run_job)
+     */
+    function is_open(): bool
+    {
+        return $this->end_time() === null;
+    }
+
+
+    /*
+     * modify
+     */
+
+    /**
+     * change the priority of this job or cancel it via the api, whose backend checks that the requesting user may
+     * do the change: the user who has requested the job can downgrade or cancel it, an admin can also upgrade it
+     *
+     * @param string $action the job action e.g. url_var::ACTION_JOB_CANCEL
+     * @param user_message $msg the frontend message with the requesting user to report why the change failed
+     * @return bool true if the job has been changed
+     */
+    function change(string $action, user_message $msg): bool
+    {
+        // a database change without a requesting user on the message is never written
+        // (docs/llm/state-and-messages.md)
+        if ($msg->usr == null) {
+            $msg->add(msg_id::USER_MISSING, [msg_id::VAR_NAME => $this->dsp_id()]);
+        } else {
+            $rest = new rest_call();
+            $data = [
+                json_fields::ID => $this->id(),
+                json_fields::ACTION => $action,
+                json_fields::USER_ID => $msg->usr->id()
+            ];
+            $json_body = $rest->api_put(self::class, $data);
+            if (array_key_exists(json_fields::MSG, $json_body)) {
+                $msg->add(msg_id::API_MESSAGE, [msg_id::VAR_JSON_TEXT => $json_body[json_fields::MSG]]);
+            }
+        }
+        return $msg->is_ok();
+    }
+
 
     /*
      * base elements
@@ -237,8 +296,7 @@ class job extends db_object
         } else {
             $result .= $html->td('');
         }
-        // TODO show the username instead of the id
-        $result .= $html->td($this->user_id());
+        $result .= $html->td($this->user_name());
         $result .= $html->td($this->type());
         $result .= $html->td($this->status());
         $result .= $html->td($this->priority());
@@ -246,9 +304,28 @@ class job extends db_object
     }
 
     /**
+     * @param bool $is_admin true if the requesting user is an admin, who can also upgrade the job
+     * @param int $msk_id the id of the shown view, so that the button returns to this view
+     * @returns string the html code of the job as table cells followed by the buttons to change an open job
+     */
+    function display_with_actions(bool $is_admin, int $msk_id): string
+    {
+        $html = new html_base();
+        $buttons = '';
+        if ($this->is_open()) {
+            if ($is_admin) {
+                $buttons .= $this->action_form(url_var::ACTION_JOB_UPGRADE, msg_id::SYSTEM_BUTTON_JOB_UPGRADE, $msk_id);
+            }
+            $buttons .= $this->action_form(url_var::ACTION_JOB_DOWNGRADE, msg_id::SYSTEM_BUTTON_JOB_DOWNGRADE, $msk_id);
+            $buttons .= $this->action_form(url_var::ACTION_JOB_CANCEL, msg_id::SYSTEM_BUTTON_JOB_CANCEL, $msk_id);
+        }
+        return $this->display() . $html->td($buttons);
+    }
+
+    /**
      * @returns string the html code to show the table header for system log entries and non admin users
      */
-    function header(): string
+    function header(bool $with_actions = false): string
     {
         $html = new html_base();
         // TODO replace with language specific headers
@@ -259,7 +336,33 @@ class job extends db_object
         $result .= $html->th('type');
         $result .= $html->th('status');
         $result .= $html->th('priority');
+        if ($with_actions) {
+            $result .= $html->th('');
+        }
         return $html->tr($result);
+    }
+
+    /**
+     * a button that changes this job directly without a confirm view: the named submit with the confirmed step
+     * lets url_to_action call the job change and then show the calling view again
+     *
+     * @param string $action the job action e.g. url_var::ACTION_JOB_CANCEL
+     * @param msg_id $label the message id of the button text
+     * @param int $msk_id the id of the shown view, so that the button returns to this view
+     * @return string the html code of the form with the button
+     */
+    private function action_form(string $action, msg_id $label, int $msk_id): string
+    {
+        global $mtr;
+        $html = new html_base();
+        $result = $html->form_start(self::ACTION_FORM_PREFIX . $action . '_' . $this->id());
+        $result .= $html->form_hidden(url_var::MASK, (string)$msk_id);
+        $result .= $html->form_hidden(url_var::JOB, (string)$this->id());
+        $result .= $html->form_hidden(url_var::ACTION, $action);
+        $result .= $html->form_hidden(url_var::STEP, url_var::STEP_CONFIRMED);
+        $result .= $html->button_bs($mtr->txt($label), html_base::BS_BTN_CANCEL, '', url_var::POST_SUBMIT);
+        $result .= $html->form_end();
+        return $result;
     }
 
 

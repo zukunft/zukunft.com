@@ -145,6 +145,7 @@ include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_WORD . 'word_list.php';
 include_once paths::SERVICE_MATH . 'calc_internal.php';
 include_once paths::SHARED_CONST . 'chars.php';
+include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_ENUM . 'change_actions.php';
 include_once paths::SHARED_ENUM . 'change_tables.php';
 include_once paths::SHARED_ENUM . 'change_fields.php';
@@ -191,6 +192,7 @@ use Zukunft\ZukunftCom\main\php\cfg\system\log;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\service\math\calc_internal;
 use Zukunft\ZukunftCom\main\php\shared\const\chars;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_fields;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_tables;
@@ -266,6 +268,7 @@ class value_base extends sandbox_value
 
     // field for user interaction
     public ?string $usr_value = null;     // the raw value as the user has entered it including formatting chars such as the thousand separator
+    public bool $set_default = false;     // true if an admin saves the value as the default of all users (see save_as_default)
 
 
     /*
@@ -313,6 +316,7 @@ class value_base extends sandbox_value
         $this->set_protection_id(null);
 
         $this->usr_value = '';
+        $this->set_default = false;
     }
 
     /**
@@ -339,42 +343,12 @@ class value_base extends sandbox_value
     {
         $lib = new library();
 
-        // check if text group id field is given and filled
-        $one_id_fld = false;
-        if (array_key_exists($id_fld, $db_row)) {
-            if ($db_row[$id_fld] != '' and $db_row[$id_fld] != 'null' and $db_row[$id_fld] != null) {
-                $one_id_fld = true;
-            }
-        }
-
-        if ($one_id_fld) {
-            // if the value is not of prime or main type, use the text group id
-            $id = $db_row[$id_fld];
-            $grp = new group($this->get_user());
-            $grp->set_phrase_list_by_id($id, $msg);
-            $grp->set_id($id);
-            $this->set_grp($grp);
-        } else {
-            // for prime and main values an array with the prime id fields is used
-            $id_fld = $this->id_field();
-            if (is_array($id_fld)) {
-                $grp_id = new group_id();
-                $phr_lst = new phrase_list($this->get_user());
-                foreach ($id_fld as $fld_name) {
-                    if (array_key_exists($fld_name, $db_row)) {
-                        $id = $db_row[$fld_name];
-                        if ($id != 0) {
-                            $phr = new phrase($this->get_user(), $id);
-                            $phr_lst->add($phr);
-                        }
-                    }
-                }
-                $grp = new group($this->get_user());
-                $grp->set_id($grp_id->get_id($phr_lst));
-                $grp->set_phrase_list($phr_lst);
-                $this->set_grp($grp);
-                $id_fld = $id_fld[0];
-            }
+        // the text group key of the row decides the group, else the phrase id fields of a
+        // prime table row do (see set_grp_by_row), and the sandbox mapper gets the field used
+        $phr_id_flds = $this->id_field();
+        $one_id_fld = $this->set_grp_by_row($db_row, $msg, $id_fld, is_array($phr_id_flds) ? $phr_id_flds : []);
+        if (!$one_id_fld and is_array($phr_id_flds)) {
+            $id_fld = $phr_id_flds[0];
         }
         $result = parent::row_mapper_sandbox_multi($db_row, $msg, $ext, $load_std, $allow_usr_protect, $id_fld, $one_id_fld);
         if ($result) {
@@ -418,14 +392,27 @@ class value_base extends sandbox_value
         // TODO use sand
         $this->reset(true);
 
-        if (array_key_exists(json_fields::PHRASES, $api_json)) {
-            $phr_lst = new phrase_list($this->get_user());
-            if ($phr_lst->api_mapper($api_json[json_fields::PHRASES], $msg)) {
-                $this->grp()->set_phrase_list($phr_lst);
-            }
-        }
         if (array_key_exists(json_fields::ID, $api_json)) {
             $this->set_id($api_json[json_fields::ID]);
+        }
+        // only the request, the save checks if the user is an admin
+        $this->set_default = (($api_json[json_fields::SET_DEFAULT] ?? false) === true);
+        // the phrases define the value, so their group id wins over the id 0 sent for a new value;
+        // an empty list (the api to the frontend omits the phrases by default) keeps the given id
+        if (array_key_exists(json_fields::PHRASES, $api_json)) {
+            $phr_lst = new phrase_list($this->get_user());
+            $mapped = $phr_lst->api_mapper($api_json[json_fields::PHRASES], $msg);
+            if ($mapped and !$phr_lst->is_empty()) {
+                $this->set_id($this->grp()->set_phrase_list($phr_lst));
+            }
+        }
+        // the name that the user has given to the group of the value in the value form
+        if (($api_json[json_fields::NAME] ?? '') != '') {
+            $this->grp()->set_name($api_json[json_fields::NAME]);
+        }
+        // the description of a value is the description of its group (see sandbox_value::set_description)
+        if (array_key_exists(json_fields::DESCRIPTION, $api_json)) {
+            $this->set_description($api_json[json_fields::DESCRIPTION]);
         }
         if (array_key_exists(json_fields::TIMESTAMP, $api_json)) {
             $time_stamp = $api_json[json_fields::TIMESTAMP];
@@ -460,10 +447,16 @@ class value_base extends sandbox_value
             }
             */
         }
+        // the source selected in the value form, which the frontend sends by its id (see api_json_array)
+        if (array_key_exists(json_fields::SOURCE_ID, $api_json)) {
+            $this->set_source_id((int)$api_json[json_fields::SOURCE_ID]);
+        }
         if (array_key_exists(json_fields::SOURCE_NAME, $api_json)) {
-            $src = new source($this->get_user());
-            $src->set_name($api_json[json_fields::SOURCE_NAME]);
-            $this->source = $src;
+            // the name is added to the source of the id above, so that a json with both keeps the id
+            if ($this->source == null) {
+                $this->source = new source($this->get_user());
+            }
+            $this->source->set_name($api_json[json_fields::SOURCE_NAME]);
         }
 
         return $msg->is_ok();
@@ -513,6 +506,11 @@ class value_base extends sandbox_value
                 $phr_grp = $phr_lst->get_grp_id(false);
                 $this->set_grp($phr_grp);
             }
+        }
+
+        // the name that a user has given to the group, mapped after the words, which create the group
+        if (($in_ex_json[json_fields::NAME] ?? '') != '') {
+            $this->grp()->set_name($in_ex_json[json_fields::NAME]);
         }
 
         // the description of a value is the description of its phrase group (see
@@ -624,6 +622,10 @@ class value_base extends sandbox_value
     {
         $vars = parent::api_json_array($typ_lst, $msg, $usr);
 
+        // the name that a user has given to the group, never the name generated from the phrases (see api_mapper)
+        if ($this->grp()->name_given() != '') {
+            $vars[json_fields::NAME] = $this->grp()->name_given();
+        }
         // add the source
         if ($this->source != null) {
             $vars[json_fields::SOURCE_ID] = $this->source->id();
@@ -1211,34 +1213,6 @@ class value_base extends sandbox_value
      * select
      */
 
-    /**
-     * to select the value if it matches all given phrase names
-     * @param array $names the phrase names for the selection
-     * @return bool true if this values is related to all phrase names
-     */
-    function match_all(array $names): bool
-    {
-        $result = true;
-        $phr_names = $this->phr_lst()->names();
-        foreach ($names as $name) {
-            if ($result) {
-                if (!in_array($name, $phr_names)) {
-                    $result = false;
-                }
-            }
-        }
-        return $result;
-    }
-
-    /**
-     * @param array $names list of phrase names e.g. the context phrases of a result validation
-     * @return bool true if all phrases of this value are part of the given phrase names
-     */
-    function matches_context(array $names): bool
-    {
-        return empty(array_diff($this->phr_lst()->names(), $names));
-    }
-
 
     /*
      * check
@@ -1614,6 +1588,10 @@ class value_base extends sandbox_value
         }
         if ($this->source != null) {
             $vars[json_fields::SOURCE_NAME] = $this->source->name();
+        }
+        // the name that a user has given to the group, never the name generated from the phrases (see import_mapper)
+        if ($this->grp()->name_given() != '') {
+            $vars[json_fields::NAME] = $this->grp()->name_given();
         }
 
         return $vars;
@@ -2027,7 +2005,8 @@ class value_base extends sandbox_value
         } else {
             $log->set_table(change_tables::VALUE_USR, $msg);
         }
-        $log->group_id = $this->grp_id();
+        // the log names the row by the same group id as the write (see sandbox_value::grp_key_id)
+        $log->group_id = $this->grp_key_id();
 
         return $log;
     }
@@ -2053,7 +2032,8 @@ class value_base extends sandbox_value
         } else {
             $log->set_table(change_tables::VALUE_USR, $msg);
         }
-        $log->row_id = $this->grp_id();
+        // the log names the row by the same group id as the write (see sandbox_value::grp_key_id)
+        $log->row_id = $this->grp_key_id();
 
         return $log;
     }
@@ -2239,13 +2219,56 @@ class value_base extends sandbox_value
     {
         log_debug($this->dsp_id());
 
-        global $db_con;
-        global $mtr;
-
         // a value is user data, so a user without login may only change it if this pod permits it
         if ($this->change_blocked($msg)) {
             return false;
         }
+        if ($this->is_pod_setting_denied($msg)) {
+            $msg->add_id(msg_id::CONFIG_SYSTEM_ADMIN_ONLY);
+        } elseif ($this->set_default) {
+            // an admin changes the value for all users without an own overwrite and not the own overwrite
+            $this->save_as_default($msg);
+        } else {
+            $this->save_for_user($msg);
+        }
+        return $msg->is_ok();
+    }
+
+    /**
+     * a setting of the pod below "system configuration > system" in config.yaml can only be changed by an
+     * admin or the system user e.g. when importing config.yaml; the settings below "user" and "select"
+     * can be changed by each logged-in user as the own overwrite
+     *
+     * @param user_message $msg to report why the phrases of the value could not be loaded
+     * @return bool true if the user of this value is not allowed to change it, because it is a pod setting
+     */
+    function is_pod_setting_denied(user_message $msg): bool
+    {
+        $usr = $this->get_user();
+        $result = false;
+        if (!$usr->is_admin() and !$usr->is_system()) {
+            $names = $this->phr_names();
+            // e.g. a value of the settings page names only its id, so its phrases are loaded to check them
+            if ($names == []) {
+                $chk = $this->clone_all();
+                $chk->load_phrases($msg, true);
+                $names = $chk->phr_names();
+            }
+            $result = (array_diff(triples::CONFIG_SYSTEM_PATH, $names) == []);
+        }
+        return $result;
+    }
+
+    /**
+     * insert the value or update it as the standard value of the owner or as the overwrite of the user
+     *
+     * @param user_message $msg in case of a problem, the message that should be shown to the user
+     * @return bool true if everything has been fine
+     */
+    private function save_for_user(user_message $msg): bool
+    {
+        global $db_con;
+        global $mtr;
 
         // init
         $msg_reload = $mtr->txt(msg_id::RELOAD);
@@ -2322,6 +2345,11 @@ class value_base extends sandbox_value
 
             }
 
+            // a name given by the user or a description is written to the group row, the name generated from the phrases never
+            if ($msg->is_ok() and ($this->grp()->name_given() != '' or $this->get_description() !== null)) {
+                $this->grp()->save($msg);
+            }
+
             if (!$msg->is_ok()) {
                 log_err_msg($msg->text(), $msg);
             }
@@ -2331,19 +2359,75 @@ class value_base extends sandbox_value
     }
 
     /**
+     * save the number as the standard value that every user without an own overwrite gets, e.g. the setting
+     * of an admin for the whole pod; the owner of the standard row stays, so that e.g. a later import of
+     * config.yaml by the system user still changes the standard row, and the own overwrite of the admin is
+     * removed, so that the admin sees the new standard value
+     *
+     * @param user_message $msg to report that the user is no admin or why the save has failed
+     * @return bool true if the standard value has been saved
+     */
+    function save_as_default(user_message $msg): bool
+    {
+        global $db_con;
+        if (!$this->get_user()->is_admin()) {
+            // without a name, because the dsp_id is technical and the user knows which value has been saved
+            $msg->add_id(msg_id::VALUE_SET_DEFAULT_DENIED);
+        } else {
+            $std_rec = $this->clone_all();
+            $std_rec->reset();
+            $std_rec->set_user($this->get_user());
+            $std_rec->load_standard($this->id(), $msg);
+            // only the number of the standard row changes, so that no other field of the request overwrites it
+            $new_std = $std_rec->clone_all();
+            $new_std->set_value($this->get_value());
+            $qp = $new_std->sql_update($db_con->sql_creator(), $std_rec, $msg, new sql_type_list([sql_type::LOG]));
+            if ($msg->is_ok() and $qp != null) {
+                $db_con->update($qp, 'update and log the default of ' . $this->dsp_id(), $msg);
+            }
+            $this->del_own_overwrite($msg);
+        }
+        return $msg->is_ok();
+    }
+
+    /**
+     * @param user_message $msg to report why the own overwrite could not be removed
+     * @return void the own overwrite of the user of this value is removed with its change log, if there is one
+     */
+    private function del_own_overwrite(user_message $msg): void
+    {
+        if ($msg->is_ok()) {
+            $db_rec = $this->clone_all();
+            $db_rec->reset();
+            $db_rec->set_user($this->get_user());
+            $db_rec->load_by_id($this->id(), $msg);
+            if ($db_rec->has_usr_cfg()) {
+                $db_rec->del_usr_cfg($msg);
+            }
+        }
+    }
+
+    /**
      * delete a value, but only if the requesting user is permitted to change data in this pod
      * so a user without login is refused here as well as in save (see sandbox_multi::change_blocked)
      *
      * @param user_message $msg the user who has requested the deletion and to collect the reject reason
      * @param bool $must_exist true if the value is expected to still exist in the database
+     * @param sql_type_list $sc_par_lst with sql_type::NO_USER_SANDBOX if the value must never be
+     *                                  excluded for one user e.g. because a phrase of its group
+     *                                  is deleted (see word::del_links)
      * @return bool true if the value has been deleted or excluded
      */
-    function del(user_message $msg, bool $must_exist = true): bool
+    function del(
+        user_message  $msg,
+        bool          $must_exist = true,
+        sql_type_list $sc_par_lst = new sql_type_list()
+    ): bool
     {
         if ($this->change_blocked($msg)) {
             return false;
         }
-        return parent::del($msg, $must_exist);
+        return parent::del($msg, $must_exist, $sc_par_lst);
     }
 
 

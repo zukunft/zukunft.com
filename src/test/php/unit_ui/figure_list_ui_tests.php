@@ -61,7 +61,7 @@ class figure_list_ui_tests
         // test the figure list display functions
         $lst = new figure_list($t_fig->figure_list($msg)->api_json([api_types::TEST_MODE, api_types::INCL_PHRASES]));
         $test_page = $html->text_h2('figure list display test');
-        $test_page .= 'figure list with tooltip: ' . $lst->display() . '<br>';
+        $test_page .= 'figure list with tooltip: ' . $lst->display($msg_ui) . '<br>';
         $test_page .= 'figure list with link: ' . $lst->display_linked($msg_ui) . '<br>';
         $t->html_page_test($test_page, 'figure_list', 'figure_list', $msg_ui);
     }

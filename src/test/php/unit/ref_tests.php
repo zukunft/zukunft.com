@@ -40,6 +40,7 @@ include_once paths::SHARED_CONST . 'refs.php';
 include_once paths::SHARED_CONST . 'sources.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED . 'json_fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
@@ -50,6 +51,7 @@ use Zukunft\ZukunftCom\main\php\cfg\ref\ref_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\ref_types;
 use Zukunft\ZukunftCom\main\php\shared\types\share_types;
@@ -238,6 +240,44 @@ class ref_tests
         $t->assert_ex_and_import($t_ref->ref_filled(), $t->usr_system);
         $json_file = 'unit/ref/wikipedia.json';
         $t->assert_json_file(new ref($t->usr1), $json_file);
+
+        // the "refs" part of a word or triple import json must be a list of objects, because
+        // import_mapper expects an array; the check guards the mapper call in
+        // word::import_mapper and triple::import_mapper against an uncaught fatal
+        $ref_json = [
+            [json_fields::NAME => refs::PI_KEY, json_fields::TYPE_NAME => refs::WIKIDATA_TYPE]
+        ];
+        $test_name = 'a list of reference objects can be mapped by the import';
+        $t->assert_true($test_name, ref::import_list_valid($ref_json));
+        $test_name = 'a list of several reference objects can be mapped by the import';
+        $ref_json[] = [json_fields::NAME => refs::MATH_KEY, json_fields::TYPE_NAME => refs::WIKIDATA_TYPE];
+        $t->assert_true($test_name, ref::import_list_valid($ref_json));
+        // a phrase without any reference names an empty list, so nothing is mapped and nothing
+        // is reported to the user
+        $test_name = 'an empty reference list can be mapped by the import';
+        $t->assert_true($test_name, ref::import_list_valid([]));
+
+        // negative: the compact form that names the reference type as the key and the external
+        // key as the value is the format that has ended an import with a fatal
+        $test_name = 'a reference map of the type to the key cannot be mapped by the import';
+        $t->assert_false($test_name, ref::import_list_valid([
+            refs::WIKIDATA_TYPE => refs::PI_KEY
+        ]));
+        $test_name = 'a reference list with a text entry cannot be mapped by the import';
+        $t->assert_false($test_name, ref::import_list_valid([refs::PI_KEY]));
+        // one object instead of a list of objects reads like a map of the field names, so it
+        // cannot be mapped either
+        $test_name = 'a single reference object cannot be mapped by the import';
+        $t->assert_false($test_name, ref::import_list_valid(
+            [json_fields::NAME => refs::PI_KEY, json_fields::TYPE_NAME => refs::WIKIDATA_TYPE]));
+        $test_name = 'a reference given as a text cannot be mapped by the import';
+        $t->assert_false($test_name, ref::import_list_valid(refs::PI_KEY));
+        // a valid entry after an invalid one must not overrule the invalid entry
+        $test_name = 'a reference list is only valid if every entry is an object';
+        $t->assert_false($test_name, ref::import_list_valid([
+            refs::PI_KEY,
+            [json_fields::NAME => refs::MATH_KEY, json_fields::TYPE_NAME => refs::WIKIDATA_TYPE]
+        ]));
 
     }
 

@@ -23,7 +23,7 @@ PREPARE group_prime_insert_log_110_call FROM
 SELECT group_prime_insert_log_110
        (3,
         1,
-        320,
+        250,
         'π (unit symbol)',
-        319,
+        249,
         5);

@@ -39,13 +39,13 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED_CONST . 'files.php';
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_HELPER . 'Message.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\files;
 use Zukunft\ZukunftCom\main\php\shared\const\files AS files_shared;
 use Zukunft\ZukunftCom\main\php\shared\enum\language_codes;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
-use Zukunft\ZukunftCom\main\php\web\user\user_message;
 
 class Translator
 {
@@ -174,7 +174,10 @@ class Translator
             try {
                 return msg_id::get($msg_id_txt);
             } catch (ValueError $error) {
-                $msg = new user_message(); // a local buffer only to build the text of the log entry
+                // the shared message and not the frontend user message builds the text, because the
+                // translator is also used by the api entry points, which do not load the frontend
+                // classes, so the frontend class turned this warning into a fatal error there
+                $msg = new Message(); // a local buffer only to build the text of the log entry
                 $msg->add(msg_id::MISSING_TRANSLATION, [
                     msg_id::VAR_MESSAGE_ID => $msg_id_txt,
                     msg_id::VAR_LANGUAGE => $this->lan,

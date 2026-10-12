@@ -355,9 +355,9 @@ class view_ui_tests
             [api_types::TEST_MODE, api_types::INCL_RELATED]));
         $ttl_html = $sfm->title_link($trm_msk, $msg);
         $test_name = 'the term view title names the linked view';
-        $t->assert_text_contains($test_name, $ttl_html, views::START_NAME);
+        $t->assert_text_contains($test_name, $ttl_html, views::MATH_CONST_NAME);
         $test_name = '... and the linked term';
-        $t->assert_text_contains($test_name, $ttl_html, word_names::MATH);
+        $t->assert_text_contains($test_name, $ttl_html, triple_names::MATH_CONST);
         $test_name = 'the term view title links to the term view edit view';
         $t->assert_text_contains($test_name, $ttl_html, url_var::MASK . '=' . views::VIEW_LINK_EDIT_ID);
         $test_name = 'the term view title has a subtitle for the share and protection';
@@ -372,6 +372,7 @@ class view_ui_tests
         global $ui_sys;
         $trm_msk_url = new term_view_ui();
         $trm_msk_url->url_mapper([
+            url_var::ID => test_const::LINK_ID,
             url_var::VIEW => (string)views::START_ID,
             url_var::TERM => (string)(word_names::MATH_ID * 2 - 1)
         ], $msg, $ui_sys);
@@ -405,6 +406,7 @@ class view_ui_tests
         $test_name = 'the view relation title of a page url names the linked views';
         $mrl_url = new view_relation_ui();
         $mrl_url->url_mapper([
+            url_var::ID => test_const::LINK_ID,
             url_var::VIEW_PARENT => (string)views::START_ID,
             url_var::VIEW_CHILD => (string)views::WORD_ID
         ], $msg, $ui->dto);
@@ -492,17 +494,20 @@ class view_ui_tests
         $t->subheader($ts . 'link select');
 
         // the view link add and edit form preselects the style that the link has now, so that
-        // saving the form does not silently change it; the expected html is the same selector
-        // asked for the expected id, so the test does not depend on the html format
+        // saving the form does not silently change it, and sends the same id as the opening value
+        // for the confirm view (see db_object::add_pre_value); the expected html is the same
+        // selector asked for the expected id, so the test does not depend on the html format
         $sty_lst = $ui_sys->typ_lst_cache->msk_sty;
         $test_name = 'the style selector preselects the style of the term view';
         $t->assert($test_name,
             $trm_msk->style_selector(views::VIEW_LINK_EDIT, $ui_sys->typ_lst_cache, $msg),
-            $sty_lst->selector(views::VIEW_LINK_EDIT, view_styles::COL_SM_8_ID));
+            $sty_lst->selector(views::VIEW_LINK_EDIT, view_styles::COL_SM_8_ID)
+            . $html->form_hidden(url_var::PRE . url_var::STYLE, (string)view_styles::COL_SM_8_ID));
         $test_name = 'a fresh term view preselects the default style';
         $t->assert($test_name,
             (new term_view_ui())->style_selector(views::VIEW_LINK_ADD, $ui_sys->typ_lst_cache, $msg),
-            $sty_lst->selector(views::VIEW_LINK_ADD, $sty_lst->default_id()));
+            $sty_lst->selector(views::VIEW_LINK_ADD, $sty_lst->default_id())
+            . $html->form_hidden(url_var::PRE . url_var::STYLE, (string)$sty_lst->default_id()));
 
 
         $t->subheader($ts . 'link tab box');

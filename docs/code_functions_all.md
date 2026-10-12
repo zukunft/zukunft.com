@@ -41,6 +41,8 @@
     \-- load_by_id_with_related - section for function load_by_id_with_related is expected to be load in /formula/formul
             a.php
     \-- api_json_array - section for function api_json_array is expected to be api in /formula/formula.php
+    \-- api_latex_terms_array - section for function api_latex_terms_array not yet defined that it should be assign in /
+            formula/formula.php
     \-- assign_phr_glst - section for function assign_phr_glst not yet defined that it should be assign in /formula/form
             ula.php
     \-- assign_phr_lst - section for function assign_phr_lst not yet defined that it should be assign in /formula/formul
@@ -183,6 +185,7 @@
     \-- name_field - section for function name_field is expected to be sql fields in /group/group.php
     \-- grp - section for function grp not yet defined that it should be set and get in /group/group.php
     \-- set_saved - section for function set_saved is expected to be set and get in /group/group.php
+    \-- can_be_ready - section for function can_be_ready is expected to be check in /group/group.php
     \-- delta - section for function delta is expected to be del in /group/group.php
     \-- sql_table - section for function sql_table not yet defined that it should be sql create in /group/group.php
     \-- sql_index - section for function sql_index not yet defined that it should be sql create in /group/group.php
@@ -215,6 +218,8 @@
     \-- add_word - section for function add_word not yet defined that it should be modify in /group/group.php
     \-- add_phrase_names - section for function add_phrase_names not yet defined that it should be modify in /group/grou
             p.php
+    \-- id_or_phrase_list_id - section for function id_or_phrase_list_id not yet defined that it should be info in /grou
+            p/group.php
     \-- needs_similar_check - section for function needs_similar_check not yet defined that it should be save in /group/
             group.php
     \-- add - section for function add not yet defined that it should be save in /group/group.php
@@ -231,6 +236,7 @@
             p.php
     \-- dsp_id_medium - section for function dsp_id_medium not yet defined that it should be debug in /group/group.php
     \-- dsp_id_short - section for function dsp_id_short not yet defined that it should be debug in /group/group.php
+    \-- name_given - section for function name_given not yet defined that it should be debug in /group/group.php
     \-- name_generated - section for function name_generated not yet defined that it should be debug in /group/group.php
     \-- names - section for function names is expected to be info in /group/group.php
     \-- order error - order of section construct and map has difference at api_mapper should be before row_mapper,
@@ -275,10 +281,30 @@
     \-- row_mapper_multi - section for function row_mapper_multi not yet defined that it should be construct and map in 
             /result/result.php
     \-- id - section for function id not yet defined that it should be set and get in /result/result.php
-    \-- source_group - section for function source_group not yet defined that it should be set and get in /result/result
+    \-- grp_key_id - section for function grp_key_id not yet defined that it should be set and get in /result/result.php
+    \-- src_grp_field_type - section for function src_grp_field_type not yet defined that it should be table selection i
+            n /result/result.php
+    \-- is_prime - section for function is_prime is expected to be info in /result/result.php
+    \-- is_main - section for function is_main is expected to be info in /result/result.php
+    \-- is_big - section for function is_big is expected to be info in /result/result.php
+    \-- moved_table_types - section for function moved_table_types not yet defined that it should be table selection in 
+            /result/result.php
+    \-- table_type - section for function table_type not yet defined that it should be table selection in /result/result
             .php
-    \-- src_grp_id - section for function src_grp_id not yet defined that it should be set and get in /result/result.php
-    \-- formula_id - section for function formula_id not yet defined that it should be set and get in /result/result.php
+    \-- table_extension - section for function table_extension not yet defined that it should be table selection in /res
+            ult/result.php
+    \-- set_value - section for function set_value is expected to be set and get in /result/result.php
+    \-- get_value - section for function get_value is expected to be set and get in /result/result.php
+    \-- set_src_grp - section for function set_src_grp is expected to be set and get in /result/result.php
+    \-- source_group - section for function source_group not yet defined that it should be table selection in /result/re
+            sult.php
+    \-- src_grp_id - section for function src_grp_id not yet defined that it should be table selection in /result/result
+            .php
+    \-- set_formula - section for function set_formula is expected to be set and get in /result/result.php
+    \-- formula_id - section for function formula_id not yet defined that it should be table selection in /result/result
+            .php
+    \-- set_symbol - section for function set_symbol is expected to be set and get in /result/result.php
+    \-- get_symbol - section for function get_symbol is expected to be set and get in /result/result.php
     \-- is_std - section for function is_std is expected to be info in /result/result.php
     \-- phr_lst - section for function phr_lst not yet defined that it should be reduce code line length in /result/resu
             lt.php
@@ -291,8 +317,20 @@
     \-- load_sql_by_frm_grp - section for function load_sql_by_frm_grp is expected to be load sql in /result/result.php
     \-- load_sql_by_frm_grp_lst - section for function load_sql_by_frm_grp_lst is expected to be load sql in /result/res
             ult.php
+    \-- load_sql_by_id_moved - section for function load_sql_by_id_moved is expected to be load sql in /result/result.ph
+            p
+    \-- load_sql_by_grp_moved - section for function load_sql_by_grp_moved is expected to be load sql in /result/result.
+            php
     \-- load_sql_where - section for function load_sql_where is expected to be load sql in /result/result.php
     \-- load_phrases - section for function load_phrases is expected to be load in /result/result.php
+    \-- used_phrase_selection - section for function used_phrase_selection not yet defined that it should be phrase load
+            ing methods in /result/result.php
+    \-- load_values_used - section for function load_values_used is expected to be load in /result/result.php
+    \-- load_results_used - section for function load_results_used is expected to be load in /result/result.php
+    \-- load_formulas_used - section for function load_formulas_used is expected to be load in /result/result.php
+    \-- load_expression_parts - section for function load_expression_parts is expected to be load in /result/result.php
+    \-- expression_parts - section for function expression_parts not yet defined that it should be phrase loading method
+            s in /result/result.php
     \-- val_formatted - section for function val_formatted not yet defined that it should be im- and export in /result/r
             esult.php
     \-- figure - section for function figure not yet defined that it should be im- and export in /result/result.php
@@ -305,6 +343,8 @@
     \-- update - section for function update not yet defined that it should be display in /result/result.php
     \-- save_if_updated - section for function save_if_updated is expected to be save in /result/result.php
     \-- save - section for function save is expected to be save in /result/result.php
+    \-- row_in_other_table - section for function row_in_other_table not yet defined that it should be @return bool true
+             if a value without time is already saved in /result/result.php
     \-- order error - order of section construct and map has difference at api_mapper should be before row_mapper_multi
 \-- user
     \-- clone_reset - section for function clone_reset not yet defined that it should be construct and map in /user/user
@@ -379,6 +419,8 @@
     \-- dummy_all - section for function dummy_all not yet defined that it should be info in /user/user.php
     \-- set_verb - section for function set_verb is expected to be set and get in /user/user.php
     \-- set_profile - section for function set_profile is expected to be set and get in /user/user.php
+    \-- raise_signup_profile - section for function raise_signup_profile not yet defined that it should be info in /user
+            /user.php
     \-- set_type - section for function set_type is expected to be set and get in /user/user.php
     \-- set_profile_id - section for function set_profile_id is expected to be set and get in /user/user.php
     \-- log_upd - section for function log_upd is expected to be log in /user/user.php
@@ -980,6 +1022,8 @@
         \-- formula - load the formula and, in the same call, the related view-models the default formula view
     \-- api_json_array
         \-- formula - extend the formula api message with the data that the default formula view needs;
+    \-- api_latex_terms_array
+        \-- formula - the terms of the latex for the "expression_latex_link" component, which the formula page
     \-- assign_phr_glst
         \-- formula - returns a list of all words that the formula is assigned to
     \-- assign_phr_lst
@@ -1208,6 +1252,8 @@
             p
     \-- add_where_no_par - section for function add_where_no_par not yet defined that it should be where in /db/sql_crea
             tor.php
+    \-- add_where_in_sub - section for function add_where_in_sub not yet defined that it should be where in /db/sql_crea
+            tor.php
     \-- sql - section for function sql not yet defined that it should be statement in /db/sql_creator.php
     \-- create_sql_insert - section for function create_sql_insert not yet defined that it should be statement in /db/sq
             l_creator.php
@@ -1242,6 +1288,8 @@
             l_creator.php
     \-- add_usr_grp_field - section for function add_usr_grp_field not yet defined that it should be statement in /db/sq
             l_creator.php
+    \-- key_match - section for function key_match not yet defined that it should be internal where in /db/sql_creator.p
+            hp
     \-- get_order - section for function get_order is expected to be set and get in /db/sql_creator.php
     \-- set_order - section for function set_order is expected to be set and get in /db/sql_creator.php
     \-- set_page - section for function set_page is expected to be set and get in /db/sql_creator.php
@@ -1288,6 +1336,8 @@
             hp
     \-- del_sql_list_without_log - section for function del_sql_list_without_log is expected to be del in /db/sql_creato
             r.php
+    \-- del_sql_list_by_text - section for function del_sql_list_by_text is expected to be del in /db/sql_creator.php
+    \-- del_sql_all - section for function del_sql_all is expected to be del in /db/sql_creator.php
     \-- sql_all - section for function sql_all not yet defined that it should be final exception correction of the table
              name in /db/sql_creator.php
     \-- get_usr_field - section for function get_usr_field is expected to be set and get in /db/sql_creator.php
@@ -1601,8 +1651,6 @@
     \-- get_row_id - section for function get_row_id is expected to be set and get in /db/sql_message.php
     \-- has_msg - section for function has_msg not yet defined that it should be get in /db/sql_message.php
     \-- has_row - section for function has_row not yet defined that it should be get in /db/sql_message.php
-    \-- combine_status - section for function combine_status not yet defined that it should be internal in /db/sql_messa
-            ge.php
 \-- sql_par
     \-- __construct - section for function __construct is expected to be construct and map in /db/sql_par.php
     \-- has_par - section for function has_par missing in /db/sql_par.php
@@ -1913,6 +1961,7 @@
     \-- is_big - section for function is_big is expected to be info in /group/group_id.php
     \-- int_array - section for function int_array not yet defined that it should be database link in /group/group_id.ph
             p
+    \-- int2key - section for function int2key not yet defined that it should be database link in /group/group_id.php
 \-- group_link
     \-- __construct - section for function __construct is expected to be construct and map in /group/group_link.php
     \-- row_mapper - section for function row_mapper missing in /group/group_link.php
@@ -1965,6 +2014,8 @@
     \-- id_field - section for function id_field not yet defined that it should be info in /helper/combine_object.php
     \-- db_ready - section for function db_ready is expected to be check in /helper/combine_object.php
 \-- config_numbers
+    \-- exact_lookup - section for function exact_lookup not yet defined that it should be set and get in /helper/config
+            _numbers.php
     \-- fill_from_cache_json - section for function fill_from_cache_json not yet defined that it should be load in /help
             er/config_numbers.php
     \-- default_json - section for function default_json not yet defined that it should be default in /helper/config_num
@@ -1975,8 +2026,19 @@
             g_numbers.php
     \-- page_cache_allowed - section for function page_cache_allowed not yet defined that it should be predefined in /he
             lper/config_numbers.php
+    \-- symbol_values_included - section for function symbol_values_included not yet defined that it should be predefine
+            d in /helper/config_numbers.php
+    \-- alias_values_included - section for function alias_values_included not yet defined that it should be predefined 
+            in /helper/config_numbers.php
+    \-- symbol_formulas_included - section for function symbol_formulas_included not yet defined that it should be prede
+            fined in /helper/config_numbers.php
+    \-- alias_formulas_included - section for function alias_formulas_included not yet defined that it should be predefi
+            ned in /helper/config_numbers.php
     \-- ip_user_can_change - section for function ip_user_can_change not yet defined that it should be predefined in /he
             lper/config_numbers.php
+\-- config_tree
+    \-- api_json - section for function api_json not yet defined that it should be api in /helper/config_tree.php
+    \-- nodes - section for function nodes not yet defined that it should be convert in /helper/config_tree.php
 \-- data_object
     \-- api_json - section for function api_json not yet defined that it should be api in /helper/data_object.php
     \-- api_array - section for function api_array not yet defined that it should be api in /helper/data_object.php
@@ -1989,6 +2051,8 @@
     \-- phrase_list - section for function phrase_list is expected to be cast in /helper/data_object.php
     \-- term_list - section for function term_list not yet defined that it should be set and get in /helper/data_object.
             php
+    \-- group_list - section for function group_list not yet defined that it should be set and get in /helper/data_objec
+            t.php
     \-- source_list - section for function source_list not yet defined that it should be set and get in /helper/data_obj
             ect.php
     \-- reference_list - section for function reference_list not yet defined that it should be set and get in /helper/da
@@ -2018,6 +2082,8 @@
             t.php
     \-- get_word_by_name - section for function get_word_by_name is expected to be set and get in /helper/data_object.ph
             p
+    \-- get_triple_by_name - section for function get_triple_by_name is expected to be set and get in /helper/data_objec
+            t.php
     \-- get_phrase_by_id - section for function get_phrase_by_id is expected to be set and get in /helper/data_object.ph
             p
     \-- get_phrase_by_name - section for function get_phrase_by_name is expected to be set and get in /helper/data_objec
@@ -2041,6 +2107,7 @@
     \-- add_triple_without_ready_check - section for function add_triple_without_ready_check not yet defined that it sho
             uld be modify in /helper/data_object.php
     \-- add_phrase - section for function add_phrase not yet defined that it should be modify in /helper/data_object.php
+    \-- add_group - section for function add_group not yet defined that it should be modify in /helper/data_object.php
     \-- add_source - section for function add_source not yet defined that it should be modify in /helper/data_object.php
     \-- add_reference - section for function add_reference not yet defined that it should be modify in /helper/data_obje
             ct.php
@@ -2090,11 +2157,17 @@
             p
     \-- load_sql - section for function load_sql is expected to be load sql in /helper/db_cache.php
     \-- del - section for function del is expected to be del in /helper/db_cache.php
+    \-- del_by_user - section for function del_by_user is expected to be del in /helper/db_cache.php
+    \-- del_by_types - section for function del_by_types is expected to be del in /helper/db_cache.php
+    \-- del_sql_by_type_ids - section for function del_sql_by_type_ids is expected to be del in /helper/db_cache.php
+    \-- del_sql_by_user - section for function del_sql_by_user is expected to be del in /helper/db_cache.php
 \-- db_cache_page
     \-- row_mapper - section for function row_mapper not yet defined that it should be construct and map in /helper/db_c
             ache_page.php
     \-- html_by_url - section for function html_by_url not yet defined that it should be load in /helper/db_cache_page.p
             hp
+    \-- del_by_user - section for function del_by_user is expected to be del in /helper/db_cache_page.php
+    \-- del_all - section for function del_all is expected to be del in /helper/db_cache_page.php
 \-- db_id_object_non_sandbox
     \-- unique_value - section for function unique_value not yet defined that it should be set and get in /helper/db_id_
             object_non_sandbox.php
@@ -2147,6 +2220,7 @@
     \-- import_mapper - section for function import_mapper is expected to be construct and map in /helper/db_object_mult
             i.php
     \-- id - section for function id not yet defined that it should be set and get in /helper/db_object_multi.php
+    \-- is_id_set - section for function is_id_set is expected to be info in /helper/db_object_multi.php
     \-- delta - section for function delta is expected to be del in /helper/db_object_multi.php
     \-- isset - section for function isset not yet defined that it should be info in /helper/db_object_multi.php
     \-- name - section for function name is expected to be debug in /helper/db_object_multi.php
@@ -2251,6 +2325,8 @@
     \-- system_users - section for function system_users not yet defined that it should be interface in /helper/system_o
             bject.php
     \-- verb - section for function verb not yet defined that it should be interface in /helper/system_object.php
+    \-- verb_by_id - section for function verb_by_id not yet defined that it should be interface in /helper/system_objec
+            t.php
     \-- system_user - section for function system_user not yet defined that it should be interface in /helper/system_obj
             ect.php
     \-- admin_user - section for function admin_user not yet defined that it should be interface in /helper/system_objec
@@ -2399,6 +2475,8 @@
              get in /import/import_file.php
     \-- import_use_case_data - section for function import_use_case_data not yet defined that it should be set and get i
             n /import/import_file.php
+    \-- import_system_data_appended - section for function import_system_data_appended not yet defined that it should be
+             set and get in /import/import_file.php
     \-- echo - section for function echo not yet defined that it should be set and get in /import/import_file.php
 \-- import_wikidata
     \-- get_entity_json - section for function get_entity_json is expected to be set and get in /import/import_wikidata.
@@ -2537,6 +2615,7 @@
     \-- echo_lines - section for function echo_lines not yet defined that it should be display in /log_text/text_log.php
     \-- time_stamp_lines - section for function time_stamp_lines not yet defined that it should be display in /log_text/
             text_log.php
+    \-- since_last - section for function since_last not yet defined that it should be display in /log_text/text_log.php
 \-- phr_ids
     \-- __construct - section for function __construct is expected to be construct and map in /phrase/phr_ids.php
     \-- count - section for function count missing in /phrase/phr_ids.php
@@ -2618,6 +2697,10 @@
     \-- get_or_add - section for function get_or_add is expected to be set and get in /phrase/phrase.php
     \-- dsp_name - section for function dsp_name not yet defined that it should be display functions in /phrase/phrase.p
             hp
+    \-- value_selection - section for function value_selection not yet defined that it should be display functions in /p
+            hrase/phrase.php
+    \-- formula_selection - section for function formula_selection not yet defined that it should be display functions i
+            n /phrase/phrase.php
     \-- phrases - section for function phrases not yet defined that it should be display functions in /phrase/phrase.php
     \-- dsp_time_selector - section for function dsp_time_selector not yet defined that it should be display functions i
             n /phrase/phrase.php
@@ -2628,6 +2711,7 @@
             order of section im- and export has difference at export_json should be before import_mapper,
             order of section load has difference at load_sql_by_id should be before load
 \-- phrase_list
+    \-- load_sql_by_verb - section for function load_sql_by_verb is expected to be load sql in /phrase/phrase_list.php
     \-- load_sql_like - section for function load_sql_like is expected to be load sql in /phrase/phrase_list.php
     \-- load_sql_by_names - section for function load_sql_by_names is expected to be load sql in /phrase/phrase_list.php
     \-- load_sql_by_ids - section for function load_sql_by_ids is expected to be load sql in /phrase/phrase_list.php
@@ -2775,6 +2859,7 @@
     \-- load_by_phr - section for function load_by_phr is expected to be load in /phrase/phrase_list.php
     \-- load_by_phr_levels - section for function load_by_phr_levels is expected to be load in /phrase/phrase_list.php
     \-- load_linked_sides - section for function load_linked_sides is expected to be load in /phrase/phrase_list.php
+    \-- load_triple_sides - section for function load_triple_sides is expected to be load in /phrase/phrase_list.php
     \-- load_by_phr_vrb_and_type - section for function load_by_phr_vrb_and_type is expected to be load in /phrase/phras
             e_list.php
     \-- load_sql_linked_phrases - section for function load_sql_linked_phrases is expected to be load sql in /phrase/phr
@@ -2793,10 +2878,6 @@
              in /phrase/phrase_type.php
     \-- order error - order of section construct and map has difference at api_mapper should be before row_mapper_typ_ob
             j
-\-- phrase_types
-    \-- load_dummy - section for function load_dummy is expected to be load in /phrase/phrase_types.php
-    \-- default_id - section for function default_id not yet defined that it should be construct and map in /phrase/phra
-            se_types.php
 \-- term
     \-- row_mapper - section for function row_mapper not yet defined that it should be construct and map in /phrase/term
             .php
@@ -2909,6 +2990,9 @@
     \-- load_sql_like - section for function load_sql_like is expected to be load sql in /ref/source_list.php
     \-- load_sql_by_names - section for function load_sql_by_names is expected to be load sql in /ref/source_list.php
     \-- order error - order of section load has difference at load_by_ids should be before load_sql_like
+\-- source_type
+    \-- row_mapper_typ_obj - section for function row_mapper_typ_obj not yet defined that it should be construct and map
+             in /ref/source_type.php
 \-- source_type_list
     \-- load_dummy - section for function load_dummy is expected to be load in /ref/source_type_list.php
     \-- default_id - section for function default_id not yet defined that it should be database link in /ref/source_type
@@ -3398,8 +3482,6 @@
     \-- sql_delete - section for function sql_delete not yet defined that it should be save helper - save fields in /san
             dbox/sandbox_multi.php
     \-- name_field - section for function name_field is expected to be sql fields in /sandbox/sandbox_multi.php
-    \-- save_field_excluded_log - section for function save_field_excluded_log is expected to be save in /sandbox/sandbo
-            x_multi.php
     \-- save_set_log_id - section for function save_set_log_id is expected to be save in /sandbox/sandbox_multi.php
     \-- is_id_updated - section for function is_id_updated is expected to be info in /sandbox/sandbox_multi.php
     \-- get_obj_with_same_id_fields - section for function get_obj_with_same_id_fields is expected to be set and get in 
@@ -3537,6 +3619,7 @@
 \-- sandbox_value
     \-- clone_all - section for function clone_all not yet defined that it should be construct and map in /sandbox/sandb
             ox_value.php
+    \-- set_grp_by_row - section for function set_grp_by_row is expected to be set and get in /sandbox/sandbox_value.php
     \-- row_mapper_multi - section for function row_mapper_multi not yet defined that it should be construct and map in 
             /sandbox/sandbox_value.php
     \-- grp - section for function grp not yet defined that it should be set and get in /sandbox/sandbox_value.php
@@ -3558,6 +3641,8 @@
     \-- is_geo_value - section for function is_geo_value is expected to be info in /sandbox/sandbox_value.php
     \-- table_extension - section for function table_extension not yet defined that it should be set and get in /sandbox
             /sandbox_value.php
+    \-- grp_key_id - section for function grp_key_id not yet defined that it should be set and get in /sandbox/sandbox_v
+            alue.php
     \-- formula_id - section for function formula_id not yet defined that it should be set and get in /sandbox/sandbox_v
             alue.php
     \-- is_prime - section for function is_prime is expected to be info in /sandbox/sandbox_value.php
@@ -3585,6 +3670,10 @@
             php
     \-- load_sql_median_user - section for function load_sql_median_user is expected to be load sql in /sandbox/sandbox_
             value.php
+    \-- match_all - section for function match_all not yet defined that it should be select in /sandbox/sandbox_value.ph
+            p
+    \-- matches_context - section for function matches_context not yet defined that it should be select in /sandbox/sand
+            box_value.php
     \-- delta - section for function delta is expected to be del in /sandbox/sandbox_value.php
     \-- id_fvt_lst - section for function id_fvt_lst not yet defined that it should be info in /sandbox/sandbox_value.ph
             p
@@ -3600,7 +3689,6 @@
     \-- wrd_lst - section for function wrd_lst not yet defined that it should be load in /sandbox/sandbox_value.php
     \-- trp_lst - section for function trp_lst not yet defined that it should be load in /sandbox/sandbox_value.php
     \-- log_add_value - section for function log_add_value is expected to be log in /sandbox/sandbox_value.php
-    \-- log_del - section for function log_del is expected to be log in /sandbox/sandbox_value.php
     \-- sql_update_value - section for function sql_update_value not yet defined that it should be save in /sandbox/sand
             box_value.php
     \-- sql_update - section for function sql_update not yet defined that it should be sql write in /sandbox/sandbox_val
@@ -3624,6 +3712,7 @@
     \-- dsp - section for function dsp not yet defined that it should be debug in /sandbox/sandbox_value.php
     \-- dsp_db - section for function dsp_db not yet defined that it should be debug in /sandbox/sandbox_value.php
     \-- order error - order of section construct and map has difference at api_mapper should be before row_mapper_multi,
+            order of section set and get has difference at set_description should be before set_id,
             order of section load has difference at load_phrases should be before load_sql_by_grp,
             order of section info has difference at id_field should be before diff_msg,
             order of section sql write has difference at sql_delete should be before sql_update_fields
@@ -3635,6 +3724,8 @@
     \-- load_sql_by_phr_lst_single - section for function load_sql_by_phr_lst_single is expected to be load sql in /sand
             box/sandbox_value_list.php
     \-- load_sql_init - section for function load_sql_init is expected to be load sql in /sandbox/sandbox_value_list.php
+    \-- get_by_names_and_context - section for function get_by_names_and_context is expected to be set and get in /sandb
+            ox/sandbox_value_list.php
     \-- id_lst - section for function id_lst not yet defined that it should be info in /sandbox/sandbox_value_list.php
     \-- add_by_group - section for function add_by_group not yet defined that it should be modify in /sandbox/sandbox_va
             lue_list.php
@@ -3665,6 +3756,8 @@
     \-- load_sql - section for function load_sql is expected to be load sql in /system/job.php
     \-- load_sql_by_id - section for function load_sql_by_id is expected to be load sql in /system/job.php
     \-- id_field - section for function id_field not yet defined that it should be load in /system/job.php
+    \-- change_by_user - section for function change_by_user not yet defined that it should be modify in /system/job.php
+    \-- apply_change - section for function apply_change not yet defined that it should be modify in /system/job.php
     \-- exe_val_upd - section for function exe_val_upd not yet defined that it should be modify in /system/job.php
     \-- exe - section for function exe not yet defined that it should be modify in /system/job.php
     \-- del - section for function del is expected to be del in /system/job.php
@@ -3679,8 +3772,12 @@
 \-- job_list
     \-- load_by_type - section for function load_by_type is expected to be load in /system/job_list.php
     \-- load_by_status - section for function load_by_status is expected to be load in /system/job_list.php
+    \-- load_by_user - section for function load_by_user is expected to be load in /system/job_list.php
+    \-- load_all - section for function load_all is expected to be load in /system/job_list.php
     \-- load_sql_by_type - section for function load_sql_by_type is expected to be load sql in /system/job_list.php
     \-- load_sql_by_status - section for function load_sql_by_status is expected to be load sql in /system/job_list.php
+    \-- load_sql_by_user - section for function load_sql_by_user is expected to be load sql in /system/job_list.php
+    \-- load_sql_all - section for function load_sql_all is expected to be load sql in /system/job_list.php
     \-- add - section for function add not yet defined that it should be modify in /system/job_list.php
     \-- merge - section for function merge not yet defined that it should be modify in /system/job_list.php
 \-- job_runner
@@ -3744,8 +3841,6 @@
 \-- system_time_list
     \-- switch - section for function switch not yet defined that it should be interface in /system/system_time_list.php
     \-- report - section for function report not yet defined that it should be interface in /system/system_time_list.php
-    \-- show_total - section for function show_total not yet defined that it should be interface in /system/system_time_
-            list.php
     \-- section_report - section for function section_report not yet defined that it should be interface in /system/syst
             em_time_list.php
     \-- reset_section - section for function reset_section not yet defined that it should be interface in /system/system
@@ -3821,8 +3916,6 @@
     \-- has_msg - section for function has_msg not yet defined that it should be get in /user/user_message.php
     \-- has_row - section for function has_row not yet defined that it should be get in /user/user_message.php
     \-- get_all_messages - section for function get_all_messages is expected to be set and get in /user/user_message.php
-    \-- combine_status - section for function combine_status not yet defined that it should be internal in /user/user_me
-            ssage.php
 \-- user_profile
     \-- row_mapper_typ_obj - section for function row_mapper_typ_obj not yet defined that it should be construct and map
              in /user/user_profile.php
@@ -3851,9 +3944,6 @@
     \-- source_name - section for function source_name not yet defined that it should be info in /value/value_base.php
     \-- phr_lst - section for function phr_lst not yet defined that it should be info in /value/value_base.php
     \-- phr_names - section for function phr_names not yet defined that it should be info in /value/value_base.php
-    \-- match_all - section for function match_all not yet defined that it should be select in /value/value_base.php
-    \-- matches_context - section for function matches_context not yet defined that it should be select in /value/value_
-            base.php
     \-- check - section for function check not yet defined that it should be check in /value/value_base.php
     \-- is_same_val - section for function is_same_val is expected to be info in /value/value_base.php
     \-- scale_new - section for function scale_new not yet defined that it should be TODO activate in /value/value_base.
@@ -3894,6 +3984,9 @@
     \-- add - section for function add not yet defined that it should be @param user_message $msg to enrich with problem
             s and suggested solutions in /value/value_base.php
     \-- save - section for function save is expected to be save in /value/value_base.php
+    \-- is_pod_setting_denied - section for function is_pod_setting_denied is expected to be info in /value/value_base.p
+            hp
+    \-- save_as_default - section for function save_as_default is expected to be save in /value/value_base.php
     \-- del - section for function del is expected to be del in /value/value_base.php
     \-- order error - order of section construct and map has difference at api_mapper should be before row_mapper_sandbo
             x_multi
@@ -3902,8 +3995,6 @@
 \-- value_list
     \-- grp_ids - section for function grp_ids not yet defined that it should be set and get in /value/value_list.php
     \-- get_by_names - section for function get_by_names is expected to be set and get in /value/value_list.php
-    \-- get_by_name_and_context - section for function get_by_name_and_context is expected to be set and get in /value/v
-            alue_list.php
     \-- load_sql_by_phr_lst - section for function load_sql_by_phr_lst is expected to be load sql in /value/value_list.p
             hp
     \-- load_sql_by_phr - section for function load_sql_by_phr is expected to be load sql in /value/value_list.php
@@ -3914,7 +4005,6 @@
             hp
     \-- load_sql_by_phr_single - section for function load_sql_by_phr_single is expected to be load sql in /value/value_
             list.php
-    \-- load_phrases - section for function load_phrases is expected to be load in /value/value_list.php
     \-- load_names_related - section for function load_names_related is expected to be load in /value/value_list.php
     \-- add_value_direct - section for function add_value_direct not yet defined that it should be modify in /value/valu
             e_list.php
@@ -3962,8 +4052,8 @@
 \-- value_time
     \-- delta - section for function delta is expected to be del in /value/value_time.php
 \-- value_time_series
-    \-- row_mapper_sandbox - section for function row_mapper_sandbox is expected to be construct and map in /value/value
-            _time_series.php
+    \-- row_mapper_sandbox_multi - section for function row_mapper_sandbox_multi not yet defined that it should be datab
+            ase load functions that reads the object from the database in /value/value_time_series.php
     \-- load_sql_standard - section for function load_sql_standard is expected to be load sql in /value/value_time_serie
             s.php
     \-- load_sql - section for function load_sql is expected to be load sql in /value/value_time_series.php
@@ -3974,7 +4064,6 @@
     \-- load_by_grp - section for function load_by_grp is expected to be load in /value/value_time_series.php
     \-- add - section for function add not yet defined that it should be database load functions that reads the object f
             rom the database in /value/value_time_series.php
-    \-- id_field - section for function id_field not yet defined that it should be info in /value/value_time_series.php
     \-- save - section for function save is expected to be save in /value/value_time_series.php
 \-- value_ts_data
     \-- sql_table - section for function sql_table not yet defined that it should be sql create in /value/value_ts_data.
@@ -4406,13 +4495,15 @@
     \-- get_by_link_id
         \-- element_list - set the SQL query parameters to load a list of formula elements by the formula id and filter 
                 by the element type
+    \-- 5
+        \-- group_list - set the SQL query parameters to load a list of phrase groups names by the ids
+        \-- sandbox_value_list - get the first value or result of the list that is related to all given phrase names
     \-- load_phrases
         \-- figure_list - set the SQL query parameters to load a list of figure objects
+        \-- sandbox_value_list - set the word objects for all values or results in the list if needed
     \-- load_by_frm_id
         \-- formula_link_list - load a list of formula links with the direct linked phrases related to the given formula
                  id
-    \-- 5
-        \-- group_list - set the SQL query parameters to load a list of phrase groups names by the ids
     \-- load_sql_by_ids
         \-- formula_link_list - set the SQL query parameters to load a list of formula links by the formula link ids
         \-- group_list - set the SQL query parameters to load a list of phrase groups by the ids
@@ -4541,16 +4632,6 @@
                 y parameters
     \-- load_user_changes
         \-- sandbox_list - load the changes that the given user has done compared to the standard
-    \-- load_by_phr_lst_multi
-        \-- sandbox_value_list - if $or is false or null
-    \-- load_sql_by_phr_lst_multi
-        \-- sandbox_value_list - create an SQL statement to retrieve a list of values by a list of phrases from the data
-                base
-    \-- load_sql_by_phr_lst_single
-        \-- sandbox_value_list - create an SQL statement to retrieve a list of values linked to a phrase from the databa
-                se
-    \-- load_sql_init
-        \-- sandbox_value_list - set the SQL query parameters to load a list of values or results
     \-- load_by_id
         \-- ip_range - load an ip range from the database selected by id
     \-- load_by_ip_addresses
@@ -4662,6 +4743,15 @@
         \-- ref_list - add a reference to the list that does not yet have an id but has the phrase name,
                  the type and the external key set
         \-- view_relation_list - delete all loaded view relations e.g. to delete all the links assigned to a view
+    \-- del_by_user
+        \-- db_cache - remove the cache entries of one user, because they reference the user row and are derived
+    \-- del_by_types
+        \-- db_cache - remove the cache entries of the given types of all users,
+                 because e.g. a default changed by an admin is
+    \-- del_sql_by_type_ids
+        \-- db_cache - create the sql statement to delete the cache entries of the given types of all users
+    \-- del_sql_by_user
+        \-- db_cache - create the sql statement to delete the cache entries of one user
     \-- fill
         \-- db_object_multi - fill this seq id object based on the given object
         \-- db_object_multi_user - fill this db user object based on the given object
@@ -4730,8 +4820,6 @@
         \-- db_object - name of the prime index field of the table
         \-- db_object_key - name of prime index field of the table
         \-- db_object_no_id - name of prime index field of the table
-        \-- value_time_series - temp overwrite of the id_field function of sandbox_value class until this class is revie
-                wed
     \-- db_ready
         \-- combine_object - checks if the combine object can be added to the database
     \-- is_outdated
@@ -4773,6 +4861,10 @@
         \-- view_relation_list - simple but slow function to add of update all list items in the database
     \-- save_html
         \-- db_cache_page - add or replace the cached html page for the given url
+    \-- del_by_user
+        \-- db_cache_page - remove the cached html pages of one user, so that the next request renders them again
+    \-- del_all
+        \-- db_cache_page - remove every cached html page, so that the next request of any page renders it again;
     \-- add
         \-- change_log - log a user change of a word, value or formula
     \-- filter_readable_by
@@ -4839,6 +4931,7 @@
         \-- db_cache_page - clear all cache page object values e.g. to detect the changed fields
         \-- change_field - set the vars of this change field object to the default values
         \-- ref_type - set the vars of this reference type object to the default values
+        \-- source_type - set the vars of this source type object to the default values
         \-- sandbox_predicated_link - reset the type of the link object
         \-- ip_range - 
         \-- value_time_series - set the user sandbox type for a value time series object and set the user,
@@ -4868,8 +4961,10 @@
     \-- row_mapper_typ_obj
         \-- change_field - fill the change field object vars based on an array of fields from the database
         \-- ref_type - fill the reference type object vars based on an array of fields from the database
+        \-- source_type - fill the source type object vars based on an array of fields from the database or the code lin
+                k csv
     \-- load_dummy
-        \-- phrase_types - adding the word types used for unit tests to the dummy list
+        \-- phrase_types - fill the list for the unit tests from db_code_links/phrase_types.csv,
     \-- default_id
         \-- phrase_types - @return int the database id of the default word type
     \-- import_mapper
@@ -4899,15 +4994,9 @@
                  part
     \-- table_id
         \-- sql_creator - get the preloaded table id for change log entries
-    \-- set_not_ok
-        \-- sql_message - set the status to not OK
-        \-- user_message - set the status to not OK
     \-- set_ok
-        \-- sql_message - set the status to OK
-        \-- user_message - set the status to OK
-    \-- set_warning
-        \-- sql_message - set the status to warning
-        \-- user_message - set the status to warning
+        \-- sql_message - set the status to OK; the setters of a worse status only make the status worse (see Message)
+        \-- user_message - set the status to OK; the setters of a worse status only make the status worse (see Message)
     \-- set_db_row_id
         \-- sql_message - set the main database row to which this user message is related
         \-- user_message - set the main database row to which this user message is related
@@ -4986,6 +5075,9 @@
         \-- config_numbers - get a frontend config value selected by the phrase names
     \-- get_by_names
         \-- config_numbers - get the first config value that is assigned to all given phrase names
+    \-- exact_lookup
+        \-- config_numbers - the config values by their complete phrase set,
+                 e.g. for the config tree that finds the value
     \-- set_cache_json
         \-- config_numbers - use the cached config json for the value lookups of this request (see get_by_names),
     \-- unique_value
@@ -4994,6 +5086,10 @@
         \-- db_id_object_non_sandbox - set the vars of this object based on json string from the frontend object
     \-- id
         \-- db_object_multi - general part to import a database multi table object from a JSON array object
+    \-- set_id
+        \-- db_object_multi - set the unique database id of a multi table object
+    \-- is_id_set
+        \-- db_object_multi - @return bool true if the database id is set
     \-- set_user
         \-- db_object_multi_user - set the user of the user sandbox object
         \-- sandbox_list - set the user of the phrase list
@@ -5027,6 +5123,8 @@
         \-- import_file - import the sample data for the view unit tests
     \-- import_use_case_data
         \-- import_file - import the use case data, which shows how a question is answered with the data
+    \-- import_system_data_appended
+        \-- import_file - import the system data that has been added after the database ids of the tested phrases
     \-- echo
         \-- import_file - display a message immediately to the user
     \-- set_action
@@ -5135,6 +5233,8 @@
         \-- sql_creator - add the parameter for a where condition a list of id are one field or another
     \-- add_where_no_par
         \-- sql_creator - add the parameter for a where condition a list of id are one field or another
+    \-- add_where_in_sub
+        \-- sql_creator - add a where condition that selects the rows whose field value is used in a field of the not
 \-- statement
     \-- sql
         \-- sql_creator - create a SQL select statement for the select database
@@ -5173,6 +5273,9 @@
     \-- add_usr_grp_field
         \-- sql_creator - define the fields that should be returned in a select query
 \-- internal where
+    \-- key_match
+        \-- sql_creator - the case-sensitive match of the key of a phrase within a group id (see sql_par_type::LIKE_KEY)
+                :
     \-- get_order
         \-- sql_creator - get the order SQL statement
     \-- set_order
@@ -5237,6 +5340,10 @@
         \-- sql_creator - create a SQL select statement for the connected database
     \-- del_sql_list_without_log
         \-- sql_creator - create a sql statement to delete all rows that have one of the given ids
+    \-- del_sql_list_by_text
+        \-- sql_creator - create a sql statement to delete all rows where a text field matches the given text,
+    \-- del_sql_all
+        \-- sql_creator - create a sql statement to delete every row of a table, used for a table that only caches
     \-- sql_all
         \-- sql_creator - return a sql statement to get all rows and all fields of the given class
 \-- user sandbox fields
@@ -5273,6 +5380,7 @@
     \-- api_json
         \-- sql_message - @return string the json message to the backend as a string
         \-- combine_object - create the api json message string of this combine object for the frontend
+        \-- config_tree - the tree of the system configuration below "zukunft.com > system configuration" as the
         \-- db_object_multi - create the api json message string of this database object based on more than one table fo
                 r the frontend
         \-- type_list - create the api json message string for this list
@@ -5405,18 +5513,6 @@
                 been created
         \-- user_message - @return bool true if the message is linked to a valid database row of just a database row has
                  been created
-\-- internal
-    \-- 1
-        \-- user_message - @return array with all the text messages
-    \-- combine_status
-        \-- sql_message - combine the status of two user messages and assume the worst
-        \-- user_message - combine the status of two user messages and assume the worst
-    \-- phr_id_lst
-        \-- expression - @returns phr_ids with the word and triple ids from a given formula text
-    \-- phr_id_lst_as_phr_lst
-        \-- expression - @returns phrase_list with the word and triple ids from a given formula text
-    \-- get_usr_names
-        \-- expression - @return array of the term names used in the expression based on the user text
 \-- debug
     \-- dsp_id
         \-- sql_par - combine two sql and the related parameters to one sql statement
@@ -5560,6 +5656,7 @@
         \-- db_cache_page - get a list of all database fields that might be changed
         \-- change_field - get a list of all database fields that might be changed
         \-- ref_type - get a list of all database fields that might be changed
+        \-- source_type - get a list of all database fields that might be changed
         \-- ip_range - get a list of all database fields that might be changed
     \-- db_fields_changed
         \-- element - get a list of database field names, values and types that have been updated
@@ -5567,6 +5664,7 @@
         \-- db_cache_page - get a list of database field names, values and types that have been updated
         \-- change_field - get a list of database field names, values and types that have been updated
         \-- ref_type - get a list of database field names, values and types that have been updated
+        \-- source_type - get a list of database field names, values and types that have been updated
         \-- ip_range - get a list of database field names, values and types that have been updated
     \-- db_field_values_types
         \-- change - get a list of all database fields
@@ -5605,6 +5703,8 @@
         \-- text_log - the single place that writes text to the standard io with the runtime timestamp
     \-- time_stamp_lines
         \-- text_log - put the runtime timestamp in front of every physical line of the given text
+    \-- since_last
+        \-- text_log - @return string the seconds since the last timestamped line e.g. "0.3540 sec", so that a debug
 \-- filter
     \-- diff
         \-- element_list - get all objects that are not in the given list
@@ -5637,6 +5737,15 @@
 \-- filter elements
     \-- element_special_following_frm
         \-- expression - similar to element_special_following, but returns the formula and not the word
+\-- internal
+    \-- phr_id_lst
+        \-- expression - @returns phr_ids with the word and triple ids from a given formula text
+    \-- phr_id_lst_as_phr_lst
+        \-- expression - @returns phrase_list with the word and triple ids from a given formula text
+    \-- get_usr_names
+        \-- expression - @return array of the term names used in the expression based on the user text
+    \-- get_all_messages
+        \-- user_message - @return array with all the text messages
 \-- extract helper
     \-- element_part_list_old
         \-- expression - @return array of the term names used in the expression based on the user text
@@ -5689,6 +5798,8 @@
         \-- group_id - @param int|string $grp_id
     \-- int_array
         \-- group_id - @param int|string $grp_id
+    \-- int2key
+        \-- group_id - the 16 slot text key of a prime group, e.g. for a result that is saved in the standard result
     \-- row_mapper
         \-- change_link - map the database fields to one change log entry to this log object
     \-- load_dummy
@@ -5723,8 +5834,28 @@
     \-- page_cache_allowed
         \-- config_numbers - the pod setting that decides if the rendered html pages are cached in the db_cache_pages ta
                 ble
+    \-- symbol_values_included
+        \-- config_numbers - the pod setting that decides if the values of the symbols of a phrase are shown with the
+    \-- alias_values_included
+        \-- config_numbers - the pod setting that decides if the values of the aliases of a phrase are shown with the
+    \-- symbol_formulas_included
+        \-- config_numbers - the pod setting that decides if the formulas assigned to the symbols of a phrase are shown
+    \-- alias_formulas_included
+        \-- config_numbers - the pod setting that decides if the formulas assigned to the aliases of a phrase are shown
     \-- ip_user_can_change
         \-- config_numbers - the pod permission that decides if a user without login can change data in the database
+\-- convert
+    \-- nodes
+        \-- config_tree - the nodes of the given part of config.yaml in the order of the file, without the keys
+    \-- convert
+        \-- import_wikidata - create a zukunft.com import json array from a wikidata entity json and a wikidata property
+                 json
+    \-- convert_to_file
+        \-- import_wikidata - convert the given wikidata entity and property json to a zukunft.com import json and write
+                 it to the cache folder
+    \-- cleanup_file
+        \-- import_wikidata - remove a cache file created by convert_to_file,
+                 e.g. as an optional cleanup after the import
 \-- settings
     \-- is_value_obj
         \-- db_id_object_non_sandbox - @return bool true if this sandbox object is a value or result
@@ -5793,6 +5924,8 @@
         \-- system_object - load all system users that have a code id
     \-- verb
         \-- system_object - get a verb
+    \-- verb_by_id
+        \-- system_object - get a preloaded verb by its database id e.g. the verb that an api request names by id
     \-- system_user
         \-- system_object - get a preloaded system user
     \-- admin_user
@@ -5808,8 +5941,6 @@
     \-- switch
         \-- system_time_list - start the timing of set the user of the error log
     \-- report
-        \-- system_time_list - @return string description of the execution times by category
-    \-- show_total
         \-- system_time_list - @return string description of the execution times by category
     \-- section_report
         \-- system_time_list - @return string description of the execution times by category of the last section
@@ -5874,16 +6005,6 @@
         \-- import - @param string $key the yaml key with the words of the triple e.g. "system configuration"
     \-- seq_id
         \-- import - @return int the next dummy id for unit testing
-\-- convert
-    \-- convert
-        \-- import_wikidata - create a zukunft.com import json array from a wikidata entity json and a wikidata property
-                 json
-    \-- convert_to_file
-        \-- import_wikidata - convert the given wikidata entity and property json to a zukunft.com import json and write
-                 it to the cache folder
-    \-- cleanup_file
-        \-- import_wikidata - remove a cache file created by convert_to_file,
-                 e.g. as an optional cleanup after the import
 \-- format
     \-- dsp
         \-- change - @return string the current change as a human-readable text
@@ -5901,6 +6022,10 @@
         \-- job_list - prepare sql to get all open jobs of one type
     \-- load_sql_by_status
         \-- job_list - prepare sql to get all open jobs of one status
+    \-- load_sql_by_user
+        \-- job_list - prepare sql to get the jobs requested by the user of this list
+    \-- load_sql_all
+        \-- job_list - prepare sql to get the jobs of all users
 \-- get function
     \-- id_lst
         \-- term_list - @returns array the phrase ids as an array
@@ -5992,6 +6117,10 @@
         \-- job_list - load a list of batch jobs of the given type
     \-- load_by_status
         \-- job_list - load a list of batch jobs of the given status
+    \-- load_by_user
+        \-- job_list - load the batch jobs that the user of this list has requested
+    \-- load_all
+        \-- job_list - load the batch jobs of all users e.g. for the job overview of an admin;
 \-- construct
     \-- __construct
         \-- job_runner - @param user $usr the system user that runs the jobs (see user::system)
@@ -6039,7 +6168,7 @@
         \-- value_text - @param user_message $msg to report a change log entry that cannot be written
         \-- value_time - @param user_message $msg to report a change log entry that cannot be written
 \-- database load functions that reads the object from the database
-    \-- row_mapper_sandbox
+    \-- row_mapper_sandbox_multi
         \-- value_time_series - map the database fields to the object fields
     \-- load_sql_standard
         \-- value_time_series - create the SQL to load the default time series always by the id
@@ -6203,6 +6332,8 @@
             password but without auto fill in /component/execute/system_form.php
     \-- show_result_formula - section for function show_result_formula not yet defined that it should be optional with s
             how password but without auto fill in /component/execute/system_form.php
+    \-- show_result_expression - section for function show_result_expression not yet defined that it should be optional 
+            with show password but without auto fill in /component/execute/system_form.php
     \-- show_all_values_needed - section for function show_all_values_needed not yet defined that it should be optional 
             with show password but without auto fill in /component/execute/system_form.php
     \-- show_impact - section for function show_impact not yet defined that it should be optional with show password but
@@ -6247,6 +6378,10 @@
             password but without auto fill in /component/execute/system_form.php
     \-- form_name - section for function form_name not yet defined that it should be optional with show password but wit
             hout auto fill in /component/execute/system_form.php
+    \-- form_word_add_simple - section for function form_word_add_simple not yet defined that it should be optional with
+             show password but without auto fill in /component/execute/system_form.php
+    \-- form_triple_add_simple - section for function form_triple_add_simple not yet defined that it should be optional 
+            with show password but without auto fill in /component/execute/system_form.php
     \-- form_description - section for function form_description not yet defined that it should be optional with show pa
             ssword but without auto fill in /component/execute/system_form.php
     \-- form_field_code_id - section for function form_field_code_id not yet defined that it should be optional with sho
@@ -6267,6 +6402,8 @@
             password but without auto fill in /component/execute/system_form.php
     \-- form_num_value - section for function form_num_value not yet defined that it should be optional with show passwo
             rd but without auto fill in /component/execute/system_form.php
+    \-- form_value_overwrite - section for function form_value_overwrite not yet defined that it should be optional with
+             show password but without auto fill in /component/execute/system_form.php
     \-- form_field_url - section for function form_field_url not yet defined that it should be optional with show passwo
             rd but without auto fill in /component/execute/system_form.php
     \-- form_field_doi - section for function form_field_doi not yet defined that it should be optional with show passwo
@@ -6408,6 +6545,7 @@
     \-- system_tile - section for function system_tile missing in /component/execute/system_page.php
     \-- title_with_object_name - section for function title_with_object_name missing in /component/execute/system_page.p
             hp
+    \-- related_view_selector - section for function related_view_selector missing in /component/execute/system_page.php
     \-- system_sub_tile - section for function system_sub_tile missing in /component/execute/system_page.php
     \-- system_sub_tile_var - section for function system_sub_tile_var missing in /component/execute/system_page.php
     \-- preview - section for function preview missing in /component/execute/system_page.php
@@ -6429,6 +6567,10 @@
     \-- process - section for function process missing in /component/execute/system_page.php
     \-- error_log - section for function error_log missing in /component/execute/system_page.php
     \-- error_update - section for function error_update missing in /component/execute/system_page.php
+    \-- not_yet_available - section for function not_yet_available missing in /component/execute/system_page.php
+    \-- config_tree - section for function config_tree missing in /component/execute/system_page.php
+    \-- user_jobs - section for function user_jobs missing in /component/execute/system_page.php
+    \-- all_jobs - section for function all_jobs missing in /component/execute/system_page.php
     \-- process_progress - section for function process_progress missing in /component/execute/system_page.php
     \-- process_list - section for function process_list missing in /component/execute/system_page.php
     \-- admin_url_delay - section for function admin_url_delay missing in /component/execute/system_page.php
@@ -6481,6 +6623,7 @@
     \-- component_views - section for function component_views missing in /component/execute/ui_list.php
     \-- formula_list - section for function formula_list missing in /component/execute/ui_list.php
     \-- formula_add_link - section for function formula_add_link missing in /component/execute/ui_list.php
+    \-- value_add_link - section for function value_add_link missing in /component/execute/ui_list.php
     \-- formulas_of_parents - section for function formulas_of_parents missing in /component/execute/ui_list.php
     \-- ref_list_word - section for function ref_list_word missing in /component/execute/ui_list.php
     \-- views_related - section for function views_related missing in /component/execute/ui_list.php
@@ -6498,6 +6641,9 @@
     \-- values_by_triple - section for function values_by_triple missing in /component/execute/ui_list.php
     \-- values_similar - section for function values_similar missing in /component/execute/ui_list.php
     \-- results_by_value - section for function results_by_value missing in /component/execute/ui_list.php
+    \-- values_used - section for function values_used missing in /component/execute/ui_list.php
+    \-- formulas_used - section for function formulas_used missing in /component/execute/ui_list.php
+    \-- results_used - section for function results_used missing in /component/execute/ui_list.php
     \-- values_by_source - section for function values_by_source missing in /component/execute/ui_list.php
     \-- results_by_word - section for function results_by_word missing in /component/execute/ui_list.php
     \-- result_list - section for function result_list missing in /component/execute/ui_list.php
@@ -6537,6 +6683,9 @@
     \-- view_select - section for function view_select missing in /component/execute/ui_select.php
     \-- view_list_for - section for function view_list_for missing in /component/execute/ui_select.php
     \-- list_select - section for function list_select missing in /component/execute/ui_select.php
+    \-- phrase_steps - section for function phrase_steps missing in /component/execute/ui_select.php
+    \-- value_add_simple - section for function value_add_simple missing in /component/execute/ui_select.php
+    \-- phrase_value_line - section for function phrase_value_line missing in /component/execute/ui_select.php
 \-- element
     \-- api_mapper - section for function api_mapper is expected to be construct and map in /element/element.php
     \-- api_array - section for function api_array not yet defined that it should be api in /element/element.php
@@ -6604,6 +6753,8 @@
             in /formula/formula.php
     \-- expression_link - section for function expression_link not yet defined that it should be overwrites in /formula/
             formula.php
+    \-- expression_named_link - section for function expression_named_link not yet defined that it should be overwrites 
+            in /formula/formula.php
     \-- need_all - section for function need_all not yet defined that it should be overwrites in /formula/formula.php
     \-- dsp_text - section for function dsp_text not yet defined that it should be to review in /formula/formula.php
     \-- is_special - section for function is_special is expected to be info in /formula/formula.php
@@ -6684,6 +6835,7 @@
             p
     \-- user_msg_html - section for function user_msg_html not yet defined that it should be cached page in /frontend.ph
             p
+    \-- setting_saved_text - section for function setting_saved_text is expected to be set and get in /frontend.php
     \-- save_html_page - section for function save_html_page is expected to be save in /frontend.php
     \-- execute_and_next - section for function execute_and_next not yet defined that it should be cached page in /front
             end.php
@@ -6704,8 +6856,13 @@
     \-- add - section for function add not yet defined that it should be modify in /group/group.php
     \-- has_percent - section for function has_percent not yet defined that it should be info in /group/group.php
     \-- name - section for function name is expected to be debug in /group/group.php
+    \-- phrase_names - section for function phrase_names not yet defined that it should be base in /group/group.php
     \-- name_tip - section for function name_tip not yet defined that it should be base in /group/group.php
+    \-- phrase_name_tip - section for function phrase_name_tip not yet defined that it should be base in /group/group.ph
+            p
     \-- name_link_list - section for function name_link_list not yet defined that it should be base in /group/group.php
+    \-- phrase_link_list - section for function phrase_link_list not yet defined that it should be base in /group/group.
+            php
     \-- order error - order of section api has difference at api_array should be before url_mapper
 \-- group_list
     \-- add - section for function add not yet defined that it should be set and get in /group/group_list.php
@@ -6713,6 +6870,8 @@
             roup_list.php
     \-- dsp_id - section for function dsp_id is expected to be debug in /group/group_list.php
 \-- config
+    \-- frontend_type - section for function frontend_type not yet defined that it should be interface in /helper/config
+            .php
     \-- percent_decimals - section for function percent_decimals not yet defined that it should be interface in /helper/
             config.php
     \-- dec_point - section for function dec_point not yet defined that it should be interface in /helper/config.php
@@ -6722,6 +6881,22 @@
             config.php
     \-- load - section for function load not yet defined that it should be load in /helper/config.php
     \-- get_by - section for function get_by is expected to be set and get in /helper/config.php
+\-- config_node
+    \-- matches - section for function matches not yet defined that it should be info in /helper/config_node.php
+    \-- order error - order of section construct and map has difference at api_mapper should be before __construct
+\-- config_tree
+    \-- load - section for function load not yet defined that it should be load in /helper/config_tree.php
+    \-- branch - section for function branch not yet defined that it should be select in /helper/config_tree.php
+    \-- columns - section for function columns not yet defined that it should be select in /helper/config_tree.php
+    \-- hits - section for function hits not yet defined that it should be select in /helper/config_tree.php
+    \-- key_names - section for function key_names not yet defined that it should be select in /helper/config_tree.php
+    \-- html - section for function html not yet defined that it should be html in /helper/config_tree.php
+    \-- columns_html - section for function columns_html not yet defined that it should be html in /helper/config_tree.p
+            hp
+    \-- search_form - section for function search_form not yet defined that it should be html in /helper/config_tree.php
+    \-- hit_list - section for function hit_list not yet defined that it should be html in /helper/config_tree.php
+    \-- marked - section for function marked not yet defined that it should be html in /helper/config_tree.php
+    \-- order error - order of section construct and map has difference at api_mapper should be before __construct
 \-- data_object
     \-- refresh_words_via_api - section for function refresh_words_via_api not yet defined that it should be set and get
              in /helper/data_object.php
@@ -6775,6 +6950,8 @@
             ject.php
     \-- add_components_to_views - section for function add_components_to_views not yet defined that it should be fill in
              /helper/data_object.php
+\-- mail_sender
+    \-- send - section for function send missing in /helper/mail_sender.php
 \-- url_mapper
     \-- url_to_standard - section for function url_to_standard missing in /helper/url_mapper.php
     \-- standard_url_to_human - section for function standard_url_to_human missing in /helper/url_mapper.php
@@ -6816,6 +6993,7 @@
     \-- display - section for function display missing in /html/display_list.php
 \-- html_base
     \-- page_html - section for function page_html not yet defined that it should be page in /html/html_base.php
+    \-- forward_page - section for function forward_page not yet defined that it should be page in /html/html_base.php
     \-- header_html - section for function header_html not yet defined that it should be header & footer in /html/html_b
             ase.php
     \-- main_body - section for function main_body not yet defined that it should be header & footer in /html/html_base.
@@ -6839,13 +7017,21 @@
             ml/html_base.php
     \-- span - section for function span not yet defined that it should be wrapper for the basic html elements used in /
             html/html_base.php
+    \-- with_title - section for function with_title not yet defined that it should be wrapper for the basic html elemen
+            ts used in /html/html_base.php
     \-- icon - section for function icon not yet defined that it should be wrapper for the basic html elements used in /
             html/html_base.php
     \-- icon_link - section for function icon_link not yet defined that it should be wrapper for the basic html elements
              used in /html/html_base.php
+    \-- change_icon - section for function change_icon not yet defined that it should be wrapper for the basic html elem
+            ents used in /html/html_base.php
+    \-- change_style_and_tip - section for function change_style_and_tip not yet defined that it should be wrapper for t
+            he basic html elements used in /html/html_base.php
     \-- icon_with_title - section for function icon_with_title not yet defined that it should be wrapper for the basic h
             tml elements used in /html/html_base.php
     \-- sup - section for function sup not yet defined that it should be wrapper for the basic html elements used in /ht
+            ml/html_base.php
+    \-- sub - section for function sub not yet defined that it should be wrapper for the basic html elements used in /ht
             ml/html_base.php
     \-- url_old - section for function url_old not yet defined that it should be wrapper for internal references used in
              the html code in /html/html_base.php
@@ -6859,6 +7045,12 @@
             in the html code in /html/html_base.php
     \-- url_with_token - section for function url_with_token not yet defined that it should be wrapper for internal refe
             rences used in the html code in /html/html_base.php
+    \-- url_with_user - section for function url_with_user not yet defined that it should be wrapper for internal refere
+            nces used in the html code in /html/html_base.php
+    \-- form_user - section for function form_user not yet defined that it should be wrapper for internal references use
+            d in the html code in /html/html_base.php
+    \-- url_with_id_var - section for function url_with_id_var not yet defined that it should be wrapper for internal re
+            ferences used in the html code in /html/html_base.php
     \-- url_api - section for function url_api not yet defined that it should be wrapper for internal references used in
              the html code in /html/html_base.php
     \-- url_ex - section for function url_ex not yet defined that it should be wrapper for internal references used in t
@@ -6985,8 +7177,8 @@
             replace in /html/html_base.php
     \-- label - section for function label not yet defined that it should be base elements - functions for all html elem
             ents used in zukunft.com in /html/html_base.php
-    \-- button_refresh - section for function button_refresh not yet defined that it should be base elements - functions
-             for all html elements used in zukunft.com in /html/html_base.php
+    \-- button_refresh_text - section for function button_refresh_text not yet defined that it should be base elements -
+             functions for all html elements used in zukunft.com in /html/html_base.php
     \-- button_submit_text - section for function button_submit_text not yet defined that it should be base elements - f
             unctions for all html elements used in zukunft.com in /html/html_base.php
     \-- label_lan - section for function label_lan not yet defined that it should be base elements - functions for all h
@@ -7042,6 +7234,13 @@
     \-- div_bs - section for function div_bs not yet defined that it should be internal in /html/html_base.php
     \-- button_bs - section for function button_bs not yet defined that it should be internal in /html/html_base.php
     \-- list_item - section for function list_item not yet defined that it should be internal in /html/html_base.php
+    \-- popup_menu - section for function popup_menu not yet defined that it should be internal in /html/html_base.php
+    \-- details - section for function details not yet defined that it should be internal in /html/html_base.php
+    \-- definition - section for function definition not yet defined that it should be internal in /html/html_base.php
+    \-- mark - section for function mark not yet defined that it should be internal in /html/html_base.php
+    \-- search_input - section for function search_input not yet defined that it should be internal in /html/html_base.p
+            hp
+    \-- popover - section for function popover not yet defined that it should be internal in /html/html_base.php
     \-- list_unsorted - section for function list_unsorted not yet defined that it should be internal in /html/html_base
             .php
 \-- html_selector
@@ -7050,8 +7249,10 @@
 \-- rest_call
     \-- class_to_api_name - section for function class_to_api_name missing in /html/rest_call.php
     \-- api_call_id - section for function api_call_id missing in /html/rest_call.php
+    \-- id_data - section for function id_data missing in /html/rest_call.php
     \-- api_call_name - section for function api_call_name missing in /html/rest_call.php
     \-- api_get - section for function api_get missing in /html/rest_call.php
+    \-- data_with_user - section for function data_with_user missing in /html/rest_call.php
     \-- api_post - section for function api_post missing in /html/rest_call.php
     \-- api_put - section for function api_put missing in /html/rest_call.php
     \-- api_del - section for function api_del missing in /html/rest_call.php
@@ -7123,6 +7324,10 @@
     \-- obj_id - section for function obj_id not yet defined that it should be set and get in /phrase/phrase.php
     \-- is_word - section for function is_word is expected to be info in /phrase/phrase.php
     \-- is_triple - section for function is_triple is expected to be info in /phrase/phrase.php
+    \-- number_symbol - section for function number_symbol not yet defined that it should be info in /phrase/phrase.php
+    \-- symbol_name - section for function symbol_name not yet defined that it should be info in /phrase/phrase.php
+    \-- stands_for - section for function stands_for not yet defined that it should be info in /phrase/phrase.php
+    \-- tooltip - section for function tooltip not yet defined that it should be info in /phrase/phrase.php
     \-- impact - section for function impact not yet defined that it should be info in /phrase/phrase.php
     \-- parents - section for function parents is expected to be foaf in /phrase/phrase.php
     \-- children - section for function children is expected to be foaf in /phrase/phrase.php
@@ -7153,12 +7358,22 @@
     \-- url_mapper - section for function url_mapper not yet defined that it should be set and get in /phrase/phrase_lis
             t.php
     \-- api_mapper - section for function api_mapper is expected to be construct and map in /phrase/phrase_list.php
+    \-- filter_by_name_start - section for function filter_by_name_start not yet defined that it should be load in /phra
+            se/phrase_list.php
+    \-- chart_definitions - section for function chart_definitions not yet defined that it should be load in /phrase/phr
+            ase_list.php
+    \-- sort_definitions - section for function sort_definitions not yet defined that it should be load in /phrase/phras
+            e_list.php
     \-- result_phrases_most_relevant - section for function result_phrases_most_relevant not yet defined that it should 
             be related in /phrase/phrase_list.php
     \-- child_names - section for function child_names not yet defined that it should be related in /phrase/phrase_list.
             php
+    \-- parent_names - section for function parent_names not yet defined that it should be related in /phrase/phrase_lis
+            t.php
     \-- child_phrases - section for function child_phrases not yet defined that it should be related in /phrase/phrase_l
             ist.php
+    \-- column_list_phrases - section for function column_list_phrases not yet defined that it should be related in /phr
+            ase/phrase_list.php
     \-- column_names - section for function column_names not yet defined that it should be related in /phrase/phrase_lis
             t.php
     \-- column_tier - section for function column_tier not yet defined that it should be related in /phrase/phrase_list.
@@ -7173,6 +7388,9 @@
     \-- cached_phrase - section for function cached_phrase not yet defined that it should be select in /phrase/phrase_li
             st.php
     \-- tooltip - section for function tooltip not yet defined that it should be select in /phrase/phrase_list.php
+    \-- stands_for - section for function stands_for not yet defined that it should be select in /phrase/phrase_list.php
+    \-- symbols_of - section for function symbols_of not yet defined that it should be select in /phrase/phrase_list.php
+    \-- symbol_of - section for function symbol_of not yet defined that it should be select in /phrase/phrase_list.php
     \-- parents - section for function parents is expected to be foaf in /phrase/phrase_list.php
     \-- parent_triples - section for function parent_triples not yet defined that it should be select in /phrase/phrase_
             list.php
@@ -7211,6 +7429,14 @@
     \-- ex_info_list - section for function ex_info_list not yet defined that it should be filter in /phrase/phrase_list
             .php
     \-- has_percent - section for function has_percent not yet defined that it should be info in /phrase/phrase_list.php
+    \-- percent_phrase - section for function percent_phrase not yet defined that it should be info in /phrase/phrase_li
+            st.php
+    \-- symbol_phrases - section for function symbol_phrases not yet defined that it should be info in /phrase/phrase_li
+            st.php
+    \-- value_quality_phrases - section for function value_quality_phrases not yet defined that it should be info in /ph
+            rase/phrase_list.php
+    \-- symbol_links - section for function symbol_links not yet defined that it should be info in /phrase/phrase_list.p
+            hp
     \-- intersect - section for function intersect not yet defined that it should be modify in /phrase/phrase_list.php
     \-- mainly - section for function mainly not yet defined that it should be modify in /phrase/phrase_list.php
     \-- add_phrase - section for function add_phrase not yet defined that it should be modify in /phrase/phrase_list.php
@@ -7321,6 +7547,8 @@
 \-- result
     \-- api_mapper - section for function api_mapper is expected to be construct and map in /result/result.php
     \-- formula_id - section for function formula_id not yet defined that it should be set and get in /result/result.php
+    \-- calculated_by_formula - section for function calculated_by_formula not yet defined that it should be set and get
+             in /result/result.php
     \-- load_by_id_with_related - section for function load_by_id_with_related is expected to be load in /result/result.
             php
     \-- display - section for function display not yet defined that it should be display in /result/result.php
@@ -7328,6 +7556,10 @@
     \-- get_description - section for function get_description is expected to be set and get in /result/result.php
     \-- display_linked - section for function display_linked not yet defined that it should be display in /result/result
             .php
+    \-- expression_figures_link - section for function expression_figures_link not yet defined that it should be display
+             in /result/result.php
+    \-- expression_latex_link - section for function expression_latex_link not yet defined that it should be display in 
+            /result/result.php
     \-- figure - section for function figure not yet defined that it should be cast in /result/result.php
     \-- api_array - section for function api_array not yet defined that it should be interface in /result/result.php
     \-- btn_add - section for function btn_add not yet defined that it should be buttons in /result/result.php
@@ -7341,6 +7573,8 @@
     \-- sort_by_number - section for function sort_by_number not yet defined that it should be sort in /result/result_li
             st.php
     \-- list - section for function list not yet defined that it should be sort in /result/result_list.php
+    \-- list_most_relevant - section for function list_most_relevant not yet defined that it should be sort in /result/r
+            esult_list.php
     \-- display - section for function display not yet defined that it should be display in /result/result_list.php
     \-- display_linked - section for function display_linked not yet defined that it should be display in /result/result
             _list.php
@@ -7542,20 +7776,45 @@
 \-- sandbox_value
     \-- url_mapper - section for function url_mapper not yet defined that it should be construct and map in /sandbox/san
             dbox_value.php
-    \-- value - section for function value not yet defined that it should be set and get in /sandbox/sandbox_value.php
     \-- number - section for function number not yet defined that it should be set and get in /sandbox/sandbox_value.php
     \-- text_value - section for function text_value not yet defined that it should be set and get in /sandbox/sandbox_v
             alue.php
     \-- time_value - section for function time_value not yet defined that it should be set and get in /sandbox/sandbox_v
             alue.php
+    \-- geo_value - section for function geo_value not yet defined that it should be set and get in /sandbox/sandbox_val
+            ue.php
     \-- is_std - section for function is_std is expected to be info in /sandbox/sandbox_value.php
+    \-- has_named_phrases - section for function has_named_phrases not yet defined that it should be set and get in /san
+            dbox/sandbox_value.php
     \-- phr_lst - section for function phr_lst not yet defined that it should be set and get in /sandbox/sandbox_value.p
             hp
     \-- api_mapper - section for function api_mapper is expected to be construct and map in /sandbox/sandbox_value.php
+    \-- impact - section for function impact not yet defined that it should be display in /sandbox/sandbox_value.php
+    \-- has_phrase - section for function has_phrase not yet defined that it should be display in /sandbox/sandbox_value
+            .php
+    \-- value - section for function value not yet defined that it should be display in /sandbox/sandbox_value.php
+    \-- value_edit - section for function value_edit not yet defined that it should be display in /sandbox/sandbox_value
+            .php
+    \-- value_edit_link - section for function value_edit_link not yet defined that it should be display in /sandbox/san
+            dbox_value.php
+    \-- quality_mark - section for function quality_mark not yet defined that it should be display in /sandbox/sandbox_v
+            alue.php
+    \-- name_link - section for function name_link not yet defined that it should be display in /sandbox/sandbox_value.p
+            hp
+    \-- phrase_link_list - section for function phrase_link_list not yet defined that it should be display in /sandbox/s
+            andbox_value.php
+    \-- time_phrase - section for function time_phrase not yet defined that it should be display in /sandbox/sandbox_val
+            ue.php
+    \-- title_name - section for function title_name not yet defined that it should be display in /sandbox/sandbox_value
+            .php
+    \-- number_symbols - section for function number_symbols not yet defined that it should be display in /sandbox/sandb
+            ox_value.php
     \-- value_linked - section for function value_linked not yet defined that it should be display in /sandbox/sandbox_v
             alue.php
     \-- val_formatted - section for function val_formatted not yet defined that it should be display in /sandbox/sandbox
             _value.php
+    \-- percent_symbol - section for function percent_symbol not yet defined that it should be info in /sandbox/sandbox_
+            value.php
     \-- order error - order of section construct and map has difference at url_mapper should be before __construct,
             order of section set and get has difference at api_mapper should be before number
 \-- job
@@ -7568,7 +7827,12 @@
     \-- type - section for function type not yet defined that it should be set and get in /system/job.php
     \-- status - section for function status not yet defined that it should be set and get in /system/job.php
     \-- priority - section for function priority not yet defined that it should be set and get in /system/job.php
+    \-- user_name - section for function user_name not yet defined that it should be set and get in /system/job.php
+    \-- is_open - section for function is_open is expected to be info in /system/job.php
+    \-- change - section for function change not yet defined that it should be modify in /system/job.php
     \-- display - section for function display not yet defined that it should be base elements in /system/job.php
+    \-- display_with_actions - section for function display_with_actions not yet defined that it should be base elements
+             in /system/job.php
     \-- header - section for function header not yet defined that it should be base elements in /system/job.php
     \-- api_array - section for function api_array not yet defined that it should be interface in /system/job.php
     \-- display_linked - section for function display_linked not yet defined that it should be to review in /system/job.
@@ -7576,10 +7840,14 @@
     \-- td - section for function td not yet defined that it should be to review in /system/job.php
     \-- th - section for function th not yet defined that it should be to review in /system/job.php
     \-- tr - section for function tr not yet defined that it should be to review in /system/job.php
-    \-- order error - order of section set and get has difference at set_user_id should be before set_request_time
+    \-- order error - order of section set and get has difference at user_name should be before status
 \-- job_list
     \-- api_mapper - section for function api_mapper is expected to be construct and map in /system/job_list.php
     \-- display - section for function display not yet defined that it should be display in /system/job_list.php
+    \-- display_with_actions - section for function display_with_actions not yet defined that it should be display in /s
+            ystem/job_list.php
+    \-- pending_first - section for function pending_first not yet defined that it should be display in /system/job_list
+            .php
     \-- tbl - section for function tbl not yet defined that it should be to review in /system/job_list.php
 \-- language
     \-- url_mapper - section for function url_mapper not yet defined that it should be api in /system/language.php
@@ -7640,6 +7908,8 @@
             hp
     \-- sort_by_impact - section for function sort_by_impact not yet defined that it should be display in /types/type_li
             st.php
+    \-- default_id - section for function default_id not yet defined that it should be display in /types/type_list.php
+    \-- selector - section for function selector not yet defined that it should be display in /types/type_list.php
     \-- type_selector - section for function type_selector not yet defined that it should be display in /types/type_list
             .php
     \-- order error - order of section  has difference at name should be before reset,
@@ -7677,6 +7947,9 @@
     \-- name - section for function name is expected to be debug in /user/user.php
     \-- last_term - section for function last_term not yet defined that it should be set and get in /user/user.php
     \-- password - section for function password not yet defined that it should be set and get in /user/user.php
+    \-- id_for_url - section for function id_for_url not yet defined that it should be info in /user/user.php
+    \-- uses_standard_data - section for function uses_standard_data not yet defined that it should be info in /user/use
+            r.php
     \-- sees_admin_fields - section for function sees_admin_fields not yet defined that it should be info in /user/user.
             php
     \-- can_set_type_id - section for function can_set_type_id not yet defined that it should be info in /user/user.php
@@ -7722,9 +7995,18 @@
     \-- get_all_messages - section for function get_all_messages is expected to be set and get in /user/user_message.php
     \-- get_all_var_messages - section for function get_all_var_messages is expected to be set and get in /user/user_mes
             sage.php
-    \-- combine_status - section for function combine_status not yet defined that it should be internal in /user/user_me
-            ssage.php
     \-- order error - order of section api has difference at api_mapper should be before api_array
+\-- table_chart
+    \-- svg - section for function svg not yet defined that it should be chart in /value/table_chart.php
+\-- table_model
+    \-- __construct - section for function __construct is expected to be construct and map in /value/table_model.php
+    \-- value_col_ids - section for function value_col_ids missing in /value/table_model.php
+    \-- phrase_col_ids - section for function phrase_col_ids missing in /value/table_model.php
+    \-- col_id_by_name - section for function col_id_by_name missing in /value/table_model.php
+    \-- cell_numbers - section for function cell_numbers missing in /value/table_model.php
+    \-- has_column - section for function has_column missing in /value/table_model.php
+    \-- col_id_of_name - section for function col_id_of_name missing in /value/table_model.php
+    \-- sort_rows - section for function sort_rows missing in /value/table_model.php
 \-- value
     \-- url_mapper - section for function url_mapper not yet defined that it should be construct and map in /value/value
             .php
@@ -7737,22 +8019,17 @@
     \-- figure - section for function figure not yet defined that it should be cast in /value/value.php
     \-- value - section for function value not yet defined that it should be base in /value/value.php
     \-- value_link - section for function value_link not yet defined that it should be base in /value/value.php
-    \-- value_edit - section for function value_edit not yet defined that it should be base in /value/value.php
     \-- links_and_measure - section for function links_and_measure is expected to be link in /value/value.php
     \-- with_unit_and_info - section for function with_unit_and_info not yet defined that it should be base in /value/va
             lue.php
     \-- warning_text - section for function warning_text not yet defined that it should be base in /value/value.php
     \-- name - section for function name is expected to be debug in /value/value.php
-    \-- impact - section for function impact not yet defined that it should be base in /value/value.php
-    \-- time_phrase - section for function time_phrase not yet defined that it should be base in /value/value.php
     \-- get_description - section for function get_description is expected to be set and get in /value/value.php
     \-- name_tip - section for function name_tip not yet defined that it should be base in /value/value.php
     \-- name_link - section for function name_link not yet defined that it should be base in /value/value.php
-    \-- val_formatted - section for function val_formatted not yet defined that it should be base in /value/value.php
     \-- source_selector - section for function source_selector not yet defined that it should be base in /value/value.ph
             p
     \-- ref_selector - section for function ref_selector not yet defined that it should be base in /value/value.php
-    \-- has_phrase - section for function has_phrase not yet defined that it should be info in /value/value.php
     \-- btn_add - section for function btn_add not yet defined that it should be buttons in /value/value.php
     \-- btn_edit - section for function btn_edit not yet defined that it should be buttons in /value/value.php
     \-- btn_del - section for function btn_del not yet defined that it should be buttons in /value/value.php
@@ -7780,6 +8057,7 @@
     \-- phrase_list - section for function phrase_list is expected to be cast in /value/value_list.php
     \-- get_by_names - section for function get_by_names is expected to be set and get in /value/value_list.php
     \-- add - section for function add not yet defined that it should be modify in /value/value_list.php
+    \-- add_results - section for function add_results not yet defined that it should be modify in /value/value_list.php
     \-- filter - section for function filter not yet defined that it should be modify in /value/value_list.php
     \-- sort_by_impact - section for function sort_by_impact not yet defined that it should be modify in /value/value_li
             st.php
@@ -7790,6 +8068,12 @@
             alue_list.php
     \-- table_by_related_columns - section for function table_by_related_columns not yet defined that it should be displ
             ay in /value/value_list.php
+    \-- table_header_by_related_columns - section for function table_header_by_related_columns not yet defined that it s
+            hould be display in /value/value_list.php
+    \-- table_to_svg - section for function table_to_svg not yet defined that it should be display in /value/value_list.
+            php
+    \-- columns_menu - section for function columns_menu not yet defined that it should be display in /value/value_list.
+            php
     \-- list_unit - section for function list_unit not yet defined that it should be display in /value/value_list.php
     \-- table - section for function table not yet defined that it should be display in /value/value_list.php
     \-- common_phrases - section for function common_phrases not yet defined that it should be info in /value/value_list
@@ -7798,7 +8082,8 @@
             hp
     \-- dsp_table - section for function dsp_table not yet defined that it should be to review in /value/value_list.php
     \-- html - section for function html not yet defined that it should be to review in /value/value_list.php
-    \-- order error - order of section display has difference at table should be before list_most_relevant
+    \-- order error - order of section modify has difference at filter should be before add_results,
+            order of section display has difference at table should be before list_most_relevant
 \-- verb
     \-- url_mapper - section for function url_mapper not yet defined that it should be construct and map in /verb/verb.p
             hp
@@ -7930,6 +8215,9 @@
             php
     \-- is_type - section for function is_type is expected to be info in /word/triple.php
     \-- is_percent - section for function is_percent is expected to be info in /word/triple.php
+    \-- is_factor - section for function is_factor is expected to be info in /word/triple.php
+    \-- is_measure_non_unit - section for function is_measure_non_unit is expected to be info in /word/triple.php
+    \-- is_value_quality - section for function is_value_quality is expected to be info in /word/triple.php
     \-- is_measure - section for function is_measure is expected to be info in /word/triple.php
     \-- is_scaling - section for function is_scaling is expected to be info in /word/triple.php
     \-- is_time - section for function is_time is expected to be info in /word/triple.php
@@ -8008,6 +8296,9 @@
     \-- is_info - section for function is_info is expected to be info in /word/word.php
     \-- is_scaling - section for function is_scaling is expected to be info in /word/word.php
     \-- is_percent - section for function is_percent is expected to be info in /word/word.php
+    \-- is_factor - section for function is_factor is expected to be info in /word/word.php
+    \-- is_measure_non_unit - section for function is_measure_non_unit is expected to be info in /word/word.php
+    \-- is_value_quality - section for function is_value_quality is expected to be info in /word/word.php
     \-- is_hidden - section for function is_hidden is expected to be info in /word/word.php
     \-- header - section for function header not yet defined that it should be views in /word/word.php
     \-- dsp_graph - section for function dsp_graph not yet defined that it should be to review in /word/word.php
@@ -8092,8 +8383,8 @@
         \-- figure - @param phrase_list|null $phr_lst_header list of phrases that are shown already in the context e.g. 
                 the table header and that should not be shown again
     \-- display
-        \-- figure - return the html code to display a value
-        \-- figure_list - @return string with a list of the figure names with html links
+        \-- figure - the number of the value or the result in the format of the user, so that a figure shows
+        \-- figure_list - @param user_message $msg to report a problem while formatting a number
     \-- display_linked
         \-- figure - html code to show the value with the possibility to click for the result explanation
         \-- figure_list - @param array $url_arr the url parameters of the calling page,
@@ -8125,6 +8416,12 @@
         \-- phrase_list - get the phrase of this cache that matches the given phrase, so that a phrase which
     \-- tooltip
         \-- phrase_list - get the tooltip text for the given phrase based on this cache:
+    \-- stands_for
+        \-- phrase_list - the phrase that the given symbol stands for, e.g. "Euro" for "EUR", taken from this list,
+    \-- symbols_of
+        \-- phrase_list - the phrases that "are symbol for" the given phrase, e.g. "m" and "mio" for million, taken
+    \-- symbol_of
+        \-- phrase_list - the symbol that stands for the given phrase, e.g. "x" for the factor or "mio" for million
     \-- parents
         \-- phrase_list - get all phrases that are connected to the given phrase
     \-- parent_triples
@@ -8191,13 +8488,22 @@
     \-- no_row_style
         \-- component - @return bool true if the component uses the style for the component not the row
     \-- needs_row_components
-        \-- component - @return bool true if the component is a system form button or a hidden form element
+        \-- component - @return bool true if the component is a system form button,
+                 a hidden form element or sets its own rows
     \-- field_code_id
         \-- change_log - @return string the change field code id (the change table id followed by the field name)
     \-- field_name
         \-- change_log - @return string the pure field name of the change e.g. 'impact',
     \-- has_percent
         \-- phrase_list - @return bool true if one of the phrases is of type percent
+    \-- percent_phrase
+        \-- phrase_list - the phrase of this list that forces the percent format, so that the caller can ask it for
+    \-- symbol_phrases
+        \-- phrase_list - the phrases that are shown as a symbol behind the number instead of being named with the
+    \-- value_quality_phrases
+        \-- phrase_list - the phrases that say how the number has been found e.g. "assumed", which are shown as a
+    \-- symbol_links
+        \-- phrase_list - the symbols of the phrases of this list, each linked to its phrase and separated from the
 \-- to be replaced
     \-- form_edit
         \-- component - HTML code to edit all component fields
@@ -8318,6 +8624,10 @@
         \-- sandbox_link - the pending link in one line, shown as the title of a confirm page, e.g.
     \-- name_linked
         \-- sandbox_link - the two linked objects as links, e.g. for the subtitle of the link default page;
+    \-- display_with_actions
+        \-- job_list - @param bool $is_admin true if the requesting user is an admin, who can also upgrade a job
+    \-- pending_first
+        \-- job_list - @return array the jobs with the open jobs on top and within each group the newest request first
     \-- display_admin
         \-- sys_log_list - @param array $url_arr the url vars of the calling page for the back link of the close links
     \-- get_html
@@ -8352,7 +8662,7 @@
         \-- job_list - set the vars of these list display objects bases on the api json array
         \-- triple_list - set the triples based on the given json
     \-- id
-        \-- figure - @return int the figure id based on the value or result id
+        \-- figure - the figure id based on the value or result id: the result id is negated, and a text key,
     \-- obj_id
         \-- figure - @return int|string|null the id of the value or result id (not unique!)
         \-- combine_named - @return int|string|null the id of the object
@@ -8530,18 +8840,24 @@
         \-- change_log_list - load a list of changes from the api
     \-- load_by_user
         \-- change_log_list - load the overwrites done by the given user via the api
+        \-- job_list - load the jobs of the requesting user via the api
         \-- sys_log_list - request the system log entries related to the session user from the backend
     \-- load_api_by_object_field
         \-- change_log_list - get the json of a list of changes from the api
-    \-- 5
+    \-- 12
         \-- phrase_list - add the phrases related to the given formula to the list
     \-- load_fallback
         \-- change_log_list - if the change log list is empty fill it with the last changes
         \-- phrase_list - if the phrase list is empty fill it with some general suggested phrases
+    \-- load_for_selector
+        \-- source_list - fill the list for a source selector: the sources that match the typed chars,
+                 or all sources of the
     \-- load_by_formula_and_group_list
         \-- result_list - load all a result by the phrase group id and time phrase
     \-- load_by_formula
         \-- result_list - load a list of results linked to a formula
+    \-- load_by_phrase_list
+        \-- result_list - add the results of any of the given phrases to this list
     \-- load_by_group
         \-- result_list - load a list of results linked to a phrase group
     \-- load_by
@@ -8550,6 +8866,8 @@
         \-- combine_named - load the phrase by name via api
     \-- load_by_id
         \-- sandbox - add the user to the load of the user sandbox object e.g. word by id via api
+    \-- load_all
+        \-- job_list - load the jobs of all users via the api, which refuses the request of a user who is not an admin
 \-- 
     \-- form_tile
         \-- system_form - start an HTML form, show the title and set and set the unique form name
@@ -8580,6 +8898,8 @@
     \-- title_with_object_name
         \-- system_page - HTML for a page title that names the object shown on the page e.g. User "zukunft.com system te
                 st"
+    \-- related_view_selector
+        \-- system_page - the "..." in the right corner below the title of a default, detail, range or detail with
     \-- system_sub_tile
         \-- system_page - HTML for a subtitle
     \-- system_sub_tile_var
@@ -8599,7 +8919,8 @@
     \-- reset_body
         \-- system_page - build the password reset request form HTML
     \-- logout_body
-        \-- system_page - HTML shown on the logout confirmation page
+        \-- system_page - HTML shown on the logout confirmation page with a button back to the last normal page seen bef
+                ore
     \-- body_search
         \-- system_page - the HTML code to show the search results with words, verbs, triple, formulas
     \-- body_search_full
@@ -8622,10 +8943,21 @@
         \-- system_page - @return string with the HTML code to show all relations of a value
     \-- error_update
         \-- system_page - render the admin error-update page body: a table of unresolved program issues an admin can
+    \-- not_yet_available
+        \-- system_page - the body of a system view that is already part of the system views,
+                 but whose data and actions are not yet
+    \-- config_tree
+        \-- system_page - the tree of the system configuration with the search and the scope of the url,
+    \-- user_jobs
+        \-- system_page - the jobs of the requesting user with the pending jobs on top and the buttons to downgrade or c
+                ancel a job
+    \-- all_jobs
+        \-- system_page - the jobs of all users for an admin with the pending jobs on top and the buttons to up- or down
+                grade or cancel
     \-- process_progress
-        \-- system_page - render the admin error-update page body: a table of unresolved program issues an admin can
+        \-- system_page - @param user_message $msg with the requesting user
     \-- process_list
-        \-- system_page - render the admin error-update page body: a table of unresolved program issues an admin can
+        \-- system_page - @param user_message $msg with the requesting user
     \-- admin_url_delay
         \-- system_page - @return string with the HTML code that contains the most relevant user response delay within a
                  time period defined in the system configuration
@@ -8676,7 +9008,7 @@
     \-- expression_link
         \-- ui_base - @param db_object|null $dbo the formula whose expression should be displayed
     \-- name
-        \-- ui_base - the label points to the field that it validates, so that a click on it opens the field
+        \-- ui_base - the label points to the field that it validates, so that a click on it opens the field and
     \-- word_children
         \-- ui_foaf - TODO move code from component_dsp_old
     \-- word_parents
@@ -8720,6 +9052,8 @@
         \-- ui_list - get a list of formulas related to e.g. a verb
     \-- formula_add_link
         \-- ui_list - the boxed plus icon behind the formulas subtitle of a word or triple page that opens the formula
+    \-- value_add_link
+        \-- ui_list - the plus icon behind the values subtitle of a word or triple page that opens the value add view
     \-- formulas_of_parents
         \-- ui_list - the formulas assigned to the ancestor phrases of a word, grouped per ancestor and shown as a
     \-- ref_list_word
@@ -8751,7 +9085,13 @@
     \-- values_similar
         \-- ui_list - the values of the same category as the given value grouped by their phrases like the
     \-- results_by_value
-        \-- ui_list - the results that use the given value as a table, used by the results column of the value
+        \-- ui_list - the results that use the given value grouped like the values of a phrase, used by the
+    \-- values_used
+        \-- ui_list - the values used to calculate the given result grouped by their phrases like the default word
+    \-- formulas_used
+        \-- ui_list - the formulas that have calculated the results used for the given result, used by the formulas
+    \-- results_used
+        \-- ui_list - the results used to calculate the given result grouped like the used values, used by the
     \-- values_by_source
         \-- ui_list - the values that name the given source grouped by their phrases like the default word view,
     \-- results_by_word
@@ -8761,7 +9101,7 @@
     \-- results
         \-- ui_list - TODO move code from component_dsp_old
     \-- results_related
-        \-- ui_list - TODO Prio 0 fill with real code
+        \-- ui_list - show the results related to the given object grouped like the values of a phrase (see
     \-- phrases_related
         \-- ui_list - TODO Prio 0 fill with real code
     \-- list_sort
@@ -8809,10 +9149,22 @@
         \-- ui_select - the views to offer in a view selector: the request cache list if it is already filled, otherwise
     \-- list_select
         \-- ui_select - show a selection list (e.g. of languages) and let the user pick one entry by name
+    \-- phrase_steps
+        \-- ui_select - the pure html selection of the phrases of a new value one after the other followed by the number
+                 field:
+    \-- value_add_simple
+        \-- ui_select - the pure html form that adds a value just by its phrases and the number: the phrases are selecte
+                d step by
+    \-- phrase_value_line
+        \-- ui_select - the line of the pure value add form with the chosen phrases, the phrase field,
+                 the find and next button,
     \-- api_mapper
         \-- element_group - set the vars of this element_group list based on the given json
     \-- element_list
         \-- expression - get a list of all formula elements
+    \-- send
+        \-- mail_sender - send a plain text mail via the smtp account of the .env or, without a smtp host,
+                 via php mail()
     \-- url_to_standard
         \-- url_mapper - get the standard url array from all allowed url formats
     \-- standard_url_to_human
@@ -8836,10 +9188,14 @@
         \-- rest_call - create the class name as used for the api
     \-- api_call_id
         \-- rest_call - create and execute an api call for a database object
+    \-- id_data
+        \-- rest_call - add the id to the api call parameters; a group id is named in its short form like in a page
     \-- api_call_name
         \-- rest_call - create and execute an api call for a database object
     \-- api_get
         \-- rest_call - create and execute an api get call to get a json message of a database object
+    \-- data_with_user
+        \-- rest_call - add the id of the logged-in user to the url vars of an api get call,
     \-- api_post
         \-- rest_call - create and execute an api post call add an object to the database based on the given json
     \-- api_put
@@ -8857,6 +9213,7 @@
         \-- table - 
         \-- user_log_display - for a user log it is always needed to know who wants to seen the log
         \-- sandbox_list_value - 
+        \-- table_model - 
     \-- reset
         \-- table - 
     \-- add_column
@@ -8894,6 +9251,20 @@
         \-- user_type_list - create the HTML code to select a user type
     \-- default_id
         \-- view_style_list - @return int|null null because the default is to use no additional style definition
+    \-- value_col_ids
+        \-- table_model - @return array the ids of the shown columns that hold a value, the leftmost first
+    \-- phrase_col_ids
+        \-- table_model - @return array the ids of the shown columns that name a phrase of the row, the leftmost first
+    \-- col_id_by_name
+        \-- table_model - @param string $name a name that selects a value column e.g. "loss" or "potential loss"
+    \-- cell_numbers
+        \-- table_model - the numbers of one cell sorted by their role, like value_list::cell shows them
+    \-- has_column
+        \-- table_model - @param int $phr_id the phrase id of a column
+    \-- col_id_of_name
+        \-- table_model - @param string $name the name of a column phrase e.g. "potential loss"
+    \-- sort_rows
+        \-- table_model - sort the shown rows by the orders of this model; the rows that every order leaves equal
 \-- optional with show password but without auto fill
     \-- admin_form_user_uses_sandbox
         \-- system_form - @return string the html code so that an admin user can switch if the pages
@@ -8938,6 +9309,8 @@
         \-- system_form - @param result|db_object $dbo the result whose value and phrase group is shown
     \-- show_result_formula
         \-- system_form - @param result|db_object $dbo the result whose creating formula is shown
+    \-- show_result_expression
+        \-- system_form - @param result|db_object $dbo the result whose formula is shown with the numbers used
     \-- show_all_values_needed
         \-- system_form - @param formula|db_object $dbo the formula whose all-values-needed flag is shown
     \-- show_impact
@@ -8983,6 +9356,11 @@
         \-- system_form - TODO Prio 1 fill with the correct field
     \-- form_name
         \-- system_form - an editable text field of an edit / add form that also sends the unchanged db value as the
+    \-- form_word_add_simple
+        \-- system_form - the one field form that adds a word by its name without the confirm view: the hidden word add 
+                mask
+    \-- form_triple_add_simple
+        \-- system_form - one field for the name of a new triple and an add button that writes the triple directly,
     \-- form_description
         \-- system_form - @param db_object|type_object $dbo
     \-- form_field_code_id
@@ -9002,7 +9380,10 @@
     \-- form_field_weight
         \-- system_form - edit field for the triple weight
     \-- form_num_value
-        \-- system_form - @param db_object $dbo the object
+        \-- system_form - the number, text, time or geolocation field of the value form with the opening value as the
+    \-- form_value_overwrite
+        \-- system_form - the one field form that overwrites the number, text,
+                 time or geolocation of a value or the number of a result
     \-- form_field_url
         \-- system_form - @return string the html code to request a url from the user
     \-- form_field_doi
@@ -9012,7 +9393,7 @@
     \-- form_field_source_group_name
         \-- system_form - @return string the html code to request the source group name
     \-- form_field_group_or_phrases
-        \-- system_form - @return string the html code to request the group name or a list of phrases
+        \-- system_form - @param db_object $dbo the value or result with the group name
     \-- form_field_source_group_or_phrases
         \-- system_form - @return string the html code to request the group name or a list of phrases
     \-- form_field_formula_link_priority
@@ -9175,12 +9556,17 @@
         \-- formula_link - @return string the description of this formula link or an empty string if not set
     \-- phrase_name
         \-- formula_link - @return string the description of this formula link or an empty string if not set
+    \-- frontend_type
+        \-- config - @param user_message $msg to report a problem of reading the config
     \-- percent_decimals
-        \-- config - 
+        \-- config - the view that adds a value for the given frontend type: a pure html frontend selects the phrases of
+                 the
     \-- dec_point
-        \-- config - 
+        \-- config - the view that adds a value for the given frontend type: a pure html frontend selects the phrases of
+                 the
     \-- thousand_sep
-        \-- config - 
+        \-- config - the view that adds a value for the given frontend type: a pure html frontend selects the phrases of
+                 the
     \-- date_time_format
         \-- config - @return string with the date format as requested by the user
 \-- classifications
@@ -9207,7 +9593,7 @@
     \-- get_by_formula
         \-- result_list - add a formula result to the list
     \-- filter
-        \-- result_list - get a list with the results related directly to the given formula, word, triple, source
+        \-- result_list - get a list with the results related directly to the given formula, word, triple or value
     \-- is_empty
         \-- sys_log_list - @return bool true when the list contains no entries; mirrors the ListBase API so callers
     \-- head
@@ -9235,8 +9621,12 @@
         \-- phrase_list - get the phrase of the most relevant result
     \-- child_names
         \-- phrase_list - get the names of the phrases that this list links to the given phrase by a triple
+    \-- parent_names
+        \-- phrase_list - get the names of the phrases that this list links the given phrase to by a triple, the
     \-- child_phrases
         \-- phrase_list - the phrases that this list links to the given phrase by a triple
+    \-- column_list_phrases
+        \-- phrase_list - the list triples of this list that collect the phrases of a table column for one row, e.g.
     \-- column_names
         \-- phrase_list - the names of the phrases that this list defines as table columns, in the order that the
     \-- column_tier
@@ -9259,7 +9649,7 @@
     \-- set_cache
         \-- frontend - load the frontend cache once upfront via api
     \-- load_dummy_cache_from_test_resources
-        \-- frontend - load the frontend cache from the test resource
+        \-- frontend - load the frontend cache from a dummy api message instead of an api call
     \-- set_type_cache
         \-- frontend - set the frontend cache once upfront base on the api message
     \-- set_view_cache
@@ -9286,6 +9676,9 @@
         \-- frontend - the canonical cache key of a view-only page request
     \-- user_msg_html
         \-- frontend - create the html notification for the user messages of the current request
+    \-- setting_saved_text
+        \-- frontend - @param array $url_array the url of the save with the new number,
+                 the shown number and the yaml keys of the setting
     \-- save_html_page
         \-- frontend - remember the rendered html page for the next request of the same url
     \-- execute_and_next
@@ -9361,6 +9754,8 @@
 \-- page
     \-- page_html
         \-- html_base - create a simple html page based on header, body and footer html code
+    \-- forward_page
+        \-- html_base - @param int $msk_id the id of the view that the forward page opens e.g. views::SYSTEM_CONFIG_ID
 \-- header & footer
     \-- header_html
         \-- html_base - the page header for simple html pages like the login page
@@ -9389,14 +9784,22 @@
         \-- html_base - escape user settable text so it is shown literally and cannot inject html
     \-- span
         \-- html_base - @param string $text the text that should be formatted
+    \-- with_title
+        \-- html_base - a text with a mouseover text but without the data-toggle of span(), which only a js plugin
     \-- icon
         \-- html_base - the html code of a font icon (e.g. Font Awesome) as an empty paired <i> tag
     \-- icon_link
         \-- html_base - an icon that links to a view of an object, e.g. the edit and the delete icon of a component
+    \-- change_icon
+        \-- html_base - an icon link that starts an add or an edit; a user without login gets the icon greyed out with a
+    \-- change_style_and_tip
+        \-- html_base - @param string $style the css class of an add or edit icon link
     \-- icon_with_title
         \-- html_base - the html of a font awesome icon
     \-- sup
         \-- html_base - @param string $text the superscript text e.g. the exponent "2"
+    \-- sub
+        \-- html_base - @param string $text the subscript text e.g. the index "i"
 \-- wrapper for internal references used in the html code
     \-- url_old
         \-- html_base - build a url for link a zukunft.com element
@@ -9410,6 +9813,12 @@
         \-- html_base - the url of the page that the given url parameters describe, e.g. to return to it
     \-- url_with_token
         \-- html_base - append the anti-csrf session token to a get action link (logout, error_update) so that the
+    \-- url_with_user
+        \-- html_base - add the id of the logged-in user to the url of a page of this pod, so that the address bar
+    \-- form_user
+        \-- html_base - the hidden field with the id of the logged-in user, because a get form drops the
+    \-- url_with_id_var
+        \-- html_base - name the object of a page url by the url var of its view, because the url builders name every
     \-- url_api
         \-- html_base - build a url for link a zukunft.com element
     \-- url_ex
@@ -9552,8 +9961,8 @@
 \-- base elements - functions for all html elements used in zukunft.com
     \-- label
         \-- html_base - create the html code for a label
-    \-- button_refresh
-        \-- html_base - a small submit button beside a form field label that asks the backend to recalculate one
+    \-- button_refresh_text
+        \-- html_base - a text button that submits the form only to refresh some fields, e.g. the 'find and next' of the
     \-- button_submit_text
         \-- html_base - a submit button that looks like a link, e.g. the 'add' of the component list of a view; it is
     \-- label_lan
@@ -9615,9 +10024,21 @@
     \-- div_bs
         \-- html_base - wrap the div tag around html code using the bootstrap default class if no style is given
     \-- button_bs
-        \-- html_base - wrap the button tag around html code
+        \-- html_base - @param string $text the html code shown on the button e.g. a translated text or an icon
     \-- list_item
         \-- html_base - html list item entry
+    \-- popup_menu
+        \-- html_base - a popup menu that opens on a click without any javascript, because the html details
+    \-- details
+        \-- html_base - a part that the user can open and close without javascript, e.g. a node of a tree
+    \-- definition
+        \-- html_base - one row of a description list, e.g. a setting and its value
+    \-- mark
+        \-- html_base - @param string $txt the already escaped text that matches a search
+    \-- search_input
+        \-- html_base - a search input with the given suggestions, which the browser shows without javascript
+    \-- popover
+        \-- html_base - a button that shows a long text above the page without javascript (html popover)
     \-- list_unsorted
         \-- html_base - html unsorted list
 \-- table
@@ -9699,6 +10120,8 @@
         \-- result_list - sort this result list in place so that the result with the highest number is first and the
     \-- list
         \-- result_list - the deterministically sorted list rendered by the generic ListBase::list(); overridden so the
+    \-- list_most_relevant
+        \-- result_list - the results grouped for a quick overview like the values of a phrase: a value list can hold
     \-- sort_by_relevance
         \-- sandbox_list - 
 \-- repeat backend
@@ -9714,5 +10137,8 @@
         \-- sandbox_list - to show the list name to the user in the most simple form (without any ids)
     \-- names
         \-- sandbox_list - @param ?int $limit the max number of ids to show
+\-- chart
+    \-- svg
+        \-- table_chart - the table as a chart of the given type
 ```
 

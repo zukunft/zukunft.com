@@ -39,12 +39,12 @@ enum source_types: string
     const string XML = "XML";
     const string JSON = "json";
     const string XBRL = "xbrl";
-    const int XBRL_ID = 2; // the fixed database ID for testing
+    const int XBRL_ID = 8; // the fixed database ID for testing
     const string XBRL_NAME = "XBRL";
     const string XBRL_COM = "eXtensible Business Reporting Language is a freely available global framework for exchanging business information";
     const string CSV = "csv";
-    const int CSV_ID = 3; // the fixed database ID for testing
+    const int CSV_ID = 9; // the fixed database ID for testing
     const string PDF = "pdf";
-    const int PDF_ID = 4; // the fixed database ID for testing
+    const int PDF_ID = 3; // the fixed database ID for testing
 
 }

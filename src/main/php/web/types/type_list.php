@@ -84,6 +84,10 @@ class type_list
     // the view that shows the complete list, used as the target of the "... and n more" tail;
     // overwritten by the child that has such a view, 0 keeps the tail an unlinked text
     const int VIEW_ALL_ID = 0;
+    // the url var of the form field that selects an entry of this list, e.g. url_var::SHARE;
+    // overwritten by every child that has a selector, so that the field name of a selector and
+    // the '8'-prefixed name of its opening value are always the same (see db_object::add_pre_value)
+    const string NAME = '';
 
     // the protected main var without id list because this is only loaded once
     protected array $lst = [];
@@ -480,6 +484,37 @@ class type_list
             $result = $html->ref($html->url_back($this::VIEW_ALL_ID, base_url: $base_url), $result);
         }
         return $result;
+    }
+
+    /**
+     * the id used by a selector if the object has no type of its own,
+     * overwritten by every child that has a default type
+     *
+     * @return int|null the database id of the default type or null if the list has no default
+     */
+    function default_id(): ?int
+    {
+        return null;
+    }
+
+    /**
+     * create the HTML code to select an entry of this list with the label of this type,
+     * overwritten by every child to name its label, so that one selector call fits all lists
+     *
+     * @param string $form the unique name of the html form
+     * @param int|null $selected the id of the entry used until now
+     * @param string $name the url var of the form field, which is the NAME of the list by default
+     * @param string $style the formatting code to adjust the formatting
+     * @return string the html code to select an entry of this list
+     */
+    function selector(
+        string $form = '',
+        ?int   $selected = null,
+        string $name = self::NAME,
+        string $style = view_styles::COL_SM_4
+    ): string
+    {
+        return $this->type_selector($form, $selected, $name, msg_id::FORM_FIELD_TYPE, $style);
     }
 
     /**

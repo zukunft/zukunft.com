@@ -55,6 +55,7 @@ include_once html_paths::PHRASE . 'phrase.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::PHRASE . 'term_list.php';
 include_once html_paths::REF . 'source.php';
+include_once html_paths::RESULT . 'result.php';
 include_once html_paths::VALUE . 'value.php';
 include_once html_paths::TYPES . 'type_object.php';
 //include_once html_paths::RESULT . 'result_list.php';
@@ -77,8 +78,7 @@ include_once html_paths::SHARED . 'library.php';
 include_once html_paths::SHARED . 'url_var.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::SHARED_ENUM . 'foaf_direction.php';
-
-//include_once test_paths::CONST . 'triple_names.php';
+include_once html_paths::SHARED_ENUM . 'table_forms.php';
 
 use Zukunft\ZukunftCom\main\php\web\component\component;
 use Zukunft\ZukunftCom\main\php\web\const\icons;
@@ -96,6 +96,7 @@ use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\phrase\term_list;
 use Zukunft\ZukunftCom\main\php\web\ref\source;
+use Zukunft\ZukunftCom\main\php\web\result\result;
 use Zukunft\ZukunftCom\main\php\web\result\result_list;
 use Zukunft\ZukunftCom\main\php\web\types\type_object;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
@@ -109,14 +110,13 @@ use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
-use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
-use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
+use Zukunft\ZukunftCom\main\php\shared\enum\table_forms;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 
@@ -239,15 +239,138 @@ class ui_list extends ui_base
     /**
      * HTML for the phrases related to the given phrase excluding the alias, symbol and "is a"
      * entries, because the alias and symbol have their own components and the "is a" parents
-     * are already shown in the page subtitle (e.g. on the default word page)
+     * are already shown in the page subtitle (e.g. on the default word page); a phrase without an
+     * "is a" parent gets the form to define it as one of the categories first (see define_form)
      *
      * @param word|db_object $wrd the object shown to the user e.g. the word "US dollar"
      * @param phrase_list|null $phr_lst the cached list of phrases for initial display without backend call
-     * @return string the html code with the remaining related phrases
+     * @param data_object|null $cfg the request cache with the categories that the phrase can be defined as
+     * @param bool $test_mode true to build the define form without a backend call
+     * @param array $url_arr the url of the shown page as back target of the triple add view
+     * @return string the html code with the define form and the remaining related phrases
      */
-    function phrases_related_ex_subtitle(word|db_object $wrd, user_message $msg, ?phrase_list $phr_lst = null): string
+    function phrases_related_ex_subtitle(
+        word|db_object $wrd,
+        user_message   $msg,
+        ?phrase_list   $phr_lst = null,
+        ?data_object   $cfg = null,
+        bool           $test_mode = false,
+        array          $url_arr = []
+    ): string
     {
-        return $this->phrases_related_ex_verbs($wrd, $phr_lst, [verbs::SYMBOL, verbs::ALIAS, verbs::IS], $msg, true);
+        $phr_cac = $this->related_list($wrd, $phr_lst);
+        $result = $this->define_form($wrd->phrase(), $phr_cac, $msg, $cfg, $test_mode, $url_arr);
+        $ex_vrb_lst = [verbs::SYMBOL, verbs::ALIAS, verbs::IS];
+        return $result . $this->phrases_related_ex_verbs($wrd, $phr_lst, $ex_vrb_lst, $msg, true);
+    }
+
+    /**
+     * the plus icon of a word or triple that has no "is a" parent yet, which reveals the form to define
+     * it as one of the categories, e.g. "define lugano as [city] add" (like the formula link icon); the
+     * button opens the triple add view with the phrase, the verb "is a" and the selected category
+     * preselected, so the user checks the new triple before the save
+     *
+     * @param phrase $phr the shown word or triple
+     * @param phrase_list|null $phr_cac the related phrases of the shown phrase with its triples
+     * @param user_message $msg to report a problem of the category load
+     * @param data_object|null $cfg the request cache with the categories that can be selected
+     * @param bool $test_mode true to build the form without a backend call
+     * @param array $url_arr the url of the shown page as back target
+     * @return string the html code of the icon and the hidden form, empty if the phrase has an "is a" parent
+     */
+    private function define_form(
+        phrase       $phr,
+        ?phrase_list $phr_cac,
+        user_message $msg,
+        ?data_object $cfg,
+        bool         $test_mode,
+        array        $url_arr
+    ): string
+    {
+        global $ui_sys;
+
+        $result = '';
+        $is_vrb = $ui_sys?->typ_lst_cache?->vrb?->get_by_code_id(verbs::IS);
+        // without the related phrases or the verb it is unknown whether the phrase has a parent
+        if ($phr->id() != 0 and $phr_cac != null and $is_vrb != null) {
+            // the "is a" triples with the phrase as from side are its parents
+            if ($phr_cac->children($phr, $msg, $is_vrb)->is_empty()) {
+                $pane = $this->define_pane($phr, $is_vrb, $msg, $cfg, $test_mode, $url_arr);
+                $result = $this->toggle_pane(
+                    styles::DEFINE_PHRASE_PANE, icons::ADD, msg_id::DEFINE_PHRASE, msg_id::DEFINE_PHRASE_BLOCKED, $pane);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the pane that the define icon reveals: the text, the category selector and the add button, or the
+     * reason why nothing can be defined, i.e. a user without login or no category to select
+     *
+     * @param phrase $phr the shown word or triple without an "is a" parent
+     * @param verb $is_vrb the verb "is a" of the new triple
+     * @param user_message $msg to report a problem of the category load
+     * @param data_object|null $cfg the request cache with the categories that can be selected
+     * @param bool $test_mode true to build the form without a backend call
+     * @param array $url_arr the url of the shown page as back target
+     * @return string the html code of the pane
+     */
+    private function define_pane(
+        phrase       $phr,
+        verb         $is_vrb,
+        user_message $msg,
+        ?data_object $cfg,
+        bool         $test_mode,
+        array        $url_arr
+    ): string
+    {
+        global $mtr;
+
+        $html = new html_base();
+        $blocked = html_base::change_blocked();
+        $ctg_lst = $cfg?->ctg_lst ?? new phrase_list();
+        // a user without login cannot save the triple, so the categories are not even read; the request
+        // cache is filled by the unit tests only, so outside of them the categories come from the backend
+        if ($ctg_lst->is_empty() and !$test_mode and !$blocked) {
+            $ctg_lst->load_by_verb($is_vrb, foaf_direction::UP, $msg);
+        }
+        if ($blocked) {
+            $pane = $html->dsp_notification($mtr->txt(msg_id::CHANGE_BLOCKED_FOR_IP_USER));
+        } elseif ($ctg_lst->is_empty()) {
+            $pane = $mtr->txt(msg_id::INFO_NO_CATEGORY_TO_SELECT);
+        } else {
+            $lib = new library();
+            $form_name = views::TRIPLE_ADD_DETAIL;
+            $fields = $this->hidden_fields([
+                url_var::MASK => views::TRIPLE_ADD_DETAIL_ID,
+                url_var::PHRASE_FROM => $phr->id(),
+                url_var::VERB => $is_vrb->id()
+            ], $url_arr);
+            $define_txt = $mtr->txt(msg_id::INFO_DEFINE_PHRASE_AS);
+            $text = $lib->msg_var_replace($define_txt, msg_id::VAR_PHRASE_NAME, $html->esc($phr->name()));
+            $sel = $ctg_lst->selector($form_name, 0, url_var::PHRASE_TO, msg_id::FORM_SELECT_PHRASE_TO);
+            $button = $html->form_submit($mtr->txt(msg_id::SYSTEM_BUTTON_ADD));
+            $pane = $html->form_start($form_name) . $fields . $text . $sel . $button . $html->form_end();
+        }
+        return $pane;
+    }
+
+    /**
+     * the hidden fields of a form that opens another view: the given url vars followed by the shown
+     * page as '9'-prefixed back target
+     *
+     * @param array $url_vars the url vars that the form sends e.g. the mask and the phrase
+     * @param array $url_arr the url of the shown page as back target
+     * @return string the html code of the hidden fields
+     */
+    private function hidden_fields(array $url_vars, array $url_arr): string
+    {
+        $html = new html_base();
+        $result = '';
+        foreach ($url_vars + html_base::back_url_array($url_arr) as $key => $val) {
+            $result .= $html->form_hidden($key, (string)$val);
+        }
+        return $result;
     }
 
     /**
@@ -353,7 +476,7 @@ class ui_list extends ui_base
         global $ui_sys;
 
         $page = new system_page();
-        $result = $page->system_sub_tile(msg_id::FORM_SUB_TITLE_ASSIGNED_PHRASES);
+        $result = $page->system_sub_tile($msg, msg_id::FORM_SUB_TITLE_ASSIGNED_PHRASES);
 
         // a formula loaded for its page carries its assigned phrases directly (like a word's
         // related formulas), so use that list; otherwise fall back to the formula link cache or,
@@ -527,8 +650,8 @@ class ui_list extends ui_base
         // a component of a view that the api sends without the link id cannot be changed by id
         if ($cmp->link_id != 0) {
             $html = new html_base();
-            $result = $html->icon_link(views::COMPONENT_LINK_EDIT_ID, $cmp->link_id,
-                    icons::EDIT, $mtr->txt(msg_id::COMPONENT_LINK_EDIT), $url_arr)
+            $result = $html->change_icon($html->url_back(views::COMPONENT_LINK_EDIT_ID, $cmp->link_id, $url_arr),
+                    icons::EDIT, $mtr->txt(msg_id::COMPONENT_LINK_EDIT))
                 . $html->icon_link(views::COMPONENT_LINK_DEL_ID, $cmp->link_id,
                     icons::DEL, $mtr->txt(msg_id::COMPONENT_UNLINK), $url_arr);
         }
@@ -733,7 +856,7 @@ class ui_list extends ui_base
 
         // a user without login cannot save the link, so the form is replaced by the reason and
         // the formulas are not even read
-        $blocked = $this->change_blocked();
+        $blocked = html_base::change_blocked();
 
         // the selector offers one selection list of formulas, not the few names that the list
         // above shows; if that list is full more formulas may exist, which the more entry says,
@@ -759,12 +882,11 @@ class ui_list extends ui_base
                 $pane = $mtr->txt(msg_id::INFO_NO_FORMULA_TO_LINK);
             } else {
                 $form_name = views::FORMULA_LINK_ADD;
-                $fields = $html->form_hidden(url_var::MASK, (string)views::FORMULA_LINK_ADD_ID)
-                    . $html->form_hidden(url_var::STEP, url_var::STEP_CONFIRM)
-                    . $html->form_hidden(url_var::PHRASE, (string)$phr->id());
-                foreach (html_base::back_url_array($url_arr) as $key => $val) {
-                    $fields .= $html->form_hidden($key, (string)$val);
-                }
+                $fields = $this->hidden_fields([
+                    url_var::MASK => views::FORMULA_LINK_ADD_ID,
+                    url_var::STEP => url_var::STEP_CONFIRM,
+                    url_var::PHRASE => $phr->id()
+                ], $url_arr);
                 $sel = $frm_lst->selector_ui($form_name, 0, url_var::FORMULA,
                     msg_id::FORM_SELECT_FORMULA, view_styles::COL_SM_12);
                 if ($frm_lst->count() >= $size) {
@@ -774,10 +896,8 @@ class ui_list extends ui_base
                 $pane = $html->form_start($form_name) . $fields . $sel->display()
                     . $button . $html->form_end();
             }
-            $pane_url = '#' . styles::FORMULA_LINK_PANE;
-            $icon = $this->change_icon($pane_url, icons::LINK, msg_id::FORMULA_LINK, msg_id::FORMULA_LINK_BLOCKED);
-            $result = $html->div($icon)
-                . $html->div($pane, styles::TOGGLE_PANE, styles::FORMULA_LINK_PANE);
+            $result = $this->toggle_pane(
+                styles::FORMULA_LINK_PANE, icons::LINK, msg_id::FORMULA_LINK, msg_id::FORMULA_LINK_BLOCKED, $pane);
         }
         return $result;
     }
@@ -805,6 +925,32 @@ class ui_list extends ui_base
     }
 
     /**
+     * the plus icon behind the values subtitle of a word or triple page that opens the value add view
+     * with the shown phrase preset as the first phrase of the new value (see value::url_mapper); the
+     * frontend type of the user decides which view adds the value (see config::value_add_view)
+     *
+     * @param phrase $phr the word or triple that the new value should be assigned to
+     * @param user_message $msg to report a problem of reading the frontend type
+     * @param array $url_arr the url of the shown page as back target
+     * @return string the html code of the add icon, empty for an unsaved phrase
+     */
+    function value_add_link(phrase $phr, user_message $msg, array $url_arr = []): string
+    {
+        global $ui_sys;
+
+        $result = '';
+        // a phrase without a db id cannot be preset, so there is nothing to add a value to
+        if ($phr->id() != 0) {
+            $html = new html_base();
+            $type = $ui_sys?->cfg?->frontend_type($msg) ?? config::DEFAULT_FRONTEND_TYPE;
+            $preset = url_var::PHRASE_LIST . url_var::EQ . $phr->id();
+            $url = $html->url_back(config::value_add_view($type), 0, $url_arr, $preset);
+            $result = $this->change_icon($url, icons::ADD, msg_id::VALUE_ADD, msg_id::VALUE_ADD_BLOCKED);
+        }
+        return $result;
+    }
+
+    /**
      * an icon link that starts a change e.g. the add or the link of a formula; a user who cannot save a
      * change (see change_blocked) gets the icon greyed out with a tooltip that asks for a login, but the
      * icon stays a link, so the user who presses it gets the reason that the backend would give
@@ -821,7 +967,7 @@ class ui_list extends ui_base
         $html = new html_base();
         $style = styles::HEADING_ICON_INLINE;
         $txt = $mtr->txt($tooltip);
-        if ($this->change_blocked()) {
+        if (html_base::change_blocked()) {
             $style .= ' ' . styles::STYLE_GREY;
             $txt = $mtr->txt($tooltip_blocked);
         }
@@ -829,14 +975,29 @@ class ui_list extends ui_base
     }
 
     /**
-     * @return bool true if the requesting user cannot save a change; without a request cache the user is
-     *              unknown and treated like any user whose profile is not known (see user::is_blocked)
+     * a change icon that reveals a hidden pane via the url fragment, e.g. the formula link form or the
+     * define form of a phrase, so the page stays short and no javascript is needed (see docs/llm/frontend.md)
+     *
+     * @param string $pane_id the css id of the pane that the icon reveals e.g. styles::FORMULA_LINK_PANE
+     * @param string $icon the icon css class from web/const/icons.php e.g. icons::LINK
+     * @param msg_id $tooltip the tooltip for a user who can save the change
+     * @param msg_id $tooltip_blocked the tooltip that asks a user without login to log in
+     * @param string $pane the html code that is shown after the icon has been pressed
+     * @return string the html code of the icon and the hidden pane
      */
-    private function change_blocked(): bool
+    private function toggle_pane(
+        string $pane_id,
+        string $icon,
+        msg_id $tooltip,
+        msg_id $tooltip_blocked,
+        string $pane
+    ): string
     {
-        global $ui_sys;
-        return $ui_sys?->usr?->is_blocked() ?? false;
+        $html = new html_base();
+        $icon_html = $this->change_icon('#' . $pane_id, $icon, $tooltip, $tooltip_blocked);
+        return $html->div($icon_html) . $html->div($pane, styles::TOGGLE_PANE, $pane_id);
     }
+
 
     /**
      * the formulas assigned to the ancestor phrases of a word, grouped per ancestor and shown as a
@@ -882,7 +1043,7 @@ class ui_list extends ui_base
     {
         if ($phr_cac == null) {
             $phr_lst = new phrase_list();
-            $phr_lst->load_related($phr, $dir);
+            $phr_lst->load_related($phr, $dir, $msg);
         } else {
             //$vrb = new verb();
             //$vrb->id = verbs::IS_ID;
@@ -1267,8 +1428,11 @@ class ui_list extends ui_base
      *                         call the same page with the next list size
      * @param bool $col_values_only true to leave out the values that share no column phrase, so
      *                              that the table stays a grid of its columns (see value_list)
-     * @param int $col_tiers the number of column tiers to show by default (see value_list)
+     * @param int $col_tiers the number of column tiers left out by default (see value_list)
      * @param bool $with_range true to show the probability ranges by default (see value_list)
+     * @param bool $value_rows_only true to leave out the rows without a number (see value_list)
+     * @param phrase_list|null $add_lst phrases that only the cells need, e.g. the list children
+     *                                  that ", ..." counts; null if the cached phrases are enough
      * @return string the html code of the value table or '' if the phrase has no values
      */
     function table_with_related_columns(
@@ -1280,7 +1444,9 @@ class ui_list extends ui_base
         array                                 $url_array = [],
         bool                                  $col_values_only = false,
         int                                   $col_tiers = value_list::COLUMN_TIERS_ALL,
-        bool                                  $with_range = true
+        bool                                  $with_range = true,
+        bool                                  $value_rows_only = false,
+        ?phrase_list                          $add_lst = null
     ): string
     {
         $result = '';
@@ -1296,24 +1462,144 @@ class ui_list extends ui_base
                 return $result;
             }
             $val_lst = $this->value_related_list($dbo, $msg, $dto, $dto?->phr_lst);
+            // a phrase whose rows are the phrases linked to it, e.g. "global warming reason", has
+            // no value of its own, so the values of the linked phrases are loaded like on the start page
+            if (($val_lst == null or $val_lst->is_empty()) and $dto != null and $dto->online) {
+                $val_lst = $this->child_values($dbo->phrase(), $dto, $msg) ?? $val_lst;
+            }
             // a phrase without any value shows no table at all instead of an empty header row
             if ($val_lst != null) {
+                // a calculated number of a row is a result and not a value, e.g. the reward ratio
+                // of a problem, and it is shown in the same table as the measured numbers; the
+                // results are added to a copy, so that the value cache of the page stays unchanged
+                $tbl_lst = clone $val_lst;
+                $tbl_lst->add_results(
+                    $this->result_related_list($dbo, $dto, $dto?->phr_lst), $msg);
                 $phr_lst = new phrase_list();
                 $phr_lst->add_phrase($dbo->phrase());
                 // the system column tiers decide which phrase heads a column and in which order;
                 // an empty list falls back to the impact ranking of the values themselves
                 if ($dto != null) {
                     $this->add_column_definitions($dto, $msg);
+                    $this->add_sort_definitions($dto, $msg);
                 }
                 $col_order = $dto?->phr_lst?->column_names() ?? [];
-                // the url of the page is handed over, so that the "... more" tail can call the
-                // same page with the next list size
-                $result = $val_lst->table_by_related_columns(
-                    $msg, $phr_lst, $col_order, $with_header, $with_border, $dto?->phr_lst,
-                    null, $url_array, $col_values_only, $col_tiers, $with_range);
+                // the "as" entry of the "..." menu says whether the rows are shown as a table,
+                // as the default charts of the table or as both
+                $form = table_forms::by_url($url_array);
+                if ($form->with_table()) {
+                    // the phrases for the cells only go into a copy taken after the definitions
+                    // are loaded, so that the cache feeds no later page with them
+                    $rel_lst = $dto?->phr_lst;
+                    if ($add_lst != null and $rel_lst != null) {
+                        $rel_lst = clone $rel_lst;
+                        $rel_lst->merge($add_lst, $msg);
+                    }
+                    // the url of the page is handed over, so that the "... more" tail can call the
+                    // same page with the next list size
+                    $result = $tbl_lst->table_by_related_columns(
+                        $msg, $phr_lst, $col_order, $with_header, $with_border, $rel_lst,
+                        null, $url_array, $col_values_only, $col_tiers, $with_range,
+                        $value_rows_only);
+                } else {
+                    // without the table its header says what the charts are about and its "..."
+                    // menu is the only way back to the table, so the header is centred above the
+                    // charts with the menu in the top right corner
+                    $html = new html_base();
+                    $head = '';
+                    if ($with_header) {
+                        $head = $tbl_lst->table_header_by_related_columns($msg, $phr_lst, $col_order,
+                            $dto?->phr_lst, null, $url_array, $col_values_only, $value_rows_only);
+                    }
+                    $head .= $html->div($tbl_lst->columns_menu($url_array), styles::CHART_CORNER);
+                    $result = $html->div($head, styles::CHART_HEAD);
+                }
+                if ($form->with_chart()) {
+                    if ($dto != null) {
+                        $this->add_chart_definitions($dto, $msg);
+                    }
+                    $result .= $this->table_charts($tbl_lst, $msg, $phr_lst, $col_order,
+                        $dto?->phr_lst, $url_array, $col_values_only, $value_rows_only, $col_tiers);
+                }
             }
         }
         return $result;
+    }
+
+    /**
+     * the default charts of a value table beside each other, e.g. the range bars of the loss
+     * and the scatter plot of the gain against the effort of the start page ranking, or the
+     * mayor charts if the table shows the mayor columns only, e.g. the leverage plot of the
+     * gain against the loss of the initial start page (phrase_list::chart_definitions)
+     *
+     * @param value_list $tbl_lst the values of the table
+     * @param user_message $msg to report a chart that the table cannot draw
+     * @param phrase_list $phr_lst the phrases of the page e.g. "global problem"
+     * @param array $col_order the defined column phrase names, the most important column first
+     * @param phrase_list|null $rel_lst the phrases related to the page phrase with the definitions
+     * @param array $url_array the url parameters of the page that shows the charts
+     * @param bool $col_values_only true to leave out the values that share no column phrase
+     * @param bool $value_rows_only true to leave out the rows without a number in a shown column
+     * @param int $col_tiers the column tiers left out by default, which the url of the page overrides
+     * @return string the html code of the charts or '' if the table defines no chart
+     */
+    private function table_charts(
+        value_list   $tbl_lst,
+        user_message $msg,
+        phrase_list  $phr_lst,
+        array        $col_order,
+        ?phrase_list $rel_lst,
+        array        $url_array,
+        bool         $col_values_only,
+        bool         $value_rows_only,
+        int          $col_tiers
+    ): string
+    {
+        $html = new html_base();
+        $charts = '';
+        // the url names the column tiers like for the table (see value_list::table_model)
+        $mayor_only = ((int)($url_array[url_var::DISPLAY_LIST_COLUMNS] ?? $col_tiers) == value_list::COLUMN_TIERS_EX_MAIN);
+        foreach ($rel_lst?->chart_definitions($msg, $mayor_only) ?? [] as [$type, $chart_cols]) {
+            $charts .= $tbl_lst->table_to_svg($type, $msg, $phr_lst, $col_order, $rel_lst, null,
+                $url_array, $col_values_only, $value_rows_only, $chart_cols);
+        }
+        return ($charts == '') ? '' : $html->div($charts, styles::CHART_ROW);
+    }
+
+    /**
+     * add the chart definitions of the tables to the request cache if they are not yet cached
+     * (like add_column_definitions)
+     *
+     * @param data_object $dto the request cache that gets the definitions
+     * @param user_message $msg to report a problem of the api call
+     * @return void
+     */
+    private function add_chart_definitions(data_object $dto, user_message $msg): void
+    {
+        if ($dto->online and $dto->phr_lst->get_by_name(triples::SYSTEM_CHART_TYPE_DEFAULT, $msg) == null) {
+            $chart_lst = new phrase_list();
+            if ($chart_lst->load_chart_definitions($msg)) {
+                $dto->add_phrases($chart_lst, $msg);
+            }
+        }
+    }
+
+    /**
+     * add the default sort orders of the tables to the request cache if they are not yet cached
+     * (like add_chart_definitions)
+     *
+     * @param data_object $dto the request cache that gets the definitions
+     * @param user_message $msg to report a problem of the api call
+     * @return void
+     */
+    private function add_sort_definitions(data_object $dto, user_message $msg): void
+    {
+        if ($dto->online and $dto->phr_lst->get_by_name(triples::SYSTEM_SORT_ORDER_DEFAULT, $msg) == null) {
+            $sort_lst = new phrase_list();
+            if ($sort_lst->load_sort_definitions($msg)) {
+                $dto->add_phrases($sort_lst, $msg);
+            }
+        }
     }
 
     /**
@@ -1337,6 +1623,62 @@ class ui_list extends ui_base
             $val_lst = $dbo->val_lst;
         }
         return $val_lst;
+    }
+
+    /**
+     * load the phrases linked to the given phrase into the request cache and their values
+     *
+     * @param phrase $phr the phrase of the page e.g. "global warming reason"
+     * @param data_object $dto the request cache that gets the links
+     * @param user_message $msg to report a problem of an api call
+     * @return value_list|null the values of the linked phrases or null if the phrase has no linked phrase
+     */
+    private function child_values(phrase $phr, data_object $dto, user_message $msg): ?value_list
+    {
+        $result = null;
+        if ($dto->phr_lst->child_phrases($phr)->is_empty()) {
+            $child_lst = new phrase_list();
+            if ($child_lst->load_related_by_name($phr->name(), foaf_direction::DOWN, $msg)) {
+                $dto->add_phrases($child_lst, $msg);
+            }
+        }
+        $children = $dto->phr_lst->child_phrases($phr);
+        if (!$children->is_empty()) {
+            $val_lst = new value_list();
+            if ($val_lst->load_by_phr_lst($children, $msg)) {
+                $result = $val_lst;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the results shown by a value table, e.g. the reward ratio of each global problem
+     *
+     * a number of a child phrase belongs to the page of the parent too (like in
+     * value_list::filter), e.g. a "global warming" result is shown on the "global problem"
+     * page, so a result is taken if its group names the page phrase or one of its children
+     *
+     * @param word|triple|db_object|type_object|null $dbo the object the results are related to
+     * @param data_object|null $dto the data cache that carries the results of the page
+     * @param phrase_list|null $ctx_lst the phrases of the page cache with their links
+     * @return result_list the results to show with the values of the given object
+     */
+    private function result_related_list(
+        word|triple|db_object|type_object|null $dbo,
+        ?data_object                           $dto,
+        ?phrase_list                           $ctx_lst = null
+    ): result_list
+    {
+        $res_lst = new result_list();
+        $row_names = $ctx_lst?->child_names($dbo->phrase()) ?? [];
+        $row_names[] = $dbo->phrase()->name();
+        foreach ($dto?->res_lst?->lst() ?? [] as $res) {
+            if (array_intersect($row_names, $res->grp->phr_lst()->names()) != []) {
+                $res_lst->add_result($res);
+            }
+        }
+        return $res_lst;
     }
 
     /**
@@ -1416,8 +1758,9 @@ class ui_list extends ui_base
     }
 
     /**
-     * the results that use the given value as a table, used by the results column of the value
-     * default page e.g. the increase that has been calculated from this value
+     * the results that use the given value grouped like the values of a phrase, used by the
+     * results column of the value default page e.g. the increase that has been calculated from
+     * this value
      *
      * @param value|db_object|null $dbo the value whose results should be listed
      * @param user_message $msg to report an unexpected selection object
@@ -1437,19 +1780,116 @@ class ui_list extends ui_base
             // all phrases of the value (see result_list::filter)
             $res_lst = $dbo->results_related;
             if ($res_lst == null and $dto?->res_lst != null) {
-                $res_lst = $dto->res_lst->filter($dbo);
+                $res_lst = $dto->res_lst->filter($msg, $dbo);
             }
             if ($res_lst == null) {
                 log_err_msg_ui('the result cache is missing to select the results', $msg);
-            } elseif ($res_lst->is_empty()) {
-                // the list is asked, not the rendered html, because result_list::table returns
-                // the empty table tags for an empty list, which would tell the user nothing
-                $result = $mtr->txt(msg_id::INFO_NOT_USED_FOR_RESULTS);
             } else {
-                $result = $res_lst->table($dbo->grp->phr_lst());
+                // the value itself is the context of the column, so its phrases are left out
+                $result = $this->result_list_grouped($res_lst, $dbo->grp->phr_lst(), $msg);
+                if ($result == '') {
+                    $result = $mtr->txt(msg_id::INFO_NOT_USED_FOR_RESULTS);
+                }
             }
         } else {
             log_err_msg_ui($dbo::class . ' is not expected to have results', $msg);
+        }
+        return $result;
+    }
+
+    /**
+     * the values used to calculate the given result grouped by their phrases like the default word
+     * view, used by the values column of the result default page e.g. the inhabitants of a country
+     * that an increase has been calculated from
+     *
+     * @param result|db_object|null $dbo the result whose used values should be listed
+     * @param user_message $msg to report a missing list or an unexpected selection object
+     * @param int|null $style_id the optional list column style
+     * @return string the used values or the message that no value has been used
+     */
+    function values_used(result|db_object|null $dbo, user_message $msg, ?int $style_id = null): string
+    {
+        global $mtr;
+
+        $result = '';
+        if ($dbo == null) {
+            log_err_msg_ui('the result is missing to select the used values', $msg);
+        } elseif ($dbo::class == result::class) {
+            // only a page request loads the used values (see result::load_values_used), so a result
+            // built from an url shows no column instead of the none-used message, which would tell
+            // the user that no value has been used, which is not known here (like the formula
+            // column of a word, see formula_list)
+            if ($dbo->values_used != null) {
+                // the result itself is the context of the column, so its phrases are left out
+                $result = $this->value_list($dbo->values_used, $dbo->grp->phr_lst(), $msg, $style_id, true);
+                if ($result == '') {
+                    $result = $mtr->txt(msg_id::INFO_NO_VALUES_USED);
+                }
+            }
+        } else {
+            log_err_msg_ui($dbo::class . ' is not expected to use values for a calculation', $msg);
+        }
+        return $result;
+    }
+
+    /**
+     * the formulas that have calculated the results used for the given result, used by the formulas
+     * column of the result default page; the formula of the result itself is named in the title
+     *
+     * @param result|db_object|null $dbo the result whose used formulas should be listed
+     * @param user_message $msg to report a missing list or an unexpected selection object
+     * @return string the linked formula names or the message that no other formula has been used
+     */
+    function formulas_used(result|db_object|null $dbo, user_message $msg): string
+    {
+        global $mtr;
+
+        $result = '';
+        if ($dbo == null) {
+            log_err_msg_ui('the result is missing to select the used formulas', $msg);
+        } elseif ($dbo::class == result::class) {
+            // like the used values only a page request loads the used formulas
+            if ($dbo->formulas_used != null) {
+                // name_link sorts the formulas by impact, so the most relevant one is named first
+                $result = $dbo->formulas_used->name_link();
+                if ($result == '') {
+                    $result = $mtr->txt(msg_id::INFO_NO_FORMULAS_USED);
+                }
+            }
+        } else {
+            log_err_msg_ui($dbo::class . ' is not expected to use formulas for a calculation', $msg);
+        }
+        return $result;
+    }
+
+    /**
+     * the results used to calculate the given result grouped like the used values, used by the
+     * results column of the result default page e.g. the increase that a growth rate has been
+     * calculated from
+     *
+     * @param result|db_object|null $dbo the result whose used results should be listed
+     * @param user_message $msg to report a missing list or an unexpected selection object
+     * @return string the used results or the message that no other result has been used
+     */
+    function results_used(result|db_object|null $dbo, user_message $msg): string
+    {
+        global $mtr;
+
+        $result = '';
+        if ($dbo == null) {
+            log_err_msg_ui('the result is missing to select the used results', $msg);
+        } elseif ($dbo::class == result::class) {
+            // like the used values only a page request loads the used results, so an url-built
+            // result shows no column instead of a message about a list that is not known here
+            if ($dbo->results_used != null) {
+                // the result itself is the context of the column, so its phrases are left out
+                $result = $this->result_list_grouped($dbo->results_used, $dbo->grp->phr_lst(), $msg);
+                if ($result == '') {
+                    $result = $mtr->txt(msg_id::INFO_NO_RESULTS_USED);
+                }
+            }
+        } else {
+            log_err_msg_ui($dbo::class . ' is not expected to use results for a calculation', $msg);
         }
         return $result;
     }
@@ -1636,7 +2076,7 @@ class ui_list extends ui_base
             log_err_msg_ui('the formula or the result cache is missing to select the results of a formula', $msg);
         } elseif ($dbo::class == formula::class) {
             $res_lst = clone $cfg->res_lst;
-            $res_lst = $res_lst->get_by_formula($dbo);
+            $res_lst = $res_lst->get_by_formula($dbo, $msg);
             $result = $res_lst->name_link();
             if ($result == '') {
                 $result = $mtr->txt(msg_id::INFO_NOT_USED_FOR_FORMULAS);
@@ -1657,18 +2097,50 @@ class ui_list extends ui_base
     }
 
     /**
-     * TODO Prio 0 fill with real code
+     * show the results related to the given object grouped like the values of a phrase (see
+     * values_most_relevant): the newest time period first, then the phrases shared by several
+     * results, then the remaining results by impact, each with the unit symbols behind the number
+     *
      * @param db_object|combine_named|null $dbo the term whose related results should be listed
-     * @param data_object|null $cfg the context used to create the view
-     * @return string the html code listing all results related to $dbo
+     * @param user_message $msg to report a problem of reading the config or a symbol
+     * @param data_object|null $cfg the request cache with the preloaded results
+     * @return string the html code of the grouped results or '' if the cache has no result
      */
-    function results_related(db_object|combine_named|null $dbo = null, ?data_object $cfg = null): string
+    function results_related(
+        db_object|combine_named|null $dbo,
+        user_message                 $msg,
+        ?data_object                 $cfg = null
+    ): string
     {
-        // the results of e.g. a formula are loaded into the data object result list and shown
-        // as a table of the result phrases and their value
         $result = '';
         if ($cfg != null and !$cfg->res_lst->is_empty()) {
-            $result = $cfg->res_lst->table();
+            // the phrase of the page is assumed by the reader, so it is left out of the result lines
+            $phr_lst = new phrase_list();
+            if ($dbo::class == word::class or $dbo::class == triple::class) {
+                $phr_lst->add_phrase($dbo->phrase());
+            }
+            $result = $this->result_list_grouped($cfg->res_lst, $phr_lst, $msg);
+        }
+        return $result;
+    }
+
+    /**
+     * show a list of results grouped like the values of a phrase (see value_list): the newest time
+     * period first, then the phrases shared by several results, then the rest by impact, limited
+     * by the configured page size with the "... and n more" tail and the unit symbols behind the
+     * number; the shared renderer of the result columns of the phrase, value and result pages
+     *
+     * @param result_list $res_lst the results to show
+     * @param phrase_list $phr_lst the phrases assumed by the reader e.g. the phrases of the page
+     * @return string the html code of the grouped results, '' if the list is empty
+     */
+    private function result_list_grouped(result_list $res_lst, phrase_list $phr_lst, user_message $msg): string
+    {
+        $html = new html_base();
+        $result = $res_lst->list_most_relevant($msg, $phr_lst);
+        // the same block div as the value list, so that each result stays on one line
+        if ($result != '') {
+            $result = $html->div($result, view_styles::COL_SM_12);
         }
         return $result;
     }
@@ -1724,13 +2196,16 @@ class ui_list extends ui_base
     {
         $phr = $this->start_page_phrase($dto, $msg);
         $this->add_start_page_cache($dto, $phr, $msg);
+        $child_lst = $this->start_page_children($dto, $msg);
         // the page already says what the table is about, so it is shown without the border; the
         // ranking is a grid of the defined columns, so a measured figure of a problem that fits
         // no column stays on the page of the problem instead of adding a row here; by default
         // only the mayor columns with the numbers are shown and the "..." header leads to the
-        // full table with every column and the range of each number
+        // full table with every column and the range of each number; a row whose numbers are
+        // all in a column left out is no part of the ranking either, e.g. the reward ratio row
+        // of a problem, so the ranking shows the rows with a number only
         return $this->table_with_related_columns($phr->obj(), $msg, $dto, true, false, $url_array,
-            true, value_list::COLUMN_TIERS_MAYOR, false);
+            true, value_list::COLUMN_TIERS_EX_MAIN, false, true, $child_lst);
     }
 
     /**
@@ -1748,11 +2223,11 @@ class ui_list extends ui_base
      */
     private function start_page_phrase(data_object $dto, user_message $msg): phrase
     {
-        $result = $dto->phr_lst->get_by_name(triple_names::GLOBAL_PROBLEM, $msg);
+        $result = $dto->phr_lst->get_by_name(triples::GLOBAL_PROBLEM, $msg);
         if ($result == null) {
             $child_lst = new phrase_list();
             if ($child_lst->load_related_by_name(
-                triple_names::GLOBAL_PROBLEM, foaf_direction::DOWN, $msg)) {
+                triples::GLOBAL_PROBLEM, foaf_direction::DOWN, $msg)) {
                 $dto->add_phrases($child_lst, $msg);
                 // every child is a triple that links to the page phrase, so the first one
                 // carries it; the sort makes the pick deterministic
@@ -1773,7 +2248,7 @@ class ui_list extends ui_base
             // no problem is linked to the page phrase, so the table has no row, but the page
             // phrase itself is still needed to head the empty table
             $result = new phrase();
-            $result->load_by_name(triple_names::GLOBAL_PROBLEM, $msg);
+            $result->load_by_name(triples::GLOBAL_PROBLEM, $msg);
         }
         return $result;
     }
@@ -1783,7 +2258,9 @@ class ui_list extends ui_base
      * add the phrases and the values that the table of the start view needs to the request cache
      *
      * each step is skipped if the cache already has that data, so a unit test that fills the
-     * cache upfront needs no api call at all
+     * cache upfront needs no api call at all; an offline cache is never filled from the api,
+     * like add_column_definitions, so the empty result list of a unit test is not filled with
+     * the results of the pod, which would repeat the groups of the test values
      *
      * @param data_object $dto the request cache to fill
      * @param phrase $phr the page phrase of the start view, which is "global problem"
@@ -1792,12 +2269,15 @@ class ui_list extends ui_base
      */
     private function add_start_page_cache(data_object $dto, phrase $phr, user_message $msg): void
     {
+        if (!$dto->online) {
+            return;
+        }
         // "global problem" itself is in no value group, so the rows are the phrases that a
         // triple links to it; without those triples the table finds no value at all
         if ($dto->phr_lst->child_phrases($phr)->is_empty()) {
             $child_lst = new phrase_list();
             if ($child_lst->load_related_by_name(
-                triple_names::GLOBAL_PROBLEM, foaf_direction::DOWN, $msg)) {
+                triples::GLOBAL_PROBLEM, foaf_direction::DOWN, $msg)) {
                 $dto->add_phrases($child_lst, $msg);
             }
         }
@@ -1810,17 +2290,50 @@ class ui_list extends ui_base
                 $dto->val_lst = $val_lst;
             }
         }
-        // a defined column that no value carries names a phrase of the row instead of a number,
+        // a column of the ranking can be calculated instead of measured, e.g. the reward ratio,
+        // and such a number is a result, so the results of the problems are loaded like their
+        // values and shown in the same table
+        if ($dto->res_lst->is_empty()) {
+            $res_lst = new result_list();
+            if ($res_lst->load_by_phrase_list($dto->phr_lst->child_phrases($phr), $msg)) {
+                $dto->set_result_list($res_lst);
+            }
+        }
+        // a defined column that no number carries names a phrase of the row instead of a number,
         // e.g. the solution column shows the solution of the problem row; the table recognises
         // that phrase by the triple that links it to the column, e.g. "reduce climate gas
-        // emissions is a solution", so the links of every phrase of the values are loaded once
-        $val_phr_lst = $dto->val_lst->phrase_list();
-        if (!$val_phr_lst->is_empty() and !$this->column_links_loaded($dto)) {
+        // emissions is a solution", so the links of every phrase of the numbers are loaded once;
+        // the results are included, because a row whose numbers are all calculated names its
+        // solution only in the phrases of its results
+        $num_lst = clone $dto->val_lst;
+        $num_lst->add_results($dto->res_lst, $msg);
+        $num_phr_lst = $num_lst->phrase_list();
+        if (!$num_phr_lst->is_empty() and !$this->column_links_loaded($dto)) {
             $lnk_lst = new phrase_list();
-            if ($lnk_lst->load_related_by_ids($val_phr_lst, foaf_direction::UP, $msg)) {
+            if ($lnk_lst->load_related_by_ids($num_phr_lst, foaf_direction::UP, $msg)) {
                 $dto->add_phrases($lnk_lst, $msg);
             }
         }
+    }
+
+    /**
+     * the children of the list triples of the start view, e.g. every reason that "populism
+     * reason" links, which names more phrases than the numbers of its row carry, so that the
+     * ", ..." behind a cell counts all of them; they are kept out of the request cache, because
+     * the cache also fills e.g. the phrase selectors of later pages
+     *
+     * @param data_object $dto the request cache with the links of the numbers of the table
+     * @param user_message $msg to report a problem of an api message to the user
+     * @return phrase_list the children of the list triples, empty offline
+     */
+    private function start_page_children(data_object $dto, user_message $msg): phrase_list
+    {
+        $result = new phrase_list();
+        $lst_phr_lst = $dto->phr_lst->column_list_phrases($dto->phr_lst->column_names());
+        if ($dto->online and !$lst_phr_lst->is_empty()) {
+            $result->load_related_by_ids($lst_phr_lst, foaf_direction::DOWN, $msg);
+        }
+        return $result;
     }
 
     /**

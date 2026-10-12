@@ -431,7 +431,7 @@ class test_types
     }
 
     /**
-     * @return phrase_type "measure" type for unit testing
+     * @return phrase_type "measure unit" type for unit testing
      */
     function phrase_type_measure(): phrase_type
     {
@@ -686,7 +686,12 @@ class test_types
             $name_col = 0;
             $desc_col = 0;
             if (($handle = fopen($csv_path, "r")) !== FALSE) {
-                while (($data = fgetcsv($handle, 0, ",", "'")) !== FALSE) {
+                while (($line = fgets($handle)) !== FALSE) {
+                    // a line without any char does not contain a type
+                    if (trim($line) == '') {
+                        continue;
+                    }
+                    $data = $lib->csv_line_to_array($line);
                     if ($row == 1) {
                         $col_names = $lib->array_trim($data);
                         if (in_array(json_fields::CODE_ID, $col_names)) {
@@ -748,7 +753,12 @@ class test_types
             // change log field specific
             $table_col = 0;
             if (($handle = fopen($csv_path, "r")) !== FALSE) {
-                while (($data = fgetcsv($handle, 0, ",", "'")) !== FALSE) {
+                while (($line = fgets($handle)) !== FALSE) {
+                    // a line without any char does not contain a type
+                    if (trim($line) == '') {
+                        continue;
+                    }
+                    $data = $lib->csv_line_to_array($line);
                     if ($row == 1) {
                         $col_names = $lib->array_trim($data);
                         if (in_array(json_fields::ID, $col_names)) {

@@ -175,6 +175,28 @@ class source_tests
         $src = $t_src->source_filled();
         $t->assert_reset($src);
 
+        $t->subheader($ts . 'same name with another link');
+        $test_name = 'a new source with the name and url of an existing one is the same';
+        $src = $t_src->source_reserved();
+        $src_new = $t_src->source_reserved();
+        $src_new->id = 0;
+        $t->assert($test_name, $src_new->is_same($src), true);
+        $test_name = 'a new source with the name but another url is similar';
+        $src_new = $t_src->source_reserved_other_url();
+        $t->assert($test_name, $src_new->is_similar($src), true);
+        $test_name = '... but not the same, so the save must not merge it';
+        $t->assert($test_name, $src_new->is_same($src), false);
+        $test_name = 'a new source with the name but without a url is the same, because the url is filled up';
+        $src_new->url = null;
+        $t->assert($test_name, $src_new->is_same($src), true);
+        $test_name = 'a new source with the name but another doi is not the same';
+        $src = $t_src->source_filled_included();
+        $src_new = $t_src->source_filled_other_doi();
+        $t->assert($test_name, $src_new->is_same($src), false);
+        $test_name = 'a doi that differs only in the letter case is the same, because a doi is case-insensitive';
+        $src_new->doi = strtoupper(sources::TEST_DOI);
+        $t->assert($test_name, $src_new->is_same($src), true);
+
         $t->subheader($ts . 'api');
         $src = $t_src->source_reserved();
         $t->assert_api_json($src);

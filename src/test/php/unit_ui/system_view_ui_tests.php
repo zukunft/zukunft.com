@@ -37,7 +37,9 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_CONST . 'def.php';
+include_once html_paths::EXECUTE . 'system_page.php';
 include_once html_paths::HELPER . 'data_object.php';
+include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::USER . 'user.php';
 include_once paths::MODEL_CONST . 'def.php';
 include_once paths::API_OBJECT . 'controller.php';
@@ -63,11 +65,18 @@ include_once paths::MODEL_VERB . 'verb.php';
 include_once paths::MODEL_WORD . 'triple.php';
 include_once paths::MODEL_WORD . 'word.php';
 include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
+include_once paths::SHARED_HELPER . 'Config.php';
 include_once test_paths::CONST . 'files.php';
+include_once test_paths::CONST . 'word_names.php';
+include_once test_paths::CREATE . 'test_config_trees.php';
 include_once test_paths::CREATE . 'test_mappers.php';
 include_once test_paths::CREATE . 'test_mappers.php';
+include_once test_paths::CREATE . 'test_results.php';
+include_once test_paths::CREATE . 'test_triples.php';
+include_once test_paths::CREATE . 'test_words.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 include_once test_paths::UTILS . 'test_lib.php';
 
@@ -97,8 +106,10 @@ use Zukunft\ZukunftCom\main\php\cfg\view\view_relation;
 use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\web\component\execute\system_page;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
 use Zukunft\ZukunftCom\main\php\cfg\helper\server_guard;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\web\const\icons;
@@ -106,25 +117,46 @@ use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\helper\Config;
 use Zukunft\ZukunftCom\main\php\shared\helper\MapObject;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\views as view_shared;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
+use Zukunft\ZukunftCom\test\php\const\word_names;
+use Zukunft\ZukunftCom\test\php\create\test_config_trees;
 use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\create\test_mappers;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
+use Zukunft\ZukunftCom\test\php\create\test_results;
 use Zukunft\ZukunftCom\test\php\create\test_users;
 use Zukunft\ZukunftCom\test\php\create\test_values;
+use Zukunft\ZukunftCom\test\php\create\test_triples;
+use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
 
 class system_view_ui_tests
 {
+
+    // the snapshot folder and name of the start page
+    const string START_PAGE_FILE_NAME = 'start_page';
+    // added to the snapshot name of a view rendered with the more version of its list
+    const string MORE_LIST_FILE_POSTFIX = '_more';
+    // added to the snapshot name of the start page with the main columns and the ranges of its table
+    const string DETAILS_LIST_FILE_POSTFIX = '_details';
+    // the start page details list shows the real ranking data of the pod, which the unit fixtures
+    // do not carry, so localhost_ui_tests fetches its snapshot from the pod after the db recreate
+    // and the cleanup of the snapshots below keeps it
+    const string START_PAGE_DETAILS_FILE = test_paths::VIEWS_BY_ID . self::START_PAGE_FILE_NAME . DIRECTORY_SEPARATOR
+        . views::START_ID . '_' . self::START_PAGE_FILE_NAME . self::DETAILS_LIST_FILE_POSTFIX;
+
     function run(test_cleanup $t): void
     {
+        global $mtr;
 
         // init
         $lib = new library();
@@ -151,7 +183,12 @@ class system_view_ui_tests
 
         $t->subheader($ts . 'link escaping');
         // a user supplied url e.g. of a source can neither break the href attribute
-        // nor inject a script and the link text is escaped by default
+        // nor inject a script and the link text is escaped by default;
+        // rendered for an anonymous user, because a link of this pod carries the id of the logged-in
+        // user of the request cache (see html_base::url_with_user), which a previous test may have left
+        global $ui_sys;
+        $usr_keep = $ui_sys->usr ?? null;
+        $ui_sys->usr = new user_ui();
         $test_name = 'the href attribute of a link is escaped';
         $t->assert($test_name,
             $html->ref('https://example.org/?a=1&b="x"', 'a name'),
@@ -165,6 +202,42 @@ class system_view_ui_tests
         $test_name = 'a relative url is linked';
         $t->assert_text_contains($test_name,
             $html->ref('/http/view.php?m=1', 'start'), '<a href="/http/view.php?m=1">');
+        if ($usr_keep == null) {
+            unset($ui_sys->usr);
+        } else {
+            $ui_sys->usr = $usr_keep;
+        }
+
+        // the body of a system view whose data and actions are not yet implemented shows a hint
+        $t->subheader($ts . 'not yet available');
+        $test_name = 'the body of a not yet implemented system view shows the hint';
+        $page = new system_page();
+        $t->assert_text_contains($test_name, $page->not_yet_available(), $mtr->txt(msg_id::INFO_VIEW_NOT_YET_AVAILABLE));
+
+        // the "..." below the title of a default view opens the menu with the other three versions
+        $t->subheader($ts . 'related view selector');
+        $test_name = 'the default word view links to the detail version';
+        $wrd_ui = new test_words($t)->chf_ui();
+        $sel_html = $page->related_view_selector(views::WORD_ID, $wrd_ui);
+        $t->assert_text_contains($test_name, $sel_html, url_var::MASK . '=' . views::WORD_DEFAULT_DETAIL_ID);
+        $test_name = '... to the range version';
+        $t->assert_text_contains($test_name, $sel_html, url_var::MASK . '=' . views::WORD_DEFAULT_RANGE_ID);
+        $test_name = '... to the detail with range version';
+        $t->assert_text_contains($test_name, $sel_html, url_var::MASK . '=' . views::WORD_DEFAULT_DETAIL_RANGE_ID);
+        $test_name = '... for the same word';
+        $t->assert_text_contains($test_name, $sel_html, url_var::ID . '=' . words::CHF_ID);
+        $test_name = '... and offers only the three other versions';
+        $t->assert($test_name, substr_count($sel_html, '<' . html_base::LI . '>'), 3);
+        $test_name = 'the detail with range version links back to the default version';
+        $sel_html = $page->related_view_selector(views::WORD_DEFAULT_DETAIL_RANGE_ID, $wrd_ui);
+        $t->assert_text_contains($test_name, $sel_html, '>' . msg_id::VIEW_VERSION_DEFAULT->text() . '<');
+        $test_name = '... but not to itself';
+        $t->assert_text_not_contains($test_name, $sel_html, '>' . msg_id::VIEW_VERSION_DETAIL_RANGE->text() . '<');
+        // negative: a view that is not a version of a default view e.g. an edit view has no menu
+        $test_name = 'the word edit view shows no view version menu';
+        $t->assert($test_name, $page->related_view_selector(views::WORD_EDIT_ID, $wrd_ui), '');
+        $test_name = 'without the object shown no view version menu is created';
+        $t->assert($test_name, $page->related_view_selector(views::WORD_ID, null), '');
         // switch usr1 to the system test profile user (needed for the ui cache imports)
         // and remember the normal usr1 so the end of this run can restore it - otherwise every
         // later test would see a system-tier usr1 instead of the normal email profile user
@@ -184,7 +257,7 @@ class system_view_ui_tests
         $dto = $tl->ui_test_cache($t->usr_dev, $t, $cac_msg);
         $ui->set_cache($dto);
         // TODO Prio 1 deprecate
-        $ui->load_dummy_cache_from_test_resources($msg);
+        $ui->load_dummy_cache_from_test_resources($msg, file_get_contents(test_files::TYPE_LISTS_CACHE));
         $usr_sys_ui = $tl->cast_user($t->usr1);
 
         // the anti-csrf gate must fail closed for every form submit, not only the crud masks, so a
@@ -192,11 +265,11 @@ class system_view_ui_tests
         $t->subheader($ts . 'anti-csrf token');
         $token = test_const::DUMMY_SESSION_TOKEN;
 
-        $submit_ok = [url_var::MASK => views::WORD_ADD_ID, url_var::POST_SUBMIT => '', url_var::SESSION_TOKEN => $token];
+        $submit_ok = [url_var::MASK => views::WORD_ADD_DETAIL_ID, url_var::POST_SUBMIT => '', url_var::SESSION_TOKEN => $token];
         $test_name = 'a crud submit with the correct token is accepted';
         $t->assert_true($test_name, frontend::request_token_valid($submit_ok, $token));
 
-        $submit_no_token = [url_var::MASK => views::WORD_ADD_ID, url_var::POST_SUBMIT => ''];
+        $submit_no_token = [url_var::MASK => views::WORD_ADD_DETAIL_ID, url_var::POST_SUBMIT => ''];
         $test_name = 'a crud submit without a token is rejected';
         $t->assert_false($test_name, frontend::request_token_valid($submit_no_token, $token));
 
@@ -208,7 +281,7 @@ class system_view_ui_tests
         $test_name = 'a login submit with the correct token is accepted';
         $t->assert_true($test_name, frontend::request_token_valid($login_ok, $token));
 
-        $submit_wrong = [url_var::MASK => views::WORD_ADD_ID, url_var::POST_SUBMIT => '', url_var::SESSION_TOKEN => 'wrong'];
+        $submit_wrong = [url_var::MASK => views::WORD_ADD_DETAIL_ID, url_var::POST_SUBMIT => '', url_var::SESSION_TOKEN => 'wrong'];
         $test_name = 'a submit with a wrong token is rejected';
         $t->assert_false($test_name, frontend::request_token_valid($submit_wrong, $token));
 
@@ -250,7 +323,7 @@ class system_view_ui_tests
         $test_name = 'the job view is blocked for an ip user';
         $t->assert_true($test_name, in_array(views::JOB_ASYNC_ID, views::IP_BLOCKED_MASKS_IDS));
         $test_name = 'the word add view is blocked for an ip user';
-        $t->assert_true($test_name, in_array(views::WORD_ADD_ID, views::IP_BLOCKED_MASKS_IDS));
+        $t->assert_true($test_name, in_array(views::WORD_ADD_DETAIL_ID, views::IP_BLOCKED_MASKS_IDS));
         $test_name = 'the login view is never blocked for an ip user';
         $t->assert_false($test_name, in_array(views::LOGIN_ID, views::IP_BLOCKED_MASKS_IDS));
         $test_name = 'the signup view is never blocked for an ip user';
@@ -357,6 +430,28 @@ class system_view_ui_tests
             $html_base->dsp_notification('Forgot password?'),
             '<div class="alert alert-warning notification-bar">Forgot password?</div>'
         );
+        $saved_txt = $ui->setting_saved_text([
+            url_var::NUMERIC_VALUE => (string)test_config_trees::MAX_DELAY_NEW,
+            url_var::PRE . url_var::NUMERIC_VALUE => (string)test_config_trees::MAX_DELAY_VALUE,
+            url_var::CONFIG_KEY => test_config_trees::MAX_DELAY,
+        ]);
+        $test_name = 'a done action without an issue is confirmed in green';
+        $saved_msg = new user_message();
+        $saved_msg->add_info($saved_txt);
+        $t->assert_text_contains($test_name, $ui->user_msg_html($saved_msg), html_base::CLASS_NOTIFICATION_SUCCESS);
+        // negative: an issue of the same request is never shown as a success
+        $test_name = '... but in orange if the request has an issue';
+        $saved_msg->add_id(msg_id::CONFIG_NOT_LOADED);
+        $t->assert_text_contains($test_name, $ui->user_msg_html($saved_msg), html_base::CLASS_NOTIFICATION . '"');
+        // e.g. the refused save of a setting of the pod, which the backend reports without vars
+        $test_name = 'a message without vars of a write is kept when merged into the message of the request';
+        $refused_msg = new user_message();
+        $refused_msg->add_id(msg_id::CONFIG_SYSTEM_ADMIN_ONLY);
+        $request_msg = new user_message();
+        $request_msg->merge($refused_msg);
+        // escaped like dsp_notification, because the text quotes the key 'system'
+        $refused_html = htmlspecialchars($mtr->txt(msg_id::CONFIG_SYSTEM_ADMIN_ONLY));
+        $t->assert_text_contains($test_name, $ui->user_msg_html($request_msg), $refused_html);
 
         // test that a failed login renders the notification in the full page
         $_SESSION[url_var::SESSION_TOKEN] = test_const::DUMMY_SESSION_TOKEN;
@@ -478,12 +573,20 @@ class system_view_ui_tests
         // activate link with the user id and key is delivered by email
         $t->subheader($ts . 'login reset');
 
-        $url_array = [url_var::MASK => views::LOGIN_ACTIVATE_ID, url_var::ID => 1];
+        // the mail link names the user by user_to_edit, because u is always the logged-in user
+        $url_array = [url_var::MASK => views::LOGIN_ACTIVATE_ID, url_var::USER_TO_EDIT => 1];
         $reset_sent_html = $ui->url_to_html($url_array, $msg, $ui->dto, true);
 
         // the first assert after a page render carries the render time, so a page timeout is used
         $test_name = 'activate page after reset email shows activation key label';
         $t->assert_text_contains($test_name, $reset_sent_html, $mtr->txt(msg_id::ACTIVATE_SUBMIT), $t::TIMEOUT_LIMIT_PAGE);
+        $test_name = '... and says that the password is optional, because the page also confirms the email of a signup';
+        $t->assert_text_contains($test_name, $reset_sent_html, $mtr->txt(msg_id::ACTIVATE_PASSWORD_OPTIONAL));
+        $test_name = '... and posts the user of the mail link as user_to_edit';
+        $ue_field = $html->form_hidden(url_var::USER_TO_EDIT, '1');
+        $t->assert_text_contains($test_name, $reset_sent_html, $ue_field);
+        $test_name = 'the activate page of an old mail link with the id posts the user as user_to_edit too';
+        $t->assert_text_contains($test_name, $activate_html, $ue_field);
 
         $file_path = test_paths::HTML . test_paths::VIEW_FUNCTIONS . 'reset_email_sent';
         $test_name = 'activate page after reset email matches snapshot';
@@ -587,6 +690,22 @@ class system_view_ui_tests
     ): void
     {
         $updated_files = [];
+        // the views of the frontend cache come from the api/type_lists/type_lists.json fixture, which reset_db
+        // regenerates only after the unit tests; if a view has been added to the seed views since, the cached ids
+        // are shifted and a view would be rendered with the object of another view (a fatal type error), so the
+        // loop and the snapshot cleanup are skipped until the fixture matches views::TEST_VIEW_IDS again
+        $test_name = 'the views of type_lists.json have the ids of views::TEST_VIEW_IDS (else reset the database)';
+        $stale = '';
+        foreach (views::TEST_VIEW_IDS as $id => $code_id) {
+            $cached_code_id = $ui->dto->typ_lst_cache->get_view_by_id($id)?->code_id;
+            if ($stale == '' and $cached_code_id != $code_id) {
+                $stale = 'view ' . $id . ' is ' . ($cached_code_id ?? 'missing') . ' instead of ' . $code_id;
+            }
+        }
+        $t->assert($test_name, $stale, '');
+        if ($stale != '') {
+            return;
+        }
         // the start view shows the global problems as a table, which the frontend fills from the
         // api; a unit test has no api, so the cache of that view is filled from the factories,
         // and only of that view, so the snapshots of the other views stay unchanged
@@ -597,7 +716,22 @@ class system_view_ui_tests
         $dto_start->typ_lst_cache = $ui->dto->typ_lst_cache;
         $dto_start->msk_lst = $ui->dto->msk_lst;
         $dto_start->add_phrases($t_phr->list_global_problems_ui(), $msg);
+        // the calculator shows the triple "global warming", whose from and to are named from the cache
+        $t_wrd = new test_words($t);
+        $gw_parts = new phrase_list($t->usr1);
+        $gw_parts->add($t_wrd->word_climate()->phrase());
+        $gw_parts->add($t_wrd->word_warmer()->phrase());
+        $dto_start->add_phrases(new phrase_list_ui($gw_parts->api_json()), $msg);
         $dto_start->val_lst = $t_val->value_list_solution_prio_ui();
+        // a value or a result page names the phrases of its sample object, which a unit test can
+        // only take from the request cache, so a copy of that cache also holds these phrases; the
+        // phrase list is copied too, so that the other views keep the unchanged cache
+        $t_res = new test_results($t);
+        $smp_lst = $t_val->value_16_filled()->phrase_list();
+        $smp_lst->merge($t_res->result_main_filled()->phrase_list());
+        $dto_smp = clone $ui->dto;
+        $dto_smp->phr_lst = clone $ui->dto->phr_lst;
+        $dto_smp->add_phrases(new phrase_list_ui($smp_lst->api_json()), $msg);
         // TODO Prio 3 review and use random?
         for ($msk_typ = 1; $msk_typ < 2; $msk_typ++) {
             for ($id = views::MIN_TEST_ID; $id <= views::MAX_TEST_ID; $id++) {
@@ -621,11 +755,13 @@ class system_view_ui_tests
                 } else {
                     $msg->usr = null;
                 }
-                // the start page and the calculator show the values of the global problems, so
-                // both render with the start page cache that carries them
+                // the start page, the table and the calculator show the values of the global
+                // problems, so they render with the start page cache that carries them
                 $dto = $ui->dto;
-                if ($id == views::START_ID or $id == views::CALCULATOR_ID) {
+                if (in_array($id, [views::START_ID, views::TABLE_ID, views::CALCULATOR_ID])) {
                     $dto = $dto_start;
+                } elseif ($dbo instanceof value or $dbo instanceof result) {
+                    $dto = $dto_smp;
                 }
                 $html = $ui->url_to_html($url_array, $msg, $dto, true);
                 [$folder, $dbo_name, $test_name] = $this->view_id_to_file_info($id, $dbo::class, $action, $url_array, $lib);
@@ -634,9 +770,83 @@ class system_view_ui_tests
                 // link to the pod like the views_by_object snapshots, so that a snapshot opened in
                 // the ide does not link to the ide preview server port (see test_base::link_to_pod)
                 $t->assert_html_page($test_name, $t->link_to_pod($html, THIS_URL), $file_path);
+                // each view is an own request, so a message of one view must not stop the next
+                // e.g. the value url mapper maps the number only if the message is ok
+                $msg->reset();
             }
         }
-        // remove test files not used any more
+
+        // the "... more" link of a list changes only how much of the same page is shown, so the
+        // start page renders with the longer list and reports nothing; a list size counted as an
+        // object field value would instead report the missing id of the page object, because the
+        // start page shows no object (see url_var::CONTROL_VARS)
+        $test_name = 'the more list of the start page reports no missing id';
+        $msg->usr = null;
+        $more_url = [url_var::MASK => views::START_ID, url_var::DISPLAY_LIST_SIZE => Config::LIMIT_MORE_LIST];
+        $more_html = $ui->url_to_html($more_url, $msg, $dto_start, true);
+        $t->assert_msg($test_name, $msg);
+        $msg->reset();
+
+        $test_name = '... and matches the snapshot of the more list';
+        $start_dbo = $this->view_id_to_dbo(views::START_ID, $t->usr1);
+        [$folder, $dbo_name,] = $this->view_id_to_file_info(views::START_ID, $start_dbo::class,
+            $this->view_id_to_url_action(views::START_ID), $more_url, $lib);
+        $file_path = test_paths::VIEWS_BY_ID . $folder . $dbo_name . self::MORE_LIST_FILE_POSTFIX;
+        $updated_files[] = test_paths::RESOURCE . $file_path . test_files::HTML;
+        $t->assert_html_page($test_name, $t->link_to_pod($more_html, THIS_URL), $file_path);
+        $msg->reset();
+
+        // the ", ..." of the reason and the solution cell of the start page link to the table page
+        // of "global warming reason" and "global warming solution", which show the reasons or the
+        // solutions of global warming as rows; per page the name, the page phrase, the phrase that
+        // names its rows, the related phrases and the values
+        $t_trp = new test_triples($t);
+        $list_pages = [
+            ['reasons', $t_trp->global_warming_reason(), $t_wrd->word_reason(),
+                $t_phr->list_global_warming_reasons_ui(), $t_val->value_list_solution_prio_reason_solution_ui()],
+            ['solutions', $t_trp->global_warming_solution(), $t_wrd->solution(),
+                $t_phr->list_global_warming_solutions_with_reasons_ui(), $t_val->value_list_global_warming_solutions_ui()],
+        ];
+        foreach ($list_pages as [$page_name, $page_trp, $row_wrd, $rel_lst, $val_lst]) {
+            // the url names the triple by its phrase id, so a triple mapped with that id would name
+            // another phrase and find none of the values
+            $test_name = 'the table page of the global warming ' . $page_name . ' shows the table';
+            $dto_page = clone $dto_start;
+            $dto_page->phr_lst = clone $dto_start->phr_lst;
+            $dto_page->add_phrases($rel_lst, $msg);
+            // like for the calculator, the from of the page triple is named from the cache, and
+            // the table heads its row column by it
+            $row_parts = new phrase_list($t->usr1);
+            $row_parts->add($row_wrd->phrase());
+            $dto_page->add_phrases(new phrase_list_ui($row_parts->api_json()), $msg);
+            // the live page loads the default sort order, so the rows are sorted by the loss
+            $dto_page->add_phrases($t_phr->list_sort_definitions_ui(), $msg);
+            $dto_page->val_lst = $val_lst;
+            // the url carries the fields of the phrase, because the page is rendered without a backend call
+            $url = $t_map->phrase_page_url(views::TABLE_ID, $page_trp->phrase(), $msg);
+            parse_str(parse_url($url)['query'], $page_url);
+            $page_html = $ui->url_to_html($page_url, $msg, $dto_page, true);
+            $t->assert_text_contains($test_name, $page_html, '<' . html_base::TABLE);
+            $test_name = 'the table page of the global warming ' . $page_name . ' matches the snapshot';
+            $tbl_dbo = $this->view_id_to_dbo(views::TABLE_ID, $t->usr1);
+            [$folder, $dbo_name,] = $this->view_id_to_file_info(views::TABLE_ID, $tbl_dbo::class,
+                $this->view_id_to_url_action(views::TABLE_ID), $page_url, $lib);
+            $file_path = test_paths::VIEWS_BY_ID . $folder . $dbo_name;
+            $updated_files[] = test_paths::RESOURCE . $file_path . test_files::HTML;
+            $t->assert_html_page($test_name, $t->link_to_pod($page_html, THIS_URL), $file_path);
+            $msg->reset();
+        }
+
+        // negative: a field of the object is not a render mode, so a page without an object
+        // still reports that the id of the object to change is missing
+        $test_name = 'an object field on a page without an object reports the missing id';
+        $name_url = [url_var::MASK => views::START_ID, url_var::NAME => word_names::MATH];
+        $ui->url_to_html($name_url, $msg, $dto_start, true);
+        $t->assert_false($test_name, $msg->is_ok());
+        $msg->reset();
+
+        // remove test files not used any more, except the details list fetched from the pod
+        $updated_files[] = test_paths::RESOURCE . self::START_PAGE_DETAILS_FILE . test_files::HTML;
         foreach ($lib->dir_files(test_paths::RESOURCE . test_paths::VIEWS_BY_ID) as $path) {
             if (str_ends_with($path, test_files::HTML) && !in_array($path, $updated_files)) {
                 $t->delete_path_file($path);
@@ -709,7 +919,8 @@ class system_view_ui_tests
     {
         $result = ['other' . DIRECTORY_SEPARATOR, $prefix . 'other', 'other view'];
         if ($id == views::START_ID) {
-            $result = ['start_page' . DIRECTORY_SEPARATOR, $prefix . 'start_page', 'start_page view'];
+            $result = [self::START_PAGE_FILE_NAME . DIRECTORY_SEPARATOR,
+                $prefix . self::START_PAGE_FILE_NAME, self::START_PAGE_FILE_NAME . ' view'];
         } elseif (in_array($id, views::CONFIRM_MASKS_IDS)) {
             $result = $this->confirm_file_info($id, $action, $prefix);
         } elseif (in_array($id, views::STATIC_VIEW_IDS)) {
@@ -800,6 +1011,8 @@ class system_view_ui_tests
         } elseif (in_array($view_id, view_shared::VIEW_RELATION_MASKS_IDS)) {
             $dbo = new view_relation($usr);
         } elseif (in_array($view_id, view_shared::USER_MASKS_IDS)) {
+            $dbo = new user();
+        } elseif (in_array($view_id, view_shared::CHANGE_LOG_VIEW_IDS)) {
             $dbo = new user();
         } elseif (in_array($view_id, view_shared::USER_LOGIN_MASK_IDS)) {
             $dbo = new user();

@@ -38,12 +38,14 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 include_once paths::MODEL_FORMULA . 'figure.php';
 include_once paths::MODEL_FORMULA . 'figure_list.php';
 include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::SHARED_TYPES . 'share_types.php';
 include_once test_paths::CREATE . 'test_const.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\formula\figure;
 use Zukunft\ZukunftCom\main\php\cfg\formula\figure_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\types\share_types;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use DateTime;
 
@@ -75,6 +77,18 @@ class test_figures
         $t_val = new test_values($this->env);
         $val = $t_val->value($msg);
         $val->set_last_update(new DateTime(test_const::DUMMY_DATETIME));
+        return $val->figure();
+    }
+
+    /**
+     * @return figure of a value that is not public, so that another user may not read the number
+     */
+    function figure_value_not_public(user_message $msg): figure
+    {
+        global $sys;
+        $t_val = new test_values($this->env);
+        $val = $t_val->value($msg);
+        $val->set_share_id($sys->typ_lst->shr_typ->id(share_types::GROUP));
         return $val->figure();
     }
 

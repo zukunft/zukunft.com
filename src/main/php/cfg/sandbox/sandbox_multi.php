@@ -1148,9 +1148,19 @@ class sandbox_multi extends db_object_multi_user
                 $pos++;
             }
         } else {
-            $sc->add_where(group_fields::FLD_ID, $this->grp()->id);
+            $sc->add_where(group_fields::FLD_ID, $this->grp_where_id());
         }
         return $qp;
+    }
+
+    /**
+     * the group key used to select the row of a table keyed by the group id; overwritten by the
+     * result, whose source group may have moved it to a table keyed by the text key
+     * @return int|string the group id as the table of this object uses it
+     */
+    protected function grp_where_id(): int|string
+    {
+        return $this->grp()->id;
     }
 
     /**
@@ -1249,7 +1259,7 @@ class sandbox_multi extends db_object_multi_user
         global $db_con;
         $result = false;
 
-        if ($this->id() > 0) {
+        if ($this->is_id_set()) {
 
             // TODO: try to avoid using load_test_user
             if ($this->owner_id() > 0) {
@@ -1858,28 +1868,61 @@ class sandbox_multi extends db_object_multi_user
      */
     function set_owner(int $new_owner_id, user_message $msg, bool $must_exist = true): bool
     {
+        global $db_con;
+
         log_debug($this->dsp_id() . ' to ' . $new_owner_id);
 
+        $result = false;
+        // the verdict of this owner change, merged into $msg right away, because a message that
+        // the caller has collected before must not turn a successful owner change into a failure
+        $own_msg = new user_message($msg->usr);
         if ($this->has_id() > 0 and $new_owner_id > 0) {
             // load the standard db row
-            $std = $this->clone_reset();
-            $get_msg = clone $msg;
-            $std->load_standard($this->id(), $get_msg);
+            $db_std = $this->clone_reset();
+            $get_msg = new user_message($msg->usr); // the verdict of the load, not reported if the row may be missing
+            $db_std->load_standard($this->id(), $get_msg);
 
-            if ($get_msg->is_ok() or $must_exist) {
+            // a standard row that cannot be loaded cannot get a new owner, and the load problem
+            // is only an error for the caller if the row is expected to exist (see must_exist)
+            if (!$get_msg->is_ok()) {
+                if ($must_exist) {
+                    $own_msg->merge($get_msg);
+                }
+            } else {
+                $new_owner = new user();
+                $new_owner->load_by_id($new_owner_id, $own_msg);
+                // the owner is the user of the standard row, so the change is written like a
+                // change of the user (see db_fields_changed) and not via save, which compares
+                // with a db row of the same user and would never detect the owner change;
+                // a missing owner is compared as an empty user, so that the new owner is written
+                $db_std->set_user($db_std->owner($own_msg) ?? new user());
+                $std = clone $db_std;
+                $std->set_user($new_owner);
+                if ($own_msg->is_ok()) {
+                    $sc = $db_con->sql_creator();
+                    $sc_par_lst = new sql_type_list([sql_type::LOG]);
+                    $fvt_lst = $std->db_fields_changed($db_std, $own_msg, $sc_par_lst);
+                    if (!$fvt_lst->is_empty_except_internal_fields()) {
+                        $sc_par_lst->add(sql_type::UPDATE);
+                        $qp = $std->sql_write($sc, $db_std, $std->db_fields_all(), $own_msg, $sc_par_lst);
+                        $db_con->update($qp, 'set owner of ' . $this->dsp_id(), $own_msg);
+                    }
+                }
 
-                // set the owner and save
-                $std->owner_id = $new_owner_id;
-                $std->save($msg);
-
-                // update the current object
-                if ($msg->is_ok()) {
+                // update the current object and continue as the new owner like sandbox::set_owner,
+                // so that e.g. del removes the user row of the new owner and not of the requester
+                if ($own_msg->is_ok()) {
                     $this->owner_id = $new_owner_id;
+                    if ($this->get_user()->id() != $new_owner_id) {
+                        $this->set_user($new_owner);
+                    }
+                    $result = true;
                 }
             }
 
         }
-        return $msg->is_ok();
+        $msg->merge($own_msg);
+        return $result;
     }
 
     /**
@@ -2027,8 +2070,10 @@ class sandbox_multi extends db_object_multi_user
         $usr_id_lst = array();
         $result = new user_list($this->get_user());
 
-        // add object owner
-        $usr_id_lst[] = $this->owner_id();
+        // add object owner, but only a known one, because an empty id breaks the id list of the user load
+        if ($this->owner_id() > 0) {
+            $usr_id_lst[] = $this->owner_id();
+        }
         $qp = $this->load_sql_of_users_that_changed($db_con->sql_creator());
         $db_usr_lst = $db_con->get($qp, $msg, 'sandbox user list');
         foreach ($db_usr_lst as $db_usr) {
@@ -2168,6 +2213,7 @@ class sandbox_multi extends db_object_multi_user
 
     /**
      * remove user adjustment and log it (used by user.php to undo the user changes)
+     * the log entry and the delete are one sql function (e.g. value_delete_log_user), see del_exe
      * @param user_message $msg to report to the requesting user why the undo has failed
      */
     function del_usr_cfg(user_message $msg): bool
@@ -2177,20 +2223,22 @@ class sandbox_multi extends db_object_multi_user
         $class_name = $lib->class_to_name($this::class);
 
         global $db_con;
-        $result = true;
 
-        if ($this->id() > 0 and $this->get_user()->id() > 0) {
-            $log = $this->log_del($msg);
-            if ($log->id() > 0) {
-                $db_con->usr_id = $this->get_user()->id();
-                $result = $this->del_usr_cfg_exe($db_con);
+        if ($this->is_id_set() and $this->get_user()->id() > 0) {
+            $db_con->usr_id = $this->get_user()->id();
+            $qp = $this->sql_delete($db_con->sql_creator(), $msg, new sql_type_list([sql_type::LOG, sql_type::USER]));
+            $db_con->delete($qp, 'del and log user ' . $this->dsp_id(), $msg);
+            if ($msg->is_ok()) {
+                $this->usr_cfg_id = null;
+                // after removing the user sandbox row switch off the sandbox usage
+                // of the user if no user sandbox row is left
+                $this->get_user()->check_sandbox_usage($db_con, $msg);
             }
-
         } else {
             log_err('The database ID and the user must be set to remove a user-specific modification of ' . $class_name . '.', $this::class . '->del_usr_cfg');
         }
 
-        return $result;
+        return $msg->is_ok();
     }
 
     /**
@@ -2607,85 +2655,6 @@ class sandbox_multi extends db_object_multi_user
 
     /**
      * dummy function definition that will be overwritten by the child object
-     * @return change_link
-     */
-    function log_del_link(user_message $msg): change_link
-    {
-        $msg->add_err(msg_id::MISSING_FUNCTION_OVERWRITE, [
-            msg_id::VAR_FUNCTION_NAME => 'log_del_link',
-            msg_id::VAR_CLASS_NAME => $this::class
-        ]);
-        return new change_link($this->get_user());
-    }
-
-    /**
-     * set the log entry parameter for a group object with a bigint key
-     * for all not named objects like links, this function is overwritten
-     * e.g. that the user can see "added formula 'scale millions' to word 'mio'"
-     *
-     * @return change the change log object with the basic parameters set
-     */
-    function log_del_prime(user_message $msg): change
-    {
-        log_debug($this->dsp_id());
-
-        $log = new change($this->get_user());
-        $class = (new library())->class_to_name($this::class);
-        $log->set_table($class . sql_db::TABLE_EXTENSION, $msg);
-        return $this->log_del_common($log, $msg);
-    }
-
-    /**
-     * similar to log_del_prime but ...
-     * ... set the log entry parameter for a group object with a 512bit key
-     *
-     * @return changes_norm the change log object with the basic parameters set
-     */
-    function log_del(user_message $msg): change
-    {
-        $log = new changes_norm($this->get_user());
-        $class = (new library())->class_to_name($this::class);
-        $log->set_table($class . sql_db::TABLE_EXTENSION . sql_type::NORM->extension(), $msg);
-        return $this->log_del_common($log, $msg);
-    }
-
-    /**
-     * similar to log_del_prime but ...
-     * * ... set the log entry parameter for a group object with a text key
-     *
-     * @return changes_big the change log object with the basic parameters set
-     */
-    function log_del_big(user_message $msg): changes_big
-    {
-        log_debug($this->dsp_id());
-
-        $log = new changes_big($this->get_user());
-        $class = (new library())->class_to_name($this::class);
-        $log->set_table($class . sql_db::TABLE_EXTENSION . sql_type::BIG->extension(), $msg);
-        return $this->log_del_common($log, $msg);
-    }
-
-    /**
-     * set the common parameters to log the delete or exclude of a value, result or group object and execute it
-     * @param change|changes_norm|changes_big $log with the target table set
-     * @param user_message $msg to report a failed change log write to the requesting user
-     * @return change|changes_norm|changes_big with the log id set
-     */
-    private function log_del_common(change|changes_norm|changes_big $log, user_message $msg): change|changes_norm|changes_big
-    {
-        $lib = new library();
-        // a value, result or group is always identified by the group name
-        $log->set_field($lib->class_to_name(group::class) . '_name', $msg);
-        $log->old_value = $this->name();
-        $log->new_value = null;
-        $log->row_id = 0;
-        $log->set_action(change_actions::DELETE, $msg);
-        $log->add($msg);
-        return $log;
-    }
-
-    /**
-     * dummy function definition that will be overwritten by the child object
      * check if the user requested a preserved name and if yes return a message to the user
      * @param user_message $msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
      * @return bool true if everything has been fine
@@ -3014,33 +2983,6 @@ class sandbox_multi extends db_object_multi_user
     }
 
     /**
-     * @param sandbox_multi $db_rec the object as saved in the database before the change
-     * @param user_message $msg to report a failed change log write to the requesting user
-     * @return change_log the log object predefined for excluding
-     */
-    function save_field_excluded_log(sandbox_multi $db_rec, user_message $msg): change_log
-    {
-        $log = new change_log($this->get_user());
-        if ($db_rec->is_excluded() <> $this->is_excluded()) {
-            if ($this->is_excluded()) {
-                if ($this->is_link_obj()) {
-                    $log = $this->log_del_link($msg);
-                } else {
-                    $log = $this->log_del($msg);
-                }
-            } else {
-                if ($this->is_link_obj()) {
-                    $log = $this->log_link_add($msg);
-                } else {
-                    $log = $this->log_add($msg);
-                }
-            }
-        }
-        $log->set_field(fields::FLD_EXCLUDED, $msg);
-        return $log;
-    }
-
-    /**
      * set to row id for the log
      * @param change_value|change_log $log
      * @return void
@@ -3366,6 +3308,10 @@ class sandbox_multi extends db_object_multi_user
                         ]);
                     } else {
                         log_debug('reloaded from db');
+                        // a request carries only the fields it changes, e.g. a value change without the
+                        // group description, so the other fields are taken over from the database row;
+                        // fill never overwrites a field that the request has set (see sandbox::save)
+                        $msg->merge($this->fill($db_rec, $this->get_user()));
                         if ($this->is_link_obj()) {
                             if (!$db_rec->load_objects($msg)) {
                                 $msg->add(msg_id::FAILED_RELOAD_OBJECT, [
@@ -3426,57 +3372,38 @@ class sandbox_multi extends db_object_multi_user
 
     /**
      * delete the complete object (the calling function del must have checked that no one uses this object)
-     * @returns string the message that should be shown to the user if something went wrong or an empty string if everything is fine
+     * the change log entry and the delete are one sql function (e.g. value_delete_log),
+     * so a delete is never done without its log entry
+     * @param user_message $msg to report a failed delete to the requesting user
+     * @return bool true if the object has been deleted
      */
     private function del_exe(user_message $msg): bool
     {
         log_debug($this->dsp_id());
-        $lib = new library();
-        $class_name = $lib->class_to_name($this::class);
 
-        global $sys;
         global $db_con;
 
-        $msg_txt = '';
+        // TODO Prio 1 activate
+        // $msg_txt = $this->del_links();
+        // $msg->merge($msg_txt);
 
-        // log the deletion request
-        if ($this->is_link_obj()) {
-            $log = $this->log_del_link($msg);
-        } else {
-            $log = $this->log_del($msg);
-        }
-        if ($log->id > 0) {
+        // a group has its own del() and results are removed without log by result_list::db_delete_no_log,
+        // so only the numeric, text, time and geo values reach this point
+        if ($this instanceof value_base) {
             $db_con->usr_id = $this->get_user()->id;
-
-            // TODO Prio 1 activate
-            // $msg_txt = $this->del_links();
-            // $msg->merge($msg_txt);
-
+            $sc = $db_con->sql_creator();
             // delete first all user configuration that have also been excluded
+            $qp = $this->sql_delete($sc, $msg, new sql_type_list([sql_type::USER, sql_type::EXCLUDE]));
+            $db_con->delete($qp, $this::class . ' user exclusions', $msg);
             if ($msg->is_ok()) {
-                // TODO always use the qp based setup
-                if ($this::class == value::class) {
-                    $qp = $this->sql_delete($db_con->sql_creator(), $msg, new sql_type_list([sql_type::USER, sql_type::EXCLUDE]));
-                    $db_con->delete($qp, $this::class . ' user exclusions', $msg);
-                } else {
-                    log_err('Delete of user link for ' . $this::class . ' not yet defined');
-                }
+                $qp = $this->sql_delete($sc, $msg, new sql_type_list([sql_type::LOG]));
+                $db_con->delete($qp, 'del and log ' . $this->dsp_id(), $msg);
             }
-            if ($msg->is_ok()) {
-                // finally, delete the object
-                if ($this::class == value::class) {
-                    $qp = $this->sql_delete($db_con->sql_creator(), $msg);
-                    $db_con->delete($qp, $this::class . ' user exclusions', $msg);
-                } else {
-                    log_err('Delete of link for ' . $this::class . ' not yet defined');
-                }
-                log_debug('of ' . $this->dsp_id() . ' done');
-            } else {
-                log_err('Delete failed for ' . $this::class, $this::class . '->del_exe', 'Delete failed, because removing the user settings for ' . $class_name . ' ' . $this->dsp_id() . ' returns ' . $msg_txt, (new Exception)->getTraceAsString(), $this->get_user());
-            }
+        } else {
+            log_err('Delete of ' . $this::class . ' not yet defined');
         }
 
-        return $msg->get_last_message();
+        return $msg->is_ok();
     }
 
     /**
@@ -3487,13 +3414,20 @@ class sandbox_multi extends db_object_multi_user
      *                     or if something went wrong
      *                     the message that should be shown to the user
      *                     including suggested solutions
+     * @param sql_type_list $sc_par_lst with sql_type::NO_USER_SANDBOX if the object must never be
+     *                                  excluded for one user e.g. because it is deleted together
+     *                                  with a phrase of its group (see word::del_links)
      * @return bool true if the value has been deleted without issues
      *
      * TODO if the owner deletes it, change the owner to the new median user
      * TODO check if all have deleted the object
      *      does not remove the user excluding if no one else is using it
      */
-    function del(user_message $msg, bool $must_exist = true): bool
+    function del(
+        user_message  $msg,
+        bool          $must_exist = true,
+        sql_type_list $sc_par_lst = new sql_type_list()
+    ): bool
     {
         log_debug($this->dsp_id());
         $lib = new library();
@@ -3502,7 +3436,7 @@ class sandbox_multi extends db_object_multi_user
         // an object without a group id can never be addressed in the database, so there is
         // nothing to delete; report the inconsistency to the admin and let the caller continue
         // e.g. with the deletion of a linked word instead of failing the complete request
-        if ($this->id() == 0 or $this->id() == '') {
+        if (!$this->is_id_set()) {
             log_err('delete of ' . $class_name . ' ' . $this->dsp_id()
                 . ' skipped, because the group of the object is not set');
             return $msg->is_ok();
@@ -3524,7 +3458,10 @@ class sandbox_multi extends db_object_multi_user
         } else {
             log_debug('reloaded ' . $this->dsp_id());
             // check if the object is still valid
-            if ($this->id() <= 0) {
+            // never compare the id with a number, because the text id of a main or big table
+            // row such as '/x-' is less than 0 for php, which has skipped the delete of
+            // every value with more than four phrases (see db_object_multi::is_id_set)
+            if (!$this->is_id_set()) {
                 log_warning('Delete failed', $this::class . '->del', 'Delete failed, because it seems that the ' . $class_name . ' ' . $this->dsp_id() . ' has been deleted in the meantime.', (new Exception)->getTraceAsString(), $this->get_user());
             } else {
                 // reload the objects if needed
@@ -3537,6 +3474,17 @@ class sandbox_multi extends db_object_multi_user
                 // del_exe reports any problem on $msg, so the bool return can be ignored here
                 if (!$this->used_by_someone_else($msg)) {
                     $this->del_exe($msg);
+                } elseif ($sc_par_lst->no_user_sandbox()) {
+                    // an object that is removed together with a phrase of its group can never be
+                    // excluded for one user, because after the delete of the phrase no user can
+                    // select the row any more; the caller is expected to check the usage before,
+                    // so a still used object is an internal inconsistency and not a user decision
+                    log_err_msg('delete of ' . $class_name . ' ' . $this->dsp_id()
+                        . ' refused, because it is still used by another user than '
+                        . $this->get_user()->dsp_id() . ' and it cannot be excluded for one user'
+                        . ' (owner id ' . $this->owner_id()
+                        . ', changed by user id ' . $this->changer($msg) . ')',
+                        $msg);
                 } else {
                     // if the owner deletes the object find a new owner or delete the object completely
                     if ($this->owner_id() == $this->get_user()->id) {
@@ -3837,7 +3785,9 @@ class sandbox_multi extends db_object_multi_user
         // get the fields for the value log entry
         // TODO review check why a different list for the log is needed; instead use the field names like in sandbox
         $fvt_lst_log = clone $fvt_lst;
-        $fvt_lst_log->add_field(group_fields::FLD_ID, $this->grp()->id());
+        // the change log names the row by the same group id as the key fields of the data table
+        // (see sandbox_value::id_fvt_lst and group::id_or_phrase_list_id)
+        $fvt_lst_log->add_field(group_fields::FLD_ID, $this->grp()->id_or_phrase_list_id());
         $fvt_lst_log->add_field(user_db::FLD_ID, $this->get_user_id(), sql_par_type::INT);
 
         // create the log entry for the value
@@ -3956,6 +3906,10 @@ class sandbox_multi extends db_object_multi_user
         }
 
         // sandbox fields
+        // the excluded field must be written like share and protect, because otherwise the exclude
+        // of a value only writes the change log entry and the row still says that the value is used,
+        // so the next delete would try to add the same user row again (see del and value_list::del)
+        $fvt_lst_write->add($fvt_lst_all->get(fields::FLD_EXCLUDED, $msg, true));
         $fvt_lst_write->add($fvt_lst_all->get(fields::FLD_SHARE, $msg, true));
         $fvt_lst_write->add($fvt_lst_all->get(fields::FLD_PROTECT, $msg, true));
 
@@ -4563,12 +4517,13 @@ class sandbox_multi extends db_object_multi_user
     function id_used_msg(sandbox_multi $obj_to_add): user_message
     {
         $lib = new library();
-        $obj_to_add_name = $lib->class_to_name($obj_to_add::class);
         $msg = new user_message(); // the message IS the return value, so the caller merges it
+        // the message asks for another name like the named sandbox objects do, so the value is
+        // the name key and not the class name, which would read "use another group group"
         $msg->add(msg_id::NAME_ALREADY_EXISTS, [
             msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
             msg_id::VAR_NAME => $obj_to_add->dsp_id(),
-            msg_id::VAR_VALUE => $obj_to_add_name
+            msg_id::VAR_VALUE => msg_id::KEY_TYPE_NAME->value
         ]);
         return $msg;
     }

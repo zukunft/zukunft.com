@@ -3,12 +3,12 @@
     "id": 1,
     "name": "Word",
     "description": "simply show the word or triple name",
-    "type_id": 8
+    "type_id": 32
   },
   {
     "id": 2,
     "name": "spreadsheet",
     "description": "changeable sheet with words, number and formulas",
-    "type_id": 35
+    "type_id": 68
   }
 ]

@@ -39,6 +39,7 @@ the object structure is:
 ├── id
 │   ├── group_id - e.g. to create a group_id based on a phrase list
 │   └── result_id - e.g. to create a id based on a mix of source, result or both phrases and the formula id
+├── config_tree - $cft - the read only tree of the system configuration in config.yaml
 ├── data_object - a header object for all data objects e.g. phrase_list, values, formulas
 ├── db_cache_db - the database const for the database cache tables
 ├── db_object_no_id
@@ -111,6 +112,7 @@ the object structure is:
 ├── valuesShared - values used by the system for testing
 ├── viewsShared - system views with name and id
 ├── wordsShared - predefined words used in the backend and frontend as code id
+├── group_id_urlShared - the sign chars of a group id and its form in a url
 ├── CombineObjectShared
 │   ├── combine_object
 │   │   ├── figure - $fig - combine object for value and result
@@ -231,7 +233,6 @@ the object structure is:
 │       │   │   │   ├── element_group_list - simply a list of formula element groups to place the name function
 │       │   │   │   ├── element_list - a list of formula elements to place the name function
 │       │   │   │   ├── figure_list - a list of figures, so either a value of a formula result object
-│       │   │   │   ├── group_list - a list of word and triple groups
 │       │   │   │   ├── ref_list - al list of ref objects
 │       │   │   │   ├── sandbox_link_list
 │       │   │   │   │   ├── component_link_list - a list of links between a view and a component
@@ -241,6 +242,7 @@ the object structure is:
 │       │   │   │   ├── sandbox_list_named
 │       │   │   │   │   ├── component_list - list of predefined system components
 │       │   │   │   │   ├── formula_list - a simple list of formulas
+│       │   │   │   │   ├── group_list - a list of word and triple groups
 │       │   │   │   │   ├── phrase_list - a list of phrase (word or triple) objects
 │       │   │   │   │   ├── term_list - a list of word, triple, verb or formula objects
 │       │   │   │   │   ├── source_list - al list of source objects
@@ -407,7 +409,10 @@ the object structure is:
 ├── iconsUi - the css class strings of the icons used in the frontend
 ├── pathsUi - set the path const for the frontend php scripts
 ├── frontendUi - $ui - the main html frontend application
+├── config_nodeUi - $cfn - one key of the read only tree of the system configuration
+├── config_treeUi - $cft - the tree of the system configuration in config.yaml
 ├── data_objectUi - frontend cache object
+├── mail_senderUi - send the mails of the pod e.g. the signup confirmation
 ├── url_mapperUi - create human-readable or pod exchangeable urls
 ├── user_requestUi - bundle the context of a frontend user request
 ├── hist_logUi - display the past changes of an object
@@ -452,7 +457,9 @@ the object structure is:
 │   ├── user_type_listUi - $usr_typ_lst - the display extension of the user-specific api type list object
 │   └── verb_listUi - al list of verb objects
 ├── type_listsUi - parent object for all preloaded types used in the html frontend
-└── type_objectUi
-    ├── languageUi - $lan - the extension of the language API objects to create language base html code
-    └── ref_typeUi - the child class for reference types which has additional the url
+├── type_objectUi
+│   ├── languageUi - $lan - the extension of the language API objects to create language base html code
+│   └── ref_typeUi - the child class for reference types which has additional the url
+├── table_chartUi - a value table drawn as an svg chart
+└── table_modelUi - the rows and columns of a value table before they are rendered
 ```

@@ -114,6 +114,14 @@ class value_read_tests
         $val->load_by_grp($phr_lst->get_grp_id(), $msg);
         $t->assert($ts . $test_name, $val->number(), values::CH_INHABITANTS_2020_IN_MIO);
 
+        // the default confidence of a value quality is a value, so that a user can overwrite it
+        $test_name = ' the default confidence of ' . word_names::ASSUMED;
+        $phr_lst = new phrase_list($t->usr1);
+        $phr_lst->load_by_names(array(word_names::ASSUMED, word_names::CONFIDENCE, words::PCT), $msg);
+        $val = new value($t->usr1);
+        $val->load_by_grp($phr_lst->get_grp_id(), $msg);
+        $t->assert($ts . $test_name, $val->number(), values::ASSUMED_CONFIDENCE);
+
         $test_name = 'value without time returns the latest value';
         $val = $t_db->load_value(array(
             word_names::CANTON,

@@ -1,0 +1,1 @@
+PREPARE db_cache_delete_by_ids (bigint[]) AS DELETE FROM db_caches WHERE type_id = ANY ($1);

@@ -277,14 +277,24 @@ class source_ui_tests
         $test_name = 'a source without a default view has no view id';
         $t->assert_null($test_name, $src_no_url->view_id());
 
+        // the page url of an existing source carries its id, without it the url mapper reports the
+        // missing id and maps no field that depends on it (see db_object::url_mapper)
         $test_name = 'the default view of a page url is read';
         $src = new source();
-        $src->url_mapper([url_var::VIEW => (string)views::SOURCE_ID], $msg, $ui_sys);
+        $src->url_mapper([
+            url_var::ID => sources::BFS_ID,
+            url_var::NAME => sources::BFS,
+            url_var::VIEW => (string)views::SOURCE_ID
+        ], $msg, $ui_sys);
         $t->assert($test_name, $src->view_id(), views::SOURCE_ID);
+        $test_name = '... together with the name';
+        $t->assert($test_name, $src->name(), sources::BFS);
+        $msg->reset();
         $test_name = 'a page url without a view leaves the view id empty';
         $src = new source();
-        $src->url_mapper([url_var::NAME => sources::BFS], $msg, $ui_sys);
+        $src->url_mapper([url_var::ID => sources::BFS_ID, url_var::NAME => sources::BFS], $msg, $ui_sys);
         $t->assert_null($test_name, $src->view_id());
+        $msg->reset();
 
         $test_name = 'the page url of a source carries the default view';
         $t->assert($test_name, $src_filled->to_url_array($msg)[url_var::VIEW] ?? '', views::SOURCE_ID);

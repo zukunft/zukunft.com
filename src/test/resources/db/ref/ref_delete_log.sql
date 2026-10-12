@@ -29,7 +29,7 @@ $$ LANGUAGE plpgsql;
 SELECT ref_delete_log
        (3::bigint,
         3::smallint,
-        22::smallint,
+        36::smallint,
         'Pi'::text,
         'wikidata'::text,
         'Q167'::text,

@@ -151,6 +151,7 @@ const WRITE_TEST = true; // perform also the db write tests
 const INTEGRATION_TEST = true; // perform also actual requests to external systems like wikidata and check if the responses are as expected
 
 
+include_once test_paths::CONST . 'files.php';
 include_once test_paths::UNIT_WRITE . 'all_unit_write_tests.php';
 include_once test_paths::UNIT_API . 'all_api_tests.php';
 include_once test_paths::UNIT_WORKFLOW . 'all_workflow_tests.php';
@@ -166,6 +167,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\shared\helper\MapObject;
 use Zukunft\ZukunftCom\main\php\web\frontend;
+use Zukunft\ZukunftCom\test\php\const\files as test_files;
 
 class all_tests extends all_unit_write_tests
 {
@@ -197,7 +199,7 @@ class all_tests extends all_unit_write_tests
         $ui = new frontend('all tests');
         $usr_ui = new user($this->usr1->api_json());
         $msg_ui = new user_message_ui($usr_ui);
-        $ui->load_dummy_cache_from_test_resources($msg_ui);
+        $ui->load_dummy_cache_from_test_resources($msg_ui, file_get_contents(test_files::TYPE_LISTS_CACHE));
 
         // if requested only run some selected tests
         if (QUICK_TEST_ONLY) {
@@ -232,14 +234,15 @@ class all_tests extends all_unit_write_tests
                 $ui = new frontend('unit ui tests');
                 $usr_ui = new user($this->usr1->api_json());
                 $msg_ui = new user_message_ui($usr_ui);
-                $ui->load_dummy_cache_from_test_resources($msg_ui);
+                $ui->load_dummy_cache_from_test_resources($msg_ui, file_get_contents(test_files::TYPE_LISTS_CACHE));
                 new all_ui_tests()->run($this, $ui);
             }
 
-            // check the fixed csv files before the database tests for consistency
+            // check the fixed csv files before the database tests for consistency, without the
+            // anonymous user that the ui tests above have created with their calls to localhost
             if ($sys->errors <= ERROR_LIMIT) {
-                // TODO Prio 0 activate
-                //$t_db->csv_recreate();
+                $this->cleanup_guest_users();
+                $t_db->csv_recreate($msg);
             }
 
             if ($sys->errors <= ERROR_LIMIT and WORKFLOW_TEST) {
@@ -251,11 +254,17 @@ class all_tests extends all_unit_write_tests
                 $this->run_db_write_tests($this);
             }
 
-            // check the fixed csv files after the write test if it still matches and the write test has undone all changes
+            // check after the write tests that they have removed all rows they have added and undone
+            // all changes, by comparing the fixed rows with the rows read before the write tests
             if ($sys->errors <= ERROR_LIMIT and WRITE_TEST) {
-                // TODO Prio 0 activate
-                //$t_db->csv_recreate();
+                $t_db->csv_leftover_check($msg);
             }
+
+            // refresh the api test files that still contain database ids which are not yet fixed
+            // e.g. the word ids of the "is a" phrase list that shift with each added seed word,
+            // because a database recreate of this run moves them and the next api test run
+            // would report the shift instead of a real change (same as in reset_db.php)
+            $t_db->update_files_with_not_yet_fixed_db_id($this, $msg);
 
             // recreate the type list api message based on the updated db
             // because this json is used for the unit tests

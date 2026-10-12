@@ -34,6 +34,7 @@
 
 namespace Zukunft\ZukunftCom\test\php\const;
 
+use Zukunft\ZukunftCom\main\php\shared\const\formulas as shared_formulas;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 
@@ -45,11 +46,17 @@ class formula_names
     // *_ID is the expected database id only used for system testing
     // *_EXP is the formula expression in the human-readable format
     // *_DB is the formula expression in the database reference format
-    const int NOT_SET_ID = 0;
+    // the frontend preselects these formulas, so their ids are defined in the shared const
+    const int NOT_SET_ID = shared_formulas::NOT_SET_ID;
     const string SCALE_TO_SEC = 'scale minute to sec';
     const string SCALE_TO_SEC_EXP = '"second (time)" = "minute" * 60';
     const string SCALE_TO_SEC_EXP_REF = '{w24}={w104}*60';
+    // the right side of the formula split at the symbol of its only element group "minute"
+    const string SCALE_TO_SEC_EXP_REF_R = '{w104}*60';
+    const string SCALE_TO_SEC_MINUTE_SYMBOL = '{w104}';
+    const string SCALE_TO_SEC_EXP_REF_R_REST = '*60';
     const string SCALE_TO_SEC_LATEX = '\text{s} = 60 \cdot \text{min}';
+    const string SCALE_TO_SEC_LATEX_NUMBER = '60';
     const string SCALE_TO_SEC_EXP_REF_SHORT_SYMBOL = '{w24}={w}*60';
     const string SCALE_TO_SEC_EXP_REF_ID_NOT_A_NUMBER = '{w24}={wO}*60';
     const string SCALE_TO_SEC_EXP_REF_SYMBOL_NOT_VALID = '{w24}={d1}*60';
@@ -70,8 +77,8 @@ class formula_names
     const int PRIOR_ID = 20;
     const string PRIOR_EXP = '=value["time jump"->,"Now"->"follower"]';
     const string PERCENT = 'percent';
-    const string INCREASE = 'increase';
-    const int INCREASE_ID = 21;
+    const string INCREASE = shared_formulas::INCREASE;
+    const int INCREASE_ID = shared_formulas::INCREASE_ID;
     const string INCREASE_EXP = '"' . words::PERCENT . '" = ( "' . word_names::THIS_NAME . '" - "' . word_names::PRIOR_NAME . '" ) / "' . word_names::PRIOR_NAME . '"';
     const string INCREASE_TEST_EXP = '"' . word_names::TEST_PERCENT . '" = ( "' . word_names::TEST_THIS . '" - "' . word_names::TEST_PRIOR . '" ) / "' . word_names::TEST_PRIOR . '"';
     const string INCREASE_ALTERNATIVE_EXP = '"' . words::PERCENT . '" = 1 - ( "' . word_names::THIS_NAME . '" / "' . word_names::PRIOR_NAME . '" )';
@@ -79,6 +86,18 @@ class formula_names
     // each term is wrapped in \text{} so the expression_latex_link component can link it; the
     // increase object page sample renders it without a term list, so without the term links
     const string INCREASE_LATEX = '\text{' . words::PERCENT . '} = \frac{ \text{' . word_names::THIS_NAME . '} - \text{' . word_names::PRIOR_NAME . '} }{ \text{' . word_names::PRIOR_NAME . '} }';
+    // a scaling formula (scaling.json) that the import file defines without a latex, so its
+    // latex is created by the import from the expression
+    const string SCALE_THOUSAND_TO_ONE = 'scale thousand to one';
+    // the latex of some propagation of uncertainty formulas (math_propagation_of_uncertainty.json)
+    // that use the latex markup beyond the fraction, e.g. the almost equal sign, the bars, the
+    // root, the function names, the sum sign and the subscripts, which the frontend renders as html
+    const string PROPAGATION_POWER = 'propagation for a power';
+    const string PROPAGATION_POWER_LATEX = '\text{sigma of f} \approx \left| \frac{\text{f} \cdot \text{b} \cdot \text{sigma of x}}{\text{x}} \right|';
+    const string STD_ERROR_OF_MEAN = 'standard error of the mean';
+    const string STD_ERROR_OF_MEAN_LATEX = '\text{sigma of f} = \frac{\text{sigma}}{\sqrt{\text{n}}}';
+    const string PROPAGATION_FIRST_ORDER = 'propagation to the first order';
+    const string PROPAGATION_FIRST_ORDER_LATEX = '\text{variance of f} \approx \sum_{i=1}^{n} \left( \frac{\partial \text{f}}{\partial \text{x}_i} \right)^2 \text{variance of x}_i';
     // the formulas of solution_prio.json: the three scaling formulas that convert a number of
     // the start page table to one and the sum that turns a percent loss into happy time points
     const string SCALE_MIO_TO_ONE = 'scale million to one';
@@ -88,10 +107,10 @@ class formula_names
     const int SCALE_BIL_TO_ONE_ID = 17;
     const string SCALE_BIL_TO_ONE_EXP = '"' . word_names::ONE . '" = "' . word_names::BILLION . '" * 1000000000';
     const string SCALE_TRILLION_TO_ONE = 'scale trillion to one';
-    const int SCALE_TRILLION_TO_ONE_ID = 22;
+    const int SCALE_TRILLION_TO_ONE_ID = 23;
     const string SCALE_TRILLION_TO_ONE_EXP = '"' . word_names::ONE . '" = "' . word_names::TRILLION . '" * 1000000000000';
     const string GLOBAL_HTP = 'global happy time points';
-    const int GLOBAL_HTP_ID = 23;
+    const int GLOBAL_HTP_ID = 24;
     const string GLOBAL_HTP_EXP = '"' . word_names::HTP . '" = "' . word_names::HTP . '","' . words::PERCENT
         . '" * "' . word_names::GLOBAL . '","' . word_names::HUMAN . '","' . word_names::POPULATION . '"';
     const string JOULE_DEF = 'definition of joule';
@@ -111,7 +130,7 @@ class formula_names
     const string PARTS_IN_PERCENT_EXP = '"' . words::PERCENT . '" = "parts" "' . verbs::OF_NAME . '" / "total"'; // TODO check if separate verb "of each" is needed
     const string PARTS_IN_PERCENT_DB = '{w' . words::PCT_ID . '}={w' . word_names::PARTS_ID . '}{v' . verbs::OF_ID . '}/{w' . words::TOTAL_ID . '}';
     const string CITY_POPULATION = 'city population';
-    const int CITY_POPULATION_ID = 26;
+    const int CITY_POPULATION_ID = 27;
     const string CITY_POPULATION_EXP = '"total" = &sum; ( "inhabitants" "of all" "city" )';
 
     // persevered formula names for unit and integration tests
@@ -135,6 +154,12 @@ class formula_names
     const string SYSTEM_TEST_SCALE_MIO_EXP = '"one" = "million" * 1000000';
     const string SYSTEM_TEST_SCALE_BIL = 'System Test Formula scale billions to one';
     const string SYSTEM_TEST_SCALE_BIL_EXP = '"one" = "System Test Scaling Word e.g. billions" * 1000000000';
+
+    // the entries of the validate workflows of the formula form: an expression that names a term
+    // which does not exist and a latex that names one term more than the expression, so that the
+    // backend answers the validate button with the reason instead of the validated text
+    const string SYSTEM_TEST_INVALID_EXP = '"System Test Word Never Added" = 2';
+    const string SYSTEM_TEST_INVALID_LATEX = self::INCREASE_LATEX . ' \cdot \text{System Test Word Never Added}';
 
     const string TEST_SPEED_PREFIX = 'System Test Formula for speed testing ';
 

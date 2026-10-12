@@ -132,8 +132,7 @@ class ref_list extends ListBase
         if ($phr->id() != 0) {
             $html = new html_base();
             $url = $html->url_back(ref::VIEW_ADD_ID, 0, $url_arr, url_var::PHRASE . '=' . $phr->id());
-            $result = $html->ref($url, $html->icon(icons::ADD),
-                $mtr->txt(ref::MSG_ADD), styles::HEADING_ICON_INLINE, true);
+            $result = $html->change_icon($url, icons::ADD, $mtr->txt(ref::MSG_ADD));
         }
         return $result;
     }

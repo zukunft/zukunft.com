@@ -43,6 +43,7 @@ include_once 'test_const.php';
 include_once TEST_PHP_PATH . 'test_app.php';
 
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
+use Zukunft\ZukunftCom\test\php\const\files as test_files;
 
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\frontend;
@@ -92,7 +93,7 @@ if ($db_con->is_open()) {
             $ui = new frontend('reset db');
             $usr_ui = new user_ui($t->usr1->api_json());
             $msg_ui = new user_message_ui($usr_ui);
-            $ui->load_dummy_cache_from_test_resources($msg_ui);
+            $ui->load_dummy_cache_from_test_resources($msg_ui, file_get_contents(test_files::TYPE_LISTS_CACHE));
 
             if (getenv(ENVIRONMENT) == ENV_DEV) {
 

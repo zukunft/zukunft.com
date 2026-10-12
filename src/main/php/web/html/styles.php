@@ -56,10 +56,31 @@ class styles
     const string STYLE_BORDERLESS_GREY = 'borderless_grey';
     const string TABLE_PUR = 'table';
     const string TEXT_RIGHT = 'text-right';
-    // a table column of the main tier is hidden on a small screen and one of the minor tier is
-    // shown on a wide screen only (see triples::SYSTEM_COLUMN_TIERS)
+    // a table column of the main tier is hidden on a small screen, one of the minor tier is
+    // shown on a wide screen only and one of the marginal tier only on the widest screen
+    // (see triples::SYSTEM_COLUMN_TIERS)
     const string COL_MAIN = 'd-none d-md-table-cell';
     const string COL_MINOR = 'd-none d-xl-table-cell';
+    const string COL_MARGINAL = 'd-none d-xxl-table-cell';
+    // the popup menu of the "..." table header that selects the columns shown, styled like
+    // the menus of the page header (see style_html.css)
+    const string MENU_COLUMN = 'column-menu';
+    // a sub header inside a popup menu e.g. "columns and values" above the column entries
+    const string MENU_HEADER = 'menu-header';
+    // the up / down icons behind a column header that sort the rows by the column, and the
+    // icon of the order that the page shows (see style_html.css)
+    const string SORT_ICON = 'sort-icon';
+    const string SORT_ACTIVE = 'sort-active';
+    // the charts of a table beside each other, wrapping on a narrow screen (see style_html.css)
+    const string CHART_ROW = 'chart-row';
+    // the line above the charts of a table shown without the table: the header of the table
+    // centred and the "..." menu of the table in the top right corner (see style_html.css)
+    const string CHART_HEAD = 'chart-head';
+    const string CHART_CORNER = 'chart-corner';
+    // the popup menu of the "..." below the title of a default view that selects the view
+    // version and the full width line that puts it in the right corner (see style_html.css)
+    const string MENU_VIEW_VERSION = 'view-version-menu';
+    const string VIEW_VERSION_CORNER = 'view-version-corner';
     // bootstrap css class to center a line e.g. the phrase above a value table
     const string TEXT_CENTER = 'text-center';
     // bootstrap css class to keep a short line like 'has aliases: $, U.S. dollar' unbroken
@@ -77,6 +98,10 @@ class styles
     // centred, so the heading stays prominent while the inline action stays unobtrusive
     const string HEADING_ICON_INLINE = 'heading-icon-inline';
 
+    // css class for an add or change icon link beside a form field e.g. behind the source selector:
+    // the size of the field label, so the icon is easy to hit
+    const string FORM_ICON_INLINE = 'form-icon-inline';
+
     // css class for a submit button that is shown like the plain text around it, e.g. the 'add'
     // of the component list of a view, which must be a submit to send the selected component
     const string TEXT_BUTTON = 'text-button';
@@ -86,6 +111,8 @@ class styles
     const string TOGGLE_PANE = 'css-toggle-pane';
     // the url fragment that reveals the formula link form on a word or triple page
     const string FORMULA_LINK_PANE = 'formula-link';
+    // the url fragment that reveals the form to define a word or triple without "is a" parent as a category
+    const string DEFINE_PHRASE_PANE = 'define-phrase';
 
     // css class for the small category line under a page-title heading
     const string SUBTITLE = 'subtitle';
@@ -109,6 +136,27 @@ class styles
     // and the measure/scaling part that follows the number like on a price tag
     const string VALUE_ROW = 'value-row';
     const string VALUE_UNIT = 'value-unit';
+
+    // css classes of the read only tree of the system configuration (web/helper/config_tree):
+    // the nested list of the keys, a node that has keys below it and the block of one search hit with its path
+    const string CONFIG_TREE = 'config-tree';
+    const string CONFIG_NODE = 'config-node';
+    const string CONFIG_HIT = 'config-hit';
+    const string CONFIG_HIT_HEAD = 'config-hit-head';
+    const string CONFIG_PATH = 'config-path';
+    const string CONFIG_SCOPE = 'config-scope';
+    const string CONFIG_SCOPE_SHOWN = 'config-scope-shown';
+    // the toolbar with the search and the scope above the tree
+    const string CONFIG_TOOLBAR = 'config-toolbar';
+    const string CONFIG_SEARCH = 'config-search';
+    // the columns of the top level keys and the unit behind a value
+    const string CONFIG_COLUMNS = 'config-columns';
+    const string CONFIG_COLUMN = 'config-column';
+    const string CONFIG_UNIT = 'config-unit';
+    const string CONFIG_FILE_VALUE = 'config-file-value';
+    // the value that a click opens to change it and its small save button
+    const string CONFIG_EDIT = 'config-edit';
+    const string CONFIG_SAVE = 'config-save';
 
 
 }

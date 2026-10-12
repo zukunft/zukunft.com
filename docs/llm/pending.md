@@ -1,25 +1,547 @@
-
 # pending - list of planned llm prompts with prio 1
 
+## admin dashboard
+
+if an admin user is logged in add to the top right user menu a 'dashboard' entry that links to a admin dashboard view page. Leave the admin dashboard page for the moment almost empty and just display the title.
+
+show in the admin dashboard the last and most relevant system errors e.g. if there is an fatal error not yet solved show it on the top of the list and below not yet solved errors followed by warnings
+
+## start page
+
+review the data so that 'one-click-hide' if the number one solution for populism' and 'public CBAM calculation' is the number one solution for 'global warming'
+
+adjust the numbers in the json data files so that the gain of the solution is always smaller than the potential loss and add a formula that checks that this is always the case
+
+adjust the numbers in the json data files so that the problem / solution are in this order
+
+1. Establish and enforce rules against disinformation
+2. Enable effective climate protection through a public carbon border tax
+3. Use a neutral knowledge base for decision-making
+4. Cap wealth on ethical grounds and use it to fund a basic income
+5. Don’t use AI for complex problems or for interpersonal communication
+6. Prevent monopolies with a market-share tax
+7. Accept that health matters and finance it in a socially fair way
+8. Achieve digital sovereignty through free software
+9. Use smartvote for initiatives and build a liquid democracy
+10. Measure the economy’s actual benefit instead of relying on GDP
+
+## import times
+
+The import may create log entries like 
+
+890.8708 import system_views.json 0% 0.506s / 146450.885s  save single 120 components (239.7 components per sec)
+891.3716 import system_views.json 0% 1.006s / 146451.388s  save single 249 components (248.6 components per sec)
+891.8754 import system_views.json 0% 1.51s / 146451.894s  save single 374 components (248.5 components per sec)
+892.4037 import system_views.json 0% 2.039s / 146452.424s  save single 7 views (16.4 views per sec)
+892.9703 import system_views.json 0% 2.605s / 146452.993s  save single 23 views (23.2 views per sec)
+893.5451 import system_views.json 0% 3.18s / 146453.57s  save single 31 views (19.8 views per sec)
+894.0548 import system_views.json 0% 3.69s / 146454.082s  save single 38 views (18.3 views per sec)
+894.5667 import system_views.json 0% 4.202s / 146454.596s  save single 45 views (17.4 views per sec)
+895.1550 import system_views.json 0% 4.79s / 146455.186s  save single 50 views (15.7 views per sec)
+895.7393 import system_views.json 0% 5.374s / 146455.773s  save single 54 views (14.4 views per sec)
+896.2505 import system_views.json 0% 5.885s / 146456.286s  save single 59 views (13.8 views per sec)
+896.8586 import system_views.json 0% 6.493s / 146456.897s  save single 66 views (13.5 views per sec)
+897.3627 import system_views.json 0% 6.998s / 146457.403s  save single 71 views (13.2 views per sec)
+897.8832 import system_views.json 0% 7.518s / 146457.925s  save single 79 views (13.4 views per sec)
+898.4431 import system_views.json 0% 8.078s / 146458.487s  save single 85 views (13.1 views per sec)
+899.0160 import system_views.json 0% 8.651s / 146459.062s  save single 92 views (13.1 views per sec)
+899.5332 import system_views.json 0% 9.168s / 146459.582s  save single 98 views (13 views per sec)
+900.0464 import system_views.json 0% 9.681s / 146460.097s  save single 117 views (14.5 views per sec)
+900.5603 import system_views.json 0% 10.194s / 146460.612s  save single 137 views (16 views per sec)
+901.0896 import system_views.json 0% 10.723s / 146461.143s  save single 153 views (16.8 views per sec)
+901.5975 import system_views.json 0% 11.232s / 146461.654s  save single 174 views (18.1 views per sec)
+
+try to adjust the calculation and calculation parameter so that the estimated to time is a better predictor of the real time. Maybe create some test cases to validate the real times to have a base for adjusting the parameters and the calculation
+
+### PV calculator
+
+Catch process forms
+
+create a 'process catch start page' view that has the components 
+'title process catch start', 'text explain process catch start', 
+'process catch initial input fields' and 'button next process catch start'. 
+The 'process catch start page' has one easy to answer question 
+with a next button that leads to the 'process catch main page'.
+
+create a 'process catch main page' view that has the components 
+'title process catch main', 'text explain process catch main', 
+'process catch main input fields' and 'button next process catch main'. 
+The 'process catch main page' has around three input fields that
+are most relevant for the result calculation and 
+for complex answers offer a limited number of pre-selection options.  
+The next button leads to the 'process catch detail page'.
+
+create a 'process catch detail page' view that has the components 
+'title process catch detail', 'text explain process catch detail', 
+'process catch detail tab one', 'process catch detail tab two', 
+'process catch detail tab three', 'process catch detail tab four' and 'process catch detail tab five'
+and 'process catch detail tab one fields', (and '... two, three, ... five)
+with a next button that leads to the 'process catch result page'.
+
+create a 'process catch result page' view that has the components 
+'title process catch result', 'text explain process catch result',
+'process catch result tab one', 'process catch result tab two',
+'process catch result tab three', 'process catch result tab four' and 'process catch result tab five'
+and 'process catch result tab one fields', (and '... two, three, ... five)
+with a back button that leads to the 'process catch detail page'.
+
+for each field these triples should be created:
+
+- '... field label phrase' e.g. 'place of the PV installation' for the place / sun intensity
+- '... field value phrases' e.g. 'PV installation location' to store the field input value in the database
+- '... field type' e.g. location selector
+- '... field unit' e.g. kWh
+- '... field limit up' 
+- '... field limit down'
+- '... field limit steps'
+- '... field limit suggestion'
+- '... button next tooltip' with the text for the tooltip (the text in the button is a msg_id defined by the component not a triple)
+- '... button next view' with the view id for the step 
+- '... button refresh tooltip' with the view id for the
+- '... button refresh label' with the view id for the
+- '... button refresh view' with the view id for the step
+- '... button back tooltip' with the view id for the
+- '... button back view' with the view id for the step
+
+For each phrase e.g. "PV Calculator" each field tripel a phrase or a list of phrases can be assigned via triples
+
+
+Unsorted notes:
+
+based on the start phrase the title text, the label and type of the input field and the phrases for the input field 
+are assigned to the start phrase via triples
+
+e.g. if the catch phrase is called with the phrase "PV Calculator" the Place / PO Box selector is shown
+
+the next page contains the up to 3 fields with a preselection that are most relevant for the calculation and a next button
+
+e.g. for the phrase "PV Calculator" it is the type or size of the panels and the electricity consumption per year
+
+depending on the selection e.g. 10 qm sub-fields are shown e.g. the vertikal and horizontal orientation
+
+the third page shows some calculated values with tabs to fine tune the assumptions but not yet the final report and a button 'calculate'
+
+the fourth page shows the earnings in EUR 
+
+This means that these system phrases with a code_id are needed:
+
+'process catch field label phrase (system)' e.g. place of the PV installation 
+catch values phrases (system) e.g. PV installation location  
+catch fields type (system) e.g. locator
+main values phrases (system) e.g. PV installation size
+
+
+create a component type 'geolocator by place name / post code' with the parameters: 'label' (which is a translatable 'place name / post code') and the value phrases (which are 'place of user')
+
+Horizontal angle
+
+Vertical angle
+
+Eigenverbrauch
+
+### LLM KI prompt suggestion
+
+the goal is a guided calculation for a question phrase like "PV calculator": four process catch
+views (start, main, detail, result) whose fields are not coded but defined as data, so that any
+question phrase gets its own calculator by a json import. the views and the component types are
+system data (system_views.json, code_id, docs/llm/json_views.md), the fields of a question are use
+case data without a code_id (docs/llm/json_structure.md "Use case files never carry a code_id")
+and the numbers are calculated by the formulas of pv_yield.json. the entered numbers are saved as
+values of the user with the existing value save, so the result page is the calculator view of the
+question phrase and every page is url state without javascript (docs/llm/frontend.md). run the
+steps one at a time, each as its own commit with the tests written first, and ask for the test run
+after each step (an llm never runs test/*, docs/llm/coding.md).
+
+1. the system phrases of a field definition: add to the system word and triple data the phrase
+   'process catch field (system)' and the properties of a field as triples with a code_id in
+   shared/const/triples.php (like triples::SYSTEM_COLUMN_MAIN): 'field label', 'field value
+   phrases', 'field type', 'field unit', 'field limit up', 'field limit down', 'field step' and
+   'field suggestion', plus the field types 'location selector', 'number with limits' and
+   'pre-selection' linked with "can be" to 'field type' like the column tiers. use only the
+   verbs of docs/llm/json_structure.md "Allowed verbs"; a property that fits no verb gets one by
+   "Adding a new verb", never a free text. add the triple_names const and the test factory of
+   each phrase, a unit test that the import creates them with the code id and re-baseline the
+   pinned ids from list.csv (docs/llm/testing.md). document the pattern in json_structure.md.
+
+2. the field model of the frontend: a class web/component/catch_field.php that is built from
+   the request cache only (docs/llm/frontend.md "The frontend never accesses the database"): for
+   a question phrase and a step (start, main, detail tab n, result tab n) it returns the fields
+   assigned to that step by the triples of step 1, each with its label, value phrases, type,
+   unit, limits, step and suggestion. the fields of a step keep the order of their phrase ids.
+   unit tests with a test_phrases factory list for every property, a missing property and a
+   field assigned to two steps (shown on both).
+
+3. the component types: add to shared/types/component_types.php and the system component data
+   'process catch fields' (the fields of the step named by the component code id as form
+   inputs: a text input with the postal codes of the cache as datalist for the location
+   selector, a number input with min, max and step for the number with limits and a select of
+   the option phrases for the pre-selection, the suggestion as the preset value), 'process catch
+   tabs' (the tab names of the detail and the result step as links that carry the selected tab
+   as a new url var with its human twin and the url_mapper branches, docs/llm/state-and-
+   messages.md) and 'process catch results' (the results of the question phrase as the table
+   with related columns of the calculator view). every renderer gets its object_pages snapshot
+   (docs/llm/testing.md "Every HTML-returning function ... contributes to an object_pages
+   snapshot"); a label is the phrase name, so it is translated like every phrase.
+
+4. the four views in system_views.json with the code ids process_catch_start, process_catch_main,
+   process_catch_detail and process_catch_result (views.php consts and views::TEST_VIEW_IDS, so
+   the views_by_id snapshots cover them): title, explain text, the fields component of the step,
+   the tabs where the step has tabs and the next button, the result page with a back button. the
+   next button submits the form: the frontend saves each entered number as a value with the
+   value phrases of the field plus the question phrase for the logged in user (the existing
+   value save api, docs/llm/frontend.md "Form field name is the url var"), reports a rejected
+   number on the $msg of the request and redirects to the next view with the question phrase
+   as id. an anonymous user gets the ip user rules like every other change.
+
+5. the PV calculator use case: a new use_cases/pv_calculator.json appended to
+   files::USE_CASE_FILES with the question word 'PV calculator' and its fields: start 'place of
+   the PV installation' (location selector, value phrase postal code, which selects the
+   irradiation of pv_yield_by_country.json); main 'PV installation size' (number with limits in
+   m2, suggestion 10), 'panel type' (pre-selection) and 'electricity consumption per year'
+   (number in kWh, suggestion 4500); detail tabs 'orientation' (horizontal and vertical angle of
+   the panels), 'self-consumption' (self-consumption share), 'prices' (household electricity
+   price and feed-in remuneration preset from the country data); result 'PV return' in EUR per
+   year by the formula 'PV return by self-consumption share' of pv_yield.json. the file imports
+   for a normal user and names no code_id and no id. tests: assert_view_by_name for every step
+   with the use case data and a workflow test under src/test/php/unit_workflow (next free
+   workflow id in test/php/const/workflows.php) that walks start, main, detail and result and
+   snapshots every page (docs/llm/testing.md "Unit workflow tests snapshot every step"), plus
+   the write workflow that checks the saved values of the user.
+
+6. docs: json_views.md gets the component types and the four views, json_structure.md the field
+   triples with the pv_calculator.json example and frontend.md the catch process rule: one easy
+   question on the start page, at most three fields on the main page, the fine tuning in tabs
+   on the detail page and the money on the result page; pending.md loses this section.
+
+## use cases
+
+add CBAM calculation, portfolio split and company sheet use cases and pin them on the start page
+
+## job list
+
+add to the user submenu of the navbar an entry 'jobs' that links to a view that shows an overview of the jobs of an user
+
+## phrase default view
+
+add e.g. a pie chart to the default phrase page with the top impact on the phrase e.g. for the 'global warming' default page show the 'co2-eq emissions by sector'
+
+## todo from group id change
+
+Things to fix or check
+1. result_id.php docblocks are stale. get_id() and alpha_num_result() still say "512-bit key as 112 chars or list of more than 16 keys with 6 chars" and "the 512 bit db key …", next to the new compact-key line (your on-disk edit kept both). The old lines are now wrong.
+2. group_id.php header typo: the table list numbers values_big as "1." instead of "3.". It's in the comment I edited, but the typo was already there.
+3. The unit majority counts every number. split_by_unit counts low/high range numbers as well, so a unit stored with ranges counts up to three per row against one per row for another unit. That's fine for the start page today; counting distinct rows would be exact.
+4. The MySQL search needs MySQL 8. REGEXP_LIKE(…, 'c') doesn't exist in MariaDB, which docs/todo.md names as a possible target.
+5. pg_unpadded does a little per-row work. It checks the field types of every Postgres row. PHP caches the type names, so it's cheap, but the char columns could be found once per result instead.
+6. The group_id_url.php header says "see docs/llm/group_id.md", which is only correct once that new file is committed. It's already staged (AM), so this just means committing it together.
+7. Three pieces are new or unverified. pg_unpadded, the main-delete fix and the unit-majority rule are only lint-checked, and MySQL is untested throughout. A full test.php run after the DB reset and syncing /var/www/html is still needed.
+8. The start-page snapshot will still differ from the committed one. Expect trillion EUR in the header with the calculated results (2.2, 4, …), not the old values.
+9. The memory-recorded no-plain-delete rule is followed. result::del_row_of_other_table deletes without a change log, but results are derived data (MAIN_CLASSES_NO_CHANGE_LOG), which matches the documented exception.
+
+
+## email accounts
+
+add to .env (.env.example) a system@zukunft.com email account that is used to email admin@zukunft.com any time a system error has accused but max 5 (config.yaml parameter) emails per day.
+
+add to .env (.env.example) a noreply@zukunft.com email account that is used to send non signup messages to the user e.g. if they have reached a top ranking in the user trust list 
+
+## add value
+
+split the 'system form phrase value line' component into separate components if possible e.g. one component for the 'selected phrases', the 'add phrase selector' the 'find and select phrase button' and the 'value type selector' 
+
 ## word default view
 
-if a word has no triple where it is the from side of a triple with the verb 'is a' show instead of the 'is a' phrase list a button 'define xxx as yyy' with an 'add' button that creates a corresponding triple. E.g. if the word lugano has no 'parent' / 'is a triple' show a phrase selection where city and other phrases can be selected and the add triple view with 'triple is a city' is preselected
+in the values column of the word and triple default view show after the column title 'values' additional an edit icon that is grey if no user is logged in. If a user is logged in the section of the values will change to "edit mode" which means that after each value an edit icon is shown, that can be used to inline change the value. This probably implies that an editional set of edit mode parameters needs to be added to the url_var. The suggestion is to use a numeric prefix for the edit mode parameters
 
-## word default view
+if in the word and triple default view the edit mode add a plus icon at the end of each value group that can be used to inline add new values. if the puls icon is pressed the group header plus all common phrases of the group are shown in one additional line in the table. Another additional line shows a phrase selector to add additionalal phrases for the new value. the next additional lines show a field for the values and the value type and a cancel and save button. 
+
+edit icon for formulas that allow to unlink formulas
 
 add a list with the triples and a plus sign to add a new triple
+
+## json import: word and triple names
+
+add to the JSON import check that word and triple names in English start always with a small letter with a few exceptions based on triples on the same json import file: if the name is a symbol or a country 
 
 ## triple view
 
 add values icon and add formula icon
 
-### add formula
+## start page
 
-propagation of uncertainty
+each number of the start page should be a result of a calculation not a value
+
+if in the component 'table with related columns' all values of the column are in 'percent' the values of this column are formatted with '%', but if one cell is empty, that default format is used. Change it, so that all 'percent' values use the '%' format independent from the other values of the table.
+
+add column 'reasons' with sub column to start page as a second column extensions option so click ... once add the 'reason' column and the next time it will add the minor columns
+
+the global warming row of `start_page/problem_global_warming.json` is done and is the pattern for
+the other twelve problem files: all eighteen numbers of the row are results, six target values and
+their twelve bounds, and the file states only the inputs behind them. a calc validation may use a
+result that the same file has reproduced before it, so the entries are ordered target first, range
+afterwards, and a result that did not reproduce is never an operand.
+
+the chain of the row, each step an own formula:
+
+| result | from |
+| --- | --- |
+| potential loss in trillion EUR | world GDP * annual damage share |
+| loss reduction in percent | minus the leakage rate that the carbon tariff avoids |
+| potential loss in GDP percent | minus the annual damage share * the long run growth factor |
+| potential loss in htp percent | the GDP share * the htp to GDP damage factor |
+| initial effort in person year | the annual damage in money * the effort per trillion EUR |
+| potential gain in billion htp | minus the htp share * the world htp * the loss reduction |
+| each low and high bound | the target * an own probability range factor |
+
+four rules that the pattern depends on:
+
+- the range formula selects the target by the word `assumed` and the factor by
+  `probability range factor`, so a factor value never carries `assumed` and every target does
+- a factor value must carry no phrase that names a column of the ranking (`potential`, `loss`,
+  `gain`, `initial effort`, `loss reduction`), else the table sorts it into that column and shows it
+  as the bound of the cell. it is scoped by the units and the subject instead, e.g.
+  `global warming, trillion, EUR, probability range factor, low`
+- the factor of each measure must be the only factor whose phrases fit the context of that measure
+- the two bounds are calculated separately, so a range may be asymmetric; a loss stated as a
+  negative share simply gets the two factors the other way round
+
+what is still open:
+
+- four inputs are tuned so that the results match the numbers that the start page has used until
+  now, and they are placeholders for a real model: the long run growth factor of 16, the htp to GDP
+  damage factor of 1.15625, the world htp of 1189.19 billion and the effort of 1.3636 person years
+  per trillion EUR. the growth factor should become a damage function of the expected warming and
+  the world htp the population times the horizon of the ranking
+- the world htp of 1189.19 billion does not fit the other htp numbers of the pod: the global welfare
+  baseline of theses_complex_simple.json is 8 billion people * 0.6 waking welfare fraction = 4.8
+  billion HTP per year, and `htp = htp percent * global human population` of solution_prio.json
+  gives 8.5 billion, so the tuned number is about 250 times bigger. it is the horizon that is
+  missing, and until it is stated the gain column of every problem file carries the same open factor
+- the probability range factor is stated per measure. it is a step function of the confidence in the
+  view-validation table of solution_prio.json, and `factor = 0.5 / confidence` reproduces every row
+  of that table, so it could be calculated from the confidence value instead
+- one pair of formulas per file, because a formula names its operands by phrase and the centre has
+  no phrase of its own. marking the centre with the word `centre` (already declared in
+  solution_prio.json and used by nothing) would let all problem files share one pair, but it changes
+  the phrase group of every start page number
+
+the 46 climate solutions of the former `start_page/co2_eq_reduction_ranking.json` live in
+`problem_global_warming.json` since 2026-09-25, because the ranking of the solutions and the
+problem row are one topic: each solution has its reduction potential, fulfillment probability and
+initial effort in billion USD, the expected return and effort return score of the co2 ranking, and
+as parts of the solution "reduce climate gas emissions" the expected return centre, loss reduction,
+gain and initial effort in the measures of the start page ranking, with bounds, 10 results per
+solution. the file is self-consistent again, so no import order and no database is needed to check
+it. what is still open:
+
+- the file is imported by every database setup (`files::SAMPLE_VIEW_DATA_FILES`), so the ids of
+  everything imported after it shift once and the pinned ids need a re-baseline from the
+  regenerated `list.csv`
+- the emissions 52.4 and 65.6 (`minimum`/`maximum` of `global greenhouse gas emissions 2019`) would
+  make every context with `minimum` or `maximum` ambiguous, so the chain computes the expected
+  return centre without the emissions first and divides by the emissions in a context without the
+  two words; the bounds use one probability range factor per solution for the loss reduction and
+  the gain
+- four expected return centres (nuclear energy, soil carbon buildup, green hydrogen, supply chain
+  laws) are exact halves at the third decimal, e.g. 0.225: `calc_internal` passes the result of
+  a bracket through a string, which rounds 0.44999999999999996 to 0.45, so the parser yields the
+  exact 0.225 and the plain number reproduces; a check that calculates with floats only (e.g. a
+  python replay) gets 0.22499999999999998 and rounds the other way, so a replay must use the php
+  parser; a calc validation that compares with a tolerance instead of rounding would end the issue
+- the co2 entries keep their style (numbers as json numbers, `"assigned"` lists) next to the
+  problem entries (numbers as strings, `"assigned_word"`); the repo formatter can unify them
+- the `expected return` bounds of all 46 climate solutions are calc-validations of the
+  `expected return formula` (minimum times minimum, maximum times maximum) since 2026-09-25; the
+  stated values stay next to the results, as the coal phase-out entries did before
+
+the 44 populism solutions of `problem_populism.json` (since 2026-09-25) follow the climate solutions:
+a triple `populism solution` (solution of populism), `populism solution is part of avoid wrong
+decisions`, one word plus `<name> is a populism solution` per measure, and per measure the assumed
+reduction potential (share of the GDP decline it avoids when fully in place), fulfillment probability
+and cost in billion USD, from which the loss reduction (potential times probability), the gain (the
+gain formula of the problem, so a measure's gain is its share of the 34.1) and the effort (cost times
+the 0.054545 person years per billion USD of the carbon border tariff) are calculated with bounds by
+one range factor pair 0.4 / 2.5 per measure, 9 results per solution. what is still open:
+
+- no source has such numbers for populism: every potential, probability and cost is an own
+  estimate, marked `assumed` and reasoned in the value description, and the potentials are not
+  additive (they sum to about 3.3, because the measures overlap)
+- values and results use the qualified name `fact-checking (populism solution)` for every measure,
+  because fact-checking, media literacy, prebunking etc. are measures of the disinformation problem
+  too and the same user must not state two numbers for one phrase group; the climate solutions
+  qualify only the names that clashed at the time (`research (climate solution)`)
+- a measure with a space is a composition triple of single word atoms (`civic education` =
+  education kind of civic, `campaign finance reform` = reform of `campaign finance`), the head noun
+  as from, an adjective joined by `kind of`, a noun by `of`, a preposition of the name by its verb
+  (`access to electricity`, `step-up in basis`); a measure whose name has no preposition that a
+  verb covers is rephrased (`taxing capital gains as income` = `income tax` on `capital gains`,
+  `privacy by design` = design with privacy, `safety evaluations before deployment` = safety
+  evaluations of deployment, because `before` is a word and no verb); the same table serves all
+  problem files, so a shared building block is declared verbatim in every file that uses it
+- `open data` is merged into `transparent government data` and `local self-government` into
+  `decentralization`; the merged names are only mentioned in the descriptions
+- the costs are in billion USD next to the EUR of the problem row, so that the climate calibration
+  of the effort is reused verbatim
+- the gain factor 0.102411 is shared by the solution and its parts, so its phrase group no longer
+  names `avoid wrong decisions`
+
+the 35 biased information solutions of `problem_biased_information.json` (since 2026-09-25) follow
+the same pattern as parts of the Delphi method: `biased information solution`, `<name> (biased
+information solution)`, assumed reduction potential, fulfillment probability and cost in billion USD,
+9 results per solution, the gain factor 1.00909 shared with the solution. what is still open:
+
+- own estimates without a source, as for populism; the potentials sum to about 2, so they are not
+  additive either
+- `wisdom of crowds` is merged into `independent judgment aggregation` and `inoculation` into
+  `prebunking`; the Delphi method itself is the whole and has no part of its own
+- `prebunking` and `fact-checking` are re-declared name-only and `media literacy` as the verbatim
+  triple, because `problem_populism.json` imports first and owns them; each problem qualifies its
+  own copy
+- the five problem files share one general formula pair `loss reduction of a solution part` /
+  `initial effort of a solution part`: the home is `problem_populism.json` (the first import), the
+  other four repeat the two formulas verbatim, so the import merges them by name
+
+the 31 wealth concentration solutions of `problem_wealth_concentration.json` (since 2026-09-25)
+follow the same pattern as parts of the basic income, the gain factor 0.29899 shared with the
+solution. what is still open:
+
+- own estimates without a source; the potentials sum to about 2.4
+- `universal basic income` is the solution `basic income` itself and has no part of its own;
+  `estate tax` is merged into `inheritance tax` and `baby bonds` into `universal basic capital`
+- `wealth cap at the value of a statistical life` is built on the `wealth surcharge` of the file
+  (`wealth surcharge` on `value of a statistical life`), so the measure of the list and the concept
+  paper phrase are linked
+- `affordable housing`, `anti-corruption measures` and `minimum wage` are re-declared as the
+  verbatim triples without description, because `problem_populism.json` resp. `problem_poverty.json`
+  import first and own them
+
+the 34 poverty solutions of `problem_poverty.json` (since 2026-09-25) follow the same pattern as
+parts of the poverty research, the gain factor 17.92188 shared with the solution. what is still open:
+
+- the gain factor is tuned so that the 1 percent loss reduction of the research gives 34.1 billion
+  htp, so the parts get gains far above every row of the ranking: economic growth 614, unconditional
+  cash transfers 273, vaccination 164 billion htp (global warming 35). this is the consequence of the
+  34.1 of the row, which is probably a copy of the populism gain (the htp share gives 13.6, see
+  above); once the row is corrected the factor and all 34 gains follow from the regenerated chain
+- own estimates without a source; the potentials sum to about 2.6
+- `negative income tax` is merged into `universal basic income` and `mobile money` into `financial
+  inclusion`; `anti-corruption` of the list is the existing word `anti-corruption measures`
+- `anti-corruption measures`, `social safety nets` and `affordable housing` are re-declared as the
+  verbatim triples of problem_populism.json without description; `economic growth` is the triple
+  of economics.json (growth kind of economic), which imports later, so the poverty file is its home
+  and carries the description
+
+the 35 black-box AI solutions of `problem_black_box_ai.json` (since 2026-09-25) follow the same
+pattern as parts of the public AI, the gain factor 0.294318 shared with the solution. what is still
+open:
+
+- own estimates without a source; the potentials sum to about 2.1
+- `EU AI Act` is merged into `risk-based regulation` and `model cards` into `open model
+  documentation`; `red teaming` is re-declared as the verbatim triple, because
+  `problem_biased_information.json` owns it
+- `open-source models` and `public AI infrastructure` are parts of the definition of the solution
+  `public AI` (open source availability, public good), so they overlap with the whole more than the
+  other parts do
+
+two words carry two concepts in the main data and lost the later description on 2026-09-25, because
+the import merges by name and the home file wins: `power` (the exponent of
+math_propagation_of_uncertainty.json, the energy per time of economics.json) and `displacement`
+(the pushed out generation of pv_switzerland_co2.json, the vector of physics.json); a `must be one
+of` qualifier triple per meaning (`power (math)`, `power (physics)`) would give each its description
+back, but changes the phrase groups of the values that use the bare word
+
+## temp
+
+One judgement call to confirm in the fix itself. REFRESH looks like a render var but is deliberately not in CONTROL_VARS, because formula::url_mapper() reads it, so it does influence the mapping. PATTERN is also left out, as it is form state of the search and add views. If you disagree with either, that is the place to say so.
+
+## add formula
+
+Nine triple fixtures gained a warning that needs your judgement. workflow_write/del_triple_wf6/* (8 files) and the last step of change_triple_wf5 now render: the triple with id 998 cannot be found; it may have been deleted That is a direct consequence of the api fix: before, end_api() appended an html error page behind the json, json_decode() failed, api_curl_call() returned an empty array and load_by_id() did nothing — the backend's answer was silently dropped. Now the body is clean json, so the frontend reads it and reports. The message itself is the pre-existing OBJECT_NOT_FOUND path, so the question is whether that load should fail in those steps. My suspicion is the triple id changes during the write run (a rename by a non-owner writes a new row), and del_triple_wf6 then opens the old id. Worth one look before the fixtures are accepted — it is the kind of signal the snapshot baseline exists for.
+
+Worth a decision
+
+1. Per-user caching has no invalidation. db_cache_page::html_by_url() returns the stored row regardless of age, nothing deletes it on a write, and the refresh job is still a TODO. That gap existed for the shared page, but it now applies to a user's own page: after their own change the redirect is live, yet the next plain view of that url can serve their pre-change page. The coding rules ask for is_outdated() on a cache — this one has none. I would add a max age or an invalidation on write before this reaches a real deployment.
+
+2. end_api() no longer writes a NOK message to sys_log. That is the fix for the corrupted json and the false "end_api error" rows, but a backend rejection that is not an error now leaves no admin trace at all. If you want to keep the trace, a log_warning on the non-error branch would do it without touching the response.
+
+3. The ip guard trusts the name. An anonymous row is recognised by name == ip, so an account that registers under a name that looks like an ip could still be identified by ip. Signup does not forbid such a name today. The alternative — the profile — is not available that early, as the 500 showed.
+
+4. test_mappers::formula_url() still emits the generic url_var::TYPE while the form posts fy. It only builds render urls, and the word does the same, so it is consistent within that file — but it no longer matches the mapper.
+
+Nice to have
+
+- frontend::session_user_id() reads $_SESSION inside a function. It follows the documented boundary pattern of session_token() right above it, but
+
+1. A formula message in a generic class. msg_id::FORMULA_VALIDATION_FAILED is added inside web/sandbox/db_object.php, so a word or value load carrying a refresh would tell the user "the entered formula cannot be used". Either the text becomes object-neutral or the branch moves to the formula class.
+2. The error workflows cannot fail. They only snapshot, so the silent no-message state above passes as "correct". Once the message works, each error workflow should assert the reason (assert_text_contains), which is also what makes them a regression test rather than a recording.
+3. url_var::REFRESH_TERMS now has no producer in the frontend (only refresh_from_url still accepts it). It is a url contract, so I left it — your call whether to retire it.
+4. formula_names::SYSTEM_TEST_INVALID_EXP names a word ("System Test Word Never Added") from formula_names; a reserved-but-never-added name would sit better in word_names.
+5. docs/llm/pending.md still carries your temp notes and the item on line 21 that this change implements.
+6. Process slip on my side: I removed the dead form_button_refresh line from both yaml files with a python one-liner instead of the Edit tool. The result is one clean line per file, but it broke your "Edit/Write only" rule.
+
+## start page temp
+
+The new snapshot does not actually show a longer list. 1_start_page_more.html is line-for-line identical to 1_start_page.html apart from the 9dls=20 back targets and the dls=20 carried into the full-table link — same six table rows. So the test pins the url and mapping contract, which is the regression, but not the "more rows" behaviour, because the test cache's value list is shorter than the short limit. The _more name may mislead a later reader; making it a real witness needs a start-page fixture with more rows than the short limit.
+
+1. Should fix — the three backend loaders are untested. The regenerated coverage doc lists load_values_used, load_results_used and load_formulas_used each with 0 unit test calls (code_test_coverage.md:1512-1523). The three renderers and name_link are covered (2 → 4 calls), but the new selection rule — source-group phrases matched with and, fallback to the result phrases matched with or — is the core behaviour of this change and nothing exercises it. The project's pattern for a db loader is an sql-creation test (result_list_tests::assert_sql_by_val), which would fit here.
+
+2. Should fix — no snapshot shows the page with data. system_views_read_tests renders only views::RESULT_OVERWRITE by factory, and views_by_id/result/9_… is built from an url, so its three columns are empty. The committed baseline therefore never shows a filled Values/Formulas/Results column, and a regression in the api emit or the mapping would not change any snapshot. An assert_view_by_factory(views::RESULT, …) case would close that.
+
+3. Nice to have — the result changes query has no table filter. The new fixture change_value_by_res_prime_last.sql selects change_values_prime by group_id alone (inherited from the value path), so a value change with the same id would show up in a result's changes tab. Result ids carry the formula id, so the id spaces do not collide today — worth a comment or an explicit table filter if that ever changes.
+
+4. Nice to have — web/result/result.php:47: the two new includes make the local alphabetical run PHRASE → RESULT → VALUE → USER; VALUE belongs after USER.
+
+5. Nice to have — docs/code_object_name_exceptions.md gained $res_tab (the tab-box test variable, mirroring $val_tab on the value side).
+
+6. For the record: a result built from an url renders the three columns as nothing — no message, no error (the choice documented in the renderers, following ui_list::formula_list() for a word). An empty column therefore means either "nothing used" or "not loaded"; only the loaded page distinguishes them via the info messages. And system show result value is now linked by no view, left defined so the component ids do not shift again.
+
+## fill the configuration and quarantine views
+
+the views user_config, system_config, admin_config, user_quarantine and all_quarantine still show only the "system body
+not yet available" hint; the user_jobs and all_jobs views are filled
+
+pin the view ids of user_config, system_config, admin_config, user_quarantine, all_quarantine, user_jobs and all_jobs
+after the next reset and add admin_config, all_quarantine and all_jobs to views::ADMIN_MASK_IDS
+
+user configuration - show the standard user configuration and the overwrites of the user (config_numbers::load_usr_cfg via api/config)
+
+system configuration - show the system configuration read only with the possibility to request changes; a change request
+is saved as a job of a new job type 'config change request' with the config phrase and the requested value as parameter,
+so that the admin sees and handles it in the all jobs view
+
+admin system configuration - show the full system configuration to an admin with the possibility to adjust it (api/config
+has no write path yet)
+
+user quarantine and all quarantine - postponed until it is defined what quarantine is and how data is moved there
+
+the existing job views job_async, job_control and job_check and the admin delayed jobs component still show placeholders
+or no data
+
+## fill the language, log, import, export, process, find and list skeleton views
+
+these system views show only the "system body not yet available" hint:
+- language: phrase_translations, language_forms (api/languageForm), translations_missing, list_languages
+- system log: sys_log_detail (link target of error_log, error_update and the admin dashboard)
+- change log: change_log_user (with undo per row), change_log_recent, object_history (incl. api/changeLogLinkList),
+  change_detail (old and new value with revert)
+- import: import_preview (like confirm_add), import_result (linked from user_jobs), import_url, import_wikidata
+  (import_wikidata.php)
+- export: export_selections (the saved selections of the export forms), export_object, export_ready (download of a job)
+- process: job_detail (link target of user_jobs and all_jobs), calc_status (outdated results and calculation progress)
+- find: value_find (api/valueList), ref_find (by external id), find_duplicates (admin, input for quarantine)
+- object lists: list_words, list_triples, list_sources, list_refs, list_formulas, list_views, list_components
+
+job_detail and calc_status use a user as the main object in the view mapping, because the unit test url mapper has no
+show url for a job yet
+
+adding the 28 views and their title components at the end of system_views.json shifted the ids of all base views by 28
+(views.php) and of the components after them by 28 (components::SOLUTION_PRIO_TITLE_ID); confirm the view ids from
+unit/view/list.csv and the component ids from unit/component/list.csv after the next reset
+
+also fill or remove the existing placeholder views word_find, search_full, undo, error_log, error_update, system_log
+(no components) and verbs (no components)
 
 ## workflows
-
-### views
 
 ### general
 
@@ -34,7 +556,9 @@ add the missing workflows link workflows such as
 - add a child view to a view
 - remove a child view from a view
 
-add a fa-plus icon at the end of the phrases linked to a formula in the formula default view and add and edit view that, based on url_to_action, call a confirm page that shows something like 'link phrase xxx to formula xxx' with a cancel and confirm button
+add a fa-plus icon at the end of the phrases linked to a formula in the formula default view and add and edit view that,
+based on url_to_action, call a confirm page that shows something like 'link phrase xxx to formula xxx' with a cancel and
+confirm button
 
 add the missing workflows quick workflows such as
 
@@ -55,76 +579,129 @@ add to the admin menu a page that shows the system errors
 
 ## main pages
 
-in the logout page add an OK button that calls the back page from the url without token and make the "you have been logged out" bigger
+in the logout page add an OK button that calls the back page from the url without token and make the "you have been
+logged out" bigger
 
 ## maybe to fix:
 
-1. Limit before sort — load_values_similar() reads with value_list::read_limit(), but the impact sort happens in the renderer (list_most_relevant). With more matches than the limit, the highest-impact similar values can be cut before sorting. Same pattern as word/source::load_values_related, so consistent — just noting it.
-2. sort views and components so the the most must are on top
+Limit before sort — load_values_similar () reads with value_list::read_limit (), but the impact sort happens in the
+   renderer (list_most_relevant). With more matches than the limit, the highest-impact similar values can be cut before
+   sorting. Same pattern as word/source::load_values_related, so consistent — just noting it.
 
 ## cleanup
-
 check why diff for docs/code_functions_all.md still takes very long
 
-write a php script that checks that a default page for all main classes exists and that the default pages show all fields that are not explicitly defined as not_show
+write a php script that checks that a default page for all main classes exists and that the default pages show all
+fields that are not explicitly defined as not_show
 
+create a script that checks that all fields of the main classes are shown on the related default view, add and edit view
+except the fields that are explicitly excluded
 
-create a script that checks that all fields of the main classes are shown on the related default view, add and edit view except the fields that are explicitly excluded
-
-create a script loops over the resources that lists all queries '*.sql' that does not have a limit and that does not have a unique db id in the where condition.
-
+create a script loops over the resources that lists all queries '*.sql' that does not have a limit and that does not
+have a unique db id in the where condition.
 
 add the check of the open_api specification to /test/test.php
 
-if the 'views tab' add after the view name a link to edit the view and make the view name a link to the view default page
+if the 'views tab' add after the view name a link to edit the view and make the view name a link to the view default
+page
 
 fix the view selector link in the word_default page
 
+make value_base abstract: value_base is only the shared parent of value, value_time, value_text, value_geo and
+value_time_series, but it can still be created, and because the table name is derived from the class a value_base
+object queries the not existing table value_bases_main (e.g. test_values::cleanup used new value_base() until the test
+value cleanup was activated). declare the class abstract, turn the functions that each child must overwrite into
+abstract functions (e.g. value(), which sandbox_value today only reports at runtime as 'expected to be overwritten'),
+check if sandbox_value can be abstract as well, and replace any remaining creation of value_base or class based
+creation from def::VALUE_CLASSES (e.g. in the test mappers) with the matching concrete value class
+
 ### verb default view
 
-a cut list shows that it continues, but not by how much: the verb page ends the triples with '...' without a number, because the loaded list is itself cut by the read limit, so the number of the remaining triples is not known (unlike value_list::more_tail, which knows the count within the loaded list). the exact number needs its own count query, the same open point as the per type count of the user page
+a cut list shows that it continues, but not by how much: the verb page ends the triples with '...' without a number,
+because the loaded list is itself cut by the read limit, so the number of the remaining triples is not known (unlike
+value_list::more_tail, which knows the count within the loaded list). the exact number needs its own count query, the
+same open point as the per type count of the user page
 
-triple_fields::FLD_NAME_GIVEN and FLD_NAME_AUTO are null for all 971 triples of the test database, although the import sets a name for each of them: the generated name lands in triple_name only, so a query that needs to know whether the user has given an own name cannot tell. check if the import should fill name_generated and if the two fields are needed at all beside triple_name
+triple_fields::FLD_NAME_GIVEN and FLD_NAME_AUTO are null for all 971 triples of the test database, although the import
+sets a name for each of them: the generated name lands in triple_name only, so a query that needs to know whether the
+user has given an own name cannot tell. check if the import should fill name_generated and if the two fields are needed
+at all beside triple_name
 
 ### value page tabs
 
-the value default view now has the 'value tab box' component, so the value page shows the views that can show a value (all views of the value view type, loaded by the new view_list::load_by_type), the change log and the user overwrites
+the value default view now has the 'value tab box' component, so the value page shows the views that can show a value
+(all views of the value view type, loaded by the new view_list::load_by_type), the change log and the user overwrites
 
-the 'my' tab of the value page has an undo icon for the numeric value, the source and the sandbox fields (see value::db_fld_to_url), but not for a text, time or geo value, because url_var has only NUMERIC_VALUE; the same applies to the apply icon of the 'others' tab
+the 'my' tab of the value page has an undo icon for the numeric value, the source and the sandbox fields (see value::
+db_fld_to_url), but not for a text, time or geo value, because url_var has only NUMERIC_VALUE; the same applies to the
+apply icon of the 'others' tab
 
-the shared changes and overwrites api arrays moved from cfg/sandbox/sandbox.php to the new cfg/sandbox/sandbox_related.php, because sandbox (one db id per row) and sandbox_multi (a group id per row) have no common parent and the value needs the same code; a third hierarchy would use the same helper
+the shared changes and overwrites api arrays moved from cfg/sandbox/sandbox.php to the new
+cfg/sandbox/sandbox_related.php, because sandbox (one db id per row) and sandbox_multi (a group id per row) have no
+common parent and the value needs the same code; a third hierarchy would use the same helper
 
-adding the 'value tab box' to base_views.json shifts the database id of every component imported after it: the two components of company.json and companies.json move from 347/348 to 348/349 in src/test/resources/unit/component/list.csv, and the component links of every view after value_default shift by one too
+adding the 'value tab box' to base_views.json shifts the database id of every component imported after it: the two
+components of company.json and companies.json move from 347/348 to 348/349 in
+src/test/resources/unit/component/list.csv, and the component links of every view after value_default shift by one too
 
 ## user page
 
-a group of the 'all_user_overwrites' column shows only the changes of the shown page and not how many overwrites of that type the user has: change_log_actions::GROUP_BY_TYPE splits the rows into one table per object type, but the list is cut to the configured row limit before the split, so a group holds the newest changes of its type and not all of them. a count per type needs its own query that counts the user sandbox rows per table; user_list::load_sql_count_all_rows already builds that union per user and would only have to keep the per-table counts instead of summing them
+a group of the 'all_user_overwrites' column shows only the changes of the shown page and not how many overwrites of that
+type the user has: change_log_actions::GROUP_BY_TYPE splits the rows into one table per object type, but the list is cut
+to the configured row limit before the split, so a group holds the newest changes of its type and not all of them. a
+count per type needs its own query that counts the user sandbox rows per table; user_list::load_sql_count_all_rows
+already builds that union per user and would only have to keep the per-table counts instead of summing them
 
 ## component page tabs
 
-the component default view now has the 'component tab box' component with the changes and the my tab; it has no views tab, because the views that use the component are listed by the separate 'component views' component of the same page
+the component default view now has the 'component tab box' component with the changes and the my tab; it has no views
+tab, because the views that use the component are listed by the separate 'component views' component of the same page
 
-api/component/index.php did not read the url flags at all, so it always sent api_json([]) and the owner of a component was never sent either although component::api_json_array emits it under incl_related; the endpoint now uses api_type_list::from_url_array like the triple and formula endpoint
+api/component/index.php did not read the url flags at all, so it always sent api_json ([]) and the owner of a component
+was never sent either although component::api_json_array emits it under incl_related; the endpoint now uses
+api_type_list::from_url_array like the triple and formula endpoint
 
-web/component/component.php has a load_by_id_with_related and a db_fld_to_url, both only on the component: view_base and source extend the same web sandbox_code_id, so adding either to the parent would also change the view and the source page, which are separate pending items
+web/component/component.php has a load_by_id_with_related and a db_fld_to_url, both only on the component: view_base and
+source extend the same web sandbox_code_id, so adding either to the parent would also change the view and the source
+page, which are separate pending items
 
-change_log_list::table_field_to_query_name returns '_of_cmp' for a component changes tab (leading underscore) and logs 'field name not expected' although an empty field name is the normal case of load_obj_last; the same wart exists for the formula ('_of_frm'), view, source, verb, group and value branches, whereas the ref and the type branch handle the empty field name properly - fixing all of them renames the prepared statements and churns the committed fixtures, so it needs its own change
+change_log_list::table_field_to_query_name returns '_of_cmp' for a component changes tab (leading underscore) and logs
+'field name not expected' although an empty field name is the normal case of load_obj_last; the same wart exists for the
+formula ('_of_frm'), view, source, verb, group and value branches, whereas the ref and the type branch handle the empty
+field name properly - fixing all of them renames the prepared statements and churns the committed fixtures, so it needs
+its own change
 
-adding the 'component tab box' to base_views.json shifts the database id of every component imported after it, like the value tab box did before
+adding the 'component tab box' to base_views.json shifts the database id of every component imported after it, like the
+value tab box did before
 
 ### more
 
-find and fix the silent not-ok on the fresh-database reset path: during reset_db_forced the request message reached the config check of db_check with status NOK but without any error text (only the DONE and 'finished successful' infos), so a sub step of the fresh-db startup (user creation, type fill or base import) returns a failed message without recording the reason - a 'never fail silently' violation; the broken-sql side effect is fixed (db_object_seq_id::sql_write now uses a build-scoped message), so the next forced reset should surface which step it is
+find and fix the silent not-ok on the fresh-database reset path: during reset_db_forced the request message reached the
+config check of db_check with status NOK but without any error text (only the DONE and 'finished successful' infos), so
+a sub step of the fresh-db startup (user creation, type fill or base import) returns a failed message without recording
+the reason - a 'never fail silently' violation; the broken-sql side effect is fixed (db_object_seq_id::sql_write now
+uses a build-scoped message), so the next forced reset should surface which step it is
 
-review Message::add_err: it passes ok=true to add(), so an error added via add_err never sets the message to not ok (is_ok() stays true), which inverts the intent of the plain add() that flips to not ok even for infos; decide the intended contract and align add, add_err, add_id and add_info_id
+review Message::add_err: it passes ok=true to add (), so an error added via add_err never sets the message to not ok
+(is_ok () stays true), which inverts the intent of the plain add () that flips to not ok even for infos; decide the
+intended contract and align add, add_err, add_id and add_info_id
 
-decide how a no update import should treat the object type: sandbox_typed::diff_msg skips the type when $ex_def is set, so a re-declaration with another type is never reported and the later import file silently wins; company.json declares the components "Cash Flow Statement" and "company with ratios" as calc_sheet and companies.json declares the same names as values_related resp. word_value_list, so today companies.json overwrites the type of company.json without a message; either report the type like the other fields or give the two files their own component names resp. one code_id to merge (see docs/llm/json_views.md)
+decide how a no update import should treat the object type: sandbox_typed::diff_msg skips the type when $ex_def is set,
+so a re-declaration with another type is never reported and the later import file silently wins; company.json declares
+the components "Cash Flow Statement" and "company with ratios" as calc_sheet and companies.json declares the same names
+as values_related resp. word_value_list, so today companies.json overwrites the type of company.json without a message;
+either report the type like the other fields or give the two files their own component names resp. one code_id to merge
+(see docs/llm/json_views.md)
 
-thread the two fill() results of the no update import in sandbox_list_named::update: both $sbc->fill($dbo, ...) and $dbc->fill($sbx, ...) drop the returned user_message, so a permission problem of a fill setter (e.g. component::set_ui_msg_code_id for a user without can_set_ui_msg_id) is lost instead of being reported
+thread the two fill () results of the no update import in sandbox_list_named::update: both $sbc->fill ($dbo, ...)
+and $dbc->fill ($sbx, ...) drop the returned user_message, so a permission problem of a fill setter (e.g. component::
+set_ui_msg_code_id for a user without can_set_ui_msg_id) is lost instead of being reported
 
 review buttons
 
-web/value/value_list.php:1352 and :1360 were not migrated — $phr_row->btn_add($back) / $val_main->btn_add($back) still pass the old string $back into the new array $url_arr parameter. dsp_table($phr_row, $back, ...) is untyped so nothing catches it statically; at runtime this is a TypeError.
+web/value/value_list.php:1352 and :1360 were not migrated — $phr_row->btn_add ($back) / $val_main->btn_add ($back) still
+pass the old string $back into the new array $url_arr parameter. dsp_table ($phr_row, $back, ...) is untyped so nothing
+catches it statically; at runtime this is a TypeError.
 
 deprecate dsp_edit
 
@@ -134,94 +711,192 @@ review $back
 
 review $msg
 
-repeat the check of the fields in the default page, the my tab and the fill of 'all_user_overwrites' for refs, term_views and any missing main or link class
+repeat the check of the fields in the default page, the my tab and the fill of 'all_user_overwrites' for refs,
+term_views and any missing main or link class
 
 Worth fixing
 formula button tooltips lost their object name
-button is now btn_edit() with no $url_arr at view.php:171 and word.php:751.
-Production web/ code now includes and reads test constants. web/view/view.php:67 and web/word/triple_list.php:51 add a real include_once test_paths::CONST . 'word_names.php' and hardcode word_names::ZH_ID as the back target. list_sort.php extends the same pattern to triple_names::GLOBAL_PROBLEM_ID — and there the include_once is commented out while the use is active, so it only works via the autoloader. triple_list.php:147 has a TODO Prio 0 admitting the $url_arr is a placeholder; view.php:145 has none. Either way "Zurich" as the back link on a generic view navbar is a placeholder, not behaviour.
-Dead code left behind in view.php:617,619 — $call_edit / $call_del are still built via url_back(...) but no longer used, since btn_edit()/btn_del() build their own url. The buttons also lost the word= and back context those urls carried.
-Unused additions in tests: graph_tests.php:60-62 adds $base_url, $lan, $url_arr — none used in the file; languages is imported unused in both graph_tests.php and horizontal_ui_tests.php.
+button is now btn_edit () with no $url_arr at view.php:171 and word.php:751.
+Production web/ code now includes and reads test constants. web/view/view.php:67 and web/word/triple_list.php:51 add a real include_once test_paths::CONST . 'word_names.php' and hardcode word_names::ZH_ID as the back target. list_sort.php extends the same pattern to triple_names::GLOBAL_PROBLEM_ID — and there the include_once is commented out while the use is active, so it only works via the autoloader. triple_list.php:147 has a TODO Prio 0 admitting the $
+url_arr is a placeholder; view.php:145 has none. Either way "Zurich" as the back link on a generic view navbar is a
+placeholder, not behaviour.
+Dead code left behind in view.php:617,619 — $call_edit / $call_del are still built via url_back (...) but no longer
+used, since btn_edit ()/btn_del () build their own url. The buttons also lost the word= and back context those urls
+carried.
+Unused additions in tests: graph_tests.php:60-62 adds $base_url, $
+lan, $url_arr — none used in the file; languages is imported unused in both graph_tests.php and horizontal_ui_tests.php.
 Tooltip regression, visible in base_ui_tests.php:512: the delete title went from delete this formula of scale minute to sec to delete this formula — the object name dropped out of the button title. Intentional?
 Nit: shared/const/words.php:335 inserts SOLUTION after STATEMENT, breaking the alphabetical order of that list.
-docs/llm/pending.md drops the self:: vs $this:: item (correctly — db_object::btn_add uses $this::VIEW_ADD_ID) but keeps the AUTO_UPDATE_TEST_FILES item, which is still open per point 1.              
+docs/llm/pending.md drops the self:: vs $this:: item (correctly — db_object::btn_add
+uses $this::VIEW_ADD_ID) but keeps the AUTO_UPDATE_TEST_FILES item, which is still open per point 1.              
 horizontal_ui_tests:106-111 calls these for many classes but only asserts the icon is present, not the url — so nothing catches it.
-dsp_list() drops the add button on an empty list. $vrb is assigned inside the foreach, so it stays null when there are no verbs and the if ($vrb != null) block is skipped — a user looking at an empty verb list has no way to add the first one. The old free btn_add() was unconditional. The button also now belongs to whichever verb happened to be last in the list, which reads oddly for an "add new verb" action.
-$add_script in dsp_list() is now dead (verb_list.php:131) — nothing consumes it since btn_add() builds its own url.
-Two url styles on one page, visible in the new snapshot: list() emits m=verb_edit / m=verb_add (code ids, via html_base::list()'s url_back) while the migrated dsp_list() button emits m=6 (view id). Same page, same action, two conventions — the html_base::list() side has not been through the #247 migration yet.
-My architecture.md section pins the wrong parameter order. It writes add_obj($obj, $allow_duplicates, $msg), which matches ListOfIdObjects and sandbox_list_named but not the new type_list::add_obj($obj, $msg, $allow_duplicates). The new order is the one the rules actually require (a user_message parameter must be required, so it cannot follow an optional one) — the two older siblings still have Message $msg = new Message(). The doc should either not name an order or say the new one is the target.
-type_list::get() now has a false alarm. It logs log_err('probably ... are duplicate code_id') whenever count($this->hash) != count($this->lst) — which is exactly the state a legitimately duplicated list is in, since hash is keyed by code_id. It only fires if someone calls get() on such a list, but the check contradicts the feature just added.
-url_back() lost its docblock (html_base.php:730-760). base_url_clean() was inserted between the existing /** … @return string the created url */ block and function url_back(, so that block now documents the private helper (which has its own docblock right below it) and url_back() is undocumented. Moving base_url_clean() above the docblock fixes it.
-sort_by_name()'s docblock is now false (type_list.php:403). It justifies returning a copy with "because get() maps the position in the hash to the position in the list" — but get() no longer does that, it was changed in this same diff. Returning a copy is still right (a preloaded type list is shared for the whole request and must not be reordered under other holders), but the stated reason has to be the new one.
-text_h4() breaks the pattern of its siblings. text_h1/2/3 pass the matching level as the non-bootstrap tag (H2,H1 / H4,H2 / H5,H3); text_h4 passes self::H6, self::H3, so with UI_USE_BOOTSTRAP = false an h4 renders as <h3>. Invisible today because bootstrap is on — the snapshot correctly shows <h6>.
-The snapshot does not actually exercise sort_by_impact(). Every verb from load_dummy() has impact 0.0, so the short and more versions fall through to the name tie-break and render alphabetically — identical to what sort_by_name() would produce. The new sort is unproven by the committed test; a fixture with distinct impacts (or an assert on sort_by_impact() directly) would close that.
+dsp_list () drops the add button on an empty list. $vrb is assigned inside the foreach, so it stays null when there are
+no verbs and the if
+($vrb != null) block is skipped — a user looking at an empty verb list has no way to add the first one. The old free btn_add () was unconditional. The button also now belongs to whichever verb happened to be last in the list, which reads oddly for an "add new verb" action.
+$add_script in dsp_list () is now dead (verb_list.php:131) — nothing consumes it since btn_add () builds its own url.
+Two url styles on one page, visible in the new snapshot: list () emits m=verb_edit / m=verb_add (code ids, via
+html_base::list ()'s url_back) while the migrated dsp_list () button emits m=6 (view id). Same page, same action, two
+conventions — the html_base::list () side has not been through the #247 migration yet.
+My architecture.md section pins the wrong parameter order. It writes add_obj ($obj, $
+allow_duplicates, $msg), which matches ListOfIdObjects and sandbox_list_named but not the new type_list::add_obj ($
+obj, $msg, $allow_duplicates). The new order is the one the rules actually require (a user_message parameter must be
+required, so it cannot follow an optional one) — the two older siblings still have
+Message $msg = new Message (). The doc should either not name an order or say the new one is the target.
+type_list::get () now has a false alarm. It logs log_err ('probably ... are duplicate code_id') whenever count ($this->
+hash) != count
+($this->lst) — which is exactly the state a legitimately duplicated list is in, since hash is keyed by code_id. It only fires if someone calls get () on such a list, but the check contradicts the feature just added.
+url_back () lost its docblock (html_base.php:730-760). base_url_clean () was inserted between the existing /** … @return string the created url */ block and function url_back (, so that block now documents the private helper (which has its own docblock right below it) and url_back () is undocumented. Moving base_url_clean () above the docblock fixes it.
+sort_by_name ()'s docblock is now false (type_list.php:403). It justifies returning a copy with "because get () maps the position in the hash to the position in the list" — but get () no longer does that, it was changed in this same diff. Returning a copy is still right (a preloaded type list is shared for the whole request and must not be reordered under other holders), but the stated reason has to be the new one.
+text_h4 () breaks the pattern of its siblings. text_h1/2/3 pass the matching level as the non-bootstrap tag (H2,H1 / H4,H2 / H5,H3); text_h4 passes self::H6, self::H3, so with UI_USE_BOOTSTRAP = false an h4 renders as <h3>. Invisible today because bootstrap is on — the snapshot correctly shows <h6>.
+The snapshot does not actually exercise sort_by_impact (). Every verb from load_dummy () has impact 0.0, so the short and more versions fall through to the name tie-break and render alphabetically — identical to what sort_by_name () would produce. The new sort is unproven by the committed test; a fixture with distinct impacts (or an assert on sort_by_impact () directly) would close that.
 $url_arr is unused in both verb_list_ui_tests.php:64 and word_list_ui_tests.php:57. Nothing on either page takes one.
-word_list_ui_tests.php / word_list.html are unrelated to this change. The only effect is that the three stylesheet hrefs became absolute (http://localhost/…) because $base_url, $lan were added to its html_page_test call. Fine in itself, but it is a separate concern riding along — worth a glance that you want it in this commit.
-src/test/resources/import/carbon_leakage_effect.json is staged and unrelated — 244 new lines, referenced by no test and no PHP file, and nothing in this change set produces it. It looks like it wandered in from other work. Either it belongs to a different commit or its consumer is still missing.
-The component insertion point causes ~1,600 lines of avoidable churn. I placed system title user directly after system title user settings, which lands it at component id 98 and shifts every later component id by one: unit/component/list.csv 450 changed lines, unit/component_link/list.csv 1,866. Appending both new components at the end of their components blocks would have given the same result with a two-line fixture diff. I checked the pinned consts in shared/const/components.php — the highest is FORM_PLURAL_ID = 92, below the insertion point, so nothing is silently mis-pinned. But if you would rather not carry that renumbering, moving the two definitions to the end of their blocks and re-running is cheap now and awkward later.
-Seven user snapshots were renamed, not edited — 74_user.html → 74_user_9.html, and likewise 49, 50, 62, 85, 87, 89. The filename carries the dbo id, which is now 9 instead of 0. Correct consequence of user_filled_loaded, but it makes the diff read as delete+add; worth confirming the deletions are the paired old files and that the runner's "remove test files not used any more" pass did not drop anything else.
-component_types.csv gains a seeded row, so the database needs the new type. I read that as data rather than structure and left version.txt alone — your call if it should carry the minor bump plus a db_check step.
-The new component is not wrapped in the row col-md-12 column div — visible in 74_user_9.html: the first four components each sit in <div class="row col-md-12">, the fifth does not. Since the request was specifically "in a fixed column", this defeats the point of the placement.
-The cause is pre-existing, not introduced here: view_exe::show() wraps a row only when it reaches the next component ($result .= $html->div_row($row, $row_style) in the BELOW branch), and the final flush at line 271-273 is a bare $result .= $row; with no div_row(). So the last component of any view has always been unwrapped — in the committed snapshot it was user system errors that lacked the div, and now it is the new one. Fixing the flush to use div_row()  with the same style resolution would wrap both, and would change the tail of many view snapshots.
-The two change-log api fixtures now carry a per-run change_time. change_log_list_word_1_word_name.json gained "change_time": "2026-08-18T09:10:19+00:00", which the committed baseline did not have. assert_api_compare() strips it before comparing (json_remove_volatile → change_log::FLD_TIME), so tests still pass — but the stored file now holds a timestamp that differs on every reset, so these two files will churn on each run.
-Cause: the update_files_with_not_yet_fixed_db_id() helpers I added last commit write the raw api response ($lib->json_for_dev($created)) without passing it through json_remove_volatile() first. The type_list_check() pattern I copied has the same property (its header timestamp also moves each run), so this is consistent with the existing code — but for the change log it bakes a volatile value per row where there was none. Stripping volatile fields before writing would make these fixtures stable.
-The files also switched from 2-space to 4-space indentation, confirming a different writer than whatever produced the committed versions.
-rest_call::api_call() gained $extra_headers for a test-only need. The parameter exists solely so assert_api_get_not_permitted() can send X-Forwarded-For and reach the rejection arm — no production caller passes it. Defensible (the local test runner is an own-pod call, so there is no other way to exercise that branch), but it is production API surface added for a test.
+word_list_ui_tests.php / word_list.html are unrelated to this change. The only effect is that the three stylesheet hrefs
+became absolute (http://localhost/…) because $base_url, $lan were added to its html_page_test call. Fine in itself, but
+it is a separate concern riding along — worth a glance that you want it in this commit.
+src/test/resources/import/carbon_leakage_effect.json is staged and unrelated — 244 new lines, referenced by no test and
+no PHP file, and nothing in this change set produces it. It looks like it wandered in from other work. Either it belongs
+to a different commit or its consumer is still missing.
+The component insertion point causes ~1,600 lines of avoidable churn. I placed system title user directly after system
+title user settings, which lands it at component id 98 and shifts every later component id by one:
+unit/component/list.csv 450 changed lines, unit/component_link/list.csv 1,866. Appending both new components at the end
+of their components blocks would have given the same result with a two-line fixture diff. I checked the pinned consts in
+shared/const/components.php — the highest is FORM_PLURAL_ID = 92, below the insertion point, so nothing is silently
+mis-pinned. But if you would rather not carry that renumbering, moving the two definitions to the end of their blocks
+and re-running is cheap now and awkward later.
+Seven user snapshots were renamed, not edited — 74_user.html → 74_user_9.html, and likewise 49, 50, 62, 85, 87, 89. The
+filename carries the dbo id, which is now 9 instead of 0. Correct consequence of user_filled_loaded, but it makes the
+diff read as delete+add; worth confirming the deletions are the paired old files and that the runner's "remove test
+files not used any more" pass did not drop anything else.
+component_types.csv gains a seeded row, so the database needs the new type. I read that as data rather than structure
+and left version.txt alone — your call if it should carry the minor bump plus a db_check step.
+The new component is not wrapped in the row col-md-12 column div — visible in 74_user_9.html: the first four components
+each sit in <div class="row col-md-12">, the fifth does not. Since the request was specifically "in a fixed column",
+this defeats the point of the placement.
+The cause is pre-existing, not introduced here: view_exe::show () wraps a row only when it reaches the next component
+($result .= $html->div_row ($row, $row_style) in the BELOW branch), and the final flush at line 271-273 is a
+bare $result .= $row; with no div_row (). So the last component of any view has always been unwrapped — in the committed
+snapshot it was user system errors that lacked the div, and now it is the new one. Fixing the flush to use div_row ()
+with the same style resolution would wrap both, and would change the tail of many view snapshots.
+The two change-log api fixtures now carry a per-run change_time. change_log_list_word_1_word_name.json gained
+"change_time": "2026-08-18T09:10:19+00:00", which the committed baseline did not have. assert_api_compare () strips it
+before comparing (json_remove_volatile → change_log::FLD_TIME), so tests still pass — but the stored file now holds a
+timestamp that differs on every reset, so these two files will churn on each run.
+Cause: the update_files_with_not_yet_fixed_db_id () helpers I added last commit write the raw api response
+($lib->json_for_dev ($created)) without passing it through json_remove_volatile () first. The type_list_check () pattern
+I copied has the same property (its header timestamp also moves each run), so this is consistent with the existing
+code — but for the change log it bakes a volatile value per row where there was none. Stripping volatile fields before
+writing would make these fixtures stable.
+The files also switched from 2-space to 4-space indentation, confirming a different writer than whatever produced the
+committed versions.
+rest_call::api_call ()
+gained $extra_headers for a test-only need. The parameter exists solely so assert_api_get_not_permitted () can send X-Forwarded-For and reach the rejection arm — no production caller passes it. Defensible (the local test runner is an own-pod call, so there is no other way to exercise that branch), but it is production API surface added for a test.
 The two skip-guards in assert_api_get / assert_api_get_by_text got looser. They now also skip when the response lacks an email field. That correctly absorbs the new core-json response when the admin login fails — but it also means a genuine regression that drops the email from the admin response would be silently skipped rather than failing. Narrower would be to check for the msg key or an explicit core-shape match rather than "email missing".
-load_by_id_with_related() ignores the load_by_user result. The $msg is threaded and merged, so problems do reach the user; but a failed change-log call leaves chg_log as an empty list, which the renderer cannot distinguish from "this user has no changes" — the page then says "This user has not changed anything." even when the load failed.
-The changeLogList branch has no permission check, justified in the comment as "the change log is public like on the object pages". That is consistent with the existing by-object branch, which is equally unguarded — worth being deliberate about, since this is the first endpoint keyed on a user id rather than an object id.
-The budget can overshoot by design. A group renders whole once started, so the last group may push the total past the limit — with your 20 and a 15-member group starting at budget 1, the page shows 21. The comment says so, and it follows from your "cap each group / keep groups whole" choice, but the limit is a target rather than a hard ceiling. If you want a hard cap, the last group would have to be truncated mid-way.
-impact_group no longer defaults to the configured limit. Its $budget is now required and it uses max(0, $budget). Every caller passes a real value today, but a future caller that passes 0 gets a section with no rows and a tail counting everything — silently correct-looking, easy to get wrong. A ?int $budget = null defaulting to configured_limit() would be safer.
-The per-group cap re-reads the config per section. time_groups() and relevant_phrase_groups() each call configured_limit() for $per_group, and group_block() calls it again per group. Correct, just repeated work on a hot path; passing it down with the budget would do.
-The word pages moved too — word.html, word_api.html, word_default_word_1/197, word_del, word_edit, value_list.html all changed. Expected (the same renderer), but they are the pages to eyeball for over-truncation, since the fixtures there are small and now render against a limit of 6 in tests.
-The owner is still not rendered — the task is incomplete. No snapshot anywhere contains ow=. url_mapper::url_par() drops null values, so $obj->get_user()->name() is null when the test url is built, and the system show field owner component renders nothing on both 116_formula_link_1.html and 115_component_1.html. The transport chain exists end to end; the test fixture just never supplies the name.
+load_by_id_with_related () ignores the load_by_user result. The $msg is threaded and merged, so problems do reach the
+user; but a failed change-log call leaves chg_log as an empty list, which the renderer cannot distinguish from "this
+user has no changes" — the page then says "This user has not changed anything." even when the load failed.
+The changeLogList branch has no permission check, justified in the comment as "the change log is public like on the
+object pages". That is consistent with the existing by-object branch, which is equally unguarded — worth being
+deliberate about, since this is the first endpoint keyed on a user id rather than an object id.
+The budget can overshoot by design. A group renders whole once started, so the last group may push the total past the
+limit — with your 20 and a 15-member group starting at budget 1, the page shows 21. The comment says so, and it follows
+from your "cap each group / keep groups whole" choice, but the limit is a target rather than a hard ceiling. If you want
+a hard cap, the last group would have to be truncated mid-way.
+impact_group no longer defaults to the configured limit. Its $budget is now required and it uses max (0, $budget). Every
+caller passes a real value today, but a future caller that passes 0 gets a section with no rows and a tail counting
+everything — silently correct-looking, easy to get wrong. A
+?int $budget = null defaulting to configured_limit () would be safer.
+The per-group cap re-reads the config per section. time_groups () and relevant_phrase_groups () each call configured_limit () for $
+per_group, and group_block () calls it again per group. Correct, just repeated work on a hot path; passing it down with
+the budget would do.
+The word pages moved too — word.html, word_api.html, word_default_word_1/197, word_del, word_edit, value_list.html all
+changed. Expected (the same renderer), but they are the pages to eyeball for over-truncation, since the fixtures there
+are small and now render against a limit of 6 in tests.
+The owner is still not rendered — the task is incomplete. No snapshot anywhere contains ow=. url_mapper::url_par ()
+drops null values,
+so $obj->get_user ()->name () is null when the test url is built, and the system show field owner component renders nothing on both 116_formula_link_1.html and 115_component_1.html. The transport chain exists end to end; the test fixture just never supplies the name.
 view_relation start position is now an empty field. Removing the 'position missing missing' placeholder was right, but test_mappers::view_relation_url doesn't carry url_var::POSITION (and view_relation has no to_url_array override), so 43_view_relation_update_1.html renders the field with no value. Component link works (value="1"), formula link is fully wired. That is exactly the "unexplained asymmetry" the fix-the-pattern rule warns about — one of the three is wired, one reads from an existing url var, one can't.
 Empty "Changes" tab on the formula link page. change_log_table_pure returns a table with when / who / what headers even with zero rows, so tab_box doesn't drop it. 116_formula_link_1.html shows a Changes tab containing only headers.
 form_field_formula_link_prio has no German translation. I changed the en text to "Priority"; de.yaml has no entry for it at all (nor for form_field_view_term_link_prio / form_field_component_link). Pre-existing, but the rule is en and de.
 Seed component ids shifted. The three new components in base_views.json pushed Cash Flow Statement 344→347 and company with ratios 345→348. list.csv is regenerated and no *_ID const pins either, so nothing broke — reporting it rather than absorbing it silently, as the json rules require.
-Two include_once lines commented out (yours): sandbox_named.php no longer includes its own parent sandbox.php, and type_list.php drops change_table_field.php. Same shape in web/sandbox/sandbox.php, where change_log_list.php is commented out while api_mapper does new change_log_list(). All load today, but each now depends on some other file loading the class first — the same class of fragility as the sandbox_link fatal.
-Minor: $url_arr is declared but unused in source_ui_tests.php and user_ui_tests.php (used 4× in component_ui_tests.php). And code_object_name_exceptions.md grew for formula_link — my test vars $lnk_fld_url, $lnk_plain, $lnk_tab — against the rule that the list stays short.
+Two include_once lines commented out (yours): sandbox_named.php no longer includes its own parent sandbox.php, and type_list.php drops change_table_field.php. Same shape in web/sandbox/sandbox.php, where change_log_list.php is commented out while api_mapper does new change_log_list (). All load today, but each now depends on some other file loading the class first — the same class of fragility as the sandbox_link fatal.
+Minor: $url_arr is declared but unused in source_ui_tests.php and user_ui_tests.php (used 4× in component_ui_tests.php).
+And code_object_name_exceptions.md grew for formula_link — my test vars $lnk_fld_url, $
+lnk_plain, $lnk_tab — against the rule that the list stays short.
 Not a defect: the coverage doc lists show_link_type, show_order_nbr and link_type as "0 unit test calls". They are tested, but in unit_ui/, which that generator doesn't count.     
 api/ui_config/ui_config.json — timestamp-only diff. Only the header timestamp changed. Consider reverting; it's pure churn.
-load_sql_by_user_value() is public but has no external caller. load_by_user() is the only user. Its sibling load_sql_by_user() is public too, and the test calls it directly, so this matches the local convention — just noting it.
-sort_by_time_and_cut() duplicates the web twin. The frontend web/log/change_log_list already has sort_by_time_and_what() + head(). The two apps are deliberately independent (docs/llm/frontend.md), so this is the accepted pattern rather than a DRY violation — but the backend now sorts and the frontend re-sorts the same list.
-The changes table comment is the load contract. load_by_user() reading 13 tables rests entirely on that comment ("all tables except value and link changes"). If a value change ever lands in changes, it would be listed twice. Not currently possible, but nothing asserts it.
+load_sql_by_user_value () is public but has no external caller. load_by_user () is the only user. Its sibling load_sql_by_user () is public too, and the test calls it directly, so this matches the local convention — just noting it.
+sort_by_time_and_cut () duplicates the web twin. The frontend web/log/change_log_list already has sort_by_time_and_what () + head (). The two apps are deliberately independent (docs/llm/frontend.md), so this is the accepted pattern rather than a DRY violation — but the backend now sorts and the frontend re-sorts the same list.
+The changes table comment is the load contract. load_by_user () reading 13 tables rests entirely on that comment ("all tables except value and link changes"). If a value change ever lands in changes, it would be listed twice. Not currently possible, but nothing asserts it.
 version.txt correctly untouched — no json format or db structure change.
 Generated docs: code_user_message_exceptions.md only shifts a line number, doesn't grow. code_test_coverage.md adds the three new functions.
 The fold is duplicated verbatim in the backend and the frontend std_table* function. That mirrors the existing prefix-strip duplication rather than adding a new pattern, so it is consistent, but both copies now have to move together.
-Verification: start page and user page render without a fatal; a script replaying both std_table* functions over every row of change_tables.csv shows all fifteen user_values* folding to values while user_value_links, value_ts_data, the change_values_* log tables and the *_standard* tables stay untouched; and a text group id round-trips through the api mapper into …?m=19&id=PmS%2BXk9wQzR0dGVzdA&n=&8n=123456&z=1. No sql fixtures need regenerating — the l2.table_id  filter travels as a bound parameter (= ANY ($2) / IN (?)), so the longer list does not change the prepared-statement text. No secrets in the diff.
-A caller I missed, already fixed by you: test_words::zh_full_ui() calls the web word's set_type, so it needed user_message_ui not user_message. My caller scan mis-classified it because zh_ui() returns a word_ui. I re-checked — that was the only one; every other set_type call is on a backend word, a component, element or sql_db.
-The fixtures are now coherent: component 352 = the new field, link 1013 = verb view position 7, sub-title 8, triples 9 — exactly as computed; the api type-list fixtures carry only the new system_show_field_name_in_formulas, none of the old colliding name. The verb snapshot's triples are in ascending id order, confirming the tie-break landed.
-change_log_list_word_1.json shifted by +3 (ids 6885→6888 …) — the re-import wrote three more change rows. That fixture pins absolute change-log ids, so it will drift on every re-import; not caused by this change, but worth knowing.
-docs/code_user_message_exceptions.md now reports db_object_seq_id.php:350 - user_message $msg = new user_message(), instead of the full signature — the generator matches a single line and your reformat of api_json split the signature across lines. Cosmetic, but the entry is now less readable than its siblings.
-Checked and clean: no &&/|| in added code, no secrets, includes and use blocks alphabetically placed, log_err only on genuine programming-error paths.
+Verification: start page and user page render without a fatal; a script replaying both std_table* functions over every row of change_tables.csv shows all fifteen user_values* folding to values while user_value_links, value_ts_data, the change_values_* log tables and the *_standard* tables stay untouched; and a text group id round-trips through the api mapper into …?m=19&id=PmS%2BXk9wQzR0dGVzdA&n=&8n=123456&z=1. No sql fixtures need regenerating — the l2.table_id  filter travels as a bound parameter (= ANY ($
+2) / IN (?)), so the longer list does not change the prepared-statement text. No secrets in the diff.
+A caller I missed, already fixed by you: test_words::zh_full_ui () calls the web word's set_type, so it needed
+user_message_ui not user_message. My caller scan mis-classified it because zh_ui () returns a word_ui. I re-checked —
+that was the only one; every other set_type call is on a backend word, a component, element or sql_db.
+The fixtures are now coherent: component 352 = the new field, link 1013 = verb view position 7, sub-title 8, triples 9 —
+exactly as computed; the api type-list fixtures carry only the new system_show_field_name_in_formulas, none of the old
+colliding name. The verb snapshot's triples are in ascending id order, confirming the tie-break landed.
+change_log_list_word_1.json shifted by +3 (ids 6885→6888 …) — the re-import wrote three more change rows. That fixture
+pins absolute change-log ids, so it will drift on every re-import; not caused by this change, but worth knowing.
+docs/code_user_message_exceptions.md now reports db_object_seq_id.php:350 - user_message $msg = new user_message (),
+instead of the full signature — the generator matches a single line and your reformat of api_json split the signature
+across lines. Cosmetic, but the entry is now less readable than its siblings.
+Checked and clean: no &&/|| in added code, no secrets, includes and use blocks alphabetically placed, log_err only on
+genuine programming-error paths.
 
 Worth deciding
-Button tooltips lost their object detail. formula::btn_edit()/btn_del() were renamed to *_back, so the formula page now uses the generic db_object::btn_edit(), which passes no $explain. Visible in formula.html: title="change formula for scale minute to sec" → "change formula", and "delete this formula of scale minute to sec" → "delete this formula". If that's intended, fine; if not, the new generic variants need an $explain path too.
-api/.htaccess — <FilesMatch "^[A-Za-z0-9_]+$"> re-allows every extensionless name under /api, which is what the routes need. Worth noting it also re-allows any other dot-free file that lands there; a tighter alternative is listing the route names, at the cost of maintenance. Your call — the current form is the one I proposed.
+Button tooltips lost their object detail. formula::btn_edit ()/btn_del () were renamed to *_back, so the formula page
+now uses the generic db_object::btn_edit (), which passes
+no $explain. Visible in formula.html: title="change formula for scale minute to sec" → "change formula", and "delete this formula of scale minute to sec" → "delete this formula". If that's intended, fine; if not, the new generic variants need an $
+explain path too.
+api/.htaccess — <FilesMatch
+"^[A-Za-z0-9_]+$"> re-allows every extensionless name under /api, which is what the routes need. Worth noting it also re-allows any other dot-free file that lands there; a tighter alternative is listing the route names, at the cost of maintenance. Your call — the current form is the one I proposed.
 src/test/resources/unit/user/list.csv and api/ui_config/ui_config.json changed too — presumably from a reset_db run; worth a glance that they belong in this commit.
-code_object_name_exceptions.md grows by two: $lst_dbl and $lst_empty are added to the verb_list line. Three instances in one scope is a legitimate deviation, but the file is supposed to shrink — $vrb_lst, $vrb_lst_dbl, $vrb_lst_empty in the test would keep it flat.
-test_verbs::list_short() mixes $this->verb_is() with self::verb_part() (the factory declares that one static) — harmless, just uneven.
-In the base type_list::set_from_json_array(), the verb arm calls $vrb->api_mapper($value, $msg) and ignores the returned bool, while verb_list's override guards on it. Pre-existing, but the two now sit side by side.
-ames_one_line() / the sort closures type the entries as verb|type_object while get() uses verb|ref_type|type_object. ref_type extends type_object, so it works, but the two unions should read the same.
-name_tip() entries without a description render as a bare <span>name</span> — a wrapper with neither class nor title. Only "is a" carries a tooltip in the snapshot, since load_dummy() sets no descriptions.
-Still open from earlier: get() opens with count($this->hash) != count($this->lst) and logs probably … are duplicate code_id, which is a false alarm on a duplicates-allowed list and fires on every call. It is the last consumer of the parallel-arrays assumption the rest of this diff removed.
+code_object_name_exceptions.md grows by two: $lst_dbl
+and $lst_empty are added to the verb_list line. Three instances in one scope is a legitimate deviation, but the file is supposed to shrink — $
+vrb_lst, $vrb_lst_dbl, $vrb_lst_empty in the test would keep it flat.
+test_verbs::list_short ()
+mixes $this->verb_is () with self::verb_part () (the factory declares that one static) — harmless, just uneven.
+In the base type_list::set_from_json_array (), the verb arm calls $vrb->api_mapper ($value, $msg) and ignores the
+returned bool, while verb_list's override guards on it. Pre-existing, but the two now sit side by side.
+ames_one_line () / the sort closures type the entries as verb|type_object while get () uses verb|ref_type|type_object.
+ref_type extends type_object, so it works, but the two unions should read the same.
+name_tip () entries without a description render as a bare <span>name</span> — a wrapper with neither class nor title.
+Only "is a" carries a tooltip in the snapshot, since load_dummy () sets no descriptions.
+Still open from earlier: get () opens with count ($this->hash) != count ($this->lst) and logs probably … are duplicate
+code_id, which is a false alarm on a duplicates-allowed list and fires on every call. It is the last consumer of the
+parallel-arrays assumption the rest of this diff removed.
 
-Fixtures are half-regenerated — rerun before committing. Two regeneration runs are mixed in the tree (28-08 22:25 and 29-08 10:05):
-- api/type_lists/type_lists.json is from the older run: its 13 system sub title usage number entries lack ui_msg_value_exception: 0, while ui_config.json has all 13.
-- views_by_id/component/34_component_update_1.html (older run) still renders Used 0 times, while its sibling views_by_object/component/component_edit_component_1.html renders Not used.
-- views_by_object/formula/formula_default_formula_21.html / _26.html still carry the live 29-08-2026 10:31; they pick up the fixed test time only on the next run.
-- Two snapshots from July still show Used 0 times and were never regenerated: workflow/change_triple_by_name_wf8/wf8_show_edit.html and workflow_write/change_word_wf2/wf2_show_edit_back_edit_save_cancel_edit_save_confirmed_edit.html (the second is one of the orphaned wf snapshots already listed in pending_prio_2.md).
+Fixtures are half-regenerated — rerun before committing. Two regeneration runs are mixed in the tree (28-08 22:25 and
+29-08 10:05):
 
-api/result/ is untracked — needs git add, and the served copy in /var/www/html needs the new endpoint plus the backend changes before the http api tests run.
+- api/type_lists/type_lists.json is from the older run: its 13 system sub title usage number entries lack
+  ui_msg_value_exception: 0, while ui_config.json has all 13.
+- views_by_id/component/34_component_update_1.html (older run) still renders Used 0 times, while its sibling
+  views_by_object/component/component_edit_component_1.html renders Not used.
+- views_by_object/formula/formula_default_formula_21.html / _26.html still carry the live 29-08-2026 10:31; they pick up
+  the fixed test time only on the next run.
+- Two snapshots from July still show Used 0 times and were never regenerated:
+  workflow/change_triple_by_name_wf8/wf8_show_edit.html and
+  workflow_write/change_word_wf2/wf2_show_edit_back_edit_save_cancel_edit_save_confirmed_edit.html (the second is one of
+  the orphaned wf snapshots already listed in pending_prio_2.md).
 
-api/formula/formula_body.json lost "usage": 7 and "ref_text" while gaining need_all_val. Nothing in this batch removes either; both are db-state dependent (usage is written by a batch job, ref_text on save), so this may flip back on the next regeneration — worth confirming it is intended.
+api/result/ is untracked — needs git add, and the served copy in /var/www/html needs the new endpoint plus the backend
+changes before the http api tests run.
+
+api/formula/formula_body.json lost "usage": 7 and "ref_text" while gaining need_all_val. Nothing in this batch removes
+either; both are db-state dependent (usage is written by a batch job, ref_text on save), so this may flip back on the
+next regeneration — worth confirming it is intended.
 
 ## prepare
 
-create in triple list a 'validate_alias_direction' function that checks if the alias verb always leads to the same main phrase
+create in triple list a 'validate_alias_direction' function that checks if the alias verb always leads to the same main
+phrase
 
-based on the /test/create/ class function and the solution_prio.json create a set of test data (a filled $dto object where the database id is taken from the /test/create/ class functions and the rest e.g. the val)
+based on the /test/create/ class function and the solution_prio.json create a set of test data (a filled $dto object
+where the database id is taken from the /test/create/ class functions and the rest e.g. the val)
 
 ## start page
 
@@ -233,12 +908,12 @@ the basic steps to show the start page are
 - the order of the column may differ and is relative e.g. 'per cent is after number'
 - the number of rows to show is taken from the config but can be overwritten
 
-
 # move to Prio 2
 
 ## triple add and edit view
 
-reduce the size of the triple description field to 8/12 and add after the description a formula selector for the conditional formula 
+reduce the size of the triple description field to 8/12 and add after the description a formula selector for the
+conditional formula
 
 ## word db table
 
@@ -246,27 +921,35 @@ similar to the triple table field 'triple_condition_id' add a field 'condition_f
 
 ## word add and edit view
 
-reduce the size of the word description field to 8/12 and add after the description a formula selector for the conditional formula
+reduce the size of the word description field to 8/12 and add after the description a formula selector for the
+conditional formula
 
 ## triple db table
 
 rename the triples table field 'triple_condition_id' to 'condition_formula_id'
 
-## log in 
+## log in
 
-if no picture of the user is uploaded create a random picture and show it in the top write corner if the user is logged in
+if no picture of the user is uploaded create a random picture and show it in the top write corner if the user is logged
+in
 
-## language 
+## language
 
 ### word
 
-add the missing db fields to the word add and edit views: a language selection (language_id, preselected with the user language) and, for users whose profile passes can_set_code_id, the code_id field; show the non-changeable fields impact and inactive as display-only info in the edit view next to the existing usage component
+add the missing db fields to the word add and edit views: a language selection (language_id, preselected with the user
+language) and, for users whose profile passes can_set_code_id, the code_id field; show the non-changeable fields impact
+and inactive as display-only info in the edit view next to the existing usage component
 
 show the missing db fields in the word default view the language e.g. as a small info line next to the description
 
 ### triple
 
-add the missing db fields to the triple add and edit views: a language selection (language_id, preselected with the user language), the given name (name_given) as its own field beside the generated name (name_auto, display-only) so the user sees the difference and can empty the given name to fall back to the generated one, the condition formula selection (triple_condition_id) and, for users whose profile passes can_set_code_id, the code_id field; show the non-changeable fields impact and inactive as display-only info in the edit view next to the existing usage component
+add the missing db fields to the triple add and edit views: a language selection (language_id, preselected with the user
+language), the given name (name_given) as its own field beside the generated name (name_auto, display-only) so the user
+sees the difference and can empty the given name to fall back to the generated one, the condition formula selection
+(triple_condition_id) and, for users whose profile passes can_set_code_id, the code_id field; show the non-changeable
+fields impact and inactive as display-only info in the edit view next to the existing usage component
 
 ## later
 

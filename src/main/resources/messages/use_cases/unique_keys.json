@@ -1,0 +1,185 @@
+{
+  "version": "0.0.3",
+  "data_version": "0.0.1",
+  "time": "2026-10-06 12:00:00",
+  "user": "timon",
+  "selection": [
+    "ISBN",
+    "ISIN"
+  ],
+  "description": "Use case: unique keys that identify exactly one item worldwide, so that the item can be found in other systems by its key. Each key word has the phrase type unique key and each sample key is linked to its key word with 'is a' and to the item it identifies with 'is symbol for'. The ISBN-13 of a book is also the EAN of the book, so one sample shows both forms.",
+  "words": [
+    {
+      "name": "ISBN",
+      "description": "International Standard Book Number: identifies one edition of a book; since 2007 it has 13 digits and equals the EAN of the book with the prefix 978 or 979",
+      "type": "unique_key",
+      "refs": [
+        {
+          "name": "ISBN",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "ISIN",
+      "description": "International Securities Identification Number (ISO 6166): identifies one security with 12 characters, the country code, the nine character national number and a check digit",
+      "type": "unique_key",
+      "refs": [
+        {
+          "name": "International Securities Identification Number",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "EAN",
+      "description": "European Article Number: the 13 digit barcode number of a retail product, today named International Article Number (IAN)",
+      "type": "unique_key",
+      "refs": [
+        {
+          "name": "International Article Number",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "IAN",
+      "description": "International Article Number: the current name of the EAN, so an IAN and an EAN are the same number",
+      "type": "unique_key"
+    },
+    {
+      "name": "UPC",
+      "description": "Universal Product Code: the 12 digit barcode number of a retail product used mainly in North America, which is an EAN with a leading zero",
+      "type": "unique_key",
+      "refs": [
+        {
+          "name": "Universal Product Code",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "JAN",
+      "description": "Japanese Article Number: the EAN of a product registered in Japan, which starts with the prefix 45 or 49",
+      "type": "unique_key"
+    },
+    {
+      "name": "978-0-679-73373-7"
+    },
+    {
+      "name": "978-0-8021-3098-3"
+    },
+    {
+      "name": "978-0-674-00078-0"
+    },
+    {
+      "name": "9 780674 000780"
+    },
+    {
+      "name": "DE0007100000"
+    },
+    {
+      "name": "CH0038863350"
+    },
+    {
+      "name": "The Myth of Sisyphus",
+      "description": "the essay by Albert Camus, first published in French in 1942, here in its English translation",
+      "refs": [
+        {
+          "name": "The Myth of Sisyphus",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Rhinoceros and Other Plays",
+      "description": "the book of Grove Press with the play Rhinoceros by Eugène Ionesco in the English translation of Derek Prouse",
+      "refs": [
+        {
+          "name": "Rhinoceros (play)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "A Theory of Justice, revised edition",
+      "description": "the revised edition of 1999 of the book by John Rawls, first published by the Belknap Press of Harvard University Press in 1971",
+      "refs": [
+        {
+          "name": "A Theory of Justice",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Mercedes-Benz Group share",
+      "description": "the registered share of Mercedes-Benz Group AG"
+    },
+    {
+      "name": "Nestlé registered share",
+      "description": "the registered share of Nestlé S.A."
+    }
+  ],
+  "triples": [
+    {
+      "from": "978-0-679-73373-7",
+      "verb": "is a",
+      "to": "ISBN"
+    },
+    {
+      "from": "978-0-679-73373-7",
+      "verb": "is symbol for",
+      "to": "The Myth of Sisyphus"
+    },
+    {
+      "from": "978-0-8021-3098-3",
+      "verb": "is a",
+      "to": "ISBN"
+    },
+    {
+      "from": "978-0-8021-3098-3",
+      "verb": "is symbol for",
+      "to": "Rhinoceros and Other Plays"
+    },
+    {
+      "from": "978-0-674-00078-0",
+      "verb": "is a",
+      "to": "ISBN"
+    },
+    {
+      "from": "978-0-674-00078-0",
+      "verb": "is symbol for",
+      "to": "A Theory of Justice, revised edition"
+    },
+    {
+      "from": "9 780674 000780",
+      "verb": "is a",
+      "to": "EAN"
+    },
+    {
+      "from": "9 780674 000780",
+      "verb": "is symbol for",
+      "to": "A Theory of Justice, revised edition"
+    },
+    {
+      "from": "DE0007100000",
+      "verb": "is a",
+      "to": "ISIN"
+    },
+    {
+      "from": "DE0007100000",
+      "verb": "is symbol for",
+      "to": "Mercedes-Benz Group share"
+    },
+    {
+      "from": "CH0038863350",
+      "verb": "is a",
+      "to": "ISIN"
+    },
+    {
+      "from": "CH0038863350",
+      "verb": "is symbol for",
+      "to": "Nestlé registered share"
+    }
+  ]
+}

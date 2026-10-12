@@ -109,6 +109,7 @@ class triple_url_tests extends url_test_base
             $t_wrd->word_id_or_fixed(word_names::TEST_ADD_TO, word_names::TEST_ADD_TO_ID)
             => word_names::TEST_ADD_TO_ID,
         ];
+        $this->add_test_words_to_cache();
     }
 
     /**
@@ -128,7 +129,7 @@ class triple_url_tests extends url_test_base
         $this->wf_start($wf_nbr, workflows::WF_ADD_TRIPLE_FAIL, $this->t->usr1, triple_names::SYSTEM_TEST_ADD_ID, $do_it);
 
         // initial url with an empty triple
-        $url_arr = test_triples::triple_new_url($this->msg);
+        $url_arr = test_triples::triple_new_url();
         // fix the values before the changes in the url TODO Prio 2 should be done by the process automatic
         $url_pre = html_base::pre_url_array($url_arr);
         $url_arr = $url_arr + $url_pre;
@@ -136,14 +137,14 @@ class triple_url_tests extends url_test_base
         $url_arr[url_var::BACK . url_var::MASK] = views::START_ID;
 
         // edit: open the empty add triple form
-        $this->assert_step(workflows::EDIT, $url_arr, views::TRIPLE_ADD_ID);
+        $this->assert_step(workflows::EDIT, $url_arr, views::TRIPLE_ADD_DETAIL_ID);
 
         // mark the failing input variant (the from and to phrases are missing) in the snapshot file name
         $this->step_path .= workflows::NAME_SEP . workflows::STEP_NO_PHRASES;
 
         // save: press save without a from and a to phrase; the confirm add view is not shown, the add
         // form is rendered again with the warning (no write)
-        $this->assert_step(workflows::SAVE, $url_arr, views::TRIPLE_ADD_ID);
+        $this->assert_step(workflows::SAVE, $url_arr, views::TRIPLE_ADD_DETAIL_ID);
 
         // the missing from and to phrases are reported as a warning instead of confirming the new triple
         $test_name = $this->step_path . workflows::NAME_SEP . 'warns_no_phrases';
@@ -165,7 +166,7 @@ class triple_url_tests extends url_test_base
         $this->set_word_norm_ids();
 
         // initial url with an empty triple
-        $url_arr = test_triples::triple_new_url($this->msg);
+        $url_arr = test_triples::triple_new_url();
 
         $this->wf_id = 0;
         $this->wf_fixed_id = triple_names::SYSTEM_TEST_ADD_ID;
@@ -175,32 +176,32 @@ class triple_url_tests extends url_test_base
         $add = $t_trp->add_url_array();
 
         // edit: open the empty add triple form
-        $this->assert_step(workflows::EDIT, $url_arr, views::TRIPLE_ADD_ID);
+        $this->assert_step(workflows::EDIT, $url_arr, views::TRIPLE_ADD_DETAIL_ID);
 
         // back: leave the add form without adding and return to the start view (no write)
         $this->assert_step(workflows::BACK, $url_arr, views::START_ID);
 
         // edit: re-open the add form to enter the new triple
-        $this->assert_step(workflows::EDIT, $url_arr, views::TRIPLE_ADD_ID);
+        $this->assert_step(workflows::EDIT, $url_arr, views::TRIPLE_ADD_DETAIL_ID);
 
         // user is entering the new triple: the from and to phrases, the name and the description
         // (a triple without a from and a to phrase would be blocked, see add_triple_fail_workflow)
         $url_arr = $add + $url_arr;
 
         // save: press save on the add form which shows the confirm add view
-        $this->assert_step(workflows::SAVE, $url_arr, views::TRIPLE_ADD_ID);
+        $this->assert_step(workflows::SAVE, $url_arr, views::TRIPLE_ADD_DETAIL_ID);
 
         // cancel: discard the new triple in the confirm view and return to the start view (no write)
         $this->assert_step(workflows::CANCEL, $url_arr, views::START_ID);
 
         // edit: re-open the add form to redo the new triple
-        $this->assert_step(workflows::EDIT, $url_arr, views::TRIPLE_ADD_ID);
+        $this->assert_step(workflows::EDIT, $url_arr, views::TRIPLE_ADD_DETAIL_ID);
 
         // user is entering the new triple again
         $url_arr = $add + $url_arr;
 
         // save: press save again which shows the confirm add view
-        $this->assert_step(workflows::SAVE, $url_arr, views::TRIPLE_ADD_ID);
+        $this->assert_step(workflows::SAVE, $url_arr, views::TRIPLE_ADD_DETAIL_ID);
 
         // confirmed: confirm the new triple so it is actually added (with do_it true); the confirm form
         // posts the confirm add mask and the back mask carries the object type (like the url that
@@ -245,7 +246,7 @@ class triple_url_tests extends url_test_base
 
         // initial url with the added triple
         $t_trp = new test_triples($this->t);
-        $url_arr = $t_trp->triple_add_url_resolved($this->msg);
+        $url_arr = $t_trp->triple_add_url_resolved();
         $url_arr[url_var::ID] = $this->wf_id;
         // fix the values before the changes in the url TODO Prio 2 should be done by the process automatic
         $url_pre = html_base::pre_url_array($url_arr);
@@ -308,7 +309,7 @@ class triple_url_tests extends url_test_base
         // from and to words (the snapshot files normalize the ids back to the fixed test ids); the
         // description is seeded so its kept '8' baseline can be checked after the failed save
         $t_trp = new test_triples($this->t);
-        $url_arr = $t_trp->triple_add_url_resolved($this->msg);
+        $url_arr = $t_trp->triple_add_url_resolved();
         $url_arr[url_var::ID] = $this->wf_id;
         $url_arr[url_var::DESCRIPTION] = triple_names::SYSTEM_TEST_ADD_COM;
         // fix the values before the changes in the url TODO Prio 2 should be done by the process automatic
@@ -377,7 +378,7 @@ class triple_url_tests extends url_test_base
         // its from and to words so the confirmed write targets the real rows (the snapshot files
         // normalize the ids back to the fixed test ids)
         $t_trp = new test_triples($this->t);
-        $url_arr = $t_trp->triple_add_url_resolved($this->msg);
+        $url_arr = $t_trp->triple_add_url_resolved();
         $url_arr[url_var::ID] = $this->wf_id;
         // fix the values before the changes in the url TODO Prio 2 should be done by the process automatic
         $url_pre = html_base::pre_url_array($url_arr);
@@ -492,7 +493,7 @@ class triple_url_tests extends url_test_base
         // is forced so the frontend check reads the triple as still in use and blocks the deletion
         // TODO Prio 0 remove workaround until the backend maintains the usage field
         $t_trp = new test_triples($this->t);
-        $url_arr = $t_trp->triple_add_url_resolved($this->msg);
+        $url_arr = $t_trp->triple_add_url_resolved();
         $url_arr[url_var::ID] = $this->wf_id;
         $url_arr[url_var::USAGE] = 1;
         // fix the values before the changes in the url TODO Prio 2 should be done by the process automatic
@@ -549,7 +550,7 @@ class triple_url_tests extends url_test_base
         // its from and to words so the confirmed delete targets the real rows (the snapshot files
         // normalize the ids back to the fixed test ids)
         $t_trp = new test_triples($this->t);
-        $url_arr = $t_trp->triple_add_url_resolved($this->msg);
+        $url_arr = $t_trp->triple_add_url_resolved();
         $url_arr[url_var::ID] = $this->wf_id;
         // fix the values before the changes in the url TODO Prio 2 should be done by the process automatic
         $url_pre = html_base::pre_url_array($url_arr);

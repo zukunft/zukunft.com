@@ -42,6 +42,11 @@ class sql_where
     public sql_par_type $typ;  // the type of the where condition e.g. =, IN, ...
     public sql_where_type $con;  // the type of the where condition e.g. AND, OR, ...
     public int $pos;  // the position in the parameter list
+    // for a sub-select condition (sql_par_type::INT_SUB_IN, see sql_creator::add_where_in_sub) the table,
+    // the returned field and the filter field of the sub-select e.g. triples, to_phrase_id and verb_id
+    public string $sub_tbl;
+    public string $sub_fld;
+    public string $sub_where_fld;
 
     function __construct()
     {
@@ -49,6 +54,9 @@ class sql_where
         $this->fld = '';
         $this->con = sql_where_type::AND;
         $this->pos = 0;
+        $this->sub_tbl = '';
+        $this->sub_fld = '';
+        $this->sub_where_fld = '';
     }
 
 }

@@ -24,7 +24,7 @@ PREPARE formula_link_update_log_0001000_user_call FROM
 SELECT formula_link_update_log_0001000_user
        (3,
         2,
-        904,
+        683,
         null,
         'System Test description for a formula link',
         1);

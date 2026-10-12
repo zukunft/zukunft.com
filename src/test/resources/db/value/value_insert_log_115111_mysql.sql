@@ -26,8 +26,8 @@ BEGIN
          SELECT                     _user_id,_change_action_id,_field_id_share_type_id,_share_type_id,_group_id ;
     INSERT INTO change_values_norm ( user_id, change_action_id, change_field_id,        new_value,     group_id)
          SELECT                     _user_id,_change_action_id,_field_id_protect_id,   _protect_id,   _group_id ;
-    INSERT INTO `values` ( group_id, user_id, numeric_value, source_id, share_type_id, protect_id,last_update)
-         SELECT           _group_id,_user_id,_numeric_value,_source_id,_share_type_id,_protect_id,Now() ;
+    INSERT INTO `values` ( group_id, user_id, numeric_value, source_id, excluded, share_type_id, protect_id,last_update)
+         SELECT           _group_id,_user_id,_numeric_value,_source_id,_excluded,_share_type_id,_protect_id,Now() ;
 
 END;
 
@@ -37,15 +37,15 @@ PREPARE value_insert_log_115111_call FROM
 SELECT value_insert_log_115111
        (3,
         1,
-        1,
+        283,
         3.1415926535898,
-        '1FajJ2-.4LYK3-..8jId-...I1A-....Yz-..../.-.....Z-.....9-...../+.....A+.....a+....3s+...1Ao+../vLC+.//ZSB+.ZSahL+',
-        2,
+        '1FajJ2-4LYK3-8jId-I1A-Yz-/.-Z-9-/+A+a+3s+1Ao+/vLC+//ZSB+ZSahL+',
+        284,
         'The International System of Units',
         1,
-        5,
+        287,
         1,
+        288,
         3,
-        3,
-        4,
+        289,
         2);

@@ -243,8 +243,11 @@ class application
         // writing the end time is always done by a system user
         $this->write_time($db_con, $msg);
 
-        // report even closing error to be on the save side
-        if (!$msg->is_ok()) {
+        // report even closing error to be on the save side, but only an internal error: a problem
+        // of the request data (e.g. a formula expression that names no term) is answered to the
+        // caller by the api message itself, and logging it here would add a wrong error to the
+        // system log and, worse, write the error page behind the json of the response
+        if ($msg->is_error()) {
             log_err_msg('end_api error', $msg);
         }
 

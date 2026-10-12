@@ -36,19 +36,23 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
+include_once paths::MODEL_COMPONENT . 'component.php';
 include_once paths::MODEL_FORMULA . 'formula_link.php';
 include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'url_var.php';
 include_once html_paths::REF . 'ref.php';
 include_once test_paths::CONST . 'files.php';
 include_once paths::SHARED_CONST . 'users.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\component\component;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use DateTimeInterface;
 use Zukunft\ZukunftCom\main\php\shared\const\def as def_shared;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\ref\ref as ref_ui;
@@ -131,10 +135,20 @@ class lib_tests
         $this->assert_sql_format($test_name, test_paths::DB_FORMAT_TEST . test_files::SQL_FORMAT_TEST_SELECT_JOINED, $t);
         $test_name = 'sql_format select of a joined object MariaSQL';
         $this->assert_sql_format($test_name, test_paths::DB_FORMAT_TEST . test_files::SQL_FORMAT_TEST_SELECT_JOINED_MYSQL, $t);
+        $test_name = 'sql_format select with two joins, sort and paging';
+        $this->assert_sql_format($test_name, test_paths::DB_FORMAT_TEST . test_files::SQL_FORMAT_TEST_SELECT_SORTED, $t);
+        $test_name = 'sql_format select with two joins, sort and paging MariaSQL';
+        $this->assert_sql_format($test_name, test_paths::DB_FORMAT_TEST . test_files::SQL_FORMAT_TEST_SELECT_SORTED_MYSQL, $t);
         $test_name = 'sql_format select union';
         $this->assert_sql_format($test_name, test_paths::DB_FORMAT_TEST . test_files::SQL_FORMAT_TEST_UNION, $t);
         $test_name = 'sql_format select union MariaSQL';
         $this->assert_sql_format($test_name, test_paths::DB_FORMAT_TEST . test_files::SQL_FORMAT_TEST_UNION_MYSQL, $t);
+        $test_name = 'sql_format select with bracketed or groups';
+        $this->assert_sql_format($test_name, test_paths::DB_FORMAT_TEST . test_files::SQL_FORMAT_TEST_OR_GROUP, $t);
+        $test_name = 'sql_format delete log';
+        $this->assert_sql_format($test_name, test_paths::DB_FORMAT_TEST . test_files::SQL_FORMAT_TEST_DELETE_LOG, $t);
+        $test_name = 'sql_format delete log MariaSQL';
+        $this->assert_sql_format($test_name, test_paths::DB_FORMAT_TEST . test_files::SQL_FORMAT_TEST_DELETE_LOG_MYSQL, $t);
         $test_name = 'sql_format select count';
         $this->assert_sql_format($test_name, test_paths::DB_USER_FORMAT . test_files::SQL_FORMAT_TEST_COUNT, $t);
         $test_name = 'sql_format select count MariaSQL';
@@ -405,6 +419,46 @@ class lib_tests
         $t->assert($test_name, $lib->class_to_api_route(ref_ui::class), url_var::REF_API);
         $test_name = 'api route of any other class is the camelized class name';
         $t->assert($test_name, $lib->class_to_api_route(formula_link::class), 'formulaLink');
+
+        // test class_csv_file_path: the rows expected after a database reset are in the folder of
+        // the class and the types of the class in the types csv of the same folder; the files
+        // themselves are written by the database reset (see test_db_load::csv_recreate)
+        $test_name = 'the expected rows of a class are in the list csv of the class folder';
+        $t->assert($test_name, $lib->class_csv_file_path(component::class),
+            test_paths::UNIT_RES . 'component' . DIRECTORY_SEPARATOR . test_files::FIXED_DB_CSV);
+        $test_name = 'and the expected types of the same class in the types csv';
+        $t->assert($test_name, $lib->class_csv_file_path(component::class, test_files::FIXED_DB_TYPES_CSV),
+            test_paths::UNIT_RES . 'component' . DIRECTORY_SEPARATOR . test_files::FIXED_DB_TYPES_CSV);
+
+        // test csv_line: a value that contains the delimiter or a quote is enclosed
+        $test_name = 'a value with a comma is enclosed in double quotes';
+        $t->assert($test_name, $lib->csv_line(['7', 'word list up', 'a list, of words']),
+            '7,word list up,"a list, of words"');
+        $test_name = 'a quote within a value is doubled';
+        $t->assert($test_name, $lib->csv_line(['e.g. Verb "is a"']), '"e.g. Verb ""is a"""');
+
+        // test csv_line_to_array: an enclosed value is read as one value, whichever quote is used
+        $test_name = 'a double quoted value with a comma is read as one value';
+        $t->assert($test_name, implode('|', $lib->csv_line_to_array('7,word list up,"a list, of words"')),
+            '7|word list up|a list, of words');
+        $test_name = 'the same for the single quotes of the code link files';
+        $t->assert($test_name, implode('|', $lib->csv_line_to_array("7, 'word list up', 'a list, of words'")),
+            '7|word list up|a list, of words');
+        $test_name = 'a doubled quote within an enclosed value is one quote';
+        $t->assert($test_name, implode('|', $lib->csv_line_to_array('1,"""one"" is needed, but not shown"')),
+            '1|"one" is needed, but not shown');
+        $test_name = 'so a value with a comma and a quote survives the round trip';
+        $row = ['a', 'b, c', 'd"e', ''];
+        $t->assert($test_name, implode('|', $lib->csv_line_to_array($lib->csv_line($row))), implode('|', $row));
+
+        // the negative cases: without an enclosure the delimiter separates two values
+        // and a quote within a value is just a char of the value
+        $test_name = 'a comma without an enclosure separates two values';
+        $t->assert($test_name, implode('|', $lib->csv_line_to_array('1,a list, of words')),
+            '1|a list| of words');
+        $test_name = 'an apostrophe within a value does not enclose';
+        $t->assert($test_name, implode('|', $lib->csv_line_to_array("1,it doesn't split")),
+            "1|it doesn't split");
 
 
         $t->subheader($ts . 'arrays and lists');
@@ -748,6 +802,8 @@ class lib_tests
         $test_result = $t->file('/web/system/result.html');
         $test_target = $t->file('/web/system/target.html');
         $result = $lib->diff_msg($test_result, $test_target);
+        // the view id in the expected diff is the text of the static result.html fixture, not an id
+        // that the code creates, so it stays a literal and does not follow the view id consts
         $target = '381//- href="Test" title=""////+ href="/http/view.php?m=2" title="add new word"//';
         $t->assert($test_name, $result, $target);
 
@@ -1054,6 +1110,12 @@ class lib_tests
         $result = $t->json_remove_volatile(json_decode($json_with_id_in_array, true), true);
         $target = json_decode($json_without_id_in_array, true);
         $t->assert("json remove volatile id in a array of a sub array", $result, $target);
+
+        // the log function list grows with every script and error location that logs,
+        // so it can never match a stored fixture and is dropped from the type list compare
+        $json_with_log_fnc = [json_fields::LIST_SYS_LOG_FUNCTIONS => [['id' => 1]], 'a' => 1];
+        $result = $t->json_remove_volatile($json_with_log_fnc);
+        $t->assert("json remove volatile log function list", $result, ['a' => 1]);
 
 
         $t->subheader($ts . 'user message');

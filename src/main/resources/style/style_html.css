@@ -56,30 +56,39 @@ body {
 }
 
 /* header popup menu */
-/* language and user dropdown menus in the header */
+/* language and user dropdown menus in the header, the column menu of a value table */
+/* and the view version menu below the title of a default view */
 .view-menu,
 .lang-menu,
-.user-menu {
+.user-menu,
+.column-menu,
+.view-version-menu {
     position: relative; /* anchor for the floating menu */
     display: inline-block; /* sit beside other navbar items */
 }
 
 .view-menu > summary,
 .lang-menu > summary,
-.user-menu > summary {
+.user-menu > summary,
+.column-menu > summary,
+.view-version-menu > summary {
     cursor: pointer; /* show a hand cursor over the icon */
     list-style: none; /* hide the default disclosure triangle */
 }
 
 .view-menu > summary::-webkit-details-marker,
 .lang-menu > summary::-webkit-details-marker,
-.user-menu > summary::-webkit-details-marker {
+.user-menu > summary::-webkit-details-marker,
+.column-menu > summary::-webkit-details-marker,
+.view-version-menu > summary::-webkit-details-marker {
     display: none; /* hide the triangle in Safari */
 }
 
 .view-menu ul,
 .lang-menu ul,
-.user-menu ul {
+.user-menu ul,
+.column-menu ul,
+.view-version-menu ul {
     position: absolute; /* float over the page */
     top: 100%; /* directly below the icon */
     right: 0; /* align to right edge of icon */
@@ -96,7 +105,9 @@ body {
 
 .view-menu ul a,
 .lang-menu ul a,
-.user-menu ul a {
+.user-menu ul a,
+.column-menu ul a,
+.view-version-menu ul a {
     display: block; /* make the whole row clickable */
     padding: 0.4rem 1rem;
     white-space: nowrap; /* keep menu items on one line */
@@ -104,8 +115,72 @@ body {
 
 .view-menu ul a:hover,
 .lang-menu ul a:hover,
-.user-menu ul a:hover {
+.user-menu ul a:hover,
+.column-menu ul a:hover,
+.view-version-menu ul a:hover {
     background: #f0f0f0;
+}
+
+/* the "..." of a table and its menu are never bold, not even in the bold table header cell */
+.column-menu {
+    font-weight: normal;
+}
+
+/* the up / down icons behind a column header that sort the rows by the column: grey and
+   never bold, and the icon of the order that the page shows in the text colour */
+.sort-icon {
+    font-weight: normal;
+    color: #aaa;
+    margin-left: 0.15em;
+}
+
+.sort-icon.sort-active {
+    color: inherit;
+}
+
+/* a sub header inside a popup menu e.g. "columns and values" and "as" of the column menu */
+.column-menu ul .menu-header {
+    padding: 0.4rem 1rem 0.1rem;
+    color: #777;
+    font-size: 0.85em;
+    white-space: nowrap;
+}
+
+/* the charts of a table beside each other, each at least a readable width, wrapping if the screen is narrower */
+.chart-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: flex-start;
+}
+
+.chart-row > svg {
+    max-width: 100%;
+    height: auto;
+}
+
+/* the line above the charts of a table shown without the table: the header of the table stays
+   centred in the middle column and the "..." menu of the table sits in the top right corner */
+.chart-head {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    width: 100%;
+}
+
+.chart-head > :not(.chart-corner) {
+    grid-column: 2;
+}
+
+.chart-head > .chart-corner {
+    grid-column: 3;
+    text-align: right;
+}
+
+/* the full width line below the title that puts the view version menu in the right corner */
+.view-version-corner {
+    width: 100%;
+    text-align: right;
 }
 
 
@@ -254,6 +329,13 @@ body {
 /* heading stays prominent while the inline action stays unobtrusive */
 .heading-icon-inline {
     font-size: 0.6rem;
+    vertical-align: middle;
+}
+
+/* add or change icon link beside a form field e.g. behind the source selector: the size of the */
+/* field label, so the icon is easy to hit */
+.form-icon-inline {
+    font-size: 1rem;
     vertical-align: middle;
 }
 
@@ -536,4 +618,228 @@ a:hover {
 }
 .password-field:has(.show-password:checked) .password-icon-hide {
     display: inline-block;
+}
+
+/* the read only tree of the system configuration (web/helper/config_tree): a toolbar with the
+   search and the scope chips above the top level keys as cards in up to three columns; a node
+   opens and closes without javascript, so the marker shows + if closed and - if open; the
+   colors are the zukunft.com grey (#9ea09e) and blues (#385eb7 links, #274b8f dark, #b9c6d6 lines) */
+.config-toolbar {
+    display: grid;
+    gap: 0.75rem;
+    background: #f9fafb;
+    border: 1px solid #b9c6d6;
+    border-radius: 8px;
+    padding: 0.875rem;
+    margin-bottom: 1.25rem;
+}
+/* the full width of the main container, which otherwise shrinks each part to its content,
+   so that the columns have room and all search hits have the same width */
+.config-toolbar,
+.config-columns,
+.config-hit-head,
+.config-hit {
+    align-self: stretch;
+}
+.config-search {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+.config-search input {
+    flex: 1 1 14rem;
+    min-width: 0;
+    font: inherit;
+    padding: 0.4rem 0.6rem;
+    border: 1px solid #b9c6d6;
+    border-radius: 6px;
+    background: #fff;
+    color: #274b8f;
+}
+.config-search input:focus-visible,
+.config-node > summary:focus-visible {
+    outline: 2px solid #385eb7;
+    outline-offset: 2px;
+}
+.config-scope {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.375rem;
+    list-style: none;
+    padding-left: 0;
+    margin: 0.75rem 0 0;
+}
+.config-scope li {
+    padding: 0.15rem 0.75rem;
+    border: 1px solid #dee2e6;
+    border-radius: 999px;
+    background: #fff;
+    font-size: 0.85rem;
+}
+.config-scope li a {
+    text-decoration: none;
+}
+.config-scope li.config-scope-shown {
+    border-color: #385eb7;
+    background: #f8f9fa;
+    color: #274b8f;
+    font-weight: 500;
+}
+.config-columns {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+    gap: 1rem;
+    align-items: start;
+    text-align: left; /* the keys read as a list, not as the body's centred text */
+}
+.config-tree {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+    list-style: none;
+    padding-left: 0;
+    margin: 0.375rem 0 0;
+}
+.config-column > .config-tree > li > .config-node,
+.config-column > .config-tree > li > dl {
+    background: #fff;
+    border: 1px solid #b9c6d6;
+    border-radius: 6px;
+    padding: 0.5rem 0.875rem;
+}
+/* a top level key without keys below it e.g. "job" with only its tooltip is a card like the
+   others, with its name behind the place of the +/- marker and without the row line */
+.config-column > .config-tree > li > dl {
+    margin-left: 0;
+    padding-left: calc(0.875rem + 1.1em);
+}
+.config-column > .config-tree > li > dl > dt {
+    font-weight: 500;
+    color: #274b8f;
+}
+.config-column > .config-tree > li > dl > dt,
+.config-column > .config-tree > li > dl > dd {
+    border-bottom: none;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+/* each level below a key starts one step to the right, marked by a thin line */
+.config-node > .config-tree {
+    padding-left: 1rem;
+    margin-left: 0.3rem;
+    border-left: 1px solid #dee2e6;
+}
+/* a setting row starts behind the +/- marker of the keys of the same level,
+   so a value is always indented compared to the next key with entries below it */
+.config-tree > li > dl {
+    margin-left: 1.1em;
+}
+.config-node > summary {
+    list-style: none;
+    cursor: pointer;
+    font-weight: 500;
+    color: #274b8f;
+}
+.config-node > summary::-webkit-details-marker {
+    display: none;
+}
+/* a fixed width marker, so the key names of one level and the setting rows line up */
+.config-node > summary::before {
+    content: "+";
+    display: inline-block;
+    width: 1.1em;
+    color: #9ea09e;
+}
+.config-node[open] > summary::before {
+    content: "\2212";
+}
+.config-tree dl,
+.config-hit dl {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    margin: 0;
+}
+.config-tree dt,
+.config-tree dd,
+.config-hit dt,
+.config-hit dd {
+    padding: 0.25rem 0;
+    border-bottom: 1px dashed #dee2e6;
+    margin: 0;
+}
+/* no underline, so that the names of the settings read like the names of the keys; the cursor hints the tooltip */
+.config-tree dt[title] {
+    cursor: help;
+}
+.config-tree dd,
+.config-hit dd {
+    font-family: ui-monospace, monospace;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+    padding-left: 1rem;
+    color: #274b8f;
+}
+.config-unit {
+    color: #9ea09e;
+    font-size: 0.8rem;
+    margin-left: 0.25rem;
+}
+/* the config.yaml value behind a database value that differs from it; a darker shade of the
+   zukunft.com grey, because unlike the unit this small text is the only hint that the value differs */
+.config-file-value {
+    color: #6e706e;
+    font-size: 0.8rem;
+    margin-left: 0.5rem;
+}
+/* inline, so that the config.yaml value stays behind the value that can be changed */
+.config-edit {
+    display: inline-block;
+}
+.config-edit > summary {
+    cursor: pointer;
+    list-style: none;
+}
+.config-edit > summary::-webkit-details-marker {
+    display: none;
+}
+.config-edit form {
+    display: flex;
+    gap: 0.25rem;
+}
+.config-save {
+    padding: 0 0.375rem;
+}
+.config-hit-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.625rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.625rem;
+}
+.config-hit {
+    background: #fff;
+    border: 1px solid #b9c6d6;
+    border-radius: 6px;
+    padding: 0.5rem 0.875rem;
+    margin-bottom: 0.625rem;
+    text-align: left;
+}
+/* a hit shows the tooltip next to the value, so the long text wraps instead of the name */
+.config-hit dl {
+    grid-template-columns: max-content minmax(0, 1fr);
+}
+.config-hit dd {
+    text-align: left;
+}
+.config-path {
+    font-family: ui-monospace, monospace;
+    font-size: 0.78rem;
+    color: #9ea09e;
+}
+.config-hit mark {
+    background: #dbe4f5;
+    color: inherit;
+    border-radius: 2px;
+    padding: 0 1px;
 }

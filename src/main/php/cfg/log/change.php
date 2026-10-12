@@ -286,7 +286,10 @@ class change extends change_log
         $sc->set_fields(self::FLD_NAMES);
         $sc->set_join_fields(array(user_db::FLD_NAME), user::class);
         $sc->set_join_fields(array(change_fields::FLD_TABLE), change_field::class);
-        $sc->set_order(self::FLD_TIME, sql::ORDER_DESC);
+        // the change time is the transaction time, so every change of one save has the same time
+        // (see the TIME_NOT_NULL default of FLD_TIME); the change id is the write sequence and
+        // therefore decides which of them a query with a row limit returns
+        $sc->set_order(self::FLD_TIME, sql::ORDER_DESC, '', self::FLD_ID);
 
         return $qp;
     }

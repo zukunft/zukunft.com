@@ -27,7 +27,7 @@ SELECT term_view_update_log_000010000_user
 SELECT term_view_update_log_000010000_user
        (3::bigint,
         2::smallint,
-        900::smallint,
+        770::smallint,
         null::bigint,
         1::bigint,
         0::bigint);

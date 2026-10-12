@@ -34,12 +34,12 @@ SELECT term_view_update_log_00000400001
 SELECT term_view_update_log_00000400001
        (3::bigint,
         2::smallint,
-        726::smallint,
+        758::smallint,
         'main word'::text,
         1::smallint,
         null::text,
         null::smallint,
         1::bigint,
-        730::smallint,
+        765::smallint,
         null::smallint,
         3::smallint);

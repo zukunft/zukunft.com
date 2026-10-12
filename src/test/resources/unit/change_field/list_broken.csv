@@ -1,0 +1,5 @@
+change_field_id,table_id,change_field_name,code_id,description
+1,27,word_name,,
+
+2,27,plural,,"the plural, if it is not the word with an s"
+3,27

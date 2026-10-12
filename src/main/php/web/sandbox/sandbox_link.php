@@ -95,8 +95,11 @@ class sandbox_link extends sandbox
      */
     function url_mapper(array $url_array, user_message $msg, data_object|null $dto = null): user_message
     {
-        parent::url_mapper($url_array, $msg, $dto);
-        if ($msg->is_ok()) {
+        $map_msg = new user_message($msg->usr); // the problems of the parent mapping, merged into $msg right away
+        parent::url_mapper($url_array, $map_msg, $dto);
+        $msg->merge($map_msg);
+        // the own fields depend on the parent mapping e.g. of the id, not on an unrelated earlier error
+        if ($map_msg->is_ok()) {
             // the linked objects are set in the child object
             // e.g. the view is set in the view_relation class
             if (array_key_exists(url_var::TYPE, $url_array)) {

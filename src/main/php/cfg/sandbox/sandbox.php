@@ -353,8 +353,10 @@ class sandbox extends db_object_seq_id_user
         // map the fields whenever the row has been mapped (id set), not based on $msg->is_ok(),
         // because an error left on $msg by an earlier operation must not lead to a half mapped object
         if ($this->id() != 0) {
-            if (!$load_std) {
-                $this->usr_cfg_id = $db_row[sql_db::TBL_USER_PREFIX . $id_fld];
+            // e.g. a row without user sandbox join does not include the user id field
+            $usr_id_fld = sql_db::TBL_USER_PREFIX . $id_fld;
+            if (!$load_std and array_key_exists($usr_id_fld, $db_row)) {
+                $this->usr_cfg_id = $db_row[$usr_id_fld];
             }
             if (array_key_exists(user_db::FLD_ID, $db_row)) {
                 $this->set_owner_id($db_row[user_db::FLD_ID]);
@@ -3083,8 +3085,13 @@ class sandbox extends db_object_seq_id_user
             }
         }
 
-        // check e.g. if a preserved name is used and if yes add a message and solution to $msg
-        if ($this->check_save($msg)) {
+        // check e.g. if a preserved name is used and if yes add a message and solution to $msg;
+        // the refresh of the derived fields depends on this check only, because an unrelated
+        // earlier problem of the request says nothing about the fields of this object
+        $chk_msg = new user_message($msg->usr); // the verdict of the save checks, merged into $msg right away
+        $this->check_save($chk_msg);
+        $msg->merge($chk_msg);
+        if ($chk_msg->is_ok()) {
             $this->reload_objects($msg);
         }
 
@@ -3337,14 +3344,25 @@ class sandbox extends db_object_seq_id_user
 
         global $db_con;
 
-        // if this object has related objects delete the related object before deleting this
-        $this->del_links($msg);
+        // if this object has related objects delete the related object before deleting this;
+        // an unrelated earlier problem of the request says nothing about the links of this object
+        $lnk_msg = new user_message($msg->usr); // the verdict of the link deletes, merged into $msg right away
+        $this->del_links($lnk_msg);
+        $msg->merge($lnk_msg);
 
-        // actually delete to object
-        $sc = $db_con->sql_creator();
-        // TODO include deleting of user excludes in the sql function
-        $qp = $this->sql_delete($sc, $msg, new sql_type_list([sql_type::LOG]));
-        $db_con->delete($qp, 'del and log ' . $this->dsp_id(), $msg);
+        // a value or a triple that is left names this object in its key, so deleting the object
+        // anyway would leave a row pointing to an object that does not exist any more
+        if ($lnk_msg->is_ok()) {
+            // actually delete to object
+            $sc = $db_con->sql_creator();
+            // TODO include deleting of user excludes in the sql function
+            $qp = $this->sql_delete($sc, $msg, new sql_type_list([sql_type::LOG]));
+            $db_con->delete($qp, 'del and log ' . $this->dsp_id(), $msg);
+        } else {
+            $msg->add(msg_id::FAILED_TO_DELETE_UNUSED, [
+                msg_id::VAR_CLASS_NAME => $this::class
+            ]);
+        }
 
         return $msg->is_ok();
     }

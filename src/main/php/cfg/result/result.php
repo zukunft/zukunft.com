@@ -71,18 +71,22 @@ include_once paths::MODEL_GROUP . 'group.php';
 include_once paths::MODEL_GROUP . 'group_db.php';
 include_once paths::MODEL_GROUP . 'group_id.php';
 include_once paths::MODEL_GROUP . 'group_list.php';
+include_once paths::MODEL_GROUP . 'result_id.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_HELPER . 'db_object_multi.php';
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
+include_once paths::MODEL_RESULT . 'result_list.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_multi.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_value.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VALUE . 'value_base.php';
+include_once paths::MODEL_VALUE . 'value_list.php';
 include_once paths::SHARED_CONST . 'chars.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::SHARED_TYPES . 'element_types.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
@@ -101,6 +105,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\element\element_list;
 use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\formula\expression;
 use Zukunft\ZukunftCom\main\php\cfg\formula\figure;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;
@@ -109,6 +114,7 @@ use Zukunft\ZukunftCom\main\php\cfg\group\group;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_db;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_id;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_list;
+use Zukunft\ZukunftCom\main\php\cfg\group\result_id;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_multi;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
@@ -117,9 +123,11 @@ use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_value;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
 use Zukunft\ZukunftCom\main\php\shared\const\chars;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\element_types;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
@@ -162,6 +170,23 @@ class result extends sandbox_value
     const array FLD_ALL_OWNER = result_db::FLD_ALL_OWNER;
     const array FLD_ALL_CHANGER = result_db::FLD_ALL_CHANGER;
 
+    // the type of the source_group_id field by the result table: the bigint of the prime and main
+    // table, char(112) of the standard table and text of the big table; by the table and not by
+    // the source group, so that each prepared insert of a table has always the same field types
+    const array SRC_GRP_FIELD_TYPES = [
+        sql_type::PRIME->value => sql_field_type::INT,
+        sql_type::MAIN->value => sql_field_type::INT,
+        sql_type::MOST->value => sql_field_type::KEY_512,
+        sql_type::BIG->value => sql_field_type::TEXT,
+    ];
+
+    // the tables that a source group can move a result to, each with the tables of the own
+    // phrases that are smaller, in the order of the fallback load (see load_moved)
+    const array MOVED_FROM_TABLE_TYPES = [
+        sql_type::MOST->value => [sql_type::PRIME, sql_type::MAIN],
+        sql_type::BIG->value => [sql_type::PRIME, sql_type::MAIN, sql_type::MOST],
+    ];
+
 
     /*
      * object vars
@@ -193,6 +218,18 @@ class result extends sandbox_value
     //                                            if this is later than the last update the result needs to be updated
     private string $symbol = '';               // the symbol of the related formula element
 
+    // the values, formulas and results that the calculation of this result has used, filled only
+    // if the result has been loaded for its page (see api_json_array), otherwise null
+    public ?value_list $values_used = null;
+    public ?formula_list $formulas_used = null;
+    public ?result_list $results_used = null;
+    // the right side of the formula split into parts, each the shown text and the figure used or
+    // null for an operator text, filled only for the result page like the used lists above
+    public ?array $expression_parts = null;
+    // the bigger table in which the fallback load looks for a result that its source group has
+    // moved there (see load_moved), null if the result is in the table of its source group
+    private ?sql_type $moved_table_type = null;
+
 
     /*
      * construct and map
@@ -212,6 +249,7 @@ class result extends sandbox_value
         $this->set_grp(new group($this->get_user()));
         $this->src_grp = new group($this->get_user());
         $this->add_info = null;
+        $this->moved_table_type = null;
         $this->set_id(0);
     }
 
@@ -227,17 +265,28 @@ class result extends sandbox_value
     function row_mapper_multi(?array $db_row, user_message $msg, string $ext, string $id_fld = '', bool $one_id_fld = true): bool
     {
         $lib = new library();
-        $result = parent::row_mapper_multi($db_row, $msg, $ext, result_fields::FLD_ID);
+        $result = false;
+        if ($db_row !== null and $db_row !== []) {
+            // a row of the group keyed result tables carries the text group key, a row of the
+            // prime and main tables the phrase id columns, and a union of both kinds shows an
+            // empty key for the latter, so the key decides the group (see set_grp_by_row)
+            $one_id_fld = $this->set_grp_by_row($db_row, $msg, result_fields::FLD_ID,
+                $this->id_fields_main(1, result_id::MAIN_PHRASES_ALL));
+            $result = parent::row_mapper_multi($db_row, $msg, $ext, result_fields::FLD_ID, $one_id_fld);
+        }
         if ($result) {
-            // only the id is mapped, because the result row does not carry the formula name;
-            // the direct int assign would fatal on the formula typed var (see api_json_array
-            // for the on demand load of the name)
+            // only the id is mapped, because the result row does not carry the formula name
+            // (see api_json_array for the on demand load of the name)
             $this->frm = new formula($this->get_user());
-            $this->frm->set_id($db_row[formula_fields::FLD_ID]);
-            if (substr($ext, 0, 2) == group_id::TBL_EXT_PHRASE_ID) {
-                $this->src_grp->set_id((int)$db_row[result_fields::FLD_SOURCE_GRP]);
-            } else {
-                $this->src_grp->set_id($db_row[result_fields::FLD_SOURCE_GRP]);
+            $this->frm->set((int)$db_row[formula_fields::FLD_ID]);
+            // a result imported without a context has no source group in the database
+            $src_grp_id = $db_row[result_fields::FLD_SOURCE_GRP] ?? null;
+            if ($src_grp_id !== null and $src_grp_id !== '') {
+                if (substr($ext, 0, 2) == group_id::TBL_EXT_PHRASE_ID) {
+                    $this->src_grp->set_id((int)$src_grp_id);
+                } else {
+                    $this->src_grp->set_id($src_grp_id);
+                }
             }
             $this->set_number($db_row[sandbox_multi::FLD_VALUE]);
             $this->set_owner_id($db_row[user_db::FLD_ID]);
@@ -264,14 +313,17 @@ class result extends sandbox_value
 
         parent::api_mapper($api_json, $msg);
 
-        if (array_key_exists(json_fields::PHRASES, $api_json)) {
-            $phr_lst = new phrase_list($this->get_user());
-            if ($phr_lst->api_mapper($api_json[json_fields::PHRASES], $msg)) {
-                $this->grp()->set_phrase_list($phr_lst);
-            }
-        }
         if (array_key_exists(json_fields::ID, $api_json)) {
             $this->set_id($api_json[json_fields::ID]);
+        }
+        // the phrases define the result, so their group id wins over the id 0 sent for a new result;
+        // an empty list (the api to the frontend omits the phrases by default) keeps the given id
+        if (array_key_exists(json_fields::PHRASES, $api_json)) {
+            $phr_lst = new phrase_list($this->get_user());
+            $mapped = $phr_lst->api_mapper($api_json[json_fields::PHRASES], $msg);
+            if ($mapped and !$phr_lst->is_empty()) {
+                $this->set_id($this->grp()->set_phrase_list($phr_lst));
+            }
         }
         if (array_key_exists(json_fields::NUMBER, $api_json)) {
             $value = $api_json[json_fields::NUMBER];
@@ -437,6 +489,8 @@ class result extends sandbox_value
             if (!$typ_lst->include_phrases() and !$typ_lst->phrase_names()) {
                 if (!$this->grp()->phrase_list()->loaded()) {
                     $this->grp()->load_phrase_names($msg);
+                    // with the from and to of its triples like the phrases of a value
+                    $this->grp()->phrase_list()->load_triple_sides($msg);
                 }
                 $vars[json_fields::PHRASES] = $this->grp()->phrase_list()->api_json_array($typ_lst, $msg);
             }
@@ -446,14 +500,74 @@ class result extends sandbox_value
                     $this->frm->load_by_id($this->formula_id(), $msg);
                 }
                 if ($this->frm->name() != '') {
-                    $vars[json_fields::FORMULA] = $this->frm->api_json_array([], $msg, $usr);
+                    // with the terms of the latex, which the page shows with a link per term
+                    $vars[json_fields::FORMULA] = array_merge(
+                        $this->frm->api_json_array([], $msg, $usr),
+                        $this->frm->api_latex_terms_array($typ_lst, $msg, $usr));
                 }
+            }
+            if ($this->expression_parts === null and !$typ_lst->test_mode() and $this->id() != 0) {
+                $this->load_expression_parts($msg);
+            }
+            if (!empty($this->expression_parts)) {
+                $vars[json_fields::EXPRESSION_PARTS] = $this->expression_parts_json($msg, $usr);
             }
             if ($this->last_update() != null) {
                 $vars[json_fields::LAST_UPDATE] = $this->last_update()->format(DateTimeInterface::ATOM);
             }
+            // the used lists are slow to build, so only the result views that show them ask for them
+            if ($typ_lst->incl_used()) {
+                $vars = array_merge($vars, $this->api_used_array($typ_lst, $msg, $usr));
+            }
+            // the changes and the overwrites tabs of the result default page
+            $vars = array_merge($vars, $this->api_changes_array($typ_lst, $msg, $usr));
+            $vars = array_merge($vars, $this->api_overwrites_array($typ_lst, $msg, $usr));
         }
 
+        return $vars;
+    }
+
+    /**
+     * what the number is based on: the values, the formulas and the results used for the
+     * calculation; a loaded list is emitted even if it is empty, because only the empty list tells
+     * the page that nothing has been used, whereas a missing list says that the result has not
+     * been asked for it and the page then shows no column instead of a wrong "nothing used"
+     * (see ui_list::values_used); each list is filtered by the read permission first, so that a
+     * list of only unreadable entries reads like an empty one (idor, see value::api_json_array)
+     *
+     * @param api_type_list $typ_lst configuration for the api message
+     * @param user_message $msg to collect the mapping problems for the requesting user
+     * @param user|null $usr the user for whom the api message should be created
+     * @return array the used lists entries of the api json array
+     */
+    private function api_used_array(api_type_list $typ_lst, user_message $msg, ?user $usr): array
+    {
+        $vars = [];
+        if ($this->values_used == null and !$typ_lst->test_mode() and $this->id() != 0) {
+            $this->load_values_used($msg);
+        }
+        $this->values_used?->filter_readable_by($usr);
+        if ($this->values_used != null) {
+            // INCL_PHRASES so each value carries its group phrases, which the frontend
+            // needs for the value name
+            $vars[json_fields::VALUES] = $this->values_used->api_json_array(
+                new api_type_list([api_types::INCL_PHRASES]), $msg, $usr);
+        }
+        if ($this->results_used == null and !$typ_lst->test_mode() and $this->id() != 0) {
+            $this->load_results_used($msg);
+        }
+        $this->results_used?->filter_readable_by($usr);
+        if ($this->results_used != null) {
+            $vars[json_fields::RESULTS] = $this->results_used->api_json_array(
+                new api_type_list([api_types::INCL_PHRASES]), $msg, $usr);
+        }
+        if ($this->formulas_used == null and !$typ_lst->test_mode() and $this->id() != 0) {
+            $this->load_formulas_used($msg);
+        }
+        $this->formulas_used?->filter_readable_by($usr);
+        if ($this->formulas_used != null) {
+            $vars[json_fields::FORMULAS] = $this->formulas_used->api_json_array([], $msg, $usr);
+        }
         return $vars;
     }
 
@@ -468,7 +582,166 @@ class result extends sandbox_value
      */
     function id(): int|string
     {
-        return $this->grp()->id();
+        return $this->text_key_if_moved($this->grp()->id());
+    }
+
+    /**
+     * the key of the result in the database, which is the text key also for a prime group if the
+     * source group has moved the result to the standard or the big table (see table_type)
+     * @return int|string the database key of the result
+     */
+    function grp_key_id(): int|string
+    {
+        return $this->text_key_if_moved(parent::grp_key_id());
+    }
+
+    /**
+     * @return int|string the group id that selects the row, the text key if the result has been moved
+     */
+    protected function grp_where_id(): int|string
+    {
+        return $this->text_key_if_moved(parent::grp_where_id());
+    }
+
+    /**
+     * @param int|string $key the key of the result phrases as the group uses it
+     * @return int|string the text key of a prime group if the result has been moved to a text table
+     */
+    private function text_key_if_moved(int|string $key): int|string
+    {
+        $result = $key;
+        if ($this->src_grp_moves_table() and is_int($key) and $key != 0) {
+            $result = new group_id()->int2key($key);
+        }
+        return $result;
+    }
+
+
+    /*
+     * table selection
+     */
+
+    /**
+     * the source group is written to the source_group_id column of the result table, which is a
+     * bigint in the prime and main table, char(112) in the standard table and text in the big table,
+     * so the result table must be big enough also for the source group, not only for the result
+     * @return bool true if the source group has moved the result to a bigger table
+     */
+    private function src_grp_moves_table(): bool
+    {
+        return $this->moved_to_table_type() != sql_type::PRIME;
+    }
+
+    /**
+     * @return sql_type the bigger table type that the source group or the fallback load has
+     *                  moved the result to, or PRIME if the table of the own phrases is used
+     */
+    private function moved_to_table_type(): sql_type
+    {
+        $typ = $this->src_table_type();
+        if ($this->moved_table_type == sql_type::BIG) {
+            $typ = sql_type::BIG;
+        } elseif ($this->moved_table_type == sql_type::MOST and $typ == sql_type::PRIME) {
+            $typ = sql_type::MOST;
+        }
+        return $typ;
+    }
+
+    /**
+     * @return sql_type the smallest result table type whose source_group_id column fits the source group
+     */
+    private function src_table_type(): sql_type
+    {
+        $typ = sql_type::PRIME;
+        if ($this->src_grp !== null and !$this->src_grp->is_prime()) {
+            $typ = sql_type::MOST;
+            if ($this->src_grp->is_big()) {
+                $typ = sql_type::BIG;
+            }
+        }
+        return $typ;
+    }
+
+    /**
+     * public because the field type decides how the source group is written, so it is unit tested
+     * @return sql_field_type the type of the source_group_id column of the result table
+     */
+    function src_grp_field_type(): sql_field_type
+    {
+        return self::SRC_GRP_FIELD_TYPES[$this->table_type()->value];
+    }
+
+    /**
+     * the key fields of the insert: the text key if the source group has moved the result to a
+     * text table, because the group itself would give the phrase id columns of the prime table
+     * @param user_message $msg to collect the problems of the key creation
+     * @return sql_par_field_list the key fields of the insert statement
+     */
+    protected function id_fvt_insert(user_message $msg): sql_par_field_list
+    {
+        if ($this->src_grp_moves_table()) {
+            $lst = new sql_par_field_list();
+            $key_typ = $this->is_big() ? sql_field_type::TEXT : sql_field_type::KEY_512;
+            $lst->add_field(group_fields::FLD_ID, $this->grp_key_id(), $key_typ);
+        } else {
+            $lst = parent::id_fvt_insert($msg);
+        }
+        return $lst;
+    }
+
+    function is_prime(): bool
+    {
+        return (!$this->src_grp_moves_table() and parent::is_prime());
+    }
+
+    function is_main(): bool
+    {
+        return (!$this->src_grp_moves_table() and parent::is_main());
+    }
+
+    function is_big(): bool
+    {
+        return ($this->moved_to_table_type() == sql_type::BIG or parent::is_big());
+    }
+
+    /**
+     * public because the fallback load depends on it, so it is unit tested
+     * @return array the bigger tables that a source group may have moved this result to, in the
+     *               order of the fallback load, empty for a result that is already in the big table
+     */
+    function moved_table_types(): array
+    {
+        $own_typ = $this->table_type();
+        $types = [];
+        foreach (self::MOVED_FROM_TABLE_TYPES as $typ => $from_types) {
+            if (in_array($own_typ, $from_types)) {
+                $types[] = sql_type::from($typ);
+            }
+        }
+        return $types;
+    }
+
+    function table_type(): sql_type
+    {
+        $typ = parent::table_type();
+        if ($this->src_grp_moves_table()) {
+            $typ = sql_type::MOST;
+            if ($this->is_big()) {
+                $typ = sql_type::BIG;
+            }
+        }
+        return $typ;
+    }
+
+    function table_extension(): string
+    {
+        $ext = parent::table_extension();
+        // like group_id::table_extension the standard and the big table have no extension,
+        // because the table type already adds e.g. "_big" to the query name
+        if ($this->src_grp_moves_table()) {
+            $ext = '';
+        }
+        return $ext;
     }
 
     function set_value(float|DateTime|string|null $val): void
@@ -723,8 +996,75 @@ class result extends sandbox_value
                 $result = $this->id();
             }
         }
+        // a result that its source group has moved to a bigger table has no row in its own table
+        if ($result === 0 and $id != 0) {
+            $load_sql = fn(sql_creator $sc, sql_type $typ) => $this->load_sql_by_id_moved($sc, $id, $typ);
+            if ($this->load_moved($load_sql, $msg)) {
+                $result = $this->id();
+            }
+        }
 
         return $result;
+    }
+
+    /**
+     * the query of the fallback load by id in a table that the source group may have moved the
+     * result to; public, because the query must match its fixture, so it is unit tested
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param int|string $id the id of the result as the table of its own phrases uses it
+     * @param sql_type $tbl_typ the bigger table to look in e.g. MOST for the standard result table
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
+     */
+    function load_sql_by_id_moved(sql_creator $sc, int|string $id, sql_type $tbl_typ): sql_par
+    {
+        $this->moved_table_type = $tbl_typ;
+        return $this->load_sql_by_id($sc, $id);
+    }
+
+    /**
+     * the query of the fallback load by group in a table that the source group may have moved the
+     * result to; public, because the query must match its fixture, so it is unit tested
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param group $grp the phrase group of the result
+     * @param sql_type $tbl_typ the bigger table to look in e.g. MOST for the standard result table
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
+     */
+    function load_sql_by_grp_moved(sql_creator $sc, group $grp, sql_type $tbl_typ): sql_par
+    {
+        $this->moved_table_type = $tbl_typ;
+        return $this->load_sql_by_grp($sc, $grp);
+    }
+
+    /**
+     * load the row from a bigger table that the source group may have moved the result to, if the
+     * table of its own phrases has no row (see table_type); the tables are tried in the order of
+     * MOVED_FROM_TABLE_TYPES, so the smaller table that fits is found first
+     *
+     * @param callable $load_sql creates the query for the given sql creator and table type
+     * @param user_message $msg to collect the problems of the load
+     * @return bool true if the result has been found in one of the bigger tables
+     */
+    private function load_moved(callable $load_sql, user_message $msg): bool
+    {
+        global $db_con;
+        $loaded = false;
+        foreach ($this->moved_table_types() as $tbl_typ) {
+            if (!$loaded) {
+                $qp = $load_sql($db_con->sql_creator(), $tbl_typ);
+                $db_row = $db_con->get1($qp, $msg);
+                if ($db_row !== false and $db_row !== null and $db_row !== []) {
+                    $this->row_mapper_multi($db_row, $msg, $qp->ext);
+                    $loaded = true;
+                }
+            }
+        }
+        // a result that is in none of the tables keeps the table of its own phrases
+        if (!$loaded) {
+            $this->moved_table_type = null;
+        }
+        return $loaded;
     }
 
     /**
@@ -751,6 +1091,11 @@ class result extends sandbox_value
                     $this->row_mapper_multi($db_row, $msg, $qp->ext);
                     $result = true;
                 }
+            }
+            // a result that its source group has moved to a bigger table has no row in its own table
+            if (!$result) {
+                $load_sql = fn(sql_creator $sc, sql_type $typ) => $this->load_sql_by_grp_moved($sc, $grp, $typ);
+                $result = $this->load_moved($load_sql, $msg);
             }
         }
 
@@ -935,12 +1280,15 @@ class result extends sandbox_value
                 }
             }
         }
-        if ($this->src_grp->phrase_list() != null) {
-            if ($this->src_grp->phrase_list()->empty()) {
+        // a result imported without a context has no source words to miss, so only a set group is checked
+        if ($this->src_grp->is_id_set()) {
+            if ($this->src_grp->phrase_list() != null) {
+                if ($this->src_grp->phrase_list()->empty()) {
+                    log_warning("Missing source words for the calculated value " . $this->id() . ' (group id ' . $this->src_grp->dsp_id() . ').', "result->load_phr_lst_src");
+                }
+            } else {
                 log_warning("Missing source words for the calculated value " . $this->id() . ' (group id ' . $this->src_grp->dsp_id() . ').', "result->load_phr_lst_src");
             }
-        } else {
-            log_warning("Missing source words for the calculated value " . $this->id() . ' (group id ' . $this->src_grp->dsp_id() . ').', "result->load_phr_lst_src");
         }
     }
 
@@ -978,11 +1326,255 @@ class result extends sandbox_value
      */
     function load_phrases(user_message $msg, bool $force_reload = false): void
     {
-        if ($this->id() > 0) {
+        // isset() and not "> 0", because the text key of a result e.g. "/x-" is no number
+        if ($this->isset()) {
             log_debug('for user ' . $this->get_user()->name);
             $this->load_phr_lst_src($msg, $force_reload);
             $this->load_phr_lst($msg, $force_reload);
         }
+    }
+
+    /**
+     * the phrases that name the numbers used to calculate this result: the source phrases that the
+     * calculation has saved with the result, or the phrases of the result itself if the source group
+     * is not set, e.g. because the result has been imported without a context,
+     * so that the result page can always show what the number is based on; returned with the
+     * selection type, because only the saved source phrases name the numbers exactly
+     *
+     * public because the selection rule is the base of the three used lists, so it is unit tested
+     *
+     * @param user_message $msg to collect any problem while loading the phrases
+     * @return array the phrases that select the numbers used for the calculation and true if a
+     *               number with any of them is related, which is the case for the fallback
+     */
+    function used_phrase_selection(user_message $msg): array
+    {
+        $this->load_phrases($msg);
+        $phr_lst = $this->src_grp?->phrase_list();
+        // the source phrases name exactly the numbers used, so a number must carry all of them;
+        // the result phrases of the fallback name the result, so any of them makes a number related
+        $any_phrase = false;
+        if ($phr_lst == null or $phr_lst->empty()) {
+            $phr_lst = $this->grp()->phrase_list();
+            $any_phrase = true;
+        }
+        return [$phr_lst ?? new phrase_list($this->get_user()), $any_phrase];
+    }
+
+    /**
+     * load the values used for this calculation into the in-memory values_used list so that
+     * api_json_array() can emit them under the INCL_RELATED flag, which the 'values used'
+     * component of the result default page shows e.g. the inhabitants of Switzerland in 2020
+     *
+     * @param user_message $msg to collect any problem while loading the values
+     * @return void
+     */
+    function load_values_used(user_message $msg): void
+    {
+        $val_lst = new value_list($this->get_user());
+        [$phr_lst, $any_phrase] = $this->used_phrase_selection($msg);
+        if (!$phr_lst->empty()) {
+            $val_lst->load_by_phr_lst($phr_lst, $msg, $any_phrase, value_list::read_limit());
+        }
+        $this->values_used = $val_lst;
+    }
+
+    /**
+     * load the results used for this calculation into the in-memory results_used list so that
+     * api_json_array() can emit them under the INCL_RELATED flag, which the 'results used'
+     * component of the result default page shows e.g. the increase used by a growth rate;
+     * this result itself is removed, because a page never lists what it shows
+     *
+     * @param user_message $msg to collect any problem while loading the results
+     * @return void
+     */
+    function load_results_used(user_message $msg): void
+    {
+        $res_lst = new result_list($this->get_user());
+        [$phr_lst, $any_phrase] = $this->used_phrase_selection($msg);
+        if (!$phr_lst->empty()) {
+            $res_lst->load_by_phrase_list($phr_lst, $msg, $any_phrase);
+            $res_lst->unset_by_id($this->id());
+        }
+        $this->results_used = $res_lst;
+    }
+
+    /**
+     * load the formulas that have calculated the used results into the in-memory formulas_used list
+     * so that api_json_array() can emit them under the INCL_RELATED flag, which the 'formulas used'
+     * component of the result default page shows; the formula of this result is not repeated,
+     * because the page title already names it
+     *
+     * @param user_message $msg to collect any problem while loading the formulas
+     * @return void
+     */
+    function load_formulas_used(user_message $msg): void
+    {
+        $frm_lst = new formula_list($this->get_user());
+        if ($this->results_used == null) {
+            $this->load_results_used($msg);
+        }
+        $frm_ids = [];
+        foreach ($this->results_used->lst() as $res) {
+            $frm_id = $res->formula_id();
+            if ($frm_id != 0 and $frm_id != $this->formula_id() and !in_array($frm_id, $frm_ids)) {
+                $frm_ids[] = $frm_id;
+            }
+        }
+        if ($frm_ids != []) {
+            $frm_lst->load_by_ids($frm_ids, $msg);
+        }
+        $this->formulas_used = $frm_lst;
+    }
+
+    /**
+     * load the right side of the formula with the figures used into expression_parts, so that the
+     * result page can show e.g. 5 * 60 with the 5 linked to the minutes; each figure is selected by
+     * element_group::figures() like the calculation does, and only for the saved source phrases,
+     * because the fallback of used_phrase_selection names related numbers, not the numbers used
+     *
+     * @param user_message $msg to collect any problem while selecting the figures
+     * @return void
+     */
+    function load_expression_parts(user_message $msg): void
+    {
+        $parts = [];
+        [$src_phr_lst, $any_phrase] = $this->used_phrase_selection($msg);
+        if (!$any_phrase and $this->formula_id() != 0) {
+            $exp = $this->frm->expression($msg);
+            $grp_parts = $this->element_group_parts($exp, $src_phr_lst, $msg);
+            $parts = $this->expression_parts($exp->r_part($msg), $grp_parts);
+        }
+        $this->expression_parts = $parts;
+    }
+
+    /**
+     * split the right side of a formula at each element group symbol into the texts and figures
+     * e.g. "{w104}*60" with the figure of the minutes for "{w104}" into the figure and "*60"
+     * public because the split is the base of the formula line of the result page, so it is unit tested
+     *
+     * @param string $ref_text the right side of the formula in the database reference format
+     * @param array $grp_parts the part of each element group by its symbol: the name and the figure or null
+     * @return array the ordered parts, each the shown text and the figure or null for an operator text
+     */
+    function expression_parts(string $ref_text, array $grp_parts): array
+    {
+        $parts = [];
+        $rest = $ref_text;
+        $next = $this->next_group_symbol($rest, $grp_parts);
+        while ($next !== null) {
+            [$pos, $symbol] = $next;
+            if ($pos > 0) {
+                $parts[] = [substr($rest, 0, $pos), null];
+            }
+            $parts[] = $grp_parts[$symbol];
+            $rest = substr($rest, $pos + strlen($symbol));
+            $next = $this->next_group_symbol($rest, $grp_parts);
+        }
+        if ($rest != '') {
+            $parts[] = [$rest, null];
+        }
+        return $parts;
+    }
+
+    /**
+     * the part of each element group of the expression for the source phrases of this result:
+     * the group name and the figure, which is null if not exactly one figure is found, because
+     * the calculation then creates one result per figure and this result names none of them
+     *
+     * @param expression $exp the expression of the formula that has calculated this result
+     * @param phrase_list $src_phr_lst the source phrases that have selected the numbers
+     * @param user_message $msg to collect any problem while selecting the figures
+     * @return array the name and the figure or null by the element group symbol
+     */
+    private function element_group_parts(expression $exp, phrase_list $src_phr_lst, user_message $msg): array
+    {
+        $grp_parts = [];
+        foreach ($exp->element_grp_lst($msg)->lst() as $elm_grp) {
+            $elm_grp->phr_lst = clone $src_phr_lst;
+            $symbol = $elm_grp->build_symbol();
+            $fig_lst = $elm_grp->figures($msg);
+            $fig = null;
+            if (count($fig_lst->lst()) == 1) {
+                $fig = $fig_lst->lst()[0];
+                $this->load_figure_phrases($fig, $msg);
+            }
+            $grp_parts[$symbol] = [$elm_grp->name(), $fig];
+        }
+        return $grp_parts;
+    }
+
+    /**
+     * load the phrase names of a figure, which the page needs to format the number e.g. as percent
+     * @param figure $fig the figure selected for an element group
+     * @param user_message $msg to collect any problem while loading the phrases
+     * @return void
+     */
+    private function load_figure_phrases(figure $fig, user_message $msg): void
+    {
+        $grp = $fig->obj()->grp();
+        if (!$grp->phrase_list()->loaded()) {
+            $grp->load_phrase_names($msg);
+        }
+    }
+
+    /**
+     * the position and the symbol of the element group symbol that comes first in the text,
+     * the longest one if two start at the same position
+     *
+     * @param string $text the remaining text of the formula
+     * @param array $grp_parts the part of each element group by its symbol
+     * @return array|null the position and the symbol or null if no symbol is in the text
+     */
+    private function next_group_symbol(string $text, array $grp_parts): ?array
+    {
+        $next = null;
+        foreach (array_keys($grp_parts) as $symbol) {
+            // an empty symbol would be found at every position and never shorten the text
+            if ($symbol != '') {
+                $pos = strpos($text, $symbol);
+                if ($pos !== false and $this->is_before($pos, $symbol, $next)) {
+                    $next = [$pos, $symbol];
+                }
+            }
+        }
+        return $next;
+    }
+
+    /**
+     * @param int $pos the position of the symbol found
+     * @param string $symbol the symbol found
+     * @param array|null $next the position and the symbol found so far or null
+     * @return bool true if the symbol found starts before the one so far or is longer at the same position
+     */
+    private function is_before(int $pos, string $symbol, ?array $next): bool
+    {
+        $before = true;
+        if ($next !== null) {
+            $before = ($pos < $next[0] or ($pos == $next[0] and strlen($symbol) > strlen($next[1])));
+        }
+        return $before;
+    }
+
+    /**
+     * the expression parts as api json: an operator text as text and a figure with its phrases,
+     * but a figure the requester may not read only by the name of its element group (idor)
+     *
+     * @param user_message $msg to collect the mapping problems for the requesting user
+     * @param user|null $usr the user for whom the api message should be created
+     * @return array the json array of each part in the order of the formula
+     */
+    private function expression_parts_json(user_message $msg, ?user $usr): array
+    {
+        $parts_json = [];
+        foreach ($this->expression_parts as [$text, $fig]) {
+            if ($fig !== null and $fig->is_readable_by($usr)) {
+                $parts_json[] = $fig->api_json_array(new api_type_list([api_types::INCL_PHRASES]), $msg, $usr);
+            } else {
+                $parts_json[] = [json_fields::TEXT => $text];
+            }
+        }
+        return $parts_json;
     }
 
     /**
@@ -1565,14 +2157,21 @@ class result extends sandbox_value
 
             // check if a database update is needed
             // or if a second results object with the database values
+            // the row may be in the table of the own phrases or in a bigger table that a source
+            // group has moved it to, so the load starts with the group id (see load_moved)
             $res_db = new result($this->get_user());
-            $res_db->load_by_id($this->id(), $msg);
-            $row_id = $res_db->id();
+            $row_id = $res_db->load_by_id($this->grp()->id(), $msg);
             $db_val = $res_db->number();
+            $row_found = ($row_id !== 0 and $row_id !== '');
+            // a row in another table than the one that fits the source group now is moved there
+            if ($row_found and $this->row_in_other_table($res_db)) {
+                $this->del_row_of_other_table($res_db, $msg);
+                $row_found = false;
+            }
 
             // if value exists, check it an update is needed
             // updates of results are not logged because they could be reproduced
-            if ($row_id > 0) {
+            if ($row_found) {
                 if ($db_con->sf($db_val) <> $db_con->sf($this->number())) {
                     $msg_txt = 'update result ' . sandbox_multi::FLD_VALUE . ' to ' . $this->number()
                         . ' from ' . $db_val . ' for ' . $this->dsp_id();
@@ -1603,6 +2202,32 @@ class result extends sandbox_value
         log_debug("id (" . $msg->get_row_id() . ")");
         return $msg->is_ok();
 
+    }
+
+    /**
+     * public because the save decides by it if the saved row must move, so it is unit tested
+     * @param result $res_db the result as it has been loaded from the database
+     * @return bool true if the saved row is in another table than the one that fits this result now
+     */
+    function row_in_other_table(result $res_db): bool
+    {
+        return $res_db->table_type() != $this->table_type();
+    }
+
+    /**
+     * remove the row of the table that does not fit the source group any more, so that the save
+     * inserts the result into the fitting table and no second row remains; without change log,
+     * because a result is derived data that the calculation recreates (def::MAIN_CLASSES_NO_CHANGE_LOG)
+     *
+     * @param result $res_db the result as it has been loaded from the other table
+     * @param user_message $msg to collect the problems of the delete
+     * @return void
+     */
+    private function del_row_of_other_table(result $res_db, user_message $msg): void
+    {
+        $res_lst = new result_list($this->get_user());
+        $res_lst->add($res_db);
+        $res_lst->db_delete_no_log($msg, null, result::class);
     }
 
 
@@ -1649,7 +2274,7 @@ class result extends sandbox_value
                 $lst->add_field(
                     result_fields::FLD_SOURCE . group_fields::FLD_ID,
                     $this->src_grp_id(),
-                    sql_field_type::INT
+                    $this->src_grp_field_type()
                 );
             }
             if ($sbx->formula_id() !== $this->formula_id()) {

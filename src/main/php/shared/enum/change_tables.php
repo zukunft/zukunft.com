@@ -43,13 +43,15 @@ enum change_tables: string
     // TODO should only contain the table names of past program versions
     //      to combine the log in case of a renamed class
     const string USER = 'users';
-    const int USER_ID = 1;
+    const int USER_ID = 21;
     const string USER_NAME = 'users';
     const string USER_COM = '';
     const string WORD = 'words';
+    const int WORD_ID = 27;
     const string WORD_USR = 'user_words';
     const string VERB = 'verbs';
     const string TRIPLE = 'triples';
+    const int TRIPLE_ID = 30;
     const string TRIPLE_USR = 'user_triples';
     const string VALUE = 'values';
     const string VALUE_USR = 'user_values';
