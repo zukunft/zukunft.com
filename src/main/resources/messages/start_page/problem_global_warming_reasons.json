@@ -298,6 +298,15 @@
       "name": "solution"
     },
     {
+      "name": "CBAM"
+    },
+    {
+      "name": "calculation"
+    },
+    {
+      "name": "public"
+    },
+    {
       "name": "gain"
     },
     {
@@ -730,6 +739,23 @@
       "to": "climate gas emissions"
     },
     {
+      "name": "CBAM calculation",
+      "from": "calculation",
+      "verb": "of",
+      "to": "CBAM"
+    },
+    {
+      "name": "public CBAM calculation",
+      "from": "CBAM calculation",
+      "verb": "kind of",
+      "to": "public"
+    },
+    {
+      "from": "public CBAM calculation",
+      "verb": "is a",
+      "to": "solution"
+    },
+    {
       "name": "climate adaptation",
       "description": "heat action plans, cooling, shaded and adjusted working hours, early warning and flood protection, so that the warming that can no longer be avoided costs fewer lives, less work and less property",
       "from": "adaptation",
@@ -751,6 +777,12 @@
     {
       "name": "reduce climate gas emissions (global warming solution)",
       "from": "reduce climate gas emissions",
+      "verb": "is a",
+      "to": "global warming solution"
+    },
+    {
+      "name": "public CBAM calculation (global warming solution)",
+      "from": "public CBAM calculation",
       "verb": "is a",
       "to": "global warming solution"
     },
@@ -1055,7 +1087,7 @@
     {"words": ["global warming", "reason", "labour productivity loss", "potential loss", "trillion", "EUR"], "number": "0.7722", "source": "Lancet Countdown (2024) report", "description": "the potential income loss of 2023 from the heat-related loss of labour capacity in the world, the 772.2 billion EUR of problem_global_warming.json in trillion EUR; 835 billion USD at the ECB 2023 average of 1.0813 USD per EUR"},
     {"words": ["global warming", "reason", "heat mortality", "potential loss", "trillion", "EUR"], "number": "0.222", "source": "Lancet Countdown (2024) report", "description": "the monetised value of the heat-related deaths of people over 65 in 2023 in the world, the 222 billion EUR of problem_global_warming.json in trillion EUR; 240 billion USD at the ECB 2023 average of 1.0813 USD per EUR"},
     {"words": ["global warming", "reason", "extreme weather", "potential loss", "trillion", "EUR"], "number": "0.1322", "source": "Newman & Noy (2023)", "description": "the annual cost 2000-2019 of the extreme weather attributable to climate change in the world, the 132.2 billion EUR of problem_global_warming.json in trillion EUR; 143 billion USD at the ECB 2023 average of 1.0813 USD per EUR"},
-    {"words": ["global warming", "reason", "climate gas emissions", "reduce climate gas emissions", "potential gain", "billion", "htp", "assumed"], "number": "35.18", "description": "the gain of the climate tariff on the loss of 2.2 trillion EUR that the climate gas emissions cause (solution_prio.json), calculated like the avoided welfare loss of problem_global_warming.json: the loss as a share of the world GDP of 110.047 trillion EUR, times the long run factor 16, the htp factor 1.15625 and the 1189.19 billion world htp, times the loss reduction of 8 percent of the carbon tariff"},
+    {"words": ["global warming", "reason", "climate gas emissions", "public CBAM calculation", "potential gain", "billion", "htp", "assumed"], "number": "35.18", "description": "the gain of the public CBAM calculation on the loss of 2.2 trillion EUR that the climate gas emissions cause (solution_prio.json), calculated like the avoided welfare loss of problem_global_warming.json: the loss as a share of the world GDP of 110.047 trillion EUR, times the long run factor 16, the htp factor 1.15625 and the 1189.19 billion world htp, times the loss reduction of 8 percent of the carbon tariff"},
     {"words": ["global warming", "reason", "labour productivity loss", "climate adaptation", "potential gain", "billion", "htp", "assumed"], "number": "46.31", "description": "the gain of cooling, shade and adjusted working hours on the loss of 0.7722 trillion EUR of the labour productivity, calculated like the avoided welfare loss of problem_global_warming.json with an assumed loss reduction of 30 percent"},
     {"words": ["global warming", "reason", "heat mortality", "climate adaptation", "potential gain", "billion", "htp", "assumed"], "number": "13.31", "description": "the gain of heat action plans and cooling on the loss of 0.222 trillion EUR of the heat mortality, calculated like the avoided welfare loss of problem_global_warming.json with an assumed loss reduction of 30 percent"},
     {"words": ["global warming", "reason", "extreme weather", "climate adaptation", "potential gain", "billion", "htp", "assumed"], "number": "5.29", "description": "the gain of early warning and flood protection on the loss of 0.1322 trillion EUR of the extreme weather, calculated like the avoided welfare loss of problem_global_warming.json with an assumed loss reduction of 20 percent"}

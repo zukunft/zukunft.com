@@ -37,6 +37,13 @@
       "name": "tariff"
     },
     {
+      "name": "CBAM",
+      "description": "the carbon border adjustment mechanism, a tariff on the climate gas emissions embedded in imported goods, operational in the EU since 2026"
+    },
+    {
+      "name": "calculation"
+    },
+    {
       "name": "price",
       "description": "amount of money required to buy something"
     },
@@ -437,6 +444,25 @@
       "from": "reduction",
       "verb": "of",
       "to": "climate gas emissions"
+    },
+    {
+      "name": "CBAM calculation",
+      "from": "calculation",
+      "verb": "of",
+      "to": "CBAM"
+    },
+    {
+      "name": "public CBAM calculation",
+      "description": "the calculation of the carbon border tariff by a public, source-verifiable tool, so that every importer and exporter can check the price of the embedded emissions; the leading measure of the solution reduce climate gas emissions and the part of the carbon border tariff that removes its main obstacle, the complexity of the calculation (concept paper section 3)",
+      "from": "CBAM calculation",
+      "verb": "kind of",
+      "to": "public"
+    },
+    {
+      "from": "public CBAM calculation",
+      "verb": "is a",
+      "to": "solution",
+      "description": "the public CBAM calculation is the global warming solution with the biggest gain, so the start page ranking names it as the solution of global warming"
     },
     {
       "name": "carbon leakage",
@@ -1427,7 +1453,7 @@
       "assigned": [
         "USD"
       ],
-      "description": "the conversion of an initial effort in billion USD into person years, calibrated on the carbon border tariff, whose effort in person years is the initial effort of the solution reduce climate gas emissions in problem_global_warming.json and whose effort in billion USD is the middle of its range in this file"
+      "description": "the conversion of an initial effort in billion USD into person years, calibrated on the carbon border tariff, whose effort in person years is the initial effort of the solution public CBAM calculation in problem_global_warming.json and whose effort in billion USD is the middle of its range in this file"
     },
     {
       "name": "initial effort of a climate solution",
@@ -1553,7 +1579,7 @@
     },
     {
       "words": [
-        "reduce climate gas emissions",
+        "public CBAM calculation",
         "carbon tariff",
         "carbon leakage rate",
         "assumed",
@@ -1736,7 +1762,7 @@
     {
       "words": [
         "global warming",
-        "reduce climate gas emissions",
+        "public CBAM calculation",
         "billion",
         "htp",
         "probability range factor",
@@ -1748,7 +1774,7 @@
     {
       "words": [
         "global warming",
-        "reduce climate gas emissions",
+        "public CBAM calculation",
         "billion",
         "htp",
         "probability range factor",
@@ -1760,7 +1786,7 @@
     {
       "words": [
         "global warming",
-        "reduce climate gas emissions",
+        "public CBAM calculation",
         "person year",
         "probability range factor",
         "low"
@@ -1771,7 +1797,7 @@
     {
       "words": [
         "global warming",
-        "reduce climate gas emissions",
+        "public CBAM calculation",
         "person year",
         "probability range factor",
         "high"
@@ -1782,7 +1808,7 @@
     {
       "words": [
         "global warming",
-        "reduce climate gas emissions",
+        "public CBAM calculation",
         "percent",
         "probability range factor",
         "low"
@@ -1793,7 +1819,7 @@
     {
       "words": [
         "global warming",
-        "reduce climate gas emissions",
+        "public CBAM calculation",
         "percent",
         "probability range factor",
         "high"
@@ -4042,7 +4068,8 @@
         "minimum",
         "assumed"
       ],
-      "number": 0.5
+      "number": 5.0,
+      "description": "the largest reduction of all climate solutions, because a publicly calculated tariff extends the carbon price to the emissions of all imports and exports and thereby also to the countries without a carbon price of their own"
     },
     {
       "words": [
@@ -4051,7 +4078,7 @@
         "maximum",
         "assumed"
       ],
-      "number": 2.0
+      "number": 9.0
     },
     {
       "words": [
@@ -4120,7 +4147,7 @@
         "minimum",
         "assumed"
       ],
-      "number": 0.2
+      "number": 2.0
     },
     {
       "words": [
@@ -4129,7 +4156,7 @@
         "maximum",
         "assumed"
       ],
-      "number": 1.4
+      "number": 6.3
     },
     {
       "words": [
@@ -4138,7 +4165,7 @@
         "minimum",
         "assumed"
       ],
-      "number": 2.0
+      "number": 20.0
     },
     {
       "words": [
@@ -4147,7 +4174,7 @@
         "maximum",
         "assumed"
       ],
-      "number": 140.0
+      "number": 630.0
     },
     {
       "words": [
@@ -7621,7 +7648,7 @@
         "effort return rank",
         "assumed"
       ],
-      "number": 5
+      "number": 3
     },
     {
       "words": [
@@ -7630,7 +7657,7 @@
         "minimum",
         "assumed"
       ],
-      "number": 5
+      "number": 3
     },
     {
       "words": [
@@ -7639,7 +7666,7 @@
         "maximum",
         "assumed"
       ],
-      "number": 7
+      "number": 5
     },
     {
       "words": [
@@ -7647,7 +7674,7 @@
         "effort return rank",
         "assumed"
       ],
-      "number": 4
+      "number": 5
     },
     {
       "words": [
@@ -7656,7 +7683,7 @@
         "minimum",
         "assumed"
       ],
-      "number": 4
+      "number": 5
     },
     {
       "words": [
@@ -7665,7 +7692,7 @@
         "maximum",
         "assumed"
       ],
-      "number": 4
+      "number": 5
     },
     {
       "words": [
@@ -8089,7 +8116,7 @@
         "effort return rank",
         "assumed"
       ],
-      "number": 3
+      "number": 4
     },
     {
       "words": [
@@ -8098,7 +8125,7 @@
         "minimum",
         "assumed"
       ],
-      "number": 3
+      "number": 4
     },
     {
       "words": [
@@ -8107,7 +8134,7 @@
         "maximum",
         "assumed"
       ],
-      "number": 3
+      "number": 4
     },
     {
       "words": [
@@ -9257,7 +9284,7 @@
     },
     {
       "context": [
-        "reduce climate gas emissions",
+        "public CBAM calculation",
         "carbon tariff",
         "carbon leakage rate",
         "assumed",
@@ -9266,7 +9293,7 @@
       "formula": "loss reduction by a carbon tariff",
       "words": [
         "global warming",
-        "reduce climate gas emissions",
+        "public CBAM calculation",
         "loss reduction",
         "percent",
         "assumed"
@@ -9328,7 +9355,7 @@
       "formula": "initial effort of a solution",
       "words": [
         "global warming",
-        "reduce climate gas emissions",
+        "public CBAM calculation",
         "initial effort",
         "person year",
         "assumed"
@@ -9339,7 +9366,7 @@
     {
       "context": [
         "global warming",
-        "reduce climate gas emissions",
+        "public CBAM calculation",
         "potential loss",
         "percent",
         "htp",
@@ -9351,7 +9378,7 @@
       "formula": "avoided welfare loss",
       "words": [
         "global warming",
-        "reduce climate gas emissions",
+        "public CBAM calculation",
         "potential gain",
         "billion",
         "htp",
@@ -9363,7 +9390,7 @@
     {
       "context": [
         "global warming",
-        "reduce climate gas emissions",
+        "public CBAM calculation",
         "potential loss",
         "trillion",
         "EUR",
@@ -9374,7 +9401,7 @@
       "formula": "avoided potential loss",
       "words": [
         "global warming",
-        "reduce climate gas emissions",
+        "public CBAM calculation",
         "reward",
         "trillion",
         "EUR",
@@ -9386,7 +9413,7 @@
     {
       "context": [
         "global warming",
-        "reduce climate gas emissions",
+        "public CBAM calculation",
         "potential loss",
         "trillion",
         "EUR",
@@ -9399,7 +9426,7 @@
       "formula": "reward ratio (formula)",
       "words": [
         "global warming",
-        "reduce climate gas emissions",
+        "public CBAM calculation",
         "reward ratio",
         "trillion",
         "EUR per person year",
@@ -9543,7 +9570,7 @@
     {
       "context": [
         "global warming",
-        "reduce climate gas emissions",
+        "public CBAM calculation",
         "potential gain",
         "billion",
         "htp",
@@ -9554,7 +9581,7 @@
       "formula": "probability range low",
       "words": [
         "global warming",
-        "reduce climate gas emissions",
+        "public CBAM calculation",
         "potential gain",
         "billion",
         "htp",
@@ -9567,7 +9594,7 @@
     {
       "context": [
         "global warming",
-        "reduce climate gas emissions",
+        "public CBAM calculation",
         "potential gain",
         "billion",
         "htp",
@@ -9578,7 +9605,7 @@
       "formula": "probability range high",
       "words": [
         "global warming",
-        "reduce climate gas emissions",
+        "public CBAM calculation",
         "potential gain",
         "billion",
         "htp",
@@ -9591,7 +9618,7 @@
     {
       "context": [
         "global warming",
-        "reduce climate gas emissions",
+        "public CBAM calculation",
         "initial effort",
         "person year",
         "assumed",
@@ -9601,7 +9628,7 @@
       "formula": "probability range low",
       "words": [
         "global warming",
-        "reduce climate gas emissions",
+        "public CBAM calculation",
         "initial effort",
         "person year",
         "assumed",
@@ -9613,7 +9640,7 @@
     {
       "context": [
         "global warming",
-        "reduce climate gas emissions",
+        "public CBAM calculation",
         "initial effort",
         "person year",
         "assumed",
@@ -9623,7 +9650,7 @@
       "formula": "probability range high",
       "words": [
         "global warming",
-        "reduce climate gas emissions",
+        "public CBAM calculation",
         "initial effort",
         "person year",
         "assumed",
@@ -9635,7 +9662,7 @@
     {
       "context": [
         "global warming",
-        "reduce climate gas emissions",
+        "public CBAM calculation",
         "loss reduction",
         "percent",
         "assumed",
@@ -9645,7 +9672,7 @@
       "formula": "probability range low",
       "words": [
         "global warming",
-        "reduce climate gas emissions",
+        "public CBAM calculation",
         "loss reduction",
         "percent",
         "assumed",
@@ -9657,7 +9684,7 @@
     {
       "context": [
         "global warming",
-        "reduce climate gas emissions",
+        "public CBAM calculation",
         "loss reduction",
         "percent",
         "assumed",
@@ -9667,7 +9694,7 @@
       "formula": "probability range high",
       "words": [
         "global warming",
-        "reduce climate gas emissions",
+        "public CBAM calculation",
         "loss reduction",
         "percent",
         "assumed",
@@ -9714,7 +9741,7 @@
       "formula": "person years per billion USD by the carbon border tariff",
       "context": [
         "global warming",
-        "reduce climate gas emissions",
+        "public CBAM calculation",
         "initial effort",
         "person year",
         "assumed",
@@ -9728,7 +9755,7 @@
         "assumed"
       ],
       "number": 0.054545,
-      "note": "3 person years of the solution reduce climate gas emissions (a result of problem_global_warming.json read from the database) / ((10 + 100) / 2) billion USD of the carbon border tariff"
+      "note": "3 person years of the solution public CBAM calculation (a result of problem_global_warming.json read from the database) / ((10 + 100) / 2) billion USD of the carbon border tariff"
     },
     {
       "formula": "expected return centre formula",
@@ -19043,7 +19070,7 @@
         "minimum",
         "assumed"
       ],
-      "number": 0.2
+      "number": 2.0
     },
     {
       "formula": "expected return formula",
@@ -19060,7 +19087,7 @@
         "maximum",
         "assumed"
       ],
-      "number": 1.4
+      "number": 6.3
     },
     {
       "formula": "expected return formula",

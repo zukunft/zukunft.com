@@ -493,6 +493,12 @@
       "description": "'one-click hide' is one of the compared populism solutions."
     },
     {
+      "from": "one-click hide",
+      "verb": "is a",
+      "to": "solution",
+      "description": "one-click hide is the populism solution with the biggest gain, so the start page ranking names it as the solution of populism; it is the leading measure of the solution avoid wrong decisions"
+    },
+    {
       "name": "civic education",
       "from": "education",
       "verb": "kind of",
@@ -1227,9 +1233,9 @@
       "assigned_word": "GDP"
     },
     {
-      "name": "loss reduction by avoiding wrong decisions",
-      "description": "the share of the potential loss that the solution avoids, the GDP gain of the solution divided by the measured GDP decline of the problem; the decline is negative, because it is a loss, while the avoided share of the loss is stated positive",
-      "expression": "\"loss reduction\",\"percent\" = 0 - \"avoid wrong decisions\",\"GDP\",\"annual\" / \"decline\",\"15-year\"",
+      "name": "loss reduction by one-click hide",
+      "description": "the share of the potential loss that one-click hide avoids as the leading measure of the solution avoid wrong decisions, the GDP gain of the solution divided by the measured GDP decline of the problem; the decline is negative, because it is a loss, while the avoided share of the loss is stated positive",
+      "expression": "\"loss reduction\",\"percent\" = 0 - \"one-click hide\",\"GDP\",\"annual\" / \"decline\",\"15-year\"",
       "latex": "r = -\\frac{s}{d}",
       "assigned_word": "decline"
     },
@@ -1318,7 +1324,7 @@
     },
     {
       "words": [
-        "avoid wrong decisions",
+        "one-click hide",
         "populism",
         "annual",
         "GDP",
@@ -1471,7 +1477,7 @@
     {
       "words": [
         "populism",
-        "avoid wrong decisions",
+        "one-click hide",
         "billion",
         "htp",
         "probability range factor",
@@ -1483,7 +1489,7 @@
     {
       "words": [
         "populism",
-        "avoid wrong decisions",
+        "one-click hide",
         "billion",
         "htp",
         "probability range factor",
@@ -1495,7 +1501,7 @@
     {
       "words": [
         "populism",
-        "avoid wrong decisions",
+        "one-click hide",
         "person year",
         "probability range factor",
         "low"
@@ -1506,7 +1512,7 @@
     {
       "words": [
         "populism",
-        "avoid wrong decisions",
+        "one-click hide",
         "person year",
         "probability range factor",
         "high"
@@ -1517,7 +1523,7 @@
     {
       "words": [
         "populism",
-        "avoid wrong decisions",
+        "one-click hide",
         "percent",
         "probability range factor",
         "low"
@@ -1528,7 +1534,7 @@
     {
       "words": [
         "populism",
-        "avoid wrong decisions",
+        "one-click hide",
         "percent",
         "probability range factor",
         "high"
@@ -1553,8 +1559,8 @@
         "percent",
         "assumed"
       ],
-      "number": "0.04",
-      "description": "the share of the loss of populism that the solution avoids if it is fully in place: a small share of the decline, because it only slows the spread of one channel"
+      "number": "0.16",
+      "description": "the share of the loss of populism that the solution avoids if it is fully in place: the largest share of all populism solutions, because hiding an emotional post with one click slows the spread of populist messages on every platform at once and at almost no cost (see fermi_internet_pro_contra.json)"
     },
     {
       "words": [
@@ -3686,7 +3692,7 @@
     {
       "context": [
         "populism",
-        "avoid wrong decisions",
+        "one-click hide",
         "annual",
         "GDP",
         "decline",
@@ -3696,10 +3702,10 @@
         "OLS",
         "assumed"
       ],
-      "formula": "loss reduction by avoiding wrong decisions",
+      "formula": "loss reduction by one-click hide",
       "words": [
         "populism",
-        "avoid wrong decisions",
+        "one-click hide",
         "loss reduction",
         "percent",
         "assumed"
@@ -3761,7 +3767,7 @@
       "formula": "initial effort of a solution",
       "words": [
         "populism",
-        "avoid wrong decisions",
+        "one-click hide",
         "initial effort",
         "person year",
         "assumed"
@@ -3772,7 +3778,7 @@
     {
       "context": [
         "populism",
-        "avoid wrong decisions",
+        "one-click hide",
         "potential loss",
         "percent",
         "htp",
@@ -3785,7 +3791,7 @@
       "formula": "avoided welfare loss with a gain factor",
       "words": [
         "populism",
-        "avoid wrong decisions",
+        "one-click hide",
         "potential gain",
         "billion",
         "htp",
@@ -3929,7 +3935,7 @@
     {
       "context": [
         "populism",
-        "avoid wrong decisions",
+        "one-click hide",
         "potential gain",
         "billion",
         "htp",
@@ -3940,7 +3946,7 @@
       "formula": "probability range low",
       "words": [
         "populism",
-        "avoid wrong decisions",
+        "one-click hide",
         "potential gain",
         "billion",
         "htp",
@@ -3953,7 +3959,7 @@
     {
       "context": [
         "populism",
-        "avoid wrong decisions",
+        "one-click hide",
         "potential gain",
         "billion",
         "htp",
@@ -3964,7 +3970,7 @@
       "formula": "probability range high",
       "words": [
         "populism",
-        "avoid wrong decisions",
+        "one-click hide",
         "potential gain",
         "billion",
         "htp",
@@ -3977,7 +3983,7 @@
     {
       "context": [
         "populism",
-        "avoid wrong decisions",
+        "one-click hide",
         "initial effort",
         "person year",
         "assumed",
@@ -3987,7 +3993,7 @@
       "formula": "probability range low",
       "words": [
         "populism",
-        "avoid wrong decisions",
+        "one-click hide",
         "initial effort",
         "person year",
         "assumed",
@@ -3999,7 +4005,7 @@
     {
       "context": [
         "populism",
-        "avoid wrong decisions",
+        "one-click hide",
         "initial effort",
         "person year",
         "assumed",
@@ -4009,7 +4015,7 @@
       "formula": "probability range high",
       "words": [
         "populism",
-        "avoid wrong decisions",
+        "one-click hide",
         "initial effort",
         "person year",
         "assumed",
@@ -4021,7 +4027,7 @@
     {
       "context": [
         "populism",
-        "avoid wrong decisions",
+        "one-click hide",
         "loss reduction",
         "percent",
         "assumed",
@@ -4031,7 +4037,7 @@
       "formula": "probability range low",
       "words": [
         "populism",
-        "avoid wrong decisions",
+        "one-click hide",
         "loss reduction",
         "percent",
         "assumed",
@@ -4043,7 +4049,7 @@
     {
       "context": [
         "populism",
-        "avoid wrong decisions",
+        "one-click hide",
         "loss reduction",
         "percent",
         "assumed",
@@ -4053,7 +4059,7 @@
       "formula": "probability range high",
       "words": [
         "populism",
-        "avoid wrong decisions",
+        "one-click hide",
         "loss reduction",
         "percent",
         "assumed",
@@ -4078,8 +4084,8 @@
         "percent",
         "assumed"
       ],
-      "number": "0.024",
-      "note": "0.04 * 0.6"
+      "number": "0.096",
+      "note": "0.16 * 0.6"
     },
     {
       "context": [
@@ -4098,8 +4104,8 @@
         "assumed",
         "low"
       ],
-      "number": "0.0096",
-      "note": "0.024 * 0.4"
+      "number": "0.0384",
+      "note": "0.096 * 0.4"
     },
     {
       "context": [
@@ -4118,8 +4124,8 @@
         "assumed",
         "high"
       ],
-      "number": "0.06",
-      "note": "0.024 * 2.5"
+      "number": "0.24",
+      "note": "0.096 * 2.5"
     },
     {
       "context": [
@@ -4142,8 +4148,8 @@
         "htp",
         "assumed"
       ],
-      "number": "0.8184",
-      "note": "0 - -0.28 * 1189.19 billion htp * 0.024 * 0.102411"
+      "number": "3.2736",
+      "note": "0 - -0.28 * 1189.19 billion htp * 0.096 * 0.102411"
     },
     {
       "context": [
@@ -4164,8 +4170,8 @@
         "assumed",
         "low"
       ],
-      "number": "0.3274",
-      "note": "0.8184 * 0.4"
+      "number": "1.3094",
+      "note": "3.2736 * 0.4"
     },
     {
       "context": [
@@ -4186,8 +4192,8 @@
         "assumed",
         "high"
       ],
-      "number": "2.046",
-      "note": "0.8184 * 2.5"
+      "number": "8.184",
+      "note": "3.2736 * 2.5"
     },
     {
       "context": [
