@@ -20,6 +20,6 @@ $$ LANGUAGE plpgsql;
 SELECT user_delete_log_ip_address
        (1::bigint,
         3::smallint,
-        75::smallint,
+        54::smallint,
         '258.257.256.255'::text,
         0::bigint);

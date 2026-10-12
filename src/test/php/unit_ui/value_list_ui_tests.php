@@ -40,6 +40,8 @@ use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
 use Zukunft\ZukunftCom\main\php\web\value\value_list as value_list_ui;
+use Zukunft\ZukunftCom\main\php\web\value\table_chart;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_value as sandbox_value_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\def;
 use Zukunft\ZukunftCom\main\php\shared\const\files as files_shared;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
@@ -47,15 +49,20 @@ use Zukunft\ZukunftCom\main\php\shared\helper\Config as shared_config;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\enum\chart_types;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\enum\table_forms;
+use Zukunft\ZukunftCom\main\php\shared\enum\table_orders;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\position_types;
+use Zukunft\ZukunftCom\main\php\web\const\icons;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
+use Zukunft\ZukunftCom\test\php\create\test_triples;
 use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -69,6 +76,7 @@ class value_list_ui_tests
         $html = new html_base();
         $tl = new test_lib();
         $t_wrd = new test_words($t);
+        $t_trp = new test_triples($t);
         $t_val = new test_values($t);
         $t_phr = new test_phrases($t);
         $lib = new library();
@@ -123,6 +131,17 @@ class value_list_ui_tests
         $header_html = $phr_lst_context_ui->headline();
         $table_html = $lst_zh_ui->table($msg_ui, $phr_lst_context_ui);
         $test_page .= 'as table with context: ' . $header_html . $table_html . '<br>';
+        // the ranking of the start page as the two charts of value_list::table_to_svg
+        $rank_lst = $t_phr->list_global_problems_ui();
+        $rank_ctx = $t_phr->list_global_problem_context_ui();
+        $svg_bars = $t_val->value_list_solution_prio_ui()->table_to_svg(
+            chart_types::RANGE_BARS, $msg_ui, $rank_ctx, $rank_lst->column_names(), $rank_lst,
+            value_list_ui::LIMIT_ALL);
+        $test_page .= 'as range bars: ' . $html->lf() . $svg_bars . '<br>';
+        $svg_points = $t_val->value_list_solution_prio_ui()->table_to_svg(
+            chart_types::SCATTER, $msg_ui, $rank_ctx, $rank_lst->column_names(), $rank_lst,
+            value_list_ui::LIMIT_ALL, [], false, false, [word_names::GAIN, word_names::LOSS]);
+        $test_page .= 'as scatter plot: ' . $html->lf() . $svg_points . '<br>';
         $t->html_page_test($test_page, 'value_list', 'value_list', $msg_ui);
 
         $t->subheader($ts . 'user config');
@@ -235,11 +254,11 @@ class value_list_ui_tests
         $t->assert_text_contains($test_name, $tbl_html, word_names::ABB);
         $test_name = 'the value that shares no column phrase is still shown';
         $t->assert_text_contains($test_name, $tbl_html, word_names::PI);
-        // one header cell per column phrase, plus the empty top left cell and the "Values" cell
-        // of the values that share no column phrase
+        // one header cell per column phrase, plus the empty top left cell, the "Values" cell
+        // of the values that share no column phrase and the "..." cell of the column menu
         $test_name = 'never more phrase columns than fit on the widest screen';
         $t->assert_true($test_name,
-            substr_count($tbl_html, '<th') <= position_types::MAX_SIDE_COLUMNS + 2);
+            substr_count($tbl_html, '<th') <= position_types::MAX_SIDE_COLUMNS + 3);
         $test_name = 'the header is shown before the first row';
         $t->assert_text_order($test_name, $tbl_html, '<th', '<td');
 
@@ -271,15 +290,21 @@ class value_list_ui_tests
         // own, and the qualifier "assumed" names no row either, so the problem keeps one row
         // (see the view-validation of solution_prio.json)
         $tbl_range = $t_val->value_list_range_ui()->table_by_related_columns($msg_ui);
+        // the values are assumed, so the centre value is followed by the "a" mark, which the
+        // bounds share with it and do not repeat (see sandbox_value::quality_mark)
+        $centre_txt = '2.2' . sandbox_value_ui::QUALITY_MARK_ASSUMED;
         $test_name = 'the range bounds are shown behind their centre value';
-        $t->assert_text_contains($test_name, $lib->html_to_text($tbl_range), '2.2 (0.88 – 5.5)');
+        $t->assert_text_contains($test_name, $lib->html_to_text($tbl_range), $centre_txt . ' (0.88 – 5.5)');
         // the four loss values (centre, both bounds and the confidence) share one row; the gain
         // is carried by one value only, so it heads no column and names a row of its own, which
         // is the header row plus two rows
         $test_name = '... so the bounds and the qualifier name no row of their own';
         $t->assert($test_name, substr_count($tbl_range, '<' . html_base::TR . '>'), 3);
+        $test_name = '... and a value without a source is followed by the "-" mark';
+        $t->assert_text_contains($test_name, $lib->html_to_text($tbl_range), '35.2' . sandbox_value_ui::QUALITY_MARK_NO_SOURCE);
         $test_name = '... and a value without bounds is shown without brackets';
-        $t->assert_text_not_contains($test_name, $lib->html_to_text($tbl_range), '35.2 (');
+        $t->assert_text_not_contains($test_name, $lib->html_to_text($tbl_range),
+            '35.2' . sandbox_value_ui::QUALITY_MARK_NO_SOURCE . ' (');
         // a simple table shows the numbers only and the "..." header links to the same page with
         // the ranges switched on, which wins over the default of the caller
         $tbl_plain = $t_val->value_list_range_ui()->table_by_related_columns(
@@ -287,14 +312,14 @@ class value_list_ui_tests
             [url_var::MASK => views::START_ID], false, value_list_ui::COLUMN_TIERS_ALL, false);
         $test_name = 'without the range the centre value is shown alone';
         $t->assert_text_contains($test_name, $lib->html_to_text($tbl_plain), '2.2');
-        $t->assert_text_not_contains($test_name, $lib->html_to_text($tbl_plain), '2.2 (');
+        $t->assert_text_not_contains($test_name, $lib->html_to_text($tbl_plain), $centre_txt . ' (');
         $test_name = '... and the "..." header links to the page with the ranges';
         $t->assert_text_contains($test_name, $tbl_plain, url_var::DISPLAY_LIST_RANGE . '=' . url_var::TRUE);
         $tbl_url = $t_val->value_list_range_ui()->table_by_related_columns(
             $msg_ui, new phrase_list_ui(), [], false, true, null, null,
             [url_var::DISPLAY_LIST_RANGE => url_var::TRUE], false, value_list_ui::COLUMN_TIERS_ALL, false);
         $test_name = 'the url switches the range on although the caller has switched it off';
-        $t->assert_text_contains($test_name, $lib->html_to_text($tbl_url), '2.2 (0.88 – 5.5)');
+        $t->assert_text_contains($test_name, $lib->html_to_text($tbl_url), $centre_txt . ' (0.88 – 5.5)');
         $test_name = 'the estimate qualifier of a value is the tooltip of its cell';
         $t->assert_text_contains($test_name, $tbl_range, 'title="' . word_names::ASSUMED . ', ');
         // a value tagged "confidence" says how sure the value with the same subject is, so it is
@@ -344,7 +369,58 @@ class value_list_ui_tests
         $test_name = '... and a cell holds the values of its unit only';
         $t->assert_text_not_contains($test_name, $lib->html_to_text($tbl_units), '2.2, ');
 
-        // a unit can be a triple, e.g. "gram per kWh", which the import types "measure" like
+        // only the table of the mayor tier alone keeps one number per column, so the second
+        // unit is shown as soon as the main columns are shown too
+        $tbl_unit_mayor = $t_val->value_list_two_units_ui()->table_by_related_columns(
+            $msg_ui, new phrase_list_ui(), $loss_lst->column_names(), false, true, $loss_lst,
+            null, [], false, value_list_ui::COLUMN_TIERS_EX_MAIN);
+        $hdr_unit_mayor = $lib->html_to_text($lib->str_left_of($tbl_unit_mayor, '</tr>'));
+        $test_name = 'the mayor columns show one unit per column';
+        $t->assert($test_name, substr_count($hdr_unit_mayor, word_names::LOSS . $unit_sep), 1);
+        // the unit of most values leads, so the start page shows the potential loss in trillion
+        // EUR of every problem and not the one bigger potential loss in htp of a single problem
+        $tbl_unit_most = $t_val->value_list_unit_majority_ui()->table_by_related_columns(
+            $msg_ui, new phrase_list_ui(), $loss_lst->column_names(), false, true, $loss_lst,
+            null, [], false, value_list_ui::COLUMN_TIERS_EX_MAIN);
+        $hdr_unit_most = $lib->html_to_text($lib->str_left_of($tbl_unit_most, '</tr>'));
+        $test_name = 'the mayor column shows the unit of most values';
+        $t->assert_text_contains($test_name, $hdr_unit_most, word_names::EUR);
+        // negative: the unit of the single bigger number is left to the full table
+        $test_name = '... and not the unit of the single biggest number';
+        $t->assert_text_not_contains($test_name, $hdr_unit_most, word_names::HTP);
+        // with the minor columns a further unit is shown only if it has a number in every row,
+        // so the potential loss in htp of global warming alone is left to the full table
+        $tbl_unit_part = $t_val->value_list_unit_majority_ui()->table_by_related_columns(
+            $msg_ui, new phrase_list_ui(), $loss_lst->column_names(), false, true, $loss_lst,
+            null, [], false, value_list_ui::COLUMN_TIERS_EX_MARGINAL);
+        $hdr_unit_part = $lib->html_to_text($lib->str_left_of($tbl_unit_part, '</tr>'));
+        $test_name = 'the minor columns leave out a unit that only some rows have';
+        $t->assert_text_not_contains($test_name, $hdr_unit_part, word_names::HTP);
+        // negative: the full table shows every unit
+        $tbl_unit_all = $t_val->value_list_unit_majority_ui()->table_by_related_columns(
+            $msg_ui, new phrase_list_ui(), $loss_lst->column_names(), false, true, $loss_lst);
+        $hdr_unit_all = $lib->html_to_text($lib->str_left_of($tbl_unit_all, '</tr>'));
+        $test_name = '... but the full table shows it';
+        $t->assert_text_contains($test_name, $hdr_unit_all, word_names::HTP);
+        $tbl_unit_minor = $t_val->value_list_two_units_ui()->table_by_related_columns(
+            $msg_ui, new phrase_list_ui(), $loss_lst->column_names(), false, true, $loss_lst,
+            null, [], false, value_list_ui::COLUMN_TIERS_EX_MARGINAL);
+        $hdr_unit_minor = $lib->html_to_text($lib->str_left_of($tbl_unit_minor, '</tr>'));
+        $test_name = '... and with the minor columns every unit is shown';
+        $t->assert($test_name, substr_count($hdr_unit_minor, word_names::LOSS . $unit_sep), 2);
+        $test_name = '... as a minor column, which is hidden below a wide screen';
+        $t->assert_text_contains($test_name, $tbl_unit_minor, '<th class="' . styles::COL_MINOR . '">');
+        // negative: a further unit is a minor column and a table shows only the columns of its
+        // tiers, so the main columns keep one unit per column, e.g. the start page with the
+        // reason columns shows the loss in trillion EUR only and not also in percent
+        $tbl_unit_main = $t_val->value_list_two_units_ui()->table_by_related_columns(
+            $msg_ui, new phrase_list_ui(), $loss_lst->column_names(), false, true, $loss_lst,
+            null, [], false, value_list_ui::COLUMN_TIERS_EX_MINOR);
+        $hdr_unit_main = $lib->html_to_text($lib->str_left_of($tbl_unit_main, '</tr>'));
+        $test_name = 'the main columns show no minor column';
+        $t->assert($test_name, substr_count($hdr_unit_main, word_names::LOSS . $unit_sep), 1);
+
+        // a unit can be a triple, e.g. "gram per kWh", which the import types "measure unit" like
         // its words (see pv_switzerland_co2.json), so the header puts it behind the "in" too
         $tbl_unit_trp = $t_val->value_list_unit_triple_ui()->table_by_related_columns(
             $msg_ui, new phrase_list_ui(), $loss_lst->column_names(), false, true, $loss_lst);
@@ -355,6 +431,22 @@ class value_list_ui_tests
         // negative: the unit triple heads no column of its own and does not name a row
         $test_name = '... and heads no column of its own';
         $t->assert($test_name, substr_count($hdr_unit_trp, triple_names::GRAM_PER_KWH), 1);
+
+        // a phrase typed "measure non unit" names what is measured e.g. "GDP" of a loss stated as
+        // a share of the GDP; it describes the number like a unit, so the header names it behind
+        // the unit and the table has no row or column for it, although it is no number type
+        $tbl_non_unit = $t_val->value_list_measure_non_unit_ui()->table_by_related_columns(
+            $msg_ui, new phrase_list_ui(), $loss_lst->column_names(), false, true, $loss_lst);
+        $hdr_non_unit = $lib->html_to_text($lib->str_left_of($tbl_non_unit, '</tr>'));
+        $test_name = 'what is measured is named behind the unit of the column header';
+        $t->assert_text_contains($test_name, $hdr_non_unit,
+            word_names::LOSS . $unit_sep . words::PCT . ' ' . word_names::GDP);
+        $test_name = '... and heads no column of its own';
+        $t->assert($test_name, substr_count($hdr_non_unit, word_names::GDP), 1);
+        // negative: the problems name the rows, so the table has the header row and one row
+        // per problem and no row for the GDP
+        $test_name = '... nor a row of its own';
+        $t->assert($test_name, substr_count($tbl_non_unit, '<' . html_base::TR . '>'), 3);
 
         // a defined column can be a triple that no value carries but whose two parts the values
         // carry, e.g. "potential loss" for the values with "potential" and "loss"; it takes those
@@ -381,39 +473,332 @@ class value_list_ui_tests
         // every defined column is shown, because the tiers hide the columns per screen size, so
         // the number of columns that fit on the widest screen limits only the columns that the
         // data suggests; five defined columns give five column headers plus the row name header
+        // and the "..." header with the column menu
         $rel_lst = $t_phr->list_columns_ordered_ui();
         $tbl_def = $t_val->value_list_defined_columns_ui()->table_by_related_columns(
             $msg_ui, new phrase_list_ui(), $rel_lst->column_names(), false, true, $rel_lst);
         $test_name = 'every defined column is shown even above the number that fit on the widest screen';
-        $t->assert($test_name, substr_count($tbl_def, '<th'), count($rel_lst->column_names()) + 1);
+        $t->assert($test_name, substr_count($tbl_def, '<th'), count($rel_lst->column_names()) + 2);
 
-        // the tier of a defined column says on which screens it is shown: a main column carries
-        // the class that hides it on a small screen, a mayor column has no class and is shown on
-        // every screen; "cost" is a main and "loss" a mayor column
-        $test_name = 'a main column is hidden on a small screen';
-        $t->assert_text_contains($test_name, $tbl_def, '<th class="' . styles::COL_MAIN . '">');
+        // the tier of a defined column says on which screens it is shown: a minor column carries
+        // the class that hides it below a wide screen, a mayor column has no class and is shown
+        // on every screen; "cost" is a minor and "loss" a mayor column
+        $test_name = 'a minor column is hidden below a wide screen';
+        $t->assert_text_contains($test_name, $tbl_def, '<th class="' . styles::COL_MINOR . '">');
         $test_name = 'a mayor column is shown on every screen';
-        $t->assert_text_not_contains($test_name, $tbl_one, styles::COL_MAIN);
+        $t->assert_text_not_contains($test_name, $tbl_one, styles::COL_MINOR);
         // negative: a column that the data suggests has no tier and therefore no class
         $test_name = 'a column without a definition is shown on every screen';
-        $t->assert_text_not_contains($test_name, $tbl_html, styles::COL_MAIN);
+        $t->assert_text_not_contains($test_name, $tbl_html, styles::COL_MINOR);
 
-        // a simple table shows the mayor columns only, so the main column "cost" is left to the
+        // a simple table shows the mayor columns only, so the minor column "cost" is left to the
         // full table and the "..." header says that more columns exist
         $tbl_mayor = $t_val->value_list_defined_columns_ui()->table_by_related_columns(
             $msg_ui, new phrase_list_ui(), $rel_lst->column_names(), false, true, $rel_lst,
-            null, [], false, value_list_ui::COLUMN_TIERS_MAYOR);
+            null, [], false, value_list_ui::COLUMN_TIERS_EX_MAIN);
         $hdr_mayor = $lib->html_to_text($lib->str_left_of($tbl_mayor, '</tr>'));
         $hdr_def = $lib->html_to_text($lib->str_left_of($tbl_def, '</tr>'));
-        $test_name = 'a simple table leaves out the main column';
+        $test_name = 'a simple table leaves out the minor column';
         $t->assert_text_not_contains($test_name, $hdr_mayor, word_names::COST);
         $test_name = '... but keeps the mayor columns';
         $t->assert_text_contains($test_name, $hdr_mayor, word_names::LOSS);
         $test_name = '... and ends with the "..." header';
         $t->assert_text_contains($test_name, $hdr_mayor, msg_id::THREE_POINTS->text());
-        $test_name = 'the full table shows the main column and has no "..." header';
+        // the full table shows every column and still ends with the "..." header, because its
+        // menu is the only way back to the fewer columns
+        $test_name = 'the full table shows the minor column and the "..." header';
         $t->assert_text_contains($test_name, $hdr_def, word_names::COST);
-        $t->assert_text_not_contains($test_name, $hdr_def, msg_id::THREE_POINTS->text());
+        $t->assert_text_contains($test_name, $hdr_def, msg_id::THREE_POINTS->text());
+
+        // the reason of a problem is a phrase column like the solution and the loss that the
+        // reason causes a value column of its own: its value carries the problem, the word
+        // "reason", the reason and the potential loss, so the defined column "potential loss of
+        // reason" takes it before the "potential loss" column of the problem (see
+        // value_list::column_parts); both are main columns, so the table with the main tier
+        // shows them and the simple table of the mayor columns leaves them out
+        // every value carries "potential", so the table header names it once and the column
+        // of the problem is headed "loss" like in the ranking without a reason (see column_head)
+        $tbl_reason = $t_val->value_list_solution_prio_reason_ui()->table_by_related_columns(
+            $msg_ui, $rank_ctx, $rank_lst->column_names(), false, true, $rank_lst,
+            value_list_ui::LIMIT_ALL, [], false, value_list_ui::COLUMN_TIERS_EX_MINOR);
+        $hdr_reason = $lib->html_to_text($lib->str_left_of($tbl_reason, '</tr>'));
+        $test_name = 'the reason column names the reason of the problem';
+        $t->assert_text_contains($test_name, $tbl_reason, '>' . triple_names::CLIMATE_GAS_EMISSIONS . '</a>');
+        $test_name = 'the loss of the reason has a column of its own behind the reason column';
+        $t->assert_text_order($test_name, $hdr_reason, word_names::REASON, triple_names::POTENTIAL_LOSS_OF_REASON . $unit_sep);
+        $test_name = '... and both stand left of the solution column';
+        $t->assert_text_order($test_name, $hdr_reason, triple_names::POTENTIAL_LOSS_OF_REASON . $unit_sep, word_names::SOLUTION);
+        $test_name = '... and the loss of the problem keeps its column';
+        $t->assert($test_name, substr_count($hdr_reason, word_names::LOSS . $unit_sep), 1);
+        $test_name = '... so the cell of the problem shows its loss alone';
+        $t->assert_text_not_contains($test_name, $lib->html_to_text($tbl_reason),
+            '31.5' . sandbox_value_ui::QUALITY_MARK_NO_SOURCE . ', ');
+        $test_name = 'a main column is hidden on a small screen';
+        $t->assert_text_contains($test_name, $tbl_reason, '<th class="' . styles::COL_MAIN . '">');
+        $tbl_reason_mayor = $t_val->value_list_solution_prio_reason_ui()->table_by_related_columns(
+            $msg_ui, $rank_ctx, $rank_lst->column_names(), false, true, $rank_lst,
+            value_list_ui::LIMIT_ALL, [], false, value_list_ui::COLUMN_TIERS_EX_MAIN);
+        $test_name = 'the simple table leaves out the reason and its loss';
+        $t->assert_text_not_contains($test_name,
+            $lib->html_to_text($lib->str_left_of($tbl_reason_mayor, '</tr>')), word_names::REASON);
+        // negative: without a value that names a reason the loss of the reason has no column,
+        // while the reason column is defined and therefore shown although it is empty
+        $tbl_no_reason = $t_val->value_list_solution_prio_ui()->table_by_related_columns(
+            $msg_ui, $rank_ctx, $rank_lst->column_names(), false, true, $rank_lst,
+            value_list_ui::LIMIT_ALL, [], false, value_list_ui::COLUMN_TIERS_EX_MINOR);
+        $hdr_no_reason = $lib->html_to_text($lib->str_left_of($tbl_no_reason, '</tr>'));
+        $test_name = 'without a reason value the loss of the reason has no column';
+        $t->assert_text_not_contains($test_name, $hdr_no_reason, triple_names::POTENTIAL_LOSS_OF_REASON);
+        $test_name = '... but the defined reason column is shown';
+        $t->assert_text_contains($test_name, $hdr_no_reason, word_names::REASON);
+
+        // a problem with two solutions shows the solution of its biggest gain, followed by
+        // ", ..." that links to the page of the problem, where all its solutions are listed
+        $start_url = [url_var::MASK => views::START_ID];
+        $tbl_two = $t_val->value_list_solution_prio_two_solutions_ui()->table_by_related_columns(
+            $msg_ui, $rank_ctx, $rank_lst->column_names(), false, true, $rank_lst,
+            value_list_ui::LIMIT_ALL, $start_url);
+        $more_tip = msg_id::TABLE_MORE_PHRASES_TIP->text();
+        $test_name = 'a problem with two solutions shows the first solution with ", ..."';
+        $t->assert_text_contains($test_name, $tbl_two, '>' . triple_names::REDUCE_EMISSIONS . '</a>, <a ');
+        $test_name = '... once, because only global warming has two solutions';
+        $t->assert($test_name, substr_count($tbl_two, $more_tip), 1);
+        // the gain cell shows the gain of the solution shown, not also the gain of the second
+        // solution, which a reader would take for a gain of the solution shown
+        $test_name = '... and the gain of the solution shown';
+        $txt_two = $lib->html_to_text($tbl_two);
+        $t->assert_text_contains($test_name, $txt_two, '35.2' . sandbox_value_ui::QUALITY_MARK_NO_SOURCE);
+        // negative: the gain of the second solution is left to the page of the problem
+        $test_name = '... without the gain of the second solution in the same cell';
+        $t->assert_text_not_contains($test_name, $txt_two, '35.2' . sandbox_value_ui::QUALITY_MARK_NO_SOURCE . ', ');
+        // the solution with the biggest gain is shown, whatever the order of the values, e.g. a
+        // second solution of global warming with a gain of 50 instead of 35.2
+        $tbl_big = $t_val->value_list_solution_prio_bigger_second_solution_ui()->table_by_related_columns(
+            $msg_ui, $rank_ctx, $rank_lst->column_names(), false, true, $rank_lst,
+            value_list_ui::LIMIT_ALL, $start_url);
+        $test_name = 'the solution with the biggest gain is shown with ", ..."';
+        $t->assert_text_contains($test_name, $tbl_big, '>' . triple_names::BASIC_INCOME . '</a>, <a ');
+        $txt_big = $lib->html_to_text($tbl_big);
+        $test_name = '... with its gain';
+        $t->assert_text_contains($test_name, $txt_big, '50' . sandbox_value_ui::QUALITY_MARK_NO_SOURCE);
+        // negative: the smaller gain of the other solution is no number of the row any more
+        $test_name = '... and not the smaller gain of the other solution';
+        $t->assert_text_not_contains($test_name, $txt_big, '35.2' . sandbox_value_ui::QUALITY_MARK_NO_SOURCE);
+        $test_name = '... which links to the page of the problem';
+        $t->assert_text_contains($test_name, $tbl_two,
+            url_var::MASK . '=' . views::TRIPLE_ID . '&amp;' . url_var::ID . '=' . triple_names::GLOBAL_WARMING_ID);
+        // negative: with one solution per problem no cell has ", ..."
+        $test_name = 'a problem with one solution shows no ", ..."';
+        $tbl_one_each = $t_val->value_list_solution_prio_ui()->table_by_related_columns(
+            $msg_ui, $rank_ctx, $rank_lst->column_names(), false, true, $rank_lst,
+            value_list_ui::LIMIT_ALL, $start_url);
+        $t->assert_text_not_contains($test_name, $tbl_one_each, $more_tip);
+
+        // a problem with two reasons shows the reason with the biggest loss, and if the triple
+        // "global warming reason" names the table of the reasons, ", ..." links to its table page
+        $test_name = 'a problem with two reasons shows the reason with the biggest loss with ", ..."';
+        $gw_reasons = $t_phr->list_global_warming_reasons_ui();
+        $tbl_reasons = $t_val->value_list_solution_prio_reasons_ui()->table_by_related_columns(
+            $msg_ui, $rank_ctx, $gw_reasons->column_names(), false, true, $gw_reasons,
+            value_list_ui::LIMIT_ALL, $start_url);
+        $t->assert_text_contains($test_name, $tbl_reasons, '>' . triple_names::CLIMATE_GAS_EMISSIONS . '</a>, <a ');
+        $test_name = '... which links to the table page of the triple "global warming reason"';
+        $t->assert_text_contains($test_name, $tbl_reasons,
+            url_var::MASK . '=' . views::TABLE_ID . '&amp;' . url_var::ID . '=-' . triple_names::GLOBAL_WARMING_REASON_ID);
+        // negative: the table is a phrase page, so the id of the triple would open the word with that id
+        $test_name = '... by the phrase id and not by the triple id';
+        $t->assert_text_not_contains($test_name, $tbl_reasons,
+            url_var::ID . '=' . triple_names::GLOBAL_WARMING_REASON_ID);
+        // negative: without the triple that names the table of the reasons ", ..." links to the
+        // page of the problem like for two solutions
+        $test_name = 'without "global warming reason" the ", ..." of the reason links to the page of the problem';
+        $two_reasons = $t_phr->list_global_problems_two_reasons_ui();
+        $tbl_no_lst = $t_val->value_list_solution_prio_reasons_ui()->table_by_related_columns(
+            $msg_ui, $rank_ctx, $two_reasons->column_names(), false, true, $two_reasons,
+            value_list_ui::LIMIT_ALL, $start_url);
+        $t->assert_text_contains($test_name, $tbl_no_lst,
+            url_var::MASK . '=' . views::TRIPLE_ID . '&amp;' . url_var::ID . '=' . triple_names::GLOBAL_WARMING_ID);
+        $test_name = '... and not to a table page';
+        $t->assert_text_not_contains($test_name, $tbl_no_lst, url_var::MASK . '=' . views::TABLE_ID . '&amp;');
+        // "global warming solution" links a second solution, whose gain is no number of the row,
+        // so the solution cell shows ", ..." with the link to the table page of the solutions
+        $test_name = 'a problem with a second linked solution shows ", ..." behind its solution';
+        $gw_solutions = $t_phr->list_global_warming_solutions_ui();
+        $tbl_sol = $t_val->value_list_solution_prio_ui()->table_by_related_columns(
+            $msg_ui, $rank_ctx, $gw_solutions->column_names(), false, true, $gw_solutions,
+            value_list_ui::LIMIT_ALL, $start_url);
+        $t->assert_text_contains($test_name, $tbl_sol, '>' . triple_names::REDUCE_EMISSIONS . '</a>, <a ');
+        $test_name = '... which links to the table page of the triple "global warming solution"';
+        $t->assert_text_contains($test_name, $tbl_sol,
+            url_var::MASK . '=' . views::TABLE_ID . '&amp;' . url_var::ID . '=-' . triple_names::GLOBAL_WARMING_SOLUTION_ID);
+        // negative: if the triple links only the solution shown, the table names no other one
+        $test_name = 'a list triple with only the solution shown adds no ", ..."';
+        $gw_one_sol = $t_phr->list_global_warming_one_solution_ui();
+        $tbl_one_sol = $t_val->value_list_solution_prio_ui()->table_by_related_columns(
+            $msg_ui, $rank_ctx, $gw_one_sol->column_names(), false, true, $gw_one_sol,
+            value_list_ui::LIMIT_ALL, $start_url);
+        $t->assert_text_not_contains($test_name, $tbl_one_sol, $more_tip);
+        // like the problems of problem_main_reasons.json, a row with the loss of its main reason
+        // only shows ", ..." if the triple "<problem> reason" links more reasons, which the table
+        // page lists once they have a loss
+        $test_name = 'a problem with one reason value but more linked reasons shows ", ..." behind its reason';
+        $tbl_one_rsn = $t_val->value_list_solution_prio_reason_ui()->table_by_related_columns(
+            $msg_ui, $rank_ctx, $gw_reasons->column_names(), false, true, $gw_reasons,
+            value_list_ui::LIMIT_ALL, $start_url);
+        $t->assert_text_contains($test_name, $tbl_one_rsn, '>' . triple_names::CLIMATE_GAS_EMISSIONS . '</a>, <a ');
+        // negative: if the triple links only the reason shown, e.g. like proprietary software
+        // without a list of its reasons, the reason cell has no ", ..."
+        $test_name = 'a list triple with only the reason shown adds no ", ..."';
+        $gw_one_rsn = $t_phr->list_global_warming_one_reason_ui();
+        $tbl_one_lst = $t_val->value_list_solution_prio_reason_ui()->table_by_related_columns(
+            $msg_ui, $rank_ctx, $gw_one_rsn->column_names(), false, true, $gw_one_rsn,
+            value_list_ui::LIMIT_ALL, $start_url);
+        $t->assert_text_not_contains($test_name, $tbl_one_lst, $more_tip);
+        // a value that names a reason and a solution is the gain of the solution of the reason,
+        // which the reasons page shows, so the row keeps the solution of the problem although
+        // the gain of the solution of the reason is bigger
+        $test_name = 'the solution of a reason adds no ", ..." to the solution of the problem';
+        $tbl_rsn_sol = $t_val->value_list_solution_prio_reason_solution_ui()->table_by_related_columns(
+            $msg_ui, $rank_ctx, $gw_reasons->column_names(), false, true, $gw_reasons,
+            value_list_ui::LIMIT_ALL, $start_url);
+        $t->assert($test_name, substr_count($tbl_rsn_sol, $more_tip), 1);
+        // negative: the gain of the solution of the reason is no number of the problem row
+        $test_name = '... and its gain is not shown on the start page';
+        $t->assert_text_not_contains($test_name, $lib->html_to_text($tbl_rsn_sol),
+            '50' . sandbox_value_ui::QUALITY_MARK_NO_SOURCE);
+
+        // the "..." header opens the menu that selects the columns, so it offers every column
+        // tier and each of them once with and once without the ranges
+        $page_url = [url_var::MASK => views::START_ID];
+        $tbl_menu = $t_val->value_list_defined_columns_ui()->table_by_related_columns(
+            $msg_ui, new phrase_list_ui(), $rel_lst->column_names(), false, true, $rel_lst,
+            null, $page_url, false, value_list_ui::COLUMN_TIERS_EX_MAIN);
+        $test_name = 'the "..." header opens a menu without any javascript';
+        $t->assert_text_contains($test_name, $tbl_menu,
+            '<' . html_base::DETAILS . ' class="' . styles::MENU_COLUMN . '">');
+        $t->assert_text_not_contains($test_name, $tbl_menu, '<script');
+        foreach (value_list_ui::COLUMN_TIER_NAMES as $tiers => $msg_tier) {
+            $test_name = 'the column menu offers ' . $msg_tier->text();
+            $t->assert_text_contains($test_name, $lib->html_to_text($tbl_menu), $msg_tier->text());
+            // the entry of one tier without and the entry with the range of each number
+            $t->assert_text_contains($test_name, $tbl_menu,
+                url_var::DISPLAY_LIST_COLUMNS . '=' . $tiers . '&amp;'
+                . url_var::DISPLAY_LIST_RANGE . '=' . url_var::FALSE);
+            $t->assert_text_contains($test_name, $tbl_menu,
+                url_var::DISPLAY_LIST_COLUMNS . '=' . $tiers . '&amp;'
+                . url_var::DISPLAY_LIST_RANGE . '=' . url_var::TRUE);
+        }
+        $test_name = '... and names the entry with the range';
+        $t->assert_text_contains($test_name, $lib->html_to_text($tbl_menu),
+            msg_id::TABLE_COLUMNS_ALL->text() . ' ' . msg_id::TABLE_COLUMNS_WITH_RANGE->text());
+        // the menu selects the columns and the form of the table, each below its own sub header
+        $test_name = 'the menu tooltip names the columns and the form';
+        $t->assert_text_contains($test_name, $tbl_menu, 'title="' . msg_id::TABLE_COLUMNS_TIP->text() . '"');
+        $test_name = 'the column entries are below the sub header columns and values';
+        $t->assert_text_order($test_name, $tbl_menu,
+            'class="' . styles::MENU_HEADER . '">' . msg_id::TABLE_MENU_COLUMNS->text(),
+            msg_id::TABLE_COLUMNS_MAYOR->text());
+        $test_name = 'the form entries are below the sub header as';
+        $t->assert_text_order($test_name, $tbl_menu,
+            'class="' . styles::MENU_HEADER . '">' . msg_id::TABLE_MENU_AS->text(),
+            msg_id::TABLE_AS_TABLE_CHART->text());
+        // the form shown is not offered again: the table page offers the chart and the table
+        // with the chart, the chart page the table and the table with the chart
+        $chart_url = [url_var::MASK => views::START_ID, url_var::DISPLAY_LIST_AS => table_forms::CHART->value];
+        $chart_menu = $t_val->value_list_defined_columns_ui()->columns_menu($chart_url);
+        foreach (table_forms::cases() as $form) {
+            $form_entry = url_var::DISPLAY_LIST_AS . '=' . $form->value . '">' . $form->msg_id()->text();
+            $test_name = 'the table menu offers the table ' . $form->value;
+            if ($form == table_forms::TABLE) {
+                $t->assert_text_not_contains($test_name, $tbl_menu, $form_entry);
+            } else {
+                $t->assert_text_contains($test_name, $tbl_menu, $form_entry);
+            }
+            $test_name = 'the chart menu offers the table ' . $form->value;
+            if ($form == table_forms::CHART) {
+                $t->assert_text_not_contains($test_name, $chart_menu, $form_entry);
+            } else {
+                $t->assert_text_contains($test_name, $chart_menu, $form_entry);
+            }
+        }
+        // the charts of a table are data: the chart triples assigned to the default chart type;
+        // compared by the chart type values, so that a difference can be printed
+        $test_name = 'the ranking defines the range bars of the loss and the scatter plot of the gain against the effort';
+        $ranking_charts = [
+            [chart_types::RANGE_BARS->value, [triple_names::POTENTIAL_LOSS]],
+            [chart_types::SCATTER->value, [triple_names::POTENTIAL_GAIN, triple_names::INITIAL_EFFORT]],
+        ];
+        $charts = $t_phr->list_global_problems_ui()->chart_definitions($msg_ui);
+        $t->assert($test_name, array_map(fn(array $chart) => [$chart[0]->value, $chart[1]], $charts), $ranking_charts);
+        // the api delivers the chart type word and the column pair nested in the chart triple of
+        // the assignment, so the charts are found without a list entry for the word or the pair
+        $test_name = 'the chart type and the columns are read from the phrases nested in the assignment';
+        $charts = $t_phr->list_chart_assignments_ui()->chart_definitions($msg_ui);
+        $t->assert($test_name, array_map(fn(array $chart) => [$chart[0]->value, $chart[1]], $charts), $ranking_charts);
+        $test_name = 'a chart type word without code id is reported and its chart left out';
+        $t->assert($test_name, $t_phr->list_chart_without_type_ui()->chart_definitions($msg_ui), []);
+        $t->assert_text_contains($test_name, $msg_ui->get_last_message_translated(), word_names::RANGE_BARS);
+        $msg_ui->reset();
+        $test_name = 'a list without chart definitions defines no chart';
+        $t->assert($test_name, $rel_lst->chart_definitions($msg_ui), []);
+        // a table with the mayor columns only shows the charts of the mayor tier instead, e.g. the
+        // leverage plot of the gain against the loss of the initial start page
+        $test_name = 'the table with the mayor columns only shows the leverage plot of the gain against the loss';
+        $all_lst = $t_phr->list_global_problems_all_ui();
+        $charts = $all_lst->chart_definitions($msg_ui, true);
+        $t->assert($test_name, array_map(fn(array $chart) => [$chart[0]->value, $chart[1]], $charts),
+            [[chart_types::LEVERAGE->value, [triple_names::POTENTIAL_GAIN, triple_names::POTENTIAL_LOSS]]]);
+        // negative: a table with more columns keeps the default charts
+        $test_name = '... and a table with more columns the default charts';
+        $charts = $all_lst->chart_definitions($msg_ui);
+        $t->assert($test_name, array_map(fn(array $chart) => [$chart[0]->value, $chart[1]], $charts), $ranking_charts);
+        // negative: without a mayor chart the mayor columns keep the default charts
+        $test_name = '... and without a mayor chart the mayor columns keep the default charts';
+        $charts = $t_phr->list_global_problems_ui()->chart_definitions($msg_ui, true);
+        $t->assert($test_name, array_map(fn(array $chart) => [$chart[0]->value, $chart[1]], $charts), $ranking_charts);
+        // the chart triple "potential gain and potential loss" links the gain to the loss column,
+        // but a defined column names no row phrase, so the gain of a solution stays in its row
+        $test_name = 'with the mayor chart definitions the table keeps the gain of the solution';
+        $tbl_all = $t_val->value_list_solution_prio_ui()->table_by_related_columns(
+            $msg_ui, $rank_ctx, $all_lst->column_names(), false, true, $all_lst, value_list_ui::LIMIT_ALL);
+        $t->assert_text_contains($test_name, $lib->html_to_text($tbl_all), '35.2' . sandbox_value_ui::QUALITY_MARK_NO_SOURCE);
+
+        // the leverage plot names each point by its row and shows the lines of an equal gain per
+        // loss, like global-problems-top4_scatter.svg
+        $svg_leverage = $t_val->value_list_solution_prio_ui()->table_to_svg(
+            chart_types::LEVERAGE, $msg_ui, $rank_ctx, $rank_lst->column_names(), $rank_lst,
+            value_list_ui::LIMIT_ALL, [], false, false, [word_names::GAIN, word_names::LOSS]);
+        $test_name = 'the leverage plot draws one point per problem';
+        $t->assert($test_name, substr_count($svg_leverage, 'class="pt"'), count($t_val->solution_prio_rows()));
+        $test_name = '... named by the problem beside the point';
+        $t->assert_text_contains($test_name, $svg_leverage, '>' . triple_names::GLOBAL_WARMING . '</text>');
+        $test_name = '... with the dashed lines of an equal gain per loss';
+        $t->assert_text_contains($test_name, $svg_leverage, 'class="ratio"');
+        $test_name = '... the quarter of a big loss and a big gain named';
+        $t->assert_text_contains($test_name, $svg_leverage, msg_id::CHART_QUADRANT_HIGH->text() . ' ' . word_names::LOSS);
+        $test_name = '... and the gain per loss of each point in its tooltip';
+        $t->assert_text_contains($test_name, $svg_leverage,
+            word_names::GAIN . ' ' . msg_id::CHART_PER->text() . ' ' . word_names::LOSS . table_chart::LABEL_SEP);
+        // negative: the numbered legend of the scatter plot is not needed, because each point is named
+        $test_name = '... without the numbered legend of the scatter plot';
+        $t->assert_text_not_contains($test_name, $svg_leverage, 'class="lg"');
+        // each point is named by its problem, so the page phrase names the chart
+        $test_name = '... named by the page phrase, because each point is named by its problem';
+        $t->assert_text_contains($test_name, $svg_leverage, 'aria-label="' . triple_names::GLOBAL_PROBLEM);
+
+        // with a reason in the reason column, which stands before the solution column, the
+        // scatter plot of the gain is still named by the solution, because a gain value names
+        // the solution and no gain value names the reason
+        $svg_reason = $t_val->value_list_solution_prio_reason_ui()->table_to_svg(
+            chart_types::SCATTER, $msg_ui, $rank_ctx, $rank_lst->column_names(), $rank_lst,
+            value_list_ui::LIMIT_ALL, [], false, false, [word_names::GAIN, word_names::LOSS]);
+        $test_name = 'a filled reason column does not name the scatter plot of the gain';
+        $t->assert_text_contains($test_name, $svg_reason, 'aria-label="' . word_names::SOLUTION);
+        $test_name = '... nor its legend';
+        $t->assert_text_contains($test_name, $svg_reason, '<tspan class="n">1</tspan>  ' . triple_names::REDUCE_EMISSIONS . ' <tspan');
+        // negative: the reason is no name of a point
+        $test_name = '... so the reason is no name of a point';
+        $t->assert_text_not_contains($test_name, $svg_reason, '  ' . triple_names::CLIMATE_GAS_EMISSIONS);
 
         $test_name = 'the table of an empty value list renders nothing';
         $t->assert($test_name, new value_list_ui()->table_by_related_columns($msg_ui), '');
@@ -429,6 +814,196 @@ class value_list_ui_tests
             ->table_by_related_columns($msg_ui, $phr_lst_context_ui, [], true);
         $t->assert_text_contains($test_name,
             $lib->str_left_of($tbl_header, '<table'), '>' . word_names::INHABITANTS . '</a>');
+
+        $t->subheader($ts . 'row order');
+        // the url can ask for another order of the rows than the impact: the phrase id of a
+        // column and the condition, e.g. the smallest potential loss first; the rows are
+        // sorted before they are cut, so the short list shows the first rows of that order
+        $loss_id = $t_trp->potential_loss()->phrase()->id();
+        $gain_id = $t_trp->potential_gain()->phrase()->id();
+        $problem_id = $t_wrd->word_problem()->phrase()->id();
+        $solution_id = $t_wrd->solution()->phrase()->id();
+        $rank_url = [url_var::MASK => views::START_ID];
+        $asc_url = $rank_url + [url_var::DISPLAY_LIST_ORDER => table_orders::NUMERIC_ASC->url_value($loss_id)];
+        $tbl_asc = $t_val->value_list_solution_prio_ui()->table_by_related_columns(
+            $msg_ui, $rank_ctx, $rank_lst->column_names(), false, true, $rank_lst, null, $asc_url);
+        $test_name = 'the smallest number of the column is first if the url asks for it';
+        $t->assert_text_order($test_name, $tbl_asc, triple_names::PROPRIETARY_SOFTWARE, triple_names::GDP_MISMEASUREMENT);
+        $test_name = '... and the biggest is cut away, because the rows are sorted before the cut';
+        $t->assert_text_not_contains($test_name, $tbl_asc, '>' . triple_names::GLOBAL_WARMING . '</a>');
+        $test_name = '... and the links of the "..." menu keep the order of the page';
+        $t->assert_text_contains($test_name, $tbl_asc,
+            url_var::DISPLAY_LIST_ORDER . '=' . table_orders::NUMERIC_ASC->url_value($loss_id));
+        // the biggest number of another column first changes the impact order, e.g. the gain
+        // of the disinformation solution is bigger than the gain of the health solution
+        // although the loss of the health problem is bigger
+        $desc_url = $rank_url + [url_var::DISPLAY_LIST_ORDER => table_orders::NUMERIC_DESC->url_value($gain_id)];
+        $tbl_desc = $t_val->value_list_solution_prio_ui()->table_by_related_columns(
+            $msg_ui, $rank_ctx, $rank_lst->column_names(), false, true, $rank_lst, value_list_ui::LIMIT_ALL, $desc_url);
+        $test_name = 'the biggest number of another column first changes the impact order';
+        $t->assert_text_order($test_name, $tbl_desc, word_names::DISINFORMATION, word_names::HEALTH);
+        $tbl_impact = $t_val->value_list_solution_prio_ui()->table_by_related_columns(
+            $msg_ui, $rank_ctx, $rank_lst->column_names(), false, true, $rank_lst, value_list_ui::LIMIT_ALL, $rank_url);
+        $test_name = '... which the table without an order keeps';
+        $t->assert_text_order($test_name, $tbl_impact, word_names::HEALTH, word_names::DISINFORMATION);
+        // the populism and the poverty solution have the same gain, so the sub order decides
+        // between them and the sub sub order if the sub order leaves them equal as well
+        $sub_url = $desc_url + [url_var::DISPLAY_LIST_ORDER_SUB => table_orders::ALPHA_DESC->url_value($problem_id)];
+        $tbl_sub = $t_val->value_list_solution_prio_ui()->table_by_related_columns(
+            $msg_ui, $rank_ctx, $rank_lst->column_names(), false, true, $rank_lst, value_list_ui::LIMIT_ALL, $sub_url);
+        $test_name = 'the sub order sorts the rows that the prime order leaves equal';
+        $t->assert_text_order($test_name, $tbl_sub, word_names::POVERTY, word_names::POPULISM);
+        $test_name = '... which keep the impact order without the sub order';
+        $t->assert_text_order($test_name, $tbl_desc, word_names::POPULISM, word_names::POVERTY);
+        $sub_sub_url = $desc_url + [
+                url_var::DISPLAY_LIST_ORDER_SUB => table_orders::NUMERIC_ASC->url_value($gain_id),
+                url_var::DISPLAY_LIST_ORDER_SUB_SUB => table_orders::ALPHA_DESC->url_value($problem_id)];
+        $tbl_sub_sub = $t_val->value_list_solution_prio_ui()->table_by_related_columns(
+            $msg_ui, $rank_ctx, $rank_lst->column_names(), false, true, $rank_lst, value_list_ui::LIMIT_ALL, $sub_sub_url);
+        $test_name = 'the sub sub order sorts the rows that the prime and the sub order leave equal';
+        $t->assert_text_order($test_name, $tbl_sub_sub, word_names::POVERTY, word_names::POPULISM);
+        // the row column is sorted by the names of the row phrases without regard to the case
+        $alpha_url = $rank_url + [url_var::DISPLAY_LIST_ORDER => table_orders::ALPHA_ASC->url_value($problem_id)];
+        $tbl_alpha = $t_val->value_list_solution_prio_ui()->table_by_related_columns(
+            $msg_ui, $rank_ctx, $rank_lst->column_names(), false, true, $rank_lst, value_list_ui::LIMIT_ALL, $alpha_url);
+        $test_name = 'the rows are sorted by their name if the url names the row column';
+        $t->assert_text_order($test_name, $tbl_alpha, word_names::EDUCATION, triple_names::GDP_MISMEASUREMENT);
+        $t->assert_text_order($test_name, $tbl_alpha, triple_names::GDP_MISMEASUREMENT, triple_names::GLOBAL_WARMING);
+        // a phrase column is sorted by the name of the phrase shown in the row
+        $sol_url = $rank_url + [url_var::DISPLAY_LIST_ORDER => table_orders::ALPHA_DESC->url_value($solution_id)];
+        $tbl_sol = $t_val->value_list_solution_prio_ui()->table_by_related_columns(
+            $msg_ui, $rank_ctx, $rank_lst->column_names(), false, true, $rank_lst, value_list_ui::LIMIT_ALL, $sol_url);
+        $test_name = 'the rows are sorted by the phrase of a phrase column';
+        $t->assert_text_order($test_name, $tbl_sol, word_names::TAXES, triple_names::REDUCE_EMISSIONS);
+        // with the parents the names of the parent phrases within the related phrases come
+        // before the name, so "GDP mismeasurement" without a parent is before "global problem
+        // education" and the second parent "potential" moves "global warming" behind "populism"
+        $parent_lst = $t_phr->list_global_problems_second_parent_ui();
+        $parent_url = $rank_url + [url_var::DISPLAY_LIST_ORDER => table_orders::ALPHA_PARENT_ASC->url_value($problem_id)];
+        $tbl_parent = $t_val->value_list_solution_prio_ui()->table_by_related_columns(
+            $msg_ui, $rank_ctx, $parent_lst->column_names(), false, true, $parent_lst, value_list_ui::LIMIT_ALL, $parent_url);
+        $test_name = 'the names of the parents come before the name of the row phrase';
+        $t->assert_text_order($test_name, $tbl_parent, triple_names::GDP_MISMEASUREMENT, word_names::EDUCATION);
+        $test_name = '... so a second parent moves the row';
+        $t->assert_text_order($test_name, $tbl_parent, word_names::POPULISM, triple_names::GLOBAL_WARMING);
+        $t->assert_text_order($test_name, $tbl_parent, triple_names::GLOBAL_WARMING, word_names::POVERTY);
+        // each column header ends with an up and a down icon, which link to the same page with
+        // the rows sorted by the column: the numbers of a value column, the names of the row
+        // column and of a phrase column
+        $test_name = 'a value column header has the up icon that sorts the smallest number on top';
+        $t->assert_text_contains($test_name, $tbl_impact, '<i class="' . icons::SORT_UP . '">');
+        $t->assert_text_contains($test_name, $tbl_impact,
+            url_var::DISPLAY_LIST_ORDER . '=' . table_orders::NUMERIC_ASC->url_value($loss_id) . '"');
+        $test_name = '... and the down icon that sorts the biggest on top';
+        $t->assert_text_contains($test_name, $tbl_impact, '<i class="' . icons::SORT_DOWN . '">');
+        $t->assert_text_contains($test_name, $tbl_impact,
+            url_var::DISPLAY_LIST_ORDER . '=' . table_orders::NUMERIC_DESC->url_value($loss_id) . '"');
+        $test_name = 'the row column and a phrase column sort by the names';
+        $t->assert_text_contains($test_name, $tbl_impact,
+            url_var::DISPLAY_LIST_ORDER . '=' . table_orders::ALPHA_ASC->url_value($problem_id) . '"');
+        $t->assert_text_contains($test_name, $tbl_impact,
+            url_var::DISPLAY_LIST_ORDER . '=' . table_orders::ALPHA_DESC->url_value($solution_id) . '"');
+        $test_name = '... with the tooltip that says what the icon does';
+        $t->assert_text_contains($test_name, $tbl_impact, 'title="' . msg_id::TABLE_SORT_UP_TIP->text() . '"');
+        // a click on another column keeps the previous order as the sub order, so that the
+        // sub orders can be reached without typing the url; the same column sorted again
+        // replaces its previous order instead of repeating it as the sub order
+        $test_name = 'the icon of another column moves the shown order to the sub order';
+        $t->assert_text_contains($test_name, $tbl_asc,
+            url_var::DISPLAY_LIST_ORDER . '=' . table_orders::NUMERIC_DESC->url_value($gain_id) . '&amp;'
+            . url_var::DISPLAY_LIST_ORDER_SUB . '=' . table_orders::NUMERIC_ASC->url_value($loss_id) . '"');
+        $test_name = '... and the icon of the sorted column replaces the shown order';
+        $t->assert_text_contains($test_name, $tbl_asc,
+            url_var::DISPLAY_LIST_ORDER . '=' . table_orders::NUMERIC_DESC->url_value($loss_id) . '"');
+        $test_name = '... which is marked as the order shown';
+        $t->assert_text_contains($test_name, $tbl_asc, 'class="' . styles::SORT_ICON . ' ' . styles::SORT_ACTIVE . '"');
+        $t->assert_text_not_contains($test_name, $tbl_impact, styles::SORT_ACTIVE);
+        // negative: a table that does not know its page has no icon, because it cannot link
+        $test_name = 'a table without the page url shows no sort icon';
+        $t->assert_text_not_contains($test_name, $tbl_html, icons::SORT_UP);
+        // the default order of a table is data: the order triple "<condition> of <column>"
+        // assigned to the default sort order tier, read like the chart definitions
+        $test_name = 'the ranking defines the biggest potential loss on top as its default order';
+        $sorted_lst = $t_phr->list_global_problems_sorted_ui();
+        $t->assert($test_name, array_map(fn(array $order) => [$order[0]->value, $order[1]],
+            $sorted_lst->sort_definitions($msg_ui)), [[table_orders::NUMERIC_DESC->value, triple_names::POTENTIAL_LOSS]]);
+        $test_name = 'a list without sort definitions defines no order';
+        $t->assert($test_name, $rank_lst->sort_definitions($msg_ui), []);
+        $test_name = 'a condition word without code id is reported and its order left out';
+        $t->assert($test_name, $t_phr->list_sort_without_condition_ui()->sort_definitions($msg_ui), []);
+        $t->assert_text_contains($test_name, $msg_ui->get_last_message_translated(), word_names::NUMERIC_DESCENDING);
+        $msg_ui->reset();
+        // without an order in the url the rows follow the default order, which puts the health
+        // problem with the bigger loss before the wealth concentration with the bigger gain
+        $tbl_default = $t_val->value_list_solution_prio_ui()->table_by_related_columns(
+            $msg_ui, $rank_ctx, $sorted_lst->column_names(), false, true, $sorted_lst, value_list_ui::LIMIT_ALL, $rank_url);
+        $test_name = 'without an order in the url the rows follow the default order of the definition';
+        $t->assert_text_order($test_name, $tbl_default, word_names::HEALTH, triple_names::WEALTH_CONCENTRATION);
+        $test_name = '... which differs from the impact order of a table without a definition';
+        $t->assert_text_order($test_name, $tbl_impact, triple_names::WEALTH_CONCENTRATION, word_names::HEALTH);
+        $test_name = '... and the down icon of the loss column is marked as the order shown';
+        $t->assert_text_contains($test_name, $tbl_default, 'class="' . styles::SORT_ICON . ' ' . styles::SORT_ACTIVE . '"');
+        $test_name = '... which the icon of another column keeps as the sub order';
+        $t->assert_text_contains($test_name, $tbl_default,
+            url_var::DISPLAY_LIST_ORDER . '=' . table_orders::NUMERIC_DESC->url_value($gain_id) . '&amp;'
+            . url_var::DISPLAY_LIST_ORDER_SUB . '=' . table_orders::NUMERIC_DESC->url_value($loss_id) . '"');
+        $tbl_url_wins = $t_val->value_list_solution_prio_ui()->table_by_related_columns(
+            $msg_ui, $rank_ctx, $sorted_lst->column_names(), false, true, $sorted_lst, value_list_ui::LIMIT_ALL, $alpha_url);
+        $test_name = 'an order in the url wins over the default order';
+        $t->assert_text_order($test_name, $tbl_url_wins, word_names::EDUCATION, triple_names::GLOBAL_WARMING);
+        // negative: a default order of a column that the table does not have is reported
+        $t_val->value_list_most_relevant_ui()->table_by_related_columns(
+            $msg_ui, new phrase_list_ui(), [], false, true, $sorted_lst, null, $rank_url);
+        $test_name = 'a default order of a column that the table does not have is reported';
+        $t->assert_true($test_name, $msg_ui->has_msg_id(msg_id::TABLE_ORDER_UNKNOWN));
+        $t->assert_text_contains($test_name, $msg_ui->get_last_message_translated(), triple_names::POTENTIAL_LOSS);
+        $msg_ui->reset();
+        // the chart shows the same rows as the table, so it draws them in the order of the url
+        $svg_asc = $t_val->value_list_solution_prio_ui()->table_to_svg(
+            chart_types::RANGE_BARS, $msg_ui, $rank_ctx, $rank_lst->column_names(), $rank_lst,
+            value_list_ui::LIMIT_ALL, $asc_url);
+        $test_name = 'the chart draws the rows in the order of the url like the table';
+        $t->assert_text_order($test_name, $svg_asc, triple_names::PROPRIETARY_SOFTWARE, triple_names::GLOBAL_WARMING);
+        // negative: an order that names no column of the table or an unknown condition is
+        // reported and the rows keep the impact order
+        $bad_url = $rank_url + [url_var::DISPLAY_LIST_ORDER => table_orders::NUMERIC_ASC->url_value(999999)];
+        $tbl_bad = $t_val->value_list_solution_prio_ui()->table_by_related_columns(
+            $msg_ui, $rank_ctx, $rank_lst->column_names(), false, true, $rank_lst, null, $bad_url);
+        $test_name = 'an order that names no column of the table is reported';
+        $t->assert_true($test_name, $msg_ui->has_msg_id(msg_id::TABLE_ORDER_UNKNOWN));
+        $t->assert_text_contains($test_name, $msg_ui->get_last_message_translated(), '999999');
+        $msg_ui->reset();
+        $test_name = '... and the rows keep the impact order';
+        $t->assert_text_order($test_name, $tbl_bad, triple_names::GLOBAL_WARMING, word_names::POPULISM);
+        $cond_url = $rank_url + [url_var::DISPLAY_LIST_ORDER => $loss_id . table_orders::ID_SEP . 'biggest'];
+        $t_val->value_list_solution_prio_ui()->table_by_related_columns(
+            $msg_ui, $rank_ctx, $rank_lst->column_names(), false, true, $rank_lst, null, $cond_url);
+        $test_name = 'an unknown condition is reported';
+        $t->assert_true($test_name, $msg_ui->has_msg_id(msg_id::TABLE_ORDER_UNKNOWN));
+        $msg_ui->reset();
+        $test_name = 'a table without an order in the url reports nothing';
+        $t->assert_false($test_name, $msg_ui->has_msg_id(msg_id::TABLE_ORDER_UNKNOWN));
+        // the url value names the phrase id of the column and the condition
+        $test_name = 'an order url value is read back to the phrase id and the condition';
+        [$phr_id, $cond] = table_orders::parse(table_orders::ALPHA_DESC->url_value(-45));
+        $t->assert($test_name, $phr_id, -45);
+        $t->assert($test_name, $cond?->value ?? '', table_orders::ALPHA_DESC->value);
+        // the id and the condition are read on their own, so the caller can say which part is wrong
+        $test_name = 'a value without a phrase id names no column but still the condition';
+        [$phr_id, $cond] = table_orders::parse('x' . table_orders::ID_SEP . table_orders::ALPHA_DESC->value);
+        $t->assert($test_name, $phr_id, 0);
+        $t->assert($test_name, $cond?->value ?? '', table_orders::ALPHA_DESC->value);
+        $test_name = 'a value with an unknown condition names the column but no condition';
+        [$phr_id, $cond] = table_orders::parse('12' . table_orders::ID_SEP . 'biggest');
+        $t->assert($test_name, $phr_id, 12);
+        $t->assert($test_name, $cond?->value ?? '', '');
+        $test_name = 'a row without a key is behind the rows with a key for both directions';
+        $t->assert($test_name, table_orders::NUMERIC_DESC->compare(null, 1.0), 1);
+        $t->assert($test_name, table_orders::NUMERIC_ASC->compare(1.0, null), -1);
+        $t->assert($test_name, table_orders::ALPHA_ASC->compare(null, null), 0);
+        $test_name = 'the names are compared without regard to the case';
+        $t->assert_true($test_name, table_orders::ALPHA_ASC->compare(word_names::EDUCATION, triple_names::GDP_MISMEASUREMENT) < 0);
+        $t->assert_true($test_name, table_orders::ALPHA_DESC->compare(word_names::EDUCATION, triple_names::GDP_MISMEASUREMENT) > 0);
 
         $t->subheader($ts . 'more tail');
         $tail_html = $t_val->list_all_ui($msg)->list($msg_ui, $phr_lst_context_ui, [], '', 1);
@@ -453,6 +1028,50 @@ class value_list_ui_tests
         $full_html = $lst_all_ui->list($msg_ui, $phr_lst_context_ui, [], '', $lst_all_ui->count());
         $test_name = 'a list that shows every value has no more tail';
         $t->assert_text_not_contains($test_name, $full_html, msg_id::MORE->text());
+
+        $t->subheader($ts . 'table to svg');
+        // the chart shows the rows of the table, so the column definitions of the page phrase
+        // select the plotted column like a table column ($svg_bars and $svg_points see above)
+        $test_name = 'the ranking is drawn as range bars';
+        $t->assert_text_contains($test_name, $svg_bars, '<svg');
+        $test_name = '... with one row per problem';
+        $t->assert($test_name, substr_count($svg_bars, 'class="bar"'), count($t_val->solution_prio_rows()));
+        $test_name = '... never named like the bootstrap row class, which would stretch the bars';
+        $t->assert_text_not_contains($test_name, $svg_bars, 'class="row"');
+        $test_name = '... the biggest loss on top';
+        $t->assert_text_order($test_name, $svg_bars, triple_names::GLOBAL_WARMING, word_names::POPULISM);
+        $test_name = '... and the solution of the problem in the tooltip';
+        $t->assert_text_contains($test_name, $svg_bars, triple_names::REDUCE_EMISSIONS);
+        // the range of a number is the bar behind the dot and the bounds are named in the
+        // tooltip like in the table cell, with the assumed mark behind the centre number
+        $svg_range = $t_val->value_list_range_ui()->table_to_svg(chart_types::RANGE_BARS, $msg_ui);
+        $test_name = 'the range bounds are named in the tooltip like in the table';
+        $t->assert_text_contains($test_name, $svg_range, $centre_txt . ' ' . word_names::TRILLION . ' '
+            . word_names::EUR . value_list_ui::RANGE_START . '0.88' . value_list_ui::RANGE_SEP . '5.5' . value_list_ui::RANGE_END);
+        $test_name = '... and drawn as the bar of the row';
+        $t->assert($test_name, substr_count($svg_range, 'class="rng"'), 1);
+        $test_name = 'the ranking is drawn as a scatter plot of the gain against the loss';
+        $t->assert($test_name, substr_count($svg_points, 'class="pt"'), count($t_val->solution_prio_rows()));
+        $test_name = '... with the solutions numbered in the legend';
+        $t->assert_text_contains($test_name, $svg_points, '<tspan class="n">1</tspan>  ' . triple_names::REDUCE_EMISSIONS);
+        // the reason column stands before the solution column but no value of the ranking
+        // names a reason, so the empty column neither names the points nor the chart
+        $test_name = '... named by the solution column and not by the empty reason column before it';
+        $t->assert_text_contains($test_name, $svg_points, 'aria-label="' . word_names::SOLUTION);
+        $t->assert_text_not_contains($test_name, $svg_points, word_names::REASON);
+        $test_name = '... and the axes named by the plotted columns';
+        $t->assert_text_contains($test_name, $svg_points,
+            word_names::GAIN . ' ' . msg_id::CHART_VERSUS->text() . ' ' . word_names::LOSS);
+        // negative: a column that the table does not have is reported instead of plotting another
+        $svg_none = $t_val->value_list_range_ui()->table_to_svg(
+            chart_types::RANGE_BARS, $msg_ui, chart_cols: [word_names::PI]);
+        $test_name = 'a column that the table does not have draws no chart';
+        $t->assert($test_name, $svg_none, '');
+        $test_name = '... and is reported to the user';
+        $t->assert_true($test_name, $msg_ui->has_msg_id(msg_id::CHART_COLUMN_NOT_FOUND));
+        $msg_ui->reset();
+        $test_name = 'an empty value list draws no chart';
+        $t->assert($test_name, new value_list_ui()->table_to_svg(chart_types::RANGE_BARS, $msg_ui), '');
 
         // TODO add a test that if a view contains beside the "2023 (year)"
         //      no other phrase that contains the word "2023"

@@ -80,6 +80,7 @@ include_once paths::DB . 'sql_db.php';
 include_once paths::DB . 'sql_par.php';
 include_once paths::DB . 'sql_par_field_list.php';
 include_once paths::DB . 'sql_par_type.php';
+include_once paths::DB . 'sql_type.php';
 include_once paths::DB . 'sql_type_list.php';
 include_once paths::MODEL_CONST . 'def.php';
 include_once paths::SHARED_CONST . 'def.php';
@@ -140,6 +141,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
@@ -447,14 +449,24 @@ class word extends sandbox_code_id
         if (key_exists(json_fields::REFS, $in_ex_json)) {
             if ($in_ex_json[json_fields::REFS] <> '') {
                 $ref_json = $in_ex_json[json_fields::REFS];
-                foreach ($ref_json as $ref_data) {
-                    $ref_obj = new ref($this->get_user());
-                    $ref_obj->set_phrase($this->phrase());
-                    $ref_obj->import_mapper($ref_data, $msg, $dto);
-                    // TODO $dto should never be null if no direct import is used
-                    $dto?->add_reference($ref_obj, $msg);
-                    if ($msg->is_ok()) {
-                        $this->ref_lst[] = $ref_obj;
+                // check the format before the mapper, which expects an array: a reference given
+                // as a compact "type": "key" map would otherwise end the whole import with an
+                // uncaught fatal (see ref::import_list_valid)
+                if (!ref::import_list_valid($ref_json)) {
+                    $msg->add(msg_id::IMPORT_REF_NOT_AN_OBJECT, [
+                        msg_id::VAR_NAME => $this->name(),
+                        msg_id::VAR_JSON_TEXT => json_encode($ref_json)
+                    ]);
+                } else {
+                    foreach ($ref_json as $ref_data) {
+                        $ref_obj = new ref($this->get_user());
+                        $ref_obj->set_phrase($this->phrase());
+                        $ref_obj->import_mapper($ref_data, $msg, $dto);
+                        // TODO $dto should never be null if no direct import is used
+                        $dto?->add_reference($ref_obj, $msg);
+                        if ($msg->is_ok()) {
+                            $this->ref_lst[] = $ref_obj;
+                        }
                     }
                 }
             }
@@ -676,7 +688,8 @@ class word extends sandbox_code_id
     function load_formulas_related(user_message $msg): void
     {
         $frm_lst = new formula_list($this->get_user());
-        $frm_lst->load_by_phr($this->phrase(), $msg);
+        // the formulas of a symbol or alias belong to the page too (see phrase::formula_selection)
+        $frm_lst->load_by_phr_lst($this->phrase()->formula_selection($msg), $msg);
         $this->formulas_related = $frm_lst;
     }
 
@@ -1127,7 +1140,9 @@ class word extends sandbox_code_id
     function reload_value_list(user_message $msg, int $page = 1, int $size = sql_db::ROW_LIMIT): value_list
     {
         $val_lst = new value_list($this->get_user());
-        $val_lst->load_by_phr($this->phrase(), $msg, $size, $page);
+        // the values of a symbol or alias belong to the page too (see phrase::value_selection),
+        // so a value that carries any phrase of the selection is loaded
+        $val_lst->load_by_phr_lst($this->phrase()->value_selection($msg), $msg, true, $size, $page);
         // load the phrase names of each value group so that the related value list
         // shows the phrase names (and not only the links) in the api and frontend
         $val_lst->load_phrases($msg);
@@ -1291,7 +1306,7 @@ class word extends sandbox_code_id
     }
 
     /**
-     * @returns bool true if the word has the type "measure" (e.g. "metre" or "CHF")
+     * @returns bool true if the word has the type "measure unit" (e.g. "metre" or "CHF")
      * in case of a division, these words are excluded from the result
      * in case of add, it is checked that the added value does not have a different measure
      */
@@ -1324,7 +1339,7 @@ class word extends sandbox_code_id
     }
 
     /**
-     * @returns bool true if the word has the type "scaling_percent" (e.g. "percent")
+     * @returns bool true if the word has the type "percent" (e.g. "percent")
      */
     function is_percent(): bool
     {
@@ -2014,8 +2029,10 @@ class word extends sandbox_code_id
         $val_lst->load_by_phr($this->phrase(), $msg);
 
         // if there are still values, ask if they really should be deleted
+        // a value of this word can never be excluded for one user, because its key contains the id
+        // of this word, so a value that another user still uses is refused and reported
         if ($val_lst->has_values()) {
-            $val_lst->del($msg);
+            $val_lst->del($msg, new sql_type_list([sql_type::NO_USER_SANDBOX]));
         }
 
         // if there are still triples, ask if they really should be deleted

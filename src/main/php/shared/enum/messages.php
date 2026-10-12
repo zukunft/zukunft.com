@@ -240,8 +240,42 @@ enum messages: string
     case TOTAL = 'total';
     case MORE = 'more';
     case AND_MORE = '... more';
-    // the tooltip of the "..." header of a simple table that links to the table with every column
-    case TABLE_ALL_COLUMNS_TIP = 'table_all_columns_tip';
+    // the tooltip and the entries of the "..." header menu of a table, which selects the
+    // column tiers to show and whether each number is shown with its probability range
+    case TABLE_COLUMNS_TIP = 'table_columns_tip';
+    case TABLE_COLUMNS_MAYOR = 'table_columns_mayor';
+    case TABLE_COLUMNS_MAIN = 'table_columns_main';
+    case TABLE_COLUMNS_MINOR = 'table_columns_minor';
+    case TABLE_COLUMNS_ALL = 'table_columns_all';
+    // added to the entry above for the same columns with the probability range of each number
+    case TABLE_COLUMNS_WITH_RANGE = 'table_columns_with_range';
+    // the sub headers of the "..." menu and the entries that select the form of the table (table_forms)
+    case TABLE_MENU_COLUMNS = 'table_menu_columns';
+    case TABLE_MENU_AS = 'table_menu_as';
+    case TABLE_AS_TABLE = 'table_as_table';
+    case TABLE_AS_CHART = 'table_as_chart';
+    case TABLE_AS_TABLE_CHART = 'table_as_table_chart';
+    // the tooltips of the up / down icons behind a column header that sort the rows (table_orders)
+    case TABLE_SORT_UP_TIP = 'table_sort_up_tip';
+    case TABLE_SORT_DOWN_TIP = 'table_sort_down_tip';
+    // the tooltip of the ", ..." behind the phrase of a cell that stands for more phrases of the row
+    case TABLE_MORE_PHRASES_TIP = 'table_more_phrases_tip';
+    // the subtitle and the axis texts of a value table shown as a chart (see table_chart)
+    case CHART_RANGE_BARS_TIP = 'chart_range_bars_tip';
+    case CHART_SCATTER_TIP = 'chart_scatter_tip';
+    case CHART_LOG_SCALE = 'chart_log_scale';
+    case CHART_VERSUS = 'chart_versus';
+    case CHART_LEVERAGE_TIP = 'chart_leverage_tip';
+    case CHART_QUADRANT_HIGH = 'chart_quadrant_high';
+    case CHART_QUADRANT_LOW = 'chart_quadrant_low';
+    case CHART_PER = 'chart_per';
+    // the tooltip and the entries of the "..." menu below the title of a default view, which
+    // shows the same object in one of the versions of views::DEFAULT_VIEW_VERSIONS
+    case VIEW_VERSION_TIP = 'view_version_tip';
+    case VIEW_VERSION_DEFAULT = 'view_version_default';
+    case VIEW_VERSION_DETAIL = 'view_version_detail';
+    case VIEW_VERSION_RANGE = 'view_version_range';
+    case VIEW_VERSION_DETAIL_RANGE = 'view_version_detail_range';
     case EXAMPLE_SHORT = 'e.g.';
     case NO_PRIVILEGES = 'cannot be changed';
 
@@ -593,6 +627,13 @@ enum messages: string
         . ' to list of user '
         . self::VAR_START . self::VAR_USER_LIST_NAME . self::VAR_END
         . ' list';
+    case LIST_CLASS_NOT_EXPECTED = 'trying to add "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" of class '
+        . self::VAR_START . self::VAR_TYPE . self::VAR_END
+        . ' to the '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' list';
     case FILL_WORD_WITH_OTHER = 'word "'
         . self::VAR_START . self::VAR_WORD_NAME . self::VAR_END
         . '" cannot be filled with '
@@ -692,6 +733,11 @@ enum messages: string
         . ' with id '
         . self::VAR_START . self::VAR_ID . self::VAR_END
         . ' cannot be found; it may have been deleted';
+    // the answer of the backend to a form that asks it to read the entered values, e.g. the
+    // validate button of the formula form: the entry cannot be used and the backend names the
+    // reason, which the user needs to correct the entry (see db_object::load_by_id)
+    case INPUT_VALIDATION_FAILED = 'the entry cannot be used: '
+        . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END;
 
     case USER_IP_ADDR_MISSING = 'ip addr for user "'
         . self::VAR_START . self::VAR_USER_NAME . self::VAR_END
@@ -702,6 +748,11 @@ enum messages: string
         . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END;
     case IMPORT_SOURCE_NOT_A_NAME = 'the source of a value must be the name of a source'
         . ' declared in the "sources" section of the file, but is '
+        . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END;
+    case IMPORT_REF_NOT_AN_OBJECT = 'the references of "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" must be a list of objects each with a name and a type'
+        . ' e.g. [{"name": "Zurich", "type": "wikipedia"}], but the import file has '
         . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END;
     case PHRASE_MISSING_IMPORT = 'phrase "'
         . self::VAR_START . self::VAR_PHRASE . self::VAR_END
@@ -1081,8 +1132,21 @@ enum messages: string
         . ' found';
 
     case NOT_YET_IMPLEMENTED = 'not yet implemented';
+    case CHART_COLUMN_NOT_FOUND = 'the table has no value column "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" to plot';
+    case CHART_COLUMNS_MISSING = 'the table has not enough value columns for the chart';
+    case CHART_TYPE_UNKNOWN = 'the chart type "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" has no code id of a known chart type, so the chart is not shown';
     case TABLE_COLUMNS_NOT_IMPLEMENTED = 'the table with related columns is not yet implemented for '
         . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END;
+    case SORT_CONDITION_UNKNOWN = 'the sort condition "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" has no code id of a known condition, so the default order is not used';
+    case TABLE_ORDER_UNKNOWN = 'the rows cannot be sorted by "'
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END
+        . '", because the table has no such column or the condition is unknown, so the rows keep the impact order';
     case VALUE_UNIT_NOT_UNIQUE = 'the value has more than one unit: "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '"';
@@ -1714,17 +1778,29 @@ enum messages: string
     case INFO_NOT_USED_FOR_VALUES = 'info_not_used_for_values';
     case INFO_NOT_USED_FOR_RESULTS = 'info_not_used_for_results';
     case INFO_NO_SIMILAR_VALUES = 'info_no_similar_values';
+    // shown on the result page if the calculation has used no value, formula or result of its own
+    case INFO_NO_VALUES_USED = 'info_no_values_used';
+    case INFO_NO_FORMULAS_USED = 'info_no_formulas_used';
+    case INFO_NO_RESULTS_USED = 'info_no_results_used';
     case INFO_VIEW_HAS_NO_COMPONENTS = 'info_view_has_no_components';
     case INFO_NOT_USED_IN_VIEWS = 'info_not_used_in_views';
     case INFO_NOT_USED_BY_TERMS = 'info_not_used_by_terms';
     // shown on the search page if no word, triple, verb or formula matches the search pattern
     case INFO_NO_SEARCH_RESULT = 'info_no_search_result';
+    // shown in the phrase selection of a new value if no word or triple starts with the typed chars
+    case INFO_NO_PHRASE_FOR_PATTERN = 'info_no_phrase_for_pattern';
+    // shown if a url field that expects a number e.g. the number of a new value gets a text
+    case URL_VALUE_NOT_NUMERIC = 'url_value_not_numeric';
     // shown instead of the formula selector of a phrase page if no formula can be offered
     case INFO_NO_FORMULA_TO_LINK = 'info_no_formula_to_link';
+    // shown instead of the category selector of a phrase page if no category can be offered
+    case INFO_NO_CATEGORY_TO_SELECT = 'info_no_category_to_select';
     // the title of the formula link confirm page
     case INFO_LINK_FORMULA_TO_PHRASE = 'info_link_formula_to_phrase';
     // the title of the confirm page section with the link that a new object gets with the same confirm
     case INFO_CONFIRM_LINK = 'info_confirm_link';
+    // the text of the form that defines a phrase without an "is a" parent as one of the categories
+    case INFO_DEFINE_PHRASE_AS = 'info_define_phrase_as';
 
     // e.g. if an import formula does not contain all needed parameters
     case FORMULA_NOT_VALID = 'formula is not valid';
@@ -1749,6 +1825,10 @@ enum messages: string
     case THREE_POINTS = '...';
     // shown in the confirm-change preview when a type field (share, protection, ...) has no value yet
     case NOT_SET = 'not_set';
+    // the tooltips of the grey superscript behind a number that marks the value quality
+    case QUALITY_MARK_ASSUMED = 'quality_mark_assumed';
+    case QUALITY_MARK_NO_SOURCE = 'quality_mark_no_source';
+    case QUALITY_MARK_PEER_REVIEWED = 'quality_mark_peer_reviewed';
 
     // text to be shown in buttons
     case ADD = 'add';
@@ -1764,6 +1844,8 @@ enum messages: string
     case WORD_EDIT = 'word_edit';
     case WORD_DEL = 'word_del';
     case WORD_UNLINK = 'unlink_word';
+    // the tooltip of the icon that removes one phrase from the phrases of a new value
+    case PHRASE_REMOVE = 'phrase_remove';
     case VERB_ADD = 'verb_add';
     case VERB_EDIT = 'verb_edit';
     case VERB_DEL = 'verb_del';
@@ -1777,6 +1859,10 @@ enum messages: string
     case REF_EDIT = 'ref_edit';
     case REF_DEL = 'ref_del';
     case VALUE_ADD = 'value_add';
+    // the tooltip of the greyed out value add icon of a user who cannot save a change
+    case VALUE_ADD_BLOCKED = 'value_add_blocked';
+    // added to the tooltip of a greyed out add or edit icon of a user without login (see html_base::change_icon)
+    case CHANGE_LOGIN_REQUIRED = 'change_login_required';
     case VALUE_ADD_SIMILAR = 'value_add_similar';
     case VALUE_EDIT = 'value_edit';
     case VALUE_DEL = 'value_del';
@@ -1788,6 +1874,10 @@ enum messages: string
     case FORMULA_LINK = 'formula_link';
     // the tooltip of the greyed out formula link icon of a user who cannot save a change
     case FORMULA_LINK_BLOCKED = 'formula_link_blocked';
+    // the tooltip of the icon that opens the form to define a phrase without "is a" parent as a category
+    case DEFINE_PHRASE = 'define_phrase';
+    // the tooltip of the greyed out define icon of a user who cannot save a change
+    case DEFINE_PHRASE_BLOCKED = 'define_phrase_blocked';
     case FORMULA_UNLINK = 'formula_unlink';
     case RESULT_EDIT = 'result_edit';
     case RESULT_DEL = 'result_del';
@@ -1843,11 +1933,15 @@ enum messages: string
     case FORM_TITLE_REF_EDIT = 'form_title_ref_edit';
     // the ref edit title that names the linked phrase, used if the phrase name is known
     case FORM_TITLE_REF_EDIT_PHRASE = 'form_title_ref_edit_phrase';
+    // the change value title with the linked phrases of the value (see system_form::form_title_text)
+    case FORM_TITLE_VALUE_EDIT_PHRASE = 'form_title_value_edit_phrase';
     case FORM_TITLE_REF_DEL = 'form_title_ref_del';
     case FORM_TITLE_GROUP_ADD = 'form_title_group_add';
     case FORM_TITLE_GROUP_EDIT = 'form_title_group_edit';
     case FORM_TITLE_GROUP_DEL = 'form_title_group_del';
     case FORM_TITLE_VALUE_ADD = 'form_title_value_add';
+    // the title of the form that selects the phrases of a new value step by step
+    case FORM_TITLE_VALUE_ADD_PHRASES = 'form_title_value_add_phrases';
     case FORM_TITLE_VALUE_EDIT = 'form_title_value_edit';
     case FORM_TITLE_VALUE_DEL = 'form_title_value_del';
     case FORM_TITLE_FORMULA_ADD = 'form_title_formula_add';
@@ -1890,6 +1984,7 @@ enum messages: string
     case FORM_SUB_TITLE_NO_USAGE = 'system_sub_title_no_usage';
     case FORM_SUB_TITLE_TRIPLES = 'system_sub_title_triples';
     case FORM_SUB_TITLE_DESCRIPTION = 'system_sub_title_description';
+    case FORM_SUB_TITLE_EXPRESSION = 'system_sub_title_expression';
     case FORM_SUB_TITLE_REF = 'system_sub_title_references';
     case FORM_SUB_TITLE_VALUES = 'system_sub_title_values';
     case FORM_SUB_TITLE_RELATED_VALUES = 'system_sub_title_related_values';
@@ -1965,12 +2060,66 @@ enum messages: string
     case RESET_MAIL_KEY_INTRO = 'reset_mail_key_intro';
     case RESET_MAIL_LINK_INTRO = 'reset_mail_link_intro';
     case RESET_MAIL_IGNORE = 'reset_mail_ignore';
+    // the mail with the link that confirms the email address of a new account
+    case SIGNUP_MAIL_SUBJECT = 'signup_mail_subject';
+    case SIGNUP_MAIL_KEY_INTRO = 'signup_mail_key_intro';
+    case SIGNUP_MAIL_IGNORE = 'signup_mail_ignore';
+    case SIGNUP_MAIL_SENT = 'signup_mail_sent';
+    case SIGNUP_MAIL_FAILED = 'signup_mail_failed';
+    // the activation page confirms the email address and only optionally sets a new password
+    case ACTIVATE_PASSWORD_OPTIONAL = 'activate_password_optional';
     case SYSTEM_TITLE_LOGOUT = 'system_title_logout';
     case LOGOUT_NOTICE = 'logout_notice';
     case SYSTEM_TITLE_VALUE_DETAIL = 'system_title_value_detail';
     case SYSTEM_TITLE_RESULT_EXPLAIN = 'system_title_result_explain';
     case SYSTEM_TITLE_FORMULA_TEST = 'system_title_formula_test';
     case SYSTEM_TITLE_USER_SETTINGS = 'system_title_user_settings';
+    case SYSTEM_TITLE_USER_CONFIG = 'system_title_user_config';
+    case SYSTEM_TITLE_SYSTEM_CONFIG = 'system_title_system_config';
+    case SYSTEM_TITLE_ADMIN_CONFIG = 'system_title_admin_config';
+    case SYSTEM_TITLE_USER_QUARANTINE = 'system_title_user_quarantine';
+    case SYSTEM_TITLE_ALL_QUARANTINE = 'system_title_all_quarantine';
+    case SYSTEM_TITLE_USER_JOBS = 'system_title_user_jobs';
+    case SYSTEM_TITLE_ALL_JOBS = 'system_title_all_jobs';
+    case SYSTEM_TITLE_PHRASE_TRANSLATIONS = 'system_title_phrase_translations';
+    case SYSTEM_TITLE_LANGUAGE_FORMS = 'system_title_language_forms';
+    case SYSTEM_TITLE_TRANSLATIONS_MISSING = 'system_title_translations_missing';
+    case SYSTEM_TITLE_LIST_LANGUAGES = 'system_title_list_languages';
+    case SYSTEM_TITLE_SYS_LOG_DETAIL = 'system_title_sys_log_detail';
+    case SYSTEM_TITLE_CHANGE_LOG_USER = 'system_title_change_log_user';
+    case SYSTEM_TITLE_CHANGE_LOG_RECENT = 'system_title_change_log_recent';
+    case SYSTEM_TITLE_OBJECT_HISTORY = 'system_title_object_history';
+    case SYSTEM_TITLE_CHANGE_DETAIL = 'system_title_change_detail';
+    case SYSTEM_TITLE_IMPORT_PREVIEW = 'system_title_import_preview';
+    case SYSTEM_TITLE_IMPORT_RESULT = 'system_title_import_result';
+    case SYSTEM_TITLE_IMPORT_URL = 'system_title_import_url';
+    case SYSTEM_TITLE_IMPORT_WIKIDATA = 'system_title_import_wikidata';
+    case SYSTEM_TITLE_EXPORT_SELECTIONS = 'system_title_export_selections';
+    case SYSTEM_TITLE_EXPORT_OBJECT = 'system_title_export_object';
+    case SYSTEM_TITLE_EXPORT_READY = 'system_title_export_ready';
+    case SYSTEM_TITLE_JOB_DETAIL = 'system_title_job_detail';
+    case SYSTEM_TITLE_CALC_STATUS = 'system_title_calc_status';
+    case SYSTEM_TITLE_VALUE_FIND = 'system_title_value_find';
+    case SYSTEM_TITLE_REF_FIND = 'system_title_ref_find';
+    case SYSTEM_TITLE_FIND_DUPLICATES = 'system_title_find_duplicates';
+    case SYSTEM_TITLE_LIST_WORDS = 'system_title_list_words';
+    case SYSTEM_TITLE_LIST_TRIPLES = 'system_title_list_triples';
+    case SYSTEM_TITLE_LIST_SOURCES = 'system_title_list_sources';
+    case SYSTEM_TITLE_LIST_REFS = 'system_title_list_refs';
+    case SYSTEM_TITLE_LIST_FORMULAS = 'system_title_list_formulas';
+    case SYSTEM_TITLE_LIST_VIEWS = 'system_title_list_views';
+    case SYSTEM_TITLE_LIST_COMPONENTS = 'system_title_list_components';
+    case INFO_VIEW_NOT_YET_AVAILABLE = 'info_view_not_yet_available';
+    // the read only tree of the system configuration (see web/helper/config_tree)
+    case CONFIG_TREE_ALL = 'config_tree_all';
+    case CONFIG_TREE_MATCHES = 'config_tree_matches';
+    case CONFIG_TREE_NO_MATCH = 'config_tree_no_match';
+    case CONFIG_TREE_SCOPE_UNKNOWN = 'config_tree_scope_unknown';
+    case CONFIG_TREE_FILE_VALUE = 'config_tree_file_value';
+    case CONFIG_TREE_VALUE_SAVED = 'config_tree_value_saved';
+    case CONFIG_TREE_DEFAULT_SAVED = 'config_tree_default_saved';
+    case VALUE_SET_DEFAULT_DENIED = 'value_set_default_denied';
+    case CONFIG_SYSTEM_ADMIN_ONLY = 'config_system_admin_only';
     case SYSTEM_TITLE_USER = 'system_title_user';
     case SYSTEM_TITLE_VERB = 'system_title_verb';
     // the class word in front of the object name of a page title e.g. view "Word"
@@ -1978,6 +2127,15 @@ enum messages: string
     case SYSTEM_TITLE_COMPONENT = 'system_title_component';
     case TITLE_LANGUAGE_SELECT = 'title_language_select';
     case ADMIN_NO_OPEN_JOBS = 'admin_no_open_jobs';
+    case INFO_NO_JOBS = 'info_no_jobs';
+    case JOB_CHANGE_NOT_PERMITTED = 'job_change_not_permitted';
+    case JOB_UPGRADE_ONLY_ADMIN = 'job_upgrade_only_admin';
+    case JOB_ALREADY_CLOSED = 'job_already_closed';
+    case JOB_ACTION_UNKNOWN = 'job_action_unknown';
+    case JOB_LIST_ALL_ONLY_ADMIN = 'job_list_all_only_admin';
+    case SYSTEM_BUTTON_JOB_UPGRADE = 'system_button_job_upgrade';
+    case SYSTEM_BUTTON_JOB_DOWNGRADE = 'system_button_job_downgrade';
+    case SYSTEM_BUTTON_JOB_CANCEL = 'system_button_job_cancel';
     case ERROR_UPDATE_PROGRAM_ISSUES = 'error_update_program_issues';
     case ERROR_UPDATE_NO_OPEN = 'error_update_no_open';
     case ERROR_UPDATE_PERMISSION_DENIED = 'error_update_permission_denied';
@@ -1987,6 +2145,8 @@ enum messages: string
     case ALL_USER_OVERWRITES_NONE = 'all_user_overwrites_none';
     // shown if a user without login tries to change data, but the pod does not permit that
     case CHANGE_BLOCKED_FOR_IP_USER = 'change_blocked_for_ip_user';
+    // shown if the url names another user than the one of the session e.g. a link shared by another user
+    case URL_USER_NOT_SESSION_USER = 'url_user_not_session_user';
     // shown if an api write is rejected because it comes from a different origin (suspected csrf)
     case CHANGE_BLOCKED_CROSS_ORIGIN = 'change_blocked_cross_origin';
 
@@ -2044,6 +2204,11 @@ enum messages: string
     // value and result fields
     case FORM_FIELD_VALUE = 'form_field_value';
     case FORM_FIELD_GROUP = 'form_field_group';
+    // the label of the field for the name or the first chars of a word or triple of a new value
+    case FORM_FIELD_PHRASE_PATTERN = 'form_field_phrase_pattern';
+    case FORM_FIELD_TEXT_VALUE = 'form_field_text_value';
+    case FORM_FIELD_TIME_VALUE = 'form_field_time_value';
+    case FORM_FIELD_GEO_VALUE = 'form_field_geo_value';
     case FORM_FIELD_GROUP_OR_PHRASE_LIST = 'form_field_group_or_phrase_list';
     case FORM_FIELD_SOURCE_GROUP_OR_PHRASE_LIST = 'form_field_source_group_or_phrase_list';
 
@@ -2099,6 +2264,12 @@ enum messages: string
     case FORM_SELECT_SOURCE = 'form_select_source';
     case FORM_SELECT_MULTI_SOURCES = 'form_select_multi_sources';
     case FORM_SELECT_SOURCE_TYPE = 'form_select_source_type';
+    // the groups of the source types (see group_msg_code_id in source_types.csv)
+    case SOURCE_TYPE_GROUP_DOCUMENTS = 'source_type_group_documents';
+    case SOURCE_TYPE_GROUP_STRUCTURED = 'source_type_group_structured';
+    case SOURCE_TYPE_GROUP_DATABASE = 'source_type_group_database';
+    case SOURCE_TYPE_GROUP_ACCESS = 'source_type_group_access';
+    case SOURCE_TYPE_GROUP_WEB = 'source_type_group_web';
     case FORM_SELECT_REF = 'form_select_ref';
     case FORM_SELECT_MULTI_REFS = 'form_select_multi_refs';
     case FORM_SELECT_REF_TYPE = 'form_select_ref_type';
@@ -2179,6 +2350,11 @@ enum messages: string
     case FORM_PHRASE_TYPE_TO = 'form_phrase_type_to';
     case FORM_SELECT_VIEW_DEFAULT = 'form_select_view_default';
     case FORM_SELECT_VALUE_TYPE = 'form_select_value_type';
+    // the options of the value type selector (see value_types::msg_id)
+    case VALUE_TYPE_NUMBER = 'value_type_number';
+    case VALUE_TYPE_TEXT = 'value_type_text';
+    case VALUE_TYPE_TIME = 'value_type_time';
+    case VALUE_TYPE_GEO = 'value_type_geo';
     case SYSTEM_PASTE_TABLE_CONTEXT = 'system_paste_table_context';
     case SYSTEM_PASTE_TABLE_BODY = 'system_paste_table_body';
     case SYSTEM_SELECTION_TEXT = 'system_selection_text';
@@ -2190,8 +2366,9 @@ enum messages: string
     case FORM_BUTTON_SAVE = 'form_button_save';
     case FORM_BUTTON_CONFIRM = 'form_button_confirm';
     case FORM_BUTTON_DEL = 'form_button_del';
-    // the tooltip of the refresh icon beside a form field label
-    case FORM_BUTTON_REFRESH = 'form_button_refresh';
+    // the button beside the expression and the latex field of the formula form that asks the
+    // backend to read the entered text and to name the terms that it selects
+    case FORM_BUTTON_VALIDATE = 'form_button_validate';
     // the tooltips of the views tab of an object page: show the object with the view, set the view
     // as the default view of the object and change the view itself (see view::open_link)
     case BUTTON_VIEW_SHOW_TIP = 'button_view_show_tip';
@@ -2201,6 +2378,16 @@ enum messages: string
     case SYSTEM_BUTTON_EXPORT = 'system_button_export';
     // the button that links the selected object to the shown object e.g. a formula to a phrase
     case SYSTEM_BUTTON_LINK = 'system_button_link';
+    // the button that opens the add view for the selected object e.g. to define a word as a category
+    case SYSTEM_BUTTON_ADD = 'system_button_add';
+    // the button that checks the typed word or triple and adds it to the phrases of a new value
+    case SYSTEM_BUTTON_CHECK_AND_ADD = 'system_button_check_and_add';
+    // the button that continues with the next step e.g. the value add form with the selected phrases
+    case SYSTEM_BUTTON_NEXT = 'system_button_next';
+    // the button beside the phrase field of a new value that adds the named phrase or offers the matching phrases
+    case SYSTEM_BUTTON_FIND_AND_NEXT = 'system_button_find_and_next';
+    // the link that opens the detailed form of a simple add form e.g. the value add form with all fields
+    case SYSTEM_BUTTON_MORE_DETAILS = 'system_button_more_details';
     case FORM_WORD_FLD_NAME = 'form_word_fld_name';
 
 
@@ -2511,6 +2698,7 @@ enum messages: string
     case SYSTEM_DB_FIELD_GEO_TRIPLE_ID = 'system_db_field_geo_triple_id';
     case SYSTEM_DB_FIELD_GEO_VALUE = 'system_db_field_geo_value';
     case SYSTEM_DB_FIELD_GROUP_ID = 'system_db_field_group_id';
+    case SYSTEM_DB_FIELD_GROUP_MSG_CODE_ID = 'system_db_field_group_msg_code_id';
     case SYSTEM_DB_FIELD_GROUP_NAME = 'system_db_field_group_name';
     case SYSTEM_DB_FIELD_IMPACT = 'system_db_field_impact';
     case SYSTEM_DB_FIELD_INACTIVE = 'system_db_field_inactive';
@@ -2662,6 +2850,7 @@ enum messages: string
     case SYSTEM_DB_FIELD_VIEW_TYPE_ID = 'system_db_field_view_type_id';
     case SYSTEM_DB_FIELD_WEIGHT = 'system_db_field_weight';
     case SYSTEM_DB_FIELD_WIKIMEDIA_CODE = 'system_db_field_wikimedia_code';
+    case SYSTEM_DB_FIELD_WIKIPEDIA = 'system_db_field_wikipedia';
     case SYSTEM_DB_FIELD_WORD_ID = 'system_db_field_word_id';
     case SYSTEM_DB_FIELD_WORD_ID_COL = 'system_db_field_word_id_col';
     case SYSTEM_DB_FIELD_WORD_ID_COL2 = 'system_db_field_word_id_col2';

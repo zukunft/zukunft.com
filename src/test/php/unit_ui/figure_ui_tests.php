@@ -54,7 +54,7 @@ class figure_ui_tests
 
         $fig = new figure($t_fig->figure_value($msg)->api_json());
         $test_page = $html->text_h2('Figure display test');
-        $test_page .= 'with tooltip: ' . $fig->display() . '<br>';
+        $test_page .= 'with tooltip: ' . $fig->display($msg_ui) . '<br>';
         $test_page .= 'with link: ' . $fig->display_linked($msg_ui) . '<br>';
         $t->html_page_test($test_page, 'figure', 'figure', $msg_ui);
     }

@@ -145,7 +145,7 @@
       "description": "the long-term rise in Earth's average surface temperature, driven mainly by human greenhouse-gas emissions, measured relative to the 1850-1900 pre-industrial baseline.",
       "refs": [
         {
-          "name": "Global_warming",
+          "name": "Climate_change",
           "type": "wikipedia"
         }
       ]
@@ -296,28 +296,12 @@
       ],
       "number": "37400000000",
       "source": "Global Carbon Project 2023"
-    },
-    {
-      "words": [
-        "Earth",
-        "excess CO2",
-        "2023",
-        "parts per million"
-      ],
-      "number": "141"
-    },
-    {
-      "words": [
-        "Earth",
-        "excess CO2 share",
-        "percent"
-      ],
-      "number": "0.5035714285714286"
     }
   ],
   "formulas": [
     {
       "name": "excess CO2 (formula)",
+      "description": "the additional carbon dioxide in the atmosphere compared to the pre-industrial level of about 280 ppm, the part caused by human activity",
       "expression": "\"excess CO2\" = \"CO2\" - \"pre-industrial CO2\"",
       "assigned": [
         "Earth"
@@ -325,6 +309,7 @@
     },
     {
       "name": "excess CO2 share (formula)",
+      "description": "the relative increase of the carbon dioxide concentration since pre-industrial times, e.g. 0.5 means the concentration is one and a half times the natural level",
       "expression": "\"excess CO2 share\" = ( \"CO2\" - \"pre-industrial CO2\" ) / \"pre-industrial CO2\"",
       "assigned": [
         "Earth"

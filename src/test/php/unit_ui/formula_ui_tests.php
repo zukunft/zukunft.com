@@ -43,8 +43,12 @@ use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::LOG . 'change_log_list.php';
+include_once html_paths::SHARED_CONST . 'chars.php';
+include_once html_paths::SHARED_TYPES . 'formula_types.php';
 
+use Zukunft\ZukunftCom\main\php\shared\const\chars;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
+use Zukunft\ZukunftCom\main\php\web\component\execute\ui_base;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_list;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_preview;
 use Zukunft\ZukunftCom\main\php\web\formula\formula;
@@ -59,6 +63,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\formula_link_types;
+use Zukunft\ZukunftCom\main\php\shared\types\formula_types;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\const\word_names;
@@ -118,6 +123,73 @@ class formula_ui_tests
         $test_page .= $html->text_h2('increase expression in latex format without term links');
         $test_page .= 'latex without links: ' . $frm_increase->expression_latex() . '<br>';
 
+        // the expression on the formula page shows each term as a link and drops the double
+        // quotes that delimit a term name in the expression, e.g. percent = ( this - prior ) / prior
+        $exp_html = $frm_increase_linked->expression_named_link();
+        $test_name = 'the expression with term links shows each term as a link';
+        $t->assert_text_contains($test_name, $exp_html, '>' . word_names::THIS_NAME . '</a>');
+        $test_name = 'the expression with term links drops the quotes around a linked term name';
+        $t->assert_text_not_contains($test_name, $exp_html,
+            chars::TERM_DELIMITER . word_names::THIS_NAME . chars::TERM_DELIMITER);
+        // a name that matches no term of the term list keeps its quotes, so the user sees
+        // which name of the expression is not resolved to a term
+        $test_name = 'a term name without a matching term keeps the quotes';
+        $t->assert_text_contains($test_name, $frm_increase->expression_named_link(),
+            chars::TERM_DELIMITER . word_names::THIS_NAME . chars::TERM_DELIMITER);
+
+        // the validated expression beside the expression field of the formula form shows the same
+        // format as the formula page, and the terms are resolved again by the validate button of
+        // the field, so the column has no refresh of its own (see ui_base::expression_link)
+        $test_name = 'the validated expression column shows the terms as links';
+        $exp_col = new ui_base()->expression_link($frm_increase_linked);
+        $t->assert_text_contains($test_name, $exp_col, '>' . word_names::THIS_NAME . '</a>');
+        $test_name = '... without the quotes around a linked term name';
+        $t->assert_text_not_contains($test_name, $exp_col,
+            chars::TERM_DELIMITER . word_names::THIS_NAME . chars::TERM_DELIMITER);
+        $test_name = '... and without a refresh of its own';
+        $t->assert_text_not_contains($test_name, $exp_col, url_var::REFRESH_TERMS);
+        $test_name = 'a formula without an expression shows no validated expression column';
+        $t->assert($test_name, new ui_base()->expression_link(new formula()), '');
+
+        // the latex markup of the propagation of uncertainty formulas is rendered as html without
+        // a latex engine: "\approx" as the almost equal sign, "\left|" and "\right|" as the bars
+        // without the size hints, "\ln" as the plain function name, "\sqrt{}" as the root sign,
+        // "\sum" with its limits as subscript and superscript and "_i" as a subscript
+        $frm_power = new formula($t_frm->formula_increase()->api_json());
+        $frm_power->set_latex(formula_names::PROPAGATION_POWER_LATEX);
+        $latex_html = $frm_power->expression_latex();
+        $test_name = 'the almost equal sign of the latex is rendered as html';
+        $t->assert_text_contains($test_name, $latex_html, '&asymp;');
+        $test_name = 'the bars of the latex are shown without the size hints';
+        $t->assert_text_contains($test_name, $latex_html, '| <span class="' . styles::FRAC . '">');
+        $test_name = 'no latex command is left in the rendered power formula';
+        $t->assert_text_not_contains($test_name, $latex_html, '\\');
+        $frm_error = new formula($t_frm->formula_increase()->api_json());
+        $frm_error->set_latex(formula_names::STD_ERROR_OF_MEAN_LATEX);
+        $test_name = 'a root inside a fraction is rendered as the root sign with the argument in brackets';
+        $t->assert_text_contains($test_name, $frm_error->expression_latex(),
+            '<span class="' . styles::FRAC_DEN . '">&radic;(n)</span>');
+        $frm_order = new formula($t_frm->formula_increase()->api_json());
+        $frm_order->set_latex(formula_names::PROPAGATION_FIRST_ORDER_LATEX);
+        $latex_html = $frm_order->expression_latex();
+        $test_name = 'the sum sign is rendered with its limits as subscript and superscript';
+        $t->assert_text_contains($test_name, $latex_html, '&sum;<sub>i=1</sub><sup>n</sup>');
+        $test_name = 'the index of a term is rendered as a subscript';
+        $t->assert_text_contains($test_name, $latex_html, 'variance of x<sub>i</sub>');
+        // a latex command that the renderer does not know stays as it is written, so the user
+        // still sees the intended markup instead of a silently dropped part of the expression
+        $frm_unknown = new formula($t_frm->formula_increase()->api_json());
+        $frm_unknown->set_latex('\text{x} \alpha');
+        $test_name = 'an unknown latex command is kept as it is written';
+        $t->assert_text_contains($test_name, $frm_unknown->expression_latex(), '\alpha');
+        // a "^" or "_" inside the html of a term link, e.g. in the tooltip description, is no
+        // latex markup, so the link html stays untouched
+        $frm_tip = $t_frm->formula_increase_ui(true);
+        $frm_tip->set_latex('\text{' . word_names::THIS_NAME . '}_i');
+        $latex_html = $frm_tip->expression_latex_link();
+        $test_name = 'the index after a term link is a subscript';
+        $t->assert_text_contains($test_name, $latex_html, '</a><sub>i</sub>');
+
         // the changes of the increase formula as a table, e.g. the name and expression added
         $t_log = new test_log($t);
         $api_typ_lst = new api_type_list([api_types::TEST_MODE]);
@@ -132,7 +204,7 @@ class formula_ui_tests
         $res_cfg->set_result_list(new result_list(
             $t_res->result_list()->api_json([api_types::TEST_MODE, api_types::INCL_PHRASES])));
         $test_page .= $html->text_h2('results of the formula increase');
-        $test_page .= $list->results_related($frm_increase, $res_cfg);
+        $test_page .= $list->results_related($frm_increase, $msg, $res_cfg);
 
         // the assigned-phrases component shows only the phrases the formula is assigned to (the
         // "year" carried by the increase formula), never the full phrase list; test_mode true so
@@ -242,6 +314,108 @@ class formula_ui_tests
             $ui_sys->usr = $usr_tab_keep;
         }
 
+        // the formula form posts the type as url_var::FORMULA_TYPE, so a type change is only saved
+        // if the url mapper reads that key and not the generic url_var::TYPE of the parent
+        $t->subheader($ts . 'type');
+
+        $test_name = 'the formula type of the form url is mapped';
+        $frm_typ = new formula();
+        $frm_typ->url_mapper([
+            url_var::ID => formula_names::SCALE_TO_SEC_ID,
+            url_var::NAME => formula_names::SCALE_TO_SEC,
+            url_var::FORMULA_TYPE => formula_types::CALC_ID
+        ], $msg);
+        $t->assert($test_name, $frm_typ->type_id($msg), formula_types::CALC_ID);
+        $msg->reset();
+        $test_name = '... and the page url of a formula names the type by the same key';
+        $t->assert($test_name, $frm_typ->to_url_array($msg)[url_var::FORMULA_TYPE] ?? '',
+            formula_types::CALC_ID);
+        $test_name = '... so the page url has no generic type key that no form posts';
+        $t->assert($test_name, $frm_typ->to_url_array($msg)[url_var::TYPE] ?? '', '');
+        $msg->reset();
+        $test_name = 'a form url without the type leaves the formula type unset';
+        $frm_no_typ = new formula();
+        $frm_no_typ->url_mapper([
+            url_var::ID => formula_names::SCALE_TO_SEC_ID,
+            url_var::NAME => formula_names::SCALE_TO_SEC
+        ], $msg);
+        $t->assert($test_name, $frm_no_typ->type_id($msg) ?? '', '');
+        $msg->reset();
+
+        // the confirm view reads the value before the change only from the '8'-prefixed url vars,
+        // so the type selector must also post the opening type, because otherwise the confirm view
+        // shows 'not set' as the old type even if the formula has always had a type (see url_var::PRE)
+        $typ_lst = $ui_sys->typ_lst_cache;
+        $typ_this_id = $typ_lst->frm_typ->id(formula_types::THIS);
+        $pre_calc = $html->form_hidden(
+            url_var::PRE . url_var::FORMULA_TYPE, (string)formula_types::CALC_ID);
+
+        $test_name = 'the formula type selector posts the opening type as pre value';
+        $typ_sel = $frm_typ->formula_type_selector(views::FORMULA_EDIT, $msg, $typ_lst);
+        $t->assert_text_contains($test_name, $typ_sel, $pre_calc);
+        $msg->reset();
+
+        $test_name = '... and a re-render keeps the opening type of the url, not the selected type';
+        $frm_upd = new formula();
+        $frm_upd->url_mapper([
+            url_var::ID => formula_names::SCALE_TO_SEC_ID,
+            url_var::NAME => formula_names::SCALE_TO_SEC,
+            url_var::FORMULA_TYPE => (string)$typ_this_id,
+            url_var::PRE . url_var::FORMULA_TYPE => (string)formula_types::CALC_ID
+        ], $msg);
+        $typ_sel_chg = $frm_upd->formula_type_selector(views::FORMULA_EDIT, $msg, $typ_lst);
+        $t->assert_text_contains($test_name, $typ_sel_chg, $pre_calc);
+        $msg->reset();
+
+        $test_name = '... so the confirm view names the type before the change';
+        $typ_chg_url = [
+            url_var::FORMULA_TYPE => (string)$typ_this_id,
+            url_var::PRE . url_var::FORMULA_TYPE => (string)formula_types::CALC_ID
+        ];
+        $typ_chg_html = new ui_preview()->popup_changes($msg, $typ_chg_url, $frm_upd, true);
+        $t->assert_text_contains($test_name, $typ_chg_html,
+            $typ_lst->frm_typ->name(formula_types::CALC_ID));
+        $test_name = '... and does not show the type before the change as not set';
+        $t->assert_text_not_contains($test_name, $typ_chg_html, $mtr->txt(msg_id::NOT_SET));
+        $msg->reset();
+
+        // add_pre_value is the shared part of every selector that a confirm view diffs, so it is
+        // tested here once for the type and used the same way for the style, source and formula
+        $sel_dummy = $html->form_hidden(url_var::FORMULA_TYPE, (string)formula_types::CALC_ID);
+
+        $test_name = 'a selector without a pre value in the url sends the shown value as pre value';
+        $frm_empty = new formula();
+        $sel_pre = $frm_empty->add_pre_value(
+            $sel_dummy, url_var::FORMULA_TYPE, (string)formula_types::CALC_ID);
+        $t->assert_text_contains($test_name, $sel_pre, $pre_calc);
+        $test_name = '... and keeps the selector itself';
+        $t->assert_text_contains($test_name, $sel_pre, $sel_dummy);
+
+        // negative: the value just selected by the user must never become the baseline of the save
+        $test_name = 'a selector keeps the opening value of the url as pre value';
+        $sel_chg = $frm_upd->add_pre_value(
+            $sel_dummy, url_var::FORMULA_TYPE, (string)$typ_this_id);
+        $t->assert_text_contains($test_name, $sel_chg, $pre_calc);
+        $test_name = '... so the selected value is not used as the value before the change';
+        $t->assert_text_not_contains($test_name, $sel_chg,
+            $html->form_hidden(url_var::PRE . url_var::FORMULA_TYPE, (string)$typ_this_id));
+
+        // type_selector_with_pre renders the complete form field of a type, so the field name and
+        // the name of its pre value both come from the type list and can never disagree
+        $test_name = 'a type selector preselects the given type';
+        $sel_typ = $frm_empty->type_selector_with_pre($typ_lst->frm_typ, views::FORMULA_EDIT, $typ_this_id);
+        $t->assert_text_contains($test_name, $sel_typ,
+            '<option value="' . $typ_this_id . '"  selected >');
+        $test_name = '... and names the field and its pre value by the url var of the type list';
+        $t->assert_text_contains($test_name, $sel_typ, 'name="' . url_var::FORMULA_TYPE . '"');
+        $t->assert_text_contains($test_name, $sel_typ,
+            $html->form_hidden(url_var::PRE . url_var::FORMULA_TYPE, (string)$typ_this_id));
+
+        // negative: an object without a type gets the default of the list, not an empty selection
+        $test_name = 'a type selector without a type preselects the default of the list';
+        $sel_def = $frm_empty->type_selector_with_pre($typ_lst->frm_typ, views::FORMULA_EDIT, null);
+        $t->assert_text_contains($test_name, $sel_def, $pre_calc);
+
         $t->subheader($ts . 'link title');
 
         // the formula link default page shows the generated link name as the page title with the
@@ -266,6 +440,7 @@ class formula_ui_tests
         $test_name = 'the formula link title of a page url names the linked objects';
         $lnk_url = new formula_link_ui();
         $lnk_url->url_mapper([
+            url_var::ID => test_const::LINK_ID,
             url_var::FORMULA => (string)formula_names::SCALE_TO_SEC_ID,
             url_var::PHRASE => (string)word_names::MINUTE_ID
         ], $msg, $ui_sys);
@@ -308,6 +483,7 @@ class formula_ui_tests
         $test_name = 'the link type and the order number of a page url are shown';
         $lnk_fld_url = new formula_link_ui();
         $lnk_fld_url->url_mapper([
+            url_var::ID => test_const::LINK_ID,
             url_var::TYPE => (string)formula_link_types::TIME_PERIOD_ID,
             url_var::FORMULA_LINK_PRIO => (string)test_const::FORMULA_LINK_ORDER_NBR,
             url_var::DESCRIPTION => test_const::FORMULA_LINK_COM,

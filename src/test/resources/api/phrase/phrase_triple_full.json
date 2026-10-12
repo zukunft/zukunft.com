@@ -1,13 +1,13 @@
 {
-  "id": 0,
-  "share": 3,
-  "protection": 3,
-  "name": "System Test Triple",
-  "description": "A mathematical constant that never changes e.g. Pi",
-  "type_id": 17,
-  "from_id": 0,
-  "verb_id": 3,
-  "to_id": 0,
-  "weight": 0.5,
-  "impact": 9999999999
+    "id": 0,
+    "share": 3,
+    "protection": 3,
+    "name": "System Test Triple",
+    "description": "A mathematical constant that never changes e.g. Pi",
+    "type_id": 20,
+    "from_id": 0,
+    "verb_id": 3,
+    "to_id": 0,
+    "weight": 0.5,
+    "impact": 9999999999
 }

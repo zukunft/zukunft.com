@@ -10,7 +10,7 @@
   "words": [
     {
       "name": "usd",
-      "type": "measure",
+      "type": "measure_unit",
       "description": "United States dollar, the currency of the United States.",
       "refs": [
         {
@@ -31,7 +31,7 @@
     },
     {
       "name": "percent",
-      "type": "measure",
+      "type": "percent",
       "description": "A ratio expressed as a fraction of 100."
     },
     {

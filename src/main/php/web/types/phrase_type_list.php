@@ -59,8 +59,8 @@ class phrase_type_list extends type_list
      * @returns string the html code to select a type from this list
      */
     function selector(
-        string $form,
-        int    $selected = 1,
+        string $form = '',
+        ?int   $selected = 1,
         string $name = self::NAME,
         string $style = view_styles::COL_SM_4
     ): string

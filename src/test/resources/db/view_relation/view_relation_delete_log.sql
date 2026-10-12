@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION view_relation_delete_log
      _old_from_id      bigint,
      _old_link_id      smallint,
      _old_to_id        bigint,
-     _view_relation_id  bigint) RETURNS void AS
+     _view_relation_id bigint) RETURNS void AS
 $$
 BEGIN
 
@@ -30,11 +30,11 @@ $$ LANGUAGE plpgsql;
 SELECT view_relation_delete_log
        (3::bigint,
         3::smallint,
-        108::smallint,
+        100::smallint,
         'word_edit'::text,
         'add components'::text,
         'word_usage'::text,
-        3::bigint,
+        48::bigint,
         1::smallint,
-        5::bigint,
+        116::bigint,
         1::bigint);

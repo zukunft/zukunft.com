@@ -12,8 +12,8 @@
     "protection": "user_protection",
     "name": "measure word",
     "description": "a personal measure word that user without personal login cannot change",
-    "type_code_id": "measure",
-    "type": "measure type",
+    "type_code_id": "measure_unit",
+    "type": "measure unit",
     "plural": "measure words",
     "view": "measure view"
   },

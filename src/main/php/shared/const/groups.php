@@ -42,6 +42,9 @@ class groups
     // persevered phrase group names for unit and integration tests
     const string TN_READ = 'π (unit symbol)';
     const string TN_READ_COM = 'Symbol for the ratio of the circumference of a circle to its diameter';
+    // the group of the Euler number symbol for the read tests, named apart from TN_READ, because
+    // a group name is unique and the read test setup creates both groups in the same database
+    const string TN_READ_E = 'System Test Group Euler number for read tests';
     const string TN_RENAMED = 'π';
 
     const string ZH_CITY_INHABITANTS = word_names::ZH . ' ' . word_names::CITY . ' ' . word_names::INHABITANTS;
@@ -64,12 +67,15 @@ class groups
     const string TN_ZH_2019_IN_MIO = self::TN_ZH_2019 . ' in ' . word_names::MIO;
     const string TN_CH_2019 = word_names::INHABITANTS . ' of ' . words::CH . ' in Mio (' . word_names::YEAR_2019 . ')';
 
-    // phrase group ids (the group key built from the phrase ids, '......' marks an empty slot)
+    // phrase group ids (the compact group key built from the phrase ids, see docs/llm/group_id.md)
     // used to load a fixed group e.g. for the api test
     // the big group named TN_CH_2019 with the words 2019, million, inhabitants, Switzerland
     // and country, created with every database reset from TEST_GROUPS_CREATE
     // (see group_write_tests::create_test_groups)
-    const string CH_2019_MIO = '....05+....0S+....13+....1C+....32+......+......+......+......+......+......+......+......+......+......+......+';
+    // each phrase id is followed by its type char, so the key is a pinned phrase id like
+    // word_names::*_ID and is re-baselined the same way after a seed change
+    // (docs/llm/testing.md): here the words 135, 158, 201, 210 and 377
+    const string CH_2019_MIO = '05+0S+17+1G+3t+';
 
     const string TN_TIME_VALUE = 'zukunft.com beta launch date';
     const string TD_TIME_VALUE = 'the expected launch date of the first beta version of zukunft.com';
@@ -80,10 +86,15 @@ class groups
     const string TD_GEO_VALUE = 'the geolocation of the initial development of zukunft.com';
 
     const string SYSTEM_TEST_RENAMED = 'System Test Group Renamed';
+    // the name that the change_value_group workflow gives to the group of the value of the add_value workflow
+    const string TN_VALUE_WORKFLOW = 'System Test Group named via value workflow';
+    // the name that the value write test gives to the group of a new value
+    const string TN_VALUE_ADD = 'System Test Group named with a new value';
 
     // list of predefined group names used for system testing that are expected to be never renamed
     const array RESERVED_GROUP_NAMES = [
         self::TN_READ,
+        self::TN_READ_E,
         self::TN_ZH_2019,
         self::TN_CH_2019
     ];

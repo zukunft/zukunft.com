@@ -148,14 +148,6 @@ class value_list extends sandbox_value_list
         $result = false;
         if ($db_rows != null) {
             foreach ($db_rows as $db_row) {
-                // TODO remove temp
-                if (array_key_exists(group_fields::FLD_ID, $db_row)) {
-                    if ($db_row[group_fields::FLD_ID] == '....0/-....2t+....39+....3o+....3p+......+......+......+......+......+......+......+......+......+......+......+') {
-                        log_info('got value');
-                    }
-                } else {
-                    log_info('group id missing');
-                }
                 $excluded = null;
                 if (array_key_exists(fields::FLD_EXCLUDED, $db_row)) {
                     $excluded = $db_row[fields::FLD_EXCLUDED];
@@ -248,27 +240,6 @@ class value_list extends sandbox_value_list
         return $result;
     }
 
-    /**
-     * get the first value of the list that is related to the given phrase name
-     * and where all phrases of the value are within the given context
-     * e.g. to select the value that a formula uses to calculate a result
-     *
-     * @param string $phr_name the name of the phrase that selects the value e.g. "price"
-     * @param array $ctx_names the phrase names that limit the selection e.g. "apple" and "CHF"
-     * @return value_base|null the first matching value or null if no value matches
-     */
-    function get_by_name_and_context(string $phr_name, array $ctx_names): ?value_base
-    {
-        $result = null;
-        foreach ($this->lst() as $val) {
-            if ($result == null) {
-                if ($val->match_all([$phr_name]) and $val->matches_context($ctx_names)) {
-                    $result = $val;
-                }
-            }
-        }
-        return $result;
-    }
 
 
     /*
@@ -317,6 +288,14 @@ class value_list extends sandbox_value_list
     function load_by_phr(phrase $phr, user_message $msg, int $limit = sql_db::ROW_LIMIT, int $page = 0): bool
     {
         global $db_con;
+        // a main or big value is selected by the alpha_num key of the phrase within its group id,
+        // so a phrase without an id would select values by the key '.+' of the phrase id zero,
+        // which no value has, e.g. for the deletion of the linked values
+        if ($phr->id() == 0) {
+            log_err('the values of ' . $phr->dsp_id()
+                . ' cannot be loaded, because the phrase has no id');
+            return false;
+        }
         $sc = $db_con->sql_creator();
         $qp = $this->load_sql_by_phr($sc, $phr, $limit, $page);
         if ($this->load($qp, $msg)) {
@@ -542,7 +521,7 @@ class value_list extends sandbox_value_list
         $par_pos++;
         $par_name = $sc->par_name($par_pos);
         $grp_id = new group_id();
-        $sc->add_where_par(group_fields::FLD_ID, $grp_id->int2alpha_num($phr->id()), sql_par_type::LIKE, '', $par_name);
+        $sc->add_where_par(group_fields::FLD_ID, $grp_id->int2alpha_num($phr->id()), sql_par_type::LIKE_KEY, '', $par_name);
 
         // add the user parameter
         $pos_usr = $par_pos;
@@ -1131,24 +1110,12 @@ class value_list extends sandbox_value_list
                     phrase::FLD_ID . '_' . $i, sql_par_type::INT_SAME_OR, $phr_pos);
             }
         } else {
-            $sc->add_where_no_par('', group_fields::FLD_ID, sql_par_type::LIKE, $grp_pos);
+            $sc->add_where_no_par('', group_fields::FLD_ID, sql_par_type::LIKE_KEY, $grp_pos);
         }
         $qp->sql = $sc->sql(0, true, false);
         $qp->par = $sc->get_par();
 
         return $qp;
-    }
-
-    /**
-     * set the word objects for all value in the list if needed
-     * not included in load, because sometimes loading of the word objects is not needed
-     */
-    function load_phrases(user_message $msg): void
-    {
-        // loading via word group is the most used case, because to save database space and reading time the value is saved with the word group id
-        foreach ($this->lst() as $val) {
-            $val->load_phrases($msg);
-        }
     }
 
     /**
@@ -1913,12 +1880,15 @@ class value_list extends sandbox_value_list
     /**
      * delete all loaded values e.g. to delete all the values linked to a phrase
      * @param user_message $msg the message for the user why deleting the values has failed and a suggested solution
+     * @param sql_type_list $sc_par_lst with sql_type::NO_USER_SANDBOX if the values are deleted
+     *                                  together with a phrase of their group, so that a value that
+     *                                  is still used by another user is refused and reported
      * @return bool true if all values has been deleted
      */
-    function del(user_message $msg): bool
+    function del(user_message $msg, sql_type_list $sc_par_lst = new sql_type_list()): bool
     {
         foreach ($this->lst() as $val) {
-            $val->del($msg);
+            $val->del($msg, true, $sc_par_lst);
         }
         return $msg->is_ok();
     }

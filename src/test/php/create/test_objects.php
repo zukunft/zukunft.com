@@ -125,8 +125,10 @@ class test_objects
                 $this->env->write_named_cleanup($obj, $obj_name);
             } elseif ($obj::class == group::class) {
                 // the group test spec is [name, [phrase names]]; remove the group's change log if at
-                // least one phrase is a test row (see cleanup_change_log_group)
+                // least one phrase is a test row (see cleanup_change_log_group) and the group row
+                // named by the test with the logged delete like any other test row
                 $this->env->cleanup_change_log_group($obj, $obj_name);
+                $this->env->write_group_cleanup($obj, $obj_name[0]);
             } elseif ($obj instanceof type_object) {
                 $this->env->write_named_cleanup($obj, $obj_name);
             } else {

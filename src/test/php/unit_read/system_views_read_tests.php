@@ -47,6 +47,7 @@ use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\cfg\result\result;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
@@ -66,6 +67,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\helper\Config;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\value\value_list as value_list_ui;
+use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
@@ -73,6 +75,8 @@ use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_components;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\create\test_log;
+use Zukunft\ZukunftCom\test\php\create\test_results;
+use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\create\test_views;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -129,12 +133,20 @@ class system_views_read_tests
                 url_var::DISPLAY_LIST_RANGE => url_var::TRUE]);
         $t->assert_view(views::START_CODE, $t->usr1, new triple($t->usr1), triple_names::GLOBAL_PROBLEM_ID,
             null, [url_var::DISPLAY_LIST_SIZE => Config::LIMIT_MORE_LIST,
-                url_var::DISPLAY_LIST_COLUMNS => value_list_ui::COLUMN_TIERS_MAYOR,
+                url_var::DISPLAY_LIST_COLUMNS => value_list_ui::COLUMN_TIERS_EX_MAIN,
                 url_var::DISPLAY_LIST_RANGE => url_var::TRUE]);
         $t->assert_view(views::START_CODE, $t->usr1, new triple($t->usr1), triple_names::GLOBAL_PROBLEM_ID,
             null, [url_var::DISPLAY_LIST_SIZE => Config::LIMIT_MORE_LIST,
-                url_var::DISPLAY_LIST_COLUMNS => value_list_ui::COLUMN_TIERS_MAYOR,
+                url_var::DISPLAY_LIST_COLUMNS => value_list_ui::COLUMN_TIERS_EX_MAIN,
                 url_var::DISPLAY_LIST_RANGE => url_var::FALSE]);
+        // the steps between the mayor columns and the full table, which the "..." clicks
+        // request: one tier is added per step, but still one unit per column and no range
+        $t->assert_view(views::START_CODE, $t->usr1, new triple($t->usr1), triple_names::GLOBAL_PROBLEM_ID,
+            null, [url_var::DISPLAY_LIST_SIZE => Config::LIMIT_MORE_LIST,
+                url_var::DISPLAY_LIST_COLUMNS => value_list_ui::COLUMN_TIERS_EX_MINOR]);
+        $t->assert_view(views::START_CODE, $t->usr1, new triple($t->usr1), triple_names::GLOBAL_PROBLEM_ID,
+            null, [url_var::DISPLAY_LIST_SIZE => Config::LIMIT_MORE_LIST,
+                url_var::DISPLAY_LIST_COLUMNS => value_list_ui::COLUMN_TIERS_EX_MARGINAL]);
 
         $t->assert_view(views::WORD, $t->usr1, new word($t->usr1), word_names::MATH_ID, $cfg);
         // Zurich and CHF is the example for the page-title symbol-line layout
@@ -142,7 +154,9 @@ class system_views_read_tests
         $t->assert_view(views::WORD, $t->usr1, new word($t->usr1), words::CHF_ID, $cfg);
         // inhabitants is the example for the related formula list (e.g. the "increase" formula)
         $t->assert_view(views::WORD, $t->usr1, new word($t->usr1), word_names::INHABITANT_ID, $cfg);
-        $t->assert_view(views::WORD_ADD, $t->usr1, new word($t->usr1), word_names::MATH_ID);
+        $t->assert_view(views::WORD_ADD_DETAIL, $t->usr1, new word($t->usr1), word_names::MATH_ID);
+        // the one field form that adds a word just by its name
+        $t->assert_view(views::WORD_ADD, $t->usr1, new word($t->usr1));
         $t->assert_view(views::WORD_EDIT, $t->usr1, new word($t->usr1), word_names::MATH_ID, $cfg);
         $t->assert_view(views::WORD_DEL, $t->usr1, new word($t->usr1), word_names::MATH_ID, $cfg);
         $t->assert_view(views::VERB, $t->usr1, new verb(), 1, $cfg);
@@ -153,7 +167,7 @@ class system_views_read_tests
         $t->assert_view(views::TRIPLE, $t->usr1, new triple($t->usr1), triple_names::PI_ID, $cfg);
         $t->assert_view(views::TRIPLE, $t->usr1, new triple($t->usr1), triple_names::SPEED_OF_LIGHT_ID, $cfg);
         $t->assert_view(views::TRIPLE, $t->usr1, new triple($t->usr1), triple_names::CANTON_ZURICH_ID, $cfg);
-        $t->assert_view(views::TRIPLE_ADD, $t->usr1, new triple($t->usr1));
+        $t->assert_view(views::TRIPLE_ADD_DETAIL, $t->usr1, new triple($t->usr1));
         $t->assert_view(views::TRIPLE_EDIT, $t->usr1, new triple($t->usr1), 1, $cfg);
         $t->assert_view(views::TRIPLE_DEL, $t->usr1, new triple($t->usr1), 1, $cfg);
         //$t->assert_view(views::SOURCE, $t->usr1, new source($t->usr1), 1, $cfg);
@@ -182,6 +196,24 @@ class system_views_read_tests
         // users, so it is the example for the share and protection subtitle of the "Value title"
         // component, which shows nothing for a value with the default types like the pi values
         $t->assert_view(views::VALUE, $t->usr1, new value($t->usr1), values::TARGET_PE_RATIO_ID, $cfg);
+        // the seeded database has neither a value with more than 16 phrases nor a text or a geo value, so
+        // these value pages are rendered from the test factory objects together with the non prime value
+        // with 16 phrases; a text and a geo value are shown on the value page, so they share its folder
+        $t_val = new test_values($t);
+        $t->assert_view_by_factory(views::VALUE, $t->usr1, $t_val->value_16(), test_files::VIEW_CASE_NON_PRIME, $cfg);
+        $t->assert_view_by_factory(views::VALUE, $t->usr1, $t_val->value_17_plus(), test_files::VIEW_CASE_BIG, $cfg);
+        $t->assert_view_by_factory(views::VALUE, $t->usr1, $t_val->text_value(), test_files::VIEW_CASE_TEXT, $cfg, value::class);
+        $t->assert_view_by_factory(views::VALUE, $t->usr1, $t_val->geo_value(), test_files::VIEW_CASE_GEO, $cfg, value::class);
+        // the empty form that selects the phrases of a new value step by step
+        $t->assert_view(views::VALUE_ADD_NO_JS, $t->usr1, new value($t->usr1));
+        // the empty form that adds a value just by its phrases and the number
+        $t->assert_view(views::VALUE_ADD, $t->usr1, new value($t->usr1));
+        // the form that overwrites just the number of the pi value
+        $t->assert_view(views::VALUE_OVERWRITE, $t->usr1, new value($t->usr1), values::PI_MATH_ID, $cfg);
+        // the seeded database has no text, time or geo value, so their overwrite forms use the factory values
+        $t->assert_view_by_factory(views::VALUE_OVERWRITE, $t->usr1, $t_val->text_value(), test_files::VIEW_CASE_TEXT, $cfg, value::class);
+        $t->assert_view_by_factory(views::VALUE_OVERWRITE, $t->usr1, $t_val->time_value(), test_files::VIEW_CASE_TIME, $cfg, value::class);
+        $t->assert_view_by_factory(views::VALUE_OVERWRITE, $t->usr1, $t_val->geo_value(), test_files::VIEW_CASE_GEO, $cfg, value::class);
         // GROUP
         //$t->assert_view(views::GROUP_ADD, $t->usr1, new group($t->usr1));
         // FORMULA
@@ -193,6 +225,28 @@ class system_views_read_tests
         $t->assert_view(views::FORMULA_DEL, $t->usr1, new formula($t->usr1), 1, $cfg);
         // FORMULA TEST
         // RESULT
+        // no seeded result id is known, so the result pages are rendered from the factory result;
+        // the default page shows beside the number the values, formulas and results that the
+        // calculation has used, which the api reads for the phrases of the result (see
+        // result::used_phrase_selection), so the page needs the database
+        $t_res = new test_results($t);
+        $t->assert_view_by_factory(views::RESULT, $t->usr1, $t_res->result_simple(), test_files::VIEW_CASE_SIMPLE, $cfg, result::class);
+        // the page of a result with used values, formulas and results, so that the three columns
+        // are part of a snapshot: the used results are grouped like the values with the unit
+        // symbols behind the number (see ui_list::results_used)
+        $t->assert_view_by_factory(views::RESULT, $t->usr1, $t_res->result_page_related(), test_files::VIEW_CASE_RELATED, $cfg, result::class);
+        // a result that the calculation of the seeded data has created, so that the formula line
+        // shows the numbers really used, e.g. the potential loss of populism in trillion EUR
+        // the number and the formula are checked, because a set group id alone does not prove that
+        // the calculated row has been loaded
+        $test_name = 'the potential loss of populism has been calculated';
+        $res_pop = $t_res->result_populism_potential_loss();
+        $t->assert_true($test_name, $res_pop->number() !== null);
+        $test_name = '... by a formula';
+        $t->assert_true($test_name, $res_pop->formula_id() != 0);
+        $t->assert_view_by_factory(views::RESULT, $t->usr1, $res_pop, test_files::VIEW_CASE_POPULISM_LOSS, $cfg, result::class);
+        // the form that overwrites just the number of a result
+        $t->assert_view_by_factory(views::RESULT_OVERWRITE, $t->usr1, $t_res->result_simple(), test_files::VIEW_CASE_SIMPLE, $cfg, result::class);
         // VIEW
         // the word default view is the example for the view default page, because it is the view
         // that every word page opens with, so it is the view a user is most likely to look at
@@ -222,13 +276,53 @@ class system_views_read_tests
         // the same test context for a user who has not done any of these overwrites, so the column
         // shows the no-changes message, which also checks that it filters by the shown user
         $t->assert_view(views::USER, $t->usr1, new user(), users::SYSTEM_TEST_NORMAL_ID, $cfg_chg);
+        // the configuration, quarantine and job views are part of the system views, but show only the not yet
+        // available hint until their data and actions are implemented
+        $t->assert_view(views::USER_CONFIG, $t->usr1, new user(), users::SYSTEM_TEST_ID);
+        $t->assert_view(views::SYSTEM_CONFIG, $t->usr1, new user(), users::SYSTEM_TEST_ID);
+        $t->assert_view(views::ADMIN_CONFIG, $t->usr1, new user(), users::SYSTEM_TEST_ID);
+        $t->assert_view(views::USER_QUARANTINE, $t->usr1, new user(), users::SYSTEM_TEST_ID);
+        $t->assert_view(views::ALL_QUARANTINE, $t->usr1, new user(), users::SYSTEM_TEST_ID);
+        $t->assert_view(views::USER_JOBS, $t->usr1, new user(), users::SYSTEM_TEST_ID);
+        $t->assert_view(views::ALL_JOBS, $t->usr1, new user(), users::SYSTEM_TEST_ID);
+        // the language, log, import, export, process, find and object list views below are skeletons that show
+        // only the not yet available hint until their data and actions are implemented
         // LANGUAGE
+        $t->assert_view(views::PHRASE_TRANSLATIONS, $t->usr1, new user(), users::SYSTEM_TEST_ID);
+        $t->assert_view(views::LANGUAGE_FORMS, $t->usr1, new user(), users::SYSTEM_TEST_ID);
+        $t->assert_view(views::TRANSLATIONS_MISSING, $t->usr1, new user(), users::SYSTEM_TEST_ID);
+        $t->assert_view(views::LIST_LANGUAGES, $t->usr1, new user(), users::SYSTEM_TEST_ID);
         // SYS LOG
+        $t->assert_view(views::SYS_LOG_DETAIL, $t->usr1, new user(), users::SYSTEM_TEST_ID);
         // CHANGE LOG
+        $t->assert_view(views::CHANGE_LOG_USER, $t->usr1, new user(), users::SYSTEM_TEST_ID);
+        $t->assert_view(views::CHANGE_LOG_RECENT, $t->usr1, new user(), users::SYSTEM_TEST_ID);
+        $t->assert_view(views::OBJECT_HISTORY, $t->usr1, new user(), users::SYSTEM_TEST_ID);
+        $t->assert_view(views::CHANGE_DETAIL, $t->usr1, new user(), users::SYSTEM_TEST_ID);
         // IMPORT
+        $t->assert_view(views::IMPORT_PREVIEW, $t->usr1, new user(), users::SYSTEM_TEST_ID);
+        $t->assert_view(views::IMPORT_RESULT, $t->usr1, new user(), users::SYSTEM_TEST_ID);
+        $t->assert_view(views::IMPORT_URL, $t->usr1, new user(), users::SYSTEM_TEST_ID);
+        $t->assert_view(views::IMPORT_WIKIDATA, $t->usr1, new user(), users::SYSTEM_TEST_ID);
         // EXPORT
+        $t->assert_view(views::EXPORT_SELECTIONS, $t->usr1, new user(), users::SYSTEM_TEST_ID);
+        $t->assert_view(views::EXPORT_OBJECT, $t->usr1, new user(), users::SYSTEM_TEST_ID);
+        $t->assert_view(views::EXPORT_READY, $t->usr1, new user(), users::SYSTEM_TEST_ID);
         // PROCESS
+        $t->assert_view(views::JOB_DETAIL, $t->usr1, new user(), users::SYSTEM_TEST_ID);
+        $t->assert_view(views::CALC_STATUS, $t->usr1, new user(), users::SYSTEM_TEST_ID);
         // FIND
+        $t->assert_view(views::VALUE_FIND, $t->usr1, new user(), users::SYSTEM_TEST_ID);
+        $t->assert_view(views::REF_FIND, $t->usr1, new user(), users::SYSTEM_TEST_ID);
+        $t->assert_view(views::FIND_DUPLICATES, $t->usr1, new user(), users::SYSTEM_TEST_ID);
+        // OBJECT LISTS
+        $t->assert_view(views::LIST_WORDS, $t->usr1, new user(), users::SYSTEM_TEST_ID);
+        $t->assert_view(views::LIST_TRIPLES, $t->usr1, new user(), users::SYSTEM_TEST_ID);
+        $t->assert_view(views::LIST_SOURCES, $t->usr1, new user(), users::SYSTEM_TEST_ID);
+        $t->assert_view(views::LIST_REFS, $t->usr1, new user(), users::SYSTEM_TEST_ID);
+        $t->assert_view(views::LIST_FORMULAS, $t->usr1, new user(), users::SYSTEM_TEST_ID);
+        $t->assert_view(views::LIST_VIEWS, $t->usr1, new user(), users::SYSTEM_TEST_ID);
+        $t->assert_view(views::LIST_COMPONENTS, $t->usr1, new user(), users::SYSTEM_TEST_ID);
         //$t->assert_view(view_shared::DSP_COMPONENT_ADD, $t->usr1, new component($t->usr1), 1, $cfg);
         // TODO add the frontend reaction tests e.g. call the view.php script with the reaction to add a word
 
@@ -279,9 +373,9 @@ class system_views_read_tests
             $mtr->txt(msg_id::CHANGE_BLOCKED_FOR_IP_USER),
             ', frontend view.php?m=error_update without a token contains at least', $is_connected);
         // an add view changes data, so a user without login is blocked before the view is created
-        // (config.yaml: system configuration > pod > permissions > database change > ip user > allowed)
+        // (config.yaml: system configuration > system > pod > permissions > database change > ip user > allowed)
         $is_connected = $t->dsp_web_test(
-            api::SCRIPT_PATH_NAME . 'view.php?' . url_var::MASK . url_var::EQ . views::WORD_ADD_ID,
+            api::SCRIPT_PATH_NAME . 'view.php?' . url_var::MASK . url_var::EQ . views::WORD_ADD_DETAIL_ID,
             $mtr->txt(msg_id::CHANGE_BLOCKED_FOR_IP_USER),
             ', frontend view.php?m=word_add contains at least', $is_connected);
         // the former find.php has been replaced by the word find view (m=67)

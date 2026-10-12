@@ -41,8 +41,10 @@ namespace Zukunft\ZukunftCom\test\php\utils;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
+include_once test_paths::CONST . 'files.php';
 include_once paths::MODEL_LOG . 'change_log.php';
 include_once paths::MODEL_LOG . 'change_field.php';
 include_once paths::MODEL_LOG . 'change_field_list.php';
@@ -632,6 +634,7 @@ class test_api extends test_base
      * @param string $id_fld the field name for the object id e.g. word_id
      * @param string $filename to overwrite the class-based filename to get the standard expected result
      * @param bool $contains set to true if the actual message is expected to contain more than the expected message
+     * @param array $url_par additional url vars of the request e.g. the direction of a verb selection
      * @return bool true if the json has no relevant differences
      */
     function assert_api_get_list(
@@ -639,9 +642,10 @@ class test_api extends test_base
         array|string $ids = [1, 2],
         string       $id_fld = url_var::ID_LST,
         string       $filename = '',
-        bool         $contains = false): bool
+        bool         $contains = false,
+        array        $url_par = []): bool
     {
-        $actual = $this->assert_result_api_get_list($class, $ids, $id_fld);
+        $actual = $this->assert_result_api_get_list($class, $ids, $id_fld, $url_par);
         $filename = $this->assert_parameter_api_list_filename($class, $id_fld, $filename);
         return $this->assert_api_compare($class, $actual, null, $filename, '', $contains);
     }
@@ -677,12 +681,14 @@ class test_api extends test_base
      * @param string $class the class that should be tested e.g. type_lists::class
      * @param array|string $ids the database ids of the db rows that should be used for testing
      * @param string $id_fld the field name for the object id e.g. word_id
+     * @param array $url_par additional url vars of the request e.g. the direction of a verb selection
      * @return array|null the json as an array to avoid differences due to formatting
      */
     function assert_result_api_get_list(
         string       $class,
         array|string $ids = [1, 2],
-        string       $id_fld = url_var::ID_LST
+        string       $id_fld = url_var::ID_LST,
+        array        $url_par = []
     ): ?array
     {
         $lib = new library();
@@ -693,6 +699,7 @@ class test_api extends test_base
         } else {
             $data = array($id_fld => $ids);
         }
+        $data = array_merge($data, $url_par);
         $ctrl = new rest_call();
         $response = $ctrl->api_call(rest_ctrl::GET, $url, $data);
         $actual = json_decode($response, true);
@@ -746,8 +753,10 @@ class test_api extends test_base
         $lib = new library();
         $url_map = new url_mapper();
         $name = $lib->class_to_name($class);
-        if ($class == phrase_list::class) {
-            if ($filename == '' and $id_fld != url_var::ID_LST) {
+        // a given file name is kept also for a phrase list, so that more than one request with the
+        // same url field can have its own expected file e.g. a full name and a typed start as pattern
+        if ($class == phrase_list::class and $filename == '') {
+            if ($id_fld != url_var::ID_LST) {
                 $file_by_name = $url_map->name_to_human($id_fld, $msg);
                 $filename = $name . '_without_link' . '_by_' . $file_by_name;
             } else {
@@ -791,7 +800,9 @@ class test_api extends test_base
         $actual = $this->assert_result_api_chg_list($class, $id, $fld, $usr, $limit, $page);
         $filename = $this->assert_parameter_api_chg_list_filename($class, $id, $fld, $usr, $limit, $page);
         $class = $lib->class_to_api_name($class);
-        return $this->assert_api_compare($class, $actual, null, $filename, change_log_list::class);
+        // the id of a change log row is a database sequence number that differs after every reset,
+        // so it is ignored like the change time, which keeps the expected json stable
+        return $this->assert_api_compare($class, $actual, null, $filename, change_log_list::class, false, true);
     }
 
     /**
@@ -815,7 +826,7 @@ class test_api extends test_base
     ): ?array
     {
         $log_lst = new change_log_list_ui();
-        $json = $log_lst->load_api_by_object_field($class, $id, $fld, $usr, $limit, $page);
+        $json = $log_lst->load_api_by_object_field($class, new user_message_ui(), $id, $fld, $usr, $limit, $page); // without a user, so the expected api json stays the same for every test user
         return json_decode($json, true);
     }
 
@@ -1103,7 +1114,11 @@ class test_api extends test_base
             $class_for_file = $class;
         }
         $class_for_file = $this->class_without_namespace($class_for_file);
-        if ($expected == null) {
+        // the compare file is the expected result only if the caller has not given one, because
+        // some callers compare two api messages with each other e.g. the json to the frontend
+        // with the json to the backend, and such a compare must never overwrite a file
+        $from_file = ($expected == null);
+        if ($from_file) {
             $expected = json_decode($this->api_json_expected($class_for_file, $filename), true);
         }
 
@@ -1117,9 +1132,23 @@ class test_api extends test_base
             $expected = $this->json_remove_fields_only_to_ui($expected);
         }
 
+        // the expected file is named after the class unless the caller overwrites the name
+        $file = $filename;
+        if ($file == '') {
+            $file = $class_for_file;
+        }
+        $path = test_paths::RESOURCE . self::API_PATH . DIRECTORY_SEPARATOR . $class_for_file
+            . DIRECTORY_SEPARATOR . $file . self::JSON_EXT;
+
         if ($expected === null) {
-            log_err('the file ' . $filename . ' for ' . $class_for_file . ' is missing');
-            return false;
+            // an expected file that does not exist yet is created from the api answer if the auto
+            // update of the test files is on, like a missing csv or html expected file, and the
+            // missing file is reported, so that the created file is checked before it is committed
+            if (test_files::AUTO_UPDATE_TEST_FILES and $actual !== null) {
+                $this->update_path_file($path, library::json_for_humans($actual) . "\n");
+            }
+            $result = $this->assert_true($class . ' API GET and the expected file ' . $file
+                . ' for ' . $class_for_file . ' exists', false);
         } else {
 
             // TODO remove, for faster debugging only
@@ -1127,11 +1156,19 @@ class test_api extends test_base
             $json_expected = json_encode($expected);
             if ($contains) {
                 // the actual json comes from a real http REST call, so a REST timeout is used to avoid a false timeout
-                return $this->assert($class . ' API GET', $lib->json_contains($expected, $actual), true, self::TIMEOUT_LIMIT_REST);
+                $result = $this->assert($class . ' API GET', $lib->json_contains($expected, $actual), true, self::TIMEOUT_LIMIT_REST);
             } else {
-                return $this->assert_json($class . ' API GET', $actual, $expected);
+                $result = $this->assert_json($class . ' API GET', $actual, $expected);
+                // a failed compare updates the expected file if the auto update is on, so that one
+                // run re-baselines all api files and the diff shows what the change has changed;
+                // only the exact compare of a file may do this, because a "contains" file is a
+                // subset of the api answer on purpose and writing the answer would lose that
+                if (!$result and $from_file and test_files::AUTO_UPDATE_TEST_FILES and $actual !== null) {
+                    $this->update_path_file($path, library::json_for_humans($actual) . "\n");
+                }
             }
         }
+        return $result;
     }
 
     /**
@@ -1290,6 +1327,10 @@ class test_api extends test_base
         $json = $this->json_remove_volatile_time_field($json, user_db::FLD_LAST_LOGIN);
         $json = $this->json_remove_volatile_time_field($json, user_db::FLD_LAST_LOGOUT);
         $json = $this->json_remove_volatile_time_field($json, user_db::FLD_CREATED);
+
+        // the log writer adds a log function for every script and error location that logs,
+        // so the list depends on the errors of the run and can never match a stored fixture
+        $json = $this->json_remove_volatile_unset_field($json, json_fields::LIST_SYS_LOG_FUNCTIONS);
 
         // remove the id fields if requested
         // for tests with base load dataset the id fields should not be ignored

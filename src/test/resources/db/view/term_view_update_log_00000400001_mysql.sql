@@ -31,12 +31,12 @@ PREPARE term_view_update_log_00000400001_call FROM
 SELECT term_view_update_log_00000400001
        (3,
         2,
-        726,
+        758,
         'main word',
         1,
         null,
         null,
         1,
-        730,
+        765,
         null,
         3);

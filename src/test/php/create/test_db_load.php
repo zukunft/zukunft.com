@@ -57,15 +57,19 @@ include_once paths::MODEL_FORMULA . 'formula.php';
 include_once paths::MODEL_FORMULA . 'formula_link.php';
 include_once paths::MODEL_GROUP . 'group.php';
 include_once paths::MODEL_HELPER . 'type_lists.php';
+include_once paths::MODEL_LOG . 'change_log_list.php';
 include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
 include_once paths::MODEL_REF . 'ref.php';
 include_once paths::MODEL_REF . 'source.php';
+include_once paths::MODEL_RESULT . 'result.php';
 include_once paths::MODEL_SANDBOX . 'sandbox.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VALUE . 'value.php';
+include_once paths::MODEL_VERB . 'verb.php';
+include_once paths::MODEL_VIEW . 'term_view.php';
 include_once paths::MODEL_VIEW . 'view.php';
 include_once paths::MODEL_WORD . 'triple.php';
 include_once paths::MODEL_WORD . 'word.php';
@@ -75,10 +79,12 @@ include_once paths::SHARED_CONST . 'sources.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'change_fields.php';
+include_once paths::SHARED_ENUM . 'foaf_direction.php';
 include_once paths::SHARED_ENUM . 'source_types.php';
 include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
+include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 include_once paths::SHARED . 'url_var.php';
@@ -111,14 +117,18 @@ use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_lists;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_log_list;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
+use Zukunft\ZukunftCom\main\php\cfg\result\result;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
+use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
@@ -128,10 +138,12 @@ use Zukunft\ZukunftCom\main\php\shared\const\sources;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_fields;
+use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
 use Zukunft\ZukunftCom\main\php\shared\enum\source_types;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
@@ -164,6 +176,27 @@ class test_db_load
 
     // use the global test environment
     private test_cleanup $env;
+
+    // the fixed rows of each class as read by csv_recreate after the database reset,
+    // so that csv_leftover_check can name the rows that the write tests have left behind
+    private array $rows_after_reset = [];
+
+    // the classes whose rows have a change log that the leftover check can show
+    // (see change_log_list::table_field_to_query_name)
+    const array LOGGED_ROW_CLASSES = [
+        word::class,
+        triple::class,
+        verb::class,
+        group::class,
+        value::class,
+        result::class,
+        formula::class,
+        source::class,
+        view::class,
+        component::class,
+        ref::class,
+        user::class,
+    ];
 
     function __construct(test_cleanup $env)
     {
@@ -794,12 +827,28 @@ class test_db_load
 
     /**
      * load a phrase group by the list of phrase names
+     *
+     * a value is named by its complete group, so a group built from a list that misses one name
+     * names another value: without the test word the group of a test value is the group of the
+     * seed phrases alone, and the number written to it stays on their page, because the cleanup
+     * refuses to delete a value by an incomplete name (see test_objects::cleanup_objects)
+     *
+     * a missing name returns the empty group instead of null, so that a caller can name the group
+     * in its test name without a null check and a value saved with it is refused
+     *
      * @param array $array_of_phrase_str with the names of the words or triples
-     * @return group|null
+     * @return group the group of all given phrases or the empty group if one of them is missing
      */
-    function load_phrase_group(array $array_of_phrase_str): ?group
+    function load_phrase_group(array $array_of_phrase_str): group
     {
-        return $this->load_phrase_list($array_of_phrase_str)->get_grp_id();
+        $result = new group($this->env->usr1);
+        $phr_lst = $this->load_phrase_list($array_of_phrase_str);
+        $missing = array_diff($array_of_phrase_str, $phr_lst->names());
+        $test_name = 'the phrases "' . implode('","', $array_of_phrase_str) . '" of the group exist';
+        if ($this->env->assert($test_name, implode(',', $missing), '')) {
+            $result = $phr_lst->get_grp_id() ?? $result;
+        }
+        return $result;
     }
 
     /**
@@ -899,6 +948,9 @@ class test_db_load
             $val->set_number($target);
             if (!$val->save($msg)) {
                 log_err('add value failed due to: ' . $msg->get_last_message());
+            } else {
+                // so that the cleanup removes the value again (see test_cleanup::cleanup)
+                $this->env->test_val_ids[] = $val->id();
             }
         }
 
@@ -1195,6 +1247,33 @@ class test_db_load
         return $msg->get_last_message();
     }
 
+    /**
+     * remove the link of a term to a view that a test has created
+     *
+     * a term view is a fixed row class whose expected rows after a database reset are none
+     * (see def::MAIN_CLASSES and the empty unit/term_view/list.csv), so every link that a test
+     * writes is removed again; the link has no name, so the linked objects of the fixture name it
+     *
+     * @param user_message $msg to collect the messages of the delete
+     * @param term_view $trm_msk the fixture of the link that should be removed
+     * @return string the message of the delete or an empty text if there is no link
+     */
+    function test_term_view_unlink(user_message $msg, term_view $trm_msk): string
+    {
+        $result = '';
+        $msk_id = $trm_msk->get_view()?->id() ?? 0;
+        $trm_id = $trm_msk->term()?->id() ?? 0;
+        if ($msk_id > 0 and $trm_id != 0) {
+            $trm_msk_db = new term_view($this->env->usr1);
+            $trm_msk_db->load_by_link_id($msk_id, $msg, 0, $trm_id);
+            if ($trm_msk_db->id() > 0) {
+                $trm_msk_db->del($msg);
+                $result = $msg->get_last_message();
+            }
+        }
+        return $result;
+    }
+
     function test_formula_link(string $formula_name, string $word_name, bool $auto_create = true): string
     {
         $result = '';
@@ -1290,7 +1369,14 @@ class test_db_load
 
         // the components of a view, because the component ids shift with each added seed component
         $result = $this->update_api_list_file(
-            $t, component_list::class, views::WORD_ADD_ID, url_var::VIEW);
+            $t, component_list::class, views::WORD_ADD_DETAIL_ID, url_var::VIEW);
+
+        // the phrases used as the to side of the "is a" triples (see api_tests), because the
+        // word ids shift with each word added to a seed imported before them e.g. a config.yaml key
+        $up_par = [url_var::DIRECTION => foaf_direction::UP->value];
+        if (!$this->update_api_list_file($t, phrase_list::class, verbs::IS_ID, url_var::VERB, $up_par)) {
+            $result = false;
+        }
 
         // the changes of a word, because the change log ids shift with each additional setup change
         if (!$this->update_api_chg_list_file($t, word::class, word_names::MATH_ID)) {
@@ -1313,21 +1399,23 @@ class test_db_load
      * @param string $class the class of the list that should be checked e.g. component_list::class
      * @param array|string $ids the database ids of the db rows that should be used for testing
      * @param string $id_fld the field name for the object id e.g. view_id
+     * @param array $url_par additional url vars of the request e.g. the direction of a verb selection
      * @return bool true if the file matches the database
      */
     private function update_api_list_file(
         test_cleanup $t,
         string       $class,
         array|string $ids,
-        string       $id_fld
+        string       $id_fld,
+        array        $url_par = []
     ): bool
     {
-        $result = $t->assert_api_get_list($class, $ids, $id_fld);
+        $result = $t->assert_api_get_list($class, $ids, $id_fld, '', false, $url_par);
 
         // easy one click update of the expected result if the test_files::AUTO_UPDATE_TEST_FILES flag is true
         if (!$result and test_files::AUTO_UPDATE_TEST_FILES) {
             $lib = new library();
-            $created = $t->assert_result_api_get_list($class, $ids, $id_fld);
+            $created = $t->assert_result_api_get_list($class, $ids, $id_fld, $url_par);
             if ($this->api_json_usable($created)) {
                 // remove the volatile fields e.g. the change time before saving, so that the
                 // stored file does not change with every database reset; the compare ignores
@@ -1455,47 +1543,157 @@ class test_db_load
         return $usable;
     }
 
+    /**
+     * check that the fixed rows of the database match the expected csv resource files after a
+     * database reset and remember the rows for the leftover check after the write tests
+     *
+     * @param user_message $msg to collect a problem of the database read
+     * @return bool true if the rows of all classes match the resource files
+     */
     function csv_recreate(user_message $msg): bool
+    {
+        // every class is checked, so that a difference of one class does not hide the next one
+        $result = true;
+        foreach ($this->fixed_row_files() as $class => $csv_file_path) {
+            $csv_db = $this->csv_of_class($class, $msg);
+            $this->rows_after_reset[$class] = $csv_db;
+            if (!$this->csv_check_of_class($class, $csv_db, $csv_file_path)) {
+                $result = false;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * check that the write tests have removed every row they have added and have undone every
+     * change, by comparing the fixed rows with the rows that csv_recreate has read before the
+     * write tests, so that a row left behind is reported with its content e.g. the group that
+     * a test value has created
+     *
+     * @param user_message $msg to collect a problem of the database read
+     * @return bool true if no write test has left a row behind or changed a fixed row
+     */
+    function csv_leftover_check(user_message $msg): bool
+    {
+        $lib = new library();
+        $result = true;
+        foreach ($this->rows_after_reset as $class => $rows_before) {
+            $rows_after = $this->csv_of_class($class, $msg);
+            // without the header line, which a class without rows does not have
+            $leftover = '';
+            foreach (array_diff(array_slice($rows_after, 1), array_slice($rows_before, 1)) as $row) {
+                $leftover .= 'left behind: ' . rtrim($row) . $this->row_changes($class, $row, $msg) . "\n";
+            }
+            foreach (array_diff(array_slice($rows_before, 1), array_slice($rows_after, 1)) as $row) {
+                $leftover .= 'changed or removed: ' . rtrim($row) . $this->row_changes($class, $row, $msg) . "\n";
+            }
+            // shown only on failure, followed by the rows e.g. "... as they were: left behind: 13,::1,..."
+            $test_name = 'the write tests have not left the ' . $lib->class_to_name($class) . 's as they were:';
+            if (!$this->env->assert_empty($test_name, $leftover)) {
+                $result = false;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the change log entries of a leftover row, so that the message names the user and the time
+     * of each write and with that the test that has left the row behind
+     *
+     * @param string $class the class of the row e.g. group
+     * @param string $row the csv line of the row starting with the id
+     * @param user_message $msg to collect a problem of the database read
+     * @return string the logged changes of the row or an empty text if the class has no change log
+     */
+    private function row_changes(string $class, string $row, user_message $msg): string
+    {
+        $lib = new library();
+        $result = '';
+        if (in_array($class, self::LOGGED_ROW_CLASSES)) {
+            $chg_lst = new change_log_list();
+            $chg_lst->load_by_obj_fld($class, $msg, $lib->csv_line_to_array($row)[0], $this->env->usr1);
+            foreach ($chg_lst->lst() as $chg) {
+                $result .= ' logged: ' . $chg->dsp();
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @return array the classes with fixed rows and the resource file with the expected rows of each
+     */
+    private function fixed_row_files(): array
+    {
+        $lib = new library();
+        $files = [];
+        foreach (def::MAIN_CLASSES as $class) {
+            $files[$class] = $lib->class_csv_file_path($class);
+        }
+        // the types of a class are fixed rows like the rows above, so a type added, removed or
+        // renamed by a reset is reported the same way e.g. the component types
+        foreach (def::MAIN_CLASS_TYPES as $class => $type_class) {
+            $files[$type_class] = $lib->class_csv_file_path($class, test_files::FIXED_DB_TYPES_CSV);
+        }
+        // the tables and fields of the change log are fixed rows of a class of their own
+        foreach (def::FIXED_ROW_CLASSES as $class) {
+            $files[$class] = $lib->class_csv_file_path($class);
+        }
+        return $files;
+    }
+
+    /**
+     * read the fixed rows of one class from the database as csv lines
+     *
+     * @param string $class the class whose rows are read e.g. component_type
+     * @param user_message $msg to collect a problem of the database read
+     * @return array the csv lines starting with the header line
+     */
+    private function csv_of_class(string $class, user_message $msg): array
     {
         global $db_con;
         $lib = new library();
 
-        $diff = '';
-        foreach (def::MAIN_CLASSES as $class) {
-            $csv_db = $db_con->csv_from_class($class, $msg);
-            $csv_file_path = $lib->class_csv_file_path($class);
-            $csv_file = file($csv_file_path);
-            if ($csv_file === false) {
-                log_err('csv file ' . $csv_file_path . ' for fixed base table entries not found');
-            } else {
-                // strip sensitive fields before comparing
-                if ($class == user::class) {
-                    $csv_db = $lib->csv_clear_col($csv_db, user_db::FLD_PASSWORD);
-                    $csv_file = $lib->csv_clear_col($csv_file, user_db::FLD_PASSWORD);
-                    $csv_db = $lib->csv_clear_col($csv_db, user_db::FLD_ACTIVATION_TIMEOUT);
-                    $csv_file = $lib->csv_clear_col($csv_file, user_db::FLD_ACTIVATION_TIMEOUT);
-                    $csv_db = $lib->csv_clear_col($csv_db, user_db::FLD_USES_SANDBOX);
-                    $csv_file = $lib->csv_clear_col($csv_file, user_db::FLD_USES_SANDBOX);
-                }
-                $diff = $lib->diff_msg($csv_db, $csv_file);
-                if ($diff != '') {
-                    $target = implode("", $csv_db);
-                    log_err('after database reset these ' . $lib->class_to_name($class)
-                        . 's have been unexpected changed in ' . $csv_file_path . ': ' . $diff
-                        . ' target is ' . substr($target, 0, 1000));
-                    if (test_files::AUTO_UPDATE_TEST_FILES) {
-                        // accept the current database content as the new expected csv
-                        $this->env->update_path_file($csv_file_path, $target);
-                    }
-                }
+        $csv_db = $db_con->csv_from_class($class, $msg);
+        // never write a password hash to a test resource file, so the expected file
+        // created from these rows contains the sensitive fields always empty
+        if ($class == user::class) {
+            $csv_db = $lib->csv_clear_col($csv_db, user_db::FLD_PASSWORD);
+            $csv_db = $lib->csv_clear_col($csv_db, user_db::FLD_ACTIVATION_TIMEOUT);
+            $csv_db = $lib->csv_clear_col($csv_db, user_db::FLD_USES_SANDBOX);
+        }
+        return $csv_db;
+    }
+
+    /**
+     * compare the fixed rows of one class with the expected csv resource file and report a
+     * difference like any other expected file as a failed test, because a wrong row is a test
+     * issue and should not stop the tests that follow; if the auto update flag is set the
+     * database content becomes the new expected file, which also creates the file of a class
+     * that is checked for the first time
+     *
+     * @param string $class the class whose rows are checked e.g. component_type
+     * @param array $csv_db the csv lines of the class as read from the database
+     * @param string $csv_file_path the resource file with the expected rows
+     * @return bool true if the database rows match the resource file
+     */
+    private function csv_check_of_class(string $class, array $csv_db, string $csv_file_path): bool
+    {
+        $lib = new library();
+        $csv_text = implode('', $csv_db);
+        $test_name = 'the ' . $lib->class_to_name($class) . 's of the database match ' . $csv_file_path;
+        $exists = file_exists($csv_file_path);
+        if ($exists) {
+            $result = $this->env->assert_file($test_name, $csv_text, $csv_file_path);
+        } else {
+            // a class that is checked for the first time has no expected file yet, which is reported
+            // without the rows; assert_file cannot be used here, because reading the missing file
+            // would log a system error and stop the tests that follow
+            $result = $this->env->assert_true($test_name . ' and the expected file exists', $exists);
+            if (test_files::AUTO_UPDATE_TEST_FILES) {
+                $this->env->update_path_file($csv_file_path, $csv_text);
             }
         }
-        if ($diff == '') {
-            return true;
-        } else {
-            return false;
-        }
-
+        return $result;
     }
 
 

@@ -32,6 +32,7 @@
 
 namespace Zukunft\ZukunftCom\test\php\const;
 
+use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 class files
@@ -64,12 +65,34 @@ class files
 
     CONST string IP_BLACKLIST = test_paths::SYSTEM . 'ip_blacklist' . self::JSON;
 
+    // the static forward pages in the docroot by their url path, which the test run rewrites
+    // from the view of api::FORWARD_VIEWS (see base_ui_tests)
+    CONST array FORWARD_PAGES = [
+        api::LOGIN_FORWARD => test_paths::DOCROOT . api::LOGIN_FORWARD,
+        api::SIGNUP_FORWARD => test_paths::DOCROOT . api::SIGNUP_FORWARD,
+        api::LOGIN_ACTIVATE_FORWARD => test_paths::DOCROOT . api::LOGIN_ACTIVATE_FORWARD,
+        api::LOGOUT_FORWARD => test_paths::DOCROOT . api::LOGOUT_FORWARD,
+        api::FIND_FORWARD => test_paths::DOCROOT . api::FIND_FORWARD,
+        api::SETTINGS_REL => test_paths::DOCROOT . api::SETTINGS_REL,
+    ];
+
     // the snapshots that no test of a run writes, but that must never be removed by the
     // cleanup of the unused test files e.g. the initial test page created before the
     // snapshots have been named by the object id
     CONST array SNAPSHOT_KEEP = [
         'word_add' . self::HTML,
     ];
+
+    // the case names of the value page snapshots that are rendered from the test factories, because the
+    // seeded database has no such value (see test_base::assert_view_by_factory)
+    CONST string VIEW_CASE_NON_PRIME = 'non prime';
+    CONST string VIEW_CASE_BIG = 'big';
+    CONST string VIEW_CASE_TEXT = 'text';
+    CONST string VIEW_CASE_GEO = 'geo';
+    CONST string VIEW_CASE_SIMPLE = 'simple';
+    CONST string VIEW_CASE_RELATED = 'related';
+    CONST string VIEW_CASE_POPULISM_LOSS = 'populism potential loss';
+    CONST string VIEW_CASE_TIME = 'time';
 
 
     /*
@@ -131,6 +154,10 @@ class files
     CONST string IMPORT_COMPONENTS = test_paths::IMPORT_UNIT . 'components';
     CONST string IMPORT_RESULT_CALC = test_paths::IMPORT_UNIT . 'result_calc_simple';
     CONST string IMPORT_CALC_VALIDATION = test_paths::IMPORT_UNIT . 'calc_validation';
+    // the same validation with an operand of several phrases e.g. the price in CHF
+    CONST string IMPORT_CALC_VALIDATION_GROUP = test_paths::IMPORT_UNIT . 'calc_validation_phrase_group';
+    // a validation whose operand is the result that the validation before has reproduced
+    CONST string IMPORT_CALC_VALIDATION_CHAIN = test_paths::IMPORT_UNIT . 'calc_validation_chain';
     // the three sample files for the data object merge test and the expected merge result
     CONST string IMPORT_MERGE_1 = test_paths::IMPORT_UNIT . 'offline_is_better_than_online1';
     CONST string IMPORT_MERGE_2 = test_paths::IMPORT_UNIT . 'offline_is_better_than_online2';
@@ -138,10 +165,13 @@ class files
     CONST string IMPORT_MERGE_RESULT = test_paths::IMPORT_UNIT . 'offline_is_better_than_online';
     CONST string IMPORT_CALC_VALIDATION_MISMATCH = test_paths::IMPORT_INCONSISTENCY . 'calc_validation_mismatch';
     CONST string IMPORT_CALC_VALIDATION_VALUE_MISSING = test_paths::IMPORT_INCONSISTENCY . 'calc_validation_value_missing';
+    CONST string IMPORT_CALC_VALIDATION_GROUP_MISSING = test_paths::IMPORT_INCONSISTENCY . 'calc_validation_phrase_group_missing';
+    CONST string IMPORT_CALC_VALIDATION_CHAIN_BROKEN = test_paths::IMPORT_INCONSISTENCY . 'calc_validation_chain_broken';
     CONST string IMPORT_VIEW_ROW_NOT_CLOSED = test_paths::IMPORT_INCONSISTENCY . 'view_row_not_closed';
     CONST string IMPORT_VIEW_COMPONENT_POS_DOUBLE = test_paths::IMPORT_INCONSISTENCY . 'view_component_pos_double';
     CONST string IMPORT_TRIPLE_LINK_AMBIGUOUS = test_paths::IMPORT_INCONSISTENCY . 'triple_link_ambiguous';
     CONST string IMPORT_VALUE_SOURCE_NOT_A_NAME = test_paths::IMPORT_INCONSISTENCY . 'value_source_not_a_name';
+    CONST string IMPORT_REFS_NOT_A_LIST = test_paths::IMPORT_INCONSISTENCY . 'phrase_refs_not_a_list';
     CONST string IMPORT_VERSION_NEWER_TEST = test_paths::IMPORT_INCONSISTENCY . 'version_newer_test' . self::JSON;
     CONST string IMPORT_TRIPLE_LINK_RENAME_1 = test_paths::IMPORT . 'triple_link_rename_1';
     CONST string IMPORT_TRIPLE_LINK_RENAME_2 = test_paths::IMPORT . 'triple_link_rename_2';
@@ -196,9 +226,13 @@ class files
     CONST string IMPORT_WORK = test_paths::IMPORT . 'work' . self::JSON;
 
     // json files with sample data that only the full load of test/test_full_load.php imports
+    CONST string IMPORT_AI_DEMAND = test_paths::IMPORT . 'ai_demand' . self::JSON;
     CONST string IMPORT_AI_MEDIATED_COMMUNICATION = test_paths::IMPORT . 'ai_mediated_communication' . self::JSON;
     CONST string IMPORT_ALMENDE = test_paths::IMPORT . 'almende' . self::JSON;
     CONST string IMPORT_ANSER_TRUST_VS_FEAR = test_paths::IMPORT . 'anser_trush_vs_fear' . self::JSON;
+    CONST string IMPORT_ATTENTION_DISTRIBUTION_WEALTH_POLITICS_COMMENTS = test_paths::IMPORT . 'attention_distribution_wealth_politics_comments' . self::JSON;
+    CONST string IMPORT_ATTENTION_SCARCITY_VS_FREEDOM_OF_EXPRESSION = test_paths::IMPORT . 'attention_scarcity_vs_freedom_of_expression' . self::JSON;
+    CONST string IMPORT_CAR_COLOR_INTEREST_RATE_CORRELATION = test_paths::IMPORT . 'car_color_interest_rate_correlation' . self::JSON;
     CONST string IMPORT_CARBON_LEAKAGE_EFFECT = test_paths::IMPORT . 'carbon_leakage_effect' . self::JSON;
     CONST string IMPORT_CBAM_ALU = test_paths::IMPORT . 'CBAM_alu' . self::JSON;
     CONST string IMPORT_CBAM_COSTS = test_paths::IMPORT . 'CBAM_costs' . self::JSON;
@@ -206,21 +240,28 @@ class files
     CONST string IMPORT_CBAM_SETUP = test_paths::IMPORT . 'CBAM_setup' . self::JSON;
     CONST string IMPORT_CLIMATE_MITIGATION_VS_DAMAGE_COSTS = test_paths::IMPORT . 'climate_mitigation_vs_damage_costs' . self::JSON;
     CONST string IMPORT_CO2_WASTE_KEZO = test_paths::IMPORT . 'co2_waste_kezo' . self::JSON;
+    CONST string IMPORT_DEMOCRATIZATION_OF_INTERNET_ATTENTION = test_paths::IMPORT . 'democratization_of_internet_attention' . self::JSON;
     CONST string IMPORT_EU_BANKING = test_paths::IMPORT . 'eu_banking' . self::JSON;
     CONST string IMPORT_EU_SOFTWARE_SOVEREIGNTY = test_paths::IMPORT . 'eu_software_sovereignty' . self::JSON;
     CONST string IMPORT_GDU_SAMPLE = test_paths::IMPORT . 'GDU_sample' . self::JSON;
     CONST string IMPORT_HEAT_AND_CLIMATE_POLITICS = test_paths::IMPORT . 'heat_and_climate_politics' . self::JSON;
     CONST string IMPORT_INCENTIVE_AND_TRUST = test_paths::IMPORT . 'incentive_and_trust' . self::JSON;
+    CONST string IMPORT_INNER_CONFLICTS = test_paths::IMPORT . 'inner_conflicts' . self::JSON;
     CONST string IMPORT_INTERNET_SOLUTION_PROBLEM_MATRIX = test_paths::IMPORT . 'internet_solution_problem_matrix' . self::JSON;
     CONST string IMPORT_METHANE_CLIMATE_METRICS = test_paths::IMPORT . 'methane_climate_metrics' . self::JSON;
     CONST string IMPORT_NPP_CH_COST_CALC = test_paths::IMPORT . 'npp_ch_cost_calc' . self::JSON;
     CONST string IMPORT_POWER_DEVOLUTION_PARADOX = test_paths::IMPORT . 'power_devolution_paradox' . self::JSON;
+    CONST string IMPORT_SWISS_LIVESTOCK_WITHOUT_IMPORT = test_paths::IMPORT . 'swiss_livestock_without_import' . self::JSON;
     CONST string IMPORT_TRUE_COSTS_CLIMATE_CHANGE = test_paths::IMPORT . 'true_costs_climate_change' . self::JSON;
+    CONST string IMPORT_WHY_ASK_WHY = test_paths::IMPORT . 'why_ask_why' . self::JSON;
     CONST string IMPORT_EDGE_FIXED_GENERATED_NAME = test_paths::IMPORT_EDGE_CASES . 'fixed_generated_name' . self::JSON;
     CONST string IMPORT_EDGE_FIXED_NAME = test_paths::IMPORT_EDGE_CASES . 'fixed_name' . self::JSON;
     CONST string IMPORT_EDGE_GENERATED_NAME = test_paths::IMPORT_EDGE_CASES . 'generated_name' . self::JSON;
+    CONST string IMPORT_LEFT_RIGHT_DATA = test_paths::IMPORT_PROTECTED_TOLERANCE . 'left_right_data' . self::JSON;
     CONST string IMPORT_REPUBLIK_TEST_INIT_DE = test_paths::IMPORT_PROTECTED_TOLERANCE . 'republik_test_init_de' . self::JSON;
     CONST string IMPORT_REPUBLIK_TEST_INIT_EN = test_paths::IMPORT_PROTECTED_TOLERANCE . 'republik_test_init_en' . self::JSON;
+    CONST string IMPORT_MODERATION_LATENCY_VS_SPREAD = test_paths::IMPORT_PROTECTED_TOLERANCE . 'moderation_latency_vs_spread' . self::JSON;
+    CONST string IMPORT_OSTRACISM = test_paths::IMPORT_PROTECTED_TOLERANCE . 'ostracism' . self::JSON;
     CONST string IMPORT_V_DEM_SAMPLE = test_paths::IMPORT_V_DEM . 'v_dem_sample' . self::JSON;
     CONST string IMPORT_WTW_SAMPLE = test_paths::IMPORT_V_DEM . 'wtw_sample' . self::JSON;
     CONST string IMPORT_CURRENCY_WIKIPEDIA = test_paths::IMPORT_WIKIPEDIA . 'currency' . self::JSON;
@@ -248,6 +289,17 @@ class files
     CONST string IMPORT_XBRL_MISSING_NAME = 'does_not_exist';
 
     CONST string FIXED_DB_CSV = 'list' . self::CSV;
+    // the rows of a class before the ids have been renumbered, to check that no row is lost
+    CONST string FIXED_DB_UNSORTED_CSV = 'list_unsorted' . self::CSV;
+    // the rows before and after the renumbering with the name instead of the id of a linked row
+    CONST string FIXED_DB_UNSORTED_TEXT_REF_CSV = 'list_unsorted_with_text_ref' . self::CSV;
+    CONST string FIXED_DB_SORTED_TEXT_REF_CSV = 'list_sorted_with_text_ref' . self::CSV;
+    // a csv with an empty line, a quoted comma and a line with fewer values than the header
+    CONST string FIXED_DB_BROKEN_CSV = 'list_broken' . self::CSV;
+    // a csv file that does not exist to test the reading error
+    CONST string FIXED_DB_MISSING_CSV = 'list_missing' . self::CSV;
+    // the expected types of a class, stored in the folder of that class e.g. the component types
+    CONST string FIXED_DB_TYPES_CSV = 'list_types' . self::CSV;
 
     // for the SQL formatter
     CONST string SQL_FORMAT_TEST = 'word_update_log_0022004000002_user' . self::SQL;
@@ -265,10 +317,19 @@ class files
     // standard table alias (l2) and each of the two is padded with the width of its own column
     CONST string SQL_FORMAT_TEST_SELECT_JOINED = 'component_link_by_view_id' . self::SQL;
     CONST string SQL_FORMAT_TEST_SELECT_JOINED_MYSQL = 'component_link_by_view_id_mysql' . self::SQL;
+    // a select with two joins, which are aligned with each other, and with the sort and the paging
+    // lines of a change log query (see change::load_sql)
+    CONST string SQL_FORMAT_TEST_SELECT_SORTED = 'change_by_group_name_of_grp_big' . self::SQL;
+    CONST string SQL_FORMAT_TEST_SELECT_SORTED_MYSQL = 'change_by_group_name_of_grp_big_mysql' . self::SQL;
     // a select that is a union of selects, because a prime value is selected by its phrase ids
     // and therefore one sub select per value is needed (see sandbox_multi::load_sql_by_ids_union)
     CONST string SQL_FORMAT_TEST_UNION = 'value_prime_p3_by_user_list_by_ids_2' . self::SQL;
     CONST string SQL_FORMAT_TEST_UNION_MYSQL = 'value_prime_p3_by_user_list_by_ids_2_mysql' . self::SQL;
+    // a union whose where conditions are bracketed or groups, which are formatted with one or part per line
+    CONST string SQL_FORMAT_TEST_OR_GROUP = 'value_list_by_phr_lst_all_p5' . self::SQL;
+    // a delete log function without the prepared test call and with the delete statements of the row
+    CONST string SQL_FORMAT_TEST_DELETE_LOG = 'word_delete_log' . self::SQL;
+    CONST string SQL_FORMAT_TEST_DELETE_LOG_MYSQL = 'word_delete_log_mysql' . self::SQL;
     CONST string SQL_FORMAT_TEST_COUNT = 'user_list_by_count_changes' . self::SQL;
     CONST string SQL_FORMAT_TEST_COUNT_MYSQL = 'user_list_by_count_changes_mysql' . self::SQL;
     CONST string SQL_FORMAT_TEST_COUNT_USER = 'user_list_by_count_user_rows' . self::SQL;
@@ -351,6 +412,18 @@ class files
         self::IMPORT_WIKIDATA_TO_IMPORT_Q4917,
         self::IMPORT_CLIMATE_MITIGATION_VS_DAMAGE_COSTS,
         self::IMPORT_XBRL_SAMPLE_JSON,
+        // appended at the end, so that the id of the objects used by the system tests does not change
+        self::IMPORT_AI_DEMAND,
+        self::IMPORT_CAR_COLOR_INTEREST_RATE_CORRELATION,
+        self::IMPORT_DEMOCRATIZATION_OF_INTERNET_ATTENTION,
+        self::IMPORT_INNER_CONFLICTS,
+        self::IMPORT_LEFT_RIGHT_DATA,
+        self::IMPORT_SWISS_LIVESTOCK_WITHOUT_IMPORT,
+        self::IMPORT_WHY_ASK_WHY,
+        self::IMPORT_ATTENTION_DISTRIBUTION_WEALTH_POLITICS_COMMENTS,
+        self::IMPORT_ATTENTION_SCARCITY_VS_FREEDOM_OF_EXPRESSION,
+        self::IMPORT_MODERATION_LATENCY_VS_SPREAD,
+        self::IMPORT_OSTRACISM,
     ];
 
 

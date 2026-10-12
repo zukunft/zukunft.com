@@ -40,11 +40,19 @@ include_once paths::DB . 'sql_db.php';
 include_once paths::DB . 'sql_par.php';
 include_once paths::DB . 'sql_par_type.php';
 include_once paths::DB . 'sql_type_list.php';
+include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
 include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
+include_once paths::MODEL_PHRASE . 'term.php';
 include_once paths::MODEL_PHRASE . 'term_list.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_list.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_list_named.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
 include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_WORD . 'triple.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_HELPER . 'Message.php';
+include_once paths::SHARED_HELPER . 'TextIdObject.php';
 include_once paths::SHARED . 'library.php';
 include_once paths::SHARED_CONST_FIELDS . 'group_fields.php';
 
@@ -56,13 +64,19 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_list;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_list_named;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\helper\Message;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\group_fields;
 
-class group_list extends sandbox_list
+class group_list extends sandbox_list_named
 {
 
     public array $time_lst = [];     // the list of the time phrase (the add function)
@@ -112,7 +126,7 @@ class group_list extends sandbox_list
             foreach ($db_rows as $db_row) {
                 $phr_grp = new group($this->get_user());
                 $phr_grp->row_mapper($db_row, $msg);
-                $this->add_obj($phr_grp);
+                $this->add_obj($phr_grp, false, $msg);
                 $result = true;
             }
         }
@@ -180,7 +194,7 @@ class group_list extends sandbox_list
     {
         $qp = $this->load_sql_init($sc, group::class, 'phr', $sc_par_lst);
         $grp_id = new group_id();
-        $sc->add_where(group_fields::FLD_ID, $grp_id->int2alpha_num($phr->id()), sql_par_type::LIKE);
+        $sc->add_where(group_fields::FLD_ID, $grp_id->int2alpha_num($phr->id()), sql_par_type::LIKE_KEY);
         $qp->sql = $sc->sql(0, true, false);
         $qp->par = $sc->get_par();
 
@@ -356,29 +370,43 @@ class group_list extends sandbox_list
 
     /**
      * add a phrase group if it is not yet part of the list
-     * @param group $grp
+     * @param group|sandbox_named|triple|phrase|term|null $to_add
+     * @param bool $allow_duplicates true if the list can contain the same entry twice e.g. for the components
+     * @param Message $msg to report which entry is double
+     * @return bool true if the group has been added
      */
-    function add(group $grp): void
+    function add(
+        group|sandbox_named|triple|phrase|term|null $to_add,
+        bool                                        $allow_duplicates = false,
+        Message                                     $msg = new Message()
+    ): bool
     {
-        log_debug($grp->id());
-        $do_add = false;
-        if ($grp->is_id_set()) {
-            if ($this->grp_ids == null) {
-                $do_add = true;
+        // the type is the one of the parent, but a group list holds only groups;
+        // reported to the caller like the other list rejections e.g. LIST_DOUBLE_ENTRY
+        if ($to_add != null and !($to_add instanceof group)) {
+            $msg->add(msg_id::LIST_CLASS_NOT_EXPECTED, [
+                msg_id::VAR_NAME => $to_add->name(),
+                msg_id::VAR_TYPE => library::class_to_name($to_add::class),
+                msg_id::VAR_CLASS_NAME => library::class_to_name($this::class)
+            ]);
+            return false;
+        }
+        $result = false;
+        if ($to_add != null) {
+            log_debug($to_add->id());
+            // add_obj checks and reports a double, so the caller decides by $allow_duplicates
+            if ($to_add->is_id_set()) {
+                $result = $this->add_obj($to_add, $allow_duplicates, $msg);
+            }
+            if ($result) {
+                $this->grp_ids[] = $to_add->id();
+                $this->time_lst[] = null;
+                log_debug($to_add->dsp_id() . ' added to list ' . $this->dsp_id());
             } else {
-                if (!in_array($grp->id(), $this->grp_ids)) {
-                    $do_add = true;
-                }
+                log_debug($to_add->dsp_id() . ' skipped, because it has no id or is already in list ' . $this->dsp_id());
             }
         }
-        if ($do_add) {
-            $this->add_obj($grp);
-            $this->grp_ids[] = $grp->id();
-            $this->time_lst[] = null;
-            log_debug($grp->dsp_id() . ' added to list ' . $this->dsp_id());
-        } else {
-            log_debug($grp->dsp_id() . ' skipped, because is already in list ' . $this->dsp_id());
-        }
+        return $result;
     }
 
     /*

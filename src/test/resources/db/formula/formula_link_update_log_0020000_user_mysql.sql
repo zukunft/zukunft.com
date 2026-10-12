@@ -24,7 +24,7 @@ PREPARE formula_link_update_log_0020000_user_call FROM
 SELECT formula_link_update_log_0020000_user
        (3,
         2,
-        712,
+        682,
         2,
         1,
         1);

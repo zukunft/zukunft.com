@@ -17,4 +17,4 @@ PREPARE source_list_by_name_like (bigint, text) AS
           FROM sources s
      LEFT JOIN user_sources u ON s.source_id = u.source_id
                              AND u.user_id = $1
-         WHERE s.source_name like $2;
+         WHERE s.source_name ilike $2;

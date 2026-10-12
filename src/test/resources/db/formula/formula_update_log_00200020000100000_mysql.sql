@@ -30,10 +30,10 @@ PREPARE formula_update_log_00200020000100000_call FROM
 SELECT formula_update_log_00200020000100000
        (3,
         2,
-        30,
+        631,
         'scale hour to sec',
         'System Test Formula Renamed',
         2,
-        31,
+        636,
         1,
         null);

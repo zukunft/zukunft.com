@@ -40,9 +40,13 @@ include_once paths::MODEL_IMPORT . 'convert_wikipedia_table.php';
 include_once paths::MODEL_IMPORT . 'import_convert_xbrl.php';
 include_once paths::MODEL_CONST . 'files.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
+include_once paths::MODEL_WORD . 'triple.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED_CONST . 'refs.php';
 include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once test_paths::CONST . 'files.php';
+include_once test_paths::CONST . 'triple_names.php';
 include_once test_paths::CONST . 'word_names.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
@@ -52,12 +56,15 @@ use Zukunft\ZukunftCom\main\php\cfg\import\convert_wikipedia_table;
 use Zukunft\ZukunftCom\main\php\cfg\import\import;
 use Zukunft\ZukunftCom\main\php\cfg\import\import_convert_xbrl;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
+use Zukunft\ZukunftCom\main\php\shared\const\refs;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\component_types;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
@@ -151,6 +158,21 @@ class import_tests
         $test_name = '... and a triple without a type is no measure';
         $trp = $dto->triple_list()->get_by_name('global warming', $msg);
         $t->assert_false($test_name, $trp?->is_measure() ?? true);
+
+        // a triple that an import json names is filled from the cache like a word, so that e.g.
+        // the triple of a term view keeps its id (see sandbox_link_named::import_mapper); the measure
+        // type proves that the cached triple is returned and not the name-only triple given
+        $test_name = 'the import cache finds a triple by its name';
+        $trp_by_name = new triple($t->usr1);
+        $trp_by_name->set_name('hertz per second');
+        $trp_cac = $dto->get_object_by_name($trp_by_name, $msg);
+        $t->assert_true($test_name, $trp_cac?->is_measure() ?? false);
+        // negative: a triple that the cache does not have is not replaced by a placeholder
+        // the math const triple is a seed triple that this import json does not contain
+        $test_name = '... but a triple that the cache does not have is not found';
+        $trp_missing = new triple($t->usr1);
+        $trp_missing->set_name(triple_names::MATH_CONST);
+        $t->assert_null($test_name, $dto->get_object_by_name($trp_missing, $msg)?->name());
 
         $test_name = 'JSON import source count';
         $json_str = file_get_contents(test_files::IMPORT_SOURCES . test_files::JSON);
@@ -293,6 +315,52 @@ class import_tests
         $t->assert($test_name, $dto->result_check_list()->count(), 1);
         $test_name = '... and reports no problem';
         $t->assert_true($test_name, $msg->is_ok());
+        // a checked result is a result like any other, so it is stored with the results of
+        // the file and not only used for the check
+        $test_name = '... and the checked result is stored with the results';
+        $t->assert($test_name, $dto->result_list()->count(), 1);
+
+        // an operand of a formula can be a group of phrases e.g. "price","CHF", which names one
+        // value, so the validation must replace the complete group with one number
+        $test_name = 'JSON import calc validation fills a phrase group with one number';
+        $msg = new user_message($t->usr1);
+        $json_str = file_get_contents(test_files::IMPORT_CALC_VALIDATION_GROUP . test_files::JSON);
+        $json_array = json_decode($json_str, true);
+        $dto = $imp->get_data_object($json_array, $msg);
+        $t->assert($test_name, $dto->result_check_list()->count(), 1);
+        $test_name = '... and reports no problem';
+        $t->assert_true($test_name, $msg->is_ok());
+
+        // negative: the missing value is reported by the complete group and not by a single phrase
+        $test_name = 'JSON import calc validation reports a missing phrase group value';
+        $msg = new user_message($t->usr1);
+        $json_str = file_get_contents(test_files::IMPORT_CALC_VALIDATION_GROUP_MISSING . test_files::JSON);
+        $json_array = json_decode($json_str, true);
+        $dto = $imp->get_data_object($json_array, $msg);
+        $target = 'the value for "price,CHF" to validate the result of '
+            . $dto->result_check_list()->lst()[0]->grp()->phrase_list()->dsp_name()
+            . ' is missing in the import message';
+        $t->assert($test_name, $msg->all_message_text(), $target);
+
+        // a result that has been reproduced is the operand of a later result, so that a file can
+        // calculate a target value first and its probability range from that target afterwards
+        $test_name = 'JSON import calc validation uses a checked result as an operand';
+        $msg = new user_message($t->usr1);
+        $json_str = file_get_contents(test_files::IMPORT_CALC_VALIDATION_CHAIN . test_files::JSON);
+        $json_array = json_decode($json_str, true);
+        $dto = $imp->get_data_object($json_array, $msg);
+        $t->assert($test_name, $dto->result_check_list()->count(), 2);
+        $test_name = '... and reports no problem';
+        $t->assert_true($test_name, $msg->is_ok());
+
+        // negative: a result that could not be reproduced is no operand, else a wrong number
+        // would confirm the next result instead of being reported
+        $test_name = 'JSON import calc validation uses no failed result as an operand';
+        $msg = new user_message($t->usr1);
+        $json_str = file_get_contents(test_files::IMPORT_CALC_VALIDATION_CHAIN_BROKEN . test_files::JSON);
+        $json_array = json_decode($json_str, true);
+        $imp->get_data_object($json_array, $msg);
+        $t->assert_text_contains($test_name, $msg->all_message_text(), 'the value for "total,CHF"');
 
         $test_name = 'JSON import calc validation reports a result mismatch';
         $msg = new user_message($t->usr1);
@@ -338,6 +406,20 @@ class import_tests
         }
         $imp->get_data_object($json_array, $msg);
         $t->assert_text_contains($test_name, $msg->all_message_text(), 'does not match');
+
+        // the unique keys use case is user data as well, so a normal user must import it
+        $test_name = 'the import of the unique keys use case reports no problem';
+        $msg = new user_message($t->usr1);
+        $json_str = file_get_contents(cfg_files::UNIQUE_KEYS_FILE);
+        $dto = $imp->get_data_object(json_decode($json_str, true), $msg);
+        $t->assert($test_name, $msg->all_message_text(), '');
+        $test_name = '... and the ISBN is typed unique key';
+        $wrd = $dto->word_list()->get_by_name(word_names::ISBN, $msg);
+        $t->assert_true($test_name, $wrd?->is_type(phrase_type_shared::UNIQUE_KEY) ?? false);
+        // negative: a sample entry is an instance of a unique key, not the key itself
+        $test_name = '... but its sample entry is not';
+        $wrd = $dto->word_list()->get_by_name(word_names::ISIN_MERCEDES, $msg);
+        $t->assert_false($test_name, $wrd?->is_type(phrase_type_shared::UNIQUE_KEY) ?? true);
 
         $test_name = 'JSON import warning creation';
         $msg = new user_message($t->usr1);
@@ -497,6 +579,38 @@ class import_tests
         $test_name = 'JSON import accepts a value that names its source';
         $msg = new user_message($t->usr_dev);
         $json_array[json_fields::VALUES][1][json_fields::SOURCE_NAME] = 'The World Factbook';
+        $imp->get_data_object($json_array, $msg);
+        $t->assert_true($test_name, $msg->is_ok());
+
+
+        $t->subheader($ts . 'phrase reference check');
+
+        // a reference of a word or a triple is a json object with a name and a type, so the
+        // compact form that names the type as the key is reported instead of ending the import
+        // with a fatal (see ref::import_list_valid)
+        $test_name = 'JSON import reports a word reference that is no object';
+        $msg = new user_message($t->usr_dev);
+        $json_str = file_get_contents(test_files::IMPORT_REFS_NOT_A_LIST . test_files::JSON);
+        $json_array = json_decode($json_str, true);
+        $imp->get_data_object($json_array, $msg);
+        $target = 'must be a list of objects each with a name and a type';
+        $t->assert_text_contains($test_name, $msg->all_message_text(), $target);
+        $test_name = '... and names the phrase and the unexpected reference format';
+        $t->assert_text_contains($test_name, $msg->all_message_text(), 'wikipedia');
+
+        // the references of a triple are checked the same way as the references of a word
+        $test_name = '... and reports a triple reference that is no object';
+        $t->assert_text_contains($test_name, $msg->all_message_text(),
+            'highest elevation of Zurich (canton)');
+
+        // the same phrases are a valid import once the references are a list of objects
+        $test_name = 'JSON import accepts references given as a list of objects';
+        $msg = new user_message($t->usr_dev);
+        // each phrase gets an external key of its own, because one key identifies one phrase
+        $json_array[json_fields::WORDS][0][json_fields::REFS] =
+            [[json_fields::NAME => refs::PI_KEY, json_fields::TYPE_NAME => refs::WIKIDATA_TYPE]];
+        $json_array[json_fields::TRIPLES][0][json_fields::REFS] =
+            [[json_fields::NAME => refs::MATH_KEY, json_fields::TYPE_NAME => refs::WIKIDATA_TYPE]];
         $imp->get_data_object($json_array, $msg);
         $t->assert_true($test_name, $msg->is_ok());
 

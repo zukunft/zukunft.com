@@ -1611,10 +1611,12 @@ COMMENT ON COLUMN user_groups_big.description IS 'the user-specific description 
 
 CREATE TABLE IF NOT EXISTS source_types
 (
-    source_type_id SERIAL PRIMARY KEY,
-    type_name      varchar(255) NOT NULL,
-    code_id        varchar(255) DEFAULT NULL,
-    description    text         DEFAULT NULL
+    source_type_id    SERIAL PRIMARY KEY,
+    type_name         varchar(255) NOT NULL,
+    code_id           varchar(255) DEFAULT NULL,
+    description       text         DEFAULT NULL,
+    group_msg_code_id varchar(255) DEFAULT NULL,
+    wikipedia         text         DEFAULT NULL
 );
 
 COMMENT ON TABLE source_types IS 'to link predefined behaviour to a source';
@@ -1622,6 +1624,8 @@ COMMENT ON COLUMN source_types.source_type_id IS 'the internal unique primary in
 COMMENT ON COLUMN source_types.type_name IS 'the unique type name as shown to the user and used for the selection';
 COMMENT ON COLUMN source_types.code_id IS 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration';
 COMMENT ON COLUMN source_types.description IS 'text to explain the type to the user as a tooltip; to be replaced by a language form entry';
+COMMENT ON COLUMN source_types.group_msg_code_id IS 'the message id of the translatable name of the group e.g. structured data formats used to group the source types in a selector';
+COMMENT ON COLUMN source_types.wikipedia IS 'the url of the english wikipedia page that explains the format';
 
 -- --------------------------------------------------------
 
@@ -5212,7 +5216,7 @@ CREATE OR REPLACE VIEW prime_terms AS
            ''                AS resolved_text,
            ''                AS latex
       FROM words AS w
-     WHERE (w.phrase_type_id <> 10 OR w.phrase_type_id IS NULL)
+     WHERE (w.phrase_type_id <> 21 OR w.phrase_type_id IS NULL)
        AND w.word_id < 32767
 UNION
     SELECT t.triple_id * -2 + 1       AS term_id,
@@ -5286,7 +5290,7 @@ CREATE OR REPLACE VIEW terms AS
            ''                AS resolved_text,
            ''                AS latex
       FROM words AS w
-     WHERE (w.phrase_type_id <> 10 OR w.phrase_type_id IS NULL)
+     WHERE (w.phrase_type_id <> 21 OR w.phrase_type_id IS NULL)
 UNION
     SELECT t.triple_id * -2 + 1       AS term_id,
            t.user_id,
@@ -5356,7 +5360,7 @@ CREATE OR REPLACE VIEW user_prime_terms AS
            ''                AS resolved_text,
            ''                AS latex
       FROM user_words AS w
-     WHERE (w.phrase_type_id <> 10 OR w.phrase_type_id IS NULL)
+     WHERE (w.phrase_type_id <> 21 OR w.phrase_type_id IS NULL)
        AND w.word_id < 32767
 UNION
     SELECT t.triple_id * -2 + 1       AS term_id,
@@ -5430,7 +5434,7 @@ CREATE OR REPLACE VIEW user_terms AS
            ''                AS resolved_text,
            ''                AS latex
       FROM user_words AS w
-     WHERE (w.phrase_type_id <> 10 OR w.phrase_type_id IS NULL)
+     WHERE (w.phrase_type_id <> 21 OR w.phrase_type_id IS NULL)
 UNION
     SELECT t.triple_id * -2 + 1       AS term_id,
            t.user_id,

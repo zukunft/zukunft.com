@@ -52,6 +52,9 @@ class test_const
     // a type name that no type list has, to test that an unknown type of an import is reported
     // with its name and does not end up as a not-found marker in the type field
     const string TYPE_NOT_IN_LIST = 'System Test type that does not exist';
+    // the id of the factory link objects e.g. formula link, component link, term view and view relation,
+    // used by a page url of an existing link, which the url mapper needs to map the linked objects
+    const int LINK_ID = 1;
     // the order number of the filled formula link
     const int FORMULA_LINK_ORDER_NBR = 2;
     // the description of the filled formula link

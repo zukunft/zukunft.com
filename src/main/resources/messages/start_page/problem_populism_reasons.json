@@ -1,0 +1,509 @@
+{
+  "version": "0.0.3",
+  "data_version": "0.0.1",
+  "time": "2026-10-08 12:00:00",
+  "user": "timon",
+  "selection": [
+    "populism reasons that cause costs"
+  ],
+  "description": "The most relevant reasons why populism causes costs, each linked to populism with 'can cause' and quantified by the studies that report it for the average populist episode and per country: the loss of GDP per capita and of consumption (Funke, Schularick & Trebesch 2023), the rise of the public debt and the drop of the financial integration (Funke et al.), the economic nationalism with the US tariffs of 2018 (Fajgelbaum et al. 2020) and the Brexit (Born et al. 2019, CER 2022, OBR), the institutional erosion with the democratic backsliding (Kyle & Mounk 2018) and the EU funds lost by Hungary under the rule of law conditionality, and the excess mortality of the COVID-19 pandemic (Bayerlein et al. 2021). The annual GDP decline of populism and its solution are stated in problem_populism.json instead, because they are the row of the global problem ranking of the start page. Venezuela under Chávez and Maduro, a populist episode of Funke et al., is added as the extreme case of the collapse of GDP, the hyperinflation and the emigration; these values are not attributed to populism by their sources, because the fall of the oil price and the sanctions are also causes, so they do not carry a '<reason> due to populism' triple. Every number is taken from the named source as reported; a country that a study does not report is left out and never estimated. A share is stored as the decimal ratio, a loss as a positive number and a change with its sign. Each study has its own sample and metric, so numbers of different studies are not comparable without reading the source description. Every amount of money is stated in euro: the US dollar figure of the source is converted with the ECB 2023 annual average of 1.0813 USD per EUR (the value of GDP.json) whatever the price base year of the source, and the source figure is kept in the description of the value. A value of a reason carries the triple '<reason> due to populism' and not the word 'populism' itself, because a value that names a global problem directly is a row of the global problem ranking of the start page, where only the potential loss and the solution of a problem belong.",
+  "words": [
+    {
+      "name": "populism"
+    },
+    {
+      "name": "GDP"
+    },
+    {
+      "name": "inhabitant"
+    },
+    {
+      "name": "change"
+    },
+    {
+      "name": "loss"
+    },
+    {
+      "name": "cost"
+    },
+    {
+      "name": "consumption"
+    },
+    {
+      "name": "debt"
+    },
+    {
+      "name": "financial"
+    },
+    {
+      "name": "globalization"
+    },
+    {
+      "name": "index"
+    },
+    {
+      "name": "point"
+    },
+    {
+      "name": "economic"
+    },
+    {
+      "name": "nationalism",
+      "description": "the policy to put the own nation first and to shield it from foreign goods, firms, capital and people"
+    },
+    {
+      "name": "tariff"
+    },
+    {
+      "name": "real"
+    },
+    {
+      "name": "income"
+    },
+    {
+      "name": "labour"
+    },
+    {
+      "name": "productivity"
+    },
+    {
+      "name": "trade"
+    },
+    {
+      "name": "Brexit",
+      "description": "the withdrawal of the United Kingdom from the European Union, decided by the referendum of 23 June 2016 and done on 31 January 2020",
+      "refs": [
+        {
+          "name": "Brexit",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q7888194",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "institutional"
+    },
+    {
+      "name": "erosion"
+    },
+    {
+      "name": "democratic"
+    },
+    {
+      "name": "backsliding",
+      "description": "a return to a worse state e.g. the decline of the quality of a democracy"
+    },
+    {
+      "name": "leader"
+    },
+    {
+      "name": "populist"
+    },
+    {
+      "name": "non-populist"
+    },
+    {
+      "name": "probability"
+    },
+    {
+      "name": "fund"
+    },
+    {
+      "name": "European Union"
+    },
+    {
+      "name": "frozen",
+      "description": "blocked so that it cannot be paid out until a condition is met"
+    },
+    {
+      "name": "excess"
+    },
+    {
+      "name": "mortality"
+    },
+    {
+      "name": "COVID-19",
+      "description": "the infectious disease caused by the coronavirus SARS-CoV-2 that caused the pandemic from 2020",
+      "refs": [
+        {
+          "name": "COVID-19",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q84263196",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "inflation"
+    },
+    {
+      "name": "migrant"
+    },
+    {
+      "name": "person"
+    },
+    {
+      "name": "EUR"
+    },
+    {
+      "name": "percent"
+    },
+    {
+      "name": "million"
+    },
+    {
+      "name": "billion"
+    },
+    {
+      "name": "low"
+    },
+    {
+      "name": "high"
+    },
+    {
+      "name": "15-year"
+    },
+    {
+      "name": "aftermath"
+    },
+    {
+      "name": "United States"
+    },
+    {
+      "name": "United Kingdom",
+      "description": "a country in north-western Europe of England, Scotland, Wales and Northern Ireland",
+      "refs": [
+        {
+          "name": "United_Kingdom",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q145",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Hungary"
+    },
+    {
+      "name": "Venezuela"
+    },
+    {
+      "name": "2013",
+      "type": "time"
+    },
+    {
+      "name": "2018",
+      "type": "time"
+    },
+    {
+      "name": "2020"
+    },
+    {
+      "name": "2022"
+    },
+    {
+      "name": "2024"
+    }
+  ],
+  "triples": [
+    {
+      "name": "GDP per capita",
+      "from": "GDP",
+      "verb": "per",
+      "to": "inhabitant"
+    },
+    {
+      "name": "GDP per capita change",
+      "from": "change",
+      "verb": "of",
+      "to": "GDP per capita"
+    },
+    {
+      "name": "GDP loss",
+      "from": "loss",
+      "verb": "of",
+      "to": "GDP"
+    },
+    {
+      "name": "GDP change",
+      "from": "change",
+      "verb": "of",
+      "to": "GDP",
+      "description": "the change of the real gross domestic product over a period; a loss is negative"
+    },
+    {
+      "name": "consumption change",
+      "from": "change",
+      "verb": "of",
+      "to": "consumption",
+      "description": "the change of the real consumption per person compared to a counterfactual without the cause e.g. without populism; a loss is negative"
+    },
+    {
+      "name": "debt to GDP ratio",
+      "from": "debt",
+      "verb": "per",
+      "to": "GDP",
+      "description": "the public debt as share of the gross domestic product"
+    },
+    {
+      "name": "debt to GDP ratio change",
+      "from": "change",
+      "verb": "of",
+      "to": "debt to GDP ratio",
+      "description": "the change of the public debt to GDP ratio compared to a counterfactual without the cause; an increase is positive"
+    },
+    {
+      "name": "financial globalization",
+      "from": "globalization",
+      "verb": "kind of",
+      "to": "financial",
+      "description": "the integration of a country into the international capital markets measured by the KOF Financial Globalisation Index (foreign direct investment, capital controls, foreign assets and liabilities, international investment agreements)"
+    },
+    {
+      "name": "financial globalization change",
+      "from": "change",
+      "verb": "of",
+      "to": "financial globalization",
+      "description": "the change of the KOF Financial Globalisation Index compared to a counterfactual without the cause; a drop is negative"
+    },
+    {
+      "name": "index point",
+      "from": "point",
+      "verb": "of",
+      "to": "index",
+      "type": "measure_unit"
+    },
+    {
+      "name": "economic nationalism",
+      "from": "nationalism",
+      "verb": "kind of",
+      "to": "economic",
+      "description": "the 'my country first' policy of higher tariffs, less trade and less foreign capital that populists promise to shield 'the people' from foreign firms, investors and migrants"
+    },
+    {
+      "name": "real income",
+      "from": "income",
+      "verb": "kind of",
+      "to": "real"
+    },
+    {
+      "name": "real income loss",
+      "from": "loss",
+      "verb": "of",
+      "to": "real income",
+      "description": "the loss of the aggregate real income after the tariff revenue and the gains of the domestic producers are taken into account"
+    },
+    {
+      "name": "labour productivity",
+      "from": "productivity",
+      "verb": "of",
+      "to": "labour"
+    },
+    {
+      "name": "labour productivity loss",
+      "from": "loss",
+      "verb": "of",
+      "to": "labour productivity"
+    },
+    {
+      "name": "trade change",
+      "from": "change",
+      "verb": "of",
+      "to": "trade",
+      "description": "the change of the imports and exports compared to a counterfactual without the cause; a drop is negative"
+    },
+    {
+      "name": "institutional erosion",
+      "from": "erosion",
+      "verb": "kind of",
+      "to": "institutional",
+      "description": "the weakening of the courts, the elections, the press and the checks and balances that limit the power of the government"
+    },
+    {
+      "name": "democratic backsliding",
+      "from": "backsliding",
+      "verb": "kind of",
+      "to": "democratic",
+      "description": "a significant decline of the quality of the democracy during the term of a leader (Kyle & Mounk 2018)"
+    },
+    {
+      "name": "populist leader",
+      "from": "leader",
+      "verb": "kind of",
+      "to": "populist"
+    },
+    {
+      "name": "non-populist leader",
+      "from": "leader",
+      "verb": "kind of",
+      "to": "non-populist",
+      "description": "a democratically elected leader who is not a populist"
+    },
+    {
+      "name": "EU fund",
+      "from": "fund",
+      "verb": "of",
+      "to": "European Union"
+    },
+    {
+      "name": "EU fund loss",
+      "from": "loss",
+      "verb": "of",
+      "to": "EU fund",
+      "description": "the EU funds that a member state cannot get any more, because it did not meet the conditions in time"
+    },
+    {
+      "name": "frozen EU fund",
+      "from": "EU fund",
+      "verb": "kind of",
+      "to": "frozen"
+    },
+    {
+      "name": "excess mortality",
+      "from": "mortality",
+      "verb": "kind of",
+      "to": "excess",
+      "description": "the deaths above the number expected from the years before, as share of the expected deaths"
+    },
+    {
+      "name": "2013-2020",
+      "from": "2013",
+      "verb": "to",
+      "to": "2020"
+    },
+    {
+      "name": "GDP per capita change due to populism",
+      "from": "populism",
+      "verb": "can cause",
+      "to": "GDP per capita change"
+    },
+    {
+      "name": "consumption change due to populism",
+      "from": "populism",
+      "verb": "can cause",
+      "to": "consumption change"
+    },
+    {
+      "name": "debt to GDP ratio change due to populism",
+      "from": "populism",
+      "verb": "can cause",
+      "to": "debt to GDP ratio change"
+    },
+    {
+      "name": "financial globalization change due to populism",
+      "from": "populism",
+      "verb": "can cause",
+      "to": "financial globalization change"
+    },
+    {
+      "name": "economic nationalism due to populism",
+      "from": "populism",
+      "verb": "can cause",
+      "to": "economic nationalism"
+    },
+    {
+      "name": "institutional erosion due to populism",
+      "from": "populism",
+      "verb": "can cause",
+      "to": "institutional erosion"
+    },
+    {
+      "name": "excess mortality due to populism",
+      "from": "populism",
+      "verb": "can cause",
+      "to": "excess mortality",
+      "description": "populist governments enact weaker measures against a pandemic and lower the effort of the citizens to follow them, e.g. by downplaying the danger and spreading misinformation"
+    }
+  ],
+  "sources": [
+    {
+      "name": "Populist Leaders and the Economy (Kiel Working Paper)",
+      "description": "Journal Article\nPopulist Leaders and the Economy\n\nAmerican Economic Review, 113 (2): 3249-3288 ",
+      "url": "https://www.ifw-kiel.de/fileadmin/Dateiverwaltung/IfW-Publications/fis-import/63738460-817f-4a88-837b-794a7c021251-KWP_2169_update_june_2022.pdf",
+      "type": "pdf"
+    },
+    {
+      "name": "Fajgelbaum et al. (2020)",
+      "description": "Fajgelbaum, P. D., Goldberg, P. K., Kennedy, P. J., Khandelwal, A. K. (2020): The Return to Protectionism. Quarterly Journal of Economics 135(1), 1-55. Abstract: the US import tariffs of 2018 were fully passed through to the duty-inclusive prices; the loss of the US buyers of imports is USD 51 billion or 0.27 percent of the GDP; after the tariff revenue and the gains of the domestic producers the aggregate real income loss is USD 7.2 billion or 0.04 percent of the GDP. Trump (2017-) is a populist leader in the list of Funke et al.",
+      "doi": "10.1093/qje/qjz036"
+    },
+    {
+      "name": "Born et al. (2019)",
+      "description": "Born, B., Müller, G. J., Schularick, M., Sedláček, P. (2019): The Costs of Economic Nationalism: Evidence from the Brexit Experiment. The Economic Journal 129(623), 2722-2744. Abstract: by the end of 2018 the Brexit vote has caused an output loss of 1.7 to 2.5 percent of the GDP compared to a synthetic control without the vote, mainly by a downward revision of the growth expectations.",
+      "doi": "10.1093/ej/uez020"
+    },
+    {
+      "name": "Springford (2022) CER cost of Brexit",
+      "description": "Springford, J. (2022): Centre for European Reform, doppelgänger estimate of December 2022: the GDP of the United Kingdom was 5.5 percent lower in the second quarter of 2022 than in a synthetic United Kingdom that stayed in the European Union, i.e. GBP 33 billion in that quarter and about GBP 40 billion of tax revenue per year; there is an estimation error around the number.",
+      "url": "https://www.cer.eu"
+    },
+    {
+      "name": "OBR Brexit analysis",
+      "description": "Office for Budget Responsibility: the long run assumption of its forecasts, unchanged up to the Spring Budget 2025, that the Brexit lowers the imports and exports of the United Kingdom by 15 percent and the potential productivity by 4 percent compared to a remaining in the European Union, with the full impact after about 15 years; an assumption based on the average of external studies, not a measured loss.",
+      "url": "https://obr.uk/forecasts-in-depth/the-economy-forecast/brexit-analysis/"
+    },
+    {
+      "name": "Kyle & Mounk (2018) The Populist Harm to Democracy",
+      "description": "Kyle, J., Mounk, Y. (2018): The Populist Harm to Democracy: An Empirical Assessment. Tony Blair Institute for Global Change. 46 populist leaders in democracies 1990-2018: 23 percent of the populists cause a significant democratic backsliding compared with 6 percent of the non-populist democratically elected leaders; only 34 percent of the populist leaders leave office after a free and fair election or because they respect the term limits.",
+      "url": "https://institute.global/policy/populist-harm-democracy-empirical-assessment"
+    },
+    {
+      "name": "Bayerlein et al. (2021)",
+      "description": "Bayerlein, M., Boese, V. A., Gates, S., Kamin, K., Murshed, S. M. (2021): Populism and COVID-19: How Populist Governments (Mis)Handle the Pandemic. Journal of Political Institutions and Political Economy 2(3), 389-428. 42 countries with weekly data of 2020: the excess mortality of the countries with a populist government exceeds the one of the non-populist countries by 8 percentage points (i.e. 98 percent); a cross-country correlation; the Kiel working paper of July 2021 stated 10 percentage points.",
+      "url": "https://nowpublishers.com/article/OpenAccessDownload/PIP-0043",
+      "type": "pdf"
+    },
+    {
+      "name": "EU rule of law conditionality Hungary",
+      "description": "Council Implementing Decision of 15 December 2022 under the conditionality regulation (EU) 2020/2092: about EUR 6.3 billion of the cohesion funds of Hungary were frozen because of the corruption, the conflicts of interest and the public procurement; the first tranche of EUR 1.04 billion expired at the end of 2024 without the reforms and is lost for Hungary, as stated by the European Commission; Orbán (2010-) is a populist leader in the list of Funke et al.",
+      "url": "https://kyivindependent.com/hungary-loses-out-on-about-1-billion-in-eu-aid/"
+    },
+    {
+      "name": "ECLAC (2020) Preliminary Overview Venezuela",
+      "description": "Economic Commission for Latin America and the Caribbean (2020): Preliminary Overview of the Economies of Latin America and the Caribbean, country note Bolivarian Republic of Venezuela: the economic activity fell by 30 percent in 2020, the seventh year in a row, a cumulative drop of 74 percent since 2013; a preliminary estimate.",
+      "url": "https://repositorio.cepal.org/bitstream/handle/11362/46504/79/PO2020_Venezuela_en.pdf",
+      "type": "pdf"
+    },
+    {
+      "name": "ECLAC Venezuela inflation 2018",
+      "description": "Economic Commission for Latin America and the Caribbean, country note Bolivarian Republic of Venezuela: inflation of 130'060.2 percent in 2018 according to the Banco Central de Venezuela, after hyperinflation had taken hold in November 2017; the IMF estimated about 1'370'000 percent.",
+      "url": "https://repositorio.cepal.org/server/api/core/bitstreams/e0b0150e-8f00-4ca8-b276-298f49f207a7/content",
+      "type": "pdf"
+    },
+    {
+      "name": "R4V (2024) Refugees and migrants from Venezuela",
+      "description": "Inter-Agency Coordination Platform for Refugees and Migrants from Venezuela (R4V), co-led by UNHCR and IOM: 7.77 million refugees and migrants from Venezuela worldwide in May 2024, 6.59 million of them in Latin America and the Caribbean.",
+      "url": "https://www.r4v.info"
+    }
+  ],
+  "values": [
+    {"words": ["GDP per capita change due to populism", "15-year", "aftermath", "percent"], "number": "-0.1", "source": "Populist Leaders and the Economy (Kiel Working Paper)", "description": "average of the 51 populist presidents and prime ministers 1900-2020 in 60 countries compared to a synthetic counterfactual without populists"},
+    {"words": ["consumption change due to populism", "15-year", "aftermath", "percent"], "number": "-0.1", "source": "Populist Leaders and the Economy (Kiel Working Paper)", "description": "the GDP per capita and the consumption decline by more than 10 percent compared to a plausible non-populist counterfactual"},
+    {"words": ["debt to GDP ratio change due to populism", "15-year", "aftermath", "percent", "high"], "number": "0.1", "source": "Populist Leaders and the Economy (Kiel Working Paper)", "description": "the public debt to GDP ratio is up to ten percentage points higher than in the synthetic doppelganger"},
+    {"words": ["financial globalization change due to populism", "15-year", "aftermath", "index point"], "number": "-5", "source": "Populist Leaders and the Economy (Kiel Working Paper)", "description": "the KOF Financial Globalisation Index declines by about 5 points compared to the synthetic control"},
+    {"words": ["economic nationalism due to populism", "tariff", "cost", "United States", "2018", "billion", "EUR"], "number": "47.2", "source": "Fajgelbaum et al. (2020)", "description": "the loss of the US buyers of imports; 51 billion USD at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["economic nationalism due to populism", "tariff", "cost", "United States", "2018", "percent", "GDP"], "number": "0.0027", "source": "Fajgelbaum et al. (2020)"},
+    {"words": ["economic nationalism due to populism", "real income loss", "United States", "2018", "billion", "EUR"], "number": "6.66", "source": "Fajgelbaum et al. (2020)", "description": "7.2 billion USD at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["economic nationalism due to populism", "real income loss", "United States", "2018", "percent", "GDP"], "number": "0.0004", "source": "Fajgelbaum et al. (2020)"},
+    {"words": ["economic nationalism due to populism", "Brexit", "GDP loss", "United Kingdom", "2018", "percent", "low"], "number": "0.017", "source": "Born et al. (2019)"},
+    {"words": ["economic nationalism due to populism", "Brexit", "GDP loss", "United Kingdom", "2018", "percent", "high"], "number": "0.025", "source": "Born et al. (2019)"},
+    {"words": ["economic nationalism due to populism", "Brexit", "GDP loss", "United Kingdom", "2022", "percent"], "number": "0.055", "source": "Springford (2022) CER cost of Brexit", "description": "second quarter of 2022"},
+    {"words": ["economic nationalism due to populism", "Brexit", "labour productivity loss", "United Kingdom", "15-year", "percent"], "number": "0.04", "source": "OBR Brexit analysis", "description": "a forecast assumption, not a measured loss"},
+    {"words": ["economic nationalism due to populism", "Brexit", "trade change", "United Kingdom", "15-year", "percent"], "number": "-0.15", "source": "OBR Brexit analysis", "description": "a forecast assumption, not a measured loss"},
+    {"words": ["institutional erosion due to populism", "democratic backsliding", "populist leader", "probability", "percent"], "number": "0.23", "source": "Kyle & Mounk (2018) The Populist Harm to Democracy", "description": "46 populist leaders in democracies 1990-2018"},
+    {"words": ["democratic backsliding", "non-populist leader", "probability", "percent"], "number": "0.06", "source": "Kyle & Mounk (2018) The Populist Harm to Democracy", "description": "the comparison for the populist leaders"},
+    {"words": ["institutional erosion due to populism", "frozen EU fund", "Hungary", "2022", "billion", "EUR"], "number": "6.3", "source": "EU rule of law conditionality Hungary"},
+    {"words": ["institutional erosion due to populism", "EU fund loss", "Hungary", "2024", "billion", "EUR"], "number": "1.04", "source": "EU rule of law conditionality Hungary"},
+    {"words": ["excess mortality due to populism", "COVID-19", "2020", "percent"], "number": "0.08", "source": "Bayerlein et al. (2021)", "description": "8 percentage points more excess mortality than in the non-populist countries, i.e. 98 percent more"},
+    {"words": ["GDP change", "Venezuela", "2013-2020", "percent"], "number": "-0.74", "source": "ECLAC (2020) Preliminary Overview Venezuela", "description": "under Chávez-Maduro, a populist episode of Funke et al.; not attributed to populism by the source"},
+    {"words": ["inflation", "Venezuela", "2018", "percent"], "number": "1300.602", "source": "ECLAC Venezuela inflation 2018", "description": "130'060.2 percent according to the Banco Central de Venezuela; not attributed to populism by the source"},
+    {"words": ["migrant", "Venezuela", "2024", "million", "person"], "number": "7.77", "source": "R4V (2024) Refugees and migrants from Venezuela", "description": "refugees and migrants from Venezuela worldwide in May 2024; not attributed to populism by the source"}
+  ]
+}

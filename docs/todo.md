@@ -1,10 +1,6 @@
 TODO notes
 ----------
 
-next 
-
-show the related phrases sorted by impact on the default word page, restrict protection level reduction to admin users and format the expected sql test resources with the new sql_format function as part of fix #247
-
 A proper issue ticket should be created for these TODOs notes:
 
     but first this needs to be prioritized:
@@ -12,14 +8,31 @@ A proper issue ticket should be created for these TODOs notes:
     TODO Release 0.0.3
     TODO target approche to finish frontend: small commits and final solution
 
+    TODO use case PV calculator
+
+    TODO add admin dashboard and jobs 
+    TODO the admin dashboard the x most changed user settings
+    TODO add default ranking 
+    TODO limit the prime phrase id by the int number that can be processed in JavaScript
+
+    ->  launch
+
+    TODO test on smartvote for initiatives, CBAM, SNSF decitions
+
+    TODO Release 0.0.4
+
     TODO create a carantane and archive database with the same structure as the main database
          access the databases with the $db_car and $db_arc connection vars
          use the functions move_to_archive and move_to_caratane to move data
          keep the carantane user in the original database to avoid dublicate creation and for blacklisting
     TODO check if the 'no change' parameter is used correctly to the json import that prevents the import from overwriting any data already set. Only null fields can be filled and new db rows can be inserted. Use this parameter for the initial import and report if any import data differs from the db data.
+    TODO show the related phrases sorted by impact on the default word page, restrict protection level reduction to admin users and format the expected sql test resources with the new sql_format function as part of fix #247
 
+    TODO the user settings should have some (config.yaml) quick settings 
     TODO add to concept that people who have done someting bad should be be mentioned by name to reduce the copycat effect and reactance. 
     TODO create a list of people who have increased the htp or prevented a decrease in htp like Shuji Nakamura or Andreas Freud   
+    TODO add a 'min value quality level' filter for values and results (including or excluding own overwrites)
+    TODO make 200 years the standard future outlook period because 100 years is usually used by science for forcasts and it is assumend that wrong decisions can potentially be undone within the double period
 
     TODO use only these global vars:
          - $sys to cache execution times, types and system configuration that change rarely
@@ -42,7 +55,9 @@ A proper issue ticket should be created for these TODOs notes:
     TODO use global $ui_sys for the frontend cache and $cac for the global backend cache and remove all other caches
     TODO use one cache object for the frontend and the backend cache and replace the single type list cache objects
 
-    TODO create a formula "good enougth" default view
+    TODO add a phrase type 'measure convertable' that includes e.g. the currencies whereas humans / inhabitants are not realy convertable
+    TODO add an 'Export my changes of the last hour, day, week, ...' as json 
+    TODO create a json file merger that can e.g. only adjust the words, triples, values, formulas of file 2 with the changes of file 2
     TODO in the formula expression '{' and '}' should be escaped to avoid confusion with the term links
     TODO in the json import seperate the share (asset) from share (to share thnigs)
     TODO if a page shows only the 'share (asset)' use 'share' instead of 'share (asset)'
@@ -62,6 +77,7 @@ A proper issue ticket should be created for these TODOs notes:
     TODO fix to bugs in the component types so that all component type returns a nice result
     TODO add unit test for all system pages including the login page to be able to use the view.php script also for the login page
     TODO deprecate the old $back parameter and use instead back prefixed parameters
+    TODO in the start page suggest also to have a look at a list of problems by continent, courty, region and personal issue, which can be created if the user is logged in
 
     TODO add horitontal write test that includes all cases of changing any unique key e.g. the name, code_id, linked object and group_id for values
     TODO finish the frontend component tests
@@ -82,8 +98,6 @@ A proper issue ticket should be created for these TODOs notes:
     TODO in import calculate the result values once based on the data_object and report an error if the result values cannot be reproduced and add a sample json for the fail test to src/test/resources/import/inconsistency_tests
          after data import check that the result values can be reproduced
 
-
-    TODO Release 0.0.4
 
     TODO add an auto fallback path to a single "too much trafic" frontpage
          The step towards this path are
@@ -608,7 +622,7 @@ A proper issue ticket should be created for these TODOs notes:
     TODO create a undo und redo function for a change_log entry
     TODO for behavior that should apply to several types create a property/behavior table with an n:m reration to phrase types e.g. "show preferred as column" for time phrases
     TODO create a user view for contradicting behaviour e.g. if time should be shown in column, but days in rows
-    TODO save time series data in datetime/value tables where the table name contains the group id e.g. TS_....0C+....0e+....12+....13+ for inhabitant of Switzerland in Mio
+    TODO save time series data in datetime/value tables where the table name contains the group id e.g. TS_0C+0e+12+13+ for inhabitant of Switzerland in Mio
     TODO add a text table for string and prosa that never should be used for selection
     TODO add a date table to save dates in an efficient way
     TODO create a alternative backend based on Rust for better speed

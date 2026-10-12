@@ -239,10 +239,12 @@ class controller
      * is the same as in the model (sandbox->save and sandbox->del) but done before the api json is
      * mapped, so a user without login gets a clear rejection instead of a change that fails later
      *
+     * public so that an endpoint with its own write action, e.g. the job priority change, uses the same guard
+     *
      * @param user_message $msg the message of this request with the requesting user
      * @return bool false if the write is a suspected csrf or the user may not change data in this pod
      */
-    private function change_permitted(user_message $msg): bool
+    function change_permitted(user_message $msg): bool
     {
         $permitted = true;
 

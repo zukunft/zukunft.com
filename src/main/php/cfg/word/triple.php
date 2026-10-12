@@ -85,6 +85,8 @@ include_once paths::MODEL_LOG . 'change_action.php';
 //include_once paths::MODEL_LOG . 'change_table_list.php';
 //include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::MODEL_PHRASE . 'phrase_type.php';
+include_once paths::MODEL_PHRASE . 'phr_ids.php';
+include_once paths::MODEL_PHRASE . 'phrase_list.php';
 //include_once paths::MODEL_PHRASE . 'term.php';
 //include_once paths::MODEL_REF . 'ref.php';
 include_once paths::MODEL_REF . 'ref_list.php';
@@ -142,7 +144,9 @@ use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 use Zukunft\ZukunftCom\main\php\cfg\log\change;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_link;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_log_list;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phr_ids;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
@@ -399,8 +403,7 @@ class triple extends sandbox_link_named
                 $this->set_name_generated($db_row[triple_fields::FLD_NAME_AUTO]);
             }
             if (array_key_exists(fields::FLD_CODE_ID, $db_row)) {
-                // a local buffer for the permission check; on a db load the row user is trusted
-                $this->set_code_id($db_row[fields::FLD_CODE_ID], new user_message($this->get_user())); // not reported, see above
+                $this->set_code_id_db($db_row[fields::FLD_CODE_ID]);
             }
             if (array_key_exists(triple_fields::FLD_WIGHT, $db_row)) {
                 $this->weight = $db_row[triple_fields::FLD_WIGHT];
@@ -661,13 +664,23 @@ class triple extends sandbox_link_named
         if (key_exists(json_fields::REFS, $in_ex_json)) {
             if ($in_ex_json[json_fields::REFS] <> '') {
                 $ref_json = $in_ex_json[json_fields::REFS];
-                foreach ($ref_json as $ref_data) {
-                    $ref_obj = new ref($this->get_user());
-                    $ref_obj->set_phrase($this->phrase());
-                    $ref_obj->import_mapper($ref_data, $msg, $dto);
-                    $dto?->add_reference($ref_obj, $msg);
-                    if ($msg->is_ok()) {
-                        $this->ref_lst[] = $ref_obj;
+                // check the format before the mapper, which expects an array: a reference given
+                // as a compact "type": "key" map would otherwise end the whole import with an
+                // uncaught fatal (see ref::import_list_valid)
+                if (!ref::import_list_valid($ref_json)) {
+                    $msg->add(msg_id::IMPORT_REF_NOT_AN_OBJECT, [
+                        msg_id::VAR_NAME => $this->name(),
+                        msg_id::VAR_JSON_TEXT => json_encode($ref_json)
+                    ]);
+                } else {
+                    foreach ($ref_json as $ref_data) {
+                        $ref_obj = new ref($this->get_user());
+                        $ref_obj->set_phrase($this->phrase());
+                        $ref_obj->import_mapper($ref_data, $msg, $dto);
+                        $dto?->add_reference($ref_obj, $msg);
+                        if ($msg->is_ok()) {
+                            $this->ref_lst[] = $ref_obj;
+                        }
                     }
                 }
             }
@@ -689,13 +702,44 @@ class triple extends sandbox_link_named
      * @return array the filled array used to create the api json message to the frontend
      */
     /**
+     * load the names of the from and the to phrase if they carry only their id, e.g. after a load
+     * by id, so that the api message names them and a link to them is never shown without a text
+     *
+     * @param user_message $msg to report a load problem to the caller
+     * @return void
+     */
+    private function load_side_names(user_message $msg): void
+    {
+        $ids = [];
+        foreach ([$this->fob(), $this->tob()] as $side) {
+            if ($side instanceof phrase and $side->id() != 0 and $side->name() == '') {
+                $ids[] = $side->id();
+            }
+        }
+        if ($ids != []) {
+            $phr_lst = new phrase_list($this->get_user());
+            $phr_lst->load_names_by_ids(new phr_ids($ids), $msg);
+            $from = $phr_lst->get($this->from_id());
+            if ($from != null and $this->fob()?->name() == '') {
+                $this->set_fob($from);
+            }
+            $to = $phr_lst->get($this->to_id());
+            if ($to != null and $this->tob()?->name() == '') {
+                $this->set_tob($to);
+            }
+        }
+    }
+
+    /**
      * load the values where this triple is used into the in-memory values_related list
      * so that api_json_array() can emit them under the INCL_RELATED flag
      */
     function load_values_related(user_message $msg): void
     {
         $val_lst = new value_list($this->get_user());
-        $val_lst->load_by_phr($this->phrase(), $msg);
+        // the values of a symbol or alias belong to the page too (see phrase::value_selection),
+        // so a value that carries any phrase of the selection is loaded
+        $val_lst->load_by_phr_lst($this->phrase()->value_selection($msg), $msg, true);
         // load the phrase names of each value group so that the related value list
         // shows the phrase names (and not only the links) in the api and frontend
         $val_lst->load_phrases($msg);
@@ -728,7 +772,8 @@ class triple extends sandbox_link_named
     function load_formulas_related(user_message $msg): void
     {
         $frm_lst = new formula_list($this->get_user());
-        $frm_lst->load_by_phr($this->phrase(), $msg);
+        // the formulas of a symbol or alias belong to the page too (see phrase::formula_selection)
+        $frm_lst->load_by_phr_lst($this->phrase()->formula_selection($msg), $msg);
         $this->formulas_related = $frm_lst;
     }
 
@@ -791,6 +836,9 @@ class triple extends sandbox_link_named
                 // or when the phrases are explicitly requested, so the frontend can show e.g.
                 // the triple page title "<from> <verb> <to>" with a link to each part
                 $with_names = ($typ_lst->include_phrases() or $typ_lst->incl_related());
+                if ($with_names and !$typ_lst->test_mode()) {
+                    $this->load_side_names($msg);
+                }
                 $from = $this->get_from()->obj();
                 if ($from != null) {
                     if ($from->id() <> 0 or $from->name() != '') {
@@ -1517,6 +1565,15 @@ class triple extends sandbox_link_named
     }
 
     /**
+     * set the code id without check
+     * should only be called by the database mapper function
+     */
+    function set_code_id_db(?string $code_id): void
+    {
+        $this->code_id = $code_id;
+    }
+
+    /**
      * @return string|null the unique key or null if the word is not used by the system
      */
     function get_code_id(): ?string
@@ -1608,7 +1665,7 @@ class triple extends sandbox_link_named
     }
 
     /**
-     * @return bool true if the word has the type "measure" (e.g. "metre" or "CHF")
+     * @return bool true if the triple has the type "measure unit" (e.g. "gram per kWh")
      * in case of a division, these words are excluded from the result
      * in case of add, it is checked that the added value does not have a different measure
      */
@@ -1641,7 +1698,7 @@ class triple extends sandbox_link_named
     }
 
     /**
-     * @return bool true if the word has the type "scaling_percent" (e.g. "percent")
+     * @return bool true if the triple has the type "percent" (e.g. "impact factor on HTP")
      */
     function is_percent(): bool
     {
@@ -3062,8 +3119,10 @@ class triple extends sandbox_link_named
         $val_lst->load_by_phr($this->phrase(), $msg);
 
         // if there are still values, ask if they really should be deleted
+        // a value of this triple can never be excluded for one user, because its key contains the
+        // id of this triple, so a value that another user still uses is refused and reported
         if ($val_lst->has_values()) {
-            $val_lst->del($msg);
+            $val_lst->del($msg, new sql_type_list([sql_type::NO_USER_SANDBOX]));
         }
 
         // if the user confirms the deletion, the removal process is started with a retry of the triple deletion at the end

@@ -46,6 +46,7 @@ include_once paths::MODEL_SYSTEM . 'job.php';
 include_once paths::MODEL_SYSTEM . 'job_status_list.php';
 include_once paths::MODEL_SYSTEM . 'job_type_list.php';
 include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'job_types.php';
@@ -53,6 +54,7 @@ include_once paths::SHARED_TYPES . 'job_types.php';
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use DateTime;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -114,6 +116,31 @@ class job_list extends list_db_write
         return $this->load($qp, $msg);
     }
 
+    /**
+     * load the batch jobs that the user of this list has requested
+     * @param user_message $msg to report a problem of the load
+     * @return bool true if at least one job found
+     */
+    function load_by_user(user_message $msg): bool
+    {
+        global $db_con;
+        $qp = $this->load_sql_by_user($db_con->sql_creator());
+        return $this->load($qp, $msg);
+    }
+
+    /**
+     * load the batch jobs of all users e.g. for the job overview of an admin;
+     * the caller checks that the requesting user is an admin
+     * @param user_message $msg to report a problem of the load
+     * @return bool true if at least one job found
+     */
+    function load_all(user_message $msg): bool
+    {
+        global $db_con;
+        $qp = $this->load_sql_all($db_con->sql_creator());
+        return $this->load($qp, $msg);
+    }
+
 
     /*
      * load internals
@@ -153,6 +180,39 @@ class job_list extends list_db_write
         $job = new job($this->usr);
         $qp = $job->load_sql($sc, 'job_status', self::class);
         $sc->add_where(job_db::FLD_STATUS, $status_id);
+        $sc->set_page($this->limit, $this->offset());
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+        return $qp;
+    }
+
+    /**
+     * prepare sql to get the jobs requested by the user of this list
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @return sql_par
+     */
+    function load_sql_by_user(sql_creator $sc): sql_par
+    {
+        $job = new job($this->usr);
+        $qp = $job->load_sql($sc, 'user', self::class);
+        $sc->add_where(user_db::FLD_ID, $this->usr->id);
+        $sc->set_page($this->limit, $this->offset());
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+        return $qp;
+    }
+
+    /**
+     * prepare sql to get the jobs of all users
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @return sql_par
+     */
+    function load_sql_all(sql_creator $sc): sql_par
+    {
+        $job = new job($this->usr);
+        $qp = $job->load_sql($sc, 'all', self::class);
         $sc->set_page($this->limit, $this->offset());
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();

@@ -31,12 +31,12 @@ PREPARE formula_link_update_log_000420000_call FROM
 SELECT formula_link_update_log_000420000
        (3,
         2,
-        702,
+        674,
         'minute',
         100,
         null,
         0,
         1,
-        700,
+        671,
         2,
         null);

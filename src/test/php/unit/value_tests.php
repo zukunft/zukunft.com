@@ -35,17 +35,27 @@ namespace Zukunft\ZukunftCom\test\php\unit;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_type_list.php';
+include_once paths::MODEL_GROUP . 'group_id.php';
+include_once paths::MODEL_HELPER . 'config_numbers.php';
+include_once paths::MODEL_SANDBOX . 'sandbox.php';
 include_once paths::MODEL_VALUE . 'value_time_series.php';
 include_once paths::MODEL_VALUE . 'value_obj.php';
 include_once paths::SHARED_CONST . 'sources.php';
 include_once paths::SHARED_CONST_FIELDS . 'fields.php';
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED_TYPES . 'db_cache_types.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\group\group_id;
+use Zukunft\ZukunftCom\main\php\cfg\helper\config_numbers;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
@@ -59,6 +69,7 @@ use Zukunft\ZukunftCom\main\php\cfg\value\value_time_series;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\groups;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\const\sources;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
@@ -67,6 +78,7 @@ use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
+use Zukunft\ZukunftCom\main\php\shared\types\db_cache_types;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\shared\types\share_types;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
@@ -124,6 +136,89 @@ class value_tests
         $val = new value_obj()->get($t->usr1, values::GEO);
         $t->assert($test_name, $val::class, value_geo::class);
 
+        // the frontend sends the group name that the user has typed in the value form as the name of the value
+        $t->subheader($ts . 'group name');
+        $test_name = 'the name of the api json is the name given to the group of the value';
+        $val = $t_val->value_pi_math();
+        $api_json = $val->api_json_array([api_types::INCL_PHRASES], $msg);
+        $api_json[json_fields::NAME] = groups::TN_VALUE_WORKFLOW;
+        $val_named = new value($t->usr1);
+        $val_named->api_mapper($api_json, $msg);
+        $t->assert($test_name, $val_named->grp()->name_given(), groups::TN_VALUE_WORKFLOW);
+        $test_name = 'without a name in the api json the group gets no given name';
+        $val_unnamed = new value($t->usr1);
+        $val_unnamed->api_mapper($val->api_json_array([api_types::INCL_PHRASES], $msg), $msg);
+        $t->assert($test_name, $val_unnamed->grp()->name_given(), '');
+        // ... and the backend sends the given name back, else the frontend could never show a saved name
+        $test_name = 'the api json of a value with a named group has the given name';
+        $named_json = $t_val->value($msg)->api_json_array([api_types::INCL_PHRASES], $msg);
+        $t->assert($test_name, $named_json[json_fields::NAME] ?? '', groups::TN_READ);
+        $test_name = 'the api json of a value named only by its phrases has no name';
+        $unnamed_json = $val->api_json_array([api_types::INCL_PHRASES], $msg);
+        $t->assert_false($test_name, array_key_exists(json_fields::NAME, $unnamed_json));
+        $test_name = 'the export json of a value with a named group has the given name';
+        $named_ex_json = $t_val->value($msg)->export_json($msg, [], false);
+        $t->assert($test_name, $named_ex_json[json_fields::NAME] ?? '', groups::TN_READ);
+        $test_name = '... which the import takes as the given name of the group';
+        $val_imported = new value($t->usr1);
+        $val_imported->import_mapper($named_ex_json, $msg);
+        $t->assert($test_name, $val_imported->grp()->name_given(), groups::TN_READ);
+        $msg->reset();
+        $test_name = 'the export json of a value named only by its phrases has no name';
+        $unnamed_ex_json = $val->export_json($msg, [], false);
+        $t->assert_false($test_name, array_key_exists(json_fields::NAME, $unnamed_ex_json));
+        $test_name = '... so the import gives no name to the group';
+        $val_imported = new value($t->usr1);
+        $val_imported->import_mapper($unnamed_ex_json, $msg);
+        $t->assert($test_name, $val_imported->grp()->name_given(), '');
+        $msg->reset();
+        $test_name = 'fill takes over the given group name';
+        $val_filled = $t_val->value($msg)->clone_reset();
+        $val_filled->fill($t_val->value($msg), $t->usr1);
+        $t->assert($test_name, $val_filled->grp()->name_given(), groups::TN_READ);
+        $test_name = 'fill never turns the name generated from the phrases into a given name';
+        $val_filled = $val->clone_reset();
+        $val_filled->fill($val, $t->usr1);
+        $t->assert($test_name, $val_filled->grp()->name_given(), '');
+
+        // the description that the user types in the change value view is the description of the group
+        $t->subheader($ts . 'description');
+        // the api json is taken before the group of the value is filled below
+        $desc_json = $val->api_json_array([api_types::INCL_PHRASES], $msg);
+        $desc_json[json_fields::DESCRIPTION] = groups::TN_READ_COM;
+        $test_name = 'a group that carries neither a given name nor a description differs from the stored group';
+        $grp_db = $t_val->value($msg)->grp();
+        $grp_db->set_description(groups::TN_READ_COM);
+        $grp_req = $val->grp();
+        $t->assert_false($test_name, $grp_req->no_diff($grp_db, $msg));
+        $test_name = '... but keeps both, because the save fills it from the stored group first';
+        $grp_req->fill($grp_db, $t->usr1);
+        $fld_names = $grp_req->db_fields_changed($grp_db, $msg, new sql_type_list([sql_type::UPDATE]))->names();
+        $t->assert_false($test_name, in_array(group_fields::FLD_NAME, $fld_names));
+        $t->assert_false($test_name, in_array(fields::FLD_DESCRIPTION, $fld_names));
+        $test_name = 'the description of the api json is the description of the group of the value';
+        $val = new value($t->usr1);
+        $val->api_mapper($desc_json, $msg);
+        $t->assert($test_name, $val->grp()->get_description(), groups::TN_READ_COM);
+        $test_name = '... which is written to a new group row without the name generated from the phrases';
+        $grp_empty = $val->grp()->clone_reset();
+        $fld_names = $val->grp()->db_fields_changed($grp_empty, $msg, new sql_type_list([sql_type::INSERT]))->names();
+        $t->assert_true($test_name, in_array(fields::FLD_DESCRIPTION, $fld_names));
+        $t->assert_false($test_name, in_array(group_fields::FLD_NAME, $fld_names));
+        // the frontend sends the source selected in the value form by its id
+        $test_name = 'the source id of the api json is the source of the value, so that the save writes it';
+        $src_json = $desc_json;
+        $src_json[json_fields::SOURCE_ID] = sources::BFS_ID;
+        $val = new value($t->usr1);
+        $val->api_mapper($src_json, $msg);
+        $t->assert($test_name, $val->get_source_id(), sources::BFS_ID);
+        $test_name = '... which a source name in the same api json does not drop';
+        $src_json[json_fields::SOURCE_NAME] = sources::BFS;
+        $val = new value($t->usr1);
+        $val->api_mapper($src_json, $msg);
+        $t->assert($test_name, $val->get_source_id(), sources::BFS_ID);
+        $msg->reset();
+
         $t->subheader($ts . 'union row mapping');
         // a value list is loaded with one union query over the prime, most and big value tables
         // (see value_list::load_sql_by_phr), so a prime row arrives with an empty group_id and
@@ -155,6 +250,111 @@ class value_tests
         $db_row[$id_flds[1]] = null;
         $val_bad->row_mapper_sandbox_multi($db_row, $msg, '');
         $t->assert_true($test_name, $val_bad->id() == 0 or $val_bad->id() == '');
+
+        // the single steps of the delete of a value: the delete either removes the row or, if another
+        // user has used the value, excludes it with a user row, so each step of this decision is
+        // checked here, because a wrong step writes a row that no user can select again
+        // (see sandbox_multi::del and save_fields_func)
+        $t->subheader($ts . 'delete steps');
+
+        // step 1: the delete is skipped if the value has no key, so the key check must never
+        // compare a text id with a number, because php reports '/x-' <= 0 as true
+        $test_name = 'the id of a value with the text group id of 16 phrases is set, '
+            . 'so that its delete is not skipped';
+        $t->assert_true($test_name, $t_val->value_16()->is_id_set());
+        $test_name = '... and a value without a group has no id set';
+        $t->assert_false($test_name, new value($t->usr1)->is_id_set());
+
+        // step 2: the reload of the value and of the database record before the change reads the
+        // user overlay row (see the by id query above in the sql read section)
+
+        // step 3: the owner can change or remove the standard row, another user only his overlay row
+        $test_name = 'the owner of a value can change the value for all users';
+        $val = $t_val->value_16();
+        $val->set_owner_id($t->usr1->id());
+        $t->assert_true($test_name, $val->can_change());
+        $test_name = '... but another user can only change his own overlay row';
+        $val->set_owner_id($t->usr2->id());
+        $t->assert_false($test_name, $val->can_change());
+
+        // step 4: if the value is used by another user it is excluded with a user row instead of
+        // being removed, so the exclude must be detected as a change of the value
+        $test_name = 'an excluded value differs from the database record, '
+            . 'so that the exclude is not skipped';
+        $val_db = $t_val->value_16();
+        $val_ex = $t_val->value_16();
+        $val_ex->exclude();
+        $t->assert_false($test_name, $val_ex->no_diff($val_db, $msg));
+        $test_name = '... and the excluded flag is written to the user row of the value, '
+            . 'because otherwise the value would still be used after the delete';
+        $fvt_lst = $val_ex->db_fields_changed($val_db, $msg, new sql_type_list([sql_type::USER]));
+        $t->assert_true($test_name, $fvt_lst->has_name(fields::FLD_EXCLUDED));
+        $test_name = '... and the insert of the user row contains the excluded field';
+        $qp_ex = $val_ex->sql_insert($sc, $msg, new sql_type_list([sql_type::USER, sql_type::LOG]));
+        $t->assert_text_contains($test_name, $qp_ex?->sql ?? '', fields::FLD_EXCLUDED);
+        $msg->reset();
+
+        // step 5: the user row of the exclude is added only if the user has no overlay row yet
+        $test_name = 'a value row with a user row reports a user overwrite, so that the exclude '
+            . 'updates the existing user row instead of adding a second one';
+        $val = new value($t->usr1);
+        $db_row = [
+            group_fields::FLD_ID => '',
+            $id_flds[0] => word_names::MATH_ID,
+            $id_flds[1] => shared_words::CHF_ID,
+            $id_flds[2] => null,
+            $id_flds[3] => null,
+            user_db::FLD_ID => 0,
+            value::FLD_VALUE => values::EARNINGS_PER_SHARE,
+            source_fields::FLD_ID => null,
+            fields::FLD_LAST_UPDATE => null,
+            sandbox::FLD_CHANGE_USER => $t->usr1->id(),
+        ];
+        $val->row_mapper_sandbox_multi($db_row, $msg, '');
+        $t->assert_true($test_name, $val->has_usr_cfg());
+        $test_name = '... and without a user row no user overwrite is reported';
+        $val = new value($t->usr1);
+        $db_row[sandbox::FLD_CHANGE_USER] = null;
+        $val->row_mapper_sandbox_multi($db_row, $msg, '');
+        $t->assert_false($test_name, $val->has_usr_cfg());
+
+        // step 6: each reload of the delete must keep the key of the value, but the group id of a
+        // main or big row is a text, which a cast to int would turn into 0
+        $test_name = 'the text group id of a row is kept even if the table type says prime';
+        $val = new value($t->usr1);
+        $db_row_main = [
+            group_fields::FLD_ID => groups::CH_2019_MIO,
+            user_db::FLD_ID => 0,
+            value::FLD_VALUE => values::CH_INHABITANTS_2019_IN_MIO,
+        ];
+        $val->row_mapper_multi($db_row_main, $msg, group_id::TBL_EXT_PHRASE_ID . '1',
+            group_fields::FLD_ID);
+        $t->assert($test_name, $val->id(), groups::CH_2019_MIO);
+        $test_name = '... and a row with the group id zero is not mapped, because such a row '
+            . 'can never be selected, changed or deleted again';
+        $val = new value($t->usr1);
+        $db_row_main[group_fields::FLD_ID] = 0;
+        $t->assert_false($test_name,
+            $val->row_mapper_multi($db_row_main, $msg, '', group_fields::FLD_ID));
+
+        // step 7: the group is the key of a value, so the write of the exclude always uses the group
+        // id, even if the object id has been lost e.g. by a row mapper of another table type
+        $test_name = 'the key field of a main value write is the group id';
+        $val = $t_val->value_16();
+        $grp_key = $val->grp()->id();
+        $fvt_lst = $val->id_fvt_lst(new sql_type_list([sql_type::INSERT]));
+        $t->assert($test_name, $fvt_lst->get_value(group_fields::FLD_ID), $grp_key);
+        $test_name = '... also if the object id of the value has been lost';
+        $val->id = 0;
+        $fvt_lst = $val->id_fvt_lst(new sql_type_list([sql_type::INSERT]));
+        $t->assert($test_name, $fvt_lst->get_value(group_fields::FLD_ID), $grp_key);
+        // a prime value is not selected by the group id but by the phrase ids of the group
+        $test_name = '... and the key fields of a prime value write are the phrases of the group';
+        $val_prime = $t_val->value_ch();
+        $val_prime->id = 0;
+        $fvt_lst = $val_prime->id_fvt_lst(new sql_type_list([sql_type::INSERT]));
+        $t->assert($test_name, $fvt_lst->get_value($val_prime->id_fields_prime()[0]),
+            $val_prime->grp()->id_lst()[0]);
 
         $t->subheader($ts . 'scaling');
         $test_name = 'scale the Swiss inhabitants from millions to one';
@@ -224,11 +424,31 @@ class value_tests
         $val = $t_val->value($msg);
         $val_16 = $t_val->value_16();
         $val_txt = $t_val->text_value();
+        // the load by group is checked for each value table and value type, because the table name
+        // and its key fields must always match e.g. the main table has no phrase_id_1 field
         $this->assert_sql_by_grp($t, $db_con, $val, $t_grp->group_prime_3());
         $this->assert_sql_by_grp($t, $db_con, $val, $t_grp->group_16());
         $this->assert_sql_by_grp($t, $db_con, $val, $t_grp->group_17_plus());
         $this->assert_sql_by_grp($t, $db_con, $val_txt, $t_grp->group_pod_url());
+        $this->assert_sql_by_grp($t, $db_con, $t_val->time_value(), $t_grp->group_pod_launch());
+        $this->assert_sql_by_grp($t, $db_con, $t_val->geo_value(), $t_grp->group_pod_point());
+        // a value of an import or a calculation has only the phrase list of its group, so the table
+        // and its key fields must follow the phrase list and must not report the value as prime
+        // with zero phrases (see group::id_or_phrase_list_id)
+        $test_name = 'the query to load a value by a group without an id '
+            . 'is the same as by the group with the id';
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp_no_id = $val->load_sql_by_grp($db_con->sql_creator(), $t_grp->group_incomplete());
+        $qp_id = $val->load_sql_by_grp($db_con->sql_creator(), $t_grp->group());
+        $t->assert($test_name, $qp_no_id->sql, $qp_id->sql);
         $t->assert_sql_by_id($sc, $val_16);
+        // the user overlay row of a value must be read for the user of the value and not for the
+        // requesting user of the database connection, because otherwise an existing user row is
+        // hidden and e.g. the exclude of the value would add a second user row
+        $test_name = 'the load of a value by id reads the overlay row of the user of the value';
+        $val_usr2 = new value($t->usr2);
+        $qp = $val_usr2->load_sql_by_id($sc, groups::CH_2019_MIO);
+        $t->assert_true($test_name, in_array($t->usr2->id(), $qp->par));
 
         $t->subheader($ts . 'sql read default and user changes');
         $val = $t_val->value($msg);
@@ -328,6 +548,19 @@ class value_tests
         $t->assert_sql_update_owner($sc, $t->usr2, $val_3, [sql_type::LOG]);
         $t->assert_sql_update_owner($sc, $t->usr2, $val_16, [sql_type::LOG]);
         $t->assert_sql_update_owner($sc, $t->usr2, $val_17, [sql_type::LOG]);
+        // the owner is the user of the standard row, so an owner change is only detected against
+        // a db row of the old owner and never against a db row of the same user as save uses it,
+        // which has left the owner unchanged when a value was deleted (see sandbox_multi::set_owner)
+        $test_name = 'a value of the new owner writes the owner';
+        $val_owner = $t_val->value($msg);
+        $val_new_owner = clone $val_owner;
+        $val_new_owner->set_user($t->usr2);
+        $fvt_lst = $val_new_owner->db_fields_changed($val_owner, $msg, new sql_type_list([sql_type::LOG]));
+        $t->assert_true($test_name, in_array(user_db::FLD_ID, $fvt_lst->names()));
+        // negative: the db row of the same user, as save compares with it, has no owner change
+        $test_name = '... but the db row of the same user has no owner change';
+        $fvt_lst = $val_owner->db_fields_changed(clone $val_owner, $msg, new sql_type_list([sql_type::LOG]));
+        $t->assert_false($test_name, in_array(user_db::FLD_ID, $fvt_lst->names()));
         // update only the last_update date to trigger calculation
         $this->assert_sql_update_trigger($t, $db_con, $val_upd, $val);
 
@@ -384,6 +617,49 @@ class value_tests
         $test_name = 'the admin protection of the new value is not reported';
         $t->assert($test_name, $msg->all_message_text(), '');
 
+        $t->subheader($ts . 'set default');
+        // the default of all users is the decision of an admin, so the request of a normal user is refused before any database access
+        $test_name = 'a normal user cannot set the default of a value for all users';
+        $msg = new user_message($t->usr_normal);
+        $val_def = $t_val->value($msg);
+        $val_def->set_user($t->usr_normal);
+        $t->assert_false($test_name, $val_def->save_as_default($msg));
+        $test_name = '... and is told why';
+        $t->assert_false($test_name, $msg->is_ok());
+        $test_name = 'the request to set the default comes with the api message';
+        $msg = new user_message($t->usr_admin);
+        $val_api = new value($t->usr_admin);
+        $val_api->api_mapper([json_fields::ID => $val_def->id(), json_fields::SET_DEFAULT => true], $msg);
+        $t->assert_true($test_name, $val_api->set_default);
+        // negative: without the request the value is saved as the own overwrite
+        $test_name = '... and without it the own overwrite is saved';
+        $val_api->api_mapper([json_fields::ID => $val_def->id()], $msg);
+        $t->assert_false($test_name, $val_api->set_default);
+        $test_name = 'the frontend sends the request of the settings page to the backend';
+        $val_ui = new value_ui();
+        $val_ui->url_mapper([url_var::ID => $val_def->id(), url_var::SET_DEFAULT => url_var::TRUE], $msg_ui);
+        $t->assert_true($test_name, $val_ui->api_array([], $msg_ui)[json_fields::SET_DEFAULT] ?? false);
+
+        $t->subheader($ts . 'pod settings');
+        // the settings below "system configuration > system" are the decision of an admin, the user and select settings not
+        $pod_names = config_numbers::CACHE_ALLOWED_NAMES[db_cache_types::TYPES];
+        $test_name = 'a normal user cannot change a setting of the pod';
+        $msg = new user_message($t->usr_normal);
+        $val_pod = $t_val->config_switch_value($pod_names, false);
+        $val_pod->set_user($t->usr_normal);
+        $t->assert_true($test_name, $val_pod->is_pod_setting_denied($msg));
+        $test_name = '... and the save is refused before any database access';
+        $t->assert_false($test_name, $val_pod->save($msg));
+        $test_name = 'an admin can change a setting of the pod';
+        $val_pod->set_user($t->usr_admin);
+        $t->assert_false($test_name, $val_pod->is_pod_setting_denied($msg));
+        // negative: a user setting is not below system, so each logged-in user can overwrite it
+        $test_name = 'a normal user can change a user setting';
+        $usr_names = array_diff($pod_names, [shared_words::SYSTEM]);
+        $val_usr = $t_val->config_switch_value($usr_names, false);
+        $val_usr->set_user($t->usr_normal);
+        $t->assert_false($test_name, $val_usr->is_pod_setting_denied($msg));
+
         $t->subheader($ts . 'read access (share)');
         // a non-public value must not be disclosed to another user loaded by id (idor);
         // see value::is_readable_by and value_list::filter_readable_by
@@ -422,6 +698,10 @@ class value_tests
         $t->assert_sql_delete($sc, $val, [sql_type::USER, sql_type::EXCLUDE]);
         $t->assert_sql_delete($sc, $val_16);
         $t->assert_sql_delete($sc, $val_16, [sql_type::USER]);
+        $t->assert_sql_delete($sc, $val_16, [sql_type::LOG]);
+        $t->assert_sql_delete($sc, $val_16, [sql_type::LOG, sql_type::USER]);
+        $t->assert_sql_delete($sc, $val_17, [sql_type::LOG]);
+        $t->assert_sql_delete($sc, $val_17, [sql_type::LOG, sql_type::USER]);
         $t->assert_sql_delete($sc, $val_txt, [sql_type::LOG]);
 
 
@@ -491,7 +771,9 @@ class value_tests
 
         // TODO move to ui tests
         $val_ui = new value_ui($val->api_json([api_types::INCL_PHRASES]));
-        $t->assert('value edit link', $val_ui->value_edit($msg_ui), '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::VALUE_DEFAULT_ID . '&amp;id=5">3.14</a>');
+        // the value has no source, so the link is followed by the grey "-" mark (see sandbox_value::quality_mark)
+        $t->assert('value edit link', $val_ui->value_edit($msg_ui), '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::VALUE_DEFAULT_ID . '&amp;id=5">3.14</a>' . $val_ui->quality_mark());
+        $t->assert_text_contains('... with the mark of the missing source', $val_ui->quality_mark(), msg_id::QUALITY_MARK_NO_SOURCE->text());
 
         $t->subheader($ts . 'convert and api');
 

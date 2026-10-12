@@ -365,6 +365,15 @@ class sql_type_list
     }
 
     /**
+     * @return bool true if the delete must never write a user sandbox row e.g. because the row is
+     *              removed together with the phrase that is part of its key (see sql_type)
+     */
+    public function no_user_sandbox(): bool
+    {
+        return in_array(sql_type::NO_USER_SANDBOX, $this->lst);
+    }
+
+    /**
      * @return bool true if a smallint as the prime db key e.g. for types
      */
     public function has_key_int_small(): bool

@@ -9,6 +9,8 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 include_once html_paths::EXECUTE . 'system_form.php';
 include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::USER . 'user_message.php';
+include_once paths::SHARED_CONST_FIELDS . 'fields.php';
+include_once paths::SHARED_CONST_FIELDS . 'triple_fields.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'messages.php';
@@ -27,6 +29,8 @@ use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object as data_object_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\web\word\triple as triple_ui;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\triple_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\impacts;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
@@ -125,6 +129,24 @@ class triple_tests
         $t->subheader($ts . 'view base object handling');
         $trp = $t_trp->triple_filled_add_name();
         $t->assert_reset($trp);
+
+        $t->subheader($ts . 'code id on load');
+
+        // the code id is read from the database for every user, because the permission
+        // to set a code id is checked on the write and never on the read
+        $test_name = 'a normal user reads the code id of a triple from the database';
+        $db_row = [
+            triple_fields::FLD_ID => triple_names::SYSTEM_TEST_ADD_ID,
+            fields::FLD_CODE_ID => triple_names::SYSTEM_TEST_ADD_CODE_ID
+        ];
+        $trp = new triple($t->usr_normal);
+        $trp->row_mapper_sandbox($db_row, $msg);
+        $t->assert($test_name, $trp->get_code_id(), triple_names::SYSTEM_TEST_ADD_CODE_ID);
+        $msg->reset();
+        $test_name = 'a normal user still cannot set the code id of a triple';
+        $trp = new triple($t->usr_normal);
+        $t->assert_false($test_name, $trp->set_code_id(
+            triple_names::SYSTEM_TEST_ADD_CODE_ID, new user_message($t->usr_normal)));
 
         $t->subheader($ts . 'rename routing');
 

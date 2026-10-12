@@ -249,11 +249,14 @@ class expression_tests
         // test the element list of the right side
         $elm_grp_lst = $exp->element_list($msg, $trm_lst);
         $result = $elm_grp_lst->dsp_id();
+        // an element is named by the formula it belongs to and the object it links, so its id
+        // is the formula id and the phrase or verb id, e.g. "1/555" for "parts" of formula 1
+        $frm_id = formula_names::SCALE_TO_SEC_ID . '/';
         $target = '"parts","of","total" (element_id '
-            . word_names::PARTS_ID . ',' . verbs::OF_ID . ',' . words::TOTAL_ID
+            . $frm_id . word_names::PARTS_ID . ','
+            . $frm_id . verbs::OF_ID . ','
+            . $frm_id . words::TOTAL_ID
             . ') for user 3 (zukunft.com system test)';
-        $target = '"parts","of","total" (element_id 1/554,1/5,1/334) for user 3 (zukunft.com system test)';
-        //$target = '"' . formulas::TN_PERCENT . '" (1)';
         $t->assert($test_name, $result, $target);
 
         // tests based on the increase formula

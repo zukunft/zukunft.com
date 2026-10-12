@@ -394,6 +394,8 @@ class test_base
 
     const string TEST_TYPE_CONTAINS = 'contains';
     const string TEST_TYPE_NOT = 'not';
+    // the chars shown before and after an unexpected hit of assert_text_not_contains
+    const int NOT_CONTAINS_CONTEXT = 100;
     const string FILE_EXT = '.sql';
     const string FILE_MYSQL = '_mysql';
 
@@ -1017,12 +1019,19 @@ class test_base
         float  $exe_max_time = self::TIMEOUT_LIMIT,
         string $comment = ''): bool
     {
-        if (str_contains($haystack, $needle)) {
-            $result = $needle;
-        } else {
-            $result = '';
+        $pos = strpos($haystack, $needle);
+        $result = '';
+        $diff = '';
+        if ($pos !== false) {
+            // only the text around the first hit, because the haystack is often a whole html page
+            $start = max(0, $pos - self::NOT_CONTAINS_CONTEXT);
+            $result = substr($haystack, $start, $pos - $start + strlen($needle) + self::NOT_CONTAINS_CONTEXT);
+            $diff = '"' . $needle . '" found at position ' . $pos;
         }
-        return $this->assert($msg, $result, $needle, $exe_max_time, $comment, self::TEST_TYPE_NOT);
+        if ($comment != '') {
+            $msg .= ' (' . $comment . ')';
+        }
+        return $this->assert_dsp($msg, $pos === false, 'a text without ' . $needle, $result, $diff, $exe_max_time);
     }
 
     /**
@@ -1232,11 +1241,7 @@ class test_base
         $file_path = test_paths::HTML . test_paths::VIEWS . $folder . $dsp_code_id . $dbo_name;
 
         // load the view from the database (the db layer measures its own read time)
-        $msk = new view($usr);
-        $msk->load_by_code_id($dsp_code_id, $msg);
-        if ($msk->id() == 0) {
-            log_err('view with code id ' . $dsp_code_id . ' not found');
-        }
+        $msk = $this->load_view_by_code_id($dsp_code_id, $usr, $msg);
         if ($id != 0) {
             // add the related database objects
             $dbo->load_by_id_with_related($id, $msg);
@@ -1289,6 +1294,61 @@ class test_base
             $dbo->load_by_id_with_related($dbo->id(), $msg);
         }
         return $this->assert_view_html($msk, $usr, $dbo, $dbo->id() != 0, $cfg, $file_path, $view_name);
+    }
+
+    /**
+     * test a view with a filled object of a test factory that the seeded database does not have, e.g. a
+     * value with more than 16 phrases or a text value; the snapshot is named by the test case, because
+     * the object has no database row whose id could name it
+     *
+     * @param string $dsp_code_id the code id of the view that should be tested e.g. views::VALUE
+     * @param user $usr to define for which user the view should be created
+     * @param db_object_seq_id|sandbox_multi $dbo the filled object of a test factory
+     * @param string $case_name the name of the test case for the snapshot file e.g. "big"
+     * @param data_object_ui|null $cfg the context that should be used to create the view
+     * @param string $class_for_file the class that names the snapshot folder, if not the class of the object
+     *                               e.g. value::class for a text value that is shown on the value page
+     * @return bool true if the generated view matches the expected
+     */
+    function assert_view_by_factory(
+        string                         $dsp_code_id,
+        user                           $usr,
+        db_object_seq_id|sandbox_multi $dbo,
+        string                         $case_name,
+        ?data_object_ui                $cfg = null,
+        string                         $class_for_file = ''
+    ): bool
+    {
+        $msg = new user_message();
+        $lib = new library();
+
+        if ($class_for_file == '') {
+            $class_for_file = $dbo::class;
+        }
+        $class = $lib->class_to_name($class_for_file);
+        $file_path = test_paths::HTML . test_paths::VIEWS . $class . DIRECTORY_SEPARATOR
+            . $dsp_code_id . '_' . $class . '_' . $this->name_to_file($case_name);
+
+        $msk = $this->load_view_by_code_id($dsp_code_id, $usr, $msg);
+        return $this->assert_view_html($msk, $usr, $dbo, true, $cfg, $file_path, $dsp_code_id);
+    }
+
+    /**
+     * load the view that a view test renders, e.g. the value default view
+     *
+     * @param string $dsp_code_id the code id of the view e.g. views::VALUE
+     * @param user $usr the user for whom the view is loaded
+     * @param user_message $msg to collect the problems of the load
+     * @return view the loaded view, which has no id if the code id is not found
+     */
+    private function load_view_by_code_id(string $dsp_code_id, user $usr, user_message $msg): view
+    {
+        $msk = new view($usr);
+        $msk->load_by_code_id($dsp_code_id, $msg);
+        if ($msk->id() == 0) {
+            log_err('view with code id ' . $dsp_code_id . ' not found');
+        }
+        return $msk;
     }
 
     /**
@@ -4460,6 +4520,31 @@ class test_base
     }
 
     /**
+     * remove the row of a test group by its reserved name with the logged delete like any other
+     * test row (docs/llm/testing.md), e.g. a fixed group of groups::TEST_GROUPS_CREATE that
+     * create_test_groups adds again for the next read or write tests; the name load covers the
+     * prime, main and big group tables and only finds a row named by a user, so a group that
+     * exists only by its phrases is never touched
+     *
+     * @param group $grp the group object used for the load and the delete
+     * @param string $name the reserved test name of the group row that should be removed
+     * @return void
+     */
+    function write_group_cleanup(group $grp, string $name): void
+    {
+        $msg = new user_message($this->usr1);
+        $grp->set_user($this->usr1);
+        $grp->load_by_name($name, $msg);
+        if ($grp->is_saved()) {
+            $grp->del($msg);
+            // the reload reports if the logged delete of the group has not removed the row
+            $grp->reset();
+            $grp->load_by_name($name, $msg);
+            $this->assert_false('the test group "' . $name . '" is removed', $grp->is_saved());
+        }
+    }
+
+    /**
      * remove all remaining test rows of a named user sandbox object
      *
      * @param sandbox_named|sandbox_link_named|verb|phrase|ref|group|type_object $sbx the named user sandbox object e.g. a word
@@ -4540,6 +4625,60 @@ class test_base
     {
         $this->write_value_cleanup_one($sbx, $this->usr1, $grp, $check);
         $this->write_value_cleanup_one($sbx, $this->usr2, $grp, $check);
+        // remove a value that resists the single user cleanups above
+        $this->write_value_cleanup_force($sbx, $grp);
+    }
+
+    /**
+     * remove a test value that resists the single user cleanup, e.g. a value owned by one test
+     * user and changed by another: del() of the owner then only hands the value over or writes an
+     * exclusion overlay, so the value would survive and the later cleanup of its test word is
+     * refused, because a value of a deleted word can never be excluded for one user
+     * (see word::del_links)
+     *
+     * @param value_base|sandbox_multi $sbx the value object
+     * @param group $grp the phrase group that specifies the value
+     * @return void
+     */
+    private function write_value_cleanup_force(value_base|sandbox_multi $sbx, group $grp): void
+    {
+        $msg = new user_message($this->usr_system);
+        $sbx_sys = clone $sbx;
+        $sbx_sys->reset();
+        $sbx_sys->set_user($this->usr_system);
+        $sbx_sys->load_by_grp($grp, $msg);
+        if ($sbx_sys->id() != 0) {
+            // remove the overlay rows of all test users, so that no other user uses the value
+            $test_users = [$this->usr1, $this->usr2, $this->usr_normal];
+            foreach ($test_users as $usr) {
+                $sbx_sys->set_user($usr);
+                $sbx_sys->del_usr_cfg($msg);
+            }
+            // only the owner can delete an unused value completely (see used_by_someone_else)
+            $owner = $this->usr_system;
+            foreach ($test_users as $usr) {
+                if ($usr->id() == $sbx_sys->owner_id()) {
+                    $owner = $usr;
+                }
+            }
+            $sbx_sys->set_user($owner);
+            $sbx_sys->del($msg);
+            // report a value that survives the forced cleanup with the state that has blocked the
+            // delete, because the later cleanup of its test word would otherwise only report the
+            // refused delete of the value without the reason (see word::del_links)
+            $chk = clone $sbx;
+            $chk->reset();
+            $chk->set_user($this->usr_system);
+            $chk_msg = new user_message($this->usr_system);
+            $chk->load_by_grp($grp, $chk_msg);
+            if ($chk->id() != 0) {
+                log_warning('forced cleanup of test value ' . $chk->dsp_id()
+                    . ' failed: owner id ' . $chk->owner_id()
+                    . ', changed by user id ' . $chk->changer($chk_msg)
+                    . ', deleted as user id ' . $owner->id()
+                    . ', messages: ' . $msg->all_message_text() . $chk_msg->all_message_text());
+            }
+        }
     }
 
     /**
@@ -4680,6 +4819,24 @@ class test_base
             }
         }
         $usr->del($msg);
+    }
+
+    /**
+     * delete a test user and its change log entries, so that no change log entry points to the deleted
+     * user; the delete itself is logged with the user name, so the name must start with TEST_ROW_NAME_PART
+     *
+     * @param string $name the reserved test name of the user e.g. users::TEST_SIGNUP_NAME
+     * @return void
+     */
+    function cleanup_test_user(string $name): void
+    {
+        $usr = new user();
+        $usr->load_by_name($name, new user_message($this->usr_system));
+        if ($usr->id() != 0) {
+            $this->delete_change_log_of_obj(user::class, $usr->id());
+        }
+        $this->write_named_cleanup_user($name, $this->usr_system);
+        $this->cleanup_change_log_deleted();
     }
 
     /**
@@ -5556,7 +5713,7 @@ class test_base
      * request a page of this pod with a login
      * needed to test the add, edit and del views, because these views change data
      * and a user without login is blocked if the pod does not permit the changes of an ip user
-     * (config.yaml: system configuration > pod > permissions > database change > ip user > allowed)
+     * (config.yaml: system configuration > system > pod > permissions > database change > ip user > allowed)
      *
      * the admin user of the env file is used, because on a fresh setup
      * this is the only user with a password (see sql_db->add_admin_users_from_env)
@@ -6108,11 +6265,7 @@ class test_base
      */
     function update_file(string $test_resource_path, string $result): void
     {
-        // TODO always set a breakpoint here
-        $filepath = test_paths::RESOURCE . $test_resource_path;
-        if (file_put_contents($filepath, $result) === false) {
-            log_err('Cannot write target file ' . $filepath);
-        }
+        $this->update_path_file(test_paths::RESOURCE . $test_resource_path, $result);
     }
 
     /**
@@ -6123,7 +6276,11 @@ class test_base
     function update_path_file(string $filepath, string $result): void
     {
         // TODO always set a breakpoint here
-        if (file_put_contents($filepath, $result) === false) {
+        // the first snapshot of a new object type is written to a folder that does not exist yet
+        $dir = dirname($filepath);
+        if (!is_dir($dir) and !mkdir($dir, 0775, true) and !is_dir($dir)) {
+            log_err('Cannot create the target folder ' . $dir);
+        } elseif (file_put_contents($filepath, $result) === false) {
             log_err('Cannot write target file ' . $filepath);
         }
     }

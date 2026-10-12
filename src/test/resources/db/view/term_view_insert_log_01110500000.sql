@@ -1,0 +1,1 @@
+ PREPARE term_view_insert_log_01110500000_call () AS SELECT term_view_insert_log_01110500000 ();  SELECT term_view_insert_log_01110500000 ();

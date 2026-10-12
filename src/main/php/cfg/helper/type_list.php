@@ -358,7 +358,7 @@ class type_list extends ListOfIdNamedCodeObjects
      * set the common part of the sql parameters to load all rows of one 'type of database type'
      *
      * a type is the link between one object and some predefined behaviour
-     * a.g. a word like 'meter' has the type 'measure' which implies that
+     * a.g. a word like 'meter' has the type 'measure unit' which implies that
      * the result of meter divided by meter is a relative value which is e.g. in per cent
      *
      * a 'database type' is a group of types used for the same objects
@@ -408,7 +408,7 @@ class type_list extends ListOfIdNamedCodeObjects
      * the sql parameters to load all rows of one 'type of database type'
      *
      * a type is the link between one object and some predefined behavior
-     * a.g. a word like 'meter' has the type 'measure' which implies that
+     * a.g. a word like 'meter' has the type 'measure unit' which implies that
      * the result of meter divided by meter is a relative value which is e.g. in percent
      *
      * a 'database type' is a group of type used for the same objects
@@ -470,7 +470,7 @@ class type_list extends ListOfIdNamedCodeObjects
             formula_type::class => new formula_type(),
             formula_link_type::class => new formula_link_type(),
             element_type::class => new element_type(),
-            phrase_types::class => new phrase_type(''),
+            phrase_type::class, phrase_types::class => new phrase_type(''),
             view_type::class => new view_type(),
             view_style::class => new view_style(),
             view_link_type::class => new view_link_type(),
@@ -727,7 +727,12 @@ class type_list extends ListOfIdNamedCodeObjects
             // change log field specific
             $table_col = 0;
             if (($handle = fopen($csv_path, "r")) !== FALSE) {
-                while (($data = fgetcsv($handle, 0, ",", "'")) !== FALSE) {
+                while (($line = fgets($handle)) !== FALSE) {
+                    // a line without any char does not contain a type
+                    if (trim($line) == '') {
+                        continue;
+                    }
+                    $data = $lib->csv_line_to_array($line);
                     if ($row == 1) {
                         $col_names = $lib->array_trim($data);
                         // TODO Prio 2 try to avoid these exception and use e.g. name_field() function

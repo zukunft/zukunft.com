@@ -26,7 +26,7 @@ PREPARE term_view_update_log_000005000_user_call FROM
 SELECT term_view_update_log_000005000_user
        (3,
         2,
-        902,
+        771,
         null,
         null,
         '2/3 width',

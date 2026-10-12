@@ -37,16 +37,23 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\result\result;
 use Zukunft\ZukunftCom\main\php\cfg\result\result_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\results;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\shared\types\share_types;
 use Zukunft\ZukunftCom\main\php\web\result\result as result_ui;
+use Zukunft\ZukunftCom\main\php\web\result\result_list as result_list_ui;
+use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
+use Zukunft\ZukunftCom\test\php\const\triple_names;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
+use Zukunft\ZukunftCom\test\php\utils\test_lib;
 use DateTime;
 
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
+include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_RESULT . 'result.php';
 include_once paths::MODEL_RESULT . 'result_list.php';
 include_once paths::SHARED_CONST . 'results.php';
@@ -56,7 +63,14 @@ include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_TYPES . 'protection_types.php';
 include_once paths::SHARED_TYPES . 'share_types.php';
 include_once html_paths::RESULT . 'result.php';
+include_once html_paths::RESULT . 'result_list.php';
+include_once test_paths::CONST . 'formula_names.php';
+include_once test_paths::CONST . 'triple_names.php';
+include_once test_paths::CONST . 'word_names.php';
+include_once test_paths::CREATE . 'test_figures.php';
+include_once test_paths::CREATE . 'test_terms.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
+include_once test_paths::UTILS . 'test_lib.php';
 
 class test_results
 {
@@ -112,6 +126,29 @@ class test_results
         return $res;
     }
 
+    /**
+     * @return result with a source group of 16 phrases, which result::save cannot write
+     *                as the bigint source_group_id of results_prime and results_main
+     */
+    function result_src_grp_big(): result
+    {
+        $t_grp = new test_groups($this->env);
+        $res = $this->result_prime();
+        $res->set_src_grp($t_grp->group_16());
+        return $res;
+    }
+
+    /**
+     * @return result of one prime phrase with a source group of more than 16 phrases
+     */
+    function result_src_grp_17_plus(): result
+    {
+        $t_grp = new test_groups($this->env);
+        $res = $this->result_prime();
+        $res->set_src_grp($t_grp->group_17_plus());
+        return $res;
+    }
+
     function result_prime_max(): result
     {
         $t_grp = new test_groups($this->env);
@@ -154,6 +191,71 @@ class test_results
         $res = $this->result_main_max();
         $res->set_last_update(new DateTime(test_const::DUMMY_DATETIME));
         return new result_ui($res->api_json([api_types::INCL_RELATED, api_types::TEST_MODE]));
+    }
+
+    /**
+     * the filled result with the values, the formulas and the results that the calculation has
+     * used, so that the three columns of the result default page can be tested without the
+     * database; the lists are set here like the backend loads them (see result::load_values_used),
+     * and the used results carry a scaling and a unit, so that the symbols behind the number are
+     * part of the page
+     *
+     * @return result the filled result with the time of the last calculation and the used lists
+     */
+    function result_page_related(): result
+    {
+        $t_val = new test_values($this->env);
+        $t_frm = new test_formulas($this->env);
+        $res = $this->result_main_max();
+        $res->set_last_update(new DateTime(test_const::DUMMY_DATETIME));
+        $res->values_used = $t_val->value_list_math();
+        // the formula of the result itself is named in the page title, so the loader keeps it out
+        // of the used formulas and the result out of the used results (see load_formulas_used)
+        $frm_used = $t_frm->formula_list();
+        $frm_used->unset_by_id($res->formula_id());
+        $res->formulas_used = $frm_used;
+        $res_used = $this->result_list();
+        $res_used->unset_by_id($res->id());
+        foreach ($this->result_list_solution_prio_first_row()->lst() as $res_row) {
+            $res_used->add($res_row);
+        }
+        $res->results_used = $res_used;
+        // the formula line of the page: the minutes that the calculation has used for the seconds
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the figure reports into
+        $t_fig = new test_figures($this->env);
+        $grp_parts = [formula_names::SCALE_TO_SEC_MINUTE_SYMBOL => [word_names::MINUTE, $t_fig->figure_value($msg)]];
+        $res->expression_parts = $res->expression_parts(formula_names::SCALE_TO_SEC_EXP_REF_R, $grp_parts);
+        // the terms of the formula, so that its latex below the formula line has the term links
+        $res->frm->latex_terms = new test_terms($this->env)->term_list_time();
+        return $res;
+    }
+
+    /**
+     * the potential loss of populism in trillion EUR, which the formula "annual damage in money"
+     * calculates from the seeded start page data; selected by the phrase names, because the group
+     * id of a result follows the import, so only a database read test can use it; the phrase
+     * "assumed" is part of the group, because the populism estimate is an assumed value
+     *
+     * @return result the calculated result loaded from the database, not set if not calculated
+     */
+    function result_populism_potential_loss(): result
+    {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the load reports into
+        $res = new result($this->env->usr1);
+        $names = [word_names::POPULISM, triple_names::POTENTIAL_LOSS, word_names::TRILLION, word_names::EUR,
+            word_names::ASSUMED];
+        $res->load_by_names($names, $msg);
+        return $res;
+    }
+
+    /**
+     * @return result_ui the filled result with the used lists as the api sends it for a page request
+     */
+    function result_page_related_ui(): result_ui
+    {
+        // with the used lists, which only the result views that show them ask for
+        $typ_lst = [api_types::INCL_RELATED, api_types::INCL_USED, api_types::TEST_MODE];
+        return new result_ui($this->result_page_related()->api_json($typ_lst));
     }
 
     /**
@@ -224,6 +326,82 @@ class test_results
         $lst->add($this->result_simple_1());
         $lst->add($this->result_pct());
         return $lst;
+    }
+
+    /**
+     * a result of the given phrases, mirroring test_values::value_for_phrases, so that a
+     * calculated number can be used like a measured one
+     *
+     * @param array $phrases the phrases that name the result
+     * @param float $number the calculated number
+     * @return result the result of the given phrases
+     */
+    function result_for_phrases(array $phrases, float $number): result
+    {
+        $lst = new phrase_list($this->env->usr1);
+        foreach ($phrases as $phr) {
+            $lst->add($phr);
+        }
+        $res = new result($this->env->usr1);
+        $res->set_grp($lst->get_grp_id(false));
+        $res->set_number($number);
+        return $res;
+    }
+
+    /**
+     * the calculated numbers of the start page ranking, e.g. the happy time points that the
+     * potential loss of a problem costs, which the table shows next to the measured numbers
+     *
+     * @return result_list the results of the start page ranking
+     */
+    function result_list_solution_prio(): result_list
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $lst = new result_list($this->env->usr1);
+        $lst->add($this->result_for_phrases([
+            $t_trp->global_warming()->phrase(),
+            $t_trp->potential_loss()->phrase(),
+            $t_wrd->word_htp()->phrase()
+        ], results::TV_PRIO_LOSS_HTP));
+        return $lst;
+    }
+
+    /**
+     * @return result_list_ui the frontend ranking results for unit testing
+     */
+    function result_list_solution_prio_ui(): result_list_ui
+    {
+        $tl = new test_lib();
+        return $tl->list_to_ui($this->result_list_solution_prio(), [api_types::INCL_PHRASES]);
+    }
+
+    /**
+     * the complete first row of the start page ranking as results, as it is after the target
+     * values of a problem file are calculated instead of stated (see
+     * src/main/resources/messages/start_page/problem_global_warming.json)
+     *
+     * @return result_list the potential loss and the potential gain of the first ranking row
+     */
+    function result_list_solution_prio_first_row(): result_list
+    {
+        $t_val = new test_values($this->env);
+        [$problem, $loss_nbr, $solution, $gain_nbr, $is_assumed] = $t_val->solution_prio_rows()[0];
+        $lst = new result_list($this->env->usr1);
+        $lst->add($this->result_for_phrases(
+            $t_val->solution_prio_loss_phrases($problem, $is_assumed), $loss_nbr));
+        $lst->add($this->result_for_phrases(
+            $t_val->solution_prio_gain_phrases($problem, $solution, $is_assumed), $gain_nbr));
+        return $lst;
+    }
+
+    /**
+     * @return result_list_ui the frontend first ranking row as results for unit testing
+     */
+    function result_list_solution_prio_first_row_ui(): result_list_ui
+    {
+        $tl = new test_lib();
+        return $tl->list_to_ui($this->result_list_solution_prio_first_row(), [api_types::INCL_PHRASES]);
     }
 
 }

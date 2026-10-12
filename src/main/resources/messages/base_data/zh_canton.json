@@ -63,7 +63,7 @@
     },
     {
       "name": "metre",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "population",
@@ -163,7 +163,7 @@
     },
     {
       "name": "month",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "company"
@@ -224,7 +224,7 @@
     },
     {
       "name": "kilometre",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "school",
@@ -281,7 +281,7 @@
     },
     {
       "name": "tonne",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "electricity"
@@ -332,7 +332,7 @@
     },
     {
       "name": "GWh",
-      "type": "measure",
+      "type": "measure_unit",
       "description": "gigawatt hour, unit of energy"
     },
     {
@@ -550,7 +550,7 @@
       "from": "dioxide",
       "verb": "of",
       "to": "carbon",
-      "type": "measure",
+      "type": "measure_unit",
       "description": "CO₂, main greenhouse gas"
     },
     {
@@ -910,7 +910,7 @@
       "from": "metre",
       "verb": "can be",
       "to": "square",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "apartment price per m²",
@@ -1216,6 +1216,7 @@
   "formulas": [
     {
       "name": "population density formula",
+      "description": "the number of inhabitants per square kilometre of the canton of Zurich, which shows how crowded the canton is compared to other cantons and countries",
       "expression": "\"population density\" = \"population of Zurich (canton)\" / \"area of Zurich (canton)\"",
       "assigned": [
         "population of Zurich (canton)",
@@ -1224,6 +1225,7 @@
     },
     {
       "name": "foreign nationals count formula",
+      "description": "the number of inhabitants without Swiss citizenship, calculated from the total population and the foreign share given in percent",
       "expression": "\"foreign\" = \"population\" * \"percent\" / 100",
       "assigned_word": "foreign population share"
     }
@@ -1259,6 +1261,9 @@
     {
       "name": "UNDP",
       "url": "https://hdr.undp.org"
+    },
+    {
+      "name": "by definition"
     }
   ],
   "values": [
@@ -1449,6 +1454,7 @@
         "year"
       ],
       "number": "19",
+      "source": "by definition",
       "description": "the age of a teenager is below 20"
     },
     {
@@ -1459,7 +1465,8 @@
         "year"
       ],
       "number": "65",
-      "description": "a pensioner is older than 64"
+      "source": "by definition",
+      "description": "a pensioner is older than 64, the reference age of the Swiss old-age insurance (AHV, federal act art. 21), which the AHV 21 reform raises to 65 for women too by 2028"
     },
     {
       "words": [

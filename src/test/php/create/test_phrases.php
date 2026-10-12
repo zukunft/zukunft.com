@@ -36,20 +36,24 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
+include_once paths::MODEL_HELPER . 'config_numbers.php';
 include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_TYPES . 'api_types.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
+include_once test_paths::CONST . 'word_names.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\helper\config_numbers;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message as backend_user_message;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class test_phrases
@@ -443,19 +447,19 @@ class test_phrases
 
     /**
      * @return phrase_list with 16 entries to test the normal group id creation
-     * 1    ...../+
-     * 11    .....9-
-     * 12    .....A+
-     * 37    .....Z-
-     * 38    .....a+
-     * 64    ..../.-
-     * 376    ....3s+
-     * 2367    ....Yz-
-     * 13108    ...1Ao+
-     * 82124    ...I1A-
-     * 505294    ../vLC+
-     * 2815273    ..8jId-
-     * 17192845    .//ZSB+
+     * 1    /+
+     * 11    9-
+     * 12    A+
+     * 37    Z-
+     * 38    a+
+     * 64    /.-
+     * 376    3s+
+     * 2367    Yz-
+     * 13108    1Ao+
+     * 82124    I1A-
+     * 505294    /vLC+
+     * 2815273    8jId-
+     * 17192845    //ZSB+
      */
     function phrase_list_13(): phrase_list
     {
@@ -519,20 +523,20 @@ class test_phrases
 
     /**
      * @return phrase_list with 16 entries to test the normal group id creation
-     * 1    ...../+
-     * 11    .....9-
-     * 12    .....A+
-     * 37    .....Z-
-     * 38    .....a+
-     * 64    ..../.-
-     * 376    ....3s+
-     * 2367    ....Yz-
-     * 13108    ...1Ao+
-     * 82124    ...I1A-
-     * 505294    ../vLC+
-     * 2815273    ..8jId-
-     * 17192845    .//ZSB+
-     * 106841477    .4LYK3-
+     * 1    /+
+     * 11    9-
+     * 12    A+
+     * 37    Z-
+     * 38    a+
+     * 64    /.-
+     * 376    3s+
+     * 2367    Yz-
+     * 13108    1Ao+
+     * 82124    I1A-
+     * 505294    /vLC+
+     * 2815273    8jId-
+     * 17192845    //ZSB+
+     * 106841477    4LYK3-
      */
     function phrase_list_14(): phrase_list
     {
@@ -547,20 +551,20 @@ class test_phrases
 
     /**
      * @return phrase_list with 16 entries to test the normal group id creation
-     * 1    ...../+
-     * 11    .....9-
-     * 12    .....A+
-     * 37    .....Z-
-     * 38    .....a+
-     * 64    ..../.-
-     * 376    ....3s+
-     * 2367    ....Yz-
-     * 13108    ...1Ao+
-     * 82124    ...I1A-
-     * 505294    ../vLC+
-     * 2815273    ..8jId-
-     * 17192845    .//ZSB+
-     * 106841477    .4LYK3-
+     * 1    /+
+     * 11    9-
+     * 12    A+
+     * 37    Z-
+     * 38    a+
+     * 64    /.-
+     * 376    3s+
+     * 2367    Yz-
+     * 13108    1Ao+
+     * 82124    I1A-
+     * 505294    /vLC+
+     * 2815273    8jId-
+     * 17192845    //ZSB+
+     * 106841477    4LYK3-
      */
     function phrase_list_14b(): phrase_list
     {
@@ -575,21 +579,21 @@ class test_phrases
 
     /**
      * @return phrase_list with 16 entries to test the normal group id creation
-     * 1    ...../+
-     * 11    .....9-
-     * 12    .....A+
-     * 37    .....Z-
-     * 38    .....a+
-     * 64    ..../.-
-     * 376    ....3s+
-     * 2367    ....Yz-
-     * 13108    ...1Ao+
-     * 82124    ...I1A-
-     * 505294    ../vLC+
-     * 2815273    ..8jId-
-     * 17192845    .//ZSB+
-     * 106841477    .4LYK3-
-     * 628779863    .ZSahL+
+     * 1    /+
+     * 11    9-
+     * 12    A+
+     * 37    Z-
+     * 38    a+
+     * 64    /.-
+     * 376    3s+
+     * 2367    Yz-
+     * 13108    1Ao+
+     * 82124    I1A-
+     * 505294    /vLC+
+     * 2815273    8jId-
+     * 17192845    //ZSB+
+     * 106841477    4LYK3-
+     * 628779863    ZSahL+
      * 3516593476    1FajJ2-
      */
     function phrase_list_16(): phrase_list
@@ -732,6 +736,88 @@ class test_phrases
     function list_canton_mio_cache_ui(): phrase_list_ui
     {
         return $this->ui_list($this->list_canton_mio_cache());
+    }
+
+    /**
+     * @return phrase_list the request cache that knows the symbol of the factor, so that a number
+     *                     with a factor phrase can be shown as e.g. "123.46 x"
+     */
+    function list_factor_symbol_cache(): phrase_list
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $lst = new phrase_list($this->env->usr1);
+        $lst->add($t_wrd->word_factor_symbol()->phrase());
+        $lst->add($t_wrd->word_factor()->phrase());
+        $lst->add($t_trp->factor_symbol()->phrase());
+        return $lst;
+    }
+
+    /**
+     * @return phrase_list the request cache that knows the symbol of percent, so that a number
+     *                     with a percent phrase can be shown as e.g. "1.23%"
+     */
+    function list_percent_symbol_cache(): phrase_list
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $lst = new phrase_list($this->env->usr1);
+        $lst->add($t_wrd->word_percent_symbol()->phrase());
+        $lst->add($t_wrd->word_percent()->phrase());
+        $lst->add($t_trp->percent_symbol()->phrase());
+        return $lst;
+    }
+
+    /**
+     * @return phrase_list_ui the frontend request cache that knows the symbol of percent
+     */
+    function list_percent_symbol_cache_ui(): phrase_list_ui
+    {
+        return $this->ui_list($this->list_percent_symbol_cache());
+    }
+
+    /**
+     * @return phrase_list_ui the frontend request cache that knows the symbol of the factor
+     */
+    function list_factor_symbol_cache_ui(): phrase_list_ui
+    {
+        return $this->ui_list($this->list_factor_symbol_cache());
+    }
+
+    /**
+     * the request cache that knows the symbols of the scaling "million" and of the unit "EUR",
+     * so that a number can be shown as e.g. "165'070'664 mio €": "m" and "mio" stand for million
+     * and "EUR" is itself a symbol of "Euro", which has the second symbol "€"
+     *
+     * @return phrase_list the symbol triples of million and Euro with their phrases
+     */
+    function list_unit_symbol_cache(): phrase_list
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        // the description of Euro is the tooltip of its symbol
+        $euro = $t_wrd->euro();
+        $euro->description = word_names::EURO_COM;
+        $lst = new phrase_list($this->env->usr1);
+        $lst->add($t_wrd->word_million()->phrase());
+        $lst->add($t_wrd->word_mio_symbol()->phrase());
+        $lst->add($t_wrd->word_m_symbol()->phrase());
+        $lst->add($t_trp->mio_symbol()->phrase());
+        $lst->add($t_trp->m_symbol()->phrase());
+        $lst->add($euro->phrase());
+        $lst->add($t_wrd->word_eur()->phrase());
+        $lst->add($t_wrd->word_euro_sign()->phrase());
+        $lst->add($t_trp->eur_symbol()->phrase());
+        $lst->add($t_trp->euro_sign_symbol()->phrase());
+        return $lst;
+    }
+
+    /**
+     * @return phrase_list_ui the frontend request cache that knows the symbols of million and Euro
+     */
+    function list_unit_symbol_cache_ui(): phrase_list_ui
+    {
+        return $this->ui_list($this->list_unit_symbol_cache());
     }
 
     function phrase_list_zh_mio(): phrase_list
@@ -926,14 +1012,8 @@ class test_phrases
      */
     function phrase_list_ip_user_change(): phrase_list
     {
-        $t_wrd = new test_words($this->env);
-        $t_trp = new test_triples($this->env);
-        $lst = new phrase_list($this->env->usr1);
-        $msg = new backend_user_message(); // a test builder is an entry point; the fixed names cannot double
-        $lst->add_by_name_direct($t_trp->triple_database_change()->phrase(), $msg);
-        $lst->add_by_name_direct($t_trp->triple_ip_user()->phrase(), $msg);
-        $lst->add_by_name_direct($t_wrd->word_allowed()->phrase(), $msg);
-        return $lst;
+        // the complete phrase set, because the permission is read by its exact path
+        return $this->list_cache_switch(config_numbers::IP_USER_CHANGE_NAMES);
     }
 
     /**
@@ -1147,13 +1227,26 @@ class test_phrases
         $lst->add($t_trp->column_cost()->phrase());
         $lst->add($t_trp->column_gain()->phrase());
         $lst->add($t_trp->column_loss()->phrase());
+        // the values carry the triples "potential loss" and "potential gain" like in solution_prio.json
+        $lst->add($t_trp->column_potential_loss()->phrase());
+        $lst->add($t_trp->column_potential_gain()->phrase());
         // the main column chain and the explaining columns that put the columns in the order
-        // problem, loss, cost, solution, gain; the cost column is ordered although no value of
-        // this table carries the phrase "cost"
-        $lst->add($t_trp->column_solution_after_problem()->phrase());
+        // problem, loss, cost, reason, loss of the reason, solution, gain; the cost column is
+        // ordered although no value of this table carries the phrase "cost"
+        $lst->add($t_trp->column_reason_after_problem()->phrase());
+        $lst->add($t_trp->column_solution_after_reason()->phrase());
         $lst->add($t_trp->column_loss_explains_problem()->phrase());
         $lst->add($t_trp->column_cost_explains_problem()->phrase());
         $lst->add($t_trp->column_gain_explains_solution()->phrase());
+        $lst->add($t_trp->column_potential_loss_explains_problem()->phrase());
+        $lst->add($t_trp->column_potential_gain_explains_solution()->phrase());
+        // the reason column and the column with the loss of the reason, the two main columns
+        // between the problem group and the solution, with the triple that links a reason to "reason"
+        $lst->add($t_trp->column_reason()->phrase());
+        $lst->add($t_trp->potential_loss_of_reason()->phrase());
+        $lst->add($t_trp->column_potential_loss_of_reason()->phrase());
+        $lst->add($t_trp->column_loss_of_reason_explains_reason()->phrase());
+        $lst->add($t_trp->climate_gas_emissions_reason()->phrase());
         // the solution column names the solution of the problem row instead of a value, so it
         // needs the column definition and the triples that link a solution to "solution"
         $lst->add($t_trp->column_solution()->phrase());
@@ -1162,6 +1255,27 @@ class test_phrases
         $lst->add($t_trp->research_solution()->phrase());
         $lst->add($t_trp->taxes_solution()->phrase());
         $lst->add($t_trp->spending_solution()->phrase());
+        // the solutions of the assumed rows, so that every row of the ranking names its solution
+        $lst->add($t_trp->basic_income_solution()->phrase());
+        $lst->add($t_trp->platform_regulation_solution()->phrase());
+        $lst->add($t_trp->market_share_tax_solution()->phrase());
+        $lst->add($t_trp->delphi_method_solution()->phrase());
+        $lst->add($t_trp->public_ai_solution()->phrase());
+        $lst->add($t_trp->fluid_democracy_solution()->phrase());
+        $lst->add($t_trp->gross_domestic_usage_solution()->phrase());
+        $lst->add($t_trp->free_software_solution()->phrase());
+        // the default charts of the ranking like phrase_list::load_chart_definitions loads them:
+        // the chart type words with the code id that selects the chart type, the tiers, the
+        // chart triples with the plotted columns and their assignment to the default tier
+        $lst->add($t_wrd->word_range_bars()->phrase());
+        $lst->add($t_wrd->word_scatter_plot()->phrase());
+        $lst->add($t_trp->chart_type_default()->phrase());
+        $lst->add($t_trp->chart_type_alternative()->phrase());
+        $lst->add($t_trp->range_bars_of_loss()->phrase());
+        $lst->add($t_trp->gain_and_effort()->phrase());
+        $lst->add($t_trp->scatter_of_gain_and_effort()->phrase());
+        $lst->add($t_trp->chart_range_bars_of_loss()->phrase());
+        $lst->add($t_trp->chart_scatter_of_gain_and_effort()->phrase());
         return $lst;
     }
 
@@ -1174,6 +1288,146 @@ class test_phrases
     }
 
     /**
+     * @return phrase_list_ui the start page definitions with every problem of solution_prio.json
+     *         linked to "global problem", so that a longer list of the ranking shows more rows,
+     *         and with the minor and the marginal columns, so that each column selection shows
+     *         its own columns, and with the leverage plot, the chart of the mayor columns only
+     */
+    function list_global_problems_all_ui(): phrase_list_ui
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $lst = $this->list_global_problems();
+        $links = array_merge($t_trp->other_problem_links(), $t_trp->column_minor_and_marginal_definitions());
+        foreach ($links as $trp) {
+            $lst->add($trp->phrase());
+        }
+        // the mayor chart like phrase_list::load_chart_definitions loads it
+        $lst->add($t_wrd->word_leverage_plot()->phrase());
+        $lst->add($t_trp->chart_type_mayor()->phrase());
+        $lst->add($t_trp->gain_and_loss()->phrase());
+        $lst->add($t_trp->leverage_of_gain_and_loss()->phrase());
+        $lst->add($t_trp->chart_leverage_of_gain_and_loss()->phrase());
+        return $this->ui_list($lst);
+    }
+
+    /**
+     * @return phrase_list_ui the global problems with a second reason of global warming, but
+     *         without the triple "global warming reason", so that no table of the reasons is known
+     */
+    function list_global_problems_two_reasons_ui(): phrase_list_ui
+    {
+        return $this->ui_list($this->list_global_problems_two_reasons());
+    }
+
+    /**
+     * @return phrase_list_ui the global problems with two reasons of global warming, each linked to
+     *         "global warming reason" like problem_global_warming_reasons.json, whose table page lists them
+     */
+    function list_global_warming_reasons_ui(): phrase_list_ui
+    {
+        $t_trp = new test_triples($this->env);
+        $lst = $this->list_global_problems_two_reasons();
+        $lst->add($t_trp->global_warming_reason()->phrase());
+        $lst->add($t_trp->climate_gas_emissions_global_warming_reason()->phrase());
+        $lst->add($t_trp->heat_mortality_global_warming_reason()->phrase());
+        return $this->ui_list($lst);
+    }
+
+    /**
+     * @return phrase_list_ui the global problems with "global warming reason" linked only to the
+     *         reason that the row of global warming shows already, like proprietary software in
+     *         problem_main_reasons.json, which has one reason and no list of its reasons
+     */
+    function list_global_warming_one_reason_ui(): phrase_list_ui
+    {
+        $t_trp = new test_triples($this->env);
+        $lst = $this->list_global_problems();
+        $lst->add($t_trp->global_warming_reason()->phrase());
+        $lst->add($t_trp->climate_gas_emissions_global_warming_reason()->phrase());
+        return $this->ui_list($lst);
+    }
+
+    /**
+     * @return phrase_list_ui the global problems with two solutions of global warming linked to
+     *         "global warming solution" like problem_global_warming_reasons.json, although only one
+     *         of them has a value in the row of global warming
+     */
+    function list_global_warming_solutions_ui(): phrase_list_ui
+    {
+        return $this->ui_list($this->list_global_warming_solutions());
+    }
+
+    /**
+     * @return phrase_list_ui the two solutions of global warming with the heat mortality as a second
+     *         reason, so that the solutions page can name the reason of each solution
+     */
+    function list_global_warming_solutions_with_reasons_ui(): phrase_list_ui
+    {
+        $t_trp = new test_triples($this->env);
+        $lst = $this->list_global_warming_solutions();
+        $lst->add($t_trp->heat_mortality_reason()->phrase());
+        return $this->ui_list($lst);
+    }
+
+    /**
+     * @return phrase_list the global problems with two solutions linked to "global warming solution"
+     */
+    private function list_global_warming_solutions(): phrase_list
+    {
+        $t_trp = new test_triples($this->env);
+        $lst = $this->list_global_warming_one_solution();
+        $lst->add($t_trp->climate_adaptation_solution()->phrase());
+        $lst->add($t_trp->climate_adaptation_global_warming_solution()->phrase());
+        return $lst;
+    }
+
+    /**
+     * @return phrase_list_ui the global problems with "global warming solution" linked only to the
+     *         solution that the row of global warming shows already
+     */
+    function list_global_warming_one_solution_ui(): phrase_list_ui
+    {
+        return $this->ui_list($this->list_global_warming_one_solution());
+    }
+
+    /**
+     * @return phrase_list the global problems with the reduction of the emissions as the only global warming solution
+     */
+    private function list_global_warming_one_solution(): phrase_list
+    {
+        $t_trp = new test_triples($this->env);
+        $lst = $this->list_global_problems();
+        $lst->add($t_trp->global_warming_solution()->phrase());
+        $lst->add($t_trp->reduce_emissions_global_warming_solution()->phrase());
+        return $lst;
+    }
+
+    /**
+     * @return phrase_list the global problems with the heat mortality as a second reason
+     */
+    private function list_global_problems_two_reasons(): phrase_list
+    {
+        $t_trp = new test_triples($this->env);
+        $lst = $this->list_global_problems();
+        $lst->add($t_trp->heat_mortality_reason()->phrase());
+        return $lst;
+    }
+
+    /**
+     * @return phrase_list_ui the global problems with "global warming potential", which gives
+     *         "global warming" the parent "potential" beside "global problem", so that a sort
+     *         by the names including the parents can be told apart from a sort by the names
+     */
+    function list_global_problems_second_parent_ui(): phrase_list_ui
+    {
+        $t_trp = new test_triples($this->env);
+        $lst = $this->list_global_problems();
+        $lst->add($t_trp->global_warming_potential()->phrase());
+        return $this->ui_list($lst);
+    }
+
+    /**
      * @return phrase_list_ui the page phrase of the global issues table, which is the context
      *         that every row of that table is assumed to be about
      */
@@ -1182,6 +1436,93 @@ class test_phrases
         $t_trp = new test_triples($this->env);
         $lst = new phrase_list($this->env->usr1);
         $lst->add($t_trp->global_problem()->phrase());
+        return $this->ui_list($lst);
+    }
+
+    /**
+     * @return phrase_list_ui the global problems with the default sort order of solution_prio.json
+     *         like phrase_list::load_sort_definitions loads it: the condition word with the code
+     *         id, the tiers, the order triple and its assignment to the default tier
+     */
+    function list_global_problems_sorted_ui(): phrase_list_ui
+    {
+        $lst = $this->list_global_problems();
+        $this->add_sort_definitions($lst);
+        return $this->ui_list($lst);
+    }
+
+    /**
+     * @return phrase_list_ui the default sort order of solution_prio.json alone, e.g. for the cache
+     *         of a page whose other phrases come from another fixture
+     */
+    function list_sort_definitions_ui(): phrase_list_ui
+    {
+        $lst = new phrase_list($this->env->usr1);
+        $this->add_sort_definitions($lst);
+        return $this->ui_list($lst);
+    }
+
+    /**
+     * add the default sort order of solution_prio.json like phrase_list::load_sort_definitions loads it
+     *
+     * @param phrase_list $lst the list that gets the condition word, the tier, the order and its assignment
+     * @return void
+     */
+    private function add_sort_definitions(phrase_list $lst): void
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $lst->add($t_wrd->word_numeric_descending()->phrase());
+        $lst->add($t_trp->sort_order_default()->phrase());
+        $lst->add($t_trp->numeric_desc_of_loss()->phrase());
+        $lst->add($t_trp->sort_numeric_desc_of_loss()->phrase());
+    }
+
+    /**
+     * @return phrase_list_ui the order of the loss assigned to the default tier, but with a
+     *         condition word without the code id, so that no condition can be selected
+     */
+    function list_sort_without_condition_ui(): phrase_list_ui
+    {
+        $t_trp = new test_triples($this->env);
+        $trp = $t_trp->numeric_desc_of_loss();
+        $cond_wrd = $trp->get_from()->obj();
+        $cond_wrd->set_code_id_db(null);
+        $order = $t_trp->sort_numeric_desc_of_loss();
+        $order->set_from($trp->phrase());
+        $lst = new phrase_list($this->env->usr1);
+        $lst->add($order->phrase());
+        return $this->ui_list($lst);
+    }
+
+    /**
+     * @return phrase_list_ui the chart assignments of the ranking as the api delivers them: only
+     *         the assignments, with the chart triple, its chart type word and the plotted
+     *         columns nested in each
+     */
+    function list_chart_assignments_ui(): phrase_list_ui
+    {
+        $t_trp = new test_triples($this->env);
+        $lst = new phrase_list($this->env->usr1);
+        $lst->add($t_trp->chart_range_bars_of_loss()->phrase());
+        $lst->add($t_trp->chart_scatter_of_gain_and_effort()->phrase());
+        return $this->ui_list($lst);
+    }
+
+    /**
+     * @return phrase_list_ui the range bars chart assigned to the default tier, but with a chart
+     *         type word without the code id, so that no chart type can be selected
+     */
+    function list_chart_without_type_ui(): phrase_list_ui
+    {
+        $t_trp = new test_triples($this->env);
+        $trp = $t_trp->range_bars_of_loss();
+        $type_wrd = $trp->get_from()->obj();
+        $type_wrd->set_code_id_db(null);
+        $chart = $t_trp->chart_range_bars_of_loss();
+        $chart->set_from($trp->phrase());
+        $lst = new phrase_list($this->env->usr1);
+        $lst->add($chart->phrase());
         return $this->ui_list($lst);
     }
 

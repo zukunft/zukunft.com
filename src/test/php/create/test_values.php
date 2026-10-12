@@ -41,7 +41,6 @@ include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VALUE . 'value.php';
-include_once paths::MODEL_VALUE . 'value_base.php';
 include_once paths::MODEL_VALUE . 'value_geo.php';
 include_once paths::MODEL_VALUE . 'value_list.php';
 include_once paths::MODEL_VALUE . 'value_text.php';
@@ -54,6 +53,8 @@ include_once paths::SHARED_CONST . 'values.php';
 include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::SHARED_TYPES . 'protection_types.php';
 include_once paths::SHARED_TYPES . 'share_types.php';
+include_once paths::SHARED . 'url_var.php';
+include_once html_paths::USER . 'user_message.php';
 include_once html_paths::VALUE . 'value.php';
 include_once html_paths::VALUE . 'value_list.php';
 include_once test_paths::CONST . 'word_names.php';
@@ -65,7 +66,6 @@ use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
-use Zukunft\ZukunftCom\main\php\cfg\value\value_base;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_geo;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_text;
@@ -77,6 +77,8 @@ use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\shared\types\share_types;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\web\value\value as value_ui;
 use Zukunft\ZukunftCom\main\php\web\value\value_list as value_list_ui;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
@@ -94,7 +96,9 @@ class test_values extends test_objects
      */
     function cleanup(string $ts): void
     {
-        parent::cleanup_objects($ts, values::TEST_VALUES, new value_base($this->env->usr1));
+        // the test values are numbers, so the numeric value class is used, because the table
+        // name is derived from the class and the base class has no table (value_bases_main)
+        parent::cleanup_objects($ts, values::TEST_VALUES, new value($this->env->usr1));
     }
 
 
@@ -289,6 +293,33 @@ class test_values extends test_objects
     }
 
     /**
+     * @return value with a factor phrase, so that the number is shown as e.g. "123.46 x" with the
+     *               factor as the symbol behind it instead of naming it (see phrase_types::FACTOR)
+     */
+    function value_factor(): value
+    {
+        $t_wrd = new test_words($this->env);
+        return $this->value_for_phrases([
+            $t_wrd->word()->phrase(),
+            $t_wrd->word_factor()->phrase()]);
+    }
+
+    /**
+     * @return value in million EUR, so that the number is expected to be shown as e.g.
+     *               "123.46 mio €" with the symbols of the scaling and of the unit behind it
+     */
+    function value_mio_eur(): value
+    {
+        $t_wrd = new test_words($this->env);
+        return $this->value_for_phrases([
+            $t_wrd->word()->phrase(),
+            $t_wrd->word_assumed()->phrase(),
+            $t_wrd->word_high()->phrase(),
+            $t_wrd->word_million()->phrase(),
+            $t_wrd->word_eur()->phrase()]);
+    }
+
+    /**
      * @param phrase[] $phrases the phrases that should build the group of the value
      * @param float $number the number assigned to the value (a sample number by default)
      * @return value with the given number assigned to the group of the given phrases
@@ -301,6 +332,17 @@ class test_values extends test_objects
         }
         $grp = $lst->get_grp_id(false);
         return new value($this->env->usr1, $number, $grp);
+    }
+
+    /**
+     * the url of the empty add value form, mirroring test_words::word_new_url, so that the value
+     * workflow tests open the add value views from a factory object (see docs/llm/testing.md)
+     *
+     * @return array the url var keyed array of a value that has no phrase and no number yet
+     */
+    static function value_new_url(): array
+    {
+        return [url_var::ID => 0];
     }
 
     /**
@@ -330,13 +372,44 @@ class test_values extends test_objects
      */
     function config_cache_switch(array $names, bool $allowed): config_numbers
     {
-        $t_phr = new test_phrases($this->env);
-        $grp = $t_phr->list_cache_switch($names)->get_grp_id(false);
-        $val = new value($this->env->usr1, (float)$allowed, $grp);
         $cfg = new config_numbers($this->env->usr1);
         // the config phrases have no database id, so the group id of the value is empty
         // and add() would skip the value, because it adds only objects with an id
-        $cfg->set_lst([$val]);
+        $cfg->set_lst([$this->config_switch_value($names, $allowed)]);
+        return $cfg;
+    }
+
+    /**
+     * @param array $names the complete phrase set of the config switch e.g. a config_numbers::CACHE_ALLOWED_NAMES row
+     * @param bool $allowed true if the switch is on
+     * @return value the config value of the switch with its phrases e.g. to check who can change it
+     */
+    function config_switch_value(array $names, bool $allowed): value
+    {
+        $t_phr = new test_phrases($this->env);
+        $grp = $t_phr->list_cache_switch($names)->get_grp_id(false);
+        return new value($this->env->usr1, (float)$allowed, $grp);
+    }
+
+    /**
+     * a pod configuration with several switches set to false, e.g. to switch off the symbols and
+     * the aliases of a value selection at once (mirrors config_cache_switch for one switch)
+     *
+     * @param array $names_lst the phrase name lists of the switches, each leaf first
+     * @return config_numbers the pod configuration with every given switch set to false
+     */
+    function config_switches_off(array $names_lst): config_numbers
+    {
+        $t_phr = new test_phrases($this->env);
+        $val_lst = [];
+        foreach ($names_lst as $names) {
+            $grp = $t_phr->list_cache_switch($names)->get_grp_id(false);
+            $val_lst[] = new value($this->env->usr1, (float)false, $grp);
+        }
+        $cfg = new config_numbers($this->env->usr1);
+        // the config phrases have no database id, so the group id of the value is empty
+        // and add() would skip the value, because it adds only objects with an id
+        $cfg->set_lst($val_lst);
         return $cfg;
     }
 
@@ -549,9 +622,6 @@ class test_values extends test_objects
     }
 
     /**
-     * @return value with the inhabitants of the canton of zurich
-     */
-    /**
      * @return value the inhabitants of the canton Zurich scaled with the symbol word "mio",
      *               so that the symbol tooltip of the related word "million" can be tested
      */
@@ -568,11 +638,22 @@ class test_values extends test_objects
         return $tl->ui_value($this->people_zh_canton_mio_symbol());
     }
 
+    /**
+     * @return value with the inhabitants of the canton of zurich
+     */
     function people_zh_canton_mio(): value
     {
         $t_grp = new test_groups($this->env);
         $grp = $t_grp->group_canton();
         return new value($this->env->usr1, values::CANTON_ZH_INHABITANTS_2020_IN_MIO, $grp);
+    }
+
+    /**
+     * @return value_ui the empty value that the value add view starts with, e.g. to test the phrase preset
+     */
+    function value_add_ui(): value_ui
+    {
+        return new value_ui();
     }
 
     function people_zh_canton_mio_ui(): value_ui
@@ -686,19 +767,42 @@ class test_values extends test_objects
      */
     function value_list_solution_prio(): value_list
     {
+        return $this->value_list_of_rows($this->solution_prio_rows());
+    }
+
+    /**
+     * the ranking values without the first problem, so that a test can show that row from the
+     * results instead (see test_results::result_list_solution_prio_first_row)
+     *
+     * @return value_list the cost and gain values of every global problem but the first
+     */
+    function value_list_solution_prio_other_rows(): value_list
+    {
+        return $this->value_list_of_rows(array_slice($this->solution_prio_rows(), 1));
+    }
+
+    /**
+     * @return value_list_ui the frontend ranking values without the first problem
+     */
+    function value_list_solution_prio_other_rows_ui(): value_list_ui
+    {
+        $tl = new test_lib();
+        return $tl->list_to_ui($this->value_list_solution_prio_other_rows(), [api_types::INCL_PHRASES]);
+    }
+
+    /**
+     * per problem the phrase, the loss, the solution phrase, the gain and whether the two
+     * numbers are estimated, in the order of the start page ranking
+     *
+     * shared with test_results, which builds the first row as results instead of values
+     *
+     * @return array one entry per row of the start page ranking
+     */
+    function solution_prio_rows(): array
+    {
         $t_wrd = new test_words($this->env);
         $t_trp = new test_triples($this->env);
-        $potential = $t_wrd->word_potential()->phrase();
-        $loss = $t_wrd->word_loss()->phrase();
-        $gain = $t_wrd->word_gain()->phrase();
-        $trillion = $t_wrd->word_trillion()->phrase();
-        $billion = $t_wrd->word_billion()->phrase();
-        $eur = $t_wrd->word_eur()->phrase();
-        $htp = $t_wrd->word_htp()->phrase();
-        $assumed = $t_wrd->word_assumed()->phrase();
-        // per problem the phrase, the loss, the solution phrase, the gain and whether the two
-        // numbers are estimated, in the order of the start page ranking
-        $prio_lst = [
+        return [
             [$t_trp->global_warming()->phrase(), 31.5, $t_trp->reduce_emissions()->phrase(), 35.2, false],
             [$t_wrd->word_populism()->phrase(), 23.8, $t_trp->avoid_wrong_decisions()->phrase(), 34.1, false],
             [$t_wrd->word_poverty()->phrase(), 20.4, $t_wrd->word_research()->phrase(), 34.1, false],
@@ -713,18 +817,72 @@ class test_values extends test_objects
             [$t_trp->gdp_mismeasurement()->phrase(), 2.5, $t_trp->gross_domestic_usage()->phrase(), 4, true],
             [$t_trp->proprietary_software()->phrase(), 1.8, $t_trp->free_software()->phrase(), 3, true],
         ];
+    }
+
+    /**
+     * the loss and the gain of each given ranking row as a value
+     *
+     * @param array $rows the rows of solution_prio_rows that should be built
+     * @return value_list the cost and gain values of the given rows
+     */
+    private function value_list_of_rows(array $rows): value_list
+    {
         $lst = new value_list($this->env->usr1);
-        foreach ($prio_lst as [$problem, $loss_nbr, $solution, $gain_nbr, $is_assumed]) {
-            $loss_phr = [$problem, $potential, $loss, $trillion, $eur];
-            $gain_phr = [$problem, $solution, $potential, $gain, $billion, $htp];
-            if ($is_assumed) {
-                $loss_phr[] = $assumed;
-                $gain_phr[] = $assumed;
-            }
-            $lst->add($this->value_for_phrases($loss_phr, $loss_nbr));
-            $lst->add($this->value_for_phrases($gain_phr, $gain_nbr));
+        foreach ($rows as [$problem, $loss_nbr, $solution, $gain_nbr, $is_assumed]) {
+            $lst->add($this->value_for_phrases(
+                $this->solution_prio_loss_phrases($problem, $is_assumed), $loss_nbr));
+            $lst->add($this->value_for_phrases(
+                $this->solution_prio_gain_phrases($problem, $solution, $is_assumed), $gain_nbr));
         }
         return $lst;
+    }
+
+    /**
+     * the phrases of the potential loss of a ranking row, shared with test_results
+     *
+     * @param phrase $problem the problem of the row
+     * @param bool $is_assumed true if the number is an estimate and not taken from a source
+     * @return array the phrases of the potential loss in trillion EUR
+     */
+    function solution_prio_loss_phrases(phrase $problem, bool $is_assumed): array
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $phrases = [
+            $problem,
+            $t_trp->potential_loss()->phrase(),
+            $t_wrd->word_trillion()->phrase(),
+            $t_wrd->word_eur()->phrase()
+        ];
+        if ($is_assumed) {
+            $phrases[] = $t_wrd->word_assumed()->phrase();
+        }
+        return $phrases;
+    }
+
+    /**
+     * the phrases of the potential gain of a ranking row, shared with test_results
+     *
+     * @param phrase $problem the problem of the row
+     * @param phrase $solution the solution of the row
+     * @param bool $is_assumed true if the number is an estimate and not taken from a source
+     * @return array the phrases of the potential gain in billion htp
+     */
+    function solution_prio_gain_phrases(phrase $problem, phrase $solution, bool $is_assumed): array
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $phrases = [
+            $problem,
+            $solution,
+            $t_trp->potential_gain()->phrase(),
+            $t_wrd->word_billion()->phrase(),
+            $t_wrd->word_htp()->phrase()
+        ];
+        if ($is_assumed) {
+            $phrases[] = $t_wrd->word_assumed()->phrase();
+        }
+        return $phrases;
     }
 
     /**
@@ -734,6 +892,265 @@ class test_values extends test_objects
     {
         $tl = new test_lib();
         return $tl->list_to_ui($this->value_list_solution_prio(), [api_types::INCL_PHRASES]);
+    }
+
+    /**
+     * the ranking values plus the loss that the reason of the first problem causes, with the
+     * phrases of solution_prio.json: the problem, the word "reason", the reason and the
+     * potential loss, so that the column of the loss of the reason can be tested
+     *
+     * @return value_list the ranking values plus the potential loss of the climate gas emissions
+     */
+    function value_list_solution_prio_reason(): value_list
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $lst = $this->value_list_solution_prio();
+        $lst->add($this->value_for_phrases([
+            $t_trp->global_warming()->phrase(),
+            $t_wrd->word_reason()->phrase(),
+            $t_trp->climate_gas_emissions()->phrase(),
+            $t_trp->potential_loss()->phrase(),
+            $t_wrd->word_trillion()->phrase(),
+            $t_wrd->word_eur()->phrase()
+        ], 31.5));
+        return $lst;
+    }
+
+    /**
+     * @return value_list_ui the frontend ranking values plus the loss of the reason for unit testing
+     */
+    function value_list_solution_prio_reason_ui(): value_list_ui
+    {
+        $tl = new test_lib();
+        return $tl->list_to_ui($this->value_list_solution_prio_reason(), [api_types::INCL_PHRASES]);
+    }
+
+    /**
+     * the ranking values plus the losses of two reasons of global warming, so that the reason
+     * cell names more than one reason and the reasons page has more than one row
+     *
+     * @return value_list the ranking values plus the loss of the climate gas emissions and of the heat mortality
+     */
+    function value_list_solution_prio_reasons(): value_list
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $lst = $this->value_list_solution_prio_reason();
+        $lst->add($this->value_for_phrases([
+            $t_trp->global_warming()->phrase(),
+            $t_wrd->word_reason()->phrase(),
+            $t_trp->heat_mortality()->phrase(),
+            $t_trp->potential_loss()->phrase(),
+            $t_wrd->word_trillion()->phrase(),
+            $t_wrd->word_eur()->phrase()
+        ], 0.222));
+        return $lst;
+    }
+
+    /**
+     * the ranking values with two reasons of global warming plus the gain of a solution of the
+     * heat mortality, which is bigger than the gain of the solution of global warming, so that a
+     * start page that took it into the row would show this solution instead
+     *
+     * @return value_list the ranking values plus the losses of two reasons and the gain of the solution of one
+     */
+    function value_list_solution_prio_reason_solution(): value_list
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $lst = $this->value_list_solution_prio_reasons();
+        $lst->add($this->value_for_phrases([
+            $t_trp->global_warming()->phrase(),
+            $t_wrd->word_reason()->phrase(),
+            $t_trp->heat_mortality()->phrase(),
+            $t_wrd->word_research()->phrase(),
+            $t_trp->potential_gain()->phrase(),
+            $t_wrd->word_billion()->phrase(),
+            $t_wrd->word_htp()->phrase()
+        ], 50));
+        return $lst;
+    }
+
+    /**
+     * @return value_list_ui the frontend ranking values plus the gain of the solution of a reason for unit testing
+     */
+    function value_list_solution_prio_reason_solution_ui(): value_list_ui
+    {
+        $tl = new test_lib();
+        return $tl->list_to_ui($this->value_list_solution_prio_reason_solution(), [api_types::INCL_PHRASES]);
+    }
+
+    /**
+     * the ranking values with two reasons of global warming plus the gain of a solution of each
+     * reason, so that the reduction of the emissions has a gain for the whole problem and a
+     * smaller one for the climate gas emissions, which the solutions page must not show side by side
+     *
+     * @return value_list the ranking values plus the losses of two reasons and the gain of the solution of each
+     */
+    function value_list_global_warming_solutions(): value_list
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $lst = $this->value_list_solution_prio_reasons();
+        $reason_solutions = [
+            [$t_trp->climate_gas_emissions(), $t_trp->reduce_emissions(), 30],
+            [$t_trp->heat_mortality(), $t_trp->climate_adaptation(), 13.31]
+        ];
+        foreach ($reason_solutions as [$reason, $solution, $gain]) {
+            $lst->add($this->value_for_phrases([
+                $t_trp->global_warming()->phrase(),
+                $t_wrd->word_reason()->phrase(),
+                $reason->phrase(),
+                $solution->phrase(),
+                $t_trp->potential_gain()->phrase(),
+                $t_wrd->word_billion()->phrase(),
+                $t_wrd->word_htp()->phrase()
+            ], $gain));
+        }
+        return $lst;
+    }
+
+    /**
+     * @return value_list_ui the frontend values of the solutions of global warming for unit testing
+     */
+    function value_list_global_warming_solutions_ui(): value_list_ui
+    {
+        $tl = new test_lib();
+        return $tl->list_to_ui($this->value_list_global_warming_solutions(), [api_types::INCL_PHRASES]);
+    }
+
+    /**
+     * @return value_list_ui the frontend ranking values plus the losses of two reasons for unit testing
+     */
+    function value_list_solution_prio_reasons_ui(): value_list_ui
+    {
+        $tl = new test_lib();
+        return $tl->list_to_ui($this->value_list_solution_prio_reasons(), [api_types::INCL_PHRASES]);
+    }
+
+    /**
+     * the ranking values with a second solution of global warming, whose gain is smaller than the
+     * gain of the first solution, so that the solution cell of that row names more than one
+     *
+     * @return value_list the ranking values plus the gain of a second solution of global warming
+     */
+    function value_list_solution_prio_two_solutions(): value_list
+    {
+        $t_trp = new test_triples($this->env);
+        $lst = $this->value_list_solution_prio();
+        $lst->add($this->value_for_phrases($this->solution_prio_gain_phrases(
+            $t_trp->global_warming()->phrase(), $t_trp->basic_income()->phrase(), false), 5));
+        return $lst;
+    }
+
+    /**
+     * the ranking values with a second solution of global warming whose gain is bigger than the
+     * gain of the first solution, so that the cell shows the second solution
+     *
+     * @return value_list the ranking values plus a bigger gain of a second solution of global warming
+     */
+    function value_list_solution_prio_bigger_second_solution(): value_list
+    {
+        $t_trp = new test_triples($this->env);
+        $lst = $this->value_list_solution_prio();
+        $lst->add($this->value_for_phrases($this->solution_prio_gain_phrases(
+            $t_trp->global_warming()->phrase(), $t_trp->basic_income()->phrase(), false), 50));
+        return $lst;
+    }
+
+    /**
+     * @return value_list_ui the frontend ranking values with a bigger second solution of global warming for unit testing
+     */
+    function value_list_solution_prio_bigger_second_solution_ui(): value_list_ui
+    {
+        $tl = new test_lib();
+        return $tl->list_to_ui($this->value_list_solution_prio_bigger_second_solution(), [api_types::INCL_PHRASES]);
+    }
+
+    /**
+     * @return value_list_ui the frontend ranking values with two solutions of global warming for unit testing
+     */
+    function value_list_solution_prio_two_solutions_ui(): value_list_ui
+    {
+        $tl = new test_lib();
+        return $tl->list_to_ui($this->value_list_solution_prio_two_solutions(), [api_types::INCL_PHRASES]);
+    }
+
+    /**
+     * the ranking values with the loss of the reason, the range of the loss of the first problem
+     * and per problem a number in each minor and marginal column, so that every selection of the
+     * start page sub menus shows its own columns: the main tier the reason columns, the minor
+     * tier the loss in percent of the GDP and of the htp, the initial effort and the loss
+     * reduction, the full table the reward ratio, and the range selection the bounds
+     *
+     * @return value_list the ranking values plus the numbers of every column tier and the range bounds
+     */
+    function value_list_start_page(): value_list
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $lst = $this->value_list_solution_prio_reason();
+        $loss_phr = $this->solution_prio_loss_phrases($t_trp->global_warming()->phrase(), false);
+        $lst->add($this->value_for_phrases(array_merge($loss_phr, [$t_wrd->word_low()->phrase()]), 25));
+        $lst->add($this->value_for_phrases(array_merge($loss_phr, [$t_wrd->word_high()->phrase()]), 40));
+        $pct = $t_wrd->word_percent()->phrase();
+        $loss = $t_trp->potential_loss()->phrase();
+        foreach ($this->solution_prio_rows() as [$problem, $loss_nbr, , $gain_nbr, $is_assumed]) {
+            // test numbers derived from the row, so that each column has a distinct number per
+            // problem; a share is stored as the decimal ratio (docs/llm/json_structure.md)
+            $reduction = round($gain_nbr / 100, 3);
+            $effort = round($gain_nbr * 10);
+            $rows = [
+                [[$problem, $loss, $pct, $t_wrd->word_gdp()->phrase()], round($loss_nbr / 105, 3)],
+                [[$problem, $loss, $pct, $t_wrd->word_htp()->phrase()], round($loss_nbr / 210, 3)],
+                [[$problem, $t_trp->loss_reduction()->phrase(), $pct], $reduction],
+                [[$problem, $t_trp->initial_effort()->phrase(), $t_trp->person_year()->phrase()], $effort],
+                [[$problem, $t_trp->reward_ratio()->phrase(), $t_wrd->word_trillion()->phrase(),
+                    $t_wrd->word_eur()->phrase()], round($loss_nbr * $reduction / $effort, 4)],
+            ];
+            foreach ($rows as [$phrases, $number]) {
+                if ($is_assumed) {
+                    $phrases[] = $t_wrd->word_assumed()->phrase();
+                }
+                $lst->add($this->value_for_phrases($phrases, $number));
+            }
+        }
+        return $lst;
+    }
+
+    /**
+     * @return value_list_ui the frontend ranking values of the start page selections for unit testing
+     */
+    function value_list_start_page_ui(): value_list_ui
+    {
+        $tl = new test_lib();
+        return $tl->list_to_ui($this->value_list_start_page(), [api_types::INCL_PHRASES]);
+    }
+
+    /**
+     * the potential loss of every problem of the start page ranking without the gain, so that
+     * every value carries the triple "potential loss" as a whole
+     *
+     * @return value_list the loss values of the ranking
+     */
+    function value_list_solution_prio_losses(): value_list
+    {
+        $lst = new value_list($this->env->usr1);
+        foreach ($this->solution_prio_rows() as [$problem, $loss_nbr, , , $is_assumed]) {
+            $lst->add($this->value_for_phrases(
+                $this->solution_prio_loss_phrases($problem, $is_assumed), $loss_nbr));
+        }
+        return $lst;
+    }
+
+    /**
+     * @return value_list_ui the loss values of the ranking for frontend unit testing
+     */
+    function value_list_solution_prio_losses_ui(): value_list_ui
+    {
+        $tl = new test_lib();
+        return $tl->list_to_ui($this->value_list_solution_prio_losses(), [api_types::INCL_PHRASES]);
     }
 
     /**
@@ -760,6 +1177,36 @@ class test_values extends test_objects
     {
         $tl = new test_lib();
         return $tl->list_to_ui($this->value_list_solution_prio_measured(), [api_types::INCL_PHRASES]);
+    }
+
+    /**
+     * the ranking values of the start page plus a number of a problem whose only column is the
+     * "cost" column, which is a main column, so that the simple table of the mayor columns
+     * would show the row of that number without any number
+     *
+     * @return value_list the ranking values plus one number in a main column
+     */
+    function value_list_solution_prio_main_column(): value_list
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $lst = $this->value_list_solution_prio();
+        $lst->add($this->value_for_phrases([
+            $t_trp->global_warming()->phrase(),
+            $t_wrd->word_cost()->phrase(),
+            $t_wrd->word_2024()->phrase()
+        ]));
+        return $lst;
+    }
+
+    /**
+     * @return value_list_ui the frontend ranking values plus the main column number
+     */
+    function value_list_solution_prio_main_column_ui(): value_list_ui
+    {
+        $tl = new test_lib();
+        return $tl->list_to_ui(
+            $this->value_list_solution_prio_main_column(), [api_types::INCL_PHRASES]);
     }
 
     /**
@@ -878,8 +1325,40 @@ class test_values extends test_objects
     }
 
     /**
-     * the loss of two problems in a unit that is a triple typed "measure" (gram per kWh), so
-     * that the table header is expected to show the triple behind the "in" like a measure word
+     * the potential loss like on the start page: in trillion EUR for two problems and in htp only
+     * for global warming but with the biggest number, so that the unit of most values must lead
+     *
+     * @return value_list the potential loss in trillion EUR of two problems and in htp of one
+     */
+    function value_list_unit_majority(): value_list
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $potential = $t_wrd->word_potential()->phrase();
+        $loss = $t_wrd->word_loss()->phrase();
+        $trillion = $t_wrd->word_trillion()->phrase();
+        $eur = $t_wrd->word_eur()->phrase();
+        $gw = $t_trp->global_warming()->phrase();
+        $populism = $t_wrd->word_populism()->phrase();
+        $lst = new value_list($this->env->usr1);
+        $lst->add($this->value_for_phrases([$gw, $potential, $loss, $t_wrd->word_htp()->phrase()], 31.5));
+        $lst->add($this->value_for_phrases([$gw, $potential, $loss, $trillion, $eur], 2.2));
+        $lst->add($this->value_for_phrases([$populism, $potential, $loss, $trillion, $eur], 4));
+        return $lst;
+    }
+
+    /**
+     * @return value_list_ui the potential loss mostly in trillion EUR for frontend unit testing
+     */
+    function value_list_unit_majority_ui(): value_list_ui
+    {
+        $tl = new test_lib();
+        return $tl->list_to_ui($this->value_list_unit_majority(), [api_types::INCL_PHRASES]);
+    }
+
+    /**
+     * the loss of two problems in a unit that is a triple typed "measure unit" (gram per kWh), so
+     * that the table header is expected to show the triple behind the "in" like a unit word
      *
      * @return value_list the loss of global warming and of populism in gram per kWh
      */
@@ -902,6 +1381,35 @@ class test_values extends test_objects
     {
         $tl = new test_lib();
         return $tl->list_to_ui($this->value_list_unit_triple(), [api_types::INCL_PHRASES]);
+    }
+
+    /**
+     * the loss of two problems as a share of the GDP, where "GDP" names what is measured and
+     * not the unit (typed "measure non unit"), so that the table header is expected to name it
+     * behind the unit and no row or column is expected for it
+     *
+     * @return value_list the loss of global warming and of populism in percent of the GDP
+     */
+    function value_list_measure_non_unit(): value_list
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $loss = $t_wrd->word_loss()->phrase();
+        $pct = $t_wrd->word_percent()->phrase();
+        $gdp = $t_wrd->word_gdp()->phrase();
+        $lst = new value_list($this->env->usr1);
+        $lst->add($this->value_for_phrases([$t_trp->global_warming()->phrase(), $loss, $pct, $gdp], 0.32));
+        $lst->add($this->value_for_phrases([$t_wrd->word_populism()->phrase(), $loss, $pct, $gdp], 0.24));
+        return $lst;
+    }
+
+    /**
+     * @return value_list_ui the loss as a share of the GDP for frontend unit testing
+     */
+    function value_list_measure_non_unit_ui(): value_list_ui
+    {
+        $tl = new test_lib();
+        return $tl->list_to_ui($this->value_list_measure_non_unit(), [api_types::INCL_PHRASES]);
     }
 
     /**

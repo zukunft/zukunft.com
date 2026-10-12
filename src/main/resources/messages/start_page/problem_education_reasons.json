@@ -1,0 +1,445 @@
+{
+  "version": "0.0.3",
+  "data_version": "0.0.1",
+  "time": "2026-10-08 12:00:00",
+  "user": "timon",
+  "selection": [
+    "education reasons that cause costs"
+  ],
+  "description": "The most relevant reasons why a lack of education causes costs, each linked to the lack of education with 'can cause' and quantified by the studies that report it for the world and per country or region: the lifetime earnings lost by the current generation of students because of the learning losses of the COVID-19 school closures (World Bank, UNESCO, UNICEF 2021 and the World Bank 2022 update), the earnings lost because girls do not complete twelve years of education (World Bank 2018 Missed Opportunities) and the private return of about 9 percent per year of schooling (Psacharopoulos & Patrinos 2018); the GDP that the world loses until 2100 because two thirds of the youth do not reach basic skills (Gust, Hanushek & Woessmann 2024); the crime that a higher high school graduation rate would avoid (Lochner & Moretti 2004); the adult mortality (Balaj et al. 2024) and the child mortality (Balaj et al. 2021) that fall with every year of education; and the unemployment rate by educational attainment (Eurostat) and the number of out-of-school children (UNESCO UIS 2025). The learning poverty, the share of ten year olds who cannot read and understand a simple text, and the solution are stated in problem_education.json instead, because they are the row of the global problem ranking of the start page. The reasons start from the triple 'lack of education' and not from the word 'education' itself, because 'income loss due to education' would read as if education caused the loss, while the costs are caused by too little or too poor education; the names '<reason> due to lack of education' and 'lack of education' are not used by any other import file. Every number is taken from the named source as reported; a country that a study does not report is left out and never estimated. A share is stored as the decimal ratio, a loss as a positive number and a change with its sign; a reduction of a risk that the source reports as the gain of more education is stored positive as reported. Each study has its own definition of education, its own sample and its own metric, so numbers of different studies are not comparable without reading the source description; the unemployment rates and the out-of-school children are statistics that their source does not attribute to the lack of education as a cause, so they do not carry a '<reason> due to lack of education' triple. Every amount of money is stated in euro: the US dollar figure of the source is converted with the ECB 2023 annual average of 1.0813 USD per EUR (the value of GDP.json) whatever the price base year of the source, and the source figure is kept in the description of the value. A value of a reason carries the triple '<reason> due to lack of education' and not the word 'education' itself, because a value that names a global problem directly is a row of the global problem ranking of the start page, where only the potential loss and the solution of a problem belong.",
+  "words": [
+    {
+      "name": "education"
+    },
+    {
+      "name": "lack",
+      "description": "the state of not having enough of something that is needed"
+    },
+    {
+      "name": "income"
+    },
+    {
+      "name": "loss"
+    },
+    {
+      "name": "GDP"
+    },
+    {
+      "name": "current"
+    },
+    {
+      "name": "value"
+    },
+    {
+      "name": "present"
+    },
+    {
+      "name": "crime"
+    },
+    {
+      "name": "cost"
+    },
+    {
+      "name": "mortality"
+    },
+    {
+      "name": "risk"
+    },
+    {
+      "name": "reduction"
+    },
+    {
+      "name": "unemployment"
+    },
+    {
+      "name": "rate"
+    },
+    {
+      "name": "graduation"
+    },
+    {
+      "name": "return"
+    },
+    {
+      "name": "private",
+      "description": "belonging to or received by a single person and not by the society as a whole"
+    },
+    {
+      "name": "year"
+    },
+    {
+      "name": "schooling",
+      "description": "the formal education received at a school, counted in completed years"
+    },
+    {
+      "name": "secondary",
+      "description": "the level of education after primary school, which is completed after about twelve years of schooling"
+    },
+    {
+      "name": "lower"
+    },
+    {
+      "name": "tertiary",
+      "description": "the level of education after secondary school e.g. at a university or a college (ISCED 2011 levels 5 to 8)"
+    },
+    {
+      "name": "out-of-school",
+      "description": "of school age but not enrolled in or not attending a school"
+    },
+    {
+      "name": "child"
+    },
+    {
+      "name": "girl"
+    },
+    {
+      "name": "man"
+    },
+    {
+      "name": "mother"
+    },
+    {
+      "name": "father"
+    },
+    {
+      "name": "person"
+    },
+    {
+      "name": "EUR"
+    },
+    {
+      "name": "percent"
+    },
+    {
+      "name": "million"
+    },
+    {
+      "name": "billion"
+    },
+    {
+      "name": "trillion"
+    },
+    {
+      "name": "low"
+    },
+    {
+      "name": "high"
+    },
+    {
+      "name": "world"
+    },
+    {
+      "name": "Sub-Saharan Africa",
+      "description": "the part of Africa south of the Sahara desert",
+      "refs": [
+        {
+          "name": "Sub-Saharan_Africa",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "South Asia",
+      "description": "the southern region of Asia with India, Pakistan, Bangladesh, Nepal, Sri Lanka, Bhutan, the Maldives and usually Afghanistan",
+      "refs": [
+        {
+          "name": "South_Asia",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Europe",
+      "description": "the continent west of Asia, north of Africa and east of the Atlantic Ocean",
+      "refs": [
+        {
+          "name": "Europe",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q46",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "North America",
+      "description": "the continent of Canada, the United States, Mexico, Central America and the Caribbean",
+      "refs": [
+        {
+          "name": "North_America",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q49",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "European Union"
+    },
+    {
+      "name": "Germany"
+    },
+    {
+      "name": "Switzerland"
+    },
+    {
+      "name": "United States"
+    },
+    {
+      "name": "1990"
+    },
+    {
+      "name": "2021"
+    },
+    {
+      "name": "2022"
+    },
+    {
+      "name": "2023"
+    },
+    {
+      "name": "2100"
+    }
+  ],
+  "triples": [
+    {
+      "from": "lack",
+      "verb": "of",
+      "to": "education",
+      "description": "too little or too poor education: children who do not go to school, leave it early or do not reach basic skills like reading a simple text while they are at school"
+    },
+    {
+      "name": "income loss",
+      "from": "loss",
+      "verb": "of",
+      "to": "income"
+    },
+    {
+      "name": "GDP loss",
+      "from": "loss",
+      "verb": "of",
+      "to": "GDP"
+    },
+    {
+      "name": "current GDP",
+      "from": "GDP",
+      "verb": "kind of",
+      "to": "current",
+      "description": "the GDP of the year in which a study is made, used to state a future amount as a multiple of one year of today's economic output"
+    },
+    {
+      "name": "present value",
+      "from": "value",
+      "verb": "kind of",
+      "to": "present"
+    },
+    {
+      "name": "mortality risk",
+      "from": "risk",
+      "verb": "of",
+      "to": "mortality"
+    },
+    {
+      "name": "mortality risk reduction",
+      "from": "reduction",
+      "verb": "of",
+      "to": "mortality risk",
+      "description": "the reduction of the all-cause mortality risk of adults compared to adults with less education"
+    },
+    {
+      "name": "child mortality",
+      "from": "mortality",
+      "verb": "of",
+      "to": "child",
+      "description": "the death of children before the age of 5"
+    },
+    {
+      "name": "child mortality reduction",
+      "from": "reduction",
+      "verb": "of",
+      "to": "child mortality",
+      "description": "the reduction of the under-5 mortality of the children of better educated parents compared to the children of parents with less education"
+    },
+    {
+      "name": "unemployment rate",
+      "from": "rate",
+      "verb": "of",
+      "to": "unemployment"
+    },
+    {
+      "name": "graduation rate",
+      "from": "rate",
+      "verb": "of",
+      "to": "graduation",
+      "description": "the share of a population that has completed a school level e.g. the high school"
+    },
+    {
+      "name": "private return",
+      "from": "return",
+      "verb": "kind of",
+      "to": "private",
+      "description": "the increase of the earnings of a person caused by more education"
+    },
+    {
+      "from": "year",
+      "verb": "of",
+      "to": "schooling"
+    },
+    {
+      "name": "secondary education",
+      "from": "education",
+      "verb": "kind of",
+      "to": "secondary",
+      "description": "a completed secondary education, which is about twelve years of schooling"
+    },
+    {
+      "name": "lower secondary education",
+      "from": "secondary education",
+      "verb": "kind of",
+      "to": "lower",
+      "description": "at most a lower secondary education: less than primary, primary and lower secondary education (ISCED 2011 levels 0 to 2)"
+    },
+    {
+      "name": "tertiary education",
+      "from": "education",
+      "verb": "kind of",
+      "to": "tertiary"
+    },
+    {
+      "name": "out-of-school child",
+      "from": "child",
+      "verb": "kind of",
+      "to": "out-of-school",
+      "description": "a child, adolescent or youth of primary or secondary school age who is not in school"
+    },
+    {
+      "name": "income loss due to lack of education",
+      "from": "lack of education",
+      "verb": "can cause",
+      "to": "income loss",
+      "description": "a person who learns less earns less during the whole working life"
+    },
+    {
+      "name": "GDP loss due to lack of education",
+      "from": "lack of education",
+      "verb": "can cause",
+      "to": "GDP loss",
+      "description": "a workforce with less skills grows the economy more slowly"
+    },
+    {
+      "name": "crime due to lack of education",
+      "from": "lack of education",
+      "verb": "can cause",
+      "to": "crime",
+      "description": "a person with less schooling is more likely to commit a crime and to be arrested or incarcerated"
+    },
+    {
+      "name": "mortality due to lack of education",
+      "from": "lack of education",
+      "verb": "can cause",
+      "to": "mortality",
+      "description": "an adult with less education has a higher risk to die"
+    },
+    {
+      "name": "child mortality due to lack of education",
+      "from": "lack of education",
+      "verb": "can cause",
+      "to": "child mortality",
+      "description": "the children of parents with less education die more often before the age of 5"
+    },
+    {
+      "name": "unemployment due to lack of education",
+      "from": "lack of education",
+      "verb": "can cause",
+      "to": "unemployment",
+      "description": "a person with less education finds a job less easily; the unemployment rates by educational attainment in this file are statistics that their source does not attribute to the education as a cause"
+    }
+  ],
+  "sources": [
+    {
+      "name": "World Bank UNESCO UNICEF (2021) The State of the Global Education Crisis",
+      "description": "World Bank, UNESCO, UNICEF (2021): The State of the Global Education Crisis: A Path to Recovery. The current generation of students risks losing USD 17 trillion in lifetime earnings in present value, or about 14 percent of today's global GDP, as a result of the COVID-19 school closures, compared to the USD 10 trillion estimated in 2020; the share of children in learning poverty in low and middle income countries, 53 percent before the pandemic, could reach 70 percent.",
+      "url": "https://www.unicef.org/turkiye/en/press-releases/learning-losses-covid-19-could-cost-generation-students-close-17-trillion-lifetime"
+    },
+    {
+      "name": "World Bank (2022) press release 70 percent of 10-year-olds in learning poverty",
+      "description": "World Bank press release of 23 June 2022 on The State of Global Learning Poverty: 2022 Update by the World Bank, UNESCO, UNICEF, FCDO, USAID and the Bill & Melinda Gates Foundation. The learning poverty in low and middle income countries rose from 57 percent before the pandemic to an estimated 70 percent; the current generation of students is at risk of losing USD 21 trillion in potential lifetime earnings in present value, the equivalent of 17 percent of today's global GDP, up from the USD 17 trillion estimated in 2021.",
+      "url": "https://www.worldbank.org/en/news/press-release/2022/06/23/70-of-10-year-olds-now-in-learning-poverty-unable-to-read-and-understand-a-simple-text"
+    },
+    {
+      "name": "World Bank (2018) Missed Opportunities: The High Cost of Not Educating Girls",
+      "description": "World Bank (2018): Missed Opportunities: The High Cost of Not Educating Girls. Limited educational opportunities for girls and barriers to completing 12 years of education cost countries between USD 15 trillion and 30 trillion in lost lifetime productivity and earnings; globally 89 percent of girls complete primary education, but only 77 percent complete lower secondary education; women with secondary education earn almost twice as much as those with no education.",
+      "url": "https://www.worldbank.org/en/topic/education/publication/missed-opportunities-the-high-cost-of-not-educating-girls"
+    },
+    {
+      "name": "Psacharopoulos & Patrinos (2018)",
+      "description": "Psacharopoulos, G., Patrinos, H. A. (2018): Returns to investment in education: a decennial review of the global literature. Education Economics 26(5), 445-458. Based on 1120 estimates in 139 countries from 1950 to 2014 the private average global return to a year of schooling is 9 percent a year; the social returns to schooling remain high and women have higher average returns.",
+      "doi": "10.1080/09645292.2018.1484426"
+    },
+    {
+      "name": "Gust, Hanushek & Woessmann (2024)",
+      "description": "Gust, S., Hanushek, E. A., Woessmann, L. (2024): Global universal basic skills: Current deficits and implications for world development. Journal of Development Economics 166, 103205. In 159 countries with 98 percent of the world population at least two thirds (67.1 percent) of the youth do not reach basic skills (PISA Level 1). The present value of the world GDP lost until 2100 by missing global universal basic skills is USD 732,127 billion, 543 percent of the current world GDP or 11.6 percent of the discounted future GDP, and the world GDP of 2100 would be 56.0 percent higher (Table 5); the loss in percent of the current GDP is 2844 percent in Sub-Saharan Africa, 2176 percent in South Asia, 195 percent in Europe and 179 percent in North America (Table 6, World Bank regions).",
+      "doi": "10.1016/j.jdeveco.2023.103205"
+    },
+    {
+      "name": "Lochner & Moretti (2004)",
+      "description": "Lochner, L., Moretti, E. (2004): The Effect of Education on Crime: Evidence from Prison Inmates, Arrests, and Self-Reports. American Economic Review 94(1), 155-189. Schooling significantly reduces the probability of incarceration and arrest; the social savings from the crime reduction of a high school graduation of a man are 14 to 26 percent of the private return. A one percentage point higher high school graduation rate of the men in the United States would have avoided nearly 100,000 crimes in 1990, including nearly 400 murders, and saved as much as USD 1.4 billion, or USD 782 million with the estimates for violent and property crime (figures from the working paper version CCPR-010-03 of August 2002).",
+      "doi": "10.1257/000282804322970751"
+    },
+    {
+      "name": "Balaj et al. (2024)",
+      "description": "Balaj, M., Henson, C. A., Aronsson, A., Aravkin, A. et al., IHME-CHAIN Collaborators (2024): Effects of education on adult mortality: a global systematic review and meta-analysis. The Lancet Public Health 9(3), e155-e165. Each additional year of education reduces the all-cause adult mortality risk by 1.9 percent (95 percent uncertainty interval 1.8 to 2.0), by 2.9 percent for adults aged 18 to 49 and by 0.8 percent for adults older than 70; 12 years of education reduce the risk by 24.5 percent (23.0 to 26.1) and 18 years by 34.3 percent compared to no schooling.",
+      "doi": "10.1016/S2468-2667(23)00306-7"
+    },
+    {
+      "name": "Balaj et al. (2021)",
+      "description": "Balaj, M., York, H. W., Sripada, K., Besnier, E. et al. (2021): Parental education and inequalities in child mortality: a global systematic review and meta-analysis. The Lancet 398(10300), 608-620. The under-5 mortality is 31.0 percent (95 percent CI 29.0 to 32.6) lower for children of mothers with 12 years of education and 17.3 percent (15.0 to 18.8) lower for children of fathers with 12 years of education compared to parents with no education; each additional year of schooling reduces the under-5 mortality by 3.04 percent (2.82 to 3.23) for the education of the mother and by 1.57 percent (1.35 to 1.72) for the education of the father.",
+      "doi": "10.1016/S0140-6736(21)00534-1"
+    },
+    {
+      "name": "Eurostat tps00066 Unemployment rates by educational attainment level",
+      "description": "Eurostat: Unemployment rates (persons aged 25-64) by educational attainment level, dataset tps00066. In 2023 the unemployment rate in the European Union was 10.9 percent for less than primary, primary and lower secondary education (ISCED 0-2), 4.8 percent for upper secondary and post-secondary non-tertiary education and 3.5 percent for tertiary education; for ISCED 0-2 it was 5.9 percent in Germany and 7.6 percent in Switzerland.",
+      "doi": "10.2908/TPS00066"
+    },
+    {
+      "name": "UNESCO UIS GEM (2025) SDG 4 Scorecard",
+      "description": "UNESCO Institute for Statistics and Global Education Monitoring Report (2025): SDG 4 Scorecard progress report on national benchmarks. The global out-of-school population is estimated at 272 million in 2023, 21 million higher than previously thought, mainly because of new population estimates of the United Nations.",
+      "url": "https://www.uis.unesco.org/en/publication/sdg-4-scorecard-countries-track-education-targets"
+    }
+  ],
+  "values": [
+    {"words": ["income loss due to lack of education", "present value", "world", "2021", "trillion", "EUR"], "number": "15.72", "source": "World Bank UNESCO UNICEF (2021) The State of the Global Education Crisis", "description": "the lifetime earnings that the current generation of students risks losing because of the learning losses of the COVID-19 school closures; 17 trillion USD at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["income loss due to lack of education", "present value", "world", "2021", "percent", "current GDP"], "number": "0.14", "source": "World Bank UNESCO UNICEF (2021) The State of the Global Education Crisis", "description": "the lost lifetime earnings of the current generation of students as share of today's global GDP"},
+    {"words": ["income loss due to lack of education", "present value", "world", "2022", "trillion", "EUR"], "number": "19.42", "source": "World Bank (2022) press release 70 percent of 10-year-olds in learning poverty", "description": "the potential lifetime earnings that the current generation of students is at risk of losing, the update of the 2021 estimate; 21 trillion USD at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["income loss due to lack of education", "present value", "world", "2022", "percent", "current GDP"], "number": "0.17", "source": "World Bank (2022) press release 70 percent of 10-year-olds in learning poverty", "description": "the lost lifetime earnings of the current generation of students as share of today's global GDP"},
+    {"words": ["income loss due to lack of education", "girl", "world", "trillion", "EUR", "low"], "number": "13.87", "source": "World Bank (2018) Missed Opportunities: The High Cost of Not Educating Girls", "description": "the lifetime productivity and earnings lost because girls do not complete 12 years of education; 15 trillion USD at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["income loss due to lack of education", "girl", "world", "trillion", "EUR", "high"], "number": "27.74", "source": "World Bank (2018) Missed Opportunities: The High Cost of Not Educating Girls", "description": "the lifetime productivity and earnings lost because girls do not complete 12 years of education; 30 trillion USD at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["income loss due to lack of education", "private return", "year of schooling", "world", "percent"], "number": "0.09", "source": "Psacharopoulos & Patrinos (2018)", "description": "the private average global return to a year of schooling, so the earnings that a person loses per missing year of schooling; average of 1120 estimates in 139 countries from 1950 to 2014"},
+    {"words": ["GDP loss due to lack of education", "present value", "world", "2100", "trillion", "EUR"], "number": "677.08", "source": "Gust, Hanushek & Woessmann (2024)", "description": "the discounted world GDP lost until 2100 because not all children reach basic skills; 732127 billion USD at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["GDP loss due to lack of education", "present value", "world", "2100", "percent", "GDP"], "number": "0.116", "source": "Gust, Hanushek & Woessmann (2024)", "description": "the share of the discounted future world GDP until 2100 that is lost because not all children reach basic skills"},
+    {"words": ["GDP loss due to lack of education", "world", "2100", "percent", "GDP"], "number": "0.56", "source": "Gust, Hanushek & Woessmann (2024)", "description": "the world GDP in the year 2100 would be 56.0 percent higher if all children reached basic skills"},
+    {"words": ["GDP loss due to lack of education", "present value", "world", "2100", "percent", "current GDP"], "number": "5.43", "source": "Gust, Hanushek & Woessmann (2024)", "description": "the discounted GDP lost until 2100 as 543 percent of the current world GDP"},
+    {"words": ["GDP loss due to lack of education", "present value", "Sub-Saharan Africa", "2100", "percent", "current GDP"], "number": "28.44", "source": "Gust, Hanushek & Woessmann (2024)", "description": "the discounted GDP lost until 2100 as 2844 percent of the current GDP of the World Bank region"},
+    {"words": ["GDP loss due to lack of education", "present value", "South Asia", "2100", "percent", "current GDP"], "number": "21.76", "source": "Gust, Hanushek & Woessmann (2024)", "description": "the discounted GDP lost until 2100 as 2176 percent of the current GDP of the World Bank region"},
+    {"words": ["GDP loss due to lack of education", "present value", "Europe", "2100", "percent", "current GDP"], "number": "1.95", "source": "Gust, Hanushek & Woessmann (2024)", "description": "the discounted GDP lost until 2100 as 195 percent of the current GDP of the World Bank region"},
+    {"words": ["GDP loss due to lack of education", "present value", "North America", "2100", "percent", "current GDP"], "number": "1.79", "source": "Gust, Hanushek & Woessmann (2024)", "description": "the discounted GDP lost until 2100 as 179 percent of the current GDP of the World Bank region"},
+    {"words": ["crime due to lack of education", "cost", "graduation rate", "man", "United States", "1990", "billion", "EUR"], "number": "1.295", "source": "Lochner & Moretti (2004)", "description": "the social cost of the crimes that a one percentage point higher high school graduation rate of the men would have avoided in 1990, nearly 100,000 crimes including nearly 400 murders; 1.4 billion USD at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["crime due to lack of education", "cost", "graduation rate", "man", "United States", "1990", "billion", "EUR", "low"], "number": "0.7232", "source": "Lochner & Moretti (2004)", "description": "the same savings with the estimates for violent and property crime instead of the single crimes; 782 million USD at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["crime due to lack of education", "private return", "man", "United States", "percent", "low"], "number": "0.14", "source": "Lochner & Moretti (2004)", "description": "the social savings from the crime reduction of a high school graduation of a man as share of his private return"},
+    {"words": ["crime due to lack of education", "private return", "man", "United States", "percent", "high"], "number": "0.26", "source": "Lochner & Moretti (2004)", "description": "the social savings from the crime reduction of a high school graduation of a man as share of his private return"},
+    {"words": ["mortality due to lack of education", "mortality risk reduction", "year of schooling", "world", "percent"], "number": "0.019", "source": "Balaj et al. (2024)", "description": "the average reduction of the all-cause adult mortality risk per additional year of education, 95 percent uncertainty interval 1.8 to 2.0 percent"},
+    {"words": ["mortality due to lack of education", "mortality risk reduction", "secondary education", "world", "percent"], "number": "0.245", "source": "Balaj et al. (2024)", "description": "adults with 12 years of education compared to adults with no schooling, 95 percent uncertainty interval 23.0 to 26.1 percent"},
+    {"words": ["child mortality due to lack of education", "child mortality reduction", "mother", "year of schooling", "world", "percent"], "number": "0.0304", "source": "Balaj et al. (2021)", "description": "the average reduction of the under-5 mortality per additional year of schooling of the mother, 95 percent CI 2.82 to 3.23 percent"},
+    {"words": ["child mortality due to lack of education", "child mortality reduction", "father", "year of schooling", "world", "percent"], "number": "0.0157", "source": "Balaj et al. (2021)", "description": "the average reduction of the under-5 mortality per additional year of schooling of the father, 95 percent CI 1.35 to 1.72 percent"},
+    {"words": ["child mortality due to lack of education", "child mortality reduction", "mother", "secondary education", "world", "percent"], "number": "0.31", "source": "Balaj et al. (2021)", "description": "children of mothers with 12 years of education compared to mothers with no education, 95 percent CI 29.0 to 32.6 percent"},
+    {"words": ["child mortality due to lack of education", "child mortality reduction", "father", "secondary education", "world", "percent"], "number": "0.173", "source": "Balaj et al. (2021)", "description": "children of fathers with 12 years of education compared to fathers with no education, 95 percent CI 15.0 to 18.8 percent"},
+    {"words": ["unemployment rate", "lower secondary education", "European Union", "2023", "percent"], "number": "0.109", "source": "Eurostat tps00066 Unemployment rates by educational attainment level", "description": "persons aged 25 to 64 with at most a lower secondary education; a statistic that the source does not attribute to the education as a cause, so no due to lack of education triple"},
+    {"words": ["unemployment rate", "tertiary education", "European Union", "2023", "percent"], "number": "0.035", "source": "Eurostat tps00066 Unemployment rates by educational attainment level", "description": "persons aged 25 to 64 with a tertiary education, the comparison to the unemployment rate of the persons with at most a lower secondary education"},
+    {"words": ["unemployment rate", "lower secondary education", "Germany", "2023", "percent"], "number": "0.059", "source": "Eurostat tps00066 Unemployment rates by educational attainment level", "description": "persons aged 25 to 64 with at most a lower secondary education; a statistic that the source does not attribute to the education as a cause, so no due to lack of education triple"},
+    {"words": ["unemployment rate", "lower secondary education", "Switzerland", "2023", "percent"], "number": "0.076", "source": "Eurostat tps00066 Unemployment rates by educational attainment level", "description": "persons aged 25 to 64 with at most a lower secondary education; a statistic that the source does not attribute to the education as a cause, so no due to lack of education triple"},
+    {"words": ["out-of-school child", "world", "2023", "million", "person"], "number": "272", "source": "UNESCO UIS GEM (2025) SDG 4 Scorecard", "description": "the children, adolescents and youth of primary and secondary school age who are not in school; the size of the lack of education and not a cost that the source attributes to it, so no due to lack of education triple"}
+  ]
+}

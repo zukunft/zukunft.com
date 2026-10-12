@@ -108,6 +108,30 @@ class math_tests
         $math_text = " -8 / 52";
         $result = $calc->parse($math_text);
         $t->assert($ts . 'calc leading minus "' . $math_text . '"', round((float)$result, 4), -0.1538);
+
+        // php writes a small intermediate result in scientific notation, so the sign of the
+        // exponent is part of the number and never split off as an operator
+        $math_text = "6.5502183406112E-5 * 2";
+        $result = $calc->parse($math_text);
+        $t->assert($ts . 'calc exponent sign "' . $math_text . '"', round((float)$result, 8), 0.00013100);
+        // negative: a sign after a number in scientific notation is still an operator if a
+        // blank separates it from the number
+        $math_text = "5E3 - 1";
+        $result = $calc->parse($math_text);
+        $t->assert($ts . 'calc minus after exponent "' . $math_text . '"', $result, 4999);
+
+        // the operator precedence without brackets: a multiplication binds stronger than an
+        // addition on either side, e.g. the variance of a sum "0.09 + 0.16 + 2 * 0.024"
+        $t->assert($ts . 'calc mul before add "2 * 3 + 4"', $calc->parse("2 * 3 + 4"), 10);
+        $t->assert($ts . 'calc add before mul "1 + 2 * 3"', $calc->parse("1 + 2 * 3"), 7);
+        $t->assert($ts . 'calc sub with mul "10 - 2 * 3"', $calc->parse("10 - 2 * 3"), 4);
+        $t->assert($ts . 'calc mixed "1 + 2 * 3 - 4 / 2"', $calc->parse("1 + 2 * 3 - 4 / 2"), 5);
+        $math_text = "0.09 + 0.16 + 2 * 0.024";
+        $result = $calc->parse($math_text);
+        $t->assert($ts . 'calc variance of a sum "' . $math_text . '"', round((float)$result, 4), 0.298);
+        // a sign directly after an operator belongs to the number, so it is no subtraction
+        $t->assert($ts . 'calc div by a negative "6 / -2"', $calc->parse("6 / -2"), -3);
+        $t->assert($ts . 'calc mul with a negative "2 * -3 + 1"', $calc->parse("2 * -3 + 1"), -5);
         $math_text = " +8 / 2";
         $result = $calc->parse($math_text);
         $t->assert($ts . 'calc leading plus "' . $math_text . '"', $result, 4);

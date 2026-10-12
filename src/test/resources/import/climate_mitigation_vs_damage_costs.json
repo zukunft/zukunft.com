@@ -47,10 +47,16 @@
     {
       "name": "Paris Agreement",
       "description": "International treaty of 2015 on climate change mitigation, adaptation and finance.",
-      "refs": {
-        "wikipedia": "Paris_Agreement",
-        "wikidata": "Q26265569"
-      }
+      "refs": [
+        {
+          "name": "Paris_Agreement",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q26265569",
+          "type": "wikidata"
+        }
+      ]
     },
     {
       "name": "percent",
@@ -99,10 +105,16 @@
     {
       "name": "Stern Review",
       "description": "The Economics of Climate Change, review for the United Kingdom government, 2006.",
-      "refs": {
-        "wikipedia": "Stern_Review",
-        "wikidata": "Q1191367"
-      }
+      "refs": [
+        {
+          "name": "Stern_Review",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1191367",
+          "type": "wikidata"
+        }
+      ]
     },
     {
       "name": "Swiss Re 2021",
@@ -111,10 +123,16 @@
     {
       "name": "IPCC AR6",
       "description": "Sixth Assessment Report of the Intergovernmental Panel on Climate Change.",
-      "refs": {
-        "wikipedia": "IPCC_Sixth_Assessment_Report",
-        "wikidata": "Q105776079"
-      }
+      "refs": [
+        {
+          "name": "IPCC_Sixth_Assessment_Report",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q105776079",
+          "type": "wikidata"
+        }
+      ]
     },
     {
       "name": "study",

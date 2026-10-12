@@ -12,5 +12,11 @@ PREPARE change_values_geo_prime_user_last (bigint, bigint[], bigint, bigint) AS
                l.user_name,
                l2.table_id
           FROM change_values_geo_prime s
-     LEFT JOIN users l ON s.user_id = l.user_id LEFT JOIN change_fields l2 ON s.change_field_id = l2.change_field_id
-         WHERE s.user_id = $1 AND l2.table_id = ANY ($2) ORDER BY s.change_time DESC LIMIT $3 OFFSET $4;
+     LEFT JOIN users l          ON s.user_id         = l.user_id
+     LEFT JOIN change_fields l2 ON s.change_field_id = l2.change_field_id
+         WHERE s.user_id = $1
+           AND l2.table_id = ANY ($2)
+      ORDER BY s.change_time DESC,
+               s.change_id   DESC
+         LIMIT $3
+        OFFSET $4;

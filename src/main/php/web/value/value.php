@@ -62,11 +62,13 @@ include_once html_paths::WORD . 'word.php';
 include_once html_paths::SHARED_CONST . 'rest_ctrl.php';
 include_once html_paths::SHARED_CONST . 'views.php';
 include_once html_paths::SHARED_CONST_FIELDS . 'fields.php';
+include_once html_paths::SHARED_CONST_FIELDS . 'group_fields.php';
 include_once html_paths::SHARED_CONST_FIELDS . 'source_fields.php';
 include_once html_paths::SHARED_CONST_FIELDS . 'value_fields.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::SHARED_HELPER . 'Message.php';
 include_once html_paths::SHARED_TYPES . 'api_type_list.php';
+include_once html_paths::SHARED_TYPES . 'view_styles.php';
 include_once html_paths::SHARED . 'api.php';
 include_once html_paths::SHARED . 'url_var.php';
 include_once html_paths::SHARED . 'json_fields.php';
@@ -93,11 +95,13 @@ use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\Message;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\group_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\source_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\value_fields;
 
@@ -109,10 +113,10 @@ class value extends sandbox_value
      */
 
     // curl views
-    const string VIEW_ADD = views::VALUE_ADD;
+    const string VIEW_ADD = views::VALUE_ADD_DETAIL;
     const string VIEW_EDIT = views::VALUE_EDIT;
     const string VIEW_DEL = views::VALUE_DEL;
-    const int VIEW_ADD_ID = views::VALUE_ADD_ID;
+    const int VIEW_ADD_ID = views::VALUE_ADD_DETAIL_ID;
     const int VIEW_EDIT_ID = views::VALUE_EDIT_ID;
     const int VIEW_DEL_ID = views::VALUE_DEL_ID;
 
@@ -148,11 +152,18 @@ class value extends sandbox_value
      */
     function url_mapper(array $url_array, user_message $msg, data_object|null $dto = null): user_message
     {
-        parent::url_mapper($url_array, $msg, $dto);
-        if ($msg->is_ok()) {
+        $map_msg = new user_message($msg->usr); // the problems of the parent mapping, merged into $msg right away
+        parent::url_mapper($url_array, $map_msg, $dto);
+        $msg->merge($map_msg);
+        // the own fields depend on the parent mapping e.g. of the id, not on an unrelated earlier error
+        if ($map_msg->is_ok()) {
             if (array_key_exists(url_var::SOURCE, $url_array)) {
-                if ($url_array[url_var::SOURCE] != null) {
-                    $this->set_source_id($url_array[url_var::SOURCE]);
+                $src_id = $url_array[url_var::SOURCE];
+                // a text would fatal on the int id, so it is reported instead
+                if (filter_var($src_id, FILTER_VALIDATE_INT) !== false) {
+                    $this->set_source_id((int)$src_id);
+                } elseif ($src_id != null) {
+                    $msg->add(msg_id::URL_VALUE_NOT_NUMERIC, [msg_id::VAR_VALUE => $src_id]);
                 }
             }
         }
@@ -160,9 +171,8 @@ class value extends sandbox_value
     }
 
     /**
-     * the url vars that url_mapper reads back for the user-editable fields of a value;
-     * the text, time and geo values have no url var yet, so an overwrite of one of them gets no
-     * undo icon (see docs/llm/pending.md)
+     * the url vars that url_mapper reads back for the user-editable fields of a value
+     * e.g. to show the undo icon of a user overwrite
      *
      * @return array db field name => url var key
      */
@@ -170,10 +180,15 @@ class value extends sandbox_value
     {
         return [
             value_fields::FLD_VALUE => url_var::NUMERIC_VALUE,
+            value_fields::FLD_VALUE_TEXT => url_var::VALUE_TEXT,
+            value_fields::FLD_VALUE_TIME => url_var::VALUE_TIME,
+            value_fields::FLD_VALUE_GEO => url_var::VALUE_GEO,
+            fields::FLD_DESCRIPTION => url_var::DESCRIPTION,
             source_fields::FLD_ID => url_var::SOURCE,
             fields::FLD_EXCLUDED => url_var::EXCLUDED,
             fields::FLD_SHARE => url_var::SHARE,
             fields::FLD_PROTECT => url_var::PROTECTION,
+            group_fields::FLD_NAME => url_var::GROUP_NAME,
         ];
     }
 
@@ -186,6 +201,16 @@ class value extends sandbox_value
     {
         parent::api_mapper($json_array, $msg);
 
+        // the name that a user has given to the group of the value (see api_array); the id of the
+        // value is the id of its group, which the link of the name to the group needs
+        if (($json_array[json_fields::NAME] ?? '') != '') {
+            $this->grp->set_name($json_array[json_fields::NAME]);
+            $this->grp->set_id($this->id());
+        }
+        // the description of a value is the description of its group, so the change value view shows it
+        if (array_key_exists(json_fields::DESCRIPTION, $json_array)) {
+            $this->grp->set_description($json_array[json_fields::DESCRIPTION]);
+        }
         if (array_key_exists(json_fields::SOURCE_ID, $json_array)) {
             $this->set_source_id($json_array[json_fields::SOURCE_ID]);
         }
@@ -238,6 +263,14 @@ class value extends sandbox_value
     function source_id(): ?int
     {
         return $this->src?->id;
+    }
+
+    /**
+     * @return bool true if the value names no source, which is shown as "-" behind the number
+     */
+    protected function is_source_missing(): bool
+    {
+        return $this->source_id() == null;
     }
 
     /**
@@ -307,9 +340,19 @@ class value extends sandbox_value
     {
         $vars = parent::api_array($typ_lst, $msg);
         $vars[json_fields::PHRASES] = $this->grp->phr_lst()->api_array($typ_lst, $msg);
+        // the name given by the user to the group of the value, so that the backend writes it
+        $vars[json_fields::NAME] = $this->grp->name;
+        // the description of the value, which the backend writes to the group row
+        $vars[json_fields::DESCRIPTION] = $this->grp->get_description();
         $vars[json_fields::NUMBER] = $this->number();
+        $vars[json_fields::TEXT_VALUE] = $this->text_value();
+        $vars[json_fields::TIME_VALUE] = $this->time_value()?->format(self::TIME_FORMAT);
+        $vars[json_fields::GEO_VALUE] = $this->geo_value();
         if ($this->src != null) {
             $vars[json_fields::SOURCE_ID] = $this->source_id();
+        }
+        if ($this->set_default) {
+            $vars[json_fields::SET_DEFAULT] = true;
         }
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
@@ -404,27 +447,16 @@ class value extends sandbox_value
      */
 
     /**
-     * create the html code to show only the value in default format to the user
-     * this is the opposite of the convert function
+     * the value in the format of the user like a result (see sandbox_value::value), but marked
+     * if this user has changed the number, so that the reader sees that it is not the standard
      * @return string the html code to show only the value
      */
     function value(user_message $msg): string
     {
-        $html = new html_base();
-        if ($this->number() != null) {
-            $result = $this->val_formatted($msg);
-            if (!$this->is_std()) {
-                $result = $html->span($result, styles::STYLE_USER);
-            }
-        } elseif ($this->text_value() != null) {
-            // escape the user text value: value() returns display-ready html (the number branch
-            // already returns a span) and the span/name callers emit it without escaping, so an
-            // un-escaped text value would be stored xss
-            $result = $html->esc($this->text_value());
-        } elseif ($this->time_value() != null) {
-            $result = $html->esc($this->time_value());
-        } else {
-            $result = '';
+        $result = parent::value($msg);
+        if ($this->number() !== null and !$this->is_std()) {
+            $html = new html_base();
+            $result = $html->span($result, styles::STYLE_USER);
         }
         return $result;
     }
@@ -439,22 +471,6 @@ class value extends sandbox_value
         $html = new html_base();
         $lib = new library();
         $url = $html->url_back($lib->class_to_name($this::class), $this->id(), $url_arr);
-        $txt = $this->value($msg);
-        // value() already returns escaped/safe html, so ref() must not escape it again
-        return $html->ref($url, $txt, '', '', true);
-    }
-
-    /**
-     * create the html code to show only the value formatted based on the user settings
-     * with a link to change the value itself or the value parameters
-     * @param user_message $msg to collect the error messages
-     * @param array $url_arr the url vars of the calling page for the back link
-     * @return string the formatted value with a link to change this value
-     */
-    function value_edit(user_message $msg, array $url_arr = []): string
-    {
-        $html = new html_base();
-        $url = $html->url_back(views::VALUE_DEFAULT_ID, $this->id(), $url_arr);
         $txt = $this->value($msg);
         // value() already returns escaped/safe html, so ref() must not escape it again
         return $html->ref($url, $txt, '', '', true);
@@ -506,6 +522,12 @@ class value extends sandbox_value
         $phr_lst = $phr_lst->ex_measure_list($msg);
         $phr_lst = $phr_lst->ex_scaling_list($msg);
         $phr_lst = $phr_lst->ex_info_list($msg);
+        // a phrase with a symbol e.g. the factor is shown as its symbol behind the number; the
+        // measure and the scaling are named here, because the given cache supplies their tooltip
+        $symbol_lst = $phr_lst->symbol_phrases($msg);
+        $phr_lst = $phr_lst->remove($symbol_lst);
+        // a value quality e.g. "assumed" is shown as a mark behind the number (see quality_mark)
+        $phr_lst = $phr_lst->remove($phr_lst->value_quality_phrases($msg));
         if ($measure_lst->count() > 1) {
             log_warning($this->dsp_id() . ' is not expected to have more than one measure');
         }
@@ -520,13 +542,14 @@ class value extends sandbox_value
             $html->url_back(views::VALUE_DEFAULT_ID, $this->id()),
             $url_arr);
         // value() already returns escaped/safe html, so ref() must not escape it again
-        $val_txt = $html->ref($url, $this->value($msg), $info_lst->name_pur(), '', true);
+        $val_txt = $html->ref($url, $this->value($msg), $info_lst->name_pur(), '', true) . $this->quality_mark();
 
         // the scaling and the measure phrases follow the number like on a price tag;
         // a symbol like "mio" has no description of its own, so the cache supplies the
         // description of the word it is a symbol for (e.g. "million") as the tooltip
         $unit_txt = trim($this->phrase_links($scale_lst, $dto)
-            . ' ' . $this->phrase_links($measure_lst, $dto));
+            . ' ' . $this->phrase_links($measure_lst, $dto)
+            . ' ' . $symbol_lst->symbol_links($msg));
 
         // each part is a span of its own, so that the css keeps the name, the number and the
         // measure side by side on one row and wraps the name first if the space gets tight;
@@ -628,33 +651,8 @@ class value extends sandbox_value
      */
     function name(): string|null
     {
-        return $this->grp->name();
-    }
-
-    /**
-     * the impact of a value is the highest impact of the phrases it is assigned to
-     * so that the most relevant values (e.g. of the highest ranked phrase) are shown first
-     * @return float the system calculated impact used to sort the values
-     */
-    function impact(): float
-    {
-        return $this->grp->phr_lst()->max_impact();
-    }
-
-    /**
-     * the time phrase (e.g. "2022 (year)") of this value used by the "most relevant" value list to
-     * group and to sort the values with a time newest first; a value has at most one time phrase
-     * @return phrase|null the first time phrase of the value's group or null if the value has no time
-     */
-    function time_phrase(user_message $msg): ?phrase
-    {
-        $result = null;
-        foreach ($this->grp->phr_lst()->lst() as $phr) {
-            if ($result == null and $phr->is_time($msg)) {
-                $result = $phr;
-            }
-        }
-        return $result;
+        // a value is shown by its phrases, the name given to its group only in the group name form field
+        return $this->grp->phrase_names();
     }
 
     /**
@@ -676,7 +674,7 @@ class value extends sandbox_value
      */
     function name_tip(user_message $msg, phrase_list|null $phr_lst_exclude = null, string $sep = ' '): string
     {
-        return $this->grp->name_tip($phr_lst_exclude) . $sep . $this->value($msg);
+        return $this->grp->phrase_name_tip($phr_lst_exclude) . $sep . $this->value($msg);
     }
 
     /**
@@ -690,41 +688,9 @@ class value extends sandbox_value
     function name_link(user_message $msg, phrase_list|null $phr_lst_exclude = null, string $sep = ' '): string
     {
         $html = new html_base();
-        $phr_links = $this->grp->name_link_list($phr_lst_exclude);
-        $val_grey = $html->span($this->value($msg), styles::STYLE_GREY);
-        return $phr_links . $sep . $val_grey;
-    }
-
-    /**
-     * depending on the word list format the numeric value
-     * format the value for on screen display
-     * similar to the corresponding function in the "result" class
-     * @returns string the HTML code to display this value
-     */
-    function val_formatted(user_message $msg): string
-    {
-        global $ui_sys;
-        $cfg = $ui_sys->cfg;
-        $result = '';
-
-        if (!is_null($this->number())) {
-            // load the list of phrases if needed
-            if (!$this->grp->phr_lst()->is_empty()) {
-                if ($this->grp->phr_lst()->has_percent($msg)) {
-                    $result = round($this->number() * 100, $cfg->percent_decimals()) . "%";
-                } else {
-                    if ($this->number() >= 1000 or $this->number() <= -1000) {
-                        $result .= number_format($this->number(), 0, $cfg->dec_point(), $cfg->thousand_sep());
-                    } else {
-                        $result = round($this->number(), 2);
-                    }
-                }
-            } else {
-                // use default settings
-                $result = round($this->number(), 2);
-            }
-        }
-        return $result;
+        $phr_links = $this->phrase_link_list($msg, $phr_lst_exclude);
+        $val_grey = $html->span($this->value($msg), styles::STYLE_GREY) . $this->quality_mark();
+        return $phr_links . $sep . $val_grey . $this->number_symbols($msg);
     }
 
     /**
@@ -733,80 +699,94 @@ class value extends sandbox_value
      * value form (see system_views.json value_add and value_edit)
      *
      * @param string $form
+     * @param user_message $msg with the requesting user for whom the sources are selected
      * @param string $pattern
      * @param source_list|null $src_lst the frontend cache with the configuration, the preloaded source and the cached objects
+     * @param bool $test_mode true to offer only the cached sources, because a snapshot is created without a backend call
      * @return string
      */
-    function source_selector(string $form, string $pattern, ?source_list $src_lst): string
+    function source_selector(string $form, user_message $msg, string $pattern, ?source_list $src_lst, bool $test_mode = false): string
     {
-        // TODO review and maybe use test_mode parameter
-        if ($pattern != '') {
-            $src_lst->load_like($pattern);
-        }
+        $src_lst = $src_lst ?? new source_list();
+        $src_lst->load_for_selector($pattern, $msg, $test_mode);
         // the selected entry is the source of this value, not the value itself
         $selected = $this->src?->id() ?? 0;
-        return $src_lst->selector($form, $selected, url_var::SOURCE, msg_id::FORM_SELECT_SOURCE)
-            . $this->source_crud_links($selected);
+        $sel_html = $src_lst->selector($form, $selected, url_var::SOURCE, msg_id::FORM_SELECT_SOURCE, view_styles::COL_SM_11);
+        $sel_html .= $this->crud_icons(views::SOURCE_ADD_ID, msg_id::SOURCE_ADD,
+            views::SOURCE_EDIT_ID, msg_id::SOURCE_EDIT, $selected);
+        // the opening source is sent as the pre value so the confirm view can show the existing source
+        return $this->add_pre_value($sel_html, url_var::SOURCE, (string)$selected);
     }
 
     /**
-     * the add and change icons shown behind the source selector of the value form
+     * the reference selector of the value add and edit form followed by the icons to add a new reference
+     * or to change the selected one, like the source selector (see source_selector)
      *
-     * @param int $src_id the database id of the selected source, 0 if the value has no source yet
-     * @return string the html code of the add icon and, for a selected source, of the change icon
+     * @param string $form the name of the html form
+     * @param user_message $msg with the requesting user for whom the references are selected
+     * @param string $pattern the typed chars to filter the references
+     * @param ref_list|null $ref_lst the references of the frontend cache to select from
+     * @return string the html code of the reference selector with its add and change icons
      */
-    private function source_crud_links(int $src_id): string
+    function ref_selector(string $form, user_message $msg, string $pattern, ?ref_list $ref_lst): string
     {
-        global $mtr;
+        $ref_lst = $ref_lst ?? new ref_list();
+        // TODO review and maybe use test_mode parameter
+        if ($pattern != '') {
+            $ref_lst->load_like($pattern, $msg);
+        }
+        // a value has no reference of its own, so the reference of one of its phrases is preselected
+        $selected = $this->phrase_ref_id($ref_lst);
+        $sel_html = $ref_lst->selector($form, $selected, url_var::REF, msg_id::FORM_SELECT_REF, view_styles::COL_SM_11);
+        return $sel_html . $this->crud_icons(views::REF_ADD_ID, msg_id::REF_ADD,
+                views::REF_EDIT_ID, msg_id::REF_EDIT, $selected);
+    }
 
-        $html = new html_base();
-        $result = $html->ref($html->url_back(views::SOURCE_ADD_ID), $html->icon(icons::ADD),
-            $mtr->txt(msg_id::SOURCE_ADD), styles::HEADING_ICON_INLINE, true);
-        // without a selected source there is nothing to change, so only the add icon is shown
-        if ($src_id != 0) {
-            $result .= $html->ref($html->url_back(views::SOURCE_EDIT_ID, $src_id), $html->icon(icons::EDIT),
-                $mtr->txt(msg_id::SOURCE_EDIT), styles::HEADING_ICON_INLINE, true);
+    /**
+     * @param ref_list $ref_lst the references to select from
+     * @return int the id of the first reference that belongs to a phrase of this value, 0 if none does
+     */
+    private function phrase_ref_id(ref_list $ref_lst): int
+    {
+        $phr_ids = $this->phr_lst()->id_lst();
+        $result = 0;
+        foreach ($ref_lst->lst() as $ref) {
+            if ($result == 0 and in_array($ref->phrase()->id(), $phr_ids)) {
+                $result = $ref->id();
+            }
         }
         return $result;
     }
 
     /**
-     * @param string $form
-     * @param string $pattern
-     * @return string
+     * the add and change icons behind a selector of the value form in the last 1/12 of the line, so the user
+     * can create a missing source or reference without leaving the value form
+     *
+     * @param int $add_msk the view that adds a new object e.g. views::SOURCE_ADD_ID
+     * @param msg_id $add_tip the tooltip of the add icon
+     * @param int $edit_msk the view that changes the selected object e.g. views::SOURCE_EDIT_ID
+     * @param msg_id $edit_tip the tooltip of the change icon
+     * @param int $selected_id the database id of the selected object, 0 if none is selected
+     * @return string the html code of the add icon and, for a selected object, of the change icon
      */
-    function ref_selector(string $form, string $pattern): string
+    private function crud_icons(int $add_msk, msg_id $add_tip, int $edit_msk, msg_id $edit_tip, int $selected_id): string
     {
-        $ref_lst = new ref_list();
-        // TODO review and maybe use test_mode parameter
-        if ($pattern != '') {
-            $ref_lst->load_like($pattern);
+        global $mtr;
+
+        $html = new html_base();
+        $result = $html->change_icon($html->url_back($add_msk), icons::ADD,
+            $mtr->txt($add_tip), styles::FORM_ICON_INLINE);
+        // without a selected object there is nothing to change, so only the add icon is shown
+        if ($selected_id != 0) {
+            $result .= $html->change_icon($html->url_back($edit_msk, $selected_id), icons::EDIT,
+                $mtr->txt($edit_tip), styles::FORM_ICON_INLINE);
         }
-        return $ref_lst->selector($form, $this->id(), url_var::REF, msg_id::FORM_SELECT_VIEW_STYLE);
+        return $html->div($result, view_styles::COL_SM_1 . ' ' . html_base::BS_ALIGN_BOTTOM);
     }
 
     /*
      * info
      */
-
-    /**
-     * to select a value by a phrase
-     * @param phrase $phr the phrase to select the value
-     * @return bool true if the value contains the given phrase
-     */
-    function has_phrase(phrase $phr, user_message $msg): bool
-    {
-        $result = false;
-        $phr_lst = $this->grp->phr_lst();
-        foreach ($phr_lst->lst() as $val_phr) {
-            if ($val_phr->is_same($phr)) {
-                $result = true;
-            } elseif ($val_phr->is_type_phrase($phr, $msg)) {
-                $result = true;
-            }
-        }
-        return $result;
-    }
 
     /*
      * buttons
@@ -837,7 +817,7 @@ class value extends sandbox_value
         }
 
         return parent::btn_add_sbx(
-            views::VALUE_ADD_ID,
+            views::VALUE_ADD_DETAIL_ID,
             $msg_code_id,
             $url_arr, $explain, $base_url);
     }
@@ -1277,7 +1257,7 @@ class value extends sandbox_value
                             /*if (!empty($phr_lst_sel->lst)) {
                 $result .= '      '.$phr_lst_sel->dsp_selector("phrase".$url_pos, $script, $phr->id);
               } else {  */
-                            $result .= '      ' . $phr->dsp_selector($phr->is_wrd, $script, $url_pos, '', $url_arr);
+                            $result .= '      ' . $phr->dsp_selector($phr->is_wrd, $script, $url_pos, '', $msg, $url_arr);
                             //}
                             $url_pos++;
 
@@ -1296,7 +1276,7 @@ class value extends sandbox_value
                             }
                             //$result .= '    <input type="' . html_base::INPUT_HIDDEN . '" name="db'.$url_pos.'" value="'.$phr->dsp_lnk_id.'">';
                             $result .= '    <td colspan="2">';
-                            $result .= '      ' . $phr->dsp_selector(0, $script, $url_pos, '', $url_arr);
+                            $result .= '      ' . $phr->dsp_selector(0, $script, $url_pos, '', $msg, $url_arr);
                             $url_pos++;
 
                             $result .= '    </td>';

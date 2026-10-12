@@ -44,6 +44,8 @@ include_once html_paths::FORMULA . 'formula.php';
 include_once html_paths::FORMULA . 'formula_list.php';
 include_once html_paths::GROUP . 'group.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
+include_once html_paths::RESULT . 'result_list.php';
+include_once html_paths::VALUE . 'value_list.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::SHARED_CONST . 'views.php';
@@ -59,6 +61,7 @@ use Zukunft\ZukunftCom\main\php\web\group\group;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_value;
+use Zukunft\ZukunftCom\main\php\web\value\value_list;
 use Zukunft\ZukunftCom\main\php\web\figure\figure;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
@@ -97,6 +100,14 @@ class result extends sandbox_value
     // the formula object used to calculate this result
     public ?formula $frm = null;
 
+    // the values, formulas and results used for the calculation, filled only if the result has
+    // been loaded for its page (see load_by_id_with_related), otherwise null
+    public ?value_list $values_used = null;
+    public ?formula_list $formulas_used = null;
+    public ?result_list $results_used = null;
+    // the right side of the formula as operator texts and the figures used, only for the result page
+    public ?array $expression_parts = null;
+
 
     /*
      * set and get
@@ -125,6 +136,35 @@ class result extends sandbox_value
             $this->frm = $frm;
         }
 
+        // only the result page asks for the values, formulas and results used for the calculation,
+        // so a missing list is not an empty list (see value::api_mapper for the same pattern)
+        if (is_array($json_array[json_fields::VALUES] ?? null)) {
+            $val_lst = new value_list();
+            $val_lst->api_mapper($json_array[json_fields::VALUES]);
+            $this->values_used = $val_lst;
+        } else {
+            $this->values_used = null;
+        }
+        if (is_array($json_array[json_fields::FORMULAS] ?? null)) {
+            $frm_lst = new formula_list();
+            $frm_lst->api_mapper($json_array[json_fields::FORMULAS]);
+            $this->formulas_used = $frm_lst;
+        } else {
+            $this->formulas_used = null;
+        }
+        if (is_array($json_array[json_fields::RESULTS] ?? null)) {
+            $res_lst = new result_list();
+            $res_lst->api_mapper($json_array[json_fields::RESULTS]);
+            $this->results_used = $res_lst;
+        } else {
+            $this->results_used = null;
+        }
+        if (is_array($json_array[json_fields::EXPRESSION_PARTS] ?? null)) {
+            $this->expression_parts = $this->expression_parts_mapper($json_array[json_fields::EXPRESSION_PARTS], $msg);
+        } else {
+            $this->expression_parts = null;
+        }
+
         /* TODO add all result fields that are not part of the sandbox value object
         if (array_key_exists(json_fields::USER_TEXT, $json_array)) {
             $this->set_usr_text($json_array[json_fields::USER_TEXT]);
@@ -135,9 +175,43 @@ class result extends sandbox_value
         return $msg->is_ok();
     }
 
+    /**
+     * @param array $parts_json the api json of the formula parts: a text or a figure each
+     * @param user_message $msg to report a figure that cannot be mapped
+     * @return array the operator texts as string and the numbers used as figure in the formula order
+     */
+    private function expression_parts_mapper(array $parts_json, user_message $msg): array
+    {
+        $parts = [];
+        foreach ($parts_json as $part_json) {
+            if (array_key_exists(json_fields::OBJECT_CLASS, $part_json)) {
+                $fig = new figure();
+                $fig->api_mapper($part_json, $msg);
+                // a class other than value or result is reported by the figure mapper and left
+                // out here, because only a number can be shown and linked (no php fatal)
+                if ($fig->obj() instanceof sandbox_value) {
+                    $parts[] = $fig;
+                }
+            } else {
+                $parts[] = $part_json[json_fields::TEXT] ?? '';
+            }
+        }
+        return $parts;
+    }
+
     function formula_id(): ?int
     {
         return $this->frm?->id;
+    }
+
+    /**
+     * to select the results of a formula e.g. for the list of results on the formula page
+     * @param formula $frm the formula that may have calculated this result
+     * @return bool true if the given formula has calculated this result
+     */
+    function calculated_by_formula(formula $frm): bool
+    {
+        return ($this->formula_id() != null and $this->formula_id() == $frm->id());
     }
 
     /**
@@ -177,6 +251,15 @@ class result extends sandbox_value
     }
 
     /**
+     * a result is shown by its own page, which names the formula that has calculated it
+     * @return int the view id of the default page of a result
+     */
+    protected function default_view_id(): int
+    {
+        return views::RESULT_ID;
+    }
+
+    /**
      * @return string interface function to align the value with the other sandbox objects
      */
     function get_description(): string
@@ -191,6 +274,37 @@ class result extends sandbox_value
     function display_linked(?phrase_list $phr_lst_header = null): string
     {
         return $this->grp->name_link_list($phr_lst_header);
+    }
+
+    /**
+     * the right side of the formula with each number used linked to its value or result page,
+     * e.g. "5*60" with the 5 linked to the minutes; empty if the numbers used are not known
+     *
+     * @param user_message $msg to report a problem while formatting a number
+     * @param array $url_arr the url vars of the calling page for the back link
+     * @return string the html code of the formula with the linked numbers
+     */
+    function expression_figures_link(user_message $msg, array $url_arr = []): string
+    {
+        $html = new html_base();
+        $result = '';
+        foreach ($this->expression_parts ?? [] as $part) {
+            if ($part instanceof figure) {
+                // value_edit() returns the safe html of the linked number
+                $result .= $part->obj()->value_edit($msg, $url_arr);
+            } else {
+                $result .= $html->esc($part);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @return string the latex of the formula that has calculated this result with a link per term
+     */
+    function expression_latex_link(): string
+    {
+        return $this->frm?->expression_latex_link() ?? '';
     }
 
     /**

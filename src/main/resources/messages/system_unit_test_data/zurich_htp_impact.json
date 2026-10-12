@@ -39,7 +39,7 @@
     { "name": "employed person", "from": "person", "verb": "kind of", "to": "employed", "description": "a person holding a job located in the place, residents and commuters alike" },
     { "name": "person influenced", "from": "person", "verb": "kind of", "to": "influenced", "description": "the number of people an entity influences, inhabitants for a region, customers for a company or employed persons for a workplace" },
     { "name": "time point", "from": "point", "verb": "is measure type for", "to": "time", "description": "a value multiplied by the time" },
-    { "name": "happy time point", "from": "happy", "verb": "and", "to": "time point", "type": "measure", "description": "HTP, the UN DALY index extended to the lowest two levels of the Maslow pyramid" },
+    { "name": "happy time point", "from": "happy", "verb": "and", "to": "time point", "type": "measure_unit", "description": "HTP, the UN DALY index extended to the lowest two levels of the Maslow pyramid" },
     { "name": "impact factor", "from": "factor", "verb": "of", "to": "impact", "description": "a factor expressing the strength of an impact" },
     { "name": "", "from": "impact factor", "verb": "on", "to": "HTP", "type": "percent", "description": "the share of one person's happy time points that the entity influences" },
     { "name": "weighted reach", "from": "reach", "verb": "kind of", "to": "weighted", "description": "a reach scaled by a relative weight" },

@@ -73,6 +73,7 @@ include_once paths::DB . 'sql_type.php';
 include_once paths::DB . 'sql_type_list.php';
 include_once paths::MODEL_CONST . 'def.php';
 include_once paths::EXPORT . 'export_type_list.php';
+include_once paths::MODEL_HELPER . 'combine_named.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
 include_once paths::MODEL_HELPER . 'type_object.php';
@@ -110,6 +111,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\helper\combine_named;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
@@ -577,6 +579,40 @@ class source extends sandbox_code_id
         $this->diff_field_msg($msg, fields::FLD_URL, $this->url, $obj->url);
         $this->diff_field_msg($msg, fields::FLD_DOI, $this->doi, $obj->doi);
         return $msg;
+    }
+
+    /**
+     * can merge only if the links agree: a source with the same name is similar, but if both have
+     * a url or both have a doi and these differ, the two name different publications, so a merge
+     * on add or rename would redirect the values of the existing source; the save then reports
+     * that the name already exists instead of merging (see sandbox_named::get_similar)
+     *
+     * @param sandbox_code_id|combine_named|type_object|sandbox $obj_to_check the source that might be the same
+     * @return bool true if the sources have the same unique keys and no contradicting link
+     */
+    function is_same(sandbox_code_id|combine_named|type_object|sandbox $obj_to_check): bool
+    {
+        $result = parent::is_same($obj_to_check);
+        if ($result and $this::class == $obj_to_check::class) {
+            // a doi is case-insensitive by its definition, a url path is not
+            if ($this->link_differs($this->url, $obj_to_check->url)
+                or $this->link_differs(strtolower($this->doi ?? ''), strtolower($obj_to_check->doi ?? ''))) {
+                $result = false;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param string|null $link the url or doi of this source
+     * @param string|null $link_chk the url or doi of the source to compare with
+     * @return bool true if both links are set and differ, false if one is empty, because an empty link is filled up
+     */
+    private function link_differs(?string $link, ?string $link_chk): bool
+    {
+        $lnk = trim($link ?? '');
+        $lnk_chk = trim($link_chk ?? '');
+        return ($lnk != '' and $lnk_chk != '' and $lnk != $lnk_chk);
     }
 
     /**

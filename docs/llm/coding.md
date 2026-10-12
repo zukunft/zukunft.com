@@ -10,7 +10,7 @@ build personal OLAP cubes from words, triples, formulas, and values
 ("calculating with words"). Architecture, source layout, and domain
 terminology: `docs/llm/architecture.md`. Read it before navigating unfamiliar code.
 
-## The three rules above all others
+## The four rules above all others
 
 1. **Reduce to the max.** This is about the **resulting code**, so that a human
    reads it easily: fewer lines, functions, assertions, parameters. When in
@@ -36,6 +36,29 @@ terminology: `docs/llm/architecture.md`. Read it before navigating unfamiliar co
    change, say so and record the gap in `docs/llm/pending_prio_2.md`; a visible
    gap is honest, a quiet approximation is not. Worked example and the review
    question: `docs/llm/structure.md`.
+4. **Never a plain delete without change log.** Every database row is removed
+   through the object's logged delete (`del()` → `sql_type::LOG`), so that who
+   removed what and when can always be reconstructed and the row can be undone.
+   This holds for test cleanups too: a cleanup that needs a plain delete is a
+   bug in the logged delete, not a reason to bypass it. The only rows that may
+   go without a log entry are derived data that the next read recreates (cache
+   rows, formula elements) and the change log rows of deleted test rows — and
+   every such exception is guarded by more than one layer at once: the class is
+   listed in `def::CLASSES_NO_CHANGE_LOG`, the sql builder says so in its name
+   (`del_sql_list_without_log`, `del_all`), and a unit test with the sql
+   fixture covers the statement. A plain delete that misses one layer is
+   rejected in review. Details and the current exceptions:
+   `docs/llm/architecture.md`.
+5. Every database access uses a prepared sql statement
+   Every read and every write goes through one named, prepared statement (or one sql function
+   that wraps the writes and their change log), created by the sql creator and covered by an
+   sql fixture in `src/test/resources/db/<class>/`. Never assemble a statement per field at
+   runtime: `sandbox_multi::save_fields_func()` and the remaining `*_fields_func` code are
+   legacy and must not be called any more. A new write needs its own prepared statement
+   (e.g. an exclude of a user value), its fixture and a unit test that compares the two
+   (see docs/llm/testing.md), so the statement is reviewable before it ever touches the
+   database. This is what rule 4 relies on: a delete or exclusion that is not one prepared
+   statement together with its change log entry cannot be audited.
 
 ## Build / test / commit
 
@@ -86,6 +109,7 @@ detail file. Order is by how often they fire, not importance.
 - No magic literals: every value with a named constant is referenced by it (IDs, URL params, field names, icons). → `docs/llm/constants.md`
 - SQL keywords in hand-built queries use the `sql::*` consts (`sql::SELECT`, `sql::FROM`, `sql::GROUP_BY`, `sql::FUNCTION_COUNT`, …), never inline `'SELECT'` / `'GROUP BY'` strings, so a `sql::CONST` search instantly finds every generator using a feature (scoping a change or test); add the const to `cfg/db/sql.php` if one is missing. → `docs/llm/constants.md`
 - Definitional data (the set/list/map that defines a behaviour — allowed profiles, required fields, field order) lives as a `const` on the owning const/enum class; functions keep only the logic and reference the const, never inline the literal array. → `docs/llm/constants.md`
+- A const array that spreads another const names its class (`...views::EDIT_MASKS_IDS`), never `...self::`, so a search for the const finds every use. → `docs/llm/constants.md`
 - A class name passed as a parameter or map key uses the `::class` constant (e.g. `$dbo::class`), never a bare name string, so a rename is one edit. → `docs/llm/constants.md`
 - Link code to DB rows by the `code_id` const only; `*_NAME` / `*_ID` siblings are test-only. → `docs/llm/constants.md`
 - Boolean db fields are `sql_field_type::BOOL` with `sql_field_default::NULL` (null reads as false, like `excluded`); never `ZERO` or `NOT_NULL`. → `docs/llm/constants.md`
@@ -129,9 +153,11 @@ detail file. Order is by how often they fire, not importance.
 - User-facing messages use `$msg->add(msg_id::X, [])` with a `messages.php` case + en/de translations; never `add_message(string)`. → `docs/llm/state-and-messages.md`
 - A db field / table / action name shown to the user is translated via `$mtr->text_db_field`/`_table`/`_action` (the `code_id` → message id lookup), called as late as possible (at display, not when storing/passing the raw `code_id`). → `docs/llm/state-and-messages.md`
 - A json field name shown to the user is translated via `$mtr->text_json_field` (which maps the json field to its db field translation), called as late as possible (at display, not when storing/passing the raw field name). → `docs/llm/state-and-messages.md`
+- `u` (`url_var::USER`) in a page or api url is always the logged-in user and is added centrally (`html_base::ref` / `form_user`, `frontend::redirect_url`, `rest_call::data_with_user`), never by a url builder; a user that is shown or changed is named by `ue` (`url_var::USER_TO_EDIT`), which the views of `views::USER_TO_EDIT_MASKS_IDS` use instead of `id` (`url_var::id_var`); the session, never the url, decides who the user is. → `docs/llm/state-and-messages.md`
 - Back-navigation is `'9'`-prefixed URL params (`url_var::BACK` is a prefix char), never a standalone `BACK` field. → `docs/llm/state-and-messages.md`
 - Edit views carry each field's opening DB value as `'8'`-prefixed URL params (`url_var::PRE` is a prefix char); on save write only fields that differ from that baseline, so a concurrent edit by another user is not overwritten. → `docs/llm/state-and-messages.md`
 - `url_var.php` names two things: a **url field** (`ACTION = 'a'`, `REFRESH = 'fr'`) and a **value one field can carry** (`CRUD_CREATE` is a value of `ACTION`, so a create reads `?a=a`); a new value const still gets a unique string built by repeating its field name (`REFRESH_EXPRESSION = 'fre'`, never a bare `'e'`), so that a url stays readable and a code search finds one place. → `docs/llm/state-and-messages.md`
+- A group id is always the compact key (`docs/llm/group_id.md`: only the significant chars of each phrase id, each ended by its sign char, no fixed slots and no `.` padding); a url writes the same key with `_` instead of the `+` of a word (`shared/group_id_url.php`), converted once on the way out (`html_base::url`/`url_back`, the back part and `url_mapper::map_standard_to`) and once on the way in (`url_mapper::url_to_standard`); everything below works with the database key.
 - A new url var is only half done without its human format: add the `*_HUMAN` twin and the `HUMAN_TO_STD` row for a field, plus a `HUMAN_TO_STD_<FIELD>_VAL` map and the two `url_mapper.php` branches for a value — else `standard_url_to_human()` reports the key as `URL_MAP_MISSING`. → `docs/llm/state-and-messages.md`
 - A user's permissions derive from the `profile_id` only (`is_admin`, `is_system`, `can_set_*`, …); the user `code_id` merely *selects* a specific user (e.g. system test user 1 vs 2) and never grants or removes a right. → `docs/llm/state-and-messages.md`
 - The code id of an object is only *shown* to an admin or a developer (`can_see_code_id`) and only *editable* for a profile that passes `can_set_code_id`; every other profile — including the system and test users — never sees it, so the rendered snapshots stay free of the field. → `docs/llm/state-and-messages.md`
@@ -145,10 +171,12 @@ detail file. Order is by how often they fire, not importance.
 - `web/` never accesses the database; request all data via the API (`rest_call`/`api_get` + `api_mapper`), never SQL (`sql_db`/`sql_creator`) or a backend `cfg/` load. Only exception: `web/frontend.php`'s deprecated direct-DB bootstrap (being migrated to the API). → `docs/llm/frontend.md`
 - Frontend and backend are two independent apps talking only over the API: `web/frontend.php` boots the html frontend (`http/view.php`, …), `cfg/application.php` boots the backend api scripts; never cross them. They overlap today (session, tls, db open, timing) and their same-named `start()` methods have different signatures, so a change to the request lifecycle goes into **both** until the split is done. → `docs/llm/frontend.md`
 - Behaviour that describes a phrase rather than a word (parents, children, similar, ...) lives once on `web/phrase/phrase.php`; `web/word/word.php` and `web/word/triple.php` keep a one-line delegate each, so a triple page can do everything a word page can. Never push it up into `sandbox_code_id` (views/formulas/components have no `phrase()`) and never use a trait (the project has none). A page-object fixture stuck on the wrong class is the symptom of a missing delegate. → `docs/llm/frontend.md`
+- A value quality phrase is never named before a number; it is shown as a grey superscript behind the number with a translated tooltip (`a` assumed, `-` source missing, `+` peer reviewed) via `sandbox_value::quality_mark`, so every display of a number goes through `value_edit`, `name_link` or `links_and_measure`. → `docs/llm/frontend.md`
 - Every list rendered on a frontend page is sorted by a deterministic key (impact, name, id, …) before output, so the HTML order never depends on API/DB row order and snapshot tests stay stable. → `docs/llm/frontend.md`
 - Every frontend list has three versions — short (5 entries), more (20) and all (paged, prev/next, from the screen cache, only below the 2'000 max frontend list size); both counts come from `config.yaml` via `$ui_sys->cfg`, never as a literal. → `docs/llm/frontend.md`
 - A page must not fill the screen, because the user messages are shown below the view and would else be hidden below the fold; so every list is limited **on its own** — each group of a grouped list gets the configured limit and its own "… and n more", not only the ungrouped rest. → `docs/llm/frontend.md`
 - A truncated list's "… and n more" tail is always a link to the next version of the list (short → more → all, e.g. the values tail links to the `phrase_values` view), never dead text; `n` is the number of extra items. → `docs/llm/frontend.md`
+- A link always shows a text: a link to a phrase, verb or other object without its name is a mapping bug (usually an id-only stub or a phrase without id, see `docs/llm/testing.md`), never a display choice; `coding_rule_tests::html_no_empty_link_tests` reports every such link in the html snapshots.
 - An HTML input's `name` is the url var (the submitted key the url mapper reads); the human label goes in `id` / `<label for>`, never in `name`. → `docs/llm/frontend.md`
 - Any paired tag (`<form>…</form>`, `<div>…</div>`, …) is emitted by an `html_base` function that builds both tags from a tag const; never inline a raw open/close tag at the call site. → `docs/llm/frontend.md`
 
@@ -167,7 +195,7 @@ words, triples, formulas, sources, values) and `docs/llm/json_views.md`
 - Use the domain nouns exactly: word, verb, triple, source, ref, value, group, formula, result, view, component. `phrase` = word|triple; `term` = word|verb|triple|formula. Every phrase is a term; a verb/formula is a term but not a phrase.
 - Keep a change to an import json as small as the task: fix the named entry only — never reformat, re-indent or re-order a file, and never add or remove a word, triple, view, component, formula or source that the task did not ask for, because every insert or delete shifts the db id of all later objects and breaks the pinned `*_ID` consts and the `list.csv` baselines. If the fix cannot avoid it, report the id shift instead of absorbing it silently. → `docs/llm/json_structure.md`
 - `percent`-measure formulas auto-scale: never add `* 100` to a ratio assigned to `percent`. A stored `percent` value is the decimal ratio too — 18 % is `"0.18"`, 0.5 % is `"0.005"` — so no `/ 100` in the consumer either; sanity-check the magnitude, a small number can be either form. → `docs/llm/json_structure.md`
-- Symbols/abbreviations may alias several phrases on purpose (`m` = metre = million); only flag genuine unintended collisions, never force-uniquify.
+- Symbols/abbreviations may alias several phrases on purpose (`m` = metre = million); only flag genuine unintended collisions, never force-uniquify. A new ambiguous symbol gets one named `is symbol for` triple per meaning (`tn (scaling)`, `tn (weight)`) and a `can be symbol for` triple from the symbol to each; a page uses the symbol for one meaning only, the one it shortens most. → `docs/llm/json_structure.md`
 - Disambiguate an ambiguous *word* with qualifier triples via the `must be one of` verb — define the word once, reference the triples; display the bare word, qualifier in the tooltip.
 - A triple's `from`/`verb`/`to` key is unique within an import; split a clashing key with an intermediate building-block triple.
 - A triple whose `from`/`to` is a *named* triple must carry its own explicit `name` — but never repeat the auto-generated `<from> <verb> <to>` as the `name` (the importer builds that for you; only set `name` when it differs or would clash).
@@ -183,11 +211,15 @@ words, triples, formulas, sources, values) and `docs/llm/json_views.md`
 - Give a formula the most *general* name (`growth rate`, not `canton growth rate`) and assign it to the most *parent* phrase it applies to (`bid-ask spread absolut` → `currency`, not each single currency); assignments from several imports are cumulative. → `docs/llm/json_structure.md`
 - Qualify a value as specifically as the data allows, globally unique — name the actual entity (`Zurich (canton)`, not bare `canton`); build qualifiers as triples from single words; omit `"share":"public"` (the default).
 - Never add a `measured value` qualifier (to a value, to a calc-validation `context`, or as a word/triple): every value is assumed to be measured. Mark only the deviation with the word `assumed` (never an `assumed value` triple, because the phrases of a value are its words) and name a `source` for the measured ones. → `docs/llm/json_structure.md`
+- A value quality (phrase type `value_quality`, `solution_prio.json`) is grouped by `is a` into the ladder `conjecture` < `report` < `science` < `convention`. A calculated value inherits the **lowest** quality of its inputs — never a higher one, and never `calculated` ranked on its own: one `assumed` input makes the whole result a conjecture, while a result of only `defined` inputs stays a convention. → `docs/llm/json_structure.md`
+- A value status (`disputed`, `retracted`, `superseded`, `outdated`; phrase type `value_status`) is **never** a rung of the quality ladder, because a value of any quality — even a peer-reviewed one — can be retracted: tag it next to the quality, never instead of it. A calculated value carries every status of its inputs. → `docs/llm/json_structure.md`
+- The default confidence of a value quality is a normal value `[<quality>, "confidence", "percent", "assumed"]` with a description of the reason (`solution_prio.json`), never a fixed number in the code, so that a user can overwrite it and a single value can carry its own confidence (a small double-blind trial can deserve less than a large cohort). `calculated` has no default of its own: it takes the confidence of its weakest input. → `docs/llm/json_structure.md`
 - `import_mapper` maps from the `$dto` only — never reads the DB; a missing reference adds a `msg_id` error, no DB load, no placeholder.
 - A component's `ui_msg_code_id` is globally unique; re-declare an existing component by its canonical `code_id` to merge, never borrow its `ui_msg_code_id` on a new `code_id`. → `docs/llm/json_views.md`
 - A seed component's (or view's) database id is its import position, so a new one is **appended at the end** of the `components` block of the latest-imported file — inserting mid-sequence shifts every later id and churns the generated `list.csv` baselines; where a test needs the numeric id, pin it as a `*_ID` const re-baselined from the regenerated `list.csv`, never guessed. → `docs/llm/json_views.md`
 - A `sys_log` row insert is never written to the change log; an update of an existing `sys_log` row is always written to the change log. → `docs/llm/architecture.md`
 - Every field written with `sql_type::LOG` needs a row in `db_code_links/change_fields.csv` (field name + `change_tables.csv` table id); a per-field change log error usually means that row is missing. → `docs/llm/architecture.md`
+- A row is deleted only through the logged `del()` of its object (top rule 4); a plain delete is allowed only for derived rows and only when all guard layers are in place: class in `def::CLASSES_NO_CHANGE_LOG`, a builder named `…without_log`/`del_all`, and a unit test with the sql fixture. → `docs/llm/architecture.md`
 
 ## Testing rules
 
@@ -207,7 +239,7 @@ Detail and worked examples: `docs/llm/testing.md`.
 - A phrase id const (`word_names`, `triple_names`, …) is re-baselined from the regenerated `src/test/resources/unit/<class>/list.csv` after a reset, never guessed: adding or removing a phrase in a seed import shifts every later id, and `diff_msg` compares keys only, so the reported drift understates the real one. → `docs/llm/testing.md`
 - A fixture mismatch is fixed by first listing **every** producer of that fixture (in-memory factory, import data → db row, ui round trip) and making them agree at the source — never by patching the side the current error report shows; the same test failing twice with the diff direction inverted (`//+x//` then `//-x//`) is the signature of two disagreeing producers, not of a half-applied fix. → `docs/llm/testing.md`
 - All test objects come from a `create/test_*.php` factory — single objects and populated lists alike, never inline construction.
-- A test url array starts from a factory object via `to_url_array($msg)` (e.g. `$t_wrd->word_dsp()->to_url_array($msg)`) or a factory url helper; the test adds only the request context (mask, action, step, back, user), never a hand-built object field list, so the factory shows centrally which test objects each test uses. → `docs/llm/testing.md`
+- A test url array is built from the `url_var` keys and the consts of the test object (e.g. `[url_var::ID => word_names::MATH_ID, url_var::NAME => word_names::MATH]`), never with `to_url_array($msg)`, so one test checks the url contract and the mapping together and one url checks several fields; adjusting such tests when a key or const changes is accepted, and `to_url_array` is only called in its own round-trip test. → `docs/llm/testing.md`
 - The user of a test comes from the test environment (`$t->usr1`, `$t->usr2`, `$t->usr_admin`, … resp. `$this->env->usr1` in a factory, `test_users::*` in a static one); never `global $usr`. → `docs/llm/testing.md`
 - A test object is created by the normal user `$t->usr1` (the standard owner); use `$t->usr2` only to test a second user's sandbox and `$t->usr_admin` only when the create needs an admin-only privilege (not `set_code_id` — `$t->usr1`'s test profile already passes `can_set_code_id()`); never create a test object as `$t->usr_system` (the system user is for system-level functions, and system-owned test data cannot be removed by the normal-user cleanup). The carve-out is *permanent* fixture data that is never cleaned up (the year words, like the imported fundamentals) — that may be system-owned, as a narrow commented exception. → `docs/llm/testing.md`
 - Factory method names don't repeat the class's object word (`test_phrases::list_chf_symbol_ui`, not `phrase_list_...`).
@@ -218,6 +250,7 @@ Detail and worked examples: `docs/llm/testing.md`.
 - Keep `$test_name` short but unique; don't repeat context the enclosing `$t->subheader(...)` (or `$t->name`) already shows.
 - Pass only `$test_name` to `$t->assert*()`; let the helper prepend `$t->name` — don't concatenate it.
 - Use the specific `assert_*` variant (`assert_text_contains`, ...), not a generic `assert_true(str_contains(...))`.
+- Every error message explains itself: a failing test shows the values it compared (the loaded id and name, the names found, the message of the call), never a bare "expected true, got false", so the reader sees the cause without a debugger; the same holds for a user message, which names the object, the problem and the solution. → `docs/llm/testing.md`
 - To read a `user_message` result, prefer `$msg->text()` (the single most-useful/last message) over `all_message_text()`; asserting the concatenation of every accumulated message is brittle — an unrelated message added on another code path breaks the assert and couples the test to code it does not exercise. → `docs/llm/testing.md`
 - `$t->subheader(...)` labels are as short as possible while staying unique.
 - Data-file-dependent tests recreate the artifact from a shared const (one point of change), e.g. import-JSON names from a reserved test word.

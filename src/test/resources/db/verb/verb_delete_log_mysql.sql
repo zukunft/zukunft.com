@@ -20,6 +20,6 @@ END;
 SELECT verb_delete_log
        (1,
         3,
-        23,
+        140,
         'not set',
         1);

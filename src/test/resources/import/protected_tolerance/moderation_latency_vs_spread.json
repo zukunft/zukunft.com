@@ -1,0 +1,2274 @@
+{
+  "version": "0.0.3",
+  "data_version": "0.0.1",
+  "time": "2026-09-25 12:00:00",
+  "user": "timon",
+  "selection": [
+    "symmetric hiding"
+  ],
+  "description": "Use case: does the delay of an intervention decide whether disinformation can be answered at all? The file collects the measured latencies of current interventions (community notes on X, removals on Facebook and X, takedowns under the DSA) against the speed of the spread (repost half-life, saturation time), the simulated effect of an intervention as a function of its delay (Bak-Coleman 2022, Truong 2025), and the argument of a forum dialogue that with generative AI the effort asymmetry between publishing and refuting has grown so far that Popper's condition for tolerance, the possibility of counter-speech, no longer holds; the thesis of symmetric hiding is stored as an assumption with its confidence. No study has tested the symmetric case empirically; the simulations vary the delay as a parameter, the field studies measure the asymmetry of today.",
+  "words": [
+    {
+      "name": "misinformation",
+      "description": "false or inaccurate information, regardless of intent to deceive",
+      "refs": [
+        {
+          "name": "Misinformation",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q188572",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "disinformation",
+      "description": "false information deliberately spread to deceive",
+      "refs": [
+        {
+          "name": "Disinformation",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1184118",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "false",
+      "description": "not in accordance with fact"
+    },
+    {
+      "name": "true",
+      "description": "in accordance with fact"
+    },
+    {
+      "name": "news",
+      "description": "information about current events",
+      "refs": [
+        {
+          "name": "News",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "misleading",
+      "description": "giving a wrong impression; the label X applies to posts that received a helpful community note"
+    },
+    {
+      "name": "post",
+      "description": "a message published on a social media platform"
+    },
+    {
+      "name": "repost",
+      "description": "the re-publication of another account's post to one's own followers; called retweet on Twitter before 2023",
+      "refs": [
+        {
+          "name": "Reblogging",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "engagement",
+      "description": "the sum of interactions with a post: posts, reposts, quotes, replies, likes",
+      "refs": [
+        {
+          "name": "Social media engagement",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "cascade",
+      "description": "the tree of reposts that grows from one original post"
+    },
+    {
+      "name": "reach",
+      "description": "the number of unique accounts that see a piece of content"
+    },
+    {
+      "name": "prevalence",
+      "description": "the share of a kind of content among all content in circulation"
+    },
+    {
+      "name": "impression",
+      "description": "one display of a piece of content to one user; the same user can generate many impressions"
+    },
+    {
+      "name": "removal",
+      "description": "the deletion of a post by the platform"
+    },
+    {
+      "name": "takedown",
+      "description": "the removal of content by a platform after it was found illegal or against the rules; the term used in the EU Digital Services Act context"
+    },
+    {
+      "name": "hiding",
+      "description": "making a post invisible by default while it stays retrievable; reversible, unlike removal"
+    },
+    {
+      "name": "delay",
+      "description": "the time between an event and the reaction to it"
+    },
+    {
+      "name": "latency",
+      "description": "the time between a cause and its visible effect; here between a post and the intervention on it"
+    },
+    {
+      "name": "response",
+      "description": "the reaction of a platform or a community to a post"
+    },
+    {
+      "name": "time",
+      "description": "the duration of or between events"
+    },
+    {
+      "name": "minute",
+      "description": "SI-accepted unit of time, 60 seconds",
+      "type": "measure",
+      "refs": [
+        {
+          "name": "Minute",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "hour",
+      "description": "unit of time, 60 minutes",
+      "type": "measure",
+      "refs": [
+        {
+          "name": "Hour",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "day",
+      "description": "unit of time, 24 hours",
+      "type": "measure",
+      "refs": [
+        {
+          "name": "Day",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "percent",
+      "description": "one hundredth; a value tagged with percent is stored as the decimal ratio",
+      "type": "measure",
+      "refs": [
+        {
+          "name": "Percentage",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "count",
+      "description": "the number of items",
+      "type": "measure"
+    },
+    {
+      "name": "share",
+      "description": "the fraction of a whole"
+    },
+    {
+      "name": "ratio",
+      "description": "the quotient of two quantities"
+    },
+    {
+      "name": "median",
+      "description": "the middle value of a distribution",
+      "refs": [
+        {
+          "name": "Median",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "mean",
+      "description": "the arithmetic average of a distribution",
+      "refs": [
+        {
+          "name": "Mean",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "odds",
+      "description": "the probability of an event divided by the probability of its absence",
+      "refs": [
+        {
+          "name": "Odds",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "reduction",
+      "description": "the amount by which a quantity is lowered, here relative to a baseline without intervention"
+    },
+    {
+      "name": "spread",
+      "description": "the diffusion of content through a network"
+    },
+    {
+      "name": "half-life",
+      "description": "the time after which half of the total has occurred; here the time in which half of all reposts of a post have happened",
+      "refs": [
+        {
+          "name": "Half-life",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "saturation",
+      "description": "the state in which a post has reached almost all of its eventual audience; here 90 percent of all reposts"
+    },
+    {
+      "name": "note",
+      "description": "a short text attached to a post to give context"
+    },
+    {
+      "name": "community",
+      "description": "the users of a platform acting as a collective",
+      "refs": [
+        {
+          "name": "Community",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "helpful",
+      "description": "the status a community note reaches when raters with different viewpoints agree it is useful; only helpful notes are displayed"
+    },
+    {
+      "name": "display",
+      "description": "the moment a note becomes visible to all users"
+    },
+    {
+      "name": "creation",
+      "description": "the moment a note or a post is written"
+    },
+    {
+      "name": "deletion",
+      "description": "the removal of a post by its own author"
+    },
+    {
+      "name": "comment",
+      "description": "a reply to a post",
+      "refs": [
+        {
+          "name": "Comment (Internet)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "fact-check",
+      "description": "the verification of a claim against evidence",
+      "refs": [
+        {
+          "name": "Fact-checking",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1140116",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "first",
+      "description": "the earliest of a sequence"
+    },
+    {
+      "name": "debunk",
+      "description": "the public refutation of a false claim"
+    },
+    {
+      "name": "event",
+      "description": "a period of rapid growth and decay of posts on one story; the unit of the Bak-Coleman simulation"
+    },
+    {
+      "name": "simulation",
+      "description": "a computational experiment on a model calibrated to data",
+      "refs": [
+        {
+          "name": "Simulation",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "model",
+      "description": "a simplified representation used to compute outcomes",
+      "refs": [
+        {
+          "name": "Scientific modelling",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "agent-based",
+      "description": "a model in which individual agents act and interact",
+      "refs": [
+        {
+          "name": "Agent-based model",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "intervention",
+      "description": "a measure taken by a platform to reduce the spread of content"
+    },
+    {
+      "name": "nudge",
+      "description": "a gentle prompt that changes individual behaviour without forbidding options; here an accuracy prompt that reduces the sharing of misinformation",
+      "refs": [
+        {
+          "name": "Nudge theory",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "circuit",
+      "description": "a closed path; used in the compound circuit breaker"
+    },
+    {
+      "name": "breaker",
+      "description": "a device that interrupts; used in the compound circuit breaker"
+    },
+    {
+      "name": "virality",
+      "description": "the tendency of content to be shared rapidly; the latent parameter of the Bak-Coleman model",
+      "refs": [
+        {
+          "name": "Viral phenomenon",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "account",
+      "description": "a user identity on a platform"
+    },
+    {
+      "name": "verified",
+      "description": "an account whose identity the platform has confirmed; before 2023 X awarded the status without payment"
+    },
+    {
+      "name": "strike",
+      "description": "one recorded violation; used in the compound three-strikes policy"
+    },
+    {
+      "name": "policy",
+      "description": "a rule applied by a platform or a state"
+    },
+    {
+      "name": "combined",
+      "description": "several interventions applied together"
+    },
+    {
+      "name": "modest",
+      "description": "the combined scenario with mild settings in the Bak-Coleman simulation: circuit breaker on 5 percent of content after 120 minutes, removal of 20 percent of that content after four hours, 10 percent nudge, three-strikes for verified accounts and accounts above 100000 followers"
+    },
+    {
+      "name": "aggressive",
+      "description": "the combined scenario with strong settings in the Bak-Coleman simulation: circuit breaker on 10 percent of content with 20 percent virality reduction, response times halved, 20 percent nudge, three-strikes above 50000 followers"
+    },
+    {
+      "name": "suspended",
+      "description": "an account blocked by the platform"
+    },
+    {
+      "name": "available",
+      "description": "a post that can still be opened on the platform"
+    },
+    {
+      "name": "change",
+      "description": "an alteration"
+    },
+    {
+      "name": "illegal",
+      "description": "forbidden by law"
+    },
+    {
+      "name": "content",
+      "description": "any material published on a platform"
+    },
+    {
+      "name": "statement",
+      "description": "a written declaration; used in the compound statement of reasons"
+    },
+    {
+      "name": "reasons",
+      "description": "the grounds for a decision; used in the compound statement of reasons"
+    },
+    {
+      "name": "database",
+      "description": "an organised collection of data",
+      "refs": [
+        {
+          "name": "Database",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "transparency",
+      "description": "openness about decisions",
+      "refs": [
+        {
+          "name": "Transparency (behavior)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "platform",
+      "description": "an online service that hosts user content",
+      "refs": [
+        {
+          "name": "Online platform",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "X",
+      "description": "the social media platform run by X Corp, called Twitter until July 2023",
+      "refs": [
+        {
+          "name": "Twitter",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q918",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Twitter",
+      "description": "the former name of X, used by the studies before 2023"
+    },
+    {
+      "name": "Facebook",
+      "description": "social media platform of Meta Platforms",
+      "refs": [
+        {
+          "name": "Facebook",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q355",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Instagram",
+      "description": "photo and video platform of Meta Platforms",
+      "refs": [
+        {
+          "name": "Instagram",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q209330",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "YouTube",
+      "description": "video platform of Google",
+      "refs": [
+        {
+          "name": "YouTube",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q866",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "TikTok",
+      "description": "short video platform of ByteDance",
+      "refs": [
+        {
+          "name": "TikTok",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q48938223",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Snapchat",
+      "description": "messaging platform of Snap Inc.",
+      "refs": [
+        {
+          "name": "Snapchat",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q3479",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "election",
+      "description": "a formal vote to choose office holders",
+      "refs": [
+        {
+          "name": "Election",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "United States",
+      "description": "country in North America",
+      "refs": [
+        {
+          "name": "United States",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q30",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Capitol riot",
+      "description": "the attack on the United States Capitol on 6 January 2021 by supporters of Donald Trump",
+      "refs": [
+        {
+          "name": "January 6 United States Capitol attack",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q104782669",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Russian invasion of Ukraine",
+      "description": "the full-scale invasion of Ukraine by Russia that began on 24 February 2022",
+      "refs": [
+        {
+          "name": "Russian invasion of Ukraine",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q110999040",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "DSA",
+      "description": "the EU Digital Services Act, Regulation (EU) 2022/2065",
+      "refs": [
+        {
+          "name": "Digital Services Act",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q104803925",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "EU",
+      "description": "the European Union",
+      "refs": [
+        {
+          "name": "European Union",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q458",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "2006"
+    },
+    {
+      "name": "2017"
+    },
+    {
+      "name": "2020"
+    },
+    {
+      "name": "2021"
+    },
+    {
+      "name": "2022"
+    },
+    {
+      "name": "2023"
+    },
+    {
+      "name": "2024"
+    },
+    {
+      "name": "2025"
+    },
+    {
+      "name": "2026"
+    },
+    {
+      "name": "30min",
+      "description": "delay scenario: intervention 30 minutes after the start of the event"
+    },
+    {
+      "name": "120min",
+      "description": "delay scenario: intervention 120 minutes after the start of the event"
+    },
+    {
+      "name": "2h",
+      "description": "delay scenario: expected delay of 2 hours"
+    },
+    {
+      "name": "4h",
+      "description": "delay scenario: intervention 4 hours after the start of the event"
+    },
+    {
+      "name": "9h",
+      "description": "delay scenario: expected delay of 9 hours"
+    },
+    {
+      "name": "36h",
+      "description": "time window of 36 hours after creation"
+    },
+    {
+      "name": "1d",
+      "description": "delay scenario: expected delay of 1 day"
+    },
+    {
+      "name": "46d",
+      "description": "delay scenario: expected delay of 46 days"
+    },
+    {
+      "name": "5%",
+      "description": "strength scenario: 5 percent reduction of individual sharing"
+    },
+    {
+      "name": "10%",
+      "description": "strength scenario: 10 percent reduction of individual sharing or of virality"
+    },
+    {
+      "name": "20%",
+      "description": "strength scenario: 20 percent reduction of individual sharing"
+    },
+    {
+      "name": "40%",
+      "description": "strength scenario: 40 percent reduction of individual sharing"
+    },
+    {
+      "name": "1500",
+      "description": "audience threshold of 1500 accounts used by Vosoughi et al. to compare the speed of true and false news"
+    },
+    {
+      "name": "relative",
+      "description": "in relation to a reference"
+    },
+    {
+      "name": "likelihood",
+      "description": "the probability of an outcome"
+    },
+    {
+      "name": "effort",
+      "description": "the work needed to do something"
+    },
+    {
+      "name": "publication",
+      "description": "the act of making a text public"
+    },
+    {
+      "name": "refutation",
+      "description": "the act of showing a claim to be false with evidence"
+    },
+    {
+      "name": "asymmetry",
+      "description": "an inequality between two sides"
+    },
+    {
+      "name": "symmetric",
+      "description": "equal on both sides; here: hiding as fast and as easy as publishing"
+    },
+    {
+      "name": "AI",
+      "description": "artificial intelligence; here generative language models that write texts at negligible cost",
+      "refs": [
+        {
+          "name": "Artificial intelligence",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q11660",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "counter-speech",
+      "description": "the response to false or hateful speech with more speech instead of suppression",
+      "refs": [
+        {
+          "name": "Counterspeech",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "suppression",
+      "description": "the prevention of speech by force or law"
+    },
+    {
+      "name": "tolerance",
+      "description": "the acceptance of views one disagrees with",
+      "refs": [
+        {
+          "name": "Toleration",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "paradox",
+      "description": "a statement that seems to contradict itself",
+      "refs": [
+        {
+          "name": "Paradox",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Popper",
+      "description": "Karl Popper, Austrian-British philosopher of science, 1902-1994",
+      "refs": [
+        {
+          "name": "Karl Popper",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q81244",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Brandolini's law",
+      "description": "the observation that refuting nonsense takes an order of magnitude more effort than producing it",
+      "refs": [
+        {
+          "name": "Brandolini's law",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q19359773",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "moderation",
+      "description": "the review and treatment of user content by a platform or a community",
+      "refs": [
+        {
+          "name": "Content moderation",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "effectiveness",
+      "description": "the degree to which a measure reaches its aim"
+    },
+    {
+      "name": "confidence",
+      "description": "the subjective probability that an assumption holds"
+    },
+    {
+      "name": "assumed",
+      "description": "qualifier for a value that is not measured but assumed"
+    }
+  ],
+  "triples": [
+    {
+      "from": "X",
+      "verb": "is a",
+      "to": "platform"
+    },
+    {
+      "from": "Twitter",
+      "verb": "is alias of",
+      "to": "X"
+    },
+    {
+      "from": "Facebook",
+      "verb": "is a",
+      "to": "platform"
+    },
+    {
+      "from": "Instagram",
+      "verb": "is a",
+      "to": "platform"
+    },
+    {
+      "from": "YouTube",
+      "verb": "is a",
+      "to": "platform"
+    },
+    {
+      "from": "TikTok",
+      "verb": "is a",
+      "to": "platform"
+    },
+    {
+      "from": "Snapchat",
+      "verb": "is a",
+      "to": "platform"
+    },
+    {
+      "name": "2006 to 2017",
+      "from": "2006",
+      "verb": "to",
+      "to": "2017",
+      "description": "the observation period of the Vosoughi rumour cascades"
+    },
+    {
+      "name": "2020 to 2021",
+      "from": "2020",
+      "verb": "to",
+      "to": "2021",
+      "description": "1 September to 15 December 2020 for the Bak-Coleman corpus plus the account removals of January 2021"
+    },
+    {
+      "name": "2022 to 2023",
+      "from": "2022",
+      "verb": "to",
+      "to": "2023",
+      "description": "26 February 2022 to 14 March 2023, the first year of the Russian invasion of Ukraine covered by the Shahi and Mejova sample"
+    },
+    {
+      "name": "2022 to 2024",
+      "from": "2022",
+      "verb": "to",
+      "to": "2024",
+      "description": "6 October 2022 to 11 June 2024, the observation period of the Chuai community notes panel"
+    },
+    {
+      "name": "US election",
+      "from": "election",
+      "verb": "of",
+      "to": "United States",
+      "description": "the presidential and congressional elections of the United States"
+    },
+    {
+      "name": "illegal content",
+      "from": "content",
+      "verb": "kind of",
+      "to": "illegal",
+      "description": "content a platform classified as illegal in its statement of reasons under the DSA"
+    },
+    {
+      "name": "statement of reasons",
+      "from": "statement",
+      "verb": "of",
+      "to": "reasons",
+      "description": "the case-level explanation a platform files in the DSA transparency database for each moderation decision, with the posting and the moderation timestamp"
+    },
+    {
+      "name": "transparency database",
+      "from": "database",
+      "verb": "of",
+      "to": "transparency",
+      "description": "the public DSA transparency database of the European Commission that collects the statements of reasons"
+    },
+    {
+      "name": "misleading post",
+      "from": "post",
+      "verb": "kind of",
+      "to": "misleading",
+      "description": "a post on X that received a community note rated helpful"
+    },
+    {
+      "name": "false news",
+      "from": "news",
+      "verb": "kind of",
+      "to": "false",
+      "description": "a rumour cascade rated false by the fact-checking organisations used by Vosoughi et al."
+    },
+    {
+      "name": "true news",
+      "from": "news",
+      "verb": "kind of",
+      "to": "true",
+      "description": "a rumour cascade rated true by the fact-checking organisations used by Vosoughi et al."
+    },
+    {
+      "name": "misinformation event",
+      "from": "event",
+      "verb": "of",
+      "to": "misinformation",
+      "description": "a period of rapid growth and decay of posts on one false or misleading story; 454 such events form the Bak-Coleman dataset"
+    },
+    {
+      "name": "community note",
+      "from": "note",
+      "verb": "of",
+      "to": "community",
+      "description": "the crowd-sourced fact-checking feature of X, formerly Birdwatch: users write notes and rate them; a note is displayed once raters with different viewpoints agree it is helpful",
+      "refs": [
+        {
+          "name": "Community Notes",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "helpful note",
+      "from": "community note",
+      "verb": "kind of",
+      "to": "helpful",
+      "description": "a community note that reached the helpful status and is therefore shown to all users"
+    },
+    {
+      "name": "note display",
+      "from": "display",
+      "verb": "of",
+      "to": "note",
+      "description": "the moment a helpful community note becomes visible under the post"
+    },
+    {
+      "name": "note creation",
+      "from": "creation",
+      "verb": "of",
+      "to": "note",
+      "description": "the moment the first community note on a post is written"
+    },
+    {
+      "name": "post deletion",
+      "from": "deletion",
+      "verb": "of",
+      "to": "post",
+      "description": "the removal of a post by its own author"
+    },
+    {
+      "name": "fact-check comment",
+      "from": "comment",
+      "verb": "of",
+      "to": "fact-check",
+      "description": "a reply that corrects the source post with reasoning or evidence; detected by a fine-tuned language model with about 91 to 93 percent accuracy"
+    },
+    {
+      "name": "first fact-check comment",
+      "from": "fact-check comment",
+      "verb": "kind of",
+      "to": "first",
+      "description": "the earliest fact-check comment under a post"
+    },
+    {
+      "name": "removal delay",
+      "from": "delay",
+      "verb": "of",
+      "to": "removal",
+      "description": "the time between the start of a misinformation event or the publication of a post and its removal"
+    },
+    {
+      "name": "takedown delay",
+      "from": "delay",
+      "verb": "of",
+      "to": "takedown",
+      "description": "the time between the posting of content and its takedown; in the Truong audit the expected value tau of an exponential survival fit to the DSA data"
+    },
+    {
+      "name": "fact-check delay",
+      "from": "delay",
+      "verb": "of",
+      "to": "fact-check",
+      "description": "the time between a post and the publication of the fact-checking article that debunks it"
+    },
+    {
+      "name": "response time",
+      "from": "time",
+      "verb": "of",
+      "to": "response",
+      "description": "the time between the creation of a post and the display of the helpful community note on it"
+    },
+    {
+      "name": "saturation time",
+      "from": "time",
+      "verb": "of",
+      "to": "saturation",
+      "description": "the time a post needs to reach 90 percent of all the reposts it ever receives"
+    },
+    {
+      "name": "repost half-life",
+      "from": "half-life",
+      "verb": "of",
+      "to": "repost",
+      "description": "the time after which half of the reposts of the first 36 hours have happened"
+    },
+    {
+      "name": "engagement reduction",
+      "from": "reduction",
+      "verb": "of",
+      "to": "engagement",
+      "description": "the share of engagement that an intervention prevents compared with the baseline without intervention"
+    },
+    {
+      "name": "repost reduction",
+      "from": "reduction",
+      "verb": "of",
+      "to": "repost",
+      "description": "the share of subsequent reposts prevented, estimated with a difference-in-differences design"
+    },
+    {
+      "name": "prevalence reduction",
+      "from": "reduction",
+      "verb": "of",
+      "to": "prevalence",
+      "description": "the share by which the prevalence of illegal content in the feeds falls compared with no removal"
+    },
+    {
+      "name": "reach reduction",
+      "from": "reduction",
+      "verb": "of",
+      "to": "reach",
+      "description": "the share by which the number of unique users exposed falls compared with no removal"
+    },
+    {
+      "name": "odds ratio",
+      "from": "ratio",
+      "verb": "of",
+      "to": "odds",
+      "description": "the odds with the intervention divided by the odds without",
+      "refs": [
+        {
+          "name": "Odds ratio",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "relative likelihood",
+      "from": "likelihood",
+      "verb": "kind of",
+      "to": "relative",
+      "description": "the probability of an outcome for one group divided by the probability for the reference group"
+    },
+    {
+      "name": "reach time",
+      "from": "time",
+      "verb": "of",
+      "to": "reach",
+      "description": "the time a post needs to reach a given number of accounts"
+    },
+    {
+      "name": "reach time ratio",
+      "from": "ratio",
+      "verb": "of",
+      "to": "reach time",
+      "description": "the reach time of true news divided by the reach time of false news for the same audience size"
+    },
+    {
+      "name": "circuit breaker",
+      "from": "breaker",
+      "verb": "of",
+      "to": "circuit",
+      "description": "a switch that interrupts a flow when it becomes dangerous",
+      "refs": [
+        {
+          "name": "Circuit breaker",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "virality circuit breaker",
+      "from": "circuit breaker",
+      "verb": "of",
+      "to": "virality",
+      "description": "a platform measure that lowers the virality of a trending topic, for example by suspending algorithmic amplification, without removing content"
+    },
+    {
+      "name": "account removal",
+      "from": "removal",
+      "verb": "of",
+      "to": "account",
+      "description": "the permanent removal of accounts that repeatedly spread misinformation"
+    },
+    {
+      "name": "three-strikes policy",
+      "from": "policy",
+      "verb": "of",
+      "to": "strike",
+      "description": "an account is removed after it took part in three separate misinformation incidents"
+    },
+    {
+      "name": "verified account",
+      "from": "account",
+      "verb": "kind of",
+      "to": "verified",
+      "description": "an account with a confirmed identity"
+    },
+    {
+      "name": "combined intervention",
+      "from": "intervention",
+      "verb": "kind of",
+      "to": "combined",
+      "description": "several modest interventions applied together"
+    },
+    {
+      "name": "policy change",
+      "from": "change",
+      "verb": "of",
+      "to": "policy",
+      "description": "the change of Facebook's moderation policy after the Capitol riot that took nearly a week to implement"
+    },
+    {
+      "name": "agent-based model",
+      "from": "model",
+      "verb": "kind of",
+      "to": "agent-based",
+      "description": "SimSoM, an agent-based model of a social media platform, calibrated with the DSA takedown delays",
+      "refs": [
+        {
+          "name": "Agent-based model",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "publication effort",
+      "from": "effort",
+      "verb": "of",
+      "to": "publication",
+      "description": "the work needed to publish one item of disinformation"
+    },
+    {
+      "name": "refutation effort",
+      "from": "effort",
+      "verb": "of",
+      "to": "refutation",
+      "description": "the work needed to refute one item of disinformation with sources"
+    },
+    {
+      "name": "effort asymmetry",
+      "from": "asymmetry",
+      "verb": "of",
+      "to": "effort",
+      "description": "the refutation effort exceeds the publication effort by an order of magnitude or more"
+    },
+    {
+      "name": "symmetric hiding",
+      "from": "hiding",
+      "verb": "kind of",
+      "to": "symmetric",
+      "description": "a mechanism that lets a reader hide a post as fast and as easily as the author published it; the post is replaced by a placeholder and a later correction reaches the readers who subscribed"
+    },
+    {
+      "name": "paradox of tolerance",
+      "from": "paradox",
+      "verb": "of",
+      "to": "tolerance",
+      "description": "Popper's argument that unlimited tolerance leads to the disappearance of tolerance; suppression is justified only when the intolerant refuse rational argument",
+      "refs": [
+        {
+          "name": "Paradox of tolerance",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "moderation effectiveness",
+      "from": "effectiveness",
+      "verb": "of",
+      "to": "moderation",
+      "description": "the share of harm or spread a moderation measure prevents"
+    },
+    {
+      "from": "Popper",
+      "verb": "issue",
+      "to": "paradox of tolerance",
+      "description": "Popper stated the paradox in The Open Society and Its Enemies, 1945, volume 1, chapter 7, note 4"
+    },
+    {
+      "from": "Brandolini's law",
+      "verb": "supports",
+      "to": "effort asymmetry"
+    },
+    {
+      "from": "AI",
+      "verb": "adds to",
+      "to": "effort asymmetry",
+      "description": "generative AI lowers the publication effort further while the refutation effort stays human work"
+    },
+    {
+      "from": "effort asymmetry",
+      "verb": "limits",
+      "to": "counter-speech",
+      "description": "the claim of the dialogue: when publishing more disinformation is cheaper than answering it, the intolerant need not engage with counter-arguments, so Popper's condition for tolerance cannot be met"
+    },
+    {
+      "from": "counter-speech",
+      "verb": "limits",
+      "to": "suppression",
+      "description": "Popper's condition: as long as counter-speech works, suppression is not justified"
+    },
+    {
+      "from": "latency",
+      "verb": "limits",
+      "to": "moderation effectiveness",
+      "description": "the finding shared by the simulation and the field studies: the effect of any intervention falls steeply with its delay"
+    },
+    {
+      "from": "symmetric hiding",
+      "verb": "enables",
+      "to": "counter-speech",
+      "description": "the thesis of the dialogue: hiding at publication speed restores the condition under which counter-speech can work"
+    },
+    {
+      "from": "symmetric hiding",
+      "verb": "reduces",
+      "to": "latency"
+    },
+    {
+      "name": "latency to half-life ratio",
+      "from": "latency",
+      "verb": "per",
+      "to": "half-life",
+      "description": "the median response time of a community note divided by the repost half-life; a ratio above one means the note arrives after most of the spread"
+    },
+    {
+      "name": "effort asymmetry ratio",
+      "from": "refutation effort",
+      "verb": "per",
+      "to": "publication effort",
+      "description": "the refutation effort divided by the publication effort"
+    }
+  ],
+  "formulas": [
+    {
+      "name": "latency to half-life ratio formula",
+      "description": "the median response time of a community note divided by the repost half-life of the misleading posts; above one the note arrives after more than half of the spread",
+      "expression": "\"latency to half-life ratio\" = \"response time\" / \"repost half-life\"",
+      "latex": "\\text{latency to half-life ratio} = \\frac{\\text{response time}}{\\text{repost half-life}}",
+      "assigned": [
+        "response time",
+        "repost half-life"
+      ]
+    },
+    {
+      "name": "effort asymmetry ratio formula",
+      "description": "the refutation effort divided by the publication effort; Brandolini's law states an order of magnitude",
+      "expression": "\"effort asymmetry ratio\" = \"refutation effort\" / \"publication effort\"",
+      "latex": "\\text{effort asymmetry ratio} = \\frac{\\text{refutation effort}}{\\text{publication effort}}",
+      "assigned": [
+        "refutation effort",
+        "publication effort"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "name": "Bak-Coleman 2022",
+      "description": "Bak-Coleman J.B., Kennedy I., Wack M., Beers A., Schafer J.S., Spiro E.S., Starbird K., West J.D. (2022). Combining interventions to reduce the spread of viral misinformation. Nature Human Behaviour 6:1372-1380. Generative branching-process model of viral spread fitted to 10.5 million Twitter posts from 454 misinformation events of the 2020 US election; simulates removal after a delay, virality circuit breakers, nudges, account removal and their combination. Open access.",
+      "doi": "10.1038/s41562-022-01388-6"
+    },
+    {
+      "name": "Chuai 2026",
+      "description": "Chuai Y., Pilarski M., Renault T., Restrepo-Amariles D., Troussel-Clément A., Lenzini G., Pröllochs N. (2026). Community-based fact-checking reduces the spread of misleading posts on X (formerly Twitter). Nature Communications 17:4070. Difference-in-differences on minute-level repost time series of 237180 community fact-checked cascades, 6 October 2022 to 11 June 2024. Open access.",
+      "doi": "10.1038/s41467-026-72597-0"
+    },
+    {
+      "name": "Vosoughi 2018",
+      "description": "Vosoughi S., Roy D., Aral S. (2018). The spread of true and false news online. Science 359:1146-1151. About 126000 rumour cascades spread by about 3 million people on Twitter 2006-2017, rated by six fact-checking organisations.",
+      "doi": "10.1126/science.aap9559"
+    },
+    {
+      "name": "Truong 2025",
+      "description": "Truong B.T., Kim S., Nogara G., Verdolotti E., Samieyan Sahneh E., Saurwein F., Just N., Luceri L., Giordano S., Menczer F. (2025). Audit of takedown delays across social media reveals failure to reduce exposure to illegal content. arXiv:2502.08841. Audit of statements of reasons in the DSA transparency database for 2024 on five platforms plus the agent-based model SimSoM calibrated to the measured delays. Preprint.",
+      "url": "https://arxiv.org/abs/2502.08841",
+      "reliability": "medium"
+    },
+    {
+      "name": "Goldstein 2023",
+      "description": "Goldstein I., Edelson L., Nguyen M.-K., Goga O., McCoy D., Lauinger T. (2023). Understanding the (in)effectiveness of content moderation: a case study of Facebook in the context of the U.S. Capitol riot. arXiv:2301.02737. Removed posts of US news publishers on Facebook around 6 January 2021 and the engagement they had gathered before removal. Preprint.",
+      "url": "https://arxiv.org/abs/2301.02737",
+      "reliability": "medium"
+    },
+    {
+      "name": "Shahi 2025",
+      "description": "Shahi G.K., Mejova Y. (2025). Too little, too late: moderation of misinformation around the Russo-Ukrainian conflict. arXiv:2502.18500. 500 tweets identified as misinformation by 41 fact-checking organisations, a streaming sample of 543475 of their retweets, and the platform status of the tweets re-queried in May 2024. Preprint.",
+      "url": "https://arxiv.org/abs/2502.18500",
+      "reliability": "medium"
+    },
+    {
+      "name": "arXiv 2509.11052",
+      "description": "Fact-checking comments precede community notes to misleading posts on X (2025). arXiv:2509.11052. Language-model pipeline over 2.2 million comments under 1841 community fact-checked misleading posts, comparing the timing of organic fact-checking comments with the creation and display of community notes. Preprint; author list not verified.",
+      "url": "https://arxiv.org/abs/2509.11052",
+      "reliability": "medium"
+    },
+    {
+      "name": "Popper 1945",
+      "description": "Popper K.R. (1945). The Open Society and Its Enemies, volume 1: The Spell of Plato, chapter 7, note 4. Routledge. The paradox of tolerance: tolerance should not be extended to the intolerant if they refuse rational argument and answer it with force."
+    },
+    {
+      "name": "forum dialogue 2026-09",
+      "description": "Dialogue in a newspaper comment forum, September 2026, between the author of this file and another commenter, prompted by the Arte series 'Stimmt das?', episode 'Durfte man früher mehr sagen?' (from minute 20: censorship by disinformation). The commenter holds that freedom of expression outweighs any censorship and that only organised foreign disinformation may justify limits; the author holds that hiding must become as fast and easy as publishing. The assumed values of this file come from that dialogue.",
+      "reliability": "low"
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "US election",
+        "2020 to 2021",
+        "X (platform)",
+        "misinformation",
+        "post",
+        "count"
+      ],
+      "number": "10500000",
+      "source": "Bak-Coleman 2022",
+      "description": "posts (tweets, retweets, replies, quote tweets) in the 454 events the model fitted; extracted from 1.04 billion election-related posts collected between 1 September and 15 December 2020"
+    },
+    {
+      "words": [
+        "US election",
+        "2020 to 2021",
+        "X (platform)",
+        "misinformation event",
+        "count"
+      ],
+      "number": "454",
+      "source": "Bak-Coleman 2022",
+      "description": "viral events that met the inclusion criteria, out of 544 candidate events from 430 incidents"
+    },
+    {
+      "words": [
+        "US election",
+        "2020 to 2021",
+        "X (platform)",
+        "simulation",
+        "removal delay",
+        "30min",
+        "engagement reduction",
+        "median",
+        "percent"
+      ],
+      "number": "0.938",
+      "source": "Bak-Coleman 2022",
+      "description": "outright removal of all posts of an event 30 minutes after its start; 89 percent credible interval 0.929 to 0.944; assumes every event is detected, fact-checked and removed in time"
+    },
+    {
+      "words": [
+        "US election",
+        "2020 to 2021",
+        "X (platform)",
+        "simulation",
+        "removal delay",
+        "4h",
+        "engagement reduction",
+        "median",
+        "percent"
+      ],
+      "number": "0.556",
+      "source": "Bak-Coleman 2022",
+      "description": "outright removal four hours after the start of the event; 89 percent credible interval 0.507 to 0.592"
+    },
+    {
+      "words": [
+        "US election",
+        "2020 to 2021",
+        "X (platform)",
+        "simulation",
+        "virality circuit breaker",
+        "10%",
+        "4h",
+        "engagement reduction",
+        "median",
+        "percent"
+      ],
+      "number": "0.453",
+      "source": "Bak-Coleman 2022",
+      "description": "a 10 percent reduction of virality applied four hours after the start of every event; 89 percent credible interval 0.394 to 0.498; similar efficacy to removal although no content is removed"
+    },
+    {
+      "words": [
+        "US election",
+        "2020 to 2021",
+        "X (platform)",
+        "simulation",
+        "nudge",
+        "5%",
+        "engagement reduction",
+        "median",
+        "percent"
+      ],
+      "number": "0.152",
+      "source": "Bak-Coleman 2022",
+      "description": "a nudge that reduces the sharing of every account by 5 percent; 89 percent credible interval 0.03 to 0.243; the system effect exceeds the individual effect"
+    },
+    {
+      "words": [
+        "US election",
+        "2020 to 2021",
+        "X (platform)",
+        "simulation",
+        "nudge",
+        "10%",
+        "engagement reduction",
+        "median",
+        "percent"
+      ],
+      "number": "0.264",
+      "source": "Bak-Coleman 2022",
+      "description": "89 percent credible interval 0.181 to 0.335"
+    },
+    {
+      "words": [
+        "US election",
+        "2020 to 2021",
+        "X (platform)",
+        "simulation",
+        "nudge",
+        "20%",
+        "engagement reduction",
+        "median",
+        "percent"
+      ],
+      "number": "0.403",
+      "source": "Bak-Coleman 2022",
+      "description": "89 percent credible interval 0.34 to 0.451"
+    },
+    {
+      "words": [
+        "US election",
+        "2020 to 2021",
+        "X (platform)",
+        "simulation",
+        "nudge",
+        "40%",
+        "engagement reduction",
+        "median",
+        "percent"
+      ],
+      "number": "0.556",
+      "source": "Bak-Coleman 2022",
+      "description": "89 percent credible interval 0.509 to 0.59"
+    },
+    {
+      "words": [
+        "US election",
+        "2020 to 2021",
+        "X (platform)",
+        "account removal",
+        "account",
+        "count"
+      ],
+      "number": "1504",
+      "source": "Bak-Coleman 2022",
+      "description": "accounts with posts in the dataset that Twitter had removed by late January 2021"
+    },
+    {
+      "words": [
+        "US election",
+        "2020 to 2021",
+        "X (platform)",
+        "simulation",
+        "account removal",
+        "engagement reduction",
+        "median",
+        "percent"
+      ],
+      "number": "0.3",
+      "source": "Bak-Coleman 2022",
+      "description": "the effect of the 1504 accounts already removed in early 2021, simulated on the election events; the paper reports 30 percent with an 89 percent credible interval of 0.102 to 0.227, which does not contain the point estimate as printed"
+    },
+    {
+      "words": [
+        "US election",
+        "2020 to 2021",
+        "X (platform)",
+        "simulation",
+        "three-strikes policy",
+        "verified account",
+        "engagement reduction",
+        "median",
+        "percent"
+      ],
+      "number": "0.127",
+      "source": "Bak-Coleman 2022",
+      "description": "removal of verified accounts after their third misinformation incident; 89 percent credible interval 0.023 to 0.23"
+    },
+    {
+      "words": [
+        "US election",
+        "2020 to 2021",
+        "X (platform)",
+        "simulation",
+        "combined intervention",
+        "modest",
+        "engagement reduction",
+        "median",
+        "percent"
+      ],
+      "number": "0.533",
+      "source": "Bak-Coleman 2022",
+      "description": "89 percent credible interval 0.482 to 0.582; settings in the description of the word modest"
+    },
+    {
+      "words": [
+        "US election",
+        "2020 to 2021",
+        "X (platform)",
+        "simulation",
+        "combined intervention",
+        "aggressive",
+        "engagement reduction",
+        "median",
+        "percent"
+      ],
+      "number": "0.63",
+      "source": "Bak-Coleman 2022",
+      "description": "89 percent credible interval 0.584 to 0.669; settings in the description of the word aggressive"
+    },
+    {
+      "words": [
+        "community note",
+        "X (platform)",
+        "2022 to 2024",
+        "cascade",
+        "count"
+      ],
+      "number": "237180",
+      "source": "Chuai 2026",
+      "description": "community fact-checked source posts with minute-level repost time series over 36 hours"
+    },
+    {
+      "words": [
+        "community note",
+        "X (platform)",
+        "2022 to 2024",
+        "repost",
+        "count"
+      ],
+      "number": "431000000",
+      "source": "Chuai 2026",
+      "description": "reposts of the 237180 cascades, reported as more than 431 million"
+    },
+    {
+      "words": [
+        "community note",
+        "X (platform)",
+        "2022 to 2024",
+        "note display",
+        "repost reduction",
+        "mean",
+        "percent"
+      ],
+      "number": "0.612",
+      "source": "Chuai 2026",
+      "description": "average treatment effect on the treated of displaying a note, 1 to 12 hours after display versus 1 to 4 hours before; 99 percent confidence interval 0.608 to 0.617; weaker for influential accounts and political content"
+    },
+    {
+      "words": [
+        "community note",
+        "X (platform)",
+        "2022 to 2024",
+        "note display",
+        "post deletion",
+        "odds ratio"
+      ],
+      "number": "1.943",
+      "source": "Chuai 2026",
+      "description": "displaying a note raises the odds that the author deletes the post by 94.3 percent"
+    },
+    {
+      "words": [
+        "community note",
+        "X (platform)",
+        "2022 to 2024",
+        "response time",
+        "mean",
+        "hour"
+      ],
+      "number": "62.9",
+      "source": "Chuai 2026",
+      "description": "time between the creation of the post and the display of the helpful note"
+    },
+    {
+      "words": [
+        "community note",
+        "X (platform)",
+        "2022 to 2024",
+        "response time",
+        "median",
+        "hour"
+      ],
+      "number": "18.1",
+      "source": "Chuai 2026",
+      "description": "time between the creation of the post and the display of the helpful note"
+    },
+    {
+      "words": [
+        "community note",
+        "X (platform)",
+        "2022 to 2024",
+        "helpful note",
+        "note display",
+        "36h",
+        "share",
+        "percent"
+      ],
+      "number": "0.757",
+      "source": "Chuai 2026",
+      "description": "share of all helpful notes that were displayed within 36 hours after the note was created; the delay is mostly rating, not writing"
+    },
+    {
+      "words": [
+        "misleading post",
+        "X (platform)",
+        "2022 to 2024",
+        "repost half-life",
+        "hour"
+      ],
+      "number": "5.75",
+      "source": "Chuai 2026",
+      "description": "half of the reposts of the first 36 hours happen within 5.75 hours"
+    },
+    {
+      "words": [
+        "community note",
+        "X (platform)",
+        "2022 to 2024",
+        "helpful note",
+        "note display",
+        "repost half-life",
+        "share",
+        "percent"
+      ],
+      "number": "0.135",
+      "source": "Chuai 2026",
+      "description": "share of helpful notes displayed before the repost half-life of their post; the other 86.5 percent arrive after most of the spread"
+    },
+    {
+      "words": [
+        "community note",
+        "X (platform)",
+        "misleading post",
+        "comment",
+        "count"
+      ],
+      "number": "2200000",
+      "source": "arXiv 2509.11052",
+      "description": "comments under 1841 community fact-checked misleading posts, reported as over 2.2 million"
+    },
+    {
+      "words": [
+        "community note",
+        "X (platform)",
+        "misleading post",
+        "count"
+      ],
+      "number": "1841",
+      "source": "arXiv 2509.11052"
+    },
+    {
+      "words": [
+        "community note",
+        "X (platform)",
+        "misleading post",
+        "first fact-check comment",
+        "note creation",
+        "share",
+        "percent"
+      ],
+      "number": "0.994",
+      "source": "arXiv 2509.11052",
+      "description": "share of misleading posts whose first fact-check comment appeared before the first community note was created"
+    },
+    {
+      "words": [
+        "community note",
+        "X (platform)",
+        "misleading post",
+        "first fact-check comment",
+        "median",
+        "hour"
+      ],
+      "number": "0.1",
+      "source": "arXiv 2509.11052",
+      "description": "median time from the publication of the post to its first fact-check comment; 99.3 percent of posts receive one within two hours"
+    },
+    {
+      "words": [
+        "community note",
+        "X (platform)",
+        "misleading post",
+        "note creation",
+        "median",
+        "hour"
+      ],
+      "number": "9.7",
+      "source": "arXiv 2509.11052",
+      "description": "median time from the publication of the post to the creation of the first community note"
+    },
+    {
+      "words": [
+        "community note",
+        "X (platform)",
+        "misleading post",
+        "fact-check comment",
+        "note creation",
+        "mean",
+        "count"
+      ],
+      "number": "70",
+      "source": "arXiv 2509.11052",
+      "description": "fact-check comments accumulated under a post by the time the first note is created, for posts with displayed notes; median 15.5"
+    },
+    {
+      "words": [
+        "Facebook (platform)",
+        "Capitol riot",
+        "2021",
+        "removal delay",
+        "median",
+        "hour"
+      ],
+      "number": "21",
+      "source": "Goldstein 2023",
+      "description": "half of the removed posts of US news publishers in the baseline period were last observed 21 hours after publication"
+    },
+    {
+      "words": [
+        "Facebook (platform)",
+        "Capitol riot",
+        "2021",
+        "removal",
+        "post",
+        "engagement",
+        "count"
+      ],
+      "number": "10900000",
+      "source": "Goldstein 2023",
+      "description": "engagements the later removed posts had gathered before their removal"
+    },
+    {
+      "words": [
+        "Facebook (platform)",
+        "Capitol riot",
+        "2021",
+        "removal",
+        "engagement reduction",
+        "percent"
+      ],
+      "number": "0.212",
+      "source": "Goldstein 2023",
+      "description": "estimated share of engagement the removals prevented; most of the audience had already seen the posts"
+    },
+    {
+      "words": [
+        "Facebook (platform)",
+        "Capitol riot",
+        "2021",
+        "policy change",
+        "removal delay",
+        "post",
+        "count"
+      ],
+      "number": "995",
+      "source": "Goldstein 2023",
+      "description": "posts whose removal the policy change after 6 January delayed by several days"
+    },
+    {
+      "words": [
+        "Facebook (platform)",
+        "Capitol riot",
+        "2021",
+        "policy change",
+        "removal delay",
+        "post",
+        "engagement",
+        "count"
+      ],
+      "number": "2000000",
+      "source": "Goldstein 2023",
+      "description": "engagements the 995 delayed posts received in the meantime, reported as over 2 million; their removal prevented less than 1 percent"
+    },
+    {
+      "words": [
+        "Facebook (platform)",
+        "illegal content",
+        "takedown delay",
+        "mean",
+        "2024",
+        "day"
+      ],
+      "number": "31",
+      "source": "Truong 2025",
+      "description": "expected takedown delay tau from an exponential survival fit to the statements of reasons of 2024; optimistic, because the fit underweights the heavy tail"
+    },
+    {
+      "words": [
+        "Facebook (platform)",
+        "illegal content",
+        "statement of reasons",
+        "2024",
+        "count"
+      ],
+      "number": "8613",
+      "source": "Truong 2025",
+      "description": "statements of reasons of 2024 that classify the content as illegal; X excluded because of suspicious reporting patterns"
+    },
+    {
+      "words": [
+        "Instagram (platform)",
+        "illegal content",
+        "takedown delay",
+        "mean",
+        "2024",
+        "day"
+      ],
+      "number": "87",
+      "source": "Truong 2025",
+      "description": "expected takedown delay tau from an exponential survival fit to the statements of reasons of 2024; optimistic, because the fit underweights the heavy tail"
+    },
+    {
+      "words": [
+        "Instagram (platform)",
+        "illegal content",
+        "statement of reasons",
+        "2024",
+        "count"
+      ],
+      "number": "3005",
+      "source": "Truong 2025",
+      "description": "statements of reasons of 2024 that classify the content as illegal; X excluded because of suspicious reporting patterns"
+    },
+    {
+      "words": [
+        "YouTube (platform)",
+        "illegal content",
+        "takedown delay",
+        "mean",
+        "2024",
+        "day"
+      ],
+      "number": "286",
+      "source": "Truong 2025",
+      "description": "expected takedown delay tau from an exponential survival fit to the statements of reasons of 2024; optimistic, because the fit underweights the heavy tail"
+    },
+    {
+      "words": [
+        "YouTube (platform)",
+        "illegal content",
+        "statement of reasons",
+        "2024",
+        "count"
+      ],
+      "number": "408400",
+      "source": "Truong 2025",
+      "description": "statements of reasons of 2024 that classify the content as illegal; X excluded because of suspicious reporting patterns"
+    },
+    {
+      "words": [
+        "TikTok (platform)",
+        "illegal content",
+        "takedown delay",
+        "mean",
+        "2024",
+        "day"
+      ],
+      "number": "6",
+      "source": "Truong 2025",
+      "description": "expected takedown delay tau from an exponential survival fit to the statements of reasons of 2024; optimistic, because the fit underweights the heavy tail"
+    },
+    {
+      "words": [
+        "TikTok (platform)",
+        "illegal content",
+        "statement of reasons",
+        "2024",
+        "count"
+      ],
+      "number": "90409",
+      "source": "Truong 2025",
+      "description": "statements of reasons of 2024 that classify the content as illegal; X excluded because of suspicious reporting patterns"
+    },
+    {
+      "words": [
+        "Snapchat (platform)",
+        "illegal content",
+        "takedown delay",
+        "mean",
+        "2024",
+        "day"
+      ],
+      "number": "136",
+      "source": "Truong 2025",
+      "description": "expected takedown delay tau from an exponential survival fit to the statements of reasons of 2024; optimistic, because the fit underweights the heavy tail"
+    },
+    {
+      "words": [
+        "Snapchat (platform)",
+        "illegal content",
+        "statement of reasons",
+        "2024",
+        "count"
+      ],
+      "number": "2142",
+      "source": "Truong 2025",
+      "description": "statements of reasons of 2024 that classify the content as illegal; X excluded because of suspicious reporting patterns"
+    },
+    {
+      "words": [
+        "agent-based model",
+        "simulation",
+        "illegal content",
+        "takedown delay",
+        "9h",
+        "prevalence reduction",
+        "percent"
+      ],
+      "number": "0.95",
+      "source": "Truong 2025",
+      "description": "for an expected delay below nine hours removal cuts prevalence, reach and impressions by 95 to 100 percent; stored is the lower bound"
+    },
+    {
+      "words": [
+        "agent-based model",
+        "simulation",
+        "illegal content",
+        "takedown delay",
+        "1d",
+        "reach reduction",
+        "percent"
+      ],
+      "number": "0.6",
+      "source": "Truong 2025",
+      "description": "removal within one day on average reduces reach and impressions only by about 60 percent"
+    },
+    {
+      "words": [
+        "agent-based model",
+        "simulation",
+        "illegal content",
+        "takedown delay",
+        "46d",
+        "prevalence reduction",
+        "percent"
+      ],
+      "number": "0",
+      "source": "Truong 2025",
+      "description": "beyond 46 days of expected delay the prevalence reduction is negligible; the measured delays of Instagram, Snapchat and YouTube lie in this range"
+    },
+    {
+      "words": [
+        "Russian invasion of Ukraine",
+        "X (platform)",
+        "2022 to 2023",
+        "misinformation",
+        "post",
+        "count"
+      ],
+      "number": "500",
+      "source": "Shahi 2025",
+      "description": "tweets debunked by fact-checking organisations and matched in the streaming sample; posted by 428 accounts"
+    },
+    {
+      "words": [
+        "Russian invasion of Ukraine",
+        "X (platform)",
+        "2022 to 2023",
+        "misinformation",
+        "account",
+        "count"
+      ],
+      "number": "428",
+      "source": "Shahi 2025"
+    },
+    {
+      "words": [
+        "Russian invasion of Ukraine",
+        "X (platform)",
+        "2022 to 2023",
+        "misinformation",
+        "repost",
+        "count"
+      ],
+      "number": "877579",
+      "source": "Shahi 2025",
+      "description": "retweets of the 500 tweets according to their metadata at the end of the collection"
+    },
+    {
+      "words": [
+        "Russian invasion of Ukraine",
+        "X (platform)",
+        "2022 to 2023",
+        "misinformation",
+        "repost",
+        "median",
+        "count"
+      ],
+      "number": "283",
+      "source": "Shahi 2025",
+      "description": "reposts per misinformation tweet; mean 1755, maximum 31941"
+    },
+    {
+      "words": [
+        "Russian invasion of Ukraine",
+        "X (platform)",
+        "2022 to 2023",
+        "misinformation",
+        "saturation time",
+        "median",
+        "hour"
+      ],
+      "number": "28",
+      "source": "Shahi 2025",
+      "description": "time until a misinformation tweet reached 90 percent of all its reposts; mean 51 hours"
+    },
+    {
+      "words": [
+        "Russian invasion of Ukraine",
+        "X (platform)",
+        "2022 to 2023",
+        "misinformation",
+        "fact-check delay",
+        "median",
+        "day"
+      ],
+      "number": "6",
+      "source": "Shahi 2025",
+      "description": "time from the tweet to the fact-checking article; mean 30 days because of a long tail"
+    },
+    {
+      "words": [
+        "Russian invasion of Ukraine",
+        "X (platform)",
+        "2022 to 2023",
+        "misinformation",
+        "post",
+        "available",
+        "2024",
+        "share",
+        "percent"
+      ],
+      "number": "0.84",
+      "source": "Shahi 2025",
+      "description": "share of the 500 misinformation tweets still available on the platform in May 2024, more than a year after posting; only one was flagged as violating rules"
+    },
+    {
+      "words": [
+        "Russian invasion of Ukraine",
+        "X (platform)",
+        "2022 to 2023",
+        "misinformation",
+        "account",
+        "suspended",
+        "2024",
+        "count"
+      ],
+      "number": "26",
+      "source": "Shahi 2025",
+      "description": "accounts of the 428 that the platform had suspended by May 2024"
+    },
+    {
+      "words": [
+        "X (platform)",
+        "2006 to 2017",
+        "news",
+        "cascade",
+        "count"
+      ],
+      "number": "126000",
+      "source": "Vosoughi 2018",
+      "description": "rumour cascades rated by six independent fact-checking organisations, about 126000"
+    },
+    {
+      "words": [
+        "X (platform)",
+        "2006 to 2017",
+        "news",
+        "cascade",
+        "account",
+        "count"
+      ],
+      "number": "3000000",
+      "source": "Vosoughi 2018",
+      "description": "accounts that took part in the cascades, about 3 million"
+    },
+    {
+      "words": [
+        "X (platform)",
+        "2006 to 2017",
+        "false news",
+        "repost",
+        "relative likelihood"
+      ],
+      "number": "1.7",
+      "source": "Vosoughi 2018",
+      "description": "false news was 70 percent more likely to be retweeted than true news"
+    },
+    {
+      "words": [
+        "X (platform)",
+        "2006 to 2017",
+        "true news",
+        "1500",
+        "reach time ratio"
+      ],
+      "number": "6",
+      "source": "Vosoughi 2018",
+      "description": "true news took about six times as long as false news to reach 1500 accounts"
+    },
+    {
+      "words": [
+        "disinformation",
+        "publication effort",
+        "AI",
+        "assumed",
+        "minute"
+      ],
+      "number": "1",
+      "source": "forum dialogue 2026-09",
+      "description": "assumed effort to generate and post one item of disinformation with a language model"
+    },
+    {
+      "words": [
+        "confidence",
+        "publication effort",
+        "AI",
+        "assumed"
+      ],
+      "number": "0.5",
+      "source": "forum dialogue 2026-09"
+    },
+    {
+      "words": [
+        "disinformation",
+        "refutation effort",
+        "assumed",
+        "minute"
+      ],
+      "number": "60",
+      "source": "forum dialogue 2026-09",
+      "description": "assumed effort of a person to refute one item with verified sources; Brandolini's law puts the factor at an order of magnitude, generative AI widens it"
+    },
+    {
+      "words": [
+        "confidence",
+        "refutation effort",
+        "assumed"
+      ],
+      "number": "0.5",
+      "source": "forum dialogue 2026-09"
+    },
+    {
+      "words": [
+        "confidence",
+        "effort asymmetry limits counter-speech",
+        "assumed"
+      ],
+      "number": "0.7",
+      "source": "forum dialogue 2026-09",
+      "description": "the claim of the dialogue that the intolerant no longer need to engage with counter-arguments because publishing more is cheaper than answering"
+    },
+    {
+      "words": [
+        "confidence",
+        "symmetric hiding enables counter-speech",
+        "assumed"
+      ],
+      "number": "0.6",
+      "source": "forum dialogue 2026-09",
+      "description": "the thesis that hiding at publication speed restores Popper's condition; no platform has tested it, the simulations above only show that the delay is the decisive variable"
+    },
+    {
+      "words": [
+        "confidence",
+        "latency limits moderation effectiveness",
+        "assumed"
+      ],
+      "number": "0.9",
+      "source": "forum dialogue 2026-09",
+      "description": "supported by the removal delay curve of Bak-Coleman, the takedown delay curve of Truong and the timing mismatch in Chuai, Goldstein and Shahi"
+    }
+  ],
+  "calc-validation": [
+    {
+      "context": [
+        "community note",
+        "X (platform)",
+        "2022 to 2024",
+        "response time",
+        "median",
+        "hour",
+        "misleading post",
+        "repost half-life"
+      ],
+      "formula": "latency to half-life ratio formula",
+      "words": [
+        "latency to half-life ratio",
+        "community note",
+        "X (platform)",
+        "2022 to 2024"
+      ],
+      "number": "3.15",
+      "note": "18.1 h / 5.75 h; the median note is displayed after about three half-lives of the reposts"
+    },
+    {
+      "context": [
+        "disinformation",
+        "publication effort",
+        "refutation effort",
+        "AI",
+        "assumed",
+        "minute"
+      ],
+      "formula": "effort asymmetry ratio formula",
+      "words": [
+        "effort asymmetry ratio",
+        "disinformation",
+        "AI",
+        "assumed"
+      ],
+      "number": "60"
+    }
+  ]
+}

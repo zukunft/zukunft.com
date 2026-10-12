@@ -34,6 +34,7 @@ include_once __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'api_c
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_LOG . 'change_log_link_list.php';
+include_once paths::SHARED . 'group_id_url.php';
 include_once paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\application;
@@ -41,6 +42,7 @@ use Zukunft\ZukunftCom\main\php\cfg\log\change_log_link_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\api\controller;
+use Zukunft\ZukunftCom\main\php\shared\group_id_url;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\library;
 
@@ -63,7 +65,8 @@ if ($db_con->is_open()) {
 
         // get the parameters
         $class = $_GET[url_var::LOG_CLASS] ?? '';
-        $id = $_GET[url_var::ID] ?? 0;
+        // an id is named like in the page url, so a group id comes in its short form
+        $id = group_id_url::from_url($_GET[url_var::ID] ?? 0);
 
         // build the api message
         if ($class != '') {

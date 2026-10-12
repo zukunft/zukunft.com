@@ -24,7 +24,7 @@ BEGIN
        AND phrase_id_3 = _phrase_id_3
        AND phrase_id_4 = _phrase_id_4
        AND user_id = _user_id
-       AND source_id = _source_id;
+       AND source_id <=> _source_id;
 
 END;
 
@@ -34,7 +34,7 @@ PREPARE value_prime_p1_update_log_21000_user_call FROM
 SELECT value_prime_p1_update_log_21000_user
        (3,
         1,
-        6,
+        295,
         123.456,
         3.1415926535898,
         5,

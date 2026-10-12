@@ -508,7 +508,7 @@ class view_exe extends view_base
                 $url = $html->url_back(views::VIEW_ADD_ID, $this->id(), $url_arr, word::class . '=' . $wrd->id() . '&add_entry=-1');
                 $result .= new button($url, $url_arr)->add(msg_id::COMPONENT_ADD);
                 $id_selected = 0; // no default view component to add defined yet, maybe use the last???
-                $result .= $this->component_selector($script, '', $id_selected, $ui_sys->component_list());
+                $result .= $this->component_selector($script, $msg, '', $id_selected, $ui_sys->component_list());
 
                 $result .= $html->dsp_form_end('',
                     $html->url_back(views::VIEW_EDIT_ID, $this->id(), $url_arr, 'word=' . $wrd->id()));
@@ -516,7 +516,7 @@ class view_exe extends view_base
                 $result .= 'Name of the new component: ';
                 $result .= $html->input(url_var::NAME, msg_id::FORM_FIELD_NAME, '', html_base::INPUT_TEXT);
                 // TODO ??? should this not be the default entry type
-                $result .= $this->component_selector($script, '', $this->type_id($msg), $ui_sys->component_list());
+                $result .= $this->component_selector($script, $msg, '', $this->type_id($msg), $ui_sys->component_list());
                 $result .= $html->dsp_form_end('',
                     $html->url_back(views::VIEW_EDIT_ID, $this->id(), $url_arr, 'word=' . $wrd->id()));
             } else {

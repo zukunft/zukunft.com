@@ -32,8 +32,6 @@
 
 namespace Zukunft\ZukunftCom\main\php\shared\const;
 
-use Zukunft\ZukunftCom\test\php\const\word_names;
-
 class views
 {
 
@@ -43,342 +41,487 @@ class views
     // *_ID is the view / mask id that is expected never to change
     // *_NAME is the name of the view if it differs from the code id
     // *_COM is the comment or description used for the tooltip
-    const string START = 'start';
-    const string START_CODE = 'entry_view'; // TODO combine
-    const string START_NAME = 'Start view';
-    const string START_COM = 'A dynamic entry mask that initially shows a table for calculations with the biggest problems from the user point of view and suggestions what the user can do to solve these problems. Used also as fallback view.';
-    const int START_ID = 1;
 
     // the id of the last system view that should be included in the unit testing
     const int MIN_TEST_ID = 1;
-    // TODO Prio 1 set to 109
-    const int MAX_TEST_ID = 120;
+    const int MAX_TEST_ID = 187;
 
-    // curl views for main objects
-    const string WORD_ADD = 'word_add';
-    const int WORD_ADD_ID = 2;
+    // start and table
+    const string START = 'start';
+    const int START_ID = 1;
+    const string START_CODE = 'entry_view';
+    const string START_NAME = 'Start view';
+    const string START_COM = 'A dynamic entry mask that initially shows a table for calculations with the biggest problems from the user point of view and suggestions what the user can do to solve these problems. Used also as fallback view.';
+    // the values of a word/triple as a table: one column per phrase used most often within the
+    // values (e.g. inhabitants and area for a city) and one row per remaining phrase combination
+    // (e.g. per year), headed by the phrase title of a word or of a triple
+    const string TABLE = 'table';
+    const int TABLE_ID = 2;
+    const string TABLE_NAME = 'Table';
+    const string TABLE_COM = 'The values related to a word or triple as a table with one column per phrase used most often within the values';
+
+    // main objects
+    const string WORD = 'word_default';
+    const int WORD_ID = 3;
+    const string WORD_NAME = 'Word';
+    const string WORD_COM = 'The default view for words';
+    const string TRIPLE = 'triple_default';
+    const int TRIPLE_ID = 4;
+    const string VALUE = 'value_default';
+    const int VALUE_DEFAULT_ID = 5;
+    const string SOURCE = 'source_default';
+    const int SOURCE_ID = 6;
+    const string SOURCE_NAME = 'Source';
+    const string REF = 'ref_default';
+    const int REF_ID = 7;
+    const string FORMULA = 'formula_default';
+    const int FORMULA_ID = 8;
+    const string RESULT = 'result_default';
+    const int RESULT_ID = 9;
+    const string VERB = 'verb_default';
+    const int VERB_ID = 10;
+    const string VERB_NAME = 'Verb';
+
+    // login
+    const string LOGIN = 'login';
+    const int LOGIN_ID = 11;
+    const string LOGOUT = 'logout';
+    const int LOGOUT_ID = 12;
+    const string SIGNUP = 'signup';
+    const int SIGNUP_ID = 13;
+    const string LOGIN_ACTIVATE = 'login_activate';
+    const int LOGIN_ACTIVATE_ID = 14;
+    const string LOGIN_RESET = 'login_reset';
+    const int LOGIN_RESET_ID = 15;
+
+    // easy data change
+    // the calculator: the values of a word/triple as a table with the columns the system column
+    // tiers define, headed by the phrase title, e.g. the use case "PV in Switzerland" with the
+    // avoided emission with and without the displacement mix concept (pv_switzerland_co2.json)
+    const string CALCULATOR = 'calculator';
+    const int CALCULATOR_ID = 16;
+    const string CALCULATOR_NAME = 'Calculator';
+    const string CALCULATOR_COM = 'The values related to a word or triple as a table with the defined columns, so that the numbers of a question can be compared';
+    const string VALUE_OVERWRITE = 'value_overwrite';
+    const int VALUE_OVERWRITE_ID = 17;
+    const string RESULT_OVERWRITE = 'result_overwrite';
+    const int RESULT_OVERWRITE_ID = 18;
+    const string VALUE_ADD_NO_JS = 'value_add_phrases';
+    const int VALUE_ADD_NO_JS_ID = 19;
+    const string VALUE_ADD = 'value_add_simple';
+    const int VALUE_ADD_ID = 20;
+    const string WORD_ADD = 'word_add_simple';
+    const int WORD_ADD_ID = 21;
+    const string TRIPLE_ADD = 'triple_add_simple';
+    const int TRIPLE_ADD_ID = 22;
+
+    // main objects with all details; the default views above will be reduced for speed and will link here
+    const string WORD_DEFAULT_DETAIL = 'word_default_detail';
+    const int WORD_DEFAULT_DETAIL_ID = 23;
+    const string TRIPLE_DEFAULT_DETAIL = 'triple_default_detail';
+    const int TRIPLE_DEFAULT_DETAIL_ID = 24;
+    const string VALUE_DEFAULT_DETAIL = 'value_default_detail';
+    const int VALUE_DEFAULT_DETAIL_ID = 25;
+    const string SOURCE_DEFAULT_DETAIL = 'source_default_detail';
+    const int SOURCE_DEFAULT_DETAIL_ID = 26;
+    const string REF_DEFAULT_DETAIL = 'ref_default_detail';
+    const int REF_DEFAULT_DETAIL_ID = 27;
+    const string FORMULA_DEFAULT_DETAIL = 'formula_default_detail';
+    const int FORMULA_DEFAULT_DETAIL_ID = 28;
+    const string RESULT_DEFAULT_DETAIL = 'result_default_detail';
+    const int RESULT_DEFAULT_DETAIL_ID = 29;
+    const string VERB_DEFAULT_DETAIL = 'verb_default_detail';
+    const int VERB_DEFAULT_DETAIL_ID = 30;
+
+    // main objects for a range; each default and detail view gets a range variant
+    const string WORD_DEFAULT_RANGE = 'word_default_range';
+    const int WORD_DEFAULT_RANGE_ID = 31;
+    const string TRIPLE_DEFAULT_RANGE = 'triple_default_range';
+    const int TRIPLE_DEFAULT_RANGE_ID = 32;
+    const string VALUE_DEFAULT_RANGE = 'value_default_range';
+    const int VALUE_DEFAULT_RANGE_ID = 33;
+    const string SOURCE_DEFAULT_RANGE = 'source_default_range';
+    const int SOURCE_DEFAULT_RANGE_ID = 34;
+    const string REF_DEFAULT_RANGE = 'ref_default_range';
+    const int REF_DEFAULT_RANGE_ID = 35;
+    const string FORMULA_DEFAULT_RANGE = 'formula_default_range';
+    const int FORMULA_DEFAULT_RANGE_ID = 36;
+    const string RESULT_DEFAULT_RANGE = 'result_default_range';
+    const int RESULT_DEFAULT_RANGE_ID = 37;
+    const string VERB_DEFAULT_RANGE = 'verb_default_range';
+    const int VERB_DEFAULT_RANGE_ID = 38;
+    const string WORD_DEFAULT_DETAIL_RANGE = 'word_default_detail_range';
+    const int WORD_DEFAULT_DETAIL_RANGE_ID = 39;
+    const string TRIPLE_DEFAULT_DETAIL_RANGE = 'triple_default_detail_range';
+    const int TRIPLE_DEFAULT_DETAIL_RANGE_ID = 40;
+    const string VALUE_DEFAULT_DETAIL_RANGE = 'value_default_detail_range';
+    const int VALUE_DEFAULT_DETAIL_RANGE_ID = 41;
+    const string SOURCE_DEFAULT_DETAIL_RANGE = 'source_default_detail_range';
+    const int SOURCE_DEFAULT_DETAIL_RANGE_ID = 42;
+    const string REF_DEFAULT_DETAIL_RANGE = 'ref_default_detail_range';
+    const int REF_DEFAULT_DETAIL_RANGE_ID = 43;
+    const string FORMULA_DEFAULT_DETAIL_RANGE = 'formula_default_detail_range';
+    const int FORMULA_DEFAULT_DETAIL_RANGE_ID = 44;
+    const string RESULT_DEFAULT_DETAIL_RANGE = 'result_default_detail_range';
+    const int RESULT_DEFAULT_DETAIL_RANGE_ID = 45;
+    const string VERB_DEFAULT_DETAIL_RANGE = 'verb_default_detail_range';
+    const int VERB_DEFAULT_DETAIL_RANGE_ID = 46;
+
+    // curl main objects
+    const string WORD_ADD_DETAIL = 'word_add';
+    const int WORD_ADD_DETAIL_ID = 47;
     const string WORD_EDIT = 'word_edit';
-    const int WORD_EDIT_ID = 3;
+    const int WORD_EDIT_ID = 48;
     const string WORD_DEL = 'word_del';
-    const int WORD_DEL_ID = 4;
-    const string WORD_LOG = 'word_usage';
-    const int WORD_LOG_ID = 5;
-    const string WORD_LOG_COM = 'child view that groups the usage and log components of a word so that it can be added to the word edit and word del view without repeating the list';
-    const string VERB_ADD = 'verb_add';
-    const int VERB_ADD_ID = 6;
-    const string VERB_EDIT = 'verb_edit';
-    const int VERB_EDIT_ID = 7;
-    const string VERB_DEL = 'verb_del';
-    const int VERB_DEL_ID = 8;
-    const string TRIPLE_ADD = 'triple_add';
-    const int TRIPLE_ADD_ID = 9;
+    const int WORD_DEL_ID = 49;
+    const string TRIPLE_ADD_DETAIL = 'triple_add';
+    const int TRIPLE_ADD_DETAIL_ID = 50;
     const string TRIPLE_EDIT = 'triple_edit';
-    const int TRIPLE_EDIT_ID = 10;
+    const int TRIPLE_EDIT_ID = 51;
     const string TRIPLE_DEL = 'triple_del';
-    const int TRIPLE_DEL_ID = 11;
-    const string SOURCE_ADD = 'source_add';
-    const int SOURCE_ADD_ID = 12;
-    const string SOURCE_EDIT = 'source_edit';
-    const int SOURCE_EDIT_ID = 13;
-    const string SOURCE_DEL = 'source_del';
-    const int SOURCE_DEL_ID = 14;
-    const string REF_ADD = 'ref_add';
-    const int REF_ADD_ID = 15;
-    const string REF_EDIT = 'ref_edit';
-    const int REF_EDIT_ID = 16;
-    const string REF_DEL = 'ref_del';
-    const int REF_DEL_ID = 17;
-    const string VALUE_ADD = 'value_add';
-    const int VALUE_ADD_ID = 18;
+    const int TRIPLE_DEL_ID = 52;
+    const string VALUE_ADD_DETAIL = 'value_add';
+    const int VALUE_ADD_DETAIL_ID = 53;
     const string VALUE_EDIT = 'value_edit';
-    const int VALUE_EDIT_ID = 19;
+    const int VALUE_EDIT_ID = 54;
     const string VALUE_DEL = 'value_del';
-    const int VALUE_DEL_ID = 20;
-    const string GROUP_ADD = 'group_add';
-    const int GROUP_ADD_ID = 21;
-    const string GROUP_EDIT = 'group_edit';
-    const int GROUP_EDIT_ID = 22;
-    const string GROUP_DEL = 'group_del';
-    const int GROUP_DEL_ID = 23;
+    const int VALUE_DEL_ID = 55;
     const string FORMULA_ADD = 'formula_add';
-    const int FORMULA_ADD_ID = 24;
+    const int FORMULA_ADD_ID = 56;
     const string FORMULA_EDIT = 'formula_edit';
-    const int FORMULA_EDIT_ID = 25;
+    const int FORMULA_EDIT_ID = 57;
     const string FORMULA_DEL = 'formula_del';
-    const int FORMULA_DEL_ID = 26;
+    const int FORMULA_DEL_ID = 58;
+    const string FORMULA_TEST = 'formula_test';
+    const int FORMULA_TEST_ID = 59;
     const string RESULT_ADD = 'result_add';
-    const int RESULT_ADD_ID = 27;
+    const int RESULT_ADD_ID = 60;
     const string RESULT_EDIT = 'result_edit';
-    const int RESULT_EDIT_ID = 28;
+    const int RESULT_EDIT_ID = 61;
     const string RESULT_DEL = 'result_del';
-    const int RESULT_DEL_ID = 29;
+    const int RESULT_DEL_ID = 62;
+    const string RESULT_EXPLAIN = 'result_explain';
+    const int RESULT_EXPLAIN_ID = 63;
+    const string FORMULA_EXPLAIN = 'formula_explain'; // TODO Prio 2 check if needed
+    const string SOURCE_ADD = 'source_add';
+    const int SOURCE_ADD_ID = 64;
+    const string SOURCE_EDIT = 'source_edit';
+    const int SOURCE_EDIT_ID = 65;
+    const string SOURCE_DEL = 'source_del';
+    const int SOURCE_DEL_ID = 66;
+    const string REF_ADD = 'ref_add';
+    const int REF_ADD_ID = 67;
+    const string REF_EDIT = 'ref_edit';
+    const int REF_EDIT_ID = 68;
+    const string REF_DEL = 'ref_del';
+    const int REF_DEL_ID = 69;
+    const string VERB_ADD = 'verb_add';
+    const int VERB_ADD_ID = 70;
+    const string VERB_EDIT = 'verb_edit';
+    const int VERB_EDIT_ID = 71;
+    const string VERB_DEL = 'verb_del';
+    const int VERB_DEL_ID = 72;
+    const string GROUP_ADD = 'group_add';
+    const int GROUP_ADD_ID = 73;
+    const string GROUP_EDIT = 'group_edit';
+    const int GROUP_EDIT_ID = 74;
+    const string GROUP_DEL = 'group_del';
+    const int GROUP_DEL_ID = 75;
 
-    // views to edit views
-    const string VIEW_ADD = 'view_add';
-    const int VIEW_ADD_ID = 30;
-    const string VIEW_EDIT = 'view_edit';
-    const int VIEW_EDIT_ID = 31;
-    const string VIEW_DEL = 'view_del';
-    const int VIEW_DEL_ID = 32;
-    const string COMPONENT_ADD = 'component_add';
-    const int COMPONENT_ADD_ID = 33;
-    const string COMPONENT_EDIT = 'component_edit';
-    const int COMPONENT_EDIT_ID = 34;
-    const string COMPONENT_DEL = 'component_del';
-    const int COMPONENT_DEL_ID = 35;
-    const string VIEW_LINK_ADD = 'view_link_add';
-    const int VIEW_LINK_ADD_ID = 36;
-    const string VIEW_LINK_EDIT = 'view_link_edit';
-    const int VIEW_LINK_EDIT_ID = 37;
-    const string VIEW_LINK_DEL = 'view_link_del';
-    const int VIEW_LINK_DEL_ID = 38;
-    const string COMPONENT_LINK_ADD = 'component_link_add';
-    const int COMPONENT_LINK_ADD_ID = 39;
-    const string COMPONENT_LINK_EDIT = 'component_link_edit';
-    const int COMPONENT_LINK_EDIT_ID = 40;
-    const string COMPONENT_LINK_DEL = 'component_link_del';
-    const int COMPONENT_LINK_DEL_ID = 41;
-    const string VIEW_RELATION_ADD = 'view_relation_add';
-    const int VIEW_RELATION_ADD_ID = 42;
-    const string VIEW_RELATION_EDIT = 'view_relation_edit';
-    const int VIEW_RELATION_EDIT_ID = 43;
-    const string VIEW_RELATION_DEL = 'view_relation_del';
-    const int VIEW_RELATION_DEL_ID = 44;
-
-    // formula links
+    // curl link objects
     const string FORMULA_LINK_ADD = 'formula_link_add';
-    const int FORMULA_LINK_ADD_ID = 45;
+    const int FORMULA_LINK_ADD_ID = 76;
     const string FORMULA_LINK_EDIT = 'formula_link_edit';
-    const int FORMULA_LINK_EDIT_ID = 46;
+    const int FORMULA_LINK_EDIT_ID = 77;
     const string FORMULA_LINK_DEL = 'formula_link_del';
-    const int FORMULA_LINK_DEL_ID = 47;
+    const int FORMULA_LINK_DEL_ID = 78;
+    const string FORMULA_LINK_DEFAULT = 'formula_link_default';
+    const int FORMULA_LINK_DEFAULT_ID = 79;
+    const string VIEW_LINK_ADD = 'view_link_add';
+    const int VIEW_LINK_ADD_ID = 80;
+    const string VIEW_LINK_EDIT = 'view_link_edit';
+    const int VIEW_LINK_EDIT_ID = 81;
+    const string VIEW_LINK_DEL = 'view_link_del';
+    const int VIEW_LINK_DEL_ID = 82;
+    const string TERM_VIEW_DEFAULT = 'term_view_default';
+    const int TERM_VIEW_DEFAULT_ID = 83;
 
-    // admin views
-    const string USER_ADMIN_ADD = 'admin_user_add';
-    const int USER_ADMIN_ADD_ID = 48;
-    const string USER_ADMIN_EDIT = 'admin_user_edit';
-    const int USER_ADMIN_EDIT_ID = 49;
-    const string USER_ADMIN_DEL = 'admin_user_del';
-    const int USER_ADMIN_DEL_ID = 50;
-    const string LANGUAGE_ADD = 'language_add';
-    const int LANGUAGE_ADD_ID = 51;
-    const string LANGUAGE_EDIT = 'language_edit';
-    const int LANGUAGE_EDIT_ID = 52;
-    const string LANGUAGE_DEL = 'language_del';
-    const int LANGUAGE_DEL_ID = 53;
+    // curl views
+    const string VIEW_ADD = 'view_add';
+    const int VIEW_ADD_ID = 84;
+    const string VIEW_EDIT = 'view_edit';
+    const int VIEW_EDIT_ID = 85;
+    const string VIEW_DEL = 'view_del';
+    const int VIEW_DEL_ID = 86;
+    const string VIEW = 'view_default';
+    const int VIEW_DEFAULT_ID = 87;
+    const string COMPONENT_ADD = 'component_add';
+    const int COMPONENT_ADD_ID = 88;
+    const string COMPONENT_EDIT = 'component_edit';
+    const int COMPONENT_EDIT_ID = 89;
+    const string COMPONENT_DEL = 'component_del';
+    const int COMPONENT_DEL_ID = 90;
+    const string COMPONENT = 'component_default';
+    const int COMPONENT_DEFAULT_ID = 91;
+    const string COMPONENT_LINK_ADD = 'component_link_add';
+    const int COMPONENT_LINK_ADD_ID = 92;
+    const string COMPONENT_LINK_EDIT = 'component_link_edit';
+    const int COMPONENT_LINK_EDIT_ID = 93;
+    const string COMPONENT_LINK_DEL = 'component_link_del';
+    const int COMPONENT_LINK_DEL_ID = 94;
+    const string COMPONENT_LINK_DEFAULT = 'component_link_default';
+    const int COMPONENT_LINK_DEFAULT_ID = 95;
+    const string VIEW_RELATION_ADD = 'view_relation_add';
+    const int VIEW_RELATION_ADD_ID = 96;
+    const string VIEW_RELATION_EDIT = 'view_relation_edit';
+    const int VIEW_RELATION_EDIT_ID = 97;
+    const string VIEW_RELATION_DEL = 'view_relation_del';
+    const int VIEW_RELATION_DEL_ID = 98;
+    const string VIEW_RELATION_DEFAULT = 'view_relation_default';
+    const int VIEW_RELATION_DEFAULT_ID = 99;
 
     // confirm
     const string CONFIRM_ADD = 'confirm_add';
-    const int CONFIRM_ADD_ID = 54;
+    const int CONFIRM_ADD_ID = 100;
     const string CONFIRM_EDIT = 'confirm_update';
-    const int CONFIRM_EDIT_ID = 55;
+    const int CONFIRM_EDIT_ID = 101;
     const string CONFIRM_DEL = 'confirm_delete';
-    const int CONFIRM_DEL_ID = 56;
+    const int CONFIRM_DEL_ID = 102;
     const string CONFIRM_VIEW = 'view_preview';
-    const int CONFIRM_VIEWS_ID = 57;
+    const int CONFIRM_VIEWS_ID = 103;
+    const string UNDO = 'undo';
+    const int UNDO_ID = 104;
 
-    // fixed
-    const string ABOUT = 'about';
-    const int ABOUT_ID = 58;
-    const string SETUP = 'setup';
-    const int SETUP_ID = 59;
-    const string SIGNUP = 'signup';
-    const int SIGNUP_ID = 60;
-    const string LOGIN = 'login';
-    const int LOGIN_ID = 61;
-    const string LOGIN_ACTIVATE = 'login_activate';
-    const int LOGIN_ACTIVATE_ID = 62;
-    const string LOGIN_RESET = 'login_reset';
-    const int LOGIN_RESET_ID = 63;
-    const string LOGOUT = 'logout';
-    const int LOGOUT_ID = 64;
-
-    // error log
-    const string ERROR_LOG = 'error_log';
-    const int ERROR_LOG_ID = 65;
-    const string ERROR_UPDATE = 'error_update';
-    const int ERROR_UPDATE_ID = 66;
+    // view list
+    const string LIST_VIEWS = 'list_views';
+    const int LIST_VIEWS_ID = 105;
+    const string LIST_COMPONENTS = 'list_components';
+    const int LIST_COMPONENTS_ID = 106;
 
     // search
     const string WORD_FIND = 'word_find';
-    const int WORD_FIND_ID = 67;
+    const int WORD_FIND_ID = 107;
     const string SEARCH_FULL = 'search_full';
-    const int SEARCH_FULL_ID = 68;
+    const int SEARCH_FULL_ID = 108;
+    const string VALUE_FIND = 'value_find';
+    const int VALUE_FIND_ID = 109;
+    const string REF_FIND = 'ref_find';
+    const int REF_FIND_ID = 110;
+    const string FIND_DUPLICATES = 'find_duplicates';
+    const int FIND_DUPLICATES_ID = 111;
 
-    // explain
-    const string VALUE_DETAIL = 'value_detail';
-    const int VALUE_DETAIL_ID = 69;
-    const string RESULT_EXPLAIN = 'result_explain';
-    const int RESULT_EXPLAIN_ID = 70;
-    const string FORMULA_TEST = 'formula_test';
-    const int FORMULA_TEST_ID = 71;
-
-    const string FORMULA_EXPLAIN = 'formula_explain';
-
-    // sandbox
-    const string SANDBOX = 'sandbox';
-    const int SANDBOX_ID = 72;
-    const string UNDO = 'undo';
-    const int UNDO_ID = 73;
-
-    // user
-    const string USER = 'user';
-    const int USER_ID = 74;
-
-    // import
-    const string PASTE_TABLE = 'paste_table';
-    const int PASTE_TABLE_ID = 75;
-    const string IMPORT = 'import';
-    const int IMPORT_ID = 76;
-
-    // export
-    const string EXPORT = 'export_in_selected_format';
-    const int EXPORT_ID = 77;
-    const string EXPORT_JSON = 'export_json';
-    const int EXPORT_JSON_ID = 78;
-    const string EXPORT_XML = 'export_xml';
-    const int EXPORT_XML_ID = 79;
-    const string EXPORT_CSV = 'export_csv';
-    const int EXPORT_CSV_ID = 80;
-    const string EXPORT_ODS = 'export_ods';
-    const int EXPORT_ODS_ID = 81;
-
-    // jobs
-    const string JOB_ASYNC = 'job_async';
-    const int JOB_ASYNC_ID = 82;
-    const string JOB_CONTROL = 'job_control';
-    const int JOB_CONTROL_ID = 83;
-    const string JOB_CHECK = 'job_check';
-    const int JOB_CHECK_ID = 84;
-
-    // admin
-    const string ADMIN_MAIN = 'admin_main';
-    const int ADMIN_MAIN_ID = 85;
-
-    // list views for users
-    const string VERBS = 'verbs';
-    const int VERBS_ID = 86;
-    const string COMPLETE = 'complete';
-    const int COMPLETE_ID = 87;
-    const string BASE_UNITS = 'base_units';
-    const int BASE_UNITS_ID = 89;
-
-    // default views
-    // TODO easy add missing default views e.g. for formula
-    const string WORD = 'word_default';
-    const int WORD_ID = 90;
-    const string WORD_NAME = 'Word';
-    const string WORD_COM = 'The default view for words';
-    const string VERB = 'verb_default';
-    const int VERB_ID = 91;
-    const string VERB_NAME = 'Verb';
-    const string TRIPLE = 'triple_default';
-    const int TRIPLE_ID = 92;
-    const string SOURCE = 'source_default';
-    const int SOURCE_ID = 93;
-    const string SOURCE_NAME = 'Source';
-    const string REF = 'ref_default';
-    const int REF_ID = 94;
-    const string LANGUAGE = 'language_default';
-    const int LANGUAGE_ID = 95;
-    const string VALUE = 'value_default';
-    const int VALUE_DEFAULT_ID = 96;
-    const string FORMULA = 'formula_default';
-    const int FORMULA_ID = 97;
-    const string RESULT = 'result_default';
-    const int RESULT_ID = 98;
-    // appended at the end of base_views.json, so the import position is after the last
-    // view of the previously imported files (see docs/llm/json_views.md)
-    const string VIEW = 'view_default';
-    const int VIEW_DEFAULT_ID = 114;
-    const string COMPONENT = 'component_default';
-    const int COMPONENT_DEFAULT_ID = 115;
-    const string FORMULA_LINK_DEFAULT = 'formula_link_default';
-    const int FORMULA_LINK_DEFAULT_ID = 116;
-    const string TERM_VIEW_DEFAULT = 'term_view_default';
-    const int TERM_VIEW_DEFAULT_ID = 117;
-    const string COMPONENT_LINK_DEFAULT = 'component_link_default';
-    const int COMPONENT_LINK_DEFAULT_ID = 118;
-    const string VIEW_RELATION_DEFAULT = 'view_relation_default';
-    const int VIEW_RELATION_DEFAULT_ID = 119;
-
-    // base views for users
-    const string RANKING = 'ranking';
-    const int RANKING_ID = 99;
-    const string SCIENCE = 'science';
-    const int SCIENCE_ID = 100;
-    const string SCIENCE_NAME = 'show mainly related words that are relevant in sciences';
-    const string HISTORIC = 'hist';
-    const int HISTORIC_ID = 101;
-    const string HISTORIC_NAME = 'Historic';
-    const string HISTORIC_COM = 'show mainly related words that are relevant in sciences';
-    const string BIOLOGICAL = 'bio';
-    const int BIOLOGICAL_ID = 102;
-    const string BIOLOGICAL_NAME = 'Biological';
-    const string BIOLOGICAL_COM = 'show what is relevant from the biological point of view';
-    const string EDUCATION = 'edu';
-    const int EDUCATION_ID = 103;
-    const string EDUCATION_NAME = 'Education';
-    const string EDUCATION_COM = 'show mainly related words that are relevant in sciences';
-    const string TOURISTIC = 'touristic';
-    const int TOURISTIC_ID = 104;
-    const string TOURISTIC_NAME = 'Touristic';
-    const string TOURISTIC_COM = 'show mainly related words that are relevant in sciences';
-    const string GRAPH = 'graph';
-    const int GRAPH_ID = 105;
-    const string GRAPH_NAME = 'Graph';
-    const string GRAPH_COM = 'show mainly related words that are relevant in sciences';
-    const string SIMPLE = 'simple';
-    const int SIMPLE_ID = 106;
-    const string SIMPLE_NAME = 'Simple';
-    const string SIMPLE_COM = 'show mainly related words that are relevant in sciences';
-    const string MATH_CONST = 'math_const';
-    const int MATH_CONST_ID = 107;
-    const string MATH_CONST_NAME = 'math const';
-    const string MATH_CONST_COM = 'Show a mathematical constance and the related words and formulas';
-    const string GLOBAL_PROBLEM = 'global_problem';
-    const int GLOBAL_PROBLEM_ID = 108;
-
-    // TODO Prio 3 resort the views and group it
-    const string SYSTEM_LOG = 'system_log';
-    const int SYSTEM_LOG_ID = 109;
-
-    // to sort
-    const string LANGUAGE_SELECT = 'language_select';
-    const int LANGUAGE_SELECT_ID = 88;
+    // phrase and term default
     const string PHRASE = 'phrase_default';
-    const int PHRASE_ID = 110;
+    const int PHRASE_ID = 112;
+    const string TERM = 'term_default';
+    const int TERM_ID = 113;
+
+    // all values of a word/triple in up to four columns headed by the phrases used most often
+    // within these values (e.g. inhabitants, area and elevation for a city) — the "more" link
+    // target of the values list shown on the default word page
+    const string PHRASE_VALUES = 'phrase_values';
+    const int PHRASE_VALUES_ID = 114;
+    const string PHRASE_VALUES_NAME = 'Values of a phrase';
+    const string PHRASE_VALUES_COM = 'All values related to a word or triple, grouped into up to four columns by the phrases used most often within the values';
 
     // full list of phrases related to a word/triple — the "..." link target shown in the
     // page title when the title's truncated related-list overflows the per-verb config limit
     // (e.g. for Zurich with limit=2 the title 'Zurich (city, canton, ...)' links the '...'
     // to this view, which then renders every related triple grouped by verb)
     const string WORD_RELATED = 'word_related';
-    const int WORD_RELATED_ID = 111;
+    const int WORD_RELATED_ID = 115;
+    const string WORD_LOG = 'word_usage';
+    const int WORD_LOG_ID = 116;
+    const string WORD_LOG_COM = 'child view that groups the usage and log components of a word so that it can be added to the word edit and word del view without repeating the list';
 
-    // all values of a word/triple in up to four columns headed by the phrases used most often
-    // within these values (e.g. inhabitants, area and elevation for a city) — the "more" link
-    // target of the values list shown on the default word page
-    const string PHRASE_VALUES = 'phrase_values';
-    const int PHRASE_VALUES_ID = 112;
-    const string PHRASE_VALUES_NAME = 'Values of a phrase';
-    const string PHRASE_VALUES_COM = 'All values related to a word or triple, grouped into up to four columns by the phrases used most often within the values';
+    // explain
+    const string VALUE_DETAIL = 'value_detail';
+    const int VALUE_DETAIL_ID = 117;
 
-    // the values of a word/triple as a table: one column per phrase used most often within the
-    // values (e.g. inhabitants and area for a city) and one row per remaining phrase combination
-    // (e.g. per year), headed by the phrase title of a word or of a triple
-    const string TABLE = 'table';
-    const int TABLE_ID = 113;
-    const string TABLE_NAME = 'Table';
-    const string TABLE_COM = 'The values related to a word or triple as a table with one column per phrase used most often within the values';
+    // sandbox
+    const string SANDBOX = 'sandbox';
+    const int SANDBOX_ID = 118;
+    const string CHANGE_LOG_USER = 'change_log_user';
+    const int CHANGE_LOG_USER_ID = 119;
+    const string CHANGE_LOG_RECENT = 'change_log_recent';
+    const int CHANGE_LOG_RECENT_ID = 120;
+    const string OBJECT_HISTORY = 'object_history';
+    const int OBJECT_HISTORY_ID = 121;
+    const string CHANGE_DETAIL = 'change_detail';
+    const int CHANGE_DETAIL_ID = 122;
 
-    // the calculator: the values of a word/triple as a table with the columns the system column
-    // tiers define, headed by the phrase title, e.g. the use case "PV in Switzerland" with the
-    // avoided emission with and without the displacement mix concept (pv_switzerland_co2.json)
-    const string CALCULATOR = 'calculator';
-    const int CALCULATOR_ID = 120;
-    const string CALCULATOR_NAME = 'Calculator';
-    const string CALCULATOR_COM = 'The values related to a word or triple as a table with the defined columns, so that the numbers of a question can be compared';
+    // user
+    const string USER = 'user';
+    const int USER_ID = 123;
+
+    // configuration
+    const string USER_CONFIG = 'user_config';
+    const int USER_CONFIG_ID = 124;
+    const string ADMIN_CONFIG = 'admin_config';
+    const int ADMIN_CONFIG_ID = 125;
+    const string SYSTEM_CONFIG = 'system_config';
+    const int SYSTEM_CONFIG_ID = 126;
+
+    // quarantine
+    const string USER_QUARANTINE = 'user_quarantine';
+    const int USER_QUARANTINE_ID = 127;
+    const string ALL_QUARANTINE = 'all_quarantine';
+    const int ALL_QUARANTINE_ID = 128;
+
+    // admin
+    const string ADMIN_MAIN = 'admin_main';
+    const int ADMIN_MAIN_ID = 129;
+    const string USER_ADMIN_ADD = 'admin_user_add';
+    const int USER_ADMIN_ADD_ID = 130;
+    const string USER_ADMIN_EDIT = 'admin_user_edit';
+    const int USER_ADMIN_EDIT_ID = 131;
+    const string USER_ADMIN_DEL = 'admin_user_del';
+    const int USER_ADMIN_DEL_ID = 132;
+
+    // error log
+    const string ERROR_LOG = 'error_log';
+    const int ERROR_LOG_ID = 133;
+    const string ERROR_UPDATE = 'error_update';
+    const int ERROR_UPDATE_ID = 134;
+    const string SYS_LOG_DETAIL = 'sys_log_detail';
+    const int SYS_LOG_DETAIL_ID = 135;
+    const string SYSTEM_LOG = 'system_log';
+    const int SYSTEM_LOG_ID = 136;
+
+    // jobs
+    const string USER_JOBS = 'user_jobs';
+    const int USER_JOBS_ID = 137;
+    const string ALL_JOBS = 'all_jobs';
+    const int ALL_JOBS_ID = 138;
+    const string JOB_DETAIL = 'job_detail';
+    const int JOB_DETAIL_ID = 139;
+    const string CALC_STATUS = 'calc_status';
+    const int CALC_STATUS_ID = 140;
+    const string JOB_ASYNC = 'job_async';
+    const int JOB_ASYNC_ID = 141;
+    const string JOB_CONTROL = 'job_control';
+    const int JOB_CONTROL_ID = 142;
+    const string JOB_CHECK = 'job_check';
+    const int JOB_CHECK_ID = 143;
+
+    // import
+    const string PASTE_TABLE = 'paste_table';
+    const int PASTE_TABLE_ID = 144;
+    const string IMPORT = 'import';
+    const int IMPORT_ID = 145;
+    const string IMPORT_PREVIEW = 'import_preview';
+    const int IMPORT_PREVIEW_ID = 146;
+    const string IMPORT_RESULT = 'import_result';
+    const int IMPORT_RESULT_ID = 147;
+    const string IMPORT_URL = 'import_url';
+    const int IMPORT_URL_ID = 148;
+    const string IMPORT_WIKIDATA = 'import_wikidata';
+    const int IMPORT_WIKIDATA_ID = 149;
+
+    // export
+    const string EXPORT = 'export_in_selected_format';
+    const int EXPORT_ID = 150;
+    const string EXPORT_JSON = 'export_json';
+    const int EXPORT_JSON_ID = 151;
+    const string EXPORT_XML = 'export_xml';
+    const int EXPORT_XML_ID = 152;
+    const string EXPORT_CSV = 'export_csv';
+    const int EXPORT_CSV_ID = 153;
+    const string EXPORT_ODS = 'export_ods';
+    const int EXPORT_ODS_ID = 154;
+    const string EXPORT_SELECTIONS = 'export_selections';
+    const int EXPORT_SELECTIONS_ID = 155;
+    const string EXPORT_OBJECT = 'export_object';
+    const int EXPORT_OBJECT_ID = 156;
+    const string EXPORT_READY = 'export_ready';
+    const int EXPORT_READY_ID = 157;
+
+    // language
+    const string LANGUAGE_SELECT = 'language_select';
+    const int LANGUAGE_SELECT_ID = 158;
+    const string LANGUAGE = 'language_default';
+    const int LANGUAGE_ID = 159;
+    const string LIST_LANGUAGES = 'list_languages';
+    const int LIST_LANGUAGES_ID = 160;
+    const string PHRASE_TRANSLATIONS = 'phrase_translations';
+    const int PHRASE_TRANSLATIONS_ID = 161;
+    const string TRANSLATIONS_MISSING = 'translations_missing';
+    const int TRANSLATIONS_MISSING_ID = 162;
+    const string LANGUAGE_FORMS = 'language_forms';
+    const int LANGUAGE_FORMS_ID = 163;
+    const string LANGUAGE_ADD = 'language_add';
+    const int LANGUAGE_ADD_ID = 164;
+    const string LANGUAGE_EDIT = 'language_edit';
+    const int LANGUAGE_EDIT_ID = 165;
+    const string LANGUAGE_DEL = 'language_del';
+    const int LANGUAGE_DEL_ID = 166;
+
+    // fixed
+    const string ABOUT = 'about';
+    const int ABOUT_ID = 167;
+    const string SETUP = 'setup';
+    const int SETUP_ID = 168;
+
+    // lists
+    const string LIST_WORDS = 'list_words';
+    const int LIST_WORDS_ID = 169;
+    const string VERBS = 'verbs';
+    const int VERBS_ID = 170;
+    const string LIST_TRIPLES = 'list_triples';
+    const int LIST_TRIPLES_ID = 171;
+    const string LIST_SOURCES = 'list_sources';
+    const int LIST_SOURCES_ID = 172;
+    const string LIST_REFS = 'list_refs';
+    const int LIST_REFS_ID = 173;
+    const string LIST_FORMULAS = 'list_formulas';
+    const int LIST_FORMULAS_ID = 174;
+
+    // mainly for testing the system views
+    const string COMPLETE = 'complete';
+    const int COMPLETE_ID = 175;
+
+
+    // base views
+    // ----------
+    const string BASE_UNITS = 'base_units';
+    const int BASE_UNITS_ID = 176;
+
+    // base views for users
+    const string RANKING = 'ranking';
+    const int RANKING_ID = 177;
+    const string SCIENCE = 'science';
+    const int SCIENCE_ID = 178;
+    const string SCIENCE_NAME = 'show mainly related words that are relevant in sciences';
+    const string HISTORIC = 'hist';
+    const int HISTORIC_ID = 179;
+    const string HISTORIC_NAME = 'Historic';
+    const string HISTORIC_COM = 'show mainly related words that are relevant in sciences';
+    const string BIOLOGICAL = 'bio';
+    const int BIOLOGICAL_ID = 180;
+    const string BIOLOGICAL_NAME = 'Biological';
+    const string BIOLOGICAL_COM = 'show what is relevant from the biological point of view';
+    const string EDUCATION = 'edu';
+    const int EDUCATION_ID = 181;
+    const string EDUCATION_NAME = 'Education';
+    const string EDUCATION_COM = 'show mainly related words that are relevant in sciences';
+    const string TOURISTIC = 'touristic';
+    const int TOURISTIC_ID = 182;
+    const string TOURISTIC_NAME = 'Touristic';
+    const string TOURISTIC_COM = 'show mainly related words that are relevant in sciences';
+    const string GRAPH = 'graph';
+    const int GRAPH_ID = 183;
+    const string GRAPH_NAME = 'Graph';
+    const string GRAPH_COM = 'show mainly related words that are relevant in sciences';
+    const string SIMPLE = 'simple';
+    const int SIMPLE_ID = 184;
+    const string SIMPLE_NAME = 'Simple';
+    const string SIMPLE_COM = 'show mainly related words that are relevant in sciences';
+    const string MATH_CONST = 'math_const';
+    const int MATH_CONST_ID = 185;
+    const string MATH_CONST_NAME = 'Mathematical constant';
+    const string MATH_CONST_COM = 'Show a mathematical constant and the related words and formulas';
+    const string GLOBAL_PROBLEM = 'global_problem';
+    const int GLOBAL_PROBLEM_ID = 186;
 
 
     /*
@@ -406,14 +549,14 @@ class views
 
     // to test a system view (add word) as unit test without database
     const string TEST_FORM_NAME = 'Add word';
-    const string TEST_FORM_NEW_NAME = 'Add new word';
+    const string TEST_FORM_NEW_NAME = 'Add word with details';
     const string TEST_FORM_COM = 'system form to add a word';
     const string TEST_FORM = 'word_add';
-    const int TEST_FORM_ID = 2;
+    const int TEST_FORM_ID = self::WORD_ADD_DETAIL_ID;
 
     // code if of views that should be checked before deployment if they are still fine with the base setup
     const string CURRENCY = 'currency'; // the default view for all currencies
-    const int CURRENCY_ID = 111; // a kind of dummy id that may often change
+    const int CURRENCY_ID = 187; // a kind of dummy id that may often change
 
 
     // TODO views to be created
@@ -481,6 +624,13 @@ class views
         self::USER_ADMIN_EDIT_ID,
         self::USER_ADMIN_DEL_ID,
         self::BASE_UNITS_ID,
+        self::USER_CONFIG_ID,
+        self::SYSTEM_CONFIG_ID,
+        self::USER_QUARANTINE_ID,
+        self::USER_JOBS_ID,
+        // a job as main object needs a show url of the unit test mapper, so the job skeleton views use the user
+        self::JOB_DETAIL_ID,
+        self::CALC_STATUS_ID,
     ];
 
     // system masks that handle user authentication or user profile
@@ -516,6 +666,28 @@ class views
         self::UNDO,
     ];
 
+    // the result views that show the values, formulas and results used for the calculation;
+    // only these ask the backend for the lists (url_var::INCL_USED), because they are slow to build
+    const array VIEWS_WITH_USED = [
+        self::RESULT_DEFAULT_DETAIL,
+        self::RESULT_DEFAULT_RANGE,
+        self::RESULT_DEFAULT_DETAIL_RANGE,
+    ];
+
+    // the four versions of the default view of each main object, always in the order default,
+    // detail, range and detail with range, so that the related system view selector of each
+    // version can link to the other three
+    const array DEFAULT_VIEW_VERSIONS = [
+        [self::WORD_ID, self::WORD_DEFAULT_DETAIL_ID, self::WORD_DEFAULT_RANGE_ID, self::WORD_DEFAULT_DETAIL_RANGE_ID],
+        [self::TRIPLE_ID, self::TRIPLE_DEFAULT_DETAIL_ID, self::TRIPLE_DEFAULT_RANGE_ID, self::TRIPLE_DEFAULT_DETAIL_RANGE_ID],
+        [self::VALUE_DEFAULT_ID, self::VALUE_DEFAULT_DETAIL_ID, self::VALUE_DEFAULT_RANGE_ID, self::VALUE_DEFAULT_DETAIL_RANGE_ID],
+        [self::SOURCE_ID, self::SOURCE_DEFAULT_DETAIL_ID, self::SOURCE_DEFAULT_RANGE_ID, self::SOURCE_DEFAULT_DETAIL_RANGE_ID],
+        [self::REF_ID, self::REF_DEFAULT_DETAIL_ID, self::REF_DEFAULT_RANGE_ID, self::REF_DEFAULT_DETAIL_RANGE_ID],
+        [self::FORMULA_ID, self::FORMULA_DEFAULT_DETAIL_ID, self::FORMULA_DEFAULT_RANGE_ID, self::FORMULA_DEFAULT_DETAIL_RANGE_ID],
+        [self::RESULT_ID, self::RESULT_DEFAULT_DETAIL_ID, self::RESULT_DEFAULT_RANGE_ID, self::RESULT_DEFAULT_DETAIL_RANGE_ID],
+        [self::VERB_ID, self::VERB_DEFAULT_DETAIL_ID, self::VERB_DEFAULT_RANGE_ID, self::VERB_DEFAULT_DETAIL_RANGE_ID],
+    ];
+
     // system masks that only admin user can see
     const array ADMIN_MASK_IDS = [
         self::USER_ADMIN_ADD_ID,
@@ -523,18 +695,27 @@ class views
         self::USER_ADMIN_DEL_ID,
         self::ADMIN_MAIN_ID,
         self::COMPLETE_ID,
+        self::ADMIN_CONFIG_ID,
+        self::ALL_QUARANTINE_ID,
+        self::ALL_JOBS_ID,
+        self::FIND_DUPLICATES_ID,
     ];
 
     // system masks that have a word as the main object
     const array WORD_MASKS_IDS = [
-        self::WORD_ADD_ID,
+        self::WORD_ADD_DETAIL_ID,
         self::WORD_EDIT_ID,
         self::WORD_DEL_ID,
         self::WORD_ID,
+        self::WORD_DEFAULT_DETAIL_ID,
+        self::WORD_DEFAULT_RANGE_ID,
+        self::WORD_DEFAULT_DETAIL_RANGE_ID,
         self::WORD_LOG_ID,
         self::WORD_RELATED_ID,
         self::PHRASE_VALUES_ID,
-        self::TABLE_ID,
+        self::WORD_ADD_ID,
+        self::CURRENCY_ID,
+        self::LIST_WORDS_ID,
     ];
 
     // system masks that have a verb as the main object
@@ -544,19 +725,43 @@ class views
         self::VERB_DEL_ID,
         self::VERBS_ID,
         self::VERB_ID,
+        self::VERB_DEFAULT_DETAIL_ID,
+        self::VERB_DEFAULT_RANGE_ID,
+        self::VERB_DEFAULT_DETAIL_RANGE_ID,
     ];
 
     // system masks that have a triple as the main object
     const array TRIPLE_MASKS_IDS = [
-        self::TRIPLE_ADD_ID,
+        self::TRIPLE_ADD_DETAIL_ID,
         self::TRIPLE_EDIT_ID,
         self::TRIPLE_DEL_ID,
         self::TRIPLE_ID,
+        self::TRIPLE_DEFAULT_DETAIL_ID,
+        self::TRIPLE_DEFAULT_RANGE_ID,
+        self::TRIPLE_DEFAULT_DETAIL_RANGE_ID,
+        self::LIST_TRIPLES_ID,
+        self::TRIPLE_ADD_ID,
+    ];
+
+    // the default views of a word and a triple, i.e. the page that shows the phrase and not a change form
+    // of it, so only there the subtitles offer to add e.g. a formula or a value for the phrase
+    const array PHRASE_DEFAULT_IDS = [
+        self::WORD_ID,
+        self::TRIPLE_ID,
+        self::WORD_DEFAULT_DETAIL_ID,
+        self::TRIPLE_DEFAULT_DETAIL_ID,
+        self::WORD_DEFAULT_RANGE_ID,
+        self::TRIPLE_DEFAULT_RANGE_ID,
+        self::WORD_DEFAULT_DETAIL_RANGE_ID,
+        self::TRIPLE_DEFAULT_DETAIL_RANGE_ID,
     ];
 
     // default view for a phrase and the views that show a word or a triple the same way
+    // e.g. the table of the reasons of global warming, which is the triple "global warming reason"
     const array PHRASE_MASKS_IDS = [
         self::PHRASE_ID,
+        self::TERM_ID,
+        self::TABLE_ID,
         self::CALCULATOR_ID,
     ];
 
@@ -566,6 +771,10 @@ class views
         self::SOURCE_EDIT_ID,
         self::SOURCE_DEL_ID,
         self::SOURCE_ID,
+        self::SOURCE_DEFAULT_DETAIL_ID,
+        self::SOURCE_DEFAULT_RANGE_ID,
+        self::SOURCE_DEFAULT_DETAIL_RANGE_ID,
+        self::LIST_SOURCES_ID,
     ];
 
     // system masks that have a reference as the main object
@@ -574,6 +783,10 @@ class views
         self::REF_EDIT_ID,
         self::REF_DEL_ID,
         self::REF_ID,
+        self::REF_DEFAULT_DETAIL_ID,
+        self::REF_DEFAULT_RANGE_ID,
+        self::REF_DEFAULT_DETAIL_RANGE_ID,
+        self::LIST_REFS_ID,
     ];
 
     // system masks that have a group as the main object
@@ -585,11 +798,17 @@ class views
 
     // system masks that have a value as the main object
     const array VALUE_MASKS_IDS = [
-        self::VALUE_ADD_ID,
+        self::VALUE_ADD_DETAIL_ID,
         self::VALUE_EDIT_ID,
         self::VALUE_DEL_ID,
         self::VALUE_DETAIL_ID,
         self::VALUE_DEFAULT_ID,
+        self::VALUE_DEFAULT_DETAIL_ID,
+        self::VALUE_DEFAULT_RANGE_ID,
+        self::VALUE_DEFAULT_DETAIL_RANGE_ID,
+        self::VALUE_ADD_NO_JS_ID,
+        self::VALUE_ADD_ID,
+        self::VALUE_OVERWRITE_ID,
     ];
 
     // system masks that have a formula as the main object
@@ -599,6 +818,10 @@ class views
         self::FORMULA_DEL_ID,
         self::FORMULA_TEST_ID,
         self::FORMULA_ID,
+        self::FORMULA_DEFAULT_DETAIL_ID,
+        self::FORMULA_DEFAULT_RANGE_ID,
+        self::FORMULA_DEFAULT_DETAIL_RANGE_ID,
+        self::LIST_FORMULAS_ID,
     ];
 
     // system masks that have a result as the main object
@@ -608,7 +831,16 @@ class views
         self::RESULT_DEL_ID,
         self::RESULT_EXPLAIN_ID,
         self::RESULT_ID,
+        self::RESULT_DEFAULT_DETAIL_ID,
+        self::RESULT_DEFAULT_RANGE_ID,
+        self::RESULT_DEFAULT_DETAIL_RANGE_ID,
+        self::RESULT_OVERWRITE_ID,
     ];
+
+    // system masks whose main object is selected by a group id, which a url names in its short
+    // form (see shared/group_id_url.php); the id of every other mask is left as it is, so that
+    // a short name like "A-" is never read as a group id
+    const array GROUP_ID_MASKS_IDS = [...views::VALUE_MASKS_IDS, ...views::GROUP_MASKS_IDS, ...views::RESULT_MASKS_IDS];
 
     // system masks that have a view as the main object
     const array VIEW_MASKS_IDS = [
@@ -616,6 +848,7 @@ class views
         self::VIEW_EDIT_ID,
         self::VIEW_DEL_ID,
         self::VIEW_DEFAULT_ID,
+        self::LIST_VIEWS_ID,
     ];
 
     // system masks that have a component as the main object
@@ -624,6 +857,7 @@ class views
         self::COMPONENT_EDIT_ID,
         self::COMPONENT_DEL_ID,
         self::COMPONENT_DEFAULT_ID,
+        self::LIST_COMPONENTS_ID,
     ];
 
     // system masks that have a term to view link as the main object
@@ -665,6 +899,10 @@ class views
         self::LANGUAGE_DEL_ID,
         self::LANGUAGE_ID,
         self::LANGUAGE_SELECT_ID,
+        self::PHRASE_TRANSLATIONS_ID,
+        self::LANGUAGE_FORMS_ID,
+        self::TRANSLATIONS_MISSING_ID,
+        self::LIST_LANGUAGES_ID,
     ];
 
     // system masks that have a system batch job as the main object
@@ -696,6 +934,15 @@ class views
         self::ERROR_LOG_ID,
         self::ERROR_UPDATE_ID,
         self::SYSTEM_LOG_ID,
+        self::SYS_LOG_DETAIL_ID,
+    ];
+
+    // change log views, which show the changes of the requesting user or of any user
+    const array CHANGE_LOG_VIEW_IDS = [
+        self::CHANGE_LOG_USER_ID,
+        self::CHANGE_LOG_RECENT_ID,
+        self::OBJECT_HISTORY_ID,
+        self::CHANGE_DETAIL_ID,
     ];
 
     // system views that are using a phrase list as a context e.g. that use the phrases as preselection for search
@@ -711,6 +958,15 @@ class views
         self::EXPORT_ODS_ID,
         self::GRAPH_ID,
         self::SIMPLE_ID,
+        self::IMPORT_PREVIEW_ID,
+        self::IMPORT_RESULT_ID,
+        self::IMPORT_URL_ID,
+        self::IMPORT_WIKIDATA_ID,
+        self::EXPORT_SELECTIONS_ID,
+        self::EXPORT_OBJECT_ID,
+        self::EXPORT_READY_ID,
+        self::VALUE_FIND_ID,
+        self::REF_FIND_ID,
     ];
 
     // views that the user can change and are not used for a system process that use a single phrase as stating point
@@ -730,6 +986,9 @@ class views
         self::WORD_FIND_ID,
         self::SEARCH_FULL_ID,
         self::LANGUAGE_SELECT_ID,
+        self::VALUE_FIND_ID,
+        self::REF_FIND_ID,
+        self::FIND_DUPLICATES_ID,
     ];
 
     // system forms to im- and export a data selection
@@ -741,6 +1000,13 @@ class views
         self::EXPORT_XML_ID,
         self::EXPORT_CSV_ID,
         self::EXPORT_ODS_ID,
+        self::IMPORT_PREVIEW_ID,
+        self::IMPORT_RESULT_ID,
+        self::IMPORT_URL_ID,
+        self::IMPORT_WIKIDATA_ID,
+        self::EXPORT_SELECTIONS_ID,
+        self::EXPORT_OBJECT_ID,
+        self::EXPORT_READY_ID,
     ];
 
     // system masks that only used to display a sandbox object
@@ -767,6 +1033,30 @@ class views
         self::VALUE_DEFAULT_ID,
         self::FORMULA_ID,
         self::RESULT_ID,
+        self::WORD_DEFAULT_DETAIL_ID,
+        self::VERB_DEFAULT_DETAIL_ID,
+        self::TRIPLE_DEFAULT_DETAIL_ID,
+        self::SOURCE_DEFAULT_DETAIL_ID,
+        self::REF_DEFAULT_DETAIL_ID,
+        self::VALUE_DEFAULT_DETAIL_ID,
+        self::FORMULA_DEFAULT_DETAIL_ID,
+        self::RESULT_DEFAULT_DETAIL_ID,
+        self::WORD_DEFAULT_RANGE_ID,
+        self::VERB_DEFAULT_RANGE_ID,
+        self::TRIPLE_DEFAULT_RANGE_ID,
+        self::SOURCE_DEFAULT_RANGE_ID,
+        self::REF_DEFAULT_RANGE_ID,
+        self::VALUE_DEFAULT_RANGE_ID,
+        self::FORMULA_DEFAULT_RANGE_ID,
+        self::RESULT_DEFAULT_RANGE_ID,
+        self::WORD_DEFAULT_DETAIL_RANGE_ID,
+        self::VERB_DEFAULT_DETAIL_RANGE_ID,
+        self::TRIPLE_DEFAULT_DETAIL_RANGE_ID,
+        self::SOURCE_DEFAULT_DETAIL_RANGE_ID,
+        self::REF_DEFAULT_DETAIL_RANGE_ID,
+        self::VALUE_DEFAULT_DETAIL_RANGE_ID,
+        self::FORMULA_DEFAULT_DETAIL_RANGE_ID,
+        self::RESULT_DEFAULT_DETAIL_RANGE_ID,
         self::RANKING_ID,
         self::SCIENCE_ID,
         self::HISTORIC_ID,
@@ -779,26 +1069,62 @@ class views
         self::SYSTEM_LOG_ID,
         self::GLOBAL_PROBLEM_ID,
         self::PHRASE_ID,
+        self::TERM_ID,
         self::WORD_RELATED_ID,
         self::PHRASE_VALUES_ID,
         self::TABLE_ID,
         self::CALCULATOR_ID,
+        self::CURRENCY_ID,
         self::VIEW_DEFAULT_ID,
         self::COMPONENT_DEFAULT_ID,
         self::FORMULA_LINK_DEFAULT_ID,
         self::TERM_VIEW_DEFAULT_ID,
         self::COMPONENT_LINK_DEFAULT_ID,
         self::VIEW_RELATION_DEFAULT_ID,
+        self::USER_CONFIG_ID,
+        self::SYSTEM_CONFIG_ID,
+        self::ADMIN_CONFIG_ID,
+        self::USER_QUARANTINE_ID,
+        self::ALL_QUARANTINE_ID,
+        self::USER_JOBS_ID,
+        self::ALL_JOBS_ID,
+        self::PHRASE_TRANSLATIONS_ID,
+        self::LANGUAGE_FORMS_ID,
+        self::TRANSLATIONS_MISSING_ID,
+        self::LIST_LANGUAGES_ID,
+        self::SYS_LOG_DETAIL_ID,
+        self::CHANGE_LOG_USER_ID,
+        self::CHANGE_LOG_RECENT_ID,
+        self::OBJECT_HISTORY_ID,
+        self::CHANGE_DETAIL_ID,
+        self::IMPORT_PREVIEW_ID,
+        self::IMPORT_RESULT_ID,
+        self::IMPORT_URL_ID,
+        self::IMPORT_WIKIDATA_ID,
+        self::EXPORT_SELECTIONS_ID,
+        self::EXPORT_OBJECT_ID,
+        self::EXPORT_READY_ID,
+        self::JOB_DETAIL_ID,
+        self::CALC_STATUS_ID,
+        // shown and not searched, because the admin mask uses the user as main object
+        self::FIND_DUPLICATES_ID,
+        self::LIST_WORDS_ID,
+        self::LIST_TRIPLES_ID,
+        self::LIST_SOURCES_ID,
+        self::LIST_REFS_ID,
+        self::LIST_FORMULAS_ID,
+        self::LIST_VIEWS_ID,
+        self::LIST_COMPONENTS_ID,
     ];
 
     // system masks that add a sandbox object
     const array ADD_MASKS_IDS = [
-        self::WORD_ADD_ID,
+        self::WORD_ADD_DETAIL_ID,
         self::VERB_ADD_ID,
-        self::TRIPLE_ADD_ID,
+        self::TRIPLE_ADD_DETAIL_ID,
         self::SOURCE_ADD_ID,
         self::REF_ADD_ID,
-        self::VALUE_ADD_ID,
+        self::VALUE_ADD_DETAIL_ID,
         self::GROUP_ADD_ID,
         self::FORMULA_ADD_ID,
         self::RESULT_ADD_ID,
@@ -811,6 +1137,10 @@ class views
         self::USER_ADMIN_ADD_ID,
         self::LANGUAGE_ADD_ID,
         self::CONFIRM_ADD_ID,
+        self::VALUE_ADD_NO_JS_ID,
+        self::WORD_ADD_ID,
+        self::TRIPLE_ADD_ID,
+        self::VALUE_ADD_ID,
     ];
 
     // system masks that change a sandbox object
@@ -835,6 +1165,8 @@ class views
         self::CONFIRM_EDIT_ID,
         self::CONFIRM_VIEWS_ID,
         self::ERROR_UPDATE_ID,
+        self::VALUE_OVERWRITE_ID,
+        self::RESULT_OVERWRITE_ID,
     ];
 
     // system masks that delete a sandbox object
@@ -862,9 +1194,9 @@ class views
     // system masks that add, change or delete data incl. the confirm steps
     // used to block a user without login from any data change (see https://wiki.php.net/rfc/spread_operator_for_array )
     const array CHANGE_MASKS_IDS = [
-        ...self::ADD_MASKS_IDS,
-        ...self::EDIT_MASKS_IDS,
-        ...self::DEL_MASKS_IDS,
+        ...views::ADD_MASKS_IDS,
+        ...views::EDIT_MASKS_IDS,
+        ...views::DEL_MASKS_IDS,
     ];
 
     // system masks that should not have the standard zukunft header
@@ -880,8 +1212,8 @@ class views
 
     // system masks that change or delete a sandbox object (see https://wiki.php.net/rfc/spread_operator_for_array )
     const array EDIT_DEL_MASKS_IDS = [
-        ...self::EDIT_MASKS_IDS,
-        ...self::DEL_MASKS_IDS,
+        ...views::EDIT_MASKS_IDS,
+        ...views::DEL_MASKS_IDS,
     ];
 
     // system masks that change data and are therefore blocked for a user without login
@@ -889,7 +1221,7 @@ class views
     // beside the add, edit and del masks also the process masks that change data,
     // but never the login, signup and export masks that an ip user must be able to use
     const array IP_BLOCKED_MASKS_IDS = [
-        ...self::CHANGE_MASKS_IDS,
+        ...views::CHANGE_MASKS_IDS,
         self::FORMULA_TEST_ID,
         self::UNDO_ID,
         self::PASTE_TABLE_ID,
@@ -897,6 +1229,8 @@ class views
         self::JOB_ASYNC_ID,
         self::JOB_CONTROL_ID,
         self::JOB_CHECK_ID,
+        self::IMPORT_URL_ID,
+        self::IMPORT_WIKIDATA_ID,
     ];
 
     // system masks that are used to modify other system masks
@@ -936,18 +1270,30 @@ class views
         self::ERROR_UPDATE_ID,
     ];
 
+    // the views that select the user to show or change by url_var::USER_TO_EDIT and not by url_var::ID,
+    // because url_var::USER is always the logged-in user (see url_var::id_var); the other views of a
+    // user (e.g. the config, the jobs or the own changes) show the logged-in user and select no user
+    const array USER_TO_EDIT_MASKS_IDS = [
+        self::USER_ID,
+        self::USER_ADMIN_ADD_ID,
+        self::USER_ADMIN_EDIT_ID,
+        self::USER_ADMIN_DEL_ID,
+        // the user who sets the password with the activation link of the signup or reset mail
+        self::LOGIN_ACTIVATE_ID,
+    ];
+
     // TODO Prio 0 convert to a key value map and use id for code_id_to_id and id_to_code_id
     // list of views where the id or the code is used for system testing
     const array TEST_VIEW_IDS = [
         self::START_ID => self::START_CODE,
-        self::WORD_ADD_ID => self::WORD_ADD,
+        self::WORD_ADD_DETAIL_ID => self::WORD_ADD_DETAIL,
         self::WORD_EDIT_ID => self::WORD_EDIT,
         self::WORD_DEL_ID => self::WORD_DEL,
         self::WORD_LOG_ID => self::WORD_LOG,
         self::VERB_ADD_ID => self::VERB_ADD,
         self::VERB_EDIT_ID => self::VERB_EDIT,
         self::VERB_DEL_ID => self::VERB_DEL,
-        self::TRIPLE_ADD_ID => self::TRIPLE_ADD,
+        self::TRIPLE_ADD_DETAIL_ID => self::TRIPLE_ADD_DETAIL,
         self::TRIPLE_EDIT_ID => self::TRIPLE_EDIT,
         self::TRIPLE_DEL_ID => self::TRIPLE_DEL,
         self::SOURCE_ADD_ID => self::SOURCE_ADD,
@@ -956,7 +1302,7 @@ class views
         self::REF_ADD_ID => self::REF_ADD,
         self::REF_EDIT_ID => self::REF_EDIT,
         self::REF_DEL_ID => self::REF_DEL,
-        self::VALUE_ADD_ID => self::VALUE_ADD,
+        self::VALUE_ADD_DETAIL_ID => self::VALUE_ADD_DETAIL,
         self::VALUE_EDIT_ID => self::VALUE_EDIT,
         self::VALUE_DEL_ID => self::VALUE_DEL,
         self::GROUP_ADD_ID => self::GROUP_ADD,
@@ -1026,6 +1372,47 @@ class views
         self::ADMIN_MAIN_ID => self::ADMIN_MAIN,
         self::VERBS_ID => self::VERBS,
         self::COMPLETE_ID => self::COMPLETE,
+        self::VALUE_ADD_NO_JS_ID => self::VALUE_ADD_NO_JS,
+        self::WORD_ADD_ID => self::WORD_ADD,
+        self::TRIPLE_ADD_ID => self::TRIPLE_ADD,
+        self::VALUE_ADD_ID => self::VALUE_ADD,
+        self::VALUE_OVERWRITE_ID => self::VALUE_OVERWRITE,
+        self::RESULT_OVERWRITE_ID => self::RESULT_OVERWRITE,
+        self::USER_CONFIG_ID => self::USER_CONFIG,
+        self::SYSTEM_CONFIG_ID => self::SYSTEM_CONFIG,
+        self::ADMIN_CONFIG_ID => self::ADMIN_CONFIG,
+        self::USER_QUARANTINE_ID => self::USER_QUARANTINE,
+        self::ALL_QUARANTINE_ID => self::ALL_QUARANTINE,
+        self::USER_JOBS_ID => self::USER_JOBS,
+        self::ALL_JOBS_ID => self::ALL_JOBS,
+        self::PHRASE_TRANSLATIONS_ID => self::PHRASE_TRANSLATIONS,
+        self::LANGUAGE_FORMS_ID => self::LANGUAGE_FORMS,
+        self::TRANSLATIONS_MISSING_ID => self::TRANSLATIONS_MISSING,
+        self::LIST_LANGUAGES_ID => self::LIST_LANGUAGES,
+        self::SYS_LOG_DETAIL_ID => self::SYS_LOG_DETAIL,
+        self::CHANGE_LOG_USER_ID => self::CHANGE_LOG_USER,
+        self::CHANGE_LOG_RECENT_ID => self::CHANGE_LOG_RECENT,
+        self::OBJECT_HISTORY_ID => self::OBJECT_HISTORY,
+        self::CHANGE_DETAIL_ID => self::CHANGE_DETAIL,
+        self::IMPORT_PREVIEW_ID => self::IMPORT_PREVIEW,
+        self::IMPORT_RESULT_ID => self::IMPORT_RESULT,
+        self::IMPORT_URL_ID => self::IMPORT_URL,
+        self::IMPORT_WIKIDATA_ID => self::IMPORT_WIKIDATA,
+        self::EXPORT_SELECTIONS_ID => self::EXPORT_SELECTIONS,
+        self::EXPORT_OBJECT_ID => self::EXPORT_OBJECT,
+        self::EXPORT_READY_ID => self::EXPORT_READY,
+        self::JOB_DETAIL_ID => self::JOB_DETAIL,
+        self::CALC_STATUS_ID => self::CALC_STATUS,
+        self::VALUE_FIND_ID => self::VALUE_FIND,
+        self::REF_FIND_ID => self::REF_FIND,
+        self::FIND_DUPLICATES_ID => self::FIND_DUPLICATES,
+        self::LIST_WORDS_ID => self::LIST_WORDS,
+        self::LIST_TRIPLES_ID => self::LIST_TRIPLES,
+        self::LIST_SOURCES_ID => self::LIST_SOURCES,
+        self::LIST_REFS_ID => self::LIST_REFS,
+        self::LIST_FORMULAS_ID => self::LIST_FORMULAS,
+        self::LIST_VIEWS_ID => self::LIST_VIEWS,
+        self::LIST_COMPONENTS_ID => self::LIST_COMPONENTS,
         self::BASE_UNITS_ID => self::BASE_UNITS,
         self::WORD_ID => self::WORD,
         self::VERB_ID => self::VERB,
@@ -1036,6 +1423,30 @@ class views
         self::VALUE_DEFAULT_ID => self::VALUE,
         self::FORMULA_ID => self::FORMULA,
         self::RESULT_ID => self::RESULT,
+        self::WORD_DEFAULT_DETAIL_ID => self::WORD_DEFAULT_DETAIL,
+        self::VERB_DEFAULT_DETAIL_ID => self::VERB_DEFAULT_DETAIL,
+        self::TRIPLE_DEFAULT_DETAIL_ID => self::TRIPLE_DEFAULT_DETAIL,
+        self::SOURCE_DEFAULT_DETAIL_ID => self::SOURCE_DEFAULT_DETAIL,
+        self::REF_DEFAULT_DETAIL_ID => self::REF_DEFAULT_DETAIL,
+        self::VALUE_DEFAULT_DETAIL_ID => self::VALUE_DEFAULT_DETAIL,
+        self::FORMULA_DEFAULT_DETAIL_ID => self::FORMULA_DEFAULT_DETAIL,
+        self::RESULT_DEFAULT_DETAIL_ID => self::RESULT_DEFAULT_DETAIL,
+        self::WORD_DEFAULT_RANGE_ID => self::WORD_DEFAULT_RANGE,
+        self::VERB_DEFAULT_RANGE_ID => self::VERB_DEFAULT_RANGE,
+        self::TRIPLE_DEFAULT_RANGE_ID => self::TRIPLE_DEFAULT_RANGE,
+        self::SOURCE_DEFAULT_RANGE_ID => self::SOURCE_DEFAULT_RANGE,
+        self::REF_DEFAULT_RANGE_ID => self::REF_DEFAULT_RANGE,
+        self::VALUE_DEFAULT_RANGE_ID => self::VALUE_DEFAULT_RANGE,
+        self::FORMULA_DEFAULT_RANGE_ID => self::FORMULA_DEFAULT_RANGE,
+        self::RESULT_DEFAULT_RANGE_ID => self::RESULT_DEFAULT_RANGE,
+        self::WORD_DEFAULT_DETAIL_RANGE_ID => self::WORD_DEFAULT_DETAIL_RANGE,
+        self::VERB_DEFAULT_DETAIL_RANGE_ID => self::VERB_DEFAULT_DETAIL_RANGE,
+        self::TRIPLE_DEFAULT_DETAIL_RANGE_ID => self::TRIPLE_DEFAULT_DETAIL_RANGE,
+        self::SOURCE_DEFAULT_DETAIL_RANGE_ID => self::SOURCE_DEFAULT_DETAIL_RANGE,
+        self::REF_DEFAULT_DETAIL_RANGE_ID => self::REF_DEFAULT_DETAIL_RANGE,
+        self::VALUE_DEFAULT_DETAIL_RANGE_ID => self::VALUE_DEFAULT_DETAIL_RANGE,
+        self::FORMULA_DEFAULT_DETAIL_RANGE_ID => self::FORMULA_DEFAULT_DETAIL_RANGE,
+        self::RESULT_DEFAULT_DETAIL_RANGE_ID => self::RESULT_DEFAULT_DETAIL_RANGE,
         self::RANKING_ID => self::RANKING,
         self::SCIENCE_ID => self::SCIENCE,
         self::HISTORIC_ID => self::HISTORIC,
@@ -1049,6 +1460,8 @@ class views
         self::SYSTEM_LOG_ID => self::SYSTEM_LOG,
         self::LANGUAGE_SELECT_ID => self::LANGUAGE_SELECT,
         self::PHRASE_ID => self::PHRASE,
+        self::TERM_ID => self::TERM,
+        self::WORD_RELATED_ID => self::WORD_RELATED,
         self::PHRASE_VALUES_ID => self::PHRASE_VALUES,
         self::TABLE_ID => self::TABLE,
         self::CALCULATOR_ID => self::CALCULATOR,
@@ -1063,14 +1476,16 @@ class views
 
     const array SYSTEM_VIEWS = [
         self::START_CODE,
+        self::WORD_ADD_DETAIL,
         self::WORD_ADD,
+        self::TRIPLE_ADD,
         self::WORD_EDIT,
         self::WORD_DEL,
         self::WORD_LOG,
         self::VERB_ADD,
         self::VERB_EDIT,
         self::VERB_DEL,
-        self::TRIPLE_ADD,
+        self::TRIPLE_ADD_DETAIL,
         self::TRIPLE_EDIT,
         self::TRIPLE_DEL,
         self::SOURCE_ADD,
@@ -1079,8 +1494,11 @@ class views
         self::REF_ADD,
         self::REF_EDIT,
         self::REF_DEL,
+        self::VALUE_ADD_DETAIL,
+        self::VALUE_ADD_NO_JS,
         self::VALUE_ADD,
         self::VALUE_EDIT,
+        self::VALUE_OVERWRITE,
         self::VALUE_DEL,
         self::GROUP_ADD,
         self::GROUP_EDIT,
@@ -1090,6 +1508,7 @@ class views
         self::FORMULA_DEL,
         self::RESULT_ADD,
         self::RESULT_EDIT,
+        self::RESULT_OVERWRITE,
         self::RESULT_DEL,
         self::VIEW_ADD,
         self::VIEW_EDIT,
@@ -1146,6 +1565,41 @@ class views
         self::JOB_ASYNC,
         self::JOB_CONTROL,
         self::JOB_CHECK,
+        self::USER_JOBS,
+        self::ALL_JOBS,
+        self::USER_CONFIG,
+        self::SYSTEM_CONFIG,
+        self::ADMIN_CONFIG,
+        self::USER_QUARANTINE,
+        self::ALL_QUARANTINE,
+        self::PHRASE_TRANSLATIONS,
+        self::LANGUAGE_FORMS,
+        self::TRANSLATIONS_MISSING,
+        self::LIST_LANGUAGES,
+        self::SYS_LOG_DETAIL,
+        self::CHANGE_LOG_USER,
+        self::CHANGE_LOG_RECENT,
+        self::OBJECT_HISTORY,
+        self::CHANGE_DETAIL,
+        self::IMPORT_PREVIEW,
+        self::IMPORT_RESULT,
+        self::IMPORT_URL,
+        self::IMPORT_WIKIDATA,
+        self::EXPORT_SELECTIONS,
+        self::EXPORT_OBJECT,
+        self::EXPORT_READY,
+        self::JOB_DETAIL,
+        self::CALC_STATUS,
+        self::VALUE_FIND,
+        self::REF_FIND,
+        self::FIND_DUPLICATES,
+        self::LIST_WORDS,
+        self::LIST_TRIPLES,
+        self::LIST_SOURCES,
+        self::LIST_REFS,
+        self::LIST_FORMULAS,
+        self::LIST_VIEWS,
+        self::LIST_COMPONENTS,
         self::ADMIN_MAIN,
         self::GLOBAL_PROBLEM,
     ];
@@ -1154,7 +1608,7 @@ class views
     // it should be checked during the build process that the word, triples and views exists
     // and that the result with the base setup still looks fine
     const array PHRASE_VIEWS = [
-        word_names::CURRENCY => self::CONFIRM_MASKS_IDS
+        words::CURRENCY => self::CONFIRM_MASKS_IDS
     ];
 
 
@@ -1168,12 +1622,12 @@ class views
     function system_to_base(string $msk_ci): string
     {
         return match ($msk_ci) {
-            self::WORD_ADD, self::WORD_EDIT, self::WORD_DEL => self::WORD,
+            self::WORD_ADD_DETAIL, self::WORD_EDIT, self::WORD_DEL => self::WORD,
             self::VERB_ADD, self::VERB_EDIT, self::VERB_DEL => self::VERB,
-            self::TRIPLE_ADD, self::TRIPLE_EDIT, self::TRIPLE_DEL => self::TRIPLE,
+            self::TRIPLE_ADD_DETAIL, self::TRIPLE_EDIT, self::TRIPLE_DEL => self::TRIPLE,
             self::SOURCE_ADD, self::SOURCE_EDIT, self::SOURCE_DEL => self::SOURCE,
             self::REF_ADD, self::REF_EDIT, self::REF_DEL => self::REF,
-            self::VALUE_ADD, self::VALUE_EDIT, self::VALUE_DEL => self::VALUE,
+            self::VALUE_ADD_DETAIL, self::VALUE_EDIT, self::VALUE_DEL => self::VALUE,
             //self::GROUP_ADD, self::GROUP_EDIT, self::GROUP_DEL => self::GROUP,
             self::FORMULA_ADD, self::FORMULA_EDIT, self::FORMULA_DEL => self::FORMULA,
             self::VIEW_ADD, self::VIEW_EDIT, self::VIEW_DEL => self::VIEW,
@@ -1237,12 +1691,12 @@ class views
     {
         $short = substr(strrchr($class, '\\'), 1) ?: $class;
         return match ($short) {
-            'word' => self::WORD_ADD_ID,
+            'word' => self::WORD_ADD_DETAIL_ID,
             'verb' => self::VERB_ADD_ID,
-            'triple' => self::TRIPLE_ADD_ID,
+            'triple' => self::TRIPLE_ADD_DETAIL_ID,
             'source' => self::SOURCE_ADD_ID,
             'ref' => self::REF_ADD_ID,
-            'value' => self::VALUE_ADD_ID,
+            'value' => self::VALUE_ADD_DETAIL_ID,
             'group' => self::GROUP_ADD_ID,
             'formula' => self::FORMULA_ADD_ID,
             'formula_link' => self::FORMULA_LINK_ADD_ID,
@@ -1328,12 +1782,12 @@ class views
     function change_to_show_id(int $msk_id): int
     {
         return match ($msk_id) {
-            self::WORD_ADD_ID, self::WORD_EDIT_ID, self::WORD_DEL_ID => self::WORD_ID,
+            self::WORD_ADD_DETAIL_ID, self::WORD_EDIT_ID, self::WORD_DEL_ID => self::WORD_ID,
             self::VERB_ADD_ID, self::VERB_EDIT_ID, self::VERB_DEL_ID => self::VERB_ID,
-            self::TRIPLE_ADD_ID, self::TRIPLE_EDIT_ID, self::TRIPLE_DEL_ID => self::TRIPLE_ID,
+            self::TRIPLE_ADD_DETAIL_ID, self::TRIPLE_EDIT_ID, self::TRIPLE_DEL_ID => self::TRIPLE_ID,
             self::SOURCE_ADD_ID, self::SOURCE_EDIT_ID, self::SOURCE_DEL_ID => self::SOURCE_ID,
             self::REF_ADD_ID, self::REF_EDIT_ID, self::REF_DEL_ID => self::REF_ID,
-            self::VALUE_ADD_ID, self::VALUE_EDIT_ID, self::VALUE_DEL_ID => self::VALUE_DEFAULT_ID,
+            self::VALUE_ADD_DETAIL_ID, self::VALUE_EDIT_ID, self::VALUE_DEL_ID => self::VALUE_DEFAULT_ID,
             self::FORMULA_ADD_ID, self::FORMULA_EDIT_ID, self::FORMULA_DEL_ID,
             self::FORMULA_TEST_ID => self::FORMULA_ID,
             self::RESULT_ADD_ID, self::RESULT_EDIT_ID, self::RESULT_DEL_ID => self::RESULT_ID,

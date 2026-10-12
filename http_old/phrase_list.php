@@ -73,7 +73,7 @@ if ($usr->id() > 0) {
     // prepare the display
     // TODO use view_shared::PHRASE_LIST instead of WORD_ADD
     $msk_db = new view($usr);
-    $msk_db->load_by_code_id(view_shared::WORD_ADD);
+    $msk_db->load_by_code_id(view_shared::WORD_ADD_DETAIL);
     $msk = new view_ui($msk_db->api_json());
     $lib = new library();
     $back = $lib->filter_var($_GET[url_var::BACK]); // the calling page which should be displayed after saving

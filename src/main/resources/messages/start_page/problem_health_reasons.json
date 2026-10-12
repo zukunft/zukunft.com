@@ -1,0 +1,402 @@
+{
+  "version": "0.0.3",
+  "data_version": "0.0.1",
+  "time": "2026-10-08 12:00:00",
+  "user": "timon",
+  "selection": [
+    "health reasons that cause costs"
+  ],
+  "description": "The most relevant reasons why poor health causes costs, each linked to the triple 'ill health' with 'can cause' and quantified by the studies and official statistics that report it for the world and per country: the loss of GDP by poor health in general (McKinsey Global Institute 2020), by the non-communicable diseases including the mental disorders (Bloom et al. 2011, World Economic Forum and Harvard School of Public Health) and by the cancers (Chen et al. 2023); the health spending (WHO 2023); the total cost of the mental disorders in the European countries (OECD/European Union 2018); the sickness absence and the lost labour productivity in Germany (BAuA 2025) and of depression and anxiety in the world (WHO); the financial hardship caused by the out-of-pocket health payments (WHO and World Bank 2023); and the healthy life years lost (GBD 2021). The share of health among the happiness factors, the annual damage of the problem health and its solution are stated in problem_health.json instead, because they are the row of the global problem ranking of the start page. The problem is the word 'health', but a reason caused by 'health' reads wrongly, so the reasons are linked to the triple 'ill health' (health can be ill), which covers every disease, injury and mental disorder; no import file had a triple for poor health before, and the word 'illness' of health.json is kept for the subjective experience of being unwell. Every number is taken from the named source as reported; a country that a study does not report is left out and never estimated. A share is stored as the decimal ratio, a loss as a positive number and a change with its sign. Each study has its own definition of the diseases, its own costing method (output loss in a macroeconomic model, cost of illness or value of the lost working days) and its own period, so numbers of different studies are not comparable without reading the source description, and a cost of a single disease group is part of the total cost of ill health and must not be added to it. Every amount of money is stated in euro: the US dollar figure of the source is converted with the ECB 2023 annual average of 1.0813 USD per EUR (the value of GDP.json) whatever the price base year of the source, and the source figure is kept in the description of the value; an amount in international dollars at purchasing power parity is not converted, but stored as the share the source reports, with the amount in the description. A value of a reason carries the triple '<reason> due to ill health' and not the word 'health' itself, because a value that names a global problem directly is a row of the global problem ranking of the start page, where only the potential loss and the solution of a problem belong.",
+  "words": [
+    {
+      "name": "health"
+    },
+    {
+      "name": "ill",
+      "description": "not in good health: suffering from a disease, an injury or a mental disorder"
+    },
+    {
+      "name": "disease"
+    },
+    {
+      "name": "non-communicable",
+      "description": "not passed from person to person, e.g. a cardiovascular disease, a cancer, a chronic respiratory disease, diabetes or a mental disorder"
+    },
+    {
+      "name": "cancer",
+      "description": "a group of diseases with an abnormal cell growth that can invade or spread to other parts of the body",
+      "refs": [
+        {
+          "name": "Cancer",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "mental"
+    },
+    {
+      "name": "disorder"
+    },
+    {
+      "name": "depression"
+    },
+    {
+      "name": "anxiety"
+    },
+    {
+      "name": "GDP"
+    },
+    {
+      "name": "GNI"
+    },
+    {
+      "name": "loss"
+    },
+    {
+      "name": "cost"
+    },
+    {
+      "name": "social"
+    },
+    {
+      "name": "spending"
+    },
+    {
+      "name": "production"
+    },
+    {
+      "name": "labour"
+    },
+    {
+      "name": "productivity"
+    },
+    {
+      "name": "absence"
+    },
+    {
+      "name": "sickness"
+    },
+    {
+      "name": "hardship"
+    },
+    {
+      "name": "financial"
+    },
+    {
+      "name": "catastrophic"
+    },
+    {
+      "name": "poverty"
+    },
+    {
+      "name": "extreme"
+    },
+    {
+      "name": "DALY"
+    },
+    {
+      "name": "day"
+    },
+    {
+      "name": "person"
+    },
+    {
+      "name": "EUR"
+    },
+    {
+      "name": "percent"
+    },
+    {
+      "name": "million"
+    },
+    {
+      "name": "billion"
+    },
+    {
+      "name": "trillion"
+    },
+    {
+      "name": "annual"
+    },
+    {
+      "name": "low"
+    },
+    {
+      "name": "high"
+    },
+    {
+      "name": "world"
+    },
+    {
+      "name": "European Union"
+    },
+    {
+      "name": "China"
+    },
+    {
+      "name": "United States"
+    },
+    {
+      "name": "Germany"
+    },
+    {
+      "name": "France"
+    },
+    {
+      "name": "United Kingdom"
+    },
+    {
+      "name": "2011",
+      "type": "time"
+    },
+    {
+      "name": "2015"
+    },
+    {
+      "name": "2019"
+    },
+    {
+      "name": "2020"
+    },
+    {
+      "name": "2021"
+    },
+    {
+      "name": "2024"
+    },
+    {
+      "name": "2030"
+    },
+    {
+      "name": "2050"
+    }
+  ],
+  "triples": [
+    {
+      "name": "ill health",
+      "from": "health",
+      "verb": "can be",
+      "to": "ill",
+      "description": "the poor health of a person or a population caused by a disease, an injury or a mental disorder; used as the cause of the health reasons, because a cost caused by 'health' reads wrongly"
+    },
+    {
+      "name": "non-communicable disease",
+      "from": "disease",
+      "verb": "kind of",
+      "to": "non-communicable",
+      "description": "a chronic disease that is not passed from person to person, mainly the cardiovascular diseases, the cancers, the chronic respiratory diseases and diabetes; the World Economic Forum study of 2011 adds the mental disorders"
+    },
+    {
+      "name": "mental disorder",
+      "from": "disorder",
+      "verb": "kind of",
+      "to": "mental"
+    },
+    {
+      "name": "GDP loss",
+      "from": "loss",
+      "verb": "of",
+      "to": "GDP"
+    },
+    {
+      "name": "social cost",
+      "from": "cost",
+      "verb": "kind of",
+      "to": "social"
+    },
+    {
+      "name": "health spending",
+      "from": "spending",
+      "verb": "of",
+      "to": "health"
+    },
+    {
+      "name": "production loss",
+      "from": "loss",
+      "verb": "of",
+      "to": "production",
+      "description": "the value of the production that is lost when the workers are absent, measured by the labour cost i.e. the average compensation of the employees"
+    },
+    {
+      "name": "labour productivity",
+      "from": "productivity",
+      "verb": "of",
+      "to": "labour"
+    },
+    {
+      "name": "labour productivity loss",
+      "from": "loss",
+      "verb": "of",
+      "to": "labour productivity"
+    },
+    {
+      "name": "sickness absence",
+      "from": "absence",
+      "verb": "kind of",
+      "to": "sickness",
+      "description": "the days on which an employee cannot work because of a disease or an injury, in Germany the days of incapacity for work (Arbeitsunfähigkeit) certified by a doctor"
+    },
+    {
+      "name": "financial hardship",
+      "from": "hardship",
+      "verb": "kind of",
+      "to": "financial",
+      "description": "the catastrophic or impoverishing out-of-pocket health spending of a household as tracked by WHO and the World Bank for the SDG target 3.8"
+    },
+    {
+      "name": "catastrophic health spending",
+      "from": "health spending",
+      "verb": "kind of",
+      "to": "catastrophic",
+      "description": "the out-of-pocket health spending of a household that exceeds 10 percent of the household budget (SDG indicator 3.8.2)"
+    },
+    {
+      "name": "extreme poverty",
+      "from": "poverty",
+      "verb": "kind of",
+      "to": "extreme"
+    },
+    {
+      "name": "2011-2030",
+      "from": "2011",
+      "verb": "to",
+      "to": "2030"
+    },
+    {
+      "name": "2020-2050",
+      "from": "2020",
+      "verb": "to",
+      "to": "2050"
+    },
+    {
+      "name": "GDP loss due to ill health",
+      "from": "ill health",
+      "verb": "can cause",
+      "to": "GDP loss",
+      "description": "the output that the economy loses because people die early or cannot fully work due to diseases, injuries and mental disorders"
+    },
+    {
+      "name": "health spending due to ill health",
+      "from": "ill health",
+      "verb": "can cause",
+      "to": "health spending",
+      "description": "the spending on the treatment, care and prevention of diseases, injuries and mental disorders"
+    },
+    {
+      "name": "social cost due to ill health",
+      "from": "ill health",
+      "verb": "can cause",
+      "to": "social cost",
+      "description": "the total cost of ill health for the society: the spending on health care, the spending on social security and the lost employment and productivity"
+    },
+    {
+      "name": "sickness absence due to ill health",
+      "from": "ill health",
+      "verb": "can cause",
+      "to": "sickness absence"
+    },
+    {
+      "name": "labour productivity loss due to ill health",
+      "from": "ill health",
+      "verb": "can cause",
+      "to": "labour productivity loss",
+      "description": "the value added that is lost when ill workers are absent or work with a reduced productivity"
+    },
+    {
+      "name": "financial hardship due to ill health",
+      "from": "ill health",
+      "verb": "can cause",
+      "to": "financial hardship",
+      "description": "a household that pays for health care out of its own pocket can no longer afford food, housing or education, or is pushed into poverty"
+    },
+    {
+      "name": "DALY due to ill health",
+      "from": "ill health",
+      "verb": "can cause",
+      "to": "DALY",
+      "description": "the healthy life years lost by an early death or by living with a disease or a disability"
+    }
+  ],
+  "sources": [
+    {
+      "name": "McKinsey Global Institute (2020) Prioritizing health",
+      "description": "McKinsey Global Institute (2020): Prioritizing health: A prescription for prosperity, July 2020, summarised by the authors Remes, J. and Linzer, K. in 'Seizing the health opportunity' (Project Syndicate). Each year poor health reduces the global GDP by 15 percent, mostly by early deaths and by people who cannot fully take part in work; better health could add USD 12 trillion or 8 percent to the global GDP in 2040 and reduce the global disease burden by 40 percent over 20 years; proven health interventions return USD 2 to 4 for each dollar invested.",
+      "url": "https://www.mckinsey.com/industries/healthcare/our-insights/prioritizing-health-a-prescription-for-prosperity"
+    },
+    {
+      "name": "Bloom et al. (2011) Global Economic Burden of Non-communicable Diseases",
+      "description": "Bloom, D. E., Cafiero, E. T., Jané-Llopis, E., Abrahams-Gessel, S., Bloom, L. R., Fathima, S., Feigl, A. B., Gaziano, T., Mowafi, M., Pandya, A., Prettner, K., Rosenberg, L., Seligman, B., Stein, A. Z., Weinstein, C. (2011): The Global Economic Burden of Noncommunicable Diseases. Geneva: World Economic Forum and Harvard School of Public Health. EPIC macroeconomic model, Table 14: the cumulative output loss of the cardiovascular diseases, the chronic respiratory diseases, the cancers, diabetes and the mental disorders over 2011-2030 is USD 46.7 trillion (of 2010), about 5 percent of the global GDP of 2010 per year; the mental disorders cause USD 16.3 trillion, the cardiovascular diseases USD 15.6 trillion and the cancers USD 8.3 trillion; the executive summary rounds the loss of the mental disorders to USD 16.1 trillion.",
+      "url": "https://www3.weforum.org/docs/WEF_Harvard_HE_GlobalEconomicBurdenNonCommunicableDiseases_2011.pdf",
+      "type": "pdf"
+    },
+    {
+      "name": "Chen et al. (2023)",
+      "description": "Chen, S., Cao, Z., Prettner, K. et al., with the co-senior authors Wang, C. and Bloom, D. E. (2023): Estimates and Projections of the Global Economic Cost of 29 Cancers in 204 Countries and Territories From 2020 to 2050. JAMA Oncology 9(4), 465-472. The global economic cost of the cancers over 2020-2050 is INT$ 25.2 trillion (95 percent uncertainty interval 18.2 to 35.1 trillion) in 2017 international dollars, equivalent to an annual tax of 0.55 percent (0.397 to 0.766 percent) on the global GDP; China bears INT$ 6.1 trillion or 24.1 percent of the global cost and the United States INT$ 5.3 trillion or 20.8 percent; the lung cancer causes 15.4 percent of the cost.",
+      "doi": "10.1001/jamaoncol.2022.7826"
+    },
+    {
+      "name": "WHO (2023) Global spending on health",
+      "description": "World Health Organization (2023): news release of 11 December 2023 'WHO calls on governments for urgent action to invest in Universal Health Coverage' on its global health expenditure report: in 2021 the global spending on health reached a new high of USD 9.8 trillion or 10.3 percent of the global GDP.",
+      "url": "https://www.who.int/news/item/11-12-2023-who-calls-on-governments-for-urgent-action-to-invest-in-universal-health-coverage"
+    },
+    {
+      "name": "OECD/EU (2018) Health at a Glance: Europe 2018",
+      "description": "OECD, European Union (2018): Health at a Glance: Europe 2018: State of Health in the EU Cycle, chapter 1 Promoting mental health in Europe, Table 1.1: the total cost of the mental health problems in the 28 EU countries in 2015 is EUR 607'074 million or 4.10 percent of the GDP, of which 1.31 percent of the GDP is spent on the health systems, 1.15 percent on the social benefits and 1.64 percent are indirect costs on the labour market by lower employment and productivity; by country 4.81 percent of the GDP in Germany, 3.71 percent in France, 4.07 percent in the United Kingdom, ranging from 2.12 percent in Romania to 5.38 percent in Denmark.",
+      "doi": "10.1787/health_glance_eur-2018-en",
+      "url": "https://health.ec.europa.eu/system/files/2020-02/2018_healthatglance_rep_en_0.pdf"
+    },
+    {
+      "name": "BAuA (2025) Volkswirtschaftliche Kosten durch Arbeitsunfähigkeit 2024",
+      "description": "Bundesanstalt für Arbeitsschutz und Arbeitsmedizin (2025): Volkswirtschaftliche Kosten durch Arbeitsunfähigkeit 2024. With 20.8 days of incapacity for work per employee there were 881.5 million days of incapacity for work in Germany in 2024; the production loss valued with the labour cost is EUR 134 billion or 3.0 percent of the gross national income and the loss of gross value added (lost labour productivity) EUR 227 billion or 5.1 percent of the gross national income; the mental and behavioural disorders cause a production loss of EUR 22.5 billion and a loss of gross value added of EUR 38.0 billion; only the days certified by a doctor are counted, so the short absences are underestimated.",
+      "url": "https://www.baua.de/DE/Themen/Monitoring-Evaluation/Zahlen-Daten-Fakten/Kosten-der-Arbeitsunfaehigkeit"
+    },
+    {
+      "name": "WHO Mental health at work fact sheet",
+      "description": "World Health Organization fact sheet Mental health at work: globally an estimated 12 billion working days are lost every year to depression and anxiety at a cost of USD 1 trillion per year in lost productivity.",
+      "url": "https://www.who.int/news-room/fact-sheets/detail/mental-health-at-work"
+    },
+    {
+      "name": "WHO World Bank (2023) Tracking universal health coverage",
+      "description": "World Health Organization, World Bank (2023): Tracking universal health coverage: 2023 global monitoring report, executive summary. In 2019 about 2 billion people experienced financial hardship due to out-of-pocket spending on health, including 344 million people living in extreme poverty; 1.04 billion people or 13.5 percent of the global population lived in households spending more than 10 percent of the household budget on out-of-pocket health expenses, up from 588 million in 2000; 1.3 billion people incurred impoverishing health spending at the relative poverty lines.",
+      "url": "https://www.who.int/publications/i/item/9789240080393"
+    },
+    {
+      "name": "GBD 2021 Diseases and Injuries Collaborators (2024)",
+      "description": "GBD 2021 Diseases and Injuries Collaborators (2024): Global incidence, prevalence, years lived with disability (YLDs), disability-adjusted life-years (DALYs), and healthy life expectancy (HALE) for 371 diseases and injuries in 204 countries and territories and 811 subnational locations, 1990-2021: a systematic analysis for the Global Burden of Disease Study 2021. The Lancet 403(10440), 2133-2161. The global DALYs of all causes increased from 2.63 billion in 2010 to 2.88 billion (95 percent uncertainty interval 2.64 to 3.15) in 2021; the non-communicable diseases contributed 1.73 billion (1.54 to 1.94) DALYs in 2021; the leading causes were COVID-19 (212.0 million DALYs), the ischaemic heart disease (188.3 million), the neonatal disorders (186.3 million) and the stroke (160.4 million).",
+      "doi": "10.1016/S0140-6736(24)00757-8"
+    }
+  ],
+  "values": [
+    {"words": ["GDP loss due to ill health", "world", "annual", "percent", "GDP"], "number": "0.15", "source": "McKinsey Global Institute (2020) Prioritizing health", "description": "poor health reduces the global GDP by 15 percent each year"},
+    {"words": ["GDP loss due to ill health", "non-communicable disease", "world", "2011-2030", "trillion", "EUR"], "number": "43.19", "source": "Bloom et al. (2011) Global Economic Burden of Non-communicable Diseases", "description": "cumulative output loss of the cardiovascular diseases, the chronic respiratory diseases, the cancers, diabetes and the mental disorders; 46.7 trillion USD of 2010 at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["GDP loss due to ill health", "non-communicable disease", "world", "2011-2030", "annual", "percent", "GDP"], "number": "0.05", "source": "Bloom et al. (2011) Global Economic Burden of Non-communicable Diseases", "description": "the cumulative output loss divided by the 20 years is about 5 percent of the global GDP of 2010"},
+    {"words": ["GDP loss due to ill health", "mental disorder", "world", "2011-2030", "trillion", "EUR"], "number": "15.07", "source": "Bloom et al. (2011) Global Economic Burden of Non-communicable Diseases", "description": "16.3 trillion USD of 2010 at the ECB 2023 average of 1.0813 USD per EUR; part of the loss of the non-communicable diseases"},
+    {"words": ["GDP loss due to ill health", "cancer", "world", "2020-2050", "annual", "percent", "GDP"], "number": "0.0055", "source": "Chen et al. (2023)", "description": "the cost of 25.2 trillion international dollars of 2017 over 2020-2050 as an annual tax on the global GDP"},
+    {"words": ["GDP loss due to ill health", "cancer", "world", "2020-2050", "annual", "percent", "GDP", "low"], "number": "0.00397", "source": "Chen et al. (2023)", "description": "lower bound of the 95 percent uncertainty interval; 18.2 trillion international dollars of 2017"},
+    {"words": ["GDP loss due to ill health", "cancer", "world", "2020-2050", "annual", "percent", "GDP", "high"], "number": "0.00766", "source": "Chen et al. (2023)", "description": "upper bound of the 95 percent uncertainty interval; 35.1 trillion international dollars of 2017"},
+    {"words": ["GDP loss due to ill health", "cancer", "China", "2020-2050", "percent"], "number": "0.241", "source": "Chen et al. (2023)", "description": "the share of China in the global economic cost of the cancers; 6.1 trillion international dollars of 2017"},
+    {"words": ["GDP loss due to ill health", "cancer", "United States", "2020-2050", "percent"], "number": "0.208", "source": "Chen et al. (2023)", "description": "the share of the United States in the global economic cost of the cancers; 5.3 trillion international dollars of 2017"},
+    {"words": ["health spending due to ill health", "world", "2021", "trillion", "EUR"], "number": "9.063", "source": "WHO (2023) Global spending on health", "description": "9.8 trillion USD at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["health spending due to ill health", "world", "2021", "percent", "GDP"], "number": "0.103", "source": "WHO (2023) Global spending on health"},
+    {"words": ["social cost due to ill health", "mental disorder", "European Union", "2015", "billion", "EUR"], "number": "607.074", "source": "OECD/EU (2018) Health at a Glance: Europe 2018", "description": "the 28 EU countries; spending on the health systems and on the social benefits plus the indirect cost on the labour market"},
+    {"words": ["social cost due to ill health", "mental disorder", "European Union", "2015", "percent", "GDP"], "number": "0.041", "source": "OECD/EU (2018) Health at a Glance: Europe 2018", "description": "the 28 EU countries"},
+    {"words": ["social cost due to ill health", "mental disorder", "Germany", "2015", "percent", "GDP"], "number": "0.0481", "source": "OECD/EU (2018) Health at a Glance: Europe 2018", "description": "146'536 million EUR"},
+    {"words": ["social cost due to ill health", "mental disorder", "France", "2015", "percent", "GDP"], "number": "0.0371", "source": "OECD/EU (2018) Health at a Glance: Europe 2018", "description": "81'345 million EUR"},
+    {"words": ["social cost due to ill health", "mental disorder", "United Kingdom", "2015", "percent", "GDP"], "number": "0.0407", "source": "OECD/EU (2018) Health at a Glance: Europe 2018", "description": "106'024 million EUR"},
+    {"words": ["sickness absence due to ill health", "Germany", "2024", "million", "day"], "number": "881.5", "source": "BAuA (2025) Volkswirtschaftliche Kosten durch Arbeitsunfähigkeit 2024", "description": "days of incapacity for work certified by a doctor, 20.8 days per employee"},
+    {"words": ["sickness absence due to ill health", "production loss", "Germany", "2024", "billion", "EUR"], "number": "134", "source": "BAuA (2025) Volkswirtschaftliche Kosten durch Arbeitsunfähigkeit 2024", "description": "valued with the labour cost"},
+    {"words": ["sickness absence due to ill health", "production loss", "Germany", "2024", "percent", "GNI"], "number": "0.03", "source": "BAuA (2025) Volkswirtschaftliche Kosten durch Arbeitsunfähigkeit 2024"},
+    {"words": ["sickness absence due to ill health", "production loss", "mental disorder", "Germany", "2024", "billion", "EUR"], "number": "22.5", "source": "BAuA (2025) Volkswirtschaftliche Kosten durch Arbeitsunfähigkeit 2024", "description": "mental and behavioural disorders (ICD-10 F00-F99)"},
+    {"words": ["labour productivity loss due to ill health", "sickness absence", "Germany", "2024", "billion", "EUR"], "number": "227", "source": "BAuA (2025) Volkswirtschaftliche Kosten durch Arbeitsunfähigkeit 2024", "description": "the lost gross value added of the days of incapacity for work"},
+    {"words": ["labour productivity loss due to ill health", "sickness absence", "Germany", "2024", "percent", "GNI"], "number": "0.051", "source": "BAuA (2025) Volkswirtschaftliche Kosten durch Arbeitsunfähigkeit 2024", "description": "the lost gross value added of the days of incapacity for work"},
+    {"words": ["labour productivity loss due to ill health", "depression", "anxiety", "world", "annual", "billion", "day"], "number": "12", "source": "WHO Mental health at work fact sheet", "description": "working days lost every year to depression and anxiety"},
+    {"words": ["labour productivity loss due to ill health", "depression", "anxiety", "world", "annual", "billion", "EUR"], "number": "924.8", "source": "WHO Mental health at work fact sheet", "description": "1 trillion USD per year in lost productivity at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["financial hardship due to ill health", "world", "2019", "billion", "person"], "number": "2", "source": "WHO World Bank (2023) Tracking universal health coverage", "description": "people with catastrophic or impoverishing out-of-pocket health spending or both"},
+    {"words": ["financial hardship due to ill health", "catastrophic health spending", "world", "2019", "billion", "person"], "number": "1.04", "source": "WHO World Bank (2023) Tracking universal health coverage", "description": "people in households spending more than 10 percent of the household budget out of pocket on health"},
+    {"words": ["financial hardship due to ill health", "catastrophic health spending", "world", "2019", "percent"], "number": "0.135", "source": "WHO World Bank (2023) Tracking universal health coverage", "description": "share of the global population"},
+    {"words": ["financial hardship due to ill health", "extreme poverty", "world", "2019", "million", "person"], "number": "344", "source": "WHO World Bank (2023) Tracking universal health coverage", "description": "people living in extreme poverty who faced impoverishing out-of-pocket health spending, almost half of the people living in extreme poverty"},
+    {"words": ["DALY due to ill health", "world", "2021", "billion"], "number": "2.88", "source": "GBD 2021 Diseases and Injuries Collaborators (2024)", "description": "all causes, 95 percent uncertainty interval 2.64 to 3.15 billion"},
+    {"words": ["DALY due to ill health", "non-communicable disease", "world", "2021", "billion"], "number": "1.73", "source": "GBD 2021 Diseases and Injuries Collaborators (2024)", "description": "95 percent uncertainty interval 1.54 to 1.94 billion"}
+  ]
+}

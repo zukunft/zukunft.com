@@ -98,10 +98,7 @@ include_once html_paths::SHARED . 'url_var.php';
 include_once html_paths::SHARED . 'json_fields.php';
 include_once html_paths::SHARED . 'library.php';
 
-//include_once test_paths::CONST . 'word_names.php';
-
 use Zukunft\ZukunftCom\main\php\api\api_message;
-use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\button;
@@ -147,10 +144,10 @@ class word extends sandbox_code_id
      */
 
     // crud views
-    const string VIEW_ADD = views::WORD_ADD;
+    const string VIEW_ADD = views::WORD_ADD_DETAIL;
     const string VIEW_EDIT = views::WORD_EDIT;
     const string VIEW_DEL = views::WORD_DEL;
-    const int VIEW_ADD_ID = views::WORD_ADD_ID;
+    const int VIEW_ADD_ID = views::WORD_ADD_DETAIL_ID;
     const int VIEW_EDIT_ID = views::WORD_EDIT_ID;
     const int VIEW_DEL_ID = views::WORD_DEL_ID;
 
@@ -205,8 +202,11 @@ class word extends sandbox_code_id
      */
     function url_mapper(array $url_array, user_message $msg, data_object|null $dto = null): user_message
     {
-        parent::url_mapper($url_array, $msg, $dto);
-        if ($msg->is_ok()) {
+        $map_msg = new user_message($msg->usr); // the problems of the parent mapping, merged into $msg right away
+        parent::url_mapper($url_array, $map_msg, $dto);
+        $msg->merge($map_msg);
+        // the own fields depend on the parent mapping e.g. of the id, not on an unrelated earlier error
+        if ($map_msg->is_ok()) {
             if (array_key_exists(url_var::PLURAL, $url_array)) {
                 $this->plural = $url_array[url_var::PLURAL];
             } else {
@@ -691,18 +691,7 @@ class word extends sandbox_code_id
             log_err('type list cache missing, falling back to the request cache');
             $typ_lst = $ui_sys->typ_lst_cache;
         }
-        $used_phrase_id = $this->type_id($msg);
-        if ($used_phrase_id == null) {
-            $used_phrase_id = $typ_lst->phr_typ->default_id();
-        }
-        // also send the opening phrase type id as the '8'-prefixed pre value so the confirm view can show
-        // the existing type and detect whether the user actually changed it (see url_var::PRE);
-        // a re-render after a save error keeps the original db snapshot via pre_value
-        $html = new html_base();
-        $pre_type = $this->pre_value(url_var::PHRASE_TYPE) ?? (string)$used_phrase_id;
-        $result = $typ_lst->phr_typ->selector($form, $used_phrase_id);
-        $result .= $html->form_hidden(url_var::PRE . url_var::PHRASE_TYPE, $pre_type);
-        return $result;
+        return $this->type_selector_with_pre($typ_lst->phr_typ, $form, $this->type_id($msg));
     }
 
 
@@ -824,7 +813,7 @@ class word extends sandbox_code_id
     }
 
     /**
-     * @return bool true if the word has the type "measure" (e.g. "metre" or "CHF")
+     * @return bool true if the word has the type "measure unit" (e.g. "metre" or "CHF")
      * in case of a division, these words are excluded from the result
      * in case of add, it is checked that the added value does not have a different measure
      */
@@ -856,11 +845,36 @@ class word extends sandbox_code_id
     }
 
     /**
-     * @return bool true if the word has the type "scaling_percent" (e.g. "percent")
+     * @return bool true if the word has the type "percent" (e.g. "percent")
      */
     function is_percent(user_message $msg): bool
     {
         return $this->is_type(phrase_types::PERCENT, $msg);
+    }
+
+    /**
+     * @return bool true if the word has the type "factor" (e.g. "factor")
+     */
+    function is_factor(user_message $msg): bool
+    {
+        return $this->is_type(phrase_types::FACTOR, $msg);
+    }
+
+    /**
+     * @return bool true if the word names what is measured (e.g. "GDP"), which is no unit
+     */
+    function is_measure_non_unit(user_message $msg): bool
+    {
+        return $this->is_type(phrase_types::MEASURE_NON_UNIT, $msg);
+    }
+
+    /**
+     * @param user_message $msg to report a missing phrase type list
+     * @return bool true if the word says how a number has been found e.g. "assumed"
+     */
+    function is_value_quality(user_message $msg): bool
+    {
+        return $this->is_type(phrase_types::VALUE_QUALITY, $msg);
     }
 
     /**
@@ -1000,14 +1014,9 @@ class word extends sandbox_code_id
         }
         $msk_lst = $msk_lst->ex_system($msg);
         $msk_lst = $msk_lst->ex_non_phrase($msg);
-        // also send the opening view id as the '8'-prefixed pre value so the confirm view can show the
-        // existing view and detect whether the user actually changed it (see url_var::PRE);
-        // a re-render after a save error keeps the original db snapshot via pre_value
-        $html = new html_base();
-        $pre_view = $this->pre_value(url_var::VIEW) ?? (string)$view_id;
-        $result = $msk_lst->selector($form, $view_id, $name, $msg_id);
-        $result .= $html->form_hidden(url_var::PRE . url_var::VIEW, $pre_view);
-        return $result;
+        // the opening view is sent as the pre value so the confirm view can show the existing view
+        $sel_html = $msk_lst->selector($form, $view_id, $name, $msg_id);
+        return $this->add_pre_value($sel_html, $name, (string)$view_id);
     }
 
 
@@ -1019,8 +1028,8 @@ class word extends sandbox_code_id
     function math(): word
     {
         $wrd = new word();
-        $wrd->id = word_names::MATH_ID;
-        $wrd->name = word_names::MATH;
+        $wrd->id = words::MATH_ID;
+        $wrd->name = words::MATH;
         return $wrd;
     }
 

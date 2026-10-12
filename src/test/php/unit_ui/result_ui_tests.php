@@ -33,22 +33,50 @@
 namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::SHARED_TYPES . 'api_types.php';
+include_once test_paths::CREATE . 'test_phrases.php';
 
+use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
+use Zukunft\ZukunftCom\main\php\web\component\execute\ui_base;
+use Zukunft\ZukunftCom\main\php\web\component\execute\ui_list;
+use Zukunft\ZukunftCom\main\php\web\formula\formula_list;
+use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\html\styles;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
 use Zukunft\ZukunftCom\main\php\web\result\result;
+use Zukunft\ZukunftCom\main\php\web\result\result_list;
+use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\value\value_list;
+use Zukunft\ZukunftCom\main\php\shared\const\results;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_fields;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\test\php\const\formula_names;
+use Zukunft\ZukunftCom\test\php\const\triple_names;
+use Zukunft\ZukunftCom\test\php\const\word_names;
+use Zukunft\ZukunftCom\test\php\create\test_log;
+use Zukunft\ZukunftCom\test\php\create\test_phrases;
 use Zukunft\ZukunftCom\test\php\create\test_results;
+use Zukunft\ZukunftCom\test\php\create\test_users;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class result_ui_tests
 {
     function run(test_cleanup $t): void
     {
+        global $mtr;
+        global $ui_sys;
+
         $html = new html_base();
         $t_res = new test_results($t);
+        $t_phr = new test_phrases($t);
         $msg = new user_message();
 
         // start the test section (ts)
@@ -63,19 +91,232 @@ class result_ui_tests
         $test_page .= $t->dsp_title_named_edit($res, $msg);
         $t->html_page_test($test_page, 'result', 'result', $msg);
 
+        // the result default page names the result by its phrases and the calculated number, the
+        // same way the value default page does (see system_views.json result_default)
+        $t->subheader($ts . 'page title');
+
+        $res_page = $t_res->result_page_related_ui();
+        $link_start = '<' . html_base::A . ' ' . html_base::HREF;
+
+        $test_name = 'the name link of a result shows the phrases as links and the number';
+        $t->assert_text_order($test_name, $res_page->name_link($msg),
+            $link_start, $res_page->val_formatted($msg));
+        // negative: a result without phrases has no link to show, but still no php warning
+        $test_name = 'the name link of an empty result has no phrase link';
+        $t->assert_text_not_contains($test_name, new result()->name_link($msg), $link_start);
+
+        $test_name = 'the result page title shows the phrases and the number';
+        $ttl_html = new system_form()->title_value($res_page, $msg);
+        $t->assert_text_contains($test_name, $ttl_html, $res_page->val_formatted($msg));
+        $test_name = '... with the link to change the result';
+        $t->assert_text_contains($test_name, $ttl_html, url_var::MASK . '=' . views::RESULT_EDIT_ID);
+
+        // below the title the page shows the formula with the numbers used and then in latex
+        $t->subheader($ts . 'formula with numbers');
+        $form = new system_form();
+        $test_name = 'the formula line links the number used to its value';
+        $exp_html = $form->show_result_expression($res_page, $msg);
+        $t->assert_text_contains($test_name, $exp_html, url_var::MASK . '=' . views::VALUE_DEFAULT_ID);
+        $test_name = '... followed by the operator';
+        $t->assert_text_contains($test_name, $exp_html, formula_names::SCALE_TO_SEC_EXP_REF_R_REST);
+        $test_name = '... without the internal symbol of the term';
+        $t->assert_text_not_contains($test_name, $exp_html, formula_names::SCALE_TO_SEC_MINUTE_SYMBOL);
+        // negative: without the numbers, e.g. because the source phrases are not known, the
+        // line is left out instead of guessing the numbers
+        $test_name = 'a result without the numbers used shows no formula line';
+        $t->assert($test_name, $form->show_result_expression($t_res->result_page_ui(), $msg), '');
+        $test_name = 'the result page shows the formula of the result in latex';
+        $ltx_html = new ui_base()->expression_latex_link($res_page);
+        $t->assert($test_name, $ltx_html, $res_page->frm->expression_latex_link());
+        $test_name = '... which is not empty';
+        $t->assert_text_contains($test_name, $ltx_html, formula_names::SCALE_TO_SEC_LATEX_NUMBER);
+        // negative: a result without a formula has no latex to show
+        $test_name = 'a result without a formula shows no latex';
+        $t->assert($test_name, new ui_base()->expression_latex_link(new result()), '');
+
+        // the used lists are slow, so only the result views that show them ask the backend for them
+        $t->subheader($ts . 'page request');
+        $test_name = 'a result detail page asks for the used lists';
+        $api_par = frontend::page_api_par(views::RESULT_DEFAULT_DETAIL);
+        $t->assert_true($test_name, array_key_exists(url_var::INCL_USED, $api_par));
+        $test_name = 'the result default page does not wait for the used lists';
+        $api_par = frontend::page_api_par(views::RESULT);
+        $t->assert_false($test_name, array_key_exists(url_var::INCL_USED, $api_par));
+        $test_name = '... but asks for the related objects';
+        $t->assert_true($test_name, array_key_exists(url_var::INCL_RELATED, $api_par));
+        $test_name = 'a page without a main object asks for no related objects';
+        $t->assert_false($test_name, array_key_exists(url_var::INCL_RELATED, frontend::page_api_par(views::START)));
+
+        // below the title the page shows in three columns what the number is based on
+        $t->subheader($ts . 'used for the calculation');
+
+        $lst_ui = new ui_list();
+
+        $test_name = 'the values used for the calculation are listed with their phrases';
+        $val_html = $lst_ui->values_used($res_page, $msg);
+        $t->assert_text_contains($test_name, $val_html, triple_names::E);
+
+        $test_name = 'the formulas used for the calculation are listed';
+        $frm_html = $lst_ui->formulas_used($res_page, $msg);
+        $t->assert_text_contains($test_name, $frm_html, formula_names::INCREASE);
+        // the formula of the result itself is named in the title, so it is not repeated here
+        $test_name = '... without the formula that has calculated the result';
+        $t->assert_text_not_contains($test_name, $frm_html, formula_names::SCALE_TO_SEC);
+
+        // the used results are listed like the used values: grouped, limited and without a table
+        // border, each with its phrase and its number (see result_list::list_most_relevant)
+        $test_name = 'the results used for the calculation are listed with their phrase and number';
+        $res_html = $lst_ui->results_used($res_page, $msg);
+        $t->assert_text_order($test_name, $res_html, word_names::MATH, results::TV_INT_FORM);
+        $test_name = '... grouped like the used values';
+        $t->assert_text_contains($test_name, $res_html, styles::VALUE_LIST);
+        $test_name = '... and without a table';
+        $t->assert_text_not_contains($test_name, $res_html, '<' . html_base::TABLE);
+
+        // negative: an empty list says so instead of showing nothing or an empty table
+        $res_none = $t_res->result_page_related_ui();
+        $res_none->values_used = new value_list();
+        $res_none->formulas_used = new formula_list();
+        $res_none->results_used = new result_list();
+        $test_name = 'a calculation without a used value says so';
+        $t->assert($test_name, $lst_ui->values_used($res_none, $msg), $mtr->txt(msg_id::INFO_NO_VALUES_USED));
+        $test_name = 'a calculation without another used formula says so';
+        $t->assert($test_name, $lst_ui->formulas_used($res_none, $msg), $mtr->txt(msg_id::INFO_NO_FORMULAS_USED));
+        $test_name = 'a calculation without another used result says so';
+        $t->assert($test_name, $lst_ui->results_used($res_none, $msg), $mtr->txt(msg_id::INFO_NO_RESULTS_USED));
+
+        // beside the columns the result page shows the change log and the user overwrites in the
+        // tab box, which the api sends like for a value (see result::api_json_array)
+        $t->subheader($ts . 'view tab box');
+
+        $t_log = new test_log($t);
+        $res_related = $t_res->result_main_max();
+        $res_related->changes_related = $t_log->log_list_result();
+        // test mode so the backend emits the given change list without loading it from the database
+        $res_json = json_decode($res_related->api_json(
+            [api_types::TEST_MODE, api_types::INCL_RELATED, api_types::INCL_PHRASES]), true);
+
+        $test_name = 'the changes of a result are sent to the frontend';
+        $t->assert_true($test_name, ($res_json[json_fields::CHANGES] ?? []) != []);
+
+        // the overwrites are read from the user sandbox table, which the test mode skips, so the
+        // 'my' row is added here like on the value page
+        $res_json[json_fields::USER_OVERWRITES] = [
+            [
+                json_fields::FIELD => change_fields::FLD_NUMERIC_VALUE,
+                json_fields::USR_VALUE => (string)results::TV_PCT,
+                json_fields::STD_VALUE => (string)results::TV_INT,
+            ],
+        ];
+        $res_tab = new result(json_encode($res_json));
+
+        $test_name = 'the changes of a result reach the frontend result object';
+        $t->assert_true($test_name, $res_tab->chg_log != null and !$res_tab->chg_log->is_empty());
+        $test_name = 'the result page shows the changes tab';
+        // the my tab is only shown to a user with an id, so the session user comes from the factory
+        $usr_keep = $ui_sys->usr ?? null;
+        $ui_sys->usr = new user_ui(new test_users()->user_sys_normal()->api_json());
+        $tab_html = $lst_ui->view_tab_box($res_tab, $msg, true);
+        $t->assert_text_contains($test_name, $tab_html,
+            'href="#' . strtolower($mtr->txt(msg_id::FORM_SUB_TITLE_LOG)) . '"');
+        $test_name = '... and the tab with the overwrites of the session user';
+        $t->assert_text_contains($test_name, $tab_html,
+            'href="#' . strtolower($mtr->txt(msg_id::FORM_SUB_TITLE_MY)) . '"');
+        // negative: a result that is not yet stored cannot have a change log, so it has no changes
+        // tab; a stored result keeps the tab even if the log is empty here, because an empty log
+        // can also mean that it has not been loaded (see ui_log::change_log_table_pure)
+        $test_name = 'a result that does not exist yet shows no changes tab';
+        $t->assert_text_not_contains($test_name, $lst_ui->view_tab_box(new result(), $msg, true),
+            'href="#' . strtolower($mtr->txt(msg_id::FORM_SUB_TITLE_LOG)) . '"');
+
+        // restore the session user for the following tests
+        if ($usr_keep == null) {
+            unset($ui_sys->usr);
+        } else {
+            $ui_sys->usr = $usr_keep;
+        }
+
         $t->subheader($ts . 'format');
 
         $test_name = 'big numbers use the user config thousand separator';
         $t->assert($test_name, $res->val_formatted($msg), "123'456");
 
-        $test_name = 'percent values use the user config percent decimals';
+        // the percent sign is not coded but given by the triple "% is symbol for percent" of
+        // scaling.json, which reaches the page either with the initial cache load or with the
+        // phrases of the page, so both sources are set here instead of relying on the fixture
         $api_json = $t_res->result_pct()->api_json([api_types::TEST_MODE, api_types::INCL_PHRASES]);
         $res = new result($api_json);
-        $t->assert($test_name, $res->val_formatted($msg), '1.23%');
+        $phr_sys_keep = $ui_sys->typ_lst_cache->phr_sys;
+        $phr_lst_keep = $ui_sys->phr_lst;
+        $test_name = 'percent values use the user config percent decimals';
+        $ui_sys->typ_lst_cache->phr_sys = $t_phr->list_percent_symbol_cache_ui();
+        $ui_sys->phr_lst = new phrase_list_ui();
+        $t->assert($test_name, $res->val_formatted($msg), '1.23' . word_names::PERCENT_SYMBOL);
+        $test_name = '... also if only the phrases of the page know the symbol';
+        $ui_sys->typ_lst_cache->phr_sys = new phrase_list_ui();
+        $ui_sys->phr_lst = $t_phr->list_percent_symbol_cache_ui();
+        $t->assert($test_name, $res->val_formatted($msg), '1.23' . word_names::PERCENT_SYMBOL);
+        // a calculated number is shown in the same format as a measured one, so the cell text of
+        // a result is the formatted number and never the raw one
+        $test_name = '... and a table cell of a result uses the same format';
+        $t->assert($test_name, $res->value($msg), '1.23' . word_names::PERCENT_SYMBOL);
+        $test_name = '... also as the linked number of the cell';
+        $t->assert_text_contains($test_name, $res->value_edit($msg),
+            '>1.23' . word_names::PERCENT_SYMBOL . '<');
+        // negative: with the symbol triple in neither cache the number is shown without the sign
+        // instead of falling back to a coded one
+        $test_name = '... but without the symbol triple in any cache the sign is missing';
+        $ui_sys->phr_lst = new phrase_list_ui();
+        $t->assert($test_name, $res->val_formatted($msg), '1.23');
+        $ui_sys->typ_lst_cache->phr_sys = $phr_sys_keep;
+        $ui_sys->phr_lst = $phr_lst_keep;
+
+        // a number of zero is a number like any other, so it is shown and not left out
+        $test_name = 'a result of zero shows the number';
+        $res_zero = new result();
+        $res_zero->number = 0;
+        $t->assert($test_name, $res_zero->val_formatted($msg), '0');
 
         $test_name = 'a missing number returns an empty text';
         $res = new result();
         $t->assert($test_name, $res->val_formatted($msg), '');
+        // negative: a result that is not yet calculated has nothing to show in its cell
+        $test_name = '... also in a table cell';
+        $t->assert($test_name, $res->value($msg), '');
+        $test_name = '... also as the numeric value component of a view, which would else stop the page';
+        $t->assert($test_name, new ui_base()->num_value($msg, $res), '');
+        $test_name = 'the number of the url is mapped even after an unrelated earlier error of the request';
+        $err_msg = new user_message();
+        $err_msg->add_message(msg_id::RESET_MAIL_SENT->value);
+        $res_map = new result();
+        $res_map->url_mapper([url_var::ID => 1, url_var::NUMERIC_VALUE => '5'], $err_msg);
+        $t->assert($test_name, $res_map->number(), 5.0);
+        $test_name = '... but not if the mapping of the result itself fails e.g. because the id is missing';
+        $res_no_id = new result();
+        $res_no_id->url_mapper([url_var::NUMERIC_VALUE => '5'], new user_message());
+        $t->assert_true($test_name, $res_no_id->number() === null);
+        $test_name = '... which shows a given number';
+        $api_json = $t_res->result_simple()->api_json([api_types::TEST_MODE, api_types::INCL_PHRASES]);
+        $t->assert_true($test_name, new ui_base()->num_value($msg, new result($api_json)) != '');
+
+        // the overwrite form writes the changed number of the result without the confirm view
+        $t->subheader($ts . 'value overwrite');
+        $test_name = 'the result overwrite form shows the number field';
+        $form = new system_form();
+        $api_json = $t_res->result_simple()->api_json([api_types::TEST_MODE, api_types::INCL_PHRASES]);
+        $res = new result($api_json);
+        $res_id = (string)$res->id();
+        $res_html = $form->form_value_overwrite($res);
+        $t->assert_text_contains($test_name, $res_html, 'name="' . url_var::NUMERIC_VALUE . '"');
+        $test_name = '... writes via the result edit mask';
+        $t->assert_text_contains($test_name, $res_html, $html->form_hidden(url_var::MASK, (string)views::RESULT_EDIT_ID));
+        $test_name = '... for the shown result';
+        $t->assert_text_contains($test_name, $res_html, $html->form_hidden(url_var::ID, $res_id));
+        $test_name = '... without the confirm view';
+        $t->assert_text_contains($test_name, $res_html, $html->form_hidden(url_var::STEP, url_var::STEP_CONFIRMED));
+        $test_name = '... shows the result with its default view';
+        $res_back = $html->form_hidden(url_var::BACK . url_var::MASK, (string)views::RESULT_ID);
+        $t->assert_text_contains($test_name, $res_html, $res_back);
     }
 
 }

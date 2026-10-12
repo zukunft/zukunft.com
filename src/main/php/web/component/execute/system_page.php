@@ -41,6 +41,7 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::COMPONENT . 'component.php';
 include_once html_paths::EXECUTE . 'ui_list.php';
+include_once html_paths::HELPER . 'config_tree.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'styles.php';
 include_once html_paths::PHRASE . 'term_list.php';
@@ -53,6 +54,7 @@ include_once html_paths::SYSTEM . 'sys_log_list.php';
 include_once html_paths::TYPES . 'type_object.php';
 include_once html_paths::USER . 'user.php';
 include_once html_paths::USER . 'user_message.php';
+include_once html_paths::WEB . 'frontend.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::SHARED . 'api.php';
 include_once html_paths::SHARED . 'library.php';
@@ -61,6 +63,8 @@ include_once html_paths::SHARED_CONST . 'views.php';
 include_once html_paths::SHARED_HELPER . 'Translator.php';
 
 use Zukunft\ZukunftCom\main\php\web\component\component;
+use Zukunft\ZukunftCom\main\php\web\frontend;
+use Zukunft\ZukunftCom\main\php\web\helper\config_tree;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named;
@@ -80,6 +84,14 @@ use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class system_page extends component
 {
+
+    // the menu name of each view version in the order of views::DEFAULT_VIEW_VERSIONS
+    const array VIEW_VERSION_NAMES = [
+        msg_id::VIEW_VERSION_DEFAULT,
+        msg_id::VIEW_VERSION_DETAIL,
+        msg_id::VIEW_VERSION_RANGE,
+        msg_id::VIEW_VERSION_DETAIL_RANGE,
+    ];
 
     /**
      * HTML for a page title
@@ -134,6 +146,54 @@ class system_page extends component
     }
 
     /**
+     * the "..." in the right corner below the title of a default, detail, range or detail with
+     * range view that opens the menu to show the same object in one of the other three versions
+     *
+     * @param int $msk_id the database id of the view that shows the object e.g. views::WORD_ID
+     * @param db_object|type_object|combine_named|sandbox_list|null $dbo the object shown on the page
+     * @return string the html code of the menu or '' if the view is not a version of a default view
+     */
+    function related_view_selector(
+        int                                                   $msk_id,
+        db_object|type_object|combine_named|sandbox_list|null $dbo
+    ): string
+    {
+        $html = new html_base();
+        $result = '';
+        $versions = $this->view_versions($msk_id);
+        // only an object with a db id can be shown in another view
+        if ($versions != [] and $dbo instanceof db_object) {
+            $items = '';
+            foreach ($versions as $pos => $view_id) {
+                if ($view_id != $msk_id) {
+                    $url = html_base::url($view_id, $dbo->id());
+                    $items .= $html->list_item($html->ref($url, self::VIEW_VERSION_NAMES[$pos]->text()));
+                }
+            }
+            $menu = $html->popup_menu(msg_id::THREE_POINTS->text(), $items,
+                styles::MENU_VIEW_VERSION, msg_id::VIEW_VERSION_TIP->text());
+            $result = $html->div($menu, styles::VIEW_VERSION_CORNER);
+        }
+        return $result;
+    }
+
+    /**
+     * @param int $msk_id the database id of a view e.g. views::WORD_DEFAULT_DETAIL_ID
+     * @return array the ids of the four versions of the default view that the given view is one of
+     *               or an empty array if the view is not a version of a default view
+     */
+    private function view_versions(int $msk_id): array
+    {
+        $result = [];
+        foreach (views::DEFAULT_VIEW_VERSIONS as $versions) {
+            if (in_array($msk_id, $versions)) {
+                $result = $versions;
+            }
+        }
+        return $result;
+    }
+
+    /**
      * build the search page title; with a pattern it reads "search result for <pattern>",
      * without a pattern it falls back to the plain search title
      * @param array $url_array the URL params; the pattern is read from url_var::PATTERN with the
@@ -162,18 +222,22 @@ class system_page extends component
 
     /**
      * HTML for a subtitle
-     * the formulas subtitle of a word or triple page also shows the icon to add a formula that is
-     * linked to the shown phrase (see ui_list::formula_add_link)
+     * the formulas and the values subtitle of a word or triple page also show the icon to add a formula
+     * or a value for the shown phrase (see ui_list::formula_add_link and ui_list::value_add_link)
      *
+     * @param user_message $msg to report a problem of reading the config e.g. the frontend type for the add icon
      * @param msg_id|null $ui_msg_code_id the message id of the text that should be shown to the user in the user-specific frontend language
      * @param db_object|type_object|combine_named|sandbox_list|null $dbo the object of the page e.g. the word of the formulas subtitle
      * @param array $url_arr the url of the shown page as back target of the add icon
+     * @param int $msk_id the database id of the shown view; only a default view of a phrase gets the add icon
      * @return string the html code to start a new form and display the subtitle
      */
     function system_sub_tile(
+        user_message                                          $msg,
         ?msg_id                                               $ui_msg_code_id = null,
         db_object|type_object|combine_named|sandbox_list|null $dbo = null,
-        array                                                 $url_arr = []
+        array                                                 $url_arr = [],
+        int                                                   $msk_id = 0
     ): string
     {
         global $mtr;
@@ -183,9 +247,15 @@ class system_page extends component
         if ($ui_msg_code_id != null) {
             $result .= $html->text_h3($mtr->txt($ui_msg_code_id));
         }
-        if ($ui_msg_code_id == msg_id::FORM_SUB_TITLE_FORMULAS and $dbo instanceof db_object) {
+        // only the default view of a word or triple offers to add, not e.g. its edit or delete form
+        if ($dbo instanceof db_object and in_array($msk_id, views::PHRASE_DEFAULT_IDS)) {
             $list = new ui_list();
-            $icon = $list->formula_add_link($dbo->phrase(), $url_arr);
+            // the formulas and the values subtitle of a word or triple page offer to add one for the phrase
+            $icon = match ($ui_msg_code_id) {
+                msg_id::FORM_SUB_TITLE_FORMULAS => $list->formula_add_link($dbo->phrase(), $url_arr),
+                msg_id::FORM_SUB_TITLE_VALUES => $list->value_add_link($dbo->phrase(), $msg, $url_arr),
+                default => '',
+            };
             // like the edit icon of the page title the icon stays on the line of the subtitle
             if ($icon != '') {
                 $result = $html->div($result . $icon, styles::HEADING_LINE);
@@ -381,17 +451,23 @@ class system_page extends component
     }
 
     /**
-     * HTML shown on the logout confirmation page
+     * HTML shown on the logout confirmation page with a button back to the last normal page seen before
+     * the logout, which the logout link has set as the '9'-prefixed back target (see html_base::normal_page_array)
+     * @param array $url_arr the url of the logout page with the '9'-prefixed back target
      * @return string the logout page body HTML
      */
-    function logout_body(): string
+    function logout_body(array $url_arr = []): string
     {
         global $mtr;
 
         $html = new html_base();
+        // normalized again, because a logout url from elsewhere may point back to a change form
+        $back_url = $html->page_url(html_base::normal_page_array(html_base::url_par_from_back_part($url_arr)));
+        $back_btn = $html->ref($back_url, $mtr->txt(msg_id::FORM_FIELD_BACK), '',
+            html_base::BS_BTN . ' ' . html_base::BS_BTN_CANCEL);
         $result = $html->logo_flex();
         $result .= $html->br2();
-        $result .= $html->div($html->p($mtr->txt(msg_id::LOGOUT_NOTICE)), html_base::CLASS_INPUT_SECTION);
+        $result .= $html->div($html->p($mtr->txt(msg_id::LOGOUT_NOTICE)) . $back_btn, html_base::CLASS_INPUT_SECTION);
         return $result;
     }
 
@@ -401,6 +477,7 @@ class system_page extends component
      * based on the context (foaf terms) and "fixed" selections like the type or the share or protection
      * limit the number of search and selection fields so that it matches a small screen
      *
+     * @param user_message $msg with the requesting user for whom the terms are searched
      * @param array $url_array the URL params; the search pattern is read from url_var::PATTERN
      *                          (the key the navbar search form submits) and falls back to the
      *                          human-readable url_var::PATTERN_HUMAN alias, because the human->standard
@@ -410,7 +487,7 @@ class system_page extends component
      *                                (e.g. for unit tests) to render a pre-loaded list without a backend call
      * @return string with the HTML code of the search body
      */
-    function body_search(array $url_array = [], ?term_list $trm_lst = null): string
+    function body_search(user_message $msg, array $url_array = [], ?term_list $trm_lst = null): string
     {
         $result = '';
 
@@ -423,7 +500,7 @@ class system_page extends component
         // most relevant (highest impact) first
         if ($trm_lst === null and $pattern != '') {
             $trm_lst = new term_list();
-            $trm_lst->get_by_pattern($pattern);
+            $trm_lst->get_by_pattern($msg, $pattern);
         }
         if ($trm_lst !== null and !$trm_lst->is_empty()) {
             $result .= $trm_lst->links_with_context($url_array);
@@ -477,7 +554,7 @@ class system_page extends component
         $html = new html_base();
         $par = url_var::STEP . url_var::EQ . url_var::STEP_CONFIRM
             . url_var::ADD . url_var::NAME . url_var::EQ . urlencode($pattern);
-        $url = $html->url_back(views::WORD_ADD_ID, 0, [], $par);
+        $url = $html->url_back(views::WORD_ADD_DETAIL_ID, 0, [], $par);
         // ref escapes the pattern, which is user input reflected from the url
         $btn_text = $lib->msg_var_replace(
             $mtr->txt(msg_id::SEARCH_ADD_WORD),
@@ -585,6 +662,98 @@ class system_page extends component
                 . $errors->get_html($msg, $usr, $url_arr);
         } else {
             $result = $html->text_h3($mtr->txt(msg_id::ERROR_UPDATE_NO_OPEN));
+        }
+        return $result;
+    }
+
+    /**
+     * the body of a system view that is already part of the system views, but whose data and actions are not yet
+     * implemented (see docs/llm/pending.md), so the user gets a hint instead of an empty page
+     *
+     * @return string the html code of the not yet available hint
+     */
+    function not_yet_available(): string
+    {
+        global $mtr;
+        $html = new html_base();
+        return $html->text_h3($mtr->txt(msg_id::INFO_VIEW_NOT_YET_AVAILABLE));
+    }
+
+    /**
+     * the tree of the system configuration with the search and the scope of the url,
+     * which also an ip user without login can see, but only a logged-in user can change for the own
+     * and an admin for all users
+     *
+     * @param user_message $msg to report a problem of the tree or config load
+     * @param array $url_arr the url vars of the page with the search (url_var::PATTERN) and the scope (url_var::CONFIG_PART)
+     * @param bool $test_mode true to show the given tree without a backend call
+     * @param config_tree $cft the tree to show in the test mode
+     * @return string the html code of the configuration tree
+     */
+    function config_tree(user_message $msg, array $url_arr, bool $test_mode, config_tree $cft = new config_tree()): string
+    {
+        if (!$test_mode) {
+            $cft->load($msg);
+        }
+        $pattern = (string)($url_arr[url_var::PATTERN] ?? '');
+        $scope = (string)($url_arr[url_var::CONFIG_PART] ?? '');
+        // the same predicate as for the own page, because a change is saved as the overwrite of the user
+        $cft->can_edit = frontend::shows_personal_page($msg);
+        $cft->is_admin = $this->is_admin($msg);
+        return $cft->html($pattern, $scope);
+    }
+
+    /**
+     * the jobs of the requesting user with the pending jobs on top and the buttons to downgrade or cancel a job
+     *
+     * @param user_message $msg with the requesting user to report a problem of the job load
+     * @param int $msk_id the id of the shown view, so that a job button returns to this view
+     * @param bool $test_mode true to show the given jobs without a backend call
+     * @param job_list $jobs the jobs to show in the test mode
+     * @return string the html code of the job table
+     */
+    function user_jobs(user_message $msg, int $msk_id, bool $test_mode, job_list $jobs = new job_list()): string
+    {
+        if (!$test_mode) {
+            $jobs->load_by_user($msg);
+        }
+        return $jobs->display_with_actions($this->is_admin($msg), $msk_id);
+    }
+
+    /**
+     * the jobs of all users for an admin with the pending jobs on top and the buttons to up- or downgrade or cancel
+     * a job; a user who is not an admin gets the hint that only an admin can see the jobs of all users
+     *
+     * @param user_message $msg with the requesting user to report a problem of the job load
+     * @param int $msk_id the id of the shown view, so that a job button returns to this view
+     * @param bool $test_mode true to show the given jobs without a backend call
+     * @param job_list $jobs the jobs to show in the test mode
+     * @return string the html code of the job table or the admin only hint
+     */
+    function all_jobs(user_message $msg, int $msk_id, bool $test_mode, job_list $jobs = new job_list()): string
+    {
+        global $mtr;
+        $html = new html_base();
+        if ($this->is_admin($msg)) {
+            if (!$test_mode) {
+                $jobs->load_all($msg);
+            }
+            $result = $jobs->display_with_actions(true, $msk_id);
+        } else {
+            $result = $html->text_h3($mtr->txt(msg_id::JOB_LIST_ALL_ONLY_ADMIN));
+        }
+        return $result;
+    }
+
+    /**
+     * @param user_message $msg with the requesting user
+     * @return bool true if the requesting user is an admin
+     */
+    private function is_admin(user_message $msg): bool
+    {
+        $result = false;
+        if ($msg->usr != null) {
+            $result = $msg->usr->is_admin();
         }
         return $result;
     }

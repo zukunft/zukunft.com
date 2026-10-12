@@ -49,6 +49,7 @@ include_once paths::SHARED . 'url_var.php';
 include_once html_paths::REF . 'ref.php';
 include_once html_paths::REF . 'ref_list.php';
 include_once html_paths::USER . 'user_message.php';
+include_once test_paths::CONST . 'word_names.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 include_once test_paths::UTILS . 'test_lib.php';
 
@@ -60,6 +61,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\refs;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\shared\types\ref_types;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\main\php\shared\types\share_types;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\ref\ref as ref_ui;
@@ -272,10 +274,9 @@ class test_refs extends test_objects
      *
      * @return array the url parameters of a reference that is not yet created
      */
-    static function ref_new_url(user_message_ui $msg): array
+    static function ref_new_url(): array
     {
-        $ref_ui = new ref_ui();
-        return $ref_ui->to_url_array($msg);
+        return [url_var::ID => 0];
     }
 
     /**
@@ -296,10 +297,15 @@ class test_refs extends test_objects
      *
      * @return array the reference url parameters of the added test reference
      */
-    function ref_add_url(user_message_ui $msg): array
+    static function ref_add_url(): array
     {
-        $ref_ui = new ref_ui($this->reference_workflow()->api_json());
-        return $ref_ui->to_url_array($msg);
+        // the reference of reference_workflow: the wikidata key of the pi symbol
+        return [
+            url_var::ID => 1,
+            url_var::PHRASE => word_names::PI_SYMBOL_ID,
+            url_var::EXTERNAL_KEY => refs::SYSTEM_TEST_ADD,
+            url_var::REF_TYPE => ref_types::WIKIDATA_ID,
+        ];
     }
 
     /**
@@ -335,8 +341,7 @@ class test_refs extends test_objects
      */
     function fill_url_array(int $id): array
     {
-        $msg = new user_message_ui();
-        $url_arr = $this->ref_add_url($msg);
+        $url_arr = self::ref_add_url();
         // the workflow step adds the current db id of the test reference, so drop the factory id
         unset($url_arr[url_var::ID]);
         $url_arr[url_var::URL] = refs::TEST_URL_CHANGED;

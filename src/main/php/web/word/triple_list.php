@@ -32,7 +32,6 @@
 namespace Zukunft\ZukunftCom\main\php\web\word;
 
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
-use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once html_paths::SANDBOX . 'ListBase.php';
 include_once html_paths::HTML . 'html_base.php';

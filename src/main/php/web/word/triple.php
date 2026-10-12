@@ -124,10 +124,10 @@ class triple extends sandbox_code_id
      */
 
     // crud views
-    const string VIEW_ADD = views::TRIPLE_ADD;
+    const string VIEW_ADD = views::TRIPLE_ADD_DETAIL;
     const string VIEW_EDIT = views::TRIPLE_EDIT;
     const string VIEW_DEL = views::TRIPLE_DEL;
-    const int VIEW_ADD_ID = views::TRIPLE_ADD_ID;
+    const int VIEW_ADD_ID = views::TRIPLE_ADD_DETAIL_ID;
     const int VIEW_EDIT_ID = views::TRIPLE_EDIT_ID;
     const int VIEW_DEL_ID = views::TRIPLE_DEL_ID;
 
@@ -198,8 +198,11 @@ class triple extends sandbox_code_id
      */
     function url_mapper(array $url_array, user_message $msg, data_object|null $dto = null): user_message
     {
-        parent::url_mapper($url_array, $msg, $dto);
-        if ($msg->is_ok()) {
+        $map_msg = new user_message($msg->usr); // the problems of the parent mapping, merged into $msg right away
+        parent::url_mapper($url_array, $map_msg, $dto);
+        $msg->merge($map_msg);
+        // the own fields depend on the parent mapping e.g. of the id, not on an unrelated earlier error
+        if ($map_msg->is_ok()) {
             if (array_key_exists(url_var::PHRASE_FROM, $url_array)) {
                 if ($url_array[url_var::PHRASE_FROM] != null) {
                     $this->set_from_by_id($url_array[url_var::PHRASE_FROM], $msg, $dto);
@@ -546,7 +549,9 @@ class triple extends sandbox_code_id
         data_object|null $dto = null
     ): void
     {
-        $this->from = $this->set_phrase_by_id($id, $msg, $dto);
+        if (!$this->is_named($this->from, $id)) {
+            $this->from = $this->set_phrase_by_id($id, $msg, $dto);
+        }
     }
 
     function set_verb(verb $vrb): void
@@ -556,8 +561,16 @@ class triple extends sandbox_code_id
 
     function set_verb_by_id(int $id): void
     {
-        $vrb = new verb();
-        $vrb->set_id($id);
+        global $ui_sys;
+        // the name of the verb comes from the verb cache, because a link to a verb without its
+        // name would show no text; a copy, so that a change of this triple never changes the cache
+        $cac_vrb = $ui_sys?->typ_lst_cache?->vrb?->get($id);
+        if ($cac_vrb instanceof verb) {
+            $vrb = clone $cac_vrb;
+        } else {
+            $vrb = new verb();
+            $vrb->set_id($id);
+        }
         $this->verb = $vrb;
     }
 
@@ -572,7 +585,27 @@ class triple extends sandbox_code_id
         data_object|null $dto = null
     ): void
     {
-        $this->to = $this->set_phrase_by_id($id, $msg, $dto);
+        if (!$this->is_named($this->to, $id)) {
+            $this->to = $this->set_phrase_by_id($id, $msg, $dto);
+        }
+    }
+
+    /**
+     * true if the given phrase is already the one of the id and carries its name, e.g. the from
+     * phrase loaded with the page, which an id-only phrase of the url must not replace, else the
+     * link to it would show no text
+     *
+     * @param phrase|null $phr the phrase set so far
+     * @param int|string $id the phrase id or the phrase name that should be set
+     * @return bool true if the phrase can be kept
+     */
+    private function is_named(?phrase $phr, int|string $id): bool
+    {
+        $result = false;
+        if ($phr != null and $phr->name() != '') {
+            $result = ((string)$phr->id() === (string)$id or $phr->name() === (string)$id);
+        }
+        return $result;
     }
 
     /**
@@ -870,18 +903,7 @@ class triple extends sandbox_code_id
             log_err('type list cache missing, falling back to the request cache');
             $typ_lst = $ui_sys->typ_lst_cache;
         }
-        $used_phrase_id = $this->type_id($msg);
-        if ($used_phrase_id == null) {
-            $used_phrase_id = $typ_lst->phr_typ->default_id();
-        }
-        // also send the opening phrase type id as the '8'-prefixed pre value so the confirm view can show
-        // the existing type and detect whether the user actually changed it (see url_var::PRE);
-        // a re-render after a save error keeps the original db snapshot via pre_value
-        $html = new html_base();
-        $pre_type = $this->pre_value(url_var::PHRASE_TYPE) ?? (string)$used_phrase_id;
-        $result = $typ_lst->phr_typ->selector($form, $used_phrase_id);
-        $result .= $html->form_hidden(url_var::PRE . url_var::PHRASE_TYPE, $pre_type);
-        return $result;
+        return $this->type_selector_with_pre($typ_lst->phr_typ, $form, $this->type_id($msg));
     }
 
     /**
@@ -961,11 +983,36 @@ class triple extends sandbox_code_id
     }
 
     /**
-     * @return bool true if the word has the type "scaling_percent" (e.g. "percent")
+     * @return bool true if the triple has the type "percent" (e.g. "impact factor on HTP")
      */
     function is_percent(user_message $msg): bool
     {
         return $this->is_type(phrase_types::PERCENT, $msg);
+    }
+
+    /**
+     * @return bool true if the triple has the type "factor" (e.g. "factor")
+     */
+    function is_factor(user_message $msg): bool
+    {
+        return $this->is_type(phrase_types::FACTOR, $msg);
+    }
+
+    /**
+     * @return bool true if the triple names what is measured (e.g. "gross domestic product"), which is no unit
+     */
+    function is_measure_non_unit(user_message $msg): bool
+    {
+        return $this->is_type(phrase_types::MEASURE_NON_UNIT, $msg);
+    }
+
+    /**
+     * @param user_message $msg to report a missing phrase type list
+     * @return bool true if the triple says how a number has been found e.g. "peer reviewed by quality journal"
+     */
+    function is_value_quality(user_message $msg): bool
+    {
+        return $this->is_type(phrase_types::VALUE_QUALITY, $msg);
     }
 
     function is_measure(user_message $msg): bool

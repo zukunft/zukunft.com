@@ -219,6 +219,13 @@ class json_fields
     // the child object with detail fields used e.g. for the child view of view relations
     const string CHILD = 'child';
 
+    // a node of the system configuration tree (api config part "tree"): the unit of its value
+    // e.g. "sec" for "start delay: {sec: 1}" and the keys below it in the order of config.yaml
+    const string CONFIG_UNIT = 'unit';
+    const string CONFIG_CHILDREN = 'children';
+    // the value of a setting in config.yaml, sent only if the database value differs or is missing
+    const string CONFIG_FILE_VALUE = 'file_value';
+
     // the child id used e.g. for the child view of view relations
     const string CHILD_ID = 'child_id';
 
@@ -233,10 +240,12 @@ class json_fields
 
     // object specific fields
     const string IS_STD = 'is_std'; // flag if a value or result is user-specific or the default value for all users
+    const string SET_DEFAULT = 'set_default'; // true if an admin saves a value as the default of all users and not as the own overwrite
     const string USER_TEXT = 'user_text'; // the formula expression in a human-readable format
     const string REF_TEXT = 'ref_text'; // the formula expression in a database reference format
     const string LATEX = 'latex'; // the formula in latex format
     const string LATEX_TERMS = 'latex_terms'; // the terms used in the formula, to link each \text{} token of the latex and each name of the expression
+    const string EXPRESSION_PARTS = 'expression_parts'; // the right side of the formula of a result as texts and the figures used for the calculation
     const string NEED_ALL_VAL = 'need_all_val'; // calculate and save the result only if all used values are not null
     const string FORMULA_NAME_PHRASE = 'name_phrase'; // the phrase object for the formula name
     const string FORMULA_NAME = 'formula'; // the name of the formula for im- and export
@@ -384,6 +393,8 @@ class json_fields
     const string LIST_CHANGE_LOG_FIELDS = 'change_field_list';
     const string LIST_VERBS = 'verbs';
     const string LIST_SYSTEM_VIEWS = 'system_views';
+    // the phrases that the frontend needs on every page e.g. the symbol triples (see verbs::PRELOAD_VERBS)
+    const string LIST_SYSTEM_PHRASES = 'system_phrases';
 
     /*
      * im- and export - fields used only for the im- and export json messages
@@ -436,6 +447,7 @@ class json_fields
 
     const string PHRASE_VALUES = 'phrase-values';
     const string SOURCES = 'sources';
+    const string GROUPS = 'groups';
     const string REFERENCES = 'references';
     // the alpha key to select the internal phrase (or later the term)
     const string REF_INTERN = 'phrase';

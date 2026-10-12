@@ -28,14 +28,14 @@
     {
       "name": "MWh",
       "description": "megawatt-hour, a unit of energy equal to one thousand kilowatt-hours.",
-      "type": "measure",
+      "type": "measure_unit",
       "refs": [{"name": "Kilowatt-hour", "type": "wikipedia"}]
     },
     {"name": "operation", "description": "the running of a plant during its lifetime."},
     {
       "name": "percent",
       "description": "a proportion expressed as a fraction of 100.",
-      "type": "measure",
+      "type": "percent",
       "refs": [{"name": "Percentage", "type": "wikipedia"}]
     },
     {"name": "private", "description": "of funding, commercial for-profit financing with a higher discount rate."},
@@ -43,7 +43,7 @@
     {"name": "rate", "description": "a quantity measured against another, here a proportion per period."},
     {"name": "ratio", "description": "the quotient of two quantities."},
     {"name": "threshold", "description": "a boundary value at which a decision changes; here a ratio of one."},
-    {"name": "times", "description": "a dimensionless multiplier or ratio.", "type": "measure"},
+    {"name": "times", "description": "a dimensionless multiplier or ratio.", "type": "measure_unit"},
     {"name": "upper"},
     {"name": "USD"},
     {"name": "value", "description": "the economic worth a generator provides to the grid."}

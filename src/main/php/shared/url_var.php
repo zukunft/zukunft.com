@@ -51,6 +51,7 @@ class url_var
     const string PAR = '?';
     const string ADD = '&';
     const string EQ = '=';
+    const string ANCHOR = '#'; // starts the in-page target, which follows the url parameters
     const string API_PATH = 'api/';
     const string ADD_ID = self::ADD . self::ID . self::EQ;
 
@@ -124,8 +125,12 @@ class url_var
     const string VIEW_TERM_LINK = 'dl'; // to link a view to a term
     const string DISPLAY_LIST_PAGE = 'dlp'; // the page of a list that is longer than the display list size, starting with 0
     const string DISPLAY_LIST_SIZE = 'dls'; // the number of rows of a list shown on a page, which a "... more" link raises to the next level (docs/llm/frontend.md "Short, more and all")
-    const string DISPLAY_LIST_COLUMNS = 'dlc'; // the number of column tiers of a table shown, which the "..." header raises to every column (0)
+    const string DISPLAY_LIST_COLUMNS = 'dlc'; // the number of column tiers of a table left out, which the "..." header lowers step by step from the mayor columns (3, ex main) over ex minor (2) and ex marginal (1) to every column (0)
     const string DISPLAY_LIST_RANGE = 'dlr'; // 1 to show the probability range behind each number of a table, 0 for the numbers only
+    const string DISPLAY_LIST_AS = 'dla'; // how a value table is shown: as a table, as its default charts or both (table_forms), selected by the "as" entries of the "..." header
+    const string DISPLAY_LIST_ORDER = 'dlo'; // the prime order of the rows of a table: the phrase id of a column and the condition (table_orders) e.g. 123.numeric_desc; without it the rows follow the impact
+    const string DISPLAY_LIST_ORDER_SUB = 'dlo2'; // the sub order, which sorts the rows that the prime order leaves equal
+    const string DISPLAY_LIST_ORDER_SUB_SUB = 'dlo3'; // the sub sub order, which sorts the rows that the prime and the sub order leave equal
     const string VIEW_CHILD = 'dm'; // the display view that modifies the parent view
     const string DOI = 'do'; // the digital object identifier of a source used to create the url to doi.org
     const string VIEW_TERM_LINK_PRIO = 'dp'; // to define the order of the view components
@@ -147,6 +152,8 @@ class url_var
     const string REFRESH_EXPRESSION = 'fre'; // recalculate the expression based on the latex changes
     const string REFRESH_LATEX = 'frx'; // recalculate the latex based on the expression
     const string REFRESH_TERMS = 'frt'; // only resolve the terms of the expression and the latex again
+    // the phrase selection asks the backend for the phrases that match the typed chars
+    const string REFRESH_PHRASES = 'frp'; // add the phrases that match the typed chars to the selector
     const string FORMULAS = 'fs';  // to select the formulas that should be displayed
     const string FORMULA_LINK_TYPE = 'ft';
     const string LATEX = 'fx'; // the formula in latex format
@@ -171,17 +178,20 @@ class url_var
     const string IP = 'ip'; // for ip ranges (for admin only)
     const string WITH_PHRASES = 'iw'; // include the phrases in the values or result messages
     const string INCL_RELATED = 'ir'; // include the related phrases (api_types::INCL_RELATED) in a word/triple api response
+    const string INCL_USED = 'iu'; // include the values, formulas and results used (api_types::INCL_USED) in a result api response
     const string JOB = 'j'; // for system batch jobs
     const string JOB_PARAMETER = 'ja'; // pArameter passed to a job e.g. the id of the phrase set
     const string JOB_START_TIME = 'jb'; // Begin time of the job execution
     const string JOB_CHANGE_FIELD = 'jc'; // the Changed field id for undo jobs
     const string JOB_END_TIME = 'je'; // End time of the job execution
+    const string JOB_LIST_ALL = 'jl'; // true to List the jobs of all users, which only an admin may request
     const string JOB_PRIORITY = 'jp'; // the Priority of the batch job
     const string JOB_REQUEST_TIME = 'jq'; // the time when the job was reQuested
     const string JOB_ROW_ID = 'jr'; // the Row id of the related object touched by the job
     const string JOB_STATUS = 'js'; // the Status of the batch job e.g. new, running, done
     const string JOB_TYPE = 'jt'; // the job type
     const string NAME = 'k'; // the name of a word, verb, triple, ... of a form field (Kennung)
+    const string CONFIG_KEY = 'kc'; // the yaml keys of a setting e.g. "select initial entries" to confirm its change by name
     const string NAME_GIVEN = 'kg'; // the overwrite name of a triple, group
     const string CODE_ID = 'ki'; // the code id
     // the user interface message links of a component, only changeable like the code id
@@ -217,13 +227,15 @@ class url_var
     const string LANGUAGE_SYMBOL = 'qs';
     const string RESULT = 'r';
     const string SHARE = 's'; // the share id of the sandbox object
+    const string SET_DEFAULT = 'sd'; // TRUE if an admin saves the value as the default of all users and not as the own overwrite
     const string SOURCE = 'so';
     const string PROTECTION = 'sp'; // the protection id of the sandbox object
     const string SOURCE_TYPE = 'st';
     const string TRIPLE = 't';
     const string WEIGHT = 'tw';
     const string TRIPLES = 'tl'; // to select the triples that should be displayed
-    const string USER = 'u';
+    const string USER = 'u'; // the logged-in user, never the user that is shown or changed
+    const string USER_TO_EDIT = 'ue'; // the user that is shown or changed, because u is the logged-in user
     const string USER_FIRST_NAME = 'uf';
     const string IMPACT = 'ui'; // the impact value a form field
     const string USER_LAST_NAME = 'ul';
@@ -237,7 +249,11 @@ class url_var
     const string USER_PASSWORD = 'uw';
     const string USER_PASSWORD_RETYPE = 'uwr';
     const string VALUE = 'v';
+    const string VALUE_TIME = 'vd'; // the date and time of a time value
+    const string VALUE_GEO = 'vg'; // the geolocation of a geo value e.g. '47.263179, 8.684730'
     const string VALUE_TIME_SERIES = 'vs';
+    const string VALUE_TEXT = 'vt'; // the text of a text value
+    const string VALUE_TYPE = 'vy'; // the selected type of a new value e.g. text to show the text field
     const string WORD = 'w';
     const string WORD_POS = 'wp'; // with a number the word id of the x word e.g. of the form field of a group
     const string WORDS = 'wl'; // array of ids to select or add the words
@@ -263,6 +279,14 @@ class url_var
     const string CRUD_READ = 'r'; // the crud read action
     const string CRUD_UPDATE = 'u'; // the crud update action
     const string CRUD_DELETE = 'd'; // the crud delete action
+    // the values of self::ACTION that name the database operation itself, in contrast to the user
+    // reactions below, which leave the operation to the view mask (see db_object::url_is_add_action)
+    const array CRUD_ACTIONS = [
+        self::CRUD_CREATE,
+        self::CRUD_READ,
+        self::CRUD_UPDATE,
+        self::CRUD_DELETE,
+    ];
     const string SHOW_FULL = 'f'; // to show object with all fields
     const string SHOW_POPUP = 'p'; // to show object with only a few fields as a popup window
     const string SHOW_CREATE = 's'; // to show object with only the name or key as table cell
@@ -294,6 +318,16 @@ class url_var
     // view mask selects which crud is run, so one action covers all three operations
     const string ACTION_CONFIRMED = 'confirmed';
     const string ACTION_CANCEL = 'cancel'; // cancel the pending change
+    const string ACTION_JOB_UPGRADE = 'aju'; // an admin increases the priority of a batch job
+    const string ACTION_JOB_DOWNGRADE = 'ajd'; // reduce the priority of a batch job
+    const string ACTION_JOB_CANCEL = 'ajc'; // cancel a batch job
+
+    // the actions of the job list buttons that change a batch job directly without a confirm view
+    const array JOB_ACTIONS = [
+        self::ACTION_JOB_UPGRADE,
+        self::ACTION_JOB_DOWNGRADE,
+        self::ACTION_JOB_CANCEL,
+    ];
 
 
     /*
@@ -302,6 +336,7 @@ class url_var
 
     // init
     const string CONFIG_PART_HUMAN = 'part';
+    const string CONFIG_KEY_HUMAN = 'setting';
     const string DEBUG = 'debug'; // to force the output of debug messages
     const string NO_CACHE_HUMAN = 'nocache'; // the long form of self::NO_CACHE to bypass the html page cache
     const string NO_CACHE_ON = '1'; // the value that switches the html page cache off e.g. view.php?m=1&nc=1
@@ -325,6 +360,7 @@ class url_var
     const array PAGE_VARS = [
         self::MASK,
         self::ID,
+        self::USER_TO_EDIT,
         self::ID_LST,
         self::PATTERN,
         self::PATTERN_HUMAN,
@@ -332,6 +368,10 @@ class url_var
         self::DISPLAY_LIST_PAGE,
         self::DISPLAY_LIST_COLUMNS,
         self::DISPLAY_LIST_RANGE,
+        self::DISPLAY_LIST_AS,
+        self::DISPLAY_LIST_ORDER,
+        self::DISPLAY_LIST_ORDER_SUB,
+        self::DISPLAY_LIST_ORDER_SUB_SUB,
     ];
 
     // the page vars where a zero is a value and not the "not set" default, so that
@@ -360,13 +400,16 @@ class url_var
     ];
 
     // the url vars that carry a secret (the unhashed password typed on the login / signup / activate
-    // form) and must never be written to a log or reflected in a page; used to redact the post array
+    // form and the activation key, which alone confirms the email and sets a new password)
+    // and must never be written to a log or reflected in a page; used to redact the post array
     // before it is logged in http/view.php (see without_secrets)
     const array SECRET_VARS = [
         self::USER_PASSWORD,
         self::USER_PASSWORD_HUMAN,
         self::USER_PASSWORD_RETYPE,
         self::USER_PASSWORD_RETYPE_HUMAN,
+        self::POST_KEY,
+        self::POST_KEY_HUMAN,
     ];
 
     // the placeholder shown instead of a secret value in a redacted url / post array
@@ -380,6 +423,7 @@ class url_var
         self::ORIGIN_MASK,
         self::ID,
         self::USER,
+        self::USER_TO_EDIT,
         self::STEP,
         self::ACTION,
         self::LANGUAGE,
@@ -387,6 +431,20 @@ class url_var
         self::POST_SUBMIT,
         self::DEBUG,
         self::NO_CACHE,
+        // how much of a list is shown is a render mode, so e.g. the "... more" link of the start
+        // page must not turn the url into a form submit of an object without an id
+        self::DISPLAY_LIST_SIZE,
+        self::DISPLAY_LIST_PAGE,
+        self::DISPLAY_LIST_COLUMNS,
+        self::DISPLAY_LIST_RANGE,
+        self::DISPLAY_LIST_AS,
+        self::DISPLAY_LIST_ORDER,
+        self::DISPLAY_LIST_ORDER_SUB,
+        self::DISPLAY_LIST_ORDER_SUB_SUB,
+        // the search and the scope select what a page shows e.g. one top level key of the settings,
+        // so they never turn the url into a form submit of an object without an id
+        self::PATTERN,
+        self::CONFIG_PART,
     ];
 
 
@@ -406,6 +464,9 @@ class url_var
     const string CRUD_FULL_HUMAN = 'full'; // to show object with all fields
     const string CRUD_POPUP_HUMAN = 'popup'; // to show object with only a few fields as a popup window
     const string CRUD_CELL_HUMAN = 'cell'; // to show object with only the name or key as table cell
+    const string ACTION_JOB_UPGRADE_HUMAN = 'job_upgrade'; // an admin increases the priority of a batch job
+    const string ACTION_JOB_DOWNGRADE_HUMAN = 'job_downgrade'; // reduce the priority of a batch job
+    const string ACTION_JOB_CANCEL_HUMAN = 'job_cancel'; // cancel a batch job
 
     // enum for self::STEP and the next step of the action
     const string STEP_BASE_HUMAN = 'no'; // no action process has been started
@@ -418,10 +479,12 @@ class url_var
 
     // user
     const string USER_HUMAN = 'user';
+    const string USER_TO_EDIT_HUMAN = 'user_to_edit';
     const string USERNAME_HUMAN = 'username';
     const string EMAIL_HUMAN = 'email';
     const string USER_PASSWORD_HUMAN = 'password';
     const string USER_PASSWORD_RETYPE_HUMAN = 're_password';
+    const string POST_KEY_HUMAN = 'activation_key';
     const string USER_PROFILE_HUMAN = 'user_profile';
     const string USER_FIRST_NAME_HUMAN = 'user_first_name';
     const string USER_LAST_NAME_HUMAN = 'user_last_name';
@@ -483,12 +546,17 @@ class url_var
     const string DISPLAY_LIST_PAGE_HUMAN = 'display_list_page'; // the page of a list longer than the size
     const string DISPLAY_LIST_COLUMNS_HUMAN = 'display_list_columns'; // the number of column tiers of a table shown
     const string DISPLAY_LIST_RANGE_HUMAN = 'display_list_range'; // 1 to show the probability ranges of a table
+    const string DISPLAY_LIST_AS_HUMAN = 'display_list_as'; // the form of a table: table, chart or table_chart
+    const string DISPLAY_LIST_ORDER_HUMAN = 'display_list_order'; // the prime order of the rows of a table
+    const string DISPLAY_LIST_ORDER_SUB_HUMAN = 'display_list_order_sub'; // the sub order of the rows of a table
+    const string DISPLAY_LIST_ORDER_SUB_SUB_HUMAN = 'display_list_order_sub_sub'; // the sub sub order of the rows of a table
 
     // graph
     const string DIRECTION_HUMAN = 'dir'; // 'up' to get the parents and 'down' for the children
     const string LEVELS_HUMAN = 'levels'; // the number of search levels'
 
     // source
+    const string SET_DEFAULT_HUMAN = 'set_default';
     const string SOURCE_HUMAN = 'source_id';
     const string SOURCE_TYPE_HUMAN = 'source_type';
     const string URL_HUMAN = 'url';
@@ -507,6 +575,10 @@ class url_var
     const string VALUE_HUMAN = 'value_id';
     const string VALUE_TIME_SERIES_HUMAN = 'time_series_id';
     const string NUMERIC_VALUE_HUMAN = 'number';
+    const string VALUE_TEXT_HUMAN = 'text_value';
+    const string VALUE_TIME_HUMAN = 'time_value';
+    const string VALUE_GEO_HUMAN = 'geo_value';
+    const string VALUE_TYPE_HUMAN = 'value_type';
 
     // formula
     const string FORMULA_HUMAN = 'formula_id';
@@ -520,6 +592,7 @@ class url_var
     const string REFRESH_EXPRESSION_HUMAN = 'expression_from_latex';
     const string REFRESH_LATEX_HUMAN = 'latex_from_expression';
     const string REFRESH_TERMS_HUMAN = 'terms_only';
+    const string REFRESH_PHRASES_HUMAN = 'phrases_from_pattern';
     const string FORMULA_LINK_HUMAN = 'formula_link_id'; // to link a formula to a phrase
     const string FORMULA_LINK_PRIO_HUMAN = 'formula_link_prio';
     const string FORMULA_LINK_TYPE_HUMAN = 'formula_link_type';
@@ -537,6 +610,7 @@ class url_var
     const string FIGURE_HUMAN = 'figure_id';
     const string WITH_PHRASES_HUMAN = 'incl_phrases';
     const string INCL_RELATED_HUMAN = 'incl_related';
+    const string INCL_USED_HUMAN = 'incl_used';
 
     // view
     const string VIEW_HUMAN = 'view_id';
@@ -592,6 +666,7 @@ class url_var
     const string JOB_REQUEST_TIME_HUMAN = 'job_request_time'; // the time when the job was requested
     const string JOB_START_TIME_HUMAN = 'job_start_time'; // begin time of the job execution
     const string JOB_END_TIME_HUMAN = 'job_end_time'; // end time of the job execution
+    const string JOB_LIST_ALL_HUMAN = 'job_list_all'; // true to list the jobs of all users
 
     // access
     const string SHARE_HUMAN = 'share';
@@ -645,6 +720,7 @@ class url_var
     const array HUMAN_TO_STD = [
         // init
         [self::CONFIG_PART_HUMAN, self::CONFIG_PART],
+        [self::CONFIG_KEY_HUMAN, self::CONFIG_KEY],
 
         // control
         [self::MASK_HUMAN, self::MASK, views::START_ID, true],
@@ -658,10 +734,12 @@ class url_var
 
         // user
         [self::USER_HUMAN, self::USER],
+        [self::USER_TO_EDIT_HUMAN, self::USER_TO_EDIT],
         [self::USERNAME_HUMAN, self::USERNAME],
         [self::EMAIL_HUMAN, self::EMAIL],
         [self::USER_PASSWORD_HUMAN, self::USER_PASSWORD],
         [self::USER_PASSWORD_RETYPE_HUMAN, self::USER_PASSWORD_RETYPE],
+        [self::POST_KEY_HUMAN, self::POST_KEY],
         [self::USER_FIRST_NAME_HUMAN, self::USER_FIRST_NAME],
         [self::USER_LAST_NAME_HUMAN, self::USER_LAST_NAME],
         [self::USER_PROFILE_HUMAN, self::USER_PROFILE],
@@ -721,12 +799,17 @@ class url_var
         [self::DISPLAY_LIST_PAGE_HUMAN, self::DISPLAY_LIST_PAGE],
         [self::DISPLAY_LIST_COLUMNS_HUMAN, self::DISPLAY_LIST_COLUMNS],
         [self::DISPLAY_LIST_RANGE_HUMAN, self::DISPLAY_LIST_RANGE],
+        [self::DISPLAY_LIST_AS_HUMAN, self::DISPLAY_LIST_AS],
+        [self::DISPLAY_LIST_ORDER_HUMAN, self::DISPLAY_LIST_ORDER],
+        [self::DISPLAY_LIST_ORDER_SUB_HUMAN, self::DISPLAY_LIST_ORDER_SUB],
+        [self::DISPLAY_LIST_ORDER_SUB_SUB_HUMAN, self::DISPLAY_LIST_ORDER_SUB_SUB],
 
         // graph
         [self::DIRECTION_HUMAN, self::DIRECTION],
         [self::LEVELS_HUMAN, self::LEVELS],
 
         // source
+        [self::SET_DEFAULT_HUMAN, self::SET_DEFAULT],
         [self::SOURCE_HUMAN, self::SOURCE],
         [self::SOURCE_TYPE_HUMAN, self::SOURCE_TYPE],
         [self::URL_HUMAN, self::URL],
@@ -745,6 +828,10 @@ class url_var
         [self::VALUE_HUMAN, self::VALUE],
         [self::VALUE_TIME_SERIES_HUMAN, self::VALUE_TIME_SERIES],
         [self::NUMERIC_VALUE_HUMAN, self::NUMERIC_VALUE],
+        [self::VALUE_TEXT_HUMAN, self::VALUE_TEXT],
+        [self::VALUE_TIME_HUMAN, self::VALUE_TIME],
+        [self::VALUE_GEO_HUMAN, self::VALUE_GEO],
+        [self::VALUE_TYPE_HUMAN, self::VALUE_TYPE],
 
         // formula
         [self::FORMULA_HUMAN, self::FORMULA],
@@ -769,6 +856,7 @@ class url_var
         [self::FIGURE_HUMAN, self::FIGURE],
         [self::WITH_PHRASES_HUMAN, self::WITH_PHRASES],
         [self::INCL_RELATED_HUMAN, self::INCL_RELATED],
+        [self::INCL_USED_HUMAN, self::INCL_USED],
 
         // view
         [self::VIEW_HUMAN, self::VIEW],
@@ -826,6 +914,7 @@ class url_var
         [self::JOB_REQUEST_TIME_HUMAN, self::JOB_REQUEST_TIME],
         [self::JOB_START_TIME_HUMAN, self::JOB_START_TIME],
         [self::JOB_END_TIME_HUMAN, self::JOB_END_TIME],
+        [self::JOB_LIST_ALL_HUMAN, self::JOB_LIST_ALL],
 
         // access
         [self::SHARE_HUMAN, self::SHARE],
@@ -845,6 +934,9 @@ class url_var
         self::SHOW_FULL => self::CRUD_FULL_HUMAN,
         self::SHOW_POPUP => self::CRUD_POPUP_HUMAN,
         self::SHOW_CREATE => self::CRUD_CELL_HUMAN,
+        self::ACTION_JOB_UPGRADE => self::ACTION_JOB_UPGRADE_HUMAN,
+        self::ACTION_JOB_DOWNGRADE => self::ACTION_JOB_DOWNGRADE_HUMAN,
+        self::ACTION_JOB_CANCEL => self::ACTION_JOB_CANCEL_HUMAN,
     ];
 
     // map human-readable url values to standard url values
@@ -852,6 +944,7 @@ class url_var
         self::REFRESH_EXPRESSION => self::REFRESH_EXPRESSION_HUMAN,
         self::REFRESH_LATEX => self::REFRESH_LATEX_HUMAN,
         self::REFRESH_TERMS => self::REFRESH_TERMS_HUMAN,
+        self::REFRESH_PHRASES => self::REFRESH_PHRASES_HUMAN,
     ];
 
     // map human-readable url values to standard url values
@@ -892,6 +985,17 @@ class url_var
     static function back_par(array $url_array): array
     {
         return array_filter($url_array, fn($k) => str_starts_with($k, self::BACK), ARRAY_FILTER_USE_KEY);
+    }
+
+    /**
+     * the url without its back part e.g. to cache a page once for every page that links to it
+     *
+     * @param array $url_array the full url parameter array e.g. ['m' => 9, 'id' => 1, '9m' => 1]
+     * @return array the url without the entries prefixed with BACK e.g. ['m' => 9, 'id' => 1]
+     */
+    static function without_back(array $url_array): array
+    {
+        return array_diff_key($url_array, self::back_par($url_array));
     }
 
     /**
@@ -964,6 +1068,42 @@ class url_var
             }
         }
         return $result;
+    }
+
+    /**
+     * the url var that selects the object of a view, which is the user to edit for the user views of
+     * views::USER_TO_EDIT_MASKS_IDS, because the url var USER is always the logged-in user
+     *
+     * @param mixed $msk the id or the code id of the view e.g. views::USER_ADMIN_EDIT_ID;
+     *                   mixed, because it is user input that may also be an array e.g. from m[]=1
+     * @return string e.g. USER_TO_EDIT for the admin user edit view or ID for all other views
+     */
+    static function id_var(mixed $msk): string
+    {
+        $msk_id = 0;
+        if (is_numeric($msk)) {
+            $msk_id = (int)$msk;
+        } elseif (is_string($msk)) {
+            $msk_id = array_flip(views::TEST_VIEW_IDS)[$msk] ?? 0;
+        }
+        $result = self::ID;
+        if (in_array($msk_id, views::USER_TO_EDIT_MASKS_IDS)) {
+            $result = self::USER_TO_EDIT;
+        }
+        return $result;
+    }
+
+    /**
+     * the object id of a url before url_mapper::url_to_standard has moved e.g. the user to edit to the id
+     *
+     * @param array $url_array the url of a request e.g. [MASK => views::USER_ID, USER_TO_EDIT => 6]
+     * @return int|string the id by the url var of the view (see id_var) or else by the id of an
+     *                    old link e.g. 'm=99&id=6', 0 if the url names no object
+     */
+    static function object_id(array $url_array): int|string
+    {
+        $id_var = self::id_var($url_array[self::MASK] ?? 0);
+        return $url_array[$id_var] ?? $url_array[self::ID] ?? 0;
     }
 
     /**

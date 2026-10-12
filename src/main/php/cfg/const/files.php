@@ -143,12 +143,19 @@ class files
     // data for the default start page
     const string START_PAGE_DATA_FILE = 'solution_prio' . self::JSON;
     const string CONFORMITY_MRI_BERNS_FILE = self::DATA_START_PAGE_PATH . 'conformity_mri_berns' . self::JSON;
-    const string CO2_EQ_REDUCTION_RANKING_FILE = self::DATA_START_PAGE_PATH . 'co2_eq_reduction_ranking' . self::JSON;
 
     // one file per use case that shows how a question is answered with the data, e.g. the
     // climate benefit of photovoltaic electricity in Switzerland with and without the
     // displacement mix concept (docs/llm/pending_prio_2.md "use case")
     const string PV_SWITZERLAND_CO2_FILE = self::USE_CASE_PATH . 'pv_switzerland_co2' . self::JSON;
+    // the unique keys like ISBN or ISIN with some sample entries
+    const string UNIQUE_KEYS_FILE = self::USE_CASE_PATH . 'unique_keys' . self::JSON;
+    // the general phrases and formulas of the photovoltaic return, imported before the country files
+    const string PV_YIELD_FILE = self::USE_CASE_PATH . 'pv_yield' . self::JSON;
+    // the sun intensity, the photovoltaic yield per kWp and the electricity prices of Switzerland per municipality
+    const string PV_YIELD_SWITZERLAND_FILE = self::USE_CASE_PATH . 'pv_yield_switzerland' . self::JSON;
+    // the sun intensity, the photovoltaic yield per kWp and the national electricity prices of the other countries
+    const string PV_YIELD_BY_COUNTRY_FILE = self::USE_CASE_PATH . 'pv_yield_by_country' . self::JSON;
 
     // one file per problem of the start page ranking with the most relevant number of the problem
     // and the potential solutions, each value with the source it is taken from;
@@ -167,6 +174,28 @@ class files
     const string PROBLEM_CITIZEN_PARTICIPATION_FILE = self::DATA_START_PAGE_PATH . 'problem_citizen_participation' . self::JSON;
     const string PROBLEM_GDP_MISMEASUREMENT_FILE = self::DATA_START_PAGE_PATH . 'problem_gdp_mismeasurement' . self::JSON;
     const string PROBLEM_PROPRIETARY_SOFTWARE_FILE = self::DATA_START_PAGE_PATH . 'problem_proprietary_software' . self::JSON;
+    // the reasons that cause costs due to global warming with the study numbers per country
+    const string PROBLEM_GLOBAL_WARMING_REASONS_FILE = self::DATA_START_PAGE_PATH . 'problem_global_warming_reasons' . self::JSON;
+    // the reasons that cause costs due to populism with the study numbers per country
+    const string PROBLEM_POPULISM_REASONS_FILE = self::DATA_START_PAGE_PATH . 'problem_populism_reasons' . self::JSON;
+    // the reasons that cause costs due to poverty with the study numbers per country
+    const string PROBLEM_POVERTY_REASONS_FILE = self::DATA_START_PAGE_PATH . 'problem_poverty_reasons' . self::JSON;
+    // the reasons that cause costs due to the other start page problems with the study numbers per country
+    const string PROBLEM_BIASED_INFORMATION_REASONS_FILE = self::DATA_START_PAGE_PATH . 'problem_biased_information_reasons' . self::JSON;
+    const string PROBLEM_BLACK_BOX_AI_REASONS_FILE = self::DATA_START_PAGE_PATH . 'problem_black_box_ai_reasons' . self::JSON;
+    const string PROBLEM_CITIZEN_PARTICIPATION_REASONS_FILE = self::DATA_START_PAGE_PATH . 'problem_citizen_participation_reasons' . self::JSON;
+    const string PROBLEM_DISINFORMATION_REASONS_FILE = self::DATA_START_PAGE_PATH . 'problem_disinformation_reasons' . self::JSON;
+    const string PROBLEM_EDUCATION_REASONS_FILE = self::DATA_START_PAGE_PATH . 'problem_education_reasons' . self::JSON;
+    const string PROBLEM_GDP_MISMEASUREMENT_REASONS_FILE = self::DATA_START_PAGE_PATH . 'problem_gdp_mismeasurement_reasons' . self::JSON;
+    const string PROBLEM_HEALTH_REASONS_FILE = self::DATA_START_PAGE_PATH . 'problem_health_reasons' . self::JSON;
+    const string PROBLEM_MARKET_POWER_REASONS_FILE = self::DATA_START_PAGE_PATH . 'problem_market_power_reasons' . self::JSON;
+    const string PROBLEM_PROPRIETARY_SOFTWARE_REASONS_FILE = self::DATA_START_PAGE_PATH . 'problem_proprietary_software_reasons' . self::JSON;
+    const string PROBLEM_WEALTH_CONCENTRATION_REASONS_FILE = self::DATA_START_PAGE_PATH . 'problem_wealth_concentration_reasons' . self::JSON;
+    // the main reason of each problem with the loss it causes for the reason column of the ranking
+    const string PROBLEM_MAIN_REASONS_FILE = self::DATA_START_PAGE_PATH . 'problem_main_reasons' . self::JSON;
+    // the chart types and the charts of the start page added after solution_prio.json, e.g. the
+    // leverage plot of the table with the mayor columns only
+    const string START_PAGE_CHARTS_FILE = self::MESSAGE_PATH . 'start_page_charts' . self::JSON;
 
     // the Fermi estimates and thesis chains of the start page, loaded by the full load
     const string FERMI_INTERNET_PRO_CONTRA_FILE = self::DATA_START_PAGE_PATH . 'fermi_internet_pro_contra' . self::JSON;
@@ -232,6 +261,9 @@ class files
     // most relevant base data around learning, cognition, Bloom's taxonomy and the zone of proximal development used as a real-world demo and for system testing
     const string EDUCATION_FILE = self::BASE_DATA_PATH . 'education' . self::JSON;
 
+    // the formulas of the propagation of uncertainty with assumed sample inputs, so that the variance formulas are calc-validated on import
+    const string MATH_PROPAGATION_OF_UNCERTAINTY_FILE = self::BASE_DATA_PATH . 'math_propagation_of_uncertainty' . self::JSON;
+
     /*
      * file lists
      */
@@ -282,21 +314,6 @@ class files
         self::IMPORT_DEMOCRACY_INDEX,
         self::IMPORT_WIND_INVESTMENT,
         self::CONFORMITY_MRI_BERNS_FILE,
-        self::CO2_EQ_REDUCTION_RANKING_FILE,
-        // the problems of the start page ranking in the order of the ranking
-        self::PROBLEM_GLOBAL_WARMING_FILE,
-        self::PROBLEM_POPULISM_FILE,
-        self::PROBLEM_POVERTY_FILE,
-        self::PROBLEM_HEALTH_FILE,
-        self::PROBLEM_EDUCATION_FILE,
-        self::PROBLEM_WEALTH_CONCENTRATION_FILE,
-        self::PROBLEM_DISINFORMATION_FILE,
-        self::PROBLEM_MARKET_POWER_FILE,
-        self::PROBLEM_BIASED_INFORMATION_FILE,
-        self::PROBLEM_BLACK_BOX_AI_FILE,
-        self::PROBLEM_CITIZEN_PARTICIPATION_FILE,
-        self::PROBLEM_GDP_MISMEASUREMENT_FILE,
-        self::PROBLEM_PROPRIETARY_SOFTWARE_FILE,
     ];
 
     // sample data that only test/test_full_load.php imports, loaded after the data of a pod,
@@ -319,10 +336,27 @@ class files
     // (docs/llm/json_structure.md "use case files")
     const array USE_CASE_FILES = [
         self::PV_SWITZERLAND_CO2_FILE,
+        self::UNIQUE_KEYS_FILE,
+        self::PV_YIELD_FILE,
+        self::PV_YIELD_SWITZERLAND_FILE,
+        self::PV_YIELD_BY_COUNTRY_FILE,
+        // start page data and no use case, but appended as the last file of the db setup, so
+        // that it shifts the database id of no phrase that a test pins
+        self::PROBLEM_MAIN_REASONS_FILE,
+    ];
+
+    // system data with code ids added after the database ids of the tested phrases have been
+    // pinned, imported as the very last step of the db setup (import_file::import_system_data_appended)
+    // so that no pinned id moves; a file moves to SYSTEM_DATA_FILES with the next re-baseline
+    const array SYSTEM_DATA_APPENDED_FILES = [
+        self::START_PAGE_CHARTS_FILE,
     ];
 
     // sample data for the view unit tests, imported in the db setup right after the system config
-    // so that the views can be tested by name without relying on database ids
+    // so that the views can be tested by name without relying on database ids;
+    // the problem files are part of it, because each of them owns the numbers of one row of the
+    // start page ranking table, which the view tests render, and they are imported after
+    // solution_prio.json, the home of the problem and solution keywords they re-declare
     const array SAMPLE_VIEW_DATA_FILES = [
         self::ZURICH_FILE,
         self::ZH_CITY_FILE,
@@ -334,6 +368,35 @@ class files
         self::HEALTH_FILE,
         self::POVERTY_FILE,
         self::EDUCATION_FILE,
+        self::MATH_PROPAGATION_OF_UNCERTAINTY_FILE,
+        // the problems of the start page ranking in the order of the ranking
+        self::PROBLEM_GLOBAL_WARMING_FILE,
+        self::PROBLEM_POPULISM_FILE,
+        self::PROBLEM_POVERTY_FILE,
+        self::PROBLEM_HEALTH_FILE,
+        self::PROBLEM_EDUCATION_FILE,
+        self::PROBLEM_WEALTH_CONCENTRATION_FILE,
+        self::PROBLEM_DISINFORMATION_FILE,
+        self::PROBLEM_MARKET_POWER_FILE,
+        self::PROBLEM_BIASED_INFORMATION_FILE,
+        self::PROBLEM_BLACK_BOX_AI_FILE,
+        self::PROBLEM_CITIZEN_PARTICIPATION_FILE,
+        self::PROBLEM_GDP_MISMEASUREMENT_FILE,
+        self::PROBLEM_PROPRIETARY_SOFTWARE_FILE,
+        // appended last, so that the ids of the files above stay stable
+        self::PROBLEM_GLOBAL_WARMING_REASONS_FILE,
+        self::PROBLEM_POPULISM_REASONS_FILE,
+        self::PROBLEM_POVERTY_REASONS_FILE,
+        self::PROBLEM_BIASED_INFORMATION_REASONS_FILE,
+        self::PROBLEM_BLACK_BOX_AI_REASONS_FILE,
+        self::PROBLEM_CITIZEN_PARTICIPATION_REASONS_FILE,
+        self::PROBLEM_DISINFORMATION_REASONS_FILE,
+        self::PROBLEM_EDUCATION_REASONS_FILE,
+        self::PROBLEM_GDP_MISMEASUREMENT_REASONS_FILE,
+        self::PROBLEM_HEALTH_REASONS_FILE,
+        self::PROBLEM_MARKET_POWER_REASONS_FILE,
+        self::PROBLEM_PROPRIETARY_SOFTWARE_REASONS_FILE,
+        self::PROBLEM_WEALTH_CONCENTRATION_REASONS_FILE,
     ];
 
 }

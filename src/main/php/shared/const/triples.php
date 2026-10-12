@@ -33,7 +33,9 @@
 
 namespace Zukunft\ZukunftCom\main\php\shared\const;
 
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
+include_once paths::SHARED_CONST . 'words.php';
 
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 
@@ -62,6 +64,8 @@ class triples
     const string FILE_SIZE = 'file size';
     const string FORMULA_LIST = 'formula list';
     const string FUTURE_PERCENT = 'future percent';
+    // the start page lists the children of this triple, so the frontend needs its name
+    const string GLOBAL_PROBLEM = 'global problem';
     const string INCREASE_LIST = 'increase list';
     const string IP_USER = 'ip user';
     const string LINK_LIST = 'link list';
@@ -94,6 +98,10 @@ class triples
     const string CHANGE_LOG = 'change log';
     const string PER_YEAR = 'per year';
     const string PHRASE_DISTRIBUTION = 'phrase distribution';
+    // the value quality of a number taken from a peer reviewed study, shown as "+" behind the number
+    const string PEER_REVIEWED = 'peer reviewed by quality journal';
+    // the factor that turns the centre of an estimate into a bound of its probability range
+    const string PROBABILITY_RANGE_FACTOR = 'probability range factor';
     const string RESPONSE_TIME = 'response time';
     const string ROW_LIMIT = 'row limit';
     const string SIDE_WIDTH = 'side width';
@@ -101,10 +109,15 @@ class triples
     const string START_DELAY = 'start delay';
     const string STORAGE_SIZE = 'storage size';
     const string SYSTEM_CONFIG = 'system configuration';
-    const int SYSTEM_CONFIG_ID = 103;
+    const int SYSTEM_CONFIG_ID = 105;
+    // the keys of config.yaml above all settings, which are also phrases of each config value
+    const array CONFIG_ROOT = [words::THIS_SYSTEM, self::SYSTEM_CONFIG];
+    // the settings of the pod below this path can only be changed by an admin (see value_base::is_pod_setting_denied)
+    const array CONFIG_SYSTEM_PATH = [...triples::CONFIG_ROOT, words::SYSTEM];
     // the column priority of a table, defined in solution_prio.json: a mayor column is shown
-    // on every screen, a main column only if the screen is not small and a minor column only
-    // if it is wide; a phrase is assigned to a tier with "<phrase> can be <tier>"
+    // on every screen, a main column only if the screen is not small, a minor column only if
+    // it is wide and a marginal column only on the widest screen; a phrase is assigned to a
+    // tier with "<phrase> can be <tier>"
     const string SYSTEM_COLUMN = 'column (system)';
     const string SYSTEM_COLUMN_CODE_ID = 'system_column';
     const string SYSTEM_COLUMN_MAYOR = 'mayor column (system)';
@@ -113,13 +126,40 @@ class triples
     const string SYSTEM_COLUMN_MAIN_CODE_ID = 'system_column_main';
     const string SYSTEM_COLUMN_MINOR = 'minor column (system)';
     const string SYSTEM_COLUMN_MINOR_CODE_ID = 'system_column_minor';
+    const string SYSTEM_COLUMN_MARGINAL = 'marginal column (system)';
+    const string SYSTEM_COLUMN_MARGINAL_CODE_ID = 'system_column_marginal';
 
     // the column tiers in the order they are shown, widest priority first
     const array SYSTEM_COLUMN_TIERS = [
         self::SYSTEM_COLUMN_MAYOR,
         self::SYSTEM_COLUMN_MAIN,
         self::SYSTEM_COLUMN_MINOR,
+        self::SYSTEM_COLUMN_MARGINAL,
     ];
+    // the charts of a table, defined in solution_prio.json like the column tiers: a chart is a
+    // triple "<chart type> of <column>" e.g. "range bars of potential loss", or for two columns
+    // "<chart type> of <column> and <column>", and is assigned to a chart type with "<chart> can
+    // be <chart type>"; the default charts are shown beside each other if the reader asks to
+    // see the table as a chart, the alternative charts can be selected instead
+    const string SYSTEM_CHART_TYPE = 'chart type (system)';
+    const string SYSTEM_CHART_TYPE_CODE_ID = 'system_chart_type';
+    const string SYSTEM_CHART_TYPE_DEFAULT = 'default chart type (system)';
+    const string SYSTEM_CHART_TYPE_DEFAULT_CODE_ID = 'system_chart_type_default';
+    const string SYSTEM_CHART_TYPE_ALTERNATIVE = 'alternative chart type (system)';
+    const string SYSTEM_CHART_TYPE_ALTERNATIVE_CODE_ID = 'system_chart_type_alternative';
+    // the charts of a table that shows the mayor columns only, e.g. the initial start page,
+    // which are shown instead of the default charts
+    const string SYSTEM_CHART_TYPE_MAYOR = 'mayor chart type (system)';
+    const string SYSTEM_CHART_TYPE_MAYOR_CODE_ID = 'system_chart_type_mayor';
+    // the default sort orders of a table, defined in solution_prio.json like the charts: an
+    // order is a triple "<condition> of <column>" e.g. "numeric descending of potential loss",
+    // where the condition word carries the table_orders value as its code id, and is assigned
+    // to the default tier with "<order> can be <tier>"; the first default order is the prime
+    // order of the rows if the url of the page names none, the next ones are the sub orders
+    const string SYSTEM_SORT_ORDER = 'sort order (system)';
+    const string SYSTEM_SORT_ORDER_CODE_ID = 'system_sort_order';
+    const string SYSTEM_SORT_ORDER_DEFAULT = 'default sort order (system)';
+    const string SYSTEM_SORT_ORDER_DEFAULT_CODE_ID = 'system_sort_order_default';
     const string SYSTEM_ERRORS = 'system errors';
     const string TABLE_NAME = 'table name';
     const string TIME_PERCENT = 'time percent';

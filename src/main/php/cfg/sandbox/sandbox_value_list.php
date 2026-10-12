@@ -305,9 +305,9 @@ class sandbox_value_list extends sandbox_list
             $pos_grp_lst[] = $par_pos;
             $par_pos++;
             $par_name = $sc->par_name($par_pos);
-            $spt = sql_par_type::LIKE;
+            $spt = sql_par_type::LIKE_KEY;
             if ($or) {
-                $spt = sql_par_type::LIKE_OR;
+                $spt = sql_par_type::LIKE_KEY_OR;
             }
             $grp_id = new group_id();
             $sc->add_where_par(group_fields::FLD_ID, $grp_id->int2alpha_num($phr->id()), $spt, '', $par_name);
@@ -403,9 +403,9 @@ class sandbox_value_list extends sandbox_list
             $this->load_sql_set_phrase_fields($sc, $phr_pos_lst, $or, $max_phr);
         } else {
             foreach ($grp_pos_lst as $grp_pos) {
-                $spt = sql_par_type::LIKE;
+                $spt = sql_par_type::LIKE_KEY;
                 if ($or) {
-                    $spt = sql_par_type::LIKE_OR;
+                    $spt = sql_par_type::LIKE_KEY_OR;
                 }
                 $sc->add_where_no_par('', group_fields::FLD_ID, $spt, $grp_pos);
             }
@@ -588,6 +588,49 @@ class sandbox_value_list extends sandbox_list
             $sc->set_usr_only_fields($fld_lst_usr_only);
         }
         return $qp;
+    }
+
+    /**
+     * get the first value or result of the list that is related to all given phrase names
+     * and where all its phrases are within the given context
+     * e.g. to select the number that a formula uses to calculate a result
+     *
+     * several names select one entry, because an operand of a formula can be a group of
+     * phrases e.g. "potential","loss","trillion","EUR" names the potential loss in trillion EUR
+     *
+     * @param array $phr_names the names of the phrases that select the number e.g. "price"
+     * @param array $ctx_names the phrase names that limit the selection e.g. "apple" and "CHF"
+     * @return sandbox_value|null the first matching number or null if none matches
+     */
+    function get_by_names_and_context(array $phr_names, array $ctx_names): ?sandbox_value
+    {
+        $result = null;
+        foreach ($this->lst() as $val) {
+            if ($result == null) {
+                if ($val->match_all($phr_names) and $val->matches_context($ctx_names)) {
+                    $result = $val;
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * set the word objects for all values or results in the list if needed
+     * not included in load, because sometimes loading of the word objects is not needed
+     */
+    function load_phrases(user_message $msg): void
+    {
+        // loading via word group is the most used case, because to save database space and reading time the value is saved with the word group id
+        $all_phr = new phrase_list($this->get_user());
+        foreach ($this->lst() as $val) {
+            $val->load_phrases($msg);
+            foreach ($val->grp()->phrase_list()->lst() as $phr) {
+                $all_phr->add($phr, true);
+            }
+        }
+        // the from and to of the triples of all values with one read, e.g. to head a column by one part
+        $all_phr->load_triple_sides($msg);
     }
 
 

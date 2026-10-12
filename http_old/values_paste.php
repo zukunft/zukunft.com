@@ -60,7 +60,7 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_code_id(view_shared::VALUE_ADD);
+    $msk->load_by_code_id(view_shared::VALUE_ADD_DETAIL);
     /*
         // get the fixed parameters
         $new_tbl   = $_GET['table'];    // the value table as pasted by the user

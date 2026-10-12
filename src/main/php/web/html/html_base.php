@@ -42,6 +42,7 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::TYPES . 'language_list.php';
 include_once html_paths::CONST . 'icons.php';
+include_once html_paths::SHARED . 'group_id_url.php';
 //include_once html_paths::USER . 'user_message.php';
 //include_once html_paths::SHARED_CONST . 'def.php';
 //include_once html_paths::SHARED_CONST . 'files.php';
@@ -67,6 +68,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\languages;
+use Zukunft\ZukunftCom\main\php\shared\group_id_url;
 use Zukunft\ZukunftCom\main\php\shared\helper\Message;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\position_types;
@@ -109,8 +111,16 @@ class html_base
     const string BS_BTN = 'btn btn-space col-1';
     // a borderless button that shows only an icon, e.g. the refresh icon beside a form field label
     const string BS_BTN_ICON = 'btn btn-link p-0 ms-1 align-baseline';
+    // align an element beside a form field to the bottom, so that it is in line with the input and not the label
+    const string BS_ALIGN_BOTTOM = 'align-self-end';
+    // the column of a text button beside a form field: the button is aligned to the bottom like the input
+    // and fills the column, so that the button margin sits inside the column and not on it
+    const string BS_BTN_FIELD_COL = 'col-1 d-flex align-items-end';
+    const string BS_BTN_FIELD = 'btn btn-outline-success w-100';
     const string BS_BTN_SUCCESS = 'btn-outline-success';
     const string BS_BTN_CANCEL = 'btn-outline-secondary';
+    // between the tooltip of an action and the reason why the action is blocked (see change_style_and_tip)
+    const string TOOLTIP_SEPARATOR = ': ';
     const string BS_BTN_DEL = 'btn-outline-secondary';
     const string BS_BTN_IMPORT = 'btn-outline-secondary';
     const string BS_BTN_EXPORT = 'btn-outline-secondary';
@@ -182,6 +192,16 @@ class html_base
     const string SCOPE = 'scope';
     const string DETAILS = 'details';
     const string SUMMARY = 'summary';
+    const string DL = 'dl';
+    const string DT = 'dt';
+    const string DD = 'dd';
+    const string MARK = 'mark';
+    const string DATALIST = 'datalist';
+    const string OPTION = 'option';
+    const string LIST = 'list';
+    const string POPOVER = 'popover';
+    const string POPOVER_TARGET = 'popovertarget';
+    const string METHOD_GET = 'get';
     const string I = 'i';
     const string B = 'b';
     const string H1 = 'h1';
@@ -195,6 +215,8 @@ class html_base
     const string CLASS_MAIN = 'main-container';
     const string CLASS_FOOTER = 'site-footer';
     const string CLASS_NOTIFICATION = 'alert alert-warning ' . api::USER_MSG_CLASS;
+    // green, so that the user sees at once that e.g. a save has worked
+    const string CLASS_NOTIFICATION_SUCCESS = 'alert alert-success ' . api::USER_MSG_CLASS;
     const string CLASS_INPUT_SECTION = 'search-section';
     const string CLASS_INPUT = 'standard-input';
     // css-only show-password toggle classes (see the .password / .show-password rules in style_html.css)
@@ -218,6 +240,15 @@ class html_base
     const string CLASS_TAB = 'css-tab';
     const string CLASS_TAB_LABEL = 'css-tab-label';
     const string CLASS_TAB_PANE = 'css-tab-pane';
+    // the static forward page of e.g. /settings with 1 the main script incl. '?', 2 the view url var
+    // and 3 the view id: the script keeps every url var of the request e.g. '9m' or the key of an
+    // activation link and sets the view last, so a view var of the request never replaces the target;
+    // without javascript the view opens without the url vars of the request
+    const string FORWARD_PAGE = "<!DOCTYPE html>\n"
+        . "<script>const p = new URLSearchParams(location.search); p.set('%2\$s', '%3\$s');"
+        . " location.replace('%1\$s' + p);</script>\n"
+        . "<noscript><meta http-equiv=\"refresh\" content=\"0; url=%1\$s%2\$s=%3\$s\"></noscript>\n"
+        . "</html>\n";
 
 
     /*
@@ -235,6 +266,15 @@ class html_base
     function page_html(string $lan, string $head, string $body, string $foot): string
     {
         return self::DOC_HTML . $this->page_lan($head . $body . $foot, $lan);
+    }
+
+    /**
+     * @param int $msk_id the id of the view that the forward page opens e.g. views::SYSTEM_CONFIG_ID
+     * @return string the html code of the static forward page in the docroot e.g. of /settings
+     */
+    function forward_page(int $msk_id): string
+    {
+        return sprintf(self::FORWARD_PAGE, api::MAIN_SCRIPT . url_var::PAR, url_var::MASK, $msk_id);
     }
 
 
@@ -377,6 +417,7 @@ class html_base
         // submit the search to the find view as a hidden field so the GET call is e.g. /http/view.php?m=67&pattern=ABB
         // (a query string in the form action would be dropped by the browser on a GET submit)
         $result .= $this->form_hidden(url_var::MASK, (string)views::WORD_FIND_ID) . "\n";
+        $result .= $this->form_user();
         $result .= '<' . self::LABEL . ' ' . self::FOR . '="kp" ' . self::CLASS_HTML . '="visually-hidden">' . $mtr->txt(msg_id::NAVBAR_SEARCH) . '</' . self::LABEL . '>' . "\n";
         $result .= '<' . self::INPUT . ' ' . self::CLASS_HTML . '="form-control me-2" ' . self::TYPE . '="search" ' . self::NAME . '="pattern" ' . self::ID . '="kp" ' . self::PLACEHOLDER . '="' . $mtr->txt(msg_id::NAVBAR_SEARCH_PLACEHOLDER) . '" ' . self::STYLE . '="min-width: 40vw; max-width: 800px;">' . "\n";
         $result .= '<' . self::BUTTON . ' ' . self::CLASS_HTML . '="btn btn-outline-primary" ' . self::TYPE . '="submit">' . $mtr->txt(msg_id::NAVBAR_GET_NUMBERS) . '</' . self::BUTTON . '>' . "\n";
@@ -441,8 +482,9 @@ class html_base
             $result .= $this->list_item($usr_label) . "\n";
         }
         if ($usr_name !== null) {
-            // logout acts on a plain get, so the link carries the anti-csrf token (see request_token_valid)
-            $url_logout = $this->url_with_token($this->url_with_back(api::LOGOUT_SCRIPT, $url_array));
+            // logout acts on a plain get, so the link carries the anti-csrf token (see request_token_valid);
+            // the back target is the last normal page, so the back button of the logout page never repeats a change
+            $url_logout = $this->url_with_token($this->url_with_back(api::LOGOUT_SCRIPT, self::normal_page_array($url_array)));
             $result .= $this->list_item($this->ref($url_logout, $mtr->txt(msg_id::NAVBAR_LOGOUT))) . "\n";
         } else {
             // a page that itself carries a '9'-prefixed back target (e.g. the logout page, see
@@ -457,6 +499,8 @@ class html_base
             $url_signup = $this->url_with_back(api::SIGNUP_SCRIPT, $url_array);
             $result .= $this->list_item($this->ref($url_signup, $mtr->txt(msg_id::NAVBAR_SIGNUP))) . "\n";
         }
+        // also an ip user without login sees the settings, so the link opens the read only system configuration
+        // by its forward page, which keeps the back target (see api::FORWARD_VIEWS)
         $url_settings = $this->url_with_back(api::SETTINGS_REL, $url_array);
         $result .= $this->list_item($this->ref($url_settings, $mtr->txt(msg_id::NAVBAR_SETTINGS))) . "\n";
         return $this->list_unsorted($result);
@@ -468,11 +512,12 @@ class html_base
      * uses Bootstrap alert-warning styling to display in orange
      *
      * @param string $msg_txt the human-readable message to display; must already be translated
+     * @param bool $is_success true to confirm a done action in green instead of the orange of an issue
      * @return string the html code for the notification bar
      */
-    function dsp_notification(string $msg_txt): string
+    function dsp_notification(string $msg_txt, bool $is_success = false): string
     {
-        return $this->dsp_notification_html(htmlspecialchars($msg_txt));
+        return $this->dsp_notification_html(htmlspecialchars($msg_txt), $is_success);
     }
 
     /**
@@ -480,11 +525,13 @@ class html_base
      * the caller is responsible for escaping any user-supplied content inside $html
      *
      * @param string $html pre-rendered safe HTML content for the notification bar
+     * @param bool $is_success true to confirm a done action in green instead of the orange of an issue
      * @return string the html code for the notification bar
      */
-    function dsp_notification_html(string $html): string
+    function dsp_notification_html(string $html, bool $is_success = false): string
     {
-        return '<' . self::DIV . ' ' . self::CLASS_HTML . '="' . self::CLASS_NOTIFICATION . '">'
+        $class = $is_success ? self::CLASS_NOTIFICATION_SUCCESS : self::CLASS_NOTIFICATION;
+        return '<' . self::DIV . ' ' . self::CLASS_HTML . '="' . $class . '">'
             . $html
             . '</' . self::DIV . '>' . "\n";
     }
@@ -556,6 +603,7 @@ class html_base
             log_warning('link to "' . $url . '" is blocked due to the unexpected url scheme');
             $result = $name;
         } else {
+            $url = $this->url_with_user($this->url_with_id_var($url));
             $result = '<' . self::A . ' ' . self::HREF . '="' . htmlspecialchars($url, ENT_QUOTES) . '"';
             if ($title != '' && $title != $name) {
                 $result .= ' ' . self::TITLE_HTML . '="' . htmlspecialchars($title, ENT_QUOTES) . '"';
@@ -653,6 +701,20 @@ class html_base
     }
 
     /**
+     * a text with a mouseover text but without the data-toggle of span(), which only a js plugin
+     * would read and which a web renderer never emits (docs/llm/frontend.md)
+     *
+     * @param string $text the html code of the text e.g. an escaped name
+     * @param string $title the mouseover text, which is escaped here
+     * @return string the html code of the text with its mouseover text
+     */
+    function with_title(string $text, string $title): string
+    {
+        $title_attr = ' ' . self::TITLE_HTML . '="' . htmlspecialchars($title, ENT_QUOTES) . '"';
+        return '<' . html_names::SPAN . $title_attr . '>' . $text . '</' . html_names::SPAN . '>';
+    }
+
+    /**
      * the html code of a font icon (e.g. Font Awesome) as an empty paired <i> tag
      * @param string $icon_class the css class string of the icon, always an icons::* const
      * @return string the html code e.g. '<i class="fas fa-chevron-right"></i>'
@@ -677,6 +739,49 @@ class html_base
     {
         $url = $this->url_back($msk_id, $id, $url_arr);
         return $this->ref($url, $this->icon($icon), $title, styles::HEADING_ICON_INLINE, true);
+    }
+
+    /**
+     * an icon link that starts an add or an edit; a user without login gets the icon greyed out with a
+     * tooltip that asks for a login, but the icon stays a link, so pressing it shows the reason of the backend
+     *
+     * @param string $url the url that the icon opens
+     * @param string $icon the icon css class from web/const/icons.php e.g. icons::EDIT
+     * @param string $tooltip the translated tooltip for a user who can save the change
+     * @param string $style the css class of the icon link e.g. styles::FORM_ICON_INLINE
+     * @return string the html code of the icon link
+     */
+    function change_icon(string $url, string $icon, string $tooltip, string $style = styles::HEADING_ICON_INLINE): string
+    {
+        [$style, $tooltip] = $this->change_style_and_tip($style, $tooltip);
+        return $this->ref($url, $this->icon($icon), $tooltip, $style, true);
+    }
+
+    /**
+     * @param string $style the css class of an add or edit icon link
+     * @param string $tooltip the translated tooltip for a user who can save the change
+     * @return array the css class and the tooltip, for a user without login grey and with the request to log in
+     */
+    function change_style_and_tip(string $style, string $tooltip): array
+    {
+        global $mtr;
+        if (self::change_blocked()) {
+            $style = trim($style . ' ' . styles::STYLE_GREY);
+            $tooltip .= self::TOOLTIP_SEPARATOR . $mtr->txt(msg_id::CHANGE_LOGIN_REQUIRED);
+        }
+        return [$style, $tooltip];
+    }
+
+    /**
+     * @return bool true if the requesting user is not logged in and therefore cannot save a change (see
+     *              user::is_blocked); without a request cache the user is unknown and treated as not blocked
+     */
+    static function change_blocked(): bool
+    {
+        global $ui_sys;
+        // read with ?? first, because a method call after ?-> does not guard an unset typed property
+        $usr = $ui_sys->usr ?? null;
+        return $usr?->is_blocked() ?? false;
     }
 
     /**
@@ -707,6 +812,15 @@ class html_base
     function sup(string $text): string
     {
         return '<' . html_names::SUP . '>' . $text . '</' . html_names::SUP . '>';
+    }
+
+    /**
+     * @param string $text the subscript text e.g. the index "i"
+     * @return string the html code that shows the given text as a subscript e.g. <sub>i</sub>
+     */
+    function sub(string $text): string
+    {
+        return '<' . html_names::SUB . '>' . $text . '</' . html_names::SUB . '>';
     }
 
     /*
@@ -800,8 +914,9 @@ class html_base
         $url = self::base_url_clean($base_url);
         $url .= rest_ctrl::PATH_FIXED . rest_ctrl::URL_MAIN_SCRIPT . rest_ctrl::EXT . '?';
         $url .= url_var::MASK . '=' . $view;
+        // a string id e.g. the group id of a value is written in its short url form
         if (is_string($id)) {
-            $url .= '&id=' . $id;
+            $url .= '&id=' . rawurlencode(group_id_url::to_url($id));
         } elseif ($id <> 0) {
             $url .= '&id=' . $id;
         }
@@ -832,8 +947,9 @@ class html_base
         $url = self::base_url_clean($base_url);
         $url .= rest_ctrl::PATH_FIXED . rest_ctrl::URL_MAIN_SCRIPT . rest_ctrl::EXT . url_var::PAR;
         $url .= url_var::MASK . url_var::EQ . $view;
+        // a string id e.g. the group id of a value is written in its short url form
         if (is_string($id)) {
-            $url .= url_var::ADD . url_var::ID . url_var::EQ . $id;
+            $url .= url_var::ADD . url_var::ID . url_var::EQ . rawurlencode(group_id_url::to_url($id));
         } elseif ($id <> 0) {
             $url .= url_var::ADD . url_var::ID . url_var::EQ . $id;
         }
@@ -876,11 +992,25 @@ class html_base
         return $this->prefixed_url_part($field_values, url_var::PRE);
     }
 
+    /**
+     * the given url params keyed by their url var with the given prefix char added to each key
+     *
+     * a param that already names another url part (the '7'-prefixed link vars, the '8'-prefixed db
+     * values and the '9'-prefixed back targets) is never prefixed again, because a compound key
+     * like '89m' names no url var and the url mapper would report it as missing (see url_var::PREFIXES)
+     *
+     * @param array $url_arr the params keyed by their url var e.g. ['m' => 3, '9m' => 5]
+     * @param string $prefix the prefix char of the url part e.g. url_var::PRE ('8')
+     * @return array the unprefixed params with the prefix added e.g. ['8m' => 3]
+     */
     static function prefixed_url_array(array $url_arr, string $prefix): array
     {
         $par = [];
         foreach ($url_arr as $key => $val) {
-            $par[$prefix . $key] = $val;
+            [$key_prefix,] = url_var::split_prefix((string)$key);
+            if ($key_prefix == '') {
+                $par[$prefix . $key] = $val;
+            }
         }
         return $par;
     }
@@ -895,6 +1025,61 @@ class html_base
     static function back_url_array(array $url_arr): array
     {
         return self::prefixed_url_array(self::page_url_array($url_arr), url_var::BACK);
+    }
+
+    /**
+     * the page params of the last normal view page, e.g. as the back target of the logout page:
+     * the page itself or, for an add, edit, del or confirm page, the page it has been opened from
+     * or else the default view of its object, because returning to a change form would repeat the change
+     *
+     * @param array $url_arr the url params of the calling page
+     * @return array the page params of the normal page, empty for the start page
+     */
+    static function normal_page_array(array $url_arr): array
+    {
+        $page_arr = self::page_url_array($url_arr);
+        $msk_id = (int)($page_arr[url_var::MASK] ?? 0);
+        if (!self::is_change_mask($msk_id)) {
+            return $page_arr;
+        }
+        $back_arr = self::page_url_array(self::url_par_from_back_part($url_arr));
+        $back_msk_id = (int)($back_arr[url_var::MASK] ?? 0);
+        if ($back_arr != [] and !self::is_change_mask($back_msk_id)) {
+            $result = $back_arr;
+        } else {
+            $result = self::object_page_array($url_arr, $msk_id);
+        }
+        return $result;
+    }
+
+    /**
+     * @param int $msk_id the id of the view mask
+     * @return bool true if the mask adds, changes or deletes an object or confirms such a change
+     */
+    private static function is_change_mask(int $msk_id): bool
+    {
+        return (in_array($msk_id, views::CHANGE_MASKS_IDS) or in_array($msk_id, views::CONFIRM_MASKS_IDS));
+    }
+
+    /**
+     * @param array $url_arr the url params of an add, edit, del or confirm page
+     * @param int $msk_id the id of the change mask, which a confirm page replaces by its origin mask
+     * @return array the page params of the default view of the changed object, empty if it is unknown
+     */
+    private static function object_page_array(array $url_arr, int $msk_id): array
+    {
+        $msk = new views();
+        $chg_msk_id = (int)($url_arr[url_var::ORIGIN_MASK] ?? $msk_id);
+        $id = $url_arr[url_var::ID] ?? '';
+        $result = [];
+        // the origin mask is url input, so only a known change mask is resolved
+        if (in_array($chg_msk_id, views::CHANGE_MASKS_IDS) and $id != '' and $id != '0') {
+            $base_code_id = $msk->system_to_base($msk->id_to_code_id($chg_msk_id));
+            if ($base_code_id != '') {
+                $result = [url_var::MASK => $msk->code_id_to_id($base_code_id), url_var::ID => $id];
+            }
+        }
+        return $result;
     }
 
     /**
@@ -966,6 +1151,10 @@ class html_base
     {
         $par = [];
         foreach ($url_array as $key => $val) {
+            // the group id of a value or result is written in its short url form
+            if ($key == url_var::ID) {
+                $val = group_id_url::to_url($val);
+            }
             $par[] = $prefix . $key . '=' . rawurlencode((string)$val);
         }
         return empty($par) ? '' : implode('&', $par);
@@ -1015,6 +1204,137 @@ class html_base
         $token = $_SESSION[url_var::SESSION_TOKEN] ?? '';
         $sep = str_contains($url, '?') ? '&' : '?';
         return $url . $sep . url_var::SESSION_TOKEN . '=' . rawurlencode($token);
+    }
+
+    /**
+     * add the id of the logged-in user to the url of a page of this pod, so that the address bar
+     * shows for whom the page is created; a user id that the url already carries is replaced
+     * @param string $url the target of a link or a redirect e.g. '/http/view.php?m=3&id=272'
+     * @return string e.g. '/http/view.php?m=3&id=272&u=12', unchanged if nobody is logged in
+     *                or if the url is an in-page anchor or points to another site or pod
+     */
+    function url_with_user(string $url): string
+    {
+        $usr_id = $this->url_user_id();
+        $result = $url;
+        if ($usr_id > 0 and $this->is_page_url($url)) {
+            $result = self::url_set_par($url, url_var::USER, (string)$usr_id);
+        }
+        return $result;
+    }
+
+    /**
+     * the hidden field with the id of the logged-in user, because a get form drops the
+     * parameters of its action url, so that the page after the submit also carries the user
+     * @return string the html code of the hidden field or an empty string if nobody is logged in
+     */
+    function form_user(): string
+    {
+        $usr_id = $this->url_user_id();
+        $result = '';
+        if ($usr_id > 0) {
+            $result = $this->form_hidden(url_var::USER, (string)$usr_id);
+        }
+        return $result;
+    }
+
+    /**
+     * read from the request cache, because the url builders are called without the message
+     * @return int the id of the logged-in user for the urls or 0 if nobody is logged in
+     */
+    private function url_user_id(): int
+    {
+        global $ui_sys;
+        // ?? and not ?->, because the user of the cache can be unset e.g. for an anonymous render
+        $usr = $ui_sys->usr ?? null;
+        return $usr?->id_for_url() ?? 0;
+    }
+
+    /**
+     * @param string $url the target of a link, which may be relative, absolute or an in-page anchor
+     * @return bool true if the url calls the main script of this pod
+     */
+    private function is_page_url(string $url): bool
+    {
+        $parts = parse_url($url);
+        $result = false;
+        if ($parts !== false) {
+            $path = $parts['path'] ?? '';
+            // a url with only parameters e.g. '?view=more' calls the page itself
+            $is_same_page = ($path == '' and isset($parts['query']));
+            $is_main = ($is_same_page or str_ends_with($path, api::MAIN_SCRIPT_EXT));
+            $result = ($is_main and self::is_own_host($parts));
+        }
+        return $result;
+    }
+
+    /**
+     * @param array $parts the parse_url parts of a url
+     * @return bool true if the url is relative or points to the host and port of this pod
+     */
+    private static function is_own_host(array $parts): bool
+    {
+        $own = parse_url(THIS_URL);
+        $host = $parts['host'] ?? '';
+        $same_host = ($host == ($own['host'] ?? '') and ($parts['port'] ?? 0) == ($own['port'] ?? 0));
+        return ($host == '' or $same_host);
+    }
+
+    /**
+     * set one url parameter in front of an in-page anchor and replace the value the url already carries
+     * @param string $url e.g. '/http/view.php?m=3&u=5#tab'
+     * @param string $key the url var e.g. url_var::USER
+     * @param string $val the new value e.g. '12'
+     * @return string e.g. '/http/view.php?m=3&u=12#tab'
+     */
+    static function url_set_par(string $url, string $key, string $val): string
+    {
+        $anchor_pos = strpos($url, url_var::ANCHOR);
+        $anchor = $anchor_pos === false ? '' : substr($url, $anchor_pos);
+        $base = $anchor_pos === false ? $url : substr($url, 0, $anchor_pos);
+        $par = $key . url_var::EQ . rawurlencode($val);
+        $pattern = self::par_pattern($key, '[^' . url_var::ADD . ']*');
+        if (preg_match($pattern, $base)) {
+            $base = preg_replace($pattern, '${1}' . $par, $base);
+        } elseif (str_contains($base, url_var::PAR)) {
+            $base .= url_var::ADD . $par;
+        } else {
+            $base .= url_var::PAR . $par;
+        }
+        return $base . $anchor;
+    }
+
+    /**
+     * name the object of a page url by the url var of its view, because the url builders name every
+     * object by url_var::ID, but e.g. the admin user edit view names its user by url_var::USER_TO_EDIT
+     * @param string $url e.g. '/http/view.php?m=107&id=5'
+     * @return string e.g. '/http/view.php?m=107&ue=5', unchanged for the views that use url_var::ID
+     */
+    function url_with_id_var(string $url): string
+    {
+        $result = $url;
+        if ($this->is_page_url($url)) {
+            parse_str(parse_url($url, PHP_URL_QUERY) ?? '', $url_arr);
+            $id_var = url_var::id_var($url_arr[url_var::MASK] ?? 0);
+            if ($id_var != url_var::ID and array_key_exists(url_var::ID, $url_arr)) {
+                $result = preg_replace(self::par_pattern(url_var::ID), '${1}' . $id_var . url_var::EQ, $url);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the regular expression of a url parameter that matches only the whole key after '?' or '&',
+     * so e.g. the back key '9u' or the value 'a=u' is not taken as the key 'u'
+     * @param string $key the url var e.g. url_var::USER
+     * @param string $val_pattern the regular expression of the value, empty to match the key only
+     * @return string the pattern with the separator in the first group
+     */
+    private static function par_pattern(string $key, string $val_pattern = ''): string
+    {
+        $sep_chars = preg_quote(url_var::PAR . url_var::ADD, '/');
+        $key_eq = preg_quote($key . url_var::EQ, '/');
+        return '/([' . $sep_chars . '])' . $key_eq . $val_pattern . '/';
     }
 
     /**
@@ -1787,9 +2107,9 @@ class html_base
 
         if ($url_arr == []) {
             log_err("Internal error: go back page missing.", "dsp_header->dsp_go_back");
-            header("Location: " . api::MAIN_SCRIPT); // go back to the fallback page
+            header("Location: " . $this->url_with_user(api::MAIN_SCRIPT)); // go back to the fallback page
         } else {
-            header("Location: " . $this->page_url($url_arr));
+            header("Location: " . $this->url_with_user($this->url_with_id_var($this->page_url($url_arr))));
         }
 
         return $result;
@@ -2162,6 +2482,7 @@ class html_base
         */
         $result .= ' <' . self::FORM . ' ' . self::ACTION . '="'
             . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::IMPORT . '" ' . self::METHOD . '="post" ' . self::ENCTYPE . '="multipart/form-data">';
+        $result .= $this->form_user();
         $result .= '   Select JSON to upload:';
         $result .= '   <' . self::INPUT . ' ' . self::TYPE . '="' . html_base::INPUT_FILE .
             '" ' . self::NAME . '="fileToUpload" ' . self::ID . '="fileToUpload">';
@@ -2193,23 +2514,17 @@ class html_base
     }
 
     /**
-     * a small submit button beside a form field label that asks the backend to recalculate one
-     * part of the form; it is a submit button and not a link, because only a submit sends the
-     * values that the user has entered but not yet saved
+     * a text button that submits the form only to refresh some fields, e.g. the 'find and next' of the
+     * phrase selection of a new value; as the first submit of a form the enter key triggers it
      *
-     * @param string $refresh which part should be recalculated e.g. url_var::REFRESH_LATEX
-     * @return string the html code of the refresh button, '' if the field offers no refresh
+     * @param string $text the translated text shown to the user
+     * @param string $refresh the url_var::REFRESH value that says which fields are refreshed
+     * @return string the html code of the refresh button in a column of its own
      */
-    function button_refresh(string $refresh): string
+    function button_refresh_text(string $text, string $refresh): string
     {
-        global $mtr;
-        $result = '';
-        if ($refresh != '') {
-            $result = $this->button_link(
-                $this->icon_with_title(icons::REFRESH, '', $mtr->txt(msg_id::FORM_BUTTON_REFRESH)),
-                url_var::REFRESH, $refresh);
-        }
-        return $result;
+        $btn = $this->button_link(htmlspecialchars($text, ENT_QUOTES), url_var::REFRESH, $refresh, '', self::BS_BTN_FIELD);
+        return $this->div($btn, self::BS_BTN_FIELD_COL);
     }
 
     /**
@@ -2319,6 +2634,7 @@ class html_base
      * @param string $type the type of the input e.g. a text or if not set a submit field
      * @param string $class_add the formatting code to adjust the formatting e.g. extend the description to the full screen width
      * @param string $placeholder
+     * @param string $form_name the form that the field is posted with if it is placed outside of it, '' for the surrounding form
      * @return string the HTML code for the field
      */
     function input(
@@ -2327,7 +2643,8 @@ class html_base
         string|null $value = '',
         string      $type = '',
         string      $class_add = '',
-        string      $placeholder = ''): string
+        string      $placeholder = '',
+        string      $form_name = ''): string
     {
         $name = '';
         if ($url_id != '') {
@@ -2350,7 +2667,11 @@ class html_base
             $placeholder = ' placeholder="' . $placeholder . '"';
         }
         $id = ' id="' . $id . '"';
-        return '<' . self::INPUT . $class . $type . $name . $id . $value . $placeholder . '>';
+        $form = '';
+        if ($form_name != '') {
+            $form = ' ' . self::FORM . '="' . $form_name . '"';
+        }
+        return '<' . self::INPUT . $class . $type . $name . $id . $value . $placeholder . $form . '>';
     }
 
     function div_form(string $text, string $style = ''): string
@@ -2451,7 +2772,7 @@ class html_base
 
         // every crud form carries the anti-csrf session token as its first hidden field so the
         // server can reject a data change that does not carry the matching token (see form_session_token)
-        return '<' . self::FORM . $action . $id . '>' . $this->form_session_token();
+        return '<' . self::FORM . $action . $id . '>' . $this->form_session_token() . $this->form_user();
     }
 
     /**
@@ -2467,7 +2788,7 @@ class html_base
         $action = ' ' . self::ACTION . '="' . $action . '"';
         $method = ' ' . self::METHOD . '="' . $method . '"';
 
-        return '<' . self::FORM . $action . $method . '>' . $txt . '</' . self::FORM . '>';
+        return '<' . self::FORM . $action . $method . '>' . $this->form_user() . $txt . '</' . self::FORM . '>';
     }
 
     /**
@@ -2480,8 +2801,7 @@ class html_base
      * @param string $type the type of the input e.g. a text or if not set a submit field
      * @param string $input_class the formatting code to change the input type
      * @param string $style the formatting code to adjust the formatting e.g. extend the description to the full screen width
-     * @param string $refresh which part of the form a refresh icon beside the label should recalculate
-     *                        e.g. url_var::REFRESH_LATEX, '' for a field without a refresh icon
+     * @param string $form_name the form that the field is posted with if it is placed outside of it, '' for the surrounding form
      * @return string the HTML code for the field with the label
      */
     function form_field(
@@ -2491,7 +2811,7 @@ class html_base
         string                $type = html_base::INPUT_TEXT,
         string                $input_class = '',
         string                $style = view_styles::COL_SM_12,
-        string                $refresh = ''
+        string                $form_name = ''
     ): string
     {
         // TODO Prio 2 move mtr to label
@@ -2500,11 +2820,10 @@ class html_base
         if (self::UI_USE_BOOTSTRAP) {
             // the label for must equal the input id (field_id) so the pair stays linked
             $text = $this->label($name, $this->field_id($url_id, $name));
-            $text .= $this->button_refresh($refresh);
-            $text .= $this->input($url_id, $msg_id, $value, $type, $input_class);
+            $text .= $this->input($url_id, $msg_id, $value, $type, $input_class, '', $form_name);
             return $this->div_form($text, $style);
         } else {
-            return $this->input($url_id, $msg_id, $value, $type);
+            return $this->input($url_id, $msg_id, $value, $type, '', '', $form_name);
         }
     }
 
@@ -2874,7 +3193,15 @@ class html_base
         return '<' . self::BUTTON . ' ' . self::TYPE . '="' . $typ . '" ' . self::CLASS_HTML . '="' . $class . '">' . $txt . '</' . self::BUTTON . '>';
     }
 
-    function button_bs(string $text, string $style = '', string $type = '', string $name = ''): string
+    /**
+     * @param string $text the html code shown on the button e.g. a translated text or an icon
+     * @param string $style the bootstrap button style, '' for the outlined success style
+     * @param string $type the button type, '' for a submit button
+     * @param string $name the url key that the button posts, '' for none
+     * @param string $label the accessible name and mouseover text of a button that shows only an icon, '' for none
+     * @return string the html code of the button
+     */
+    function button_bs(string $text, string $style = '', string $type = '', string $name = '', string $label = ''): string
     {
         if ($style == '') {
             $style = self::BS_BTN_SUCCESS;
@@ -2887,7 +3214,14 @@ class html_base
         // a named submit button posts its name as a url key (e.g. POST_SUBMIT) so the entry point can
         // tell a data-changing submit apart from a plain navigation and run url_to_action
         $name = $name == '' ? '' : ' ' . self::NAME . '="' . $name . '"';
-        return '<' . self::BUTTON . $class . $type . $name . '>' . $text . '</' . self::BUTTON . '>';
+        // a screen reader has no text to read on an icon, so the label names the action
+        $label_attr = '';
+        if ($label != '') {
+            $label_txt = htmlspecialchars($label, ENT_QUOTES);
+            $label_attr = ' ' . self::ARIA_LABEL . '="' . $label_txt . '"';
+            $label_attr .= ' ' . self::TITLE_HTML . '="' . $label_txt . '"';
+        }
+        return '<' . self::BUTTON . $class . $type . $name . $label_attr . '>' . $text . '</' . self::BUTTON . '>';
     }
 
     /**
@@ -2930,9 +3264,133 @@ class html_base
      * @param string $txt the html code that should be a list item
      * @return string the html code of a list item
      */
-    function list_item(string $txt): string
+    function list_item(string $txt, string $style = ''): string
     {
-        return '<' . self::LI . '>' . $txt . '</' . self::LI . '>';
+        $attr = '';
+        if ($style != '') {
+            $attr .= ' ' . self::CLASS_HTML . '="' . $style . '"';
+        }
+        return '<' . self::LI . $attr . '>' . $txt . '</' . self::LI . '>';
+    }
+
+    /**
+     * a popup menu that opens on a click without any javascript, because the html details
+     * element keeps the open state itself (docs/llm/frontend.md "Pure HTML, no JavaScript");
+     * the css class positions the entries below the label (see the menus of style_html.css)
+     *
+     * @param string $label the html code of the always shown part e.g. an icon or "..."
+     * @param string $items the html code of the list items of the menu
+     * @param string $style the css class of the menu e.g. styles::MENU_COLUMN
+     * @param string $title the mouseover text that says what the menu selects
+     * @return string the html code of the popup menu
+     */
+    function popup_menu(string $label, string $items, string $style, string $title = ''): string
+    {
+        $title_attr = '';
+        if ($title != '') {
+            $title_attr = ' ' . self::TITLE_HTML . '="' . htmlspecialchars($title, ENT_QUOTES) . '"';
+        }
+        $result = '<' . self::DETAILS . ' ' . self::CLASS_HTML . '="' . $style . '">';
+        $result .= '<' . self::SUMMARY . $title_attr . '>' . $label . '</' . self::SUMMARY . '>';
+        $result .= $this->list_unsorted($items);
+        return $result . '</' . self::DETAILS . '>';
+    }
+
+    /**
+     * a part that the user can open and close without javascript, e.g. a node of a tree
+     *
+     * @param string $summary the html code of the always shown line
+     * @param string $body the html code shown if the part is open
+     * @param string $style the css class of the part
+     * @param string $id the html id e.g. the anchor of a tree node
+     * @param string $title the mouseover text of the summary line
+     * @return string the html code of the details element
+     */
+    function details(string $summary, string $body, string $style = '', string $id = '', string $title = ''): string
+    {
+        $attr = '';
+        if ($style != '') {
+            $attr .= ' ' . self::CLASS_HTML . '="' . $style . '"';
+        }
+        if ($id != '') {
+            $attr .= ' ' . self::ID . '="' . htmlspecialchars($id, ENT_QUOTES) . '"';
+        }
+        $title_attr = '';
+        if ($title != '') {
+            $title_attr = ' ' . self::TITLE_HTML . '="' . htmlspecialchars($title, ENT_QUOTES) . '"';
+        }
+        $result = '<' . self::DETAILS . $attr . '>';
+        $result .= '<' . self::SUMMARY . $title_attr . '>' . $summary . '</' . self::SUMMARY . '>';
+        return $result . $body . '</' . self::DETAILS . '>';
+    }
+
+    /**
+     * one row of a description list, e.g. a setting and its value
+     *
+     * @param string $term the html code of the term e.g. the setting name
+     * @param string $definition the html code of the definition e.g. the value with its unit
+     * @param string $title the mouseover text of the term
+     * @return string the html code of the description list with the one row
+     */
+    function definition(string $term, string $definition, string $title = ''): string
+    {
+        $title_attr = '';
+        if ($title != '') {
+            $title_attr = ' ' . self::TITLE_HTML . '="' . htmlspecialchars($title, ENT_QUOTES) . '"';
+        }
+        $result = '<' . self::DL . '>';
+        $result .= '<' . self::DT . $title_attr . '>' . $term . '</' . self::DT . '>';
+        $result .= '<' . self::DD . '>' . $definition . '</' . self::DD . '>';
+        return $result . '</' . self::DL . '>';
+    }
+
+    /**
+     * @param string $txt the already escaped text that matches a search
+     * @return string the html code of the highlighted text
+     */
+    function mark(string $txt): string
+    {
+        return '<' . self::MARK . '>' . $txt . '</' . self::MARK . '>';
+    }
+
+    /**
+     * a search input with the given suggestions, which the browser shows without javascript
+     *
+     * @param string $name the url var of the search e.g. url_var::PATTERN
+     * @param string $value the search of the request to show it again
+     * @param string $list_id the html id of the suggestions
+     * @param array $suggestions the texts the browser suggests e.g. the names of all settings
+     * @return string the html code of the search input and its suggestions
+     */
+    function search_input(string $name, string $value, string $list_id, array $suggestions): string
+    {
+        $result = '<' . self::INPUT . ' ' . self::TYPE . '="' . self::INPUT_SEARCH . '"';
+        $result .= ' ' . self::NAME . '="' . $name . '"';
+        $result .= ' ' . self::LIST . '="' . $list_id . '"';
+        $result .= ' ' . self::VALUE . '="' . htmlspecialchars($value, ENT_QUOTES) . '">';
+        $result .= '<' . self::DATALIST . ' ' . self::ID . '="' . $list_id . '">';
+        foreach ($suggestions as $suggestion) {
+            $result .= '<' . self::OPTION . ' ' . self::VALUE . '="' . htmlspecialchars($suggestion, ENT_QUOTES) . '">';
+            $result .= '</' . self::OPTION . '>';
+        }
+        return $result . '</' . self::DATALIST . '>';
+    }
+
+    /**
+     * a button that shows a long text above the page without javascript (html popover)
+     *
+     * @param string $id the html id of the text, unique on the page
+     * @param string $label the html code of the button
+     * @param string $txt the already escaped long text
+     * @return string the html code of the button and the text it opens
+     */
+    function popover(string $id, string $label, string $txt): string
+    {
+        $safe_id = htmlspecialchars($id, ENT_QUOTES);
+        $result = '<' . self::BUTTON . ' ' . self::TYPE . '="' . self::BUTTON . '"';
+        $result .= ' ' . self::POPOVER_TARGET . '="' . $safe_id . '">' . $label . '</' . self::BUTTON . '>';
+        $result .= '<' . self::DIV . ' ' . self::ID . '="' . $safe_id . '" ' . self::POPOVER . '>';
+        return $result . $txt . '</' . self::DIV . '>';
     }
 
     /**

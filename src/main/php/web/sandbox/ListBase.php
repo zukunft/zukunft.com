@@ -99,6 +99,8 @@ class ListBase extends ListOfIdObjects
     const int CODE_ID_NOT_FOUND = -1;
     // extra entry used in a selection to separate the highlighted entries from the sorted entries
     const string SELECT_SEPARATOR = ' --- ';
+    // the sql like wildcard as a load_like pattern, which the backend completes to select all objects
+    const string PATTERN_ALL = '%';
 
     private array $hash = []; // hash list with the code id for fast selection
 
@@ -199,7 +201,7 @@ class ListBase extends ListOfIdObjects
 
         $data = array($url_var => $id);
         $rest = new rest_call();
-        $json_body = $rest->api_get($class, $data);
+        $json_body = $rest->api_get($class, $data, $msg);
         $this->api_mapper($json_body);
         if (!$this->is_empty()) {
             $result = true;
@@ -276,16 +278,17 @@ class ListBase extends ListOfIdObjects
     /**
      * add the objects from the backend
      * @param string $pattern part of the name that should be used to select the objects
+     * @param user_message $msg with the requesting user for whom the objects are selected
      * @return bool true if at least one object has been found
      */
-    function load_like(string $pattern): bool
+    function load_like(string $pattern, user_message $msg): bool
     {
         $result = false;
 
         $api = new api_ui();
         $data = array();
         $data[url_var::PATTERN] = $pattern;
-        $json_body = $api->api_get($this::class, $data);
+        $json_body = $api->api_get($this::class, $data, $msg);
         $this->api_mapper($json_body);
         if (!$this->is_empty()) {
             $result = true;
@@ -511,11 +514,11 @@ class ListBase extends ListOfIdObjects
             //      this default value is only valid to select the view
             //      but it does not work for e.g. the formula selector
             if ($this::class == view_list::class) {
-                if ($form == views::WORD_ADD or $form == views::WORD_EDIT) {
+                if ($form == views::WORD_ADD_DETAIL or $form == views::WORD_EDIT) {
                     $default = views::WORD;
                 } elseif ($form == views::VERB_ADD or $form == views::VERB_EDIT) {
                     $default = views::VERB;
-                } elseif ($form == views::TRIPLE_ADD or $form == views::TRIPLE_EDIT) {
+                } elseif ($form == views::TRIPLE_ADD_DETAIL or $form == views::TRIPLE_EDIT) {
                     $default = views::TRIPLE;
                 } elseif ($form == views::SOURCE_ADD or $form == views::SOURCE_EDIT) {
                     $default = views::SOURCE;
@@ -523,7 +526,7 @@ class ListBase extends ListOfIdObjects
                     $default = views::REF;
                 } elseif ($form == views::LANGUAGE_ADD or $form == views::LANGUAGE_EDIT) {
                     $default = views::LANGUAGE;
-                } elseif ($form == views::VALUE_ADD or $form == views::VALUE_EDIT) {
+                } elseif ($form == views::VALUE_ADD_DETAIL or $form == views::VALUE_EDIT) {
                     $default = views::VALUE;
                 } elseif ($form == views::FORMULA_ADD or $form == views::FORMULA_EDIT) {
                     $default = views::FORMULA;
@@ -583,6 +586,7 @@ class ListBase extends ListOfIdObjects
             . ' ' . html_base::ACTION . '="' . $action . '"'
             . ' ' . html_base::METHOD . '="' . html_base::METHOD_POST . '"'
             . ' ' . html_base::ENCTYPE . '="multipart/form-data">'
+            . $html->form_user()
             . $frm_str
             . '</' . html_base::FORM . '>';
         return $result;

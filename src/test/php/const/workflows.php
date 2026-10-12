@@ -53,12 +53,19 @@ class workflows
     const string CANCEL = 'cancel'; // press the cancel button
     const string CONFIRM = 'confirm'; // call the page to delete an object
     const string CONFIRMED = 'confirmed'; // show the original view with the changes
+    // press the validate button beside the expression or the latex field of the formula form,
+    // which only reads the entered text and never writes (see system_form::form_formula_expression)
+    const string VALIDATE = 'validate';
+    // the phrase selection steps of the value add views, which only update the form and never write
+    const string PHRASE = 'phrase'; // select one phrase of the new value
+    const string REMOVE = 'remove'; // press the remove icon of one already chosen phrase
+    const string DETAILS = 'details'; // open the detailed add form with the phrases chosen so far
 
     // separator between the name parts of a workflow snapshot file name e.g. 'wf2_show_edit'
     const string NAME_SEP = '_';
 
-    // the dummy start time that replaces the volatile change log time in the snapshots; the change log
-    // rows keep a deterministic time sequence by increasing this by one second per shown entry (see
+    // the dummy time that replaces every volatile change log time in the snapshots, the same one for
+    // each entry, so that a change log row more or less never moves the time of another row (see
     // url_test_base::normalize_change_log_time)
     const string WF_CHANGE_LOG_START = '1997-06-07 16:01:00';
 
@@ -132,6 +139,10 @@ class workflows
     // snapshot file name marker for the steps after the real login of the workflow user, e.g. the
     // 'login' in 'wf18_show_login_show' where the same page is shown again as a logged in user
     const string STEP_LOGIN = 'login';
+
+    // snapshot file name marker for the activation link with a wrong key, e.g. the 'wrong_key' in
+    // 'wf36_edit_fill_wrong_key_edit' where the link of the signup mail is opened with a wrong key
+    const string STEP_WRONG_KEY = 'wrong_key';
 
     // the add_triple_fail workflow name used for the snapshot folder and the test subheader:
     // the negative twin of add_triple where a save without a from and a to phrase keeps the add form
@@ -279,6 +290,61 @@ class workflows
     const string WF_DEL_REF = 'del_ref';
     // the id of the current del_ref workflow; increase it to add the next snapshot set
     const int WF_DEL_REF_NBR = 30;
+
+    // the add_value workflow name used for the snapshot folder and the test subheader:
+    // a value is added with the pure html view without any preset phrase, so the user selects the
+    // two phrases one after the other, enters the number and the add button writes the value
+    // without a confirm view (see ui_select::value_add_fields)
+    const string WF_ADD_VALUE = 'add_value';
+    // the id of the current add_value workflow; increase it to add the next snapshot set
+    const int WF_ADD_VALUE_NBR = 31;
+
+    // the add_value_with_phrase workflow name used for the snapshot folder and the test subheader:
+    // like add_value, but the add view is opened with one phrase already preset, as the add value
+    // icon of a word or triple page does, and two more phrases are added before the number
+    const string WF_ADD_VALUE_WITH_PHRASE = 'add_value_with_phrase';
+    // the id of the current add_value_with_phrase workflow; increase it to add the next snapshot set
+    const int WF_ADD_VALUE_WITH_PHRASE_NBR = 32;
+
+    // the add_value_remove_phrase workflow name used for the snapshot folder and the test subheader:
+    // like add_value_with_phrase, but one of the chosen phrases is removed again with its remove
+    // icon and another phrase is selected instead before the value is written
+    const string WF_ADD_VALUE_REMOVE_PHRASE = 'add_value_remove_phrase';
+    // the id of the current add_value_remove_phrase workflow; increase it for the next snapshot set
+    const int WF_ADD_VALUE_REMOVE_PHRASE_NBR = 33;
+
+    // the add_value_details workflow name used for the snapshot folder and the test subheader:
+    // like add_value_with_phrase, but instead of entering the number the user opens the detailed
+    // add value view with the more details link, which takes the chosen phrases with it
+    const string WF_ADD_VALUE_DETAILS = 'add_value_details';
+    // the id of the current add_value_details workflow; increase it to add the next snapshot set
+    const int WF_ADD_VALUE_DETAILS_NBR = 34;
+
+    // the change_value_group workflow name used for the snapshot folder and the test subheader:
+    // the user opens the value of the add_value workflow in the change value view, names its
+    // group and confirms the change, which writes the group name to the database
+    const string WF_CHANGE_VALUE_GROUP = 'change_value_group';
+    // the id of the current change_value_group workflow; increase it to add the next snapshot set
+    const int WF_CHANGE_VALUE_GROUP_NBR = 35;
+
+    // the signup_confirm workflow name used for the snapshot folder and the test subheader: a new user
+    // signs up, gets the name profile and confirms the email with the activation link of the signup mail
+    const string WF_SIGNUP_CONFIRM = 'signup_confirm';
+    // the id of the current signup_confirm workflow; increase it to add the next snapshot set
+    const int WF_SIGNUP_CONFIRM_NBR = 36;
+
+    // the four validate workflows of the formula form: the user presses the validate button beside
+    // the expression or the latex field with a text that the backend cannot read and with a text
+    // that it can read; the backend answers the validation, so these workflows have no test mode
+    // twin (see formula_write_url_tests)
+    const string WF_VALIDATE_EXPRESSION_ERR = 'validate_expression_err';
+    const int WF_VALIDATE_EXPRESSION_ERR_NBR = 37;
+    const string WF_VALIDATE_EXPRESSION = 'validate_expression';
+    const int WF_VALIDATE_EXPRESSION_NBR = 38;
+    const string WF_VALIDATE_LATEX_ERR = 'validate_latex_err';
+    const int WF_VALIDATE_LATEX_ERR_NBR = 39;
+    const string WF_VALIDATE_LATEX = 'validate_latex';
+    const int WF_VALIDATE_LATEX_NBR = 40;
 
     /**
      * the user process step that a user reaction action triggers

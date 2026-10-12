@@ -95,6 +95,7 @@ include_once paths::MODEL_VALUE . 'value.php';
 include_once paths::MODEL_VALUE . 'value_base.php';
 include_once paths::MODEL_WORD . 'word.php';
 include_once paths::SHARED_CONST . 'groups.php';
+include_once paths::SHARED_HELPER . 'Message.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
@@ -130,6 +131,7 @@ use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\shared\const\groups;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\helper\Message;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
@@ -297,7 +299,7 @@ class group extends sandbox_multi
      * set the phrase list of this group
      * and return the unique database id of this group
      * @param phrase_list $phr_lst sorted list of phrases for this group
-     * @return int|string $id either a 62-bit int, a 512-bit id with 16 phrase ids or a text with more than 16 +/- separated 6 char alpha_num coded phrase ids
+     * @return int|string $id either a 62-bit int, a 512-bit id with 16 phrase ids or a text with more than 16 +/- separated 6 char alpha_num coded phrase ids using the compact text key e.g. "0U+0X+3-" (see docs/llm/group_id.md)
      */
     function set_phrase_list(phrase_list $phr_lst): int|string
     {
@@ -385,26 +387,15 @@ class group extends sandbox_multi
 
 
     /**
-     * @param bool $no_fill if true the id is not filled up to the complete key size e.g. for the api messages
-     * @return int|string either a 62-bit int, a 512-bit id with 16 phrase ids or a text with more than 16 +/- separated 6 char alpha_num coded phrase ids
+     * @return int|string either a 62-bit int or the compact text key e.g. "0U+0X+3-" (see docs/llm/group_id.md)
      * the internal null value is used to detect if database saving has been tried
      */
-    function id(bool $no_fill = false): int|string
+    function id(): int|string
     {
         if (is_numeric($this->id)) {
             return (int)$this->id;
         } else {
-            if ($no_fill) {
-                $id = $this->id;
-                $grp_id = new id();
-                $zero_id = $grp_id->int2alpha_num(0);
-                while (str_ends_with($id, $zero_id)) {
-                    $id = str_replace($zero_id, '', $id);
-                }
-                return $id;
-            } else {
-                return $this->id;
-            }
+            return $this->id;
         }
     }
 
@@ -414,7 +405,9 @@ class group extends sandbox_multi
     function id_lst(): array
     {
         $grp_id = new group_id();
-        return $grp_id->get_array($this->id());
+        // the same id as for the table selection, because these ids are the key fields
+        // of the table that table_type() selects (see id_or_phrase_list_id)
+        return $grp_id->get_array($this->id_or_phrase_list_id());
     }
 
     /**
@@ -509,7 +502,7 @@ class group extends sandbox_multi
     function table_extension(bool $with_phrase_count = true): string
     {
         $grp_id = new group_id();
-        return $grp_id->table_extension($this->id(), $with_phrase_count);
+        return $grp_id->table_extension($this->id_or_phrase_list_id(), $with_phrase_count);
     }
 
     /**
@@ -519,13 +512,13 @@ class group extends sandbox_multi
     function table_type(): sql_type
     {
         $grp_id = new group_id();
-        return $grp_id->table_type($this->id());
+        return $grp_id->table_type($this->id_or_phrase_list_id());
     }
 
     /**
      * set the unique database id of this group
      * @param phrase_list $phr_lst sorted list of phrases for this group
-     * @return int|string $id either a 62-bit int, a 512-bit id with 16 phrase ids or a text with more than 16 +/- separated 6 char alpha_num coded phrase ids
+     * @return int|string $id either a 62-bit int, a 512-bit id with 16 phrase ids or a text with more than 16 +/- separated 6 char alpha_num coded phrase ids using the compact text key e.g. "0U+0X+3-" (see docs/llm/group_id.md)
      */
     function set_id_from_phrase_list(phrase_list $phr_lst): int|string
     {
@@ -596,6 +589,24 @@ class group extends sandbox_multi
     function set_saved(): void
     {
         $this->is_saved = true;
+    }
+
+    /**
+     * check if the group can be held in a list e.g. of an import: the key of a group in a list is its name,
+     * given by a user or generated from the phrases, because the id needs the database ids of all phrases,
+     * which are not yet known in an import (db_ready checks the id)
+     * @param user_message|Message $msg including suggested solutions if something is missing e.g. the user
+     * @return bool true if the group has a name and a user
+     */
+    function can_be_ready(user_message|Message $msg): bool
+    {
+        if ($this->name() == '') {
+            $msg->add_id(msg_id::ID_AND_NAME_MISSING);
+        }
+        if ($this->get_user() == null) {
+            $msg->add(msg_id::USER_MISSING, [msg_id::VAR_NAME => $this->dsp_id()]);
+        }
+        return $msg->is_ok();
     }
 
     /**
@@ -1582,14 +1593,7 @@ class group extends sandbox_multi
     function is_prime(): bool
     {
         $grp_id = new group_id();
-        $id = $grp_id->get_id($this->phr_lst);
-        if (count($this->phr_lst->lst()) == 0 and is_string($this->id())) {
-            if ($this->id() != '') {
-                $id = $this->id();
-                log_warning('fix wrong using of value id');
-            }
-        }
-        return $grp_id->is_prime($id);
+        return $grp_id->is_prime($this->id_or_phrase_list_id());
     }
 
     /**
@@ -1603,8 +1607,32 @@ class group extends sandbox_multi
     function is_big(): bool
     {
         $grp_id = new group_id();
-        $id = $grp_id->get_id($this->phr_lst);
-        return $grp_id->is_big($id);
+        return $grp_id->is_big($this->id_or_phrase_list_id());
+    }
+
+    /**
+     * the id that selects the table of the group like table_type(): the database id if it is set, because the
+     * phrase list of a loaded group can be incomplete, and else the id created from the phrase list
+     *
+     * used by table_type(), table_extension(), id_lst(), is_prime() and is_big() and by the value key
+     * (see sandbox_value::id_fvt_lst), because a table name, its key fields and the matching change log
+     * table must always be derived from the same id: with the database id alone a group with an unset id
+     * but a set phrase list is a prime group with zero phrases (e.g. the sql function name
+     * value_prime_p0_insert_log), while is_prime() reports it as a main group, which creates an sql
+     * statement for a table that does not exist
+     *
+     * @return int|string the database id of this group or the id of its phrase list
+     */
+    function id_or_phrase_list_id(): int|string
+    {
+        $result = $this->id();
+        // an empty phrase list has no id, so keep the unset id of e.g. a just reset group
+        // instead of replacing it with the prime id of zero phrases
+        if (($result === 0 or $result === '') and $this->has_phrase_list()) {
+            $grp_id = new group_id();
+            $result = $grp_id->get_id($this->phr_lst);
+        }
+        return $result;
     }
 
     /**
@@ -1655,8 +1683,9 @@ class group extends sandbox_multi
     function fill(group|db_object_multi $obj, user $usr_req): user_message
     {
         $msg = parent::fill($obj, $usr_req);
-        if ($this->name === null and $obj->name() != null) {
-            $this->set_name($obj->name());
+        // only a name given by a user, because name() falls back to the name generated from the phrases
+        if ($this->name_given() == '' and $obj->name_given() != '') {
+            $this->set_name($obj->name_given());
         }
         if ($this->get_description() === null and $obj->get_description() != null) {
             $this->set_description($obj->get_description());
@@ -1706,10 +1735,11 @@ class group extends sandbox_multi
             }
         }
 
-        // check potential duplicate by name
-        if ($sim == null) {
+        // check potential duplicate by name: only a name given by a user must be unique, a group without
+        // one (e.g. saved only for the description of its value) is identified by the phrases checked above
+        if ($sim == null and $this->name_given() != '') {
             // check with the standard namespace
-            if ($db_chk->load_standard_by_name($this->name(), $msg)) {
+            if ($db_chk->load_standard_by_name($this->name_given(), $msg)) {
                 if ($db_chk->id() > 0) {
                     log_debug($this->dsp_id() . ' has the same name is the already existing "' . $db_chk->dsp_id() . '" of the standard namespace');
                     $sim = $db_chk;
@@ -1717,15 +1747,11 @@ class group extends sandbox_multi
             }
             // check with the user namespace
             $db_chk->set_user($this->get_user());
-            if ($this->name() != '') {
-                if ($db_chk->load_by_name($this->name(), $msg)) {
-                    if ($db_chk->id() > 0) {
-                        log_debug($this->dsp_id() . ' has the same name is the already existing "' . $db_chk->dsp_id() . '" of the user namespace');
-                        $sim = $db_chk;
-                    }
+            if ($db_chk->load_by_name($this->name_given(), $msg)) {
+                if ($db_chk->id() > 0) {
+                    log_debug($this->dsp_id() . ' has the same name is the already existing "' . $db_chk->dsp_id() . '" of the user namespace');
+                    $sim = $db_chk;
                 }
-            } else {
-                log_err_msg('The name must be set to check if a similar object exists', $msg);
             }
         }
 
@@ -1751,8 +1777,8 @@ class group extends sandbox_multi
         $qp = $this->sql_insert($sc, $msg, new sql_type_list([sql_type::LOG]));
         // TODO Prio 1 set the user table based on the exiting db rows link the sandbox add
         $usr_tbl = false;
+        // the id is kept, because the group id is given by the phrases and the insert function returns no row id
         if ($db_con->insert($qp, 'add and log ' . $this->dsp_id(), $msg, new sql_message(), $usr_tbl, true)) {
-            $this->id = $msg->get_row_id();
             $this->set_saved();
         }
 
@@ -1960,9 +1986,15 @@ class group extends sandbox_multi
      *
      * @param user_message $msg
      * @param bool $must_exist if false no error message is created if the group has already been deleted
+     * @param sql_type_list $sc_par_lst not used, because a group row is never user specific and
+     *                                  therefore never excluded for one user (see sandbox_multi::del)
      * @return bool
      */
-    function del(user_message $msg, bool $must_exist = true): bool
+    function del(
+        user_message  $msg,
+        bool          $must_exist = true,
+        sql_type_list $sc_par_lst = new sql_type_list()
+    ): bool
     {
         global $db_con;
         $sc = $db_con->sql_creator();
@@ -2090,7 +2122,9 @@ class group extends sandbox_multi
 
         $lst = new sql_par_field_list();
 
-        if ($sbx->name() <> $this->name()) {
+        // only a name given by a user is written, because name() falls back to the name generated from the
+        // phrases, which would be loaded as a given name; that a request keeps the stored name is done by fill
+        if ($sbx->name_given() <> $this->name_given()) {
             if ($sc_par_lst->incl_log()) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . group_fields::FLD_NAME,
@@ -2100,7 +2134,7 @@ class group extends sandbox_multi
             }
             $lst->add_field(
                 group_fields::FLD_NAME,
-                $this->name(),
+                $this->name_given(),
                 group_db::FLD_NAME_SQL_TYP
             );
         }
@@ -2260,6 +2294,14 @@ class group extends sandbox_multi
     {
         $grp_id_obj = new group_id();
         return implode(',', $grp_id_obj->get_array($this->id(), true));
+    }
+
+    /**
+     * @return string the name given by a user, '' if the group is only named by its phrases
+     */
+    function name_given(): string
+    {
+        return $this->name ?? '';
     }
 
     /**

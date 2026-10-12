@@ -55,6 +55,7 @@ include_once html_paths::SANDBOX . 'sandbox_named.php';
 include_once html_paths::SANDBOX . 'sandbox_value.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::VALUE . 'value.php';
+include_once html_paths::VALUE . 'value_list.php';
 include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'word.php';
 include_once html_paths::SHARED_HELPER . 'CombineObject.php';
@@ -80,8 +81,10 @@ use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_named;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_value;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\value\value;
+use Zukunft\ZukunftCom\main\php\web\value\value_list;
 use Zukunft\ZukunftCom\main\php\web\word\triple;
 use Zukunft\ZukunftCom\main\php\web\word\word;
+use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
 use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
@@ -123,7 +126,7 @@ class result_list extends sandbox_list_value
         $data = array();
         $data[url_var::FORMULA] = $frm->id();
         $data[url_var::GROUP] = $lst->ids();
-        return $this->load_by($data);
+        return $this->load_by($data, $msg);
     }
 
     /**
@@ -136,7 +139,23 @@ class result_list extends sandbox_list_value
     {
         $data = array();
         $data[url_var::FORMULA] = $frm->id();
-        return $this->load_by($data);
+        return $this->load_by($data, $msg);
+    }
+
+    /**
+     * add the results of any of the given phrases to this list
+     * e.g. the reward ratio of every global problem for the ranking table of the start page
+     *
+     * @param phrase_list $phr_lst the phrases whose results should be loaded
+     * @param user_message $msg to report a problem of the api message to the user
+     * @return bool true if at least one result has been loaded
+     */
+    function load_by_phrase_list(phrase_list $phr_lst, user_message $msg): bool
+    {
+        $data = array();
+        // comma separated like every other id list of the api e.g. url_var::ID_LST
+        $data[api::JSON_LIST_PHRASE_IDS] = implode(',', $phr_lst->ids());
+        return $this->load_by($data, $msg);
     }
 
     /**
@@ -149,20 +168,21 @@ class result_list extends sandbox_list_value
     {
         $data = array();
         $data[url_var::GROUP] = $grp->id();
-        return $this->load_by($data);
+        return $this->load_by($data, $msg);
     }
 
     /**
      * get a list of results via api from the backend
      *
      * @param array $data the array to select the results
+     * @param user_message $msg with the requesting user for whom the results are selected
      * @return bool true if value or phrases are found
      */
-    function load_by(array $data): bool
+    function load_by(array $data, user_message $msg): bool
     {
         $result = false;
         $api = new rest_call();
-        $json_body = $api->api_get(self::class, $data);
+        $json_body = $api->api_get(self::class, $data, $msg);
         $this->api_mapper($json_body);
         if (!$this->is_empty()) {
             $result = true;
@@ -192,19 +212,25 @@ class result_list extends sandbox_list_value
         return $result;
     }
 
-    function get_by_formula(formula $frm): result_list
+    function get_by_formula(formula $frm, user_message $msg): result_list
     {
-        return $this->filter($frm);
+        return $this->filter($msg, $frm);
     }
 
     /**
-     * get a list with the results related directly to the given formula, word, triple, source
-     * or value
+     * get a list with the results related directly to the given formula, word, triple or value
      *
-     * @param word|triple|source|value|formula|db_object|null $dbo to filter the values
-     * @return result_list with only the direct linked values
+     * a result carries no source, because it is calculated and not measured, so a source
+     * selects no result
+     *
+     * @param user_message $msg to report a problem of reading a phrase type
+     * @param word|triple|value|formula|db_object|null $dbo to filter the results
+     * @return result_list with only the direct linked results
      */
-    function filter(word|triple|source|value|formula|db_object|null $dbo = null): result_list
+    function filter(
+        user_message                                $msg,
+        word|triple|value|formula|db_object|null $dbo = null
+    ): result_list
     {
         $res_lst = new result_list();
         if ($dbo::class == formula::class) {
@@ -216,14 +242,7 @@ class result_list extends sandbox_list_value
         }
         if ($dbo::class == word::class or $dbo::class == triple::class) {
             foreach ($this->lst() as $res) {
-                if ($res->has_phrase($dbo->phrase())) {
-                    $res_lst->add_result($res);
-                }
-            }
-        }
-        if ($dbo::class == source::class) {
-            foreach ($this->lst() as $res) {
-                if ($res->source_id() == $dbo->id()) {
+                if ($res->has_phrase($dbo->phrase(), $msg)) {
                     $res_lst->add_result($res);
                 }
             }
@@ -278,6 +297,28 @@ class result_list extends sandbox_list_value
     {
         $this->sort_by_number();
         return parent::list($msg, $context_phr_lst, $url_arr, $style, $limit, $page);
+    }
+
+    /**
+     * the results grouped for a quick overview like the values of a phrase: a value list can hold
+     * results as well (see value_list::add_results), so the grouping, the page limit with the
+     * "... and n more" tail and the unit symbols behind the number are those of the value list
+     *
+     * @param phrase_list $context_phr_lst phrases assumed by the reader and left out of each result line
+     * @param array $url_arr the url vars of the calling page for the back link
+     * @param string $style to define e.g. the list width
+     * @return string the html code of the grouped results (see value_list::list_most_relevant)
+     */
+    function list_most_relevant(
+        user_message $msg,
+        phrase_list  $context_phr_lst = new phrase_list(),
+        array        $url_arr = [],
+        string       $style = ''
+    ): string
+    {
+        $val_lst = new value_list();
+        $val_lst->set_lst($this->lst());
+        return $val_lst->list_most_relevant($msg, $context_phr_lst, $url_arr, $style);
     }
 
 

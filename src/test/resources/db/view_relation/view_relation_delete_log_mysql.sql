@@ -1,15 +1,15 @@
 DROP PROCEDURE IF EXISTS view_relation_delete_log;
 CREATE PROCEDURE view_relation_delete_log
-    (_user_id            bigint,
-     _change_action_id  smallint,
-     _change_table_id   smallint,
-     _old_text_from     text,
-     _old_text_link     text,
-     _old_text_to       text,
-     _old_from_id       bigint,
-     _old_link_id       smallint,
-     _old_to_id         bigint,
-     _view_relation_id   bigint)
+    (_user_id          bigint,
+     _change_action_id smallint,
+     _change_table_id  smallint,
+     _old_text_from    text,
+     _old_text_link    text,
+     _old_text_to      text,
+     _old_from_id      bigint,
+     _old_link_id      smallint,
+     _old_to_id        bigint,
+     _view_relation_id bigint)
 
 BEGIN
 
@@ -30,11 +30,11 @@ END;
 SELECT view_relation_delete_log
        (3,
         3,
-        108,
+        100,
         'word_edit',
         'add components',
         'word_usage',
-        3,
+        48,
         1,
-        5,
+        116,
         1);

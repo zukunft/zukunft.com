@@ -1,6 +1,6 @@
 CREATE OR REPLACE FUNCTION triple_delete_log_user
-    (_user_id            bigint,
-     _change_action_id   smallint,
+    (_user_id              bigint,
+     _change_action_id     smallint,
      _field_id_triple_name smallint,
      _triple_name          text,
      _triple_id            bigint) RETURNS void AS
@@ -21,6 +21,6 @@ $$ LANGUAGE plpgsql;
 SELECT triple_delete_log_user
        (3::bigint,
         3::smallint,
-        22::smallint,
+        175::smallint,
         'mathematical constant'::text,
         1::bigint);

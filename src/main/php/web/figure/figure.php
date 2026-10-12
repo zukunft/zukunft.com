@@ -47,6 +47,7 @@ include_once html_paths::SHARED_CONST . 'views.php';
 include_once html_paths::SHARED_TYPES . 'api_type_list.php';
 include_once html_paths::SHARED . 'api.php';
 include_once html_paths::SHARED . 'json_fields.php';
+include_once html_paths::SHARED . 'group_id_url.php';
 include_once html_paths::SHARED . 'library.php';
 include_once html_paths::SHARED . 'url_var.php';
 
@@ -60,6 +61,7 @@ use Zukunft\ZukunftCom\main\php\web\value\value;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\group_id_url;
 use Zukunft\ZukunftCom\main\php\shared\library;
 
 class figure extends combine_named
@@ -96,20 +98,19 @@ class figure extends combine_named
     }
 
     /**
-     * @return int the figure id based on the value or result id
-     * must have the same logic as the database view and the frontend
+     * the figure id based on the value or result id: the result id is negated, and a text key,
+     * which cannot be negated, gets a leading "-" (see group_id_url::FIGURE_RESULT_PREFIX)
+     * must have the same logic as the database view and the backend
+     *
+     * @return int|string the unique id of the value or result within the figure list
      */
-    function id(): int
+    function id(): int|string
     {
-        if ($this->obj() == null) {
-            return 0;
-        } else {
-            if ($this->is_result()) {
-                return $this->obj_id() * -1;
-            } else {
-                return $this->obj_id();
-            }
+        $id = $this->obj_id() ?? 0;
+        if ($this->obj() != null and $this->is_result()) {
+            $id = is_string($id) ? group_id_url::FIGURE_RESULT_PREFIX . $id : $id * -1;
         }
+        return $id;
     }
 
     /**
@@ -155,8 +156,13 @@ class figure extends combine_named
         }
         $vars[json_fields::ID] = $this->obj_id();
         $vars[json_fields::NUMBER] = $this->number();
-        if ($this->obj->grp->name() != '') {
-            $vars[json_fields::PHRASES] = $this->obj->api_array($typ_lst, $msg);
+        // TODO Prio 3 create function for easier code read
+        // only the name given to the group like the backend sends it (see value_base::api_json_array)
+        $vars[json_fields::NAME] = $this->obj->grp->name;
+        // the description of the group like the value sends it (see value::api_array)
+        $vars[json_fields::DESCRIPTION] = $this->obj->grp->get_description();
+        if (!$this->obj->grp->phr_lst()->is_empty()) {
+            $vars[json_fields::PHRASES] = $this->obj->grp->phr_lst()->api_array($typ_lst, $msg);
         }
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
@@ -199,17 +205,20 @@ class figure extends combine_named
      */
     function name_linked(?phrase_list $phr_lst_header = null): string
     {
-        return $this->grp()->name_link_list($phr_lst_header);
+        return $this->grp()->phrase_link_list($phr_lst_header);
     }
 
 
     /**
-     * return the html code to display a value
-     * this is the opposite of the convert function
+     * the number of the value or the result in the format of the user, so that a figure shows
+     * e.g. a percent as "-32%" and not as the raw ratio (see sandbox_value::val_formatted)
+     *
+     * @param user_message $msg to report a problem while formatting the number
+     * @return string the html code to display the number
      */
-    function display(): string
+    function display(user_message $msg): string
     {
-        return round($this->number(), 2);
+        return $this->val_formatted($msg);
     }
 
     /**

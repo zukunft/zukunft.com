@@ -34,12 +34,16 @@ namespace Zukunft\ZukunftCom\test\php\unit;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_GROUP . 'group_id.php';
 include_once paths::MODEL_GROUP . 'group_link.php';
 include_once paths::MODEL_GROUP . 'group_list.php';
 include_once paths::MODEL_GROUP . 'result_id.php';
 include_once paths::SHARED_CONST . 'groups.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED . 'group_id_url.php';
+include_once test_paths::CONST . 'triple_names.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
@@ -47,10 +51,14 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_id;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_link;
+use Zukunft\ZukunftCom\main\php\cfg\group\group_list;
 use Zukunft\ZukunftCom\main\php\cfg\group\result_id;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\shared\const\groups;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\group_id_url;
+use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\create\test_groups;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
@@ -62,7 +70,7 @@ class group_tests
 {
     function run(test_cleanup $t): void
     {
-
+        global $mtr;
 
         // init
         $db_con = new sql_db();
@@ -120,31 +128,31 @@ class group_tests
         $this->check_64_bit_key($t, [-32765,32767,-32766,32766], 9223231295071322110);
         $this->check_64_bit_key($t, [-32767,-32766,-32765,32767], 9223372028264775679);
         // these are not "prime" anymore because at least one id must be positiv to avoid exeeding PHP_INT_MAX
-        $this->check_64_bit_key($t, [-1,-2,-3,-4], '.....2-.....1-.....0-...../-......+......+......+......+......+......+......+......+......+......+......+......+');
-        $this->check_64_bit_key($t, [-32767,-32766,-32765,-1], '...5zz-...5zy-...5zx-...../-......+......+......+......+......+......+......+......+......+......+......+......+');
+        $this->check_64_bit_key($t, [-1,-2,-3,-4], '2-1-0-/-');
+        $this->check_64_bit_key($t, [-32767,-32766,-32765,-1], '5zz-5zy-5zx-/-');
 
-        $this->check_int2alpha($t, 0, '......+');
-        $this->check_int2alpha($t, 1, '...../+');
-        $this->check_int2alpha($t, 2, '.....0+');
-        $this->check_int2alpha($t, 11, '.....9+');
-        $this->check_int2alpha($t, 12, '.....A+');
-        $this->check_int2alpha($t, 37, '.....Z+');
-        $this->check_int2alpha($t, 38, '.....a+');
-        $this->check_int2alpha($t, 63, '.....z+');
-        $this->check_int2alpha($t, 64, '..../.+');
-        $this->check_int2alpha($t, -1, '...../-');
-        $this->check_int2alpha($t, -2, '.....0-');
-        $this->check_int2alpha($t, -11, '.....9-');
-        $this->check_int2alpha($t, -12, '.....A-');
-        $this->check_int2alpha($t, -37, '.....Z-');
-        $this->check_int2alpha($t, -38, '.....a-');
-        $this->check_int2alpha($t, -63, '.....z-');
-        $this->check_int2alpha($t, -64, '..../.-');
-        $this->check_int2alpha($t, 12, '.....A<', true, );
-        $this->check_int2alpha($t, 12, '.....A>', false, true);
-        $this->check_int2alpha($t, 12, '.....A=', false, false, true);
-        $this->check_int2alpha($t, -12, '.....A(', true, );
-        $this->check_int2alpha($t, -12, '.....A)', false, true);
+        $this->check_int2alpha($t, 0, '.+');
+        $this->check_int2alpha($t, 1, '/+');
+        $this->check_int2alpha($t, 2, '0+');
+        $this->check_int2alpha($t, 11, '9+');
+        $this->check_int2alpha($t, 12, 'A+');
+        $this->check_int2alpha($t, 37, 'Z+');
+        $this->check_int2alpha($t, 38, 'a+');
+        $this->check_int2alpha($t, 63, 'z+');
+        $this->check_int2alpha($t, 64, '/.+');
+        $this->check_int2alpha($t, -1, '/-');
+        $this->check_int2alpha($t, -2, '0-');
+        $this->check_int2alpha($t, -11, '9-');
+        $this->check_int2alpha($t, -12, 'A-');
+        $this->check_int2alpha($t, -37, 'Z-');
+        $this->check_int2alpha($t, -38, 'a-');
+        $this->check_int2alpha($t, -63, 'z-');
+        $this->check_int2alpha($t, -64, '/.-');
+        $this->check_int2alpha($t, 12, 'A<', true, );
+        $this->check_int2alpha($t, 12, 'A>', false, true);
+        $this->check_int2alpha($t, 12, 'A=', false, false, true);
+        $this->check_int2alpha($t, -12, 'A(', true, );
+        $this->check_int2alpha($t, -12, 'A)', false, true);
 
         $t->assert('group_id triple list', $grp_id->get_id($t_trp->triple_list_one()->phrase_list()),values::PI_ID);
         $t->assert('triple ids 64 bit group_id ', $grp_id->get_array(values::PI_SYMBOL_ID), [values::PI_SYMBOL_ID]);
@@ -152,17 +160,135 @@ class group_tests
         $phr_lst->merge($t_wrd->word_list()->phrase_list());
         $phr_lst->merge($t_trp->triple_list_short()->phrase_list());
         $t->assert('group_id combine phrase list', $grp_id->get_id($phr_lst),
-            '..../j-.....3-...../-...../+.....0+.....3+.....4+......+......+......+......+......+......+......+......+......+');
+            '/l-3-/-/+0+3+4+');
         $t->assert('group_id phrase list', $grp_id->get_id($t_phr->phrase_list()),
-            '.....3-...../-...../+.....0+.....F+......+......+......+......+......+......+......+......+......+......+......+');
+            '3-/-/+0+F+');
         $t->assert('group_id phrase list 16', $grp_id->get_id($t_phr->phrase_list_16()),
-            '1FajJ2-.4LYK3-..8jId-...I1A-....Yz-..../.-.....Z-.....9-...../+.....A+.....a+....3s+...1Ao+../vLC+.//ZSB+.ZSahL+');
+            '1FajJ2-4LYK3-8jId-I1A-Yz-/.-Z-9-/+A+a+3s+1Ao+/vLC+//ZSB+ZSahL+');
         $t->assert('group_id phrase list 16', $grp_id->get_id($t_phr->phrase_list_17_plus()),
-            '1FajJ2-.4LYK3-..8jId-...I1A-....Yz-..../.-.....Z-.....9-...../+.....A+.....a+....3s+...1Ao+../vLC+.//ZSB+.ZSahL+.uraWl+');
+            '1FajJ2-4LYK3-8jId-I1A-Yz-/.-Z-9-/+A+a+3s+1Ao+/vLC+//ZSB+ZSahL+uraWl+');
+        // the key uses upper and lower case letters for different ids, so a phrase is searched within
+        // a group id with a case-sensitive pattern (sql_par_type::LIKE_KEY); a case-insensitive match
+        // would e.g. find the values of "position" (1122) when deleting the phrase 1148
+        $test_name = 'the keys of two phrase ids can differ only in the case of a letter';
+        $t->assert($test_name, strtolower($grp_id->int2alpha_num(1148)), strtolower($grp_id->int2alpha_num(1122)));
+        $t->assert_true($test_name, $grp_id->int2alpha_num(1148) != $grp_id->int2alpha_num(1122));
+        // the compact key has no fixed slots, so a phrase is found only at the start or after a sign char
+        $test_name = 'a phrase is found within a group id after a sign char';
+        $phr_pattern = '~' . group_id_url::phrase_pattern('0U+') . '~';
+        $t->assert_true($test_name, preg_match($phr_pattern, '1-0U+') == 1);
+        $test_name = '... but not as the end of a longer phrase id';
+        $t->assert_false($test_name, preg_match($phr_pattern, '10U+') == 1);
         $t->assert('group_id revers phrase list 16',
-            implode(',', $grp_id->get_array('...../+.....9-.....A+.....Z-.....a+..../.-....3s+....Yz-...1Ao+...I1A-../vLC+..8jId-.//ZSB+.4LYK3-.ZSahL+1FajJ2-')),
+            implode(',', $grp_id->get_array('/+9-A+Z-a+/.-3s+Yz-1Ao+I1A-/vLC+8jId-//ZSB+4LYK3-ZSahL+1FajJ2-')),
             '1,-11,12,-37,38,-64,376,-2367,13108,-82124,505294,-2815273,17192845,-106841477,628779863,-3516593476');
+        $test_name = 'the "_" of a url is also read as the sign of a word';
+        $t->assert($test_name, $grp_id->get_array('3-/-/_0_F_'), $grp_id->get_array('3-/-/+0+F+'));
         $grp_id = 0;
+
+        // the prime and big check of a group follow the database id like the table selection, because the phrase
+        // list of a loaded group can be incomplete, and only a group without an id is checked by its phrase list
+        $test_name = 'a group with the text id of 16 phrases is not prime although its phrase list has one phrase';
+        $grp = $t_grp->group();
+        $grp->set_id($t_grp->group_16()->id());
+        $t->assert_false($test_name, $grp->is_prime());
+        $test_name = 'a group with the id of more than 16 phrases is big although its phrase list has one phrase';
+        $grp->set_id($t_grp->group_17_plus()->id());
+        $t->assert_true($test_name, $grp->is_big());
+        $test_name = 'a group without an id is prime by its phrase list';
+        $t->assert_true($test_name, $t_grp->group_incomplete()->is_prime());
+
+        // the table name, its key fields and the matching change log table must be derived from the
+        // same id, because a mix creates an sql statement for a table that does not exist, e.g. the
+        // prime function name value_prime_p0_insert_log with the log table change_values_norm_prime
+        $test_name = 'the table of a group with the text id of 16 phrases is the main table';
+        $grp = $t_grp->group_16();
+        $t->assert($test_name, $grp->table_type()->value, sql_type::MOST->value);
+        $t->assert($test_name, $grp->table_extension(), '');
+        $test_name = '... and the table of a group with a prime id is the prime table';
+        $grp = $t_grp->group();
+        $t->assert($test_name, $grp->table_type()->value, sql_type::PRIME->value);
+        $t->assert($test_name, $grp->table_extension(), group_id::TBL_EXT_PHRASE_ID . '1');
+        $test_name = '... and the id list of the key fields has the phrases of the id';
+        $t->assert($test_name, $grp->id_lst(), $t_grp->group()->phrase_list()->ids());
+        $test_name = 'the table of a group without an id follows its phrase list like is_prime';
+        $grp = $t_grp->group_16();
+        $grp->set_id('');
+        $t->assert($test_name, $grp->table_type()->value, sql_type::MOST->value);
+        $t->assert($test_name, $grp->table_extension(), '');
+        $t->assert_false($test_name, $grp->is_prime());
+        $test_name = 'a group without an id and without phrases has no phrase count for the table';
+        $t->assert($test_name, $t_grp->group_without_key()->table_extension(),
+            group_id::TBL_EXT_PHRASE_ID . '0');
+
+        // a url uses the compact key, only the "+" of a word is a "_", which a url needs no "%2B" for
+        $t->subheader($ts . 'url form');
+        $test_name = 'the url form of a group id writes the "+" as "_"';
+        $grp_id = new group_id();
+        $key = $grp_id->get_id($t_phr->phrase_list());
+        $url_id = group_id_url::to_url($key);
+        $t->assert($test_name, $url_id, '3-/-/_0_F_');
+        $test_name = '... and the database key is restored from the url form';
+        $t->assert($test_name, group_id_url::from_url($url_id), $key);
+        $test_name = 'a key of more than 16 phrases is restored';
+        $key_big = $grp_id->get_id($t_phr->phrase_list_17_plus());
+        $t->assert($test_name, group_id_url::from_url(group_id_url::to_url($key_big)), $key_big);
+        $test_name = 'a result key keeps the sign chars of the formula and the source phrases';
+        $res_key = 'A=A(A<A)A>A+';
+        $t->assert($test_name, group_id_url::to_url($res_key), 'A=A(A<A)A>A_');
+        $t->assert($test_name, group_id_url::from_url('A=A(A<A)A>A_'), $res_key);
+        // negative: an integer id of a prime group, a database key and a name are left as they are
+        $test_name = 'the integer id of a prime group is the same in the url';
+        $t->assert($test_name, group_id_url::to_url(values::PI_ID), (string)values::PI_ID);
+        $t->assert($test_name, group_id_url::from_url((string)values::PI_ID), (string)values::PI_ID);
+        $test_name = 'a database key is accepted as a url id';
+        $t->assert($test_name, group_id_url::from_url($key), $key);
+        $test_name = 'a text that is no group key is not changed';
+        $t->assert($test_name, group_id_url::to_url(groups::TN_READ), groups::TN_READ);
+        $t->assert($test_name, group_id_url::from_url(groups::TN_READ), groups::TN_READ);
+
+        $t->subheader($ts . 'given name');
+        $test_name = 'a group named by a user reports the given name';
+        $grp = $t_grp->group();
+        $t->assert($test_name, $grp->name_given(), groups::TN_READ);
+        $test_name = 'a group named only by its phrases reports no given name, but still a name';
+        $grp = $t_phr->phrase_list_pi()->get_grp_id(false);
+        $t->assert($test_name, $grp->name_given(), '');
+        $t->assert_true($test_name, $grp->name() != '');
+        // the given name is unique, so the e group must not repeat the name of the pi group
+        $test_name = 'the group of e has no given name and is named by its phrase';
+        $grp = $t_grp->group_e();
+        $t->assert($test_name, $grp->name_given(), '');
+        $t->assert($test_name, $grp->name(), triple_names::E);
+
+        // a list e.g. of an import holds a group by its name, because the id needs the ids of the phrases
+        $t->subheader($ts . 'list ready');
+        $test_name = 'a group without an id can be held in a list by its name';
+        $t->assert_true($test_name, $t_grp->group_incomplete()->can_be_ready($msg));
+        $msg->reset();
+        $test_name = 'a group without a given name and without phrases cannot be held in a list';
+        $t->assert_false($test_name, $t_grp->group_without_key()->can_be_ready($msg));
+        $test_name = '... which is reported';
+        $t->assert($test_name, $msg->text(), $mtr->txt(msg_id::ID_AND_NAME_MISSING));
+        $msg->reset();
+        $test_name = 'a group list holds a group without an id by its name';
+        $grp_lst = new group_list($t->usr1);
+        $t->assert_true($test_name, $grp_lst->add_by_key($t_grp->group_incomplete(), false, $msg));
+        $msg->reset();
+        $test_name = 'a group list refuses a phrase';
+        $grp_lst = new group_list($t->usr1);
+        $t->assert_false($test_name, $grp_lst->add($t_phr->phrase(), false, $msg));
+        $test_name = '... which is reported';
+        $t->assert_false($test_name, $msg->is_ok());
+        $msg->reset();
+        $test_name = 'a group list refuses the same group twice';
+        $grp_lst = new group_list($t->usr1);
+        $grp_lst->add($t_grp->group(), false, $msg);
+        $t->assert_false($test_name, $grp_lst->add($t_grp->group(), false, $msg));
+        $msg->reset();
+        $test_name = '... unless the caller allows duplicates';
+        $t->assert_true($test_name, $grp_lst->add($t_grp->group(), true, $msg));
+        $msg->reset();
 
         $t->subheader($ts . 'result id');
         // TODO assign the formula "increase" to the word inhabitants
@@ -174,19 +300,19 @@ class group_tests
         $t->assert('64 bit result_id for the formula increase, '
             . 'the phrases Zurich (city) and inhabitants and the result only phrase 2023 (year)',
             $res_id->get_id($t_phr->zh_inhabitants_2020(), $t_phr->zh_inhabitants_2020(), $t_frm->formula_increase(), $msg),
-            6052158684790981);
+            6052167274725577);
         $t->assert('128 bit result_id for the formula increase, '
             . 'the phrases Zurich (city), Geneva (city) and inhabitants and the result only phrase 2023 (year)',
             $res_id->get_id($t_phr->zh_ge_inhabitants_2020(), $t_phr->zh_ge_inhabitants_2020(), $t_frm->formula_increase(), $msg),
-            '9234884208812910592');
+            '9234897316213172736');
         // building the 512 bit result id from long phrase lists takes longer than a normal unit function
-        $t->assert('512 bit result_id ',
+        $t->assert('text key result_id ',
             $res_id->get_id($t_phr->phrase_list_14(), $t_phr->phrase_list_14b(), $t_frm->formula_increase(), $msg),
-            '.....J=..8jId-...I1A-....Yz-..../.-.....Z-.....9-...../+.....A+.....a+....3s+...1Ao+../vLC+.//ZSB+1FajJ2(.4LYK3)1FajJ2)',
+            'J=8jId-I1A-Yz-/.-Z-9-/+A+a+3s+1Ao+/vLC+//ZSB+1FajJ2(4LYK3)1FajJ2)',
             $t::TIMEOUT_LIMIT_PAGE);
-        $t->assert('512 bit result_id ',
+        $t->assert('text key result_id ',
             $res_id->get_id($t_phr->phrase_list_17_plus(), $t_phr->phrase_list_17_plus(), $t_frm->formula_increase(), $msg),
-            '...../+.....9-.....A+.....Z-.....a+..../.-....3s+....Yz-...1Ao+...I1A-../vLC+..8jId-.//ZSB+.4LYK3-.ZSahL+1FajJ2-.uraWl+',
+            '/+9-A+Z-a+/.-3s+Yz-1Ao+I1A-/vLC+8jId-//ZSB+4LYK3-ZSahL+1FajJ2-uraWl+',
             $t::TIMEOUT_LIMIT_PAGE);
 
         $t->subheader($ts . 'similar');
@@ -247,6 +373,9 @@ class group_tests
         //$grp->set_phrase_list($t_phr->phrase_list_prime());
         //$t->assert_sql_delete($sc, $grp, [sql_type::LOG]);
         $grp->set_phrase_list($t_phr->phrase_list_16());
+        // the logged delete of a main group is used by the test cleanup to remove a group that a
+        // test has named (see test_base::write_group_cleanup), so it needs its own expected sql
+        $t->assert_sql_delete($sc, $grp, [sql_type::LOG]);
         $t->assert_sql_delete($sc, $grp, [sql_type::LOG, sql_type::USER]);
         $grp->set_phrase_list($t_phr->phrase_list_17_plus());
         $t->assert_sql_delete($sc, $grp);

@@ -1,6 +1,34 @@
 # pending prio 2
 
+## start page global problem
+
+add a subtitle with the country, region and an 'yours' option for the problem and solution list where the region and country are based on the ip if the user is not logged in and 'yours' is grey with the tooltip 'signup or login to create your personal list'
+
+### leftovers
+
+1. Climate gas emissions leads the cell. Its value of 2.2 is still the biggest,
+while the three cost channels add up to about 1.1. The reasons page lists both kinds side by side.
+It is a data decision for you, as noted before.
+
+## settings page
+
+the 'tree' config api (cfg/helper/config_tree::api_json) parses config.yaml on each request; the settings page cache hides this for now, but the parsed tree could be cached like the config values and dropped when config.yaml changes
+
+with CACHE_LOCATION file the config cache file is never dropped by a value change, only by a newer config.yaml (config_numbers::is_file_cache_valid), unlike the database cache (frontend::drop_cached_pages)
+
+the settings tree shows the config.yaml value as "default" behind a value that differs, but after an admin has changed the default in the database the default is the database standard value; the api could send the standard value besides the value of the user, so the tree shows the real default. The confirmation of an admin names the number that the admin has seen, which can be the own overwrite and not the previous default
+
+a boolean setting is shown as true or false and therefore not yet editable on the settings page (web/helper/config_tree::is_editable); it needs a true / false selector that saves 1 or 0. A text setting e.g. the language needs a text input. After a save the page shows the whole tree, so the search and the scope of the page could be kept as '9'-prefixed back vars
+
+## frontend rules
+
+html_base::span() adds data-toggle="tooltip" to each span with a title, which no script reads and which docs/llm/frontend.md forbids for a web renderer; html_base::with_title() is the span without it, used so far only by the settings tree. Removing the attribute from span() changes about 188 snapshots, so it needs one run with AUTO_UPDATE_TEST_FILES and the review of the rewritten files
+
 ## tests
+
+add to the json_validation test a check for which words, triples, verb, formula or type objects a description is missing
+
+after the renumbering of the change tables and fields (#267) is merged, remove the check() test of change_link_validation_tests and the change_link_validation call of test/json_validation.php: both compare against the snapshot unit/change_table/list_unsorted.csv and unit/change_field/list_unsorted.csv from before the renumbering, so the first change field added to db_code_links/change_fields.csv later fails the unit run
 
 add a write workflow test for the formula add from a word page: the confirmed add must also write the formula link to the phrase of the '7'-prefixed link vars (frontend::add_link_of_new), which the unit tests cannot check because they never write the formula
 
@@ -12,6 +40,8 @@ assign all values assigned to a symbol to the main word or triple but in the def
 
 if a value of a phrase is shown that has a symbol use the shortest symbol that is unique for the page. E.g. if values in Euro are shown use € instead of Euro
 
+the phrase type "measure type" (code id "measure") has been renamed to "measure unit" (code id "measure_unit") in phrase_types.csv and the code; a database created before the rename still carries the old code id in the phrase_types table, so the update process of the code link tables (see the TODO in cfg/phrase/phrase_types.php) must rename it before the next production upgrade
+
 ## use case
 
 PV in Switzerland
@@ -20,9 +50,35 @@ add a quick value change modal box to change just the value
 
 if the value if updated use the frontend cache to update the results within the frontend cache and report the result updates to the backend
 
+the html page cache (db_cache_page) is dropped only after a data change (frontend::drop_cached_pages), so after a code change of a renderer a page cached before the change is still served until a data change or `nc=1` bypasses it; add the program version (version.txt) to the cache key or drop all cached pages when the frontend starts with a new version, so that a deployment never shows a stale page
+
+the url form of a group id (shared/group_id_url.php) has known limits:
+- the alpha_num char "/" (value 1) is still url encoded as "%2F" e.g. "/x-" is "%2Fx-"; a free char like "~" could replace it the same way as "_" replaces the "+" of a word
+- the short form of a "9"-prefixed back target is only read back if "9m" is a numeric mask of views::GROUP_ID_MASKS_IDS; a back target with a view code id keeps the id as it is
+- the decoding is limited to the masks of views::GROUP_ID_MASKS_IDS, so a user defined view that shows a value or result by a group id in the url is not covered until the mask list is derived from the view type instead of the fixed system mask lists
+- a raw "+" in a hand written old link arrives as a space (a url reads "+" as a space) and is not repaired; only the "%2B" form of an old link is accepted
+
+the used values and results of a result are selected by any phrase of the result when the result has no source group (result::used_phrase_selection), so a result that carries e.g. "high" lists every result with "high"; the fallback should be the phrases of the formula expression instead
+
+## start page data
+
+### reasons by country
+
+at least for the climate change add a json for the reasons why climate change causes costs and create for each reason a file with the percent of gdp lost or absolut number by for some countries and an estimate for the rest
+
+## picture values
+
+add valie table for pictures that can be use to assign a picture ti a phrase group 
+
 ## default views
 
 the $wrd->name_link(), $trp->name_link() or $prh->name_link() function returns at the moment a link to the word or triple default view, but it should lead to the selected page of the word / triple. E.g. for 'PV in Switzerland' the 'calculator' view should be used instead of the triple default view  
+
+the formula line with the numbers of the result default view (result::load_expression_parts) selects the figures again on each page request, so it shows the numbers of today and not the numbers of the calculation if a value has changed since; the gaps that are visible instead of guessed:
+- an element group with more than one figure (the calculation creates one result per figure) is shown by its name without a number, because the result does not save which figure it has used; saving the used figure ids with the result would close this and the re-selection
+- a result without saved source phrases (e.g. imported without a context) shows no formula line
+- result::load_std_by_grp and result::load_by_formula_and_group read only the standard results table (load_sql() always uses sql_type::MOST), so they miss every result of the prime and main tables; load_std_by_grp also has an inverted guard (it logs an error if the group id IS set) and its prepared statement compares the char(112) group_id with a bigint parameter; fix both to follow the table of the group plus the fallback of load_moved, with new fixtures
+- a symbol in the operator text that is no element group (e.g. a verb) is shown in the reference format e.g. {v3}
 
 ## search empty result 
 
@@ -142,6 +198,19 @@ hardcoded rows whose only dispatch is commented out at component_exe.php:189 —
 
 6. Scope note, not a defect. dlp is wired into the slicing and the url mapping, but no page renders prev/next links yet — the "all" version remains unpaged from the user's side. That is consistent with what was asked (the more link), and the frontend.md update says so.
 
+### start page data
+
+1. Poverty gain 34.1: it needs a tuned factor of 17.9, while the other problems need 0.10 to 2.2. Poverty's gain and bounds are exactly the same as populism's (34.1 / 22.73 / 51.15), and solution_prio.json notes a health/poverty swap. So 34.1 is probably a copy mistake. Only the gain factor value would change.
+2. Market power, wealth concentration and citizen participation loss reduction: in all three, the result only restates an assumed input (the markup share and the demand share = 0.3, the restored position share = 0.5). The row is formally a result, but nothing is derived.
+3. The same definitions are repeated in 7 files. The shared formulas, world GDP 110.047109 and world htp 1189.19 are copied into each problem file, because the importer only reads the file's own data. If one copy changes, the last imported file wins without any warning. The note on "one pair of formulas per file" in docs/llm/pending.md covers the range formulas only. It could be extended to these, and to the fact that the gain factors are placeholders for the missing horizon of the ranking.
+4. The 2-decimal check is too coarse for the small bounds. At 2 decimals, numbers such as 0.004, 0.025, -0.032 and 0.0003 are hardly checked. The education high bound 1.375 → 1.38 only just passes, on half-up rounding.
+5. Stale test data: src/test/php/create/test_values.php:771 still uses the old populism loss of 23.8. It is in-memory test data, so it doesn't break anything, but it no longer matches the start page.
+6. The formula snapshots grow with each problem file. change_formula_wf15 and del_formula_wf16 went from 48 to 156 table rows, because the formula page lists every result. Each further problem file adds about 18 rows to about 15 snapshots.
+7. Three existing values changed their words, not just their location. The solution values of biased information and black-box AI gained decisions, and disinformation's gained public discourse. A fresh import is fine. An existing database would keep the old value under its old group next to the new one, so a re-import there leaves three orphan values unless the database is reset.
+8. Citizen participation has the same weakness as item 2 in pending_prio_2.md. Its loss reduction of 0.5 only restates an assumed input. That item currently names only market power and wealth concentration.
+9. The GDP mismeasurement loss reduction of 1.0 depends on the chosen end of the range. It divides by the new upper-end value 0.0011; the existing lower end 0.0005 would give 2.2. The new value carries high, while the existing 0.0005 value carries no low.
+10. The effort factors are now spread wide. Black-box AI 90.9, disinformation 34.3 and citizen participation 33.3 person years per trillion EUR, against 1.25 to 16 elsewhere. They are placeholders, but the spread shows that effort isn't really proportional to the loss.
+11. The pending_prio_2.md change is your typo fix ("paghe" → "page"). It's fine to include.
 
 ## view
 
@@ -186,6 +255,27 @@ what is left:
 - the other rules of `docs/llm/json_structure.md` - the triple naming rules, "a word and a triple
   must never share a name", the value qualifier rules - are still only prose and can be added as
   further check functions to the same class
+- a calc validation finding discards the complete import file: `import::put_json` hands the same
+  message to `data_object::save`, whose every step is gated by `$msg->is_ok()`, so a result that
+  cannot be reproduced drops the words, triples and values of that file too. the finding belongs
+  to the file and not to the save, so the save needs a message scoped to the mapping errors (see
+  `docs/llm/dependent-errors.md`). the consequence is hard to see, because the database setup
+  continues with the next file and only the next test run reports the missing data, e.g. as
+  'triple "PV in Switzerland" not found' when the use case file, the last step of the setup, is
+  the one that is left out
+- `result_list::load_sql_by_ids` prepares the id list as `bigint[]` and selects from the group
+  keyed `results` table only, whose key is a `char(112)`, so the result list api by ids fails
+  with a prepare error for every result that is not in a prime table; the load by id of the
+  single result and the by phrase list query take the table from the key and should be the
+  pattern for it
+- the same gate drops the results of a file whose formula names a term the file does not declare:
+  `data_object::save_formulas` merges the `EXPRESSION_TERM_MISSING` of `generate_ref_text` into
+  the import message, the words, triples, values and formulas are already stored by then, and
+  `save_results` is skipped without a word to the user, so a table shows the row without its
+  calculated numbers. seen with `global happy time points` in problem_global_warming.json before
+  the file declared `global`, `human` and `population`. a formula whose expression term is
+  missing should report that as a warning of the file and still let the results be saved, or the
+  json validation should check the expression terms like it checks the assigned phrases
 
 ## change log object names of the link classes
 
@@ -211,7 +301,13 @@ a value is named by the phrases of its group, so change_log_list::load_row_names
 
 ## test value and result leftovers survive an aborted write test run
 
-test_cleanup::cleanup_objects_ex_user() runs $t_wrd->cleanup() but has $t_val->cleanup(), $t_res->cleanup() and $t_grp->cleanup() commented out (since the function was added in de52d9c08), so the test words are deleted while the values and results that use them stay. After that the leftover row cannot be found by phrase names any more, because one of its phrases no longer exists, and only a database reset removes it. That is what makes a read test fail with extra rows on the word default page of 'inhabitants' (2026-09: the 987'654'321 of value_write_tests and the 0.79% result of the test increase formula assigned to 'System Test Word Percent'). The two value groups of value_write_tests are now in values::TEST_VALUES so the by-name cleanup covers them while the words still exist; the remaining step is to enable the value, result and group cleanup in cleanup_objects_ex_user before the word cleanup - they were switched off deliberately, so check first why
+the group and the value cleanup of test_cleanup::cleanup_objects_ex_user() are enabled now and run before $t_wrd->cleanup(), sandbox::del_exe() no longer deletes an object whose del_links() has failed, and test_db_load::load_phrase_group() reports a phrase name it cannot find instead of building the group of the remaining names, so a test number can no longer land in the group of the seed phrases alone (2026-09: the 987'654'321 of value_write_tests under 'inhabitants, million, 2020' on the word default page of 'inhabitants'). Such a row is named by seed phrases only, so no by-name cleanup may remove it and only a database reset does. The result cleanup is still commented out, because test_results has no cleanup() function yet and no results::TEST_RESULTS const to name the rows; until it has one an aborted write test run can still leave a result of a deleted test word behind (the 0.79% result of the test increase formula assigned to 'System Test Word Percent'). A write test of the refused delete is missing as well: it should check that del() keeps the object and reports the reason when one of its values cannot be deleted
+
+## the read phase view snapshots contain volatile test row ids
+
+the html snapshots of system_views_read_tests (test_base::assert_view) are taken before run_db_recreate, so they show the test rows that create_test_db_entries has just written, with the id that the database sequence happens to give them. A sequence never reuses the id of a row that an earlier run has created and deleted, so the same page has a different id on every database that has been used before, e.g. the word default page of 'inhabitants' names 'System Test Word Increase' with id 1453 right after a reset and with 1476 on the database the committed snapshot was taken on (the highest seed word id is 1432), and the value link of that word differs as well, because the group key encodes the phrase ids. The workflow snapshots already solve this with url_test_base::normalize_ids(), wf_fixed_id and wf_norm_ids; the same normalization is missing for assert_view and would additionally have to re-encode the group key with id::int2alpha_num. Until then a snapshot of these pages is only reproducible directly after reset_db
+
+a second source of the same kind is a user overlay that a test leaves on a seed row: the page of the seed row then shows the 'My' tab and the user change log row of the test user, so it differs between a run after reset_db and a run on a database where the write tests have run before (2026-09: view_write_tests imported the system views as the test user, which wrote the protection of the start view into the sandbox of the test user, see the fix at the import_system_views call). A test may change a seed row for a user only if it undoes the overwrite with del_usr_cfg, like write_named_cleanup_force does before a delete
 
 ## code cleanup
 The cleanup deleted 14 snapshots and the blast radius is wider than the orphan case. delete_unused_files() removes every .html under views_by_object/ that this run did not write. That is correct for a full run, but a partial run — test_part.php, a single test class, or
@@ -1345,6 +1441,16 @@ from the symbol to the math triple instead of adding the extra hop; if values ke
 should show their siblings too, categories() needs to follow 'is symbol for' and 'name of' before
 the 'is a' step (see verbs::CATEGORY_VERBS)
 
+## a user value without source cannot be stored in the non-prime user value tables
+
+the user value tables use the source as part of the unique key, and a user value without source has a
+null source_id; the where part compares it null-safe (sql_par_type::INT_NULL_SAFE), but the non-prime
+user tables (user_values, user_values_big, user_values_text*, user_values_time*, user_values_geo, ...)
+declare PRIMARY KEY (group_id, user_id, source_id), which makes source_id NOT NULL in postgres, so the
+insert of a user value without source fails there while the prime user tables allow it; replace these
+primary keys with a unique index that allows a null source (postgres 15+: UNIQUE NULLS NOT DISTINCT)
+in zukunft_structure.sql, the table creation code (sandbox_value::FLD_USER_SOURCE) and a db upgrade
+
 ## the linked component of a component has no form field
 
 the component page now shows the linked component with its link type (components.linked_component_id
@@ -1406,3 +1512,129 @@ but it is the kind of thing the reference workflow was presumably meant to surfa
 
 Two smaller consistency notes, both matching the change_source sibling so I would not change them: change_view_workflow runs ~90 lines (over the ~50-line guideline, as change_source_workflow does), and the file header still says "each step of the add_view workflow" now that
 there are two.        
+
+## change value view: given group name and the phrases of the fixture value
+
+the change value view (value_edit) now shows only a name that a user has given to the group and
+writes it to the group row on save (value_base::save), but these gaps remain:
+
+- since 2026-09-18 value_base::api_json_array sends the given group name and the frontend
+  value::api_mapper takes it, so a saved name is shown again in the value views and in the group
+  field of the edit form. the name is only loaded by value_base::load_objects (load_grp_by_id
+  reads the group row), so a value loaded without it (e.g. the rows of a value list) still has
+  no given name. the backend add path is covered by value_write_tests ('given group name'),
+  but no write workflow types a group name in the detailed add form: add_value_details (wf34)
+  cannot be extended, because its phrases are the ones of add_value_with_phrase (wf32), so the
+  value exists already in a write run; a workflow of its own with other phrases is needed
+- since 2026-09-18 the value export and import carry the given group name as the optional json
+  field `name` (value_base::export_json / import_mapper). this is an addition to the json format,
+  for which docs/llm/versions.md asks for a minor version bump with a database upgrade script;
+  not done, because the upgrade path has the open defects listed under "database upgrade path".
+  the developer decides if an optional field needs the bump. the value list import format
+  (value_list::import_obj, one context for many values) has no group name
+- a stored given group name or value description cannot be cleared: the frontend drops an emptied
+  field before sending (value::api_array filters empty entries), and sandbox_multi::save fills every
+  field that the request does not carry from the database row, so "emptied" and "not sent" look
+  the same. the source of a value has the same gap: selecting no source drops the source in the
+  frontend (value::set_source_id) and value_base::set_source_id ignores the id 0, so a stored
+  source stays. to close the gap compare the field with its '8'-prefixed opening value
+  (url_var::PRE) and send an explicit empty value for a field that the user has emptied, which
+  fill must then keep instead of taking the stored value
+- the group list of the backend data_object (data_object::add_group, group_list()) is only
+  filled, e.g. by horizontal_tests for the value import, but never read: no import_mapper takes a
+  group from it and the frontend data_object does not map the json field `groups` that
+  data_object::api_json_array sends (like `sources` and `references`). either the value import
+  resolves a given group name via this cache or the developer retires the list and the json field
+- the value of the views_by_id fixtures (test_values::value_16_filled, group_16) is built from
+  artificial phrase ids (word1 = 1, triple7 = 106841477, ...) of which only word 1 is in the test
+  request cache, so the page title of views_by_id/value/30_value_update_*.html reads
+  'mathematics - Change value with details' but the form title stays 'Change value' without the
+  phrases, because system_form::form_title_text names them only if all are named
+  (sandbox_value::has_named_phrases). use a value
+  with cached phrases (e.g. value_pi_math) for the value views by id or add the phrases of
+  group_16 to the cache of test_lib; both change the fixture file names, because they carry the id
+- a value has no reference (decided 2026-09-17), so the reference selector was removed from the
+  value add and edit views; value::ref_selector and value::phrase_ref_id in web/value/value.php
+  are now unused by any view
+
+## given group name: two producers of TN_READ and a generic name that is always empty
+
+found 2026-09-18 while fixing the double name of the e group in
+all_unit_read_tests::init_unit_db_tests (the e group is now created without a given name):
+
+- groups::TN_READ is given to two different phrase lists: groups::TEST_GROUPS_CREATE creates it
+  for the words [PI, MATH], but all_unit_read_tests::init_unit_db_tests and
+  value_read_tests (add_phrase_group) give it to the group of the triple 'Pi (math)'. since
+  value_base::save writes a given group name to the group row, the second one is refused with
+  NAME_ALREADY_EXISTS as soon as its value is not yet in the database (e.g. after a reset).
+  the developer decides which phrase list owns the name; the other producer gets its own
+  reserved name or no given name
+- group::generic_name always returns '', because the block that sets $result is commented out,
+  so the check `$name != $this->generic_name($msg)` in group::get_by_phrase_list takes every
+  non-empty name as given by the user, also one that equals the name generated from the phrases,
+  which then is written to the group row. compare with group::name_generated instead or let
+  generic_name return the generated name
+
+## database upgrade path
+
+two defects for the next minor version bump: sql_db::add_column pluralises its table argument via
+get_table_name, so it cannot take a real table name like values_standard_prime (a column for all
+value tables needs a variant that takes the name as in the database), and the version match in
+db_check::db_check has no arm for a 0.0.3 database (def::NEXT_VERSION maps a 0.0.4 database to
+db_upgrade_0_0_4), so the first start after the bump would end in an UnhandledMatchError
+
+## log function names taken from the log writer itself
+
+log_err without a function name derives it via library::php_function_from_exception from an
+Exception created inside text_log_functions.php, so the first trace frame is the log writer and the
+saved sys_log_function is "text_log_functions" or "src/main/php/cfg/log_text/text_log_functions"
+instead of the caller; the dedup in the log writer does not catch it either, so a test db load
+holds eight rows named text_log_functions. test_app::write_time adds the script path as a further
+log function. The type list compare of the tests drops sys_log_functions since 2026-09-17
+(test_api::json_remove_volatile), so this only pollutes the sys_log_functions table
+
+## unstable test baselines and a test gap of the one form value add view
+
+found 2026-09-18 in the review of the change that posts the phrases, the value and its type of the
+pure html value add view with one form (ui_select::value_add_fields):
+
+- the change log rows of workflow_write/change_formula_wf15/
+  wf15_show_edit_back_edit_save_cancel_edit_save_confirmed_edit_fill_confirmed.html moved by one
+  position without any formula change ('added latex ...' dropped out of the shown rows), so the
+  order of change log rows with the same timestamp is not deterministic. sort the change log list
+  by a second deterministic key (e.g. the change id) before it is shown, because a regenerated
+  snapshot only replaces one unstable baseline with another
+- src/test/resources/unit/user/list.csv contains the row of the localhost ip user ('13,::1') only
+  if the pod has been opened from localhost without login before the test run, so the baseline
+  flips with the environment. exclude the ip users from the user list baseline
+- no test posts the find and next request like a browser does since the one form change: with the
+  hidden confirmed step (z=2) and the back mask (9m=5), but without url_var::POST_SUBMIT, and
+  asserts that nothing is written and the pure add view is shown again. today this is covered
+  only by the generic frontend::request_triggers_action logic; add the step to the add_value
+  workflows (value_url_tests) and a negative test of request_triggers_action for such a url
+- the more details link of the pure html value add view takes the value and its type to the
+  detailed form only if a find and next has posted them before (ui_select::typed_value_url_par),
+  because a link never posts the form; a value typed just before the click is still lost. to
+  close the gap without javascript make more details a named submit button of the one form that
+  switches the mask to views::VALUE_ADD_DETAIL_ID without triggering url_to_action
+- url_test_base::assert_step runs url_to_action for every step, while http/view.php runs it only
+  for a form submit or a get action mask (frontend::request_triggers_action); only the
+  signup_confirm workflow passes $submit_acts = true so far. make the view.php gate the default
+  for all workflows and regenerate their snapshots in one change
+- the world GDP of 110.047109 trillion EUR 2024 (110047109 million EUR in solution_prio.json and
+  one copy per start_page/problem_*.json) is sourced to the IMF World Economic Outlook 2024, which
+  states it in USD, so the EUR label is probably wrong: 110 trillion USD are about 101 trillion EUR.
+  fix the unit or the number and regenerate the start page chains, because every potential loss of
+  the ranking is calculated from it
+- the low and high bounds of the world GDP and of the global human population in
+  solution_prio.json (factor 1.5 on the centre) are stated values marked "assumed"; they could be
+  replaced by range factor results like the bounds of the problem files, so that the factor is
+  stated once and the bounds follow the centre
+- sandbox_value::quality_mark finds "assumed" and "peer reviewed by quality journal" by their name
+  (words::ASSUMED, triples::PEER_REVIEWED), so a user who renames the phrase loses the mark; give
+  both a code_id in solution_prio.json, make sure the api sends the code_id of the group phrases
+  and check by the code_id instead
+- test_words::word_assumed has no phrase type, while solution_prio.json gives "assumed" the type
+  value_quality, so in the unit tests sandbox_value::name_link still names "assumed" as a phrase
+  link next to its "a" mark; set phrase_types::VALUE_QUALITY there, add the negative test that
+  value_ui_tests no longer shows the ">assumed</a>" link and re-baseline the fixtures it changes

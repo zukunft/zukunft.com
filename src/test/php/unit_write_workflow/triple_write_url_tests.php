@@ -246,6 +246,11 @@ class triple_write_url_tests extends triple_url_tests
     private function cleanup_test_triples(test_cleanup $t): void
     {
         $trp = new triple($t->usr1);
+        // remove the change log entries of the test triples before the rows themselves, because a
+        // change log entry must never point to a deleted test row (see docs/llm/testing.md) and
+        // because the change log is shown on the triple page: without this the entries of a
+        // previous run stay in the database and the workflow page snapshots change with every run
+        $t->cleanup_change_log($trp, triple_names::TEST_TRIPLES);
         foreach (triple_names::TEST_TRIPLES as $trp_name) {
             // write_named_cleanup removes the usr1 / usr2 sandbox rows including the usr1 owned base
             // triple (the workflows add it with the usr1 message user, see url_test_base::init); the
@@ -256,6 +261,7 @@ class triple_write_url_tests extends triple_url_tests
             $t->write_named_cleanup_one($trp, $t->usr_system, $trp_name);
         }
         $wrd = new word($t->usr1);
+        $t->cleanup_change_log($wrd, [word_names::TEST_ADD, word_names::TEST_ADD_TO]);
         foreach ([word_names::TEST_ADD, word_names::TEST_ADD_TO] as $wrd_name) {
             $t->write_named_cleanup($wrd, $wrd_name);
             $t->write_named_cleanup_one($wrd, $t->usr_system, $wrd_name);

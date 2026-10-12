@@ -360,15 +360,6 @@
     },
     {
       "words": [
-        "world",
-        "poverty rate",
-        "2024",
-        "percent"
-      ],
-      "number": "0.08480392156862745"
-    },
-    {
-      "words": [
         "international poverty line",
         "consumption",
         "USD"
@@ -408,15 +399,6 @@
     {
       "words": [
         "European Union",
-        "relative poverty line",
-        "2023",
-        "USD"
-      ],
-      "number": "12000"
-    },
-    {
-      "words": [
-        "European Union",
         "top income share",
         "2023",
         "percent"
@@ -433,19 +415,12 @@
       ],
       "number": "0.08",
       "source": "Eurostat Income and Living Conditions 2023"
-    },
-    {
-      "words": [
-        "European Union",
-        "income ratio",
-        "2023"
-      ],
-      "number": "5"
     }
   ],
   "formulas": [
     {
       "name": "poverty rate (formula)",
+      "description": "the share of the population living in extreme poverty, below the international poverty line of the World Bank",
       "expression": "\"poverty rate\" = \"extreme poverty\" / \"population\"",
       "assigned": [
         "world"
@@ -453,6 +428,7 @@
     },
     {
       "name": "relative poverty line (formula)",
+      "description": "the income below which a person counts as poor in relation to the surrounding society, set by the European Union at 60% of the median income",
       "expression": "\"relative poverty line\" = \"median income\" * 0.6",
       "assigned": [
         "European Union"
@@ -460,6 +436,7 @@
     },
     {
       "name": "income ratio (formula)",
+      "description": "a measure of income inequality, how many times more income the richest part of the population receives than the poorest part, e.g. the top 10% compared to the bottom 10%",
       "expression": "\"income ratio\" = \"top income share\" / \"bottom income share\"",
       "assigned": [
         "European Union"

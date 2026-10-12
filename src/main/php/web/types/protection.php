@@ -60,7 +60,7 @@ class protection extends type_list
      */
     function selector(
         string $form = '',
-        int    $selected = 0,
+        ?int   $selected = 0,
         string $name = self::NAME,
         string $style = view_styles::COL_SM_4
     ): string

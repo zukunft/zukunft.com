@@ -71,5 +71,11 @@ class icons
     // previous page of rows
     const string PAGE_FORWARD = 'fas fa-chevron-right';
     const string PAGE_BACK = 'fas fa-chevron-left';
+    // shown behind each column header of a value table to sort the rows by the column, the
+    // smallest number or the first name on top (up) or the biggest or the last (down)
+    const string SORT_UP = 'fas fa-sort-up';
+    const string SORT_DOWN = 'fas fa-sort-down';
+    // the small save button of a value that is changed in place e.g. a setting of the settings page
+    const string SAVE = 'fas fa-floppy-disk';
 
 }

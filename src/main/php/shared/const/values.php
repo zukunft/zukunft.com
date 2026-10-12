@@ -67,7 +67,10 @@ class values
     // the group id of the target price earning ratio of companies.json, which is the only seeded
     // value with a share and a protection type that are not the default, so it is the example for
     // the share and protection subtitle of the value default view
-    const int TARGET_PE_RATIO_ID = 33393;
+    // the group of one triple is the triple id with the sign bit of a 16 bit slot, so this is a
+    // pinned phrase id and is re-baselined like word_names::*_ID (docs/llm/testing.md):
+    // 32768 + 703 for the "Target Price Earning Ratio" triple
+    const int TARGET_PE_RATIO_ID = 33471;
     const int TRANSITION_OF_CS = 9192631770;
     const int SPEED_OF_LIGHT = 299792458;
     const string SPEED_OF_LIGHT_TXT = "299'792'458";
@@ -79,11 +82,13 @@ class values
     CONST string SAMPLE_FLOAT_HIGH_QUOTE_FORM = "123'456";
     CONST string SAMPLE_FLOAT_SPACE_FORM = "123 456";
     CONST float SAMPLE_PCT = 0.182642816772838; // to test the percentage calculation by the percent of Swiss inhabitants living in canton Zurich
-    CONST float INCREASE = 0.007871833296164; // to test the increase calculation by the increase of inhabitants in Switzerland from 2019 to 2020
+    CONST float INCREASE = 0.0074676683205838; // to test the increase calculation by the increase of inhabitants in Switzerland from 2019 to 2020
     CONST float CANTON_ZH_INHABITANTS_2020_IN_MIO = 1.553423;
     CONST int CITY_ZH_INHABITANTS_2019 = 415367;
-    CONST float CH_INHABITANTS_2019_IN_MIO = 8.438822;
-    CONST float CH_INHABITANTS_2020_IN_MIO = 8.505251;
+    CONST float CH_INHABITANTS_2019_IN_MIO = 8.606033;
+    CONST float CH_INHABITANTS_2020_IN_MIO = 8.6703;
+    // the default confidence of the value quality "assumed" (see solution_prio.json)
+    CONST float ASSUMED_CONFIDENCE = 0.3;
     CONST float SHARE_PRICE = 17.08;
     CONST float EARNINGS_PER_SHARE = 1.22;
     CONST string SALES_INCREASE_2017_FORM = '90.03 %';

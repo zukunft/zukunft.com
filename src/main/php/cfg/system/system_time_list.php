@@ -106,15 +106,6 @@ class system_time_list
         return $time_report;
     }
 
-    function show_total(): string
-    {
-        $total = 0.0;
-        foreach ($this->lst as $time) {
-            $total = $total + $time;
-        }
-        return round($total, 4) . ' sec';
-    }
-
     /**
      * @return string description of the execution times by category of the last section
      */

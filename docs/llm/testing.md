@@ -117,6 +117,21 @@ cleanup `del()` calls themselves have written about the test rows.
   pointing to the deleted test words — or removes the entries with a manual
   `DELETE`.
 
+## A cleanup deletes through `del()` — never with a plain delete
+
+Top rule 4 of `docs/llm/coding.md` applies to test code without exception: a
+cleanup removes a test row with the object's logged `del()` and afterwards
+removes the change log entries of that row with the `cleanup_change_log*`
+helpers above. When a logged delete does not remove the row, the cleanup does
+not fall back to a plain sql delete — it asserts that the row is gone, so the
+run names the broken logged delete, and that delete is repaired. A plain delete
+in a test cleanup hides a defect of the product and destroys the audit trail
+that the leftover check needs to explain a row.
+
+- **Right**: `$grp->del($msg)`, reload, `assert_false(..., $grp->is_saved())`.
+- **Wrong**: `$db_con->delete($grp->sql_delete($sc, $msg), ...)` "because the
+  logged delete does not work".
+
 ## An LLM never runs the `/test/*` scripts — the developer does
 
 The predefined test scripts in `/test/*` — `test.php`, `test_unit.php`,
@@ -279,33 +294,35 @@ $chf->phrases_related = $sym_lst;
 $chf->phrases_related = $t_phr->list_chf_symbol_ui();
 ```
 
-### Test url arrays come from a factory object via to_url_array($msg)
+### Test url arrays are built from consts
 
-A url test (e.g. `unit_workflow/*_url_tests.php`) never hand-builds the object
-fields of a `$url_arr`: it starts from a factory object's `to_url_array($msg)`
-(`$t_wrd->word_dsp()->to_url_array($msg)`) or a factory url helper
-(`test_words::word_new_url()`, `word_add_url()`, `change_url_array()`, ...) and
-adds only the request context — mask, action, step, back, user. A hand-built key
-list duplicates the object's field mapping in the test body, and the factory
-would no longer show centrally which test objects each test uses; keeping the
-build in the factory also means a field added to the object reaches every url
-test through one change. To vary a field, change it on the factory object
-(`$wrd->set_description(...)`) before calling `to_url_array($msg)`, never by
-patching the array. The only urls built without a factory object are those that
-carry no object at all (e.g. a search pattern url).
+A test that maps or renders a url (e.g. a `url_mapper` test or a
+`unit_workflow/*_url_tests.php` step) writes its `$url_arr` with the `url_var`
+keys and the consts of the test object (`word_names::MATH_ID`,
+`sources::BFS`, ...), never with `to_url_array($msg)`. So one test checks the url
+contract (the keys a browser sends) and the mapping together, and a change of
+`to_url_array` cannot hide a change of the mapping, because both sides would move
+at once. Put all the fields the test needs into the one url, so a single mapping
+checks several fields. When a url key or a test const changes, the tests with
+that key are adjusted; this is accepted, because the goal is to reduce the
+changes of the code, not of the tests. `to_url_array` itself is tested in its own
+round trip (object → url → object), which is the only place that calls it in a
+test. A factory url helper (`test_words::word_new_url()`, ...) is fine where it
+returns such a const url for more than one test.
 
-- **Wrong**:
-```php
-$url_arr = [];
-$url_arr[url_var::MASK] = views::WORD_EDIT_ID;
-$url_arr[url_var::ID] = word_names::MATH_ID;
-$url_arr[url_var::NAME] = word_names::MATH;
-```
-- **Right** — the object fields come from the factory, the test adds the context:
-
+- **Wrong** — the url comes from the function the test should check against:
 ```php
 $url_arr = $t_wrd->word_dsp()->to_url_array($msg_ui);
 $url_arr[url_var::MASK] = views::WORD_EDIT_ID;
+```
+- **Right** — the keys and values are consts, and one url checks several fields:
+
+```php
+$url_arr = [
+    url_var::MASK => views::WORD_EDIT_ID,
+    url_var::ID => word_names::MATH_ID,
+    url_var::NAME => word_names::MATH,
+];
 ```
 
 ### Factory names don't repeat the object word
@@ -585,6 +602,29 @@ Two follow-ons:
   acceptable. Reach for it last. (Still feed it named consts:
   `strpos($html, icons::EDIT)`, not `'fas fa-edit'`.)
 
+### Every error message explains itself
+
+A failing test is read by someone who did not write it, often from a pasted
+line without the code. So the failure output must say what went wrong: compare
+the values the check is about, not a boolean built from them. When no specific
+`assert_*` variant fits, build the actual and the expected side as short texts
+and compare those, e.g. the loaded id and name, the sorted names a page shows,
+or a result with the `$msg->text()` of the call appended when the message is not
+ok. The comment above the assert names the most likely cause of a failure.
+
+- **Wrong**: `$t->assert_true($test_name, $loaded_id > 0 and $wrd->name() == words::CHF);`
+  fails with "actual: false, expected: true", which does not tell whether the
+  load failed or selected another word.
+- **Right**: `$t->assert($test_name, $loaded_id . ' ' . $wrd->name(), words::CHF_ID . ' ' . words::CHF);`
+  fails with e.g. "actual: 460 S$, expected: 460 CHF", which shows at once that
+  the pinned id selects another word and needs a re-baseline.
+- **Right**: the start page selection test compares the sorted problem names
+  that a page shows with all problems and appends the message of the rendering,
+  so a failure tells whether rows are missing or the table was not drawn.
+
+The same holds for a user message: it names the object, the problem and the
+solution (`docs/llm/state-and-messages.md`).
+
 ### Read a `user_message` result with `$msg->text()`, not `all_message_text()`
 
 A `user_message` is append-only and threaded across a whole request, so by the
@@ -703,6 +743,13 @@ import stays as small as the task asks for, so that the object count of every
 class stays the same. Never reformat a seed file and never add or remove a
 word, triple or other object on the side — see *Change as little as the task
 asks for* in `docs/llm/json_structure.md`.
+
+A shift itself is planned and accepted, not a reason to keep data out of the
+setup: the phrases the tests use most often are imported first, so a new seed
+file or a grown one shifts few pinned ids, and importing more data on every
+setup keeps the pressure high to speed up the import. A re-baseline is the
+normal follow-up of such a change, done by the reviewer with the sequence
+below, never avoided by leaving data out.
 
 The authority for the new ids is `src/test/resources/unit/<class>/list.csv`. That
 file is not hand-maintained: `test_db_load::csv_recreate()` dumps the whole table
@@ -1008,6 +1055,30 @@ change) snapshots into `src/test/resources/web/html/workflow/`; the matching
 folders mirror each other so the read-only and write runs of the same workflow
 are easy to compare; the write run additionally proves the database side
 effect of the confirmed step.
+
+A workflow of the user masks (e.g. `signup_confirm`) sets `frontend::live_request`
+to false, so the signup and the activation write to the database but never switch
+the php session of the streamed test run nor send a mail, and it passes
+`$submit_acts = true` to `assert_step`, so like `http/view.php` only a form submit
+runs the action of the view (opening the activation link must not confirm the
+email yet). A typed password never reaches a snapshot, because `assert_url`
+masks the `url_var::SECRET_VARS`.
+
+## The start page is snapshotted for every selection of its sub menus
+
+`unit_ui/start_page_ui_tests.php` renders the ranking of the start page from the
+unit fixtures (`test_values::value_list_start_page`) for every combination that
+the sub menus offer: the rows of the "… more" tail (`dls`), the column tiers with
+and without the ranges of the "…" header (`dlc`, `dlr`) and the form of the
+ranking (`dla`: table, chart or both). Each page is compared with
+`src/test/resources/web/html/start_page/start_page<_var_value…>.html`, named by
+the url vars of the selection, so the file of a page is found from its url
+(`start_page_dls_20_dlc_0_dlr_1_dla_chart.html`); the default of a sub menu has
+no var. The test needs no database, so it is the fast check of a ranking change;
+the `views_by_id/start_page/` snapshots keep the few full pages with the frame,
+and the details page there is the only one fetched from the pod. A snapshot of a
+selection that the menus no longer offer is reported as orphaned like the
+`views_by_id` ones.
 
 ## Every machine-checkable coding rule has a coded test
 

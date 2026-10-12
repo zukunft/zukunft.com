@@ -41,6 +41,9 @@ enum api_types: string
     // include the most often used related objects in the api message e.g. for a symbol like 'CHF' the related 'Swiss Franc'
     case INCL_RELATED = 'incl_related';
 
+    // include the slow lists of what a result is based on e.g. the values used for the calculation
+    case INCL_USED = 'incl_used';
+
     // include only the phrase names for a short list that is at least somehow user human-readable
     case PHRASE_NAMES = 'phrase_names';
 
@@ -70,9 +73,6 @@ enum api_types: string
 
     // include object id and the impact of excluded objects for warning messages in the frontend
     case WITH_EXCLUDED_ID = 'with_excluded_id';
-
-    // do not fill up the group id to the full key length
-    case NO_KEY_FILL = 'no_key_fill';
 
     // internal parameter for unit testing to switch off the database loading of missing objects
     // and ignore the excluded flag so include all fields also for excluded

@@ -25,6 +25,6 @@ END;
 SELECT word_delete_log
        (3,
         3,
-        10,
+        112,
         'mathematics',
         1);

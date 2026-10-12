@@ -160,8 +160,11 @@ class ref extends sandbox
      */
     function url_mapper(array $url_array, user_message $msg, data_object|null $dto = null): user_message
     {
-        parent::url_mapper($url_array, $msg, $dto);
-        if ($msg->is_ok()) {
+        $map_msg = new user_message($msg->usr); // the problems of the parent mapping, merged into $msg right away
+        parent::url_mapper($url_array, $map_msg, $dto);
+        $msg->merge($map_msg);
+        // the own fields depend on the parent mapping e.g. of the id, not on an unrelated earlier error
+        if ($map_msg->is_ok()) {
             if (array_key_exists(url_var::PHRASE, $url_array)) {
                 $this->set_phrase_by_id($url_array[url_var::PHRASE]);
             } else {
@@ -600,26 +603,26 @@ class ref extends sandbox
             log_err('type list cache missing, falling back to the request cache');
             $typ_lst = $ui_sys->typ_lst_cache;
         }
-        $used_ref_type_id = $this->predicate_id();
-        if ($used_ref_type_id == null) {
-            $used_ref_type_id = $typ_lst->ref_typ->default_id();
-        }
-        return $typ_lst->ref_typ->selector($form, $used_ref_type_id);
+        return $this->type_selector_with_pre($typ_lst->ref_typ, $form, $this->predicate_id());
     }
 
     /**
      * @param string $form
+     * @param user_message $msg with the requesting user for whom the sources are selected
      * @param string $pattern
      * @param source_list|null $src_lst the frontend cache with the configuration, the preloaded source and the cached objects
+     * @param bool $test_mode true to offer only the cached sources, because a snapshot is created without a backend call
      * @return string
      */
-    function source_selector(string $form, string $pattern, ?source_list $src_lst): string
+    function source_selector(string $form, user_message $msg, string $pattern, ?source_list $src_lst, bool $test_mode = false): string
     {
-        // TODO review and maybe use test_mode parameter
-        if ($pattern != '') {
-            $src_lst->load_like($pattern);
-        }
-        return $src_lst->selector($form, $this->id(), url_var::SOURCE, msg_id::FORM_SELECT_SOURCE);
+        $src_lst = $src_lst ?? new source_list();
+        $src_lst->load_for_selector($pattern, $msg, $test_mode);
+        // the selected entry is the source of this reference, not the reference itself
+        $selected = $this->source?->id() ?? 0;
+        $sel_html = $src_lst->selector($form, $selected, url_var::SOURCE, msg_id::FORM_SELECT_SOURCE);
+        // the source is part of db_fld_to_url, so the confirm view needs the opening source as pre value
+        return $this->add_pre_value($sel_html, url_var::SOURCE, (string)$selected);
     }
 
 

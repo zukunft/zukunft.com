@@ -839,6 +839,8 @@ class test_mappers
             case component_types::PHRASE:
             case component_types::FORM_TITLE:
             case component_types::FORM_FIELD_NAME:
+            case component_types::FORM_WORD_ADD_SIMPLE:
+            case component_types::FORM_TRIPLE_ADD_SIMPLE:
             case component_types::FORM_FIELD_DESCRIPTION:
             case component_types::FORM_FIELD_SELECTION_NAME:
             case component_types::FORM_FIELD_SELECTION_DESCRIPTION:
@@ -868,6 +870,7 @@ class test_mappers
             case component_types::SYSTEM_TITLE:
             case component_types::SYSTEM_SUB_TITLE:
             case component_types::SYSTEM_SUB_TITLE_VAR:
+            case component_types::RELATED_SYSTEM_VIEW_SELECTOR:
             case component_types::SYSTEM_BODY_ABOUT:
             case component_types::SYSTEM_BODY_SETUP:
             case component_types::SYSTEM_BODY_SEARCH:
@@ -877,6 +880,10 @@ class test_mappers
             case component_types::SYSTEM_BODY_PROCESS:
             case component_types::SYSTEM_BODY_PROCESS_PROGRESS:
             case component_types::SYSTEM_BODY_PROCESS_LIST:
+            case component_types::SYSTEM_BODY_NOT_YET_AVAILABLE:
+            case component_types::SYSTEM_BODY_USER_JOBS:
+            case component_types::SYSTEM_BODY_ALL_JOBS:
+            case component_types::SYSTEM_BODY_CONFIG_TREE:
             case component_types::SYSTEM_BODY_ERROR_LOG:
             case component_types::SYSTEM_BODY_ERROR_UPDATE:
             case component_types::LIST_PARENTS_OF_WORD:
@@ -962,6 +969,10 @@ class test_mappers
             case component_types::NUMERIC_VALUE:
             case component_types::VALUES_ALL:
             case component_types::SYSTEM_BODY_VALUE_DETAIL:
+            case component_types::FORM_PHRASE_STEPS:
+            case component_types::FORM_VALUE_ADD_SIMPLE:
+            case component_types::FORM_PHRASE_VALUE_LINE:
+            case component_types::FORM_VALUE_OVERWRITE:
                 $obj = $t_val->value_16_filled();
                 break;
             case component_types::FORM_FIELD_GROUP:
@@ -1114,10 +1125,10 @@ class test_mappers
                 $url_array = array_merge($url_array, $obj_array);
                 break;
             case phrase::class:
-                // the calculator shows the values of a phrase as a table, so its sample is the
-                // triple "global warming", which has the values of the start page fixture,
-                // instead of the filled test phrase that has none
-                if ($msk_id == views::CALCULATOR_ID) {
+                // the table and the calculator show the values of a phrase as a table, so their
+                // sample is the triple "global warming", which has the values of the start page
+                // fixture, instead of the filled test phrase that has none
+                if (in_array($msk_id, [views::TABLE_ID, views::CALCULATOR_ID])) {
                     $obj = $t_trp->global_warming()->phrase();
                 } else {
                     $obj = $t_phr->phrase_filled();
@@ -1207,6 +1218,23 @@ class test_mappers
         $url_array[] = [url_var::ID, $obj->id()];
         $url_array[] = [url_var::ACTION, url_var::CRUD_READ, true];
         return $this->array_to_url_type($url_array, $type, $msg_ui);
+    }
+
+    /**
+     * the show url of a phrase page with the fields of the phrase like class_to_url_show, because
+     * a snapshot test renders the page from the url without a backend call
+     * @param int $msk_id the id of the phrase view e.g. the table of "global warming reason"
+     * @param phrase $phr the phrase that the page shows
+     * @param user_message_ui $msg_ui to enhance with messages to the user
+     * @return string the complete url for the test server
+     */
+    function phrase_page_url(int $msk_id, phrase $phr, user_message_ui $msg_ui): string
+    {
+        $url_array[] = [url_var::MASK, $msk_id];
+        $url_array = array_merge($url_array, $this->phrase_url($phr, url_var::MASK_HUMAN));
+        $url_array[] = [url_var::ID, $phr->id()];
+        $url_array[] = [url_var::ACTION, url_var::CRUD_READ, true];
+        return $this->test_url($this->array_to_url_type($url_array, url_var::MASK_HUMAN, $msg_ui));
     }
 
     /**

@@ -82,6 +82,9 @@ class calc_internal
     const string RESULT_TYPE_USER = 'user';   // returns a formula in the user format
     const string RESULT_TYPE_VALUE = 'value'; // returns a result of the formula
 
+    // the marker of the exponent in a number in scientific notation e.g. "6.55E-5"
+    const string EXPONENT_MARKER = 'E';
+
     /*
      * external functions that are supposed to be called from other libraries
      */
@@ -105,14 +108,17 @@ class calc_internal
             log_debug("math_parse after if:" . $result);
             $result = $this->math_bracket($result);
             log_debug("math_parse after bracket:" . $result);
-            $result = $this->math_mul($result);
-            log_debug("math_parse after mul:" . $result);
-            $result = $this->math_div($result);
-            log_debug("math_parse after div:" . $result);
+            // the operator with the lowest precedence splits the formula first, because each part
+            // is parsed on its own: splitting at a "*" first would evaluate a "+" inside its left
+            // part before the multiplication, e.g. "1 + 2 * 3" as "(1 + 2) * 3"
             $result = $this->math_add($result);
             log_debug("math_parse after add:" . $result);
             $result = $this->math_sub($result);
             log_debug("math_parse after sub:" . $result);
+            $result = $this->math_mul($result);
+            log_debug("math_parse after mul:" . $result);
+            $result = $this->math_div($result);
+            log_debug("math_parse after div:" . $result);
         }
 
         log_debug('calculated result: "' . $result . '"');
@@ -155,7 +161,8 @@ class calc_internal
             // in case of brackets handle the inner part first
             if (!$text_linked) {
                 if ($open_brackets == 0) {
-                    if (substr($formula, $pos, strlen($separator)) == $separator) {
+                    if (substr($formula, $pos, strlen($separator)) == $separator
+                        and !$this->is_sign($formula, $pos)) {
                         $found = true;
                     }
                 }
@@ -210,7 +217,8 @@ class calc_internal
             // remember the separator only at the top bracket level and outside text
             if (!$text_linked) {
                 if ($open_brackets == 0) {
-                    if (substr($formula, $pos, strlen($separator)) == $separator) {
+                    if (substr($formula, $pos, strlen($separator)) == $separator
+                        and !$this->is_sign($formula, $pos)) {
                         $last = $pos;
                     }
                 }
@@ -227,6 +235,53 @@ class calc_internal
 
         log_debug($last);
         return $last;
+    }
+
+    /**
+     * true if the "+" or "-" at the given position belongs to a number and is not an operator:
+     * the sign of a number at the start of the formula or after another operator or an open
+     * bracket (e.g. the "-" of "6 / -2"), and the exponent sign of a number in scientific
+     * notation (e.g. the "-" of "6.5502183406112E-5", which php writes for a small intermediate
+     * result); a sign that no number follows (e.g. a lone "-" or "- log(x)") stays an operator,
+     * so that the db format conversion still detects it as a math symbol
+     *
+     * @param string $formula the formula text
+     * @param int $pos the position of a separator in the formula
+     * @return bool true if the separator at the position is the sign of a number
+     */
+    private function is_sign(string $formula, int $pos): bool
+    {
+        $result = false;
+        $char = substr($formula, $pos, 1);
+        if ($char == chars::ADD or $char == chars::SUB) {
+            // the chars next to the sign that are not blanks
+            $prev = substr(rtrim(substr($formula, 0, $pos)), -1);
+            $next = substr(ltrim(substr($formula, $pos + 1)), 0, 1);
+            $number_follows = (ctype_digit($next) or $next == chars::DECIMAL_POINT);
+            $is_start = ($prev == '');
+            $after_operator = in_array($prev, [chars::ADD, chars::SUB, chars::MUL, chars::DIV, chars::BRACKET_OPEN]);
+            // brackets around the whole condition, because "or" binds weaker than the assignment
+            $result = ((($is_start or $after_operator) and $number_follows)
+                or $this->is_exponent_sign($formula, $pos));
+        }
+        return $result;
+    }
+
+    /**
+     * @param string $formula the formula text
+     * @param int $pos the position of a "+" or "-" in the formula
+     * @return bool true if the sign is the exponent sign of a number in scientific notation
+     */
+    private function is_exponent_sign(string $formula, int $pos): bool
+    {
+        $result = false;
+        if ($pos >= 2) {
+            $marker = strtoupper(substr($formula, $pos - 1, 1));
+            $before = substr($formula, $pos - 2, 1);
+            $after = substr($formula, $pos + 1, 1);
+            $result = ($marker == self::EXPONENT_MARKER and ctype_digit($before) and ctype_digit($after));
+        }
+        return $result;
     }
 
 

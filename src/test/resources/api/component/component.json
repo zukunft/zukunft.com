@@ -1,6 +1,6 @@
 {
-  "id": 1,
-  "name": "Word",
-  "description": "simply show the word or triple name",
-  "type_id": 8
+    "id": 1,
+    "name": "Word",
+    "description": "simply show the word or triple name",
+    "type_id": 32
 }

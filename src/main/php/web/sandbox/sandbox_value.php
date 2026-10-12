@@ -38,7 +38,9 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::GROUP . 'group.php';
 include_once html_paths::HELPER . 'data_object.php';
+include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'html_selector.php';
+include_once html_paths::HTML . 'styles.php';
 include_once html_paths::SANDBOX . 'sandbox.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::PHRASE . 'phrase.php';
@@ -49,17 +51,25 @@ include_once html_paths::SHARED . 'api.php';
 include_once html_paths::SHARED . 'url_var.php';
 include_once html_paths::SHARED . 'json_fields.php';
 include_once html_paths::SHARED . 'library.php';
+include_once html_paths::SHARED_CONST . 'triples.php';
+include_once html_paths::SHARED_CONST . 'views.php';
+include_once html_paths::SHARED_CONST . 'words.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::SHARED_ENUM . 'value_types.php';
 include_once html_paths::SHARED_TYPES . 'view_styles.php';
 
 use Zukunft\ZukunftCom\main\php\web\group\group;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\html_selector;
+use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\enum\value_types;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
@@ -67,9 +77,20 @@ use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use DateTime;
+use DateTimeInterface;
 
 class sandbox_value extends sandbox
 {
+
+    // the format of a time value in a form field and in the api message to the backend
+    const string TIME_FORMAT = DateTimeInterface::ATOM;
+    // the key of the date text in the json of a DateTime object
+    const string JSON_DATETIME_DATE = 'date';
+    // the grey superscript behind a number that shows how the number has been found
+    // TODO Prio 3 move the config.yaml
+    const string QUALITY_MARK_ASSUMED = 'a';
+    const string QUALITY_MARK_NO_SOURCE = '-';
+    const string QUALITY_MARK_PEER_REVIEWED = '+';
 
     /*
      * object vars
@@ -102,10 +123,16 @@ class sandbox_value extends sandbox
             $this->time_value = $value;
         }
     } // a time value
-    // TODO add geo points
+    public ?string $geo_value = null {
+        set {
+            $this->geo_value = $value;
+        }
+    } // a geolocation value e.g. '47.263179, 8.684730'
 
     // true if the user has done no personal overwrites which is the default case
     private bool $is_std = true;
+    // true if an admin saves the value as the default of all users and not as the own overwrite
+    public bool $set_default = false;
 
 
     /*
@@ -131,26 +158,51 @@ class sandbox_value extends sandbox
      */
     function url_mapper(array $url_array, user_message $msg, data_object|null $dto = null): user_message
     {
-        parent::url_mapper($url_array, $msg, $dto);
+        $map_msg = new user_message($msg->usr); // the problems of the parent mapping, merged into $msg right away
+        parent::url_mapper($url_array, $map_msg, $dto);
+        $msg->merge($map_msg);
         // even if the value is added set already the id if possible because if might contain the phrase list
         if ($this->url_is_add_action($url_array)) {
             if (array_key_exists(url_var::ID, $url_array)) {
                 $this->set_id($url_array[url_var::ID]);
             }
         }
-        // the other normal fields
-        if ($msg->is_ok()) {
+        // the other normal fields, which depend on the parent mapping, not on an unrelated earlier error
+        if ($map_msg->is_ok()) {
             if (array_key_exists(url_var::PHRASE_LIST, $url_array)) {
                 $id_lst = explode(',', $url_array[url_var::PHRASE_LIST]);
                 if (count($id_lst) > 0) {
-                    $this->set_phrases_by_is_list($id_lst);
+                    $this->set_phrases_by_is_list($id_lst, $msg, $dto);
                 }
+            }
+            // the name that the user has given to the group of the value
+            if (array_key_exists(url_var::GROUP_NAME, $url_array)) {
+                $this->grp->set_name($url_array[url_var::GROUP_NAME]);
+            }
+            // the description of the value, which is the description of its group
+            if (array_key_exists(url_var::DESCRIPTION, $url_array)) {
+                $this->grp->set_description($url_array[url_var::DESCRIPTION]);
             }
             if (array_key_exists(url_var::NUMERIC_VALUE, $url_array)) {
-                if ($url_array[url_var::NUMERIC_VALUE] != null) {
-                    $this->number = $url_array[url_var::NUMERIC_VALUE];
+                $number = $url_array[url_var::NUMERIC_VALUE];
+                // a typed text would fatal on the float property, so it is reported instead
+                if (is_numeric($number)) {
+                    $this->number = (float)$number;
+                } elseif ($number != null) {
+                    $msg->add(msg_id::URL_VALUE_NOT_NUMERIC, [msg_id::VAR_VALUE => $number]);
                 }
             }
+            if (array_key_exists(url_var::VALUE_TEXT, $url_array)) {
+                $this->text_value = $url_array[url_var::VALUE_TEXT];
+            }
+            if (array_key_exists(url_var::VALUE_TIME, $url_array)) {
+                $this->time_value = $this->time_from_text($url_array[url_var::VALUE_TIME]);
+            }
+            if (array_key_exists(url_var::VALUE_GEO, $url_array)) {
+                $this->geo_value = $url_array[url_var::VALUE_GEO];
+            }
+            // only the request, the backend save checks if the user is an admin
+            $this->set_default = (($url_array[url_var::SET_DEFAULT] ?? '') == url_var::TRUE);
         }
         return $msg;
     }
@@ -163,20 +215,6 @@ class sandbox_value extends sandbox
     function set_is_std(bool $is_std = true): void
     {
         $this->is_std = $is_std;
-    }
-
-    // TODO review (split value objects?)
-    function value(user_message $msg): float|string|DateTime|null
-    {
-        if ($this->number() != null) {
-            return $this->number();
-        } elseif ($this->text_value() != null) {
-            return $this->text_value();
-        } elseif ($this->time_value() != null) {
-            return $this->time_value();
-        } else {
-            return null;
-        }
     }
 
     function number(): ?float
@@ -194,6 +232,29 @@ class sandbox_value extends sandbox
         return $this->time_value;
     }
 
+    function geo_value(): ?string
+    {
+        return $this->geo_value;
+    }
+
+    /**
+     * @param string|array|null $time the time as text or as the json of a DateTime object of the backend
+     * @return DateTime|null the time or null if no time is given
+     */
+    private function time_from_text(string|array|null $time): ?DateTime
+    {
+        $result = null;
+        $text = $time;
+        if (is_array($time)) {
+            $text = $time[self::JSON_DATETIME_DATE] ?? null;
+        }
+        if ($text != null and $text != '') {
+            $lib = new library();
+            $result = $lib->get_datetime($text, $this->dsp_id(), 'value time mapper');
+        }
+        return $result;
+    }
+
     /**
      * @return bool false if the loaded value is user-specific
      */
@@ -205,17 +266,43 @@ class sandbox_value extends sandbox
     /**
      * set the phrase list based on the given id list
      * @param array $id_lst with the all phrase ids for the unique identification of this value
+     * @param user_message $msg to report an id that is not a number e.g. from a changed url
+     * @param data_object|null $dto the request cache with the names of the phrases, which the url does not carry
      * @return void
      */
-    function set_phrases_by_is_list(array $id_lst): void
+    function set_phrases_by_is_list(array $id_lst, user_message $msg, ?data_object $dto = null): void
     {
-        $phr_lst = new phrase_list();
         foreach ($id_lst as $id) {
-            $phr = new phrase();
-            $phr->set_id($id);
-            $this->grp->add($phr);
+            // a text would fatal on the int id, so it is reported and skipped; an empty list is normal
+            if (filter_var($id, FILTER_VALIDATE_INT) !== false) {
+                $phr = new phrase();
+                $phr->set_id((int)$id);
+                // a phrase of the cache has the name, so that e.g. the form title can show it
+                if ($dto != null) {
+                    $phr = $dto->phr_lst->cached_phrase($phr);
+                }
+                $this->grp->add($phr);
+            } elseif ($id != '') {
+                $msg->add(msg_id::URL_VALUE_NOT_NUMERIC, [msg_id::VAR_VALUE => $id]);
+            }
         }
     }
+
+    /**
+     * @return bool true if the phrases of the value are loaded with their names, so they can be shown as links
+     *              e.g. in the form title; a value filled from the url only carries the phrase ids
+     */
+    function has_named_phrases(): bool
+    {
+        $result = !$this->phr_lst()->is_empty();
+        foreach ($this->phr_lst()->lst() as $phr) {
+            if ($phr->name() == '') {
+                $result = false;
+            }
+        }
+        return $result;
+    }
+
     /**
      * @returns phrase_list the list of phrases as an object
      */
@@ -246,8 +333,9 @@ class sandbox_value extends sandbox
         } elseif (array_key_exists(json_fields::TEXT_VALUE, $json_array)) {
             $this->text_value = $json_array[json_fields::TEXT_VALUE];
         } elseif (array_key_exists(json_fields::TIME_VALUE, $json_array)) {
-            $this->time_value = $json_array[json_fields::TIME_VALUE];
-            // TODO add geo point
+            $this->time_value = $this->time_from_text($json_array[json_fields::TIME_VALUE]);
+        } elseif (array_key_exists(json_fields::GEO_VALUE, $json_array)) {
+            $this->geo_value = $json_array[json_fields::GEO_VALUE];
         } else {
             $this->number = null;
         }
@@ -285,12 +373,8 @@ class sandbox_value extends sandbox
      */
     public function value_type_selector(string $form, ?type_lists $typ_lst): string
     {
-        $lst = [];
-        foreach (value_types::cases() as $case) {
-            $lst[$case->value] = $case->value;
-        }
         $sel = new html_selector();
-        $sel->lst = $lst;
+        $sel->lst = value_types::selector_list();
         $sel->name = url_var::TYPE;
         $sel->form = $form;
         $sel->selected = value_types::NUMBER->value;
@@ -304,6 +388,246 @@ class sandbox_value extends sandbox
     /*
      * display
      */
+
+    /**
+     * the impact of a value or a result is the highest impact of the phrases it is assigned to
+     * so that the most relevant numbers (e.g. of the highest ranked phrase) are shown first
+     * @return float the system calculated impact used to sort the numbers
+     */
+    function impact(): float
+    {
+        return $this->grp->phr_lst()->max_impact();
+    }
+
+    /**
+     * to select a value or a result by a phrase
+     * @param phrase $phr the phrase to select the number
+     * @param user_message $msg to report a problem of reading a phrase type
+     * @return bool true if the number is related to the given phrase or to a phrase of its type
+     */
+    function has_phrase(phrase $phr, user_message $msg): bool
+    {
+        $result = false;
+        foreach ($this->grp->phr_lst()->lst() as $val_phr) {
+            if ($val_phr->is_same($phr)) {
+                $result = true;
+            } elseif ($val_phr->is_type_phrase($phr, $msg)) {
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the number of a value or of a result as display-ready html, so that a table cell shows
+     * a calculated number in the same format as a measured one e.g. "-32%" for a percent result
+     *
+     * a text, a time or a geo value is escaped here, because the callers emit the result
+     * without escaping it again (see value_edit)
+     *
+     * @param user_message $msg to report a problem while formatting the number
+     * @return string the html code of the number, the text, the time or the geo value
+     */
+    function value(user_message $msg): string
+    {
+        global $ui_sys;
+        $html = new html_base();
+        if ($this->number() !== null) {
+            $result = $this->val_formatted($msg);
+        } elseif ($this->text_value() !== null) {
+            $result = $html->esc($this->text_value());
+        } elseif ($this->time_value() !== null) {
+            // a DateTime cannot be escaped, so it is formatted before, which also applies the
+            // date format that the user has configured
+            $result = $html->esc(date_format($this->time_value(), $ui_sys->cfg->date_time_format()));
+        } elseif ($this->geo_value() !== null) {
+            $result = $html->esc($this->geo_value());
+        } else {
+            $result = '';
+        }
+        return $result;
+    }
+
+    /**
+     * the number as a link to the page of the value or of the result followed by its quality
+     * mark, so that a table cell leads to the number itself and a result to the formula that
+     * has calculated it
+     *
+     * @param user_message $msg to report a problem while formatting the number
+     * @param array $url_arr with the url vars of the calling page for the back link
+     * @return string the html code of the linked number with its quality mark
+     */
+    function value_edit(user_message $msg, array $url_arr = []): string
+    {
+        return $this->value_edit_link($msg, $url_arr) . $this->quality_mark();
+    }
+
+    /**
+     * the number as a link without the quality mark, e.g. for a bound of a probability range,
+     * which has the quality of its centre value, so that the mark is shown only once behind
+     * the centre value (see value_list::cell); not named value_link, because value::value_link
+     * links the class name page and would overwrite it
+     *
+     * @param user_message $msg to report a problem while formatting the number
+     * @param array $url_arr with the url vars of the calling page for the back link
+     * @return string the html code of the linked number
+     */
+    function value_edit_link(user_message $msg, array $url_arr = []): string
+    {
+        $html = new html_base();
+        $url = $html->url_back($this->default_view_id(), $this->id(), $url_arr);
+        $txt = $this->value($msg);
+        // value() already returns escaped/safe html, so ref() must not escape it again
+        return $html->ref($url, $txt, '', '', true);
+    }
+
+    /**
+     * the grey superscript behind the number that shows how the number has been found, with the
+     * explanation as the tooltip, so that the value quality phrase is not named before the number
+     * (see phrase_link_list): "a" for an assumed number, "-" for a number without its source and
+     * "+" for a number taken from a peer reviewed study; an assumed number has no source on
+     * purpose, so its "a" says more than the "-", and a missing source makes a peer review claim
+     * unverifiable, so the "-" wins over the "+"
+     *
+     * @return string the html code of the mark, empty if the number has none of the three marks
+     */
+    function quality_mark(): string
+    {
+        // TODO Prio 2 check by code_id (see docs/llm/pending_prio_2.md)
+        $names = $this->grp->phr_lst()->names();
+        $result = '';
+        if (in_array(words::ASSUMED, $names)) {
+            $result = $this->quality_sup(self::QUALITY_MARK_ASSUMED, msg_id::QUALITY_MARK_ASSUMED);
+        } elseif ($this->is_source_missing()) {
+            $result = $this->quality_sup(self::QUALITY_MARK_NO_SOURCE, msg_id::QUALITY_MARK_NO_SOURCE);
+        } elseif (in_array(triples::PEER_REVIEWED, $names)) {
+            $result = $this->quality_sup(self::QUALITY_MARK_PEER_REVIEWED, msg_id::QUALITY_MARK_PEER_REVIEWED);
+        }
+        return $result;
+    }
+
+    /**
+     * @param string $mark the mark char e.g. "a" for assumed
+     * @param msg_id $tooltip the explanation of the mark shown as the tooltip
+     * @return string the html code of the mark as a grey superscript with the tooltip
+     */
+    private function quality_sup(string $mark, msg_id $tooltip): string
+    {
+        $html = new html_base();
+        return $html->sup($html->span($mark, styles::STYLE_GREY, $tooltip->text()));
+    }
+
+    /**
+     * a result is calculated by a formula, so it has no source to miss; the value overwrites it
+     *
+     * @return bool true if the number should name a source, but does not
+     */
+    protected function is_source_missing(): bool
+    {
+        return false;
+    }
+
+    /**
+     * the page that shows the number on its own, overwritten by the result, which has its own
+     * page; the class to view map of view_list::default_id cannot be used here, because
+     * including the view list would close the circle value -> sandbox_value -> view_list -> value
+     *
+     * @return int the view id of the default page of a value
+     */
+    protected function default_view_id(): int
+    {
+        return views::VALUE_DEFAULT_ID;
+    }
+
+    /**
+     * the phrases of this number as links followed by the number itself, which is the page title
+     * of a value and of a result (see system_form::title_value); the value overwrites it, because
+     * it can also show a text, a time or a geo value and marks a user value
+     *
+     * @param user_message $msg to report a problem while formatting the number
+     * @param phrase_list|null $phr_lst_exclude the phrases already shown in the context e.g. a table header
+     * @param string $sep the separator between the phrase links and the number
+     * @return string the html code of the phrase links with the number
+     */
+    function name_link(user_message $msg, ?phrase_list $phr_lst_exclude = null, string $sep = ' '): string
+    {
+        $html = new html_base();
+        $num_grey = $html->span($this->val_formatted($msg), styles::STYLE_GREY) . $this->quality_mark();
+        return $this->phrase_link_list($msg, $phr_lst_exclude) . $sep . $num_grey . $this->number_symbols($msg);
+    }
+
+    /**
+     * the phrases of this number as links, without the phrases already shown in the context,
+     * without the phrases that are shown as a symbol behind the number (see number_symbols) and
+     * without the value quality phrases, which are shown as a mark behind it (see quality_mark)
+     *
+     * @param phrase_list|null $phr_lst_exclude the phrases already shown in the context e.g. a table header
+     * @return string the html code of the phrase links
+     */
+    function phrase_link_list(user_message $msg, ?phrase_list $phr_lst_exclude = null): string
+    {
+        $exclude = new phrase_list();
+        if ($phr_lst_exclude != null) {
+            $exclude->merge($phr_lst_exclude, $msg);
+        }
+        $exclude->merge($this->grp->phr_lst()->symbol_phrases($msg), $msg);
+        $exclude->merge($this->grp->phr_lst()->value_quality_phrases($msg), $msg);
+        return $this->grp->phrase_link_list($exclude);
+    }
+
+    /**
+     * the time phrase (e.g. "2022 (year)") of this number used by the "most relevant" list to
+     * group and to sort the numbers with a time newest first; a number has at most one time phrase
+     *
+     * @return phrase|null the first time phrase of the group or null if the number has no time
+     */
+    function time_phrase(user_message $msg): ?phrase
+    {
+        $result = null;
+        foreach ($this->grp->phr_lst()->lst() as $phr) {
+            if ($result == null and $phr->is_time($msg)) {
+                $result = $phr;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the name of this number in the browser tab title: only the phrase that the page heading
+     * names first (see phrase_link_list), because a tab title must stay short, while the heading
+     * links all phrases
+     *
+     * @param user_message $msg to report a problem of reading the symbol of a phrase
+     * @return string the name of the most relevant phrase, or the name of the number if no phrase has a name
+     */
+    function title_name(user_message $msg): string
+    {
+        $result = '';
+        // a copy, because the sort must not change the phrase order of the number
+        $phr_lst = clone $this->grp->phr_lst();
+        $phr_lst->remove($phr_lst->symbol_phrases($msg));
+        $phr_lst->sort_by_impact();
+        foreach ($phr_lst->lst() as $phr) {
+            if ($result == '' and $phr->name() != '') {
+                $result = $phr->name();
+            }
+        }
+        if ($result == '') {
+            $result = $this->name() ?? '';
+        }
+        return $result;
+    }
+
+    /**
+     * the symbol of every phrase of this number that is shown behind the number instead of being
+     * named with the other phrases, e.g. the "x" of a factor (see phrase::number_symbol)
+     *
+     * @return string the html code of the symbol links, empty if no phrase of the number has one
+     */
+    function number_symbols(user_message $msg): string
+    {
+        return $this->grp->phr_lst()->symbol_links($msg);
+    }
 
     /**
      * @returns string the html code to display the value with reference links
@@ -330,7 +654,7 @@ class sandbox_value extends sandbox
 
         if (!$this->is_null()) {
             if ($this->is_percent($msg)) {
-                $result = round($this->number() * 100, $cfg->percent_decimals()) . "%";
+                $result = round($this->number() * 100, $cfg->percent_decimals()) . $this->percent_symbol($msg);
             } else {
                 if ($this->number() >= 1000 or $this->number() <= -1000) {
                     $result .= number_format($this->number(), 0, $cfg->dec_point(), $cfg->thousand_sep());
@@ -360,11 +684,25 @@ class sandbox_value extends sandbox
     }
 
     /**
+     * the symbol that is shown behind a percent number, e.g. "%"
+     *
+     * the symbol is not coded but given by a triple e.g. "% is symbol for percent", so it is shown
+     * only if the request cache knows that triple (see phrase::symbol_name)
+     *
+     * @return string the symbol name, empty if the cache knows no symbol of the percent phrase
+     */
+    function percent_symbol(user_message $msg): string
+    {
+        return $this->grp->phr_lst()->percent_phrase($msg)?->symbol_name($msg) ?? '';
+    }
+
+    /**
+     * a number of zero is a number like any other, so only a missing number is null
      * @return bool true if the value is not available
      */
     function is_null(): bool
     {
-        if ($this->number() == null) {
+        if ($this->number() === null) {
             return true;
         } else {
             return false;

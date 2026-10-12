@@ -184,8 +184,11 @@ class formula extends sandbox_code_id
      */
     function url_mapper(array $url_array, user_message $msg, data_object|null $dto = null): user_message
     {
-        parent::url_mapper($url_array, $msg, $dto);
-        if ($msg->is_ok()) {
+        $map_msg = new user_message($msg->usr); // the problems of the parent mapping, merged into $msg right away
+        parent::url_mapper($url_array, $map_msg, $dto);
+        $msg->merge($map_msg);
+        // the own fields depend on the parent mapping e.g. of the id, not on an unrelated earlier error
+        if ($map_msg->is_ok()) {
             // the field that the user has asked to refresh has just been recalculated by the
             // backend (see api_par_from_url), so the url value of that field is outdated
             $refresh = $url_array[url_var::REFRESH] ?? '';
@@ -220,6 +223,13 @@ class formula extends sandbox_code_id
             if (array_key_exists(url_var::VIEW, $url_array)) {
                 if ($url_array[url_var::VIEW] != null) {
                     $this->view_id = $url_array[url_var::VIEW];
+                }
+            }
+            // the formula type field is posted as url_var::FORMULA_TYPE ('fy'), not the generic
+            // url_var::TYPE the parent reads, so capture it here to persist a formula type change
+            if (array_key_exists(url_var::FORMULA_TYPE, $url_array)) {
+                if ($url_array[url_var::FORMULA_TYPE] != null) {
+                    $this->set_type_id($url_array[url_var::FORMULA_TYPE]);
                 }
             }
         }
@@ -262,6 +272,10 @@ class formula extends sandbox_code_id
     function to_url_array(user_message $msg): array
     {
         $url_array = parent::to_url_array($msg);
+        // the formula form posts the type as url_var::FORMULA_TYPE, so the generic type key of the
+        // parent is replaced, just like in component::to_url_array
+        unset($url_array[url_var::TYPE]);
+        $url_array[url_var::FORMULA_TYPE] = $this->type_id($msg);
         // an unset field is left out (not sent as an empty value) like the triple weight
         if ($this->usr_text != '') {
             $url_array[url_var::USER_EXPRESSION] = $this->usr_text;
@@ -374,6 +388,8 @@ class formula extends sandbox_code_id
         $lnk = null;
         if ($link_vars != []) {
             $lnk = new formula_link();
+            // the link is created together with the new formula, so it has no id yet
+            $link_vars[url_var::ACTION] = url_var::CRUD_CREATE;
             $lnk->url_mapper($link_vars, $msg, $dto);
             $lnk->set_formula($this);
         }
@@ -538,11 +554,7 @@ class formula extends sandbox_code_id
             log_err('type list cache missing, falling back to the request cache');
             $typ_lst = $ui_sys->typ_lst_cache;
         }
-        $used_formula_type_id = $this->type_id($msg);
-        if ($used_formula_type_id == null) {
-            $used_formula_type_id = $typ_lst->frm_typ->default_id();
-        }
-        return $typ_lst->frm_typ->selector($form, $used_formula_type_id);
+        return $this->type_selector_with_pre($typ_lst->frm_typ, $form, $this->type_id($msg));
     }
 
 
@@ -680,6 +692,35 @@ class formula extends sandbox_code_id
     }
 
     /**
+     * the user expression with each term shown as a link to the term that displays the term
+     * description as a tooltip and without the double quotes that delimit a term name in the
+     * expression, e.g. 'second (time) = minute * 60' with both names linked; shown on the
+     * formula page below the expression subtitle, where the link marks the term instead of the
+     * quotes; a name that matches no term of the preloaded term list keeps its quotes, so the
+     * user sees which name is not resolved
+     *
+     * @return string the expression with the quoted term names replaced by the term links
+     */
+    function expression_named_link(): string
+    {
+        // escape the user expression first, so that only the trusted term-link html inserted
+        // below stays unescaped; ENT_NOQUOTES, because the double quotes are the term delimiter
+        // that the replace below looks for, so they must stay literal (see expression_link)
+        $exp = htmlspecialchars($this->usr_text ?? '', ENT_NOQUOTES);
+        if ($this->trm_lst != null) {
+            foreach ($this->trm_lst->lst() as $trm) {
+                $name = htmlspecialchars($trm->name(), ENT_NOQUOTES);
+                $exp = str_replace(
+                    chars::TERM_DELIMITER . $name . chars::TERM_DELIMITER,
+                    $trm->name_link(),
+                    $exp
+                );
+            }
+        }
+        return $exp;
+    }
+
+    /**
      * render the given latex math markup as html and keep the whole expression on one line with
      * the "text-nowrap" wrapper; shared by expression_latex and expression_latex_link
      * @param string $latex the latex expression, the term names already replaced by links if wanted
@@ -697,9 +738,14 @@ class formula extends sandbox_code_id
 
     /**
      * convert the supported latex math markup to html so the expression can be shown without a
-     * latex engine: the "\text{...}" wrapper is unwrapped to plain text, an exponent "^2" becomes
-     * a superscript, the product "\cdot" becomes a middle dot and a fraction "\frac{a}{b}" (or the
-     * display variant "\dfrac{a}{b}") becomes a numerator-over-denominator block styled by css
+     * latex engine: the "\text{...}" wrapper is unwrapped to plain text, an exponent "^2" or
+     * "^{n}" becomes a superscript, an index "_i" or "_{i=1}" a subscript, the product "\cdot"
+     * a middle dot, "\approx" the almost equal sign, "\sum" and "\partial" their symbols, a
+     * "\left" or "\right" size hint is dropped so that the bracket itself stays, a function name
+     * such as "\ln" loses its backslash, a root "\sqrt{a}" becomes the root sign with the
+     * argument in brackets and a fraction "\frac{a}{b}" (or the display variant "\dfrac{a}{b}")
+     * becomes a numerator-over-denominator block styled by css; any other latex command is
+     * shown as it is written
      * @param string $latex the latex expression with the term names already replaced by their links
      * @return string the html code that renders the expression with the same layout as latex
      */
@@ -709,21 +755,44 @@ class formula extends sandbox_code_id
         // unwrap the "\text{...}" wrapper so the symbol or name is shown as plain text and its
         // braces do not interfere with the fraction conversion below
         $result = preg_replace('/\\\\text\{([^{}]*)}/', '$1', $latex);
-        // an exponent "^2" becomes a superscript "<sup>2</sup>"
-        $result = preg_replace_callback('/\^(\w+)/', fn($m) => $html->sup($m[1]), $result);
-        // the latex product "\cdot" becomes the html middle dot
-        $result = str_replace('\cdot', '&middot;', $result);
+        // an exponent "^{n+1}" or "^2" becomes a superscript "<sup>2</sup>" and an index "_{i=1}"
+        // or "_i" a subscript "<sub>i</sub>"; the lookahead skips a "^" or "_" inside a html tag,
+        // e.g. in the title of a term link, because the link html has been inserted before
+        $result = preg_replace_callback('/\^\{([^{}]*)}(?![^<]*>)/', fn($m) => $html->sup($m[1]), $result);
+        $result = preg_replace_callback('/\^(\w+)(?![^<]*>)/', fn($m) => $html->sup($m[1]), $result);
+        $result = preg_replace_callback('/_\{([^{}]*)}(?![^<]*>)/', fn($m) => $html->sub($m[1]), $result);
+        $result = preg_replace_callback('/_(\w+)(?![^<]*>)/', fn($m) => $html->sub($m[1]), $result);
+        // the latex product "\cdot" becomes the html middle dot and "\approx" the almost equal
+        // sign; the sum and the partial derivative signs are shown as their html entities
+        $result = str_replace(
+            ['\cdot', '\approx', '\sum', '\partial'],
+            ['&middot;', '&asymp;', '&sum;', '&part;'],
+            $result);
+        // the "\left" and "\right" size hints of a bracket or bar are dropped, the bracket stays
+        $result = preg_replace('/\\\\(left|right)\s*/', '', $result);
+        // a function name such as "\ln" or "\cos" is shown as the plain function name
+        $result = preg_replace('/\\\\(ln|log|exp|sin|cos|tan|sec)\b/', '$1', $result);
         // a fraction "\frac{a}{b}" or the display variant "\dfrac{a}{b}" becomes the numerator
-        // shown above the denominator
-        $result = preg_replace_callback(
-            '/\\\\d?frac\{([^{}]*)}\{([^{}]*)}/',
-            function ($m) use ($html) {
-                $num = $html->span(trim($m[1]), styles::FRAC_NUM);
-                $den = $html->span(trim($m[2]), styles::FRAC_DEN);
-                return $html->span($num . $den, styles::FRAC);
-            },
-            $result
-        );
+        // shown above the denominator and a root "\sqrt{a}" the root sign with the argument in
+        // brackets; both accept no braces inside, so a nested markup e.g. a fraction inside a
+        // root is converted from the inside out until nothing is left to convert
+        do {
+            $before = $result;
+            $result = preg_replace_callback(
+                '/\\\\d?frac\{([^{}]*)}\{([^{}]*)}/',
+                function ($m) use ($html) {
+                    $num = $html->span(trim($m[1]), styles::FRAC_NUM);
+                    $den = $html->span(trim($m[2]), styles::FRAC_DEN);
+                    return $html->span($num . $den, styles::FRAC);
+                },
+                $result
+            );
+            $result = preg_replace_callback(
+                '/\\\\sqrt\{([^{}]*)}/',
+                fn($m) => '&radic;(' . trim($m[1]) . ')',
+                $result
+            );
+        } while ($result != $before);
         return $result;
     }
 

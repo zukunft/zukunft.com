@@ -44,6 +44,7 @@ enum sql_par_type: string
     case INT_OR = 'int_or'; //
     case INT_NOT = 'int_not';
     case INT_NOT_OR_NULL = 'int_not_or_null';
+    case INT_NULL_SAFE = 'int_null_safe'; // a key part that may be null e.g. the source of a user value, so it is compared null-safe
     case INT_LIST = 'int_list';
     case INT_LIST_OR = 'int_list_or';
     case INT_SUB = 'int_sub'; // a sub query is using an int parameter
@@ -59,8 +60,15 @@ enum sql_par_type: string
     case TEXT_USR = 'text_usr'; // a name that can be user-specific e.g. the word or triple name
     case INT_USR = 'int_usr'; // an id that can be user-specific e.g. the source of a value
     case LIKE_R = 'like_start_with'; // add a wildcard to the right to fine the values that start with the given text
+    case LIKE_L = 'like_end_with'; // add a wildcard to the left to find the values that end with the given text
     case LIKE = 'like';
     case LIKE_OR = 'like_or'; // connect with the previous condition with OR and like
+    // the case-sensitive match of the alpha_num key of a phrase within a group id, because the key
+    // uses upper and lower case letters for different ids e.g. 'FW+' and 'Fw+' (see id::int2char),
+    // and only at the start or after a sign char, because e.g. '0U+' is also the end of '10U+'
+    // (see sql_creator::key_match and group_id_url::phrase_pattern)
+    case LIKE_KEY = 'like_key';
+    case LIKE_KEY_OR = 'like_key_or'; // connect with the previous condition with OR and the key like
     case CONST = 'const';
     case CONST_NOT = 'const_not';
     case CONST_OR_NULL = 'const_or_null';
@@ -86,7 +94,8 @@ enum sql_par_type: string
     function is_or(): bool
     {
         return match($this) {
-            self::TEXT_OR, self::INT_OR, self::INT_LIST_OR, self::LIKE_OR, self::INT_SAME_OR => true,
+            self::TEXT_OR, self::INT_OR, self::INT_LIST_OR, self::LIKE_OR, self::LIKE_KEY_OR,
+            self::INT_SAME_OR => true,
             default => false,
         };
     }

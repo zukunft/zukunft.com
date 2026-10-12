@@ -294,9 +294,9 @@ class element_group extends list_db_write
             log_debug('load word value for ' . $val_phr_lst->dsp_id());
             $wrd_val = new value($this->usr);
             // TODO create $wrd_val->load_best();
-            $wrd_val->load_by_grp($val_phr_grp, $msg);
-
-            if ($wrd_val->isset()) {
+            // the load result and not isset(), because load_by_grp sets the group also if no
+            // value is found, which would add a figure without a number
+            if ($wrd_val->load_by_grp($val_phr_grp, $msg)) {
                 // save the value to the result
                 $fig = $wrd_val->figure();
                 $fig->set_symbol($frm_elm->symbol);
@@ -317,10 +317,9 @@ class element_group extends list_db_write
                 /* TODO review
                 $grp_res->load_by_grp($val_phr_grp);
                 */
-                $grp_res->load_by_grp( $val_phr_grp, $msg, true );
-
-                // save the value to the result
-                if ($grp_res->id() > 0) {
+                // save the value to the result; never compare the id with a number, because php
+                // reports e.g. the text key '/x-' > 0 as false (see db_object_multi::is_id_set)
+                if ($grp_res->load_by_grp($val_phr_grp, $msg, true)) {
                     $fig = $grp_res->figure();
                     $fig->set_symbol($this->symbol);
                     $fig_lst->add($fig, $msg);

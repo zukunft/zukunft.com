@@ -38,7 +38,6 @@
 namespace Zukunft\ZukunftCom\main\php\web\component\execute;
 
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
-use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once html_paths::DB . 'sql_db.php';
 include_once html_paths::COMPONENT . 'component.php';
@@ -47,13 +46,14 @@ include_once html_paths::COMPONENT . 'component_list.php';
 include_once html_paths::EXECUTE . 'ui_base.php';
 include_once html_paths::FORMULA . 'formula.php';
 include_once html_paths::FORMULA . 'formula_link.php';
-include_once html_paths::FORMULA . 'formula_list.php';
+//include_once html_paths::FORMULA . 'formula_list.php';
 include_once html_paths::CONST . 'icons.php';
 include_once html_paths::HTML . 'html_names.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'styles.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::REF . 'ref.php';
+include_once html_paths::REF . 'ref_list.php';
 include_once html_paths::REF . 'source.php';
 include_once html_paths::REF . 'source_list.php';
 include_once html_paths::RESULT . 'result.php';
@@ -90,7 +90,6 @@ include_once html_paths::SHARED_TYPES . 'view_styles.php';
 include_once html_paths::SHARED . 'api.php';
 include_once html_paths::SHARED . 'url_var.php';
 include_once html_paths::SHARED . 'library.php';
-include_once test_paths::CONST . 'word_names.php';
 
 use Zukunft\ZukunftCom\main\php\web\component\component;
 use Zukunft\ZukunftCom\main\php\web\component\component_link;
@@ -102,6 +101,7 @@ use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\ref\ref;
+use Zukunft\ZukunftCom\main\php\web\ref\ref_list;
 use Zukunft\ZukunftCom\main\php\web\ref\source;
 use Zukunft\ZukunftCom\main\php\web\ref\source_list;
 use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named;
@@ -137,7 +137,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
-use Zukunft\ZukunftCom\test\php\const\word_names;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
 
 class system_form extends component
 {
@@ -180,6 +180,7 @@ class system_form extends component
     {
         global $mtr;
 
+        $lib = new library();
         $result = $mtr->txt($ui_msg_code_id);
         // the api sends the phrase with the name for a page request; name_link() returns safe html,
         // so it replaces the message var unescaped; without a name (e.g. a test render that fills
@@ -187,11 +188,19 @@ class system_form extends component
         // a name would be invisible
         if ($ui_msg_code_id == msg_id::FORM_TITLE_REF_EDIT and $dbo instanceof ref
             and $dbo->phrase()->name() != '') {
-            $lib = new library();
             $result = $lib->msg_var_replace(
                 $mtr->txt(msg_id::FORM_TITLE_REF_EDIT_PHRASE),
                 msg_id::VAR_PHRASE_NAME,
                 $dbo->phrase()->name_link());
+        } elseif ($ui_msg_code_id == msg_id::FORM_TITLE_VALUE_EDIT and $dbo instanceof value
+            and $dbo->has_named_phrases()) {
+            // the same for the phrases of a value e.g. "Change value for Pi (math)"; the list is cloned,
+            // because the links sort the phrases and the form fields below keep the phrase order of the value
+            $phr_lst = clone $dbo->phr_lst();
+            $result = $lib->msg_var_replace(
+                $mtr->txt(msg_id::FORM_TITLE_VALUE_EDIT_PHRASE),
+                msg_id::VAR_PHRASE_NAME,
+                $phr_lst->name_link_list());
         }
         return $result;
     }
@@ -351,9 +360,10 @@ class system_form extends component
         array        $url_array = []
     ): string
     {
-        // the heading shows the related phrases as links with tooltip plus the value
+        // the heading shows the related phrases as links with tooltip plus the number, which a
+        // result shows the same way as a value (see sandbox_value::name_link)
         $heading_content = $this->esc($dbo->name());
-        if ($dbo::class == value::class) {
+        if ($dbo instanceof sandbox_value) {
             $heading_content = $dbo->name_link($msg);
         }
         return $this->subtitle($dbo, $heading_content, $msg, $max, '', $url_array);
@@ -439,8 +449,8 @@ class system_form extends component
             if ($dbo->phr_lst != null) {
                 $result = $dbo->phr_lst->assigned_subtitle($max);
             }
-        } elseif ($dbo::class == value::class) {
-            // a value lists its related phrases already in the title heading, so the
+        } elseif ($dbo instanceof sandbox_value) {
+            // a value and a result list their related phrases already in the title heading, so the
             // subtitle is left to the type, share and protection parts
             $result = '';
         } else {
@@ -451,7 +461,7 @@ class system_form extends component
     }
 
     /**
-     * type subtitle for an object with a non-default type e.g. "measure" for a measure word
+     * type subtitle for an object with a non-default type e.g. "measure unit" for a unit word
      * the type name is a link to the type page that shows the other phrases of the same type
      * and the fixed code rules linked to this type
      *
@@ -549,7 +559,8 @@ class system_form extends component
         $result = '';
         $html = new html_base();
         $result .= $html->input(url_var::MASK, msg_id::FORM_FIELD_MASK, $msk_id, html_base::INPUT_HIDDEN);
-        $result .= $html->input(url_var::ID, msg_id::FORM_FIELD_ID, $id, html_base::INPUT_HIDDEN);
+        // e.g. the admin user edit names its user by url_var::USER_TO_EDIT, because url_var::USER is the logged-in user
+        $result .= $html->input(url_var::id_var($msk_id), msg_id::FORM_FIELD_ID, $id, html_base::INPUT_HIDDEN);
         // carry the '9'-prefixed back targets so cancel and the post-action redirect return to where the
         // user came from, the '7'-prefixed vars of the link that a new object gets with the same confirm
         // (only those that a link may name, see html_base::link_vars) and the origin mask that names the
@@ -1064,6 +1075,26 @@ class system_form extends component
     }
 
     /**
+     * @param result|db_object $dbo the result whose formula is shown with the numbers used
+     * @param user_message $msg to report a component that is assigned to another object than a result
+     * @param array $url_arr the url vars of the calling page for the back link of the numbers
+     * @return string the right side of the formula with each number linked to its value or result,
+     *                empty if the numbers used are not known
+     */
+    function show_result_expression(result|db_object $dbo, user_message $msg, array $url_arr = []): string
+    {
+        $result = '';
+        // guarded by class, because only a result has the numbers used for its calculation and a
+        // mis-assigned seed component must not stop the page with a fatal
+        if ($dbo instanceof result) {
+            $result = $dbo->expression_figures_link($msg, $url_arr);
+        } else {
+            log_err_msg_ui($dbo::class . ' is not expected to be calculated by a formula', $msg);
+        }
+        return $result;
+    }
+
+    /**
      * @param formula|db_object $dbo the formula whose all-values-needed flag is shown
      * @return string the translated flag label, because the label alone says all for a boolean
      *                (empty if the formula calculates also with missing values, the default)
@@ -1441,8 +1472,6 @@ class system_form extends component
      * @param string $style_text the column style of the field
      * @param db_object|type_object|null $dbo the object, used to keep the original db snapshot as the
      *                       '8' pre value on a re-render (e.g. after a save error) instead of the change
-     * @param string $refresh which part of the form a refresh icon beside the label should recalculate
-     *                        e.g. url_var::REFRESH_LATEX, '' for a field without a refresh icon
      * @return string the html code of the editable field plus the hidden pre value
      */
     private function form_field_tracked(
@@ -1450,21 +1479,60 @@ class system_form extends component
         msg_id                     $label,
         ?string                    $value,
         string                     $style_text,
-        db_object|type_object|null $dbo = null,
-        string                     $refresh = ''
+        db_object|type_object|null $dbo = null
     ): string
     {
         $html = new html_base();
         $value = $value ?? '';
         // on a re-render keep the original db snapshot from the url, else the unchanged value is the snap
         $pre = ($dbo instanceof db_object) ? ($dbo->pre_value($url_id) ?? $value) : $value;
-        return $html->form_field($url_id, $label, $value, html_base::INPUT_TEXT, '', $style_text, $refresh)
+        return $html->form_field($url_id, $label, $value, html_base::INPUT_TEXT, '', $style_text)
             . $html->form_hidden(url_var::PRE . $url_id, $pre);
     }
 
     function form_name(db_object|type_object $dbo, string $style_text): string
     {
         return $this->form_field_tracked(url_var::NAME, msg_id::FORM_FIELD_NAME, $dbo->name(), $style_text, $dbo);
+    }
+
+    /**
+     * the one field form that adds a word by its name without the confirm view: the hidden word add mask
+     * with the confirmed step lets url_to_action write the word directly, the backend refuses a name that
+     * is already used by a term and after the write the new word is shown with its default view
+     *
+     * @param string $style_text the formatting code of the name field
+     * @return string the html code of the name field, the hidden write vars and the add button
+     */
+    function form_word_add_simple(string $style_text = view_styles::COL_SM_12): string
+    {
+        $html = new html_base();
+        global $mtr;
+        $result = $html->form_field(url_var::NAME, msg_id::FORM_FIELD_NAME, '', html_base::INPUT_TEXT, '', $style_text);
+        $result .= $html->form_hidden(url_var::MASK, (string)views::WORD_ADD_DETAIL_ID);
+        $result .= $html->form_hidden(url_var::STEP, url_var::STEP_CONFIRMED);
+        $result .= $html->form_hidden(url_var::BACK . url_var::MASK, (string)views::WORD_ID);
+        $result .= $html->button_bs($mtr->txt(msg_id::SYSTEM_BUTTON_ADD), '', '', url_var::POST_SUBMIT);
+        return $result;
+    }
+
+    /**
+     * one field for the name of a new triple and an add button that writes the triple directly,
+     * so like form_word_add_simple the hidden triple add mask with the confirmed step lets
+     * url_to_action save the triple without the confirm view and show the new triple afterwards
+     *
+     * @param string $style_text the css style of the name field e.g. to set the width
+     * @return string the html code of the name field and the add button
+     */
+    function form_triple_add_simple(string $style_text = view_styles::COL_SM_12): string
+    {
+        $html = new html_base();
+        global $mtr;
+        $result = $html->form_field(url_var::NAME, msg_id::FORM_FIELD_NAME, '', html_base::INPUT_TEXT, '', $style_text);
+        $result .= $html->form_hidden(url_var::MASK, (string)views::TRIPLE_ADD_DETAIL_ID);
+        $result .= $html->form_hidden(url_var::STEP, url_var::STEP_CONFIRMED);
+        $result .= $html->form_hidden(url_var::BACK . url_var::MASK, (string)views::TRIPLE_ID);
+        $result .= $html->button_bs($mtr->txt(msg_id::SYSTEM_BUTTON_ADD), '', '', url_var::POST_SUBMIT);
+        return $result;
     }
 
     /**
@@ -1494,7 +1562,8 @@ class system_form extends component
         // guarded by class, because only a code id object has a code id and a mis-assigned
         // seed component must not stop the page with a fatal
         if ($dbo instanceof sandbox_code_id) {
-            if ($ui_sys?->usr?->can_see_code_id() ?? false) {
+            // read with ?? first, because a method call after ?-> does not guard an unset typed property
+            if (($ui_sys->usr ?? null)?->can_see_code_id() ?? false) {
                 if ($ui_sys->usr->can_set_code_id()) {
                     $result = $this->form_field_tracked(
                         url_var::CODE_ID,
@@ -1531,7 +1600,8 @@ class system_form extends component
         // guarded by class, because only a component has ui message links and a mis-assigned
         // seed component must not stop the page with a fatal
         if ($dbo instanceof component) {
-            if ($ui_sys?->usr?->can_see_code_id() ?? false) {
+            // read with ?? first, because a method call after ?-> does not guard an unset typed property
+            if (($ui_sys->usr ?? null)?->can_see_code_id() ?? false) {
                 $val_exp = $dbo->ui_msg_value_exception;
                 if ($ui_sys->usr->can_set_code_id()) {
                     $result = $this->form_field_tracked(
@@ -1697,23 +1767,110 @@ class system_form extends component
     }
 
     /**
-     * @param db_object $dbo the object
-     * @return string the html code to request a numeric value from the user
+     * the number, text, time or geolocation field of the value form with the opening value as the
+     * hidden pre value, so that the confirm view shows only a changed value (see url_var::PRE)
+     *
+     * @param db_object $dbo the value that the user changes
+     * @param string $style_text the formatting code of the value field
+     * @param user_message $msg to report a value that cannot be shown
+     * @return string the html code of the value field and the hidden pre value
      */
     function form_num_value(db_object $dbo, string $style_text, user_message $msg): string
     {
         $html = new html_base();
-        $val_txt = $dbo->value($msg);
-        if ($val_txt == null) {
-            $val_txt = '';
+        $result = '';
+        // the value form is only opened for a value or a result, so any other object is a program error
+        if ($dbo instanceof sandbox_value) {
+            [$url_id, $label_id, $input, $value] = $this->value_field_by_type($dbo);
+            // on a re-render keep the original db snapshot from the url, else the unchanged value is the snap
+            $pre = $dbo->pre_value($url_id) ?? (string)$value;
+            $result = $html->form_field($url_id, $label_id, $value, $input, '', $style_text)
+                . $html->form_hidden(url_var::PRE . $url_id, $pre);
+        } else {
+            log_err_msg('the value form got ' . get_debug_type($dbo) . ' instead of a value or result', $msg);
         }
-        return $html->form_field(
-            url_var::VALUE,
-            msg_id::FORM_FIELD_VALUE,
-            $val_txt,
-            html_base::INPUT_NUMBER,
-            '', $style_text
-        );
+        return $result;
+    }
+
+    /**
+     * the one field form that overwrites the number, text, time or geolocation of a value or the number of a result
+     * without the confirm view: the hidden edit mask with the confirmed step lets url_to_action write the change
+     * directly as the user overwrite and after the write the value or result is shown with its default view
+     *
+     * @param db_object|type_object|combine_named|sandbox_list|null $dbo the value or result that the user overwrites
+     * @param string $style_text the formatting code of the value field
+     * @return string the html code of the value field, the hidden write vars and the save button
+     */
+    function form_value_overwrite(
+        db_object|type_object|combine_named|sandbox_list|null $dbo,
+        string                                                $style_text = view_styles::COL_SM_12
+    ): string
+    {
+        $result = '';
+        // the overwrite view is only opened for a value or a result, so any other object is a program error
+        if ($dbo instanceof sandbox_value) {
+            $result = $this->form_value_overwrite_fields($dbo, $style_text);
+        } else {
+            log_err('the value overwrite form got ' . get_debug_type($dbo) . ' instead of a value or result');
+        }
+        return $result;
+    }
+
+    /**
+     * @param sandbox_value $dbo the value or result that the user overwrites
+     * @param string $style_text the formatting code of the value field
+     * @return string the html code of the value field, the hidden write vars and the save button
+     */
+    private function form_value_overwrite_fields(sandbox_value $dbo, string $style_text): string
+    {
+        $html = new html_base();
+        $edit_mask = views::VALUE_EDIT_ID;
+        $back_mask = views::VALUE_DEFAULT_ID;
+        if ($dbo instanceof result) {
+            $edit_mask = views::RESULT_EDIT_ID;
+            $back_mask = views::RESULT_ID;
+        }
+        $id = (string)$dbo->id();
+        $result = $this->form_field_value_by_type($dbo, $style_text);
+        $result .= $html->form_hidden(url_var::MASK, (string)$edit_mask);
+        $result .= $html->form_hidden(url_var::ID, $id);
+        $result .= $html->form_hidden(url_var::STEP, url_var::STEP_CONFIRMED);
+        $result .= $html->form_hidden(url_var::BACK . url_var::MASK, (string)$back_mask);
+        $result .= $html->form_hidden(url_var::BACK . url_var::ID, $id);
+        $result .= $this->button_save();
+        return $result;
+    }
+
+    /**
+     * @param sandbox_value $dbo the value or result that the user overwrites
+     * @param string $style_text the formatting code of the value field
+     * @return string the html code of the text, time, geolocation or number field that matches the type of the value
+     */
+    private function form_field_value_by_type(sandbox_value $dbo, string $style_text): string
+    {
+        $html = new html_base();
+        [$url_id, $label_id, $input, $value] = $this->value_field_by_type($dbo);
+        return $html->form_field($url_id, $label_id, $value, $input, '', $style_text);
+    }
+
+    /**
+     * @param sandbox_value $dbo the value or result that the user changes
+     * @return array the url var, the label, the input type and the shown value of the field that matches
+     *               the type of the value, so that the url var is the one that url_mapper reads
+     */
+    private function value_field_by_type(sandbox_value $dbo): array
+    {
+        if ($dbo->text_value() !== null) {
+            $result = [url_var::VALUE_TEXT, msg_id::FORM_FIELD_TEXT_VALUE, html_base::INPUT_TEXT, $dbo->text_value()];
+        } elseif ($dbo->time_value() !== null) {
+            $time = $dbo->time_value()->format(sandbox_value::TIME_FORMAT);
+            $result = [url_var::VALUE_TIME, msg_id::FORM_FIELD_TIME_VALUE, html_base::INPUT_TEXT, $time];
+        } elseif ($dbo->geo_value() !== null) {
+            $result = [url_var::VALUE_GEO, msg_id::FORM_FIELD_GEO_VALUE, html_base::INPUT_TEXT, $dbo->geo_value()];
+        } else {
+            $result = [url_var::NUMERIC_VALUE, msg_id::FORM_FIELD_VALUE, html_base::INPUT_NUMBER, $dbo->number()];
+        }
+        return $result;
     }
 
     /**
@@ -1795,18 +1952,28 @@ class system_form extends component
     }
 
     /**
-     * @return string the html code to request the group name or a list of phrases
+     * @param db_object $dbo the value or result with the group name
+     * @param string $style_text the width set by the view e.g. col-md-12, '' for 2/3 to leave room for a side field
+     * @return string the html code to request the group name
      */
-    function form_field_group_or_phrases(db_object $dbo): string
+    function form_field_group_or_phrases(db_object $dbo, string $style_text): string
     {
         $html = new html_base();
+        if ($style_text == '') {
+            $style_text = view_styles::COL_SM_8;
+        }
+        $name = $dbo->name();
+        // a value shows only a name given by a user, because its phrases are shown in the title
+        if ($dbo instanceof sandbox_value) {
+            $name = $dbo->grp->name;
+        }
         return $html->form_field(
             url_var::GROUP_NAME,
             msg_id::FORM_FIELD_GROUP,
-            $dbo->name(),
+            $name,
             html_base::INPUT_TEXT,
             '',
-            view_styles::COL_SM_8
+            $style_text
         );
     }
 
@@ -1984,7 +2151,7 @@ class system_form extends component
         // TODO use a pattern base on user entry
         $pattern = '';
         if ($test_mode) {
-            $pattern = word_names::MATH;
+            $pattern = words::MATH;
         }
 
         // get the selected phrase id
@@ -2050,7 +2217,7 @@ class system_form extends component
         // TODO use a pattern base on user entry
         $pattern = '';
         if ($test_mode) {
-            $pattern = word_names::MATH;
+            $pattern = words::MATH;
         }
 
         // get the selected phrase id
@@ -2116,7 +2283,7 @@ class system_form extends component
         // TODO use a pattern base on user entry
         $pattern = '';
         if ($test_mode) {
-            $pattern = word_names::MATH;
+            $pattern = words::MATH;
         }
 
         // get the selected phrase id
@@ -2164,7 +2331,7 @@ class system_form extends component
         // TODO use a pattern base on user entry
         $pattern = '';
         if ($test_mode) {
-            $pattern = word_names::MATH;
+            $pattern = words::MATH;
         }
 
         // get the selected phrase id
@@ -2220,38 +2387,50 @@ class system_form extends component
      * create the html code for the form element to select the source
      * @param db_object $dbo the frontend phrase object with the type used until now
      * @param string $form_name the name of the view which is also used for the html form name
+     * @param user_message $msg with the requesting user for whom the sources are selected
      * @param source_list|null $src_lst the frontend cache with the configuration, the preloaded source and the cached objects
      * @param string $pattern the selection pattern to filter a selection
+     * @param bool $test_mode true to offer only the cached sources, because a snapshot is created without a backend call
      * @return string the html code to select the source
      */
-    function form_source(db_object $dbo, string $form_name, ?source_list $src_lst, string $pattern = ''): string
+    function form_source(
+        db_object    $dbo,
+        string       $form_name,
+        user_message $msg,
+        ?source_list $src_lst,
+        string       $pattern = '',
+        bool         $test_mode = false
+    ): string
     {
-        return $dbo->source_selector($form_name, $pattern, $src_lst);
+        return $dbo->source_selector($form_name, $msg, $pattern, $src_lst, $test_mode);
     }
 
     /**
      * create the html code for the form element to select one or many sources
      * @param db_object $dbo the frontend phrase object with the type used until now
      * @param string $form_name the name of the view which is also used for the html form name
+     * @param user_message $msg with the requesting user for whom the sources are selected
      * @param source_list|null $src_lst the frontend cache with the configuration, the preloaded types and the cached objects
+     * @param bool $test_mode true to offer only the cached sources, because a snapshot is created without a backend call
      * @return string the html code to select the source
      */
-    function form_sources(db_object $dbo, string $form_name, ?source_list $src_lst): string
+    function form_sources(db_object $dbo, string $form_name, user_message $msg, ?source_list $src_lst, bool $test_mode = false): string
     {
-        return $dbo->source_selector($form_name, '', $src_lst);
+        return $dbo->source_selector($form_name, $msg, '', $src_lst, $test_mode);
     }
 
     /**
      * create the html code for the form element to select the reference
      * @param db_object $dbo the frontend phrase object with the type used until now
      * @param string $form_name the name of the view which is also used for the html form name
-     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
+     * @param user_message $msg with the requesting user for whom the references are selected
+     * @param ref_list|null $ref_lst the references of the frontend cache to select from
      * @param string $pattern the selection pattern to filter a selection
      * @return string the html code to select the reference
      */
-    function form_ref(db_object $dbo, string $form_name, ?type_lists $typ_lst, string $pattern = ''): string
+    function form_ref(db_object $dbo, string $form_name, user_message $msg, ?ref_list $ref_lst, string $pattern = ''): string
     {
-        return $dbo->ref_selector($form_name, $pattern);
+        return $dbo->ref_selector($form_name, $msg, $pattern, $ref_lst);
     }
 
     /**
@@ -2259,12 +2438,13 @@ class system_form extends component
      * TODO Prio 1 review
      * @param db_object $dbo the frontend phrase object with the type used until now
      * @param string $form_name the name of the view which is also used for the html form name
-     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
+     * @param user_message $msg with the requesting user for whom the references are selected
+     * @param ref_list|null $ref_lst the references of the frontend cache to select from
      * @return string the html code to select the reference
      */
-    function form_refs(db_object $dbo, string $form_name, ?type_lists $typ_lst): string
+    function form_refs(db_object $dbo, string $form_name, user_message $msg, ?ref_list $ref_lst): string
     {
-        return $dbo->ref_selector($form_name, '');
+        return $dbo->ref_selector($form_name, $msg, '', $ref_lst);
     }
 
     /**
@@ -2410,6 +2590,7 @@ class system_form extends component
      * create the html code for the form element to select the component
      * @param db_object $dbo the frontend object with the component used until now
      * @param string $form_name the name of the component which is also used for the html form name
+     * @param user_message $msg with the requesting user for whom the components are selected
      * @param string $pattern the pattern used to filter the components by the name
      * @param int $id the id of the component selected until now
      * @param component_list|null $cmp_lst cached list of components for fast selection
@@ -2418,18 +2599,20 @@ class system_form extends component
     function form_component(
         db_object       $dbo,
         string          $form_name,
+        user_message    $msg,
         string          $pattern,
         int             $id,
         ?component_list $cmp_lst
     ): string
     {
-        return $dbo->component_selector($form_name, $pattern, $id, $cmp_lst);
+        return $dbo->component_selector($form_name, $msg, $pattern, $id, $cmp_lst);
     }
 
     /**
      * create the html code for the form element to select one or many components
      * @param db_object $dbo the frontend object with the component used until now
      * @param string $form_name the name of the component which is also used for the html form name
+     * @param user_message $msg with the requesting user for whom the components are selected
      * @param string $pattern the pattern used to filter the components by the name
      * @param int $id the id of the component selected until now
      * @param component_list|null $msk_lst cached list of components for fast selection
@@ -2438,12 +2621,13 @@ class system_form extends component
     function form_components(
         db_object       $dbo,
         string          $form_name,
+        user_message    $msg,
         string          $pattern,
         int             $id,
         ?component_list $msk_lst
     ): string
     {
-        return $dbo->component_selector($form_name, $pattern, $id, $msk_lst);
+        return $dbo->component_selector($form_name, $msg, $pattern, $id, $msk_lst);
     }
 
     /**
@@ -2660,20 +2844,27 @@ class system_form extends component
      */
     function form_formula_expression(db_object $dbo, string $form_name): string
     {
+        global $mtr;
+        $html = new html_base();
         // the expression field posts the user expression (not the need-all flag, which is a
         // separate checkbox with the same key); the raw expression is passed so form_field escapes
         // the quotes exactly once - passing a pre-escaped value would double-encode the quotes.
         // form_field_tracked also sends the '8'-prefixed pre value so the confirm view can show the
         // formula text before the change (see url_var::PRE)
-        // 2/3 of the width, because the expression with the term links is shown in the last third
-        // the refresh icon takes the changes of the latex field over into the expression
-        return $this->form_field_tracked(
+        // 7/12 of the width, because the validate button takes one twelfth and the expression with
+        // the term links is shown in the last third
+        $result = $this->form_field_tracked(
             url_var::USER_EXPRESSION,
             msg_id::FORM_FIELD_FORMULA_EXPRESSION,
             $dbo->get_usr_text(),
-            view_styles::COL_SM_8,
-            $dbo,
-            url_var::REFRESH_EXPRESSION);
+            view_styles::COL_SM_7,
+            $dbo);
+        // the validate button asks the backend to read the entered expression: it names the terms
+        // in the validated expression beside the field, recreates the latex of the formula and
+        // tells the user if the expression cannot be used (see formula::refresh_from_url)
+        $result .= $html->button_refresh_text(
+            $mtr->txt(msg_id::FORM_BUTTON_VALIDATE), url_var::REFRESH_LATEX);
+        return $result;
     }
 
     /**
@@ -2684,17 +2875,24 @@ class system_form extends component
      */
     function form_formula_latex(db_object $dbo, string $form_name): string
     {
+        global $mtr;
+        $html = new html_base();
         // form_field_tracked also sends the '8'-prefixed pre value so the confirm view can show
         // the latex text before the change (see url_var::PRE)
-        // 2/3 of the width, because the formatted latex with the term links is shown in the last third
-        // the refresh icon creates the latex again based on the expression
-        return $this->form_field_tracked(
+        // 7/12 of the width, because the validate button takes one twelfth and the formatted latex
+        // with the term links is shown in the last third
+        $result = $this->form_field_tracked(
             url_var::LATEX,
             msg_id::FORM_FIELD_FORMULA_LATEX,
             $dbo->get_latex(),
-            view_styles::COL_SM_8,
-            $dbo,
-            url_var::REFRESH_LATEX);
+            view_styles::COL_SM_7,
+            $dbo);
+        // the validate button asks the backend to read the entered latex: it names the terms in
+        // the validated latex beside the field, takes the latex changes over into the expression
+        // and tells the user if the latex cannot be used (see formula::refresh_from_url)
+        $result .= $html->button_refresh_text(
+            $mtr->txt(msg_id::FORM_BUTTON_VALIDATE), url_var::REFRESH_EXPRESSION);
+        return $result;
     }
 
     /**

@@ -57,7 +57,7 @@
     {
       "name": "bn",
       "description": "billion, a scaling word for 1e9.",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "bound"
@@ -73,7 +73,7 @@
     {
       "name": "Celsius",
       "description": "degree Celsius, a unit of temperature.",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "Chernobyl",
@@ -98,7 +98,7 @@
     {
       "name": "CO2",
       "description": "carbon dioxide, the principal anthropogenic greenhouse gas.",
-      "type": "measure",
+      "type": "measure_unit",
       "refs": [
         {
           "name": "Carbon_dioxide",
@@ -133,7 +133,7 @@
     {
       "name": "count",
       "description": "a dimensionless number of countable items.",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "cumulative",
@@ -281,7 +281,7 @@
     {
       "name": "GBP",
       "description": "the pound sterling.",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "Germany",
@@ -300,7 +300,7 @@
     {
       "name": "gram",
       "description": "a metric unit of mass.",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "growth",
@@ -309,7 +309,7 @@
     {
       "name": "GW",
       "description": "gigawatt, a unit of power equal to one billion watts.",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "Gösgen",
@@ -342,7 +342,7 @@
     {
       "name": "kWh",
       "description": "kilowatt-hour, a unit of energy.",
-      "type": "measure",
+      "type": "measure_unit",
       "refs": [
         {
           "name": "Kilowatt-hour",
@@ -366,12 +366,12 @@
     {
       "name": "million",
       "description": "a scaling word for 1e6.",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "minute",
       "description": "a unit of time equal to sixty seconds.",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "molten",
@@ -406,7 +406,7 @@
     {
       "name": "percent",
       "description": "a proportion expressed as a fraction of 100.",
-      "type": "measure",
+      "type": "percent",
       "refs": [
         {
           "name": "Percentage",
@@ -417,7 +417,7 @@
     {
       "name": "person",
       "description": "a single human being, the unit of a death toll.",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "photovoltaic",
@@ -532,7 +532,7 @@
     {
       "name": "times",
       "description": "a dimensionless multiplier or factor.",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "toll",
@@ -541,7 +541,7 @@
     {
       "name": "tonne",
       "description": "a metric unit of mass equal to 1000 kilograms.",
-      "type": "measure"
+      "type": "measure_unit"
     },
     {
       "name": "turbine",
@@ -550,7 +550,7 @@
     {
       "name": "TWh",
       "description": "terawatt-hour, a unit of energy equal to one billion kilowatt-hours.",
-      "type": "measure",
+      "type": "measure_unit",
       "refs": [
         {
           "name": "Kilowatt-hour",

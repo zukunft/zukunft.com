@@ -100,7 +100,7 @@ class formula_url_tests extends url_test_base
         $this->wf_start($wf_nbr, workflows::WF_ADD_FORMULA, $this->t->usr1, formula_names::SYSTEM_TEST_ADD_ID, $do_it);
 
         // initial url with an empty formula
-        $url_arr = test_formulas::formula_new_url($this->msg);
+        $url_arr = test_formulas::formula_new_url();
 
         $this->wf_id = 0;
         $this->wf_fixed_id = formula_names::SYSTEM_TEST_ADD_ID;
@@ -164,7 +164,6 @@ class formula_url_tests extends url_test_base
     protected function change_formula_workflow(int $wf_nbr, bool $do_it = false): void
     {
         $msg = new user_message();
-        $msg_ui = new user_message_ui();
         // the workflow runs on the reserved 'System Test Formula' added above, not on seeded data;
         // resolve its current database id by name and set the fixed snapshot id of the test formula
         $this->wf_start($wf_nbr, workflows::WF_CHANGE_FORMULA, $this->t->usr1, formula_names::SYSTEM_TEST_ADD_ID, $do_it);
@@ -182,7 +181,7 @@ class formula_url_tests extends url_test_base
         // rendered buttons and the confirmed write target the real row (the snapshot files normalize
         // the id back to the fixed test id)
         $t_frm = new test_formulas($this->t);
-        $url_arr = $t_frm->formula_add_url($msg_ui);
+        $url_arr = test_formulas::formula_add_url();
         $url_arr[url_var::ID] = $this->wf_id;
         // fix the values before the changes in the url TODO Prio 2 should be done by the process automatic
         $url_pre = html_base::pre_url_array($url_arr);
@@ -267,7 +266,6 @@ class formula_url_tests extends url_test_base
     protected function del_formula_workflow(int $wf_nbr, bool $do_it = false): void
     {
         $msg = new user_message();
-        $msg_ui = new user_message_ui();
         // the del_formula workflow runs on the reserved 'System Test Formula'
         // resolve its current db id by name and set the fixed snapshot id so the snapshot does not depend on the assigned id
         $this->wf_start($wf_nbr, workflows::WF_DEL_FORMULA, $this->t->usr1, formula_names::SYSTEM_TEST_ADD_ID, $do_it);
@@ -284,8 +282,7 @@ class formula_url_tests extends url_test_base
         // initial url with the added formula; the url carries the current db ids of the formula and of
         // its from and to words so the confirmed delete targets the real rows (the snapshot files
         // normalize the ids back to the fixed test ids)
-        $t_frm = new test_formulas($this->t);
-        $url_arr = $t_frm->formula_add_url($msg_ui);
+        $url_arr = test_formulas::formula_add_url();
         $url_arr[url_var::ID] = $this->wf_id;
         // fix the values before the changes in the url TODO Prio 2 should be done by the process automatic
         $url_pre = html_base::pre_url_array($url_arr);
@@ -330,6 +327,58 @@ class formula_url_tests extends url_test_base
         if ($do_it) {
             $this->assert_formula_removed('del_formula workflow has removed the formula');
         }
+    }
+
+    /**
+     * run one validate workflow of the formula form: the user opens the edit view of the test
+     * formula, types a text into the expression or the latex field and presses the validate button
+     * beside it, which asks the backend to read the entered text; the backend answers either with
+     * the terms that the text names (shown in the validated column beside the field) or with the
+     * reason why it cannot be used, which the page shows like every other message to the user
+     *
+     * only the backend can validate an expression, so these workflows run with $do_it true (which
+     * renders without test mode, see url_test_base::wf_start) and have no test mode twin; nothing
+     * is written, because a validate is never a form save
+     *
+     * @param int $wf_nbr the workflow id selecting the snapshot folder and file prefix e.g. 37 for wf37
+     * @param string $wf_name the workflow name e.g. workflows::WF_VALIDATE_EXPRESSION
+     * @param string $url_id the field that the user has typed in e.g. url_var::USER_EXPRESSION
+     * @param string $text the text that the user has entered in that field
+     * @param string $refresh the refresh value that the validate button of that field posts
+     */
+    protected function validate_formula_workflow(
+        int    $wf_nbr,
+        string $wf_name,
+        string $url_id,
+        string $text,
+        string $refresh
+    ): void
+    {
+        $msg = new user_message();
+        $this->wf_start($wf_nbr, $wf_name, $this->t->usr1, formula_names::SYSTEM_TEST_ADD_ID, true);
+
+        // the validate workflows run on the reserved 'System Test Formula' like change_formula_workflow
+        $frm = new formula($this->t->usr1);
+        $this->wf_id = $frm->load_by_name(formula_names::SYSTEM_TEST_ADD, $msg);
+        if ($this->wf_id == 0) {
+            $this->wf_id = formula_names::SYSTEM_TEST_ADD_ID;
+        }
+        $this->wf_fixed_id = formula_names::SYSTEM_TEST_ADD_ID;
+
+        $url_arr = test_formulas::formula_add_url();
+        $url_arr[url_var::ID] = $this->wf_id;
+        // fix the values before the change in the url TODO Prio 2 should be done by the process automatic
+        $url_arr = $url_arr + html_base::pre_url_array($url_arr);
+        $url_arr[url_var::BACK . url_var::MASK] = views::FORMULA_ID;
+        $url_arr[url_var::BACK . url_var::ID] = $this->wf_id;
+
+        // edit: open the formula edit view
+        $this->assert_step(workflows::EDIT, $url_arr, views::FORMULA_EDIT_ID);
+
+        // validate: the user has typed the text and presses the validate button beside the field
+        $url_arr[$url_id] = $text;
+        $url_arr[url_var::REFRESH] = $refresh;
+        $this->assert_step(workflows::VALIDATE, $url_arr, views::FORMULA_EDIT_ID);
     }
 
     /**

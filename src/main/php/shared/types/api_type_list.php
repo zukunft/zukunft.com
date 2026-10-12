@@ -61,6 +61,7 @@ class api_type_list
      *
      * currently translates:
      *   - url_var::INCL_RELATED (truthy)  → api_types::INCL_RELATED
+     *   - url_var::INCL_USED (truthy)     → api_types::INCL_USED
      *
      * $base seeds the result so callers can include flags that always apply (e.g. HEADER for
      * a top-level api response); flags from $base are kept verbatim
@@ -74,6 +75,9 @@ class api_type_list
         $types = $base;
         if (!empty($url_array[url_var::INCL_RELATED])) {
             $types[] = api_types::INCL_RELATED;
+        }
+        if (!empty($url_array[url_var::INCL_USED])) {
+            $types[] = api_types::INCL_USED;
         }
         return new self($types);
     }
@@ -169,6 +173,15 @@ class api_type_list
     }
 
     /**
+     * @return bool true if the api message of a result should include the values, formulas and
+     *              results used for the calculation, which only some result views show
+     */
+    public function incl_used(): bool
+    {
+        return in_array(api_types::INCL_USED, $this->lst);
+    }
+
+    /**
      * @return bool true if the api message should include the details of the term
      *              otherwise just the view id is included in the api message
      */
@@ -209,14 +222,6 @@ class api_type_list
     public function with_excluded_id(): bool
     {
         return in_array(api_types::WITH_EXCLUDED_ID, $this->lst);
-    }
-
-    /**
-     * @return bool true if the keys should not be filled to the full key length
-     */
-    public function no_key_fill(): bool
-    {
-        return in_array(api_types::NO_KEY_FILL, $this->lst);
     }
 
     /**

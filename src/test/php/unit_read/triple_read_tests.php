@@ -82,7 +82,7 @@ class triple_read_tests
         $t->assert($test_name, $trp_by_id->description, triple_names::MATH_CONST_COM);
 
         // a triple can carry a phrase type like a word: the unit triple "gram per kWh" of the
-        // use case import is typed "measure", so the type must survive the db round trip
+        // use case import is typed "measure unit", so the type must survive the db round trip
         // (import, save, load), else a table header shows the unit like a normal phrase
         $test_name = 'the measure type of the unit triple ' . triple_names::GRAM_PER_KWH . ' is saved';
         $trp_unit = new triple($t->usr1);

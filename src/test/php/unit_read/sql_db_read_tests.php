@@ -68,11 +68,16 @@ class sql_db_read_tests
         $t->assert('change_column_name', $result, '');
 
         $test_name = 'csv check for the change log ';
-        $this->assert_table_field_preload($test_name, $t, $db_con);
+        $this->assert_table_field_preload($test_name, $t, $db_con, $msg);
 
     }
 
-    private function assert_table_field_preload(string $test_name, test_cleanup $t, sql_db $db_con): void
+    private function assert_table_field_preload(
+        string       $test_name,
+        test_cleanup $t,
+        sql_db       $db_con,
+        user_message $msg
+    ): void
     {
         global $sys;
 
@@ -81,7 +86,7 @@ class sql_db_read_tests
         $next_tbl_id = $sys->typ_lst->cng_tbl->count() + 1;
         $next_fld_id = $sys->typ_lst->cng_fld->count() + 1;
 
-        $tbl_lst = $db_con->get_tables();
+        $tbl_lst = $db_con->get_tables($msg);
         foreach ($tbl_lst as $tbl) {
             if (!$this->table_no_change_log($tbl)) {
                 $tbl_id = $sys->typ_lst->cng_tbl->id($tbl);
@@ -89,7 +94,7 @@ class sql_db_read_tests
                     $tbl_msg->add_message_text($next_tbl_id . ",'" . $tbl . "',,'" . $tbl . "'");
                     $next_tbl_id++;
                 } else {
-                    $fld_lst = $db_con->get_fields($tbl);
+                    $fld_lst = $db_con->get_fields($tbl, $msg);
                     foreach ($fld_lst as $fld) {
                         $fld_id = $sys->typ_lst->cng_fld->id($tbl_id . $fld);
                         if ($fld_id == -1) {

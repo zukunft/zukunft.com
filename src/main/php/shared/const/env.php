@@ -54,6 +54,8 @@ const ENV_PGSQL_ADMIN_USERNAME = 'PGSQL_ADMIN_USERNAME';
 const ENV_PGSQL_ADMIN_PASSWORD = 'PGSQL_ADMIN_PASSWORD';
 const ENV_PGSQL_HOST = 'PGSQL_HOST';
 const ENV_PGSQL_PORT = 'PGSQL_PORT';
+// the libpq sslmode e.g. "require" for a database on another server (see SQL_DB_SSLMODE)
+const ENV_PGSQL_SSLMODE = 'PGSQL_SSLMODE';
 const ENV_MYSQL_DATABASE = 'MYSQL_DATABASE';
 const ENV_MYSQL_USERNAME = 'MYSQL_USERNAME';
 const ENV_MYSQL_PASSWORD = 'MYSQL_PASSWORD';
@@ -109,6 +111,14 @@ const ENV_USER_MAIL = 'USER_MAIL';
 const ENV_CO_USER_NAME = 'CO_USER_NAME'; // the suggestion is to have always a deputy admin as fallback
 const ENV_CO_USER_PW = 'CO_USER_PW'; // if empty requested on initial startup
 const ENV_CO_USER_MAIL = 'CO_USER_MAIL';
+// the email account that sends the signup confirmation and the password reset mails via smtp;
+// without a host the mails are sent via the local sendmail of php mail() (see web/helper/mail_sender)
+const ENV_SIGNUP_MAIL = 'SIGNUP_MAIL'; // the sender address of the mails
+const ENV_SIGNUP_MAIL_HOST = 'SIGNUP_MAIL_HOST'; // the smtp server e.g. smtp.example.com
+const ENV_SIGNUP_MAIL_PORT = 'SIGNUP_MAIL_PORT'; // 587 for starttls or 465 for implicit tls
+const ENV_SIGNUP_MAIL_USER = 'SIGNUP_MAIL_USER'; // the login of the account; empty to use the sender address
+const ENV_SIGNUP_MAIL_PW = 'SIGNUP_MAIL_PW'; // the password of the account, which stays in the deployed .env
+const SIGNUP_MAIL_PORT_FALLBACK = 587;
 const POD_NAME_FALLBACK = 'zukunft.com';  // the default pod name if not defined
 const THIS_URL_FALLBACK = 'http://localhost/';  // the default pod url if not defined
 const SOURCE_REPO_URL_FALLBACK = 'https://github.com/zukunft/zukunft.com';  // the default source repository for program updates
@@ -132,6 +142,7 @@ const ENV_VARS = [
     ENV_PGSQL_ADMIN_PASSWORD,
     ENV_PGSQL_HOST,
     ENV_PGSQL_PORT,
+    ENV_PGSQL_SSLMODE,
     ENV_MYSQL_DATABASE,
     ENV_MYSQL_USERNAME,
     ENV_MYSQL_PASSWORD,
@@ -168,9 +179,15 @@ const ENV_VARS = [
     ENV_CO_USER_NAME,
     ENV_CO_USER_PW,
     ENV_CO_USER_MAIL,
+    ENV_SIGNUP_MAIL,
+    ENV_SIGNUP_MAIL_HOST,
+    ENV_SIGNUP_MAIL_PORT,
+    ENV_SIGNUP_MAIL_USER,
+    ENV_SIGNUP_MAIL_PW,
 ];
 
 const ENV_SECRETS = [
+    ENV_SIGNUP_MAIL_PW,
     ENV_PGSQL_PASSWORD,
     ENV_PGSQL_ADMIN_PASSWORD,
     ENV_MYSQL_PASSWORD,
@@ -178,6 +195,10 @@ const ENV_SECRETS = [
     ENV_SERVER_ADMIN_PW,
     ENV_SERVER_ADMIN_2_PW,
     ENV_SERVER_ADMIN_3_PW,
+    ENV_ADMIN_PW,
+    ENV_CO_ADMIN_PW,
+    ENV_USER_PW,
+    ENV_CO_USER_PW,
 ];
 
 // the possible environments
@@ -215,6 +236,12 @@ const SQL_DB_NAME_DEFAULT = 'zukunft';
 const SQL_DB_HOST_DEFAULT = '127.0.0.1';
 const SQL_DB_USER_DEFAULT = 'zukunft';
 const SQL_DB_PASSWD_FALLBACK = 'change_me';
+// a database on the same host is reached without ssl, because ssl protects nothing on the loopback
+// and libpq and curl sharing openssl in one php process can break the ssl stream with
+// "SSL error: decryption failed or bad record mac"; any other host keeps the libpq default
+const SQL_DB_LOCAL_HOSTS = ['localhost', '127.0.0.1', '::1'];
+const SQL_DB_SSLMODE_LOCAL = 'disable';
+const SQL_DB_SSLMODE_DEFAULT = 'prefer';
 const SYSTEM_ADMIN_IP_FALLBACK = 'localhost';
 
 // read the environment file: prefer a copy one level above the web root so the secrets are not
@@ -334,6 +361,8 @@ define('SOURCE_REPO_URL', getenv(ENV_SOURCE_REPO_URL) ?: SOURCE_REPO_URL_FALLBAC
 define('SQL_DB_TYPE', getenv(ENV_DB) ?: POSTGRES);
 define('SQL_DB_NAME', getenv(ENV_PGSQL_DATABASE) ?: SQL_DB_NAME_DEFAULT);
 define('SQL_DB_HOST', getenv(ENV_PGSQL_HOST) ?: SQL_DB_HOST_DEFAULT);
+$sql_db_is_local = in_array(SQL_DB_HOST, SQL_DB_LOCAL_HOSTS, true);
+define('SQL_DB_SSLMODE', getenv(ENV_PGSQL_SSLMODE) ?: ($sql_db_is_local ? SQL_DB_SSLMODE_LOCAL : SQL_DB_SSLMODE_DEFAULT));
 // the technical postgres user that is owner of the zukunft database
 define('SQL_DB_USER', getenv(ENV_PGSQL_USERNAME) ?: SQL_DB_USER_DEFAULT);
 define('SQL_DB_PASSWD', getenv(ENV_PGSQL_PASSWORD) ?: SQL_DB_PASSWD_FALLBACK);
@@ -376,6 +405,11 @@ define('USER_MAIL', getenv(ENV_USER_MAIL) ?: '');
 define('CO_USER_NAME', getenv(ENV_CO_USER_NAME) ?: '');
 define('CO_USER_PW', getenv(ENV_CO_USER_PW) ?: '');
 define('CO_USER_MAIL', getenv(ENV_CO_USER_MAIL) ?: '');
+define('SIGNUP_MAIL', getenv(ENV_SIGNUP_MAIL) ?: '');
+define('SIGNUP_MAIL_HOST', getenv(ENV_SIGNUP_MAIL_HOST) ?: '');
+define('SIGNUP_MAIL_PORT', (int)(getenv(ENV_SIGNUP_MAIL_PORT) ?: SIGNUP_MAIL_PORT_FALLBACK));
+define('SIGNUP_MAIL_USER', getenv(ENV_SIGNUP_MAIL_USER) ?: SIGNUP_MAIL);
+define('SIGNUP_MAIL_PW', getenv(ENV_SIGNUP_MAIL_PW) ?: '');
 
 // the location type for the system cache which can be the database or with some permission adjustments a file folder
 define('CACHE_LOCATION', getenv(ENV_CACHE) ?: ENV_CACHE_FALLBACK);

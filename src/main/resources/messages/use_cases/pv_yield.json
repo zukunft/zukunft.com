@@ -1,0 +1,111 @@
+{
+  "version": "0.0.3",
+  "data_version": "0.0.1",
+  "time": "2026-10-08 12:00:00",
+  "user": "timon",
+  "selection": [
+    "PV return"
+  ],
+  "description": "Use case: the general part of the photovoltaic return calculation, the phrases, the formulas and the data that are the same for every country; the sun intensity per postal code and the electricity prices of a country are in the file pv_yield_<country>.json of that country. The yearly return of one kWp is the PV yield of the place times the value of one kWh: with self-consumption every kWh replaces a kWh bought at the household electricity price, with feed-in every kWh is sold to the grid at the feed-in remuneration, and the expected return mixes both with the share of the yield that the household uses itself. The calc-validation checks the three formulas with one assumed example installation, because a check may only use the values and formulas of its own file.",
+  "words": [
+    {"name": "photovoltaic"},
+    {"name": "PV"},
+    {"name": "irradiation", "description": "the solar energy that reaches one square metre of a surface over a period, e.g. in kWh per m2 and year"},
+    {"name": "global"},
+    {"name": "horizontal"},
+    {"name": "optimal"},
+    {"name": "slope"},
+    {"name": "yield"},
+    {"name": "postal"},
+    {"name": "code"},
+    {"name": "country"},
+    {"name": "annual"},
+    {"name": "kWh"},
+    {"name": "m2"},
+    {"name": "kWp", "description": "kilowatt peak, the nominal power of photovoltaic panels under the standard test conditions of 1000 W per m2 at 25 degree Celsius", "type": "measure_unit", "refs": [{"name": "Nominal_power_(photovoltaic)", "type": "wikipedia"}]},
+    {"name": "EUR"},
+    {"name": "electricity"},
+    {"name": "price"},
+    {"name": "household"},
+    {"name": "feed-in", "description": "the delivery of self-produced electricity into the public grid"},
+    {"name": "remuneration"},
+    {"name": "return"},
+    {"name": "self-consumption", "description": "the use of self-produced electricity in the own house, which saves the purchase of the same kWh from the grid"},
+    {"name": "share"},
+    {"name": "percent"},
+    {"name": "house"},
+    {"name": "terraced"},
+    {"name": "S2", "description": "the second half of a year from July to December, as Eurostat names the semester of the bi-annual price data"},
+    {"name": "2025"},
+    {"name": "example"},
+    {"name": "assumed"}
+  ],
+  "triples": [
+    {"name": "postal code", "from": "code", "verb": "kind of", "to": "postal", "description": "the number of a post office area that is part of a postal address; the number is qualified as postal code, e.g. 1950 (postal code), because the same number can also be a year, and each postal code is the triple of the qualified number in its country, named with the country code as prefix, e.g. CH-1950"},
+    {"name": "country code", "from": "code", "verb": "of", "to": "country", "description": "the two-letter ISO 3166-1 alpha-2 code of a country, used as the prefix of its postal codes"},
+    {"name": "horizontal irradiation", "from": "irradiation", "verb": "kind of", "to": "horizontal"},
+    {"name": "global horizontal irradiation", "from": "horizontal irradiation", "verb": "kind of", "to": "global", "description": "the direct and the diffuse solar irradiation on a horizontal surface"},
+    {"name": "optimal slope", "from": "slope", "verb": "kind of", "to": "optimal", "description": "the inclination of a fixed panel to the horizontal that gives the highest yearly irradiation at a place"},
+    {"name": "irradiation on optimal slope", "from": "irradiation", "verb": "on", "to": "optimal slope", "description": "the direct, diffuse and reflected solar irradiation on a panel at the optimal slope and azimuth"},
+    {"name": "PV yield", "from": "yield", "verb": "of", "to": "PV", "description": "the electricity that photovoltaic panels deliver to the grid or the house, after the losses of the cables, the inverter, the temperature and the dirt"},
+    {"from": "kWh", "verb": "per", "to": "m2", "type": "measure_unit"},
+    {"from": "kWh", "verb": "per", "to": "kWp", "type": "measure_unit"},
+    {"from": "EUR", "verb": "per", "to": "kWh", "type": "measure_unit"},
+    {"from": "EUR", "verb": "per", "to": "kWp", "type": "measure_unit"},
+    {"name": "electricity price", "from": "price", "verb": "of", "to": "electricity"},
+    {"name": "household electricity price", "from": "electricity price", "verb": "kind of", "to": "household", "description": "the total price of one kWh for a household: energy, grid usage, metering, taxes and levies"},
+    {"name": "feed-in remuneration", "from": "remuneration", "verb": "kind of", "to": "feed-in", "description": "the price that the grid operator pays for one kWh of electricity fed into the grid"},
+    {"name": "PV return", "from": "return", "verb": "of", "to": "PV", "description": "the money that photovoltaic panels earn or save per year, either by replacing electricity bought from the grid or by selling electricity to the grid"},
+    {"name": "self-consumption share", "from": "share", "verb": "of", "to": "self-consumption", "description": "the share of the PV yield that is used in the own house at the time it is produced; the rest is fed into the grid"},
+    {"name": "terraced house", "from": "house", "verb": "kind of", "to": "terraced"},
+    {"name": "2025-S2", "from": "S2", "verb": "of", "to": "2025"}
+  ],
+  "formulas": [
+    {
+      "name": "PV return by self-consumption",
+      "description": "the upper bound of the yearly return of one kWp: every kWh of the yield is used in the own house and replaces a kWh bought at the household electricity price",
+      "expression": "\"PV return\" = \"PV yield\" * \"household electricity price\"",
+      "assigned": ["PV yield", "household electricity price"]
+    },
+    {
+      "name": "PV return by feed-in",
+      "description": "the lower bound of the yearly return of one kWp: every kWh of the yield is fed into the grid and paid with the feed-in remuneration",
+      "expression": "\"PV return\" = \"PV yield\" * \"feed-in remuneration\"",
+      "assigned": ["PV yield", "feed-in remuneration"]
+    },
+    {
+      "name": "PV return by self-consumption share",
+      "description": "the expected yearly return of one kWp: the self-consumed share of the yield replaces electricity bought at the household electricity price and the rest is fed into the grid and paid with the feed-in remuneration",
+      "expression": "\"PV return\" = \"PV yield\" * ( \"self-consumption share\" * \"household electricity price\" + ( 1 - \"self-consumption share\" ) * \"feed-in remuneration\" )",
+      "assigned": ["PV yield", "self-consumption share", "household electricity price", "feed-in remuneration"]
+    }
+  ],
+  "sources": [
+    {
+      "name": "PVGIS 5.3",
+      "description": "Photovoltaic Geographical Information System version 5.3 of the European Commission Joint Research Centre, tool PVcalc queried on 8 October 2026 with the default settings: radiation database PVGIS-SARAH3 with the years 2005 to 2023, meteorological data ERA5, horizon shading calculated from the elevation model, crystalline silicon panels with a peak power of 1 kWp and 14 percent system loss, free-standing at the optimal slope and azimuth for the yield and at slope 0 for the global horizontal irradiation.",
+      "url": "https://re.jrc.ec.europa.eu/pvg_tools/en/"
+    },
+    {
+      "name": "Eurostat electricity prices for household consumers",
+      "description": "Eurostat dataset nrg_pc_204, electricity prices for household consumers, bi-annual data, queried on 8 October 2026: the national average price of the consumption band DC (2500 to 4999 kWh per year) including all taxes and levies in EUR per kWh, also for the countries outside the euro area; the second half of 2025 is the latest semester with a price for every country.",
+      "url": "https://ec.europa.eu/eurostat/databrowser/view/nrg_pc_204/default/table"
+    },
+    {
+      "name": "Kanton Zürich battery storage for a terraced house with PV",
+      "description": "Canton of Zurich, pilot project energy: Viridén + Partner AG measured a 3.75 kWp photovoltaic installation on the terraced house Nassackerstrasse 29 in Schlieren from July 2014 to September 2017, the first year without battery, then with 5.5 kWh and 11 kWh of battery; the installation produces about 3100 kWh per year, of which only 30 percent are used directly in the house without storage.",
+      "url": "https://www.zh.ch/de/umwelt-tiere/energie/pilotprojekt-energie/flexdata/batteriespeicher-fuer-reiheneinfamilienhaus-mit-photovoltaik.html"
+    }
+  ],
+  "values": [
+    {"words": ["self-consumption share", "terraced house", "percent"], "number": "0.3", "source": "Kanton Zürich battery storage for a terraced house with PV", "description": "measured without battery on a terraced house in Schlieren with 3.75 kWp; a house with a heat pump, an electric car, a battery or a smaller installation uses a larger share itself"},
+    {"words": ["example", "PV yield", "annual", "kWh per kWp", "assumed"], "number": "1000", "description": "a round yield to check the formulas"},
+    {"words": ["example", "household electricity price", "EUR per kWh", "assumed"], "number": "0.3", "description": "a round price to check the formulas"},
+    {"words": ["example", "feed-in remuneration", "EUR per kWh", "assumed"], "number": "0.06", "description": "a round remuneration to check the formulas"}
+  ],
+  "calc-validation": [
+    {"context": ["example", "PV yield", "annual", "kWh per kWp", "household electricity price", "EUR per kWh", "assumed"], "formula": "PV return by self-consumption", "words": ["example", "PV return", "self-consumption", "annual", "EUR per kWp", "assumed"], "number": "300"},
+    {"context": ["example", "PV yield", "annual", "kWh per kWp", "feed-in remuneration", "EUR per kWh", "assumed"], "formula": "PV return by feed-in", "words": ["example", "PV return", "feed-in", "annual", "EUR per kWp", "assumed"], "number": "60"},
+    {"context": ["example", "PV yield", "annual", "kWh per kWp", "household electricity price", "feed-in remuneration", "EUR per kWh", "assumed", "self-consumption share", "terraced house", "percent"], "formula": "PV return by self-consumption share", "words": ["example", "PV return", "terraced house", "annual", "EUR per kWp", "assumed"], "number": "132"}
+  ]
+}

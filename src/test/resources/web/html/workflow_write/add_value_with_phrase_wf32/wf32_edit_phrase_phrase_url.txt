@@ -1,0 +1,15 @@
+GET
+http://localhost/http/view.php?id=0&9m=1&pl=192%2C1932&p=997&fr=frp&m=19&z=0
+/http/view.php?id=0&9m=1&pl=192%2C1932&p=997&fr=frp&m=19&z=0
+/http/view.php?id=0&9mask_id=entry_view&phrase_ids=192%2C1932&phrase_id=997&refresh=phrases_from_pattern&mask_id=value_add_phrases&step=no&
+{
+    "id": "0",
+    "phrase_ids": "192,1932",
+    "phrase_id": "997",
+    "refresh": "phrases_from_pattern",
+    "mask_id": "value_add_phrases",
+    "step": "no",
+    "url_part_back": {
+        "mask_id": "entry_view"
+    }
+}

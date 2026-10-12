@@ -163,6 +163,53 @@ class test_sources extends test_objects
     }
 
     /**
+     * @return source that is about to be added with the name of the reserved source but another
+     *                url, which must not be merged into the reserved source
+     */
+    function source_reserved_other_url(): source
+    {
+        $src = $this->source_reserved();
+        $src->id = 0;
+        $src->url = sources::BFS_ULR;
+        return $src;
+    }
+
+    /**
+     * @return source that is about to be added with the name and url of the filled source but
+     *                another doi, which must not be merged into the filled source
+     */
+    function source_filled_other_doi(): source
+    {
+        $src = $this->source_filled_included();
+        $src->id = 0;
+        $src->doi = sources::TEST_DOI_OTHER;
+        return $src;
+    }
+
+    /**
+     * @return source with the name of the db write test source but another url, which the save of
+     *                a new source must reject once the test source has been added
+     */
+    function source_add_other_url(): source
+    {
+        $src = $this->source_filled_add();
+        $src->url = sources::SIB_URL;
+        return $src;
+    }
+
+    /**
+     * @return source with the renamed test name and another url, which the save must reject
+     *                when it is renamed to the name of the db write test source
+     */
+    function source_renamed_other_url(): source
+    {
+        $src = new source($this->env->usr1);
+        $src->set_name(sources::SYSTEM_TEST_RENAMED);
+        $src->url = sources::SIB_URL;
+        return $src;
+    }
+
+    /**
      * @return source used for the reference
      */
     function source_ref(): source
@@ -222,10 +269,9 @@ class test_sources extends test_objects
      *
      * @return array the source url parameters of a new source
      */
-    static function source_new_url(user_message_ui $msg): array
+    static function source_new_url(): array
     {
-        $src_ui = new source_ui();
-        return $src_ui->to_url_array($msg);
+        return [url_var::ID => 0];
     }
 
     /**
@@ -233,10 +279,9 @@ class test_sources extends test_objects
      *
      * @return array the source url parameters of the added test source
      */
-    function source_add_url(user_message_ui $msg): array
+    static function source_add_url(): array
     {
-        $src_ui = new source_ui($this->source_add()->api_json());
-        return $src_ui->to_url_array($msg);
+        return [url_var::ID => 0, url_var::NAME => sources::SYSTEM_TEST_ADD];
     }
 
     /**
@@ -272,8 +317,7 @@ class test_sources extends test_objects
      */
     function fill_url_array(int $id): array
     {
-        $msg = new user_message_ui();
-        $url_arr = $this->source_add_url($msg);
+        $url_arr = self::source_add_url();
         // the workflow step adds the current db id of the test source, so drop the factory id
         unset($url_arr[url_var::ID]);
         $url_arr[url_var::URL] = sources::TEST_URL_CHANGED;
