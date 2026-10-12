@@ -25381,7 +25381,7 @@
                         "type_id": 261,
                         "code_id": "system_admin_login_fails",
                         "position": 3,
-                        "position_type": 1
+                        "position_type": 5
                     },
                     {
                         "link_id": 1346,
@@ -25391,7 +25391,7 @@
                         "type_id": 262,
                         "code_id": "system_admin_errors_unassigned",
                         "position": 4,
-                        "position_type": 1
+                        "position_type": 6
                     },
                     {
                         "link_id": 1347,
@@ -25401,7 +25401,7 @@
                         "type_id": 263,
                         "code_id": "system_admin_errors_delayed_fix",
                         "position": 5,
-                        "position_type": 1
+                        "position_type": 6
                     },
                     {
                         "link_id": 1348,
@@ -25411,7 +25411,7 @@
                         "type_id": 264,
                         "code_id": "system_admin_jobs_delayed",
                         "position": 6,
-                        "position_type": 1
+                        "position_type": 7
                     }
                 ]
             },

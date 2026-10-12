@@ -6573,13 +6573,16 @@
     \-- all_jobs - section for function all_jobs missing in /component/execute/system_page.php
     \-- process_progress - section for function process_progress missing in /component/execute/system_page.php
     \-- process_list - section for function process_list missing in /component/execute/system_page.php
-    \-- admin_url_delay - section for function admin_url_delay missing in /component/execute/system_page.php
-    \-- admin_login_fails - section for function admin_login_fails missing in /component/execute/system_page.php
-    \-- admin_errors_unassigned - section for function admin_errors_unassigned missing in /component/execute/system_page
-            .php
-    \-- admin_errors_delayed_fix - section for function admin_errors_delayed_fix missing in /component/execute/system_pa
-            ge.php
-    \-- admin_jobs_delayed - section for function admin_jobs_delayed missing in /component/execute/system_page.php
+    \-- admin_url_delay - section for function admin_url_delay not yet defined that it should be admin dashboard in /com
+            ponent/execute/system_page.php
+    \-- admin_login_fails - section for function admin_login_fails not yet defined that it should be admin dashboard in 
+            /component/execute/system_page.php
+    \-- admin_errors_unassigned - section for function admin_errors_unassigned not yet defined that it should be admin d
+            ashboard in /component/execute/system_page.php
+    \-- admin_errors_delayed_fix - section for function admin_errors_delayed_fix not yet defined that it should be admin
+             dashboard in /component/execute/system_page.php
+    \-- admin_jobs_delayed - section for function admin_jobs_delayed not yet defined that it should be admin dashboard i
+            n /component/execute/system_page.php
 \-- ui_base
     \-- phrase_name - section for function phrase_name missing in /component/execute/ui_base.php
     \-- verb_name - section for function verb_name missing in /component/execute/ui_base.php
@@ -7829,6 +7832,7 @@
     \-- priority - section for function priority not yet defined that it should be set and get in /system/job.php
     \-- user_name - section for function user_name not yet defined that it should be set and get in /system/job.php
     \-- is_open - section for function is_open is expected to be info in /system/job.php
+    \-- is_delayed - section for function is_delayed is expected to be info in /system/job.php
     \-- change - section for function change not yet defined that it should be modify in /system/job.php
     \-- display - section for function display not yet defined that it should be base elements in /system/job.php
     \-- display_with_actions - section for function display_with_actions not yet defined that it should be base elements
@@ -7848,6 +7852,8 @@
             ystem/job_list.php
     \-- pending_first - section for function pending_first not yet defined that it should be display in /system/job_list
             .php
+    \-- open_oldest_first - section for function open_oldest_first not yet defined that it should be display in /system/
+            job_list.php
     \-- tbl - section for function tbl not yet defined that it should be to review in /system/job_list.php
 \-- language
     \-- url_mapper - section for function url_mapper not yet defined that it should be api in /system/language.php
@@ -7880,7 +7886,16 @@
     \-- api_array - section for function api_array not yet defined that it should be api in /system/sys_log_list.php
     \-- add - section for function add not yet defined that it should be modify in /system/sys_log_list.php
     \-- is_empty - section for function is_empty is expected to be info in /system/sys_log_list.php
+    \-- count - section for function count not yet defined that it should be modify in /system/sys_log_list.php
     \-- head - section for function head not yet defined that it should be modify in /system/sys_log_list.php
+    \-- filtered - section for function filtered not yet defined that it should be modify in /system/sys_log_list.php
+    \-- critical_first - section for function critical_first not yet defined that it should be modify in /system/sys_log
+            _list.php
+    \-- critical - section for function critical not yet defined that it should be modify in /system/sys_log_list.php
+    \-- login_fails - section for function login_fails not yet defined that it should be modify in /system/sys_log_list.
+            php
+    \-- login_fail_groups - section for function login_fail_groups not yet defined that it should be modify in /system/s
+            ys_log_list.php
     \-- display - section for function display not yet defined that it should be display in /system/sys_log_list.php
     \-- display_admin - section for function display_admin not yet defined that it should be display in /system/sys_log_
             list.php
@@ -7889,6 +7904,19 @@
     \-- get_html_header - section for function get_html_header is expected to be set and get in /system/sys_log_list.php
     \-- get_html_navbar - section for function get_html_navbar is expected to be set and get in /system/sys_log_list.php
     \-- get_html_footer - section for function get_html_footer is expected to be set and get in /system/sys_log_list.php
+\-- system_time
+    \-- api_mapper - section for function api_mapper is expected to be construct and map in /system/system_time.php
+    \-- display - section for function display not yet defined that it should be display in /system/system_time.php
+    \-- header - section for function header not yet defined that it should be display in /system/system_time.php
+\-- system_time_list
+    \-- add - section for function add not yet defined that it should be modify in /system/system_time_list.php
+    \-- count - section for function count not yet defined that it should be info in /system/system_time_list.php
+    \-- slowest_first - section for function slowest_first not yet defined that it should be select in /system/system_ti
+            me_list.php
+    \-- critical - section for function critical not yet defined that it should be select in /system/system_time_list.ph
+            p
+    \-- head - section for function head not yet defined that it should be select in /system/system_time_list.php
+    \-- display - section for function display not yet defined that it should be display in /system/system_time_list.php
 \-- type_list
     \-- reset - section for function reset is expected to be construct and map in /types/type_list.php
     \-- set_from_json_array - section for function set_from_json_array is expected to be set and get in /types/type_list
@@ -8437,6 +8465,14 @@
         \-- phrase_list - get the words from the phrase list
     \-- triple_list
         \-- phrase_list - get the triples from the phrase list
+    \-- slowest_first
+        \-- system_time_list - @return system_time_list the request times with the slowest first and the same time sorte
+                d by the url
+    \-- critical
+        \-- system_time_list - @param bool $critical true for the requests that took at least the limit,
+                 false for the faster ones
+    \-- head
+        \-- system_time_list - @param int $limit the maximal number of request times to keep
     \-- time_lst
         \-- triple_list - get all time triples from this list of triples
     \-- measure_lst
@@ -8504,6 +8540,12 @@
         \-- phrase_list - the phrases that say how the number has been found e.g. "assumed", which are shown as a
     \-- symbol_links
         \-- phrase_list - the symbols of the phrases of this list, each linked to its phrase and separated from the
+    \-- is_critical
+        \-- system_time - @param int $limit the milliseconds from which a request is critical
+    \-- is_empty
+        \-- system_time_list - @return bool true if the list contains no request time
+    \-- count
+        \-- system_time_list - @return int the number of request times of this list
 \-- to be replaced
     \-- form_edit
         \-- component - HTML code to edit all component fields
@@ -8577,6 +8619,8 @@
         \-- sandbox_link - @return string that best describes this object
         \-- job_list - @return string with a table of the batch job entries for users
         \-- sys_log_list - @return string with a table of the system log entries for users
+        \-- system_time - @return string the html table row of this request time
+        \-- system_time_list - @return string the html table of the request times with a header row
         \-- triple_list - the names are separated by a blank and not by a comma, because each name is already a link
     \-- name_tip
         \-- formula_link_list - @return string with a list of the formula names with html links
@@ -8584,6 +8628,7 @@
         \-- group_list - @return string with to identify the phrase group list
     \-- header
         \-- text_log - write a header text to the standard io
+        \-- system_time - @return string the html table header row of the request times
     \-- subheader
         \-- text_log - write a subheader text to the standard io
     \-- name_link_by_impact
@@ -8628,6 +8673,8 @@
         \-- job_list - @param bool $is_admin true if the requesting user is an admin, who can also upgrade a job
     \-- pending_first
         \-- job_list - @return array the jobs with the open jobs on top and within each group the newest request first
+    \-- open_oldest_first
+        \-- job_list - @return array the jobs that have not yet ended with the longest waiting job first
     \-- display_admin
         \-- sys_log_list - @param array $url_arr the url vars of the calling page for the back link of the close links
     \-- get_html
@@ -8660,6 +8707,7 @@
         \-- result_list - set the vars of a result object based on the given json
         \-- sandbox - set the vars of this sandbox object bases on the api json array
         \-- job_list - set the vars of these list display objects bases on the api json array
+        \-- system_time - set the vars of this request time based on the api json array
         \-- triple_list - set the triples based on the given json
     \-- id
         \-- figure - the figure id based on the value or result id: the result id is negated, and a text key,
@@ -8809,6 +8857,7 @@
         \-- sandbox - @return array the json message array to send the updated data to the backend
     \-- set_from_json_array
         \-- sys_log_list - set the vars of these list display objects bases on the api json array
+        \-- system_time_list - set the request times based on the api json array
         \-- verb_list - set the vars of a term object based on the given json
     \-- default_id
         \-- component_type_list - create the HTML code to select a component type
@@ -8958,19 +9007,6 @@
         \-- system_page - @param user_message $msg with the requesting user
     \-- process_list
         \-- system_page - @param user_message $msg with the requesting user
-    \-- admin_url_delay
-        \-- system_page - @return string with the HTML code that contains the most relevant user response delay within a
-                 time period defined in the system configuration
-    \-- admin_login_fails
-        \-- system_page - @return string with the HTML code that contains the last failed user logins
-    \-- admin_errors_unassigned
-        \-- system_page - @return string with the HTML code that all internal system errors that are not yet assigned to
-                 a developer
-    \-- admin_errors_delayed_fix
-        \-- system_page - @return string with the HTML code that all internal system errors that have not been updated s
-                ince a some time (as defined in the system config)
-    \-- admin_jobs_delayed
-        \-- system_page - render an HTML table of all not-yet-closed system jobs ordered by the longest delay first;
     \-- phrase_name
         \-- ui_base - @return string the name of a phrase and give the user the possibility to change the phrase name
     \-- verb_name
@@ -9521,6 +9557,20 @@
                 s)
     \-- row_end
         \-- system_form - @return string just to indicate that a row ends
+\-- admin dashboard
+    \-- admin_url_delay
+        \-- system_page - the slowest user requests: a request that took at least the configured warning time is critica
+                l
+    \-- admin_login_fails
+        \-- system_page - the failed logins grouped by the typed name: a name with at least the configured number of fai
+                led logins
+    \-- admin_errors_unassigned
+        \-- system_page - the new system errors without a solver, the most critical and then the newest first;
+    \-- admin_errors_delayed_fix
+        \-- system_page - the system errors that a developer has taken or marked as solved but that are not yet closed,
+    \-- admin_jobs_delayed
+        \-- system_page - the open system jobs with the longest waiting first: a job that has waited longer than the con
+                figured
 \-- html
     \-- name
         \-- element - create an api json array for the backend based on this frontend object
@@ -9576,6 +9626,7 @@
     \-- add
         \-- figure_list - add a figure to the list
         \-- sys_log_list - add a system log entry to the list
+        \-- system_time_list - @param system_time $sys_tim the request time that should be added to the list
     \-- intersect
         \-- phrase_list - removes all terms from this list that are not in the given list
     \-- mainly
@@ -9596,8 +9647,22 @@
         \-- result_list - get a list with the results related directly to the given formula, word, triple or value
     \-- is_empty
         \-- sys_log_list - @return bool true when the list contains no entries; mirrors the ListBase API so callers
+    \-- count
+        \-- sys_log_list - @return int the number of log entries of this list
     \-- head
         \-- sys_log_list - @param int $limit the maximal number of log entries to keep
+    \-- filtered
+        \-- sys_log_list - @param array $status_codes the code ids of the statuum to keep e.g. sys_log_statuum::OPEN
+    \-- critical_first
+        \-- sys_log_list - @param bool $newest_first true for the newest entry of the same level first,
+                 false for the longest not updated
+    \-- critical
+        \-- sys_log_list - @param bool $critical true for the entries with a critical level (sys_log_levels::CRITICAL),
+                 false for the others
+    \-- login_fails
+        \-- sys_log_list - @param bool $only true to keep only the failed logins, false to keep all other entries
+    \-- login_fail_groups
+        \-- sys_log_list - group the failed logins by the typed name, which the log entry has as its description
 \-- object vars
     \-- name
         \-- formula_link - TODO Prio 1 review and add else error message

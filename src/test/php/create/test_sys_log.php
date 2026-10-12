@@ -62,6 +62,10 @@ use DateTime;
 class test_sys_log extends test_objects
 {
 
+    // the id of the new error of the admin dashboard list, which differs from the ids of the other test entries
+    const int OPEN_ERROR_ID = 3;
+
+
     /*
      * cleanup
      */
@@ -156,6 +160,29 @@ class test_sys_log extends test_objects
     {
         $lst_ui = new sys_log_list_ui();
         $lst_ui->set_from_json($this->sys_log_list()->api_json(), $msg);
+        return $lst_ui;
+    }
+
+    /**
+     * @param user_message_ui $msg to report the api mapping problems of the frontend list
+     * @return sys_log_list_ui the not closed system errors of the admin dashboard: a new info that is newer than
+     *                         a new error, both without a solver, and a resolved error that waits for the close
+     */
+    function list_for_admin_ui(user_message_ui $msg): sys_log_list_ui
+    {
+        global $sys;
+        $info = $this->sys_log();
+        $info->log_time = new DateTime(sys_log_tests::TV_TIME_CLOSED);
+        $err = $this->sys_log_two();
+        $err->id = self::OPEN_ERROR_ID;
+        $err->solver = null;
+        $err->status_id = $sys->typ_lst->sys_log_sta->id(sys_log_statuum::OPEN);
+        $sys_lst = new sys_log_list();
+        $sys_lst->add($info);
+        $sys_lst->add($err);
+        $sys_lst->add($this->sys_log_filled());
+        $lst_ui = new sys_log_list_ui();
+        $lst_ui->set_from_json($sys_lst->api_json(), $msg);
         return $lst_ui;
     }
 

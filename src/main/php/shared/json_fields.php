@@ -257,6 +257,7 @@ class json_fields
     const string TIME_START = 'start_time'; // e.g. the timestamp of a log entry
     const string TIME_UPDATE = 'update_time'; // e.g. the timestamp of the last system error update
     const string TIME_END = 'end_time'; // e.g. the timestamp of a log entry
+    const string MILLISECONDS = 'milliseconds'; // e.g. the execution time of a request
     const string STATUS = 'status'; // name or code id of the user or job status and also used for the sys log
     const string STATUS_ID = 'status_id'; // database id of the user or job status and also used for the sys log
 

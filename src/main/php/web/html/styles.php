@@ -139,6 +139,8 @@ class styles
 
     // css classes of the read only tree of the system configuration (web/helper/config_tree):
     // the nested list of the keys, a node that has keys below it and the block of one search hit with its path
+    // the not critical entries of an admin dashboard column, which open by a click on the +/- marker
+    const string ADMIN_MORE = 'admin-more';
     const string CONFIG_TREE = 'config-tree';
     const string CONFIG_NODE = 'config-node';
     const string CONFIG_HIT = 'config-hit';

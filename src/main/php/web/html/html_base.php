@@ -401,8 +401,15 @@ class html_base
      * @param array $url_array the current request parameters passed through for back-navigation
      * @param string|null $usr_name the logged-in username to display; null when not logged in
      * @param string|null $usr_role the profile/role name to display next to the username; null if not set
+     * @param bool $is_admin true to offer the admin dashboard in the user menu
      */
-    function navbar(int $msk_id = 0, array $url_array = [], ?string $usr_name = null, ?string $usr_role = null): string
+    function navbar(
+        int     $msk_id = 0,
+        array   $url_array = [],
+        ?string $usr_name = null,
+        ?string $usr_role = null,
+        bool    $is_admin = false
+    ): string
     {
         global $ui_sys;
 
@@ -445,7 +452,7 @@ class html_base
             . ($usr_tooltip !== '' ? ' title="' . htmlspecialchars($usr_tooltip) . '"' : '')
             . '></' . self::I . '>';
         $result .= '<' . self::SUMMARY . '>' . $usr_icon . '</' . self::SUMMARY . '>' . "\n";
-        $result .= $this->user_login_list($url_array, $usr_name, $usr_tooltip) . "\n";
+        $result .= $this->user_login_list($url_array, $usr_name, $usr_tooltip, $is_admin) . "\n";
         $result .= '</' . self::DETAILS . '>' . "\n";
         $result .= '</' . self::LI . '>' . "\n";
         $result .= '</' . self::UL . '>' . "\n";
@@ -473,8 +480,14 @@ class html_base
      * @param array $url_array the current request parameters used to build back-navigation links
      * @param string|null $usr_name the logged-in username; null shows login and signup, non-null shows logout
      * @param string $usr_label role and username combined e.g. "admin timon"; shown as the first non-link menu line when non-empty
+     * @param bool $is_admin true to offer the admin dashboard
      */
-    private function user_login_list(array $url_array = [], ?string $usr_name = null, string $usr_label = ''): string
+    private function user_login_list(
+        array   $url_array = [],
+        ?string $usr_name = null,
+        string  $usr_label = '',
+        bool    $is_admin = false
+    ): string
     {
         global $mtr;
         $result = '';
@@ -503,6 +516,11 @@ class html_base
         // by its forward page, which keeps the back target (see api::FORWARD_VIEWS)
         $url_settings = $this->url_with_back(api::SETTINGS_REL, $url_array);
         $result .= $this->list_item($this->ref($url_settings, $mtr->txt(msg_id::NAVBAR_SETTINGS))) . "\n";
+        // the view itself is admin only (views::ADMIN_MASK_IDS), the link is just not offered to the others
+        if ($is_admin) {
+            $url_dashboard = $this->url_with_back(api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::ADMIN_MAIN_ID, $url_array);
+            $result .= $this->list_item($this->ref($url_dashboard, $mtr->txt(msg_id::NAVBAR_DASHBOARD))) . "\n";
+        }
         return $this->list_unsorted($result);
     }
 

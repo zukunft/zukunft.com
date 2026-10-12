@@ -368,6 +368,7 @@ the object structure is:
 │       │       ├── resultUi - $res - the display extension of the api result object
 │       │       └── valueUi - $val - create the html code to show a value to the user
 │       ├── jobUi - $job - the extension of the batch task API objects to create job base html code
+│       ├── system_timeUi - $sys_tim - one measured request time e.g. a slow url shown on the admin dashboard
 │       └── userUi - $usr - functions to create the HTML code to display the user setup and log information
 ├── TranslatorShared - $mtr - translates a message for the user into the user language
 ├── WorkflowShared - $wrk - defines which view to show next
@@ -430,6 +431,7 @@ the object structure is:
 ├── user_log_displayUi - a combined object to display single value changes or changes of links by the user
 ├── user_sandbox_displayUi - extends the user sandbox superclass for common display functions
 ├── sys_log_listUi - the display extension of the system error log api object
+├── system_time_listUi - $sys_tim_lst - a list of measured request times e.g. the slow urls of the admin dashboard
 ├── type_listUi
 │   ├── change_action_listUi - the preloaded change log actions used for the html frontend
 │   ├── change_field_listUi - the preloaded change log fields used for the html frontend
@@ -447,6 +449,7 @@ the object structure is:
 │   ├── ref_type_listUi - the preloaded data ref types used for the html frontend
 │   ├── shareUi - the preloaded data share types used for the html frontend
 │   ├── source_type_listUi - the preloaded data source types used for the html frontend
+│   ├── sys_log_level_listUi - the preloaded system log levels used for the html frontend
 │   ├── sys_log_status_listUi - the preloaded system log actions used for the html frontend
 │   ├── user_profileUi - the preloaded user profiles used for the html frontend
 │   ├── verbsUi - the preloaded data verbs used for the html frontend

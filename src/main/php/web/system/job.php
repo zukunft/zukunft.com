@@ -236,6 +236,17 @@ class job extends db_object
         return $this->end_time() === null;
     }
 
+    /**
+     * @param DateTime $now the time of the data snap, given so that a test result does not depend on the clock
+     * @param int $max_delay the seconds an open job may wait since its request before it is critical
+     * @return bool true if the job is still open and has waited longer than the given seconds
+     */
+    function is_delayed(DateTime $now, int $max_delay): bool
+    {
+        $waited = $now->getTimestamp() - $this->request_time()->getTimestamp();
+        return $this->is_open() and $waited > $max_delay;
+    }
+
 
     /*
      * modify

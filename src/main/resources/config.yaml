@@ -279,6 +279,9 @@ zukunft.com:
               tooltip-comment: "the number of phrases shown in a ranked list with the lowest ranking for an indication of the range"
       job:
         tooltip-comment: "keyword to separate the internal system job configuration"
+        max delay:
+          sec: 3600
+          tooltip-comment: "an open job that has waited longer than this number of seconds is shown as critical on the admin dashboard"
       test:
         tooltip-comment: "to configure the internal system test"
         output format:

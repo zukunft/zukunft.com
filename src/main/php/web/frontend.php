@@ -1169,7 +1169,8 @@ class frontend
                         $logged_in = $usr !== null && !$usr->is_ip_only();
                         $result .= $html->navbar($view_id, $url_array,
                             $logged_in ? $usr->name() : null,
-                            $logged_in ? $usr->navbar_role() : null);
+                            $logged_in ? $usr->navbar_role() : null,
+                            ($logged_in and $usr->is_admin()));
                     }
                     $result .= $html->main($dsp_text);
                     $result .= $this->user_msg_html($msg_ui);

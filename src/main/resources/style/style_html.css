@@ -753,6 +753,28 @@ a:hover {
 .config-node[open] > summary::before {
     content: "\2212";
 }
+/* the not critical entries of an admin dashboard column behind the same +/- marker as a settings node */
+.admin-more > summary {
+    list-style: none;
+    cursor: pointer;
+    color: #274b8f;
+}
+.admin-more > summary::-webkit-details-marker {
+    display: none;
+}
+.admin-more > summary::before {
+    content: "+";
+    display: inline-block;
+    width: 1.1em;
+    color: #9ea09e;
+}
+.admin-more[open] > summary::before {
+    content: "\2212";
+}
+.admin-more > summary:focus-visible {
+    outline: 2px solid #385eb7;
+    outline-offset: 2px;
+}
 .config-tree dl,
 .config-hit dl {
     display: grid;

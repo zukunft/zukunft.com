@@ -34,6 +34,7 @@ namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\component\execute\system_page;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\const\icons;
@@ -45,6 +46,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
@@ -53,6 +55,7 @@ use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_log;
 use Zukunft\ZukunftCom\test\php\create\test_sys_log;
 use Zukunft\ZukunftCom\test\php\create\test_users;
+use Zukunft\ZukunftCom\test\php\unit\sys_log_tests;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class sys_log_ui_tests
@@ -253,6 +256,34 @@ class sys_log_ui_tests
         // a table that shows all changes (no row limit reached) has no forward button
         $test_name = 'no forward button is shown when all changes fit';
         $t->assert_text_not_contains($test_name, $chg_tbl, icons::PAGE_FORWARD);
+
+        $t->subheader($ts . 'admin dashboard');
+
+        // the errors of the admin dashboard with the most critical first
+        global $mtr;
+        $page = new system_page();
+        $adm_lst = $t_sys->list_for_admin_ui($msg_ui);
+        $unassigned = $page->admin_errors_unassigned($msg_ui, true, $adm_lst);
+        $err_txt = $html->esc(sys_log_tests::T2_LOG_TEXT);
+        $info_txt = $html->esc(sys_log_tests::TV_LOG_TEXT);
+        $test_name = 'the unassigned errors show a new error before a newer info';
+        $t->assert_true($test_name, strpos($unassigned, $err_txt) < strpos($unassigned, $info_txt));
+        // negative: a resolved error has a solver, so it is not unassigned
+        $test_name = '... but not a resolved error';
+        $t->assert($test_name, substr_count($unassigned, $err_txt), 1);
+        $test_name = 'the pending error fixes show the resolved error';
+        $pending = $page->admin_errors_delayed_fix($msg_ui, true, $adm_lst);
+        $t->assert($test_name, substr_count($pending, $err_txt), 1);
+        // negative: a new info has no fix that could be pending
+        $test_name = '... but not a new error';
+        $t->assert_text_not_contains($test_name, $pending, $info_txt);
+        $test_name = 'a dashboard section without an error says so';
+        $empty = $page->admin_errors_unassigned($msg_ui, true, new sys_log_list_ui());
+        $t->assert_text_contains($test_name, $empty, $mtr->txt(msg_id::ADMIN_NO_ERRORS));
+        // the live page has no load of the request times yet, so it says so instead of an empty column
+        $test_name = 'the response times of the live page are not yet recorded';
+        $t->assert_text_contains($test_name, $page->admin_url_delay($msg_ui, false), $mtr->txt(msg_id::ADMIN_NOT_YET_RECORDED));
+        $test_page .= $html->text_h2('admin dashboard errors') . $unassigned . $pending;
 
         $t->html_page_test($test_page, 'sys_log', 'sys_log');
     }

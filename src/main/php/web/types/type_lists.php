@@ -51,6 +51,7 @@ include_once html_paths::TYPES . 'type_list.php';
 include_once html_paths::TYPES . 'change_action_list.php';
 include_once html_paths::TYPES . 'change_table_list.php';
 include_once html_paths::TYPES . 'change_field_list.php';
+include_once html_paths::TYPES . 'sys_log_level_list.php';
 include_once html_paths::TYPES . 'sys_log_status_list.php';
 include_once html_paths::TYPES . 'user_profile.php';
 include_once html_paths::TYPES . 'job_type_list.php';
@@ -138,6 +139,7 @@ class type_lists
     public ?language_list $lan = null;
     public ?language_form_list $lan_for = null;
     public ?verbs $vrb = null;
+    public ?sys_log_level_list $sys_log_lvl = null;
     public ?sys_log_status_list $sys_log_sta = null;
     public ?job_type_list $job_typ = null;
     public ?change_action_list $cng_act = null;
@@ -415,6 +417,12 @@ class type_lists
         } else {
             $this->set_system_phrases([]);
         }
+        if (array_key_exists(api::JSON_LIST_SYS_LOG_LEVELS, $json_array)) {
+            $this->set_sys_log_levels($json_array[api::JSON_LIST_SYS_LOG_LEVELS], $msg);
+        } else {
+            $msg->add_error_text('Mandatory sys_log_levels missing in API JSON ' . json_encode($json_array));
+            $this->set_sys_log_levels([], $msg);
+        }
         if (array_key_exists(api::JSON_LIST_SYS_LOG_STATUUS, $json_array)) {
             $this->set_sys_log_statuum($json_array[api::JSON_LIST_SYS_LOG_STATUUS], $msg);
         } else {
@@ -554,6 +562,12 @@ class type_lists
     {
         $this->vrb = new verbs();
         $this->vrb->set_from_json_array($json_array, $msg, verb::class);
+    }
+
+    function set_sys_log_levels(?array $json_array, user_message $msg): void
+    {
+        $this->sys_log_lvl = new sys_log_level_list();
+        $this->sys_log_lvl->set_from_json_array($json_array, $msg);
     }
 
     function set_sys_log_statuum(?array $json_array, user_message $msg): void

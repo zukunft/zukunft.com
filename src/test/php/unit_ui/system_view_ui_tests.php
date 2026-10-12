@@ -38,6 +38,7 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_CONST . 'def.php';
 include_once html_paths::EXECUTE . 'system_page.php';
+include_once html_paths::SYSTEM . 'sys_log_list.php';
 include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::USER . 'user.php';
@@ -71,6 +72,8 @@ include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED_HELPER . 'Config.php';
 include_once test_paths::CONST . 'files.php';
 include_once test_paths::CONST . 'word_names.php';
+include_once test_paths::CREATE . 'test_admin_dashboard.php';
+include_once test_paths::UNIT . 'sys_log_tests.php';
 include_once test_paths::CREATE . 'test_config_trees.php';
 include_once test_paths::CREATE . 'test_mappers.php';
 include_once test_paths::CREATE . 'test_mappers.php';
@@ -107,6 +110,7 @@ use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_page;
+use Zukunft\ZukunftCom\main\php\web\system\sys_log_list;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
@@ -127,6 +131,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\test\php\const\word_names;
+use Zukunft\ZukunftCom\test\php\create\test_admin_dashboard;
 use Zukunft\ZukunftCom\test\php\create\test_config_trees;
 use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\create\test_mappers;
@@ -136,11 +141,19 @@ use Zukunft\ZukunftCom\test\php\create\test_users;
 use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\create\test_triples;
 use Zukunft\ZukunftCom\test\php\create\test_words;
+use Zukunft\ZukunftCom\test\php\unit\sys_log_tests;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
+use DateTime;
+use DateTimeInterface;
 
 class system_view_ui_tests
 {
+
+    // the snapshot names of the admin dashboard with the three data sets of test_admin_dashboard
+    const string ADMIN_EMPTY_FILE = test_paths::HTML . test_paths::VIEWS_ADMIN . 'admin_main_empty';
+    const string ADMIN_MIXED_FILE = test_paths::HTML . test_paths::VIEWS_ADMIN . 'admin_main_mixed';
+    const string ADMIN_CRITICAL_FILE = test_paths::HTML . test_paths::VIEWS_ADMIN . 'admin_main_critical';
 
     // the snapshot folder and name of the start page
     const string START_PAGE_FILE_NAME = 'start_page';
@@ -452,6 +465,13 @@ class system_view_ui_tests
         // escaped like dsp_notification, because the text quotes the key 'system'
         $refused_html = htmlspecialchars($mtr->txt(msg_id::CONFIG_SYSTEM_ADMIN_ONLY));
         $t->assert_text_contains($test_name, $ui->user_msg_html($request_msg), $refused_html);
+        // negative: e.g. the done of a successful write is an info without vars and never an error
+        $test_name = '... but an info without vars keeps the request ok';
+        $done_msg = new user_message();
+        $done_msg->add_info_id(msg_id::DONE);
+        $ok_msg = new user_message();
+        $ok_msg->merge($done_msg);
+        $t->assert_true($test_name, $ok_msg->is_ok());
 
         // test that a failed login renders the notification in the full page
         $_SESSION[url_var::SESSION_TOKEN] = test_const::DUMMY_SESSION_TOKEN;
@@ -636,6 +656,8 @@ class system_view_ui_tests
         // content is not rendered to just anyone (see frontend::admin_mask_denied)
         $t->subheader($ts . 'admin mask authorization');
         $admin_url = [url_var::MASK => views::ADMIN_MAIN_ID];
+        // the translated title of the admin dashboard, which only the admin view shows
+        $admin_title = $html->text_h2($mtr->txt(msg_id::FORM_TITLE_ADMIN));
 
         // negative: an anonymous user is sent to the start view with a permission message and never
         // sees the admin content
@@ -643,7 +665,7 @@ class system_view_ui_tests
         $anon_html = $ui->url_to_html($admin_url, $anon_msg, $ui->dto, true);
         // the first assert after a page render carries the render time, so a page timeout is used
         $test_name = 'the admin main view is not rendered for an anonymous user';
-        $t->assert_text_not_contains($test_name, $anon_html, 'system_title_admin', $t::TIMEOUT_LIMIT_PAGE);
+        $t->assert_text_not_contains($test_name, $anon_html, $admin_title, $t::TIMEOUT_LIMIT_PAGE);
         $test_name = 'the anonymous user is told that the admin view needs an administrator';
         $t->assert_text_contains($test_name, $anon_html, msg_id::ADMIN_MASK_DENIED->value);
 
@@ -652,7 +674,7 @@ class system_view_ui_tests
         $adm_msg->usr = $usr_sys_ui;
         $adm_html = $ui->url_to_html($admin_url, $adm_msg, $ui->dto, true);
         $test_name = 'the admin main view is rendered for a system user';
-        $t->assert_text_contains($test_name, $adm_html, 'system_title_admin');
+        $t->assert_text_contains($test_name, $adm_html, $admin_title);
 
         // negative: url_to_action refuses an admin mask action for a non-admin user and returns the
         // start view instead of acting on it (a fresh frontend user has the ip-only profile)
@@ -663,12 +685,149 @@ class system_view_ui_tests
         $test_name = 'url_to_action sends a non-admin admin mask request to the start view';
         $t->assert($test_name, $act_url[url_var::MASK] ?? 0, views::START_ID);
 
+        // the admin dashboard with the critical entries shown directly and the others behind a plus sign
+        $this->assert_admin_dashboard($t, $ui, $usr_sys_ui);
+
         // loop over the system views
         $this->assert_views_by_id($t, $t_map, $ui, $usr_sys_ui, $msg, $lib);
 
         // restore the normal usr1 so the following tests run with the email profile user again
         $t->usr1 = $usr1_saved;
 
+    }
+
+    /**
+     * the admin dashboard with an empty, a mixed and a critical data set: each column shows its critical
+     * entries directly and the other entries behind a plus sign, and each data set is a page snapshot
+     *
+     * @param test_cleanup $t test runner for assertions and user fixtures
+     * @param frontend $ui renders HTML from a URL array
+     * @param user_ui $usr_sys_ui the admin (here the system user, see frontend::admin_mask_denied)
+     */
+    private function assert_admin_dashboard(test_cleanup $t, frontend $ui, user_ui $usr_sys_ui): void
+    {
+        global $mtr;
+        $ts = 'unit ui system views ';
+        $t->subheader($ts . 'admin dashboard');
+        $t_adm = new test_admin_dashboard($t);
+        $page = new system_page();
+        $msg = new user_message();
+        $msg->usr = $usr_sys_ui;
+        $now = new DateTime(test_admin_dashboard::SNAP_TIME);
+        $no_critical = $mtr->txt(msg_id::ADMIN_NO_CRITICAL);
+
+        // empty: every column says that it has no entry and has no plus sign
+        $dto = $t_adm->dto_empty($ui->dto);
+        $this->assert_admin_page($t, $ui, $msg, $dto, self::ADMIN_EMPTY_FILE, 'empty');
+        $col = $page->admin_url_delay($msg, true, $dto->adm_sys_tim_lst);
+        $t->assert_text_contains('an empty response time column says so', $col, $mtr->txt(msg_id::ADMIN_NO_SLOW_REQUESTS));
+        $t->assert_text_not_contains('... and has no plus sign', $col, '<details');
+        $col = $page->admin_login_fails($msg, true, $dto->adm_sys_log);
+        $t->assert_text_contains('an empty failed login column says so', $col, $mtr->txt(msg_id::ADMIN_NO_LOGIN_FAILS));
+        $col = $page->admin_errors_unassigned($msg, true, $dto->adm_sys_log);
+        $t->assert_text_contains('an empty error column says so', $col, $mtr->txt(msg_id::ADMIN_NO_ERRORS));
+        $t->assert_text_not_contains('... and has no plus sign', $col, '<details');
+        $col = $page->admin_jobs_delayed($msg, true, $dto->adm_job_lst, $now);
+        $t->assert_text_contains('an empty job column says so', $col, $mtr->txt(msg_id::ADMIN_NO_DELAYED_JOBS));
+        $t->assert_text_not_contains('... without a table like the other columns', $col, '<table');
+
+        // mixed: a column without a critical entry says so and shows its entries only behind the plus sign
+        $dto = $t_adm->dto_mixed($ui->dto, $msg);
+        $this->assert_admin_page($t, $ui, $msg, $dto, self::ADMIN_MIXED_FILE, 'mixed');
+        [$direct, $behind] = $this->admin_split($page->admin_errors_unassigned($msg, true, $dto->adm_sys_log));
+        $t->assert_text_contains('the unassigned error is shown directly', $direct, test_admin_dashboard::ERR_ERROR_TEXT);
+        $t->assert_text_contains('... but the info is behind the plus sign', $behind, test_admin_dashboard::ERR_INFO_TEXT);
+        $t->assert_text_not_contains('... and not shown directly', $direct, test_admin_dashboard::ERR_INFO_TEXT);
+        [$direct, $behind] = $this->admin_split($page->admin_errors_delayed_fix($msg, true, $dto->adm_sys_log));
+        $t->assert_text_contains('a pending fix column without an error says nothing critical', $direct, $no_critical);
+        $t->assert_text_contains('... and has the warning behind the plus sign', $behind, test_admin_dashboard::FIX_WARNING_TEXT);
+        [$direct, $behind] = $this->admin_split($page->admin_login_fails($msg, true, $dto->adm_sys_log));
+        $t->assert_text_contains('a single failed login is not critical', $direct, $no_critical);
+        $t->assert_text_contains('... and is behind the plus sign', $behind, test_admin_dashboard::LOGIN_TYPO);
+        [$direct, $behind] = $this->admin_split($page->admin_url_delay($msg, true, $dto->adm_sys_tim_lst));
+        $t->assert_text_contains('a slow request is shown directly', $direct, test_admin_dashboard::URL_SLOW);
+        $t->assert_text_contains('... but a fast one is behind the plus sign', $behind, test_admin_dashboard::URL_FAST);
+        [$direct, $behind] = $this->admin_split($page->admin_jobs_delayed($msg, true, $dto->adm_job_lst, $now));
+        $t->assert_text_contains('a job that waits less than the max delay is not critical', $direct, $no_critical);
+        $fresh_job = new DateTime(test_admin_dashboard::SNAP_TIME)->modify('-1 minute')->format(DateTimeInterface::ATOM);
+        $t->assert_text_contains('... and is behind the plus sign', $behind, $fresh_job);
+        $test_name = 'the failed logins are not listed as unassigned errors';
+        $col = $page->admin_errors_unassigned($msg, true, $dto->adm_sys_log);
+        $t->assert_text_not_contains($test_name, $col, test_admin_dashboard::LOGIN_TYPO);
+
+        // critical: every column shows its critical entries directly, the most critical first
+        $dto = $t_adm->dto_critical($ui->dto, $msg);
+        $this->assert_admin_page($t, $ui, $msg, $dto, self::ADMIN_CRITICAL_FILE, 'critical');
+        [$direct, $behind] = $this->admin_split($page->admin_errors_unassigned($msg, true, $dto->adm_sys_log));
+        $test_name = 'the fatal error is shown above the error';
+        $fatal_pos = strpos($direct, test_admin_dashboard::ERR_FATAL_TEXT);
+        $error_pos = strpos($direct, test_admin_dashboard::ERR_ERROR_TEXT);
+        $t->assert_true($test_name, $fatal_pos !== false and $error_pos !== false and $fatal_pos < $error_pos);
+        $t->assert_text_contains('the warning is behind the plus sign', $behind, test_admin_dashboard::ERR_WARNING_TEXT);
+        $t->assert_text_contains('... which names the number of the not critical entries', $behind,
+            '2 ' . $mtr->txt(msg_id::ADMIN_NOT_CRITICAL));
+        [$direct, $behind] = $this->admin_split($page->admin_errors_delayed_fix($msg, true, $dto->adm_sys_log));
+        $t->assert_text_contains('the assigned error is shown directly', $direct, test_admin_dashboard::FIX_ERROR_TEXT);
+        $t->assert_text_contains('... but the resolved warning is behind the plus sign', $behind, test_admin_dashboard::FIX_WARNING_TEXT);
+        $groups = $dto->adm_sys_log->login_fail_groups();
+        $t->assert('the failed logins are grouped by the typed name', count($groups), 2);
+        $t->assert('... with the most often tried name first', $groups[0][sys_log_list::GROUP_NAME],
+            test_admin_dashboard::LOGIN_ATTACKED);
+        $t->assert('... which counts each try', $groups[0][sys_log_list::GROUP_COUNT], sys_log_list::login_fail_limit($msg));
+        $t->assert('the other entries are not failed logins', $dto->adm_sys_log->login_fails(false)->count(), 6);
+        [$direct, $behind] = $this->admin_split($page->admin_login_fails($msg, true, $dto->adm_sys_log));
+        $t->assert_text_contains('the name with the limit of failed logins is shown directly', $direct, test_admin_dashboard::LOGIN_ATTACKED);
+        $t->assert_text_not_contains('... but not the typo', $direct, test_admin_dashboard::LOGIN_TYPO);
+        $t->assert_text_contains('... which is behind the plus sign', $behind, test_admin_dashboard::LOGIN_TYPO);
+        [$direct, $behind] = $this->admin_split($page->admin_url_delay($msg, true, $dto->adm_sys_tim_lst));
+        $test_name = 'the slowest request is shown above the slow request';
+        $slower_pos = strpos($direct, test_admin_dashboard::URL_SLOWER);
+        $slow_pos = strpos($direct, test_admin_dashboard::URL_SLOW);
+        $t->assert_true($test_name, $slower_pos !== false and $slow_pos !== false and $slower_pos < $slow_pos);
+        $t->assert_text_contains('the fast request is behind the plus sign', $behind, test_admin_dashboard::URL_FAST);
+        [$direct, $behind] = $this->admin_split($page->admin_jobs_delayed($msg, true, $dto->adm_job_lst, $now));
+        $delayed_job = new DateTime(sys_log_tests::TV_TIME)->format(DateTimeInterface::ATOM);
+        $t->assert_text_contains('the job that waits longer than the max delay is shown directly', $direct, $delayed_job);
+        $t->assert_text_contains('... but the fresh job is behind the plus sign', $behind, $fresh_job);
+        $t->assert_text_not_contains('... and not shown directly', $direct, $fresh_job);
+    }
+
+    /**
+     * render the admin dashboard with the given data set and compare it with the page snapshot
+     *
+     * @param test_cleanup $t test runner for assertions and the list of the written snapshots
+     * @param frontend $ui renders HTML from a URL array
+     * @param user_message $msg with the admin who requests the page
+     * @param data_object $dto the data set of the admin dashboard
+     * @param string $file_path the snapshot without the extension relative to the test resources
+     * @param string $case_name the name of the data set for the test name
+     */
+    private function assert_admin_page(
+        test_cleanup $t,
+        frontend     $ui,
+        user_message $msg,
+        data_object  $dto,
+        string       $file_path,
+        string       $case_name
+    ): void
+    {
+        $admin_url = [url_var::MASK => views::ADMIN_MAIN_ID];
+        $html = $ui->url_to_html($admin_url, $msg, $dto, true);
+        // remember the snapshot, so that the cleanup of the views_by_object snapshots keeps it
+        $t->updated_files[] = test_paths::RESOURCE . $file_path . test_files::HTML;
+        // link to the pod like the views_by_object snapshots (see test_base::link_to_pod)
+        $test_name = 'the admin dashboard ' . $case_name . ' matches the snapshot';
+        $t->assert_html_page($test_name, $t->link_to_pod($html, THIS_URL), $file_path);
+    }
+
+    /**
+     * @param string $col the html code of one admin dashboard column
+     * @return array the html code shown directly and the html code behind the plus sign, which is empty if there is none
+     */
+    private function admin_split(string $col): array
+    {
+        $parts = explode('<details', $col, 2);
+        return [$parts[0], $parts[1] ?? ''];
     }
 
     /**

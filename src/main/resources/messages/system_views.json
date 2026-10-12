@@ -9710,19 +9710,23 @@
         },
         {
           "position": "3",
-          "name": "system admin failed logins"
+          "name": "system admin failed logins",
+          "position_type": "side_or_first_below"
         },
         {
           "position": "4",
-          "name": "system admin unassigned errors"
+          "name": "system admin unassigned errors",
+          "position_type": "side_or_below"
         },
         {
           "position": "5",
-          "name": "system admin pending error fixes"
+          "name": "system admin pending error fixes",
+          "position_type": "side_or_below"
         },
         {
           "position": "6",
-          "name": "system admin delayed jobs"
+          "name": "system admin delayed jobs",
+          "position_type": "side_or_last_below"
         }
       ]
     },

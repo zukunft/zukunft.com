@@ -1104,30 +1104,6 @@ make the export views work: m=77 (export in the selected format), m=78 (json), m
 
 remove or rewrite the experimental js files src/test/php/dev/test_js.php and src/test/php/dev/test_jquery.php: they call the retired /http/get_json.php, partly on the productive server (https://zukunft.com/http/get_json.php), and they are not part of any test suite. The retired http_old/get_json_test.php belongs to them: it just echoed a hard coded json array with ten sample names ('balance sheet', 'BMW', ...) as the answer for the autocomplete experiments, so nothing has to be migrated from it. The real suggestion list for the search field comes from the word find view (m=67) resp. from the api (api/phraseList), and if a type ahead suggestion is wanted again, it must use the api and not a static file
 
-### error log view (missing parts of the retired http_old/error_log.php)
-
-the legacy controller http_old/error_log.php (show one internal error to the user, so that he can track the solving of it) has a mask in the new frontend: the error log view called via /http/view.php?m=65 (views::ERROR_LOG_ID), and frontend::url_to_action already has the action for the error update view (m=66, views::ERROR_UPDATE_ID). Its only caller was the critical error message of cfg/log_text/text_log_functions.php ('You can track the solving of the error with this link:'), which built the url from api::SCRIPT_PATH . api::ERROR_LOG_SCRIPT and therefore created the doubled and invalid path '/http//http/error_log.php'. The link now points to /http/view.php?m=65&id=<sys_log id> and the unused const api::ERROR_LOG_SCRIPT is removed. But the component of the view is a stub.
-
-fill web/component/execute/system_page.php::error_log() with the real code: it returns only the text 'error_log placeholder' (see the snapshot src/test/resources/web/html/views_by_id/sys_log/65_sys_log_2.html), while web/system/sys_log.php::page_view already creates the page of one error entry and has no caller any more since http_old/error_log.php is retired. Load the sys log entry by the id from the url, show it and add a page test. Take care that a user may only see his own errors and that only an admin sees the errors of all users
-
-### calculate all results (missing parts of the retired http_old/calculate.php)
-
-the legacy controller http_old/calculate.php ('update all formula results', the batch version of the retired formula_test.php) had no caller in the program code. It loaded all formulas in blocks, built the calculation queue per formula and calculated all results, while it streamed the progress in percent to the browser with ob_flush every few seconds (the pause taken from the configured frontend response time). It has no direct replacement: the job views exist (m=82 job_async 'Progress', m=83 job_control 'Process list' and m=84 job_check, views::JOB_ASYNC_ID, JOB_CONTROL_ID and JOB_CHECK_ID), but they show only 'process_progress placeholder' resp. 'process_list placeholder', and shared/types/job_types.php has only the per object triggers (value_update, formula_update, ...), no job that recalculates all results.
-
-add a job type that recalculates all formula results (the queue building of the old controller with result_list::frm_upd_lst and formula::calc can be taken over) and let the admin start it from the job control view (m=83). A long running recalculation must not block a http request, so it must run as an async job, not synchronously as the old controller did
-
-fill the job views with real code: web/component/execute/system_page.php shows only 'process_list placeholder' for the job control view (m=83) and 'process_progress placeholder' for the job async view (m=82), so a running job can neither be seen nor followed. Show the job list with the status of each job and the progress in percent of the running job, which replaces the streaming progress of the old controller, and add a page test
-
-note for the denial of service protection (see the section above): the old controller was a perfect attack target, because it recalculated all formulas of the pod on a simple GET request and checked only that the user id is set, so even an ip user without a login could start it. The new job must be startable only by an admin user, and there must be a test for the negative case
-
-### reload the base configuration (missing parts of the retired http_old/async_process.php)
-
-the legacy controller http_old/async_process.php had no caller in the program code and it did not do what its name and its header say ('display the progress of an asynchronous process'): for an admin user it reloaded the base configuration synchronously in the http request (import_file::import_system_data, the action that the retired http_old/user.php offered as 'Force reloading the base configuration e.g. to check that the units definition are still OK'), it showed the import view (m=76) as the header and printed only 'loading of base configuration started' and 'finished' around the import. The function import_system_data is still used by cfg/db/sql_db.php, so only the frontend action is missing.
-
-add the 'reload the base configuration' action for an admin to http/server_admin.php (where the other admin functions live) or as a job type, with a confirm step, because the import overwrites the system objects. Do not run it synchronously in a http request as the old page did: a long running import belongs to an async job, whose progress is shown in the job async view (m=82), see the calculate all results section above
-
-the mask that the name of the old page promises is the job async view (m=82, views::JOB_ASYNC_ID, 'Progress'), but it shows only 'process_progress placeholder', so the progress of an asynchronous process cannot be followed at all, see the calculate all results section above
-
 ### data load
 
 are there any database or object fields that are not yet filled or set by one of the json import tests
@@ -1203,8 +1179,6 @@ fix the '// TODO add json_fields::VIEW_VALIDATION' in src/main/php/cfg/import/im
 ### user frontend
 
 fill the placeholders
-
-add a page with the sys_log entries to the admin menu
 
 dsp_sandbox_* family → one generic "user changes vs. standard" component
 

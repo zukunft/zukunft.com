@@ -39,10 +39,12 @@ result: $ch_increase, $dbo, $dbo_ui, $grp_res, $k_val, $obj, $res_canton, $res_c
 source: $dbo, $dbo_ui, $msk, $obj, $scr_ui, $src1, $src2, $src_db, $src_filled, $src_no_url, $src_plain, $src_tab, $src_ui, $src_unused, $src_usr2, $src_usr2_reloaded
 sql_message: $msg, $msg_sql
 sys_log: $dbo, $dbo_ui, $err, $err_entry, $log, $log_ui, $new, $sys_log
+system_time: $new, $sys_exe
+system_time_list: $lst, $result, $times
 term: $frm, $msk, $result, $term, $trm_by_obj_id, $trm_case, $trm_start, $trm_wrd, $trm_zero, $trp, $vrb, $wrd
 triple: $bare_trp_ui, $base, $db_trp, $dbo, $dbo_ui, $lnk, $lnk2, $lnk_canton, $lnk_company, $lnk_test, $lnk_ui, $obj, $phr_canton_ui, $phr_city_ui, $result, $similar_trp, $trp_back, $trp_by_id, $trp_by_name, $trp_chk, $trp_del, $trp_err, $trp_franc, $trp_gone, $trp_in, $trp_ins, $trp_load, $trp_missing, $trp_old, $trp_owner, $trp_owner_load, $trp_pr, $trp_problem, $trp_sec, $trp_tab, $trp_ui, $trp_undo_chk, $trp_unit, $trp_zh, $wrd, $wrd_lnk, $wrd_or_trp
 user: $adm_usr_ui, $cfm_usr, $changer, $changer_ui, $check_usr, $chk_usr, $db_usr, $dbo, $dbo_ui, $dev_ui, $edit_usr, $existing, $fail_usr, $init_usr, $ip_ui, $json_usr, $local_usr, $new_owner, $new_usr, $obj, $other, $owner, $owner_ui, $req_usr, $result, $row_usr, $session, $sgn_usr, $sim, $solver, $sys_test_ui, $sys_ui, $sys_usr, $sys_usr_prof_ui, $sys_usr_ui, $test_usr, $test_usr2, $test_usr_normal, $unknown, $unprivileged, $upd_usr, $usr1_ui, $usr_admin, $usr_attacker, $usr_backend, $usr_by_id, $usr_by_ip, $usr_by_name, $usr_check, $usr_chk, $usr_db, $usr_key, $usr_load, $usr_reload, $usr_sgn_key, $usr_sys, $usr_sys_ui, $usr_test, $usr_ui, $web_usr
-user_message: $act_msg, $activate_msg, $add_msg, $adm_msg, $anon_msg, $api_msg, $base_msg, $cac_msg, $cache_msg, $cfm_msg, $change_msg, $chg_msg, $chk_msg, $code_msg, $conv_msg, $db_msg, $del_msg, $dsp_msg, $empty_msg, $err_msg, $exp_msg, $fac_msg, $fail_msg, $fld_msg, $form_msg, $frm_msg, $frm_usr_msg, $func_msg, $get_msg, $imp_msg, $ins_usr_msg, $ip_msg, $job_msg, $key_msg, $lnk_msg, $load_msg, $login_msg, $logoff_msg, $logout_msg, $lst_ins, $lst_msg, $mail_msg, $map_err_msg, $map_msg, $msg1, $msg2, $msg_2, $msg_activate_ui, $msg_adm, $msg_be, $msg_chk, $msg_del, $msg_err, $msg_exp, $msg_imp, $msg_ins, $msg_lnk, $msg_load, $msg_login_ui, $msg_logoff_ui, $msg_missing, $msg_no_usr, $msg_nok, $msg_ok, $msg_reload, $msg_signup_ui, $msg_sys, $msg_ui, $msg_upd, $msg_usr, $msg_usr2, $msg_wrn, $msg_zero, $no_usr_msg, $ok_msg, $other_msg, $ovr_msg, $own_msg, $owner_msg, $p, $pw_msg, $rdy_msg, $ref_usr_msg, $refused_msg, $request_msg, $reset_msg, $result, $save_msg, $saved_msg, $setup_msg, $sgn_load_msg, $signup_msg, $sim_msg, $sim_name_msg, $sort_msg, $sql_msg, $sys_msg, $tbl_msg, $trm_usr_msg, $two_msg, $txt_msg, $ui_msg, $undo_msg, $upd_usr_msg, $url_msg, $usr_msg, $usr_msg_calc, $usr_msg_del, $usr_msg_map, $usr_msg_ui, $usr_no, $usr_no_2, $usr_ok, $val_msg, $warning
+user_message: $act_msg, $activate_msg, $add_msg, $adm_msg, $anon_msg, $api_msg, $base_msg, $cac_msg, $cache_msg, $cfm_msg, $change_msg, $chg_msg, $chk_msg, $code_msg, $conv_msg, $db_msg, $del_msg, $done_msg, $dsp_msg, $empty_msg, $err_msg, $exp_msg, $fac_msg, $fail_msg, $fld_msg, $form_msg, $frm_msg, $frm_usr_msg, $func_msg, $get_msg, $imp_msg, $ins_usr_msg, $ip_msg, $job_msg, $key_msg, $lnk_msg, $load_msg, $login_msg, $logoff_msg, $logout_msg, $lst_ins, $lst_msg, $mail_msg, $map_err_msg, $map_msg, $msg1, $msg2, $msg_2, $msg_activate_ui, $msg_adm, $msg_be, $msg_chk, $msg_del, $msg_err, $msg_exp, $msg_imp, $msg_ins, $msg_lnk, $msg_load, $msg_login_ui, $msg_logoff_ui, $msg_missing, $msg_no_usr, $msg_nok, $msg_ok, $msg_reload, $msg_signup_ui, $msg_sys, $msg_ui, $msg_upd, $msg_usr, $msg_usr2, $msg_wrn, $msg_zero, $no_usr_msg, $ok_msg, $other_msg, $ovr_msg, $own_msg, $owner_msg, $p, $pw_msg, $rdy_msg, $ref_usr_msg, $refused_msg, $request_msg, $reset_msg, $result, $save_msg, $saved_msg, $setup_msg, $sgn_load_msg, $signup_msg, $sim_msg, $sim_name_msg, $sort_msg, $sql_msg, $sys_msg, $tbl_msg, $trm_usr_msg, $two_msg, $txt_msg, $ui_msg, $undo_msg, $upd_usr_msg, $url_msg, $usr_msg, $usr_msg_calc, $usr_msg_del, $usr_msg_map, $usr_msg_ui, $usr_no, $usr_no_2, $usr_ok, $val_msg, $warning
 user_profile_list: $lst
 user_status_list: $lst
 user_type_list: $lst
@@ -56,7 +58,7 @@ word: $ZH, $add_from, $add_to, $country, $dbo, $dbo_ui, $from, $is_wrd, $max_wrd
 
 ## Classes without a suggested var name
 
-DateTime: $actual_time, $cut_time, $cutoff, $end_time, $expired, $fix_now, $fixed, $now, $request_time, $request_timestamp, $reset_end, $result, $snap_time, $start_time, $sys_log_timestamp, $time, $timeout
+DateTime: $actual_time, $cut_time, $cutoff, $end_time, $expired, $fix_now, $fixed, $fresh_time, $now, $request_time, $request_timestamp, $reset_end, $result, $snap_time, $start_time, $sys_log_timestamp, $time, $timeout
 ListOfIdNamedCodeObjects: $del_lst, $lst
 ListOfIdNamedObjects: $del_lst, $lst
 ListOfIdObjects: $del_lst, $lst
@@ -184,12 +186,11 @@ sql_type_list: $par_lst, $sc_par_lst, $sc_par_lst_sub, $sc_par_lst_upd, $sc_par_
 sql_where: $pwh
 sys_log_function: $fnc, $log_fnc, $log_fuc, $sys_log, $sys_log_fnc, $typ
 sys_log_level: $log_typ
-sys_log_list: $err_lst, $err_lst_ui, $log_lst, $log_lst_ui, $lst_ui, $sys_lst
+sys_log_list: $err_lst, $err_lst_ui, $errors, $log_lst, $log_lst_ui, $lst, $lst_ui, $sys_lst
 sys_log_status: $log_sta
 sys_log_status_list: $lst, $sys_log_status
 system_form: $form, $overwrite_form, $sfm, $simple_form, $value_form
 system_page: $page, $sys_page
-system_time: $sys_exe
 system_time_type: $sys_exe_typ, $sys_script
 table_chart: $chart
 table_model: $model
@@ -197,6 +198,7 @@ term_list: $cache, $col_lst, $del_lst, $empty_lst, $found_lst, $lst, $phr_lst, $
 term_list_dsp: $trm_lst_ui
 term_view: $dbo, $dbo_ui, $lnk, $msk_lnk, $new_lnk, $obj, $trm_lnk_ui, $trm_msk, $trm_msk_db, $trm_msk_sel_ui, $trm_msk_url
 term_view_list: $lnk_lst, $lst
+test_admin_dashboard: $t_adm
 test_api: $t_api
 test_components: $t_cmp
 test_config_trees: $t_cft

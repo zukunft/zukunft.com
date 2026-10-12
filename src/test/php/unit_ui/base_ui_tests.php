@@ -365,6 +365,15 @@ class base_ui_tests
         $navbar_anon = $html->navbar(0, []);
         $t->assert_text_not_contains($test_name, $navbar_anon, styles::USER_LOGGED);
 
+        // the user menu of an admin offers the admin dashboard
+        $dashboard_par = url_var::MASK . '=' . views::ADMIN_MAIN_ID;
+        $test_name = 'the user menu of an admin links to the admin dashboard';
+        $navbar_admin = $html->navbar(0, [], 'test admin', null, true);
+        $t->assert_text_contains($test_name, $navbar_admin, $dashboard_par);
+        // negative: a normal user cannot open the dashboard, so the link is not offered
+        $test_name = '... but not the user menu of a normal user';
+        $t->assert_text_not_contains($test_name, $navbar_logged, $dashboard_par);
+
         // the settings are the read only system configuration, which an ip user without login can see too
         $test_name = 'the settings link of a request without login is the short settings path';
         $t->assert_text_contains($test_name, $navbar_anon, api::SETTINGS_REL . '"');

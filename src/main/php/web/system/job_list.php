@@ -43,8 +43,14 @@ include_once html_paths::USER . 'user_message.php';
 include_once html_paths::HTML . 'rest_call.php';
 include_once html_paths::SHARED . 'json_fields.php';
 include_once html_paths::SHARED . 'url_var.php';
+include_once html_paths::SHARED_CONST . 'def.php';
+include_once html_paths::SHARED_CONST . 'triples.php';
+include_once html_paths::SHARED_CONST . 'words.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
 
+use Zukunft\ZukunftCom\main\php\shared\const\def;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
@@ -183,6 +189,30 @@ class job_list extends ListBase
         usort($jobs, fn(job $a, job $b) => [$b->is_open(), $b->request_time(), $b->id()]
             <=> [$a->is_open(), $a->request_time(), $a->id()]);
         return $jobs;
+    }
+
+    /**
+     * @return array the jobs that have not yet ended with the longest waiting job first
+     */
+    function open_oldest_first(): array
+    {
+        $jobs = array_values(array_filter($this->lst(), fn(job $job) => $job->is_open()));
+        usort($jobs, fn(job $a, job $b) => [$a->request_time(), $a->id()] <=> [$b->request_time(), $b->id()]);
+        return $jobs;
+    }
+
+    /**
+     * @param user_message $msg to report a problem of the config lookup
+     * @return int the seconds an open job may wait before it is critical (config.yaml system > job > max delay)
+     */
+    static function max_delay(user_message $msg): int
+    {
+        global $ui_sys;
+        $limit = def::FALLBACK_JOB_MAX_DELAY;
+        if ($ui_sys?->cfg !== null) {
+            $limit = (int)$ui_sys->cfg->get_by([triples::MAX_DELAY, words::JOB], $msg, def::FALLBACK_JOB_MAX_DELAY);
+        }
+        return $limit;
     }
 
     /*

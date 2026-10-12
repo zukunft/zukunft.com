@@ -284,7 +284,7 @@ class sys_log extends log
      */
     function display_admin(user $usr, array $url_arr = [], string $style = ''): string
     {
-        global $mtr, $sys;
+        global $mtr, $ui_sys;
 
         $html = new html_base();
         $row = '';
@@ -301,7 +301,7 @@ class sys_log extends log
         $row .= $html->td($this->owner_id());
         $row .= $html->td($this->status());
         if ($usr->is_admin() or $usr->is_system()) {
-            $par_status = rest_ctrl::PAR_LOG_STATUS . '=' . $sys->typ_lst->sys_log_sta->id(sys_log_statuum::CLOSED);
+            $par_status = rest_ctrl::PAR_LOG_STATUS . '=' . $ui_sys->typ_lst_cache->sys_log_sta->id(sys_log_statuum::CLOSED);
             // error_update acts on a plain get, so the link carries the anti-csrf token (see request_token_valid)
             $url = $html->url_with_token($html->url_back(views::ERROR_UPDATE_ID, $this->id, $url_arr, $par_status));
             $row .= $html->td($html->ref($url, $mtr->txt(msg_id::CLOSE)));
@@ -347,7 +347,7 @@ class sys_log extends log
      */
     function get_html(user_message $msg, ?user $usr = null, array $url_arr = []): string
     {
-        global $mtr, $sys;
+        global $mtr, $ui_sys;
 
         $html = new html_base();
         $row_text = $html->td($this->time->format(DateTimeInterface::ATOM));
@@ -370,7 +370,7 @@ class sys_log extends log
         $row_text .= $html->td($this->status_name());
         if ($usr != null) {
             if ($usr->is_admin() or $usr->is_system()) {
-                $par_status = rest_ctrl::PAR_LOG_STATUS . '=' . $sys->typ_lst->sys_log_sta->id(sys_log_statuum::CLOSED);
+                $par_status = rest_ctrl::PAR_LOG_STATUS . '=' . $ui_sys->typ_lst_cache->sys_log_sta->id(sys_log_statuum::CLOSED);
                 // error_update acts on a plain get, so the link carries the anti-csrf token (see request_token_valid)
                 $url = $html->url_with_token($html->url_back(views::ERROR_UPDATE_ID, $this->id, $url_arr, $par_status));
                 $row_text .= $html->td($html->ref($url, $mtr->txt(msg_id::CLOSE)));

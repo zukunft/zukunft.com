@@ -48,6 +48,12 @@ enum sys_log_functions: string
     const string IMPORT_SAMPLE_VIEW_DATA_NAME = "Import sample view data";
     const string IMPORT_USE_CASE_DATA = "import_use_case_data";
     const string IMPORT_USE_CASE_DATA_NAME = "Import use case data";
+    // a login with a wrong password or an unknown user, which the admin dashboard lists as failed logins;
+    // the log writer selects the function by its name, so the name is the code id like 'cfg/application'
+    const string USER_LOGIN_FAILED = "user_login_failed";
+    // the log text of a failed login, whose description is the typed name; the frontend selects the failed logins
+    // by this text, because its type cache has no function list (admin only, so not translated)
+    const string LOGIN_FAILED_TEXT = "failed login";
 
     // only to test the write functions
     const string TEST_NAME = "System test function name";
