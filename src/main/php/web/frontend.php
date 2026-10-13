@@ -1486,6 +1486,10 @@ class frontend
         if (in_array($mask_id, views::GET_ACTION_IDS)) {
             $is_view_only = false;
         }
+        // a view of the live state of the pod e.g. the admin dashboard is always created again
+        if (in_array($mask_id, views::LIVE_MASKS_IDS)) {
+            $is_view_only = false;
+        }
         if ($is_view_only) {
             $result = url_var::MASK . url_var::EQ . $mask_id . url_var::ADD_ID . $obj_id;
             if ($lan != '') {

@@ -46,6 +46,15 @@ use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class component_link_list_tests
 {
+
+    // the components of the split by view test
+    const int TV_CMP_ID_1 = 1;
+    const string TV_CMP_NAME_1 = 'first component of the start view';
+    const int TV_CMP_ID_2 = 2;
+    const string TV_CMP_NAME_2 = 'component of the math view';
+    const int TV_CMP_ID_3 = 3;
+    const string TV_CMP_NAME_3 = 'second component of the start view';
+
     function run(test_cleanup $t): void
     {
 
@@ -79,6 +88,60 @@ class component_link_list_tests
         $lst = new component_link_list($t->usr1);
         $this->assert_sql_by_component($t, $db_con, $lst);
 
+        // load the links of all system views with one query
+        $lst = new component_link_list($t->usr1);
+        $this->assert_sql_by_view_ids($t, $db_con, $lst);
+        $test_name = 'the component link list query of an empty view id list is not prepared';
+        $db_con->db_type = sql_db::POSTGRES;
+        $t->assert($test_name, $lst->load_sql_by_view_ids($db_con->sql_creator(), [])->name, '');
+
+
+        $t->subheader($ts . 'split by view');
+
+        // the links of all system views are loaded at once and then split into the list of each view
+        $t_msk = new test_views($t);
+        $t_cmp = new test_components($t);
+        $lst = new component_link_list($t->usr1);
+        $lst->add(1, $t_msk->view(), $t_cmp->component_text(self::TV_CMP_ID_1, self::TV_CMP_NAME_1), 1);
+        $lst->add(2, $t_msk->view_math(), $t_cmp->component_text(self::TV_CMP_ID_2, self::TV_CMP_NAME_2), 1);
+        $lst->add(3, $t_msk->view(), $t_cmp->component_text(self::TV_CMP_ID_3, self::TV_CMP_NAME_3), 2);
+        $test_name = 'the links of a view are split from the links of all views';
+        $t->assert($test_name, $lst->by_view_id($t_msk->view()->id())->cmp_ids(), [self::TV_CMP_ID_1, self::TV_CMP_ID_3]);
+        $test_name = '... and the links of another view are split as well';
+        $t->assert($test_name, $lst->by_view_id($t_msk->view_math()->id())->cmp_ids(), [self::TV_CMP_ID_2]);
+        // negative: a view without a component gets an empty list and not the links of another view
+        $test_name = 'a view without a component link gets no link';
+        $t->assert_true($test_name, $lst->by_view_id($t_msk->word()->id())->is_empty());
+
+    }
+
+    /**
+     * test the SQL statement creation to load the component links of several views at once
+     * e.g. of all system views, in all SQL dialect and check if the statement name is unique
+     *
+     * @param test_cleanup $t the test environment
+     * @param sql_db $db_con the test database connection
+     * @param component_link_list $lst the empty component_link list object
+     * @return void
+     */
+    private function assert_sql_by_view_ids(
+        test_cleanup        $t,
+        sql_db              $db_con,
+        component_link_list $lst
+    ): void
+    {
+        $t_msk = new test_views($t);
+        $ids = [$t_msk->view()->id(), $t_msk->view_math()->id()];
+
+        // check the Postgres query syntax
+        $db_con->db_type = sql_db::POSTGRES;
+        $qp = $lst->load_sql_by_view_ids($db_con->sql_creator(), $ids);
+        $t->assert_qp($qp, $db_con->db_type);
+
+        // check the MySQL query syntax
+        $db_con->db_type = sql_db::MYSQL;
+        $qp = $lst->load_sql_by_view_ids($db_con->sql_creator(), $ids);
+        $t->assert_qp($qp, $db_con->db_type);
     }
 
     /**

@@ -178,6 +178,15 @@ class base_ui_tests
         $url_array = [url_var::MASK => views::WORD_ADD_DETAIL_ID, url_var::ID => 2];
         $t->assert($test_name, $ui->url_cache_key($url_array), '');
 
+        // the admin dashboard shows the live state of the pod, so it is always created again
+        $test_name = 'the admin dashboard is not cached';
+        $url_array = [url_var::MASK => views::ADMIN_MAIN_ID];
+        $t->assert($test_name, $ui->url_cache_key($url_array, users::SYSTEM_TEST_ID), '');
+        // negative: another system view is still cached
+        $test_name = '... but the settings page is cached';
+        $url_array = [url_var::MASK => views::SYSTEM_CONFIG_ID];
+        $t->assert($test_name, $ui->url_cache_key($url_array), 'm=' . views::SYSTEM_CONFIG_ID . '&id=0');
+
         // a request with a form submission is never cached
         $test_name = 'a post request is not cached';
         $url_array = [url_var::MASK => views::WORD_ID, url_var::ID => 2, url_var::POST_SUBMIT => 'Save'];

@@ -1207,6 +1207,8 @@
     \-- load_by_ids - section for function load_by_ids is expected to be load in /component/component_link_list.php
     \-- add_by_key - section for function add_by_key not yet defined that it should be modify in /component/component_li
             nk_list.php
+    \-- by_view_id - section for function by_view_id not yet defined that it should be info in /component/component_link
+            _list.php
 \-- component_list
     \-- order error - order of section load sql has difference at load_sql should be before load_sql_by_view_id
 \-- sql_creator
@@ -4455,6 +4457,8 @@
         \-- view_relation_list - interface function to load all view relations of the given view
     \-- load_by_view_with_components
         \-- component_link_list - interface function to load all component links and the components of the given view
+    \-- load_by_view_ids
+        \-- component_link_list - load the component links of several views with one query e.g. of all system views,
     \-- load_by_component
         \-- component_link_list - interface function to load all views linked to a given component
     \-- load_components
@@ -4660,6 +4664,8 @@
     \-- load_sql_by_view
         \-- component_link_list - set the SQL query parameters to load all components linked to a view
         \-- view_relation_list - set the SQL query parameters to load all components linked to a view
+    \-- load_sql_by_view_ids
+        \-- component_link_list - set the SQL query parameters to load the component links of several views at once
     \-- load_sql_by_component
         \-- component_link_list - set the SQL query parameters to load all views linked to a component
     \-- load_sql_by_ids
@@ -4812,6 +4818,8 @@
     \-- view_ids
         \-- component_link_list - @return array with all view ids
         \-- view_relation_list - @return array with all view ids
+    \-- by_view_id
+        \-- component_link_list - the links of one view taken from the links of several views loaded by load_by_view_ids
     \-- cmp_ids
         \-- component_link_list - @return array with all component ids
     \-- names
@@ -7867,6 +7875,9 @@
     \-- is_delayed - section for function is_delayed is expected to be info in /system/job.php
     \-- change - section for function change not yet defined that it should be modify in /system/job.php
     \-- display - section for function display not yet defined that it should be base elements in /system/job.php
+    \-- type_text - section for function type_text not yet defined that it should be base elements in /system/job.php
+    \-- status_text - section for function status_text not yet defined that it should be base elements in /system/job.ph
+            p
     \-- display_with_actions - section for function display_with_actions not yet defined that it should be base elements
              in /system/job.php
     \-- header - section for function header not yet defined that it should be base elements in /system/job.php

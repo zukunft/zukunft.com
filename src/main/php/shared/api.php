@@ -146,6 +146,7 @@ class api
     const string JSON_LIST_SYS_LOG_LEVELS = 'sys_log_levels';
     const string JSON_LIST_SYS_LOG_STATUUS = 'sys_log_statuum';
     const string JSON_LIST_JOB_TYPES = 'job_types';
+    const string JSON_LIST_JOB_STATUUS = 'job_statuum';
     const string JSON_LIST_CHANGE_LOG_ACTIONS = 'change_action_list';
     const string JSON_LIST_CHANGE_LOG_TABLES = 'change_table_list';
     const string JSON_LIST_CHANGE_LOG_FIELDS = 'change_field_list';

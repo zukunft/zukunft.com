@@ -1264,6 +1264,12 @@ class views
         self::SIGNUP_ID,
     ];
 
+    // views that show the live state of the pod, which a cached page would show as it has been at the
+    // time of the caching, so they are never read from or written to the html page cache
+    const array LIVE_MASKS_IDS = [
+        self::ADMIN_MAIN_ID,
+    ];
+
     // system masks that trigger an action via GET (no form submission required)
     const array GET_ACTION_IDS = [
         self::LOGOUT_ID,

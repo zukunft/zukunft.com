@@ -1045,7 +1045,8 @@ class system_page extends component
     {
         global $mtr;
         $html = new html_base();
-        return $html->text_h4($mtr->txt($title)) . $body;
+        // the column limits its tables to its width, so that e.g. a long url does not widen the column
+        return $html->div($html->text_h4($mtr->txt($title)) . $body, styles::ADMIN_COLUMN);
     }
 
 }

@@ -55,6 +55,7 @@ include_once html_paths::TYPES . 'sys_log_level_list.php';
 include_once html_paths::TYPES . 'sys_log_status_list.php';
 include_once html_paths::TYPES . 'user_profile.php';
 include_once html_paths::TYPES . 'job_type_list.php';
+include_once html_paths::TYPES . 'job_status_list.php';
 include_once html_paths::TYPES . 'language_list.php';
 include_once html_paths::TYPES . 'language_form_list.php';
 include_once html_paths::TYPES . 'share.php';
@@ -142,6 +143,7 @@ class type_lists
     public ?sys_log_level_list $sys_log_lvl = null;
     public ?sys_log_status_list $sys_log_sta = null;
     public ?job_type_list $job_typ = null;
+    public ?job_status_list $job_sta = null;
     public ?change_action_list $cng_act = null;
     public ?change_table_list $cng_tbl = null;
     public ?change_field_list $cng_fld = null;
@@ -435,6 +437,12 @@ class type_lists
             $msg->add_error_text('Mandatory job_types missing in API JSON ' . json_encode($json_array));
             $this->set_job_types([], $msg);
         }
+        if (array_key_exists(api::JSON_LIST_JOB_STATUUS, $json_array)) {
+            $this->set_job_statuum($json_array[api::JSON_LIST_JOB_STATUUS], $msg);
+        } else {
+            $msg->add_error_text('Mandatory job_statuum missing in API JSON ' . json_encode($json_array));
+            $this->set_job_statuum([], $msg);
+        }
         if (array_key_exists(api::JSON_LIST_CHANGE_LOG_ACTIONS, $json_array)) {
             $this->set_change_action_list($json_array[api::JSON_LIST_CHANGE_LOG_ACTIONS], $msg);
         } else {
@@ -580,6 +588,12 @@ class type_lists
     {
         $this->job_typ = new job_type_list();
         $this->job_typ->set_from_json_array($json_array, $msg);
+    }
+
+    function set_job_statuum(?array $json_array, user_message $msg): void
+    {
+        $this->job_sta = new job_status_list();
+        $this->job_sta->set_from_json_array($json_array, $msg);
     }
 
     function set_change_action_list(?array $json_array, user_message $msg): void

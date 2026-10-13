@@ -34,6 +34,7 @@ namespace Zukunft\ZukunftCom\main\php\cfg\view;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
+include_once paths::MODEL_COMPONENT . 'component_link_list.php';
 include_once paths::MODEL_HELPER . 'type_list.php';
 include_once paths::DB . 'sql.php';
 include_once paths::DB . 'sql_creator.php';
@@ -49,6 +50,7 @@ include_once paths::SHARED_CONST_FIELDS . 'fields.php';
 include_once paths::SHARED_CONST_FIELDS . 'view_fields.php';
 include_once paths::SHARED . 'url_var.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\component\component_link_list;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
@@ -115,15 +117,26 @@ class view_sys_list extends type_list
         $sc = $db_con->sql_creator();
         $qp = $this->load_sql_list($sc);
         $db_lst = $db_con->get($qp, $msg, 'system view list');
+        $msk_lst = [];
         if ($db_lst != null) {
             foreach ($db_lst as $db_row) {
                 $msk = new view($this->usr);
                 $msk->row_mapper_sandbox($db_row, $msg);
-                $msk->load_components($msg, $db_con);
-                $this->add($msk);
+                $msk_lst[] = $msk;
             }
         }
-        // the time of this message is the component load of every system view with one read per view
+        // the component links and the components of all system views are loaded with one query each
+        // instead of two queries per view and then split into the list of each view
+        $all_lnk = new component_link_list($this->usr);
+        $ids = array_map(fn(view $msk) => $msk->id(), $msk_lst);
+        if ($ids != [] and $all_lnk->load_by_view_ids($ids, $msg, $db_con)) {
+            $all_lnk->load_components($msg, $db_con);
+        }
+        foreach ($msk_lst as $msk) {
+            $msk->cmp_lnk_lst = $all_lnk->by_view_id($msk->id());
+            $this->add($msk);
+        }
+        // the time of this message is the component load of all system views
         log_debug('components of ' . count($this->lst()) . ' system views loaded', url_var::DEBUG_LEVEL_DB_READ);
         return $this->lst();
     }

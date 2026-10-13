@@ -82,6 +82,10 @@ use Zukunft\ZukunftCom\main\php\shared\helper\TextIdObject;
 class component_link_list extends sandbox_link_list
 {
 
+    // the selection of the component links of several views at once e.g. of all system views
+    const string QUERY_VIEW_IDS = 'view_ids';
+
+
     /*
      * construct and map
      */
@@ -146,6 +150,28 @@ class component_link_list extends sandbox_link_list
     }
 
     /**
+     * load the component links of several views with one query e.g. of all system views,
+     * which by_view_id then splits into the list of each view
+     *
+     * @param array $ids the ids of the views of which the component links should be loaded
+     * @param user_message $msg to report a failed database read
+     * @param sql_db|null $db_con_given the database connection as a parameter for the initial load of the system views
+     * @return bool true if at least one component link has been found
+     */
+    function load_by_view_ids(array $ids, user_message $msg, ?sql_db $db_con_given = null): bool
+    {
+        global $db_con;
+
+        $db_con_used = $db_con_given;
+        if ($db_con_used == null) {
+            $db_con_used = $db_con;
+        }
+
+        $qp = $this->load_sql_by_view_ids($db_con_used->sql_creator(), $ids);
+        return $this->load_sys($qp, $msg, false, $db_con_given);
+    }
+
+    /**
      * interface function to load all views linked to a given component
      *
      * @param component $cmp if set to get all links for this view
@@ -195,6 +221,29 @@ class component_link_list extends sandbox_link_list
         $qp = $this->load_sql($sc, view_fields::FLD_ID);
         if ($msk->id() > 0) {
             $sc->add_where(view_fields::FLD_ID, $msk->id());
+            $sc->set_order(component_link::FLD_ORDER_NBR);
+            $sc = (new component($this->get_user()))->set_join($sc);
+            $qp->sql = $sc->sql();
+        } else {
+            $qp->name = '';
+        }
+        $qp->par = $sc->get_par();
+        return $qp;
+    }
+
+    /**
+     * set the SQL query parameters to load the component links of several views at once
+     * like load_sql_by_view, so that the links of each view keep the order of load_sql_by_view
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param array $ids the ids of the views of which the component links should be loaded
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
+     */
+    function load_sql_by_view_ids(sql_creator $sc, array $ids): sql_par
+    {
+        $qp = $this->load_sql($sc, self::QUERY_VIEW_IDS);
+        if (count($ids) > 0) {
+            $sc->add_where(view_fields::FLD_ID, $ids, sql_par_type::INT_LIST);
             $sc->set_order(component_link::FLD_ORDER_NBR);
             $sc = (new component($this->get_user()))->set_join($sc);
             $qp->sql = $sc->sql();
@@ -361,6 +410,24 @@ class component_link_list extends sandbox_link_list
                 if (!in_array($id, $result)) {
                     $result[] = $id;
                 }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the links of one view taken from the links of several views loaded by load_by_view_ids
+     * in the order of this list; the link objects are shared and not copied
+     *
+     * @param int $view_id the id of the view of which the links are selected
+     * @return component_link_list the links of the view, empty if the view has no link in this list
+     */
+    function by_view_id(int $view_id): component_link_list
+    {
+        $result = new component_link_list($this->get_user());
+        foreach ($this->lst() as $lnk) {
+            if ($lnk->get_view()->id() == $view_id) {
+                $result->add_obj($lnk);
             }
         }
         return $result;

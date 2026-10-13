@@ -442,6 +442,7 @@ the object structure is:
 │   ├── component_type_listUi - the preloaded data component types used for the html frontend
 │   ├── formula_link_type_listUi - the preloaded data formula link types used for the html frontend
 │   ├── formula_type_listUi - the preloaded data formula types used for the html frontend
+│   ├── job_status_listUi - the preloaded job statuum used for the html frontend
 │   ├── job_type_listUi - the preloaded data job types used for the html frontend
 │   ├── language_form_listUi - the preloaded data language_forms used for the html frontend
 │   ├── language_listUi - the preloaded data languages used for the html frontend

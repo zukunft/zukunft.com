@@ -308,9 +308,38 @@ class job extends db_object
             $result .= $html->td('');
         }
         $result .= $html->td($this->user_name());
-        $result .= $html->td($this->type());
-        $result .= $html->td($this->status());
+        $result .= $html->td($html->esc($this->type_text()));
+        $result .= $html->td($html->esc($this->status_text()));
         $result .= $html->td($this->priority());
+        return $result;
+    }
+
+    /**
+     * @return string the name of the type e.g. "update value" or the id if the type is not in the type cache
+     */
+    function type_text(): string
+    {
+        global $ui_sys;
+        $result = $ui_sys?->typ_lst_cache?->job_typ?->name($this->type()) ?? '';
+        if ($result == '') {
+            $result = (string)$this->type();
+        }
+        return $result;
+    }
+
+    /**
+     * @return string the name of the status e.g. "created" or the id if the status is not in the type cache
+     */
+    function status_text(): string
+    {
+        global $ui_sys;
+        $result = '';
+        if (is_numeric($this->status)) {
+            $result = $ui_sys?->typ_lst_cache?->job_sta?->name((int)$this->status) ?? '';
+        }
+        if ($result == '') {
+            $result = $this->status;
+        }
         return $result;
     }
 

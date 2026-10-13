@@ -775,6 +775,19 @@ a:hover {
     outline: 2px solid #385eb7;
     outline-offset: 2px;
 }
+/* an admin dashboard column limits its tables to the column width, so a long text wraps instead of widening it;
+   with three quarters of the normal font size the columns show more entries at once; no table-layout fixed,
+   because Firefox then collapses all columns of the dashboard row as soon as a not critical list is opened */
+.admin-column {
+    min-width: 0;
+    max-width: 100%;
+    overflow-x: auto;
+    font-size: 0.75rem;
+}
+.admin-column td,
+.admin-column th {
+    overflow-wrap: anywhere;
+}
 .config-tree dl,
 .config-hit dl {
     display: grid;

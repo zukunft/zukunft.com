@@ -53,6 +53,11 @@ use Exception;
 class system_time extends db_object
 {
 
+    // the chars of the url shown in the response time table, so that the table fits into the dashboard column
+    const int URL_SHOW_CHARS = 100;
+    // the mark behind a cut url, whose full text is shown as tooltip
+    const string URL_CUT_MARK = '...';
+
     /*
      * object vars
      */
@@ -120,10 +125,24 @@ class system_time extends db_object
     function display(): string
     {
         $html = new html_base();
-        $row = $html->td($html->esc($this->url));
+        $row = $html->td($this->url_html());
         $row .= $html->td((string)$this->milliseconds);
         $row .= $html->td($this->start_time?->format(DateTimeInterface::ATOM) ?? '');
         return $html->tr($row);
+    }
+
+    /**
+     * @return string the escaped url, cut after URL_SHOW_CHARS chars with the full url as tooltip
+     */
+    private function url_html(): string
+    {
+        $html = new html_base();
+        $result = $html->esc($this->url);
+        if (mb_strlen($this->url) > self::URL_SHOW_CHARS) {
+            $short = $html->esc(mb_substr($this->url, 0, self::URL_SHOW_CHARS)) . self::URL_CUT_MARK;
+            $result = $html->with_title($short, $this->url);
+        }
+        return $result;
     }
 
     /**

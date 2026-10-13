@@ -2,10 +2,6 @@
 
 ## admin dashboard
 
-### response times
-
-the frontend column is done (web/system/system_time_list, critical from pod > limits > usage > response time > millisecond > warning, test data in test/create/test_admin_dashboard.php) and application::write_time writes each api request slower than config.yaml behaviour > response time > log with its url and milliseconds as an api_request row to system_times and, if slower than detail, one row per measured step (system_time_list::slow_request_rows), and the dashboard loads the api_request rows of the last pod > limits > usage > response time > period days that are still slower than the log limit via the admin only api/systemTimeList (cfg/system/system_time_slow_list); still open: the html frontend requests (http/view.php) are not yet written and test/test_app.php::write_time still has the old hand-built insert
-
 ### errors
 
 show in the admin dashboard the last and most relevant system errors e.g. if there is an fatal error not yet solved show it on the top of the list and below not yet solved errors followed by warnings
@@ -48,7 +44,12 @@ add to the admin dashboard a security section that shows the state of the ip and
 
 ### system health
 
-add to the admin dashboard a system health section with the release number (read from the git versioned file of pending_prio_2.md "move the release number in a file"), the db version, the result of cfg/db/db_check, the age of the config cache and whether config.yaml is newer than the cache, and the number of cached pages; use the same data for an admin only sanity api that monitor tools like checkMK can call (docs/todo.md "create a sanity API for monitor tools")
+add to the admin dashboard a system health section with the release number
+(read from the git versioned file of pending_prio_2.md "move the release number in a file"), 
+the db version, the result of cfg/db/db_check, the age of the config cache 
+and whether config.yaml is newer than the cache, and the number of cached pages; 
+use the same data for an admin only sanity api that monitor tools like checkMK can call 
+(docs/todo.md "create a sanity API for monitor tools")
 
 add to the admin dashboard the number of user sandbox rows that are equal to the standard value and can be removed (the del_usr_cfg() cleanup of the dsp_sandbox_* family that belongs to the system consistency checks, see pending_prio_2.md) and the number of possible duplicates (input of find_duplicates), each with a link to the cleanup job resp. the list
 
