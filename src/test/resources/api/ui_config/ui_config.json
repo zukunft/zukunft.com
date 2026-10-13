@@ -28232,8 +28232,8 @@
                 "code_id": "table_editor",
                 "components": [
                     {
-                        "link_id": 1574,
-                        "id": 431,
+                        "link_id": 1575,
+                        "id": 432,
                         "name": "system title table editor",
                         "description": "show the language specific title of the table editor",
                         "type_id": 1,
@@ -28243,8 +28243,8 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1575,
-                        "id": 433,
+                        "link_id": 1576,
+                        "id": 434,
                         "name": "phrase selector",
                         "description": "placeholder to select the word or triple that an editor starts from",
                         "type_id": 146,
@@ -28262,8 +28262,8 @@
                 "code_id": "calculation_editor",
                 "components": [
                     {
-                        "link_id": 1576,
-                        "id": 432,
+                        "link_id": 1577,
+                        "id": 433,
                         "name": "system title calculation editor",
                         "description": "show the language specific title of the calculation editor",
                         "type_id": 1,
@@ -28273,8 +28273,8 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1577,
-                        "id": 433,
+                        "link_id": 1578,
+                        "id": 434,
                         "name": "phrase selector",
                         "description": "placeholder to select the word or triple that an editor starts from",
                         "type_id": 146,
