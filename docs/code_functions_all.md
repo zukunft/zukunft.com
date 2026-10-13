@@ -8135,6 +8135,8 @@
             hould be display in /value/value_list.php
     \-- table_to_svg - section for function table_to_svg not yet defined that it should be display in /value/value_list.
             php
+    \-- chart_model - section for function chart_model not yet defined that it should be display in /value/value_list.ph
+            p
     \-- columns_menu - section for function columns_menu not yet defined that it should be display in /value/value_list.
             php
     \-- list_unit - section for function list_unit not yet defined that it should be display in /value/value_list.php

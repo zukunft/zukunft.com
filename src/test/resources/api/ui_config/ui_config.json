@@ -1,8 +1,6 @@
 {
     "pod": "zukunft.com",
     "type": "ui_config",
-    "user_id": 3,
-    "user": "zukunft.com system test",
     "version": "0.0.3",
     "body": {
         "user_profiles": [

@@ -280,15 +280,6 @@ class controller
      */
 
     /**
-     * set the http response code only if the response headers have not been sent yet
-     * during the test run the log writer may already have emitted output (e.g. a test header),
-     * which sends the headers, so setting the response code afterwards would raise a php warning
-     * (Cannot set response code - headers already sent); this guard matches the header() calls
-     * that are already protected the same way
-     * @param int $code the http response code e.g. 200 or 400
-     * @return void
-     */
-    /**
      * name in a header if the answer comes from the cache, so that e.g. the test run shows it
      * (see rest_call::api_call); only if def::DEBUG_API_CACHE is switched on
      *
@@ -303,6 +294,15 @@ class controller
         }
     }
 
+    /**
+     * set the http response code only if the response headers have not been sent yet
+     * during the test run the log writer may already have emitted output (e.g. a test header),
+     * which sends the headers, so setting the response code afterwards would raise a php warning
+     * (Cannot set response code - headers already sent); this guard matches the header() calls
+     * that are already protected the same way
+     * @param int $code the http response code e.g. 200 or 400
+     * @return void
+     */
     private function set_response_code(int $code): void
     {
         if (!headers_sent()) {

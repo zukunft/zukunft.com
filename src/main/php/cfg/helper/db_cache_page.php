@@ -263,6 +263,7 @@ class db_cache_page extends db_object_seq_id
     /**
      * the cache key of an api get request e.g. 'resultList?phrase_ids=-134%2C-186&u=3'
      * the values are url encoded, so that a value cannot end the key with another user
+     * and an empty value is left out, because the api treats it like a missing parameter
      *
      * @param string $class the class of the api e.g. result_list::class for the resultList api
      * @param array $par every request parameter that changes the json message, as url var => value
@@ -273,7 +274,9 @@ class db_cache_page extends db_object_seq_id
     {
         $lib = new library();
         $api_name = $lib->class_to_api_route($class);
-        return $api_name . url_var::PAR . http_build_query($par) . self::user_key($usr_id);
+        // a zero is a used parameter, so only the empty string is filtered
+        $used_par = array_filter($par, fn($val) => $val !== '');
+        return $api_name . url_var::PAR . http_build_query($used_par) . self::user_key($usr_id);
     }
 
 

@@ -47,6 +47,7 @@ include_once paths::MODEL_VIEW . 'view_list.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_CONST_FIELDS . 'fields.php';
 include_once paths::SHARED_CONST_FIELDS . 'view_fields.php';
+include_once paths::SHARED . 'url_var.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
@@ -59,6 +60,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\views as view_shared;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\view_fields;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class view_sys_list extends type_list
 {
@@ -121,6 +123,8 @@ class view_sys_list extends type_list
                 $this->add($msk);
             }
         }
+        // the time of this message is the component load of every system view with one read per view
+        log_debug('components of ' . count($this->lst()) . ' system views loaded', url_var::DEBUG_LEVEL_DB_READ);
         return $this->lst();
     }
 

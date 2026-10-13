@@ -66,6 +66,9 @@ use Exception;
 class ui_config
 {
 
+    // true if the last get has read the api message from the types cache, e.g. for the debug cache header
+    public bool $from_cache = false;
+
     /**
      * create a user-specific api json message string of this combine object for the frontend
      * that contains at the moment the preloaded types and the system views.
@@ -75,7 +78,7 @@ class ui_config
      * and if possible cached in the frontend in a cookie if possible
      *
      * @param api_type_list|array $typ_lst configuration for the api message e.g. if phrases should be included
-     * @param user_message $msg to collect the error messages and the user for whom the api message should be created which can differ from the session user
+     * @param user_message $msg to collect the error messages; the user is not named in the header, because the message is shared
      * @returns string the api json message for the object as a string
      */
     function api_json(
@@ -99,7 +102,8 @@ class ui_config
             new api_type_list([api_types::INCL_PHRASES]), $msg);
         $api_msg = new api_message();
         $pod_name = $api_msg->api_site_name($db_con);
-        return $api_msg->api_json($pod_name, $this::class, $vars, $typ_lst, $msg->usr);
+        // without the user in the header, because every user reads the same cached message (see get)
+        return $api_msg->api_json($pod_name, $this::class, $vars, $typ_lst);
     }
 
     /**
@@ -143,11 +147,16 @@ class ui_config
         if ($use_cache) {
             $result = $this->read_db_cache($msg);
         }
+        $this->from_cache = ($result !== false);
         if ($result === false) {
+            // the snap is taken before the types are read, so a change during the read outdates the entry
+            $snap_time = new DateTime();
             $this->reload($msg);
             $result = $this->api_json($typ_lst, $msg);
+            // the message just created is cached, because the only caller api/typeLists always
+            // requests the same message types and read_db_cache returns the row for any type list
             if ($use_cache) {
-                $this->write_db_cache($msg);
+                $this->write_db_cache($result, $snap_time);
             }
         }
         return $result;
@@ -186,17 +195,35 @@ class ui_config
         }
     }
 
-    private function write_db_cache(user_message $msg): void
+    /**
+     * the types cache row for the given api message
+     *
+     * @param string $json the types api message that has just been sent to the frontend
+     * @param DateTime $snap_time when the types of the message have started to be read, which is the age of the row
+     * @return db_cache the cache row that is not yet saved
+     */
+    function cache_entry(string $json, DateTime $snap_time): db_cache
     {
         // the cache row is written as the system user because filling the cache is a system
         // action that must also work for an ip user who cannot change data (like the html
         // page cache, see frontend::save_html_page)
         $cac = new db_cache(user::system());
         $cac->type_id = db_cache_types::TYPES_ID;
-        $cac->data = $this->api_json([api_types::HEADER, api_types::INCL_COMPONENTS], $msg);
+        $cac->data = $json;
         $cac->usr = user::system();
         $cac->status_id = db_cache_statuum::CLEAN_ID;
-        $cac->last_update = new DateTime();
+        $cac->last_update = $snap_time;
+        return $cac;
+    }
+
+    /**
+     * @param string $json the types api message that has just been sent to the frontend
+     * @param DateTime $snap_time when the types of the message have started to be read
+     * @return void a failed cache write is only logged
+     */
+    private function write_db_cache(string $json, DateTime $snap_time): void
+    {
+        $cac = $this->cache_entry($json, $snap_time);
         // use a local message with the system user as the requester, because filling the cache
         // is a system action that must also work when the request comes from an ip user who
         // cannot change data; a refused or failed cache write is only logged and must never

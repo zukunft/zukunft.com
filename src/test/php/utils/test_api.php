@@ -174,9 +174,9 @@ class test_api extends test_base
     ): bool
     {
         $msg = new user_message();
-        // set the requesting user on the message, because e.g. ui_config::api_json reads the
-        // user for the api message header from $msg->usr (see docs/llm/state-and-messages.md);
-        // without it the header lacks the user name and the compare with the expected json fails
+        // set the requesting user on the message, because an api message may read the requesting
+        // user from $msg->usr (see docs/llm/state-and-messages.md); the shared types message of
+        // ui_config::api_json on purpose names no user in its header
         $msg->usr = $this->usr1;
         // check and norm the parameters
         if (is_array($typ_lst)) {

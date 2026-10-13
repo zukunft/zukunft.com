@@ -315,6 +315,10 @@ class rest_call
         //      the backend $sys must not be used here (web/ may declare only $ui_sys and $mtr)
         $result = curl_exec($curl);
 
+        // the time shown with this message is the wait for the backend, so that the time of the next
+        // message is the work of the frontend after the answer and not the api call
+        log_debug('answer of ' . $method . ' ' . $url, url_var::DEBUG_LEVEL_API_CALL);
+
         // the header is only sent if the debug switch of the backend is on, so the message is shown at every level
         if ($cache_state != '') {
             log_debug('api cache ' . $cache_state . ' for ' . $url, url_var::DEBUG_LEVEL_SWITCHED);

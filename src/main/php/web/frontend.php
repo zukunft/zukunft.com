@@ -702,6 +702,8 @@ class frontend
                 ]);
             } else {
                 $this->set_type_cache($api_msg, $msg_ui);
+                // the time of this message is the mapping of the types api message to the frontend objects
+                log_debug('type cache set from the api message', url_var::DEBUG_LEVEL_MAIN_STEP);
             }
         }
         $sys->times->switch(system_time_type::DEFAULT);
@@ -1349,6 +1351,8 @@ class frontend
                 // remember the rendered page for the next request with the same key: the own page
                 // of the logged in user or the standard page of the users without own data
                 $result = $this->url_to_html($url_array, $msg_ui, $dto);
+                // the time of this message is the rendering, so that the next one is only the cache write
+                log_debug('page rendered for ' . $url_key, url_var::DEBUG_LEVEL_MAIN_STEP);
                 $this->save_html_page($cac_page, $url_key, $result);
             }
         } else {
