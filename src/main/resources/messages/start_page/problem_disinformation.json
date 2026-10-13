@@ -218,6 +218,13 @@
       "expression": "\"potential gain\",\"billion\",\"htp\" = 0 - \"potential loss\",\"percent\",\"htp\" * \"world\",\"htp\",\"billion\" * \"loss reduction\",\"percent\" * \"htp\",\"billion\",\"factor\"",
       "latex": "G = -d_{htp} \\cdot HTP_{world} \\cdot r \\cdot k",
       "assigned_word": "loss reduction"
+    },
+    {
+      "name": "avoided loss in trillion EUR",
+      "description": "the potential gain of a solution in trillion EUR, the potential loss of the problem multiplied by the share of the loss that the solution avoids, so that the gain is stated in the unit of the loss and is never bigger than the loss",
+      "expression": "\"potential gain\",\"trillion\",\"EUR\" = \"potential loss\",\"trillion\",\"EUR\" * \"loss reduction\",\"percent\"",
+      "latex": "G_{EUR} = L_{pot} \\cdot r",
+      "assigned_word": "loss reduction"
     }
   ],
   "sources": [
@@ -597,6 +604,29 @@
       ],
       "number": "12",
       "note": "0 - -0.08 * 1189.19 billion htp * 10 percent * 1.261363"
+    },
+    {
+      "context": [
+        "disinformation",
+        "platform regulation",
+        "potential loss",
+        "trillion",
+        "EUR",
+        "loss reduction",
+        "percent",
+        "assumed"
+      ],
+      "formula": "avoided loss in trillion EUR",
+      "words": [
+        "disinformation",
+        "platform regulation",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed"
+      ],
+      "number": "0.035",
+      "note": "0.35 trillion EUR potential loss * 10 percent loss reduction; the calculation uses the potential loss result of 0.35, so 0.035 and not 0.034995 of the unrounded loss, which would round to 0.03 instead of 0.04"
     },
     {
       "context": [

@@ -1636,6 +1636,31 @@ class test_phrases
     }
 
     /**
+     * @return phrase_list_ui the "potential gain" column defined per unit like in solution_prio.json:
+     *         in EUR as a mayor and in htp as a minor column, without a definition for any unit
+     */
+    function list_columns_gain_units_ui(): phrase_list_ui
+    {
+        $t_trp = new test_triples($this->env);
+        $lst = new phrase_list($this->env->usr1);
+        $lst->add($t_trp->column_potential_gain_in_eur()->phrase());
+        $lst->add($t_trp->column_potential_gain_in_htp()->phrase());
+        return $this->ui_list($lst);
+    }
+
+    /**
+     * @return phrase_list_ui the "potential gain" column defined for any unit only, so that the
+     *         unit of the most values fills the column
+     */
+    function list_columns_potential_gain_ui(): phrase_list_ui
+    {
+        $t_trp = new test_triples($this->env);
+        $lst = new phrase_list($this->env->usr1);
+        $lst->add($t_trp->column_potential_gain()->phrase());
+        return $this->ui_list($lst);
+    }
+
+    /**
      * a list of currencies and their common parent "currency" linked via the "is a" verb
      * e.g. to test word::similar where the similar words of "Swiss franc" are "Euro" and "US Dollar"
      *

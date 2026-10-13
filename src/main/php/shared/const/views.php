@@ -102,6 +102,9 @@ class views
     const int CALCULATOR_ID = 16;
     const string CALCULATOR_NAME = 'Calculator';
     const string CALCULATOR_COM = 'The values related to a word or triple as a table with the defined columns, so that the numbers of a question can be compared';
+    // placeholders with a title and a phrase selector until the editors are done (editor_views.json)
+    const string TABLE_EDITOR_NAME = 'Table editor';
+    const string CALCULATION_EDITOR_NAME = 'Calculation editor';
     const string VALUE_OVERWRITE = 'value_overwrite';
     const int VALUE_OVERWRITE_ID = 17;
     const string RESULT_OVERWRITE = 'result_overwrite';

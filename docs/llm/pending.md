@@ -55,9 +55,6 @@ add to the admin dashboard the number of user sandbox rows that are equal to the
 
 ## start page
 
-review the data so that 'one-click-hide' if the number one solution for populism' and 'public CBAM calculation' is the number one solution for 'global warming'
-
-adjust the numbers in the json data files so that the gain of the solution is always smaller than the potential loss and add a formula that checks that this is always the case
 
 adjust the numbers in the json data files so that the problem / solution are in this order
 

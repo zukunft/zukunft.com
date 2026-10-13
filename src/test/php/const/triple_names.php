@@ -155,24 +155,24 @@ class triple_names
     const int POTENTIAL_EDUCATION_PROBLEM_ID = 125;
     // the links of the other problems of solution_prio.json to "global problem"
     const int DISINFORMATION_PROBLEM_ID = 155;
-    const int WEALTH_CONCENTRATION_PROBLEM_ID = 193;
-    const int MARKET_POWER_PROBLEM_ID = 194;
-    const int BIASED_INFORMATION_PROBLEM_ID = 195;
-    const int CITIZEN_PARTICIPATION_PROBLEM_ID = 196;
-    const int GDP_MISMEASUREMENT_PROBLEM_ID = 197;
-    const int PROPRIETARY_SOFTWARE_PROBLEM_ID = 198;
-    const int BLACK_BOX_AI_PROBLEM_ID = 228;
+    const int WEALTH_CONCENTRATION_PROBLEM_ID = 195;
+    const int MARKET_POWER_PROBLEM_ID = 196;
+    const int BIASED_INFORMATION_PROBLEM_ID = 197;
+    const int CITIZEN_PARTICIPATION_PROBLEM_ID = 198;
+    const int GDP_MISMEASUREMENT_PROBLEM_ID = 199;
+    const int PROPRIETARY_SOFTWARE_PROBLEM_ID = 200;
+    const int BLACK_BOX_AI_PROBLEM_ID = 230;
     // the solution triples and the table column definitions of solution_prio.json
     const string REDUCE_EMISSIONS = 'reduce climate gas emissions';
-    const int REDUCE_EMISSIONS_ID = 226;
+    const int REDUCE_EMISSIONS_ID = 228;
     const string AVOID_WRONG_DECISIONS = 'avoid wrong decisions';
-    const int AVOID_WRONG_DECISIONS_ID = 188;
+    const int AVOID_WRONG_DECISIONS_ID = 190;
     // the triples that link a solution to "solution", so that the table can name the solution
     // of a problem row in a column of its own (like the problem links for the rows)
     const string REDUCE_EMISSIONS_SOLUTION = 'reduce climate gas emissions (solution)';
     const int REDUCE_EMISSIONS_SOLUTION_ID = 256;
     const string AVOID_WRONG_DECISIONS_SOLUTION = 'avoid wrong decisions (solution)';
-    const int AVOID_WRONG_DECISIONS_SOLUTION_ID = 227;
+    const int AVOID_WRONG_DECISIONS_SOLUTION_ID = 229;
     const string RESEARCH_SOLUTION = 'research (solution)';
     const int RESEARCH_SOLUTION_ID = 140;
     const string TAXES_SOLUTION = 'taxes (solution)';
@@ -180,21 +180,21 @@ class triple_names
     const string SPENDING_SOLUTION = 'spending (solution)';
     const int SPENDING_SOLUTION_ID = 142;
     const string BASIC_INCOME_SOLUTION = 'basic income (solution)';
-    const int BASIC_INCOME_SOLUTION_ID = 199;
+    const int BASIC_INCOME_SOLUTION_ID = 201;
     const string PLATFORM_REGULATION_SOLUTION = 'platform regulation (solution)';
-    const int PLATFORM_REGULATION_SOLUTION_ID = 200;
+    const int PLATFORM_REGULATION_SOLUTION_ID = 202;
     const string MARKET_SHARE_TAX_SOLUTION = 'market share tax (solution)';
-    const int MARKET_SHARE_TAX_SOLUTION_ID = 229;
+    const int MARKET_SHARE_TAX_SOLUTION_ID = 231;
     const string DELPHI_METHOD_SOLUTION = 'Delphi method (solution)';
-    const int DELPHI_METHOD_SOLUTION_ID = 201;
+    const int DELPHI_METHOD_SOLUTION_ID = 203;
     const string PUBLIC_AI_SOLUTION = 'public AI (solution)';
-    const int PUBLIC_AI_SOLUTION_ID = 230;
+    const int PUBLIC_AI_SOLUTION_ID = 232;
     const string FLUID_DEMOCRACY_SOLUTION = 'fluid democracy (solution)';
-    const int FLUID_DEMOCRACY_SOLUTION_ID = 202;
+    const int FLUID_DEMOCRACY_SOLUTION_ID = 204;
     const string GROSS_DOMESTIC_USAGE_SOLUTION = 'gross domestic usage (solution)';
-    const int GROSS_DOMESTIC_USAGE_SOLUTION_ID = 231;
+    const int GROSS_DOMESTIC_USAGE_SOLUTION_ID = 233;
     const string FREE_SOFTWARE_SOLUTION = 'free software (solution)';
-    const int FREE_SOFTWARE_SOLUTION_ID = 203;
+    const int FREE_SOFTWARE_SOLUTION_ID = 205;
     // the problems of solution_prio.json that are a triple, ordered like the start page ranking
     const string WEALTH_CONCENTRATION = 'wealth concentration';
     const int WEALTH_CONCENTRATION_ID = 132;
@@ -203,7 +203,7 @@ class triple_names
     const string BIASED_INFORMATION = 'biased information';
     const int BIASED_INFORMATION_ID = 134;
     const string BLACK_BOX_AI = 'black-box AI';
-    const int BLACK_BOX_AI_ID = 186;
+    const int BLACK_BOX_AI_ID = 188;
     const string CITIZEN_PARTICIPATION = 'citizen participation';
     const int CITIZEN_PARTICIPATION_ID = 136;
     const string GDP_MISMEASUREMENT = 'GDP mismeasurement';
@@ -216,29 +216,29 @@ class triple_names
     const string PLATFORM_REGULATION = 'platform regulation';
     const int PLATFORM_REGULATION_ID = 143;
     const string MARKET_SHARE_TAX = 'market share tax';
-    const int MARKET_SHARE_TAX_ID = 190;
+    const int MARKET_SHARE_TAX_ID = 192;
     const string DELPHI_METHOD = 'Delphi method';
     const int DELPHI_METHOD_ID = 144;
     const string PUBLIC_AI = 'public AI';
-    const int PUBLIC_AI_ID = 189;
+    const int PUBLIC_AI_ID = 191;
     const string FLUID_DEMOCRACY = 'fluid democracy';
     const int FLUID_DEMOCRACY_ID = 148;
     const string GROSS_DOMESTIC_USAGE = 'gross domestic usage';
-    const int GROSS_DOMESTIC_USAGE_ID = 191;
+    const int GROSS_DOMESTIC_USAGE_ID = 193;
     const string FREE_SOFTWARE = 'free software';
     const int FREE_SOFTWARE_ID = 147;
     const string SYSTEM_COLUMN_MAYOR = 'mayor column (system)';
-    const int SYSTEM_COLUMN_MAYOR_ID = 222;
+    const int SYSTEM_COLUMN_MAYOR_ID = 224;
     const string SYSTEM_COLUMN_MAIN = 'main column (system)';
-    const int SYSTEM_COLUMN_MAIN_ID = 223;
+    const int SYSTEM_COLUMN_MAIN_ID = 225;
     // the chart type tiers of solution_prio.json and the two charts of the start page ranking
     // (see triples::SYSTEM_CHART_TYPE and docs/llm/frontend.md "A table as a chart")
     const string SYSTEM_CHART_TYPE = shared_triples::SYSTEM_CHART_TYPE;
-    const int SYSTEM_CHART_TYPE_ID = 214;
+    const int SYSTEM_CHART_TYPE_ID = 216;
     const string SYSTEM_CHART_TYPE_DEFAULT = shared_triples::SYSTEM_CHART_TYPE_DEFAULT;
-    const int SYSTEM_CHART_TYPE_DEFAULT_ID = 235;
+    const int SYSTEM_CHART_TYPE_DEFAULT_ID = 237;
     const string SYSTEM_CHART_TYPE_ALTERNATIVE = shared_triples::SYSTEM_CHART_TYPE_ALTERNATIVE;
-    const int SYSTEM_CHART_TYPE_ALTERNATIVE_ID = 236;
+    const int SYSTEM_CHART_TYPE_ALTERNATIVE_ID = 238;
     // the chart of the table with the mayor columns only from start_page_charts.json, which the
     // db setup imports last, so the ids follow the highest triple id of the seed data in the
     // order of the import levels; check them in the triple list.csv
@@ -260,79 +260,90 @@ class triple_names
     const string PERSON_YEAR = 'person year';
     const int PERSON_YEAR_ID = 153;
     const string SYSTEM_COLUMN_MARGINAL = shared_triples::SYSTEM_COLUMN_MARGINAL;
-    const int SYSTEM_COLUMN_MARGINAL_ID = 225;
+    const int SYSTEM_COLUMN_MARGINAL_ID = 227;
     const string COLUMN_LOSS_REDUCTION = 'column loss reduction';
-    const int COLUMN_LOSS_REDUCTION_ID = 257;
+    const int COLUMN_LOSS_REDUCTION_ID = 258;
     const string COLUMN_INITIAL_EFFORT = 'column initial effort';
-    const int COLUMN_INITIAL_EFFORT_ID = 258;
+    const int COLUMN_INITIAL_EFFORT_ID = 259;
     const string COLUMN_REWARD_RATIO = 'column reward ratio';
-    const int COLUMN_REWARD_RATIO_ID = 259;
+    const int COLUMN_REWARD_RATIO_ID = 260;
     const string RANGE_BARS_OF_LOSS = 'range bars of potential loss';
-    const int RANGE_BARS_OF_LOSS_ID = 215;
+    const int RANGE_BARS_OF_LOSS_ID = 217;
     const string GAIN_AND_EFFORT = 'potential gain and initial effort';
-    const int GAIN_AND_EFFORT_ID = 216;
+    const int GAIN_AND_EFFORT_ID = 218;
     const string SCATTER_OF_GAIN_AND_EFFORT = 'scatter plot of potential gain and initial effort';
-    const int SCATTER_OF_GAIN_AND_EFFORT_ID = 237;
+    const int SCATTER_OF_GAIN_AND_EFFORT_ID = 239;
     const string CHART_RANGE_BARS_OF_LOSS = 'chart range bars of potential loss';
-    const int CHART_RANGE_BARS_OF_LOSS_ID = 262;
+    const int CHART_RANGE_BARS_OF_LOSS_ID = 263;
     const string CHART_SCATTER_OF_GAIN_AND_EFFORT = 'chart scatter plot of potential gain and initial effort';
-    const int CHART_SCATTER_OF_GAIN_AND_EFFORT_ID = 263;
+    const int CHART_SCATTER_OF_GAIN_AND_EFFORT_ID = 264;
     // the default sort order of the start page ranking (see triples::SYSTEM_SORT_ORDER)
     const string SYSTEM_SORT_ORDER = shared_triples::SYSTEM_SORT_ORDER;
-    const int SYSTEM_SORT_ORDER_ID = 217;
+    const int SYSTEM_SORT_ORDER_ID = 219;
     const string SYSTEM_SORT_ORDER_DEFAULT = shared_triples::SYSTEM_SORT_ORDER_DEFAULT;
-    const int SYSTEM_SORT_ORDER_DEFAULT_ID = 238;
+    const int SYSTEM_SORT_ORDER_DEFAULT_ID = 240;
     const string NUMERIC_DESC_OF_LOSS = 'numeric descending of potential loss';
-    const int NUMERIC_DESC_OF_LOSS_ID = 218;
+    const int NUMERIC_DESC_OF_LOSS_ID = 220;
     const string SORT_NUMERIC_DESC_OF_LOSS = 'sort numeric descending of potential loss';
-    const int SORT_NUMERIC_DESC_OF_LOSS_ID = 264;
+    const int SORT_NUMERIC_DESC_OF_LOSS_ID = 265;
     const string COLUMN_PROBLEM = 'column problem (high prio)';
-    const int COLUMN_PROBLEM_ID = 240;
+    const int COLUMN_PROBLEM_ID = 242;
     const string COLUMN_SOLUTION = 'column solution (high prio)';
-    const int COLUMN_SOLUTION_ID = 243;
+    const int COLUMN_SOLUTION_ID = 244;
     // the main column chain and the explaining columns of solution_prio.json that order a table
     const string COLUMN_SOLUTION_AFTER_REASON = 'column solution (high prio) is next main column after column reason';
     const int COLUMN_SOLUTION_AFTER_REASON_ID = 282;
     // the chain of a table without the reason column, which no import file contains
     const string COLUMN_SOLUTION_AFTER_PROBLEM = 'column solution (high prio) is next main column after column problem (high prio)';
     const int COLUMN_SOLUTION_AFTER_PROBLEM_ID = 996;
+    // the loss and the gain column and their explaining triples, which no import file contains
+    // any more, so that the column order can be tested with columns named by a word
     const string COLUMN_LOSS_EXPLAINS_PROBLEM = 'column loss is explaining column for column problem (high prio)';
-    const int COLUMN_LOSS_EXPLAINS_PROBLEM_ID = 272;
+    const int COLUMN_LOSS_EXPLAINS_PROBLEM_ID = 992;
     const string COLUMN_COST_EXPLAINS_PROBLEM = 'column cost is explaining column for column problem (high prio)';
     const int COLUMN_COST_EXPLAINS_PROBLEM_ID = 273;
     const string COLUMN_GAIN_EXPLAINS_SOLUTION = 'column gain is explaining column for column solution (high prio)';
-    const int COLUMN_GAIN_EXPLAINS_SOLUTION_ID = 276;
+    const int COLUMN_GAIN_EXPLAINS_SOLUTION_ID = 993;
     // a circular main column chain that no import file contains, so that the fallback can be tested
     const string COLUMN_PROBLEM_AFTER_SOLUTION = 'column problem (high prio) is next main column after column solution (high prio)';
     const int COLUMN_PROBLEM_AFTER_SOLUTION_ID = 997;
     const string COLUMN_COST = 'column cost';
     const int COLUMN_COST_ID = 247;
     const string COLUMN_GAIN = 'column gain';
-    const int COLUMN_GAIN_ID = 245;
+    const int COLUMN_GAIN_ID = 991;
     const string COLUMN_LOSS = 'column loss';
-    const int COLUMN_LOSS_ID = 242;
+    const int COLUMN_LOSS_ID = 990;
     // the measures of the start page values, their columns and the triples that order them
     const string POTENTIAL_LOSS = 'potential loss';
     const int POTENTIAL_LOSS_ID = 128;
     const string POTENTIAL_GAIN = 'potential gain';
     const int POTENTIAL_GAIN_ID = 129;
     const string COLUMN_POTENTIAL_LOSS = 'column potential loss';
-    const int COLUMN_POTENTIAL_LOSS_ID = 241;
+    const int COLUMN_POTENTIAL_LOSS_ID = 243;
     const string COLUMN_POTENTIAL_GAIN = 'column potential gain';
-    const int COLUMN_POTENTIAL_GAIN_ID = 244;
+    const int COLUMN_POTENTIAL_GAIN_ID = 245;
+    // the gain columns per unit
+    const string POTENTIAL_GAIN_IN_EUR = 'potential gain in EUR';
+    const int POTENTIAL_GAIN_IN_EUR_ID = 185;
+    const string POTENTIAL_GAIN_IN_HTP = 'potential gain in htp';
+    const int POTENTIAL_GAIN_IN_HTP_ID = 186;
+    const string COLUMN_POTENTIAL_GAIN_IN_EUR = 'column potential gain in EUR';
+    const int COLUMN_POTENTIAL_GAIN_IN_EUR_ID = 254;
+    const string COLUMN_POTENTIAL_GAIN_IN_HTP = 'column potential gain in htp';
+    const int COLUMN_POTENTIAL_GAIN_IN_HTP_ID = 257;
     const string SYSTEM_COLUMN_MINOR = 'minor column (system)';
-    const int SYSTEM_COLUMN_MINOR_ID = 224;
+    const int SYSTEM_COLUMN_MINOR_ID = 226;
     // the reason of a problem and the loss it causes, the two main columns of the ranking
     const string CLIMATE_GAS_EMISSIONS = 'climate gas emissions';
-    const int CLIMATE_GAS_EMISSIONS_ID = 187;
+    const int CLIMATE_GAS_EMISSIONS_ID = 189;
     const string CLIMATE_GAS_EMISSIONS_REASON = 'climate gas emissions (reason)';
-    const int CLIMATE_GAS_EMISSIONS_REASON_ID = 239;
+    const int CLIMATE_GAS_EMISSIONS_REASON_ID = 241;
     const string COLUMN_REASON = 'column reason';
-    const int COLUMN_REASON_ID = 265;
+    const int COLUMN_REASON_ID = 266;
     const string POTENTIAL_LOSS_OF_REASON = 'potential loss of reason';
-    const int POTENTIAL_LOSS_OF_REASON_ID = 219;
+    const int POTENTIAL_LOSS_OF_REASON_ID = 221;
     const string COLUMN_POTENTIAL_LOSS_OF_REASON = 'column potential loss of reason';
-    const int COLUMN_POTENTIAL_LOSS_OF_REASON_ID = 266;
+    const int COLUMN_POTENTIAL_LOSS_OF_REASON_ID = 267;
     const string COLUMN_REASON_AFTER_PROBLEM = 'column reason is next main column after column problem (high prio)';
     const int COLUMN_REASON_AFTER_PROBLEM_ID = 280;
     const string COLUMN_LOSS_OF_REASON_EXPLAINS_REASON = 'column potential loss of reason is explaining column for column reason';

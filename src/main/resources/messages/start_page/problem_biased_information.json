@@ -964,6 +964,13 @@
       "assigned_word": "loss reduction"
     },
     {
+      "name": "avoided loss in trillion EUR",
+      "description": "the potential gain of a solution in trillion EUR, the potential loss of the problem multiplied by the share of the loss that the solution avoids, so that the gain is stated in the unit of the loss and is never bigger than the loss",
+      "expression": "\"potential gain\",\"trillion\",\"EUR\" = \"potential loss\",\"trillion\",\"EUR\" * \"loss reduction\",\"percent\"",
+      "latex": "G_{EUR} = L_{pot} \\cdot r",
+      "assigned_word": "loss reduction"
+    },
+    {
       "name": "loss reduction of a solution part",
       "description": "the share of the potential loss of a problem that one part of its solution avoids, the share of the loss it avoids if it is fully in place multiplied by the probability that it is fully in place; the same measure as the loss reduction of the whole solution in the start page ranking",
       "expression": "\"loss reduction\",\"percent\" = \"reduction potential\",\"percent\" * \"fulfillment probability\"",
@@ -3038,6 +3045,29 @@
       ],
       "number": "9",
       "note": "0 - -0.05 * 1189.19 billion htp * 15 percent * 1.00909"
+    },
+    {
+      "context": [
+        "biased information",
+        "Delphi method",
+        "potential loss",
+        "trillion",
+        "EUR",
+        "loss reduction",
+        "percent",
+        "assumed"
+      ],
+      "formula": "avoided loss in trillion EUR",
+      "words": [
+        "biased information",
+        "Delphi method",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed"
+      ],
+      "number": "0.067497",
+      "note": "0.449983 trillion EUR potential loss * 15 percent loss reduction"
     },
     {
       "context": [

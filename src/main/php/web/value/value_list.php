@@ -939,7 +939,10 @@ class value_list extends ListBase
         // a simple table shows the first tiers only, and the table of the mayor tier alone
         // one unit per column; the columns left out are still reachable via the menu of
         // the "..." header
-        $col_ids = $this->columns_of_tiers($col_ids, $col_phr, $phr_col, $rel_lst, $col_tiers, $cells, $msg);
+        // the unit describes the number of a whole column, so its own header names it and a
+        // column can be defined per unit
+        $col_unit = $this->column_units($col_phr, $val_col, $msg);
+        $col_ids = $this->columns_of_tiers($col_ids, $col_phr, $phr_col, $col_unit, $rel_lst, $col_tiers, $cells, $msg);
         // a row whose numbers are all in columns that this table does not show says nothing
         // to the reader, e.g. the reward ratio of a problem in a table of the mayor tiers,
         // so such a row is dropped before the cut and uses up none of the shown rows
@@ -961,8 +964,7 @@ class value_list extends ListBase
         foreach ($col_phr as $col_id => $phr) {
             $model->col_head[$col_id] = $this->column_head($phr, $tbl_phr);
         }
-        // the unit describes the number of a whole column, so its own header names it
-        $model->col_unit = $this->column_units($col_phr, $val_col, $msg);
+        $model->col_unit = $col_unit;
         // the names are set before the orders, because a defined order names its column
         $model->col_names = $this->column_names_of($col_phr, $model->col_head, $col_parts, $all_by_id);
         // a page must not fill the screen, because the user messages are shown below the
@@ -1064,7 +1066,7 @@ class value_list extends ListBase
                     $members, $rest, array_diff($rel_lst?->child_names($phr) ?? [], $col_order));
                 // a column shows one measure, so a phrase with values in several units gets
                 // one column per unit, the unit of the most relevant value first
-                foreach ($this->split_by_unit($members, $msg) as $unit_members) {
+                foreach ($this->split_by_unit($members, $phr->name(), $rel_lst, $msg) as $unit_members) {
                     $col_id = $this->unit_column_id($id, $col_phr);
                     $col_phr[$col_id] = $phr;
                     $col_parts[$col_id] = $parts;
@@ -1297,7 +1299,8 @@ class value_list extends ListBase
             $phr = $model->col_phr[$col_id] ?? $model->phr_col[$col_id];
             // a phrase column names a phrase of the row, so it has no unit
             $unit_lst = $model->col_unit[$col_id] ?? new phrase_list();
-            $col_style[$col_id] = $this->column_style($this->column_tier($col_id, $phr->name(), $rel_lst));
+            $tier = $this->column_tier($col_id, $phr->name(), $rel_lst, $unit_lst->names());
+            $col_style[$col_id] = $this->column_style($tier);
             $head_phr = $this->column_head($phr, $model->tbl_phr);
             $col_head = $this->column_header($head_phr, $unit_lst);
             // a further column of the same phrase in another unit has no icons, because the
@@ -1892,19 +1895,23 @@ class value_list extends ListBase
     /**
      * split the values of one column phrase into the values of each unit, e.g. the potential
      * loss in trillion EUR and the potential loss in percent htp, because a column shows one
-     * measure; the unit with the most values leads, because the table with the mayor tier only
-     * shows the leading unit (see columns_of_tiers), e.g. the potential loss in trillion EUR of
-     * every problem and not the one potential loss in htp of a single problem, which has the
-     * bigger number; units with the same number of values keep the order of the impact
+     * measure; the table with the mayor tier only shows the leading unit (see columns_of_tiers),
+     * so the unit that a column definition puts in the higher tier leads, e.g. the potential
+     * gain in EUR before the gain in htp; among units of the same tier the unit with the most
+     * values leads, e.g. the potential loss in trillion EUR of every problem and not the one
+     * potential loss in htp of a single problem, which has the bigger number; units with the
+     * same tier and number of values keep the order of the impact
      *
      * a confidence value is a share whatever the unit of the value it qualifies, so it follows
      * the value with the same subject instead of its own unit (see cell)
      *
      * @param array $members the values of the column phrase in the order of the impact
+     * @param string $name the name of the column phrase e.g. "potential gain"
+     * @param phrase_list|null $rel_lst the phrases related to the page phrase with the column definitions
      * @param user_message $msg to report a problem of reading a phrase type
      * @return array per unit the values of that unit, the leading unit first
      */
-    private function split_by_unit(array $members, user_message $msg): array
+    private function split_by_unit(array $members, string $name, ?phrase_list $rel_lst, user_message $msg): array
     {
         $result = [];
         $conf_lst = [];
@@ -1915,8 +1922,14 @@ class value_list extends ListBase
                 $result[$this->unit_key($val, $msg)][] = $val;
             }
         }
-        // a stable sort, so units with the same number of values keep the impact order
-        uasort($result, fn(array $a, array $b) => count($b) <=> count($a));
+        $level = [];
+        foreach (array_keys($result) as $unit_key) {
+            $level[$unit_key] = $this->tier_level($rel_lst?->column_tier($name, json_decode($unit_key)) ?? '');
+        }
+        // the higher tier first and then the most values; a stable sort, so units with the same
+        // tier and number of values keep the impact order
+        $lead_first = fn(string $a, string $b) => [$level[$a], count($result[$b])] <=> [$level[$b], count($result[$a])];
+        uksort($result, $lead_first);
         foreach ($conf_lst as $conf_val) {
             $found = $this->unit_of_qualified($result, $conf_val, $msg);
             // a confidence value that qualifies no value of the column keeps its own unit, where
@@ -2575,6 +2588,7 @@ class value_list extends ListBase
      * @param array $col_ids the ids of every column in the order they are shown
      * @param array $col_phr the value column phrases by column id
      * @param array $phr_col the phrase column phrases by column id
+     * @param array $col_unit per value column id the unit phrases of the column, which can have a tier of their own
      * @param phrase_list|null $rel_lst the phrases related to the page phrase with the definitions
      * @param int $col_tiers the number of column tiers left out, self::COLUMN_TIERS_ALL for every column
      * @param array $cells per row and column the values, to check if a further unit column is complete
@@ -2585,6 +2599,7 @@ class value_list extends ListBase
         array        $col_ids,
         array        $col_phr,
         array        $phr_col,
+        array        $col_unit,
         ?phrase_list $rel_lst,
         int          $col_tiers,
         array        $cells,
@@ -2601,7 +2616,9 @@ class value_list extends ListBase
                 $phr = $col_phr[$col_id] ?? $phr_col[$col_id];
                 $is_first_unit = !str_contains((string)$col_id, self::UNIT_COLUMN_SEP);
                 $unit_shown = ($is_first_unit or $this->unit_column_complete((string)$col_id, $cells));
-                $level = $this->tier_level($this->column_tier($col_id, $phr->name(), $rel_lst));
+                // a phrase column names a phrase of the row, so it has no unit
+                $unit_names = isset($col_unit[$col_id]) ? $col_unit[$col_id]->names() : [];
+                $level = $this->tier_level($this->column_tier($col_id, $phr->name(), $rel_lst, $unit_names));
                 if ($unit_shown and $level <= $last_tier) {
                     $level_of_shown[$col_id] = $level;
                 }
@@ -2666,11 +2683,12 @@ class value_list extends ListBase
      * @param int|string $col_id the id of the column, which names a further unit e.g. "125|1"
      * @param string $name the name of the column phrase e.g. "loss"
      * @param phrase_list|null $rel_lst the phrases related to the page phrase with the definitions
+     * @param array $unit_names the names of the unit phrases of the column e.g. "trillion" and "EUR"
      * @return string the tier name e.g. "minor column (system)" or '' if the column is not defined
      */
-    private function column_tier(int|string $col_id, string $name, ?phrase_list $rel_lst): string
+    private function column_tier(int|string $col_id, string $name, ?phrase_list $rel_lst, array $unit_names): string
     {
-        $result = $rel_lst?->column_tier($name) ?? '';
+        $result = $rel_lst?->column_tier($name, $unit_names) ?? '';
         if (str_contains((string)$col_id, self::UNIT_COLUMN_SEP)
             and $this->tier_level($result) < $this->tier_level(triples::SYSTEM_COLUMN_MINOR)) {
             $result = triples::SYSTEM_COLUMN_MINOR;

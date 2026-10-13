@@ -1025,6 +1025,13 @@
       "assigned_word": "loss reduction"
     },
     {
+      "name": "avoided loss in trillion EUR",
+      "description": "the potential gain of a solution in trillion EUR, the potential loss of the problem multiplied by the share of the loss that the solution avoids, so that the gain is stated in the unit of the loss and is never bigger than the loss",
+      "expression": "\"potential gain\",\"trillion\",\"EUR\" = \"potential loss\",\"trillion\",\"EUR\" * \"loss reduction\",\"percent\"",
+      "latex": "G_{EUR} = L_{pot} \\cdot r",
+      "assigned_word": "loss reduction"
+    },
+    {
       "name": "loss reduction of a solution part",
       "description": "the share of the potential loss of a problem that one part of its solution avoids, the share of the loss it avoids if it is fully in place multiplied by the probability that it is fully in place; the same measure as the loss reduction of the whole solution in the start page ranking",
       "expression": "\"loss reduction\",\"percent\" = \"reduction potential\",\"percent\" * \"fulfillment probability\"",
@@ -3104,6 +3111,29 @@
       ],
       "number": "7",
       "note": "0 - -0.04 * 1189.19 billion htp * 50 percent * 0.294318"
+    },
+    {
+      "context": [
+        "black-box AI",
+        "public AI",
+        "potential loss",
+        "trillion",
+        "EUR",
+        "loss reduction",
+        "percent",
+        "assumed"
+      ],
+      "formula": "avoided loss in trillion EUR",
+      "words": [
+        "black-box AI",
+        "public AI",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed"
+      ],
+      "number": "0.109992",
+      "note": "0.219984 trillion EUR potential loss * 50 percent loss reduction"
     },
     {
       "context": [

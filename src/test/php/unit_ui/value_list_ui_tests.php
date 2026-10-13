@@ -420,6 +420,27 @@ class value_list_ui_tests
         $test_name = 'the main columns show no minor column';
         $t->assert($test_name, substr_count($hdr_unit_main, word_names::LOSS . $unit_sep), 1);
 
+        // a column defined per unit shows the unit of the higher tier first, even if another unit
+        // has more values, e.g. the start page shows the potential gain in trillion EUR, which
+        // has the unit of the loss, and not the gain in billion htp
+        $gain_lst = $t_phr->list_columns_gain_units_ui();
+        $tbl_gain_mayor = $t_val->value_list_gain_units_ui()->table_by_related_columns(
+            $msg_ui, new phrase_list_ui(), $gain_lst->column_names(), false, true, $gain_lst,
+            null, [], false, value_list_ui::COLUMN_TIERS_EX_MAIN);
+        $hdr_gain_mayor = $lib->html_to_text($lib->str_left_of($tbl_gain_mayor, '</tr>'));
+        $test_name = 'the mayor column shows the unit that its definition names';
+        $t->assert_text_contains($test_name, $hdr_gain_mayor, word_names::EUR);
+        $test_name = '... and not the unit of the most values, which is a minor column';
+        $t->assert_text_not_contains($test_name, $hdr_gain_mayor, word_names::HTP);
+        // negative: without a definition per unit the unit of the most values fills the column
+        $any_lst = $t_phr->list_columns_potential_gain_ui();
+        $tbl_gain_any = $t_val->value_list_gain_units_ui()->table_by_related_columns(
+            $msg_ui, new phrase_list_ui(), $any_lst->column_names(), false, true, $any_lst,
+            null, [], false, value_list_ui::COLUMN_TIERS_EX_MAIN);
+        $hdr_gain_any = $lib->html_to_text($lib->str_left_of($tbl_gain_any, '</tr>'));
+        $test_name = 'without a unit definition the mayor column shows the unit of the most values';
+        $t->assert_text_contains($test_name, $hdr_gain_any, word_names::HTP);
+
         // a unit can be a triple, e.g. "gram per kWh", which the import types "measure unit" like
         // its words (see pv_switzerland_co2.json), so the header puts it behind the "in" too
         $tbl_unit_trp = $t_val->value_list_unit_triple_ui()->table_by_related_columns(
