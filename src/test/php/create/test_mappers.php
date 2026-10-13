@@ -901,6 +901,7 @@ class test_mappers
             case component_types::SYSTEM_ADMIN_ERRORS_UNASSIGNED:
             case component_types::SYSTEM_ADMIN_ERRORS_DELAYED_FIX:
             case component_types::SYSTEM_ADMIN_JOBS_DELAYED:
+            case component_types::SYSTEM_ADMIN_SUBTITLE:
             case component_types::USED_IN_AS_TEXT:
             case component_types::USED_IN_AS_TEXT_WITH_LINK:
             case component_types::FORM_CLASS:

@@ -62,6 +62,7 @@ include_once html_paths::SHARED . 'api.php';
 include_once html_paths::SHARED . 'library.php';
 include_once html_paths::SHARED . 'url_var.php';
 include_once html_paths::SHARED_CONST . 'views.php';
+include_once html_paths::SHARED_HELPER . 'Config.php';
 include_once html_paths::SHARED_HELPER . 'Translator.php';
 
 use Zukunft\ZukunftCom\main\php\web\component\component;
@@ -83,6 +84,7 @@ use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_statuum;
+use Zukunft\ZukunftCom\main\php\shared\helper\Config as shared_config;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use DateTime;
@@ -782,6 +784,29 @@ class system_page extends component
      * each column shows its critical entries directly and the other entries behind a plus sign,
      * like a node of the settings tree, so that the admin sees at once what needs an action
      */
+
+    /**
+     * the subtitle of the admin dashboard with the requesting admin, the pod and the creation time of the page,
+     * so that a printed or shared dashboard shows from where and from when the entries are
+     *
+     * @param user_message $msg with the requesting admin
+     * @param DateTime|null $now the time of the data snap e.g. fixed by a test; null for the time of the request
+     * @return string the html code of the subtitle
+     */
+    function admin_subtitle(user_message $msg, ?DateTime $now = null): string
+    {
+        global $mtr;
+        global $ui_sys;
+        $lib = new library();
+        $html = new html_base();
+        $now = $now ?? new DateTime();
+        $format = $ui_sys?->cfg?->date_time_format() ?? shared_config::DEFAULT_DATE_TIME_FORMAT;
+        $txt = $mtr->txt(msg_id::ADMIN_SUBTITLE);
+        $txt = $lib->msg_var_replace($txt, msg_id::VAR_USER_NAME, $html->esc($msg->usr?->name() ?? ''));
+        $txt = $lib->msg_var_replace($txt, msg_id::VAR_POD_NAME, $html->esc(POD_NAME));
+        $txt = $lib->msg_var_replace($txt, msg_id::VAR_TIME, $now->format($format));
+        return $html->text_h3($txt);
+    }
 
     /**
      * the slowest user requests: a request that took at least the configured warning time is critical

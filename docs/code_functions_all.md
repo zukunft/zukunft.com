@@ -6573,6 +6573,8 @@
     \-- all_jobs - section for function all_jobs missing in /component/execute/system_page.php
     \-- process_progress - section for function process_progress missing in /component/execute/system_page.php
     \-- process_list - section for function process_list missing in /component/execute/system_page.php
+    \-- admin_subtitle - section for function admin_subtitle not yet defined that it should be admin dashboard in /compo
+            nent/execute/system_page.php
     \-- admin_url_delay - section for function admin_url_delay not yet defined that it should be admin dashboard in /com
             ponent/execute/system_page.php
     \-- admin_login_fails - section for function admin_login_fails not yet defined that it should be admin dashboard in 
@@ -7882,6 +7884,7 @@
     \-- status_name - section for function status_name not yet defined that it should be display in /system/sys_log.php
     \-- order error - order of section display has difference at header should be before page_view
 \-- sys_log_list
+    \-- api_load - section for function api_load not yet defined that it should be load in /system/sys_log_list.php
     \-- api_json - section for function api_json not yet defined that it should be api in /system/sys_log_list.php
     \-- api_array - section for function api_array not yet defined that it should be api in /system/sys_log_list.php
     \-- add - section for function add not yet defined that it should be modify in /system/sys_log_list.php
@@ -8917,6 +8920,9 @@
         \-- sandbox - add the user to the load of the user sandbox object e.g. word by id via api
     \-- load_all
         \-- job_list - load the jobs of all users via the api, which refuses the request of a user who is not an admin
+    \-- api_load
+        \-- sys_log_list - @param array $json_body the api answer with the log entries or the message why the entries ar
+                e not sent
 \-- 
     \-- form_tile
         \-- system_form - start an HTML form, show the title and set and set the unique form name
@@ -9558,6 +9564,9 @@
     \-- row_end
         \-- system_form - @return string just to indicate that a row ends
 \-- admin dashboard
+    \-- admin_subtitle
+        \-- system_page - the subtitle of the admin dashboard with the requesting admin,
+                 the pod and the creation time of the page,
     \-- admin_url_delay
         \-- system_page - the slowest user requests: a request that took at least the configured warning time is critica
                 l

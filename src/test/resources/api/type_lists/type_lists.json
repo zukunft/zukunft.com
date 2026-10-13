@@ -9982,6 +9982,12 @@
                 "code_id": "system_body_config_tree",
                 "description": "the read only tree of the system configuration of config.yaml with a search and a scope to show one branch",
                 "id": 265
+            },
+            {
+                "name": "system admin subtitle",
+                "code_id": "system_admin_subtitle",
+                "description": "the name of the admin, the pod name and the creation time of the admin dashboard",
+                "id": 266
             }
         ],
         "component_link_types": [
@@ -25365,52 +25371,62 @@
                     },
                     {
                         "link_id": 1344,
-                        "id": 395,
-                        "name": "system admin response times",
-                        "description": "show the most relevant delays in response to user request",
-                        "type_id": 260,
-                        "code_id": "system_admin_url_delay",
+                        "id": 401,
+                        "name": "system admin subtitle",
+                        "description": "the name of the admin, the pod name and the creation time of the admin dashboard",
+                        "type_id": 266,
+                        "code_id": "system_admin_subtitle",
                         "position": 2,
                         "position_type": 1
                     },
                     {
                         "link_id": 1345,
+                        "id": 395,
+                        "name": "system admin response times",
+                        "description": "show the most relevant delays in response to user request",
+                        "type_id": 260,
+                        "code_id": "system_admin_url_delay",
+                        "position": 3,
+                        "position_type": 1
+                    },
+                    {
+                        "link_id": 1346,
                         "id": 396,
                         "name": "system admin failed logins",
                         "description": "show last and most critical failed login trails to be able to detect hacking attempts",
                         "type_id": 261,
                         "code_id": "system_admin_login_fails",
-                        "position": 3,
+                        "position": 4,
                         "position_type": 5
                     },
                     {
-                        "link_id": 1346,
+                        "link_id": 1347,
                         "id": 397,
                         "name": "system admin unassigned errors",
                         "description": "show new detected internal errors that do not yet have a human check priority and that are not yet assigned to a developer",
                         "type_id": 262,
                         "code_id": "system_admin_errors_unassigned",
-                        "position": 4,
-                        "position_type": 6
-                    },
-                    {
-                        "link_id": 1347,
-                        "id": 398,
-                        "name": "system admin pending error fixes",
-                        "description": "show a list of errors where the fix has been expected but that are not yet fixed",
-                        "type_id": 263,
-                        "code_id": "system_admin_errors_delayed_fix",
                         "position": 5,
                         "position_type": 6
                     },
                     {
                         "link_id": 1348,
+                        "id": 398,
+                        "name": "system admin pending error fixes",
+                        "description": "show a list of errors where the fix has been expected but that are not yet fixed",
+                        "type_id": 263,
+                        "code_id": "system_admin_errors_delayed_fix",
+                        "position": 6,
+                        "position_type": 6
+                    },
+                    {
+                        "link_id": 1349,
                         "id": 399,
                         "name": "system admin delayed jobs",
                         "description": "list of critical jobs that are delayed with the possibility to de-prioritise blocking jobs",
                         "type_id": 264,
                         "code_id": "system_admin_jobs_delayed",
-                        "position": 6,
+                        "position": 7,
                         "position_type": 7
                     }
                 ]
@@ -25424,7 +25440,7 @@
                 "code_id": "admin_user_add",
                 "components": [
                     {
-                        "link_id": 1349,
+                        "link_id": 1350,
                         "id": 112,
                         "name": "system form title admin user add",
                         "description": "show the language specific title for the system admin form to add a user",
@@ -25435,7 +25451,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1350,
+                        "link_id": 1351,
                         "id": 146,
                         "name": "system form hidden back stack",
                         "description": "field that contains the stack for the undo actions",
@@ -25445,7 +25461,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1351,
+                        "link_id": 1352,
                         "id": 147,
                         "name": "system form hidden confirm status",
                         "description": "switch on that the form saving needs an extra confirm by the user",
@@ -25455,7 +25471,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1352,
+                        "link_id": 1353,
                         "id": 390,
                         "name": "admin form field username",
                         "description": "the username field in a form",
@@ -25466,7 +25482,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1353,
+                        "link_id": 1354,
                         "id": 391,
                         "name": "admin form field user email",
                         "description": "the user email field in a form",
@@ -25477,7 +25493,7 @@
                         "position_type": 2
                     },
                     {
-                        "link_id": 1354,
+                        "link_id": 1355,
                         "id": 392,
                         "name": "admin form field user password",
                         "description": "the user password field in a form",
@@ -25488,7 +25504,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1355,
+                        "link_id": 1356,
                         "id": 156,
                         "name": "system formatter row right",
                         "description": "to start a new row and fill from right the following components in one row until the row end is triggered",
@@ -25498,7 +25514,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1356,
+                        "link_id": 1357,
                         "id": 149,
                         "name": "system form button cancel",
                         "description": "button to cancel the form action and go back to the previous view",
@@ -25509,7 +25525,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1357,
+                        "link_id": 1358,
                         "id": 148,
                         "name": "system form button save",
                         "description": "button to save the form field into the database",
@@ -25520,7 +25536,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1358,
+                        "link_id": 1359,
                         "id": 157,
                         "name": "system formatter row end",
                         "description": "to close the previous opened row and show the components collected since the start in one row",
@@ -25530,7 +25546,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1359,
+                        "link_id": 1360,
                         "id": 152,
                         "name": "system form end",
                         "type_id": 19,
@@ -25549,7 +25565,7 @@
                 "code_id": "admin_user_edit",
                 "components": [
                     {
-                        "link_id": 1360,
+                        "link_id": 1361,
                         "id": 113,
                         "name": "system form title admin user edit",
                         "description": "show the language specific title for the system admin form to change a user",
@@ -25560,7 +25576,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1361,
+                        "link_id": 1362,
                         "id": 146,
                         "name": "system form hidden back stack",
                         "description": "field that contains the stack for the undo actions",
@@ -25570,7 +25586,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1362,
+                        "link_id": 1363,
                         "id": 147,
                         "name": "system form hidden confirm status",
                         "description": "switch on that the form saving needs an extra confirm by the user",
@@ -25580,7 +25596,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1363,
+                        "link_id": 1364,
                         "id": 390,
                         "name": "admin form field username",
                         "description": "the username field in a form",
@@ -25591,7 +25607,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1364,
+                        "link_id": 1365,
                         "id": 391,
                         "name": "admin form field user email",
                         "description": "the user email field in a form",
@@ -25602,7 +25618,7 @@
                         "position_type": 2
                     },
                     {
-                        "link_id": 1365,
+                        "link_id": 1366,
                         "id": 392,
                         "name": "admin form field user password",
                         "description": "the user password field in a form",
@@ -25613,7 +25629,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1366,
+                        "link_id": 1367,
                         "id": 393,
                         "name": "admin form field user uses sandbox",
                         "description": "checkbox so that an admin can switch if the pages for the user must be created from the user sandbox",
@@ -25624,7 +25640,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1367,
+                        "link_id": 1368,
                         "id": 156,
                         "name": "system formatter row right",
                         "description": "to start a new row and fill from right the following components in one row until the row end is triggered",
@@ -25634,7 +25650,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1368,
+                        "link_id": 1369,
                         "id": 149,
                         "name": "system form button cancel",
                         "description": "button to cancel the form action and go back to the previous view",
@@ -25645,7 +25661,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1369,
+                        "link_id": 1370,
                         "id": 148,
                         "name": "system form button save",
                         "description": "button to save the form field into the database",
@@ -25656,7 +25672,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1370,
+                        "link_id": 1371,
                         "id": 157,
                         "name": "system formatter row end",
                         "description": "to close the previous opened row and show the components collected since the start in one row",
@@ -25666,7 +25682,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1371,
+                        "link_id": 1372,
                         "id": 152,
                         "name": "system form end",
                         "type_id": 19,
@@ -25685,7 +25701,7 @@
                 "code_id": "admin_user_del",
                 "components": [
                     {
-                        "link_id": 1372,
+                        "link_id": 1373,
                         "id": 114,
                         "name": "system form title admin user del",
                         "description": "show the language specific title for the system admin form to delete or exclude a user",
@@ -25696,7 +25712,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1373,
+                        "link_id": 1374,
                         "id": 146,
                         "name": "system form hidden back stack",
                         "description": "field that contains the stack for the undo actions",
@@ -25706,7 +25722,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1374,
+                        "link_id": 1375,
                         "id": 147,
                         "name": "system form hidden confirm status",
                         "description": "switch on that the form saving needs an extra confirm by the user",
@@ -25716,7 +25732,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1375,
+                        "link_id": 1376,
                         "id": 390,
                         "name": "admin form field username",
                         "description": "the username field in a form",
@@ -25727,7 +25743,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1376,
+                        "link_id": 1377,
                         "id": 391,
                         "name": "admin form field user email",
                         "description": "the user email field in a form",
@@ -25738,7 +25754,7 @@
                         "position_type": 2
                     },
                     {
-                        "link_id": 1377,
+                        "link_id": 1378,
                         "id": 156,
                         "name": "system formatter row right",
                         "description": "to start a new row and fill from right the following components in one row until the row end is triggered",
@@ -25748,7 +25764,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1378,
+                        "link_id": 1379,
                         "id": 149,
                         "name": "system form button cancel",
                         "description": "button to cancel the form action and go back to the previous view",
@@ -25759,7 +25775,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1379,
+                        "link_id": 1380,
                         "id": 151,
                         "name": "system form button del",
                         "description": "button to delete or exclude a word, triple, verb, value, formula, view or component",
@@ -25770,7 +25786,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1380,
+                        "link_id": 1381,
                         "id": 157,
                         "name": "system formatter row end",
                         "description": "to close the previous opened row and show the components collected since the start in one row",
@@ -25780,7 +25796,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1381,
+                        "link_id": 1382,
                         "id": 152,
                         "name": "system form end",
                         "type_id": 19,
@@ -25798,7 +25814,7 @@
                 "code_id": "error_log",
                 "components": [
                     {
-                        "link_id": 1382,
+                        "link_id": 1383,
                         "id": 10,
                         "name": "system title error log",
                         "description": "show the language specific title for the error log page",
@@ -25809,7 +25825,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1383,
+                        "link_id": 1384,
                         "id": 381,
                         "name": "system body error log",
                         "description": "show the body of the error log page",
@@ -25828,7 +25844,7 @@
                 "code_id": "error_update",
                 "components": [
                     {
-                        "link_id": 1384,
+                        "link_id": 1385,
                         "id": 11,
                         "name": "system title error update",
                         "description": "show the language specific title for the error update page",
@@ -25839,7 +25855,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1385,
+                        "link_id": 1386,
                         "id": 382,
                         "name": "system body error update",
                         "description": "show the body of the error update page",
@@ -25859,7 +25875,7 @@
                 "code_id": "sys_log_detail",
                 "components": [
                     {
-                        "link_id": 1386,
+                        "link_id": 1387,
                         "id": 43,
                         "name": "system title sys log detail",
                         "description": "show the language specific title for the detail of one system error",
@@ -25870,7 +25886,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1387,
+                        "link_id": 1388,
                         "id": 388,
                         "name": "system body not yet available",
                         "description": "the hint that the data and actions of the shown system view are not yet available",
@@ -25898,7 +25914,7 @@
                 "code_id": "user_jobs",
                 "components": [
                     {
-                        "link_id": 1388,
+                        "link_id": 1389,
                         "id": 37,
                         "name": "system title user jobs",
                         "description": "show the language specific title for the jobs caused by the user",
@@ -25909,7 +25925,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1389,
+                        "link_id": 1390,
                         "id": 386,
                         "name": "system body user jobs",
                         "description": "the jobs of the requesting user with the status, the pending jobs on top and the buttons to downgrade or cancel a job",
@@ -25929,7 +25945,7 @@
                 "code_id": "all_jobs",
                 "components": [
                     {
-                        "link_id": 1390,
+                        "link_id": 1391,
                         "id": 38,
                         "name": "system title all jobs",
                         "description": "show the language specific title for the admin list of all jobs",
@@ -25940,7 +25956,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1391,
+                        "link_id": 1392,
                         "id": 387,
                         "name": "system body all jobs",
                         "description": "the jobs of all users for an admin with the status, the pending jobs on top and the buttons to up- or downgrade or cancel a job",
@@ -25960,7 +25976,7 @@
                 "code_id": "job_detail",
                 "components": [
                     {
-                        "link_id": 1392,
+                        "link_id": 1393,
                         "id": 55,
                         "name": "system title job detail",
                         "description": "show the language specific title for the detail of one job",
@@ -25971,7 +25987,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1393,
+                        "link_id": 1394,
                         "id": 388,
                         "name": "system body not yet available",
                         "description": "the hint that the data and actions of the shown system view are not yet available",
@@ -25991,7 +26007,7 @@
                 "code_id": "calc_status",
                 "components": [
                     {
-                        "link_id": 1394,
+                        "link_id": 1395,
                         "id": 56,
                         "name": "system title calc status",
                         "description": "show the language specific title for the status of the formula calculation",
@@ -26002,7 +26018,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1395,
+                        "link_id": 1396,
                         "id": 388,
                         "name": "system body not yet available",
                         "description": "the hint that the data and actions of the shown system view are not yet available",
@@ -26021,7 +26037,7 @@
                 "code_id": "job_async",
                 "components": [
                     {
-                        "link_id": 1396,
+                        "link_id": 1397,
                         "id": 27,
                         "name": "system title process async",
                         "description": "show the language specific title for the progress of one process",
@@ -26032,7 +26048,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1397,
+                        "link_id": 1398,
                         "id": 384,
                         "name": "system body process async",
                         "description": "show the progress of one process",
@@ -26051,7 +26067,7 @@
                 "code_id": "job_control",
                 "components": [
                     {
-                        "link_id": 1398,
+                        "link_id": 1399,
                         "id": 28,
                         "name": "system title process list",
                         "description": "show the language specific title for the control of all processes",
@@ -26062,7 +26078,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1399,
+                        "link_id": 1400,
                         "id": 385,
                         "name": "system body process list",
                         "description": "show all progress of one progress",
@@ -26081,7 +26097,7 @@
                 "code_id": "job_check",
                 "components": [
                     {
-                        "link_id": 1400,
+                        "link_id": 1401,
                         "id": 29,
                         "name": "system title process",
                         "description": "show the language specific title for the job dashboard",
@@ -26092,7 +26108,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1401,
+                        "link_id": 1402,
                         "id": 383,
                         "name": "system body process",
                         "description": "show all progress of job dashboard",
@@ -26112,7 +26128,7 @@
                 "code_id": "paste_table",
                 "components": [
                     {
-                        "link_id": 1402,
+                        "link_id": 1403,
                         "id": 20,
                         "name": "system form title paste table",
                         "description": "show the language specific title for the drop table to db page",
@@ -26123,7 +26139,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1403,
+                        "link_id": 1404,
                         "id": 362,
                         "name": "system form field context",
                         "description": "show the context used to import a data table",
@@ -26134,7 +26150,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1404,
+                        "link_id": 1405,
                         "id": 363,
                         "name": "system form body paste table",
                         "description": "show the drop fields to import a data table",
@@ -26154,7 +26170,7 @@
                 "code_id": "import",
                 "components": [
                     {
-                        "link_id": 1405,
+                        "link_id": 1406,
                         "id": 21,
                         "name": "system title import",
                         "description": "show the language specific title for the import page",
@@ -26165,7 +26181,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1406,
+                        "link_id": 1407,
                         "id": 360,
                         "name": "system form select file",
                         "description": "selector for a file to import",
@@ -26176,7 +26192,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1407,
+                        "link_id": 1408,
                         "id": 156,
                         "name": "system formatter row right",
                         "description": "to start a new row and fill from right the following components in one row until the row end is triggered",
@@ -26186,7 +26202,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1408,
+                        "link_id": 1409,
                         "id": 149,
                         "name": "system form button cancel",
                         "description": "button to cancel the form action and go back to the previous view",
@@ -26197,7 +26213,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1409,
+                        "link_id": 1410,
                         "id": 361,
                         "name": "system form button import",
                         "description": "button to start the import",
@@ -26208,7 +26224,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1410,
+                        "link_id": 1411,
                         "id": 157,
                         "name": "system formatter row end",
                         "description": "to close the previous opened row and show the components collected since the start in one row",
@@ -26218,7 +26234,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1411,
+                        "link_id": 1412,
                         "id": 152,
                         "name": "system form end",
                         "type_id": 19,
@@ -26237,7 +26253,7 @@
                 "code_id": "import_preview",
                 "components": [
                     {
-                        "link_id": 1412,
+                        "link_id": 1413,
                         "id": 48,
                         "name": "system title import preview",
                         "description": "show the language specific title for the preview of an import",
@@ -26248,7 +26264,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1413,
+                        "link_id": 1414,
                         "id": 388,
                         "name": "system body not yet available",
                         "description": "the hint that the data and actions of the shown system view are not yet available",
@@ -26268,7 +26284,7 @@
                 "code_id": "import_result",
                 "components": [
                     {
-                        "link_id": 1414,
+                        "link_id": 1415,
                         "id": 49,
                         "name": "system title import result",
                         "description": "show the language specific title for the result of an import",
@@ -26279,7 +26295,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1415,
+                        "link_id": 1416,
                         "id": 388,
                         "name": "system body not yet available",
                         "description": "the hint that the data and actions of the shown system view are not yet available",
@@ -26299,7 +26315,7 @@
                 "code_id": "import_url",
                 "components": [
                     {
-                        "link_id": 1416,
+                        "link_id": 1417,
                         "id": 50,
                         "name": "system title import url",
                         "description": "show the language specific title for the import of a file given by an url",
@@ -26310,7 +26326,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1417,
+                        "link_id": 1418,
                         "id": 388,
                         "name": "system body not yet available",
                         "description": "the hint that the data and actions of the shown system view are not yet available",
@@ -26330,7 +26346,7 @@
                 "code_id": "import_wikidata",
                 "components": [
                     {
-                        "link_id": 1418,
+                        "link_id": 1419,
                         "id": 51,
                         "name": "system title import wikidata",
                         "description": "show the language specific title for the import by a Wikidata id",
@@ -26341,7 +26357,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1419,
+                        "link_id": 1420,
                         "id": 388,
                         "name": "system body not yet available",
                         "description": "the hint that the data and actions of the shown system view are not yet available",
@@ -26360,7 +26376,7 @@
                 "code_id": "export_in_selected_format",
                 "components": [
                     {
-                        "link_id": 1420,
+                        "link_id": 1421,
                         "id": 22,
                         "name": "system title export",
                         "description": "show the language specific title for the export page",
@@ -26371,7 +26387,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1421,
+                        "link_id": 1422,
                         "id": 273,
                         "name": "system form field selection name",
                         "description": "the unique name of a selection",
@@ -26382,7 +26398,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1422,
+                        "link_id": 1423,
                         "id": 274,
                         "name": "system form field selection description",
                         "description": "text that explains this selection",
@@ -26393,7 +26409,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1423,
+                        "link_id": 1424,
                         "id": 365,
                         "name": "system form field selection text",
                         "description": "show the description of a named selection",
@@ -26404,7 +26420,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1424,
+                        "link_id": 1425,
                         "id": 283,
                         "name": "system form select multi phrases",
                         "description": "select one or many words and triples",
@@ -26415,7 +26431,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1425,
+                        "link_id": 1426,
                         "id": 358,
                         "name": "system form select export format",
                         "description": "selector for the export format e.g. json",
@@ -26426,7 +26442,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1426,
+                        "link_id": 1427,
                         "id": 156,
                         "name": "system formatter row right",
                         "description": "to start a new row and fill from right the following components in one row until the row end is triggered",
@@ -26436,7 +26452,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1427,
+                        "link_id": 1428,
                         "id": 148,
                         "name": "system form button save",
                         "description": "button to save the form field into the database",
@@ -26447,7 +26463,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1428,
+                        "link_id": 1429,
                         "id": 149,
                         "name": "system form button cancel",
                         "description": "button to cancel the form action and go back to the previous view",
@@ -26458,7 +26474,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1429,
+                        "link_id": 1430,
                         "id": 359,
                         "name": "system form button export",
                         "description": "button to start the export",
@@ -26469,7 +26485,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1430,
+                        "link_id": 1431,
                         "id": 157,
                         "name": "system formatter row end",
                         "description": "to close the previous opened row and show the components collected since the start in one row",
@@ -26479,7 +26495,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1431,
+                        "link_id": 1432,
                         "id": 152,
                         "name": "system form end",
                         "type_id": 19,
@@ -26497,7 +26513,7 @@
                 "code_id": "export_json",
                 "components": [
                     {
-                        "link_id": 1432,
+                        "link_id": 1433,
                         "id": 23,
                         "name": "system title export json",
                         "description": "show the language specific title for the export json page",
@@ -26508,7 +26524,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1433,
+                        "link_id": 1434,
                         "id": 273,
                         "name": "system form field selection name",
                         "description": "the unique name of a selection",
@@ -26519,7 +26535,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1434,
+                        "link_id": 1435,
                         "id": 274,
                         "name": "system form field selection description",
                         "description": "text that explains this selection",
@@ -26530,7 +26546,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1435,
+                        "link_id": 1436,
                         "id": 365,
                         "name": "system form field selection text",
                         "description": "show the description of a named selection",
@@ -26541,7 +26557,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1436,
+                        "link_id": 1437,
                         "id": 283,
                         "name": "system form select multi phrases",
                         "description": "select one or many words and triples",
@@ -26552,7 +26568,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1437,
+                        "link_id": 1438,
                         "id": 156,
                         "name": "system formatter row right",
                         "description": "to start a new row and fill from right the following components in one row until the row end is triggered",
@@ -26562,7 +26578,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1438,
+                        "link_id": 1439,
                         "id": 148,
                         "name": "system form button save",
                         "description": "button to save the form field into the database",
@@ -26573,7 +26589,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1439,
+                        "link_id": 1440,
                         "id": 149,
                         "name": "system form button cancel",
                         "description": "button to cancel the form action and go back to the previous view",
@@ -26584,7 +26600,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1440,
+                        "link_id": 1441,
                         "id": 359,
                         "name": "system form button export",
                         "description": "button to start the export",
@@ -26595,7 +26611,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1441,
+                        "link_id": 1442,
                         "id": 157,
                         "name": "system formatter row end",
                         "description": "to close the previous opened row and show the components collected since the start in one row",
@@ -26605,7 +26621,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1442,
+                        "link_id": 1443,
                         "id": 152,
                         "name": "system form end",
                         "type_id": 19,
@@ -26623,7 +26639,7 @@
                 "code_id": "export_xml",
                 "components": [
                     {
-                        "link_id": 1443,
+                        "link_id": 1444,
                         "id": 24,
                         "name": "system title export xml",
                         "description": "show the language specific title for the export xml page",
@@ -26634,7 +26650,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1444,
+                        "link_id": 1445,
                         "id": 273,
                         "name": "system form field selection name",
                         "description": "the unique name of a selection",
@@ -26645,7 +26661,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1445,
+                        "link_id": 1446,
                         "id": 274,
                         "name": "system form field selection description",
                         "description": "text that explains this selection",
@@ -26656,7 +26672,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1446,
+                        "link_id": 1447,
                         "id": 365,
                         "name": "system form field selection text",
                         "description": "show the description of a named selection",
@@ -26667,7 +26683,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1447,
+                        "link_id": 1448,
                         "id": 283,
                         "name": "system form select multi phrases",
                         "description": "select one or many words and triples",
@@ -26678,7 +26694,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1448,
+                        "link_id": 1449,
                         "id": 156,
                         "name": "system formatter row right",
                         "description": "to start a new row and fill from right the following components in one row until the row end is triggered",
@@ -26688,7 +26704,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1449,
+                        "link_id": 1450,
                         "id": 148,
                         "name": "system form button save",
                         "description": "button to save the form field into the database",
@@ -26699,7 +26715,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1450,
+                        "link_id": 1451,
                         "id": 149,
                         "name": "system form button cancel",
                         "description": "button to cancel the form action and go back to the previous view",
@@ -26710,7 +26726,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1451,
+                        "link_id": 1452,
                         "id": 359,
                         "name": "system form button export",
                         "description": "button to start the export",
@@ -26721,7 +26737,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1452,
+                        "link_id": 1453,
                         "id": 157,
                         "name": "system formatter row end",
                         "description": "to close the previous opened row and show the components collected since the start in one row",
@@ -26731,7 +26747,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1453,
+                        "link_id": 1454,
                         "id": 152,
                         "name": "system form end",
                         "type_id": 19,
@@ -26749,7 +26765,7 @@
                 "code_id": "export_csv",
                 "components": [
                     {
-                        "link_id": 1454,
+                        "link_id": 1455,
                         "id": 25,
                         "name": "system title export csv",
                         "description": "show the language specific title for the export csv page",
@@ -26760,7 +26776,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1455,
+                        "link_id": 1456,
                         "id": 273,
                         "name": "system form field selection name",
                         "description": "the unique name of a selection",
@@ -26771,7 +26787,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1456,
+                        "link_id": 1457,
                         "id": 274,
                         "name": "system form field selection description",
                         "description": "text that explains this selection",
@@ -26782,7 +26798,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1457,
+                        "link_id": 1458,
                         "id": 365,
                         "name": "system form field selection text",
                         "description": "show the description of a named selection",
@@ -26793,7 +26809,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1458,
+                        "link_id": 1459,
                         "id": 283,
                         "name": "system form select multi phrases",
                         "description": "select one or many words and triples",
@@ -26804,7 +26820,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1459,
+                        "link_id": 1460,
                         "id": 156,
                         "name": "system formatter row right",
                         "description": "to start a new row and fill from right the following components in one row until the row end is triggered",
@@ -26814,7 +26830,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1460,
+                        "link_id": 1461,
                         "id": 148,
                         "name": "system form button save",
                         "description": "button to save the form field into the database",
@@ -26825,7 +26841,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1461,
+                        "link_id": 1462,
                         "id": 149,
                         "name": "system form button cancel",
                         "description": "button to cancel the form action and go back to the previous view",
@@ -26836,7 +26852,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1462,
+                        "link_id": 1463,
                         "id": 359,
                         "name": "system form button export",
                         "description": "button to start the export",
@@ -26847,7 +26863,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1463,
+                        "link_id": 1464,
                         "id": 157,
                         "name": "system formatter row end",
                         "description": "to close the previous opened row and show the components collected since the start in one row",
@@ -26857,7 +26873,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1464,
+                        "link_id": 1465,
                         "id": 152,
                         "name": "system form end",
                         "type_id": 19,
@@ -26875,7 +26891,7 @@
                 "code_id": "export_ods",
                 "components": [
                     {
-                        "link_id": 1465,
+                        "link_id": 1466,
                         "id": 26,
                         "name": "system title export ods",
                         "description": "show the language specific title for the export ods page",
@@ -26886,7 +26902,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1466,
+                        "link_id": 1467,
                         "id": 273,
                         "name": "system form field selection name",
                         "description": "the unique name of a selection",
@@ -26897,7 +26913,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1467,
+                        "link_id": 1468,
                         "id": 274,
                         "name": "system form field selection description",
                         "description": "text that explains this selection",
@@ -26908,7 +26924,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1468,
+                        "link_id": 1469,
                         "id": 365,
                         "name": "system form field selection text",
                         "description": "show the description of a named selection",
@@ -26919,7 +26935,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1469,
+                        "link_id": 1470,
                         "id": 283,
                         "name": "system form select multi phrases",
                         "description": "select one or many words and triples",
@@ -26930,7 +26946,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1470,
+                        "link_id": 1471,
                         "id": 156,
                         "name": "system formatter row right",
                         "description": "to start a new row and fill from right the following components in one row until the row end is triggered",
@@ -26940,7 +26956,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1471,
+                        "link_id": 1472,
                         "id": 148,
                         "name": "system form button save",
                         "description": "button to save the form field into the database",
@@ -26951,7 +26967,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1472,
+                        "link_id": 1473,
                         "id": 149,
                         "name": "system form button cancel",
                         "description": "button to cancel the form action and go back to the previous view",
@@ -26962,7 +26978,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1473,
+                        "link_id": 1474,
                         "id": 359,
                         "name": "system form button export",
                         "description": "button to start the export",
@@ -26973,7 +26989,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1474,
+                        "link_id": 1475,
                         "id": 157,
                         "name": "system formatter row end",
                         "description": "to close the previous opened row and show the components collected since the start in one row",
@@ -26983,7 +26999,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1475,
+                        "link_id": 1476,
                         "id": 152,
                         "name": "system form end",
                         "type_id": 19,
@@ -27002,7 +27018,7 @@
                 "code_id": "export_selections",
                 "components": [
                     {
-                        "link_id": 1476,
+                        "link_id": 1477,
                         "id": 52,
                         "name": "system title export selections",
                         "description": "show the language specific title for the saved export selections of the user",
@@ -27013,7 +27029,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1477,
+                        "link_id": 1478,
                         "id": 388,
                         "name": "system body not yet available",
                         "description": "the hint that the data and actions of the shown system view are not yet available",
@@ -27033,7 +27049,7 @@
                 "code_id": "export_object",
                 "components": [
                     {
-                        "link_id": 1478,
+                        "link_id": 1479,
                         "id": 53,
                         "name": "system title export object",
                         "description": "show the language specific title for the export of one object",
@@ -27044,7 +27060,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1479,
+                        "link_id": 1480,
                         "id": 388,
                         "name": "system body not yet available",
                         "description": "the hint that the data and actions of the shown system view are not yet available",
@@ -27064,7 +27080,7 @@
                 "code_id": "export_ready",
                 "components": [
                     {
-                        "link_id": 1480,
+                        "link_id": 1481,
                         "id": 54,
                         "name": "system title export ready",
                         "description": "show the language specific title for the download of an export created by a job",
@@ -27075,7 +27091,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1481,
+                        "link_id": 1482,
                         "id": 388,
                         "name": "system body not yet available",
                         "description": "the hint that the data and actions of the shown system view are not yet available",
@@ -27094,7 +27110,7 @@
                 "code_id": "language_select",
                 "components": [
                     {
-                        "link_id": 1482,
+                        "link_id": 1483,
                         "id": 31,
                         "name": "title language select",
                         "description": "show the page title to select a language",
@@ -27105,7 +27121,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1483,
+                        "link_id": 1484,
                         "id": 364,
                         "name": "list of all languages",
                         "description": "show as many languages on on page as useful and allow the user to select one to change the frontend language and if there are more than can be displayed at once it needs be to pages allow to switch the pages",
@@ -27115,7 +27131,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1484,
+                        "link_id": 1485,
                         "id": 153,
                         "name": "request additional language",
                         "description": "a button to request an additional language",
@@ -27135,7 +27151,7 @@
                 "code_id": "language_default",
                 "components": [
                     {
-                        "link_id": 1485,
+                        "link_id": 1486,
                         "id": 181,
                         "name": "language name",
                         "description": "simply show the name of a language",
@@ -27144,7 +27160,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1486,
+                        "link_id": 1487,
                         "id": 191,
                         "name": "related values",
                         "description": "show the most relevant and related values",
@@ -27163,7 +27179,7 @@
                 "code_id": "list_languages",
                 "components": [
                     {
-                        "link_id": 1487,
+                        "link_id": 1488,
                         "id": 42,
                         "name": "system title list languages",
                         "description": "show the language specific title for the list of all languages",
@@ -27174,7 +27190,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1488,
+                        "link_id": 1489,
                         "id": 388,
                         "name": "system body not yet available",
                         "description": "the hint that the data and actions of the shown system view are not yet available",
@@ -27194,7 +27210,7 @@
                 "code_id": "phrase_translations",
                 "components": [
                     {
-                        "link_id": 1489,
+                        "link_id": 1490,
                         "id": 39,
                         "name": "system title phrase translations",
                         "description": "show the language specific title for the names of a word or triple in all languages",
@@ -27205,7 +27221,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1490,
+                        "link_id": 1491,
                         "id": 388,
                         "name": "system body not yet available",
                         "description": "the hint that the data and actions of the shown system view are not yet available",
@@ -27225,7 +27241,7 @@
                 "code_id": "translations_missing",
                 "components": [
                     {
-                        "link_id": 1491,
+                        "link_id": 1492,
                         "id": 41,
                         "name": "system title translations missing",
                         "description": "show the language specific title for the words and triples without a name in the language of the user",
@@ -27236,7 +27252,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1492,
+                        "link_id": 1493,
                         "id": 388,
                         "name": "system body not yet available",
                         "description": "the hint that the data and actions of the shown system view are not yet available",
@@ -27256,7 +27272,7 @@
                 "code_id": "language_forms",
                 "components": [
                     {
-                        "link_id": 1493,
+                        "link_id": 1494,
                         "id": 40,
                         "name": "system title language forms",
                         "description": "show the language specific title for the language forms of a language",
@@ -27267,7 +27283,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1494,
+                        "link_id": 1495,
                         "id": 388,
                         "name": "system body not yet available",
                         "description": "the hint that the data and actions of the shown system view are not yet available",
@@ -27287,7 +27303,7 @@
                 "code_id": "language_add",
                 "components": [
                     {
-                        "link_id": 1495,
+                        "link_id": 1496,
                         "id": 115,
                         "name": "system form title admin add language",
                         "description": "show the language specific title for the system admin form to add a language",
@@ -27298,7 +27314,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1496,
+                        "link_id": 1497,
                         "id": 146,
                         "name": "system form hidden back stack",
                         "description": "field that contains the stack for the undo actions",
@@ -27308,7 +27324,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1497,
+                        "link_id": 1498,
                         "id": 147,
                         "name": "system form hidden confirm status",
                         "description": "switch on that the form saving needs an extra confirm by the user",
@@ -27318,7 +27334,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1498,
+                        "link_id": 1499,
                         "id": 254,
                         "name": "system form field name",
                         "description": "the name field in a form",
@@ -27329,7 +27345,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1499,
+                        "link_id": 1500,
                         "id": 394,
                         "name": "admin form field language symbol",
                         "description": "form field for admin users only to add or change the language name",
@@ -27340,7 +27356,7 @@
                         "position_type": 2
                     },
                     {
-                        "link_id": 1500,
+                        "link_id": 1501,
                         "id": 255,
                         "name": "system form field description",
                         "description": "the description field in a form",
@@ -27351,7 +27367,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1501,
+                        "link_id": 1502,
                         "id": 156,
                         "name": "system formatter row right",
                         "description": "to start a new row and fill from right the following components in one row until the row end is triggered",
@@ -27361,7 +27377,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1502,
+                        "link_id": 1503,
                         "id": 149,
                         "name": "system form button cancel",
                         "description": "button to cancel the form action and go back to the previous view",
@@ -27372,7 +27388,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1503,
+                        "link_id": 1504,
                         "id": 148,
                         "name": "system form button save",
                         "description": "button to save the form field into the database",
@@ -27383,7 +27399,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1504,
+                        "link_id": 1505,
                         "id": 157,
                         "name": "system formatter row end",
                         "description": "to close the previous opened row and show the components collected since the start in one row",
@@ -27393,7 +27409,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1505,
+                        "link_id": 1506,
                         "id": 152,
                         "name": "system form end",
                         "type_id": 19,
@@ -27412,7 +27428,7 @@
                 "code_id": "language_edit",
                 "components": [
                     {
-                        "link_id": 1506,
+                        "link_id": 1507,
                         "id": 116,
                         "name": "system form title admin edit language",
                         "description": "show the language specific title for the system admin form to change a language",
@@ -27423,7 +27439,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1507,
+                        "link_id": 1508,
                         "id": 146,
                         "name": "system form hidden back stack",
                         "description": "field that contains the stack for the undo actions",
@@ -27433,7 +27449,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1508,
+                        "link_id": 1509,
                         "id": 147,
                         "name": "system form hidden confirm status",
                         "description": "switch on that the form saving needs an extra confirm by the user",
@@ -27443,7 +27459,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1509,
+                        "link_id": 1510,
                         "id": 254,
                         "name": "system form field name",
                         "description": "the name field in a form",
@@ -27454,7 +27470,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1510,
+                        "link_id": 1511,
                         "id": 394,
                         "name": "admin form field language symbol",
                         "description": "form field for admin users only to add or change the language name",
@@ -27465,7 +27481,7 @@
                         "position_type": 2
                     },
                     {
-                        "link_id": 1511,
+                        "link_id": 1512,
                         "id": 255,
                         "name": "system form field description",
                         "description": "the description field in a form",
@@ -27476,7 +27492,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1512,
+                        "link_id": 1513,
                         "id": 156,
                         "name": "system formatter row right",
                         "description": "to start a new row and fill from right the following components in one row until the row end is triggered",
@@ -27486,7 +27502,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1513,
+                        "link_id": 1514,
                         "id": 149,
                         "name": "system form button cancel",
                         "description": "button to cancel the form action and go back to the previous view",
@@ -27497,7 +27513,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1514,
+                        "link_id": 1515,
                         "id": 148,
                         "name": "system form button save",
                         "description": "button to save the form field into the database",
@@ -27508,7 +27524,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1515,
+                        "link_id": 1516,
                         "id": 157,
                         "name": "system formatter row end",
                         "description": "to close the previous opened row and show the components collected since the start in one row",
@@ -27518,7 +27534,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1516,
+                        "link_id": 1517,
                         "id": 152,
                         "name": "system form end",
                         "type_id": 19,
@@ -27537,7 +27553,7 @@
                 "code_id": "language_del",
                 "components": [
                     {
-                        "link_id": 1517,
+                        "link_id": 1518,
                         "id": 117,
                         "name": "system form title admin del language",
                         "description": "show the language specific title for the system admin form to delete or exclude a language",
@@ -27548,7 +27564,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1518,
+                        "link_id": 1519,
                         "id": 146,
                         "name": "system form hidden back stack",
                         "description": "field that contains the stack for the undo actions",
@@ -27558,7 +27574,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1519,
+                        "link_id": 1520,
                         "id": 147,
                         "name": "system form hidden confirm status",
                         "description": "switch on that the form saving needs an extra confirm by the user",
@@ -27568,7 +27584,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1520,
+                        "link_id": 1521,
                         "id": 227,
                         "name": "system show field name big",
                         "description": "the object name huge in the center as read only e.g. for the delete confirm page",
@@ -27578,7 +27594,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1521,
+                        "link_id": 1522,
                         "id": 253,
                         "name": "show field language symbol",
                         "description": "show language name",
@@ -27589,7 +27605,7 @@
                         "position_type": 2
                     },
                     {
-                        "link_id": 1522,
+                        "link_id": 1523,
                         "id": 228,
                         "name": "system show field description",
                         "description": "the object description as read only",
@@ -27599,7 +27615,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1523,
+                        "link_id": 1524,
                         "id": 156,
                         "name": "system formatter row right",
                         "description": "to start a new row and fill from right the following components in one row until the row end is triggered",
@@ -27609,7 +27625,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1524,
+                        "link_id": 1525,
                         "id": 149,
                         "name": "system form button cancel",
                         "description": "button to cancel the form action and go back to the previous view",
@@ -27620,7 +27636,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1525,
+                        "link_id": 1526,
                         "id": 151,
                         "name": "system form button del",
                         "description": "button to delete or exclude a word, triple, verb, value, formula, view or component",
@@ -27631,7 +27647,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1526,
+                        "link_id": 1527,
                         "id": 157,
                         "name": "system formatter row end",
                         "description": "to close the previous opened row and show the components collected since the start in one row",
@@ -27641,7 +27657,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1527,
+                        "link_id": 1528,
                         "id": 152,
                         "name": "system form end",
                         "type_id": 19,
@@ -27659,7 +27675,7 @@
                 "code_id": "about",
                 "components": [
                     {
-                        "link_id": 1528,
+                        "link_id": 1529,
                         "id": 3,
                         "name": "system title about",
                         "description": "show the language specific title for the about page",
@@ -27670,7 +27686,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1529,
+                        "link_id": 1530,
                         "id": 366,
                         "name": "system body about",
                         "description": "show the body of the about page",
@@ -27689,7 +27705,7 @@
                 "code_id": "setup",
                 "components": [
                     {
-                        "link_id": 1530,
+                        "link_id": 1531,
                         "id": 4,
                         "name": "system title setup",
                         "description": "show the language specific title for the setup page",
@@ -27700,7 +27716,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1531,
+                        "link_id": 1532,
                         "id": 367,
                         "name": "system body setup",
                         "description": "show the body of the setup page",
@@ -27720,7 +27736,7 @@
                 "code_id": "list_words",
                 "components": [
                     {
-                        "link_id": 1532,
+                        "link_id": 1533,
                         "id": 60,
                         "name": "system title list words",
                         "description": "show the language specific title for the list of words",
@@ -27731,7 +27747,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1533,
+                        "link_id": 1534,
                         "id": 388,
                         "name": "system body not yet available",
                         "description": "the hint that the data and actions of the shown system view are not yet available",
@@ -27759,7 +27775,7 @@
                 "code_id": "list_triples",
                 "components": [
                     {
-                        "link_id": 1534,
+                        "link_id": 1535,
                         "id": 61,
                         "name": "system title list triples",
                         "description": "show the language specific title for the list of triples",
@@ -27770,7 +27786,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1535,
+                        "link_id": 1536,
                         "id": 388,
                         "name": "system body not yet available",
                         "description": "the hint that the data and actions of the shown system view are not yet available",
@@ -27790,7 +27806,7 @@
                 "code_id": "list_sources",
                 "components": [
                     {
-                        "link_id": 1536,
+                        "link_id": 1537,
                         "id": 62,
                         "name": "system title list sources",
                         "description": "show the language specific title for the list of sources",
@@ -27801,7 +27817,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1537,
+                        "link_id": 1538,
                         "id": 388,
                         "name": "system body not yet available",
                         "description": "the hint that the data and actions of the shown system view are not yet available",
@@ -27821,7 +27837,7 @@
                 "code_id": "list_refs",
                 "components": [
                     {
-                        "link_id": 1538,
+                        "link_id": 1539,
                         "id": 63,
                         "name": "system title list refs",
                         "description": "show the language specific title for the list of references",
@@ -27832,7 +27848,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1539,
+                        "link_id": 1540,
                         "id": 388,
                         "name": "system body not yet available",
                         "description": "the hint that the data and actions of the shown system view are not yet available",
@@ -27852,7 +27868,7 @@
                 "code_id": "list_formulas",
                 "components": [
                     {
-                        "link_id": 1540,
+                        "link_id": 1541,
                         "id": 64,
                         "name": "system title list formulas",
                         "description": "show the language specific title for the list of formulas",
@@ -27863,7 +27879,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1541,
+                        "link_id": 1542,
                         "id": 388,
                         "name": "system body not yet available",
                         "description": "the hint that the data and actions of the shown system view are not yet available",
@@ -27882,7 +27898,7 @@
                 "code_id": "complete",
                 "components": [
                     {
-                        "link_id": 1542,
+                        "link_id": 1543,
                         "id": 1,
                         "name": "Word",
                         "description": "simply show the word or triple name",
@@ -27891,7 +27907,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1543,
+                        "link_id": 1544,
                         "id": 326,
                         "name": "link list word",
                         "description": "changeable list of links of this word",
@@ -27901,7 +27917,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1544,
+                        "link_id": 1545,
                         "id": 215,
                         "name": "formulas list word",
                         "description": "changeable list of formulas related to this word",
@@ -27911,7 +27927,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1545,
+                        "link_id": 1546,
                         "id": 205,
                         "name": "result list word",
                         "description": "list of result related to this word",
@@ -27921,7 +27937,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1546,
+                        "link_id": 1547,
                         "id": 354,
                         "name": "Export JSON",
                         "description": "export this word and the related value in the JSON format",
@@ -27931,7 +27947,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1547,
+                        "link_id": 1548,
                         "id": 355,
                         "name": "Export XML",
                         "description": "export this word and the related value in the XML format",
@@ -27950,7 +27966,7 @@
                 "code_id": "base_units",
                 "components": [
                     {
-                        "link_id": 1548,
+                        "link_id": 1549,
                         "id": 1,
                         "name": "Word",
                         "description": "simply show the word or triple name",
@@ -27968,8 +27984,8 @@
                 "code_id": "ranking",
                 "components": [
                     {
-                        "link_id": 1549,
-                        "id": 401,
+                        "link_id": 1550,
+                        "id": 402,
                         "name": "phrase",
                         "description": "simply show the name of a word or triple",
                         "type_id": 32,
@@ -27977,8 +27993,8 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1550,
-                        "id": 402,
+                        "link_id": 1551,
+                        "id": 403,
                         "name": "ranking parameters",
                         "description": "the parameters used to calculate a ranking",
                         "type_id": 230,
@@ -27986,8 +28002,8 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1551,
-                        "id": 403,
+                        "link_id": 1552,
+                        "id": 404,
                         "name": "ranking list",
                         "description": "list sorted by the calculated ranking",
                         "type_id": 229,
@@ -28060,7 +28076,7 @@
                 "code_id": "math_const",
                 "components": [
                     {
-                        "link_id": 1552,
+                        "link_id": 1553,
                         "id": 1,
                         "name": "Word",
                         "description": "simply show the word or triple name",
@@ -28069,8 +28085,8 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1553,
-                        "id": 417,
+                        "link_id": 1554,
+                        "id": 418,
                         "name": "related words",
                         "description": "show the most relevant and related words or triples",
                         "type_id": 51,
@@ -28078,8 +28094,8 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1554,
-                        "id": 419,
+                        "link_id": 1555,
+                        "id": 420,
                         "name": "formulas",
                         "description": "simply show all related formulas",
                         "type_id": 81,
@@ -28096,7 +28112,7 @@
                 "code_id": "global_problem",
                 "components": [
                     {
-                        "link_id": 1555,
+                        "link_id": 1556,
                         "id": 1,
                         "name": "Word",
                         "description": "simply show the word or triple name",
@@ -28105,8 +28121,8 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1556,
-                        "id": 410,
+                        "link_id": 1557,
+                        "id": 411,
                         "name": "problem definition",
                         "description": "show the most relevant definitions related to a problem",
                         "type_id": 44,
@@ -28114,8 +28130,8 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1557,
-                        "id": 411,
+                        "link_id": 1558,
+                        "id": 412,
                         "name": "problem size",
                         "description": "show the estimations of the size of a problem",
                         "type_id": 44,
@@ -28123,8 +28139,8 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1558,
-                        "id": 412,
+                        "link_id": 1559,
+                        "id": 413,
                         "name": "problem solutions",
                         "description": "show the most fastest or most sustainable or most efficient solutions to the problem",
                         "type_id": 44,
@@ -28141,7 +28157,7 @@
                 "code_id": "currency",
                 "components": [
                     {
-                        "link_id": 1559,
+                        "link_id": 1560,
                         "id": 1,
                         "name": "Word",
                         "description": "simply show the word or triple name",
@@ -28150,8 +28166,8 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1560,
-                        "id": 413,
+                        "link_id": 1561,
+                        "id": 414,
                         "name": "exchange rates",
                         "description": "show the most relevant exchange rates",
                         "type_id": 44,
@@ -28159,7 +28175,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1561,
+                        "link_id": 1562,
                         "id": 191,
                         "name": "related values",
                         "description": "show the most relevant and related values",
@@ -28168,8 +28184,8 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1562,
-                        "id": 414,
+                        "link_id": 1563,
+                        "id": 415,
                         "name": "currency formulas",
                         "description": "show the formulas related to a currency",
                         "type_id": 44,
@@ -28186,8 +28202,8 @@
                 "code_id": "solution_prio_validation",
                 "components": [
                     {
-                        "link_id": 1563,
-                        "id": 425,
+                        "link_id": 1564,
+                        "id": 426,
                         "protection": 3,
                         "name": "Title solution priority",
                         "description": "page title: the global problems ranked by their potential loss",
@@ -28198,8 +28214,8 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1564,
-                        "id": 426,
+                        "link_id": 1565,
+                        "id": 427,
                         "name": "table problem ranking by potential loss",
                         "description": "one row per global problem, sorted by the potential loss in trillion EUR per year, descending; shows the solution keyword, the share of the loss the solution can avoid, the initial effort and the resulting reward ratio. The rows are health, populism, global warming, poverty, market power, wealth concentration, education, biased information, disinformation, GDP mismeasurement, black-box AI, citizen participation and proprietary software; only the first five of them are linked to \"global problem\", so the rows cannot yet be named by a single row phrase. The columns are ranking, problem, potential loss, solution, loss reduction, initial effort, reward ratio and probability range; they are no phrases of this file, so they cannot be named by a column phrase either.",
                         "type_id": 55,

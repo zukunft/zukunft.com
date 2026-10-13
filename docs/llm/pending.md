@@ -2,27 +2,22 @@
 
 ## admin dashboard
 
-add to the admin dashboard view a subtitle with the username, the pos name and the timestamp of the page creation
+### response times
 
+if an rest call takes longe that the time defined in the system configuration log the call in the table 'system_times' 
+including as many details as possible
 
-
-show in the admin dashboard the last and most relevant system errors e.g. if there is an fatal error not yet solved show it on the top of the list and below not yet solved errors followed by warnings
-
-### admin session for the api calls
-
-the live admin dashboard cannot show the system log, because the frontend calls the backend api server-side by curl (web/html/rest_call.php::api_call) without the session of the logged-in admin: only the test bootstrap sets a session cookie file (rest_call::set_session_cookie_file in test_base::api_login), so api/sysLogList sees an anonymous ip user and answers {"message":"not permitted"} (web/system/sys_log_list.php::load_by_user now shows this message instead of a fatal TypeError); decide and implement how the frontend passes the session of the requesting user to the api e.g. by forwarding the session cookie of the browser request (passed as a parameter from the entry-point script, no superglobals inside methods) or by a pod-internal signed token with the user id, check that the backend still never trusts the plain url user id (u=) for admin-only data, apply the same to the other admin-only api calls (e.g. the job list of all users and the admin settings save), and add a test that an admin sees the log on the dashboard and a normal user still gets "not permitted"
+the frontend column is done (web/system/system_time_list, critical from pod > limits > usage > response time > millisecond > warning, test data in test/create/test_admin_dashboard.php), but the live page still says "not yet recorded": store the url and the milliseconds of each request in system_times (application::write_time writes neither the url nor real milliseconds and uses a hand-built insert), add a load of the slowest requests of the last n days (config.yaml parameter) with its sql fixture and an admin only api, and load them in web/component/execute/system_page.php::admin_url_delay() if not in test mode; write only requests above a config.yaml threshold to keep the table small (see the docs/todo.md note "for the speed check use the speed log table with the url and the execution time if above a threshold")
 
 ### errors
+
+show in the admin dashboard the last and most relevant system errors e.g. if there is an fatal error not yet solved show it on the top of the list and below not yet solved errors followed by warnings
 
 move the selection of the unassigned errors and the pending error fixes from the frontend to the backend: add to cfg/system/sys_log_list::load_sql a filter by status and by solver (none = unassigned), let api/sysLogList use the requested type instead of ignoring it, add the sql fixture for each new query and replace in web/component/execute/system_page.php::admin_errors_unassigned() and admin_errors_delayed_fix() the client side filtered() on the newest sys_log_list::ADMIN_READ_SIZE entries by the backend selection, so that an older open error of a pod with many open errors is also shown
 
 fill the sys_log_detail view (the link target of error_log, error_update and the admin dashboard) and web/component/execute/system_page.php::error_log() with the page of one sys log entry: error_log() of the error log view (m=65, views::ERROR_LOG_ID, linked from the critical error message of cfg/log_text/text_log_functions.php as /http/view.php?m=65&id=<sys_log id>) returns only 'error_log placeholder' (snapshot src/test/resources/web/html/views_by_id/sys_log/65_sys_log_2.html), while web/system/sys_log.php::page_view already creates the page of one error entry and has no caller any more since http_old/error_log.php is retired; load the sys log entry by the id from the url, show it and add a page test; link each row of the dashboard error tables to it and allow the admin to assign the error to themselves, to set the status and to add a solution text; a normal user may only see their own errors
 
 add to the admin dashboard a small summary line above the error tables with the number of open errors per sys log level (fatal, error, warning), the number of new errors in the last 24 hours and the number of error emails sent and suppressed today (see the system@zukunft.com email account in the section 'email accounts', max 5 per day by config.yaml)
-
-### response times
-
-the frontend column is done (web/system/system_time_list, critical from pod > limits > usage > response time > millisecond > warning, test data in test/create/test_admin_dashboard.php), but the live page still says "not yet recorded": store the url and the milliseconds of each request in system_times (application::write_time writes neither the url nor real milliseconds and uses a hand-built insert), add a load of the slowest requests of the last n days (config.yaml parameter) with its sql fixture and an admin only api, and load them in web/component/execute/system_page.php::admin_url_delay() if not in test mode; write only requests above a config.yaml threshold to keep the table small (see the docs/todo.md note "for the speed check use the speed log table with the url and the execution time if above a threshold")
 
 ### failed logins
 
@@ -149,6 +144,11 @@ for each field these triples should be created:
 - '... field limit down'
 - '... field limit steps'
 - '... field limit suggestion'
+- '... field phrase selector label' to describe what the selected phrase will be used for e.g. if the parent is 'main column (system)' the label could be 'Main table columns:' 
+- '... field phrase selector parent' to preselect the phrases that can be selected e.g. if the parent is 'column (system)' all columns related to the phrase are shown so that one can be selected to define the default sorting 
+- '... field phrase selector value based' to preselect the phrases that can be selected e.g. if the phrase for the table is 'global warming solution' the phrases of all values related to it are shown 
+- '... selection label' to describe what a sorted list of phrases mean e.g. if the parent is 'main column (system)' the label could be 'Main table columns:'
+- '... selection parent' to show the table columns of a phrase e.g. if the parent is ''
 - '... button next tooltip' with the text for the tooltip (the text in the button is a msg_id defined by the component not a triple)
 - '... button next view' with the view id for the step 
 - '... button refresh tooltip' with the view id for the

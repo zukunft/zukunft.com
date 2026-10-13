@@ -328,6 +328,7 @@ class component_exe extends component
             component_types::ADMIN_FORM_FIELD_USER_USES_SANDBOX => $form->admin_form_user_uses_sandbox($dbo),
             component_types::ADMIN_FORM_FIELD_LANGUAGE_SYMBOL => $form->admin_form_language_symbol($dbo),
             component_types::FIELD_LANGUAGE_SYMBOL => $form->show_language_symbol($dbo),
+            component_types::SYSTEM_ADMIN_SUBTITLE => $page->admin_subtitle($msg, $adm_dto->snap_time),
             component_types::SYSTEM_ADMIN_URL_DELAY => $page->admin_url_delay($msg, $test_mode, $adm_dto->adm_sys_tim_lst),
             component_types::SYSTEM_ADMIN_LOGIN_FAILS => $page->admin_login_fails($msg, $test_mode, $adm_dto->adm_sys_log),
             component_types::SYSTEM_ADMIN_ERRORS_UNASSIGNED => $page->admin_errors_unassigned($msg, $test_mode, $adm_dto->adm_sys_log),

@@ -716,6 +716,18 @@ class system_view_ui_tests
         $now = new DateTime(test_admin_dashboard::SNAP_TIME);
         $no_critical = $mtr->txt(msg_id::ADMIN_NO_CRITICAL);
 
+        // the subtitle names the admin, the pod and the creation time of the page
+        $subtitle = $page->admin_subtitle($msg, $now);
+        $t->assert_text_contains('the admin dashboard subtitle names the admin', $subtitle, $usr_sys_ui->name());
+        $t->assert_text_contains('... the pod', $subtitle, POD_NAME);
+        $t->assert_text_contains('... and the time of the data snap', $subtitle, $now->format(Config::DEFAULT_DATE_TIME_FORMAT));
+        // negative: another time or a request without a user is not shown as the snap
+        $later = new DateTime(test_admin_dashboard::SNAP_TIME)->modify('+1 day');
+        $test_name = '... but not another time';
+        $t->assert_text_not_contains($test_name, $subtitle, $later->format(Config::DEFAULT_DATE_TIME_FORMAT));
+        $test_name = 'the subtitle of a request without a user names no admin';
+        $t->assert_text_not_contains($test_name, $page->admin_subtitle(new user_message(), $now), $usr_sys_ui->name());
+
         // empty: every column says that it has no entry and has no plus sign
         $dto = $t_adm->dto_empty($ui->dto);
         $this->assert_admin_page($t, $ui, $msg, $dto, self::ADMIN_EMPTY_FILE, 'empty');
@@ -921,6 +933,10 @@ class system_view_ui_tests
                     $dto = $dto_start;
                 } elseif ($dbo instanceof value or $dbo instanceof result) {
                     $dto = $dto_smp;
+                } elseif ($id == views::ADMIN_MAIN_ID) {
+                    // the subtitle of the admin dashboard shows the creation time, so the snapshot uses a fixed one
+                    $dto = clone $ui->dto;
+                    $dto->snap_time = new DateTime(test_admin_dashboard::SNAP_TIME);
                 }
                 $html = $ui->url_to_html($url_array, $msg, $dto, true);
                 [$folder, $dbo_name, $test_name] = $this->view_id_to_file_info($id, $dbo::class, $action, $url_array, $lib);

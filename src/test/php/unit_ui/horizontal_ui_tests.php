@@ -51,6 +51,7 @@ include_once paths::MODEL_RESULT . 'result.php';
 include_once paths::MODEL_VERB . 'verb.php';
 include_once paths::SHARED . 'library.php';
 include_once html_paths::HTML . 'button.php';
+include_once test_paths::CREATE . 'test_admin_dashboard.php';
 include_once test_paths::CREATE . 'test_mappers.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 
@@ -80,10 +81,12 @@ use Zukunft\ZukunftCom\main\php\shared\helper\MapObject;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\component_types;
 use Zukunft\ZukunftCom\test\php\const\word_names;
+use Zukunft\ZukunftCom\test\php\create\test_admin_dashboard;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
 use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\create\test_mappers;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
+use DateTime;
 
 class horizontal_ui_tests
 {
@@ -269,6 +272,10 @@ class horizontal_ui_tests
                 $cmp_dto = $ui->dto;
                 if ($typ->code_id == component_types::CALC_SHEET) {
                     $cmp_dto = $dto_start;
+                } elseif ($typ->code_id == component_types::SYSTEM_ADMIN_SUBTITLE) {
+                    // the admin subtitle shows the creation time, so the snapshot uses a fixed one
+                    $cmp_dto = clone $ui->dto;
+                    $cmp_dto->snap_time = new DateTime(test_admin_dashboard::SNAP_TIME);
                 }
                 $part = $cmp->dsp_entries($ui_obj, $msg_ui, $form_name, views::WORD_EDIT_ID, $cmp_dto,
                     null, '', true, [], $test_form_unique_id);

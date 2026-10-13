@@ -4368,6 +4368,10 @@ class library
             $result = $this->str_split_add_sep($text, $result, $with_sep);
         } elseif ($type == self::STR_TYPE_JSON) {
             $result = json_decode($text, true);
+            // a json scalar e.g. the quoted text "sys_log" decodes to a string, which is one part
+            if (!is_array($result) and $result !== null) {
+                $result = [$text];
+            }
         } elseif ($type == self::STR_TYPE_HTML) {
             $result = preg_split("/[\s,<>]+/", $text);
             $result = $this->str_split_add_sep($text, $result, $with_sep);

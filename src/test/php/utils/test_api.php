@@ -52,6 +52,7 @@ include_once paths::MODEL_LOG . 'change_log_list.php';
 include_once paths::MODEL_SYSTEM . 'job.php';
 include_once paths::MODEL_SYSTEM . 'job_db.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_db.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_list.php';
 include_once html_paths::LOG . 'change_log_list.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once test_paths::UTILS . 'test_base.php';
@@ -68,6 +69,7 @@ use Zukunft\ZukunftCom\main\php\cfg\ref\source;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\system\job_db;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_db;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
@@ -619,6 +621,44 @@ class test_api extends test_base
 
         $result = false;
         if ($core and $no_leak and $rejected and $no_name) {
+            $result = true;
+        }
+        return $result;
+    }
+
+    /**
+     * check that the own html frontend, which calls the api server-to-server without the browser
+     * session, gets the system log for an admin it has validated and only the reason for a normal user
+     * (see api/sysLogList and server_guard::from_own_pod); a forwarded external call can never use the
+     * data user parameter, which is checked by the data_user unit test in unit/user_tests.php
+     *
+     * @return bool true if the admin gets the log and the normal user gets the reason
+     */
+    function assert_api_sys_log_list_admin_only(): bool
+    {
+        global $mtr;
+        $url = $this->class_to_url(sys_log_list::class);
+        $ctrl = new rest_call();
+        $only_admin = $mtr->txt(msg_id::SYS_LOG_LIST_ONLY_ADMIN);
+
+        // the answer is the log list in the body of the api message header (see controller::check_api_msg)
+        // or only the message why the log is not sent
+        $data = [url_var::USER => users::SYSTEM_TEST_ADMIN_ID, url_var::LOG_SIZE => 1];
+        $answer = json_decode($ctrl->api_call(rest_ctrl::GET, $url, $data), true) ?? [];
+        $test_name = 'the own frontend gets the system log for an admin';
+        $adm_body = $this->assert_true($test_name, array_key_exists(json_fields::BODY, $answer));
+        $test_name = '... without the reason why only an admin can see it';
+        $adm_no_msg = $this->assert($test_name, $answer[json_fields::MSG] ?? '', '');
+
+        $data = [url_var::USER => users::SYSTEM_TEST_NORMAL_ID, url_var::LOG_SIZE => 1];
+        $answer = json_decode($ctrl->api_call(rest_ctrl::GET, $url, $data), true) ?? [];
+        $test_name = 'the own frontend gets for a normal user only the reason why only an admin can see the system log';
+        $usr_msg = $this->assert($test_name, $answer[json_fields::MSG] ?? '', $only_admin);
+        $test_name = '... and no system log entry';
+        $usr_no_body = $this->assert_false($test_name, array_key_exists(json_fields::BODY, $answer));
+
+        $result = false;
+        if ($adm_body and $adm_no_msg and $usr_msg and $usr_no_body) {
             $result = true;
         }
         return $result;

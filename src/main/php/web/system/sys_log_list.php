@@ -42,7 +42,6 @@ include_once html_paths::SANDBOX . 'ListBase.php';
 include_once html_paths::SYSTEM . 'sys_log.php';
 include_once html_paths::USER . 'user.php';
 include_once html_paths::USER . 'user_message.php';
-include_once html_paths::SHARED . 'api.php';
 include_once html_paths::SHARED . 'json_fields.php';
 include_once html_paths::SHARED . 'url_var.php';
 include_once html_paths::SHARED_CONST . 'def.php';
@@ -60,7 +59,6 @@ use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\rest_call;
 use Zukunft\ZukunftCom\main\php\web\user\user;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
-use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\def;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
@@ -132,7 +130,8 @@ class sys_log_list
     function set_from_json_array(array $json_array, user_message $msg): bool
     {
         $ctrl = new controller();
-        $json_array = $ctrl->check_api_msg($json_array, api::JSON_BODY_SYS_LOG);
+        // the backend sends the log entries like the other lists in the body of the api message header
+        $json_array = $ctrl->check_api_msg($json_array);
         foreach ($json_array as $value) {
             $new = new sys_log();
             $new->api_mapper($value, $msg);
@@ -163,12 +162,24 @@ class sys_log_list
         $rest = new rest_call();
         $json_body = $rest->api_get($this::class, $data, $msg);
         log_debug('sysLogList answer with ' . count($json_body) . ' entries', url_var::DEBUG_LEVEL_API_CALL);
-        // the backend answers only with a message e.g. 'not permitted' if the api call has no admin session
+        return $this->api_load($json_body, $msg);
+    }
+
+    /**
+     * @param array $json_body the api answer with the log entries or the message why the entries are not sent
+     * @param user_message $msg to report the message of the backend e.g. that only an admin can see the system log,
+     *                          which is shown to the user in the notification bar of the page
+     * @return bool true if the backend has sent the log entries
+     */
+    function api_load(array $json_body, user_message $msg): bool
+    {
         if (array_key_exists(json_fields::MSG, $json_body)) {
             $msg->add(msg_id::API_MESSAGE, [msg_id::VAR_JSON_TEXT => $json_body[json_fields::MSG]]);
-            return false;
+            $result = false;
+        } else {
+            $result = $this->set_from_json_array($json_body, $msg);
         }
-        return $this->set_from_json_array($json_body, $msg);
+        return $result;
     }
 
 

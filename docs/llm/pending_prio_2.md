@@ -20,6 +20,12 @@ the settings tree shows the config.yaml value as "default" behind a value that d
 
 a boolean setting is shown as true or false and therefore not yet editable on the settings page (web/helper/config_tree::is_editable); it needs a true / false selector that saves 1 or 0. A text setting e.g. the language needs a text input. After a save the page shows the whole tree, so the search and the scope of the page could be kept as '9'-prefixed back vars
 
+## security
+
+all api call should include the user session key
+and all backend calls should include a sequence id
+if a backend call breaks the sequence id the session is set to invalid and a new login is required
+
 ## frontend rules
 
 html_base::span() adds data-toggle="tooltip" to each span with a title, which no script reads and which docs/llm/frontend.md forbids for a web renderer; html_base::with_title() is the span without it, used so far only by the settings tree. Removing the attribute from span() changes about 188 snapshots, so it needs one run with AUTO_UPDATE_TEST_FILES and the review of the rewritten files

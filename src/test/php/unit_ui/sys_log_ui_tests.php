@@ -47,6 +47,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
@@ -283,6 +284,31 @@ class sys_log_ui_tests
         // the live page has no load of the request times yet, so it says so instead of an empty column
         $test_name = 'the response times of the live page are not yet recorded';
         $t->assert_text_contains($test_name, $page->admin_url_delay($msg_ui, false), $mtr->txt(msg_id::ADMIN_NOT_YET_RECORDED));
+        // the refusal of the backend is shown to the user instead of being mapped as a log entry
+        $only_admin = $mtr->txt(msg_id::SYS_LOG_LIST_ONLY_ADMIN);
+        $refused_msg = new user_message_ui();
+        $refused_lst = new sys_log_list_ui();
+        $test_name = 'a refused system log api answer loads no log entry';
+        $t->assert_false($test_name, $refused_lst->api_load([json_fields::MSG => $only_admin], $refused_msg));
+        $test_name = '... and is empty';
+        $t->assert_true($test_name, $refused_lst->is_empty());
+        $test_name = '... but tells the user why';
+        $t->assert($test_name, $refused_msg->get_last_message_translated(), $only_admin);
+        // negative: the answer with the log entries has no message for the user
+        $answer_msg = new user_message_ui();
+        $answer_lst = new sys_log_list_ui();
+        // like api/sysLogList the entries are in the body of the api message header
+        $answer = [
+            json_fields::POD => POD_NAME,
+            json_fields::TYPE_NAME => 'sys_log_list',
+            json_fields::BODY => json_decode($adm_lst->api_json(), true)
+        ];
+        $test_name = 'the system log api answer with entries is loaded';
+        $t->assert_true($test_name, $answer_lst->api_load($answer, $answer_msg));
+        $test_name = '... with all entries and no header field as an entry';
+        $t->assert($test_name, $answer_lst->count(), $adm_lst->count());
+        $test_name = '... and without a message for the user';
+        $t->assert_false($test_name, $answer_msg->has_info());
         $test_page .= $html->text_h2('admin dashboard errors') . $unassigned . $pending;
 
         $t->html_page_test($test_page, 'sys_log', 'sys_log');
