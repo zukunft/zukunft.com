@@ -1072,6 +1072,17 @@ class value_list_ui_tests
         $msg_ui->reset();
         $test_name = 'an empty value list draws no chart';
         $t->assert($test_name, new value_list_ui()->table_to_svg(chart_types::RANGE_BARS, $msg_ui), '');
+        // the charts of one table share one table model, because creating the model is the slow part
+        $rank_model = $t_val->value_list_solution_prio_ui()->chart_model(
+            $msg_ui, $rank_ctx, $rank_lst->column_names(), $rank_lst, value_list_ui::LIMIT_ALL);
+        $test_name = 'the range bars drawn from the shared table model are the range bars of the table';
+        $t->assert($test_name, value_list_ui::model_to_svg($rank_model, chart_types::RANGE_BARS, $msg_ui, $rank_ctx), $svg_bars);
+        $test_name = '... and the scatter plot drawn from the same model is the scatter plot of the table';
+        $t->assert($test_name, value_list_ui::model_to_svg($rank_model, chart_types::SCATTER, $msg_ui, $rank_ctx,
+            [word_names::GAIN, word_names::LOSS]), $svg_points);
+        // negative: without a number there is no model to share
+        $test_name = 'an empty value list has no table model for the charts';
+        $t->assert_null($test_name, new value_list_ui()->chart_model($msg_ui));
 
         // TODO add a test that if a view contains beside the "2023 (year)"
         //      no other phrase that contains the word "2023"

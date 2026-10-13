@@ -130,6 +130,10 @@ enum messages: string
     const string VAR_USER_CHK = 'VarUserCheck';
     // the name of a user
     const string VAR_USER_NAME = 'VarUserName';
+    // the name of the pod e.g. of the admin dashboard subtitle
+    const string VAR_POD_NAME = 'VarPodName';
+    // a formatted date and time e.g. of the creation of a page
+    const string VAR_TIME = 'VarTime';
     // the name, profile and permissions of a user
     const string VAR_USER_PROFILE = 'VarUserProfile';
     // the name of a user of a list
@@ -2127,12 +2131,35 @@ enum messages: string
     case SYSTEM_TITLE_COMPONENT = 'system_title_component';
     case TITLE_LANGUAGE_SELECT = 'title_language_select';
     case ADMIN_NO_OPEN_JOBS = 'admin_no_open_jobs';
+    case ADMIN_NO_DELAYED_JOBS = 'admin_no_delayed_jobs';
+    // the sections of the admin dashboard
+    case ADMIN_TITLE_URL_DELAY = 'admin_title_url_delay';
+    case ADMIN_TITLE_LOGIN_FAILS = 'admin_title_login_fails';
+    case ADMIN_TITLE_ERRORS_UNASSIGNED = 'admin_title_errors_unassigned';
+    case ADMIN_TITLE_ERRORS_DELAYED_FIX = 'admin_title_errors_delayed_fix';
+    case ADMIN_TITLE_JOBS_DELAYED = 'admin_title_jobs_delayed';
+    // the admin, the pod and the creation time below the title of the admin dashboard
+    case ADMIN_SUBTITLE = 'admin_subtitle';
+    case ADMIN_NOT_YET_RECORDED = 'admin_not_yet_recorded';
+    case ADMIN_NO_ERRORS = 'admin_no_errors';
+    case ADMIN_NOT_CRITICAL = 'admin_not_critical';
+    case ADMIN_NO_CRITICAL = 'admin_no_critical';
+    case ADMIN_NO_SLOW_REQUESTS = 'admin_no_slow_requests';
+    case ADMIN_NO_LOGIN_FAILS = 'admin_no_login_fails';
+    case ADMIN_HEAD_URL = 'admin_head_url';
+    case ADMIN_HEAD_MILLISECONDS = 'admin_head_milliseconds';
+    case ADMIN_HEAD_TIME = 'admin_head_time';
+    case ADMIN_HEAD_USER_NAME = 'admin_head_user_name';
+    case ADMIN_HEAD_ATTEMPTS = 'admin_head_attempts';
+    case ADMIN_HEAD_LAST_TRY = 'admin_head_last_try';
     case INFO_NO_JOBS = 'info_no_jobs';
     case JOB_CHANGE_NOT_PERMITTED = 'job_change_not_permitted';
     case JOB_UPGRADE_ONLY_ADMIN = 'job_upgrade_only_admin';
     case JOB_ALREADY_CLOSED = 'job_already_closed';
     case JOB_ACTION_UNKNOWN = 'job_action_unknown';
     case JOB_LIST_ALL_ONLY_ADMIN = 'job_list_all_only_admin';
+    case SYS_LOG_LIST_ONLY_ADMIN = 'sys_log_list_only_admin';
+    case SYSTEM_TIME_LIST_ONLY_ADMIN = 'system_time_list_only_admin';
     case SYSTEM_BUTTON_JOB_UPGRADE = 'system_button_job_upgrade';
     case SYSTEM_BUTTON_JOB_DOWNGRADE = 'system_button_job_downgrade';
     case SYSTEM_BUTTON_JOB_CANCEL = 'system_button_job_cancel';
@@ -2418,6 +2445,7 @@ enum messages: string
     case NAVBAR_LOGIN = 'navbar_login';
     case NAVBAR_SIGNUP = 'navbar_signup';
     case NAVBAR_SETTINGS = 'navbar_settings';
+    case NAVBAR_DASHBOARD = 'navbar_dashboard';
     case NAVBAR_LOGOUT = 'navbar_logout';
 
     // about page text

@@ -69,6 +69,10 @@ class api
     // the http header name of the per session anti csrf token that must be sent with every
     // api write call of a session (see server_guard::csrf_token_valid)
     const string CSRF_TOKEN_HEADER = 'X-CSRF-Token';
+    // the http header that names if an api answer comes from the cache, sent only if def::DEBUG_API_CACHE is true
+    const string CACHE_HEADER = 'X-Zukunft-Cache';
+    const string CACHE_HIT = 'hit';
+    const string CACHE_MISS = 'miss';
 
     // human-readable root-level forward scripts (nicer than /http/view.php?m=... for emails and sharing)
     const string LOGIN_FORWARD = DIRECTORY_SEPARATOR . 'login';
@@ -139,8 +143,10 @@ class api
     const string JSON_LIST_PROTECTION_TYPES = 'protection_types';
     const string JSON_LIST_LANGUAGES = 'languages';
     const string JSON_LIST_LANGUAGE_FORMS = 'language_forms';
+    const string JSON_LIST_SYS_LOG_LEVELS = 'sys_log_levels';
     const string JSON_LIST_SYS_LOG_STATUUS = 'sys_log_statuum';
     const string JSON_LIST_JOB_TYPES = 'job_types';
+    const string JSON_LIST_JOB_STATUUS = 'job_statuum';
     const string JSON_LIST_CHANGE_LOG_ACTIONS = 'change_action_list';
     const string JSON_LIST_CHANGE_LOG_TABLES = 'change_table_list';
     const string JSON_LIST_CHANGE_LOG_FIELDS = 'change_field_list';

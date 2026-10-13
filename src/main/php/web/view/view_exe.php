@@ -242,6 +242,8 @@ class view_exe extends view_base
                     $auto_row = false;
                 }
                 $cmp_html = $cmp->dsp_entries($dbo, $msg, $form_name, $this->id(), $cfg, $cmp->style_id, $pattern, $test_mode, $url_array);
+                // the time of this message is the creation of this component incl. its api calls, so a slow component can be found
+                log_debug('component ' . $cmp->dsp_id() . ' rendered', url_var::DEBUG_LEVEL_MAIN_STEP);
                 // a combined component shares the row with the previous one, but it is still an own
                 // component, so it starts on an own line, e.g. the plural of a word below its
                 // description instead of behind it; a component that creates no html adds no line

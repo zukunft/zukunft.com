@@ -699,6 +699,13 @@ class lib_tests
         $result = $lib->str_split_for_humans($test_text);
         $target = ['json_tag' => 'text'];
         $t->assert("str_split_for_humans, json", $result, $target);
+        // a quoted text is a json scalar, which decodes to a string, so it is kept as one part
+        $test_text = '"sys_log"';
+        $result = $lib->str_split_for_humans($test_text);
+        $t->assert("str_split_for_humans, json scalar", $result, [$test_text]);
+        $test_text = 'the expected json key "sys_log" is missing';
+        $test_name = "... and a diff with a json scalar is a message and no fatal type error";
+        $t->assert_true($test_name, $lib->diff_msg($test_text, '"sys_log"') != '');
         /* TODO activate
         $test_text = '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Title</title></head><body></body></html>';
         $result = $lib->str_split_for_humans($test_text);

@@ -236,6 +236,17 @@ class job extends db_object
         return $this->end_time() === null;
     }
 
+    /**
+     * @param DateTime $now the time of the data snap, given so that a test result does not depend on the clock
+     * @param int $max_delay the seconds an open job may wait since its request before it is critical
+     * @return bool true if the job is still open and has waited longer than the given seconds
+     */
+    function is_delayed(DateTime $now, int $max_delay): bool
+    {
+        $waited = $now->getTimestamp() - $this->request_time()->getTimestamp();
+        return $this->is_open() and $waited > $max_delay;
+    }
+
 
     /*
      * modify
@@ -297,9 +308,38 @@ class job extends db_object
             $result .= $html->td('');
         }
         $result .= $html->td($this->user_name());
-        $result .= $html->td($this->type());
-        $result .= $html->td($this->status());
+        $result .= $html->td($html->esc($this->type_text()));
+        $result .= $html->td($html->esc($this->status_text()));
         $result .= $html->td($this->priority());
+        return $result;
+    }
+
+    /**
+     * @return string the name of the type e.g. "update value" or the id if the type is not in the type cache
+     */
+    function type_text(): string
+    {
+        global $ui_sys;
+        $result = $ui_sys?->typ_lst_cache?->job_typ?->name($this->type()) ?? '';
+        if ($result == '') {
+            $result = (string)$this->type();
+        }
+        return $result;
+    }
+
+    /**
+     * @return string the name of the status e.g. "created" or the id if the status is not in the type cache
+     */
+    function status_text(): string
+    {
+        global $ui_sys;
+        $result = '';
+        if (is_numeric($this->status)) {
+            $result = $ui_sys?->typ_lst_cache?->job_sta?->name((int)$this->status) ?? '';
+        }
+        if ($result == '') {
+            $result = $this->status;
+        }
         return $result;
     }
 

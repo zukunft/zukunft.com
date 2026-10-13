@@ -36,6 +36,7 @@ include_once __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'api_c
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
+include_once paths::MODEL_HELPER . 'db_cache_page.php';
 include_once paths::MODEL_PHRASE . 'phr_ids.php';
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
 include_once paths::MODEL_VALUE . 'value_list.php';
@@ -43,6 +44,7 @@ include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::SHARED . 'api.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\application;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache_page;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phr_ids;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
@@ -74,7 +76,20 @@ if ($db_con->is_open()) {
     $phr_ids = $_GET[api::JSON_LIST_PHRASE_IDS] ?? '';
 
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
+    $cac_key = '';
+    $cac_page = '';
     if ($usr->id > 0) {
+        $cac_par = [url_var::ID_LST => $id_lst, api::JSON_LIST_PHRASE_IDS => $phr_ids];
+        $cac_key = db_cache_page::api_key(value_list::class, $cac_par, $usr->id);
+        $cac_page = new db_cache_page();
+        $result = $cac_page->json_by_key($cac_key, $msg);
+    }
+    // without a user the result stays empty, which is no cached answer
+    $cac_hit = ($usr->id > 0 and $result !== null);
+    if ($usr->id > 0 and $result === null) {
+        $result = '';
+        // the snap is taken before the values are read, so a change during the read outdates the entry
+        $snap_time = new DateTime();
 
         if ($phr_ids != '') {
             $phr_lst = new phrase_list($usr);
@@ -99,9 +114,11 @@ if ($db_con->is_open()) {
         } else {
             $msg->add_message_text('value or phrase id list is missing');
         }
+        $cac_page->save_json($cac_key, $result, $snap_time, $msg);
     }
 
     $ctrl = new controller();
+    $ctrl->cache_header($cac_hit);
     $ctrl->get_json($result, $msg);
 
 

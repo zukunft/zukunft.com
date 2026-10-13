@@ -52,6 +52,7 @@ include_once paths::MODEL_LOG . 'change_log_list.php';
 include_once paths::MODEL_SYSTEM . 'job.php';
 include_once paths::MODEL_SYSTEM . 'job_db.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_db.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_list.php';
 include_once html_paths::LOG . 'change_log_list.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once test_paths::UTILS . 'test_base.php';
@@ -68,6 +69,7 @@ use Zukunft\ZukunftCom\main\php\cfg\ref\source;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\system\job_db;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_db;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
@@ -114,6 +116,8 @@ class test_api extends test_base
     // forward header to simulate the api call of an external visitor (the ip is the
     // documentation example address also used to test server_guard::is_own_pod_call)
     const string HEADER_FORWARDED = 'X-Forwarded-For: 203.0.113.7';
+    // the number of chars shown of the start and of the end of an api response that is no valid json
+    const int API_RESPONSE_SHOW_CHARS = 500;
 
     /**
      * check if the HTML frontend object can be set based on the api json message
@@ -170,9 +174,9 @@ class test_api extends test_base
     ): bool
     {
         $msg = new user_message();
-        // set the requesting user on the message, because e.g. ui_config::api_json reads the
-        // user for the api message header from $msg->usr (see docs/llm/state-and-messages.md);
-        // without it the header lacks the user name and the compare with the expected json fails
+        // set the requesting user on the message, because an api message may read the requesting
+        // user from $msg->usr (see docs/llm/state-and-messages.md); the shared types message of
+        // ui_config::api_json on purpose names no user in its header
         $msg->usr = $this->usr1;
         // check and norm the parameters
         if (is_array($typ_lst)) {
@@ -625,6 +629,44 @@ class test_api extends test_base
     }
 
     /**
+     * check that the own html frontend, which calls the api server-to-server without the browser
+     * session, gets the system log for an admin it has validated and only the reason for a normal user
+     * (see api/sysLogList and server_guard::from_own_pod); a forwarded external call can never use the
+     * data user parameter, which is checked by the data_user unit test in unit/user_tests.php
+     *
+     * @return bool true if the admin gets the log and the normal user gets the reason
+     */
+    function assert_api_sys_log_list_admin_only(): bool
+    {
+        global $mtr;
+        $url = $this->class_to_url(sys_log_list::class);
+        $ctrl = new rest_call();
+        $only_admin = $mtr->txt(msg_id::SYS_LOG_LIST_ONLY_ADMIN);
+
+        // the answer is the log list in the body of the api message header (see controller::check_api_msg)
+        // or only the message why the log is not sent
+        $data = [url_var::USER => users::SYSTEM_TEST_ADMIN_ID, url_var::LOG_SIZE => 1];
+        $answer = json_decode($ctrl->api_call(rest_ctrl::GET, $url, $data), true) ?? [];
+        $test_name = 'the own frontend gets the system log for an admin';
+        $adm_body = $this->assert_true($test_name, array_key_exists(json_fields::BODY, $answer));
+        $test_name = '... without the reason why only an admin can see it';
+        $adm_no_msg = $this->assert($test_name, $answer[json_fields::MSG] ?? '', '');
+
+        $data = [url_var::USER => users::SYSTEM_TEST_NORMAL_ID, url_var::LOG_SIZE => 1];
+        $answer = json_decode($ctrl->api_call(rest_ctrl::GET, $url, $data), true) ?? [];
+        $test_name = 'the own frontend gets for a normal user only the reason why only an admin can see the system log';
+        $usr_msg = $this->assert($test_name, $answer[json_fields::MSG] ?? '', $only_admin);
+        $test_name = '... and no system log entry';
+        $usr_no_body = $this->assert_false($test_name, array_key_exists(json_fields::BODY, $answer));
+
+        $result = false;
+        if ($adm_body and $adm_no_msg and $usr_msg and $usr_no_body) {
+            $result = true;
+        }
+        return $result;
+    }
+
+    /**
      * TODO Prio 1 add the $msg parameter because an api call fail and also the developer should get a easy to read message
      * check if the REST GET call of a user sandbox objects returns the expected JSON message
      * for testing the local deployments need to be updated using an external script
@@ -708,9 +750,13 @@ class test_api extends test_base
         // response is not valid json, so report it readably and return null,
         // which assert_api_compare turns into a single failed test instead of a
         // TypeError that aborts the whole test suite
+        // the start and the end of the response are shown, because an error text echoed behind
+        // the json (e.g. by an error at the end of the request) is only visible at the end
         if ($actual === null) {
-            log_err('api list call to ' . $url . ' returned no valid json: '
-                . substr($response, 0, 200));
+            log_err('api list call to ' . $url . ' with ' . http_build_query($data)
+                . ' returned no valid json (' . json_last_error_msg() . ', ' . strlen($response) . ' chars): '
+                . substr($response, 0, self::API_RESPONSE_SHOW_CHARS)
+                . ' ... ' . substr($response, -self::API_RESPONSE_SHOW_CHARS));
         }
         return $actual;
     }

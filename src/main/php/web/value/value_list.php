@@ -774,16 +774,64 @@ class value_list extends ListBase
     ): string
     {
         $result = '';
+        $model = $this->chart_model($msg, $context_phr_lst, $col_order, $rel_lst, $limit,
+            $url_array, $col_values_only, $value_rows_only);
+        if ($model != null) {
+            $result = self::model_to_svg($model, $type, $msg, $context_phr_lst, $chart_cols);
+        }
+        return $result;
+    }
+
+    /**
+     * the table model of the charts of table_to_svg, which is the same for every chart of the table,
+     * so that the charts of one table can share it instead of each creating it again
+     * (the parameters are the ones of table_to_svg)
+     *
+     * @return table_model|null the rows and columns of the table for every chart or null if the table has nothing to plot
+     */
+    function chart_model(
+        user_message $msg,
+        phrase_list  $context_phr_lst = new phrase_list(),
+        array        $col_order = [],
+        ?phrase_list $rel_lst = null,
+        ?int         $limit = null,
+        array        $url_array = [],
+        bool         $col_values_only = false,
+        bool         $value_rows_only = false
+    ): ?table_model
+    {
+        $result = null;
         if (!$this->is_empty()) {
             // the tooltip of a row names every column of the table, so no tier is left out, not
             // even by the column selection of the page that shows the table beside the chart
             unset($url_array[url_var::DISPLAY_LIST_COLUMNS]);
-            $model = $this->table_model($msg, $context_phr_lst, $col_order, $rel_lst, $limit,
+            $result = $this->table_model($msg, $context_phr_lst, $col_order, $rel_lst, $limit,
                 $url_array, $col_values_only, self::COLUMN_TIERS_ALL, $value_rows_only);
-            $chart = new table_chart();
-            $result = $chart->svg($model, $type, $msg, $context_phr_lst, $chart_cols);
         }
         return $result;
+    }
+
+    /**
+     * draw one chart of a table model created by chart_model; the model is only read,
+     * so the same model can be drawn as several charts
+     *
+     * @param table_model $model the rows and columns of the table
+     * @param chart_types $type how the rows are drawn
+     * @param user_message $msg to report a chart column that the table does not have
+     * @param phrase_list $context_phr_lst the phrases of the page e.g. "global problem", which name the chart
+     * @param array $chart_cols the names of the value columns to plot, the y axis first (see table_to_svg)
+     * @return string the svg code of the chart or '' if the table has nothing to plot
+     */
+    static function model_to_svg(
+        table_model  $model,
+        chart_types  $type,
+        user_message $msg,
+        phrase_list  $context_phr_lst = new phrase_list(),
+        array        $chart_cols = []
+    ): string
+    {
+        $chart = new table_chart();
+        return $chart->svg($model, $type, $msg, $context_phr_lst, $chart_cols);
     }
 
     /**

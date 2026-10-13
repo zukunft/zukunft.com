@@ -178,6 +178,15 @@ class base_ui_tests
         $url_array = [url_var::MASK => views::WORD_ADD_DETAIL_ID, url_var::ID => 2];
         $t->assert($test_name, $ui->url_cache_key($url_array), '');
 
+        // the admin dashboard shows the live state of the pod, so it is always created again
+        $test_name = 'the admin dashboard is not cached';
+        $url_array = [url_var::MASK => views::ADMIN_MAIN_ID];
+        $t->assert($test_name, $ui->url_cache_key($url_array, users::SYSTEM_TEST_ID), '');
+        // negative: another system view is still cached
+        $test_name = '... but the settings page is cached';
+        $url_array = [url_var::MASK => views::SYSTEM_CONFIG_ID];
+        $t->assert($test_name, $ui->url_cache_key($url_array), 'm=' . views::SYSTEM_CONFIG_ID . '&id=0');
+
         // a request with a form submission is never cached
         $test_name = 'a post request is not cached';
         $url_array = [url_var::MASK => views::WORD_ID, url_var::ID => 2, url_var::POST_SUBMIT => 'Save'];
@@ -364,6 +373,15 @@ class base_ui_tests
         $test_name = 'without a logged in user the person icon keeps the default color';
         $navbar_anon = $html->navbar(0, []);
         $t->assert_text_not_contains($test_name, $navbar_anon, styles::USER_LOGGED);
+
+        // the user menu of an admin offers the admin dashboard
+        $dashboard_par = url_var::MASK . '=' . views::ADMIN_MAIN_ID;
+        $test_name = 'the user menu of an admin links to the admin dashboard';
+        $navbar_admin = $html->navbar(0, [], 'test admin', null, true);
+        $t->assert_text_contains($test_name, $navbar_admin, $dashboard_par);
+        // negative: a normal user cannot open the dashboard, so the link is not offered
+        $test_name = '... but not the user menu of a normal user';
+        $t->assert_text_not_contains($test_name, $navbar_logged, $dashboard_par);
 
         // the settings are the read only system configuration, which an ip user without login can see too
         $test_name = 'the settings link of a request without login is the short settings path';
@@ -1021,6 +1039,16 @@ class base_ui_tests
         $test_name = '... but leaves an integer id as it is';
         $t->assert($test_name, (string)new rest_call()->id_data(word_names::MATH_ID)[url_var::ID],
             (string)word_names::MATH_ID);
+        // the backend names in a header if an api answer comes from the cache (see def::DEBUG_API_CACHE)
+        $test_name = 'the cache header of an api answer is read';
+        $line = api::CACHE_HEADER . ': ' . api::CACHE_HIT . "\r\n";
+        $t->assert($test_name, rest_call::cache_state_of($line), api::CACHE_HIT);
+        $test_name = '... also in lower case as http/2 sends it';
+        $line = strtolower(api::CACHE_HEADER) . ': ' . api::CACHE_MISS . "\r\n";
+        $t->assert($test_name, rest_call::cache_state_of($line), api::CACHE_MISS);
+        $test_name = '... but not from another header';
+        $line = api::CSRF_TOKEN_HEADER . ': ' . api::CACHE_HIT . "\r\n";
+        $t->assert($test_name, rest_call::cache_state_of($line), '');
         // negative: the database key of an old link and an integer id are still accepted
         $test_name = 'the database key of an old link is still accepted';
         $url = 'http://localhost' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::VALUE_DEFAULT_ID

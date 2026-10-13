@@ -753,6 +753,41 @@ a:hover {
 .config-node[open] > summary::before {
     content: "\2212";
 }
+/* the not critical entries of an admin dashboard column behind the same +/- marker as a settings node */
+.admin-more > summary {
+    list-style: none;
+    cursor: pointer;
+    color: #274b8f;
+}
+.admin-more > summary::-webkit-details-marker {
+    display: none;
+}
+.admin-more > summary::before {
+    content: "+";
+    display: inline-block;
+    width: 1.1em;
+    color: #9ea09e;
+}
+.admin-more[open] > summary::before {
+    content: "\2212";
+}
+.admin-more > summary:focus-visible {
+    outline: 2px solid #385eb7;
+    outline-offset: 2px;
+}
+/* an admin dashboard column limits its tables to the column width, so a long text wraps instead of widening it;
+   with three quarters of the normal font size the columns show more entries at once; no table-layout fixed,
+   because Firefox then collapses all columns of the dashboard row as soon as a not critical list is opened */
+.admin-column {
+    min-width: 0;
+    max-width: 100%;
+    overflow-x: auto;
+    font-size: 0.75rem;
+}
+.admin-column td,
+.admin-column th {
+    overflow-wrap: anywhere;
+}
 .config-tree dl,
 .config-hit dl {
     display: grid;

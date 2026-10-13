@@ -436,8 +436,9 @@ class user_message extends Message
         foreach ($msg_to_add->get_all_messages() as $msg_text) {
             $this->add_message_text($msg_text);
         }
+        // only appended, because combine_status below keeps the status and an info id is no error
         foreach ($msg_to_add->get_all_id_messages() as $msg_id) {
-            $this->add_id($msg_id);
+            $this->add_info_id($msg_id);
         }
         foreach ($msg_to_add->get_all_type_messages() as $key => $lst) {
             foreach ($lst as $entry) {

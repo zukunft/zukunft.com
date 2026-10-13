@@ -2621,6 +2621,12 @@
       "description": "the read only tree of the system configuration of config.yaml with a search and a scope to show one branch",
       "type": "system_body_config_tree",
       "code_id": "system_body_config_tree"
+    },
+    {
+      "name": "system admin subtitle",
+      "description": "the name of the admin, the pod name and the creation time of the admin dashboard",
+      "type": "system_admin_subtitle",
+      "code_id": "system_admin_subtitle"
     }
   ],
   "views": [
@@ -9706,23 +9712,31 @@
         },
         {
           "position": "2",
-          "name": "system admin response times"
+          "name": "system admin subtitle"
         },
         {
           "position": "3",
-          "name": "system admin failed logins"
+          "name": "system admin response times"
         },
         {
           "position": "4",
-          "name": "system admin unassigned errors"
+          "name": "system admin failed logins",
+          "position_type": "side_or_first_below"
         },
         {
           "position": "5",
-          "name": "system admin pending error fixes"
+          "name": "system admin unassigned errors",
+          "position_type": "side_or_below"
         },
         {
           "position": "6",
-          "name": "system admin delayed jobs"
+          "name": "system admin pending error fixes",
+          "position_type": "side_or_below"
+        },
+        {
+          "position": "7",
+          "name": "system admin delayed jobs",
+          "position_type": "side_or_last_below"
         }
       ]
     },

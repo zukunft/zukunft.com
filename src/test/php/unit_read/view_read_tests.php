@@ -145,6 +145,18 @@ class view_read_tests
         }
         $t->assert('check view with code id ' . view_shared::WORD, $result, $target);
 
+        // the components of all system views are loaded at once, which must give each view the same
+        // components in the same order as the load of the components of the single view
+        $sys_word = $lst->get_by_code_id(view_shared::WORD);
+        $single_word = new view($t->usr1);
+        $single_word->load_by_id($sys_word->id(), $msg);
+        $single_word->load_components($msg);
+        $test_name = 'the system view has the same components as the single load of the view';
+        $t->assert($test_name, $sys_word->cmp_lnk_lst->names(), $single_word->cmp_lnk_lst->names());
+        // negative: the split of the links of all system views gives a view no link of another view
+        $test_name = '... and no component link of another system view';
+        $t->assert($test_name, $sys_word->cmp_lnk_lst->view_ids(), [$sys_word->id()]);
+
         // check all system views
         // TODO Prio 2 activate
         //$t->assert_view(view_shared::DSP_COMPONENT_ADD, $t->usr1);

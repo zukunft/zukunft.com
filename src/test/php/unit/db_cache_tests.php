@@ -35,31 +35,62 @@ namespace Zukunft\ZukunftCom\test\php\unit;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
+include_once paths::API_OBJECT . 'ui_config.php';
 include_once paths::DB . 'sql_db.php';
 include_once paths::MODEL_HELPER . 'db_cache_db.php';
+include_once paths::MODEL_PHRASE . 'phrase_list.php';
+include_once paths::MODEL_RESULT . 'result_list.php';
 include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_VALUE . 'value_list.php';
 include_once paths::SHARED_TYPES . 'db_cache_statuum.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED_TYPES . 'db_cache_types.php';
+include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED_ENUM . 'foaf_direction.php';
 
+use Zukunft\ZukunftCom\main\php\api\ui_config;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache_db;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache_page;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\result\result_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
 use Zukunft\ZukunftCom\main\php\shared\api;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\types\db_cache_types;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\test\php\create\test_db_caches;
 use Zukunft\ZukunftCom\test\php\create\test_users;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
+use DateTime;
+use DateTimeInterface;
 
 class db_cache_tests
 {
+
+    // the phrase ids of an api request and its cache key without the id of the requesting user
+    const string TV_PHRASE_IDS = '-134,-186';
+    const string TV_API_KEY = 'resultList?phrase_ids=-134%2C-186&u=';
+    const string TV_API_KEY_VALUE = 'valueList?phrase_ids=-134%2C-186&u=';
+    // a parameter value that tries to name another user in the cache key
+    const string TV_PHRASE_IDS_WITH_USER = '1&u=2';
+    const string TV_API_KEY_WITH_USER = 'resultList?phrase_ids=1%26u%3D2&u=';
+    // the related phrases of a system phrase selected by its name e.g. by the frontend for the sort order
+    const string TV_LEVELS = '2';
+    const string TV_API_KEY_PHRASE = 'phraseList?k=sort+order+%28system%29&pd=both&px=2&u=';
+    // a types api message and the time when its types have started to be read
+    const string TV_TYPES_JSON = '{"pod":"zukunft.com","body":{"cache_test":[1]}}';
+    const string TV_TYPES_SNAP_TIME = '2023-01-03T20:59:59+01:00';
+
     function run(test_cleanup $t): void
     {
 
@@ -202,6 +233,77 @@ class db_cache_tests
         $cac->last_update = null;
         $test_name = 'a cache entry without update time is refilled';
         $t->assert_true($test_name, $cac->is_outdated());
+
+        $test_name = 'a just cached api message is used';
+        $cac_page = $t_db_cache->db_cache_page_up_to_date();
+        $t->assert_false($test_name, $cac_page->is_outdated());
+
+        $test_name = 'an api message older than the max cache age is created again';
+        $cac_page = $t_db_cache->db_cache_page_filled();
+        $t->assert_true($test_name, $cac_page->is_outdated());
+
+        $test_name = 'a cache row without content is created again';
+        $cac_page = $t_db_cache->db_cache_page_up_to_date();
+        $cac_page->html_page = null;
+        $t->assert_true($test_name, $cac_page->is_outdated());
+
+
+        $t->subheader($ts . 'api key');
+
+        // the user is the end of the key like of a personal page, so del_by_user drops it
+        $test_name = 'the api key names the api, every parameter and the user';
+        $par = [api::JSON_LIST_PHRASE_IDS => self::TV_PHRASE_IDS];
+        $cac_key = db_cache_page::api_key(result_list::class, $par, $t->usr1->id());
+        $t->assert($test_name, $cac_key, self::TV_API_KEY . $t->usr1->id());
+
+        $test_name = 'the api key of another user differs';
+        $cac_key_usr2 = db_cache_page::api_key(result_list::class, $par, $t->usr2->id());
+        $t->assert_not($test_name, $cac_key_usr2, $cac_key);
+
+        $test_name = 'the api key of the value list names the value list api';
+        $cac_key_val = db_cache_page::api_key(value_list::class, $par, $t->usr1->id());
+        $t->assert($test_name, $cac_key_val, self::TV_API_KEY_VALUE . $t->usr1->id());
+
+        $test_name = 'a parameter cannot name another user, because the values are url encoded';
+        $par = [api::JSON_LIST_PHRASE_IDS => self::TV_PHRASE_IDS_WITH_USER];
+        $cac_key = db_cache_page::api_key(result_list::class, $par, $t->usr1->id());
+        $t->assert($test_name, $cac_key, self::TV_API_KEY_WITH_USER . $t->usr1->id());
+
+        // the phrase list api has many selection parameters of which a request uses only a few
+        $test_name = 'the api key of the phrase list names only the used parameters';
+        $par = [
+            url_var::ID_LST => '',
+            url_var::PHRASE => '',
+            url_var::NAME => triples::SYSTEM_SORT_ORDER,
+            url_var::DIRECTION => foaf_direction::BOTH->value,
+            url_var::LEVELS => self::TV_LEVELS,
+            url_var::PATTERN => '',
+            url_var::VERB => ''
+        ];
+        $cac_key = db_cache_page::api_key(phrase_list::class, $par, $t->usr1->id());
+        $t->assert($test_name, $cac_key, self::TV_API_KEY_PHRASE . $t->usr1->id());
+
+        $test_name = '... but a zero is a used parameter that changes the key';
+        $par[url_var::VERB] = '0';
+        $cac_key_zero = db_cache_page::api_key(phrase_list::class, $par, $t->usr1->id());
+        $t->assert_not($test_name, $cac_key_zero, $cac_key);
+
+
+        $t->subheader($ts . 'types message');
+
+        // on a cache miss the types api message just sent is cached and not created a second time
+        $ui_cfg = new ui_config();
+        $snap_time = new DateTime(self::TV_TYPES_SNAP_TIME);
+        $cac = $ui_cfg->cache_entry(self::TV_TYPES_JSON, $snap_time);
+        $test_name = 'the cached types message is the api message just sent';
+        $t->assert($test_name, $cac->data, self::TV_TYPES_JSON);
+        $test_name = '... in the types cache row';
+        $t->assert($test_name, $cac->type_id, db_cache_types::TYPES_ID);
+        $test_name = '... aged from the start of the read';
+        $t->assert($test_name, $cac->last_update->format(DateTimeInterface::ATOM), $snap_time->format(DateTimeInterface::ATOM));
+        // negative: every user reads the row, so it is written as the system user and not as the requesting user
+        $test_name = 'the types cache row is not owned by the requesting user';
+        $t->assert_not($test_name, $cac->usr->id(), $t->usr1->id());
 
 
         $t->subheader($ts . 'session token swap');

@@ -88,6 +88,7 @@ include_once paths::MODEL_CONST . 'def.php';
 //include_once paths::MODEL_SYSTEM . 'sys_log.php';
 //include_once paths::MODEL_SYSTEM . 'sys_log_level.php';
 //include_once paths::MODEL_SYSTEM . 'sys_log_status.php';
+//include_once paths::MODEL_SYSTEM . 'system_time.php';
 //include_once paths::MODEL_WORD . 'triple.php';
 //include_once paths::MODEL_USER . 'user.php';
 //include_once paths::MODEL_USER . 'user_db.php';
@@ -154,6 +155,7 @@ use Zukunft\ZukunftCom\main\php\cfg\system\job_status;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_level;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status;
+use Zukunft\ZukunftCom\main\php\cfg\system\system_time;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_status;
@@ -230,6 +232,7 @@ class sql_creator
         change_values_geo_big::class,
         change_link::class,
         sys_log::class,
+        system_time::class,
         job::class,
         db_cache::class,
         db_cache_page::class,
@@ -1170,6 +1173,7 @@ class sql_creator
             } elseif ($spt == sql_par_type::INT
                 or $spt == sql_par_type::INT_SMALL
                 or $spt == sql_par_type::INT_HIGHER
+                or $spt == sql_par_type::TIME_HIGHER
                 or $spt == sql_par_type::INT_LOWER
                 or $spt == sql_par_type::INT_OR
                 or $spt == sql_par_type::INT_NOT
@@ -3929,7 +3933,7 @@ class sql_creator
                     . ' OR ' . $tbl . $fld . ' IS NULL )';
             } elseif ($typ == sql_par_type::INT_NULL_SAFE) {
                 $sql_where .= $tbl . $fld . $this->equal_operator($typ) . $par->name;
-            } elseif ($typ == sql_par_type::INT_HIGHER) {
+            } elseif ($typ == sql_par_type::INT_HIGHER or $typ == sql_par_type::TIME_HIGHER) {
                 $sql_where .= $tbl . $fld . ' >= ' . $par->name;
             } elseif ($typ == sql_par_type::INT_LOWER) {
                 $sql_where .= $tbl . $fld . ' =< ' . $par->name;
@@ -4165,7 +4169,7 @@ class sql_creator
                         } elseif ($typ == sql_par_type::INT_NOT_OR_NULL) {
                             $result .= '( ' . $tbl_id . $this->par_lst->name($i) . ' <> ' . $this->par_name($par_pos)
                                 . ' OR ' . $tbl_id . $this->par_lst->name($i) . ' IS NULL )';
-                        } elseif ($typ == sql_par_type::INT_HIGHER) {
+                        } elseif ($typ == sql_par_type::INT_HIGHER or $typ == sql_par_type::TIME_HIGHER) {
                             $result .= $tbl_id . $this->par_lst->name($i) . ' >= ' . $this->par_name($par_pos);
                         } elseif ($typ == sql_par_type::INT_LOWER) {
                             $result .= $tbl_id . $this->par_lst->name($i) . ' =< ' . $this->par_name($par_pos);
@@ -5553,6 +5557,9 @@ class sql_creator
         if ($result == 'db_cache_type_name') {
             $result = fields::FLD_TYPE_NAME;
         }
+        if ($result == 'system_time_type_name') {
+            $result = fields::FLD_TYPE_NAME;
+        }
         return $result;
     }
 
@@ -5646,6 +5653,9 @@ class sql_creator
                 break;
             case sql_par_type::INT_SMALL:
                 $result = sql::PG_PAR_INT_SMALL;
+                break;
+            case sql_par_type::TIME_HIGHER:
+                $result = sql_par_type::TIME->value;
                 break;
             case sql_par_type::TEXT_LIST:
                 $result = sql::PG_PAR_TEXT . sql::PG_PAR_LIST;

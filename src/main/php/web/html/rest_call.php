@@ -223,6 +223,21 @@ class rest_call
     }
 
     /**
+     * @param string $line one http header line of an api answer e.g. "X-Zukunft-Cache: hit"
+     * @return string api::CACHE_HIT or api::CACHE_MISS if the line is the cache header, else an empty string
+     */
+    static function cache_state_of(string $line): string
+    {
+        $result = '';
+        $parts = explode(':', $line, 2);
+        // a header name is case-insensitive, e.g. http/2 sends it in lower case
+        if (count($parts) == 2 and strcasecmp(trim($parts[0]), api::CACHE_HEADER) == 0) {
+            $result = trim($parts[1]);
+        }
+        return $result;
+    }
+
+    /**
      * execute an api call
      *
      * @param string $method the REST method (GET, POST, PUT or DELETE)
@@ -288,10 +303,26 @@ class rest_call
         // backend calls a rendering triggers, because an api call is neither a db read nor a db write
         log_debug($method . ' ' . $url, url_var::DEBUG_LEVEL_API_CALL);
 
+        // the backend names in a header if the answer comes from the cache (see def::DEBUG_API_CACHE)
+        $cache_state = '';
+        curl_setopt($curl, CURLOPT_HEADERFUNCTION, function ($curl, string $line) use (&$cache_state): int {
+            $cache_state = self::cache_state_of($line) ?: $cache_state;
+            return strlen($line);
+        });
+
         // TODO Prio 2 measure the api call time in a frontend owned timing object on $ui_sys, so that
         //      the api_ctrl section of the time report also covers the wait of the html frontend;
         //      the backend $sys must not be used here (web/ may declare only $ui_sys and $mtr)
         $result = curl_exec($curl);
+
+        // the time shown with this message is the wait for the backend, so that the time of the next
+        // message is the work of the frontend after the answer and not the api call
+        log_debug('answer of ' . $method . ' ' . $url, url_var::DEBUG_LEVEL_API_CALL);
+
+        // the header is only sent if the debug switch of the backend is on, so the message is shown at every level
+        if ($cache_state != '') {
+            log_debug('api cache ' . $cache_state . ' for ' . $url, url_var::DEBUG_LEVEL_SWITCHED);
+        }
 
         if ($result === false) {
             $error = curl_error($curl);

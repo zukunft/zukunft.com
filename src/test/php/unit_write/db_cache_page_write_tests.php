@@ -36,22 +36,32 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_HELPER . 'db_cache_page.php';
+include_once paths::MODEL_RESULT . 'result_list.php';
 include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED_CONST . 'users.php';
 include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::WEB . 'frontend.php';
 include_once test_paths::CONST . 'word_names.php';
+include_once test_paths::UNIT . 'db_cache_tests.php';
+include_once test_paths::UNIT . 'sys_log_tests.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache_page;
+use Zukunft\ZukunftCom\main\php\cfg\result\result_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\test\php\const\word_names;
+use Zukunft\ZukunftCom\test\php\unit\db_cache_tests;
+use Zukunft\ZukunftCom\test\php\unit\sys_log_tests;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
+use DateTime;
 
 class db_cache_page_write_tests
 {
@@ -62,6 +72,8 @@ class db_cache_page_write_tests
     const string TV_URL_IP_USER = 'http://zukunft.com/test_cache_page_ip_user';
     const string TV_HTML = '<html lang="en"><body>cache test</body></html>';
     const string TV_HTML_RENEWED = '<html lang="en"><body>cache test renewed</body></html>';
+    const string TV_API_JSON = '{"cache_test":[1]}';
+    const string TV_API_JSON_RENEWED = '{"cache_test":[2]}';
 
     function run(test_cleanup $t): void
     {
@@ -111,6 +123,28 @@ class db_cache_page_write_tests
         $test_name = 'the html page cache is filled even if the requesting user cannot change data';
         $t->assert($test_name, $cac_check->html_by_url(self::TV_URL_IP_USER, $msg), self::TV_HTML);
 
+        // an api message is cached in the same url keyed table, keyed by the api, its parameters and the user
+        $test_name = 'an api message that has not been cached returns null';
+        $par = [api::JSON_LIST_PHRASE_IDS => db_cache_tests::TV_PHRASE_IDS];
+        $api_key = db_cache_page::api_key(result_list::class, $par, $t->usr1->id());
+        $t->assert_true($test_name, $cac_check->json_by_key($api_key, $msg) === null);
+
+        $test_name = 'the cached api message is returned for the key';
+        $cac_page->save_json($api_key, self::TV_API_JSON, new DateTime(), $msg);
+        $t->assert($test_name, $cac_check->json_by_key($api_key, $msg), self::TV_API_JSON);
+
+        // the age is the time when the data has started to be read, not the time of the cache write
+        $test_name = 'an api message older than the max cache age is created again';
+        $cac_page->save_json($api_key, self::TV_API_JSON, new DateTime(sys_log_tests::TV_TIME), $msg);
+        $t->assert_true($test_name, $cac_check->json_by_key($api_key, $msg) === null);
+
+        // the failed request is simulated by the status only, because add_err would write an error to the log
+        $test_name = 'the api message of a failed request is not cached';
+        $msg_fail = new user_message($t->usr1);
+        $msg_fail->set_not_ok();
+        $cac_page->save_json($api_key, self::TV_API_JSON_RENEWED, new DateTime(), $msg_fail);
+        $t->assert_true($test_name, $cac_check->json_by_key($api_key, $msg) === null);
+
         // a change of a user makes the own pages of that user outdated, so they are removed and
         // rendered again on the next request (see frontend::drop_cached_pages)
         $test_name = 'the cached pages of a user are removed when the user changes data';
@@ -124,8 +158,11 @@ class db_cache_page_write_tests
         $cac_page->save_html($std_url, self::TV_HTML, $msg);
         $cac_page->save_html($usr_url, self::TV_HTML, $msg);
         $cac_page->save_html($usr_url_other, self::TV_HTML, $msg);
+        $cac_page->save_json($api_key, self::TV_API_JSON, new DateTime(), $msg);
         $cac_page->del_by_user(users::SYSTEM_TEST_ID, $msg);
         $t->assert_true($test_name, $cac_check->html_by_url($usr_url, $msg) === null);
+        $test_name = '... and the cached api messages of the user';
+        $t->assert_true($test_name, $cac_check->json_by_key($api_key, $msg) === null);
         $test_name = '... and the page of a user with a similar id is kept';
         $t->assert($test_name, $cac_check->html_by_url($usr_url_other, $msg), self::TV_HTML);
         $test_name = '... like the standard page, which the change of a user does not touch';

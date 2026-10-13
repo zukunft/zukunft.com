@@ -137,6 +137,11 @@ class styles
     const string VALUE_ROW = 'value-row';
     const string VALUE_UNIT = 'value-unit';
 
+    // the not critical entries of an admin dashboard column, which open by a click on the +/- marker
+    const string ADMIN_MORE = 'admin-more';
+    // one column of the admin dashboard, which limits its tables to the width of the column
+    const string ADMIN_COLUMN = 'admin-column';
+
     // css classes of the read only tree of the system configuration (web/helper/config_tree):
     // the nested list of the keys, a node that has keys below it and the block of one search hit with its path
     const string CONFIG_TREE = 'config-tree';

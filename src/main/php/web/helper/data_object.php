@@ -45,7 +45,9 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 //include_once html_paths::REF . 'source_list.php';
 //include_once html_paths::REF . 'ref_list.php';
 //include_once html_paths::RESULT . 'result_list.php';
+//include_once html_paths::SYSTEM . 'job_list.php';
 //include_once html_paths::SYSTEM . 'sys_log_list.php';
+//include_once html_paths::SYSTEM . 'system_time_list.php';
 //include_once html_paths::TYPES . 'type_lists.php';
 //include_once html_paths::USER . 'user_message.php';
 //include_once html_paths::VALUE . 'value_list.php';
@@ -65,7 +67,9 @@ use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\ref\ref_list;
 use Zukunft\ZukunftCom\main\php\web\ref\source_list;
 use Zukunft\ZukunftCom\main\php\web\result\result_list;
+use Zukunft\ZukunftCom\main\php\web\system\job_list;
 use Zukunft\ZukunftCom\main\php\web\system\sys_log_list;
+use Zukunft\ZukunftCom\main\php\web\system\system_time_list;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\user\user;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
@@ -76,6 +80,7 @@ use Zukunft\ZukunftCom\main\php\web\word\triple_list;
 use Zukunft\ZukunftCom\main\php\web\word\word_list;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use DateTime;
 
 class data_object
 {
@@ -202,6 +207,13 @@ class data_object
     // the open system errors related to the session user
     public sys_log_list $sys_log;
 
+    // the given data of the admin dashboard, so that a test shows fixed entries without a backend call
+    public sys_log_list $adm_sys_log;
+    public job_list $adm_job_lst;
+    public system_time_list $adm_sys_tim_lst;
+    // the time of the data snap that decides e.g. if a job is delayed; null for the time of the request
+    public ?DateTime $snap_time = null;
+
     // for warning and errors while filling the data_object
     private user_message $msg;
     // set to false if the api should not be used to reload missing data e.g. for unit tests
@@ -224,6 +236,9 @@ class data_object
             $this->res_lst = new result_list();
             $this->src_lst = new source_list();
             $this->ref_lst = new ref_list();
+            $this->adm_sys_log = new sys_log_list();
+            $this->adm_job_lst = new job_list();
+            $this->adm_sys_tim_lst = new system_time_list();
             $this->set_from_json($api_json, $this->msg);
             $this->usr = new user();
         } else {
@@ -252,6 +267,10 @@ class data_object
         $this->cmp_lst = new component_list();
         $this->chg_log = new change_log_list();
         $this->sys_log = new sys_log_list();
+        $this->adm_sys_log = new sys_log_list();
+        $this->adm_job_lst = new job_list();
+        $this->adm_sys_tim_lst = new system_time_list();
+        $this->snap_time = null;
         $this->online = true;
     }
 

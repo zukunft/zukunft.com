@@ -5,10 +5,13 @@
     model/helper/db_cache_page.php - the cached html pages of view-only requests keyed by the url
     ------------------------------
 
+    also the json messages of api get requests e.g. of the resultList api are cached here (see api_key)
+
     The main sections of this object are
     - db const:          const for the database link
     - object vars:       the variables of this cached page object
     - construct and map: set the vars of this object to the initial value or based on a db row
+    - info:              e.g. if the cached content is too old to be used
     - load:              database access object (DAO) functions
     - save:              add or replace a cached html page
     - api:               create an api array for the frontend
@@ -182,6 +185,24 @@ class db_cache_page extends db_object_seq_id
 
 
     /*
+     * info
+     */
+
+    /**
+     * @return bool true if this row has no content or is older than the max cache age and therefore needs to be refilled
+     */
+    function is_outdated(): bool
+    {
+        $result = true;
+        if ($this->html_page !== null and $this->last_update !== null) {
+            $lib = new library();
+            $result = $lib->is_older_than_cache_max_age($this->last_update);
+        }
+        return $result;
+    }
+
+
+    /*
      * load
      */
 
@@ -217,6 +238,45 @@ class db_cache_page extends db_object_seq_id
             // TODO Prio 1 add message to page
         }
         return $result;
+    }
+
+    /**
+     * get the cached json of an api get request, but only within the max cache age, because e.g. a
+     * recalculated result does not drop the cache (see save_json)
+     *
+     * @param string $key the cache key of the request created by api_key
+     * @param user_message $msg to report a failed cache read to the requesting user
+     * @return string|null the cached api json message or null if it is not cached, outdated or the cache is switched off
+     */
+    function json_by_key(string $key, user_message $msg): ?string
+    {
+        $result = null;
+        if ($this->api_cache_allowed()) {
+            $this->load_by_url($key, $msg);
+            if (!$this->is_outdated()) {
+                $result = $this->html_page;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the cache key of an api get request e.g. 'resultList?phrase_ids=-134%2C-186&u=3'
+     * the values are url encoded, so that a value cannot end the key with another user
+     * and an empty value is left out, because the api treats it like a missing parameter
+     *
+     * @param string $class the class of the api e.g. result_list::class for the resultList api
+     * @param array $par every request parameter that changes the json message, as url var => value
+     * @param int $usr_id the requesting user, because the json differs by the user sandbox and permissions
+     * @return string the key that ends with the user like a personal page, so that del_by_user drops it
+     */
+    static function api_key(string $class, array $par, int $usr_id): string
+    {
+        $lib = new library();
+        $api_name = $lib->class_to_api_route($class);
+        // a zero is a used parameter, so only the empty string is filtered
+        $used_par = array_filter($par, fn($val) => $val !== '');
+        return $api_name . url_var::PAR . http_build_query($used_par) . self::user_key($usr_id);
     }
 
 
@@ -309,16 +369,39 @@ class db_cache_page extends db_object_seq_id
      * @param string $url the request url that the cached html page belongs to
      * @param string $html the rendered html page that should be cached
      * @param user_message $msg to collect the problem messages for the requesting user
+     * @param DateTime $snap_time when the data of the page has started to be read, by default the time of the write
      * @return bool true if the cached html page has been saved
      */
-    function save_html(string $url, string $html, user_message $msg): bool
+    function save_html(string $url, string $html, user_message $msg, DateTime $snap_time = new DateTime()): bool
     {
         $this->load_by_url($url, $msg);
         $this->url = $url;
         $this->html_page = $html;
-        $this->last_update = new DateTime();
+        $this->last_update = $snap_time;
         $this->save($msg);
         return $msg->is_ok();
+    }
+
+    /**
+     * remember the json of an api get request for the next request with the same key
+     * in the html page field, because the url keyed cache is the same for a page and an api message;
+     * a failed cache write is only logged, because the requesting user already has the json
+     *
+     * @param string $key the cache key of the request created by api_key
+     * @param string $json the api json message created for the request
+     * @param DateTime $snap_time when the data of the json has started to be read, which is the age of the entry
+     * @param user_message $msg of the request, only read to never cache the json of a failed request
+     * @return void
+     */
+    function save_json(string $key, string $json, DateTime $snap_time, user_message $msg): void
+    {
+        if ($msg->is_ok() and $this->api_cache_allowed()) {
+            // filling the cache is a system action that must also work for a user who cannot change data
+            $cac_msg = new user_message(user::system()); // not reported, a failed cache write is only logged
+            if (!$this->save_html($key, $json, $cac_msg, $snap_time)) {
+                log_warning('caching the api message ' . $key . ' failed because ' . $cac_msg->all_message_text());
+            }
+        }
     }
 
     /**
@@ -337,9 +420,8 @@ class db_cache_page extends db_object_seq_id
     {
         global $db_con;
 
-        $usr_key = url_var::ADD . url_var::USER . url_var::EQ . $usr_id;
         $qp = $db_con->sql_creator()->del_sql_list_by_text(
-            self::class, self::FLD_URL, $usr_key, sql_par_type::LIKE_L);
+            self::class, self::FLD_URL, self::user_key($usr_id), sql_par_type::LIKE_L);
         return $db_con->delete($qp, 'cached pages of user ' . $usr_id, $msg);
     }
 
@@ -524,6 +606,25 @@ class db_cache_page extends db_object_seq_id
             ]);
         }
         return $msg->is_ok();
+    }
+
+    /**
+     * the pod setting of the url keyed cache, which switches the html pages and the api messages together
+     * @return bool false if nothing should be read from or written to the cache, true also before the config is loaded
+     */
+    private function api_cache_allowed(): bool
+    {
+        global $cfg;
+        return $cfg?->page_cache_allowed() ?? true;
+    }
+
+    /**
+     * @param int $usr_id the id of the user of a personal page or api message
+     * @return string the end of the cache key that names the user e.g. '&u=3'
+     */
+    private static function user_key(int $usr_id): string
+    {
+        return url_var::ADD . url_var::USER . url_var::EQ . $usr_id;
     }
 
 

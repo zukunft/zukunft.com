@@ -51,8 +51,10 @@ namespace Zukunft\ZukunftCom\main\php\cfg\helper;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
+include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED . 'url_var.php';
 
+use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class server_guard
@@ -203,6 +205,16 @@ class server_guard
             header('X-Frame-Options: SAMEORIGIN');
             header('Referrer-Policy: strict-origin-when-cross-origin');
         }
+    }
+
+    /**
+     * the url of the request as received e.g. to log a slow api call in the system times;
+     * $_SERVER is read here because this is the request boundary, like enforce_tls / enforce
+     * @return string the path and query of the request or '' if the script has not been called by an url
+     */
+    public static function request_url(): string
+    {
+        return $_SERVER[rest_ctrl::REQUEST_URI] ?? '';
     }
 
     /**

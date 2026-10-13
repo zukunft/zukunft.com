@@ -33,16 +33,20 @@ include_once __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'api_c
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
+include_once paths::MODEL_HELPER . 'server_guard.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_list.php';
+include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_HELPER . 'Config.php';
 include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::SHARED . 'url_var.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\application;
+use Zukunft\ZukunftCom\main\php\cfg\helper\server_guard;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\api\controller;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\Config as shared_config;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
@@ -69,18 +73,22 @@ if ($db_con->is_open()) {
     // the system log holds the internal code trace, text and description of every error, so it is
     // admin-only data; an anonymous visitor always gets an auto created ip user with id > 0, so the
     // former id > 0 check let anyone read the full log - restrict it to an admin or system user,
-    // matching the frontend that only shows the log to admins (web/system/sys_log.php)
-    if ($usr->is_admin() or $usr->is_system()) {
+    // matching the frontend that only shows the log to admins (web/system/sys_log.php);
+    // the own html frontend calls this api server-to-server without the browser session, so like
+    // api/jobList the browsing user it has validated is the data user in url_var::USER, which is
+    // only trusted for a call of this pod itself (see user::data_user and server_guard::from_own_pod)
+    $load_usr = $usr->data_user($_GET[url_var::USER] ?? 0, $msg, server_guard::from_own_pod());
+    if ($load_usr->is_admin() or $load_usr->is_system()) {
 
         $lst = new sys_log_list();
-        $lst->set_user($usr);
+        $lst->set_user($load_usr);
         $lst->dsp_type = $dsp_type;
         $lst->page = $page;
         $lst->size = $size;
         $lst->load_all($msg);
-        $result = $lst->api_json([api_types::HEADER], $msg, $usr);
+        $result = $lst->api_json([api_types::HEADER], $msg, $load_usr);
     } else {
-        $msg->add_message_text('not permitted');
+        $msg->add(msg_id::SYS_LOG_LIST_ONLY_ADMIN, []);
     }
 
     $ctrl = new controller();

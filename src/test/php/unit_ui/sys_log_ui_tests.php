@@ -34,17 +34,27 @@ namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\component\execute\system_page;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\const\icons;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_list as change_log_list_ui;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_named;
+use Zukunft\ZukunftCom\main\php\web\system\job as job_ui;
 use Zukunft\ZukunftCom\main\php\web\system\sys_log_list as sys_log_list_ui;
+use Zukunft\ZukunftCom\main\php\web\system\system_time as system_time_ui;
+use Zukunft\ZukunftCom\main\php\web\system\system_time_list as system_time_list_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_statuum;
+use Zukunft\ZukunftCom\main\php\shared\types\job_statuum;
+use Zukunft\ZukunftCom\main\php\shared\types\job_types;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
@@ -53,7 +63,9 @@ use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_log;
 use Zukunft\ZukunftCom\test\php\create\test_sys_log;
 use Zukunft\ZukunftCom\test\php\create\test_users;
+use Zukunft\ZukunftCom\test\php\unit\sys_log_tests;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
+use DateTime;
 
 class sys_log_ui_tests
 {
@@ -65,6 +77,9 @@ class sys_log_ui_tests
     // a sample row limit for the change log table pure so that a change log longer than the limit is
     // shortened to the most recent rows in the snapshot (config.yaml 'change log > row limit')
     const int ROW_LIMIT_SAMPLE = 5;
+
+    // a request url longer than the chars shown in the response time table of the admin dashboard
+    const string TV_URL_LONG = '/api/phraseList/?il=315,159,284,163,274,-143,281,-137,323,-1072,160,255,254,-186,324,-189,318,-151,280,257,-153,-191,-134,279';
 
     function run(test_cleanup $t): void
     {
@@ -253,6 +268,138 @@ class sys_log_ui_tests
         // a table that shows all changes (no row limit reached) has no forward button
         $test_name = 'no forward button is shown when all changes fit';
         $t->assert_text_not_contains($test_name, $chg_tbl, icons::PAGE_FORWARD);
+
+        $t->subheader($ts . 'admin dashboard');
+
+        // the errors of the admin dashboard with the most critical first
+        global $mtr;
+        $page = new system_page();
+        $adm_lst = $t_sys->list_for_admin_ui($msg_ui);
+        $unassigned = $page->admin_errors_unassigned($msg_ui, true, $adm_lst);
+        $err_txt = $html->esc(sys_log_tests::T2_LOG_TEXT);
+        $info_txt = $html->esc(sys_log_tests::TV_LOG_TEXT);
+        $test_name = 'the unassigned errors show a new error before a newer info';
+        $t->assert_true($test_name, strpos($unassigned, $err_txt) < strpos($unassigned, $info_txt));
+        // negative: a resolved error has a solver, so it is not unassigned
+        $test_name = '... but not a resolved error';
+        $t->assert($test_name, substr_count($unassigned, $err_txt), 1);
+        $test_name = 'the pending error fixes show the resolved error';
+        $pending = $page->admin_errors_delayed_fix($msg_ui, true, $adm_lst);
+        $t->assert($test_name, substr_count($pending, $err_txt), 1);
+        // negative: a new info has no fix that could be pending
+        $test_name = '... but not a new error';
+        $t->assert_text_not_contains($test_name, $pending, $info_txt);
+        $test_name = 'a dashboard section without an error says so';
+        $empty = $page->admin_errors_unassigned($msg_ui, true, new sys_log_list_ui());
+        $t->assert_text_contains($test_name, $empty, $mtr->txt(msg_id::ADMIN_NO_ERRORS));
+        // the live page loads the slow requests from the backend, which refuses them to a user who is no admin
+        $only_admin_time = $mtr->txt(msg_id::SYSTEM_TIME_LIST_ONLY_ADMIN);
+        $refused_msg = new user_message_ui();
+        $refused_times = new system_time_list_ui();
+        $test_name = 'a refused slow requests api answer loads no request time';
+        $t->assert_false($test_name, $refused_times->api_load([json_fields::MSG => $only_admin_time], $refused_msg));
+        $test_name = '... but tells the user why';
+        $t->assert($test_name, $refused_msg->get_last_message_translated(), $only_admin_time);
+        // negative: the answer for an admin is loaded as the request times without a message
+        $answer_msg = new user_message_ui();
+        $answer_times = new system_time_list_ui();
+        $test_name = 'the slow requests api answer is loaded';
+        $t->assert_true($test_name, $answer_times->api_load($t_sys->system_time_api_json(), $answer_msg));
+        $test_name = '... with the slow request';
+        $t->assert($test_name, $answer_times->count(), 1);
+        $test_name = '... and without a message for the user';
+        $t->assert_false($test_name, $answer_msg->has_info());
+        // a long url is cut in the response time table, so that the table fits into the dashboard column
+        $long_tim = new system_time_ui();
+        $long_tim->url = self::TV_URL_LONG;
+        $long_row = $long_tim->display();
+        $test_name = 'a long url is cut in the response time table';
+        $t->assert_text_contains($test_name, $long_row,
+            '>' . substr(self::TV_URL_LONG, 0, system_time_ui::URL_SHOW_CHARS) . system_time_ui::URL_CUT_MARK . '<');
+        $test_name = '... with the full url as tooltip';
+        $t->assert_text_contains($test_name, $long_row, '="' . self::TV_URL_LONG . '"');
+        // negative: a short url is shown as it is without a tooltip
+        $short_tim = new system_time_ui();
+        $short_tim->url = sys_log_tests::TV_URL;
+        $test_name = 'a short url is shown complete without a tooltip';
+        $t->assert_text_not_contains($test_name, $short_tim->display(), system_time_ui::URL_CUT_MARK);
+        // the status of an error is shown by its name and not by its database id
+        global $ui_sys;
+        $log_sta = $ui_sys->typ_lst_cache->sys_log_sta;
+        $open_id = $log_sta->id(sys_log_statuum::OPEN);
+        $test_name = 'the unassigned errors show the name of the error status';
+        $t->assert_text_contains($test_name, $unassigned, '<td>' . $log_sta->name($open_id) . '</td>');
+        // negative: the id of the status is not shown
+        $test_name = '... and not its id';
+        $t->assert_text_not_contains($test_name, $unassigned, '<td>' . $open_id . '</td>');
+        // the user who has caused the error and its owner are shown by their names and not by their ids
+        $test_name = 'the unassigned errors show the name of the user';
+        $t->assert_text_contains($test_name, $unassigned, '<td>' . $html->esc($t->usr2->name()) . '</td>');
+        // negative: the id of the user is not shown
+        $test_name = '... and not its id';
+        $t->assert_text_not_contains($test_name, $unassigned, '<td>' . $t->usr2->id() . '</td>');
+        $test_name = 'the pending error fixes show the name of the owner';
+        $t->assert_text_contains($test_name, $pending, '<td>' . $html->esc($t->usr_system->name()) . '</td>');
+        // negative: the id of the owner is not shown
+        $test_name = '... and not its id';
+        $t->assert_text_not_contains($test_name, $pending, '<td>' . $t->usr_system->id() . '</td>');
+        $test_name = 'the pending error fixes show the name of the error status';
+        $resolved_id = $log_sta->id(sys_log_statuum::RESOLVED);
+        $t->assert_text_contains($test_name, $pending, '<td>' . $log_sta->name($resolved_id) . '</td>');
+        // the status of a job is shown by its name like the status of an error
+        $job_sta = $ui_sys->typ_lst_cache->job_sta;
+        $new_id = $job_sta->id(job_statuum::STATUS_NEW);
+        $job_new = new job_ui();
+        $job_new->api_mapper([json_fields::ID => 1, json_fields::TIME_REQUEST => sys_log_tests::TV_TIME,
+            json_fields::STATUS => (string)$new_id], $msg_ui);
+        $test_name = 'a delayed job shows the name of the job status';
+        $t->assert_text_contains($test_name, $job_new->display(), '<td>' . $job_sta->name($new_id) . '</td>');
+        // negative: the id of the status is not shown
+        $test_name = '... and not its id';
+        $t->assert_text_not_contains($test_name, $job_new->display(), '<td>' . $new_id . '</td>');
+        // the type of a job is shown by its name like the status
+        $job_typ = $ui_sys->typ_lst_cache->job_typ;
+        $upd_id = $job_typ->id(job_types::VALUE_UPDATE);
+        $job_upd = new job_ui();
+        $job_upd->api_mapper([json_fields::ID => 1, json_fields::TIME_REQUEST => sys_log_tests::TV_TIME,
+            json_fields::TYPE => $upd_id], $msg_ui);
+        $test_name = 'a delayed job shows the name of the job type';
+        $t->assert_text_contains($test_name, $job_upd->display(), '<td>' . $job_typ->name($upd_id) . '</td>');
+        // negative: the id of the type is not shown
+        $test_name = '... and not its id';
+        $t->assert_text_not_contains($test_name, $job_upd->display(), '<td>' . $upd_id . '</td>');
+        // every table of the dashboard is limited to the width of its column
+        $test_name = 'a dashboard column limits its table to the column width';
+        $t->assert_text_contains($test_name, $unassigned, 'class="' . styles::ADMIN_COLUMN . '"');
+        // negative: the subtitle is no column
+        $test_name = '... but the subtitle is no column';
+        $t->assert_text_not_contains($test_name, $page->admin_subtitle($msg_ui, new DateTime()), styles::ADMIN_COLUMN);
+        // the refusal of the backend is shown to the user instead of being mapped as a log entry
+        $only_admin = $mtr->txt(msg_id::SYS_LOG_LIST_ONLY_ADMIN);
+        $refused_msg = new user_message_ui();
+        $refused_lst = new sys_log_list_ui();
+        $test_name = 'a refused system log api answer loads no log entry';
+        $t->assert_false($test_name, $refused_lst->api_load([json_fields::MSG => $only_admin], $refused_msg));
+        $test_name = '... and is empty';
+        $t->assert_true($test_name, $refused_lst->is_empty());
+        $test_name = '... but tells the user why';
+        $t->assert($test_name, $refused_msg->get_last_message_translated(), $only_admin);
+        // negative: the answer with the log entries has no message for the user
+        $answer_msg = new user_message_ui();
+        $answer_lst = new sys_log_list_ui();
+        // like api/sysLogList the entries are in the body of the api message header
+        $answer = [
+            json_fields::POD => POD_NAME,
+            json_fields::TYPE_NAME => 'sys_log_list',
+            json_fields::BODY => json_decode($adm_lst->api_json(), true)
+        ];
+        $test_name = 'the system log api answer with entries is loaded';
+        $t->assert_true($test_name, $answer_lst->api_load($answer, $answer_msg));
+        $test_name = '... with all entries and no header field as an entry';
+        $t->assert($test_name, $answer_lst->count(), $adm_lst->count());
+        $test_name = '... and without a message for the user';
+        $t->assert_false($test_name, $answer_msg->has_info());
+        $test_page .= $html->text_h2('admin dashboard errors') . $unassigned . $pending;
 
         $t->html_page_test($test_page, 'sys_log', 'sys_log');
     }

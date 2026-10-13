@@ -128,6 +128,8 @@ class paths
     const string VIEW_FUNCTIONS = 'object_pages' . DIRECTORY_SEPARATOR;
     // to test if each object has all curl views including one or many read only view
     const string VIEWS = 'views_by_object' . DIRECTORY_SEPARATOR;
+    // the admin dashboard with given data sets e.g. with and without critical entries
+    const string VIEWS_ADMIN = self::VIEWS . 'admin' . DIRECTORY_SEPARATOR;
     // to test every selection of the start page sub menus: the rows, the columns and the form of the ranking
     const string START_PAGE = 'start_page' . DIRECTORY_SEPARATOR;
     // to test the read only settings page with the tree of the system configuration; not below

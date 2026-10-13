@@ -264,3 +264,4 @@ component_type_id, type_name, description, code_id
 263, 'system admin pending error fixes', 'show a list of errors where the fix has been expected but that are not yet fixed', 'system_admin_errors_delayed_fix'
 264, 'system admin delayed jobs', 'list of critical jobs that are delayed with the possibility to de-prioritise blocking jobs', 'system_admin_jobs_delayed'
 265, 'system body config tree', 'the read only tree of the system configuration of config.yaml with a search and a scope to show one branch', 'system_body_config_tree'
+266, 'system admin subtitle', 'the name of the admin, the pod name and the creation time of the admin dashboard', 'system_admin_subtitle'

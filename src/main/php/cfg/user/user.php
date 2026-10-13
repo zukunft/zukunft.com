@@ -116,6 +116,8 @@ include_once paths::SHARED_CONST . 'users.php';
 include_once paths::SHARED_ENUM . 'change_actions.php';
 include_once paths::SHARED_ENUM . 'change_tables.php';
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_ENUM . 'sys_log_functions.php';
+include_once paths::SHARED_ENUM . 'sys_log_levels.php';
 include_once paths::SHARED_ENUM . 'user_profiles.php';
 include_once paths::SHARED_ENUM . 'user_types.php';
 include_once paths::SHARED_ENUM . 'user_statuum.php';
@@ -162,6 +164,8 @@ use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_tables;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_functions;
+use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_levels;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_statuum;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_types;
@@ -962,6 +966,10 @@ class user extends db_id_object_non_sandbox
         // does not confirm which usernames or emails exist (user enumeration)
         if (!$this->has_db_id() || !$pw_ok) {
             $msg->add(msg_id::PASSWORD_WRONG, []);
+            // the admin dashboard lists the failed logins by the typed name to detect a brute force attack;
+            // a warning is below text_log::LOG_LEVEL, so the entry is forced into the system log
+            log_msg(sys_log_functions::LOGIN_FAILED_TEXT, $usr_name, sys_log_levels::WARNING_ID,
+                sys_log_functions::USER_LOGIN_FAILED, '', null, true);
         }
         return $msg->is_ok();
     }

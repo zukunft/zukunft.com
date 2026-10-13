@@ -341,6 +341,7 @@ class url_var
     const string NO_CACHE_HUMAN = 'nocache'; // the long form of self::NO_CACHE to bypass the html page cache
     const string NO_CACHE_ON = '1'; // the value that switches the html page cache off e.g. view.php?m=1&nc=1
     const int DEBUG_EXE_TIME_REPORT = -1; // show the execution time report in the frontend
+    const int DEBUG_LEVEL_SWITCHED = 0; // a debug message switched on by a const in the code e.g. def::DEBUG_API_CACHE, so shown at every level
     const int DEBUG_LEVEL_EXTERNAL_CALLS = 1; // the first debug level is to show only the calls of external systems such as wikipedia
     const int DEBUG_LEVEL_POD_READS = 2; // the second debug level is to show data calls from other zukunft.com pods
     const int DEBUG_LEVEL_POD_PUSH = 3; // the third debug level is to show push messages to other zukunft.com pods

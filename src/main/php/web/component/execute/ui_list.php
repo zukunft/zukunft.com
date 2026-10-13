@@ -1483,7 +1483,10 @@ class ui_list extends ui_base
                     $this->add_column_definitions($dto, $msg);
                     $this->add_sort_definitions($dto, $msg);
                 }
+                // the time of this message is mainly the merge of the definitions into the request cache
+                log_debug('column and sort definitions added', url_var::DEBUG_LEVEL_COMPLEX_FUNCTION);
                 $col_order = $dto?->phr_lst?->column_names() ?? [];
+                log_debug('column order of ' . count($col_order) . ' columns', url_var::DEBUG_LEVEL_COMPLEX_FUNCTION);
                 // the "as" entry of the "..." menu says whether the rows are shown as a table,
                 // as the default charts of the table or as both
                 $form = table_forms::by_url($url_array);
@@ -1501,6 +1504,7 @@ class ui_list extends ui_base
                         $msg, $phr_lst, $col_order, $with_header, $with_border, $rel_lst,
                         null, $url_array, $col_values_only, $col_tiers, $with_range,
                         $value_rows_only);
+                    log_debug('table of ' . $tbl_lst->count() . ' numbers created', url_var::DEBUG_LEVEL_COMPLEX_FUNCTION);
                 } else {
                     // without the table its header says what the charts are about and its "..."
                     // menu is the only way back to the table, so the header is centred above the
@@ -1518,6 +1522,7 @@ class ui_list extends ui_base
                     if ($dto != null) {
                         $this->add_chart_definitions($dto, $msg);
                     }
+                    log_debug('chart definitions added', url_var::DEBUG_LEVEL_COMPLEX_FUNCTION);
                     $result .= $this->table_charts($tbl_lst, $msg, $phr_lst, $col_order,
                         $dto?->phr_lst, $url_array, $col_values_only, $value_rows_only, $col_tiers);
                 }
@@ -1559,9 +1564,20 @@ class ui_list extends ui_base
         $charts = '';
         // the url names the column tiers like for the table (see value_list::table_model)
         $mayor_only = ((int)($url_array[url_var::DISPLAY_LIST_COLUMNS] ?? $col_tiers) == value_list::COLUMN_TIERS_EX_MAIN);
-        foreach ($rel_lst?->chart_definitions($msg, $mayor_only) ?? [] as [$type, $chart_cols]) {
-            $charts .= $tbl_lst->table_to_svg($type, $msg, $phr_lst, $col_order, $rel_lst, null,
-                $url_array, $col_values_only, $value_rows_only, $chart_cols);
+        $chart_defs = $rel_lst?->chart_definitions($msg, $mayor_only) ?? [];
+        log_debug(count($chart_defs) . ' chart definitions selected', url_var::DEBUG_LEVEL_COMPLEX_FUNCTION);
+        // the table model is the same for every chart of the table and the slow part, so it is created once
+        $model = null;
+        if ($chart_defs != []) {
+            $model = $tbl_lst->chart_model($msg, $phr_lst, $col_order, $rel_lst, null,
+                $url_array, $col_values_only, $value_rows_only);
+            log_debug('table model of the charts created', url_var::DEBUG_LEVEL_COMPLEX_FUNCTION);
+        }
+        if ($model != null) {
+            foreach ($chart_defs as [$type, $chart_cols]) {
+                $charts .= value_list::model_to_svg($model, $type, $msg, $phr_lst, $chart_cols);
+                log_debug('chart ' . $type->value . ' created', url_var::DEBUG_LEVEL_COMPLEX_FUNCTION);
+            }
         }
         return ($charts == '') ? '' : $html->div($charts, styles::CHART_ROW);
     }

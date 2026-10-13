@@ -51,15 +51,18 @@ include_once html_paths::SANDBOX . 'sandbox_list.php';
 include_once html_paths::SYSTEM . 'job.php';
 include_once html_paths::SYSTEM . 'job_list.php';
 include_once html_paths::SYSTEM . 'sys_log_list.php';
+include_once html_paths::SYSTEM . 'system_time_list.php';
 include_once html_paths::TYPES . 'type_object.php';
 include_once html_paths::USER . 'user.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::WEB . 'frontend.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
+include_once html_paths::SHARED_ENUM . 'sys_log_statuum.php';
 include_once html_paths::SHARED . 'api.php';
 include_once html_paths::SHARED . 'library.php';
 include_once html_paths::SHARED . 'url_var.php';
 include_once html_paths::SHARED_CONST . 'views.php';
+include_once html_paths::SHARED_HELPER . 'Config.php';
 include_once html_paths::SHARED_HELPER . 'Translator.php';
 
 use Zukunft\ZukunftCom\main\php\web\component\component;
@@ -75,12 +78,17 @@ use Zukunft\ZukunftCom\main\php\web\phrase\term_list;
 use Zukunft\ZukunftCom\main\php\web\system\job;
 use Zukunft\ZukunftCom\main\php\web\system\job_list;
 use Zukunft\ZukunftCom\main\php\web\system\sys_log_list;
+use Zukunft\ZukunftCom\main\php\web\system\system_time_list;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_dsp;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_statuum;
+use Zukunft\ZukunftCom\main\php\shared\helper\Config as shared_config;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use DateTime;
+use DateTimeInterface;
 
 class system_page extends component
 {
@@ -770,85 +778,275 @@ class system_page extends component
         return 'process_list placeholder';
     }
 
-    // TODO Prio 0 fill with real code
-
-    /**
-     * @return string with the HTML code that contains the most relevant user response delay within a time period defined in the system configuration
-     */
-    function admin_url_delay(): string
-    {
-        return 'admin_url_delay placeholder';
-    }
-
-    // TODO Prio 0 fill with real code
-
-    /**
-     * @return string with the HTML code that contains the last failed user logins
-     */
-    function admin_login_fails(): string
-    {
-        return 'admin_login_fails placeholder';
-    }
-
-    // TODO Prio 0 fill with real code
-
-    /**
-     * @return string with the HTML code that all internal system errors that are not yet assigned to a developer
-     */
-    function admin_errors_unassigned(): string
-    {
-        return 'admin_errors_unassigned placeholder';
-    }
-
-    // TODO Prio 0 fill with real code
-
-    /**
-     * @return string with the HTML code that all internal system errors that have not been updated since a some time (as defined in the system config)
-     */
-    function admin_errors_delayed_fix(): string
-    {
-        return 'admin_errors_delayed_fix placeholder';
-    }
-
-    /**
-     * render an HTML table of all not-yet-closed system jobs ordered by the longest delay first;
-     * "delay" is the time elapsed between request_time and now, and a job is "not yet closed" when end_time is null;
-     * sorting by request_time ascending puts the longest-waiting job at the top of the table
+    /*
+     * admin dashboard
      *
-     * @param job_list|null $jobs the open-jobs list to render; when null or empty an empty-state row is shown
-     *                            so the column headers stay visible to the admin
-     * @return string the HTML code of the delayed-jobs table
+     * each column shows its critical entries directly and the other entries behind a plus sign,
+     * like a node of the settings tree, so that the admin sees at once what needs an action
      */
-    function admin_jobs_delayed(?job_list $jobs = null): string
+
+    /**
+     * the subtitle of the admin dashboard with the requesting admin, the pod and the creation time of the page,
+     * so that a printed or shared dashboard shows from where and from when the entries are
+     *
+     * @param user_message $msg with the requesting admin
+     * @param DateTime|null $now the time of the data snap e.g. fixed by a test; null for the time of the request
+     * @return string the html code of the subtitle
+     */
+    function admin_subtitle(user_message $msg, ?DateTime $now = null): string
     {
         global $mtr;
-
+        global $ui_sys;
+        $lib = new library();
         $html = new html_base();
+        $now = $now ?? new DateTime();
+        $format = $ui_sys?->cfg?->date_time_format() ?? shared_config::DEFAULT_DATE_TIME_FORMAT;
+        $txt = $mtr->txt(msg_id::ADMIN_SUBTITLE);
+        $txt = $lib->msg_var_replace($txt, msg_id::VAR_USER_NAME, $html->esc($msg->usr?->name() ?? ''));
+        $txt = $lib->msg_var_replace($txt, msg_id::VAR_POD_NAME, $html->esc(POD_NAME));
+        $txt = $lib->msg_var_replace($txt, msg_id::VAR_TIME, $now->format($format));
+        return $html->text_h3($txt);
+    }
 
-        // keep only jobs that have not yet ended and sort by request_time ascending so the longest-waiting job is first
-        $open = [];
-        if ($jobs !== null and !$jobs->is_empty()) {
-            foreach ($jobs->lst() as $job_obj) {
-                if ($job_obj->end_time() === null) {
-                    $open[] = $job_obj;
-                }
+    /**
+     * the slowest user requests of the configured last days: a request that took at least the configured
+     * warning time is critical and the other written requests are shown behind the plus sign
+     *
+     * @param user_message $msg with the requesting admin to report a problem of the load or the config lookup
+     * @param bool $test_mode true to show the given request times without a backend call
+     * @param system_time_list $times the request times to show in the test mode
+     * @return string the html code of the slowest user requests of the admin dashboard
+     */
+    function admin_url_delay(user_message $msg, bool $test_mode, system_time_list $times = new system_time_list()): string
+    {
+        global $mtr;
+        if (!$test_mode) {
+            $times = new system_time_list();
+            $times->load($msg);
+        }
+        $limit = system_time_list::critical_limit($msg);
+        $size = sys_log_list::display_limit($msg);
+        $sorted = $times->slowest_first();
+        $critical = $sorted->critical(true, $limit);
+        $more = $sorted->critical(false, $limit);
+        return $this->admin_split(
+            msg_id::ADMIN_TITLE_URL_DELAY,
+            $critical->is_empty() ? '' : $critical->head($size)->display(),
+            $more->is_empty() ? '' : $more->head($size)->display(),
+            $more->count(),
+            $mtr->txt(msg_id::ADMIN_NO_SLOW_REQUESTS));
+    }
+
+    /**
+     * the failed logins grouped by the typed name: a name with at least the configured number of failed logins
+     * is critical, because it can be a brute force attack
+     *
+     * @param user_message $msg with the requesting admin to report a problem of the load
+     * @param bool $test_mode true to show the given log entries without a backend call
+     * @param sys_log_list $errors the not closed log entries to show in the test mode
+     * @return string the html code of the failed logins of the admin dashboard
+     */
+    function admin_login_fails(user_message $msg, bool $test_mode, sys_log_list $errors = new sys_log_list()): string
+    {
+        global $mtr;
+        if (!$test_mode) {
+            // a fresh list, because the given list is shared by the columns of the page
+            $errors = new sys_log_list();
+            $errors->load_by_user(sys_log_list::DSP_ALL, $msg, sys_log_list::ADMIN_READ_SIZE);
+        }
+        log_debug('admin login fails of ' . $errors->count() . ' log entries', url_var::DEBUG_LEVEL_MAIN_STEP);
+        $limit = sys_log_list::login_fail_limit($msg);
+        $size = sys_log_list::display_limit($msg);
+        $critical = [];
+        $more = [];
+        foreach ($errors->login_fail_groups() as $group) {
+            if ($group[sys_log_list::GROUP_COUNT] >= $limit) {
+                $critical[] = $group;
+            } else {
+                $more[] = $group;
             }
-            usort($open, fn(job $a, job $b) => $a->request_time() <=> $b->request_time());
         }
+        return $this->admin_split(
+            msg_id::ADMIN_TITLE_LOGIN_FAILS,
+            $this->admin_login_fail_table(array_slice($critical, 0, $size)),
+            $this->admin_login_fail_table(array_slice($more, 0, $size)),
+            count($more),
+            $mtr->txt(msg_id::ADMIN_NO_LOGIN_FAILS));
+    }
 
-        // build the body: one row per open job, or a single empty-state cell when no open jobs are available
-        $body = '';
-        foreach ($open as $job_obj) {
-            $body .= $html->tr($job_obj->display());
+    /**
+     * the new system errors without a solver, the most critical and then the newest first;
+     * the failed logins have their own column
+     *
+     * @param user_message $msg with the requesting admin to report a problem of the load
+     * @param bool $test_mode true to show the given errors without a backend call
+     * @param sys_log_list $errors the not closed errors to show in the test mode
+     * @return string the html code of the unassigned errors of the admin dashboard
+     */
+    function admin_errors_unassigned(user_message $msg, bool $test_mode, sys_log_list $errors = new sys_log_list()): string
+    {
+        if (!$test_mode) {
+            // a fresh list, because the given list is shared by the columns of the page
+            $errors = new sys_log_list();
+            $errors->load_by_user(sys_log_list::DSP_ALL, $msg, sys_log_list::ADMIN_READ_SIZE);
         }
-        if ($body === '') {
-            $body = $html->tr($html->td($mtr->txt(msg_id::ADMIN_NO_OPEN_JOBS)));
-        }
+        $err_lst = $errors->login_fails(false)->filtered([sys_log_statuum::OPEN], true)->critical_first(true);
+        return $this->admin_errors(msg_id::ADMIN_TITLE_ERRORS_UNASSIGNED, $err_lst, $msg);
+    }
 
-        // TODO Prio 1 wire the data source: load via web/system/job_list with the cut_off_time from the system config
-        // job::header() already returns a full <tr><th>…</th></tr> row, so a fresh job instance is used to render the header
-        $result = $html->tbl(new job()->header() . $body);
+    /**
+     * the system errors that a developer has taken or marked as solved but that are not yet closed,
+     * the most critical and then the longest not updated first
+     *
+     * @param user_message $msg with the requesting admin to report a problem of the load
+     * @param bool $test_mode true to show the given errors without a backend call
+     * @param sys_log_list $errors the not closed errors to show in the test mode
+     * @return string the html code of the pending error fixes of the admin dashboard
+     */
+    function admin_errors_delayed_fix(user_message $msg, bool $test_mode, sys_log_list $errors = new sys_log_list()): string
+    {
+        if (!$test_mode) {
+            // a fresh list, because the given list is shared by the columns of the page
+            $errors = new sys_log_list();
+            $errors->load_by_user(sys_log_list::DSP_ALL, $msg, sys_log_list::ADMIN_READ_SIZE);
+        }
+        $pending = [sys_log_statuum::ASSIGNED, sys_log_statuum::RESOLVED];
+        $err_lst = $errors->login_fails(false)->filtered($pending, false)->critical_first(false);
+        return $this->admin_errors(msg_id::ADMIN_TITLE_ERRORS_DELAYED_FIX, $err_lst, $msg);
+    }
+
+    /**
+     * the open system jobs with the longest waiting first: a job that has waited longer than the configured
+     * max delay is critical
+     *
+     * @param user_message $msg with the requesting admin to report a problem of the job load
+     * @param bool $test_mode true to show the given jobs without a backend call
+     * @param job_list $jobs the jobs to show in the test mode; without an open job the column shows only
+     *                       a text without a table like the other columns
+     * @param DateTime|null $now the time of the data snap e.g. fixed by a test; null for the time of the request
+     * @return string the HTML code of the delayed-jobs column
+     */
+    function admin_jobs_delayed(
+        user_message $msg,
+        bool         $test_mode,
+        job_list     $jobs = new job_list(),
+        ?DateTime    $now = null
+    ): string
+    {
+        global $mtr;
+        $html = new html_base();
+        if (!$test_mode) {
+            // a fresh list, because the given list is part of the page context
+            $jobs = new job_list();
+            $jobs->load_all($msg);
+        }
+        $now = $now ?? new DateTime();
+        $max_delay = job_list::max_delay($msg);
+        $critical = '';
+        $more = '';
+        $more_count = 0;
+        foreach ($jobs->open_oldest_first() as $job_obj) {
+            if ($job_obj->is_delayed($now, $max_delay)) {
+                $critical .= $html->tr($job_obj->display());
+            } else {
+                $more .= $html->tr($job_obj->display());
+                $more_count++;
+            }
+        }
+        // job::header() already returns a full <tr><th>…</th></tr> row, so a fresh job instance renders the header
+        $header = new job()->header();
+        return $this->admin_split(
+            msg_id::ADMIN_TITLE_JOBS_DELAYED,
+            $critical == '' ? '' : $html->tbl($header . $critical),
+            $more == '' ? '' : $html->tbl($header . $more),
+            $more_count,
+            $mtr->txt(msg_id::ADMIN_NO_DELAYED_JOBS));
+    }
+
+    /**
+     * @param msg_id $title the headline of the section
+     * @param sys_log_list $err_lst the selected and sorted errors
+     * @param user_message $msg to report a problem of the config lookup
+     * @return string the html code of the error column with the critical errors and the others behind a plus sign
+     */
+    private function admin_errors(msg_id $title, sys_log_list $err_lst, user_message $msg): string
+    {
+        global $mtr;
+        $size = sys_log_list::display_limit($msg);
+        $critical = $err_lst->critical(true);
+        $more = $err_lst->critical(false);
+        return $this->admin_split(
+            $title,
+            $critical->is_empty() ? '' : $critical->head($size)->display(),
+            $more->is_empty() ? '' : $more->head($size)->display(),
+            $more->count(),
+            $mtr->txt(msg_id::ADMIN_NO_ERRORS));
+    }
+
+    /**
+     * @param array $groups the failed logins grouped by the typed name (see sys_log_list::login_fail_groups)
+     * @return string the html table of the failed logins or an empty string if there is none
+     */
+    private function admin_login_fail_table(array $groups): string
+    {
+        global $mtr;
+        $html = new html_base();
+        $result = '';
+        if (count($groups) > 0) {
+            $rows = $html->tr($html->th($mtr->txt(msg_id::ADMIN_HEAD_USER_NAME))
+                . $html->th($mtr->txt(msg_id::ADMIN_HEAD_ATTEMPTS))
+                . $html->th($mtr->txt(msg_id::ADMIN_HEAD_LAST_TRY)));
+            foreach ($groups as $group) {
+                $rows .= $html->tr($html->td($html->esc($group[sys_log_list::GROUP_NAME]))
+                    . $html->td((string)$group[sys_log_list::GROUP_COUNT])
+                    . $html->td($group[sys_log_list::GROUP_LAST]?->format(DateTimeInterface::ATOM) ?? ''));
+            }
+            $result = $html->tbl($rows);
+        }
         return $result;
+    }
+
+    /**
+     * one column of the admin dashboard with the critical entries shown directly and the other entries behind
+     * a plus sign, which opens without javascript like a node of the settings tree
+     *
+     * @param msg_id $title the headline of the column
+     * @param string $critical the html code of the critical entries or an empty string if there is none
+     * @param string $more the html code of the not critical entries or an empty string if there is none
+     * @param int $more_count the number of the not critical entries, which can be more than the shown entries
+     * @param string $none the html code shown if the column has no entry at all
+     * @return string the html code of the column
+     */
+    private function admin_split(msg_id $title, string $critical, string $more, int $more_count, string $none): string
+    {
+        global $mtr;
+        // one debug line per finished column to see with '&debug=9' which column stops the admin page
+        log_debug('admin column ' . $title->value . ' done', url_var::DEBUG_LEVEL_MAIN_STEP);
+        $html = new html_base();
+        $body = $critical;
+        if ($body == '' and $more_count > 0) {
+            $body = $mtr->txt(msg_id::ADMIN_NO_CRITICAL);
+        } elseif ($body == '') {
+            $body = $none;
+        }
+        if ($more_count > 0) {
+            $summary = $more_count . ' ' . $mtr->txt(msg_id::ADMIN_NOT_CRITICAL);
+            $body .= $html->details($summary, $more, styles::ADMIN_MORE);
+        }
+        return $this->admin_section($title, $body);
+    }
+
+    /**
+     * @param msg_id $title the headline of the section
+     * @param string $body the html code of the section
+     * @return string the html code of one column of the admin dashboard
+     */
+    private function admin_section(msg_id $title, string $body): string
+    {
+        global $mtr;
+        $html = new html_base();
+        // the column limits its tables to its width, so that e.g. a long url does not widen the column
+        return $html->div($html->text_h4($mtr->txt($title)) . $body, styles::ADMIN_COLUMN);
     }
 
 }

@@ -72,10 +72,11 @@ class job_ui_tests
         $page = new system_page();
         $job_lst = new job_list($t_job->job_list_delayed()->api_json());
         $test_page .= $html->text_h2('admin_jobs_delayed test');
+        $job_msg = new user_message();
         $test_page .= 'empty job list shows the no-open-jobs notice<br>';
-        $test_page .= $page->admin_jobs_delayed() . '<br>';
+        $test_page .= $page->admin_jobs_delayed($job_msg, true) . '<br>';
         $test_page .= 'job list with one open batch job sorted by request_time ascending<br>';
-        $test_page .= $page->admin_jobs_delayed($job_lst) . '<br>';
+        $test_page .= $page->admin_jobs_delayed($job_msg, true, $job_lst) . '<br>';
 
         // test the SYSTEM_BODY_USER_JOBS and SYSTEM_BODY_ALL_JOBS renderers (system_page::user_jobs and all_jobs)
         $t_usr = new test_users($t);

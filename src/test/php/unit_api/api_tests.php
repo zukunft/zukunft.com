@@ -220,6 +220,8 @@ class api_tests
             'sys_log_list_api',
             true);
         */
+        // the admin dashboard of the own frontend gets the system log only for an admin
+        $t->assert_api_sys_log_list_admin_only();
         // $t->assert_rest(new word($usr, words::TN_READ));
         // TODO add value_list tests for prime, normal and big value tables
         // TODO add a test case for empty list, no key found, and more  values than the page size

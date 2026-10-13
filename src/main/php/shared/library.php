@@ -265,6 +265,23 @@ class library
     }
 
     /**
+     * @param DateTime $time e.g. the time of the data snap of a cache entry
+     * @return bool true if the time is before the max cache age, so the cache entry needs to be refilled
+     */
+    function is_older_than_cache_max_age(DateTime $time): bool
+    {
+        $result = true;
+        $cut_time = new DateTime();
+        try {
+            $cut_time->modify($this->unquote(CACHE_MAX_AGE));
+            $result = $time < $cut_time;
+        } catch (Exception $e) {
+            log_err('cannot apply the max cache age ' . CACHE_MAX_AGE . ': ' . $e->getMessage());
+        }
+        return $result;
+    }
+
+    /**
      * Converts a DateTime object into a URL-safe string parameter.
      *
      * @param DateTimeInterface $dateTime The date time object to convert.
@@ -4368,6 +4385,10 @@ class library
             $result = $this->str_split_add_sep($text, $result, $with_sep);
         } elseif ($type == self::STR_TYPE_JSON) {
             $result = json_decode($text, true);
+            // a json scalar e.g. the quoted text "sys_log" decodes to a string, which is one part
+            if (!is_array($result) and $result !== null) {
+                $result = [$text];
+            }
         } elseif ($type == self::STR_TYPE_HTML) {
             $result = preg_split("/[\s,<>]+/", $text);
             $result = $this->str_split_add_sep($text, $result, $with_sep);

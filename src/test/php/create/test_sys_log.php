@@ -39,28 +39,42 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 include_once paths::MODEL_SYSTEM . 'sys_log.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_list.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_function.php';
+include_once paths::MODEL_SYSTEM . 'system_time.php';
+include_once paths::MODEL_SYSTEM . 'system_time_list.php';
+include_once paths::MODEL_SYSTEM . 'system_time_type_list.php';
+include_once paths::MODEL_USER . 'user_message.php';
 include_once html_paths::SYSTEM . 'sys_log_list.php';
 include_once html_paths::USER . 'user_message.php';
 include_once paths::SHARED_CONST . 'users.php';
 include_once paths::SHARED_ENUM . 'sys_log_functions.php';
 include_once paths::SHARED_ENUM . 'sys_log_levels.php';
 include_once paths::SHARED_ENUM . 'sys_log_statuum.php';
+include_once paths::SHARED_TYPES . 'system_time_type.php';
 include_once test_paths::UNIT . 'sys_log_tests.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_list;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_function;
+use Zukunft\ZukunftCom\main\php\cfg\system\system_time;
+use Zukunft\ZukunftCom\main\php\cfg\system\system_time_list;
+use Zukunft\ZukunftCom\main\php\cfg\system\system_time_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\system\sys_log_list as sys_log_list_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_functions;
 use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_levels;
 use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_statuum;
+use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\test\php\unit\sys_log_tests;
 use DateTime;
 
 class test_sys_log extends test_objects
 {
+
+    // the id of the new error of the admin dashboard list, which differs from the ids of the other test entries
+    const int OPEN_ERROR_ID = 3;
+
 
     /*
      * cleanup
@@ -138,6 +152,77 @@ class test_sys_log extends test_objects
     }
 
     /**
+     * @return system_time_type_list the areas of the execution times from the code link csv
+     */
+    function system_time_types(): system_time_type_list
+    {
+        $sys_tim_typ_lst = new system_time_type_list();
+        $sys_tim_typ_lst->load_dummy();
+        return $sys_tim_typ_lst;
+    }
+
+    /**
+     * @return system_time_list the measured steps of a request with the longest step not first
+     */
+    function system_time_steps(): system_time_list
+    {
+        $sys_tim_lst = new system_time_list();
+        $sys_tim_lst->add(sys_log_tests::TV_STEP_LOAD_TYPES_SEC, system_time_type::LOAD_TYPES);
+        $sys_tim_lst->add(sys_log_tests::TV_STEP_DB_READ_SEC, system_time_type::DB_READ);
+        return $sys_tim_lst;
+    }
+
+    /**
+     * @return system_time_list a measured step that has no area in the code link csv
+     */
+    function system_time_steps_unknown(): system_time_list
+    {
+        $sys_tim_lst = new system_time_list();
+        $sys_tim_lst->add(sys_log_tests::TV_STEP_DB_READ_SEC, sys_log_tests::TV_STEP_UNKNOWN);
+        return $sys_tim_lst;
+    }
+
+    /**
+     * @return system_time the total time of a slow api request with all fields set
+     */
+    function system_time(): system_time
+    {
+        $sys_tim = new system_time();
+        $sys_tim->start_time = new DateTime(sys_log_tests::TV_TIME);
+        $sys_tim->end_time = new DateTime(sys_log_tests::TV_TIME);
+        $sys_tim->type_id = $this->system_time_types()->id(system_time_type::API_REQUEST);
+        $sys_tim->url = sys_log_tests::TV_URL;
+        $sys_tim->milliseconds = sys_log_tests::TV_SLOW_MS;
+        return $sys_tim;
+    }
+
+    /**
+     * @return array the database row of a slow api request without end time
+     */
+    function system_time_row(): array
+    {
+        return [
+            system_time::FLD_ID => 1,
+            system_time::FLD_TIME_START => sys_log_tests::TV_TIME_DB,
+            system_time::FLD_TIME_END => null,
+            system_time::FLD_GROUP => $this->system_time_types()->id(system_time_type::API_REQUEST),
+            system_time::FLD_URL => sys_log_tests::TV_URL,
+            system_time::FLD_MILLISECONDS => sys_log_tests::TV_SLOW_MS,
+        ];
+    }
+
+    /**
+     * @return array the body of the slow requests api answer as api/systemTimeList creates it
+     */
+    function system_time_api_json(): array
+    {
+        $msg = new user_message($this->env->usr1);
+        $sys_tim = new system_time();
+        $sys_tim->row_mapper($this->system_time_row(), $msg);
+        return [$sys_tim->api_json_array([], $msg)];
+    }
+
+    /**
      * @return sys_log_list a list of system error entries with some dummy values
      */
     function sys_log_list(): sys_log_list
@@ -156,6 +241,29 @@ class test_sys_log extends test_objects
     {
         $lst_ui = new sys_log_list_ui();
         $lst_ui->set_from_json($this->sys_log_list()->api_json(), $msg);
+        return $lst_ui;
+    }
+
+    /**
+     * @param user_message_ui $msg to report the api mapping problems of the frontend list
+     * @return sys_log_list_ui the not closed system errors of the admin dashboard: a new info that is newer than
+     *                         a new error, both without a solver, and a resolved error that waits for the close
+     */
+    function list_for_admin_ui(user_message_ui $msg): sys_log_list_ui
+    {
+        global $sys;
+        $info = $this->sys_log();
+        $info->log_time = new DateTime(sys_log_tests::TV_TIME_CLOSED);
+        $err = $this->sys_log_two();
+        $err->id = self::OPEN_ERROR_ID;
+        $err->solver = null;
+        $err->status_id = $sys->typ_lst->sys_log_sta->id(sys_log_statuum::OPEN);
+        $sys_lst = new sys_log_list();
+        $sys_lst->add($info);
+        $sys_lst->add($err);
+        $sys_lst->add($this->sys_log_filled());
+        $lst_ui = new sys_log_list_ui();
+        $lst_ui->set_from_json($sys_lst->api_json(), $msg);
         return $lst_ui;
     }
 

@@ -59,5 +59,19 @@ enum sys_log_levels: string
     const string ERROR_COM = "if the process has not been completed";
     const string FATAL = "log_fatal";
     const int FATAL_ID = 6;
+    // the levels from the most critical to the least, e.g. to list the most critical errors first
+    const array CRITICAL_FIRST = [
+        sys_log_levels::FATAL,
+        sys_log_levels::ERROR,
+        sys_log_levels::WARNING,
+        sys_log_levels::INFO,
+        sys_log_levels::DEBUG,
+        sys_log_levels::UNDEFINED,
+    ];
+    // the levels that the admin dashboard shows directly; the other entries are behind a plus sign
+    const array CRITICAL = [
+        sys_log_levels::FATAL,
+        sys_log_levels::ERROR,
+    ];
 
 }

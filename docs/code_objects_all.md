@@ -72,7 +72,7 @@ the object structure is:
 ├── job_runner - $job_run - execute the pending non-interactive backend jobs
 ├── log - the simple log interface object
 ├── sys_log_db - the database const for the system log table
-├── system_time_list - a list of system error objects
+├── system_time_list - $sys_tim_lst - a list of system error objects
 ├── user_list - a list of users
 ├── value_db - the database const for value tables
 ├── value_obj - $val - just to select the best fitting class for a value
@@ -219,7 +219,7 @@ the object structure is:
 │           ├── job_time - to scheduled a job with predefined parameters
 │           ├── session - $ses - to control the user frontend sessions
 │           ├── sys_log - $slg - object to handle a system errors
-│           ├── system_time - object to log and optimize the execution times of the system
+│           ├── system_time - $sys_tim - object to log and optimize the execution times of the system
 │           └── user_db - a person who uses zukunft.com
 ├── ListOfShared
 │   ├── value_type_list - a list of value types e.g. to create the query extension
@@ -255,7 +255,8 @@ the object structure is:
 │       │   │   │           └── config_numbers - $cfg - additional behavior for the system and user config graph value tree
 │       │   │   ├── ip_range_list - a list of internet protocol address ranges
 │       │   │   └── job_list - a list of calculation request
-│       │   └── sys_log_list - a list of system error objects
+│       │   ├── sys_log_list - a list of system error objects
+│       │   └── system_time_slow_list - $slw_lst - the slow api requests of the last days for the admin dashboard
 │       ├── ListOfIdNamedObjectsShared
 │       │   └── ListOfIdNamedCodeObjectsShared
 │       │       └── type_list
@@ -283,6 +284,7 @@ the object structure is:
 │       │           ├── sys_log_function_list - to group the system log entries by function
 │       │           ├── sys_log_level_list - list of the system log types
 │       │           ├── sys_log_status_list - list of the system log statuum
+│       │           ├── system_time_type_list - $sys_tim_typ_lst - the areas of the execution times e.g. a slow api request or one step of it
 │       │           ├── user_profile_list - $usr_pro_lst - a list of possible user profiles with the database id
 │       │           ├── user_status_list - $usr_sta_lst - a list of possible user statuum with the database id
 │       │           ├── user_type_list - $usr_typ_lst - a list of possible user types with the database id
@@ -368,6 +370,7 @@ the object structure is:
 │       │       ├── resultUi - $res - the display extension of the api result object
 │       │       └── valueUi - $val - create the html code to show a value to the user
 │       ├── jobUi - $job - the extension of the batch task API objects to create job base html code
+│       ├── system_timeUi - $sys_tim - one measured request time e.g. a slow url shown on the admin dashboard
 │       └── userUi - $usr - functions to create the HTML code to display the user setup and log information
 ├── TranslatorShared - $mtr - translates a message for the user into the user language
 ├── WorkflowShared - $wrk - defines which view to show next
@@ -430,6 +433,7 @@ the object structure is:
 ├── user_log_displayUi - a combined object to display single value changes or changes of links by the user
 ├── user_sandbox_displayUi - extends the user sandbox superclass for common display functions
 ├── sys_log_listUi - the display extension of the system error log api object
+├── system_time_listUi - $sys_tim_lst - a list of measured request times e.g. the slow urls of the admin dashboard
 ├── type_listUi
 │   ├── change_action_listUi - the preloaded change log actions used for the html frontend
 │   ├── change_field_listUi - the preloaded change log fields used for the html frontend
@@ -438,6 +442,7 @@ the object structure is:
 │   ├── component_type_listUi - the preloaded data component types used for the html frontend
 │   ├── formula_link_type_listUi - the preloaded data formula link types used for the html frontend
 │   ├── formula_type_listUi - the preloaded data formula types used for the html frontend
+│   ├── job_status_listUi - the preloaded job statuum used for the html frontend
 │   ├── job_type_listUi - the preloaded data job types used for the html frontend
 │   ├── language_form_listUi - the preloaded data language_forms used for the html frontend
 │   ├── language_listUi - the preloaded data languages used for the html frontend
@@ -447,6 +452,7 @@ the object structure is:
 │   ├── ref_type_listUi - the preloaded data ref types used for the html frontend
 │   ├── shareUi - the preloaded data share types used for the html frontend
 │   ├── source_type_listUi - the preloaded data source types used for the html frontend
+│   ├── sys_log_level_listUi - the preloaded system log levels used for the html frontend
 │   ├── sys_log_status_listUi - the preloaded system log actions used for the html frontend
 │   ├── user_profileUi - the preloaded user profiles used for the html frontend
 │   ├── verbsUi - the preloaded data verbs used for the html frontend

@@ -44,6 +44,13 @@ class def
     // general prefix for named test objects that should never be used for any real object
     const string TEST_PREFIX = 'zukunft.com System TesT ';
 
+    /*
+     * CAUTION! debug setting -> set always to false after debugging!
+     * true to show in the output of e.g. test/test.php if an api answer comes from the cache
+     * (the api sends api::CACHE_HEADER and rest_call::api_call shows it)
+     */
+    const bool DEBUG_API_CACHE = false;
+
 
     /*
      * fallback
@@ -55,6 +62,15 @@ class def
     // fallback for the number of open system errors shown to the user;
     // overridden by config.yaml entry frontend.lists.limit.system errors
     const int FALLBACK_USER_ERRORS = 10;
+    // fallback for the response time in milliseconds from which a request is critical on the admin dashboard;
+    // overridden by config.yaml entry pod.limits.usage.response time.millisecond.warning
+    const int FALLBACK_RESPONSE_TIME_WARNING = 2000;
+    // fallback for the number of failed logins of the same name from which they are critical on the admin dashboard;
+    // overridden by config.yaml entry pod.limits.max login.per day.by ip-address
+    const int FALLBACK_MAX_LOGIN = 5;
+    // fallback for the seconds an open job may wait before it is critical on the admin dashboard;
+    // overridden by config.yaml entry system.job.max delay
+    const int FALLBACK_JOB_MAX_DELAY = 3600;
     // fallback for the per-verb limit of related phrases shown in the page title (Zurich -> city, canton, ...);
     // overridden by config.yaml entry frontend.lists.limit.related per verb once the $cfg accessor is wired
     const int LIMIT_RELATED_PER_VERB = 2;
