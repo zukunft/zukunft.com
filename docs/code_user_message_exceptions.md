@@ -9,7 +9,7 @@ that needs a comment behind the creation on the same line explaining why a local
 message is needed - typically a buffer that is merged back or a message of
 a different user; only a block of sibling buffers shares one comment above it
 
-220 creations below the entry points: 198 explained, 20 parameter defaults and 2 still unexplained
+219 creations below the entry points: 197 explained, 20 parameter defaults and 2 still unexplained
 and 0 nullable message parameters and 4 messages that never reach the caller
 
 ## parameter defaults
@@ -26,7 +26,7 @@ main backend: /group/group_list.php:381 - Message                               
 main backend: /helper/combine_object.php:129 - function api_json(api_type_list|array $typ_lst = [], user_message $msg = new user_message(), user|null $usr = null): string
 main backend: /helper/db_object_multi.php:185 - function api_json(api_type_list|array $typ_lst = [], user_message $msg = new user_message(), user|null $usr = null): string
 main backend: /helper/db_object_seq_id.php:350 - user_message $msg = new user_message(),
-main backend: /helper/type_list.php:663 - function api_json(api_type_list|array $typ_lst = [], user_message $msg = new user_message(), user|null $usr = null): string
+main backend: /helper/type_list.php:666 - function api_json(api_type_list|array $typ_lst = [], user_message $msg = new user_message(), user|null $usr = null): string
 main backend: /helper/type_lists.php:600 - function api_json(api_type_list|array $typ_lst = [], user_message $msg = new user_message(), user|null $usr = null): string
 main backend: /sandbox/sandbox_list.php:467 - user_message|Message                                         $msg = new Message()
 main backend: /sandbox/sandbox_list_named.php:467 - Message                               $msg = new Message()

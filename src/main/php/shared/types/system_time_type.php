@@ -72,6 +72,8 @@ class system_time_type extends type_object
     const string INIT = "INIT";
     const string MAP_JSON = "map_json";
     const string API_CTRL = "api_ctrl";
+    // the total time of one api request, which is written if the request has been slow
+    const string API_REQUEST = "api_request";
 
 
     /*

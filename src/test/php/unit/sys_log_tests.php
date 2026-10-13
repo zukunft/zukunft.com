@@ -35,14 +35,18 @@ namespace Zukunft\ZukunftCom\test\php\unit;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_TYPES . 'system_time_type.php';
+include_once paths::MODEL_CONST . 'def.php';
 include_once paths::MODEL_LOG_TEXT . 'text_log.php';
 include_once paths::MODEL_SYSTEM . 'system_time.php';
+include_once paths::MODEL_SYSTEM . 'system_time_list.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\log_text\text_log;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log;
 use Zukunft\ZukunftCom\main\php\cfg\system\system_time;
+use Zukunft\ZukunftCom\main\php\cfg\system\system_time_list;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\test\php\create\test_sys_log;
@@ -73,6 +77,17 @@ class sys_log_tests
     CONST int USEC_PER_SEC = 1000000;
     // derived, so the compared pause never differs from the slept one
     CONST float STEP_PAUSE_SEC = self::STEP_PAUSE_USEC / self::USEC_PER_SEC;
+    // a request url and request times below, between and above the fallback log and detail limits
+    CONST string TV_URL = '/api/sysLogList/index.php';
+    CONST float TV_FAST_SEC = 1.0;
+    CONST int TV_SLOW_MS = 1600;
+    CONST float TV_SLOW_SEC = self::TV_SLOW_MS / system_time_list::MILLISECONDS_PER_SECOND;
+    CONST float TV_VERY_SLOW_SEC = 2.5;
+    // the measured steps of the very slow request
+    CONST int TV_STEP_DB_READ_MS = 1500;
+    CONST float TV_STEP_DB_READ_SEC = self::TV_STEP_DB_READ_MS / system_time_list::MILLISECONDS_PER_SECOND;
+    CONST float TV_STEP_LOAD_TYPES_SEC = 0.4;
+    CONST string TV_STEP_UNKNOWN = 'step without system time type';
 
     function run(test_cleanup $t): void
     {
@@ -182,6 +197,50 @@ class sys_log_tests
         $t->assert_sql_table_create($sys_exe);
         $t->assert_sql_index_create($sys_exe);
         $t->assert_sql_foreign_key_create($sys_exe);
+
+        $t->subheader($ts . 'system time of a slow request');
+        $sys_tim_typ_lst = $t_sys->system_time_types();
+        $start = (float)strtotime(self::TV_TIME);
+        $log_limit = def::FALLBACK_RESPONSE_TIME_LOG;
+        $detail_limit = def::FALLBACK_RESPONSE_TIME_DETAIL;
+
+        $test_name = 'a request faster than the log limit writes no system time';
+        $end = $start + self::TV_FAST_SEC;
+        $sys_tim_lst = $t_sys->system_time_steps();
+        $rows = $sys_tim_lst->slow_request_rows($start, $end, self::TV_URL, $log_limit, $detail_limit, $sys_tim_typ_lst);
+        $t->assert($test_name, count($rows), 0);
+
+        $test_name = 'a slow request writes one row with the total time';
+        $end = $start + self::TV_SLOW_SEC;
+        $sys_tim_lst = $t_sys->system_time_steps();
+        $rows = $sys_tim_lst->slow_request_rows($start, $end, self::TV_URL, $log_limit, $detail_limit, $sys_tim_typ_lst);
+        $t->assert($test_name, count($rows), 1);
+        $test_name = '... as api request';
+        $t->assert($test_name, $rows[0]->type_id, $sys_tim_typ_lst->id(system_time_type::API_REQUEST));
+        $test_name = '... with the url';
+        $t->assert($test_name, $rows[0]->url, self::TV_URL);
+        $test_name = '... and the milliseconds of the request';
+        $t->assert($test_name, $rows[0]->milliseconds, self::TV_SLOW_MS);
+
+        $test_name = 'a request slower than the detail limit writes also each step';
+        $end = $start + self::TV_VERY_SLOW_SEC;
+        $sys_tim_lst = $t_sys->system_time_steps();
+        $rows = $sys_tim_lst->slow_request_rows($start, $end, self::TV_URL, $log_limit, $detail_limit, $sys_tim_typ_lst);
+        $t->assert($test_name, count($rows), 3);
+        $test_name = '... with the longest step first';
+        $t->assert($test_name, $rows[1]->type_id, $sys_tim_typ_lst->id(system_time_type::DB_READ));
+        $test_name = '... and the milliseconds of the step';
+        $t->assert($test_name, $rows[1]->milliseconds, self::TV_STEP_DB_READ_MS);
+
+        $test_name = 'a step without system time type is written as not specified';
+        $end = $start + self::TV_VERY_SLOW_SEC;
+        $sys_tim_lst = $t_sys->system_time_steps_unknown();
+        $rows = $sys_tim_lst->slow_request_rows($start, $end, self::TV_URL, $log_limit, $detail_limit, $sys_tim_typ_lst);
+        $t->assert($test_name, $rows[1]->type_id, $sys_tim_typ_lst->default_id());
+
+        $t->subheader($ts . 'system time SQL write');
+        $sys_tim = $t_sys->system_time();
+        $t->assert_sql_insert($sc, $sys_tim);
 
     }
 

@@ -5553,6 +5553,9 @@ class sql_creator
         if ($result == 'db_cache_type_name') {
             $result = fields::FLD_TYPE_NAME;
         }
+        if ($result == 'system_time_type_name') {
+            $result = fields::FLD_TYPE_NAME;
+        }
         return $result;
     }
 

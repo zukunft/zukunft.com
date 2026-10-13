@@ -39,23 +39,31 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 include_once paths::MODEL_SYSTEM . 'sys_log.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_list.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_function.php';
+include_once paths::MODEL_SYSTEM . 'system_time.php';
+include_once paths::MODEL_SYSTEM . 'system_time_list.php';
+include_once paths::MODEL_SYSTEM . 'system_time_type_list.php';
 include_once html_paths::SYSTEM . 'sys_log_list.php';
 include_once html_paths::USER . 'user_message.php';
 include_once paths::SHARED_CONST . 'users.php';
 include_once paths::SHARED_ENUM . 'sys_log_functions.php';
 include_once paths::SHARED_ENUM . 'sys_log_levels.php';
 include_once paths::SHARED_ENUM . 'sys_log_statuum.php';
+include_once paths::SHARED_TYPES . 'system_time_type.php';
 include_once test_paths::UNIT . 'sys_log_tests.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_list;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_function;
+use Zukunft\ZukunftCom\main\php\cfg\system\system_time;
+use Zukunft\ZukunftCom\main\php\cfg\system\system_time_list;
+use Zukunft\ZukunftCom\main\php\cfg\system\system_time_type_list;
 use Zukunft\ZukunftCom\main\php\web\system\sys_log_list as sys_log_list_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_functions;
 use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_levels;
 use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_statuum;
+use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\test\php\unit\sys_log_tests;
 use DateTime;
 
@@ -139,6 +147,51 @@ class test_sys_log extends test_objects
         $slg = $this->sys_log_filled();
         $slg->status_id = $sys->typ_lst->sys_log_sta->id(sys_log_statuum::CLOSED);
         return $slg;
+    }
+
+    /**
+     * @return system_time_type_list the areas of the execution times from the code link csv
+     */
+    function system_time_types(): system_time_type_list
+    {
+        $sys_tim_typ_lst = new system_time_type_list();
+        $sys_tim_typ_lst->load_dummy();
+        return $sys_tim_typ_lst;
+    }
+
+    /**
+     * @return system_time_list the measured steps of a request with the longest step not first
+     */
+    function system_time_steps(): system_time_list
+    {
+        $sys_tim_lst = new system_time_list();
+        $sys_tim_lst->add(sys_log_tests::TV_STEP_LOAD_TYPES_SEC, system_time_type::LOAD_TYPES);
+        $sys_tim_lst->add(sys_log_tests::TV_STEP_DB_READ_SEC, system_time_type::DB_READ);
+        return $sys_tim_lst;
+    }
+
+    /**
+     * @return system_time_list a measured step that has no area in the code link csv
+     */
+    function system_time_steps_unknown(): system_time_list
+    {
+        $sys_tim_lst = new system_time_list();
+        $sys_tim_lst->add(sys_log_tests::TV_STEP_DB_READ_SEC, sys_log_tests::TV_STEP_UNKNOWN);
+        return $sys_tim_lst;
+    }
+
+    /**
+     * @return system_time the total time of a slow api request with all fields set
+     */
+    function system_time(): system_time
+    {
+        $sys_tim = new system_time();
+        $sys_tim->start_time = new DateTime(sys_log_tests::TV_TIME);
+        $sys_tim->end_time = new DateTime(sys_log_tests::TV_TIME);
+        $sys_tim->type_id = $this->system_time_types()->id(system_time_type::API_REQUEST);
+        $sys_tim->url = sys_log_tests::TV_URL;
+        $sys_tim->milliseconds = sys_log_tests::TV_SLOW_MS;
+        return $sys_tim;
     }
 
     /**

@@ -116,6 +116,8 @@ class test_api extends test_base
     // forward header to simulate the api call of an external visitor (the ip is the
     // documentation example address also used to test server_guard::is_own_pod_call)
     const string HEADER_FORWARDED = 'X-Forwarded-For: 203.0.113.7';
+    // the number of chars shown of the start and of the end of an api response that is no valid json
+    const int API_RESPONSE_SHOW_CHARS = 500;
 
     /**
      * check if the HTML frontend object can be set based on the api json message
@@ -748,9 +750,13 @@ class test_api extends test_base
         // response is not valid json, so report it readably and return null,
         // which assert_api_compare turns into a single failed test instead of a
         // TypeError that aborts the whole test suite
+        // the start and the end of the response are shown, because an error text echoed behind
+        // the json (e.g. by an error at the end of the request) is only visible at the end
         if ($actual === null) {
-            log_err('api list call to ' . $url . ' returned no valid json: '
-                . substr($response, 0, 200));
+            log_err('api list call to ' . $url . ' with ' . http_build_query($data)
+                . ' returned no valid json (' . json_last_error_msg() . ', ' . strlen($response) . ' chars): '
+                . substr($response, 0, self::API_RESPONSE_SHOW_CHARS)
+                . ' ... ' . substr($response, -self::API_RESPONSE_SHOW_CHARS));
         }
         return $actual;
     }

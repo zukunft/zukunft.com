@@ -40,6 +40,7 @@ include_once paths::SERVICE . 'config.php';
 include_once paths::MODEL_GROUP . 'group.php';
 include_once paths::MODEL_SYSTEM . 'session.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_list.php';
+include_once paths::MODEL_SYSTEM . 'system_time_type_list.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_ENUM . 'sys_log_statuum.php';
 include_once paths::SHARED_CONST . 'refs.php';
@@ -80,6 +81,7 @@ use Zukunft\ZukunftCom\main\php\cfg\system\session;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_list;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status_list;
+use Zukunft\ZukunftCom\main\php\cfg\system\system_time_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_status;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_geo;
@@ -328,6 +330,9 @@ class system_tests
         // check if the sql to load the complete list of all ... types is created as expected
         $sys_log_status = new sys_log_status_list();
         $t->assert_sql_all($sc, $sys_log_status);
+        // the areas of the system times are loaded only to write a slow request
+        $sys_tim_typ_lst = new system_time_type_list();
+        $t->assert_sql_all($sc, $sys_tim_typ_lst);
 
         $t->subheader($ts . 'user message');
 

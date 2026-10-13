@@ -44,6 +44,7 @@ namespace Zukunft\ZukunftCom\main\php\cfg;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
+include_once paths::MODEL_CONST . 'def.php';
 include_once paths::DB . 'db_check.php';
 include_once paths::DB . 'sql_creator.php';
 include_once paths::DB . 'sql_db.php';
@@ -52,10 +53,13 @@ include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_HELPER . 'server_guard.php';
 include_once paths::MODEL_HELPER . 'system_object.php';
 include_once paths::MODEL_LOG . 'change_log.php';
+include_once paths::MODEL_SYSTEM . 'system_time_type_list.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
+include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'users.php';
+include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'language_codes.php';
 include_once paths::SHARED_ENUM . 'user_profiles.php';
 include_once paths::SHARED_HELPER . 'Translator.php';
@@ -64,6 +68,7 @@ include_once paths::SHARED_TYPES . 'system_time_type.php';
 include_once paths::SHARED . 'library.php';
 include_once paths::SHARED . 'url_var.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\db\db_check;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
@@ -72,10 +77,12 @@ use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\helper\server_guard;
 use Zukunft\ZukunftCom\main\php\cfg\helper\system_object;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_log;
+use Zukunft\ZukunftCom\main\php\cfg\system\system_time_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
-use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\language_codes;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
 use Zukunft\ZukunftCom\main\php\shared\helper\Translator;
@@ -423,53 +430,34 @@ class application
     }
 
     /**
-     * write the execution time to the database if it is long
+     * write the time of the api request to the system times if it has been slower than the configured log limit
+     * and the time of each step if it has been slower than the detail limit (config.yaml: user > default >
+     * frontend > behaviour > response time > log / detail), so that the admin can find and optimize slow calls
+     *
+     * @param sql_db $db_con the open database connection to write the times
+     * @param user_message $msg to report why the times could not be written
      */
     private function write_time(sql_db $db_con, user_message $msg): void
     {
         global $sys;
+        global $cfg;
 
-        $sys_time_end = microtime(true);
-        if ($sys_time_end > $sys->time_limit) {
-            $db_con->usr_id = users::SYSTEM_ID;
-            $db_con->set_class(system_time_type::class);
-            $fnc_lst = $sys->typ_lst->sys_log_fnc;
-            // TODO Prio 1 use an object and add tests
-            $sys_script_id = $fnc_lst->id_by_name($sys->script);
-            if ($sys_script_id <= 0) {
-                $sys_script = new system_time_type();
-                $sys_script->name = $sys->script;
-                $sys_script->code_id = $sys->script;
-                $sys_usr = new user();
-                $sys_usr->load_by_id(users::SYSTEM_ID, $msg);
-                $msg_sys = new user_message($sys_usr); // the system user saves the script type, merged below
-                $sys_script->save($msg_sys);
-                if ($msg_sys->is_ok()) {
-                    $sys_script_id = $sys_script->id();
-                    $sys->typ_lst->sys_log_fnc->add($sys_script);
-                }
-                $msg->merge($msg_sys);
+        $end = microtime(true);
+        $log_names = [triples::RESPONSE_TIME, words::LOG, words::FRONTEND, words::BEHAVIOUR];
+        $detail_names = [triples::RESPONSE_TIME, words::DETAIL, words::FRONTEND, words::BEHAVIOUR];
+        // without a loaded config e.g. if the config load has failed the fallback limits are used
+        $log_limit = $cfg?->get_by($log_names, def::FALLBACK_RESPONSE_TIME_LOG) ?? def::FALLBACK_RESPONSE_TIME_LOG;
+        $detail_limit = $cfg?->get_by($detail_names, def::FALLBACK_RESPONSE_TIME_DETAIL) ?? def::FALLBACK_RESPONSE_TIME_DETAIL;
+        if ($db_con->is_open() and $end - $sys->start_time > $log_limit) {
+            // loaded only for a slow request, because it is not part of the cached type lists
+            $sys_tim_typ_lst = new system_time_type_list();
+            $sys_tim_typ_lst->load($db_con, $msg);
+            $url = server_guard::request_url();
+            $rows = $sys->times->slow_request_rows($sys->start_time, $end, $url, $log_limit, $detail_limit, $sys_tim_typ_lst);
+            foreach ($rows as $sys_tim) {
+                $sys_tim->insert($msg);
             }
-            $start_time_sql = date("Y-m-d H:i:s", $sys->start_time);
-            $end_time_sql = date("Y-m-d H:i:s", $sys_time_end);
-            $interval = $sys_time_end - $sys->start_time;
-            $milliseconds = $interval;
-
-            //$db_con->insert();
-            if (in_array(rest_ctrl::REQUEST_URI, $_SERVER)) {
-                $calling_uri = $_SERVER[rest_ctrl::REQUEST_URI];
-            } else {
-                $calling_uri = 'localhost';
-            }
-            // TODO Prio 1 add time report to database and calling uri
-            $time_report = $sys->times->report();
-            $sql = "INSERT INTO system_times (start_time, system_time_type_id, end_time, milliseconds) "
-                . "VALUES ('" . $start_time_sql . "'," . $sys_script_id . ",'" . $end_time_sql . "', " . $milliseconds . ");";
-            $db_con->exe($sql);
         }
-
-        // free the global vars
-        unset($sys);
     }
 
 }

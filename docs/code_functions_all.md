@@ -3838,6 +3838,8 @@
              in /system/sys_log_status.php
     \-- order error - order of section construct and map has difference at api_mapper should be before row_mapper_typ_ob
             j
+\-- system_time
+    \-- insert - section for function insert not yet defined that it should be save in /system/system_time.php
 \-- system_time_list
     \-- switch - section for function switch not yet defined that it should be interface in /system/system_time_list.php
     \-- report - section for function report not yet defined that it should be interface in /system/system_time_list.php
@@ -3845,6 +3847,8 @@
             em_time_list.php
     \-- reset_section - section for function reset_section not yet defined that it should be interface in /system/system
             _time_list.php
+    \-- slow_request_rows - section for function slow_request_rows not yet defined that it should be interface in /syste
+            m/system_time_list.php
     \-- add - section for function add not yet defined that it should be modify in /system/system_time_list.php
 \-- user_list
     \-- lst - section for function lst not yet defined that it should be set and get in /user/user_list.php
@@ -4248,6 +4252,7 @@
         \-- sys_log_function_list - adding the system log functions used for unit tests to the dummy list
         \-- sys_log_level_list - adding the system log statuum used for unit tests to the dummy list
         \-- sys_log_status_list - adding the system log statuum used for unit tests to the dummy list
+        \-- system_time_type_list - fill the list from the code link csv for the unit tests without database
         \-- user_profile_list - create a dummy type list for the unit tests without database connection
         \-- user_status_list - create a dummy type list for the unit tests without database connection
         \-- user_type_list - create a dummy type list for the unit tests without database connection
@@ -4275,6 +4280,7 @@
         \-- sys_log_function_list - return the database id of the default system log function
         \-- sys_log_level_list - return the database id of the default system log status
         \-- sys_log_status_list - return the database id of the default system log status
+        \-- system_time_type_list - @return int the id of the area used for a step that has no own type yet
         \-- user_profile_list - return the database id of the default user profile
         \-- user_status_list - return the database id of the default user status
         \-- user_type_list - return the database id of the default user profile
@@ -4721,7 +4727,7 @@
         \-- sandbox_value_list - add one value to the value list, but only if it is not yet part of the list
         \-- ip_range_list - add an ip range to the list
         \-- job_list - add another job to the list, but only if needed
-        \-- system_time_list - start a new measurement section, so that the section report shows only the times of the
+        \-- system_time_list - @param string $code_id the area of the time e.g. the whole api request or one step
     \-- remove
         \-- sql_type_list - remove a type from the list if it has been in the list
         \-- export_type_list - remove a type from the list if it has been in the list
@@ -4871,6 +4877,8 @@
         \-- ref_list - drop the references the requesting user may not read, so a reference list returned by the api
     \-- id_field
         \-- ip_range - helper because the db id field differs from the class name
+    \-- insert
+        \-- system_time - add the execution time row without permission check and without change log,
 \-- sql fields
     \-- 1
         \-- db_cache_status - 
@@ -4934,6 +4942,7 @@
         \-- source_type - set the vars of this source type object to the default values
         \-- sandbox_predicated_link - reset the type of the link object
         \-- ip_range - 
+        \-- system_time - reset the vars of this execution time row
         \-- value_time_series - set the user sandbox type for a value time series object and set the user,
                  which is needed in all cases
     \-- clone_all
@@ -5658,6 +5667,7 @@
         \-- ref_type - get a list of all database fields that might be changed
         \-- source_type - get a list of all database fields that might be changed
         \-- ip_range - get a list of all database fields that might be changed
+        \-- system_time - @param sql_type_list $sc_par_lst not used, because the fields are the same for all writes
     \-- db_fields_changed
         \-- element - get a list of database field names, values and types that have been updated
         \-- db_cache - get a list of database field names, values and types that have been updated
@@ -5666,6 +5676,7 @@
         \-- ref_type - get a list of database field names, values and types that have been updated
         \-- source_type - get a list of database field names, values and types that have been updated
         \-- ip_range - get a list of database field names, values and types that have been updated
+        \-- system_time - get the database field names, values and types that differ from the given row
     \-- db_field_values_types
         \-- change - get a list of all database fields
         \-- change_log - get a list of all database fields
@@ -5946,6 +5957,9 @@
         \-- system_time_list - @return string description of the execution times by category of the last section
     \-- reset_section
         \-- system_time_list - start a new measurement section, so that the section report shows only the times of the
+    \-- slow_request_rows
+        \-- system_time_list - the system time rows of one request: a row with the total time if the request has been sl
+                ow
 \-- interface set and get
     \-- get_or_insert
         \-- type_list - get the type object with this name from the list

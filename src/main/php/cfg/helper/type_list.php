@@ -94,6 +94,7 @@ include_once paths::MODEL_SYSTEM . 'sys_log_level.php';
 //include_once paths::MODEL_SYSTEM . 'sys_log_level_list.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_status.php';
 //include_once paths::MODEL_SYSTEM . 'sys_log_status_list.php';
+//include_once paths::MODEL_SYSTEM . 'system_time_type_list.php';
 include_once paths::MODEL_USER . 'user_profile.php';
 //include_once paths::MODEL_USER . 'user_profile_list.php';
 //include_once paths::MODEL_USER . 'user_type.php';
@@ -185,6 +186,7 @@ use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_level;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_level_list;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status_list;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status;
+use Zukunft\ZukunftCom\main\php\cfg\system\system_time_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_official_type;
@@ -494,6 +496,7 @@ class type_list extends ListOfIdNamedCodeObjects
             sys_log_function_list::class => sys_log_function::class,
             sys_log_level_list::class => sys_log_level::class,
             sys_log_status_list::class => sys_log_status::class,
+            system_time_type_list::class => system_time_type::class,
             db_cache_status_list::class => db_cache_status::class,
             db_cache_type_list::class => db_cache_type::class,
             user_profile_list::class => user_profile::class,
