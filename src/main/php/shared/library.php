@@ -265,6 +265,23 @@ class library
     }
 
     /**
+     * @param DateTime $time e.g. the time of the data snap of a cache entry
+     * @return bool true if the time is before the max cache age, so the cache entry needs to be refilled
+     */
+    function is_older_than_cache_max_age(DateTime $time): bool
+    {
+        $result = true;
+        $cut_time = new DateTime();
+        try {
+            $cut_time->modify($this->unquote(CACHE_MAX_AGE));
+            $result = $time < $cut_time;
+        } catch (Exception $e) {
+            log_err('cannot apply the max cache age ' . CACHE_MAX_AGE . ': ' . $e->getMessage());
+        }
+        return $result;
+    }
+
+    /**
      * Converts a DateTime object into a URL-safe string parameter.
      *
      * @param DateTimeInterface $dateTime The date time object to convert.

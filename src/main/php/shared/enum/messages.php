@@ -2159,6 +2159,7 @@ enum messages: string
     case JOB_ACTION_UNKNOWN = 'job_action_unknown';
     case JOB_LIST_ALL_ONLY_ADMIN = 'job_list_all_only_admin';
     case SYS_LOG_LIST_ONLY_ADMIN = 'sys_log_list_only_admin';
+    case SYSTEM_TIME_LIST_ONLY_ADMIN = 'system_time_list_only_admin';
     case SYSTEM_BUTTON_JOB_UPGRADE = 'system_button_job_upgrade';
     case SYSTEM_BUTTON_JOB_DOWNGRADE = 'system_button_job_downgrade';
     case SYSTEM_BUTTON_JOB_CANCEL = 'system_button_job_cancel';

@@ -129,4 +129,14 @@ class test_db_caches
         return $db_cache_page;
     }
 
+    /**
+     * @return db_cache_page a cache row that has just been filled and is therefore expected to be used
+     */
+    function db_cache_page_up_to_date(): db_cache_page
+    {
+        $db_cache_page = $this->db_cache_page_filled();
+        $db_cache_page->last_update = new DateTime();
+        return $db_cache_page;
+    }
+
 }

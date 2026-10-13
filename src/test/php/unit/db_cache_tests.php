@@ -37,7 +37,9 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::DB . 'sql_db.php';
 include_once paths::MODEL_HELPER . 'db_cache_db.php';
+include_once paths::MODEL_RESULT . 'result_list.php';
 include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_VALUE . 'value_list.php';
 include_once paths::SHARED_TYPES . 'db_cache_statuum.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once paths::SHARED . 'api.php';
@@ -49,7 +51,9 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache_db;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache_page;
+use Zukunft\ZukunftCom\main\php\cfg\result\result_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\types\db_cache_types;
@@ -60,6 +64,15 @@ use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class db_cache_tests
 {
+
+    // the phrase ids of an api request and its cache key without the id of the requesting user
+    const string TV_PHRASE_IDS = '-134,-186';
+    const string TV_API_KEY = 'resultList?phrase_ids=-134%2C-186&u=';
+    const string TV_API_KEY_VALUE = 'valueList?phrase_ids=-134%2C-186&u=';
+    // a parameter value that tries to name another user in the cache key
+    const string TV_PHRASE_IDS_WITH_USER = '1&u=2';
+    const string TV_API_KEY_WITH_USER = 'resultList?phrase_ids=1%26u%3D2&u=';
+
     function run(test_cleanup $t): void
     {
 
@@ -202,6 +215,41 @@ class db_cache_tests
         $cac->last_update = null;
         $test_name = 'a cache entry without update time is refilled';
         $t->assert_true($test_name, $cac->is_outdated());
+
+        $test_name = 'a just cached api message is used';
+        $cac_page = $t_db_cache->db_cache_page_up_to_date();
+        $t->assert_false($test_name, $cac_page->is_outdated());
+
+        $test_name = 'an api message older than the max cache age is created again';
+        $cac_page = $t_db_cache->db_cache_page_filled();
+        $t->assert_true($test_name, $cac_page->is_outdated());
+
+        $test_name = 'a cache row without content is created again';
+        $cac_page = $t_db_cache->db_cache_page_up_to_date();
+        $cac_page->html_page = null;
+        $t->assert_true($test_name, $cac_page->is_outdated());
+
+
+        $t->subheader($ts . 'api key');
+
+        // the user is the end of the key like of a personal page, so del_by_user drops it
+        $test_name = 'the api key names the api, every parameter and the user';
+        $par = [api::JSON_LIST_PHRASE_IDS => self::TV_PHRASE_IDS];
+        $cac_key = db_cache_page::api_key(result_list::class, $par, $t->usr1->id());
+        $t->assert($test_name, $cac_key, self::TV_API_KEY . $t->usr1->id());
+
+        $test_name = 'the api key of another user differs';
+        $cac_key_usr2 = db_cache_page::api_key(result_list::class, $par, $t->usr2->id());
+        $t->assert_not($test_name, $cac_key_usr2, $cac_key);
+
+        $test_name = 'the api key of the value list names the value list api';
+        $cac_key_val = db_cache_page::api_key(value_list::class, $par, $t->usr1->id());
+        $t->assert($test_name, $cac_key_val, self::TV_API_KEY_VALUE . $t->usr1->id());
+
+        $test_name = 'a parameter cannot name another user, because the values are url encoded';
+        $par = [api::JSON_LIST_PHRASE_IDS => self::TV_PHRASE_IDS_WITH_USER];
+        $cac_key = db_cache_page::api_key(result_list::class, $par, $t->usr1->id());
+        $t->assert($test_name, $cac_key, self::TV_API_KEY_WITH_USER . $t->usr1->id());
 
 
         $t->subheader($ts . 'session token swap');

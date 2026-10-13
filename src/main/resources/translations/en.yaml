@@ -146,6 +146,7 @@ messages:
   job_action_unknown: "the requested job change is not known"
   job_list_all_only_admin: "only an admin can see the jobs of all users"
   sys_log_list_only_admin: "only an admin can see the system log"
+  system_time_list_only_admin: "only an admin can see the slow requests"
   system_button_job_upgrade: "higher priority"
   system_button_job_downgrade: "lower priority"
   system_button_job_cancel: "cancel job"

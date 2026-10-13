@@ -2166,6 +2166,8 @@
             ache_page.php
     \-- html_by_url - section for function html_by_url not yet defined that it should be load in /helper/db_cache_page.p
             hp
+    \-- json_by_key - section for function json_by_key not yet defined that it should be load in /helper/db_cache_page.p
+            hp
     \-- del_by_user - section for function del_by_user is expected to be del in /helper/db_cache_page.php
     \-- del_all - section for function del_all is expected to be del in /helper/db_cache_page.php
 \-- db_id_object_non_sandbox
@@ -3839,6 +3841,8 @@
     \-- order error - order of section construct and map has difference at api_mapper should be before row_mapper_typ_ob
             j
 \-- system_time
+    \-- row_mapper - section for function row_mapper not yet defined that it should be construct and map in /system/syst
+            em_time.php
     \-- insert - section for function insert not yet defined that it should be save in /system/system_time.php
 \-- system_time_list
     \-- switch - section for function switch not yet defined that it should be interface in /system/system_time_list.php
@@ -3850,6 +3854,10 @@
     \-- slow_request_rows - section for function slow_request_rows not yet defined that it should be interface in /syste
             m/system_time_list.php
     \-- add - section for function add not yet defined that it should be modify in /system/system_time_list.php
+\-- system_time_slow_list
+    \-- load - section for function load not yet defined that it should be load in /system/system_time_slow_list.php
+    \-- load_sql - section for function load_sql is expected to be load sql in /system/system_time_slow_list.php
+    \-- order error - order of section load has difference at load_sql should be before load
 \-- user_list
     \-- lst - section for function lst not yet defined that it should be set and get in /user/user_list.php
     \-- load_sql_by_ids - section for function load_sql_by_ids is expected to be load sql in /user/user_list.php
@@ -4537,6 +4545,8 @@
         \-- db_cache_page - load a cached html page from the database selected by url
     \-- html_by_url
         \-- db_cache_page - get the cached html page for the given url
+    \-- json_by_key
+        \-- db_cache_page - get the cached json of an api get request, but only within the max cache age, because e.g. a
     \-- load_by_key
         \-- db_id_object_non_sandbox - load the object by the given unique key
     \-- load_sql_by_id_str
@@ -4830,6 +4840,8 @@
         \-- combine_object - checks if the combine object can be added to the database
     \-- is_outdated
         \-- db_cache - @return bool true if this cache entry has no data or is older than the max cache age
+        \-- db_cache_page - @return bool true if this row has no content or is older than the max cache age and therefor
+                e needs to be refilled
     \-- log_name_field
         \-- db_object - name of log entry used shown to the user which entry has been deleted
     \-- delta
@@ -4867,6 +4879,8 @@
         \-- view_relation_list - simple but slow function to add of update all list items in the database
     \-- save_html
         \-- db_cache_page - add or replace the cached html page for the given url
+    \-- save_json
+        \-- db_cache_page - remember the json of an api get request for the next request with the same key
     \-- del_by_user
         \-- db_cache_page - remove the cached html pages of one user, so that the next request renders them again
     \-- del_all
@@ -4965,6 +4979,7 @@
         \-- change - map the database fields to one change log entry to this log object
         \-- change_value - map the database fields to one change log entry to this log object
         \-- ip_range - map the database fields to this ip range object
+        \-- system_time - map one row of the system times table to this execution time row
     \-- row_mapper_multi
         \-- db_object_multi - map the database fields to the object fields
     \-- row_mapper_typ_obj
@@ -5416,6 +5431,7 @@
         \-- ref_list - map the database rows of one load to the refs of this list
         \-- ref_type - TODO use parent function for setting the name, ...
         \-- list_db_read - create an array for the api json message
+        \-- system_time - create an array for the api json creation e.g. of the slow requests for the admin dashboard
         \-- value_geo - create an array for the api json creation
         \-- value_text - create an array for the api json creation
         \-- value_time - create an array for the api json creation
@@ -5532,7 +5548,7 @@
         \-- figure_list - create a text that describes the figures for unique identification
         \-- group_list - @param term_list|null $trm_lst a cached list of terms
         \-- db_cache - 
-        \-- db_cache_page - check if the cached html page can be added to the database
+        \-- db_cache_page - @param int $usr_id the id of the user of a personal page or api message
         \-- db_object - TODO Prio 1 make sure that this function is always called before tying to update a database row
         \-- db_object_multi - @return string with the unique database id mainly for child dsp_id() functions
         \-- type_list - @return string the verb list with the internal database ids for debugging
@@ -5549,7 +5565,7 @@
         \-- figure_list - create a text that describes the figures for unique identification
         \-- group_list - create a useful (but not unique!) name of the phrase group list mainly used for debugging
         \-- db_cache - check if the database cache can be added to the database
-        \-- db_cache_page - check if the cached html page can be added to the database
+        \-- db_cache_page - @param int $usr_id the id of the user of a personal page or api message
         \-- change_value - @return string with the best possible id for this value mainly used for debugging
         \-- sandbox_list - to show the list name to the user in the most simple form (without any ids)
         \-- ip_range - @return string with the unique name of the ip range
@@ -7926,6 +7942,8 @@
     \-- display - section for function display not yet defined that it should be display in /system/system_time.php
     \-- header - section for function header not yet defined that it should be display in /system/system_time.php
 \-- system_time_list
+    \-- load - section for function load not yet defined that it should be load in /system/system_time_list.php
+    \-- api_load - section for function api_load not yet defined that it should be load in /system/system_time_list.php
     \-- add - section for function add not yet defined that it should be modify in /system/system_time_list.php
     \-- count - section for function count not yet defined that it should be info in /system/system_time_list.php
     \-- slowest_first - section for function slowest_first not yet defined that it should be select in /system/system_ti
@@ -8896,6 +8914,8 @@
         \-- formula_link_list - get the formula link that use this formula from the backend via api
     \-- load
         \-- config - request the user-specific frontend configuration from the backend
+        \-- system_time_list - load the slow requests of the configured last days from the backend,
+                 which sends them only to an admin
     \-- get_by
         \-- config - get a frontend config value selected by the phrase names
     \-- load_by_object
@@ -8937,6 +8957,8 @@
     \-- api_load
         \-- sys_log_list - @param array $json_body the api answer with the log entries or the message why the entries ar
                 e not sent
+        \-- system_time_list - @param array $json_body the api answer with the slow requests or the message why they are
+                 not sent
 \-- 
     \-- form_tile
         \-- system_form - start an HTML form, show the title and set and set the unique form name
@@ -9582,8 +9604,8 @@
         \-- system_page - the subtitle of the admin dashboard with the requesting admin,
                  the pod and the creation time of the page,
     \-- admin_url_delay
-        \-- system_page - the slowest user requests: a request that took at least the configured warning time is critica
-                l
+        \-- system_page - the slowest user requests of the configured last days: a request that took at least the config
+                ured
     \-- admin_login_fails
         \-- system_page - the failed logins grouped by the typed name: a name with at least the configured number of fai
                 led logins

@@ -255,7 +255,8 @@ the object structure is:
 │       │   │   │           └── config_numbers - $cfg - additional behavior for the system and user config graph value tree
 │       │   │   ├── ip_range_list - a list of internet protocol address ranges
 │       │   │   └── job_list - a list of calculation request
-│       │   └── sys_log_list - a list of system error objects
+│       │   ├── sys_log_list - a list of system error objects
+│       │   └── system_time_slow_list - $slw_lst - the slow api requests of the last days for the admin dashboard
 │       ├── ListOfIdNamedObjectsShared
 │       │   └── ListOfIdNamedCodeObjectsShared
 │       │       └── type_list

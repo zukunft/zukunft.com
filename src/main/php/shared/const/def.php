@@ -44,6 +44,13 @@ class def
     // general prefix for named test objects that should never be used for any real object
     const string TEST_PREFIX = 'zukunft.com System TesT ';
 
+    /*
+     * CAUTION! debug setting -> set always to false after debugging!
+     * true to show in the output of e.g. test/test.php if an api answer comes from the cache
+     * (the api sends api::CACHE_HEADER and rest_call::api_call shows it)
+     */
+    const bool DEBUG_API_CACHE = false;
+
 
     /*
      * fallback

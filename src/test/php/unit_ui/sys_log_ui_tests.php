@@ -41,6 +41,7 @@ use Zukunft\ZukunftCom\main\php\web\const\icons;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_list as change_log_list_ui;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_named;
 use Zukunft\ZukunftCom\main\php\web\system\sys_log_list as sys_log_list_ui;
+use Zukunft\ZukunftCom\main\php\web\system\system_time_list as system_time_list_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
@@ -281,9 +282,23 @@ class sys_log_ui_tests
         $test_name = 'a dashboard section without an error says so';
         $empty = $page->admin_errors_unassigned($msg_ui, true, new sys_log_list_ui());
         $t->assert_text_contains($test_name, $empty, $mtr->txt(msg_id::ADMIN_NO_ERRORS));
-        // the live page has no load of the request times yet, so it says so instead of an empty column
-        $test_name = 'the response times of the live page are not yet recorded';
-        $t->assert_text_contains($test_name, $page->admin_url_delay($msg_ui, false), $mtr->txt(msg_id::ADMIN_NOT_YET_RECORDED));
+        // the live page loads the slow requests from the backend, which refuses them to a user who is no admin
+        $only_admin_time = $mtr->txt(msg_id::SYSTEM_TIME_LIST_ONLY_ADMIN);
+        $refused_msg = new user_message_ui();
+        $refused_times = new system_time_list_ui();
+        $test_name = 'a refused slow requests api answer loads no request time';
+        $t->assert_false($test_name, $refused_times->api_load([json_fields::MSG => $only_admin_time], $refused_msg));
+        $test_name = '... but tells the user why';
+        $t->assert($test_name, $refused_msg->get_last_message_translated(), $only_admin_time);
+        // negative: the answer for an admin is loaded as the request times without a message
+        $answer_msg = new user_message_ui();
+        $answer_times = new system_time_list_ui();
+        $test_name = 'the slow requests api answer is loaded';
+        $t->assert_true($test_name, $answer_times->api_load($t_sys->system_time_api_json(), $answer_msg));
+        $test_name = '... with the slow request';
+        $t->assert($test_name, $answer_times->count(), 1);
+        $test_name = '... and without a message for the user';
+        $t->assert_false($test_name, $answer_msg->has_info());
         // the refusal of the backend is shown to the user instead of being mapped as a log entry
         $only_admin = $mtr->txt(msg_id::SYS_LOG_LIST_ONLY_ADMIN);
         $refused_msg = new user_message_ui();

@@ -39,18 +39,27 @@ include_once paths::MODEL_CONST . 'def.php';
 include_once paths::MODEL_LOG_TEXT . 'text_log.php';
 include_once paths::MODEL_SYSTEM . 'system_time.php';
 include_once paths::MODEL_SYSTEM . 'system_time_list.php';
+include_once paths::MODEL_SYSTEM . 'system_time_slow_list.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::SHARED . 'json_fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\log_text\text_log;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log;
 use Zukunft\ZukunftCom\main\php\cfg\system\system_time;
 use Zukunft\ZukunftCom\main\php\cfg\system\system_time_list;
+use Zukunft\ZukunftCom\main\php\cfg\system\system_time_slow_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\test\php\create\test_sys_log;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
+use DateTime;
+use DateTimeInterface;
 
 class sys_log_tests
 {
@@ -88,6 +97,8 @@ class sys_log_tests
     CONST float TV_STEP_DB_READ_SEC = self::TV_STEP_DB_READ_MS / system_time_list::MILLISECONDS_PER_SECOND;
     CONST float TV_STEP_LOAD_TYPES_SEC = 0.4;
     CONST string TV_STEP_UNKNOWN = 'step without system time type';
+    // the start time of a slow request as read from the database
+    CONST string TV_TIME_DB = '2023-01-03 20:59:59';
 
     function run(test_cleanup $t): void
     {
@@ -241,6 +252,45 @@ class sys_log_tests
         $t->subheader($ts . 'system time SQL write');
         $sys_tim = $t_sys->system_time();
         $t->assert_sql_insert($sc, $sys_tim);
+
+        $t->subheader($ts . 'slow requests SQL read');
+        // only the total time of a request of the last days that is still slower than the log limit
+        $slw_lst = new system_time_slow_list();
+        $type_id = $t_sys->system_time_types()->id(system_time_type::API_REQUEST);
+        $since = new DateTime(self::TV_TIME);
+        $sc->reset(sql_db::POSTGRES);
+        $qp = $slw_lst->load_sql($sc, $type_id, $since, self::TV_SLOW_MS);
+        $t->assert_qp($qp, $sc->db_type);
+        $sc->reset(sql_db::MYSQL);
+        $qp = $slw_lst->load_sql($sc, $type_id, $since, self::TV_SLOW_MS);
+        $t->assert_qp($qp, $sc->db_type);
+
+        $t->subheader($ts . 'slow requests period');
+        // the config.yaml period is the same as the fallback
+        $test_name = 'the period starts the configured days before now';
+        $now = strtotime(self::TV_TIME);
+        $since = system_time_slow_list::since($now);
+        $days_sec = def::FALLBACK_SLOW_REQUEST_DAYS * system_time_slow_list::SECONDS_PER_DAY;
+        $t->assert($test_name, $since->getTimestamp(), $now - $days_sec);
+
+        $t->subheader($ts . 'slow request api');
+        $msg = new user_message($t->usr1);
+        $test_name = 'a slow request is sent with its milliseconds';
+        $sys_tim = new system_time();
+        $sys_tim->row_mapper($t_sys->system_time_row(), $msg);
+        $json = $sys_tim->api_json_array([], $msg);
+        $t->assert($test_name, $json[json_fields::MILLISECONDS], self::TV_SLOW_MS);
+        $test_name = '... its url';
+        $t->assert($test_name, $json[json_fields::URL], self::TV_URL);
+        $test_name = '... and its start time';
+        $start = new DateTime(self::TV_TIME_DB)->format(DateTimeInterface::ATOM);
+        $t->assert($test_name, $json[json_fields::TIME_START], $start);
+        $test_name = 'a request without end time has no end time instead of now';
+        $t->assert_null($test_name, $sys_tim->end_time);
+        $test_name = 'a missing row maps no url';
+        $sys_tim = new system_time();
+        $sys_tim->row_mapper(null, $msg);
+        $t->assert_null($test_name, $sys_tim->url);
 
     }
 

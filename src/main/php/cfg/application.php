@@ -53,6 +53,7 @@ include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_HELPER . 'server_guard.php';
 include_once paths::MODEL_HELPER . 'system_object.php';
 include_once paths::MODEL_LOG . 'change_log.php';
+include_once paths::MODEL_SYSTEM . 'system_time_list.php';
 include_once paths::MODEL_SYSTEM . 'system_time_type_list.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_message.php';
@@ -77,6 +78,7 @@ use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\helper\server_guard;
 use Zukunft\ZukunftCom\main\php\cfg\helper\system_object;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_log;
+use Zukunft\ZukunftCom\main\php\cfg\system\system_time_list;
 use Zukunft\ZukunftCom\main\php\cfg\system\system_time_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
@@ -443,10 +445,9 @@ class application
         global $cfg;
 
         $end = microtime(true);
-        $log_names = [triples::RESPONSE_TIME, words::LOG, words::FRONTEND, words::BEHAVIOUR];
         $detail_names = [triples::RESPONSE_TIME, words::DETAIL, words::FRONTEND, words::BEHAVIOUR];
         // without a loaded config e.g. if the config load has failed the fallback limits are used
-        $log_limit = $cfg?->get_by($log_names, def::FALLBACK_RESPONSE_TIME_LOG) ?? def::FALLBACK_RESPONSE_TIME_LOG;
+        $log_limit = system_time_list::log_limit();
         $detail_limit = $cfg?->get_by($detail_names, def::FALLBACK_RESPONSE_TIME_DETAIL) ?? def::FALLBACK_RESPONSE_TIME_DETAIL;
         if ($db_con->is_open() and $end - $sys->start_time > $log_limit) {
             // loaded only for a slow request, because it is not part of the cached type lists

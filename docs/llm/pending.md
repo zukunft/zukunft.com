@@ -4,7 +4,7 @@
 
 ### response times
 
-the frontend column is done (web/system/system_time_list, critical from pod > limits > usage > response time > millisecond > warning, test data in test/create/test_admin_dashboard.php) and application::write_time writes each api request slower than config.yaml behaviour > response time > log with its url and milliseconds as an api_request row to system_times and, if slower than detail, one row per measured step (system_time_list::slow_request_rows), but the live page still says "not yet recorded": add a load of the slowest api_request rows of the last n days (config.yaml parameter) with its sql fixture and an admin only api, and load them in web/component/execute/system_page.php::admin_url_delay() if not in test mode; also the html frontend requests (http/view.php) are not yet written and test/test_app.php::write_time still has the old hand-built insert
+the frontend column is done (web/system/system_time_list, critical from pod > limits > usage > response time > millisecond > warning, test data in test/create/test_admin_dashboard.php) and application::write_time writes each api request slower than config.yaml behaviour > response time > log with its url and milliseconds as an api_request row to system_times and, if slower than detail, one row per measured step (system_time_list::slow_request_rows), and the dashboard loads the api_request rows of the last pod > limits > usage > response time > period days that are still slower than the log limit via the admin only api/systemTimeList (cfg/system/system_time_slow_list); still open: the html frontend requests (http/view.php) are not yet written and test/test_app.php::write_time still has the old hand-built insert
 
 ### errors
 

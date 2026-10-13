@@ -45,7 +45,6 @@ namespace Zukunft\ZukunftCom\main\php\cfg\helper;
 
 use DateTime;
 use DateTimeInterface;
-use Exception;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::DB . 'sql.php';
@@ -228,13 +227,7 @@ class db_cache extends db_object_seq_id_user
         $result = true;
         if ($this->data !== null and $this->last_update !== null) {
             $lib = new library();
-            $cut_time = new DateTime();
-            try {
-                $cut_time->modify($lib->unquote(CACHE_MAX_AGE));
-                $result = $this->last_update < $cut_time;
-            } catch (Exception $e) {
-                log_err('cannot apply the max cache age ' . CACHE_MAX_AGE . ': ' . $e->getMessage());
-            }
+            $result = $lib->is_older_than_cache_max_age($this->last_update);
         }
         return $result;
     }

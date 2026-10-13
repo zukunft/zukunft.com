@@ -36,16 +36,22 @@ namespace Zukunft\ZukunftCom\main\php\web\system;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::HTML . 'rest_call.php';
 include_once html_paths::SYSTEM . 'system_time.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::SHARED_CONST . 'def.php';
 include_once html_paths::SHARED_CONST . 'triples.php';
 include_once html_paths::SHARED_CONST . 'words.php';
+include_once html_paths::SHARED_ENUM . 'messages.php';
+include_once html_paths::SHARED . 'json_fields.php';
 
 use Zukunft\ZukunftCom\main\php\shared\const\def;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\html\rest_call;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 
 class system_time_list
@@ -77,6 +83,39 @@ class system_time_list
             $this->add($new);
         }
         return $msg->is_ok();
+    }
+
+
+    /*
+     * load
+     */
+
+    /**
+     * load the slow requests of the configured last days from the backend, which sends them only to an admin
+     * @param user_message $msg to report the message of the backend e.g. that only an admin can see the slow requests
+     * @return bool true if the backend has sent the slow requests
+     */
+    function load(user_message $msg): bool
+    {
+        $rest = new rest_call();
+        $json_body = $rest->api_get($this::class, [], $msg);
+        return $this->api_load($json_body, $msg);
+    }
+
+    /**
+     * @param array $json_body the api answer with the slow requests or the message why they are not sent
+     * @param user_message $msg to report the message of the backend e.g. that only an admin can see the slow requests
+     * @return bool true if the backend has sent the slow requests
+     */
+    function api_load(array $json_body, user_message $msg): bool
+    {
+        $result = false;
+        if (array_key_exists(json_fields::MSG, $json_body)) {
+            $msg->add(msg_id::API_MESSAGE, [msg_id::VAR_JSON_TEXT => $json_body[json_fields::MSG]]);
+        } else {
+            $result = $this->set_from_json_array($json_body, $msg);
+        }
+        return $result;
     }
 
 

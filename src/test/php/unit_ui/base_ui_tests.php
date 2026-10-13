@@ -1030,6 +1030,16 @@ class base_ui_tests
         $test_name = '... but leaves an integer id as it is';
         $t->assert($test_name, (string)new rest_call()->id_data(word_names::MATH_ID)[url_var::ID],
             (string)word_names::MATH_ID);
+        // the backend names in a header if an api answer comes from the cache (see def::DEBUG_API_CACHE)
+        $test_name = 'the cache header of an api answer is read';
+        $line = api::CACHE_HEADER . ': ' . api::CACHE_HIT . "\r\n";
+        $t->assert($test_name, rest_call::cache_state_of($line), api::CACHE_HIT);
+        $test_name = '... also in lower case as http/2 sends it';
+        $line = strtolower(api::CACHE_HEADER) . ': ' . api::CACHE_MISS . "\r\n";
+        $t->assert($test_name, rest_call::cache_state_of($line), api::CACHE_MISS);
+        $test_name = '... but not from another header';
+        $line = api::CSRF_TOKEN_HEADER . ': ' . api::CACHE_HIT . "\r\n";
+        $t->assert($test_name, rest_call::cache_state_of($line), '');
         // negative: the database key of an old link and an integer id are still accepted
         $test_name = 'the database key of an old link is still accepted';
         $url = 'http://localhost' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::VALUE_DEFAULT_ID

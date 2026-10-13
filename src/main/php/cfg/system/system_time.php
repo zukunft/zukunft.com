@@ -43,8 +43,12 @@ include_once paths::DB . 'sql_field_type.php';
 include_once paths::DB . 'sql_par_field_list.php';
 include_once paths::DB . 'sql_type_list.php';
 include_once paths::MODEL_HELPER . 'type_object.php';
+include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED_TYPES . 'system_time_type.php';
+include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
@@ -54,9 +58,14 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\library;
 use DateTime;
+use DateTimeInterface;
 
 class system_time extends db_object_seq_id
 {
@@ -125,6 +134,53 @@ class system_time extends db_object_seq_id
         $this->type_id = null;
         $this->url = null;
         $this->milliseconds = null;
+    }
+
+    /**
+     * map one row of the system times table to this execution time row
+     *
+     * @param array|null $db_row with the data directly from the database
+     * @param user_message $msg to report a problem of the mapping
+     * @param string $id_fld not used, because the id field of the system times is always the same
+     * @return bool true if the mapping has been done without problems
+     */
+    function row_mapper(?array $db_row, user_message $msg, string $id_fld = ''): bool
+    {
+        $lib = new library();
+        parent::row_mapper($db_row, $msg, self::FLD_ID);
+        // map the fields if the id has been set from a found row, independent of the message state
+        if ($this->id() != 0) {
+            $this->start_time = $lib->get_datetime($db_row[self::FLD_TIME_START] ?? null, $this->dsp_id());
+            // the end time can be missing, which must not be shown as now
+            if (($db_row[self::FLD_TIME_END] ?? null) !== null) {
+                $this->end_time = $lib->get_datetime($db_row[self::FLD_TIME_END], $this->dsp_id());
+            }
+            $this->type_id = $db_row[self::FLD_GROUP] ?? null;
+            $this->url = $db_row[self::FLD_URL] ?? null;
+            $this->milliseconds = $db_row[self::FLD_MILLISECONDS] ?? null;
+        }
+        return $msg->is_ok();
+    }
+
+
+    /*
+     * api
+     */
+
+    /**
+     * create an array for the api json creation e.g. of the slow requests for the admin dashboard
+     * @param api_type_list|array $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user_message $msg to collect the mapping problems for the requesting user
+     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
+     * @return array the filled array used to create the api json message to the frontend
+     */
+    function api_json_array(api_type_list|array $typ_lst, user_message $msg, user|null $usr = null): array
+    {
+        $vars = parent::api_json_array($typ_lst, $msg, $usr);
+        $vars[json_fields::TIME_START] = $this->start_time?->format(DateTimeInterface::ATOM);
+        $vars[json_fields::URL] = $this->url;
+        $vars[json_fields::MILLISECONDS] = $this->milliseconds;
+        return $vars;
     }
 
 

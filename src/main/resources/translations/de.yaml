@@ -108,6 +108,7 @@ messages:
   job_action_unknown: "die gewünschte Änderung des Auftrags ist nicht bekannt"
   job_list_all_only_admin: "nur ein Administrator kann die Aufträge aller Benutzer sehen"
   sys_log_list_only_admin: "nur ein Administrator kann das Systemprotokoll sehen"
+  system_time_list_only_admin: "nur ein Administrator kann die langsamen Anfragen sehen"
   system_button_job_upgrade: "höhere Priorität"
   system_button_job_downgrade: "tiefere Priorität"
   system_button_job_cancel: "Auftrag abbrechen"

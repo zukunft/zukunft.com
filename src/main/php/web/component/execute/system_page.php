@@ -809,12 +809,10 @@ class system_page extends component
     }
 
     /**
-     * the slowest user requests: a request that took at least the configured warning time is critical
+     * the slowest user requests of the configured last days: a request that took at least the configured
+     * warning time is critical and the other written requests are shown behind the plus sign
      *
-     * TODO Prio 1 store the url and the milliseconds in system_times and add a load and an api for the slowest
-     *      requests (see docs/llm/pending.md 'admin dashboard'), until then the live page says not yet recorded
-     *
-     * @param user_message $msg with the requesting admin to report a problem of the config lookup
+     * @param user_message $msg with the requesting admin to report a problem of the load or the config lookup
      * @param bool $test_mode true to show the given request times without a backend call
      * @param system_time_list $times the request times to show in the test mode
      * @return string the html code of the slowest user requests of the admin dashboard
@@ -823,7 +821,8 @@ class system_page extends component
     {
         global $mtr;
         if (!$test_mode) {
-            return $this->admin_section(msg_id::ADMIN_TITLE_URL_DELAY, $mtr->txt(msg_id::ADMIN_NOT_YET_RECORDED));
+            $times = new system_time_list();
+            $times->load($msg);
         }
         $limit = system_time_list::critical_limit($msg);
         $size = sys_log_list::display_limit($msg);

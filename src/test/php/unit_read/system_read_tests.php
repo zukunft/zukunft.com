@@ -38,6 +38,7 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_HELPER . 'type_lists.php';
 include_once paths::MODEL_SYSTEM . 'sys_log.php';
+include_once paths::MODEL_SYSTEM . 'system_time_slow_list.php';
 include_once paths::MODEL_SYSTEM . 'system_time_type_list.php';
 include_once paths::DB . 'db_check.php';
 include_once paths::SHARED_TYPES . 'api_types.php';
@@ -51,6 +52,7 @@ use Zukunft\ZukunftCom\main\php\cfg\helper\type_list;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_lists;
 use Zukunft\ZukunftCom\main\php\cfg\system\job_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status_list;
+use Zukunft\ZukunftCom\main\php\cfg\system\system_time_slow_list;
 use Zukunft\ZukunftCom\main\php\cfg\system\system_time_type_list;
 use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_statuum;
 use Zukunft\ZukunftCom\main\php\shared\types\job_types;
@@ -110,6 +112,12 @@ class system_read_tests
         $t->assert($test_name, $sys_tim_typ_lst->id(system_time_type::API_REQUEST), $req_id);
         $test_name = '... but no id for a step that has no system time type';
         $t->assert($test_name, $sys_tim_typ_lst->id(sys_log_tests::TV_STEP_UNKNOWN, false), type_list::CODE_ID_NOT_FOUND);
+
+        // the table can be empty, so only the prepared select is checked against the database
+        $test_name = 'the slow requests of the last days load without database error';
+        $slw_lst = new system_time_slow_list();
+        $slw_lst->load($msg);
+        $t->assert_true($test_name, $msg->is_ok());
 
         $t->subheader($ts . 'type list cached load');
 

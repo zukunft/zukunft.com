@@ -42,6 +42,7 @@ include_once paths::MODEL_SYSTEM . 'sys_log_function.php';
 include_once paths::MODEL_SYSTEM . 'system_time.php';
 include_once paths::MODEL_SYSTEM . 'system_time_list.php';
 include_once paths::MODEL_SYSTEM . 'system_time_type_list.php';
+include_once paths::MODEL_USER . 'user_message.php';
 include_once html_paths::SYSTEM . 'sys_log_list.php';
 include_once html_paths::USER . 'user_message.php';
 include_once paths::SHARED_CONST . 'users.php';
@@ -57,6 +58,7 @@ use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_function;
 use Zukunft\ZukunftCom\main\php\cfg\system\system_time;
 use Zukunft\ZukunftCom\main\php\cfg\system\system_time_list;
 use Zukunft\ZukunftCom\main\php\cfg\system\system_time_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\system\sys_log_list as sys_log_list_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
@@ -192,6 +194,32 @@ class test_sys_log extends test_objects
         $sys_tim->url = sys_log_tests::TV_URL;
         $sys_tim->milliseconds = sys_log_tests::TV_SLOW_MS;
         return $sys_tim;
+    }
+
+    /**
+     * @return array the database row of a slow api request without end time
+     */
+    function system_time_row(): array
+    {
+        return [
+            system_time::FLD_ID => 1,
+            system_time::FLD_TIME_START => sys_log_tests::TV_TIME_DB,
+            system_time::FLD_TIME_END => null,
+            system_time::FLD_GROUP => $this->system_time_types()->id(system_time_type::API_REQUEST),
+            system_time::FLD_URL => sys_log_tests::TV_URL,
+            system_time::FLD_MILLISECONDS => sys_log_tests::TV_SLOW_MS,
+        ];
+    }
+
+    /**
+     * @return array the body of the slow requests api answer as api/systemTimeList creates it
+     */
+    function system_time_api_json(): array
+    {
+        $msg = new user_message($this->env->usr1);
+        $sys_tim = new system_time();
+        $sys_tim->row_mapper($this->system_time_row(), $msg);
+        return [$sys_tim->api_json_array([], $msg)];
     }
 
     /**

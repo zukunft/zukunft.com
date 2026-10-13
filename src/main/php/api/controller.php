@@ -44,6 +44,7 @@ include_once paths::SHARED_CONST . 'def.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'json_fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
@@ -287,6 +288,21 @@ class controller
      * @param int $code the http response code e.g. 200 or 400
      * @return void
      */
+    /**
+     * name in a header if the answer comes from the cache, so that e.g. the test run shows it
+     * (see rest_call::api_call); only if def::DEBUG_API_CACHE is switched on
+     *
+     * @param bool $is_cached true if the answer has been read from the cache, false if it has been created
+     * @return void
+     */
+    function cache_header(bool $is_cached): void
+    {
+        if (def::DEBUG_API_CACHE and !headers_sent()) {
+            $state = $is_cached ? api::CACHE_HIT : api::CACHE_MISS;
+            header(api::CACHE_HEADER . ': ' . $state);
+        }
+    }
+
     private function set_response_code(int $code): void
     {
         if (!headers_sent()) {

@@ -386,6 +386,9 @@ zukunft.com:
                 target: 100
                 info: 500
                 warning: 2000
+              period:
+                days: 10
+                tooltip-comment: "the admin dashboard shows the slow requests of the system times of this number of last days"
     user:
       tooltip-comment: "settings that each user can set individually"
       default:
