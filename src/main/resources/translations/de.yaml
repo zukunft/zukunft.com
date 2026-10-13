@@ -568,6 +568,8 @@ messages:
   system_sub_title_terms: "Verwendet von"
   system_title_about: "Über"
   system_title_setup: "Einrichtung"
+  system_title_table_editor: "Tabelleneditor"
+  system_title_calculation_editor: "Berechnungseditor"
   system_title_signup: "Registrieren"
   system_title_login: ""
   system_title_login_activate: "Aktivieren"

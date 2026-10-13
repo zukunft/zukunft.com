@@ -259,6 +259,13 @@
       "expression": "\"potential gain\",\"billion\",\"htp\" = 0 - \"potential loss\",\"percent\",\"htp\" * \"world\",\"htp\",\"billion\" * \"loss reduction\",\"percent\" * \"htp\",\"billion\",\"factor\"",
       "latex": "G = -d_{htp} \\cdot HTP_{world} \\cdot r \\cdot k",
       "assigned_word": "loss reduction"
+    },
+    {
+      "name": "avoided loss in trillion EUR",
+      "description": "the potential gain of a solution in trillion EUR, the potential loss of the problem multiplied by the share of the loss that the solution avoids, so that the gain is stated in the unit of the loss and is never bigger than the loss",
+      "expression": "\"potential gain\",\"trillion\",\"EUR\" = \"potential loss\",\"trillion\",\"EUR\" * \"loss reduction\",\"percent\"",
+      "latex": "G_{EUR} = L_{pot} \\cdot r",
+      "assigned_word": "loss reduction"
     }
   ],
   "sources": [
@@ -653,6 +660,29 @@
       ],
       "number": "5.5",
       "note": "0 - -0.04 * 1189.19 billion htp * 50 percent * 0.23125"
+    },
+    {
+      "context": [
+        "citizen participation",
+        "fluid democracy",
+        "potential loss",
+        "trillion",
+        "EUR",
+        "loss reduction",
+        "percent",
+        "assumed"
+      ],
+      "formula": "avoided loss in trillion EUR",
+      "words": [
+        "citizen participation",
+        "fluid democracy",
+        "potential gain",
+        "trillion",
+        "EUR",
+        "assumed"
+      ],
+      "number": "0.090002",
+      "note": "0.180004 trillion EUR potential loss * 50 percent loss reduction"
     },
     {
       "context": [

@@ -1,0 +1,66 @@
+{
+  "version": "0.0.3",
+  "data_version": "0.0.1",
+  "time": "2026-10-13 12:00:00",
+  "user": "timon",
+  "selection": [
+    "the placeholder views of the table and the calculation editor"
+  ],
+  "description": "The table editor and the calculation editor as placeholder views with a title and a phrase selector, so that the steps of docs/table_creation.md can link to them before the editors are done. This file is imported as the last step of the db setup, so that no database id of a tested view or component moves.",
+  "components": [
+    {
+      "name": "system title table editor",
+      "description": "show the language specific title of the table editor",
+      "type": "system_title",
+      "code_id": "system_title_table_editor",
+      "ui_msg_code_id": "system_title_table_editor"
+    },
+    {
+      "name": "system title calculation editor",
+      "description": "show the language specific title of the calculation editor",
+      "type": "system_title",
+      "code_id": "system_title_calculation_editor",
+      "ui_msg_code_id": "system_title_calculation_editor"
+    },
+    {
+      "name": "phrase selector",
+      "description": "placeholder to select the word or triple that an editor starts from",
+      "type": "select_phrase",
+      "code_id": "phrase_selector"
+    }
+  ],
+  "views": [
+    {
+      "name": "Table editor",
+      "description": "placeholder to define the columns, the rows and the default sorting of a table starting from a word or triple",
+      "code_id": "table_editor",
+      "type": "word",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title table editor"
+        },
+        {
+          "position": "2",
+          "name": "phrase selector"
+        }
+      ]
+    },
+    {
+      "name": "Calculation editor",
+      "description": "placeholder to define a calculation starting from a word or triple",
+      "code_id": "calculation_editor",
+      "type": "word",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title calculation editor"
+        },
+        {
+          "position": "2",
+          "name": "phrase selector"
+        }
+      ]
+    }
+  ]
+}

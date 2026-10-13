@@ -191,3 +191,5 @@ view_id,user_id,view_name,description,view_type_id,view_style_id,usage,code_id,e
 190,1,company sheet,"The income statement, balance sheet or cash flow sheet of a big company",6,,,,,,
 191,1,company list with main ratios,list the most interesting companies with the main ratios,6,,,,,,
 192,1,PV in Switzerland emission comparison,the climate benefit of photovoltaic electricity in Switzerland with and without the displacement concept,13,,,,,,
+193,1,Table editor,"placeholder to define the columns, the rows and the default sorting of a table starting from a word or triple",11,,,table_editor,,,
+194,1,Calculation editor,placeholder to define a calculation starting from a word or triple,11,,,calculation_editor,,,

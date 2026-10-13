@@ -2028,6 +2028,8 @@ enum messages: string
     // fixed system page titles
     case SYSTEM_TITLE_ABOUT = 'system_title_about';
     case SYSTEM_TITLE_SETUP = 'system_title_setup';
+    case SYSTEM_TITLE_TABLE_EDITOR = 'system_title_table_editor';
+    case SYSTEM_TITLE_CALCULATION_EDITOR = 'system_title_calculation_editor';
     case SYSTEM_TITLE_SIGNUP = 'system_title_signup';
     case SIGNUP_ALPHA_NOTICE = 'signup_alpha_notice';
     case SIGNUP_DATA_WARNING = 'signup_data_warning';
