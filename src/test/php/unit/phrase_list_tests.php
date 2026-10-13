@@ -293,6 +293,26 @@ class phrase_list_tests
         $test_name = 'a phrase that is no column has no tier';
         $t->assert($test_name, $phr_lst_ui->column_tier(word_names::GAIN), '');
 
+        // a column can be defined per unit, e.g. the potential gain in EUR as a mayor and in htp
+        // as a minor column, where the unit names the measure whatever the scaling
+        $phr_lst_ui = $t_phr->list_columns_gain_units_ui();
+        $test_name = 'the tier of a column in a unit is the tier of its unit definition';
+        $t->assert($test_name, $phr_lst_ui->column_tier(triple_names::POTENTIAL_GAIN,
+            [word_names::TRILLION, word_names::EUR]), triple_names::SYSTEM_COLUMN_MAYOR);
+        $test_name = '... also for the other unit';
+        $t->assert($test_name, $phr_lst_ui->column_tier(triple_names::POTENTIAL_GAIN,
+            [word_names::BILLION, word_names::HTP]), triple_names::SYSTEM_COLUMN_MINOR);
+        // negative: a unit that no definition names has no tier, if no definition is for any unit
+        $test_name = 'a column in a unit without a definition has no tier';
+        $t->assert($test_name, $phr_lst_ui->column_tier(triple_names::POTENTIAL_GAIN,
+            [words::PERCENT]), '');
+        // negative: a definition for any unit is the fallback for a unit without a definition
+        $test_name = 'a column in an undefined unit has the tier of the definition for any unit';
+        $t->assert($test_name, $t_phr->list_columns_potential_gain_ui()->column_tier(
+            triple_names::POTENTIAL_GAIN, [words::PERCENT]), triple_names::SYSTEM_COLUMN_MAYOR);
+        $test_name = 'the definitions per unit name the column phrase once';
+        $t->assert($test_name, $phr_lst_ui->column_names(), [triple_names::POTENTIAL_GAIN]);
+
 
         $t->subheader($ts . 'child phrases');
 

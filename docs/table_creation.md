@@ -7,9 +7,8 @@ This guide shows step by step how to get this table:
 > **potential gain** in trillion EUR, the **initial effort** in person years
 > and the **reward ratio**, the best ratio on top
 
-The start page data already has all these numbers. So you can go straight to
-step 2. Steps 3 to 5 show how to add a solution, a number or a formula of
-your own.
+The start page data already has all these numbers. So steps 2 to 4 are
+enough. Steps 5 and 6 show how to add a number or a formula of your own.
 
 Icons used in this guide:
 
@@ -104,7 +103,9 @@ To add a formula of your own, e.g. the reward ratio from the gain:
      ```
 
 4. Click **"Validate"** next to the expression. Every word must be found.
-   If one is not found, create it first (see 5.1).
+   If one is not found, create it first: type it in the search field at the
+   top, click **"Get numbers"** and then the green button **"add '...' as a
+   new word"**.
 5. Tick **"calculate only if all values used in the formula exist"**, so
    that no ratio is calculated for a solution without an effort.
 6. Click **"save"**.

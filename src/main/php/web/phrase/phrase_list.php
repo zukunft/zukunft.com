@@ -696,21 +696,47 @@ class phrase_list extends sandbox_list_named
      * the tier of the table column of the given phrase name
      *
      * the tier says on which screens the column is shown: a mayor column on every screen, a main
-     * column not on a small one and a minor column on a wide one only
+     * column not on a small one and a minor column on a wide one only; a definition of the
+     * column in one unit e.g. "potential gain in EUR" wins over the definition for any unit
      *
      * @param string $name the name of the column phrase e.g. "loss"
+     * @param array $unit_names the names of the unit phrases of the column e.g. "trillion" and "EUR"; empty for any unit
      * @return string the tier name e.g. "mayor column (system)" or '' if the column is not defined
      */
-    function column_tier(string $name): string
+    function column_tier(string $name, array $unit_names = []): string
     {
         $result = '';
+        $any_unit = '';
         foreach ($this->lst() as $phr) {
-            if ($phr->is_triple() and $result == '') {
-                $trp = $phr->obj();
-                $to_name = $trp->get_to()?->name() ?? '';
-                if (in_array($to_name, triples::SYSTEM_COLUMN_TIERS) and $trp->get_from()?->name() == $name) {
-                    $result = $to_name;
+            $trp = $phr->is_triple() ? $phr->obj() : null;
+            $tier = $trp?->get_to()?->name() ?? '';
+            if (in_array($tier, triples::SYSTEM_COLUMN_TIERS)) {
+                [$col, $unit] = $this->column_and_unit($trp->get_from());
+                if ($col?->name() == $name and $unit == null and $any_unit == '') {
+                    $any_unit = $tier;
+                } elseif ($col?->name() == $name and in_array($unit?->name(), $unit_names) and $result == '') {
+                    $result = $tier;
                 }
+            }
+        }
+        return $result == '' ? $any_unit : $result;
+    }
+
+    /**
+     * the column phrase and the unit of a column definition: "<phrase> can be <tier>" defines the
+     * column in any unit and "<phrase> in <unit> can be <tier>" the column in that unit only,
+     * where the unit is the measure e.g. "EUR" whatever the scaling, like the verb "in" says
+     *
+     * @param phrase|null $phr the from side of a column definition e.g. "potential gain in EUR"
+     * @return array the column phrase e.g. "potential gain" and the unit phrase or null for any unit
+     */
+    private function column_and_unit(?phrase $phr): array
+    {
+        $result = [$phr, null];
+        if ($phr != null and $phr->is_triple()) {
+            $trp = $phr->obj();
+            if ($trp->get_verb()?->get_code_id() == verbs::IN) {
+                $result = [$trp->get_from(), $trp->get_to()];
             }
         }
         return $result;
@@ -731,7 +757,7 @@ class phrase_list extends sandbox_list_named
                     $trp = $phr->obj();
                     // the tier is the "to" side, so the column phrase is the "from" side
                     if ($trp->get_to()?->name() == $tier) {
-                        $name = $trp->get_from()?->name();
+                        $name = $this->column_and_unit($trp->get_from())[0]?->name();
                         // a phrase assigned to two tiers keeps the more important one
                         if ($name != null and !in_array($name, $result)) {
                             $result[$phr->name()] = $name;
@@ -860,8 +886,9 @@ class phrase_list extends sandbox_list_named
                 $trp = $phr->obj();
                 // the tier is the "to" side, so the column phrase is the "from" side
                 if (in_array($trp->get_to()?->name(), triples::SYSTEM_COLUMN_TIERS)) {
-                    if ($trp->get_from()?->name() == $name) {
-                        $result = $trp->get_from();
+                    $col = $this->column_and_unit($trp->get_from())[0];
+                    if ($col?->name() == $name) {
+                        $result = $col;
                     }
                 }
             }

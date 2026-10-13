@@ -1292,11 +1292,9 @@
       "to": "mayor column (system)"
     },
     {
-      "name": "column loss",
-      "description": "the table column 'loss' that should be shown also on small screens",
-      "from": "loss",
-      "verb": "can be",
-      "to": "mayor column (system)"
+      "from": "potential gain",
+      "verb": "in",
+      "to": "EUR"
     },
     {
       "name": "column solution (high prio)",
@@ -1313,11 +1311,9 @@
       "to": "mayor column (system)"
     },
     {
-      "name": "column gain",
-      "description": "the table column 'gain' that should be shown also on small screens",
-      "from": "gain",
-      "verb": "can be",
-      "to": "mayor column (system)"
+      "from": "potential gain",
+      "verb": "in",
+      "to": "htp"
     },
     {
       "name": "column ranking",
@@ -1401,11 +1397,11 @@
       "to": "minor column (system)"
     },
     {
-      "name": "column source",
-      "description": "the table column 'source' with the origin of the number, so that a measured value can be told apart from an assumed one",
-      "from": "source",
+      "name": "column potential gain in EUR",
+      "description": "the table column 'potential gain' with the gain of the solution in EUR, the unit of the potential loss; a mayor column, so the simple start page shows it",
+      "from": "potential gain in EUR",
       "verb": "can be",
-      "to": "minor column (system)"
+      "to": "mayor column (system)"
     },
     {
       "name": "column confidence",
@@ -1693,14 +1689,16 @@
       "to": "column priority"
     },
     {
-      "from": "column source",
-      "verb": "is explaining column for",
-      "to": "column priority"
+      "name": "column potential gain in htp",
+      "description": "the table column 'potential gain' with the gain of the solution in happy time points; a minor column, so only the wide table shows it",
+      "from": "potential gain in htp",
+      "verb": "can be",
+      "to": "minor column (system)"
     },
     {
-      "from": "column loss",
+      "from": "column potential gain in EUR",
       "verb": "is explaining column for",
-      "to": "column problem (high prio)"
+      "to": "column solution (high prio)"
     },
     {
       "from": "column cost",
@@ -1718,7 +1716,7 @@
       "to": "column problem (high prio)"
     },
     {
-      "from": "column gain",
+      "from": "column potential gain in htp",
       "verb": "is explaining column for",
       "to": "column solution (high prio)"
     },

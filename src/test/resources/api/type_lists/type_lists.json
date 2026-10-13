@@ -29255,7 +29255,7 @@
                 "class": "triple"
             },
             {
-                "id": 185,
+                "id": 187,
                 "name": "AI is symbol for artificial intelligence",
                 "from_id": 291,
                 "from_phrase": {
@@ -30601,7 +30601,7 @@
                 "class": "triple"
             },
             {
-                "id": 220,
+                "id": 222,
                 "name": "htp is symbol for happy time points",
                 "from_id": 274,
                 "from_phrase": {
@@ -31866,7 +31866,7 @@
                 "class": "triple"
             },
             {
-                "id": 221,
+                "id": 223,
                 "name": "OLS is symbol for ordinary least squares",
                 "from_id": 244,
                 "from_phrase": {

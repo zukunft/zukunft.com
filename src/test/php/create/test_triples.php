@@ -2249,6 +2249,64 @@ class test_triples extends test_objects
     }
 
     /**
+     * @return triple "potential gain in EUR" - the potential gain stated in EUR, whatever the scaling
+     */
+    function potential_gain_in_eur(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::POTENTIAL_GAIN_IN_EUR_ID, triple_names::POTENTIAL_GAIN_IN_EUR);
+        $trp->set_from($this->potential_gain()->phrase());
+        $trp->set_verb($t_vrb->verb_in());
+        $trp->set_to($t_wrd->word_eur()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "potential gain in htp" - the potential gain stated in happy time points
+     */
+    function potential_gain_in_htp(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::POTENTIAL_GAIN_IN_HTP_ID, triple_names::POTENTIAL_GAIN_IN_HTP);
+        $trp->set_from($this->potential_gain()->phrase());
+        $trp->set_verb($t_vrb->verb_in());
+        $trp->set_to($t_wrd->word_htp()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "column potential gain in EUR" that defines the potential gain in EUR as a mayor column
+     */
+    function column_potential_gain_in_eur(): triple
+    {
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::COLUMN_POTENTIAL_GAIN_IN_EUR_ID, triple_names::COLUMN_POTENTIAL_GAIN_IN_EUR);
+        $trp->set_from($this->potential_gain_in_eur()->phrase());
+        $trp->set_verb($t_vrb->verb_can_be());
+        $trp->set_to($this->column_mayor()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "column potential gain in htp" that defines the potential gain in htp as a minor column
+     */
+    function column_potential_gain_in_htp(): triple
+    {
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::COLUMN_POTENTIAL_GAIN_IN_HTP_ID, triple_names::COLUMN_POTENTIAL_GAIN_IN_HTP);
+        $trp->set_from($this->potential_gain_in_htp()->phrase());
+        $trp->set_verb($t_vrb->verb_can_be());
+        $trp->set_to($this->column_minor()->phrase());
+        return $trp;
+    }
+
+    /**
      * @return triple "column potential loss is explaining column for column problem (high prio)"
      */
     function column_potential_loss_explains_problem(): triple

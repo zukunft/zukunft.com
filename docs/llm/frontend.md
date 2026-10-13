@@ -434,8 +434,11 @@ first, then wire the tail to it.
 
 A value table has a simple and a full version, like a list has a short and a
 more version. The simple version shows the columns of the mayor tier only, one
-unit per column — the unit that most numbers of the column have, so that one
-bigger number in another unit cannot hide the unit of every other row
+unit per column — the unit that a column definition per unit puts in the
+highest tier, e.g. `potential gain in EUR can be mayor column (system)` and
+`potential gain in htp can be minor column (system)` (`phrase_list::column_tier`),
+and among units of the same tier the unit that most numbers of the column have,
+so that one bigger number in another unit cannot hide the unit of every other row
 (`value_list::split_by_unit`) — and each cell the number without its probability range; the
 full version shows every tier, every unit and the range behind each number. A
 further unit of a column states the same measure a second way, so it is a minor

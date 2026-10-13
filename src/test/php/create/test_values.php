@@ -1357,6 +1357,38 @@ class test_values extends test_objects
     }
 
     /**
+     * the potential gain like on the start page: in billion htp for two problems and in trillion
+     * EUR only for global warming, so that only a unit definition can let the EUR column lead
+     *
+     * @return value_list the potential gain in billion htp of two problems and in trillion EUR of one
+     */
+    function value_list_gain_units(): value_list
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $gain = $t_trp->potential_gain()->phrase();
+        $gw = $t_trp->global_warming()->phrase();
+        $billion = $t_wrd->word_billion()->phrase();
+        $htp = $t_wrd->word_htp()->phrase();
+        $trillion = $t_wrd->word_trillion()->phrase();
+        $eur = $t_wrd->word_eur()->phrase();
+        $lst = new value_list($this->env->usr1);
+        $lst->add($this->value_for_phrases([$gw, $gain, $billion, $htp], 35.2));
+        $lst->add($this->value_for_phrases([$gw, $gain, $trillion, $eur], 0.176));
+        $lst->add($this->value_for_phrases([$t_wrd->word_populism()->phrase(), $gain, $billion, $htp], 26.4));
+        return $lst;
+    }
+
+    /**
+     * @return value_list_ui the potential gain mostly in billion htp for frontend unit testing
+     */
+    function value_list_gain_units_ui(): value_list_ui
+    {
+        $tl = new test_lib();
+        return $tl->list_to_ui($this->value_list_gain_units(), [api_types::INCL_PHRASES]);
+    }
+
+    /**
      * the loss of two problems in a unit that is a triple typed "measure unit" (gram per kWh), so
      * that the table header is expected to show the triple behind the "in" like a unit word
      *
