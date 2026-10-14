@@ -1280,6 +1280,27 @@ class test_phrases
     }
 
     /**
+     * @return phrase_list_ui the table editor example: "populism solution" with the link up to
+     *         "global problem", the mayor and the minor column tier of "column (system)" and one
+     *         column of each tier that is related to "populism solution" and one that is not
+     */
+    function list_column_tiers_ui(): phrase_list_ui
+    {
+        $t_trp = new test_triples($this->env);
+        $lst = new phrase_list($this->env->usr1);
+        $lst->add($t_trp->populism_solution()->phrase());
+        $lst->add($t_trp->populism_problem()->phrase());
+        $lst->add($t_trp->global_problem()->phrase());
+        $lst->add($t_trp->column_system()->phrase());
+        $lst->add($t_trp->column_tier_mayor()->phrase());
+        $lst->add($t_trp->column_tier_minor()->phrase());
+        $lst->add($t_trp->column_problem()->phrase());
+        $lst->add($t_trp->column_solution()->phrase());
+        $lst->add($t_trp->column_cost()->phrase());
+        return $this->ui_list($lst);
+    }
+
+    /**
      * @return phrase_list_ui the "global problem" context for frontend unit testing
      */
     function list_global_problems_ui(): phrase_list_ui

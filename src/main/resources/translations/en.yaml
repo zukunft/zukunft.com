@@ -401,6 +401,7 @@ messages:
   find: "Find"
   "remove filter": "Remove filter"
   "yes or no": "Yes / No"
+  " for ": " for "
   button_add_languages: "Add languages"
   select_view: "Select a view"
   is_reserved: "is a reserved"

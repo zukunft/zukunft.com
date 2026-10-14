@@ -175,9 +175,66 @@ class coding_rule_tests
         $t->subheader($ts . 'path consts');
         $this->php_path_const_tests($t);
 
-        $t->subheader($ts . 'html snapshots');
-        $this->html_no_empty_link_tests($t);
+    }
 
+    /**
+     * check the html snapshots; called after the tests that write the snapshots and not by run,
+     * because run is part of the unit tests, which would else check the snapshots of the last run
+     *
+     * @param test_cleanup $t the test harness used for the assertion
+     */
+    function run_html_snapshots(test_cleanup $t): void
+    {
+        $t->name = 'code_rule->';
+        $t->subheader('code rule html snapshots');
+        $this->html_no_empty_link_tests($t);
+        $this->html_no_duplicate_id_tests($t);
+    }
+
+    /**
+     * check that no html snapshot contains an element id twice, because a label and the browser
+     * find only the first element of an id; the usual cause is one selector rendered twice
+     * on the same form, e.g. the view selector by two components of one view
+     *
+     * @param test_cleanup $t the test harness used for the assertion
+     */
+    function html_no_duplicate_id_tests(test_cleanup $t): void
+    {
+        $test_name = 'an id used twice is found';
+        $t->assert($test_name, $this->duplicate_ids('<select id="d_view"></select><select id="d_view"></select>'),
+            ['d_view']);
+        $test_name = 'different ids are no duplicate';
+        $t->assert($test_name, $this->duplicate_ids('<select id="df_view"></select><select id="dm_view"></select>'),
+            []);
+
+        $lib = new library();
+        $files_checked = 0;
+        foreach ($lib->dir_files(test_paths::WEB_RES) as $html_file) {
+            if (str_ends_with($html_file, test_files::HTML)) {
+                $files_checked++;
+                $ids = $this->duplicate_ids(file_get_contents($html_file));
+                if ($ids != []) {
+                    $test_name = 'no id used twice in ' . $html_file;
+                    $t->assert($test_name, implode(', ', $ids), '');
+                }
+            }
+        }
+        // one summary assertion so that a clean tree also produces a visible pass
+        $test_name = 'ids used twice checked in ' . $files_checked . ' html files';
+        $t->assert_greater($test_name, 0, $files_checked);
+    }
+
+    /**
+     * @param string $html the html code of a page or a part of it
+     * @return array every element id that the html uses more than once, sorted by name
+     */
+    function duplicate_ids(string $html): array
+    {
+        preg_match_all('/\sid="([^"]+)"/', $html, $matches);
+        $used = array_count_values($matches[1]);
+        $result = array_keys(array_filter($used, fn(int $count) => $count > 1));
+        sort($result);
+        return $result;
     }
 
     /**

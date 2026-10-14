@@ -180,6 +180,9 @@ class view extends sandbox_code_id
     // load_terms_related() for a page request, so that the used by column of the view pages
     // can list the terms (emitted by api_json_array like the components)
     public ?term_view_list $trm_msk_lst;
+    // the view id of the editor of this view as defined by a view relation of the editor type,
+    // set for the system views (view_sys_list), so that the navbar can offer the editor
+    public ?int $editor_id = null;
 
     // the default display style for this component which can be overwritten by the link
     // TODO Prio 1 change to style_id because the style objects are part of the $sys object
@@ -215,6 +218,7 @@ class view extends sandbox_code_id
 
         $this->cmp_lnk_lst = null;
         $this->trm_msk_lst = null;
+        $this->editor_id = null;
     }
 
     // TODO check if there is any case where the user fields should not be set
@@ -471,6 +475,9 @@ class view extends sandbox_code_id
             $vars = parent::api_json_array($typ_lst, $msg, $usr);
             if ($this->get_style_id() != null) {
                 $vars[json_fields::STYLE] = $this->get_style_id();
+            }
+            if ($this->editor_id != null) {
+                $vars[json_fields::EDITOR_ID] = $this->editor_id;
             }
             if ($this->cmp_lnk_lst != null) {
                 // the component links of a view are not the requested main object, so the page

@@ -266,3 +266,5 @@ component_type_id, type_name, description, code_id
 265, 'system body config tree', 'the read only tree of the system configuration of config.yaml with a search and a scope to show one branch', 'system_body_config_tree'
 266, 'system admin subtitle', 'the name of the admin, the pod name and the creation time of the admin dashboard', 'system_admin_subtitle'
 267, 'system admin user load', 'the users with the most server time of the last days, the users over a threshold shown first', 'system_admin_user_load'
+268, 'system title for phrase', 'page title that shows the translated title of the component, a translated for and the name of the phrase of the page e.g. Table editor for populism solution', 'system_title_for_phrase'
+269, 'triple list', 'the name of each sub type of the column phrase, e.g. of each column tier, with the list of the triples that point to it and that are related to the phrase of the page', 'triple_list'

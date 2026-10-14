@@ -71,9 +71,11 @@ include_once paths::MODEL_REF . 'source_list.php';
 //include_once paths::MODEL_VERB . 'verb.php';
 //include_once paths::MODEL_VERB . 'verb_list.php';
 include_once paths::MODEL_VIEW . 'term_view_list.php';
+include_once paths::MODEL_VIEW . 'view_relation_list.php';
 //include_once paths::MODEL_VIEW . 'term_view.php';
 //include_once paths::MODEL_VIEW . 'view.php';
 //include_once paths::MODEL_VIEW . 'view_list.php';
+//include_once paths::MODEL_VIEW . 'view_relation.php';
 //include_once paths::MODEL_VIEW . 'view_relation_type_list.php';
 //include_once paths::MODEL_VIEW . 'view_sys_list.php';
 //include_once paths::MODEL_WORD . 'word.php';
@@ -128,6 +130,8 @@ use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
 use Zukunft\ZukunftCom\main\php\cfg\view\term_view_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_list;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_relation;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_relation_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_sys_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
@@ -185,6 +189,7 @@ class data_object
     private view_list $msk_lst;
     private component_list $cmp_lst;
     private term_view_list $trm_msk_lst;
+    private view_relation_list $mrl_lst;
 
     // for system configuration exchange
     private user_list $usr_lst;
@@ -234,6 +239,7 @@ class data_object
         $this->msk_lst = new view_list($usr);
         $this->cmp_lst = new component_list($usr);
         $this->trm_msk_lst = new term_view_list($usr);
+        $this->mrl_lst = new view_relation_list($usr);
         $this->usr_lst = new user_list($usr);
         $this->ip_lst = new ip_range_list();
         $this->msg = new user_message(); // an object field of this cache, not the message of a request
@@ -513,6 +519,14 @@ class data_object
     function term_view_list(): term_view_list
     {
         return $this->trm_msk_lst;
+    }
+
+    /**
+     * @return view_relation_list with the relations between the views e.g. the editor of a view
+     */
+    function view_relation_list(): view_relation_list
+    {
+        return $this->mrl_lst;
     }
 
     /**
@@ -979,6 +993,16 @@ class data_object
     function add_term_view(term_view $trm_msk): void
     {
         $this->trm_msk_lst->add_link($trm_msk);
+    }
+
+    /**
+     * add a view relation with the parent and child view of the import to the list
+     * @param view_relation $mrl the relation with the views of this data object
+     * @param user_message $msg to report a relation that is in the import twice
+     */
+    function add_view_relation(view_relation $mrl, user_message $msg): void
+    {
+        $this->mrl_lst->add_by_key($mrl, false, $msg);
     }
 
     /**
@@ -1630,6 +1654,13 @@ class data_object
             $this->save_views($msg, $imp);
         } else {
             log_debug('views not imported because ' . $msg->all_message_text());
+        }
+
+        // import the view relations after the views, because the relation is saved with the view ids
+        if ($msg->is_ok()) {
+            $this->mrl_lst->save($msg);
+        } else {
+            log_debug('view relations not imported because ' . $msg->all_message_text());
         }
 
         return $msg->is_ok();

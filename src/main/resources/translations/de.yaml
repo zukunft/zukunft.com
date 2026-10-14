@@ -811,6 +811,7 @@ messages:
   no: "Nein"
   "remove filter": "Filter entfernen"
   "yes or no": "Ja / Nein"
+  " for ": " für "
   button_add_languages: "Sprachen hinzufügen"
   select_view: "Ansicht auswählen"
   is_reserved: "ist ein reservierter"

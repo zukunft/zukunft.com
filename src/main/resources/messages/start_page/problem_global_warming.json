@@ -1378,13 +1378,6 @@
       "assigned_word": "GDP"
     },
     {
-      "name": "loss reduction by a carbon tariff",
-      "description": "the share of the potential loss that the emission reduction avoids, the share of the emissions that the carbon tariff keeps from leaking into a region without a carbon price; the leakage rate change is negative, because it is a reduction, while the avoided share of the loss is stated positive",
-      "expression": "\"loss reduction\",\"percent\" = 0 - \"carbon leakage rate\",\"percent\",\"assumed\"",
-      "latex": "r = -\\Delta l",
-      "assigned_word": "carbon leakage rate"
-    },
-    {
       "name": "long run damage share of the GDP",
       "description": "the share of the world GDP that a problem costs at the end of its development, the share it costs today multiplied by the factor by which the damage still grows; the share is stated negative, because it is a loss",
       "expression": "\"potential loss\",\"percent\",\"GDP\" = 0 - \"percent\",\"GDP\",\"annual\" * \"percent\",\"GDP\",\"factor\"",
@@ -1586,14 +1579,14 @@
     },
     {
       "words": [
+        "global warming",
         "public CBAM calculation",
-        "carbon tariff",
-        "carbon leakage rate",
-        "assumed",
-        "percent"
+        "loss reduction",
+        "percent",
+        "assumed"
       ],
-      "number": "-0.08",
-      "source": "Branger & Quirion (2014b)"
+      "number": "0.7273",
+      "description": "the share of the potential loss of 2.2 trillion EUR that the public CBAM calculation avoids, so that its gain is 1.6 trillion EUR; assumed, because a public calculation of the embedded emissions lets a carbon price reach most of the 72 percent of the global emissions that no direct carbon price covers yet (carbon price coverage of 28 percent), which is far more than the 8 percent leakage that the carbon tariff alone avoids (Branger & Quirion (2014b): 14 percent leakage without and 6 percent with a carbon tariff)"
     },
     {
       "words": [
@@ -1831,8 +1824,8 @@
         "probability range factor",
         "high"
       ],
-      "number": "2.5",
-      "description": "the centre times 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
+      "number": "1.375",
+      "description": "the centre times 2.5 would exceed the share limit, so the upper bound is clamped at 100 percent, which is the centre of 72.73 percent times 1.375"
     },
     {
       "words": [
@@ -9291,25 +9284,6 @@
     },
     {
       "context": [
-        "public CBAM calculation",
-        "carbon tariff",
-        "carbon leakage rate",
-        "assumed",
-        "percent"
-      ],
-      "formula": "loss reduction by a carbon tariff",
-      "words": [
-        "global warming",
-        "public CBAM calculation",
-        "loss reduction",
-        "percent",
-        "assumed"
-      ],
-      "number": "0.08",
-      "note": "0 - -0.08, the leakage rate that the carbon tariff avoids"
-    },
-    {
-      "context": [
         "global warming",
         "percent",
         "GDP",
@@ -9391,8 +9365,8 @@
         "htp",
         "assumed"
       ],
-      "number": "35.2",
-      "note": "0 - -0.37 * 1189.19 billion htp * 8 percent"
+      "number": "320.01",
+      "note": "0 - -0.37 * 1189.19 billion htp * 72.73 percent"
     },
     {
       "context": [
@@ -9414,8 +9388,8 @@
         "EUR",
         "assumed"
       ],
-      "number": "0.176",
-      "note": "2.2 trillion EUR potential loss * 8 percent loss reduction; the same number as the reward of the solution"
+      "number": "1.6",
+      "note": "2.2 trillion EUR potential loss * 72.73 percent loss reduction; the same number as the reward of the solution"
     },
     {
       "context": [
@@ -9437,8 +9411,8 @@
         "EUR",
         "assumed"
       ],
-      "number": "0.176",
-      "note": "2.2 trillion EUR potential loss * 8 percent loss reduction; only the centre is validated, because a context that names low or high would match the centre value as well"
+      "number": "1.6",
+      "note": "2.2 trillion EUR potential loss * 72.73 percent loss reduction; only the centre is validated, because a context that names low or high would match the centre value as well"
     },
     {
       "context": [
@@ -9462,8 +9436,8 @@
         "EUR per person year",
         "assumed"
       ],
-      "number": "0.0587",
-      "note": "2.2 trillion EUR * 8 percent / 3 person years; the comparison rounds to two decimals, so 0.06"
+      "number": "0.533",
+      "note": "2.2 trillion EUR * 72.73 percent / 3 person years; the comparison rounds to two decimals, so 0.53"
     },
     {
       "context": [
@@ -9618,8 +9592,8 @@
         "assumed",
         "low"
       ],
-      "number": "23.47",
-      "note": "35.2 * 0.6667; the comparison rounds to two decimals, so 23.47"
+      "number": "213.35",
+      "note": "320.01 * 0.6667; the comparison rounds to two decimals, so 213.35"
     },
     {
       "context": [
@@ -9642,8 +9616,8 @@
         "assumed",
         "high"
       ],
-      "number": "52.8",
-      "note": "35.2 * 1.5"
+      "number": "480.02",
+      "note": "320.01 * 1.5; the comparison rounds to two decimals, so 480.02"
     },
     {
       "context": [
@@ -9708,8 +9682,8 @@
         "assumed",
         "low"
       ],
-      "number": "0.032",
-      "note": "0.08 * 0.4"
+      "number": "0.2909",
+      "note": "0.7273 * 0.4; the comparison rounds to two decimals, so 0.29"
     },
     {
       "context": [
@@ -9730,8 +9704,8 @@
         "assumed",
         "high"
       ],
-      "number": "0.2",
-      "note": "0.08 * 2.5"
+      "number": "1",
+      "note": "0.7273 * 1.375, clamped at the share limit"
     },
     {
       "formula": "expected return formula",

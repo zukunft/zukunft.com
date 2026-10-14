@@ -61,6 +61,7 @@ include_once paths::SHARED_CONST_FIELDS . 'view_fields.php';
 include_once paths::MODEL_VIEW . 'view_relation.php';
 include_once paths::SHARED_HELPER . 'Message.php';
 include_once paths::SHARED_HELPER . 'TextIdObject.php';
+include_once paths::SHARED_TYPES . 'view_relation_types.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
@@ -74,6 +75,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\helper\Message;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\view_fields;
 use Zukunft\ZukunftCom\main\php\shared\helper\TextIdObject;
+use Zukunft\ZukunftCom\main\php\shared\types\view_relation_types;
 
 class view_relation_list extends sandbox_link_list
 {
@@ -120,6 +122,23 @@ class view_relation_list extends sandbox_link_list
         return $this->load_sys($qp, $msg, false, $db_con_given);
     }
 
+    /**
+     * load the view relations of several parent views with one query e.g. of all system views
+     *
+     * @param array $ids the database ids of the parent views
+     * @param user_message $msg to collect the load problems for the user
+     * @param sql_db|null $db_con_given the database connection as a parameter for the initial load of the system views
+     * @return bool true if at least one view relation is found
+     */
+    function load_by_parent_ids(array $ids, user_message $msg, ?sql_db $db_con_given = null): bool
+    {
+        global $db_con;
+
+        $db_con_used = $db_con_given ?? $db_con;
+        $qp = $this->load_sql_by_parent_ids($db_con_used->sql_creator(), $ids);
+        return $this->load_sys($qp, $msg, false, $db_con_given);
+    }
+
 
     /*
      * load sql
@@ -159,6 +178,30 @@ class view_relation_list extends sandbox_link_list
         if (count($ids) > 0) {
             $sc->add_where(view_relation_db::FLD_ID, $ids, sql_par_type::INT_LIST);
             // also load the names of both linked views, so that the relation can name them
+            $sc->set_join_usr_fields(view_db::FLD_NAMES_USR_ALL, view::class, view_relation::FLD_FROM, '', true);
+            $sc->set_join_usr_fields(view_db::FLD_NAMES_USR_ALL, view::class, view_relation::FLD_TO, '', true);
+            $qp->sql = $sc->sql();
+        } else {
+            $qp->name = '';
+        }
+        $qp->par = $sc->get_par();
+        return $qp;
+    }
+
+    /**
+     * set the SQL query parameters to load the view relations of several parent views at once
+     * @param sql_creator $sc with the target db_type set
+     * @param array $ids the database ids of the parent views
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
+     */
+    function load_sql_by_parent_ids(sql_creator $sc, array $ids): sql_par
+    {
+        $qp = $this->load_sql($sc, 'parent_ids');
+        if (count($ids) > 0) {
+            // the row mapper needs the start position, which the common list query does not select
+            $sc->set_usr_num_fields(view_relation_db::FLD_NAMES_NUM_USR);
+            $sc->add_where(view_relation::FLD_FROM, $ids, sql_par_type::INT_LIST);
+            // the same joins as the load by ids, so that the relation can name both views
             $sc->set_join_usr_fields(view_db::FLD_NAMES_USR_ALL, view::class, view_relation::FLD_FROM, '', true);
             $sc->set_join_usr_fields(view_db::FLD_NAMES_USR_ALL, view::class, view_relation::FLD_TO, '', true);
             $qp->sql = $sc->sql();
@@ -284,6 +327,26 @@ class view_relation_list extends sandbox_link_list
     }
 
     /**
+     * the editor with the lowest relation id, so that the result does not depend on the row order
+     * @param int $msk_id the database id of the view whose editor is requested
+     * @return int|null the database id of the editor view or null if the view has no editor
+     */
+    function editor_id(int $msk_id): ?int
+    {
+        $result = null;
+        $mrl_id = null;
+        foreach ($this->lst() as $mrl) {
+            $is_editor = ($mrl->parent()?->id() == $msk_id
+                and $mrl->get_predicate_code_id() == view_relation_types::EDITOR);
+            if ($is_editor and ($mrl_id === null or $mrl->id() < $mrl_id)) {
+                $mrl_id = $mrl->id();
+                $result = $mrl->child()?->id();
+            }
+        }
+        return $result;
+    }
+
+    /**
      * @return array with all component names linked usually to one view
      */
     function names(bool $ignore_excluded = false, ?int $limit = null): array
@@ -320,14 +383,7 @@ class view_relation_list extends sandbox_link_list
             // for each item of a list an empty user_message statement should be used
             // so that an issue in one item does not prevent other item from being saved
             $msk_rel_usr_msg = $msg->clone_reset();
-            // save upfront and missing components
-            $cmp = $sbx->get_component();
-            if (!$cmp->is_valid()) {
-                if ($cmp->db_ready($msk_rel_usr_msg)) {
-                    $cmp->save($msk_rel_usr_msg);
-                }
-            }
-            // save the link of the view to the component
+            // both views are saved before, because a relation never creates a view
             $sbx->save($msk_rel_usr_msg);
             // collect the user message for a consolidated list for the user
             $msg->merge($msk_rel_usr_msg);

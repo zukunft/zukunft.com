@@ -80,6 +80,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\helper\MapObject;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\component_types;
+use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_admin_dashboard;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
@@ -255,6 +256,9 @@ class horizontal_ui_tests
         $dto_start->cfg = $ui->dto->cfg;
         $dto_start->add_phrases($t_phr->list_global_problems_ui(), $msg_ui);
         $dto_start->val_lst = $t_val->value_list_solution_prio_ui();
+        // the triple list of the table editor lists the column tiers, which it also loads from the api
+        $dto_tiers = clone $dto_start;
+        $dto_tiers->phr_lst = $t_phr->list_column_tiers_ui();
         foreach ($ui->dto->typ_lst_cache->cmp_typ->lst() as $typ) {
             $test_page .= '<br><br>' . $html->dsp_text_h2($typ->name . ' (' . $typ->code_id . ')') . '<br><br><br>';
             $obj = $t_map->component_type_to_object($typ);
@@ -276,6 +280,9 @@ class horizontal_ui_tests
                     // the admin subtitle shows the creation time, so the snapshot uses a fixed one
                     $cmp_dto = clone $ui->dto;
                     $cmp_dto->snap_time = new DateTime(test_admin_dashboard::SNAP_TIME);
+                } elseif ($typ->code_id == component_types::TRIPLE_LIST) {
+                    $cmp_dto = $dto_tiers;
+                    $cmp->col_phrase = $dto_tiers->phr_lst->get_by_name(triple_names::SYSTEM_COLUMN, $msg_ui)->id();
                 }
                 $part = $cmp->dsp_entries($ui_obj, $msg_ui, $form_name, views::WORD_EDIT_ID, $cmp_dto,
                     null, '', true, [], $test_form_unique_id);

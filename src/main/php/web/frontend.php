@@ -1169,10 +1169,17 @@ class frontend
                     $result .= $html->header($title, $msg_ui, '', $lan);
                     if (!in_array($view_id, views::NO_NAVBAR_IDS)) {
                         $logged_in = $usr !== null && !$usr->is_ip_only();
+                        // the editor of the view as defined by a view relation e.g. the table editor
+                        $msk_edt = null;
+                        if ($msk_ui->editor_id != null) {
+                            $msk_edt = $this->dto->typ_lst_cache->get_view_by_id($msk_ui->editor_id);
+                        }
                         $result .= $html->navbar($view_id, $url_array,
                             $logged_in ? $usr->name() : null,
                             $logged_in ? $usr->navbar_role() : null,
-                            ($logged_in and $usr->is_admin()));
+                            ($logged_in and $usr->is_admin()),
+                            $msk_edt?->id() ?? 0,
+                            $msk_edt?->name() ?? '');
                     }
                     $result .= $html->main($dsp_text);
                     $result .= $this->user_msg_html($msg_ui);

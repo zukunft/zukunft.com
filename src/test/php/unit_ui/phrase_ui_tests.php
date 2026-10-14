@@ -439,6 +439,29 @@ class phrase_ui_tests
         $dto_no_reasons->phr_lst = $t_phr->list_global_problems_two_reasons_ui();
         $t->assert($test_name, $list->table_with_related_columns($t_trp->global_warming_reason_ui(), $msg, $dto_no_reasons), '');
 
+        $t->subheader($ts . 'triple list');
+
+        // the table editor lists the columns of each column tier
+        $test_name = 'the columns are listed below their tier';
+        $dto_col = new data_object();
+        // offline, because a unit test has no api to load the tiers and the parents from
+        $dto_col->online = false;
+        $dto_col->add_phrases($t_phr->list_column_tiers_ui(), $msg);
+        $typ_id = $dto_col->phr_lst->get_by_name(triple_names::SYSTEM_COLUMN, $msg)->id();
+        $col_html = $list->triples_of_types($t_trp->populism_solution_ui(), $typ_id, $msg, $dto_col);
+        $t->assert_text_contains($test_name, $col_html, triple_names::COLUMN_PROBLEM);
+        $test_name = '... below the name of the tier';
+        $t->assert_text_contains($test_name, $col_html, triple_names::SYSTEM_COLUMN_MAYOR);
+        $test_name = '... and the columns of the next tier below its name';
+        $t->assert_text_contains($test_name,
+            $lib->str_right_of($col_html, triple_names::SYSTEM_COLUMN_MINOR), triple_names::COLUMN_COST);
+        $test_name = '... but not below the name of the tier before';
+        $t->assert_text_not_contains($test_name,
+            $lib->str_left_of($col_html, triple_names::SYSTEM_COLUMN_MINOR), triple_names::COLUMN_COST);
+        $test_name = 'without a phrase nothing is listed';
+        $t->assert($test_name, $list->triples_of_types(null, $typ_id, $msg, $dto_col), '');
+        $t->html_page_test($html->text_h2('Triple list test') . $col_html, 'triples of types', 'triples_of_types', $msg);
+
         // negative: the component type can be assigned to any object by a view, so a class
         // that is not a phrase must say so instead of silently showing nothing
         // this block stays last, because the frontend user_message has no reset() to clear

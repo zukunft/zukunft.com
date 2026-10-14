@@ -45,6 +45,10 @@ use Zukunft\ZukunftCom\main\php\cfg\component\position_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\web\component\component_link as component_link_ui;
+use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\create\test_components;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -125,6 +129,20 @@ class component_link_tests
         $t->subheader($ts . 'component link base object handling');
         $lnk = $t_cmp->component_link_filled();
         $t->assert_reset($lnk);
+
+        // the add and edit form of a component link shows the position type and the link type,
+        // so each posts its own url var, else the form has two link type fields with the same id
+        global $ui_sys;
+        $t->subheader($ts . 'component link form');
+        $form = new system_form();
+        $lnk_ui = new component_link_ui($lnk->api_json());
+        $test_name = 'the position type field posts the position type';
+        $pos_html = $form->form_component_pos_type($lnk_ui, views::COMPONENT_LINK_ADD, $ui_sys->typ_lst_cache);
+        $t->assert_text_contains($test_name, $pos_html, 'name="' . url_var::POSITION_TYPE . '"');
+        $test_name = '... and not the link type, which the link type field posts';
+        $lnk_typ_html = $form->form_component_link_type($lnk_ui, views::COMPONENT_LINK_ADD, $ui_sys->typ_lst_cache);
+        $t->assert_text_contains($test_name, $lnk_typ_html, 'name="' . url_var::COMPONENT_LINK_TYPE . '"');
+        $t->assert_text_not_contains($test_name, $pos_html, 'name="' . url_var::COMPONENT_LINK_TYPE . '"');
 
     }
 

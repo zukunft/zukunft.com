@@ -44,5 +44,9 @@ class view_relation_types
     const int REMOVE_ID = 2;
     const string REMOVE_NAME = "remove components";
     const string REMOVE_COM = "delete the components of the child view from the parent and if the start position is set starting at this position";
+    const string EDITOR = "editor";
+    const int EDITOR_ID = 3;
+    const string EDITOR_NAME = "editor";
+    const string EDITOR_COM = "the child view is the editor of the parent view, which the edit menu of the navbar offers instead of the alternative views";
 
 }

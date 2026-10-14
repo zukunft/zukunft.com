@@ -51,6 +51,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\triple_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
@@ -350,6 +351,50 @@ class phrase_list_tests
         // negative: "global warming reason" collects reasons, so it is no list of the solutions
         $test_name = 'a list triple of another column is not returned';
         $t->assert($test_name, $phr_lst_ui->column_list_phrases([word_names::SOLUTION])->names(), []);
+
+
+        $t->subheader($ts . 'triple list');
+
+        // the table editor lists the columns related to "populism solution", which is related to
+        // "problem", because "populism is a global problem" and "global problem" is built from "problem"
+        $test_name = 'the parents follow the sides and the links up to the top';
+        $msg_ui = new user_message_ui();
+        $phr_lst_ui = $t_phr->list_column_tiers_ui();
+        $phr = $t_trp->populism_solution_ui()->phrase();
+        $t->assert_contains($test_name, $phr_lst_ui->parents_all($phr, $msg_ui)->names(),
+            [word_names::SOLUTION, word_names::POPULISM, triple_names::GLOBAL_PROBLEM, word_names::PROBLEM]);
+        $msg_ui->reset();
+        $test_name = '... but not to a phrase that links to a parent';
+        $t->assert_text_not_contains($test_name,
+            implode(', ', $phr_lst_ui->parents_all($phr, $msg_ui)->names()), triple_names::COLUMN_PROBLEM);
+        $msg_ui->reset();
+        $test_name = 'the sides only are not linked up';
+        $t->assert_text_not_contains($test_name,
+            implode(', ', $phr_lst_ui->parents_all($phr, $msg_ui, true)->names()), triple_names::GLOBAL_PROBLEM);
+        $msg_ui->reset();
+        $test_name = 'the sub types of a type are in the order of their definition';
+        $typ = $phr_lst_ui->get_by_name(triple_names::SYSTEM_COLUMN, $msg_ui);
+        $sub_names = array_map(fn($sub) => $sub->name(), $phr_lst_ui->sub_types($typ, $msg_ui));
+        $t->assert($test_name, $sub_names, [triple_names::SYSTEM_COLUMN_MAYOR, triple_names::SYSTEM_COLUMN_MINOR]);
+        $msg_ui->reset();
+        $test_name = 'a type without sub types is its own sub type';
+        $tier = $phr_lst_ui->get_by_name(triple_names::SYSTEM_COLUMN_MAYOR, $msg_ui);
+        $sub_names = array_map(fn($sub) => $sub->name(), $phr_lst_ui->sub_types($tier, $msg_ui));
+        $t->assert($test_name, $sub_names, [triple_names::SYSTEM_COLUMN_MAYOR]);
+        $msg_ui->reset();
+        $test_name = 'the triples of a type that are built from a parent are listed';
+        $par_lst = $phr_lst_ui->parents_all($phr, $msg_ui);
+        $t->assert($test_name, $phr_lst_ui->related_triples_to($tier, $par_lst, $msg_ui)->names(),
+            [triple_names::COLUMN_PROBLEM, triple_names::COLUMN_SOLUTION]);
+        $msg_ui->reset();
+        $test_name = 'a triple of a type that is built from no parent is not listed';
+        $minor = $phr_lst_ui->get_by_name(triple_names::SYSTEM_COLUMN_MINOR, $msg_ui);
+        $t->assert($test_name, $phr_lst_ui->related_triples_to($minor, $par_lst, $msg_ui)->names(), []);
+        $msg_ui->reset();
+        $test_name = 'a list has any of the given phrases';
+        $t->assert_true($test_name, $par_lst->has_any_of($phr_lst_ui));
+        $test_name = 'a list has none of the phrases of an empty list';
+        $t->assert_false($test_name, $par_lst->has_any_of(new phrase_list_ui()));
 
 
         $t->subheader($ts . 'parent names');

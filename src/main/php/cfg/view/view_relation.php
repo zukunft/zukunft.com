@@ -259,7 +259,7 @@ class view_relation extends sandbox_link
         // name is not mandatory because might be generated based on the link
         if (key_exists(json_fields::PARENT, $in_ex_json)) {
             if (is_string($in_ex_json[json_fields::PARENT])) {
-                $this->set_parent_by_name($in_ex_json[json_fields::PARENT]);
+                $this->set_parent($this->view_from_import($in_ex_json[json_fields::PARENT], $in_ex_json, $msg, $dto));
             } else {
                 $msk = new view($this->get_user());
                 $msk->import_mapper($in_ex_json[json_fields::PARENT], $msg, $dto);
@@ -268,7 +268,7 @@ class view_relation extends sandbox_link
         }
         if (key_exists(json_fields::CHILD, $in_ex_json)) {
             if (is_string($in_ex_json[json_fields::CHILD])) {
-                $this->set_child_by_name($in_ex_json[json_fields::CHILD]);
+                $this->set_child($this->view_from_import($in_ex_json[json_fields::CHILD], $in_ex_json, $msg, $dto));
             } else {
                 $msk = new view($this->get_user());
                 $msk->import_mapper($in_ex_json[json_fields::CHILD], $msg, $dto);
@@ -286,6 +286,28 @@ class view_relation extends sandbox_link
         }
 
         return $msg->is_ok();
+    }
+
+    /**
+     * the view of the import with the given name, so that the relation gets its id when the views are saved
+     * @param string $name the name of the parent or child view
+     * @param array $in_ex_json the json of the relation to name it in the message
+     * @param user_message $msg to report a view that is missing in the import
+     * @param data_object|null $dto cache of the objects imported until now
+     * @return view the view of the import or a view with only the name if it is missing
+     */
+    private function view_from_import(string $name, array $in_ex_json, user_message $msg, ?data_object $dto): view
+    {
+        $msk = $dto?->get_view_by_name($name, $msg);
+        if ($msk == null) {
+            $msg->add(msg_id::VIEW_MISSING_IMPORT, [
+                msg_id::VAR_VIEW => $name,
+                msg_id::VAR_JSON_TEXT => json_encode($in_ex_json)
+            ]);
+            $msk = new view($this->get_user());
+            $msk->set_name($name);
+        }
+        return $msk;
     }
 
 

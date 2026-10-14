@@ -105,7 +105,7 @@ changes_big: $chg, $log, $log_named
 changes_norm: $chg, $log, $log_named
 coding_rule_tests: $t_code
 component_exe: $cmp, $cmp_lnk_ui, $cmp_lnk_url_ui, $cmp_map_ui, $cmp_no_frm_ui, $cmp_ui, $cmp_zero_ui, $dbo_ui
-component_link: $cmp_lnk, $cmp_lnk_ui, $dbo, $dbo_ui, $lnk, $lnk_new, $lnk_tab, $lnk_url, $new_lnk, $obj, $vcl
+component_link: $cmp_lnk, $cmp_lnk_ui, $dbo, $dbo_ui, $lnk, $lnk_new, $lnk_tab, $lnk_ui, $lnk_url, $new_lnk, $obj, $vcl
 component_link_list: $all_lnk, $lnk_lst, $lst, $result
 component_link_type: $cmp_lnk_typ, $lnk_typ_ui
 component_list: $add_lst, $cmp_lst, $db_lst, $db_lst_all, $lst, $phr_lst, $wrd_lst
@@ -113,7 +113,7 @@ component_type: $cmp_typ
 component_type_list: $cmp_lst
 config: $cfg, $cfg_all, $cfg_db, $cfg_sys, $sys_cfg
 controller: $ctrl
-data_object: $cac, $cache_dto, $cfg, $ctg_dto, $dto, $dto_base_ui, $dto_empty, $dto_no_links, $dto_no_reasons, $dto_prio, $dto_reasons, $dto_res, $dto_rsn_sol, $dto_sim, $dto_sol, $dto_start, $dto_ui, $res_cfg, $steps_dto
+data_object: $cac, $cache_dto, $cfg, $ctg_dto, $dto, $dto_base_ui, $dto_col, $dto_empty, $dto_no_links, $dto_no_reasons, $dto_prio, $dto_reasons, $dto_res, $dto_rsn_sol, $dto_sim, $dto_sol, $dto_start, $dto_ui, $res_cfg, $steps_dto
 db_cache: $cac, $cac_cfg, $db_cache
 db_cache_page: $cac_check, $cac_page, $db_cache_page
 db_cache_status: $dbc_sta
@@ -156,7 +156,7 @@ list_sort: $lst
 message: $ui_msg
 phr_ids: $ids_to_load, $phr_ids, $phr_ids_obj
 phrase_dsp: $phr_ui
-phrase_list: $add_lst, $added_phr_lst, $additional_added, $additional_added_phrases, $additional_added_triples, $all_phr, $chart_lst, $child_lst, $col_lst, $common_phr_lst, $context_phr_lst, $db_phr_lst, $dbo, $dbo_ui, $dest_phr_lst, $exclude, $found, $found_lst, $full_lst, $gw_parts, $kept, $lnk_lst, $load_lst, $lst, $lst_imp, $lst_sym, $matches, $page_lst, $phr, $phr_ch_19, $phr_ch_20, $phr_lst, $phr_lst1, $phr_lst_added, $phr_lst_context, $phr_lst_context_ui, $phr_lst_ex, $phr_lst_ui, $phr_lst_used, $related, $remain_lst, $result, $row_parts, $self, $sort_lst, $src_phr_lst, $target, $time_lst, $unit_lst, $zh_lst
+phrase_list: $add_lst, $added_phr_lst, $additional_added, $additional_added_phrases, $additional_added_triples, $all_phr, $chart_lst, $child_lst, $col_lst, $common_phr_lst, $context_phr_lst, $db_phr_lst, $dbo, $dbo_ui, $dest_phr_lst, $exclude, $found, $found_lst, $full_lst, $gw_parts, $kept, $lnk_lst, $load_lst, $lst, $lst_imp, $lst_sym, $matches, $page_lst, $phr, $phr_ch_19, $phr_ch_20, $phr_lst, $phr_lst1, $phr_lst_added, $phr_lst_context, $phr_lst_context_ui, $phr_lst_ex, $phr_lst_ui, $phr_lst_used, $related, $remain_lst, $result, $row_parts, $self, $sort_lst, $src_phr_lst, $target, $time_lst, $typ_lst, $unit_lst, $zh_lst
 phrase_table: $phr_tbl
 phrase_table_status: $phr_tbl_sta
 phrase_type: $phr_typ
@@ -266,7 +266,7 @@ verb_list: $link_types_ui, $lst, $lst_all, $lst_dbl, $lst_empty, $vrb_lst, $vrb_
 verbs: $lst
 view_link_type: $lnk_typ_ui
 view_list: $dsp_to_validate, $lst, $msk_lst, $msk_typ_lst, $views, $wrd_lst
-view_relation_list: $mrl_lst
+view_relation_list: $all_mrl, $mrl_lst
 view_relation_type: $lnk_typ_ui
 view_style: $style
 view_sys_list: $lst, $sys_msk_cac, $sys_msk_lst

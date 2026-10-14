@@ -134,6 +134,16 @@ class result_ui_tests
         $test_name = 'a result without a formula shows no latex';
         $t->assert($test_name, new ui_base()->expression_latex_link(new result()), '');
 
+        // the result add and edit form shows the group and the source group, so the source
+        // group posts its own url var, else it overwrites the group and both fields share one id
+        $test_name = 'the source group field posts the source group';
+        $src_html = $form->form_field_source_group_or_phrases($res_page);
+        $t->assert_text_contains($test_name, $src_html, 'name="' . url_var::SOURCE_GROUP_NAME . '"');
+        $test_name = '... and not the group, which the group field posts';
+        $grp_html = $form->form_field_group_or_phrases($res_page, '');
+        $t->assert_text_contains($test_name, $grp_html, 'name="' . url_var::GROUP_NAME . '"');
+        $t->assert_text_not_contains($test_name, $src_html, 'name="' . url_var::GROUP_NAME . '"');
+
         // the used lists are slow, so only the result views that show them ask the backend for them
         $t->subheader($ts . 'page request');
         $test_name = 'a result detail page asks for the used lists';

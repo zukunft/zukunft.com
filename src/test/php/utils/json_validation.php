@@ -238,6 +238,7 @@ class json_validation
         json_fields::VALUES => 'value',
         json_fields::VALUE_LIST => 'value_list',
         json_fields::VIEWS => 'view',
+        json_fields::VIEW_RELATIONS => 'view_relation',
         json_fields::COMPONENTS => 'component',
         json_fields::CALC_VALIDATION => 'result',
         json_fields::RESULTS => 'result',

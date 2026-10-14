@@ -4,6 +4,17 @@
 
 add a subtitle with the country, region and an 'yours' option for the problem and solution list where the region and country are based on the ip if the user is not logged in and 'yours' is grey with the tooltip 'signup or login to create your personal list'
 
+### table editor
+
+create a new component 'triple list' and add it to the table editor. The component has at least two parameters: the base phrase e.g. 'populism solution' and the type phrase e.g. 'mayor column (system)'
+The component shows the name of the type phrase as a label and lists below all triples that have the type phrase as 'to' e.g. 'column problem (high prio)' that have any relation to the base phrase e.g. 'populism solution'
+
+add four components to the editor for the type phrases 'mayor column (system)', 'main column (system)', 'minor column (system)' and 'marginal column (system)' or use 'column (system)' for the selection of the component list
+
+the triple list (`ui_list::triples_of_types`) shows every triple of a type and not yet only those related to the base phrase: the walk of `phrase_list::parents_all` takes the "to" side of every link up of a word as a parent, e.g. "health" via "solution of health" for "solution", so it reaches most of the graph with one growing api call per level and the table editor page did not respond; `related_triples_to` and `parents_all` stay with their unit tests and need a narrower parent definition (e.g. only the sides and the "is a" links) before they are switched on again
+
+gap of the triple list: each list shows all its triples, because there is no view yet for the "… and n more" tail to link to, so the short, more and all versions of the list are still missing
+
 ### leftovers
 
 1. Climate gas emissions leads the cell. Its value of 2.2 is still the biggest,
@@ -1652,3 +1663,19 @@ found 2026-10-14 when the user_log table and its writer in application::end_api 
   rebuilds config_numbers::exact_lookup() once per switch, because the map is not kept between
   calls; if this shows up in the response times, keep the map until the config values change and
   collect the counts in the session to write them once per minute
+
+## view relations
+
+- the "view_relations" list of an import json is read only by the data_object import
+  (import::get_data_object); the direct import (import::put) still reports it as an unknown element,
+  because there each view is saved on its own and no import cache holds the views of the file
+- only the system views get their editor (view_sys_list::load_list), so a user view with an editor
+  relation does not yet show the editor in the navbar
+- view_relation_list::view_ids() and names() are copies of the component link list and call
+  get_view() and get_component(), which a view relation does not have; nothing calls them yet,
+  but they should return the parent and child view ids and names
+- the db comment view_relation_db::FLD_TYPE_COM names only the types 1 and 2 and not the editor (3);
+  changing it changes the table create sql and its fixture
+- view_relation_list::load_sql() selects no user number fields, so a load by ids gives the row mapper
+  no start_pos (PHP warning "Undefined array key"); the load by parent ids adds them on its own,
+  the common load_sql should add them like component_link_list, which changes the by_ids fixtures

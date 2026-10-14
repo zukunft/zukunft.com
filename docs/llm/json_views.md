@@ -192,3 +192,24 @@ wraps them onto fewer rows (down to one) as the screen narrows; build a multi-ro
 column by giving its first component the `side_or_*` type and the rest `combine`.
 `style` is an optional Bootstrap column class (e.g. `col-md-4`).
 
+## View relations
+
+A view relation links a parent view to a child view; its `type` says what the
+child does for the parent:
+
+```json
+"view_relations": [
+  { "parent": "Table", "child": "Table editor", "type": "editor" }
+]
+```
+
+| type | effect |
+|---|---|
+| `add_components` | the components of the child are added to the parent at the start `position` |
+| `del_components` | the components of the child are removed from the parent |
+| `editor` | the edit menu of the navbar offers the child instead of the alternative views, opened with the same object |
+
+`parent` and `child` name views **of the same file**, because the import maps a
+relation to the views it has just read; a view of another file is re-declared by
+its name only (`{ "name": "Table" }`), like a borrowed word.
+

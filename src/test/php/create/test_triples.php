@@ -1467,6 +1467,67 @@ class test_triples extends test_objects
     }
 
     /**
+     * @return triple "column (system)" - the keyword the column tiers are built from
+     */
+    function column_system(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::SYSTEM_COLUMN_ID, triple_names::SYSTEM_COLUMN);
+        return $trp;
+    }
+
+    /**
+     * @return triple "mayor column (system)" with the "column (system)" it is a sub type of
+     */
+    function column_tier_mayor(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = $this->column_mayor();
+        $trp->set_from($this->column_system()->phrase());
+        $trp->set_verb($t_vrb->verb_can_be());
+        $trp->set_to($t_wrd->word_mayor()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "minor column (system)" with the "column (system)" it is a sub type of
+     */
+    function column_tier_minor(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = $this->column_minor();
+        $trp->set_from($this->column_system()->phrase());
+        $trp->set_verb($t_vrb->verb_can_be());
+        $trp->set_to($t_wrd->word_minor()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "populism solution" - the base phrase of the table editor example
+     */
+    function populism_solution(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::POPULISM_SOLUTION_ID, triple_names::POPULISM_SOLUTION);
+        $trp->set_from($t_wrd->solution()->phrase());
+        $trp->set_verb($t_vrb->verb_of());
+        $trp->set_to($t_wrd->word_populism()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple_ui "populism solution" as the page phrase of the table editor
+     */
+    function populism_solution_ui(): triple_ui
+    {
+        return $this->page_ui($this->populism_solution());
+    }
+
+    /**
      * @return triple "climate gas emissions" - the reason of global warming
      */
     function climate_gas_emissions(): triple

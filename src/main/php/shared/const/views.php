@@ -103,6 +103,8 @@ class views
     const string CALCULATOR_NAME = 'Calculator';
     const string CALCULATOR_COM = 'The values related to a word or triple as a table with the defined columns, so that the numbers of a question can be compared';
     // placeholders with a title and a phrase selector until the editors are done (editor_views.json)
+    const string TABLE_EDITOR = 'table_editor';
+    const int TABLE_EDITOR_ID = 193;
     const string TABLE_EDITOR_NAME = 'Table editor';
     const string CALCULATION_EDITOR_NAME = 'Calculation editor';
     const string VALUE_OVERWRITE = 'value_overwrite';
@@ -761,11 +763,13 @@ class views
 
     // default view for a phrase and the views that show a word or a triple the same way
     // e.g. the table of the reasons of global warming, which is the triple "global warming reason"
+    // and the table editor, which the navbar opens with the phrase id of the table
     const array PHRASE_MASKS_IDS = [
         self::PHRASE_ID,
         self::TERM_ID,
         self::TABLE_ID,
         self::CALCULATOR_ID,
+        self::TABLE_EDITOR_ID,
     ];
 
     // system masks that have a source as the main object

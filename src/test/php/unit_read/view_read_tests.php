@@ -157,6 +157,13 @@ class view_read_tests
         $test_name = '... and no component link of another system view';
         $t->assert($test_name, $sys_word->cmp_lnk_lst->view_ids(), [$sys_word->id()]);
 
+        // the view relations of all system views are loaded at once too, which gives the table
+        // its editor as the editor_views.json import has defined it
+        $test_name = 'the table view has the table editor as editor';
+        $t->assert($test_name, $lst->get_by_code_id(view_shared::TABLE)?->editor_id, view_shared::TABLE_EDITOR_ID);
+        $test_name = '... but a view without an editor relation has no editor';
+        $t->assert_null($test_name, $sys_word->editor_id);
+
         // check all system views
         // TODO Prio 2 activate
         //$t->assert_view(view_shared::DSP_COMPONENT_ADD, $t->usr1);

@@ -45,6 +45,7 @@ include_once paths::SHARED . 'library.php';
 include_once paths::SHARED_CONST . 'refs.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
+include_once paths::SHARED_TYPES . 'view_relation_types.php';
 include_once test_paths::CONST . 'files.php';
 include_once test_paths::CONST . 'triple_names.php';
 include_once test_paths::CONST . 'word_names.php';
@@ -65,6 +66,7 @@ use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\component_types;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
+use Zukunft\ZukunftCom\main\php\shared\types\view_relation_types;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
@@ -174,7 +176,33 @@ class import_tests
         $trp_missing->set_name(triple_names::MATH_CONST);
         $t->assert_null($test_name, $dto->get_object_by_name($trp_missing, $msg)?->name());
 
+        // a view relation names its views, which the import finds in the views of the same file
+        $test_name = 'JSON import view relation count';
+        $msg = new user_message($t->usr_dev);
+        $mrl_lst_json = [[
+            json_fields::PARENT => views::TABLE_NAME,
+            json_fields::CHILD => views::TABLE_EDITOR_NAME,
+            json_fields::TYPE_NAME => view_relation_types::EDITOR
+        ]];
+        $mrl_json = [
+            json_fields::VIEWS => [[json_fields::NAME => views::TABLE_NAME], [json_fields::NAME => views::TABLE_EDITOR_NAME]],
+            json_fields::VIEW_RELATIONS => $mrl_lst_json
+        ];
+        $dto = $imp->get_data_object($mrl_json, $msg);
+        $t->assert($test_name, $dto->view_relation_list()->count(), 1);
+        $test_name = '... and the relation is the editor of the view of the same file';
+        $mrl = $dto->view_relation_list()->lst()[0] ?? null;
+        $t->assert($test_name, $mrl?->get_predicate_code_id(), view_relation_types::EDITOR);
+        $t->assert_true($test_name, $mrl?->parent() === $dto->get_view_by_name(views::TABLE_NAME, $msg));
+        $test_name = 'a view relation whose views are missing in the import is reported';
+        $msg = new user_message($t->usr_dev);
+        $dto = $imp->get_data_object([json_fields::VIEW_RELATIONS => $mrl_lst_json], $msg);
+        $t->assert_text_contains($test_name, $msg->text(), views::TABLE_EDITOR_NAME);
+        $test_name = '... and not added';
+        $t->assert($test_name, $dto->view_relation_list()->count(), 0);
+
         $test_name = 'JSON import source count';
+        $msg = new user_message($t->usr_dev);
         $json_str = file_get_contents(test_files::IMPORT_SOURCES . test_files::JSON);
         $json_array = json_decode($json_str, true);
         $dto = $imp->get_data_object($json_array, $msg);

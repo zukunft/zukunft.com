@@ -480,6 +480,41 @@ class test_views extends test_objects
         return $mrl;
     }
 
+    /**
+     * @return view the table of the values of a phrase, which has the table editor as editor
+     */
+    function view_table(): view
+    {
+        $msk = new view($this->env->usr1);
+        $msk->set(views::TABLE_ID, views::TABLE_NAME);
+        $msk->set_code_id_db(views::TABLE);
+        return $msk;
+    }
+
+    /**
+     * @return view the editor of the table view
+     */
+    function view_table_editor(): view
+    {
+        $msk = new view($this->env->usr1);
+        $msk->set(views::TABLE_EDITOR_ID, views::TABLE_EDITOR_NAME);
+        $msk->set_code_id_db(views::TABLE_EDITOR);
+        return $msk;
+    }
+
+    /**
+     * @return view_relation the table editor as the editor of the table view
+     */
+    function view_relation_editor(): view_relation
+    {
+        $mrl = new view_relation($this->env->usr1);
+        $mrl->id = 2;
+        $mrl->set_parent($this->view_table());
+        $mrl->set_relation_type(view_relation_types::EDITOR);
+        $mrl->set_child($this->view_table_editor());
+        return $mrl;
+    }
+
     function view_relation(): view_relation
     {
         $mrl = new view_relation($this->env->usr1);

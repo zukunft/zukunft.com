@@ -39,6 +39,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation_list;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
@@ -145,6 +146,20 @@ class view_tests
         $msk = $t_msk->view_protected();
         $t->assert_api($msk);
         $t->assert_api_to_ui($msk, new view_ui());
+
+        // the edit menu of the navbar offers the editor of a view, so the api sends its id
+        $test_name = 'the api of a view with an editor sends the editor id';
+        $msg = new user_message($t->usr1);
+        $msk = $t_msk->view_table();
+        $msk->editor_id = views::TABLE_EDITOR_ID;
+        $t->assert($test_name, $msk->api_json_array([], $msg)[json_fields::EDITOR_ID] ?? null, views::TABLE_EDITOR_ID);
+        $test_name = '... which the frontend view gets';
+        $t->assert($test_name, new view_ui($msk->api_json())->editor_id, views::TABLE_EDITOR_ID);
+        $test_name = 'a view without an editor sends no editor id';
+        $msk = $t_msk->view_table();
+        $t->assert_false($test_name, array_key_exists(json_fields::EDITOR_ID, $msk->api_json_array([], $msg)));
+        $test_name = '... so the frontend view has none';
+        $t->assert_null($test_name, new view_ui($msk->api_json())->editor_id);
 
         // the view add and edit form has a code id field like the source and the component form,
         // but a code id is only shown to an admin or a developer and only a developer gets the
@@ -319,11 +334,27 @@ class view_tests
         $mrl_lst = new view_relation_list($t->usr1);
         $this->assert_sql_by_view($t, $sc, $mrl_lst, $t_msk->view());
         $this->assert_sql_by_ids($t, $sc, $mrl_lst);
+        $this->assert_sql_by_parent_ids($t, $sc, $mrl_lst);
 
         // without an id the query has no name, so that the caller does not send it to the database
         $test_name = 'the view relation list query of an empty id list is not prepared';
         $sc->reset(sql_db::POSTGRES);
         $t->assert($test_name, $mrl_lst->load_sql_by_ids($sc, [])->name, '');
+        $test_name = '... nor of an empty parent view id list';
+        $t->assert($test_name, $mrl_lst->load_sql_by_parent_ids($sc, [])->name, '');
+
+        // the relations of all system views are loaded at once and each view gets its editor
+        $t->subheader($ts . 'editor');
+        $msg = new user_message($t->usr1);
+        $mrl_lst = new view_relation_list($t->usr1);
+        $mrl_lst->add_by_key($t_msk->view_relation(), false, $msg);
+        $mrl_lst->add_by_key($t_msk->view_relation_editor(), false, $msg);
+        $test_name = 'the editor of a view is the child of its editor relation';
+        $t->assert($test_name, $mrl_lst->editor_id(views::TABLE_ID), views::TABLE_EDITOR_ID);
+        $test_name = '... but a relation that adds components names no editor';
+        $t->assert_null($test_name, $mrl_lst->editor_id(views::WORD_EDIT_ID));
+        $test_name = '... and a view without a relation has no editor';
+        $t->assert_null($test_name, $mrl_lst->editor_id(views::START_ID));
 
 
         /*
@@ -403,6 +434,37 @@ class view_tests
         if ($result) {
             $sc->reset(sql_db::MYSQL);
             $qp = $mrl->load_sql_by_ids($sc, [1, 2]);
+            $result = $t->assert_qp($qp, $sc->db_type);
+        }
+        return $result;
+    }
+
+    /**
+     * check the SQL statement to load the view relations of several parent views at once
+     * e.g. of all system views for all allowed SQL database dialects
+     *
+     * @param test_cleanup $t the test environment
+     * @param sql_creator $sc a sql creator object that can be empty
+     * @param view_relation_list $mrl the view relation list object
+     * @return bool true if all tests are fine
+     */
+    function assert_sql_by_parent_ids(
+        test_cleanup       $t,
+        sql_creator        $sc,
+        view_relation_list $mrl
+    ): bool
+    {
+        $ids = [views::TABLE_ID, views::WORD_EDIT_ID];
+
+        // check the Postgres query syntax
+        $sc->reset(sql_db::POSTGRES);
+        $qp = $mrl->load_sql_by_parent_ids($sc, $ids);
+        $result = $t->assert_qp($qp, $sc->db_type);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $sc->reset(sql_db::MYSQL);
+            $qp = $mrl->load_sql_by_parent_ids($sc, $ids);
             $result = $t->assert_qp($qp, $sc->db_type);
         }
         return $result;

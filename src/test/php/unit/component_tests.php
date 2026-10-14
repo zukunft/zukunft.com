@@ -65,11 +65,14 @@ use Zukunft\ZukunftCom\main\php\shared\types\component_link_types;
 use Zukunft\ZukunftCom\main\php\shared\types\component_types;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_components;
 use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
 use Zukunft\ZukunftCom\test\php\create\test_users;
+use Zukunft\ZukunftCom\test\php\create\test_views;
+use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class component_tests
@@ -81,6 +84,7 @@ class component_tests
         // init
         $sc = new sql_creator();
         $t_cmp = new test_components($t);
+        $t_wrd = new test_words($t);
         $t->name = 'component->';
         $t->resource_path = 'db/component/';
 
@@ -269,6 +273,14 @@ class component_tests
         $t->assert_text_contains($test_name, $sub_title,
             $lib->msg_var_replace(msg_id::SYS_MSG_USAGE_ONE->value, msg_id::VAR_USAGE, 1));
 
+        $test_name = 'the editor title names the phrase of the page';
+        $title = $page->title_for_phrase(msg_id::SYSTEM_TITLE_TABLE_EDITOR, $t_wrd->zh_ui());
+        $t->assert_text_contains($test_name, $title,
+            $mtr->txt(msg_id::SYSTEM_TITLE_TABLE_EDITOR) . $mtr->txt(msg_id::FOR) . word_names::ZH);
+        $test_name = 'the editor title without a phrase is the plain title';
+        $title = $page->title_for_phrase(msg_id::SYSTEM_TITLE_TABLE_EDITOR);
+        $t->assert_text_not_contains($test_name, $title, $mtr->txt(msg_id::FOR));
+
         $t->subheader($ts . 'component frontend');
         $t->assert_api_to_ui($cmp, new component_ui());
 
@@ -325,6 +337,18 @@ class component_tests
         $sel_html = $cmp_no_frm_ui->formula_selector(views::COMPONENT_EDIT, $frm_lst_ui);
         $t->assert_false($test_name, (bool)preg_match(
             '/value="' . formula_names::SCALE_TO_SEC_ID . '"\s+selected/', $sel_html));
+
+        // the component add form shows the view selector and the table of the linked views, so
+        // the view to link posts its own url var, else the form has two fields with the same id
+        $test_name = 'the linked views of a component post the view to link';
+        $t_msk = new test_views($t);
+        $msg_ui = new user_message_ui();
+        $lnk_html = $form->form_table_linked_view($cmp_ui, views::COMPONENT_ADD, $msg_ui, $t_msk->view_list_ui());
+        $t->assert_text_contains($test_name, $lnk_html, 'name="' . url_var::COMPONENT_LINK . '"');
+        $test_name = '... and not the view of the form, which the view selector posts';
+        $msk_html = $form->form_view($cmp_ui, views::COMPONENT_ADD, $msg_ui, $t_msk->view_list_ui());
+        $t->assert_text_contains($test_name, $msk_html, 'name="' . url_var::VIEW . '"');
+        $t->assert_text_not_contains($test_name, $lnk_html, 'name="' . url_var::VIEW . '"');
 
         // the ui message links posted by the component form are mapped to the frontend object;
         // like every edit form the url carries the id of the changed component, because an url

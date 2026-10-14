@@ -78,11 +78,16 @@ class word_ui_read_tests
         $test_page .= 'edit button: ' . $wrd->btn_edit($url_arr, $base_url) . '<br>';
         $test_page .= 'del button: ' . $wrd->btn_del($url_arr, $base_url) . '<br>';
         $test_page .= 'unlink button: ' . $wrd->btn_unlink(1) . '<br>';
+
+        // the same field with the long view list is checked apart from the page,
+        // because one page must not hold two fields with the same id
+        $test_name = 'the view selector with the long view list keeps the view url var as field name';
+        $long_sel = $wrd->view_selector(views::WORD_EDIT, $t_msk->view_list_long_dsp(), $msg);
+        $t->assert_text_contains($test_name, $long_sel, 'name="' . url_var::VIEW . '"');
+
         $test_page .= $html->text_h2('select');
         $from_rows = $wrd->dsp_type_selector(views::WORD_EDIT, $msg, '', $ui->dto->typ_lst_cache) . '<br>';
         $from_rows .= $wrd->view_selector(views::WORD_EDIT, $t_msk->view_list_ui(), $msg) . '<br>';
-        // the same field with the long view list, so the field name stays the view url var
-        $from_rows .= $wrd->view_selector(views::WORD_EDIT, $t_msk->view_list_long_dsp(), $msg) . '<br>';
         $test_page .= $html->form(views::WORD_EDIT, $from_rows);
         $test_page .= $html->text_h2('table');
         $test_page .= $html->tbl($html->tr($wrd->th()) . $wrd_pi->tr());

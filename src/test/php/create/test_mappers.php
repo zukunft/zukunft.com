@@ -939,6 +939,9 @@ class test_mappers
             case component_types::FORM_FIELD_WEIGHT:
                 $obj = $t_trp->triple_filled();
                 break;
+            case component_types::TRIPLE_LIST:
+                $obj = $t_trp->populism_solution();
+                break;
             case component_types::FORM_SELECT_SOURCE:
             case component_types::FORM_SELECT_SOURCES:
             case component_types::FORM_SELECT_SOURCE_TYPE:

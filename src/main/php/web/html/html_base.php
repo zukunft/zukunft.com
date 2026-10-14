@@ -402,13 +402,17 @@ class html_base
      * @param string|null $usr_name the logged-in username to display; null when not logged in
      * @param string|null $usr_role the profile/role name to display next to the username; null if not set
      * @param bool $is_admin true to offer the admin dashboard in the user menu
+     * @param int $edt_id the view id of the editor of the current view; 0 offers the alternative views instead
+     * @param string $edt_name the name of the editor view shown in the edit menu
      */
     function navbar(
         int     $msk_id = 0,
         array   $url_array = [],
         ?string $usr_name = null,
         ?string $usr_role = null,
-        bool    $is_admin = false
+        bool    $is_admin = false,
+        int     $edt_id = 0,
+        string  $edt_name = ''
     ): string
     {
         global $ui_sys;
@@ -435,7 +439,7 @@ class html_base
         $result .= '<' . self::DETAILS . ' ' . self::CLASS_HTML . '="view-menu">' . "\n";
         $result .= '<' . self::SUMMARY . '><' . self::I . ' ' . self::CLASS_HTML . '="fas fa-edit"></' . self::I . '></' . self::SUMMARY . '>' . "\n";
         // TODO switch the view mask to a suggested related view
-        $result .= $this->view_change_list($msk_id, $url_array, $is_admin) . "\n";
+        $result .= $this->view_change_list($msk_id, $url_array, $is_admin, $edt_id, $edt_name) . "\n";
         $result .= '</' . self::DETAILS . '>' . "\n";
         $result .= '<' . self::DETAILS . ' ' . self::CLASS_HTML . '="lang-menu">' . "\n";
         $result .= '<' . self::SUMMARY . '><' . self::I . ' ' . self::CLASS_HTML . '="fas fa-globe"></' . self::I . '></' . self::SUMMARY . '>' . "\n";
@@ -466,10 +470,20 @@ class html_base
      * @param array $url_array the current request parameters used to build back-navigation links
      * @param bool $is_admin true to offer the server admin page at the end
      */
-    private function view_change_list(int $msk_id = 0, array $url_array = [], bool $is_admin = false): string
+    private function view_change_list(int $msk_id = 0, array $url_array = [], bool $is_admin = false, int $edt_id = 0, string $edt_name = ''): string
     {
         global $mtr;
-        $result = $this->list_item($this->ref(api::MAIN_SCRIPT . '?' . url_var::MASK . '=view_change&id=2', $mtr->txt(msg_id::NAVBAR_ALTERNATIVE_VIEW))) . "\n";
+        if ($edt_id != 0) {
+            // the editor shows the same object, so it gets the page vars of the current page
+            $edt_par = [url_var::MASK => $edt_id] + self::page_url_array($url_array);
+            $url_edt = $this->url_with_back($this->page_url($edt_par), $url_array);
+            // like the edit icons behind the title grey with the request to log in if the user cannot save a change
+            // and for a user who can no tooltip, because ref() skips a title that repeats the name
+            [$edt_style, $edt_tip] = $this->change_style_and_tip('', $edt_name);
+            $result = $this->list_item($this->ref($url_edt, $edt_name, $edt_tip, $edt_style)) . "\n";
+        } else {
+            $result = $this->list_item($this->ref(api::MAIN_SCRIPT . '?' . url_var::MASK . '=view_change&id=2', $mtr->txt(msg_id::NAVBAR_ALTERNATIVE_VIEW))) . "\n";
+        }
         $result .= $this->list_item($this->ref('?view=more', $mtr->txt(msg_id::AND_MORE))) . "\n";
         $url_msk_edit = $this->url_with_back(api::MAIN_SCRIPT
             . '?' . url_var::MASK . '=' . views::VIEW_EDIT_ID

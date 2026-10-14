@@ -2083,6 +2083,8 @@
             ta_object.php
     \-- term_view_list - section for function term_view_list not yet defined that it should be set and get in /helper/da
             ta_object.php
+    \-- view_relation_list - section for function view_relation_list not yet defined that it should be set and get in /h
+            elper/data_object.php
     \-- user_list - section for function user_list not yet defined that it should be set and get in /helper/data_object.
             php
     \-- ip_range_list - section for function ip_range_list not yet defined that it should be set and get in /helper/data
@@ -2132,6 +2134,8 @@
             ct.php
     \-- add_term_view - section for function add_term_view not yet defined that it should be modify in /helper/data_obje
             ct.php
+    \-- add_view_relation - section for function add_view_relation not yet defined that it should be modify in /helper/d
+            ata_object.php
     \-- add_user - section for function add_user not yet defined that it should be modify in /helper/data_object.php
     \-- add_ip_range - section for function add_ip_range not yet defined that it should be modify in /helper/data_object
             .php
@@ -4158,6 +4162,10 @@
     \-- add_by_key - section for function add_by_key not yet defined that it should be modify in /view/view_relation_lis
             t.php
     \-- del - section for function del is expected to be del in /view/view_relation_list.php
+    \-- editor_id - section for function editor_id not yet defined that it should be info in /view/view_relation_list.ph
+            p
+    \-- order error - order of section load sql has difference at load_by_ids should be before load_sql_by_parent_ids,
+            order of section info has difference at names should be before editor_id
 \-- view_sys_list
     \-- __construct - section for function __construct is expected to be construct and map in /view/view_sys_list.php
     \-- load_sql_list - section for function load_sql_list is expected to be load sql in /view/view_sys_list.php
@@ -4485,7 +4493,6 @@
 \-- load
     \-- load_by_view
         \-- component_link_list - interface function to load all component links of the given view
-        \-- view_relation_list - interface function to load all view relations of the given view
     \-- load_by_view_with_components
         \-- component_link_list - interface function to load all component links and the components of the given view
     \-- load_by_view_ids
@@ -4697,7 +4704,6 @@
 \-- load sql
     \-- load_sql_by_view
         \-- component_link_list - set the SQL query parameters to load all components linked to a view
-        \-- view_relation_list - set the SQL query parameters to load all components linked to a view
     \-- load_sql_by_view_ids
         \-- component_link_list - set the SQL query parameters to load the component links of several views at once
     \-- load_sql_by_component
@@ -4707,15 +4713,12 @@
                 ds
         \-- term_list - create an SQL statement to retrieve a list of terms from the database
         \-- ref_list - set the SQL query parameters to load a list of references by their database ids
-        \-- view_relation_list - set the SQL query parameters to load a list of view relations by the view relation ids
     \-- load_by_ids
         \-- component_link_list - load a list of component links by the given component link ids
-        \-- view_relation_list - load a list of view relations by the given view relation ids
     \-- load_sql
         \-- component_link_list - set the common part of the SQL query component links
         \-- db_cache_page - create the common part of an SQL statement to retrieve a cached html page from the database
         \-- ip_range - create the common part of an SQL statement to retrieve an ip range from the database
-        \-- view_relation_list - set the common part of the SQL query view relations
     \-- load_sql_by_url
         \-- db_cache_page - create an SQL statement to retrieve a cached html page by url from the database
     \-- load_sql_by_user
@@ -4746,7 +4749,6 @@
         \-- value_geo - create an array with the export json fields
         \-- value_text - create an array with the export json fields
         \-- value_time - create an array with the export json fields
-        \-- view_relation_list - create an array with the export json fields
     \-- import_mapper
         \-- db_object_multi - general part to import a database multi table object from a JSON array object
     \-- id
@@ -4762,7 +4764,6 @@
 \-- modify
     \-- add_by_key
         \-- component_link_list - add a view component link to the list without saving it to the database
-        \-- view_relation_list - add a view relation to the list without saving it to the database
     \-- 1
         \-- element_list - add an object to the list that does
         \-- term_list - removes all terms from this list that are not in the given list
@@ -4798,7 +4799,6 @@
                 d entry)
         \-- ref_list - add a reference to the list that does not yet have an id but has the phrase name,
                  the type and the external key set
-        \-- view_relation_list - delete all loaded view relations e.g. to delete all the links assigned to a view
     \-- del_by_user
         \-- db_cache - remove the cache entries of one user, because they reference the user row and are derived
     \-- del_by_types
@@ -4853,14 +4853,12 @@
 \-- info
     \-- view_ids
         \-- component_link_list - @return array with all view ids
-        \-- view_relation_list - @return array with all view ids
     \-- by_view_id
         \-- component_link_list - the links of one view taken from the links of several views loaded by load_by_view_ids
     \-- cmp_ids
         \-- component_link_list - @return array with all component ids
     \-- names
         \-- component_link_list - @return array with all component names linked usually to one view
-        \-- view_relation_list - @return array with all component names linked usually to one view
     \-- ids
         \-- element_list - get the first ids from the list e.g. to show it to humans
     \-- is_valid
@@ -4920,7 +4918,6 @@
         \-- ip_range_list - store all ip ranges from this list in the database using grouped calls of predefined sql fun
                 ctions
         \-- verb_list - simple loop to save all verbs of the list
-        \-- view_relation_list - simple but slow function to add of update all list items in the database
     \-- save_html
         \-- db_cache_page - add or replace the cached html page for the given url
     \-- save_json
@@ -6642,6 +6639,7 @@
     \-- system_tile - section for function system_tile missing in /component/execute/system_page.php
     \-- title_with_object_name - section for function title_with_object_name missing in /component/execute/system_page.p
             hp
+    \-- title_for_phrase - section for function title_for_phrase missing in /component/execute/system_page.php
     \-- related_view_selector - section for function related_view_selector missing in /component/execute/system_page.php
     \-- system_sub_tile - section for function system_sub_tile missing in /component/execute/system_page.php
     \-- system_sub_tile_var - section for function system_sub_tile_var missing in /component/execute/system_page.php
@@ -6753,6 +6751,7 @@
     \-- result_list - section for function result_list missing in /component/execute/ui_list.php
     \-- results - section for function results missing in /component/execute/ui_list.php
     \-- results_related - section for function results_related missing in /component/execute/ui_list.php
+    \-- triples_of_types - section for function triples_of_types missing in /component/execute/ui_list.php
     \-- phrases_related - section for function phrases_related missing in /component/execute/ui_list.php
     \-- list_sort - section for function list_sort missing in /component/execute/ui_list.php
     \-- start_list - section for function start_list missing in /component/execute/ui_list.php
@@ -7476,6 +7475,13 @@
             t.php
     \-- child_phrases - section for function child_phrases not yet defined that it should be related in /phrase/phrase_l
             ist.php
+    \-- parents_all - section for function parents_all not yet defined that it should be related in /phrase/phrase_list.
+            php
+    \-- sub_types - section for function sub_types not yet defined that it should be related in /phrase/phrase_list.php
+    \-- related_triples_to - section for function related_triples_to not yet defined that it should be related in /phras
+            e/phrase_list.php
+    \-- has_any_of - section for function has_any_of not yet defined that it should be related in /phrase/phrase_list.ph
+            p
     \-- column_list_phrases - section for function column_list_phrases not yet defined that it should be related in /phr
             ase/phrase_list.php
     \-- column_names - section for function column_names not yet defined that it should be related in /phrase/phrase_lis
@@ -9096,6 +9102,9 @@
     \-- title_with_object_name
         \-- system_page - HTML for a page title that names the object shown on the page e.g. User "zukunft.com system te
                 st"
+    \-- title_for_phrase
+        \-- system_page - HTML for a page title that names the phrase the page works on e.g. Table editor for populism s
+                olution
     \-- related_view_selector
         \-- system_page - the "..." in the right corner below the title of a default, detail, range or detail with
     \-- system_sub_tile
@@ -9287,6 +9296,8 @@
         \-- ui_list - TODO move code from component_dsp_old
     \-- results_related
         \-- ui_list - show the results related to the given object grouped like the values of a phrase (see
+    \-- triples_of_types
+        \-- ui_list - the triples that point to the given type, one list per sub type of the type below its name,
     \-- phrases_related
         \-- ui_list - TODO Prio 0 fill with real code
     \-- list_sort
@@ -9580,7 +9591,7 @@
     \-- form_field_group_or_phrases
         \-- system_form - @param db_object $dbo the value or result with the group name
     \-- form_field_source_group_or_phrases
-        \-- system_form - @return string the html code to request the group name or a list of phrases
+        \-- system_form - the source group has its own url var and label, because the same form shows the group of
     \-- form_field_formula_link_priority
         \-- system_form - shows the current order number, so that saving the form does not drop it
     \-- form_field_view_link_priority
@@ -9847,6 +9858,14 @@
         \-- phrase_list - get the names of the phrases that this list links the given phrase to by a triple, the
     \-- child_phrases
         \-- phrase_list - the phrases that this list links to the given phrase by a triple
+    \-- parents_all
+        \-- phrase_list - the given phrase and every phrase above it in this list: the sides that a triple is built
+    \-- sub_types
+        \-- phrase_list - the sub types of the given type, e.g. the column tiers "mayor column (system)" to
+    \-- related_triples_to
+        \-- phrase_list - the triples of this list that link a phrase related to the given parents to the given type,
+    \-- has_any_of
+        \-- phrase_list - @param phrase_list $phr_lst the phrases to look for
     \-- column_list_phrases
         \-- phrase_list - the list triples of this list that collect the phrases of a table column for one row, e.g.
     \-- column_names

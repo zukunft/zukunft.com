@@ -126,6 +126,9 @@ class view_base extends sandbox_code_id
     // the style e.g. to define the width
     protected ?int $style_id = null;
 
+    // the view id of the editor of this view, which the edit menu of the navbar offers
+    public ?int $editor_id = null;
+
 
     /*
      * construct and map
@@ -170,6 +173,7 @@ class view_base extends sandbox_code_id
         if (array_key_exists(json_fields::STYLE, $json_array)) {
             $this->set_style_id($json_array[json_fields::STYLE]);
         }
+        $this->editor_id = $json_array[json_fields::EDITOR_ID] ?? null;
         // set the components
         $cmp_lst = new component_list();
         if (array_key_exists(json_fields::COMPONENTS, $json_array)) {

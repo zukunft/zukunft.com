@@ -83,6 +83,7 @@ use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
 use Zukunft\ZukunftCom\main\php\web\result\result as result_ui;
 use Zukunft\ZukunftCom\main\php\web\result\result_list as result_list_ui;
+use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\web\value\value as value_ui;
 use Zukunft\ZukunftCom\main\php\web\verb\verb as verb_ui;
 use Zukunft\ZukunftCom\main\php\web\word\word;
@@ -93,6 +94,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\enum\table_orders;
+use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\component_types as comp_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\formula_types;
@@ -480,6 +482,40 @@ class base_ui_tests
         ]);
         $t->assert_text_contains($test_name, $navbar_normal_page,
             api::LOGIN_SCRIPT . '&amp;' . url_var::BACK . url_var::MASK . '=' . views::WORD_ID);
+
+        // the edit menu of a view with an editor (a view relation of the editor type) opens the
+        // editor with the same object, e.g. the table editor for the table of a phrase
+        $test_name = 'the edit menu of a view with an editor opens the editor with the same object';
+        $table_page = [url_var::MASK => (string)views::TABLE_ID, url_var::ID => (string)word_names::MATH_ID];
+        $navbar_table = $html->navbar(views::TABLE_ID, $table_page, null, null, false,
+            views::TABLE_EDITOR_ID, views::TABLE_EDITOR_NAME);
+        $t->assert_text_contains($test_name, $navbar_table,
+            url_var::MASK . '=' . views::TABLE_EDITOR_ID . '&amp;' . url_var::ID . '=' . word_names::MATH_ID);
+        $t->assert_text_contains($test_name, $navbar_table, '>' . views::TABLE_EDITOR_NAME . '<');
+        $test_name = '... and returns to the table';
+        $t->assert_text_contains($test_name, $navbar_table, url_var::BACK . url_var::MASK . '=' . views::TABLE_ID);
+        $alternative = '>' . $mtr->txt(msg_id::NAVBAR_ALTERNATIVE_VIEW) . '<';
+        $test_name = '... instead of the alternative views';
+        $t->assert_text_not_contains($test_name, $navbar_table, $alternative);
+        $test_name = 'the edit menu of a view without an editor offers the alternative views';
+        $t->assert_text_contains($test_name, $navbar_normal_page, $alternative);
+        // like the edit icons behind the title the editor of a user without login is grey and asks for a login
+        $usr_known = $ui_sys->usr;
+        $ip_ui = new user_ui();
+        $ip_ui->api_mapper([
+            json_fields::ID => users::TEST_USER_ID,
+            json_fields::PROFILE_ID => $ui_sys->typ_lst_cache->usr_pro->id(user_profiles::IP_ONLY)], $msg_ui);
+        $ui_sys->usr = $ip_ui;
+        $navbar_table_ip = $html->navbar(views::TABLE_ID, $table_page, null, null, false,
+            views::TABLE_EDITOR_ID, views::TABLE_EDITOR_NAME);
+        $ui_sys->usr = $usr_known;
+        $test_name = 'the editor in the edit menu of a user without login is grey';
+        $t->assert_text_contains($test_name, $navbar_table_ip, styles::STYLE_GREY);
+        $test_name = '... and asks for a login';
+        $t->assert_text_contains($test_name, $navbar_table_ip, $mtr->txt(msg_id::CHANGE_LOGIN_REQUIRED));
+        $test_name = 'the editor in the edit menu of a known user is not grey and asks for nothing';
+        $t->assert_text_not_contains($test_name, $navbar_table, styles::STYLE_GREY);
+        $t->assert_text_not_contains($test_name, $navbar_table, $mtr->txt(msg_id::CHANGE_LOGIN_REQUIRED));
 
         $t->subheader($ts . 'login');
 

@@ -138,7 +138,7 @@ use Zukunft\ZukunftCom\main\php\web\user\user;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 // main test settings
-const ERROR_LIMIT = 0; // increase to 1 or more to detect more than one error message with one run
+const ERROR_LIMIT = 100; // the number of logged errors after which the next test sections are skipped; high, so that one run reports the errors of all sections, but a broken setup e.g. a database without connection still stops the run
 const ONLY_UNIT_TESTS = true; // set to true if only the unit tests should be performed
 const ONLY_UNIT_TESTS_DEV = false; // dito for development
 const RESET_DB = false; // if true the database is completely overwritten for testing; must always be false for UAT and PROD
@@ -155,9 +155,11 @@ include_once test_paths::CONST . 'files.php';
 include_once test_paths::UNIT_WRITE . 'all_unit_write_tests.php';
 include_once test_paths::UNIT_API . 'all_api_tests.php';
 include_once test_paths::UNIT_WORKFLOW . 'all_workflow_tests.php';
+include_once test_paths::UNIT . 'coding_rule_tests.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\log_text\text_log_format;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
+use Zukunft\ZukunftCom\test\php\unit\coding_rule_tests;
 use Zukunft\ZukunftCom\test\php\unit_api\all_api_tests;
 use Zukunft\ZukunftCom\test\php\unit_ui\all_ui_tests;
 use Zukunft\ZukunftCom\test\php\unit_workflow\all_workflow_tests;
@@ -269,6 +271,13 @@ class all_tests extends all_unit_write_tests
             // recreate the type list api message based on the updated db
             // because this json is used for the unit tests
             $t_db->type_list_check($this, $msg);
+
+            // check the html snapshots after the ui and workflow tests have written them in this run;
+            // if an error has stopped these tests, their snapshots are from the last run, so a check
+            // would report the pages of the old code instead of a problem of this run
+            if ($sys->errors <= ERROR_LIMIT and FRONTEND_TEST and WORKFLOW_TEST and WRITE_TEST) {
+                new coding_rule_tests()->run_html_snapshots($this);
+            }
         }
 
         // end the admin session used for the api calls of the test scripts
