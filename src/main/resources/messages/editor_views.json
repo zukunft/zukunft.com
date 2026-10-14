@@ -61,6 +61,17 @@
           "name": "phrase selector"
         }
       ]
+    },
+    {
+      "name": "Table"
+    }
+  ],
+  "view_relations": [
+    {
+      "parent": "Table",
+      "child": "Table editor",
+      "type": "editor",
+      "description": "the edit menu of the table offers the table editor with the same phrase"
     }
   ]
 }

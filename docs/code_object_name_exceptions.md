@@ -264,7 +264,7 @@ verb_list: $link_types_ui, $lst, $lst_all, $lst_dbl, $lst_empty, $vrb_lst, $vrb_
 verbs: $lst
 view_link_type: $lnk_typ_ui
 view_list: $dsp_to_validate, $lst, $msk_lst, $msk_typ_lst, $views, $wrd_lst
-view_relation_list: $mrl_lst
+view_relation_list: $all_mrl, $mrl_lst
 view_relation_type: $lnk_typ_ui
 view_style: $style
 view_sys_list: $lst, $sys_msk_cac, $sys_msk_lst

@@ -1,0 +1,2 @@
+view_relation_id,parent_view_id,child_view_id,user_id,view_relation_type_id,start_pos,description,excluded,share_type_id,protect_id
+1,2,193,1,3,,the edit menu of the table offers the table editor with the same phrase,,,

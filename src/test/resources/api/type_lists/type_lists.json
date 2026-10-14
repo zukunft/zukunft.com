@@ -10082,6 +10082,12 @@
                 "code_id": "del_components",
                 "description": "delete the components of the child view from the parent and if the start position is set starting at this position",
                 "id": 2
+            },
+            {
+                "name": "editor",
+                "code_id": "editor",
+                "description": "the child view is the editor of the parent view, which the edit menu of the navbar offers instead of the alternative views",
+                "id": 3
             }
         ],
         "system_views": [
@@ -10119,6 +10125,7 @@
                 "description": "the values related to a word or triple as a table with one column per phrase used most often within the values",
                 "type_id": 11,
                 "code_id": "table",
+                "editor_id": 193,
                 "components": [
                     {
                         "link_id": 3,

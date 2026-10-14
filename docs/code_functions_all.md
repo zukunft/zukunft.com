@@ -2074,6 +2074,8 @@
             ta_object.php
     \-- term_view_list - section for function term_view_list not yet defined that it should be set and get in /helper/da
             ta_object.php
+    \-- view_relation_list - section for function view_relation_list not yet defined that it should be set and get in /h
+            elper/data_object.php
     \-- user_list - section for function user_list not yet defined that it should be set and get in /helper/data_object.
             php
     \-- ip_range_list - section for function ip_range_list not yet defined that it should be set and get in /helper/data
@@ -2123,6 +2125,8 @@
             ct.php
     \-- add_term_view - section for function add_term_view not yet defined that it should be modify in /helper/data_obje
             ct.php
+    \-- add_view_relation - section for function add_view_relation not yet defined that it should be modify in /helper/d
+            ata_object.php
     \-- add_user - section for function add_user not yet defined that it should be modify in /helper/data_object.php
     \-- add_ip_range - section for function add_ip_range not yet defined that it should be modify in /helper/data_object
             .php
@@ -4127,6 +4131,10 @@
     \-- add_by_key - section for function add_by_key not yet defined that it should be modify in /view/view_relation_lis
             t.php
     \-- del - section for function del is expected to be del in /view/view_relation_list.php
+    \-- editor_id - section for function editor_id not yet defined that it should be info in /view/view_relation_list.ph
+            p
+    \-- order error - order of section load sql has difference at load_by_ids should be before load_sql_by_parent_ids,
+            order of section info has difference at names should be before editor_id
 \-- view_sys_list
     \-- __construct - section for function __construct is expected to be construct and map in /view/view_sys_list.php
     \-- load_sql_list - section for function load_sql_list is expected to be load sql in /view/view_sys_list.php
@@ -4454,7 +4462,6 @@
 \-- load
     \-- load_by_view
         \-- component_link_list - interface function to load all component links of the given view
-        \-- view_relation_list - interface function to load all view relations of the given view
     \-- load_by_view_with_components
         \-- component_link_list - interface function to load all component links and the components of the given view
     \-- load_by_view_ids
@@ -4663,7 +4670,6 @@
 \-- load sql
     \-- load_sql_by_view
         \-- component_link_list - set the SQL query parameters to load all components linked to a view
-        \-- view_relation_list - set the SQL query parameters to load all components linked to a view
     \-- load_sql_by_view_ids
         \-- component_link_list - set the SQL query parameters to load the component links of several views at once
     \-- load_sql_by_component
@@ -4673,15 +4679,12 @@
                 ds
         \-- term_list - create an SQL statement to retrieve a list of terms from the database
         \-- ref_list - set the SQL query parameters to load a list of references by their database ids
-        \-- view_relation_list - set the SQL query parameters to load a list of view relations by the view relation ids
     \-- load_by_ids
         \-- component_link_list - load a list of component links by the given component link ids
-        \-- view_relation_list - load a list of view relations by the given view relation ids
     \-- load_sql
         \-- component_link_list - set the common part of the SQL query component links
         \-- db_cache_page - create the common part of an SQL statement to retrieve a cached html page from the database
         \-- ip_range - create the common part of an SQL statement to retrieve an ip range from the database
-        \-- view_relation_list - set the common part of the SQL query view relations
     \-- load_sql_by_url
         \-- db_cache_page - create an SQL statement to retrieve a cached html page by url from the database
     \-- load_sql_by_user
@@ -4712,7 +4715,6 @@
         \-- value_geo - create an array with the export json fields
         \-- value_text - create an array with the export json fields
         \-- value_time - create an array with the export json fields
-        \-- view_relation_list - create an array with the export json fields
     \-- import_mapper
         \-- db_object_multi - general part to import a database multi table object from a JSON array object
     \-- id
@@ -4728,7 +4730,6 @@
 \-- modify
     \-- add_by_key
         \-- component_link_list - add a view component link to the list without saving it to the database
-        \-- view_relation_list - add a view relation to the list without saving it to the database
     \-- 1
         \-- element_list - add an object to the list that does
         \-- term_list - removes all terms from this list that are not in the given list
@@ -4764,7 +4765,6 @@
                 d entry)
         \-- ref_list - add a reference to the list that does not yet have an id but has the phrase name,
                  the type and the external key set
-        \-- view_relation_list - delete all loaded view relations e.g. to delete all the links assigned to a view
     \-- del_by_user
         \-- db_cache - remove the cache entries of one user, because they reference the user row and are derived
     \-- del_by_types
@@ -4817,14 +4817,12 @@
 \-- info
     \-- view_ids
         \-- component_link_list - @return array with all view ids
-        \-- view_relation_list - @return array with all view ids
     \-- by_view_id
         \-- component_link_list - the links of one view taken from the links of several views loaded by load_by_view_ids
     \-- cmp_ids
         \-- component_link_list - @return array with all component ids
     \-- names
         \-- component_link_list - @return array with all component names linked usually to one view
-        \-- view_relation_list - @return array with all component names linked usually to one view
     \-- ids
         \-- element_list - get the first ids from the list e.g. to show it to humans
     \-- is_valid
@@ -4884,7 +4882,6 @@
         \-- ip_range_list - store all ip ranges from this list in the database using grouped calls of predefined sql fun
                 ctions
         \-- verb_list - simple loop to save all verbs of the list
-        \-- view_relation_list - simple but slow function to add of update all list items in the database
     \-- save_html
         \-- db_cache_page - add or replace the cached html page for the given url
     \-- save_json

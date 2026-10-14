@@ -460,6 +460,23 @@ class base_ui_tests
         $t->assert_text_contains($test_name, $navbar_normal_page,
             api::LOGIN_SCRIPT . '&amp;' . url_var::BACK . url_var::MASK . '=' . views::WORD_ID);
 
+        // the edit menu of a view with an editor (a view relation of the editor type) opens the
+        // editor with the same object, e.g. the table editor for the table of a phrase
+        $test_name = 'the edit menu of a view with an editor opens the editor with the same object';
+        $table_page = [url_var::MASK => (string)views::TABLE_ID, url_var::ID => (string)word_names::MATH_ID];
+        $navbar_table = $html->navbar(views::TABLE_ID, $table_page, null, null, false,
+            views::TABLE_EDITOR_ID, views::TABLE_EDITOR_NAME);
+        $t->assert_text_contains($test_name, $navbar_table,
+            url_var::MASK . '=' . views::TABLE_EDITOR_ID . '&amp;' . url_var::ID . '=' . word_names::MATH_ID);
+        $t->assert_text_contains($test_name, $navbar_table, '>' . views::TABLE_EDITOR_NAME . '<');
+        $test_name = '... and returns to the table';
+        $t->assert_text_contains($test_name, $navbar_table, url_var::BACK . url_var::MASK . '=' . views::TABLE_ID);
+        $alternative = '>' . $mtr->txt(msg_id::NAVBAR_ALTERNATIVE_VIEW) . '<';
+        $test_name = '... instead of the alternative views';
+        $t->assert_text_not_contains($test_name, $navbar_table, $alternative);
+        $test_name = 'the edit menu of a view without an editor offers the alternative views';
+        $t->assert_text_contains($test_name, $navbar_normal_page, $alternative);
+
         $t->subheader($ts . 'login');
 
         $created_html = $html->about_page($msg_ui);

@@ -63,6 +63,7 @@ include_once paths::MODEL_VALUE . 'value_list.php';
 include_once paths::MODEL_VERB . 'verb.php';
 include_once paths::MODEL_VIEW . 'view.php';
 include_once paths::MODEL_VIEW . 'view_list.php';
+include_once paths::MODEL_VIEW . 'view_relation.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
@@ -91,6 +92,7 @@ use Zukunft\ZukunftCom\main\php\cfg\value\value_text;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_list;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_relation;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
@@ -926,6 +928,13 @@ class import
                 $msg->merge($this->dto_get_views($msk_array, $dto, $msg, $msk_per_sec));
                 $this->step_end($dto->view_list()->count(), $msk_per_sec);
             }
+            // after the views, because a relation is mapped to the views of the import
+            if (key_exists(json_fields::VIEW_RELATIONS, $json_array)) {
+                $mrl_array = $json_array[json_fields::VIEW_RELATIONS];
+                $this->step_start(msg_id::COUNT, view_relation::class, count($mrl_array), $step_time);
+                $this->dto_get_view_relations($mrl_array, $dto, $msg, $msk_per_sec);
+                $this->step_end($dto->view_relation_list()->count(), $msk_per_sec);
+            }
             // TODO add json_fields::VIEW_VALIDATION
         }
 
@@ -1543,6 +1552,31 @@ class import
             $this->display_progress($i, $per_sec, $msk->dsp_id());
         }
         return $msg;
+    }
+
+    /**
+     * add the view relations from the json array to the data object
+     * @param array $json_array the view relation part of the import json
+     * @param data_object $dto the data object with the views of the import
+     * @param user_message $msg to report e.g. a view that is missing in the import
+     * @param float $per_sec the expected number of view relations that can be analysed per second
+     */
+    private function dto_get_view_relations(
+        array        $json_array,
+        data_object  $dto,
+        user_message $msg,
+        float        $per_sec = 0
+    ): void
+    {
+        $i = 0;
+        foreach ($json_array as $mrl_json) {
+            $mrl = new view_relation($this->usr);
+            if ($mrl->import_mapper($mrl_json, $msg, $dto)) {
+                $dto->add_view_relation($mrl, $msg);
+                $i++;
+            }
+            $this->display_progress($i, $per_sec, $mrl->dsp_id());
+        }
     }
 
     /**

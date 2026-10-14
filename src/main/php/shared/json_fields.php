@@ -407,6 +407,10 @@ class json_fields
     const string VIEW = 'view'; // the view as a sub array
     // list of views
     const string VIEWS = 'views';
+    // list of view relations e.g. the table editor of the table view
+    const string VIEW_RELATIONS = 'view_relations';
+    // the view id of the editor of a view, which the edit menu of the navbar offers
+    const string EDITOR_ID = 'editor_id';
     // list of terms e.g. the terms that use a view
     const string TERMS = 'terms';
 

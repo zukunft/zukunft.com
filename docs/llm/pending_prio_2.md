@@ -1620,3 +1620,19 @@ pure html value add view with one form (ui_select::value_add_fields):
   value_quality, so in the unit tests sandbox_value::name_link still names "assumed" as a phrase
   link next to its "a" mark; set phrase_types::VALUE_QUALITY there, add the negative test that
   value_ui_tests no longer shows the ">assumed</a>" link and re-baseline the fixtures it changes
+
+## view relations
+
+- the "view_relations" list of an import json is read only by the data_object import
+  (import::get_data_object); the direct import (import::put) still reports it as an unknown element,
+  because there each view is saved on its own and no import cache holds the views of the file
+- only the system views get their editor (view_sys_list::load_list), so a user view with an editor
+  relation does not yet show the editor in the navbar
+- view_relation_list::view_ids() and names() are copies of the component link list and call
+  get_view() and get_component(), which a view relation does not have; nothing calls them yet,
+  but they should return the parent and child view ids and names
+- the db comment view_relation_db::FLD_TYPE_COM names only the types 1 and 2 and not the editor (3);
+  changing it changes the table create sql and its fixture
+- view_relation_list::load_sql() selects no user number fields, so a load by ids gives the row mapper
+  no start_pos (PHP warning "Undefined array key"); the load by parent ids adds them on its own,
+  the common load_sql should add them like component_link_list, which changes the by_ids fixtures

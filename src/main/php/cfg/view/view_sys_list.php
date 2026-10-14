@@ -45,6 +45,7 @@ include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VIEW . 'view.php';
 include_once paths::MODEL_VIEW . 'view_list.php';
+include_once paths::MODEL_VIEW . 'view_relation_list.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_CONST_FIELDS . 'fields.php';
 include_once paths::SHARED_CONST_FIELDS . 'view_fields.php';
@@ -132,8 +133,14 @@ class view_sys_list extends type_list
         if ($ids != [] and $all_lnk->load_by_view_ids($ids, $msg, $db_con)) {
             $all_lnk->load_components($msg, $db_con);
         }
+        // the same for the view relations, which name e.g. the editor of a view
+        $all_mrl = new view_relation_list($this->usr);
+        if ($ids != []) {
+            $all_mrl->load_by_parent_ids($ids, $msg, $db_con);
+        }
         foreach ($msk_lst as $msk) {
             $msk->cmp_lnk_lst = $all_lnk->by_view_id($msk->id());
+            $msk->editor_id = $all_mrl->editor_id($msk->id());
             $this->add($msk);
         }
         // the time of this message is the component load of all system views
