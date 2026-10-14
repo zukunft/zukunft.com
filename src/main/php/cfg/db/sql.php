@@ -120,6 +120,8 @@ class sql
     const string UNION_ALL = 'UNION ALL';
     const string IN = 'IN';
     const string ANY = '= ANY';
+    // to add a value to the database value of a field e.g. to count requests (see sql_par_field::increment)
+    const string PLUS = '+';
     const string LIKE = 'LIKE';
     // lower case like the pattern search of the existing queries
     const string LIKE_LOWER_CASE = 'like';

@@ -104,6 +104,7 @@ include_once paths::MODEL_LOG . 'change_log.php';
 //include_once paths::MODEL_WORD . 'triple_list.php';
 include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_list.php';
+include_once paths::MODEL_USER . 'user_log.php';
 include_once paths::MODEL_USER . 'user_profile.php';
 include_once paths::MODEL_USER . 'user_type.php';
 //include_once paths::MODEL_VERB . 'verb_list.php';
@@ -1207,8 +1208,29 @@ class user extends db_id_object_non_sandbox
     function data_user(int $req_usr_id, user_message $msg, bool $from_pod = false): user
     {
         $result = $this;
-        // only switch to the requested data user if it differs from the session user (the session
-        // user is already fully loaded via get(), so reloading it by id would drop that setup) and
+        // the session user is already fully loaded via get(), so reloading it by id would drop that setup
+        $data_usr_id = $this->data_user_id($req_usr_id, $from_pod);
+        if ($data_usr_id != $this->id) {
+            $req_usr = new user();
+            $req_usr->load_by_id($data_usr_id, $msg);
+            if ($req_usr->id > 0) {
+                $result = $req_usr;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the id of the user whose data an api request should load without loading the user,
+     * e.g. to count the request in the user log for the browsing user (see data_user)
+     * @param int $req_usr_id the requested data user id from the api request, 0 for the session user
+     * @param bool $from_pod true if the request has been sent by this pod itself (see server_guard::from_own_pod)
+     * @return int the id of the session user, or the requested id when the caller is permitted
+     */
+    function data_user_id(int $req_usr_id, bool $from_pod = false): int
+    {
+        $result = $this->id;
+        // only switch to the requested data user if it differs from the session user and
         // only when the session user may see another user's data (an admin or the system user) or
         // the request comes from this pod itself ($from_pod, see server_guard::from_own_pod),
         // because the own html frontend has validated the browsing user's session before calling
@@ -1217,11 +1239,7 @@ class user extends db_id_object_non_sandbox
         if ($req_usr_id > 0
             and $req_usr_id != $this->id
             and ($from_pod or $this->is_admin() or $this->is_system())) {
-            $req_usr = new user();
-            $req_usr->load_by_id($req_usr_id, $msg);
-            if ($req_usr->id > 0) {
-                $result = $req_usr;
-            }
+            $result = $req_usr_id;
         }
         return $result;
     }
@@ -4180,10 +4198,12 @@ class user extends db_id_object_non_sandbox
                             'Delete failed, because it seems that the ' . $class_name . ' ' . $this->dsp_id()
                             . ' has been deleted in the meantime.', (new Exception)->getTraceAsString());
                     } else {
-                        // the cache entries of the user reference the user row, so they are
-                        // removed first (see db_cache::del_by_user)
+                        // the cache entries and the user log sessions of the user reference the user row,
+                        // so they are removed first (see db_cache::del_by_user and user_log::del_by_user)
                         $cac = new db_cache($this);
                         $cac->del_by_user($this->id, $msg);
+                        $usr_log = new user_log();
+                        $usr_log->del_by_user($this->id, $msg);
                         // TODO check if there are related log entries and if yes exclude it instead of delete
                         parent::del_exe($msg);
                     }

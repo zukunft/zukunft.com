@@ -363,6 +363,28 @@ zukunft.com:
               month:
                 sys-conf-value: 3
                 tooltip-comment: "the number of month that the admin user has time to confirm an api account"
+          user:
+            log:
+              period:
+                max:
+                  sys-conf-value: 1800
+                  tooltip-comment: "the max number of seconds between two api requests of a user that still belong to the same session in the user log"
+              allowed:
+                sys-conf-value: true
+                tooltip-comment: "if false no session is written to the user log for any user"
+              ip user:
+                allowed:
+                  sys-conf-value: true
+                  tooltip-comment: "if false no session is written to the user log for a user without login (an ip user)"
+              age:
+                max:
+                  days:
+                    sys-conf-value: 365
+                    tooltip-comment: "the max number of days that a user log entry is kept in the database before it is exported to the archive and removed"
+              archive:
+                path:
+                  sys-conf-value: "/var/log/zukunft/user_log/"
+                  tooltip-comment: "the directory where the user log entries older than the max age are exported as csv files"
         hardware:
           usage:
             CPU:

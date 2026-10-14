@@ -77,6 +77,7 @@ enum sql_par_type: string
     case NOT_NULL = 'not_null';
     case TIME = 'timestamp'; // e.g. for now()
     case TIME_HIGHER = 'time_higher'; // the result includes the given timestamp and all rows with a later one
+    case TIME_LOWER = 'time_lower'; // the result includes all rows with an earlier timestamp but not the given one
     case POINT = 'point'; // e.g. for geolocations
 
     // parameter types to calculate the result for a group

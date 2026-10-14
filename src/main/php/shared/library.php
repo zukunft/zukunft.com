@@ -83,6 +83,7 @@ use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status_list;
 use Zukunft\ZukunftCom\main\php\cfg\system\system_time;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_log;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_official_type;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_status;
@@ -183,6 +184,9 @@ class library
 
     // to separate two string for the human-readable format
     const string SEPARATOR = ',';
+
+    // the tables named by the singular class name, because a log is already a collection
+    const array SINGULAR_TABLES = ['user_log'];
 
     // display array truncation thresholds
     const int DSP_ALL_DEBUG = 10;  // debug level above which all entries are shown
@@ -4775,6 +4779,22 @@ class library
     }
 
     /**
+     * the single place of the exception that some tables keep the singular class name
+     * @param string $tbl_name the table name with the plural extension e.g. user_logs
+     * @return string the table name without the plural extension e.g. user_log, if listed in SINGULAR_TABLES
+     */
+    function singular_table(string $tbl_name): string
+    {
+        $result = $tbl_name;
+        $singular = substr($tbl_name, 0, -strlen(sql_db::TABLE_EXTENSION));
+        $is_plural = str_ends_with($tbl_name, sql_db::TABLE_EXTENSION);
+        if ($is_plural and in_array($singular, self::SINGULAR_TABLES, true)) {
+            $result = $singular;
+        }
+        return $result;
+    }
+
+    /**
      * remove the namespace from the class name and adds the name extension for the table
      * TODO Prio 2 check if the code_id or the name is returned and clean this up
      * @param string $class including the namespace
@@ -4831,6 +4851,7 @@ class library
         if ($result == 'sys_logs') {
             $result = 'sys_log';
         }
+        $result = $this->singular_table($result);
         if ($result == 'configs') {
             $result = 'config';
         }
@@ -4956,6 +4977,9 @@ class library
                 break;
             case $this->class_to_name(term_view::class):
                 $result = $this->class_to_name(view::class);
+                break;
+            case $this->class_to_name(user_log::class):
+                $result = $this->class_to_name(user::class);
                 break;
             case $this->class_to_name(component_link_type::class):
             case $this->class_to_name(position_type::class):

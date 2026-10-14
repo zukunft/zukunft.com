@@ -33,6 +33,7 @@
 namespace Zukunft\ZukunftCom\test\php\unit;
 
 use DateTime;
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
@@ -40,6 +41,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_log;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_profile_list;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
@@ -75,6 +77,96 @@ class user_tests
         $t->assert_sql_table_create($usr_test);
         $t->assert_sql_index_create($usr_test);
         $t->assert_sql_foreign_key_create($usr_test);
+
+        $t->subheader($ts . 'log sql setup');
+        $usr_log = new user_log();
+        $t->assert_sql_table_create($usr_log);
+        $t->assert_sql_index_create($usr_log);
+        $t->assert_sql_foreign_key_create($usr_log);
+
+        $t->subheader($ts . 'log sql');
+        $usr_log = $t_usr->user_log();
+        $t->assert_sql_insert($sc, $usr_log);
+        // the counts of a request are added to the database values, so a request written at the same time is not lost
+        $usr_log_db = $t_usr->user_log_open();
+        $usr_log = clone $usr_log_db;
+        $start = (float)strtotime(test_users::TV_USER_LOG_START) + 1;
+        $usr_log->count_request(users::SYSTEM_TEST_ID, $start, $start + test_users::TV_USER_LOG_SEC, true);
+        $t->assert_sql_update($sc, $usr_log, $usr_log_db);
+        $usr_log = new user_log();
+        $since = new DateTime(test_users::TV_USER_LOG_START);
+        $sc->reset(sql_db::POSTGRES);
+        $qp = $usr_log->load_sql_open($sc, users::SYSTEM_TEST_ID, $since);
+        $t->assert_qp($qp, $sc->db_type);
+        $sc->reset(sql_db::MYSQL);
+        $qp = $usr_log->load_sql_open($sc, users::SYSTEM_TEST_ID, $since);
+        $t->assert_qp($qp, $sc->db_type);
+        // the oldest sessions are moved to the archive and removed without change log
+        $sc->reset(sql_db::POSTGRES);
+        $qp = $usr_log->load_sql_old($sc, $since, user_log::ARCHIVE_LIMIT);
+        $t->assert_qp($qp, $sc->db_type);
+        $sc->reset(sql_db::MYSQL);
+        $qp = $usr_log->load_sql_old($sc, $since, user_log::ARCHIVE_LIMIT);
+        $t->assert_qp($qp, $sc->db_type);
+        $sc->reset(sql_db::POSTGRES);
+        $qp = $usr_log->del_sql_without_log($sc, [1, 2]);
+        $t->assert_qp($qp, $sc->db_type);
+        $sc->reset(sql_db::MYSQL);
+        $qp = $usr_log->del_sql_without_log($sc, [1, 2]);
+        $t->assert_qp($qp, $sc->db_type);
+        // the sessions of a user are removed before the user is deleted
+        $sc->reset(sql_db::POSTGRES);
+        $qp = $usr_log->del_sql_by_user_without_log($sc, users::SYSTEM_TEST_ID);
+        $t->assert_qp($qp, $sc->db_type);
+        $sc->reset(sql_db::MYSQL);
+        $qp = $usr_log->del_sql_by_user_without_log($sc, users::SYSTEM_TEST_ID);
+        $t->assert_qp($qp, $sc->db_type);
+
+        $t->subheader($ts . 'log count');
+        $test_name = 'the first request starts the session with one request';
+        $usr_log = $t_usr->user_log();
+        $t->assert($test_name, $usr_log->requests, 1);
+        $test_name = '... and its milliseconds';
+        $t->assert($test_name, $usr_log->request_time, test_users::TV_USER_LOG_MS);
+        $test_name = '... but a read request is not counted as update';
+        $t->assert($test_name, $usr_log->updated, 0);
+        $test_name = '... and its time neither';
+        $t->assert($test_name, $usr_log->update_time, 0);
+        $test_name = 'a write request is counted as update';
+        $usr_log = $t_usr->user_log_open();
+        $usr_log->count_request(users::SYSTEM_TEST_ID, $start, $start + test_users::TV_USER_LOG_SEC, true);
+        $t->assert($test_name, $usr_log->updated, 1);
+        $test_name = '... with its milliseconds';
+        $t->assert($test_name, $usr_log->update_time, test_users::TV_USER_LOG_MS);
+        $test_name = '... and as the second request of the open session';
+        $t->assert($test_name, $usr_log->requests, 2);
+        $test_name = '... which keeps the start of the session';
+        $first_start = new DateTime(test_users::TV_USER_LOG_START);
+        $t->assert($test_name, $usr_log->session_start->getTimestamp(), $first_start->getTimestamp());
+        $test_name = '... but moves the end to the second request';
+        $t->assert($test_name, $usr_log->session_end->getTimestamp(), (int)($start + test_users::TV_USER_LOG_SEC));
+
+        $t->subheader($ts . 'log session gap');
+        // the config.yaml gap is the same as the fallback
+        $test_name = 'a request continues the session that has ended within the configured gap';
+        $end = (float)strtotime(test_users::TV_USER_LOG_START);
+        $since = user_log::since($end);
+        $t->assert($test_name, $since->getTimestamp(), (int)$end - def::FALLBACK_USER_LOG_SESSION_GAP);
+        $test_name = '... so a session that has ended before the request is not always continued';
+        $t->assert_true($test_name, $since->getTimestamp() < (int)$end);
+        $test_name = 'the user log is written for a user with login';
+        $t->assert_true($test_name, user_log::allowed($t_usr->user_sys_normal()));
+
+        $t->subheader($ts . 'data user id');
+        $usr_normal = $t_usr->user_sys_normal();
+        $test_name = 'an own pod call is counted for the browsing user';
+        $t->assert($test_name, $usr_normal->data_user_id(users::SYSTEM_TEST_PARTNER_ID, true), users::SYSTEM_TEST_PARTNER_ID);
+        $test_name = 'an admin may name the data user';
+        $t->assert($test_name, $t->usr_admin->data_user_id(users::SYSTEM_TEST_PARTNER_ID), users::SYSTEM_TEST_PARTNER_ID);
+        $test_name = 'a normal user cannot name another data user';
+        $t->assert($test_name, $usr_normal->data_user_id(users::SYSTEM_TEST_PARTNER_ID), users::SYSTEM_TEST_NORMAL_ID);
+        $test_name = 'a request without data user is counted for the session user';
+        $t->assert($test_name, $usr_normal->data_user_id(0, true), users::SYSTEM_TEST_NORMAL_ID);
 
 
         $t->subheader($ts . 'sql read');

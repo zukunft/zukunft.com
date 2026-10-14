@@ -1,0 +1,1 @@
+PREPARE user_log_delete_by_ids FROM 'DELETE FROM user_log WHERE user_log_id IN (?)';

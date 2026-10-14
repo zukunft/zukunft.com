@@ -37,6 +37,7 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_db.php';
+include_once paths::MODEL_USER . 'user_log.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_CONST . 'users.php';
 include_once paths::SHARED_ENUM . 'user_profiles.php';
@@ -48,6 +49,7 @@ include_once test_paths::UTILS . 'test_cleanup.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_log;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
@@ -61,6 +63,11 @@ use DateTime;
 
 class test_users
 {
+
+    const int TV_USER_LOG_ID = 1; // the id of the user log session for unit tests
+    const string TV_USER_LOG_START = '2023-01-03T20:59:59+0100'; // the start of the first request of the session
+    const float TV_USER_LOG_SEC = 0.25; // the seconds of one request of the session
+    const int TV_USER_LOG_MS = 250; // the same request time in milliseconds as written to the user log
 
     /*
      * cleanup
@@ -361,6 +368,33 @@ class test_users
         $sys_usr->percent_decimals = shared_config::DEFAULT_PERCENT_DECIMALS;
         $sys_usr->profile_id = user_profiles::SYSTEM_ID;
         return $sys_usr;
+    }
+
+
+    /*
+     * user log
+     */
+
+    /**
+     * @return user_log the session of the test user after its first request, as the insert writes it
+     */
+    function user_log(): user_log
+    {
+        $usr_log = new user_log();
+        $start = (float)strtotime(self::TV_USER_LOG_START);
+        $end = $start + self::TV_USER_LOG_SEC;
+        $usr_log->count_request(users::SYSTEM_TEST_ID, $start, $end, false);
+        return $usr_log;
+    }
+
+    /**
+     * @return user_log the session of the test user after its first request, as loaded from the database
+     */
+    function user_log_open(): user_log
+    {
+        $usr_log = $this->user_log();
+        $usr_log->id = self::TV_USER_LOG_ID;
+        return $usr_log;
     }
 
 }

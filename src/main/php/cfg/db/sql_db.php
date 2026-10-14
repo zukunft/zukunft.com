@@ -126,6 +126,7 @@ include_once paths::MODEL_WORD . 'triple.php';
 include_once paths::MODEL_HELPER . 'type_lists.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_db.php';
+include_once paths::MODEL_USER . 'user_log.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_USER . 'user_profile.php';
 include_once paths::MODEL_USER . 'user_profile_list.php';
@@ -267,6 +268,7 @@ use Zukunft\ZukunftCom\main\php\cfg\value\value_time;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_lists;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_log;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_profile;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_type;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
@@ -402,6 +404,7 @@ class sql_db
         user::class,
         ip_range::class,
         session::class,
+        user_log::class,
         change_action::class,
         change_table::class,
         change_field::class,
@@ -519,6 +522,7 @@ class sql_db
         db_cache_type::class,
         share_type::class,
         protection_type::class,
+        user_log::class,
         user::class,
         user_status::class,
         user_type::class,
@@ -588,6 +592,7 @@ class sql_db
         change_values_big::class,
         change_link::class,
         sys_log::class,
+        user_log::class,
         job::class,
         db_cache::class,
         db_cache_page::class,
@@ -2456,6 +2461,7 @@ class sql_db
         if ($result == 'sys_logs') {
             $result = 'sys_log';
         }
+        $result = $lib->singular_table($result);
         if ($result == 'sys_log_statuss') {
             $result = 'sys_log_status';
         }
@@ -2555,7 +2561,8 @@ class sql_db
             and $class != user_status::class
             and $class != user_statuum::class
             and $class != user_type::class
-            and $class != user_official_type::class) {
+            and $class != user_official_type::class
+            and $class != user_log::class) {
             $type = $lib->str_right_of($type, sql_db::TBL_USER_PREFIX);
         }
         $result = $type . sql_db::FLD_EXT_ID;

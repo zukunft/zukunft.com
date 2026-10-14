@@ -49,6 +49,7 @@ class sql_par_field
     public sql_par_type|string $type;  // the type of the sql field
     public sql_par_type|string|null $type_id = null;  // the type of the id sql field
     public string $par_name = '';  // the parameter name of the field used from the change log e.g. for the sql field name "new_from_id" the parameter name is "_new_phrase_id"
+    public bool $increment = false;  // true if an update adds the value to the database value e.g. to count requests that are written at the same time
 
 }
 

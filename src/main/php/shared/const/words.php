@@ -107,9 +107,11 @@ class words
     // in alphabetic order except the main keywords listed above
     const string ACCESS = 'access';
     const string ACCOUNT = 'account';
+    const string AGE = 'age';
     const string ALLOWED = 'allowed';
     const string API = 'api';
     const string API_WORD = 'API';
+    const string ARCHIVE = 'archive';
     const string AUTOMATIC = 'automatic';
     const string AVERAGE = 'average';
     const string AVERAGE_COM = 'The arithmetic mean – the sum of the numbers divided by how many numbers are in the list.';
@@ -213,6 +215,7 @@ class words
     const string NUMBER = 'number';
     const int NUMBER_ID = 137;
     const string PAGE = 'page';
+    const string PATH = 'path';
     const string PCT = 'percent';
     const int PCT_ID = 160;
     // the words that tag a value as a bound of the probability range of the value with the same

@@ -9,7 +9,8 @@
 
     remove the old completed jobs (successful and failed) from the job table so that the table that
     is written on every value change and page refresh does not grow without a bound; the sweep is
-    bounded per run so that it fits into the time budget of the job_runner (see docs/llm/pending.md)
+    bounded per run so that it fits into the time budget of the job_runner (see docs/llm/pending.md);
+    the same sweep moves the user log sessions older than the configured max age to the csv archive
 
 
     This file is part of zukunft.com - calc with words
@@ -44,11 +45,13 @@ include_once paths::MODEL_SYSTEM . 'job.php';
 include_once paths::MODEL_SYSTEM . 'job_exe.php';
 include_once paths::MODEL_SYSTEM . 'job_list.php';
 include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_log.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_TYPES . 'job_statuum.php';
 include_once paths::SHARED_TYPES . 'job_types.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_log;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\types\job_statuum;
 use Zukunft\ZukunftCom\main\php\shared\types\job_types;
@@ -82,8 +85,9 @@ class job_db_cleanup implements job_exe
 
     /**
      * remove the completed jobs whose end time is older than the retention period
+     * and archive the old user log sessions
      * @param user_message $msg the message buffer that collects a delete problem for the log
-     * @return int the number of jobs that have been deleted
+     * @return int the number of jobs that have been deleted and user log sessions that have been archived
      */
     function execute(user_message $msg): int
     {
@@ -98,6 +102,10 @@ class job_db_cleanup implements job_exe
         if ($left > 0) {
             $result += $this->del_old_jobs(job_statuum::STATUS_FAILED, $cutoff, $usr, $msg, $left);
         }
+
+        // move the old sessions of the user log to the csv archive
+        $usr_log = new user_log();
+        $result += $usr_log->archive($msg);
 
         return $result;
     }

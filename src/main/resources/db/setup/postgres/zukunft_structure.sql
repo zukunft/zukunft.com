@@ -542,6 +542,34 @@ COMMENT ON COLUMN sessions.uid IS 'the user session id as get by the frontend';
 -- --------------------------------------------------------
 
 --
+-- table structure for the sessions of the users with the number and the time of their api requests
+--
+
+CREATE TABLE IF NOT EXISTS user_log
+(
+    user_log_id   BIGSERIAL PRIMARY KEY,
+    user_id       bigint        NOT NULL,
+    session_start timestamp     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    session_end   timestamp DEFAULT NULL,
+    requests      bigint        NOT NULL,
+    updated       bigint        NOT NULL,
+    request_time  bigint        NOT NULL,
+    update_time   bigint        NOT NULL
+);
+
+COMMENT ON TABLE user_log IS 'for the sessions of the users with the number and the time of their api requests';
+COMMENT ON COLUMN user_log.user_log_id IS 'the internal unique primary index';
+COMMENT ON COLUMN user_log.user_id IS 'the user whose api requests are counted';
+COMMENT ON COLUMN user_log.session_start IS 'the start time of the first api request of the session';
+COMMENT ON COLUMN user_log.session_end IS 'the end time of the last api request of the session';
+COMMENT ON COLUMN user_log.requests IS 'the number of api requests of the session';
+COMMENT ON COLUMN user_log.updated IS 'the number of api requests of the session that have changed data';
+COMMENT ON COLUMN user_log.request_time IS 'the sum of the milliseconds of all api requests of the session';
+COMMENT ON COLUMN user_log.update_time IS 'the sum of the milliseconds of the api requests of the session that have changed data';
+
+-- --------------------------------------------------------
+
+--
 -- table structure for add,change,delete,undo and redo actions
 --
 
@@ -5716,6 +5744,16 @@ CREATE INDEX sessions_uid_idx ON sessions (uid);
 -- --------------------------------------------------------
 
 --
+-- indexes for table user_log
+--
+
+CREATE INDEX user_log_user_idx ON user_log (user_id);
+CREATE INDEX user_log_session_start_idx ON user_log (session_start);
+CREATE INDEX user_log_session_end_idx ON user_log (session_end);
+
+-- --------------------------------------------------------
+
+--
 -- indexes for table change_actions
 --
 
@@ -7307,6 +7345,13 @@ ALTER TABLE users
     ADD CONSTRAINT users_view_fk FOREIGN KEY (view_id) REFERENCES views (view_id),
     ADD CONSTRAINT users_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id),
     ADD CONSTRAINT users_user_status_fk FOREIGN KEY (user_status_id) REFERENCES user_statuum (user_status_id);
+
+--
+-- constraints for table user_log
+--
+
+ALTER TABLE user_log
+    ADD CONSTRAINT user_log_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
 
 --
 -- constraints for table change_fields

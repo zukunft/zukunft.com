@@ -49,6 +49,7 @@ include_once paths::MODEL_REF . 'source_type.php';
 include_once paths::MODEL_RESULT . 'result_two.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_function.php';
 include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_log.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_USER . 'user_profile_list.php';
 include_once paths::MODEL_USER . 'user_type_list.php';
@@ -81,6 +82,7 @@ use Zukunft\ZukunftCom\main\php\cfg\result\result_two;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_function;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_log;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_profile_list;
@@ -513,6 +515,15 @@ class db_check
         $result .= $db_con->add_column($trm_msk_usr, term_view::FLD_ORDER, sql_field_type::INT->value, $msg);
         $result .= $db_con->add_column($trm_msk, fields::FLD_STYLE, sql_field_type::INT_SMALL->value, $msg);
         $result .= $db_con->add_column($trm_msk_usr, fields::FLD_STYLE, sql_field_type::INT_SMALL->value, $msg);
+
+        // the user log added to count the api requests of each user session
+        $usr_log = new user_log();
+        $usr_log_tbl = $db_con->get_table_name(user_log::class);
+        if (!$db_con->has_table($usr_log_tbl, $msg, 'check if db has table ' . $usr_log_tbl)) {
+            $sc = $db_con->sql_creator();
+            $sql = $usr_log->sql_table($sc) . $usr_log->sql_index($sc) . $usr_log->sql_foreign_key($sc);
+            $result .= $db_con->exe_try('add the user log table', $sql);
+        }
 
         $db_version = $cfg->get_db(config::VERSION_DB, $db_con, $msg, 'get database version');
         if ($db_version != def::PRG_VERSION) {

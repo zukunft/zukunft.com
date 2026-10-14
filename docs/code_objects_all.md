@@ -220,7 +220,8 @@ the object structure is:
 │           ├── session - $ses - to control the user frontend sessions
 │           ├── sys_log - $slg - object to handle a system errors
 │           ├── system_time - $sys_tim - object to log and optimize the execution times of the system
-│           └── user_db - a person who uses zukunft.com
+│           ├── user_db - a person who uses zukunft.com
+│           └── user_log - $usr_log - one session of a user with the number and the time of the api requests
 ├── ListOfShared
 │   ├── value_type_list - a list of value types e.g. to create the query extension
 │   └── ListOfIdObjectsShared

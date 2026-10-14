@@ -59,7 +59,7 @@ word: $ZH, $add_from, $add_to, $country, $dbo, $dbo_ui, $from, $is_wrd, $max_wrd
 
 ## Classes without a suggested var name
 
-DateTime: $actual_time, $cut_time, $cutoff, $end_time, $expired, $fix_now, $fixed, $fresh_time, $now, $request_time, $request_timestamp, $reset_end, $result, $since, $snap_time, $start_time, $sys_log_timestamp, $time, $timeout
+DateTime: $actual_time, $cut_time, $cutoff, $end_time, $expired, $first_start, $fix_now, $fixed, $fresh_time, $now, $request_time, $request_timestamp, $reset_end, $result, $since, $snap_time, $start_time, $sys_log_timestamp, $time, $timeout
 ListOfIdNamedCodeObjects: $del_lst, $lst
 ListOfIdNamedObjects: $del_lst, $lst
 ListOfIdObjects: $del_lst, $lst

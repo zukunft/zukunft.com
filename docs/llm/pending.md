@@ -2,6 +2,31 @@
 
 ## admin dashboard
 
+### system health
+
+add to the admin dashboard a button with a link to 'http/server_admin.php'
+
+add to the admin dashboard a list of top 10 (config.yaml value) users that have done most requests 
+and one list with user that have done most db updates  (the threshold for a critical number is also a config.yaml value)
+after each user should be a button that moves the user to the blacklist 
+
+add to the admin dashboard a list of top 10 (config.yaml value) ip-address ranges that have done most requests
+and one list with ip-address ranges that have done most db updates (the threshold for a critical number is also a config.yaml value)
+after each user should be a button that moves the ip_address to the blacklist 
+
+add to the admin dashboard a list of top 10 (config.yaml value) email servers that have done an account opening
+(the threshold for a critical number is also a config.yaml value)
+after each user should be a button that moves the email server to the blacklist
+
+add to the admin dashboard a system health section with the release number
+(read from the git versioned file of pending_prio_2.md "move the release number in a file"),
+the db version, the result of cfg/db/db_check, the age of the config cache
+and whether config.yaml is newer than the cache, and the number of cached pages;
+use the same data for an admin only sanity api that monitor tools like checkMK can call
+(docs/todo.md "create a sanity API for monitor tools")
+
+add to the admin dashboard the number of user sandbox rows that are equal to the standard value and can be removed (the del_usr_cfg() cleanup of the dsp_sandbox_* family that belongs to the system consistency checks, see pending_prio_2.md) and the number of possible duplicates (input of find_duplicates), each with a link to the cleanup job resp. the list
+
 ### errors
 
 show in the admin dashboard the last and most relevant system errors e.g. if there is an fatal error not yet solved show it on the top of the list and below not yet solved errors followed by warnings
@@ -41,17 +66,6 @@ add a section with the number of connected pods, their usage and the most likely
 ### security
 
 add to the admin dashboard a security section that shows the state of the ip and user whitelist mode (server_admin/state.json), the newest entries of the database user and ip blacklist with the reason and the time and a remove button for each entry, and an input to add an ip address or range to the blacklist (docs/todo.md "allow admin users to change IP blacklist"); every change is written with the change log
-
-### system health
-
-add to the admin dashboard a system health section with the release number
-(read from the git versioned file of pending_prio_2.md "move the release number in a file"), 
-the db version, the result of cfg/db/db_check, the age of the config cache 
-and whether config.yaml is newer than the cache, and the number of cached pages; 
-use the same data for an admin only sanity api that monitor tools like checkMK can call 
-(docs/todo.md "create a sanity API for monitor tools")
-
-add to the admin dashboard the number of user sandbox rows that are equal to the standard value and can be removed (the del_usr_cfg() cleanup of the dsp_sandbox_* family that belongs to the system consistency checks, see pending_prio_2.md) and the number of possible duplicates (input of find_duplicates), each with a link to the cleanup job resp. the list
 
 ## start page
 

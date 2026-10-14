@@ -377,6 +377,8 @@
     \-- load_by_id - section for function load_by_id is expected to be load in /user/user.php
     \-- data_user - section for function data_user not yet defined that it should be loading / database access object (D
             AO) functions in /user/user.php
+    \-- data_user_id - section for function data_user_id not yet defined that it should be loading / database access obj
+            ect (DAO) functions in /user/user.php
     \-- load_by_name - section for function load_by_name is expected to be load in /user/user.php
     \-- load_by_code_id - section for function load_by_code_id is expected to be load in /user/user.php
     \-- load_by_email - section for function load_by_email is expected to be load in /user/user.php
@@ -1336,6 +1338,8 @@
             ql_creator.php
     \-- load_sql_not_changed - section for function load_sql_not_changed is expected to be load sql in /db/sql_creator.p
             hp
+    \-- del_sql_by_user_without_log - section for function del_sql_by_user_without_log is expected to be del in /db/sql_
+            creator.php
     \-- del_sql_list_without_log - section for function del_sql_list_without_log is expected to be del in /db/sql_creato
             r.php
     \-- del_sql_list_by_text - section for function del_sql_list_by_text is expected to be del in /db/sql_creator.php
@@ -1666,6 +1670,7 @@
     \-- add_name_part - section for function add_name_part missing in /db/sql_par_field_list.php
     \-- add_list - section for function add_list missing in /db/sql_par_field_list.php
     \-- add_field - section for function add_field missing in /db/sql_par_field_list.php
+    \-- add_increment - section for function add_increment missing in /db/sql_par_field_list.php
     \-- add_link_field - section for function add_link_field missing in /db/sql_par_field_list.php
     \-- add_type_field - section for function add_type_field missing in /db/sql_par_field_list.php
     \-- add_id_and_user - section for function add_id_and_user missing in /db/sql_par_field_list.php
@@ -2038,6 +2043,8 @@
             ned in /helper/config_numbers.php
     \-- ip_user_can_change - section for function ip_user_can_change not yet defined that it should be predefined in /he
             lper/config_numbers.php
+    \-- user_log_allowed - section for function user_log_allowed not yet defined that it should be predefined in /helper
+            /config_numbers.php
 \-- config_tree
     \-- api_json - section for function api_json not yet defined that it should be api in /helper/config_tree.php
     \-- nodes - section for function nodes not yet defined that it should be convert in /helper/config_tree.php
@@ -3887,6 +3894,19 @@
     \-- get_by_code_id - section for function get_by_code_id is expected to be set and get in /user/user_list.php
     \-- order error - order of section set and get has difference at id should be before name_lst,
             order of section load has difference at load_by_ids should be before load_sql_by_code_id
+\-- user_log
+    \-- row_mapper - section for function row_mapper not yet defined that it should be construct and map in /user/user_l
+            og.php
+    \-- count_request - section for function count_request not yet defined that it should be modify in /user/user_log.ph
+            p
+    \-- load_sql_open - section for function load_sql_open is expected to be load sql in /user/user_log.php
+    \-- load_sql_old - section for function load_sql_old is expected to be load sql in /user/user_log.php
+    \-- log_request - section for function log_request is expected to be log in /user/user_log.php
+    \-- archive - section for function archive not yet defined that it should be save in /user/user_log.php
+    \-- del_sql_without_log - section for function del_sql_without_log is expected to be del in /user/user_log.php
+    \-- del_by_user - section for function del_by_user is expected to be del in /user/user_log.php
+    \-- del_sql_by_user_without_log - section for function del_sql_by_user_without_log is expected to be del in /user/us
+            er_log.php
 \-- user_message
     \-- __construct - section for function __construct is expected to be construct and map in /user/user_message.php
     \-- reset - section for function reset is expected to be construct and map in /user/user_message.php
@@ -4592,8 +4612,11 @@
         \-- change - create an SQL statement to retrieve a change long entry by the changing user
     \-- load_by_user_sql
         \-- change - create the SQL statement to retrieve the parameters of the change log by name
+    \-- 2
+        \-- user_log - create the sql statement to select the open session of a user, the latest first
     \-- load_sql_old
         \-- change - create the SQL statement to retrieve the parameters of the change log by name
+        \-- user_log - create the sql statement to select the oldest sessions that have ended before the given time
     \-- load_by_name_and_table_id
         \-- change_field - load the change log table field from the database selected by the table id and the field name
     \-- load_sql_by_name_and_table_id
@@ -4802,6 +4825,8 @@
     \-- add_obj
         \-- sandbox_list - add one object to the list of user sandbox objects,
                  but only if it is not yet part of the list
+    \-- count_request
+        \-- user_log - add one api request to this session, which starts a new session if this row has no id
     \-- add_by_name
         \-- verb_list - add a verb to the list that does not yet have an id but has a name
     \-- calc_usage
@@ -4901,6 +4926,10 @@
         \-- ip_range - helper because the db id field differs from the class name
     \-- insert
         \-- system_time - add the execution time row without permission check and without change log,
+    \-- log_request
+        \-- user_log - count one api request in the open session of the user or start a new session;
+    \-- archive
+        \-- user_log - move the oldest sessions that have ended before the configured max age to a csv file
 \-- sql fields
     \-- 1
         \-- db_cache_status - 
@@ -4965,6 +4994,7 @@
         \-- sandbox_predicated_link - reset the type of the link object
         \-- ip_range - 
         \-- system_time - reset the vars of this execution time row
+        \-- user_log - reset the vars of this session row
         \-- value_time_series - set the user sandbox type for a value time series object and set the user,
                  which is needed in all cases
     \-- clone_all
@@ -4988,6 +5018,7 @@
         \-- change_value - map the database fields to one change log entry to this log object
         \-- ip_range - map the database fields to this ip range object
         \-- system_time - map one row of the system times table to this execution time row
+        \-- user_log - map one row of the user log table to this session row
     \-- row_mapper_multi
         \-- db_object_multi - map the database fields to the object fields
     \-- row_mapper_typ_obj
@@ -5370,6 +5401,8 @@
         \-- sql_creator - create a SQL select statement for the connected database
     \-- load_sql_not_changed
         \-- sql_creator - create a SQL select statement for the connected database
+    \-- del_sql_by_user_without_log
+        \-- sql_creator - create a sql statement to delete all rows of one user without change log,
     \-- del_sql_list_without_log
         \-- sql_creator - create a sql statement to delete all rows that have one of the given ids
     \-- del_sql_list_by_text
@@ -5682,6 +5715,12 @@
         \-- change_log - dummy function overwritten by the child object
     \-- sql_insert_key_field
         \-- ip_range - create the sql statement to add a object e.g. word to the database
+    \-- del_sql_without_log
+        \-- user_log - create the sql statement to remove the archived sessions without change log,
+    \-- del_by_user
+        \-- user_log - remove the sessions of one user, because they reference the user row and must not block
+    \-- del_sql_by_user_without_log
+        \-- user_log - create the sql statement to remove the sessions of one user without change log
 \-- sql write fields
     \-- db_fields_all
         \-- element - to get a list of all database fields that might be changed,
@@ -5692,6 +5731,7 @@
         \-- source_type - get a list of all database fields that might be changed
         \-- ip_range - get a list of all database fields that might be changed
         \-- system_time - @param sql_type_list $sc_par_lst not used, because the fields are the same for all writes
+        \-- user_log - @param sql_type_list $sc_par_lst not used, because the fields are the same for all writes
     \-- db_fields_changed
         \-- element - get a list of database field names, values and types that have been updated
         \-- db_cache - get a list of database field names, values and types that have been updated
@@ -5701,6 +5741,7 @@
         \-- source_type - get a list of database field names, values and types that have been updated
         \-- ip_range - get a list of database field names, values and types that have been updated
         \-- system_time - get the database field names, values and types that differ from the given row
+        \-- user_log - get the database field names, values and types that differ from the given row;
     \-- db_field_values_types
         \-- change - get a list of all database fields
         \-- change_log - get a list of all database fields
@@ -5879,6 +5920,8 @@
         \-- config_numbers - the pod setting that decides if the formulas assigned to the aliases of a phrase are shown
     \-- ip_user_can_change
         \-- config_numbers - the pod permission that decides if a user without login can change data in the database
+    \-- user_log_allowed
+        \-- config_numbers - the pod setting that decides if the sessions of a user are written to the user log
 \-- convert
     \-- nodes
         \-- config_tree - the nodes of the given part of config.yaml in the order of the file, without the keys
