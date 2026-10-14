@@ -123,7 +123,7 @@
         "class": "triple"
     },
     {
-        "id": 1737,
+        "id": 1736,
         "name": "EAN",
         "description": "European Article Number: the 13 digit barcode number of a retail product, today named International Article Number (IAN)",
         "type_id": 23,
@@ -202,14 +202,14 @@
         "class": "triple"
     },
     {
-        "id": 1735,
+        "id": 1734,
         "name": "ISBN",
         "description": "International Standard Book Number: identifies one edition of a book; since 2007 it has 13 digits and equals the EAN of the book with the prefix 978 or 979",
         "type_id": 23,
         "class": "word"
     },
     {
-        "id": 1736,
+        "id": 1735,
         "name": "ISIN",
         "description": "International Securities Identification Number (ISO 6166): identifies one security with 12 characters, the country code, the nine character national number and a check digit",
         "type_id": 23,

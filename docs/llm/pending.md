@@ -325,8 +325,9 @@ if in the component 'table with related columns' all values of the column are in
 add column 'reasons' with sub column to start page as a second column extensions option so click ... once add the 'reason' column and the next time it will add the minor columns
 
 the global warming row of `start_page/problem_global_warming.json` is done and is the pattern for
-the other twelve problem files: all eighteen numbers of the row are results, six target values and
-their twelve bounds, and the file states only the inputs behind them. a calc validation may use a
+the other twelve problem files: seventeen of the eighteen numbers of the row are results, five target
+values and their twelve bounds, and the file states only the inputs behind them; the loss reduction
+of the public CBAM calculation is an assumed input. a calc validation may use a
 result that the same file has reproduced before it, so the entries are ordered target first, range
 afterwards, and a result that did not reproduce is never an operand.
 
@@ -335,7 +336,7 @@ the chain of the row, each step an own formula:
 | result | from |
 | --- | --- |
 | potential loss in trillion EUR | world GDP * annual damage share |
-| loss reduction in percent | minus the leakage rate that the carbon tariff avoids |
+| loss reduction in percent | an assumed input: 72.73 percent of the public CBAM calculation, so the gain is 1.6 trillion EUR |
 | potential loss in GDP percent | minus the annual damage share * the long run growth factor |
 | potential loss in htp percent | the GDP share * the htp to GDP damage factor |
 | initial effort in person year | the annual damage in money * the effort per trillion EUR |
@@ -469,7 +470,7 @@ parts of the poverty research, the gain factor 17.92188 shared with the solution
 
 - the gain factor is tuned so that the 1 percent loss reduction of the research gives 34.1 billion
   htp, so the parts get gains far above every row of the ranking: economic growth 614, unconditional
-  cash transfers 273, vaccination 164 billion htp (global warming 35). this is the consequence of the
+  cash transfers 273, vaccination 164 billion htp (global warming 320). this is the consequence of the
   34.1 of the row, which is probably a copy of the populism gain (the htp share gives 13.6, see
   above); once the row is corrected the factor and all 34 gains follow from the regenerated chain
 - own estimates without a source; the potentials sum to about 2.6

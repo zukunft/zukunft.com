@@ -1373,8 +1373,8 @@ class test_values extends test_objects
         $trillion = $t_wrd->word_trillion()->phrase();
         $eur = $t_wrd->word_eur()->phrase();
         $lst = new value_list($this->env->usr1);
-        $lst->add($this->value_for_phrases([$gw, $gain, $billion, $htp], 35.2));
-        $lst->add($this->value_for_phrases([$gw, $gain, $trillion, $eur], 0.176));
+        $lst->add($this->value_for_phrases([$gw, $gain, $billion, $htp], 320.01));
+        $lst->add($this->value_for_phrases([$gw, $gain, $trillion, $eur], 1.6));
         $lst->add($this->value_for_phrases([$t_wrd->word_populism()->phrase(), $gain, $billion, $htp], 26.4));
         return $lst;
     }
