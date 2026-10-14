@@ -34,6 +34,10 @@
 
 namespace Zukunft\ZukunftCom\main\php\shared\const;
 
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+
+include_once paths::TEST_CONST . 'word_names.php';
+
 use Zukunft\ZukunftCom\test\php\const\word_names;
 
 class words

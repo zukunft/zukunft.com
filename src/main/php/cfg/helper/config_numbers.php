@@ -883,18 +883,23 @@ class config_numbers extends value_list
     }
 
     /**
-     * the pod setting that decides if the sessions of a user are written to the user log
+     * the pod setting that decides if the sessions of the users are written to the user log
      * a pod without the switch writes the log, so only an explicit false in config.yaml switches it off
-     * @param bool $is_ip_user true if the user has no login, which has an additional switch
-     * @return bool false if the sessions of the user should not be written to the user log
+     * @return bool false if no session should be written to the user log
      */
-    function user_log_allowed(bool $is_ip_user): bool
+    function user_log_allowed(): bool
     {
-        $result = $this->pod_switch(self::USER_LOG_ALLOWED_NAMES);
-        if ($result and $is_ip_user) {
-            $result = $this->pod_switch(self::IP_USER_LOG_ALLOWED_NAMES);
-        }
-        return $result;
+        return $this->pod_switch(self::USER_LOG_ALLOWED_NAMES);
+    }
+
+    /**
+     * the pod setting that decides if the sessions of the users without login are written to the user log
+     * a pod without the switch writes the log, so only an explicit false in config.yaml switches it off
+     * @return bool false if no session of an ip user should be written to the user log
+     */
+    function ip_user_log_allowed(): bool
+    {
+        return $this->pod_switch(self::IP_USER_LOG_ALLOWED_NAMES);
     }
 
 }

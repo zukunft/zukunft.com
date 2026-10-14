@@ -4200,12 +4200,19 @@ class user extends db_id_object_non_sandbox
                     } else {
                         // the cache entries and the user log sessions of the user reference the user row,
                         // so they are removed first (see db_cache::del_by_user and user_log::del_by_user)
+                        $del_msg = new user_message($msg->usr); // merged back below
                         $cac = new db_cache($this);
-                        $cac->del_by_user($this->id, $msg);
+                        $cac->del_by_user($this->id, $del_msg);
                         $usr_log = new user_log();
-                        $usr_log->del_by_user($this->id, $msg);
-                        // TODO check if there are related log entries and if yes exclude it instead of delete
-                        parent::del_exe($msg);
+                        $usr_log->del_by_user($this->id, $del_msg);
+                        $msg->merge($del_msg);
+                        if ($del_msg->is_ok()) {
+                            // TODO check if there are related log entries and if yes exclude it instead of delete
+                            parent::del_exe($msg);
+                        } else {
+                            // the user row is not deleted, because its remaining rows would block it
+                            log_debug('delete of ' . $this->dsp_id() . ' skipped');
+                        }
                     }
                 }
             }

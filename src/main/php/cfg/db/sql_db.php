@@ -178,7 +178,7 @@ include_once paths::SHARED . 'library.php';
 include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED_CONST_FIELDS . 'fields.php';
 
-//include_once test_paths::CONST . 'word_names.php';
+include_once paths::TEST_CONST . 'word_names.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
 use Zukunft\ZukunftCom\main\php\cfg\component\component_link;

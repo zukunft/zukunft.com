@@ -8,7 +8,7 @@ add to the admin dashboard a button with a link to 'http/server_admin.php'
 
 add to the admin dashboard a list of top 10 (config.yaml value) users that have done most requests 
 and one list with user that have done most db updates  (the threshold for a critical number is also a config.yaml value)
-after each user should be a button that moves the user to the blacklist 
+after each user should be a button that moves the user from the whitelist to the blacklist 
 
 add to the admin dashboard a list of top 10 (config.yaml value) ip-address ranges that have done most requests
 and one list with ip-address ranges that have done most db updates (the threshold for a critical number is also a config.yaml value)

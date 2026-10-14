@@ -41,6 +41,11 @@ class paths
     // set all path for the program code here at once
     const string SRC = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR;
     const string MAIN = self::SRC . 'main' . DIRECTORY_SEPARATOR;
+    // the test names that the main const classes still use (e.g. words::RESERVED_NAMES); a path of its
+    // own, because the api scripts do not load the test paths class
+    // TODO Prio 2 remove when the main code does not use the test names any more
+    const string TEST_CONST = self::SRC . 'test' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR
+        . 'const' . DIRECTORY_SEPARATOR;
     // recreation of the PHP for library use only
     const string PHP_LIB = self::MAIN . 'php' . DIRECTORY_SEPARATOR;
     // path of the main model objects for db saving, api feed and processing
@@ -77,6 +82,9 @@ class paths
 
     // for the backend cache
     const string CACHE = ROOT_PATH . 'cache' . DIRECTORY_SEPARATOR;
+    // outside the web root, because the archived user sessions must never be served by the web server
+    const string USER_LOG_ARCHIVE = DIRECTORY_SEPARATOR . 'var' . DIRECTORY_SEPARATOR . 'log'
+        . DIRECTORY_SEPARATOR . 'zukunft' . DIRECTORY_SEPARATOR . 'user_log' . DIRECTORY_SEPARATOR;
 
     const string SHARED = self::PHP_LIB . 'shared' . DIRECTORY_SEPARATOR;
     const string SHARED_SECTION = 'Shared';

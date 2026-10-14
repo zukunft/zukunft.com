@@ -1645,6 +1645,10 @@ found 2026-10-14 when the user_log table and its writer in application::end_api 
   a page count needs the frontend to tell the api which call is the page request
 - the user of an own pod call is the id of url_var::USER without a load (user::data_user_id), so
   an unknown id is only rejected by the foreign key of the insert, which is logged as an end_api
-  error instead of being reported before the write
-- each api request now reads and writes one user log row; if this shows up in the response times,
-  the counts could be collected in the session and written once per minute
+  error instead of being reported before the write; the user is loaded only if the pod has
+  switched off the log of the ip users and the counted user is not the session user
+  (user_log::allowed)
+- each api request now reads and writes one user log row and checks the two pod switches, which
+  rebuilds config_numbers::exact_lookup() once per switch, because the map is not kept between
+  calls; if this shows up in the response times, keep the map until the config values change and
+  collect the counts in the session to write them once per minute

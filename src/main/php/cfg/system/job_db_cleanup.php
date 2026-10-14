@@ -91,6 +91,8 @@ class job_db_cleanup implements job_exe
      */
     function execute(user_message $msg): int
     {
+        global $cfg;
+
         $result = 0;
         $usr = user::system();
         $cutoff = new DateTime();
@@ -105,7 +107,7 @@ class job_db_cleanup implements job_exe
 
         // move the old sessions of the user log to the csv archive
         $usr_log = new user_log();
-        $result += $usr_log->archive($msg);
+        $result += $usr_log->archive($msg, user_log::archive_before($cfg), user_log::archive_dir($cfg));
 
         return $result;
     }

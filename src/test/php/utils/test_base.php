@@ -335,6 +335,7 @@ include_once test_paths::UNIT_READ . 'type_lists_ui_tests.php';
 //include_once test_paths::UNIT_WRITE . 'all_unit_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'api_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'user_write_tests.php';
+include_once test_paths::UNIT_WRITE . 'user_log_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'word_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'word_list_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'verb_write_tests.php';

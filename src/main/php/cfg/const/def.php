@@ -291,7 +291,6 @@ class def
     const int FALLBACK_SLOW_REQUEST_DAYS = 10; // the number of last days of which the admin dashboard shows the slow requests
     const int FALLBACK_USER_LOG_SESSION_GAP = 1800; // the max seconds between two requests of a user that are still one session of the user log
     const int FALLBACK_USER_LOG_MAX_AGE_DAYS = 365; // the days a session is kept in the user log before it is archived
-    const string FALLBACK_USER_LOG_ARCHIVE_PATH = '/var/log/zukunft/user_log/'; // the directory of the archived user log csv files
 
 
     /*

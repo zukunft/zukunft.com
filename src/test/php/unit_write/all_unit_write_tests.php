@@ -146,6 +146,7 @@ class all_unit_write_tests extends all_unit_read_tests
 
                 // run the general db write tests
                 new user_write_tests()->run($t);
+                new user_log_write_tests()->run($t);
                 new sys_log_write_tests()->run($t);
                 new db_cache_page_write_tests()->run($t);
                 // TODO Prio 0 activate

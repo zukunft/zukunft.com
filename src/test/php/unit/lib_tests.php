@@ -48,6 +48,7 @@ include_once paths::SHARED_CONST . 'users.php';
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_log;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use DateTimeInterface;
 use Zukunft\ZukunftCom\main\php\shared\const\def as def_shared;
@@ -86,6 +87,16 @@ class lib_tests
         $bool = null;
         $result = $lib->get_bool($bool);
         $t->assert("trim", $result, false);
+
+        // a table listed in library::SINGULAR_TABLES keeps the singular class name
+        $test_name = 'the user log table keeps the singular name';
+        $t->assert($test_name, $lib->singular_table('user_logs'), 'user_log');
+        $test_name = 'the class of the user log has the singular table name';
+        $t->assert($test_name, $lib->class_to_table(user_log::class), 'user_log');
+        $test_name = 'a table not listed keeps the plural name';
+        $t->assert($test_name, $lib->singular_table('words'), 'words');
+        $test_name = 'a listed name without the plural extension is not changed';
+        $t->assert($test_name, $lib->singular_table('user_log'), 'user_log');
 
 
         $t->subheader($ts . 'strings');

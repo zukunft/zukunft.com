@@ -36,6 +36,7 @@ namespace Zukunft\ZukunftCom\main\php\shared\const;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_CONST . 'words.php';
+include_once paths::TEST_CONST . 'triple_names.php';
 
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 

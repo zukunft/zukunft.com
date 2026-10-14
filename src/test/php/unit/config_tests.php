@@ -130,6 +130,31 @@ class config_tests
         $t->assert_false($test_name, $t_val->config_empty()->ip_user_can_change());
 
 
+        $t->subheader($ts . 'user log switches');
+
+        // the user log can be switched off for all users and for the users without login
+        // and a pod without the switch writes the log
+        $names = config_numbers::USER_LOG_ALLOWED_NAMES;
+        $test_name = 'the user log is written if the pod setting is true';
+        $t->assert_true($test_name, $t_val->config_cache_switch($names, true)->user_log_allowed());
+        $test_name = 'the user log is not written if the pod setting is false';
+        $t->assert_false($test_name, $t_val->config_cache_switch($names, false)->user_log_allowed());
+        $test_name = 'a pod without the switch writes the user log';
+        $t->assert_true($test_name, $t_val->config_empty()->user_log_allowed());
+        $test_name = 'the switch for all users does not change the switch for the ip users';
+        $t->assert_true($test_name, $t_val->config_cache_switch($names, false)->ip_user_log_allowed());
+        $names = config_numbers::IP_USER_LOG_ALLOWED_NAMES;
+        $test_name = 'the user log of an ip user is written if the pod setting is true';
+        $t->assert_true($test_name, $t_val->config_cache_switch($names, true)->ip_user_log_allowed());
+        $test_name = 'the user log of an ip user is not written if the pod setting is false';
+        $t->assert_false($test_name, $t_val->config_cache_switch($names, false)->ip_user_log_allowed());
+        $test_name = 'a pod without the switch writes the user log of an ip user';
+        $t->assert_true($test_name, $t_val->config_empty()->ip_user_log_allowed());
+        // negative: the ip user switch has all phrases of the switch for all users
+        $test_name = 'the switch for the ip users does not change the switch for all users';
+        $t->assert_true($test_name, $t_val->config_cache_switch($names, false)->user_log_allowed());
+
+
         $t->subheader($ts . 'database cache switches');
 
         // each database cache can be switched off by a pod setting in config.yaml

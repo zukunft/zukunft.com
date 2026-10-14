@@ -34,10 +34,12 @@ namespace Zukunft\ZukunftCom\test\php\unit;
 
 use DateTime;
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\helper\config_numbers;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_list;
@@ -48,6 +50,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\test\php\create\test_users;
+use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class user_tests
@@ -63,6 +66,7 @@ class user_tests
         $db_con = new sql_db();
         $sc = new sql_creator();
         $t_usr = new test_users($t);
+        $t_val = new test_values($t);
         $t->name = 'user->';
         $t->resource_path = 'db/user/';
         $t->usr_admin = $t_usr->user_sys_admin();
@@ -154,11 +158,42 @@ class user_tests
         $t->assert($test_name, $since->getTimestamp(), (int)$end - def::FALLBACK_USER_LOG_SESSION_GAP);
         $test_name = '... so a session that has ended before the request is not always continued';
         $t->assert_true($test_name, $since->getTimestamp() < (int)$end);
-        $test_name = 'the user log is written for a user with login';
-        $t->assert_true($test_name, user_log::allowed($t_usr->user_sys_normal()));
+
+        $t->subheader($ts . 'log switches');
+        $usr_normal = $t_usr->user_sys_normal();
+        // the counted user is the session user, so no user is loaded
+        // not user_sys_normal, because the normal profile is the ip only profile of a user without login
+        $usr_login = $t_usr->user_sys_admin();
+        $msg_login = new user_message($usr_login); // the request message of a user with login
+        $usr_ip = $t_usr->user_ip_loaded();
+        $msg_ip = new user_message($usr_ip); // the request message of a user without login
+        $all_off = $t_val->config_cache_switch(config_numbers::USER_LOG_ALLOWED_NAMES, false);
+        $ip_off = $t_val->config_cache_switch(config_numbers::IP_USER_LOG_ALLOWED_NAMES, false);
+        $test_name = 'the user log is written during the setup without config';
+        $t->assert_true($test_name, user_log::allowed($msg_login, $usr_login->id(), null));
+        $test_name = 'the user log is written if no switch is set';
+        $t->assert_true($test_name, user_log::allowed($msg_ip, $usr_ip->id(), $t_val->config_empty()));
+        $test_name = 'the user log is not written if it is switched off for all users';
+        $t->assert_false($test_name, user_log::allowed($msg_login, $usr_login->id(), $all_off));
+        $test_name = 'the user log of a user with login is written if it is switched off for ip users';
+        $t->assert_true($test_name, user_log::allowed($msg_login, $usr_login->id(), $ip_off));
+        $test_name = 'the user log of an ip user is not written if it is switched off for ip users';
+        $t->assert_false($test_name, user_log::allowed($msg_ip, $usr_ip->id(), $ip_off));
+
+        $t->subheader($ts . 'log archive');
+        $test_name = 'the archive is outside the web root by default';
+        $t->assert($test_name, user_log::archive_dir(null), rtrim(paths::USER_LOG_ARCHIVE, DIRECTORY_SEPARATOR));
+        $test_name = 'a pod without the archive path uses the default';
+        $t->assert($test_name, user_log::archive_dir($t_val->config_empty()), user_log::archive_dir(null));
+        $test_name = 'a session is archived after the default max age';
+        $max_age = new DateTime()->modify('-' . def::FALLBACK_USER_LOG_MAX_AGE_DAYS . ' days');
+        $diff = abs(user_log::archive_before(null)->getTimestamp() - $max_age->getTimestamp());
+        // a few seconds can pass between the two times
+        $t->assert_true($test_name, $diff < test_users::TV_USER_LOG_TOLERANCE_SEC);
+        $test_name = 'a session younger than the max age is not archived';
+        $t->assert_true($test_name, user_log::archive_before(null) < new DateTime());
 
         $t->subheader($ts . 'data user id');
-        $usr_normal = $t_usr->user_sys_normal();
         $test_name = 'an own pod call is counted for the browsing user';
         $t->assert($test_name, $usr_normal->data_user_id(users::SYSTEM_TEST_PARTNER_ID, true), users::SYSTEM_TEST_PARTNER_ID);
         $test_name = 'an admin may name the data user';

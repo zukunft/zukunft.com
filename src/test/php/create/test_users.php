@@ -68,6 +68,9 @@ class test_users
     const string TV_USER_LOG_START = '2023-01-03T20:59:59+0100'; // the start of the first request of the session
     const float TV_USER_LOG_SEC = 0.25; // the seconds of one request of the session
     const int TV_USER_LOG_MS = 250; // the same request time in milliseconds as written to the user log
+    const int TV_USER_LOG_TOLERANCE_SEC = 60; // the max seconds between two times taken in the same test
+    const string TV_USER_LOG_OLD_START = '2000-01-01T00:00:00+0100'; // a session older than any real session
+    const string TV_USER_LOG_ARCHIVE_BEFORE = '2000-01-02T00:00:00+0100'; // to archive only the old test session
 
     /*
      * cleanup

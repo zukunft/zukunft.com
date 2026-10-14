@@ -467,7 +467,7 @@ class application
 
     /**
      * count the api request in the session of the user it has been made for, which is the browsing
-     * user of an own pod call (see user::data_user), so that the admin can see how the pod is used;
+     * user of an own pod call (see user::data_user_id), so that the admin can see how the pod is used;
      * unless the pod has switched off the user log for all users or for the users without login
      *
      * @param sql_db $db_con the open database connection to write the session
@@ -476,14 +476,13 @@ class application
     private function write_user_log(sql_db $db_con, user_message $msg): void
     {
         global $sys;
+        global $cfg;
 
-        if ($db_con->is_open() and $msg->usr != null) {
-            $usr = $msg->usr->data_user(server_guard::requested_user_id(), $msg, server_guard::from_own_pod());
-            if ($usr->id > 0 and user_log::allowed($usr)) {
-                $is_update = server_guard::request_method() != rest_ctrl::GET;
-                $usr_log = new user_log();
-                $usr_log->log_request($usr->id, $sys->start_time, microtime(true), $is_update, $msg);
-            }
+        $usr_id = $msg->usr?->data_user_id(server_guard::requested_user_id(), server_guard::from_own_pod()) ?? 0;
+        if ($db_con->is_open() and $usr_id > 0 and user_log::allowed($msg, $usr_id, $cfg)) {
+            $is_update = server_guard::request_method() != rest_ctrl::GET;
+            $usr_log = new user_log();
+            $usr_log->log_request($usr_id, $sys->start_time, microtime(true), $is_update, $msg);
         }
     }
 

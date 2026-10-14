@@ -230,11 +230,13 @@ class server_guard
     /**
      * the data user that the request names in url_var::USER e.g. the browsing user of an own pod call
      * (see user::data_user_id); $_GET is read here because this is the request boundary, like request_url
-     * @return int the requested user id or 0 if the request names no user
+     * @return int the requested user id or 0 if the request names no user or no valid id
      */
     public static function requested_user_id(): int
     {
-        return (int)($_GET[url_var::USER] ?? 0);
+        // a cast would turn e.g. the array of u[]=x into the id 1
+        $id = filter_var($_GET[url_var::USER] ?? 0, FILTER_VALIDATE_INT, ['options' => ['default' => 0]]);
+        return $id;
     }
 
     /**

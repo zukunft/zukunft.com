@@ -2045,6 +2045,8 @@
             lper/config_numbers.php
     \-- user_log_allowed - section for function user_log_allowed not yet defined that it should be predefined in /helper
             /config_numbers.php
+    \-- ip_user_log_allowed - section for function ip_user_log_allowed not yet defined that it should be predefined in /
+            helper/config_numbers.php
 \-- config_tree
     \-- api_json - section for function api_json not yet defined that it should be api in /helper/config_tree.php
     \-- nodes - section for function nodes not yet defined that it should be convert in /helper/config_tree.php
@@ -4929,7 +4931,7 @@
     \-- log_request
         \-- user_log - count one api request in the open session of the user or start a new session;
     \-- archive
-        \-- user_log - move the oldest sessions that have ended before the configured max age to a csv file
+        \-- user_log - move the oldest sessions that have ended before the given time to a csv file in the given
 \-- sql fields
     \-- 1
         \-- db_cache_status - 
@@ -5921,7 +5923,10 @@
     \-- ip_user_can_change
         \-- config_numbers - the pod permission that decides if a user without login can change data in the database
     \-- user_log_allowed
-        \-- config_numbers - the pod setting that decides if the sessions of a user are written to the user log
+        \-- config_numbers - the pod setting that decides if the sessions of the users are written to the user log
+    \-- ip_user_log_allowed
+        \-- config_numbers - the pod setting that decides if the sessions of the users without login are written to the 
+                user log
 \-- convert
     \-- nodes
         \-- config_tree - the nodes of the given part of config.yaml in the order of the file, without the keys

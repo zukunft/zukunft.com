@@ -53,6 +53,9 @@ include_once paths::DB . 'sql_par_field_list.php';
 include_once paths::DB . 'sql_par_type.php';
 include_once paths::DB . 'sql_type_list.php';
 include_once paths::MODEL_CONST . 'def.php';
+include_once paths::MODEL_CONST . 'files.php';
+// only a parameter type, because config_numbers loads the value classes, which would include user.php while it is loaded
+//include_once paths::MODEL_HELPER . 'config_numbers.php';
 include_once paths::MODEL_SYSTEM . 'system_time_list.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_db.php';
@@ -62,6 +65,7 @@ include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
+use Zukunft\ZukunftCom\main\php\cfg\const\files;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
@@ -71,6 +75,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\helper\config_numbers;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
 use Zukunft\ZukunftCom\main\php\cfg\system\system_time_list;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
@@ -138,10 +143,10 @@ class user_log extends db_object_seq_id
 
     // the max number of sessions moved to the archive in one run to keep the run within the time budget
     const int ARCHIVE_LIMIT = 1000;
-    // the start of the name of the archive files, followed by the archive time and the first session id
-    const string ARCHIVE_FILE = 'user_log_';
+    // the archive time in the name of the archive file
     const string ARCHIVE_TIME_FORMAT = 'Ymd_His';
-    const string ARCHIVE_FILE_TYPE = '.csv';
+    // only the owner and the group of the pod process can read the archived sessions
+    const int ARCHIVE_DIR_MODE = 0750;
 
 
     /*
@@ -257,38 +262,58 @@ class user_log extends db_object_seq_id
     }
 
     /**
-     * @param user $usr the user whose request should be counted
+     * @param user_message $msg with the session user of the request and to report a failed load of the counted user
+     * @param int $usr_id the user whose request should be counted e.g. the browsing user of an own pod call
+     * @param config_numbers|null $cfg the pod configuration or null during the initial setup, which counts the request
      * @return bool false if the pod has switched off the user log for all users or for this user without login
      */
-    static function allowed(user $usr): bool
+    static function allowed(user_message $msg, int $usr_id, ?config_numbers $cfg): bool
     {
-        global $cfg;
-        // during the initial setup the config is not yet loaded, so the request is counted
-        return $cfg?->user_log_allowed($usr->is_ip_user()) ?? true;
+        $result = $cfg?->user_log_allowed() ?? true;
+        // the counted user is only loaded if the log of the users without login is switched off
+        if ($result and !($cfg?->ip_user_log_allowed() ?? true)) {
+            $result = !self::counted_user($msg, $usr_id)->is_ip_user();
+        }
+        return $result;
     }
 
     /**
+     * @param config_numbers|null $cfg the pod configuration or null to use the fallback
      * @return DateTime the sessions that have ended before this time are moved to the archive
      */
-    static function archive_before(): DateTime
+    static function archive_before(?config_numbers $cfg): DateTime
     {
-        global $cfg;
         $days = (int)($cfg?->get_by(self::MAX_AGE_NAMES, def::FALLBACK_USER_LOG_MAX_AGE_DAYS)
             ?? def::FALLBACK_USER_LOG_MAX_AGE_DAYS);
         return new DateTime()->modify('-' . $days . ' days');
     }
 
     /**
+     * @param config_numbers|null $cfg the pod configuration or null to use the fallback
      * @return string the directory where the archived sessions are written to without the closing slash
      */
-    static function archive_dir(): string
+    static function archive_dir(?config_numbers $cfg): string
     {
-        global $cfg;
         $path = $cfg?->get_by_names(self::ARCHIVE_PATH_NAMES)?->get_value();
         if (!is_string($path) or $path == '') {
-            $path = def::FALLBACK_USER_LOG_ARCHIVE_PATH;
+            $path = paths::USER_LOG_ARCHIVE;
         }
-        return rtrim($path, '/');
+        return rtrim($path, DIRECTORY_SEPARATOR);
+    }
+
+    /**
+     * @param user_message $msg with the session user of the request and to report a failed load
+     * @param int $usr_id the user whose request is counted
+     * @return user the session user or the loaded user if the request is counted for another user
+     */
+    private static function counted_user(user_message $msg, int $usr_id): user
+    {
+        $result = $msg->usr;
+        if ($result == null or $usr_id != $result->id) {
+            $result = new user();
+            $result->load_by_id($usr_id, $msg);
+        }
+        return $result;
     }
 
 
@@ -393,23 +418,30 @@ class user_log extends db_object_seq_id
     }
 
     /**
-     * move the oldest sessions that have ended before the configured max age to a csv file
-     * in the configured archive directory and remove them from the database;
+     * move the oldest sessions that have ended before the given time to a csv file in the given
+     * directory and remove them from the database (see archive_before and archive_dir);
      * the sessions are removed only after the csv file has been written completely
      * and without change log, because the csv file is the log of the removed sessions
      *
      * @param user_message $msg to report why the sessions could not be archived
+     * @param DateTime $before the sessions that have ended before this time are archived
+     * @param string $dir the directory of the csv file without the closing slash
      * @return int the number of sessions that have been moved to the archive
      */
-    function archive(user_message $msg): int
+    function archive(user_message $msg, DateTime $before, string $dir): int
     {
         global $db_con;
 
         $result = 0;
-        $qp = $this->load_sql_old($db_con->sql_creator(), self::archive_before(), self::ARCHIVE_LIMIT);
-        $rows = $db_con->get($qp, $msg) ?: [];
+        // TODO Prio 1 do not use load_sql_old, use a prepared SQL statement instead
+        $qp = $this->load_sql_old($db_con->sql_creator(), $before, self::ARCHIVE_LIMIT);
+        $rows = $db_con->get($qp, $msg);
+        // a failed read is already reported by the db layer and nothing is archived
+        if ($rows === false) {
+            $rows = [];
+        }
         $ids = array_column($rows, self::FLD_ID);
-        if ($ids != [] and $this->write_csv($rows, $msg)) {
+        if ($ids != [] and $this->write_csv($rows, $dir, $msg)) {
             $qp = $this->del_sql_without_log($db_con->sql_creator(), $ids);
             if ($db_con->delete($qp, 'archived user log sessions', $msg)) {
                 $result = count($ids);
@@ -422,25 +454,27 @@ class user_log extends db_object_seq_id
      * write the given session rows with a header line to a new csv file in the archive directory
      *
      * @param array $rows the session rows as selected from the database
+     * @param string $dir the directory of the csv file without the closing slash
      * @param user_message $msg to report why the file could not be written
      * @return bool true if all rows have been written to the file
      */
-    private function write_csv(array $rows, user_message $msg): bool
+    private function write_csv(array $rows, string $dir, user_message $msg): bool
     {
-        $dir = self::archive_dir();
         $time = new DateTime()->format(self::ARCHIVE_TIME_FORMAT);
-        $file = $dir . '/' . self::ARCHIVE_FILE . $time . '_' . $rows[0][self::FLD_ID] . self::ARCHIVE_FILE_TYPE;
+        $name = files::USER_LOG_ARCHIVE . $time . files::SEP . $rows[0][self::FLD_ID] . files::CSV;
+        $file = $dir . DIRECTORY_SEPARATOR . $name;
         $fields = [self::FLD_ID, ...self::FLD_NAMES];
-        $result = is_dir($dir) || mkdir($dir, 0750, true);
+        // a file with the name of the directory is reported like a failed mkdir
+        $result = (is_dir($dir) or (!file_exists($dir) and mkdir($dir, self::ARCHIVE_DIR_MODE, true)));
         // x to never overwrite an archive file
         $handle = $result ? fopen($file, 'x') : false;
-        $result = $handle !== false && fputcsv($handle, $fields, escape: '') !== false;
+        $result = ($handle !== false and fputcsv($handle, $fields, escape: '') !== false);
         foreach ($rows as $row) {
             $values = array_map(fn(string $fld) => $row[$fld], $fields);
-            $result = $result && fputcsv($handle, $values, escape: '') !== false;
+            $result = ($result and fputcsv($handle, $values, escape: '') !== false);
         }
         if ($handle !== false) {
-            $result = fclose($handle) && $result;
+            $result = (fclose($handle) and $result);
         }
         if (!$result) {
             // a partly written file would archive the sessions twice, because they are archived again on the next run
