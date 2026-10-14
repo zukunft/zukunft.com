@@ -2162,8 +2162,9 @@ class ui_list extends ui_base
     }
 
     /**
-     * the triples that point to the given type, one list per sub type of the type below its name,
-     * e.g. for "column (system)" the triple "column problem (high prio)" below "mayor column (system)"
+     * the triples that point to the given type, one column per sub type of the type below its name,
+     * e.g. for "column (system)" the triple "column problem (high prio)" below "mayor column (system)";
+     * the sub types are shown side by side in up to four columns, which wrap on a narrow screen
      *
      * TODO Prio 2 list only the triples related to the phrase of the page again
      *      (phrase_list::related_triples_to); switched off, because the walk of parents_all
@@ -2173,13 +2174,15 @@ class ui_list extends ui_base
      * @param int|null $typ_id the phrase id of the type e.g. of "column (system)", which is the column phrase of the component
      * @param user_message $msg to report a component without a known type
      * @param data_object|null $dto the request cache, which is filled from the api if online; null for no list
+     * @param array $url_arr the url vars of the shown page as back target of the delete and the add icons
      * @return string the html code of the labelled triple lists or '' if the page shows no phrase
      */
     function triples_of_types(
         db_object|type_object|combine_named|null $dbo,
         ?int                                     $typ_id,
         user_message                             $msg,
-        ?data_object                             $dto
+        ?data_object                             $dto,
+        array                                    $url_arr = []
     ): string
     {
         $result = '';
@@ -2194,29 +2197,49 @@ class ui_list extends ui_base
         if ($typ == null) {
             log_err_msg_ui('the type phrase ' . $typ_id . ' of the triple list is missing', $msg);
         } else {
+            $col_lst = [];
             foreach ($dto->phr_lst->sub_types($typ, $msg) as $sub) {
-                $result .= $this->triples_of_type($sub, $dto->phr_lst, $msg);
+                $col_lst[] = $this->triples_of_type($sub, $dto->phr_lst, $msg, $url_arr);
             }
+            $result = new html_base()->div_row_wrapping_cols($col_lst, $msg);
         }
         return $result;
     }
 
     /**
+     * the name of the type followed by its triples separated by a comma, each with a delete icon,
+     * and in the next line the add icon of a new triple that points to the type
+     *
      * @param phrase $typ the type phrase that the listed triples point to e.g. "mayor column (system)"
      * @param phrase_list $phr_lst the request cache with the triples
      * @param user_message $msg to report a problem of reading a triple of the cache
+     * @param array $url_arr the url vars of the shown page as back target of the delete and the add icons
      * @return string the html code of the type name followed by the list of its triples
      */
-    private function triples_of_type(phrase $typ, phrase_list $phr_lst, user_message $msg): string
+    private function triples_of_type(phrase $typ, phrase_list $phr_lst, user_message $msg, array $url_arr): string
     {
+        global $mtr;
+        global $ui_sys;
+
         $html = new html_base();
         $trp_lst = $phr_lst->parent_triples($typ, $msg);
         $trp_lst->sort_by_name();
-        $items = '';
-        foreach ($trp_lst->lst() as $trp) {
-            $items .= $html->list_item($trp->name_link());
+        $items = [];
+        foreach ($trp_lst->lst() as $phr) {
+            // the list has phrases, so the delete view gets the triple id and not the negative phrase id
+            $items[] = $phr->name_link()
+                . $html->icon_link(views::TRIPLE_DEL_ID, $phr->obj_id(), icons::DEL, $mtr->txt(triple::MSG_DEL), $url_arr);
         }
-        return $html->text_h4($typ->name_link()) . $html->list_unsorted($items);
+        // the new triple is preset with the type and the verb of the listed triples
+        // e.g. "can be" "mayor column (system)", so that the user only selects the from phrase
+        $preset = [url_var::PHRASE_TO => $typ->id()];
+        $vrb = $ui_sys?->typ_lst_cache?->vrb?->get_by_code_id(verbs::CAN_BE);
+        if ($vrb != null) {
+            $preset[url_var::VERB] = $vrb->id();
+        }
+        $url = $html->url_back(views::TRIPLE_ADD_ID, 0, $url_arr, http_build_query($preset));
+        $add = $html->change_icon($url, icons::ADD, $mtr->txt(msg_id::TRIPLE_ADD));
+        return $html->text_h4($typ->name_link()) . $html->div(implode(', ', $items)) . $html->div($add);
     }
 
     /**

@@ -9297,7 +9297,7 @@
     \-- results_related
         \-- ui_list - show the results related to the given object grouped like the values of a phrase (see
     \-- triples_of_types
-        \-- ui_list - the triples that point to the given type, one list per sub type of the type below its name,
+        \-- ui_list - the triples that point to the given type, one column per sub type of the type below its name,
     \-- phrases_related
         \-- ui_list - TODO Prio 0 fill with real code
     \-- list_sort

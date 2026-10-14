@@ -458,6 +458,24 @@ class phrase_ui_tests
         $test_name = '... but not below the name of the tier before';
         $t->assert_text_not_contains($test_name,
             $lib->str_left_of($col_html, triple_names::SYSTEM_COLUMN_MINOR), triple_names::COLUMN_COST);
+        $test_name = 'the columns of one tier are shown behind each other';
+        $col_mayor = $lib->str_left_of($col_html, triple_names::SYSTEM_COLUMN_MINOR);
+        $t->assert_text_order($test_name, $col_mayor,
+            triple_names::COLUMN_PROBLEM, ', ', triple_names::COLUMN_SOLUTION);
+        $test_name = '... each with a delete icon';
+        $del_url = url_var::MASK . '=' . views::TRIPLE_DEL_ID . '&amp;' . url_var::ID . '=';
+        $t->assert_text_contains($test_name, $col_mayor, $del_url . triple_names::COLUMN_PROBLEM_ID);
+        $t->assert_text_contains($test_name, $col_mayor, $del_url . triple_names::COLUMN_SOLUTION_ID);
+        // negative: the delete icon of a column is only shown in the column of its tier
+        $test_name = '... but not for a column of another tier';
+        $t->assert_text_not_contains($test_name, $col_mayor, $del_url . triple_names::COLUMN_COST_ID);
+        $test_name = 'the tier has an add icon for a new column of the tier';
+        $t->assert_text_contains($test_name, $col_mayor,
+            url_var::MASK . '=' . views::TRIPLE_ADD_ID . '&amp;' . url_var::PHRASE_TO . '=' . -triple_names::SYSTEM_COLUMN_MAYOR_ID);
+        // negative: the add icon of the mayor tier does not add a column to the minor tier
+        $test_name = '... but not for a column of another tier';
+        $t->assert_text_not_contains($test_name, $col_mayor,
+            url_var::PHRASE_TO . '=' . -triple_names::SYSTEM_COLUMN_MINOR_ID);
         $test_name = 'without a phrase nothing is listed';
         $t->assert($test_name, $list->triples_of_types(null, $typ_id, $msg, $dto_col), '');
         $t->html_page_test($html->text_h2('Triple list test') . $col_html, 'triples of types', 'triples_of_types', $msg);

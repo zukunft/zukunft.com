@@ -511,7 +511,7 @@ class component_exe extends component
             component_types::VALUES_MOST_RELEVANT => $list->values_most_relevant($dbo, $msg, $cfg, $style_id),
             component_types::VALUES_IN_COLUMNS => $list->values_in_columns($dbo, $msg, $cfg),
             component_types::TABLE_WITH_RELATED_COLUMNS => $list->table_with_related_columns($dbo, $msg, $cfg, false, true, $url_arr),
-            component_types::TRIPLE_LIST => $list->triples_of_types($dbo, $this->col_phrase, $msg, $cfg),
+            component_types::TRIPLE_LIST => $list->triples_of_types($dbo, $this->col_phrase, $msg, $cfg, $url_arr),
             component_types::VALUE_CHART => $list->value_chart($dbo, $msg, $cfg),
             component_types::VIEW_TAB_BOX => $list->view_tab_box($dbo, $msg, $test_mode, $url_arr),
             component_types::NUMERIC_VALUE => $list->num_list(),

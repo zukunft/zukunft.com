@@ -28296,6 +28296,15 @@
                         "word_col": -184,
                         "position": 3,
                         "position_type": 1
+                    },
+                    {
+                        "link_id": 1579,
+                        "id": 437,
+                        "name": "table editor table",
+                        "description": "the table of the phrase of the table editor with the columns that the column tiers above define",
+                        "type_id": 55,
+                        "position": 4,
+                        "position_type": 1
                     }
                 ]
             },
@@ -28307,7 +28316,7 @@
                 "code_id": "calculation_editor",
                 "components": [
                     {
-                        "link_id": 1579,
+                        "link_id": 1580,
                         "id": 434,
                         "name": "system title calculation editor",
                         "description": "show the language specific title of the calculation editor",
@@ -28318,7 +28327,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1580,
+                        "link_id": 1581,
                         "id": 435,
                         "name": "phrase selector",
                         "description": "placeholder to select the word or triple that an editor starts from",

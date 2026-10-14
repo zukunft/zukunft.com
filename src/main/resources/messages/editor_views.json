@@ -58,6 +58,11 @@
       "description": "the columns of each column tier that are related to the phrase of the table",
       "type": "triple_list",
       "column": "column (system)"
+    },
+    {
+      "name": "table editor table",
+      "description": "the table of the phrase of the table editor with the columns that the column tiers above define",
+      "type": "table_with_related_columns"
     }
   ],
   "views": [
@@ -78,6 +83,10 @@
         {
           "position": "3",
           "name": "column tiers"
+        },
+        {
+          "position": "4",
+          "name": "table editor table"
         }
       ]
     },
