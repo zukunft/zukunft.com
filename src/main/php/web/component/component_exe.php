@@ -334,6 +334,7 @@ class component_exe extends component
             component_types::SYSTEM_ADMIN_ERRORS_UNASSIGNED => $page->admin_errors_unassigned($msg, $test_mode, $adm_dto->adm_sys_log),
             component_types::SYSTEM_ADMIN_ERRORS_DELAYED_FIX => $page->admin_errors_delayed_fix($msg, $test_mode, $adm_dto->adm_sys_log),
             component_types::SYSTEM_ADMIN_JOBS_DELAYED => $page->admin_jobs_delayed($msg, $test_mode, $adm_dto->adm_job_lst, $adm_dto->snap_time),
+            component_types::SYSTEM_ADMIN_USER_LOAD => $page->admin_user_load($msg, $test_mode, $adm_dto->adm_usr_log_sum_lst),
             component_types::SELECT_LIST => $select->list_select($dbo, $cfg->typ_lst_cache->lan, $form_name),
             component_types::EXPRESSION => $base->expression($dbo),
             component_types::EXPRESSION_LATEX_LINK => $base->expression_latex_link($dbo),

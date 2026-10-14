@@ -168,6 +168,11 @@ class lib_tests
         $this->assert_sql_format($test_name, test_paths::DB_USER_FORMAT . test_files::SQL_FORMAT_TEST_COUNT_USER, $t);
         $test_name = 'sql_format select count by user MariaSQL';
         $this->assert_sql_format($test_name, test_paths::DB_USER_FORMAT . test_files::SQL_FORMAT_TEST_COUNT_USER_MYSQL, $t);
+        // a joined sub query without a union e.g. the summed user log sessions with paging
+        $test_name = 'sql_format select sum with paging';
+        $this->assert_sql_format($test_name, test_paths::DB_USER_FORMAT . test_files::SQL_FORMAT_TEST_SUM, $t);
+        $test_name = 'sql_format select sum with paging MariaSQL';
+        $this->assert_sql_format($test_name, test_paths::DB_USER_FORMAT . test_files::SQL_FORMAT_TEST_SUM_MYSQL, $t);
         $test_name = 'sql_format create table';
         $this->assert_sql_format($test_name, test_paths::DB_CACHE . test_files::SQL_FORMAT_TEST_CREATE, $t);
         $test_name = 'sql_format create table MariaSQL';

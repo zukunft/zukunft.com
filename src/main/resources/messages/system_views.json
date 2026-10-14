@@ -2617,6 +2617,12 @@
       "code_id": "system_admin_jobs_delayed"
     },
     {
+      "name": "system admin user load",
+      "description": "the users with the most server time of the last days, the users over a threshold shown first",
+      "type": "system_admin_user_load",
+      "code_id": "system_admin_user_load"
+    },
+    {
       "name": "system body config tree",
       "description": "the read only tree of the system configuration of config.yaml with a search and a scope to show one branch",
       "type": "system_body_config_tree",
@@ -9736,6 +9742,11 @@
         {
           "position": "7",
           "name": "system admin delayed jobs",
+          "position_type": "side_or_below"
+        },
+        {
+          "position": "8",
+          "name": "system admin user load",
           "position_type": "side_or_last_below"
         }
       ]

@@ -44,6 +44,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_log;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_log_sum_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_profile_list;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
@@ -111,6 +112,14 @@ class user_tests
         $t->assert_qp($qp, $sc->db_type);
         $sc->reset(sql_db::MYSQL);
         $qp = $usr_log->load_sql_old($sc, $since, user_log::ARCHIVE_LIMIT);
+        $t->assert_qp($qp, $sc->db_type);
+        // the sessions of the dashboard days summed per user for the users with the most server time
+        $usr_log_sum_lst = new user_log_sum_list();
+        $sc->reset(sql_db::POSTGRES);
+        $qp = $usr_log_sum_lst->load_sql($sc, $since, def::FALLBACK_USER_LOG_DASHBOARD_TOP);
+        $t->assert_qp($qp, $sc->db_type);
+        $sc->reset(sql_db::MYSQL);
+        $qp = $usr_log_sum_lst->load_sql($sc, $since, def::FALLBACK_USER_LOG_DASHBOARD_TOP);
         $t->assert_qp($qp, $sc->db_type);
         $sc->reset(sql_db::POSTGRES);
         $qp = $usr_log->del_sql_without_log($sc, [1, 2]);

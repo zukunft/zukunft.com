@@ -146,6 +146,7 @@ class words
     // in the shared const and not only in the test const
     const string CURRENCY = 'currency';
     const string DAILY = 'daily';
+    const string DASHBOARD = 'dashboard';
     const string DATA = 'data';
     const string DATABASE = 'database';
     const string DATABASE_COM = 'An organized collection of data stored and accessed electronically.';
@@ -253,6 +254,8 @@ class words
     const string REFERENCES = 'references';
     const string RELATED = 'related';
     const string REMOVE = 'remove';
+    const string REQUEST = 'request';
+    const string REQUESTS = 'requests';
     const string RESULTS = 'results';
     const string RETRY = 'retry';
     const string RISK = 'risk';
@@ -290,6 +293,7 @@ class words
     const string TRUSTED = 'trusted';
     const string TYPE = 'type';
     const string UPDATE = 'update';
+    const string UPDATES = 'updates';
     const string URL = 'url';
     const int URL_ID = 211;
     const string USAGE = 'usage';

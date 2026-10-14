@@ -54,6 +54,7 @@ include_once html_paths::SYSTEM . 'sys_log_list.php';
 include_once html_paths::SYSTEM . 'system_time_list.php';
 include_once html_paths::TYPES . 'type_object.php';
 include_once html_paths::USER . 'user.php';
+include_once html_paths::USER . 'user_log_sum_list.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::WEB . 'frontend.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
@@ -80,6 +81,7 @@ use Zukunft\ZukunftCom\main\php\web\system\job_list;
 use Zukunft\ZukunftCom\main\php\web\system\sys_log_list;
 use Zukunft\ZukunftCom\main\php\web\system\system_time_list;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_dsp;
+use Zukunft\ZukunftCom\main\php\web\user\user_log_sum_list;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -835,6 +837,39 @@ class system_page extends component
             $more->is_empty() ? '' : $more->head($size)->display(),
             $more->count(),
             $mtr->txt(msg_id::ADMIN_NO_SLOW_REQUESTS));
+    }
+
+    /**
+     * the users with the most server time of the configured last days: a user that has reached at least one
+     * of the configured thresholds is critical and the other top users are shown behind the plus sign
+     *
+     * @param user_message $msg with the requesting admin to report a problem of the load or the config lookup
+     * @param bool $test_mode true to show the given summed sessions without a backend call
+     * @param user_log_sum_list $usr_log_sum_lst the summed sessions per user to show in the test mode
+     * @return string the html code of the users with the most server time of the admin dashboard
+     */
+    function admin_user_load(
+        user_message      $msg,
+        bool              $test_mode,
+        user_log_sum_list $usr_log_sum_lst = new user_log_sum_list()
+    ): string
+    {
+        global $mtr;
+        if (!$test_mode) {
+            $usr_log_sum_lst = new user_log_sum_list();
+            $usr_log_sum_lst->load($msg);
+        }
+        $limits = user_log_sum_list::critical_limits($msg);
+        $sorted = $usr_log_sum_lst->most_first();
+        $critical = $sorted->critical(true, $limits);
+        $more = $sorted->critical(false, $limits);
+        // the backend sends only the configured top users, so all of them are shown
+        return $this->admin_split(
+            msg_id::ADMIN_TITLE_USER_LOAD,
+            $critical->is_empty() ? '' : $critical->display(),
+            $more->is_empty() ? '' : $more->display(),
+            $more->count(),
+            $mtr->txt(msg_id::ADMIN_NO_USER_LOAD));
     }
 
     /**

@@ -4,12 +4,11 @@
 
 ### system health
 
-add to the admin dashboard a list of top 10 (config.yaml value) users that have used most server time (request_time + update_time)
-with the columns from the user_og table or that have reached a threshold for the requests, updated, request_time or update_time
-(the threshold for a critical number is also a config.yaml value)
-below allow the popup a list with users that have not yet reached the threshold
-after each user should be a button that moves the user from the whitelist to the blacklist 
-
+add after each user of the admin dashboard column "Server time per user" (system_page::admin_user_load)
+a button that sets the user status to user_statuum::READ_ONLY: enforce the read only status in
+cfg user::is_blocked, add an admin only status change to api/user (refuse system users) and a frontend
+action like action_job; check before that the server-to-server put sends the csrf header
+(rest_call::set_session_token is only called in the tests)
 
 add to the admin dashboard a list of top 10 (config.yaml value) ip-address ranges that have done most requests
 and one list with ip-address ranges that have done most db updates (the threshold for a critical number is also a config.yaml value)
@@ -70,7 +69,6 @@ add a section with the number of connected pods, their usage and the most likely
 add to the admin dashboard a security section that shows the state of the ip and user whitelist mode (server_admin/state.json), the newest entries of the database user and ip blacklist with the reason and the time and a remove button for each entry, and an input to add an ip address or range to the blacklist (docs/todo.md "allow admin users to change IP blacklist"); every change is written with the change log
 
 ## start page
-
 
 adjust the numbers in the json data files so that the problem / solution are in this order
 

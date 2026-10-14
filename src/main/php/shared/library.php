@@ -1565,6 +1565,44 @@ class library
         $on = $prt[2];
         $where = $prt[4] ?? '';
         $order = $prt[6] ?? '';
+        if (str_contains($sub, ' FROM ( ')) {
+            $result = $this->sql_format_count_union($outer_tbl, $sub, $out_alias, $on);
+        } else {
+            // a sub query without a union e.g. the summed user log sessions is shown on one line
+            $result = '          FROM ' . $outer_tbl;
+            $result .= "\n" . '     LEFT JOIN (' . $sub . ') ' . $out_alias;
+            $result .= "\n" . '            ON ' . $on;
+        }
+        if ($where != '') {
+            $result .= "\n" . '         WHERE ' . $where;
+        }
+        if ($order != '') {
+            // the paging of e.g. a top list follows the order and gets an own line per clause
+            [$order, $offset] = $this->sql_split_clause($order, ' OFFSET ');
+            [$order, $limit] = $this->sql_split_clause($order, ' LIMIT ');
+            $result .= "\n" . '      ORDER BY ' . $order;
+            if ($limit != '') {
+                $result .= "\n" . '         LIMIT ' . $limit;
+            }
+            if ($offset != '') {
+                $result .= "\n" . '        OFFSET ' . $offset;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * format the from and the left join sub query of a user change count select, which sums up
+     * the union of the per-table counts, so the union is shown one table per line
+     *
+     * @param string $outer_tbl the outer table with its alias e.g. "users s"
+     * @param string $sub the content of the joined sub query without the outer brackets
+     * @param string $out_alias the alias of the joined sub query e.g. "l"
+     * @param string $on the join condition
+     * @return string the formatted from, join sub query and on lines
+     */
+    private function sql_format_count_union(string $outer_tbl, string $sub, string $out_alias, string $on): string
+    {
         // split the wrapping sum sub query into its select part and the counted union
         $from_pos = strpos($sub, ' FROM ( ');
         $sum = substr($sub, strlen('SELECT '), $from_pos - strlen('SELECT '));
@@ -1584,12 +1622,6 @@ class library
         }
         $result .= "\n" . '               GROUP BY ' . $sub_group . ' ) ' . $out_alias;
         $result .= "\n" . '            ON ' . $on;
-        if ($where != '') {
-            $result .= "\n" . '         WHERE ' . $where;
-        }
-        if ($order != '') {
-            $result .= "\n" . '      ORDER BY ' . $order;
-        }
         return $result;
     }
 

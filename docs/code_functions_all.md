@@ -3909,6 +3909,15 @@
     \-- del_by_user - section for function del_by_user is expected to be del in /user/user_log.php
     \-- del_sql_by_user_without_log - section for function del_sql_by_user_without_log is expected to be del in /user/us
             er_log.php
+\-- user_log_sum
+    \-- row_mapper - section for function row_mapper not yet defined that it should be construct and map in /user/user_l
+            og_sum.php
+\-- user_log_sum_list
+    \-- load - section for function load not yet defined that it should be load in /user/user_log_sum_list.php
+    \-- load_sql - section for function load_sql is expected to be load sql in /user/user_log_sum_list.php
+    \-- add - section for function add not yet defined that it should be modify in /user/user_log_sum_list.php
+    \-- api_json - section for function api_json not yet defined that it should be api in /user/user_log_sum_list.php
+    \-- order error - order of section load has difference at load_sql should be before load
 \-- user_message
     \-- __construct - section for function __construct is expected to be construct and map in /user/user_message.php
     \-- reset - section for function reset is expected to be construct and map in /user/user_message.php
@@ -5021,6 +5030,7 @@
         \-- ip_range - map the database fields to this ip range object
         \-- system_time - map one row of the system times table to this execution time row
         \-- user_log - map one row of the user log table to this session row
+        \-- user_log_sum - map one row of the summed sessions of a user
     \-- row_mapper_multi
         \-- db_object_multi - map the database fields to the object fields
     \-- row_mapper_typ_obj
@@ -5475,6 +5485,7 @@
         \-- ref_type - TODO use parent function for setting the name, ...
         \-- list_db_read - create an array for the api json message
         \-- system_time - create an array for the api json creation e.g. of the slow requests for the admin dashboard
+        \-- user_log_sum - @return array the summed sessions of the user for the api json message to the admin dashboard
         \-- value_geo - create an array for the api json creation
         \-- value_text - create an array for the api json creation
         \-- value_time - create an array for the api json creation
@@ -6662,6 +6673,8 @@
     \-- admin_subtitle - section for function admin_subtitle not yet defined that it should be admin dashboard in /compo
             nent/execute/system_page.php
     \-- admin_url_delay - section for function admin_url_delay not yet defined that it should be admin dashboard in /com
+            ponent/execute/system_page.php
+    \-- admin_user_load - section for function admin_user_load not yet defined that it should be admin dashboard in /com
             ponent/execute/system_page.php
     \-- admin_login_fails - section for function admin_login_fails not yet defined that it should be admin dashboard in 
             /component/execute/system_page.php
@@ -8091,6 +8104,20 @@
     \-- display - section for function display not yet defined that it should be to review in /user/user.php
     \-- order error - order of section construct and map has difference at url_mapper should be before reset,
             order of section set and get has difference at name should be before name_or_null
+\-- user_log_sum
+    \-- api_mapper - section for function api_mapper is expected to be construct and map in /user/user_log_sum.php
+    \-- server_time - section for function server_time not yet defined that it should be info in /user/user_log_sum.php
+    \-- display - section for function display not yet defined that it should be display in /user/user_log_sum.php
+    \-- header - section for function header not yet defined that it should be display in /user/user_log_sum.php
+\-- user_log_sum_list
+    \-- load - section for function load not yet defined that it should be load in /user/user_log_sum_list.php
+    \-- api_load - section for function api_load not yet defined that it should be load in /user/user_log_sum_list.php
+    \-- add - section for function add not yet defined that it should be modify in /user/user_log_sum_list.php
+    \-- count - section for function count not yet defined that it should be info in /user/user_log_sum_list.php
+    \-- most_first - section for function most_first not yet defined that it should be select in /user/user_log_sum_list
+            .php
+    \-- critical - section for function critical not yet defined that it should be select in /user/user_log_sum_list.php
+    \-- display - section for function display not yet defined that it should be display in /user/user_log_sum_list.php
 \-- user_message
     \-- __construct - section for function __construct is expected to be construct and map in /user/user_message.php
     \-- reset - section for function reset is expected to be construct and map in /user/user_message.php
@@ -8564,9 +8591,14 @@
     \-- slowest_first
         \-- system_time_list - @return system_time_list the request times with the slowest first and the same time sorte
                 d by the url
+    \-- 1
+        \-- user_log_sum_list - @return user_log_sum_list the users with the most server time first and the same time so
+                rted by the name
     \-- critical
         \-- system_time_list - @param bool $critical true for the requests that took at least the limit,
                  false for the faster ones
+        \-- user_log_sum_list - @param bool $critical true for the users that have reached a threshold,
+                 false for the others
     \-- head
         \-- system_time_list - @param int $limit the maximal number of request times to keep
     \-- time_lst
@@ -8636,12 +8668,17 @@
         \-- phrase_list - the phrases that say how the number has been found e.g. "assumed", which are shown as a
     \-- symbol_links
         \-- phrase_list - the symbols of the phrases of this list, each linked to its phrase and separated from the
+    \-- 1
+        \-- user_log_sum - @return int the server time of the user, which decides the order of the users
     \-- is_critical
         \-- system_time - @param int $limit the milliseconds from which a request is critical
+        \-- user_log_sum - @param array $limits the thresholds as returned by user_log_sum_list::critical_limits
     \-- is_empty
         \-- system_time_list - @return bool true if the list contains no request time
+        \-- user_log_sum_list - @return bool true if the list contains no user
     \-- count
         \-- system_time_list - @return int the number of request times of this list
+        \-- user_log_sum_list - @return int the number of users of this list
 \-- to be replaced
     \-- form_edit
         \-- component - HTML code to edit all component fields
@@ -8717,6 +8754,8 @@
         \-- sys_log_list - @return string with a table of the system log entries for users
         \-- system_time - @return string the html table row of this request time
         \-- system_time_list - @return string the html table of the request times with a header row
+        \-- user_log_sum - @return string the html table row of the summed sessions of the user
+        \-- user_log_sum_list - @return string the html table of the summed sessions with a header row
         \-- triple_list - the names are separated by a blank and not by a comma, because each name is already a link
     \-- name_tip
         \-- formula_link_list - @return string with a list of the formula names with html links
@@ -8725,6 +8764,7 @@
     \-- header
         \-- text_log - write a header text to the standard io
         \-- system_time - @return string the html table header row of the request times
+        \-- user_log_sum - @return string the html table header row of the summed sessions
     \-- subheader
         \-- text_log - write a subheader text to the standard io
     \-- name_link_by_impact
@@ -8804,6 +8844,7 @@
         \-- sandbox - set the vars of this sandbox object bases on the api json array
         \-- job_list - set the vars of these list display objects bases on the api json array
         \-- system_time - set the vars of this request time based on the api json array
+        \-- user_log_sum - set the vars of the summed sessions based on the api json array
         \-- triple_list - set the triples based on the given json
     \-- id
         \-- figure - the figure id based on the value or result id: the result id is negated, and a text key,
@@ -8954,6 +8995,7 @@
     \-- set_from_json_array
         \-- sys_log_list - set the vars of these list display objects bases on the api json array
         \-- system_time_list - set the request times based on the api json array
+        \-- user_log_sum_list - set the summed sessions based on the api json array
         \-- verb_list - set the vars of a term object based on the given json
     \-- default_id
         \-- component_type_list - create the HTML code to select a component type
@@ -8976,6 +9018,8 @@
     \-- load
         \-- config - request the user-specific frontend configuration from the backend
         \-- system_time_list - load the slow requests of the configured last days from the backend,
+                 which sends them only to an admin
+        \-- user_log_sum_list - load the users with the most server time from the backend,
                  which sends them only to an admin
     \-- get_by
         \-- config - get a frontend config value selected by the phrase names
@@ -9020,6 +9064,8 @@
                 e not sent
         \-- system_time_list - @param array $json_body the api answer with the slow requests or the message why they are
                  not sent
+        \-- user_log_sum_list - @param array $json_body the api answer with the summed sessions or the message why they 
+                are not sent
 \-- 
     \-- form_tile
         \-- system_form - start an HTML form, show the title and set and set the unique form name
@@ -9667,6 +9713,9 @@
     \-- admin_url_delay
         \-- system_page - the slowest user requests of the configured last days: a request that took at least the config
                 ured
+    \-- admin_user_load
+        \-- system_page - the users with the most server time of the configured last days: a user that has reached at le
+                ast one
     \-- admin_login_fails
         \-- system_page - the failed logins grouped by the typed name: a name with at least the configured number of fai
                 led logins
@@ -9733,6 +9782,8 @@
         \-- figure_list - add a figure to the list
         \-- sys_log_list - add a system log entry to the list
         \-- system_time_list - @param system_time $sys_tim the request time that should be added to the list
+        \-- user_log_sum_list - @param user_log_sum $usr_log_sum the summed sessions of a user that should be added to t
+                he list
     \-- intersect
         \-- phrase_list - removes all terms from this list that are not in the given list
     \-- mainly

@@ -191,6 +191,7 @@ include_once paths::SHARED_TYPES . 'system_time_type.php';
 include_once paths::MODEL_REF . 'ref_type.php';
 include_once paths::MODEL_REF . 'source_type.php';
 include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_log_sum_list.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_USER . 'user_official_type.php';
 include_once paths::MODEL_VIEW . 'view_type.php';

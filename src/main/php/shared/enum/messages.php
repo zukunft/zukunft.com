@@ -2140,6 +2140,7 @@ enum messages: string
     case ADMIN_TITLE_ERRORS_UNASSIGNED = 'admin_title_errors_unassigned';
     case ADMIN_TITLE_ERRORS_DELAYED_FIX = 'admin_title_errors_delayed_fix';
     case ADMIN_TITLE_JOBS_DELAYED = 'admin_title_jobs_delayed';
+    case ADMIN_TITLE_USER_LOAD = 'admin_title_user_load';
     // the admin, the pod and the creation time below the title of the admin dashboard
     case ADMIN_SUBTITLE = 'admin_subtitle';
     case ADMIN_NOT_YET_RECORDED = 'admin_not_yet_recorded';
@@ -2148,12 +2149,17 @@ enum messages: string
     case ADMIN_NO_CRITICAL = 'admin_no_critical';
     case ADMIN_NO_SLOW_REQUESTS = 'admin_no_slow_requests';
     case ADMIN_NO_LOGIN_FAILS = 'admin_no_login_fails';
+    case ADMIN_NO_USER_LOAD = 'admin_no_user_load';
     case ADMIN_HEAD_URL = 'admin_head_url';
     case ADMIN_HEAD_MILLISECONDS = 'admin_head_milliseconds';
     case ADMIN_HEAD_TIME = 'admin_head_time';
     case ADMIN_HEAD_USER_NAME = 'admin_head_user_name';
     case ADMIN_HEAD_ATTEMPTS = 'admin_head_attempts';
     case ADMIN_HEAD_LAST_TRY = 'admin_head_last_try';
+    case ADMIN_HEAD_REQUESTS = 'admin_head_requests';
+    case ADMIN_HEAD_UPDATES = 'admin_head_updates';
+    case ADMIN_HEAD_REQUEST_MS = 'admin_head_request_ms';
+    case ADMIN_HEAD_UPDATE_MS = 'admin_head_update_ms';
     case INFO_NO_JOBS = 'info_no_jobs';
     case JOB_CHANGE_NOT_PERMITTED = 'job_change_not_permitted';
     case JOB_UPGRADE_ONLY_ADMIN = 'job_upgrade_only_admin';
@@ -2162,6 +2168,7 @@ enum messages: string
     case JOB_LIST_ALL_ONLY_ADMIN = 'job_list_all_only_admin';
     case SYS_LOG_LIST_ONLY_ADMIN = 'sys_log_list_only_admin';
     case SYSTEM_TIME_LIST_ONLY_ADMIN = 'system_time_list_only_admin';
+    case USER_LOG_SUM_LIST_ONLY_ADMIN = 'user_log_sum_list_only_admin';
     case SYSTEM_BUTTON_JOB_UPGRADE = 'system_button_job_upgrade';
     case SYSTEM_BUTTON_JOB_DOWNGRADE = 'system_button_job_downgrade';
     case SYSTEM_BUTTON_JOB_CANCEL = 'system_button_job_cancel';

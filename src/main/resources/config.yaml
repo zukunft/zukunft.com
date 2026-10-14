@@ -385,6 +385,28 @@ zukunft.com:
                 path:
                   sys-conf-value: "/var/log/zukunft/user_log/"
                   tooltip-comment: "the directory where the user log entries older than the max age are exported as csv files"
+              dashboard:
+                days:
+                  sys-conf-value: 1
+                  tooltip-comment: "the number of last days whose user log sessions are summed per user for the admin dashboard"
+                top:
+                  sys-conf-value: 10
+                  tooltip-comment: "the number of users with the most server time that the admin dashboard shows"
+                threshold:
+                  requests:
+                    sys-conf-value: 10000
+                    tooltip-comment: "a user with at least this number of api requests in the dashboard days is shown as critical"
+                  updates:
+                    sys-conf-value: 1000
+                    tooltip-comment: "a user with at least this number of data changing api requests in the dashboard days is shown as critical"
+                  request:
+                    millisecond:
+                      sys-conf-value: 600000
+                      tooltip-comment: "a user whose api requests have taken at least these milliseconds in the dashboard days is shown as critical"
+                  update:
+                    millisecond:
+                      sys-conf-value: 60000
+                      tooltip-comment: "a user whose data changing api requests have taken at least these milliseconds in the dashboard days is shown as critical"
         hardware:
           usage:
             CPU:
