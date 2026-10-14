@@ -74,6 +74,8 @@ the object structure is:
 ├── sys_log_db - the database const for the system log table
 ├── system_time_list - $sys_tim_lst - a list of system error objects
 ├── user_list - a list of users
+├── user_log_sum - $usr_log_sum - the summed user log sessions of one user e.g. of the last days
+├── user_log_sum_list - $usr_log_sum_lst - the users that have used most server time in the last days
 ├── value_db - the database const for value tables
 ├── value_obj - $val - just to select the best fitting class for a value
 ├── verb_db - the database const for predicate/verb tables
@@ -220,7 +222,8 @@ the object structure is:
 │           ├── session - $ses - to control the user frontend sessions
 │           ├── sys_log - $slg - object to handle a system errors
 │           ├── system_time - $sys_tim - object to log and optimize the execution times of the system
-│           └── user_db - a person who uses zukunft.com
+│           ├── user_db - a person who uses zukunft.com
+│           └── user_log - $usr_log - one session of a user with the number and the time of the api requests
 ├── ListOfShared
 │   ├── value_type_list - a list of value types e.g. to create the query extension
 │   └── ListOfIdObjectsShared
@@ -466,6 +469,8 @@ the object structure is:
 ├── type_objectUi
 │   ├── languageUi - $lan - the extension of the language API objects to create language base html code
 │   └── ref_typeUi - the child class for reference types which has additional the url
+├── user_log_sumUi - $usr_log_sum - the summed user log sessions of one user for the admin dashboard
+├── user_log_sum_listUi - $usr_log_sum_lst - the users with the most server time for the admin dashboard
 ├── table_chartUi - a value table drawn as an svg chart
 └── table_modelUi - the rows and columns of a value table before they are rendered
 ```

@@ -48,7 +48,8 @@ class files
     const string YAML = '.yaml';
     const string XML = '.xml';
     const string ZIP = '.zip';
-    const string CODE_LINK_TYPE = '.csv';
+    const string CSV = '.csv';
+    const string CODE_LINK_TYPE = self::CSV;
     const string SQL = '.sql';
     const string SEP = '_';
 
@@ -62,6 +63,8 @@ class files
     // the json state file of the sys_log insert throttle, next to the error log
     // because the throttle must work even if the database is broken
     const string SYS_LOG_THROTTLE = ROOT_PATH . 'sys_log_throttle' . self::JSON;
+    // the start of the name of an archived user log file, followed by the archive time and the first session id
+    const string USER_LOG_ARCHIVE = 'user_log' . self::SEP;
 
     const string RESOURCE_PATH = paths::MAIN . 'resources' . DIRECTORY_SEPARATOR;
     const string MESSAGE_PATH = self::RESOURCE_PATH . 'messages' . DIRECTORY_SEPARATOR;

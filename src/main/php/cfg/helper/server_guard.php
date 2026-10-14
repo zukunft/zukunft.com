@@ -218,6 +218,38 @@ class server_guard
     }
 
     /**
+     * the http method of the request e.g. to count a write request in the user log;
+     * $_SERVER is read here because this is the request boundary, like request_url
+     * @return string the http method e.g. POST or GET if the script has not been called by an url
+     */
+    public static function request_method(): string
+    {
+        return $_SERVER[rest_ctrl::REQUEST_METHOD] ?? rest_ctrl::GET;
+    }
+
+    /**
+     * the data user that the request names in url_var::USER e.g. the browsing user of an own pod call
+     * (see user::data_user_id); $_GET is read here because this is the request boundary, like request_url
+     * @return int the requested user id or 0 if the request names no user or no valid id e.g. a negative id
+     */
+    public static function requested_user_id(): int
+    {
+        return self::valid_user_id($_GET[url_var::USER] ?? 0);
+    }
+
+    /**
+     * pure user id check of a url parameter
+     * @param mixed $url_value the value of the url parameter e.g. a string or an array for u[]=x
+     * @return int the user id or 0 if the value is no positive integer
+     */
+    public static function valid_user_id(mixed $url_value): int
+    {
+        // a cast would turn e.g. the array of u[]=x into the id 1
+        $options = ['options' => ['default' => 0, 'min_range' => 1]];
+        return filter_var($url_value, FILTER_VALIDATE_INT, $options);
+    }
+
+    /**
      * true if a state changing api request (post / put / delete) may proceed with respect to csrf:
      * a browser always sends an Origin (or at least a Referer) on a cross-origin write, so a request
      * whose Origin/Referer host does not match the request Host is rejected. a server-to-server call

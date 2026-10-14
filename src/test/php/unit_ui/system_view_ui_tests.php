@@ -42,6 +42,8 @@ include_once html_paths::SYSTEM . 'sys_log_list.php';
 include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::USER . 'user.php';
+include_once html_paths::USER . 'user_log_sum.php';
+include_once html_paths::USER . 'user_log_sum_list.php';
 include_once paths::MODEL_CONST . 'def.php';
 include_once paths::API_OBJECT . 'controller.php';
 include_once paths::MODEL_SYSTEM . 'system_time_list.php';
@@ -68,6 +70,7 @@ include_once paths::MODEL_WORD . 'word.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED_HELPER . 'Config.php';
 include_once test_paths::CONST . 'files.php';
@@ -119,6 +122,8 @@ use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\web\const\icons;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
+use Zukunft\ZukunftCom\main\php\web\user\user_log_sum;
+use Zukunft\ZukunftCom\main\php\web\user\user_log_sum_list;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\Config;
@@ -128,6 +133,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\views as view_shared;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\test\php\const\word_names;
@@ -433,6 +439,19 @@ class system_view_ui_tests
         $t->assert_false($test_name, server_guard::is_own_pod_call('127.0.0.1', '', true));
         $test_name = 'an unknown remote address is not from the own pod';
         $t->assert_false($test_name, server_guard::is_own_pod_call('', '', false));
+
+        // the data user of an own pod call is only taken from a url parameter that is a valid id
+        $t->subheader($ts . 'requested user id');
+        $test_name = 'a positive number is the requested user id';
+        $t->assert($test_name, server_guard::valid_user_id('7'), 7);
+        $test_name = 'a request without user parameter names no user';
+        $t->assert($test_name, server_guard::valid_user_id(0), 0);
+        $test_name = 'a negative number is no user id';
+        $t->assert($test_name, server_guard::valid_user_id('-7'), 0);
+        $test_name = 'a text is no user id';
+        $t->assert($test_name, server_guard::valid_user_id('7x'), 0);
+        $test_name = 'an array parameter e.g. u[]=7 is no user id';
+        $t->assert($test_name, server_guard::valid_user_id(['7']), 0);
 
         // test the notification component standalone
         $t->subheader($ts . 'notification');
@@ -742,6 +761,9 @@ class system_view_ui_tests
         $col = $page->admin_jobs_delayed($msg, true, $dto->adm_job_lst, $now);
         $t->assert_text_contains('an empty job column says so', $col, $mtr->txt(msg_id::ADMIN_NO_DELAYED_JOBS));
         $t->assert_text_not_contains('... without a table like the other columns', $col, '<table');
+        $col = $page->admin_user_load($msg, true, $dto->adm_usr_log_sum_lst);
+        $t->assert_text_contains('an empty server time column says so', $col, $mtr->txt(msg_id::ADMIN_NO_USER_LOAD));
+        $t->assert_text_not_contains('... and has no plus sign', $col, '<details');
 
         // mixed: a column without a critical entry says so and shows its entries only behind the plus sign
         $dto = $t_adm->dto_mixed($ui->dto, $msg);
@@ -763,6 +785,9 @@ class system_view_ui_tests
         $t->assert_text_contains('a job that waits less than the max delay is not critical', $direct, $no_critical);
         $fresh_job = new DateTime(test_admin_dashboard::SNAP_TIME)->modify('-1 minute')->format(DateTimeInterface::ATOM);
         $t->assert_text_contains('... and is behind the plus sign', $behind, $fresh_job);
+        [$direct, $behind] = $this->admin_split($page->admin_user_load($msg, true, $dto->adm_usr_log_sum_lst));
+        $t->assert_text_contains('a user below all thresholds is not critical', $direct, $no_critical);
+        $t->assert_text_contains('... and is behind the plus sign', $behind, test_admin_dashboard::LOAD_LIGHT_NAME);
         $test_name = 'the failed logins are not listed as unassigned errors';
         $col = $page->admin_errors_unassigned($msg, true, $dto->adm_sys_log);
         $t->assert_text_not_contains($test_name, $col, test_admin_dashboard::LOGIN_TYPO);
@@ -802,6 +827,19 @@ class system_view_ui_tests
         $t->assert_text_contains('the job that waits longer than the max delay is shown directly', $direct, $delayed_job);
         $t->assert_text_contains('... but the fresh job is behind the plus sign', $behind, $fresh_job);
         $t->assert_text_not_contains('... and not shown directly', $direct, $fresh_job);
+        [$direct, $behind] = $this->admin_split($page->admin_user_load($msg, true, $dto->adm_usr_log_sum_lst));
+        $t->assert_text_contains('the user with the request threshold is shown directly', $direct,
+            test_admin_dashboard::LOAD_HEAVY_NAME);
+        $t->assert_text_contains('... but the user below all thresholds is behind the plus sign', $behind,
+            test_admin_dashboard::LOAD_LIGHT_NAME);
+        $t->assert_text_not_contains('... and not shown directly', $direct, test_admin_dashboard::LOAD_LIGHT_NAME);
+        // one request less than the threshold is not critical, and a single threshold is enough
+        $limits = user_log_sum_list::critical_limits($msg);
+        $usr_log_sum = new user_log_sum();
+        $usr_log_sum->requests = $limits[json_fields::REQUESTS] - 1;
+        $t->assert_false('a user one request below the threshold is not critical', $usr_log_sum->is_critical($limits));
+        $usr_log_sum->update_ms = $limits[json_fields::UPDATE_MS];
+        $t->assert_true('... but a user with the update time threshold is', $usr_log_sum->is_critical($limits));
     }
 
     /**

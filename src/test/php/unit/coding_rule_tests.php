@@ -1973,8 +1973,16 @@ class coding_rule_tests
                             $path_alias = str_starts_with($path_conv, 'paths::')
                                 ? 'html_' . $path_conv
                                 : '';
+                            // a main file includes a test const class via the main paths copy
+                            // of the test path, because test_paths is not loaded by the api
+                            // (e.g. paths::TEST_CONST for test_paths::CONST)
+                            // TODO Prio 2 remove if the main code no longer uses test names
+                            $path_main = str_starts_with($path_conv, 'test_paths::')
+                                ? 'paths::TEST_' . $lib->str_right_of($path_conv, 'test_paths::')
+                                : '';
                             if ($path_conv == $path_incl
                                 or $path_alias == $path_incl
+                                or $path_main == $path_incl
                                 or $path_conv == '') {
                                 $found = true;
                             }

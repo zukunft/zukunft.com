@@ -53,8 +53,6 @@ include_once paths::DB . 'sql_db.php';
 include_once paths::DB . 'sql_field_type.php';
 include_once paths::DB . 'sql_par.php';
 include_once paths::DB . 'sql_par_field_list.php';
-include_once paths::DB . 'sql_par_type.php';
-include_once paths::DB . 'sql_type.php';
 include_once paths::DB . 'sql_type_list.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_db.php';
@@ -73,8 +71,6 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
-use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
-use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
@@ -412,15 +408,7 @@ class db_cache extends db_object_seq_id_user
      */
     function del_sql_by_user(sql_creator $sc, int $usr_id): sql_par
     {
-        $qp = new sql_par(self::class, new sql_type_list([sql_type::DELETE]));
-        $sc->set_class(self::class);
-        $sc->add_where(user_db::FLD_ID, $usr_id);
-        $sql = sql::DELETE . ' ' . $sc->name_sql_esc($sc->get_table()) . ' ';
-        $sql .= sql::WHERE . ' ' . user_db::FLD_ID . ' = ' . $sc->par_name(1);
-        $qp->name .= '_by_user';
-        $qp->sql = $sc->prepare_sql($sql, $qp->name, [sql_par_type::INT]);
-        $qp->par = $sc->get_par();
-        return $qp;
+        return $sc->del_sql_by_user_without_log(self::class, $usr_id);
     }
 
 

@@ -334,6 +334,8 @@ class files
     CONST string SQL_FORMAT_TEST_COUNT_MYSQL = 'user_list_by_count_changes_mysql' . self::SQL;
     CONST string SQL_FORMAT_TEST_COUNT_USER = 'user_list_by_count_user_rows' . self::SQL;
     CONST string SQL_FORMAT_TEST_COUNT_USER_MYSQL = 'user_list_by_count_user_rows_mysql' . self::SQL;
+    CONST string SQL_FORMAT_TEST_SUM = 'user_log_sum_list_by_server_time' . self::SQL;
+    CONST string SQL_FORMAT_TEST_SUM_MYSQL = 'user_log_sum_list_by_server_time_mysql' . self::SQL;
     CONST string SQL_FORMAT_TEST_CREATE = 'db_cache_page_create' . self::SQL;
     CONST string SQL_FORMAT_TEST_CREATE_MYSQL = 'db_cache_page_create_mysql' . self::SQL;
     // the create of a table with its user sandbox table and the column comments

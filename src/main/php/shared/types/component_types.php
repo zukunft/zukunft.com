@@ -329,6 +329,9 @@ class component_types
     // the admin, the pod and the creation time of the admin dashboard (see system_page::admin_subtitle)
     const string SYSTEM_ADMIN_SUBTITLE = "system_admin_subtitle";
     const int SYSTEM_ADMIN_SUBTITLE_ID = 266;
+    // the users with the most server time of the last days (see system_page::admin_user_load)
+    const string SYSTEM_ADMIN_USER_LOAD = "system_admin_user_load";
+    const int SYSTEM_ADMIN_USER_LOAD_ID = 267;
 
     // generic list selector (e.g. languages)
     const string SELECT_LIST = "select_list";
@@ -851,6 +854,7 @@ class component_types
         self::SYSTEM_ADMIN_ERRORS_DELAYED_FIX,
         self::SYSTEM_ADMIN_JOBS_DELAYED,
         self::SYSTEM_ADMIN_SUBTITLE,
+        self::SYSTEM_ADMIN_USER_LOAD,
         self::SELECT_LIST,
         self::SHOW_NAME,
         self::SHOW_NAME_BIG,
@@ -1067,6 +1071,7 @@ class component_types
         [self::SYSTEM_ADMIN_ERRORS_DELAYED_FIX, self::SYSTEM_ADMIN_ERRORS_DELAYED_FIX_ID],
         [self::SYSTEM_ADMIN_JOBS_DELAYED, self::SYSTEM_ADMIN_JOBS_DELAYED_ID],
         [self::SYSTEM_ADMIN_SUBTITLE, self::SYSTEM_ADMIN_SUBTITLE_ID],
+        [self::SYSTEM_ADMIN_USER_LOAD, self::SYSTEM_ADMIN_USER_LOAD_ID],
         [self::SELECT_LIST, self::SELECT_LIST_ID],
         [self::FORM_END, self::FORM_END_ID],
         [self::ROW_START, self::ROW_START_ID],

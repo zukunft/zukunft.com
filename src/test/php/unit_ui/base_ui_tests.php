@@ -281,6 +281,18 @@ class base_ui_tests
         $url_array = [url_var::MASK => views::SIGNUP_ID];
         $t->assert($test_name, $ui->url_cache_key($url_array), 'm=' . views::SIGNUP_ID . '&id=0');
 
+        // the form carries the back part as hidden fields to return to the calling page after the login
+        $test_name = 'the login form with a back part is not cached';
+        $url_array = [url_var::MASK => views::LOGIN_ID,
+            url_var::BACK . url_var::MASK => views::WORD_ID, url_var::BACK . url_var::ID => 2];
+        $t->assert($test_name, $ui->url_cache_key($url_array), '');
+        $test_name = 'the signup form with a back part is not cached';
+        $url_array = [url_var::MASK => views::SIGNUP_ID, url_var::BACK . url_var::MASK => views::WORD_ID];
+        $t->assert($test_name, $ui->url_cache_key($url_array), '');
+        $test_name = 'a word view with a back part is still cached';
+        $url_array = [url_var::MASK => views::WORD_ID, url_var::ID => 2, url_var::BACK . url_var::MASK => views::START_ID];
+        $t->assert($test_name, $ui->url_cache_key($url_array), 'm=' . views::WORD_ID . '&id=2');
+
         // the login submit is a post action, so only the form GET is cached, never the submission
         $test_name = 'the login submit is not cached';
         $url_array = [url_var::MASK => views::LOGIN_ID, url_var::POST_SUBMIT => 'Login'];
@@ -382,6 +394,15 @@ class base_ui_tests
         // negative: a normal user cannot open the dashboard, so the link is not offered
         $test_name = '... but not the user menu of a normal user';
         $t->assert_text_not_contains($test_name, $navbar_logged, $dashboard_par);
+
+        // the edit menu of an admin offers the server admin page as last entry
+        $test_name = 'the edit menu of an admin links to the server admin page';
+        $t->assert_text_contains($test_name, $navbar_admin, api::SERVER_ADMIN_SCRIPT);
+        // negative: the server admin page is not offered to a normal user or a user without login
+        $test_name = '... but not the edit menu of a normal user';
+        $t->assert_text_not_contains($test_name, $navbar_logged, api::SERVER_ADMIN_SCRIPT);
+        $test_name = '... and not the edit menu without login';
+        $t->assert_text_not_contains($test_name, $navbar_anon, api::SERVER_ADMIN_SCRIPT);
 
         // the settings are the read only system configuration, which an ip user without login can see too
         $test_name = 'the settings link of a request without login is the short settings path';

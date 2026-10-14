@@ -50,6 +50,7 @@ include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::SYSTEM . 'job_list.php';
 include_once html_paths::SYSTEM . 'sys_log_list.php';
 include_once html_paths::SYSTEM . 'system_time_list.php';
+include_once html_paths::USER . 'user_log_sum_list.php';
 include_once html_paths::USER . 'user_message.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED_ENUM . 'sys_log_functions.php';
@@ -70,6 +71,7 @@ use Zukunft\ZukunftCom\main\php\web\helper\data_object as data_object_ui;
 use Zukunft\ZukunftCom\main\php\web\system\job_list as job_list_ui;
 use Zukunft\ZukunftCom\main\php\web\system\sys_log_list as sys_log_list_ui;
 use Zukunft\ZukunftCom\main\php\web\system\system_time_list;
+use Zukunft\ZukunftCom\main\php\web\user\user_log_sum_list;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_functions;
@@ -97,6 +99,12 @@ class test_admin_dashboard extends test_objects
     // the typed names of the failed logins
     const string LOGIN_ATTACKED = 'admin';
     const string LOGIN_TYPO = 'test_user_typo';
+
+    // the users of the server time column
+    const int LOAD_HEAVY_ID = 1;
+    const string LOAD_HEAVY_NAME = 'test_user_heavy';
+    const int LOAD_LIGHT_ID = 2;
+    const string LOAD_LIGHT_NAME = 'test_user_light';
 
     // the urls of the request times
     const string URL_SLOW = '/http/view.php?m=129';
@@ -145,6 +153,8 @@ class test_admin_dashboard extends test_objects
         ], $msg);
         // delayed jobs: only a job that is waiting less than the max delay
         $dto->adm_job_lst = $this->jobs(false);
+        // server time: only a user below all thresholds
+        $dto->adm_usr_log_sum_lst = $this->user_loads(false, $msg);
         return $dto;
     }
 
@@ -183,6 +193,8 @@ class test_admin_dashboard extends test_objects
         ], $msg);
         // delayed jobs: a job that is waiting longer than the max delay and one that is waiting less
         $dto->adm_job_lst = $this->jobs(true);
+        // server time: a user over the request threshold and one below all thresholds
+        $dto->adm_usr_log_sum_lst = $this->user_loads(true, $msg);
         return $dto;
     }
 
@@ -293,6 +305,45 @@ class test_admin_dashboard extends test_objects
         $lst = new system_time_list();
         $lst->set_from_json_array($json, $msg);
         return $lst;
+    }
+
+    /**
+     * @param bool $with_heavy true to add a user that has reached the request threshold
+     * @param user_message_ui $msg to report the mapping problems
+     * @return user_log_sum_list the summed sessions per user as the frontend receives them from the api
+     */
+    function user_loads(bool $with_heavy, user_message_ui $msg): user_log_sum_list
+    {
+        $limits = user_log_sum_list::critical_limits($msg);
+        $json = [];
+        if ($with_heavy) {
+            $json[] = $this->user_load(self::LOAD_HEAVY_ID, self::LOAD_HEAVY_NAME,
+                $limits[json_fields::REQUESTS], intdiv($limits[json_fields::REQUEST_MS], 2));
+        }
+        $json[] = $this->user_load(self::LOAD_LIGHT_ID, self::LOAD_LIGHT_NAME,
+            intdiv($limits[json_fields::REQUESTS], 10), intdiv($limits[json_fields::REQUEST_MS], 10));
+        $lst = new user_log_sum_list();
+        $lst->set_from_json_array($json, $msg);
+        return $lst;
+    }
+
+    /**
+     * @param int $id the id of the user
+     * @param string $name the name of the user
+     * @param int $requests the number of api requests
+     * @param int $request_ms the milliseconds of the api requests
+     * @return array the api json of the summed sessions of a user without data changes
+     */
+    private function user_load(int $id, string $name, int $requests, int $request_ms): array
+    {
+        return [
+            json_fields::ID => $id,
+            json_fields::NAME => $name,
+            json_fields::REQUESTS => $requests,
+            json_fields::UPDATES => 0,
+            json_fields::REQUEST_MS => $request_ms,
+            json_fields::UPDATE_MS => 0,
+        ];
     }
 
     /**

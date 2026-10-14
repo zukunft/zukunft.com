@@ -33,6 +33,10 @@
 
 namespace Zukunft\ZukunftCom\main\php\shared\const;
 
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+
+include_once paths::TEST_CONST . 'formula_names.php';
+
 use Zukunft\ZukunftCom\test\php\const\formula_names;
 
 class formulas

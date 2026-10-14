@@ -62,6 +62,8 @@ class paths
     // the docroot as the current folder of the root path, so the url path of a forward page
     // e.g. api::SETTINGS_REL, which starts with a separator, can be added to name its file
     const string DOCROOT = ROOT_PATH . '.';
+    // the user log archive of the write test, which the test removes again
+    const string USER_LOG_ARCHIVE = ROOT_PATH . 'cache' . DIRECTORY_SEPARATOR . 'test_user_log' . DIRECTORY_SEPARATOR;
 
 
     // main path for the test resources

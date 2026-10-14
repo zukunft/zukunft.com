@@ -71,6 +71,12 @@ class def
     // fallback for the seconds an open job may wait before it is critical on the admin dashboard;
     // overridden by config.yaml entry system.job.max delay
     const int FALLBACK_JOB_MAX_DELAY = 3600;
+    // fallbacks for the server use of a user in the dashboard days from which the user is critical on the admin dashboard;
+    // overridden by config.yaml entry pod.limits.user.log.dashboard.threshold
+    const int FALLBACK_USER_LOG_MAX_REQUESTS = 10000;
+    const int FALLBACK_USER_LOG_MAX_UPDATES = 1000;
+    const int FALLBACK_USER_LOG_MAX_REQUEST_MS = 600000;
+    const int FALLBACK_USER_LOG_MAX_UPDATE_MS = 60000;
     // fallback for the per-verb limit of related phrases shown in the page title (Zurich -> city, canton, ...);
     // overridden by config.yaml entry frontend.lists.limit.related per verb once the $cfg accessor is wired
     const int LIMIT_RELATED_PER_VERB = 2;

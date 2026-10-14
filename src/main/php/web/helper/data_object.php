@@ -50,6 +50,7 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 //include_once html_paths::SYSTEM . 'system_time_list.php';
 //include_once html_paths::TYPES . 'type_lists.php';
 //include_once html_paths::USER . 'user_message.php';
+//include_once html_paths::USER . 'user_log_sum_list.php';
 //include_once html_paths::VALUE . 'value_list.php';
 //include_once html_paths::VIEW . 'view.php';
 //include_once html_paths::VIEW . 'view_list.php';
@@ -72,6 +73,7 @@ use Zukunft\ZukunftCom\main\php\web\system\sys_log_list;
 use Zukunft\ZukunftCom\main\php\web\system\system_time_list;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\user\user;
+use Zukunft\ZukunftCom\main\php\web\user\user_log_sum_list;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\value\value_list;
 use Zukunft\ZukunftCom\main\php\web\view\view;
@@ -211,6 +213,7 @@ class data_object
     public sys_log_list $adm_sys_log;
     public job_list $adm_job_lst;
     public system_time_list $adm_sys_tim_lst;
+    public user_log_sum_list $adm_usr_log_sum_lst;
     // the time of the data snap that decides e.g. if a job is delayed; null for the time of the request
     public ?DateTime $snap_time = null;
 
@@ -239,6 +242,7 @@ class data_object
             $this->adm_sys_log = new sys_log_list();
             $this->adm_job_lst = new job_list();
             $this->adm_sys_tim_lst = new system_time_list();
+            $this->adm_usr_log_sum_lst = new user_log_sum_list();
             $this->set_from_json($api_json, $this->msg);
             $this->usr = new user();
         } else {
@@ -270,6 +274,7 @@ class data_object
         $this->adm_sys_log = new sys_log_list();
         $this->adm_job_lst = new job_list();
         $this->adm_sys_tim_lst = new system_time_list();
+        $this->adm_usr_log_sum_lst = new user_log_sum_list();
         $this->snap_time = null;
         $this->online = true;
     }

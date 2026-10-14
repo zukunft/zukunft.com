@@ -138,6 +138,12 @@ class config_numbers extends value_list
         words::ALLOWED,
     ];
 
+    // the complete phrase sets of the pod switches to write the sessions of the users to the user log
+    // (config.yaml system > pod > limits > user > log > allowed and > ip user > allowed)
+    const array USER_LOG_PATH = [...triples::CONFIG_SYSTEM_PATH, words::POD, words::LIMITS, words::USER, words::LOG];
+    const array USER_LOG_ALLOWED_NAMES = [...config_numbers::USER_LOG_PATH, words::ALLOWED];
+    const array IP_USER_LOG_ALLOWED_NAMES = [...config_numbers::USER_LOG_PATH, triples::IP_USER, words::ALLOWED];
+
     // list of word that should be hidden be default for normal selections
     // TODO check on pod start that these words exists and are of hidden type
     const array HIDDEN_KEYWORDS = [
@@ -874,6 +880,26 @@ class config_numbers extends value_list
     {
         $val = $this->exact_lookup()[self::names_key(self::IP_USER_CHANGE_NAMES)] ?? null;
         return ($val?->number() ?? 0) != 0;
+    }
+
+    /**
+     * the pod setting that decides if the sessions of the users are written to the user log
+     * a pod without the switch writes the log, so only an explicit false in config.yaml switches it off
+     * @return bool false if no session should be written to the user log
+     */
+    function user_log_allowed(): bool
+    {
+        return $this->pod_switch(self::USER_LOG_ALLOWED_NAMES);
+    }
+
+    /**
+     * the pod setting that decides if the sessions of the users without login are written to the user log
+     * a pod without the switch writes the log, so only an explicit false in config.yaml switches it off
+     * @return bool false if no session of an ip user should be written to the user log
+     */
+    function ip_user_log_allowed(): bool
+    {
+        return $this->pod_switch(self::IP_USER_LOG_ALLOWED_NAMES);
     }
 
 }

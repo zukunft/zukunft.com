@@ -34,6 +34,10 @@
 
 namespace Zukunft\ZukunftCom\main\php\shared\const;
 
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+
+include_once paths::TEST_CONST . 'word_names.php';
+
 use Zukunft\ZukunftCom\test\php\const\word_names;
 
 class words
@@ -107,9 +111,11 @@ class words
     // in alphabetic order except the main keywords listed above
     const string ACCESS = 'access';
     const string ACCOUNT = 'account';
+    const string AGE = 'age';
     const string ALLOWED = 'allowed';
     const string API = 'api';
     const string API_WORD = 'API';
+    const string ARCHIVE = 'archive';
     const string AUTOMATIC = 'automatic';
     const string AVERAGE = 'average';
     const string AVERAGE_COM = 'The arithmetic mean – the sum of the numbers divided by how many numbers are in the list.';
@@ -140,6 +146,7 @@ class words
     // in the shared const and not only in the test const
     const string CURRENCY = 'currency';
     const string DAILY = 'daily';
+    const string DASHBOARD = 'dashboard';
     const string DATA = 'data';
     const string DATABASE = 'database';
     const string DATABASE_COM = 'An organized collection of data stored and accessed electronically.';
@@ -213,6 +220,7 @@ class words
     const string NUMBER = 'number';
     const int NUMBER_ID = 137;
     const string PAGE = 'page';
+    const string PATH = 'path';
     const string PCT = 'percent';
     const int PCT_ID = 160;
     // the words that tag a value as a bound of the probability range of the value with the same
@@ -246,6 +254,8 @@ class words
     const string REFERENCES = 'references';
     const string RELATED = 'related';
     const string REMOVE = 'remove';
+    const string REQUEST = 'request';
+    const string REQUESTS = 'requests';
     const string RESULTS = 'results';
     const string RETRY = 'retry';
     const string RISK = 'risk';
@@ -283,6 +293,7 @@ class words
     const string TRUSTED = 'trusted';
     const string TYPE = 'type';
     const string UPDATE = 'update';
+    const string UPDATES = 'updates';
     const string URL = 'url';
     const int URL_ID = 211;
     const string USAGE = 'usage';

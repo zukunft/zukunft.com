@@ -56,6 +56,7 @@ include_once paths::MODEL_LOG . 'change_log.php';
 include_once paths::MODEL_SYSTEM . 'system_time_list.php';
 include_once paths::MODEL_SYSTEM . 'system_time_type_list.php';
 include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_log.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_CONST . 'triples.php';
@@ -81,7 +82,9 @@ use Zukunft\ZukunftCom\main\php\cfg\log\change_log;
 use Zukunft\ZukunftCom\main\php\cfg\system\system_time_list;
 use Zukunft\ZukunftCom\main\php\cfg\system\system_time_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_log;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
@@ -251,6 +254,7 @@ class application
 
         // writing the end time is always done by a system user
         $this->write_time($db_con, $msg);
+        $this->write_user_log($db_con, $msg);
 
         // report even closing error to be on the save side, but only an internal error: a problem
         // of the request data (e.g. a formula expression that names no term) is answered to the
@@ -458,6 +462,27 @@ class application
             foreach ($rows as $sys_tim) {
                 $sys_tim->insert($msg);
             }
+        }
+    }
+
+    /**
+     * count the api request in the session of the user it has been made for, which is the browsing
+     * user of an own pod call (see user::data_user_id), so that the admin can see how the pod is used;
+     * unless the pod has switched off the user log for all users or for the users without login
+     *
+     * @param sql_db $db_con the open database connection to write the session
+     * @param user_message $msg with the session user of the request and to report why the request could not be counted
+     */
+    private function write_user_log(sql_db $db_con, user_message $msg): void
+    {
+        global $sys;
+        global $cfg;
+
+        $usr_id = $msg->usr?->data_user_id(server_guard::requested_user_id(), server_guard::from_own_pod()) ?? 0;
+        if ($db_con->is_open() and $usr_id > 0 and user_log::allowed($msg, $usr_id, $cfg)) {
+            $is_update = server_guard::request_method() != rest_ctrl::GET;
+            $usr_log = new user_log();
+            $usr_log->log_request($usr_id, $sys->start_time, microtime(true), $is_update, $msg);
         }
     }
 

@@ -92,6 +92,7 @@ include_once paths::MODEL_CONST . 'def.php';
 //include_once paths::MODEL_WORD . 'triple.php';
 //include_once paths::MODEL_USER . 'user.php';
 //include_once paths::MODEL_USER . 'user_db.php';
+//include_once paths::MODEL_USER . 'user_log.php';
 //include_once paths::MODEL_USER . 'user_message.php';
 //include_once paths::MODEL_USER . 'user_profile.php';
 //include_once paths::MODEL_USER . 'user_status.php';
@@ -166,6 +167,7 @@ use Zukunft\ZukunftCom\main\php\cfg\value\value_time;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_log;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_profile;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_type;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_official_type;
@@ -233,6 +235,7 @@ class sql_creator
         change_link::class,
         sys_log::class,
         system_time::class,
+        user_log::class,
         job::class,
         db_cache::class,
         db_cache_page::class,
@@ -1174,6 +1177,7 @@ class sql_creator
                 or $spt == sql_par_type::INT_SMALL
                 or $spt == sql_par_type::INT_HIGHER
                 or $spt == sql_par_type::TIME_HIGHER
+                or $spt == sql_par_type::TIME_LOWER
                 or $spt == sql_par_type::INT_LOWER
                 or $spt == sql_par_type::INT_OR
                 or $spt == sql_par_type::INT_NOT
@@ -1625,7 +1629,7 @@ class sql_creator
                     $sql_set .= ', ';
                 }
                 if ($val != sql::NOW) {
-                    $sql_set .= $this->name_sql_esc($fld) . ' = ' . $this->name_sql_esc($this->par_lst->name($i));
+                    $sql_set .= $this->sql_set_field($fvt, $this->name_sql_esc($this->par_lst->name($i)));
                 } else {
                     $sql_set .= $this->name_sql_esc($fld) . ' = ' . $val;
                     $i--;
@@ -1780,7 +1784,7 @@ class sql_creator
                     $sql_set .= ', ';
                 }
                 if ($val != sql::NOW) {
-                    $sql_set .= $this->name_sql_esc($fld) . ' = ' . $this->name_sql_esc($this->par_lst->name($i));
+                    $sql_set .= $this->sql_set_field($fvt, $this->name_sql_esc($this->par_lst->name($i)));
                     $i++;
                 } else {
                     $sql_set .= $this->name_sql_esc($fld) . ' = ' . $val;
@@ -1796,6 +1800,23 @@ class sql_creator
 
         }
         return $this->end_sql($sql, $sql_type);
+    }
+
+    /**
+     * the set part of one field of an update e.g. "requests = requests + $3" for an increment field
+     *
+     * @param sql_par_field $fvt the field with the name and the increment flag
+     * @param string $par the escaped parameter name of the value e.g. $3
+     * @return string the assignment of the field for the set part of the update
+     */
+    private function sql_set_field(sql_par_field $fvt, string $par): string
+    {
+        $fld = $this->name_sql_esc($fvt->name);
+        $result = $fld . ' = ' . $par;
+        if ($fvt->increment) {
+            $result = $fld . ' = ' . $fld . ' ' . sql::PLUS . ' ' . $par;
+        }
+        return $result;
     }
 
     /**
@@ -3935,6 +3956,8 @@ class sql_creator
                 $sql_where .= $tbl . $fld . $this->equal_operator($typ) . $par->name;
             } elseif ($typ == sql_par_type::INT_HIGHER or $typ == sql_par_type::TIME_HIGHER) {
                 $sql_where .= $tbl . $fld . ' >= ' . $par->name;
+            } elseif ($typ == sql_par_type::TIME_LOWER) {
+                $sql_where .= $tbl . $fld . ' < ' . $par->name;
             } elseif ($typ == sql_par_type::INT_LOWER) {
                 $sql_where .= $tbl . $fld . ' =< ' . $par->name;
             } elseif ($typ == sql_par_type::INT_SAME
@@ -4171,6 +4194,8 @@ class sql_creator
                                 . ' OR ' . $tbl_id . $this->par_lst->name($i) . ' IS NULL )';
                         } elseif ($typ == sql_par_type::INT_HIGHER or $typ == sql_par_type::TIME_HIGHER) {
                             $result .= $tbl_id . $this->par_lst->name($i) . ' >= ' . $this->par_name($par_pos);
+                        } elseif ($typ == sql_par_type::TIME_LOWER) {
+                            $result .= $tbl_id . $this->par_lst->name($i) . ' < ' . $this->par_name($par_pos);
                         } elseif ($typ == sql_par_type::INT_LOWER) {
                             $result .= $tbl_id . $this->par_lst->name($i) . ' =< ' . $this->par_name($par_pos);
                         } elseif ($typ == sql_par_type::INT_SAME
@@ -5167,7 +5192,8 @@ class sql_creator
             and $class != user_profile::class
             and $class != user_type::class
             and $class != user_official_type::class
-            and $class != user_status::class) {
+            and $class != user_status::class
+            and $class != user_log::class) {
             $type = $lib->str_right_of($type, sql_db::TBL_USER_PREFIX);
         }
         $result = $type . sql_db::FLD_EXT_ID;
@@ -5341,6 +5367,7 @@ class sql_creator
         if ($result == 'sys_logs') {
             $result = 'sys_log';
         }
+        $result = $lib->singular_table($result);
         if ($result == 'pod_statuss') {
             $result = 'pod_status';
         }
@@ -5655,6 +5682,7 @@ class sql_creator
                 $result = sql::PG_PAR_INT_SMALL;
                 break;
             case sql_par_type::TIME_HIGHER:
+            case sql_par_type::TIME_LOWER:
                 $result = sql_par_type::TIME->value;
                 break;
             case sql_par_type::TEXT_LIST:
@@ -5824,6 +5852,27 @@ class sql_creator
         return $qp;
     }
 
+
+    /**
+     * create a sql statement to delete all rows of one user without change log,
+     * e.g. the cache entries or the user log sessions before the user is deleted
+     *
+     * @param string $class the class name of a table in def::CLASSES_NO_CHANGE_LOG with a user_id field
+     * @param int $usr_id the id of the user whose rows are removed
+     * @return sql_par the sql statement to delete the rows of the user
+     */
+    function del_sql_by_user_without_log(string $class, int $usr_id): sql_par
+    {
+        $qp = new sql_par($class, new sql_type_list([sql_type::DELETE]));
+        $this->set_class($class);
+        $this->add_where(user_db::FLD_ID, $usr_id);
+        $sql = sql::DELETE . ' ' . $this->name_sql_esc($this->get_table()) . ' ';
+        $sql .= sql::WHERE . ' ' . user_db::FLD_ID . ' = ' . $this->par_name(1);
+        $qp->name .= '_by_user';
+        $qp->sql = $this->prepare_sql($sql, $qp->name, [sql_par_type::INT]);
+        $qp->par = $this->get_par();
+        return $qp;
+    }
 
     /**
      * create a sql statement to delete all rows that have one of the given ids

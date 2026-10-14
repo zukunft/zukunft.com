@@ -258,6 +258,11 @@ class json_fields
     const string TIME_UPDATE = 'update_time'; // e.g. the timestamp of the last system error update
     const string TIME_END = 'end_time'; // e.g. the timestamp of a log entry
     const string MILLISECONDS = 'milliseconds'; // e.g. the execution time of a request
+    // the summed user log sessions of one user e.g. for the users with the most server time on the admin dashboard
+    const string REQUESTS = 'requests'; // the number of api requests
+    const string UPDATES = 'updates'; // the number of api requests that have changed data
+    const string REQUEST_MS = 'request_ms'; // the milliseconds of all api requests
+    const string UPDATE_MS = 'update_ms'; // the milliseconds of the api requests that have changed data
     const string STATUS = 'status'; // name or code id of the user or job status and also used for the sys log
     const string STATUS_ID = 'status_id'; // database id of the user or job status and also used for the sys log
 

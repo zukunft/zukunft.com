@@ -1419,6 +1419,9 @@ class frontend
     {
         global $cfg;
 
+        // the login and signup form carry the back part as hidden fields, so that the submit returns
+        // to the calling page (see system_page::login_body), which a page cached without it would lose
+        $back_par = url_var::back_par($url_array);
         $url_array = url_var::without_back($url_array);
 
         $result = '';
@@ -1481,6 +1484,10 @@ class frontend
         // the submit is a POST action that is never cached (see views::PAGE_CACHE_ALLOWED_MASKS_IDS)
         if (in_array($mask_id, views::PROCESS_STEP_MASKS_IDS)
             and !in_array($mask_id, views::PAGE_CACHE_ALLOWED_MASKS_IDS)) {
+            $is_view_only = false;
+        }
+        // a login or signup form with a back part is rendered live to keep the return to the calling page
+        if (in_array($mask_id, views::PAGE_CACHE_ALLOWED_MASKS_IDS) and $back_par != []) {
             $is_view_only = false;
         }
         if (in_array($mask_id, views::GET_ACTION_IDS)) {

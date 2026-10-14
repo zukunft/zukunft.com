@@ -1620,3 +1620,35 @@ pure html value add view with one form (ui_select::value_add_fields):
   value_quality, so in the unit tests sandbox_value::name_link still names "assumed" as a phrase
   link next to its "a" mark; set phrase_types::VALUE_QUALITY there, add the negative test that
   value_ui_tests no longer shows the ">assumed</a>" link and re-baseline the fixtures it changes
+
+## the term view that the database reset creates
+
+found 2026-10-14 while fixing the used by box of views_by_object/view/view_edit_view_1.html:
+
+- sql_db (after the import, "TODO Prio 0 review") saves a term view of the word mathematics to the
+  start view with the test description 'add usage and log of a word' as the system user, while
+  test_db_load::test_term_view_unlink says that no term view is expected after a reset; decide
+  whether the reset should create it (then move it to an import file) or not (then remove it and
+  re-baseline unit/term_view/list.csv and view_edit_view_1.html)
+- a test user exclusion of a link is not removed by the test cleanup, so a test that excludes a
+  seed link (like the save of a fixture with the id of another row did) changes the snapshots of
+  every later run until the next reset
+
+## user log
+
+found 2026-10-14 when the user_log table and its writer in application::end_api were added:
+
+- the html frontend saves its changes with the backend objects directly (the api_post / api_put /
+  api_del calls of web/sandbox/db_object.php are still a TODO), so a change done in the html
+  frontend is not counted in updated and update_time until these calls go through the api
+- requests counts api requests, so one html page counts as the number of api calls it needs;
+  a page count needs the frontend to tell the api which call is the page request
+- the user of an own pod call is the id of url_var::USER without a load (user::data_user_id), so
+  an unknown id is only rejected by the foreign key of the insert, which is logged as an end_api
+  error instead of being reported before the write; the user is loaded only if the pod has
+  switched off the log of the ip users and the counted user is not the session user
+  (user_log::allowed)
+- each api request now reads and writes one user log row and checks the two pod switches, which
+  rebuilds config_numbers::exact_lookup() once per switch, because the map is not kept between
+  calls; if this shows up in the response times, keep the map until the config values change and
+  collect the counts in the session to write them once per minute
