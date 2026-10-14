@@ -767,6 +767,49 @@ class import_tests
         $test_name = 'import time estimate handles a zero original estimate';
         $t->assert_true($test_name, $est > 0);
 
+        // the factor compares the real time with the estimated time of the work done until now:
+        // half of a 10s estimate done after 10s means the rest also takes longer than estimated,
+        // which the factor based on the total estimate did not see
+        $imp->est_time_total = 10;
+        $imp->est_time_step = 0;
+        $imp->micro_steps = 0;
+        $imp->done_time_main_step = 5;
+        $imp->done_time_step = 0;
+        $test_name = 'import time estimate grows if the work done has taken longer than estimated';
+        $est = $imp->calc_total_time($base + 10, 0);
+        $t->assert_true($test_name, abs($est - 17.5) < 0.0001);
+        $test_name = '... but stays the original estimate if the work done has taken the estimated time';
+        $est = $imp->calc_total_time($base + 5, 0);
+        $t->assert_true($test_name, abs($est - 10) < 0.0001);
+
+        // the speeds of config.yaml are in MB per second, but the file size is in bytes
+        $test_name = 'the file size estimate converts the configured MB per second';
+        $t->assert_true($test_name, abs(import::est_time_by_size(2100000, 2.1) - 1) < 0.0001);
+        $test_name = '... so that a file of 300 kB is not expected to take more than a day';
+        $t->assert_true($test_name, import::est_time_by_size(310935, 2.1) < 1);
+        $test_name = '... and a speed of zero gives no estimate instead of a division by zero';
+        $t->assert_true($test_name, import::est_time_by_size(1000, 0) == 0);
+
+        // the direct import estimates the store time by the number of objects of each section
+        $imp_cnt = new import();
+        $test_name = 'the store time of an import is the sum of the store time of the sections';
+        $est_parts = $imp_cnt->est_time_save(json_fields::COMPONENTS, 100)
+            + $imp_cnt->est_time_save(json_fields::VIEWS, 10);
+        $est = $imp_cnt->est_time_put([
+            json_fields::VERSION => def::PRG_VERSION,
+            json_fields::COMPONENTS => array_fill(0, 100, []),
+            json_fields::VIEWS => array_fill(0, 10, [])
+        ]);
+        $t->assert_true($test_name, $est > 0 and abs($est - $est_parts) < 0.0001);
+        $test_name = '... and a section without objects to store adds no time';
+        $t->assert_true($test_name, $imp_cnt->est_time_put([json_fields::SELECTION => ['a', 'b']]) == 0);
+        $test_name = 'a view takes longer to store than a component, because it also links its components';
+        $t->assert_true($test_name,
+            $imp_cnt->est_time_save(json_fields::VIEWS, 1) > $imp_cnt->est_time_save(json_fields::COMPONENTS, 1));
+        $test_name = 'a section without a configured speed uses the fallback speed';
+        $t->assert_true($test_name,
+            abs($imp_cnt->est_time_save(json_fields::LIST_VERBS, def::FALLBACK_IMPORT_PER_SEC) - 1) < 0.0001);
+
 
         $t->subheader($ts . 'merge two import json');
 

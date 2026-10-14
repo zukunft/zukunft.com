@@ -2441,6 +2441,11 @@
             rocess for continuous timestamp reporting in /import/import.php
     \-- calc_total_time - section for function calc_total_time not yet defined that it should be use to apply the time o
             f the parent process for continuous timestamp reporting in /import/import.php
+    \-- est_time_put - section for function est_time_put not yet defined that it should be use to apply the time of the 
+            parent process for continuous timestamp reporting in /import/import.php
+    \-- est_time_save - section for function est_time_save not yet defined that it should be use to apply the time of th
+            e parent process for continuous timestamp reporting in /import/import.php
+    \-- save_per_sec - section for function save_per_sec is expected to be save in /import/import.php
     \-- end - section for function end not yet defined that it should be use to apply the time of the parent process for
              continuous timestamp reporting in /import/import.php
     \-- get_data_object_yaml - section for function get_data_object_yaml is expected to be set and get in /import/import
@@ -6087,6 +6092,12 @@
         \-- import - @param int $nbr the number of precessed objects e.g. count(word)
     \-- calc_total_time
         \-- import - calc the adjusted expected total execution time
+    \-- est_time_put
+        \-- import - the expected time to store all objects of an import json direct to the database
+    \-- est_time_save
+        \-- import - @param string $key the json name of the section e.g. "views"
+    \-- save_per_sec
+        \-- import - @param string $key the json name of the section e.g. "views"
     \-- end
         \-- import - calc the import times and show the result to the user
     \-- get_data_object_yaml

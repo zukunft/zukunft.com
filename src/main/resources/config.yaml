@@ -112,15 +112,15 @@ zukunft.com:
                 sys-conf-value: 5
                 tooltip-comment: "the estimated MB per second for storing the objects in the database"
               total:
-                sys-conf-value: 2.1
-                tooltip-comment: "the estimated MB per second that can be processed when importing a json"
+                sys-conf-value: 0.03
+                tooltip-comment: "the estimated MB per second that can be processed when importing a json; measured 0.02 to 0.03 for the solution priority import files"
             objects second:
               load:
                 words:
-                  sys-conf-value: 800
+                  sys-conf-value: 8000
                   tooltip-comment: "the estimated number of words that can be loaded per second"
                 triples:
-                  sys-conf-value: 790
+                  sys-conf-value: 6000
                   tooltip-comment: "the estimated number of triples that can be loaded per second"
                 references:
                   sys-conf-value: 780
@@ -132,7 +132,7 @@ zukunft.com:
                   sys-conf-value: 770
                   tooltip-comment: "the estimated number of values that can be loaded per second"
                 formulas:
-                  sys-conf-value: 760
+                  sys-conf-value: 4000
                   tooltip-comment: "the estimated number of formulas that can be loaded per second"
                 results:
                   sys-conf-value: 755
@@ -141,7 +141,7 @@ zukunft.com:
                   sys-conf-value: 750
                   tooltip-comment: "the estimated number of views that can be loaded per second"
                 components:
-                  sys-conf-value: 740
+                  sys-conf-value: 4000
                   tooltip-comment: "the estimated number of components that can be loaded per second"
                 ip-ranges:
                   sys-conf-value: 730
@@ -151,7 +151,7 @@ zukunft.com:
                   sys-conf-value: 700
                   tooltip-comment: "the estimated number of words that can be created per second"
                 triples:
-                  sys-conf-value: 420
+                  sys-conf-value: 520
                   tooltip-comment: "the estimated number of triples that can be created per second"
                 sources:
                   sys-conf-value: 600
@@ -160,13 +160,13 @@ zukunft.com:
                   sys-conf-value: 610
                   tooltip-comment: "the estimated number of references that can be created per second"
                 values:
-                  sys-conf-value: 250
+                  sys-conf-value: 700
                   tooltip-comment: "the estimated number of values that can be created per second"
                 formulas:
                   sys-conf-value: 150
                   tooltip-comment: "the estimated number of formulas that can be created per second"
                 results:
-                  sys-conf-value: 140
+                  sys-conf-value: 480
                   tooltip-comment: "the estimated number of pre-calculated results that can be created per second"
                 views:
                   sys-conf-value: 250
@@ -210,32 +210,32 @@ zukunft.com:
                   tooltip-comment: "the estimated number of ip-ranges that can be updated per second"
               store:
                 words:
-                  sys-conf-value: 800
+                  sys-conf-value: 340
                   tooltip-comment: "the estimated number of words that can be added or updated in the database per second"
                 triples:
-                  sys-conf-value: 450
+                  sys-conf-value: 300
                   tooltip-comment: "the estimated number of triples that can be added or updated in the database per second"
                 sources:
                   sys-conf-value: 300
                   tooltip-comment: "the estimated number of sources that can be added or updated in the database per second"
                 references:
-                  sys-conf-value: 250
+                  sys-conf-value: 300
                   tooltip-comment: "the estimated number of references that can be added or updated in the database per second"
                 values:
-                  sys-conf-value: 95
+                  sys-conf-value: 300
                   tooltip-comment: "the estimated number of values that can be added or updated in the database per second"
                 formulas:
                   sys-conf-value: 50
                   tooltip-comment: "the estimated number of formulas that can be added or updated in the database per second"
                 results:
-                  sys-conf-value: 45
+                  sys-conf-value: 210
                   tooltip-comment: "the estimated number of pre-calculated results that can be added or updated in the database per second"
                 views:
-                  sys-conf-value: 75
-                  tooltip-comment: "the estimated number of views that can be added or updated in the database per second"
+                  sys-conf-value: 15
+                  tooltip-comment: "the estimated number of views that can be added or updated in the database per second; measured about 15 for system_views.json, because each view also links its components"
                 components:
-                  sys-conf-value: 85
-                  tooltip-comment: "the estimated number of components that can be added or updated in the database per second"
+                  sys-conf-value: 250
+                  tooltip-comment: "the estimated number of components that can be added or updated in the database per second; measured about 250 for system_views.json"
                 ip-ranges:
                   sys-conf-value: 95
                   tooltip-comment: "the estimated number of ip-ranges that can be added or updated in the database per second"

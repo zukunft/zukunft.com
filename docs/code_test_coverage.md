@@ -8,7 +8,7 @@ in a test file of the src/test/php/unit* folders; the count is by function name
 and cannot tell the classes apart, so a name that several classes declare needs
 2 calls per class and is listed as shared otherwise
 
-685 of 6076 public functions have at least 2 unit test calls; the 5391 functions below do not
+689 of 6080 public functions have at least 2 unit test calls; the 5391 functions below do not
 
 ## main backend
 
@@ -997,13 +997,13 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- load_sql_init - 0 unit test calls shared by 2 classes
     \-- remove_wrd_lst - 0 unit test calls
 \-- import
-    \-- calc_total_time - 0 unit test calls
     \-- display_progress - 0 unit test calls
     \-- end - 0 unit test calls shared by 3 classes
     \-- get_data_object_yaml - 1 unit test calls
     \-- put - 0 unit test calls
     \-- put_json - 0 unit test calls
     \-- put_yaml - 0 unit test calls
+    \-- save_per_sec - 0 unit test calls
     \-- seq_id - 0 unit test calls
     \-- set_start_time - 0 unit test calls shared by 2 classes
     \-- status_text - 0 unit test calls shared by 2 classes

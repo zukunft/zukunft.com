@@ -119,7 +119,8 @@ class import_file
 
         // indicate to the user that the import has started
         $size = filesize($filename);
-        $imp->est_time_total = $size / $total_bytes_per_sec;
+        // the speed is configured in MB per second, so without the conversion the estimate was a million times too long
+        $imp->est_time_total = import::est_time_by_size($size, $total_bytes_per_sec);
         $imp->est_time_read = $imp->est_time_total * $read_time_pct / 100;
         $imp->est_time_decode = $imp->est_time_total * $decode_time_pct / 100;
         $imp->est_time_create = $imp->est_time_total * $create_time_pct / 100;
