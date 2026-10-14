@@ -483,7 +483,7 @@ class base_ui_tests
         $ip_ui = new user_ui();
         $ip_ui->api_mapper([
             json_fields::ID => users::TEST_USER_ID,
-            json_fields::PROFILE_ID => $ui_sys->typ_lst_cache->usr_pro->id(user_profiles::IP_ONLY)], $msg);
+            json_fields::PROFILE_ID => $ui_sys->typ_lst_cache->usr_pro->id(user_profiles::IP_ONLY)], $msg_ui);
         $ui_sys->usr = $ip_ui;
         $navbar_table_ip = $html->navbar(views::TABLE_ID, $table_page, null, null, false,
             views::TABLE_EDITOR_ID, views::TABLE_EDITOR_NAME);
