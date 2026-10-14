@@ -9486,7 +9486,7 @@
     \-- form_field_group_or_phrases
         \-- system_form - @param db_object $dbo the value or result with the group name
     \-- form_field_source_group_or_phrases
-        \-- system_form - @return string the html code to request the group name or a list of phrases
+        \-- system_form - the source group has its own url var and label, because the same form shows the group of
     \-- form_field_formula_link_priority
         \-- system_form - shows the current order number, so that saving the form does not drop it
     \-- form_field_view_link_priority

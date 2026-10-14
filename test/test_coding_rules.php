@@ -83,6 +83,8 @@ if ($db_con->is_open()) {
 
             // check the coding rules
             new coding_rule_tests()->run($t);
+            // the html snapshots as the last test run has written them
+            new coding_rule_tests()->run_html_snapshots($t);
 
             // display the test results
             if ($t->format == text_log_format::HTML) {

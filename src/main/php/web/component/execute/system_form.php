@@ -1940,15 +1940,7 @@ class system_form extends component
      */
     function form_field_source_group_name(db_object $dbo): string
     {
-        $html = new html_base();
-        return $html->form_field(
-            url_var::GROUP_NAME,
-            msg_id::FORM_FIELD_GROUP,
-            $dbo->name(),
-            html_base::INPUT_TEXT,
-            '',
-            view_styles::COL_SM_8
-        );
+        return $this->form_field_source_group_or_phrases($dbo);
     }
 
     /**
@@ -1978,15 +1970,22 @@ class system_form extends component
     }
 
     /**
-     * @return string the html code to request the group name or a list of phrases
+     * the source group has its own url var and label, because the same form shows the group of
+     * the result, which would else be overwritten and share the html id with this field
+     * @param db_object $dbo the result with the group of the numbers it is calculated from
+     * @return string the html code to request the source group name or a list of phrases
      */
     function form_field_source_group_or_phrases(db_object $dbo): string
     {
         $html = new html_base();
+        $name = '';
+        if ($dbo instanceof result) {
+            $name = $dbo->src_grp?->name() ?? '';
+        }
         return $html->form_field(
-            url_var::GROUP_NAME,
-            msg_id::FORM_FIELD_GROUP,
-            $dbo->name(),
+            url_var::SOURCE_GROUP_NAME,
+            msg_id::FORM_FIELD_SOURCE_GROUP_OR_PHRASE_LIST,
+            $name,
             html_base::INPUT_TEXT,
             '',
             view_styles::COL_SM_8
@@ -2792,11 +2791,11 @@ class system_form extends component
      * @param db_object $dbo the frontend component object with the type used until now
      * @param string $form_name the name of the view which is also used for the html form name
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
-     * @return string the html code to select the component link type
+     * @return string the html code to select the component position type
      */
     function form_component_pos_type(db_object $dbo, string $form_name, ?type_lists $typ_lst): string
     {
-        return $dbo->component_link_type_selector($form_name, $typ_lst);
+        return $dbo->component_pos_type_selector($form_name, $typ_lst);
     }
 
     /**
@@ -2825,15 +2824,19 @@ class system_form extends component
 
     /**
      * TODO Prio 0 review
-     * create the html code for the form element to select the protection type
+     * create the html code for the form element to select a view to link the object to
+     * the view to link is posted as url_var::COMPONENT_LINK and not as url_var::VIEW,
+     * because the same form can show the view selector, which would give two fields with one id
      * @param db_object $dbo the frontend object with the type used until now
      * @param string $form_name the name of the view which is also used for the html form name
+     * @param user_message $msg to collect the warnings of the view selection
      * @param view_list|null $msk_lst the frontend cache with the configuration, the preloaded types and the cached objects
-     * @return string the html code to select the protection type
+     * @return string the html code to select the view to link
      */
     function form_table_linked_view(db_object $dbo, string $form_name, user_message $msg, ?view_list $msk_lst): string
     {
-        return $dbo->view_selector($form_name, $msk_lst, $msg);
+        return $dbo->view_selector($form_name, $msk_lst, $msg,
+            url_var::COMPONENT_LINK, msg_id::FORM_LINK_TABLE_VIEW);
     }
 
     /**

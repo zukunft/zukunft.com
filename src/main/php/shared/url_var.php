@@ -160,6 +160,7 @@ class url_var
     const string FORMULA_TYPE = 'fy';
     const string GROUP = 'g';
     const string GROUP_NAME = 'gn'; // TODO maybe it is possible to use NAME
+    const string SOURCE_GROUP_NAME = 'gs'; // the group of the numbers that a result is calculated from
     const string LOG = 'h'; // h for history of the object
     const string LOG_STATUS = 'ha'; // the stAtus of a system log entry
     const string LOG_PAGE = 'hb'; // the page Block of the system log list to show
@@ -571,6 +572,7 @@ class url_var
     // group
     const string GROUP_HUMAN = 'group_ig';
     const string GROUP_NAME_HUMAN = 'group_name';
+    const string SOURCE_GROUP_NAME_HUMAN = 'source_group_name';
 
     // value
     const string VALUE_HUMAN = 'value_id';
@@ -824,6 +826,7 @@ class url_var
         // group
         [self::GROUP_HUMAN, self::GROUP],
         [self::GROUP_NAME_HUMAN, self::GROUP_NAME],
+        [self::SOURCE_GROUP_NAME_HUMAN, self::SOURCE_GROUP_NAME],
 
         // value
         [self::VALUE_HUMAN, self::VALUE],

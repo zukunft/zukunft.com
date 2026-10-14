@@ -1672,10 +1672,10 @@
             <br>
             <br>
             <div class="form-group col-md-8">
-                <label for="group_82">
-                    group
+                <label for="source_group_or_phrases_82">
+                    source group or phrases
                 </label>
-                <input class="form-control" type="text" name="gn_82" id="group_82">
+                <input class="form-control" type="text" name="gs_82" id="source_group_or_phrases_82">
             </div>
             <br>
             <br>
@@ -1686,10 +1686,10 @@
             <br>
             <br>
             <div class="form-group col-md-8">
-                <label for="group_83">
-                    group
+                <label for="source_group_or_phrases_83">
+                    source group or phrases
                 </label>
-                <input class="form-control" type="text" name="gn_83" id="group_83">
+                <input class="form-control" type="text" name="gs_83" id="source_group_or_phrases_83">
             </div>
             <br>
             <br>
@@ -8012,30 +8012,40 @@
             <form action="/http/view.php" id="component_type_test_128">
                 <input type="hidden" name="token" value="5e18d78c56c5ccb645631d7e5c6657d02a2f7c579cd01d36d3f5539ba07a6c13">
                 <div class="form-group col-md-4">
-                    <label for="cy_form_select_component_link_type_128">
-                        Link type
+                    <label for="cp_form_select_component_pos_type_128">
+                        Position type
                     </label>
-                    <select class="form-control" name="cy_128" form="component_type_test_128" id="cy_form_select_component_link_type_128" >
+                    <select class="form-control" name="cp_128" form="component_type_test_128" id="cp_form_select_component_pos_type_128" >
                         <option value="0" selected>
                             please select ...
                         </option>
-                        <option value="3"  >
-                            add
-                        </option>
                         <option value="1"  >
-                            always
+                            below
                         </option>
                         <option value="2"  >
-                            expression
+                            side
+                        </option>
+                        <option value="3"  >
+                            combine
                         </option>
                         <option value="4"  >
-                            overwrite
+                            column
                         </option>
                         <option value="5"  >
-                            remove
+                            side or first below
+                        </option>
+                        <option value="6"  >
+                            side or below
+                        </option>
+                        <option value="7"  >
+                            side or last below
+                        </option>
+                        <option value="8"  >
+                            same line
                         </option>
                     </select>
                 </div>
+                <input type="hidden" name="8cp_128" value="">
             </form>
             <br>
             <br>
@@ -8131,15 +8141,12 @@
             <form action="/http/view.php" id="component_type_test_134">
                 <input type="hidden" name="token" value="5e18d78c56c5ccb645631d7e5c6657d02a2f7c579cd01d36d3f5539ba07a6c13">
                 <div class="form-group col-md-4">
-                    <label for="d_form_select_view_134">
-                        View
+                    <label for="cl_form_link_table_view_134">
+                        Table view
                     </label>
-                    <select class="form-control" name="d_134" form="component_type_test_134" id="d_form_select_view_134" >
-                        <option value="175"  >
-                            Complete
-                        </option>
-                        <option value="0"  >
-                            ---
+                    <select class="form-control" name="cl_134" form="component_type_test_134" id="cl_form_link_table_view_134" >
+                        <option value="176"  >
+                            base units
                         </option>
                         <option value="180"  >
                             Biological
@@ -8150,11 +8157,23 @@
                         <option value="16"  >
                             Calculator
                         </option>
+                        <option value="191"  >
+                            company list with main ratios
+                        </option>
+                        <option value="190"  >
+                            company sheet
+                        </option>
+                        <option value="175"  >
+                            Complete
+                        </option>
                         <option value="91"  >
                             Component
                         </option>
                         <option value="95"  >
                             Component link
+                        </option>
+                        <option value="189"  >
+                            country ratios
                         </option>
                         <option value="187"  >
                             Currency
@@ -8171,11 +8190,11 @@
                         <option value="44"  >
                             Formula (detail with range)
                         </option>
-                        <option value="36"  >
-                            Formula (range)
-                        </option>
                         <option value="79"  >
                             Formula link
+                        </option>
+                        <option value="36"  >
+                            Formula (range)
                         </option>
                         <option value="183"  >
                             Graph
@@ -8192,11 +8211,14 @@
                         <option value="185"  >
                             Mathematical constant
                         </option>
-                        <option value="192"  >
-                            PV in Switzerland emission comparison
-                        </option>
                         <option value="112"  >
                             Phrase (default)
+                        </option>
+                        <option value="186"  >
+                            problem with solutions
+                        </option>
+                        <option value="192"  >
+                            PV in Switzerland emission comparison
                         </option>
                         <option value="177"  >
                             Ranking
@@ -8233,6 +8255,9 @@
                         </option>
                         <option value="184"  >
                             Simple
+                        </option>
+                        <option value="188"  >
+                            solution priority validation
                         </option>
                         <option value="6"  >
                             Source (default)
@@ -8320,24 +8345,6 @@
                         </option>
                         <option value="31"  >
                             Word (range)
-                        </option>
-                        <option value="176"  >
-                            base units
-                        </option>
-                        <option value="191"  >
-                            company list with main ratios
-                        </option>
-                        <option value="190"  >
-                            company sheet
-                        </option>
-                        <option value="189"  >
-                            country ratios
-                        </option>
-                        <option value="186"  >
-                            problem with solutions
-                        </option>
-                        <option value="188"  >
-                            solution priority validation
                         </option>
                     </select>
                 </div>

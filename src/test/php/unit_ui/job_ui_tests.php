@@ -84,9 +84,13 @@ class job_ui_tests
         $msg_usr->usr = new user_ui($t_usr->user_sys_normal()->api_json());
         $msg_adm = new user_message();
         $msg_adm->usr = new user_ui($t_usr->user_sys_admin()->api_json());
-        $test_page .= $html->text_h2('user jobs and all jobs test');
-        $test_page .= 'the jobs of a user without the upgrade button<br>';
-        $test_page .= $page->user_jobs($msg_usr, 0, true, $job_lst) . '<br>';
+        // the jobs of a user and of all users have one form per job each, so they are two pages
+        // like in the frontend, because one page must not hold two forms with the same id
+        $usr_page = $html->text_h2('user jobs test');
+        $usr_page .= 'the jobs of a user without the upgrade button<br>';
+        $usr_page .= $page->user_jobs($msg_usr, 0, true, $job_lst) . '<br>';
+        $t->html_page_test($usr_page, 'user jobs', 'job_user', $msg);
+        $test_page .= $html->text_h2('all jobs test');
         $test_page .= 'the jobs of all users for an admin<br>';
         $test_page .= $page->all_jobs($msg_adm, 0, true, $job_lst) . '<br>';
         $test_page .= 'the hint for a user who is not an admin<br>';

@@ -1207,6 +1207,17 @@ class db_object extends TextIdObject
     }
 
     /**
+     * create the html code to select the position type of a component link
+     * @param string $form the name of the html form
+     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
+     * @return string the html code to select the position type
+     */
+    public function component_pos_type_selector(string $form, ?type_lists $typ_lst): string
+    {
+        return $this->selector_not_defined('component_pos_type_selector');
+    }
+
+    /**
      * the html code to select a share type
      * @param string $form the name of the html form
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects

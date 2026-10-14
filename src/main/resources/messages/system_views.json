@@ -1973,14 +1973,14 @@
     {
       "name": "system form select parent view",
       "description": "select the parent view of a view relation",
-      "type": "form_select_view",
+      "type": "form_select_parent_view",
       "code_id": "form_select_parent_view",
       "ui_msg_code_id": "form_select_parent_view"
     },
     {
       "name": "system form select child view",
       "description": "select the child view of a view relation",
-      "type": "form_select_view",
+      "type": "form_select_child_view",
       "code_id": "form_select_child_view",
       "ui_msg_code_id": "form_select_child_view"
     },

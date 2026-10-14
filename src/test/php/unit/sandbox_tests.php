@@ -223,7 +223,7 @@ class sandbox_tests
         $t->assert($test_name, $result, $target);
 
         // the shared helper behind the dummy parent functions above; only the warning level is
-        // tested, because the error level would raise the error count and ERROR_LIMIT is zero
+        // tested, because the error level would raise the error count, which can stop the test run (ERROR_LIMIT)
         $test_name = 'the missing overwrite helper names the function and the class';
         $miss_txt = log_missing_overwrite_warning('test_fnc', word::class);
         $target = 'test_fnc function is not overwritten by ' . word::class;

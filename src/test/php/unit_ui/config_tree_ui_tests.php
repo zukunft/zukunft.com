@@ -275,12 +275,16 @@ class config_tree_ui_tests
         $sys_page = new system_page();
         $test_page = $html->text_h2('config tree');
         $test_page .= $sys_page->config_tree($msg, [], true, $t_cft->tree_ui());
-        $test_page .= $html->text_h2('config tree search');
-        $test_page .= $sys_page->config_tree($msg, [url_var::PATTERN => 'delay'], true, $t_cft->tree_ui());
-        $test_page .= $html->text_h2('config tree scope');
-        $url_scope = [url_var::CONFIG_PART => test_config_trees::USER];
-        $test_page .= $sys_page->config_tree($msg, $url_scope, true, $t_cft->tree_ui());
         $t->html_page_test($test_page, 'config tree', 'config_tree', $msg);
+        // the search and the scope are own pages like in the frontend, because each page has the
+        // search list and the tree nodes with fixed ids, which one page must not hold twice
+        $search_page = $html->text_h2('config tree search');
+        $search_page .= $sys_page->config_tree($msg, [url_var::PATTERN => 'delay'], true, $t_cft->tree_ui());
+        $t->html_page_test($search_page, 'config tree search', 'config_tree_search', $msg);
+        $scope_page = $html->text_h2('config tree scope');
+        $url_scope = [url_var::CONFIG_PART => test_config_trees::USER];
+        $scope_page .= $sys_page->config_tree($msg, $url_scope, true, $t_cft->tree_ui());
+        $t->html_page_test($scope_page, 'config tree scope', 'config_tree_scope', $msg);
 
         // the read only settings page as view 126 shows it, which the developer opens to check the layout
         $settings_page = $sys_page->system_tile(msg_id::SYSTEM_TITLE_SYSTEM_CONFIG);

@@ -140,11 +140,16 @@ class word_ui_tests
         $test_page .= 'edit button: ' . $wrd->btn_edit($url_arr, $base_url) . '<br>';
         $test_page .= 'del button: ' . $wrd->btn_del($url_arr, $base_url) . '<br>';
         $test_page .= 'unlink button: ' . $wrd->btn_unlink(1) . '<br>';
+
+        // the same field with the long view list is checked apart from the page,
+        // because one page must not hold two fields with the same id
+        $test_name = 'the view selector with the long view list keeps the view url var as field name';
+        $long_sel = $wrd->view_selector(views::WORD_EDIT, $t_msk->view_list_long_dsp(), $msg);
+        $t->assert_text_contains($test_name, $long_sel, 'name="' . url_var::VIEW . '"');
+
         $test_page .= $html->text_h2('select');
         $from_rows = $wrd->dsp_type_selector(views::WORD_EDIT, $msg, '', $cfg) . '<br>';
         $from_rows .= $wrd->view_selector(views::WORD_EDIT, $t_msk->view_list_ui(), $msg) . '<br>';
-        // the same field with the long view list, so the field name stays the view url var
-        $from_rows .= $wrd->view_selector(views::WORD_EDIT, $t_msk->view_list_long_dsp(), $msg) . '<br>';
         $test_page .= $html->form(views::WORD_EDIT, $from_rows);
         $test_page .= $html->text_h2('table');
         $test_page .= $html->tbl($html->tr($wrd->th()) . $wrd_pi->tr());
@@ -213,8 +218,11 @@ class word_ui_tests
         $wrd_minute = new word($t_wrd->word_minute()->api_json());
         $test_page .= $html->text_h2('formulas assigned to ' . $wrd_minute->name());
         $test_page .= 'formulas: ' . $list->formulas($wrd_minute, $msg, $dto) . '<br>';
-        $test_page .= $html->text_h2('formulas assigned to ' . $wrd->name());
-        $test_page .= 'formulas: ' . $list->formulas($wrd, $msg, $dto) . '<br>';
+        // the formulas of a second word are checked apart from the page, because each list
+        // has the form to assign a formula and one page must not hold two forms with the same id
+        $test_name = 'the formulas assigned to a second word are listed';
+        $frm_html = $list->formulas($wrd, $msg, $dto);
+        $t->assert_text_contains($test_name, $frm_html, formula_names::INCREASE);
 
         // show the values related to a word sorted by impact as on the default word page
         $t_val = new test_values($t);

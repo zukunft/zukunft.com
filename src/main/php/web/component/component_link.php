@@ -329,6 +329,25 @@ class component_link extends sandbox_link
         return $this->type_selector_with_pre($typ_lst->msk_sty, $form, $this->style_id);
     }
 
+    /**
+     * create the html code to select the position type e.g. below or right of the previous component
+     * overrides db_object::component_pos_type_selector
+     * @param string $form the name of the html form
+     * @param type_lists|null $typ_lst the frontend cache with the preloaded position types
+     * @return string the html code to select the position type
+     */
+    public function component_pos_type_selector(string $form, ?type_lists $typ_lst): string
+    {
+        global $ui_sys;
+        // fall back to the frontend request cache if the caller has no type list
+        if ($typ_lst == null) {
+            log_err('type list cache missing, falling back to the request cache');
+            $typ_lst = $ui_sys->typ_lst_cache;
+        }
+        // the position type is part of db_fld_to_url, so it needs the opening value as pre value
+        return $this->type_selector_with_pre($typ_lst->pos_typ, $form, $this->pos_type_id);
+    }
+
 
     /*
      * display

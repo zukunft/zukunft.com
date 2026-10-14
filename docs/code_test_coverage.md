@@ -8,7 +8,7 @@ in a test file of the src/test/php/unit* folders; the count is by function name
 and cannot tell the classes apart, so a name that several classes declare needs
 2 calls per class and is listed as shared otherwise
 
-667 of 6013 public functions have at least 2 unit test calls; the 5346 functions below do not
+667 of 6015 public functions have at least 2 unit test calls; the 5348 functions below do not
 
 ## main backend
 
@@ -4148,6 +4148,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
 \-- component_link
     \-- api_array - 11 unit test calls shared by 37 classes
     \-- api_mapper - 29 unit test calls shared by 103 classes
+    \-- component_pos_type_selector - 0 unit test calls shared by 2 classes
     \-- component_style_selector - 0 unit test calls shared by 2 classes
     \-- db_fld_to_url - 6 unit test calls shared by 13 classes
     \-- get_component - 2 unit test calls shared by 2 classes
@@ -4237,6 +4238,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- btn_edit - 2 unit test calls shared by 3 classes
     \-- btn_edit_sbx - 0 unit test calls
     \-- component_link_type_selector - 0 unit test calls shared by 2 classes
+    \-- component_pos_type_selector - 0 unit test calls shared by 2 classes
     \-- component_selector - 0 unit test calls shared by 2 classes
     \-- component_style_selector - 0 unit test calls shared by 2 classes
     \-- component_type_selector - 0 unit test calls shared by 2 classes
@@ -4290,7 +4292,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- view_link_type_selector - 0 unit test calls shared by 2 classes
     \-- view_list - 0 unit test calls shared by 3 classes
     \-- view_relation_type_selector - 0 unit test calls shared by 2 classes
-    \-- view_selector - 1 unit test calls shared by 9 classes
+    \-- view_selector - 3 unit test calls shared by 9 classes
     \-- view_type_selector - 0 unit test calls shared by 2 classes
 \-- display_list
     \-- display - 9 unit test calls shared by 22 classes
@@ -4351,7 +4353,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- to_url_array - 24 unit test calls shared by 13 classes
     \-- url_mapper - 42 unit test calls shared by 27 classes
     \-- user_expression - 0 unit test calls shared by 2 classes
-    \-- view_selector - 1 unit test calls shared by 9 classes
+    \-- view_selector - 3 unit test calls shared by 9 classes
 \-- formula_link
     \-- api_array - 11 unit test calls shared by 37 classes
     \-- api_mapper - 29 unit test calls shared by 103 classes
@@ -4751,7 +4753,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- triple_list - 8 unit test calls shared by 5 classes
     \-- url_mapper - 42 unit test calls shared by 27 classes
     \-- value_quality_phrases - 0 unit test calls
-    \-- view_selector - 1 unit test calls shared by 9 classes
+    \-- view_selector - 3 unit test calls shared by 9 classes
     \-- wrd_lst_all - 2 unit test calls shared by 2 classes
 \-- phrase_type_list
     \-- default_id - 1 unit test calls shared by 46 classes
@@ -4787,7 +4789,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- url - 3 unit test calls shared by 7 classes
     \-- url_mapper - 42 unit test calls shared by 27 classes
     \-- used_url - 0 unit test calls
-    \-- view_selector - 1 unit test calls shared by 9 classes
+    \-- view_selector - 3 unit test calls shared by 9 classes
 \-- ref_list
     \-- api_mapper - 29 unit test calls shared by 103 classes
     \-- get_by_phrase - 0 unit test calls
@@ -4855,7 +4857,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- share_type_selector - 0 unit test calls shared by 2 classes
     \-- to_url_array - 24 unit test calls shared by 13 classes
     \-- url_mapper - 42 unit test calls shared by 27 classes
-    \-- view_selector - 1 unit test calls shared by 9 classes
+    \-- view_selector - 3 unit test calls shared by 9 classes
 \-- sandbox_code_id
     \-- api_array - 11 unit test calls shared by 37 classes
     \-- api_mapper - 29 unit test calls shared by 103 classes
@@ -4947,7 +4949,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- to_url_array - 24 unit test calls shared by 13 classes
     \-- url - 3 unit test calls shared by 7 classes
     \-- url_mapper - 42 unit test calls shared by 27 classes
-    \-- view_selector - 1 unit test calls shared by 9 classes
+    \-- view_selector - 3 unit test calls shared by 9 classes
 \-- source_list
     \-- api_mapper - 29 unit test calls shared by 103 classes
 \-- source_type_list
@@ -5008,8 +5010,8 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- button_save - 0 unit test calls
     \-- form_child_view - 0 unit test calls
     \-- form_component - 0 unit test calls
-    \-- form_component_link_type - 0 unit test calls
-    \-- form_component_pos_type - 0 unit test calls
+    \-- form_component_link_type - 1 unit test calls
+    \-- form_component_pos_type - 1 unit test calls
     \-- form_component_style - 0 unit test calls
     \-- form_component_type - 0 unit test calls
     \-- form_components - 0 unit test calls
@@ -5029,7 +5031,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- form_field_selection_name - 0 unit test calls
     \-- form_field_selection_text - 0 unit test calls
     \-- form_field_source_group_name - 0 unit test calls
-    \-- form_field_source_group_or_phrases - 0 unit test calls
+    \-- form_field_source_group_or_phrases - 1 unit test calls
     \-- form_field_url - 0 unit test calls
     \-- form_field_view_link_priority - 0 unit test calls
     \-- form_formula - 0 unit test calls
@@ -5054,7 +5056,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- form_source - 0 unit test calls
     \-- form_source_type - 0 unit test calls
     \-- form_sources - 0 unit test calls
-    \-- form_table_linked_view - 0 unit test calls
+    \-- form_table_linked_view - 1 unit test calls
     \-- form_term - 0 unit test calls
     \-- form_terms - 0 unit test calls
     \-- form_triple_add_simple - 0 unit test calls
@@ -5063,7 +5065,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- form_values - 0 unit test calls
     \-- form_verb - 0 unit test calls
     \-- form_verbs - 0 unit test calls
-    \-- form_view - 0 unit test calls
+    \-- form_view - 1 unit test calls
     \-- form_view_default - 0 unit test calls
     \-- form_view_link_type - 0 unit test calls
     \-- form_view_relation_pos - 0 unit test calls
@@ -5263,7 +5265,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- type - 0 unit test calls shared by 6 classes
     \-- url_mapper - 42 unit test calls shared by 27 classes
     \-- verb_selector - 1 unit test calls shared by 2 classes
-    \-- view_selector - 1 unit test calls shared by 9 classes
+    \-- view_selector - 3 unit test calls shared by 9 classes
     \-- wrd_lst - 0 unit test calls shared by 6 classes
 \-- triple_list
     \-- api_mapper - 29 unit test calls shared by 103 classes
@@ -5565,7 +5567,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- term - 17 unit test calls shared by 13 classes
     \-- type_id - 11 unit test calls shared by 10 classes
     \-- url_mapper - 42 unit test calls shared by 27 classes
-    \-- view_selector - 1 unit test calls shared by 9 classes
+    \-- view_selector - 3 unit test calls shared by 9 classes
 \-- verb_list
     \-- dsp_list - 0 unit test calls
     \-- list - 5 unit test calls shared by 7 classes
@@ -5694,7 +5696,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- to_url_array - 24 unit test calls shared by 13 classes
     \-- tr - 0 unit test calls shared by 6 classes
     \-- url_mapper - 42 unit test calls shared by 27 classes
-    \-- view_selector - 1 unit test calls shared by 9 classes
+    \-- view_selector - 3 unit test calls shared by 9 classes
 \-- word_list
     \-- api_mapper - 29 unit test calls shared by 103 classes
     \-- assume_time - 0 unit test calls shared by 4 classes
