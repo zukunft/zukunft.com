@@ -472,7 +472,10 @@ class html_base
             // the editor shows the same object, so it gets the page vars of the current page
             $edt_par = [url_var::MASK => $edt_id] + self::page_url_array($url_array);
             $url_edt = $this->url_with_back($this->page_url($edt_par), $url_array);
-            $result = $this->list_item($this->ref($url_edt, $edt_name)) . "\n";
+            // like the edit icons behind the title grey with the request to log in if the user cannot save a change
+            // and for a user who can no tooltip, because ref() skips a title that repeats the name
+            [$edt_style, $edt_tip] = $this->change_style_and_tip('', $edt_name);
+            $result = $this->list_item($this->ref($url_edt, $edt_name, $edt_tip, $edt_style)) . "\n";
         } else {
             $result = $this->list_item($this->ref(api::MAIN_SCRIPT . '?' . url_var::MASK . '=view_change&id=2', $mtr->txt(msg_id::NAVBAR_ALTERNATIVE_VIEW))) . "\n";
         }
