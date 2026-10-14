@@ -1171,6 +1171,16 @@ class test_words extends test_objects
     }
 
     /**
+     * @return word "minor" that names the column tier of the columns shown on a wide screen only
+     */
+    function word_minor(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::MINOR_ID, word_names::MINOR);
+        return $wrd;
+    }
+
+    /**
      * @return word "leverage plot" with the code id that selects the chart type (see chart_types)
      */
     function word_leverage_plot(): word

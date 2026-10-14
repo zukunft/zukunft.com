@@ -6580,6 +6580,7 @@
     \-- system_tile - section for function system_tile missing in /component/execute/system_page.php
     \-- title_with_object_name - section for function title_with_object_name missing in /component/execute/system_page.p
             hp
+    \-- title_for_phrase - section for function title_for_phrase missing in /component/execute/system_page.php
     \-- related_view_selector - section for function related_view_selector missing in /component/execute/system_page.php
     \-- system_sub_tile - section for function system_sub_tile missing in /component/execute/system_page.php
     \-- system_sub_tile_var - section for function system_sub_tile_var missing in /component/execute/system_page.php
@@ -6689,6 +6690,7 @@
     \-- result_list - section for function result_list missing in /component/execute/ui_list.php
     \-- results - section for function results missing in /component/execute/ui_list.php
     \-- results_related - section for function results_related missing in /component/execute/ui_list.php
+    \-- triples_of_types - section for function triples_of_types missing in /component/execute/ui_list.php
     \-- phrases_related - section for function phrases_related missing in /component/execute/ui_list.php
     \-- list_sort - section for function list_sort missing in /component/execute/ui_list.php
     \-- start_list - section for function start_list missing in /component/execute/ui_list.php
@@ -7412,6 +7414,13 @@
             t.php
     \-- child_phrases - section for function child_phrases not yet defined that it should be related in /phrase/phrase_l
             ist.php
+    \-- parents_all - section for function parents_all not yet defined that it should be related in /phrase/phrase_list.
+            php
+    \-- sub_types - section for function sub_types not yet defined that it should be related in /phrase/phrase_list.php
+    \-- related_triples_to - section for function related_triples_to not yet defined that it should be related in /phras
+            e/phrase_list.php
+    \-- has_any_of - section for function has_any_of not yet defined that it should be related in /phrase/phrase_list.ph
+            p
     \-- column_list_phrases - section for function column_list_phrases not yet defined that it should be related in /phr
             ase/phrase_list.php
     \-- column_names - section for function column_names not yet defined that it should be related in /phrase/phrase_lis
@@ -8999,6 +9008,9 @@
     \-- title_with_object_name
         \-- system_page - HTML for a page title that names the object shown on the page e.g. User "zukunft.com system te
                 st"
+    \-- title_for_phrase
+        \-- system_page - HTML for a page title that names the phrase the page works on e.g. Table editor for populism s
+                olution
     \-- related_view_selector
         \-- system_page - the "..." in the right corner below the title of a default, detail, range or detail with
     \-- system_sub_tile
@@ -9190,6 +9202,8 @@
         \-- ui_list - TODO move code from component_dsp_old
     \-- results_related
         \-- ui_list - show the results related to the given object grouped like the values of a phrase (see
+    \-- triples_of_types
+        \-- ui_list - the triples that point to the given type, one list per sub type of the type below its name,
     \-- phrases_related
         \-- ui_list - TODO Prio 0 fill with real code
     \-- list_sort
@@ -9745,6 +9759,14 @@
         \-- phrase_list - get the names of the phrases that this list links the given phrase to by a triple, the
     \-- child_phrases
         \-- phrase_list - the phrases that this list links to the given phrase by a triple
+    \-- parents_all
+        \-- phrase_list - the given phrase and every phrase above it in this list: the sides that a triple is built
+    \-- sub_types
+        \-- phrase_list - the sub types of the given type, e.g. the column tiers "mayor column (system)" to
+    \-- related_triples_to
+        \-- phrase_list - the triples of this list that link a phrase related to the given parents to the given type,
+    \-- has_any_of
+        \-- phrase_list - @param phrase_list $phr_lst the phrases to look for
     \-- column_list_phrases
         \-- phrase_list - the list triples of this list that collect the phrases of a table column for one row, e.g.
     \-- column_names

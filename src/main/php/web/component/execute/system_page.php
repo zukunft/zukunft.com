@@ -154,6 +154,34 @@ class system_page extends component
     }
 
     /**
+     * HTML for a page title that names the phrase the page works on e.g. Table editor for populism solution
+     *
+     * @param msg_id|null $ui_msg_code_id the message id of the title in the user-specific frontend language
+     * @param db_object|type_object|combine_named|sandbox_list|null $dbo the phrase of the page; without a name only the title is shown
+     * @return string the html code of the page title
+     */
+    function title_for_phrase(
+        ?msg_id                                               $ui_msg_code_id = null,
+        db_object|type_object|combine_named|sandbox_list|null $dbo = null
+    ): string
+    {
+        global $mtr;
+
+        $html = new html_base();
+        $result = '';
+        if ($ui_msg_code_id != null) {
+            $title = $mtr->txt($ui_msg_code_id);
+            $name = $dbo?->name() ?? '';
+            if ($name != '') {
+                // escape the user settable name, because the title is shown as raw html
+                $title .= $mtr->txt(msg_id::FOR) . $html->esc($name);
+            }
+            $result = $html->text_h2($title);
+        }
+        return $result;
+    }
+
+    /**
      * the "..." in the right corner below the title of a default, detail, range or detail with
      * range view that opens the menu to show the same object in one of the other three versions
      *

@@ -9986,6 +9986,18 @@
                 "code_id": "system_admin_subtitle",
                 "description": "the name of the admin, the pod name and the creation time of the admin dashboard",
                 "id": 266
+            },
+            {
+                "name": "system title for phrase",
+                "code_id": "system_title_for_phrase",
+                "description": "page title that shows the translated title of the component, a translated for and the name of the phrase of the page e.g. Table editor for populism solution",
+                "id": 267
+            },
+            {
+                "name": "triple list",
+                "code_id": "triple_list",
+                "description": "the name of each sub type of the column phrase, e.g. of each column tier, with the list of the triples that point to it and that are related to the phrase of the page",
+                "id": 268
             }
         ],
         "component_link_types": [
@@ -28243,7 +28255,7 @@
                         "id": 432,
                         "name": "system title table editor",
                         "description": "show the language specific title of the table editor",
-                        "type_id": 1,
+                        "type_id": 267,
                         "code_id": "system_title_table_editor",
                         "ui_msg_code_id": "system_title_table_editor",
                         "position": 1,
@@ -28258,6 +28270,16 @@
                         "code_id": "phrase_selector",
                         "position": 2,
                         "position_type": 1
+                    },
+                    {
+                        "link_id": 1577,
+                        "id": 435,
+                        "name": "column tiers",
+                        "description": "the columns of each column tier that are related to the phrase of the table",
+                        "type_id": 268,
+                        "word_col": -184,
+                        "position": 3,
+                        "position_type": 1
                     }
                 ]
             },
@@ -28269,18 +28291,18 @@
                 "code_id": "calculation_editor",
                 "components": [
                     {
-                        "link_id": 1577,
+                        "link_id": 1578,
                         "id": 433,
                         "name": "system title calculation editor",
                         "description": "show the language specific title of the calculation editor",
-                        "type_id": 1,
+                        "type_id": 267,
                         "code_id": "system_title_calculation_editor",
                         "ui_msg_code_id": "system_title_calculation_editor",
                         "position": 1,
                         "position_type": 1
                     },
                     {
-                        "link_id": 1578,
+                        "link_id": 1579,
                         "id": 434,
                         "name": "phrase selector",
                         "description": "placeholder to select the word or triple that an editor starts from",

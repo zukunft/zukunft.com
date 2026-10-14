@@ -2162,6 +2162,82 @@ class ui_list extends ui_base
     }
 
     /**
+     * the triples that point to the given type, one list per sub type of the type below its name,
+     * e.g. for "column (system)" the triple "column problem (high prio)" below "mayor column (system)"
+     *
+     * TODO Prio 2 list only the triples related to the phrase of the page again
+     *      (phrase_list::related_triples_to); switched off, because the walk of parents_all
+     *      reaches most of the graph and the page did not respond (docs/llm/pending_prio_2.md)
+     *
+     * @param db_object|type_object|combine_named|null $dbo the base phrase e.g. "populism solution"
+     * @param int|null $typ_id the phrase id of the type e.g. of "column (system)", which is the column phrase of the component
+     * @param user_message $msg to report a component without a known type
+     * @param data_object|null $dto the request cache, which is filled from the api if online; null for no list
+     * @return string the html code of the labelled triple lists or '' if the page shows no phrase
+     */
+    function triples_of_types(
+        db_object|type_object|combine_named|null $dbo,
+        ?int                                     $typ_id,
+        user_message                             $msg,
+        ?data_object                             $dto
+    ): string
+    {
+        $result = '';
+        // e.g. the editor opened without a phrase has nothing to list yet
+        if (!($dbo instanceof word or $dbo instanceof triple) or $dbo->id() == 0 or $dto == null) {
+            return $result;
+        }
+        if ($dto->online and $typ_id != null) {
+            $this->add_triple_list_cache($typ_id, $dto, $msg);
+        }
+        $typ = $typ_id == null ? null : $dto->phr_lst->get($typ_id);
+        if ($typ == null) {
+            log_err_msg_ui('the type phrase ' . $typ_id . ' of the triple list is missing', $msg);
+        } else {
+            foreach ($dto->phr_lst->sub_types($typ, $msg) as $sub) {
+                $result .= $this->triples_of_type($sub, $dto->phr_lst, $msg);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param phrase $typ the type phrase that the listed triples point to e.g. "mayor column (system)"
+     * @param phrase_list $phr_lst the request cache with the triples
+     * @param user_message $msg to report a problem of reading a triple of the cache
+     * @return string the html code of the type name followed by the list of its triples
+     */
+    private function triples_of_type(phrase $typ, phrase_list $phr_lst, user_message $msg): string
+    {
+        $html = new html_base();
+        $trp_lst = $phr_lst->parent_triples($typ, $msg);
+        $trp_lst->sort_by_name();
+        $items = '';
+        foreach ($trp_lst->lst() as $trp) {
+            $items .= $html->list_item($trp->name_link());
+        }
+        return $html->text_h4($typ->name_link()) . $html->list_unsorted($items);
+    }
+
+    /**
+     * add the type of a triple list, its sub types and the triples that point to them to the request cache
+     *
+     * @param int $typ_id the phrase id of the type e.g. of "column (system)"
+     * @param data_object $dto the request cache to fill
+     * @param user_message $msg to report a problem of an api message to the user
+     * @return void
+     */
+    private function add_triple_list_cache(int $typ_id, data_object $dto, user_message $msg): void
+    {
+        $typ_lst = new phrase_list();
+        $typ_lst->load_by_ids([$typ_id], $msg);
+        // a sub type is linked from the type and a listed triple points to the type or a sub type
+        $typ_lst->load_related_by_ids($typ_lst, foaf_direction::UP, $msg);
+        $typ_lst->load_related_by_ids($typ_lst, foaf_direction::DOWN, $msg);
+        $dto->add_phrases($typ_lst, $msg);
+    }
+
+    /**
      * TODO Prio 0 fill with real code
      * @param db_object|combine_named|null $dbo the term whose related phrases should be listed
      * @param data_object|null $cfg the context used to create the view

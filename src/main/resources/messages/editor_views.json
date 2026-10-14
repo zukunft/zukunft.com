@@ -6,19 +6,44 @@
   "selection": [
     "the placeholder views of the table and the calculation editor"
   ],
-  "description": "The table editor and the calculation editor as placeholder views with a title and a phrase selector, so that the steps of docs/table_creation.md can link to them before the editors are done. This file is imported as the last step of the db setup, so that no database id of a tested view or component moves.",
+  "description": "The table editor and the calculation editor as placeholder views with a title and a phrase selector, the table editor also with the related columns of each column tier, so that the steps of docs/table_creation.md can link to them before the editors are done. This file is imported as the last step of the db setup, so that no database id of a tested view or component moves.",
+  "words": [
+    {
+      "name": "column"
+    },
+    {
+      "name": "zukunft.com"
+    },
+    {
+      "name": "system"
+    }
+  ],
+  "triples": [
+    {
+      "name": "zukunft.com system",
+      "from": "zukunft.com",
+      "verb": "is a",
+      "to": "system"
+    },
+    {
+      "name": "column (system)",
+      "from": "column",
+      "verb": "can be",
+      "to": "zukunft.com system"
+    }
+  ],
   "components": [
     {
       "name": "system title table editor",
       "description": "show the language specific title of the table editor",
-      "type": "system_title",
+      "type": "system_title_for_phrase",
       "code_id": "system_title_table_editor",
       "ui_msg_code_id": "system_title_table_editor"
     },
     {
       "name": "system title calculation editor",
       "description": "show the language specific title of the calculation editor",
-      "type": "system_title",
+      "type": "system_title_for_phrase",
       "code_id": "system_title_calculation_editor",
       "ui_msg_code_id": "system_title_calculation_editor"
     },
@@ -27,6 +52,12 @@
       "description": "placeholder to select the word or triple that an editor starts from",
       "type": "select_phrase",
       "code_id": "phrase_selector"
+    },
+    {
+      "name": "column tiers",
+      "description": "the columns of each column tier that are related to the phrase of the table",
+      "type": "triple_list",
+      "column": "column (system)"
     }
   ],
   "views": [
@@ -43,6 +74,10 @@
         {
           "position": "2",
           "name": "phrase selector"
+        },
+        {
+          "position": "3",
+          "name": "column tiers"
         }
       ]
     },

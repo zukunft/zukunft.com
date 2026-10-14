@@ -382,6 +382,8 @@ class component_types
     const int SYSTEM_TITLE_ID = 1;
     const string SYSTEM_TITLE_WITH_OBJECT_NAME = "system_title_with_object_name";
     const int SYSTEM_TITLE_WITH_OBJECT_NAME_ID = 5;
+    const string SYSTEM_TITLE_FOR_PHRASE = "system_title_for_phrase";
+    const int SYSTEM_TITLE_FOR_PHRASE_ID = 267;
     const string SYSTEM_SUB_TITLE = "system_sub_title";
     const int SYSTEM_SUB_TITLE_ID = 3;
     const string SYSTEM_SUB_TITLE_VAR = "system_sub_title_var";
@@ -570,6 +572,10 @@ class component_types
     const string TABLE_WITH_RELATED_COLUMNS = "table_with_related_columns";
     const int TABLE_WITH_RELATED_COLUMNS_ID = 55;
     const string TABLE_WITH_RELATED_COLUMNS_COM = "show the values related to a phrase as a table with one column per phrase used most often within the values";
+    // the triples that point to the column phrase of the component and that are related to the
+    // phrase of the page, e.g. the columns of the table editor (see ui_list::triples_of_types)
+    const string TRIPLE_LIST = "triple_list";
+    const int TRIPLE_LIST_ID = 268;
     const string FORM_TABLE_LINKED_VIEWS = "system_form_link_table";
     const int FORM_TABLE_LINKED_VIEWS_ID = 189;
 
@@ -1075,6 +1081,7 @@ class component_types
         [self::ROW_END, self::ROW_END_ID],
         [self::SYSTEM_TITLE, self::SYSTEM_TITLE_ID],
         [self::SYSTEM_TITLE_WITH_OBJECT_NAME, self::SYSTEM_TITLE_WITH_OBJECT_NAME_ID],
+        [self::SYSTEM_TITLE_FOR_PHRASE, self::SYSTEM_TITLE_FOR_PHRASE_ID],
         [self::SYSTEM_SUB_TITLE, self::SYSTEM_SUB_TITLE_ID],
         [self::SYSTEM_SUB_TITLE_VAR, self::SYSTEM_SUB_TITLE_VAR_ID],
         [self::RELATED_SYSTEM_VIEW_SELECTOR, self::RELATED_SYSTEM_VIEW_SELECTOR_ID],
@@ -1141,6 +1148,7 @@ class component_types
         [self::VALUES_MOST_RELEVANT, self::VALUES_MOST_RELEVANT_ID],
         [self::VALUES_IN_COLUMNS, self::VALUES_IN_COLUMNS_ID],
         [self::TABLE_WITH_RELATED_COLUMNS, self::TABLE_WITH_RELATED_COLUMNS_ID],
+        [self::TRIPLE_LIST, self::TRIPLE_LIST_ID],
         [self::SHOW_NAME, self::SHOW_NAME_ID],
         [self::SHOW_NAME_BIG, self::SHOW_NAME_BIG_ID],
         [self::SHOW_DESCRIPTION, self::SHOW_DESCRIPTION_ID],

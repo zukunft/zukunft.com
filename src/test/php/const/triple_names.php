@@ -227,8 +227,13 @@ class triple_names
     const int GROSS_DOMESTIC_USAGE_ID = 193;
     const string FREE_SOFTWARE = 'free software';
     const int FREE_SOFTWARE_ID = 147;
+    const string SYSTEM_COLUMN = shared_triples::SYSTEM_COLUMN;
+    const int SYSTEM_COLUMN_ID = 184;
     const string SYSTEM_COLUMN_MAYOR = 'mayor column (system)';
     const int SYSTEM_COLUMN_MAYOR_ID = 224;
+    // the base phrase of the table editor example (problem_main_reasons.json)
+    const string POPULISM_SOLUTION = 'populism solution';
+    const int POPULISM_SOLUTION_ID = 1189;
     const string SYSTEM_COLUMN_MAIN = 'main column (system)';
     const int SYSTEM_COLUMN_MAIN_ID = 225;
     // the chart type tiers of solution_prio.json and the two charts of the start page ranking

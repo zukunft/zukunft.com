@@ -634,6 +634,105 @@ class phrase_list extends sandbox_list_named
     }
 
     /**
+     * the given phrase and every phrase above it in this list: the sides that a triple is built
+     * from and the "to" side of each triple that links a phrase up, followed to the top, e.g. for
+     * "populism solution" its sides "solution" and "populism" and, via "populism is a global
+     * problem", also "global problem" and its side "problem"
+     *
+     * @param phrase $phr the phrase whose parents are collected
+     * @param user_message $msg to report a problem of reading a triple of this list
+     * @param bool $sides_only true to follow only the sides that a triple is built from, e.g. "potential gain" and "EUR" of "potential gain in EUR"
+     * @return phrase_list the given phrase and its parents, each once
+     */
+    function parents_all(phrase $phr, user_message $msg, bool $sides_only = false): phrase_list
+    {
+        $result = new phrase_list();
+        $next = [$phr];
+        // a phrase already collected is not followed again, which also ends a circular link chain
+        while ($next != []) {
+            $cur = $this->cached_phrase(array_pop($next));
+            if (!$result->has_id($cur->id())) {
+                $result->add_phrase($cur);
+                $next = array_merge($next, $this->up_phrases($cur, $msg, $sides_only));
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the sub types of the given type, e.g. the column tiers "mayor column (system)" to
+     * "marginal column (system)" that "column (system)" can be, or the type itself if it has none
+     *
+     * @param phrase $typ the type phrase e.g. "column (system)"
+     * @param user_message $msg to report a problem of reading a triple of this list
+     * @return array the sub type phrases in the order of their definition, e.g. from mayor to marginal
+     */
+    function sub_types(phrase $typ, user_message $msg): array
+    {
+        $result = $this->children($typ, $msg)->lst();
+        if ($result == []) {
+            $result = [$typ];
+        }
+        usort($result, fn(phrase $a, phrase $b) => $a->obj()->id() <=> $b->obj()->id());
+        return $result;
+    }
+
+    /**
+     * the triples of this list that link a phrase related to the given parents to the given type,
+     * e.g. "column problem (high prio)" for "mayor column (system)", because "problem" is a parent
+     * of "populism solution"; a triple is related if it is built from one of the parents
+     *
+     * @param phrase $typ the type phrase that the triples point to e.g. "mayor column (system)"
+     * @param phrase_list $par_lst the phrases that relate a triple e.g. all parents of "populism solution"
+     * @param user_message $msg to report a problem of reading a triple of this list
+     * @return phrase_list the related triples sorted by name
+     */
+    function related_triples_to(phrase $typ, phrase_list $par_lst, user_message $msg): phrase_list
+    {
+        $result = new phrase_list();
+        foreach ($this->parent_triples($typ, $msg)->lst() as $trp) {
+            $from = $trp->get_from();
+            if ($from != null and $this->parents_all($from, $msg, true)->has_any_of($par_lst)) {
+                $result->add_phrase($trp);
+            }
+        }
+        $result->sort_by_name();
+        return $result;
+    }
+
+    /**
+     * @param phrase_list $phr_lst the phrases to look for
+     * @return bool true if at least one of the given phrases is part of this list
+     */
+    function has_any_of(phrase_list $phr_lst): bool
+    {
+        $result = false;
+        foreach ($phr_lst->lst() as $phr) {
+            if ($this->has_id($phr->id())) {
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param phrase $phr the phrase whose direct parents are returned
+     * @param user_message $msg to report a problem of reading a triple of this list
+     * @param bool $sides_only true for the sides of a triple only, false also for the "to" side of each link up
+     * @return array the sides of the phrase if it is a triple and the "to" side of the triples of this list that link it up
+     */
+    private function up_phrases(phrase $phr, user_message $msg, bool $sides_only): array
+    {
+        $result = [$phr->get_from(), $phr->get_to()];
+        if (!$sides_only) {
+            foreach ($this->children($phr, $msg)->lst() as $lnk) {
+                $result[] = $lnk->get_to();
+            }
+        }
+        return array_filter($result);
+    }
+
+    /**
      * the list triples of this list that collect the phrases of a table column for one row, e.g.
      * "populism reason" (reason of populism), which lists every reason of populism
      *
@@ -1016,8 +1115,9 @@ class phrase_list extends sandbox_list_named
         $result = new phrase_list;
         foreach ($this->lst() as $trp) {
             if ($trp->is_triple()) {
-                if ($trp->get_verb()->id() == $vrb?->id() or $vrb == null) {
-                    if ($trp->get_from()->id() == $phr->id()) {
+                // null-safe, because a triple that a link names only by its id has no verb and no sides
+                if ($trp->get_verb()?->id() == $vrb?->id() or $vrb == null) {
+                    if ($trp->get_from()?->id() == $phr->id()) {
                         $result->add($trp, $msg);
                     }
                 }
@@ -1242,8 +1342,9 @@ class phrase_list extends sandbox_list_named
         $result = new phrase_list;
         foreach ($this->lst() as $trp) {
             if ($trp->is_triple()) {
-                if ($trp->get_verb()->id() == $vrb?->id() or $vrb == null) {
-                    if ($trp->get_to()->id() == $phr->id()) {
+                // null-safe, because a triple that a link names only by its id has no verb and no sides
+                if ($trp->get_verb()?->id() == $vrb?->id() or $vrb == null) {
+                    if ($trp->get_to()?->id() == $phr->id()) {
                         $result->add($trp->get_from(), $msg);
                     }
                 }
@@ -1264,8 +1365,9 @@ class phrase_list extends sandbox_list_named
         $result = new phrase_list;
         foreach ($this->lst() as $trp) {
             if ($trp->is_triple()) {
-                if ($trp->get_verb()->id() == $vrb?->id() or $vrb == null) {
-                    if ($trp->get_to()->id() == $phr->id()) {
+                // null-safe, because a triple that a link names only by its id has no verb and no sides
+                if ($trp->get_verb()?->id() == $vrb?->id() or $vrb == null) {
+                    if ($trp->get_to()?->id() == $phr->id()) {
                         $result->add($trp, $msg);
                     }
                 }
@@ -1287,7 +1389,8 @@ class phrase_list extends sandbox_list_named
         foreach ($this->lst() as $trp) {
             if ($trp->is_triple()) {
                 if (!in_array($trp->get_verb()?->id(), $vrb_ids)) {
-                    if ($trp->get_to()->id() == $phr->id()) {
+                    // null-safe, because a triple that a link names only by its id has no sides
+                    if ($trp->get_to()?->id() == $phr->id()) {
                         $result->add($trp, $msg);
                     }
                 }

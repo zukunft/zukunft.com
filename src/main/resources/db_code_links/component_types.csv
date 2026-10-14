@@ -265,3 +265,5 @@ component_type_id, type_name, description, code_id
 264, 'system admin delayed jobs', 'list of critical jobs that are delayed with the possibility to de-prioritise blocking jobs', 'system_admin_jobs_delayed'
 265, 'system body config tree', 'the read only tree of the system configuration of config.yaml with a search and a scope to show one branch', 'system_body_config_tree'
 266, 'system admin subtitle', 'the name of the admin, the pod name and the creation time of the admin dashboard', 'system_admin_subtitle'
+267, 'system title for phrase', 'page title that shows the translated title of the component, a translated for and the name of the phrase of the page e.g. Table editor for populism solution', 'system_title_for_phrase'
+268, 'triple list', 'the name of each sub type of the column phrase, e.g. of each column tier, with the list of the triples that point to it and that are related to the phrase of the page', 'triple_list'

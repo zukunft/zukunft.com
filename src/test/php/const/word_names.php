@@ -202,6 +202,8 @@ class word_names
     const int DEFAULT_ID = 366;
     const string MAYOR = 'mayor';
     const int MAYOR_ID = 262;
+    const string MINOR = 'minor';
+    const int MINOR_ID = 264;
     // the chart type of start_page_charts.json, which the db setup imports last, so the id
     // follows the highest word id of the seed data; check it in the word list.csv
     const string LEVERAGE_PLOT = 'leverage plot';
