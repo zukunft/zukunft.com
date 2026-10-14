@@ -190,8 +190,9 @@ class user_tests
         $diff = abs(user_log::archive_before(null)->getTimestamp() - $max_age->getTimestamp());
         // a few seconds can pass between the two times
         $t->assert_true($test_name, $diff < test_users::TV_USER_LOG_TOLERANCE_SEC);
-        $test_name = 'a session younger than the max age is not archived';
-        $t->assert_true($test_name, user_log::archive_before(null) < new DateTime());
+        $test_name = 'a session that has ended one day within the max age is not archived';
+        $young_end = new DateTime()->modify('-' . (def::FALLBACK_USER_LOG_MAX_AGE_DAYS - 1) . ' days');
+        $t->assert_false($test_name, $young_end < user_log::archive_before(null));
 
         $t->subheader($ts . 'data user id');
         $test_name = 'an own pod call is counted for the browsing user';

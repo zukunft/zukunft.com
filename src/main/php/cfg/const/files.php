@@ -48,8 +48,8 @@ class files
     const string YAML = '.yaml';
     const string XML = '.xml';
     const string ZIP = '.zip';
-    const string CODE_LINK_TYPE = '.csv';
     const string CSV = '.csv';
+    const string CODE_LINK_TYPE = self::CSV;
     const string SQL = '.sql';
     const string SEP = '_';
 

@@ -434,6 +434,19 @@ class system_view_ui_tests
         $test_name = 'an unknown remote address is not from the own pod';
         $t->assert_false($test_name, server_guard::is_own_pod_call('', '', false));
 
+        // the data user of an own pod call is only taken from a url parameter that is a valid id
+        $t->subheader($ts . 'requested user id');
+        $test_name = 'a positive number is the requested user id';
+        $t->assert($test_name, server_guard::valid_user_id('7'), 7);
+        $test_name = 'a request without user parameter names no user';
+        $t->assert($test_name, server_guard::valid_user_id(0), 0);
+        $test_name = 'a negative number is no user id';
+        $t->assert($test_name, server_guard::valid_user_id('-7'), 0);
+        $test_name = 'a text is no user id';
+        $t->assert($test_name, server_guard::valid_user_id('7x'), 0);
+        $test_name = 'an array parameter e.g. u[]=7 is no user id';
+        $t->assert($test_name, server_guard::valid_user_id(['7']), 0);
+
         // test the notification component standalone
         $t->subheader($ts . 'notification');
         $html_base = new html_base();

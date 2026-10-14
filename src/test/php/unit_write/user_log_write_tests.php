@@ -38,14 +38,18 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_CONST . 'files.php';
+include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_log.php';
 include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::SHARED_CONST . 'users.php';
 include_once test_paths::CREATE . 'test_users.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\files;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_log;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\test\php\create\test_users;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use DateTime;
@@ -68,15 +72,37 @@ class user_log_write_tests
 
         $t->subheader($ts . 'delete by user');
         $test_name = 'the sessions of a user are removed before the user is deleted';
-        $this->add_old_session($t, $msg);
+        $this->add_old_session($t->usr1->id(), $msg);
         $usr_log = new user_log();
         $usr_log->del_by_user($t->usr1->id(), $msg);
         $t->assert($test_name, $this->old_ids($before, $msg), []);
         $msg->reset();
 
+        $t->subheader($ts . 'delete user');
+        // remove the test user left over from a previous run, because the add would update it
+        $t->cleanup_test_user(users::TEST_USER_NAME);
+        $msg_sys = new user_message($t->usr_system); // the system user adds and removes the reserved test user
+        $usr = new test_users($t)->user_add();
+        $usr->save_user($msg_sys, $t->usr_system);
+        $usr_id = $usr->id();
+        $test_name = 'the test user with a session is added';
+        $t->assert_true($test_name, $usr_id > 0);
+        $this->add_old_session($usr_id, $msg_sys);
+        $test_name = '... and its session is written';
+        $t->assert($test_name, count($this->old_ids($before, $msg_sys)), 1);
+        $test_name = 'a user with a session can be deleted';
+        $t->assert_true($test_name, $usr->del($msg_sys));
+        $test_name = '... and the session of the user is removed with the user';
+        $t->assert($test_name, $this->old_ids($before, $msg_sys), []);
+        $test_name = '... and the user is removed';
+        $t->assert($test_name, new user()->load_by_id($usr_id, $msg_sys), 0);
+        $t->cleanup_test_user(users::TEST_USER_NAME);
+
         $t->subheader($ts . 'archive');
+        // archive files left over from a previous run would be counted as written by this run
+        $this->remove_archive($dir);
         $test_name = 'a failed archive file write is reported';
-        $this->add_old_session($t, $msg);
+        $this->add_old_session($t->usr1->id(), $msg);
         // an existing file cannot be used as the archive directory
         $usr_log->archive($msg, $before, __FILE__);
         // the message of msg_id::FILE_WRITE_FAILED names the file in the given directory
@@ -99,20 +125,31 @@ class user_log_write_tests
         $t->assert($test_name, $lines[0], implode(',', [user_log::FLD_ID, ...user_log::FLD_NAMES]));
 
         // cleanup
-        array_map('unlink', $files);
-        rmdir($dir);
+        $this->remove_archive($dir);
     }
 
     /**
-     * write a session of the test user that has ended before any real session
-     * @param test_cleanup $t the test environment with the test user
+     * write a session of a test user that has ended before any real session
+     * @param int $usr_id the test user whose session is written
      * @param user_message $msg to report why the session could not be written
      */
-    private function add_old_session(test_cleanup $t, user_message $msg): void
+    private function add_old_session(int $usr_id, user_message $msg): void
     {
         $usr_log = new user_log();
         $start = (float)strtotime(test_users::TV_USER_LOG_OLD_START);
-        $usr_log->log_request($t->usr1->id(), $start, $start + test_users::TV_USER_LOG_SEC, false, $msg);
+        $usr_log->log_request($usr_id, $start, $start + test_users::TV_USER_LOG_SEC, false, $msg);
+    }
+
+    /**
+     * remove the archive files of the test and the test archive directory if they exist
+     * @param string $dir the test archive directory without the closing slash
+     */
+    private function remove_archive(string $dir): void
+    {
+        if (is_dir($dir)) {
+            array_map('unlink', glob($dir . DIRECTORY_SEPARATOR . files::USER_LOG_ARCHIVE . '*' . files::CSV));
+            rmdir($dir);
+        }
     }
 
     /**
