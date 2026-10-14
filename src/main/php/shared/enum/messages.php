@@ -2444,6 +2444,7 @@ enum messages: string
     case NAVBAR_ALTERNATIVE_VIEW = 'navbar_alternative_view';
     case NAVBAR_CHANGE_VIEW = 'navbar_change_view';
     case NAVBAR_ADD_VIEW = 'navbar_add_view';
+    case NAVBAR_SERVER_ADMIN = 'navbar_server_admin';
     case NAVBAR_LOGIN = 'navbar_login';
     case NAVBAR_SIGNUP = 'navbar_signup';
     case NAVBAR_SETTINGS = 'navbar_settings';

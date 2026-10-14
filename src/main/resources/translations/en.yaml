@@ -529,6 +529,7 @@ messages:
   navbar_alternative_view: "alternative"
   navbar_change_view: "change view"
   navbar_add_view: "add view"
+  navbar_server_admin: "server admin"
   or: "or"
   cancel_and_go: "cancel and go"
   not_set: "not set"

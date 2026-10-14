@@ -435,7 +435,7 @@ class html_base
         $result .= '<' . self::DETAILS . ' ' . self::CLASS_HTML . '="view-menu">' . "\n";
         $result .= '<' . self::SUMMARY . '><' . self::I . ' ' . self::CLASS_HTML . '="fas fa-edit"></' . self::I . '></' . self::SUMMARY . '>' . "\n";
         // TODO switch the view mask to a suggested related view
-        $result .= $this->view_change_list($msk_id, $url_array) . "\n";
+        $result .= $this->view_change_list($msk_id, $url_array, $is_admin) . "\n";
         $result .= '</' . self::DETAILS . '>' . "\n";
         $result .= '<' . self::DETAILS . ' ' . self::CLASS_HTML . '="lang-menu">' . "\n";
         $result .= '<' . self::SUMMARY . '><' . self::I . ' ' . self::CLASS_HTML . '="fas fa-globe"></' . self::I . '></' . self::SUMMARY . '>' . "\n";
@@ -461,7 +461,12 @@ class html_base
         return $this->nav($result, self::CLASS_NAV);
     }
 
-    private function view_change_list(int $msk_id = 0, array $url_array = []): string
+    /**
+     * @param int $msk_id the current view id used to build the view change links
+     * @param array $url_array the current request parameters used to build back-navigation links
+     * @param bool $is_admin true to offer the server admin page at the end
+     */
+    private function view_change_list(int $msk_id = 0, array $url_array = [], bool $is_admin = false): string
     {
         global $mtr;
         $result = $this->list_item($this->ref(api::MAIN_SCRIPT . '?' . url_var::MASK . '=view_change&id=2', $mtr->txt(msg_id::NAVBAR_ALTERNATIVE_VIEW))) . "\n";
@@ -473,6 +478,10 @@ class html_base
         $url_msk_add = $this->url_with_back(api::MAIN_SCRIPT
             . '?' . url_var::MASK . '=' . views::VIEW_ADD_ID, $url_array);
         $result .= $this->list_item($this->ref($url_msk_add, $mtr->txt(msg_id::NAVBAR_ADD_VIEW))) . "\n";
+        // the server admin page checks the access itself, the link is just not offered to the others
+        if ($is_admin) {
+            $result .= $this->list_item($this->ref(api::SERVER_ADMIN_SCRIPT, $mtr->txt(msg_id::NAVBAR_SERVER_ADMIN))) . "\n";
+        }
         return $this->list_unsorted($result);
     }
 

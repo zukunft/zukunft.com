@@ -4,11 +4,12 @@
 
 ### system health
 
-add to the admin dashboard a button with a link to 'http/server_admin.php'
-
-add to the admin dashboard a list of top 10 (config.yaml value) users that have done most requests 
-and one list with user that have done most db updates  (the threshold for a critical number is also a config.yaml value)
+add to the admin dashboard a list of top 10 (config.yaml value) users that have used most server time (request_time + update_time)
+with the columns from the user_og table or that have reached a threshold for the requests, updated, request_time or update_time
+(the threshold for a critical number is also a config.yaml value)
+below allow the popup a list with users that have not yet reached the threshold
 after each user should be a button that moves the user from the whitelist to the blacklist 
+
 
 add to the admin dashboard a list of top 10 (config.yaml value) ip-address ranges that have done most requests
 and one list with ip-address ranges that have done most db updates (the threshold for a critical number is also a config.yaml value)
@@ -29,7 +30,8 @@ add to the admin dashboard the number of user sandbox rows that are equal to the
 
 ### errors
 
-show in the admin dashboard the last and most relevant system errors e.g. if there is an fatal error not yet solved show it on the top of the list and below not yet solved errors followed by warnings
+show in the admin dashboard the last and most relevant system errors e.g. if there is an fatal error not yet solved 
+show it on the top of the list and below not yet solved errors followed by warnings
 
 move the selection of the unassigned errors and the pending error fixes from the frontend to the backend: add to cfg/system/sys_log_list::load_sql a filter by status and by solver (none = unassigned), let api/sysLogList use the requested type instead of ignoring it, add the sql fixture for each new query and replace in web/component/execute/system_page.php::admin_errors_unassigned() and admin_errors_delayed_fix() the client side filtered() on the newest sys_log_list::ADMIN_READ_SIZE entries by the backend selection, so that an older open error of a pod with many open errors is also shown
 

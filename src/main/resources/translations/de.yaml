@@ -21,6 +21,7 @@ messages:
   navbar_alternative_view: "Alternative"
   navbar_change_view: "Ansicht ändern"
   navbar_add_view: "Ansicht hinzufügen"
+  navbar_server_admin: "Server-Administration"
   or: "oder"
   cancel_and_go: "abbrechen und zurück zu"
   not_set: "nicht gesetzt"
