@@ -2833,6 +2833,22 @@ class html_base
     }
 
     /**
+     * a form that only shows a page again with the entered values e.g. the refresh of a process catch
+     * page; the inputs of other components join it by their form attribute, so it has no session token
+     * and no named submit, because it never changes data
+     *
+     * @param string $form_name the id of the form that the inputs of the page name in their form attribute
+     * @param string $txt the inner html code of the form e.g. the hidden page vars and the submit button
+     * @return string the HTML code of the form
+     */
+    function form_get(string $form_name, string $txt): string
+    {
+        $action = ' ' . self::ACTION . '="' . api::HOST_SAME . api::MAIN_SCRIPT_EXT . '"';
+        $id = ' ' . self::ID . '="' . $form_name . '"';
+        return '<' . self::FORM . $action . $id . '>' . $this->form_user() . $txt . '</' . self::FORM . '>';
+    }
+
+    /**
      * create the HTML code for an input field including the label
      * @param string $url_id the id of the input field e.g. n
      * @param msg_id $msg_id the msg_id of the title of the input field e.g. Name

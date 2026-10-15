@@ -6693,6 +6693,20 @@
              dashboard in /component/execute/system_page.php
     \-- admin_jobs_delayed - section for function admin_jobs_delayed not yet defined that it should be admin dashboard i
             n /component/execute/system_page.php
+    \-- text_explain - section for function text_explain not yet defined that it should be process catch in /component/e
+            xecute/system_page.php
+    \-- process_catch_fields - section for function process_catch_fields not yet defined that it should be process catch
+             in /component/execute/system_page.php
+    \-- process_catch_tab - section for function process_catch_tab not yet defined that it should be process catch in /c
+            omponent/execute/system_page.php
+    \-- process_catch_button_next - section for function process_catch_button_next not yet defined that it should be pro
+            cess catch in /component/execute/system_page.php
+    \-- process_catch_button_back - section for function process_catch_button_back not yet defined that it should be pro
+            cess catch in /component/execute/system_page.php
+    \-- process_catch_button_refresh - section for function process_catch_button_refresh not yet defined that it should 
+            be process catch in /component/execute/system_page.php
+    \-- geolocator - section for function geolocator not yet defined that it should be process catch in /component/execu
+            te/system_page.php
 \-- ui_base
     \-- phrase_name - section for function phrase_name missing in /component/execute/ui_base.php
     \-- verb_name - section for function verb_name missing in /component/execute/ui_base.php
@@ -7034,6 +7048,8 @@
             data_object.php
     \-- view_list - section for function view_list not yet defined that it should be set and get in /helper/data_object.
             php
+    \-- view_code_id - section for function view_code_id not yet defined that it should be set and get in /helper/data_o
+            bject.php
     \-- has_view_list - section for function has_view_list not yet defined that it should be set and get in /helper/data
             _object.php
     \-- file_list - section for function file_list not yet defined that it should be set and get in /helper/data_object.
@@ -7316,6 +7332,8 @@
              html elements used in zukunft.com in /html/html_base.php
     \-- form_simple - section for function form_simple not yet defined that it should be base elements - functions for a
             ll html elements used in zukunft.com in /html/html_base.php
+    \-- form_get - section for function form_get not yet defined that it should be base elements - functions for all htm
+            l elements used in zukunft.com in /html/html_base.php
     \-- form_field - section for function form_field not yet defined that it should be base elements - functions for all
              html elements used in zukunft.com in /html/html_base.php
     \-- form_end - section for function form_end not yet defined that it should be base elements - functions for all htm
@@ -8918,6 +8936,8 @@
         \-- data_object - @return view_list with the views of this data object
     \-- get_view_by_id
         \-- data_object - the view with its name from the request cache, asked in both view caches, because the
+    \-- view_code_id
+        \-- data_object - @param int $id the database id of the view e.g. of the page that shows a component
     \-- has_view_list
         \-- data_object - @return bool true if this context object contains a view list
     \-- file_list
@@ -9748,6 +9768,24 @@
     \-- admin_jobs_delayed
         \-- system_page - the open system jobs with the longest waiting first: a job that has waited longer than the con
                 figured
+\-- process catch
+    \-- text_explain
+        \-- system_page - @param msg_id|null $ui_msg_code_id the message id of the text e.g. the explain text of a proce
+                ss catch page
+    \-- process_catch_fields
+        \-- system_page - the input fields of a process catch page or of one of its tabs; a placeholder with the name of
+    \-- process_catch_tab
+        \-- system_page - one tab of a process catch page: the selected tab as text and every other tab as a link to the
+    \-- process_catch_button_next
+        \-- system_page - @param string $msk_code_id the code id of the process catch page that shows the button
+    \-- process_catch_button_back
+        \-- system_page - @param string $msk_code_id the code id of the process catch page that shows the button
+    \-- process_catch_button_refresh
+        \-- system_page - the button that shows the process catch page again with the entered values e.g. to calculate t
+                he
+    \-- geolocator
+        \-- system_page - the input of a place by its name or postal code; it joins the form of the refresh button by th
+                e
 \-- html
     \-- name
         \-- element - create an api json array for the backend based on this frontend object
@@ -10239,6 +10277,8 @@
         \-- html_base - start a html form; the form name must be identical with the php script name
     \-- form_simple
         \-- html_base - start a html form; the form name must be identical with the php script name
+    \-- form_get
+        \-- html_base - a form that only shows a page again with the entered values e.g. the refresh of a process catch
     \-- form_field
         \-- html_base - create the HTML code for an input field including the label
     \-- form_end

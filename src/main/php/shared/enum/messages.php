@@ -2034,6 +2034,26 @@ enum messages: string
     case SYSTEM_TITLE_SETUP = 'system_title_setup';
     case SYSTEM_TITLE_TABLE_EDITOR = 'system_title_table_editor';
     case SYSTEM_TITLE_CALCULATION_EDITOR = 'system_title_calculation_editor';
+    // the titles, the explain texts and the tabs of the four process catch pages
+    case PROCESS_CATCH_TITLE_START = 'process_catch_title_start';
+    case PROCESS_CATCH_TITLE_MAIN = 'process_catch_title_main';
+    case PROCESS_CATCH_TITLE_DETAIL = 'process_catch_title_detail';
+    case PROCESS_CATCH_TITLE_RESULT = 'process_catch_title_result';
+    case PROCESS_CATCH_EXPLAIN_START = 'process_catch_explain_start';
+    case PROCESS_CATCH_EXPLAIN_MAIN = 'process_catch_explain_main';
+    case PROCESS_CATCH_EXPLAIN_DETAIL = 'process_catch_explain_detail';
+    case PROCESS_CATCH_EXPLAIN_RESULT = 'process_catch_explain_result';
+    case PROCESS_CATCH_TAB_ONE = 'process_catch_tab_one';
+    case PROCESS_CATCH_TAB_TWO = 'process_catch_tab_two';
+    case PROCESS_CATCH_TAB_THREE = 'process_catch_tab_three';
+    case PROCESS_CATCH_TAB_FOUR = 'process_catch_tab_four';
+    case PROCESS_CATCH_TAB_FIVE = 'process_catch_tab_five';
+    // shown until the fields of a process catch page are read from the triples of the question phrase
+    case PROCESS_CATCH_FIELDS_PENDING = 'process_catch_fields_pending';
+    // the text of the button that shows a process catch page again with the changed input
+    case PROCESS_CATCH_BUTTON_REFRESH = 'process_catch_button_refresh';
+    // the label of the geolocator input
+    case GEOLOCATOR_LABEL = 'geolocator_label';
     case SYSTEM_TITLE_SIGNUP = 'system_title_signup';
     case SIGNUP_ALPHA_NOTICE = 'signup_alpha_notice';
     case SIGNUP_DATA_WARNING = 'signup_data_warning';
@@ -2420,6 +2440,8 @@ enum messages: string
     case SYSTEM_BUTTON_CHECK_AND_ADD = 'system_button_check_and_add';
     // the button that continues with the next step e.g. the value add form with the selected phrases
     case SYSTEM_BUTTON_NEXT = 'system_button_next';
+    // the button that returns to the step before e.g. from the process catch result to the detail page
+    case SYSTEM_BUTTON_BACK = 'system_button_back';
     // the button beside the phrase field of a new value that adds the named phrase or offers the matching phrases
     case SYSTEM_BUTTON_FIND_AND_NEXT = 'system_button_find_and_next';
     // the link that opens the detailed form of a simple add form e.g. the value add form with all fields

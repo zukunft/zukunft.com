@@ -231,6 +231,10 @@ class triple_names
     const int SYSTEM_COLUMN_ID = 184;
     const string SYSTEM_COLUMN_MAYOR = 'mayor column (system)';
     const int SYSTEM_COLUMN_MAYOR_ID = 224;
+    // the building block of the process catch field keyword of process_catch_fields.json, which has no code id
+    const string PROCESS_CATCH_FIELD = 'process catch field';
+    // the value phrase of the geolocator component of process_catch_views.json, an unnamed "of" triple
+    const string PLACE_OF_USER = 'place of user';
     // the base phrase of the table editor example (problem_main_reasons.json)
     const string POPULISM_SOLUTION = 'populism solution';
     const int POPULISM_SOLUTION_ID = 1189;

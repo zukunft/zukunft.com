@@ -153,8 +153,8 @@ any user may add. So it is user data, not system data:
 - **no `code_id` anywhere** — not on a word, a triple, a formula, a view or a
   component. A `code_id` marks an object the code addresses by a constant, and only
   a system or developer user may set one (`user::can_set_code_id`); a normal user's
-  import of such a file is refused for that object and, through the shared message,
-  drops everything after it.
+  import of such a file is refused as a whole (see *An import with a refused
+  `code_id` is all-or-nothing* below).
 - **a borrowed system triple is repeated without its `code_id`**: the
   `from`/`verb`/`to` and the `name` stay verbatim, so the import merges it by name
   into the existing row, which keeps the code id it already has.
@@ -172,6 +172,21 @@ any user may add. So it is user data, not system data:
 - the unit test that runs the calc-validation of the file imports it as a **normal**
   user (`import_tests`), so a code id in the file fails the test — that is the
   coded form of this rule.
+
+### An import with a refused `code_id` is all-or-nothing
+
+An import file should not contain a `code_id`; only the system data files
+(`files::SYSTEM_DATA_FILES`, `files::SYSTEM_DATA_APPENDED_FILES`) do, and they are
+imported by a system or developer user. If a file with a `code_id` is imported by
+a user who may not set it, the **complete** import is refused, never only the
+object with the code id: the refusal is reported on the shared `$msg`, and every
+import mapper returns `$msg->is_ok()` (e.g. `import::dto_get_triples`), so the
+refused object and every object after it are not added. This is intended — a
+system file that is imported half would leave the code with constants that point
+to missing rows. So never give an import step its own message buffer to "save" the
+rest of the file, and a test of such a refusal asserts only the refusal
+(`assert_false($msg->is_ok())`), never that some other object of the file was
+still imported.
 
 ### Split a large domain into a concept file and a list file
 
@@ -848,6 +863,49 @@ the end of the block of related triples.
 
 `test/json_validation.php` reports a forward reference as *"triple uses a phrase
 that is defined later"*.
+
+### A system keyword with properties and types: define it by triples, not by code
+
+When the code needs a structure that each question or table fills with its own
+data, e.g. the columns of a table or the input fields of a process catch view,
+the structure is a **system keyword** with its **properties** and its **types**,
+each a triple with a `code_id` (the const pair `NAME` / `NAME_CODE_ID` in
+`shared/const/triples.php`). The use case file then only links its own phrases
+to these triples, so a new calculator or table needs a json import and no code.
+
+1. **The keyword**: `<thing> can be zukunft.com system`, named `<thing> (system)`,
+   e.g. `column (system)` or `process catch field (system)`.
+2. **A property**: `<keyword> has a <word>`, named for the property, e.g. `field
+   unit` = `process catch field (system)` `has a` `unit`. A property that fits
+   no verb of *Allowed verbs* gets a verb by *Adding a new verb*, never a free
+   text or a description that the code would have to parse.
+3. **A type**: `<type property> can be <qualifier>`, like the column tiers
+   (`mayor column (system)` = `column (system)` `can be` `mayor`), e.g. `number
+   with limits` = `field type` `can be` `number`, or `<keyword> can be
+   <qualifier>` if the keyword has no type property, e.g. `next button` =
+   `process catch button (system)` `can be` `proceed`.
+4. **A property of a property**: the key `from`/`verb`/`to` is unique, so a second
+   `label` of the field cannot be `<keyword> has a label` again; it gets a
+   sub-keyword with its own properties instead, e.g. `field phrase selector
+   label` = `field phrase selector` `has a` `label`. The same holds for a
+   property that differs per type: each button type has its own tooltip and
+   view, e.g. `button next tooltip` = `next button` `has a` `tooltip` and
+   `button back tooltip` = `back button` `has a` `tooltip`.
+
+A word of a keyword that another file already defines e.g. `type` or `page` is
+re-declared name-only, and a word with another meaning e.g. the physical `field`
+or the time formula `next` is not used, so the system file never overwrites the
+description of a phrase of another domain.
+
+The data of one use case then uses only these triples: a phrase is assigned to a
+type or a tier by `<phrase> can be <type>`, gets a phrase property by a triple to
+the property phrase, and gets a number property (a limit, a step, a suggestion)
+as a value with the property phrase, e.g. the value 100 with `PV installation
+size` and `field limit up`.
+
+The keywords of the process catch pages, fields and buttons are in `process_catch_fields.json`
+(`files::SYSTEM_DATA_APPENDED_FILES`); a use case file repeats a borrowed system
+triple without its `code_id` (see *Use case files never carry a `code_id`*).
 
 ## Formulas
 

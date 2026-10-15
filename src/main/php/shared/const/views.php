@@ -107,6 +107,28 @@ class views
     const int TABLE_EDITOR_ID = 193;
     const string TABLE_EDITOR_NAME = 'Table editor';
     const string CALCULATION_EDITOR_NAME = 'Calculation editor';
+    // the four pages of a process catch, which guide the user of a question phrase e.g. the PV
+    // calculator from one easy question to the result (process_catch_views.json)
+    const string PROCESS_CATCH_START = 'process_catch_start';
+    const string PROCESS_CATCH_START_NAME = 'process catch start page';
+    const string PROCESS_CATCH_MAIN = 'process_catch_main';
+    const string PROCESS_CATCH_MAIN_NAME = 'process catch main page';
+    const string PROCESS_CATCH_DETAIL = 'process_catch_detail';
+    const string PROCESS_CATCH_DETAIL_NAME = 'process catch detail page';
+    const string PROCESS_CATCH_RESULT = 'process_catch_result';
+    const string PROCESS_CATCH_RESULT_NAME = 'process catch result page';
+    // the page that the next button of a process catch page opens
+    const array PROCESS_CATCH_NEXT = [
+        self::PROCESS_CATCH_START => self::PROCESS_CATCH_MAIN,
+        self::PROCESS_CATCH_MAIN => self::PROCESS_CATCH_DETAIL,
+        self::PROCESS_CATCH_DETAIL => self::PROCESS_CATCH_RESULT,
+    ];
+    // the page that the back button of a process catch page opens
+    const array PROCESS_CATCH_BACK = [
+        self::PROCESS_CATCH_MAIN => self::PROCESS_CATCH_START,
+        self::PROCESS_CATCH_DETAIL => self::PROCESS_CATCH_MAIN,
+        self::PROCESS_CATCH_RESULT => self::PROCESS_CATCH_DETAIL,
+    ];
     const string VALUE_OVERWRITE = 'value_overwrite';
     const int VALUE_OVERWRITE_ID = 17;
     const string RESULT_OVERWRITE = 'result_overwrite';

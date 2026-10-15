@@ -201,6 +201,11 @@ class files
     const string START_PAGE_CHARTS_FILE = self::MESSAGE_PATH . 'start_page_charts' . self::JSON;
     // the placeholder views of the table and the calculation editor (docs/table_creation.md)
     const string EDITOR_VIEWS_FILE = self::MESSAGE_PATH . 'editor_views' . self::JSON;
+    // the keyword, the properties and the types of an input field of the process catch views,
+    // so that the fields of a question phrase are defined by triples of a use case file
+    const string PROCESS_CATCH_FIELDS_FILE = self::MESSAGE_PATH . 'process_catch_fields' . self::JSON;
+    // the start, main, detail and result page of a process catch with the components of each page
+    const string PROCESS_CATCH_VIEWS_FILE = self::MESSAGE_PATH . 'process_catch_views' . self::JSON;
 
     // the Fermi estimates and thesis chains of the start page, loaded by the full load
     const string FERMI_INTERNET_PRO_CONTRA_FILE = self::DATA_START_PAGE_PATH . 'fermi_internet_pro_contra' . self::JSON;
@@ -356,6 +361,8 @@ class files
     const array SYSTEM_DATA_APPENDED_FILES = [
         self::START_PAGE_CHARTS_FILE,
         self::EDITOR_VIEWS_FILE,
+        self::PROCESS_CATCH_FIELDS_FILE,
+        self::PROCESS_CATCH_VIEWS_FILE,
     ];
 
     // sample data for the view unit tests, imported in the db setup right after the system config

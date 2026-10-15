@@ -1,0 +1,478 @@
+{
+  "version": "0.0.3",
+  "data_version": "0.0.1",
+  "time": "2026-10-15 12:00:00",
+  "user": "timon",
+  "selection": [
+    "the system phrases that define the pages, the input fields and the buttons of a process catch"
+  ],
+  "description": "The keywords of the pages, the input fields and the buttons of the process catch views with their properties and types, so that the pages of a question phrase e.g. the PV calculator are defined by the triples of a use case file and not by code. This file is imported as the last step of the db setup, so that no database id of a tested phrase moves.",
+  "words": [
+    {
+      "name": "zukunft.com"
+    },
+    {
+      "name": "system"
+    },
+    {
+      "name": "process",
+      "description": "a series of steps that leads to a result e.g. the guided input of the numbers of a calculation"
+    },
+    {
+      "name": "catch",
+      "description": "the guided collection of the input of a calculation step by step, from one easy question on the start page to the result"
+    },
+    {
+      "name": "input",
+      "description": "the data that the user enters for a calculation"
+    },
+    {
+      "name": "label",
+      "description": "the text that names an input field for the user"
+    },
+    {
+      "name": "phrase",
+      "description": "a word or a triple, which selects or stores a value"
+    },
+    {
+      "name": "type"
+    },
+    {
+      "name": "unit"
+    },
+    {
+      "name": "maximum"
+    },
+    {
+      "name": "minimum"
+    },
+    {
+      "name": "step",
+      "description": "the increment by which the number of an input field changes"
+    },
+    {
+      "name": "suggestion",
+      "description": "the value that an input field shows before the user has entered one"
+    },
+    {
+      "name": "location",
+      "description": "a place on the earth e.g. given by a postal code"
+    },
+    {
+      "name": "number"
+    },
+    {
+      "name": "choice",
+      "description": "one of a limited number of answers that the user can select"
+    },
+    {
+      "name": "selector",
+      "description": "an input field to select one phrase of a list of phrases"
+    },
+    {
+      "name": "list",
+      "description": "phrases in a sorted order e.g. the columns of a table"
+    },
+    {
+      "name": "parent"
+    },
+    {
+      "name": "value"
+    },
+    {
+      "name": "page"
+    },
+    {
+      "name": "start",
+      "description": "the first step of a process"
+    },
+    {
+      "name": "main"
+    },
+    {
+      "name": "detail",
+      "description": "the step of a process with the fine tuning of the assumptions"
+    },
+    {
+      "name": "result"
+    },
+    {
+      "name": "button",
+      "description": "a control that the user presses to start an action e.g. to go to the next page"
+    },
+    {
+      "name": "tooltip",
+      "description": "the text shown if the user moves the mouse over a control"
+    },
+    {
+      "name": "view",
+      "description": "the page that is shown to the user e.g. the next page of a process catch"
+    },
+    {
+      "name": "proceed",
+      "description": "to continue with the step that follows the current one"
+    },
+    {
+      "name": "refresh",
+      "description": "to show the page again with the changed input"
+    },
+    {
+      "name": "back",
+      "description": "the step before the current one"
+    },
+    {
+      "name": "place"
+    },
+    {
+      "name": "user"
+    }
+  ],
+  "triples": [
+    {
+      "name": "zukunft.com system",
+      "description": "keyword for system internal triples such as the column definitions",
+      "from": "zukunft.com",
+      "verb": "is a",
+      "to": "system",
+      "code_id": "zukunft_com_system"
+    },
+    {
+      "name": "process catch",
+      "description": "the guided input of a calculation in four steps: one easy question, the most relevant inputs, the fine tuning and the result",
+      "from": "catch",
+      "verb": "kind of",
+      "to": "process"
+    },
+    {
+      "name": "process catch field",
+      "description": "an input field of a process catch view",
+      "from": "input",
+      "verb": "of",
+      "to": "process catch"
+    },
+    {
+      "name": "process catch field (system)",
+      "description": "keyword for the input fields of the process catch views; a field of a question phrase is defined by the triples of the properties below",
+      "from": "process catch field",
+      "verb": "can be",
+      "to": "zukunft.com system",
+      "code_id": "system_process_catch_field"
+    },
+    {
+      "name": "field label",
+      "description": "the phrase whose name is shown to the user as the label of the field e.g. place of the PV installation",
+      "from": "process catch field (system)",
+      "verb": "has a",
+      "to": "label",
+      "code_id": "system_field_label"
+    },
+    {
+      "name": "field value phrases",
+      "description": "the phrases that store the entered number as a value e.g. PV installation location",
+      "from": "process catch field (system)",
+      "verb": "has a",
+      "to": "phrase",
+      "code_id": "system_field_value_phrases"
+    },
+    {
+      "name": "field type",
+      "description": "the type that decides how the field is shown e.g. as a location selector",
+      "from": "process catch field (system)",
+      "verb": "has a",
+      "to": "type",
+      "code_id": "system_field_type"
+    },
+    {
+      "name": "field unit",
+      "description": "the unit of the number of the field e.g. kWh",
+      "from": "process catch field (system)",
+      "verb": "has a",
+      "to": "unit",
+      "code_id": "system_field_unit"
+    },
+    {
+      "name": "field limit up",
+      "description": "the highest number that the field accepts",
+      "from": "process catch field (system)",
+      "verb": "has a",
+      "to": "maximum",
+      "code_id": "system_field_limit_up"
+    },
+    {
+      "name": "field limit down",
+      "description": "the lowest number that the field accepts",
+      "from": "process catch field (system)",
+      "verb": "has a",
+      "to": "minimum",
+      "code_id": "system_field_limit_down"
+    },
+    {
+      "name": "field step",
+      "description": "the increment of the number of the field",
+      "from": "process catch field (system)",
+      "verb": "has a",
+      "to": "step",
+      "code_id": "system_field_step"
+    },
+    {
+      "name": "field suggestion",
+      "description": "the number that the field shows before the user has entered one",
+      "from": "process catch field (system)",
+      "verb": "has a",
+      "to": "suggestion",
+      "code_id": "system_field_suggestion"
+    },
+    {
+      "name": "location selector",
+      "description": "field type to select a place by its name or postal code",
+      "from": "field type",
+      "verb": "can be",
+      "to": "location",
+      "code_id": "system_field_location_selector"
+    },
+    {
+      "name": "number with limits",
+      "description": "field type to enter a number between the field limits in the field steps",
+      "from": "field type",
+      "verb": "can be",
+      "to": "number",
+      "code_id": "system_field_number_with_limits"
+    },
+    {
+      "name": "pre-selection",
+      "description": "field type to select one of a limited number of answers",
+      "from": "field type",
+      "verb": "can be",
+      "to": "choice",
+      "code_id": "system_field_pre_selection"
+    },
+    {
+      "name": "phrase selector",
+      "description": "field type to select one phrase of the phrases defined by the field phrase selector",
+      "from": "field type",
+      "verb": "can be",
+      "to": "selector",
+      "code_id": "system_field_phrase_selector_type"
+    },
+    {
+      "name": "phrase selection",
+      "description": "field type to sort a list of phrases e.g. the main columns of a table",
+      "from": "field type",
+      "verb": "can be",
+      "to": "list",
+      "code_id": "system_field_phrase_selection_type"
+    },
+    {
+      "name": "field phrase selector",
+      "description": "the phrases that a phrase selector field offers",
+      "from": "process catch field (system)",
+      "verb": "has a",
+      "to": "selector",
+      "code_id": "system_field_phrase_selector"
+    },
+    {
+      "name": "field phrase selector label",
+      "description": "the phrase that describes what the selected phrase is used for e.g. Main table columns",
+      "from": "field phrase selector",
+      "verb": "has a",
+      "to": "label",
+      "code_id": "system_field_phrase_selector_label"
+    },
+    {
+      "name": "field phrase selector parent",
+      "description": "the phrase whose children can be selected e.g. column (system) to select one column of the table",
+      "from": "field phrase selector",
+      "verb": "has a",
+      "to": "parent",
+      "code_id": "system_field_phrase_selector_parent"
+    },
+    {
+      "name": "field phrase selector value based",
+      "description": "the phrase whose values offer their phrases for the selection e.g. global warming solution",
+      "from": "field phrase selector",
+      "verb": "has a",
+      "to": "value",
+      "code_id": "system_field_phrase_selector_value_based"
+    },
+    {
+      "name": "field selection",
+      "description": "the sorted list of phrases that a phrase selection field shows",
+      "from": "process catch field (system)",
+      "verb": "has a",
+      "to": "list",
+      "code_id": "system_field_selection"
+    },
+    {
+      "name": "field selection label",
+      "description": "the phrase that describes what the sorted list means e.g. Main table columns",
+      "from": "field selection",
+      "verb": "has a",
+      "to": "label",
+      "code_id": "system_field_selection_label"
+    },
+    {
+      "name": "field selection parent",
+      "description": "the phrase whose children are listed e.g. main column (system) for the main columns of a table",
+      "from": "field selection",
+      "verb": "has a",
+      "to": "parent",
+      "code_id": "system_field_selection_parent"
+    },
+    {
+      "name": "process catch page",
+      "description": "one of the four pages of a process catch",
+      "from": "page",
+      "verb": "of",
+      "to": "process catch"
+    },
+    {
+      "name": "process catch page (system)",
+      "description": "keyword for the pages of a process catch, which the fields and the buttons of a question phrase are assigned to",
+      "from": "process catch page",
+      "verb": "can be",
+      "to": "zukunft.com system",
+      "code_id": "system_process_catch_page"
+    },
+    {
+      "name": "process catch start page",
+      "description": "the first page of a process catch with one easy to answer question",
+      "from": "process catch page (system)",
+      "verb": "can be",
+      "to": "start",
+      "code_id": "system_process_catch_start_page"
+    },
+    {
+      "name": "process catch main page",
+      "description": "the page of a process catch with the about three inputs that are most relevant for the result",
+      "from": "process catch page (system)",
+      "verb": "can be",
+      "to": "main",
+      "code_id": "system_process_catch_main_page"
+    },
+    {
+      "name": "process catch detail page",
+      "description": "the page of a process catch with the fine tuning of the assumptions in tabs",
+      "from": "process catch page (system)",
+      "verb": "can be",
+      "to": "detail",
+      "code_id": "system_process_catch_detail_page"
+    },
+    {
+      "name": "process catch result page",
+      "description": "the last page of a process catch with the calculated result in tabs",
+      "from": "process catch page (system)",
+      "verb": "can be",
+      "to": "result",
+      "code_id": "system_process_catch_result_page"
+    },
+    {
+      "name": "field page",
+      "description": "the page of the process catch that shows the field e.g. the process catch main page",
+      "from": "process catch field (system)",
+      "verb": "has a",
+      "to": "page",
+      "code_id": "system_field_page"
+    },
+    {
+      "name": "process catch button",
+      "description": "a button of a process catch page",
+      "from": "button",
+      "verb": "of",
+      "to": "process catch"
+    },
+    {
+      "name": "process catch button (system)",
+      "description": "keyword for the buttons of the process catch pages; the text in the button is defined by the component, the tooltip and the target by the properties of each button type",
+      "from": "process catch button",
+      "verb": "can be",
+      "to": "zukunft.com system",
+      "code_id": "system_process_catch_button"
+    },
+    {
+      "name": "next button",
+      "description": "button type to save the input and to open the next page",
+      "from": "process catch button (system)",
+      "verb": "can be",
+      "to": "proceed",
+      "code_id": "system_button_next"
+    },
+    {
+      "name": "refresh button",
+      "description": "button type to show the page again with the changed input",
+      "from": "process catch button (system)",
+      "verb": "can be",
+      "to": "refresh",
+      "code_id": "system_button_refresh"
+    },
+    {
+      "name": "back button",
+      "description": "button type to open the page before",
+      "from": "process catch button (system)",
+      "verb": "can be",
+      "to": "back",
+      "code_id": "system_button_back"
+    },
+    {
+      "name": "button next tooltip",
+      "description": "the phrase whose name is shown as the tooltip of the next button; the text in the button is the ui message of the component",
+      "from": "next button",
+      "verb": "has a",
+      "to": "tooltip",
+      "code_id": "system_button_next_tooltip"
+    },
+    {
+      "name": "button next view",
+      "description": "the process catch page that the next button opens e.g. the process catch main page",
+      "from": "next button",
+      "verb": "has a",
+      "to": "view",
+      "code_id": "system_button_next_view"
+    },
+    {
+      "name": "button refresh tooltip",
+      "description": "the phrase whose name is shown as the tooltip of the refresh button",
+      "from": "refresh button",
+      "verb": "has a",
+      "to": "tooltip",
+      "code_id": "system_button_refresh_tooltip"
+    },
+    {
+      "name": "button refresh label",
+      "description": "the phrase whose name is shown in the refresh button e.g. calculate",
+      "from": "refresh button",
+      "verb": "has a",
+      "to": "label",
+      "code_id": "system_button_refresh_label"
+    },
+    {
+      "name": "button refresh view",
+      "description": "the process catch page that the refresh button shows again with the changed input",
+      "from": "refresh button",
+      "verb": "has a",
+      "to": "view",
+      "code_id": "system_button_refresh_view"
+    },
+    {
+      "name": "button back tooltip",
+      "description": "the phrase whose name is shown as the tooltip of the back button",
+      "from": "back button",
+      "verb": "has a",
+      "to": "tooltip",
+      "code_id": "system_button_back_tooltip"
+    },
+    {
+      "name": "button back view",
+      "description": "the process catch page that the back button opens e.g. the process catch detail page",
+      "from": "back button",
+      "verb": "has a",
+      "to": "view",
+      "code_id": "system_button_back_view"
+    },
+    {
+      "description": "the place that the user has entered in the geolocator e.g. to select the sun intensity of a PV calculator",
+      "from": "place",
+      "verb": "of",
+      "to": "user"
+    }
+  ]
+}

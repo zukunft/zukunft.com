@@ -903,6 +903,13 @@ class test_mappers
             case component_types::SYSTEM_ADMIN_JOBS_DELAYED:
             case component_types::SYSTEM_ADMIN_SUBTITLE:
             case component_types::SYSTEM_ADMIN_USER_LOAD:
+            case component_types::SYSTEM_TEXT_EXPLAIN:
+            case component_types::PROCESS_CATCH_FIELDS:
+            case component_types::PROCESS_CATCH_TAB:
+            case component_types::PROCESS_CATCH_BUTTON_NEXT:
+            case component_types::PROCESS_CATCH_BUTTON_BACK:
+            case component_types::PROCESS_CATCH_BUTTON_REFRESH:
+            case component_types::GEOLOCATOR:
             case component_types::USED_IN_AS_TEXT:
             case component_types::USED_IN_AS_TEXT_WITH_LINK:
             case component_types::FORM_CLASS:

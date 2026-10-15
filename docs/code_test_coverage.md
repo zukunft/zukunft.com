@@ -8,7 +8,7 @@ in a test file of the src/test/php/unit* folders; the count is by function name
 and cannot tell the classes apart, so a name that several classes declare needs
 2 calls per class and is listed as shared otherwise
 
-689 of 6080 public functions have at least 2 unit test calls; the 5391 functions below do not
+699 of 6089 public functions have at least 2 unit test calls; the 5390 functions below do not
 
 ## main backend
 
@@ -362,7 +362,6 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- fill - 13 unit test calls shared by 36 classes
     \-- formula_link_list - 0 unit test calls shared by 2 classes
     \-- formula_list - 5 unit test calls shared by 4 classes
-    \-- get_component_by_name - 0 unit test calls
     \-- get_first_verb - 0 unit test calls
     \-- get_first_word - 0 unit test calls
     \-- get_formula_by_id - 0 unit test calls
@@ -375,7 +374,6 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- get_triple_by_name - 0 unit test calls
     \-- get_user - 1 unit test calls shared by 17 classes
     \-- get_value_by_names - 0 unit test calls
-    \-- get_view_by_name - 1 unit test calls
     \-- get_word_by_name - 0 unit test calls
     \-- group_list - 0 unit test calls
     \-- has_view_list - 0 unit test calls shared by 2 classes
@@ -394,7 +392,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- source_list - 3 unit test calls shared by 2 classes
     \-- term_list - 3 unit test calls shared by 7 classes
     \-- term_view_list - 0 unit test calls
-    \-- triple_list - 8 unit test calls shared by 5 classes
+    \-- triple_list - 9 unit test calls shared by 5 classes
     \-- user_list - 0 unit test calls
     \-- validate_results - 0 unit test calls
     \-- verb_list - 1 unit test calls shared by 2 classes
@@ -2835,7 +2833,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- term_by_obj_id - 0 unit test calls shared by 2 classes
     \-- term_ids - 0 unit test calls
     \-- triple_by_id - 0 unit test calls shared by 2 classes
-    \-- triple_list - 8 unit test calls shared by 5 classes
+    \-- triple_list - 9 unit test calls shared by 5 classes
     \-- verb_by_id - 0 unit test calls shared by 3 classes
     \-- verb_list - 1 unit test calls shared by 2 classes
     \-- word_by_id - 0 unit test calls shared by 2 classes
@@ -4252,7 +4250,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- set_view_list - 0 unit test calls shared by 2 classes
     \-- source_list - 3 unit test calls shared by 2 classes
     \-- sys_log_list - 0 unit test calls
-    \-- triple_list - 8 unit test calls shared by 5 classes
+    \-- triple_list - 9 unit test calls shared by 5 classes
     \-- value_list_cloned - 0 unit test calls
     \-- view_list - 0 unit test calls shared by 3 classes
 \-- db_object
@@ -4523,6 +4521,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- form_end - 2 unit test calls shared by 2 classes
     \-- form_end_with_submit - 0 unit test calls
     \-- form_field_id - 0 unit test calls
+    \-- form_get - 0 unit test calls
     \-- form_input - 0 unit test calls
     \-- form_input_password - 0 unit test calls
     \-- form_session_token - 0 unit test calls
@@ -4780,7 +4779,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- symbol_phrases - 0 unit test calls
     \-- symbols_of - 0 unit test calls
     \-- tooltip - 0 unit test calls shared by 2 classes
-    \-- triple_list - 8 unit test calls shared by 5 classes
+    \-- triple_list - 9 unit test calls shared by 5 classes
     \-- url_mapper - 42 unit test calls shared by 27 classes
     \-- value_quality_phrases - 0 unit test calls
     \-- view_selector - 3 unit test calls shared by 9 classes
@@ -5438,7 +5437,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- results_by_value - 1 unit test calls
     \-- results_by_word - 0 unit test calls
     \-- results_related - 0 unit test calls
-    \-- triple_list - 8 unit test calls shared by 5 classes
+    \-- triple_list - 9 unit test calls shared by 5 classes
     \-- value_add_link - 1 unit test calls
     \-- value_chart - 0 unit test calls
     \-- values_by_triple - 0 unit test calls

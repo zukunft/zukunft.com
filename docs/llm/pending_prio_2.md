@@ -15,6 +15,14 @@ the triple list (`ui_list::triples_of_types`) shows every triple of a type and n
 
 gap of the triple list: each list shows all its triples, because there is no view yet for the "… and n more" tail to link to, so the short, more and all versions of the list are still missing
 
+### process catch geolocator and refresh
+
+gaps of the geolocator (`system_page::geolocator`): the input is a plain text field without the
+postal codes of the cache as datalist, the entered place is not yet saved as a value with the row
+phrase of the component (`place of user`), and the next and back links drop it, because only the
+refresh button submits the inputs; the refresh button shows the ui message of the component and not
+yet the `button refresh label` / `button refresh tooltip` of the question phrase
+
 ### leftovers
 
 1. Climate gas emissions leads the cell. Its value of 2.2 is still the biggest,

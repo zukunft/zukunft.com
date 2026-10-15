@@ -102,6 +102,15 @@ class styles
     // the size of the field label, so the icon is easy to hit
     const string FORM_ICON_INLINE = 'form-icon-inline';
 
+    // css classes of the links that look like buttons or tabs on a process catch page: the next button
+    // continues, the back button returns, and the selected tab is shown without a link
+    const string PROCESS_CATCH_BUTTON_NEXT = 'btn btn-outline-success btn-space';
+    const string PROCESS_CATCH_BUTTON_BACK = 'btn btn-outline-secondary btn-space';
+    // the refresh is a submit button, which gets the btn and btn-space classes from html_base::button_bs
+    const string PROCESS_CATCH_BUTTON_REFRESH = 'btn-outline-primary';
+    const string PROCESS_CATCH_TAB = 'nav-link d-inline-block';
+    const string PROCESS_CATCH_TAB_SELECTED = 'nav-link d-inline-block active fw-bold';
+
     // css class for a submit button that is shown like the plain text around it, e.g. the 'add'
     // of the component list of a view, which must be a submit to send the selected component
     const string TEXT_BUTTON = 'text-button';

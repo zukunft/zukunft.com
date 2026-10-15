@@ -128,6 +128,8 @@ class url_var
     const string DISPLAY_LIST_COLUMNS = 'dlc'; // the number of column tiers of a table left out, which the "..." header lowers step by step from the mayor columns (3, ex main) over ex minor (2) and ex marginal (1) to every column (0)
     const string DISPLAY_LIST_RANGE = 'dlr'; // 1 to show the probability range behind each number of a table, 0 for the numbers only
     const string DISPLAY_LIST_AS = 'dla'; // how a value table is shown: as a table, as its default charts or both (table_forms), selected by the "as" entries of the "..." header
+    const string TAB = 'tb'; // the number of the selected tab of a page with tabs e.g. of the process catch detail page, starting with 1
+    const string PLACE = 'loc'; // the place name or postal code entered in the geolocator e.g. 8000
     const string DISPLAY_LIST_ORDER = 'dlo'; // the prime order of the rows of a table: the phrase id of a column and the condition (table_orders) e.g. 123.numeric_desc; without it the rows follow the impact
     const string DISPLAY_LIST_ORDER_SUB = 'dlo2'; // the sub order, which sorts the rows that the prime order leaves equal
     const string DISPLAY_LIST_ORDER_SUB_SUB = 'dlo3'; // the sub sub order, which sorts the rows that the prime and the sub order leave equal
@@ -374,6 +376,7 @@ class url_var
         self::DISPLAY_LIST_ORDER,
         self::DISPLAY_LIST_ORDER_SUB,
         self::DISPLAY_LIST_ORDER_SUB_SUB,
+        self::TAB,
     ];
 
     // the page vars where a zero is a value and not the "not set" default, so that
@@ -443,6 +446,8 @@ class url_var
         self::DISPLAY_LIST_ORDER,
         self::DISPLAY_LIST_ORDER_SUB,
         self::DISPLAY_LIST_ORDER_SUB_SUB,
+        // the selected tab is a render mode like the list display
+        self::TAB,
         // the search and the scope select what a page shows e.g. one top level key of the settings,
         // so they never turn the url into a form submit of an object without an id
         self::PATTERN,
@@ -549,6 +554,8 @@ class url_var
     const string DISPLAY_LIST_COLUMNS_HUMAN = 'display_list_columns'; // the number of column tiers of a table shown
     const string DISPLAY_LIST_RANGE_HUMAN = 'display_list_range'; // 1 to show the probability ranges of a table
     const string DISPLAY_LIST_AS_HUMAN = 'display_list_as'; // the form of a table: table, chart or table_chart
+    const string TAB_HUMAN = 'tab'; // the number of the selected tab of a page
+    const string PLACE_HUMAN = 'place'; // the place name or postal code entered in the geolocator
     const string DISPLAY_LIST_ORDER_HUMAN = 'display_list_order'; // the prime order of the rows of a table
     const string DISPLAY_LIST_ORDER_SUB_HUMAN = 'display_list_order_sub'; // the sub order of the rows of a table
     const string DISPLAY_LIST_ORDER_SUB_SUB_HUMAN = 'display_list_order_sub_sub'; // the sub sub order of the rows of a table
@@ -803,6 +810,8 @@ class url_var
         [self::DISPLAY_LIST_COLUMNS_HUMAN, self::DISPLAY_LIST_COLUMNS],
         [self::DISPLAY_LIST_RANGE_HUMAN, self::DISPLAY_LIST_RANGE],
         [self::DISPLAY_LIST_AS_HUMAN, self::DISPLAY_LIST_AS],
+        [self::TAB_HUMAN, self::TAB],
+        [self::PLACE_HUMAN, self::PLACE],
         [self::DISPLAY_LIST_ORDER_HUMAN, self::DISPLAY_LIST_ORDER],
         [self::DISPLAY_LIST_ORDER_SUB_HUMAN, self::DISPLAY_LIST_ORDER_SUB],
         [self::DISPLAY_LIST_ORDER_SUB_SUB_HUMAN, self::DISPLAY_LIST_ORDER_SUB_SUB],

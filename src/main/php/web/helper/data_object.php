@@ -484,6 +484,20 @@ class data_object
     }
 
     /**
+     * @param int $id the database id of the view e.g. of the page that shows a component
+     * @return string the code id of the cached view e.g. views::PROCESS_CATCH_MAIN or an empty string for a user view or a view not cached
+     */
+    function view_code_id(int $id): string
+    {
+        $result = '';
+        $msk = $this->get_view_by_id($id);
+        if ($msk != null) {
+            $result = $msk->code_id ?? '';
+        }
+        return $result;
+    }
+
+    /**
      * @return bool true if this context object contains a view list
      */
     function has_view_list(): bool

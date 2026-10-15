@@ -709,8 +709,8 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 708,1,job,,,1,,,,,job,,,3
 709,1,min,,The minimal numeric value.,,,,,,min,,,3
 710,1,name,,,,,,,,name,,,3
-711,1,page,,,,,,,,page,,,3
-712,1,phrase,,,,,,,,phrase,,,3
+711,1,page,,,1,,,,,page,,,3
+712,1,phrase,,"a word or a triple, which selects or stores a value",1,,,,,phrase,,,3
 713,1,preload,,,,,,,,preload,,,3
 714,1,preselect,,,,,,,,preselect,,,3
 715,1,read,,,,,,,,read,,,3
@@ -718,16 +718,16 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 717,1,sec,,,,,,,,sec,,,3
 718,1,select,,,,,,,,select,,,3
 719,1,size,,,1,,,,,size,,,3
-720,1,start,,,,,,,,start,,,3
+720,1,start,,the first step of a process,1,,,,,start,,,3
 721,1,sys-conf-value,,keyword to read the numeric value from the config.yaml,,,,,,sys-conf-value,,,3
 722,1,table,,,,,,,,table,,,3
 723,1,triple,,,,,,,,triple,,,3
-724,1,type,,,,,,,,type,,,3
+724,1,type,,,1,,,,,type,,,3
 725,1,update,,,,,,,,update,,,3
 726,1,user,,"a person who uses a computer, network, or online service.",1,,,,,user,,,3
 727,1,value,,,1,,,,,value,,,3
 728,1,version,,,,,,,,version,,,3
-729,1,view,,,,,,,,view,,,3
+729,1,view,,the page that is shown to the user e.g. the next page of a process catch,1,,,,,view,,,3
 730,1,tooltip-comment,,keyword to read the word or triple description from the config.yaml,,,,,,tooltip-comment,,,3
 731,1,source-name,,source-description,,,,,,source-name,,,3
 732,1,pod-user-config,,keyword to read the user configuration for a specific user,,,,,,pod-user-config,,,3
@@ -765,7 +765,7 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 764,1,tables,,,,,,,,,,,
 765,1,levels,,,,,,,,,,,
 766,1,component,,,,,,,,,,,
-767,1,list,,,,,,,,,,,
+767,1,list,,phrases in a sorted order e.g. the columns of a table,1,,,,,,,,
 768,1,entries,,,,,,,,,,,
 769,1,top,,the highest part or group,1,,,,,,,,
 770,1,bottom,,the lowest part or group,1,,,,,,,,
@@ -787,7 +787,7 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 786,1,per,,,,,,,,,,,
 787,1,by,,,,,,,,,,,
 788,1,ip-address,,,,,,,,,,,
-789,1,location,,,,,,,,,,,
+789,1,location,,a place on the earth e.g. given by a postal code,1,,,,,,,,
 790,1,changes,,,,,,,,,,,
 791,1,verbs,,,,,,,,,,,
 792,1,lifetime,,,,,,,,,,,
@@ -840,7 +840,7 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 839,1,word,,,,,,,,,,,
 840,1,what,,,,,,,,,,,
 841,1,behaviour,,,,,,,,,,,
-842,1,detail,,,,,,,,,,,
+842,1,detail,,the step of a process with the fine tuning of the assumptions,1,,,,,,,,
 843,1,decimal,,,,,,,,,,,
 844,1,suggested,,,,,,,,,,,
 845,1,more,,,,,,,,,,,
@@ -1924,3 +1924,16 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 1923,1,11120,,,1,,,,,,,,
 1924,1,21120,,,1,,,,,,,,
 1925,1,leverage plot,,"chart with one labelled point per table row placed by two numbers of the row, the first number up and the second to the right, with the dashed lines of an equal ratio of the two numbers",1,,,,,leverage_plot,,,
+1926,1,process,,a series of steps that leads to a result e.g. the guided input of the numbers of a calculation,1,,,,,,,,
+1927,1,catch,,"the guided collection of the input of a calculation step by step, from one easy question on the start page to the result",1,,,,,,,,
+1928,1,input,,the data that the user enters for a calculation,1,,,,,,,,
+1929,1,label,,the text that names an input field for the user,1,,,,,,,,
+1930,1,step,,the increment by which the number of an input field changes,1,,,,,,,,
+1931,1,suggestion,,the value that an input field shows before the user has entered one,1,,,,,,,,
+1932,1,choice,,one of a limited number of answers that the user can select,1,,,,,,,,
+1933,1,selector,,an input field to select one phrase of a list of phrases,1,,,,,,,,
+1934,1,button,,a control that the user presses to start an action e.g. to go to the next page,1,,,,,,,,
+1935,1,tooltip,,the text shown if the user moves the mouse over a control,1,,,,,,,,
+1936,1,proceed,,to continue with the step that follows the current one,1,,,,,,,,
+1937,1,refresh,,to show the page again with the changed input,1,,,,,,,,
+1938,1,back,,the step before the current one,1,,,,,,,,
