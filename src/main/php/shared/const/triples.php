@@ -106,6 +106,11 @@ class triples
     const string RESPONSE_TIME = 'response time';
     const string ROW_LIMIT = 'row limit';
     const string SIDE_WIDTH = 'side width';
+    // the views linked on the start page (config.yaml system view startup)
+    const string PINNED_VIEWS = 'pinned views';
+    // the config.yaml keys whose sub keys are names of the data e.g. the url name of a pinned view,
+    // which therefore need no word const (see coding_rule_tests::config_yaml_word_triple_tests)
+    const array CONFIG_DATA_KEYS = [self::PINNED_VIEWS];
     const string SOURCE_TABLE = 'source table';
     const string START_DELAY = 'start delay';
     const string STORAGE_SIZE = 'storage size';

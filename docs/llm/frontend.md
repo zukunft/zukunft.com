@@ -98,6 +98,27 @@ value list: `get_by()` silently returns the fallback instead of the user setting
 and the per-request load from the backend is bypassed. The rule is enforced by
 `coding_rule_tests::php_web_config_from_cache_tests`.
 
+### The pinned views of the static start page are written by the test run
+
+`/index.html` and the short urls in the docroot (`/pv`, `/cbam`, …) are static
+files, so no request reads the config for them. The pinned views of
+`config.yaml` (`system` → `view` → `startup` → `pinned views`) are keyed by
+their url name, and each has a `url`, a `name` and a `tooltip`.
+`base_ui_tests` writes them with `AUTO_UPDATE_TEST_FILES`, like the forward
+pages of `api::FORWARD_VIEWS`:
+
+- `html_base::start_page` writes the links between the
+  `PINNED_VIEWS_BEGIN` / `_END` comments of `index.html`; the rest of the page
+  stays hand-written.
+- `html_base::forward_url_page` writes one forward page per url name of
+  `config.yaml` into `test_files::PINNED_PAGE_PATH`, a meta refresh without
+  javascript.
+
+A new pinned view therefore needs only its url name in the extensionless
+allow-list of the `.htaccess`, and the test fails until it is there. The url
+name is a name of the data, not a word, so it needs no const
+(`triples::CONFIG_DATA_KEYS`, see `config_yaml_word_triple_tests`).
+
 ## The frontend never accesses the database — load via the API
 
 Code under `src/main/php/web/**` must not open or query the database. It never

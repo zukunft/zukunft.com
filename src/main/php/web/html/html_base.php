@@ -234,6 +234,8 @@ class html_base
     const string CLASS_LOGO_BIG = 'logo-big';
     const string CLASS_LOGO_FLEX = 'brand-logo';
     const string CLASS_LOGO_SECTION = 'logo-section';
+    // the links to the pinned views below the search field of the start page
+    const string CLASS_PINNED_SECTION = 'pinned-section';
     const string CLASS_CONTAINER = 'container';
     // the css-only tab box classes (see tab_box and the matching :target rules in style_html.css)
     const string CLASS_TABS = 'css-tabs';
@@ -249,6 +251,15 @@ class html_base
         . " location.replace('%1\$s' + p);</script>\n"
         . "<noscript><meta http-equiv=\"refresh\" content=\"0; url=%1\$s%2\$s=%3\$s\"></noscript>\n"
         . "</html>\n";
+    // the static forward page of a pinned view e.g. /pv with 1 the complete target url of config.yaml,
+    // which needs no javascript, because the url vars of the request are not kept
+    const string FORWARD_URL_PAGE = "<!DOCTYPE html>\n"
+        . "<meta http-equiv=\"refresh\" content=\"0; url=%1\$s\">\n"
+        . "</html>\n";
+    // the html comments around the links to the pinned views in the static start page index.html,
+    // between which the test run writes the links of config.yaml (see start_page)
+    const string PINNED_VIEWS_BEGIN = '<!-- pinned views: written by the test run from config.yaml -->';
+    const string PINNED_VIEWS_END = '<!-- pinned views end -->';
 
 
     /*
@@ -275,6 +286,42 @@ class html_base
     function forward_page(int $msk_id): string
     {
         return sprintf(self::FORWARD_PAGE, api::MAIN_SCRIPT . url_var::PAR, url_var::MASK, $msk_id);
+    }
+
+    /**
+     * @param string $url the complete url that the forward page opens e.g. the url of a pinned view
+     * @return string the html code of the static forward page in the docroot e.g. of /pv
+     */
+    function forward_url_page(string $url): string
+    {
+        return sprintf(self::FORWARD_URL_PAGE, htmlspecialchars($url, ENT_QUOTES));
+    }
+
+    /**
+     * write the links to the pinned views between the markers of the static start page, so that
+     * a changed config.yaml is shown after the next test run (see docs/llm/frontend.md)
+     *
+     * @param string $page the html code of the start page e.g. of index.html
+     * @param array $pin_lst the pinned views by url name, each with the url, name and tooltip of config.yaml
+     * @return string the start page with the links or the unchanged page if the markers are missing
+     */
+    function start_page(string $page, array $pin_lst): string
+    {
+        $begin = strpos($page, self::PINNED_VIEWS_BEGIN);
+        $end = strpos($page, self::PINNED_VIEWS_END);
+        $result = $page;
+        if ($begin === false or $end === false or $end < $begin) {
+            log_err('the start page has no markers for the pinned views');
+        } else {
+            $links = '';
+            foreach ($pin_lst as $pin) {
+                $links .= $this->ref($pin[words::URL] ?? '', $pin[words::NAME] ?? '',
+                    $pin[words::TOOLTIP] ?? '', with_user: false);
+            }
+            $block = self::PINNED_VIEWS_BEGIN . $this->div($links, self::CLASS_PINNED_SECTION);
+            $result = substr($page, 0, $begin) . $block . substr($page, $end);
+        }
+        return $result;
     }
 
 
@@ -632,9 +679,17 @@ class html_base
      * @param string $title the tooltip of the link
      * @param string $css_class the css class name of the link
      * @param bool $name_is_html true only if the calling function guarantees that the link text is safe html e.g. an icon
+     * @param bool $with_user false for a link of a static page e.g. index.html, which is the same for every user
      * @return string the html code of the link or just the text if the url scheme is not allowed
      */
-    function ref(string $url, string $name, string $title = '', string $css_class = '', bool $name_is_html = false): string
+    function ref(
+        string $url,
+        string $name,
+        string $title = '',
+        string $css_class = '',
+        bool   $name_is_html = false,
+        bool   $with_user = true
+    ): string
     {
         if (!$name_is_html) {
             $name = $this->esc($name);
@@ -644,7 +699,10 @@ class html_base
             log_warning('link to "' . $url . '" is blocked due to the unexpected url scheme');
             $result = $name;
         } else {
-            $url = $this->url_with_user($this->url_with_id_var($url));
+            $url = $this->url_with_id_var($url);
+            if ($with_user) {
+                $url = $this->url_with_user($url);
+            }
             $result = '<' . self::A . ' ' . self::HREF . '="' . htmlspecialchars($url, ENT_QUOTES) . '"';
             if ($title != '' && $title != $name) {
                 $result .= ' ' . self::TITLE_HTML . '="' . htmlspecialchars($title, ENT_QUOTES) . '"';

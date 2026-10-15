@@ -89,9 +89,12 @@ use Zukunft\ZukunftCom\main\php\web\verb\verb as verb_ui;
 use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
+use Zukunft\ZukunftCom\main\php\shared\const\files as files_shared;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\enum\table_orders;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
@@ -424,6 +427,50 @@ class base_ui_tests
             $test_name = 'the forward page ' . $forward . ' opens the view ' . $msk_id . ' with the url vars of the request';
             $t->assert_file($test_name, $html->forward_page($msk_id), $file);
         }
+
+        // the pinned views of config.yaml are linked on the static start page and each has a static
+        // forward page by its url name, which the next run with AUTO_UPDATE_TEST_FILES writes
+        $yaml = yaml_parse_file(files_shared::CONFIG_YAML);
+        $pin_lst = $yaml[words::THIS_SYSTEM][triples::SYSTEM_CONFIG][words::SYSTEM][words::VIEW]
+            [words::STARTUP][triples::PINNED_VIEWS] ?? [];
+        unset($pin_lst[words::TOOLTIP_COMMENT]);
+        // e.g. a moved yaml key would else skip every test of the pinned views silently
+        $test_name = 'config.yaml has pinned views';
+        $t->assert_greater_zero($test_name, count($pin_lst));
+        foreach ($pin_lst as $url_name => $pin) {
+            $url = $pin[words::URL] ?? '';
+            $test_name = 'the short url ' . $url_name . ' opens ' . $url;
+            $t->assert_file($test_name, $html->forward_url_page($url), test_files::PINNED_PAGE_PATH . $url_name);
+        }
+        $test_name = 'the start page links the pinned views of config.yaml';
+        $start_page = file_get_contents(test_files::START_PAGE);
+        $t->assert_file($test_name, $html->start_page($start_page, $pin_lst), test_files::START_PAGE);
+        $test_name = 'a pinned view is linked by its name with the tooltip';
+        $pin = array_slice($pin_lst, 0, 1, true);
+        $pin_fields = reset($pin) ?: [];
+        $page_one = $html->start_page($html::PINNED_VIEWS_BEGIN . $html::PINNED_VIEWS_END, $pin);
+        $t->assert_text_contains($test_name, $page_one, '>' . ($pin_fields[words::NAME] ?? '') . '<');
+        $t->assert_text_contains($test_name, $page_one, 'title="' . ($pin_fields[words::TOOLTIP] ?? '') . '"');
+        // negative: the static page is the same for every user, so a link never names the user
+        $test_name = '... and without the user';
+        $t->assert_text_not_contains($test_name, $page_one, url_var::USER . url_var::EQ);
+        $test_name = 'the short url page opens the url with the escaped url vars';
+        $url_one = $pin_fields[words::URL] ?? '';
+        $forward_one = $html->forward_url_page($url_one);
+        $t->assert_text_contains($test_name, $forward_one, htmlspecialchars($url_one, ENT_QUOTES));
+        // negative: the short url opens a fixed url, so it needs no javascript to keep the url vars
+        $test_name = '... without javascript';
+        $t->assert_text_not_contains($test_name, $forward_one, '<script');
+
+        // the docroot serves an extensionless file only if its name is in the allow-list of the .htaccess
+        $htaccess = file_get_contents(test_files::HTACCESS);
+        preg_match('/<FilesMatch "\^\(([^)]*)\)\$">/', $htaccess, $allowed);
+        $allow_lst = explode('|', $allowed[1] ?? '');
+        $forward_lst = array_map(fn($forward) => ltrim($forward, DIRECTORY_SEPARATOR), array_keys(api::FORWARD_VIEWS));
+        $test_name = 'the .htaccess allows each forward page';
+        $t->assert($test_name, array_values(array_diff($forward_lst, $allow_lst)), []);
+        $test_name = '... and each short url of a pinned view';
+        $t->assert($test_name, array_values(array_diff(array_keys($pin_lst), $allow_lst)), []);
 
         // the login link forwards a '9'-prefixed back target of the current page (the logout
         // page carries the original page as back target, see frontend::action_logout), so after

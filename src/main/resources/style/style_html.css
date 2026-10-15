@@ -235,6 +235,16 @@ body {
     width: 100%;
 }
 
+/* the links to the pinned views below the search field of the start page */
+.pinned-section {
+    width: 60%; /* As wide as the search section above */
+    display: flex;
+    flex-wrap: wrap; /* Moves a link to the next line if the screen is too narrow */
+    justify-content: center;
+    gap: 10px 20px;
+    margin: 1rem 0;
+}
+
 /* signup and login section */
 .cta-section {
     width: 50%; /* Sets the container for the logo to 60% of the screen width */

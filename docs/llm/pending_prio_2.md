@@ -15,6 +15,14 @@ the triple list (`ui_list::triples_of_types`) shows every triple of a type and n
 
 gap of the triple list: each list shows all its triples, because there is no view yet for the "… and n more" tail to link to, so the short, more and all versions of the list are still missing
 
+### pinned views of the start page
+
+gaps of the pinned views (`html_base::start_page`, `config.yaml` startup): the links and the short urls are
+written from the config.yaml file by the test run, so a pinned view that an admin changes in the database is
+not shown until the file is changed and the tests are run again; the urls still point to the placeholder
+view `m=4&id=1954` except the global problems; the search field of `index.html` still sends `q`, which is
+the language url var and not a search
+
 ### process catch geolocator and refresh
 
 gaps of the geolocator (`system_page::geolocator`): the input is a plain text field without the

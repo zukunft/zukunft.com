@@ -7124,6 +7124,9 @@
 \-- html_base
     \-- page_html - section for function page_html not yet defined that it should be page in /html/html_base.php
     \-- forward_page - section for function forward_page not yet defined that it should be page in /html/html_base.php
+    \-- forward_url_page - section for function forward_url_page not yet defined that it should be page in /html/html_ba
+            se.php
+    \-- start_page - section for function start_page not yet defined that it should be page in /html/html_base.php
     \-- header_html - section for function header_html not yet defined that it should be header & footer in /html/html_b
             ase.php
     \-- main_body - section for function main_body not yet defined that it should be header & footer in /html/html_base.
@@ -10047,6 +10050,10 @@
         \-- html_base - create a simple html page based on header, body and footer html code
     \-- forward_page
         \-- html_base - @param int $msk_id the id of the view that the forward page opens e.g. views::SYSTEM_CONFIG_ID
+    \-- forward_url_page
+        \-- html_base - @param string $url the complete url that the forward page opens e.g. the url of a pinned view
+    \-- start_page
+        \-- html_base - write the links to the pinned views between the markers of the static start page, so that
 \-- header & footer
     \-- header_html
         \-- html_base - the page header for simple html pages like the login page

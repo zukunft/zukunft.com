@@ -43,6 +43,14 @@ url_name: company_sheet
 name: Company sheet
 tooltip: compare two or more key figure sheets related to a company 
 
+the frontend forward page e.g. /settings with '<!DOCTYPE html>
+<script>const p = new URLSearchParams(location.search); p.set('m', '126'); location.replace('/http/view.php?' + p);</script>
+<noscript><meta http-equiv="refresh" content="0; url=/http/view.php?m=126"></noscript>
+</html>
+' are checked and if needed updated. Near that check add the creation of the pinned views and after the creation try to remove forward pages that should not be used any more, so that are not a fixed forward page nor a pinned one.
+
+
+
 ## import / export
 
 add to the user menu in the navbar an import and an export entry that links to the import and export view (id 145 and 150)

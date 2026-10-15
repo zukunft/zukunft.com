@@ -736,7 +736,10 @@ load, and if a sample file mixes both, split the code-id part into the system da
 of the test phrases. Those ids come from the insert order of the import files, so
 **adding or removing a phrase in a seed import shifts every id after it** — a new
 word in `base_phrases.json`, a split of one multi-word word into a triple, an
-extra file in `files::BASE_DATA_PATH_FILES`, all of them.
+extra file in `files::BASE_DATA_PATH_FILES`, all of them. The default
+`config.yaml` is such a seed import too: it is fixed and part of the code, and
+each key becomes a word (and a multi-word key a triple), so a new or moved key
+in `config.yaml` (e.g. a pinned view) needs a re-pin as well.
 
 The cheapest re-baseline is the one that is not needed: a change to a seed
 import stays as small as the task asks for, so that the object count of every

@@ -268,6 +268,33 @@ zukunft.com:
       view:
         freeze: 20
         tooltip-comment: "the number of views by one user to automatically lock/freeze the view for the user, so that changes from other user does not change the view any more"
+        startup:
+          pinned views:
+            tooltip-comment: "the views linked below the search field of the start page (index.html) by their name with the tooltip; the key is the url name for direct typing e.g. zukunft.com/pv"
+            problems:
+              url: "/http/view.php?m=1"
+              name: "Global problems"
+              tooltip: "the global issues that are expected to cause the damage with the suggested solution to solve the problem"
+            pv:
+              url: "/http/view.php?m=4&id=1954"
+              name: "Photovoltaic calculator"
+              tooltip: "calculate the effects of photovoltaic"
+            panels:
+              url: "/http/view.php?m=4&id=1954"
+              name: "PV panels installation"
+              tooltip: "step by step process to calculate the installation of PV panels"
+            cbam:
+              url: "/http/view.php?m=4&id=1954"
+              name: "CBAM Calculator"
+              tooltip: "step by step process to calculate the carbon border adjustment"
+            portfolio_split:
+              url: "/http/view.php?m=4&id=1954"
+              name: "Portfolio split"
+              tooltip: "step by step process to calculate the splitting of an investment portfolio taking the round lots into account"
+            company_sheet:
+              url: "/http/view.php?m=4&id=1954"
+              name: "Company sheet"
+              tooltip: "compare two or more key figure sheets related to a company"
       component:
         list:
           entries:

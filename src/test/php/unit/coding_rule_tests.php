@@ -676,16 +676,17 @@ class coding_rule_tests
      * @param array $data the parsed yaml subtree
      * @param array $keys (in/out) accumulator keyed by yaml key for uniqueness
      * @param array $meta_keys keys to skip because they are structural, not domain words
+     * @param bool $is_data true if the keys of this subtree are names of the data e.g. the url names of the pinned views (triples::CONFIG_DATA_KEYS)
      * @return void
      */
-    private function collect_yaml_keys(array $data, array &$keys, array $meta_keys): void
+    private function collect_yaml_keys(array $data, array &$keys, array $meta_keys, bool $is_data = false): void
     {
         foreach ($data as $key => $value) {
-            if (is_string($key) and !in_array($key, $meta_keys, true)) {
+            if (is_string($key) and !$is_data and !in_array($key, $meta_keys, true)) {
                 $keys[$key] = true;
             }
             if (is_array($value)) {
-                $this->collect_yaml_keys($value, $keys, $meta_keys);
+                $this->collect_yaml_keys($value, $keys, $meta_keys, in_array($key, triples::CONFIG_DATA_KEYS, true));
             }
         }
     }
