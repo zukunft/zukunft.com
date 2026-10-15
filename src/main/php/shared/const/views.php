@@ -106,7 +106,11 @@ class views
     const string TABLE_EDITOR = 'table_editor';
     const int TABLE_EDITOR_ID = 193;
     const string TABLE_EDITOR_NAME = 'Table editor';
+    const string CALCULATION_EDITOR = 'calculation_editor';
     const string CALCULATION_EDITOR_NAME = 'Calculation editor';
+    // the views whose phrase selector sends the name of the phrase that the view shows next
+    // (see frontend::url_with_selected_phrase)
+    const array PHRASE_SELECT_VIEWS = [self::TABLE_EDITOR, self::CALCULATION_EDITOR];
     // the four pages of a process catch, which guide the user of a question phrase e.g. the PV
     // calculator from one easy question to the result (process_catch_views.json)
     const string PROCESS_CATCH_START = 'process_catch_start';

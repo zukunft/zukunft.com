@@ -28331,21 +28331,31 @@
                     },
                     {
                         "link_id": 1578,
-                        "id": 436,
-                        "name": "column tiers",
-                        "description": "the columns of each column tier that are related to the phrase of the table",
-                        "type_id": 269,
-                        "word_col": -184,
+                        "id": 438,
+                        "name": "button show editor phrase",
+                        "description": "the form of the phrase selector that shows the editor again for the selected word or triple",
+                        "type_id": 275,
+                        "ui_msg_code_id": "editor_button_show",
                         "position": 3,
                         "position_type": 1
                     },
                     {
                         "link_id": 1579,
+                        "id": 436,
+                        "name": "column tiers",
+                        "description": "the columns of each column tier that are related to the phrase of the table",
+                        "type_id": 269,
+                        "word_col": -184,
+                        "position": 4,
+                        "position_type": 1
+                    },
+                    {
+                        "link_id": 1580,
                         "id": 437,
                         "name": "table editor table",
                         "description": "the table of the phrase of the table editor with the columns that the column tiers above define",
                         "type_id": 55,
-                        "position": 4,
+                        "position": 5,
                         "position_type": 1
                     }
                 ]
@@ -28358,7 +28368,7 @@
                 "code_id": "calculation_editor",
                 "components": [
                     {
-                        "link_id": 1580,
+                        "link_id": 1581,
                         "id": 434,
                         "name": "system title calculation editor",
                         "description": "show the language specific title of the calculation editor",
@@ -28369,13 +28379,23 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1581,
+                        "link_id": 1582,
                         "id": 435,
                         "name": "phrase selector",
                         "description": "placeholder to select the word or triple that an editor starts from",
                         "type_id": 146,
                         "code_id": "phrase_selector",
                         "position": 2,
+                        "position_type": 1
+                    },
+                    {
+                        "link_id": 1583,
+                        "id": 438,
+                        "name": "button show editor phrase",
+                        "description": "the form of the phrase selector that shows the editor again for the selected word or triple",
+                        "type_id": 275,
+                        "ui_msg_code_id": "editor_button_show",
+                        "position": 3,
                         "position_type": 1
                     }
                 ]
@@ -28388,8 +28408,8 @@
                 "code_id": "process_catch_start",
                 "components": [
                     {
-                        "link_id": 1582,
-                        "id": 438,
+                        "link_id": 1584,
+                        "id": 439,
                         "name": "title process catch start",
                         "description": "the translated title of the start page of a process catch with the name of the question phrase",
                         "type_id": 268,
@@ -28398,8 +28418,8 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1583,
-                        "id": 439,
+                        "link_id": 1585,
+                        "id": 440,
                         "name": "text explain process catch start",
                         "description": "the translated text that explains the start page of a process catch",
                         "type_id": 270,
@@ -28408,8 +28428,8 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1584,
-                        "id": 440,
+                        "link_id": 1586,
+                        "id": 441,
                         "name": "process catch initial input fields",
                         "description": "the one easy to answer question of the start page, defined by the field triples of the question phrase",
                         "type_id": 271,
@@ -28417,8 +28437,8 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1585,
-                        "id": 441,
+                        "link_id": 1587,
+                        "id": 442,
                         "name": "button next process catch start",
                         "description": "opens the main page of the process catch for the same question phrase",
                         "type_id": 273,
@@ -28435,8 +28455,8 @@
                 "code_id": "process_catch_main",
                 "components": [
                     {
-                        "link_id": 1586,
-                        "id": 442,
+                        "link_id": 1588,
+                        "id": 443,
                         "name": "title process catch main",
                         "description": "the translated title of the main page of a process catch with the name of the question phrase",
                         "type_id": 268,
@@ -28445,8 +28465,8 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1587,
-                        "id": 443,
+                        "link_id": 1589,
+                        "id": 444,
                         "name": "text explain process catch main",
                         "description": "the translated text that explains the main page of a process catch",
                         "type_id": 270,
@@ -28455,8 +28475,8 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1588,
-                        "id": 444,
+                        "link_id": 1590,
+                        "id": 445,
                         "name": "process catch main input fields",
                         "description": "the about three input fields that are most relevant for the result, defined by the field triples of the question phrase",
                         "type_id": 271,
@@ -28464,8 +28484,8 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1589,
-                        "id": 445,
+                        "link_id": 1591,
+                        "id": 446,
                         "name": "button next process catch main",
                         "description": "opens the detail page of the process catch for the same question phrase",
                         "type_id": 273,
@@ -28482,8 +28502,8 @@
                 "code_id": "process_catch_detail",
                 "components": [
                     {
-                        "link_id": 1590,
-                        "id": 446,
+                        "link_id": 1592,
+                        "id": 447,
                         "name": "title process catch detail",
                         "description": "the translated title of the detail page of a process catch with the name of the question phrase",
                         "type_id": 268,
@@ -28492,8 +28512,8 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1591,
-                        "id": 447,
+                        "link_id": 1593,
+                        "id": 448,
                         "name": "text explain process catch detail",
                         "description": "the translated text that explains the detail page of a process catch",
                         "type_id": 270,
@@ -28502,8 +28522,8 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1592,
-                        "id": 448,
+                        "link_id": 1594,
+                        "id": 449,
                         "name": "process catch detail tab one",
                         "description": "tab 1 of the detail page of a process catch",
                         "type_id": 272,
@@ -28512,8 +28532,8 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1593,
-                        "id": 449,
+                        "link_id": 1595,
+                        "id": 450,
                         "name": "process catch detail tab two",
                         "description": "tab 2 of the detail page of a process catch",
                         "type_id": 272,
@@ -28522,8 +28542,8 @@
                         "position_type": 8
                     },
                     {
-                        "link_id": 1594,
-                        "id": 450,
+                        "link_id": 1596,
+                        "id": 451,
                         "name": "process catch detail tab three",
                         "description": "tab 3 of the detail page of a process catch",
                         "type_id": 272,
@@ -28532,8 +28552,8 @@
                         "position_type": 8
                     },
                     {
-                        "link_id": 1595,
-                        "id": 451,
+                        "link_id": 1597,
+                        "id": 452,
                         "name": "process catch detail tab four",
                         "description": "tab 4 of the detail page of a process catch",
                         "type_id": 272,
@@ -28542,8 +28562,8 @@
                         "position_type": 8
                     },
                     {
-                        "link_id": 1596,
-                        "id": 452,
+                        "link_id": 1598,
+                        "id": 453,
                         "name": "process catch detail tab five",
                         "description": "tab 5 of the detail page of a process catch",
                         "type_id": 272,
@@ -28552,8 +28572,8 @@
                         "position_type": 8
                     },
                     {
-                        "link_id": 1597,
-                        "id": 453,
+                        "link_id": 1599,
+                        "id": 454,
                         "name": "process catch detail tab one fields",
                         "description": "the input fields of tab 1 of the detail page of a process catch, shown if the tab is selected",
                         "type_id": 271,
@@ -28562,8 +28582,8 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1598,
-                        "id": 454,
+                        "link_id": 1600,
+                        "id": 455,
                         "name": "process catch detail tab two fields",
                         "description": "the input fields of tab 2 of the detail page of a process catch, shown if the tab is selected",
                         "type_id": 271,
@@ -28572,8 +28592,8 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1599,
-                        "id": 455,
+                        "link_id": 1601,
+                        "id": 456,
                         "name": "process catch detail tab three fields",
                         "description": "the input fields of tab 3 of the detail page of a process catch, shown if the tab is selected",
                         "type_id": 271,
@@ -28582,8 +28602,8 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1600,
-                        "id": 456,
+                        "link_id": 1602,
+                        "id": 457,
                         "name": "process catch detail tab four fields",
                         "description": "the input fields of tab 4 of the detail page of a process catch, shown if the tab is selected",
                         "type_id": 271,
@@ -28592,8 +28612,8 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1601,
-                        "id": 457,
+                        "link_id": 1603,
+                        "id": 458,
                         "name": "process catch detail tab five fields",
                         "description": "the input fields of tab 5 of the detail page of a process catch, shown if the tab is selected",
                         "type_id": 271,
@@ -28602,8 +28622,8 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1602,
-                        "id": 472,
+                        "link_id": 1604,
+                        "id": 473,
                         "name": "button refresh process catch detail",
                         "description": "shows the detail page of the process catch again with the changed assumptions",
                         "type_id": 275,
@@ -28612,8 +28632,8 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1603,
-                        "id": 458,
+                        "link_id": 1605,
+                        "id": 459,
                         "name": "button next process catch detail",
                         "description": "opens the result page of the process catch for the same question phrase",
                         "type_id": 273,
@@ -28630,8 +28650,8 @@
                 "code_id": "process_catch_result",
                 "components": [
                     {
-                        "link_id": 1604,
-                        "id": 459,
+                        "link_id": 1606,
+                        "id": 460,
                         "name": "title process catch result",
                         "description": "the translated title of the result page of a process catch with the name of the question phrase",
                         "type_id": 268,
@@ -28640,8 +28660,8 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1605,
-                        "id": 460,
+                        "link_id": 1607,
+                        "id": 461,
                         "name": "text explain process catch result",
                         "description": "the translated text that explains the result page of a process catch",
                         "type_id": 270,
@@ -28650,8 +28670,8 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1606,
-                        "id": 461,
+                        "link_id": 1608,
+                        "id": 462,
                         "name": "process catch result tab one",
                         "description": "tab 1 of the result page of a process catch",
                         "type_id": 272,
@@ -28660,8 +28680,8 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1607,
-                        "id": 462,
+                        "link_id": 1609,
+                        "id": 463,
                         "name": "process catch result tab two",
                         "description": "tab 2 of the result page of a process catch",
                         "type_id": 272,
@@ -28670,8 +28690,8 @@
                         "position_type": 8
                     },
                     {
-                        "link_id": 1608,
-                        "id": 463,
+                        "link_id": 1610,
+                        "id": 464,
                         "name": "process catch result tab three",
                         "description": "tab 3 of the result page of a process catch",
                         "type_id": 272,
@@ -28680,8 +28700,8 @@
                         "position_type": 8
                     },
                     {
-                        "link_id": 1609,
-                        "id": 464,
+                        "link_id": 1611,
+                        "id": 465,
                         "name": "process catch result tab four",
                         "description": "tab 4 of the result page of a process catch",
                         "type_id": 272,
@@ -28690,8 +28710,8 @@
                         "position_type": 8
                     },
                     {
-                        "link_id": 1610,
-                        "id": 465,
+                        "link_id": 1612,
+                        "id": 466,
                         "name": "process catch result tab five",
                         "description": "tab 5 of the result page of a process catch",
                         "type_id": 272,
@@ -28700,8 +28720,8 @@
                         "position_type": 8
                     },
                     {
-                        "link_id": 1611,
-                        "id": 466,
+                        "link_id": 1613,
+                        "id": 467,
                         "name": "process catch result tab one fields",
                         "description": "the input fields of tab 1 of the result page of a process catch, shown if the tab is selected",
                         "type_id": 271,
@@ -28710,8 +28730,8 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1612,
-                        "id": 467,
+                        "link_id": 1614,
+                        "id": 468,
                         "name": "process catch result tab two fields",
                         "description": "the input fields of tab 2 of the result page of a process catch, shown if the tab is selected",
                         "type_id": 271,
@@ -28720,8 +28740,8 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1613,
-                        "id": 468,
+                        "link_id": 1615,
+                        "id": 469,
                         "name": "process catch result tab three fields",
                         "description": "the input fields of tab 3 of the result page of a process catch, shown if the tab is selected",
                         "type_id": 271,
@@ -28730,8 +28750,8 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1614,
-                        "id": 469,
+                        "link_id": 1616,
+                        "id": 470,
                         "name": "process catch result tab four fields",
                         "description": "the input fields of tab 4 of the result page of a process catch, shown if the tab is selected",
                         "type_id": 271,
@@ -28740,8 +28760,8 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1615,
-                        "id": 470,
+                        "link_id": 1617,
+                        "id": 471,
                         "name": "process catch result tab five fields",
                         "description": "the input fields of tab 5 of the result page of a process catch, shown if the tab is selected",
                         "type_id": 271,
@@ -28750,8 +28770,8 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1616,
-                        "id": 471,
+                        "link_id": 1618,
+                        "id": 472,
                         "name": "button back process catch result",
                         "description": "opens the detail page of the process catch for the same question phrase",
                         "type_id": 274,

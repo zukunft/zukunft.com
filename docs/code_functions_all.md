@@ -6970,6 +6970,8 @@
     \-- show_view - section for function show_view not yet defined that it should be cached page in /frontend.php
     \-- url_to_back_url - section for function url_to_back_url not yet defined that it should be execute in /frontend.ph
             p
+    \-- url_with_selected_phrase - section for function url_with_selected_phrase not yet defined that it should be execu
+            te in /frontend.php
     \-- api_get - section for function api_get not yet defined that it should be api in /frontend.php
 \-- group
     \-- unset_name_tip_dirty - section for function unset_name_tip_dirty not yet defined that it should be set and get i
@@ -7494,6 +7496,8 @@
     \-- url_mapper - section for function url_mapper not yet defined that it should be set and get in /phrase/phrase_lis
             t.php
     \-- api_mapper - section for function api_mapper is expected to be construct and map in /phrase/phrase_list.php
+    \-- get_or_load_by_name - section for function get_or_load_by_name is expected to be set and get in /phrase/phrase_l
+            ist.php
     \-- filter_by_name_start - section for function filter_by_name_start not yet defined that it should be load in /phra
             se/phrase_list.php
     \-- chart_definitions - section for function chart_definitions not yet defined that it should be load in /phrase/phr
@@ -9076,7 +9080,7 @@
         \-- sys_log_list - request the system log entries related to the session user from the backend
     \-- load_api_by_object_field
         \-- change_log_list - get the json of a list of changes from the api
-    \-- 12
+    \-- 13
         \-- phrase_list - add the phrases related to the given formula to the list
     \-- load_fallback
         \-- change_log_list - if the change log list is empty fill it with the last changes
@@ -9956,6 +9960,8 @@
         \-- frontend - execute the user request e.g. a database update and create the url for the next page
     \-- url_to_back_url
         \-- frontend - the previous page of a url built from its '9'-prefixed back targets, ready to be used directly as
+    \-- url_with_selected_phrase
+        \-- frontend - the url with the phrase id of the word or triple that the user has selected by its name in the
     \-- show
         \-- view_exe - create the html code to view a sandbox object
 \-- view

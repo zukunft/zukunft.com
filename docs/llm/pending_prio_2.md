@@ -15,6 +15,8 @@ the triple list (`ui_list::triples_of_types`) shows every triple of a type and n
 
 gap of the triple list: each list shows all its triples, because there is no view yet for the "… and n more" tail to link to, so the short, more and all versions of the list are still missing
 
+the form of the phrase selector of the editors reuses the component type `process_catch_button_refresh`, because it already shows a page again with the entered values; a generic name for the type (e.g. `button_refresh`) is the developer's decision; the unknown-name path of `frontend::url_with_selected_phrase` asks the backend and has no unit test yet
+
 ### pinned views of the start page
 
 gaps of the pinned views (`html_base::start_page`, `config.yaml` startup): the links and the short urls are

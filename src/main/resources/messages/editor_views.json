@@ -63,6 +63,12 @@
       "name": "table editor table",
       "description": "the table of the phrase of the table editor with the columns that the column tiers above define",
       "type": "table_with_related_columns"
+    },
+    {
+      "name": "button show editor phrase",
+      "description": "the form of the phrase selector that shows the editor again for the selected word or triple",
+      "type": "process_catch_button_refresh",
+      "ui_msg_code_id": "editor_button_show"
     }
   ],
   "views": [
@@ -82,10 +88,14 @@
         },
         {
           "position": "3",
-          "name": "column tiers"
+          "name": "button show editor phrase"
         },
         {
           "position": "4",
+          "name": "column tiers"
+        },
+        {
+          "position": "5",
           "name": "table editor table"
         }
       ]
@@ -103,6 +113,10 @@
         {
           "position": "2",
           "name": "phrase selector"
+        },
+        {
+          "position": "3",
+          "name": "button show editor phrase"
         }
       ]
     },

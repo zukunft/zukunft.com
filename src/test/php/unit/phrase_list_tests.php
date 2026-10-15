@@ -377,6 +377,13 @@ class phrase_list_tests
         $sub_names = array_map(fn($sub) => $sub->name(), $phr_lst_ui->sub_types($typ, $msg_ui));
         $t->assert($test_name, $sub_names, [triple_names::SYSTEM_COLUMN_MAYOR, triple_names::SYSTEM_COLUMN_MINOR]);
         $msg_ui->reset();
+        // the name of a phrase in the list is found without a backend call, e.g. the selected phrase of an editor
+        $test_name = 'a phrase of the list is found by its name';
+        $phr_found = $phr_lst_ui->get_or_load_by_name(triple_names::SYSTEM_COLUMN, $msg_ui);
+        $t->assert($test_name, $phr_found?->name(), triple_names::SYSTEM_COLUMN);
+        $test_name = '... without a message';
+        $t->assert($test_name, $msg_ui->is_ok(), true);
+        $msg_ui->reset();
         $test_name = 'a type without sub types is its own sub type';
         $tier = $phr_lst_ui->get_by_name(triple_names::SYSTEM_COLUMN_MAYOR, $msg_ui);
         $sub_names = array_map(fn($sub) => $sub->name(), $phr_lst_ui->sub_types($tier, $msg_ui));

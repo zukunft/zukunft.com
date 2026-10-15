@@ -671,6 +671,26 @@ class system_view_ui_tests
         $test_name = 'add view does not stamp the url id onto the new object';
         $t->assert_text_not_contains($test_name, $add_html, 'name="id" id="id" value="1"');
 
+        // the phrase selector of an editor sends the name of the selected phrase, so that the editor is
+        // shown again for that phrase (see frontend::url_with_selected_phrase)
+        $t->subheader($ts . 'editor phrase selector');
+        $t_trp = new test_triples($t);
+        $phr = $t_trp->populism_solution_ui()->phrase();
+        $dto_sel = new data_object();
+        $dto_sel->phr_lst->add($phr, $msg);
+        $sel_url = [url_var::MASK => views::TABLE_EDITOR, url_var::ID => -1, url_var::PHRASE => $phr->name()];
+        $test_name = 'the selected phrase replaces the phrase of the editor';
+        $sel_url_new = $ui->url_with_selected_phrase($sel_url, views::TABLE_EDITOR, $dto_sel, $msg);
+        $t->assert($test_name, $sel_url_new[url_var::ID] ?? 0, $phr->id());
+        $test_name = '... and the name is not kept as an object value';
+        $t->assert($test_name, array_key_exists(url_var::PHRASE, $sel_url_new), false);
+        // negative: e.g. the phrase of a reference is not the selection of the page
+        $test_name = 'the phrase of another view does not switch the page';
+        $t->assert($test_name, $ui->url_with_selected_phrase($sel_url, views::START_CODE, $dto_sel, $msg), $sel_url);
+        $test_name = 'an empty selection keeps the phrase of the editor';
+        $empty_url = [url_var::MASK => views::TABLE_EDITOR, url_var::ID => -1, url_var::PHRASE => ''];
+        $t->assert($test_name, $ui->url_with_selected_phrase($empty_url, views::TABLE_EDITOR, $dto_sel, $msg), $empty_url);
+
         // the admin only masks (views::ADMIN_MASK_IDS) must be authorized centrally so the admin
         // content is not rendered to just anyone (see frontend::admin_mask_denied)
         $t->subheader($ts . 'admin mask authorization');

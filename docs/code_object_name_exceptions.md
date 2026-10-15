@@ -114,7 +114,7 @@ component_type: $cmp_typ
 component_type_list: $cmp_lst
 config: $cfg, $cfg_all, $cfg_db, $cfg_sys, $sys_cfg
 controller: $ctrl
-data_object: $cac, $cache_dto, $cfg, $ctg_dto, $dto, $dto_base_ui, $dto_col, $dto_empty, $dto_no_links, $dto_no_reasons, $dto_prio, $dto_reasons, $dto_res, $dto_rsn_sol, $dto_sim, $dto_sol, $dto_start, $dto_ui, $res_cfg, $steps_dto
+data_object: $cac, $cache_dto, $cfg, $ctg_dto, $dto, $dto_base_ui, $dto_col, $dto_empty, $dto_no_links, $dto_no_reasons, $dto_prio, $dto_reasons, $dto_res, $dto_rsn_sol, $dto_sel, $dto_sim, $dto_sol, $dto_start, $dto_ui, $res_cfg, $steps_dto
 db_cache: $cac, $cac_cfg, $db_cache
 db_cache_page: $cac_check, $cac_page, $db_cache_page
 db_cache_status: $dbc_sta

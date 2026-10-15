@@ -2034,6 +2034,8 @@ enum messages: string
     case SYSTEM_TITLE_SETUP = 'system_title_setup';
     case SYSTEM_TITLE_TABLE_EDITOR = 'system_title_table_editor';
     case SYSTEM_TITLE_CALCULATION_EDITOR = 'system_title_calculation_editor';
+    // the text of the button that shows an editor again for the phrase selected in its phrase selector
+    case EDITOR_BUTTON_SHOW = 'editor_button_show';
     // the titles, the explain texts and the tabs of the four process catch pages
     case PROCESS_CATCH_TITLE_START = 'process_catch_title_start';
     case PROCESS_CATCH_TITLE_MAIN = 'process_catch_title_main';

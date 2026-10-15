@@ -1048,6 +1048,9 @@ class frontend
             $view_code_id = views::START_CODE;
         }
 
+        $url_array = $this->url_with_selected_phrase($url_array, $view_code_id, $dto, $msg_ui);
+        $id = $url_array[url_var::ID] ?? 0;
+
         // select the main object to display (object-type-aware also for a confirm view, see dbo_for_url)
         $dbo = $this->dbo_for_url($view_id, $url_array);
         // TODO Prio 2 check and review: maybe not needed any more
@@ -2613,6 +2616,35 @@ class frontend
             $back_url = [url_var::MASK => views::START_ID];
         }
         return $back_url;
+    }
+
+    /**
+     * the url with the phrase id of the word or triple that the user has selected by its name in the
+     * phrase selector of an editor, so that the editor shows that phrase next
+     *
+     * @param array $url_array the parsed url with the selected phrase name as url_var::PHRASE
+     * @param string $view_code_id the requested view; only the views::PHRASE_SELECT_VIEWS switch the phrase
+     * @param data_object $dto the request cache that is asked before the backend
+     * @param user_message_ui $msg_ui to tell the user that no phrase has the selected name
+     * @return array the url with the id of the selected phrase or the unchanged url
+     */
+    function url_with_selected_phrase(
+        array           $url_array,
+        string          $view_code_id,
+        data_object     $dto,
+        user_message_ui $msg_ui
+    ): array
+    {
+        $phr_name = (string)($url_array[url_var::PHRASE] ?? '');
+        if ($phr_name != '' and in_array($view_code_id, views::PHRASE_SELECT_VIEWS, true)) {
+            $phr = $dto->phr_lst->get_or_load_by_name($phr_name, $msg_ui);
+            // an unknown name keeps the phrase of the page, so the user sees the message and can correct it
+            if ($phr != null) {
+                $url_array[url_var::ID] = $phr->id();
+                unset($url_array[url_var::PHRASE]);
+            }
+        }
+        return $url_array;
     }
 
     /**
