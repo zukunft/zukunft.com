@@ -170,7 +170,7 @@ class phrase_list extends sandbox_list_named
      * @param user_message $msg to report a phrase name that the user needs to correct
      * @return phrase|null the phrase or null if no phrase has the name
      */
-    function get_or_load_by_name(string $name, user_message $msg): ?phrase
+    function load_or_get_by_name(string $name, user_message $msg): ?phrase
     {
         $phr = $this->get_by_name($name, $msg);
         if ($phr == null) {

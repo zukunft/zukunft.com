@@ -2637,7 +2637,7 @@ class frontend
     {
         $phr_name = (string)($url_array[url_var::PHRASE] ?? '');
         if ($phr_name != '' and in_array($view_code_id, views::PHRASE_SELECT_VIEWS, true)) {
-            $phr = $dto->phr_lst->get_or_load_by_name($phr_name, $msg_ui);
+            $phr = $dto->phr_lst->load_or_get_by_name($phr_name, $msg_ui);
             // an unknown name keeps the phrase of the page, so the user sees the message and can correct it
             if ($phr != null) {
                 $url_array[url_var::ID] = $phr->id();

@@ -188,6 +188,7 @@ class coding_rule_tests
         $t->name = 'code_rule->';
         $t->subheader('code rule html snapshots');
         $this->html_no_empty_link_tests($t);
+        $this->html_form_balance_tests($t);
         $this->html_no_duplicate_id_tests($t);
     }
 
@@ -279,6 +280,49 @@ class coding_rule_tests
         $tag = html_base::A;
         preg_match_all('/<' . $tag . '\b[^>]*>\s*<\/' . $tag . '>/', $html, $matches);
         return $matches[0];
+    }
+
+    /**
+     * every form of a rendered page is opened and closed once: a view that has a "form end" component
+     * needs a form opening title (system_form_title) and a component that renders its own form (e.g. the
+     * file selector) must not be closed again by the view, because html forms cannot nest
+     *
+     * @param test_cleanup $t the test environment
+     * @return void
+     */
+    function html_form_balance_tests(test_cleanup $t): void
+    {
+        $test_name = 'a closed form is balanced';
+        $t->assert($test_name, $this->form_balance('<form id="a"><input></form>'), 0);
+        $test_name = 'a form end without a form start is reported';
+        $t->assert($test_name, $this->form_balance('<div></div></form>'), -1);
+        $test_name = 'a form start without a form end is reported';
+        $t->assert($test_name, $this->form_balance('<form><form id="b"></form>'), 1);
+
+        $lib = new library();
+        $files_checked = 0;
+        foreach ($lib->dir_files(test_paths::WEB_RES) as $html_file) {
+            if (str_ends_with($html_file, test_files::HTML)) {
+                $files_checked++;
+                $balance = $this->form_balance(file_get_contents($html_file));
+                if ($balance != 0) {
+                    $test_name = 'form tags balanced in ' . $html_file;
+                    $t->assert($test_name, $balance, 0);
+                }
+            }
+        }
+        $test_name = 'form tags checked in ' . $files_checked . ' html files';
+        $t->assert_greater($test_name, 0, $files_checked);
+    }
+
+    /**
+     * @param string $html the html code of a page or a part of it
+     * @return int the number of form start tags minus the number of form end tags, so 0 if balanced
+     */
+    function form_balance(string $html): int
+    {
+        $tag = html_base::FORM;
+        return preg_match_all('/<' . $tag . '\b[^>]*>/', $html) - preg_match_all('/<\/' . $tag . '>/', $html);
     }
 
     /**

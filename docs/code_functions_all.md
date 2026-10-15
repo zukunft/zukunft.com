@@ -7496,8 +7496,6 @@
     \-- url_mapper - section for function url_mapper not yet defined that it should be set and get in /phrase/phrase_lis
             t.php
     \-- api_mapper - section for function api_mapper is expected to be construct and map in /phrase/phrase_list.php
-    \-- get_or_load_by_name - section for function get_or_load_by_name is expected to be set and get in /phrase/phrase_l
-            ist.php
     \-- filter_by_name_start - section for function filter_by_name_start not yet defined that it should be load in /phra
             se/phrase_list.php
     \-- chart_definitions - section for function chart_definitions not yet defined that it should be load in /phrase/phr
@@ -10190,7 +10188,7 @@
     \-- form_submit
         \-- html_base - the end of a form with the submit button, the cancel link back to the calling page and
     \-- form_input
-        \-- html_base - the end of a form with the submit button, the cancel link back to the calling page and
+        \-- html_base - a plain input field of the simple html forms e.g. the login, with its label linked to the field
     \-- form_input_password
         \-- html_base - a password input with a css-only "show password" toggle (no javascript,
                  see docs/llm/frontend.md)
@@ -10199,7 +10197,7 @@
     \-- about_page
         \-- html_base - @param user_message|Message $msg to colle
     \-- about_body
-        \-- html_base - @param user_message|Message $msg to colle
+        \-- html_base - @return string the html code of the about text without the page footer, because the about view
 \-- output device specific support functions for the pure HTML version
     \-- edit_url
         \-- html_base - converts object class name to an edit php script name
@@ -10225,9 +10223,11 @@
     \-- dsp_btn_text
         \-- html_base - redirect to the calling page after an action, so that a reload never repeats the action
     \-- dsp_err
-        \-- html_base - redirect to the calling page after an action, so that a reload never repeats the action
+        \-- html_base - display an error text to the user; use this function always for easy redesign of the error messa
+                ges
     \-- dsp_link_hist_box
-        \-- html_base - redirect to the calling page after an action, so that a reload never repeats the action
+        \-- html_base - display an error text to the user; use this function always for easy redesign of the error messa
+                ges
     \-- tab_box
         \-- html_base - a tab box that shows the given tabs side by side, the first tab active by default and the tab
     \-- tab_id

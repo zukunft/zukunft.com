@@ -569,6 +569,11 @@ class base_ui_tests
         $created_html = $html->about_page($msg_ui);
         $expected_html = $t->file(test_paths::HTML . test_paths::VIEW_FUNCTIONS . 'about.html');
         $t->assert('about', $lib->trim_html($created_html), $lib->trim_html($expected_html));
+        // the about view shows the about text inside the main element, so only the page closes the body
+        $test_name = 'the about text does not close the page';
+        $t->assert_text_not_contains($test_name, $html->about_body(), '</' . html_base::BODY . '>');
+        $test_name = '... but the about page does';
+        $t->assert_text_contains($test_name, $created_html, '</' . html_base::BODY . '>');
 
 
         $t->subheader($ts . 'selector');
@@ -639,6 +644,26 @@ class base_ui_tests
         $labelled_add = $html->form_field(url_var::NAME . '_add', msg_id::FORM_FIELD_NAME, '');
         $t->assert_text_contains($test_name, $labelled_add, 'for="' . $name_id . '_add"');
         $t->assert_text_contains($test_name, $labelled_add, 'id="' . $name_id . '_add"');
+
+        // the plain input of the simple forms (login, signup, ...) links its label to the field the same way
+        $test_name = 'form_input links the label to the input id';
+        $plain = $html->form_input(html_base::INPUT_TEXT, url_var::USERNAME_HUMAN, '', 'username or email');
+        $t->assert_text_contains($test_name, $plain, '<label for="username_or_email">username or email</label>');
+        $t->assert_text_contains($test_name, $plain, 'id="username_or_email"');
+        $t->assert_text_contains($test_name, $plain, 'name="' . url_var::USERNAME_HUMAN . '"');
+        // negative: a field without a label gets neither a label nor an id
+        $test_name = '... and a field without a label has no label tag and no id';
+        $plain_no_label = $html->form_input(html_base::INPUT_NUMBER, url_var::NUMERIC_VALUE, '3');
+        $t->assert_text_not_contains($test_name, $plain_no_label, '<label');
+        $t->assert_text_not_contains($test_name, $plain_no_label, ' id="');
+
+        // an error text is an inline text with the danger style that keeps its html e.g. the <b> of a message
+        $test_name = 'an error text is a red inline text';
+        $err_html = $html->dsp_err('data <b>may get lost</b>');
+        $t->assert($test_name, $err_html, '<span class="' . styles::TEXT_DANGER . '">data <b>may get lost</b></span>');
+        // negative: a <style> tag is a stylesheet and the browser does not show its text
+        $test_name = '... and never a style tag';
+        $t->assert_text_not_contains($test_name, $err_html, '<style');
 
 
         $t->subheader($ts . 'unit html table tests');

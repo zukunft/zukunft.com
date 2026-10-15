@@ -56,6 +56,8 @@ class styles
     const string STYLE_BORDERLESS_GREY = 'borderless_grey';
     const string TABLE_PUR = 'table';
     const string TEXT_RIGHT = 'text-right';
+    // a warning or error text shown inline to the user (see html_base::dsp_err)
+    const string TEXT_DANGER = 'text-danger';
     // a table column of the main tier is hidden on a small screen, one of the minor tier is
     // shown on a wide screen only and one of the marginal tier only on the widest screen
     // (see triples::SYSTEM_COLUMN_TIERS)

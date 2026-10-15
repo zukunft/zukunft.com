@@ -148,22 +148,28 @@
                 <form action="http://localhost/http/view.php" method="post">
                     <input type="hidden" name="ue" value="9">
                     <p>
-                        Activation key
+                        <label for="activation_key">
+                            Activation key
+                        </label>
                         <br>
-                        <input type="text" name="key" class="standard-input">
+                        <input type="text" name="key" id="activation_key" class="standard-input">
                     </p>
                     <p>
                         Leave the password empty to only confirm your email address.
                     </p>
                     <p>
-                        password
+                        <label for="password">
+                            password
+                        </label>
                         <br>
-                        <input type="password" name="uw" class="standard-input">
+                        <input type="password" name="uw" id="password" class="standard-input">
                     </p>
                     <p>
-                        re-type password
+                        <label for="re-type_password">
+                            re-type password
+                        </label>
                         <br>
-                        <input type="password" name="uwr" class="standard-input">
+                        <input type="password" name="uwr" id="re-type_password" class="standard-input">
                     </p>
                     <input type="hidden" name="token" value="5e18d78c56c5ccb645631d7e5c6657d02a2f7c579cd01d36d3f5539ba07a6c13">
                     <input type="hidden" name="m" value="14">

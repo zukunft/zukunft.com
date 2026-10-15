@@ -506,6 +506,10 @@ class system_view_ui_tests
         $expected_msg = msg_id::PASSWORD_WRONG->value;
         $test_name = 'login page notification contains password wrong message';
         $t->assert_text_contains($test_name, $login_html, $expected_msg);
+        // the label of a login field is linked to the field, so a click on the label focuses the field
+        $test_name = 'login page links the username label to its field';
+        $t->assert_text_contains($test_name, $login_html, 'for="username_or_email"');
+        $t->assert_text_contains($test_name, $login_html, 'id="username_or_email"');
 
         // optional: only active when the login password field uses the css-only show-password toggle
         // (form_input_password) instead of the native type=password field that keeps the browser auto fill
@@ -676,20 +680,23 @@ class system_view_ui_tests
         $t->subheader($ts . 'editor phrase selector');
         $t_trp = new test_triples($t);
         $phr = $t_trp->populism_solution_ui()->phrase();
-        $dto_sel = new data_object();
-        $dto_sel->phr_lst->add($phr, $msg);
+        $dto = new data_object();
+        $dto->phr_lst->add($phr, $msg);
         $sel_url = [url_var::MASK => views::TABLE_EDITOR, url_var::ID => -1, url_var::PHRASE => $phr->name()];
         $test_name = 'the selected phrase replaces the phrase of the editor';
-        $sel_url_new = $ui->url_with_selected_phrase($sel_url, views::TABLE_EDITOR, $dto_sel, $msg);
+        $sel_url_new = $ui->url_with_selected_phrase($sel_url, views::TABLE_EDITOR, $dto, $msg);
         $t->assert($test_name, $sel_url_new[url_var::ID] ?? 0, $phr->id());
         $test_name = '... and the name is not kept as an object value';
         $t->assert($test_name, array_key_exists(url_var::PHRASE, $sel_url_new), false);
+        $msg->reset();
         // negative: e.g. the phrase of a reference is not the selection of the page
         $test_name = 'the phrase of another view does not switch the page';
-        $t->assert($test_name, $ui->url_with_selected_phrase($sel_url, views::START_CODE, $dto_sel, $msg), $sel_url);
+        $t->assert($test_name, $ui->url_with_selected_phrase($sel_url, views::START_CODE, $dto, $msg), $sel_url);
+        $msg->reset();
         $test_name = 'an empty selection keeps the phrase of the editor';
         $empty_url = [url_var::MASK => views::TABLE_EDITOR, url_var::ID => -1, url_var::PHRASE => ''];
-        $t->assert($test_name, $ui->url_with_selected_phrase($empty_url, views::TABLE_EDITOR, $dto_sel, $msg), $empty_url);
+        $t->assert($test_name, $ui->url_with_selected_phrase($empty_url, views::TABLE_EDITOR, $dto, $msg), $empty_url);
+        $msg->reset();
 
         // the admin only masks (views::ADMIN_MASK_IDS) must be authorized centrally so the admin
         // content is not rendered to just anyone (see frontend::admin_mask_denied)

@@ -1893,12 +1893,30 @@ class html_base
         return $txt;
     }
 
-    // TODO Prio 0 use this function for all html input fields
-    function form_input(string $type, string $name, string $value = ''): string
+    /**
+     * a plain input field of the simple html forms e.g. the login, with its label linked to the field
+     * TODO Prio 0 use this function for all html input fields
+     * @param string $type the input type e.g. self::INPUT_TEXT
+     * @param string $name the submitted field name, which is the url var e.g. url_var::USERNAME
+     * @param string $value the pre-filled value e.g. the username after a failed signup
+     * @param string $label the translated label shown above the field, '' for a field without a label
+     * @return string the html code of the label (if given) and the input field
+     */
+    function form_input(string $type, string $name, string $value = '', string $label = ''): string
     {
-        $txt = '<' . self::INPUT . ' ' . self::TYPE . '="' . $type . '" ' . self::NAME . '="' . $name . '"';
+        $txt = '';
+        $id = '';
+        if ($label != '') {
+            // the label is linked to the field by the id (like form_field), so a click on the label focuses the field
+            $id = $this->field_id($name, $label);
+            $txt .= $this->label($label, $id) . $this->br();
+        }
+        $txt .= '<' . self::INPUT . ' ' . self::TYPE . '="' . $type . '" ' . self::NAME . '="' . $name . '"';
         if ($value != '') {
             $txt .= ' ' . self::VALUE . '="' . htmlspecialchars($value, ENT_QUOTES) . '"';
+        }
+        if ($id != '') {
+            $txt .= ' ' . self::ID . '="' . $id . '"';
         }
         $txt .= ' ' . self::CLASS_HTML . '="' . self::CLASS_INPUT . '">';
         return $txt;
@@ -1986,12 +2004,16 @@ class html_base
     {
         global $mtr;
         $result = $this->header($mtr->txt(msg_id::SYSTEM_TITLE_ABOUT), $msg, "center_form");
-
         $result .= $this->about_body();
-
+        // the about page needs no link to itself in the footer
+        $result .= $this->footer(true);
         return $result;
     }
 
+    /**
+     * @return string the html code of the about text without the page footer, because the about view
+     *                shows it inside the main element and the page adds the footer (see about_page)
+     */
     function about_body(): string
     {
         global $mtr;
@@ -2013,8 +2035,6 @@ class html_base
         $tream_img = $this->img('/src/main/resources/images/TREAM_logo.jpg', 'TREAM', 'logo-tream');
         $result .= $this->ref(def::LINK_TREAM_DEMO, $tream_img, $mtr->txt(msg_id::ABOUT_TREAM_DEMO), '', true) . '<' . self::BR . '><' . self::BR . '>';
         $result .= '</' . self::DIV . '>   ';
-        $result .= $this->footer(true);
-
         return $result;
     }
 
@@ -2226,16 +2246,14 @@ class html_base
         return $result;
     }
 
-// simply to display an error text interactively to the user; use this function always for easy redesign of the error messages
-    function dsp_err($err_text): string
+    /**
+     * display an error text to the user; use this function always for easy redesign of the error messages
+     * @param string $err_text the html code of the error text e.g. a translated message with <b> tags
+     * @return string the error text as a red inline text
+     */
+    function dsp_err(string $err_text): string
     {
-        $result = '';
-        if (self::UI_USE_BOOTSTRAP) {
-            $result .= '<style class="text-danger">' . $err_text . '</style>';
-        } else {
-            $result .= '<style color="red">' . $err_text . '</style>';
-        }
-        return $result;
+        return $this->span($err_text, styles::TEXT_DANGER);
     }
 
 // display a box with the history and the links

@@ -603,6 +603,12 @@ a:hover {
     margin: 0;
     opacity: 0;
 }
+/* the labels of the simple forms in the input section (login, signup, activation, reset) stay centered
+   above their field like the input itself; this overrides the generic ".main-container form label
+   { text-align: left }" rule, which is for the left aligned bootstrap forms */
+.main-container .search-section form label {
+    text-align: center;
+}
 /* the show-password label is an inline toggle, not a stacked field label, so keep it on the same line
    as the input; this overrides the generic ".main-container form label { display: block }" rule */
 .main-container form .password-field label {

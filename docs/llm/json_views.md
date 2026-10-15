@@ -78,7 +78,10 @@ json (e.g. `system_title` 66 times, `system_form_title` 52, `system_sub_title`
 16, `change_log` 13), from the top:
 
 1. **page titles** — the system titles and the `title_of_…_with_edit_link` types
-2. **form frame** — the hidden back stack and confirm status, the buttons, form end
+2. **form frame** — the hidden back stack and confirm status, the buttons, form end; a view
+   with a `form_end` opens its form with a `system_form_title` (never a plain `system_title`),
+   and a view whose component renders its own form (the file selector of the import) has no
+   `form_end`, because html forms cannot nest (`coding_rule_tests::html_form_balance_tests`)
 3. **layout rows** — row start, center, right, end
 4. **tabs and history** — view tab box, change log, usage, user overwrites
 5. **object names** — word, triple, verb, source, … names, aliases, symbols

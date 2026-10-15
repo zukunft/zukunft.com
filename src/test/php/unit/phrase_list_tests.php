@@ -379,7 +379,7 @@ class phrase_list_tests
         $msg_ui->reset();
         // the name of a phrase in the list is found without a backend call, e.g. the selected phrase of an editor
         $test_name = 'a phrase of the list is found by its name';
-        $phr_found = $phr_lst_ui->get_or_load_by_name(triple_names::SYSTEM_COLUMN, $msg_ui);
+        $phr_found = $phr_lst_ui->load_or_get_by_name(triple_names::SYSTEM_COLUMN, $msg_ui);
         $t->assert($test_name, $phr_found?->name(), triple_names::SYSTEM_COLUMN);
         $test_name = '... without a message';
         $t->assert($test_name, $msg_ui->is_ok(), true);
