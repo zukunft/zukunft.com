@@ -106,8 +106,9 @@ class styles
     // continues, the back button returns, and the selected tab is shown without a link
     const string PROCESS_CATCH_BUTTON_NEXT = 'btn btn-outline-success btn-space';
     const string PROCESS_CATCH_BUTTON_BACK = 'btn btn-outline-secondary btn-space';
-    // the refresh is a submit button, which gets the btn and btn-space classes from html_base::button_bs
-    const string PROCESS_CATCH_BUTTON_REFRESH = 'btn-outline-primary';
+    // the refresh is a submit button, which gets the btn class from html_base::button, but not the
+    // col-1 of html_base::button_bs, so it is as wide as its text like the next and the back button
+    const string PROCESS_CATCH_BUTTON_REFRESH = 'btn-outline-primary btn-space';
     const string PROCESS_CATCH_TAB = 'nav-link d-inline-block';
     const string PROCESS_CATCH_TAB_SELECTED = 'nav-link d-inline-block active fw-bold';
 

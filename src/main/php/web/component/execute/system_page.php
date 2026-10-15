@@ -1243,7 +1243,7 @@ class system_page extends component
      * @param string $form_name the id of the form that the inputs of the page join e.g. the code id of the page
      * @param string $msk_code_id the code id of the process catch page that is shown again
      * @param db_object|type_object|combine_named|sandbox_list|null $dbo the question phrase of the page
-     * @param array $url_arr the url vars of the page with the selected tab, which the refresh keeps
+     * @param array $url_arr the url vars of the page with the selected tab, which the refresh keeps if the user has selected one
      * @return string the html code of the button or an empty string if the component is shown on no page
      */
     function process_catch_button_refresh(
@@ -1261,8 +1261,12 @@ class system_page extends component
             $html = new html_base();
             $page_vars = $html->form_hidden(url_var::MASK, $msk_code_id);
             $page_vars .= $html->form_hidden(url_var::ID, (string)$this->process_catch_phrase_id($dbo));
-            $page_vars .= $html->form_hidden(url_var::TAB, (string)$this->process_catch_tab_selected($url_arr));
-            $button = $html->button_bs($html->esc($mtr->txt($label)), styles::PROCESS_CATCH_BUTTON_REFRESH);
+            // the tab is only kept if the user has selected one, so a page without tabs gets no tab var
+            if (array_key_exists(url_var::TAB, $url_arr)) {
+                $page_vars .= $html->form_hidden(url_var::TAB, (string)$this->process_catch_tab_selected($url_arr));
+            }
+            $button = $html->button($html->esc($mtr->txt($label)), html_base::INPUT_SUBMIT,
+                styles::PROCESS_CATCH_BUTTON_REFRESH);
             $result = $html->form_get($form_name, $page_vars . $button);
         }
         return $result;

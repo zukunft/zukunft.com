@@ -43,6 +43,9 @@ url_name: company_sheet
 name: Company sheet
 tooltip: compare two or more key figure sheets related to a company 
 
+## import / export
+
+add to the user menu in the navbar an import and an export entry that links to the import and export view (id 145 and 150)
 
 ## simple pv calc sheet
 

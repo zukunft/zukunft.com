@@ -7364,6 +7364,7 @@
             tml_base.php
     \-- nav - section for function nav not yet defined that it should be internal in /html/html_base.php
     \-- div_bs - section for function div_bs not yet defined that it should be internal in /html/html_base.php
+    \-- button - section for function button not yet defined that it should be internal in /html/html_base.php
     \-- button_bs - section for function button_bs not yet defined that it should be internal in /html/html_base.php
     \-- list_item - section for function list_item not yet defined that it should be internal in /html/html_base.php
     \-- popup_menu - section for function popup_menu not yet defined that it should be internal in /html/html_base.php
@@ -10315,6 +10316,8 @@
         \-- html_base - wrap the nav tag around html code
     \-- div_bs
         \-- html_base - wrap the div tag around html code using the bootstrap default class if no style is given
+    \-- button
+        \-- html_base - wrap the button tag around html code
     \-- button_bs
         \-- html_base - @param string $text the html code shown on the button e.g. a translated text or an icon
     \-- list_item

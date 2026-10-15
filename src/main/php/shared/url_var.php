@@ -448,6 +448,9 @@ class url_var
         self::DISPLAY_LIST_ORDER_SUB_SUB,
         // the selected tab is a render mode like the list display
         self::TAB,
+        // the place of the geolocator is an assumption of the process catch page and never a field of
+        // the question phrase, so the refresh of the page must not turn the url into a form submit
+        self::PLACE,
         // the search and the scope select what a page shows e.g. one top level key of the settings,
         // so they never turn the url into a form submit of an object without an id
         self::PATTERN,

@@ -38,6 +38,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_page;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -149,6 +150,13 @@ class process_catch_ui_tests
         // negative: the refresh never changes data, so it posts no submit key that would start a save
         $test_name = '... without a data change submit';
         $t->assert_text_not_contains($test_name, $refresh_html, 'name="' . url_var::POST_SUBMIT . '"');
+        $test_name = '... and as wide as its text like the next and the back button';
+        $t->assert_text_not_contains($test_name, $refresh_html, html_base::BS_BTN);
+        // negative: a page without a selected tab keeps no tab
+        $test_name = 'the refresh of a page without a selected tab sends no tab';
+        $refresh_html = $page->process_catch_button_refresh(msg_id::PROCESS_CATCH_BUTTON_REFRESH,
+            views::PROCESS_CATCH_DETAIL, views::PROCESS_CATCH_DETAIL, $question, []);
+        $t->assert_text_not_contains($test_name, $refresh_html, 'name="' . url_var::TAB . '"');
         // negative: a component without a page e.g. a preview has no page to show again
         $test_name = 'a refresh button without a page shows nothing';
         $t->assert($test_name, $page->process_catch_button_refresh(msg_id::PROCESS_CATCH_BUTTON_REFRESH,
@@ -169,6 +177,11 @@ class process_catch_ui_tests
         $test_name = 'a new page shows an empty place';
         $geo_html = $page->geolocator(msg_id::GEOLOCATOR_LABEL, views::PROCESS_CATCH_DETAIL, []);
         $t->assert_text_not_contains($test_name, $geo_html, 'value="');
+        // the refresh with a place must load the question phrase like a plain page call and not
+        // like a form submit of the phrase (see frontend::url_object_values)
+        $test_name = 'the place and the tab are control vars';
+        $t->assert_true($test_name, in_array(url_var::PLACE, url_var::CONTROL_VARS)
+            and in_array(url_var::TAB, url_var::CONTROL_VARS));
 
         // the detail page with the second tab selected as one snapshot of all process catch renderers
         $detail_html = $page->text_explain(msg_id::PROCESS_CATCH_EXPLAIN_DETAIL);

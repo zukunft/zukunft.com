@@ -2649,8 +2649,9 @@ class html_base
     private function field_id(string $url_id, string $label): string
     {
         if ($label != '') {
-            // a label may contain spaces ("Plural reverse"); an html id may not, so use '_'
-            $id = str_replace(' ', '_', strtolower($label));
+            // a label may contain spaces ("Plural reverse") or signs ("place name / post code"); an html
+            // id may not contain spaces and is easier to select without signs, so each run of them is one '_'
+            $id = trim(preg_replace('/[^\p{L}\p{N}_-]+/u', '_', strtolower($label)), '_');
             $sep = strpos($url_id, '_');
             if ($sep !== false) {
                 $id .= substr($url_id, $sep);
@@ -2834,8 +2835,8 @@ class html_base
 
     /**
      * a form that only shows a page again with the entered values e.g. the refresh of a process catch
-     * page; the inputs of other components join it by their form attribute, so it has no session token
-     * and no named submit, because it never changes data
+     * page; the inputs of other components join it by their form attribute; it keeps the user id of
+     * form_user, so the user stays logged in, but it has no named submit, because it never changes data
      *
      * @param string $form_name the id of the form that the inputs of the page name in their form attribute
      * @param string $txt the inner html code of the form e.g. the hidden page vars and the submit button
@@ -3240,7 +3241,7 @@ class html_base
      * @param string $class additional CSS classes for the button
      * @return string the wrapped button code
      */
-    private function button(string $txt, string $typ, string $class = ''): string
+    function button(string $txt, string $typ, string $class = ''): string
     {
         if ($class != '') {
             $class = self::CLASS_BUTTON . ' ' . $class;

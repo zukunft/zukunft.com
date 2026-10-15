@@ -210,7 +210,7 @@ triples of the question phrase (`process_catch_fields.json`, see
 | `process_catch_tab` | one tab: the selected tab as text, every other tab as a link to the same page with the tab url var (`url_var::TAB`) |
 | `process_catch_button_next` | a link to the next page with the same question phrase (`views::PROCESS_CATCH_NEXT`) |
 | `process_catch_button_back` | a link to the page before with the same question phrase (`views::PROCESS_CATCH_BACK`) |
-| `process_catch_button_refresh` | a form with the page, the question phrase and the tab as hidden fields and a submit with the `ui_msg_code_id` text, so the page is shown again with the entered values |
+| `process_catch_button_refresh` | a form with the page, the question phrase and the selected tab (only if the url selects one) as hidden fields and a submit with the `ui_msg_code_id` text, so the page is shown again with the entered values |
 | `geolocator` | a text input for a place name or postal code with the `ui_msg_code_id` as label and `url_var::PLACE` as name; it joins the refresh form by its `form` attribute, and the `row` phrase of the component is the value phrase of the place (`place of user`) |
 
 A tab and the fields of the tab are linked by the **`code_id`** of the
