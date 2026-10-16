@@ -137,6 +137,11 @@ class paths
     // to test the read only settings page with the tree of the system configuration; not below
     // views_by_id, because the system view test removes every snapshot there that it has not written
     const string CONFIG_PAGE = 'config_page' . DIRECTORY_SEPARATOR;
+    // the page of a use case as generated from its json next to the hand made sample page
+    // (<name>_sample.html) that shows the target layout, so that the developer can compare the
+    // two; not below views_by_object, because the view test removes every snapshot there that it
+    // has not written, which would delete the sample
+    const string USE_CASES = 'use_cases' . DIRECTORY_SEPARATOR;
     // to test if all system view based on the id are fine including more static views like the about page
     const string VIEWS_BY_ID = self::HTML . 'views_by_id' . DIRECTORY_SEPARATOR;
     const string WEB = 'web' . DIRECTORY_SEPARATOR;

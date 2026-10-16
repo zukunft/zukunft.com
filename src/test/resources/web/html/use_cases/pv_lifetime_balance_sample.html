@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PV lifetime CO₂ balance - zukunft.com</title>
+    <!-- the same stylesheets as every page of the pod, so the navbar, the footer and the colors match -->
+    <link rel="stylesheet" href="/external_lib/bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="/external_lib/fontawesome/css/all.css">
+    <link rel="stylesheet" href="/main/resources/style/style_html.css">
+    <style>
+/* Layout: two-column tool - inputs/assumptions left, result table right; stacks on phones.
+   The colors are the zukunft.com grey (#9ea09e) and blues (#385eb7 links, #274b8f dark,
+   #6b86c2 changed, #b9c6d6 lines) of style_html.css; the only other color is the bootstrap
+   danger red for a negative balance */
+:root{
+  --bg:#ffffff; --panel:#f9fafb; --fg:#274b8f; --muted:#9ea09e; --line:#b9c6d6; --line-soft:#dee2e6;
+  --accent:#385eb7; --accent-soft:#dbe4f5; --sun:#6b86c2; --good:#274b8f; --bad:#dc3545;
+}
+.wrap{width:100%;max-width:1180px;margin:0 auto;padding:0 0 28px;display:grid;gap:24px;text-align:left;color:var(--fg);line-height:1.5}
+.wrap header h4{margin:0;color:var(--fg)}
+.wrap header p{margin:6px 0 0;color:var(--muted);max-width:70ch}
+.grid{display:grid;grid-template-columns:minmax(0,340px) minmax(0,1fr);gap:24px;align-items:start}
+@media (max-width:860px){.grid{grid-template-columns:minmax(0,1fr)}}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:18px;display:grid;gap:14px;min-width:0}
+.wrap h2{font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0;font-weight:600}
+.field{display:grid;gap:4px}
+.field label{font-size:.88rem;font-weight:500}
+.field .hint{font-size:.76rem;color:var(--muted)}
+/* the input row keeps its own flex layout: the bootstrap .row rule would make every child full width */
+.wrap .row{display:flex;flex-wrap:nowrap;gap:8px;align-items:center;margin:0}
+.wrap .row > *{width:auto;max-width:none;flex-shrink:1;padding:0}
+.wrap .row > input{flex:1 1 auto}
+.wrap input,.wrap select{font:inherit;font-size:.95rem;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:7px 9px;width:100%;min-width:0}
+.wrap input:focus-visible,.wrap select:focus-visible,.wrap summary:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.unit{font-size:.8rem;color:var(--muted);white-space:nowrap;min-width:3.5em}
+.inputs .field label{color:var(--accent)}
+.wrap details summary{cursor:pointer;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.wrap details[open] summary{margin-bottom:12px}
+.wrap details .field{margin-top:10px}
+/* the opened monthly details keep the spacing of the panel between the table, the notes and the sources */
+.wrap details .more{display:grid;gap:18px}
+.tag{font-size:.68rem;padding:1px 6px;border-radius:4px;border:1px solid var(--line);color:var(--muted);margin-left:6px;font-weight:400}
+.tag.m{color:var(--accent);border-color:var(--accent)}
+.tag.a{color:var(--sun);border-color:var(--sun)}
+.scroll{overflow-x:auto}
+.wrap table{border-collapse:collapse;width:100%;font-size:.9rem}
+.wrap th,.wrap td{padding:8px 10px;border-bottom:1px solid var(--line-soft);text-align:left;vertical-align:baseline}
+.wrap th{font-size:.74rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.wrap td.n,.wrap th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.wrap tr.sec td{background:var(--accent-soft);font-weight:600;font-size:.8rem;letter-spacing:.04em;text-transform:uppercase;color:var(--fg)}
+.wrap tr.key td{font-weight:600}
+.wrap td .sub{display:block;font-size:.76rem;color:var(--muted);font-weight:400}
+.pos{color:var(--good)} .neg{color:var(--bad)}
+.notes{font-size:.82rem;color:var(--muted);display:grid;gap:6px;max-width:80ch}
+.notes p{margin:0}
+.notes strong{color:var(--fg)}
+.src ol{margin:0;padding-left:20px;font-size:.82rem;display:grid;gap:4px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+    </style>
+</head>
+<body>
+
+<!-- the zukunft.com navbar as rendered by html_base::header: logo, search, language and user menu -->
+<nav class="navbar site-header fixed-top">
+    <a href="/http/view.php" title="zukunft.com" class="navbar-brand">
+        <img src="/main/resources/images/ZUKUNFT_logo.svg" alt="zukunft.com" class="logo-nav">
+    </a>
+    <form action="/http/view.php" class="d-flex align-items-center my-2 my-lg-0 flex-grow-1 mx-3">
+        <input type="hidden" name="m" value="107">
+        <label for="kp" class="visually-hidden">Search</label>
+        <input class="form-control me-2" type="search" name="pattern" id="kp" placeholder="word or formula" style="min-width: 40vw; max-width: 800px;">
+        <button class="btn btn-outline-primary" type="submit">Get numbers</button>
+    </form>
+    <div class="col-md-2">
+        <ul class="nav navbar-nav">
+            <li class="active">
+                <details class="lang-menu">
+                    <summary><i class="fas fa-globe"></i></summary>
+                    <ul>
+                        <li><a href="/http/view.php?q=en">English</a></li>
+                        <li><a href="/http/view.php?q=en_us">US English</a></li>
+                        <li><a href="/http/view.php?q=de" title="German">Deutsch</a></li>
+                        <li><a href="/http/view.php?q=fr" title="French">Français</a></li>
+                        <li><a href="/http/view.php?q=es" title="Spanish">Español</a></li>
+                        <li><a href="/http/view.php?q=zh" title="Chinese">漢語</a></li>
+                        <li><a href="/http/view.php?q=ar" title="Arabic">العربية</a></li>
+                        <li><a href="/http/view.php?m=language_select">... more</a></li>
+                    </ul>
+                </details>
+                <details class="user-menu">
+                    <summary><i class="fas fa-user-circle"></i></summary>
+                    <ul>
+                        <li><a href="/http/view.php?m=11">Log in</a></li>
+                        <li><a href="/http/view.php?m=13">Signup</a></li>
+                        <li><a href="/settings">Settings</a></li>
+                    </ul>
+                </details>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<main class="main-container">
+<div class="wrap">
+  <header>
+    <h4>PV lifetime CO₂ balance</h4>
+    <p>Rooftop photovoltaic installation in the Swiss plateau: electricity produced over the lifetime and greenhouse-gas savings against the Swiss consumer mix and against a replacement (import) mix. Edit the four inputs; all assumptions are open below them.</p>
+  </header>
+
+  <div class="grid">
+    <aside class="panel">
+      <div class="inputs" style="display:grid;gap:14px">
+        <h2>Inputs</h2>
+        <div class="field">
+          <label for="kwp">System size</label>
+          <div class="row"><input id="kwp" type="number" min="0.5" step="0.5" value="10"><span class="unit">kWp</span></div>
+        </div>
+        <div class="field">
+          <label for="orient">Orientation</label>
+          <select id="orient">
+            <option value="1.00">South, ~30° tilt</option>
+            <option value="0.95">South-east / south-west, ~30°</option>
+            <option value="0.85" selected>East-west split, flat tilt</option>
+            <option value="0.82">East or west only, ~30°</option>
+            <option value="0.88">Flat (0°)</option>
+            <option value="0.59">North, ~30°</option>
+          </select>
+          <span class="hint" id="orientHint">Yield factor relative to south 30°</span>
+        </div>
+        <div class="field">
+          <label for="batt">Battery capacity (usable)</label>
+          <div class="row"><input id="batt" type="number" min="0" step="1" value="10"><span class="unit">kWh</span></div>
+        </div>
+        <div class="field">
+          <label for="cons">Local electricity consumption</label>
+          <div class="row"><input id="cons" type="number" min="0" step="100" value="4500"><span class="unit">kWh/a</span></div>
+        </div>
+        <!-- placement test only: the save does nothing yet -->
+        <button class="btn btn-outline-primary" type="button">Save</button>
+      </div>
+
+      <details>
+        <summary>Assumptions</summary>
+        <div class="field">
+          <label for="yield">Specific yield, south 30° <span class="tag m">measured</span></label>
+          <div class="row"><input id="yield" type="number" step="10" value="976"><span class="unit">kWh/kWp·a</span></div>
+          <span class="hint">Lifetime average incl. 0.7 %/a degradation [1]</span>
+        </div>
+        <div class="field">
+          <label for="life">Lifetime <span class="tag m">measured</span></label>
+          <div class="row"><input id="life" type="number" step="1" value="30"><span class="unit">a</span></div>
+          <span class="hint">Reference lifetime used in the LCA [1]</span>
+        </div>
+        <div class="field">
+          <label for="pvlca">PV life-cycle emissions <span class="tag m">measured</span></label>
+          <div class="row"><input id="pvlca" type="number" step="0.1" value="35.8"><span class="unit">g/kWh</span></div>
+          <span class="hint">Swiss 3 kWp mono-Si pitched roof, 2023 update [1]; converted to a fixed amount per kWp</span>
+        </div>
+        <div class="field">
+          <label for="mixA">Swiss consumer mix, annual <span class="tag m">measured</span></label>
+          <div class="row"><input id="mixA" type="number" step="1" value="128"><span class="unit">g/kWh</span></div>
+          <span class="hint">2018 consumer mix, low voltage [2]</span>
+        </div>
+        <div class="field">
+          <label for="mixC">Replacement mix</label>
+          <select id="mixC">
+            <option value="523" selected>European residual mix — 523 g/kWh [4]</option>
+            <option value="395">ENTSO-E production mix 2022 — ~395 g/kWh (midpoint of 350–440) [3]</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="dayshare">Load share during PV hours <span class="tag a">assumed 0.6</span></label>
+          <div class="row"><input id="dayshare" type="number" step="0.05" min="0" max="1" value="0.35"><span class="unit">share</span></div>
+          <span class="hint">Household; raise for home office or a heat pump running at noon</span>
+        </div>
+        <div class="field">
+          <label for="eta">Battery round-trip efficiency <span class="tag a">assumed 0.7</span></label>
+          <div class="row"><input id="eta" type="number" step="0.01" value="0.90"><span class="unit">share</span></div>
+        </div>
+        <div class="field">
+          <label for="bco2">Battery production emissions <span class="tag a">assumed 0.5</span></label>
+          <div class="row"><input id="bco2" type="number" step="5" value="100"><span class="unit">kg/kWh</span></div>
+          <span class="hint">Literature spans ~37–212 kg CO₂-eq per kWh capacity [5][6]</span>
+        </div>
+        <div class="field">
+          <label for="blife">Battery lifetime <span class="tag a">assumed 0.6</span></label>
+          <div class="row"><input id="blife" type="number" step="1" value="15"><span class="unit">a</span></div>
+        </div>
+      </details>
+    </aside>
+
+    <section class="panel" style="gap:18px">
+      <h2>Main results over the lifetime</h2>
+      <div class="scroll">
+        <table id="res">
+          <thead><tr><th>Result</th><th class="n">Lifetime</th><th class="n">Per year</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+
+      <!-- the monthly table, the notes and the sources are hidden by default like the assumptions -->
+      <details>
+        <summary>Monthly details and sources</summary>
+        <div class="more">
+      <h2>Monthly energy balance, average year</h2>
+      <div class="scroll">
+        <table id="mon">
+          <thead><tr><th>Month</th><th class="n">PV kWh</th><th class="n">Load kWh</th><th class="n">Direct</th><th class="n">Battery</th><th class="n">Export</th><th class="n">Grid import</th><th class="n">CH mix g/kWh</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+
+      <div class="notes">
+        <p><strong>How the CO₂ saving is counted.</strong> Every PV kilowatt-hour that reaches a consumer, used at home or exported, is assumed to displace one kilowatt-hour of grid electricity. Production emissions of the modules and the battery are subtracted. Battery losses reduce the delivered energy.</p>
+        <p><strong>Seasonal Swiss mix.</strong> PV produces mostly in summer, when the Swiss consumer mix is cleanest (about 70–90 g/kWh in May–August, 140–165 g/kWh in winter) [3]. Weighting each month's PV output by that month's mix gives a lower saving than the annual average.</p>
+        <p><strong>Self-consumption model.</strong> Monthly resolution: direct use is capped at the load during PV hours, the battery does at most one full cycle per day and only covers the evening and night load. Real day-to-day weather swings lower the battery share somewhat. Monthly PV and load profiles are assumed typical values for the Zurich region (confidence 0.6).</p>
+      </div>
+
+      <div class="src">
+        <h2 style="margin-bottom:8px">Sources</h2>
+        <ol>
+          <li><a href="https://iea-pvps.org/wp-content/uploads/2024/09/Task-12-Fact-Sheet-Stucki.pdf" target="_blank" rel="noopener">Stucki, Götz, de Wild-Scholten, Frischknecht: IEA PVPS Task 12 fact sheet, LCA of PV electricity, 2023 update</a></li>
+          <li><a href="https://www.bafu.admin.ch/dam/bafu/de/dokumente/klima/fachinfo-daten/Umweltbilanz-Strommix-Schweiz-2018-v2.01.pdf" target="_blank" rel="noopener">Krebs &amp; Frischknecht (treeze): Umweltbilanz Strommixe Schweiz 2018, for BAFU</a></li>
+          <li><a href="https://www.stadt-zuerich.ch/content/dam/web/de/aktuell/publikationen/2025/studien-netto-null/oekobilanz-monatliche-strombereitstellung-studie.pdf" target="_blank" rel="noopener">Frischknecht (treeze): Ökobilanz der monatlichen Strombereitstellung Schweiz und Europa, Stadt Zürich 2025 (monthly means 2018–2022)</a></li>
+          <li><a href="https://www.swissolar.ch/01_wissen/swissolar-publikationen/branchen-faktenblatt_pv_ch_f.pdf" target="_blank" rel="noopener">Swissolar: Fiche d'information Photovoltaïque, Feb 2024 (European residual mix)</a></li>
+          <li><a href="https://ideas.repec.org/a/bla/inecol/v29y2025i1p113-128.html" target="_blank" rel="noopener">Comparative LCA of Li-ion, Na-ion and solid-state cells, J. Industrial Ecology 29 (2025): 58–92 kg CO₂-eq/kWh cell, LFP down to ~37</a></li>
+          <li><a href="https://solar.htw-berlin.de/wp-content/uploads/WENIGER-2019-Sind-Solarstromspeicher-Klimaschuetzer.pdf" target="_blank" rel="noopener">HTW Berlin (Weniger et al.) 2019: Sind Solarstromspeicher Klimaschützer? (212 kg CO₂-eq/kWh)</a></li>
+          <li><a href="https://gruenes.haus/?p=485" target="_blank" rel="noopener">Orientation yield table, 30° tilt: S 100 %, SE/SW 95 %, E/W 82 %, N 59 %</a></li>
+        </ol>
+      </div>
+        </div>
+      </details>
+    </section>
+  </div>
+</div>
+</main>
+
+<!-- the zukunft.com footer as rendered by html_base::footer -->
+<footer class="site-footer">
+    <p>
+        <a href="/http/about.php">About</a>
+        &middot;
+        <a href="/http/privacy_policy.html">Privacy Policy</a>
+        &middot;
+        All structured data is available under the
+        <a href="https://creativecommons.org/publicdomain/zero/1.0/" title="CC0 License">Creative Commons CC0</a>
+        Licence unless otherwise stated and the
+        <a href="https://github.com/zukunft/zukunft.com">program code</a>
+        of this version 0.0.3 under the
+        <a href="https://www.gnu.org/licenses/agpl.html">AGPL3</a>
+        Licence.
+    </p>
+</footer>
+
+<script>
+const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const DAYS = [31,28,31,30,31,30,31,31,30,31,30,31];
+// Share of annual PV output per month, Swiss plateau (assumed, confidence 0.6)
+const PV_SHARE = [2.5,4.5,8,11,12.5,13,13.5,12,10,7,3.5,2.5];
+// Share of annual household load per month (assumed, confidence 0.6)
+const LOAD_SHARE = [10,9,9,8,7.5,7,7,7,7.5,8.5,9.5,10];
+// Swiss consumer mix, 5-year monthly means 2018–2022, g CO2-eq/kWh [3]
+const CH_MONTH = [150.8,146.9,141.4,100.0,69.1,79.5,87.7,88.8,129.6,134.6,163.7,152.8];
+// Reference LCA yield and lifetime used to convert g/kWh into kg per kWp [1]
+const REF_YIELD = 976;
+const REF_LIFE = 30;
+
+function num(id) {
+  const raw = document.getElementById(id).value;
+  const value = parseFloat(raw);
+  let result = 0;
+  if (Number.isFinite(value)) {
+    result = value;
+  }
+  return result;
+}
+
+function fmt(value, digits) {
+  const options = { minimumFractionDigits: digits, maximumFractionDigits: digits };
+  const result = value.toLocaleString("de-CH", options);
+  return result;
+}
+
+function tonnes(kg) {
+  const t = kg / 1000;
+  const result = fmt(t, 1) + " t";
+  return result;
+}
+
+function simulate(p, battKwh) {
+  const months = [];
+  const sum = { pv: 0, load: 0, direct: 0, battIn: 0, battOut: 0, export: 0, grid: 0, chWeighted: 0 };
+  const annualPv = p.kwp * p.yield * p.factor;
+  for (let m = 0; m < 12; m++) {
+    const pv = annualPv * PV_SHARE[m] / 100;
+    const load = p.cons * LOAD_SHARE[m] / 100;
+    const dayLoad = load * p.dayshare;
+    const nightLoad = load - dayLoad;
+    const direct = Math.min(pv, dayLoad);
+    const surplus = pv - direct;
+    const cycleLimit = battKwh * DAYS[m];
+    const nightLimit = nightLoad / p.eta;
+    const battIn = Math.min(surplus, cycleLimit, nightLimit);
+    const battOut = battIn * p.eta;
+    const exported = surplus - battIn;
+    const grid = load - direct - battOut;
+    const delivered = direct + battOut + exported;
+    months.push({ pv, load, direct, battOut, exported, grid, mix: CH_MONTH[m] });
+    sum.pv += pv;
+    sum.load += load;
+    sum.direct += direct;
+    sum.battIn += battIn;
+    sum.battOut += battOut;
+    sum.export += exported;
+    sum.grid += grid;
+    sum.chWeighted += delivered * CH_MONTH[m];
+  }
+  sum.delivered = sum.direct + sum.battOut + sum.export;
+  const result = { months, sum };
+  return result;
+}
+
+function readParams() {
+  const p = {
+    kwp: num("kwp"),
+    factor: num("orient"),
+    batt: num("batt"),
+    cons: num("cons"),
+    yield: num("yield"),
+    life: num("life"),
+    pvlca: num("pvlca"),
+    mixA: num("mixA"),
+    mixC: num("mixC"),
+    dayshare: Math.min(Math.max(num("dayshare"), 0), 1),
+    eta: Math.min(Math.max(num("eta"), 0.01), 1),
+    bco2: num("bco2"),
+    blife: Math.max(num("blife"), 1)
+  };
+  return p;
+}
+
+function row(label, sub, life, year, cls) {
+  const subHtml = sub ? `<span class="sub">${sub}</span>` : "";
+  const klass = cls ? ` class="${cls}"` : "";
+  const html = `<tr${klass}><td>${label}${subHtml}</td><td class="n">${life}</td><td class="n">${year}</td></tr>`;
+  return html;
+}
+
+function section(label) {
+  const html = `<tr class="sec"><td colspan="3">${label}</td></tr>`;
+  return html;
+}
+
+function signed(kg, perYear) {
+  const cls = kg >= 0 ? "pos" : "neg";
+  const text = perYear ? fmt(kg, 0) + " kg" : tonnes(kg);
+  const html = `<span class="${cls}">${text}</span>`;
+  return html;
+}
+
+function render() {
+  const p = readParams();
+  const run = simulate(p, p.batt);
+  const base = simulate(p, 0);
+  const s = run.sum;
+  const L = p.life;
+
+  // Embodied emissions: PV as fixed kg per kWp from the reference LCA
+  const pvKgPerKwp = p.pvlca * REF_YIELD * REF_LIFE / 1000;
+  const pvEmb = pvKgPerKwp * p.kwp;
+  const battUnits = p.batt > 0 ? Math.ceil(L / p.blife) : 0;
+  const battEmb = p.batt * p.bco2 * battUnits;
+  const emb = pvEmb + battEmb;
+
+  const lifePv = s.pv * L;
+  const lifeDelivered = s.delivered * L;
+  const pvIntensity = lifePv > 0 ? pvEmb * 1000 / lifePv : 0;
+
+  const grossA = lifeDelivered * p.mixA / 1000;
+  const grossB = s.chWeighted * L / 1000;
+  const grossC = lifeDelivered * p.mixC / 1000;
+  const netA = grossA - emb;
+  const netB = grossB - emb;
+  const netC = grossC - emb;
+  const mixBeff = s.delivered > 0 ? s.chWeighted / s.delivered : 0;
+
+  const payback = (gross) => {
+    const perYear = gross / L;
+    let text = "never";
+    if (perYear > 0) {
+      text = fmt(emb / perYear, 1) + " a";
+    }
+    return text;
+  };
+
+  const selfUse = s.direct + s.battOut;
+  const selfRate = s.pv > 0 ? (s.direct + s.battIn) / s.pv * 100 : 0;
+  const autarky = s.load > 0 ? selfUse / s.load * 100 : 0;
+  const baseNetA = base.sum.delivered * L * p.mixA / 1000 - pvEmb;
+  const battEffect = netA - baseNetA;
+
+  let h = "";
+  h += section("Electricity");
+  h += row("PV production", `${fmt(p.kwp,1)} kWp × ${fmt(p.yield,0)} kWh/kWp × factor ${fmt(p.factor,2)}`, fmt(lifePv,0)+" kWh", fmt(s.pv,0)+" kWh", "key");
+  h += row("Used directly", "", fmt(s.direct*L,0)+" kWh", fmt(s.direct,0)+" kWh");
+  h += row("Used via battery", "after losses", fmt(s.battOut*L,0)+" kWh", fmt(s.battOut,0)+" kWh");
+  h += row("Exported to grid", "", fmt(s.export*L,0)+" kWh", fmt(s.export,0)+" kWh");
+  h += row("Battery losses", "", fmt((s.battIn-s.battOut)*L,0)+" kWh", fmt(s.battIn-s.battOut,0)+" kWh");
+  h += row("Grid import still needed", "", fmt(s.grid*L,0)+" kWh", fmt(s.grid,0)+" kWh");
+  h += row("Self-consumption rate", "share of PV used on site", "", fmt(selfRate,0)+" %");
+  h += row("Autarky", "share of load covered by PV", "", fmt(autarky,0)+" %", "key");
+
+  h += section("Production emissions");
+  h += row("PV system", `${fmt(pvKgPerKwp,0)} kg CO₂-eq/kWp → ${fmt(pvIntensity,1)} g/kWh at this site`, tonnes(pvEmb), fmt(pvEmb/L,0)+" kg");
+  h += row("Battery", battUnits ? `${battUnits} × ${fmt(p.batt,0)} kWh × ${fmt(p.bco2,0)} kg/kWh` : "no battery", tonnes(battEmb), fmt(battEmb/L,0)+" kg");
+
+  h += section("CO₂-eq saved, net of production emissions");
+  h += row(`vs. Swiss consumer mix, annual (${fmt(p.mixA,0)} g/kWh)`, `payback ${payback(grossA)}`, signed(netA,false), signed(netA/L,true), "key");
+  h += row(`vs. Swiss consumer mix, monthly (${fmt(mixBeff,0)} g/kWh PV-weighted)`, `payback ${payback(grossB)}`, signed(netB,false), signed(netB/L,true), "key");
+  h += row(`vs. replacement mix (${fmt(p.mixC,0)} g/kWh)`, `payback ${payback(grossC)}`, signed(netC,false), signed(netC/L,true), "key");
+  h += row("Effect of the battery", "vs. same PV without battery, annual Swiss mix", signed(battEffect,false), signed(battEffect/L,true));
+
+  document.querySelector("#res tbody").innerHTML = h;
+
+  let mh = "";
+  run.months.forEach((m, i) => {
+    mh += `<tr><td>${MONTHS[i]}</td><td class="n">${fmt(m.pv,0)}</td><td class="n">${fmt(m.load,0)}</td><td class="n">${fmt(m.direct,0)}</td><td class="n">${fmt(m.battOut,0)}</td><td class="n">${fmt(m.exported,0)}</td><td class="n">${fmt(m.grid,0)}</td><td class="n">${fmt(m.mix,0)}</td></tr>`;
+  });
+  mh += `<tr class="key"><td>Year</td><td class="n">${fmt(s.pv,0)}</td><td class="n">${fmt(s.load,0)}</td><td class="n">${fmt(s.direct,0)}</td><td class="n">${fmt(s.battOut,0)}</td><td class="n">${fmt(s.export,0)}</td><td class="n">${fmt(s.grid,0)}</td><td class="n">${fmt(mixBeff,0)}</td></tr>`;
+  document.querySelector("#mon tbody").innerHTML = mh;
+
+  const sel = document.getElementById("orient");
+  document.getElementById("orientHint").textContent = `Yield factor ${fmt(p.factor,2)} relative to south 30° [7]`;
+  return sel;
+}
+
+document.querySelectorAll("input,select").forEach((el) => {
+  el.addEventListener("input", render);
+});
+render();
+</script>
+
+</body></html>

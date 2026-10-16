@@ -1,0 +1,2032 @@
+{
+  "version": "0.0.3",
+  "data_version": "0.0.1",
+  "time": "2026-10-16 01:40:00",
+  "user": "timon",
+  "selection": [
+    "example PV installation"
+  ],
+  "description": "Use case: the main results of a rooftop photovoltaic installation in Switzerland over its lifetime, the electricity produced and the CO2-eq saved against the Swiss consumption mix and against a replacement mix, as shown on the page 'PV lifetime CO2 balance'. The inputs are the system size in kWp, the orientation as a yield factor, the usable battery capacity and the annual household consumption; the worked example is 10 kWp east-west, 10 kWh battery, 4500 kWh. Every delivered kWh, used at home or exported, is assumed to displace one kWh of the reference mix; the embodied emission of the PV system (IEA PVPS 2023 reference, converted to a fixed amount per kWp) and of the batteries bought over the lifetime is subtracted. The CO2-eq saving is stated three times: with the annual Swiss consumption mix of 2018 (KBOB), with the monthly Swiss consumption mix 2018 to 2022 (treeze) weighted by the PV electricity delivered in each month, which is lower because PV produces in summer when the Swiss mix is cleanest, and with the European residual mix (Swissolar) as the replacement mix. The monthly dispatch of the page (direct use capped by the day share of the consumption, battery charge capped by one cycle a day and the night consumption) needs a minimum function, so its two annual sums and the PV-weighted mix are stored as modelled values; all other results are formulas of the file and reproduced by the calc-validation. The inputs that are not measured carry the word assumed and a confidence.",
+  "words": [
+    {
+      "name": "photovoltaic"
+    },
+    {
+      "name": "PV",
+      "description": "the usual acronym for photovoltaic"
+    },
+    {
+      "name": "Switzerland"
+    },
+    {
+      "name": "Europe"
+    },
+    {
+      "name": "electricity",
+      "description": "energy from the flow of electric charge"
+    },
+    {
+      "name": "mix",
+      "description": "the combination of generation technologies behind one kWh of electricity, weighted by their share"
+    },
+    {
+      "name": "consumption"
+    },
+    {
+      "name": "production",
+      "description": "the making of a good or an energy, here the electricity generated within a country"
+    },
+    {
+      "name": "residual",
+      "description": "what remains after the tracked part is taken out; for electricity the mix that is left after all guarantees of origin have been assigned"
+    },
+    {
+      "name": "emission"
+    },
+    {
+      "name": "avoided",
+      "description": "not caused, because something else has taken its place"
+    },
+    {
+      "name": "gross"
+    },
+    {
+      "name": "net"
+    },
+    {
+      "name": "CO2-eq",
+      "description": "carbon dioxide equivalent: the amount of CO2 with the same global warming effect as the mix of climate gases released",
+      "refs": [
+        {
+          "name": "Global warming potential",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "cycle"
+    },
+    {
+      "name": "life"
+    },
+    {
+      "name": "lifetime",
+      "description": "the years a system is operated before it is dismantled"
+    },
+    {
+      "name": "embodied",
+      "description": "built into a product during its making, for an emission the greenhouse gases released by the production, transport and disposal of the product",
+      "refs": [
+        {
+          "name": "Embodied carbon",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "intensity"
+    },
+    {
+      "name": "payback",
+      "description": "the time until the saving has repaid the initial cost; for emissions the operating years until the avoided emission equals the embodied emission"
+    },
+    {
+      "name": "gram"
+    },
+    {
+      "name": "kg"
+    },
+    {
+      "name": "kWh"
+    },
+    {
+      "name": "kWp",
+      "description": "kilowatt peak: the rated power of a PV system under standard test conditions",
+      "refs": [
+        {
+          "name": "Nominal power (photovoltaic)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "year"
+    },
+    {
+      "name": "month"
+    },
+    {
+      "name": "annual"
+    },
+    {
+      "name": "mean"
+    },
+    {
+      "name": "percent"
+    },
+    {
+      "name": "factor"
+    },
+    {
+      "name": "share"
+    },
+    {
+      "name": "yield"
+    },
+    {
+      "name": "capacity"
+    },
+    {
+      "name": "installation"
+    },
+    {
+      "name": "example"
+    },
+    {
+      "name": "household"
+    },
+    {
+      "name": "battery",
+      "description": "an electrochemical store; here a stationary lithium-ion home storage system charged by the PV surplus",
+      "refs": [
+        {
+          "name": "Home energy storage",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "charge"
+    },
+    {
+      "name": "discharge"
+    },
+    {
+      "name": "round-trip",
+      "description": "charge and discharge taken together"
+    },
+    {
+      "name": "efficiency"
+    },
+    {
+      "name": "count"
+    },
+    {
+      "name": "direct"
+    },
+    {
+      "name": "use"
+    },
+    {
+      "name": "export"
+    },
+    {
+      "name": "import"
+    },
+    {
+      "name": "grid"
+    },
+    {
+      "name": "delivered",
+      "description": "handed to a consumer, at home or through the grid"
+    },
+    {
+      "name": "self-consumption"
+    },
+    {
+      "name": "autarky",
+      "description": "the share of the own consumption that is covered by the own production",
+      "refs": [
+        {
+          "name": "Energy independence",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "orientation"
+    },
+    {
+      "name": "south"
+    },
+    {
+      "name": "south-east"
+    },
+    {
+      "name": "south-west"
+    },
+    {
+      "name": "east"
+    },
+    {
+      "name": "west"
+    },
+    {
+      "name": "north"
+    },
+    {
+      "name": "horizontal"
+    },
+    {
+      "name": "day",
+      "description": "here the hours with PV production"
+    },
+    {
+      "name": "2018"
+    },
+    {
+      "name": "2022"
+    },
+    {
+      "name": "2023"
+    },
+    {
+      "name": "assumed"
+    },
+    {
+      "name": "modelled"
+    },
+    {
+      "name": "confidence"
+    },
+    {
+      "name": "January"
+    },
+    {
+      "name": "February"
+    },
+    {
+      "name": "March"
+    },
+    {
+      "name": "April"
+    },
+    {
+      "name": "May"
+    },
+    {
+      "name": "June"
+    },
+    {
+      "name": "July"
+    },
+    {
+      "name": "August"
+    },
+    {
+      "name": "September"
+    },
+    {
+      "name": "October"
+    },
+    {
+      "name": "November"
+    },
+    {
+      "name": "December"
+    }
+  ],
+  "triples": [
+    {
+      "from": "PV",
+      "verb": "is an acronym for",
+      "to": "photovoltaic"
+    },
+    {
+      "from": "PV",
+      "verb": "in",
+      "to": "Switzerland",
+      "description": "photovoltaic electricity generated in Switzerland, the subject of this use case; the table of this phrase compares its climate benefit with and without the displacement concept"
+    },
+    {
+      "name": "PV installation",
+      "from": "installation",
+      "verb": "of",
+      "to": "PV",
+      "description": "a photovoltaic system on a building: the modules, the inverter and, if present, the battery"
+    },
+    {
+      "name": "example PV installation",
+      "from": "PV installation",
+      "verb": "kind of",
+      "to": "example",
+      "description": "the default installation of the page: 10 kWp east-west on a flat roof in the Swiss plateau, a 10 kWh battery and a household that uses 4500 kWh a year; every input can be changed, the numbers of this phrase are the worked example"
+    },
+    {
+      "name": "consumption mix",
+      "from": "mix",
+      "verb": "of",
+      "to": "consumption",
+      "description": "the average mix of the electricity consumed in a country including the imports; the reference of the classic comparison without the displacement concept"
+    },
+    {
+      "name": "production mix",
+      "from": "mix",
+      "verb": "of",
+      "to": "production",
+      "description": "the average mix of the electricity generated within a country, without imports and exports"
+    },
+    {
+      "name": "residual mix",
+      "from": "mix",
+      "verb": "kind of",
+      "to": "residual",
+      "description": "the European mix that remains after all guarantees of origin have been taken out, so the generation a consumer without a certificate gets; used on the page as the replacement mix, the second reference next to the Swiss consumption mix"
+    },
+    {
+      "name": "PV-weighted consumption mix",
+      "from": "consumption mix",
+      "verb": "weighted by",
+      "to": "PV",
+      "description": "the Swiss consumption mix averaged over the twelve months with the PV electricity delivered in each month as the weight; lower than the annual mean, because PV produces most in summer when the Swiss mix is cleanest"
+    },
+    {
+      "name": "life cycle",
+      "from": "cycle",
+      "verb": "of",
+      "to": "life",
+      "description": "the whole life of a product from the raw materials over the use to the disposal, the scope of a life cycle assessment",
+      "refs": [
+        {
+          "name": "Life-cycle assessment",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "embodied emission",
+      "from": "emission",
+      "verb": "kind of",
+      "to": "embodied",
+      "description": "the greenhouse gases released to make, install and dispose of a system, before it has delivered any electricity"
+    },
+    {
+      "name": "embodied intensity",
+      "from": "intensity",
+      "verb": "kind of",
+      "to": "embodied",
+      "description": "the embodied emission per unit of rated power"
+    },
+    {
+      "name": "PV embodied emission",
+      "from": "embodied emission",
+      "verb": "of",
+      "to": "PV"
+    },
+    {
+      "name": "PV embodied intensity",
+      "from": "embodied intensity",
+      "verb": "of",
+      "to": "PV",
+      "description": "the embodied emission of one kWp of PV, derived from the life cycle emission per kWh of the reference system times its reference yield and lifetime"
+    },
+    {
+      "name": "battery embodied emission",
+      "from": "embodied emission",
+      "verb": "of",
+      "to": "battery"
+    },
+    {
+      "name": "avoided emission",
+      "from": "emission",
+      "verb": "can be",
+      "to": "avoided",
+      "description": "the emission of the reference mix minus the emission of the new source, so the climate benefit of one kWh of the new source"
+    },
+    {
+      "name": "gross avoided emission",
+      "from": "avoided emission",
+      "verb": "kind of",
+      "to": "gross",
+      "description": "the emission of the reference mix that the delivered PV electricity displaces, before the embodied emission of the installation is subtracted"
+    },
+    {
+      "name": "net avoided emission",
+      "from": "avoided emission",
+      "verb": "kind of",
+      "to": "net",
+      "description": "the gross avoided emission minus the embodied emission of the PV system and the battery: the lifetime climate benefit of the installation"
+    },
+    {
+      "name": "emission payback",
+      "from": "payback",
+      "verb": "of",
+      "to": "emission",
+      "description": "the years of operation until the avoided emission has repaid the embodied emission"
+    },
+    {
+      "from": "gram",
+      "verb": "per",
+      "to": "kWh",
+      "type": "measure_unit",
+      "description": "the unit of the emission intensity of electricity"
+    },
+    {
+      "from": "kg",
+      "verb": "per",
+      "to": "kWh",
+      "type": "measure_unit",
+      "description": "the unit of the production emission of a battery per kWh of storage capacity"
+    },
+    {
+      "from": "kg",
+      "verb": "per",
+      "to": "kWp",
+      "type": "measure_unit",
+      "description": "the unit of the embodied emission of a PV system per kWp of rated power"
+    },
+    {
+      "from": "kWh",
+      "verb": "per",
+      "to": "kWp",
+      "type": "measure_unit"
+    },
+    {
+      "name": "PV yield",
+      "from": "yield",
+      "verb": "of",
+      "to": "PV"
+    },
+    {
+      "name": "yield factor",
+      "from": "factor",
+      "verb": "of",
+      "to": "yield",
+      "description": "the annual yield of a panel orientation relative to the best orientation, south with 30 degree tilt"
+    },
+    {
+      "name": "east-west",
+      "from": "east",
+      "verb": "and",
+      "to": "west",
+      "description": "half the modules facing east, half facing west, the usual layout on a flat roof"
+    },
+    {
+      "name": "PV capacity",
+      "from": "capacity",
+      "verb": "of",
+      "to": "PV",
+      "description": "the rated power of the PV modules in kWp"
+    },
+    {
+      "name": "PV production",
+      "from": "production",
+      "verb": "of",
+      "to": "PV",
+      "description": "the electricity the PV modules generate"
+    },
+    {
+      "name": "lifetime production",
+      "from": "PV production",
+      "verb": "of",
+      "to": "lifetime",
+      "description": "the PV production summed over the lifetime of the installation"
+    },
+    {
+      "name": "battery capacity",
+      "from": "capacity",
+      "verb": "of",
+      "to": "battery",
+      "description": "the usable storage capacity of the battery in kWh"
+    },
+    {
+      "name": "battery charge",
+      "from": "charge",
+      "verb": "of",
+      "to": "battery",
+      "description": "the PV surplus that goes into the battery"
+    },
+    {
+      "name": "battery discharge",
+      "from": "discharge",
+      "verb": "of",
+      "to": "battery",
+      "description": "the electricity the battery gives back to the house, the charge minus the losses"
+    },
+    {
+      "name": "round-trip efficiency",
+      "from": "efficiency",
+      "verb": "kind of",
+      "to": "round-trip",
+      "description": "the share of the charged energy that comes back out of the battery"
+    },
+    {
+      "name": "battery count",
+      "from": "count",
+      "verb": "of",
+      "to": "battery",
+      "description": "how many batteries are bought over the lifetime of the installation, the lifetime divided by the battery lifetime rounded up"
+    },
+    {
+      "name": "battery lifetime",
+      "from": "lifetime",
+      "verb": "of",
+      "to": "battery"
+    },
+    {
+      "name": "battery production emission",
+      "from": "emission",
+      "verb": "of",
+      "to": "battery",
+      "description": "the greenhouse gases released to produce one kWh of battery storage capacity"
+    },
+    {
+      "name": "household consumption",
+      "from": "consumption",
+      "verb": "kind of",
+      "to": "household",
+      "description": "the electricity the household uses in a year, the local consumption that the PV electricity can replace first"
+    },
+    {
+      "name": "direct use",
+      "from": "use",
+      "verb": "kind of",
+      "to": "direct",
+      "description": "the PV electricity used in the house in the hour it is produced"
+    },
+    {
+      "name": "grid import",
+      "from": "import",
+      "verb": "of",
+      "to": "grid",
+      "description": "the electricity the household still buys from the grid"
+    },
+    {
+      "name": "delivered electricity",
+      "from": "electricity",
+      "verb": "kind of",
+      "to": "delivered",
+      "description": "the PV electricity that reaches a consumer: used directly, taken from the battery after the losses, or exported; every delivered kWh is assumed to displace one kWh of the reference mix"
+    },
+    {
+      "name": "lifetime delivered electricity",
+      "from": "delivered electricity",
+      "verb": "of",
+      "to": "lifetime"
+    },
+    {
+      "name": "self-consumption share",
+      "from": "share",
+      "verb": "of",
+      "to": "self-consumption",
+      "description": "the share of the PV production that is used on site, directly or via the battery"
+    },
+    {
+      "name": "day share",
+      "from": "share",
+      "verb": "of",
+      "to": "day",
+      "description": "the share of the household consumption that falls into the hours with PV production"
+    },
+    {
+      "name": "monthly share",
+      "from": "share",
+      "verb": "of",
+      "to": "month",
+      "description": "the share of an annual amount that falls into one month"
+    },
+    {
+      "from": "2018",
+      "verb": "to",
+      "to": "2022"
+    }
+  ],
+  "formulas": [
+    {
+      "name": "PV production by orientation",
+      "description": "the annual PV production: the rated power times the specific yield of the best orientation times the yield factor of the real orientation",
+      "expression": "\"PV production\" = \"PV capacity\" * \"PV yield\" * \"yield factor\"",
+      "assigned": [
+        "PV capacity",
+        "PV yield",
+        "yield factor"
+      ]
+    },
+    {
+      "name": "lifetime production formula",
+      "description": "the PV production over the whole lifetime; the degradation of the modules is already part of the lifetime average yield",
+      "expression": "\"lifetime production\" = \"PV production\" * \"lifetime\"",
+      "assigned": [
+        "PV production",
+        "lifetime"
+      ]
+    },
+    {
+      "name": "battery discharge formula",
+      "description": "what the battery gives back: the charge times the round-trip efficiency",
+      "expression": "\"battery discharge\" = \"battery charge\" * \"round-trip efficiency\"",
+      "assigned": [
+        "battery charge",
+        "round-trip efficiency"
+      ]
+    },
+    {
+      "name": "export formula",
+      "description": "the PV production that is neither used directly nor stored goes to the grid",
+      "expression": "\"export\" = \"PV production\" - \"direct use\" - \"battery charge\"",
+      "assigned": [
+        "PV production",
+        "direct use",
+        "battery charge"
+      ]
+    },
+    {
+      "name": "grid import formula",
+      "description": "the consumption not covered by direct use and battery discharge is bought from the grid",
+      "expression": "\"grid import\" = \"household consumption\" - \"direct use\" - \"battery discharge\"",
+      "assigned": [
+        "household consumption",
+        "direct use",
+        "battery discharge"
+      ]
+    },
+    {
+      "name": "delivered electricity formula",
+      "description": "the PV electricity that reaches a consumer, so the production minus the battery losses",
+      "expression": "\"delivered electricity\" = \"direct use\" + \"battery discharge\" + \"export\"",
+      "assigned": [
+        "direct use",
+        "battery discharge",
+        "export"
+      ]
+    },
+    {
+      "name": "lifetime delivered electricity formula",
+      "expression": "\"lifetime delivered electricity\" = \"delivered electricity\" * \"lifetime\"",
+      "assigned": [
+        "delivered electricity",
+        "lifetime"
+      ]
+    },
+    {
+      "name": "self-consumption share by dispatch",
+      "description": "the share of the production used on site; the battery charge counts in full, because the losses happen on site too",
+      "expression": "\"self-consumption share\" = ( \"direct use\" + \"battery charge\" ) / \"PV production\"",
+      "assigned": [
+        "direct use",
+        "battery charge",
+        "PV production"
+      ]
+    },
+    {
+      "name": "autarky formula",
+      "description": "the share of the household consumption covered by the own PV electricity",
+      "expression": "\"autarky\" = ( \"direct use\" + \"battery discharge\" ) / \"household consumption\"",
+      "assigned": [
+        "direct use",
+        "battery discharge",
+        "household consumption"
+      ]
+    },
+    {
+      "name": "PV embodied intensity formula",
+      "description": "turns the life cycle emission per kWh of the reference system into a fixed amount per kWp: the emission per kWh is spread over the reference yield and lifetime, so a site with a lower yield has the same embodied emission and a higher emission per kWh; the division by 1000 converts gram to kg",
+      "expression": "\"PV embodied intensity\" = \"PV in Switzerland\" * \"PV yield\" * \"lifetime\" / 1000",
+      "assigned": [
+        "PV in Switzerland",
+        "PV yield",
+        "lifetime"
+      ]
+    },
+    {
+      "name": "PV embodied emission formula",
+      "expression": "\"PV embodied emission\" = \"PV embodied intensity\" * \"PV capacity\"",
+      "assigned": [
+        "PV embodied intensity",
+        "PV capacity"
+      ]
+    },
+    {
+      "name": "battery embodied emission formula",
+      "description": "the production emission of all batteries bought over the lifetime",
+      "expression": "\"battery embodied emission\" = \"battery capacity\" * \"battery production emission\" * \"battery count\"",
+      "assigned": [
+        "battery capacity",
+        "battery production emission",
+        "battery count"
+      ]
+    },
+    {
+      "name": "gross avoided emission by consumption mix",
+      "description": "the emission of the Swiss consumption mix that the delivered PV electricity displaces over the lifetime; one formula per reference mix, because the mix is the operand; the division by 1000 converts gram to kg",
+      "expression": "\"gross avoided emission\" = \"lifetime delivered electricity\" * \"consumption mix\" / 1000",
+      "assigned": [
+        "lifetime delivered electricity",
+        "consumption mix"
+      ]
+    },
+    {
+      "name": "gross avoided emission by PV-weighted consumption mix",
+      "description": "the same with the Swiss consumption mix weighted by the monthly PV delivery",
+      "expression": "\"gross avoided emission\" = \"lifetime delivered electricity\" * \"PV-weighted consumption mix\" / 1000",
+      "assigned": [
+        "lifetime delivered electricity",
+        "PV-weighted consumption mix"
+      ]
+    },
+    {
+      "name": "gross avoided emission by residual mix",
+      "description": "the same with the European residual mix as the replacement mix",
+      "expression": "\"gross avoided emission\" = \"lifetime delivered electricity\" * \"residual mix\" / 1000",
+      "assigned": [
+        "lifetime delivered electricity",
+        "residual mix"
+      ]
+    },
+    {
+      "name": "net avoided emission formula",
+      "description": "the gross avoided emission minus the embodied emission of the PV system and the battery; the reference mix is selected by the context",
+      "expression": "\"net avoided emission\" = \"gross avoided emission\" - \"PV embodied emission\" - \"battery embodied emission\"",
+      "assigned": [
+        "gross avoided emission",
+        "PV embodied emission",
+        "battery embodied emission"
+      ]
+    },
+    {
+      "name": "emission payback formula",
+      "description": "the operating years until the gross avoided emission equals the embodied emission, assuming an even avoided emission per year",
+      "expression": "\"emission payback\" = ( \"PV embodied emission\" + \"battery embodied emission\" ) / \"gross avoided emission\" * \"lifetime\"",
+      "assigned": [
+        "gross avoided emission",
+        "PV embodied emission",
+        "battery embodied emission",
+        "lifetime"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "name": "IEA PVPS Task 12 fact sheet 2023",
+      "description": "Stucki M., Götz M., de Wild-Scholten M., Frischknecht R.: Ökobilanz von Strom aus PV-Anlagen, Aktualisierung der Daten für das Jahr 2023. IEA PVPS Task 12 fact sheet, 2024. Reference system: 3 kWp mono-crystalline pitched roof system in Switzerland, 976 kWh/kWp annual yield including a linear degradation of 0.7 percent per year, 30 years lifetime, 35.8 g CO2-eq per kWh AC (modules 20.2, inverter 9.9, rest 5.8).",
+      "url": "https://iea-pvps.org/wp-content/uploads/2024/09/Task-12-Fact-Sheet-Stucki.pdf"
+    },
+    {
+      "name": "KBOB energy systems 2022",
+      "description": "Ramseier L., Frischknecht R. (treeze Ltd.): Umweltkennwerte und Primärenergiefaktoren von Energiesystemen, UVEK Ökobilanzdatenbestand DQRv2:2022, for KBOB, BAFU and AHB, Uster, 9 March 2022. Table 'Elektrizität, Bezug via Netz' gives the greenhouse gas emissions per MJ of electricity for the Swiss mixes of 2018 (CH-Verbrauchermix 0.035, CH-Produktionsmix 0.009, CH-Lieferantenmix HKN 0.015 kg CO2-eq/MJ) and for photovoltaic electricity (Fotovoltaik 0.013 kg CO2-eq/MJ); the mixes are documented in Krebs & Frischknecht (2020) and Frischknecht et al. (2020), Umweltbilanz Strommixe Schweiz 2018, BAFU.",
+      "url": "https://www.ecobau.ch/resources/uploads/Oekobilanzdaten/Hintergrundberichte/KBOB_BAFU_AHB_2022_Energiesysteme_v1_0.pdf"
+    },
+    {
+      "name": "treeze monthly electricity mixes 2025",
+      "description": "Frischknecht R. (treeze Ltd.): Ökobilanz der monatlichen Strombereitstellung Schweiz und Europa, for the Amt für Hochbauten der Stadt Zürich, Uster, 4 June 2025. Table 5.1: monthly greenhouse gas emissions of the Swiss consumer mix at low voltage 2018 to 2022 and the mean of the five years; chapter 6: the monthly European production mix 2022 varies between about 350 (May) and 440 (September) g CO2-eq per kWh.",
+      "url": "https://www.stadt-zuerich.ch/content/dam/web/de/aktuell/publikationen/2025/studien-netto-null/oekobilanz-monatliche-strombereitstellung-studie.pdf"
+    },
+    {
+      "name": "Swissolar PV fact sheet 2024",
+      "description": "Swissolar: Fiche d'information Photovoltaïque, édition février 2024. Footnote 2 names the reference mixes of the CO2 saving: Swiss consumer mix 128 g CO2-eq per kWh and European residual mix 523 g CO2-eq per kWh, after treeze, Ökobilanz Strom aus Photovoltaikanlagen, Factsheet 1.0, Update 2020.",
+      "url": "https://www.swissolar.ch/01_wissen/swissolar-publikationen/branchen-faktenblatt_pv_ch_f.pdf"
+    },
+    {
+      "name": "Lithium-ion cell LCA comparison 2025",
+      "description": "Comparative life cycle assessment of lithium-ion, sodium-ion, and solid-state battery cells for electric vehicles. Journal of Industrial Ecology 29(1):113-128, 2025. Cradle-to-gate production of lithium-ion cells emits about 58 to 92 kg CO2-eq per kWh of cell capacity, optimised LFP cells about 37 kg; the figure covers the cells only, not the housing, inverter and control of a home storage system.",
+      "url": "https://ideas.repec.org/a/bla/inecol/v29y2025i1p113-128.html"
+    },
+    {
+      "name": "HTW Berlin solar storage climate 2019",
+      "description": "Weniger J., Orth N., Böhme N., Quaschning V. (HTW Berlin): Sind Solarstromspeicher Klimaschützer? 2019. Uses 212 kg CO2-eq per kWh of battery capacity for the production of a lithium home storage system, the upper end of the literature.",
+      "url": "https://solar.htw-berlin.de/wp-content/uploads/WENIGER-2019-Sind-Solarstromspeicher-Klimaschuetzer.pdf"
+    },
+    {
+      "name": "gruenes.haus tilt and orientation table",
+      "description": "Janßen K.: Photovoltaik-Neigungswinkel: Tabelle und optimale Dachneigung. gruenes.haus. Annual yield relative to south with 30 degree tilt at 30 degree tilt: south 100, south-east or south-west 95, east or west 82, north 59 percent; flat roof without tilt about 88, east-west with flat tilt about 85 percent. A German installer table, so the figures are indicative for the Swiss plateau.",
+      "url": "https://gruenes.haus/?p=485"
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "example PV installation",
+        "PV capacity",
+        "kWp",
+        "assumed"
+      ],
+      "number": "10",
+      "description": "the system size, the first input of the page; 10 kWp is a typical single family roof"
+    },
+    {
+      "words": [
+        "example PV installation",
+        "battery capacity",
+        "kWh",
+        "assumed"
+      ],
+      "number": "10",
+      "description": "the usable battery capacity, the third input of the page; set it to 0 for an installation without battery"
+    },
+    {
+      "words": [
+        "example PV installation",
+        "household consumption",
+        "annual",
+        "kWh",
+        "assumed"
+      ],
+      "number": "4500",
+      "description": "the local electricity consumption, the fourth input of the page; 4500 kWh is a typical Swiss family household without heat pump or electric car"
+    },
+    {
+      "words": [
+        "yield factor",
+        "south",
+        "percent"
+      ],
+      "number": "1",
+      "source": "gruenes.haus tilt and orientation table",
+      "description": "the best case, the reference of the factor"
+    },
+    {
+      "words": [
+        "yield factor",
+        "south-east",
+        "percent"
+      ],
+      "number": "0.95",
+      "source": "gruenes.haus tilt and orientation table",
+      "description": "30 degree tilt facing south-east"
+    },
+    {
+      "words": [
+        "yield factor",
+        "south-west",
+        "percent"
+      ],
+      "number": "0.95",
+      "source": "gruenes.haus tilt and orientation table",
+      "description": "30 degree tilt facing south-west"
+    },
+    {
+      "words": [
+        "yield factor",
+        "east",
+        "percent"
+      ],
+      "number": "0.82",
+      "source": "gruenes.haus tilt and orientation table",
+      "description": "30 degree tilt facing east"
+    },
+    {
+      "words": [
+        "yield factor",
+        "west",
+        "percent"
+      ],
+      "number": "0.82",
+      "source": "gruenes.haus tilt and orientation table",
+      "description": "30 degree tilt facing west"
+    },
+    {
+      "words": [
+        "yield factor",
+        "north",
+        "percent"
+      ],
+      "number": "0.59",
+      "source": "gruenes.haus tilt and orientation table",
+      "description": "30 degree tilt facing north"
+    },
+    {
+      "words": [
+        "yield factor",
+        "horizontal",
+        "percent"
+      ],
+      "number": "0.88",
+      "source": "gruenes.haus tilt and orientation table",
+      "description": "flat roof without tilt"
+    },
+    {
+      "words": [
+        "yield factor",
+        "east-west",
+        "percent"
+      ],
+      "number": "0.85",
+      "source": "gruenes.haus tilt and orientation table",
+      "description": "half east, half west with a flat tilt of 10 to 15 degree, the usual flat roof layout; the orientation of the example installation, the second input of the page"
+    },
+    {
+      "words": [
+        "PV yield",
+        "annual",
+        "kWh per kWp",
+        "2023"
+      ],
+      "number": "976",
+      "source": "IEA PVPS Task 12 fact sheet 2023",
+      "description": "the lifetime average annual yield of the reference system, a pitched roof facing south in Switzerland, including the linear degradation of 0.7 percent per year"
+    },
+    {
+      "words": [
+        "PV installation",
+        "lifetime",
+        "year"
+      ],
+      "number": "30",
+      "source": "IEA PVPS Task 12 fact sheet 2023",
+      "description": "the reference lifetime of the life cycle assessment"
+    },
+    {
+      "words": [
+        "PV in Switzerland",
+        "life cycle",
+        "CO2-eq",
+        "gram per kWh",
+        "2023"
+      ],
+      "number": "35.8",
+      "source": "IEA PVPS Task 12 fact sheet 2023",
+      "description": "life cycle emission of one kWh AC from a 3 kWp mono-crystalline pitched roof system in Switzerland with the module technology of 2023; the 2018 figure of KBOB is 46.8, see the use case PV in Switzerland"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "electricity",
+        "consumption mix",
+        "life cycle",
+        "CO2-eq",
+        "gram per kWh",
+        "2018"
+      ],
+      "number": "126",
+      "source": "KBOB energy systems 2022",
+      "description": "the average Swiss consumption mix of 2018 incl. the imports per hour (table Elektrizität, Bezug via Netz, CH-Verbrauchermix: 0.035 kg CO2-eq/MJ times 3.6 MJ per kWh); exact to about 2 g per kWh, the BAFU report gives 128.0 before the rounding per MJ"
+    },
+    {
+      "words": [
+        "Europe",
+        "electricity",
+        "residual mix",
+        "life cycle",
+        "CO2-eq",
+        "gram per kWh"
+      ],
+      "number": "523",
+      "source": "Swissolar PV fact sheet 2024",
+      "description": "the European residual mix that Swissolar uses as the replacement mix for the CO2 saving of PV; the European production mix 2022 of treeze is lower, 350 to 440 g per month"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "electricity",
+        "consumption mix",
+        "January",
+        "2018 to 2022",
+        "mean",
+        "CO2-eq",
+        "gram per kWh"
+      ],
+      "number": "150.8",
+      "source": "treeze monthly electricity mixes 2025",
+      "description": "monthly mean of the five years 2018 to 2022 at low voltage, table 5.1; the twelve values are the base of the PV-weighted consumption mix"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "electricity",
+        "consumption mix",
+        "February",
+        "2018 to 2022",
+        "mean",
+        "CO2-eq",
+        "gram per kWh"
+      ],
+      "number": "146.9",
+      "source": "treeze monthly electricity mixes 2025"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "electricity",
+        "consumption mix",
+        "March",
+        "2018 to 2022",
+        "mean",
+        "CO2-eq",
+        "gram per kWh"
+      ],
+      "number": "141.4",
+      "source": "treeze monthly electricity mixes 2025"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "electricity",
+        "consumption mix",
+        "April",
+        "2018 to 2022",
+        "mean",
+        "CO2-eq",
+        "gram per kWh"
+      ],
+      "number": "100",
+      "source": "treeze monthly electricity mixes 2025"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "electricity",
+        "consumption mix",
+        "May",
+        "2018 to 2022",
+        "mean",
+        "CO2-eq",
+        "gram per kWh"
+      ],
+      "number": "69.1",
+      "source": "treeze monthly electricity mixes 2025"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "electricity",
+        "consumption mix",
+        "June",
+        "2018 to 2022",
+        "mean",
+        "CO2-eq",
+        "gram per kWh"
+      ],
+      "number": "79.5",
+      "source": "treeze monthly electricity mixes 2025"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "electricity",
+        "consumption mix",
+        "July",
+        "2018 to 2022",
+        "mean",
+        "CO2-eq",
+        "gram per kWh"
+      ],
+      "number": "87.7",
+      "source": "treeze monthly electricity mixes 2025"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "electricity",
+        "consumption mix",
+        "August",
+        "2018 to 2022",
+        "mean",
+        "CO2-eq",
+        "gram per kWh"
+      ],
+      "number": "88.8",
+      "source": "treeze monthly electricity mixes 2025"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "electricity",
+        "consumption mix",
+        "September",
+        "2018 to 2022",
+        "mean",
+        "CO2-eq",
+        "gram per kWh"
+      ],
+      "number": "129.6",
+      "source": "treeze monthly electricity mixes 2025"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "electricity",
+        "consumption mix",
+        "October",
+        "2018 to 2022",
+        "mean",
+        "CO2-eq",
+        "gram per kWh"
+      ],
+      "number": "134.6",
+      "source": "treeze monthly electricity mixes 2025"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "electricity",
+        "consumption mix",
+        "November",
+        "2018 to 2022",
+        "mean",
+        "CO2-eq",
+        "gram per kWh"
+      ],
+      "number": "163.7",
+      "source": "treeze monthly electricity mixes 2025"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "electricity",
+        "consumption mix",
+        "December",
+        "2018 to 2022",
+        "mean",
+        "CO2-eq",
+        "gram per kWh"
+      ],
+      "number": "152.8",
+      "source": "treeze monthly electricity mixes 2025"
+    },
+    {
+      "words": [
+        "example PV installation",
+        "day share",
+        "household consumption",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.35",
+      "description": "the share of the household consumption that falls into the hours with PV production; a household where nobody is at home during the day, higher with home office or a heat pump running at noon"
+    },
+    {
+      "words": [
+        "example PV installation",
+        "day share",
+        "household consumption",
+        "assumed",
+        "confidence",
+        "percent"
+      ],
+      "number": "0.6",
+      "description": "a rough split, the hourly profile of a household is well known but varies a lot between households"
+    },
+    {
+      "words": [
+        "battery",
+        "round-trip efficiency",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.9",
+      "description": "the usual system efficiency of a lithium-ion home storage incl. the inverter losses"
+    },
+    {
+      "words": [
+        "battery",
+        "round-trip efficiency",
+        "assumed",
+        "confidence",
+        "percent"
+      ],
+      "number": "0.7",
+      "description": "manufacturers state 90 to 95 percent for the cells, measured systems reach 80 to 92 percent"
+    },
+    {
+      "words": [
+        "battery",
+        "battery production emission",
+        "kg per kWh",
+        "assumed"
+      ],
+      "number": "100",
+      "description": "the middle of the literature: cells alone 37 to 92 kg per kWh, a complete home storage system in the HTW study 212 kg per kWh"
+    },
+    {
+      "words": [
+        "battery",
+        "battery production emission",
+        "assumed",
+        "confidence",
+        "percent"
+      ],
+      "number": "0.5",
+      "description": "the published figures span a factor of five, so the middle is a guess"
+    },
+    {
+      "words": [
+        "battery",
+        "battery lifetime",
+        "year",
+        "assumed"
+      ],
+      "number": "15",
+      "description": "a lithium-ion home storage with one cycle a day lasts 10 to 20 years"
+    },
+    {
+      "words": [
+        "battery",
+        "battery lifetime",
+        "assumed",
+        "confidence",
+        "percent"
+      ],
+      "number": "0.6"
+    },
+    {
+      "words": [
+        "example PV installation",
+        "battery count",
+        "assumed"
+      ],
+      "number": "2",
+      "description": "the lifetime of 30 years divided by the battery lifetime of 15 years, rounded up: the first battery and one replacement"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "PV production",
+        "monthly share",
+        "January",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.03",
+      "description": "the share of the annual PV production that falls into the month, a typical profile for the Swiss plateau with winter fog; the twelve shares sum to 1"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "PV production",
+        "monthly share",
+        "February",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.05"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "PV production",
+        "monthly share",
+        "March",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.08"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "PV production",
+        "monthly share",
+        "April",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.11"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "PV production",
+        "monthly share",
+        "May",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.13"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "PV production",
+        "monthly share",
+        "June",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.13"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "PV production",
+        "monthly share",
+        "July",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.14"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "PV production",
+        "monthly share",
+        "August",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.12"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "PV production",
+        "monthly share",
+        "September",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.1"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "PV production",
+        "monthly share",
+        "October",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.07"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "PV production",
+        "monthly share",
+        "November",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.04"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "PV production",
+        "monthly share",
+        "December",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.03"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "PV production",
+        "monthly share",
+        "assumed",
+        "confidence",
+        "percent"
+      ],
+      "number": "0.6",
+      "description": "the seasonal shape is well known from PVGIS, the exact shares depend on the place and the year"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "household consumption",
+        "monthly share",
+        "January",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.1",
+      "description": "the share of the annual household consumption that falls into the month, more in winter for light and heating pumps; the twelve shares sum to 1"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "household consumption",
+        "monthly share",
+        "February",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.09"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "household consumption",
+        "monthly share",
+        "March",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.09"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "household consumption",
+        "monthly share",
+        "April",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.08"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "household consumption",
+        "monthly share",
+        "May",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.08"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "household consumption",
+        "monthly share",
+        "June",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.07"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "household consumption",
+        "monthly share",
+        "July",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.07"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "household consumption",
+        "monthly share",
+        "August",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.07"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "household consumption",
+        "monthly share",
+        "September",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.08"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "household consumption",
+        "monthly share",
+        "October",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.09"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "household consumption",
+        "monthly share",
+        "November",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.1"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "household consumption",
+        "monthly share",
+        "December",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.1"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "household consumption",
+        "monthly share",
+        "assumed",
+        "confidence",
+        "percent"
+      ],
+      "number": "0.6"
+    },
+    {
+      "words": [
+        "example PV installation",
+        "direct use",
+        "annual",
+        "kWh",
+        "modelled"
+      ],
+      "number": "1575",
+      "description": "monthly dispatch of the page: in each month the direct use is the smaller of the PV production and the day share of the consumption, the battery charge is the smallest of the surplus, one full battery cycle per day and the night consumption divided by the round-trip efficiency; this needs a minimum function that the zukunft.com formulas do not have, so the annual sum is stored as a modelled value"
+    },
+    {
+      "words": [
+        "example PV installation",
+        "battery charge",
+        "annual",
+        "kWh",
+        "modelled"
+      ],
+      "number": "2470.86",
+      "description": "the annual sum of the monthly battery charge of the dispatch described at the direct use"
+    },
+    {
+      "words": [
+        "example PV installation",
+        "PV-weighted consumption mix",
+        "2018 to 2022",
+        "mean",
+        "CO2-eq",
+        "gram per kWh",
+        "modelled"
+      ],
+      "number": "105.83",
+      "description": "the sum over the twelve months of the delivered PV electricity times the monthly Swiss consumption mix, divided by the annual delivered electricity; a weighted mean of the twelve monthly values above with the monthly dispatch of the page as the weight"
+    }
+  ],
+  "calc-validation": [
+    {
+      "context": [
+        "example PV installation",
+        "PV capacity",
+        "kWp",
+        "assumed",
+        "PV yield",
+        "annual",
+        "kWh per kWp",
+        "2023",
+        "yield factor",
+        "east-west",
+        "percent"
+      ],
+      "formula": "PV production by orientation",
+      "words": [
+        "example PV installation",
+        "PV production",
+        "annual",
+        "kWh"
+      ],
+      "number": "8296"
+    },
+    {
+      "context": [
+        "example PV installation",
+        "PV production",
+        "annual",
+        "kWh",
+        "PV installation",
+        "lifetime",
+        "year"
+      ],
+      "formula": "lifetime production formula",
+      "words": [
+        "example PV installation",
+        "lifetime production",
+        "kWh"
+      ],
+      "number": "248880"
+    },
+    {
+      "context": [
+        "example PV installation",
+        "battery charge",
+        "annual",
+        "kWh",
+        "modelled",
+        "battery",
+        "round-trip efficiency",
+        "percent",
+        "assumed"
+      ],
+      "formula": "battery discharge formula",
+      "words": [
+        "example PV installation",
+        "battery discharge",
+        "annual",
+        "kWh"
+      ],
+      "number": "2223.77"
+    },
+    {
+      "context": [
+        "example PV installation",
+        "PV production",
+        "annual",
+        "kWh",
+        "direct use",
+        "battery charge",
+        "modelled"
+      ],
+      "formula": "export formula",
+      "words": [
+        "example PV installation",
+        "export",
+        "annual",
+        "kWh"
+      ],
+      "number": "4250.14"
+    },
+    {
+      "context": [
+        "example PV installation",
+        "household consumption",
+        "annual",
+        "kWh",
+        "assumed",
+        "direct use",
+        "modelled",
+        "battery discharge"
+      ],
+      "formula": "grid import formula",
+      "words": [
+        "example PV installation",
+        "grid import",
+        "annual",
+        "kWh"
+      ],
+      "number": "701.23"
+    },
+    {
+      "context": [
+        "example PV installation",
+        "direct use",
+        "annual",
+        "kWh",
+        "modelled",
+        "battery discharge",
+        "export"
+      ],
+      "formula": "delivered electricity formula",
+      "words": [
+        "example PV installation",
+        "delivered electricity",
+        "annual",
+        "kWh"
+      ],
+      "number": "8048.91"
+    },
+    {
+      "context": [
+        "example PV installation",
+        "delivered electricity",
+        "annual",
+        "kWh",
+        "PV installation",
+        "lifetime",
+        "year"
+      ],
+      "formula": "lifetime delivered electricity formula",
+      "words": [
+        "example PV installation",
+        "lifetime delivered electricity",
+        "kWh"
+      ],
+      "number": "241467.3"
+    },
+    {
+      "context": [
+        "example PV installation",
+        "direct use",
+        "battery charge",
+        "PV production",
+        "annual",
+        "kWh",
+        "modelled"
+      ],
+      "formula": "self-consumption share by dispatch",
+      "words": [
+        "example PV installation",
+        "self-consumption share",
+        "percent"
+      ],
+      "number": "0.49"
+    },
+    {
+      "context": [
+        "example PV installation",
+        "direct use",
+        "battery discharge",
+        "household consumption",
+        "annual",
+        "kWh",
+        "assumed",
+        "modelled"
+      ],
+      "formula": "autarky formula",
+      "words": [
+        "example PV installation",
+        "autarky",
+        "percent"
+      ],
+      "number": "0.84"
+    },
+    {
+      "context": [
+        "PV in Switzerland",
+        "life cycle",
+        "CO2-eq",
+        "gram per kWh",
+        "2023",
+        "PV yield",
+        "annual",
+        "kWh per kWp",
+        "PV installation",
+        "lifetime",
+        "year"
+      ],
+      "formula": "PV embodied intensity formula",
+      "words": [
+        "PV embodied intensity",
+        "kg per kWp",
+        "CO2-eq",
+        "2023"
+      ],
+      "number": "1048.22"
+    },
+    {
+      "context": [
+        "PV embodied intensity",
+        "kg per kWp",
+        "CO2-eq",
+        "2023",
+        "example PV installation",
+        "PV capacity",
+        "kWp",
+        "assumed"
+      ],
+      "formula": "PV embodied emission formula",
+      "words": [
+        "example PV installation",
+        "PV embodied emission",
+        "kg",
+        "CO2-eq"
+      ],
+      "number": "10482.2"
+    },
+    {
+      "context": [
+        "example PV installation",
+        "battery capacity",
+        "kWh",
+        "assumed",
+        "battery",
+        "battery production emission",
+        "kg per kWh",
+        "battery count"
+      ],
+      "formula": "battery embodied emission formula",
+      "words": [
+        "example PV installation",
+        "battery embodied emission",
+        "kg",
+        "CO2-eq"
+      ],
+      "number": "2000"
+    },
+    {
+      "context": [
+        "example PV installation",
+        "lifetime delivered electricity",
+        "kWh",
+        "Switzerland",
+        "electricity",
+        "consumption mix",
+        "life cycle",
+        "CO2-eq",
+        "gram per kWh",
+        "2018"
+      ],
+      "formula": "gross avoided emission by consumption mix",
+      "words": [
+        "example PV installation",
+        "gross avoided emission",
+        "consumption mix",
+        "kg",
+        "CO2-eq"
+      ],
+      "number": "30424.88"
+    },
+    {
+      "context": [
+        "example PV installation",
+        "lifetime delivered electricity",
+        "kWh",
+        "PV-weighted consumption mix",
+        "2018 to 2022",
+        "mean",
+        "CO2-eq",
+        "gram per kWh",
+        "modelled"
+      ],
+      "formula": "gross avoided emission by PV-weighted consumption mix",
+      "words": [
+        "example PV installation",
+        "gross avoided emission",
+        "PV-weighted consumption mix",
+        "kg",
+        "CO2-eq"
+      ],
+      "number": "25554.48"
+    },
+    {
+      "context": [
+        "example PV installation",
+        "lifetime delivered electricity",
+        "kWh",
+        "Europe",
+        "electricity",
+        "residual mix",
+        "life cycle",
+        "CO2-eq",
+        "gram per kWh"
+      ],
+      "formula": "gross avoided emission by residual mix",
+      "words": [
+        "example PV installation",
+        "gross avoided emission",
+        "residual mix",
+        "kg",
+        "CO2-eq"
+      ],
+      "number": "126287.4"
+    },
+    {
+      "context": [
+        "example PV installation",
+        "gross avoided emission",
+        "consumption mix",
+        "PV embodied emission",
+        "battery embodied emission",
+        "kg",
+        "CO2-eq"
+      ],
+      "formula": "net avoided emission formula",
+      "words": [
+        "example PV installation",
+        "net avoided emission",
+        "consumption mix",
+        "kg",
+        "CO2-eq"
+      ],
+      "number": "17942.68"
+    },
+    {
+      "context": [
+        "example PV installation",
+        "gross avoided emission",
+        "PV-weighted consumption mix",
+        "PV embodied emission",
+        "battery embodied emission",
+        "kg",
+        "CO2-eq"
+      ],
+      "formula": "net avoided emission formula",
+      "words": [
+        "example PV installation",
+        "net avoided emission",
+        "PV-weighted consumption mix",
+        "kg",
+        "CO2-eq"
+      ],
+      "number": "13072.28"
+    },
+    {
+      "context": [
+        "example PV installation",
+        "gross avoided emission",
+        "residual mix",
+        "PV embodied emission",
+        "battery embodied emission",
+        "kg",
+        "CO2-eq"
+      ],
+      "formula": "net avoided emission formula",
+      "words": [
+        "example PV installation",
+        "net avoided emission",
+        "residual mix",
+        "kg",
+        "CO2-eq"
+      ],
+      "number": "113805.2"
+    },
+    {
+      "context": [
+        "example PV installation",
+        "gross avoided emission",
+        "consumption mix",
+        "PV embodied emission",
+        "battery embodied emission",
+        "kg",
+        "CO2-eq",
+        "PV installation",
+        "lifetime",
+        "year"
+      ],
+      "formula": "emission payback formula",
+      "words": [
+        "example PV installation",
+        "emission payback",
+        "consumption mix",
+        "year"
+      ],
+      "number": "12.31"
+    },
+    {
+      "context": [
+        "example PV installation",
+        "gross avoided emission",
+        "PV-weighted consumption mix",
+        "PV embodied emission",
+        "battery embodied emission",
+        "kg",
+        "CO2-eq",
+        "PV installation",
+        "lifetime",
+        "year"
+      ],
+      "formula": "emission payback formula",
+      "words": [
+        "example PV installation",
+        "emission payback",
+        "PV-weighted consumption mix",
+        "year"
+      ],
+      "number": "14.65"
+    },
+    {
+      "context": [
+        "example PV installation",
+        "gross avoided emission",
+        "residual mix",
+        "PV embodied emission",
+        "battery embodied emission",
+        "kg",
+        "CO2-eq",
+        "PV installation",
+        "lifetime",
+        "year"
+      ],
+      "formula": "emission payback formula",
+      "words": [
+        "example PV installation",
+        "emission payback",
+        "residual mix",
+        "year"
+      ],
+      "number": "2.97"
+    }
+  ],
+  "components": [
+    {
+      "name": "Title example PV installation",
+      "type": "phrase_title",
+      "description": "page title: the phrase example PV installation with its from, verb and to"
+    },
+    {
+      "name": "description example PV installation",
+      "type": "system_show_field_description",
+      "description": "the description of the phrase example PV installation below the title, which explains the worked example and its inputs like the lead text of the page"
+    },
+    {
+      "name": "table example PV installation lifetime balance",
+      "type": "table_with_related_columns",
+      "description": "the values and results of the example PV installation as a table with one column per reference mix (consumption mix, PV-weighted consumption mix, residual mix) and one row per remaining phrase combination: the production, the dispatch, the embodied emissions, the gross and net avoided emission and the payback"
+    }
+  ],
+  "views": [
+    {
+      "name": "PV lifetime CO2 balance",
+      "description": "the lifetime electricity and CO2-eq balance of a PV installation with battery, compared with the annual Swiss consumption mix, the PV-weighted monthly Swiss mix and the European residual mix",
+      "type": "triple",
+      "components": [
+        {
+          "position": "1",
+          "name": "Title example PV installation"
+        },
+        {
+          "position": "2",
+          "name": "description example PV installation"
+        },
+        {
+          "position": "3",
+          "name": "table example PV installation lifetime balance"
+        }
+      ]
+    }
+  ],
+  "view-validation": [
+    {
+      "url": "mask=PV lifetime CO2 balance&words=example PV installation",
+      "result": "# example PV installation\n \n| | consumption mix | PV-weighted consumption mix | residual mix |\n| --- | ---: | ---: | ---: |\n| gross avoided emission in CO2-eq kg | 30424.88 | 25554.48 | 126287.4 |\n| net avoided emission in CO2-eq kg | 17942.68 | 13072.28 | 113805.2 |\n| emission payback in year | 12.31 | 14.65 | 2.97 |\n \nThe example installation of 10 kWp east-west with a 10 kWh battery and 4500 kWh household\nconsumption produces 8296 kWh a year and 248880 kWh over 30 years. The net\nsaving depends on the reference mix: with the annual Swiss consumption mix it is about\n18 t, with the monthly mix weighted by the PV delivery less, because PV produces in\nsummer when the Swiss mix is cleanest, and with the European residual mix about\n114 t.\n"
+    }
+  ]
+}

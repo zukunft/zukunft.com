@@ -293,6 +293,16 @@ class value_tests
         $qp_ex = $val_ex->sql_insert($sc, $msg, new sql_type_list([sql_type::USER, sql_type::LOG]));
         $t->assert_text_contains($test_name, $qp_ex?->sql ?? '', fields::FLD_EXCLUDED);
         $msg->reset();
+        // a user row that already matches the request (e.g. of a repeated import) must not be
+        // updated, because the source is a key field of the user row and an update of only
+        // the key fields would be an sql without a set clause
+        $test_name = 'a user row that already matches reports no changed field for the user table, '
+            . 'so that no update without a set clause is created';
+        $fvt_lst = $val_db->db_fields_changed($t_val->value_16(), $msg, new sql_type_list([sql_type::USER]));
+        $t->assert_true($test_name, $fvt_lst->is_empty_except_internal_fields());
+        $test_name = '... and a changed user row still carries the source key field';
+        $fvt_lst = $val_ex->db_fields_changed($val_db, $msg, new sql_type_list([sql_type::USER]));
+        $t->assert_true($test_name, $fvt_lst->has_name(source_fields::FLD_ID));
 
         // step 5: the user row of the exclude is added only if the user has no overlay row yet
         $test_name = 'a value row with a user row reports a user overwrite, so that the exclude '

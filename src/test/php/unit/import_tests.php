@@ -534,6 +534,18 @@ class import_tests
         $imp->get_data_object($json_array, $msg);
         $t->assert_text_contains($test_name, $msg->all_message_text(), 'does not match');
 
+        // the PV lifetime balance use case chains its results: the production, the dispatch, the
+        // embodied emissions, the gross and net avoided emission and the payback, so every
+        // pre-calculated result of the file must be reproduced from its values and formulas
+        $test_name = 'the import of the PV lifetime balance use case reports no problem';
+        $msg = new user_message($t->usr1);
+        $json_str = file_get_contents(cfg_files::PV_LIFETIME_BALANCE_FILE);
+        $json_array = json_decode($json_str, true);
+        $dto = $imp->get_data_object($json_array, $msg);
+        $t->assert($test_name, $msg->all_message_text(), '');
+        $test_name = '... and its calc validation reproduces every result of the chain';
+        $t->assert($test_name, $dto->result_check_list()->count(), count($json_array[json_fields::CALC_VALIDATION]));
+
         // the unique keys use case is user data as well, so a normal user must import it
         $test_name = 'the import of the unique keys use case reports no problem';
         $msg = new user_message($t->usr1);

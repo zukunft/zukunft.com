@@ -196,6 +196,7 @@ sys_log_status_list: $lst, $sys_log_status
 system_form: $form, $overwrite_form, $sfm, $simple_form, $value_form
 system_page: $page, $sys_page
 system_time_type: $sys_exe_typ, $sys_script
+system_views_read_tests: $msk_tests
 table_chart: $chart
 table_model: $model
 term_list: $cache, $col_lst, $del_lst, $empty_lst, $found_lst, $lst, $phr_lst, $remain_lst, $search_lst, $trm_lst, $trm_lst_start, $trm_lst_ui

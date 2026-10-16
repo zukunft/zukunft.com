@@ -102,9 +102,12 @@ class views
     const int CALCULATOR_ID = 16;
     const string CALCULATOR_NAME = 'Calculator';
     const string CALCULATOR_COM = 'The values related to a word or triple as a table with the defined columns, so that the numbers of a question can be compared';
+    // the view of the use case pv_lifetime_balance.json: a use case view is user data, so it is
+    // selected by its name only and never by a code id (docs/llm/json_structure.md "Use case files")
+    const string PV_LIFETIME_BALANCE_NAME = 'PV lifetime CO2 balance';
     // placeholders with a title and a phrase selector until the editors are done (editor_views.json)
     const string TABLE_EDITOR = 'table_editor';
-    const int TABLE_EDITOR_ID = 193;
+    const int TABLE_EDITOR_ID = 194;
     const string TABLE_EDITOR_NAME = 'Table editor';
     const string CALCULATION_EDITOR = 'calculation_editor';
     const string CALCULATION_EDITOR_NAME = 'Calculation editor';
